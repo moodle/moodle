@@ -4403,23 +4403,46 @@ function component_level_changed($cap, $comp, $contextlevel) {
 }
 
 /**
- * Populate context.path and context.depth
+ * Populate context.path and context.depth where missing.
+ *
+ * Use $force=true to force a complete rebuild of
+ * the path and depth fields.
+ *
  */
-function build_context_path() {
+function build_context_path($force=false) {
     global $CFG;
 
     // Site
-    $sitectx = get_field('context', 'id','contextlevel', CONTEXT_SYSTEM);
-    $base = "/$sitectx";
-    set_field('context', 'path',  $base, 'id', $sitectx);
-    set_field('context', 'depth', 1,     'id', $sitectx);
+    $sitectx = get_record('context', 'contextlevel', CONTEXT_SYSTEM);
+    $base = '/' . $sitectx->id;
+
+    if ($force || $sitectx->path !== $base) {
+        set_field('context', 'path',  $base, 'id', $sitectx->id);
+        set_field('context', 'depth', 1,     'id', $sitectx->id);
+        $sitectx = get_record('context', 'contextlevel', CONTEXT_SYSTEM);
+    }
 
     // Sitecourse
-    $ctxid = get_field('context', 'id','contextlevel', CONTEXT_COURSE,
-                       'instanceid', SITEID);
-    set_field('context', 'path',  "$base/$ctxid", 'id', $ctxid);
-    set_field('context', 'depth', 2,              'id', $ctxid);
+    $sitecoursectx = get_record('context',
+                                'contextlevel', CONTEXT_COURSE,
+                                'instanceid', SITEID);
+    if ($force || $sitecoursectx->path !== "$base/{$sitecoursectx->id}") {
+        set_field('context', 'path',  "$base/{$sitecoursectx->id}",
+                  'id', $sitecoursectx->id);
+        set_field('context', 'depth', 2,
+                  'id', $sitecoursectx->id);
+        $sitecoursectx = get_record('context',
+                                    'contextlevel', CONTEXT_COURSE,
+                                    'instanceid', SITEID);
+    }
 
+    $emptyclause = " AND path=''";
+    if ($CFG->dbtype==='oci8po') { // DIRTYHACK - everybody loves Oracle ;-)
+        $emptyclause = " AND path=' '";
+    }
+    if ($force) {
+        $emptyclause = '';
+    }
     // Top level categories
     $sql = "UPDATE {$CFG->prefix}context
               SET depth=2, path=" . sql_concat("'$base/'", 'id') . "
@@ -4427,7 +4450,7 @@ function build_context_path() {
                   AND instanceid IN
                (SELECT id
                 FROM {$CFG->prefix}course_categories
-                WHERE depth=1)";
+                WHERE depth=1 $emptyclause )";
     execute_sql($sql, false);
 
     // Deeper categories - one query per depthlevel
@@ -4443,7 +4466,8 @@ function build_context_path() {
                             AND pctx.contextlevel=".CONTEXT_COURSECAT.")
                       WHERE c.depth=$n) it
                 WHERE contextlevel=".CONTEXT_COURSECAT."
-                      AND {$CFG->prefix}context.instanceid=it.instanceid";
+                      AND {$CFG->prefix}context.instanceid=it.instanceid
+                      $emptyclause ";
         execute_sql($sql, false);
     }
 
@@ -4458,7 +4482,8 @@ function build_context_path() {
                             AND pctx.contextlevel=".CONTEXT_COURSECAT.")
                       WHERE c.id != ".SITEID.") it
                 WHERE contextlevel=".CONTEXT_COURSE."
-                      AND {$CFG->prefix}context.instanceid=it.instanceid";
+                      AND {$CFG->prefix}context.instanceid=it.instanceid
+                      $emptyclause ";
         execute_sql($sql, false);
 
     // Module instances
@@ -4472,7 +4497,8 @@ function build_context_path() {
                         AND pctx.contextlevel=".CONTEXT_COURSE.")
                   ) it
             WHERE contextlevel=".CONTEXT_MODULE."
-                  AND {$CFG->prefix}context.instanceid=it.instanceid";
+                  AND {$CFG->prefix}context.instanceid=it.instanceid
+                  $emptyclause ";
         execute_sql($sql, false);
 
     // Blocks - non-pinned only
@@ -4487,16 +4513,17 @@ function build_context_path() {
                         AND pctx.contextlevel=".CONTEXT_COURSE.")
                   ) it
             WHERE contextlevel=".CONTEXT_BLOCK."
-                  AND {$CFG->prefix}context.instanceid=it.instanceid";
+                  AND {$CFG->prefix}context.instanceid=it.instanceid
+                  $emptyclause ";
     execute_sql($sql, false);
 
     // User
     $sql = "UPDATE {$CFG->prefix}context
               SET depth=2, path=".sql_concat("'$base/'", 'id')."
             WHERE contextlevel=".CONTEXT_USER."
-                  AND instanceid IN
-               (SELECT id
-                FROM {$CFG->prefix}user)";
+                  AND instanceid IN (SELECT id
+                                     FROM {$CFG->prefix}user)
+                  $emptyclause ";
     execute_sql($sql, false);
 
     // Personal TODO
