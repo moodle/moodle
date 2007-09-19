@@ -1202,7 +1202,7 @@ function get_user_access_sitewide($userid) {
             JOIN {$CFG->prefix}context ctx
               ON ra.contextid=ctx.id
             JOIN {$CFG->prefix}context sctx
-              ON (sctx.path LIKE ctx.path||'/%')
+              ON (sctx.path LIKE " . sql_concat('ctx.path',"'/%'"). " )
             JOIN {$CFG->prefix}role_capabilities rco
               ON (rco.roleid=ra.roleid AND rco.contextid=sctx.id)
             WHERE ra.userid = $userid
@@ -4422,7 +4422,7 @@ function build_context_path() {
 
     // Top level categories
     $sql = "UPDATE {$CFG->prefix}context
-              SET depth=2, path='$base/' || id
+              SET depth=2, path=" . sql_concat("'$base/'", 'id') . "
             WHERE contextlevel=".CONTEXT_COURSECAT."
                   AND instanceid IN
                (SELECT id
@@ -4435,7 +4435,7 @@ function build_context_path() {
                                FROM {$CFG->prefix}course_categories");
     for ($n=2;$n<=$maxdepth;$n++) {
         $sql = "UPDATE {$CFG->prefix}context
-                  SET depth=$n+1, path=it.ppath || '/' || id
+                  SET depth=$n+1, path=" . sql_concat('it.ppath', "'/'", 'id') . "
                 FROM (SELECT c.id AS instanceid, pctx.path AS ppath
                       FROM {$CFG->prefix}course_categories c
                       JOIN {$CFG->prefix}context pctx
@@ -4449,7 +4449,7 @@ function build_context_path() {
 
     // Courses -- except sitecourse
     $sql = "UPDATE {$CFG->prefix}context
-                  SET depth=it.pdepth+1, path=it.ppath || '/' || id
+                  SET depth=it.pdepth+1, path=" . sql_concat('it.ppath', "'/'", 'id') . "
                 FROM (SELECT c.id AS instanceid, pctx.path AS ppath,
                              pctx.depth as pdepth
                       FROM {$CFG->prefix}course c
@@ -4463,7 +4463,7 @@ function build_context_path() {
 
     // Module instances
     $sql = "UPDATE {$CFG->prefix}context
-                  SET depth=it.pdepth+1, path=it.ppath || '/' || id
+                  SET depth=it.pdepth+1, path=" . sql_concat('it.ppath', "'/'", 'id') . "
             FROM (SELECT cm.id AS instanceid, pctx.path AS ppath,
                          pctx.depth as pdepth
                   FROM {$CFG->prefix}course_modules cm
@@ -4477,7 +4477,7 @@ function build_context_path() {
 
     // Blocks - non-pinned only
     $sql = "UPDATE {$CFG->prefix}context
-              SET depth=it.pdepth+1, path=it.ppath || '/' || id
+              SET depth=it.pdepth+1, path=" . sql_concat('it.ppath', "'/'", 'id') . "
             FROM (SELECT bi.id AS instanceid, pctx.path AS ppath,
                          pctx.depth as pdepth
                   FROM {$CFG->prefix}block_instance bi
@@ -4492,7 +4492,7 @@ function build_context_path() {
 
     // User
     $sql = "UPDATE {$CFG->prefix}context
-              SET depth=2, path='$base/' || id
+              SET depth=2, path=".sql_concat("'$base/'", 'id')."
             WHERE contextlevel=".CONTEXT_USER."
                   AND instanceid IN
                (SELECT id
@@ -4534,7 +4534,7 @@ function context_moved($context, $newparent) {
 
     $len = strlen($frompath);
     $sql = "UPDATE {$CFG->prefix}context
-            SET path = '$newpath' || SUBSTR(path, {$len} +1)
+            SET path = ".sql_concat("'$newpath'", 'SUBSTR(path, {$len} +1)')."
                 $setdepth
             WHERE path LIKE '{$frompath}/%'";
     execute_sql($sql,false);
