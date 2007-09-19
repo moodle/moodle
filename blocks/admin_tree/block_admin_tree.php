@@ -100,12 +100,17 @@ class block_admin_tree extends block_base {
 
         global $CFG, $ADMIN;
 
-        require_once($CFG->libdir.'/adminlib.php');
-        $adminroot = admin_get_root();
+        if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+            $this->content = '';
+            return '';
+        }
 
         if ($this->content !== NULL) {
             return $this->content;
         }
+
+        require_once($CFG->libdir.'/adminlib.php');
+        $adminroot = admin_get_root();
 
         if ($this->pathtosection = $adminroot->path($this->section)) {
             $this->pathtosection = array_reverse($this->pathtosection);
