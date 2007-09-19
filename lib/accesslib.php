@@ -1656,7 +1656,13 @@ function load_all_capabilities() {
             $USER->access['ra'][$base] = array($roleid);
         }
     }
+
+    // Timestamp to read 
+    // dirty context timestamps
     $USER->access['time'] = time();
+
+    // Clear to force a refresh
+    unset($USER->mycourses);
 }
 
 /**
