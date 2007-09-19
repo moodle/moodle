@@ -698,6 +698,11 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
         return array(); // no courses!
     }
 
+    $CFG->coursemanager = trim($CFG->coursemanager);
+    if (empty($CFG->coursemanager)) {
+        return $courses;
+    }
+
     $managerroles = split(',', $CFG->coursemanager);
     $catctxids = '';
     if (count($managerroles)) {
