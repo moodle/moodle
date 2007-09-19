@@ -855,6 +855,12 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
         $fields = $basefields;
     }
 
+    $orderby = '';
+    $sort    = trim($sort);
+    if (!empty($sort)) {
+        $orderby = "ORDER BY $sort";
+    }
+
     //
     // Logged-in user - Check cached courses
     //
@@ -901,7 +907,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
                     JOIN {$CFG->prefix}context ctx 
                       ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
                     WHERE c.id IN ($courseids)
-                    ORDER BY $sort";
+                    $orderby";
             $rs = get_recordset_sql($sql);
             $courses = array();
             $cc = 0; // keep count
