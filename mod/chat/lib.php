@@ -497,10 +497,14 @@ function chat_update_chat_times($chatid=0) {
                     $chat->schedule = 0;
                     break;
             case 2: // Repeat daily
-                    $chat->chattime += 24 * 3600;
+                    while ($chat->chattime <= $timenow) {
+                        $chat->chattime += 24 * 3600;
+                    }
                     break;
             case 3: // Repeat weekly
-                    $chat->chattime += 7 * 24 * 3600;
+                    while ($chat->chattime <= $timenow) {
+                        $chat->chattime += 7 * 24 * 3600;
+                    }
                     break;
         }
         update_record("chat", $chat);
