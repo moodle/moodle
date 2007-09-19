@@ -1820,8 +1820,8 @@ function print_course($course) {
     
     /// first find all roles that are supposed to be displayed
     
-    if ($managerroles = !empty($CFG->coursemanager)) {
-        $coursemanagerroles = split(',', $managerroles);
+    if (!empty($CFG->coursemanager)) {
+        $managerroles = split(',', $CFG->coursemanager);
         $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
         $namesarray = array();
         if (isset($course->managers)) {
@@ -1838,7 +1838,7 @@ function print_course($course) {
                 }
             }
         } else {
-            $rusers = get_role_users($coursemanagerroles, $context, 
+            $rusers = get_role_users($managerroles, $context, 
                                      true, '', 'r.sortorder ASC, u.lastname ASC', $canseehidden);
             if (is_array($rusers) && count($rusers)) {
                 $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
