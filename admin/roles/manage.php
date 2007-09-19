@@ -117,6 +117,9 @@
                     }
                 }
 
+                // added a role sitewide...
+                mark_context_dirty($sitecontext->path);
+
                 if (empty($errors)) {
                     redirect('manage.php');
                 }
@@ -228,8 +231,14 @@
                         } 
                     }                    
 
+                    // edited a role sitewide...
+                    mark_context_dirty($sitecontext->path);
+
                     redirect('manage.php');
                 }
+
+                // edited a role sitewide - with errors, but still...
+                mark_context_dirty($sitecontext->path);
             }
             break;
 
@@ -239,8 +248,14 @@
             }
             if ($confirm and data_submitted() and confirm_sesskey()) {
                 if (!delete_role($roleid)) {
+
+                    // partially deleted a role sitewide...?
+                    mark_context_dirty($sitecontext->path);
+
                     error('Could not delete role with ID '.$roleid);
                 }
+                // deleted a role sitewide...
+                mark_context_dirty($sitecontext->path);
 
             } else if (confirm_sesskey()){
                 // show confirmation
@@ -340,6 +355,10 @@
             if ($newrole = create_role($currentfullname, $currentshortname, $description)) {
                 // dupilcate all the capabilities
                 role_cap_duplicate($sourcerole, $newrole);
+
+                // dup'ed a role sitewide...
+                mark_context_dirty($sitecontext->path);
+
             }
             redirect('manage.php');
             break;
@@ -351,6 +370,10 @@
 
             if ($confirm and data_submitted() and confirm_sesskey()) {
                 reset_role_capabilities($roleid);
+
+                // reset a role sitewide...
+                mark_context_dirty($sitecontext->path);
+
                 redirect('manage.php?action=view&amp;roleid='.$roleid);
 
             } else {

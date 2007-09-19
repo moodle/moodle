@@ -43,6 +43,8 @@
                 }
             }
         }
+        // updated allowoverride sitewide...
+        mark_context_dirty($sitecontext->path);
     }
 /// displaying form here
 
