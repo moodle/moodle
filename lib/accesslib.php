@@ -4609,7 +4609,7 @@ function cleanup_dirty_contexts() {
     global $CFG;
     
     $sql = "plugin='accesslib/dirtycontexts' AND
-                  CAST(value AS DECIMAL) < " . time() - $CFG->sessiontimeout;
+            value < " . time() - $CFG->sessiontimeout;
     delete_records_select('config_plugins', $sql);
 }
 
