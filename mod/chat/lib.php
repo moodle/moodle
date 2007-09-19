@@ -233,14 +233,14 @@ function chat_cron () {
     chat_delete_old_users();
 
     /// Delete old messages
-    if ($chats = get_records("chat")) {
-        foreach ($chats as $chat) {
-            if ($chat->keepdays) {
-                $timeold = time() - ($chat->keepdays * 24 * 3600);
-                delete_records_select("chat_messages", "chatid = '$chat->id' AND timestamp < '$timeold'");
-            }
-        }
-    }
+    $sql = "SELECT m.id 
+            FROM {$CFG->prefix}chat_messages m 
+            JOIN {$CFG->prefix}chat c
+              ON m.chatid = c.id
+            WHERE c.keepdays != 0 
+                  AND m.timestamp < ( ".time()." - c.keepdays * 24 * 3600)";
+
+    delete_records_select("chat_messages", "id IN ($sql)");
 
     return true;
 }
@@ -506,7 +506,9 @@ function chat_update_chat_times($chatid=0) {
         update_record("chat", $chat);
 
         $event = NULL;           // Update calendar too
-        if ($event->id = get_field('event', 'id', 'modulename', 'chat', 'instance', $chat->id)) {
+        $cond = "modulename='chat' AND instance = {$chat->id} 
+                 AND timestart != {$chat->chattime}";
+        if ($event->id = get_field_select('event', 'id', $cond)) {
             $event->timestart   = $chat->chattime;
             update_event($event);
         }
