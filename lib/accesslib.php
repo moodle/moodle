@@ -363,7 +363,7 @@ function get_parent_cats($context) {
 
 
 function has_capability($capability, $context=NULL, $userid=NULL, $doanything=true) {
-    global $USER, $CONTEXT, $ACCESS, $CFG;
+    global $USER, $CONTEXT, $ACCESS, $CFG, $DIRTYCONTEXTS;
 
     /// Make sure we know the current context
     if (empty($context)) {              // Use default CONTEXT if none specified
@@ -381,11 +381,11 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         $userid = $USER->id;
     }
 
-    //error_log(print_r($context,1));
     $contexts = array();
+    $basepath = '/' . SYSCONTEXTID;
     if (empty($context->path)) {
         $contexts[] = SYSCONTEXTID;
-        $context->path = '/' . SYSCONTEXTID;
+        $context->path = $basepath;
         if (isset($context->id) && $context->id ==! SYSCONTEXTID) {
             $contexts[] = $context->id;
             $context->path .= '/' . $context->id;
@@ -397,6 +397,28 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
     if ($USER->id === 0 && !isset($USER->access)) {
         load_all_capabilities();
+    }
+
+    // Careful check for staleness...
+    $clean = true;
+    if (!isset($DIRTYCONTEXTS)) {
+        // Load dirty contexts list
+        $DIRTYCONTEXTS = get_dirty_contexts($USER->access['time']);
+
+        // Check basepath only once, when
+        // we load the dirty contexts...
+        if (isset($DIRTYCONTEXTS->{$basepath})) {
+            // sitewide change, dirty
+            $clean = false;
+        }
+    }
+    // Check for staleness in the whole parenthood
+    if ($clean && !is_contextpath_clean($context->path, $DIRTYCONTEXTS)) {
+        $clean = false;
+    }
+    if (!$clean) {
+        // TODO: reload all capabilities but
+        // preserve loginas, roleswitches, etc
     }
 
     
@@ -1545,6 +1567,7 @@ function load_all_capabilities() {
             $USER->access['ra']["$base:def"] = array($roleid);
         }
     }
+    $USER->access['time'] = time();
 }
 
 
@@ -4636,17 +4659,13 @@ function make_context_subobj($rec) {
  * Uses config_plugins.
  *
  */
-function get_dirty_contexts($time=NULL) {
+function get_dirty_contexts($time) {
     global $CFG;
 
-    $timecond = '';
-    if (!is_null($time)) {
-        $timecond = " AND CAST(value to integer) > $time";
-    }
     $sql = "SELECT name, value 
             FROM {$CFG->prefix}config_plugins
             WHERE plugin='accesslib/dirtycontexts'
-                  $timecond";
+                  AND CAST(value AS integer) > $time";
     if ($ctx = get_records_sql($sql)) {
         return $ctx;
     }
@@ -4676,6 +4695,45 @@ function cleanup_dirty_contexts() {
     $sql = "plugin='accesslib/dirtycontexts' AND
                   CAST(value to integer) < " . time() - $CFG->sessiontimeout;
     delete_records_select('config_plugins', $sql);
+}
+
+/*
+ * Will walk the contextpath to answer whether
+ * the contextpath is clean
+ *
+ * NOTE: it will *NOT* test the base path
+ * as it assumes that the caller has checked
+ * that beforehand.
+ *
+ * @param string path
+ * @param obj/array dirty from get_dirty_contexts()
+ *
+ */
+function is_contextpath_clean($path, $dirty) {
+
+    $basepath = '/' . SYSCONTEXTID;
+
+    // all clean, no dirt!
+    if (count($dirty) === 0) {
+        return true;
+    }
+
+    // is _this_ context dirty?
+    if (isset($dirty->{$path})) {
+        return false;
+    }
+    while (preg_match('!^(/.+)/\d+$!', $path, $matches)) {
+        $path = $matches[1];
+        if ($path === $basepath) { 
+            // we don't test basepath
+            // assume caller did it already
+            return true;
+        }
+        if (isset($dirty->{$path})) {
+            return false;
+        }
+    }    
+    return true;
 }
 
 ?>
