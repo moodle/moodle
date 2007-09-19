@@ -687,9 +687,6 @@ function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sort
     $basefields = array('id', 'sortorder', 'shortname', 'idnumber');
 
     if (!is_null($fields)) {
-        if (!is_array($fields)) {
-            error_log(print_r($fields,1));
-        }
         $fields = array_merge($basefields, $fields);
         $fields = array_unique($fields);
     } else {
@@ -789,6 +786,75 @@ function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sort
     }
     rs_close($rs);
     return $courses;
+}
+
+/*
+ * Draft - use for the course participants list page 
+ *
+ * Uses 1 DB query (cheap too - 2~7ms).
+ *
+ * TODO:
+ * - implement additional where clauses
+ * - sorting
+ * - get course participants list to use it!
+ *
+ * returns a users array, both sorted _and_ keyed
+ * on id (as get_my_courses() does)
+ *
+ * as a bonus, every user record comes with its own
+ * personal context, as our callers need it straight away
+ * {save 1 dbquery per user! yay!}
+ *
+ */
+function get_context_users_byrole ($context, $roleid, $fields=NULL, $where=NULL, $sort=NULL, $limit=0) {
+
+    global $CFG;
+    // Slim base fields, let callers ask for what they need...
+    $basefields = array('id', 'username');
+
+    if (!is_null($fields)) {
+        $fields = array_merge($basefields, $fields);
+        $fields = array_unique($fields);
+    } else {
+        $fields = $basefields;
+    }
+    $userfields = 'u.' .join(',u.', $fields);
+
+    $contexts = substr($context->path, 1); // kill leading slash
+    $contexts = str_replace('/', ',', $contexts);
+
+    $sql = "SELECT $userfields,
+                   ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+            FROM {$CFG->prefix}user u
+            JOIN {$CFG->prefix}context ctx 
+              ON (u.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_USER.")
+            JOIN {$CFG->prefix}role_assignments ra
+              ON u.id = ra.userid
+            WHERE ra.roleid = $roleid 
+                  AND ra.contextid IN ($contexts)";
+
+    $rs = get_recordset_sql($sql);
+    
+    $users = array();
+    $cc = 0; // keep count
+    if ($rs->RecordCount()) {
+        while ($u = rs_fetch_next_record($rs)) {
+            // build the context obj
+            $ctx = new StdClass;
+            $ctx->id           = $u->ctxid;    unset($u->ctxid);
+            $ctx->path         = $u->ctxpath;  unset($u->ctxpath);
+            $ctx->depth        = $u->ctxdepth; unset($u->ctxdepth);
+            $ctx->instanceid   = $u->id;
+            $ctx->contextlevel = CONTEXT_USER;
+            $u->context = $ctx;
+            $users[] = $u;
+            if ($limit > 0 && $cc++ > $limit) {
+                break;
+            }
+        }
+    }
+    rs_close($rs);
+    return $users;
 }
 
 /**
@@ -1604,7 +1670,9 @@ function get_user_access_sitewide($userid) {
                 $acc['rdef'][$k][$ra->capability] = $ra->permission;
             }
             $parentids = explode('/', $ra->path);
-            array_pop($parentids); array_shift($parentids);
+            array_shift($parentids); // drop empty leading "context"
+            array_pop($parentids);   // drop _this_ context
+
             if (isset($raparents[$ra->roleid])) {
                 $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid], $parentids);
             } else {
