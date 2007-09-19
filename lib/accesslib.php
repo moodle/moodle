@@ -2226,7 +2226,6 @@ function create_system_context() {
         $context->contextlevel = CONTEXT_SYSTEM;
         $context->instanceid = 0;
         if ($context->id = insert_record('context',$context)) {
-            // we need not to populate context_rel for system context
             return $context;
         } else {
             debugging('Can not create system context');
@@ -2243,12 +2242,10 @@ function create_system_context() {
  */
 function delete_context($contextlevel, $instanceid) {
     if ($context = get_context_instance($contextlevel, $instanceid)) {
-        delete_records('context_rel', 'c2', $context->id); // might not be a parent
         mark_context_dirty($context->path);
         return delete_records('context', 'id', $context->id) &&
                delete_records('role_assignments', 'contextid', $context->id) &&
-               delete_records('role_capabilities', 'contextid', $context->id) &&
-               delete_records('context_rel', 'c1', $context->id);
+               delete_records('role_capabilities', 'contextid', $context->id);
     }
     return true;
 }
@@ -4645,76 +4642,6 @@ function user_has_role_assignment($userid, $roleid, $contextid=0) {
     }
 }
 
-/**
- * Inserts all parental context and self into context_rel table
- *
- * @param object $context-context to be deleted
- * @param bool deletechild - deltes child contexts dependencies
- */
-function insert_context_rel($context, $deletechild=true, $deleteparent=true) {
-
-    // first check validity
-    // MDL-9057
-    if (!validate_context($context->contextlevel, $context->instanceid)) {
-        debugging('Error: Invalid context creation request for level "' .
-                s($context->contextlevel) . '", instance "' . s($context->instanceid) . '".');
-        return NULL;
-    }
-
-    // removes all parents
-    if ($deletechild) {
-        delete_records('context_rel', 'c2', $context->id);
-    }
-
-    if ($deleteparent) {
-        delete_records('context_rel', 'c1', $context->id);
-    }
-    // insert all parents
-    if ($parents = get_parent_contexts($context)) {
-        $parents[] = $context->id;
-        foreach ($parents as $parent) {
-            $rec = new object;
-            $rec ->c1 = $context->id;
-            $rec ->c2 = $parent;
-            insert_record('context_rel', $rec);
-        }
-    }
-}
-
-/**
- * rebuild context_rel table without deleting
- */
-function build_context_rel() {
-
-    global $CFG, $db;
-    $savedb = $db->debug;
-
-    // MDL-10679, only identify contexts with overrides in them
-    $contexts = get_records_sql("SELECT c.* FROM {$CFG->prefix}context c,
-                                                 {$CFG->prefix}role_capabilities rc
-                                            WHERE c.id = rc.contextid");
-    // total number of records
-    // subtract one because the site context should not be calculated, will not be processed
-    $total = count($contexts) - 1;
-
-    // processed records
-    $done = 0;
-    print_progress($done, $total, 10, 0, 'Processing context relations');
-    $db->debug = false;
-
-    //if ($contexts = get_records('context')) {
-    foreach ($contexts as $context) {
-        // no need to delete because it's all empty
-        insert_context_rel($context, false, false);
-        $db->debug = true;
-        print_progress(++$done, $total, 10, 0, 'Processing context relations');
-        $db->debug = false;
-    }
-
-    $db->debug = $savedb;
-}
-
-
 // gets the custom name of the role in course
 // TODO: proper documentation
 function role_get_name($role, $context) {
@@ -4724,38 +4651,6 @@ function role_get_name($role, $context) {
     } else {
         return format_string($role->name);
     }
-}
-
-/*
- * @param int object - context object (node), from which we find all it's children
- * and rebuild all associated context_rel info
- * this is needed when a course or course category is moved
- * as the children's relationship to grandparents needs to be fixed
- * @return int number of contexts rebuilt
- */
-function rebuild_context_rel($context) {
-
-    $contextlist = array();
-
-    if (record_exists('role_capabilities', 'contextid', $context->id)) {
-        $contextlist[] = $context;
-    }
-
-    // find all children used in context_rel
-    if ($childcontexts = get_records('context_rel', 'c2', $context->id)) {
-        foreach ($childcontexts as $childcontext) {
-            $contextlist[$childcontext->c1] = get_record('context', 'id', $childcontext->c1);
-        }
-    }
-
-    $i = 0;
-    // rebuild all the contexts of this list
-    foreach ($contextlist as $c) {
-        insert_context_rel($c);
-        $i++;
-    }
-
-    return $i;
 }
 
 /**

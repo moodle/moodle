@@ -525,7 +525,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
         /// code here to fill the context_rel table
         /// use get record set to iterate slower
-        build_context_rel();
+        /// /deprecated and gone / build_context_rel();
     }
 
     if ($result && $oldversion < 2007011501) {
