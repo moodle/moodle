@@ -4629,4 +4629,53 @@ function make_context_subobj($rec) {
     return $rec;
 }
 
+/*
+ * Fetch recent dirty contexts to know cheaply whether our $USER->access
+ * is stale and needs to be reloaded.
+ *
+ * Uses config_plugins.
+ *
+ */
+function get_dirty_contexts($time=NULL) {
+    global $CFG;
+
+    $timecond = '';
+    if (!is_null($time)) {
+        $timecond = " AND CAST(value to integer) > $time";
+    }
+    $sql = "SELECT name, value 
+            FROM {$CFG->prefix}config_plugins
+            WHERE plugin='accesslib/dirtycontexts'
+                  $timecond";
+    if ($ctx = get_records_sql($sql)) {
+        return $ctx;
+    }
+    return array();
+}
+
+/*
+ * Mark a context as dirty (with timestamp)
+ * so as to force reloading of the context.
+ *
+ */
+function mark_context_dirty($path) {
+    // Trivial (for now?)
+    set_config($path, time(), 'accesslib/dirtycontexts');
+}
+
+/*
+ * Cleanup all the old/stale dirty contexts.
+ * Any context exceeding our session
+ * timeout is stale. We only keep these for ongoing
+ * sessions.
+ *
+ */
+function cleanup_dirty_contexts() {
+    global $CFG;
+    
+    $sql = "plugin='accesslib/dirtycontexts' AND
+                  CAST(value to integer) < " . time() - $CFG->sessiontimeout;
+    delete_records_select('config_plugins', $sql);
+}
+
 ?>
