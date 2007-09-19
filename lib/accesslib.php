@@ -746,6 +746,11 @@ function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sort
             $catclause = 'OR (' . join(' OR ', $catpaths) .')';
         }
         unset($catpaths);
+
+        $capany = '';
+        if ($doanything) {
+            $capany = " OR rc.capability='moodle/site:doanything'";
+        }
         //
         // Note here that we *have* to have the compound clauses
         // in the LEFT OUTER JOIN condition for them to return NULL
@@ -759,7 +764,7 @@ function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sort
                 LEFT OUTER JOIN {$CFG->prefix}role_assignments ra
                   ON (ra.contextid=ctx.id AND ra.userid=$userid)
                 LEFT OUTER JOIN {$CFG->prefix}role_capabilities rc
-                  ON (rc.contextid=ctx.id AND rc.capability='$cap')
+                  ON (rc.contextid=ctx.id AND (rc.capability='$cap' $capany))
                 WHERE    ra.id IS NOT NULL
                       OR rc.id IS NOT NULL
                       $catclause
