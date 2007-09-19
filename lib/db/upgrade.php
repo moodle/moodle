@@ -2093,6 +2093,12 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);
     }
 
+    if ($result && $oldversion < 2007091900) {
+        cleanup_contexts();
+        build_context_path(true);
+        load_all_capabilities();
+    }
+
 
 /*
     /// drop old gradebook tables
