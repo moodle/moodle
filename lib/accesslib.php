@@ -1578,8 +1578,6 @@ function load_user_accessdata($userid) {
 function load_all_capabilities() {
     global $USER,$CFG;
 
-    static $defcaps;
-
     $base = '/'.SYSCONTEXTID;
 
     if (isguestuser()) {
