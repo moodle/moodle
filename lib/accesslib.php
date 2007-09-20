@@ -4431,31 +4431,40 @@ function build_context_path($force=false) {
                                     'instanceid', SITEID);
     }
 
-    $ctxemptyclause = " AND (ctx.depth IS NULL 
+    $ctxemptyclause = " AND (ctx.depth IS NULL
                               OR ctx.depth=0) ";
-    $emptyclause    = " AND ({$CFG->prefix}context.depth IS NULL 
+    $emptyclause    = " AND ({$CFG->prefix}context.depth IS NULL
                               OR {$CFG->prefix}context.depth=0) ";
     if ($force) {
         $ctxemptyclause = $emptyclause = '';
     }
 
-    $updatesql = "UPDATE {$CFG->prefix}context
-                    SET path  = ct.path,
-                        depth = ct.depth
-                 FROM {$CFG->prefix}$temptable ct
-                 WHERE ct.id={$CFG->prefix}context.id";
-    if ($CFG->dbfamily==='mysql') {
+    /* MDL-11347:
+     *  - mysql does not allow to use FROM in UPDATE statements
+     *  - using two tables after UPDATE works in mysql, but might give unexpected
+     *    results in pg 8 (depends on configuration)
+     *  - when using temporary table in mysql, it can be used only once in subselects
+     *  - using table alias in UPDATE does not work in pg < 8.2
+     */
+    if ($CFG->dbfamily == 'mysql') {
         $updatesql = "UPDATE {$CFG->prefix}context, {$CFG->prefix}$temptable
-                        SET {$CFG->prefix}context.path  = {$CFG->prefix}$temptable.path,
-                            {$CFG->prefix}context.depth = {$CFG->prefix}$temptable.depth
-                     WHERE {$CFG->prefix}$temptable.id={$CFG->prefix}context.id";
+                         SET {$CFG->prefix}context.path  = {$CFG->prefix}$temptable.path,
+                             {$CFG->prefix}context.depth = {$CFG->prefix}$temptable.depth
+                       WHERE {$CFG->prefix}$temptable.id={$CFG->prefix}context.id";
+    } else {
+        $updatesql = "UPDATE {$CFG->prefix}context
+                         SET path  = ct.path,
+                             depth = ct.depth
+                        FROM {$CFG->prefix}$temptable ct
+                       WHERE ct.id={$CFG->prefix}context.id";
     }
+
     $udelsql = "TRUNCATE TABLE {$CFG->prefix}$temptable";
 
     // Top level categories
     $sql = "UPDATE {$CFG->prefix}context
-              SET depth=2, path=" . sql_concat("'$base/'", 'id') . "
-            WHERE contextlevel=".CONTEXT_COURSECAT."
+               SET depth=2, path=" . sql_concat("'$base/'", 'id') . "
+             WHERE contextlevel=".CONTEXT_COURSECAT."
                    AND EXISTS (SELECT 'x'
                                  FROM {$CFG->prefix}course_categories cc
                                 WHERE cc.id = {$CFG->prefix}context.instanceid
@@ -4545,7 +4554,7 @@ function build_context_path($force=false) {
              WHERE contextlevel=".CONTEXT_USER."
                    AND EXISTS (SELECT 'x'
                                  FROM {$CFG->prefix}user u
-                                WHERE u.id = {$CFG->prefix}context.instanceid) 
+                                WHERE u.id = {$CFG->prefix}context.instanceid)
                    $emptyclause ";
     execute_sql($sql, $force);
 
