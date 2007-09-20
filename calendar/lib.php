@@ -526,7 +526,13 @@ function calendar_print_event($event) {
         $eventclass = ' '.$event->class;
     }
 
-    echo '<td class="description '.$event->cssclass.$eventclass.'">';
+    if (isset($event->cssclass)) {
+        $eclass = $event->cssclass.$eventclass;
+    } else {
+        $eclass = $eventclass;
+    }
+
+    echo '<td class="description '.$eclass.'">';
     echo format_text($event->description, FORMAT_HTML);
     if (calendar_edit_event_allowed($event)) {
         echo '<div class="commands">';
