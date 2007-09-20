@@ -62,13 +62,17 @@
 
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
-        redirect('edit.php?cmid='.$cm->id);
+        redirect($CFG->wwwroot . '/mod/quiz/edit.php?quizid=' . $quiz->id);
     }
 
-    // Get number for the next or unfinished attempt
+    if (!$ispreviewing) {
+        require_capability('mod/quiz:attempt', $context);
+    }
+
+/// Get number for the next or unfinished attempt
     if(!$attemptnumber = (int)get_field_sql('SELECT MAX(attempt)+1 FROM ' .
-     "{$CFG->prefix}quiz_attempts WHERE quiz = '{$quiz->id}' AND " .
-     "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1")) {
+            "{$CFG->prefix}quiz_attempts WHERE quiz = '{$quiz->id}' AND " .
+            "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1")) {
         $attemptnumber = 1;
     }
 
@@ -76,22 +80,14 @@
     $strquizzes = get_string("modulenameplural", "quiz");
     $popup = $quiz->popup && !$ispreviewing; // Controls whether this is shown in a javascript-protected window.
 
-    // Check availability
-    if (isguestuser()) {
-        print_heading(get_string('guestsno', 'quiz'));
-        if (empty($popup)) {
-            print_footer($course);
-        }
-        exit;
-    }
-
+/// Check number of attempts
     $numberofpreviousattempts = count_records_select('quiz_attempts', "quiz = '{$quiz->id}' AND " .
         "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1");
     if ($quiz->attempts and $numberofpreviousattempts >= $quiz->attempts) {
         error(get_string('nomoreattempts', 'quiz'), "view.php?id={$cm->id}");
     }
 
-    // Check subnet access
+/// Check subnet access
     if ($quiz->subnet and !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
         if ($ispreviewing) {
             notify(get_string('subnetnotice', 'quiz'));
@@ -100,7 +96,7 @@
         }
     }
 
-    // Check password access
+/// Check password access
     if ($ispreviewing && $forcenew) {
         unset($SESSION->passwordcheckedquizzes[$quiz->id]);
     }
@@ -171,7 +167,7 @@
         }
     }
 
-    // Load attempt or create a new attempt if there is no unfinished one
+/// Load attempt or create a new attempt if there is no unfinished one
 
     if ($ispreviewing and $forcenew) { // teacher wants a new preview
         // so we set a finish time on the current attempt (if any).
@@ -324,7 +320,7 @@
     // We have now finished processing form data
     }
 
-    // Finish attempt if requested
+/// Finish attempt if requested
     if ($finishattempt) {
 
         // Set the attempt to be finished
@@ -364,7 +360,7 @@
                            "$quiz->id", $cm->id);
     }
 
-    // Update the quiz attempt and the overall grade for the quiz
+/// Update the quiz attempt and the overall grade for the quiz
     if ($responses || $finishattempt) {
         if (!update_record('quiz_attempts', $attempt)) {
             error('Failed to save the current quiz attempt!');
@@ -392,7 +388,7 @@
 
     if ($finishattempt) {
         unset($SESSION->passwordcheckedquizzes[$quiz->id]);
-        redirect('review.php?attempt='.$attempt->id, 0);
+        redirect($CFG->wwwroot . '/mod/quiz/review.php?attempt='.$attempt->id, 0);
     }
 
 /// Print the quiz page ////////////////////////////////////////////////////////
@@ -461,7 +457,7 @@
     // Add a hidden field with the quiz id
     echo '<div>';
 
-    // Print the navigation panel if required
+/// Print the navigation panel if required
     $numpages = quiz_number_of_pages($attempt->layout);
     if ($numpages > 1) {
         ?>
@@ -495,7 +491,7 @@
         $number += $questions[$i]->length;
     }
 
-    // Print the submit buttons
+/// Print the submit buttons
     $strconfirmattempt = addslashes(get_string("confirmclose", "quiz"));
     $onclick = "return confirm('$strconfirmattempt')";
     echo "<div class=\"submitbtns mdl-align\">\n";

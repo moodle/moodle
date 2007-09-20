@@ -586,6 +586,7 @@ $string['xml'] = 'Moodle XML format';
 $string['xmlimportnoname'] = 'Missing question name in xml file';
 $string['xmlimportnoquestion'] = 'Missing question text in xml file';
 $string['xmltypeunsupported'] = 'Question type $a is not supported by xml import';
+$string['youneedtoenrol'] = 'You need to enrol in this course before you can attempt this quiz';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is $a.';
 $string['zerosignificantfiguresnotallowed'] = 'The correct answer cannot have zero significant figures!';
 
