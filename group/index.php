@@ -138,7 +138,14 @@ echo "<td>\n";
 // NO GROUPINGS YET!
 echo '<p><label for="groups"><span id="groupslabel">'.get_string('groups').':</span><span id="thegrouping">&nbsp;</span></label></p>'."\n";
 
-echo '<select name="group" id="groups" size="15" class="select" onchange="membersCombo.refreshMembers(this.options[this.selectedIndex].value);"'."\n";
+if (ajaxenabled()) {
+    $onchange = 'membersCombo.refreshMembers(this.options[this.selectedIndex].value);';
+} else {
+    $onchange = ''; 
+}
+
+
+echo '<select name="group" id="groups" size="15" class="select" onchange="'.$onchange.'"'."\n";
 echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
 
 $groups = groups_get_all_groups($courseid);
