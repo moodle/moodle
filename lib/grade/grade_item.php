@@ -202,7 +202,7 @@ class grade_item extends grade_object {
      * Display type of the grades (Real, Percentage, Letter, or default).
      * @var int $display
      */
-    var $display = null;
+    var $display = -1;
 
     /**
      * 0 if visible, 1 always hidden or date not visible until
