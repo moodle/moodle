@@ -2133,67 +2133,6 @@ function assignment_grade_item_delete($assignment) {
 }
 
 /**
- * Gradebook informs this module about new grade or feedback.
- *
- */
-function assignment_grade_updated($instance, $itemnumber, $userid, $gradevalue, $feedback, $feedbackformat, $usermodified) {
-    global $CFG, $USER;
-
-    if (!$assignment = get_record('assignment', 'id', $instance)) {
-        return true;
-    }
-    if (! $course = get_record('course', 'id', $assignment->course)) {
-        return true;
-    }
-    if (! $cm = get_coursemodule_from_instance('assignment', $assignment->id, $course->id)) {
-        return true;
-    }
-
-    // Load up the required assignment class
-    require_once($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
-    $assignmentclass = 'assignment_'.$assignment->assignmenttype;
-    $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
-
-    $old = $assignmentinstance->get_submission($userid, true);  // Get or make one
-    $submission = new object();
-    $submission->id         = $old->id;
-    $submission->userid     = $old->userid;
-    $submission->teacher    = $usermodified;
-
-    if ($gradevalue === false) {
-        $submission->grade  = $old->grade;
-    } else if (is_null($gradevalue)) {
-        $submission->grade  = -1;
-    } else {
-        $submission->grade  = (int)$gradevalue; // round it for now
-        $submission->timemarked = time();
-    }
-
-    if ($feedback === false) {
-        $submission->submissioncomment = addslashes($old->submissioncomment);
-        $submission->format            = $old->format;
-    } else {
-        $submission->submissioncomment = addslashes($feedback);
-        $submission->format            = (int)$feedbackformat;
-    }
-
-    if ($old->submissioncomment != $submission->submissioncomment or $old->grade != $submission->grade) {
-
-        $submission->mailed = 0; // Make sure mail goes out (again, even)
-
-        if (!update_record('assignment_submissions', $submission)) {
-            return false;
-        }
-    }
-
-    // TODO: add proper logging
-    add_to_log($course->id, 'assignment', 'update grades',
-               'submissions.php?id='.$assignment->id.'&user='.$submission->userid, $submission->userid, $cm->id);
-
-    return true;
-}
-
-/**
  * Returns the users with data in one assignment (students and teachers)
  *
  * @param $assignmentid int

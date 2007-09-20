@@ -1248,13 +1248,14 @@ class grade_item extends grade_object {
      * @param mixed $feedback teachers feedback as string - false means do not change
      * @param int $feedbackformat
      * @return boolean success
-     * TODO Allow for a change of feedback without a change of finalgrade. Currently I get notice about uninitialised $result
      */
     function update_final_grade($userid, $finalgrade=false, $source=NULL, $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
         global $USER, $CFG;
         if (empty($usermodified)) {
             $usermodified = $USER->id;
         }
+
+        $result = true;
 
         // no grading used or locked
         if ($this->gradetype == GRADE_TYPE_NONE or $this->is_locked()) {
@@ -1273,37 +1274,24 @@ class grade_item extends grade_object {
 
         $locktime = $grade->get_locktime();
         if ($locktime and $locktime < time()) {
-            // do not update grades that should be already locked and force regrade
+            // do not update grades that should be already locked, force regrade instead
             $this->force_regrading();
             return false;
         }
 
         $oldgrade = new object();
         $oldgrade->finalgrade  = $grade->finalgrade;
-        $oldgrade->rawgrade    = $grade->rawgrade;
-        $oldgrade->rawgrademin = $grade->rawgrademin;
-        $oldgrade->rawgrademax = $grade->rawgrademax;
-        $oldgrade->rawscaleid  = $grade->rawscaleid;
         $oldgrade->overridden  = $grade->overridden;
-
-        $override = false;
-        $functionname = null;
 
         if ($finalgrade !== false or $feedback !== false) {
             if (($this->is_outcome_item() or $this->is_manual_item()) and !$this->is_calculated()) {
                 // final grades updated only by user - no need for overriding
-
-            } else if ($this->itemtype == 'mod' and $this->plusfactor == 0 and $this->multfactor == 1) {
-                // do not override grade if module can update own raw grade
-                require_once($CFG->dirroot.'/mod/'.$this->itemmodule.'/lib.php');
-                $functionname = $this->itemmodule.'_grade_updated';
-                if (!function_exists($functionname)) {
-                    $override = true;
-                    $functionname = null;
-                }
+                $grade->overridden = 0;
 
             } else {
-                $override = true;
+                if (!$grade->overridden) {
+                    $grade->overridden = time();
+                }
             }
         }
 
@@ -1314,36 +1302,13 @@ class grade_item extends grade_object {
                 $finalgrade = $finalgrade;
             }
             $grade->finalgrade = $finalgrade;
-
-            if ($override) {
-                if (!$grade->overridden) {
-                    $grade->overridden = time();
-                }
-
-            } else if ($this->is_raw_used()) {
-                // module which is not overridden - no factors used
-                $grade->rawgrade = $finalgrade;
-                // copy current grademin/max and scale
-                $grade->rawgrademin = $this->grademin;
-                $grade->rawgrademax = $this->grademax;
-                $grade->rawscaleid  = $this->scaleid;
-            }
         }
 
         if (empty($grade->id)) {
             $result = (boolean)$grade->insert($source);
 
-        } else if ($grade->finalgrade  !== $oldgrade->finalgrade
-                or $grade->rawgrade    !== $oldgrade->rawgrade
-                or $grade->rawgrademin !== $oldgrade->rawgrademin
-                or $grade->rawgrademax !== $oldgrade->rawgrademax
-                or $grade->rawscaleid  !== $oldgrade->rawscaleid
-                or $grade->overridden  !== $oldgrade->overridden) {
-
+        } else if ($grade->finalgrade !== $oldgrade->finalgrade or $grade->overridden !== $oldgrade->overridden) {
             $result = $grade->update($source);
-
-        } else {
-            $result = true;
         }
 
         // do we have comment from teacher?
@@ -1351,7 +1316,11 @@ class grade_item extends grade_object {
             $result = $grade->update_feedback($feedback, $feedbackformat, $usermodified);
         }
 
-        if ($this->is_course_item() and !$this->needsupdate) {
+        if (!$result) {
+            // something went wrong - better force final grade recalculation
+            $this->force_regrading();
+
+        } else if ($this->is_course_item() and !$this->needsupdate) {
             if (!grade_regrade_final_grades($this->courseid, $userid, $this)) {
                 $this->force_regrading();
             }
@@ -1365,11 +1334,6 @@ class grade_item extends grade_object {
             } else {
                 $this->force_regrading();
             }
-        }
-
-        // inform modules, etc. if needed
-        if ($result and $functionname) {
-            $functionname($this->iteminstance, $this->itemnumber, $userid, $finalgrade, $feedback, $feedbackformat, $usermodified);
         }
 
         return $result;
