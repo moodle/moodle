@@ -22,14 +22,13 @@ class eaccelerator {
     function eaccelerator() {
         global $CFG;
         if ( function_exists('eaccelerator_get')) {
-            $mode = 'eaccelerator';
+            $this->mode = 'eaccelerator';
         } elseif (function_exists('mmcache_get')) {
-            $mode = 'mmcache';
+            $this->mode = 'mmcache';
         } else {
             debugging("\$CFG->eaccelerator is set to true but the required functions are not available. You need to have either eaccelerator or turckmmcache extensions installed, compiled with the shmem keys option enabled.");
         }
 
-        $this->mode   = $mode;
         $this->prefix = $CFG->dbname .'|' . $CFG->prefix . '|';
     }
 
