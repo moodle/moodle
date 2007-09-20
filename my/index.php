@@ -38,9 +38,13 @@
 
     $PAGE->print_header($mymoodlestr);
 
-    echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
+    echo '<table id="layout-table">';
     echo '<tr valign="top">';
 
+    $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+    foreach ($lt as $column) {
+        switch ($column) {
+            case 'left':
 
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 
@@ -49,7 +53,10 @@
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</td>';
     }
-
+    
+            break;
+            case 'middle':
+    
     echo '<td valign="top" id="middle-column">';
 
 /// The main overview in the middle of the page
@@ -83,7 +90,10 @@
     }
     
     echo '</td>';
-
+    
+            break;
+            case 'right':
+            
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
 
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing()) {
@@ -91,7 +101,9 @@
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
         echo '</td>';
     }
-
+            break;
+        }
+    }
 
     /// Finish the page
     echo '</tr></table>';
