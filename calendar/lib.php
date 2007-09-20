@@ -1321,7 +1321,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
                 }
 
                 // If the user is an editing teacher in there,
-                if (!empty($USER->id) && has_capability('moodle/calendar:manageentries', $courseeventsfrom[$courseid]->context)) {
+                if (!empty($USER->id) && isset($courseeventsfrom[$courseid]->context) && has_capability('moodle/calendar:manageentries', $courseeventsfrom[$courseid]->context)) {
                     // If this course has groups, show events from all of them
                     if(is_int($groupeventsfrom)) {
                         if (is_object($courseeventsfrom[$courseid])) { // SHOULD be set MDL-11221
