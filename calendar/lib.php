@@ -1315,7 +1315,9 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
             foreach($groupcourses as $courseid) {
 
                 if (!isset($courseeventsfrom[$courseid]->context)) { // SHOULD be set MDL-11221
-                    $courseeventsfrom[$courseid]->context = get_context_instance(CONTEXT_COURSE, $courseid);
+                    if (is_object($courseeventsfrom[$courseid])) {
+                        $courseeventsfrom[$courseid]->context = get_context_instance(CONTEXT_COURSE, $courseid);
+                    }
                 }
 
                 // If the user is an editing teacher in there,
