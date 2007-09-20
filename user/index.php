@@ -332,7 +332,7 @@
     $select .= $course->enrolperiod?', r.timeend ':'';
 
     $from   = "FROM {$CFG->prefix}user u
-               JOIN {$CFG->prefix}context ctx
+               LEFT OUTER JOIN {$CFG->prefix}context ctx
                  ON (u.id=ctx.instanceid AND ctx.contextlevel = ".CONTEXT_USER.")
                JOIN {$CFG->prefix}role_assignments r
                  ON u.id=r.userid
