@@ -2240,7 +2240,7 @@ function rcache_set($table, $id, $rec) {
     } else {
         $key   = $table . '|' . $id;
 
-        if (isset($MCACHE)) {
+        if (isset($MCACHE) && $MCACHE->status()) {
             // $table is a flag used to mark
             // a table as dirty & uncacheable
             // when an UPDATE or DELETE not bound by ID
@@ -2273,7 +2273,7 @@ function rcache_unset($table, $id) {
         }
     } else {
         $key   = $table . '|' . $id;
-        if (isset($MCACHE)) {
+        if (isset($MCACHE) && $MCACHE->status()) {
             $MCACHE->delete($key);
         }
     }
@@ -2307,7 +2307,7 @@ function rcache_get($table, $id) {
         }
     }
 
-    if (isset($MCACHE)) {
+    if (isset($MCACHE) && $MCACHE->status()) {
         $key   = $table . '|' . $id;
         // we set $table as a flag used to mark
         // a table as dirty & uncacheable
@@ -2356,7 +2356,7 @@ function rcache_getforfill($table, $id) {
         return rcache_get($table, $id);
     }
 
-    if (isset($MCACHE)) {
+    if (isset($MCACHE) && $MCACHE->status()) {
         $key   = $table . '|' . $id;
         // if $table is set - we won't take the
         // lock either
@@ -2389,7 +2389,7 @@ function rcache_getforfill($table, $id) {
 function rcache_releaseforfill($table, $id) {
     global $CFG, $MCACHE;
 
-    if (isset($MCACHE)) {
+    if (isset($MCACHE) && $MCACHE->status()) {
         $key   = $table . '|' . $id;
         return $MCACHE->releaseforfill($key);
     }
@@ -2416,7 +2416,7 @@ function rcache_unset_table ($table) {
         return true;
     }
 
-    if (isset($MCACHE)) {
+    if (isset($MCACHE) && $MCACHE->status()) {
         // at least as long as content keys to ensure they expire
         // before the dirty flag
         $MCACHE->set($table, true, $CFG->rcachettl);
