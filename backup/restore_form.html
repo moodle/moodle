@@ -194,12 +194,13 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
      *      newcourse
      */
 
-    $mycourses = get_capability_courses('moodle/site:restore');
+    //$mycourses = get_capability_courses('moodle/site:restore');
 
     // if the user can manage 2 or more courses,
     // or if the only course the user can manage is not the current course
     // we show options for existing courses
-    if (count($mycourses) > 1 || !in_array($id, $mycourses)) {
+    if (user_can_create_courses()) { // this is not entirely accurate but much faster
+    //if (count($mycourses) > 1 || !in_array($id, $mycourses)) {
         // if user can manage more than 1 course, or if user can restore to a single different course
         $restore_restoreto_options[0] = get_string("existingcoursedeleting");
         $restore_restoreto_options[1] = get_string("existingcourseadding");
