@@ -409,7 +409,7 @@ function get_site() {
  * Returns list of courses, for whole site, or category
  *
  * Returns list of courses, for whole site, or category
- * Important: Using c.* for fields is extremely expensive because 
+ * Important: Using c.* for fields is extremely expensive because
  *            we are using distinct. You almost _NEVER_ need all the fields
  *            in such a large SELECT
  *
@@ -597,7 +597,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  * that we need for print_course(). This allows print_courses() to do its job
  * in a constant number of DB queries, regardless of the number of courses,
  * role assignments, etc.
- * 
+ *
  * The returned array is indexed on c.id, and each course will have
  * - $course->context - a context obj
  * - $course->managers - array containing RA objects that include a $user obj
@@ -606,7 +606,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  */
 function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=array()) {
     /*
-     * The plan is to 
+     * The plan is to
      *
      * - Grab the courses JOINed w/context
      *
@@ -644,7 +644,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
         if (empty($fields)) {
             $fields = $basefields;
         } else {
-            // turn the fields from a string to an array that 
+            // turn the fields from a string to an array that
             // get_user_courses_bycap() will like...
             $fields = explode(',',$fields);
             $fields = array_map('trim', $fields);
@@ -680,7 +680,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
     $catpath  = NULL;
     if ($courses = get_records_sql($sql)) {
         // loop on courses materialising
-        // the context, and prepping data to fetch the 
+        // the context, and prepping data to fetch the
         // managers efficiently later...
         foreach ($courses as $k => $course) {
             $courses[$k] = make_context_subobj($courses[$k]);
@@ -728,7 +728,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
             $categoryclause = "AND $categoryclause";
         }
         /*
-         * Note: Here we use a LEFT OUTER JOIN that can 
+         * Note: Here we use a LEFT OUTER JOIN that can
          * "optionally" match to avoid passing a ton of context
          * ids in an IN() clause. Perhaps a subselect is faster.
          *
@@ -737,7 +737,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
          *
          */
         $sql = "SELECT ctx.path, ctx.instanceid, ctx.contextlevel,
-                       ra.hidden, 
+                       ra.hidden,
                        r.id AS roleid, r.name as rolename,
                        u.id AS userid, u.firstname, u.lastname
                 FROM {$CFG->prefix}role_assignments ra
@@ -749,14 +749,14 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
                   ON ra.roleid = r.id
                 LEFT OUTER JOIN {$CFG->prefix}course c
                   ON (ctx.instanceid=c.id AND ctx.contextlevel=".CONTEXT_COURSE.")
-                WHERE (  c.id IS NOT NULL 
+                WHERE (  c.id IS NOT NULL
                          OR ra.contextid  IN ($catctxids) )
                       AND ra.roleid IN ({$CFG->coursemanager})
                       $categoryclause
                 ORDER BY r.sortorder ASC, ctx.contextlevel ASC, ra.sortorder ASC";
 
         $rs = get_recordset_sql($sql);
-        
+
         // This loop is fairly stupid as it stands - might get better
         // results doing an initial pass clustering RAs by path.
         if ($rs->RecordCount()) {
@@ -792,25 +792,25 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
         }
 
 
-        
+
     }
 
     return $courses;
 }
 
 /**
- * Convenience function - lists courses that a user has access to view. 
+ * Convenience function - lists courses that a user has access to view.
  *
  * For admins and others with access to "every" course in the system, we should
  * try to get courses with explicit RAs.
  *
  * NOTE: this function is heavily geared towards the perspective of the user
- *       passed in $userid. So it will hide courses that the user cannot see 
+ *       passed in $userid. So it will hide courses that the user cannot see
  *       (for any reason) even if called from cron or from another $USER's
  *       perspective.
- *       
+ *
  *       If you really want to know what courses are assigned to the user,
- *       without any hiding or scheming, call the lower-level 
+ *       without any hiding or scheming, call the lower-level
  *       get_user_courses_bycap().
  *
  *
@@ -852,14 +852,14 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
         if (empty($fields)) {
             $fields = $basefields;
         } else {
-            // turn the fields from a string to an array that 
+            // turn the fields from a string to an array that
             // get_user_courses_bycap() will like...
             $fields = explode(',',$fields);
             $fields = array_map('trim', $fields);
             $fields = array_unique(array_merge($basefields, $fields));
         }
     } elseif (is_array($fields)) {
-        $fields = array_unique(array_merge($basefields, $fields)); 
+        $fields = array_unique(array_merge($basefields, $fields));
     } else {
         $fields = $basefields;
     }
@@ -886,12 +886,12 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     // because we use IN()
     //
     if ($userid === $USER->id) {
-        if (isset($USER->loginascontext) 
+        if (isset($USER->loginascontext)
             && $USER->loginascontext->contextlevel == CONTEXT_COURSE) {
             // list _only_ this course
             // anything else is asking for trouble...
             $courseids = $USER->loginascontext->instanceid;
-        } elseif (isset($USER->mycourses) 
+        } elseif (isset($USER->mycourses)
                   && is_string($USER->mycourses)) {
             if ($USER->mycourses === '') {
                 // empty str means: user has no courses
@@ -902,7 +902,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
             }
         }
         if (isset($courseids)) {
-            // The data massaging here MUST be kept in sync with 
+            // The data massaging here MUST be kept in sync with
             // get_user_courses_bycap() so we return
             // the same...
             // (but here we don't need to check has_cap)
@@ -914,7 +914,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
                     FROM {$CFG->prefix}course c
                     JOIN {$CFG->prefix}course_categories cc
                       ON c.category=cc.id
-                    JOIN {$CFG->prefix}context ctx 
+                    JOIN {$CFG->prefix}context ctx
                       ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
                     WHERE c.id IN ($courseids)
                     $orderby";
@@ -944,7 +944,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
         $accessinfo = get_user_access_sitewide($userid);
     }
 
-    
+
     $courses = get_user_courses_bycap($userid, 'moodle/course:view', $accessinfo,
                                       $doanything, $sort, $fields,
                                       $limit);
@@ -957,19 +957,26 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
                        ctx.id AS ctxid, ctx.path AS ctxpath,
                        ctx.depth as ctxdepth, ctx.contextlevel AS ctxlevel
                 FROM {$CFG->prefix}course_categories cc
-            JOIN {$CFG->prefix}context ctx 
+            JOIN {$CFG->prefix}context ctx
               ON (cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT.")
                 ORDER BY id";
         $rs = get_recordset_sql($sql);
-        $cats = array();
+
+        // Using a temporary array instead of $cats here, to avoid a "true" result when isnull($cats) further down
+        $categories = array();
         if ($rs->RecordCount()) {
-            while ($cc = rs_fetch_next_record($rs)) {
+            while ($course_cat = rs_fetch_next_record($rs)) {
                 // build the context obj
-                $cc = make_context_subobj($cc);
-                $cats[$cc->id] = $cc;
+                $course_cat = make_context_subobj($course_cat);
+                $categories[$course_cat->id] = $course_cat;
             }
         }
-        unset($cc);
+
+        if (!empty($categories)) {
+            $cats = $categories;
+        }
+
+        unset($course_cat);
         rs_close($rs);
     }
     //
@@ -978,13 +985,13 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     // So do that, and also cache the ids in the session if appropriate
     //
     $kcourses = array();
-    $cc = count($courses);
+    $courses_count = count($courses);
     $cacheids = NULL;
     $vcatpaths = array();
-    if ($userid === $USER->id && $cc < 500) {
+    if ($userid === $USER->id && $courses_count < 500) {
         $cacheids = array();
     }
-    for ($n=0; $n<$cc; $n++) {
+    for ($n=0; $n<$courses_count; $n++) {
 
         //
         // Check whether $USER (not $userid) can _actually_ see them
@@ -992,7 +999,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
         // is set, and we don't have to care about categories.
         // Lots of work otherwise... (all in mem though!)
         //
-        $cansee = false;        
+        $cansee = false;
         if (is_null($cats)) { // easy rules!
             if ($courses[$n]->visible == true) {
                 $cansee = true;
@@ -1027,15 +1034,16 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
             //
             // Perhaps it's actually visible to $USER
             // check moodle/category:visibility
-            // 
+            //
             // The name isn't obvious, but the description says
             // "See hidden categories" so the user shall see...
-            //
+            // But also check if the allowvisiblecoursesinhiddencategories setting is true, and check for course visibility
             if ($viscat === false) {
-                $catctx = $cats[ $courses[$n]->category ]->context;
-                if (has_capability('moodle/category:visibility',
-                                   $catctx, $USER->id)) {
+                $catctx = $cats[$courses[$n]->category]->context;
+                if (has_capability('moodle/category:visibility', $catctx, $USER->id)) {
                     $vcatpaths[$courses[$n]->categorypath] = true;
+                    $viscat = true;
+                } elseif ($CFG->allowvisiblecoursesinhiddencategories && $courses[$n]->visible == true) {
                     $viscat = true;
                 }
             }
@@ -1140,14 +1148,14 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
             FROM {$CFG->prefix}course c
             JOIN {$CFG->prefix}context ctx
              ON (c.id = ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-            WHERE ( $fullnamesearch OR  $summarysearch ) 
+            WHERE ( $fullnamesearch OR  $summarysearch )
                   AND category > 0
             ORDER BY " . $sort;
 
     $courses = array();
 
     if ($rs = get_recordset_sql($sql)) {
-        
+
 
         // Tiki pagination
         $limitfrom = $page * $recordsperpage;
@@ -1178,12 +1186,12 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 /**
  * Returns a sorted list of categories. Each category object has a context
  * property that is a context object.
- * 
+ *
  * When asking for $parent='none' it will return all the categories, regardless
  * of depth. Wheen asking for a specific parent, the default is to return
  * a "shallow" resultset. Pass false to $shallow and it will return all
- * the child categories as well. 
- * 
+ * the child categories as well.
+ *
  *
  * @param string $parent The parent category if any
  * @param string $sort the sortorder
@@ -2054,7 +2062,7 @@ function print_object($object) {
 
 /*
  * Check whether a course is visible through its parents
- * path. 
+ * path.
  *
  * Notes:
  *
@@ -2066,7 +2074,7 @@ function print_object($object) {
  *   the user can has the 'moodle/category:visibility'
  *   capability...
  *
- * - Will generate 2 DB calls. 
+ * - Will generate 2 DB calls.
  *
  * - It does have a small local cache, however...
  *
@@ -2092,7 +2100,7 @@ function course_parent_visible($course = null) {
         $mycache = array();
     } else {
         // cast to force assoc array
-        $k = (string)$course->category; 
+        $k = (string)$course->category;
         if (isset($mycache[$k])) {
             return $mycache[$k];
         }
@@ -2101,7 +2109,7 @@ function course_parent_visible($course = null) {
     if (isset($course->categorypath)) {
         $path = $course->categorypath;
     } else {
-        $path = get_field('course_categories', 'path', 
+        $path = get_field('course_categories', 'path',
                           'id', $course->category);
     }
     $catids = substr($path,1); // strip leading slash
