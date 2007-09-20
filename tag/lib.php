@@ -893,28 +893,29 @@ function tag_instance_table_cleanup() {
         {$CFG->prefix}tag_instance
     ";
 
-    $items_types = get_records_sql($query);
+    if ($items_types = get_records_sql($query)) {
 
-    // for each itemtype, remove tag_instances that are orphans
-    // That is: For a given tag_instance, if in the itemtype table there's no entry with id equal to itemid,
-    //          then this tag_instance is an orphan and it will be removed.
-    foreach ($items_types as $type) {
+        // for each itemtype, remove tag_instances that are orphans
+        // That is: For a given tag_instance, if in the itemtype table there's no entry with id equal to itemid,
+        //          then this tag_instance is an orphan and it will be removed.
+        foreach ($items_types as $type) {
 
-        $query = "
-            {$CFG->prefix}tag_instance.id
-        IN
-            ( SELECT sq1.id
-              FROM
+            $query = "
+                {$CFG->prefix}tag_instance.id
+            IN
+                ( SELECT sq1.id
+                FROM
                     (SELECT sq2.*
                      FROM {$CFG->prefix}tag_instance sq2
                      LEFT JOIN {$CFG->prefix}{$type->itemtype} item
                      ON sq2.itemid = item.id
                      WHERE item.id IS NULL
                      AND sq2.itemtype = '{$type->itemtype}')
-              sq1
-            ) ";
+                sq1
+                ) ";
 
-        delete_records_select('tag_instance', $query);
+            delete_records_select('tag_instance', $query);
+        }
     }
 
     // remove tag_instances that are orphans because tagid does not correspond to an
@@ -1130,10 +1131,11 @@ function tag_cron(){
 
     tag_instance_table_cleanup();
 
-    $tags = get_all_tags('*');
+    if ($tags = get_all_tags('*')) {
 
-    foreach ($tags as $tag){
-        cache_correlated_tags($tag->id);
+        foreach ($tags as $tag){
+            cache_correlated_tags($tag->id);
+        }
     }
 
 }
