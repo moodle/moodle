@@ -77,19 +77,6 @@ class grade_item_test extends grade_test {
         $this->assertEqual(11, $grade_item->sortorder);
     }
 
-    function test_grade_item_generate_itemnumber_for_manual() {
-        $grade_item = new grade_item($this->grade_items[10]);
-        $copy_grade_item = fullclone($grade_item);
-        $copy_grade_item->itemnumber = null;
-        unset($copy_grade_item->id);
-        $result_id = $copy_grade_item->insert();
-        $this->assertEqual($grade_item->itemnumber+1, $copy_grade_item->itemnumber);
-    }
-
-    function test_grade_item_generate_idnumber() {
-
-    }
-
     function test_grade_item_delete() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'delete'));
