@@ -1545,6 +1545,7 @@ function load_all_capabilities() {
 
     } else if (isloggedin()) {
 
+        check_enrolment_plugins($USER);
 
         $ad = get_user_access_sitewide($USER->id);
 
