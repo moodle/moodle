@@ -68,11 +68,19 @@
 
     echo '<table id="layout-table"><tr>';
 
+    $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+    foreach ($lt as $column) {
+        switch ($column) {
+            case 'left':
+            
     if(!empty($CFG->showblocksonmodpages) && (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
         echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</td>';
     }
+    
+            break;
+            case 'middle':
 
     echo '<td id="middle-column">';
 
@@ -179,7 +187,13 @@
 
 
 /// Finish the page
-    echo '</td></tr></table>';
+    echo '</td>';
+    
+            break;
+        }
+    }
+    
+    echo '</tr></table>';
 
     print_footer($course);
 
