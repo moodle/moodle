@@ -4443,7 +4443,13 @@ function build_context_path($force=false) {
                                     'instanceid', SITEID);
     }
 
-    $emptyclause = " AND (depth IS NULL OR depth=0) ";
+    $ctxemptyclause = " AND (ctx.depth IS NULL 
+                              OR ctx.depth=0) ";
+    $emptyclause    = " AND (context.depth IS NULL 
+                              OR context.depth=0) ";
+    if ($force) {
+        $ctxemptyclause = $emptyclause = '';
+    }
 
     // TODO: following could be improved with WHERE + $emptyclause, but there should be a better way
     $upathsql = "UPDATE {$CFG->prefix}context
@@ -4489,7 +4495,7 @@ function build_context_path($force=false) {
                  WHERE ctx.contextlevel=".CONTEXT_COURSECAT."
                        AND pctx.contextlevel=".CONTEXT_COURSECAT."
                        AND c.depth=$n
-                       $emptyclause";
+                       $ctxemptyclause";
         execute_sql($sql, $force);
     }
 
@@ -4506,7 +4512,7 @@ function build_context_path($force=false) {
              WHERE ctx.contextlevel=".CONTEXT_COURSE."
                    AND c.id!=".SITEID."
                    AND pctx.contextlevel=".CONTEXT_COURSECAT."
-                   $emptyclause";
+                   $ctxemptyclause";
     execute_sql($sql, $force);
 
     execute_sql($upathsql, $force);
@@ -4521,7 +4527,7 @@ function build_context_path($force=false) {
               JOIN {$CFG->prefix}context pctx ON cm.course=pctx.instanceid
              WHERE ctx.contextlevel=".CONTEXT_MODULE."
                    AND pctx.contextlevel=".CONTEXT_COURSE."
-                   $emptyclause";
+                   $ctxemptyclause";
     execute_sql($sql, $force);
 
     execute_sql($upathsql, $force);
@@ -4537,7 +4543,7 @@ function build_context_path($force=false) {
              WHERE ctx.contextlevel=".CONTEXT_BLOCK."
                    AND pctx.contextlevel=".CONTEXT_COURSE."
                    AND bi.pagetype='course-view'
-                   $emptyclause";
+                   $ctxemptyclause";
     execute_sql($sql, $force);
 
     execute_sql($upathsql, $force);
