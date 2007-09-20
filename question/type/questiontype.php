@@ -685,7 +685,7 @@ class default_questiontype {
                         $table->data[] = array (
                                                 $link,
                                                 $b.get_string('event'.$st->event, 'quiz').$be,
-                                                $b.$this->response_summary($question, $st).$be,
+                                                $b.s($this->response_summary($question, $st)).$be,
                                                 $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
                                                 $b.round($st->raw_grade, $cmoptions->decimalpoints).$be,
                                                 //$b.round($st->penalty, $cmoptions->decimalpoints).$be,
@@ -695,7 +695,7 @@ class default_questiontype {
                         $table->data[] = array (
                                                 $link,
                                                 $b.get_string('event'.$st->event, 'quiz').$be,
-                                                $b.$this->response_summary($question, $st).$be,
+                                                $b.s($this->response_summary($question, $st)).$be,
                                                 $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
                                                 );
                     }
