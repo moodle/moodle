@@ -4456,7 +4456,7 @@ function build_context_path($force=false) {
                         depth = ct.depth
                  FROM {$CFG->prefix}$temptable ct
                  WHERE ct.id={$CFG->prefix}context.id";
-    if ($CFG->dbtype==='mysql') {
+    if ($CFG->dbfamily==='mysql') {
         $updatesql = "UPDATE {$CFG->prefix}context, {$CFG->prefix}$temptable
                         SET {$CFG->prefix}context.path  = {$CFG->prefix}$temptable.path,
                             {$CFG->prefix}context.depth = {$CFG->prefix}$temptable.depth
