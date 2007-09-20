@@ -235,11 +235,21 @@
         }
     }
 
+
+
+    // Non-cached - get accessinfo
+    if (isset($USER->access)) {
+        $accessinfo = $USER->access;
+    } else {
+        $accessinfo = get_user_access_sitewide($USER->id);
+    }
+    $mycourses = get_user_courses_bycap($USER->id, 'moodle/site:restore', $accessinfo, true, 'c.sortorder ASC',  array('id', 'fullname', 'shortname', 'visible'));
+
     //Now, select the course if needed
     //if (($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id == 0) and get_capability_courses('moodle/site:restore')) {
-    if (($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id == 0)) {
+    if (($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id == 0) && count($mycourses) > 1) {
 
-        if ($courses = get_courses("all","c.fullname","c.id,c.fullname,c.shortname,c.visible")) {
+        if ($courses = $mycourses) {
             print_heading(get_string("choosecourse"));
             print_simple_box_start("center");
             foreach ($courses as $course) {

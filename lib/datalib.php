@@ -2135,30 +2135,6 @@ function xmldb_debug($message, $object) {
 }
 
 /**
- * Get the lists of courses the current user has $cap capability in
- * I am not sure if this is needed, it loops through all courses so
- * could cause performance problems.
- * If it's not used, we can use a faster function to detect
- * capability in restorelib.php
- * @param string $cap
- * @return array
- */
-function get_capability_courses($cap) {
-    global $USER;
-
-    $mycourses = array();
-    if ($courses = get_records('course')) {
-        foreach ($courses as $course) {
-            if (has_capability($cap, get_context_instance(CONTEXT_COURSE, $course->id))) {
-                $mycourses[] = $course->id;
-            }
-        }
-    }
-
-    return $mycourses;
-}
-
-/**
  * true or false function to see if user can create any courses at all
  * @return bool
  */
