@@ -4445,29 +4445,23 @@ function build_context_path($force=false) {
 
     $ctxemptyclause = " AND (ctx.depth IS NULL 
                               OR ctx.depth=0) ";
-    $emptyclause    = " AND (context.depth IS NULL 
-                              OR context.depth=0) ";
+    $emptyclause    = " AND ({$CFG->prefix}context.depth IS NULL 
+                              OR {$CFG->prefix}context.depth=0) ";
     if ($force) {
         $ctxemptyclause = $emptyclause = '';
     }
 
-    // TODO: following could be improved with WHERE + $emptyclause, but there should be a better way
-    $upathsql = "UPDATE {$CFG->prefix}context
-                    SET path = COALESCE((SELECT ct.path FROM {$CFG->prefix}$temptable ct WHERE {$CFG->prefix}context.id=ct.id), {$CFG->prefix}context.path)";
-
-    $udepthsql = "UPDATE {$CFG->prefix}context
-                     SET depth = COALESCE((SELECT ct.depth FROM {$CFG->prefix}$temptable ct WHERE {$CFG->prefix}context.id=ct.id), {$CFG->prefix}context.depth)";
-
-/*
- * TODO: following code complains: Can't reopen table: 'ct' when using temporary teables, why? 
-    $upathsql = "UPDATE {$CFG->prefix}context
-                    SET path = (SELECT ct.path FROM {$CFG->prefix}$temptable ct WHERE {$CFG->prefix}context.id=ct.id)
-                  WHERE id IN (SELECT ctx.id FROM {$CFG->prefix}$temptable ctx)";
-
-    $udepthsql = "UPDATE {$CFG->prefix}context
-                     SET depth = (SELECT ct.depth FROM {$CFG->prefix}$temptable ct WHERE {$CFG->prefix}context.id=ct.id)
-                   WHERE id IN (SELECT ct.id FROM {$CFG->prefix}$temptable ct)";
-*/
+    $updatesql = "UPDATE {$CFG->prefix}context
+                    SET path  = ct.path,
+                        depth = ct.depth
+                 FROM {$CFG->prefix}$temptable ct
+                 WHERE ct.id={$CFG->prefix}context.id";
+    if ($CFG->dbtype==='mysql') {
+        $updatesql = "UPDATE {$CFG->prefix}context, {$CFG->prefix}$temptable
+                        SET {$CFG->prefix}context.path  = {$CFG->prefix}$temptable.path,
+                            {$CFG->prefix}context.depth = {$CFG->prefix}$temptable.depth
+                     WHERE {$CFG->prefix}$temptable.id={$CFG->prefix}context.id";
+    }
     $udelsql = "TRUNCATE TABLE {$CFG->prefix}$temptable";
 
     // Top level categories
@@ -4499,8 +4493,7 @@ function build_context_path($force=false) {
         execute_sql($sql, $force);
     }
 
-    execute_sql($upathsql, $force);
-    execute_sql($udepthsql, $force);
+    execute_sql($updatesql, $force);
     execute_sql($udelsql, $force);
 
     // Courses -- except sitecourse
@@ -4515,8 +4508,7 @@ function build_context_path($force=false) {
                    $ctxemptyclause";
     execute_sql($sql, $force);
 
-    execute_sql($upathsql, $force);
-    execute_sql($udepthsql, $force);
+    execute_sql($updatesql, $force);
     execute_sql($udelsql, $force);
 
     // Module instances
@@ -4530,8 +4522,7 @@ function build_context_path($force=false) {
                    $ctxemptyclause";
     execute_sql($sql, $force);
 
-    execute_sql($upathsql, $force);
-    execute_sql($udepthsql, $force);
+    execute_sql($updatesql, $force);
     execute_sql($udelsql, $force);
 
     // Blocks - non-pinned course-view only
@@ -4546,8 +4537,7 @@ function build_context_path($force=false) {
                    $ctxemptyclause";
     execute_sql($sql, $force);
 
-    execute_sql($upathsql, $force);
-    execute_sql($udepthsql, $force);
+    execute_sql($updatesql, $force);
     execute_sql($udelsql, $force);
 
     // Blocks - others
