@@ -156,7 +156,7 @@ Tämä sallii Moodlen asettaa muistirajan itse.</li>
 <p>Kuitenkin, joillain palvelimilla tämä estää  <b>kaikkia</b> PHP sivuja toimimasta (näet virheet, kun katsot sivuja), joten sinun täytyy poistaa .htaccess tiedosto.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'JOitakin vaadituista kentistä puuttuu';
-$string['moodledocslink'] = 'Moodle Docs tästä sivusta';
+$string['moodledocslink'] = 'Tämä sivu Moodle Docs -sivustolla';
 $string['mysql416bypassed'] = 'Kuitenkin jos teidän sivustonne käyttää vain iso-8859-1 merkistöä, te voitte jatkaa nykyisen mySQL 4.1.12 käyttöä.';
 $string['mysql416required'] = 'MySQL 4.1.16 on  vähimmäisversio joka vaaditaan Moodle1.6:lle, jotta takaa, että kaikki data voidaan muuntaa UTF-8:ksi tulevaisuudessa';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP:tä ei ole asennettu MySQL laajennuksen kanssa, jotta se voisi kommunikoida MySQL:n kanssa. Tarkista php.ini tiedostosi tai käännä PHP uudelleen.';
