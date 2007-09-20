@@ -283,7 +283,11 @@ class question_truefalse_qtype extends default_questiontype {
         $status = true;
 
         //Get the truefalse array
-        $truefalses = $info['#']['TRUEFALSE'];
+        if (array_key_exists('TRUEFALSE', $info['#'])) {
+            $truefalses = $info['#']['TRUEFALSE'];
+        } else {
+            $truefalses = array();
+        }
 
         //Iterate over truefalse
         for($i = 0; $i < sizeof($truefalses); $i++) {

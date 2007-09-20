@@ -319,11 +319,7 @@
             $question->questiontext = backup_todb($que_info['#']['QUESTIONTEXT']['0']['#']);
             $question->questiontextformat = backup_todb($que_info['#']['QUESTIONTEXTFORMAT']['0']['#']);
             $question->image = backup_todb($que_info['#']['IMAGE']['0']['#']);
-            if (array_key_exists('GENERALFEEDBACK', $que_info['#'])) {
-                $question->generalfeedback = backup_todb($que_info['#']['GENERALFEEDBACK']['0']['#']);
-            } else {
-                $question->generalfeedback = '';
-            }
+            $question->generalfeedback = backup_todb_optional_field($que_info, 'GENERALFEEDBACK', '');
             $question->defaultgrade = backup_todb($que_info['#']['DEFAULTGRADE']['0']['#']);
             $question->penalty = backup_todb($que_info['#']['PENALTY']['0']['#']);
             $question->qtype = backup_todb($que_info['#']['QTYPE']['0']['#']);
@@ -331,10 +327,10 @@
             $question->stamp = backup_todb($que_info['#']['STAMP']['0']['#']);
             $question->version = backup_todb($que_info['#']['VERSION']['0']['#']);
             $question->hidden = backup_todb($que_info['#']['HIDDEN']['0']['#']);
-            $question->timecreated = backup_todb($que_info['#']['TIMECREATED']['0']['#']);
-            $question->timemodified = backup_todb($que_info['#']['TIMEMODIFIED']['0']['#']);
-            $question->createdby = backup_todb($que_info['#']['CREATEDBY']['0']['#']);
-            $question->modifiedby = backup_todb($que_info['#']['MODIFIEDBY']['0']['#']);
+            $question->timecreated = backup_todb_optional_field($que_info, 'TIMECREATED', 0);
+            $question->timemodified = backup_todb_optional_field($que_info, 'TIMEMODIFIED', 0);
+            $question->createdby = backup_todb_optional_field($que_info, 'CREATEDBY', null);
+            $question->modifiedby = backup_todb_optional_field($que_info, 'MODIFIEDBY', null);
 
             if ($restore->backup_version < 2006032200) {
                 // The qtype was an integer that now needs to be converted to the name
@@ -466,6 +462,14 @@
             }
         }
         return $status;
+    }
+
+    function backup_todb_optional_field($data, $field, $default) {
+        if (array_key_exists($field, $data['#'])) {
+            return backup_todb($data['#'][$field]['0']['#']);
+        } else {
+            return $default;
+        }
     }
 
     function question_restore_answers ($old_question_id,$new_question_id,$info,$restore) {
