@@ -56,7 +56,7 @@
  * - load_all_capabilities()
  * - reload_all_capabilities()
  * - $ACCESS global
- * - has_cap_fad()
+ * - has_capability_in_accessdata()
  * - is_siteadmin()
  * - get_user_access_sitewide()
  * - get_user_access_bycontext()
@@ -65,12 +65,6 @@
  * Name conventions
  * ----------------
  * 
- * - $ad means accessdata (see below for more...)
- *
- * - function names ending in _fad() mean "from accessdata"
- *   meaning that the answer will be read from the data in $ad
- *   without touching the DB
- *
  * - "ctx" means context
  *
  * accessdata
@@ -82,7 +76,7 @@
  * For other users can be generated and passed around (but see
  * the $ACCESS global).
  *
- * accessdata ($ad) is a multidimensional array, holding
+ * $accessdata is a multidimensional array, holding
  * role assignments (RAs), role-capabilities-perm sets 
  * (role defs) and a list of courses we have loaded
  * data for.
@@ -90,18 +84,18 @@
  * Things are keyed on "contextpaths" (the path field of 
  * the context table) for fast walking up/down the tree.
  * 
- * $ad[ra][$contextpath]= array($roleid)
- *        [$contextpath]= array($roleid)
- *        [$contextpath]= array($roleid) 
+ * $accessdata[ra][$contextpath]= array($roleid)
+ *                [$contextpath]= array($roleid)
+ *                [$contextpath]= array($roleid) 
  *
  * Role definitions are stored like this
  * (no cap merge is done - so it's compact)
  *
- * $ad[rdef][$contextpath:$roleid][mod/forum:viewpost] = 1
- *                                [mod/forum:editallpost] = -1
- *                                [mod/forum:startdiscussion] = -1000
+ * $accessdata[rdef][$contextpath:$roleid][mod/forum:viewpost] = 1
+ *                                        [mod/forum:editallpost] = -1
+ *                                        [mod/forum:startdiscussion] = -1000
  *
- * See how has_cap_fad() walks up/down the tree.
+ * See how has_capability_in_accessdata() walks up/down the tree.
  *
  * Normally - specially for the logged-in user, we only load
  * rdef and ra down to the course level, but not below. This
@@ -109,7 +103,7 @@
  * are loaded as needed. We keep track of which courses we
  * have loaded ra/rdef in 
  *
- * $ad[loaded] = array($contextpath, $contextpath) 
+ * $accessdata[loaded] = array($contextpath, $contextpath) 
  *
  * Stale accessdata
  * ----------------
@@ -205,7 +199,7 @@ function get_role_context_caps($roleid, $context) {
  *
  * @return array
  */
-function get_role_access($roleid, $ad=NULL) {
+function get_role_access($roleid, $accessdata=NULL) {
 
     global $CFG;
 
@@ -213,11 +207,11 @@ function get_role_access($roleid, $ad=NULL) {
      * - relevant role caps at the root and down
      *   to the course level - but not below
      */
-    if (is_null($ad)) {
-        $ad           = array(); // named list
-        $ad['ra']     = array();
-        $ad['rdef']   = array();
-        $ad['loaded'] = array();
+    if (is_null($accessdata)) {
+        $accessdata           = array(); // named list
+        $accessdata['ra']     = array();
+        $accessdata['rdef']   = array();
+        $accessdata['loaded'] = array();
     }
 
     $base = '/' . SYSCONTEXTID;
@@ -238,13 +232,13 @@ function get_role_access($roleid, $ad=NULL) {
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$roleid}";
-            $ad['rdef'][$k][$rd->capability] = $rd->permission;
+            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
         }
         unset($rd);
     }
     rs_close($rs);
 
-    return $ad;
+    return $accessdata;
 }
 
 /**
@@ -389,8 +383,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         //
         if ($context->contextlevel <= CONTEXT_COURSE) {
             // Course and above are always preloaded
-            return has_cap_fad($capability, $context,
-                               $USER->access, $doanything);
+            return has_capability_in_accessdata($capability, $context, $USER->access, $doanything);
         }
         // Load accessdata for below-the-course contexts
         if (!path_inaccessdata($context->path,$USER->access)) {
@@ -400,11 +393,9 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
             $USER->access = get_user_access_bycontext($USER->id, $context,
                                                       $USER->access);
         }
-        return has_cap_fad($capability, $context,
-                           $USER->access, $doanything);
-
-
+        return has_capability_in_accessdata($capability, $context, $USER->access, $doanything);
     }
+
     if (!isset($ACCESS)) {
         $ACCESS = array();
     }
@@ -413,8 +404,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
     }
     if ($context->contextlevel <= CONTEXT_COURSE) {
         // Course and above are always preloaded
-        return has_cap_fad($capability, $context,
-                           $ACCESS[$userid], $doanything);
+        return has_capability_in_accessdata($capability, $context, $ACCESS[$userid], $doanything);
     }
     // Load accessdata for below-the-course contexts as needed
     if (!path_inaccessdata($context->path,$ACCESS[$userid])) {
@@ -424,8 +414,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         $ACCESS[$userid] = get_user_access_bycontext($userid, $context,
                                                          $ACCESS[$userid]);
     }
-    return has_cap_fad($capability, $context,
-                       $ACCESS[$userid], $doanything);
+    return has_capability_in_accessdata($capability, $context, $ACCESS[$userid], $doanything);
 }
 
 /*
@@ -468,11 +457,11 @@ function get_course_from_path ($path) {
     return false;
 }
 
-function path_inaccessdata($path, $ad) {
+function path_inaccessdata($path, $accessdata) {
 
     // assume that contexts hang from sys or from a course
     // this will only work well with stuff that hangs from a course
-    if (in_array($path, $ad['loaded'], true)) {
+    if (in_array($path, $accessdata['loaded'], true)) {
             error_log("found it!");
         return true;
     }
@@ -482,7 +471,7 @@ function path_inaccessdata($path, $ad) {
         if ($path === $base) {
             return false;
         }
-        if (in_array($path, $ad['loaded'], true)) {
+        if (in_array($path, $accessdata['loaded'], true)) {
             return true;
         }
     }
@@ -542,7 +531,7 @@ function path_inaccessdata($path, $ad) {
  * - Rewrite in ASM :-)
  *
  */
-function has_cap_fad($capability, $context, $ad, $doanything) {
+function has_capability_in_accessdata($capability, $context, $accessdata, $doanything) {
 
     global $CFG;
 
@@ -557,12 +546,12 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
     }
 
     $ignoreguest = false;
-    if (isset($ad['dr'])
+    if (isset($accessdata['dr'])
         && ($capability    == 'moodle/course:view'
             || $capability == 'moodle/legacy:guest')) {
         // At the base, ignore rdefs where moodle/legacy:guest
         // is set
-        $ignoreguest = $ad['dr'];
+        $ignoreguest = $accessdata['dr'];
     }
 
 
@@ -573,28 +562,28 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
     //
     // role-switches loop
     //
-    if (isset($ad['rsw'])) {
+    if (isset($accessdata['rsw'])) {
         // check for isset() is fast 
         // empty() is slow...
-        if (empty($ad['rsw'])) {
-            unset($ad['rsw']); // keep things fast and unambiguous
+        if (empty($accessdata['rsw'])) {
+            unset($accessdata['rsw']); // keep things fast and unambiguous
             break;
         }
         // From the bottom up...
         for ($n=$cc-1;$n>=0;$n--) {
             $ctxp = $contexts[$n];
-            if (isset($ad['rsw'][$ctxp])) {
+            if (isset($accessdata['rsw'][$ctxp])) {
                 // Found a switchrole assignment
                 // check for that role _plus_ the default user role
-                $ras = array($ad['rsw'][$ctxp],$CFG->defaultuserroleid);
+                $ras = array($accessdata['rsw'][$ctxp],$CFG->defaultuserroleid);
                 for ($rn=0;$rn<2;$rn++) {
                     $roleid = $ras[$rn];
                     // Walk the path for capabilities
                     // from the bottom up...
                     for ($m=$cc-1;$m>=0;$m--) {
                         $capctxp = $contexts[$m];
-                        if (isset($ad['rdef']["{$capctxp}:$roleid"][$capability])) {
-                            $perm = $ad['rdef']["{$capctxp}:$roleid"][$capability];
+                        if (isset($accessdata['rdef']["{$capctxp}:$roleid"][$capability])) {
+                            $perm = $accessdata['rdef']["{$capctxp}:$roleid"][$capability];
                             // The most local permission (first to set) wins
                             // the only exception is CAP_PROHIBIT
                             if ($can === 0) {
@@ -613,8 +602,7 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
                     if ($doanything) {
                         // didn't find it as an explicit cap,
                         // but maybe the user candoanything in this context...
-                        return has_cap_fad('moodle/site:doanything', $context,
-                                                $ad, false);
+                        return has_capability_in_accessdata('moodle/site:doanything', $context, $accessdata, false);
                     } else {
                         return false;
                     }
@@ -632,9 +620,9 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
     //
     for ($n=$cc-1;$n>=0;$n--) {
         $ctxp = $contexts[$n];
-        if (isset($ad['ra'][$ctxp])) {
+        if (isset($accessdata['ra'][$ctxp])) {
             // Found role assignments on this leaf
-            $ras = $ad['ra'][$ctxp];
+            $ras = $accessdata['ra'][$ctxp];
             $rc  = count($ras);
             $ctxcan = 0;
             for ($rn=0;$rn<$rc;$rn++) {
@@ -649,12 +637,12 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
                     if ($ignoreguest == $roleid
                         && $n === 0
                         && $m === 0
-                        && isset($ad['rdef']["{$capctxp}:$roleid"]['moodle/legacy:guest'])
-                        && $ad['rdef']["{$capctxp}:$roleid"]['moodle/legacy:guest'] > 0) {
+                        && isset($accessdata['rdef']["{$capctxp}:$roleid"]['moodle/legacy:guest'])
+                        && $accessdata['rdef']["{$capctxp}:$roleid"]['moodle/legacy:guest'] > 0) {
                             continue;
                     }
-                    if (isset($ad['rdef']["{$capctxp}:$roleid"][$capability])) {
-                        $perm = $ad['rdef']["{$capctxp}:$roleid"][$capability];
+                    if (isset($accessdata['rdef']["{$capctxp}:$roleid"][$capability])) {
+                        $perm = $accessdata['rdef']["{$capctxp}:$roleid"][$capability];
                         // The most local permission (first to set) wins
                         // the only exception is CAP_PROHIBIT
                         if ($rolecan === 0) {
@@ -685,8 +673,7 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
         if ($doanything) {
             // didn't find it as an explicit cap,
             // but maybe the user candoanything in this context...
-            return has_cap_fad('moodle/site:doanything', $context,
-                               $ad, false);
+            return has_capability_in_accessdata('moodle/site:doanything', $context, $accessdata, false);
         } else {
             return false;
         }
@@ -696,7 +683,7 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
 
 }
 
-function aggr_roles_fad($context, $ad) {
+function aggregate_roles_from_accessdata($context, $accessdata) {
 
     $path = $context->path;
 
@@ -714,9 +701,9 @@ function aggr_roles_fad($context, $ad) {
     // From the bottom up...
     for ($n=$cc-1;$n>=0;$n--) {
         $ctxp = $contexts[$n];
-        if (isset($ad['ra'][$ctxp]) && count($ad['ra'][$ctxp])) {
+        if (isset($accessdata['ra'][$ctxp]) && count($accessdata['ra'][$ctxp])) {
             // Found assignments on this leaf
-            $addroles = $ad['ra'][$ctxp];
+            $addroles = $accessdata['ra'][$ctxp];
             $roles    = array_merge($roles, $addroles);
         }
     }
@@ -815,10 +802,10 @@ function require_capability($capability, $context=NULL, $userid=NULL, $doanythin
  *   - walk the courses recordset checking the caps oneach one
  *     the checks are all in memory and quite fast
  *     (though we could implement a specialised variant of the
- *     has_cap_fad() code to speed it up)
+ *     has_capability_in_accessdata() code to speed it up)
  *
  * @param string $capability - name of the capability
- * @param array  $ad         - accessdata session array
+ * @param array  $accessdata - accessdata session array
  * @param bool   $doanything - if false, ignore do anything
  * @param string $sort - sorting fields - prefix each fieldname with "c."
  * @param array  $fields - additional fields you are interested in...
@@ -826,7 +813,7 @@ function require_capability($capability, $context=NULL, $userid=NULL, $doanythin
  * @return array $courses - ordered array of course objects - see notes above
  *
  */
-function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortorder ASC', $fields=NULL, $limit=0) {
+function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='c.sortorder ASC', $fields=NULL, $limit=0) {
 
     global $CFG;
 
@@ -847,7 +834,7 @@ function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortor
     }
 
     $sysctx = get_context_instance(CONTEXT_SYSTEM);
-    if (has_cap_fad($cap, $sysctx, $ad, $doanything)) {
+    if (has_capability_in_accessdata($cap, $sysctx, $accessdata, $doanything)) {
         //
         // Apparently the user has the cap sitewide, so walk *every* course
         // (the cap checks are moderately fast, but this moves massive bandwidth w the db)
@@ -880,7 +867,7 @@ function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortor
         if ($rs->RecordCount()) {
             while ($catctx = rs_fetch_next_record($rs)) {
                 if ($catctx->path != '' 
-                    && has_cap_fad($cap, $catctx, $ad, $doanything)) {
+                    && has_capability_in_accessdata($cap, $catctx, $accessdata, $doanything)) {
                     $catpaths[] = $catctx->path;
                 }
             }
@@ -931,7 +918,7 @@ function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortor
             // build the context obj
             $c = make_context_subobj($c);
 
-            if (has_cap_fad($cap, $c->context, $ad, $doanything)) {
+            if (has_capability_in_accessdata($cap, $c->context, $accessdata, $doanything)) {
                 $courses[] = $c;
                 if ($limit > 0 && $cc++ > $limit) {
                     break;
@@ -1154,10 +1141,10 @@ function get_user_access_sitewide($userid) {
      *   - below this user's RAs - limited to course level
      */
 
-    $ad           = array(); // named list
-    $ad['ra']     = array();
-    $ad['rdef']   = array();
-    $ad['loaded'] = array();
+    $accessdata           = array(); // named list
+    $accessdata['ra']     = array();
+    $accessdata['rdef']   = array();
+    $accessdata['loaded'] = array();
 
     $sitectx = get_field('context', 'id','contextlevel', CONTEXT_SYSTEM);
     $base = "/$sitectx";
@@ -1189,15 +1176,15 @@ function get_user_access_sitewide($userid) {
         while ($ra = rs_fetch_next_record($rs)) {
             // RAs leafs are arrays to support multi
             // role assignments...
-            if (!isset($ad['ra'][$ra->path])) {
-                $ad['ra'][$ra->path] = array();
+            if (!isset($accessdata['ra'][$ra->path])) {
+                $accessdata['ra'][$ra->path] = array();
             }
             // only add if is not a repeat caused
             // by capability join...
             // (this check is cheaper than in_array())
             if ($lastseen !== $ra->path.':'.$ra->roleid) {
                 $lastseen = $ra->path.':'.$ra->roleid;
-                array_push($ad['ra'][$ra->path], $ra->roleid);
+                array_push($accessdata['ra'][$ra->path], $ra->roleid);
                 $parentids = explode('/', $ra->path);
                 array_shift($parentids); // drop empty leading "context"
                 array_pop($parentids);   // drop _this_ context
@@ -1212,7 +1199,7 @@ function get_user_access_sitewide($userid) {
             // Always add the roleded
             if (!empty($ra->capability)) {
                 $k = "{$ra->path}:{$ra->roleid}";
-                $ad['rdef'][$k][$ra->capability] = $ra->permission;
+                $accessdata['rdef'][$k][$ra->capability] = $ra->permission;
             }
         }
         unset($ra);
@@ -1247,7 +1234,7 @@ function get_user_access_sitewide($userid) {
         if ($rs->RecordCount()) {
             while ($rd = rs_fetch_next_record($rs)) {
                 $k = "{$rd->path}:{$rd->roleid}";
-                $ad['rdef'][$k][$rd->capability] = $rd->permission;
+                $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
             }
             unset($rd);
         }
@@ -1280,13 +1267,13 @@ function get_user_access_sitewide($userid) {
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$rd->roleid}";
-            $ad['rdef'][$k][$rd->capability] = $rd->permission;
+            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
         }
         unset($rd);
     }
     rs_close($rs);
 
-    return $ad;
+    return $accessdata;
 }
 
 /**
@@ -1295,10 +1282,10 @@ function get_user_access_sitewide($userid) {
  *
  * @param $userid  integer - the id of the user
  * @param $context context obj - needs path!
- * @param $ad      accessdata array
+ * @param $accessdata array  accessdata array
  *
  */
-function get_user_access_bycontext($userid, $context, $ad=NULL) {
+function get_user_access_bycontext($userid, $context, $accessdata=NULL) {
 
     global $CFG;
 
@@ -1312,11 +1299,11 @@ function get_user_access_bycontext($userid, $context, $ad=NULL) {
      */
 
     // Roles already in use in this context
-    if (is_null($ad)) {
-        $ad           = array(); // named list
-        $ad['ra']     = array();
-        $ad['rdef']   = array();
-        $ad['loaded'] = array();
+    if (is_null($accessdata)) {
+        $accessdata           = array(); // named list
+        $accessdata['ra']     = array();
+        $accessdata['rdef']   = array();
+        $accessdata['loaded'] = array();
     }
 
     $base = "/" . SYSCONTEXTID;
@@ -1365,10 +1352,10 @@ function get_user_access_bycontext($userid, $context, $ad=NULL) {
     $localroles = array();
     if ($rs->RecordCount()) {
         while ($ra = rs_fetch_next_record($rs)) {
-            if (!isset($ad['ra'][$ra->path])) {
-                $ad['ra'][$ra->path] = array();
+            if (!isset($accessdata['ra'][$ra->path])) {
+                $accessdata['ra'][$ra->path] = array();
             }
-            array_push($ad['ra'][$ra->path], $ra->roleid);
+            array_push($accessdata['ra'][$ra->path], $ra->roleid);
             array_push($localroles,           $ra->roleid);
         }
     }
@@ -1381,7 +1368,7 @@ function get_user_access_bycontext($userid, $context, $ad=NULL) {
     // NOTES
     // - we use IN() but the number of roles is very limited.
     //
-    $courseroles    = aggr_roles_fad($context, $ad);
+    $courseroles    = aggregate_roles_from_accessdata($context, $accessdata);
 
     // Do we have any interesting "local" roles?
     $localroles = array_diff($localroles,$courseroles); // only "new" local roles
@@ -1411,7 +1398,7 @@ function get_user_access_bycontext($userid, $context, $ad=NULL) {
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$rd->roleid}";
-            $ad['rdef'][$k][$rd->capability] = $rd->permission;
+            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
         }
     }
     rs_close($rs);
@@ -1419,9 +1406,9 @@ function get_user_access_bycontext($userid, $context, $ad=NULL) {
     // TODO: compact capsets?
 
     error_log("loaded {$context->path}");
-    $ad['loaded'][] = $context->path;
+    $accessdata['loaded'][] = $context->path;
 
-    return $ad;
+    return $accessdata;
 }
 
 /**
@@ -1436,10 +1423,10 @@ function get_user_access_bycontext($userid, $context, $ad=NULL) {
  *
  * @param $roleid  integer - the id of the user
  * @param $context context obj - needs path!
- * @param $ad      accessdata array
+ * @param $accessdata      accessdata array
  *
  */
-function get_role_access_bycontext($roleid, $context, $ad=NULL) {
+function get_role_access_bycontext($roleid, $context, $accessdata=NULL) {
 
     global $CFG;
 
@@ -1449,11 +1436,11 @@ function get_role_access_bycontext($roleid, $context, $ad=NULL) {
      *   - below this ctx
      */
 
-    if (is_null($ad)) {
-        $ad           = array(); // named list
-        $ad['ra']     = array();
-        $ad['rdef']   = array();
-        $ad['loaded'] = array();
+    if (is_null($accessdata)) {
+        $accessdata           = array(); // named list
+        $accessdata['ra']     = array();
+        $accessdata['rdef']   = array();
+        $accessdata['loaded'] = array();
     }
     
     $contexts = substr($context->path, 1); // kill leading slash
@@ -1481,12 +1468,12 @@ function get_role_access_bycontext($roleid, $context, $ad=NULL) {
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$roleid}";
-            $ad['rdef'][$k][$rd->capability] = $rd->permission;
+            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
         }
     }
     rs_close($rs);
 
-    return $ad;
+    return $accessdata;
 }
 
 /*
@@ -1508,20 +1495,20 @@ function load_user_accessdata($userid) {
     }
     $base = '/'.SYSCONTEXTID;
 
-    $ad = get_user_access_sitewide($userid);
+    $accessdata = get_user_access_sitewide($userid);
         
     //
     // provide "default role" & set 'dr'
     //
-    $ad = get_role_access($CFG->defaultuserroleid, $ad);
-    if (!isset($ad['ra'][$base])) {
-        $ad['ra'][$base] = array($CFG->defaultuserroleid);
+    $accessdata = get_role_access($CFG->defaultuserroleid, $accessdata);
+    if (!isset($accessdata['ra'][$base])) {
+        $accessdata['ra'][$base] = array($CFG->defaultuserroleid);
     } else {
-        array_push($ad['ra'][$base], $CFG->defaultuserroleid);
+        array_push($accessdata['ra'][$base], $CFG->defaultuserroleid);
     }
-    $ad['dr'] = $CFG->defaultuserroleid;
+    $accessdata['dr'] = $CFG->defaultuserroleid;
 
-    $ACCESS[$userid] = $ad;
+    $ACCESS[$userid] = $accessdata;
     return true;
 }
 
@@ -1547,20 +1534,20 @@ function load_all_capabilities() {
 
         check_enrolment_plugins($USER);
 
-        $ad = get_user_access_sitewide($USER->id);
+        $accessdata = get_user_access_sitewide($USER->id);
 
         //
         // provide "default role" & set 'dr'
         //
-        $ad = get_role_access($CFG->defaultuserroleid, $ad);
-        if (!isset($ad['ra'][$base])) {
-            $ad['ra'][$base] = array($CFG->defaultuserroleid);
+        $accessdata = get_role_access($CFG->defaultuserroleid, $accessdata);
+        if (!isset($accessdata['ra'][$base])) {
+            $accessdata['ra'][$base] = array($CFG->defaultuserroleid);
         } else {
-            array_push($ad['ra'][$base], $CFG->defaultuserroleid);
+            array_push($accessdata['ra'][$base], $CFG->defaultuserroleid);
         }
-        $ad['dr'] = $CFG->defaultuserroleid;
+        $accessdata['dr'] = $CFG->defaultuserroleid;
 
-        $USER->access = $ad;
+        $USER->access = $accessdata;
 
     } else {
         if ($roleid = get_notloggedin_roleid()) {
@@ -1619,7 +1606,7 @@ function reload_all_capabilities() {
  * Note - assumes a course context!
  *
  */
-function load_temp_role($context, $roleid, $ad) {
+function load_temp_role($context, $roleid, $accessdata) {
 
     global $CFG;
 
@@ -1647,7 +1634,7 @@ function load_temp_role($context, $roleid, $ad) {
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$roleid}";
-            $ad['rdef'][$k][$rd->capability] = $rd->permission;
+            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
         }
     }
     rs_close($rs);
@@ -1658,18 +1645,18 @@ function load_temp_role($context, $roleid, $ad) {
     // RA in this session, this data will need to be reloaded,
     // but that is handled by the complete accessdata reload
     //
-    array_push($ad['loaded'], $context->path);
+    array_push($accessdata['loaded'], $context->path);
 
     //
     // Add the ghost RA
     //
-    if (isset($ad['ra'][$context->path])) {
-        array_push($ad['ra'][$context->path], $roleid);
+    if (isset($accessdata['ra'][$context->path])) {
+        array_push($accessdata['ra'][$context->path], $roleid);
     } else {
-        $ad['ra'][$context->path] = array($roleid);
+        $accessdata['ra'][$context->path] = array($roleid);
     }
 
-    return $ad;
+    return $accessdata;
 }
 
 
