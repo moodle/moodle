@@ -54,13 +54,13 @@
     define('BLOCK_R_MIN_WIDTH', $rmin);
     define('BLOCK_R_MAX_WIDTH', $rmax);
 
-   // check if major upgrade needed - also present in login/index.php
+    // check if major upgrade needed - also present in login/index.php
     if ((int)$CFG->version < 2006101100) { //1.7 or older
         @require_logout();
         redirect("$CFG->wwwroot/$CFG->admin/");
     }
     // Trigger 1.9 accesslib upgrade?
-    if ((int)$CFG->version < 2007090700 
+    if ((int)$CFG->version < 2007092000 
         && isset($USER->id) 
         && is_siteadmin($USER->id)) { // this test is expensive, but is only triggered during the upgrade
         redirect("$CFG->wwwroot/$CFG->admin/");
