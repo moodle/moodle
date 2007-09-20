@@ -3768,7 +3768,11 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
         $file = 'f2';
     }
     $class = "userpicture";
-
+    if (!empty($HTTPSPAGEREQUIRED)) {
+        $wwwroot = $CFG->httpswwwroot;
+    } else {
+        $wwwroot = $CFG->wwwroot;
+    } 
 
     if (is_null($picture)) {
         $picture = $user->picture;
@@ -3776,9 +3780,9 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
     
     if ($picture) {  // Print custom user picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $src =  $CFG->wwwroot .'/user/pix.php/'. $user->id .'/'. $file .'.jpg';
+            $src =  $wwwroot .'/user/pix.php/'. $user->id .'/'. $file .'.jpg';
         } else {
-            $src =  $CFG->wwwroot .'/user/pix.php?file=/'. $user->id .'/'. $file .'.jpg';
+            $src =  $wwwroot .'/user/pix.php?file=/'. $user->id .'/'. $file .'.jpg';
         }
     } else {         // Print default user pictures (use theme version if available)
         $class .= " defaultuserpic";
