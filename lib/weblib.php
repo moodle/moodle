@@ -2504,7 +2504,7 @@ function force_strict_header($output) {
     $strict = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
     $xsl = '/lib/xhtml.xsl';
 
-    if (!headers_sent() && debugging(NULL, DEBUG_DEVELOPER)) {   // In developer debugging, the browser will barf
+    if (!headers_sent() && !empty($CFG->xmlstrictheaders)) {   // With xml strict headers, the browser will barf
         $ctype = 'Content-Type: ';
         $prolog= "<?xml version='1.0' encoding='utf-8'?>\n";
 
