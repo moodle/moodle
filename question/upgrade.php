@@ -272,7 +272,9 @@ function question_upgrade_context_etc(){
 
     /// update table contents with previously calculated new contents.
     if ($question_categories){
-        foreach ($question_categories as $question_category){
+        foreach ($question_categories as $question_category) {
+            $question_category->name = addslashes($question_category->name);
+            $question_category->info = addslashes($question_category->info);
             if (!$result = update_record('question_categories', $question_category)){
                 notify('Couldn\'t update question_categories "'. $question_category->name .'"!');
             }
