@@ -212,6 +212,7 @@ $string['configunzip'] = 'Indicate the location of your unzip program (Unix only
 $string['configusetags'] = 'Should tags functionality across the site be enabled?';
 $string['configvariables'] = 'Variables';
 $string['configwarning'] = 'Be careful modifying these settings - strange values could cause problems.';
+$string['configxmlstrictheaders'] = 'Set to on, each page will be generated using XML http headers and prolog, so browsers will show XHTML errors inline. This is only useful for developers.';
 $string['configzip'] = 'Indicate the location of your zip program (Unix only, optional).  If specified, this will be used to create zip archives on the server.  If you leave this blank, then Moodle will use internal routines.';
 $string['confirmation'] = 'Confirmation';
 $string['confirminstall'] = 'You are about to install language pack ($a), are you sure?';
@@ -638,5 +639,6 @@ $string['usersdeleted'] = 'Users deleted';
 $string['usersupdated'] = 'Users updated';
 $string['usetags'] = 'Enable tags functionality';
 $string['validateerror'] = 'This value was not valid:';
+$string['xmlstrictheaders'] = 'XML strict headers';
 
 ?>
