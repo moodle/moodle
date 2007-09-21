@@ -1718,7 +1718,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
     if ($COURSE->id == SITEID) {
 /// We can eliminate hidden site activities straight away
         if (!empty($cm) && !$cm->visible and !has_capability('moodle/course:viewhiddenactivities',
-                                                      get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+                                                      get_context_instance(CONTEXT_COURSE, $COURSE->id))) {
             redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
         }
         return;
