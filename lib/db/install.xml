@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070918" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070921" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -830,7 +830,7 @@
         <INDEX NAME="path" UNIQUE="false" FIELDS="path" PREVIOUS="instanceid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="context_rel" COMMENT="context relations, c2 is a parent (or higher) of c1" PREVIOUS="context" NEXT="capabilities">
+    <TABLE NAME="context_rel" COMMENT="context relations, c2 is a parent (or higher) of c1" PREVIOUS="context" NEXT="context_temp">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="c1"/>
         <FIELD NAME="c1" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="context 1, child context" PREVIOUS="id" NEXT="c2"/>
@@ -843,7 +843,17 @@
         <KEY NAME="c1c2" TYPE="unique" FIELDS="c1, c2" PREVIOUS="c2"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="capabilities" COMMENT="this defines all capabilities" PREVIOUS="context_rel" NEXT="role_allow_assign">
+    <TABLE NAME="context_temp" COMMENT="Used by build_context_path() in upgrade and cron to keep context depths and paths in sync." PREVIOUS="context_rel" NEXT="capabilities">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="This id isn't autonumeric/sequence. It's the context->id" NEXT="path"/>
+        <FIELD NAME="path" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="depth"/>
+        <FIELD NAME="depth" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="path"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="capabilities" COMMENT="this defines all capabilities" PREVIOUS="context_temp" NEXT="role_allow_assign">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="captype"/>

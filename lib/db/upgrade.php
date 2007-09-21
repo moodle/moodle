@@ -2093,7 +2093,25 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);
     }
 
-    if ($result && $oldversion < 2007092000) {
+
+/// Create the permanent context_temp table to be used by build_context_path()
+    if ($result && $oldversion < 2007092001) {
+
+    /// Define table context_temp to be created
+        $table = new XMLDBTable('context_temp');
+
+    /// Adding fields to table context_temp
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('path', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('depth', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table context_temp
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Launch create table for context_temp
+        $result = $result && create_table($table);
+
+    /// Recalculate depths, paths and so on
         cleanup_contexts();
         build_context_path(true);
         load_all_capabilities();
