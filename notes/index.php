@@ -2,7 +2,7 @@
 
     /**
      * file index.php
-     * index page to view notes. 
+     * index page to view notes.
      * if a course id is specified then the entries from that course are shown
      * if a user id is specified only notes related to that user are shown
      */
@@ -59,6 +59,7 @@
 
     print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($nav));
 
+    $showroles = 1;
     $currenttab = 'notes';
     require_once($CFG->dirroot .'/user/tabs.php');
 
@@ -96,7 +97,7 @@
                 note_print_notes($header, $addid, $view, $c->id, $userid, NOTES_STATE_PUBLIC, 0);
             }
         }
-    }    
+    }
 
     print_box_end();
 

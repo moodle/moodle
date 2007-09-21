@@ -32,7 +32,7 @@
 
         $site = get_site();
         print_heading(format_string($site->fullname));
-        
+
         if ($CFG->bloglevel >= 4) {
             if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                 $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.SITEID,
@@ -54,7 +54,7 @@
 
         $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.$filterselect,
             get_string('participants'));
-        
+
         if ($CFG->bloglevel >= 3) {
             $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=course&amp;filterselect='.$filterselect, get_string('blogs','blog'));
         }
@@ -76,7 +76,7 @@
             $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect,
                 get_string('participants'));
 
-        
+
             $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=group&amp;filterselect='.$filterselect, get_string('blogs','blog'));
         }
 
@@ -139,7 +139,7 @@
         }
 
     /// Everyone can see posts for this user
-    
+
     /// add logic to see course read posts permission
         if (has_capability('moodle/user:readuserposts', $personalcontext) || has_capability('mod/forum:viewdiscussion', get_context_instance(CONTEXT_COURSE, $course->id))) {
             $toprow[] = new tabobject('forumposts', $CFG->wwwroot.'/mod/forum/user.php?id='.$user->id.'&amp;course='.$course->id,
@@ -176,10 +176,10 @@
         }
 
     /// Current user must be teacher of the course or the course allows user to view their reports
-    
+
     //print_object($course);
     //print_object($user);
-    
+
         // add in logic to check course read report
         if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext) || ($course->showreports and $USER->id == $user->id) || has_capability('moodle/user:viewuseractivitiesreport', $coursecontext)) {
 
@@ -203,12 +203,12 @@
                     $secondrow[] = new tabobject('stats',$CFG->wwwroot.'/course/user.php?id='.$course->id.
                                                  '&amp;user='.$user->id.'&amp;mode=stats',get_string('stats'));
                 }
-                
+
                 if ($course->showgrades) {
                     $secondrow[] = new tabobject('grade', $CFG->wwwroot.'/course/user.php?id='.$course->id.
                                           '&amp;user='.$user->id.'&amp;mode=grade', get_string('grade'));
                 }
-                                
+
             }
 
         }
@@ -218,25 +218,25 @@
 
     /// this needs permission checkings
 
-    
+
     if (!empty($showroles) and !empty($user)) { // this variable controls whether this roles is showed, or not, so only user/view page should set this flag
         $usercontext = get_context_instance(CONTEXT_USER, $user->id);
         if (has_capability('moodle/role:assign',$usercontext)) {
             $toprow[] = new tabobject('roles', $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
                                   ,get_string('roles'));
-                                  
+
             if (in_array($currenttab, array('assign', 'override'))) {
                 $inactive = array('roles');
                 $activetwo = array('roles');
-    
+
                 $secondrow = array();
                 $secondrow[] = new tabobject('assign', $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
                                   ,get_string('assignroles', 'role'));
                 $secondrow[] = new tabobject('override', $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
                                   ,get_string('overrideroles', 'role'));
-                                    
+
             }
-        }                                                                                                       
+        }
     }
 /// Add second row to display if there is one
 

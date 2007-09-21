@@ -129,7 +129,6 @@
         /// course header
         $navlinks = array();
         if ($courseid != SITEID) {
-            $navlinks[] = array('name' => $course->shortname, 'link' => "$CFG->wwwroot/course/view.php?id=$course->id", 'type' => 'course');
             $navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'misc');
             $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
             $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
@@ -301,8 +300,8 @@
 
             $selectsql = " AND ($FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%') ";
             $select  .= $selectsql;
-        } else { 
-            $selectsql = ""; 
+        } else {
+            $selectsql = "";
         }
 
         if ($context->contextlevel > CONTEXT_COURSE) { // mod or block (or group?)
@@ -320,9 +319,9 @@
              * 3) get_recordset_sql() is more efficient                             *
              *                                                                      *
              ************************************************************************/
-        
+
             if ($possibleroles = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $context)) {
-  
+
                 $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
 
                 $validroleids = array();
@@ -339,7 +338,7 @@
 
                 if ($validroleids) {
                     $roleids =  '('.implode(',', $validroleids).')';
-            
+
                     $select = " SELECT u.id, u.firstname, u.lastname, u.email";
                     $countselect = "SELECT COUNT(u.id)";
                     $from   = " FROM {$CFG->prefix}user u
@@ -353,25 +352,25 @@
                                     FROM {$CFG->prefix}role_assignments r,
                                     {$CFG->prefix}user u
                                     WHERE r.contextid = $contextid
-                                    AND u.id = r.userid 
+                                    AND u.id = r.userid
                                     AND r.roleid = $roleid
                                     $selectsql)";
-            
-                    $availableusers = get_recordset_sql($select . $from . $where . $selectsql . $excsql);         
+
+                    $availableusers = get_recordset_sql($select . $from . $where . $selectsql . $excsql);
                 }
-                
+
                 $usercount =  count_records_sql($countselect . $from . $where) - count($contextusers);
             }
 
-        } else { 
-         
+        } else {
+
             /************************************************************************
              *                                                                      *
              * context level is above or equal course context level                 *
              * in this case we pull out all users matching search criteria (if any) *
              *                                                                      *
              ************************************************************************/
-            
+
             /// MDL-11111 do not include user already assigned this role in this context as available users
             /// so that the number of available users is right and we save time looping later
             $availableusers = get_recordset_sql('SELECT id, firstname, lastname, email
@@ -382,12 +381,12 @@
                                                     FROM '.$CFG->prefix.'role_assignments r,
                                                     '.$CFG->prefix.'user u
                                                     WHERE r.contextid = '.$contextid.'
-                                                    AND u.id = r.userid 
+                                                    AND u.id = r.userid
                                                     AND r.roleid = '.$roleid.'
                                                     '.$selectsql.')
                                                 ORDER BY lastname ASC, firstname ASC');
             $usercount = count_records_select('user', $select) - count($contextusers);
-   
+
         }
 
         echo '<div style="text-align:center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';

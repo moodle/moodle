@@ -43,6 +43,8 @@
     $fullname          = fullname($user, true);
 
     $navlinks = array();
+    $navlinks[] = array('name' => $course->shortname, 'link' => "course/view.php?id=$course->id", 'type' => 'misc');
+
     if ($course->id != SITEID) {
         $navlinks[] = array('name' => $strparticipants, 'link' => "../user/index.php?id=$course->id", 'type' => 'misc');
     }
