@@ -34,6 +34,16 @@ define("QUIZ_ATTEMPTFIRST", "3");
 define("QUIZ_ATTEMPTLAST",  "4");
 /**#@-*/
 
+/**#@+
+ * Constants to describe the various states a quiz attempt can be in.
+ */
+define('QUIZ_STATE_DURING', 'during'); 
+define('QUIZ_STATE_IMMEDIATELY', 'immedately'); 
+define('QUIZ_STATE_OPEN', 'open'); 
+define('QUIZ_STATE_CLOSED', 'closed'); 
+define('QUIZ_STATE_TEACHERACCESS', 'teacheraccess'); // State only relevant if you are in a studenty role.
+/**#@-*/
+
 /// Functions related to attempts /////////////////////////////////////////
 
 /**
@@ -680,6 +690,7 @@ function quiz_get_renderoptions($reviewoptions, $state) {
     // Always show responses and scores
     $options->responses = true;
     $options->scores = true;
+    $options->quizstate = QUIZ_STATE_DURING;
 
     return $options;
 }
@@ -712,6 +723,7 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
         $options->solutions = false;
         $options->generalfeedback = true;
         $options->overallfeedback = true;
+        $options->quizstate = QUIZ_STATE_TEACHERACCESS;
 
         // Show a link to the comment box only for closed attempts
         if ($attempt->timefinish) {
@@ -720,10 +732,13 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
     } else {
         if (((time() - $attempt->timefinish) < 120) || $attempt->timefinish==0) {
             $quiz_state_mask = QUIZ_REVIEW_IMMEDIATELY;
+            $options->quizstate = QUIZ_STATE_IMMEDIATELY;
         } else if (!$quiz->timeclose or time() < $quiz->timeclose) {
             $quiz_state_mask = QUIZ_REVIEW_OPEN;
+            $options->quizstate = QUIZ_STATE_OPEN;
         } else {
             $quiz_state_mask = QUIZ_REVIEW_CLOSED;
+            $options->quizstate = QUIZ_STATE_CLOSED;
         }
         $options->responses = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
         $options->scores = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SCORES) ? 1 : 0;

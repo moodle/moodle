@@ -46,15 +46,28 @@
     $options = quiz_get_reviewoptions($quiz, $attempt, $context);
     $popup = $isteacher ? 0 : $quiz->popup; // Controls whether this is shown in a javascript-protected window.
 
+    $timenow = time();
     if (!has_capability('mod/quiz:viewreports', $context)) {
+        // Can't review during the attempt.
         if (!$attempt->timefinish) {
-            redirect('attempt.php?q='.$quiz->id);
+            redirect('attempt.php?q=' . $quiz->id);
         }
-        // If not even responses are to be shown in review then we
-        // don't allow any review
-        if (!($quiz->review & QUIZ_REVIEW_RESPONSES)) {
+        // Can't review other student's attempts.
+        if ($attempt->userid != $USER->id) {
+            error("This is not your attempt!", 'view.php?q=' . $quiz->id);
+        }
+        // Can't review if Student's may review ... Responses is turned on.
+        if (!$options->responses) {
+            if ($options->quizstate == QUIZ_STATE_IMMEDIATELY) {
+                $message = '';
+            } else if ($options->quizstate == QUIZ_STATE_OPEN && $quiz->timeclose &&
+                        ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES)) {
+                $message = get_string('noreviewuntil', 'quiz', userdate($quiz->timeclose));
+            } else {
+                $message = get_string('noreview', 'quiz');
+            }
             if (empty($popup)) {
-                redirect('view.php?q='.$quiz->id);
+                redirect('view.php?q=' . $quiz->id, $message);
             } else {
                 ?><script type="text/javascript">
                 opener.document.location.reload();
@@ -62,17 +75,6 @@
                 </script><?php
                 die();
             }
-        }
-        if ((time() - $attempt->timefinish) > 120) { // always allow review right after attempt
-            if ((!$quiz->timeclose or time() < $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_OPEN)) {
-                redirect('view.php?q='.$quiz->id, get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
-            }
-            if ($quiz->timeclose and time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
-                redirect('view.php?q='.$quiz->id, get_string("noreview", "quiz"));
-            }
-        }
-        if ($attempt->userid != $USER->id) {
-            error("This is not your attempt!", 'view.php?q='.$quiz->id);
         }
     }
 
