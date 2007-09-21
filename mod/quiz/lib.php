@@ -231,6 +231,30 @@ function quiz_cron () {
     return true;
 }
 
+/**
+ * @param integer $quizid the quiz id.
+ * @param integer $userid the userid.
+ * @param string $status 'all', 'finished' or 'unfinished' to control
+ * @return an array of all the user's attempts at this quiz. Returns an empty array if there are none.
+ */
+function quiz_get_user_attempts($quizid, $userid, $status = 'finished', $includepreviews = false) {
+    $status_condition = array(
+        'all' => '',
+        'finished' => ' AND timefinish > 0',
+        'unfinished' => ' AND timefinish = 0'
+    );
+    $previewclause = '';
+    if (!$includepreviews) {
+        $previewclause = ' AND preview = 0';
+    }
+    if ($attempts = get_records_select('quiz_attempts',
+            "quiz = '$quizid' AND userid = '$userid'" . $previewclause . $status_condition[$status],
+            'attempt ASC')) {
+        return $attempts;
+    } else {
+        return array();
+    }
+}
 
 /**
  * Return grade for given user or all users.
@@ -954,5 +978,72 @@ function quiz_check_file_access($attemptid, $questionid) {
 
     // otherwise, this user does not have permission
     return false;
+}
+
+/**
+ * Prints quiz summaries on MyMoodle Page
+ */
+function quiz_print_overview($courses, &$htmlarray) {
+    global $USER, $CFG;
+/// These next 6 Lines are constant in all modules (just change module name)
+    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
+        return array();
+    }
+
+    if (!$quizs = get_all_instances_in_courses('quiz', $courses)) {
+        return;
+    }
+
+/// Fetch some language strings outside the main loop.
+    $strquiz = get_string('modulename', 'quiz');
+    $strnoattempts = get_string('noattempts', 'quiz');
+
+/// We want to list quizzes that are currently available, and which have a close date.
+/// This is the same as what the lesson does, and the dabate is in MDL-10568.
+    $now = date();
+    foreach ($quizs as $quiz) {
+        if ($quiz->timeclose >= $now && $quiz->timeopen < $now) {
+        /// Give a link to the quiz, and the deadline.
+            $str = '<div class="quiz overview">' .
+                    '<div class="name">' . $strquiz . ': <a ' . ($quiz->visible ? '' : ' class="dimmed"') .
+                    ' href="' . $CFG->wwwroot . '/mod/quiz/view.php?id=' . $quiz->coursemodule . '">' .
+                    $quiz->name . '</a></div>';
+            $str .= '<div class="info">' . get_string('quizcloseson', 'quiz', userdate($quiz->timeclose)) . '</div>';
+
+        /// Now provide more information depending on the uers's role.
+            $context = get_context_instance(CONTEXT_MODULE, $quiz->coursemodule);
+            if (has_capability('mod/quiz:viewreports', $context)) {
+            /// For teacher-like people, show a summary of the number of student attempts.
+                $a = new stdClass;
+                if ($a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0)) {
+                    $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
+                } else {
+                    $a->studentnum = 0;
+                    $a->attemptnum = 0;
+                }
+                $a->studentstring  = $course->students;
+                $str .= '<div class="info">' . get_string('numattempts', 'quiz', $a) . '</div>';
+            } else if (has_capability('mod/quiz:attempt', $context)){ // Student
+            /// For student-like people, tell them how many attempts they have made.
+                if (isset($USER->id) && ($attempts = quiz_get_user_attempts($quiz->id, $USER->id))) {
+                    $numattempts = count($attempts);
+                    $str .= '<div class="info">' . get_string('numattemptsmade', 'quiz', $numattempts) . '</div>';  
+                } else {
+                    $str .= '<div class="info">' . $strnoattempts . '</div>';
+                }
+            } else {
+            /// For ayone else, there is no point listing this quiz, so stop processing.
+                continue;
+            }
+
+        /// Add the output for this quiz to the rest.
+            $str .= '</div>';
+            if (empty($htmlarray[$quiz->course]['quiz'])) {
+                $htmlarray[$quiz->course]['quiz'] = $str;
+            } else {
+                $htmlarray[$quiz->course]['quiz'] .= $str;
+            }
+        }
+    }
 }
 ?>

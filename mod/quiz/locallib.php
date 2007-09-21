@@ -91,31 +91,6 @@ function quiz_get_user_attempt_unfinished($quizid, $userid) {
 }
 
 /**
- * @param integer $quizid the quiz id.
- * @param integer $userid the userid.
- * @param string $status 'all', 'finished' or 'unfinished' to control
- * @return an array of all the user's attempts at this quiz. Returns an empty array if there are none.
- */
-function quiz_get_user_attempts($quizid, $userid, $status = 'finished', $includepreviews = false) {
-    $status_condition = array(
-        'all' => '',
-        'finished' => ' AND timefinish > 0',
-        'unfinished' => ' AND timefinish = 0'
-    );
-    $previewclause = '';
-    if (!$includepreviews) {
-        $previewclause = ' AND preview = 0';
-    }
-    if ($attempts = get_records_select('quiz_attempts',
-            "quiz = '$quizid' AND userid = '$userid'" . $previewclause . $status_condition[$status],
-            'attempt ASC')) {
-        return $attempts;
-    } else {
-        return array();
-    }
-}
-
-/**
  * Delete a quiz attempt.
  */
 function quiz_delete_attempt($attempt, $quiz) {
