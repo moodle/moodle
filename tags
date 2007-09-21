@@ -3424,8 +3424,8 @@ ageCookies	lib/simpletestlib/browser.php	/^        function ageCookies($interval
 ageCookies	lib/simpletestlib/user_agent.php	/^        function ageCookies($interval) {$/;"	f
 ageCookies	lib/simpletestlib/web_tester.php	/^        function ageCookies($interval) {$/;"	f
 agePrematurely	lib/simpletestlib/cookies.php	/^        function agePrematurely($interval) {$/;"	f
-aggr_roles_fad	lib/accesslib.php	/^function aggr_roles_fad($context, $ad) {$/;"	f
 aggregate_grades	lib/grade/grade_category.php	/^    function aggregate_grades($userid, $items, $grade_values, $oldgrade, $excluded) {$/;"	f
+aggregate_roles_from_accessdata	lib/accesslib.php	/^function aggregate_roles_from_accessdata($context, $accessdata) {$/;"	f
 ajax_get_lib	lib/ajax/ajaxlib.php	/^function ajax_get_lib($libname) {$/;"	f
 ajaxenabled	lib/ajax/ajaxlib.php	/^function ajaxenabled($browsers = array()) {$/;"	f
 algebra2tex	filter/algebra/algebradebug.php	/^function algebra2tex($algebra) {$/;"	f
@@ -3620,7 +3620,6 @@ assignment_get_user_grades	mod/assignment/lib.php	/^function assignment_get_user
 assignment_get_view_actions	mod/assignment/lib.php	/^function assignment_get_view_actions() {$/;"	f
 assignment_grade_item_delete	mod/assignment/lib.php	/^function assignment_grade_item_delete($assignment) {$/;"	f
 assignment_grade_item_update	mod/assignment/lib.php	/^function assignment_grade_item_update($assignment) {$/;"	f
-assignment_grade_updated	mod/assignment/lib.php	/^function assignment_grade_updated($instance, $itemnumber, $userid, $gradevalue, $feedback, $feedbackformat, $usermodified) {$/;"	f
 assignment_ids	mod/assignment/backuplib.php	/^    function assignment_ids ($course) {$/;"	f
 assignment_log_info	mod/assignment/lib.php	/^function assignment_log_info($log) {$/;"	f
 assignment_offline	mod/assignment/type/offline/assignment.class.php	/^    function assignment_offline($cmid='staticonly', $assignment=NULL, $cm=NULL, $course=NULL) {$/;"	f
@@ -3850,6 +3849,7 @@ backup_survey_analysis	mod/survey/backuplib.php	/^    function backup_survey_ana
 backup_survey_answers	mod/survey/backuplib.php	/^    function backup_survey_answers ($bf,$preferences,$survey) {$/;"	f
 backup_to_restore_array	backup/restorelib.php	/^    function backup_to_restore_array($backup,$k=0) {$/;"	f
 backup_todb	backup/lib.php	/^    function backup_todb ($data) {$/;"	f
+backup_todb_optional_field	question/restorelib.php	/^    function backup_todb_optional_field($data, $field, $default) {$/;"	f
 backup_upgrade	backup/db/mysql.php	/^function backup_upgrade($oldversion=0) {$/;"	f
 backup_upgrade	backup/db/postgres7.php	/^function backup_upgrade($oldversion=0) {$/;"	f
 backup_user_info	backup/backuplib.php	/^    function backup_user_info ($bf,$preferences) {$/;"	f
@@ -4899,6 +4899,7 @@ definition	course/import/activities/import_form.php	/^    function definition() 
 definition	course/import/groups/import_form.php	/^    function definition() {$/;"	f
 definition	course/request_form.php	/^    function definition() {$/;"	f
 definition	enrol/authorize/enrol_form.php	/^    function definition()$/;"	f
+definition	grade/edit/gradedisplay/gradedisplay_form.php	/^    function definition() {$/;"	f
 definition	grade/edit/outcome/edit_form.php	/^    function definition() {$/;"	f
 definition	grade/edit/scale/edit_form.php	/^    function definition() {$/;"	f
 definition	grade/edit/tree/calculation_form.php	/^    function definition() {$/;"	f
@@ -4965,6 +4966,7 @@ definition	user/profile/index_field_form.php	/^    function definition () {$/;"	
 definition_after_data	admin/user/user_bulk_form.php	/^    function definition_after_data() {$/;"	f
 definition_after_data	course/edit_form.php	/^    function definition_after_data() {$/;"	f
 definition_after_data	course/moodleform_mod.php	/^    function definition_after_data() {$/;"	f
+definition_after_data	grade/edit/gradedisplay/gradedisplay_form.php	/^    function definition_after_data() {$/;"	f
 definition_after_data	grade/edit/outcome/edit_form.php	/^    function definition_after_data() {$/;"	f
 definition_after_data	grade/edit/scale/edit_form.php	/^    function definition_after_data() {$/;"	f
 definition_after_data	grade/edit/tree/calculation_form.php	/^    function definition_after_data() {$/;"	f
@@ -5929,6 +5931,7 @@ finishGroup	lib/pear/HTML/QuickForm/Renderer.php	/^    function finishGroup(&$gr
 finishGroup	lib/pear/HTML/QuickForm/Renderer/Array.php	/^    function finishGroup(&$group)$/;"	f
 finishGroup	lib/pear/HTML/QuickForm/Renderer/Default.php	/^    function finishGroup(&$group)$/;"	f
 finishGroup	lib/pear/HTML/QuickForm/Renderer/Object.php	/^    function finishGroup(&$group) $/;"	f
+finish_page	mod/quiz/view.php	/^function finish_page($course) {$/;"	f
 finished_edit_wizard	question/type/datasetdependent/abstractqtype.php	/^    function finished_edit_wizard(&$form) {$/;"	f
 finished_edit_wizard	question/type/questiontype.php	/^    function finished_edit_wizard(&$form) {$/;"	f
 first_child	auth/cas/CAS/domxml-php4-php5.php	/^ function first_child() {return new php4DOMElement($this->myDOMNode->firstChild,$this->myOwnerDocument);}$/;"	f
@@ -6040,7 +6043,8 @@ forum_get_ratings_summary	mod/forum/lib.php	/^function forum_get_ratings_summary
 forum_get_readable_forums	mod/forum/lib.php	/^function forum_get_readable_forums($userid, $courseid=0) {$/;"	f
 forum_get_recent_mod_activity	mod/forum/lib.php	/^function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $cmid="0", $user="", $groupid="") {$/;"	f
 forum_get_separate_modules	mod/forum/lib.php	/^function forum_get_separate_modules($courseid) {$/;"	f
-forum_get_subscribe_link	mod/forum/lib.php	/^function forum_get_subscribe_link($forum, $context, $messages = array(), $cantaccessagroup = false) {$/;"	f
+forum_get_subscribe_link	mod/forum/lib.php	/^function forum_get_subscribe_link($forum, $context, $messages = array(), $cantaccessagroup = false, $fakelink=true) {$/;"	f
+forum_get_tracking_link	mod/forum/lib.php	/^function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {$/;"	f
 forum_get_unmailed_posts	mod/forum/lib.php	/^function forum_get_unmailed_posts($starttime, $endtime) {$/;"	f
 forum_get_user_discussions	mod/forum/lib.php	/^function forum_get_user_discussions($courseid, $userid, $groupid=0) {$/;"	f
 forum_get_user_grades	mod/forum/lib.php	/^function forum_get_user_grades($forum, $userid=0) {$/;"	f
@@ -7029,7 +7033,6 @@ get_cached_capabilities	lib/accesslib.php	/^function get_cached_capabilities($co
 get_calculation	lib/grade/grade_item.php	/^    function get_calculation() {$/;"	f
 get_calculation_icon	grade/lib.php	/^    function get_calculation_icon($element, $gpr) {$/;"	f
 get_capabilities_from_role_on_context	lib/accesslib.php	/^function get_capabilities_from_role_on_context($role, $context) {$/;"	f
-get_capability_courses	lib/datalib.php	/^function get_capability_courses($cap) {$/;"	f
 get_capability_string	lib/accesslib.php	/^function get_capability_string($capabilityname) {$/;"	f
 get_categories	lib/datalib.php	/^function get_categories($parent='none', $sort=NULL, $shallow=true) {$/;"	f
 get_categories_for_contexts	lib/questionlib.php	/^function get_categories_for_contexts($contexts, $sortorder = 'parent, sortorder, name ASC') {$/;"	f
@@ -7137,6 +7140,7 @@ get_directory_list	lib/moodlelib.php	/^function get_directory_list($rootdir, $ex
 get_directory_size	lib/moodlelib.php	/^function get_directory_size($rootdir, $excludefile='') {$/;"	f
 get_dirs	lib/typo3/class.t3lib_div.php	/^	function get_dirs($path)	{$/;"	f
 get_dirty_contexts	lib/accesslib.php	/^function get_dirty_contexts($time) {$/;"	f
+get_displaytype	lib/grade/grade_item.php	/^    function get_displaytype() {$/;"	f
 get_edit_icon	grade/lib.php	/^    function get_edit_icon($element, $gpr) {$/;"	f
 get_element_by_id	auth/cas/CAS/domxml-php4-php5.php	/^ function get_element_by_id($id) {return new php4DOMElement($this->myDOMNode->getElementById($id),$this);}$/;"	f
 get_elements_by_tagname	auth/cas/CAS/domxml-php4-php5.php	/^ function get_elements_by_tagname($name)$/;"	f
@@ -7394,10 +7398,10 @@ get_related_contexts_string	lib/accesslib.php	/^function get_related_contexts_st
 get_remote_courses	blocks/course_list/block_course_list.php	/^    function get_remote_courses() {$/;"	f
 get_response	lib/soap/nusoap.php	/^	function get_response(){$/;"	f
 get_return_url	grade/lib.php	/^    function get_return_url($default, $extras=null) {$/;"	f
-get_role_access	lib/accesslib.php	/^function get_role_access($roleid, $ad=NULL) {$/;"	f
-get_role_access_bycontext	lib/accesslib.php	/^function get_role_access_bycontext($roleid, $context, $ad=NULL) {$/;"	f
+get_role_access	lib/accesslib.php	/^function get_role_access($roleid, $accessdata=NULL) {$/;"	f
+get_role_access_bycontext	lib/accesslib.php	/^function get_role_access_bycontext($roleid, $context, $accessdata=NULL) {$/;"	f
 get_role_context_caps	lib/accesslib.php	/^function get_role_context_caps($roleid, $context) {$/;"	f
-get_role_users	lib/accesslib.php	/^function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC', $gethidden=true) {$/;"	f
+get_role_users	lib/accesslib.php	/^function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC', $gethidden=true, $group='') {$/;"	f
 get_roles	enrol/flatfile/enrol.php	/^    function get_roles() {$/;"	f
 get_roles_on_exact_context	lib/accesslib.php	/^function get_roles_on_exact_context($context) {$/;"	f
 get_roles_used_in_context	lib/accesslib.php	/^function get_roles_used_in_context($context, $view = false) {$/;"	f
@@ -7469,10 +7473,10 @@ get_um	group/group_form.php	/^    function get_um() {$/;"	f
 get_um	user/edit_form.php	/^    function get_um() {$/;"	f
 get_um	user/editadvanced_form.php	/^    function get_um() {$/;"	f
 get_url_action	admin/mysql/scripts/setup.php	/^function get_url_action($url, $title, $params = array()) {$/;"	f
-get_user_access_bycontext	lib/accesslib.php	/^function get_user_access_bycontext($userid, $context, $ad=NULL) {$/;"	f
+get_user_access_bycontext	lib/accesslib.php	/^function get_user_access_bycontext($userid, $context, $accessdata=NULL) {$/;"	f
 get_user_access_sitewide	lib/accesslib.php	/^function get_user_access_sitewide($userid) {$/;"	f
 get_user_capability_course	lib/accesslib.php	/^function get_user_capability_course($capability, $userid=NULL,$doanything=true,$fieldsexceptid='',$orderby='') {$/;"	f
-get_user_courses_bycap	lib/accesslib.php	/^function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortorder ASC', $fields=NULL, $limit=0) {$/;"	f
+get_user_courses_bycap	lib/accesslib.php	/^function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='c.sortorder ASC', $fields=NULL, $limit=0) {$/;"	f
 get_user_fieldnames	lib/moodlelib.php	/^function get_user_fieldnames() {$/;"	f
 get_user_info_from_db	lib/deprecatedlib.php	/^function get_user_info_from_db($field, $value) {  \/\/ For backward compatibility$/;"	f
 get_user_preferences	lib/moodlelib.php	/^function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {$/;"	f
@@ -7774,8 +7778,8 @@ has_admin_caps	blocks/admin_tree/block_admin_tree.php	/^    function has_admin_c
 has_all_required_files	mod/data/preset_class.php	/^    function has_all_required_files($directory = null) $/;"	f
 has_attribute	auth/cas/CAS/domxml-php4-php5.php	/^ function has_attribute($name) {return $this->myDOMNode->hasAttribute($name);}$/;"	f
 has_attributes	auth/cas/CAS/domxml-php4-php5.php	/^ function has_attributes() {return $this->myDOMNode->hasAttributes();}$/;"	f
-has_cap_fad	lib/accesslib.php	/^function has_cap_fad($capability, $context, $ad, $doanything) {$/;"	f
 has_capability	lib/accesslib.php	/^function has_capability($capability, $context=NULL, $userid=NULL, $doanything=true) {$/;"	f
+has_capability_in_accessdata	lib/accesslib.php	/^function has_capability_in_accessdata($capability, $context, $accessdata, $doanything) {$/;"	f
 has_child_nodes	auth/cas/CAS/domxml-php4-php5.php	/^ function has_child_nodes() {return $this->myDOMNode->hasChildNodes();}$/;"	f
 has_config	blocks/blog_tags/block_blog_tags.php	/^    function has_config() {$/;"	f
 has_config	blocks/course_list/block_course_list.php	/^    function has_config() {$/;"	f
@@ -8827,7 +8831,7 @@ load_role_mappings	enrol/imsenterprise/enrol.php	/^function load_role_mappings()
 load_scale	lib/grade/grade_item.php	/^    function load_scale() {$/;"	f
 load_scale	lib/grade/grade_outcome.php	/^    function load_scale() {$/;"	f
 load_scale	lib/simpletest/fixtures/gradetest.php	/^    function load_scale() {$/;"	f
-load_temp_role	lib/accesslib.php	/^function load_temp_role($context, $roleid, $ad) {$/;"	f
+load_temp_role	lib/accesslib.php	/^function load_temp_role($context, $roleid, $accessdata) {$/;"	f
 load_test_data	lib/simpletestlib.php	/^function load_test_data($tablename, $data, $localdb = null) {$/;"	f
 load_test_table	lib/simpletestlib.php	/^function load_test_table($tablename, $data, $db = null, $strlen = 255) {$/;"	f
 load_text	lib/grade/grade_grade.php	/^    function load_text() {$/;"	f
@@ -9402,7 +9406,7 @@ password	lib/adodb/session/adodb-session2.php	/^	function password($password = n
 password_expire	auth/ldap/auth.php	/^    function password_expire($username) {$/;"	f
 password_expire	lib/authlib.php	/^    function password_expire($username) {$/;"	f
 path	lib/adminlib.php	/^    function path($name, $path = array()) {$/;"	f
-path_inaccessdata	lib/accesslib.php	/^function path_inaccessdata($path, $ad) {$/;"	f
+path_inaccessdata	lib/accesslib.php	/^function path_inaccessdata($path, $accessdata) {$/;"	f
 pdf	lib/pdflib.php	/^    function pdf($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8') {$/;"	f
 pear_handle_error	lib/formslib.php	/^function pear_handle_error($error){$/;"	f
 people_findByEmail	lib/phpflickr/phpFlickr.php	/^    function people_findByEmail ($find_email)$/;"	f
@@ -10182,7 +10186,6 @@ quiz_restore_pre15_shortanswer	mod/quiz/restorelibpre15.php	/^    function quiz_
 quiz_restore_pre15_truefalse	mod/quiz/restorelibpre15.php	/^    function quiz_restore_pre15_truefalse ($old_question_id,$new_question_id,$info,$restore) {$/;"	f
 quiz_restore_pre15_wiki2markdown	mod/quiz/restorelibpre15.php	/^    function quiz_restore_pre15_wiki2markdown ($restore) {$/;"	f
 quiz_restore_wiki2markdown	mod/quiz/restorelib.php	/^    function quiz_restore_wiki2markdown ($restore) {$/;"	f
-quiz_review_allowed	mod/quiz/view.php	/^function quiz_review_allowed($quiz) {$/;"	f
 quiz_save_best_grade	mod/quiz/locallib.php	/^function quiz_save_best_grade($quiz, $userid = null) {$/;"	f
 quiz_send_confirmation	mod/quiz/locallib.php	/^function quiz_send_confirmation($a) {$/;"	f
 quiz_send_notification	mod/quiz/locallib.php	/^function quiz_send_notification($recipient, $a) {$/;"	f
@@ -12210,8 +12213,6 @@ test_grade_item_fetch	lib/grade/simpletest/testgradeitem.php	/^    function test
 test_grade_item_fetch_all	lib/grade/simpletest/testgradeitem.php	/^    function test_grade_item_fetch_all() {$/;"	f
 test_grade_item_fetch_course_item	lib/grade/simpletest/testgradeitem.php	/^    function test_grade_item_fetch_course_item() {$/;"	f
 test_grade_item_force_regrading	lib/grade/simpletest/testgradeitem.php	/^    function test_grade_item_force_regrading() {$/;"	f
-test_grade_item_generate_idnumber	lib/grade/simpletest/testgradeitem.php	/^    function test_grade_item_generate_idnumber() {$/;"	f
-test_grade_item_generate_itemnumber_for_manual	lib/grade/simpletest/testgradeitem.php	/^    function test_grade_item_generate_itemnumber_for_manual() {$/;"	f
 test_grade_item_get_all_finals	lib/grade/simpletest/testgradeitem.php	/^    function test_grade_item_get_all_finals() {$/;"	f
 test_grade_item_get_calculation	lib/grade/simpletest/testgradeitem.php	/^    function test_grade_item_get_calculation() {$/;"	f
 test_grade_item_get_final	lib/grade/simpletest/testgradeitem.php	/^    function test_grade_item_get_final() {$/;"	f
