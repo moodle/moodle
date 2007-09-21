@@ -3255,7 +3255,7 @@ function forum_post_subscription($post) {
  *      at the top of the function.
  * @param 
  */
-function forum_get_subscribe_link($forum, $context, $messages = array(), $cantaccessagroup = false) {
+function forum_get_subscribe_link($forum, $context, $messages = array(), $cantaccessagroup = false, $fakelink=true) {
     global $CFG, $USER;
     $defaultmessages = array(
         'subscribed' => get_string('unsubscribe', 'forum'),
@@ -3281,19 +3281,79 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
             $linktitle = get_string('subscribestart', 'forum');
         }
 
-        $link = '<script type="text/javascript">';
-        $link .= 'document.getElementById("subscriptionlink").innerHTML = "<a title=\"' . $linktitle . '\" href=\"' . $CFG->wwwroot .
-           '/mod/forum/subscribe.php?id=' . $forum->id . '\">' . $linktext . '</a>";';
-        $link .= '</script>';
-        // use <noscript> to print button in case javascript is not enabled
-        $link .= '<noscript>';
+        $link = '';
+        if ($fakelink) {
+            $link .= '<script type="text/javascript">';
+            $link .= '//<![CDATA['."\n";
+            $link .= 'document.getElementById("subscriptionlink").innerHTML = "<a title=\"' . $linktitle . '\" href=\"' . $CFG->wwwroot .
+               '/mod/forum/subscribe.php?id=' . $forum->id . '\">' . $linktext . '<\/a>";';
+            $link .= '//]]>';
+            $link .= '</script>';
+            // use <noscript> to print button in case javascript is not enabled
+            $link .= '<noscript>';
+        }
         $link .= print_single_button($CFG->wwwroot . '/mod/forum/subscribe.php?id=' . $forum->id,
                 '', $linktext, 'post', '_self', true, $linktitle);
-        $link .= '</noscript>';
+        if ($fakelink) {
+            $link .= '</noscript>';
+        }
 
         return $link;  
     }    
 }
+
+
+/**
+ * Generate and return the track or no track link for a forum.
+ * @param object $forum the forum. Fields used are $forum->id and $forum->forcesubscribe.
+ */
+function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
+    global $CFG, $USER;
+
+    static $strnotrackforum, $strtrackforum;
+
+    if (isset($messages['trackforum'])) {
+         $strtrackforum = $messages['trackforum'];
+    }
+    if (isset($messages['notrackforum'])) {
+         $strnotrackforum = $messages['notrackforum'];
+    }
+    if (empty($strtrackforum)) {
+        $strtrackforum = get_string('trackforum', 'forum');
+    }
+    if (empty($strnotrackforum)) {
+        $strnotrackforum = get_string('notrackforum', 'forum');
+    }
+
+    if (forum_tp_is_tracked($forum, $USER->id)) {
+        $linktitle = $strnotrackforum;
+        $linktext = $strtrackforum;
+    } else {
+        $linktitle = $strtrackforum;
+        $linktext = $strnotrackforum;
+    }
+
+    $link = '';
+    if ($fakelink) {
+        $link .= '<script type="text/javascript">';
+        $link .= '//<![CDATA['."\n";
+        $link .= 'document.getElementById("trackinglink").innerHTML = "<a title=\"' . $linktitle . '\" href=\"' . $CFG->wwwroot .
+           '/mod/forum/settracking.php?id=' . $forum->id . '\">' . $linktext . '<\/a>";'."\n";
+        $link .= '//]]>'."\n";
+        $link .= '</script>';
+        // use <noscript> to print button in case javascript is not enabled
+        $link .= '<noscript>';
+    }
+    $link .= print_single_button($CFG->wwwroot . '/mod/forum/settracking.php?id=' . $forum->id,
+            '', $linktext, 'post', '_self', true, $linktitle);
+    if ($fakelink) {
+        $link .= '</noscript>';
+    }
+
+    return $link;  
+}
+
+
 
 /**
  * 

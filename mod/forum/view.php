@@ -134,7 +134,7 @@
             } else {
                 echo $streveryoneisnowsubscribed;
             }
-            echo '</span>';
+            echo '</span><br />';
 
         } else if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
             $strsubscriptionsoff = get_string('disallowsubscribe','forum');
@@ -155,22 +155,12 @@
                 echo '<span class="helplink">'.$streveryonecannowchoose.'</span>';
             }
 
-            echo '<br /><span class="helplink" id="subscriptionlink">', forum_get_subscribe_link($forum, $context, 
-                    array('forcesubscribed' => '', 'cantsubscribe' => '')), '</span>';
+            echo '<div class="helplink" id="subscriptionlink">', forum_get_subscribe_link($forum, $context, 
+                    array('forcesubscribed' => '', 'cantsubscribe' => '')), '</div>';
         }
 
-        if (forum_tp_can_track_forums($forum) && ($forum->trackingtype == FORUM_TRACKING_OPTIONAL)) {
-            if (forum_tp_is_tracked($forum, $USER->id)) {
-                $trtitle = get_string('notrackforum', 'forum');
-                $trackedlink = '<a title="'.get_string('notrackforum', 'forum').'" href="settracking.php?id='.
-                               $forum->id.'&amp;returnpage=view.php">'.get_string('forumtracked', 'forum').'</a>';
-            } else {
-                $trtitle = get_string('trackforum', 'forum');
-                $trackedlink = '<a title="'.get_string('trackforum', 'forum').'" href="settracking.php?id='.
-                               $forum->id.'&amp;returnpage=view.php">'.get_string('forumtrackednot', 'forum').'</a>';
-            }
-            echo '<br />';
-            echo "<span class=\"helplink\">$trackedlink</span>";
+        if (($forum->trackingtype == FORUM_TRACKING_OPTIONAL) && forum_tp_can_track_forums($forum)) {
+            echo '<div class="helplink" id="trackinglink">'. forum_get_tracking_link($forum). '</div';
         }
 
     }

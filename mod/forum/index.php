@@ -195,16 +195,14 @@
 
 
                     if ($forum->trackingtype == FORUM_TRACKING_OPTIONAL) {
-                        $trackedlink = '<a title="'.$strnotrackforum.'" href="settracking.php?id='.
-                                       $forum->id.'">'.$stryes.'</a>';
+                        $trackedlink = print_single_button($CFG->wwwroot . '/mod/forum/settracking.php?id=' . $forum->id, '', $stryes, 'post', '_self', true, $strnotrackforum);
                     }
                     else {
                         $trackedlink = $stryes;
                     }
                 } else {
                     $unreadlink = '-';
-                    $trackedlink = '<a title="'.$strtrackforum.'" href="settracking.php?id='.
-                                   $forum->id.'">'.$strno.'</a>';
+                    $trackedlink = print_single_button($CFG->wwwroot . '/mod/forum/settracking.php?id=' . $forum->id, '', $strno, 'post', '_self', true, $strtrackforum);
                 }
             }
 
@@ -234,7 +232,7 @@
             if ($can_subscribe) {
                 $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
                         'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
-                        'cantsubscribe' => '-'), $cantaccessagroup);
+                        'cantsubscribe' => '-'), $cantaccessagroup, false);
             }
 
             //If this forum has RSS activated, calculate it
@@ -334,12 +332,11 @@
                             $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
                         }
                         if ($forum->trackingtype == FORUM_TRACKING_OPTIONAL) {
-                            $trackedlink = '<a title="'.$strnotrackforum.'" href="settracking.php?id='.
-                                           $forum->id.'">'.$stryes.'</a>';
+                            $trackedlink = print_single_button($CFG->wwwroot . '/mod/forum/settracking.php?id=' . $forum->id, '', $stryes, 'post', '_self', true, $strnotrackforum);
                         }
                     } else {
                         $unreadlink = '-';
-                        $trackedlink = '<a title="'.$strtrackforum.'" href="settracking.php?id='.$forum->id.'">'.$strno.'</a>';
+                        $trackedlink = print_single_button($CFG->wwwroot . '/mod/forum/settracking.php?id=' . $forum->id, '', $strno, 'post', '_self', true, $strtrackforum);
                     }
                 }
 
@@ -379,7 +376,7 @@
                 if ($can_subscribe) {
                     $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
                         'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
-                        'cantsubscribe' => '-'), $cantaccessagroup);
+                        'cantsubscribe' => '-'), $cantaccessagroup, false);
                 }
                 
                 //If this forum has RSS activated, calculate it
