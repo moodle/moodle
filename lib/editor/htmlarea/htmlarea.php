@@ -225,7 +225,7 @@ HTMLArea.Config = function () {
 			$key = str_replace('_', '-', $key);
 			$strlangarray .= '"'.$key.' ": "'.$key.'_ML",';
 		}
-		$strlangarray = substr($strlangarray, 0, -1); 
+		$strlangarray = substr($strlangarray, 0, -1);
 		echo $strlangarray;
 		?>
 	};
@@ -1979,9 +1979,7 @@ HTMLArea.prototype.setLang = function(lang) {
 
 	if (insertNewSpan && lang != '') {
 		var str  = '<span lang="'+lang.trim()+'"';
-		if (multiLang) {
-			str += ' class="multilang"';
-		}
+        str += ' class="multilang"';
 		str += '>';
 	    str += selectedHTML;
 	    str += '</span>';
@@ -2153,7 +2151,7 @@ HTMLArea.prototype._editorEvent = function(ev) {
 				case ',': cmd = "subscript"; break;
 				case '.': cmd = "superscript"; break;
 				
-				case 'v': 
+				case 'v':
 					if (! HTMLArea.is_gecko ) {
 						cmd = "paste";
 					}
