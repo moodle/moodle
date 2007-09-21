@@ -382,7 +382,7 @@ class question_shortanswer_qtype extends default_questiontype {
                     // MDL-7496
                     if ($correctanswer) {
                         echo ('<div class="correctness">');
-                        print_string('correctansweris', 'quiz', s($correctanswer));
+                        print_string('correctansweris', 'quiz', s($correctanswer, true));
                         echo ('</div>');
                     }
                 } else {
@@ -391,7 +391,7 @@ class question_shortanswer_qtype extends default_questiontype {
                     print_string('incorrect', 'quiz');
                     if ($correctanswer) {
                         echo ('<div class="correctness">');
-                        print_string('correctansweris', 'quiz', s($correctanswer));
+                        print_string('correctansweris', 'quiz', s($correctanswer, true));
                         echo ('</div>');
                     }
                 }
