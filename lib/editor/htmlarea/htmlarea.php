@@ -225,7 +225,7 @@ HTMLArea.Config = function () {
             $key = str_replace('_', '-', $key);
             $strlangarray .= '"'.$key.' ": "'.$key.'_ML",';
         }
-        $strlangarray = substr($strlangarray, 0, -1); 
+        $strlangarray = substr($strlangarray, 0, -1);
         echo $strlangarray;
         ?>
     };
@@ -1943,7 +1943,7 @@ HTMLArea.prototype.setLang = function(lang) {
         multiLang = true;
         lang = lang.replace(re, '');
     }
-        
+
     // Remove all lang attributes from span tags in selected html.
     selectedHTML = selectedHTML.replace(/(<span[^>]*)lang="[^"]*"([^>]*>)/, "$1$2");
     selectedHTML = selectedHTML.replace(/(<span[^>]*)class="multilang"([^>]*>)/, "$1$2");
@@ -1954,7 +1954,7 @@ HTMLArea.prototype.setLang = function(lang) {
 
     var parentEl = this.getParentElement();
     var insertNewSpan = false;
-    
+
     if (parentEl.nodeName == 'SPAN' && parentEl.getAttribute('lang')) {
         // A language was previously defined for the current block.
         // Check whether the selected text makes up the whole of the block
@@ -1970,7 +1970,7 @@ HTMLArea.prototype.setLang = function(lang) {
                 }
             } else {
                 parentEl.removeAttribute('lang');
-                
+
                 var classAttr = parentEl.getAttribute('class');
                 if (classAttr) {
                     classAttr = classAttr.replace(/multilang/, '').trim();
@@ -1995,9 +1995,7 @@ HTMLArea.prototype.setLang = function(lang) {
 
     if (insertNewSpan && lang != '') {
         var str  = '<span lang="'+lang.trim()+'"';
-        if (multiLang) {
             str += ' class="multilang"';
-        }
         str += '>';
         str += selectedHTML;
         str += '</span>';
@@ -2168,13 +2166,13 @@ HTMLArea.prototype._editorEvent = function(ev) {
                 case 's': cmd = "strikethrough"; break;
                 case ',': cmd = "subscript"; break;
                 case '.': cmd = "superscript"; break;
-                
-                case 'v': 
+
+                case 'v':
                     if (! HTMLArea.is_gecko ) {
                         cmd = "paste";
                     }
                     break;
-                
+
                 case '0': cmd = "killword"; break;
                 case 'z': cmd = "undo"; break;
                 case 'y': cmd = "redo"; break;
@@ -2215,8 +2213,8 @@ HTMLArea.prototype._editorEvent = function(ev) {
                 break;
 
             } // End switch (key)
-            
-            
+
+
         } else if (ev.ctrlKey && ev.altKey) {
             /**
              * Ctrl + Alt modifiers.
@@ -2234,7 +2232,7 @@ HTMLArea.prototype._editorEvent = function(ev) {
                 case 't': cmd = 'inserttable'; break;
                 case 's': cmd = 'insertsmile'; break;
                 case 'c': cmd = 'insertchar'; break;
-            }    
+            }
         }
 
         if (cmd) {
