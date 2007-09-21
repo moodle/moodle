@@ -4398,20 +4398,6 @@ function build_context_path($force=false) {
     global $CFG;
     require_once($CFG->libdir.'/ddllib.php');
 
-/// Define table context_temp to be created
-    $table = new XMLDBTable('context_temp');
-
-/// Adding fields to table context_temp
-    $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-    $table->addFieldInfo('path', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-    $table->addFieldInfo('depth', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-
-/// Adding keys to table context_temp
-    $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-/// Launch create table for context_temp
-    $temptable = create_temp_table($table, !$force, $force);
-
     // Site
     $sitectx = get_record('context', 'contextlevel', CONTEXT_SYSTEM);
     $base = '/' . $sitectx->id;
@@ -4448,23 +4434,31 @@ function build_context_path($force=false) {
      *  - mysql does not allow to use FROM in UPDATE statements
      *  - using two tables after UPDATE works in mysql, but might give unexpected
      *    results in pg 8 (depends on configuration)
-     *  - when using temporary table in mysql, it can be used only once in subselects
      *  - using table alias in UPDATE does not work in pg < 8.2
      */
     if ($CFG->dbfamily == 'mysql') {
-        $updatesql = "UPDATE {$CFG->prefix}context, {$CFG->prefix}$temptable
-                         SET {$CFG->prefix}context.path  = {$CFG->prefix}$temptable.path,
-                             {$CFG->prefix}context.depth = {$CFG->prefix}$temptable.depth
-                       WHERE {$CFG->prefix}$temptable.id={$CFG->prefix}context.id";
+        $updatesql = "UPDATE {$CFG->prefix}context ct, {$CFG->prefix}context_temp temp
+                         SET ct.path  = temp.path,
+                             ct.depth = temp.depth
+                       WHERE ct.id = temp.id";
+    } else if ($CFG->dbfamily == 'oracle') {
+        $updatesql = "UPDATE {$CFG->prefix}context ct
+                         SET (ct.path, ct.depth) =
+                             (SELECT temp.path, temp.depth
+                                FROM {$CFG->prefix}$temptable temp
+                               WHERE temp.id=ct.id)
+                       WHERE EXISTS (SELECT 'x'
+                                       FROM {$CFG->prefix}$temptable temp
+                                       WHERE temp.id = ct.id)";
     } else {
         $updatesql = "UPDATE {$CFG->prefix}context
-                         SET path  = ct.path,
-                             depth = ct.depth
-                        FROM {$CFG->prefix}$temptable ct
-                       WHERE ct.id={$CFG->prefix}context.id";
+                         SET path  = temp.path,
+                             depth = temp.depth
+                        FROM {$CFG->prefix}context_temp temp
+                       WHERE temp.id={$CFG->prefix}context.id";
     }
 
-    $udelsql = "TRUNCATE TABLE {$CFG->prefix}$temptable";
+    $udelsql = "TRUNCATE TABLE {$CFG->prefix}context_temp";
 
     // Top level categories
     $sql = "UPDATE {$CFG->prefix}context
@@ -4475,6 +4469,7 @@ function build_context_path($force=false) {
                                 WHERE cc.id = {$CFG->prefix}context.instanceid
                                       AND cc.depth=1)
                    $emptyclause";
+
     execute_sql($sql, $force);
 
     execute_sql($udelsql, $force);
@@ -4483,7 +4478,7 @@ function build_context_path($force=false) {
     $maxdepth = get_field_sql("SELECT MAX(depth)
                                FROM {$CFG->prefix}course_categories");
     for ($n=2;$n<=$maxdepth;$n++) {
-        $sql = "INSERT INTO {$CFG->prefix}$temptable (id, path, depth)
+        $sql = "INSERT INTO {$CFG->prefix}context_temp (id, path, depth)
                 SELECT ctx.id, ".sql_concat('pctx.path', "'/'", 'ctx.id').", $n+1
                   FROM {$CFG->prefix}context ctx
                   JOIN {$CFG->prefix}course_categories c ON ctx.instanceid=c.id
@@ -4491,6 +4486,9 @@ function build_context_path($force=false) {
                  WHERE ctx.contextlevel=".CONTEXT_COURSECAT."
                        AND pctx.contextlevel=".CONTEXT_COURSECAT."
                        AND c.depth=$n
+                       AND NOT EXISTS (SELECT 'x'
+                                       FROM {$CFG->prefix}context_temp temp
+                                       WHERE temp.id = ctx.id)
                        $ctxemptyclause";
         execute_sql($sql, $force);
     }
@@ -4499,7 +4497,7 @@ function build_context_path($force=false) {
     execute_sql($udelsql, $force);
 
     // Courses -- except sitecourse
-    $sql = "INSERT INTO {$CFG->prefix}$temptable (id, path, depth)
+    $sql = "INSERT INTO {$CFG->prefix}context_temp (id, path, depth)
             SELECT ctx.id, ".sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
               FROM {$CFG->prefix}context ctx
               JOIN {$CFG->prefix}course c ON ctx.instanceid=c.id
@@ -4507,6 +4505,9 @@ function build_context_path($force=false) {
              WHERE ctx.contextlevel=".CONTEXT_COURSE."
                    AND c.id!=".SITEID."
                    AND pctx.contextlevel=".CONTEXT_COURSECAT."
+                       AND NOT EXISTS (SELECT 'x'
+                                       FROM {$CFG->prefix}context_temp temp
+                                       WHERE temp.id = ctx.id)
                    $ctxemptyclause";
     execute_sql($sql, $force);
 
@@ -4514,13 +4515,16 @@ function build_context_path($force=false) {
     execute_sql($udelsql, $force);
 
     // Module instances
-    $sql = "INSERT INTO {$CFG->prefix}$temptable (id, path, depth)
+    $sql = "INSERT INTO {$CFG->prefix}context_temp (id, path, depth)
             SELECT ctx.id, ".sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
               FROM {$CFG->prefix}context ctx
               JOIN {$CFG->prefix}course_modules cm ON ctx.instanceid=cm.id
               JOIN {$CFG->prefix}context pctx ON cm.course=pctx.instanceid
              WHERE ctx.contextlevel=".CONTEXT_MODULE."
                    AND pctx.contextlevel=".CONTEXT_COURSE."
+                       AND NOT EXISTS (SELECT 'x'
+                                       FROM {$CFG->prefix}context_temp temp
+                                       WHERE temp.id = ctx.id)
                    $ctxemptyclause";
     execute_sql($sql, $force);
 
@@ -4528,7 +4532,7 @@ function build_context_path($force=false) {
     execute_sql($udelsql, $force);
 
     // Blocks - non-pinned course-view only
-    $sql = "INSERT INTO {$CFG->prefix}$temptable (id, path, depth)
+    $sql = "INSERT INTO {$CFG->prefix}context_temp (id, path, depth)
             SELECT ctx.id, ".sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
               FROM {$CFG->prefix}context ctx
               JOIN {$CFG->prefix}block_instance bi ON ctx.instanceid = bi.id
@@ -4536,6 +4540,9 @@ function build_context_path($force=false) {
              WHERE ctx.contextlevel=".CONTEXT_BLOCK."
                    AND pctx.contextlevel=".CONTEXT_COURSE."
                    AND bi.pagetype='course-view'
+                       AND NOT EXISTS (SELECT 'x'
+                                       FROM {$CFG->prefix}context_temp temp
+                                       WHERE temp.id = ctx.id)
                    $ctxemptyclause";
     execute_sql($sql, $force);
 
