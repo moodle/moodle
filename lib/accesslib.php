@@ -1383,25 +1383,30 @@ function get_user_access_bycontext($userid, $context, $accessdata=NULL) {
     }
 
     // We will want overrides for all of them
-    $roleids  = implode(',',array_merge($courseroles,$localroles));
+    $whereroles = '';
+    if ($roleids  = implode(',',array_merge($courseroles,$localroles))) {
+        $whereroles = "rc.roleid IN ($roleids) AND";
+    }
     $sql = "SELECT ctx.path, rc.roleid, rc.capability, rc.permission
             FROM {$CFG->prefix}role_capabilities rc
             JOIN {$CFG->prefix}context ctx
              ON rc.contextid=ctx.id
-            WHERE (rc.roleid IN ($roleids)
-                    AND (ctx.id={$context->id} OR ctx.path LIKE '{$context->path}/%'))
+            WHERE ($whereroles
+                    (ctx.id={$context->id} OR ctx.path LIKE '{$context->path}/%'))
                     $wherelocalroles
             ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
 
-    $rs = get_recordset_sql($sql);
-
-    if ($rs->RecordCount()) {
-        while ($rd = rs_fetch_next_record($rs)) {
-            $k = "{$rd->path}:{$rd->roleid}";
-            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
+    if ($rs = get_recordset_sql($sql)) {
+        if ($rs->RecordCount()) {
+            while ($rd = rs_fetch_next_record($rs)) {
+                $k = "{$rd->path}:{$rd->roleid}";
+                $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
+            }
         }
+        rs_close($rs);
+    } else {
+        debugging('Bad SQL encountered!');
     }
-    rs_close($rs);
 
     // TODO: compact capsets?
 
