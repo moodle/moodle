@@ -231,7 +231,7 @@ global $HTTPSPAGEREQUIRED;
         register_shutdown_function('moodle_request_shutdown');
     }
 
-//// Defining the site
+/// Defining the site
     if ($SITE = get_site()) {
         /**
          * If $SITE global from {@link get_site()} is set then SITEID to $SITE->id, otherwise set to 1.
@@ -249,10 +249,8 @@ global $HTTPSPAGEREQUIRED;
         $COURSE->id = 1;
     }
 
-    $sysctxid = get_field('context', 'id',
-                          'contextlevel', CONTEXT_SYSTEM);
-if (!empty($syscontextid)) {
-        define('SYSCONTEXTID', $syscontextid);
+    if ($sysctxid = get_field('context', 'id', 'contextlevel', CONTEXT_SYSTEM)) {
+        define('SYSCONTEXTID', $sysctxid);
     } else {
         define('SYSCONTEXTID', 1);
     }
