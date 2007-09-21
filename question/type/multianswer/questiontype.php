@@ -701,7 +701,8 @@ function qtype_multianswer_extract_question($text) {
             }
             if (isset($altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK])) {
                 $feedback = html_entity_decode($altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK], ENT_QUOTES, 'UTF-8');
-                $wrapped->feedback[] = str_replace('\}', '}', $feedback);
+                $feedback = str_replace('\}', '}', $feedback);
+                $wrapped->feedback[] = str_replace('\#', '#', $feedback);
             } else {
                 $wrapped->feedback[] = '';
             }
@@ -717,7 +718,8 @@ function qtype_multianswer_extract_question($text) {
             } else { // Tolerance can stay undefined for non numerical questions
                 // Undo quoting done by the HTML editor.
                 $answer = html_entity_decode($altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER], ENT_QUOTES, 'UTF-8');
-                $wrapped->answer[] = str_replace('\}', '}', $answer);
+                $answer = str_replace('\}', '}', $answer);
+                $wrapped->answer[] = str_replace('\#', '#', $answer);
             }
             $tmp = explode($altregs[0], $remainingalts, 2);
             $remainingalts = $tmp[1];
