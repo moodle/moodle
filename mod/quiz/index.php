@@ -43,7 +43,7 @@
     $headings = array(get_string('name'), get_string('quizcloses', 'quiz'));
     $align = array('left', 'left');
     $colsize = array('', '');
-    if ($course->format == "weeks") {
+    if ($course->format == "weeks" || $course->format == "weekscss") {
         array_unshift($headings, get_string('week'));
         array_unshift($align, 'center');
         array_unshift($colsize, 10);
@@ -79,7 +79,7 @@
 
         // Section number if necessary.
         $strsection = '';
-        if ($course->format == "weeks" or $course->format == "topics") {
+        if ($course->format == "weeks" || $course->format == "weekscss" || $course->format == "topics") {
             if ($quiz->section !== $currentsection) {
                 if ($quiz->section) {
                     $strsection = $quiz->section;
