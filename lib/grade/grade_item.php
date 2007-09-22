@@ -1269,9 +1269,7 @@ class grade_item extends grade_object {
             return false;
         }
 
-        if (!$grade = grade_grade::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
-            $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid), false);
-        }
+        $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid));
         $grade->grade_item =& $this; // prevent db fetching of this grade_item
 
         if ($grade->is_locked()) {
@@ -1381,9 +1379,7 @@ class grade_item extends grade_object {
             return false;
         }
 
-        if (!$grade = grade_grade::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
-            $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid), false);
-        }
+        $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid));
         $grade->grade_item =& $this; // prevent db fetching of this grade_item
 
         if ($grade->is_locked()) {

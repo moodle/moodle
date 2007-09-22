@@ -66,12 +66,20 @@ class grade_object {
      */
     function grade_object($params=NULL, $fetch=true) {
         if (!empty($params) and (is_array($params) or is_object($params))) {
-            if ($fetch and $data = $this->fetch($params)) {
-                grade_object::set_properties($this, $data);
+            if ($fetch) {
+                if ($data = $this->fetch($params)) {
+                    grade_object::set_properties($this, $data);
+                } else {
+                    grade_object::set_properties($this, $this->optional_fields);//apply defaults for optional fields
+                    grade_object::set_properties($this, $params);
+                }
 
             } else {
                 grade_object::set_properties($this, $params);
             }
+
+        } else {
+            grade_object::set_properties($this, $this->optional_fields);//apply defaults for optional fields
         }
     }
 
