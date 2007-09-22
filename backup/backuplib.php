@@ -1408,7 +1408,6 @@
         if ($preferences->backup_gradebook_history) {
             $status = backup_gradebook_categories_history_info($bf, $preferences);
             $status = backup_gradebook_grades_history_info($bf, $preferences);
-            $status = backup_gradebook_grades_text_history_info($bf, $preferences);
             $status = backup_gradebook_items_history_info($bf, $preferences);
             $status = backup_gradebook_outcomes_history($bf, $preferences);
         }
@@ -1479,7 +1478,7 @@
 
                 // do not restore if this grade_item is a mod, and
                 if ($grade_item->itemtype == 'mod') {
-                    // this still needs to be included, though grades and grades_text can be ignored
+                    // this still needs to be included, though grades can be ignored
                 } else if ($grade_item->itemtype == 'category') {
                     // if not all grade items are being backed up
                     // we ignore this type of grade_item and grades associated
@@ -1524,7 +1523,6 @@
                     // but userdata is not selected
                 } else {
                     $status = backup_gradebook_grades_info($bf,$preferences,$grade_item->id);
-                    $status = backup_gradebook_grades_text_info($bf,$preferences,$grade_item->id);
                 }
                 //End grade_item
                 fwrite ($bf,end_tag("GRADE_ITEM",4,true));
@@ -1627,37 +1625,13 @@
                 fwrite ($bf,full_tag("EXPORTED",7,false,$grade->exported));
                 fwrite ($bf,full_tag("OVERRIDDEN",7,false,$grade->overridden));
                 fwrite ($bf,full_tag("EXCLUDED",7,false,$grade->excluded));
+                fwrite ($bf,full_tag("FEEDBACK",7,false,$grade->feedback));
+                fwrite ($bf,full_tag("FEEDBACKFORMAT",7,false,$grade->feedbackformat));
+                fwrite ($bf,full_tag("INFORMATION",7,false,$grade->information));
+                fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$grade->informationformat));
                 fwrite ($bf,end_tag("GRADE",6,true));
             }
             $status = fwrite ($bf,end_tag("GRADE_GRADES",5,true));
-        }
-        return $status;
-    }
-
-    function backup_gradebook_grades_text_info($bf, $preferences, $itemid) {
-
-        global $CFG;
-
-        $status = true;
-
-        // find all grade texts belonging to this item
-        if ($grades = get_records('grade_grades', 'itemid', $itemid)) {
-            fwrite ($bf,start_tag("GRADE_GRADES_TEXT",5,true));
-            foreach ($grades as $grade) {
-                if ($texts = get_records('grade_grades_text', 'gradeid', $grade->id)) {
-                    foreach ($texts as $text) {
-                        fwrite ($bf,start_tag("GRADE_TEXT",6,true));
-                        fwrite ($bf,full_tag("ID",7,false,$text->id));
-                        fwrite ($bf,full_tag("GRADEID",7,false,$text->gradeid));
-                        fwrite ($bf,full_tag("INFORMATION",7,false,$text->information));
-                        fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$text->informationformat));
-                        fwrite ($bf,full_tag("FEEDBACK",7,false,$text->feedback));
-                        fwrite ($bf,full_tag("FEEDBACKFORMAT",7,false,$text->feedbackformat));
-                        fwrite ($bf,end_tag("GRADE_TEXT",6,true));
-                    }
-                }
-            }
-            $status = fwrite ($bf,end_tag("GRADE_GRADES_TEXT",5,true));
         }
         return $status;
     }
@@ -1724,44 +1698,13 @@
                 fwrite ($bf,full_tag("EXPORTED",7,false,$ch->exported));
                 fwrite ($bf,full_tag("OVERRIDDEN",7,false,$ch->overridden));
                 fwrite ($bf,full_tag("EXCLUDED",7,false,$ch->excluded));
+                fwrite ($bf,full_tag("FEEDBACK",7,false,$ch->feedback));
+                fwrite ($bf,full_tag("FEEDBACKFORMAT",7,false,$ch->feedbackformat));
+                fwrite ($bf,full_tag("INFORMATION",7,false,$ch->information));
+                fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$ch->informationformat));
                 fwrite ($bf,end_tag("GRADE_GRADES_HISTORY",6,true));
             }
             $status = fwrite ($bf,end_tag("GRADE_GRADES_HISTORIES",5,true));
-        }
-        return $status;
-    }
-
-    function backup_gradebook_grades_text_history_info($bf, $preferences) {
-
-        global $CFG;
-        $status = true;
-
-        // find all grade categories history
-        if ($chs = get_records_sql("SELECT ggth.* FROM {$CFG->prefix}grade_grades_text_history ggth,
-                                                  {$CFG->prefix}grade_grades gg,
-                                                  {$CFG->prefix}grade_items gi
-                                             WHERE gi.courseid = $preferences->backup_course
-                                             AND ggth.gradeid = gg.id
-                                             AND gg.itemid = gi.id")) {
-
-            fwrite ($bf,start_tag("GRADE_TEXT_HISTORIES",5,true));
-            foreach ($chs as $ch) {
-                fwrite ($bf,start_tag("GRADE_TEXT_HISTORY",6,true));
-                fwrite ($bf,full_tag("ID",7,false,$ch->id));
-                fwrite ($bf,full_tag("OLDID",7,false,$ch->oldid));
-                fwrite ($bf,full_tag("ACTION",7,false,$ch->action));
-                fwrite ($bf,full_tag("SOURCE",7,false,$ch->source));
-                fwrite ($bf,full_tag("TIMEMODIFIED",7,false,$ch->timemodified));
-                fwrite ($bf,full_tag("LOGGEDUSER",7,false,$ch->loggeduser));
-                fwrite ($bf,full_tag("GRADEID",7,false,$ch->gradeid));
-                fwrite ($bf,full_tag("INFORMATION",7,false,$ch->information));
-                fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$ch->informationformat));
-                fwrite ($bf,full_tag("FEEDBACK",7,false,$ch->feedback));
-                fwrite ($bf,full_tag("FEEDBACKFORMAT",7,false,$ch->feedbackformat));
-                fwrite ($bf,full_tag("USERMODIFIED",7,false,$ch->usermodified));
-                fwrite ($bf,end_tag("GRADE_TEXT_HISTORY",6,true));
-            }
-            $status = fwrite ($bf,end_tag("GRADE_TEXT_HISTORIES",5,true));
         }
         return $status;
     }

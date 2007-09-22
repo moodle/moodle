@@ -312,10 +312,9 @@ class grade_report_grader extends grade_report {
         global $CFG;
 
         // please note that we must fetch all grade_grades fields if we want to contruct grade_grade object from it!
-        $sql = "SELECT g.*, gt.feedback, gt.feedbackformat, gi.grademin, gi.grademax
+        $sql = "SELECT g.*, gi.grademin, gi.grademax
                   FROM {$CFG->prefix}grade_items gi,
                        {$CFG->prefix}grade_grades g
-                       LEFT JOIN {$CFG->prefix}grade_grades_text gt ON g.id = gt.gradeid
                  WHERE g.itemid = gi.id AND gi.courseid = $this->courseid $this->userselect";
 
         if ($grades = get_records_sql($sql)) {

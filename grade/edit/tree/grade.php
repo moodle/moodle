@@ -70,19 +70,17 @@ if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and !has_capability('
 $mform = new edit_grade_form(null, array('grade_item'=>$grade_item, 'gpr'=>$gpr));
 
 if ($grade = get_record('grade_grades', 'itemid', $grade_item->id, 'userid', $userid)) {
-    if ($grade_text = get_record('grade_grades_text', 'gradeid', $grade->id)) {
-        // always clean existing feedback - grading should not have XSS risk
-        if (can_use_html_editor()) {
-            $options = new object();
-            $options->smiley  = false;
-            $options->filter  = false;
-            $options->noclean = false;
-            $grade->feedback       = format_text($grade_text->feedback, $grade_text->feedbackformat, $options);
-            $grade->feedbackformat = FORMAT_HTML;
-        } else {
-            $grade->feedback       = clean_text($grade_text->feedback, $grade_text->feedbackformat);
-            $grade->feedbackformat = $grade_text->feedbackformat;
-        }
+
+    // always clean existing feedback - grading should not have XSS risk
+    if (can_use_html_editor()) {
+        $options = new object();
+        $options->smiley  = false;
+        $options->filter  = false;
+        $options->noclean = false;
+        $grade->feedback       = format_text($grade->feedback, $grade->feedbackformat, $options);
+        $grade->feedbackformat = FORMAT_HTML;
+    } else {
+        $grade->feedback       = clean_text($grade->feedback, $grade->feedbackformat);
     }
 
     $grade->locked      = $grade->locked     > 0 ? 1:0;
@@ -130,7 +128,6 @@ if ($mform->is_cancelled()) {
 // form processing
 } else if ($data = $mform->get_data(false)) {
     $old_grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true); //might not exist yet
-    $old_grade_text = new grade_grade_text(array('gradeid' => $old_grade_grade->id), true);
 
     // fix no grade for scales
     if (!isset($data->finalgrade) or $data->finalgrade == $data->oldgrade) {
@@ -144,8 +141,8 @@ if ($mform->is_cancelled()) {
     }
 
     if (!isset($data->feedback)) {
-        $data->feedback       = $old_grade_text->feedback;
-        $data->feedbackformat = $old_grade_text->feedbackformat;
+        $data->feedback       = $old_grade_grade->feedback;
+        $data->feedbackformat = $old_grade_grade->feedbackformat;
     }
     // update final grade or feedback
     $grade_item->update_final_grade($data->userid, $data->finalgrade, NULL, 'editgrade', $data->feedback, $data->feedbackformat);

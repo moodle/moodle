@@ -115,7 +115,6 @@ class grade_report_user extends grade_report {
                 $data = array();
 
                 $grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$this->user->id));
-                $grade_text = $grade_grade->load_text();
 
                 // TODO: indicate items that "needsupdate" - missing final calculation
 
@@ -215,8 +214,8 @@ class grade_report_user extends grade_report {
                 }
 
                 /// prints notes
-                if (!empty($grade_text->feedback)) {
-                    $data[] = $grade_text->feedback;
+                if (!empty($grade_grade->feedback)) {
+                    $data[] = format_text($grade_grade->feedback, $grade_grade->feedbackformat);
                 } else {
                     $data[] = '&nbsp;';
                 }

@@ -29,16 +29,17 @@
  */
 class grade_object {
     /**
-     * Array of class variables that are not part of the DB table fields
-     * @var array $nonfields
-     */
-    var $nonfields = array('nonfields', 'required_fields');
-
-    /**
-     * Array of required fields (keys) and their default values (values).
+     * Array of required table fields, must start with 'id'.
      * @var array $required_fields
      */
-    var $required_fields = array();
+    var $required_fields = array('id', 'timecreated', 'timemodified');
+
+    /**
+     * Array of optional fields with default values - usually long text information that is not always needed.
+     * If you want to create an instance without optional fields use: new grade_object($only_required_fields, false);
+     * @var array $optional_fields
+     */
+    var $optional_fields = array();
 
     /**
      * The PK.
@@ -47,13 +48,13 @@ class grade_object {
     var $id;
 
     /**
-     * The first time this grade_calculation was created.
+     * The first time this grade_object was created.
      * @var int $timecreated
      */
     var $timecreated;
 
     /**
-     * The last time this grade_calculation was modified.
+     * The last time this grade_object was modified.
      * @var int $timemodified
      */
     var $timemodified;
@@ -63,13 +64,31 @@ class grade_object {
      * @param array $params an array with required parameters for this grade object.
      * @param boolean $fetch Whether to fetch corresponding row from DB or not.
      */
-    function grade_object($params=NULL, $fetch = true) {
+    function grade_object($params=NULL, $fetch=true) {
         if (!empty($params) and (is_array($params) or is_object($params))) {
             if ($fetch and $data = $this->fetch($params)) {
                 grade_object::set_properties($this, $data);
 
             } else {
                 grade_object::set_properties($this, $params);
+            }
+        }
+    }
+
+    /**
+     * Makes sure all the optional fields are loaded.
+     * If id present (==instance exists in db) fetches data from db.
+     * Defaults are used for new instances.
+     */
+    function load_optional_fields() {
+        foreach ($this->optional_fields as $field=>$default) {
+            if (array_key_exists($field, $this)) {
+                continue;
+            }
+            if (empty($this->id)) {
+                $this->$field = $default;
+            } else {
+                $this->$field = get_field($this->table, $field, 'id', $this->id);
             }
         }
     }
@@ -130,10 +149,9 @@ class grade_object {
 
         $wheresql = array();
 
-        // remove incorrect params - warn developer if needed
+        // remove incorrect params
         foreach ($params as $var=>$value) {
-            if (!in_array($var, array_keys($classvars)) or in_array($var, $instance->nonfields)) {
-                debugging("Incorrect property name $var for class $classname");
+            if (!in_array($var, $instance->required_fields) and !array_key_exists($var, $instance->optional_fields)) {
                 continue;
             }
             if (is_null($value)) {
@@ -177,7 +195,7 @@ class grade_object {
         // we need to do this to prevent infinite loops in addslashes_recursive - grade_item -> category ->grade_item
         $data = new object();
         foreach ($this as $var=>$value) {
-            if (!in_array($var, $this->nonfields)) {
+            if (in_array($var, $this->required_fields) or array_key_exists($var, $this->optional_fields)) {
                 if (is_object($value) or is_array($value)) {
                     debugging("Incorrect property '$var' found when updating grade object");
                 } else {
@@ -186,7 +204,7 @@ class grade_object {
             }
         }
 
-        if(!update_record($this->table, addslashes_recursive($data))) {
+        if (!update_record($this->table, addslashes_recursive($data))) {
             return false;
         }
 
@@ -253,7 +271,7 @@ class grade_object {
         // we need to do this to prevent infinite loops in addslashes_recursive - grade_item -> category ->grade_item
         $data = new object();
         foreach ($this as $var=>$value) {
-            if (!in_array($var, $this->nonfields)) {
+            if (in_array($var, $this->required_fields) or array_key_exists($var, $this->optional_fields)) {
                 if (is_object($value) or is_array($value)) {
                     debugging("Incorrect property '$var' found when inserting grade object");
                 } else {
@@ -310,9 +328,8 @@ class grade_object {
      * @static final
      */
     function set_properties(&$instance, $params) {
-        $classvars = (array)$instance;
         foreach ($params as $var => $value) {
-            if (in_array($var, array_keys($classvars))) {
+            if (in_array($var, $instance->required_fields) or array_key_exists($var, $instance->optional_fields)) {
                 $instance->$var = $value;
             }
         }

@@ -98,23 +98,6 @@ class grade_grade_test extends grade_test {
         $this->assertEqual(count($this->grade_grades), count($grades));
     }
 
-    function test_grade_raw_update_feedback() {
-
-    }
-
-    function test_grade_raw_update_information() {
-
-    }
-
-    function test_grade_load_text() {
-        $grade_grade = new grade_grade($this->grade_grades[0]);
-        $this->assertTrue(method_exists($grade_grade, 'load_text'));
-        $this->assertNull($grade_grade->grade_grade_text);
-        $this->assertNotNull($grade_grade->load_text());
-        $this->assertNotNull($grade_grade->grade_grade_text);
-        $this->assertEqual($this->grade_grades_text[0]->id, $grade_grade->grade_grade_text->id);
-    }
-
     function test_grade_grade_load_grade_item() {
         $grade_grade = new grade_grade($this->grade_grades[0]);
         $this->assertTrue(method_exists($grade_grade, 'load_grade_item'));

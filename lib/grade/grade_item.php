@@ -37,10 +37,14 @@ class grade_item extends grade_object {
     var $table = 'grade_items';
 
     /**
-     * Array of class variables that are not part of the DB table fields
-     * @var array $nonfields
+     * Array of required table fields, must start with 'id'.
+     * @var array $required_fields
      */
-    var $nonfields = array('table', 'nonfields', 'required_fields', 'formula', 'calculation_normalized', 'scale', 'item_category', 'parent_category', 'outcome');
+    var $required_fields = array('id', 'courseid', 'categoryid', 'itemname', 'itemtype', 'itemmodule', 'iteminstance',
+                                 'itemnumber', 'iteminfo', 'idnumber', 'calculation', 'gradetype', 'grademax', 'grademin',
+                                 'scaleid', 'outcomeid', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef',
+                                 'sortorder', 'display', 'hidden', 'locked', 'locktime', 'needsupdate', 'timecreated',
+                                 'timemodified');
 
     /**
      * The course this grade_item belongs to.
@@ -615,10 +619,12 @@ class grade_item extends grade_object {
 
         // normal grade item - just new final grades
         $result = true;
+        $grade_inst = new grade_grade();
+        $fields = implode(',', $grade_inst->required_fields);
         if ($userid) {
-            $rs = get_recordset_select('grade_grades', "itemid={$this->id} AND userid=$userid");
+            $rs = get_recordset_select('grade_grades', "itemid={$this->id} AND userid=$userid", '', $fields);
         } else {
-            $rs = get_recordset('grade_grades', 'itemid', $this->id);
+            $rs = get_recordset('grade_grades', 'itemid', $this->id, '', $fields);
         }
         if ($rs) {
             if ($rs->RecordCount() > 0) {
@@ -1251,6 +1257,7 @@ class grade_item extends grade_object {
      */
     function update_final_grade($userid, $finalgrade=false, $source=NULL, $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
         global $USER, $CFG;
+
         if (empty($usermodified)) {
             $usermodified = $USER->id;
         }
@@ -1280,8 +1287,10 @@ class grade_item extends grade_object {
         }
 
         $oldgrade = new object();
-        $oldgrade->finalgrade  = $grade->finalgrade;
-        $oldgrade->overridden  = $grade->overridden;
+        $oldgrade->finalgrade     = $grade->finalgrade;
+        $oldgrade->overridden     = $grade->overridden;
+        $oldgrade->feedback       = $grade->feedback;
+        $oldgrade->feedbackformat = $grade->feedbackformat;
 
         if ($finalgrade !== false or $feedback !== false) {
             if (($this->is_outcome_item() or $this->is_manual_item()) and !$this->is_calculated()) {
@@ -1304,16 +1313,20 @@ class grade_item extends grade_object {
             $grade->finalgrade = $finalgrade;
         }
 
+        // do we have comment from teacher?
+        if ($feedback !== false) {
+            $grade->feedback       = $feedback;
+            $grade->feedbackformat = $feedbackformat;
+        }
+
         if (empty($grade->id)) {
             $result = (boolean)$grade->insert($source);
 
-        } else if ($grade->finalgrade !== $oldgrade->finalgrade or $grade->overridden !== $oldgrade->overridden) {
+        } else if ($grade->finalgrade     !== $oldgrade->finalgrade
+                or $grade->overridden     !== $oldgrade->overridden
+                or $grade->feedback       !== $oldgrade->feedback
+                or $grade->feedbackformat !== $oldgrade->feedbackformat) {
             $result = $grade->update($source);
-        }
-
-        // do we have comment from teacher?
-        if ($result and $feedback !== false) {
-            $result = $grade->update_feedback($feedback, $feedbackformat, $usermodified);
         }
 
         if (!$result) {
@@ -1360,6 +1373,8 @@ class grade_item extends grade_object {
             $usermodified = $USER->id;
         }
 
+        $result = true;
+
         // calculated grades can not be updated; course and category can not be updated  because they are aggregated
         if ($this->is_calculated() or $this->is_outcome_item() or !$this->is_normal_item()
          or $this->gradetype == GRADE_TYPE_NONE or $this->is_locked()) {
@@ -1384,42 +1399,49 @@ class grade_item extends grade_object {
         }
 
         $oldgrade = new object();
-        $oldgrade->finalgrade  = $grade->finalgrade;
-        $oldgrade->rawgrade    = $grade->rawgrade;
-        $oldgrade->rawgrademin = $grade->rawgrademin;
-        $oldgrade->rawgrademax = $grade->rawgrademax;
-        $oldgrade->rawscaleid  = $grade->rawscaleid;
+        $oldgrade->finalgrade     = $grade->finalgrade;
+        $oldgrade->rawgrade       = $grade->rawgrade;
+        $oldgrade->rawgrademin    = $grade->rawgrademin;
+        $oldgrade->rawgrademax    = $grade->rawgrademax;
+        $oldgrade->rawscaleid     = $grade->rawscaleid;
+        $oldgrade->feedback       = $grade->feedback;
+        $oldgrade->feedbackformat = $grade->feedbackformat;
 
         // fist copy current grademin/max and scale
         $grade->rawgrademin = $this->grademin;
         $grade->rawgrademax = $this->grademax;
         $grade->rawscaleid  = $this->scaleid;
 
+        // change raw grade?
         if ($rawgrade !== false) {
             $grade->rawgrade = $rawgrade;
+        }
+
+        // do we have comment from teacher?
+        if ($feedback !== false) {
+            $grade->feedback       = $feedback;
+            $grade->feedbackformat = $feedbackformat;
         }
 
         if (empty($grade->id)) {
             $result = (boolean)$grade->insert($source);
 
-        } else if ($grade->finalgrade  !== $oldgrade->finalgrade
-                or $grade->rawgrade    !== $oldgrade->rawgrade
-                or $grade->rawgrademin !== $oldgrade->rawgrademin
-                or $grade->rawgrademax !== $oldgrade->rawgrademax
-                or $grade->rawscaleid  !== $oldgrade->rawscaleid) {
+        } else if ($grade->finalgrade     !== $oldgrade->finalgrade
+                or $grade->rawgrade       !== $oldgrade->rawgrade
+                or $grade->rawgrademin    !== $oldgrade->rawgrademin
+                or $grade->rawgrademax    !== $oldgrade->rawgrademax
+                or $grade->rawscaleid     !== $oldgrade->rawscaleid
+                or $grade->feedback       !== $oldgrade->feedback
+                or $grade->feedbackformat !== $oldgrade->feedbackformat) {
 
             $result = $grade->update($source);
-
-        } else {
-            $result = true;
         }
 
-        // do we have comment from teacher?
-        if ($result and $feedback !== false) {
-            $result = $grade->update_feedback($feedback, $feedbackformat, $usermodified);
-        }
+        if (!$result) {
+            // something went wrong - better force final grade recalculation
+            $this->force_regrading();
 
-        if (!$this->needsupdate) {
+        } else if (!$this->needsupdate) {
             $course_item = grade_item::fetch_course_item($this->courseid);
             if (!$course_item->needsupdate) {
                 if (!grade_regrade_final_grades($this->courseid, $userid, $this)) {
@@ -1468,7 +1490,10 @@ class grade_item extends grade_object {
             $usersql = "";
         }
 
-        $sql = "SELECT g.*
+        $grade_inst = new grade_grade();
+        $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
+
+        $sql = "SELECT $fields
                   FROM {$CFG->prefix}grade_grades g, {$CFG->prefix}grade_items gi
                  WHERE gi.id = g.itemid AND gi.courseid={$this->courseid} AND gi.id IN ($gis) $usersql
               ORDER BY g.userid";
@@ -1590,26 +1615,35 @@ class grade_item extends grade_object {
      * @param string $formula
      * @return boolean true if calculation possible, false otherwise
      */
-    function validate_formula($formula) {
+    function validate_formula($formulastr) {
         global $CFG;
         require_once($CFG->libdir.'/mathslib.php');
 
-        $formula = grade_item::normalize_formula($formula, $this->courseid);
+        $formulastr = grade_item::normalize_formula($formulastr, $this->courseid);
 
-        if (empty($formula)) {
+        if (empty($formulastr)) {
             return true;
         }
 
-        if (strpos($formula, '=') !== 0) {
+        if (strpos($formulastr, '=') !== 0) {
             return get_string('errorcalculationnoequal', 'grades');
         }
 
+        // get used items
+        if (preg_match_all('/##gi(\d+)##/', $formulastr, $matches)) {
+            $useditems = array_unique($matches[1]); // remove duplicates
+        } else {
+            $useditems = array();
+        }
+
+        if (!empty($this->id)) {
+            unset($useditems[$this->id]);
+        }
+
         // prepare formula and init maths library
-        $formula = preg_replace('/##(gi\d+)##/', '\1', $formula);
+        $formula = preg_replace('/##(gi\d+)##/', '\1', $formulastr);
         $formula = new calc_formula($formula);
 
-        // get used items
-        $useditems = $this->depends_on();
 
         if (empty($useditems)) {
             $grade_items = array();

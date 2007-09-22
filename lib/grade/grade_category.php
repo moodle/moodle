@@ -33,10 +33,12 @@ class grade_category extends grade_object {
     var $table = 'grade_categories';
 
     /**
-     * Array of class variables that are not part of the DB table fields
-     * @var array $nonfields
+     * Array of required table fields, must start with 'id'.
+     * @var array $required_fields
      */
-    var $nonfields = array('table', 'required_fields', 'nonfields', 'children', 'all_children', 'grade_item', 'parent_category', 'sortorder');
+    var $required_fields = array('id', 'courseid', 'parent', 'depth', 'path', 'fullname', 'aggregation',
+                                 'keephigh', 'droplow', 'aggregateonlygraded', 'aggregateoutcomes',
+                                 'aggregatesubcats', 'timecreated', 'timemodified');
 
     /**
      * The course this category belongs to.
@@ -390,9 +392,12 @@ class grade_category extends grade_object {
             $usersql = "";
         }
 
+        $grade_inst = new grade_grade();
+        $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
+
         // where to look for final grades - include grade of this item too, we will store the results there
         $gis = implode(',', array_merge($depends_on, array($this->grade_item->id)));
-        $sql = "SELECT g.*
+        $sql = "SELECT $fields
                   FROM {$CFG->prefix}grade_grades g, {$CFG->prefix}grade_items gi
                  WHERE gi.id = g.itemid AND gi.id IN ($gis) $usersql
               ORDER BY g.userid";

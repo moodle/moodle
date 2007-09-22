@@ -34,10 +34,18 @@ class grade_grade extends grade_object {
     var $table = 'grade_grades';
 
     /**
-     * Array of class variables that are not part of the DB table fields
-     * @var array $nonfields
+     * Array of required table fields, must start with 'id'.
+     * @var array $required_fields
      */
-    var $nonfields = array('table', 'nonfields', 'required_fields', 'grade_grade_text', 'grade_item');
+    var $required_fields = array('id', 'itemid', 'userid', 'rawgrade', 'rawgrademax', 'rawgrademin',
+                                 'rawscaleid', 'usermodified', 'finalgrade', 'hidden', 'locked',
+                                 'locktime', 'exported', 'overridden', 'excluded', 'timecreated', 'timemodified');
+
+    /**
+     * Array of optional fields with default values (these should match db defaults)
+     * @var array $optional_fields
+     */
+    var $optional_fields = array('feedback'=>null, 'feedbackformat'=>0, 'information'=>null, 'informationformat'=>0);
 
     /**
      * The id of the grade_item this grade belongs to.
@@ -88,14 +96,6 @@ class grade_grade extends grade_object {
     var $usermodified;
 
     /**
-     * Additional textual information about this grade. It can be automatically generated
-     * from the module or entered manually by the teacher. This is kept in its own table
-     * for efficiency reasons, so it is encapsulated in its own object, and included in this grade object.
-     * @var object $grade_grade_text
-     */
-    var $grade_grade_text;
-
-    /**
      * The final value of this grade.
      * @var float $finalgrade
      */
@@ -136,23 +136,6 @@ class grade_grade extends grade_object {
      * @var boolean $excluded
      */
     var $excluded = 0;
-
-    /**
-     * Loads the grade_grade_text object linked to this grade (through the intersection of itemid and userid), and
-     * saves it as a class variable for this final object.
-     * @return object
-     */
-    function load_text() {
-        if (empty($this->id)) {
-            return false; // text can not be attached to non existing grade
-        }
-
-        if (empty($this->grade_grade_text->id)) {
-            $this->grade_grade_text = grade_grade_text::fetch(array('gradeid'=>$this->id));
-        }
-
-        return $this->grade_grade_text;
-    }
 
     /**
      * Loads the grade_item object referenced by $this->itemid and saves it as $this->grade_item for easy access.
@@ -423,93 +406,6 @@ class grade_grade extends grade_object {
      */
     function fetch_all($params) {
         return grade_object::fetch_all_helper('grade_grades', 'grade_grade', $params);
-    }
-
-
-    /**
-     * Delete grade together with feedback.
-     * @param string $source from where was the object deleted (mod/forum, manual, etc.)
-     * @return boolean success
-     */
-    function delete($source=null) {
-        if ($text = $this->load_text()) {
-            $text->delete($source);
-        }
-        return parent::delete($source);
-    }
-
-    /**
-     * Updates this grade with the given textual information. This will create a new grade_grade_text entry
-     * if none was previously in DB for this raw grade, or will update the existing one.
-     * @param string $information Manual information from the teacher. Could be a code like 'mi'
-     * @param int $informationformat Text format for the information
-     * @return boolean Success or Failure
-     */
-    function update_information($information, $informationformat) {
-        $this->load_text();
-
-        if (empty($this->grade_grade_text->id)) {
-            $this->grade_grade_text = new grade_grade_text();
-
-            $this->grade_grade_text->gradeid           = $this->id;
-            $this->grade_grade_text->userid            = $this->userid;
-            $this->grade_grade_text->information       = $information;
-            $this->grade_grade_text->informationformat = $informationformat;
-
-            return $this->grade_grade_text->insert();
-
-        } else {
-            if ($this->grade_grade_text->information != $information
-              or $this->grade_grade_text->informationformat != $informationformat) {
-
-                $this->grade_grade_text->information       = $information;
-                $this->grade_grade_text->informationformat = $informationformat;
-                return  $this->grade_grade_text->update();
-            } else {
-                return true;
-            }
-        }
-    }
-
-    /**
-     * Updates this grade with the given textual information. This will create a new grade_grade_text entry
-     * if none was previously in DB for this raw grade, or will update the existing one.
-     * @param string $feedback Manual feedback from the teacher. Could be a code like 'mi'
-     * @param int $feedbackformat Text format for the feedback
-     * @return boolean Success or Failure
-     */
-    function update_feedback($feedback, $feedbackformat, $usermodified=null) {
-        global $USER;
-
-        $this->load_text();
-
-        if (empty($usermodified)) {
-            $usermodified = $USER->id;
-        }
-
-        if (empty($this->grade_grade_text->id)) {
-            $this->grade_grade_text = new grade_grade_text();
-
-            $this->grade_grade_text->gradeid        = $this->id;
-            $this->grade_grade_text->feedback       = $feedback;
-            $this->grade_grade_text->feedbackformat = $feedbackformat;
-            $this->grade_grade_text->usermodified   = $usermodified;
-
-            return $this->grade_grade_text->insert();
-
-        } else {
-            if ($this->grade_grade_text->feedback != $feedback
-              or $this->grade_grade_text->feedbackformat != $feedbackformat) {
-
-                $this->grade_grade_text->feedback       = $feedback;
-                $this->grade_grade_text->feedbackformat = $feedbackformat;
-                $this->grade_grade_text->usermodified   = $usermodified;
-
-                return  $this->grade_grade_text->update();
-            } else {
-                return true;
-            }
-        }
     }
 
     /**

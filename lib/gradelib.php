@@ -38,7 +38,6 @@ require_once($CFG->libdir . '/grade/grade_item.php');
 require_once($CFG->libdir . '/grade/grade_grade.php');
 require_once($CFG->libdir . '/grade/grade_scale.php');
 require_once($CFG->libdir . '/grade/grade_outcome.php');
-require_once($CFG->libdir . '/grade/grade_grade_text.php');
 
 /***** PUBLIC GRADE API - only these functions should be used in modules *****/
 
@@ -360,18 +359,12 @@ function grade_get_final_grades($courseid, $itemtype, $itemmodule, $iteminstance
                 //no user info
 
             } if ($grade = $item->get_grade($userid, false)) {
-                $o->grade      = $grade->finalgrade;
-                $o->locked     = $grade->is_locked();
-                $o->hidden     = $grade->is_hidden();
-                $o->overridden = $grade->overridden;
-
-                if ($text = $grade->load_text()) {
-                    $o->feedback       = $text->feedback;
-                    $o->feedbackformat = $text->feedbackformat;
-                } else {
-                    $o->feedback       = null;
-                    $o->feedbackformat = FORMAT_MOODLE;
-                }
+                $o->grade          = $grade->finalgrade;
+                $o->locked         = $grade->is_locked();
+                $o->hidden         = $grade->is_hidden();
+                $o->overridden     = $grade->overridden;
+                $o->feedback       = $text->feedback;
+                $o->feedbackformat = $text->feedbackformat;
 
             } else {
                 $o->grade          = null;

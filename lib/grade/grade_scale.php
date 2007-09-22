@@ -37,10 +37,10 @@ class grade_scale extends grade_object {
     var $table = 'scale';
 
     /**
-     * Array of class variables that are not part of the DB table fields
-     * @var array $nonfields
+     * Array of required table fields, must start with 'id'.
+     * @var array $required_fields
      */
-    var $nonfields = array('table', 'nonfields', 'required_fields', 'scale_items');
+    var $required_fields = array('id', 'courseid', 'userid', 'name', 'scale', 'description', 'timemodified');
 
     /**
      * The course this scale belongs to.

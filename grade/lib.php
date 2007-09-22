@@ -75,9 +75,8 @@ class graded_users_iterator {
             $itemids = array_keys($this->grade_items);
             $itemids = implode(',', $itemids);
 
-            $grades_sql = "SELECT g.*, gt.feedback, gt.feedbackformat
+            $grades_sql = "SELECT g.*
                              FROM {$CFG->prefix}grade_grades g
-                                  LEFT JOIN {$CFG->prefix}grade_grades_text gt ON gt.gradeid = g.id
                                   INNER JOIN {$CFG->prefix}user u ON g.userid = u.id
                                   INNER JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
                                   $groupsql

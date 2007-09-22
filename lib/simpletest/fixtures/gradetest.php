@@ -55,13 +55,11 @@ class grade_test extends UnitTestCase {
                         'scale',
                         'grade_items',
                         'grade_grades',
-                        'grade_grades_text',
                         'grade_outcomes');
 
     var $grade_items = array();
     var $grade_categories = array();
     var $grade_grades = array();
-    var $grade_grades_text = array();
     var $grade_outcomes = array();
     var $scale = array();
 
@@ -264,6 +262,10 @@ class grade_test extends UnitTestCase {
             $table->addFieldInfo('exported', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('overridden', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('excluded', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('feedback', XMLDB_TYPE_TEXT, 'medium', XMLDB_UNSIGNED, null, null, null, null, null);
+            $table->addFieldInfo('feedbackformat', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('information', XMLDB_TYPE_TEXT, 'medium', XMLDB_UNSIGNED, null, null, null, null, null);
+            $table->addFieldInfo('informationformat', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
             $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
 
@@ -274,34 +276,6 @@ class grade_test extends UnitTestCase {
             $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
 
             /// Launch create table for grade_grades
-            $result = $result && create_table($table, true, false);
-
-        } else {
-            delete_records($table->name);
-        }
-
-
-        /// Define table grade_grades_text to be created
-        $table = new XMLDBTable('grade_grades_text');
-
-        if ($result && !table_exists($table)) {
-
-        /// Adding fields to table grade_grades_text
-            $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-            $table->addFieldInfo('gradeid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-            $table->addFieldInfo('information', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
-            $table->addFieldInfo('informationformat', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
-            $table->addFieldInfo('feedback', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
-            $table->addFieldInfo('feedbackformat', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-            $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-            $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null);
-            $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null);
-
-        /// Adding keys to table grade_grades_text
-            $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-            $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
-
-        /// Launch create table for grade_grades_text
             $result = $result && create_table($table, true, false);
 
         } else {
@@ -534,6 +508,10 @@ class grade_test extends UnitTestCase {
             $table->addFieldInfo('exported', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('overridden', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('excluded', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('feedback', XMLDB_TYPE_TEXT, 'medium', XMLDB_UNSIGNED, null, null, null, null, null);
+            $table->addFieldInfo('feedbackformat', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('information', XMLDB_TYPE_TEXT, 'medium', XMLDB_UNSIGNED, null, null, null, null, null);
+            $table->addFieldInfo('informationformat', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
 
         /// Adding keys to table grade_grades_history
             $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -548,43 +526,6 @@ class grade_test extends UnitTestCase {
             $table->addIndexInfo('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
 
         /// Launch create table for grade_grades_history
-            $result = $result && create_table($table, true, false);
-
-        } else {
-            delete_records($table->name);
-        }
-
-
-        /// Define table grade_grades_text to be created
-        $table = new XMLDBTable('grade_grades_text_history');
-
-        if ($result && !table_exists($table)) {
-
-        /// Adding fields to table grade_grades_text_history
-            $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-            $table->addFieldInfo('action', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
-            $table->addFieldInfo('oldid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
-            $table->addFieldInfo('source', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
-            $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-            $table->addFieldInfo('loggeduser', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-            $table->addFieldInfo('gradeid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-            $table->addFieldInfo('information', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
-            $table->addFieldInfo('informationformat', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
-            $table->addFieldInfo('feedback', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
-            $table->addFieldInfo('feedbackformat', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-            $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-
-        /// Adding keys to table grade_grades_text_history
-            $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-            $table->addKeyInfo('oldid', XMLDB_KEY_FOREIGN, array('oldid'), 'grade_grades_text', array('id'));
-            $table->addKeyInfo('gradeid', XMLDB_KEY_FOREIGN, array('gradeid'), 'grade_grades', array('id'));
-            $table->addKeyInfo('loggeduser', XMLDB_KEY_FOREIGN, array('loggeduser'), 'user', array('id'));
-            $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
-
-        /// Adding indexes to table grade_grades_text_history
-            $table->addIndexInfo('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
-
-        /// Launch create table for grade_grades_text_history
             $result = $result && create_table($table, true, false);
 
         } else {
@@ -1205,6 +1146,10 @@ class grade_test extends UnitTestCase {
         $grade->finalgrade = 30;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = 'Thumbs down';
+        $grade->informationformat = FORMAT_PLAIN;
+        $grade->feedback = 'Good, but not good enough..';
+        $grade->feedbackformat = FORMAT_PLAIN;
 
         if ($grade->id = insert_record('grade_grades', $grade)) {
             $this->grade_grades[0] = $grade;
@@ -1412,23 +1357,6 @@ class grade_test extends UnitTestCase {
 
         if ($grade->id = insert_record('grade_grades', $grade)) {
             $this->grade_grades[] = $grade;
-        }
-    }
-
-    /**
-     * Load grade_grades_text data into the database, and adds the corresponding objects to this class' variable.
-     */
-    function load_grade_grades_text() {
-        $grade_grades_text = new stdClass();
-
-        $grade_grades_text->gradeid = $this->grade_grades[0]->id;
-        $grade_grades_text->information = 'Thumbs down';
-        $grade_grades_text->informationformat = FORMAT_PLAIN;
-        $grade_grades_text->feedback = 'Good, but not good enough..';
-        $grade_grades_text->feedbackformat = FORMAT_PLAIN;
-
-        if ($grade_grades_text->id = insert_record('grade_grades_text', $grade_grades_text)) {
-            $this->grade_grades_text[] = $grade_grades_text;
         }
     }
 
