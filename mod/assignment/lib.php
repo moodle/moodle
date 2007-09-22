@@ -33,7 +33,6 @@ class assignment_base {
     var $usehtmleditor;
     var $defaultformat;
     var $context;
-    var $lockedgrades;
 
     /**
      * Constructor for the base assignment class
@@ -78,9 +77,6 @@ class assignment_base {
 
         $this->assignment->cmidnumber = $this->cm->id;     // compatibility with modedit assignment obj
         $this->assignment->courseid   = $this->course->id; // compatibility with modedit assignment obj
-
-        require_once($CFG->libdir.'/gradelib.php');
-        $this->lockedgrades = grade_is_locked($this->course->id, 'mod', 'assignment', $this->assignment->id, 0);
 
         $this->strassignment = get_string('modulename', 'assignment');
         $this->strassignments = get_string('modulenameplural', 'assignment');
@@ -497,11 +493,6 @@ class assignment_base {
         //make user global so we can use the id
         global $USER;
 
-        // no grading when grades are locked
-        if ($this->lockedgrades) {
-            $mode = 'all';
-        }
-
         switch ($mode) {
             case 'grade':                         // We are in a popup window grading
                 if ($submission = $this->process_feedback()) {
@@ -694,20 +685,22 @@ class assignment_base {
         }
 
         if (!empty($CFG->enableoutcomes) and empty($SESSION->flextable['mod-assignment-submissions']->collapse['outcomes'])) {
-            if ($outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $submission->userid)) {
-                foreach($outcomes_data as $n=>$data) {
+            $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $submission->userid);
+
+            if (!empty($grading_info->outcomes)) {
+                foreach($grading_info->outcomes as $n=>$outcome) {
                     if ($data->locked) {
                         continue;
                     }
 
                     if ($quickgrade){
                         $output.= 'opener.document.getElementById("outcome_'.$n.'_'.$submission->userid.
-                        '").selectedIndex="'.$data->grade.'";'."\n";
-                    } else {
-                        $options = make_grades_menu(-$data->scaleid);
-                        $options[0] = get_string('nooutcome', 'grades');
-                        $output.= 'opener.document.getElementById("outcome_'.$n.'_'.$submission->userid.'").innerHTML="'.$options[$data->grade]."\";\n";
+                        '").selectedIndex="'.$outcome->grades[$submission->userid]->grade.'";'."\n";
 
+                    } else {
+                        $options = make_grades_menu(-$outcome->scaleid);
+                        $options[0] = get_string('nooutcome', 'grades');
+                        $output.= 'opener.document.getElementById("outcome_'.$n.'_'.$submission->userid.'").innerHTML="'.$options[$outcome->grades[$submission->userid]->grade]."\";\n";
                     }
 
                 }
@@ -876,15 +869,16 @@ class assignment_base {
 
         echo '<div class="clearer"></div>';
 
-        if (!empty($CFG->enableoutcomes) and $outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid)) {
-            foreach($outcomes_data as $n=>$data) {
-                echo '<div class="outcome"><label for="menuoutcome_'.$n.'">'.$data->name.'</label> ';
-                $options = make_grades_menu(-$data->scaleid);
-                if ($data->locked) {
+        if (!empty($CFG->enableoutcomes)) {
+            $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $submission->userid);
+            foreach($grading_info->outcomes as $n=>$outcome) {
+                echo '<div class="outcome"><label for="menuoutcome_'.$n.'">'.$outcome->name.'</label> ';
+                $options = make_grades_menu(-$outcome->scaleid);
+                if ($outcome->grades[$submission->userid]->locked) {
                     $options[0] = get_string('nooutcome', 'grades');
-                    echo $options[$data->grade];
+                    echo $options[$outcome->grades[$submission->userid]->grade];
                 } else {
-                    choose_from_menu($options, 'outcome_'.$n.'['.$userid.']', $data->grade, get_string('nooutcome', 'grades'), '', 0, false, false, 0, 'menuoutcome_'.$n);
+                    choose_from_menu($options, 'outcome_'.$n.'['.$userid.']', $outcome->grades[$submission->userid]->grade, get_string('nooutcome', 'grades'), '', 0, false, false, 0, 'menuoutcome_'.$n);
                 }
                 echo '</div>';
                 echo '<div class="clearer"></div>';
@@ -985,13 +979,11 @@ class assignment_base {
          */
         $perpage    = get_user_preferences('assignment_perpage', 10);
 
-        if ($this->lockedgrades) {
-            $quickgrade = 0;
-        } else {
-            $quickgrade = get_user_preferences('assignment_quickgrade', 0);
-        }
+        $quickgrade = get_user_preferences('assignment_quickgrade', 0);
 
-        if (!empty($CFG->enableoutcomes) and grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id)) {
+        $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id);
+
+        if (!empty($CFG->enableoutcomes) and !empty($grading_info->outcomes)) {
             $uses_outcomes = true;
         } else {
             $uses_outcomes = false;
@@ -1139,7 +1131,7 @@ class assignment_base {
         $grademenu = make_grades_menu($this->assignment->grade);
 
         if (($ausers = get_records_sql($select.$sql.$sort, $table->get_page_start(), $table->get_page_size())) !== false) {
-
+            $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, array_keys($ausers));
             foreach ($ausers as $auser) {
             /// Calculate user status
                 $auser->status = ($auser->timemarked > 0) && ($auser->timemarked >= $auser->timemodified);
@@ -1222,33 +1214,29 @@ class assignment_base {
 
                 $buttontext = ($auser->status == 1) ? $strupdate : $strgrade;
 
-                if ($this->lockedgrades) {
-                    $status = get_string('gradeitemlocked', 'grades');
-                } else {
-                    ///No more buttons, we use popups ;-).
-                    $popup_url = '/mod/assignment/submissions.php?id='.$this->cm->id
-                               . '&amp;userid='.$auser->id.'&amp;mode=single'.'&amp;offset='.$offset++;
-                    $button = link_to_popup_window ($popup_url, 'grade'.$auser->id, $buttontext, 600, 780,
-                                                    $buttontext, 'none', true, 'button'.$auser->id);
+                ///No more buttons, we use popups ;-).
+                $popup_url = '/mod/assignment/submissions.php?id='.$this->cm->id
+                           . '&amp;userid='.$auser->id.'&amp;mode=single'.'&amp;offset='.$offset++;
+                $button = link_to_popup_window ($popup_url, 'grade'.$auser->id, $buttontext, 600, 780,
+                                                $buttontext, 'none', true, 'button'.$auser->id);
 
-                    $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
-                }
+                $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
 
                 $outcomes = '';
 
-                if ($uses_outcomes and $outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $auser->id)) {
+                if ($uses_outcomes) {
 
-                    foreach($outcomes_data as $n=>$data) {
-                        $outcomes .= '<div class="outcome"><label>'.$data->name.'</label>';
-                        $options = make_grades_menu(-$data->scaleid);
+                    foreach($grading_info->outcomes as $n=>$outcome) {
+                        $outcomes .= '<div class="outcome"><label>'.$outcome->name.'</label>';
+                        $options = make_grades_menu(-$outcome->scaleid);
 
-                        if ($data->locked or !$quickgrade) {
+                        if ($outcome->grades[$auser->id]->locked or !$quickgrade) {
                             $options[0] = get_string('nooutcome', 'grades');
-                            $outcomes .= ': <span id="outcome_'.$n.'_'.$auser->id.'">'.$options[$data->grade].'</span>';
+                            $outcomes .= ': <span id="outcome_'.$n.'_'.$auser->id.'">'.$options[$outcome->grades[$auser->id]->grade].'</span>';
                         } else {
                             $outcomes .= ' ';
                             $outcomes .= choose_from_menu($options, 'outcome_'.$n.'['.$auser->id.']',
-                                        $data->grade, get_string('nooutcome', 'grades'), '', 0, true, false, 0, 'outcome_'.$n.'_'.$auser->id);
+                                        $outcome->grades[$auser->id]->grade, get_string('nooutcome', 'grades'), '', 0, true, false, 0, 'outcome_'.$n.'_'.$auser->id);
                         }
                         $outcomes .= '</div>';
                     }
@@ -1296,20 +1284,18 @@ class assignment_base {
         echo '<input type="text" id="perpage" name="perpage" size="1" value="'.$perpage.'" />';
         helpbutton('pagesize', get_string('pagesize','assignment'), 'assignment');
         echo '</td></tr>';
-        if (!$this->lockedgrades) {
-            echo '<tr align="right">';
-            echo '<td>';
-            print_string('quickgrade','assignment');
-            echo ':</td>';
-            echo '<td align="left">';
-            if ($quickgrade){
-                echo '<input type="checkbox" name="quickgrade" value="1" checked="checked" />';
-            } else {
-                echo '<input type="checkbox" name="quickgrade" value="1" />';
-            }
-            helpbutton('quickgrade', get_string('quickgrade', 'assignment'), 'assignment').'</p></div>';
-            echo '</td></tr>';
+        echo '<tr align="right">';
+        echo '<td>';
+        print_string('quickgrade','assignment');
+        echo ':</td>';
+        echo '<td align="left">';
+        if ($quickgrade){
+            echo '<input type="checkbox" name="quickgrade" value="1" checked="checked" />';
+        } else {
+            echo '<input type="checkbox" name="quickgrade" value="1" />';
         }
+        helpbutton('quickgrade', get_string('quickgrade', 'assignment'), 'assignment').'</p></div>';
+        echo '</td></tr>';
         echo '<tr>';
         echo '<td colspan="2" align="right">';
         echo '<input type="submit" value="'.get_string('savepreferences').'" />';
@@ -1393,10 +1379,12 @@ class assignment_base {
         }
 
         $data = array();
-        if ($outcomes = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid)) {
-            foreach($outcomes as $n=>$old) {
+        $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid);
+
+        if (!empty($grading_info->outcomes)) {
+            foreach($grading_info->outcomes as $n=>$old) {
                 $name = 'outcome_'.$n;
-                if (isset($formdata->{$name}[$userid]) and $old->grade != $formdata->{$name}[$userid]) {
+                if (isset($formdata->{$name}[$userid]) and $old->grades[$userid]->grade != $formdata->{$name}[$userid]) {
                     $data[$n] = $formdata->{$name}[$userid];
                 }
             }

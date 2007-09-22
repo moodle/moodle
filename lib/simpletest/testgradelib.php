@@ -38,11 +38,8 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
 
 class gradelib_test extends grade_test {
-    function test_grade_is_locked() {
-        $grade_item = $this->grade_items[0];
-        $this->assertFalse(grade_is_locked($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
-        $grade_item = $this->grade_items[6];
-        $this->assertTrue(grade_is_locked($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
+    function test_grade_get_grades() {
+        //TODO
     }
 }
 

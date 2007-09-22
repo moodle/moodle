@@ -137,6 +137,48 @@ class grade_grade extends grade_object {
      */
     var $excluded = 0;
 
+
+    /**
+     * Returns array of grades for given grade_item+users.
+     * @param object $grade_item
+     * @param array $userids
+     * @param bool $include_missing include grades taht do not exist yet
+     * @return array userid=>grade_grade array
+     */
+    function fetch_users_grades($grade_item, $userids, $include_missing=true) {
+
+        // hmm, there might be a problem with length of sql query
+        // if there are too many users requested - we might run out of memory anyway
+        $limit = 2000;
+        $count = count($userids);
+        if ($count > $limit) {
+            $half = (int)($count/2);
+            $first  = array_slice($userids, 0, $half);
+            $second = array_slice($userids, $half);
+            return grade_grade::fetch_users_grades($grade_item, $first, $include_missing) + grade_grade::fetch_users_grades($grade_item, $second, $include_missing);
+        }
+
+        $user_ids_cvs = implode(',', $userids);
+        $result = array();
+        if ($grade_records = get_records_select('grade_grades', "itemid={$grade_item->id} AND userid IN ($user_ids_cvs)")) {
+            foreach ($grade_records as $record) {
+                $result[$record->userid] = new grade_grade($record, false);
+            }
+        }
+        if ($include_missing) {
+            foreach ($userids as $userid) {
+                if (!array_key_exists($userid, $result)) {
+                    $grade_grade = new grade_grade();
+                    $grade_grade->userid = $userid;
+                    $grade_grade->itemid = $grade_item->id;
+                    $result[$userid] = $grade_grade;
+                }
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * Loads the grade_item object referenced by $this->itemid and saves it as $this->grade_item for easy access.
      * @return object grade_item.

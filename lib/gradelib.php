@@ -49,6 +49,8 @@ require_once($CFG->libdir . '/grade/grade_outcome.php');
  * Only following grade item properties can be changed 'itemname', 'idnumber', 'gradetype', 'grademax',
  * 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted'.
  *
+ * Manual, course or category items can not be updated by this function.
+
  * @param string $source source of the grade such as 'mod/assignment'
  * @param int $courseid id of course
  * @param string $itemtype type of grade item - mod, block
@@ -217,104 +219,16 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
     }
 }
 
-
-/**
- * Tells a module whether a grade (or grade_item if $userid is not given) is currently locked or not.
- * If it's locked to the current user then the module can print a nice message or prevent editing in the module.
- * If no $userid is given, the method will always return the grade_item's locked state.
- * If a $userid is given, the method will first check the grade_item's locked state (the column). If it is locked,
- * the method will return true no matter the locked state of the specific grade being checked. If unlocked, it will
- * return the locked state of the specific grade.
- *
- * @param int $courseid id of course
- * @param string $itemtype 'mod', 'block'
- * @param string $itemmodule 'forum, 'quiz', etc.
- * @param int $iteminstance id of the item module
- * @param int $itemnumber most probably 0, modules can use other numbers when having more than one grades for each user
- * @param int $userid ID of the graded user
- * @return boolean Whether the grade is locked or not
- */
-function grade_is_locked($courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $userid=NULL) {
-
-    if (!$grade_items = grade_item::fetch_all(compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber'))) {
-        return false;
-
-    } else if (count($grade_items) == 1){
-        $grade_item = reset($grade_items);
-        return $grade_item->is_locked($userid);
-
-    } else {
-        debugging('Found more than one grade item');
-        foreach ($grade_items as $grade_item) {
-            if ($grade_item->is_locked($userid)) {
-                return true;
-            }
-        }
-        return false;
-    }
-}
-
-/**
- * Returns list of outcomes used in activity together with current outcomes for user
- * @param int $courseid id of course
- * @param string $itemtype 'mod', 'block'
- * @param string $itemmodule 'forum, 'quiz', etc.
- * @param int $iteminstance id of the item module
- * @param int $userid optional id of the graded user
- * @return array of outcome information objects (scaleid, name, grade and locked status) indexed with itemnumbers
- */
-function grade_get_outcomes($courseid, $itemtype, $itemmodule, $iteminstance, $userid=0) {
-    $result = array();
-    $course_item = grade_item::fetch_course_item($courseid);
-    $needsupdate = $course_item->needsupdate;
-
-    if ($items = grade_item::fetch_all(array('itemtype'=>$itemtype, 'itemmodule'=>$itemmodule, 'iteminstance'=>$iteminstance, 'courseid'=>$courseid))) {
-        foreach ($items as $item) {
-            if (empty($item->outcomeid)) {
-                continue;
-            }
-            if (!$outcome = grade_outcome::fetch(array('id'=>$item->outcomeid))) {
-                debugging('Incorect outcomeid found');
-                continue;
-            }
-            // prepare outcome info with user grade
-            $o = new object();
-            $o->scaleid = $outcome->scaleid;
-            $o->name    = $outcome->get_name();
-
-            if (empty($userid)) {
-                //no user info
-            } if ($grade = $item->get_grade($userid,false)) {
-                $o->grade  = $grade->finalgrade;
-                $o->locked = $grade->is_locked();
-                $o->hidden = $grade->is_hidden();
-
-            } else {
-                $o->grade = null;
-                $o->locked = $item->is_locked();
-                $o->hidden = $grade->is_hidden();
-            }
-
-            if ($needsupdate) {
-                $o->grade = false;
-            } else {
-                $o->grade = intval($o->grade); // 0 means no grade, int for scales
-            }
-
-            $result[$item->itemnumber] = $o;
-        }
-    }
-
-    return $result;
-}
-
 /**
  * Updates outcomes of user
+ * Manual outcomes can not be updated.
+ * @param string $source source of the grade such as 'mod/assignment'
  * @param int $courseid id of course
  * @param string $itemtype 'mod', 'block'
  * @param string $itemmodule 'forum, 'quiz', etc.
  * @param int $iteminstance id of the item module
  * @param int $userid ID of the graded user
+ * @param array $data array itemnumber=>outcomegrade
  */
 function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $iteminstance, $userid, $data) {
     if ($items = grade_item::fetch_all(array('itemtype'=>$itemtype, 'itemmodule'=>$itemmodule, 'iteminstance'=>$iteminstance, 'courseid'=>$courseid))) {
@@ -329,7 +243,8 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
 }
 
 /**
- * Returns list of grades used in activity optionally with current grades of one user
+ * Returns grading information for given activity - optionally with users grades
+ * Manual, course or category items can not be queried.
  * @param int $courseid id of course
  * @param string $itemtype 'mod', 'block'
  * @param string $itemmodule 'forum, 'quiz', etc.
@@ -337,82 +252,181 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
  * @param int $userid optional id of the graded user; if userid not used, returns only information about grade_item
  * @return array of grade information objects (scaleid, name, grade and locked status, etc.) indexed with itemnumbers
  */
-function grade_get_final_grades($courseid, $itemtype, $itemmodule, $iteminstance, $userid=0) {
-    $result = array();
+function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $userid_or_ids=0) {
+    $return = new object();
+    $return->items    = array();
+    $return->outcomes = array();
+
     $course_item = grade_item::fetch_course_item($courseid);
-    $needsupdate = $course_item->needsupdate;
-
-    if ($items = grade_item::fetch_all(array('itemtype'=>$itemtype, 'itemmodule'=>$itemmodule, 'iteminstance'=>$iteminstance, 'courseid'=>$courseid))) {
-        foreach ($items as $item) {
-            if (!empty($item->outcomeid)) {
-                continue;
-            }
-            // prepare grade info with user grade
-            $o = new object();
-            $o->scaleid   = $item->scaleid;
-            $o->name      = $item->get_name();
-            $o->grademin  = $item->grademin;
-            $o->grademax  = $item->grademax;
-            $o->gradepass = $item->gadepass;
-
-            if (empty($userid)) {
-                //no user info
-
-            } if ($grade = $item->get_grade($userid, false)) {
-                $o->grade          = $grade->finalgrade;
-                $o->locked         = $grade->is_locked();
-                $o->hidden         = $grade->is_hidden();
-                $o->overridden     = $grade->overridden;
-                $o->feedback       = $text->feedback;
-                $o->feedbackformat = $text->feedbackformat;
-
-            } else {
-                $o->grade          = null;
-                $o->locked         = $item->is_locked();
-                $o->hidden         = $grade->is_hidden();
-                $o->overridden     = 0;
-                $o->feedback       = null;
-                $o->feedbackformat = FORMAT_MOODLE;
-            }
-
-            // create text representation of grade
-            if ($needsupdate) {
-                $o->grade     = false;
-                $o->str_grade = get_string('error');
-
-            } else if (is_null($o->grade)) {
-                $o->str_grade = get_string('nograde');
-
-            } else {
-                switch ($item->gradetype) {
-                    case GRADE_TYPE_VALUE:
-                        $o->str_grade = $o->grade;
-                        break;
-
-                    case GRADE_TYPE_SCALE:
-                        $scale = $item->load_scale();
-                        $o->str_grade = format_string($scale[$o->grade-1]);
-                        break;
-
-                    case GRADE_TYPE_NONE:
-                    case GRADE_TYPE_TEXT:
-                    default:
-                        $o->str_grade = '';
-                }
-            }
-
-            // create html representation of feedback
-            if (is_null($o->feedback)) {
-                $o->str_feedback = '';
-            } else {
-                $o->str_feedback = format_text($o->feedback, $o->feedbackformat);
-            }
-
-            $result[$item->itemnumber] = $o;
+    $needsupdate = array();
+    if ($course_item->needsupdate) {
+        $result = grade_regrade_final_grades($courseid);
+        if ($result !== true) {
+            $needsupdate = array_keys($result);
         }
     }
 
-    return $result;
+    if ($grade_items = grade_item::fetch_all(array('itemtype'=>$itemtype, 'itemmodule'=>$itemmodule, 'iteminstance'=>$iteminstance, 'courseid'=>$courseid))) {
+        foreach ($grade_items as $grade_item) {
+            if (empty($grade_item->outcomeid)) {
+                // prepare information about grade item
+                $item = new object();
+                $item->itemnumber = $grade_item->itemnumber;
+                $item->scaleid    = $grade_item->scaleid;
+                $item->name       = $grade_item->get_name();
+                $item->grademin   = $grade_item->grademin;
+                $item->grademax   = $grade_item->grademax;
+                $item->gradepass  = $grade_item->gradepass;
+                $item->locked     = $grade_item->is_locked();
+                $item->hidden     = $grade_item->is_hidden();
+                $item->grades     = array();
+
+                switch ($grade_item->gradetype) {
+                    case GRADE_TYPE_NONE:
+                        continue;
+
+                    case GRADE_TYPE_VALUE:
+                        $item->scaleid = 0;
+                        break;
+
+                    case GRADE_TYPE_TEXT:
+                        $item->scaleid   = 0;
+                        $item->grademin   = 0;
+                        $item->grademax   = 0;
+                        $item->gradepass  = 0;
+                        break;
+                }
+
+                if (empty($userid_or_ids)) {
+                    $userids = array();
+
+                } else if (is_array($userid_or_ids)) {
+                    $userids = $userid_or_ids;
+
+                } else {
+                    $userids = array($userid_or_ids);
+                }
+
+                if ($userids) {
+                    $grade_grades = grade_grade::fetch_users_grades($grade_item, $userids, true);
+                    foreach ($userids as $userid) {
+                        $grade_grades[$userid]->grade_item =& $grade_item;
+
+                        $grade = new object();
+                        $grade->grade          = $grade_grades[$userid]->finalgrade;
+                        $grade->locked         = $grade_grades[$userid]->is_locked();
+                        $grade->hidden         = $grade_grades[$userid]->is_hidden();
+                        $grade->overridden     = $grade_grades[$userid]->overridden;
+                        $grade->feedback       = $grade_grades[$userid]->feedback;
+                        $grade->feedbackformat = $grade_grades[$userid]->feedbackformat;
+
+                        // create text representation of grade
+                        if (in_array($grade_item->id, $needsupdate)) {
+                            $grade->grade     = false;
+                            $grade->str_grade = get_string('error');
+
+                        } else if (is_null($grade->grade)) {
+                            $grade->str_grade = get_string('nograde');
+
+                        } else {
+                            switch ($grade_item->gradetype) {
+                                case GRADE_TYPE_VALUE:
+                                    $grade->str_grade = $grade->grade; //TODO: fix localisation and decimal places
+                                    break;
+
+                                case GRADE_TYPE_SCALE:
+                                    $scale = $grade_item->load_scale();
+                                    $grade->str_grade = format_string($scale->scale_items[$grade->grade-1]);
+                                    break;
+
+                                case GRADE_TYPE_TEXT:
+                                default:
+                                    $grade->str_grade = '';
+                            }
+                        }
+
+                        // create html representation of feedback
+                        if (is_null($grade->feedback)) {
+                            $grade->str_feedback = '';
+                        } else {
+                            $grade->str_feedback = format_text($grade->feedback, $grade->feedbackformat);
+                        }
+
+                        $item->grades[$userid] = $grade;
+                    }
+                }
+                $return->items[$grade_item->itemnumber] = $item;
+
+            } else {
+                if (!$grade_outcome = grade_outcome::fetch(array('id'=>$grade_item->outcomeid))) {
+                    debugging('Incorect outcomeid found');
+                    continue;
+                }
+
+                // outcome info
+                $outcome = new object();
+                $outcome->itemnumber = $grade_item->itemnumber;
+                $outcome->scaleid    = $grade_outcome->scaleid;
+                $outcome->name       = $grade_outcome->get_name();
+                $outcome->locked     = $grade_item->is_locked();
+                $outcome->hidden     = $grade_item->is_hidden();
+
+                if (empty($userid_or_ids)) {
+                    $userids = array();
+                } else if (is_array($userid_or_ids)) {
+                    $userids = $userid_or_ids;
+                } else {
+                    $userids = array($userid_or_ids);
+                }
+
+                if ($userids) {
+                    $grade_grades = grade_grade::fetch_users_grades($grade_item, $userids, true);
+                    foreach ($userids as $userid) {
+                        $grade_grades[$userid]->grade_item =& $grade_item;
+
+                        $grade = new object();
+                        $grade->grade          = $grade_grades[$userid]->finalgrade;
+                        $grade->locked         = $grade_grades[$userid]->is_locked();
+                        $grade->hidden         = $grade_grades[$userid]->is_hidden();
+                        $grade->feedback       = $grade_grades[$userid]->feedback;
+                        $grade->feedbackformat = $grade_grades[$userid]->feedbackformat;
+
+                        // create text representation of grade
+                        if (in_array($grade_item->id, $needsupdate)) {
+                            $grade->grade     = false;
+                            $grade->str_grade = get_string('error');
+
+                        } else if (is_null($grade->grade)) {
+                            $grade->grade = 0;
+                            $grade->str_grade = get_string('nooutcome', 'grades');
+
+                        } else {
+                            $grade->grade = (int)$grade->grade;
+                            $scale = $grade_item->load_scale();
+                            $grade->str_grade = format_string($scale->scale_items[(int)$grade->grade-1]);
+                        }
+
+                        // create html representation of feedback
+                        if (is_null($grade->feedback)) {
+                            $grade->str_feedback = '';
+                        } else {
+                            $grade->str_feedback = format_text($grade->feedback, $grade->feedbackformat);
+                        }
+
+                        $outcome->grades[$userid] = $grade;
+                    }
+                }
+                $return->outcomes[$grade_item->itemnumber] = $outcome;
+
+            }
+        }
+    }
+
+    // sort results using itemnumbers
+    ksort($return->items, SORT_NUMERIC);
+    ksort($return->outcomes, SORT_NUMERIC);
+
+    return $return;
 }
 
 /***** END OF PUBLIC API *****/
@@ -891,7 +905,10 @@ function grade_cron() {
         rs_close($rs);
     }
 
-    $sql = "SELECT g.*
+    $grade_inst = new grade_grade();
+    $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
+
+    $sql = "SELECT $fields
               FROM {$CFG->prefix}grade_grades g, {$CFG->prefix}grade_items i
              WHERE g.locked = 0 AND g.locktime > 0 AND g.locktime < $now AND g.itemid=i.id AND EXISTS (
                 SELECT 'x' FROM {$CFG->prefix}grade_items c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
