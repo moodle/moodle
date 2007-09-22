@@ -62,7 +62,8 @@ class grade_object {
     /**
      * Constructor. Optionally (and by default) attempts to fetch corresponding row from DB.
      * @param array $params an array with required parameters for this grade object.
-     * @param boolean $fetch Whether to fetch corresponding row from DB or not.
+     * @param boolean $fetch Whether to fetch corresponding row from DB or not,
+     *        optional fields might not be defined if false used
      */
     function grade_object($params=NULL, $fetch=true) {
         if (!empty($params) and (is_array($params) or is_object($params))) {
