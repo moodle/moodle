@@ -1296,9 +1296,7 @@ class grade_item extends grade_object {
                 $grade->overridden = 0;
 
             } else {
-                if (!$grade->overridden) {
-                    $grade->overridden = time();
-                }
+                $grade->overridden = time();
             }
         }
 
@@ -1321,7 +1319,6 @@ class grade_item extends grade_object {
             $result = (boolean)$grade->insert($source);
 
         } else if ($grade->finalgrade     !== $oldgrade->finalgrade
-                or $grade->overridden     !== $oldgrade->overridden
                 or $grade->feedback       !== $oldgrade->feedback
                 or $grade->feedbackformat !== $oldgrade->feedbackformat) {
             $result = $grade->update($source);
