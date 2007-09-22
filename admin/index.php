@@ -621,14 +621,6 @@
     }
 
 
-    if (optional_param('dbmigrate')) {               // ??? Is this actually used?
-        print_box_start();
-        require_once($CFG->dirroot.'/'.$CFG->admin.'/utfdbmigrate.php');
-        db_migrate2utf8();
-        print_box_end();
-    }
-
-
     admin_externalpage_print_footer();
 
 
