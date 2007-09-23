@@ -693,6 +693,7 @@ class grade_report_grader extends grade_report {
                             if ((int) $gradeval < 1) {
                                 $studentshtml .= '-';
                             } else {
+                                $gradeval = (int)bounded_number($grade->grade_item->grademin, $gradeval, $grade->grade_item->grademax); //just in case somebody changes scale
                                 $studentshtml .= $scales[$gradeval-1];
                             }
                         } else {
