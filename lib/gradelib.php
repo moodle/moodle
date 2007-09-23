@@ -253,6 +253,8 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
  * @return array of grade information objects (scaleid, name, grade and locked status, etc.) indexed with itemnumbers
  */
 function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $userid_or_ids=0) {
+    global $CFG;
+
     $return = new object();
     $return->items    = array();
     $return->outcomes = array();
@@ -268,6 +270,8 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
 
     if ($grade_items = grade_item::fetch_all(array('itemtype'=>$itemtype, 'itemmodule'=>$itemmodule, 'iteminstance'=>$iteminstance, 'courseid'=>$courseid))) {
         foreach ($grade_items as $grade_item) {
+            $decimalpoints = null;
+
             if (empty($grade_item->outcomeid)) {
                 // prepare information about grade item
                 $item = new object();
@@ -319,6 +323,7 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
                         $grade->overridden     = $grade_grades[$userid]->overridden;
                         $grade->feedback       = $grade_grades[$userid]->feedback;
                         $grade->feedbackformat = $grade_grades[$userid]->feedbackformat;
+                        $grade->usermodified   = $grade_grades[$userid]->usermodified;
 
                         // create text representation of grade
                         if (in_array($grade_item->id, $needsupdate)) {
@@ -326,16 +331,21 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
                             $grade->str_grade = get_string('error');
 
                         } else if (is_null($grade->grade)) {
-                            $grade->str_grade = get_string('nograde');
+                            $grade->str_grade = '-';
 
                         } else {
                             switch ($grade_item->gradetype) {
                                 case GRADE_TYPE_VALUE:
-                                    $grade->str_grade = $grade->grade; //TODO: fix localisation and decimal places
+                                    if (!isset($decimalpoints)) {
+                                        require_once($CFG->dirroot.'/grade/report/user/lib.php');//TODO: which setting to use?
+                                        $decimalpoints = grade_report_user::get_pref('decimalpoints', $grade_item->id);
+                                    }
+                                    $grade->str_grade = format_float($grade->grade, $decimalpoints);
                                     break;
 
                                 case GRADE_TYPE_SCALE:
                                     $scale = $grade_item->load_scale();
+                                    $grade->grade = (int)bounded_number($item->grademin, $grade->grade, $item->grademax);
                                     $grade->str_grade = format_string($scale->scale_items[$grade->grade-1]);
                                     break;
 
@@ -390,6 +400,7 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
                         $grade->hidden         = $grade_grades[$userid]->is_hidden();
                         $grade->feedback       = $grade_grades[$userid]->feedback;
                         $grade->feedbackformat = $grade_grades[$userid]->feedbackformat;
+                        $grade->usermodified   = $grade_grades[$userid]->usermodified;
 
                         // create text representation of grade
                         if (in_array($grade_item->id, $needsupdate)) {
