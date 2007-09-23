@@ -408,7 +408,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
         $log->url  = strip_tags(urldecode($log->url));   // Some XSS protection
         $log->info = strip_tags(urldecode($log->info));  // Some XSS protection
-        $log->url  = str_replace('&', '&amp;', $log->url); /// XHTML compatibility
+        $log->url  = s($log->url); /// XSS protection and XHTML compatibility - should be in link_to_popup_window() instead!!
 
         echo '<tr class="r'.$row.'">';
         if ($course->id == SITEID) {
