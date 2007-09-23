@@ -1272,6 +1272,8 @@ class grade_item extends grade_object {
         $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid));
         $grade->grade_item =& $this; // prevent db fetching of this grade_item
 
+        $grade->usermodified = $usermodified;
+
         if ($grade->is_locked()) {
             // do not update locked grades at all
             return false;
@@ -1378,6 +1380,8 @@ class grade_item extends grade_object {
 
         $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid));
         $grade->grade_item =& $this; // prevent db fetching of this grade_item
+
+        $grade->usermodified = $usermodified;
 
         if ($grade->is_locked()) {
             // do not update locked grades at all
