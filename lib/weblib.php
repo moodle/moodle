@@ -1937,6 +1937,7 @@ function cleanAttributes2($htmlArray){
                 $value = kses_decode_entities($value);
                 $value = preg_replace('/(&#[0-9]+)(;?)/', "\\1;", $value);
                 $value = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', "\\1;", $value);
+                $value = str_replace('&#x03A;', ':', $value);
                 if ($value === $prevvalue) {
                     $arreach['value'] = $value;
                     break;
