@@ -509,7 +509,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
 
         $log->url  = strip_tags(urldecode($log->url));     // Some XSS protection
         $log->info = strip_tags(urldecode($log->info));    // Some XSS protection
-        $log->url  = str_replace('&', '&amp;', $log->url); // XHTML compatibility
+        $log->url  = s($log->url); /// XSS protection and XHTML compatibility - should be in link_to_popup_window() instead!!
 
         $firstField = $courses[$log->course];
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
