@@ -14,12 +14,15 @@
   padding:5px;
 }
 
-.mod-assignment .feedback .grade {
+.mod-assignment .feedback .grade,
+.mod-assignment .feedback .outcome,
+.mod-assignment .feedback .finalgrade {
   float: right;
 }
 
-.mod-assignment .feedback .outcome {
-  float: right;
+.mod-assignment .feedback .disabledfeedback {
+    width: 500px;
+    height: 250px;
 }
 
 .mod-assignment .feedback .from {
@@ -89,7 +92,8 @@
   text-align: center;
 }
 
-#mod-assignment-submissions .submissions .outcome {
+#mod-assignment-submissions .submissions .outcome,
+#mod-assignment-submissions .submissions .finalgrade {
   text-align: right;
 }
 

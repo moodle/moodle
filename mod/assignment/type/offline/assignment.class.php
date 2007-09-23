@@ -37,8 +37,8 @@ class assignment_offline extends assignment_base {
 
     // needed for the timemodified override
     function process_feedback() {
-
-        global $USER;
+        global $CFG, $USER;
+        require_once($CFG->libdir.'/gradelib.php');
 
         if (!$feedback = data_submitted()) {      // No incoming data?
             return false;
@@ -55,34 +55,40 @@ class assignment_offline extends assignment_base {
             return false;
         }
 
+        $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $feedback->userid);
+
         // store outcomes if needed
         $this->process_outcomes($feedback->userid);
 
         $submission = $this->get_submission($feedback->userid, true);  // Get or make one
 
-        $submission->grade      = $feedback->grade;
-        $submission->submissioncomment    = $feedback->submissioncomment;
-        $submission->format     = $feedback->format;
-        $submission->teacher    = $USER->id;
-        $submission->mailed     = 0;       // Make sure mail goes out (again, even)
-        $submission->timemarked = time();
+        if (!$grading_info->items[0]->grades[$feedback->userid]->locked and
+            !$grading_info->items[0]->grades[$feedback->userid]->overridden) {
 
-        unset($submission->data1);  // Don't need to update this.
-        unset($submission->data2);  // Don't need to update this.
+            $submission->grade      = $feedback->grade;
+            $submission->submissioncomment    = $feedback->submissioncomment;
+            $submission->format     = $feedback->format;
+            $submission->teacher    = $USER->id;
+            $submission->mailed     = 0;       // Make sure mail goes out (again, even)
+            $submission->timemarked = time();
 
-        if (empty($submission->timemodified)) {   // eg for offline assignments
-            $submission->timemodified = time();
+            unset($submission->data1);  // Don't need to update this.
+            unset($submission->data2);  // Don't need to update this.
+
+            if (empty($submission->timemodified)) {   // eg for offline assignments
+                $submission->timemodified = time();
+            }
+
+            if (! update_record('assignment_submissions', $submission)) {
+                return false;
+            }
+
+            // triger grade event
+            $this->update_grade($submission);
+
+            add_to_log($this->course->id, 'assignment', 'update grades',
+                       'submissions.php?id='.$this->assignment->id.'&user='.$feedback->userid, $feedback->userid, $this->cm->id);
         }
-
-        if (! update_record('assignment_submissions', $submission)) {
-            return false;
-        }
-
-        // triger grade event
-        $this->update_grade($submission);
-
-        add_to_log($this->course->id, 'assignment', 'update grades',
-                   'submissions.php?id='.$this->assignment->id.'&user='.$feedback->userid, $feedback->userid, $this->cm->id);
 
         return $submission;
 

@@ -228,34 +228,58 @@ class assignment_base {
      * @param $submission object The submission object or NULL in which case it will be loaded
      */
     function view_feedback($submission=NULL) {
-        global $USER;
+        global $USER, $CFG;
+        require_once($CFG->libdir.'/gradelib.php');
+
+        if (!has_capability('mod/assignment:submit', $this->context, $USER->id, false)) {
+            // can not submit assignments -> no feedback
+            return;
+        }
 
         if (!$submission) { /// Get submission for this assignment
             $submission = $this->get_submission($USER->id);
         }
 
-        if (empty($submission->timemarked)) {   /// Nothing to show, so print nothing
+        $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $USER->id);
+        $item = $grading_info->items[0];
+        $grade = $item->grades[$USER->id];
+
+        if ($grade->hidden or $grade->grade === false) { // hidden or error
             return;
         }
 
-    /// We need the teacher info
-        if (! $teacher = get_record('user', 'id', $submission->teacher)) {
-            error('Could not find the teacher');
+        if ($grade->grade === null and empty($feedback)) {   /// Nothing to show yet
+            return;
         }
 
+        if ($grade->overridden) {
+            $graded_date = $grade->overridden;
+            $graded_by   = $grade->usermodified;
+        } else {
+            $graded_date = $submission->timemarked;
+            $graded_by   = $submission->teacher;
+        }
+
+    /// We need the teacher info
+        $teacher = get_record('user', 'id', $graded_by);
+
     /// Print the feedback
-        print_heading(get_string('feedbackfromteacher', 'assignment', $this->course->teacher));
+        print_heading(get_string('feedbackfromteacher', 'assignment', $this->course->teacher)); // TODO: fix teacher string
 
         echo '<table cellspacing="0" class="feedback">';
 
         echo '<tr>';
         echo '<td class="left picture">';
-        print_user_picture($teacher->id, $this->course->id, $teacher->picture);
+        if ($teacher) {
+            print_user_picture($teacher->id, $this->course->id, $teacher->picture);
+        }
         echo '</td>';
         echo '<td class="topic">';
         echo '<div class="from">';
-        echo '<div class="fullname">'.fullname($teacher).'</div>';
-        echo '<div class="time">'.userdate($submission->timemarked).'</div>';
+        if ($teacher) {
+            echo '<div class="fullname">'.fullname($teacher).'</div>';
+        }
+        echo '<div class="time">'.userdate($graded_date).'</div>';
         echo '</div>';
         echo '</td>';
         echo '</tr>';
@@ -263,15 +287,13 @@ class assignment_base {
         echo '<tr>';
         echo '<td class="left side">&nbsp;</td>';
         echo '<td class="content">';
-        if ($this->assignment->grade) {
-            echo '<div class="grade">';
-            echo get_string("grade").': '.$this->display_grade($submission->grade);
-            echo '</div>';
-            echo '<div class="clearer"></div>';
-        }
+        echo '<div class="grade">';
+        echo get_string("grade").': '.$grade->str_grade;
+        echo '</div>';
+        echo '<div class="clearer"></div>';
 
         echo '<div class="comment">';
-        echo format_text($submission->submissioncomment, $submission->format);
+        echo $grade->str_feedback;
         echo '</div>';
         echo '</tr>';
 
@@ -684,12 +706,18 @@ class assignment_base {
             $output.= 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes_js($button).'";';
         }
 
-        if (!empty($CFG->enableoutcomes) and empty($SESSION->flextable['mod-assignment-submissions']->collapse['outcomes'])) {
-            $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $submission->userid);
+        $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $submission->userid);
+
+        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['finalgrade'])) {
+            $output.= 'opener.document.getElementById("finalgrade_'.$submission->userid.
+            '").innerHTML="'.$grading_info->items[0]->grades[$submission->userid]->str_grade.'";'."\n";
+        }
+
+        if (!empty($CFG->enableoutcomes) and empty($SESSION->flextable['mod-assignment-submissions']->collapse['outcome'])) {
 
             if (!empty($grading_info->outcomes)) {
                 foreach($grading_info->outcomes as $n=>$outcome) {
-                    if ($data->locked) {
+                    if ($outcome->grades[$submission->userid]->locked) {
                         continue;
                     }
 
@@ -774,6 +802,9 @@ class assignment_base {
         } else {
             $subtype = 'assignmentold';
         }
+
+        $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, array($user->id));
+        $disabled = $grading_info->items[0]->grades[$userid]->locked || $grading_info->items[0]->grades[$userid]->overridden;
 
     /// construct SQL, using current offset to find the data of the next student
         $course     = $this->course;
@@ -864,13 +895,14 @@ class assignment_base {
             echo '</div>';
         }
         echo '<div class="grade"><label for="menugrade">'.get_string('grade').'</label> ';
-        choose_from_menu(make_grades_menu($this->assignment->grade), 'grade', $submission->grade, get_string('nograde'), '', -1);
+        choose_from_menu(make_grades_menu($this->assignment->grade), 'grade', $submission->grade, get_string('nograde'), '', -1, false, $disabled);
         echo '</div>';
 
         echo '<div class="clearer"></div>';
+        echo '<div class="finalgrade">'.get_string('finalgrade', 'grades').': '.$grading_info->items[0]->grades[$userid]->str_grade.'</div>';
+        echo '<div class="clearer"></div>';
 
         if (!empty($CFG->enableoutcomes)) {
-            $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $submission->userid);
             foreach($grading_info->outcomes as $n=>$outcome) {
                 echo '<div class="outcome"><label for="menuoutcome_'.$n.'">'.$outcome->name.'</label> ';
                 $options = make_grades_menu(-$outcome->scaleid);
@@ -888,15 +920,19 @@ class assignment_base {
 
         $this->preprocess_submission($submission);
 
-        print_textarea($this->usehtmleditor, 14, 58, 0, 0, 'submissioncomment', $submission->submissioncomment, $this->course->id);
+        if ($disabled) {
+            echo '<div class="disabledfeedback">'.$grading_info->items[0]->grades[$userid]->str_feedback.'</div>';
 
-        if ($this->usehtmleditor) {
-            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
         } else {
-            echo '<div class="format">';
-            choose_from_menu(format_text_menu(), "format", $submission->format, "");
-            helpbutton("textformat", get_string("helpformatting"));
-            echo '</div>';
+            print_textarea($this->usehtmleditor, 14, 58, 0, 0, 'submissioncomment', $submission->submissioncomment, $this->course->id);
+            if ($this->usehtmleditor) {
+                echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
+            } else {
+                echo '<div class="format">';
+                choose_from_menu(format_text_menu(), "format", $submission->format, "");
+                helpbutton("textformat", get_string("helpformatting"));
+                echo '</div>';
+            }
         }
 
         ///Print Buttons in Single View
@@ -939,7 +975,7 @@ class assignment_base {
 
         echo '</table>';
 
-        if ($this->usehtmleditor) {
+        if (!$disabled and $this->usehtmleditor) {
             use_html_editor();
         }
 
@@ -1032,12 +1068,12 @@ class assignment_base {
         if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
             $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
             $users = array_intersect($users, array_keys($groupingusers));
-            
+
         }
 
-        $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status');
+        $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status', 'finalgrade');
         if ($uses_outcomes) {
-            $tablecolumns[] = ''; // no sorting based on outcomes column
+            $tablecolumns[] = 'outcome'; // no sorting based on outcomes column
         }
 
         $tableheaders = array('',
@@ -1046,9 +1082,10 @@ class assignment_base {
                               get_string('comment', 'assignment'),
                               get_string('lastmodified').' ('.$course->student.')',
                               get_string('lastmodified').' ('.$course->teacher.')',
-                              get_string('status'));
+                              get_string('status'),
+                              get_string('finalgrade', 'grades'));
         if ($uses_outcomes) {
-            $tableheaders[] = get_string('outcomes', 'grades');
+            $tableheaders[] = get_string('outcome', 'grades');
         }
 
         require_once($CFG->libdir.'/tablelib.php');
@@ -1072,8 +1109,9 @@ class assignment_base {
         $table->column_class('timemodified', 'timemodified');
         $table->column_class('timemarked', 'timemarked');
         $table->column_class('status', 'status');
+        $table->column_class('finalgrade', 'finalgrade');
         if ($uses_outcomes) {
-            $table->column_class('outcomes', 'outcomes');
+            $table->column_class('outcome', 'outcome');
         }
 
         $table->set_attribute('cellspacing', '0');
@@ -1081,6 +1119,9 @@ class assignment_base {
         $table->set_attribute('class', 'submissions');
         $table->set_attribute('width', '90%');
         //$table->set_attribute('align', 'center');
+
+        $table->no_sorting('finalgrade');
+        $table->no_sorting('outcome');
 
         // Start working -- this is necessary as soon as the niceties are over
         $table->setup();
@@ -1133,6 +1174,7 @@ class assignment_base {
         if (($ausers = get_records_sql($select.$sql.$sort, $table->get_page_start(), $table->get_page_size())) !== false) {
             $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, array_keys($ausers));
             foreach ($ausers as $auser) {
+                $final_grade = $grading_info->items[0]->grades[$auser->id];
             /// Calculate user status
                 $auser->status = ($auser->timemarked > 0) && ($auser->timemarked >= $auser->timemodified);
                 $picture = print_user_picture($auser->id, $course->id, $auser->picture, false, true);
@@ -1155,7 +1197,9 @@ class assignment_base {
                     if ($auser->timemarked > 0) {
                         $teachermodified = '<div id="tt'.$auser->id.'">'.userdate($auser->timemarked).'</div>';
 
-                        if ($quickgrade) {
+                        if ($final_grade->locked or $final_grade->overridden) {
+                            $grade = '<div id="g'.$auser->id.'">'.$final_grade->str_grade.'</div>';
+                        } else if ($quickgrade) {
                             $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
                                                      'menu['.$auser->id.']', $auser->grade,
                                                      get_string('nograde'),'',-1,true,false,$tabindex++);
@@ -1166,7 +1210,9 @@ class assignment_base {
 
                     } else {
                         $teachermodified = '<div id="tt'.$auser->id.'">&nbsp;</div>';
-                        if ($quickgrade) {
+                        if ($final_grade->locked or $final_grade->overridden) {
+                            $grade = '<div id="g'.$auser->id.'">'.$final_grade->str_grade.'</div>';
+                        } else if ($quickgrade) {
                             $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
                                                      'menu['.$auser->id.']', $auser->grade,
                                                      get_string('nograde'),'',-1,true,false,$tabindex++);
@@ -1176,7 +1222,10 @@ class assignment_base {
                         }
                     }
                 ///Print Comment
-                    if ($quickgrade) {
+                    if ($final_grade->locked or $final_grade->overridden) {
+                        $comment = '<div id="com'.$auser->id.'">'.shorten_text(strip_tags($final_grade->str_feedback),15).'</div>';
+
+                    } else if ($quickgrade) {
                         $comment = '<div id="com'.$auser->id.'">'
                                  . '<textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment'
                                  . $auser->id.'" rows="2" cols="20">'.($auser->submissioncomment).'</textarea></div>';
@@ -1188,7 +1237,9 @@ class assignment_base {
                     $teachermodified = '<div id="tt'.$auser->id.'">&nbsp;</div>';
                     $status          = '<div id="st'.$auser->id.'">&nbsp;</div>';
 
-                    if ($quickgrade) {   // allow editing
+                    if ($final_grade->locked or $final_grade->overridden) {
+                        $grade = '<div id="g'.$auser->id.'">'.$final_grade->str_grade.'</div>';
+                    } else if ($quickgrade) {   // allow editing
                         $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
                                                  'menu['.$auser->id.']', $auser->grade,
                                                  get_string('nograde'),'',-1,true,false,$tabindex++);
@@ -1197,7 +1248,9 @@ class assignment_base {
                         $grade = '<div id="g'.$auser->id.'">-</div>';
                     }
 
-                    if ($quickgrade) {
+                    if ($final_grade->locked or $final_grade->overridden) {
+                        $comment = '<div id="com'.$auser->id.'">'.$final_grade->str_feedback.'</div>';
+                    } else if ($quickgrade) {
                         $comment = '<div id="com'.$auser->id.'">'
                                  . '<textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment'
                                  . $auser->id.'" rows="2" cols="20">'.($auser->submissioncomment).'</textarea></div>';
@@ -1222,6 +1275,8 @@ class assignment_base {
 
                 $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
 
+                $finalgrade = '<span id="finalgrade_'.$auser->id.'">'.$final_grade->str_grade.'</span>';
+
                 $outcomes = '';
 
                 if ($uses_outcomes) {
@@ -1243,7 +1298,7 @@ class assignment_base {
                 }
 
 
-                $row = array($picture, fullname($auser), $grade, $comment, $studentmodified, $teachermodified, $status);
+                $row = array($picture, fullname($auser), $grade, $comment, $studentmodified, $teachermodified, $status, $finalgrade);
                 if ($uses_outcomes) {
                     $row[] = $outcomes;
                 }
@@ -1314,8 +1369,8 @@ class assignment_base {
      * @return object The updated submission object
      */
     function process_feedback() {
-
-        global $USER;
+        global $CFG, $USER;
+        require_once($CFG->libdir.'/gradelib.php');
 
         if (!$feedback = data_submitted()) {      // No incoming data?
             return false;
@@ -1332,34 +1387,40 @@ class assignment_base {
             return false;
         }
 
+        $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $feedback->userid);
+
         // store outcomes if needed
         $this->process_outcomes($feedback->userid);
 
         $submission = $this->get_submission($feedback->userid, true);  // Get or make one
 
-        $submission->grade      = $feedback->grade;
-        $submission->submissioncomment    = $feedback->submissioncomment;
-        $submission->format     = $feedback->format;
-        $submission->teacher    = $USER->id;
-        $submission->mailed     = 0;       // Make sure mail goes out (again, even)
-        $submission->timemarked = time();
+        if (!$grading_info->items[0]->grades[$feedback->userid]->locked and
+            !$grading_info->items[0]->grades[$feedback->userid]->overridden) {
 
-        unset($submission->data1);  // Don't need to update this.
-        unset($submission->data2);  // Don't need to update this.
+            $submission->grade      = $feedback->grade;
+            $submission->submissioncomment    = $feedback->submissioncomment;
+            $submission->format     = $feedback->format;
+            $submission->teacher    = $USER->id;
+            $submission->mailed     = 0;       // Make sure mail goes out (again, even)
+            $submission->timemarked = time();
 
-        if (empty($submission->timemodified)) {   // eg for offline assignments
-            // $submission->timemodified = time();
+            unset($submission->data1);  // Don't need to update this.
+            unset($submission->data2);  // Don't need to update this.
+
+            if (empty($submission->timemodified)) {   // eg for offline assignments
+                // $submission->timemodified = time();
+            }
+
+            if (! update_record('assignment_submissions', $submission)) {
+                return false;
+            }
+
+            // triger grade event
+            $this->update_grade($submission);
+
+            add_to_log($this->course->id, 'assignment', 'update grades',
+                       'submissions.php?id='.$this->assignment->id.'&user='.$feedback->userid, $feedback->userid, $this->cm->id);
         }
-
-        if (! update_record('assignment_submissions', $submission)) {
-            return false;
-        }
-
-        // triger grade event
-        $this->update_grade($submission);
-
-        add_to_log($this->course->id, 'assignment', 'update grades',
-                   'submissions.php?id='.$this->assignment->id.'&user='.$feedback->userid, $feedback->userid, $this->cm->id);
 
         return $submission;
 
@@ -2020,7 +2081,7 @@ function assignment_get_user_grades($assignment, $userid=0) {
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, u.id AS userid, s.grade AS rawgrade, s.submissioncomment AS feedback, s.format AS feedbackformat
+    $sql = "SELECT u.id, u.id AS userid, s.grade AS rawgrade, s.submissioncomment AS feedback, s.format AS feedbackformat, s.teacher AS usermodified
               FROM {$CFG->prefix}user u, {$CFG->prefix}assignment_submissions s
              WHERE u.id = s.userid AND s.assignment = $assignment->id
                    $user";

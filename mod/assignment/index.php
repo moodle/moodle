@@ -2,6 +2,7 @@
 
     require_once("../../config.php");
     require_once("lib.php");
+    require_once($CFG->libdir.'/gradelib.php');
 
     $id = required_param('id', PARAM_INT);   // course
 
@@ -62,12 +63,8 @@
     
         $submitted = $assignmentinstance->submittedlink();
 
-        $grade = '-';
-        if ($submission = $assignmentinstance->get_submission($USER->id)) {
-            if ($submission->timemarked) {
-                $grade = $assignmentinstance->display_grade($submission->grade);
-            }
-        }
+        $grading_info = grade_get_grades($course->id, 'mod', 'assignment', $assignment->id, $USER->id);
+        $grade = $grading_info->items[0]->grades[$USER->id]->str_grade;
 
         $type = $types[$assignment->assignmenttype];
 
