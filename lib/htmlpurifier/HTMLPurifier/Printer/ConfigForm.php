@@ -25,7 +25,9 @@ class HTMLPurifier_Printer_ConfigForm extends HTMLPurifier_Printer
     
     /**
      * Whether or not to compress directive names, clipping them off
-     * after a certain amount of letters
+     * after a certain amount of letters. False to disable or integer letters
+     * before clipping.
+     * @protected
      */
     var $compress = false;
     
@@ -41,11 +43,13 @@ class HTMLPurifier_Printer_ConfigForm extends HTMLPurifier_Printer
         $this->docURL = $doc_url;
         $this->name   = $name;
         $this->compress = $compress;
+        // initialize sub-printers
         $this->fields['default']    = new HTMLPurifier_Printer_ConfigForm_default();
         $this->fields['bool']       = new HTMLPurifier_Printer_ConfigForm_bool();
     }
     
     /**
+     * Sets default column and row size for textareas in sub-printers
      * @param $cols Integer columns of textarea, null to use default
      * @param $rows Integer rows of textarea, null to use default
      */
@@ -55,15 +59,14 @@ class HTMLPurifier_Printer_ConfigForm extends HTMLPurifier_Printer
     }
     
     /**
-     * Retrieves styling, in case the directory it's in is not publically
-     * available
+     * Retrieves styling, in case it is not accessible by webserver
      */
     function getCSS() {
         return file_get_contents(HTMLPURIFIER_PREFIX . '/HTMLPurifier/Printer/ConfigForm.css');
     }
     
     /**
-     * Retrieves JavaScript, in case directory is not public
+     * Retrieves JavaScript, in case it is not accessible by webserver
      */
     function getJavaScript() {
         return file_get_contents(HTMLPURIFIER_PREFIX . '/HTMLPurifier/Printer/ConfigForm.js');
@@ -97,14 +100,14 @@ class HTMLPurifier_Printer_ConfigForm extends HTMLPurifier_Printer
             $ret .= $this->renderNamespace($ns, $directives);
         }
         if ($render_controls) {
-             $ret .= $this->start('tfoot');
+             $ret .= $this->start('tbody');
              $ret .= $this->start('tr');
                  $ret .= $this->start('td', array('colspan' => 2, 'class' => 'controls'));
-                     $ret .= $this->elementEmpty('input', array('type' => 'Submit', 'value' => 'Submit'));
+                     $ret .= $this->elementEmpty('input', array('type' => 'submit', 'value' => 'Submit'));
                      $ret .= '[<a href="?">Reset</a>]';
                  $ret .= $this->end('td');
              $ret .= $this->end('tr');
-             $ret .= $this->end('tfoot');
+             $ret .= $this->end('tbody');
         }
         $ret .= $this->end('table');
         return $ret;

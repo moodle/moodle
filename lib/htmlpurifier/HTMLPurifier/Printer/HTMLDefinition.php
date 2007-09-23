@@ -102,6 +102,7 @@ class HTMLPurifier_Printer_HTMLDefinition extends HTMLPurifier_Printer
             $ret .= $this->element('td', $this->listifyTagLookup($lookup));
             $ret .= $this->end('tr');
         }
+        $ret .= $this->end('table');
         return $ret;
     }
     
@@ -179,7 +180,8 @@ class HTMLPurifier_Printer_HTMLDefinition extends HTMLPurifier_Printer
                     $def->validateChildren(array(), $this->config, $context);
                 }
                 $elements = $def->elements;
-            } elseif ($def->type == 'chameleon') {
+            }
+            if ($def->type == 'chameleon') {
                 $attr['rowspan'] = 2;
             } elseif ($def->type == 'empty') {
                 $elements = array();

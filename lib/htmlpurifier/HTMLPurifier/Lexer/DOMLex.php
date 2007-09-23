@@ -53,14 +53,7 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
         }
         
         // preprocess html, essential for UTF-8
-        $html =
-            '<!DOCTYPE html '.
-                'PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'.
-                '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'.
-            '<html><head>'.
-            '<meta http-equiv="Content-Type" content="text/html;'.
-                ' charset=utf-8" />'.
-            '</head><body><div>'.$html.'</div></body></html>';
+        $html = $this->wrapHTML($html, $config, $context);
         
         $doc = new DOMDocument();
         $doc->encoding = 'UTF-8'; // theoretically, the above has this covered
@@ -175,6 +168,26 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
      */
     function callbackArmorCommentEntities($matches) {
         return '<!--' . str_replace('&', '&amp;', $matches[1]) . $matches[2];
+    }
+    
+    /**
+     * Wraps an HTML fragment in the necessary HTML
+     */
+    function wrapHTML($html, $config, &$context) {
+        $def = $config->getDefinition('HTML');
+        $ret = '';
+        
+        if (!empty($def->doctype->dtdPublic) || !empty($def->doctype->dtdSystem)) {
+            $ret .= '<!DOCTYPE html ';
+            if (!empty($def->doctype->dtdPublic)) $ret .= 'PUBLIC "' . $def->doctype->dtdPublic . '" ';
+            if (!empty($def->doctype->dtdSystem)) $ret .= '"' . $def->doctype->dtdSystem . '" ';
+            $ret .= '>';
+        }
+        
+        $ret .= '<html><head>';
+        $ret .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
+        $ret .= '</head><body><div>'.$html.'</div></body></html>';
+        return $ret;
     }
     
 }

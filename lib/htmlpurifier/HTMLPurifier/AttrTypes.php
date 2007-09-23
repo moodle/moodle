@@ -44,6 +44,9 @@ class HTMLPurifier_AttrTypes
         $this->info['LanguageCode'] = new HTMLPurifier_AttrDef_Lang();
         $this->info['Color']    = new HTMLPurifier_AttrDef_HTML_Color();
         
+        // unimplemented aliases
+        $this->info['ContentType'] = new HTMLPurifier_AttrDef_Text();
+        
         // number is really a positive integer (one or more digits)
         // FIXME: ^^ not always, see start and value of list items
         $this->info['Number']   = new HTMLPurifier_AttrDef_Integer(false, false, true);

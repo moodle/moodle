@@ -189,6 +189,9 @@ class HTMLPurifier_Lexer
                 return new HTMLPurifier_Lexer_DOMLex();
             case 'DirectLex':
                 return new HTMLPurifier_Lexer_DirectLex();
+            case 'PH5P':
+                // experimental Lexer that must be manually included
+                return new HTMLPurifier_Lexer_PH5P();
             default:
                 trigger_error("Cannot instantiate unrecognized Lexer type " . htmlspecialchars($lexer), E_USER_ERROR);
         }

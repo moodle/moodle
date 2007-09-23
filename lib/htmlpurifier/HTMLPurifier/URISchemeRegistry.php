@@ -1,5 +1,12 @@
 <?php
 
+require_once 'HTMLPurifier/URIScheme/http.php';
+require_once 'HTMLPurifier/URIScheme/https.php';
+require_once 'HTMLPurifier/URIScheme/mailto.php';
+require_once 'HTMLPurifier/URIScheme/ftp.php';
+require_once 'HTMLPurifier/URIScheme/nntp.php';
+require_once 'HTMLPurifier/URIScheme/news.php';
+
 HTMLPurifier_ConfigSchema::define(
     'URI', 'AllowedSchemes', array(
         'http'  => true, // "Hypertext Transfer Protocol", nuf' said
@@ -7,7 +14,6 @@ HTMLPurifier_ConfigSchema::define(
         // quite useful, but not necessary
         'mailto' => true,// Email
         'ftp'   => true, // "File Transfer Protocol"
-        'irc'   => true, // "Internet Relay Chat", usually needs another app
         // for Usenet, these two are similar, but distinct
         'nntp'  => true, // individual Netnews articles
         'news'  => true  // newsgroup or individual Netnews articles
@@ -55,12 +61,6 @@ class HTMLPurifier_URISchemeRegistry
     var $schemes = array();
     
     /**
-     * Directory where scheme objects can be found
-     * @private
-     */
-    var $_scheme_dir = null;
-    
-    /**
      * Retrieves a scheme validator object
      * @param $scheme String scheme name like http or mailto
      * @param $config HTMLPurifier_Config object
@@ -79,21 +79,16 @@ class HTMLPurifier_URISchemeRegistry
         }
         
         if (isset($this->schemes[$scheme])) return $this->schemes[$scheme];
-        if (empty($this->_dir)) $this->_dir = HTMLPURIFIER_PREFIX . '/HTMLPurifier/URIScheme/';
-        
         if (!isset($allowed_schemes[$scheme])) return $null;
         
-        // this bit of reflection is not very efficient, and a bit
-        // hacky too
         $class = 'HTMLPurifier_URIScheme_' . $scheme;
-        if (!class_exists($class)) include_once $this->_dir . $scheme . '.php';
         if (!class_exists($class)) return $null;
         $this->schemes[$scheme] = new $class();
         return $this->schemes[$scheme];
     }
     
     /**
-     * Registers a custom scheme to the cache.
+     * Registers a custom scheme to the cache, bypassing reflection.
      * @param $scheme Scheme name
      * @param $scheme_obj HTMLPurifier_URIScheme object
      */

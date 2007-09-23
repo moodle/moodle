@@ -29,6 +29,7 @@ require_once 'HTMLPurifier/HTMLModule/Scripting.php';
 require_once 'HTMLPurifier/HTMLModule/XMLCommonAttributes.php';
 require_once 'HTMLPurifier/HTMLModule/NonXMLCommonAttributes.php';
 require_once 'HTMLPurifier/HTMLModule/Ruby.php';
+require_once 'HTMLPurifier/HTMLModule/Object.php';
 
 // tidy modules
 require_once 'HTMLPurifier/HTMLModule/Tidy.php';
@@ -172,7 +173,7 @@ class HTMLPurifier_HTMLModuleManager
         $common = array(
             'CommonAttributes', 'Text', 'Hypertext', 'List',
             'Presentation', 'Edit', 'Bdo', 'Tables', 'Image',
-            'StyleAttribute', 'Scripting'
+            'StyleAttribute', 'Scripting', 'Object'
         );
         $transitional = array('Legacy', 'Target');
         $xml = array('XMLCommonAttributes');
