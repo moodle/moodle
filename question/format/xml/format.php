@@ -224,6 +224,7 @@ class qformat_xml extends qformat_default {
         // 'header' parts particular to multianswer
         $qo->qtype = MULTIANSWER;
         $qo->course = $this->course;
+        $qo->generalfeedback = $this->getpath( $questions, array('#','generalfeedback',0,'#','text',0,'#'), '', true );
 
         if (!empty($questions)) {
             $qo->name = $this->import_text( $questions['#']['name'][0]['#']['text'] );
@@ -864,11 +865,15 @@ class qformat_xml extends qformat_default {
             // for Cloze type only
             $name_text = $this->writetext( $question->name );
             $question_text = $this->writetext( $question->questiontext );
+            $generalfeedback = $this->writetext( $question->generalfeedback );
             $expout .= "  <question type=\"$question_type\">\n";
             $expout .= "    <name>$name_text</name>\n";
             $expout .= "    <questiontext>\n";
             $expout .= $question_text;
             $expout .= "    </questiontext>\n";
+            $expout .= "    <generalfeedback>\n";
+            $expout .= $generalfeedback;
+            $expout .= "    </generalfeedback>\n";
         }
 
         if (!empty($question->options->shuffleanswers)) {
