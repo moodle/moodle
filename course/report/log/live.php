@@ -7,11 +7,11 @@
     $id   = required_param('id', PARAM_INT);
     $page = optional_param('page', 0, PARAM_INT);     // which page to show
 
-    require_login();
-
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
     }
+
+    require_login($course);
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     if (!has_capability('moodle/site:viewreports', $context)) {
