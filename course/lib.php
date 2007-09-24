@@ -1383,19 +1383,13 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     }
 
                 } else { // Normal activity
-                
-                    if (!empty($USER->screenreader)) {
-                        $typestring = '('.get_string('modulename',$mod->modname).') ';
-                    } else {
-                        $typestring = '';
-                    }
-                
+
                     $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
-                    echo '<img src="'.$icon.'"'.
-                         ' class="activityicon" alt="'.$mod->modfullname.'" />'.
-                         ' <a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
+                    echo '<a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
                          ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
-                         $typestring.$instancename.'</a>';
+                         '<img src="'.$icon.'"'.
+                         ' class="activityicon" alt="'.$mod->modfullname.'" /> '.
+                         $instancename.'</a>';
                 }
                 if ($usetracking && $mod->modname == 'forum') {
                     $groupmode = groupmode($course, $mod);
