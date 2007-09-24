@@ -1024,3 +1024,7 @@ form.mform .fdescription.required {
   color:#a00;
 }
 
+/* Accessibility: for Windows High Contrast, partial fix MDL-7493. */
+.sideblock .hide-show a {
+  border:1px solid white;
+}
