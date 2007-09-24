@@ -90,14 +90,12 @@ class new_table extends XMLDBAction {
             $field->setNotNull(true);
             $field->setUnsigned(true);
             $field->setSequence(true);
-            $field->setComment('id of the table, please edit me');
             $field->setLoaded(true);
             $field->setChanged(true);
 
             $key = new XMLDBKey('primary');
             $key->setType(XMLDB_KEY_PRIMARY);
             $key->setFields(array('id'));
-            $key->setComment('primary key of the table, please edit me');
             $key->setLoaded(true);
             $key->setChanged(true);
 

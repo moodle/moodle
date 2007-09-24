@@ -82,10 +82,10 @@ class create_xml_file extends XMLDBAction {
         $c.= '    <TABLES>' . "\n";
         $c.= '      <TABLE NAME="' . $xmltable . '" COMMENT="Default comment for ' . $xmltable .', please edit me">' . "\n";
         $c.= '        <FIELDS>' . "\n";
-        $c.= '          <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true" COMMENT="id of the table, please edit me" />' . "\n";
+        $c.= '          <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true" />' . "\n";
         $c.= '        </FIELDS>' . "\n";
         $c.= '        <KEYS>' . "\n";
-        $c.= '          <KEY NAME="primary" COMMENT="Primary key for ' . $xmltable . '" TYPE="primary" FIELDS="id" />' . "\n";
+        $c.= '          <KEY NAME="primary" TYPE="primary" FIELDS="id" />' . "\n";
         $c.= '        </KEYS>' . "\n";
         $c.= '      </TABLE>' . "\n";
         $c.= '    </TABLES>' . "\n";

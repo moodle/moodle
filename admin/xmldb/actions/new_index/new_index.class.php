@@ -89,7 +89,6 @@ class new_index extends XMLDBAction {
         }
         if (!$changeme_exists) { /// Lets create the Index
             $index = new XMLDBIndex('changeme');
-            $index->setComment('Default comment for the index, please edit me');
             $table->addIndex($index);
 
         /// We have one new key, so the structure has changed

@@ -89,7 +89,6 @@ class new_field extends XMLDBAction {
         }
         if (!$changeme_exists) { /// Lets create the field
             $field = new XMLDBField('changeme');
-            $field->setComment('Default comment for the field, please edit me');
             $table->addField($field);
 
         /// We have one new field, so the structure has changed

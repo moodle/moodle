@@ -89,7 +89,6 @@ class new_key extends XMLDBAction {
         }
         if (!$changeme_exists) { /// Lets create the Key
             $key = new XMLDBKey('changeme');
-            $key->setComment('Default comment for the key, please edit me');
             $table->addKey($key);
 
         /// We have one new key, so the structure has changed
