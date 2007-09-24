@@ -1053,7 +1053,7 @@ class grade_tree {
 
         if ($element['object']->is_hidden()) {
             $icon = 'show';
-            $tooltip = '';
+            $tooltip = $strshow;
 
             if ($element['type'] != 'category' and $element['object']->get_hidden() > 1) { // Change the icon and add a tooltip showing the date
                 $icon = 'hiddenuntil';
@@ -1063,8 +1063,7 @@ class grade_tree {
             $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=show&amp;sesskey='.sesskey()
                      . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'"><img title="' . $tooltip . '" src="'.$CFG->pixpath.'/t/' . $icon . '.gif" class="iconsmall" alt="'
-                     . $strshow.'" title="'.$strshow.'"/></a>';
+            $action  = '<a href="'.$url.'"><img alt="'.$strshow.'" src="'.$CFG->pixpath.'/t/'.$icon.'.gif" class="iconsmall" title="'.$tooltip.'"/></a>';
 
         } else {
             $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=hide&amp;sesskey='.sesskey()
@@ -1092,7 +1091,7 @@ class grade_tree {
 
         if ($element['object']->is_locked()) {
             $icon = 'unlock';
-            $tooltip = '';
+            $tooltip = $strunlock;
 
             if ($element['type'] != 'category' and $element['object']->get_locktime() > 1) { // Change the icon and add a tooltip showing the date
                 $icon = 'locktime';
@@ -1105,9 +1104,7 @@ class grade_tree {
             $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=unlock&amp;sesskey='.sesskey()
                      . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/' . $icon . '.gif" title="' . $tooltip
-                     . '" class="iconsmall" alt="'.$strunlock
-                     . '" title="'.$strunlock.'"/></a>';
+            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/'.$icon.'.gif" alt="'.$strunlock.'" class="iconsmall" title="'.$tooltip.'"/></a>';
 
         } else {
             if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:lock', $this->context)) {
