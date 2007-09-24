@@ -1,4 +1,4 @@
-<?php  //$Id: upgrade.php,v 1.2 2007/04/06 17:13:31 skodak Exp $
+<?php  //$Id: upgrade.php,v 1.3 2007/09/24 08:47:34 skodak Exp $
 
 // This file keeps track of upgrades to 
 // the assignment module
@@ -28,9 +28,16 @@ function xmldb_book_upgrade($oldversion=0) {
 /// this comment lines once this file start handling proper
 /// upgrade code.
 
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of "/lib/ddllib.php" function calls
-/// }
+    if ($result && $oldversion < 2007052001) {
+
+    /// Changing type of field importsrc on table book_chapters to char
+        $table = new XMLDBTable('book_chapters');
+        $field = new XMLDBField('importsrc');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, '', 'timemodified');
+
+    /// Launch change of type for field importsrc
+        $result = $result && change_field_type($table, $field);
+    }
 
     return $result;
 }
