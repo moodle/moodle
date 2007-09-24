@@ -1222,6 +1222,16 @@ function forum_scale_used ($forumid,$scaleid) {
     return $return;
 }
 
+/**
+ * Returns true if the scale is in use in the system.
+ *
+ * @param $scaleid int The scale to be counted.
+ * @return boolean
+ */
+function forum_scale_used_anywhere($scaleid) {
+    return record_exists("forum","scale","-$scaleid");
+}
+
 // SQL FUNCTIONS ///////////////////////////////////////////////////////////
 
 /**

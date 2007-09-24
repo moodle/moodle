@@ -1225,6 +1225,17 @@ function hotpot_scale_used ($hotpotid, $scaleid) {
     return $report;
 }
 
+/**
+ * Returns true if the scale is in use in the system.
+ *
+ * @param $scaleid int The scale to be counted.
+ * @return boolean
+ */
+function hotpot_scale_used_anywhere($scaleid) {
+//    return record_exists("hotpot","scale","-$scaleid");
+    return false; // Scales are not used by Hotpot module
+}
+
 //////////////////////////////////////////////////////////
 /// Any other hotpot functions go here.
 /// Each of them must have a name that starts with hotpot

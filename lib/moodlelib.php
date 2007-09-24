@@ -5953,12 +5953,11 @@ function make_grades_menu($gradingtype) {
 }
 
 /**
- * This function returns the nummber of activities
- * using scaleid in a courseid
+ * Returns true if a scale is in use in the given course.
  *
- * @param int $courseid ?
- * @param int $scaleid ?
- * @return int
+ * @param int $courseid The course to be checked.
+ * @param int $scaleid The scale to be checked.
+ * @return boolean
  * @todo Finish documenting this function
  */
 function course_scale_used($courseid, $scaleid) {
@@ -5976,42 +5975,69 @@ function course_scale_used($courseid, $scaleid) {
                     $function_name = $cm->modname.'_scale_used';
                     if (function_exists($function_name)) {
                         if ($function_name($cm->instance,$scaleid)) {
-                            $return++;
+                            return true;
                         }
                     }
                 }
             }
         }
     }
-    return $return;
+    return false;
 }
 
 /**
- * This function returns the nummber of activities
- * using scaleid in the entire site
+ * Returns true if a scale is in use anywhere on the site.
  *
- * @param int $scaleid ?
- * @return int
- * @todo Finish documenting this function. Is return type correct?
+ * @param int $scaleid The scale to be checked.
+ * @param array $courses The site courses, needed is the old way to check has to be used.
+ * @return boolean
  */
 function site_scale_used($scaleid,&$courses) {
+
+    if (empty($scaleid)) {
+        return false;
+    }
 
     global $CFG;
 
     $return = 0;
 
-    if (!is_array($courses) || count($courses) == 0) {
-        $courses = get_courses("all",false,"c.id,c.shortname");
-    }
-
-    if (!empty($scaleid)) {
-        if (is_array($courses) && count($courses) > 0) {
-            foreach ($courses as $course) {
-                $return += course_scale_used($course->id,$scaleid);
+    $legacy_mods = false;
+    if ($mods = get_records('modules', 'visible', 1)) {
+        foreach ($mods as $mod) {
+            //Check $mod->name/lib.php exists
+            if (file_exists($CFG->dirroot.'/mod/'.$mod->name.'/lib.php')) {
+                include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
+                $function_name = $mod->name.'_scale_used_anywhere';
+                $old_function_name = $mod->name.'_scale_used';
+                if (function_exists($function_name)) {
+                    if ($function_name($scaleid)) {
+                        return true;
+                    }
+                } else if (function_exists($old_function_name)) {
+                    $legacy_mods = true;
+                    debugging('Please notify the developer of module "'.$mod->name.'" that new function module_scale_used_anywhere() should be implemented.', DEBUG_DEVELOPER);
+                    break;
+                }
             }
         }
     }
-    return $return;
+
+    // some mods are missing the new xxx_scale_used_anywhere() - use the really slow old way
+    if ($legacy_mods) {
+        if (!is_array($courses) || count($courses) == 0) {
+            $courses = get_courses("all",false,"c.id,c.shortname");
+        }
+        if (is_array($courses) && count($courses) > 0) {
+            foreach ($courses as $course) {
+                if (course_scale_used($course->id,$scaleid)) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
 }
 
 /**

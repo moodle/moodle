@@ -1981,6 +1981,16 @@ function assignment_scale_used ($assignmentid, $scaleid) {
 }
 
 /**
+ * Returns true if the scale is in use in the system.
+ *
+ * @param $scaleid int The scale to be counted.
+ * @return boolean
+ */
+function assignment_scale_used_anywhere($scaleid) {
+    return record_exists("assignment","grade","-$scaleid");
+}
+
+/**
  * Make sure up-to-date events are created for all assignment instances
  *
  * This standard function will check all instances of this module

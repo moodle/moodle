@@ -140,6 +140,17 @@ function lams_scale_used ($lamsid,$scaleid) {
   return $return;
 }
 
+/**
+ * Returns true if the scale is in use in the system.
+ *
+ * @param $scaleid int The scale to be counted.
+ * @return boolean
+ */
+function lams_scale_used_anywhere($scaleid) {
+//    return record_exists("lams","scale","-$scaleid");
+    return false;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other lams functions go here.  Each of them must have a name that
 /// starts with lams_

@@ -401,6 +401,16 @@ function glossary_scale_used ($glossaryid,$scaleid) {
     return $return;
 }
 
+/**
+ * Returns true if the scale is in use in the system.
+ *
+ * @param $scaleid int The scale to be counted.
+ * @return boolean
+ */
+function glossary_scale_used_anywhere($scaleid) {
+    return record_exists("glossary","scale","-$scaleid");
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other glossary functions go here.  Each of them must have a name that
 /// starts with glossary_

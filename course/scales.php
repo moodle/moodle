@@ -146,15 +146,15 @@
             $scale->description = "";
         }
 
-        //Calculate the uses
+        //Check if the scale is in use
         if ($scale->courseid == 0) {
-            $scale_uses = site_scale_used($scale->id,$courses);
+            $scale_used = site_scale_used($scale->id,$courses);
         } else {
-            $scale_uses = course_scale_used($course->id,$scale->id);
+            $scale_used = course_scale_used($course->id,$scale->id);
         }
 
-        //Check for scale_uses
-        if (!empty($scale_uses)) {
+        //Check for scale use
+        if ($scale_used)) {
             error("Scale is in use and cannot be modified",$CFG->wwwroot.'/course/scales.php?id='.$course->id);
         }
 
@@ -210,7 +210,7 @@
             echo "<tr valign=\"top\">";
             echo "<td align=\"right\">";
             echo "</td>";
-            echo "<td>".get_string("usedinnplaces","",$scale_uses);
+            echo "<td>$stractivities: ".($scale_used ? get_string("yes") : get_string("no"));
             echo "</td>";
             echo "</tr>";
         }
@@ -240,15 +240,15 @@
             error("Scale ID was incorrect");
         }
 
-        //Calculate the uses
+        //Check if the scale is in use
         if ($scale->courseid == 0) {
-            $scale_uses = site_scale_used($scale->id,$courses);
+            $scale_used = site_scale_used($scale->id,$courses);
         } else {
-            $scale_uses = course_scale_used($course->id,$scale->id);
+            $scale_used = course_scale_used($course->id,$scale->id);
         }
 
-        //Check for scale_uses
-        if (!empty($scale_uses)) {
+        //Check for scale use
+        if ($scale_used) {
             error("Scale is in use and cannot be deleted",$CFG->wwwroot.'/course/scales.php?id='.$course->id);
         }
 
@@ -271,15 +271,15 @@
             error("Scale ID was incorrect");
         }
 
-        //Calculate the uses
+        //Check if the scale is in use
         if ($scale->courseid == 0) {
-            $scale_uses = site_scale_used($scale->id,$courses);
+            $scale_used = site_scale_used($scale->id,$courses);
         } else {
-            $scale_uses = course_scale_used($course->id,$scale->id);
+            $scale_used = course_scale_used($course->id,$scale->id);
         }
 
-        //Check for scale_uses
-        if (!empty($scale_uses)) {
+        //Check for scale use
+        if ($scale_used)) {
             error("Scale is in use and cannot be moved",$CFG->wwwroot.'/course/scales.php?id='.$course->id);
         }
 
@@ -424,18 +424,18 @@
             $line = array();
             $line[] = "<a target=\"scale\" title=\"$scale->name\" href=\"$CFG->wwwroot/course/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=details\" "."onclick=\"return openpopup('/course/scales.php?id=$course->id\&amp;scaleid=$scale->id&amp;action=details', 'scale', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">".$scale->name."</a><br /><font size=\"-1\">".str_replace(",",", ",$scale->scale)."</font>";
             if (!empty($scale->courseid)) {
-                $scales_uses = course_scale_used($course->id,$scale->id);
+                $scale_used = course_scale_used($course->id,$scale->id);
             } else {
-                $scales_uses = site_scale_used($scale->id,$courses);
+                $scale_used = site_scale_used($scale->id,$courses);
             }
-            $line[] = $scales_uses;
+            $line[] = $scale_used ? get_string("yes") : get_string("no");
             if ($incustom) {
                 $line[] = $strcustomscale;
             } else {
                 $line[] = $strstandardscale;
             }
             $buttons = "";
-            if (empty($scales_uses) && ($incustom || has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM, SITEID)))) {
+            if (!$scale_used && ($incustom || has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM, SITEID)))) {
                 $buttons .= "<a title=\"$stredit\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=edit\"><img".
                             " src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
                 if ($incustom && has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
