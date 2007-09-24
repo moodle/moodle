@@ -9,7 +9,7 @@
         <FIELD NAME="falseanswer" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="trueanswer"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for question_truefalse" NEXT="question"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
         <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="questions" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>

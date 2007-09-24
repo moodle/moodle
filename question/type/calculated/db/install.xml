@@ -12,7 +12,7 @@
         <FIELD NAME="correctanswerformat" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="2" SEQUENCE="false" ENUM="false" PREVIOUS="correctanswerlength"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for question_calculated" NEXT="question"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
         <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="questions" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>

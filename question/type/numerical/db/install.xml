@@ -9,7 +9,7 @@
         <FIELD NAME="tolerance" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="0.0" SEQUENCE="false" ENUM="false" PREVIOUS="answer"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for question_numerical" NEXT="question"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
         <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="questions" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
