@@ -50,6 +50,7 @@
     }
 
     if (!empty($id)) {
+        require_login($id);
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
             if (empty($to)) {
                 error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");

@@ -37,6 +37,7 @@
         if (!$course = get_record('course', 'id', $id) ) {
             error('That\'s an invalid course id'.$id);
         }
+        require_login($course);
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         require_capability('moodle/site:viewreports', $context);
         add_to_log($course->id, "course", "report log", "report/log/index.php?id=$course->id", $course->id);
@@ -45,6 +46,7 @@
         $course->id        = $id;
         $course->shortname = $course_stub->coursename;
         $course->fullname  = $course_stub->coursename;
+        require_login($course);
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
         require_capability('moodle/site:viewreports', $context);
         add_to_log(0, "mnet course", "report log", "report/log/index.php?chooselog=1&host_course=".urlencode($host_course), $course->fullname);
