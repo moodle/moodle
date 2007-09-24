@@ -154,7 +154,7 @@
         }
 
         //Check for scale use
-        if ($scale_used)) {
+        if ($scale_used) {
             error("Scale is in use and cannot be modified",$CFG->wwwroot.'/course/scales.php?id='.$course->id);
         }
 
@@ -279,7 +279,7 @@
         }
 
         //Check for scale use
-        if ($scale_used)) {
+        if ($scale_used) {
             error("Scale is in use and cannot be moved",$CFG->wwwroot.'/course/scales.php?id='.$course->id);
         }
 
