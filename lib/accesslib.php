@@ -228,15 +228,16 @@ function get_role_access($roleid, $accessdata=NULL) {
             WHERE rc.roleid = {$roleid}
                   AND ctx.contextlevel <= ".CONTEXT_COURSE."
             ORDER BY ctx.depth, ctx.path";
-    $rs = get_recordset_sql($sql);
-    if ($rs->RecordCount()) {
-        while ($rd = rs_fetch_next_record($rs)) {
-            $k = "{$rd->path}:{$roleid}";
-            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
+    if ($rs = get_recordset_sql($sql)) {
+        if ($rs->RecordCount()) {
+            while ($rd = rs_fetch_next_record($rs)) {
+                $k = "{$rd->path}:{$roleid}";
+                $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
+            }
+            unset($rd);
         }
-        unset($rd);
+        rs_close($rs);
     }
-    rs_close($rs);
 
     return $accessdata;
 }
