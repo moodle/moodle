@@ -1444,15 +1444,19 @@ global $CFG;
     $bclose = '</b>';
 
      $neworder = '';
+     $currentorder = '';
+     $currentsort = '';
      if ( $sortorder ) {
          if ( $sortorder == 'asc' ) {
+             $currentorder = $asc;
              $neworder = '&amp;sortorder=desc';
-             $newordertitle = $desc;
+             $newordertitle = get_string('changeto', 'glossary', $desc);
          } else {
+             $currentorder = $desc;
              $neworder = '&amp;sortorder=asc';
-             $newordertitle = $asc;
+             $newordertitle = get_string('changeto', 'glossary', $asc);
          }
-         $icon = " <img src=\"$sortorder.gif\" class=\"icon\" alt=\"". get_string($sortorder)."\" />";
+         $icon = " <img src=\"$sortorder.gif\" class=\"icon\" alt=\"$newordertitle\" />";
      } else {
          if ( $sortkey != 'CREATION' and $sortkey != 'UPDATE' and
                $sortkey != 'FIRSTNAME' and $sortkey != 'LASTNAME' ) {
@@ -1461,7 +1465,7 @@ global $CFG;
          } else {
              $newordertitle = $desc;
              $neworder = '&amp;sortorder=desc';
-             $icon = ' <img src="asc.gif" border="0" class="icon" alt="" />';
+             $icon = ' <img src="asc.gif" class="icon" alt="'.$newordertitle.'" />';
          }
      }
      $ficon     = '';
@@ -1504,6 +1508,10 @@ global $CFG;
          $fsort  = get_string("sortbycreation", "glossary");
          $ssort  = get_string("sortbylastupdate", "glossary");
 
+         $currentsort = $fsort;
+         if ($sortkey == 'UPDATE') {
+             $currentsort = $ssort;
+         }
          $sort        = get_string("sortchronogically", "glossary");
      } elseif ( $sortkey == 'FIRSTNAME' or $sortkey == 'LASTNAME') {
          $forder = 'FIRSTNAME';
@@ -1511,10 +1519,14 @@ global $CFG;
          $fsort  = get_string("firstname");
          $ssort  = get_string("lastname");
 
+         $currentsort = $fsort;
+         if ($sortkey == 'LASTNAME') {
+             $currentsort = $ssort;
+         }
          $sort        = get_string("sortby", "glossary");
      }
-
-     echo "<br />$sort: $sbtag<a title=\"$ssort $sordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;sortkey=$sorder$sneworder&amp;mode=$mode\">$ssort$sicon</a>$sendbtag | ".
+     $current = '<span class="accesshide">'.get_string('current', 'glossary', "$currentsort $currentorder").'</span>';
+     echo "<br />$current $sort: $sbtag<a title=\"$ssort $sordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;sortkey=$sorder$sneworder&amp;mode=$mode\">$ssort$sicon</a>$sendbtag | ".
                           "$fbtag<a title=\"$fsort $fordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;sortkey=$forder$fneworder&amp;mode=$mode\">$fsort$ficon</a>$fendbtag<br />";
 }
 
