@@ -289,7 +289,7 @@ class default_questiontype {
             }
         } else {         // Question is a new one
             // Set the unique code
-            list($question->category,$contextid) = explode(',', $form->category);
+            list($question->category,$notused) = explode(',', $form->category);
             $question->stamp = make_unique_id_code();
             $question->createdby = $USER->id;
             $question->timecreated = time();
