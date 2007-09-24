@@ -626,7 +626,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="action"/>
         <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
-        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
         <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="courseid"/>
@@ -637,7 +637,7 @@
         <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="scale"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="oldid"/>
         <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="scale" REFFIELDS="id" PREVIOUS="primary" NEXT="courseid"/>
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="oldid" NEXT="loggeduser"/>
         <KEY NAME="loggeduser" TYPE="foreign" FIELDS="loggeduser" REFTABLE="user" REFFIELDS="id" PREVIOUS="courseid"/>
@@ -789,7 +789,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for post" NEXT="usermodified"/>
-        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" COMMENT="Default comment for the key, please edit me" PREVIOUS="primary"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="id-userid" UNIQUE="true" FIELDS="id, userid" NEXT="lastmodified"/>
@@ -837,9 +837,9 @@
         <FIELD NAME="c2" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="parent (or higher) context" PREVIOUS="c1"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="c1"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="c1"/>
         <KEY NAME="c1" TYPE="foreign" FIELDS="c1" REFTABLE="context" REFFIELDS="id" PREVIOUS="primary" NEXT="c2"/>
-        <KEY NAME="c2" TYPE="foreign" FIELDS="c2" REFTABLE="context" REFFIELDS="id" COMMENT="Default comment for the key, please edit me" PREVIOUS="c1" NEXT="c1c2"/>
+        <KEY NAME="c2" TYPE="foreign" FIELDS="c2" REFTABLE="context" REFFIELDS="id" PREVIOUS="c1" NEXT="c1c2"/>
         <KEY NAME="c1c2" TYPE="unique" FIELDS="c1, c2" PREVIOUS="c2"/>
       </KEYS>
     </TABLE>
@@ -850,7 +850,7 @@
         <FIELD NAME="depth" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="path"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
     </TABLE>
     <TABLE NAME="capabilities" COMMENT="this defines all capabilities" PREVIOUS="context_temp" NEXT="role_allow_assign">
@@ -952,7 +952,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for role_names" NEXT="roleid"/>
-        <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" COMMENT="Default comment for the key, please edit me" PREVIOUS="primary" NEXT="contextid"/>
+        <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" PREVIOUS="primary" NEXT="contextid"/>
         <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="roleid"/>
       </KEYS>
       <INDEXES>
@@ -961,14 +961,14 @@
     </TABLE>
     <TABLE NAME="role_sortorder" COMMENT="sort order of course managers in a course" PREVIOUS="role_names" NEXT="user_info_field">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="userid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="roleid"/>
         <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="roleid" NEXT="sortoder"/>
         <FIELD NAME="sortoder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" PREVIOUS="contextid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="userid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="roleid"/>
         <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" PREVIOUS="userid" NEXT="contextid"/>
         <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="roleid"/>
@@ -979,7 +979,7 @@
     </TABLE>
     <TABLE NAME="user_info_field" COMMENT="Customisable user profile fields" PREVIOUS="role_sortorder" NEXT="user_info_category">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="shortname"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="shortname" SEQUENCE="false" ENUM="false" COMMENT="short name for each field" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="field name" PREVIOUS="shortname" NEXT="datatype"/>
         <FIELD NAME="datatype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Type of data held in this field" PREVIOUS="name" NEXT="description"/>
@@ -999,28 +999,28 @@
         <FIELD NAME="param5" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="General parameter field" PREVIOUS="param4"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
     </TABLE>
     <TABLE NAME="user_info_category" COMMENT="Customisable fields categories" PREVIOUS="user_info_field" NEXT="user_info_data">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="name"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Category name" PREVIOUS="id" NEXT="sortorder"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Display order" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
     </TABLE>
     <TABLE NAME="user_info_data" COMMENT="Data for the customisable user fields" PREVIOUS="user_info_category" NEXT="mnet_enrol_course">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="userid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="id from the user table" PREVIOUS="id" NEXT="fieldid"/>
         <FIELD NAME="fieldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="id from the field table" PREVIOUS="userid" NEXT="data"/>
         <FIELD NAME="data" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Field data" PREVIOUS="fieldid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
     </TABLE>
     <TABLE NAME="mnet_enrol_course" COMMENT="Information about courses on remote hosts" PREVIOUS="user_info_data" NEXT="mnet_enrol_assignments">
@@ -1215,20 +1215,20 @@
     </TABLE>
     <TABLE NAME="events_queue" COMMENT="This table is for storing queued events. It stores only one copy of the eventdata here, and entries from this table are being references by the event_queue_handlers table." PREVIOUS="mnet_sso_access_control" NEXT="events_handlers">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="eventdata"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="eventdata"/>
         <FIELD NAME="eventdata" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="serialized version of the data object passed to the event handler." PREVIOUS="id" NEXT="stackdump"/>
         <FIELD NAME="stackdump" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="serialized debug_backtrace showing where the event was fired from" PREVIOUS="eventdata" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="$USER-&amp;gt;id when the event was fired" PREVIOUS="stackdump" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="time stamp of the first time this was added" PREVIOUS="userid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="userid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="events_handlers" COMMENT="This table is for storing which components requests what type of event, and the location of the responsible handlers. For example, the assignment registers 'grade_updated' event with a function assignment_grade_handler() that should be called event time an 'grade_updated' event is triggered by grade_update() function." PREVIOUS="events_queue" NEXT="events_queue_handlers">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="eventname"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="eventname"/>
         <FIELD NAME="eventname" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="name of the event, e.g. 'grade_updated'" PREVIOUS="id" NEXT="handlermodule"/>
         <FIELD NAME="handlermodule" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="e.g. moodle, mod/forum, block/rss_client" PREVIOUS="eventname" NEXT="handlerfile"/>
         <FIELD NAME="handlerfile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="path to the file of the function, eg /grade/export/lib.php" PREVIOUS="handlermodule" NEXT="handlerfunction"/>
@@ -1237,7 +1237,7 @@
         <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="number of failed attempts to process this handler" PREVIOUS="schedule"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="eventname-handlermodule" UNIQUE="true" FIELDS="eventname, handlermodule"/>
@@ -1245,7 +1245,7 @@
     </TABLE>
     <TABLE NAME="events_queue_handlers" COMMENT="This is the list of queued handlers for processing. The event object is retrieved from the events_queue table. When no further reference is made to the event_queues table, the corresponding entry in the events_queue table should be deleted. Entry should get deleted after a successful event processing by the specified handler." PREVIOUS="events_handlers" NEXT="grade_outcomes">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="queuedeventid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="queuedeventid"/>
         <FIELD NAME="queuedeventid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="foreign key id corresponding to the id of the event_queues table" PREVIOUS="id" NEXT="handlerid"/>
         <FIELD NAME="handlerid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="foreign key id corresponding to the id of the event_handlers table" PREVIOUS="queuedeventid" NEXT="status"/>
         <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="number of failed attempts to process this handler" PREVIOUS="handlerid" NEXT="errormessage"/>
@@ -1253,7 +1253,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="time stamp of the last attempt to run this from the queue" PREVIOUS="errormessage"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="queuedeventid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="queuedeventid"/>
         <KEY NAME="queuedeventid" TYPE="foreign" FIELDS="queuedeventid" REFTABLE="events_queue" REFFIELDS="id" PREVIOUS="primary" NEXT="handlerid"/>
         <KEY NAME="handlerid" TYPE="foreign" FIELDS="handlerid" REFTABLE="events_handlers" REFFIELDS="id" PREVIOUS="queuedeventid"/>
       </KEYS>
@@ -1271,21 +1271,21 @@
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="courseid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseid"/>
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary" NEXT="scaleid"/>
         <KEY NAME="scaleid" TYPE="foreign" FIELDS="scaleid" REFTABLE="scale" REFFIELDS="id" PREVIOUS="courseid" NEXT="usermodified"/>
         <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="scaleid" NEXT="courseid-shortname"/>
-        <KEY NAME="courseid-shortname" TYPE="unique" FIELDS="courseid, shortname" COMMENT="Default comment for the key, please edit me" PREVIOUS="usermodified"/>
+        <KEY NAME="courseid-shortname" TYPE="unique" FIELDS="courseid, shortname" PREVIOUS="usermodified"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="grade_outcomes_courses" COMMENT="stores what outcomes are used in what courses." PREVIOUS="grade_outcomes" NEXT="grade_categories">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the course" PREVIOUS="id" NEXT="outcomeid"/>
         <FIELD NAME="outcomeid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the outcome" PREVIOUS="courseid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="courseid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseid"/>
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary" NEXT="outcomeid"/>
         <KEY NAME="outcomeid" TYPE="foreign" FIELDS="outcomeid" REFTABLE="grade_outcomes" REFFIELDS="id" PREVIOUS="courseid" NEXT="courseid-outcomeid"/>
         <KEY NAME="courseid-outcomeid" TYPE="unique" FIELDS="courseid, outcomeid" PREVIOUS="outcomeid"/>
@@ -1293,7 +1293,7 @@
     </TABLE>
     <TABLE NAME="grade_categories" COMMENT="This table keeps information about categories, used for grouping items." PREVIOUS="grade_outcomes_courses" NEXT="grade_items">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The course this grade category is part of" PREVIOUS="id" NEXT="parent"/>
         <FIELD NAME="parent" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Categories can be hierarchical" PREVIOUS="courseid" NEXT="depth"/>
         <FIELD NAME="depth" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="How many parents does this category have?" PREVIOUS="parent" NEXT="path"/>
@@ -1309,14 +1309,14 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="courseid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseid"/>
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary" NEXT="parent"/>
         <KEY NAME="parent" TYPE="foreign" FIELDS="parent" REFTABLE="grade_categories" REFFIELDS="id" PREVIOUS="courseid"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="grade_items" COMMENT="This table keeps information about gradeable items (ie columns). If an activity (eg an assignment or quiz) has multiple grade_items associated with it (eg several outcomes or numerical grades), then there will be a corresponding multiple number of rows in this table." PREVIOUS="grade_categories" NEXT="grade_grades">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The course this item is part of" PREVIOUS="id" NEXT="categoryid"/>
         <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="(optional) the category group this item belongs to" PREVIOUS="courseid" NEXT="itemname"/>
         <FIELD NAME="itemname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="The name of this item (pushed in by the module)" PREVIOUS="categoryid" NEXT="itemtype"/>
@@ -1346,7 +1346,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="timecreated"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="courseid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseid"/>
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary" NEXT="categoryid"/>
         <KEY NAME="categoryid" TYPE="foreign" FIELDS="categoryid" REFTABLE="grade_categories" REFFIELDS="id" PREVIOUS="courseid" NEXT="scaleid"/>
         <KEY NAME="scaleid" TYPE="foreign" FIELDS="scaleid" REFTABLE="scale" REFFIELDS="id" PREVIOUS="categoryid" NEXT="outcomeid"/>
@@ -1361,7 +1361,7 @@
     </TABLE>
     <TABLE NAME="grade_grades" COMMENT="grade_grades  This table keeps individual grades for each user and each item, exactly as imported or submitted by modules. The rawgrademax/min and rawscaleid are stored here to record the values at the time the grade was stored, because teachers might change this for an activity! All the results are normalised/resampled for the final grade value." PREVIOUS="grade_items" NEXT="grade_outcomes_history">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="itemid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="itemid"/>
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The item this grade belongs to" PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The user who this grade is for" PREVIOUS="itemid" NEXT="rawgrade"/>
         <FIELD NAME="rawgrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="If the grade is a float value (or has been converted to one)" PREVIOUS="userid" NEXT="rawgrademax"/>
@@ -1384,7 +1384,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the time this grade was last modified" PREVIOUS="timecreated"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="itemid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="itemid"/>
         <KEY NAME="itemid" TYPE="foreign" FIELDS="itemid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="itemid" NEXT="rawscaleid"/>
         <KEY NAME="rawscaleid" TYPE="foreign" FIELDS="rawscaleid" REFTABLE="scale" REFFIELDS="id" PREVIOUS="userid" NEXT="usermodified"/>
@@ -1396,9 +1396,9 @@
     </TABLE>
     <TABLE NAME="grade_outcomes_history" COMMENT="History table" PREVIOUS="grade_grades" NEXT="grade_categories_history">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="action"/>
         <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
-        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
         <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="courseid"/>
@@ -1409,7 +1409,7 @@
         <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Outcome description" PREVIOUS="scaleid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="oldid"/>
         <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="grade_outcomes" REFFIELDS="id" PREVIOUS="primary" NEXT="courseid"/>
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="oldid" NEXT="scaleid"/>
         <KEY NAME="scaleid" TYPE="foreign" FIELDS="scaleid" REFTABLE="scale" REFFIELDS="id" PREVIOUS="courseid" NEXT="loggeduser"/>
@@ -1421,9 +1421,9 @@
     </TABLE>
     <TABLE NAME="grade_categories_history" COMMENT="History of grade_categories" PREVIOUS="grade_outcomes_history" NEXT="grade_items_history">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="action"/>
         <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
-        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
         <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="courseid"/>
@@ -1440,7 +1440,7 @@
         <FIELD NAME="aggregatesubcats" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="ignore subcategories in aggregation" PREVIOUS="aggregateoutcomes"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="oldid"/>
         <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="grade_categories" REFFIELDS="id" PREVIOUS="primary" NEXT="courseid"/>
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="oldid" NEXT="parent"/>
         <KEY NAME="parent" TYPE="foreign" FIELDS="parent" REFTABLE="grade_categories" REFFIELDS="id" PREVIOUS="courseid" NEXT="loggeduser"/>
@@ -1452,9 +1452,9 @@
     </TABLE>
     <TABLE NAME="grade_items_history" COMMENT="History of grade_items" PREVIOUS="grade_categories_history" NEXT="grade_grades_history">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="action"/>
         <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
-        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
         <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="courseid"/>
@@ -1484,7 +1484,7 @@
         <FIELD NAME="needsupdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="If this flag is set, then the whole column will be recalculated" PREVIOUS="locktime"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="oldid"/>
         <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="primary" NEXT="courseid"/>
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="oldid" NEXT="categoryid"/>
         <KEY NAME="categoryid" TYPE="foreign" FIELDS="categoryid" REFTABLE="grade_categories" REFFIELDS="id" PREVIOUS="courseid" NEXT="scaleid"/>
@@ -1498,9 +1498,9 @@
     </TABLE>
     <TABLE NAME="grade_grades_history" COMMENT="History table" PREVIOUS="grade_items_history" NEXT="grade_import_newitem">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="action"/>
         <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
-        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
         <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="itemid"/>
@@ -1524,7 +1524,7 @@
         <FIELD NAME="informationformat" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="format of information text" PREVIOUS="information"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="oldid"/>
         <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="grade_grades" REFFIELDS="id" PREVIOUS="primary" NEXT="itemid"/>
         <KEY NAME="itemid" TYPE="foreign" FIELDS="itemid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="oldid" NEXT="userid"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="itemid" NEXT="rawscaleid"/>
@@ -1538,17 +1538,17 @@
     </TABLE>
     <TABLE NAME="grade_import_newitem" COMMENT="temporary table for storing new grade_item names from grade import" PREVIOUS="grade_grades_history" NEXT="grade_import_values">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="itemname"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="itemname"/>
         <FIELD NAME="itemname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="new grade item name" PREVIOUS="id" NEXT="import_code"/>
         <FIELD NAME="import_code" TYPE="int" LENGTH="12" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="import batch code for identification" PREVIOUS="itemname"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
     </TABLE>
     <TABLE NAME="grade_import_values" COMMENT="Temporary table for importing grades" PREVIOUS="grade_import_newitem" NEXT="tag">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="itemid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="itemid"/>
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="if set, this points to existing grade_items id" PREVIOUS="id" NEXT="newgradeitem"/>
         <FIELD NAME="newgradeitem" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="if set, points to the id of grade_import_newitem" PREVIOUS="itemid" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="newgradeitem" NEXT="finalgrade"/>
@@ -1557,7 +1557,7 @@
         <FIELD NAME="import_code" TYPE="int" LENGTH="12" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="similar to backup_code, a unique batch code for identifying one batch of imports" PREVIOUS="feedback"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="itemid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="itemid"/>
         <KEY NAME="itemid" TYPE="foreign" FIELDS="itemid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="primary" NEXT="newgradeitem"/>
         <KEY NAME="newgradeitem" TYPE="foreign" FIELDS="newgradeitem" REFTABLE="grade_import_newitem" REFFIELDS="id" PREVIOUS="itemid"/>
       </KEYS>
@@ -1629,7 +1629,7 @@
     </TABLE>
     <TABLE NAME="groupings" COMMENT="A grouping is a collection of groups. WAS: groups_groupings" PREVIOUS="groups" NEXT="groups_members">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Short human readable unique name for group." PREVIOUS="courseid" NEXT="description"/>
         <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="configdata"/>
@@ -1657,7 +1657,7 @@
     </TABLE>
     <TABLE NAME="groupings_groups" COMMENT="Link a grouping to a group (note, groups can be in multiple groupings ONLY in a course). WAS: groups_groupings_groups" PREVIOUS="groups_members" NEXT="user_private_key">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="groupingid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="groupingid"/>
         <FIELD NAME="groupingid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="groupid"/>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupingid" NEXT="timeadded"/>
         <FIELD NAME="timeadded" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupid"/>
@@ -1670,7 +1670,7 @@
     </TABLE>
     <TABLE NAME="user_private_key" COMMENT="access keys used in cookieless scripts - rss, etc." PREVIOUS="groupings_groups" NEXT="grade_letters">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="script"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="script"/>
         <FIELD NAME="script" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="plugin, module - unique identifier" PREVIOUS="id" NEXT="value"/>
         <FIELD NAME="value" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="private access key value" PREVIOUS="script" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="owner" PREVIOUS="value" NEXT="instance"/>
@@ -1680,7 +1680,7 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="created timestamp" PREVIOUS="validuntil"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="userid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="id from user table" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
@@ -1689,13 +1689,13 @@
     </TABLE>
     <TABLE NAME="grade_letters" COMMENT="Repository for grade letters, for courses and other moodle entities that use grades." PREVIOUS="user_private_key">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="contextid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="What contextid does this letter apply to (for now these will always be courses, but later...)" PREVIOUS="id" NEXT="lowerboundary"/>
         <FIELD NAME="lowerboundary" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="The lower boundary of the letter. Its upper boundary is the lower boundary of the next highest letter, unless there is none above, in which case it's grademax for that grade_item." PREVIOUS="contextid" NEXT="letter"/>
         <FIELD NAME="letter" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The display value of the letter. Can be any character or string of characters (OK, A, 10% etc..)" PREVIOUS="lowerboundary"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
     </TABLE>
   </TABLES>

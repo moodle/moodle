@@ -66,7 +66,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for backup_log" NEXT="courseid"/>
-        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="backup_courses" REFFIELDS="courseid" COMMENT="Default comment for the key, please edit me" PREVIOUS="primary"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="backup_courses" REFFIELDS="courseid" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
   </TABLES>
