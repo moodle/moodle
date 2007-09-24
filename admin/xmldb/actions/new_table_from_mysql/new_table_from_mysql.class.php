@@ -160,7 +160,6 @@ class new_table_from_mysql extends XMLDBAction {
                         $key->setFromADOKey($dbindex);
                     /// Set default comment to PKs
                         if ($key->getType() == XMLDB_KEY_PRIMARY) {
-                            $key->setComment('Primary key for ' . $table->getName());
                         }
                     /// Add key to the table
                         $table->addKey($key);
