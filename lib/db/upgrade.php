@@ -654,7 +654,7 @@ function xmldb_main_upgrade($oldversion=0) {
                 if ($data = get_records('user_info_data', 'fieldid', $field->id)) {
 
                 /// Get the menu options
-                    $options = explode("\n", $this->field->param1);
+                    $options = explode("\n", $field->param1);
                     foreach ($data as $d) {
                         $key = array_search($d->data, $options);
 
