@@ -740,7 +740,6 @@ class default_questiontype {
         // Core question types should not use this mechanism. Their styles
         // should be included in the standard theme.
 
-
         // We only do this once
         // for this question type, no matter how often this method is called.
         if ($this->already_done) {

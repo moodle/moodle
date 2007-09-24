@@ -146,7 +146,6 @@ class question_edit_form extends moodleform {
         // Any questiontype specific fields.
         $this->definition_inner($mform);
 
-
         if (!empty($this->question->id)){
             $mform->addElement('header', 'createdmodifiedheader', get_string('createdmodifiedheader', 'question'));
             $a = new object();
@@ -258,7 +257,6 @@ class question_edit_form extends moodleform {
     function qtype() {
         return '';
     }
-
 }
 
 ?>
