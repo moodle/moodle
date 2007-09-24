@@ -32,23 +32,25 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $inactive = NULL;
+    $activetwo = NULL;
+    $tabs = array();
     $row = array();
 
-    $row[] = new tabobject('list', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('list','data'), '', true);
+    $row[] = new tabobject('list', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('list','data'));
     
     //Add an advanced search tab.
-    $row[] = new tabobject('asearch', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;mode=asearch', get_string('advancedsearch', 'data'), '', true);
+    $row[] = new tabobject('asearch', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;mode=asearch', get_string('advancedsearch', 'data'));
     
     if (isset($record)) {
-        $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id, get_string('single','data'), '', true);
+        $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id, get_string('single','data'));
     } else {
-        $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;mode=single', get_string('single','data'), '', true);
+        $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;mode=single', get_string('single','data'));
     }
 
     if (isloggedin()) {
         if (data_user_can_add_entry($data, $currentgroup, $groupmode)) { // took out participation list here!
             $addstring = empty($editentry) ? get_string('add', 'data') : get_string('editentry', 'data');
-            $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/edit.php?d='.$data->id, $addstring, '', true);
+            $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/edit.php?d='.$data->id, $addstring);
         }
         if (has_capability('mod/data:managetemplates', $context)) {
             if ($currenttab == 'list') {
@@ -64,9 +66,9 @@
             $row[] = new tabobject('templates', $CFG->wwwroot.'/mod/data/templates.php?d='.$data->id.'&amp;mode='.$defaultemplate,
                          get_string('templates','data'));
             $row[] = new tabobject('fields', $CFG->wwwroot.'/mod/data/field.php?d='.$data->id,
-                         get_string('fields','data'), '', true);
+                         get_string('fields','data'));
             $row[] = new tabobject('presets', $CFG->wwwroot.'/mod/data/preset.php?d='.$data->id,
-                         get_string('presets', 'data'), '', true);
+                         get_string('presets', 'data'));
         }
     }
 
@@ -74,6 +76,7 @@
 
     if ($currenttab == 'templates' and isset($mode)) {
 
+        $inactive = array();
         $inactive[] = 'templates';
         $templatelist = array ('listtemplate', 'asearchtemplate' , 'singletemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
 
@@ -90,12 +93,9 @@
         }
         $tabs[] = $row;
         $activetwo = array('templates');
-    } else {
-        $activetwo = array();
     }
 
 /// Print out the tabs and continue!
-
     print_tabs($tabs, $currenttab, $inactive, $activetwo);
 
 ?>
