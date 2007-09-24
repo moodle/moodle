@@ -244,6 +244,5 @@
         print_box(get_string('movingcategorynofiles', 'question', $cattomove), 'boxwidthnarrow boxaligncenter generalbox');
     }
     $contextmoveform->display();
-    print_object($brokenurls);
     print_footer($COURSE);
 ?>
