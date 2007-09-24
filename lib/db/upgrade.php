@@ -1708,44 +1708,63 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
-    /// migrate all tags table to tag
+    /// migrate all tags table to tag - this code MUST use SQL only,
+    /// because if the db structure changes the library functions will fail in future
     if ($result && $oldversion < 2007082701) {
-        require_once($CFG->dirroot.'/tag/lib.php');
         $tagrefs = array(); // $tagrefs[$oldtagid] = $newtagid
-        if ($tags = get_records('tags')) {
-            foreach ($tags as $oldtag) {
-                // if this tag does not exist in tag table yet
-                if (!$newtag = get_record('tag', 'name', tag_normalize($oldtag->text))) {
-                    $itag = new object();
-                    $itag->name = tag_normalize($oldtag->text);
-                    $itag->rawname = tag_normalize($oldtag->text, false);
+        if ($rs = get_recordset('tags')) {
+            $db->debug = false;
+            if ($rs->RecordCount() > 0) {
+                while ($oldtag = rs_fetch_next_record($rs)) {
+                    $raw_normalized = clean_param($oldtag->text, PARAM_TAG);
+                    $normalized     = moodle_strtolower($raw_normalized);
+                    // if this tag does not exist in tag table yet
+                    if (!$newtag = get_record('tag', 'name', $normalized, '', '', '', '', 'id')) {
+                        $itag = new object();
+                        $itag->name         = $normalized;
+                        $itag->rawname      = $raw_normalized;
+                        $itag->userid       = $oldtag->userid;
+                        $itag->timemodified = time();
+                        if ($oldtag->type == 'official') {
+                            $itag->tagtype  = 'official';
+                        } else {
+                            $itag->tagtype  = 'default';
+                        }
 
-                    if ($oldtag->type == 'official') {
-                        $itag->tagtype = $oldtag->type;
+                        if ($idx = insert_record('tag', $itag)) {
+                            $tagrefs[$oldtag->id] = $idx;
+                        }
+                    // if this tag is already used by tag table
                     } else {
-                        $itag->tagtype = 'default';
+                        $tagrefs[$oldtag->id] = $newtag->id;
                     }
-                    $itag->userid = $oldtag->userid;
-                    $itag->timemodified = time();
-
-                    if ($idx = insert_record('tag', $itag)) {
-                        $tagrefs[$oldtag->id] = $idx;
-                    }
-                // if this tag is already used by tag table
-                } else {
-                    $tagrefs[$oldtag->id] = $newtag->id;
                 }
             }
+            $db->debug = true;
+            rs_close($rs);
         }
 
         // fetch all the tag instances and migrate them as well
-        if ($blogtags = get_records('blog_tag_instance')) {
-            foreach ($blogtags as $blogtag) {
-                if (!empty($tagrefs[$blogtag->tagid])) {
-                    tag_an_item('blog', $blogtag->entryid, $tagrefs[$blogtag->tagid]);
+        if ($rs = get_recordset('blog_tag_instance')) {
+            $db->debug = false;
+            if ($rs->RecordCount() > 0) {
+                while ($blogtag = rs_fetch_next_record($rs)) {
+                    if (array_key_exists($blogtag->tagid, $tagrefs)) {
+                        $tag_instance = new object();
+                        $tag_instance->tagid        = $tagrefs[$blogtag->tagid];
+                        $tag_instance->itemtype     = 'blog';
+                        $tag_instance->itemid       = $blogtag->entryid;
+                        $tag_instance->ordering     = 1; // does not matter much, because originally there was no ordering in blogs
+                        $tag_instance->timemodified = time();
+                        insert_record('tag_instance', $tag_instance);
+                    }
                 }
             }
+            $db->debug = true;
+            rs_close($rs);
         }
+
+        unset($tagrefs); // release memory
 
         $table = new XMLDBTable('tags');
         drop_table($table);
