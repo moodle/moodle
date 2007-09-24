@@ -30,7 +30,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="height"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scorm"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
@@ -49,7 +49,7 @@
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="scormtype"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scorm_scoes" NEXT="scorm"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm"/>
         <KEY NAME="scorm" TYPE="foreign" FIELDS="scorm" REFTABLE="scorm" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
@@ -61,7 +61,7 @@
         <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scorm_scoes_data" NEXT="scorm_scoes_data_scoid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_scoes_data_scoid"/>
         <KEY NAME="scorm_scoes_data_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
@@ -77,7 +77,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="value"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scorm_scoes_track" NEXT="scormid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scormid"/>
         <KEY NAME="scormid" TYPE="foreign" FIELDS="scormid" REFTABLE="scorm" REFFIELDS="id" PREVIOUS="primary" NEXT="scoid"/>
         <KEY NAME="scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" PREVIOUS="scormid"/>
       </KEYS>
@@ -97,7 +97,7 @@
         <FIELD NAME="minnormalizedmeasure" TYPE="float" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0.0000" SEQUENCE="false" ENUM="false" DECIMALS="4" PREVIOUS="satisfiedbymeasure"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scorm_sequencing_objectives" NEXT="scorm_objective_uniq"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_objective_uniq"/>
         <KEY NAME="scorm_objective_uniq" TYPE="unique" FIELDS="scoid, id" PREVIOUS="primary" NEXT="scorm_objective_scoid"/>
         <KEY NAME="scorm_objective_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco" PREVIOUS="scorm_objective_uniq"/>
       </KEYS>
@@ -114,7 +114,7 @@
         <FIELD NAME="writenormalizedmeasure" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="writesatisfiedstatus"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scorm_sequencing_objective" NEXT="scorm_mapinfo_uniq"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_mapinfo_uniq"/>
         <KEY NAME="scorm_mapinfo_uniq" TYPE="unique" FIELDS="scoid, id, objectiveid" PREVIOUS="primary" NEXT="scorm_mapinfo_scoid"/>
         <KEY NAME="scorm_mapinfo_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco" PREVIOUS="scorm_mapinfo_uniq" NEXT="scorm_mapinfo_objectiveid"/>
         <KEY NAME="scorm_mapinfo_objectiveid" TYPE="foreign" FIELDS="objectiveid" REFTABLE="scorm_seq_objective" REFFIELDS="id" COMMENT="The relative objective" PREVIOUS="scorm_mapinfo_scoid"/>
@@ -129,7 +129,7 @@
         <FIELD NAME="action" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="ruletype"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scorm_sequencing_ruleconditions" NEXT="scorm_ruleconds_un"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_ruleconds_un"/>
         <KEY NAME="scorm_ruleconds_un" TYPE="unique" FIELDS="scoid, id" PREVIOUS="primary" NEXT="scorm_ruleconds_scoid"/>
         <KEY NAME="scorm_ruleconds_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco" PREVIOUS="scorm_ruleconds_un"/>
       </KEYS>
@@ -145,7 +145,7 @@
         <FIELD NAME="cond" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="always" SEQUENCE="false" ENUM="false" PREVIOUS="operator"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scorm_sequencing_rulecondition" NEXT="scorm_rulecond_uniq"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_rulecond_uniq"/>
         <KEY NAME="scorm_rulecond_uniq" TYPE="unique" FIELDS="id, scoid, ruleconditionsid" PREVIOUS="primary" NEXT="scorm_rulecond_scoid"/>
         <KEY NAME="scorm_rulecond_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco" PREVIOUS="scorm_rulecond_uniq" NEXT="scorm_rulecond_ruleconditionsid"/>
         <KEY NAME="scorm_rulecond_ruleconditionsid" TYPE="foreign" FIELDS="ruleconditionsid" REFTABLE="scorm_seq_ruleconds" REFFIELDS="id" COMMENT="The relative rulecondition" PREVIOUS="scorm_rulecond_scoid"/>
@@ -162,7 +162,7 @@
         <FIELD NAME="action" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="conditioncombination"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scorm_sequencing_rolluprule" NEXT="scorm_rolluprule_uniq"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_rolluprule_uniq"/>
         <KEY NAME="scorm_rolluprule_uniq" TYPE="unique" FIELDS="scoid, id" PREVIOUS="primary" NEXT="scorm_rolluprule_scoid"/>
         <KEY NAME="scorm_rolluprule_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco" PREVIOUS="scorm_rolluprule_uniq"/>
       </KEYS>
@@ -176,7 +176,7 @@
         <FIELD NAME="cond" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="operator"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scorm_sequencing_rolluprulecondition" NEXT="scorm_rulluprulecond_uniq"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_rulluprulecond_uniq"/>
         <KEY NAME="scorm_rulluprulecond_uniq" TYPE="unique" FIELDS="scoid, rollupruleid, id" PREVIOUS="primary" NEXT="scorm_rolluprulecond_scoid"/>
         <KEY NAME="scorm_rolluprulecond_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco" PREVIOUS="scorm_rulluprulecond_uniq" NEXT="scorm_rolluprulecond_rolluprule"/>
         <KEY NAME="scorm_rolluprulecond_rolluprule" TYPE="foreign" FIELDS="rollupruleid" REFTABLE="scorm_seq_rolluprule" REFFIELDS="id" COMMENT="The relative rolluprule" PREVIOUS="scorm_rolluprulecond_scoid"/>

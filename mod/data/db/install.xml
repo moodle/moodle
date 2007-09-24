@@ -38,7 +38,7 @@
         <FIELD NAME="notification" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="Notify people when things change" PREVIOUS="editany"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for data"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
     </TABLE>
     <TABLE NAME="data_fields" COMMENT="every field available" PREVIOUS="data" NEXT="data_records">
@@ -60,7 +60,7 @@
         <FIELD NAME="param10" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="param9"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for data_fields" NEXT="dataid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="dataid"/>
         <KEY NAME="dataid" TYPE="foreign" FIELDS="dataid" REFTABLE="data" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
@@ -75,7 +75,7 @@
         <FIELD NAME="approved" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timemodified"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for data_records" NEXT="dataid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="dataid"/>
         <KEY NAME="dataid" TYPE="foreign" FIELDS="dataid" REFTABLE="data" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
@@ -91,7 +91,7 @@
         <FIELD NAME="content4" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="content3"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for data_content" NEXT="recordid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="recordid"/>
         <KEY NAME="recordid" TYPE="foreign" FIELDS="recordid" REFTABLE="data_records" REFFIELDS="id" PREVIOUS="primary" NEXT="fieldid"/>
         <KEY NAME="fieldid" TYPE="foreign" FIELDS="fieldid" REFTABLE="data_fields" REFFIELDS="id" PREVIOUS="recordid"/>
       </KEYS>
@@ -107,7 +107,7 @@
         <FIELD NAME="modified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="created"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for data_comments" NEXT="recordid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="recordid"/>
         <KEY NAME="recordid" TYPE="foreign" FIELDS="recordid" REFTABLE="data_records" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
@@ -119,7 +119,7 @@
         <FIELD NAME="rating" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="recordid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for data_ratings" NEXT="recordid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="recordid"/>
         <KEY NAME="recordid" TYPE="foreign" FIELDS="recordid" REFTABLE="data_records" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>

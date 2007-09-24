@@ -26,7 +26,7 @@
         <FIELD NAME="blockperiod" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="blockafter"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for forum"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
@@ -48,7 +48,7 @@
         <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timestart"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for forum_discussions" NEXT="forum"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="forum"/>
         <KEY NAME="forum" TYPE="foreign" FIELDS="forum" REFTABLE="forum" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
@@ -72,7 +72,7 @@
         <FIELD NAME="mailnow" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="totalscore"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for forum_posts" NEXT="discussion"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="discussion"/>
         <KEY NAME="discussion" TYPE="foreign" FIELDS="discussion" REFTABLE="forum_discussions" REFFIELDS="id" PREVIOUS="primary" NEXT="parent"/>
         <KEY NAME="parent" TYPE="foreign" FIELDS="parent" REFTABLE="forum_posts" REFFIELDS="id" COMMENT="note that to make this recursive FK working someday, the parent field must be decalred NULL" PREVIOUS="discussion"/>
       </KEYS>
@@ -90,7 +90,7 @@
         <FIELD NAME="postid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="discussionid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for forum_queue" NEXT="discussionid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="discussionid"/>
         <KEY NAME="discussionid" TYPE="foreign" FIELDS="discussionid" REFTABLE="forum_discussions" REFFIELDS="id" PREVIOUS="primary" NEXT="postid"/>
         <KEY NAME="postid" TYPE="foreign" FIELDS="postid" REFTABLE="forum_posts" REFFIELDS="id" PREVIOUS="discussionid"/>
       </KEYS>
@@ -107,7 +107,7 @@
         <FIELD NAME="rating" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="time"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for forum_ratings" NEXT="post"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="post"/>
         <KEY NAME="post" TYPE="foreign" FIELDS="post" REFTABLE="forum_posts" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
@@ -121,7 +121,7 @@
         <FIELD NAME="forum" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for forum_subscriptions" NEXT="forum"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="forum"/>
         <KEY NAME="forum" TYPE="foreign" FIELDS="forum" REFTABLE="forum" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
@@ -139,7 +139,7 @@
         <FIELD NAME="lastread" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="firstread"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for forum_read"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid-forumid" UNIQUE="false" FIELDS="userid, forumid" NEXT="userid-discussionid"/>
@@ -154,7 +154,7 @@
         <FIELD NAME="forumid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for forum_track_prefs"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid-forumid" UNIQUE="false" FIELDS="userid, forumid"/>

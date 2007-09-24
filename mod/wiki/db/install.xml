@@ -24,7 +24,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="initialcontent"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for wiki"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
@@ -41,7 +41,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="pagename"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for wiki_entries" NEXT="wikiid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="wikiid"/>
         <KEY NAME="wikiid" TYPE="foreign" FIELDS="wikiid" REFTABLE="wiki" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
@@ -68,7 +68,7 @@
         <FIELD NAME="wiki" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="hits"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for wiki_pages" NEXT="wiki"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="wiki"/>
         <KEY NAME="wiki" TYPE="foreign" FIELDS="wiki" REFTABLE="wiki" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
@@ -85,7 +85,7 @@
         <FIELD NAME="lockedseen" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Time (seconds since epoch) at which lock was last reconfirmed (we ignore lock if this is &amp;gt;2 mins ago)" PREVIOUS="lockedsince"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for wiki_locks" NEXT="wikiid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="wikiid"/>
         <KEY NAME="wikiid" TYPE="foreign" FIELDS="wikiid" REFTABLE="wiki" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>

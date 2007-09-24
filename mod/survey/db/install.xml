@@ -14,7 +14,7 @@
         <FIELD NAME="questions" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="intro"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for survey"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
@@ -31,7 +31,7 @@
         <FIELD NAME="options" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="type"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for survey_questions"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
     </TABLE>
     <TABLE NAME="survey_answers" COMMENT="the answers to each questions filled by the users" PREVIOUS="survey_questions" NEXT="survey_analysis">
@@ -45,7 +45,7 @@
         <FIELD NAME="answer2" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="answer1"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for survey_answers" NEXT="survey"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="survey"/>
         <KEY NAME="survey" TYPE="foreign" FIELDS="survey" REFTABLE="survey" REFFIELDS="id" PREVIOUS="primary" NEXT="question"/>
         <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="survey_questions" REFFIELDS="id" PREVIOUS="survey"/>
       </KEYS>
@@ -61,7 +61,7 @@
         <FIELD NAME="notes" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for survey_analysis" NEXT="survey"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="survey"/>
         <KEY NAME="survey" TYPE="foreign" FIELDS="survey" REFTABLE="survey" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>

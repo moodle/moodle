@@ -19,7 +19,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeclose"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for choice"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
@@ -34,7 +34,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="maxanswers"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for choice_options" NEXT="choiceid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="choiceid"/>
         <KEY NAME="choiceid" TYPE="foreign" FIELDS="choiceid" REFTABLE="choice" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
@@ -47,7 +47,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="optionid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for choice_answers" NEXT="choiceid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="choiceid"/>
         <KEY NAME="choiceid" TYPE="foreign" FIELDS="choiceid" REFTABLE="choice" REFFIELDS="id" PREVIOUS="primary" NEXT="optionid"/>
         <KEY NAME="optionid" TYPE="foreign" FIELDS="optionid" REFTABLE="choice_options" REFFIELDS="id" PREVIOUS="choiceid"/>
       </KEYS>
