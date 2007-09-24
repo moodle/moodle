@@ -3044,7 +3044,18 @@ function print_student_grade($user, $course) {
                     if (empty($mod->modname)) {
                         continue;  // Just in case, see MDL-7150
                     }
-                    $instance = get_record($mod->modname, 'id', $mod->instance);
+                    if (!$instance = get_record($mod->modname, 'id', $mod->instance)) {
+                        continue;
+                    }
+                    if (!$cm = get_coursemodule_from_instance($mod->modname, $mod->instance)) {
+                        continue;
+                    }
+                    if (!$cm->visible) {
+                        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                        if(!has_capability('moodle/course:viewhiddenactivities', $modcontext)) {
+                            continue;
+                        }
+                    }
                     $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";    
                     
                     if (file_exists($libfile)) {
