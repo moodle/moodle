@@ -2665,6 +2665,13 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
         }
     }
 
+/// Close eventually open custom_corner divs
+    if ((!empty($THEME->customcorners)) && ($THEME->customcornersopen > 1)) {
+        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
+        while ($THEME->customcornersopen > 1) {
+            print_custom_corners_end();
+        }
+    }
 
 /// Include the actual footer file
 
@@ -5948,6 +5955,7 @@ function print_side_block_start($heading='', $attributes = array()) {
     if (!empty($THEME->customcorners)) {
         echo '<div class="i1"><div class="i2">';
         echo '<div class="i3">';
+        $THEME->customcornersopen += 1;
     }
     echo '<div class="content">';
 

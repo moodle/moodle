@@ -17,6 +17,7 @@
  * @param mixed   $idbase, optionally, define one idbase to be added to all the elements in the corners
  */
 function print_custom_corners_start($clearfix=false, $return=false, $idbase=null) {
+    global $THEME;
 
 /// Analise if we want ids for the custom corner elements
     $idbt = '';
@@ -37,7 +38,9 @@ function print_custom_corners_start($clearfix=false, $return=false, $idbase=null
     $output .= "\n";
     $output .= '<div '.$idi1.'class="i1"><div '.$idi2.'class="i2">';
     $output .= (!empty($clearfix)) ? '<div '.$idi3.'class="i3 clearfix">' : '<div '.$idi3.'class="i3">';
-
+    
+    $THEME->customcornersopen += 1;
+    
     if ($return) {
         return $output;
     } else {
@@ -53,6 +56,7 @@ function print_custom_corners_start($clearfix=false, $return=false, $idbase=null
  * @param mixed   $idbase, optionally, define one idbase to be added to all the elements in the corners
  */
 function print_custom_corners_end($return=false, $idbase=null) {
+    global $THEME;
 
 /// Analise if we want ids for the custom corner elements
     $idbb = '';
@@ -66,7 +70,9 @@ function print_custom_corners_end($return=false, $idbase=null) {
     $output .= "\n";
     $output .= '<div '.$idbb.'class="bb"><div>&nbsp;</div></div>'."\n";
     $output .= '</div>';
-
+    
+    $THEME->customcornersopen -= ($THEME->customcornersopen > 0) ? 1 : 0;
+    
     if ($return) {
         return $output;
     } else {
