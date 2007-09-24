@@ -1703,7 +1703,7 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     /// Print the tabs
 
     if ($currenttab) {
-        include_once('tabs.php');
+        include('tabs.php');
     }
 
     /// Print any notices
