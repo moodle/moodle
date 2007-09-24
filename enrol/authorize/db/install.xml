@@ -20,7 +20,7 @@
         <FIELD NAME="currency" TYPE="char" LENGTH="3" NOTNULL="true" DEFAULT="USD" SEQUENCE="false" ENUM="false" PREVIOUS="amount"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for enrol_authorize"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="userid"/>
@@ -39,7 +39,7 @@
         <FIELD NAME="settletime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="transid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for enrol_authorize_refunds" NEXT="orderid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="orderid"/>
         <KEY NAME="orderid" TYPE="foreign" FIELDS="orderid" REFTABLE="enrol_authorize" REFFIELDS="id" COMMENT="Reference to enrol_authorize.id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>

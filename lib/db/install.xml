@@ -11,7 +11,7 @@
         <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for config" NEXT="name"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="name"/>
         <KEY NAME="name" TYPE="unique" FIELDS="name" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
@@ -23,7 +23,7 @@
         <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for config_plugins" NEXT="plugin_name"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="plugin_name"/>
         <KEY NAME="plugin_name" TYPE="unique" FIELDS="plugin, name" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
@@ -76,7 +76,7 @@
         <FIELD NAME="defaultrole" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="The default role given to participants who self-enrol" PREVIOUS="enrol"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="category" UNIQUE="false" FIELDS="category" NEXT="idnumber"/>
@@ -99,7 +99,7 @@
         <FIELD NAME="theme" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Theme for the category" PREVIOUS="path"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_categories" NEXT="parent"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="parent"/>
         <KEY NAME="parent" TYPE="foreign" FIELDS="parent" REFTABLE="course_categories" REFFIELDS="id" COMMENT="note that to make this recursive FK working someday, the parent field must be declared NULL" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
@@ -111,7 +111,7 @@
         <FIELD NAME="display" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_display"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="course_userid" UNIQUE="false" FIELDS="course, userid"/>
@@ -124,7 +124,7 @@
         <FIELD NAME="child_course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="parent_course"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_meta"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="parent_course" UNIQUE="false" FIELDS="parent_course" NEXT="child_course"/>
@@ -149,7 +149,7 @@
         <FIELD NAME="groupmembersonly" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="only members of any group are allowed to access the activity" PREVIOUS="groupingid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_modules" NEXT="groupingid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="groupingid"/>
         <KEY NAME="groupingid" TYPE="foreign" FIELDS="groupingid" REFTABLE="groupings" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
@@ -170,7 +170,7 @@
         <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="sequence"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_sections"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="course_section" UNIQUE="false" FIELDS="course, section"/>
@@ -187,7 +187,7 @@
         <FIELD NAME="password" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="requester"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_request"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="shortname" UNIQUE="false" FIELDS="shortname"/>
@@ -200,7 +200,7 @@
         <FIELD NAME="module" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="course"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_allowed_modules"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course" NEXT="module"/>
@@ -228,7 +228,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="sequence"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for event"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="userid"/>
@@ -247,7 +247,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="rawtext"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for cache_filters"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="filter_md5key" UNIQUE="false" FIELDS="filter, md5key"/>
@@ -261,7 +261,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="formattedtext"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for cache_text"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="md5key" UNIQUE="false" FIELDS="md5key"/>
@@ -278,7 +278,7 @@
         <FIELD NAME="weight" TYPE="number" LENGTH="5" NOTNULL="true" UNSIGNED="false" DEFAULT="0.00" SEQUENCE="false" ENUM="false" DECIMALS="2" PREVIOUS="hidden"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for grade_category"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
@@ -292,7 +292,7 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="grade_itemid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for grade_exceptions"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
@@ -310,7 +310,7 @@
         <FIELD NAME="sort_order" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="extra_credit"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for grade_item"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
@@ -325,7 +325,7 @@
         <FIELD NAME="grade_low" TYPE="number" LENGTH="5" NOTNULL="true" UNSIGNED="false" DEFAULT="0.00" SEQUENCE="false" ENUM="false" DECIMALS="2" PREVIOUS="grade_high"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for grade_letter"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
@@ -339,7 +339,7 @@
         <FIELD NAME="value" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="preference"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for grade_preferences"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid-preference" UNIQUE="true" FIELDS="courseid, preference"/>
@@ -359,7 +359,7 @@
         <FIELD NAME="info" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="url"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for log"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="time-course-module-action" UNIQUE="false" FIELDS="time, course, module, action" NEXT="course-module-action"/>
@@ -378,7 +378,7 @@
         <FIELD NAME="field" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="mtable"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for log_display"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="module-action" UNIQUE="true" FIELDS="module, action"/>
@@ -395,7 +395,7 @@
         <FIELD NAME="messagetype" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for message"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="useridfrom" UNIQUE="false" FIELDS="useridfrom" NEXT="useridto"/>
@@ -415,7 +415,7 @@
         <FIELD NAME="mailed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="messagetype"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for message_read"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="useridfrom" UNIQUE="false" FIELDS="useridfrom" NEXT="useridto"/>
@@ -430,7 +430,7 @@
         <FIELD NAME="blocked" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="contactid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for message_contacts"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid-contactid" UNIQUE="true" FIELDS="userid, contactid"/>
@@ -447,7 +447,7 @@
         <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="search"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for modules"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="name" UNIQUE="false" FIELDS="name"/>
@@ -463,7 +463,7 @@
         <FIELD NAME="sessdata" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="modified"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="sesskey" COMMENT="Primary key for sessions"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="sesskey" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="expiry" UNIQUE="false" FIELDS="expiry" NEXT="expireref"/>
@@ -504,7 +504,7 @@
         <FIELD NAME="std_time" TYPE="char" LENGTH="5" NOTNULL="true" DEFAULT="00:00" SEQUENCE="false" ENUM="false" PREVIOUS="std_skipweeks"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for timezone"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
     </TABLE>
     <TABLE NAME="user" COMMENT="One record for each person" PREVIOUS="timezone" NEXT="user_preferences">
@@ -559,7 +559,7 @@
         <FIELD NAME="screenreader" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="flag for determining whehter the user uses a screenreader." PREVIOUS="imagealt"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for user"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="username" UNIQUE="true" FIELDS="mnethostid, username" NEXT="deleted"/>
@@ -583,7 +583,7 @@
         <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for user_preferences"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid-name" UNIQUE="true" FIELDS="userid, name"/>
@@ -597,7 +597,7 @@
         <FIELD NAME="timeaccess" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for user_lastaccess"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid-courseid" UNIQUE="true" FIELDS="userid, courseid" NEXT="userid"/>
@@ -616,7 +616,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="description"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scale"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
@@ -657,7 +657,7 @@
         <FIELD NAME="stat2" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="stat2. usually used for writes." PREVIOUS="stat1"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for stats_daily"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="timeend"/>
@@ -676,7 +676,7 @@
         <FIELD NAME="stat2" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="stat2. usually used for writes." PREVIOUS="stat1"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for stats_weekly"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="timeend"/>
@@ -695,7 +695,7 @@
         <FIELD NAME="stat2" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="stat2. usually used for writes." PREVIOUS="stat1"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for stats_monthly"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="timeend"/>
@@ -715,7 +715,7 @@
         <FIELD NAME="stattype" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="statswrites"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for stats_user_daily"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="userid"/>
@@ -736,7 +736,7 @@
         <FIELD NAME="stattype" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="statswrites"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for stats_user_weekly"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="userid"/>
@@ -757,7 +757,7 @@
         <FIELD NAME="stattype" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="statswrites"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for stats_user_monthly"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="userid"/>
@@ -788,7 +788,7 @@
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="created"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for post" NEXT="usermodified"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="usermodified"/>
         <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
@@ -807,7 +807,7 @@
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="description"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for role"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="sortorder" UNIQUE="true" FIELDS="sortorder"/>
@@ -822,7 +822,7 @@
         <FIELD NAME="depth" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="path"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for context"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="contextlevel-instanceid" UNIQUE="true" FIELDS="contextlevel, instanceid" NEXT="instanceid"/>
@@ -863,7 +863,7 @@
         <FIELD NAME="riskbitmask" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="component"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for capabilities" NEXT="name"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="name"/>
         <KEY NAME="name" TYPE="unique" FIELDS="name" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
@@ -874,7 +874,7 @@
         <FIELD NAME="allowassign" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="roleid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for role_allow_assign" NEXT="roleid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="roleid"/>
         <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" PREVIOUS="primary" NEXT="allowassign"/>
         <KEY NAME="allowassign" TYPE="foreign" FIELDS="allowassign" REFTABLE="role" REFFIELDS="id" PREVIOUS="roleid"/>
       </KEYS>
@@ -889,7 +889,7 @@
         <FIELD NAME="allowoverride" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="roleid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for role_allow_override" NEXT="roleid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="roleid"/>
         <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" PREVIOUS="primary" NEXT="allowoverride"/>
         <KEY NAME="allowoverride" TYPE="foreign" FIELDS="allowoverride" REFTABLE="role" REFFIELDS="id" PREVIOUS="roleid"/>
       </KEYS>
@@ -912,7 +912,7 @@
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="enrol"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for role_assignments" NEXT="roleid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="roleid"/>
         <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" PREVIOUS="primary" NEXT="contextid"/>
         <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="roleid" NEXT="userid"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="contextid"/>
@@ -933,7 +933,7 @@
         <FIELD NAME="modifierid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timemodified"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for role_capabilities" NEXT="roleid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="roleid"/>
         <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" PREVIOUS="primary" NEXT="contextid"/>
         <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="roleid" NEXT="modifierid"/>
         <KEY NAME="modifierid" TYPE="foreign" FIELDS="modifierid" REFTABLE="user" REFFIELDS="id" PREVIOUS="contextid" NEXT="capability"/>
@@ -951,7 +951,7 @@
         <FIELD NAME="text" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="contextid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for role_names" NEXT="roleid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="roleid"/>
         <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" PREVIOUS="primary" NEXT="contextid"/>
         <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="roleid"/>
       </KEYS>
@@ -1076,7 +1076,7 @@
         <FIELD NAME="sso_land_url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="xmlrpc_server_url"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for mnet_application"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
       </KEYS>
     </TABLE>
     <TABLE NAME="mnet_host" COMMENT="Information about the local and remote hosts for RPC" PREVIOUS="mnet_application" NEXT="mnet_host2service">
@@ -1575,7 +1575,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="flag"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for tag" NEXT="userid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
@@ -1589,7 +1589,7 @@
         <FIELD NAME="correlatedtags" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="tagid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for tag_correlation" NEXT="tagid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="tagid"/>
         <KEY NAME="tagid" TYPE="foreign" FIELDS="tagid" REFTABLE="tag" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
@@ -1603,7 +1603,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="timemodified" PREVIOUS="ordering"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for tag_instance" NEXT="tagid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="tagid"/>
         <KEY NAME="tagid" TYPE="foreign" FIELDS="tagid" REFTABLE="tag" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
@@ -1623,7 +1623,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups." NEXT="courseid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseid"/>
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
@@ -1638,7 +1638,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groupings." NEXT="courseid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseid"/>
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
@@ -1650,7 +1650,7 @@
         <FIELD NAME="timeadded" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups_members" NEXT="groupid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="groupid"/>
         <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="groups" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="groupid"/>
       </KEYS>
@@ -1663,7 +1663,7 @@
         <FIELD NAME="timeadded" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groupings_groups" NEXT="groupingid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="groupingid"/>
         <KEY NAME="groupingid" TYPE="foreign" FIELDS="groupingid" REFTABLE="groupings" REFFIELDS="id" PREVIOUS="primary" NEXT="groupid"/>
         <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="groups" REFFIELDS="id" PREVIOUS="groupingid"/>
       </KEYS>
