@@ -71,8 +71,14 @@ class moodleform_mod extends moodleform {
             }
         }
 
-        // groupings have no use without groupmode or groupmembersonly
-        if (!$mform->elementExists('groupmode') and !$mform->elementExists('groupmembersonly')) {
+        if ($mform->elementExists('groupmode') and !$mform->elementExists('groupmembersonly') and empty($COURSE->groupmodeforce)) {
+            $mform->disabledIf('groupingid', 'groupmode', 'eq', NOGROUPS);
+
+        } else if (!$mform->elementExists('groupmode') and $mform->elementExists('groupmembersonly')) {
+            $mform->disabledIf('groupingid', 'groupmembersonly', 'notchecked');
+            
+        } else if (!$mform->elementExists('groupmode') and !$mform->elementExists('groupmembersonly')) {
+            // groupings have no use without groupmode or groupmembersonly
             if ($mform->elementExists('groupingid')) {
                 $mform->removeElement('groupingid');
             }
@@ -194,7 +200,7 @@ class moodleform_mod extends moodleform {
             }
 
             if ($features->groupmembersonly) {
-                $mform->addElement('advcheckbox', 'groupmembersonly', get_string('groupmembersonly', 'group'));
+                $mform->addElement('checkbox', 'groupmembersonly', get_string('groupmembersonly', 'group'));
                 $mform->setAdvanced('groupmembersonly');
             }
         }
