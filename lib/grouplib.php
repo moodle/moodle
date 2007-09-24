@@ -106,9 +106,31 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0) {
 
     return get_records_sql("SELECT g.*
                               FROM {$CFG->prefix}groups g $userfrom $groupingfrom
-                             WHERE g.courseid = '$courseid' $userwhere $groupingwhere
+                             WHERE g.courseid = $courseid $userwhere $groupingwhere
                           ORDER BY name ASC");
 }
+
+
+/**
+ * Gets array of all groupings in a specified course.
+ * @param int $coursid return only groupings in this with this courseid
+ * @return array | false Returns an array of the group IDs or false if no records
+ * or an error occurred.
+ */
+function groups_get_all_groupings($courseid) {
+    global $CFG;
+
+    // groupings are ignored when not enabled
+    if (empty($CFG->enablegroupings)) {
+        return(false);
+    }
+    return get_records_sql("SELECT *
+                              FROM {$CFG->prefix}groupings
+                             WHERE courseid = $courseid
+                          ORDER BY name ASC");
+}
+
+
 
 /**
  * Determines if the user is a member of the given group.

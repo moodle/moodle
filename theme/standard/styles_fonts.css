@@ -460,6 +460,9 @@ h2.headingblock {
   font-style: italic;
 }
 
+.section .groupinglabel {
+  color: #666666;
+}
 
 /***
  *** Doc

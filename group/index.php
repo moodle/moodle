@@ -68,6 +68,10 @@ switch ($action) {
         redirect('group.php?courseid='.$courseid);
         break;
 
+    case 'showautocreategroupsform':
+        redirect('autogroup.php?courseid='.$courseid);
+        break;        
+
     case 'showgroupsettingsform':
         redirect('group.php?courseid='.$courseid.'&amp;id='.$groupid);
         break;
@@ -180,6 +184,9 @@ echo '<p><input type="submit" '. $deletegroup_disabled . ' name="act_deletegroup
 
 echo '<p><input type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="'
         . get_string('creategroup', 'group') . '" /></p>'."\n";
+        
+echo '<p><input type="submit" name="act_showautocreategroupsform" id="showautocreategroupsform" value="'
+        . get_string('autocreategroups', 'group') . '" /></p>'."\n";
 
 echo '</td>'."\n";
 echo '<td>'."\n";

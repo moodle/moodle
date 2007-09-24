@@ -287,6 +287,7 @@ function groups_get_users_not_in_group($courseid, $groupid, $searchtext='') {
     $from   = " FROM {$CFG->prefix}user u
                 INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
                 INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid";
+                
     $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
                   AND u.deleted = 0
                   AND ra.roleid in $roleids
@@ -294,8 +295,118 @@ function groups_get_users_not_in_group($courseid, $groupid, $searchtext='') {
                                    FROM {$CFG->prefix}groups_members
                                    WHERE groupid = $groupid)
                   $wheresearch";
+    $groupby = " GROUP BY u.id, u.firstname, u.lastname ";
+    
+    return get_records_sql($select.$from.$where.$groupby);
+}
 
-    return get_records_sql($select.$from.$where);;
+
+/**
+ * Gets potential group members for grouping
+ * @param int $courseid The id of the course
+ * @param int $roleid The role to select users from
+ * @param string $orderby The colum to sort users by
+ * @return array An array of the users
+ */
+function groups_get_potental_members($courseid, $roleid = null, $orderby = 'lastname') {
+	global $CFG;
+    
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $rolenames = array();
+    $avoidroles = array();
+
+    if ($roles = get_roles_used_in_context($context, true)) {
+
+        $canviewroles    = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $context);
+        $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
+
+        foreach ($roles as $role) {
+            if (!isset($canviewroles[$role->id])) {   // Avoid this role (eg course creator)
+                $avoidroles[] = $role->id;
+                unset($roles[$role->id]);
+                continue;
+            }
+            if (isset($doanythingroles[$role->id])) {   // Avoid this role (ie admin)
+                $avoidroles[] = $role->id;
+                unset($roles[$role->id]);
+                continue;
+            }
+            $rolenames[$role->id] = strip_tags(role_get_name($role, $context));   // Used in menus etc later on
+        }
+    }
+    
+    $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.idnumber ';
+    $from   = "FROM {$CFG->prefix}user u INNER JOIN
+               {$CFG->prefix}role_assignments r on u.id=r.userid ";
+
+    if ($avoidroles) {
+        $adminroles = 'AND r.roleid NOT IN (';
+        $adminroles .= implode(',', $avoidroles);
+        $adminroles .= ')';
+    } else {
+        $adminroles = '';
+    }
+
+    // we are looking for all users with this role assigned in this context or higher
+    if ($usercontexts = get_parent_contexts($context)) {
+        $listofcontexts = '('.implode(',', $usercontexts).')';
+    } else {
+        $listofcontexts = '('.$sitecontext->id.')'; // must be site
+    }
+    
+    if ($roleid) {
+        $selectrole = " AND r.roleid = $roleid ";
+    } else {
+        $selectrole = " ";
+    }
+    
+    $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts)
+               AND u.deleted = 0 $selectrole                 
+               AND u.username != 'guest'
+               $adminroles
+               ";
+    $order = "ORDER BY $orderby ";
+                    
+    return(get_records_sql($select.$from.$where.$order));
+    
+}
+
+/**
+ * Parse a group name for characters to replace
+ * @param string $format The format a group name will follow
+ * @param int $groupnumber The number of the group to be used in the parsed format string
+ * @return string the parsed format string
+ */
+function groups_parse_name($format, $groupnumber) {
+    
+    if (strstr($format, '@') !== false) { // Convert $groupnumber to a character series
+    	$tmp = $groupnumber;
+        $places = 1;
+        $serial = '';
+        
+        if ($groupnumber > 25) {
+            while (floor($groupnumber / pow(25, $places)) > 0) {
+        	   $places++;
+            }
+          
+        } else {
+        	$places = 1;
+        }
+        
+        for($i=$places;$i>0;$i--) {
+            if ($i>1) {
+                $serial .= chr(65+floor($tmp/ pow(26, $i)));
+                $tmp -= floor($tmp/ pow(26, $i))*pow(26, $i);
+            } else {
+            	$serial .= chr(65+$tmp%26);
+            }             
+        }
+        $str = preg_replace('/[@]/', $serial, $format);
+    } else {
+    	$str = preg_replace('/[#]/', $groupnumber+1, $format);
+    }
+    return($str);
 }
 
 ?>

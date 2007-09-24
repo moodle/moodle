@@ -24,6 +24,7 @@ $string['groups'] = 'Groups';
 $string['group'] = 'Group';
 $string['groupsinselectedgrouping'] = 'Groups in:'; //'selected grouping'
 $string['membersofselectedgroup'] = 'Members of:';
+$string['overview'] = 'Overview';
 
 $string['showgroupsingrouping'] = 'Show groups in grouping';
 $string['showmembersforgroup'] = 'Show members for group';
@@ -103,4 +104,25 @@ $string['groupmembersonlyerror'] = 'Sorry, you must be member of at least one gr
 
 $string['groupaddedsuccesfully'] = 'Group $a added succesfully';
 $string['nopermissionforcreation'] = 'Can\'t create group \"$a\" as you dont have the required permissions';
+
+$string['usergroupmembership'] = 'Selected user\'s membership:';
+$string['filtergroups'] = 'Filter groups by: ';
+$string['nogroups'] = 'There are no groups setup in this course yet';
+
+$string['autocreategroups'] = 'Auto-create groups';
+$string['selectfromrole'] = 'Role to select members from';
+$string['groupby'] = 'Create groups based on the number of ';
+$string['members'] = 'Members per group';
+$string['number'] = 'Number of groups or members per group';
+$string['allocateby'] = 'Allocate members';
+$string['random'] = 'randomly';
+$string['firstname'] = 'alphabetically by first name';
+$string['lastname'] = 'alphabetically by last name';
+$string['namingscheme'] = 'Naming scheme';
+$string['namingschemehelp'] = 'note: Use \'@\' to represent the group letter or \'#\' to represent the group number';
+$string['toomanygroups'] = 'Insufficient users to populate this number of groups - there are only $a users in the selected role.';
+$string['badnamingscheme'] = 'Must contain exactly one \'@\' or one \'#\'  character';
+$string['groupspreview'] = 'Groups preview';
+$string['nousersinrole'] = 'There are no suitable users in the selected role';
+$string['nogroupsassigned'] = 'No groups assigned';
 ?>

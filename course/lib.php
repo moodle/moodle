@@ -1343,6 +1343,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
 /// Casting $course->modinfo to string prevents one notice when the field is null
     $modinfo = unserialize((string)$course->modinfo);
+    
+    $groupings = groups_get_all_groupings($course->id);
 
     //Acccessibility: replace table with list <ul>, but don't output empty list.
     if (!empty($section->sequence)) {
@@ -1404,6 +1406,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                          '<img src="'.$icon.'"'.
                          ' class="activityicon" alt="'.$mod->modfullname.'" /> '.
                          $instancename.'</a>';
+                    if (!empty($CFG->enablegroupings) && !empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                        echo " <span class=\"groupinglabel\"> - ".format_string($groupings[$mod->groupingid]->name).'</span>';
+                    }
                 }
                 if ($usetracking && $mod->modname == 'forum') {
                     $groupmode = groups_get_course_groupmode($course, $mod);

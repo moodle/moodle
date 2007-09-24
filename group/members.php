@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 /**
  * Add/remove members from group.
  *
@@ -100,9 +100,21 @@ if (!empty($potentialmembers)) {
 if ($potentialmemberscount <=  MAX_USERS_PER_PAGE) {
 
     if ($potentialmembers != false) {
+        // Get other groups user already belongs to
+        $sql = "SELECT u.id AS userid, g.* FROM {$CFG->prefix}user u " .
+                    "INNER JOIN {$CFG->prefix}groups_members gm ON u.id = gm.userid " .
+                    "INNER JOIN {$CFG->prefix}groups g ON gm.groupid = g.id " .
+               "WHERE u.id IN (".implode(',',array_keys($potentialmembers)).") AND g.courseid = {$course->id} ";
+        $rs = get_recordset_sql($sql);
+        $groups = array();
+        $usergroups = array();
+        while ($usergroup =  rs_fetch_next_record($rs)) {
+            $usergroups[$usergroup->userid][$usergroup->id] = $usergroup;
+        }
+        
         // Put the groupings into a hash and sorts them
         foreach ($potentialmembers as $userid => $user) {
-            $nonmembers[$userid] = fullname($user);
+            $nonmembers[$userid] = fullname($user)." (".@count($usergroups[$userid]).")";
         }
         natcasesort($nonmembers);
 
@@ -119,6 +131,7 @@ if ($potentialmemberscount <=  MAX_USERS_PER_PAGE) {
 $strgroups = get_string('groups');
 $strparticipants = get_string('participants');
 $stradduserstogroup = get_string('adduserstogroup', 'group');
+$strusergroupmembership = get_string('usergroupmembership', 'group');
 
 $groupname = format_string($group->name);
 
@@ -130,7 +143,62 @@ $navigation = build_navigation($navlinks);
 
 print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '', '', true, '', user_login_string($course, $USER));
 
+// Print Javascript for showing the selected users group membership
 ?>
+<script type="text/javascript">
+//<![CDATA[
+var userSummaries = Array( 
+<?php
+$membercnt = count($nonmembers);
+$i=1;
+foreach ($nonmembers as $userid => $potentalmember) {
+
+    if (isset($usergroups[$userid])) {
+        $usergrouplist = '<ul>';
+    
+        foreach ($usergroups[$userid] as $groupitem) {
+            $usergrouplist .= '<li>'.addslashes(format_string($groupitem->name)).'</li>';
+        }
+        $usergrouplist .= '</ul>';
+    }
+    else {
+    	$usergrouplist = '';
+    }
+    echo "'$usergrouplist'";
+    if ($i < $membercnt) {
+    	echo ', ';
+    }
+    $i++;
+}
+?>
+);
+
+function updateUserSummary() {
+
+    var selectEl = document.getElementById('addselect');
+    var summaryDiv = document.getElementById('group-usersummary');
+    var length = selectEl.length;
+    var selectCnt = 0;
+    var selectIdx = -1;
+    
+    for(i=0;i<length;i++) {
+        if (selectEl.options[i].selected) {
+        	selectCnt++;
+            selectIdx = i;
+        }
+    }
+
+    if (selectCnt == 1 && userSummaries[selectIdx]) {
+        summaryDiv.innerHTML = userSummaries[selectIdx];
+    } else {
+        summaryDiv.innerHTML = '';
+    }
+    
+    return(true);
+}
+//]]>
+</script>
+
 <div id="addmembersform">
     <h3 class="main"><?php print_string('adduserstogroup', 'group'); echo ": $groupname"; ?></h3>
 
@@ -139,15 +207,17 @@ print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '
     <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
     <input type="hidden" name="group" value="<?php echo $groupid; ?>" />
 
-    <table summary="" cellpadding="5" cellspacing="0">
+    <table cellpadding="6" class="generaltable generalbox groupmanagementtable boxaligncenter" summary="">
     <tr>
       <td valign="top">
-          <label for="removeselect"><?php print_string('existingmembers', 'group', $groupmemberscount); //count($contextusers) ?></label>
-          <br />
+          <p>
+            <label for="removeselect"><?php print_string('existingmembers', 'group', $groupmemberscount); //count($contextusers) ?></label>
+          </p>
           <select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
                   onfocus="document.getElementById('assignform').add.disabled=true;
                            document.getElementById('assignform').remove.disabled=false;
-                           document.getElementById('assignform').addselect.selectedIndex=-1;">
+                           document.getElementById('assignform').addselect.selectedIndex=-1;"
+                  onclick="this.focus();updateUserSummary();">
           <?php echo $groupmembersoptions ?>
           </select></td>
       <td valign="top">
@@ -161,12 +231,14 @@ print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '
         </p>
       </td>
       <td valign="top">
-          <label for="addselect"><?php print_string('potentialmembers', 'group', $potentialmemberscount); //$usercount ?></label>
-          <br />
+          <p>
+            <label for="addselect"><?php print_string('potentialmembers', 'group', $potentialmemberscount); //$usercount ?></label>
+          </p>
           <select name="addselect[]" size="20" id="addselect" multiple="multiple"
-                  onfocus="document.getElementById('assignform').add.disabled=false;
+                  onfocus="updateUserSummary();document.getElementById('assignform').add.disabled=false;
                            document.getElementById('assignform').remove.disabled=true;
-                           document.getElementById('assignform').removeselect.selectedIndex=-1;">
+                           document.getElementById('assignform').removeselect.selectedIndex=-1;"
+                  onclick="this.focus();updateUserSummary();">
           <?php
             if ($potentialmemberscount > MAX_USERS_PER_PAGE) {
                 echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
@@ -178,7 +250,7 @@ print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '
          </select>
          <br />
          <label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
-         <input type="text" name="searchtext" id="searchtext" size="30" value="<?php p($searchtext, true) ?>"
+         <input type="text" name="searchtext" id="searchtext" size="21" value="<?php p($searchtext, true) ?>"
                   onfocus ="getElementById('assignform').add.disabled=true;
                             getElementById('assignform').remove.disabled=true;
                             getElementById('assignform').removeselect.selectedIndex=-1;
@@ -191,9 +263,13 @@ print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '
          <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
          <?php
               if (!empty($searchtext)) {
-                  echo '<input name="showall" id="showall" type="submit" value="'.$strshowall.'" />'."\n";
+                  echo '<br /><input name="showall" id="showall" type="submit" value="'.$strshowall.'" />'."\n";
               }
          ?>
+       </td>
+       <td valign="top">
+        <p><?php p($strusergroupmembership) ?></p>
+        <div id="group-usersummary"></div>
        </td>
     </tr>
     <tr><td>
