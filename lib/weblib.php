@@ -964,6 +964,8 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
  * @param boolean $return Indicates whether the function should return the text
  *         as a string or echo it directly to the page being rendered
  * @param string $targetwindow The name of the target page to open the linked page in.
+ * @param string $selectlabel Text to place in a [label] element - preferred for accessibility.
+ * @param array $optionsextra TODO, an array?
  * @return string If $return is true then the entire form is returned as a string.
  * @todo Finish documenting this function<br>
  */
@@ -2708,6 +2710,19 @@ function check_theme_arrows() {
 }
 
 /**
+ * Return a HTML element with the class "accesshide", for accessibility.
+ *   Please use cautiously - where possible, text should be visible!
+ * @param string $text Plain text.
+ * @param string $elem Lowercase element name, default "span".
+ * @param string $class Additional classes for the element.
+ * @param string $attrs Additional attributes string in the form, "name='value' name2='value2'"
+ * @return string HTML string.
+ */
+function get_accesshide($text, $elem='span', $class='', $attrs='') {
+    return "<$elem class=\"accesshide $class\" $attrs>$text</$elem>";
+}
+
+/**
  * Prints breadcrumb trail of links, called in theme/-/header.html
  *
  * @uses $CFG
@@ -2730,8 +2745,7 @@ function print_navigation ($navigation, $separator=0, $return=false) {
 
     if ($navigation) {
         //Accessibility: breadcrumb links now in a list, &raquo; replaced with a 'silent' character.
-        $nav_text = get_string('youarehere','access');
-        $output .= '<h2 class="accesshide">'.$nav_text."</h2><ul>\n";
+        $output .= get_accesshide(get_string('youarehere','access'), 'h2')."<ul>\n";
         if (! $site = get_site()) {
             $site->shortname = get_string('home');
         }
