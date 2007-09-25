@@ -184,10 +184,12 @@
 
             $currentweek = (($weekdate <= $timenow) && ($timenow < $nextweekdate));
 
+            $currenttext = '';
             if (!$thissection->visible) {
                 $sectionstyle = ' hidden';
             } else if ($currentweek) {
                 $sectionstyle = ' current';
+                $currenttext = get_accesshide(get_string('currentweek','access'));
             } else {
                 $sectionstyle = '';
             }
@@ -195,7 +197,7 @@
             echo '<li id="section-'.$section.'" class="section main'.$sectionstyle.'" >'; //'<div class="left side">&nbsp;</div>';
 
             // Note, 'right side' is BEFORE content.
-            echo '<div class="right side">';
+            echo '<div class="right side">'.$currenttext;
             
             if ($displaysection == $section) {
                 echo '<a href="view.php?id='.$course->id.'&amp;week=0#section-'.$section.'" title="'.$strshowallweeks.'">'.
