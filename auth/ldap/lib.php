@@ -1338,6 +1338,11 @@ function auth_ldap_connect($binddn='',$bindpwd=''){
             ldap_set_option($connresult, LDAP_OPT_PROTOCOL_VERSION, $CFG->ldap_version);
         }
 
+        // Fix MDL-10921
+        if ($this->config->user_type == 'ad') {
+             ldap_set_option($connresult, LDAP_OPT_REFERRALS, 0);
+        }
+
         if (!empty($binddn)){
             //bind with search-user
             //$debuginfo .= 'Using bind user'.$binddn.'and password:'.$bindpwd; 
