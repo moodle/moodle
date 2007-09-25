@@ -49,8 +49,14 @@ a:link,
 a:visited {
   text-decoration:none;
 }
-
 a:hover {
+  text-decoration: underline;
+}
+
+.img-text a:hover {
+  text-decoration: none;
+}
+.img-text a:hover span {
   text-decoration: underline;
 }
 
