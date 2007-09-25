@@ -1,6 +1,6 @@
 <?PHP // $Id$ 
       // access.php - created with Moodle 1.7 beta + (2006101003)
-
+      // Accessibility, usability and navigation language file.
 
 $string['access'] = 'Accessibility';
 $string['accesshelp'] = 'Accessibility help';
@@ -9,6 +9,8 @@ $string['accessstatement'] = 'Accessibility statement';
 $string['activitynext'] = 'Next activity';
 $string['activityprev'] = 'Previous activity';
 $string['breadcrumb'] = 'Breadcrumb trail';
+$string['currentweek'] = 'Current week ';
+$string['currenttopic'] = 'Current topic ';
 $string['monthnext'] = 'Next month';
 $string['monthprev'] = 'Previous month';
 $string['showhideblock'] = 'Show or hide block';

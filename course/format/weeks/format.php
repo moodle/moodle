@@ -162,19 +162,20 @@
 
             $currentweek = (($weekdate <= $timenow) && ($timenow < $nextweekdate));
 
+            $currenttext = '';
             if (!$thissection->visible) {
                 $sectionstyle = ' hidden';
             } else if ($currentweek) {
                 $sectionstyle = ' current';
+                $currenttext = get_accesshide(get_string('currentweek','access'));
             } else {
                 $sectionstyle = '';
             }
 
             echo '<tr id="section-'.$section.'" class="section main'.$sectionstyle.'">';
-            echo '<td class="left side">&nbsp;</td>';
+            echo '<td class="left side">&nbsp;'.$currenttext.'</td>';
 
             $weekperiod = $weekday.' - '.$endweekday;
-            
 
             echo '<td class="content">';
             if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
