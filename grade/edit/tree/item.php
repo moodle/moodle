@@ -26,28 +26,17 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
+if ($item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
     // redirect if outcomeid present
     if (!empty($item->outcomeid) && !empty($CFG->enableoutcomes)) {
         $url = $CFG->wwwroot.'/grade/edit/tree/outcomeitem.php?id='.$id.'&amp;courseid='.$courseid;
         redirect($gpr->add_url_params($url));
     }
-    // Get Item preferences
-    $item->pref_gradedisplaytype = grade_report::get_pref('gradedisplaytype', $item->id);
-    $item->pref_decimalpoints    = grade_report::get_pref('decimalpoints', $item->id);
-
-    $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
-
-    $decimalpoints = grade_report::get_pref('decimalpoints', $item->id);
-
+    $item->calculation = grade_item::denormalize_formula($item->calculation, $courseid);
 } else {
     $item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'), false);
-    // Get Item preferences
-    $item->pref_gradedisplaytype = grade_report::get_pref('gradedisplaytype');
-    $item->pref_decimalpoints    = grade_report::get_pref('decimalpoints');
-
-    $decimalpoints = grade_report::get_pref('decimalpoints');
 }
+$decimalpoints = $item->get_decimals();
 
 if ($item->hidden > 1) {
     $item->hiddenuntil = $item->hidden;
@@ -91,8 +80,12 @@ if ($data = $mform->get_data(false)) {
 
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));
     grade_item::set_properties($grade_item, $data);
-
     $grade_item->outcomeid = null;
+
+    // Handle null decimals value
+    if (strlen($data->decimals) < 1) {
+        $grade_item->decimals = null;
+    }
 
     if (empty($grade_item->id)) {
         $grade_item->itemtype = 'manual'; // all new items to be manual only
@@ -111,19 +104,6 @@ if ($data = $mform->get_data(false)) {
 
     $grade_item->set_locktime($locktime); // locktime first - it might be removed when unlocking
     $grade_item->set_locked($locked, false, true);
-
-    // Handle user preferences
-    if (isset($data->pref_gradedisplaytype)) {
-        if (!grade_report::set_pref('gradedisplaytype', $data->pref_gradedisplaytype, $grade_item->id)) {
-            error("Could not set preference gradedisplaytype to $value for this grade item");
-        }
-    }
-
-    if (isset($data->pref_decimalpoints)) {
-        if (!grade_report::set_pref('decimalpoints', $data->pref_decimalpoints, $grade_item->id)) {
-            error("Could not set preference decimalpoints to $value for this grade item");
-        }
-    }
 
     redirect($returnurl);
 }

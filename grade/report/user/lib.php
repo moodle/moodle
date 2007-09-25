@@ -108,10 +108,10 @@ class grade_report_user extends grade_report {
             $total = $grade_items[1];
             unset($grade_items[1]);
             $grade_items[] = $total;
-            
+
             foreach ($grade_items as $grade_item) {
 
-                $decimalpoints = $this->get_pref('decimalpoints', $grade_item->id);
+                $decimalpoints = $grade_item->get_decimals();
                 $data = array();
 
                 $grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$this->user->id));
@@ -138,14 +138,14 @@ class grade_report_user extends grade_report {
                     $excluded = '';
                 }
 
-                if ($grade_grade->is_hidden() && !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $grade_item->courseid))) {         
-                 
+                if ($grade_grade->is_hidden() && !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $grade_item->courseid))) {
+
                     if ((int) $grade_grade->finalgrade < 1) {
-                        $data[] = '-'; 
+                        $data[] = '-';
                     } else {
                         $data[] = get_string('gradedon', 'grades', userdate($grade_grade->timemodified));
                     }
-                 
+
                 } else {
                     if ($grade_item->scaleid) {
                         // using scales
@@ -162,8 +162,8 @@ class grade_report_user extends grade_report {
                     } else {
                         // normal grade, or text, just display
                         if ((int) $grade_grade->finalgrade < 1) {
-                            $data[] = $excluded.'-'; 
-                        } else { 
+                            $data[] = $excluded.'-';
+                        } else {
                             $data[] = $excluded.format_float($grade_grade->finalgrade, $decimalpoints);
                         }
                     }
@@ -172,7 +172,7 @@ class grade_report_user extends grade_report {
 
                 if ($grade_grade->is_hidden() && !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $grade_item->courseid))) {
                     if ((int) $grade_grade->finalgrade < 1) {
-                        $data[] = '-'; 
+                        $data[] = '-';
                     } else {
                         $data[] = get_string('gradedon', 'grades', userdate($grade_grade->timemodified));
                     }

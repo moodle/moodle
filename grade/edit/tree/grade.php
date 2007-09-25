@@ -110,8 +110,7 @@ if ($grade = get_record('grade_grades', 'itemid', $grade_item->id, 'userid', $us
             $grade->finalgrade = (int)$grade->finalgrade;
         }
     } else if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
-        $decimalpoints = grade_report::get_pref('decimalpoints', $grade_item->id);
-        $grade->finalgrade = format_float($grade->finalgrade, $decimalpoints);
+        $grade->finalgrade = format_float($grade->finalgrade, $grade_item->get_decimals());
     }
 
     $grade->oldgrade = $grade->finalgrade;

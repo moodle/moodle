@@ -35,7 +35,6 @@ class grader_report_preferences_form extends moodleform {
         // Initialise the preferences arrays with grade:manage capabilities
         if (has_capability('moodle/grade:manage', $context)) {
             $preferences['prefgeneral'] = array(
-                          'decimalpoints'       => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default', 0, 1, 2, 3, 4, 5),
                           'aggregationview'     => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
                                                          GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('fullmode', 'grades'),
                                                          GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY => get_string('aggregatesonly', 'grades'),

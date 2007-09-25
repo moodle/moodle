@@ -11,6 +11,7 @@ class edit_grade_display_form extends moodleform {
         $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
         $course_has_letters = $this->_customdata['course_has_letters'];
         $coursegradedisplaytype = get_field('grade_items', 'display', 'courseid', $COURSE->id, 'itemtype', 'course');
+        $coursegradedecimals    = get_field('grade_items', 'decimals', 'courseid', $COURSE->id, 'itemtype', 'course');
 
         $mform->addElement('header', 'coursesettings', get_string('coursesettings', 'grades'));
 
@@ -18,15 +19,31 @@ class edit_grade_display_form extends moodleform {
                                    GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
                                    GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
                                    GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'));
-        $mform->addElement('select', 'gradedisplaytype', get_string('coursegradedisplaytype', 'grades'), $gradedisplaytypes);
-        $mform->setHelpButton('gradedisplaytype', array(false, get_string('coursegradedisplaytype', 'grades'),
+        $label = get_string('coursegradedisplaytype', 'grades') . ' (' . get_string('default', 'grades') . ': '
+                . $gradedisplaytypes[$CFG->grade_report_gradedisplaytype] . ')';
+        $mform->addElement('select', 'display', $label, $gradedisplaytypes);
+        $mform->setHelpButton('display', array(false, get_string('coursegradedisplaytype', 'grades'),
                 false, true, false, get_string('configcoursegradedisplaytype', 'grades')));
-        $mform->setDefault('gradedisplaytype', $coursegradedisplaytype);
+        $mform->setDefault('display', $coursegradedisplaytype);
         $mform->setType($coursegradedisplaytype, PARAM_INT);
+
+        $options = array(GRADE_DECIMALS_DEFAULT => get_string('default', 'grades'), 0, 1, 2, 3, 4, 5);
+        $label = get_string('decimalpoints', 'grades') . ' (' . get_string('default', 'grades') . ': ' . $options[$CFG->grade_report_decimalpoints] . ')';
+        $mform->addElement('select', 'decimals', $label, $options);
+        $mform->setHelpButton('decimals', array(false, get_string('decimalpoints', 'grades'), false, true, false, get_string("configdecimalpoints", 'grades')));
+        $mform->setDefault('decimals', $coursegradedecimals);
+
+        // Disable decimals if displaytype is not REAL or PERCENTAGE
+        $mform->disabledIf('decimals', 'display', "eq", GRADE_DISPLAY_TYPE_LETTER);
 
         $course_set_to_letters  = $coursegradedisplaytype == GRADE_DISPLAY_TYPE_LETTER;
         $course_set_to_default  = $coursegradedisplaytype == GRADE_DISPLAY_TYPE_DEFAULT;
         $site_set_to_letters = $CFG->grade_report_gradedisplaytype == GRADE_DISPLAY_TYPE_LETTER;
+
+        // Disable decimals if course displaytype is DEFAULT and site displaytype is LETTER
+        if ($site_set_to_letters) {
+            $mform->disabledIf('decimals', 'display', "eq", GRADE_DISPLAY_TYPE_DEFAULT);
+        }
 
         if ($course_set_to_letters || ($course_set_to_default && $site_set_to_letters)) {
 

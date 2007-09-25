@@ -51,8 +51,16 @@ if ($mform->is_cancelled()) {
     }
 
     // Update course item's gradedisplay type
-    if (isset($data->gradedisplaytype)) {
-        set_field('grade_items', 'display', $data->gradedisplaytype, 'courseid', $courseid, 'itemtype', 'course');
+    if (isset($data->display)) {
+        set_field('grade_items', 'display', $data->display, 'courseid', $courseid, 'itemtype', 'course');
+    }
+
+    // Update course item's decimals type
+    if (isset($data->decimals)) {
+        if (strlen($data->decimals) < 1) {
+            $data->decimals = null;
+        }
+        set_field('grade_items', 'decimals', $data->decimals, 'courseid', $courseid, 'itemtype', 'course');
     }
 
     // If override is present, add/update entries in grade_letters table

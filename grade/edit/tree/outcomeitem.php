@@ -33,14 +33,7 @@ if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
         $url = $CFG->wwwroot.'/grade/edit/tree/item.php?id='.$id.'&amp;courseid='.$courseid;
         redirect($gpr->add_url_params($url));
     }
-    // Get Item preferences
-    $item->pref_gradedisplaytype = grade_report::get_pref('gradedisplaytype', $item->id);
-    $item->pref_decimalpoints    = grade_report::get_pref('decimalpoints', $item->id);
-
     $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
-
-    $decimalpoints = grade_report::get_pref('decimalpoints', $item->id);
-
     if ($item->itemtype == 'mod') {
         $cm = get_coursemodule_from_instance($item->itemmodule, $item->iteminstance, $item->courseid);
         $item->cmid = $cm->id;
@@ -50,14 +43,10 @@ if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
 
 } else {
     $item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'));
-    // Get Item preferences
-    $item->pref_gradedisplaytype = grade_report::get_pref('gradedisplaytype');
-    $item->pref_decimalpoints    = grade_report::get_pref('decimalpoints');
-
-    $decimalpoints = grade_report::get_pref('decimalpoints');
-
     $item->cmid = 0;
 }
+
+$decimalpoints = $item->get_decimals();
 
 if ($item->hidden > 1) {
     $item->hiddenuntil = $item->hidden;

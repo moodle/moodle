@@ -88,15 +88,37 @@ class edit_item_form extends moodleform {
             $default_gradedisplaytype = $site_gradedisplaytype;
         }
 
-        $options = array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'),
+        $options = array(GRADE_DISPLAY_TYPE_DEFAULT => get_string('default', 'grades'),
                          GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
                          GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
                          GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'));
-        $label = get_string('gradedisplaytype', 'grades') . ' (' . get_string('default', 'grades')
-               . ': ' . $options[$default_gradedisplaytype] . ')';
+        $label = get_string('gradedisplaytype', 'grades') . ' (' . get_string('default', 'grades') . ': ' . $options[$default_gradedisplaytype] . ')';
         $mform->addElement('select', 'display', $label, $options);
         $mform->setHelpButton('display', array(false, get_string('gradedisplaytype', 'grades'),
                               false, true, false, get_string("configgradedisplaytype", 'grades')));
+
+        // Determine default value for decimalpoints (site or course)
+        $course_gradedecimals = get_field('grade_items', 'decimals', 'courseid', $COURSE->id, 'itemtype', 'course');
+        $site_gradedecimals = $CFG->grade_report_decimalpoints;
+        $default_gradedecimals = $course_gradedecimals;
+
+        if ($course_gradedecimals == GRADE_DECIMALS_DEFAULT) {
+            $default_gradedecimals = $site_gradedecimals;
+        }
+        $options = array(GRADE_DECIMALS_DEFAULT => get_string('default', 'grades'), 0, 1, 2, 3, 4, 5);
+        $label = get_string('decimalpoints', 'grades') . ' (' . get_string('default', 'grades') . ': ' . $options[$default_gradedecimals] . ')';
+        $mform->addElement('select', 'decimals', $label, $options);
+        $mform->setHelpButton('decimals', array(false, get_string('decimalpoints', 'grades'),
+                              false, true, false, get_string("configdecimalpoints", 'grades')));
+        $mform->setDefault('decimals', GRADE_REPORT_PREFERENCE_DEFAULT);
+
+        // Disable decimals if displaytype is not REAL or PERCENTAGE
+        $mform->disabledIf('decimals', 'display', "eq", GRADE_DISPLAY_TYPE_LETTER);
+
+        // Disable decimals if displaytype is DEFAULT and course or site displaytype is LETTER
+        if ($default_gradedisplaytype == GRADE_DISPLAY_TYPE_LETTER) {
+            $mform->disabledIf('decimals', 'display', "eq", GRADE_DISPLAY_TYPE_DEFAULT);
+        }
 
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!
@@ -113,17 +135,6 @@ class edit_item_form extends moodleform {
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
         $mform->setHelpButton('locktime', array('locktime', get_string('locktime', 'grades'), 'grade'));
         $mform->disabledIf('locktime', 'gradetype', 'eq', GRADE_TYPE_NONE);
-
-        // user preferences
-        $mform->addElement('header', 'general', get_string('userpreferences', 'grades'));
-
-        $options = array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'), 0, 1, 2, 3, 4, 5);
-        $label = get_string('decimalpoints', 'grades') . ' (' . get_string('default', 'grades')
-               . ': ' . $options[$CFG->grade_report_decimalpoints] . ')';
-        $mform->addElement('select', 'pref_decimalpoints', $label, $options);
-        $mform->setHelpButton('pref_decimalpoints', array(false, get_string('decimalpoints', 'grades'),
-                              false, true, false, get_string("configdecimalpoints", 'grades')));
-        $mform->setDefault('pref_decimalpoints', GRADE_REPORT_PREFERENCE_DEFAULT);
 
 /// hidden params
         $mform->addElement('hidden', 'id', 0);

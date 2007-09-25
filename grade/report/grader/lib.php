@@ -607,7 +607,7 @@ class grade_report_grader extends grade_report {
 
             foreach ($this->items as $itemid=>$item) {
                 // Get the decimal points preference for this item
-                $decimalpoints = $this->get_pref('decimalpoints', $item->id);
+                $decimalpoints = $item->get_decimals();
 
                 if (isset($this->finalgrades[$userid][$item->id])) {
                     $gradeval = $this->finalgrades[$userid][$item->id]->finalgrade;
@@ -896,7 +896,7 @@ class grade_report_grader extends grade_report {
                     $mean_count = $totalcount;
                 }
 
-                $decimalpoints = $this->get_pref('decimalpoints', $item->id);
+                $decimalpoints = $item->get_decimals();
 
                 // Determine which display type to use for this average
                 $gradedisplaytype = $item->get_displaytype();
@@ -909,6 +909,7 @@ class grade_report_grader extends grade_report {
                     $displaytype = $averagesdisplaytype;
                 }
 
+                // Override grade_item setting if a display preference (not inherit) was set for the averages
                 if ($averagesdecimalpoints != GRADE_REPORT_PREFERENCE_INHERIT) {
                     $decimalpoints = $averagesdecimalpoints;
                 }
@@ -974,8 +975,8 @@ class grade_report_grader extends grade_report {
             $columncount = 1;
             foreach ($this->items as $item) {
 
-                $decimalpoints = $this->get_pref('decimalpoints', $item->id);
                 // Determine which display type to use for this range
+                $decimalpoints = $item->get_decimals();
                 $gradedisplaytype = $item->get_displaytype();
 
                 if ($USER->gradeediting[$this->courseid]) {
@@ -986,6 +987,7 @@ class grade_report_grader extends grade_report {
                     $displaytype = $rangesdisplaytype;
                 }
 
+                // If ranges decimal points pref is set (but not to inherit), override grade_item setting
                 if ($rangesdecimalpoints != GRADE_REPORT_PREFERENCE_INHERIT) {
                     $decimalpoints = $rangesdecimalpoints;
                 }

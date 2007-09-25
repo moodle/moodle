@@ -43,7 +43,7 @@ class grade_item extends grade_object {
     var $required_fields = array('id', 'courseid', 'categoryid', 'itemname', 'itemtype', 'itemmodule', 'iteminstance',
                                  'itemnumber', 'iteminfo', 'idnumber', 'calculation', 'gradetype', 'grademax', 'grademin',
                                  'scaleid', 'outcomeid', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef',
-                                 'sortorder', 'display', 'hidden', 'locked', 'locktime', 'needsupdate', 'timecreated',
+                                 'sortorder', 'display', 'decimals', 'hidden', 'locked', 'locktime', 'needsupdate', 'timecreated',
                                  'timemodified');
 
     /**
@@ -206,7 +206,13 @@ class grade_item extends grade_object {
      * Display type of the grades (Real, Percentage, Letter, or default).
      * @var int $display
      */
-    var $display = -1;
+    var $display = GRADE_DISPLAY_TYPE_DEFAULT;
+
+    /**
+     * The number of digits after the decimal point symbol. Applies only to REAL and PERCENTAGE grade display types.
+     * @var int $decimals
+     */
+    var $decimals = GRADE_DECIMALS_DEFAULT;
 
     /**
      * 0 if visible, 1 always hidden or date not visible until
@@ -1691,13 +1697,32 @@ class grade_item extends grade_object {
         $site_gradedisplaytype = $CFG->grade_report_gradedisplaytype;
         $default_gradedisplaytype = $this->display;
 
-        if ($this->display == GRADE_REPORT_PREFERENCE_DEFAULT) {
+        if ($this->display == GRADE_DISPLAY_TYPE_DEFAULT) {
             $default_gradedisplaytype = $course_gradedisplaytype;
-            if ($course_gradedisplaytype == GRADE_REPORT_PREFERENCE_DEFAULT) {
+            if ($course_gradedisplaytype == GRADE_DISPLAY_TYPE_DEFAULT) {
                 $default_gradedisplaytype = $site_gradedisplaytype;
             }
         }
         return $default_gradedisplaytype;
+    }
+
+    /**
+     * Returns the value of the decimals field. It can be set at 3 levels: grade_item, course and site. The lowest level overrides the higher ones.
+     * @return int Decimals (0 - 5)
+     */
+    function get_decimals() {
+        global $CFG;
+        $course_gradedecimals = get_field('grade_items', 'decimals', 'courseid', $this->courseid, 'itemtype', 'course');
+        $site_gradedecimals = $CFG->grade_report_decimalpoints;
+        $item_gradedecimals = $this->decimals;
+
+        if ($this->decimals == GRADE_DECIMALS_DEFAULT) {
+            $item_gradedecimals = $course_gradedecimals;
+            if ($course_gradedecimals == GRADE_DECIMALS_DEFAULT) {
+                $item_gradedecimals = $site_gradedecimals;
+            }
+        }
+        return $item_gradedecimals;
     }
 }
 ?>

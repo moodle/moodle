@@ -1288,8 +1288,8 @@ function validate_' . $this->_formName . '(frm) {
      * Adds a dependency for $elementName which will be disabled if $condition is met.
      * If $condition = 'notchecked' (default) then the condition is that the $dependentOn element
      * is not checked. If $condition = 'checked' then the condition is that the $dependentOn element
-     * is checked. If $condition is something else then it is checked to see if the value
-     * of the $dependentOn element is equal to $condition.
+     * is checked. If $condition is something else (like "eq" for equals) then it is checked to see if the value
+     * of the $dependentOn element is $condition (such as equal) to $value.
      *
      * @param string $elementName the name of the element which will be disabled
      * @param string $dependentOn the name of the element whose state will be checked for
