@@ -235,6 +235,31 @@ function mimeinfo_from_type($element, $mimetype) {
 }
 
 /**
+ * Get information about a filetype based on the icon file.
+ * @param string $element Desired information (usually 'icon')
+ * @param string $icon Icon file path.
+ * @return string Requested piece of information from array
+ */
+function mimeinfo_from_icon($element, $icon) {
+    static $mimeinfo;
+    $mimeinfo=get_mimetypes_array();
+
+    if (preg_match("/\/(.*)/", $icon, $matches)) {
+        $icon = $matches[1];
+    }
+    $info = $mimeinfo['xxx'][$element]; // Default
+    foreach($mimeinfo as $values) {
+        if($values['icon']==$icon) {
+            if(isset($values[$element])) {
+                $info = $values[$element];
+            }
+            //No break, for example for 'excel.gif' we don't want 'csv'!
+        }
+    }
+    return $info;
+}
+
+/**
  * Obtains descriptions for file types (e.g. 'Microsoft Word document') from the 
  * mimetypes.php language file. 
  * @param string $mimetype MIME type (can be obtained using the mimeinfo function)

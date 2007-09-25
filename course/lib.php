@@ -1332,7 +1332,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     if (!empty($section->sequence)) {
 
         // Fix bug #5027, don't want style=\"width:$width\".
-        echo "<ul class=\"section\">\n";
+        echo "<ul class=\"section img-text\">\n";
         $sectionmods = explode(",", $section->sequence);
 
         foreach ($sectionmods as $modnumber) {
@@ -1384,12 +1384,33 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
                 } else { // Normal activity
 
+                    //Accessibility: for files get description via icon.
+                    $altname = '';
+                    
+                    if ('resource'==$mod->modname) {
+                        if (!empty($modinfo[$modnumber]->icon)) {
+                            $possaltname = $modinfo[$modnumber]->icon;
+
+                            $mimetype = mimeinfo_from_icon('type', $possaltname);
+                            $altname = get_mimetype_description($mimetype); //get_string($mimetype, 'mimetypes');
+                        } else {
+                            $altname = $mod->modfullname;
+                        }
+                    } else {
+                        $altname = $mod->modfullname;
+                    }
+
+                    // Avoid unnecessary duplication.
+                    if (false!==stripos($instancename, $altname)) {
+                        $altname = '';
+                    }
+
                     $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
-                    echo '<a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
+                    echo '<a '.$linkcss.' '.$extra.        // Title unnecessary!
                          ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
-                         '<img src="'.$icon.'"'.
-                         ' class="activityicon" alt="'.$mod->modfullname.'" /> '.
-                         $instancename.'</a>';
+                         '<img src="'.$icon.'" title=""'.  // Suppress IE tooltip.
+                         ' class="activityicon" alt="'.$altname.'" /> <span>'.
+                         $instancename.'</span></a>';
                 }
                 if ($usetracking && $mod->modname == 'forum') {
                     $groupmode = groupmode($course, $mod);
