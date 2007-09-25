@@ -2221,6 +2221,27 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
+    if ($result && $oldversion < 2007092501) {
+
+    /// Changing the default of field decimals on table grade_items to drop it
+        $table = new XMLDBTable('grade_items');
+        $field = new XMLDBField('decimals');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, null, 'display');
+
+    /// Launch change of default for field decimals
+        $result = $result && change_field_default($table, $field);
+    }
+    if ($result && $oldversion < 2007092501) {
+
+    /// Changing nullability of field decimals on table grade_items to null
+        $table = new XMLDBTable('grade_items');
+        $field = new XMLDBField('decimals');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, null, 'display');
+
+    /// Launch change of nullability for field decimals
+        $result = $result && change_field_notnull($table, $field);
+    }
+
 /*
     /// drop old gradebook tables
     if ($result && $oldversion < xxxxxxxx) {
