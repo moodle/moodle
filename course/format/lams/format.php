@@ -242,17 +242,19 @@ while ($section <= $course->numsections) {
 
         $currenttopic = ($course->marker == $section);
 
+        $currenttext = '';
         if (!$thissection->visible) {
             $sectionstyle = ' hidden';
         } else if ($currenttopic) {
             $sectionstyle = ' current';
+            $currenttext = get_accesshide(get_string('currenttopic','access'));
         } else {
             $sectionstyle = '';
         }
 
         echo '<tr id="section-'.$section.'" class="section main'.$sectionstyle.'">';
 
-        echo '<td class="left side">&nbsp;</td>';
+        echo '<td class="left side">&nbsp;'.$currenttext.'</td>';
 
         echo '<td class="content">';
         if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
