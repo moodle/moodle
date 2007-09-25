@@ -63,7 +63,7 @@ httpsrequired();
     } else {
         $currlang = current_language();
         $langs    = get_list_of_languages();
-        $langlabel = '<span class="accesshide">'.get_string('language').':</span>';
+        $langlabel = get_accesshide(get_string('language'));
         $langmenu = popup_form ("$CFG->httpswwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true, 'self', $langlabel);
     }
 

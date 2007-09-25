@@ -905,6 +905,8 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
  * @param boolean $return Indicates whether the function should return the text
  *         as a string or echo it directly to the page being rendered
  * @param string $targetwindow The name of the target page to open the linked page in.
+ * @param string $selectlabel Text to place in a [label] element - preferred for accessibility.
+ * @param array $optionsextra TODO, an array?
  * @return string If $return is true then the entire form is returned as a string.
  * @todo Finish documenting this function<br>
  */
@@ -2894,7 +2896,7 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
     if ($text) {
         $htmltext = $text.'&nbsp;';
         if ($accesshide) {
-            $htmltext = '<span class="accesshide">'.$htmltext.'</span>';
+            $htmltext = get_accesshide($htmltext);
         }
     }
     if ($url) {
@@ -2928,7 +2930,7 @@ function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
     if ($text) {
         $htmltext = '&nbsp;'.$text;
         if ($accesshide) {
-            $htmltext = '<span class="accesshide">'.$htmltext.'</span>';
+            $htmltext = get_accesshide($htmltext);
         }
     }
     if ($url) {
@@ -2939,6 +2941,19 @@ function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
         return '<a'.$class.' href="'.$url.'" title="'.preg_replace('/<.*?>/','',$text).'">'.$arrow.$htmltext.'</a>';
     }
     return $arrow.$htmltext;
+}
+
+/**
+ * Return a HTML element with the class "accesshide", for accessibility.
+ *   Please use cautiously - where possible, text should be visible!
+ * @param string $text Plain text.
+ * @param string $elem Lowercase element name, default "span".
+ * @param string $class Additional classes for the element.
+ * @param string $attrs Additional attributes string in the form, "name='value' name2='value2'"
+ * @return string HTML string.
+ */
+function get_accesshide($text, $elem='span', $class='', $attrs='') {
+    return "<$elem class=\"accesshide $class\" $attrs>$text</$elem>";
 }
 
 /**
@@ -2993,8 +3008,7 @@ function print_navigation ($navigation, $separator=0, $return=false) {
         }
 
         //Accessibility: breadcrumb links now in a list, &raquo; replaced with a 'silent' character.
-        $nav_text = get_string('youarehere','access');
-        $output .= '<h2 class="accesshide">'.$nav_text."</h2><ul>\n";
+        $output .= get_accesshide(get_string('youarehere','access'), 'h2')."<ul>\n";
 
         $output .= '<li class="first">'."\n".'<a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
                .$CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))
@@ -5420,7 +5434,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
     else {
         $skip_text = get_string('skipa', 'access', strip_tags($title));
     }
-    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block" title="'.$skip_text.'">'."\n".'<span class="accesshide">'.$skip_text.'</span>'."\n".'</a>';
+    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block" title="'.$skip_text.'">'."\n".get_accesshide($skip_text)."\n".'</a>';
     $skip_dest = '<span id="sb-'.$block_id.'" class="skip-block-to"></span>';
 
     if (! empty($heading)) {
