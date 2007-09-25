@@ -2199,7 +2199,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
             if ($result) {
                 $tables = array('grade_grades_text', 'grade_grades_text_history');
-    
+
                 foreach ($tables as $table) {
                     $table = new XMLDBTable($table);
                     if (table_exists($table)) {
@@ -2208,6 +2208,17 @@ function xmldb_main_upgrade($oldversion=0) {
                 }
             }
         }
+    }
+
+    if ($result && $oldversion < 2007092500) {
+
+    /// Define field decimals to be added to grade_items
+        $table = new XMLDBTable('grade_items');
+        $field = new XMLDBField('decimals');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '2', 'display');
+
+    /// Launch add field decimals
+        $result = $result && add_field($table, $field);
     }
 
 /*
