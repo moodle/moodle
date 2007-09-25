@@ -806,6 +806,8 @@ class grade_report_grader extends grade_report {
         $meanselection         = $this->get_pref('meanselection');
         $shownumberofgrades    = $this->get_pref('shownumberofgrades');
 
+        $canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->course->id));
+
         $avghtml = '';
         $avgcssclass = 'avg';
 
@@ -857,6 +859,12 @@ class grade_report_grader extends grade_report {
 
             $columncount=1;
             foreach ($this->items as $item) {
+                // If the user shouldn't see this grade_item, hide the average as well
+                if ($item->is_hidden() && !$canviewhidden) {
+                    $avghtml .= '<td class="cell c' . $columncount++.'"> - </td>';
+                    continue;
+                }
+
                 if (empty($sum_array[$item->id])) {
                     $sum_array[$item->id] = 0;
                 }
@@ -991,6 +999,9 @@ class grade_report_grader extends grade_report {
                 if ($rangesdecimalpoints != GRADE_REPORT_PREFERENCE_INHERIT) {
                     $decimalpoints = $rangesdecimalpoints;
                 }
+
+                $grademin = 0;
+                $grademax = 100;
 
                 if ($displaytype == GRADE_DISPLAY_TYPE_REAL) {
                     $grademin = format_float($item->grademin, $decimalpoints);

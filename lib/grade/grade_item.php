@@ -533,7 +533,7 @@ class grade_item extends grade_object {
      * Returns the hidden state of this grade_item
      * @return boolean hidden state
      */
-    function is_hidden($userid=NULL) {
+    function is_hidden() {
         return ($this->hidden == 1 or ($this->hidden != 0 and $this->hidden > time()));
     }
 

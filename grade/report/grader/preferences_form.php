@@ -117,7 +117,7 @@ class grader_report_preferences_form extends moodleform {
                 $help_string = get_string("config$lang_string", 'grades');
 
                 // Replace the 'default' value with the site default language string
-                if (!is_null($options) AND $options[GRADE_REPORT_PREFERENCE_DEFAULT] == 'default') {
+                if (!is_null($options) AND isset($options[GRADE_REPORT_PREFERENCE_DEFAULT]) && $options[GRADE_REPORT_PREFERENCE_DEFAULT] == 'default') {
                     $options[GRADE_REPORT_PREFERENCE_DEFAULT] = get_string('sitedefault', 'grades', $default);
                 } elseif ($type == 'text') {
                     $help_string = get_string("config{$lang_string}default", 'grades', $default);
