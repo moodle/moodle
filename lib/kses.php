@@ -470,7 +470,7 @@ function kses_bad_protocol_once($string, $allowed_protocols)
 ###############################################################################
 {
   return preg_replace('/^((&[^;]*;|[\sA-Za-z0-9])*)'.
-                      '(:|&#0*58;|&#[Xx]3[Aa];)\s*/e',
+                      '(:|&#0*58;|&#[Xx]0*3[Aa];)\s*/e',
                       'kses_bad_protocol_once2("\\1", $allowed_protocols)',
                       $string);
 } # function kses_bad_protocol_once
