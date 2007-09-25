@@ -1664,7 +1664,6 @@ function clean_text($text, $format=FORMAT_MOODLE) {
 
         /// Remove tags that are not allowed
             $text = strip_tags($text, $ALLOWED_TAGS);
-            $text = str_replace('&#x03A;', ':', $text);
 
         /// Clean up embedded scripts and , using kses
             $text = cleanAttributes($text);
@@ -1738,7 +1737,6 @@ function cleanAttributes2($htmlArray){
                 $value = kses_decode_entities($value);
                 $value = preg_replace('/(&#[0-9]+)(;?)/', "\\1;", $value);
                 $value = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', "\\1;", $value);
-                $value = str_replace('&#x03A;', '', $value); //better not have these characters in output at all
                 if ($value === $prevvalue) {
                     $arreach['value'] = $value;
                     break;
