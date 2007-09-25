@@ -14,7 +14,7 @@
     require_once('config.php');
     require_once('lib/filelib.php');
 
-    if (empty($CFG->filelifetime)) {
+    if (!isset($CFG->filelifetime)) {
         $lifetime = 86400;     // Seconds for files to remain in caches
     } else {
         $lifetime = $CFG->filelifetime;
