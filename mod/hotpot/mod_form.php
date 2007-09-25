@@ -1,5 +1,5 @@
 <?php
-require_once ('moodleform_mod.php');
+require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 require_once ($CFG->dirroot.'/mod/hotpot/lib.php');
 
 $HOTPOT_TEXTSOURCE = array(
@@ -64,7 +64,7 @@ class mod_hotpot_mod_form extends moodleform_mod {
         $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
         if (has_capability('moodle/course:managefiles', $sitecontext)) {
             $site = get_site();
-            if ($course->id==$site->id) {
+            if ($COURSE->id==$site->id) {
                 $id = $site->id;
                 $location = HOTPOT_LOCATION_SITEFILES;
             } else {
