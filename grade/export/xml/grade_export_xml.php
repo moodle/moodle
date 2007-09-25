@@ -67,7 +67,7 @@ class grade_export_xml extends grade_export {
             foreach ($userdata->grades as $itemid => $grade) {
                 $grade_item = $this->grade_items[$itemid];
                 $grade->grade_item =& $grade_item;
-                $gradestr = $this->format_grade($grade);
+                $gradestr = $grade->finalgrade; // no formating for now
 
                 fwrite($handle,  "\t<result>\n");
 
