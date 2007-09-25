@@ -36,6 +36,15 @@ function groups_get_group_name($groupid) {
 }
 
 /**
+ * Gets the name of a grouping with a specified id
+ * @param int $groupingid The id of the grouping
+ * @return string The name of the grouping
+ */
+function groups_get_grouping_name($groupingid) {
+    return get_field('groupings', 'name', 'id', $groupingid);
+}
+
+/**
  * Returns the groupid of a group with the name specified for the course.
  * Group names should be unique in course
  * @param int $courseid The id of the course
