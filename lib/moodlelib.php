@@ -1957,7 +1957,7 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null) {
  * @param int $instance optional instance id
  */
 function require_user_key_login($script, $instance=null) {
-    global $nomoodlecookie, $USER, $SESSION;
+    global $nomoodlecookie, $USER, $SESSION, $CFG;
 
     if (empty($nomoodlecookie)) {
         error('Incorrect use of require_key_login() - session cookies must be disabled!');
@@ -1990,6 +1990,13 @@ function require_user_key_login($script, $instance=null) {
 /// emulate normal session
     $SESSION = new object();
     $USER    = $user;
+
+/// note we are not using normal login
+    if (!defined('USER_KEY_LOGIN')) {
+        define('USER_KEY_LOGIN', true);
+    }
+
+    load_all_capabilities();
 
 /// return isntance id - it might be empty
     return $key->instance;
