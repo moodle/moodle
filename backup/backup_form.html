@@ -170,7 +170,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                 $var = 'exists_one_'.$modname;
                 if (!empty($$var)) {
                     echo '<tr><td></td><td colspan="3"><table class="backup-form-instances">';
-                    $instances = get_all_instances_in_course($modname,$course);
+                    $instances = get_all_instances_in_course($modname, $course, NULL, true);
                     foreach ($instances as $instance) {
                         echo '<tr><td>';
                         $var = 'backup_'.$modname.'_instance_'.$instance->id;
@@ -302,6 +302,25 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         else {
             $hidden_options .= '<input type="hidden" name="backup_messages" value="0" />';
         }
+    }
+
+    //Now print a place to select which role assignments to back up.
+    if (empty($to)) {
+        //Line
+        echo "<tr><td colspan=\"4\"><hr /></td></tr>\n";
+
+        echo "<tr>";
+        echo "<td align=\"right\" valign=\"top\" colspan=\"2\"><b>";
+        echo get_string("backuproleassignments").":";
+        echo "</b></td><td colspan=\"2\">";
+        $roles = get_records('role', '', '', 'sortorder');
+        foreach ($roles as $role) {
+            print_checkbox('backupassignments_' . $role->shortname, 1, true, strip_tags(format_string($role->name, true)));
+            echo "<br />";
+        }
+        echo "<a href=\"#\" onclick=\"selectItemInCheckboxByName('form1', 'backupassignments_', true); return false;\">". get_string("all")."</a>/";
+        echo "<a href=\"#\" onclick=\"selectItemInCheckboxByName('form1', 'backupassignments_', false); return false;\">". get_string("none")."</a>";
+        echo "</td></tr>";
     }
 
     $backup_unique_code = time();

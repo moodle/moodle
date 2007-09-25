@@ -721,7 +721,7 @@
             /// write local course overrides here?
             write_role_overrides_xml($bf, $context, 3);
             /// write role_assign code here
-            write_role_assignments_xml($bf, $context, 3);
+            write_role_assignments_xml($bf, $context, 3, $preferences);
             //Print header end
             fwrite ($bf,end_tag("HEADER",2,true));
         } else {
@@ -972,7 +972,7 @@
                         $context = get_context_instance(CONTEXT_BLOCK, $instance->id);
                         write_role_overrides_xml($bf, $context, 4);
                         /// write role_assign code here
-                        write_role_assignments_xml($bf, $context, 4);
+                        write_role_assignments_xml($bf, $context, 4, $preferences);
                         //End Block
                         fwrite ($bf,end_tag('BLOCK',3,true));
                     }
@@ -1109,9 +1109,9 @@
                fwrite ($bf,full_tag("GROUPMEMBERSONLY",6,false,$course_module[$tok]->groupmembersonly));
                // get all the role_capabilities overrides in this mod
                write_role_overrides_xml($bf, $context, 6);
-                /// write role_assign code here
-               write_role_assignments_xml($bf, $context, 6);
-                /// write role_assign code here
+               /// write role_assign code here
+               write_role_assignments_xml($bf, $context, 6, $preferences);         
+               /// write role_assign code here
 
                fwrite ($bf,end_tag("MOD",5,true));
            }
@@ -1270,8 +1270,8 @@
 
                 write_role_overrides_xml($bf, $context, 4);
                 /// write role_assign code here
-                write_role_assignments_xml($bf, $context, 4);
-              //End User tag
+                write_role_assignments_xml($bf, $context, 4, $preferences);
+                //End User tag
                 fwrite ($bf,end_tag("USER",3,true));
                 //Do some output
                 $counter++;
@@ -2429,7 +2429,7 @@
                 $var = 'exists_one_'.$modname;
                 $preferences->$var = true;
                 $varname = $modname.'_instances';
-                $preferences->$varname = get_all_instances_in_course($modname,$course);
+                $preferences->$varname = get_all_instances_in_course($modname, $course, NULL, true);
                 foreach ($preferences->$varname as $instance) {
                     $preferences->mods[$modname]->instances[$instance->id]->name = $instance->name;
                     $var = 'backup_'.$modname.'_instance_'.$instance->id;
@@ -2474,6 +2474,14 @@
         $preferences->backup_course = $course->id;
         $preferences->backup_name = required_param('backup_name',PARAM_FILE);
         $preferences->backup_unique_code =  required_param('backup_unique_code');
+
+        $roles = get_records('role', '', '', 'sortorder');
+        $preferences->backuproleassignments = array();
+        foreach ($roles as $role) {
+            if (optional_param('backupassignments_' . $role->shortname, 0, PARAM_INT)) {
+                $preferences->backuproleassignments[$role->id] = $role;
+            }
+        }
 
         // put it (back) in the session
         $SESSION->backupprefs[$course->id] = $preferences;
@@ -2579,12 +2587,15 @@
     }
 
     /* function to print xml for assignment */
-    function write_role_assignments_xml($bf, $context, $startlevel) {
-     /// write role_assign code here
+    function write_role_assignments_xml($bf, $context, $startlevel, $preferences) {
+    /// write role_assign code here
         fwrite ($bf, start_tag("ROLES_ASSIGNMENTS", $startlevel, true));
 
         if ($roles = get_roles_with_assignment_on_context($context)) {
             foreach ($roles as $role) {
+                if (!isset($preferences->backuproleassignments[$role->id])) {
+                    continue;
+                }
                 fwrite ($bf, start_tag("ROLE", $startlevel+1, true));
                 fwrite ($bf, full_tag("ID", $startlevel+2, false, $role->id));
                 fwrite ($bf, full_tag("NAME", $startlevel+2, false, $role->name));

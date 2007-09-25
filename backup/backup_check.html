@@ -85,9 +85,10 @@
                     }
                 }
             }
-        $backupprefs->backup_user_files = 0;
-        $backupprefs->backup_logs = 0;
-        $backupprefs->backup_messages = 0;
+            $backupprefs->backup_user_files = 0;
+            $backupprefs->backup_logs = 0;
+            $backupprefs->backup_messages = 0;
+            $backupprefs->backuproleassignments = array();
         }
         print_simple_box("<font color=\"red\">".get_string("backupnoneusersinfo")."</font>","center", "70%", '', "20", "noticebox");
         echo "<hr />";
@@ -197,7 +198,7 @@
         }
 
         //Now print the Course Files tr conditionally
-       if ($backupprefs->backup_course_files) {
+        if ($backupprefs->backup_course_files) {
             echo "<tr>";
             echo "<td colspan=\"2\"><b>";
             echo get_string("includecoursefiles").'</b>';
@@ -206,13 +207,25 @@
             print_table($table);
             echo "</td></tr>";
         }
-       //Now print the site Files tr conditionally
-       if ($backupprefs->backup_site_files) {
+
+        //Now print the site Files tr conditionally
+        if ($backupprefs->backup_site_files) {
             echo "<tr>";
             echo "<td colspan=\"2\"><b>";
             echo get_string("includesitefiles").'</b>';
             //Print info
             $table->data = site_files_check_backup($id,$backupprefs->backup_unique_code);
+            print_table($table);
+            echo "</td></tr>";
+        }
+
+        //Now print the role assignments information conditionally
+        if (!empty($backupprefs->backuproleassignments)) {
+            echo "<tr>";
+            echo "<td colspan=\"2\"><b>";
+            echo get_string("includeroleassignments").'</b>';
+            //Print info
+            $table->data = array(array(get_string('roles'), count($backupprefs->backuproleassignments)));
             print_table($table);
             echo "</td></tr>";
         }

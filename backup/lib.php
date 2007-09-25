@@ -805,7 +805,7 @@
                 $var = 'exists_one_'.$modname;
                 $preferences->$var = true;
                 $varname = $modname.'_instances';
-                $preferences->$varname = get_all_instances_in_course($modname,$course);
+                $preferences->$varname = get_all_instances_in_course($modname, $course, NULL, true);
                 foreach ($preferences->$varname as $instance) {
                     $preferences->mods[$modname]->instances[$instance->id]->name = $instance->name;
                     $var = 'backup_'.$modname.'_instance_'.$instance->id;
