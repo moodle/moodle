@@ -41,9 +41,9 @@ $settings->add(new admin_setting_configselect('grade_report_aggregationview', ge
 
 $settings->add(new admin_setting_configselect('grade_report_gradedisplaytype', get_string('gradedisplaytype', 'grades'),
                                           get_string('configgradedisplaytype', 'grades'), false,
-                                          array(GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => $strreal,
-                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
-                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => $strletter)));
+                                          array(GRADE_DISPLAY_TYPE_REAL => $strreal,
+                                                GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
+                                                GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_meanselection', get_string('meanselection', 'grades'),
                                           get_string('configmeanselection', 'grades'), false,
@@ -82,15 +82,15 @@ $settings->add(new admin_setting_configcheckbox('grade_report_shownumberofgrades
 
 $settings->add(new admin_setting_configselect('grade_report_averagesdisplaytype', get_string('averagesdisplaytype', 'grades'),
                                           get_string('configaveragesdisplaytype', 'grades'), false,
-                                          array(GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => $strreal,
-                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
-                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => $strletter)));
+                                          array(GRADE_DISPLAY_TYPE_REAL => $strreal,
+                                                GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
+                                                GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_rangesdisplaytype', get_string('rangesdisplaytype', 'grades'),
                                           get_string('configrangesdisplaytype', 'grades'), false,
-                                          array(GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => $strreal,
-                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
-                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => $strletter)));
+                                          array(GRADE_DISPLAY_TYPE_REAL => $strreal,
+                                                GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
+                                                GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_averagesdecimalpoints', get_string('averagesdecimalpoints', 'grades'),
                                           get_string('configaveragesdecimalpoints', 'grades'), 2,

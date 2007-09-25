@@ -14,19 +14,19 @@ class edit_grade_display_form extends moodleform {
 
         $mform->addElement('header', 'coursesettings', get_string('coursesettings', 'grades'));
 
-        $gradedisplaytypes = array(GRADE_REPORT_GRADE_DISPLAY_TYPE_DEFAULT => get_string('default'),
-                                   GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                                   GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
-                                   GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'));
+        $gradedisplaytypes = array(GRADE_DISPLAY_TYPE_DEFAULT => get_string('default'),
+                                   GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
+                                   GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                                   GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'));
         $mform->addElement('select', 'gradedisplaytype', get_string('coursegradedisplaytype', 'grades'), $gradedisplaytypes);
         $mform->setHelpButton('gradedisplaytype', array(false, get_string('coursegradedisplaytype', 'grades'),
                 false, true, false, get_string('configcoursegradedisplaytype', 'grades')));
         $mform->setDefault('gradedisplaytype', $coursegradedisplaytype);
         $mform->setType($coursegradedisplaytype, PARAM_INT);
 
-        $course_set_to_letters  = $coursegradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER;
-        $course_set_to_default  = $coursegradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_DEFAULT;
-        $site_set_to_letters = $CFG->grade_report_gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER;
+        $course_set_to_letters  = $coursegradedisplaytype == GRADE_DISPLAY_TYPE_LETTER;
+        $course_set_to_default  = $coursegradedisplaytype == GRADE_DISPLAY_TYPE_DEFAULT;
+        $site_set_to_letters = $CFG->grade_report_gradedisplaytype == GRADE_DISPLAY_TYPE_LETTER;
 
         if ($course_set_to_letters || ($course_set_to_default && $site_set_to_letters)) {
 

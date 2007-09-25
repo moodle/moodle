@@ -52,14 +52,14 @@ class grader_report_preferences_form extends moodleform {
                                              'showlocks'         => $checkbox_default);
 
             $preferences['prefrows'] = array(
-                        'averagesdisplaytype'    => array(GRADE_REPORT_GRADE_DISPLAY_TYPE_DEFAULT => 'default',
-                                                          GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                                                          GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
-                                                          GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
-                        'rangesdisplaytype'      => array(GRADE_REPORT_GRADE_DISPLAY_TYPE_DEFAULT => 'default',
-                                                          GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                                                          GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
-                                                          GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
+                        'averagesdisplaytype'    => array(GRADE_DISPLAY_TYPE_DEFAULT => 'default',
+                                                          GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
+                                                          GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                                                          GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
+                        'rangesdisplaytype'      => array(GRADE_DISPLAY_TYPE_DEFAULT => 'default',
+                                                          GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
+                                                          GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                                                          GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
                         'averagesdecimalpoints'  => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
                                                           GRADE_REPORT_PREFERENCE_INHERIT => $strinherit, 0, 1, 2, 3, 4, 5),
                         'rangesdecimalpoints'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',

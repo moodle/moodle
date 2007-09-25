@@ -173,7 +173,7 @@ class grade_export {
             $grade_item = $this->grade_items[$grade->itemid];
             $grade_item_displaytype = $this->report->get_pref('gradedisplaytype', $grade_item->id);
 
-            if ($grade_item_displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
+            if ($grade_item_displaytype == GRADE_DISPLAY_TYPE_LETTER) {
                 return grade_grade::get_letter($this->letters, $grade->finalgrade, $grade_item->grademin, $grade_item->grademax);
             }
         }

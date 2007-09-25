@@ -89,9 +89,9 @@ class edit_item_form extends moodleform {
         }
 
         $options = array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'),
-                         GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                         GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
-                         GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'));
+                         GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
+                         GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                         GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'));
         $label = get_string('gradedisplaytype', 'grades') . ' (' . get_string('default', 'grades')
                . ': ' . $options[$default_gradedisplaytype] . ')';
         $mform->addElement('select', 'display', $label, $options);
