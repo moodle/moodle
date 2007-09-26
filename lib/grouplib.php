@@ -86,7 +86,7 @@ function groups_get_group($groupid) {
  * @param int $courseid The id of the course.
  * @param int $userid optional user id, returns only groups of the user.
  * @param int $groupingid optional returns only groups in the specified grouping.
- * @return array | false Returns an array of the group IDs or false if no records
+ * @return array | false Returns an array of the group objects or false if no records
  * or an error occurred.
  */
 function groups_get_all_groups($courseid, $userid=0, $groupingid=0) {
