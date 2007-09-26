@@ -23,7 +23,7 @@ class block_admin_tree extends block_base {
 
     function applicable_formats() {
         if (block_admin_tree::has_admin_caps()) {
-            return array('site' => true, 'admin' => true);
+            return array('site' => true, 'admin' => true, 'my' => true);
         } else {
             return array('site' => true);
         }
