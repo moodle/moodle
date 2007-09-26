@@ -8,6 +8,12 @@
   border-color:#DDDDDD;
 }
 
+#mod-assignment-submissions form#options div {
+  text-align:right;
+  margin-left:auto;
+  margin-right:20px;
+}
+
 .mod-assignment .feedback .files {
   float: right;
   background-color: #EFEFEF;
@@ -21,8 +27,8 @@
 }
 
 .mod-assignment .feedback .disabledfeedback {
-    width: 500px;
-    height: 250px;
+  width: 500px;
+  height: 250px;
 }
 
 .mod-assignment .feedback .from {

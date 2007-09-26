@@ -1329,13 +1329,13 @@ class assignment_base {
         /// Mini form for setting user preference
         echo '<br />';
         echo '<form id="options" action="submissions.php?id='.$this->cm->id.'" method="post">';
-        echo '<fieldset class="invisiblefieldset">';
+        echo '<div>';
         echo '<input type="hidden" id="updatepref" name="updatepref" value="1" />';
-        echo '<table id="optiontable">';
+        echo '<table id="optiontable" align="right">';
         echo '<tr align="right"><td>';
         echo '<label for="perpage">'.get_string('pagesize','assignment').'</label>';
         echo ':</td>';
-        echo '<td align="left">';
+        echo '<td>';
         echo '<input type="text" id="perpage" name="perpage" size="1" value="'.$perpage.'" />';
         helpbutton('pagesize', get_string('pagesize','assignment'), 'assignment');
         echo '</td></tr>';
@@ -1343,7 +1343,7 @@ class assignment_base {
         echo '<td>';
         print_string('quickgrade','assignment');
         echo ':</td>';
-        echo '<td align="left">';
+        echo '<td>';
         if ($quickgrade){
             echo '<input type="checkbox" name="quickgrade" value="1" checked="checked" />';
         } else {
@@ -1355,7 +1355,7 @@ class assignment_base {
         echo '<td colspan="2" align="right">';
         echo '<input type="submit" value="'.get_string('savepreferences').'" />';
         echo '</td></tr></table>';
-        echo '</fieldset>';
+        echo '</div>';
         echo '</form>';
         ///End of mini form
         print_footer($this->course);
