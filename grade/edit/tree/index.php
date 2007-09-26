@@ -160,6 +160,9 @@ echo '</div>';
 print_footer($course);
 die;
 
+/**
+ * TODO document
+ */
 function print_grade_tree(&$gtree, $element, $moving, &$gpr, $switch, $switchedlast=false) {
     global $CFG, $COURSE;
 

@@ -800,7 +800,7 @@ class grade_tree {
         $order = key($element['children']);
         unset($element['children'][$order]);
         $element['children'][$order] =& $category_item;
-        foreach ($element['children'] as $sortorder=>$child) {
+        foreach ($element['children'] as $sortorder => $child) {
             grade_tree::category_grade_last($element['children'][$sortorder]);
         }
     }
