@@ -1,5 +1,6 @@
 <?php  //$Id$
 require_once '../../../config.php';
+require_once $CFG->libdir.'/gradelib.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once '../grade_import_form.php';
 require_once '../lib.php';
@@ -226,8 +227,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
 
                             // case of an id, only maps id of a grade_item
                             // this was idnumber
-                            include_once($CFG->libdir.'/grade/grade_item.php');
-                            if (!$gradeitem = new grade_item(array('id'=>$map[$key]))) {
+                            if (!$gradeitem = new grade_item(array('id'=>$map[$key], 'courseid'=>$course->id))) {
                                 // supplied bad mapping, should not be possible since user
                                 // had to pick mapping
                                 $status = false;
@@ -319,7 +319,6 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
 
 } else if ($formdata = $mform->get_data()) {
     // else if file is just uploaded
-
     $filename = $mform->get_userfile_name();
 
     // Large files are likely to take their time and memory. Let PHP know
@@ -371,7 +370,6 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     echo '</table>';
 
     /// feeding gradeitems into the grade_import_mapping_form
-    include_once($CFG->libdir.'/grade/grade_item.php');
     $gradeitems = array();
     if ($id) {
         if ($grade_items = grade_item::fetch_all(array('courseid'=>$id))) {

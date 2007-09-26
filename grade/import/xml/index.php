@@ -6,6 +6,7 @@
  */
 
 require_once '../../../config.php';
+require_once $CFG->libdir.'/gradelib.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once '../grade_import_form.php';
 require_once '../lib.php';
@@ -85,8 +86,7 @@ if ( $formdata = $mform->get_data()) {
                 $numlines ++;
             }
 
-            include_once($CFG->libdir.'/grade/grade_item.php');
-            if (!$gradeitem = new grade_item(array('idnumber'=>$result['#']['assignment'][0]['#']))) {
+            if (!$gradeitem = new grade_item(array('idnumber'=>$result['#']['assignment'][0]['#'], 'courseid'=>$course->id))) {
                 // gradeitem does not exist
                 // no data in temp table so far, abort
                 $status = false;
