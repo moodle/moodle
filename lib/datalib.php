@@ -1,5 +1,4 @@
 <?php // $Id$
-
 /**
  * Library of functions for database manipulation.
  *
@@ -7,7 +6,6 @@
  * - weblib.php - functions that produce web output
  * - moodlelib.php - general-purpose Moodle functions
  * @author Martin Dougiamas and many others
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
