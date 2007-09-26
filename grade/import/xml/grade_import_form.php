@@ -55,12 +55,17 @@ class grade_import_form extends moodleform {
         $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
     }
 
-    function validation($data) {
+    function validation($data, $files) {
         $err = array();
+        if (empty($data['url']) and empty($files['userfile'])) {
+            if (array_key_exists('url', $data)) {
+                $err['url'] = get_string('required');
+            }
+            if (array_key_exists('userfile', $data)) {
+                $err['userfile'] = get_string('required');
+            }
 
-        $strrequired = get_string('required');
-
-        if (array_key_exists('url', $data) and $data['url'] != clean_param($data['url'], PARAM_URL)) {
+        } else if (array_key_exists('url', $data) and $data['url'] != clean_param($data['url'], PARAM_URL)) {
             $err['url'] = get_string('error');
         }
 
