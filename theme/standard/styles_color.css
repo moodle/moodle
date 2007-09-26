@@ -1023,6 +1023,9 @@ form.mform .required label {
 form.mform .fdescription.required {
   color:#a00;
 }
+form.mform .required .fgroup span label {
+  color:#000;
+}
 
 /* Accessibility: for Windows High Contrast, partial fix MDL-7493. */
 .sideblock .hide-show a {
