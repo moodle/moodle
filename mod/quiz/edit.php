@@ -184,40 +184,31 @@
         $catcontext = get_context_instance_by_id($category->contextid);
         require_capability('moodle/question:useall', $catcontext);
         $category->name = addslashes($category->name);
-        // find existing random questions in this category
-        $random = RANDOM;
-        if ($existingquestions = get_records_select('question', "qtype = '$random' AND category = '$category->id'")) {
-            // now remove the ones that are already used in this quiz
-            if ($questionids = explode(',', $quiz->questions)) {
-                foreach ($questionids as $questionid) {
-                    unset($existingquestions[$questionid]);
-                }
+        // Find existing random questions in this category that are not used by any quiz.
+        if ($existingquestions = get_records_sql(
+                "SELECT * FROM " . $CFG->prefix . "question q
+                WHERE qtype = '" . RANDOM . "'
+                    AND category = $category->id
+                    AND " . sql_compare_text('questiontext') . " = '$recurse'
+                    AND NOT EXISTS (SELECT * FROM " . $CFG->prefix . "quiz_question_instances WHERE question = q.id)
+                ORDER BY id")) {
+            // Take as many of these as needed.
+            while (($existingquestion = array_shift($existingquestions)) and $randomcount > 0) {
+                quiz_add_quiz_question($existingquestion->id, $quiz);
+                $randomcount--;
             }
-            // now take as many of these as needed
-            $i = 0;
-            while (($existingquestion = array_pop($existingquestions)) and ($i < $randomcount)) {
-                if ($existingquestion->questiontext == $recurse) {
-                    // this question has the right recurse property, so use it
-                    quiz_add_quiz_question($existingquestion->id, $quiz);
-                    $i++;
-                }
-            }
-            $randomcreate = $randomcount - $i; // the number of additional random questions needed.
-        } else {
-            $randomcreate = $randomcount;
         }
 
-        if ($randomcreate > 0) {
-
-            $form->name = get_string('random', 'quiz') .' ('. $category->name .')';
-            $form->category = "$category->id,$category->contextid";
+        // If more are needed, create them.
+        if ($randomcount > 0) {
             $form->questiontext = $recurse; // we use the questiontext field to store the info
                                             // on whether to include questions in subcategories
             $form->questiontextformat = 0;
             $form->image = '';
             $form->defaultgrade = 1;
             $form->hidden = 1;
-            for ($i=0; $i<$randomcreate; $i++) {
+            for ($i = 0; $i < $randomcount; $i++) {
+                $form->category = "$category->id,$category->contextid";
                 $form->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
                 $question = new stdClass;
                 $question->qtype = RANDOM;

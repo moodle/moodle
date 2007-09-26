@@ -34,11 +34,6 @@ class question_edit_random_form extends question_edit_form {
         $mform->addElement('questioncategory', 'category', get_string('category', 'quiz'), 
                 array('contexts' => $this->contexts->having_cap('moodle/question:useall')));
 
-        $mform->addElement('text', 'name', get_string('questionname', 'quiz'),
-                array('size' => 50));
-        $mform->setType('name', PARAM_TEXT);
-        $mform->addRule('name', null, 'required', null, 'client');
-
         $mform->addElement('advcheckbox', 'questiontext', get_string("recurse", "quiz"), null, null, array(0, 1));
 
         // Standard fields at the end of the form.
@@ -75,13 +70,6 @@ class question_edit_random_form extends question_edit_form {
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
-    }
-
-    function set_data($question) {
-        if (empty($question->name)) {
-            $question->name = get_string("random", "quiz");
-        }
-        parent::set_data($question);
     }
 
     function qtype() {
