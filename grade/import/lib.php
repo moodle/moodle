@@ -27,57 +27,33 @@ function grade_import_commit($courseid, $importcode, $feedback=true) {
         // instances of the new grade_items created, cached
         // in case grade_update fails, so that we can remove them
         $instances = array();
+        $failed = false;
         foreach ($newitems as $newitem) {
             // get all grades with this item
 
             if ($grades = get_records('grade_import_values', 'newgradeitem', $newitem->id)) {
-
-                // make the grades array for update_grade
-
-                // find the max instance number of 'manual' grade item
-                // and increment that number by 1 by hand
-                // I can not find other ways to make 'manual' type work,
-                // unless we have a 'new' flag for grade_update to let it
-                // know that this is a new grade_item, and let grade_item
-                // handle the instance id in the case of a 'manual' import?
-                if ($lastimport = get_record_sql("SELECT *
-                                                  FROM {$CFG->prefix}grade_items
-                                                  WHERE courseid = $courseid
-                                                  AND itemtype = 'manual'
-                                                  ORDER BY iteminstance DESC", true)) {
-                    $instance = $lastimport->iteminstance + 1;
-                } else {
-                    $instance = 1;
-                }
-
-                $instances[] = $instance;
-
-                // TODO clean up following comment?
-                // if fails, deletes all the created grade_items and grades
-
-                /// create a new grade item for this
-                $gradeitem = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual', 'iteminstance'=>$instance, 'itemname'=>$newitem->itemname));
-                $gradeitem->insert();
+                /// create a new grade item for this - must use false as second param!
+                /// TODO: we need some bounds here too
+                $gradeitem = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual', 'itemname'=>$newitem->itemname), false);
+                $gradeitem->insert('import');
+                $instances[] = $gradeitem;
 
                 // insert each individual grade to this new grade item
-                $failed = 0;
                 foreach ($grades as $grade) {
-                    if (!$gradeitem->update_final_grade($grade->userid, $grade->finalgrade, NULL, NULL, $grade->feedback)) {
-                        $failed = 1;
-                        break;
+                    if (!$gradeitem->update_final_grade($grade->userid, $grade->finalgrade, 'import', NULL, $grade->feedback)) {
+                        $failed = true;
+                        break 2;
                     }
-                }
-                if ($failed) {
-                    foreach ($instances as $instance) {
-                        $gradeitem = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual', 'iteminstance'=>$instance));
-                        // TODO this method does not seem to delete all the raw grades and the item itself
-                        // which I think should be deleted in this case, can I use sql directly here?
-                        $gradeitem->delete();
-                    }
-                    import_cleanup($importcode);
-                    return false;
                 }
             }
+        }
+
+        if ($failed) {
+            foreach ($instances as $instance) {
+                $gradeitem->delete('import');
+            }
+            import_cleanup($importcode);
+            return false;
         }
     }
 
@@ -102,7 +78,7 @@ function grade_import_commit($courseid, $importcode, $feedback=true) {
 
                 // make the grades array for update_grade
                 foreach ($grades as $grade) {
-                    if (!$gradeitem->update_final_grade($grade->userid, $grade->finalgrade, NULL, NULL, $grade->feedback)) {
+                    if (!$gradeitem->update_final_grade($grade->userid, $grade->finalgrade, 'import', NULL, $grade->feedback)) {
                         $failed = 1;
                         break 2;
                     }
