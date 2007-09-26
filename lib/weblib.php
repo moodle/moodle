@@ -2325,9 +2325,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
 
 /// Add the required JavaScript Libraries for AJAX
-    if (!empty($CFG->enableajax)) {
+//    if (!empty($CFG->enableajax)) {  // This is the way all JS should be included, so get rid of the test.
         $meta .= "\n".require_js();
-    }
+//    }
 
 /// Set up some navigation variables
 
@@ -2385,7 +2385,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
 
 
-    $meta = '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'. "\n". $meta ."\n";
+    $meta = '<meta http-equiv="content-type" content="text/html; charset=utf-8" />' .
+            "\n" . $meta . "\n";
     if (!$usexml) {
         @header('Content-type: text/html; charset=utf-8');
     }
