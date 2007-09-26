@@ -2,7 +2,6 @@
 /**
 * Import quiz questions into the given category
 *
-* @version $Id$
 * @author Martin Dougiamas, Howard Miller, and many others.
 *         {@link http://moodle.org}
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
