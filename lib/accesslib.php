@@ -265,6 +265,7 @@ function get_default_frontpage_role_access($roleid, $accessdata=NULL) {
               ON rc.contextid=ctx.id
             WHERE rc.roleid = {$roleid}
                   AND (ctx.id = ".SYSCONTEXTID." OR ctx.path LIKE '$base/%')
+                  AND ctx.contextlevel <= ".CONTEXT_COURSE."
             ORDER BY ctx.depth, ctx.path";             
             
     if ($rs = get_recordset_sql($sql)) {
