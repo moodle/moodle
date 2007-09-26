@@ -114,7 +114,7 @@ if ($results = $content['results']['#']['result']) {
         foreach ($newgrades as $newgrade) {
 
             // check if user exist
-            if (!$user = get_record('user', 'id', $newgrade->userid)) {
+            if (!$user = get_record('user', 'id', addslashes($newgrade->userid))) {
                 // no user found, abort
                 $status = false;
                 $error = get_string('baduserid', 'grades');
@@ -130,7 +130,7 @@ if ($results = $content['results']['#']['result']) {
 
             // insert this grade into a temp table
             $newgrade->import_code = $importcode;
-            if (!insert_record('grade_import_values', $newgrade)) {
+            if (!insert_record('grade_import_values', addslashes_recursive($newgrade))) {
                 $status = false;
                 // could not insert into temp table
                 $error = get_string('importfailed', 'grades');

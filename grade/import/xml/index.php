@@ -124,7 +124,7 @@ if ( $formdata = $mform->get_data()) {
             foreach ($newgrades as $newgrade) {
 
                 // check if user exist
-                if (!$user = get_record('user', 'id', $newgrade->userid)) {
+                if (!$user = get_record('user', 'id', addslashes($newgrade->userid))) {
                     // no user found, abort
                     $status = false;
                     import_cleanup($importcode);
@@ -143,7 +143,7 @@ if ( $formdata = $mform->get_data()) {
 
                 // insert this grade into a temp table
                 $newgrade->import_code = $importcode;
-                if (!insert_record('grade_import_values', $newgrade)) {
+                if (!insert_record('grade_import_values', addslashes_recursive($newgrade))) {
                     $status = false;
                     // could not insert into temp table
                     import_cleanup($importcode);

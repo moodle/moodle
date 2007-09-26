@@ -140,7 +140,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
 
                 switch ($t0) {
                     case 'userid': //
-                        if (!$user = get_record('user','id', $value)) {
+                        if (!$user = get_record('user','id', addslashes($value))) {
                             // user not found, abort whold import
                             import_cleanup($importcode);
                             notify("user mapping error, could not find user with id \"$value\"");
@@ -150,7 +150,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                         $studentid = $value;
                     break;
                     case 'useridnumber':
-                        if (!$user = get_record('user', 'idnumber', $value)) {
+                        if (!$user = get_record('user', 'idnumber', addslashes($value))) {
                              // user not found, abort whold import
                             import_cleanup($importcode);
                             notify("user mapping error, could not find user with idnumber \"$value\"");
@@ -160,7 +160,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                         $studentid = $user->id;
                     break;
                     case 'useremail':
-                        if (!$user = get_record('user', 'email', $value)) {
+                        if (!$user = get_record('user', 'email', addslashes($value))) {
                             import_cleanup($importcode);
                             notify("user mapping error, could not find user with email address \"$value\"");
                             $status = false;
@@ -169,7 +169,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                         $studentid = $user->id;
                     break;
                     case 'username':
-                        if (!$user = get_record('user', 'username', $value)) {
+                        if (!$user = get_record('user', 'username', addslashes($value))) {
                             import_cleanup($importcode);
                             notify("user mapping error, could not find user with username \"$value\"");
                             $status = false;
@@ -182,11 +182,12 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
 
                         if (empty($newgradeitems[$key])) {
 
+                            $newgradeitem = new object();
                             $newgradeitem->itemname = $header[$key];
                             $newgradeitem->import_code = $importcode;
 
                             // failed to insert into new grade item buffer
-                            if (!$newgradeitems[$key] = insert_record('grade_import_newitem', $newgradeitem)) {
+                            if (!$newgradeitems[$key] = insert_record('grade_import_newitem', addslashes_recursive($newgradeitem))) {
                                 $status = false;
                                 import_cleanup($importcode);
                                 notify(get_string('importfailed', 'grades'));
@@ -195,9 +196,9 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                             // add this to grade_import_newitem table
                             // add the new id to $newgradeitem[$key]
                         }
-                        unset($newgrade);
-                        $newgrade -> newgradeitem = $newgradeitems[$key];
-                        $newgrade -> finalgrade = $value;
+                        $newgrade = new object();
+                        $newgrade->newgradeitem = $newgradeitems[$key];
+                        $newgrade->finalgrade   = $value;
                         $newgrades[] = $newgrade;
 
                         // if not, put it in
@@ -206,8 +207,9 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                     case 'feedback':
                         if ($t1) {
                             // t1 is the id of the grade item
-                            $feedback -> itemid = $t1;
-                            $feedback -> feedback = $value;
+                            $feedback = new object();
+                            $feedback->itemid   = $t1;
+                            $feedback->feedback = $value;
                             $newfeedbacks[] = $feedback;
                         }
                     break;
@@ -244,9 +246,9 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                                 break 3;
                             }
 
-                            unset($newgrade);
-                            $newgrade -> itemid = $gradeitem->id;
-                            $newgrade -> finalgrade = $value;
+                            $newgrade = new object();
+                            $newgrade->itemid     = $gradeitem->id;
+                            $newgrade->finalgrade = $value;
                             $newgrades[] = $newgrade;
                         } // otherwise, we ignore this column altogether
                           // because user has chosen to ignore them (e.g. institution, address etc)
@@ -281,7 +283,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
 
                     $newgrade->import_code = $importcode;
                     $newgrade->userid = $studentid;
-                    if (!insert_record('grade_import_values', $newgrade)) {
+                    if (!insert_record('grade_import_values', addslashes_recursive($newgrade))) {
                         // could not insert into temporary table
                         $status = false;
                         import_cleanup($importcode);
@@ -296,12 +298,12 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                 foreach ($newfeedbacks as $newfeedback) {
                     if ($feedback = get_record('grade_import_values', 'import_code', $importcode, 'userid', $studentid, 'itemid', $newfeedback->itemid)) {
                         $newfeedback ->id = $feedback ->id;
-                        update_record('grade_import_values', $newfeedback);
+                        update_record('grade_import_values', addslashes_recursive($newfeedback));
                     } else {
                         // the grade item for this is not updated
                         $newfeedback->import_code = $importcode;
                         $newfeedback->userid = $studentid;
-                        insert_record('grade_import_values', $newfeedback);
+                        insert_record('grade_import_values', addslashes_recursive($newfeedback));
                     }
                 }
             }
