@@ -420,6 +420,38 @@ class moodleform {
     }
 
     /**
+     * Get content of uploaded file.
+     * @param $element name of file upload element
+     * @return mixed false in case of failure, string if ok
+     */
+    function get_file_content($elname) {
+        if (!$this->is_submitted() or !$this->is_validated()) {
+            return false;
+        }
+
+        if (!$this->_form->elementExists($elname)) {
+            return false;
+        }
+
+        if (empty($this->_upload_manager->files[$elname]['tmp_name'])) {
+            return false;
+
+        } else {
+            $data = "";
+            $file = @fopen($this->_upload_manager->files[$elname]['tmp_name'], "rb");
+            if ($file) {
+                while (!feof($file)) {
+                    $data .= fread($file, 1024); // TODO: do we really have to do this?
+                }
+                fclose($file);
+                return $data;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
      * Print html form.
      */
     function display() {
