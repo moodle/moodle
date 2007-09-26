@@ -115,6 +115,8 @@
                 $a->studentstring  = $course->students;
                 $data[] = "<a href=\"report.php?mode=overview&amp;q=$quiz->id\">" .
                         get_string('numattempts', 'quiz', $a) . '</a>';
+            } else {
+                $data[] = '';
             }
         } else if ($showing = 'scores') {
 
