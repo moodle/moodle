@@ -1,15 +1,31 @@
 <?php  //$Id$
 
-/**
- * code in development
- * does xml plugin need some flexibility/mapping of columns?
- */
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.com                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards  Martin Dougiamas  http://moodle.com       //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
 
 require_once '../../../config.php';
-require_once $CFG->libdir.'/gradelib.php';
-require_once $CFG->dirroot.'/grade/lib.php';
-require_once '../grade_import_form.php';
-require_once '../lib.php';
+require_once 'lib.php';
+require_once 'grade_import_form.php';
 
 $id = required_param('id', PARAM_INT); // course id
 
@@ -22,151 +38,65 @@ $context = get_context_instance(CONTEXT_COURSE, $id);
 require_capability('moodle/grade:import', $context);
 require_capability('gradeimport/xml:view', $context);
 
-
 // print header
 $strgrades = get_string('grades', 'grades');
-$actionstr = get_string('xml', 'grades');
+$actionstr = get_string('modulename', 'gradeimport_xml');
 $navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course->id));
 
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
-print_grade_plugin_selector($id, 'import', 'xml');
 $mform = new grade_import_form();
 
-if ( $formdata = $mform->get_data()) {
-
-    // array to hold all grades to be inserted
-    $newgrades = array();
-
-    $filename = $mform->get_userfile_name();
+if ($data = $mform->get_data()) {
     // Large files are likely to take their time and memory. Let PHP know
     // that we'll take longer, and that the process should be recycled soon
     // to free up memory.
     @set_time_limit(0);
-    @raise_memory_limit("192M");
+    @raise_memory_limit("256M");
     if (function_exists('apache_child_terminate')) {
         @apache_child_terminate();
     }
 
-    $text = my_file_get_contents($filename);
+    if ($text = $mform->get_file_content('userfile')) {
+        print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
+        print_grade_plugin_selector($id, 'import', 'xml');
 
-    // trim utf-8 bom
-    $textlib = textlib_get_instance();
-    // converts to propert unicode
-    $text = $textlib->convert($text, $formdata->encoding);
-    $text = $textlib->trim_utf8_bom($text);
-    // Fix mac/dos newlines
-    $text = preg_replace('!\r\n?!',"\n",$text);
-
-    // text is the text, we should xmlize it
-    include_once($CFG->dirroot.'/lib/xmlize.php');
-    $content = xmlize($text);
-
-    if ($results = $content['results']['#']['result']) {
-
-        // import batch identifier timestamp
-        $importcode = time();
-        $status = true;
-
-        $numlines = 0;
-
-        // print some previews
-        print_heading(get_string('importpreview', 'grades'));
-
-        echo '<table cellpadding="5">';
-        foreach ($results as $i => $result) {
-            if ($numlines < $formdata->previewrows && isset($results[$i+1])) {
-                echo '<tr>';
-                foreach ($result['#'] as $fieldname => $val) {
-                    echo '<td>'.$fieldname.' > '.$val[0]['#'].'</td>';
-                }
-                echo '</tr>';
-                $numlines ++;
-            } else if ($numlines == $formdata->previewrows || !isset($results[$i+1])) {
-                echo '</table>';
-                $numlines ++;
-            }
-
-            if (!$gradeitem = new grade_item(array('idnumber'=>$result['#']['assignment'][0]['#'], 'courseid'=>$course->id))) {
-                // gradeitem does not exist
-                // no data in temp table so far, abort
-                $status = false;
-                break;
-            }
-
-            // grade item locked, abort
-            if ($gradeitem->locked) {
-                $status = false;
-                notify(get_string('gradeitemlocked', 'grades'));
-                break 3;
-            }
-
-            // check if grade_grade is locked and if so, abort
-            if ($grade_grade = new grade_grade(array('itemid'=>$gradeitem->id, 'userid'=>$result['#']['student'][0]['#']))) {
-                if ($grade_grade->locked) {
-                    // individual grade locked, abort
-                    $status = false;
-                    notify(get_string('gradegradeslocked', 'grades'));
-                    break 2;
-                }
-            }
-            unset($newgrade);
-
-            if (isset($result['#']['score'][0]['#'])) {
-                $newgrade -> itemid = $gradeitem->id;
-                $newgrade -> rawgrade = $result['#']['score'][0]['#'];
-                $newgrade-> userid = $result['#']['student'][0]['#'];
-                $newgrades[] = $newgrade;
-            }
-        }
-
-        // loop through info collected so far
-        if ($status && !empty($newgrades)) {
-            foreach ($newgrades as $newgrade) {
-
-                // check if user exist
-                if (!$user = get_record('user', 'id', addslashes($newgrade->userid))) {
-                    // no user found, abort
-                    $status = false;
-                    import_cleanup($importcode);
-                    notify(get_string('baduserid', 'grades'));
-                    notify(get_string('importfailed', 'grades'));
-                    break;
-                }
-
-                // check grade value is a numeric grade
-                if (!is_numeric($newgrade->rawgrade)) {
-                    $status = false;
-                    import_cleanup($importcode);
-                    notify(get_string('badgrade', 'grades'));
-                    break;
-                }
-
-                // insert this grade into a temp table
-                $newgrade->import_code = $importcode;
-                if (!insert_record('grade_import_values', addslashes_recursive($newgrade))) {
-                    $status = false;
-                    // could not insert into temp table
-                    import_cleanup($importcode);
-                    notify(get_string('importfailed', 'grades'));
-                    break;
-                }
-            }
-        }
-
-        // if all ok, we proceed
-        if ($status) {
-            /// comit the code if we are up this far
+        $error = '';
+        $importcode = import_xml_grades($text, $course, $error);
+        if ($importcode) {
             grade_import_commit($id, $importcode);
+            print_footer();
+            die;
+        } else {
+            notify($error);
+            print_continue($CFG->wwwroot.'/grade/index.php?id='.$course->id);
+            print_footer();
+            die;
         }
+
+    } else if (empty($data->key)) {
+        redirect('import.php?id='.$id.'&url='.urlencode($data->url));
+
     } else {
-        // no results section found in xml,
-        // assuming bad format, abort import
-        notify('badxmlformat', 'grade');
+        if ($data->key == 1) {
+            $data->key = create_user_key('grade/import', $USER->id, $course->id, $data->iprestriction, $data->validuntil);
+        }
+
+        print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
+        print_grade_plugin_selector($id, 'import', 'xml');
+
+        echo '<div class="gradeexportlink">';
+        $link = $CFG->wwwroot.'/grade/import/xml/fetch.php?id='.$id.'&amp;url='.urlencode($data->url).'&amp;key='.$data->key;
+        echo get_string('import', 'grades').': <a href="'.$link.'">'.$link.'</a>';
+        echo '</div>';
+        print_footer();
+        die;
     }
-} else {
-    // display the standard upload file form
-    $mform->display();
 }
 
+print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
+print_grade_plugin_selector($id, 'import', 'xml');
+
+$mform->display();
+
 print_footer();
+
 ?>

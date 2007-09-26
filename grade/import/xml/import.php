@@ -24,11 +24,11 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require_once '../../../config.php';
-require_once $CFG->dirroot.'/grade/lib.php';
-require_once 'grade_import_form.php';
-require_once '../lib.php';
+require_once 'lib.php';
+require_once $CFG->libdir.'/filelib.php';
 
-$id = required_param('id', PARAM_INT); // course id
+$url = required_param('url', PARAM_URL); // only real urls here
+$id  = required_param('id', PARAM_INT); // course id
 
 if (!$course = get_record('course', 'id', $id)) {
     print_error('nocourseid');
@@ -36,43 +36,55 @@ if (!$course = get_record('course', 'id', $id)) {
 
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $id);
+
 require_capability('moodle/grade:import', $context);
-require_capability('gradeimport/xml_getch:view', $context);
+require_capability('gradeimport/xml:view', $context);
 
-// print header
-$strgrades = get_string('grades', 'grades');
-$actionstr = get_string('modulename', 'gradeimport_xmlurl');
-$navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course->id));
 
-$mform = new grade_import_form();
+// Large files are likely to take their time and memory. Let PHP know
+// that we'll take longer, and that the process should be recycled soon
+// to free up memory.
+@set_time_limit(0);
+@raise_memory_limit("256M");
+if (function_exists('apache_child_terminate')) {
+    @apache_child_terminate();
+}
 
-if ($data = $mform->get_data()) {
+$text = download_file_content($url);
+if ($text === false) {
+    error('Can not read file');
+}
 
-    if (empty($data->key)) {
-        redirect('import.php?id='.$id.'&url='.urlencode($data->url));
+$error = '';
+$importcode = import_xml_grades($text, $course, $error);
 
-    } else {
-        if ($data->key == 1) {
-            $data->key = create_user_key('grade/import', $USER->id, $course->id, $data->iprestriction, $data->validuntil);
+if ($importcode !== false) {
+    /// comit the code if we are up this far
+
+    if (defined('USER_KEY_LOGIN')) {
+        if (grade_import_commit($id, $importcode, false)) {
+            echo 'ok';
+            die;
+        } else {
+            error('Grade import error'); //TODO: localize
         }
 
-        print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
-        print_grade_plugin_selector($id, 'import', 'xmlurl');
+    } else {
+        $strgrades = get_string('grades', 'grades');
+        $actionstr = get_string('xml', 'grades');
+        $navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course->id));
 
-        echo '<div class="gradeexportlink">';
-        $link = $CFG->wwwroot.'/grade/import/xmlurl/fetch.php?id='.$id.'&amp;url='.urlencode($data->url).'&amp;key='.$data->key;
-        echo get_string('import', 'grades').': <a href="'.$link.'">'.$link.'</a>';
-        echo '</div>';
+        print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
+        print_grade_plugin_selector($id, 'import', 'xml');
+
+        grade_import_commit($id, $importcode);
+
         print_footer();
         die;
     }
+
+} else {
+    error($error);
 }
-
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
-print_grade_plugin_selector($id, 'import', 'xmlurl');
-
-$mform->display();
-
-print_footer();
 
 ?>

@@ -7,15 +7,20 @@ class grade_import_form extends moodleform {
 
         $mform =& $this->_form;
 
-        $strrequired = get_string('required');
+        $this->set_upload_manager(new upload_manager('userfile', false, false, null, false, 0, true, true, false));
 
         // course id needs to be passed for auth purposes
         $mform->addElement('hidden', 'id', optional_param('id'));
         $mform->setType('id', PARAM_INT);
         $mform->addElement('header', 'general', get_string('importfile', 'grades'));
+        $mform->disabledIf('url', 'userfile', 'noteq', '');
+
         // file upload
-        $mform->addElement('text', 'url', get_string('importfile', 'grades'), 'size="80"');
-        $mform->addRule('url', $strrequired, 'required', null, 'client');
+        $mform->addElement('file', 'userfile', get_string('file'));
+        $mform->setType('userfile', PARAM_FILE);
+        $mform->disabledIf('userfile', 'url', 'noteq', '');
+
+        $mform->addElement('text', 'url', get_string('fileurl', 'gradeimport_xml'), 'size="80"');
 
         if (!empty($CFG->gradepublishing)) {
             $mform->addElement('header', 'publishing', get_string('publishing', 'grades'));
@@ -38,8 +43,13 @@ class grade_import_form extends moodleform {
             $mform->addElement('date_time_selector', 'validuntil', get_string('keyvaliduntil', 'userkey'), array('optional'=>true));
             $mform->setHelpButton('validuntil', array(false, get_string('keyvaliduntil', 'userkey'),
                     false, true, false, get_string("keyvaliduntilhelp", 'userkey')));
-            $mform->disabledIf('iprestriction', 'key', get_string('createnewkey', 'userkey'));
-            $mform->disabledIf('validuntil', 'key', get_string('createnewkey', 'userkey'));
+
+            $mform->disabledIf('iprestriction', 'key', 'noteq', 1);
+            $mform->disabledIf('validuntil', 'key', 'noteq', 1);
+
+            $mform->disabledIf('iprestriction', 'url', 'eq', '');
+            $mform->disabledIf('validuntil', 'url', 'eq', '');
+            $mform->disabledIf('key', 'url', 'eq', '');
         }
 
         $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
@@ -48,7 +58,9 @@ class grade_import_form extends moodleform {
     function validation($data) {
         $err = array();
 
-        if ($data['url'] != clean_param($data['url'], PARAM_URL)) {
+        $strrequired = get_string('required');
+
+        if (array_key_exists('url', $data) and $data['url'] != clean_param($data['url'], PARAM_URL)) {
             $err['url'] = get_string('error');
         }
 
