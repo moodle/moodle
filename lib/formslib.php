@@ -189,13 +189,12 @@ class moodleform {
     /**
      * Internal method. Validates all uploaded files.
      */
-    function _validate_files() {
+    function _validate_files(&$files) {
+        $files = array();
+
         if (empty($_FILES)) {
             // we do not need to do any checks because no files were submitted
-            // TODO: find out why server side required rule does not work for uploaded files;
-            //       testing is easily done by always returning true from this function and adding
-            //       $mform->addRule('soubor', get_string('required'), 'required', null, 'server');
-            //       and submitting form without selected file
+            // note: server side rules do not work for files - use custom verification in validate() instead
             return true;
         }
         $errors = array();
@@ -214,6 +213,9 @@ class moodleform {
                         continue;
                     }
                     $errors[$elname] = $this->_upload_manager->files[$elname]['uploadlog'];
+
+                } else if ($this->_upload_manager->files[$elname]['clear']) {
+                    $files[$elname] = $this->_upload_manager->files[$elname]['tmp_name'];
                 }
             } else {
                 error('Incorrect upload attempt!');
@@ -223,7 +225,9 @@ class moodleform {
         // return errors if found
         if ($status and 0 == count($errors)){
             return true;
+
         } else {
+            $files = array();
             return $errors;
         }
     }
@@ -307,7 +311,20 @@ class moodleform {
             return false;
         } elseif ($validated === null) {
             $internal_val = $mform->validate();
-            $moodle_val = $this->validation($mform->exportValues(null, true));
+
+            $files = array();
+            $file_val = $this->_validate_files($files);
+            if ($file_val !== true) {
+                if (!empty($file_val)) {
+                    foreach ($file_val as $element=>$msg) {
+                        $mform->setElementError($element, $msg);
+                    }
+                }
+                $file_val = false;
+            }
+
+            $data = $mform->exportValues(null, true);
+            $moodle_val = $this->validation($data, $files);
             if ($moodle_val !== true) {
                 if ((is_array($moodle_val) && count($moodle_val)!==0)) {
                     foreach ($moodle_val as $element=>$msg) {
@@ -318,15 +335,7 @@ class moodleform {
                     $moodle_val = true;
                 }
             }
-            $file_val = $this->_validate_files();
-            if ($file_val !== true) {
-                if (!empty($file_val)) {
-                    foreach ($file_val as $element=>$msg) {
-                        $mform->setElementError($element, $msg);
-                    }
-                }
-                $file_val = false;
-            }
+
             $validated = ($internal_val and $moodle_val and $file_val);
         }
         return $validated;
@@ -433,21 +442,24 @@ class moodleform {
             return false;
         }
 
+        if (empty($this->_upload_manager->files[$elname]['clear'])) {
+            return false;
+        }        
+
         if (empty($this->_upload_manager->files[$elname]['tmp_name'])) {
             return false;
+        }
 
-        } else {
-            $data = "";
-            $file = @fopen($this->_upload_manager->files[$elname]['tmp_name'], "rb");
-            if ($file) {
-                while (!feof($file)) {
-                    $data .= fread($file, 1024); // TODO: do we really have to do this?
-                }
-                fclose($file);
-                return $data;
-            } else {
-                return false;
+        $data = "";
+        $file = @fopen($this->_upload_manager->files[$elname]['tmp_name'], "rb");
+        if ($file) {
+            while (!feof($file)) {
+                $data .= fread($file, 1024); // TODO: do we really have to do this?
             }
+            fclose($file);
+            return $data;
+        } else {
+            return false;
         }
     }
 
@@ -485,11 +497,14 @@ class moodleform {
      * If there are errors return array of errors ("fieldname"=>"error message"),
      * otherwise true if ok.
      *
+     * Server side rules do not work for uploaded files, implement serverside rules here if needed.
+     *
      * @param array $data array of ("fieldname"=>value) of submitted data
-     * @return bool array of errors or true if ok
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return bool array of errors or true if ok "element_name"=>"error_description"
      */
-    function validation($data) {
-        return array();
+    function validation($data, $files) {
+        return true;
     }
 
     /**
