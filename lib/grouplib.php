@@ -537,7 +537,7 @@ function groups_get_activity_group($cm, $update=false) {
  * @param int $userid User ID (defaults to current user)
  * @return array An array of group objects, or false if none
  */
-function groups_get_allowed_groups($cm,$userid=0) {
+function groups_get_activity_allowed_groups($cm,$userid=0) {
     // Use current user by default
     global $USER;
     if(!$userid) {
