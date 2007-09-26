@@ -3403,8 +3403,8 @@ function build_navigation($extranavlinks) {
             }
             $cap = has_capability('moodle/course:manageactivities', $COURSE->context);
         }
-        $hidetype_is2 = $CFG->hideactivitytypenavlink == 2;
-        $hidetype_is1 = $CFG->hideactivitytypenavlink == 1;
+        $hidetype_is2 = isset($CFG->hideactivitytypenavlink) && $CFG->hideactivitytypenavlink == 2;
+        $hidetype_is1 = isset($CFG->hideactivitytypenavlink) && $CFG->hideactivitytypenavlink == 1;
 
         if ($navlink['type'] == 'activity' &&
             $i+1 < $countlinks  &&
