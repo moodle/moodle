@@ -775,7 +775,7 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
 
         // cache $isteacher setting
         
-        $isteacher = has_capability('mod/hotpot:viewreport', get_context_instance(CONTEXT_MODULE, $course->id));
+        $isteacher = has_capability('mod/hotpot:viewreport', get_context_instance(CONTEXT_COURSE, $course->id));
 
         $explodesection = array();
         $order = array();
