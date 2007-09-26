@@ -54,8 +54,8 @@ class grade_export_form extends moodleform {
             $mform->addElement('date_time_selector', 'validuntil', get_string('keyvaliduntil', 'userkey'), array('optional'=>true));
             $mform->setHelpButton('validuntil', array(false, get_string('keyvaliduntil', 'userkey'),
                     false, true, false, get_string("keyvaliduntilhelp", 'userkey')));
-            $mform->disabledIf('iprestriction', 'key', get_string('createnewkey', 'userkey'));
-            $mform->disabledIf('validuntil', 'key', get_string('createnewkey', 'userkey'));
+            $mform->disabledIf('iprestriction', 'key', 'eq', 0);
+            $mform->disabledIf('validuntil', 'key', 'eq', 0);
         }
 
         $mform->addElement('header', 'gradeitems', get_string('gradeitemsinc', 'grades'));
