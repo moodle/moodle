@@ -7,8 +7,10 @@
  * up to this point is fine and we can go ahead and commit
  * @param int courseid - id of the course
  * @param string importcode - import batch identifier
+ * @param feedback print feedback and continue button
+ * @return bool success
  */
-function grade_import_commit($courseid, $importcode) {
+function grade_import_commit($courseid, $importcode, $feedback=true) {
     global $CFG;
 
     include_once($CFG->libdir.'/gradelib.php');
@@ -117,10 +119,14 @@ function grade_import_commit($courseid, $importcode) {
         }
     }
 
-    notify(get_string('importsuccess', 'grades'));
-    print_continue($CFG->wwwroot.'/course/view.php?id='.$courseid);
+    if ($feedback) {
+        notify(get_string('importsuccess', 'grades'), 'notifysuccess');
+        print_continue($CFG->wwwroot.'/grade/index.php?id='.$courseid);
+    }
     // clean up
     import_cleanup($importcode);
+
+    return true;
 }
 
 /**

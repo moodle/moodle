@@ -1,0 +1,62 @@
+<?php // $Id$
+require_once $CFG->libdir.'/formslib.php';
+
+class grade_import_form extends moodleform {
+    function definition () {
+        global $COURSE, $USER, $CFG;
+
+        $mform =& $this->_form;
+
+        $strrequired = get_string('required');
+
+        // course id needs to be passed for auth purposes
+        $mform->addElement('hidden', 'id', optional_param('id'));
+        $mform->setType('id', PARAM_INT);
+        $mform->addElement('header', 'general', get_string('importfile', 'grades'));
+        // file upload
+        $mform->addElement('text', 'url', get_string('importfile', 'grades'), 'size="80"');
+        $mform->addRule('url', $strrequired, 'required', null, 'client');
+
+        if (!empty($CFG->gradepublishing)) {
+            $mform->addElement('header', 'publishing', get_string('publishing', 'grades'));
+            $options = array(get_string('nopublish', 'grades'), get_string('createnewkey', 'userkey'));
+            if ($keys = get_records_select('user_private_key', "script='grade/import' AND instance={$COURSE->id} AND userid={$USER->id}")) {
+                foreach ($keys as $key) {
+                    $options[$key->value] = $key->value; // TODO: add more details - ip restriction, valid until ??
+                }
+            }
+            $mform->addElement('select', 'key', get_string('userkey', 'userkey'), $options);
+            $mform->setHelpButton('key', array(false, get_string('userkey', 'userkey'),
+                    false, true, false, get_string("userkeyhelp", 'grades')));
+            $mform->addElement('static', 'keymanagerlink', get_string('keymanager', 'userkey'),
+                    '<a href="'.$CFG->wwwroot.'/grade/import/keymanager.php?id='.$COURSE->id.'">'.get_string('keymanager', 'userkey').'</a>');
+
+            $mform->addElement('text', 'iprestriction', get_string('keyiprestriction', 'userkey'), array('size'=>80));
+            $mform->setHelpButton('iprestriction', array(false, get_string('keyiprestriction', 'userkey'),
+                    false, true, false, get_string("keyiprestrictionhelp", 'userkey')));
+
+            $mform->addElement('date_time_selector', 'validuntil', get_string('keyvaliduntil', 'userkey'), array('optional'=>true));
+            $mform->setHelpButton('validuntil', array(false, get_string('keyvaliduntil', 'userkey'),
+                    false, true, false, get_string("keyvaliduntilhelp", 'userkey')));
+            $mform->disabledIf('iprestriction', 'key', get_string('createnewkey', 'userkey'));
+            $mform->disabledIf('validuntil', 'key', get_string('createnewkey', 'userkey'));
+        }
+
+        $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
+    }
+
+    function validation($data) {
+        $err = array();
+
+        if ($data['url'] != clean_param($data['url'], PARAM_URL)) {
+            $err['url'] = get_string('error');
+        }
+
+        if (count($err) == 0){
+            return true;
+        } else {
+            return $err;
+        }
+    }
+}
+?>
