@@ -3177,7 +3177,7 @@ body#mod-forum-search .introcontent {
   text-align: right;
 }
 /* Equivalent to 1 and 5 nested blockquotes respectively. */
-#help .indent, #help pre {
+#help .indent {
   margin-left: 40px;
 }
 #help .indent-big {
