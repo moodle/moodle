@@ -97,8 +97,8 @@
 
     $usehtmleditor = (can_use_html_editor() && get_user_preferences('message_usehtmleditor', 0));
     if ($usehtmleditor) {
-        echo '<table align="center"><tr><td align="center">';
-        print_textarea($usehtmleditor, 7, 34, 0, 0, 'message', '');
+        echo '<table><tr><td class="fixeditor" align="center">';
+        print_textarea($usehtmleditor, 9, 200, 0, 0, 'message', '');
         echo '</td></tr></table>';
         echo '<input type="submit" value="'.get_string('sendmessage', 'message').'" />';
         use_html_editor('message', 'formatblock subscript superscript copy cut paste clean undo redo justifyleft justifycenter justifyright justifyfull lefttoright righttoleft insertorderedlist insertunorderedlist outdent indent inserthorizontalrule createanchor nolink inserttable');

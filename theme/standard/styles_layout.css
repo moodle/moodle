@@ -2509,6 +2509,10 @@ body#message-send .notifysuccess {
   padding:1px;
 }
 
+body#message-send td.fixeditor {
+  text-align:center;
+}
+
 /***
  *** Notes
  ***/

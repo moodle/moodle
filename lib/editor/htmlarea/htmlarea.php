@@ -805,7 +805,7 @@ HTMLArea.prototype.generate = function () {
     var height = (this.config.height == "auto" ? (this._ta_size.h) : this.config.height);
     height = parseInt(height);
     var width = (this.config.width == "auto" ? (this._toolbar.offsetWidth) : this.config.width);
-    width = Math.max(parseInt(width), 588);
+    // width = Math.max(parseInt(width), 598);
 
     if (!HTMLArea.is_ie) {
         height -= 2;
