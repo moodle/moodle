@@ -197,7 +197,7 @@
             echo '<li id="section-'.$section.'" class="section main'.$sectionstyle.'" >'; //'<div class="left side">&nbsp;</div>';
 
             // Note, 'right side' is BEFORE content.
-            echo '<div class="right side">'.$currenttext;
+            echo '<div class="right side">';
             
             if ($displaysection == $section) {
                 echo '<a href="view.php?id='.$course->id.'&amp;week=0#section-'.$section.'" title="'.$strshowallweeks.'">'.
@@ -230,10 +230,10 @@
 
             echo '<div class="content">';
             if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
-                echo '<div class="weekdates">'.$weekday.' - '.$endweekday.' ('.get_string('notavailable').')</div>';
+                echo '<div class="weekdates">'.$currenttext.$weekday.' - '.$endweekday.' ('.get_string('notavailable').')</div>';
 
             } else {
-                echo '<div class="weekdates">'.$weekday.' - '.$endweekday.'</div>';
+                echo '<div class="weekdates">'.$currenttext.$weekday.' - '.$endweekday.'</div>';
 
                 echo '<div class="summary">';
                 $summaryformatoptions->noclean = true;
