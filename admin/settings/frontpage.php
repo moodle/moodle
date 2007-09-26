@@ -40,6 +40,17 @@ $ADMIN->add('frontpage', new admin_externalpage('frontpagebackup', get_string('f
 
 $ADMIN->add('frontpage', new admin_externalpage('frontpagerestore', get_string('frontpagerestore', 'admin'), $CFG->wwwroot.'/files/index.php?id='.SITEID.'&amp;wdir=/backupdata', 'moodle/site:restore', false, $frontpagecontext));
 
+// front page default role
+$temp = new admin_settingpage('frontpagedefaultrole', get_string('frontpagedefaultrole', 'admin'), 'moodle/site:config', false, get_context_instance(CONTEXT_SYSTEM));
+$roleoptions = array(0=>'N/A'); // roles to choose from
+if ($roles = get_records('role')) {
+    foreach ($roles as $role) {
+        $roleoptions[$role->id] = $role->name;
+    }
+}
+$temp->add(new admin_setting_configselect('defaultfrontpageroleid', get_string('frontpagedefaultrole', 'admin'), '', '', $roleoptions));
+$ADMIN->add('frontpage', $temp);
+
 $ADMIN->add('frontpage', new admin_externalpage('sitefiles', get_string('sitefiles'), $CFG->wwwroot . '/files/index.php?id=' . SITEID, 'moodle/course:managefiles', false, $frontpagecontext));
 
 ?>

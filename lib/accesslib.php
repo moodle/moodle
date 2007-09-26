@@ -243,6 +243,46 @@ function get_role_access($roleid, $accessdata=NULL) {
 }
 
 /**
+ * Gets the accessdata for role "sitewide" 
+ * (system down to course)
+ *
+ * @return array
+ */
+function get_default_frontpage_role_access($roleid, $accessdata=NULL) {
+
+    global $CFG;
+    
+    $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+    $base = '/'. SYSCONTEXTID .'/'. $frontpagecontext->id;
+ 
+    //
+    // Overrides for the role in any contexts related to the course
+    //
+    $sql = "SELECT ctx.path,
+                   rc.capability, rc.permission
+            FROM {$CFG->prefix}context ctx
+            JOIN {$CFG->prefix}role_capabilities rc
+              ON rc.contextid=ctx.id
+            WHERE rc.roleid = {$roleid}
+                  AND (ctx.id = ".SYSCONTEXTID." OR ctx.path LIKE '$base/%')
+            ORDER BY ctx.depth, ctx.path";             
+            
+    if ($rs = get_recordset_sql($sql)) {
+        if ($rs->RecordCount()) {
+            while ($rd = rs_fetch_next_record($rs)) {
+                $k = "{$rd->path}:{$roleid}";
+                $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
+            }
+            unset($rd);
+        }
+        rs_close($rs);
+    }
+
+    return $accessdata;
+}
+
+
+/**
  * Get the id for the not-logged-in role - or set it up if needed
  * @return bool
  */
@@ -1514,7 +1554,19 @@ function load_user_accessdata($userid) {
     }
     $accessdata['dr'] = $CFG->defaultuserroleid;
 
-    $ACCESS[$userid] = $accessdata;
+    //
+    // provide "default frontpage role"
+    //
+    if ($CFG->defaultfrontpageroleid) {
+        $base = '/'. SYSCONTEXTID .'/'. $frontpagecontext->id;
+        $accessdata = get_default_frontpage_role_access($CFG->defaultfrongpageroleid, $accessdata);
+        if (!isset($accessdata['ra'][$base])) {
+            $accessdata['ra'][$base] = array($CFG->defaultfrongpageroleid);
+        } else {
+            array_push($accessdata['ra'][$base], $CFG->defaultfrongpageroleid);
+        }
+    }
+    $ACCESS[$userid] = $accessdata;  
     return true;
 }
 
@@ -1553,8 +1605,23 @@ function load_all_capabilities() {
         }
         $accessdata['dr'] = $CFG->defaultuserroleid;
 
-        $USER->access = $accessdata;
+        $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
 
+        //
+        // provide "default frontpage role"
+        //
+        
+        if ($CFG->defaultfrontpageroleid) {
+            $base = '/'. SYSCONTEXTID .'/'. $frontpagecontext->id;
+            $accessdata = get_default_frontpage_role_access($CFG->defaultfrontpageroleid, $accessdata);
+            if (!isset($accessdata['ra'][$base])) {
+                $accessdata['ra'][$base] = array($CFG->defaultfrontpageroleid);
+            } else {
+                array_push($accessdata['ra'][$base], $CFG->defaultfrontpageroleid);
+            }
+        } 
+        $USER->access = $accessdata;
+    
     } else {
         if ($roleid = get_notloggedin_roleid()) {
             $USER->access = get_role_access($roleid);
