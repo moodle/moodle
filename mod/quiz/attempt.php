@@ -394,6 +394,7 @@
 /// Print the quiz page ////////////////////////////////////////////////////////
 
     // Print the page header
+    require_js($CFG->wwwroot . '/mod/quiz/quiz.js');
     $pagequestions = explode(',', $pagelist);
     $headtags = get_html_head_contributions($pagequestions, $questions, $states);
     if (!empty($popup)) {
@@ -439,12 +440,13 @@
 
     // Start the form
     echo '<form id="responseform" method="post" action="attempt.php?q=', s($quiz->id), '&amp;page=', s($page),
-            '" enctype="multipart/form-data" onclick="this.autocomplete=\'off\'">', "\n";
+            '" enctype="multipart/form-data"' .
+            ' onclick="this.autocomplete=\'off\'" onkeypress="return check_enter(event);">', "\n";
     if($quiz->timelimit > 0) {
         // Make sure javascript is enabled for time limited quizzes
         ?>
         <script type="text/javascript">
-            // Do nothing.
+            // Do nothing, but you have to have a script tag before a noscript tag.
         </script>
         <noscript>
         <div>
@@ -453,35 +455,15 @@
         </noscript>
         <?php
     }
-
-    // Add a hidden field with the quiz id
     echo '<div>';
 
 /// Print the navigation panel if required
     $numpages = quiz_number_of_pages($attempt->layout);
     if ($numpages > 1) {
-        ?>
-        <script type="text/javascript">
-        //<![CDATA[
-        function navigate(page) {
-            var ourForm = document.getElementById('responseform');
-            ourForm.action = ourForm.action.replace(/page=.*/, 'page=' + page);
-            if (ourForm.onsubmit) {
-                ourForm.onsubmit();
-            }
-            ourForm.submit();
-        }
-        //]]>
-        </script>
-        <?php
         quiz_print_navigation_panel($page, $numpages);
     }
 
 /// Print all the questions
-
-    // Add a hidden field with questionids
-    echo '<input type="hidden" name="questionids" value="'.$pagelist."\" />\n";
-
     $number = quiz_first_questionnumber($attempt->layout, $pagelist);
     foreach ($pagequestions as $i) {
         $options = quiz_get_renderoptions($quiz->review, $states[$i]);
@@ -512,29 +494,28 @@
     // Finish the form
     echo '</div>';
     echo '<input type="hidden" name="timeup" id="timeup" value="0" />';
+
+    // Add a hidden field with questionids. Do this at the end of the form, so 
+    // if you navigate before the form has finished loading, it does not wipe all
+    // the student's answers.
+    echo '<input type="hidden" name="questionids" value="'.$pagelist."\" />\n";
+
     echo "</form>\n";
 
-    $secondsleft = ($quiz->timeclose ? $quiz->timeclose : 999999999999) - time();
-    if ($ispreviewing) {
-        // For teachers ignore the quiz closing time
-        $secondsleft = 999999999999;
+    // If the quiz has a time limit, or if we are close to the close time, include a floating timer.
+    $showtimer = false;
+    $timerstartvalue = 999999999999;
+    if ($quiz->timeclose) {
+        $timerstartvalue = min($timerstartvalue, $quiz->timeclose - time());
+        $showtimer = $timerstartvalue < 60*60; // Show the timer if we are less than 60 mins from the deadline.
     }
-
-    // If time limit is set include floating timer.
-    // MDL-7495, no timer for users with disability
     if ($quiz->timelimit > 0 && !has_capability('mod/quiz:ignoretimelimits', $context, NULL, false)) {
-        $timesincestart = time() - $attempt->timestart;
-        $timerstartvalue = min($quiz->timelimit*60 - $timesincestart, $secondsleft);
-        if ($timerstartvalue <= 0) {
-            $timerstartvalue = 1;
-        }
-
+        $timerstartvalue = min($timerstartvalue, $attempt->timestart + $quiz->timelimit*60- time());
+        $showtimer = true;
+    }
+    if ($showtimer && (!$ispreviewing || $timerstartvalue > 0)) {
+        $timerstartvalue = max($timerstartvalue, 1); // Make sure it starts just above zero.
         require('jstimer.php');
-    } else {
-        // Add the javascript timer in the title bar if the closing time appears close
-        if ($secondsleft > 0 and $secondsleft < 24*3600) {  // less than a day remaining
-            include('jsclock.php');
-        }
     }
 
     // Finish the page

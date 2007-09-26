@@ -20,7 +20,6 @@ var ec_quiz_finish = ec_page_start + <?php echo ($timerstartvalue * 1000); ?>;
 
 //]]>
 </script>
-<script type="text/javascript" src="timer.js"></script>
 <div id="timer">
 <!--EDIT BELOW CODE TO YOUR OWN MENU-->
 <table class="generalbox" border="0" cellpadding="0" cellspacing="0" style="width:150px;">

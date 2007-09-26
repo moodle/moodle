@@ -1,9 +1,34 @@
-// $Id$
-//
-// QuizTimer
-// Provides a counter that keeps track how much
-// time user have left to check in started quiz.
-//
+/*
+ * JavaScript library for the quiz module.
+ *
+ * (c) The Open University and others.
+ * @author T.J.Hunt@open.ac.uk and others.
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ */
+
+/* Used by quiz navigation links to force a form submit, and hence save the user's data. */
+function navigate(page) {
+    var ourForm = document.getElementById('responseform');
+    ourForm.action = ourForm.action.replace(/page=.*/, 'page=' + page);
+    if (ourForm.onsubmit) {
+        ourForm.onsubmit();
+    }
+    ourForm.submit();
+}
+
+/* Use this in an onkeypress handler, to stop enter submitting the forum unless you 
+are actually on the submit button. Don't stop the user typing things in text areas. */
+function check_enter(e) {
+    var target = e.target ? e.target : e.srcElement;
+    var keyCode = e.keyCode ? e.keyCode : e.which;
+
+    if(keyCode==13 && (!target.type || (target.type!='submit' && target.type!='textarea')))
+        return false;
+    else
+        return true;
+}
+
+/* Used to update the on-screen countdown clock for quizzes with a time limit */
 function countdown_clock(theTimer) {
     var timeout_id = null;
 
@@ -42,6 +67,7 @@ function countdown_clock(theTimer) {
     timeout_id = setTimeout("countdown_clock(theTimer)", 1000);
 }
 
+/* Use to keep the quiz timer on-screen as the user scrolls. */
 function movecounter(timerbox) {
     var pos;
 
