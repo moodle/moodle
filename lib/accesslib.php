@@ -475,19 +475,19 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 function is_siteadmin($userid) {
     global $CFG;
 
-    $sql = "SELECT COUNT(u.id)
-            FROM mdl_user u
-            JOIN mdl_role_assignments ra
-              ON ra.userid=u.id
-            JOIN mdl_context ctx 
-              ON ctx.id=ra.contextid
-            JOIN mdl_role_capabilities rc
-              ON (ra.roleid=rc.roleid AND rc.contextid=ctx.id)
+    $sql = "SELECT SUM(rc.permission)
+            FROM " . $CFG->prefix . "role_capabilities rc
+            JOIN " . $CFG->prefix . "context ctx 
+              ON ctx.id=rc.contextid
+            JOIN " . $CFG->prefix . "role_assignments ra
+              ON ra.roleid=rc.roleid AND ra.contextid=ctx.id
             WHERE ctx.contextlevel=10
+              AND ra.userid={$userid}
               AND rc.capability IN ('moodle/site:config', 'moodle/legacy:admin', 'moodle/site:doanything')       
-              AND u.id={$userid}";
+            GROUP BY rc.capability
+            HAVING SUM(rc.permission) > 0";
 
-    $isadmin = (get_field_sql($sql) > 0);
+    $isadmin = record_exists_sql($sql);
     return $isadmin;
 }
 
