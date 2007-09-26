@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 
 require_once("$CFG->dirroot/mod/quiz/locallib.php");
