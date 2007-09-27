@@ -15,7 +15,7 @@ if (empty($CFG->gradepublishing)) {
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $id);
-require_capability('gradeexport/ods:pusblish', $context);
+require_capability('gradeexport/ods:publish', $context);
 
 // use the same page parameters as export.php and append &key=sdhakjsahdksahdkjsahksadjksahdkjsadhksa
 require 'export.php';

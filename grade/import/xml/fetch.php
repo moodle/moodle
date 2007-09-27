@@ -15,7 +15,7 @@ if (empty($CFG->gradepublishing)) {
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $id);
-require_capability('gradeimport/xml:pusblish', $context);
+require_capability('gradeimport/xml:publish', $context);
 
 // use the same page parameters as import.php and append &key=sdhakjsahdksahdkjsahksadjksahdkjsadhksa
 require 'import.php';
