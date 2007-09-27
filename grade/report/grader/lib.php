@@ -742,10 +742,12 @@ class grade_report_grader extends grade_report {
 
                     // If feedback present, surround grade with feedback tooltip
                     if (!empty($grade->feedback)) {
+                        $overlib = '';
                         if ($grade->feedbackformat == 1) {
                             $overlib = "return overlib('" . s(ltrim($grade->feedback)) . "', FULLHTML);";
                         } else {
-                            $overlib = "return overlib('" . s($grade->feedback) . "', CAPTION, '$strfeedback');";
+                            $overlib = "return overlib('" . s($grade->feedback) . "', BORDER, 0, FGCLASS, 'feedback', "
+                                     . "CAPTIONFONTCLASS, 'caption', CAPTION, '$strfeedback');";
                         }
 
                         $studentshtml .= '<span onmouseover="' . $overlib . '" onmouseout="return nd();">';
