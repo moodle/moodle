@@ -140,10 +140,15 @@ if ($cm !== null){
 } else {
     $toform->courseid = $COURSE->id;
 }
+$toform->inpopup = $inpopup;
 $mform->set_data($toform);
 
 if ($mform->is_cancelled()){
-    redirect($returnurl);
+    if ($inpopup) {
+        close_window();
+    } else {
+        redirect($returnurl);
+    }
 } elseif ($fromform = $mform->get_data()){
     $returnurl = new moodle_url($returnurl);
     //select category that question has been saved in / moved to when we return to question bank
