@@ -5360,11 +5360,11 @@ function editorhelpbutton(){
  */
 function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=false, $text='', $return=false,
                      $imagetext='') {
-    global $CFG, $course;
+    global $CFG, $COURSE;
 
     // fix for MDL-7734
-    if (!empty($course->lang)) {
-        $forcelang = $course->lang;
+    if (!empty($COURSE->lang)) {
+        $forcelang = $COURSE->lang;
     } else {
         $forcelang = '';
     }

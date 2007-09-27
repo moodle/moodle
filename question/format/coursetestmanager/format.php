@@ -25,7 +25,7 @@ class qformat_coursetestmanager extends qformat_default {
     }
 
     function importprocess($filename) {
-        global $CFG, $USER, $strimportquestions,$form,$question_category,$category,$course,
+        global $CFG, $USER, $strimportquestions,$form,$question_category,$category,$COURSE,
             $hostname, $mdapath, $mdbpath;
         if ((PHP_OS == "Linux") and isset($hostname)) {
             $hostname = trim($hostname);
@@ -42,7 +42,7 @@ class qformat_coursetestmanager extends qformat_default {
 
         if ((PHP_OS == "Linux") and !isset($hostname)) {
             // copy the file to a semi-permanent location
-            if (! $basedir = make_upload_directory("$course->id")) {
+            if (! $basedir = make_upload_directory("$COURSE->id")) {
                 error("The site administrator needs to fix the file permissions for the data directory");
             }
             if (!isset($hostname_access_error)) {
@@ -52,7 +52,7 @@ class qformat_coursetestmanager extends qformat_default {
                     $newfile = "$basedir/$cleanfilename";
                     if (move_uploaded_file($filename, $newfile)) {
                         chmod($newfile, 0666);
-                        clam_log_upload($newfile,$course);
+                        clam_log_upload($newfile,$COURSE);
                     } else {
                         notify(get_string("uploadproblem", "", $filename));
                     }
@@ -88,7 +88,7 @@ class qformat_coursetestmanager extends qformat_default {
             echo '</fieldset>';
             echo "</form>";
             print_simple_box_end();
-            print_footer($course);
+            print_footer($COURSE);
             exit;
         }
 
@@ -100,7 +100,7 @@ class qformat_coursetestmanager extends qformat_default {
 
             if (PHP_OS == "WINNT") {
             // copy the file to a semi-permanent location
-                if (! $basedir = make_upload_directory("$course->id")) {
+                if (! $basedir = make_upload_directory("$COURSE->id")) {
                     error("The site administrator needs to fix the file permissions for the data directory");
                 }
                 $bname=basename($filename);
@@ -109,7 +109,7 @@ class qformat_coursetestmanager extends qformat_default {
                     $newfile = "$basedir/$cleanfilename";
                     if (move_uploaded_file($filename, $newfile)) {
                         chmod($newfile, 0666);
-                        clam_log_upload($newfile,$course);
+                        clam_log_upload($newfile,$COURSE);
                     } else {
                         notify(get_string("uploadproblem", "", $filename));
                     }
@@ -123,7 +123,7 @@ class qformat_coursetestmanager extends qformat_default {
                 $question_categories = $this->getquestioncategories($filename);
             }
             // print the intermediary form
-            if (!$categories = question_category_options($course->id, true)) {
+            if (!$categories = question_category_options($COURSE->id, true)) {
                 error("No categories!");
             }
             print_heading_with_help($strimportquestions, "import", "quiz");
@@ -151,7 +151,7 @@ class qformat_coursetestmanager extends qformat_default {
             echo '</fieldset>';
             echo "</form>";
             print_simple_box_end();
-            print_footer($course);
+            print_footer($COURSE);
             exit;
         }
 //

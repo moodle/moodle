@@ -39,11 +39,11 @@
     require_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $course->id));
 
     function html_footer() {
-        global $course, $choose;
+        global $COURSE, $choose;
 
         echo '</td></tr></table>';
 
-        print_footer($course);
+        print_footer($COURSE);
     }
 
     function html_header($course, $wdir, $formfield=""){

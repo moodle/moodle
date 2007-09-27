@@ -11,11 +11,7 @@ class block_blog_menu extends block_base {
     }
 
     function get_content() {
-        global $CFG, $course;
-
-        if (!isset($course)) {
-            $course = SITEID;
-        }
+        global $CFG, $USER, $COURSE;
 
         if (empty($CFG->bloglevel)) {
             $this->content->text = '';
@@ -32,7 +28,6 @@ class block_blog_menu extends block_base {
             $userBlog ->userid = 0;
         }
 
-        global $CFG, $USER, $course;
         if (!empty($USER->id)) {
             $userBlog->userid = $USER->id;
         }   //what is $userBlog anyway
@@ -58,11 +53,10 @@ class block_blog_menu extends block_base {
 
             $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-            if (isset($course) && isset($course->id)
-                    && $course->id != 0 && $course->id != SITEID) {
+            if ($COURSE->id != SITEID) {
 
                 $incoursecontext = true;
-                $curcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                $curcontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
             } else {
                 $incoursecontext = false;
                 $curcontext = $sitecontext;
@@ -75,10 +69,10 @@ class block_blog_menu extends block_base {
             if ( (isloggedin() && !isguest()) && $incoursecontext
                     && $CFG->bloglevel >= BLOG_COURSE_LEVEL && $canviewblogs) {
 
-                $coursearg = '&amp;courseid='.$course->id;
+                $coursearg = '&amp;courseid='.$COURSE->id;
                 // a course is specified
 
-                $courseviewlink = '<li><a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=course&amp;filterselect='. $course->id .'">';
+                $courseviewlink = '<li><a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=course&amp;filterselect='. $COURSE->id .'">';
                 $courseviewlink .= get_string('viewcourseentries', 'blog') ."</a></li>\n";
             }
 
