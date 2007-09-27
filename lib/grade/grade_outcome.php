@@ -288,6 +288,8 @@ class grade_outcome extends grade_object {
      * @return float
      */
     function get_grade_info($courseid=null, $average=true, $items=false) {
+        global $CFG;
+
         if (!isset($this->id)) {
             debugging("You must setup the outcome's id before calling its get_grade_info() method!");
             return false; // id must be defined for this to work
@@ -300,19 +302,19 @@ class grade_outcome extends grade_object {
 
         $wheresql = '';
         if (!is_null($courseid)) {
-            $wheresql = " AND mdl_grade_items.courseid = $courseid ";
+            $wheresql = " AND {$CFG->prefix}grade_items.courseid = $courseid ";
         }
 
         $selectadd = '';
         if ($items !== false) {
-            $selectadd = ', mdl_grade_items.* ';
+            $selectadd = ", {$CFG->prefix}grade_items.* ";
         }
 
         $sql = "SELECT finalgrade $selectadd
-                  FROM mdl_grade_grades, mdl_grade_items, mdl_grade_outcomes
-                 WHERE mdl_grade_outcomes.id = mdl_grade_items.outcomeid
-                   AND mdl_grade_items.id = mdl_grade_grades.itemid
-                   AND mdl_grade_outcomes.id = $this->id
+                  FROM {$CFG->prefix}grade_grades, {$CFG->prefix}grade_items, {$CFG->prefix}grade_outcomes
+                 WHERE {$CFG->prefix}grade_outcomes.id = {$CFG->prefix}grade_items.outcomeid
+                   AND {$CFG->prefix}grade_items.id = {$CFG->prefix}grade_grades.itemid
+                   AND {$CFG->prefix}grade_outcomes.id = $this->id
                    $wheresql";
 
         $grades = get_records_sql($sql);

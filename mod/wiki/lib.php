@@ -555,8 +555,8 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
         $wiki_entries = wiki_get_entries($wiki, 'student');
         
         if (!empty($CFG->enablegroupings) && !empty($wiki->groupingid)) {
-            $sql = "SELECT gm.userid FROM mdl_groups_members gm " .
-                    "INNER JOIN mdl_groupings_groups gg ON gm.groupid = gg.groupid " .
+            $sql = "SELECT gm.userid FROM {$CFG->prefix}groups_members gm " .
+                    "INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = gg.groupid " .
                     "WHERE gg.groupingid = $wiki->groupingid ";
     
             $groupingmembers = get_records_sql($sql);
