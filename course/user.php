@@ -13,8 +13,6 @@
     $page    = optional_param('page', 0, PARAM_INT);
     $perpage = optional_param('perpage', 100, PARAM_INT);
 
-    require_login();
-
     if (! $course = get_record("course", "id", $id)) {
         error("Course id is incorrect.");
     }
@@ -22,6 +20,8 @@
     if (! $user = get_record("user", "id", $user)) {
         error("User ID is incorrect");
     }
+
+    require_login($course);
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
     $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
@@ -43,7 +43,6 @@
     $fullname          = fullname($user, true);
 
     $navlinks = array();
-    $navlinks[] = array('name' => $course->shortname, 'link' => "course/view.php?id=$course->id", 'type' => 'misc');
 
     if ($course->id != SITEID) {
         $navlinks[] = array('name' => $strparticipants, 'link' => "../user/index.php?id=$course->id", 'type' => 'misc');
