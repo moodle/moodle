@@ -289,7 +289,9 @@ class default_questiontype {
             list($question->category,$notused) = explode(',', $form->category);
             $question->stamp = make_unique_id_code();
             $question->createdby = $USER->id;
+            $question->modifiedby = $USER->id;
             $question->timecreated = time();
+            $question->timemodified = time();
             if (!$question->id = insert_record('question', $question)) {
                 error('Could not insert new question!');
             }
