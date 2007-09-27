@@ -179,7 +179,7 @@ class default_questiontype {
         }
 
         if (empty($question->name)) {
-            $question->name = shorten_text($question->questiontext, 15);
+            $question->name = shorten_text(strip_tags($question->questiontext), 15);
             if (empty($question->name)) {
                 $question->name = '-';
             }
