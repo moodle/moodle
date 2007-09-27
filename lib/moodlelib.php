@@ -6046,17 +6046,22 @@ function generate_password($maxlen=10) {
 
 /**
  * Given a float, prints it nicely.
- * Do NOT use the result in any calculation later!
+ * Localized floats must not be used in calculations!
  *
  * @param float $flaot The float to print
  * @param int $places The number of decimal places to print.
+ * @param bool $localized use localized decimal separator
  * @return string locale float
  */
-function format_float($float, $decimalpoints=1) {
+function format_float($float, $decimalpoints=1, $localized=true) {
     if (is_null($float)) {
         return '';
     }
-    return number_format($float, $decimalpoints, get_string('decsep'), '');
+    if ($localized) {
+        return number_format($float, $decimalpoints, get_string('decsep'), '');
+    } else {
+        return number_format($float, $decimalpoints, '.', '');
+    }
 }
 
 /**
