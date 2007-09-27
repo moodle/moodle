@@ -3732,6 +3732,7 @@ function generate_email_supportuser() {
     $supportuser->email = $CFG->supportemail ? $CFG->supportemail : $CFG->noreplyaddress;
     $supportuser->firstname = $CFG->supportname ? $CFG->supportname : get_string('noreplyname');
     $supportuser->lastname = '';
+    $supportuser->maildisplay = true;
 
     return $supportuser;
 }
