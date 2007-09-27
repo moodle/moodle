@@ -11,7 +11,17 @@ $gradeexport_txt_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
+    ),
+
+    'gradeexport/txt:publish' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'admin' => CAP_ALLOW
+        )
     )
+
 );
 
 ?>

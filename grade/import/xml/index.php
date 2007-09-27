@@ -43,6 +43,10 @@ $strgrades = get_string('grades', 'grades');
 $actionstr = get_string('modulename', 'gradeimport_xml');
 $navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course->id));
 
+if (!empty($CFG->gradepublishing)) {
+    $CFG->gradepublishing = has_capability('gradeimport/xml:publish', $context);
+}
+
 $mform = new grade_import_form();
 
 if ($data = $mform->get_data()) {

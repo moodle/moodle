@@ -6,5 +6,6 @@ $string['errincorrectidnumber'] = 'Error - incorrect idnumber';
 $string['fileurl'] = 'Remote file URL';
 $string['modulename'] = 'XML file';
 $string['xml:view'] = 'Import grades from XML';
+$string['xml:publish'] = 'Publish import grades from XML';
 
 ?>

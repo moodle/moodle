@@ -47,6 +47,10 @@ $navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course-
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
 print_grade_plugin_selector($id, 'export', 'txt');
 
+if (!empty($CFG->gradepublishing)) {
+    $CFG->gradepublishing = has_capability('gradeexport/txt:publish', $context);
+}
+
 $mform = new grade_export_form(null, array('includeseparator'=>true, 'publishing' => true));
 
 // process post information
