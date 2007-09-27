@@ -4010,6 +4010,16 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         $view=false, $useviewallgroups=false) {
     global $CFG;
 
+/// check for front page course, and see if default front page role has the required capability
+    
+    $frontpagectx = get_context_instance(CONTEXT_COURSE, SITEID);
+    if ($CFG->defaultfrontpageroleid && ($context->id == $frontpagectx->id || strstr($context->path, '/'.$cfrontpagectx->id.'/'))) {
+        $roles = get_roles_with_capability($capability, CAP_ALLOW, $context);
+        if (in_array($CFG->defaultfrontpageroleid, array_keys($roles))) {
+            return get_records_sql("SELECT $fields FROM {$CFG->prefix}user ORDER BY $sort, $limitfrom, $limitnum"); 
+        }
+    }
+
 /// Sorting out groups
     if ($groups) {
         if (is_array($groups)) {
