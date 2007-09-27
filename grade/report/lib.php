@@ -112,6 +112,11 @@ class grade_report {
     function grade_report($courseid, $gpr, $context, $page=null) {
         global $CFG, $COURSE;
 
+        if (!$CFG->gradebookroles) {
+            error ('no roles defined in admin->appearance->graderoles'); 
+        }
+        
+
         $this->courseid  = $courseid;
         if ($this->courseid == $COURSE->id) {
             $this->course = $COURSE;
