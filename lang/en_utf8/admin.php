@@ -526,7 +526,7 @@ $string['questioncwqpfscheck'] = 'One or more \'random\' questions in a quiz are
 $string['questioncwqpfsok'] = 'Good. There are no \'random\' questions in your quizzes that are set up to select questions from a mixture of shared and unshared question categories.';
 $string['rcache'] = 'Record cache';
 $string['rcachettl'] = 'Record cache TTL';
-$string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target=\"_new\" href=\"$a\">Release Notes</a>';
+$string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target=\"_blank\" href=\"$a\">Release Notes</a>';
 $string['remotelangnotavailable'] = 'Because Moodle can not connect to download.moodle.org, we are unable to do language pack installation automatically. Please download the appropriate zip file(s) from the list below, copy them to your $a directory and unzip them manually.';
 $string['renameerrors'] = 'Rename errors';
 $string['restrictbydefault'] = 'Restrict modules by default';
