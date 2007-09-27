@@ -113,7 +113,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
                     }
                 }
             } else {
-                $sql = "select distinct course, coursename from mdl_mnet_log where hostid = '$hostid_'";
+                $sql = "select distinct course, coursename from {$CFG->prefix}mnet_log where hostid = '$hostid_'";
                 if ($ccc = get_records_sql($sql)) {
                     foreach ($ccc as $cc) {
                         if (1 == $cc->course) { // TODO: MDL-8187 : this might be wrong - site course may have another id
