@@ -113,9 +113,9 @@ class grade_report {
         global $CFG, $COURSE;
 
         if (!$CFG->gradebookroles) {
-            error ('no roles defined in admin->appearance->graderoles'); 
+            error ('no roles defined in admin->appearance->graderoles');
         }
-        
+
 
         $this->courseid  = $courseid;
         if ($this->courseid == $COURSE->id) {
@@ -255,25 +255,8 @@ class grade_report {
      */
     function get_grade_letters() {
         global $COURSE;
-        $letters = array();
         $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-
-        if ($records = get_records('grade_letters', 'contextid', $context->id)) {
-            foreach ($records as $record) {
-                if (!is_null($record->lowerboundary) && !empty($record->letter)) {
-                    $letters[$record->lowerboundary] = $record->letter;
-                }
-            }
-        } else {
-            for ($i = 1; $i <= 10; $i++) {
-                $boundary = grade_report::get_pref('gradeboundary' . $i);
-                $letter = grade_report::get_pref('gradeletter' . $i);
-                if (!is_null($boundary) && $boundary != -1 && !empty($letter)) {
-                    $letters[$boundary] = $letter;
-                }
-            }
-        }
-        return $letters;
+        $letters = grade_get_letters($context);
     }
 
     /**

@@ -296,14 +296,6 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             $menu[$url] = get_string('edittree', 'grades');
         }
 
-        if (has_capability('moodle/grade:manage', $context)) {
-            $url = 'edit/gradedisplay/index.php?id='.$courseid;
-            if ($active_type == 'edit' and $active_plugin == 'gradedisplay' ) {
-                $active = $url;
-            }
-            $menu[$url] = get_string('gradedisplay', 'grades');
-        }
-
         if (has_capability('moodle/course:managescales', $context)) {
             $url = 'edit/scale/index.php?id='.$courseid;
             if ($active_type == 'edit' and $active_plugin == 'scale' ) {
@@ -324,6 +316,15 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             }
             $menu[$url] = get_string('outcomes', 'grades');
         }
+
+        if (has_capability('moodle/course:manage', $context)) {
+            $url = 'edit/letter/index.php?id='.$courseid;
+            if ($active_type == 'edit' and $active_plugin == 'letter' ) {
+                $active = $url;
+            }
+            $menu[$url] = get_string('letters', 'grades');
+        }
+
     }
 
 /// finally print/return the popup form

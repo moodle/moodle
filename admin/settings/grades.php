@@ -18,6 +18,8 @@ $scales = new admin_externalpage('scales', get_string('scales'), $CFG->wwwroot.'
 $ADMIN->add('grades', $scales);
 $outcomes = new admin_externalpage('outcomes', get_string('outcomes', 'grades'), $CFG->wwwroot.'/grade/edit/outcome/index.php', 'moodle/grade:manage');
 $ADMIN->add('grades', $outcomes);
+$letters = new admin_externalpage('letters', get_string('letters', 'grades'), $CFG->wwwroot.'/grade/edit/letter/edit.php', 'moodle/grade:manageletters');
+$ADMIN->add('grades', $letters);
 
 /// Grade category settings
 require_once $CFG->libdir . '/grade/constants.php';

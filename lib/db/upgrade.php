@@ -2242,6 +2242,17 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && change_field_notnull($table, $field);
     }
 
+    if ($result && $oldversion < 2007092801) {
+
+    /// Define index contextidlowerboundary (not unique) to be added to grade_letters
+        $table = new XMLDBTable('grade_letters');
+        $index = new XMLDBIndex('contextid-lowerboundary');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('contextid', 'lowerboundary'));
+
+    /// Launch add index contextidlowerboundary
+        $result = $result && add_index($table, $index);
+    }
+
 /*
     /// drop old gradebook tables
     if ($result && $oldversion < xxxxxxxx) {

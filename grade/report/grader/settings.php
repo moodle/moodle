@@ -1,9 +1,6 @@
 <?php // $Id$
-require_once($CFG->libdir.'/gradelib.php');
-$strgradeboundary       = get_string('gradeboundary', 'grades');
-$strconfiggradeboundary = get_string('configgradeboundary', 'grades');
-$strgradeletter         = get_string('gradeletter', 'grades');
-$strconfiggradeletter   = get_string('configgradeletter', 'grades');
+require_once($CFG->libdir.'/grade/constants.php');
+
 $strinherit             = get_string('inherit', 'grades');
 $strpercentage          = get_string('percentage', 'grades');
 $strreal                = get_string('real', 'grades');
@@ -111,18 +108,5 @@ $settings->add(new admin_setting_configselect('grade_report_rangesdecimalpoints'
                                                  '4' => '4',
                                                  '5' => '5')));
 
-$percentages = array(GRADE_REPORT_PREFERENCE_UNUSED => get_string('unused', 'grades'));
-for ($i=100; $i > -1; $i--) {
-    $percentages[$i] = "$i%";
-}
-
-for ($i = 1; $i <= 10; $i++) {
-    $default = abs(($i-10)*10);
-    $settings->add(new admin_setting_configselect('grade_report_gradeboundary'.$i, $strgradeboundary . " $i",
-                                              $strconfiggradeboundary, $default, $percentages));
-
-    $settings->add(new admin_setting_configtext('grade_report_gradeletter'.$i, $strgradeletter . " $i",
-                                            $strconfiggradeletter, ''));
-}
 
 ?>

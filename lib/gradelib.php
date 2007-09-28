@@ -504,21 +504,8 @@ function grade_format_gradevalue($value, &$grade_item, $localized=true, $display
  */
 function grade_get_letters($context=null) {
     if (empty($context)) {
-        // defaults
-        // TODO: maybe we should hardcode defaults here and remove them from admin tree
-        //       it seems a bit less than optional to use report preferences for this
-        //       when letters are used in other types of plugins too
-        global $CFG;
-        require_once($CFG->dirroot.'/grade/report/lib.php');
-
-        for ($i = 1; $i <= 10; $i++) {
-            $boundary = grade_report::get_pref('gradeboundary' . $i);
-            $letter = grade_report::get_pref('gradeletter' . $i);
-            if (!is_null($boundary) && $boundary != -1 && !empty($letter)) {
-                $letters[$boundary] = $letter;
-            }
-        }
-        return $letters;
+        //default grading letters
+        return array('93'=>'A', '90'=>'A-', '87'=>'B+', '83'=>'B', '80'=>'B-', '77'=>'C+', '73'=>'C', '70'=>'C-', '67'=>'D+', '60'=>'D', '0'=>'F');
     }
 
     static $cache = array();
@@ -537,11 +524,9 @@ function grade_get_letters($context=null) {
     array_unshift($contexts, $context->id);
 
     foreach ($contexts as $ctxid) {
-        if ($records = get_records('grade_letters', 'contextid', $ctxid, 'lowerboundary DESC')) { //TODO: add index?
+        if ($records = get_records('grade_letters', 'contextid', $ctxid, 'lowerboundary DESC')) {
             foreach ($records as $record) {
-                if (!is_null($record->lowerboundary) && !empty($record->letter)) {
-                    $letters[$record->lowerboundary] = $record->letter;
-                }
+                $letters[$record->lowerboundary] = $record->letter;
             }
         }
 

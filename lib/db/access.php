@@ -1043,7 +1043,16 @@ $moodle_capabilities = array(
     ),
 
     'moodle/grade:manageoutcomes' => array(
-        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:managegrades'
+    ),
+
+    'moodle/grade:manageletters' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
