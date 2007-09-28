@@ -32,3 +32,4 @@ class note_edit_form extends moodleform {
         $mform->setType('note', PARAM_INT);
     }
 }
+?>

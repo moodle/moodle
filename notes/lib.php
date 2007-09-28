@@ -33,7 +33,7 @@ define('NOTES_SHOW_FOOT', 0x04);
  */
 function note_list($courseid=0, $userid=0, $state = '', $author = 0, $order='lastmodified DESC', $limitfrom=0, $limitnum=0) {
     // setup filters
-    $select = array();
+    $selects = array();
     if($courseid) {
         $selects[] = 'courseid=' . $courseid;
     }
