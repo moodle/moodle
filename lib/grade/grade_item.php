@@ -212,7 +212,7 @@ class grade_item extends grade_object {
      * The number of digits after the decimal point symbol. Applies only to REAL and PERCENTAGE grade display types.
      * @var int $decimals
      */
-    var $decimals = GRADE_DECIMALS_DEFAULT;
+    var $decimals = null;
 
     /**
      * 0 if visible, 1 always hidden or date not visible until
@@ -1722,14 +1722,14 @@ class grade_item extends grade_object {
         global $CFG;
         static $cache = array();
 
-        if ($this->decimals == GRADE_DECIMALS_DEFAULT) {
+        if (is_null($this->decimals)) {
             if (array_key_exists($this->courseid, $cache)) {
                 return $cache[$this->courseid];
             } else if (count($cache) > 100) {
                 $cache = array(); // cache size limit
             }
             $gradedecimals = get_field('grade_items', 'decimals', 'courseid', $this->courseid, 'itemtype', 'course');
-            if ($gradedecimals == GRADE_DECIMALS_DEFAULT) {
+            if (is_null($gradedecimals)) {
                 $gradedecimals = $CFG->grade_report_decimalpoints;
             }
             $cache[$this->courseid] = $gradedecimals;

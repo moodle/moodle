@@ -98,14 +98,11 @@ class edit_item_form extends moodleform {
                               false, true, false, get_string("configgradedisplaytype", 'grades')));
 
         // Determine default value for decimalpoints (site or course)
-        $course_gradedecimals = get_field('grade_items', 'decimals', 'courseid', $COURSE->id, 'itemtype', 'course');
-        $site_gradedecimals = $CFG->grade_report_decimalpoints;
-        $default_gradedecimals = $course_gradedecimals;
-
-        if ($course_gradedecimals == GRADE_DECIMALS_DEFAULT) {
-            $default_gradedecimals = $site_gradedecimals;
+        $default_gradedecimals = get_field('grade_items', 'decimals', 'courseid', $COURSE->id, 'itemtype', 'course');
+        if (is_null($default_gradedecimals)) {
+            $default_gradedecimals = $CFG->grade_report_decimalpoints;
         }
-        $options = array(GRADE_DECIMALS_DEFAULT => get_string('default', 'grades'), 0, 1, 2, 3, 4, 5);
+        $options = array(-1=>get_string('default', 'grades'), 0, 1, 2, 3, 4, 5);
         $label = get_string('decimalpoints', 'grades') . ' (' . get_string('default', 'grades') . ': ' . $options[$default_gradedecimals] . ')';
         $mform->addElement('select', 'decimals', $label, $options);
         $mform->setHelpButton('decimals', array(false, get_string('decimalpoints', 'grades'),

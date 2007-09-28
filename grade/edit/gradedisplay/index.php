@@ -57,7 +57,7 @@ if ($mform->is_cancelled()) {
 
     // Update course item's decimals type
     if (isset($data->decimals)) {
-        if (strlen($data->decimals) < 1) {
+        if ($data->decimals < 0) {
             $data->decimals = null;
         }
         set_field('grade_items', 'decimals', $data->decimals, 'courseid', $courseid, 'itemtype', 'course');

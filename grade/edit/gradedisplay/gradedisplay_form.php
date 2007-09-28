@@ -27,7 +27,7 @@ class edit_grade_display_form extends moodleform {
         $mform->setDefault('display', $coursegradedisplaytype);
         $mform->setType($coursegradedisplaytype, PARAM_INT);
 
-        $options = array(GRADE_DECIMALS_DEFAULT => get_string('default', 'grades'), 0, 1, 2, 3, 4, 5);
+        $options = array(-1=>get_string('default', 'grades'), 0, 1, 2, 3, 4, 5);
         $label = get_string('decimalpoints', 'grades') . ' (' . get_string('default', 'grades') . ': ' . $options[$CFG->grade_report_decimalpoints] . ')';
         $mform->addElement('select', 'decimals', $label, $options);
         $mform->setHelpButton('decimals', array(false, get_string('decimalpoints', 'grades'), false, true, false, get_string("configdecimalpoints", 'grades')));

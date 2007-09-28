@@ -83,7 +83,7 @@ if ($data = $mform->get_data(false)) {
     $grade_item->outcomeid = null;
 
     // Handle null decimals value
-    if (strlen($data->decimals) < 1) {
+    if (!array_key_exists('decimals', $data) or $data->decimals < 0) {
         $grade_item->decimals = null;
     }
 
