@@ -109,7 +109,12 @@ class grader_report_preferences_form extends moodleform {
                 if (is_array($type)) {
                     $options = $type;
                     $type = 'select';
-                    $default = $options[$CFG->$full_pref];
+                    // MDL-11478
+                    if (isset($options[$CFG->$full_pref])) {
+                        $default = $options[$CFG->$full_pref];
+                    } else {
+                        $default = ''; 
+                    }
                 } else {
                     $default = $CFG->$full_pref;
                 }
