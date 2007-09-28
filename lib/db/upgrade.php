@@ -1081,6 +1081,8 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('plusfactor', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('aggregationcoef', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('display', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('decimals', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, null);
         $table->addFieldInfo('hidden', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('locked', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('locktime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
@@ -1240,6 +1242,8 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('plusfactor', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('aggregationcoef', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('display', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('decimals', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, null);
         $table->addFieldInfo('hidden', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('locked', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('locktime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
@@ -2015,17 +2019,6 @@ function xmldb_main_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2007091800) {
 
-    /// Define field display to be added to grade_items
-        $table = new XMLDBTable('grade_items');
-        $field = new XMLDBField('display');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '-1', 'sortorder');
-
-    /// Launch add field display
-        $result = $result && add_field($table, $field);
-    }
-
-    if ($result && $oldversion < 2007091800) {
-
     /// Define table grade_letters to be created
         $table = new XMLDBTable('grade_letters');
 
@@ -2070,29 +2063,6 @@ function xmldb_main_upgrade($oldversion=0) {
      * Merging of grade_grades_text back into grade_grades
      */
     if ($result && $oldversion < 2007092002) {
-
-/// Remove obsoleted unit tests tables - they will be recreated automatically
-        $tables = array('grade_categories',
-                        'scale',
-                        'grade_items',
-                        'grade_calculations',
-                        'grade_grades',
-                        'grade_grades_raw',
-                        'grade_grades_final',
-                        'grade_grades_text',
-                        'grade_outcomes',
-                        'grade_outcomes_courses');
-
-        foreach ($tables as $tablename) {
-            $table = new XMLDBTable('unittest_'.$tablename);
-            if (table_exists($table)) {
-                drop_table($table);
-            }
-            $table = new XMLDBTable('unittest_'.$tablename.'_history');
-            if (table_exists($table)) {
-                drop_table($table);
-            }
-        }
 
     /// Define field feedback to be added to grade_grades
         $table = new XMLDBTable('grade_grades');
@@ -2210,38 +2180,6 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
-    if ($result && $oldversion < 2007092500) {
-
-    /// Define field decimals to be added to grade_items
-        $table = new XMLDBTable('grade_items');
-        $field = new XMLDBField('decimals');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '2', 'display');
-
-    /// Launch add field decimals
-        $result = $result && add_field($table, $field);
-    }
-
-    if ($result && $oldversion < 2007092501) {
-
-    /// Changing the default of field decimals on table grade_items to drop it
-        $table = new XMLDBTable('grade_items');
-        $field = new XMLDBField('decimals');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, null, 'display');
-
-    /// Launch change of default for field decimals
-        $result = $result && change_field_default($table, $field);
-    }
-    if ($result && $oldversion < 2007092501) {
-
-    /// Changing nullability of field decimals on table grade_items to null
-        $table = new XMLDBTable('grade_items');
-        $field = new XMLDBField('decimals');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, null, 'display');
-
-    /// Launch change of nullability for field decimals
-        $result = $result && change_field_notnull($table, $field);
-    }
-
     if ($result && $oldversion < 2007092801) {
 
     /// Define index contextidlowerboundary (not unique) to be added to grade_letters
@@ -2250,7 +2188,86 @@ function xmldb_main_upgrade($oldversion=0) {
         $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('contextid', 'lowerboundary'));
 
     /// Launch add index contextidlowerboundary
-        $result = $result && add_index($table, $index);
+        if (!index_exists($table, $field)) {
+            $result = $result && add_index($table, $index);
+        }
+    }
+
+    if ($result && $oldversion < 2007092803) {
+
+/// Remove obsoleted unit tests tables - they will be recreated automatically
+        $tables = array('grade_categories',
+                        'scale',
+                        'grade_items',
+                        'grade_calculations',
+                        'grade_grades',
+                        'grade_grades_raw',
+                        'grade_grades_final',
+                        'grade_grades_text',
+                        'grade_outcomes',
+                        'grade_outcomes_courses');
+
+        foreach ($tables as $tablename) {
+            $table = new XMLDBTable('unittest_'.$tablename);
+            if (table_exists($table)) {
+                drop_table($table);
+            }
+            $table = new XMLDBTable('unittest_'.$tablename.'_history');
+            if (table_exists($table)) {
+                drop_table($table);
+            }
+        }
+
+    /// Define field display to be added to grade_items
+        $table = new XMLDBTable('grade_items');
+        $field = new XMLDBField('display');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0', 'sortorder');
+
+    /// Launch add field display
+        if (!field_exists($table, $field)) {
+            $result = $result && add_field($table, $field);
+        } else {
+            $result = $result && change_field_default($table, $field);
+        }
+
+    /// Define field display to be added to grade_items_history
+        $table = new XMLDBTable('grade_items_history');
+        $field = new XMLDBField('display');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0', 'sortorder');
+
+    /// Launch add field display
+        if (!field_exists($table, $field)) {
+            $result = $result && add_field($table, $field);
+        }
+
+
+    /// Define field decimals to be added to grade_items
+        $table = new XMLDBTable('grade_items');
+        $field = new XMLDBField('decimals');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, null, 'display');
+
+    /// Launch add field decimals
+        if (!field_exists($table, $field)) {
+            $result = $result && add_field($table, $field);
+        } else {
+            $result = $result && change_field_default($table, $field);
+            $result = $result && change_field_notnull($table, $field);
+        }
+
+    /// Define field decimals to be added to grade_items_history
+        $table = new XMLDBTable('grade_items_history');
+        $field = new XMLDBField('decimals');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, null, 'display');
+
+    /// Launch add field decimals
+        if (!field_exists($table, $field)) {
+            $result = $result && add_field($table, $field);
+        }
+
+
+    /// fix incorrect -1 default for grade_item->display
+        execute_sql("UPDATE {$CFG->prefix}grade_items SET display=0 WHERE display=-1");
+
     }
 
 /*
