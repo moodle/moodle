@@ -53,6 +53,7 @@ print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname
 
 print_heading($straddnote);
 echo '<form method="post" action="addnote.php">';
+echo '<fieldset class="invisiblefieldset">';
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
 $table->head  = array (get_string('fullname'),
@@ -83,6 +84,6 @@ foreach ($users as $k => $v) {
     );
 }
 print_table($table);
-echo '<div style="width:100%;text-align:center;"><input type="submit" value="' . get_string('savechanges'). '" /></div></form>';
+echo '<div style="width:100%;text-align:center;"><input type="submit" value="' . get_string('savechanges'). '" /></div></fieldset></form>';
 print_footer($course);
 ?>
