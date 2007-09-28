@@ -757,9 +757,8 @@ class grade_report_grader extends grade_report {
                         $studentshtml .= '<span class="gradingerror">'.get_string('error').'</span>';
 
                     } else if ($gradedisplaytype == GRADE_DISPLAY_TYPE_LETTER) {
-                        $letters = grade_report::get_grade_letters();
                         if (!is_null($gradeval)) {
-                            $studentshtml .= grade_grade::get_letter($letters, $gradeval, $grademin, $grademax);
+                           $studentshtml .= grade_format_gradevalue($gradeval, $item, false, GRADE_DISPLAY_TYPE_LETTER, null);
                         }
                     } else if ($item->scaleid && !empty($scales_array[$item->scaleid])
                                 && $gradedisplaytype == GRADE_DISPLAY_TYPE_REAL) {
@@ -946,12 +945,8 @@ class grade_report_grader extends grade_report {
                         $gradehtml = $gradeval;
                     }
 
-                    if ($displaytype == GRADE_DISPLAY_TYPE_PERCENTAGE) {
-                        $gradeval = grade_to_percentage($rawgradeval, $item->grademin, $item->grademax);
-                        $gradehtml = format_float($gradeval, $decimalpoints). '%';
-                    } elseif ($displaytype == GRADE_DISPLAY_TYPE_LETTER) {
-                        $letters = grade_report::get_grade_letters();
-                        $gradehtml = grade_grade::get_letter($letters, $rawgradeval, $item->grademin, $item->grademax);
+                    if ($displaytype == GRADE_DISPLAY_TYPE_PERCENTAGE or $displaytype == GRADE_DISPLAY_TYPE_LETTER) {
+                        $gradeshtml = grade_format_gradevalue($rawgradeval, $item, true, $displaytype, null);
                     }
 
                     $numberofgrades = '';

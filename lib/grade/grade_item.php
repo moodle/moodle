@@ -1693,17 +1693,25 @@ class grade_item extends grade_object {
      */
     function get_displaytype() {
         global $CFG;
-        $course_gradedisplaytype = get_field('grade_items', 'display', 'courseid', $this->courseid, 'itemtype', 'course');
-        $site_gradedisplaytype = $CFG->grade_report_gradedisplaytype;
-        $default_gradedisplaytype = $this->display;
+        static $cache = array();
 
         if ($this->display == GRADE_DISPLAY_TYPE_DEFAULT) {
-            $default_gradedisplaytype = $course_gradedisplaytype;
-            if ($course_gradedisplaytype == GRADE_DISPLAY_TYPE_DEFAULT) {
-                $default_gradedisplaytype = $site_gradedisplaytype;
+            if (array_key_exists($this->courseid, $cache)) {
+                return $cache[$this->courseid];
+            } else if (count($cache) > 100) {
+                $cache = array(); // cache size limit
             }
+
+            $gradedisplaytype = get_field('grade_items', 'display', 'courseid', $this->courseid, 'itemtype', 'course');
+            if ($gradedisplaytype == GRADE_DISPLAY_TYPE_DEFAULT) {
+                $gradedisplaytype = $CFG->grade_report_gradedisplaytype;
+            }
+            $cache[$this->courseid] = $gradedisplaytype;
+            return $gradedisplaytype;
+
+        } else {
+            return $this->display;
         }
-        return $default_gradedisplaytype;
     }
 
     /**
@@ -1712,17 +1720,24 @@ class grade_item extends grade_object {
      */
     function get_decimals() {
         global $CFG;
-        $course_gradedecimals = get_field('grade_items', 'decimals', 'courseid', $this->courseid, 'itemtype', 'course');
-        $site_gradedecimals = $CFG->grade_report_decimalpoints;
-        $item_gradedecimals = $this->decimals;
+        static $cache = array();
 
         if ($this->decimals == GRADE_DECIMALS_DEFAULT) {
-            $item_gradedecimals = $course_gradedecimals;
-            if ($course_gradedecimals == GRADE_DECIMALS_DEFAULT) {
-                $item_gradedecimals = $site_gradedecimals;
+            if (array_key_exists($this->courseid, $cache)) {
+                return $cache[$this->courseid];
+            } else if (count($cache) > 100) {
+                $cache = array(); // cache size limit
             }
+            $gradedecimals = get_field('grade_items', 'decimals', 'courseid', $this->courseid, 'itemtype', 'course');
+            if ($gradedecimals == GRADE_DECIMALS_DEFAULT) {
+                $gradedecimals = $CFG->grade_report_decimalpoints;
+            }
+            $cache[$this->courseid] = $gradedecimals;
+            return $gradedecimals;
+
+        } else {
+            return $this->decimals;
         }
-        return $item_gradedecimals;
     }
 }
 ?>

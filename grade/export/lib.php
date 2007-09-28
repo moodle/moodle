@@ -40,12 +40,9 @@ class grade_export {
     var $columns;     // array of grade_items selected for export
 
     var $previewrows;     // number of rows in preview
-    var $export_letters;  // export letters - TODO: finish implementation
+    var $export_letters;  // export letters
     var $export_feedback; // export feedback
     var $userkey;         // export using private user key
-
-    var $letters;     // internal
-    var $report;      // internal
 
     /**
      * Constructor should set up all the private variables ready to be pulled
@@ -144,42 +141,17 @@ class grade_export {
     }
 
     /**
-     * internal
-     */
-    function _init_letters() {
-        global $CFG;
-
-        if (!isset($this->letters)) {
-            if ($this->export_letters) {
-                require_once($CFG->dirroot . '/grade/report/lib.php');
-                $this->report = new grade_report($this->course->id, null, null);
-                $this->letters = $this->report->get_grade_letters();
-            } else {
-                $this->letters = false; // false prevents another fetching of grade letters
-            }
-        }
-    }
-
-    /**
      * Returns string representation of final grade
      * @param $object $grade instance of grade_grade class
      * @return string
      */
     function format_grade($grade) {
-        $this->_init_letters();
-
-        //TODO: rewrite the letters handling code - this is slow
-        if ($this->letters) {
-            $grade_item = $this->grade_items[$grade->itemid];
-            $grade_item_displaytype = $this->report->get_pref('gradedisplaytype', $grade_item->id);
-
-            if ($grade_item_displaytype == GRADE_DISPLAY_TYPE_LETTER) {
-                return grade_grade::get_letter($this->letters, $grade->finalgrade, $grade_item->grademin, $grade_item->grademax);
-            }
+        $displaytype = null;
+        if ($this->export_letters) {
+            $displaytype = GRADE_DISPLAY_TYPE_LETTER;
         }
 
-        //TODO: format it somehow - scale/letter/number/etc.
-        return $grade->finalgrade;
+        return grade_format_gradevalue($grade->finalgrade, $this->grade_items[$grade->itemid], false, $displaytype, null);
     }
 
     /**
@@ -299,7 +271,7 @@ class grade_export {
 
         echo '<div class="gradeexportlink">';
         if (!$this->userkey) {      // this button should trigger a download prompt
-            print_single_button($CFG->wwwroot.'/grade/export/'.$this->plugin.'/export.php', 
+            print_single_button($CFG->wwwroot.'/grade/export/'.$this->plugin.'/export.php',
                                 $params, get_string('download', 'admin'));
 
         } else {

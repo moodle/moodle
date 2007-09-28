@@ -334,25 +334,7 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
                             $grade->str_grade = '-';
 
                         } else {
-                            switch ($grade_item->gradetype) {
-                                case GRADE_TYPE_VALUE:
-                                    if (!isset($decimalpoints)) {
-                                        require_once($CFG->dirroot.'/grade/report/user/lib.php');//TODO: which setting to use?
-                                        $decimalpoints = grade_report_user::get_pref('decimalpoints', $grade_item->id);
-                                    }
-                                    $grade->str_grade = format_float($grade->grade, $decimalpoints);
-                                    break;
-
-                                case GRADE_TYPE_SCALE:
-                                    $scale = $grade_item->load_scale();
-                                    $grade->grade = (int)bounded_number($item->grademin, $grade->grade, $item->grademax);
-                                    $grade->str_grade = format_string($scale->scale_items[$grade->grade-1]);
-                                    break;
-
-                                case GRADE_TYPE_TEXT:
-                                default:
-                                    $grade->str_grade = '';
-                            }
+                            $grade->str_grade = grade_format_gradevalue($grade->grade, $grade_item);
                         }
 
                         // create html representation of feedback
@@ -441,6 +423,138 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
 }
 
 /***** END OF PUBLIC API *****/
+
+/**
+ * Returns string representation of grade value
+ * @param float $value grade value
+ * @param object $grade_item - by reference to prevent scale reloading
+ * @param bool $localized use localised decimal separator
+ * @param int $display type of display - raw, letter, percentage
+ * @param int $decimalplaces number of decimal places when displaying float values
+ * @return string
+ */
+function grade_format_gradevalue($value, &$grade_item, $localized=true, $displaytype=null, $decimals=null) {
+    if ($grade_item->gradetype == GRADE_TYPE_NONE or $grade_item->gradetype == GRADE_TYPE_TEXT) {
+        return '';
+    }
+
+    // no grade yet?
+    if (is_null($value)) {
+        return '-';
+    }
+
+    if ($grade_item->gradetype != GRADE_TYPE_VALUE and $grade_item->gradetype != GRADE_TYPE_SCALE) {
+        //unknown type??
+        return '';
+    }
+
+    if (is_null($displaytype)) {
+        $displaytype = $grade_item->get_displaytype();
+    }
+
+    if (is_null($decimals)) {
+        $decimals = $grade_item->get_decimals();
+    }
+
+    switch ($displaytype) {
+        case GRADE_DISPLAY_TYPE_REAL:
+            if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
+                $scale = $grade_item->load_scale();
+                $value = (int)bounded_number($grade_item->grademin, $value, $grade_item->grademax);
+                return format_string($scale->scale_items[$value-1]);
+
+            } else {
+                return format_float($value, $decimals, $localized);
+            }
+
+        case GRADE_DISPLAY_TYPE_PERCENTAGE:
+            $min = $grade_item->grademin;
+            $max = $grade_item->grademax;
+            if ($min == $max) {
+                return '';
+            }
+            $value = bounded_number($min, $value, $max);
+            $percentage = (($value-$min)*100)/($max-$min);
+            return format_float($percentage, $decimals, $localized).' %';
+
+        case GRADE_DISPLAY_TYPE_LETTER:
+            $context = get_context_instance(CONTEXT_COURSE, $grade_item->courseid);
+            if (!$letters = grade_get_letters($context)) {
+                return ''; // no letters??
+            }
+
+            $value = grade_grade::standardise_score($value, $grade_item->grademin, $grade_item->grademax, 0, 100);
+            $value = bounded_number(0, $value, 100); // just in case
+            foreach ($letters as $boundary => $letter) {
+                if ($value >= $boundary) {
+                    return format_string($letter);
+                }
+            }
+            return '-'; // no match? maybe '' would be more correct
+
+        default:
+            return '';
+    }
+}
+
+/**
+ * Returns grade letters array used in context
+ * @param object $context object or null for defaults
+ * @return array of grade_boundary=>letter_string
+ */
+function grade_get_letters($context=null) {
+    if (empty($context)) {
+        // defaults
+        // TODO: maybe we should hardcode defaults here and remove them from admin tree
+        //       it seems a bit less than optional to use report preferences for this
+        //       when letters are used in other types of plugins too
+        global $CFG;
+        require_once($CFG->dirroot.'/grade/report/lib.php');
+
+        for ($i = 1; $i <= 10; $i++) {
+            $boundary = grade_report::get_pref('gradeboundary' . $i);
+            $letter = grade_report::get_pref('gradeletter' . $i);
+            if (!is_null($boundary) && $boundary != -1 && !empty($letter)) {
+                $letters[$boundary] = $letter;
+            }
+        }
+        return $letters;
+    }
+
+    static $cache = array();
+
+    if (array_key_exists($context->id, $cache)) {
+        return $cache[$context->id];
+    }
+
+    if (count($cache) > 100) {
+        $cache = array(); // cache size limit
+    }
+
+    $letters = array();
+
+    $contexts = get_parent_contexts($context);
+    array_unshift($contexts, $context->id);
+
+    foreach ($contexts as $ctxid) {
+        if ($records = get_records('grade_letters', 'contextid', $ctxid, 'lowerboundary DESC')) { //TODO: add index?
+            foreach ($records as $record) {
+                if (!is_null($record->lowerboundary) && !empty($record->letter)) {
+                    $letters[$record->lowerboundary] = $record->letter;
+                }
+            }
+        }
+
+        if (!empty($letters)) {
+            $cache[$context->id] = $letters;
+            return $letters;
+        }
+    }
+
+    $letters = grade_get_letters(null);
+    $cache[$context->id] = $letters;
+    return $letters;
+}
 
 
 /**
