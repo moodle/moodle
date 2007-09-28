@@ -7,6 +7,96 @@
  * (Do not use functions from accesslib.php, grades classes or group functions at all!)
  */
 
+/**
+ * Migrates the grade_letter data to grade_letters
+ */
+function upgrade_18_letters() {
+    global $CFG;
+
+    $table = new XMLDBTable('grade_letters');
+
+    if (table_exists($table)) {
+        // already converted or development site
+        return true;
+    }
+
+    $result = true;
+
+/// Rename field grade_low on table grade_letter to lowerboundary
+    $table = new XMLDBTable('grade_letter');
+    $field = new XMLDBField('grade_low');
+    $field->setAttributes(XMLDB_TYPE_NUMBER, '5, 2', null, XMLDB_NOTNULL, null, null, null, '0.00', 'grade_high');
+
+/// Launch rename field grade_low
+    $result = $result && rename_field($table, $field, 'lowerboundary');
+
+/// Define field grade_high to be dropped from grade_letter
+    $table = new XMLDBTable('grade_letter');
+    $field = new XMLDBField('grade_high');
+
+/// Launch drop field grade_high
+    $result = $result && drop_field($table, $field);
+
+/// Define index courseid (not unique) to be dropped form grade_letter
+    $table = new XMLDBTable('grade_letter');
+    $index = new XMLDBIndex('courseid');
+    $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('courseid'));
+
+/// Launch drop index courseid
+    $result = $result && drop_index($table, $index);
+
+/// Rename field courseid on table grade_letter to contextid
+    $table = new XMLDBTable('grade_letter');
+    $field = new XMLDBField('courseid');
+    $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'id');
+
+/// Launch rename field courseid
+    $result = $result && rename_field($table, $field, 'contextid');
+
+    $sql = "UPDATE {$CFG->prefix}grade_letter
+               SET contextid=COALESCE((SELECT c.id
+                                        FROM {$CFG->prefix}context c
+                                       WHERE c.instanceid={$CFG->prefix}grade_letter.contextid AND c.contextlevel=".CONTEXT_COURSE."), 0)";
+    execute_sql($sql);
+
+/// remove broken records
+    execute_sql("DELETE FROM {$CFG->prefix}grade_letter WHERE contextid=0");
+
+/// Define table grade_letter to be renamed to grade_letters
+    $table = new XMLDBTable('grade_letter');
+
+/// Launch rename table for grade_letter
+    $result = $result && rename_table($table, 'grade_letters');
+
+/// Changing type of field lowerboundary on table grade_letters to number
+    $table = new XMLDBTable('grade_letters');
+    $field = new XMLDBField('lowerboundary');
+    $field->setAttributes(XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, null, 'contextid');
+
+/// Launch change of type for field lowerboundary
+    $result = $result && change_field_precision($table, $field);
+    $result = $result && change_field_default($table, $field);
+
+/// Changing the default of field letter on table grade_letters to drop it
+    $table = new XMLDBTable('grade_letters');
+    $field = new XMLDBField('letter');
+    $field->setAttributes(XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'lowerboundary');
+
+/// Launch change of default for field letter
+    $result = $result && change_field_precision($table, $field);
+    $result = $result && change_field_default($table, $field);
+
+/// Define index contextidlowerboundary (not unique) to be added to grade_letters
+    $table = new XMLDBTable('grade_letters');
+    $index = new XMLDBIndex('contextid-lowerboundary');
+    $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('contextid', 'lowerboundary'));
+
+/// Launch add index contextidlowerboundary
+    $result = $result && add_index($table, $index);
+
+    return $result;
+}
+
 
 /**
  * This function is used to migrade old data and settings from old gradebook into new grading system.

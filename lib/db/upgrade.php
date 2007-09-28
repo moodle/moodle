@@ -1361,6 +1361,9 @@ function xmldb_main_upgrade($oldversion=0) {
                 rs_close($rs);
             }
         }
+
+    /// migrate grade letter table
+        $result = $result && upgrade_18_letters();
     }
 
     if ($result && $oldversion < 2007072400) {
@@ -2017,25 +2020,6 @@ function xmldb_main_upgrade($oldversion=0) {
 
     }
 
-    if ($result && $oldversion < 2007091800) {
-
-    /// Define table grade_letters to be created
-        $table = new XMLDBTable('grade_letters');
-
-    /// Adding fields to table grade_letters
-        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->addFieldInfo('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->addFieldInfo('lowerboundary', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->addFieldInfo('letter', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-
-    /// Adding keys to table grade_letters
-        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-    /// Launch create table for grade_letters
-        $result = $result && create_table($table);
-    }
-
-
 /// Create the permanent context_temp table to be used by build_context_path()
     if ($result && $oldversion < 2007092001) {
 
@@ -2180,19 +2164,6 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
-    if ($result && $oldversion < 2007092801) {
-
-    /// Define index contextidlowerboundary (not unique) to be added to grade_letters
-        $table = new XMLDBTable('grade_letters');
-        $index = new XMLDBIndex('contextid-lowerboundary');
-        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('contextid', 'lowerboundary'));
-
-    /// Launch add index contextidlowerboundary
-        if (!index_exists($table, $field)) {
-            $result = $result && add_index($table, $index);
-        }
-    }
-
     if ($result && $oldversion < 2007092803) {
 
 /// Remove obsoleted unit tests tables - they will be recreated automatically
@@ -2267,7 +2238,22 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// fix incorrect -1 default for grade_item->display
         execute_sql("UPDATE {$CFG->prefix}grade_items SET display=0 WHERE display=-1");
+    }
 
+    if ($result && $oldversion < 2007092806) {
+        require_once($CFG->libdir.'/db/upgradelib.php');
+
+        $result = upgrade_18_letters(); // executes on dev sites only
+
+    /// Define index contextidlowerboundary (not unique) to be added to grade_letters
+        $table = new XMLDBTable('grade_letters');
+        $index = new XMLDBIndex('contextid-lowerboundary');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('contextid', 'lowerboundary'));
+
+    /// Launch add index contextidlowerboundary
+        if (!index_exists($table, $index)) {
+            $result = $result && add_index($table, $index);
+        }
     }
 
 /*
