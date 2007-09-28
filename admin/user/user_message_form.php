@@ -30,3 +30,4 @@ class user_message_form extends moodleform {
         $mform->closeHeaderBefore('buttonar');
     }
 }
+?>

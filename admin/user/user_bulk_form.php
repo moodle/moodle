@@ -189,3 +189,4 @@ class user_bulk_form extends moodleform {
         return $data->action;
     }
 }
+?>

@@ -28,14 +28,20 @@
     $user_bulk_form =& new user_bulk_form(null, $actions);
     // check if an action should be performed and do so
     switch ($user_bulk_form->getAction()) {
-    case 1:
-        redirect($CFG->wwwroot . '/admin/user/user_bulk_confirm.php');
-    case 2:
-        redirect($CFG->wwwroot . '/admin/user/user_bulk_message.php');
-    case 3:
-        redirect($CFG->wwwroot . '/admin/user/user_bulk_delete.php');
-    case 4:
-        redirect($CFG->wwwroot . '/admin/user/user_bulk_display.php');
+        case 1:
+            redirect($CFG->wwwroot . '/admin/user/user_bulk_confirm.php');
+            break;
+        case 2:
+            redirect($CFG->wwwroot . '/admin/user/user_bulk_message.php');
+            break;
+        case 3:
+            redirect($CFG->wwwroot . '/admin/user/user_bulk_delete.php');
+            break;
+        case 4:
+            redirect($CFG->wwwroot . '/admin/user/user_bulk_display.php');
+            break;
+        default:
+            break;
     }
 
     // prepare user filter types
@@ -73,3 +79,4 @@
     // display the bulk user form
     $user_bulk_form->display();
     admin_externalpage_print_footer();
+?>

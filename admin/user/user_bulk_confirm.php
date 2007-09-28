@@ -26,6 +26,7 @@ if (empty($userlist)) {
 
 admin_externalpage_setup('userbulk');
 admin_externalpage_print_header();
+
 if (empty($confirm)) {
     $usernames = array();
     foreach ($userlist as $user) {
@@ -47,3 +48,4 @@ if (empty($confirm)) {
     redirect($CFG->wwwroot . '/admin/user/user_bulk.php', get_string('changessaved'));
 }
 admin_externalpage_print_footer();
+?>

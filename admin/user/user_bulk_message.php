@@ -3,15 +3,15 @@ require_once('../../config.php');
 require_once($CFG->dirroot.'/message/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$users       = $SESSION->bulk_susers;
-$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 require_login();
 require_capability('moodle/site:readallmessages', $sitecontext);
-
 // fix for MDL-10112
 if (empty($CFG->messaging)) {
     error("Messaging is disabled on this site");  
 }
+
+$users       = $SESSION->bulk_susers;
+$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
 require_once('user_message_form.php');
 $extradata['userlist'] =& $users;
@@ -45,3 +45,4 @@ if ($noteform->is_submitted() && !empty($formdata->preview)) {
 
 $noteform->display();
 admin_externalpage_print_footer();
+?>
