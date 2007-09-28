@@ -212,7 +212,7 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
     // remove the default groupingid from course
     set_field('course', 'defaultgroupingid', 0, 'id', $courseid);
     // remove the groupingid from all course modules
-    set_field('course_modules', 'groupingid', 0, 'courseid', $courseid);
+    set_field('course_modules', 'groupingid', 0, 'course', $courseid);
 
     delete_records('groupings', 'courseid', $courseid);
     if ($showfeedback) {
