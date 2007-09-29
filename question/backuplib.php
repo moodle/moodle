@@ -439,7 +439,7 @@
         if ($questionids){
             foreach ($questionids as $question_bk){
                 $question = get_record('question', 'id', $question_bk->old_id);
-                $QTYPES[$question->qtype]->get_question_options(&$question);
+                $QTYPES[$question->qtype]->get_question_options($question);
                 $urls = array_merge_recursive($urls, $QTYPES[$question->qtype]->find_file_links($question, SITEID));
             }
         }

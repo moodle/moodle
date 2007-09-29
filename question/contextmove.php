@@ -61,7 +61,7 @@
         $urls = array();
         if ($questions){
             foreach ($questions as $id => $question){
-                $QTYPES[$questions[$id]->qtype]->get_question_options(&$questions[$id]);
+                $QTYPES[$questions[$id]->qtype]->get_question_options($questions[$id]);
                 $urls = array_merge_recursive($urls, $QTYPES[$questions[$id]->qtype]->find_file_links($questions[$id], $fromcoursefilesid));
             }
         }
