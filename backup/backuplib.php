@@ -1444,7 +1444,11 @@
                 fwrite ($bf,full_tag("AGGREGATION",5,false,$grade_category->aggregation));
                 fwrite ($bf,full_tag("KEEPHIGH",5,false,$grade_category->keephigh));
                 fwrite ($bf,full_tag("DROPLOW",5,false,$grade_category->droplow));
+                fwrite ($bf,full_tag("AGGREGATEONLYGRADED",5,false,$grade_category->aggregateonlygraded));
                 fwrite ($bf,full_tag("AGGREGATEOUTCOMES",5,false,$grade_category->aggregateoutcomes));
+                fwrite ($bf,full_tag("AGGREGATESUBCATS",5,false,$grade_category->aggregatesubcats));
+                fwrite ($bf,full_tag("TIMECREATED",5,false,$grade_category->timecreated));
+                fwrite ($bf,full_tag("TIMEMODIFIED",5,false,$grade_category->timemodified));
 
                 //End grade_category
                 fwrite ($bf,end_tag("GRADE_CATEGORY",4,true));
@@ -1502,6 +1506,7 @@
                 fwrite ($bf,full_tag("IDNUMBER",5,false,$grade_item->idnumber));
                 // use [idnumber] in calculation instead of [#giXXX#]
                 fwrite ($bf,full_tag("CALCULATION",5,false,$grade_item->get_calculation()));
+                fwrite ($bf,full_tag("GRADETYPE",5,false,$grade_item->gradetype));
                 fwrite ($bf,full_tag("GRADEMAX",5,false,$grade_item->grademax));
                 fwrite ($bf,full_tag("GRADEMIN",5,false,$grade_item->grademin));
                 fwrite ($bf,full_tag("SCALEID",5,false,$grade_item->scaleid));
@@ -1509,6 +1514,9 @@
                 fwrite ($bf,full_tag("GRADEPASS",5,false,$grade_item->gradepass));
                 fwrite ($bf,full_tag("MULTFACTOR",5,false,$grade_item->multfactor));
                 fwrite ($bf,full_tag("PLUSFACTOR",5,false,$grade_item->plusfactor));
+                fwrite ($bf,full_tag("AGGREGATIONCOEF",5,false,$grade_item->aggregationcoef));
+                fwrite ($bf,full_tag("DISPLAY",5,false,$grade_item->plusfactor));
+                fwrite ($bf,full_tag("DECIMALS",5,false,$grade_item->plusfactor));
                 fwrite ($bf,full_tag("HIDDEN",5,false,$grade_item->hidden));
                 fwrite ($bf,full_tag("LOCKED",5,false,$grade_item->locked));
                 fwrite ($bf,full_tag("LOCKTIME",5,false,$grade_item->locktime));
@@ -1560,6 +1568,7 @@
                 fwrite ($bf,full_tag("SHORTNAME",5,false,$grade_outcome->shortname));
                 fwrite ($bf,full_tag("FULLNAME",5,false,$grade_outcome->fullname));
                 fwrite ($bf,full_tag("SCALEID",5,false,$grade_outcome->scaleid));
+                fwrite ($bf,full_tag("DESCRIPTION",5,false,$grade_outcome->description));
                 fwrite ($bf,full_tag("USERMODIFIED",5,false,$grade_outcome->usermodified));
 
                 //End grade_outcome
@@ -1629,6 +1638,8 @@
                 fwrite ($bf,full_tag("FEEDBACKFORMAT",7,false,$grade->feedbackformat));
                 fwrite ($bf,full_tag("INFORMATION",7,false,$grade->information));
                 fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$grade->informationformat));
+                fwrite ($bf,full_tag("TIMECREATED",7,false,$grade->timecreated));
+                fwrite ($bf,full_tag("TIMEMODIFIED",7,false,$grade->timemodified));
                 fwrite ($bf,end_tag("GRADE",6,true));
             }
             $status = fwrite ($bf,end_tag("GRADE_GRADES",5,true));
@@ -1659,6 +1670,9 @@
                 fwrite ($bf,full_tag("AGGRETGATION",7,false,$ch->aggregation));
                 fwrite ($bf,full_tag("KEEPHIGH",7,false,$ch->keephigh));
                 fwrite ($bf,full_tag("DROPLOW",7,false,$ch->droplow));
+                fwrite ($bf,full_tag("AGGREGATEONLYGRADED",7,false,$ch->aggregateonlygraded));
+                fwrite ($bf,full_tag("AGGREGATEOUTCOMES",7,false,$ch->aggregateoutcomes));
+                fwrite ($bf,full_tag("AGGREGATESUBCATS",7,false,$ch->aggregatesubcats));
                 fwrite ($bf,end_tag("GRADE_CATEGORIES_HISTORY",6,true));
             }
             $status = fwrite ($bf,end_tag("GRADE_CATEGORIES_HISTORIES",5,true));
@@ -1744,6 +1758,8 @@
                 fwrite ($bf,full_tag("PLUSFACTOR",7,false,$ch->plusfactor));
                 fwrite ($bf,full_tag("AGGREGATIONCOEF",7,false,$ch->aggregationcoef));
                 fwrite ($bf,full_tag("SORTORDER",7,false,$ch->sortorder));
+                fwrite ($bf,full_tag("DISPLAY",7,false,$ch->plusfactor));
+                fwrite ($bf,full_tag("DECIMALS",7,false,$ch->plusfactor));
                 fwrite ($bf,full_tag("HIDDEN",7,false,$ch->hidden));
                 fwrite ($bf,full_tag("LOCKED",7,false,$ch->locked));
                 fwrite ($bf,full_tag("LOCKTIME",7,false,$ch->locktime));
