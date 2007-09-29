@@ -419,14 +419,23 @@ function groups_get_course_group($course, $update=false) {
         $SESSION->activegroup = array();
     }
     if (!array_key_exists($course->id, $SESSION->activegroup)) {
-        $SESSION->activegroup[$course->id] = array(SEPARATEGROUPS=>array(), VISIBLEGROUPS=>array());
+        $SESSION->activegroup[$course->id] = array(SEPARATEGROUPS=>array(), VISIBLEGROUPS=>array(), 'aag'=>array());
+    }
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (has_capability('moodle/site:accessallgroups', $context)) {
+        $groupmode = 'aag';
     }
 
     // grouping used the first time - add first user group as default
     if (!array_key_exists(0, $SESSION->activegroup[$course->id][$groupmode])) {
-        if ($usergroups = groups_get_all_groups($course->id, $USER->id, 0)) {
+        if ($groupmode == 'aag') {
+            $SESSION->activegroup[$course->id][$groupmode][0] = 0; // all groups by default if user has accessallgroups
+
+        } else if ($usergroups = groups_get_all_groups($course->id, $USER->id, 0)) {
             $fistgroup = reset($usergroups);
             $SESSION->activegroup[$course->id][$groupmode][0] = $fistgroup->id;
+
         } else {
             // this happen when user not assigned into group in SEPARATEGROUPS mode or groups do not exist yet
             // mod authors must add extra checks for this when SEPARATEGROUPS mode used (such as when posting to forum)
@@ -441,13 +450,13 @@ function groups_get_course_group($course, $update=false) {
 
         if ($changegroup == 0) {
             // do not allow changing to all groups without accessallgroups capability
-            if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
+            if ($groupmode == VISIBLEGROUPS or $groupmode == 'aag') {
                 $SESSION->activegroup[$course->id][$groupmode][0] = 0;
             }
 
         } else {
             // first make list of allowed groups
-            if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
+            if ($groupmode == VISIBLEGROUPS or $groupmode == 'aag') {
                 $allowedgroups = groups_get_all_groups($course->id, 0, 0);
             } else {
                 $allowedgroups = groups_get_all_groups($course->id, $USER->id, 0);
@@ -487,14 +496,23 @@ function groups_get_activity_group($cm, $update=false) {
         $SESSION->activegroup = array();
     }
     if (!array_key_exists($cm->course, $SESSION->activegroup)) {
-        $SESSION->activegroup[$cm->course] = array(SEPARATEGROUPS=>array(), VISIBLEGROUPS=>array());
+        $SESSION->activegroup[$cm->course] = array(SEPARATEGROUPS=>array(), VISIBLEGROUPS=>array(), 'aag'=>array());
+    }
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (has_capability('moodle/site:accessallgroups', $context)) {
+        $groupmode = 'aag';
     }
 
     // grouping used the first time - add first user group as default
     if (!array_key_exists($cm->groupingid, $SESSION->activegroup[$cm->course][$groupmode])) {
-        if ($usergroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid)) {
+        if ($groupmode == 'aag') {
+            $SESSION->activegroup[$cm->course][$groupmode][$cm->groupingid] = 0; // all groups by default if user has accessallgroups
+
+        } else if ($usergroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid)) {
             $fistgroup = reset($usergroups);
             $SESSION->activegroup[$cm->course][$groupmode][$cm->groupingid] = $fistgroup->id;
+
         } else {
             // this happen when user not assigned into group in SEPARATEGROUPS mode or groups do not exist yet
             // mod authors must add extra checks for this when SEPARATEGROUPS mode used (such as when posting to forum)
@@ -505,17 +523,16 @@ function groups_get_activity_group($cm, $update=false) {
     // set new active group if requested
     $changegroup = optional_param('group', -1, PARAM_INT);
     if ($update and $changegroup != -1) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         if ($changegroup == 0) {
-            // do not allow changing to all groups without accessallgroups capability
-            if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
+            // allgroups visible only in VISIBLEGROUPS or when accessallgroups
+            if ($groupmode == VISIBLEGROUPS or $groupmode == 'aag') {
                 $SESSION->activegroup[$cm->course][$groupmode][$cm->groupingid] = 0;
             }
 
         } else {
             // first make list of allowed groups
-            if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
+            if ($groupmode == VISIBLEGROUPS or $groupmode == 'aag') {
                 $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid); // any group in grouping (all if groupings not used)
             } else {
                 $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid); // only assigned groups
