@@ -170,7 +170,7 @@ define('PARAM_PATH',     0x0020);
 define('PARAM_HOST',     0x0040);
 
 /**
- * PARAM_URL - expected properly formatted URL.
+ * PARAM_URL - expected properly formatted URL. Please note that domain part is required, http://localhost/ is not acceppted but http://localhost.localdomain/ is ok.
  */
 define('PARAM_URL',      0x0080);
 
