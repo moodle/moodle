@@ -51,10 +51,10 @@
         // then, all categories from this course's modules' contexts.
         // using 'dummykeyname' in sql because otherwise get_records_sql_menu returns an error
         // if two key names are the same.
-        $cmcontexts = get_records_sql_menu("SELECT c.id, c.id AS dummykeyname FROM {$CFG->prefix}modules mod,
+        $cmcontexts = get_records_sql_menu("SELECT c.id, c.id AS dummykeyname FROM {$CFG->prefix}modules m,
                                                         {$CFG->prefix}course_modules cm,
                                                         {$CFG->prefix}context c
-                               WHERE mod.name = 'quiz' AND mod.id = cm.module AND cm.id = c.instanceid
+                               WHERE m.name = 'quiz' AND m.id = cm.module AND cm.id = c.instanceid
                                     AND c.contextlevel = ".CONTEXT_MODULE." AND cm.course = $course");
         if ($cmcontexts){
             $status = $status && execute_sql("INSERT INTO {$CFG->prefix}backup_ids
