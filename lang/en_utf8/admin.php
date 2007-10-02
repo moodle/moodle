@@ -318,6 +318,7 @@ $string['forcetimezone'] = 'Force default timezone';
 $string['framename'] = 'Frame name';
 $string['frontpage'] = 'Front Page';
 $string['frontpagebackup'] = 'Front Page backup';
+$string['frontpagedefaultrole'] = 'Default frontpage role';
 $string['frontpageloggedin'] = 'Front page items when logged in';
 $string['frontpagerestore'] = 'Front Page restore';
 $string['frontpageroles'] = 'Front Page roles';

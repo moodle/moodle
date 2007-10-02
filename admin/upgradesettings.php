@@ -6,6 +6,8 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
+$return = optional_param('return', '', PARAM_ALPHA);
+
 // Technically, we shouldn't need it, but during the
 // v1.9 accesslib upgrade _sometimes_ USER->access
 // isn't set.
@@ -23,8 +25,11 @@ $newsettingshtml = output_new_settings_by_page(admin_get_root());
 
 // first we deal with the case where there are no new settings to be set
 if ($newsettingshtml == '') {
-    redirect($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
-    die;
+    if ($return == 'site') {
+        redirect("$CFG->wwwroot/");
+    } else {
+        redirect("$CFG->wwwroot/$CFG->admin/index.php");
+    }
 }
 
 // now we'll deal with the case that the admin has submitted the form with new settings
@@ -44,15 +49,17 @@ if ($data = data_submitted()) {
 
         if (empty($errors)) {
             // there must be either redirect without message or continue button or else upgrade would be sometimes broken
-            redirect($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
-            die;
+            if ($return == 'site') {
+                redirect("$CFG->wwwroot/");
+            } else {
+                redirect("$CFG->wwwroot/$CFG->admin/index.php");
+            }
         } else {
-            error(get_string('errorwithsettings', 'admin') . ' <br />' . $errors);
-            die;
+            $url = "$CFG->wwwroot/$CFG->admin/upgradesettings.php?return=$return";
+            error(get_string('errorwithsettings', 'admin') . ' <br />' . $errors, $url);
         }
     } else {
         error(get_string('confirmsesskeybad', 'error'));
-        die;
     }
 
 }
@@ -64,7 +71,8 @@ admin_externalpage_print_header();
 print_simple_box(get_string('upgradesettingsintro','admin'),'','100%','',5,'generalbox','');
 
 echo '<form action="upgradesettings.php" method="post" id="adminsettings">';
-echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+echo '<input type="hidden" name="return" value="'.$return.'" />';
 echo '<fieldset>';
 echo '<div class="clearer"><!-- --></div>';
 echo $newsettingshtml;

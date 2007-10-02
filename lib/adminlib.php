@@ -1400,6 +1400,10 @@ class admin_setting {
         return NULL; // has to be overridden
     }
 
+    function get_defaultsetting() {
+        return $this->defaultsetting;
+    }
+
     function write_setting($data) {
         return; // has to be overridden
     }
@@ -1792,7 +1796,7 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
 
     function get_setting() {
         $site = get_site();
-        return (isset($site->{$this->name}) ? $site->{$this->name} : NULL);
+        return $site->{$this->name};
     }
 
     function write_setting($data) {
@@ -1819,7 +1823,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
 
     function get_setting() {
         $site = get_site();
-        return (isset($site->{$this->name}) ? $site->{$this->name} : NULL);
+        return $site->{$this->name} != '' ? $site->{$this->name} : NULL;
     }
 
     function validate($data) {
@@ -1877,7 +1881,7 @@ class admin_setting_special_frontpagedesc extends admin_setting {
     function get_setting() {
 
         $site = get_site();
-        return (isset($site->{$this->name}) ? $site->{$this->name} : NULL);
+        return $site->{$this->name} != '' ? $site->{$this->name} : NULL;
 
     }
 
@@ -2929,10 +2933,15 @@ function admin_get_root() {
     return $ADMIN;
 }
 
-/// settings utiliti functions
+/// settings utility functions
 
-// n.b. this function unconditionally applies default settings
-function apply_default_settings(&$node) {
+/**
+ * This function applies default settings.
+ * @param object $node
+ * @param bool $uncoditional if true overrides all values with defaults
+ * @return void
+ */
+function apply_default_settings(&$node, $unconditional=true) {
 
     global $CFG;
 
@@ -2946,8 +2955,17 @@ function apply_default_settings(&$node) {
 
     if (is_a($node, 'admin_settingpage')) {
         foreach ($node->settings as $setting) {
-                $CFG->{$setting->name} = $setting->defaultsetting;
-                $setting->write_setting($setting->defaultsetting);
+            if (!$unconditional and !is_null($setting->get_setting)) {
+                //do not override existing defaults
+                continue;
+            }
+            $defaultsetting = $setting->get_defaultsetting();
+            if (is_null($defaultsetting)) {
+                // no value yet - default maybe applied after admin user creation or in upgradesettings
+                continue;
+            }
+            $CFG->{$setting->name} = $defaultsetting;
+            $setting->write_setting($defaultsetting);
             unset($setting); // needed to prevent odd (imho) reference behaviour
                              // see http://www.php.net/manual/en/language.references.whatdo.php#AEN6399
         }

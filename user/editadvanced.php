@@ -141,6 +141,9 @@
             }
             if (!empty($USER->newadminuser)) {
                 unset($USER->newadminuser);
+                // try to apply defaults again - some of them might depend on admin user info
+                $adminroot = admin_get_root();
+                apply_default_settings($adminroot, false);
                 // redirect to admin/ to continue with installation
                 redirect("$CFG->wwwroot/$CFG->admin/");
             } else {

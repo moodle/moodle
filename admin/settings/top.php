@@ -5,6 +5,8 @@
 // since they need to exist *before* settingpages and externalpages
 // are added to them.
 
+$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+
 $ADMIN->add('root', new admin_externalpage('adminnotifications', get_string('notifications'), "$CFG->wwwroot/$CFG->admin/index.php"));
 
  // hidden upgrade script

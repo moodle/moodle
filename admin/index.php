@@ -527,8 +527,9 @@
     require_capability('moodle/site:config', $context);
 
 /// check that site is properly customized
-    if (empty($site->shortname) or empty($site->shortname)) {
-        redirect('settings.php?section=frontpagesettings&amp;return=site');
+    if (empty($site->shortname)) {
+        // probably new installation - lets return to frontpage after this step
+        redirect('upgradesettings.php?return=site');
     }
 
 /// Check if we are returning from moodle.org registration and if so, we mark that fact to remove reminders
