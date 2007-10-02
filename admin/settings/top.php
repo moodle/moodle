@@ -37,6 +37,10 @@ foreach (get_list_of_plugins('admin/report') as $plugin) {
         continue;
     }
 /// End of removable snippet
+    $reportname = get_string($plugin, 'report_' . $plugin);
+    if ($reportname[1] == '[') {
+        $reportname = get_string($plugin, 'admin');
+    }
     $ADMIN->add('reports', new admin_externalpage('report'.$plugin, get_string($plugin, 'admin'), "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php"));
 }
 
