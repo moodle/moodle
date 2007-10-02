@@ -340,13 +340,12 @@
                       ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel ';    
         $select .= $course->enrolperiod?', r.timeend ':'';
     } else {
-        $select = 'SELECT DISTINCT u.id, u.username, u.firstname, u.lastname,
+        $select = 'SELECT u.id, u.username, u.firstname, u.lastname,
                       u.email, u.city, u.country, u.picture,
                       u.lang, u.timezone, u.emailstop, u.maildisplay, u.imagealt,
                       u.lastaccess,
                       ctx.id AS ctxid, ctx.path AS ctxpath,
                       ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel ';
-     
     }
 
     if ($context->id != $frontpagectx->id) {
