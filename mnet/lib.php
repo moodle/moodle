@@ -246,7 +246,7 @@ function mnet_get_keypair() {
     static $keypair = null;
     if (!is_null($keypair)) return $keypair;
     if ($result = get_field('config_plugins', 'value', 'plugin', 'mnet', 'name', 'openssl')) {
-        $keypair               = explode('@@@@@@@@', $result);
+        list($keypair['certificate'], $keypair['keypair_PEM']) = explode('@@@@@@@@', $result);
         $keypair['privatekey'] = openssl_pkey_get_private($keypair['keypair_PEM']);
         $keypair['publickey']  = openssl_pkey_get_public($keypair['certificate']);
         return $keypair;
