@@ -2256,6 +2256,31 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2007100100) {
+
+
+    /// Define table cache_flags to be created
+        $table = new XMLDBTable('cache_flags');
+
+    /// Adding fields to table cache_flags
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('flagtype', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('value', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('expiry', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table cache_flags
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Adding indexes to table cache_flags
+        $table->addIndexInfo('typename', XMLDB_INDEX_UNIQUE, array('flagtype', 'name'));
+
+    /// Launch create table for cache_flags
+        $result = $result && create_table($table);
+    }
+
+
 /*
     /// drop old gradebook tables
     if ($result && $oldversion < xxxxxxxx) {

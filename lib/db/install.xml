@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070928" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20071001" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1688,7 +1688,7 @@
         <INDEX NAME="script-value" UNIQUE="false" FIELDS="script, value" COMMENT="index used for key validation"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="grade_letters" COMMENT="Repository for grade letters, for courses and other moodle entities that use grades." PREVIOUS="user_private_key">
+    <TABLE NAME="grade_letters" COMMENT="Repository for grade letters, for courses and other moodle entities that use grades." PREVIOUS="user_private_key" NEXT="cache_flags">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="What contextid does this letter apply to (for now these will always be courses, but later...)" PREVIOUS="id" NEXT="lowerboundary"/>
@@ -1700,6 +1700,22 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="contextid-lowerboundary" UNIQUE="false" FIELDS="contextid, lowerboundary" COMMENT="index used when fetching context letters"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="cache_flags" COMMENT="Cache of time-sensitive flags" PREVIOUS="grade_letters">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="flagtype"/>
+        <FIELD NAME="flagtype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="flagtype" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="value"/>
+        <FIELD NAME="value" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="timemodified" NEXT="expiry"/>
+        <FIELD NAME="expiry" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="value"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="typename" UNIQUE="true" FIELDS="flagtype, name"/>
       </INDEXES>
     </TABLE>
   </TABLES>
