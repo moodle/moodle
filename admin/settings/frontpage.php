@@ -41,8 +41,8 @@ if (get_site()) { //do not use during installation
             foreach ($roles as $role) {
                 $roleoptions[$role->id] = $role->name;
             }
-            $temp->add(new admin_setting_configselect('defaultfrontpageroleid', get_string('frontpagedefaultrole', 'admin'), '', 0, $roleoptions));
         }
+        $temp->add(new admin_setting_configselect('defaultfrontpageroleid', get_string('frontpagedefaultrole', 'admin'), '', 0, $roleoptions));
 
         $ADMIN->add('frontpage', $temp);
 
