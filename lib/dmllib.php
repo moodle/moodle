@@ -86,11 +86,11 @@ function execute_sql($command, $feedback=true) {
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
-    $result = $db->Execute($command);
+    $rs = $db->Execute($command);
 
     $db->debug = $olddebug;
 
-    if ($result) {
+    if ($rs) {
         if ($feedback) {
             notify(get_string('success'), 'notifysuccess');
         }
@@ -99,6 +99,8 @@ function execute_sql($command, $feedback=true) {
         if ($feedback) {
             notify('<strong>' . get_string('error') . '</strong>');
         }
+        // these two may go to difference places
+        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $command");
@@ -1272,7 +1274,16 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
     }
 
 /// Arriving here, standard update
-    return $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '.$update.' '.$select);
+    $rs = $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '.$update.' '.$select);
+    if (!$rs) {
+        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
+        if (!empty($CFG->dblogerror)) {
+            $debug=array_shift(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+        }
+        return false;
+    }
+    return $rs;
 }
 
 /**
@@ -1311,7 +1322,16 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
 
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
-    return $db->Execute('DELETE FROM '. $CFG->prefix . $table .' '. $select);
+    $rs = $db->Execute('DELETE FROM '. $CFG->prefix . $table .' '. $select);
+    if (!$rs) {
+        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
+        if (!empty($CFG->dblogerror)) {
+            $debug=array_shift(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+        }
+        return false;
+    }
+    return $rs;
 }
 
 /**
@@ -1339,7 +1359,16 @@ function delete_records_select($table, $select='') {
         $select = 'WHERE '.$select;
     }
 
-    return $db->Execute('DELETE FROM '. $CFG->prefix . $table .' '. $select);
+    $rs = $db->Execute('DELETE FROM '. $CFG->prefix . $table .' '. $select);
+    if (!$rs) {
+        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
+        if (!empty($CFG->dblogerror)) {
+            $debug=array_shift(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+        }
+        return false;
+    }
+    return $rs;
 }
 
 /**
@@ -2029,6 +2058,11 @@ function column_type($table, $column) {
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     if(!$rs = $db->Execute('SELECT '.$column.' FROM '.$CFG->prefix.$table.' WHERE 1=2')) {
+        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
+        if (!empty($CFG->dblogerror)) {
+            $debug=array_shift(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+        }
         return false;
     }
 
