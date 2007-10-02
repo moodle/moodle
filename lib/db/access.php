@@ -597,6 +597,15 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
+    
+    'moodle/site:viewparticipants' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'admin' => CAP_ALLOW
+        )
+    ),
 
     'moodle/course:viewscales' => array(
 

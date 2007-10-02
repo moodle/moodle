@@ -42,11 +42,19 @@
     require_login($course);
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $frontpagectx = get_context_instance(CONTEXT_COURSE, SITEID);
 
-    if (!has_capability('moodle/course:viewparticipants', $context)) {
-        print_error('nopermissions');
+    if ($context->id != $frontpagectx->id) {
+        if (!has_capability('moodle/course:viewparticipants', $context)) {
+            print_error('nopermissions');
+        }     
+    } else {
+        if (!has_capability('moodle/site:viewparticipants', $sitecontext)) {
+            print_error('nopermissions');
+        }
     }
 
+    /// front page course is different
     $rolenames = array();
     $avoidroles = array();
 
@@ -74,8 +82,9 @@
         }
     }
 
-    // no roles to display yet?
-    if (empty($rolenames)) {
+    // no roles to display yet? 
+    // frontpage course is an exception, on the front page course we should display all users
+    if (empty($rolenames) && $context->id != $frontpagectx->id) {
         if (has_capability('moodle/role:assign', $context)) {
             redirect($CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id);
         } else {
@@ -259,7 +268,6 @@
         }
     }
 
-
     /// Define a table showing a list of users in the current role selection
 
     $tablecolumns = array('userpic', 'fullname');
@@ -321,24 +329,41 @@
     } else {
         $selectrole = " ";
     }
-    $select = 'SELECT u.id, u.username, u.firstname, u.lastname,
+    
+    if ($context->id != $frontpagectx->id) {
+        $select = 'SELECT u.id, u.username, u.firstname, u.lastname,
                       u.email, u.city, u.country, u.picture,
                       u.lang, u.timezone, u.emailstop, u.maildisplay, u.imagealt,
                       COALESCE(ul.timeaccess, 0) AS lastaccess,
                       r.hidden,
                       ctx.id AS ctxid, ctx.path AS ctxpath,
+                      ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel ';    
+        $select .= $course->enrolperiod?', r.timeend ':'';
+    } else {
+        $select = 'SELECT u.id, u.username, u.firstname, u.lastname,
+                      u.email, u.city, u.country, u.picture,
+                      u.lang, u.timezone, u.emailstop, u.maildisplay, u.imagealt,
+                      u.lastaccess,
+                      ctx.id AS ctxid, ctx.path AS ctxpath,
                       ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel ';
+     
+    }
 
-    $select .= $course->enrolperiod?', r.timeend ':'';
-
-    $from   = "FROM {$CFG->prefix}user u
-               LEFT OUTER JOIN {$CFG->prefix}context ctx
-                 ON (u.id=ctx.instanceid AND ctx.contextlevel = ".CONTEXT_USER.")
-               JOIN {$CFG->prefix}role_assignments r
-                 ON u.id=r.userid
-               LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul
-                 ON (r.userid=ul.userid and ul.courseid = $course->id) ";
-
+    if ($context->id != $frontpagectx->id) {
+        $from   = "FROM {$CFG->prefix}user u
+                LEFT OUTER JOIN {$CFG->prefix}context ctx
+                    ON (u.id=ctx.instanceid AND ctx.contextlevel = ".CONTEXT_USER.")
+                JOIN {$CFG->prefix}role_assignments r
+                    ON u.id=r.userid
+                LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul
+                    ON (r.userid=ul.userid and ul.courseid = $course->id) ";
+    } else {
+        $from = "FROM {$CFG->prefix}user u
+                LEFT OUTER JOIN {$CFG->prefix}context ctx
+                    ON (u.id=ctx.instanceid AND ctx.contextlevel = ".CONTEXT_USER.") ";               
+     
+    }
+    
     $hiddensql = has_capability('moodle/role:viewhiddenassigns', $context)? '':' AND r.hidden = 0 ';
 
     // exclude users with roles we are avoiding
@@ -353,14 +378,20 @@
     // join on 2 conditions
     // otherwise we run into the problem of having records in ul table, but not relevant course
     // and user record is not pulled out
-    $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts)
-        AND u.deleted = 0 $selectrole
-        AND (ul.courseid = $course->id OR ul.courseid IS NULL)
-        AND u.username != 'guest'
-        $adminroles
-        $hiddensql ";
-        $where .= get_lastaccess_sql($accesssince);
-
+    
+    if ($context->id != $frontpagectx->id) {
+        $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts)
+            AND u.deleted = 0 $selectrole
+            AND (ul.courseid = $course->id OR ul.courseid IS NULL)
+            AND u.username != 'guest'
+            $adminroles
+            $hiddensql ";
+            $where .= get_lastaccess_sql($accesssince);
+    } else {
+        $where = "WHERE u.deleted = 0
+            AND u.username != 'guest'";
+            $where .= get_lastaccess_sql($accesssince); 
+    }
     $wheresearch = '';
 
     if (!empty($search)) {
@@ -611,12 +642,15 @@
         if (has_capability('moodle/site:readallmessages', $context) && !empty($CFG->messaging)) {
             $displaylist['messageselect.php'] = get_string('messageselectadd');
         }
-        if (has_capability('moodle/notes:manage', $context)) {
+        if (has_capability('moodle/notes:manage', $context) && $context->id != $frontpagectx->id) {
             $displaylist['addnote.php'] = get_string('addnewnote', 'notes');
             $displaylist['groupaddnote.php'] = get_string('groupaddnewnote', 'notes');
         }
-        $displaylist['extendenrol.php'] = get_string('extendenrol');
-        $displaylist['groupextendenrol.php'] = get_string('groupextendenrol');
+        
+        if ($context->id != $frontpagectx->id) {
+            $displaylist['extendenrol.php'] = get_string('extendenrol');
+            $displaylist['groupextendenrol.php'] = get_string('groupextendenrol');
+        }
 
         helpbutton("participantswithselectedusers", get_string("withselectedusers"));
         choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");

@@ -34,7 +34,7 @@
         print_heading(format_string($site->fullname));
 
         if ($CFG->bloglevel >= 4) {
-            if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+            if (has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM))) {
                 $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.SITEID,
                     get_string('participants'));
             }

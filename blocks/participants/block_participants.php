@@ -19,21 +19,28 @@ class block_participants extends block_list {
         if (empty($this->instance->pageid)) {
             return '';
         }
-
-        if (!$currentcontext = get_context_instance(CONTEXT_COURSE, $this->instance->pageid)) {
-            $this->content = '';
-            return $this->content;
-        }
-
-        if (!has_capability('moodle/course:viewparticipants', $currentcontext)) {
-            $this->content = '';
-            return $this->content;
-        }
-
+        
         $this->content = new object();
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';
+        
+        if (!$currentcontext = get_context_instance(CONTEXT_COURSE, $this->instance->pageid)) {
+            $this->content = '';
+            return $this->content;
+        }
+        
+        if ($this->instance->pageid == SITEID) {
+            if (!has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM))) {
+                $this->content = '';
+                return $this->content;
+            }
+        } else {
+            if (!has_capability('moodle/course:viewparticipants', $currentcontext)) {
+                $this->content = '';
+                return $this->content;
+            }
+        }
 
         $this->content->items[] = '<a title="'.get_string('listofallpeople').'" href="'.
                                   $CFG->wwwroot.'/user/index.php?contextid='.$currentcontext->id.'">'.get_string('participants').'</a>';
