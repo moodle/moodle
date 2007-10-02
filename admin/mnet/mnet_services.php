@@ -33,6 +33,7 @@
     $strconfiguration    = get_string('configuration');
     $strmnetsettings     = get_string('mnetsettings', 'mnet');
     $strmnetservices     = get_string('mnetservices', 'mnet');
+    $strmnetthemes       = get_string('mnetthemes', 'mnet');
     $strmnetlog          = get_string('mnetlog', 'mnet');
     $strmnetedithost     = get_string('reviewhostdetails', 'mnet');
     $strmneteditservices = get_string('reviewhostservices', 'mnet');
