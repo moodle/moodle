@@ -199,6 +199,38 @@ function olson_simple_rule_parser ($filename) {
         return false;
     }
     
+    // determine the maximum year for this zone
+    $maxyear = array();
+    
+    while ($line = fgets($file)) {
+        // only pay attention to rules lines
+        if(!preg_match('/^Rule\s/', $line)){
+            continue;
+        }
+        $line = preg_replace('/\n$/', '',$line); // chomp
+        $rule = preg_split('/\s+/', $line);
+        list($discard,
+             $name,
+             $from,
+             $to,
+             $type,
+             $in,
+             $on,
+             $at,
+             $save,
+             $letter) = $rule;
+        if (isset($maxyear[$name])) {
+            if ($maxyear[$name] < $from) {
+                $maxyear[$name] = $from;
+            }
+        } else {
+            $maxyear[$name] = $from;
+        }
+        
+    }
+    
+    fseek($file, 0);
+    
     $rules = array();
     while ($line = fgets($file)) {
         // only pay attention to rules lines
@@ -224,7 +256,7 @@ function olson_simple_rule_parser ($filename) {
             $to = $from;
         }
         else if($to == 'max') {
-            $to = date('Y');
+            $to = $maxyear[$name];
         }
 
         for($i = $from; $i <= $to; ++$i) {
