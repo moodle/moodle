@@ -67,7 +67,7 @@
     $now = usergetdate(time());
     $pagetitle = '';
 
-    $nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
+    $nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;course='.$courseid.'&amp;', $now['mday'], $now['mon'], $now['year']);
 
     
     if(!checkdate($mon, $day, $yr)) {
@@ -149,13 +149,13 @@
 
     switch($view) {
         case 'day':
-            calendar_show_day($day, $mon, $yr, $courses, $groups, $users);
+            calendar_show_day($day, $mon, $yr, $courses, $groups, $users, $courseid);
         break;
         case 'month':
-            calendar_show_month_detailed($mon, $yr, $courses, $groups, $users);
+            calendar_show_month_detailed($mon, $yr, $courses, $groups, $users, $courseid);
         break;
         case 'upcoming':
-            calendar_show_upcoming_events($courses, $groups, $users, get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS));
+            calendar_show_upcoming_events($courses, $groups, $users, get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS), $courseid);
         break;
     }
 
@@ -186,20 +186,20 @@
 
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
-    $getvars = 'cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
+    $getvars = 'id='.$courseid.'&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
 
     echo '<div class="filters">';
     echo calendar_filter_controls($view, $getvars);
     echo '</div>';
 
     echo '<div class="minicalendarblock">';
-    echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
+    echo calendar_top_controls('display', array('id' => $courseid, 'm' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
     echo '</div><div class="minicalendarblock">';
-    echo calendar_top_controls('display', array('m' => $mon, 'y' => $yr));
+    echo calendar_top_controls('display', array('id' => $courseid, 'm' => $mon, 'y' => $yr));
     echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
     echo '</div><div class="minicalendarblock">';
-    echo calendar_top_controls('display', array('m' => $nextmon, 'y' => $nextyr));
+    echo calendar_top_controls('display', array('id' => $courseid, 'm' => $nextmon, 'y' => $nextyr));
     echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
     echo '</div>';
 
@@ -211,7 +211,7 @@
 
 
 
-function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
+function calendar_show_day($d, $m, $y, $courses, $groups, $users, $courseid) {
     global $CFG, $USER;
 
     if (!checkdate($m, $d, $y)) {
@@ -232,6 +232,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         $text.= '<form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<div>';
         $text.= '<input type="hidden" name="action" value="new" />';
+        $text.= '<input type="hidden" name="course" value="'.$courseid.'" />';
         $text.= '<input type="hidden" name="cal_d" value="'.$d.'" />';
         $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
         $text.= '<input type="hidden" name="cal_y" value="'.$y.'" />';
@@ -243,8 +244,8 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
 
     echo '<div class="header">'.$text.'</div>';
 
-    echo '<div class="controls">'.calendar_top_controls('day', array('d' => $d, 'm' => $m, 'y' => $y)).'</div>';
-
+    echo '<div class="controls">'.calendar_top_controls('day', array('id' => $courseid, 'd' => $d, 'm' => $m, 'y' => $y)).'</div>';
+    
     if (empty($events)) {
         // There is nothing to display today.
         echo '<h3>'.get_string('daywithnoevents', 'calendar').'</h3>';
@@ -257,6 +258,13 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
 
         // First, print details about events that start today
         foreach ($events as $event) {
+         
+            // Set event course class if a course event
+            if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
+                $event->class = 'event_course'.array_search($event->courseid, $courses) % CALENDAR_MAXCOURSES;
+            }
+            $event->calendarcourseid = $courseid;
+
             if ($event->timestart >= $starttime && $event->timestart <= $endtime) {  // Print it now
 
 
@@ -290,7 +298,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
     }
 }
 
-function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
+function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $courseid) {
     global $CFG, $SESSION, $USER, $CALENDARDAYS;
     global $day, $mon, $yr;
 
@@ -363,6 +371,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         $text.= '<div class="buttons"><form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<div>';
         $text.= '<input type="hidden" name="action" value="new" />';
+        $text.= '<input type="hidden" name="course" value="'.$courseid.'" />';
         $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
         $text.= '<input type="hidden" name="cal_y" value="'.$y.'" />';
         $text.= '<input type="submit" value="'.get_string('newevent', 'calendar').'" />';
@@ -374,7 +383,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     echo '<div class="header">'.$text.'</div>';
 
     echo '<div class="controls">';
-    echo calendar_top_controls('month', array('m' => $m, 'y' => $y));
+    echo calendar_top_controls('month', array('id' => $courseid, 'm' => $m, 'y' => $y));
     echo '</div>';
 
     // Start calendar display
@@ -409,7 +418,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 
         // Reset vars
         $cell = '';
-        $dayhref = calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;', $day, $m, $y);
+        $dayhref = calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;course='.$courseid.'&amp;', $day, $m, $y);
 
         if(CALENDAR_WEEKEND & (1 << ($dayweek % 7))) {
             // Weekend. This is true no matter what the exact range is.
@@ -547,7 +556,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     echo '</table></div>';
 }
 
-function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $maxevents) {
+function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $maxevents, $courseid) {
     global $USER;
 
     $events = calendar_get_upcoming($courses, $groups, $users, $futuredays, $maxevents);
@@ -559,6 +568,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
         $text.= '<form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<div>';
         $text.= '<input type="hidden" name="action" value="new" />';
+        $text.= '<input type="hidden" name="course" value="'.$courseid.'" />';
         /*
         $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
         $text.= '<input type="hidden" name="cal_y" value="'.$y.'" />';

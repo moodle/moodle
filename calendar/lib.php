@@ -191,7 +191,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
     // Paddding (the first week may have blank days in the beginning)
     for($i = $display->minwday; $i < $startwday; ++$i) {
-        $content .= '<td>&nbsp;</td>'."\n";
+        $content .= '<td class="day">&nbsp;</td>'."\n";
     }
 
     // Now display all the calendar
@@ -306,7 +306,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
     // Paddding (the last week may have blank days at the end)
     for($i = $dayweek; $i <= $display->maxwday; ++$i) {
-        $content .= '<td>&nbsp;</td>';
+        $content .= '<td class="day">&nbsp;</td>';
     }
     $content .= '</tr>'; // Last row ends
 
@@ -485,9 +485,15 @@ function calendar_print_event($event) {
     echo format_text($event->description, FORMAT_HTML);
     if (calendar_edit_event_allowed($event)) {
         echo '<div class="commands">';
+        
+        $calendarcourseid = '';
+ 	  	if (!empty($event->calendarcourseid)) {
+ 	  	    $calendarcourseid = '&amp;course='.$event->calendarcourseid;
+ 	  	}
+        
         if (empty($event->cmid)) {
-            $editlink   = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id;
-            $deletelink = CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id;
+            $editlink   = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id.$calendarcourseid;
+            $deletelink = CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id.$calendarcourseid;
         } else {
             $editlink   = $CFG->wwwroot.'/course/mod.php?update='.$event->cmid.'&amp;return=true&amp;sesskey='.$USER->sesskey;
             $deletelink = $CFG->wwwroot.'/course/mod.php?delete='.$event->cmid.'&amp;sesskey='.$USER->sesskey;;
@@ -608,6 +614,13 @@ function calendar_top_controls($type, $data) {
         $data['d'] = 1;
     }
 
+    // Ensure course id passed if relevant
+    // Required due to changes in view/lib.php mainly (calendar_session_vars())
+    $courseid = '';
+    if (!empty($data['id'])) {
+        $courseid = '&amp;course='.$data['id'];
+    }
+
     if(!checkdate($data['m'], $data['d'], $data['y'])) {
         $time = time();
     }
@@ -630,7 +643,7 @@ function calendar_top_controls($type, $data) {
             $nextlink = calendar_get_link_next(get_string('monthnext', 'access'), 'index.php?', 0, $nextmonth, $nextyear, $accesshide=true);
             $prevlink = calendar_get_link_previous(get_string('monthprev', 'access'), 'index.php?', 0, $prevmonth, $prevyear, true);
             $content .= "\n".'<div class="calendar-controls">'. $prevlink;
-            $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
+            $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month'.$courseid.'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
             $content .= '<span class="hide"> | </span>'. $nextlink ."\n";
             $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
@@ -640,7 +653,7 @@ function calendar_top_controls($type, $data) {
             $nextlink = calendar_get_link_next(get_string('monthnext', 'access'), 'view.php?id='.$data['id'].'&amp;', 0, $nextmonth, $nextyear, $accesshide=true);
             $prevlink = calendar_get_link_previous(get_string('monthprev', 'access'), 'view.php?id='.$data['id'].'&amp;', 0, $prevmonth, $prevyear, true);
             $content .= "\n".'<div class="calendar-controls">'. $prevlink;
-            $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;course='.$data['id'].'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
+            $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month'.$courseid.'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
             $content .= '<span class="hide"> | </span>'. $nextlink ."\n";
             $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
