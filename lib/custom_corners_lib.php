@@ -39,6 +39,9 @@ function print_custom_corners_start($clearfix=false, $return=false, $idbase=null
     $output .= '<div '.$idi1.'class="i1"><div '.$idi2.'class="i2">';
     $output .= (!empty($clearfix)) ? '<div '.$idi3.'class="i3 clearfix">' : '<div '.$idi3.'class="i3">';
     
+    if (!isset($THEME->customcornersopen)) {
+        $THEME->customcornersopen = 0;
+    }
     $THEME->customcornersopen += 1;
     
     if ($return) {
