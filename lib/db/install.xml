@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20071001" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20071002" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1093,10 +1093,8 @@
         <FIELD NAME="last_connect_time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="portno" NEXT="last_log_id"/>
         <FIELD NAME="last_log_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="last_connect_time" NEXT="force_theme"/>
         <FIELD NAME="force_theme" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="last_log_id" NEXT="theme"/>
-        <FIELD NAME="theme" TYPE="char" LENGTH="100" NOTNULL="true" UNSIGNED="true" DEFAULT="" SEQUENCE="false" ENUM="false" PREVIOUS="force_theme"/>
-       </FIELDS>
-        <FIELD NAME="last_log_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="last_connect_time" NEXT="applicationid"/>
-        <FIELD NAME="applicationid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="last_log_id"/>
+        <FIELD NAME="theme" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="force_theme" NEXT="applicationid"/>
+        <FIELD NAME="applicationid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="theme"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_host table" NEXT="applicationid"/>
@@ -1719,8 +1717,8 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="flagtype" UNIQUE="false" FIELDS="flagtype"/>
-        <INDEX NAME="name" UNIQUE="false" FIELDS="name"/>
+        <INDEX NAME="flagtype" UNIQUE="false" FIELDS="flagtype" NEXT="name"/>
+        <INDEX NAME="name" UNIQUE="false" FIELDS="name" PREVIOUS="flagtype"/>
       </INDEXES>
     </TABLE>
   </TABLES>

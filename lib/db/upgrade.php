@@ -2286,22 +2286,23 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+
     if ($oldversion < 2007100300) {
-        //
-        // MNET stuff for roaming theme
-        //
+    /// MNET stuff for roaming theme
+    /// Define field force_theme to be added to mnet_host
         $table = new XMLDBTable('mnet_host');
-
         $field = new XMLDBField('force_theme');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '0', 'last_log_id');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'last_log_id');
 
-        // Launch add field theme
+    /// Launch add field force_theme
         $result = $result && add_field($table, $field);
 
+    /// Define field theme to be added to mnet_host
+        $table = new XMLDBTable('mnet_host');
         $field = new XMLDBField('theme');
         $field->setAttributes(XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null, 'force_theme');
 
-        // Launch add field force_theme
+    /// Launch add field theme
         $result = $result && add_field($table, $field);
     }
 
