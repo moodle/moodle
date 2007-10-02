@@ -640,11 +640,23 @@ function close_window($delay=0) {
 
 
 /**
- * Given an array of value, creates a popup menu to be part of a form
- * $options["value"]["label"]
+ * Given an array of values, output the HTML for a select element with those options.
+ * Normally, you only need to use the first few parameters.
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @param array $options The options to offer. An array of the form
+ *      $options[{value}] = {text displayed for that option};
+ * @param string $name the name of this form control, as in &lt;select name="..." ...
+ * @param string $selected the option to select initially, default none.
+ * @param string $nothing The label for the 'nothing is selected' option. Defaults to get_string('choose').
+ *      Set this to '' if you don't want a 'nothing is selected' option.
+ * @param string $script in not '', then this is added to the &lt;select> element as an onchange handler.
+ * @param string $nothingvalue The value corresponding to the $nothing option. Defaults to 0.
+ * @param boolean $return if false (the default) the the output is printed directly, If true, the
+ *      generated HTML is returned as a string.
+ * @param boolean $disabled if true, the select is generated in a disabled state. Default, false.
+ * @param int $tabindex if give, sets the tabindex attribute on the &lt;select> element. Default none.
+ * @param string $id value to use for the id attribute of the &lt;select> element. If none is given,
+ *      then a suitable one is constructed.
  */
 function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='',
                            $nothingvalue='0', $return=false, $disabled=false, $tabindex=0, $id='') {
