@@ -9,7 +9,9 @@ $string['yourpeers']                    = 'Your Peers';
 $string['settings']                     = 'Settings';
 $string['hostsettings']                 = 'Host Settings';
 $string['mnetpeers']                    = 'Peers';
+$string['themesavederror']              = 'An error occurred: Theme change not saved';
 $string['mnetservices']                 = 'Moodle network services';
+$string['mnetthemes']                   = 'Themes';
 $string['trustedhosts']                 = 'XML-RPC hosts';
 $string['trustedhostsexplain']          = '<p>The trusted hosts mechanism allows specific machines to
                                            execute calls via XML-RPC to any part of the Moodle API. This
@@ -118,6 +120,7 @@ $string['verifysignature-error']        = 'The signature verification failed. An
 $string['verifysignature-invalid']      = 'The signature verification failed. It appears that this payload was not signed by you.';
 $string['mnetsettings']                 = 'Moodle network settings';
 $string['mnetservices']                 = 'Services';
+$string['mnetthemes']                   = 'Themes';
 $string['mnetlog']                      = 'Logs';
 
 $string['issubscribed']                 = 'The $a Moodle is subscribing to this service on your host.';
