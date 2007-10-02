@@ -2299,7 +2299,7 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 */
 
-    if ($oldversion < 2007091300) {
+    if ($oldversion < 2007100300) {
         //
         // MNET stuff for roaming theme
         //
