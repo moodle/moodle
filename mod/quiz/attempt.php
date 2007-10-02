@@ -435,12 +435,25 @@
     }
 
 /// Start the form
-    echo "<form id=\"responseform\" method=\"post\" action=\"attempt.php\" onclick=\"this.autocomplete='off'\">\n";
+    echo "<form id=\"responseform\" method=\"post\" action=\"attempt.php\" " .
+            "onclick=\"this.autocomplete='off'\" onkeypress=\"return check_enter(event);\">\n";
     if($quiz->timelimit > 0) {
         // Make sure javascript is enabled for time limited quizzes
         ?>
         <script type="text/javascript">
-            // Do nothing.
+//<![CDATA[
+/* Use this in an onkeypress handler, to stop enter submitting the forum unless you 
+are actually on the submit button. Don't stop the user typing things in text areas. */
+function check_enter(e) {
+    var target = e.target ? e.target : e.srcElement;
+    var keyCode = e.keyCode ? e.keyCode : e.which;
+
+    if(keyCode==13 && (!target.type || (target.type!='submit' && target.type!='textarea')))
+        return false;
+    else
+        return true;
+}
+//]]>
         </script>
         <noscript>
         <div>
@@ -478,9 +491,6 @@
 
 /// Print all the questions
 
-    // Add a hidden field with questionids
-    echo '<input type="hidden" name="questionids" value="'.$pagelist."\" />\n";
-
     $pagequestions = explode(',', $pagelist);
     $number = quiz_first_questionnumber($attempt->layout, $pagelist);
     foreach ($pagequestions as $i) {
@@ -515,6 +525,11 @@
         quiz_print_navigation_panel($page, $numpages);
         echo '<br />';
     }
+
+    // Add a hidden field with questionids. Do this at the end of the form, so
+    // if you navigate before the form has finished loading, it does not wipe all
+    // the student's answers.
+    echo '<input type="hidden" name="questionids" value="'.$pagelist."\" />\n";
 
     // Finish the form
     echo '</div>';
