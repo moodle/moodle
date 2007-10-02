@@ -1719,7 +1719,8 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="typename" UNIQUE="true" FIELDS="flagtype, name"/>
+        <INDEX NAME="flagtype" UNIQUE="false" FIELDS="flagtype"/>
+        <INDEX NAME="name" UNIQUE="false" FIELDS="name"/>
       </INDEXES>
     </TABLE>
   </TABLES>

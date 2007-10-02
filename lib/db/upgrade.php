@@ -2258,7 +2258,6 @@ function xmldb_main_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2007100100) {
 
-
     /// Define table cache_flags to be created
         $table = new XMLDBTable('cache_flags');
 
@@ -2273,31 +2272,19 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Adding keys to table cache_flags
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
 
+    /*
+     * Note: mysql can not create indexes on text fields larger than 333 chars! 
+     */
+
     /// Adding indexes to table cache_flags
-        $table->addIndexInfo('typename', XMLDB_INDEX_UNIQUE, array('flagtype', 'name'));
+        $table->addIndexInfo('flagtype', XMLDB_INDEX_NOTUNIQUE, array('flagtype'));
+        $table->addIndexInfo('name', XMLDB_INDEX_NOTUNIQUE, array('name'));
 
     /// Launch create table for cache_flags
-        $result = $result && create_table($table);
-    }
-
-
-/*
-    /// drop old gradebook tables
-    if ($result && $oldversion < xxxxxxxx) {
-        $tables = array('grade_category',
-                        'grade_item',
-                        'grade_letter',
-                        'grade_preferences',
-                        'grade_exceptions');
-
-        foreach ($tables as $table) {
-            $table = new XMLDBTable($table);
-            if (table_exists($table)) {
-                drop_table($table);
-            }
+        if (!table_exists($table)) {
+            $result = $result && create_table($table);
         }
     }
-*/
 
     if ($oldversion < 2007100300) {
         //
@@ -2317,6 +2304,51 @@ function xmldb_main_upgrade($oldversion=0) {
         // Launch add field force_theme
         $result = $result && add_field($table, $field);
     }
+
+    if ($result && $oldversion < 2007100301) {
+
+    /// Define table cache_flags to be created
+        $table = new XMLDBTable('cache_flags');
+        $index = new XMLDBIndex('typename');
+        if (index_exists($table, $index)) {
+            $result = $result && drop_index($table, $index);
+        }
+        
+        $table = new XMLDBTable('cache_flags');
+        $index = new XMLDBIndex('flagtype');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('flagtype'));
+        if (!index_exists($table, $index)) {
+            $result = $result && add_index($table, $index);
+        }
+
+        $table = new XMLDBTable('cache_flags');
+        $index = new XMLDBIndex('name');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('name'));
+        if (!index_exists($table, $index)) {
+            $result = $result && add_index($table, $index);
+        }
+    }
+
+
+
+/* NOTE: please keep this at the end of upgrade file for now ;-)
+    /// drop old gradebook tables
+    if ($result && $oldversion < xxxxxxxx) {
+        $tables = array('grade_category',
+                        'grade_item',
+                        'grade_letter',
+                        'grade_preferences',
+                        'grade_exceptions');
+
+        foreach ($tables as $table) {
+            $table = new XMLDBTable($table);
+            if (table_exists($table)) {
+                drop_table($table);
+            }
+        }
+    }
+*/
+
 
     return $result;
 }
