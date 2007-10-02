@@ -214,7 +214,8 @@ class block_admin_tree extends block_base {
 
     }
 
-    /* Return true
+    /**
+     * Return true
      * if $USER has any caps that mean we should
      * display this block...
      */
@@ -222,13 +223,16 @@ class block_admin_tree extends block_base {
 
         $sysctx = get_context_instance(CONTEXT_SYSTEM);
 
-        return (has_capability('moodle/site:config',          $sysctx)
+        return (has_capability('moodle/site:config',             $sysctx)
                 || has_capability('moodle/site:langeditmaster',  $sysctx)
                 || has_capability('moodle/site:langeditlocal',   $sysctx)
                 || has_capability('moodle/site:manageblocks',    $sysctx)
                 || has_capability('moodle/user:delete',          $sysctx)
                 || has_capability('moodle/user:update',          $sysctx)
                 || has_capability('moodle/user:create',          $sysctx)
+                || has_capability('moodle/grade:manage',         $sysctx)
+                || has_capability('moodle/grade:manageletters',  $sysctx)
+                || has_capability('moodle/grade:managescales',   $sysctx)
                 || has_capability('moodle/site:readallmessages', $sysctx));
     }
 }
