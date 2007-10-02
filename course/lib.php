@@ -2709,12 +2709,20 @@ function move_category ($category, $newparentcat) {
 
     global $CFG;
 
-    if (!set_field('course_categories', 'parent', $newparentcat->id, 'id', $category->id)) {
-        return false;
+    $context = get_context_instance(CONTEXT_COURSECAT, $category->id);
+
+    if (empty($newparentcat->id)) {
+        if (!set_field('course_categories', 'parent', 0, 'id', $category->id)) {
+            return false;
+        }
+        $newparent = get_context_instance(CONTEXT_SYSTEM);
+    } else {
+        if (!set_field('course_categories', 'parent', $newparentcat->id, 'id', $category->id)) {
+            return false;
+        }
+        $newparent = get_context_instance(CONTEXT_COURSECAT, $newparentcat->id);
     }
 
-    $context   = get_context_instance(CONTEXT_COURSECAT, $category->id);
-    $newparent = get_context_instance(CONTEXT_COURSECAT, $newparentcat->id);
     context_moved($context, $newparent);
 
     // The most effective thing would be to find the common parent, 

@@ -4685,7 +4685,7 @@ function context_moved($context, $newparent) {
 
     $len = strlen($frompath);
     $sql = "UPDATE {$CFG->prefix}context
-            SET path = ".sql_concat("'$newpath'", 'SUBSTR(path, {$len} +1)')."
+            SET path = ".sql_concat("'$newpath'", 'SUBSTR(path, '.$len.' +1)')."
                 $setdepth
             WHERE path LIKE '{$frompath}/%'";
     execute_sql($sql,false);
