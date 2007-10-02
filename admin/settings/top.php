@@ -41,7 +41,7 @@ foreach (get_list_of_plugins('admin/report') as $plugin) {
     if ($reportname[1] == '[') {
         $reportname = get_string($plugin, 'admin');
     }
-    $ADMIN->add('reports', new admin_externalpage('report'.$plugin, get_string($plugin, 'admin'), "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php"));
+    $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $reportname, "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php"));
 }
 
 $ADMIN->add('root', new admin_category('misc', get_string('miscellaneous')));
