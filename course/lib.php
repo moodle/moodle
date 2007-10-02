@@ -1386,7 +1386,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
                     //Accessibility: for files get description via icon.
                     $altname = '';
-                    
                     if ('resource'==$mod->modname) {
                         if (!empty($modinfo[$modnumber]->icon)) {
                             $possaltname = $modinfo[$modnumber]->icon;
@@ -1399,18 +1398,20 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     } else {
                         $altname = $mod->modfullname;
                     }
-
                     // Avoid unnecessary duplication.
                     if (false!==stripos($instancename, $altname)) {
                         $altname = '';
+                    }
+                    // File type after name, for alphabetic lists.
+                    if ($altname) {
+                        $altname = get_accesshide(' '.$altname);
                     }
 
                     $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
                     echo '<a '.$linkcss.' '.$extra.        // Title unnecessary!
                          ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
-                         '<img src="'.$icon.'" title=""'.  // Suppress IE tooltip.
-                         ' class="activityicon" alt="'.$altname.'" /> <span>'.
-                         $instancename.'</span></a>';
+                         '<img src="'.$icon.'" class="activityicon" alt="" /> <span>'.
+                         $instancename.$altname.'</span></a>';
                 }
                 if ($usetracking && $mod->modname == 'forum') {
                     $groupmode = groupmode($course, $mod);
