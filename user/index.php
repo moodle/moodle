@@ -331,7 +331,7 @@
     }
     
     if ($context->id != $frontpagectx->id) {
-        $select = 'SELECT u.id, u.username, u.firstname, u.lastname,
+        $select = 'SELECT DISTINCT u.id, u.username, u.firstname, u.lastname,
                       u.email, u.city, u.country, u.picture,
                       u.lang, u.timezone, u.emailstop, u.maildisplay, u.imagealt,
                       COALESCE(ul.timeaccess, 0) AS lastaccess,
@@ -340,7 +340,7 @@
                       ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel ';    
         $select .= $course->enrolperiod?', r.timeend ':'';
     } else {
-        $select = 'SELECT u.id, u.username, u.firstname, u.lastname,
+        $select = 'SELECT DISTINCT u.id, u.username, u.firstname, u.lastname,
                       u.email, u.city, u.country, u.picture,
                       u.lang, u.timezone, u.emailstop, u.maildisplay, u.imagealt,
                       u.lastaccess,
