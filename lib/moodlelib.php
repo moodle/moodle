@@ -720,6 +720,97 @@ function unset_config($name, $plugin=NULL) {
     }
 }
 
+/**
+ * Get volatile flags
+ *
+ * @param string $type
+ * @param int    $changedsince
+ * @return records array
+ *
+ */
+function get_cache_flags($type, $changedsince=NULL) {
+
+    $type = addslashes($type);
+
+    $sqlwhere = 'flagtype=\'' . $type . '\' AND expiry >= ' . time();
+    if ($changedsince !== NULL) {
+        $changedsince = (int)$changedsince;
+        $sqlwhere .= ' AND timemodified > ' . $changedsince;
+    }
+    $cf = array();
+    if ($flags=get_records_select('cache_flags', $sqlwhere, '', 'name,value')) {
+        foreach ($flags as $flag) {
+            $cf[$flag->name] = $flag->value;
+        }
+    }
+    return $cf;
+}
+
+
+/**
+ * Set a volatile flag
+ *
+ * @param string $type the "type" namespace for the key
+ * @param string $name the key to set
+ * @param string $value the value to set (without magic quotes) - NULL will remove the flag
+ * @param int $expiry (optional) epoch indicating expiry - defaults to now()+ 24hs
+ * @return bool
+ */
+function set_cache_flag($type, $name, $value, $expiry=NULL) {
+
+
+    $timemodified = time();
+    if ($expiry===NULL || $expiry < $timemodified) {
+        $expiry = $timemodified + 24 * 60 * 60;
+    } else {
+        $expiry = (int)$expiry;
+    }
+
+    if ($value === NULL) {
+        return unset_cache_flag($type,$name);
+    }
+
+    $type = addslashes($type);
+    $name = addslashes($name);
+    $value = addslashes($value);
+    if ($f = get_record('cache_flags', 'name', $name, 'flagtype', $type)) {
+        $f->value        = $value;
+        $f->expiry       = $expiry;
+        $f->timemodified = $timemodified;
+        return update_record('cache_flags', $f);
+    } else {
+        $f = new StdClass;
+        $f->flagtype     = $type;
+        $f->name         = $name;
+        $f->value        = $value;
+        $f->expiry       = $expiry;
+        $f->timemodified = $timemodified;
+        return insert_record('cache_flags', $f);
+    }
+}
+
+/**
+ * Removes a single volatile flag
+ *
+ * @param string $type the "type" namespace for the key
+ * @param string $name the key to set
+ * @uses $CFG
+ * @return bool
+ */
+function unset_cache_flag($type, $name) {
+
+    return delete_records('cache_flags',
+                          'name', addslashes($name),
+                          'flagtype', addslashes($type));
+}
+
+/**
+ * Garbage-collect volatile flags
+ *
+ */
+function gc_cache_flags() {
+    return delete_records_select('cache_flags', 'expiry < ' . time());
+}
 
 /**
  * Refresh current $USER session global variable with all their current preferences.
