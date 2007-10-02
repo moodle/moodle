@@ -1407,25 +1407,28 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                             $possaltname = $modinfo[$modnumber]->icon;
 
                             $mimetype = mimeinfo_from_icon('type', $possaltname);
-                            $altname = get_mimetype_description($mimetype); //get_string($mimetype, 'mimetypes');
+                            $altname = get_mimetype_description($mimetype);
                         } else {
                             $altname = $mod->modfullname;
                         }
                     } else {
                         $altname = $mod->modfullname;
                     }
-
                     // Avoid unnecessary duplication.
                     if (false!==stripos($instancename, $altname)) {
                         $altname = '';
+                    }
+                    // File type after name, for alphabetic lists (screen reader).
+                    if ($altname) {
+                        $altname = get_accesshide(' '.$altname);
                     }
 
                     $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
                     echo '<a '.$linkcss.' '.$extra.        // Title unnecessary!
                          ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
-                         '<img src="'.$icon.'" title=""'.  // Suppress IE tooltip.
-                         ' class="activityicon" alt="'.$altname.'" /> <span>'.
-                         $instancename.'</span></a>';
+                         '<img src="'.$icon.'" class="activityicon" alt="" /> <span>'.
+                         $instancename.$altname.'</span></a>';
+
                     if (!empty($CFG->enablegroupings) && !empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
                         echo " <span class=\"groupinglabel\"> - ".format_string($groupings[$mod->groupingid]->name).'</span>';
                     }
