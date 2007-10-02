@@ -100,7 +100,7 @@ function execute_sql($command, $feedback=true) {
             notify('<strong>' . get_string('error') . '</strong>');
         }
         // these two may go to difference places
-        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
+        debugging($db->ErrorMsg() .'<br /><br />'. $command);
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $command");
