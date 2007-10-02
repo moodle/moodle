@@ -1824,11 +1824,6 @@ function hotpot_convert_navbutton_url($baseurl, $reference, $url, $course, $stri
 
     return $url;
 }
-function hotpot_stripslashes($str) {
-    static $escapedchars = array('\\\\', '\\"', "\\'");
-    static $unescapedchars = array('\\', '"', "'");
-    return str_replace($escapedchars, $unescapedchars, $str);
-}
 function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $closetag, $stripslashes=true) {
     if ($stripslashes) {
         $opentag = hotpot_stripslashes($opentag);
