@@ -18,6 +18,8 @@ class mnet_peer {
     var $public_key_expires = 0;
     var $last_connect_time  = 0;
     var $last_log_id        = 0;
+    var $force_theme        = 0;
+    var $theme              = '';
     var $applicationid      = 1; // Default of 1 == Moodle
     var $keypair            = array();
     var $error              = array();
@@ -164,6 +166,8 @@ class mnet_peer {
         $obj->deleted               = $this->deleted;
         $obj->last_connect_time     = $this->last_connect_time;
         $obj->last_log_id           = $this->last_log_id;
+        $obj->force_theme           = $this->force_theme;
+        $obj->theme                 = $this->theme;
         $obj->applicationid         = $this->applicationid;
 
         if (isset($this->id) && $this->id > 0) {
@@ -249,6 +253,8 @@ class mnet_peer {
         $this->public_key_expires   = $hostinfo->public_key_expires;
         $this->last_connect_time    = $hostinfo->last_connect_time;
         $this->last_log_id          = $hostinfo->last_log_id;
+        $this->force_theme          = $hostinfo->force_theme;
+        $this->theme                = $hostinfo->theme;
         $this->applicationid        = $hostinfo->applicationid;
         $this->application = get_record('mnet_application', 'id', $this->applicationid);
     }
