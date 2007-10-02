@@ -115,6 +115,9 @@
         error("Could not update attempt record: ".$db->ErrorMsg(), $next_url);
     }
 
+    // update grades for this user
+    hotpot_update_grades($hotpot, $attempt->userid);
+
     // get previous attempt details record, if any
     $details_exist = record_exists("hotpot_details", "attempt", $attempt->id);
 

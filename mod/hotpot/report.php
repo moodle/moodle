@@ -386,6 +386,9 @@ function hotpot_delete_selected_attempts(&$hotpot, $del) {
             $select = 'attempt IN ('.implode(',', array_keys($attempts)).')';
             hotpot_delete_and_notify('hotpot_details', $select, get_string('rawdetails', 'hotpot'));
             hotpot_delete_and_notify('hotpot_responses', $select, get_string('answer', 'quiz'));
+
+            // update grades for all users for this hotpot
+            hotpot_update_grades($hotpot);
         }
     }
 

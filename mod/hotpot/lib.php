@@ -199,6 +199,7 @@ function hotpot_add_instance(&$hotpot) {
         if ($result = insert_record('hotpot', $hotpot)) {
             $hotpot->id = $result;
             hotpot_update_events($hotpot);
+            hotpot_grade_item_update(stripslashes_recursive($hotpot));
         }
     } else {
         $result=  false;
@@ -211,6 +212,7 @@ function hotpot_update_instance(&$hotpot) {
         $hotpot->id = $hotpot->instance;
         if ($result = update_record('hotpot', $hotpot)) {
             hotpot_update_events($hotpot);
+            hotpot_grade_item_update(stripslashes_recursive($hotpot));
         }
     } else {
         $result=  false;
@@ -323,18 +325,20 @@ function hotpot_set_form_values(&$hotpot) {
         hotpot_set_name_summary_reference($hotpot);
     }
 
-    switch ($hotpot->displaynext) {
-        // N.B. redirection only works for Moodle 1.5+
-        case HOTPOT_DISPLAYNEXT_COURSE:
-            $hotpot->redirect = true;
-            $hotpot->redirecturl = "view.php?id=$hotpot->course";
-            break;
-        case HOTPOT_DISPLAYNEXT_INDEX:
-            $hotpot->redirect = true;
-            $hotpot->redirecturl = "../mod/hotpot/index.php?id=$hotpot->course";
-            break;
-        default:
-            // use Moodle default action (i.e. go on to display the hotpot quiz)
+    if (isset($hotpot->displaynext)) {
+        switch ($hotpot->displaynext) {
+            // N.B. redirection only works for Moodle 1.5+
+            case HOTPOT_DISPLAYNEXT_COURSE:
+                $hotpot->redirect = true;
+                $hotpot->redirecturl = "view.php?id=$hotpot->course";
+                break;
+            case HOTPOT_DISPLAYNEXT_INDEX:
+                $hotpot->redirect = true;
+                $hotpot->redirecturl = "../mod/hotpot/index.php?id=$hotpot->course";
+                break;
+            default:
+                // use Moodle default action (i.e. go on to display the hotpot quiz)
+        }
     }
 
     // if ($ok && $hotpot->setdefaults) {
@@ -855,20 +859,29 @@ function hotpot_delete_instance($id) {
 /// this function will permanently delete the instance
 /// and any data that depends on it.
 
-    $result = false;
-    if (delete_records("hotpot", "id", "$id")) {
-        $result = true;
-        delete_records("hotpot_questions", "hotpot", "$id");
-        if ($attempts = get_records_select("hotpot_attempts", "hotpot='$id'")) {
-            $ids = implode(',', array_keys($attempts));
-            delete_records_select("hotpot_attempts",  "id IN ($ids)");
-            delete_records_select("hotpot_details",   "attempt IN ($ids)");
-            delete_records_select("hotpot_responses", "attempt IN ($ids)");
-        }
-         // remove calendar events for this hotpot
-        delete_records('event', 'modulename', 'hotpot', 'instance', $id);
-   }
-    return $result;
+    if (! $hotpot = get_record("hotpot", "id", $id)) {
+        return false;
+    }
+
+    if (! delete_records("hotpot", "id", "$id")) {
+        return false;
+    }
+
+    delete_records("hotpot_questions", "hotpot", "$id");
+    if ($attempts = get_records_select("hotpot_attempts", "hotpot='$id'")) {
+        $ids = implode(',', array_keys($attempts));
+        delete_records_select("hotpot_attempts",  "id IN ($ids)");
+        delete_records_select("hotpot_details",   "attempt IN ($ids)");
+        delete_records_select("hotpot_responses", "attempt IN ($ids)");
+    }
+
+     // remove calendar events for this hotpot
+    delete_records('event', 'modulename', 'hotpot', 'instance', $id);
+
+     // remove grade item for this hotpot
+    hotpot_grade_item_delete($hotpot);
+
+    return true;
 }
 function hotpot_delete_and_notify($table, $select, $strtable) {
     $count = max(0, count_records_select($table, $select));
@@ -1179,6 +1192,107 @@ function hotpot_get_grades($hotpot, $user_ids='') {
 }
 function hotpot_get_precision(&$hotpot) {
     return ($hotpot->grademethod==HOTPOT_GRADEMETHOD_AVERAGE || $hotpot->grade<100) ? 1 : 0;
+}
+
+/**
+ * Return grade for given user or all users.
+ *
+ * @param object $hotpot
+ * @param int $userid optional user id, 0 means all users
+ * @return array array of grades, false if none
+ */
+function hotpot_get_user_grades($hotpot, $userid=0) {
+    $grades = array();
+    if ($hotpotgrades = hotpot_get_grades($hotpot, $userid)) {
+        foreach ($hotpotgrades as $hotpotuserid => $hotpotgrade) {
+            $grades[$hotpotuserid] = new stdClass();
+            $grades[$hotpotuserid]->id        = $hotpotuserid;
+            $grades[$hotpotuserid]->userid    = $hotpotuserid;
+            $grades[$hotpotuserid]->rawgrade  = $hotpotgrade;
+        }
+    }
+    if (count($grades)) {
+        return $grades;
+    } else {
+        return false;
+    }
+}
+/**
+ * Update grades in central gradebook
+ *
+ * @param object $hotpot null means all hotpots
+ * @param int $userid specific user only, 0 mean all
+ */
+function hotpot_update_grades($hotpot=null, $userid=0, $nullifnone=true) {
+    global $CFG;
+    if (! function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
+    }
+    if ($hotpot) {
+        if ($grades = hotpot_get_user_grades($hotpot, $userid)) {
+            grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, $grades);
+
+        } else if ($userid && $nullifnone) {
+            $grade = new object();
+            $grade->userid   = $userid;
+            $grade->rawgrade = null;
+            grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, $grade);
+        }
+    } else {
+        $sql = "SELECT h.*, cm.idnumber as cmidnumber
+                  FROM {$CFG->prefix}hotpot h, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                 WHERE m.name='hotpot' AND m.id=cm.module AND cm.instance=s.id";
+        if ($rs = get_recordset_sql($sql)) {
+            if ($rs->RecordCount() > 0) {
+                while ($hotpot = rs_fetch_next_record($rs)) {
+                    hotpot_grade_item_update($hotpot);
+                    hotpot_update_grades($hotpot, 0, false);
+                }
+            }
+            rs_close($rs);
+        }
+    }
+}
+/**
+ * Update/create grade item for given hotpot
+ *
+ * @param object $hotpot object with extra cmidnumber
+ * @return object grade_item
+ */
+function hotpot_grade_item_update($hotpot) {
+    global $CFG;
+    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
+    }
+
+    $params = array('itemname' => $hotpot->name);
+    if (array_key_exists('cmidnumber', $hotpot)) {
+        //cmidnumber may not be always present
+        $params['idnumber'] = $hotpot->cmidnumber;
+    }
+
+    if ($hotpot->grade > 0) {
+        $params['gradetype'] = GRADE_TYPE_VALUE;
+        $params['grademax']  = $hotpot->grade;
+        $params['grademin']  = 0;
+
+    } else {
+        $params['gradetype'] = GRADE_TYPE_NONE;
+    }
+
+    return grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, NULL, $params);
+}
+/**
+ * Delete grade item for given hotpot
+ *
+ * @param object $hotpot object
+ * @return object grade_item
+ */
+function hotpot_grade_item_delete($hotpot) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    return grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, NULL, array('deleted'=>1));
 }
 
 function hotpot_get_participants($hotpotid) {
