@@ -1558,13 +1558,13 @@ function load_user_accessdata($userid) {
     //
     // provide "default frontpage role"
     //
-    if ($CFG->defaultfrontpageroleid) {
+    if (!empty($CFG->defaultfrontpageroleid)) {
         $base = '/'. SYSCONTEXTID .'/'. $frontpagecontext->id;
-        $accessdata = get_default_frontpage_role_access($CFG->defaultfrongpageroleid, $accessdata);
+        $accessdata = get_default_frontpage_role_access($CFG->defaultfrontpageroleid, $accessdata);
         if (!isset($accessdata['ra'][$base])) {
-            $accessdata['ra'][$base] = array($CFG->defaultfrongpageroleid);
+            $accessdata['ra'][$base] = array($CFG->defaultfrontpageroleid);
         } else {
-            array_push($accessdata['ra'][$base], $CFG->defaultfrongpageroleid);
+            array_push($accessdata['ra'][$base], $CFG->defaultfrontpageroleid);
         }
     }
     $ACCESS[$userid] = $accessdata;  
@@ -1612,7 +1612,7 @@ function load_all_capabilities() {
         // provide "default frontpage role"
         //
         
-        if ($CFG->defaultfrontpageroleid) {
+        if (!empty($CFG->defaultfrontpageroleid)) {
             $base = '/'. SYSCONTEXTID .'/'. $frontpagecontext->id;
             $accessdata = get_default_frontpage_role_access($CFG->defaultfrontpageroleid, $accessdata);
             if (!isset($accessdata['ra'][$base])) {
@@ -4016,7 +4016,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 /// check for front page course, and see if default front page role has the required capability
     
     $frontpagectx = get_context_instance(CONTEXT_COURSE, SITEID);
-    if ($CFG->defaultfrontpageroleid && ($context->id == $frontpagectx->id || strstr($context->path, '/'.$frontpagectx->id.'/'))) {
+    if (!empty($CFG->defaultfrontpageroleid) && ($context->id == $frontpagectx->id || strstr($context->path, '/'.$frontpagectx->id.'/'))) {
         $roles = get_roles_with_capability($capability, CAP_ALLOW, $context);
         if (in_array($CFG->defaultfrontpageroleid, array_keys($roles))) {
             return get_records_sql("SELECT $fields FROM {$CFG->prefix}user ORDER BY $sort, $limitfrom, $limitnum"); 
