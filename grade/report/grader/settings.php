@@ -26,24 +26,24 @@ $settings->add(new admin_setting_configselect('grade_report_decimalpoints', get_
                                                  '5' => '5')));
 
 $settings->add(new admin_setting_configselect('grade_report_aggregationposition', get_string('aggregationposition', 'grades'),
-                                          get_string('configaggregationposition', 'grades'), false,
+                                          get_string('configaggregationposition', 'grades'), GRADE_REPORT_AGGREGATION_POSITION_RIGHT,
                                           array(GRADE_REPORT_AGGREGATION_POSITION_LEFT => get_string('left', 'grades'),
                                                 GRADE_REPORT_AGGREGATION_POSITION_RIGHT => get_string('right', 'grades'))));
 
 $settings->add(new admin_setting_configselect('grade_report_aggregationview', get_string('aggregationview', 'grades'),
-                                          get_string('configaggregationview', 'grades'), false,
+                                          get_string('configaggregationview', 'grades'), GRADE_REPORT_AGGREGATION_VIEW_FULL,
                                           array(GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('full', 'grades'),
                                                 GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY => get_string('aggregatesonly', 'grades'),
                                                 GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY => get_string('gradesonly', 'grades'))));
 
 $settings->add(new admin_setting_configselect('grade_report_gradedisplaytype', get_string('gradedisplaytype', 'grades'),
-                                          get_string('configgradedisplaytype', 'grades'), false,
+                                          get_string('configgradedisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
                                           array(GRADE_DISPLAY_TYPE_REAL => $strreal,
                                                 GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
                                                 GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_meanselection', get_string('meanselection', 'grades'),
-                                          get_string('configmeanselection', 'grades'), false,
+                                          get_string('configmeanselection', 'grades'), GRADE_REPORT_MEAN_ALL,
                                           array(GRADE_REPORT_MEAN_ALL => get_string('meanall', 'grades'),
                                                 GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades'))));
 
@@ -78,13 +78,13 @@ $settings->add(new admin_setting_configcheckbox('grade_report_shownumberofgrades
                                             get_string('configshownumberofgrades', 'grades'), 0));
 
 $settings->add(new admin_setting_configselect('grade_report_averagesdisplaytype', get_string('averagesdisplaytype', 'grades'),
-                                          get_string('configaveragesdisplaytype', 'grades'), false,
+                                          get_string('configaveragesdisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
                                           array(GRADE_DISPLAY_TYPE_REAL => $strreal,
                                                 GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
                                                 GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_rangesdisplaytype', get_string('rangesdisplaytype', 'grades'),
-                                          get_string('configrangesdisplaytype', 'grades'), false,
+                                          get_string('configrangesdisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
                                           array(GRADE_DISPLAY_TYPE_REAL => $strreal,
                                                 GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
                                                 GRADE_DISPLAY_TYPE_LETTER => $strletter)));
