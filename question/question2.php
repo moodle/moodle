@@ -111,7 +111,7 @@ if ($mform->is_cancelled()){
     }
 } else {
 
-    $streditingquestion = get_string('editingquestion', 'question');
+    list($streditingquestion,) = $QTYPES[$question->qtype]->get_heading();
     if (isset($SESSION->modform->instance)) {
         // TODO: remove restriction to quiz
         $strediting = '<a href="' . htmlspecialchars($returnurl) . '">' . get_string('editingquiz', 'quiz') . '</a> -> '.
