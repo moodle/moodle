@@ -199,8 +199,8 @@
             if ($assigns = get_users_longtimenosee($longtime)) {
                 foreach ($assigns as $assign) {
                     if ($context = get_context_instance(CONTEXT_COURSE, $assign->courseid)) {
-                        if (role_unassign(0, $assign->id, 0, $context->id)) {
-                            mtrace("Deleted assignment for user $assign->id from course $assign->courseid");
+                        if (role_unassign(0, $assign->userid, 0, $context->id)) {
+                            mtrace("Deleted assignment for user $assign->userid from course $assign->courseid");
                         }
                     }
                 }

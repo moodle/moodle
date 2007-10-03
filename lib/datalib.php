@@ -354,10 +354,9 @@ function get_users_unconfirmed($cutofftime=2000000000) {
  */
 function get_users_longtimenosee($cutofftime) {
     global $CFG;
-    return get_records_sql("SELECT userid as id, courseid
+    return get_records_sql("SELECT id, userid, courseid
                               FROM {$CFG->prefix}user_lastaccess
                              WHERE courseid != ".SITEID."
-                               AND timeaccess > 0
                                AND timeaccess < $cutofftime ");
 }
 
