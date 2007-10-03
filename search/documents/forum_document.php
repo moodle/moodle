@@ -252,16 +252,16 @@ function forum_check_text_access($path, $itemtype, $this_id, $user, $group_id){
     $post = get_record('forum_posts', 'id', $this_id);
     $dicussion = get_record('forum_discussion', 'id', $post->discussion);
     $course = get_record('course', 'id', $discussion->course);
-    $context_module = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $context_module->instanceid);
+    $cm = get_coursemodule_from_instance('forum', $dicussion->forum, $course->id);
+    $context_module = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context_module)) return false;
     
     // approval check : entries should be approved for being viewed, or belongs to the user 
-    if (!$post->mailed && !has_capability('mod/forum:viewhiddentimeposts')) return false;
+    if (!$post->mailed && !has_capability('mod/forum:viewhiddentimeposts', $context_module)) return false;
 
     // group check : entries should be in accessible groups
     $current_group = get_current_group($course->id);
-    if ((groupmode($course, $cm)  == SEPARATEGROUPS) && ($group_id != $current_group) && !has_capability('mod/forum:viewdiscussionsfromallgroups')) return false;
+    if ((groupmode($course, $cm)  == SEPARATEGROUPS) && ($group_id != $current_group) && !has_capability('mod/forum:viewdiscussionsfromallgroups', $context_module)) return false;
     
     return true;
 } //forum_check_text_access
