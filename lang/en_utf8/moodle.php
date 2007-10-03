@@ -619,6 +619,7 @@ $string['guestsyes'] = 'Allow guests without the key';
 $string['guestuser'] = 'Guest User';
 $string['guestuserinfo'] = 'This user is a special user that allows read-only access to some courses.';
 $string['healthcenter'] = 'Health Center';
+$string['healthnoproblemsfound'] = 'There is no health problem found!';
 $string['healthproblemsdetected'] = 'Health Problems Detected!';
 $string['healthproblemsolution'] = 'Health Problem Solution';
 $string['healthreturntomain'] = 'Continue';
