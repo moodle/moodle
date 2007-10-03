@@ -659,6 +659,150 @@ function grade_to_percentage($gradeval, $grademin, $grademax) {
 }
 
 /**
+ * Flat structure similar to grade tree.
+ */
+class grade_seq {
+
+    /**
+     * A string of GET URL variables, namely courseid and sesskey, used in most URLs built by this class.
+     * @var string $commonvars
+     */
+    var $commonvars;
+
+    /**
+     * 1D array of grade items only
+     */
+    var $items;
+
+    /**
+     * Course context
+     */
+    var $context;
+
+    /**
+     * Constructor, retrieves and stores array of all grade_category and grade_item
+     * objects for the given courseid. Full objects are instantiated. Ordering sequence is fixed if needed.
+     * @param int $courseid
+     * @param boolean $category_grade_last category grade item is the last child
+     * @param array $collapsed array of collapsed categories
+     */
+    function grade_seq($courseid, $category_grade_last=false, $nooutcomes=false) {
+        global $USER, $CFG;
+
+        $this->courseid   = $courseid;
+        $this->commonvars = "&amp;sesskey=$USER->sesskey&amp;id=$this->courseid";
+        $this->context    = get_context_instance(CONTEXT_COURSE, $courseid);
+
+        // get course grade tree
+        $top_element = grade_category::fetch_course_tree($courseid, true);
+
+        $this->items = grade_seq::flatten($top_element, $category_grade_last, $nooutcomes);
+    }
+
+    /**
+     * Static recursive helper - makes the grade_item for category the last children
+     * @static
+     * @param array $element The seed of the recursion
+     * @return void
+     */
+    function flatten(&$element, $category_grade_last, $nooutcomes) {
+        if (empty($element['children'])) {
+            return array();
+        }
+        $children = array();
+
+        foreach ($element['children'] as $sortorder=>$unused) {
+            if ($nooutcomes and $element['type'] != 'category' and $element['children'][$sortorder]['object']->is_outcome_item()) {
+                continue;
+            }
+            $children[] = $element['children'][$sortorder];
+        }
+        unset($element['children']);
+
+        if ($category_grade_last and count($children) > 1) {
+            $cat_item = array_shift($children);
+            array_push($children, $cat_item);
+        }
+
+        $result = array();
+        foreach ($children as $child) {
+            if ($child['type']== 'category') {
+                $result = array_merge($result, grade_seq::flatten($child, $category_grade_last, $nooutcomes));
+            } else {
+                $child['eid'] = 'i'.$child['object']->id;
+                $result[] = $child;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Parses the array in search of a given eid and returns a element object with
+     * information about the element it has found.
+     * @param int $eid
+     * @return object element
+     */
+    function locate_element($eid) {
+        // it is a grade - construct a new object
+        if (strpos($eid, 'n') === 0) {
+            if (!preg_match('/n(\d+)u(\d+)/', $eid, $matches)) {
+                return null;
+            }
+
+            $itemid = $matches[1];
+            $userid = $matches[2];
+
+            //extra security check - the grade item must be in this tree
+            if (!$item_el = $this->locate_element('i'.$itemid)) {
+                return null;
+            }
+
+            // $gradea->id may be null - means does not exist yet
+            $grade = new grade_grade(array('itemid'=>$itemid, 'userid'=>$userid));
+
+            $grade->grade_item =& $item_el['object']; // this may speedup grade_grade methods!
+            return array('eid'=>'n'.$itemid.'u'.$userid,'object'=>$grade, 'type'=>'grade');
+
+        } else if (strpos($eid, 'g') === 0) {
+            $id = (int)substr($eid, 1);
+            if (!$grade = grade_grade::fetch(array('id'=>$id))) {
+                return null;
+            }
+            //extra security check - the grade item must be in this tree
+            if (!$item_el = $this->locate_element('i'.$grade->itemid)) {
+                return null;
+            }
+            $grade->grade_item =& $item_el['object']; // this may speedup grade_grade methods!
+            return array('eid'=>'g'.$id,'object'=>$grade, 'type'=>'grade');
+        }
+
+        // it is a category or item
+        foreach ($this->items as $element) {
+            if ($element['eid'] == $eid) {
+                return $element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the grade eid - the grade may not exist yet.
+     * @param $grade_grade object
+     * @return string eid
+     */
+    function get_grade_eid($grade_grade) {
+        if (empty($grade_grade->id)) {
+            return 'n'.$grade_grade->itemid.'u'.$grade_grade->userid;
+        } else {
+            return 'g'.$grade_grade->id;
+        }
+    }
+
+}
+
+/**
  * This class represents a complete tree of categories, grade_items and final grades,
  * organises as an array primarily, but which can also be converted to other formats.
  * It has simple method calls with complex implementations, allowing for easy insertion,
@@ -690,8 +834,7 @@ class grade_tree {
 
     /**
      * Constructor, retrieves and stores a hierarchical array of all grade_category and grade_item
-     * objects for the given courseid. Full objects are instantiated.
-     * and renumbering.
+     * objects for the given courseid. Full objects are instantiated. Ordering sequence is fixed if needed.
      * @param int $courseid
      * @param boolean $fillers include fillers and colspans, make the levels var "rectangular"
      * @param boolean $category_grade_last category grade item is the last child
