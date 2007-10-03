@@ -1471,4 +1471,59 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall
 
 }
 
+/**
+ * All users that we have not seen for a really long time (ie dead accounts)
+ * TODO: Delete this for Moodle 2.0
+ *
+ * @uses $CFG
+ * @deprecated The query is executed directly within admin/cron.php (MDL-11571)
+ * @param string $cutofftime ?
+ * @return object  {@link $USER} records
+ */
+function get_users_longtimenosee($cutofftime) {
+    global $CFG;
+    return get_records_sql("SELECT id, userid, courseid
+                             FROM {$CFG->prefix}user_lastaccess
+                            WHERE courseid != ".SITEID."
+                              AND timeaccess < $cutofftime ");
+}
+
+/**
+ * Full list of users that have not yet confirmed their accounts.
+ * TODO: Delete this for Moodle 2.0
+ *
+ * @uses $CFG
+ * @deprecated The query is executed directly within admin/cron.php (MDL-11487)
+ * @param string $cutofftime ?
+ * @return object  {@link $USER} records
+ */
+function get_users_unconfirmed($cutofftime=2000000000) {
+    global $CFG;
+    return get_records_sql("SELECT *
+                              FROM {$CFG->prefix}user
+                             WHERE confirmed = 0
+                               AND firstaccess > 0
+                               AND firstaccess < $cutofftime");
+}
+
+/**
+ * Full list of bogus accounts that are probably not ever going to be used
+ * TODO: Delete this for Moodle 2.0
+ *
+ * @uses $CFG
+ * @deprecated The query is executed directly within admin/cron.php (MDL-11487)
+ * @param string $cutofftime ?
+ * @return object  {@link $USER} records
+ */
+function get_users_not_fully_set_up($cutofftime=2000000000) {
+    global $CFG;
+    return get_records_sql("SELECT *
+                              FROM {$CFG->prefix}user
+                             WHERE confirmed = 1
+                               AND lastaccess > 0
+                               AND lastaccess < $cutofftime
+                               AND deleted = 0
+                               AND (lastname = '' OR firstname = '' OR email = '')");
+}
+
 ?>

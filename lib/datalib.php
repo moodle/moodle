@@ -329,56 +329,6 @@ function get_users_confirmed() {
 }
 
 
-/**
- * Full list of users that have not yet confirmed their accounts.
- *
- * @uses $CFG
- * @param string $cutofftime ?
- * @return object  {@link $USER} records
- */
-function get_users_unconfirmed($cutofftime=2000000000) {
-    global $CFG;
-    return get_records_sql("SELECT *
-                             FROM {$CFG->prefix}user
-                            WHERE confirmed = 0
-                              AND firstaccess > 0
-                              AND firstaccess < $cutofftime");
-}
-
-/**
- * All users that we have not seen for a really long time (ie dead accounts)
- *
- * @uses $CFG
- * @param string $cutofftime ?
- * @return object  {@link $USER} records
- */
-function get_users_longtimenosee($cutofftime) {
-    global $CFG;
-    return get_records_sql("SELECT id, userid, courseid
-                              FROM {$CFG->prefix}user_lastaccess
-                             WHERE courseid != ".SITEID."
-                               AND timeaccess < $cutofftime ");
-}
-
-/**
- * Full list of bogus accounts that are probably not ever going to be used
- *
- * @uses $CFG
- * @param string $cutofftime ?
- * @return object  {@link $USER} records
- */
-
-function get_users_not_fully_set_up($cutofftime=2000000000) {
-    global $CFG;
-    return get_records_sql("SELECT *
-                             FROM {$CFG->prefix}user
-                            WHERE confirmed = 1
-                             AND lastaccess > 0
-                             AND lastaccess < $cutofftime
-                             AND deleted = 0
-                             AND (lastname = '' OR firstname = '' OR email = '')");
-}
-
 /// OTHER SITE AND COURSE FUNCTIONS /////////////////////////////////////////////
 
 
