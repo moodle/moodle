@@ -15,7 +15,7 @@ $string['admindirsettinghead'] = 'S\'està configurant el directori d\'administr
 $string['admindirsettingsub'] = 'Alguns proveïdors d\'espai web utilitzen /admin com una adreça URL especial per accedir a un tauler de control o quelcom semblant. Malauradament això interfereix amb la ubicació estàndard de les pàgines d\'administració de Moodle. Podeu solucionar aquest problema canviant el nom del directori admin en la vostra instal·lació i introduint aquí el nou nom. Per exemple: <br /> <br /><b>moodleadmin</b><br /> <br />
 Això repararà tots els enllaços d\'administració de Moodle.';
 $string['bypassed'] = 'S\'ha deixat de banda';
-$string['cannotcreatelangdir'] = 'No es pot crear el directori d\'idiomes.';
+$string['cannotcreatelangdir'] = 'No s\'ha pogut crear el directori d\'idiomes.';
 $string['cannotcreatetempdir'] = 'No s\'ha pogut crear el directori temporal';
 $string['cannotdownloadcomponents'] = 'No s\'han pogut baixar components';
 $string['cannotdownloadzipfile'] = 'No s\'ha pogut baixar el fitxer zip';
@@ -66,6 +66,12 @@ $string['databasesettingssub_mssql_n'] = '<b>Tipus:</b> SQL*Server (UTF-8 habili
 <b>Contrasenya:</b> la vostra contrasenya de la base de dades<br />
 <b>Prefix de les taules:</b> prefix que cal anteposar als noms de totes les taules (obligatori)';
 $string['databasesettingssub_mysql'] = '<b>Tipus:</b> MySQL<br />
+<b>Servidor:</b> p. ex. localhost o db.isp.com<br />
+<b>Nom:</b> nom de la base de dades, p. ex. moodle<br />
+<b>Usuari:</b> el vostre nom d\'usuari de la base de dades<br />
+<b>Contrasenya:</b> la vostra contrasenya de la base de dades<br />
+<b>Prefix de les taules:</b> prefix que cal anteposar als noms de totes les taules (opcional)';
+$string['databasesettingssub_mysqli'] = '<b>Tipus:</b> MySQL Improved<br />
 <b>Servidor:</b> p. ex. localhost o db.isp.com<br />
 <b>Nom:</b> nom de la base de dades, p. ex. moodle<br />
 <b>Usuari:</b> el vostre nom d\'usuari de la base de dades<br />
@@ -159,10 +165,10 @@ $string['memorylimithelp'] = '<p>El límit de memòria del PHP del vostre servid
 
 <p>Això pot causar que Moodle tingui problemes de memòria més endavant, especialment si teniu molts mòduls habilitats i/o molts usuaris.</p>
 
-<p>És recomanable que configureu el PHP amb un límit superior, com ara 16 MB, sempre que sigui possible. Hi ha diverses maneres de fer això:</p>
+<p>És recomanable que configureu el PHP amb un límit superior, com ara 40 MB, sempre que sigui possible. Hi ha diverses maneres de fer això:</p>
 <ol>
 <li>Si podeu, recompileu el PHP amb <i>--enable-memory-limit</i>. Això permetrà que Moodle defineixi el límit de memòria per si mateix.</li>
-<li>Si teniu accés al fitxer php.ini, podeu canviar el paràmetre <b>memory_limit</b> a 40M. Si no hi teniu accés podeu demanar al vostre administrador que ho faci ell.</li>
+<li>Si teniu accés al fitxer php.ini, podeu canviar el paràmetre <b>memory_limit</b> a 40 MB. Si no hi teniu accés podeu demanar al vostre administrador que ho faci ell.</li>
 <li>En alguns servidors PHP podeu crear un fitxer .htaccess dins del directori de Moodle amb aquesta línia:
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Tanmateix, en alguns servidors això farà que no funcioni <b>cap</b> pàgina PHP (es visualitzaran errors) en el qual cas hauríeu de suprimir el fitxer .htaccess.</p></li>
@@ -176,6 +182,8 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Tanmateix, si el vostre lloc fa servir NOMÉS llengües romàniques (iso-8859-1), podeu seguir utilitzant el MySQL 4.1.12 (o superior) instal·lat.';
 $string['mysql416required'] = 'MySQL 4.1.16 és la versió mínima requerida per Moodle 1.6 a fi de garantir la conversió de totes les dades a UTF-8 en el futur.';
 $string['mysqlextensionisnotpresentinphp'] = 'El PHP no s\'ha configurat correctament amb l\'extensió MySQL de manera que pugui comunicar-se amb MySQL. Reviseu el fitxer php.ini o recompileu el PHP.';
+$string['mysqli'] = 'MySQL Improved (mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'El PHP no ha estat configurat adequadament amb l\'extensió MySQLi de manera que pugui comunicar-se amb MySQL. Reviseu el fitxer php.ini o recompileu el PHP. L\'extensió MySQLi no està disponible per a PHP 4.';
 $string['name'] = 'Nom';
 $string['next'] = 'Següent';
 $string['oci8po'] = 'Oracle (oci8po)';
