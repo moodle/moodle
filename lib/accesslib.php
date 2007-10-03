@@ -3924,6 +3924,9 @@ function get_assignable_roles ($context, $field="name") {
             $roles[$r->id] = $r->{$field};
         }
     }
+    foreach ($roles as $roleid => $rolename) {
+        $roles[$roleid] = strip_tags(format_string($rolename, true));
+    }
     return $roles;
 }
 
