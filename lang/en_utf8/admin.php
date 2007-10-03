@@ -269,6 +269,7 @@ $string['download'] = 'Download';
 $string['editennotallowed'] = 'Language en_utf8 cannot be edited with this page - switch to local';
 $string['edithelpdocs'] = 'Edit help documents';
 $string['editingnoncorelangfile'] = 'You are trying to modify translation of an add-on module/plugin. You can save translation of 3rd party modules in your _local folder only. You may want to move the file with translation into the module\'s lang directory and/or send it to the maintainer of the add-on module.';
+$string['editlang'] = '<b>Edit</b>';
 $string['editorbackgroundcolor'] = 'Background color';
 $string['editordictionary'] = 'Editor dictionary';
 $string['editorfontfamily'] = 'Font family';
