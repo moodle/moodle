@@ -733,6 +733,10 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
                         }
                     }
                 } else { // course-level
+                    if(!array_key_exists($ra->instanceid, $courses)) {
+                        //this course is not in a list, probably a frontpage course
+                        continue;
+                    }
                     $courses[$ra->instanceid]->managers[] = $ra;
                 }
             }
