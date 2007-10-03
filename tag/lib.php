@@ -706,7 +706,7 @@ function search_tags($text, $ordered=true, $limitfrom='' , $limitnum='' ) {
             LIKE
                 '%{$text}%'
             GROUP BY
-                tg.id
+                tg.id, tg.name, tg.rawname
             ORDER BY
                 count
             DESC";
@@ -1116,7 +1116,7 @@ function popular_tags_count($nr_of_tags=20, $tag_type = 'default') {
         ON
             tg.id = ti.tagid
         GROUP BY
-            tagid
+            tg.id, tg.rawname, tg.name
         ORDER BY
             count
         DESC
