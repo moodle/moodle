@@ -530,7 +530,11 @@
     // START: Last column (3-month display)
 
     $defaultcourses = calendar_get_default_courses();
-    calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
+    //calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
+    
+    // when adding an event you can not be a guest, so I think it's reasonalbe to ignore defaultcourses
+    // MDL-10353
+    calendar_set_filters($courses, $groups, $users);
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
     
