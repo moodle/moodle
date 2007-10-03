@@ -422,7 +422,7 @@ function groups_get_course_group($course, $update=false) {
         $SESSION->activegroup[$course->id] = array(SEPARATEGROUPS=>array(), VISIBLEGROUPS=>array(), 'aag'=>array());
     }
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
     if (has_capability('moodle/site:accessallgroups', $context)) {
         $groupmode = 'aag';
     }
@@ -446,7 +446,6 @@ function groups_get_course_group($course, $update=false) {
     // set new active group if requested
     $changegroup = optional_param('group', -1, PARAM_INT);
     if ($update and $changegroup != -1) {
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
         if ($changegroup == 0) {
             // do not allow changing to all groups without accessallgroups capability
