@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 /// This script looks through all the module directories for cron.php files
 /// and runs them.  These files can contain cleanup functions, email functions
@@ -178,8 +178,7 @@
 
     mtrace('Starting grade job ...', '');
     grade_cron();
-    mtrace('Done ...', '');
-    
+    mtrace('Done ...');
 
 
 /// Run all core cron jobs, but not every time since they aren't too important.
@@ -195,64 +194,81 @@
         /// Unenrol users who haven't logged in for $CFG->longtimenosee
 
         if ($CFG->longtimenosee) { // value in days
-            $longtime = $timenow - ($CFG->longtimenosee * 3600 * 24);
-            if ($assigns = get_users_longtimenosee($longtime)) {
-                foreach ($assigns as $assign) {
-                    if ($context = get_context_instance(CONTEXT_COURSE, $assign->courseid)) {
-                        if (role_unassign(0, $assign->userid, 0, $context->id)) {
-                            mtrace("Deleted assignment for user $assign->userid from course $assign->courseid");
-                        }
+            $cuttime = $timenow - ($CFG->longtimenosee * 3600 * 24);
+            $rs = get_recordset_sql ("SELECT id, userid, courseid
+                                        FROM {$CFG->prefix}user_lastaccess
+                                       WHERE courseid != ".SITEID."
+                                         AND timeaccess < $cuttime ");
+            while ($assign = rs_fetch_next_record($rs)) {
+                if ($context = get_context_instance(CONTEXT_COURSE, $assign->courseid)) {
+                    if (role_unassign(0, $assign->userid, 0, $context->id)) {
+                        mtrace("Deleted assignment for user $assign->userid from course $assign->courseid");
                     }
                 }
             }
-        }
-    
-    
-        /// Delete users who haven't confirmed within required period
-
-        if (!empty($CFG->deleteunconfirmed)) {
-            $oneweek = $timenow - ($CFG->deleteunconfirmed * 3600);
-            if ($users = get_users_unconfirmed($oneweek)) {
-                foreach ($users as $user) {
-                    if (delete_records('user', 'id', $user->id)) {
-                        mtrace("Deleted unconfirmed user for ".fullname($user, true)." ($user->id)");
-                    }
-                }
-            }
+            rs_close($rs);
         }
         flush();
 
+
+        /// Delete users who haven't confirmed within required period
+
+        if (!empty($CFG->deleteunconfirmed)) {
+            $cuttime = $timenow - ($CFG->deleteunconfirmed * 3600);
+            $rs = get_recordset_sql ("SELECT id, firstname, lastname
+                                        FROM {$CFG->prefix}user
+                                       WHERE confirmed = 0
+                                         AND firstaccess > 0
+                                         AND firstaccess < $cuttime");
+            while ($user = rs_fetch_next_record($rs)) {
+                if (delete_records('user', 'id', $user->id)) {
+                    mtrace("Deleted unconfirmed user for ".fullname($user, true)." ($user->id)");
+                }
+            }
+            rs_close($rs);
+        }
+        flush();
 
 
         /// Delete users who haven't completed profile within required period
 
         if (!empty($CFG->deleteunconfirmed)) {
-            $oneweek = $timenow - ($CFG->deleteunconfirmed * 3600);
-            if ($users = get_users_not_fully_set_up($oneweek)) {
-                foreach ($users as $user) {
-                    if (delete_records('user', 'id', $user->id)) {
-                        mtrace("Deleted not fully setup user $user->username ($user->id)");
-                    }
+            $cuttime = $timenow - ($CFG->deleteunconfirmed * 3600);
+            $rs = get_recordset_sql ("SELECT id, username
+                                        FROM {$CFG->prefix}user
+                                       WHERE confirmed = 1
+                                         AND lastaccess > 0
+                                         AND lastaccess < $cuttime
+                                         AND deleted = 0
+                                         AND (lastname = '' OR firstname = '' OR email = '')");
+            while ($user = rs_fetch_next_record($rs)) {
+                if (delete_records('user', 'id', $user->id)) {
+                    mtrace("Deleted not fully setup user $user->username ($user->id)");
                 }
+            }
+            rs_close($rs);
+        }
+        flush();
+
+
+        /// Delete old logs to save space (this might need a timer to slow it down...)
+
+        if (!empty($CFG->loglifetime)) {  // value in days
+            $loglifetime = $timenow - ($CFG->loglifetime * 3600 * 24);
+            if (delete_records_select("log", "time < '$loglifetime'")) {
+                mtrace("Deleted old log records");
             }
         }
         flush();
 
 
-    
-        /// Delete old logs to save space (this might need a timer to slow it down...)
-    
-        if (!empty($CFG->loglifetime)) {  // value in days
-            $loglifetime = $timenow - ($CFG->loglifetime * 3600 * 24);
-            delete_records_select("log", "time < '$loglifetime'");
-        }
-        flush();
-
         /// Delete old cached texts
 
         if (!empty($CFG->cachetext)) {   // Defined in config.php
             $cachelifetime = time() - $CFG->cachetext - 60;  // Add an extra minute to allow for really heavy sites
-            delete_records_select('cache_text', "timemodified < '$cachelifetime'");
+            if (delete_records_select('cache_text', "timemodified < '$cachelifetime'")) {
+                mtrace("Deleted old cache_text records");
+            }
         }
         flush();
 
@@ -295,7 +311,7 @@
         
         // Accesslib stuff
         cleanup_contexts();
-        cleanup_dirty_contexts();
+        gc_cache_flags();
         // If you suspect that the context paths are somehow corrupt
         // replace the line below with: build_context_path(true); 
         build_context_path();
