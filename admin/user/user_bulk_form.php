@@ -97,8 +97,8 @@ class user_bulk_form extends moodleform {
                 $SESSION->bulk_susers = array_diff($SESSION->bulk_susers, $SESSION->bulk_ausers);
             }
         } else if(@$data->removesel) {
-            if(!empty($data->ausers)) {
-                $SESSION->bulk_susers = array_diff($SESSION->bulk_susers, array_values($data->ausers));
+            if(!empty($data->susers)) {
+                $SESSION->bulk_susers = array_diff($SESSION->bulk_susers, array_values($data->susers));
             }
         } else if(@$data->deletesel) {
             if(!empty($data->susers)) {
