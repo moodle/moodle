@@ -17,6 +17,8 @@ Changes:
 - 11. 2006: User capabilities are now loaded properly as of Moodle 1.7+
 - 03. 2007: Adapted authentication method to Moodle 1.8
 - 07. 2007: Fixed a but that caused problems with uppercase usernames
+- 10. 2007: Removed the requirement for email address, surname and given name
+            attributes on request of Markus Hagman
 
 Moodle Configuration with Dual login
 -------------------------------------------------------------------------------

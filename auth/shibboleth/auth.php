@@ -18,6 +18,7 @@
  * 2006-08-28  File created, code imported from lib.php
  * 2006-10-27  Upstream 1.7 changes merged in, added above credits from lib.php :-)
  * 2007-03-09  Fixed authentication but may need some other changes
+ * 2007-10-03  Removed requirement for email address, surname and given name on request of Markus Hagman
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -72,12 +73,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         global $CFG;
 
         // Check whether we have got all the essential attributes
-        if (
-               empty($_SERVER[$this->config->user_attribute])
-            || empty($_SERVER[$this->config->field_map_firstname])
-            || empty($_SERVER[$this->config->field_map_lastname])
-            || empty($_SERVER[$this->config->field_map_email])
-            ) {
+        if ( empty($_SERVER[$this->config->user_attribute]) ) {
             error(get_string( 'shib_not_all_attributes_error', 'auth' , "'".$this->config->user_attribute."' ('".$_SERVER[$this->config->user_attribute]."'), '".$this->config->field_map_firstname."' ('".$_SERVER[$this->config->field_map_firstname]."'), '".$this->config->field_map_lastname."' ('".$_SERVER[$this->config->field_map_lastname]."') and '".$this->config->field_map_email."' ('".$_SERVER[$this->config->field_map_email]."')"));
         }
 
