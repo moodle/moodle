@@ -412,7 +412,7 @@ function question_sort_options($pageurl, $sortorder){
 }
 
 function question_showbank_actions($pageurl, $cm){
-    global $CFG;
+    global $CFG, $COURSE;
     /// Now, check for commands on this page and modify variables as necessary
     if (isset($_REQUEST['move']) and confirm_sesskey()) { /// Move selected questions to new category
         $category = required_param('category', PARAM_SEQUENCE);
