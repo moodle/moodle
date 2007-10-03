@@ -38,6 +38,7 @@ if (!$course = get_record('course', 'id', $courseid)) {
 require_login($course->id);
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
+$systemcontext = get_context_instance(CONTEXT_SYSTEM);
 require_capability('gradereport/grader:view', $context);
 
 // If data submitted, then process and store.
@@ -79,7 +80,7 @@ $currenttab = 'preferences';
 include('tabs.php');
 
 // If USER has admin capability, print a link to the site config page for this report
-if (has_capability('moodle/site:config')) {
+if (has_capability('moodle/site:config', $systemcontext)) {
     echo '<div id="siteconfiglink"><a href="' . $CFG->wwwroot . '/admin/settings.php?section=gradereportgrader">';
     echo get_string('changesitedefaults', 'grades');
     echo "</a></div>\n";
