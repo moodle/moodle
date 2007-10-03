@@ -44,6 +44,7 @@ if ($cmid){
 } else {
     error('Need to pass courseid or cmid to this script.');
 }
+$contexts = new question_edit_contexts($thiscontext);
 
 
 if (!$questions = get_records_sql("SELECT q.*, c.contextid FROM {$CFG->prefix}question q, {$CFG->prefix}question_categories c  WHERE q.id IN ($ids) AND c.id = q.category")) {
