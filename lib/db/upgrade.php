@@ -2330,6 +2330,16 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2007100303) {
+
+    /// Changing nullability of field summary on table course to null
+        $table = new XMLDBTable('course');
+        $field = new XMLDBField('summary');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'idnumber');
+
+    /// Launch change of nullability for field summary
+        $result = $result && change_field_notnull($table, $field);
+    }
 
 
 /* NOTE: please keep this at the end of upgrade file for now ;-)

@@ -1862,41 +1862,30 @@ class admin_setting_special_frontpagedesc extends admin_setting {
     }
 
     function output_html() {
-
         global $CFG;
 
-        if ($this->get_setting() === NULL) {
-            $currentsetting = $this->defaultsetting;
-        } else {
-            $currentsetting = $this->get_setting();
-        }
-
         $CFG->adminusehtmleditor = can_use_html_editor();
-
-        $return = print_textarea($CFG->adminusehtmleditor, 15, 60, 0, 0, 's_' . $this->name, $currentsetting, 0, true);
+        $return = print_textarea($CFG->adminusehtmleditor, 15, 60, 0, 0, 's_' . $this->name, $this->get_setting(), 0, true);
 
         return format_admin_setting($this->name, $this->visiblename, $return, $this->description, false);
     }
 
     function get_setting() {
-
         $site = get_site();
-        return $site->{$this->name} != '' ? $site->{$this->name} : NULL;
+        return $site->{$this->name};
+    }
 
+    function get_defaultsetting() {
+        return NULL;
     }
 
     function write_setting($data) {
-
-        $data = addslashes(clean_param($data, PARAM_CLEANHTML));
-
-        $record = new stdClass();
-        $record->id = $this->id;
-        $temp = $this->name;
-        $record->$temp = $data;
-        $record->timemodified = time();
+        $record = new object();
+        $record->id            = $this->id;
+        $record->{$this->name} = addslashes($data);
+        $record->timemodified  = time();
 
         return(update_record('course', $record) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
-
     }
 
 }

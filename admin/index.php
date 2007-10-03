@@ -446,10 +446,10 @@
         // We are about to create the site "course"
         require_once($CFG->libdir.'/blocklib.php');
 
-        $newsite = new Object();
+        $newsite = new object();
         $newsite->fullname = "";
         $newsite->shortname = "";
-        $newsite->summary = "";
+        $newsite->summary = NULL;
         $newsite->newsitems = 3;
         $newsite->numsections = 0;
         $newsite->category = 0;
@@ -460,24 +460,26 @@
         $newsite->students = get_string("defaultcoursestudents");
         $newsite->timemodified = time();
 
-        if ($newid = insert_record('course', $newsite)) {
-            // Site created, add blocks for it
-            $page = page_create_object(PAGE_COURSE_VIEW, $newid);
-            blocks_repopulate_page($page); // Return value not checked because you can always edit later
-
-            $cat = new Object();
-            $cat->name = get_string('miscellaneous');
-            if ($cat->id = insert_record('course_categories', $cat)) {
-                $cat->context = get_context_instance(CONTEXT_COURSECAT, $cat->id);
-                 mark_context_dirty('/'.SYSCONTEXTID);
-
-                redirect('index.php');
-            } else {
-                error("Serious Error! Could not set up a default course category!");
-            }
-        } else {
+        if (!$newid = insert_record('course', $newsite)) {
             error("Serious Error! Could not set up the site!");
         }
+        // make sure course context exists
+        get_context_instance(CONTEXT_COURSE, $newid);
+
+        // Site created, add blocks for it
+        $page = page_create_object(PAGE_COURSE_VIEW, $newid);
+        blocks_repopulate_page($page); // Return value not checked because you can always edit later
+
+        $cat = new object();
+        $cat->name = get_string('miscellaneous');
+        if (!$catid = insert_record('course_categories', $cat)) {
+            error("Serious Error! Could not set up a default course category!");
+        }
+        // make sure category context exists
+        get_context_instance(CONTEXT_COURSECAT, $catid);
+        mark_context_dirty('/'.SYSCONTEXTID);
+
+        redirect('index.php');
     }
 
     // initialise default blocks on admin and site page if needed
