@@ -2078,13 +2078,14 @@ function get_course_section($section, $courseid) {
     $id = insert_record("course_sections", $cw);
     return get_record("course_sections", "id", $id);
 }
-
+/**
+ * Given a full mod object with section and course already defined, adds this module to that section.
+ *
+ * @param object $mod
+ * @param int $beforemod An existing ID which we will insert the new module before
+ * @return int The course_sections ID where the mod is inserted
+ */
 function add_mod_to_section($mod, $beforemod=NULL) {
-/// Given a full mod object with section and course already defined
-/// If $before is specified, then this is an existing ID which we
-/// will insert the new module before
-///
-/// Returns the course_sections ID where the mod is inserted
 
     if ($section = get_record("course_sections", "course", "$mod->course", "section", "$mod->section")) {
 

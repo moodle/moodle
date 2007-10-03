@@ -2852,6 +2852,7 @@ function truncate_userinfo($info) {
 function delete_user($user) {
     global $CFG;
     require_once($CFG->libdir.'/grouplib.php');
+    require_once($CFG->libdir.'/gradelib.php');
 
     begin_sql();
 

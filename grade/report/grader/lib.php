@@ -374,7 +374,7 @@ class grade_report_grader extends grade_report {
         $icons = array('eyecons' => 't/hide.gif',
                        'calculations' => 't/calc.gif',
                        'locks' => 't/lock.gif',
-                       'averages' => 't/sigma.gif',
+                       'averages' => 't/mean.gif',
                        'nooutcomes' => 't/outcomes.gif');
 
         $pref_name = 'grade_report_show' . $type;
