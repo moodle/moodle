@@ -465,7 +465,7 @@ function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
     } else if ($expectmultiple) {
         $limitfrom = 0;
         $limitnum  = 1;
-    } else if (debugging()) {
+    } else if (debugging('', DEBUG_DEVELOPER)) {
         // Debugging mode - don't use a limit of 1, but do change the SQL, because sometimes that
         // causes errors, and in non-debug mode you don't see the error message and it is
         // impossible to know what's wrong.
