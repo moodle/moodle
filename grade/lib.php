@@ -284,6 +284,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
 
 /// editing scripts - not real plugins
     if (has_capability('moodle/grade:manage', $context)
+      or has_capability('moodle/grade:manageletters', $context)
       or has_capability('moodle/course:managescales', $context)
       or has_capability('moodle/course:update', $context)) {
         $menu['edit']='--'.get_string('edit');
@@ -317,7 +318,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             $menu[$url] = get_string('outcomes', 'grades');
         }
 
-        if (has_capability('moodle/course:manage', $context)) {
+        if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:manageletters', $context)) {
             $url = 'edit/letter/index.php?id='.$courseid;
             if ($active_type == 'edit' and $active_plugin == 'letter' ) {
                 $active = $url;

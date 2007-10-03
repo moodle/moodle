@@ -50,6 +50,7 @@ $string['grade:hide'] = 'Hide/unhide grades or items';
 $string['grade:import'] = 'Import grades';
 $string['grade:lock'] = 'Lock grades or items';
 $string['grade:manage'] = 'Manage grade items';
+$string['grade:manageletters'] = 'Manage letter grades';
 $string['grade:manageoutcomes'] = 'Manage grade outcomes';
 $string['grade:override'] = 'Override grades';
 $string['grade:unlock'] = 'Unlock grades or items';
