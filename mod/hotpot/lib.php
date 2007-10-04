@@ -1675,7 +1675,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         $script = '<script src="'.$src.'" type="text/javascript"></script>'."\n";
         $this->html = preg_replace('|</head>|i', $script.'</head>', $this->html, 1);
     }
-    function insert_submission_form($attemptid, $startblock, $endblock, $keep_contents=false) {
+    function insert_submission_form($attemptid, $startblock, $endblock, $keep_contents=false, $targetframe='') {
         $form_name = 'store';
         $form_fields = ''
         .   '<input type="hidden" name="attemptid" value="'.$attemptid.'" />'
@@ -1685,7 +1685,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         .   '<input type="hidden" name="detail" value="" />'
         .   '<input type="hidden" name="status" value="" />'
         ;
-        $this->insert_form($startblock, $endblock, $form_name, $form_fields, $keep_contents);
+        $this->insert_form($startblock, $endblock, $form_name, $form_fields, $keep_contents, false, $targetframe);
     }
     function insert_giveup_form($attemptid, $startblock, $endblock, $keep_contents=false) {
         $form_name = ''; // no <form> tag will be generated
@@ -1698,15 +1698,20 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         ;
         $this->insert_form($startblock, $endblock, $form_name, $form_fields, $keep_contents, true);
     }
-    function insert_form($startblock, $endblock, $form_name, $form_fields, $keep_contents, $center=false) {
+    function insert_form($startblock, $endblock, $form_name, $form_fields, $keep_contents, $center=false, $targetframe='') {
         global $CFG;
         $search = '#('.preg_quote($startblock).')(.*?)('.preg_quote($endblock).')#s';
         $replace = $form_fields;
         if ($keep_contents) {
             $replace .= '\\2';
         }
+        if ($targetframe) {
+            $frametarget = ' target="'.$targetframe.'"';
+        } else {
+            $frametarget = $CFG->frametarget;
+        }
         if ($form_name) {
-            $replace = '<form action="'.$CFG->wwwroot.'/mod/hotpot/attempt.php" method="post" name="'.$form_name.'"'.$CFG->frametarget.'>'.$replace.'</form>';
+            $replace = '<form action="'.$CFG->wwwroot.'/mod/hotpot/attempt.php" method="post" name="'.$form_name.'"'.$frametarget.'>'.$replace.'</form>';
         }
         if ($center) {
             $replace = '<div style="margin-left:auto; margin-right:auto; text-align: center;">'.$replace.'</div>';

@@ -153,6 +153,7 @@
             $hp->adjust_media_urls();
             if (empty($frameset)) {
                 // HP6 v6
+                $targetframe = '';
                 switch ($hotpot->navigation) {
                     case HOTPOT_NAVIGATION_BUTTONS:
                         // do nothing (i.e. leave buttons as they are)
@@ -160,13 +161,16 @@
                     case HOTPOT_NAVIGATION_GIVEUP:
                         $hp->insert_giveup_form($attemptid, '<!-- BeginTopNavButtons -->', '<!-- EndTopNavButtons -->');
                         break;
+                    case HOTPOT_NAVIGATION_FRAME:
+                        $targetframe = $CFG->framename;
+                        break;
                     default:
                         $hp->remove_nav_buttons();
                 }
                 if (isset($hp->real_outputformat) && $hp->real_outputformat==HOTPOT_OUTPUTFORMAT_MOBILE) {
                     $hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->', true);
                 } else {
-                    $hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->');
+                    $hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->', false, $targetframe);
                 }
             } else {
                 // HP5 v5
