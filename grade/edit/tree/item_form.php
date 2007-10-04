@@ -79,43 +79,20 @@ class edit_item_form extends moodleform {
         $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoef', 'grades'),
                 false, true, false, get_string('aggregationcoefhelp', 'grades')));
 
-        // Determine default value for gradedisplaytype (site or course)
-        $course_gradedisplaytype = get_field('grade_items', 'display', 'courseid', $COURSE->id, 'itemtype', 'course');
-        $site_gradedisplaytype = $CFG->grade_report_gradedisplaytype;
-        $default_gradedisplaytype = $course_gradedisplaytype;
-
-        if ($course_gradedisplaytype == GRADE_REPORT_PREFERENCE_DEFAULT) {
-            $default_gradedisplaytype = $site_gradedisplaytype;
-        }
 
         $options = array(GRADE_DISPLAY_TYPE_DEFAULT => get_string('default', 'grades'),
                          GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
                          GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
                          GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'));
-        $label = get_string('gradedisplaytype', 'grades') . ' (' . get_string('default', 'grades') . ': ' . $options[$default_gradedisplaytype] . ')';
-        $mform->addElement('select', 'display', $label, $options);
+        $mform->addElement('select', 'display', null, $options);
         $mform->setHelpButton('display', array(false, get_string('gradedisplaytype', 'grades'),
                               false, true, false, get_string("configgradedisplaytype", 'grades')));
 
-        // Determine default value for decimalpoints (site or course)
-        $default_gradedecimals = get_field('grade_items', 'decimals', 'courseid', $COURSE->id, 'itemtype', 'course');
-        if (is_null($default_gradedecimals)) {
-            $default_gradedecimals = $CFG->grade_report_decimalpoints;
-        }
         $options = array(-1=>get_string('default', 'grades'), 0, 1, 2, 3, 4, 5);
-        $label = get_string('decimalpoints', 'grades') . ' (' . get_string('default', 'grades') . ': ' . $options[$default_gradedecimals] . ')';
-        $mform->addElement('select', 'decimals', $label, $options);
+        $mform->addElement('select', 'decimals', null, $options);
         $mform->setHelpButton('decimals', array(false, get_string('decimalpoints', 'grades'),
                               false, true, false, get_string("configdecimalpoints", 'grades')));
         $mform->setDefault('decimals', GRADE_REPORT_PREFERENCE_DEFAULT);
-
-        // Disable decimals if displaytype is not REAL or PERCENTAGE
-        $mform->disabledIf('decimals', 'display', "eq", GRADE_DISPLAY_TYPE_LETTER);
-
-        // Disable decimals if displaytype is DEFAULT and course or site displaytype is LETTER
-        if ($default_gradedisplaytype == GRADE_DISPLAY_TYPE_LETTER) {
-            $mform->disabledIf('decimals', 'display', "eq", GRADE_DISPLAY_TYPE_DEFAULT);
-        }
 
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!
@@ -163,6 +140,59 @@ class edit_item_form extends moodleform {
             $grade_item = grade_item::fetch(array('id'=>$id));
 
             $mform->setDefault('display', $grade_item->display);
+
+            // Determine default value for gradedisplaytype and decimalpoints (site or course)
+            $course_gradedisplaytype = get_field('grade_items', 'display', 'courseid', $COURSE->id, 'itemtype', 'course');
+            $site_gradedisplaytype = $CFG->grade_report_gradedisplaytype;
+            $course_gradedecimals = get_field('grade_items', 'decimals', 'courseid', $COURSE->id, 'itemtype', 'course');
+            $site_gradedecimals = $CFG->grade_report_decimalpoints;
+    
+            // Show site settings if the item is the course item
+            if ($grade_item->is_course_item()) {
+                $default_gradedisplaytype = $site_gradedisplaytype;
+                $default_gradedecimals = $site_gradedecimals;
+            } else { // Otherwise show course item settings
+                $default_gradedisplaytype = $course_gradedisplaytype;
+                $default_gradedecimals = $course_gradedecimals;
+
+                // If course item settings are set to default, show site defaults
+                if ($default_gradedisplaytype == GRADE_DISPLAY_TYPE_DEFAULT) {
+                    $default_gradedisplaytype = $site_gradedisplaytype;
+                } 
+                if (is_null($default_gradedecimals)) {
+                    $default_gradedecimals = $site_gradedecimals;
+                } 
+            } 
+            
+            $displaytypeEl =& $mform->getElement('display');
+            $options = $displaytypeEl->_options;
+            $option_value = 0;
+            foreach ($options as $key => $option) {
+                if ($option['attr']['value'] == $default_gradedisplaytype) {
+                    $option_value = $option['text'];
+                    break;
+                }
+            }
+            $displaytypeEl->setLabel(get_string('gradedisplaytype', 'grades') . ' (' . get_string('default', 'grades') . ': ' . $option_value . ')'); 
+            
+            $decimalsEl =& $mform->getElement('decimals');
+            $options = $decimalsEl->_options;
+            $option_value = 0;
+            foreach ($options as $key => $option) {
+                if ($option['attr']['value'] == $default_gradedecimals) {
+                    $option_value = $option['text'];
+                    break;
+                }
+            }
+            $decimalsEl->setLabel(get_string('decimalpoints', 'grades') . ' (' . get_string('default', 'grades') . ': ' . $option_value . ')'); 
+
+            // Disable decimals if displaytype is not REAL or PERCENTAGE
+            $mform->disabledIf('decimals', 'display', "eq", GRADE_DISPLAY_TYPE_LETTER);
+
+            // Disable decimals if displaytype is DEFAULT and course or site displaytype is LETTER
+            if ($default_gradedisplaytype == GRADE_DISPLAY_TYPE_LETTER) {
+                $mform->disabledIf('decimals', 'display', "eq", GRADE_DISPLAY_TYPE_DEFAULT);
+            }
 
             if (!$grade_item->is_raw_used()) {
                 $mform->removeElement('plusfactor');

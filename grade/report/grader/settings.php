@@ -79,13 +79,15 @@ $settings->add(new admin_setting_configcheckbox('grade_report_shownumberofgrades
 
 $settings->add(new admin_setting_configselect('grade_report_averagesdisplaytype', get_string('averagesdisplaytype', 'grades'),
                                           get_string('configaveragesdisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
-                                          array(GRADE_DISPLAY_TYPE_REAL => $strreal,
+                                          array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
+                                                GRADE_DISPLAY_TYPE_REAL => $strreal,
                                                 GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
                                                 GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_rangesdisplaytype', get_string('rangesdisplaytype', 'grades'),
                                           get_string('configrangesdisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
-                                          array(GRADE_DISPLAY_TYPE_REAL => $strreal,
+                                          array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
+                                                GRADE_DISPLAY_TYPE_REAL => $strreal,
                                                 GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
                                                 GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
