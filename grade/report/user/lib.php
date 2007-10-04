@@ -131,6 +131,7 @@ class grade_report_user extends grade_report {
 
 
                 /// prints the grade
+                $displaytype = $grade_item->get_displaytype();
 
                 if ($grade_grade->is_excluded()) {
                     $excluded = get_string('excluded', 'grades').' ';
@@ -138,36 +139,20 @@ class grade_report_user extends grade_report {
                     $excluded = '';
                 }
 
-                if ($grade_grade->is_hidden() && !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $grade_item->courseid))) {
-
-                    if ((int) $grade_grade->finalgrade < 1) {
-                        $data[] = '-';
-                    } else {
-                        $data[] = get_string('gradedon', 'grades', userdate($grade_grade->timemodified));
-                    }
-
+                if ((int) $grade_grade->finalgrade < 1) {
+                    $data[] = '-';
+                } elseif ($grade_grade->is_hidden() && !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $grade_item->courseid))) { 
+                    $data[] = get_string('gradedon', 'grades', userdate($grade_grade->timemodified)); 
+                } elseif ($grade_item->scaleid) {
+                    if ($scale = get_record('scale', 'id', $grade_item->scaleid)) {
+                        $scales = explode(",", $scale->scale);
+                        // reindex because scale is off 1
+                        $data[] = $excluded.$scales[$grade_grade->finalgrade-1];
+                    } 
                 } else {
-                    if ($grade_item->scaleid) {
-                        // using scales
-                        if ($scale = get_record('scale', 'id', $grade_item->scaleid)) {
-                            $scales = explode(",", $scale->scale);
-                            // reindex because scale is off 1
-                            // invalid grade if gradeval < 1
-                            if ((int) $grade_grade->finalgrade < 1) {
-                                $data[] = $excluded.'-';
-                            } else {
-                                $data[] = $excluded.$scales[$grade_grade->finalgrade-1];
-                            }
-                        }
-                    } else {
-                        // normal grade, or text, just display
-                        if ((int) $grade_grade->finalgrade < 1) {
-                            $data[] = $excluded.'-';
-                        } else {
-                            $data[] = $excluded.format_float($grade_grade->finalgrade, $decimalpoints);
-                        }
-                    }
-                }
+                    $data[] = $excluded . grade_format_gradevalue($grade_grade->finalgrade, $grade_item, true, $displaytype, $decimalpoints);
+                } 
+
                 /// prints percentage
 
                 if ($grade_grade->is_hidden() && !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $grade_item->courseid))) {
