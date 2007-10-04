@@ -40,6 +40,7 @@ if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
     } else {
         $item->cmid = 0;
     }
+    $item = new grade_item($item);
 
 } else {
     $item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'));
