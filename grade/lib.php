@@ -942,7 +942,7 @@ class grade_tree {
             return;
         }
         $first_item = reset($element['children']);
-        if ($first_item['type'] == 'categoryitem') {
+        if ($first_item['type'] == 'categoryitem' or $first_item['type'] == 'courseitem') {
             // the category item might have been already removed
             $order = key($element['children']);
             unset($element['children'][$order]);
