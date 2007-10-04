@@ -256,7 +256,7 @@ class grade_report {
     function get_grade_letters() {
         global $COURSE;
         $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-        $letters = grade_get_letters($context);
+        return grade_get_letters($context);
     }
 
     /**
