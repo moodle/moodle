@@ -28,6 +28,8 @@ if ($mform->is_cancelled() || empty($CFG->enableoutcomes)) {
 }
 
 if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
+    $item = new grade_item($item, false);
+
     // redirect if outcomeid present
     if (empty($item->outcomeid)) {
         $url = $CFG->wwwroot.'/grade/edit/tree/item.php?id='.$id.'&amp;courseid='.$courseid;
@@ -40,7 +42,6 @@ if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
     } else {
         $item->cmid = 0;
     }
-    $item = new grade_item($item);
 
 } else {
     $item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'));
