@@ -859,9 +859,11 @@ class grade_report_grader extends grade_report {
             $avghtml = '<tr class="' . $avgcssclass . ' r'.$this->rowcount++.'"><th class="header c0" scope="row">'.$straverage.'</th>';
 
             $columncount=1;
+
             foreach ($this->items as $item) {
                 // If the user shouldn't see this grade_item, hide the average as well
-                if ($item->is_hidden() && !$canviewhidden) {
+                // MDL-11576 If any of the grades are hidden and the user doesn't have permission to view them, hide average as well
+                if (($item->is_hidden() || $item->has_hidden_grades()) && !$canviewhidden) {
                     $avghtml .= '<td class="cell c' . $columncount++.'"> - </td>';
                     continue;
                 }

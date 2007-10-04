@@ -564,6 +564,14 @@ class grade_item extends grade_object {
             }
         }
     }
+    
+    /**
+     * Returns the number of grades that are hidden.
+     * @param return int Number of hidden grades
+     */
+    function has_hidden_grades() {
+        return count_records('grade_grades', 'itemid', $this->id, 'hidden', 1);
+    }
 
     /**
      * Mark regrading as finished successfully.
