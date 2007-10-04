@@ -1732,6 +1732,7 @@ function xmldb_main_upgrade($oldversion=0) {
                         $itag->rawname      = $raw_normalized;
                         $itag->userid       = $oldtag->userid;
                         $itag->timemodified = time();
+                        $itag->descriptionformat = 0; // default format
                         if ($oldtag->type == 'official') {
                             $itag->tagtype  = 'official';
                         } else {
