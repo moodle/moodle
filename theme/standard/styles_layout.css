@@ -2131,27 +2131,26 @@ body#doc-contents ul {
 }
 
 .grade-report-grader #overDiv table {
-  margin: 0;	
-  
+  margin: 0;  
 }
 
 .grade-report-grader #overDiv table td.feedback {
-	border: 0px;
+  border: 0px;
 }
 .grade-report-grader #overDiv .feedback {
-	background-color: #AABBFF;	
-	color: #000000;
-	font-family: Verdana;
-	font-size: 70%;
-	font-weight: normal;	
+  background-color: #AABBFF;
+  color: #000000;
+  font-family: Verdana;
+  font-size: 70%;
+  font-weight: normal;  
 }
 
 .grade-report-grader #overDiv .caption {
-	background-color: #5566CC;
-	color: #CCCCFF;
-	font-family: Arial;
-	font-size: 70%;
-	font-weight: bold;	
+  background-color: #5566CC;
+  color: #CCCCFF;
+  font-family: Arial;
+  font-size: 70%;
+  font-weight: bold;
 }
 
 .grade-report-grader div.submit {
@@ -2238,19 +2237,22 @@ body#doc-contents ul {
   border: #000000 1px dashed;
 }
 
+.grade-report-user table#user-grade td.cell {
+  padding-right: 10px;
+}
+
 .popupfeedback {
   background-color: #FFFFFF;
   border: #000000 1px dashed;
 }
 
 .gradebook_feedback {
-	display: block;	
-	color: yellow;
-	
+  display: block;
+  color: yellow;
 }
 
 .gradebook_feedback_caption {
-	font-size: 2em;
+  font-size: 2em;
 }
 /* scales edit */
 
