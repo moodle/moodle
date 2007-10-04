@@ -163,7 +163,7 @@
                         break;
                     case HOTPOT_NAVIGATION_FRAME:
                         $targetframe = $CFG->framename;
-                        break;
+                        // drop through to remove nav buttons too
                     default:
                         $hp->remove_nav_buttons();
                 }
