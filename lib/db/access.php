@@ -1002,6 +1002,9 @@ $moodle_capabilities = array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE, // and CONTEXT_PERSONAL too
         'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
         ),
         'clonepermissionsfrom' => 'moodle/course:viewcoursegrades'
     ),
