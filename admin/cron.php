@@ -138,6 +138,8 @@
                             mtrace('Error: could not update timestamp for '.$block->name);
                         }
                     }
+                /// Reset possible changes by blocks to time_limit. MDL-11597
+                    @set_time_limit(0);
                     mtrace('done.');
                 }
             }
