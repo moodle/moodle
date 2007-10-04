@@ -941,10 +941,13 @@ class grade_tree {
         if (count($element['children']) < 2) {
             return;
         }
-        $category_item = reset($element['children']);
-        $order = key($element['children']);
-        unset($element['children'][$order]);
-        $element['children'][$order] =& $category_item;
+        $first_item = reset($element['children']);
+        if ($first_item['type'] == 'categoryitem') {
+            // the category item might have been already removed
+            $order = key($element['children']);
+            unset($element['children'][$order]);
+            $element['children'][$order] =& $first_item;
+        }
         foreach ($element['children'] as $sortorder => $child) {
             grade_tree::category_grade_last($element['children'][$sortorder]);
         }
