@@ -725,22 +725,14 @@ class grade_report_grader extends grade_report {
                                       .$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '" />';
                     }
 
-                } else {
-                    // Percentage format if specified by user (check each item for a set preference)
+                } else { // Not editing
                     $gradedisplaytype = $item->get_displaytype();
 
                     $percentsign = '';
                     $grademin = $item->grademin;
                     $grademax = $item->grademax;
 
-                    if ($gradedisplaytype == GRADE_DISPLAY_TYPE_PERCENTAGE) {
-                        if (!is_null($gradeval)) {
-                            $gradeval = grade_to_percentage($gradeval, $grademin, $grademax);
-                        }
-                        $percentsign = '%';
-                    }
-
-                    // If feedback present, surround grade with feedback tooltip
+                    // If feedback present, surround grade with feedback tooltip: Open span here
                     if (!empty($grade->feedback)) {
                         $overlib = '';
                         if ($grade->feedbackformat == 1) {
@@ -755,13 +747,7 @@ class grade_report_grader extends grade_report {
 
                     if ($item->needsupdate) {
                         $studentshtml .= '<span class="gradingerror">'.get_string('error').'</span>';
-
-                    } else if ($gradedisplaytype == GRADE_DISPLAY_TYPE_LETTER) {
-                        if (!is_null($gradeval)) {
-                           $studentshtml .= grade_format_gradevalue($gradeval, $item, false, GRADE_DISPLAY_TYPE_LETTER, null);
-                        }
-                    } else if ($item->scaleid && !empty($scales_array[$item->scaleid])
-                                && $gradedisplaytype == GRADE_DISPLAY_TYPE_REAL) {
+                    } elseif ($item->scaleid && !empty($scales_array[$item->scaleid])) {
                         $scale = $scales_array[$item->scaleid];
                         $scales = explode(",", $scale->scale);
 
@@ -775,9 +761,11 @@ class grade_report_grader extends grade_report {
                         if (is_null($gradeval)) {
                             $studentshtml .= '-';
                         } else {
-                            $studentshtml .=  format_float($gradeval, $decimalpoints). $percentsign;
+                           $studentshtml .= grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null);
                         }
                     }
+
+                    // Close feedback span
                     if (!empty($grade->feedback)) {
                         $studentshtml .= '</span>';
                     }
