@@ -707,6 +707,8 @@ function quiz_get_renderoptions($reviewoptions, $state) {
  *          correct_responses, solutions and general feedback
  */
 function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
+    
+    global $CFG;
 
     $options = new stdClass;
     $options->readonly = true;
@@ -717,7 +719,15 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
         // The teacher should be shown everything except during preview when the teachers
         // wants to see just what the students see
         $options->responses = true;
-        $options->scores = true;
+        
+        // MDL-11580, hide quiz report for teachers when they have no viewhidden capability
+        // need to check for other calls when context is not supplied       
+        if (empty($CFG->openuniversityhacks) || ($context && has_capability('moodle/grade:viewhidden', $context))) {
+            $options->scores = true;
+        } else {
+            $options->scores = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SCORES) ? 1 : 0; 
+        }
+        
         $options->feedback = true;
         $options->correct_responses = true;
         $options->solutions = false;

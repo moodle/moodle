@@ -30,6 +30,12 @@ class quiz_report extends quiz_default_report {
             $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="overview");
         }
 
+        // MDL-11580, make a fake attempt object
+        // so that we can check whehter this user can view scores or not
+        $attempt->preview = false;
+        $attempt->timefinish = $quiz->timeopen;
+        $attemptoptions = quiz_get_reviewoptions($quiz, $attempt, $context);
+
         // Deal with actions
         $action = optional_param('action', '', PARAM_ACTION);
 
@@ -443,10 +449,11 @@ class quiz_report extends quiz_default_report {
                     }
 
                     if ($quiz->grade and $quiz->sumgrades) {
+                        // MDL-11580, hide grades for OU teachers with no view hidden capability in open quiz
                         if (!$download) {
-                            $row[] = $attempt->sumgrades === NULL ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints).'</a>';
+                            $row[] = ($attempt->sumgrades === NULL || !$attemptoptions->scores)? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints).'</a>';
                         } else {
-                            $row[] = $attempt->sumgrades === NULL ? '-' : round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints);
+                            $row[] = ($attempt->sumgrades === NULL || !$attemptoptions->scores) ? '-' : round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints);
                         }
                     }
                     if($detailedmarks) {
@@ -456,7 +463,8 @@ class quiz_report extends quiz_default_report {
                             }
                         } else {
                             foreach($questionids as $questionid) {
-                                if ($gradedstateid = get_field('question_sessions', 'newgraded', 'attemptid', $attempt->attemptuniqueid, 'questionid', $questionid)) {
+                                // MDL-11580
+                                if (!$attemptoptions->scores && ($gradedstateid = get_field('question_sessions', 'newgraded', 'attemptid', $attempt->attemptuniqueid, 'questionid', $questionid))) {
                                     $grade = round(get_field('question_states', 'grade', 'id', $gradedstateid), $quiz->decimalpoints);
                                 } else {
                                     $grade = '--';
@@ -464,7 +472,7 @@ class quiz_report extends quiz_default_report {
                                 if (!$download) {
                                     $row[] = link_to_popup_window ('/mod/quiz/reviewquestion.php?state='.$gradedstateid.'&amp;number='.$questions[$questionid]->number, 'reviewquestion', $grade, 450, 650, $strreviewquestion, 'none', true);
                                 } else {
-                                $row[] = $grade;
+                                    $row[] = $grade;
                                 }
                             }
                         }
