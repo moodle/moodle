@@ -111,6 +111,8 @@
                         mtrace("... used " . ($PERF->dbqueries - $pre_dbqueries) . " dbqueries");
                         mtrace("... used " . (microtime(1) - $pre_time) . " seconds");
                     }
+                /// Reset possible changes by modules to time_limit. MDL-11597
+                    @set_time_limit(0);
                     mtrace("done.");
                 }
             }
@@ -135,6 +137,8 @@
                             mtrace('Error: could not update timestamp for '.$block->name);
                         }
                     }
+                /// Reset possible changes by blocks to time_limit. MDL-11597
+                    @set_time_limit(0);
                     mtrace('done.');
                 }
             }
