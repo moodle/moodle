@@ -715,19 +715,25 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
     // Provide the links to the question review and comment script
     $options->questionreviewlink = '/mod/quiz/reviewquestion.php';
 
-    if ($context && has_capability('mod/quiz:viewreports', $context) and !$attempt->preview) {
-        // The teacher should be shown everything except during preview when the teachers
-        // wants to see just what the students see
+    // Work out the state of the attempt.
+    if (((time() - $attempt->timefinish) < 120) || $attempt->timefinish==0) {
+        $quiz_state_mask = QUIZ_REVIEW_IMMEDIATELY;
+        $options->quizstate = QUIZ_STATE_IMMEDIATELY;
+    } else if (!$quiz->timeclose or time() < $quiz->timeclose) {
+        $quiz_state_mask = QUIZ_REVIEW_OPEN;
+        $options->quizstate = QUIZ_STATE_OPEN;
+    } else {
+        $quiz_state_mask = QUIZ_REVIEW_CLOSED;
+        $options->quizstate = QUIZ_STATE_CLOSED;
+    }
+
+    if (!is_null($context) && has_capability('mod/quiz:viewreports', $context) and !$attempt->preview) {
+        // The teacher should be shown everything except:
+        //  - during preview when teachers want to see what students see
+        //  - hidden scores are controlled by the moodle/grade:viewhidden capability
         $options->responses = true;
-        
-        // MDL-11580, hide quiz report for teachers when they have no viewhidden capability
-        // need to check for other calls when context is not supplied       
-        if (empty($CFG->openuniversityhacks) || ($context && has_capability('moodle/grade:viewhidden', $context))) {
-            $options->scores = true;
-        } else {
-            $options->scores = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SCORES) ? 1 : 0; 
-        }
-        
+        $options->scores = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SCORES) ||
+                has_capability('moodle/grade:viewhidden', $context); 
         $options->feedback = true;
         $options->correct_responses = true;
         $options->solutions = false;
@@ -740,16 +746,6 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
             $options->questioncommentlink = '/mod/quiz/comment.php';
         }
     } else {
-        if (((time() - $attempt->timefinish) < 120) || $attempt->timefinish==0) {
-            $quiz_state_mask = QUIZ_REVIEW_IMMEDIATELY;
-            $options->quizstate = QUIZ_STATE_IMMEDIATELY;
-        } else if (!$quiz->timeclose or time() < $quiz->timeclose) {
-            $quiz_state_mask = QUIZ_REVIEW_OPEN;
-            $options->quizstate = QUIZ_STATE_OPEN;
-        } else {
-            $quiz_state_mask = QUIZ_REVIEW_CLOSED;
-            $options->quizstate = QUIZ_STATE_CLOSED;
-        }
         $options->responses = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
         $options->scores = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SCORES) ? 1 : 0;
         $options->feedback = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
