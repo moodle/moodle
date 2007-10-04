@@ -47,7 +47,7 @@ require_once($CFG->libdir . '/grade/grade_outcome.php');
  * or key means do not change existing.
  *
  * Only following grade item properties can be changed 'itemname', 'idnumber', 'gradetype', 'grademax',
- * 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted'.
+ * 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted' and 'hidden'.
  *
  * Manual, course or category items can not be updated by this function.
 
@@ -64,7 +64,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
     global $USER;
 
     // only following grade_item properties can be changed in this function
-    $allowed = array('itemname', 'idnumber', 'gradetype', 'grademax', 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted');
+    $allowed = array('itemname', 'idnumber', 'gradetype', 'grademax', 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted', 'hidden');
 
     // grade item identification
     $params = compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber');

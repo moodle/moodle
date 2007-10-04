@@ -345,6 +345,30 @@ function quiz_grade_item_update($quiz) {
         $params['gradetype'] = GRADE_TYPE_NONE;
     }
 
+/* description by TJ:
+1/ If the quiz is set to not show scores while the quiz is still open, and is set to show scores after
+   the quiz is closed, then create the grade_item with a show-after date that is the quiz close date.
+2/ If the quiz is set to not show scores at either of those times, create the grade_item as hidden.
+3/ If the quiz is set to show scores, create the grade_item visible.
+*/
+    if (!($quiz->review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_CLOSED)
+    and !($quiz->review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_OPEN)) {
+        $params['hidden'] = 1;
+
+    } else if ( ($quiz->review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_CLOSED)
+           and !($quiz->review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_OPEN)) {
+        if ($quiz->timeclose) {
+            $params['hidden'] = $quiz->timeclose;
+        } else {
+            $params['hidden'] = 1;
+        }
+
+    } else {
+        // a) both open and closed enabled
+        // b) open enabled, closed disabled - we can not "hide after", grades are kept visible even after closing
+        $params['hidden'] = 0;
+    }
+
     return grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, NULL, $params);
 }
 
