@@ -49,7 +49,7 @@
                 break;
             }
         }
-        redirect('view.php', get_string('changessaved'), 1);
+        redirect('view.php?course='.$course->id, get_string('changessaved'), 1);
         exit;
     }
 
