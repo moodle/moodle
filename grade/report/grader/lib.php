@@ -863,7 +863,7 @@ class grade_report_grader extends grade_report {
             foreach ($this->items as $item) {
                 // If the user shouldn't see this grade_item, hide the average as well
                 // MDL-11576 If any of the grades are hidden and the user doesn't have permission to view them, hide average as well
-                if (($item->is_hidden() || $item->has_hidden_grades()) && !$canviewhidden) {
+                if (($item->is_hidden() || $item->has_hidden_grades($groupsql, $groupwheresql)) && !$canviewhidden) {
                     $avghtml .= '<td class="cell c' . $columncount++.'"> - </td>';
                     continue;
                 }
