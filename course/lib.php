@@ -512,7 +512,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         if ($course->id == SITEID) {
             echo "<td class=\"cell c0\">\n";
             if (empty($log->course)) {
-                echo format_string($log->info)."\n";
+                echo get_string('site') . "\n";
             } else {
                 echo "    <a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">". format_string($courses[$log->course])."</a>\n";
             }
