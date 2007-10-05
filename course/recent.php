@@ -164,11 +164,16 @@
                                               WHERE course = '$course->id' $hiddenfilter
                                                 AND m.id = cm.module $activityfilter
                                                 AND cm.id = '$sectionmod'");
+
+                if (!$coursemod) {
+                    continue;
+                }
+
                 $groupmode = groups_get_activity_groupmode($coursemod);
                 switch ($groupmode) {
                     case SEPARATEGROUPS :
                         $groupid = 0;
-                        if ($mygroups = groups_get_all_groups($course->id, $USER->id, $coursemode->groupingid)) {
+                        if ($mygroups = groups_get_all_groups($course->id, $USER->id, $coursemod->groupingid)) {
                             if (array_key_exists($selectedgroup, $mygroups)) {
                                 $groupid = $selectedgroup;
                             }
