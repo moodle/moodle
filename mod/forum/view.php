@@ -73,7 +73,6 @@
     print_header_simple(format_string($forum->name), "",
                  $navigation, "", "", true, $buttontext, navmenu($course, $cm));
 
-
 /// Some capability checks.
     if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
         notice(get_string("activityiscurrentlyhidden"));

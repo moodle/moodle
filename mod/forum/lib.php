@@ -1840,7 +1840,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     //TODO: there must be a nice way to do this that keeps both postgres and mysql 3.2x happy but I can't find it right now.
     if ($CFG->dbfamily == 'postgres' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'oracle') {
         return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
-                                   u.firstname, u.lastname, u.email, u.picture $umfields
+                                   u.firstname, u.lastname, u.email, u.picture, u.imagealt $umfields
                               FROM {$CFG->prefix}forum_discussions d
                               JOIN {$CFG->prefix}forum_posts p ON p.discussion = d.id
                               JOIN {$CFG->prefix}user u ON p.userid = u.id
@@ -1851,7 +1851,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                           ORDER BY $forumsort", $limitfrom, $limitnum);
     } else { // MySQL query. TODO: Check if this is needed (MySQL 4.1 should work with the above query)
         return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
-                                   u.firstname, u.lastname, u.email, u.picture $umfields
+                                   u.firstname, u.lastname, u.email, u.picture, u.imagealt $umfields
                               FROM ({$CFG->prefix}forum_posts p,
                                    {$CFG->prefix}user u,
                                    {$CFG->prefix}forum_discussions d)
@@ -2433,19 +2433,19 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
  * @param boolean $canviewparticipants True if user has the viewparticipants permission for this course
  */
 function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring="",
-                                        $cantrack=true, $forumtracked=true, $canviewparticipants=true) {
+                                        $cantrack=true, $forumtracked=true, $canviewparticipants=true, $modcontext=NULL) {
 
     global $USER, $CFG;
 
     static $rowcount;
     static $strmarkalldread;
 
-
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-        error('Course Module ID was incorrect');
+    if (empty($modcontext)) {
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+            error('Course Module ID was incorrect');
+        }
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-
 
     if (!isset($rowcount)) {
         $rowcount = 0;
@@ -2465,8 +2465,15 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     echo "</td>\n";
 
     // Picture
+    $postuser = new object;
+    $postuser->id = $post->userid;
+    $postuser->firstname = $post->firstname;
+    $postuser->lastname = $post->lastname;
+    $postuser->imagealt = $post->imagealt;
+    $postuser->picture = $post->picture;
+
     echo '<td class="picture">';
-    print_user_picture($post->userid, $forum->course, $post->picture);
+    print_user_picture($postuser, $forum->course);
     echo "</td>\n";
 
     // User name
@@ -3614,11 +3621,13 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL) {
  *
  */
 function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $displayformat='plain', $sort='',
-                                        $currentgroup=-1, $groupmode=-1, $page=-1) {
+                                        $currentgroup=-1, $groupmode=-1, $page=-1, $cm=NULL) {
     global $CFG, $USER;
 
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-        error('Course Module ID was incorrect');
+    if (!$cm) {
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+            error('Course Module ID was incorrect');
+        }
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -3803,7 +3812,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                     $group = -1;
                 }
                 forum_print_discussion_header($discussion, $forum, $group, $strdatestring, $cantrack, $forumtracked,
-                    $canviewparticipants);
+                    $canviewparticipants, $context);
             break;
             default:
                 if ($canreply or $discussion->replies) {
