@@ -1566,7 +1566,7 @@ function get_course_mods($courseid) {
     return get_records_sql("SELECT cm.*, m.name as modname
                             FROM {$CFG->prefix}modules m,
                                  {$CFG->prefix}course_modules cm
-                            WHERE cm.course = '$courseid'
+                            WHERE cm.course = ".intval($courseid)."
                             AND cm.module = m.id ");
 }
 
@@ -1583,14 +1583,14 @@ function get_coursemodule_from_id($modulename, $cmid, $courseid=0) {
 
     global $CFG;
 
-    $courseselect = ($courseid) ? "cm.course = '$courseid' AND " : '';
+    $courseselect = ($courseid) ? 'cm.course = '.intval($courseid).' AND ' : '';
 
     return get_record_sql("SELECT cm.*, m.name, md.name as modname
                            FROM {$CFG->prefix}course_modules cm,
                                 {$CFG->prefix}modules md,
                                 {$CFG->prefix}$modulename m
                            WHERE $courseselect
-                                 cm.id = '$cmid' AND
+                                 cm.id = ".intval($cmid)." AND
                                  cm.instance = m.id AND
                                  md.name = '$modulename' AND
                                  md.id = cm.module");
@@ -1608,7 +1608,7 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
 
     global $CFG;
 
-    $courseselect = ($courseid) ? "cm.course = '$courseid' AND " : '';
+    $courseselect = ($courseid) ? 'cm.course = '.intval($courseid).' AND ' : '';
 
     return get_record_sql("SELECT cm.*, m.name, md.name as modname
                            FROM {$CFG->prefix}course_modules cm,
@@ -1618,7 +1618,7 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
                                  cm.instance = m.id AND
                                  md.name = '$modulename' AND
                                  md.id = cm.module AND
-                                 m.id = '$instance'");
+                                 m.id = ".intval($instance));
 
 }
 
