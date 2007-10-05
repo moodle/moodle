@@ -2311,7 +2311,10 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
     //make sure system context exists
     $syscontext = get_system_context(false);
 
-    if (empty($contextlevel) or $contextlevel == CONTEXT_COURSECAT) {
+    if (empty($contextlevel) or $contextlevel == CONTEXT_COURSECAT
+                             or $contextlevel == CONTEXT_COURSE
+                             or $contextlevel == CONTEXT_MODULE
+                             or $contextlevel == CONTEXT_BLOCK) {
         $sql = "INSERT INTO {$CFG->prefix}context (contextlevel, instanceid)
                 SELECT ".CONTEXT_COURSECAT.", cc.id
                   FROM  {$CFG->prefix}course_categories cc
@@ -2322,8 +2325,9 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
 
     }
 
-    if (empty($contextlevel) or $contextlevel == CONTEXT_COURSE) {
-        create_contexts(CONTEXT_COURSECAT, false);
+    if (empty($contextlevel) or $contextlevel == CONTEXT_COURSE
+                             or $contextlevel == CONTEXT_MODULE
+                             or $contextlevel == CONTEXT_BLOCK) {
         $sql = "INSERT INTO {$CFG->prefix}context (contextlevel, instanceid)
                 SELECT ".CONTEXT_COURSE.", c.id
                   FROM  {$CFG->prefix}course c
@@ -2335,7 +2339,6 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
     }
 
     if (empty($contextlevel) or $contextlevel == CONTEXT_MODULE) {
-        create_contexts(CONTEXT_COURSE, false);
         $sql = "INSERT INTO {$CFG->prefix}context (contextlevel, instanceid)
                 SELECT ".CONTEXT_MODULE.", cm.id
                   FROM  {$CFG->prefix}course_modules cm
@@ -2346,7 +2349,6 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
     }
 
     if (empty($contextlevel) or $contextlevel == CONTEXT_BLOCK) {
-        create_contexts(CONTEXT_COURSE, false);
         $sql = "INSERT INTO {$CFG->prefix}context (contextlevel, instanceid)
                 SELECT ".CONTEXT_BLOCK.", bi.id
                   FROM  {$CFG->prefix}block_instance bi
