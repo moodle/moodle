@@ -3876,6 +3876,9 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     static $countries;
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    if (isset($user->context->id)) {
+        $usercontext = get_context_instance_by_id($user->context->id);
+    }
 
     if (empty($string)) {     // Cache all the strings for the rest of the page
 
@@ -3958,7 +3961,7 @@ has_capability('moodle/course:viewhiddenuserfields', $context)) {
         $output .= '<a href="'.$CFG->wwwroot.'/notes/index.php?course=' . $course->id. '&amp;user='.$user->id.'">'.get_string('notes','notes').'</a><br />';
     }
 
-    if (has_capability('moodle/site:viewreports', $context)) {
+    if (has_capability('moodle/site:viewreports', $context) || (isset($usercontext) && has_capability('moodle/site:viewreports', $usercontext))) {
         $timemidnight = usergetmidnight(time());
         $output .= '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
     }
