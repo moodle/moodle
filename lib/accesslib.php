@@ -2300,6 +2300,80 @@ function delete_context($contextlevel, $instanceid) {
 }
 
 /**
+ * Precreates all contexts including all parents
+ * @param int $contextlevel, empty means all
+ * @param bool $buildpaths update paths and depths
+ * @return void
+ */
+function create_contexts($contextlevel=null, $buildpaths=true) {
+    global $CFG;
+
+    //make sure system context exists
+    $syscontext = get_system_context(false);
+
+    if (empty($contextlevel) or $contextlevel == CONTEXT_COURSECAT) {
+        $sql = "INSERT INTO {$CFG->prefix}context (contextlevel, instanceid)
+                SELECT ".CONTEXT_COURSECAT.", cc.id
+                  FROM  {$CFG->prefix}course_categories cc
+                 WHERE NOT EXISTS (SELECT 'x'
+                                     FROM {$CFG->prefix}context cx
+                                    WHERE cc.id = cx.instanceid AND cx.contextlevel=".CONTEXT_COURSECAT.")";
+        execute_sql($sql, false);
+
+    }
+
+    if (empty($contextlevel) or $contextlevel == CONTEXT_COURSE) {
+        create_contexts(CONTEXT_COURSECAT, false);
+        $sql = "INSERT INTO {$CFG->prefix}context (contextlevel, instanceid)
+                SELECT ".CONTEXT_COURSE.", c.id
+                  FROM  {$CFG->prefix}course c
+                 WHERE NOT EXISTS (SELECT 'x'
+                                     FROM {$CFG->prefix}context cx
+                                    WHERE c.id = cx.instanceid AND cx.contextlevel=".CONTEXT_COURSE.")";
+        execute_sql($sql, false);
+
+    }
+
+    if (empty($contextlevel) or $contextlevel == CONTEXT_MODULE) {
+        create_contexts(CONTEXT_COURSE, false);
+        $sql = "INSERT INTO {$CFG->prefix}context (contextlevel, instanceid)
+                SELECT ".CONTEXT_MODULE.", cm.id
+                  FROM  {$CFG->prefix}course_modules cm
+                 WHERE NOT EXISTS (SELECT 'x'
+                                     FROM {$CFG->prefix}context cx
+                                    WHERE cm.id = cx.instanceid AND cx.contextlevel=".CONTEXT_MODULE.")";
+        execute_sql($sql, false);
+    }
+
+    if (empty($contextlevel) or $contextlevel == CONTEXT_BLOCK) {
+        create_contexts(CONTEXT_COURSE, false);
+        $sql = "INSERT INTO {$CFG->prefix}context (contextlevel, instanceid)
+                SELECT ".CONTEXT_BLOCK.", bi.id
+                  FROM  {$CFG->prefix}block_instance bi
+                 WHERE NOT EXISTS (SELECT 'x'
+                                     FROM {$CFG->prefix}context cx
+                                    WHERE bi.id = cx.instanceid AND cx.contextlevel=".CONTEXT_BLOCK.")";
+        execute_sql($sql, false);
+    }
+
+    if (empty($contextlevel) or $contextlevel == CONTEXT_USER) {
+        $sql = "INSERT INTO {$CFG->prefix}context (contextlevel, instanceid)
+                SELECT ".CONTEXT_USER.", u.id
+                  FROM  {$CFG->prefix}user u
+                 WHERE u.deleted=0
+                   AND NOT EXISTS (SELECT 'x'
+                                     FROM {$CFG->prefix}context cx
+                                    WHERE u.id = cx.instanceid AND cx.contextlevel=".CONTEXT_USER.")";
+        execute_sql($sql, false);
+
+    }
+
+    if ($buildpaths) {
+        build_context_path(false);
+    }
+}
+
+/**
  * Remove stale context records
  *
  * @return bool
