@@ -569,10 +569,10 @@ class grade_item extends grade_object {
      * Returns the number of grades that are hidden.
      * @param return int Number of hidden grades
      */
-    function has_hidden_grades($groupsql = null, $groupwheresql = null) {
+    function has_hidden_grades($groupsql="", $groupwheresql="") {
         global $CFG;
         return get_field_sql("SELECT COUNT(*) FROM {$CFG->prefix}grade_grades g LEFT JOIN "
-                            ."{$CFG->prefix}user u ON g.userid = u.id$groupsql WHERE itemid = $this->id AND hidden = 1 $groupwheresql");
+                            ."{$CFG->prefix}user u ON g.userid = u.id $groupsql WHERE itemid = $this->id AND hidden = 1 $groupwheresql");
     }
 
     /**

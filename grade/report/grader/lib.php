@@ -797,6 +797,16 @@ class grade_report_grader extends grade_report {
 
         $canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->course->id));
 
+        if ($canviewhidden) {
+            $hidingsql1 = "";
+            $hidingsql2 = "";
+            
+        } else {
+            $now = round(time(), -2); //100 sec gradularity, we need some db caching speedup here
+            $hidingsql1 = "AND g.hidden!=1 AND (g.hidden=0 OR g.hidden<$now)";
+            $hidingsql2 = "OR (g.hidden!=1 AND (g.hidden=0 OR g.hidden<$now))";
+        }
+
         $avghtml = '';
         $avgcssclass = 'avg';
 
@@ -809,8 +819,8 @@ class grade_report_grader extends grade_report {
         } else {
             $straverage = get_string('overallaverage', 'grades');
             $showaverages = $this->get_pref('showaverages');
-            $groupsql = null;
-            $groupwheresql = null;
+            $groupsql = "";
+            $groupwheresql = "";
         }
 
         if ($shownumberofgrades) {
@@ -828,6 +838,7 @@ class grade_report_grader extends grade_report {
                      {$CFG->prefix}user u ON g.userid = u.id
                      $groupsql
                 WHERE gi.courseid = $this->courseid
+                     $hidingsql1
                      $groupwheresql
                      AND g.userid IN (
                         SELECT DISTINCT(u.id)
@@ -851,7 +862,7 @@ class grade_report_grader extends grade_report {
             foreach ($this->items as $item) {
                 // If the user shouldn't see this grade_item, hide the average as well
                 // MDL-11576 If any of the grades are hidden and the user doesn't have permission to view them, hide average as well
-                if (($item->is_hidden() || $item->has_hidden_grades($groupsql, $groupwheresql)) && !$canviewhidden) {
+                if (!$canviewhidden and $item->is_hidden()) {
                     $avghtml .= '<td class="cell c' . $columncount++.'"> - </td>';
                     continue;
                 }
@@ -859,20 +870,14 @@ class grade_report_grader extends grade_report {
                 if (empty($sum_array[$item->id])) {
                     $sum_array[$item->id] = 0;
                 }
-                if ($grouponly) {
-                    $groupsql = $this->groupsql;
-                    $groupwheresql = $this->groupwheresql;
-                } else {
-                    $groupsql = '';
-                    $groupwheresql = '';
-                }
                 // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
                 // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
+                // optionally plus number of hidden grades
                 $SQL = "SELECT COUNT(*) AS count FROM {$CFG->prefix}user u
                          WHERE u.id NOT IN
-                           (SELECT userid FROM {$CFG->prefix}grade_grades
-                             WHERE itemid = $item->id
-                               AND finalgrade IS NOT NULL
+                           (SELECT userid FROM {$CFG->prefix}grade_grades g
+                             WHERE g.itemid = $item->id AND
+                               (g.finalgrade IS NOT NULL $hidingsql2)
                            )
                            AND u.id IN (
                              SELECT DISTINCT(u.id)
