@@ -211,6 +211,21 @@
                 }
             }
             rs_close($rs);
+        /// Execute the same query again, looking for remaining records and deleting them
+        /// if the user hasn't moodle/course:view in the CONTEXT_COURSE context (orphan records)
+            $rs = get_recordset_sql ("SELECT id, userid, courseid
+                                        FROM {$CFG->prefix}user_lastaccess
+                                       WHERE courseid != ".SITEID."
+                                         AND timeaccess < $cuttime ");
+            while ($assign = rs_fetch_next_record($rs)) {
+                if ($context = get_context_instance(CONTEXT_COURSE, $assign->courseid)) {
+                    if (!has_capability('moodle/course:view', $context, $assign->userid)) {
+                        delete_records('user_lastaccess', 'userid', $assign->userid, 'courseid', $assign->courseid);
+                        mtrace("Deleted orphan user_lastaccess for user $assign->userid from course $assign->courseid");
+                    }
+                }
+            }
+            rs_close($rs);
         }
         flush();
 
