@@ -2138,12 +2138,16 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     static $strmarkread, $strmarkunread, $istracked;
 
 
-    $discussion = get_record('forum_discussions', 'id', $post->discussion);
-    if (!$cm = get_coursemodule_from_instance('forum', $discussion->forum)) {
-        error('Course Module ID was incorrect');
+    if (empty($post->modcontext)) {   // Have to generate it, which is expensive!  Should always be set.
+        if (empty($post->forum)) {
+            $discussion = get_record('forum_discussions', 'id', $post->discussion);
+            $post->forum = $discussion->forum;
+        }
+        if (!$cm = get_coursemodule_from_instance('forum', $post->forum)) {
+            error('Course Module ID was incorrect');
+        }
+        $post->modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-
 
     if (!forum_user_can_see_post($post->forum,$post->discussion,$post)) {
         if (!$dummyifcantsee) {
@@ -2238,7 +2242,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
 
     echo '<div class="author">';
-    $fullname = fullname($post, has_capability('moodle/site:viewfullnames', $modcontext));
+    $fullname = fullname($post, has_capability('moodle/site:viewfullnames', $post->modcontext));
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
                 $post->userid.'&amp;course='.$courseid.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified);
@@ -2323,18 +2327,18 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         }
     }
 
-    $forumtype = get_field('forum', 'type', 'id', $post->forum);
+    if (!isset($post->forumtype)) {
+        $post->forumtype = get_field('forum', 'type', 'id', $post->forum);
+    }
 
     $age = time() - $post->created;
     // Hack for allow to edit news posts those are not displayed yet until they are displayed
     if (!$post->parent
-        && $forumtype == 'news'
+        && $post->forumtype == 'news'
         && get_field_sql("SELECT id FROM {$CFG->prefix}forum_discussions WHERE id = $post->discussion AND timestart > ".time())) {
         $age = 0;
     }
-    $editanypost = has_capability('mod/forum:editanypost', $modcontext);
-
-
+    $editanypost = has_capability('mod/forum:editanypost', $post->modcontext);
 
     if ($ownpost or $editanypost) {
         if (($age < $CFG->maxeditingtime) or $editanypost) {
@@ -2342,16 +2346,16 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         }
     }
 
-    if (has_capability('mod/forum:splitdiscussions', $modcontext)
-                && $post->parent && $forumtype != 'single') {
+    if (has_capability('mod/forum:splitdiscussions', $post->modcontext)
+                && $post->parent && $post->forumtype != 'single') {
 
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?prune='.$post->id.
                       '" title="'.$strpruneheading.'">'.$strprune.'</a>';
     }
 
     if (($ownpost and $age < $CFG->maxeditingtime
-                and has_capability('mod/forum:deleteownpost', $modcontext))
-                or has_capability('mod/forum:deleteanypost', $modcontext)) {
+                and has_capability('mod/forum:deleteownpost', $post->modcontext))
+                or has_capability('mod/forum:deleteanypost', $post->modcontext)) {
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?delete='.$post->id.'">'.$strdelete.'</a>';
     }
 
@@ -2378,7 +2382,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         if ($useratings) {
             $mypost = ($USER->id == $post->userid);
 
-            $canviewallratings = has_capability('mod/forum:viewanyrating', $modcontext);
+            $canviewallratings = has_capability('mod/forum:viewanyrating', $post->modcontext);
 
             if ($canviewallratings and !$mypost) {
                 forum_print_ratings_mean($post->id, $ratings->scale, $canviewallratings);
@@ -3905,6 +3909,17 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
         $user_read_array = array();
     }
 
+    if (empty($post->modcontext)) {   // Have to generate it, which is expensive!  Should always be set.
+        if (empty($post->forum)) {
+            $discussion = get_record('forum_discussions', 'id', $post->discussion);
+            $post->forum = $discussion->forum;
+        }
+        if (!$cm = get_coursemodule_from_instance('forum', $post->forum)) {
+            error('Course Module ID was incorrect');
+        }
+        $post->modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    }
+
     if (forum_print_post($post, $course->id, $ownpost, $reply, $link=false, $ratings,
                          '', '', (!$forumtracked || isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
         $ratingsmenuused = true;
@@ -3915,21 +3930,21 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
         case FORUM_MODE_FLATNEWEST :
         default:
             if (forum_print_posts_flat($post->discussion, $course->id, $mode, $ratings, $reply,
-                                       $user_read_array, $post->forum)) {
+                                       $user_read_array, $post->forum, $post->modcontext)) {
                 $ratingsmenuused = true;
             }
             break;
 
         case FORUM_MODE_THREADED :
             if (forum_print_posts_threaded($post->id, $course->id, 0, $ratings, $reply,
-                                           $user_read_array, $post->forum)) {
+                                           $user_read_array, $post->forum, $post->modcontext)) {
                 $ratingsmenuused = true;
             }
             break;
 
         case FORUM_MODE_NESTED :
             if (forum_print_posts_nested($post->id, $course->id, $ratings, $reply,
-                                         $user_read_array, $post->forum)) {
+                                         $user_read_array, $post->forum, $post->modcontext)) {
                 $ratingsmenuused = true;
             }
             break;
@@ -3956,7 +3971,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
 /**
  * 
  */
-function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $reply, &$user_read_array, $forumid=0) {
+function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $reply, &$user_read_array, $forumid=0, $modcontext=NULL) {
     global $USER, $CFG;
 
     $link  = false;
@@ -3972,6 +3987,7 @@ function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $r
         foreach ($posts as $post) {
 
             $post->subject = format_string($post->subject);
+            $post->modcontext = $modcontext;
 
             $ownpost = ($USER->id == $post->userid);
             if (forum_print_post($post, $courseid, $ownpost, $reply, $link, $ratings,
@@ -3988,7 +4004,7 @@ function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $r
 /**
  * TODO document
  */
-function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply, &$user_read_array, $forumid=0) {
+function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply, &$user_read_array, $forumid=0, $modcontext=NULL) {
     global $USER, $CFG;
 
     $link  = false;
@@ -3998,10 +4014,6 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
 
     if ($posts = forum_get_child_posts($parent, $forumid)) {
 
-        if (!$cm = get_coursemodule_from_instance('forum', $forumid, $courseid)) {
-            error('Course Module ID was incorrect');
-        }
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $modcontext);
 
         foreach ($posts as $post) {
@@ -4009,8 +4021,8 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
             echo '<div class="indent">';
             if ($depth > 0) {
                 $ownpost = ($USER->id == $post->userid);
-
                 $post->subject = format_string($post->subject);
+                $post->modcontext = $modcontext;
 
                 if (forum_print_post($post, $courseid, $ownpost, $reply, $link, $ratings,
                                      '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
@@ -4039,7 +4051,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
             }
 
             if (forum_print_posts_threaded($post->id, $courseid, $depth-1, $ratings, $reply,
-                                           $user_read_array, $forumid)) {
+                                           $user_read_array, $forumid, $modcontext)) {
                 $ratingsmenuused = true;
             }
             echo "</div>\n";
@@ -4051,7 +4063,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
 /**
  * 
  */
-function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_read_array, $forumid=0) {
+function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_read_array, $forumid=0, $modcontext=NULL) {
     global $USER, $CFG;
 
     $link  = false;
@@ -4069,11 +4081,13 @@ function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_r
 
             $post->subject = format_string($post->subject);
 
+            $post->modcontext = $modcontext;
+
             if (forum_print_post($post, $courseid, $ownpost, $reply, $link, $ratings,
                                  '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
                 $ratingsmenuused = true;
             }
-            if (forum_print_posts_nested($post->id, $courseid, $ratings, $reply, $user_read_array, $forumid)) {
+            if (forum_print_posts_nested($post->id, $courseid, $ratings, $reply, $user_read_array, $forumid, $modcontext)) {
                 $ratingsmenuused = true;
             }
             echo "</div>\n";
