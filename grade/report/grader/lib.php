@@ -625,7 +625,8 @@ class grade_report_grader extends grade_report {
                 // Hide grades in the grader report if the current grader doesn't have 'moodle/grade:viewhidden'
                 if ($grade->is_hidden() && !$canviewhidden) {
                     if (isset($grade->finalgrade)) {
-                        $studentshtml .= '<td class="cell c'.$columncount++.'">'.userdate($grade->timecreated,get_string('strftimedatetimeshort')).'</td>';                  } else {
+                        $studentshtml .= '<td class="cell c'.$columncount++.'">'.userdate($grade->timecreated,get_string('strftimedatetimeshort')).'</td>';
+                    } else {
                         $studentshtml .= '<td class="cell c'.$columncount++.'">-</td>';
                     }
                     continue;
