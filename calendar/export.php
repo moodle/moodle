@@ -6,10 +6,15 @@ require_once($CFG->dirroot.'/calendar/lib.php');
 //require_once($CFG->libdir.'/bennu/bennu.inc.php');
 
 $action = optional_param('action', '', PARAM_ALPHA);
-$course = optional_param('course', 0);
 $day  = optional_param('cal_d', 0, PARAM_INT);
 $mon  = optional_param('cal_m', 0, PARAM_INT);
 $yr   = optional_param('cal_y', 0, PARAM_INT);
+
+if (isset($SESSION->cal_course_referer)) {
+    $course = $SESSION->cal_course_referer;
+} else {
+    $course = optional_param('course', 0, PARAM_INT);
+}
 
 require_login();
 
@@ -22,7 +27,7 @@ calendar_session_vars();
 
 $pagetitle = get_string('export', 'calendar');
 $now = usergetdate(time());
-$nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']).' -> '.$pagetitle;
+$nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;course='.$course.'&amp;', $now['mday'], $now['mon'], $now['year']).' -> '.$pagetitle;
 
 if(!checkdate($mon, $day, $yr)) {
     $day = intval($now['mday']);
@@ -94,13 +99,13 @@ list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
 $getvars = 'cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
 
 echo '<div class="minicalendarblock">';
-echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
+echo calendar_top_controls('display', array('id' => $course, 'm' => $prevmon, 'y' => $prevyr));
 echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
 echo '</div><div class="minicalendarblock">';
-echo calendar_top_controls('display', array('m' => $mon, 'y' => $yr));
+echo calendar_top_controls('display', array('id' => $course, 'm' => $mon, 'y' => $yr));
 echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
 echo '</div><div class="minicalendarblock">';
-echo calendar_top_controls('display', array('m' => $nextmon, 'y' => $nextyr));
+echo calendar_top_controls('display', array('id' => $course, 'm' => $nextmon, 'y' => $nextyr));
 echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
 echo '</div>';
 
