@@ -6,10 +6,15 @@ require_once($CFG->dirroot.'/calendar/lib.php');
 //require_once($CFG->libdir.'/bennu/bennu.inc.php');
 
 $action = optional_param('action', '', PARAM_ALPHA);
-$course = optional_param('course', 0);
 $day  = optional_param('cal_d', 0, PARAM_INT);
 $mon  = optional_param('cal_m', 0, PARAM_INT);
 $yr   = optional_param('cal_y', 0, PARAM_INT);
+
+if (isset($SESSION->cal_course_referer)) {
+    $course = $SESSION->cal_course_referer;
+} else {
+    $course = optional_param('course', 0, PARAM_INT);
+}
 
 require_login();
 
