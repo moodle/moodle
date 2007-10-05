@@ -1296,7 +1296,7 @@ function forum_scale_used_anywhere($scaleid) {
 function forum_get_post_full($postid) {
     global $CFG;
 
-    return get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture
+    return get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture, u.imagealt
                             FROM {$CFG->prefix}forum_posts p
                        LEFT JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id
                        LEFT JOIN {$CFG->prefix}user u ON p.userid = u.id
@@ -1311,7 +1311,7 @@ function forum_get_post_full($postid) {
 function forum_get_discussion_posts($discussion, $sort, $forumid) {
     global $CFG;
 
-    return get_records_sql("SELECT p.*, $forumid AS forum, u.firstname, u.lastname, u.email, u.picture
+    return get_records_sql("SELECT p.*, $forumid AS forum, u.firstname, u.lastname, u.email, u.picture, u.imagealt
                               FROM {$CFG->prefix}forum_posts p
                          LEFT JOIN {$CFG->prefix}user u ON p.userid = u.id
                              WHERE p.discussion = $discussion
@@ -1326,7 +1326,7 @@ function forum_get_discussion_posts($discussion, $sort, $forumid) {
 function forum_get_child_posts($parent, $forumid) {
     global $CFG;
 
-    return get_records_sql("SELECT p.*, $forumid AS forum, u.firstname, u.lastname, u.email, u.picture
+    return get_records_sql("SELECT p.*, $forumid AS forum, u.firstname, u.lastname, u.email, u.picture, u.imagealt
                               FROM {$CFG->prefix}forum_posts p
                          LEFT JOIN {$CFG->prefix}user u ON p.userid = u.id
                              WHERE p.parent = '$parent'
@@ -2213,8 +2213,16 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo '<a id="p'.$post->id.'"></a>';
     echo '<table cellspacing="0" class="forumpost'.$read_style.'">';
 
+    // Picture
+    $postuser = new object;
+    $postuser->id = $post->userid;
+    $postuser->firstname = $post->firstname;
+    $postuser->lastname = $post->lastname;
+    $postuser->imagealt = $post->imagealt;
+    $postuser->picture = $post->picture;
+
     echo '<tr class="header"><td class="picture left">';
-    print_user_picture($post->userid, $courseid, $post->picture);
+    print_user_picture($postuser, $courseid);
     echo '</td>';
 
     if ($post->parent) {
