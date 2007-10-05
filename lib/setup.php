@@ -249,10 +249,9 @@ global $HTTPSPAGEREQUIRED;
         $COURSE->id = 1;
     }
 
-    if ($sysctxid = get_field('context', 'id', 'contextlevel', CONTEXT_SYSTEM)) {
-        define('SYSCONTEXTID', $sysctxid);
-    } else {
-        define('SYSCONTEXTID', 1);
+    // define SYSCONTEXTID in config.php if you want to save some queries (after install or upgrade!)
+    if (!defined('SYSCONTEXTID')) {
+        get_system_context();
     }
 
 /// Set error reporting back to normal

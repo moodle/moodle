@@ -1509,12 +1509,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_key($table, $key);
     }
 
-    if ($result && $oldversion < 2007080101) {
-        if ($firstadmin = get_admin()) {  // the person currently used for support emails
-            set_config('supportname',  s(fullname($firstadmin)));   // New settings same as old
-            set_config('supportemail',  s($firstadmin->email));
-        }
-    }
+    /// originally there was supportname and supportemail upgrade code - this is handled in upgradesettings.php instead
 
     /// MDL-10679, context_rel clean up
     if ($result && $oldversion < 2007080200) {
@@ -1580,7 +1575,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Add context.path & index
         $table = new XMLDBTable('context');
         $field = new XMLDBField('path');
-        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'instanceid');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null, 'instanceid');
         $result = $result && add_field($table, $field);
         $table = new XMLDBTable('context');
         $index = new XMLDBIndex('path');
@@ -1592,6 +1587,9 @@ function xmldb_main_upgrade($oldversion=0) {
         $field = new XMLDBField('depth');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'path');
         $result = $result && add_field($table, $field);
+
+    /// make sure the system context has proper data
+        get_system_context(false);
     }
 
     if ($result && $oldversion < 2007080903) {
@@ -2039,9 +2037,11 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);
 
     /// Recalculate depths, paths and so on
-        cleanup_contexts();
-        build_context_path(true);
-        load_all_capabilities();
+        if (!empty($CFG->rolesactive)) {
+            cleanup_contexts();
+            build_context_path(true);
+            load_all_capabilities();
+        }
     }
 
     /**
@@ -2339,6 +2339,18 @@ function xmldb_main_upgrade($oldversion=0) {
         $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'idnumber');
 
     /// Launch change of nullability for field summary
+        $result = $result && change_field_notnull($table, $field);
+    }
+
+    if ($result && $oldversion < 2007100500) {
+    /// for dev sites - it is ok to do this repeatedly
+
+    /// Changing nullability of field path on table context to null
+        $table = new XMLDBTable('context');
+        $field = new XMLDBField('path');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null, 'instanceid');
+
+    /// Launch change of nullability for field path
         $result = $result && change_field_notnull($table, $field);
     }
 

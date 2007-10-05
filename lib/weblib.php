@@ -6294,7 +6294,7 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
 function page_doc_link($text='', $iconpath='') {
     global $ME, $COURSE, $CFG;
 
-    if (empty($CFG->docroot)) {
+    if (empty($CFG->docroot) or empty($CFG->rolesactive)) {
         return '';
     }
 

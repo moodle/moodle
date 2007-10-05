@@ -284,27 +284,6 @@ function get_default_frontpage_role_access($roleid, $accessdata=NULL) {
 
 
 /**
- * Get the id for the not-logged-in role - or set it up if needed
- * @return bool
- */
-function get_notloggedin_roleid($return=false) {
-    global $CFG, $USER;
-
-    if (empty($CFG->notloggedinroleid)) {    // Let's set the default to the guest role
-        if ($role = get_guest_role()) {
-            set_config('notloggedinroleid', $role->id);
-            return $role->id;
-        } else {
-            return false;
-        }
-    } else {
-        return $CFG->notloggedinroleid;
-    }
-
-    return (get_record('role','id', $CFG->notloggedinas));
-}
-
-/**
  * Get the default guest role
  * @return object role
  */
@@ -331,19 +310,14 @@ function get_guest_role() {
     }
 }
 
-function has_capability($capability, $context=NULL, $userid=NULL, $doanything=true) {
-    global $USER, $CONTEXT, $ACCESS, $CFG, $DIRTYCONTEXTS;
+function has_capability($capability, $context, $userid=NULL, $doanything=true) {
+    global $USER, $ACCESS, $CFG, $DIRTYCONTEXTS;
 
-    /// Make sure we know the current context
-    if (empty($context)) {              // Use default CONTEXT if none specified
-        if (empty($CONTEXT)) {
-            return false;
-        } else {
-            $context = $CONTEXT;
-        }
-    }
-    if (empty($CONTEXT)) {
-        $CONTEXT = $context;
+    // the original $CONTEXT here was hiding serious errors
+    // for security reasons do notreuse previous context
+    if (empty($context)) {
+        debugging('Incorrect context specified');
+        return false;
     }
 
     if (is_null($userid) || $userid===0) {
@@ -365,10 +339,10 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
     }
 
     if ($USER->id === 0 && !isset($USER->access)) {
+        // not-logged-in user first time here
         load_all_capabilities();
-    }
 
-    if (defined('FULLME') && FULLME === 'cron' && !isset($USER->access)) {
+    } else if (defined('FULLME') && FULLME === 'cron' && !isset($USER->access)) {
         //
         // In cron, some modules setup a 'fake' $USER,
         // ensure we load the appropriate accessdata.
@@ -382,6 +356,11 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         }
         $USER->access = $ACCESS[$userid];
         $DIRTYCONTEXTS = array();
+
+    } else if ($USER->id === $userid && !isset($USER->access)) {
+        // caps not loaded yet - better to load them to keep BC with 1.8
+        // probably $USER object set up manually
+        load_all_capabilities();
     }
 
     // Careful check for staleness...
@@ -1214,7 +1193,7 @@ function get_user_access_sitewide($userid) {
     //
     $raparents = array();
     $lastseen  = '';
-    if ($rs->RecordCount()) {
+    if ($rs and $rs->RecordCount()) {
         while ($ra = rs_fetch_next_record($rs)) {
             // RAs leafs are arrays to support multi
             // role assignments...
@@ -1547,13 +1526,15 @@ function load_user_accessdata($userid) {
     //
     // provide "default role" & set 'dr'
     //
-    $accessdata = get_role_access($CFG->defaultuserroleid, $accessdata);
-    if (!isset($accessdata['ra'][$base])) {
-        $accessdata['ra'][$base] = array($CFG->defaultuserroleid);
-    } else {
-        array_push($accessdata['ra'][$base], $CFG->defaultuserroleid);
+    if (!empty($CFG->defaultuserroleid)) {
+        $accessdata = get_role_access($CFG->defaultuserroleid, $accessdata);
+        if (!isset($accessdata['ra'][$base])) {
+            $accessdata['ra'][$base] = array($CFG->defaultuserroleid);
+        } else {
+            array_push($accessdata['ra'][$base], $CFG->defaultuserroleid);
+        }
+        $accessdata['dr'] = $CFG->defaultuserroleid;
     }
-    $accessdata['dr'] = $CFG->defaultuserroleid;
 
     //
     // provide "default frontpage role"
@@ -1598,13 +1579,15 @@ function load_all_capabilities() {
         //
         // provide "default role" & set 'dr'
         //
-        $accessdata = get_role_access($CFG->defaultuserroleid, $accessdata);
-        if (!isset($accessdata['ra'][$base])) {
-            $accessdata['ra'][$base] = array($CFG->defaultuserroleid);
-        } else {
-            array_push($accessdata['ra'][$base], $CFG->defaultuserroleid);
+        if (!empty($CFG->defaultuserroleid)) {
+            $accessdata = get_role_access($CFG->defaultuserroleid, $accessdata);
+            if (!isset($accessdata['ra'][$base])) {
+                $accessdata['ra'][$base] = array($CFG->defaultuserroleid);
+            } else {
+                array_push($accessdata['ra'][$base], $CFG->defaultuserroleid);
+            }
+            $accessdata['dr'] = $CFG->defaultuserroleid;
         }
-        $accessdata['dr'] = $CFG->defaultuserroleid;
 
         $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
 
@@ -1623,11 +1606,9 @@ function load_all_capabilities() {
         } 
         $USER->access = $accessdata;
     
-    } else {
-        if ($roleid = get_notloggedin_roleid()) {
-            $USER->access = get_role_access($roleid);
-            $USER->access['ra'][$base] = array($roleid);
-        }
+    } else if (!empty($CFG->notloggedinroleid)) {
+        $USER->access = get_role_access($CFG->notloggedinroleid);
+        $USER->access['ra'][$base] = array($CFG->notloggedinroleid);
     }
 
     // Timestamp to read 
@@ -1991,11 +1972,13 @@ function moodle_install_roles() {
 
 /// Delete the old user tables when we are done
 
-    drop_table(new XMLDBTable('user_students'));
-    drop_table(new XMLDBTable('user_teachers'));
-    drop_table(new XMLDBTable('user_coursecreators'));
-    drop_table(new XMLDBTable('user_admins'));
-
+    $tables = array('user_students', 'user_teachers', 'user_coursecreators', 'user_admins');  
+    foreach ($tables as $tablename) {
+        $table = new XMLDBTable($tablename);
+        if (table_exists($table)) {
+            drop_table($table);
+        }
+    }
 }
 
 /**
@@ -2115,6 +2098,8 @@ function create_context($contextlevel, $instanceid) {
     $basepath  = '/' . SYSCONTEXTID;
     $basedepth = 1;
 
+    $result = true;
+
     switch ($contextlevel) {
         case CONTEXT_COURSECAT:
             $sql = "SELECT ctx.path, ctx.depth 
@@ -2125,6 +2110,20 @@ function create_context($contextlevel, $instanceid) {
             if ($p = get_record_sql($sql)) {
                 $basepath  = $p->path;
                 $basedepth = $p->depth;
+            } else if ($category = get_record('course_categories', 'id', $instanceid)) {
+                if (empty($category->parent)) {
+                    // ok - this is a top category
+                } else if ($parent = get_context_instance(CONTEXT_COURSECAT, $category->parent)) {
+                    $basepath  = $parent->path;
+                    $basedepth = $parent->depth;
+                } else {
+                    // wrong parent category - no big deal, this can be fixed later
+                    $basepath  = null;
+                    $basedepth = 0;
+                }
+            } else {
+                // incorrect category id
+                $result = false;
             }
             break;
 
@@ -2137,6 +2136,23 @@ function create_context($contextlevel, $instanceid) {
             if ($p = get_record_sql($sql)) {
                 $basepath  = $p->path;
                 $basedepth = $p->depth;
+            } else if ($course = get_record('course', 'id', $instanceid)) {
+                if ($course->id == SITEID) {
+                    //ok - no parent category
+                } else if ($parent = get_context_instance(CONTEXT_COURSECAT, $course->category)) {
+                    $basepath  = $parent->path;
+                    $basedepth = $parent->depth;
+                } else {
+                    // wrong parent category of course - no big deal, this can be fixed later
+                    $basepath  = null;
+                    $basedepth = 0;
+                }
+            } else if ($instanceid == SITEID) {
+                // no errors for missing site course during installation
+                return false;
+            } else {
+                // incorrect course id
+                $result = false;
             }
             break;
 
@@ -2146,9 +2162,21 @@ function create_context($contextlevel, $instanceid) {
                     JOIN {$CFG->prefix}course_modules    cm
                       ON (cm.course=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
                     WHERE cm.id={$instanceid}";
-            $p = get_record_sql($sql);
-            $basepath  = $p->path;
-            $basedepth = $p->depth;
+            if ($p = get_record_sql($sql)) {
+                $basepath  = $p->path;
+                $basedepth = $p->depth;
+            } else if ($cm = get_record('course_modules', 'id', $instanceid)) {
+                if ($parent = get_context_instance(CONTEXT_COURSE, $cm->course)) {
+                    $basepath  = $parent->path;
+                    $basedepth = $parent->depth;
+                } else {
+                    // course does not exist - modules can not exist without a course
+                    $result = false;
+                }
+            } else {
+                // cm does not exist
+                $result = false;
+            }
             break;
 
         case CONTEXT_BLOCK:
@@ -2161,6 +2189,19 @@ function create_context($contextlevel, $instanceid) {
             if ($p = get_record_sql($sql)) {
                 $basepath  = $p->path;
                 $basedepth = $p->depth;
+            } else if ($bi = get_record('block_instance', 'id', $instanceid)) {
+                if ($bi->pagetype != 'course-view') {
+                    // ok - not a course block
+                } else if ($parent = get_context_instance(CONTEXT_COURSE, $bi->pageid)) {
+                    $basepath  = $parent->path;
+                    $basedepth = $parent->depth;
+                } else {
+                    // parent course does not exist - course blocks can not exist without a course
+                    $result = false;
+                }
+            } else {
+                // block does not exist
+                $result = false;
             }
             break;
         case CONTEXT_USER:
@@ -2171,44 +2212,75 @@ function create_context($contextlevel, $instanceid) {
             break;
     }
 
-    $context->depth = $basedepth+1;
+    // if grandparents unknown, maybe rebuild_context_path() will solve it later
+    if ($basedepth != 0) {
+        $context->depth = $basedepth+1;
+    }
 
-    if ($id = insert_record('context',$context)) {
-        // can't set the path till we know the id!
-        set_field('context', 'path', $basepath . '/' . $id,
-                  'id', $id);
-        $c = get_context_instance_by_id($id);
-        return $c;
+    if ($result and $id = insert_record('context', $context)) {
+        // can't set the full path till we know the id!
+        if ($basedepth != 0 and !empty($basepath)) {
+            set_field('context', 'path', $basepath.'/'. $id, 'id', $id);
+        }
+        return get_context_instance_by_id($id);
+
     } else {
         debugging('Error: could not insert new context level "'.
                   s($contextlevel).'", instance "'.
                   s($instanceid).'".');
-        return NULL;
+        return false;
     }
 }
 
 /**
  * This hacky function is needed because we can not change system context instanceid using normal upgrade routine.
  */
-function create_system_context() {
-    if ($context = get_record('context', 'contextlevel', CONTEXT_SYSTEM, 'instanceid', SITEID)) {
-        // we are going to change instanceid of system context to 0 now
-        $context->instanceid = 0;
-        update_record('context', $context);
-        //context rel not affected
-        return $context;
+function get_system_context($cache=true) {
+    static $cached = null;
+    if ($cache and defined('SYSCONTEXTID')) {
+        if (is_null($cached)) {
+            $cached = new object();
+            $cached->id           = SYSCONTEXTID;
+            $cached->contextlevel = CONTEXT_SYSTEM;
+            $cached->instanceid   = 0;
+            $cached->path         = '/'.SYSCONTEXTID;
+            $cached->depth        = 1;
+        }
+        return $cached;
+    }
 
-    } else {
+    if (!$context = get_record('context', 'contextlevel', CONTEXT_SYSTEM)) {
         $context = new object();
         $context->contextlevel = CONTEXT_SYSTEM;
-        $context->instanceid = 0;
-        if ($context->id = insert_record('context',$context)) {
-            return $context;
-        } else {
+        $context->instanceid   = 0;
+        $context->depth        = 1;
+        $context->path         = NULL; //not known before insert
+
+        if (!$context->id = insert_record('context', $context)) {
+            // better something than nothing - let's hope it will work somehow
+            if (!defined('SYSCONTEXTID')) {
+                define('SYSCONTEXTID', 1);
+            }
             debugging('Can not create system context');
-            return NULL;
+            $context->id   = SYSCONTEXTID;
+            $context->path = '/'.SYSCONTEXTID;
+            return $context;
         }
     }
+
+    if (!isset($context->depth) or $context->depth != 1 or $context->instanceid != 0 or $context->path != '/'.$context->id) {
+        $context->instanceid   = 0;
+        $context->path         = '/'.$context->id;
+        $context->depth        = 1;
+        update_record('context', $context);
+    }
+
+    if (!defined('SYSCONTEXTID')) {
+        define('SYSCONTEXTID', $context->id);
+    }
+
+    $cached = $context;
+    return $cached;
 }
 /**
  * Remove a context record and any dependent entries
@@ -2303,9 +2375,9 @@ function cleanup_contexts() {
  *      for $level = CONTEXT_MODULE, this would be $cm->id. And so on.
  * @return object The context object.
  */
-function get_context_instance($contextlevel=NULL, $instance=0) {
+function get_context_instance($contextlevel, $instance=0) {
 
-    global $context_cache, $context_cache_id, $CONTEXT;
+    global $context_cache, $context_cache_id;
     static $allowed_contexts = array(CONTEXT_SYSTEM, CONTEXT_PERSONAL, CONTEXT_USER, CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_GROUP, CONTEXT_MODULE, CONTEXT_BLOCK);
 
     if ($contextlevel === 'clearcache') {
@@ -2317,19 +2389,9 @@ function get_context_instance($contextlevel=NULL, $instance=0) {
         return false;
     }
 
-/// If no level is supplied then return the current global context if there is one
-    if (empty($contextlevel)) {
-        if (empty($CONTEXT)) {
-            //fatal error, code must be fixed
-            error("Error: get_context_instance() called without a context");
-        } else {
-            return $CONTEXT;
-        }
-    }
-
-/// Backwards compatibility with obsoleted (CONTEXT_SYSTEM, SITEID)
+/// System context has special cache
     if ($contextlevel == CONTEXT_SYSTEM) {
-        $instance = 0;
+        return get_system_context();
     }
 
 /// check allowed context levels
@@ -2345,8 +2407,7 @@ function get_context_instance($contextlevel=NULL, $instance=0) {
 
 /// Get it from the database, or create it
     if (!$context = get_record('context', 'contextlevel', $contextlevel, 'instanceid', $instance)) {
-        create_context($contextlevel, $instance);
-        $context = get_record('context', 'contextlevel', $contextlevel, 'instanceid', $instance);
+        $context = create_context($contextlevel, $instance);
     }
 
 /// Only add to cache if context isn't empty.
@@ -2367,6 +2428,10 @@ function get_context_instance($contextlevel=NULL, $instance=0) {
 function get_context_instance_by_id($id) {
 
     global $context_cache, $context_cache_id;
+
+    if ($id == SYSCONTEXTID) {
+        return get_system_context();
+    }
 
     if (isset($context_cache_id[$id])) {  // Already cached
         return $context_cache_id[$id];
@@ -4504,9 +4569,9 @@ function build_context_path($force=false) {
                                     'instanceid', SITEID);
     }
 
-    $ctxemptyclause = " AND (ctx.depth IS NULL
+    $ctxemptyclause = " AND (ctx.path IS NULL
                               OR ctx.depth=0) ";
-    $emptyclause    = " AND ({$CFG->prefix}context.depth IS NULL
+    $emptyclause    = " AND ({$CFG->prefix}context.path IS NULL
                               OR {$CFG->prefix}context.depth=0) ";
     if ($force) {
         $ctxemptyclause = $emptyclause = '';
@@ -4655,6 +4720,12 @@ function build_context_path($force=false) {
     // Personal TODO
 
     //TODO: fix group contexts
+
+    // reset static course cache - it might have incorrect cached data
+    global $context_cache, $context_cache_id;
+    $context_cache    = array();
+    $context_cache_id = array();
+
 }
 
 /**

@@ -1794,7 +1794,7 @@ function main_upgrade($oldversion=0) {
     
     }
 
-    if ($oldversion < 2006091212) {   // Reload the guest roles completely with new defaults
+    if (!empty($CFG->rolesactive) and $oldversion < 2006091212) {   // Reload the guest roles completely with new defaults
         if ($guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
             delete_records('capabilities');
             $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
@@ -1817,7 +1817,7 @@ function main_upgrade($oldversion=0) {
         delete_records('config', 'name', 'requestedstudentsname');
     }
 
-    if ($oldversion < 2006091901) {
+    if (!empty($CFG->rolesactive) and $oldversion < 2006091901) {
         if ($roles = get_records('role')) {
             $first = array_shift($roles);
             if (!empty($first->shortname)) {
