@@ -3788,12 +3788,12 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
             $userobj = new StdClass; // fake it to save DB traffic
             $userobj->id = $user;
             $userobj->picture = $picture;
-            $user = $userobj;
+            $user = clone($userobj);
             unset($userobj);
         }
     }
     if ($needrec) {
-        $user = get_record('user','id',$user);   
+        $user = get_record('user','id',$user, '', '', '', '', 'id,firstname,lastname,imagealt');   
     }
 
     if ($link) {
