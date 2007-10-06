@@ -80,8 +80,10 @@ class embedded_cloze_qtype extends default_questiontype {
         }
 
         // Delete redundant wrapped questions
-        $oldwrappedids = implode(',', $oldwrappedids);
-        delete_records_select('question', "id IN ($oldwrappedids)");
+        if(is_array($oldwrappedids) && count($oldwrappedids)){ 
+            $oldwrappedids = implode(',', $oldwrappedids);
+            delete_records_select('question', "id IN ($oldwrappedids)");
+        }
 
         if (!empty($sequence)) {
             $multianswer = new stdClass;
