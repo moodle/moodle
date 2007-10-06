@@ -576,6 +576,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
     }
 
     function save_dataset_items($question, $fromform){
+        global $CFG ;
         // max datasets = 100 items
         $max100 = 100 ;
         $regenerate = optional_param('forceregeneration', 0, PARAM_BOOL);
