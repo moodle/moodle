@@ -74,7 +74,7 @@ switch ($filtertype) {
         }
         $courseid = $course->id;
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-        require_login($course->id);
+        require_login($course);
         if (!has_capability('moodle/blog:view', $coursecontext)) {
             error('You do not have the required permissions to view blogs in this course');
         }
@@ -94,7 +94,7 @@ switch ($filtertype) {
         }
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $courseid = $course->id;
-        require_login($course->id);
+        require_login($course);
         if (!has_capability('moodle/blog:view', $coursecontext)) {
             error('You do not have the required permissions to view blogs in this course/group');
         }
@@ -130,6 +130,10 @@ switch ($filtertype) {
             }
         }
         $userid = $filterselect;
+
+        if (!empty($courseid)) {
+            require_login($courseid);
+        }
 
     break;
 

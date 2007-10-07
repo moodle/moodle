@@ -9,7 +9,7 @@ $id       = optional_param('id', 0, PARAM_INT);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 $courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tab - does nothing here
 
-require_login();
+require_login($courseid);
 
 if (empty($CFG->bloglevel)) {
     error('Blogging is disabled!');
