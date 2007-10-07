@@ -34,6 +34,15 @@
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/gradelib.php');
 
+/// Extra debugging (set in config.php)
+    if (!empty($CFG->showcronsql)) {
+        $db->debug = true;
+    }
+    if (!empty($CFG->showcrondebugging)) {
+        $CFG->debug = DEBUG_DEVELOPER;
+        $CFG->displaydebug = true;
+    }
+
 /// extra safety
     @session_write_close();
 
