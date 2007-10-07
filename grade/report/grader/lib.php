@@ -904,18 +904,23 @@ class grade_report_grader extends grade_report {
                 $decimalpoints = $item->get_decimals();
 
                 // Determine which display type to use for this average
-                $gradedisplaytype = $item->get_displaytype();
-
                 if ($USER->gradeediting[$this->courseid]) {
                     $displaytype = GRADE_DISPLAY_TYPE_REAL;
-                } elseif ($averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // Inherit specific column or general preference
-                    $displaytype = $gradedisplaytype;
-                } else { // General preference overrides specific column display type
+
+                } else if ($averagesdisplaytype == GRADE_REPORT_PREFERENCE_DEFAULT 
+                        or $averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) {
+                    $displaytype = $item->get_displaytype();
+
+                } else {
                     $displaytype = $averagesdisplaytype;
                 }
 
                 // Override grade_item setting if a display preference (not inherit) was set for the averages
-                if ($averagesdecimalpoints != GRADE_REPORT_PREFERENCE_INHERIT) {
+                if ($averagesdecimalpoints == GRADE_REPORT_PREFERENCE_DEFAULT 
+                 or $averagesdecimalpoints == GRADE_REPORT_PREFERENCE_INHERIT) {
+                    $decimalpoints = $item->get_decimals();
+
+                } else {
                     $decimalpoints = $averagesdecimalpoints;
                 }
 
@@ -923,30 +928,10 @@ class grade_report_grader extends grade_report {
                     $avghtml .= '<td class="cell c' . $columncount++.'">-</td>';
                 } else {
                     $sum = $sum_array[$item->id];
-
-                    if ($item->scaleid) {
-                        if ($grouponly) {
-                            $finalsum = $sum_array[$item->id];
-                            $finalavg = $finalsum/$mean_count;
-                        } else {
-                            $finalavg = $sum/$mean_count;
-                        }
-                        $scaleval = round($finalavg);
-                        $scale_object = new grade_scale(array('id' => $item->scaleid), false);
-                        $gradehtml = $scale_object->get_nearest_item($scaleval);
-                        $rawvalue = $scaleval;
-                    } else {
-                        $rawgradeval = $sum/$mean_count;
-                        $gradeval = format_float($sum/$mean_count, $decimalpoints);
-                        $gradehtml = $gradeval;
-                    }
-
-                    if ($displaytype == GRADE_DISPLAY_TYPE_PERCENTAGE or $displaytype == GRADE_DISPLAY_TYPE_LETTER) {
-                        $gradeshtml = grade_format_gradevalue($rawgradeval, $item, true, $displaytype, null);
-                    }
+                    $avgradeval = $sum/$mean_count;
+                    $gradehtml = grade_format_gradevalue($avgradeval, $item, true, $displaytype, $decimalpoints);
 
                     $numberofgrades = '';
-
                     if ($shownumberofgrades) {
                         $numberofgrades = " ($mean_count)";
                     }
@@ -968,47 +953,46 @@ class grade_report_grader extends grade_report {
 
         $scalehtml = '';
         if ($this->get_pref('showranges')) {
-            $rangesdisplaytype = $this->get_pref('rangesdisplaytype');
+            $rangesdisplaytype   = $this->get_pref('rangesdisplaytype');
             $rangesdecimalpoints = $this->get_pref('rangesdecimalpoints');
+
             $scalehtml = '<tr class="r'.$this->rowcount++.'">'
                        . '<th class="header c0 range" scope="row">'.$this->get_lang_string('range','grades').'</th>';
 
             $columncount = 1;
             foreach ($this->items as $item) {
 
-                // Determine which display type to use for this range
-                $decimalpoints = $item->get_decimals();
-                $gradedisplaytype = $item->get_displaytype();
-
+                // Determine which display type to use for this average
                 if ($USER->gradeediting[$this->courseid]) {
                     $displaytype = GRADE_DISPLAY_TYPE_REAL;
-                } elseif ($rangesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // Inherit specific column or general preference
-                    $displaytype = $gradedisplaytype;
-                } else { // General preference overrides specific column display type
+
+                } else if ($rangesdisplaytype == GRADE_REPORT_PREFERENCE_DEFAULT 
+                        or $rangesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) {
+                    $displaytype = $item->get_displaytype();
+
+                } else {
                     $displaytype = $rangesdisplaytype;
                 }
 
-                // If ranges decimal points pref is set (but not to inherit), override grade_item setting
-                if ($rangesdecimalpoints != GRADE_REPORT_PREFERENCE_INHERIT) {
+                // Override grade_item setting if a display preference (not default) was set for the averages
+                if ($rangesdecimalpoints == GRADE_REPORT_PREFERENCE_DEFAULT 
+                 or $rangesdecimalpoints == GRADE_REPORT_PREFERENCE_INHERIT) {
+                    $decimalpoints = $item->get_decimals();
+
+                } else {
                     $decimalpoints = $rangesdecimalpoints;
                 }
 
-                $grademin = 0;
-                $grademax = 100;
+                if ($displaytype == GRADE_DISPLAY_TYPE_PERCENTAGE) {
+                    $grademin = "0 %";
+                    $grademax = "100 %";
 
-                if ($displaytype == GRADE_DISPLAY_TYPE_REAL) {
-                    $grademin = format_float($item->grademin, $decimalpoints);
-                    $grademax = format_float($item->grademax, $decimalpoints);
-                } elseif ($displaytype == GRADE_DISPLAY_TYPE_PERCENTAGE) {
-                    $grademin = 0;
-                    $grademax = 100;
-                } elseif ($displaytype == GRADE_DISPLAY_TYPE_LETTER) {
-                    $letters = grade_report::get_grade_letters();
-                    $grademin = end($letters);
-                    $grademax = reset($letters);
+                } else {
+                    $grademin = grade_format_gradevalue($item->grademin, $item, true, $displaytype, $decimalpoints);
+                    $grademax = grade_format_gradevalue($item->grademax, $item, true, $displaytype, $decimalpoints);
                 }
 
-                $scalehtml .= '<th class="header c'.$columncount++.' range">'. $grademin.'-'. $grademax.'</th>';
+                $scalehtml .= '<th class="header c'.$columncount++.' range">'. $grademin.'&ndash;'. $grademax.'</th>';
             }
             $scalehtml .= '</tr>';
         }

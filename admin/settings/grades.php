@@ -4,12 +4,30 @@
 
 // General settings
 
+require_once $CFG->libdir.'/grade/constants.php';
+
 $temp = new admin_settingpage('gradessettings', get_string('gradessettings', 'grades'));
 $temp->add(new admin_setting_special_gradeexport());
 // enable outcomes checkbox
 $temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'grades'), get_string('configenableoutcomes', 'grades'), 0, PARAM_INT));
 // enable publishing in exports/imports
 $temp->add(new admin_setting_configcheckbox('gradepublishing', get_string('gradepublishing', 'grades'), get_string('configgradepublishing', 'grades'), 0, PARAM_INT));
+
+$temp->add(new admin_setting_configselect('grade_displaytype', get_string('gradedisplaytype', 'grades'),
+                                          get_string('configgradedisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
+                                          array(GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
+                                                GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                                                GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'))));
+
+$temp->add(new admin_setting_configselect('grade_decimalpoints', get_string('decimalpoints', 'grades'),
+                                          get_string('configdecimalpoints', 'grades'), 2,
+                                          array( '0' => '0',
+                                                 '1' => '1',
+                                                 '2' => '2',
+                                                 '3' => '3',
+                                                 '4' => '4',
+                                                 '5' => '5')));
+
 $ADMIN->add('grades', $temp);
 
 /// Scales and outcomes
@@ -22,8 +40,8 @@ $letters = new admin_externalpage('letters', get_string('letters', 'grades'), $C
 $ADMIN->add('grades', $letters);
 
 /// Grade category settings
-require_once $CFG->libdir . '/grade/constants.php';
 $temp = new admin_settingpage('gradecategorysettings', get_string('gradecategorysettings', 'grades'));
+
 $strnoforce = get_string('noforce', 'grades');
 
     // Aggregation type

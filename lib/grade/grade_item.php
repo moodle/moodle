@@ -1714,7 +1714,7 @@ class grade_item extends grade_object {
 
             $gradedisplaytype = get_field('grade_items', 'display', 'courseid', $this->courseid, 'itemtype', 'course');
             if ($gradedisplaytype == GRADE_DISPLAY_TYPE_DEFAULT) {
-                $gradedisplaytype = $CFG->grade_report_gradedisplaytype;
+                $gradedisplaytype = $CFG->grade_displaytype;
             }
             $cache[$this->courseid] = $gradedisplaytype;
             return $gradedisplaytype;
@@ -1740,7 +1740,7 @@ class grade_item extends grade_object {
             }
             $gradedecimals = get_field('grade_items', 'decimals', 'courseid', $this->courseid, 'itemtype', 'course');
             if (is_null($gradedecimals)) {
-                $gradedecimals = $CFG->grade_report_decimalpoints;
+                $gradedecimals = $CFG->grade_decimalpoints;
             }
             $cache[$this->courseid] = $gradedecimals;
             return $gradedecimals;

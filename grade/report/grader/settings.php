@@ -5,6 +5,7 @@ $strinherit             = get_string('inherit', 'grades');
 $strpercentage          = get_string('percentage', 'grades');
 $strreal                = get_string('real', 'grades');
 $strletter              = get_string('letter', 'grades');
+$strdefault             = get_string('default');
 
 /// Add settings for this module to the $settings object (it's already defined)
 $settings->add(new admin_setting_configtext('grade_report_studentsperpage', get_string('studentsperpage', 'grades'),
@@ -16,15 +17,6 @@ $settings->add(new admin_setting_configcheckbox('grade_report_quickgrading', get
 $settings->add(new admin_setting_configcheckbox('grade_report_quickfeedback', get_string('quickfeedback', 'grades'),
                                             get_string('configquickfeedback', 'grades'), 1));
 
-$settings->add(new admin_setting_configselect('grade_report_decimalpoints', get_string('decimalpoints', 'grades'),
-                                          get_string('configdecimalpoints', 'grades'), 2,
-                                          array( '0' => '0',
-                                                 '1' => '1',
-                                                 '2' => '2',
-                                                 '3' => '3',
-                                                 '4' => '4',
-                                                 '5' => '5')));
-
 $settings->add(new admin_setting_configselect('grade_report_aggregationposition', get_string('aggregationposition', 'grades'),
                                           get_string('configaggregationposition', 'grades'), GRADE_REPORT_AGGREGATION_POSITION_RIGHT,
                                           array(GRADE_REPORT_AGGREGATION_POSITION_LEFT => get_string('left', 'grades'),
@@ -35,12 +27,6 @@ $settings->add(new admin_setting_configselect('grade_report_aggregationview', ge
                                           array(GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('full', 'grades'),
                                                 GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY => get_string('aggregatesonly', 'grades'),
                                                 GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY => get_string('gradesonly', 'grades'))));
-
-$settings->add(new admin_setting_configselect('grade_report_gradedisplaytype', get_string('gradedisplaytype', 'grades'),
-                                          get_string('configgradedisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
-                                          array(GRADE_DISPLAY_TYPE_REAL => $strreal,
-                                                GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
-                                                GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_meanselection', get_string('meanselection', 'grades'),
                                           get_string('configmeanselection', 'grades'), GRADE_REPORT_MEAN_ALL,
@@ -78,22 +64,22 @@ $settings->add(new admin_setting_configcheckbox('grade_report_shownumberofgrades
                                             get_string('configshownumberofgrades', 'grades'), 0));
 
 $settings->add(new admin_setting_configselect('grade_report_averagesdisplaytype', get_string('averagesdisplaytype', 'grades'),
-                                          get_string('configaveragesdisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
-                                          array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
+                                          get_string('configaveragesdisplaytype', 'grades'), GRADE_REPORT_PREFERENCE_DEFAULT,
+                                          array(GRADE_REPORT_PREFERENCE_DEFAULT => $strdefault,
                                                 GRADE_DISPLAY_TYPE_REAL => $strreal,
                                                 GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
                                                 GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_rangesdisplaytype', get_string('rangesdisplaytype', 'grades'),
-                                          get_string('configrangesdisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
-                                          array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
+                                          get_string('configrangesdisplaytype', 'grades'), GRADE_REPORT_PREFERENCE_DEFAULT,
+                                          array(GRADE_REPORT_PREFERENCE_DEFAULT => $strdefault,
                                                 GRADE_DISPLAY_TYPE_REAL => $strreal,
                                                 GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
                                                 GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_averagesdecimalpoints', get_string('averagesdecimalpoints', 'grades'),
                                           get_string('configaveragesdecimalpoints', 'grades'), 2,
-                                          array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
+                                          array(GRADE_REPORT_PREFERENCE_DEFAULT => $strdefault,
                                                  '0' => '0',
                                                  '1' => '1',
                                                  '2' => '2',
@@ -102,7 +88,7 @@ $settings->add(new admin_setting_configselect('grade_report_averagesdecimalpoint
                                                  '5' => '5')));
 $settings->add(new admin_setting_configselect('grade_report_rangesdecimalpoints', get_string('rangesdecimalpoints', 'grades'),
                                           get_string('configrangesdecimalpoints', 'grades'), 2,
-                                          array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
+                                          array(GRADE_REPORT_PREFERENCE_DEFAULT => $strdefault,
                                                  '0' => '0',
                                                  '1' => '1',
                                                  '2' => '2',

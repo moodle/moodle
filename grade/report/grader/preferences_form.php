@@ -21,12 +21,11 @@ class grader_report_preferences_form extends moodleform {
         $strconfiggradeboundary = get_string('configgradeboundary', 'grades');
         $strgradeletter         = get_string('gradeletter', 'grades');
         $strconfiggradeletter   = get_string('configgradeletter', 'grades');
-        $strinherit             = get_string('inherit', 'grades');
         $stryes                 = get_string('yes');
         $strno                  = get_string('no');
 
 
-        $checkbox_default = array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default', 0 => $strno, 1 => $stryes);
+        $checkbox_default = array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*', 0 => $strno, 1 => $stryes);
 
 /// form definition with preferences defaults
 //--------------------------------------------------------------------------------
@@ -35,11 +34,11 @@ class grader_report_preferences_form extends moodleform {
         // Initialise the preferences arrays with grade:manage capabilities
         if (has_capability('moodle/grade:manage', $context)) {
             $preferences['prefgeneral'] = array(
-                          'aggregationview'     => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
+                          'aggregationview'     => array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
                                                          GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('fullmode', 'grades'),
                                                          GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY => get_string('aggregatesonly', 'grades'),
                                                          GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY => get_string('gradesonly', 'grades')),
-                          'meanselection'       => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
+                          'meanselection'       => array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
                                                          GRADE_REPORT_MEAN_ALL => get_string('meanall', 'grades'),
                                                          GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades')));
 
@@ -51,20 +50,18 @@ class grader_report_preferences_form extends moodleform {
                                              'showlocks'         => $checkbox_default);
 
             $preferences['prefrows'] = array(
-                        'averagesdisplaytype'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
-                                                          GRADE_REPORT_PREFERENCE_INHERIT => $strinherit, 
+                        'averagesdisplaytype'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default'),
                                                           GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
                                                           GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
                                                           GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
-                        'rangesdisplaytype'      => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
-                                                          GRADE_REPORT_PREFERENCE_INHERIT => $strinherit, 
+                        'rangesdisplaytype'      => array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default'),
                                                           GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
                                                           GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
                                                           GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
-                        'averagesdecimalpoints'  => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
-                                                          GRADE_REPORT_PREFERENCE_INHERIT => $strinherit, 0, 1, 2, 3, 4, 5),
-                        'rangesdecimalpoints'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
-                                                          GRADE_REPORT_PREFERENCE_INHERIT => $strinherit, 0, 1, 2, 3, 4, 5));
+                        'averagesdecimalpoints'  => array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default'),
+                                                          '0'=>0, '1'=>1, '2'=>2, '3'=>3, '4'=>4, '5'=>5),
+                        'rangesdecimalpoints'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default'),
+                                                          '0'=>0, '1'=>1, '2'=>2, '3'=>3, '4'=>4, '5'=>5));
 
         }
 
@@ -77,7 +74,7 @@ class grader_report_preferences_form extends moodleform {
         // View capability is the lowest permission. Users with grade:manage or grade:edit must also have grader:view
         if (has_capability('gradereport/grader:view', $context)) {
             $preferences['prefgeneral']['studentsperpage'] = 'text';
-            $preferences['prefgeneral']['aggregationposition'] = array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
+            $preferences['prefgeneral']['aggregationposition'] = array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
                                                                      GRADE_REPORT_AGGREGATION_POSITION_LEFT => get_string('left', 'grades'),
                                                                      GRADE_REPORT_AGGREGATION_POSITION_RIGHT => get_string('right', 'grades'));
             // $preferences['prefgeneral']['enableajax'] = $checkbox_default;
@@ -123,8 +120,8 @@ class grader_report_preferences_form extends moodleform {
 
                 $help_string = get_string("config$lang_string", 'grades');
 
-                // Replace the 'default' value with the site default language string
-                if (!is_null($options) AND isset($options[GRADE_REPORT_PREFERENCE_DEFAULT]) && $options[GRADE_REPORT_PREFERENCE_DEFAULT] == 'default') {
+                // Replace the '*default*' value with the site default language string - 'default' might collide with custom language packs
+                if (!is_null($options) AND isset($options[GRADE_REPORT_PREFERENCE_DEFAULT]) && $options[GRADE_REPORT_PREFERENCE_DEFAULT] == '*default*') {
                     $options[GRADE_REPORT_PREFERENCE_DEFAULT] = get_string('sitedefault', 'grades', $default);
                 } elseif ($type == 'text') {
                     $help_string = get_string("config{$lang_string}default", 'grades', $default);
@@ -145,7 +142,6 @@ class grader_report_preferences_form extends moodleform {
 
         $this->add_action_buttons();
     }
-
 
 /// perform some extra moodle validation
     function validation($data){

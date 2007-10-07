@@ -59,7 +59,7 @@ if ($data = data_submitted()) {
         }
     }
 
-    redirect($CFG->wwwroot . '/grade/report/grader/index.php?id='.$courseid, get_string('changessaved'), 1);
+    redirect($CFG->wwwroot . '/grade/report/grader/index.php?id='.$courseid); // message here breaks accessability and is sloooowww
     exit;
 }
 
