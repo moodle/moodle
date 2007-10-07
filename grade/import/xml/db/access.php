@@ -21,5 +21,3 @@ $gradeimport_xml_capabilities = array(
 );
 
 ?>
-
-
