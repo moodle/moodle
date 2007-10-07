@@ -88,7 +88,7 @@ class auth_plugin_fc extends auth_plugin_base {
 
         $userinfo = array();
 
-        $fpp = new fcFPP($this->config->host, $this->config->port);
+        $fpp = new fcFPP($this->config->host, $this->config->fppport);
         if ($fpp->open()) {
             if ($fpp->login($this->config->userid, $this->config->passwd)) {
                 $userinfo['firstname']   = $fpp->getUserInfo($username,"1202");
@@ -121,7 +121,7 @@ class auth_plugin_fc extends auth_plugin_base {
 
         $fcgroups = array();
 
-        $fpp = new fcFPP($this->config->host, $this->config->port);
+        $fpp = new fcFPP($this->config->host, $this->config->fppport);
         if ($fpp->open()) {
             if ($fpp->login($this->config->userid, $this->config->passwd)) {
                 $fcgroups = $fpp->getGroups($username);
@@ -224,7 +224,7 @@ class auth_plugin_fc extends auth_plugin_base {
         }
 
         // save settings
-        set_config('host',      $config->user,     'auth/fc');
+        set_config('host',      $config->host,     'auth/fc');
         set_config('fppport',   $config->fppport,  'auth/fc');
         set_config('userid',    $config->userid,   'auth/fc');
         set_config('passwd',    $config->passwd,   'auth/fc');
