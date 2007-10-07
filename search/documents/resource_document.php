@@ -187,7 +187,7 @@ function resource_get_physical_file(&$resource, $context_id, $getsingle, &$docum
         $resource->alltext = $function_name($resource);
         if (!empty($resource->alltext)){
             if ($getsingle){
-                return new ResourceSearchDocument(get_object_vars($resource));
+                return new ResourceSearchDocument(get_object_vars($resource), $context_id);
             }
             else{
                 $documents[] = new ResourceSearchDocument(get_object_vars($resource), $context_id);
