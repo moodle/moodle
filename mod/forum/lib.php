@@ -384,15 +384,17 @@ function forum_cron() {
                     continue; // user does not subscribe to this forum
                 }
 
-                // Get the context (from cache)
-                $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);   // Cached already
-
                 // setup global $COURSE properly - needed for roles and languages
                 course_setup($course);   // More environment
 
+                // Get the context (from cache)
+                $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);   // Cached already
+                $post->modcontext = $modcontext;
+                $post->viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext);
+
                 // Make sure groups allow this user to see this email
                 if ($discussion->groupid > 0 and $groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
-                    if (! groups_group_exists($discussion->groupid)) { // Can't find group
+                    if (!groups_group_exists($discussion->groupid)) { // Can't find group
                         continue;                           // Be safe and don't send it to anyone
                     }
 
@@ -403,7 +405,7 @@ function forum_cron() {
                 }
 
                 // Make sure we're allowed to see it...
-                if (!forum_user_can_see_post($forum, $discussion, $post)) {
+                if (!forum_user_can_see_post($forum, $discussion, $post, NULL, $cm)) {
                     mtrace('user '.$userto->id. ' can not see '.$post->id);
                     continue;
                 }
@@ -497,6 +499,8 @@ function forum_cron() {
 
     $timenow = time();
     $digesttime = usergetmidnight($timenow, $sitetimezone) + ($CFG->digestmailtime * 3600);
+
+    mtrace('Starting digest processing...');
 
     if ($CFG->digestmailtimelast < $digesttime and $timenow > $digesttime) {
 
@@ -761,14 +765,18 @@ function forum_cron() {
 function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, $bare = false) {
     global $CFG, $USER;
 
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-        error('Course Module ID was incorrect');
+    if (empty($post->viewfullnames)) {
+        if (empty($post->modcontext)) {
+            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+                error('Course Module ID was incorrect');
+            }
+            $post->modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        }
+        $post->viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
     }
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
 
     $by = New stdClass;
-    $by->name = fullname($userfrom, $viewfullnames);
+    $by->name = fullname($userfrom, $post->viewfullnames);
     $by->date = userdate($post->modified, "", $userto->timezone);
 
     $strbynameondate = get_string('bynameondate', 'forum', $by);
@@ -834,8 +842,15 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
         return '';
     }
 
+    if (empty($post->modcontext)) {
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+            error('Course Module ID was incorrect');
+        }
+        $post->modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    }
+
     $strforums = get_string('forums', 'forum');
-    $canreply = forum_user_can_post($forum, $userto);
+    $canreply = forum_user_can_post($forum, $userto, NULL, $post->modcontext);
     $canunsubscribe = ! forum_is_forcesubscribed($forum);
 
     $posthtml = '<head>';
@@ -1879,7 +1894,7 @@ function forum_get_user_discussions($courseid, $userid, $groupid=0) {
         $groupselect = "";
     }
 
-    return get_records_sql("SELECT p.*, d.groupid, u.firstname, u.lastname, u.email, u.picture,
+    return get_records_sql("SELECT p.*, d.groupid, u.firstname, u.lastname, u.email, u.picture, u.imagealt,
                                    f.type as forumtype, f.name as forumname, f.id as forumid
                               FROM {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}forum_posts p,
@@ -1919,7 +1934,7 @@ function forum_subscribed_users($course, $forum, $groupid=0, $cache=false) {
     if (forum_is_forcesubscribed($forum)) {
         $results = get_course_users($course->id);     // Otherwise get everyone in the course
     } else {
-        $results = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest, u.emailstop,
+        $results = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest, u.emailstop, u.imagealt,
                                    u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.theme, u.lang, u.trackforums
                               FROM {$CFG->prefix}user u,
                                    {$CFG->prefix}forum_subscriptions s $grouptables
@@ -3477,12 +3492,12 @@ function forum_user_can_post_discussion($forum, $currentgroup=-1, $groupmode=-1,
  */
 function forum_user_can_post($forum, $user=NULL, $cm=NULL, $context=NULL) {
 
-    if (!$cm) {
-        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-            error('Course Module ID was incorrect');
-        }
-    }
     if (!$context) {
+        if (!$cm) {
+            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+                error('Course Module ID was incorrect');
+            }
+        }
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
 
@@ -3567,7 +3582,7 @@ function forum_user_can_see_discussion($forum, $discussion, $context, $user=NULL
 /**
  * 
  */
-function forum_user_can_see_post($forum, $discussion, $post, $user=NULL) {
+function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NULL) {
     global $USER;
 
     // retrieve objects (yuk)
@@ -3591,16 +3606,20 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL) {
         $post->id = $post->parent;
     }
 
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-        error('Course Module ID was incorrect');
+    if (!$cm) {
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+            error('Course Module ID was incorrect');
+        }
     }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (!isset($post->modcontext)) {
+        $post->modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    }
 
     if (empty($user) || empty($user->id)) {
         $user = $USER;
     }
 
-    if (!has_capability('mod/forum:viewdiscussion', $context, $user->id)) {
+    if (!has_capability('mod/forum:viewdiscussion', $post->modcontext, $user->id)) {
         return false;
     }
     
@@ -3613,7 +3632,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL) {
 
         return (forum_user_has_posted($forum->id,$discussion->id,$user->id) ||
                 $firstpost->id == $post->id ||
-                has_capability('mod/forum:viewqandawithoutposting', $context, false, $user->id));
+                has_capability('mod/forum:viewqandawithoutposting', $post->modcontext, false, $user->id));
     }
     return true;
 }
