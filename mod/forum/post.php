@@ -141,8 +141,12 @@
         if (! $course = get_record("course", "id", $discussion->course)) {
             error("The course number was incorrect ($discussion->course)");
         }
+        if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+            error("Incorrect cm");
+        }
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $modcontext    = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         if (! forum_user_can_post($forum)) {
             if (has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
@@ -154,19 +158,16 @@
             }
         }
 
-        if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-            if (groupmode($course, $cm)) {   // Make sure user can post here
-                $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-                $mygroupid = mygroupid($course->id);
-                if (!((empty($mygroupid) and $discussion->groupid == -1)
-                        || (groups_is_member($discussion->groupid)/*$mygroupid == $discussion->groupid*/)
-                        || has_capability('moodle/site:accessallgroups', $modcontext, NULL, false) )) {
-                    print_error('nopostdiscussion', 'forum');
-                }
+        if (groupmode($course, $cm)) {   // Make sure user can post here
+            $mygroupid = mygroupid($course->id);
+            if (!((empty($mygroupid) and $discussion->groupid == -1)
+                    || (groups_is_member($discussion->groupid)/*$mygroupid == $discussion->groupid*/)
+                    || has_capability('moodle/site:accessallgroups', $modcontext, NULL, false) )) {
+                print_error('nopostdiscussion', 'forum');
             }
-            if (!$cm->visible and !has_capability('moodle/course:manageactivities', $coursecontext)) {
-                error(get_string("activityiscurrentlyhidden"));
-            }
+        }
+        if (!$cm->visible and !has_capability('moodle/course:manageactivities', $coursecontext)) {
+            error(get_string("activityiscurrentlyhidden"));
         }
 
         // Load up the $post variable.
