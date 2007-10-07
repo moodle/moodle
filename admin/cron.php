@@ -302,10 +302,12 @@
 
         if (!empty($CFG->notifyloginfailures)) {
             notify_login_failures();
+            mtrace('Notified login failured');
         }
         flush();
 
         sync_metacourses();
+        mtrace('Synchronised metacourses');
 
         //
         // generate new password emails for users 
@@ -335,14 +337,20 @@
         if(!empty($CFG->usetags)){
             require_once($CFG->dirroot.'/tag/lib.php');
             tag_cron();
+            mtrace ('Executed tag cron');
         }
         
         // Accesslib stuff
         cleanup_contexts();
+        mtrace ('Cleaned up contexts');
         gc_cache_flags();
+        mtrace ('Cleaned cache flags');
         // If you suspect that the context paths are somehow corrupt
         // replace the line below with: build_context_path(true); 
         build_context_path();
+        mtrace ('Built context paths');
+
+        mtrace("Finished clean-up tasks...");
 
     } // End of occasional clean-up tasks
 
