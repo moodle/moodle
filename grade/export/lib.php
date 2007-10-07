@@ -149,6 +149,8 @@ class grade_export {
         $displaytype = null;
         if ($this->export_letters) {
             $displaytype = GRADE_DISPLAY_TYPE_LETTER;
+        } else {
+            $displaytype = GRADE_DISPLAY_TYPE_REAL;
         }
 
         return grade_format_gradevalue($grade->finalgrade, $this->grade_items[$grade->itemid], false, $displaytype, null);

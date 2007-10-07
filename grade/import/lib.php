@@ -1,5 +1,22 @@
 <?php  // $Id$
 
+require_once($CFG->libdir.'/gradelib.php');
+
+/**
+ * Returns new improtcode for current user
+ * @return int importcode
+ */
+function get_new_importcode() {
+    global $USER;
+
+    $importcode = time();
+    while (get_record('grade_import_values', 'importcode', $importcode, 'importer', $USER->id)) {
+        $importcode--;
+    }
+
+    return $importcode;
+}
+
 /**
  * given an import code, commits all entries in buffer tables
  * (grade_import_value and grade_import_newitem)
@@ -11,18 +28,16 @@
  * @return bool success
  */
 function grade_import_commit($courseid, $importcode, $importfeedback=true, $verbose=true) {
-    global $CFG;
+    global $CFG, $USER;
 
-    include_once($CFG->libdir.'/gradelib.php');
-    include_once($CFG->libdir.'/grade/grade_item.php');
     $commitstart = time(); // start time in case we need to roll back
     $newitemids = array(); // array to hold new grade_item ids from grade_import_newitem table, mapping array
 
     /// first select distinct new grade_items with this batch
 
     if ($newitems = get_records_sql("SELECT *
-                                     FROM {$CFG->prefix}grade_import_newitem
-                                     WHERE import_code = $importcode")) {
+                                       FROM {$CFG->prefix}grade_import_newitem
+                                      WHERE importcode = $importcode AND importer={$USER->id}")) {
 
         // instances of the new grade_items created, cached
         // in case grade_update fails, so that we can remove them
@@ -60,13 +75,12 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
     /// then find all existing items
 
     if ($gradeitems = get_records_sql("SELECT DISTINCT (itemid)
-                                       FROM {$CFG->prefix}grade_import_values
-                                       WHERE import_code = $importcode
-                                       AND itemid > 0")) {
+                                         FROM {$CFG->prefix}grade_import_values
+                                        WHERE importcode = $importcode AND importer={$USER->id} AND itemid > 0")) {
 
         $modifieditems = array();
 
-        foreach ($gradeitems as $itemid=>$iteminfo) {
+        foreach ($gradeitems as $itemid=>$notused) {
 
             if (!$gradeitem = new grade_item(array('id'=>$itemid))) {
                 // not supposed to happen, but just in case
@@ -114,22 +128,11 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
  * @param string importcode - import batch identifier
  */
 function import_cleanup($importcode) {
+    global $USER;
+
     // remove entries from buffer table
-    delete_records('grade_import_values', 'import_code', $importcode);
-    delete_records('grade_import_newitem', 'import_code', $importcode);
+    delete_records('grade_import_values', 'importcode', $importcode, 'importer', $USER->id);
+    delete_records('grade_import_newitem', 'importcode', $importcode, 'importer', $USER->id);
 }
 
-/// Returns the file as one big long string
-function my_file_get_contents($filename, $use_include_path = 0) {
-
-    $data = "";
-    $file = @fopen($filename, "rb", $use_include_path);
-    if ($file) {
-        while (!feof($file)) {
-            $data .= fread($file, 1024);
-        }
-        fclose($file);
-    }
-    return $data;
-}
 ?>

@@ -1,5 +1,6 @@
 <?php // $Id$
 require_once $CFG->libdir.'/formslib.php';
+require_once($CFG->libdir.'/gradelib.php');
 
 class grade_import_form extends moodleform {
     function definition (){
@@ -18,18 +19,9 @@ class grade_import_form extends moodleform {
         $mform->addElement('select', 'encoding', get_string('encoding', 'grades'), $encodings);
 
         $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000);
-        $mform->addElement('select', 'previewrows', 'Preview rows', $options); // TODO: localize
+        $mform->addElement('select', 'previewrows', get_string('rowpreviewnum', 'grades'), $options); // TODO: localize
         $mform->setType('previewrows', PARAM_INT);
         $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
-    }
-
-    function get_userfile_name(){
-        if ($this->is_submitted() and $this->is_validated()) {
-            // return the temporary filename to process
-            return $this->_upload_manager->files['userfile']['tmp_name'];
-        } else{
-            return  NULL;
-        }
     }
 }
 
@@ -41,8 +33,6 @@ class grade_import_mapping_form extends moodleform {
 
         // this is an array of headers
         $header = $this->_customdata['header'];
-        // temporary filename
-        $filename = $this->_customdata['filename'];
         // course id
 
         $mform->addElement('header', 'general', get_string('identifier', 'grades'));
@@ -71,8 +61,6 @@ class grade_import_mapping_form extends moodleform {
             }
         }
 
-        include_once($CFG->libdir.'/gradelib.php');
-
         if ($header) {
             $i = 0; // index
             foreach ($header as $h) {
@@ -88,23 +76,13 @@ class grade_import_mapping_form extends moodleform {
             }
         }
 
-        // find a non-conflicting file name based on time stamp
-        $newfilename = 'cvstemp_'.time();
-        while (file_exists($CFG->dataroot.'/temp/'.$newfilename)) {
-            $newfilename = 'cvstemp_'.time();
-        }
-
-        // move the uploaded file
-        move_uploaded_file($filename, $CFG->dataroot.'/temp/'.$newfilename);
-
         // course id needs to be passed for auth purposes
         $mform->addElement('hidden', 'map', 1);
         $mform->setType('map', PARAM_INT);
-        $mform->addElement('hidden', 'id', optional_param('id'));
+        $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
-        //echo '<input name="filename" value='.$newfilename.' type="hidden" />';
-        $mform->addElement('hidden', 'filename', $newfilename);
-        $mform->setType('filename', PARAM_FILE);
+        $mform->addElement('hidden', 'importcode');
+        $mform->setType('importcode', PARAM_FILE);
         $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
 
     }

@@ -44,8 +44,12 @@ $mform = new grade_import_form();
 // they are somehow not returned with get_data()
 if (($formdata = data_submitted()) && !empty($formdata->map)) {
 
-    // temporary file name supplied by form
-    $filename = $CFG->dataroot.'/temp/'.clean_param($formdata->filename, PARAM_FILE);
+    $importcode = clean_param($formdata->importcode, PARAM_FILE);
+    $filename = $CFG->dataroot.'/temp/gradeimport/cvs/'.$USER->id.'/'.$importcode;
+
+    if (!file_exists($filename)) {
+        error('error processing upload file');
+    }
 
     if ($fp = fopen($filename, "r")) {
         // --- get header (field names) ---
@@ -55,7 +59,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
         }
     } else {
-        error ('could not open file '.$filename);
+        error ('could not open file');
     }
 
     $map = array();
@@ -79,7 +83,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
             } else {
                 // collision
                 unlink($filename); // needs to be uploaded again, sorry
-                error('mapping collision detected, 2 fields maps to the same grdae item '.$j);
+                error('mapping collision detected, 2 fields maps to the same grade item '.$j);
             }
         }
     }
@@ -97,13 +101,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     if ($fp = fopen($filename, "r")) {
 
         // read the first line makes sure this doesn't get read again
-        $header = split($csv_delimiter, clean_param(fgets($fp,1024), PARAM_RAW));
-
-        // use current (non-conflicting) time stamp
-        $importcode = time();
-        while (get_record('grade_import_values', 'import_code', $importcode)) {
-            $importcode = time();
-        }
+        $header = split($csv_delimiter, fgets($fp,1024));
 
         $newgradeitems = array(); // temporary array to keep track of what new headers are processed
         $status = true;
@@ -133,7 +131,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                 $t = explode("_", $map[$key]);
                 $t0 = $t[0];
                 if (isset($t[1])) {
-                    $t1 = $t[1];
+                    $t1 = (int)$t[1];
                 } else {
                     $t1 = '';
                 }
@@ -184,7 +182,8 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
 
                             $newgradeitem = new object();
                             $newgradeitem->itemname = $header[$key];
-                            $newgradeitem->import_code = $importcode;
+                            $newgradeitem->importcode = $importcode;
+                            $newgradeitem->importer   = $USER->id;
 
                             // failed to insert into new grade item buffer
                             if (!$newgradeitems[$key] = insert_record('grade_import_newitem', addslashes_recursive($newgradeitem))) {
@@ -206,6 +205,17 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                     break;
                     case 'feedback':
                         if ($t1) {
+                            // case of an id, only maps id of a grade_item
+                            // this was idnumber
+                            if (!$gradeitem = new grade_item(array('id'=>$t1, 'courseid'=>$course->id))) {
+                                // supplied bad mapping, should not be possible since user
+                                // had to pick mapping
+                                $status = false;
+                                import_cleanup($importcode);
+                                notify(get_string('importfailed', 'grades'));
+                                break 3;
+                            }
+
                             // t1 is the id of the grade item
                             $feedback = new object();
                             $feedback->itemid   = $t1;
@@ -215,10 +225,12 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                     break;
                     default:
                         // existing grade items
-                        if (!empty($map[$key]) && $value!=="") {
+                        if (!empty($map[$key])) {
+                            if ($value === '' or $value == '-') {
+                                $value = null; // no grade
 
+                            } else if (!is_numeric($value)) {
                             // non numeric grade value supplied, possibly mapped wrong column
-                            if (!is_numeric($value)) {
                                 echo "<br/>t0 is $t0";
                                 echo "<br/>grade is $value";
                                 $status = false;
@@ -239,7 +251,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                             }
 
                             // check if grade item is locked if so, abort
-                            if ($gradeitem->locked) {
+                            if ($gradeitem->is_locked()) {
                                 $status = false;
                                 import_cleanup($importcode);
                                 notify(get_string('gradeitemlocked', 'grades'));
@@ -266,13 +278,13 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
             }
 
             // insert results of this students into buffer
-            if (!empty($newgrades)) {
+            if ($status and !empty($newgrades)) {
 
                 foreach ($newgrades as $newgrade) {
 
                     // check if grade_grade is locked and if so, abort
-                    if ($grade_grade = new grade_grade(array('itemid'=>$newgrade->itemid, 'userid'=>$studentid))) {
-                        if ($grade_grade->locked) {
+                    if (!empty($newgrade->itemid) and $grade_grade = new grade_grade(array('itemid'=>$newgrade->itemid, 'userid'=>$studentid))) {
+                        if ($grade_grade->is_locked()) {
                             // individual grade locked
                             $status = false;
                             import_cleanup($importcode);
@@ -281,8 +293,9 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                         }
                     }
 
-                    $newgrade->import_code = $importcode;
-                    $newgrade->userid = $studentid;
+                    $newgrade->importcode = $importcode;
+                    $newgrade->userid     = $studentid;
+                    $newgrade->importer   = $USER->id;
                     if (!insert_record('grade_import_values', addslashes_recursive($newgrade))) {
                         // could not insert into temporary table
                         $status = false;
@@ -294,15 +307,20 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
             }
 
             // updating/inserting all comments here
-            if (!empty($newfeedbacks)) {
+            if ($status and !empty($newfeedbacks)) {
                 foreach ($newfeedbacks as $newfeedback) {
-                    if ($feedback = get_record('grade_import_values', 'import_code', $importcode, 'userid', $studentid, 'itemid', $newfeedback->itemid)) {
-                        $newfeedback ->id = $feedback ->id;
+                    $sql = "SELECT *
+                              FROM {$CFG->prefix}grade_import_values
+                             WHERE importcode=$importcode AND userid=$studentid AND itemid=$newfeedback->itemid AND importer={$USER->id}";
+                    if ($feedback = get_record_sql($sql)) {
+                        $newfeedback->id = $feedback->id;
                         update_record('grade_import_values', addslashes_recursive($newfeedback));
+
                     } else {
                         // the grade item for this is not updated
-                        $newfeedback->import_code = $importcode;
-                        $newfeedback->userid = $studentid;
+                        $newfeedback->importcode = $importcode;
+                        $newfeedback->userid     = $studentid;
+                        $newfeedback->importer   = $USER->id;
                         insert_record('grade_import_values', addslashes_recursive($newfeedback));
                     }
                 }
@@ -320,8 +338,6 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     }
 
 } else if ($formdata = $mform->get_data()) {
-    // else if file is just uploaded
-    $filename = $mform->get_userfile_name();
 
     // Large files are likely to take their time and memory. Let PHP know
     // that we'll take longer, and that the process should be recycled soon
@@ -332,7 +348,14 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
         @apache_child_terminate();
     }
 
-    $text = my_file_get_contents($filename);
+    // use current (non-conflicting) time stamp
+    $importcode = get_new_importcode();
+    if (!$filename = make_upload_directory('temp/gradeimport/cvs/'.$USER->id, true)) {
+        die;
+    }
+    $filename = $filename.'/'.$importcode;
+
+    $text = $mform->get_file_content('userfile');
     // trim utf-8 bom
     $textlib = textlib_get_instance();
     /// normalize line endings and do the encoding conversion
@@ -347,7 +370,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     $fp = fopen($filename, "r");
 
     // --- get header (field names) ---
-    $header = split($csv_delimiter, clean_param(fgets($fp,1024), PARAM_RAW));
+    $header = split($csv_delimiter, fgets($fp,1024), PARAM_RAW);
 
     // print some preview
     $numlines = 0; // 0 preview lines displayed
@@ -387,7 +410,8 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
         }
     }
     // display the mapping form with header info processed
-    $mform2 = new grade_import_mapping_form(qualified_me(), array('gradeitems'=>$gradeitems, 'header'=>$header, 'filename'=>$filename));
+    $mform2 = new grade_import_mapping_form(null, array('gradeitems'=>$gradeitems, 'header'=>$header));
+    $mform2->set_data(array('importcode'=>$importcode, 'id'=>$id));
     $mform2->display();
 } else {
     // display the standard upload file form

@@ -6,7 +6,9 @@ require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/import/lib.php';
 
 function import_xml_grades($text, $course, &$error) {
-    $importcode = time(); //TODO: fix predictable+colliding import code!
+    global $USER;
+
+    $importcode = get_new_importcode();
 
     $status = true;
 
@@ -46,6 +48,7 @@ function import_xml_grades($text, $course, &$error) {
 
             // check if grade_grade is locked and if so, abort
             if ($grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$user->id))) {
+                $grade_grade->grade_item =& $grade_item;
                 if ($grade_grade->is_locked()) {
                     // individual grade locked, abort
                     $status = false;
@@ -55,9 +58,10 @@ function import_xml_grades($text, $course, &$error) {
             }
 
             $newgrade = new object();
-            $newgrade->itemid      = $grade_item->id;
-            $newgrade->userid      = $user->id;
-            $newgrade->import_code = $importcode;
+            $newgrade->itemid     = $grade_item->id;
+            $newgrade->userid     = $user->id;
+            $newgrade->importcode = $importcode;
+            $newgrade->importer   = $USER->id;
 
             // check grade value exists and is a numeric grade
             if (isset($result['#']['score'][0]['#'])) {
