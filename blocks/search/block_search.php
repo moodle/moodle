@@ -46,8 +46,8 @@
       //lazy check for the moment
       if (check_php_version("5.0.0")) {        
         //fetch values if defined in admin, otherwise use defaults
-        $label  = (isset($CFG->block_search_text)) ? $CFG->block_search_text : get_string('searchmoodle', 'block_search');
-        $button = (isset($CFG->block_search_button)) ? $CFG->block_search_button : get_string('go', 'block_search');
+        $label  = (!empty($CFG->block_search_text)) ? $CFG->block_search_text : get_string('searchmoodle', 'block_search');
+        $button = (!empty($CFG->block_search_button)) ? $CFG->block_search_button : get_string('go', 'block_search');
         
         //basic search form
         $this->content->text =
