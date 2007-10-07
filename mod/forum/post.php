@@ -142,10 +142,12 @@
         if (! $course = get_record("course", "id", $discussion->course)) {
             error("The course number was incorrect ($discussion->course)");
         }
+        if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+            error("Incorrect cm");
+        }
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-		$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $modcontext    = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         if (! forum_user_can_post($forum)) {
             if (has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
