@@ -15,6 +15,9 @@ class grade_import_form extends moodleform {
         $mform->addElement('header', 'general', get_string('importfile', 'grades'));
         $mform->disabledIf('url', 'userfile', 'noteq', '');
 
+        $mform->addElement('advcheckbox', 'feedback', get_string('importfeedback', 'grades'));
+        $mform->setDefault('feedback', 0);
+
         // file upload
         $mform->addElement('file', 'userfile', get_string('file'));
         $mform->setType('userfile', PARAM_FILE);

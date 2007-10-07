@@ -27,8 +27,9 @@ require_once '../../../config.php';
 require_once 'lib.php';
 require_once $CFG->libdir.'/filelib.php';
 
-$url = required_param('url', PARAM_URL); // only real urls here
-$id  = required_param('id', PARAM_INT); // course id
+$url       = required_param('url', PARAM_URL); // only real urls here
+$id        = required_param('id', PARAM_INT); // course id
+$feedback  = optional_param('feedback', 0, PARAM_BOOL);
 
 if (!$course = get_record('course', 'id', $id)) {
     print_error('nocourseid');
@@ -62,7 +63,7 @@ if ($importcode !== false) {
     /// comit the code if we are up this far
 
     if (defined('USER_KEY_LOGIN')) {
-        if (grade_import_commit($id, $importcode, false)) {
+        if (grade_import_commit($id, $importcode, $feedback, false)) {
             echo 'ok';
             die;
         } else {
@@ -77,7 +78,7 @@ if ($importcode !== false) {
         print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
         print_grade_plugin_selector($id, 'import', 'xml');
 
-        grade_import_commit($id, $importcode);
+        grade_import_commit($id, $importcode, $feedback, true);
 
         print_footer();
         die;

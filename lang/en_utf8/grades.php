@@ -223,6 +223,7 @@ $string['identifier'] = 'Identify user by';
 $string['import'] = 'Import';
 $string['importcsv'] = 'Import CSV';
 $string['importfailed'] = 'Import failed';
+$string['importfeedback'] = 'Import feedback';
 $string['importfile'] = 'Import file';
 $string['importplugins'] = 'Import plugins';
 $string['importpreview'] = 'Import preview';

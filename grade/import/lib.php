@@ -10,7 +10,7 @@
  * @param feedback print feedback and continue button
  * @return bool success
  */
-function grade_import_commit($courseid, $importcode, $feedback=true) {
+function grade_import_commit($courseid, $importcode, $importfeedback=true, $verbose=true) {
     global $CFG;
 
     include_once($CFG->libdir.'/gradelib.php');
@@ -78,6 +78,9 @@ function grade_import_commit($courseid, $importcode, $feedback=true) {
 
                 // make the grades array for update_grade
                 foreach ($grades as $grade) {
+                    if (!$importfeedback) {
+                        $grade->feedback = false; // ignore it
+                    }
                     if (!$gradeitem->update_final_grade($grade->userid, $grade->finalgrade, 'import', NULL, $grade->feedback)) {
                         $failed = 1;
                         break 2;
@@ -95,7 +98,7 @@ function grade_import_commit($courseid, $importcode, $feedback=true) {
         }
     }
 
-    if ($feedback) {
+    if ($verbose) {
         notify(get_string('importsuccess', 'grades'), 'notifysuccess');
         print_continue($CFG->wwwroot.'/grade/index.php?id='.$courseid);
     }

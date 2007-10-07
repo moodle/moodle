@@ -66,7 +66,7 @@ if ($data = $mform->get_data()) {
         $error = '';
         $importcode = import_xml_grades($text, $course, $error);
         if ($importcode) {
-            grade_import_commit($id, $importcode);
+            grade_import_commit($id, $importcode, $data->feedback, true);
             print_footer();
             die;
         } else {
@@ -77,7 +77,7 @@ if ($data = $mform->get_data()) {
         }
 
     } else if (empty($data->key)) {
-        redirect('import.php?id='.$id.'&url='.urlencode($data->url));
+        redirect('import.php?id='.$id.'&amp;feedback='.(int)($data->feedback).'&url='.urlencode($data->url));
 
     } else {
         if ($data->key == 1) {
@@ -88,7 +88,7 @@ if ($data = $mform->get_data()) {
         print_grade_plugin_selector($id, 'import', 'xml');
 
         echo '<div class="gradeexportlink">';
-        $link = $CFG->wwwroot.'/grade/import/xml/fetch.php?id='.$id.'&amp;url='.urlencode($data->url).'&amp;key='.$data->key;
+        $link = $CFG->wwwroot.'/grade/import/xml/fetch.php?id='.$id.'&amp;feedback='.(int)($data->feedback).'&amp;url='.urlencode($data->url).'&amp;key='.$data->key;
         echo get_string('import', 'grades').': <a href="'.$link.'">'.$link.'</a>';
         echo '</div>';
         print_footer();

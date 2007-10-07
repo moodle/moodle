@@ -63,6 +63,11 @@ class grade_export_xml extends grade_export {
         while ($userdata = $gui->next_user()) {
             $user = $userdata->user;
 
+            if (empty($user->idnumber)) {
+                //id number must exist
+                continue;
+            }
+
             // studentgrades[] index should match with corresponding $index
             foreach ($userdata->grades as $itemid => $grade) {
                 $grade_item = $this->grade_items[$itemid];
@@ -79,7 +84,7 @@ class grade_export_xml extends grade_export {
                 // only need id number
                 fwrite($handle,  "\t\t<assignment>{$grade_item->idnumber}</assignment>\n");
                 // this column should be customizable to use either student id, idnumber, uesrname or email.
-                fwrite($handle,  "\t\t<student>{$user->id}</student>\n");
+                fwrite($handle,  "\t\t<student>{$user->idnumber}</student>\n");
                 fwrite($handle,  "\t\t<score>$gradestr</score>\n");
                 if ($this->export_feedback) {
                     $feedbackstr = $this->format_feedback($userdata->feedbacks[$itemid]);
