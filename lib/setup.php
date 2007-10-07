@@ -519,6 +519,9 @@ global $HTTPSPAGEREQUIRED;
         $SESSION  = NULL;
         $USER     = new object();
         $USER->id = 0; // user not logged in when session disabled
+        if (isset($CFG->mnet_localhost_id)) {
+            $USER->mnethostid = $CFG->mnet_localhost_id;
+        }
     }
 
     if (defined('FULLME')) {     // Usually in command-line scripts like admin/cron.php
