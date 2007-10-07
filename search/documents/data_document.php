@@ -330,7 +330,7 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     $data = get_record('data', 'id', $record->dataid);
     $course = get_record('course', 'id', $data->course);
     $module_context = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $module_context->instance);
+    $cm = get_record('course_modules', 'id', $module_context->instanceid);
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $module_context)) return false;
     
     //group consistency check : checks the following situations about groups

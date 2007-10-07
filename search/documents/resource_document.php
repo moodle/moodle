@@ -295,7 +295,7 @@ function resource_check_text_access($path, $itemtype, $this_id, $user, $group_id
     
     $r = get_record('resource', 'id', $this_id);
     $module_context = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $module_context->instance);
+    $cm = get_record('course_modules', 'id', $module_context->instanceid);
 
     //check if found course module is visible
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $module_context)){

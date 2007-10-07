@@ -223,7 +223,7 @@ function glossary_check_text_access($path, $itemtype, $this_id, $user, $group_id
     $glossary = get_record('glossary', 'id', $entry->glossaryid);
     $course = get_record('course', 'id', $glossary->course);
     $module_context = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $module_context->instance);
+    $cm = get_record('course_modules', 'id', $module_context->instanceid);
     if (!$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $module_context)) return false;
     
     //approval check : entries should be approved for being viewed, or belongs to the user unless the viewer can approve them or manage them 
