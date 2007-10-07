@@ -13,11 +13,11 @@
     $page    = optional_param('page', 0, PARAM_INT);
     $perpage = optional_param('perpage', 100, PARAM_INT);
 
-    require_login();
-
     if (! $course = get_record("course", "id", $id)) {
         error("Course id is incorrect.");
     }
+
+    require_login($course);
 
     if (! $user = get_record("user", "id", $user)) {
         error("User ID is incorrect");
