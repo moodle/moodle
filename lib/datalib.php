@@ -907,10 +907,10 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
         $sql = "SELECT cc.id, cc.path, cc.visible,
                        ctx.id AS ctxid, ctx.path AS ctxpath,
                        ctx.depth as ctxdepth, ctx.contextlevel AS ctxlevel
-                FROM {$CFG->prefix}course_categories cc
-            JOIN {$CFG->prefix}context ctx
-              ON (cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT.")
-                ORDER BY id";
+                 FROM {$CFG->prefix}course_categories cc
+                 JOIN {$CFG->prefix}context ctx ON (cc.id = ctx.instanceid)
+                WHERE ctx.contextlevel = ".CONTEXT_COURSECAT."
+             ORDER BY cc.id";
         $rs = get_recordset_sql($sql);
 
         // Using a temporary array instead of $cats here, to avoid a "true" result when isnull($cats) further down
