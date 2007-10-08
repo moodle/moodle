@@ -4594,7 +4594,7 @@ function switchroles_form($courseid) {
         return '';
     }
 
-    if (!empty($user->access['rsw'][$context->path])){  // Just a button to return to normal
+    if (!empty($USER->access['rsw'][$context->path])){  // Just a button to return to normal
         $options = array();
         $options['id'] = $courseid;
         $options['sesskey'] = sesskey();
