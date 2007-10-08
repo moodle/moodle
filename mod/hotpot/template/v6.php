@@ -652,7 +652,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',remaining-words');
     }
     function v6_expand_TimesUp() {
-        return $this->parent->xml_value('hotpot-config-file,global,times-up');
+        return $this->js_safe($this->parent->xml_value('hotpot-config-file,global,times-up'));
     }
 
     // nav bar
