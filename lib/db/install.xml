@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20071007" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20071008" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -813,7 +813,7 @@
         <INDEX NAME="sortorder" UNIQUE="true" FIELDS="sortorder"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="context" COMMENT="one of these must be set" PREVIOUS="role" NEXT="context_rel">
+    <TABLE NAME="context" COMMENT="one of these must be set" PREVIOUS="role" NEXT="context_temp">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="contextlevel"/>
         <FIELD NAME="contextlevel" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="instanceid"/>
@@ -830,20 +830,7 @@
         <INDEX NAME="path" UNIQUE="false" FIELDS="path" PREVIOUS="instanceid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="context_rel" COMMENT="context relations, c2 is a parent (or higher) of c1" PREVIOUS="context" NEXT="context_temp">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="c1"/>
-        <FIELD NAME="c1" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="context 1, child context" PREVIOUS="id" NEXT="c2"/>
-        <FIELD NAME="c2" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="parent (or higher) context" PREVIOUS="c1"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="c1"/>
-        <KEY NAME="c1" TYPE="foreign" FIELDS="c1" REFTABLE="context" REFFIELDS="id" PREVIOUS="primary" NEXT="c2"/>
-        <KEY NAME="c2" TYPE="foreign" FIELDS="c2" REFTABLE="context" REFFIELDS="id" PREVIOUS="c1" NEXT="c1c2"/>
-        <KEY NAME="c1c2" TYPE="unique" FIELDS="c1, c2" PREVIOUS="c2"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="context_temp" COMMENT="Used by build_context_path() in upgrade and cron to keep context depths and paths in sync." PREVIOUS="context_rel" NEXT="capabilities">
+    <TABLE NAME="context_temp" COMMENT="Used by build_context_path() in upgrade and cron to keep context depths and paths in sync." PREVIOUS="context" NEXT="capabilities">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="This id isn't autonumeric/sequence. It's the context-&gt;id" NEXT="path"/>
         <FIELD NAME="path" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="depth"/>

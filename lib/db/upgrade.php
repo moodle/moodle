@@ -2390,7 +2390,15 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 */
+    // dropping context_rel table
+    if ($result && $oldversion < 2007100800) {
 
+    /// Define table context_rel to be dropped
+        $table = new XMLDBTable('context_rel');
+
+    /// Launch drop table for context_rel
+        $result = $result && drop_table($table);
+    }
 
     return $result;
 }
