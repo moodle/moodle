@@ -1536,7 +1536,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		return $this->xml_value("hotpot-config-file,$this->quiztype,remaining-words");
 	}
 	function v6_expand_TimesUp() {
-		return $this->xml_value('hotpot-config-file,global,times-up');
+		return $this->js_safe($this->xml_value('hotpot-config-file,global,times-up'));
 	}
 
 	// nav bar
