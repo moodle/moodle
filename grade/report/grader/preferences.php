@@ -43,19 +43,15 @@ require_capability('gradereport/grader:view', $context);
 
 // If data submitted, then process and store.
 if ($data = data_submitted()) {
-
     foreach ($data as $preference => $value) {
-        switch ($preference) {
-            case 'persistflt':
-                set_user_preference('calendar_persistflt', intval($value));
-                break;
-            default:
-                if ($value == GRADE_REPORT_PREFERENCE_DEFAULT || strlen($value) == 0) {
-                    unset_user_preference($preference);
-                } else {
-                    set_user_preference($preference, $value);
-                }
-                break;
+        if (substr($preference, 0, 6) !== 'grade_') {
+            continue;
+        }
+
+        if ($value == GRADE_REPORT_PREFERENCE_DEFAULT || strlen($value) == 0) {
+            unset_user_preference($preference);
+        } else {
+            set_user_preference($preference, $value);
         }
     }
 
