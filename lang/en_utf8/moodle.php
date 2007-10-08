@@ -644,6 +644,7 @@ $string['gd1'] = 'GD 1.x is installed';
 $string['gd2'] = 'GD 2.x is installed';
 $string['gdneed'] = 'GD must be installed to see this graph';
 $string['gdnot'] = 'GD is not installed';
+$string['general'] = 'General';
 $string['gettheselogs'] = 'Get these logs';
 $string['go'] = 'Go';
 $string['gpl'] = 'Copyright (C) 1999 onwards  Martin Dougiamas  (http://moodle.com)

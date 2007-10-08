@@ -10,6 +10,8 @@ class user_edit_form extends moodleform {
 
         $mform =& $this->_form;
         $this->set_upload_manager(new upload_manager('imagefile', false, false, null, false, 0, true, true, false));
+        //Accessibility: "Required" is bad legend text.
+        $strgeneral  = get_string('general');
         $strrequired = get_string('required');
 
         /// Add some extra hidden fields
@@ -17,7 +19,7 @@ class user_edit_form extends moodleform {
         $mform->addElement('hidden', 'course', $COURSE->id);
 
         /// Print the required moodle fields first
-        $mform->addElement('header', 'moodle', $strrequired);
+        $mform->addElement('header', 'moodle', $strgeneral);
 
         /// shared fields
         useredit_shared_definition($mform);
