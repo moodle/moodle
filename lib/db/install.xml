@@ -264,7 +264,8 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="md5key" UNIQUE="false" FIELDS="md5key"/>
+        <INDEX NAME="md5key" UNIQUE="false" FIELDS="md5key" NEXT="timemodified"/>
+        <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified" COMMENT="Mainly to help deletion of expired records from cron" PREVIOUS="md5key"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="grade_category" COMMENT="to define categories to group activity grades" PREVIOUS="cache_text" NEXT="grade_exceptions">

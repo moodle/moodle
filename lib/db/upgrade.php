@@ -2400,6 +2400,21 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && drop_table($table);
     }
 
+/// Truncate the text_cahe table and add new index
+    if ($result && $oldversion < 2007100802) {
+
+    /// Truncate the cache_text table
+        execute_sql("TRUNCATE TABLE {$CFG->prefix}cache_text", true);
+
+    /// Define index timemodified (not unique) to be added to cache_text
+        $table = new XMLDBTable('cache_text');
+        $index = new XMLDBIndex('timemodified');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+    /// Launch add index timemodified
+        $result = $result && add_index($table, $index);
+    }
+
     return $result;
 }
 
