@@ -81,7 +81,11 @@ class grade_report_overview extends grade_report {
         if ($courses = get_courses('all', null, 'c.id, c.shortname')) {
             foreach ($courses as $course) {
                 // Get course grade_item
-                $grade_item = grade_item::fetch(array('itemtype' => 'course', 'courseid' => $course->id));
+                if (!$grade_item = grade_item::fetch(array('itemtype' => 'course', 'courseid' => $course->id))) {
+                    // Create the course item if it doesn't already exist.
+                    $coursecat = grade_category::fetch_course_category($course->id);
+                    $grade_item = $coursecat->get_grade_item();
+                } 
 
                 // Get the grade
                 $finalgrade = get_field('grade_grades', 'finalgrade', 'itemid', $grade_item->id, 'userid', $this->user->id);
