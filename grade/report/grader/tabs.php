@@ -9,7 +9,7 @@
         has_capability('gradereport/grader:view', $tabcontext)) {
         $row[] = new tabobject('preferences',
                                $CFG->wwwroot.'/grade/report/grader/preferences.php?id='.$courseid,
-                               get_string('preferences'));
+                               get_string('myreportpreferences', 'grades'));
     }
 
     $tabs[] = $row;

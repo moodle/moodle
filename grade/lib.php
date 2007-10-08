@@ -326,6 +326,14 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             $menu[$url] = get_string('letters', 'grades');
         }
 
+        if (has_capability('moodle/grade:manage', $context)) {
+            $url = 'edit/settings/index.php?id='.$courseid;
+            if ($active_type == 'edit' and $active_plugin == 'settings' ) {
+                $active = $url;
+            }
+            $menu[$url] = get_string('coursesettings', 'grades');
+        }
+
     }
 
 /// finally print/return the popup form
@@ -726,7 +734,7 @@ class grade_seq {
 
         $result = array();
         foreach ($children as $child) {
-            if ($child['type']== 'category') {
+            if ($child['type'] == 'category') {
                 $result = array_merge($result, grade_seq::flatten($child, $category_grade_last, $nooutcomes));
             } else {
                 $child['eid'] = 'i'.$child['object']->id;

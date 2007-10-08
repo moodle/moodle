@@ -82,21 +82,33 @@ class edit_item_form extends moodleform {
                 false, true, false, get_string('aggregationcoefhelp', 'grades')));
 
         /// grade display prefs
-        $this->displayoptions = array(GRADE_DISPLAY_TYPE_DEFAULT => get_string('default', 'grades'),
-                                      GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                                      GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
-                                      GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'));
-        $mform->addElement('select', 'display', null, $this->displayoptions);
+
+        $default_gradedisplaytype = grade_get_setting($COURSE->id, 'displaytype', $CFG->grade_displaytype);
+        $options = array(GRADE_DISPLAY_TYPE_DEFAULT    => get_string('default', 'grades'),
+                         GRADE_DISPLAY_TYPE_REAL       => get_string('real', 'grades'),
+                         GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                         GRADE_DISPLAY_TYPE_LETTER     => get_string('letter', 'grades'));
+        foreach ($options as $key=>$option) {
+            if ($key == $default_gradedisplaytype) {
+                $options[GRADE_DISPLAY_TYPE_DEFAULT] = get_string('defaultprev', 'grades', $option);
+                break;
+            }
+        }
+        $mform->addElement('select', 'display', get_string('gradedisplaytype', 'grades'), $options);
         $mform->setHelpButton('display', array(false, get_string('gradedisplaytype', 'grades'),
                               false, true, false, get_string('configgradedisplaytype', 'grades')));
 
 
-        $options = array(-1=>get_string('default', 'grades'), 0, 1, 2, 3, 4, 5);
-        $mform->addElement('select', 'decimals', null, $options);
+        $default_gradedecimals = grade_get_setting($COURSE->id, 'decimalpoints', $CFG->grade_decimalpoints);
+        $options = array(-1=>get_string('defaultprev', 'grades', $default_gradedecimals), 0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);
+        $mform->addElement('select', 'decimals', get_string('decimalpoints', 'grades'), $options);
         $mform->setHelpButton('decimals', array(false, get_string('decimalpoints', 'grades'),
                               false, true, false, get_string('configdecimalpoints', 'grades')));
-        $mform->setDefault('decimals', GRADE_REPORT_PREFERENCE_DEFAULT);
+        $mform->setDefault('decimals', -1);
         $mform->disabledIf('decimals', 'display', 'eq', GRADE_DISPLAY_TYPE_LETTER);
+        if ($default_gradedisplaytype == GRADE_DISPLAY_TYPE_LETTER) {
+            $mform->disabledIf('decimals', 'display', "eq", GRADE_DISPLAY_TYPE_DEFAULT);
+        }
 
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!
@@ -191,29 +203,6 @@ class edit_item_form extends moodleform {
             if (!$course_category->is_aggregationcoef_used()) {
                 $mform->removeElement('aggregationcoef');
             }
-        }
-
-        // setup defaults and extra locking based on it
-        $course_item = grade_item::fetch_course_item($COURSE->id);
-        $default_gradedisplaytype = $course_item->get_displaytype();
-        $default_gradedecimals    = $course_item->get_decimals();
-
-        $option_value = 'error';
-        foreach ($this->displayoptions as $key => $option) {
-            if ($key == $default_gradedisplaytype) {
-                $option_value = $option;
-                break;
-            }
-        }
-        $displaytypeEl =& $mform->getElement('display');
-        $displaytypeEl->setLabel(get_string('gradedisplaytype', 'grades').' ('.get_string('default', 'grades').': '.$option_value.')');
-
-        $decimalsEl =& $mform->getElement('decimals');
-        $decimalsEl->setLabel(get_string('decimalpoints', 'grades').' ('.get_string('default', 'grades').': '.$default_gradedecimals.')');
-
-        // Disable decimals if displaytype is DEFAULT and course or site displaytype is LETTER
-        if ($default_gradedisplaytype == GRADE_DISPLAY_TYPE_LETTER) {
-            $mform->disabledIf('decimals', 'display', "eq", GRADE_DISPLAY_TYPE_DEFAULT);
         }
     }
 

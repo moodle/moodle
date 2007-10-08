@@ -64,7 +64,7 @@ if (empty($eid)) {
     $object = $element['object'];
 }
 
-$switch = grade_report::get_pref('aggregationposition');
+$switch = grade_get_setting($course->id, 'aggregationposition', $CFG->grade_aggregationposition);
 
 $strgrades             = get_string('grades');
 $strgraderreport       = get_string('graderreport', 'grades');

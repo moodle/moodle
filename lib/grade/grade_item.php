@@ -564,7 +564,7 @@ class grade_item extends grade_object {
             }
         }
     }
-    
+
     /**
      * Returns the number of grades that are hidden.
      * @param return int Number of hidden grades
@@ -1698,26 +1698,14 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Returns the value of the display type. It can be set at 3 levels: grade_item, course and site. The lowest level overrides the higher ones.
+     * Returns the value of the display type. It can be set at 3 levels: grade_item, course setting and site. The lowest level overrides the higher ones.
      * @return int Display type
      */
     function get_displaytype() {
         global $CFG;
-        static $cache = array();
 
         if ($this->display == GRADE_DISPLAY_TYPE_DEFAULT) {
-            if (array_key_exists($this->courseid, $cache)) {
-                return $cache[$this->courseid];
-            } else if (count($cache) > 100) {
-                $cache = array(); // cache size limit
-            }
-
-            $gradedisplaytype = get_field('grade_items', 'display', 'courseid', $this->courseid, 'itemtype', 'course');
-            if ($gradedisplaytype == GRADE_DISPLAY_TYPE_DEFAULT) {
-                $gradedisplaytype = $CFG->grade_displaytype;
-            }
-            $cache[$this->courseid] = $gradedisplaytype;
-            return $gradedisplaytype;
+            return grade_get_setting($this->courseid, 'displaytype', $CFG->grade_displaytype);
 
         } else {
             return $this->display;
@@ -1725,25 +1713,14 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Returns the value of the decimals field. It can be set at 3 levels: grade_item, course and site. The lowest level overrides the higher ones.
+     * Returns the value of the decimals field. It can be set at 3 levels: grade_item, course setting and site. The lowest level overrides the higher ones.
      * @return int Decimals (0 - 5)
      */
     function get_decimals() {
         global $CFG;
-        static $cache = array();
 
         if (is_null($this->decimals)) {
-            if (array_key_exists($this->courseid, $cache)) {
-                return $cache[$this->courseid];
-            } else if (count($cache) > 100) {
-                $cache = array(); // cache size limit
-            }
-            $gradedecimals = get_field('grade_items', 'decimals', 'courseid', $this->courseid, 'itemtype', 'course');
-            if (is_null($gradedecimals)) {
-                $gradedecimals = $CFG->grade_decimalpoints;
-            }
-            $cache[$this->courseid] = $gradedecimals;
-            return $gradedecimals;
+            return grade_get_setting($this->courseid, 'decimalpoints', $CFG->grade_decimalpoints);
 
         } else {
             return $this->decimals;

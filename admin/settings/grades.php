@@ -13,6 +13,11 @@ $temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enable
 // enable publishing in exports/imports
 $temp->add(new admin_setting_configcheckbox('gradepublishing', get_string('gradepublishing', 'grades'), get_string('configgradepublishing', 'grades'), 0, PARAM_INT));
 
+$temp->add(new admin_setting_configselect('grade_aggregationposition', get_string('aggregationposition', 'grades'),
+                                          get_string('configaggregationposition', 'grades'), GRADE_REPORT_AGGREGATION_POSITION_LAST,
+                                          array(GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
+                                                GRADE_REPORT_AGGREGATION_POSITION_LAST => get_string('positionlast', 'grades'))));
+
 $temp->add(new admin_setting_configselect('grade_displaytype', get_string('gradedisplaytype', 'grades'),
                                           get_string('configgradedisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
                                           array(GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),

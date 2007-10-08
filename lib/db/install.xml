@@ -1696,7 +1696,7 @@
         <INDEX NAME="contextid-lowerboundary" UNIQUE="false" FIELDS="contextid, lowerboundary" COMMENT="index used when fetching context letters"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="cache_flags" COMMENT="Cache of time-sensitive flags" PREVIOUS="grade_letters">
+    <TABLE NAME="cache_flags" COMMENT="Cache of time-sensitive flags" PREVIOUS="grade_letters" NEXT="grade_settings">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="flagtype"/>
         <FIELD NAME="flagtype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
@@ -1711,6 +1711,21 @@
       <INDEXES>
         <INDEX NAME="flagtype" UNIQUE="false" FIELDS="flagtype" NEXT="name"/>
         <INDEX NAME="name" UNIQUE="false" FIELDS="name" PREVIOUS="flagtype"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="grade_settings" COMMENT="gradebook settings" PREVIOUS="cache_flags">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseid"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid-name" UNIQUE="true" FIELDS="courseid, name"/>
       </INDEXES>
     </TABLE>
   </TABLES>

@@ -88,8 +88,14 @@ class grade_report_grader extends grade_report {
             $nooutcomes = get_user_preferences('grade_report_shownooutcomes');
         }
 
+        // if user report preference set or site report setting set use it, otherwise use course or site setting
+        $switch = $this->get_pref('aggregationposition');
+        if ($switch == GRADE_REPORT_PREFERENCE_INHERIT) {
+            $switch = grade_get_setting($this->courseid, 'aggregationposition', $CFG->grade_aggregationposition);
+        }
+
         // Grab the grade_tree for this course
-        $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'), $this->collapsed, $nooutcomes);
+        $this->gtree = new grade_tree($this->courseid, true, $switch, $this->collapsed, $nooutcomes);
 
         $this->sortitemid = $sortitemid;
 
@@ -801,7 +807,7 @@ class grade_report_grader extends grade_report {
         if ($canviewhidden) {
             $hidingsql1 = "";
             $hidingsql2 = "";
-            
+
         } else {
             $now = round(time(), -2); //100 sec gradularity, we need some db caching speedup here
             $hidingsql1 = "AND g.hidden!=1 AND (g.hidden=0 OR g.hidden<$now)";
@@ -907,9 +913,7 @@ class grade_report_grader extends grade_report {
                 if ($USER->gradeediting[$this->courseid]) {
                     $displaytype = GRADE_DISPLAY_TYPE_REAL;
 
-                } else if ($averagesdisplaytype == GRADE_REPORT_PREFERENCE_DEFAULT 
-                        || $averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT
-                        || $averagesdisplaytype == 0) {
+                } else if ($averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // no ==0 here, please resave the report and user preferences
                     $displaytype = $item->get_displaytype();
 
                 } else {
@@ -917,8 +921,7 @@ class grade_report_grader extends grade_report {
                 }
 
                 // Override grade_item setting if a display preference (not inherit) was set for the averages
-                if ($averagesdecimalpoints == GRADE_REPORT_PREFERENCE_DEFAULT 
-                 || $averagesdecimalpoints == GRADE_REPORT_PREFERENCE_INHERIT) {
+                if ($averagesdecimalpoints == GRADE_REPORT_PREFERENCE_INHERIT) {
                     $decimalpoints = $item->get_decimals();
 
                 } else {
@@ -967,9 +970,7 @@ class grade_report_grader extends grade_report {
                 if ($USER->gradeediting[$this->courseid]) {
                     $displaytype = GRADE_DISPLAY_TYPE_REAL;
 
-                } else if ($rangesdisplaytype == GRADE_REPORT_PREFERENCE_DEFAULT 
-                        || $rangesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT
-                        || $rangesdisplaytype == 0 ) {
+                } else if ($rangesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // no ==0 here, please resave report and user prefs
                     $displaytype = $item->get_displaytype();
 
                 } else {
@@ -977,8 +978,7 @@ class grade_report_grader extends grade_report {
                 }
 
                 // Override grade_item setting if a display preference (not default) was set for the averages
-                if ($rangesdecimalpoints == GRADE_REPORT_PREFERENCE_DEFAULT 
-                 or $rangesdecimalpoints == GRADE_REPORT_PREFERENCE_INHERIT) {
+                if ($rangesdecimalpoints == GRADE_REPORT_PREFERENCE_INHERIT) {
                     $decimalpoints = $item->get_decimals();
 
                 } else {

@@ -424,6 +424,69 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
 
 /***** END OF PUBLIC API *****/
 
+
+/**
+ * Returns course gradebook setting
+ * @param int $courseid
+ * @param string $name of setting, maybe null if reset only
+ * @param bool $resetcache force reset of internal static cache
+ * @return string value, NULL if no setting
+ */
+function grade_get_setting($courseid, $name, $default=null, $resetcache=false) {
+    static $cache = array();
+
+    if ($resetcache or !array_key_exists($courseid, $cache)) {
+        $cache[$courseid] = array();
+
+    } else if (is_null($name)) {
+        return null;
+
+    } else if (array_key_exists($name, $cache[$courseid])) {
+        return $cache[$courseid][$name];
+    }
+
+    if (!$data = get_record('grade_settings', 'courseid', $courseid, 'name', addslashes($name))) {
+        $result = null;
+    } else {
+        $result = $data->value;
+    }
+
+    if (is_null($result)) {
+        $result = $default;
+    }
+
+    $cache[$courseid][$name] = $result;
+    return $result;
+}
+
+/**
+ * Add/update course gradebook setting
+ * @param int $courseid
+ * @param string $name of setting
+ * @param string value, NULL means no setting==remove
+ * @return void
+ */
+function grade_set_setting($courseid, $name, $value) {
+    if (is_null($value)) {
+        delete_records('grade_settings', 'courseid', $courseid, 'name', addslashes($name));
+
+    } else if (!$existing = get_record('grade_settings', 'courseid', $courseid, 'name', addslashes($name))) {
+        $data = new object();
+        $data->courseid = $courseid;
+        $data->name     = addslashes($name);
+        $data->value    = addslashes($value);
+        insert_record('grade_settings', $data);
+
+    } else {
+        $data = new object();
+        $data->id       = $existing->id;
+        $data->value    = addslashes($value);
+        update_record('grade_settings', $data);
+    }
+
+    grade_get_setting($courseid, null, null, true); // reset the cache
+}
+
 /**
  * Returns string representation of grade value
  * @param float $value grade value

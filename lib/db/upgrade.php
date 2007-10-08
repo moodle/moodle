@@ -2372,6 +2372,28 @@ function xmldb_main_upgrade($oldversion=0) {
 
     }
 
+    if ($result && $oldversion < 2007100803) {
+
+    /// Define table grade_settings to be created
+        $table = new XMLDBTable('grade_settings');
+
+    /// Adding fields to table grade_settings
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('value', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
+
+    /// Adding keys to table grade_settings
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+
+    /// Adding indexes to table grade_settings
+        $table->addIndexInfo('courseid-name', XMLDB_INDEX_UNIQUE, array('courseid', 'name'));
+
+    /// Launch create table for grade_settings
+        $result = $result && create_table($table);
+    }
+
 
 /* NOTE: please keep this at the end of upgrade file for now ;-)
     /// drop old gradebook tables
