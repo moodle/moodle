@@ -88,7 +88,7 @@ if (has_capability('moodle/site:config', $systemcontext)) {
 
 print_simple_box_start("center");
 
-include('./preferences_form.php');
+require('preferences_form.php');
 $mform = new grader_report_preferences_form('preferences.php', compact('course'));
 echo $mform->display();
 print_simple_box_end();

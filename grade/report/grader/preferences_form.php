@@ -37,10 +37,7 @@ class grader_report_preferences_form extends moodleform {
                           'aggregationview'     => array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
                                                          GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('fullmode', 'grades'),
                                                          GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY => get_string('aggregatesonly', 'grades'),
-                                                         GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY => get_string('gradesonly', 'grades')),
-                          'meanselection'       => array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
-                                                         GRADE_REPORT_MEAN_ALL => get_string('meanall', 'grades'),
-                                                         GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades')));
+                                                         GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY => get_string('gradesonly', 'grades')));
 
 
             $preferences['prefshow'] = array('showcalculations'  => $checkbox_default,
@@ -50,18 +47,21 @@ class grader_report_preferences_form extends moodleform {
                                              'showlocks'         => $checkbox_default);
 
             $preferences['prefrows'] = array(
-                        'averagesdisplaytype'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default'),
+                        'rangesdisplaytype'      => array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default'),
                                                           GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
                                                           GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
                                                           GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
-                        'rangesdisplaytype'      => array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default'),
+                        'rangesdecimalpoints'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default'),
+                                                          '0'=>0, '1'=>1, '2'=>2, '3'=>3, '4'=>4, '5'=>5),
+                        'averagesdisplaytype'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default'),
                                                           GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
                                                           GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
                                                           GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
                         'averagesdecimalpoints'  => array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default'),
                                                           '0'=>0, '1'=>1, '2'=>2, '3'=>3, '4'=>4, '5'=>5),
-                        'rangesdecimalpoints'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default'),
-                                                          '0'=>0, '1'=>1, '2'=>2, '3'=>3, '4'=>4, '5'=>5));
+                        'meanselection'          => array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
+                                                          GRADE_REPORT_MEAN_ALL => get_string('meanall', 'grades'),
+                                                          GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades')));
 
         }
 
