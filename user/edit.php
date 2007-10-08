@@ -86,9 +86,9 @@
             }   
         }   
 
-        if (isset($usernew->password)) {
-            unset($usernew->password);
-        }
+        unset($usernew->password);
+        unset($usernew->admin);
+        unset($usernew->newadminuser);
 
         // data cleanup 
         // username is validated in find_form_errors
