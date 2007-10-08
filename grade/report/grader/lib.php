@@ -908,7 +908,8 @@ class grade_report_grader extends grade_report {
                     $displaytype = GRADE_DISPLAY_TYPE_REAL;
 
                 } else if ($averagesdisplaytype == GRADE_REPORT_PREFERENCE_DEFAULT 
-                        or $averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) {
+                        || $averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT
+                        || $averagesdisplaytype == 0) {
                     $displaytype = $item->get_displaytype();
 
                 } else {
@@ -917,7 +918,7 @@ class grade_report_grader extends grade_report {
 
                 // Override grade_item setting if a display preference (not inherit) was set for the averages
                 if ($averagesdecimalpoints == GRADE_REPORT_PREFERENCE_DEFAULT 
-                 or $averagesdecimalpoints == GRADE_REPORT_PREFERENCE_INHERIT) {
+                 || $averagesdecimalpoints == GRADE_REPORT_PREFERENCE_INHERIT) {
                     $decimalpoints = $item->get_decimals();
 
                 } else {
@@ -967,7 +968,8 @@ class grade_report_grader extends grade_report {
                     $displaytype = GRADE_DISPLAY_TYPE_REAL;
 
                 } else if ($rangesdisplaytype == GRADE_REPORT_PREFERENCE_DEFAULT 
-                        or $rangesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) {
+                        || $rangesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT
+                        || $rangesdisplaytype == 0 ) {
                     $displaytype = $item->get_displaytype();
 
                 } else {
