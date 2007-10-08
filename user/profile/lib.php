@@ -384,4 +384,27 @@ function profile_signup_fields(&$mform) {
     }
 }
 
+/**
+ * Returns an object with the custom profile fields set for the given user
+ * @param  integer  userid
+ * @return  object
+ */
+function profile_user_record($userid) {
+    global $CFG;
+
+    $user = new object();
+
+    if ($fields = get_records_select('user_info_field')) {
+        foreach ($fields as $field) {
+            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+            $newfield = 'profile_field_'.$field->datatype;
+            $formfield = new $newfield($field->id, $userid);
+            $user->{$field->shortname} = $formfield->data;
+        }
+    }
+
+    return $user;
+}
+
+
 ?>
