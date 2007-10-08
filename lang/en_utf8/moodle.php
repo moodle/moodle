@@ -663,6 +663,7 @@ $string['gd1'] = 'GD 1.x is installed';
 $string['gd2'] = 'GD 2.x is installed';
 $string['gdneed'] = 'GD must be installed to see this graph';
 $string['gdnot'] = 'GD is not installed';
+$string['general'] = 'General';
 $string['gettheselogs'] = 'Get these logs';
 $string['go'] = 'Go';
 $string['gotoyourserver'] = '(Links back to your server)';
