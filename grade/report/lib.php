@@ -339,12 +339,7 @@ class grade_report {
 
             $url .= "?id=$coursemodule->id";
 
-            // MDL-11274, Hide grades in the grader report if the current grader doesn't have 'moodle/grade:viewhidden'
-            if (has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $coursemodule->course))) {
-                return '<a href="' . $url . '">' . $modulename . '</a>';
-            } else {
-                return $modulename;
-            }
+            return '<a href="' . $url . '">' . $modulename . '</a>';
         }
 
         return $modulename;
