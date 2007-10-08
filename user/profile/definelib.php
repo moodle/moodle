@@ -93,6 +93,8 @@ class profile_define_base {
      * @return  array    associative array of error messages
      */
     function define_validate_common($data) {
+        global $USER;
+        
         $err = array();
 
         /// Check the shortname was not truncated by cleaning
@@ -101,6 +103,10 @@ class profile_define_base {
 
         /// Check the shortname is unique
         } else if (($field = get_record('user_info_field', 'shortname', $data->shortname)) and ($field->id <> $data->id)) {
+            $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
+
+        /// Shortname must also be unique compared to the standard user fields
+        } else if (isset($USER->{$data->shortname})) {
             $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
         }
 
