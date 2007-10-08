@@ -1587,7 +1587,7 @@ function update_record($table, $dataobject) {
     }
 
     // Remove this record from record cache since it will change
-    if ($CFG->rcache === true) {
+    if (!empty($CFG->rcache)) { // no === here! breaks upgrade
         rcache_unset($table, $dataobject->id);
     }
 
