@@ -3961,7 +3961,7 @@ has_capability('moodle/course:viewhiddenuserfields', $context)) {
         $output .= '<a href="'.$CFG->wwwroot.'/notes/index.php?course=' . $course->id. '&amp;user='.$user->id.'">'.get_string('notes','notes').'</a><br />';
     }
 
-    if (has_capability('moodle/site:viewreports', $context) || (isset($usercontext) && has_capability('moodle/site:viewreports', $usercontext))) {
+    if (has_capability('moodle/user:viewuseractivitiesreport', $context) || (isset($usercontext) && has_capability('moodle/user:viewuseractivitiesreport', $usercontext))) {
         $timemidnight = usergetmidnight(time());
         $output .= '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
     }
