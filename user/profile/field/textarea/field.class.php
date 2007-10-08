@@ -11,6 +11,12 @@ class profile_field_textarea extends profile_field_base {
         $mform->setType($this->inputname, PARAM_CLEAN);
     }
 
+    /// Overwrite base class method, data in this field type is potentially too large to be
+    /// included in the user object
+    function is_user_object_data() {
+        return false;
+    }
+
 }
 
 ?>

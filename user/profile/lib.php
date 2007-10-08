@@ -162,6 +162,16 @@ class profile_field_base {
         }
     }
 
+    /**
+     * Check if the field data should be loaded into the user object
+     * By default it is, but for field types where the data may be potentially
+     * large, the child class should override this and return false
+     * @return boolean
+     */
+    function is_user_object_data() {
+        return true;
+    }
+
 
 /***** The following methods generally should not be overwritten by child classes *****/
    
@@ -399,7 +409,7 @@ function profile_user_record($userid) {
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
             $newfield = 'profile_field_'.$field->datatype;
             $formfield = new $newfield($field->id, $userid);
-            $user->{$field->shortname} = $formfield->data;
+            if ($formfield->is_user_object_data()) $user->{$field->shortname} = $formfield->data;
         }
     }
 
