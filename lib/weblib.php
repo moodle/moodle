@@ -6235,7 +6235,8 @@ function convert_tree_to_html($tree, $row=0) {
         $str .= (!empty($liclass)) ? '<li class="'.$liclass.'">' : '<li>';
 
         if ($tab->inactive || $tab->active || ($tab->selected && !$tab->linkedwhenselected)) {
-            $str .= '<a href="#" title="'.$tab->title.'"><span>'.$tab->text.'</span></a>';
+            // The a tag is used for styling
+            $str .= '<a class="nolink"><span>'.$tab->text.'</span></a>';
         } else {
             $str .= '<a href="'.$tab->link.'" title="'.$tab->title.'"><span>'.$tab->text.'</span></a>';
         }

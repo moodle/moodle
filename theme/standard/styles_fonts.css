@@ -630,6 +630,10 @@ body#grade-index .grades .header {
  *** Tabs
  ***/
 
+.tabtree a.nolink:hover {
+  text-decoration: none;
+}
+
 
 /***
  *** User
