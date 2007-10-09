@@ -1359,7 +1359,8 @@ function delete_records_select($table, $select='') {
         $select = 'WHERE '.$select;
     }
 
-    $rs = $db->Execute('DELETE FROM '. $CFG->prefix . $table .' '. $select);
+    $sql = 'DELETE FROM '. $CFG->prefix . $table .' '. $select;
+    $rs = $db->Execute($sql);
     if (!$rs) {
         debugging($db->ErrorMsg() .'<br /><br />'. $sql);
         if (!empty($CFG->dblogerror)) {
