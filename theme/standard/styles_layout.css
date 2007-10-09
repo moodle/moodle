@@ -1188,7 +1188,8 @@ a.skip-block, .skip-block {
   height:4px;
 }
 .skip-block-to {
-  font-size:1px;
+  display: block;
+  height: 1px;
 }
 
 .sideblock {
