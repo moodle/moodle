@@ -524,9 +524,11 @@ class moodleform {
      * @param string $addfieldsname name for button to add more fields
      * @param int $addfieldsno how many fields to add at a time
      * @param string $addstring name of button, {no} is replaced by no of blanks that will be added.
+     * @param boolean $addbuttoninside if true, don't call closeHeaderBefore($addfieldsname). Default false.
      * @return int no of repeats of element in this page
      */
-    function repeat_elements($elementobjs, $repeats, $options, $repeathiddenname, $addfieldsname, $addfieldsno=5, $addstring=null){
+    function repeat_elements($elementobjs, $repeats, $options, $repeathiddenname,
+            $addfieldsname, $addfieldsno=5, $addstring=null, $addbuttoninside=false){
         if ($addstring===null){
             $addstring = get_string('addfields', 'form', $addfieldsno);
         } else {
@@ -598,7 +600,9 @@ class moodleform {
         }
         $mform->addElement('submit', $addfieldsname, $addstring);
 
-        $mform->closeHeaderBefore($addfieldsname);
+        if (!$addbuttoninside) {
+            $mform->closeHeaderBefore($addfieldsname);
+        }
 
         return $repeats;
     }

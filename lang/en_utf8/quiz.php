@@ -22,6 +22,7 @@ $string['addingrandom'] = 'Adding a Random Question';
 $string['addingrandomsamatch'] = 'Adding a Random Short-Answer Matching question';
 $string['addingshortanswer'] = 'Adding a Short-Answer question';
 $string['addingtruefalse'] = 'Adding a True/False question';
+$string['addmoreoverallfeedbacks'] = 'Add {no} more feedback fields';
 $string['addquestions'] = 'Add questions';
 $string['addquestionstoquiz'] = 'Add questions to current quiz';
 $string['addrandom'] = 'Add $a random questions';
