@@ -21,7 +21,12 @@ Our changes:
        working properly. Simplified logic (now that we are FETCH_ASSOC). Work in progress
        for the annoying http://tracker.moodle.org/browse/MDL-6877.
        Once fixed by adodb guys, we'll return to their official distro.
+ * lang/adodb-ar.inc.php lang/adodb-bg.inc.php lang/adodb-bgutf8.inc.php 
+   lang/adodb-en.inc.php lang/adodb-pl.inc.php lang/adodb-ro.inc.php
+   lang/adodb_th.inc.php - Removed leading white space outside PHP open/close tags
+   (see http://tracker.moodle.org/browse/MDL-11632).
 
-skodak
+
+skodak,iarenaza
 
 $Id$

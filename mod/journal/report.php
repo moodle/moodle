@@ -145,4 +145,3 @@
     print_footer($course);
 
 ?>
-

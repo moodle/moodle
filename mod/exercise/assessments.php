@@ -1178,4 +1178,3 @@
     print_footer($course);
 
 ?>
-

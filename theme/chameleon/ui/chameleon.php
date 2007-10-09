@@ -28,5 +28,3 @@ if (!empty($THEME->chameleonenabled)) {
     }
 }
 ?>
-
-

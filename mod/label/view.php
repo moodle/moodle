@@ -35,4 +35,3 @@
     redirect("$CFG->wwwroot/course/view.php?id=$course->id");
 
 ?>
-

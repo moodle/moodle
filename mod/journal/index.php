@@ -60,4 +60,3 @@
     print_footer($course);
  
 ?>
-

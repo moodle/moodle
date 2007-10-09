@@ -93,4 +93,3 @@
     print_footer($course);
  
 ?>
-

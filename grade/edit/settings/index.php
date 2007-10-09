@@ -67,4 +67,3 @@ $mform->display();
 print_footer($course);
 
 ?>
-

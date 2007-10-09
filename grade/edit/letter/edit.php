@@ -122,4 +122,3 @@ $mform->display();
 
 print_footer($COURSE);
 ?>
-

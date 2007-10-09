@@ -217,4 +217,3 @@ function my_file_get_contents($filename, $use_include_path = 0) {
 }
 
 ?>
-
