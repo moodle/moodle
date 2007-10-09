@@ -42,7 +42,7 @@
 
     //Get the user theme and enough info to be used in chat_format_message() which passes it along to
     // chat_format_message_manually() -- and only id and timezone are used.
-    if (!$USER = get_record('user','id',$chatuser->userid,'','','','','id, lang, theme, username, timezone')) {
+    if (!$USER = get_record('user','id',$chatuser->userid)) { // no optimisation here, it would break again in future!
         error('User does not exist!');
     }
     $USER->description = '';
