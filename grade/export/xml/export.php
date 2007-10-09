@@ -32,6 +32,7 @@ $groupid         = optional_param('groupid', 0, PARAM_INT);
 $itemids         = required_param('itemids', PARAM_RAW);
 $export_feedback = optional_param('export_feedback', 0, PARAM_BOOL);
 $export_letters  = optional_param('export_letters', 0, PARAM_BOOL);
+$updatedgradesonly = optional_param('updatedgradesonly', false, PARAM_BOOL);
 
 if (!$course = get_record('course', 'id', $id)) {
     print_error('nocourseid');
@@ -45,7 +46,7 @@ require_capability('gradeexport/xml:view', $context);
 
 
 // print all the exported data here
-$export = new grade_export_xml($course, $groupid, $itemids, $export_feedback, $export_letters);
+$export = new grade_export_xml($course, $groupid, $itemids, $export_feedback, $export_letters, $updatedgradesonly);
 $export->print_grades();
 
 ?>

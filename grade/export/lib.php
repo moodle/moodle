@@ -44,6 +44,7 @@ class grade_export {
     var $export_feedback; // export feedback
     var $userkey;         // export using private user key
 
+    var $updatedgradesonly; // only export updated grades
     /**
      * Constructor should set up all the private variables ready to be pulled
      * @param object $course
@@ -53,7 +54,7 @@ class grade_export {
      * @param boolean $export_letters
      * @note Exporting as letters will lead to data loss if that exported set it re-imported.
      */
-    function grade_export($course, $groupid=0, $itemlist='', $export_feedback=false, $export_letters=false) {
+    function grade_export($course, $groupid=0, $itemlist='', $export_feedback=false, $export_letters=false, $updatedgradesonly = false) {
         $this->course = $course;
         $this->groupid = $groupid;
         $this->grade_items = grade_item::fetch_all(array('courseid'=>$this->course->id));
@@ -77,6 +78,7 @@ class grade_export {
         $this->export_feedback = $export_feedback;
         $this->userkey         = '';
         $this->previewrows     = false;
+        $this->updatedgradesonly = $updatedgradesonly;
     }
 
     /**
@@ -230,8 +232,18 @@ class grade_export {
             echo "<td>$user->firstname</td><td>$user->lastname</td><td>$user->idnumber</td><td>$user->institution</td><td>$user->department</td><td>$user->email</td>";
             foreach ($this->columns as $itemid=>$unused) {
                 $gradetxt = $this->format_grade($userdata->grades[$itemid]);
-                echo "<td>$gradetxt</td>";
-
+                
+                // get the status of this grade, and put it through track to get the status
+                $g = new grade_export_update_buffer();
+                $grade_grade = new grade_grade(array('itemid'=>$itemid, 'userid'=>$user->id));
+                $status = $g->track($grade_grade);
+echo "status is $status";
+                if ($this->updatedgradesonly && ($status == 'nochange' || $status == 'unknown')) {
+                    echo '<td>'.get_string('unchangedgrade', 'grade').'</td>';
+                } else {
+                    echo "<td>$gradetxt</td>";
+                }
+                
                 if ($this->export_feedback) {
                     echo '<td>'.$this->format_feedback($userdata->feedbacks[$itemid]).'</td>';
                 }
@@ -249,11 +261,12 @@ class grade_export {
     function get_export_params() {
         $itemids = array_keys($this->columns);
 
-        $params = array('id'             =>$this->course->id,
-                        'groupid'        =>$this->groupid,
-                        'itemids'        =>implode(',', $itemids),
-                        'export_letters' =>$this->export_letters,
-                        'export_feedback'=>$this->export_feedback);
+        $params = array('id'                =>$this->course->id,
+                        'groupid'           =>$this->groupid,
+                        'itemids'           =>implode(',', $itemids),
+                        'export_letters'    =>$this->export_letters,
+                        'export_feedback'   =>$this->export_feedback,
+                        'updatedgradesonly' =>$this->updatedgradesonly);
 
         return $params;
     }
@@ -325,6 +338,7 @@ class grade_export_update_buffer {
      * @return string $status (unknow, new, regrade, nochange)
      */
     function track($grade_grade) {
+
         if (empty($grade_grade->exported) or empty($grade_grade->timemodified)) {
             if (is_null($grade_grade->finalgrade)) {
                 // grade does not exist yet

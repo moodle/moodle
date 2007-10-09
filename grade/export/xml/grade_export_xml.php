@@ -27,7 +27,8 @@ require_once($CFG->dirroot.'/grade/export/lib.php');
 class grade_export_xml extends grade_export {
 
     var $plugin = 'xml';
-
+    var $updatedgradesonly = false; // default to export ALL grades
+    
     /**
      * To be implemented by child classes
      * @param boolean $feedback
@@ -73,11 +74,18 @@ class grade_export_xml extends grade_export {
                 $grade_item = $this->grade_items[$itemid];
                 $grade->grade_item =& $grade_item;
                 $gradestr = $grade->finalgrade; // no formating for now
+                
+                // MDL-11
+                if ($export_tracking) {
+                    $status = $geub->track($grade);
+                    if ($this->updatedgradesonly && ($status == 'nochange' || $status == 'unknown')) {
+                        continue; 
+                    }
+                }
 
                 fwrite($handle,  "\t<result>\n");
 
                 if ($export_tracking) {
-                    $status = $geub->track($grade);
                     fwrite($handle,  "\t\t<state>$status</state>\n");
                 }
 

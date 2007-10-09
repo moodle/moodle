@@ -51,12 +51,11 @@ if (!empty($CFG->gradepublishing)) {
     $CFG->gradepublishing = has_capability('gradeexport/xml:publish', $context);
 }
 
-$mform = new grade_export_form(null, array('idnumberrequired'=>true, 'publishing' => true));
+$mform = new grade_export_form(null, array('idnumberrequired'=>true, 'publishing' => true, 'updatedgrades' => true));
 
 // process post information
 if ($data = $mform->get_data()) {
-    $export = new grade_export_xml($course, groups_get_course_group($course));
-
+    $export = new grade_export_xml($course, groups_get_course_group($course), $data->updatedgradesonly, false, false, $data->updatedgradesonly);
     // print the grades on screen for feedbacks
     $export->process_form($data);
     $export->print_continue();

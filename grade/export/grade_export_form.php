@@ -25,6 +25,10 @@ class grade_export_form extends moodleform {
         $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000);
         $mform->addElement('select', 'previewrows', get_string('previewrows', 'grades'), $options); 
 
+        if (!empty($features['updatedgrades'])) {
+            $mform->addElement('advcheckbox', 'updatedgradesonly', get_string('updatedgradesonly', 'grades'));
+        }
+    
         if (!empty($features['includeseparator'])) {
             $radio = array();
             $radio[] = &MoodleQuickForm::createElement('radio', 'separator', null, get_string('septab', 'grades'), 'tab');
