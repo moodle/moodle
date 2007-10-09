@@ -2394,24 +2394,6 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);
     }
 
-
-/* NOTE: please keep this at the end of upgrade file for now ;-)
-    /// drop old gradebook tables
-    if ($result && $oldversion < xxxxxxxx) {
-        $tables = array('grade_category',
-                        'grade_item',
-                        'grade_letter',
-                        'grade_preferences',
-                        'grade_exceptions');
-
-        foreach ($tables as $table) {
-            $table = new XMLDBTable($table);
-            if (table_exists($table)) {
-                drop_table($table);
-            }
-        }
-    }
-*/
     // dropping context_rel table
     if ($result && $oldversion < 2007100800) {
 
@@ -2436,6 +2418,37 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add index timemodified
         $result = $result && add_index($table, $index);
     }
+
+/// cleanup in user_lastaccess
+    if ($result && $oldversion < 2007100902) {
+        $sql = "DELETE
+                  FROM {$CFG->prefix}user_lastaccess
+                 WHERE NOT EXISTS (SELECT 'x'
+                                    FROM {$CFG->prefix}course c
+                                   WHERE c.id = {$CFG->prefix}user_lastaccess.courseid)"; 
+        execute_sql($sql);
+    }
+
+
+
+
+/* NOTE: please keep this at the end of upgrade file for now ;-)
+    /// drop old gradebook tables
+    if ($result && $oldversion < xxxxxxxx) {
+        $tables = array('grade_category',
+                        'grade_item',
+                        'grade_letter',
+                        'grade_preferences',
+                        'grade_exceptions');
+
+        foreach ($tables as $table) {
+            $table = new XMLDBTable($table);
+            if (table_exists($table)) {
+                drop_table($table);
+            }
+        }
+    }
+*/
 
     return $result;
 }
