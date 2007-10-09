@@ -707,45 +707,43 @@ function quiz_get_renderoptions($reviewoptions, $state) {
  *          correct_responses, solutions and general feedback
  */
 function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
-    
-    global $CFG;
-
     $options = new stdClass;
     $options->readonly = true;
+
     // Provide the links to the question review and comment script
     $options->questionreviewlink = '/mod/quiz/reviewquestion.php';
 
-    // Work out the state of the attempt.
-    if (((time() - $attempt->timefinish) < 120) || $attempt->timefinish==0) {
-        $quiz_state_mask = QUIZ_REVIEW_IMMEDIATELY;
-        $options->quizstate = QUIZ_STATE_IMMEDIATELY;
-    } else if (!$quiz->timeclose or time() < $quiz->timeclose) {
-        $quiz_state_mask = QUIZ_REVIEW_OPEN;
-        $options->quizstate = QUIZ_STATE_OPEN;
-    } else {
-        $quiz_state_mask = QUIZ_REVIEW_CLOSED;
-        $options->quizstate = QUIZ_STATE_CLOSED;
+    // Show a link to the comment box only for closed attempts
+    if ($attempt->timefinish && has_capability('mod/quiz:grade', $context)) {
+        $options->questioncommentlink = '/mod/quiz/comment.php';
     }
 
-    if (!is_null($context) && has_capability('mod/quiz:viewreports', $context) and !$attempt->preview) {
-        // The teacher should be shown everything except:
-        //  - during preview when teachers want to see what students see
-        //  - hidden scores are controlled by the moodle/grade:viewhidden capability
+    if (!is_null($context) && has_capability('mod/quiz:viewreports', $context) && 
+            has_capability('moodle/grade:viewhidden', $context) && !$attempt->preview) {
+        // People who can see reports and hidden grades should be shown everything,
+        // except during preview when teachers want to see what students see.
         $options->responses = true;
-        $options->scores = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SCORES) ||
-                has_capability('moodle/grade:viewhidden', $context); 
+        $options->scores = true; 
         $options->feedback = true;
         $options->correct_responses = true;
         $options->solutions = false;
         $options->generalfeedback = true;
         $options->overallfeedback = true;
         $options->quizstate = QUIZ_STATE_TEACHERACCESS;
-
-        // Show a link to the comment box only for closed attempts
-        if ($attempt->timefinish) {
-            $options->questioncommentlink = '/mod/quiz/comment.php';
-        }
     } else {
+        // Work out the state of the attempt ...
+        if (((time() - $attempt->timefinish) < 120) || $attempt->timefinish==0) {
+            $quiz_state_mask = QUIZ_REVIEW_IMMEDIATELY;
+            $options->quizstate = QUIZ_STATE_IMMEDIATELY;
+        } else if (!$quiz->timeclose or time() < $quiz->timeclose) {
+            $quiz_state_mask = QUIZ_REVIEW_OPEN;
+            $options->quizstate = QUIZ_STATE_OPEN;
+        } else {
+            $quiz_state_mask = QUIZ_REVIEW_CLOSED;
+            $options->quizstate = QUIZ_STATE_CLOSED;
+        }
+
+        // ... and hence extract the appropriate review options. 
         $options->responses = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
         $options->scores = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SCORES) ? 1 : 0;
         $options->feedback = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;

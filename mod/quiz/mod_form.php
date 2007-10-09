@@ -140,8 +140,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addElement('hidden', 'grade', $CFG->quiz_maximumgrade);
 
 //-------------------------------------------------------------------------------
-        $mform->addElement('header', 'reviewoptionshdr', get_string("reviewoptions", "quiz"));
-        $mform->setHelpButton('reviewoptionshdr', array("review2", get_string("allowreview","quiz"), "quiz"));
+        $mform->addElement('header', 'reviewoptionshdr', get_string('reviewoptionsheading', 'quiz'));
+        $mform->setHelpButton('reviewoptionshdr', array('reviewoptions', get_string('reviewoptionsheading','quiz'), 'quiz'));
         $mform->setAdvanced('reviewoptionshdr', $CFG->quiz_fix_review);
 
         $immediatelyoptionsgrp=array();
