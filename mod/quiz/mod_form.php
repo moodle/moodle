@@ -227,7 +227,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setType('feedbackboundaries', PARAM_NOTAGS);
 
         $nextel=$this->repeat_elements($repeatarray, $numfeedbacks-1,
-                    array(), 'boundary_repeats', 'boundary_add_fields', 3);
+                array(), 'boundary_repeats', 'boundary_add_fields', 3,
+                get_string('addmoreoverallfeedbacks', 'quiz'), true);
 
         //put some extra elements in before the button
         $insertEl = &MoodleQuickForm::createElement('text', "feedbacktext[$nextel]", get_string('feedback', 'quiz'), array('size' => 50));

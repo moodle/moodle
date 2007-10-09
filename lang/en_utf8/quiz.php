@@ -10,6 +10,7 @@ $string['action'] = 'Action';
 $string['adaptive'] = 'Adaptive mode';
 $string['addcategory'] = 'Add category';
 $string['addingquestions'] = 'This side of the page is where you manage your database of questions.  Questions are stored in categories to help you keep them organised, and can be used by any quiz in your course or even other courses if you choose to \'publish\' them. <br /><br />After you select or create a question category you will be able to create or edit questions.  You can select any of these questions to add to your quiz over on the other side of this page.';
+$string['addmoreoverallfeedbacks'] = 'Add {no} more feedback fields';
 $string['addquestions'] = 'Add questions';
 $string['addquestionstoquiz'] = 'Add questions to current quiz';
 $string['addrandom'] = 'Add $a random questions';
