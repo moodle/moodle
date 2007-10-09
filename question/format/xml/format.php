@@ -772,9 +772,10 @@ class qformat_xml extends qformat_default {
         // add opening tag
         // generates specific header for Cloze and category type question
         if ($question->qtype == 'category') {
+            $categorypath = $this->writetext( $question->category );
             $expout .= "  <question type=\"category\">\n";
             $expout .= "    <category>\n";
-            $expout .= "        $question->category\n";
+            $expout .= "        $categorypath\n";
             $expout .= "    </category>\n";
             $expout .= "  </question>\n";
             return $expout;
