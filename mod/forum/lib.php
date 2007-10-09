@@ -772,7 +772,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
             }
             $post->modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         }
-        $post->viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
+        $post->viewfullnames = has_capability('moodle/site:viewfullnames', $post->modcontext, $userto->id);
     }
 
     $by = New stdClass;
