@@ -94,8 +94,6 @@
 
             if ($data->payment_status != "Completed" and $data->payment_status != "Pending") {
                 role_unassign(0, $data->userid, 0, $context->id);
-                // force accessinfo refresh for users visiting this context...
-                mark_context_dirty($context->path);
                 email_paypal_error_to_admin("Status not completed or pending. User unenrolled from course", $data);
                 die;
             }

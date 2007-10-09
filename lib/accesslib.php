@@ -157,6 +157,8 @@ require_once($CFG->dirroot.'/group/lib.php');
 $context_cache    = array();    // Cache of all used context objects for performance (by level and instance)
 $context_cache_id = array();    // Index to above cache by id
 
+$DIRTYCONTEXTS = null; // dirty contexts cache
+$ACCESS = array(); // cache of caps for cron user switching and has_capability for other users (==not $USER)
 
 function get_role_context_caps($roleid, $context) {
     //this is really slow!!!! - do not use above course context level!
@@ -310,89 +312,84 @@ function get_guest_role() {
     }
 }
 
+/**
+ * This function returns whether the current user has the capability of performing a function
+ * For example, we can do has_capability('mod/forum:replypost',$context) in forum
+ * @param string $capability - name of the capability (or debugcache or clearcache)
+ * @param object $context - a context object (record from context table)
+ * @param integer $userid - a userid number, empty if current $USER
+ * @param bool $doanything - if false, ignore do anything
+ * @return bool
+ */
 function has_capability($capability, $context, $userid=NULL, $doanything=true) {
     global $USER, $ACCESS, $CFG, $DIRTYCONTEXTS;
 
     // the original $CONTEXT here was hiding serious errors
-    // for security reasons do notreuse previous context
+    // for security reasons do not reuse previous context
     if (empty($context)) {
         debugging('Incorrect context specified');
         return false;
     }
 
-    if (is_null($userid) || $userid===0) {
+    if (empty($userid)) { // we must accept null, 0, '0', '' etc. in $userid
         $userid = $USER->id;
     }
 
-    $contexts = array();
-    $basepath = '/' . SYSCONTEXTID;
-    if (empty($context->path)) {
-        $contexts[] = SYSCONTEXTID;
-        $context->path = $basepath;
-        if (isset($context->id) && $context->id ==! SYSCONTEXTID) {
-            $contexts[] = $context->id;
-            $context->path .= '/' . $context->id;
-        }
+    if (is_null($context->path) or $context->depth == 0) {
+        //this should not happen
+        $contexts = array(SYSCONTEXTID, $context->id);
+        $context->path = '/'.SYSCONTEXTID.'/'.$context->id;
+        debugging('Context id '.$context->id.' does not have valid path, please use build_context_path()', DEBUG_DEVELOPER);
+
     } else {
         $contexts = explode('/', $context->path);
         array_shift($contexts);
     }
 
-    if ($USER->id === 0 && !isset($USER->access)) {
-        // not-logged-in user first time here
-        load_all_capabilities();
-
-    } else if (defined('FULLME') && FULLME === 'cron' && !isset($USER->access)) {
-        //
+    if (defined('FULLME') && FULLME === 'cron' && !isset($USER->access)) {
         // In cron, some modules setup a 'fake' $USER,
         // ensure we load the appropriate accessdata.
-        // Also: set $DIRTYCONTEXTS to empty
-        // 
-        if (!isset($ACCESS)) {
-            $ACCESS = array();
-        }
-        if (!isset($ACCESS[$userid])) {
+        if (isset($ACCESS[$userid])) {
+            $DIRTYCONTEXTS = NULL; //load fresh dirty contexts
+        } else {
             load_user_accessdata($userid);
+            $DIRTYCONTEXTS = array();
         }
         $USER->access = $ACCESS[$userid];
-        $DIRTYCONTEXTS = array();
 
-    } else if ($USER->id === $userid && !isset($USER->access)) {
+    } else if ($USER->id == $userid && !isset($USER->access)) {
         // caps not loaded yet - better to load them to keep BC with 1.8
-        // probably $USER object set up manually
+        // not-logged-in user or $USER object set up manually first time here
         load_all_capabilities();
+        $ACCESS = array(); // reset the cache for other users too, the dirty contexts are empty now
+    }
+
+    // Load dirty contexts list if needed
+    if (!isset($DIRTYCONTEXTS)) {
+        $DIRTYCONTEXTS = get_dirty_contexts($USER->access['time']);
     }
 
     // Careful check for staleness...
-    $clean = true;
-    if (!isset($DIRTYCONTEXTS)) {
-        // Load dirty contexts list
-        $DIRTYCONTEXTS = get_dirty_contexts($USER->access['time']);
-
-        // Check basepath only once, when
-        // we load the dirty contexts...
-        if (isset($DIRTYCONTEXTS[$basepath])) {
-            // sitewide change, dirty
-            $clean = false;
-        }
-    }
-    // Check for staleness in the whole parenthood
-    if ($clean && !is_contextpath_clean($context->path, $DIRTYCONTEXTS)) {
-        $clean = false;
-    }
-    if (!$clean) {
+    if (count($DIRTYCONTEXTS) !== 0 and is_contextpath_dirty($contexts, $DIRTYCONTEXTS)) {
         // reload all capabilities - preserving loginas, roleswitches, etc
         // and then cleanup any marks of dirtyness... at least from our short
         // term memory! :-)
-        reload_all_capabilities();
-        $DIRTYCONTEXTS = array();
-        $clean = true;
+        $ACCESS = array();
+
+        if (defined('FULLME') && FULLME === 'cron') {
+            load_user_accessdata($userid);
+            $USER->access = $ACCESS[$userid];
+            $DIRTYCONTEXTS = array();
+
+        } else {
+            reload_all_capabilities();
+        }
     }
-    
+
     // divulge how many times we are called
     //// error_log("has_capability: id:{$context->id} path:{$context->path} userid:$userid cap:$capability");
 
-    if ($USER->id === $userid) {
+    if ($USER->id == $userid) { // we must accept strings and integers in $userid
         //
         // For the logged in user, we have $USER->access
         // which will have all RAs and caps preloaded for
@@ -417,9 +414,6 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         return has_capability_in_accessdata($capability, $context, $USER->access, $doanything);
     }
 
-    if (!isset($ACCESS)) {
-        $ACCESS = array();
-    }
     if (!isset($ACCESS[$userid])) {
         load_user_accessdata($userid);
     }
@@ -428,7 +422,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         return has_capability_in_accessdata($capability, $context, $ACCESS[$userid], $doanything);
     }
     // Load accessdata for below-the-course contexts as needed
-    if (!path_inaccessdata($context->path,$ACCESS[$userid])) {
+    if (!path_inaccessdata($context->path, $ACCESS[$userid])) {
         error_log("loading access for context {$context->path} for $capability at {$context->contextlevel} {$context->id}");
         // $bt = debug_backtrace();
         // error_log("bt {$bt[0]['file']} {$bt[0]['line']}");
@@ -438,7 +432,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
     return has_capability_in_accessdata($capability, $context, $ACCESS[$userid], $doanything);
 }
 
-/*
+/**
  * Uses 1 DB query to answer whether a user is an admin at the sitelevel.
  * It depends on DB schema >=1.7 but does not depend on the new datastructures
  * in v1.9 (context.path, or $USER->access)
@@ -499,7 +493,7 @@ function path_inaccessdata($path, $accessdata) {
     return false;
 }
 
-/*
+/**
  * Walk the accessdata array and return true/false.
  * Deals with prohibits, roleswitching, aggregating
  * capabilities, etc.
@@ -749,27 +743,30 @@ function aggregate_roles_from_accessdata($context, $accessdata) {
  * @param string $errorstring - an errorstring
  * @param string $stringfile - which stringfile to get it from
  */
-function require_capability($capability, $context=NULL, $userid=NULL, $doanything=true,
+function require_capability($capability, $context, $userid=NULL, $doanything=true,
                             $errormessage='nopermissions', $stringfile='') {
 
     global $USER, $CFG;
 
-/// If the current user is not logged in, then make sure they are (if needed)
-
-    if (is_null($userid) && !isset($USER->access)) {
-        if ($context && ($context->contextlevel == CONTEXT_COURSE)) {
+    /* Empty $userid means current user, if the current user is not logged in,
+     * then make sure they are (if needed).
+     * Originally there was a check for loaded permissions - it is not needed here.
+     * Context is now required parameter, the cached $CONTEXT was only hiding errors.
+     */
+    if (empty($userid)) {
+        if ($context->contextlevel == CONTEXT_COURSE) {
             require_login($context->instanceid);
-        } else if ($context && ($context->contextlevel == CONTEXT_MODULE)) {
-            if ($cm = get_record('course_modules','id',$context->instanceid)) {
-                if (!$course = get_record('course', 'id', $cm->course)) {
-                    error('Incorrect course.');
-                }
-                require_course_login($course, true, $cm);
 
-            } else {
-                require_login();
+        } else if ($context->contextlevel == CONTEXT_MODULE) {
+            if (!$cm = get_record('course_modules', 'id', $context->instanceid)) {
+                error('Incorrect module');
             }
-        } else if ($context && ($context->contextlevel == CONTEXT_SYSTEM)) {
+            if (!$course = get_record('course', 'id', $cm->course)) {
+                error('Incorrect course.');
+            }
+            require_course_login($course, true, $cm);
+
+        } else if ($context->contextlevel == CONTEXT_SYSTEM) {
             if (!empty($CFG->forcelogin)) {
                 require_login();
             }
@@ -787,7 +784,7 @@ function require_capability($capability, $context=NULL, $userid=NULL, $doanythin
     }
 }
 
-/*
+/**
  * Get an array of courses (with magic extra bits)
  * where the accessdata and in DB enrolments show
  * that the cap requested is available.
@@ -951,7 +948,7 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
     return $courses;
 }
 
-/*
+/**
  * Draft - use for the course participants list page 
  *
  * Uses 1 DB query (cheap too - 2~7ms).
@@ -1016,7 +1013,7 @@ function get_context_users_byrole ($context, $roleid, $fields=NULL, $where=NULL,
     return $users;
 }
 
-/*
+/**
  * Draft - use for the course participants list page 
  *
  * Uses 2 fast DB queries
@@ -1193,39 +1190,41 @@ function get_user_access_sitewide($userid) {
     //
     $raparents = array();
     $lastseen  = '';
-    if ($rs and $rs->RecordCount()) {
-        while ($ra = rs_fetch_next_record($rs)) {
-            // RAs leafs are arrays to support multi
-            // role assignments...
-            if (!isset($accessdata['ra'][$ra->path])) {
-                $accessdata['ra'][$ra->path] = array();
-            }
-            // only add if is not a repeat caused
-            // by capability join...
-            // (this check is cheaper than in_array())
-            if ($lastseen !== $ra->path.':'.$ra->roleid) {
-                $lastseen = $ra->path.':'.$ra->roleid;
-                array_push($accessdata['ra'][$ra->path], $ra->roleid);
-                $parentids = explode('/', $ra->path);
-                array_shift($parentids); // drop empty leading "context"
-                array_pop($parentids);   // drop _this_ context
-
-                if (isset($raparents[$ra->roleid])) {
-                    $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid],
-                                                          $parentids);
-                } else {
-                    $raparents[$ra->roleid] = $parentids;
+    if ($rs) {
+        if ($rs->RecordCount()) {
+            while ($ra = rs_fetch_next_record($rs)) {
+                // RAs leafs are arrays to support multi
+                // role assignments...
+                if (!isset($accessdata['ra'][$ra->path])) {
+                    $accessdata['ra'][$ra->path] = array();
+                }
+                // only add if is not a repeat caused
+                // by capability join...
+                // (this check is cheaper than in_array())
+                if ($lastseen !== $ra->path.':'.$ra->roleid) {
+                    $lastseen = $ra->path.':'.$ra->roleid;
+                    array_push($accessdata['ra'][$ra->path], $ra->roleid);
+                    $parentids = explode('/', $ra->path);
+                    array_shift($parentids); // drop empty leading "context"
+                    array_pop($parentids);   // drop _this_ context
+    
+                    if (isset($raparents[$ra->roleid])) {
+                        $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid],
+                                                              $parentids);
+                    } else {
+                        $raparents[$ra->roleid] = $parentids;
+                    }
+                }
+                // Always add the roleded
+                if (!empty($ra->capability)) {
+                    $k = "{$ra->path}:{$ra->roleid}";
+                    $accessdata['rdef'][$k][$ra->capability] = $ra->permission;
                 }
             }
-            // Always add the roleded
-            if (!empty($ra->capability)) {
-                $k = "{$ra->path}:{$ra->roleid}";
-                $accessdata['rdef'][$k][$ra->capability] = $ra->permission;
-            }
+            unset($ra);
         }
-        unset($ra);
+        rs_close($rs);
     }
-    rs_close($rs);
 
     // Walk up the tree to grab all the roledefs
     // of interest to our user...
@@ -1516,9 +1515,6 @@ function get_role_access_bycontext($roleid, $context, $accessdata=NULL) {
 function load_user_accessdata($userid) {
     global $ACCESS,$CFG;
 
-    if (!isset($ACCESS)) {
-        $ACCESS = array();
-    }
     $base = '/'.SYSCONTEXTID;
 
     $accessdata = get_user_access_sitewide($userid);
@@ -1548,6 +1544,9 @@ function load_user_accessdata($userid) {
             array_push($accessdata['ra'][$base], $CFG->defaultfrontpageroleid);
         }
     }
+    // for dirty timestamps in cron
+    $accessdata['time'] = time();
+
     $ACCESS[$userid] = $accessdata;  
     return true;
 }
@@ -1557,7 +1556,7 @@ function load_user_accessdata($userid) {
  *  for the current user.   This is what gets called from login, for example.
  */
 function load_all_capabilities() {
-    global $USER,$CFG;
+    global $USER, $CFG, $DIRTYCONTEXTS;
 
     $base = '/'.SYSCONTEXTID;
 
@@ -1594,7 +1593,6 @@ function load_all_capabilities() {
         //
         // provide "default frontpage role"
         //
-        
         if (!empty($CFG->defaultfrontpageroleid)) {
             $base = '/'. SYSCONTEXTID .'/'. $frontpagecontext->id;
             $accessdata = get_default_frontpage_role_access($CFG->defaultfrontpageroleid, $accessdata);
@@ -1611,9 +1609,9 @@ function load_all_capabilities() {
         $USER->access['ra'][$base] = array($CFG->notloggedinroleid);
     }
 
-    // Timestamp to read 
-    // dirty context timestamps
+    // Timestamp to read dirty context timestamps later
     $USER->access['time'] = time();
+    $DIRTYCONTEXTS = array();
 
     // Clear to force a refresh
     unset($USER->mycourses);
@@ -2860,8 +2858,12 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
 
     if ($success) {   /// Role was assigned, so do some other things
 
-    /// If the user is the current user, then reload the capabilities too.
+    /// mark context as dirty - modules might use has_capability() in xxx_role_assing()
+    /// again expensive, but needed
+        mark_context_dirty($context->path);
+
         if (!empty($USER->id) && $USER->id == $userid) {
+    /// If the user is the current user, then do full reload of capabilities too.
             load_all_capabilities();
         }
 
@@ -2926,11 +2928,21 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
                 }
                 $success = delete_records('role_assignments', 'id', $ra->id) and $success;
 
-                /// If the user is the current user, then reload the capabilities too.
+                if (!$context = get_context_instance_by_id($ra->contextid)) {
+                    // strange error, not much to do
+                    continue;
+                }
+
+                /* mark contexts as dirty here, because we need the refreshed
+                 * caps bellow to delete group membership and user_lastaccess!
+                 * and yes, this is very expensive for bulk operations :-(
+                 */
+                mark_context_dirty($context->path);
+
+                /// If the user is the current user, then do full reload of capabilities too.
                 if (!empty($USER->id) && $USER->id == $ra->userid) {
                     load_all_capabilities();
                 }
-                $context = get_record('context', 'id', $ra->contextid);
 
                 /// Ask all the modules if anything needs to be done for this user
                 foreach ($mods as $mod) {
@@ -2942,7 +2954,7 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
                 }
 
                 /// now handle metacourse role unassigment and removing from goups if in course context
-                if (!empty($context) and $context->contextlevel == CONTEXT_COURSE) {
+                if ($context->contextlevel == CONTEXT_COURSE) {
 
                     // cleanup leftover course groups/subscriptions etc when user has
                     // no capability to view course
@@ -3874,7 +3886,8 @@ function get_roles_used_in_context($context, $view = false) {
     return get_records_sql($sql);
 }
 
-/** this function is used to print roles column in user profile page.
+/**
+ * This function is used to print roles column in user profile page.
  * @param int userid
  * @param int contextid
  * @return string
@@ -4612,10 +4625,8 @@ function component_level_changed($cap, $comp, $contextlevel) {
 
 /**
  * Populate context.path and context.depth where missing.
- *
- * Use $force=true to force a complete rebuild of
- * the path and depth fields.
- *
+ * @param bool $force force a complete rebuild of the path and depth fields.
+ * @return void
  */
 function build_context_path($force=false) {
     global $CFG;
@@ -4864,67 +4875,51 @@ function make_context_subobj($rec) {
     return $rec;
 }
 
-/*
+/**
  * Fetch recent dirty contexts to know cheaply whether our $USER->access
  * is stale and needs to be reloaded.
  *
  * Uses cache_flags
- *
+ * @param int $time
+ * @return array of dirty contexts
  */
 function get_dirty_contexts($time) {
     return get_cache_flags('accesslib/dirtycontexts', $time-2);
 }
 
-/*
+/**
  * Mark a context as dirty (with timestamp)
  * so as to force reloading of the context.
- *
+ * @param string $path context path
  */
 function mark_context_dirty($path) {
-    global $CFG;
+    global $CFG, $DIRTYCONTEXTS;
     // only if it is a non-empty string
     if (is_string($path) && $path !== '') {
         set_cache_flag('accesslib/dirtycontexts', $path, 1, time()+$CFG->sessiontimeout);
+        if (isset($DIRTYCONTEXTS)) {
+            $DIRTYCONTEXTS[$path] = 1;
+        }
     }
 }
 
-/*
+/**
  * Will walk the contextpath to answer whether
- * the contextpath is clean
+ * the contextpath is dirty
  *
- * NOTE: it will *NOT* test the base path
- * as it assumes that the caller has checked
- * that beforehand.
- *
- * @param string path
- * @param obj/array dirty from get_dirty_contexts()
- *
+ * @param array $contexts array of strings
+ * @param obj/array dirty contexts from get_dirty_contexts()
+ * @return bool
  */
-function is_contextpath_clean($path, $dirty) {
-
-    $basepath = '/' . SYSCONTEXTID;
-
-    // all clean, no dirt!
-    if (count($dirty) === 0) {
-        return true;
-    }
-
-    // is _this_ context dirty?
-    if (isset($dirty[$path])) {
-        return false;
-    }
-    while (preg_match('!^(/.+)/\d+$!', $path, $matches)) {
-        $path = $matches[1];
-        if ($path === $basepath) { 
-            // we don't test basepath
-            // assume caller did it already
+function is_contextpath_dirty($pathcontexts, $dirty) {
+    $path = '';
+    foreach ($pathcontexts as $ctx) {
+        $path = $path.'/'.$ctx;
+        if (isset($dirty[$path])) {
             return true;
         }
-        if (isset($dirty[$path])) {
-            return false;
-        }
-    }    
-    return true;
+    }
+    return false;
 }
 
 ?>

@@ -331,9 +331,6 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='man
 
     $res = role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, $enrol);
 
-    // force accessinfo refresh for users visiting this context...
-    mark_context_dirty($context->path);
-
     return $res;
 }
 
@@ -368,8 +365,6 @@ function unenrol_student($userid, $courseid=0) {
         foreach($roles as $role) {
             $status = role_unassign($role->id, $userid, 0, $context->id) and $status;
         }
-        // force accessinfo refresh for users visiting this context...
-        mark_context_dirty($context->path);
     } else {
         // recursivelly unenroll student from all courses
         if ($courses = get_records('course')) {
@@ -414,9 +409,6 @@ function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $ti
     }
 
     $res = role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, $enrol);
-
-    // force accessinfo refresh for users visiting this context...
-    mark_context_dirty($context->path);
 
     return $res;
 }
@@ -467,8 +459,6 @@ function remove_teacher($userid, $courseid=0) {
                 $return = false;
             }
         }
-        // force accessinfo refresh for users visiting this context...
-        mark_context_dirty($context->path);
 
     } else {
         delete_records('forum_subscriptions', 'userid', $userid);

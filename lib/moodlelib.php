@@ -772,20 +772,22 @@ function set_cache_flag($type, $name, $value, $expiry=NULL) {
 
     $type = addslashes($type);
     $name = addslashes($name);
-    $value = addslashes($value);
-    if ($f = get_record('cache_flags', 'name', $name, 'flagtype', $type)) {
-        $f->value        = $value;
+    if ($f = get_record('cache_flags', 'name', $name, 'flagtype', $type)) { // this is a potentail problem in DEBUG_DEVELOPER
+        if ($f->value == $value and $f->expiry == $expiry and $f->timemodified == $timemodified) {
+            return true; //no need to update; helps rcache too
+        }
+        $f->value        = addslashes($value);
         $f->expiry       = $expiry;
         $f->timemodified = $timemodified;
         return update_record('cache_flags', $f);
     } else {
-        $f = new StdClass;
+        $f = new object();
         $f->flagtype     = $type;
         $f->name         = $name;
-        $f->value        = $value;
+        $f->value        = addslashes($value);
         $f->expiry       = $expiry;
         $f->timemodified = $timemodified;
-        return insert_record('cache_flags', $f);
+        return (bool)insert_record('cache_flags', $f);
     }
 }
 
@@ -2355,22 +2357,15 @@ function sync_metacourse($course) {
     $success = true;
 
     // Make the unassignments, if they are not managers.
-    $unchanged = true;
     foreach ($unassignments as $unassignment) {
         if (!in_array($unassignment->userid, $managers)) {
             $success = role_unassign($unassignment->roleid, $unassignment->userid, 0, $context->id) && $success;
-            $unchanged = false;
         }
     }
 
     // Make the assignments.
     foreach ($assignments as $assignment) {
         $success = role_assign($assignment->roleid, $assignment->userid, 0, $context->id) && $success;
-        $unchanged = false;
-    }
-    if (!$unchanged) {
-        // force accessinfo refresh for users visiting this context...
-        mark_context_dirty($context->path);
     }
 
     return $success;
