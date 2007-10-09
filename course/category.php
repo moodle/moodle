@@ -16,7 +16,7 @@
     $moveup       = optional_param('moveup', 0, PARAM_INT);
     $movedown     = optional_param('movedown', 0, PARAM_INT);
     $moveto       = optional_param('moveto', 0, PARAM_INT);
-    $rename       = optional_param('rename', '', PARAM_NOTAGS);
+    $rename       = optional_param('rename', '', PARAM_RAW);
     $resort       = optional_param('resort', 0, PARAM_BOOL);
     $categorytheme= optional_param('categorytheme', false, PARAM_CLEAN);
 
@@ -54,7 +54,7 @@
     if (has_capability('moodle/category:update', $context)) {
         /// Rename the category if requested
         if (!empty($rename) and confirm_sesskey()) {
-            $category->name = $rename;
+            $category->name = stripslashes_safe($rename);
             if (! set_field("course_categories", "name", $category->name, "id", $category->id)) {
                 notify("An error occurred while renaming the category");
             }
@@ -484,7 +484,7 @@
         echo '<form id="renameform" action="category.php" method="post"><div>';
         echo '<input type="hidden" name="id" value="'.$category->id.'" />';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-        echo '<input type="text" size="30" name="rename" value="'.format_string($category->name).'" alt="'.$strrename.'" />';
+        echo '<input type="text" size="30" name="rename" value="'.htmlspecialchars($category->name).'" alt="'.$strrename.'" />';
         echo '<input type="submit" value="'.$strrename.'" />';
         echo '</div></form>';
         echo '<br />';
