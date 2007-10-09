@@ -428,7 +428,7 @@ body#admin-config .confighelp {
  *** Blocks
  ***/
  
-/*Accessibility: Skip block link, for screen reader users. */
+/*Accessibility: Skip block link, for keyboard-only users. */
 a.skip-block, .skip-block {
   display:block;
   width:2em; 
@@ -438,7 +438,8 @@ a.skip-block, .skip-block {
   height:4px;
 }
 .skip-block-to {
-  font-size:1px;
+  display: block;
+  height: 1px;
 }
 
 .sideblock li .icon img {
