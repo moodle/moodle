@@ -45,24 +45,6 @@
     $straction = get_string('action');
 
 
-/// If data for a new category was submitted, then add it
-    $mform = new category_add_form();
-    if ($form = $mform->get_data() and has_capability('moodle/category:create', $context)) {
-        if (!empty($form->addcategory)) {
-            unset($newcategory);
-            $newcategory->name = stripslashes_safe($form->addcategory);
-            $newcategory->description = $form->description;
-            $newcategory->sortorder = 999;
-            if (!$newcategory->id = insert_record('course_categories', $newcategory)) {
-                notify("Could not insert the new category '" . format_string($newcategory->name) . "'");
-            } else {
-                $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
-                mark_context_dirty($newcategory->context->path);
-                notify(get_string('categoryadded', '', format_string($newcategory->name)));
-            }
-        }
-    }
-
 /// Unless it's an editing admin, just print the regular listing of courses/categories
 
     if (!$adminediting) {
@@ -281,12 +263,6 @@
 /// Should be a no-op 99% of the cases
     fix_course_sortorder();
 
-/// Print form for creating new categories
-
-    if (has_capability('moodle/category:create', get_context_instance(CONTEXT_SYSTEM))) {
-        $mform->display();
-    }
-
 /// Print out the categories with all the knobs
 
     $strcategories = get_string('categories');
@@ -312,13 +288,26 @@
     echo '</table>';
 
     echo '<div class="buttons">';
-    /// Print link to create a new course
+    
+    // Print link to create a new course
     if (has_capability('moodle/course:create', $context)) {
         unset($options);
         if (!empty($category->id)) {
             $options['category'] = $category->id;
             print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
         }
+    }
+
+    // Print button for creating new categories
+    if (has_capability('moodle/category:create', $context)) {
+        unset($options);
+        if (!empty($category->id)) {
+            $options['id'] = $category->id;
+        } else {
+            $options['id'] = 0;
+        }
+        $options['categoryadd'] = 1;
+        print_single_button('editcategory.php', $options, get_string('addnewcategory'), 'get');
     }
 
     if (has_capability('moodle/site:approvecourse', $sysctx)  and !empty($CFG->enablecourserequests)) {
@@ -339,6 +328,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
     static $str = '';
 
     if (empty($str)) {
+        $str->edit     = get_string('edit');
         $str->delete   = get_string('delete');
         $str->moveup   = get_string('moveup');
         $str->movedown = get_string('movedown');
@@ -366,6 +356,11 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         echo '<td class="count">'.$category->coursecount.'</td>';
 
         echo '<td class="icons">';    /// Print little icons
+
+        if (has_capability('moodle/category:update', $category->context)) {
+            echo '<a title="'.$str->edit.'" href="editcategory.php?id='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
+                 ' src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$str->edit.'" /></a> ';
+        }
 
         if (has_capability('moodle/category:delete', $category->context)) {
             echo '<a title="'.$str->delete.'" href="index.php?delete='.$category->id.'&amp;sesskey='.sesskey().'"><img'.

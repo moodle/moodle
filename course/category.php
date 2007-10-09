@@ -51,20 +51,6 @@
         $creatorediting = false;
     }
 
-    $mform = new sub_category_add_form();
-    if (has_capability('moodle/category:create', $context)) {
-        if ($form = $mform->get_data()) {
-            $subcategory = new stdClass;
-            $subcategory->name = $form->addcategory;
-            $subcategory->description = $form->description;
-            $subcategory->sortorder = 999;
-            $subcategory->parent = $id;
-            if (!insert_record('course_categories', $subcategory )) {
-                notify( "Could not insert the new subcategory '$addsubcategory' " );
-            }
-        }
-    }
-
     if (has_capability('moodle/category:update', $context)) {
         /// Rename the category if requested
         if (!empty($rename) and confirm_sesskey()) {
@@ -274,11 +260,14 @@
         }
     }
 
-/// print option to add a subcategory
+    // Print button for creating new categories
     if (has_capability('moodle/category:create', $context) && $creatorediting) {
-        $cat->id = $id;
-        $mform->set_data($cat);
-        $mform->display();
+        unset($options);
+        $options['categoryadd'] = 1;
+        $options['id'] = $id;
+        echo '<div class="buttons">'; 
+        print_single_button('editcategory.php', $options, get_string('addsubcategory'), 'get');
+        echo '<br /></div>';
     }
 
 /// Print out all the courses
