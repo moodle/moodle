@@ -75,7 +75,7 @@ class grade_export_xml extends grade_export {
                 $grade->grade_item =& $grade_item;
                 $gradestr = $grade->finalgrade; // no formating for now
                 
-                // MDL-11
+                // MDL-11669, skip exported grades or bad grades (if setting says so)
                 if ($export_tracking) {
                     $status = $geub->track($grade);
                     if ($this->updatedgradesonly && ($status == 'nochange' || $status == 'unknown')) {
