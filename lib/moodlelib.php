@@ -3253,6 +3253,13 @@ function delete_course($courseid, $showfeedback = true) {
     require_once($CFG->libdir.'/gradelib.php');
     $result = true;
 
+    // frontpage course can not be deleted!!
+    if ($courseid == SITEID) {
+        return false;
+    }
+
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
     if (!remove_course_contents($courseid, $showfeedback)) {
         if ($showfeedback) {
             notify("An error occurred while deleting some of the course contents.");
@@ -3261,6 +3268,7 @@ function delete_course($courseid, $showfeedback = true) {
     }
 
     remove_course_grades($courseid, $showfeedback);
+    remove_grade_letters($context, $showfeedback);
 
     if (!delete_records("course", "id", $courseid)) {
         if ($showfeedback) {
@@ -3269,9 +3277,10 @@ function delete_course($courseid, $showfeedback = true) {
         $result = false;
     }
 
-    if (!delete_records('context', 'contextlevel', CONTEXT_COURSE, 'instanceid', $courseid)) {
+/// Delete all roles and overiddes in the course context
+    if (!delete_context(CONTEXT_COURSE, $courseid)) {
         if ($showfeedback) {
-            notify("An error occurred while deleting the main context record.");
+            notify("An error occurred while deleting the main course context.");
         }
         $result = false;
     }
@@ -3327,7 +3336,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
                             if ($cm = get_coursemodule_from_instance($modname, $instance->id, $course->id)) {
                                 /// Delete activity context questions and question categories
                                 question_delete_activity($cm,  $showfeedback);
-                                delete_context(CONTEXT_MODULE, $cm->id);
                             }
                             if ($moddelete($instance->id)) {
                                 $count++;
@@ -3335,6 +3343,11 @@ function remove_course_contents($courseid, $showfeedback=true) {
                             } else {
                                 notify('Could not delete '. $modname .' instance '. $instance->id .' ('. format_string($instance->name) .')');
                                 $result = false;
+                            }
+                            if ($cm) {
+                                // delete cm and its context in correct order
+                                delete_records('course_modules', 'id', $cm->id);
+                                delete_context(CONTEXT_MODULE, $cm->id);
                             }
                         }
                     }
@@ -3373,12 +3386,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
             require_once($CFG->libdir.'/blocklib.php');
             foreach ($blocks as $block) {  /// Delete any associated contexts for this block
 
-                // Block instances are rarely created. Since the block instance is gone from the above delete
-                // statement, calling delete_context() will generate a warning as get_context_instance could
-                // no longer create the context as the block is already gone.
-                if (record_exists('context', 'contextlevel', CONTEXT_BLOCK, 'instanceid', $block->id)) {
-                    delete_context(CONTEXT_BLOCK, $block->id);
-                }
+                delete_context(CONTEXT_BLOCK, $block->id);
 
                 // fix for MDL-7164
                 // Get the block object and call instance_delete()
@@ -3394,6 +3402,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
                 // third party blocks might have stuff to clean up
                 // we execute this anyway
                 $obj->instance_delete();
+
             }
         } else {
             $result = false;
@@ -3415,6 +3424,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
         'course_sections' => 'course', // Delete any course stuff
         'course_modules' => 'course',
         'backup_courses' => 'courseid', // Delete scheduled backup stuff
+        'user_lastaccess' => 'courseid',
         'backup_log' => 'courseid'
     );
     foreach ($tablestoclear as $table => $col) {
@@ -3449,11 +3459,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 /// Delete questions and question categories
     question_delete_course($course, $showfeedback);
-
-/// Delete all roles and overiddes in the course context (but keep the course context)
-    if ($courseid != SITEID) {
-        delete_context(CONTEXT_COURSE, $course->id);
-    }
 
     return $result;
 }

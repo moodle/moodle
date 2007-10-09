@@ -2280,21 +2280,39 @@ function get_system_context($cache=true) {
     $cached = $context;
     return $cached;
 }
+
 /**
- * Remove a context record and any dependent entries
+ * Remove a context record and any dependent entries,
+ * removes context from static context cache too
  * @param $level
  * @param $instanceid
  *
  * @return bool properly deleted
  */
 function delete_context($contextlevel, $instanceid) {
-    if ($context = get_context_instance($contextlevel, $instanceid)) {
-        mark_context_dirty($context->path);
-        return delete_records('context', 'id', $context->id) &&
-               delete_records('role_assignments', 'contextid', $context->id) &&
-               delete_records('role_capabilities', 'contextid', $context->id);
+    global $context_cache, $context_cache_id;
+
+    // do not use get_context_instance(), because the related object might not exist,
+    // or the context does not exist yet and it would be created now
+    if ($context = get_record('context', 'contextlevel', $contextlevel, 'instanceid', $instanceid)) {
+        $result = delete_records('role_assignments', 'contextid', $context->id) &&
+                  delete_records('role_capabilities', 'contextid', $context->id) &&
+                  delete_records('context', 'id', $context->id);
+
+        // do not mark dirty contexts if parents unknown
+        if (!is_null($context->path) and $context->depth > 0) {
+            mark_context_dirty($context->path);
+        }
+
+        // purge static context cache if entry present
+        unset($context_cache[$contextlevel][$instanceid]);
+        unset($context_cache_id[$context->id]);
+
+        return $result;
+    } else {
+
+        return true;
     }
-    return true;
 }
 
 /**

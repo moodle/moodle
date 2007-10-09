@@ -1009,6 +1009,18 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
 }
 
 /**
+ * Remove grade letters for given context
+ * @param object $context
+ */
+function remove_grade_letters($context, $showfeedback) {
+    $strdeleted = get_string('deleted');
+
+    delete_records('grade_letters', 'contextid', $context->id);
+    if ($showfeedback) {
+        notify($strdeleted.' - '.get_string('letters', 'grades'));
+    }
+}
+/**
  * Remove all grade related course data - history is kept
  * @param int $courseid
  * @param bool @showfeedback print feedback
@@ -1039,6 +1051,11 @@ function remove_course_grades($courseid, $showfeedback) {
     }
     if ($showfeedback) {
         notify($strdeleted.' - '.get_string('scales'));
+    }
+
+    delete_records('grade_settings', 'courseid', $courseid);
+    if ($showfeedback) {
+        notify($strdeleted.' - '.get_string('settings', 'grades'));
     }
 }
 
