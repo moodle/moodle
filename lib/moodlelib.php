@@ -5827,6 +5827,10 @@ function moodle_needs_upgrading() {
 /**
  * Notify admin users or admin user of any failed logins (since last notification).
  *
+ * Note that this function must be only executed from the cron script
+ * It uses the cache_flags system to store temporary records, deleting them
+ * by name before finishing
+ *
  * @uses $CFG
  * @uses $db
  * @uses HOURSECS
@@ -5852,67 +5856,94 @@ function notify_login_failures() {
         $CFG->notifyloginthreshold = 10; // default to something sensible.
     }
 
-    $notifyipsrs = $db->Execute('SELECT ip FROM '. $CFG->prefix .'log WHERE time > '. $CFG->lastnotifyfailure .'
-                          AND module=\'login\' AND action=\'error\' GROUP BY ip HAVING count(*) > '. $CFG->notifyloginthreshold);
-
-    $notifyusersrs = $db->Execute('SELECT info FROM '. $CFG->prefix .'log WHERE time > '. $CFG->lastnotifyfailure .'
-                          AND module=\'login\' AND action=\'error\' GROUP BY info HAVING count(*) > '. $CFG->notifyloginthreshold);
-
-    if ($notifyipsrs) {
-        $ipstr = '';
-        while ($row = rs_fetch_next_record($notifyipsrs)) {
-            $ipstr .= "'". $row->ip ."',";
-        }
-        rs_close($notifyipsrs);
-        $ipstr = substr($ipstr,0,strlen($ipstr)-1);
-    }
-    if ($notifyusersrs) {
-        $userstr = '';
-        while ($row = rs_fetch_next_record($notifyusersrs)) {
-            $userstr .= "'". $row->info ."',";
-        }
-        rs_close($notifyusersrs);
-        $userstr = substr($userstr,0,strlen($userstr)-1);
-    }
-
-    if (strlen($userstr) > 0 || strlen($ipstr) > 0) {
-        $count = 0;
-        $logs = get_logs('time > '. $CFG->lastnotifyfailure .' AND module=\'login\' AND action=\'error\' '
-                 .((strlen($ipstr) > 0 && strlen($userstr) > 0) ? ' AND ( ip IN ('. $ipstr .') OR info IN ('. $userstr .') ) '
-                 : ((strlen($ipstr) != 0) ? ' AND ip IN ('. $ipstr .') ' : ' AND info IN ('. $userstr .') ')), 'l.time DESC', '', '', $count);
-
-        // if we haven't run in the last hour and we have something useful to report and we are actually supposed to be reporting to somebody
-        if (is_array($recip) and count($recip) > 0 and ((time() - HOURSECS) > $CFG->lastnotifyfailure)
-            and is_array($logs) and count($logs) > 0) {
-
-            $message = '';
-            $site = get_site();
-            $subject = get_string('notifyloginfailuressubject', '', format_string($site->fullname));
-            $message .= get_string('notifyloginfailuresmessagestart', '', $CFG->wwwroot)
-                 .(($CFG->lastnotifyfailure != 0) ? '('.userdate($CFG->lastnotifyfailure).')' : '')."\n\n";
-            foreach ($logs as $log) {
-                $log->time = userdate($log->time);
-                $message .= get_string('notifyloginfailuresmessage','',$log)."\n";
-            }
-            $message .= "\n\n".get_string('notifyloginfailuresmessageend','',$CFG->wwwroot)."\n\n";
-            foreach ($recip as $admin) {
-                mtrace('Emailing '. $admin->username .' about '. count($logs) .' failed login attempts');
-                email_to_user($admin,get_admin(),$subject,$message);
-            }
-            $conf = new object();
-            $conf->name = 'lastnotifyfailure';
-            $conf->value = time();
-            if ($current = get_record('config', 'name', 'lastnotifyfailure')) {
-                $conf->id = $current->id;
-                if (! update_record('config', $conf)) {
-                    mtrace('Could not update last notify time');
-                }
-
-            } else if (! insert_record('config', $conf)) {
-                mtrace('Could not set last notify time');
-            }
+/// Get all the IPs with more than notifyloginthreshold failures since lastnotifyfailure
+/// and insert them into the cache_flags temp table
+    $iprs = get_recordset_sql("SELECT ip, count(*)
+                                 FROM {$CFG->prefix}log
+                                WHERE module = 'login'
+                                  AND action = 'error'
+                                  AND time > $CFG->lastnotifyfailure
+                             GROUP BY ip
+                               HAVING count(*) >= $CFG->notifyloginthreshold");
+    while ($iprec = rs_fetch_next_record($iprs)) {
+        if (!empty($iprec->ip)) {
+            set_cache_flag('login_failure_by_ip', $iprec->ip, '1', 0);
         }
     }
+    rs_close($iprs);
+
+/// Get all the INFOs with more than notifyloginthreshold failures since lastnotifyfailure
+/// and insert them into the cache_flags temp table
+    $infors = get_recordset_sql("SELECT info, count(*)
+                                   FROM {$CFG->prefix}log
+                                  WHERE module = 'login'
+                                    AND action = 'error'
+                                    AND time > $CFG->lastnotifyfailure
+                               GROUP BY info
+                                 HAVING count(*) >= $CFG->notifyloginthreshold");
+    while ($inforec = rs_fetch_next_record($infors)) {
+        if (!empty($inforec->info)) {
+            set_cache_flag('login_failure_by_info', $inforec->info, '1', 0);
+        }
+    }
+    rs_close($infors);
+
+/// Now, select all the login error logged records belonging to the ips and infos
+/// since lastnotifyfailure, that we have stored in the cache_flags table
+    $logsrs = get_recordset_sql("SELECT l.*, u.firstname, u.lastname
+                                   FROM {$CFG->prefix}log l
+                                   JOIN {$CFG->prefix}cache_flags cf ON (l.ip = cf.name)
+                              LEFT JOIN {$CFG->prefix}user u ON (l.userid = u.id)
+                                  WHERE l.module = 'login'
+                                    AND l.action = 'error'
+                                    AND l.time > $CFG->lastnotifyfailure
+                                    AND cf.flagtype = 'login_failure_by_ip'
+                             UNION ALL
+                                 SELECT l.*, u.firstname, u.lastname
+                                   FROM {$CFG->prefix}log l
+                                   JOIN {$CFG->prefix}cache_flags cf ON (l.info = cf.name)
+                              LEFT JOIN {$CFG->prefix}user u ON (l.userid = u.id)
+                                  WHERE l.module = 'login'
+                                    AND l.action = 'error'
+                                    AND l.time > $CFG->lastnotifyfailure
+                                    AND cf.flagtype = 'login_failure_by_info'
+                             ORDER BY time DESC");
+
+/// Init some variables
+    $count = 0;
+    $messages = '';
+/// Iterate over the logs recordset
+    while ($log = rs_fetch_next_record($logsrs)) {
+        $log->time = userdate($log->time);
+        $messages .= get_string('notifyloginfailuresmessage','',$log)."\n";
+        $count++;
+    }
+    rs_close($logsrs);
+
+/// If we haven't run in the last hour and
+/// we have something useful to report and we
+/// are actually supposed to be reporting to somebody
+    if ((time() - HOURSECS) > $CFG->lastnotifyfailure && $count > 0 && is_array($recip) && count($recip) > 0) {
+        $site = get_site();
+        $subject = get_string('notifyloginfailuressubject', '', format_string($site->fullname));
+    /// Calculate the complete body of notification (start + messages + end)
+        $body = get_string('notifyloginfailuresmessagestart', '', $CFG->wwwroot) .
+                (($CFG->lastnotifyfailure != 0) ? '('.userdate($CFG->lastnotifyfailure).')' : '')."\n\n" .
+                $messages .
+                "\n\n".get_string('notifyloginfailuresmessageend','',$CFG->wwwroot)."\n\n";
+
+    /// For each destination, send mail
+        foreach ($recip as $admin) {
+            mtrace('Emailing '. $admin->username .' about '. $count .' failed login attempts');
+            email_to_user($admin,get_admin(), $subject, $body);
+        }
+
+    /// Update lastnotifyfailure with current time
+        set_config('lastnotifyfailure', time());
+    }
+
+/// Finally, delete all the temp records we have created in cache_flags
+    delete_records_select('cache_flags', "flagtype IN ('login_failure_by_ip', 'login_failure_by_info')");
 }
 
 /**
