@@ -811,7 +811,7 @@ class grade_report_grader extends grade_report {
         } else {
             $now = round(time(), -2); //100 sec gradularity, we need some db caching speedup here
             $hidingsql1 = "AND g.hidden!=1 AND (g.hidden=0 OR g.hidden<$now)";
-            $hidingsql2 = "OR (g.hidden!=1 AND (g.hidden=0 OR g.hidden<$now))";
+            //$hidingsql2 = "OR (g.hidden!=1 AND (g.hidden=0 OR g.hidden<$now))";
         }
 
         $avghtml = '';
@@ -884,7 +884,7 @@ class grade_report_grader extends grade_report {
                          WHERE u.id NOT IN
                            (SELECT userid FROM {$CFG->prefix}grade_grades g
                              WHERE g.itemid = $item->id AND
-                               (g.finalgrade IS NOT NULL $hidingsql2)
+                               (g.finalgrade IS NOT NULL $hidingsql1)
                            )
                            AND u.id IN (
                              SELECT DISTINCT(u.id)
