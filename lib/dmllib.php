@@ -1274,7 +1274,8 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
     }
 
 /// Arriving here, standard update
-    $rs = $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '.$update.' '.$select);
+    $sql = 'UPDATE '. $CFG->prefix . $table .' SET '.$update.' '.$select;
+    $rs = $db->Execute($sql);
     if (!$rs) {
         debugging($db->ErrorMsg() .'<br /><br />'. $sql);
         if (!empty($CFG->dblogerror)) {
@@ -1322,7 +1323,8 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
 
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
-    $rs = $db->Execute('DELETE FROM '. $CFG->prefix . $table .' '. $select);
+    $sql = 'DELETE FROM '. $CFG->prefix . $table .' '. $select;
+    $rs = $db->Execute($sql);
     if (!$rs) {
         debugging($db->ErrorMsg() .'<br /><br />'. $sql);
         if (!empty($CFG->dblogerror)) {
@@ -2058,7 +2060,8 @@ function column_type($table, $column) {
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
-    if(!$rs = $db->Execute('SELECT '.$column.' FROM '.$CFG->prefix.$table.' WHERE 1=2')) {
+    $sql = 'SELECT '.$column.' FROM '.$CFG->prefix.$table.' WHERE 1=2';
+    if(!$rs = $db->Execute($sql)) {
         debugging($db->ErrorMsg() .'<br /><br />'. $sql);
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
