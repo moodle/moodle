@@ -645,11 +645,18 @@ class grade_report_grader extends grade_report {
                 $eid = $this->gtree->get_grade_eid($grade);
                 $element = array('eid'=>$eid, 'object'=>$grade, 'type'=>'grade');
 
+                $cellclasses = 'cell c'.$columncount++;
+                if ($item->is_category_item()) {
+                    $cellclasses .= ' cat';
+                }  
+                if ($item->is_course_item()) {
+                    $cellclasses .= ' course';
+                }  
                 if ($grade->is_overridden()) {
-                    $studentshtml .= '<td class="overridden cell c'.$columncount++.'">';
-                } else {
-                    $studentshtml .= '<td class="cell c'.$columncount++.'">';
+                    $cellclasses .= ' overridden';
                 }
+
+                $studentshtml .= '<td class="'.$cellclasses.'">';
 
                 if ($grade->is_excluded()) {
                     $studentshtml .= get_string('excluded', 'grades'); // TODO: improve visual representation of excluded grades

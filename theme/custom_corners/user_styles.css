@@ -991,3 +991,26 @@ a.dimmed:visited {
 #message-user #content {
   padding: 0;
 }
+body#grade-index .grades .header {
+  font-weight: bold;
+  font-size: 0.7em;
+}
+
+.grade-edit-scale .scale_options {
+  font-size: 0.7em;
+}
+
+.grade-report-grader .gradestable tr.groupavg td.cell {
+  font-weight: bold;
+  color: #006400;
+}
+
+.grade-report-grader .gradestable tr.avg td.cell {
+  font-weight: bold;
+  color: #00008B;
+}
+
+.grade-report-grader .gradestable td.cat,
+.grade-report-grader .gradestable td.course {
+  font-weight: bold;
+}

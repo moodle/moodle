@@ -18,5 +18,14 @@
     <?php print_custom_corners_end(); ?>
 </div>
 </div>
+<?php 
+     $useridarray = array(2 // MD
+                          );
+     
+     if (!empty($performanceinfo) && isloggedin() && in_array($USER->id, $useridarray)) {
+          echo $performanceinfo;
+     }
+?>
+
 </body>
 </html>

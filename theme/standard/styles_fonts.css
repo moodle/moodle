@@ -495,15 +495,20 @@ body#grade-index .grades .header {
 }
 
 .grade-report-grader .gradestable tr.groupavg td.cell {
-	font-weight: bold;
-	color: #006400;
+  font-weight: bold;
+  color: #006400;
 }
 
 .grade-report-grader .gradestable tr.avg td.cell {
-	font-weight: bold;
-	color: #00008B;
-	
+  font-weight: bold;
+  color: #00008B;
 }
+
+.grade-report-grader .gradestable td.cat,
+.grade-report-grader .gradestable td.course {
+  font-weight: bold;
+}
+
 /***
  *** Login
  ***/
