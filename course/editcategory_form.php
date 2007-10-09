@@ -1,0 +1,61 @@
+<?php 
+require_once ($CFG->dirroot.'/course/moodleform_mod.php');
+class editcategory_form extends moodleform {
+
+    // form definition
+    function definition() {
+        global $CFG;
+        $mform =& $this->_form;
+        
+        // get list of categories to use as parents, with site as the first one
+        $categories = get_categories();
+        $options = array(get_string('site'));
+        foreach ($categories as $catid => $cat) {
+            $options[$catid] = $cat->name;
+        }
+        
+        $mform->addElement('select', 'parent', get_string('parentcategory'), $options);
+        $mform->addElement('text', 'name', get_string('categoryname'), array('size'=>'30'));    
+        $mform->addRule('name', get_string('required'), 'required', null);        
+        $mform->addElement('htmleditor', 'description', get_string('description'));
+        $mform->setType('description', PARAM_RAW);
+        if (!empty($CFG->allowcoursethemes)) {
+            $themes=array();
+            $themes[''] = get_string('forceno');
+            $themes += get_list_of_themes();
+            $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);
+        }
+        $mform->setHelpButton('description', array('writing', 'richtext'), false, 'editorhelpbutton');
+        
+        $mform->addElement('hidden', 'id', null);
+        $mform->setType('id', PARAM_INT);
+        $this->add_action_buttons(false, get_string('submit'));
+    }
+
+    function definition_after_data() {
+        $mform = $this->_form;
+        
+        $category = $this->_customdata['category'];
+        $parentid = $this->_customdata['id'];
+
+        if (!empty($category->name)) {
+            $id_el =& $mform->getElement('id');
+            $id_el->setValue($category->id);
+            $name_el =& $mform->getElement('name');
+            $name_el->setValue($category->name);
+            $parent_el =& $mform->getElement('parent');
+            $parent_el->setValue($category->parent);
+            $description_el =& $mform->getElement('description');
+            $description_el->setValue($category->description);
+            if (!empty($CFG->allowcategorythemes)) {
+                $theme_el =& $mform->getElement('theme');
+                $theme_el->setValue($category->theme);
+            }
+        } elseif (!is_null($parentid)) { // We assume we are adding a new category, and use $id as the parent id
+            $parent_el =& $mform->getElement('parent');
+            $parent_el->setValue($parentid);
+            $mform->addElement('hidden', 'categoryadd', 1);
+        }
+    }
+} 
+?>
