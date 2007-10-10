@@ -2319,9 +2319,10 @@ function delete_context($contextlevel, $instanceid) {
  * Precreates all contexts including all parents
  * @param int $contextlevel, empty means all
  * @param bool $buildpaths update paths and depths
+ * @param bool $feedback show sql feedback
  * @return void
  */
-function create_contexts($contextlevel=null, $buildpaths=true) {
+function create_contexts($contextlevel=null, $buildpaths=true, $feedback=false) {
     global $CFG;
 
     //make sure system context exists
@@ -2337,7 +2338,7 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {$CFG->prefix}context cx
                                     WHERE cc.id = cx.instanceid AND cx.contextlevel=".CONTEXT_COURSECAT.")";
-        execute_sql($sql, false);
+        execute_sql($sql, $feedback);
 
     }
 
@@ -2350,7 +2351,7 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {$CFG->prefix}context cx
                                     WHERE c.id = cx.instanceid AND cx.contextlevel=".CONTEXT_COURSE.")";
-        execute_sql($sql, false);
+        execute_sql($sql, $feedback);
 
     }
 
@@ -2361,7 +2362,7 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {$CFG->prefix}context cx
                                     WHERE cm.id = cx.instanceid AND cx.contextlevel=".CONTEXT_MODULE.")";
-        execute_sql($sql, false);
+        execute_sql($sql, $feedback);
     }
 
     if (empty($contextlevel) or $contextlevel == CONTEXT_BLOCK) {
@@ -2371,7 +2372,7 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {$CFG->prefix}context cx
                                     WHERE bi.id = cx.instanceid AND cx.contextlevel=".CONTEXT_BLOCK.")";
-        execute_sql($sql, false);
+        execute_sql($sql, $feedback);
     }
 
     if (empty($contextlevel) or $contextlevel == CONTEXT_USER) {
@@ -2382,12 +2383,12 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
                    AND NOT EXISTS (SELECT 'x'
                                      FROM {$CFG->prefix}context cx
                                     WHERE u.id = cx.instanceid AND cx.contextlevel=".CONTEXT_USER.")";
-        execute_sql($sql, false);
+        execute_sql($sql, $feedback);
 
     }
 
     if ($buildpaths) {
-        build_context_path(false);
+        build_context_path(false, $feedback);
     }
 }
 
@@ -4644,9 +4645,10 @@ function component_level_changed($cap, $comp, $contextlevel) {
 /**
  * Populate context.path and context.depth where missing.
  * @param bool $force force a complete rebuild of the path and depth fields.
+ * @param bool $feedback display feedback (during upgrade usually)
  * @return void
  */
-function build_context_path($force=false) {
+function build_context_path($force=false, $feedback=false) {
     global $CFG;
     require_once($CFG->libdir.'/ddllib.php');
 
@@ -4722,9 +4724,9 @@ function build_context_path($force=false) {
                                       AND cc.depth=1)
                    $emptyclause";
 
-    execute_sql($sql, $force);
+    execute_sql($sql, $feedback);
 
-    execute_sql($udelsql, $force);
+    execute_sql($udelsql, $feedback);
 
     // Deeper categories - one query per depthlevel
     $maxdepth = get_field_sql("SELECT MAX(depth)
@@ -4742,11 +4744,11 @@ function build_context_path($force=false) {
                                        FROM {$CFG->prefix}context_temp temp
                                        WHERE temp.id = ctx.id)
                        $ctxemptyclause";
-        execute_sql($sql, $force);
+        execute_sql($sql, $feedback);
     }
 
-    execute_sql($updatesql, $force);
-    execute_sql($udelsql, $force);
+    execute_sql($updatesql, $feedback);
+    execute_sql($udelsql, $feedback);
 
     // Courses -- except sitecourse
     $sql = "INSERT INTO {$CFG->prefix}context_temp (id, path, depth)
@@ -4761,10 +4763,10 @@ function build_context_path($force=false) {
                                        FROM {$CFG->prefix}context_temp temp
                                        WHERE temp.id = ctx.id)
                    $ctxemptyclause";
-    execute_sql($sql, $force);
+    execute_sql($sql, $feedback);
 
-    execute_sql($updatesql, $force);
-    execute_sql($udelsql, $force);
+    execute_sql($updatesql, $feedback);
+    execute_sql($udelsql, $feedback);
 
     // Module instances
     $sql = "INSERT INTO {$CFG->prefix}context_temp (id, path, depth)
@@ -4778,10 +4780,10 @@ function build_context_path($force=false) {
                                        FROM {$CFG->prefix}context_temp temp
                                        WHERE temp.id = ctx.id)
                    $ctxemptyclause";
-    execute_sql($sql, $force);
+    execute_sql($sql, $feedback);
 
-    execute_sql($updatesql, $force);
-    execute_sql($udelsql, $force);
+    execute_sql($updatesql, $feedback);
+    execute_sql($udelsql, $feedback);
 
     // Blocks - non-pinned course-view only
     $sql = "INSERT INTO {$CFG->prefix}context_temp (id, path, depth)
@@ -4796,10 +4798,10 @@ function build_context_path($force=false) {
                                        FROM {$CFG->prefix}context_temp temp
                                        WHERE temp.id = ctx.id)
                    $ctxemptyclause";
-    execute_sql($sql, $force);
+    execute_sql($sql, $feedback);
 
-    execute_sql($updatesql, $force);
-    execute_sql($udelsql, $force);
+    execute_sql($updatesql, $feedback);
+    execute_sql($udelsql, $feedback);
 
     // Blocks - others
     $sql = "UPDATE {$CFG->prefix}context
@@ -4810,7 +4812,7 @@ function build_context_path($force=false) {
                                 WHERE bi.id = {$CFG->prefix}context.instanceid
                                       AND bi.pagetype!='course-view')
                    $emptyclause ";
-    execute_sql($sql, $force);
+    execute_sql($sql, $feedback);
 
     // User
     $sql = "UPDATE {$CFG->prefix}context
@@ -4820,7 +4822,7 @@ function build_context_path($force=false) {
                                  FROM {$CFG->prefix}user u
                                 WHERE u.id = {$CFG->prefix}context.instanceid)
                    $emptyclause ";
-    execute_sql($sql, $force);
+    execute_sql($sql, $feedback);
 
     // Personal TODO
 

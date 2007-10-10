@@ -1301,9 +1301,6 @@ function xmldb_main_upgrade($oldversion=0) {
                 rs_close($rs);
             }
         }
-
-    /// migrate grade letter table
-        $result = $result && upgrade_18_letters();
     }
 
     if ($result && $oldversion < 2007072400) {
@@ -1973,8 +1970,16 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Recalculate depths, paths and so on
         if (!empty($CFG->rolesactive)) {
             cleanup_contexts();
-            build_context_path(true);
+            // make sure all course, category and user contexts exist - we need it for grade letter upgrade, etc.
+            create_contexts(CONTEXT_COURSE, false, true);
+            create_contexts(CONTEXT_USER, false, true);
+            // we need all contexts path/depths filled properly
+            build_context_path(true, true);
             load_all_capabilities();
+
+        } else {
+            // upgrade from 1.6 - build all contexts
+            create_contexts(null, true, true);
         }
     }
 
@@ -2175,10 +2180,11 @@ function xmldb_main_upgrade($oldversion=0) {
         execute_sql("UPDATE {$CFG->prefix}grade_items SET display=0 WHERE display=-1");
     }
 
+/// migrade grade letters - we can not do this in normal grades upgrade becuase we need all course contexts
     if ($result && $oldversion < 2007092806) {
         require_once($CFG->libdir.'/db/upgradelib.php');
 
-        $result = upgrade_18_letters(); // executes on dev sites only
+        $result = upgrade_18_letters();
 
     /// Define index contextidlowerboundary (not unique) to be added to grade_letters
         $table = new XMLDBTable('grade_letters');

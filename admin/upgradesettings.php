@@ -8,12 +8,6 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $return = optional_param('return', '', PARAM_ALPHA);
 
-// Technically, we shouldn't need it, but during the
-// v1.9 accesslib upgrade _sometimes_ USER->access
-// isn't set.
-if (!isset($USER->access)) {
-    load_all_capabilities();
-}
 admin_externalpage_setup('upgradesettings'); // now hidden page
 
 // a caveat: we're depending on only having one admin access this page at once. why? the following line
