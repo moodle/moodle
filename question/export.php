@@ -208,4 +208,3 @@
     print_simple_box_end();
     print_footer($course);
 ?>
-

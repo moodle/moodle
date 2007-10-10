@@ -1363,4 +1363,3 @@
     print_footer($course);
 
 ?>
-

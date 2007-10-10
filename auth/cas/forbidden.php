@@ -15,4 +15,3 @@
     print_footer();
     exit;
 ?>
-

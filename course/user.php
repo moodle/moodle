@@ -285,4 +285,3 @@ function print_outline_row($mod, $instance, $result) {
 }
 
 ?>
-

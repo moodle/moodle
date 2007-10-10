@@ -30,5 +30,3 @@ if (isset($THEME->chameleonenabled) && $THEME->chameleonenabled) {
     }
 }
 ?>
-
-

@@ -43,4 +43,3 @@ $query .= '&mklmsstyle='.$stylesheets;
 
 redirect($CFG->hiveprotocol .'://'. $CFG->hivehost .':'. $CFG->hiveport .''. $CFG->hivepath .'?'.$query);
 ?>
-

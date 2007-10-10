@@ -47,4 +47,3 @@ function auth_user_login ($username, $password) {
     $rauth->close();
 }
 ?>
-

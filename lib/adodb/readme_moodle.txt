@@ -20,6 +20,10 @@ Our changes:
        for the annoying http://tracker.moodle.org/browse/MDL-6877.
        Once fixed by adodb guys, we'll return to their official distro.
  * removed bogus "_connec" from first line of adodb-postgres64.inc.php
+ * lang/adodb-ar.inc.php lang/adodb-bg.inc.php lang/adodb-bgutf8.inc.php 
+   lang/adodb-en.inc.php lang/adodb-pl.inc.php lang/adodb-ro.inc.php
+   lang/adodb_th.inc.php - Removed leading/trailing white space outside PHP open/close tags
+   (see http://tracker.moodle.org/browse/MDL-11632).
 
-skodak
-11 October 2006
+skodak,iarenaza
+10 October 2007

@@ -144,4 +144,3 @@
     print_footer($course);
 
 ?>
-
