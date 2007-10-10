@@ -212,9 +212,12 @@ class question_shortanswer_qtype extends default_questiontype {
         // Break the string on non-escaped asterisks.
         $bits = preg_split('/(?<!\\\\)\*/', $pattern);
         // Escape regexp special characters in the bits.
-        $bits = array_map('preg_quote', $bits);
+        $excapedbits = array();
+        foreach ($bits as $bit) {
+            $excapedbits[] = preg_quote(str_replace('\*', '*', $bit));
+        }
         // Put it back together to make the regexp.
-        $regexp = '|^' . implode('.*', $bits) . '$|u';
+        $regexp = '|^' . implode('.*', $excapedbits) . '$|u';
 
         // Make the match insensitive if requested to.
         if ($ignorecase) {
