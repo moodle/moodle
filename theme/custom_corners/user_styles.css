@@ -414,6 +414,8 @@ div.sitetopic {
 }
 div.categorybox {
   border-style: solid;
+  border-width: 1px;
+  border-color: #EEEEEE;
 }
 div.mdescr div.images {
   text-align: center;
