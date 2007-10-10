@@ -814,6 +814,15 @@ function rs_fetch_next_record(&$rs) {
 }
 
 /**
+ * Returns true if no more records found
+ * @param ADORecordSet the recordset
+ * @return bool
+ */
+function rs_EOF($rs) {
+    return $rs->EOF;
+}
+
+/**
  * This function closes the recordset, freeing all the memory and associated resources.
  * Note that, once closed, the recordset must not be used anymore along the request.
  * Saves memory (optional but recommended).
