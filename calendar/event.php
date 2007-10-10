@@ -626,8 +626,9 @@ function calendar_add_event_allowed($event) {
             // to edit group calendar too
             // there is no need to check membership, because if you have this capability
             // you will have a role in this group context
-            return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_GROUP, $event->groupid));
-
+            $group = get_record('groups', 'id', $event->groupid); 
+            //return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_GROUP, $event->groupid));
+            return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $group->courseid));
         case 'user':
             if ($event->userid == $USER->id) {
                 return (has_capability('moodle/calendar:manageownentries', $sitecontext));
