@@ -290,7 +290,7 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
             }
 
             if (!update_record('course_categories', $category)) {
-                notice( "Could not update the category '$category->name' ");
+                error( "Could not update the category '$category->name' ");
             } else {
                 if ($category->parent == 0) {
                     $redirect_link = 'index.php?categoryedit=on';
@@ -298,11 +298,11 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
                     $redirect_link = 'category.php?id='.$category->id.'&categoryedit=on'; 
                 }
                 fix_course_sortorder();
-                redirect($redirect_link, get_string('categoryupdated', null, $category->name));
+                redirect($redirect_link);
             }
         } 
     } else {
-        notice("You do not have the permission to update this category.");
+        error("You do not have the permission to update this category.");
     }
 }
 

@@ -19,7 +19,7 @@ class editcategory_form extends moodleform {
         $mform->addRule('name', get_string('required'), 'required', null);        
         $mform->addElement('htmleditor', 'description', get_string('description'));
         $mform->setType('description', PARAM_RAW);
-        if (!empty($CFG->allowcoursethemes)) {
+        if (!empty($CFG->allowcategorythemes)) {
             $themes=array();
             $themes[''] = get_string('forceno');
             $themes += get_list_of_themes();

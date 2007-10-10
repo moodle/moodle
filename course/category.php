@@ -122,7 +122,7 @@
 
 /// Print button to turn editing off
     if ($adminediting) {
-        echo '<div class="categoryediting button" align="right">'.update_category_button($category->id).'</div>';
+        echo '<div class="categoryediting button">'.update_category_button($category->id).'</div>';
     }
 
 /// Print link to roles
@@ -143,9 +143,8 @@
     echo '</div>';
 
 /// Print current category description
-    if ($category->description) {
+    if (!$creatorediting && $category->description) {
         print_box_start();
-        print_heading(get_string('description'));
         echo $category->description;
         print_box_end();
     }
@@ -237,6 +236,24 @@
 
     } // End of editing stuff
 
+
+    if ($creatorediting) {   
+        echo '<div class="buttons">'; 
+        if (has_capability('moodle/category:update', $context)) {   // Print button to update this category
+            unset($options);
+            $options['id'] = $category->id;
+            print_single_button('editcategory.php', $options, get_string('editcategorythis'), 'get');
+        }
+
+        if (has_capability('moodle/category:create', $context)) {   // Print button for creating new categories
+            unset($options);
+            $options['categoryadd'] = 1;
+            $options['id'] = $id;
+            print_single_button('editcategory.php', $options, get_string('addsubcategory'), 'get');
+        }
+        echo '</div>';
+    }
+
 /// Print out all the sub-categories
     if ($subcategories = get_records("course_categories", "parent", $category->id, "sortorder ASC")) {
         $firstentry = true;
@@ -260,15 +277,6 @@
         }
     }
 
-    // Print button for creating new categories
-    if (has_capability('moodle/category:create', $context) && $creatorediting) {
-        unset($options);
-        $options['categoryadd'] = 1;
-        $options['id'] = $id;
-        echo '<div class="buttons">'; 
-        print_single_button('editcategory.php', $options, get_string('addsubcategory'), 'get');
-        echo '<br /></div>';
-    }
 
 /// Print out all the courses
     unset($course);    // To avoid unwanted language effects later
@@ -464,6 +472,7 @@
         echo '<br />';
     }
 
+    echo '<div class="buttons">'; 
     if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM, SITEID)) and $numcourses > 1) {           /// Print button to re-sort courses by name
         unset($options);
         $options['id'] = $category->id;
@@ -476,33 +485,9 @@
         unset($options);
         $options['category'] = $category->id;
         print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
-        echo '<br />';
     }
+    echo '</div>'; 
 
-    if (has_capability('moodle/category:update', $context)) {           /// Print form to rename the category
-        $strrename= get_string('rename');
-        echo '<form id="renameform" action="category.php" method="post"><div>';
-        echo '<input type="hidden" name="id" value="'.$category->id.'" />';
-        echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-        echo '<input type="text" size="30" name="rename" value="'.htmlspecialchars($category->name).'" alt="'.$strrename.'" />';
-        echo '<input type="submit" value="'.$strrename.'" />';
-        echo '</div></form>';
-        echo '<br />';
-
-        if (!empty($CFG->allowcategorythemes)) {
-            $choices = array();
-            $choices[''] = get_string('default');
-            $choices += get_list_of_themes();
-
-            echo '<form id="themeform" action="category.php" method="post"><div>';
-            echo '<input type="hidden" name="id" value="'.$category->id.'" />';
-            echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-            choose_from_menu($choices, 'categorytheme', $category->theme);
-            echo '<input type="submit" value="'.get_string('setcategorytheme').'" />';
-            echo '</div></form>';
-            echo '<br />';
-        }
-    }
 
 
     print_course_search();

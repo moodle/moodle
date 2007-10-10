@@ -405,6 +405,7 @@ $string['edhelpfontlist'] = 'Define the fonts used on editors dropdown menu.';
 $string['edhelpfontsize'] = 'The default font-size sets the size of a font. <br />Valid values are for example: medium, large, smaller, larger, 10pt, 11px.';
 $string['edit'] = 'Edit $a';
 $string['editcategorysettings'] = 'Edit category settings';
+$string['editcategorythis'] = 'Edit this category';
 $string['editcoursesettings'] = 'Edit course settings';
 $string['editfiles'] = 'Edit files';
 $string['editgroupprofile'] = 'Edit group profile';

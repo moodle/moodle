@@ -1922,6 +1922,15 @@ body#course-category .addcategory {
   padding: 10px;
 }
 
+body#course-category .buttons .singlebutton {
+  display: inline;
+}
+
+body#course-category .buttons {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
 body#course-index #middle-column .editcourse {
   margin-left:auto;
   margin-right:auto;

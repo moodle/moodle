@@ -23,6 +23,10 @@
             $USER->timeaccess = $SESSION->oldtimeaccess;
             unset($SESSION->oldtimeaccess);
         }
+        if (isset($SESSION->grade_last_report)) {    // Restore grade defaults if any
+            $USER->grade_last_report = $SESSION->grade_last_report;
+            unset($SESSION->grade_last_report);
+        }
 
         if ($return and isset($_SERVER["HTTP_REFERER"])) { // That's all we wanted to do, so let's go back
             redirect($_SERVER["HTTP_REFERER"]);
@@ -72,6 +76,9 @@
 
     if (isset($USER->timeaccess)) {
         $SESSION->oldtimeaccess = $USER->timeaccess;
+    }
+    if (isset($USER->grade_last_report)) {
+        $SESSION->grade_last_report = $USER->grade_last_report;
     }
 
 /// Login as this user and return to course home page.
