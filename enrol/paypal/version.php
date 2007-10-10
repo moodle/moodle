@@ -7,6 +7,6 @@
 
 $plugin->version  = 2006092200;   // This module's version
 
-$plugin->requires = 2006092100;   // Requires this Moodle version
+$plugin->requires = 2007101000;   // Requires this Moodle version
 
 ?>

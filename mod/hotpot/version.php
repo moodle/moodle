@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 $module->version  = 2007040200;   // release date of this version (see note below)
 $module->release  = 'v2.4.2';    // human-friendly version name (used in mod/hotpot/lib.php)
-$module->requires = 2007020200;  // Requires this Moodle version
+$module->requires = 2007101000;  // Requires this Moodle version
 $module->cron     = 0;            // period for cron to check this module (secs)
 // interpretation of YYYYMMDDXY version numbers
 //     YYYY : year
