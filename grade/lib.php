@@ -119,7 +119,7 @@ class graded_users_iterator {
      * @return mixed array of user info, all grades and feedback or null when no more users found
      */
     function next_user() {
-        if (!$this->users_rs or !$this->users_rs->RecordCount()) {
+        if (!$this->users_rs) {
             return false; // no users present
         }
 
@@ -200,7 +200,7 @@ class graded_users_iterator {
      */
     function _pop() {
         if (empty($this->gradestack)) {
-            if (!$this->grades_rs or !$this->grades_rs->RecordCount()) {
+            if (!$this->grades_rs) {
                 return NULL; // no grades present
             }
 

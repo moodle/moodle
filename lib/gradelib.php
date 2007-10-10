@@ -1085,12 +1085,10 @@ function grade_cron() {
 
     // go through all courses that have proper final grades and lock them if needed
     if ($rs = get_recordset_sql($sql)) {
-        if ($rs->RecordCount() > 0) {
-            while ($item = rs_fetch_next_record($rs)) {
-                $grade_item = new grade_item($item, false);
-                $grade_item->locked = $now;
-                $grade_item->update('locktime');
-            }
+        while ($item = rs_fetch_next_record($rs)) {
+            $grade_item = new grade_item($item, false);
+            $grade_item->locked = $now;
+            $grade_item->update('locktime');
         }
         rs_close($rs);
     }
@@ -1105,12 +1103,10 @@ function grade_cron() {
 
     // go through all courses that have proper final grades and lock them if needed
     if ($rs = get_recordset_sql($sql)) {
-        if ($rs->RecordCount() > 0) {
-            while ($grade = rs_fetch_next_record($rs)) {
-                $grade_grade = new grade_grade($grade, false);
-                $grade_grade->locked = $now;
-                $grade_grade->update('locktime');
-            }
+        while ($grade = rs_fetch_next_record($rs)) {
+            $grade_grade = new grade_grade($grade, false);
+            $grade_grade->locked = $now;
+            $grade_grade->update('locktime');
         }
         rs_close($rs);
     }

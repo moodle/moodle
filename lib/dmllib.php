@@ -306,13 +306,18 @@ function record_exists_sql($sql) {
     $limitfrom = 0; /// Number of records to skip
     $limitnum  = 1; /// Number of records to retrieve
 
-    $rs = get_recordset_sql($sql, $limitfrom, $limitnum);
-
-    if ($rs && $rs->RecordCount() > 0) {
-        return true;
-    } else {
+    if (!$rs = get_recordset_sql($sql, $limitfrom, $limitnum)) {
         return false;
     }
+
+    if (rs_EOF($rs)) {
+        $result = false;
+    } else {
+        $result = true;
+    }
+
+    rs_close($rs);
+    return $result;
 }
 
 /**
@@ -698,7 +703,7 @@ function recordset_to_array($rs) {
 
     global $CFG;
 
-    if ($rs && $rs->RecordCount() > 0) {
+    if ($rs && !rs_EOF($rs)) {
     /// First of all, we are going to get the name of the first column
     /// to introduce it back after transforming the recordset to assoc array
     /// See http://docs.moodle.org/en/XMLDB_Problems, fetch mode problem.
@@ -939,7 +944,7 @@ function get_records_sql($sql, $limitfrom='', $limitnum='') {
 function recordset_to_menu($rs) {
     global $CFG;
     $menu = array();
-    if ($rs && $rs->RecordCount() > 0) {
+    if ($rs && !rs_EOF($rs)) {
         $keys = array_keys($rs->fields);
         $key0=$keys[0];
         $key1=$keys[1];
@@ -1155,7 +1160,7 @@ function get_fieldset_sql($sql) {
         return false;
     }
 
-    if ( $rs->RecordCount() > 0 ) {
+    if ( !rs_EOF($rs) ) {
         $keys = array_keys($rs->fields);
         $key0 = $keys[0];
         $results = array();
@@ -1170,8 +1175,10 @@ function get_fieldset_sql($sql) {
             array_walk($results, 'onespace2empty');
         }
         /// End of DIRTY HACK
+        rs_close($rs);
         return $results;
     } else {
+        rs_close($rs);
         return false;
     }
 }

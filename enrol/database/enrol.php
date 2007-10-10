@@ -78,15 +78,18 @@ function setup_enrolments(&$user) {
                 $existing = array();
             }
 
-            //error_log('[ENROL_DB] Found '.count($existing).' existing roles and '.$rs->RecordCount().' in external database');
 
-            if ($rs->RecordCount() > 0) {   // We found some courses
+            if (!$rs->EOF) {   // We found some courses
 
+                //$count = 0;
                 $courselist = array();
                 while ($fields_obj = rs_fetch_next_record($rs)) {         // Make a nice little array of courses to process
                     $courselist[] = $fields_obj->enrolremotecoursefield;
+                    //$count++;
                 }
                 rs_close($rs);
+
+                //error_log('[ENROL_DB] Found '.count($existing).' existing roles and '.$count.' in external database');
 
                 foreach ($courselist as $coursefield) {   /// Check the list of courses against existing
                     $course = get_record('course', $CFG->enrol_localcoursefield, $coursefield);
@@ -209,7 +212,7 @@ function sync_enrolments($role = null) {
         trigger_error($enroldb->ErrorMsg() .' STATEMENT: '. $sql);
         return false;
     }
-    if ( $rs->RecordCount() == 0 ) { // no courses! outta here...
+    if ( $rs->EOF ) { // no courses! outta here...
         return true;
     }
 
@@ -267,7 +270,7 @@ function sync_enrolments($role = null) {
             trigger_error($enroldb->ErrorMsg() .' STATEMENT: '. $sql);
             return false;
         }
-        if ( $crs->RecordCount() == 0 ) { // shouldn't happen, but cover all bases
+        if ( $crs->EOF ) { // shouldn't happen, but cover all bases
             continue;
         }
 
@@ -329,7 +332,7 @@ function sync_enrolments($role = null) {
                 trigger_error($db->ErrorMsg() .' STATEMENT: '. $sql);
                 return false;
             }
-            if ( $ers->RecordCount() == 0 ) { // if this returns empty, it means we don't have the student record.
+            if ( $ers->EOF ) { // if this returns empty, it means we don't have the student record.
                                               // should not happen -- but skip it anyway
                 trigger_error('weird! no user record entry?');
                 continue;
@@ -381,7 +384,7 @@ function sync_enrolments($role = null) {
         trigger_error($db->ErrorMsg() .' STATEMENT: '. $sql);
         return false;
     }
-    if ( $ers->RecordCount() > 0 ) {
+    if ( !$ers->EOF ) {
         while ($user_obj = rs_fetch_next_record($ers)) {
             $roleid     = $user_obj->roleid;
             $user       = $user_obj->userid;

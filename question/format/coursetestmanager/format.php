@@ -307,7 +307,7 @@ class qformat_coursetestmanager extends qformat_default {
         if (PHP_OS == "WINNT") {
             $ldb =& $this->connect_win($filename);
             $qset = $ldb->Execute("$sql");
-            if ( $qset->RecordCount() > 0 ) {
+            if ( !$qset->EOF ) {
                 $records = $qset->GetAssoc(true);
             } else {
                 $this->err("There were no records in the database.",$dsn);
@@ -341,7 +341,7 @@ class qformat_coursetestmanager extends qformat_default {
         if (PHP_OS == "WINNT") {
             $ldb =& $this->connect_win($filename);
             $qset = $ldb->Execute("$sql");
-            if ( $qset->RecordCount() > 0 ) {
+            if ( !$qset->EOF ) {
                 $records = $qset->GetArray(true);
                 foreach ($records as $record) {
                     $categories[$record[0]] = $record[0];

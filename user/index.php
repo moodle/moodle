@@ -560,7 +560,7 @@
         $timeformat = get_string('strftimedate');
 
 
-        if ($userlist->RecordCount() > 0)  {
+        if ($userlist)  {
             while ($user = rs_fetch_next_record($userlist)) {
                 $user = make_context_subobj($user);
                 if ($user->hidden) {
@@ -676,7 +676,9 @@
 
     print_footer($course);
 
-
+    if ($userlist) {
+        rs_close($userlist);
+    }
 
 
 function get_lastaccess_sql($accesssince='') {

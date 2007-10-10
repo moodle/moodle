@@ -293,7 +293,7 @@ function remove_test_table($tablename, $db, $cascade = false) {
     
     if ($CFG->dbfamily == 'postgres') {
         $rs = $db->Execute("SELECT relname FROM pg_class WHERE relname = '{$tablename}_id_seq' AND relkind = 'S';");
-        if ($rs && $rs->RecordCount()) {
+        if ($rs && !rs_EOF($rs)) {
             _private_execute_sql("DROP SEQUENCE {$tablename}_id_seq;", $db);
         }
     }

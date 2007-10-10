@@ -1147,12 +1147,12 @@
                                           b.table_name = 'user'");
 
         //If we have users to backup
-        if ($users && $users->RecordCount()) {
+        if ($users && !rs_EOF($users)) {
             //Begin Users tag
             fwrite ($bf,start_tag("USERS",2,true));
             $counter = 0;
             //With every user
-            while ($user = $users->FetchNextObj()) {
+            while ($user = rs_fetch_next_record($users)) {
                 //Begin User tag
                 fwrite ($bf,start_tag("USER",3,true));
                 //Output all user data
@@ -1288,6 +1288,10 @@
         } else {
             // There aren't any users.
             $status = true;
+        }
+
+        if ($users) {
+            rs_close($users);
         }
 
         return $status;

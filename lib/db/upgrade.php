@@ -1289,13 +1289,11 @@ function xmldb_main_upgrade($oldversion=0) {
         if ($result) {
             require_once($CFG->libdir.'/db/upgradelib.php');
             if ($rs = get_recordset('course')) {
-                if ($rs->RecordCount() > 0) {
-                    while ($course = rs_fetch_next_record($rs)) {
-                        // this function uses SQL only, it must not be changed after 1.9 goes stable!!
-                        if (!upgrade_18_gradebook($course->id)) {
-                            $result = false;
-                            break;
-                        }
+                while ($course = rs_fetch_next_record($rs)) {
+                    // this function uses SQL only, it must not be changed after 1.9 goes stable!!
+                    if (!upgrade_18_gradebook($course->id)) {
+                        $result = false;
+                        break;
                     }
                 }
                 rs_close($rs);
@@ -1650,31 +1648,29 @@ function xmldb_main_upgrade($oldversion=0) {
         $tagrefs = array(); // $tagrefs[$oldtagid] = $newtagid
         if ($rs = get_recordset('tags')) {
             $db->debug = false;
-            if ($rs->RecordCount() > 0) {
-                while ($oldtag = rs_fetch_next_record($rs)) {
-                    $raw_normalized = clean_param($oldtag->text, PARAM_TAG);
-                    $normalized     = moodle_strtolower($raw_normalized);
-                    // if this tag does not exist in tag table yet
-                    if (!$newtag = get_record('tag', 'name', $normalized, '', '', '', '', 'id')) {
-                        $itag = new object();
-                        $itag->name         = $normalized;
-                        $itag->rawname      = $raw_normalized;
-                        $itag->userid       = $oldtag->userid;
-                        $itag->timemodified = time();
-                        $itag->descriptionformat = 0; // default format
-                        if ($oldtag->type == 'official') {
-                            $itag->tagtype  = 'official';
-                        } else {
-                            $itag->tagtype  = 'default';
-                        }
-
-                        if ($idx = insert_record('tag', $itag)) {
-                            $tagrefs[$oldtag->id] = $idx;
-                        }
-                    // if this tag is already used by tag table
+            while ($oldtag = rs_fetch_next_record($rs)) {
+                $raw_normalized = clean_param($oldtag->text, PARAM_TAG);
+                $normalized     = moodle_strtolower($raw_normalized);
+                // if this tag does not exist in tag table yet
+                if (!$newtag = get_record('tag', 'name', $normalized, '', '', '', '', 'id')) {
+                    $itag = new object();
+                    $itag->name         = $normalized;
+                    $itag->rawname      = $raw_normalized;
+                    $itag->userid       = $oldtag->userid;
+                    $itag->timemodified = time();
+                    $itag->descriptionformat = 0; // default format
+                    if ($oldtag->type == 'official') {
+                        $itag->tagtype  = 'official';
                     } else {
-                        $tagrefs[$oldtag->id] = $newtag->id;
+                        $itag->tagtype  = 'default';
                     }
+
+                    if ($idx = insert_record('tag', $itag)) {
+                        $tagrefs[$oldtag->id] = $idx;
+                    }
+                // if this tag is already used by tag table
+                } else {
+                    $tagrefs[$oldtag->id] = $newtag->id;
                 }
             }
             $db->debug = true;
@@ -1684,17 +1680,15 @@ function xmldb_main_upgrade($oldversion=0) {
         // fetch all the tag instances and migrate them as well
         if ($rs = get_recordset('blog_tag_instance')) {
             $db->debug = false;
-            if ($rs->RecordCount() > 0) {
-                while ($blogtag = rs_fetch_next_record($rs)) {
-                    if (array_key_exists($blogtag->tagid, $tagrefs)) {
-                        $tag_instance = new object();
-                        $tag_instance->tagid        = $tagrefs[$blogtag->tagid];
-                        $tag_instance->itemtype     = 'blog';
-                        $tag_instance->itemid       = $blogtag->entryid;
-                        $tag_instance->ordering     = 1; // does not matter much, because originally there was no ordering in blogs
-                        $tag_instance->timemodified = time();
-                        insert_record('tag_instance', $tag_instance);
-                    }
+            while ($blogtag = rs_fetch_next_record($rs)) {
+                if (array_key_exists($blogtag->tagid, $tagrefs)) {
+                    $tag_instance = new object();
+                    $tag_instance->tagid        = $tagrefs[$blogtag->tagid];
+                    $tag_instance->itemtype     = 'blog';
+                    $tag_instance->itemid       = $blogtag->entryid;
+                    $tag_instance->ordering     = 1; // does not matter much, because originally there was no ordering in blogs
+                    $tag_instance->timemodified = time();
+                    insert_record('tag_instance', $tag_instance);
                 }
             }
             $db->debug = true;

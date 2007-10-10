@@ -175,7 +175,7 @@ function setup_is_unicodedb() {
     switch ($dbfamily) {
         case 'mysql':
             $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");
-            if ($rs && $rs->RecordCount() > 0) {
+            if ($rs && !$rs->EOF) { // rs_EOF() not available yet
                 $records = $rs->GetAssoc(true);
                 $encoding = $records['character_set_database']['Value'];
                 if (strtoupper($encoding) == 'UTF8') {
@@ -186,7 +186,7 @@ function setup_is_unicodedb() {
         case 'postgres':
         /// Get PostgreSQL server_encoding value
             $rs = $db->Execute("SHOW server_encoding");
-            if ($rs && $rs->RecordCount() > 0) {
+            if ($rs && !$rs->EOF) { // rs_EOF() not available yet
                 $encoding = $rs->fields['server_encoding'];
                 if (strtoupper($encoding) == 'UNICODE' || strtoupper($encoding) == 'UTF8') {
                     $unicodedb = true;
@@ -200,7 +200,7 @@ function setup_is_unicodedb() {
         case 'oracle':
         /// Get Oracle DB character set value
             $rs = $db->Execute("SELECT parameter, value FROM nls_database_parameters where parameter = 'NLS_CHARACTERSET'");
-            if ($rs && $rs->RecordCount() > 0) {
+            if ($rs && !$rs->EOF) { // rs_EOF() not available yet
                 $encoding = $rs->fields['value'];
                 if (strtoupper($encoding) == 'AL32UTF8') {
                     $unicodedb = true;

@@ -59,20 +59,23 @@ class auth_plugin_db extends auth_plugin_base {
             // don't track passwords
             $rs = $authdb->Execute("SELECT * FROM {$this->config->table}
                                      WHERE {$this->config->fielduser} = '".$this->ext_addslashes($extusername)."' ");
-            $authdb->Close();
-
             if (!$rs) {
+                $authdb->Close();
                 print_error('auth_dbcantconnect','auth');
                 return false;
             }
 
-            if ( $rs->RecordCount() ) {
+            if ( !$rs->EOF ) {
+                $rs->Close();
+                $authdb->Close();
                 // user exists exterally
                 // check username/password internally
                 if ($user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id)) {
                     return validate_internal_user_password($user, $password);
                 }
             } else {
+                $rs->Close();
+                $authdb->Close();
                 // user does not exist externally
                 return false;
             }
@@ -89,16 +92,19 @@ class auth_plugin_db extends auth_plugin_base {
             $rs = $authdb->Execute("SELECT * FROM {$this->config->table}
                                 WHERE {$this->config->fielduser} = '".$this->ext_addslashes($extusername)."'
                                   AND {$this->config->fieldpass} = '".$this->ext_addslashes($extpassword)."' ");
-            $authdb->Close();
-
             if (!$rs) {
+                $authdb->Close();
                 print_error('auth_dbcantconnect','auth');
                 return false;
             }
 
-            if ($rs->RecordCount()) {
+            if (!$rs->EOF) {
+                $rs->Close();
+                $authdb->Close();
                 return true;
             } else {
+                $rs->Close();
+                $authdb->Close();
                 return false;
             }
 
@@ -171,7 +177,7 @@ class auth_plugin_db extends auth_plugin_base {
                 " FROM {$this->config->table}" .
                 " WHERE {$this->config->fielduser} = '".$this->ext_addslashes($extusername)."'";
             if ($rs = $authdb->Execute($sql)) {
-                if ( $rs->RecordCount() == 1 ) {
+                if ( !$rs->EOF ) {
                     $fields_obj = rs_fetch_record($rs);
                     foreach ($selectfields as $localname=>$externalname) {
                         $result[$localname] = $textlib->convert($fields_obj->{$localname}, $this->config->extencoding, 'utf-8');
@@ -391,9 +397,9 @@ class auth_plugin_db extends auth_plugin_base {
 
         if (!$rs) {
             print_error('auth_dbcantconnect','auth');
-        } else if ( $rs->RecordCount() ) {
+        } else if ( !$rs->EOF ) {
             // user exists exterally
-            $result = $rs->RecordCount();
+            $result = true;
         }
 
         $authdb->Close();
@@ -414,7 +420,7 @@ class auth_plugin_db extends auth_plugin_base {
 
         if (!$rs) {
             print_error('auth_dbcantconnect','auth');
-        } else if ( $rs->RecordCount() ) {
+        } else if ( !$rs->EOF ) {
             while ($rec = rs_fetch_next_record($rs)) {
                 array_push($result, $rec->username);
             }

@@ -475,11 +475,9 @@ function scorm_update_grades($scorm=null, $userid=0, $nullifnone=true) {
                   FROM {$CFG->prefix}scorm s, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
                  WHERE m.name='scorm' AND m.id=cm.module AND cm.instance=s.id";
         if ($rs = get_recordset_sql($sql)) {
-            if ($rs->RecordCount() > 0) {
-                while ($scorm = rs_fetch_next_record($rs)) {
-                    scorm_grade_item_update($scorm);
-                    scorm_update_grades($scorm, 0, false);
-                }
+            while ($scorm = rs_fetch_next_record($rs)) {
+                scorm_grade_item_update($scorm);
+                scorm_update_grades($scorm, 0, false);
             }
             rs_close($rs);
         }

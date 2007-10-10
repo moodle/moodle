@@ -404,29 +404,27 @@ class grade_category extends grade_object {
 
         // group the results by userid and aggregate the grades for this user
         if ($rs = get_recordset_sql($sql)) {
-            if ($rs->RecordCount() > 0) {
-                $prevuser = 0;
-                $grade_values = array();
-                $excluded     = array();
-                $oldgrade     = null;
-                while ($used = rs_fetch_next_record($rs)) {
-                    if ($used->userid != $prevuser) {
-                        $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade, $excluded);
-                        $prevuser = $used->userid;
-                        $grade_values = array();
-                        $excluded     = array();
-                        $oldgrade     = null;
-                    }
-                    $grade_values[$used->itemid] = $used->finalgrade;
-                    if ($used->excluded) {
-                        $excluded[] = $used->itemid;
-                    }
-                    if ($this->grade_item->id == $used->itemid) {
-                        $oldgrade = $used;
-                    }
+            $prevuser = 0;
+            $grade_values = array();
+            $excluded     = array();
+            $oldgrade     = null;
+            while ($used = rs_fetch_next_record($rs)) {
+                if ($used->userid != $prevuser) {
+                    $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade, $excluded);
+                    $prevuser = $used->userid;
+                    $grade_values = array();
+                    $excluded     = array();
+                    $oldgrade     = null;
                 }
-                $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade, $excluded);//the last one
+                $grade_values[$used->itemid] = $used->finalgrade;
+                if ($used->excluded) {
+                    $excluded[] = $used->itemid;
+                }
+                if ($this->grade_item->id == $used->itemid) {
+                    $oldgrade = $used;
+                }
             }
+            $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade, $excluded);//the last one
             rs_close($rs);
         }
 

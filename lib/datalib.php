@@ -473,34 +473,29 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     }
     $totalcount = 0;
 
-    if (!$limitnum) {
-        $limitnum = $rs->RecordCount();
-    }
-
     if (!$limitfrom) {
         $limitfrom = 0;
     }
 
     // iteration will have to be done inside loop to keep track of the limitfrom and limitnum
-    if ($rs->RecordCount()) {
-        while ($course = rs_fetch_next_record($rs)) {
-            $course = make_context_subobj($course);
-            if ($course->visible <= 0) {
-                // for hidden courses, require visibility check
-                if (has_capability('moodle/course:viewhiddencourses', $course->context)) {
-                    $totalcount++;
-                    if ($totalcount > $limitfrom && count($visiblecourses) < $limitnum) {
-                        $visiblecourses [] = $course;
-                    }
-                }
-            } else {
+    while ($course = rs_fetch_next_record($rs)) {
+        $course = make_context_subobj($course);
+        if ($course->visible <= 0) {
+            // for hidden courses, require visibility check
+            if (has_capability('moodle/course:viewhiddencourses', $course->context)) {
                 $totalcount++;
-                if ($totalcount > $limitfrom && count($visiblecourses) < $limitnum) {
+                if ($totalcount > $limitfrom && (!$limitnum or count($visiblecourses) < $limitnum)) {
                     $visiblecourses [] = $course;
                 }
             }
+        } else {
+            $totalcount++;
+            if ($totalcount > $limitfrom && (!$limitnum or count($visiblecourses) < $limitnum)) {
+                $visiblecourses [] = $course;
+            }
         }
     }
+    rs_close($rs);
     return $visiblecourses;
 
 /**
@@ -706,44 +701,40 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
 
         // This loop is fairly stupid as it stands - might get better
         // results doing an initial pass clustering RAs by path.
-        if ($rs->RecordCount()) {
-            while ($ra = rs_fetch_next_record($rs)) {
-                $user = new StdClass;
-                $user->id        = $ra->userid;    unset($ra->userid);
-                $user->firstname = $ra->firstname; unset($ra->firstname);
-                $user->lastname  = $ra->lastname;  unset($ra->lastname);
-                $ra->user = $user;
-                if ($ra->contextlevel == CONTEXT_SYSTEM) {
+        while ($ra = rs_fetch_next_record($rs)) {
+            $user = new StdClass;
+            $user->id        = $ra->userid;    unset($ra->userid);
+            $user->firstname = $ra->firstname; unset($ra->firstname);
+            $user->lastname  = $ra->lastname;  unset($ra->lastname);
+            $ra->user = $user;
+            if ($ra->contextlevel == CONTEXT_SYSTEM) {
+                foreach ($courses as $k => $course) {
+                    $courses[$k]->managers[] = $ra;
+                }
+            } elseif ($ra->contextlevel == CONTEXT_COURSECAT) {
+                if ($allcats === false) {
+                    // It always applies
                     foreach ($courses as $k => $course) {
                         $courses[$k]->managers[] = $ra;
                     }
-                } elseif ($ra->contextlevel == CONTEXT_COURSECAT) {
-                    if ($allcats === false) {
-                        // It always applies
-                        foreach ($courses as $k => $course) {
+                } else {
+                    foreach ($courses as $k => $course) {
+                        // Note that strpos() returns 0 as "matched at pos 0"
+                        if (strpos($course->context->path, $ra->path.'/')===0) {
+                            // Only add it to subpaths
                             $courses[$k]->managers[] = $ra;
                         }
-                    } else {
-                        foreach ($courses as $k => $course) {
-                            // Note that strpos() returns 0 as "matched at pos 0"
-                            if (strpos($course->context->path, $ra->path.'/')===0) {
-                                // Only add it to subpaths
-                                $courses[$k]->managers[] = $ra;
-                            }
-                        }
                     }
-                } else { // course-level
-                    if(!array_key_exists($ra->instanceid, $courses)) {
-                        //this course is not in a list, probably a frontpage course
-                        continue;
-                    }
-                    $courses[$ra->instanceid]->managers[] = $ra;
                 }
+            } else { // course-level
+                if(!array_key_exists($ra->instanceid, $courses)) {
+                    //this course is not in a list, probably a frontpage course
+                    continue;
+                }
+                $courses[$ra->instanceid]->managers[] = $ra;
             }
         }
-
-
-
+        rs_close($rs);
     }
 
     return $courses;
@@ -872,15 +863,13 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
             $rs = get_recordset_sql($sql);
             $courses = array();
             $cc = 0; // keep count
-            if ($rs->RecordCount()) {
-                while ($c = rs_fetch_next_record($rs)) {
-                    // build the context obj
-                    $c = make_context_subobj($c);
+            while ($c = rs_fetch_next_record($rs)) {
+                // build the context obj
+                $c = make_context_subobj($c);
 
-                    $courses[$c->id] = $c;
-                    if ($limit > 0 && $cc++ > $limit) {
-                        break;
-                    }
+                $courses[$c->id] = $c;
+                if ($limit > 0 && $cc++ > $limit) {
+                    break;
                 }
             }
             rs_close($rs);
@@ -915,20 +904,18 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
 
         // Using a temporary array instead of $cats here, to avoid a "true" result when isnull($cats) further down
         $categories = array();
-        if ($rs->RecordCount()) {
-            while ($course_cat = rs_fetch_next_record($rs)) {
-                // build the context obj
-                $course_cat = make_context_subobj($course_cat);
-                $categories[$course_cat->id] = $course_cat;
-            }
+        while ($course_cat = rs_fetch_next_record($rs)) {
+            // build the context obj
+            $course_cat = make_context_subobj($course_cat);
+            $categories[$course_cat->id] = $course_cat;
         }
+        rs_close($rs);
 
         if (!empty($categories)) {
             $cats = $categories;
         }
 
         unset($course_cat);
-        rs_close($rs);
     }
     //
     // Strangely, get_my_courses() is expected to return the
@@ -1383,7 +1370,7 @@ function fix_coursecategory_orphans() {
 
     $rs = get_recordset_sql($sql);
 
-    if ($rs->RecordCount()){ // we have some orphans
+    if (!rs_EOF($rs)) { // we have some orphans
 
         // the "default" category is the lowest numbered...
         $default   = get_field_sql("SELECT MIN(id)
@@ -1405,6 +1392,7 @@ function fix_coursecategory_orphans() {
             rollback_sql();
         }
     }
+    rs_close($rs);
 }
 
 /**

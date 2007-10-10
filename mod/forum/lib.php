@@ -1168,12 +1168,10 @@ function forum_update_grades($forum=null, $userid=0, $nullifnone=true) {
                   FROM {$CFG->prefix}forum f, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
                  WHERE m.name='forum' AND m.id=cm.module AND cm.instance=f.id";
         if ($rs = get_recordset_sql($sql)) {
-            if ($rs->RecordCount() > 0) {
-                while ($forum = rs_fetch_next_record($rs)) {
-                    forum_grade_item_update($forum);
-                    if ($forum->assessed) {
-                        forum_update_grades($forum, 0, false);
-                    }
+            while ($forum = rs_fetch_next_record($rs)) {
+                forum_grade_item_update($forum);
+                if ($forum->assessed) {
+                    forum_update_grades($forum, 0, false);
                 }
             }
             rs_close($rs);

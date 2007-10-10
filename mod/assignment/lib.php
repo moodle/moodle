@@ -2117,12 +2117,10 @@ function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true)
                   FROM {$CFG->prefix}assignment a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
                  WHERE m.name='assignment' AND m.id=cm.module AND cm.instance=a.id";
         if ($rs = get_recordset_sql($sql)) {
-            if ($rs->RecordCount() > 0) {
-                while ($assignment = rs_fetch_next_record($rs)) {
-                    assignment_grade_item_update($assignment);
-                    if ($assignment->grade != 0) {
-                        assignment_update_grades($assignment);
-                    }
+            while ($assignment = rs_fetch_next_record($rs)) {
+                assignment_grade_item_update($assignment);
+                if ($assignment->grade != 0) {
+                    assignment_update_grades($assignment);
                 }
             }
             rs_close($rs);

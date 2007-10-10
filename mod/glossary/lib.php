@@ -358,12 +358,10 @@ function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
                   FROM {$CFG->prefix}glossary g, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
                  WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id";
         if ($rs = get_recordset_sql($sql)) {
-            if ($rs->RecordCount() > 0) {
-                while ($glossary = rs_fetch_next_record($rs)) {
-                    glossary_grade_item_update($glossary);
-                    if ($glossary->assessed) {
-                        glossary_update_grades($glossary, 0, false);
-                    }
+            while ($glossary = rs_fetch_next_record($rs)) {
+                glossary_grade_item_update($glossary);
+                if ($glossary->assessed) {
+                    glossary_update_grades($glossary, 0, false);
                 }
             }
             rs_close($rs);

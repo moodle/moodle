@@ -781,12 +781,10 @@ function data_update_grades($data=null, $userid=0, $nullifnone=true) {
                   FROM {$CFG->prefix}data d, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
                  WHERE m.name='data' AND m.id=cm.module AND cm.instance=d.id";
         if ($rs = get_recordset_sql($sql)) {
-            if ($rs->RecordCount() > 0) {
-                while ($data = rs_fetch_next_record($rs)) {
-                    data_grade_item_update($data);
-                    if ($data->assessed) {
-                        data_update_grades($data, 0, false);
-                    }
+            while ($data = rs_fetch_next_record($rs)) {
+                data_grade_item_update($data);
+                if ($data->assessed) {
+                    data_update_grades($data, 0, false);
                 }
             }
             rs_close($rs);

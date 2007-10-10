@@ -643,21 +643,19 @@ class grade_item extends grade_object {
             $rs = get_recordset('grade_grades', 'itemid', $this->id, '', $fields);
         }
         if ($rs) {
-            if ($rs->RecordCount() > 0) {
-                while ($grade_record = rs_fetch_next_record($rs)) {
-                    $grade = new grade_grade($grade_record, false);
+            while ($grade_record = rs_fetch_next_record($rs)) {
+                $grade = new grade_grade($grade_record, false);
 
-                    if (!empty($grade_record->locked) or !empty($grade_record->overridden)) {
-                        // this grade is locked - final grade must be ok
-                        continue;
-                    }
+                if (!empty($grade_record->locked) or !empty($grade_record->overridden)) {
+                    // this grade is locked - final grade must be ok
+                    continue;
+                }
 
-                    $grade->finalgrade = $this->adjust_raw_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
+                $grade->finalgrade = $this->adjust_raw_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
 
-                    if ($grade_record->finalgrade !== $grade->finalgrade) {
-                        if (!$grade->update('system')) {
-                            $result = "Internal error updating final grade";
-                        }
+                if ($grade_record->finalgrade !== $grade->finalgrade) {
+                    if (!$grade->update('system')) {
+                        $result = "Internal error updating final grade";
                     }
                 }
             }
@@ -1515,30 +1513,28 @@ class grade_item extends grade_object {
 
         // group the grades by userid and use formula on the group
         if ($rs = get_recordset_sql($sql)) {
-            if ($rs->RecordCount() > 0) {
-                $prevuser = 0;
-                $grade_records   = array();
-                $oldgrade    = null;
-                while ($used = rs_fetch_next_record($rs)) {
-                    if ($used->userid != $prevuser) {
-                        if (!$this->use_formula($prevuser, $grade_records, $useditems, $oldgrade)) {
-                            $return = false;
-                        }
-                        $prevuser = $used->userid;
-                        $grade_records   = array();
-                        $oldgrade    = null;
+            $prevuser = 0;
+            $grade_records   = array();
+            $oldgrade    = null;
+            while ($used = rs_fetch_next_record($rs)) {
+                if ($used->userid != $prevuser) {
+                    if (!$this->use_formula($prevuser, $grade_records, $useditems, $oldgrade)) {
+                        $return = false;
                     }
-                    if ($used->itemid == $this->id) {
-                        $oldgrade = $used;
-                    }
-                    $grade_records['gi'.$used->itemid] = $used->finalgrade;
+                    $prevuser = $used->userid;
+                    $grade_records   = array();
+                    $oldgrade    = null;
                 }
-                if (!$this->use_formula($prevuser, $grade_records, $useditems, $oldgrade)) {
-                    $return = false;
+                if ($used->itemid == $this->id) {
+                    $oldgrade = $used;
                 }
+                $grade_records['gi'.$used->itemid] = $used->finalgrade;
             }
-            rs_close($rs);
+            if (!$this->use_formula($prevuser, $grade_records, $useditems, $oldgrade)) {
+                $return = false;
+            }
         }
+        rs_close($rs);
 
         return $return;
     }

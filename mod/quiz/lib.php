@@ -305,12 +305,10 @@ function quiz_update_grades($quiz=null, $userid=0, $nullifnone=true) {
                   FROM {$CFG->prefix}quiz a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
                  WHERE m.name='quiz' AND m.id=cm.module AND cm.instance=a.id";
         if ($rs = get_recordset_sql($sql)) {
-            if ($rs->RecordCount() > 0) {
-                while ($quiz = rs_fetch_next_record($rs)) {
-                    quiz_grade_item_update($quiz);
-                    if ($quiz->grade != 0) {
-                        quiz_update_grades($quiz, 0, false);
-                    }
+            while ($quiz = rs_fetch_next_record($rs)) {
+                quiz_grade_item_update($quiz);
+                if ($quiz->grade != 0) {
+                    quiz_update_grades($quiz, 0, false);
                 }
             }
             rs_close($rs);

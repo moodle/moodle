@@ -363,11 +363,12 @@ function chat_get_latest_message($chatid, $groupid=0) {
                                  ORDER BY timestamp DESC", 1)) {
         return false;
     }
-    if ($rs->RecordCount() == 1) {
-        return rs_fetch_record($rs);
-    } else {
-        return false;                 // Found no records
-    }
+
+    $result = rs_fetch_record($rs);
+
+    rs_close($result);
+
+    return $result;
 }
 
 

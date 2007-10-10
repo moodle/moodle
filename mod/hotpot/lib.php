@@ -1243,11 +1243,9 @@ function hotpot_update_grades($hotpot=null, $userid=0, $nullifnone=true) {
                   FROM {$CFG->prefix}hotpot h, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
                  WHERE m.name='hotpot' AND m.id=cm.module AND cm.instance=s.id";
         if ($rs = get_recordset_sql($sql)) {
-            if ($rs->RecordCount() > 0) {
-                while ($hotpot = rs_fetch_next_record($rs)) {
-                    hotpot_grade_item_update($hotpot);
-                    hotpot_update_grades($hotpot, 0, false);
-                }
+            while ($hotpot = rs_fetch_next_record($rs)) {
+                hotpot_grade_item_update($hotpot);
+                hotpot_update_grades($hotpot, 0, false);
             }
             rs_close($rs);
         }

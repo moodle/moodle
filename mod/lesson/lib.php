@@ -392,12 +392,10 @@ function lesson_update_grades($lesson=null, $userid=0, $nullifnone=true) {
                   FROM {$CFG->prefix}lesson l, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
                  WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id";
         if ($rs = get_recordset_sql($sql)) {
-            if ($rs->RecordCount() > 0) {
-                while ($lesson = rs_fetch_next_record($rs)) {
-                    lesson_grade_item_update($lesson);
-                    if ($lesson->grade != 0) {
-                        lesson_update_grades($lesson, 0, false);
-                    }
+            while ($lesson = rs_fetch_next_record($rs)) {
+                lesson_grade_item_update($lesson);
+                if ($lesson->grade != 0) {
+                    lesson_update_grades($lesson, 0, false);
                 }
             }
             rs_close($rs);

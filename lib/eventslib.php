@@ -345,18 +345,16 @@ function events_cron($eventname='') {
     }
 
     if ($rs = get_recordset_sql($sql)) {
-        if ($rs->RecordCount() > 0) {
-            while ($qhandler = rs_fetch_next_record($rs)) {
-                if (in_array($qhandler->handlerid, $failed)) {
-                    // do not try to dispatch any later events when one already failed
-                    continue;
-                }
-                $status = events_process_queued_handler($qhandler);
-                if ($status === false) {
-                    $failed[] = $qhandler->handlerid;
-                } else {
-                    $processed++;
-                }
+        while ($qhandler = rs_fetch_next_record($rs)) {
+            if (in_array($qhandler->handlerid, $failed)) {
+                // do not try to dispatch any later events when one already failed
+                continue;
+            }
+            $status = events_process_queued_handler($qhandler);
+            if ($status === false) {
+                $failed[] = $qhandler->handlerid;
+            } else {
+                $processed++;
             }
         }
         rs_close($rs);

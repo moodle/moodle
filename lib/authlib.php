@@ -205,6 +205,7 @@ class auth_plugin_base {
      * Checks if user exists in external db
      *
      * @param string $username (with system magic quotes)
+     * @return bool
      */
     function user_exists() {
         //override if needed

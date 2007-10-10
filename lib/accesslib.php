@@ -231,13 +231,11 @@ function get_role_access($roleid, $accessdata=NULL) {
                   AND ctx.contextlevel <= ".CONTEXT_COURSE."
             ORDER BY ctx.depth, ctx.path";
     if ($rs = get_recordset_sql($sql)) {
-        if ($rs->RecordCount()) {
-            while ($rd = rs_fetch_next_record($rs)) {
-                $k = "{$rd->path}:{$roleid}";
-                $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
-            }
-            unset($rd);
+        while ($rd = rs_fetch_next_record($rs)) {
+            $k = "{$rd->path}:{$roleid}";
+            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
         }
+        unset($rd);
         rs_close($rs);
     }
 
@@ -271,13 +269,11 @@ function get_default_frontpage_role_access($roleid, $accessdata=NULL) {
             ORDER BY ctx.depth, ctx.path";             
             
     if ($rs = get_recordset_sql($sql)) {
-        if ($rs->RecordCount()) {
-            while ($rd = rs_fetch_next_record($rs)) {
-                $k = "{$rd->path}:{$roleid}";
-                $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
-            }
-            unset($rd);
+        while ($rd = rs_fetch_next_record($rs)) {
+            $k = "{$rd->path}:{$roleid}";
+            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
         }
+        unset($rd);
         rs_close($rs);
     }
 
@@ -882,12 +878,10 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
                 ORDER BY ctx.depth";
         $rs = get_recordset_sql($sql);
         $catpaths = array();
-        if ($rs->RecordCount()) {
-            while ($catctx = rs_fetch_next_record($rs)) {
-                if ($catctx->path != '' 
-                    && has_capability_in_accessdata($cap, $catctx, $accessdata, $doanything)) {
-                    $catpaths[] = $catctx->path;
-                }
+        while ($catctx = rs_fetch_next_record($rs)) {
+            if ($catctx->path != '' 
+                && has_capability_in_accessdata($cap, $catctx, $accessdata, $doanything)) {
+                $catpaths[] = $catctx->path;
             }
         }
         rs_close($rs);
@@ -931,16 +925,14 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
     }
     $courses = array();
     $cc = 0; // keep count
-    if ($rs->RecordCount()) {
-        while ($c = rs_fetch_next_record($rs)) {
-            // build the context obj
-            $c = make_context_subobj($c);
+    while ($c = rs_fetch_next_record($rs)) {
+        // build the context obj
+        $c = make_context_subobj($c);
 
-            if (has_capability_in_accessdata($cap, $c->context, $accessdata, $doanything)) {
-                $courses[] = $c;
-                if ($limit > 0 && $cc++ > $limit) {
-                    break;
-                }
+        if (has_capability_in_accessdata($cap, $c->context, $accessdata, $doanything)) {
+            $courses[] = $c;
+            if ($limit > 0 && $cc++ > $limit) {
+                break;
             }
         }
     }
@@ -998,15 +990,13 @@ function get_context_users_byrole ($context, $roleid, $fields=NULL, $where=NULL,
     
     $users = array();
     $cc = 0; // keep count
-    if ($rs->RecordCount()) {
-        while ($u = rs_fetch_next_record($rs)) {
-            // build the context obj
-            $u = make_context_subobj($u);
+    while ($u = rs_fetch_next_record($rs)) {
+        // build the context obj
+        $u = make_context_subobj($u);
 
-            $users[] = $u;
-            if ($limit > 0 && $cc++ > $limit) {
-                break;
-            }
+        $users[] = $u;
+        if ($limit > 0 && $cc++ > $limit) {
+            break;
         }
     }
     rs_close($rs);
@@ -1071,10 +1061,8 @@ function get_context_users_bycap ($context, $capability='moodle/course:view', $f
             WHERE rc.capability = '$capability'
                   AND rc.contextid IN ($contexts)";
     $rs = get_recordset_sql($sql);
-    if ($rs->RecordCount()) {
-        while ($u = rs_fetch_next_record($rs)) {
-            $roles[] = $u->roleid;
-        }
+    while ($u = rs_fetch_next_record($rs)) {
+        $roles[] = $u->roleid;
     }
     rs_close($rs);
     $roles = implode(',', $roles);
@@ -1112,15 +1100,13 @@ function get_context_users_bycap ($context, $capability='moodle/course:view', $f
     
     $users = array();
     $cc = 0; // keep count
-    if ($rs->RecordCount()) {
-        while ($u = rs_fetch_next_record($rs)) {
-            // build the context obj
-            $u = make_context_subobj($u);
+    while ($u = rs_fetch_next_record($rs)) {
+        // build the context obj
+        $u = make_context_subobj($u);
 
-            $users[] = $u;
-            if ($limit > 0 && $cc++ > $limit) {
-                break;
-            }
+        $users[] = $u;
+        if ($limit > 0 && $cc++ > $limit) {
+            break;
         }
     }
     rs_close($rs);
@@ -1191,38 +1177,36 @@ function get_user_access_sitewide($userid) {
     $raparents = array();
     $lastseen  = '';
     if ($rs) {
-        if ($rs->RecordCount()) {
-            while ($ra = rs_fetch_next_record($rs)) {
-                // RAs leafs are arrays to support multi
-                // role assignments...
-                if (!isset($accessdata['ra'][$ra->path])) {
-                    $accessdata['ra'][$ra->path] = array();
-                }
-                // only add if is not a repeat caused
-                // by capability join...
-                // (this check is cheaper than in_array())
-                if ($lastseen !== $ra->path.':'.$ra->roleid) {
-                    $lastseen = $ra->path.':'.$ra->roleid;
-                    array_push($accessdata['ra'][$ra->path], $ra->roleid);
-                    $parentids = explode('/', $ra->path);
-                    array_shift($parentids); // drop empty leading "context"
-                    array_pop($parentids);   // drop _this_ context
-    
-                    if (isset($raparents[$ra->roleid])) {
-                        $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid],
-                                                              $parentids);
-                    } else {
-                        $raparents[$ra->roleid] = $parentids;
-                    }
-                }
-                // Always add the roleded
-                if (!empty($ra->capability)) {
-                    $k = "{$ra->path}:{$ra->roleid}";
-                    $accessdata['rdef'][$k][$ra->capability] = $ra->permission;
+        while ($ra = rs_fetch_next_record($rs)) {
+            // RAs leafs are arrays to support multi
+            // role assignments...
+            if (!isset($accessdata['ra'][$ra->path])) {
+                $accessdata['ra'][$ra->path] = array();
+            }
+            // only add if is not a repeat caused
+            // by capability join...
+            // (this check is cheaper than in_array())
+            if ($lastseen !== $ra->path.':'.$ra->roleid) {
+                $lastseen = $ra->path.':'.$ra->roleid;
+                array_push($accessdata['ra'][$ra->path], $ra->roleid);
+                $parentids = explode('/', $ra->path);
+                array_shift($parentids); // drop empty leading "context"
+                array_pop($parentids);   // drop _this_ context
+
+                if (isset($raparents[$ra->roleid])) {
+                    $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid],
+                                                          $parentids);
+                } else {
+                    $raparents[$ra->roleid] = $parentids;
                 }
             }
-            unset($ra);
+            // Always add the roleded
+            if (!empty($ra->capability)) {
+                $k = "{$ra->path}:{$ra->roleid}";
+                $accessdata['rdef'][$k][$ra->capability] = $ra->permission;
+            }
         }
+        unset($ra);
         rs_close($rs);
     }
 
@@ -1251,13 +1235,11 @@ function get_user_access_sitewide($userid) {
         $rs = get_recordset_sql($sql);
         unset($clauses);
 
-        if ($rs->RecordCount()) {
-            while ($rd = rs_fetch_next_record($rs)) {
-                $k = "{$rd->path}:{$rd->roleid}";
-                $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
-            }
-            unset($rd);
+        while ($rd = rs_fetch_next_record($rs)) {
+            $k = "{$rd->path}:{$rd->roleid}";
+            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
         }
+        unset($rd);
         rs_close($rs);
     }
 
@@ -1284,13 +1266,11 @@ function get_user_access_sitewide($userid) {
             ORDER BY sctx.depth, sctx.path, ra.roleid";
 
     $rs = get_recordset_sql($sql);
-    if ($rs->RecordCount()) {
-        while ($rd = rs_fetch_next_record($rs)) {
-            $k = "{$rd->path}:{$rd->roleid}";
-            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
-        }
-        unset($rd);
+    while ($rd = rs_fetch_next_record($rs)) {
+        $k = "{$rd->path}:{$rd->roleid}";
+        $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
     }
+    unset($rd);
     rs_close($rs);
 
     return $accessdata;
@@ -1370,14 +1350,12 @@ function get_user_access_bycontext($userid, $context, $accessdata=NULL) {
     // Read in the RAs
     //
     $localroles = array();
-    if ($rs->RecordCount()) {
-        while ($ra = rs_fetch_next_record($rs)) {
-            if (!isset($accessdata['ra'][$ra->path])) {
-                $accessdata['ra'][$ra->path] = array();
-            }
-            array_push($accessdata['ra'][$ra->path], $ra->roleid);
-            array_push($localroles,           $ra->roleid);
+    while ($ra = rs_fetch_next_record($rs)) {
+        if (!isset($accessdata['ra'][$ra->path])) {
+            $accessdata['ra'][$ra->path] = array();
         }
+        array_push($accessdata['ra'][$ra->path], $ra->roleid);
+        array_push($localroles,           $ra->roleid);
     }
     rs_close($rs);
 
@@ -1417,11 +1395,9 @@ function get_user_access_bycontext($userid, $context, $accessdata=NULL) {
             ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
 
     if ($rs = get_recordset_sql($sql)) {
-        if ($rs->RecordCount()) {
-            while ($rd = rs_fetch_next_record($rs)) {
-                $k = "{$rd->path}:{$rd->roleid}";
-                $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
-            }
+        while ($rd = rs_fetch_next_record($rs)) {
+            $k = "{$rd->path}:{$rd->roleid}";
+            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
         }
         rs_close($rs);
     } else {
@@ -1490,11 +1466,9 @@ function get_role_access_bycontext($roleid, $context, $accessdata=NULL) {
             ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
 
     $rs = get_recordset_sql($sql);
-    if ($rs->RecordCount()) {
-        while ($rd = rs_fetch_next_record($rs)) {
-            $k = "{$rd->path}:{$roleid}";
-            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
-        }
+    while ($rd = rs_fetch_next_record($rs)) {
+        $k = "{$rd->path}:{$roleid}";
+        $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
     }
     rs_close($rs);
 
@@ -1684,11 +1658,9 @@ function load_temp_role($context, $roleid, $accessdata) {
                   AND rc.roleid = {$roleid}
             ORDER BY ctx.depth, ctx.path";
     $rs = get_recordset_sql($sql);
-    if ($rs->RecordCount()) {
-        while ($rd = rs_fetch_next_record($rs)) {
-            $k = "{$rd->path}:{$roleid}";
-            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
-        }
+    while ($rd = rs_fetch_next_record($rs)) {
+        $k = "{$rd->path}:{$roleid}";
+        $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
     }
     rs_close($rs);
 
@@ -2443,20 +2415,18 @@ function cleanup_contexts() {
               WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_GROUP . "
            ";
     if ($rs = get_recordset_sql($sql)) {
-        if ($rs->RecordCount()) {
-            begin_sql();
-            $tx = true;
-            while ($tx && $ctx = rs_fetch_next_record($rs)) {
-                $tx = $tx && delete_context($ctx->level, $ctx->instanceid);
-            }
-            rs_close($rs);
-            if ($tx) {
-                commit_sql();
-                return true;
-            }
-            rollback_sql();
-            return false;
+        begin_sql();
+        $tx = true;
+        while ($tx && $ctx = rs_fetch_next_record($rs)) {
+            $tx = $tx && delete_context($ctx->level, $ctx->instanceid);
         }
+        rs_close($rs);
+        if ($tx) {
+            commit_sql();
+            return true;
+        }
+        rollback_sql();
+        return false;
         rs_close($rs);
     }
     return true;
@@ -3679,12 +3649,10 @@ function get_child_contexts($context) {
             ";
             $rs  = get_recordset_sql($sql);
             $records = array();
-            if ($rs->RecordCount()) {
-                while ($rec = rs_fetch_next_record($rs)) {
-                    $records[$rec->id] = $rec;
-                    $context_cache[$rec->contextlevel][$rec->instanceid] = $rec;
-                }
-             }
+            while ($rec = rs_fetch_next_record($rs)) {
+                $records[$rec->id] = $rec;
+                $context_cache[$rec->contextlevel][$rec->instanceid] = $rec;
+            }
             rs_close($rs);
             return $records;
         break;
@@ -3700,11 +3668,9 @@ function get_child_contexts($context) {
             ";
             $rs  = get_recordset_sql($sql);
             $records = array();
-            if ($rs->RecordCount()) {
-                while ($rec = rs_fetch_next_record($rs)) {
-                    $records[$rec->id] = $rec;
-                    $context_cache[$rec->contextlevel][$rec->instanceid] = $rec;
-                }
+            while ($rec = rs_fetch_next_record($rs)) {
+                $records[$rec->id] = $rec;
+                $context_cache[$rec->contextlevel][$rec->instanceid] = $rec;
             }
             rs_close($rs);
             return $records;
@@ -4094,11 +4060,10 @@ function get_assignable_roles ($context, $field="name") {
 
     $rs = get_recordset_sql($sql);
     $roles = array();
-    if ($rs->RecordCount()) {
-        while ($r = rs_fetch_next_record($rs)) {
-            $roles[$r->id] = $r->{$field};
-        }
+    while ($r = rs_fetch_next_record($rs)) {
+        $roles[$r->id] = $r->{$field};
     }
+    rs_close($rs);
     foreach ($roles as $roleid => $rolename) {
         $roles[$roleid] = strip_tags(format_string($rolename, true));
     }

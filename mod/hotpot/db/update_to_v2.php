@@ -270,7 +270,7 @@ function hotpot_update_to_v2_1_2() {
         GROUP BY userid, hotpot
         HAVING COUNT(*)>1 AND MIN(status)=1
     ");
-    if ($rs && $rs->RecordCount()) {
+    if ($rs && !$rs->EOF) {
         $records = $rs->GetArray();
 
         // start message to browser
@@ -921,7 +921,7 @@ function hotpot_db_index_exists($table, $index, $feedback=false) {
     switch (strtolower($CFG->dbfamily)) {
         case 'mysql' : 
             $rs = $db->Execute("SHOW INDEX FROM `$table`");
-            if ($rs && $rs->RecordCount()>0) {
+            if ($rs && !$rs->EOF) {
                 $records = $rs->GetArray();
                 foreach ($records as $record) {
                     if (isset($record['Key_name']) && $record['Key_name']==$index) {
@@ -933,7 +933,7 @@ function hotpot_db_index_exists($table, $index, $feedback=false) {
         break;
         case 'postgres' :
             $rs = $db->Execute("SELECT relname FROM pg_class WHERE relname = '$index' AND relkind='i'");
-            if ($rs && $rs->RecordCount()>0) {
+            if ($rs && !$rs->EOF) {
                 $exists = true;
             }
         break;
@@ -1042,7 +1042,7 @@ function hotpot_db_object_exists($table, $field='', $feedback=false) {
     if (empty($rs) && debugging()) {
         notify($db->ErrorMsg()."<br /><br />$sql");
     }
-    return ($rs && $rs->RecordCount()>0);
+    return ($rs && !$rs->EOF);
 }
 function hotpot_db_remove_table($table, $feedback=true) {
     global $CFG;
@@ -1208,7 +1208,7 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
             //    (except lib/adodb/drivers/adodb-postgre64-inc.php)
             $dbversion = '';
             $rs = $db->Execute("SELECT version()");
-            if ($rs && $rs->RecordCount()>0) {
+            if ($rs && !$rs->EOF) {
                 $records = $rs->GetArray();
                 if (preg_match('/\d+\.\d+/', $records[0][0], $matches)) {
                     $dbversion = $matches[0];

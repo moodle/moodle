@@ -340,12 +340,10 @@ class grade_grade extends grade_object {
         $now = time(); // no rounding needed, this is not supposed to be called every 10 seconds
 
         if ($rs = get_recordset_select('grade_grades', "itemid IN ($items_sql) AND locked = 0 AND locktime > 0 AND locktime < $now")) {
-            if ($rs->RecordCount() > 0) {
-                while ($grade = rs_fetch_next_record($rs)) {
-                    $grade_grade = new grade_grade($grade, false);
-                    $grade_grade->locked = time();
-                    $grade_grade->update('locktime');
-                }
+            while ($grade = rs_fetch_next_record($rs)) {
+                $grade_grade = new grade_grade($grade, false);
+                $grade_grade->locked = time();
+                $grade_grade->update('locktime');
             }
             rs_close($rs);
         }
