@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20071008" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20071010" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -253,7 +253,7 @@
         <INDEX NAME="filter_md5key" UNIQUE="false" FIELDS="filter, md5key"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="cache_text" COMMENT="For storing temporary copies of processed texts" PREVIOUS="cache_filters" NEXT="grade_category">
+    <TABLE NAME="cache_text" COMMENT="For storing temporary copies of processed texts" PREVIOUS="cache_filters" NEXT="log">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="md5key"/>
         <FIELD NAME="md5key" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="formattedtext"/>
@@ -268,85 +268,7 @@
         <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified" COMMENT="Mainly to help deletion of expired records from cron" PREVIOUS="md5key"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="grade_category" COMMENT="to define categories to group activity grades" PREVIOUS="cache_text" NEXT="grade_exceptions">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="drop_x_lowest"/>
-        <FIELD NAME="drop_x_lowest" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="bonus_points"/>
-        <FIELD NAME="bonus_points" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="drop_x_lowest" NEXT="hidden"/>
-        <FIELD NAME="hidden" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="bonus_points" NEXT="weight"/>
-        <FIELD NAME="weight" TYPE="number" LENGTH="5" NOTNULL="true" UNSIGNED="false" DEFAULT="0.00" SEQUENCE="false" ENUM="false" DECIMALS="2" PREVIOUS="hidden"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="grade_exceptions" COMMENT="individual grades to be skipped for certain students" PREVIOUS="grade_category" NEXT="grade_item">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="grade_itemid"/>
-        <FIELD NAME="grade_itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="grade_itemid"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="grade_item" COMMENT="items to be graded" PREVIOUS="grade_exceptions" NEXT="grade_letter">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="category"/>
-        <FIELD NAME="category" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="modid"/>
-        <FIELD NAME="modid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="category" NEXT="cminstance"/>
-        <FIELD NAME="cminstance" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="modid" NEXT="scale_grade"/>
-        <FIELD NAME="scale_grade" TYPE="float" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="1.0000000000" SEQUENCE="false" ENUM="false" DECIMALS="10" PREVIOUS="cminstance" NEXT="extra_credit"/>
-        <FIELD NAME="extra_credit" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="scale_grade" NEXT="sort_order"/>
-        <FIELD NAME="sort_order" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="extra_credit"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="grade_letter" COMMENT="to convert numerical grades to letter grades" PREVIOUS="grade_item" NEXT="grade_preferences">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="letter"/>
-        <FIELD NAME="letter" TYPE="char" LENGTH="8" NOTNULL="true" DEFAULT="NA" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="grade_high"/>
-        <FIELD NAME="grade_high" TYPE="number" LENGTH="5" NOTNULL="true" UNSIGNED="false" DEFAULT="100.00" SEQUENCE="false" ENUM="false" DECIMALS="2" PREVIOUS="letter" NEXT="grade_low"/>
-        <FIELD NAME="grade_low" TYPE="number" LENGTH="5" NOTNULL="true" UNSIGNED="false" DEFAULT="0.00" SEQUENCE="false" ENUM="false" DECIMALS="2" PREVIOUS="grade_high"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="grade_preferences" COMMENT="Preferences of the gradebook for each course" PREVIOUS="grade_letter" NEXT="log">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="preference"/>
-        <FIELD NAME="preference" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="value"/>
-        <FIELD NAME="value" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="preference"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="courseid-preference" UNIQUE="true" FIELDS="courseid, preference"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="log" COMMENT="Every action is logged as far as possible" PREVIOUS="grade_preferences" NEXT="log_display">
+    <TABLE NAME="log" COMMENT="Every action is logged as far as possible" PREVIOUS="cache_text" NEXT="log_display">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="time"/>
         <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>

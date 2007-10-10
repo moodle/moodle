@@ -504,30 +504,6 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
-    if ($result && $oldversion < 2007011200) {
-
-    /// Define table context_rel to be created
-        $table = new XMLDBTable('context_rel');
-
-    /// Adding fields to table context_rel
-        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->addFieldInfo('c1', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->addFieldInfo('c2', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-
-    /// Adding keys to table context_rel
-        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->addKeyInfo('c1', XMLDB_KEY_FOREIGN, array('c1'), 'context', array('id'));
-        $table->addKeyInfo('c2', XMLDB_KEY_FOREIGN, array('c2'), 'context', array('id'));
-        $table->addKeyInfo('c1c2', XMLDB_KEY_UNIQUE, array('c1', 'c2'));
-
-    /// Launch create table for context_rel
-        $result = $result && create_table($table);
-
-        /// code here to fill the context_rel table
-        /// use get record set to iterate slower
-        /// /deprecated and gone / build_context_rel();
-    }
-
     if ($result && $oldversion < 2007011501) {
         if (!empty($CFG->enablerecordcache) && empty($CFG->rcache) &&
             // Note: won't force-load these settings into CFG
@@ -1475,12 +1451,6 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// originally there was supportname and supportemail upgrade code - this is handled in upgradesettings.php instead
 
-    /// MDL-10679, context_rel clean up
-    if ($result && $oldversion < 2007080200) {
-        delete_records('context_rel');
-        /// /deprecated and gone / build_context_rel();
-    }
-
     if ($result && $oldversion < 2007080202) {
 
     /// Define index tagiditem (not unique) to be dropped form tag_instance
@@ -2394,14 +2364,16 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);
     }
 
-    // dropping context_rel table
+/// dropping context_rel table - not used anymore
     if ($result && $oldversion < 2007100800) {
 
     /// Define table context_rel to be dropped
         $table = new XMLDBTable('context_rel');
 
     /// Launch drop table for context_rel
-        $result = $result && drop_table($table);
+        if (table_exists($table)) {
+            drop_table($table);
+        }
     }
 
 /// Truncate the text_cahe table and add new index
@@ -2429,12 +2401,8 @@ function xmldb_main_upgrade($oldversion=0) {
         execute_sql($sql);
     }
 
-
-
-
-/* NOTE: please keep this at the end of upgrade file for now ;-)
-    /// drop old gradebook tables
-    if ($result && $oldversion < xxxxxxxx) {
+/// drop old gradebook tables
+    if ($result && $oldversion < 2007100903) {
         $tables = array('grade_category',
                         'grade_item',
                         'grade_letter',
@@ -2448,7 +2416,8 @@ function xmldb_main_upgrade($oldversion=0) {
             }
         }
     }
-*/
+
+
 
     return $result;
 }
