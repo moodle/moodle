@@ -28,4 +28,3 @@
          "lesson.php?action=delete&amp;id=$cm->id&amp;pageid=$pageid&amp;sesskey=".$USER->sesskey, 
          "view.php?id=$cm->id");
 ?>
-    

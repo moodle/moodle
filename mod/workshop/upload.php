@@ -117,4 +117,3 @@
     print_footer($course);
 
 ?>
-

@@ -1364,4 +1364,3 @@
     print_footer($course);
 
 ?>
-
