@@ -38,11 +38,6 @@ class grade_export_form extends moodleform {
 
         $mform->addElement('header', 'options', get_string('options', 'grades'));
 
-        $mform->addElement('advcheckbox', 'export_letters', get_string('exportletters', 'grades'));
-        $mform->setDefault('export_letters', 0);
-        $mform->setHelpButton('export_letters', array(false, get_string('exportletters', 'grades'),
-                false, true, false, get_string("exportlettershelp", 'grades')));
-
         $mform->addElement('advcheckbox', 'export_feedback', get_string('exportfeedback', 'grades'));
         $mform->setDefault('export_feedback', 0);
 
@@ -52,7 +47,35 @@ class grade_export_form extends moodleform {
         if (!empty($features['updatedgrades'])) {
             $mform->addElement('advcheckbox', 'updatedgradesonly', get_string('updatedgradesonly', 'grades'));
         }
-    
+        
+        /// selections for decimal points and format, MDL-11667, defaults to site settings, if set
+        //$default_gradedisplaytype = $CFG->grade_export_displaytype;
+        $options = array(GRADE_DISPLAY_TYPE_REAL       => get_string('real', 'grades'),
+                         GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                         GRADE_DISPLAY_TYPE_LETTER     => get_string('letter', 'grades'));
+        
+        /*
+        foreach ($options as $key=>$option) {
+            if ($key == $default_gradedisplaytype) {
+                $options[GRADE_DISPLAY_TYPE_DEFAULT] = get_string('defaultprev', 'grades', $option);
+                break;
+            }
+        }
+        */
+        $mform->addElement('select', 'display', get_string('gradeexportdisplaytype', 'grades'), $options);  
+        $mform->setDefault('display', $CFG->grade_export_displaytype);
+        
+        //$default_gradedecimals = $CFG->grade_export_decimalpoints;
+        $options = array(0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);
+        $mform->addElement('select', 'decimals', get_string('gradeexportdecimalpoints', 'grades'), $options);
+        $mform->setDefault('decimals', $CFG->grade_export_decimalpoints);
+        $mform->disabledIf('decimals', 'display', 'eq', GRADE_DISPLAY_TYPE_LETTER);
+        /*
+        if ($default_gradedisplaytype == GRADE_DISPLAY_TYPE_LETTER) {
+            $mform->disabledIf('decimals', 'display', "eq", GRADE_DISPLAY_TYPE_DEFAULT);
+        }
+        */
+
         if (!empty($features['includeseparator'])) {
             $radio = array();
             $radio[] = &MoodleQuickForm::createElement('radio', 'separator', null, get_string('septab', 'grades'), 'tab');

@@ -27,12 +27,13 @@ require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/export/lib.php';
 require_once 'grade_export_xml.php';
 
-$id              = required_param('id', PARAM_INT); // course id
-$groupid         = optional_param('groupid', 0, PARAM_INT);
-$itemids         = required_param('itemids', PARAM_RAW);
-$export_feedback = optional_param('export_feedback', 0, PARAM_BOOL);
-$export_letters  = optional_param('export_letters', 0, PARAM_BOOL);
+$id                = required_param('id', PARAM_INT); // course id
+$groupid           = optional_param('groupid', 0, PARAM_INT);
+$itemids           = required_param('itemids', PARAM_RAW);
+$export_feedback   = optional_param('export_feedback', 0, PARAM_BOOL);
 $updatedgradesonly = optional_param('updatedgradesonly', false, PARAM_BOOL);
+$displaytype       = optional_param('displaytype', $CFG->grade_export_displaytype, PARAM_INT);
+$decimalpoints     = optional_param('decimalpoints', $CFG->grade_export_decimalpoints, PARAM_INT);
 
 if (!$course = get_record('course', 'id', $id)) {
     print_error('nocourseid');
@@ -46,7 +47,7 @@ require_capability('gradeexport/xml:view', $context);
 
 
 // print all the exported data here
-$export = new grade_export_xml($course, $groupid, $itemids, $export_feedback, $export_letters, $updatedgradesonly);
+$export = new grade_export_xml($course, $groupid, $itemids, $export_feedback, $updatedgradesonly, $displaytype, $decimalpoints);
 $export->print_grades();
 
 ?>

@@ -30,8 +30,8 @@ class grade_export_txt extends grade_export {
 
     var $separator; // default separator
 
-    function grade_export_txt($course, $groupid=0, $itemlist='', $export_feedback=false, $export_letters=false, $separator='comma') {
-        $this->grade_export($course, $groupid, $itemlist, $export_feedback, $export_letters);
+    function grade_export_txt($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2, $separator='comma') {
+        $this->grade_export($course, $groupid, $itemlist, $export_feedback, $updatedgradesonly, $displaytype, $decimalpoints);
         $this->separator = $separator;
     }
 

@@ -7,7 +7,7 @@
 require_once $CFG->libdir.'/grade/constants.php';
 
 $temp = new admin_settingpage('gradessettings', get_string('gradessettings', 'grades'));
-$temp->add(new admin_setting_special_gradeexport());
+
 // enable outcomes checkbox
 $temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'grades'), get_string('configenableoutcomes', 'grades'), 0, PARAM_INT));
 // enable publishing in exports/imports
@@ -33,6 +33,22 @@ $temp->add(new admin_setting_configselect('grade_decimalpoints', get_string('dec
                                                  '4' => '4',
                                                  '5' => '5')));
 
+$temp->add(new admin_setting_configselect('grade_export_displaytype', get_string('gradeexportdisplaytype', 'grades'),
+                                          get_string('configgradeexportdisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
+                                          array(GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
+                                                GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                                                GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'))));
+
+$temp->add(new admin_setting_configselect('grade_export_decimalpoints', get_string('gradeexportdecimalpoints', 'grades'),
+                                          get_string('configexportdecimalpoints', 'grades'), 2,
+                                          array( '0' => '0',
+                                                 '1' => '1',
+                                                 '2' => '2',
+                                                 '3' => '3',
+                                                 '4' => '4',
+                                                 '5' => '5')));                                                 
+                                                 
+$temp->add(new admin_setting_special_gradeexport());
 $ADMIN->add('grades', $temp);
 
 /// Scales and outcomes

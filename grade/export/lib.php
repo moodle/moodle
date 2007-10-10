@@ -45,6 +45,8 @@ class grade_export {
     var $userkey;         // export using private user key
 
     var $updatedgradesonly; // only export updated grades
+    var $displaytype; // display type (e.g. real, percentages, letter) for exports
+    var $decimalpoints; // number of decimal points for exports
     /**
      * Constructor should set up all the private variables ready to be pulled
      * @param object $course
@@ -54,7 +56,7 @@ class grade_export {
      * @param boolean $export_letters
      * @note Exporting as letters will lead to data loss if that exported set it re-imported.
      */
-    function grade_export($course, $groupid=0, $itemlist='', $export_feedback=false, $export_letters=false, $updatedgradesonly = false) {
+    function grade_export($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2) {
         $this->course = $course;
         $this->groupid = $groupid;
         $this->grade_items = grade_item::fetch_all(array('courseid'=>$this->course->id));
@@ -79,6 +81,9 @@ class grade_export {
         $this->userkey         = '';
         $this->previewrows     = false;
         $this->updatedgradesonly = $updatedgradesonly;
+        
+        $this->displaytype = $displaytype;
+        $this->decimalpoints = $decimalpoints;
     }
 
     /**
@@ -148,14 +153,7 @@ class grade_export {
      * @return string
      */
     function format_grade($grade) {
-        $displaytype = null;
-        if ($this->export_letters) {
-            $displaytype = GRADE_DISPLAY_TYPE_LETTER;
-        } else {
-            $displaytype = GRADE_DISPLAY_TYPE_REAL;
-        }
-
-        return grade_format_gradevalue($grade->finalgrade, $this->grade_items[$grade->itemid], false, $displaytype, null);
+        return grade_format_gradevalue($grade->finalgrade, $this->grade_items[$grade->itemid], false, $this->displaytype, $this->decimalpoints);
     }
 
     /**
@@ -266,7 +264,9 @@ echo "status is $status";
                         'itemids'           =>implode(',', $itemids),
                         'export_letters'    =>$this->export_letters,
                         'export_feedback'   =>$this->export_feedback,
-                        'updatedgradesonly' =>$this->updatedgradesonly);
+                        'updatedgradesonly' =>$this->updatedgradesonly,
+                        'displaytype'       =>$this->displaytype,
+                        'decimalpoints'     =>$this->decimalpoints);
 
         return $params;
     }
