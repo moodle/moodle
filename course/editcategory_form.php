@@ -28,34 +28,9 @@ class editcategory_form extends moodleform {
         $mform->setHelpButton('description', array('writing', 'richtext'), false, 'editorhelpbutton');
         
         $mform->addElement('hidden', 'id', null);
+        $mform->addElement('hidden', 'categoryadd', 0);
         $mform->setType('id', PARAM_INT);
         $this->add_action_buttons(false, get_string('submit'));
-    }
-
-    function definition_after_data() {
-        $mform = $this->_form;
-        
-        $category = $this->_customdata['category'];
-        $parentid = $this->_customdata['id'];
-
-        if (!empty($category->name)) {
-            $id_el =& $mform->getElement('id');
-            $id_el->setValue($category->id);
-            $name_el =& $mform->getElement('name');
-            $name_el->setValue($category->name);
-            $parent_el =& $mform->getElement('parent');
-            $parent_el->setValue($category->parent);
-            $description_el =& $mform->getElement('description');
-            $description_el->setValue($category->description);
-            if (!empty($CFG->allowcategorythemes)) {
-                $theme_el =& $mform->getElement('theme');
-                $theme_el->setValue($category->theme);
-            }
-        } elseif (!is_null($parentid)) { // We assume we are adding a new category, and use $id as the parent id
-            $parent_el =& $mform->getElement('parent');
-            $parent_el->setValue($parentid);
-            $mform->addElement('hidden', 'categoryadd', 1);
-        }
     }
 } 
 ?>

@@ -26,44 +26,77 @@ if (!$site = get_site()) {
 }
 
 if ($categoryadd) { // Show Add category form: if $id is given, it is used as the parent category 
-    $context = get_context_instance(CONTEXT_SYSTEM);
-    $category = new stdClass();
     $strtitle = get_string("addnewcategory");
-    $mform = new editcategory_form('editcategory.php', compact(array('category', 'id')));
-    
-    if (($data = $mform->get_data()) && has_capability('moodle/category:create', $context)) {
-        $category->name = stripslashes_safe($data->name);
-        $category->description = $data->description;
-        $category->sortorder = 999;
-        $category->parent = $data->parent; // if $id = 0, the new category will be a top-level category
-
-        if (!empty($data->theme) && !empty($CFG->allowcategorythemes)) {
-            $category->theme = $data->theme;
-            theme_setup();
-        }
-
-        if (!$category->id = insert_record('course_categories', $category)) {
-            notify( "Could not insert the new category '$category->name' ");
-        } else {
-            $category->context = get_context_instance(CONTEXT_COURSECAT, $category->id);
-            mark_context_dirty($category->context->path);
-            redirect('index.php?categoryedit=on', get_string('categoryadded', null, $category->name));
-        }
-    }
-}
-
-// Prepare context if category id is given, or use System context if not
-if ($id && !$categoryadd) {
+    $context = get_context_instance(CONTEXT_SYSTEM);
+    $category = null;
+} elseif (!is_null($id) && !$categoryadd) { // Show Edit category form: $id is given as the identifier of the category being edited
+    $strtitle = get_string("editcategorysettings");
     $context = get_context_instance(CONTEXT_COURSECAT, $id); 
     if (!$category = get_record("course_categories", "id", $id)) {
         error("Category not known!");
     }
-} elseif ($categoryadd) {
-    $context = get_context_instance(CONTEXT_SYSTEM);
-    $category = new stdClass();
-} else {
-    error("You must provide either an id or the categoryadd switch");
-} 
+}
+
+$mform = new editcategory_form('editcategory.php', compact(array('category', 'id')));
+
+if (!empty($category)) {
+    $mform->set_data($category); 
+} elseif (!is_null($id)) {
+    $data = new stdClass();
+    $data->parent = $id;
+    $data->categoryadd = 1;
+    $mform->set_data($data);
+}
+    
+if ($mform->is_cancelled()){
+    if (empty($category)) {
+        redirect($CFG->wwwroot);
+    } else {
+        redirect($CFG->wwwroot.'/course/category.php?categoryedit=on&id='.$category->id);
+    } 
+} else if (($data = $mform->get_data())) {
+    $newcategory = new stdClass();
+    $newcategory->name = $data->name;
+    $newcategory->description = $data->description;
+    $newcategory->sortorder = 999;
+    $newcategory->parent = $data->parent; // if $id = 0, the new category will be a top-level category
+
+    if (!empty($data->theme) && !empty($CFG->allowcategorythemes)) {
+        $newcategory->theme = $data->theme;
+        theme_setup();
+    }
+
+    if (empty($category) && has_capability('moodle/category:create', $context)) { // Create a new category 
+        if (!$newcategory->id = insert_record('course_categories', $newcategory)) {
+            notify( "Could not insert the new category '$newcategory->name' ");
+        } else {
+            $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
+            mark_context_dirty($newcategory->context->path);
+            redirect('index.php?categoryedit=on', get_string('categoryadded', null, $newcategory->name));
+        }
+    } elseif (has_capability('moodle/category:update', $context)) {
+        $newcategory->id = $category->id;
+
+        if ($newcategory->parent != $category->parent) {
+            $parent_cat = get_record('course_categories', 'id', $newcategory->parent);
+            move_category($newcategory, $parent_cat);
+        }
+
+        if (!update_record('course_categories', $newcategory)) {
+            error( "Could not update the category '$newcategory->name' ");
+        } else {
+            if ($newcategory->parent == 0) {
+                $redirect_link = 'index.php?categoryedit=on';
+            } else {
+                $redirect_link = 'category.php?id='.$newcategory->id.'&categoryedit=on'; 
+            }
+            fix_course_sortorder();
+            redirect($redirect_link);
+        }
+    } 
+}
+
+
 
 // If id is given, but not categoryadd or categoryupdate, we show the category with its list of subcategories
 if ($id && !$categoryadd && !$categoryupdate && false) { 
@@ -269,43 +302,7 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
         $mform->display();
     }
     */
-} elseif (!is_null($id) && !$categoryadd) { // Show Edit category form: $id is given as the identifier of the category being edited
-    $strtitle = get_string("editcategorysettings");
-    $mform = new editcategory_form('editcategory.php', compact(array('id', 'category')));
-    if (has_capability('moodle/category:update', $context)) {
-        if ($data = $mform->get_data()) {
-            $category->name = $data->name;
-            $category->description = $data->description;
-            $category->sortorder = 999;
-
-            if ($category->parent != $data->parent) {
-                $parent_cat = get_record('course_categories', 'id', $data->parent);
-                move_category($category, $parent_cat);
-                $category->parent = $data->parent;
-            }
-
-            if (!empty($data->theme) && !empty($CFG->allowcategorythemes)) {
-                $category->theme = $data->theme;
-                theme_setup();
-            }
-
-            if (!update_record('course_categories', $category)) {
-                error( "Could not update the category '$category->name' ");
-            } else {
-                if ($category->parent == 0) {
-                    $redirect_link = 'index.php?categoryedit=on';
-                } else {
-                    $redirect_link = 'category.php?id='.$category->id.'&categoryedit=on'; 
-                }
-                fix_course_sortorder();
-                redirect($redirect_link);
-            }
-        } 
-    } else {
-        error("You do not have the permission to update this category.");
-    }
-}
-
+} 
 // Print the form
 
 $site = get_site();
