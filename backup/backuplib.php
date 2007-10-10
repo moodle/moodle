@@ -1515,8 +1515,8 @@
                 fwrite ($bf,full_tag("MULTFACTOR",5,false,$grade_item->multfactor));
                 fwrite ($bf,full_tag("PLUSFACTOR",5,false,$grade_item->plusfactor));
                 fwrite ($bf,full_tag("AGGREGATIONCOEF",5,false,$grade_item->aggregationcoef));
-                fwrite ($bf,full_tag("DISPLAY",5,false,$grade_item->plusfactor));
-                fwrite ($bf,full_tag("DECIMALS",5,false,$grade_item->plusfactor));
+                fwrite ($bf,full_tag("DISPLAY",5,false,$grade_item->display));
+                fwrite ($bf,full_tag("DECIMALS",5,false,$grade_item->decimals));
                 fwrite ($bf,full_tag("HIDDEN",5,false,$grade_item->hidden));
                 fwrite ($bf,full_tag("LOCKED",5,false,$grade_item->locked));
                 fwrite ($bf,full_tag("LOCKTIME",5,false,$grade_item->locktime));
