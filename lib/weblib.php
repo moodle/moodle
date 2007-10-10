@@ -3375,14 +3375,30 @@ function print_navigation ($navigation, $separator=0, $return=false) {
 
 /**
  * This function will build the navigation string to be used by print_header
- * and others
+ * and others.
+ *
+ * It will automatically add the site (and course level if appropriate) links.
+ *
+ * If you pass in a $cm object, the method will also generate the activity (e.g. Forums)
+ * and activityinstances (e.g. General Developer Forum) navigation levels.
+ *
+ * The fields used are $cm->modname, $cm->name and $cm->course. If you get the $cm object 
+ * using the function get_coursemodule_from_instance or get_coursemodule_from_id (as recommended)
+ * then this will be done for you automatically. If you don't have $cm->modname or $cm->name,
+ * this fuction will attempt to find them using the $cm->module and $cm->instance fields, but 
+ * this takes extra database queries, so a warning is printed in developer debug mode.
+ * 
  * @uses $CFG
  * @uses $THEME
- * @param $extranavlinks - array of associative arrays, keys: name, link, type
+ *
+ * @param array $extranavlinks - array of associative arrays, keys: name, link, type
+ * @param mixed $cm - optionally the $cm object, if you want this function to generate the 
+ *      activity and activityinstance levels of navigation too.
+ *
  * @return $navigation as an object so it can be differentiated from old style
  * navigation strings.
  */
-function build_navigation($extranavlinks) {
+function build_navigation($extranavlinks, $cm = null) {
     global $CFG, $COURSE;
 
     $navigation = '';
@@ -3390,19 +3406,46 @@ function build_navigation($extranavlinks) {
 
     //Site name
     if ($site = get_site()) {
-        $navlinks[] = array('name' => format_string($site->shortname),
-                            'link' => "$CFG->wwwroot/",
-                            'type' => 'home');
+        $navlinks[] = array(
+                'name' => format_string($site->shortname),
+                'link' => "$CFG->wwwroot/",
+                'type' => 'home');
     }
 
+    // Course name, if appropriate.
+    if (isset($COURSE) && $COURSE->id != SITEID) {
+        $navlinks[] = array(
+                'name' => format_string($COURSE->shortname),
+                'link' => "$CFG->wwwroot/course/view.php?id=$COURSE->id",
+                'type' => 'course');
+    }
 
-    if ($COURSE) {
-        if ($COURSE->id != SITEID) {
-            //Course
-            $navlinks[] = array('name' => format_string($COURSE->shortname),
-                                'link' => "$CFG->wwwroot/course/view.php?id=$COURSE->id",
-                                'type' => 'course');
+    // Activity type and instance, if appropriate.
+    if (is_object($cm)) {
+        if (!isset($cm->modname)) {
+            debugging('The field $cm->modname should be set if you call build_navigation with '.
+                    'a $cm parameter. If you get $cm using get_coursemodule_from_instance or ',
+                    'get_coursemodule_from_id, this will be done automatically.', DEBUG_DEVELOPER);
+            if (!$cm->modname = get_field('modules', 'name', 'id', $cm->module)) {
+                error('Cannot get the module type in build navigation.');
+            }
         }
+        if (!isset($cm->name)) {
+            debugging('The field $cm->name should be set if you call build_navigation with '.
+                    'a $cm parameter. If you get $cm using get_coursemodule_from_instance or ',
+                    'get_coursemodule_from_id, this will be done automatically.', DEBUG_DEVELOPER);
+            if (!$cm->modname = get_field($cm->modname, 'name', 'id', $cm->instance)) {
+                error('Cannot get the module name in build navigation.');
+            }
+        }
+        $navlinks[] = array(
+                'name' => get_string('modulenameplural', $cm->modname),
+                'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/index.php?id=' . $cm->course,
+                'type' => 'activity');
+        $navlinks[] = array(
+                'name' => format_string($cm->name),
+                'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/view.php?id=' . $cm->id,
+                'type' => 'activityinstance');
     }
 
     //Merge in extra navigation links
