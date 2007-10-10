@@ -1302,8 +1302,12 @@
                             $dbrec->aggregation = backup_todb($info['GRADE_CATEGORY']['#']['AGGREGATION']['0']['#']);
                             $dbrec->keephigh = backup_todb($info['GRADE_CATEGORY']['#']['KEEPHIGH']['0']['#']);
                             $dbrec->droplow = backup_todb($info['GRADE_CATEGORY']['#']['DROPLOW']['0']['#']);
+                            $dbrec->aggregateonlygraded = backup_todb($info['GRADE_CATEGORY']['#']['AGGREGATEONLYGRADED']['0']['#']);
                             $dbrec->aggregateoutcomes = backup_todb($info['GRADE_CATEGORY']['#']['AGGREGATEOUTCOMES']['0']['#']);
-
+                            $dbrec->aggregatesubcats = backup_todb($info['GRADE_CATEGORY']['#']['AGGREGATESUBCATS']['0']['#']);
+                            $dbrec->timecreated = backup_todb($info['GRADE_CATEGORY']['#']['TIMECREATED']['0']['#']);
+                            $dbrec->timemodified = backup_todb($info['GRADE_CATEGORY']['#']['TIMEMODIFIED']['0']['#']);                           
+                                               
                             //Structure is equal to db, insert record
                             //if the fullname doesn't exist
                             if (!$prerec = get_record('grade_categories','courseid',$dbrec->courseid,'fullname',$dbrec->fullname)) {
@@ -1379,7 +1383,11 @@
                                 $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($info['GRADE_OUTCOME']['#']['SCALEID']['0']['#']));
                                 $dbrec->scaleid = $scale->new_id;
                             }
-
+                            
+                            $dbrec->description = backup_todb($info['GRADE_OUTCOME']['#']['DESCRIPTION']['0']['#']);
+                            $dbrec->timecreated = backup_todb($info['GRADE_OUTCOME']['#']['TIMECREATED']['0']['#']);
+                            $dbrec->timemodified = backup_todb($info['GRADE_OUTCOME']['#']['TIMEMODIFIED']['0']['#']);
+                            
                             $modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_OUTCOME']['#']['USERMODIFIED']['0']['#']));
                             $dbrec->usermodified = $modifier->new_id;
 
@@ -1558,6 +1566,7 @@
                             $dbrec->itemnumber = backup_todb($info['GRADE_ITEM']['#']['ITEMNUMBER']['0']['#']);
                             $dbrec->iteminfo = backup_todb($info['GRADE_ITEM']['#']['ITEMINFO']['0']['#']);
                             $dbrec->idnumber = backup_todb($info['GRADE_ITEM']['#']['IDNUMBER']['0']['#']);
+                            $dbrec->gradetype = backup_todb($info['GRADE_ITEM']['#']['GRADETYPE']['0']['#']);
                             $dbrec->calculation = backup_todb($info['GRADE_ITEM']['#']['CALCULATION']['0']['#']);
                             $dbrec->grademax = backup_todb($info['GRADE_ITEM']['#']['GRADEMAX']['0']['#']);
                             $dbrec->grademin = backup_todb($info['GRADE_ITEM']['#']['GRADEMIN']['0']['#']);
@@ -1569,11 +1578,18 @@
                             }
 
                             /// needs to be restored first
-                            $dbrec->outcomeid = backup_getid($restore->backup_unique_code,"grade_outcomes",backup_todb($info['GRADE_ITEM']['#']['OUTCOMEID']['0']['#']));
+                            /// TODO
+                            if  (backup_todb($info['GRADE_ITEM']['#']['OUTCOMEID']['0']['#'])) {
+                                $outcome = backup_getid($restore->backup_unique_code,"grade_outcomes",backup_todb($info['GRADE_ITEM']['#']['OUTCOMEID']['0']['#']));
+                                $dbrec->outcomeid = $outcome->new_id;
+                            }
 
                             $dbrec->gradepass = backup_todb($info['GRADE_ITEM']['#']['GRADEPASS']['0']['#']);
                             $dbrec->multfactor = backup_todb($info['GRADE_ITEM']['#']['MULTFACTOR']['0']['#']);
                             $dbrec->plusfactor = backup_todb($info['GRADE_ITEM']['#']['PLUSFACTOR']['0']['#']);
+                            $dbrec->aggregationcoef = backup_todb($info['GRADE_ITEM']['#']['AGGREGATIONCOEF']['0']['#']);
+                            $dbrec->display = backup_todb($info['GRADE_ITEM']['#']['DISPLAY']['0']['#']);
+                            $dbrec->decimals = backup_todb($info['GRADE_ITEM']['#']['DECIMALS']['0']['#']);                            
                             $dbrec->hidden = backup_todb($info['GRADE_ITEM']['#']['HIDDEN']['0']['#']);
                             $dbrec->locked = backup_todb($info['GRADE_ITEM']['#']['LOCKED']['0']['#']);
                             $dbrec->locktime = backup_todb($info['GRADE_ITEM']['#']['LOCKTIME']['0']['#']);
@@ -1628,6 +1644,13 @@
                                         $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($ite_info['#']['RAWSCALEID']['0']['#']));
                                         $grade->rawscaleid = $scale->new_id;
                                     }
+                                    
+                                    if (backup_todb($ite_info['#']['USERMODIFIED']['0']['#'])) {
+                                        if ($modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERMODIFIED']['0']['#']))) {
+                                            $grade->usermodified = $modifier->new_id; 
+                                        }
+                                    }
+                                    
                                     $grade->finalgrade = backup_todb($ite_info['#']['FINALGRADE']['0']['#']);
                                     $grade->hidden = backup_todb($ite_info['#']['HIDDEN']['0']['#']);
                                     $grade->locked = backup_todb($ite_info['#']['LOCKED']['0']['#']);
@@ -1639,7 +1662,9 @@
                                     $grade->feedbackformat = backup_todb($ite_info['#']['FEEDBACKFORMAT']['0']['#']);
                                     $grade->information = backup_todb($ite_info['#']['INFORMATION']['0']['#']);
                                     $grade->informationformat = backup_todb($ite_info['#']['INFORMATIONFORMAT']['0']['#']);
-
+                                    $grade->timecreated = backup_todb($ite_info['#']['TIMECREATED']['0']['#']);
+                                    $grade->timemodified = backup_todb($ite_info['#']['TIMEMODIFIED']['0']['#']);
+                                    
                                     $newid = insert_record('grade_grades', $grade);
 
                                     if ($newid) {
@@ -1736,6 +1761,11 @@
                             $dbrec->aggregation = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['AGGRETGATION']['0']['#']);
                             $dbrec->keephigh = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['KEEPHIGH']['0']['#']);
                             $dbrec->droplow = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['DROPLOW']['0']['#']);
+                            
+                            $dbrec->aggregateonlygraded = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['AGGREGATEONLYGRADED']['0']['#']);
+                            $dbrec->aggregateoutcomes = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['AGGREGATEOUTCOMES']['0']['#']);
+                            $dbrec->aggregatesubcats = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['AGGREGATESUBCATS']['0']['#']);
+
                             $dbrec->courseid = $restore->course_id;
                             insert_record('grade_categories_history', $dbrec);
                             unset($dbrec);
@@ -1795,6 +1825,7 @@
                             if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_GRADES_HISTORY']['#']['LOGGEDUSER']['0']['#']))) {
                                 $dbrec->loggeduser = $oldobj->new_id;
                             }
+                            
                             $oldobj = backup_getid($restore->backup_unique_code,"grade_items", backup_todb($info['GRADE_GRADES_HISTORY']['#']['ITEMID']['0']['#']));
                             $dbrec->itemid = $oldobj->new_id;
                             if (empty($dbrec->itemid)) {
@@ -1809,6 +1840,12 @@
                             if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_GRADES_HISTORY']['#']['USERMODIFIED']['0']['#']))) {
                                 $dbrec->usermodified = $oldobj->new_id;
                             }
+                            
+                            if (backup_todb($info['GRADE_GRADES_HISTORY']['#']['RAWSCALEID']['0']['#'])) {
+                                $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($info['GRADE_GRADES_HISTORY']['#']['RAWSCALEID']['0']['#']));
+                                $dbrec->rawscaleid = $scale->new_id;
+                            }
+                            
                             $dbrec->finalgrade = backup_todb($info['GRADE_GRADES_HISTORY']['#']['FINALGRADE']['0']['#']);
                             $dbrec->hidden = backup_todb($info['GRADE_GRADES_HISTORY']['#']['HIDDEN']['0']['#']);
                             $dbrec->locked = backup_todb($info['GRADE_GRADES_HISTORY']['#']['LOCKED']['0']['#']);
@@ -1881,6 +1918,7 @@
                             if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_ITEM_HISTORY']['#']['LOGGEDUSER']['0']['#']))) {
                                 $dbrec->loggeduser = $oldobj->new_id;
                             }
+                            $dbrec->courseid = $restore->course_id;
                             $oldobj = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_ITEM_HISTORY']['#']['CATEGORYID']['0']['#']));
                             $oldobj->categoryid = $category->new_id;
                             if (empty($oldobj->categoryid)) {
@@ -1956,6 +1994,8 @@
                             $dbrec->plusfactor = backup_todb($info['GRADE_ITEM_HISTORY']['#']['PLUSFACTOR']['0']['#']);
                             $dbrec->aggregationcoef = backup_todb($info['GRADE_ITEM_HISTORY']['#']['AGGREGATIONCOEF']['0']['#']);
                             $dbrec->sortorder = backup_todb($info['GRADE_ITEM_HISTORY']['#']['SORTORDER']['0']['#']);
+                            $dbrec->display = backup_todb($info['GRADE_ITEM_HISTORY']['#']['DISPLAY']['0']['#']);
+                            $dbrec->decimals = backup_todb($info['GRADE_ITEM_HISTORY']['#']['DECIMALS']['0']['#']);
                             $dbrec->hidden = backup_todb($info['GRADE_ITEM_HISTORY']['#']['HIDDEN']['0']['#']);
                             $dbrec->locked = backup_todb($info['GRADE_ITEM_HISTORY']['#']['LOCKED']['0']['#']);
                             $dbrec->locktime = backup_todb($info['GRADE_ITEM_HISTORY']['#']['LOCKTIME']['0']['#']);
@@ -2019,6 +2059,7 @@
                             if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['LOGGEDUSER']['0']['#']))) {
                                 $dbrec->loggeduser = $oldobj->new_id;
                             }
+                            $dbrec->courseid = $restore->course_id;
                             $dbrec->shortname = backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['SHORTNAME']['0']['#']);
                             $dbrec->fullname= backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['FULLNAME']['0']['#']);
                             $oldobj = backup_getid($restore->backup_unique_code,"scale", backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['SCALEID']['0']['#']));
