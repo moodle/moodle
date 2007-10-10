@@ -33,6 +33,10 @@ define('SITEID', 0);
 session_name('MoodleSession');
 @session_start();
 
+/// make sure PHP errors are displayed to help diagnose problems
+@error_reporting(1023); //E_ALL not used because we do not want strict notices in PHP5 yet
+@ini_set('display_errors', '1');
+
 if (! isset($_SESSION['INSTALL'])) {
     $_SESSION['INSTALL'] = array();
 }
@@ -369,7 +373,7 @@ if ($INSTALL['stage'] == DATABASE) {
                 case 'mysqli':
                 /// Get MySQL character_set_database value
                     $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");
-                    if ($rs && $rs->RecordCount() > 0) {
+                    if ($rs && !$rs->EOF) {
                         $records = $rs->GetAssoc(true);
                         $encoding = $records['character_set_database']['Value'];
                         if (strtoupper($encoding) != 'UTF8') {
