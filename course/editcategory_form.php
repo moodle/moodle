@@ -9,7 +9,7 @@ class editcategory_form extends moodleform {
         
         // get list of categories to use as parents, with site as the first one
         $categories = get_categories();
-        $options = array(get_string('site'));
+        $options = array(get_string('top'));
         foreach ($categories as $catid => $cat) {
             $options[$catid] = $cat->name;
         }
