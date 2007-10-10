@@ -1660,8 +1660,8 @@
             foreach ($chs as $ch) {
                 fwrite ($bf,start_tag("GRADE_CATEGORIES_HISTORY",6,true));
                 fwrite ($bf,full_tag("ID",7,false,$ch->id));
-                fwrite ($bf,full_tag("OLDID",7,false,$ch->oldid));
                 fwrite ($bf,full_tag("ACTION",7,false,$ch->action));
+                fwrite ($bf,full_tag("OLDID",7,false,$ch->oldid));
                 fwrite ($bf,full_tag("SOURCE",7,false,$ch->source));
                 fwrite ($bf,full_tag("TIMEMODIFIED",7,false,$ch->timemodified));
                 fwrite ($bf,full_tag("LOGGEDUSER",7,false,$ch->loggeduser));
@@ -1696,8 +1696,8 @@
             foreach ($chs as $ch) {
                 fwrite ($bf,start_tag("GRADE_GRADES_HISTORY",6,true));
                 fwrite ($bf,full_tag("ID",7,false,$ch->id));
-                fwrite ($bf,full_tag("OLDID",7,false,$ch->oldid));
                 fwrite ($bf,full_tag("ACTION",7,false,$ch->action));
+                fwrite ($bf,full_tag("OLDID",7,false,$ch->oldid));
                 fwrite ($bf,full_tag("SOURCE",7,false,$ch->source));
                 fwrite ($bf,full_tag("TIMEMODIFIED",7,false,$ch->timemodified));
                 fwrite ($bf,full_tag("LOGGEDUSER",7,false,$ch->loggeduser));
@@ -1706,6 +1706,7 @@
                 fwrite ($bf,full_tag("RAWGRADE",7,false,$ch->rawgrade));
                 fwrite ($bf,full_tag("RAWGRADEMAX",7,false,$ch->rawgrademax));
                 fwrite ($bf,full_tag("RAWGRADEMIN",7,false,$ch->rawgrademin));
+                fwrite ($bf,full_tag("RAWSCALEID",7,false,$ch->rawscaleid));
                 fwrite ($bf,full_tag("USERMODIFIED",7,false,$ch->usermodified));
                 fwrite ($bf,full_tag("FINALGRADE",7,false,$ch->finalgrade));
                 fwrite ($bf,full_tag("HIDDEN",7,false,$ch->hidden));
@@ -1736,8 +1737,8 @@
             foreach ($chs as $ch) {
                 fwrite ($bf,start_tag("GRADE_ITEM_HISTORY",6,true));
                 fwrite ($bf,full_tag("ID",7,false,$ch->id));
-                fwrite ($bf,full_tag("OLDID",7,false,$ch->oldid));
                 fwrite ($bf,full_tag("ACTION",7,false,$ch->action));
+                fwrite ($bf,full_tag("OLDID",7,false,$ch->oldid));
                 fwrite ($bf,full_tag("SOURCE",7,false,$ch->source));
                 fwrite ($bf,full_tag("TIMEMODIFIED",7,false,$ch->timemodified));
                 fwrite ($bf,full_tag("LOGGEDUSER",7,false,$ch->loggeduser));
@@ -1760,8 +1761,8 @@
                 fwrite ($bf,full_tag("PLUSFACTOR",7,false,$ch->plusfactor));
                 fwrite ($bf,full_tag("AGGREGATIONCOEF",7,false,$ch->aggregationcoef));
                 fwrite ($bf,full_tag("SORTORDER",7,false,$ch->sortorder));
-                fwrite ($bf,full_tag("DISPLAY",7,false,$ch->plusfactor));
-                fwrite ($bf,full_tag("DECIMALS",7,false,$ch->plusfactor));
+                fwrite ($bf,full_tag("DISPLAY",7,false,$ch->display));
+                fwrite ($bf,full_tag("DECIMALS",7,false,$ch->decimals));
                 fwrite ($bf,full_tag("HIDDEN",7,false,$ch->hidden));
                 fwrite ($bf,full_tag("LOCKED",7,false,$ch->locked));
                 fwrite ($bf,full_tag("LOCKTIME",7,false,$ch->locktime));
