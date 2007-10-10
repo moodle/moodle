@@ -1282,12 +1282,14 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
             }
 
             if (!empty($groupids)) {
-                $sql = "SELECT id
+                $sql = "SELECT *
                         FROM {$CFG->prefix}groups
                         WHERE courseid IN (".implode(',', $groupids).')';
 
                 if ($grouprecords= get_records_sql($sql)) {
-                    $grouparray = array_merge($grouparray, array_keys($grouprecords));
+                    foreach ($grouprecords as $grouprecord) {
+                        $grouparray[] = $grouprecord->id;
+                    }
                 }
             }
 
