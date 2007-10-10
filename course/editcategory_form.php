@@ -11,7 +11,7 @@ class editcategory_form extends moodleform {
         $categories = get_categories();
         $options = array(get_string('top'));
         foreach ($categories as $catid => $cat) {
-            $options[$catid] = $cat->name;
+            $options[$catid] = format_string($cat->name);
         }
         
         $mform->addElement('select', 'parent', get_string('parentcategory'), $options);
