@@ -8,11 +8,9 @@ class editcategory_form extends moodleform {
         $mform =& $this->_form;
         
         // get list of categories to use as parents, with site as the first one
-        $categories = get_categories();
         $options = array(get_string('top'));
-        foreach ($categories as $catid => $cat) {
-            $options[$catid] = format_string($cat->name);
-        }
+        $parents = array();
+        make_categories_list($options, $parents);
         
         $mform->addElement('select', 'parent', get_string('parentcategory'), $options);
         $mform->addElement('text', 'name', get_string('categoryname'), array('size'=>'30'));    
