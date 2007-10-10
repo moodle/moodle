@@ -40,6 +40,18 @@ function xmldb_forum_upgrade($oldversion=0) {
         $db->debug = true;
     }  
 
+    if ($result && $oldversion < 2007101000) {
+
+    /// Define field timemodified to be added to forum_queue
+        $table = new XMLDBTable('forum_queue');
+        $field = new XMLDBField('timemodified');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'postid');
+
+    /// Launch add field timemodified
+        $result = $result && add_field($table, $field);
+    }
+
+
     return $result;
 }
 
