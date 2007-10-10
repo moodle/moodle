@@ -72,123 +72,137 @@
 
     echo '<table id="layout-table"><tr>';
 
-    if(!empty($CFG->showblocksonmodpages) && (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
-        echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start();
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        if (!empty($THEME->customcorners)) print_custom_corners_end();
-        echo '</td>';
+    $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+    foreach ($lt as $column) {
+        switch ($column) {
+            case 'left':
+
+                if(!empty($CFG->showblocksonmodpages) && (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
+                    echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
+                    if (!empty($THEME->customcorners)) print_custom_corners_start();
+                    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+                    if (!empty($THEME->customcorners)) print_custom_corners_end();
+                    echo '</td>';
+                }
+                break;
+
+            case 'middle':
+
+                echo '<td id="middle-column">';
+                if (!empty($THEME->customcorners)) print_custom_corners_start();
+
+                /// Check to see if groups are being used here
+                $groupmode = groups_get_activity_groupmode($cm);
+                $currentgroup = groups_get_activity_group($cm, true);
+                groups_print_activity_menu($cm, "view.php?id=$cm->id");
+
+                if ($currentgroup) {
+                    $groupselect = " AND groupid = '$currentgroup'";
+                    $groupparam = "&amp;groupid=$currentgroup";
+                } else {
+                    $groupselect = "";
+                    $groupparam = "";
+                }
+
+                if ($chat->studentlogs or has_capability('mod/chat:readlog',$context)) {
+                    echo '<div class="reportlink">';
+                    echo "<a href=\"report.php?id=$cm->id\">".
+                        get_string('viewreport', 'chat').'</a>';
+                    echo '</div>';
+                }
+
+
+                print_heading(format_string($chat->name));
+
+                /// Print the main part of the page
+
+                if (has_capability('mod/chat:chat',$context)) {
+                    print_box_start('generalbox', 'enterlink');
+                    // users with screenreader set, will only see 1 link, to the manual refresh page
+                    // for better accessibility
+                    if (!empty($USER->screenreader)) {
+                        $chattarget = "/mod/chat/gui_basic/index.php?id=$chat->id$groupparam";
+                    } else {
+                        $chattarget = "/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam"; 
+                    }
+
+                    echo '<p>';
+                    link_to_popup_window ($chattarget,
+                            "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
+                    echo '</p>';
+
+                    // if user is using screen reader, then there is no need to display this link again
+                    if ($CFG->chat_method == 'header_js' && empty($USER->screenreader)) {
+                        // show frame/js-less alternative
+                        echo '<p>(';
+                                link_to_popup_window ("/mod/chat/gui_basic/index.php?id=$chat->id$groupparam",
+                                    "chat$course->id$chat->id$groupparam", get_string('noframesjs', 'message'), 500, 700, get_string('modulename', 'chat'));
+                                echo ')</p>';
+                    }
+
+                    print_box_end();
+
+                } else if (isguestuser()) {
+                    $wwwroot = $CFG->wwwroot.'/login/index.php';
+                    if (!empty($CFG->loginhttps)) {
+                        $wwwroot = str_replace('http:','https:', $wwwroot);
+                    }
+
+                    notice_yesno(get_string('noguests', 'chat').'<br /><br />'.get_string('liketologin'),
+                            $wwwroot, $CFG->wwwroot.'/course/view.php?id='.$course->id);
+
+                    print_footer($course);
+                    exit;
+
+                } else {
+                    // show some error message
+                    require_capability('mod/chat:chat', $context);
+                }
+
+
+                if ($chat->chattime and $chat->schedule) {  // A chat is scheduled
+                    echo "<p class=\"nextchatsession\">$strnextsession: ".userdate($chat->chattime).' ('.usertimezone($USER->timezone).')</p>';
+                } else {
+                    echo '<br />';
+                }
+
+                if ($chat->intro) {
+                    print_box(format_text($chat->intro), 'generalbox', 'intro');
+                }
+
+                chat_delete_old_users();
+
+                if ($chatusers = chat_get_users($chat->id, $currentgroup, $cm->groupingid)) {
+                    $timenow = time();
+                    print_simple_box_start('center');
+                    print_heading($strcurrentusers);
+                    echo '<table id="chatcurrentusers">';
+                    foreach ($chatusers as $chatuser) {
+                        $lastping = $timenow - $chatuser->lastmessageping;
+                        echo '<tr><td class="chatuserimage">';
+                        echo "<a href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&amp;course=$chat->course\">";
+                        print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
+                        echo '</a></td><td class="chatuserdetails">';
+                        echo '<p>';
+                        echo fullname($chatuser).'<br />';
+                        echo "<span class=\"idletime\">$stridle: ".format_time($lastping)."</span>";
+                        echo '</p>';
+                        echo '</td></tr>';
+                    }
+                    echo '</table>';
+                    print_simple_box_end();
+                }
+
+                if (!empty($THEME->customcorners)) {
+                    print_custom_corners_end();
+                }
+                echo '</td>';
+
+                break;
+        }
     }
-
-    echo '<td id="middle-column">';
-    if (!empty($THEME->customcorners)) print_custom_corners_start();
-
-/// Check to see if groups are being used here
-    $groupmode = groups_get_activity_groupmode($cm);
-    $currentgroup = groups_get_activity_group($cm, true);
-    groups_print_activity_menu($cm, "view.php?id=$cm->id");
     
-    if ($currentgroup) {
-        $groupselect = " AND groupid = '$currentgroup'";
-        $groupparam = "&amp;groupid=$currentgroup";
-    } else {
-        $groupselect = "";
-        $groupparam = "";
-    }
-
-    if ($chat->studentlogs or has_capability('mod/chat:readlog',$context)) {
-        echo '<div class="reportlink">';
-        echo "<a href=\"report.php?id=$cm->id\">".
-              get_string('viewreport', 'chat').'</a>';
-        echo '</div>';
-    }
-
-
-    print_heading(format_string($chat->name));
-
-/// Print the main part of the page
-
-    if (has_capability('mod/chat:chat',$context)) {
-        print_box_start('generalbox', 'enterlink');
-        // users with screenreader set, will only see 1 link, to the manual refresh page
-        // for better accessibility
-        if (!empty($USER->screenreader)) {
-            $chattarget = "/mod/chat/gui_basic/index.php?id=$chat->id$groupparam";
-        } else {
-            $chattarget = "/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam"; 
-        }
-        
-        echo '<p>';
-        link_to_popup_window ($chattarget,
-                              "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
-        echo '</p>';
-        
-        // if user is using screen reader, then there is no need to display this link again
-        if ($CFG->chat_method == 'header_js' && empty($USER->screenreader)) {
-            // show frame/js-less alternative
-            echo '<p>(';
-            link_to_popup_window ("/mod/chat/gui_basic/index.php?id=$chat->id$groupparam",
-                                  "chat$course->id$chat->id$groupparam", get_string('noframesjs', 'message'), 500, 700, get_string('modulename', 'chat'));
-            echo ')</p>';
-        }
-
-        print_box_end();
-
-    } else if (isguestuser()) {
-        $wwwroot = $CFG->wwwroot.'/login/index.php';
-        if (!empty($CFG->loginhttps)) {
-            $wwwroot = str_replace('http:','https:', $wwwroot);
-        }
-
-        notice_yesno(get_string('noguests', 'chat').'<br /><br />'.get_string('liketologin'),
-                     $wwwroot, $CFG->wwwroot.'/course/view.php?id='.$course->id);
-                     
-        print_footer($course);
-        exit;
-
-    } else {
-        // show some error message
-        require_capability('mod/chat:chat', $context);
-    }
-
-
-    if ($chat->chattime and $chat->schedule) {  // A chat is scheduled
-        echo "<p class=\"nextchatsession\">$strnextsession: ".userdate($chat->chattime).' ('.usertimezone($USER->timezone).')</p>';
-    } else {
-        echo '<br />';
-    }
-
-    if ($chat->intro) {
-        print_box(format_text($chat->intro), 'generalbox', 'intro');
-    }
-
-    chat_delete_old_users();
-
-    if ($chatusers = chat_get_users($chat->id, $currentgroup, $cm->groupingid)) {
-        $timenow = time();
-        print_simple_box_start('center');
-        print_heading($strcurrentusers);
-        echo '<table id="chatcurrentusers">';
-        foreach ($chatusers as $chatuser) {
-            $lastping = $timenow - $chatuser->lastmessageping;
-            echo '<tr><td class="chatuserimage">';
-            echo "<a href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&amp;course=$chat->course\">";
-            print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
-            echo '</a></td><td class="chatuserdetails">';
-            echo '<p>';
-            echo fullname($chatuser).'<br />';
-            echo "<span class=\"idletime\">$stridle: ".format_time($lastping)."</span>";
-            echo '</p>';
-            echo '</td></tr>';
-        }
-        echo '</table>';
-        print_simple_box_end();
-    }
-
-
-/// Finish the page
-    if (!empty($THEME->customcorners)) print_custom_corners_end();
-    echo '</td></tr></table>';
+    echo '</tr></table>';
 
     print_footer($course);
 
