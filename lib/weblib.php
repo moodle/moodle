@@ -3805,7 +3805,7 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
  * @todo Finish documenting this function
  */
 function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
-    global $CFG;
+    global $CFG, $HTTPSPAGEREQUIRED;
 
     $needrec = false;
     // only touch the DB if we are missing data...
