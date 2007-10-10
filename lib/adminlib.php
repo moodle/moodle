@@ -9,6 +9,36 @@
  * @package moodlecore
  */
 
+function upgrade_main_savepoint($result, $version) {
+    global $CFG;
+
+    if ($result) {
+        if ($CFG->version >= $version) {
+            // something really wrong is going on in main upgrade script
+            error("Upgrade savepoint: Can not upgrade main version from $CFG->version to $version.");  
+        }
+        set_config('version', $version);
+    } else {
+        notify ("Upgrade savepoint: Error during main upgrade to version $version");
+    }
+}
+
+function upgrade_mod_savepoint($result, $version, $type) {
+    //TODO
+}
+
+function upgrade_plugin_savepoint($result, $version, $type, $dir) {
+    //TODO
+}
+
+function upgrade_backup_savepoint($result, $version) {
+    //TODO
+}
+
+function upgrade_blocks_savepoint($result, $version, $type) {
+    //TODO
+}
+
 /**
  * Upgrade plugins
  *

@@ -31,6 +31,8 @@ function xmldb_main_upgrade($oldversion=0) {
             drop_table(new XMLDBTable('user_coursecreators'));
             drop_table(new XMLDBTable('user_admins'));
         }
+
+        upgrade_main_savepoint($result, 2006100401);
     }
 
     if ($oldversion < 2006100601) {         /// Disable the exercise module because it's unmaintained
@@ -48,12 +50,16 @@ function xmldb_main_upgrade($oldversion=0) {
                 rebuild_course_cache();  // Rebuld cache for all modules because they might have changed
             }
         }
+
+        upgrade_main_savepoint($result, 2006100601);
     }
 
     if ($oldversion < 2006101001) {         /// Disable the LAMS module by default (if it is installed)
         if (count_records('modules', 'name', 'lams') && !count_records('lams')) {
             set_field('modules', 'visible', 0, 'name', 'lams');  // Disable it by default
         }
+
+        upgrade_main_savepoint($result, 2006101001);
     }
 
     if ($result && $oldversion < 2006102600) {
@@ -80,6 +86,8 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field3);
         $result = $result && add_field($table, $field4);
         $result = $result && add_field($table, $field5);
+
+        upgrade_main_savepoint($result, 2006102600);
     }
 
     if ($result && $oldversion < 2006112000) {
@@ -91,6 +99,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add field attachment
         $result = $result && add_field($table, $field);
+
+        upgrade_main_savepoint($result, 2006112000);
     }
 
     if ($result && $oldversion < 2006112200) {
@@ -109,6 +119,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add field screenreader
         $result = $result && add_field($table, $field);
+
+        upgrade_main_savepoint($result, 2006112200);
     }
 
     if ($oldversion < 2006120300) {    /// Delete guest course section settings
@@ -116,10 +128,14 @@ function xmldb_main_upgrade($oldversion=0) {
         if ($guest = get_record('user', 'username', 'guest')) {
             execute_sql("DELETE FROM {$CFG->prefix}course_display where userid=$guest->id", true);
         }
+
+        upgrade_main_savepoint($result, 2006120300);
     }
 
     if ($oldversion < 2006120400) {    /// Remove secureforms config setting
         execute_sql("DELETE FROM {$CFG->prefix}config where name='secureforms'", true);
+
+        upgrade_main_savepoint($result, 2006120400);
     }
 
     if (!empty($CFG->rolesactive) && $oldversion < 2006120700) { // add moodle/user:viewdetails to all roles!
@@ -130,6 +146,8 @@ function xmldb_main_upgrade($oldversion=0) {
                 assign_capability('moodle/user:viewdetails', CAP_ALLOW, $roleid, $context->id);
             }
         }
+
+        upgrade_main_savepoint($result, 2006120700);
     }
 
     // Move the auth plugin settings into the config_plugin table
@@ -166,6 +184,8 @@ function xmldb_main_upgrade($oldversion=0) {
                 break; // don't check the rest of the auth plugin names
             }
         }
+
+        upgrade_main_savepoint($result, 2007010300);
     }
 
     if ($oldversion < 2007010301) {
@@ -475,6 +495,7 @@ function xmldb_main_upgrade($oldversion=0) {
         // Create the table
         $result = $result && create_table($table);
 
+        upgrade_main_savepoint($result, 2007010301);
     }
 
     if ($result && $oldversion < 2007010404) {
@@ -502,6 +523,8 @@ function xmldb_main_upgrade($oldversion=0) {
                 $result && update_record('user_info_field', $field);
             }
         }
+
+        upgrade_main_savepoint($result, 2007010404);
     }
 
     if ($result && $oldversion < 2007011501) {
@@ -515,6 +538,8 @@ function xmldb_main_upgrade($oldversion=0) {
             unset_config('enablerecordcache');
             unset($CFG->enablerecordcache);
         }
+
+        upgrade_main_savepoint($result, 2007011501);
     }
 
     if ($result && $oldversion < 2007012100) {
@@ -550,6 +575,8 @@ function xmldb_main_upgrade($oldversion=0) {
                 }
             }
         }
+
+        upgrade_main_savepoint($result, 2007012100);
     }
 
     if ($result && $oldversion < 2007012101) {
@@ -569,6 +596,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch change of precision for field user->lang
         $result = $result && change_field_precision($table, $field);
+
+        upgrade_main_savepoint($result, 2007012101);
     }
 
     if ($result && $oldversion < 2007012400) {
@@ -580,10 +609,14 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch rename field accessctrl
         $result = $result && rename_field($table, $field, 'accessctrl');
+
+        upgrade_main_savepoint($result, 2007012400);
     }
 
     if ($result && $oldversion < 2007012500) {
         execute_sql("DELETE FROM {$CFG->prefix}user WHERE username='changeme'", true);
+
+        upgrade_main_savepoint($result, 2007012500);
     }
 
     if ($result && $oldversion < 2007020400) {
@@ -597,6 +630,8 @@ function xmldb_main_upgrade($oldversion=0) {
         /// Launch change of nullability for field ajax
             $result = $result && change_field_notnull($table, $field);
         }
+
+        upgrade_main_savepoint($result, 2007020400);
     }
 
     if (!empty($CFG->rolesactive) && $result && $oldversion < 2007021401) {
@@ -611,11 +646,15 @@ function xmldb_main_upgrade($oldversion=0) {
                 }
             }
         }
+
+        upgrade_main_savepoint($result, 2007021401);
     }
 
     if ($result && $oldversion < 2007021501) {
     /// delete removed setting from config
         unset_config('tabselectedtofront');
+
+        upgrade_main_savepoint($result, 2007021501);
     }
 
 
@@ -642,6 +681,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch create table for role_sortorder
         $result = $result && create_table($table);
+
+        upgrade_main_savepoint($result, 2007032200);
     }
 
 
@@ -667,6 +708,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add index text
         $result = $result && add_index($table, $index);
+
+        upgrade_main_savepoint($result, 2007040400);
     }
 
     if ($result && $oldversion < 2007041100) {
@@ -687,6 +730,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add index idnumber
         $result = $result && add_index($table, $index);
 
+        upgrade_main_savepoint($result, 2007041100);
     }
 
     /* Changes to the custom profile menu type - store values rather than indices.
@@ -717,6 +761,7 @@ function xmldb_main_upgrade($oldversion=0) {
             }
         }
 
+        upgrade_main_savepoint($result, 2007041600);
     }
 
     /// adding new gradebook tables
@@ -778,6 +823,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch create table for events_queue_handlers
         $result = $result && create_table($table);
 
+        upgrade_main_savepoint($result, 2007041800);
     }
 
     if ($result && $oldversion < 2007043001) {
@@ -797,6 +843,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add field status
         $result = $result && add_field($table, $field);
+
+        upgrade_main_savepoint($result, 2007043001);
     }
 
     if ($result && $oldversion < 2007050201) {
@@ -808,6 +856,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add field theme
         $result = $result && add_field($table, $field);
+
+        upgrade_main_savepoint($result, 2007050201);
     }
 
     if ($result && $oldversion < 2007051100) {
@@ -827,6 +877,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add field signup
         $result = $result && add_field($table, $field);
+
+        upgrade_main_savepoint($result, 2007051100);
     }
 
     if (!empty($CFG->rolesactive) && $result && $oldversion < 2007051801) {
@@ -840,6 +892,8 @@ function xmldb_main_upgrade($oldversion=0) {
             $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
             assign_capability('moodle/my:manageblocks',CAP_ALLOW,$defaultroleid,$context->id);
         }
+
+        upgrade_main_savepoint($result, 2007051801);
     }
 
     if ($result && $oldversion < 2007052200) {
@@ -850,11 +904,15 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch drop field stackdump
         $result = $result && drop_field($table, $field);
+
+        upgrade_main_savepoint($result, 2007052200);
     }
 
     if ($result && $oldversion < 2007052300) {
         require_once($CFG->dirroot . '/question/upgrade.php');
         $result = $result && question_remove_rqp_qtype();
+
+        upgrade_main_savepoint($result, 2007052300);
     }
 
     if ($result && $oldversion < 2007060500) {
@@ -874,11 +932,15 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add key usermodified
         $result = $result && add_key($table, $key);
+
+        upgrade_main_savepoint($result, 2007060500);
     }
 
     if ($result && $oldversion < 2007070603) {
         // Small update of guest user to be 100% sure it has the correct mnethostid (MDL-10375)
         set_field('user', 'mnethostid', $CFG->mnet_localhost_id, 'username', 'guest');
+
+        upgrade_main_savepoint($result, 2007070603);
     }
 
     if ($result && $oldversion < 2007071400) {
@@ -935,11 +997,14 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add key applicationid
         $result = $result && add_key($table, $key);
 
+        upgrade_main_savepoint($result, 2007071400);
     }
 
     if ($result && $oldversion < 2007071607) {
         require_once($CFG->dirroot . '/question/upgrade.php');
         $result = $result && question_remove_rqp_qtype_config_string();
+
+        upgrade_main_savepoint($result, 2007071607);
     }
 
     if ($result && $oldversion < 2007072200) {
@@ -1299,6 +1364,8 @@ function xmldb_main_upgrade($oldversion=0) {
                 rs_close($rs);
             }
         }
+
+        upgrade_main_savepoint($result, 2007072200);
     }
 
     if ($result && $oldversion < 2007072400) {
@@ -1312,6 +1379,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch change of default for field sessdata
         $result = $result && change_field_default($table, $field);
+
+        upgrade_main_savepoint($result, 2007072400);
     }
 
 
@@ -1332,6 +1401,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch create table for grade_outcomes_courses
         $result = $result && create_table($table);
 
+        upgrade_main_savepoint($result, 2007073100);
     }
 
 
@@ -1398,6 +1468,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch create table for tag_instance
         $result = $result && create_table($table);
 
+        upgrade_main_savepoint($result, 2007073101);
     }
 
 
@@ -1410,6 +1481,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add field rawname
         $result = $result && add_field($table, $field);
+
+        upgrade_main_savepoint($result, 2007073103);
     }
 
     if ($result && $oldversion < 2007073105) {
@@ -1430,6 +1503,8 @@ function xmldb_main_upgrade($oldversion=0) {
         /// Launch add field description
             $result = $result && add_field($table, $field);
         }
+
+        upgrade_main_savepoint($result, 2007073105);
     }
 
     // adding unique contraint on (courseid,shortname) of an outcome
@@ -1442,6 +1517,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add key courseid-shortname
         $result = $result && add_key($table, $key);
+
+        upgrade_main_savepoint($result, 2007080100);
     }
 
     /// originally there was supportname and supportemail upgrade code - this is handled in upgradesettings.php instead
@@ -1464,6 +1541,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add index tagiditem
         $result = $result && add_index($table, $index);
 
+        upgrade_main_savepoint($result, 2007080202);
     }
 
     if ($result && $oldversion < 2007080300) {
@@ -1487,6 +1565,8 @@ function xmldb_main_upgrade($oldversion=0) {
         /// Launch add field aggregateoutcomes
             $result = $result && add_field($table, $field);
         }
+
+        upgrade_main_savepoint($result, 2007080300);
     }
 
     if ($result && $oldversion < 2007080800) { /// Normalize course->shortname MDL-10026
@@ -1498,6 +1578,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch change of precision for field shortname
         $result = $result && change_field_precision($table, $field);
+
+        upgrade_main_savepoint($result, 2007080800);
     }
 
     if ($result && $oldversion < 2007080900) {
@@ -1519,6 +1601,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// make sure the system context has proper data
         get_system_context(false);
+
+        upgrade_main_savepoint($result, 2007080900);
     }
 
     if ($result && $oldversion < 2007080903) {
@@ -1561,11 +1645,14 @@ function xmldb_main_upgrade($oldversion=0) {
             $result = $result && add_index($table, $index);
         }
 
+        upgrade_main_savepoint($result, 2007080903);
     }
 
     if ($result && $oldversion < 2007081000) {
         require_once($CFG->dirroot . '/question/upgrade.php');
         $result = $result && question_upgrade_context_etc();
+
+        upgrade_main_savepoint($result, 2007081000);
     }
 
     if ($result && $oldversion < 2007081302) {
@@ -1617,6 +1704,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupingid'), 'groupings', array('id'));
         $result = $result && add_key($table, $key);
 
+        upgrade_main_savepoint($result, 2007081302);
     }
 
     if ($result && $oldversion < 2007082300) {
@@ -1629,6 +1717,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add field rawname
         $result = $result && add_field($table, $field);
+
+        upgrade_main_savepoint($result, 2007082300);
     }
 
     if ($result && $oldversion < 2007082700) {
@@ -1640,6 +1730,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add field timemodified
         $result = $result && add_field($table, $field);
+
+        upgrade_main_savepoint($result, 2007082700);
     }
 
     /// migrate all tags table to tag - this code MUST use SQL only,
@@ -1701,6 +1793,8 @@ function xmldb_main_upgrade($oldversion=0) {
         drop_table($table);
         $table = new XMLDBTable('blog_tag_instance');
         drop_table($table);
+
+        upgrade_main_savepoint($result, 2007082701);
     }
 
     /// MDL-11015, MDL-11016
@@ -1803,6 +1897,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add key tagid
         $result = $result && add_key($table, $key);
 
+        upgrade_main_savepoint($result, 2007082800);
     }
 
 
@@ -1830,6 +1925,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch create table for user_private_key
         $result = $result && create_table($table);
+
+        upgrade_main_savepoint($result, 2007082801);
     }
 
 /// Going to modify the applicationid from int(1) to int(10). Dropping and
@@ -1858,6 +1955,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add key applicationid
         $result = $result && add_key($table, $key);
 
+        upgrade_main_savepoint($result, 2007082803);
     }
 
     if ($result && $oldversion < 2007090503) {
@@ -1912,6 +2010,8 @@ function xmldb_main_upgrade($oldversion=0) {
             $sql = "UPDATE {$CFG->prefix}grade_categories SET aggregation = $i, aggregateonlygraded = 1 WHERE aggregation = $j";
             execute_sql($sql, true);
         }
+
+        upgrade_main_savepoint($result, 2007090503);
     }
 
 /// To have UNIQUE indexes over NULLable columns isn't cross-db at all
@@ -1942,6 +2042,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add index idnumber-courseid
         $result = $result && add_index($table, $index);
 
+        upgrade_main_savepoint($result, 2007090600);
     }
 
 /// Create the permanent context_temp table to be used by build_context_path()
@@ -1975,6 +2076,8 @@ function xmldb_main_upgrade($oldversion=0) {
             // upgrade from 1.6 - build all contexts
             create_contexts(null, true, true);
         }
+
+        upgrade_main_savepoint($result, 2007092001);
     }
 
     /**
@@ -2096,6 +2199,8 @@ function xmldb_main_upgrade($oldversion=0) {
                 }
             }
         }
+
+        upgrade_main_savepoint($result, 2007092002);
     }
 
     if ($result && $oldversion < 2007092803) {
@@ -2172,6 +2277,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// fix incorrect -1 default for grade_item->display
         execute_sql("UPDATE {$CFG->prefix}grade_items SET display=0 WHERE display=-1");
+
+        upgrade_main_savepoint($result, 2007092803);
     }
 
 /// migrade grade letters - we can not do this in normal grades upgrade becuase we need all course contexts
@@ -2189,6 +2296,8 @@ function xmldb_main_upgrade($oldversion=0) {
         if (!index_exists($table, $index)) {
             $result = $result && add_index($table, $index);
         }
+
+        upgrade_main_savepoint($result, 2007092806);
     }
 
     if ($result && $oldversion < 2007100100) {
@@ -2219,6 +2328,8 @@ function xmldb_main_upgrade($oldversion=0) {
         if (!table_exists($table)) {
             $result = $result && create_table($table);
         }
+
+        upgrade_main_savepoint($result, 2007100100);
     }
 
 
@@ -2239,6 +2350,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add field theme
         $result = $result && add_field($table, $field);
+
+        upgrade_main_savepoint($result, 2007100300);
     }
 
     if ($result && $oldversion < 2007100301) {
@@ -2263,6 +2376,8 @@ function xmldb_main_upgrade($oldversion=0) {
         if (!index_exists($table, $index)) {
             $result = $result && add_index($table, $index);
         }
+
+        upgrade_main_savepoint($result, 2007100301);
     }
 
     if ($result && $oldversion < 2007100303) {
@@ -2274,6 +2389,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch change of nullability for field summary
         $result = $result && change_field_notnull($table, $field);
+
+        upgrade_main_savepoint($result, 2007100303);
     }
 
     if ($result && $oldversion < 2007100500) {
@@ -2286,6 +2403,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch change of nullability for field path
         $result = $result && change_field_notnull($table, $field);
+
+        upgrade_main_savepoint($result, 2007100500);
     }
 
     if ($result && $oldversion < 2007100700) {
@@ -2340,8 +2459,41 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch create table for grade_import_values
         $result = $result && create_table($table);
 
+        upgrade_main_savepoint($result, 2007100700);
     }
 
+/// dropping context_rel table - not used anymore
+    if ($result && $oldversion < 2007100800) {
+
+    /// Define table context_rel to be dropped
+        $table = new XMLDBTable('context_rel');
+
+    /// Launch drop table for context_rel
+        if (table_exists($table)) {
+            drop_table($table);
+        }
+
+        upgrade_main_savepoint($result, 2007100800);
+    }
+
+/// Truncate the text_cahe table and add new index
+    if ($result && $oldversion < 2007100802) {
+
+    /// Truncate the cache_text table
+        execute_sql("TRUNCATE TABLE {$CFG->prefix}cache_text", true);
+
+    /// Define index timemodified (not unique) to be added to cache_text
+        $table = new XMLDBTable('cache_text');
+        $index = new XMLDBIndex('timemodified');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+    /// Launch add index timemodified
+        $result = $result && add_index($table, $index);
+
+        upgrade_main_savepoint($result, 2007100802);
+    }
+
+/// newtable for gradebook settings per course
     if ($result && $oldversion < 2007100803) {
 
     /// Define table grade_settings to be created
@@ -2362,33 +2514,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch create table for grade_settings
         $result = $result && create_table($table);
-    }
 
-/// dropping context_rel table - not used anymore
-    if ($result && $oldversion < 2007100800) {
-
-    /// Define table context_rel to be dropped
-        $table = new XMLDBTable('context_rel');
-
-    /// Launch drop table for context_rel
-        if (table_exists($table)) {
-            drop_table($table);
-        }
-    }
-
-/// Truncate the text_cahe table and add new index
-    if ($result && $oldversion < 2007100802) {
-
-    /// Truncate the cache_text table
-        execute_sql("TRUNCATE TABLE {$CFG->prefix}cache_text", true);
-
-    /// Define index timemodified (not unique) to be added to cache_text
-        $table = new XMLDBTable('cache_text');
-        $index = new XMLDBIndex('timemodified');
-        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
-
-    /// Launch add index timemodified
-        $result = $result && add_index($table, $index);
+        upgrade_main_savepoint($result, 2007100803);
     }
 
 /// cleanup in user_lastaccess
@@ -2399,6 +2526,8 @@ function xmldb_main_upgrade($oldversion=0) {
                                     FROM {$CFG->prefix}course c
                                    WHERE c.id = {$CFG->prefix}user_lastaccess.courseid)"; 
         execute_sql($sql);
+
+        upgrade_main_savepoint($result, 2007100902);
     }
 
 /// drop old gradebook tables
@@ -2415,6 +2544,8 @@ function xmldb_main_upgrade($oldversion=0) {
                 drop_table($table);
             }
         }
+
+        upgrade_main_savepoint($result, 2007100903);
     }
 
 
