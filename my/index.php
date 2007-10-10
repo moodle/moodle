@@ -42,9 +42,13 @@
 
     $PAGE->print_header($mymoodlestr);
 
-    echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
+    echo '<table id="layout-table">';
     echo '<tr valign="top">';
 
+    $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+    foreach ($lt as $column) {
+        switch ($column) {
+            case 'left':
 
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 
@@ -55,7 +59,10 @@
         if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
     }
-
+    
+            break;
+            case 'middle':
+    
     echo '<td valign="top" id="middle-column">';
     if (!empty($THEME->customcorners)) print_custom_corners_start(TRUE);
 
@@ -91,7 +98,10 @@
     
     if (!empty($THEME->customcorners)) print_custom_corners_end();
     echo '</td>';
-
+    
+            break;
+            case 'right':
+            
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
 
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing()) {
@@ -101,7 +111,9 @@
         if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
     }
-
+            break;
+        }
+    }
 
     /// Finish the page
     echo '</tr></table>';
