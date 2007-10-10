@@ -2442,20 +2442,22 @@ function cleanup_contexts() {
                 ON c.instanceid = t.id
               WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_GROUP . "
            ";
-    $rs = get_recordset_sql($sql);
-    if ($rs->RecordCount()) {
-        begin_sql();
-        $tx = true;
-        while ($tx && $ctx = rs_fetch_next_record($rs)) {
-            $tx = $tx && delete_context($ctx->level, $ctx->instanceid);
+    if ($rs = get_recordset_sql($sql)) {
+        if ($rs->RecordCount()) {
+            begin_sql();
+            $tx = true;
+            while ($tx && $ctx = rs_fetch_next_record($rs)) {
+                $tx = $tx && delete_context($ctx->level, $ctx->instanceid);
+            }
+            rs_close($rs);
+            if ($tx) {
+                commit_sql();
+                return true;
+            }
+            rollback_sql();
+            return false;
         }
         rs_close($rs);
-        if ($tx) {
-            commit_sql();
-            return true;
-        }
-        rollback_sql();
-        return false;
     }
     return true;
 }
