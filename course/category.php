@@ -16,7 +16,7 @@
     $moveup       = optional_param('moveup', 0, PARAM_INT);
     $movedown     = optional_param('movedown', 0, PARAM_INT);
     $moveto       = optional_param('moveto', 0, PARAM_INT);
-    $rename       = optional_param('rename', '', PARAM_RAW);
+    $rename       = optional_param('rename', '', PARAM_TEXT);
     $resort       = optional_param('resort', 0, PARAM_BOOL);
     $categorytheme= optional_param('categorytheme', false, PARAM_CLEAN);
 
@@ -54,7 +54,7 @@
     if (has_capability('moodle/category:update', $context)) {
         /// Rename the category if requested
         if (!empty($rename) and confirm_sesskey()) {
-            $category->name = stripslashes_safe($rename);
+            $category->name = $rename;
             if (! set_field("course_categories", "name", $category->name, "id", $category->id)) {
                 notify("An error occurred while renaming the category");
             }
