@@ -3432,7 +3432,7 @@ function build_navigation($extranavlinks, $cm = null) {
             debugging('The field $cm->name should be set if you call build_navigation with '.
                     'a $cm parameter. If you get $cm using get_coursemodule_from_instance or ',
                     'get_coursemodule_from_id, this will be done automatically.', DEBUG_DEVELOPER);
-            if (!$cm->modname = get_field($cm->modname, 'name', 'id', $cm->instance)) {
+            if (!$cm->name = get_field($cm->modname, 'name', 'id', $cm->instance)) {
                 error('Cannot get the module name in build navigation.');
             }
         }
