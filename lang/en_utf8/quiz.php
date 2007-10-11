@@ -542,6 +542,7 @@ $string['stoponerror'] = 'Stop on error';
 $string['subneterror'] = 'Sorry, this quiz has been locked so that it is only accessible from certain locations.  Currently your computer is not one of those allowed to use this quiz.';
 $string['subnetnotice'] = 'This quiz has been locked so that it is only accessible from certain locations. Your computer is not on an allowed subnet. As teacher you are allowed to preview anyway.';
 $string['substitutedby'] = 'will be substituted by';
+$string['summaryofattempts'] = 'Summary of your previous attempts';
 $string['temporaryblocked'] = 'You are temporarily not allowed to re-attempt the quiz.<br /> You will be able to take another attempt on:';
 $string['time'] = 'Time';
 $string['timecompleted'] = 'Completed';
