@@ -2582,14 +2582,12 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
 
     global $COURSE, $CFG;
 
-    $shortname ='';
-    if ($COURSE->id != SITEID) {
-        $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. $COURSE->shortname .'</a> ->';
-    }
-
     // If old style nav prepend course short name otherwise leave $navigation object alone
     if (!is_newnav($navigation)) {
-        $navigation = $shortname.' '.$navigation;
+        if ($COURSE->id != SITEID) {
+            $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. $COURSE->shortname .'</a> ->';
+            $navigation = $shortname.' '.$navigation;
+        }
     }
 
     $output = print_header($COURSE->shortname .': '. $title, $COURSE->fullname .' '. $heading, $navigation, $focus, $meta,
