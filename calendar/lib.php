@@ -1198,11 +1198,12 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
                 else if(isset($USER->groupmember[$courseid])) {
                     //changed to 2D array
                     foreach ($USER->groupmember[$courseid] as $groupid){
-                        $grouparray[] = $groupid;
+                        $rec = get_record('groups_courses_groups', 'courseid', $courseid, 'groupid', $groupid);
+                        //$grouparray[] = $groupid;
+                        $grouparray[] = $rec->id;
                     }
                 }
             }
-            
             if (!empty($groupids)) {
                 $sql = "SELECT id, groupid 
                         FROM {$CFG->prefix}groups_courses_groups
