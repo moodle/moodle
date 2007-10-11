@@ -337,6 +337,7 @@ class grade_object {
      * @static final
      */
     function set_properties(&$instance, $params) {
+        $params = (array) $params;
         foreach ($params as $var => $value) {
             if (in_array($var, $instance->required_fields) or array_key_exists($var, $instance->optional_fields)) {
                 $instance->$var = $value;
