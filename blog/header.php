@@ -206,11 +206,7 @@ $navlinks = array();
                                         'type' => 'misc');
                     $navlinks[] = array('name' => $blogstring, 'link' => null, 'type' => 'misc');
                     $navigation = build_navigation($navlinks);
-                    print_header("$course->shortname: $blogstring", $course->fullname,
-                            '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
-                            <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'">'.$participants.'</a> ->
-                            <a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'&amp;course='.$course->id.'">'.fullname($user).'</a> ->
-                            '.$blogstring,'','',true,$PAGE->get_extra_header_string());
+                    print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
                 }
 
             } else {
