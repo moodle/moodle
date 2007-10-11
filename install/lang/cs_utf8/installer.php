@@ -121,8 +121,10 @@ $string['downloadlanguagenotneeded'] = 'V instalaci lze nyní pokračovat v jazy
 $string['downloadlanguagesub'] = 'Nyní máte možnost stáhnout si některý z jazykových balíčků Moodlu a pokračovat v tomto jazyce.<br /><br />Pokud si momentálně nemůžete nebo nechcete stáhnout jazykový balíček, bude instalační proces pokračovat v angličtině. Jazykové balíčky si budete moci stáhnout i později po ukončení instalace.';
 $string['environmenterrortodo'] = 'Pro pokračování v instalaci této verze Moodlu je nutné nejdříve vyřešit problémy v programovém prostředí (chyby) serveru uvedené výše!';
 $string['environmenthead'] = 'Kontrola programového prostředí...';
+$string['environmentrecommendcustomcheck'] = 'Pokud tento test selhal, znamená to možné problémy';
 $string['environmentrecommendinstall'] = 'doporučená komponenta';
 $string['environmentrecommendversion'] = 'doporučena je verze $a->needed, nyní používáte verzi $a->current';
+$string['environmentrequirecustomcheck'] = 'Tebto test musí projít';
 $string['environmentrequireinstall'] = 'vyžadovaná komponenta';
 $string['environmentrequireversion'] = 'vyžadována je verze $a->needed, nyní používáte verzi $a->current';
 $string['environmentsub'] = 'Nyní se prověřuje, zda vybrané komponenty vašeho systému splňují požadavky instalace.';
@@ -199,6 +201,8 @@ $string['phpversionhelp'] = '<p>Moodle vyžaduje PHP alespoň verze 4.3.0 nebo 5
 (U PHP 5.0.x můžete také přejít na nižší verzi 4.4.x či 4.3.x.)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Předchozí';
+$string['qtyperqpwillberemoved'] = 'Během upgrade bude odstraněn typ testové úlohy RQP. Tento typ jste nepoužívali, takže byste neměli zaznamenta žádné problémy.';
+$string['qtyperqpwillberemovedanyway'] = 'Během upgrade bude odstraněn typ testové úlohy RQP. Ve vaší databázi existuje několik takových úloh a ty nebudou fungovat, dokud nepřeinstalujete kód z http://moodle.org/mod/data/view.php?d=13&amp;rid=797 před pokračováním upgrade.';
 $string['remotedownloadnotallowed'] = 'Stahování komponent na server není povoleno (direktiva allow_url_fopen je ve stavu \'vypnuto\').<br /><br />Musíte soubor stáhnout <a href=\"$a->url\">$a->url</a> ručně, zkopírovat jej na serveru do umístění \"$a->dest\" a tam jej dekomprimovat.';
 $string['report'] = 'Sestava';
 $string['restricted'] = 'Nedostupné';
