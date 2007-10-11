@@ -82,9 +82,7 @@ function ImageCopyBicubic ($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $
  * @return boolean
  * @todo Finish documenting this function
  */
-function save_profile_image($id, $uploadmanager, $dir='users') {
-// 
-
+function save_profile_image($id, $uploadmanager, $dir='user') {
     global $CFG;
 
     if (empty($CFG->gdversion)) {
@@ -103,13 +101,19 @@ function save_profile_image($id, $uploadmanager, $dir='users') {
         }
     }
 
-    if (!file_exists($CFG->dataroot .'/'. $dir .'/'. $id)) {
-        if (! mkdir($CFG->dataroot .'/'. $dir .'/'. $id, $CFG->directorypermissions)) {
+    if ($dir == 'user') {
+        $destination = make_user_directory($id, true);
+    } else {
+        $destination = "$CFG->dataroot/$dir/$id";
+    }
+
+    if (!file_exists($destination)) {
+        if (!mkdir($destination, $CFG->directorypermissions)) {
             return false;
         }
     }
 
-    $destination = $CFG->dataroot .'/'. $dir .'/'. $id;
+    
     if (!$uploadmanager->save_files($destination)) {
         return false;
     }
@@ -185,12 +189,12 @@ function save_profile_image($id, $uploadmanager, $dir='users') {
     ImageCopyBicubic($im2, $im, 0, 0, $cx-$half, $cy-$half, 35, 35, $half*2, $half*2);
 
     if (function_exists('ImageJpeg')) {
-        @touch($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg');  // Helps in Safe mode
-        @touch($CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg');  // Helps in Safe mode
-        if (ImageJpeg($im1, $CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 90) and 
-            ImageJpeg($im2, $CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 95) ) {
-            @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 0666);
-            @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 0666);
+        @touch($destination .'/f1.jpg');  // Helps in Safe mode
+        @touch($destination .'/f2.jpg');  // Helps in Safe mode
+        if (ImageJpeg($im1, $destination .'/f1.jpg', 90) and
+            ImageJpeg($im2, $destination .'/f2.jpg', 95) ) {
+            @chmod($destination .'/f1.jpg', 0666);
+            @chmod($destination .'/f2.jpg', 0666);
             return 1;
         }
     } else {

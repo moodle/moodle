@@ -667,7 +667,7 @@ function process_person_tag($tagcontents){
                                    $person->picture = 1;
                                    //Llibreria creada per nosaltres mateixos.
                                    require_once($CFG->dirroot.'/lib/gdlib.php');
-                                   if ($usernew->picture = save_profile_image($id, $person->urlphoto,'users', true)) {
+                                   if ($usernew->picture = save_profile_image($id, $person->urlphoto,'user')) {
                                      set_field('user', 'picture', $usernew->picture, 'id', $id);  /// Note picture in DB
                                    }
                                  }

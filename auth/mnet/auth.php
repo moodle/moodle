@@ -115,7 +115,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         $userdata['session.gc_maxlifetime']  = ini_get('session.gc_maxlifetime');
         $userdata['picture']                 = $user->picture;
         if (!empty($user->picture)) {
-            $imagefile = "{$CFG->dataroot}/users/{$user->id}/f1.jpg";
+            $imagefile = make_user_directory($user->id, true) . "/f1.jpg";
             if (file_exists($imagefile)) {
                 $userdata['imagehash'] = sha1(file_get_contents($imagefile));
             }
@@ -319,7 +319,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
             // TODO: fetch image if it has changed
             if ($key == 'imagehash') {
-                $dirname = "{$CFG->dataroot}/users/{$localuser->id}";
+                $dirname = make_user_directory($localuser->id, true);
                 $filename = "$dirname/f1.jpg";
 
                 $localhash = '';
@@ -1262,8 +1262,8 @@ class auth_plugin_mnet extends auth_plugin_base {
         global $CFG;
 
         if ($user = get_record('user', 'username', addslashes($username), 'mnethostid', $CFG->mnet_localhost_id)) {
-            $filename1 = "{$CFG->dataroot}/users/{$user->id}/f1.jpg";
-            $filename2 = "{$CFG->dataroot}/users/{$user->id}/f2.jpg";
+            $filename1 = make_user_directory($user->id, true) . "/f1.jpg";
+            $filename2 = make_user_directory($user->id, true) . "/f2.jpg";
             $return = array();
             if (file_exists($filename1)) {
                 $return['f1'] = base64_encode(file_get_contents($filename1));
