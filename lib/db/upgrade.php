@@ -2555,6 +2555,11 @@ function xmldb_main_upgrade($oldversion=0) {
         
         foreach ($folders as $userid) {
             $olddir = $oldusersdir . '/' . $userid;
+            $files = get_directory_list($olddir);
+            
+            if (empty($files)) {
+                continue;
+            }
 
             // Create new user directory
             if (!$newdir = make_user_directory($userid)) {
@@ -2564,7 +2569,6 @@ function xmldb_main_upgrade($oldversion=0) {
 
             // Move contents of old directory to new one
             if (file_exists($olddir) && file_exists($newdir)) {
-                $files = get_directory_list($olddir);
                 foreach ($files as $file) {
                     copy($olddir . '/' . $file, $newdir . '/' . $file);
                 }
@@ -2586,8 +2590,9 @@ function xmldb_main_upgrade($oldversion=0) {
         } else {
             // Could not create the readme file. No cause for huge concern
             notify("Could not create the README.txt file in $readmefilename.");
-        } 
+        }
     }    
+
 
     return $result;
 }
