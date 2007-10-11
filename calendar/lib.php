@@ -490,7 +490,7 @@ function calendar_print_event($event) {
  	  	if (!empty($event->calendarcourseid)) {
  	  	    $calendarcourseid = '&amp;course='.$event->calendarcourseid;
  	  	}
-        
+
         if (empty($event->cmid)) {
             $editlink   = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id.$calendarcourseid;
             $deletelink = CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id.$calendarcourseid;

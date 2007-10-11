@@ -9,13 +9,8 @@ $action = optional_param('action', '', PARAM_ALPHA);
 $day  = optional_param('cal_d', 0, PARAM_INT);
 $mon  = optional_param('cal_m', 0, PARAM_INT);
 $yr   = optional_param('cal_y', 0, PARAM_INT);
-
-if (isset($SESSION->cal_course_referer)) {
-    $course = $SESSION->cal_course_referer;
-} else {
-    $course = optional_param('course', 0, PARAM_INT);
-}
-
+$courseid = optional_param('course', 0, PARAM_INT);
+                
 require_login();
 
 if(!$site = get_site()) {
@@ -27,7 +22,7 @@ calendar_session_vars();
 
 $pagetitle = get_string('export', 'calendar');
 $now = usergetdate(time());
-$nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;course='.$course.'&amp;', $now['mday'], $now['mon'], $now['year']).' -> '.$pagetitle;
+$nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;course='.$courseid.'&amp;', $now['mday'], $now['mon'], $now['year']).' -> '.$pagetitle;
 
 if(!checkdate($mon, $day, $yr)) {
     $day = intval($now['mday']);
@@ -36,13 +31,23 @@ if(!checkdate($mon, $day, $yr)) {
 }
 $time = make_timestamp($yr, $mon, $day);
 
-$SESSION->cal_courses_shown = calendar_get_default_courses(true);
-calendar_set_referring_course(0);
+if ($courseid) {
+    if ($course = get_record('course', 'id', $courseid)) {
+        if ($course->id == SITEID) {
+            // If coming from the home page, show all courses
+            $SESSION->cal_courses_shown = calendar_get_default_courses(true);
+            calendar_set_referring_course(0);
+        } else {
+            // Otherwise show just this one
+            $SESSION->cal_courses_shown = $course->id;
+            calendar_set_referring_course($SESSION->cal_courses_shown);
+        }
+    }
+}
 
 if (empty($USER->id) or isguest()) {
     $defaultcourses = calendar_get_default_courses();
     calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
-
 } else {
     calendar_set_filters($courses, $groups, $users);
 }
@@ -99,13 +104,13 @@ list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
 $getvars = 'cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
 
 echo '<div class="minicalendarblock">';
-echo calendar_top_controls('display', array('id' => $course, 'm' => $prevmon, 'y' => $prevyr));
+echo calendar_top_controls('display', array('id' => $courseid, 'm' => $prevmon, 'y' => $prevyr));
 echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
 echo '</div><div class="minicalendarblock">';
-echo calendar_top_controls('display', array('id' => $course, 'm' => $mon, 'y' => $yr));
+echo calendar_top_controls('display', array('id' => $courseid, 'm' => $mon, 'y' => $yr));
 echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
 echo '</div><div class="minicalendarblock">';
-echo calendar_top_controls('display', array('id' => $course, 'm' => $nextmon, 'y' => $nextyr));
+echo calendar_top_controls('display', array('id' => $courseid, 'm' => $nextmon, 'y' => $nextyr));
 echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
 echo '</div>';
 

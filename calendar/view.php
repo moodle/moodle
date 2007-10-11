@@ -161,7 +161,7 @@
 
     //Link to calendar export page
     echo '<div class="bottom">';
-    print_single_button('export.php', false, get_string('exportcalendar', 'calendar'));
+    print_single_button('export.php', array('course'=>$courseid), get_string('exportcalendar', 'calendar'));
 
     if (!empty($USER->id)) {
         $authtoken = sha1($USER->username . $USER->password);
@@ -258,6 +258,8 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users, $courseid) {
 
         // First, print details about events that start today
         foreach ($events as $event) {
+
+            $event->calendarcourseid = $courseid;
 
             if ($event->timestart >= $starttime && $event->timestart <= $endtime) {  // Print it now
 
@@ -578,6 +580,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
     if ($events) {
         echo '<div class="eventlist">';
         foreach ($events as $event) {
+            $event->calendarcourseid = $courseid;
             calendar_print_event($event);
         }
         echo '</div>';
