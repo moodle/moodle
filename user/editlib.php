@@ -23,10 +23,10 @@ function useredit_update_picture(&$usernew, &$userform) {
     global $CFG;
 
     if (isset($usernew->deletepicture) and $usernew->deletepicture) {
-        $location = $CFG->dataroot.'/users/'.$usernew->id;
+        $location = make_user_directory($usernew->id, true);
         @remove_dir($location);
         set_field('user', 'picture', 0, 'id', $usernew->id);
-    } else if ($usernew->picture = save_profile_image($usernew->id, $userform->get_um(), 'users')) {
+    } else if ($usernew->picture = save_profile_image($usernew->id, $userform->get_um(), 'user')) {
         set_field('user', 'picture', 1, 'id', $usernew->id);
     }
 }

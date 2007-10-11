@@ -2547,8 +2547,47 @@ function xmldb_main_upgrade($oldversion=0) {
 
         upgrade_main_savepoint($result, 2007100903);
     }
+    
+    if ($result && $oldversion < 2007101101) {
+        // Get list of users by browsing moodledata/user
+        $oldusersdir = $CFG->dataroot . '/users';
+        $folders = get_directory_list($oldusersdir, '', false, true, false);
+        
+        foreach ($folders as $userid) {
+            $olddir = $oldusersdir . '/' . $userid;
 
+            // Create new user directory
+            if (!$newdir = make_user_directory($userid)) {
+                $result = false;
+                break;
+            }
 
+            // Move contents of old directory to new one
+            if (file_exists($olddir) && file_exists($newdir)) {
+                $files = get_directory_list($olddir);
+                foreach ($files as $file) {
+                    copy($olddir . '/' . $file, $newdir . '/' . $file);
+                }
+            } else {
+                notify("Could not move the contents of $olddir into $newdir!");
+                $result = false;
+                break;
+            }
+        }
+
+        // Leave a README in old users directory
+        $readmefilename = $oldusersdir . '/README.txt';
+        if ($handle = fopen($readmefilename, 'w+b')) {
+            if (!fwrite($handle, get_string('olduserdirectory'))) {
+                // Could not write to the readme file. No cause for huge concern 
+                notify("Could not write to the README.txt file in $readmefilename.");
+            }
+            fclose($handle);
+        } else {
+            // Could not create the readme file. No cause for huge concern
+            notify("Could not create the README.txt file in $readmefilename.");
+        } 
+    }    
 
     return $result;
 }

@@ -1096,6 +1096,7 @@ $string['numwords'] = '$a words';
 $string['numyears'] = '$a years';
 $string['ok'] = 'OK';
 $string['oldpassword'] = 'Current Password';
+$string['olduserdirectory'] = 'This is the OLD users directory, and is no longer needed. \r\nYou may safely delete it. \r\nThe files it contains have been copied to the NEW user directory.';
 $string['opentoguests'] = 'Guest access';
 $string['optional'] = 'optional';
 $string['order'] = 'Order';

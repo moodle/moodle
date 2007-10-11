@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.org                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -177,6 +177,25 @@ class moodlelib_test extends UnitTestCase {
         
         $this->assertEqual(clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_CLEAN), 
             '#()*#,9789\\\'\".,');
+        
+    }
+
+    function test_make_user_directory() {
+        global $CFG;
+
+        // Test success conditions
+        $this->assertEqual("$CFG->dataroot/user/0/0", make_user_directory(0, true));
+        $this->assertEqual("$CFG->dataroot/user/0/1", make_user_directory(1, true));
+        $this->assertEqual("$CFG->dataroot/user/0/999", make_user_directory(999, true));
+        $this->assertEqual("$CFG->dataroot/user/1000/1000", make_user_directory(1000, true));
+        $this->assertEqual("$CFG->dataroot/user/2147483000/2147483647", make_user_directory(2147483647, true)); // Largest int possible
+
+        // Test fail conditions
+        $this->assertFalse(make_user_directory(2147483648, true)); // outside int boundary
+        $this->assertFalse(make_user_directory(-1, true));
+        $this->assertFalse(make_user_directory('string', true));
+        $this->assertFalse(make_user_directory(false, true));
+        $this->assertFalse(make_user_directory(true, true));
         
     }
 }

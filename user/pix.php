@@ -18,10 +18,10 @@
     if (count($args) == 2) {
         $userid   = (integer)$args[0];
         $image    = $args[1];
-        $pathname = $CFG->dataroot.'/users/'.$userid.'/'.$image;
+        $pathname = make_user_directory($userid, true) . "/$image";
         if (file_exists($pathname) and !is_dir($pathname)) {
             send_file($pathname, $image);
-        }
+        } 
     }
 
     // picture was deleted - use default instead

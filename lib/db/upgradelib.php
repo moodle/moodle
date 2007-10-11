@@ -2,7 +2,7 @@
 
 /*
  * This file is used for special upgrade functions - for example groups and gradebook.
- * These functions must use SQL and dabase related functions only- no other Moodle API,
+ * These functions must use SQL and database related functions only- no other Moodle API,
  * because it might depend on db structures that are not yet present during upgrade.
  * (Do not use functions from accesslib.php, grades classes or group functions at all!)
  */
