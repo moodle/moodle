@@ -607,6 +607,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
 
         echo '<div class="eventlist">';
         foreach ($events as $event) {
+            $event->calendarcourseid = $courseid;
             calendar_print_event($event);
         }
         echo '</div>';
