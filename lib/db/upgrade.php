@@ -698,16 +698,19 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     return $result;
-
-}
     
-    if ($result && $oldversion < 2007101101) {
+    if ($result && $oldversion < 2007021531) {
         // Get list of users by browsing moodledata/user
         $oldusersdir = $CFG->dataroot . '/users';
         $folders = get_directory_list($oldusersdir, '', false, true, false);
         
         foreach ($folders as $userid) {
             $olddir = $oldusersdir . '/' . $userid;
+            $files = get_directory_list($olddir);
+            
+            if (empty($files)) {
+                continue;
+            }
 
             // Create new user directory
             if (!$newdir = make_user_directory($userid)) {
@@ -717,7 +720,6 @@ function xmldb_main_upgrade($oldversion=0) {
 
             // Move contents of old directory to new one
             if (file_exists($olddir) && file_exists($newdir)) {
-                $files = get_directory_list($olddir);
                 foreach ($files as $file) {
                     copy($olddir . '/' . $file, $newdir . '/' . $file);
                 }
@@ -743,6 +745,7 @@ function xmldb_main_upgrade($oldversion=0) {
     }    
 
 
-    return $result;
+    return $result; 
 
+}
 ?>
