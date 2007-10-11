@@ -2582,14 +2582,12 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
 
     global $COURSE, $CFG;
 
-    $shortname ='';
-    if ($COURSE->id != SITEID) {
-        $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. $COURSE->shortname .'</a> ->';
-    }
-
     // If old style nav prepend course short name otherwise leave $navigation object alone
     if (!is_newnav($navigation)) {
-        $navigation = $shortname.' '.$navigation;
+        if ($COURSE->id != SITEID) {
+            $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. $COURSE->shortname .'</a> ->';
+            $navigation = $shortname.' '.$navigation;
+        }
     }
 
     $output = print_header($COURSE->shortname .': '. $title, $COURSE->fullname .' '. $heading, $navigation, $focus, $meta,
@@ -3451,52 +3449,55 @@ function build_navigation($extranavlinks, $cm = null) {
     //Merge in extra navigation links
     $navlinks = array_merge($navlinks, $extranavlinks);
 
+    // Work out whether we should be showing the activity (e.g. Forums) link.
+    // Note: build_navigation() is called from many places --
+    // install & upgrade for example -- where we cannot count on the
+    // roles infrastructure to be defined. Hence the $CFG->rolesactive check.
+    if (!isset($CFG->hideactivitytypenavlink)) {
+        $CFG->hideactivitytypenavlink == 0;
+    }
+    if ($CFG->hideactivitytypenavlink == 2) {
+        $hideactivitylink = true;
+    } else if ($CFG->hideactivitytypenavlink == 1 && $CFG->rolesactive &&
+            !empty($COURSE->id) && $COURSE->id != SITEID) {
+        if (!isset($COURSE->context)) {
+            $COURSE->context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        }
+        $hideactivitylink = !has_capability('moodle/course:manageactivities', $COURSE->context);
+    } else {
+        $hideactivitylink = false;
+    }
+
     //Construct an unordered list from $navlinks
     //Accessibility: heading hidden from visual browsers by default.
     $navigation = '<h2 class="accesshide">'.get_string('youarehere','access')."</h2> <ul>\n";
-    $countlinks = count($navlinks);
-    $i = 0;
+    $lastindex = count($navlinks) - 1;
+    $i = -1; // Used to count the times, so we know when we get to the last item.
+    $first = true;
     foreach ($navlinks as $navlink) {
-        if ($i >= $countlinks || !is_array($navlink)) {
+        $i++;
+        $last = ($i == $lastindex);
+        if (!is_array($navlink)) {
             continue;
         }
-        // Check the link type to see if this link should appear in the trail
-        //
-        // NOTE: we should move capchecks _out_ to the callers. build_navigation() is
-        // called from many places -- install & upgrade for example -- where we cannot
-        // count on the roles infrastructure to be defined.
-        //
-        $cap = 0;
-        if (!empty($COURSE->id) && $COURSE->id != SITEID) {
-            if (!isset($COURSE->context)) {
-                $COURSE->context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-            }
-            $cap = has_capability('moodle/course:manageactivities', $COURSE->context);
-        }
-        $hidetype_is2 = isset($CFG->hideactivitytypenavlink) && $CFG->hideactivitytypenavlink == 2;
-        $hidetype_is1 = isset($CFG->hideactivitytypenavlink) && $CFG->hideactivitytypenavlink == 1;
-
-        if ($navlink['type'] == 'activity' &&
-            $i+1 < $countlinks  &&
-            ($hidetype_is2 || ($hidetype_is1 && !$cap))) {
+        if ($navlink['type'] == 'activity' && !$last && $hideactivitylink) {
             continue;
         }
         $navigation .= '<li class="first">';
-        if ($i > 0) {
+        if (!$first) {
             $navigation .= get_separator();
         }
-        if ((!empty($navlink['link'])) && $i+1 < $countlinks) {
+        if ((!empty($navlink['link'])) && !$last) {
             $navigation .= "<a onclick=\"this.target='$CFG->framename'\" href=\"{$navlink['link']}\">";
         }
         $navigation .= "{$navlink['name']}";
-        if ((!empty($navlink['link'])) && $i+1 < $countlinks) {
+        if ((!empty($navlink['link'])) && !$last) {
             $navigation .= "</a>";
         }
 
         $navigation .= "</li>";
-        $i++;
+        $first = false;
     }
-
     $navigation .= "</ul>";
 
     return(array('newnav' => true, 'navlinks' => $navigation));
