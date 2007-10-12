@@ -3375,31 +3375,55 @@ function print_navigation ($navigation, $separator=0, $return=false) {
  * This function will build the navigation string to be used by print_header
  * and others.
  *
- * It will automatically add the site (and course level if appropriate) links.
+ * It automatically generates the site and course level (if appropriate) links.
  *
- * If you pass in a $cm object, the method will also generate the activity (e.g. Forums)
- * and activityinstances (e.g. General Developer Forum) navigation levels.
+ * If you pass in a $cm object, the method will also generate the activity (e.g. 'Forums')
+ * and activityinstances (e.g. 'General Developer Forum') navigation levels.
  *
- * The fields used are $cm->modname, $cm->name and $cm->course. If you get the $cm object 
- * using the function get_coursemodule_from_instance or get_coursemodule_from_id (as recommended)
- * then this will be done for you automatically. If you don't have $cm->modname or $cm->name,
- * this fuction will attempt to find them using the $cm->module and $cm->instance fields, but 
- * this takes extra database queries, so a warning is printed in developer debug mode.
+ * If you want to add any further navigation links after the ones this function generates,
+ * the pass an array of extra link arrays like this:
+ * array(
+ *     array('name' => $linktext1, 'link' => $url1, 'type' => $linktype1),
+ *     array('name' => $linktext2, 'link' => $url2, 'type' => $linktype2)
+ * )
+ * The normal case is to just add one further link, for example 'Editing forum' after
+ * 'General Developer Forum', with no link.
+ * To do that, you need to pass
+ * array(array('name' => $linktext, 'link' => '', 'type' => 'title'))
+ * However, becuase this is a very common case, you can use a shortcut syntax, and just
+ * pass the string 'Editing forum', instead of an array as $extranavlinks.
+ * 
+ * At the moment, the link types only have limited significance. Type 'activity' is
+ * recognised in order to implement the $CFG->hideactivitytypenavlink feature. Types 
+ * that are known to appear are 'home', 'course', 'activity', 'activityinstance' and 'title'.
+ * This really needs to be documented better. In the mean time, try to be consistent, it will
+ * enable people to customise the navigation more in future.
+ *
+ * When passing a $cm object, the fields used are $cm->modname, $cm->name and $cm->course.
+ * If you get the $cm object using the function get_coursemodule_from_instance or
+ * get_coursemodule_from_id (as recommended) then this will be done for you automatically.
+ * If you don't have $cm->modname or $cm->name, this fuction will attempt to find them using
+ * the $cm->module and $cm->instance fields, but this takes extra database queries, so a
+ * warning is printed in developer debug mode.
  * 
  * @uses $CFG
  * @uses $THEME
  *
- * @param array $extranavlinks - array of associative arrays, keys: name, link, type
+ * @param mixed $extranavlinks - Normally an array of arrays, keys: name, link, type. If you 
+ *      only want one extra item with no link, you can pass a string instead.
  * @param mixed $cm - optionally the $cm object, if you want this function to generate the 
  *      activity and activityinstance levels of navigation too.
  *
  * @return $navigation as an object so it can be differentiated from old style
- * navigation strings.
+ *      navigation strings.
  */
 function build_navigation($extranavlinks, $cm = null) {
     global $CFG, $COURSE;
 
-    $navigation = '';
+    if (is_string($extranavlinks)) {
+        $extranavlinks = array(array('name' => $extranavlinks, 'link' => '', 'type' => 'title'));
+    }
+
     $navlinks = array();
 
     //Site name
