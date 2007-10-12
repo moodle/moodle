@@ -64,12 +64,7 @@
 
 
 /// Print header.
-    $navlinks = array();
-    $navlinks[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($forum->name), 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
-    
-    $navigation = build_navigation($navlinks);
-    
+    $navigation = build_navigation('', $cm);
     print_header_simple(format_string($forum->name), "",
                  $navigation, "", "", true, $buttontext, navmenu($course, $cm));
 

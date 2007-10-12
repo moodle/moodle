@@ -82,11 +82,9 @@ function display() {
                         "center", "", "", "20");
                 print_footer($course);
             } else {                           /// Make a page and a pop-up window
+                $navigation = build_navigation($this->navlinks, $cm);
 
-                $this->navlinks[] = array('name' => format_string($resource->name), 'link' => null, 'type' => 'misc');
-                $this->navigation = build_navigation($this->navlinks);
-
-                print_header($pagetitle, $course->fullname, $this->navigation,
+                print_header($pagetitle, $course->fullname, $navigation,
                         "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
                         navmenu($course, $cm));
 
@@ -113,10 +111,9 @@ function display() {
         } else {    /// not a popup at all
 
             add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
-            $this->navlinks[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'title');
-            $this->navigation = build_navigation($this->navlinks);
+            $navigation = build_navigation($this->navlinks, $cm);
 
-            print_header($pagetitle, $course->fullname, $this->navigation,
+            print_header($pagetitle, $course->fullname, $navigation,
                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
                     navmenu($course, $cm));
 

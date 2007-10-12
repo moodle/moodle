@@ -65,12 +65,7 @@
                        <a href=\"view.php?id=$cm->id\">".format_string($survey->name,true)."</a> -> ";
     }
     
-    $navlinks = array();
-    $navlinks[] = array('name' => $strsurveys, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($survey->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $navlinks[] = array('name' => $strreport, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($navlinks);
-    
+    $navigation = build_navigation($strreport, $cm);
     print_header("$course->shortname: ".format_string($survey->name), $course->fullname, $navigation,
                  "", "", true,
                  update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));

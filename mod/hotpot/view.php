@@ -43,11 +43,7 @@
     $title = format_string($course->shortname.': '.$hotpot->name, true);
     $heading = $course->fullname;
 
-    $navlinks = array();
-    $navlinks[] = array('name' => get_string("modulenameplural", "hotpot"), 'link' => $CFG->wwwroot.'/mod/hotpot/index.php?id='.$course->id, 'type' => 'activity');
-    $navlinks[] = array('name' => $hotpot->name, 'link' => '', 'type' => 'activityinstance');
-
-    $navigation = build_navigation($navlinks);
+    $navigation = build_navigation('', $cm);
 
     $button = update_module_button($cm->id, $course->id, get_string("modulename", "hotpot"));
     $button = '<div style="font-size:0.75em;">'.$button.'</div>';

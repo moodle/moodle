@@ -405,11 +405,6 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
     $title = format_string($course->shortname) . ": $hotpot->name";
     $heading = $course->fullname;
     
-    $navlinks = array();
-    $navlinks[] = array('name' => $strmodulenameplural, 'link' => 'index.php?id='.$course->id, 'type' => 'activity');
-    $navlinks[] = array('name' => $hotpot->name, 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-
-
     $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (has_capability('mod/hotpot:viewreport',$modulecontext)) {
         if ($mode=='overview' || $mode=='simplestat' || $mode=='fullstat') {
@@ -418,16 +413,12 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
             $module = "hotpot";
         }
 
-        $navlinks[] = array('name' => get_string("report$mode", $module), 'link' => '', 'type' => 'title');
-        
-
+        $navigation = build_navigation(get_string("report$mode", $module), $cm);
     } else {
-
-        $navlinks[] = array('name' => get_string("report", "quiz"), 'link' => '', 'type' => 'title');
+        $navigation = build_navigation(get_string("report", "quiz"), $cm);
     }
 
     $button = update_module_button($cm->id, $course->id, $strmodulename);
-    $navigation = build_navigation($navlinks);
     print_header($title, $heading, $navigation, "", "", true, $button, navmenu($course, $cm));
 
     print_heading($hotpot->name);

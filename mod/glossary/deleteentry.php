@@ -39,16 +39,10 @@
 
     $strareyousuredelete = get_string("areyousuredelete","glossary");
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-
-$navigation = build_navigation($navlinks);
-
+    $navigation = build_navigation('', $cm);
     print_header_simple(format_string($glossary->name), "", $navigation,
                   "", "", true, update_module_button($cm->id, $course->id, $strglossary),
                   navmenu($course, $cm));
-
 
     if (($entry->userid != $USER->id) and !$manageentries) { // guest id is never matched, no need for special check here
         error("You can't delete other people's entries!");

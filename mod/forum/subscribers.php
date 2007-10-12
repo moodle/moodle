@@ -36,12 +36,7 @@
     $strsubscribers = get_string("subscribers", "forum");
     $strforums      = get_string("forums", "forum");
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($forum->name), 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
-    $navlinks[] = array('name' => $strsubscribers, 'link' => '', 'type' => 'title');
-
-    $navigation = build_navigation($navlinks);
+    $navigation = build_navigation($strsubscribers, $cm);
 
     if (has_capability('mod/forum:managesubscriptions', $context)) {
         print_header_simple("$strsubscribers", "", $navigation,

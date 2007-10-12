@@ -61,10 +61,8 @@ function display() {
         array_shift($subs);
         $countsubs = count($subs);
         $count = 0;
-        $subnav = "<a href=\"view.php?id={$cm->id}\">".format_string($resource->name,true)."</a>";
         $backsub = '';
-        $this->navlinks[] = array('name' => format_string($resource->name,true), 'link' => "view.php?id={$cm->id}", 'type' => 'activity');
-        
+
         foreach ($subs as $sub) {
             $count++;
             if ($count < $countsubs) {
@@ -75,8 +73,6 @@ function display() {
                 $this->navlinks[] = array('name' => $sub, 'link' => '', 'type' => 'title');
             }
         }
-    } else {
-        $this->navlinks[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activity');        
     }
 
     $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
@@ -87,8 +83,8 @@ function display() {
         $editfiles = print_single_button("$CFG->wwwroot/files/index.php", $options, get_string("editfiles"), 'get', '', true);
         $update = $editfiles.$update;
     }
-    $this->navigation = build_navigation($this->navlinks);
-    print_header($pagetitle, $course->fullname, $this->navigation,
+    $navigation = build_navigation($this->navlinks, $cm);
+    print_header($pagetitle, $course->fullname, $navigation,
             "", "", true, $update,
             navmenu($course, $cm));
 

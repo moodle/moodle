@@ -324,9 +324,8 @@ class resource_file extends resource_base {
             if ($inpopup) {
                 print_header($pagetitle, $course->fullname);
             } else {
-                $this->navlinks[] = array('name' => format_string($resource->name), 'link' => null, 'type' => 'misc');
-                $this->navigation = build_navigation($this->navlinks);
-                print_header($pagetitle, $course->fullname, $this->navigation,
+                $navigation = build_navigation($this->navlinks, $cm);
+                print_header($pagetitle, $course->fullname, $navigation,
                         "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
             }
             notify(get_string('notallowedlocalfileaccess', 'resource', ''));
@@ -340,12 +339,9 @@ class resource_file extends resource_base {
 
         /// Check whether this is supposed to be a popup, but was called directly
         if ($resource->popup and !$inpopup) {    /// Make a page and a pop-up window
-            $this->navlinks[] = array('name' => format_string($resource->name), 'link' => null, 'type' => 'misc');
-            $this->navigation = build_navigation($this->navlinks);
-
-            print_header($pagetitle, $course->fullname, $this->navigation,
+            $navigation = build_navigation($this->navlinks, $cm);
+            print_header($pagetitle, $course->fullname, $navigation,
                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
-
 
             echo "\n<script type=\"text/javascript\">";
             echo "\n<!--\n";
@@ -405,9 +401,8 @@ class resource_file extends resource_base {
         /// If we are in a frameset, just print the top of it
 
         if (!empty( $frameset ) and ($frameset == "top") ) {
-            $this->navlinks[] = array('name' => format_string($resource->name), 'link' => null, 'type' => 'misc');
-            $this->navigation = build_navigation($this->navlinks);
-            print_header($pagetitle, $course->fullname, $this->navigation,
+            $navigation = build_navigation($this->navlinks, $cm);
+            print_header($pagetitle, $course->fullname, $navigation,
                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
             $options = new object();
@@ -431,11 +426,8 @@ class resource_file extends resource_base {
             if ($inpopup) {
                 print_header($pagetitle);
             } else {
-                $this->navlinks[] = array('name' => format_string($resource->name, true),
-                                          'link' => $fullurl,
-                                          'type' => 'misc');
-                $this->navigation = build_navigation($this->navlinks);
-                print_header_simple($pagetitle, '', $this->navigation, "", "", true,
+                $navigation = build_navigation($this->navlinks, $cm);
+                print_header_simple($pagetitle, '', $navigation, "", "", true,
                     update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
 
             }

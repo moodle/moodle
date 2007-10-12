@@ -244,10 +244,7 @@ function display() {
             $resourcetype = "html";
         }
     }
-
-
-    $this->navlinks[] = array('name' => format_string($resource->name), 'link' => null, 'type' => 'misc');
-    $this->navigation = build_navigation($this->navlinks);
+    $navigation = build_navigation($this->navlinks, $cm);
 
 /// Form the parse string
     if (!empty($resource->alltext)) {
@@ -280,7 +277,7 @@ function display() {
         if ($inpopup) {
             print_header($pagetitle, $course->fullname);
         } else {
-            print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+            print_header($pagetitle, $course->fullname, $navigation, "", "", true,
                     update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
         }
         notify('You do not have access to HarvestRoad Hive. This resource is unavailable.');
@@ -299,7 +296,7 @@ function display() {
         if ($inpopup) {
             print_header($pagetitle, $course->fullname);
         } else {
-            print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+            print_header($pagetitle, $course->fullname, $navigation, "", "", true,
                     update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
         }
         notify(get_string('notallowedlocalfileaccess', 'resource', ''));
@@ -314,7 +311,7 @@ function display() {
     /// Check whether this is supposed to be a popup, but was called directly
 
     if ($resource->popup and !$inpopup) {    /// Make a page and a pop-up window
-        print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+        print_header($pagetitle, $course->fullname, $navigation, "", "", true,
                 update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
 
 
@@ -373,7 +370,7 @@ function display() {
     /// If we are in a frameset, just print the top of it
 
     if (!empty($frameset) and $frameset == "top") {
-        print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+        print_header($pagetitle, $course->fullname, $navigation, "", "", true,
                 update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
         echo '<div class="summary">'.format_text($resource->summary, FORMAT_HTML, $formatoptions).'</div>';
@@ -395,7 +392,7 @@ function display() {
         if ($inpopup) {
             print_header($pagetitle);
         } else {
-            print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+            print_header($pagetitle, $course->fullname, $navigation, "", "", true,
                     update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
 
         }

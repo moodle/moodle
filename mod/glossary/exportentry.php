@@ -38,12 +38,7 @@
     $entryalreadyexist = get_string('entryalreadyexist','glossary');
     $entryexported = get_string('entryexported','glossary');
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-   
-    $navigation = build_navigation($navlinks);
-
+    $navigation = build_navigation('', $cm);
     print_header_simple(format_string($glossary->name), '', $navigation, '', '', true, '', navmenu($course, $cm));
 
     if ( $PermissionGranted ) {

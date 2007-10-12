@@ -64,30 +64,28 @@
         $strattempt  = get_string('attempt', 'scorm');
         $strname  = get_string('name');
         
-        $navlinks = array();
-        $navlinks[] = array('name' => $strscorms, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-        
         if (empty($b)) {
             if (empty($a)) {
-                $navigation = build_navigation($navlinks);
+                $navigation = build_navigation('', $cm);
                 print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,$navigation,
                              '', '', true);
             } else {
                 
+                $navlinks = array();
                 $navlinks[] = array('name' => $strreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');    
                 $navlinks[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => '', 'type' => 'title');
-                $navigation = build_navigation($navlinks);
+                $navigation = build_navigation($navlinks, $cm);
                     
                 print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,
                              $navigation, '', '', true);
             }
         } else {
-            
+
+            $navlinks = array();
             $navlinks[] = array('name' => $strreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');    
             $navlinks[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => "report.php?a=$a&user=$user&attempt=$attempt", 'type' => 'title');
             $navlinks[] = array('name' => $sco->title, 'link' => '', 'type' => 'title');
-            $navigation = build_navigation($navlinks);
+            $navigation = build_navigation($navlinks, $cm);
             
             print_header("$course->shortname: ".format_string($scorm->name), $course->fullname, $navigation,
                      '', '', true);

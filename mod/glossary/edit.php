@@ -188,21 +188,10 @@ if ($mform->is_cancelled()){
     }
 }
 
-$strglossary = get_string("modulename", "glossary");
-$strglossaries = get_string("modulenameplural", "glossary");
 $stredit = empty($e) ? get_string('addentry', 'glossary') : get_string("edit");
-
-$navlinks = array();
-$navlinks[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-$navlinks[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-$navlinks[] = array('name' => $stredit, 'link' => '', 'type' => 'title');
-
-$navigation = build_navigation($navlinks);
-
+$navigation = build_navigation($stredit, $cm);
 print_header_simple(format_string($glossary->name), "", $navigation, "",
               "", true, "", navmenu($course, $cm));
-
-
 
 print_heading(format_string($glossary->name));
 

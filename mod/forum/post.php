@@ -52,19 +52,11 @@
             $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         }
 
-        $strforums = get_string('modulenameplural', 'forum');
-
         if (!get_referer()) {   // No referer - probably coming in via email  See MDL-9052
             require_login();
         }
         
-        $navlinks = array();
-        $navlinks[] = array('name' => get_string("forums", "forum"), 'link' => "../forum/view.php?f=$forum->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($forum->name,true), 'link' => '../forum/index.php?id=$course->id', 'type' => 'activityinstance');
-        
-        $navigation = build_navigation($navlinks);
-        
-        
+        $navigation = build_navigation('', $cm);
         print_header($course->shortname, $course->fullname, $navigation, '' , '', true, "", navmenu($course, $cm));
 
         notice_yesno(get_string('noguestpost', 'forum').'<br /><br />'.get_string('liketologin'),
@@ -410,16 +402,11 @@
         } else { // User just asked to prune something
 
             $course = get_record('course', 'id', $forum->course);
-            $strforums = get_string("modulenameplural", "forum");
             
             $navlinks = array();
-            $navlinks[] = array('name' => $strforums, 'link' => "../forum/index.php?id=$course->id", 'type' => 'activity');
-            $navlinks[] = array('name' => $forum->name, 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
             $navlinks[] = array('name' => format_string($post->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
             $navlinks[] = array('name' => get_string("prune", "forum"), 'link' => '', 'type' => 'title');
-            
-            $navigation = build_navigation($navlinks);
-            
+            $navigation = build_navigation($navlinks, $cm);
             print_header_simple(format_string($discussion->name).": ".format_string($post->subject), "", $navigation, '', "", true, "", navmenu($course, $cm));
 
             print_heading(get_string('pruneheading', 'forum'));
@@ -635,24 +622,9 @@
                                                        get_string("addanewdiscussion", "forum");
     }
 
-    $strforums = get_string("modulenameplural", "forum");
-
-    $navlinks = array();
-    $navlinks[] = array('name' => $strforums, 'link' => "../forum/index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => $forum->name, 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
-
-
-    if ($post->parent) {
-        $navlinks[] = array('name' => format_string($toppost->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'activityinstance');
-        $navlinks[] = array('name' => get_string('editing', 'forum'), 'link' => '', 'type' => 'action');            
-    } else {
-        $navlinks[] = array('name' => format_string($toppost->subject), 'link' => '', 'type' => 'action');
-    }
-
     if (empty($post->edit)) {
         $post->edit = '';
     }
-
     
     if (empty($discussion->name)) {
         if (empty($discussion)) {
@@ -665,7 +637,6 @@
         // not show the discussion name (same as forum name in this case) in
         // the breadcrumbs.
         $strdiscussionname = '';
-        $navtail = '';
     } else {
         // Show the discussion name in the breadcrumbs.
         $strdiscussionname = format_string($discussion->name).':';
@@ -673,13 +644,18 @@
 
     $forcefocus = empty($reply) ? NULL : 'message';
 
-
-    $navigation = build_navigation($navlinks);
+    $navlinks = array();
+    if ($post->parent) {
+        $navlinks[] = array('name' => format_string($toppost->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
+        $navlinks[] = array('name' => get_string('editing', 'forum'), 'link' => '', 'type' => 'title');            
+    } else {
+        $navlinks[] = array('name' => format_string($toppost->subject), 'link' => '', 'type' => 'title');
+    }
+    $navigation = build_navigation($navlinks, $cm);
      
     print_header("$course->shortname: $strdiscussionname ".
                   format_string($toppost->subject), $course->fullname,
                   $navigation, $mform_post->focus($forcefocus), "", true, "", navmenu($course, $cm));
-
    
 // checkup
     if (!empty($parent) && !forum_user_can_see_post($forum, $discussion, $post)) {

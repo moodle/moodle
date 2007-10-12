@@ -51,13 +51,7 @@
             $wwwroot = str_replace('http:','https:', $wwwroot);
         }
         
-        $strforums = get_string('modulenameplural', 'forum');
-        $navlinks = array();
-        $navlinks[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($forum->name), 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
-    
-        $navigation = build_navigation($navlinks);
-        
+        $navigation = build_navigation('', $cm);
         print_header($course->shortname, $course->fullname, $navigation, '', '', true, "", navmenu($course, $cm));
         
         notice_yesno(get_string('noguestsubscribe', 'forum').'<br /><br />'.get_string('liketologin'),

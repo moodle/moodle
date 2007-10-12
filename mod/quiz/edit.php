@@ -293,12 +293,7 @@
         $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
                     ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
                     : "";
-        $navlinks = array();
-        $navlinks[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($quiz->name), 'link' => "view.php?q=$quiz->instance", 'type' => 'activityinstance');
-        $navlinks[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($navlinks);
-
+        $navigation = build_navigation($streditingquiz, $cm);
         print_header_simple($streditingquiz, '', $navigation, "", "",
                  true, $strupdatemodule);
 
@@ -331,12 +326,7 @@
     $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
         ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
         : "";
-    $navlinks = array();
-    $navlinks[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($quiz->name), 'link' => "view.php?q=$quiz->instance", 'type' => 'activityinstance');
-    $navlinks[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($navlinks);
-
+    $navigation = build_navigation($streditingquiz, $cm);
     print_header_simple($streditingquiz, '', $navigation, "", "", true, $strupdatemodule);
 
     $currenttab = 'edit';

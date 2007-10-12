@@ -40,7 +40,6 @@
 
     $strworkshops = get_string("modulenameplural", "workshop");
     $strworkshop  = get_string("modulename", "workshop");
-    $straction = ($action) ? '-> '.get_string($action, 'workshop') : '';
 
     // ...and if necessary set default action
     if (workshop_is_teacher($workshop)) {
@@ -69,14 +68,7 @@
     }
 
     // ...display header...
-    $navlinks = array();
-    $navlinks[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($workshop->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    if ($straction) {
-        $navlinks[] = array('name' => $straction, 'link' => '', 'type' => 'title');
-    }
-    $navigation = build_navigation($navlinks);    
-    
+    $navigation = build_navigation($action, $cm);    
     print_header_simple(format_string($workshop->name), "", $navigation,
                   "", "", true, update_module_button($cm->id, $course->id, $strworkshop), navmenu($course, $cm));
 

@@ -58,12 +58,7 @@ if ($action == 'delchoice') {
 
 
 /// Display the choice and possibly results
-    $navlinks = array();
-    $navlinks[] = array('name' => $strchoices, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($choice->name), 'link' => '', 'type' => 'activityinstance');
-    
-    $navigation = build_navigation($navlinks);
-
+    $navigation = build_navigation('', $cm);
     print_header_simple(format_string($choice->name), "", $navigation, "", "", true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
 

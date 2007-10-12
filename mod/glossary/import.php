@@ -45,13 +45,7 @@
     $strsearch = get_string("search");
     $strimportentries = get_string('importentriesfromxml', 'glossary');
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $navlinks[] = array('name' => $strimportentries, 'link' => '', 'type' => 'title');
-   
-    $navigation = build_navigation($navlinks);
-
+    $navigation = build_navigation($strimportentries, $cm);
     print_header_simple(format_string($glossary->name), "", $navigation,
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));

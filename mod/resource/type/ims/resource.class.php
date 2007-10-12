@@ -372,11 +372,8 @@ class resource_ims extends resource_base {
             if ($inpopup) {
                 print_header($pagetitle, $course->fullname.' : '.$resource->name);
             } else {
-
-                $this->navlinks[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
-                $this->navigation = build_navigation($this->navlinks);
-
-                print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+                $navigation = build_navigation($this->navlinks, $cm);
+                print_header($pagetitle, $course->fullname, $navigation, "", "", true,
                         update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
             }
             print_simple_box_start('center', '60%');
@@ -426,10 +423,9 @@ class resource_ims extends resource_base {
     /// Check whether this is supposed to be a popup, but was called directly
 
         if (empty($frameset) && $resource->popup && !$inpopup) {    /// Make a page and a pop-up window
-            $this->navlinks[] = array('name' => format_string($resource->name), 'link' => null, 'type' => 'misc');
-            $this->navigation = build_navigation($this->navlinks);
+            $navigation = build_navigation($this->navlinks, $cm);
 
-            print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+            print_header($pagetitle, $course->fullname, $navigation, "", "", true,
                     update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
 
             echo "\n<script type=\"text/javascript\">";
@@ -478,9 +474,8 @@ class resource_ims extends resource_base {
                 //print_header($pagetitle, $course->fullname.' : '.$resource->name);
                 print_header();
             } else {
-                $this->navlinks[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
-                $this->navigation = build_navigation($this->navlinks);
-                print_header($pagetitle, $course->fullname, $this->navigation, "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
+                $navigation = build_navigation($this->navlinks, $cm);
+                print_header($pagetitle, $course->fullname, $navigation, "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
             }
         /// content - this produces everything else
             $this->print_ims($cm, $course, $items, $resource, $page);

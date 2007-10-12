@@ -62,13 +62,7 @@
     $strassessments = get_string("assessments", "exercise");
 
     // ... print the header and...
-    $navlinks = array();
-    $navlinks[] = array('name' => $strexercises, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($exercise->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $navlinks[] = array('name' => $strassessments, 'link' => '', 'type' => 'title');
-    
-    $navigation = build_navigation($navlinks);
-    
+    $navigation = build_navigation($strassessments, $cm);
     print_header_simple(format_string($exercise->name), "", $navigation,
                   "", "", true);
 

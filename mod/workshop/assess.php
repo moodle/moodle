@@ -59,14 +59,7 @@
     /// top frame with the navigation bar and the assessment form
 
     if ($frameset == "top") {
-        // removed <base target="_parent" />
-        // because it does not validate MDL-7861
-        $navlinks = array();
-        $navlinks[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($workshop->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-        $navlinks[] = array('name' => $strassess, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($navlinks);
-        
+        $navigation = build_navigation($strassess, $cm);
         print_header_simple(format_string($workshop->name), "",$navigation,
                       "", '', true);
 
