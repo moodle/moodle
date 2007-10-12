@@ -3200,48 +3200,56 @@
 
         $counter = 0;
 
-        //First, we check to "users" exists and create is as necessary
+        // 'users' is the old users folder, 'user' is the new one, with a new hierarchy. Detect which one is here and treat accordingly 
         //in CFG->dataroot
-        $dest_dir = $CFG->dataroot."/users";
+        $dest_dir = $CFG->dataroot."/user";
         $status = check_dir_exists($dest_dir,true);
 
         //Now, we iterate over "user_files" records to check if that user dir must be
         //copied (and renamed) to the "users" dir.
         $rootdir = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code."/user_files";
+        
         //Check if directory exists
-        if (is_dir($rootdir)) {
-            $list = list_directories ($rootdir);
-            if ($list) {
-                //Iterate
-                $counter = 0;
-                foreach ($list as $dir) {
-                    //Look for dir like username in backup_ids
-                    $data = get_record ("backup_ids","backup_code",$restore->backup_unique_code,
-                                                     "table_name","user",
-                                                     "old_id",$dir);
-                    //If thar user exists in backup_ids
-                    if ($data) {
-                        //Only it user has been created now
-                        //or if it existed previously, but he hasn't image (see bug 1123)
-                        if ((strpos($data->info,"new") !== false) or
-                            (!check_dir_exists($dest_dir."/".$data->new_id,false))) {
-                            //Copy the old_dir to its new location (and name) !!
-                            //Only if destination doesn't exists
-                            if (!file_exists($dest_dir."/".$data->new_id)) {
-                                $status = backup_copy_file($rootdir."/".$dir,
-                                              $dest_dir."/".$data->new_id,true);
-                                $counter ++;
-                            }
-                            //Do some output
-                            if ($counter % 2 == 0) {
-                                if (!defined('RESTORE_SILENTLY')) {
-                                    echo ".";
-                                    if ($counter % 40 == 0) {
-                                        echo "<br />";
-                                    }
+        $userlist = array();
+
+        if (is_dir($rootdir) && ($list = list_directories ($rootdir))) {
+            $counter = 0;
+            foreach ($list as $dir) {
+                // If there are directories in this folder, we are in the new user hierarchy
+                if ($newlist = list_directories("$rootdir/$dir")) {
+                    foreach ($newlist as $userid) {
+                        $userlist[$userid] = "$rootdir/$dir/$userid";
+                    }
+                } else {
+                    $userlist[$userid] = "$rootdir/$dir";
+                }
+            }
+
+            foreach ($userlist as $userid => $backup_location) { 
+                //Look for dir like username in backup_ids
+                $data = get_record ("backup_ids","backup_code",$restore->backup_unique_code, "table_name","user", "old_id",$userid);
+
+                //If that user exists in backup_ids
+                if ($data) {
+                    //Only if user has been created now or if it existed previously, but he hasn't got an image (see bug 1123)
+                    $newuserdir = make_user_directory($userid, true); // Doesn't create the folder, just returns the location
+
+                    if ((strpos($data->info,"new") !== false) or (!check_dir_exists($newuserdir))) {
+                        //Copy the old_dir to its new location (and name) !! Only if destination doesn't exists
+                        if (!file_exists($newuserdir)) {
+                            make_user_directory($userid); // Creates the folder
+                            $status = backup_copy_file($backup_location, $newuserdir, true);
+                            $counter ++;
+                        }
+                        //Do some output
+                        if ($counter % 2 == 0) {
+                            if (!defined('RESTORE_SILENTLY')) {
+                                echo ".";
+                                if ($counter % 40 == 0) {
+                                    echo "<br />";
                                 }
-                                backup_flush(300);
                             }
+                            backup_flush(300);
                         }
                     }
                 }

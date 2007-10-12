@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -490,11 +490,11 @@ function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
     } else if ($recordcount == 1) {    // Found one record
     /// DIRTY HACK to retrieve all the ' ' (1 space) fields converted back
     /// to '' (empty string) for Oracle. It's the only way to work with
-    /// all those NOT NULL DEFAULT '' fields until we definetively delete them
+    /// all those NOT NULL DEFAULT '' fields until we definitively delete them
         if ($CFG->dbfamily == 'oracle') {
             array_walk($rs->fields, 'onespace2empty');
         }
-    /// End od DIRTY HACK
+    /// End of DIRTY HACK
         return (object)$rs->fields;
 
     } else {                          // Error: found more than one record

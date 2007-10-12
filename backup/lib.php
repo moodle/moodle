@@ -305,7 +305,7 @@
         if (!is_dir($to_file)) {
             //echo "<br />Creating ".$to_file;                                //Debug
             umask(0000);
-            $status = mkdir($to_file,$CFG->directorypermissions);
+            $status = check_dir_exists($to_file, true, true);
         }
         $dir = opendir($from_file);
         while ($file=readdir($dir)) {
