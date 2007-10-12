@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 /**
  * Utility functions to make unit testing easier.
  * 
