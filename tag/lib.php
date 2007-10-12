@@ -1116,7 +1116,7 @@ function popular_tags_count($nr_of_tags=20, $tag_type = 'default') {
         ON
             tg.id = ti.tagid
         GROUP BY
-            tg.id, tg.rawname, tg.name
+            tg.id, tg.rawname, tg.name, tg.flag
         ORDER BY
             count
         DESC
