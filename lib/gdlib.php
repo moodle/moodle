@@ -113,11 +113,11 @@ function save_profile_image($id, $uploadmanager, $dir='user') {
     umask(0000);
 
     if (!file_exists($CFG->dataroot .'/'. $dir)) {
-        if (!mkdir($CFG->dataroot .'/'. $dir, $CFG->directorypermissions)) {
+        if (! mkdir($CFG->dataroot .'/'. $dir, $CFG->directorypermissions)) {
             return false;
         }
     }
-    
+
     if ($dir == 'user') {
         $destination = make_user_directory($id, true);
     } else {

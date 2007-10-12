@@ -21,7 +21,7 @@
         $pathname = make_user_directory($userid, true) . "/$image";
         if (file_exists($pathname) and !is_dir($pathname)) {
             send_file($pathname, $image);
-        } 
+        }
     }
 
     // picture was deleted - use default instead

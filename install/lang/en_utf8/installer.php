@@ -79,12 +79,6 @@ $string['databasesettingssub_mysql'] = '<b>Type:</b> MySQL<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> prefix to use for all table names (optional)';
-$string['databasesettingssub_mysqli'] = '<b>Type:</b> Improved MySQL<br />
-       <b>Host:</b> eg localhost or db.isp.com<br />
-       <b>Name:</b> database name, eg moodle<br />
-       <b>User:</b> your database username<br />
-       <b>Password:</b> your database password<br />
-       <b>Tables Prefix:</b> prefix to use for all table names (optional)';
 $string['databasesettingssub_oci8po'] = '<b>Type:</b> Oracle<br />
        <b>Host:</b> not used, must be left blank<br />
        <b>Name:</b> given name of the tnsnames.ora connection<br />
@@ -143,10 +137,10 @@ $string['downloadlanguagesub'] = 'You now have the option of downloading a langu
 $string['environmenterrortodo'] = 'You must solve all the environmental problems (errors) found above before proceeding to install this Moodle version!';
 $string['environmenthead'] = 'Checking your environment ...';
 $string['environmentrecommendcustomcheck'] = 'if this test fails, it indicates a potential problem';
-$string['environmentrecommendinstall'] = 'should be installed and enabled for best results';
+$string['environmentrecommendinstall'] = 'is recommended to be installed/enabled';
 $string['environmentrecommendversion'] = 'version $a->needed is recommended and you are running $a->current';
 $string['environmentrequirecustomcheck'] = 'this test must pass';
-$string['environmentrequireinstall'] = 'must be installed and enabled';
+$string['environmentrequireinstall'] = 'is required to be installed/enabled.';
 $string['environmentrequireversion'] = 'version $a->needed is required and you are running $a->current';
 $string['environmentsub'] = 'We are checking if the various components of your system meet the system requirements';
 $string['environmentxmlerror'] = 'Error reading environment data ($a->error_code)';
@@ -209,8 +203,6 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'However, if your site is using iso-8859-1 (latin) languages ONLY, you may continue using your currently installed MySQL 4.1.12 (or higher).';
 $string['mysql416required'] = 'MySQL 4.1.16 is the minimum version required for Moodle 1.6 in order to guarantee that all data can be converted to UTF-8 in the future.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQL extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.';
-$string['mysqli'] = 'Improved MySQL (mysqli)';
-$string['mysqliextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQLi extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.  MySQLi extension is not available for PHP 4.';
 $string['name'] = 'Name';
 $string['next'] = 'Next';
 $string['oci8po'] = 'Oracle (oci8po)';
@@ -231,8 +223,6 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 
 (In case of 5.0.x you could also downgrade to 4.4.x version)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Previous';
-$string['qtyperqpwillberemoved'] = 'During the upgrade, the RQP question type will be removed. You were not using this question type, so you should not experience any problems.';
-$string['qtyperqpwillberemovedanyway'] = 'During the upgrade, the RQP question type will be removed. You have some RQP questions in your database, and these will stop working unless you reinstall the code from http://moodle.org/mod/data/view.php?d=13&amp;rid=797 before continuing with the upgrade.';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['report'] = 'Report';
 $string['restricted'] = 'Restricted';

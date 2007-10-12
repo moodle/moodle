@@ -3799,6 +3799,25 @@ body#mod-forum-search .introcontent {
 {
   text-align: center;
 }
+#mod-quiz-view #page .quizattemptsummary td p {
+  margin-top: 0;
+}
+#mod-quiz-view .generalbox#feedback {
+  width:70%;
+  margin-left:auto;
+  margin-right:auto;
+  padding-bottom:15px;
+}
+#mod-quiz-view .generalbox#feedback h2 {
+  margin: 0 0;
+}
+body#mod-quiz-view .generalbox#feedback .overriddennotice {
+  text-align: center;
+  font-size: 0.7em;
+}
+#mod-quiz-view .generalbox#feedback h3 {
+  text-align: left;
+}
 
 .generalbox#passwordbox { /* Should probably match .generalbox#intro above */
   width:70%;
@@ -3813,6 +3832,19 @@ body#mod-forum-search .introcontent {
 }
 #mod-quiz-attempt .pagingbar {
   margin: 1.5em auto;
+}
+#mod-quiz-attempt #page {
+    text-align: center;
+}
+
+#mod-quiz-attempt #timer .generalbox {
+  width:150px
+}
+
+#mod-quiz-attempt #timer {
+  position:absolute;
+  /*top:100px; is set by js*/
+  left:10px
 }
 
 body#question-preview .quemodname,
@@ -3888,48 +3920,128 @@ table.quizreviewsummary td.cell {
   text-align: center;
 }
 
-body#mod-quiz-report table#attempts,
-body#mod-quiz-report table#commands,
-body#mod-quiz-report table#itemanalysis
+#mod-quiz-report table#attempts,
+#mod-quiz-report table#commands,
+#mod-quiz-report table#itemanalysis
 {
   width: 80%;
   margin: auto;
 }
-body#mod-quiz-report table#attempts,
-body#mod-quiz-report h2.main {
+#mod-quiz-report table#attempts,
+#mod-quiz-report h2.main {
   clear: both;
 }
-body#mod-quiz-report table#attempts {
+#mod-quiz-report table#attempts {
   margin: 20px auto;
 }
-body#mod-quiz-report table#attempts .header,
-body#mod-quiz-report table#attempts .cell
+#mod-quiz-report table#attempts .header,
+#mod-quiz-report table#attempts .cell
 {
   padding: 4px;
 }
-body#mod-quiz-report table#attempts .header .commands {
+#mod-quiz-report table#attempts .header .commands {
   display: inline;
 }
-body#mod-quiz-report table#attempts .picture {
+#mod-quiz-report table#attempts .picture {
   width: 40px;
 }
-body#mod-quiz-report table#attempts td {
+#mod-quiz-report table#attempts td {
   border-left-width: 1px;
   border-right-width: 1px;
   border-left-style: solid;
   border-right-style: solid;
   vertical-align: middle;
 }
-body#mod-quiz-report table#attempts .header {
+#mod-quiz-report table#attempts .header {
   text-align: left;
 }
-body#mod-quiz-report table#attempts .picture {
+#mod-quiz-report table#attempts .picture {
   text-align: center !important;
 }
-body#mod-quiz-report .controls {
+#mod-quiz-report .controls {
   text-align: center;
 }
 
+#mod-quiz-report table#itemanalysis {
+  margin: 20px auto;
+}
+#mod-quiz-report table#itemanalysis .header,
+#mod-quiz-report table#itemanalysis .cell
+{
+  padding: 4px;
+}
+#mod-quiz-report table#itemanalysis .header .commands {
+  display: inline;
+}
+#mod-quiz-report table#itemanalysis td {
+  border-width: 1px;
+  border-style: solid;
+}
+#mod-quiz-report table#itemanalysis .header {
+  text-align: left;
+}
+#mod-quiz-report table#itemanalysis .numcol {
+  text-align: center;
+  vertical-align : middle !important;
+}
+
+#mod-quiz-report table#itemanalysis .uncorrect {
+  color: red;
+}
+
+#mod-quiz-report table#itemanalysis .correct {
+  color: blue;
+  font-weight : bold;
+}
+
+#mod-quiz-report table#itemanalysis .partialcorrect {
+  color: green !important;
+}
+
+#mod-quiz-report table#itemanalysis .qname {
+  color: green !important;
+}
+
+/* manual grading */
+#mod-quiz-grading table#grading
+{
+  width: 80%;
+  margin: auto;
+}
+
+#mod-quiz-grading table#grading
+{
+  margin: 20px auto;
+}
+
+#mod-quiz-grading table#grading .header,
+#mod-quiz-grading table#grading .cell
+{
+  padding: 4px;
+}
+
+#mod-quiz-grading table#grading .header .commands 
+{
+  display: inline;
+}
+
+#mod-quiz-grading table#grading .picture 
+{
+  width: 40px;
+}
+
+#mod-quiz-grading table#grading td 
+{
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-left-style: solid;
+  border-right-style: solid;
+  vertical-align: bottom;
+}
+
+.mod-quiz .gradingdetails {
+  font-size: small;
+}
 /***
  *** Modules: Resource
  ***/

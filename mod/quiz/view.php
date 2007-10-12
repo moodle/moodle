@@ -3,10 +3,11 @@
 // This page prints a particular instance of quiz
 
     require_once("../../config.php");
-    require_once("locallib.php");
     require_once($CFG->libdir.'/blocklib.php');
-    require_once('pagelib.php');
-    
+    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->dirroot.'/mod/quiz/locallib.php');
+    require_once($CFG->dirroot.'/mod/quiz/pagelib.php');
+
     if (!empty($THEME->customcorners)) {
         require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
     }
@@ -160,12 +161,27 @@
     }
     $numattempts = count($attempts);
 
+    // Work out the final grade, checking whether it was overridden in the gradebook.
     $mygrade = quiz_get_best_grade($quiz, $USER->id);
+    $mygradeoverridden = false;
+    $gradebookfeedback = '';
 
+    $grading_info = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $USER->id);
+    $item = $grading_info->items[0];
+    $grade = $item->grades[$USER->id];
+
+    if ($grade->overridden) {
+        $mygrade = $grade->grade + 0; // Convert to number.
+        $mygradeoverridden = true;
+    }
+    if (!empty($grade->str_feedback)) {
+        $gradebookfeedback = $grade->str_feedback;
+    }
+    
     // Print table with existing attempts
     if ($attempts) {
 
-        print_heading('Summary of your previous attempts');
+        print_heading(get_string('summaryofattempts', 'quiz'));
 
         // Get some strings.
         $strattempt       = get_string("attempt", "quiz");
@@ -294,22 +310,38 @@
     }
 
     if ($numattempts && $quiz->sumgrades && !is_null($mygrade)) {
+        $resultinfo = '';
+        
         if ($overallstats) {
             if ($available && $moreattempts) {
                 $a = new stdClass;
                 $a->method = quiz_get_grading_option_name($quiz->grademethod);
                 $a->mygrade = $mygrade;
                 $a->quizgrade = $quiz->grade;
-                print_heading(get_string('gradesofar', 'quiz', $a));
+                $resultinfo .= print_heading(get_string('gradesofar', 'quiz', $a), '', 2, 'main', true);
             } else {
-                print_heading(get_string('yourfinalgradeis', 'quiz', "$mygrade / $quiz->grade"));
+                $resultinfo .= print_heading(get_string('yourfinalgradeis', 'quiz', "$mygrade / $quiz->grade"), '', 2, 'main', true);
+                if ($mygradeoverridden) {
+                    $resultinfo .= '<p class="overriddennotice">'.get_string('overriddennotice', 'grades').'</p>';
+                }
             }
         }
 
+        if ($gradebookfeedback) {
+            $resultinfo .= print_heading(get_string('comment', 'quiz'), '', 3, 'main', true);
+            $resultinfo .= '<p class="quizteacherfeedback">'.$gradebookfeedback.'</p>';
+        }
         if ($overallfeedback) {
-            echo '<p class="quizgradefeedback">'.quiz_feedback_for_grade($mygrade, $quiz->id).'</p>';
+            $resultinfo .= print_heading(get_string('overallfeedback', 'quiz'), '', 3, 'main', true);
+            $resultinfo .= '<p class="quizgradefeedback">'.quiz_feedback_for_grade($mygrade, $quiz->id).'</p>';
+        }
+
+        if ($resultinfo) {
+            print_box($resultinfo, 'generalbox', 'feedback');
         }
     }
+
+
 
     // Print a button to start/continue an attempt, if appropriate.
     if (!$quiz->questions) {
