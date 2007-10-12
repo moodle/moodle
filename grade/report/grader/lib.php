@@ -575,7 +575,7 @@ class grade_report_grader extends grade_report {
                                 .$this->get_lang_string('manualgrade', 'grades') .'"/>';
                     }
 
-                    $headerlink = $this->get_module_link($element['object']->get_name(), $itemmodule, $iteminstance);
+                    $headerlink = $this->get_module_link($element['object']->get_name(), $itemmodule, $iteminstance, $element['object']->is_hidden());
                     $headerhtml .= '<th class="header '.$columnclass.' '.$type.$catlevel.$dimmed.'" scope="col">'. $headerlink . $arrow;
                     $headerhtml .= $this->get_icons($element) . '</th>';
 
