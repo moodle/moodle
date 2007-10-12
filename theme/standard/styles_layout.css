@@ -1090,14 +1090,15 @@ body#admin-modules table.generaltable td.c0
  *** Blocks
  ***/
 
-/*Accessibility: Skip block link, for screen reader users. */
-a.skip-block, .skip-block {
-  display:block;
-  width:2em;
-  height:1px;
+/*Accessibility: Skip block link, for keyboard-only users. */
+a.skip-block {
+  position: absolute;
+  top: -1000em;
+  font-size: 0.85em;
 }
-.sideblock .skip-block {
-  height:4px;
+a.skip-block:focus, a.skip-block:active {
+  position: static;
+  display: block;
 }
 .skip-block-to {
   display: block;

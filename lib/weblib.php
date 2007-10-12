@@ -5444,15 +5444,13 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
     else {
         $skip_text = get_string('skipa', 'access', strip_tags($title));
     }
-    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block" title="'.$skip_text.'">'."\n".get_accesshide($skip_text)."\n".'</a>';
+    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block">'.$skip_text.'</a>';
     $skip_dest = '<span id="sb-'.$block_id.'" class="skip-block-to"></span>';
 
     if (! empty($heading)) {
-        $heading = $skip_link . $heading;
-    }
-    /*else { //ELSE: I think a single link on a page, "Skip block 4" is too confusing - don't print.
         echo $skip_link;
-    }*/
+    }
+    //ELSE: a single link on a page "Skip block 4" is too confusing - ignore.
 
     print_side_block_start($heading, $attributes);
 
