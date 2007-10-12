@@ -108,12 +108,11 @@ function save_profile_image($id, $uploadmanager, $dir='user') {
     }
 
     if (!file_exists($destination)) {
-        if (!mkdir($destination, $CFG->directorypermissions)) {
+        if (!make_upload_directory(str_replace($CFG->dataroot . '/', '', $destination))) {
             return false;
         }
     }
 
-    
     if (!$uploadmanager->save_files($destination)) {
         return false;
     }

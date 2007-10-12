@@ -313,7 +313,7 @@
  
         global $CFG;
 
-            $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/user_files",true);
+        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/user_files",true, true);
 
         return $status;
     }
@@ -1911,26 +1911,18 @@
         //in temp/backup/$backup_code  dir
         $status = check_and_create_user_files_dir($preferences->backup_unique_code);
  
-        //Now iterate over directories under "users" to check if that user must be 
-        //copied to backup
+        //Now iterate over directories under "user" to check if that user must be copied to backup
+
+        // Method to get a list of userid=>array(basedir => $basedir, userfolder => $userfolder) 
+        $userlist = get_user_directories();
         
-        $rootdir = $CFG->dataroot."/users";
-        //Check if directory exists
-        if (is_dir($rootdir)) {
-            $list = list_directories ($rootdir);
-            if ($list) {
-                //Iterate
-                foreach ($list as $dir) {
+        foreach ($userlist as $userid => $userinfo) {
                     //Look for dir like username in backup_ids
-                    $data = get_record ("backup_ids","backup_code",$preferences->backup_unique_code,
-                                                     "table_name","user", 
-                                                     "old_id",$dir);
+            $data = count_records("backup_ids","backup_code",$preferences->backup_unique_code, "table_name","user", "old_id",$userid);
                     //If exists, copy it
                     if ($data) {
-                        $status = backup_copy_file($rootdir."/".$dir,
-                                       $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/user_files/".$dir);
-                    }
-                }
+                $status = backup_copy_file($userinfo['basedir'] . '/' . $userinfo['userfolder'], 
+                    "$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/{$userinfo['userfolder']}");
             }
         }
 
