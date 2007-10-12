@@ -235,7 +235,7 @@ class grade_export {
                 $g = new grade_export_update_buffer();
                 $grade_grade = new grade_grade(array('itemid'=>$itemid, 'userid'=>$user->id));
                 $status = $g->track($grade_grade);
-echo "status is $status";
+
                 if ($this->updatedgradesonly && ($status == 'nochange' || $status == 'unknown')) {
                     echo '<td>'.get_string('unchangedgrade', 'grade').'</td>';
                 } else {
