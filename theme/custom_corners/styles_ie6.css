@@ -14,3 +14,137 @@ div.i1 {
 div#header div.i3 {
     min-width: 0;
 }
+.skip-block-to {
+  font-size: 1%;
+  line-height: 1%;
+}
+body {
+  background-image: none;
+  background-color: #F1ECE6;
+}
+div.sideblock div.bt div {
+  background-image: url(pix/box.gif);
+}
+div.sideblock div.bt {
+  background-image: url(pix/box.gif);
+}
+div.sideblock div.header div.bt div {
+  background-image: url(pix/box.gif);
+}
+div.sideblock div.header div.bt {
+  background-image: url(pix/box.gif);
+}
+div.sideblock div.header div.i1 {
+  background-image: url(pix/borders.gif);
+}
+div.sideblock div.header div.i2 {
+  background-image: url(pix/borders.gif);
+}
+div.sideblock div.i1 {
+  background-image: url(pix/beige_borders.gif);
+}
+div.sideblock div.i2 {
+  background-image: url(pix/beige_borders.gif);
+}
+div.sideblock div.bb div {
+  background-image: url(pix/beige_box.gif);
+}
+div.sideblock div.bb {
+  background-image: url(pix/beige_box.gif);
+}
+td#middle-column div.bt div {
+  background-image: url(pix/box.gif);
+}
+td#middle-column div.bt {
+  background-image: url(pix/box.gif);
+}
+td#middle-column div.i1 {
+  background-image: url(pix/borders.gif);
+}
+td#middle-column div.i2 {
+  background-image: url(pix/borders.gif);
+}
+td#middle-column div.bb div {
+  background-image: url(pix/box.gif);
+}
+td#middle-column div.bb {
+  background-image: url(pix/box.gif);
+}
+div#footer div.bt div {
+  background-image: url(pix/beige_box.gif);
+}
+div#footer div.bt {
+  background-image: url(pix/beige_box.gif);
+}
+div#footer div.i1 {
+  background-image: url(pix/beige_borders.gif);
+}
+div#footer div.i2 {
+  background-image: url(pix/beige_borders.gif);
+}
+div#footer div.bb div {
+  background-image: url(pix/beige_box.gif);
+}
+div#footer div.bb {
+  background-image: url(pix/beige_box.gif);
+}
+div#header div.bt div {
+  background-image: url(pix/beige_box.gif);
+}
+div#header div.bt {
+  background-image: url(pix/beige_box.gif);
+}
+div#header div.i1 {
+  background-image: url(pix/beige_borders.gif);
+}
+div#header div.i2 {
+  background-image: url(pix/beige_borders.gif);
+}
+div#header div.bb div {
+  background-image: url(pix/beige_box.gif);
+}
+div#header div.bb {
+  background-image: url(pix/beige_box.gif);
+}
+div#header-home div.bt div {
+  background-image: url(pix/beige_box.gif);
+}
+div#header-home div.bt {
+  background-image: url(pix/beige_box.gif);
+}
+div#header-home div.i1 {
+  background-image: url(pix/beige_borders.gif);
+}
+div#header-home div.i2 {
+  background-image: url(pix/beige_borders.gif);
+}
+div#header-home div.bb div {
+  background-image: url(pix/beige_box.gif);
+}
+div#header-home div.bb {
+  background-image: url(pix/beige_box.gif);
+}
+body.nocoursepage div#content div.bt div {
+  background-image: url(pix/box.gif);
+}
+body.nocoursepage div#content div.bt {
+  background-image: url(pix/box.gif);
+}
+body.nocoursepage div#content div.i1 {
+  background-image: url(pix/borders.gif);
+}
+body.nocoursepage div#content div.i2 {
+  background-image: url(pix/borders.gif);
+}
+body.nocoursepage div#content div.bb div {
+  background-image: url(pix/box.gif);
+}
+body.nocoursepage div#content div.bb {
+  background-image: url(pix/box.gif);
+}
+th.header {
+  background-image: url(pix/header.gif);
+}
+table.forumpost tr.header {
+  background-image: url(pix/header.gif);
+}
