@@ -24,9 +24,9 @@
 
 /// Print the header
 
-    if ($course->id != SITEID) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    }
+    $navlinks = array();
+    $navlinks[] = array('name' => $strlamss, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($navlinks);
 
     print_header("$course->shortname: $strlamss", $course->fullname, "$navigation $strlamss", "", "", true, "", navmenu($course));
 

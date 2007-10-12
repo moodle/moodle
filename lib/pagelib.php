@@ -648,14 +648,6 @@ class page_generic_activity extends page_base {
             $title = str_replace($search, $replace, $title);
         }
     
-        $navlinks = array();
-        $navlinks[] = array('name' => get_string('modulenameplural', $this->activityname), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/index.php?id={$this->courserecord->id}", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($this->activityrecord->name), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/view.php?id={$this->modulerecord->id}", 'type' => 'activityinstance');
-    
-        if (!empty($morenavlinks)) {
-            $navlinks = array_merge($navlinks, $morenavlinks);
-        }
-              
         if (empty($morenavlinks) && $this->user_allowed_editing()) {
             $buttons = '<table><tr><td>'.update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', $this->activityname)).'</td>';
             if (!empty($CFG->showblocksonmodpages)) {
@@ -669,8 +661,10 @@ class page_generic_activity extends page_base {
             $buttons = '&nbsp;';
         }
         
-        $navigation = build_navigation($navlinks);
-        
+        if (empty($morenavlinks)) {
+            $morenavlinks = array();
+        }
+        $navigation = build_navigation($morenavlinks, $this->modulerecord);
         print_header($title, $this->courserecord->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord), false, $bodytags);
     }
     

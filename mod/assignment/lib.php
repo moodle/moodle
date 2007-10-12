@@ -27,7 +27,6 @@ class assignment_base {
     var $strassignments;
     var $strsubmissions;
     var $strlastmodified;
-    var $navigation;
     var $pagetitle;
     var $currentgroup;
     var $usehtmleditor;
@@ -82,19 +81,15 @@ class assignment_base {
         $this->strassignments = get_string('modulenameplural', 'assignment');
         $this->strsubmissions = get_string('submissions', 'assignment');
         $this->strlastmodified = get_string('lastmodified');
-
-        $this->navigation[] = array('name' => $this->strassignments, 'link' => "index.php?id={$this->course->id}", 'type' => 'activity');
-
         $this->pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment.': '.format_string($this->assignment->name,true));
 
         // visibility
         $context = get_context_instance(CONTEXT_MODULE, $cmid);
         if (!$this->cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
             $pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment);
-            $this->navigation[] = array('name' => $this->strassignment, 'link' => '', 'type' => 'activityinstance');
-            $navigation = build_navigation($this->navigation);
+            $navigation = build_navigation('', $this->cm);
 
-            print_header($pagetitle, $this->course->fullname, $this->navigation,
+            print_header($pagetitle, $this->course->fullname, $navigation,
                          "", "", true, '', navmenu($this->course, $this->cm));
             notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
         }
@@ -148,13 +143,10 @@ class assignment_base {
 
 
         if ($subpage) {
-            $this->navigation[] = array('name' => format_string($this->assignment->name,true), 'link' => "view.php?id={$this->cm->id}", 'type' => 'activityinstance');
-            $this->navigation[] = array('name' => $subpage, 'link' => '', 'type' => 'title');
+            $navigation = build_navigation($subpage, $this->cm);
         } else {
-            $this->navigation[] = array('name' => format_string($this->assignment->name,true), 'link' => '', 'type' => 'activityinstance');
+            $navigation = build_navigation('', $this->cm);
         }
-
-        $navigation = build_navigation($this->navigation);
 
         print_header($this->pagetitle, $this->course->fullname, $navigation, '', '',
                      true, update_module_button($this->cm->id, $this->course->id, $this->strassignment),
@@ -1039,14 +1031,7 @@ class assignment_base {
 
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
 
-        $navlinks = array();
-        $navlinks[] = array('name' => $this->strassignments, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($this->assignment->name,true),
-                            'link' => "view.php?a={$this->assignment->id}",
-                            'type' => 'activityinstance');
-        $navlinks[] = array('name' => $this->strsubmissions, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($navlinks);
-
+        $navigation = build_navigation($this->strsubmissions, $this->cm);
         print_header_simple(format_string($this->assignment->name,true), "", $navigation,
                 '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
 

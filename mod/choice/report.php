@@ -40,13 +40,7 @@
         
     if (!$download) {
 
-        $navlinks = array();
-        $navlinks[] = array('name' => $strchoices, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($choice->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-        $navlinks[] = array('name' => $strresponses, 'link' => '', 'type' => 'title');
-
-        $navigation = build_navigation($navlinks);    
-    
+        $navigation = build_navigation($strresponses, $cm);    
         print_header_simple(format_string($choice->name).": $strresponses", "", $navigation, "", '', true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
         /// Check to see if groups are being used in this choice

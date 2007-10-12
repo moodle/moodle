@@ -226,9 +226,7 @@ if (!defined("LESSON_RESPONSE_EDITOR")) {
 function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     global $CFG, $USER;
 
-    $strlessons = get_string('modulenameplural', 'lesson');
     $strlesson  = get_string('modulename', 'lesson');
-    $strname    = format_string($lesson->name, true);
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -239,11 +237,7 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     }
 
 /// Header setup
-    $navlinks = array();
-    $navlinks[] = array('name' => $strlessons, 'link' => "$CFG->wwwroot/mod/lesson/index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => $strname, 'link' => '', 'type' => 'activityinstance');
-    
-    $navigation = build_navigation($navlinks);
+    $navigation = build_navigation('', $cm);
     
 /// Print header, heading, tabs and messages
     print_header("$course->shortname: $strname", $course->fullname, $navigation,

@@ -106,14 +106,19 @@
 
 /// Print the page header
 
-    $strquizzes = get_string("modulenameplural", "quiz");
-    $strreview  = get_string("review", "quiz");
     $strscore  = get_string("score", "quiz");
     $strgrade  = get_string("grade");
     $strbestgrade  = get_string("bestgrade", "quiz");
     $strtimetaken     = get_string("timetaken", "quiz");
     $strtimecompleted = get_string("completedon", "quiz");
     $stroverdue = get_string("overdue", "quiz");
+
+/// Work out appropriate title.
+    if ($isteacher and $attempt->userid == $USER->id) {
+        $strreviewtitle = get_string('reviewofpreview', 'quiz');
+    } else {
+        $strreviewtitle = get_string('reviewofattempt', 'quiz', $attempt->attempt);
+    }
 
     $pagequestions = explode(',', $pagelist);
     $headtags = get_html_head_contributions($pagequestions, $questions, $states);
@@ -126,14 +131,8 @@
         $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
                     ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
                     : "";
-        
-        $navlinks = array();
-        $navlinks[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($quiz->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-        $navlinks[] = array('name' => $strreview, 'link' => '', 'type' => 'title');
-        
-        $navigation = build_navigation($navlinks);
-               
+        get_string('reviewofattempt', 'quiz', $attempt->attempt);
+        $navigation = build_navigation($strreviewtitle, $cm);
         print_header_simple(format_string($quiz->name), "", $navigation, "", $headtags, true, $strupdatemodule);
     }
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
@@ -147,9 +146,8 @@
             $mode = '';
         }
         include('tabs.php');
-    } else {
-        print_heading(format_string($quiz->name));
     }
+    print_heading(format_string($quiz->name));
     if ($isteacher and $attempt->userid == $USER->id) {
         // the teacher is at the end of a preview. Print button to start new preview
         unset($buttonoptions);
@@ -158,9 +156,8 @@
         echo '<div class="controls">';
         print_single_button($CFG->wwwroot.'/mod/quiz/attempt.php', $buttonoptions, get_string('startagain', 'quiz'));
         echo '</div>';
-    } else { // print number of the attempt
-        print_heading(get_string('reviewofattempt', 'quiz', $attempt->attempt));
     }
+    print_heading($strreviewtitle);
 
     // print javascript button to close the window, if necessary
     if (!$isteacher) {

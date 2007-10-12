@@ -81,7 +81,6 @@ class resource_base {
     var $cm;
     var $course;
     var $resource;
-    var $navigation;
     var $navlinks;
 
     /**
@@ -113,14 +112,11 @@ class resource_base {
             $this->strresource  = get_string("modulename", "resource");
             $this->strresources = get_string("modulenameplural", "resource");
 
-            $this->navlinks[] = array('name' => $this->strresources, 'link' => "index.php?id={$this->course->id}", 'type' => 'activity');
-
             if (!$this->cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $this->cm->id))) {
                 $pagetitle = strip_tags($this->course->shortname.': '.$this->strresource);
-                $this->navlinks[] = array('name' => $this->strresource, 'link' => '', 'type' => 'activityinstance');
-                $this->navigation = build_navigation($this->navlinks);
+                $navigation = build_navigation($this->navlinks, $this->cm);
 
-                print_header($pagetitle, $this->course->fullname, $this->navigation, "", "", true, '', navmenu($this->course, $this->cm));
+                print_header($pagetitle, $this->course->fullname, $navigation, "", "", true, '', navmenu($this->course, $this->cm));
                 notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
             }
 

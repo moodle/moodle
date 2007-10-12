@@ -114,13 +114,8 @@
           default: break;
        }
     }
-    $navlinks = array();
-    $navlinks[] = array('name' => $strwikis, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($wiki->name,true), 'link' => "view.php?id=$moodleID", 'type' => 'activityinstace');
-    $navlinks[] = array('name' => get_string("administration","wiki"), 'link' => '', 'type' => 'title');
-    
-    $navigation = build_navigation($navlinks);
 
+    $navigation = build_navigation(get_string("administration","wiki"), $cm);
     print_header_simple("$wiki_entry->pagename", "", $navigation,
                 $focus, "", true, update_module_button($cm->id, $course->id, $strwiki),
                 navmenu($course, $cm));

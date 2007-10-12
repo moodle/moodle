@@ -42,12 +42,7 @@
     $strcomments = get_string("comments", "glossary");
     $straddcomment = get_string("addcomment", "glossary");
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($glossary->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $navlinks[] = array('name' => $strcomments, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($navlinks);
-    
+    $navigation = build_navigation($strcomments, $cm);
     print_header_simple(strip_tags("$strcomments: $entry->concept"), "", $navigation,
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));

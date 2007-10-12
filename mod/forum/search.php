@@ -97,12 +97,11 @@
     $strsearchresults = get_string("searchresults", "forum");
     $strpage = get_string("page");
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    
     if (!$search || $showform) {
     
-        $crumns[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
+        $navlinks = array();
+        $navlinks[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $navlinks[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($navlinks);
         
         print_header_simple("$strsearch", "", $navigation, 'search.words',

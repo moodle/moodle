@@ -76,15 +76,6 @@ class page_lesson extends page_generic_activity {
             $title = "{$this->courserecord->shortname}: $activityname";
         }
         
-        $navlinks = array();
-        $navlinks[] = array('name' => get_string('modulenameplural', $this->activityname), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/index.php?id={$this->courserecord->id}", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($this->activityrecord->name), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/view.php?id={$this->modulerecord->id}", 'type' => 'activityinstance');
-    
-        if (!empty($morenavlinks)) {
-            $navlinks = array_merge($navlinks, $morenavlinks);
-        }
- 
-
     /// Build the buttons
         if (has_capability('mod/lesson:edit', $context)) {
             $buttons = '<span class="edit_buttons">'.update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', 'lesson'));
@@ -133,8 +124,7 @@ class page_lesson extends page_generic_activity {
             $meta = '';
         // }
 
-        $navigation = build_navigation($navlinks);
-
+        $navigation = build_navigation($morenavlinks);
         print_header($title, $this->courserecord->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord));
 
         if (has_capability('mod/lesson:manage', $context)) {

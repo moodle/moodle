@@ -31,14 +31,7 @@
 
     add_to_log($course->id, "survey", "submit", "view.php?id=$cm->id", "$survey->id", "$cm->id");
 
-    $strsurveys = get_string("modulenameplural", "survey");
-    $strsurveysaved = get_string("surveysaved", "survey");
-    $navlinks = array();
-    $navlinks[] = array('name' => $strsurveys, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($survey->name), 'link' => '', 'type' => 'activityinstance');
-    $navlinks[] = array('name' => $strsurveysaved, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($navlinks);
-
+    $navigation = build_navigation($strsurveysaved, $cm);
     print_header_simple("$strsurveysaved", "", $navigation, "");
 
 

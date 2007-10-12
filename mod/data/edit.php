@@ -68,11 +68,7 @@
     if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
         $strdatabases = get_string("modulenameplural", "data");
 
-        $navlinks = array();
-        $navlinks[] = array('name' => $strdatabases, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
-        $navigation = build_navigation($navlinks);
-
+        $navigation = build_navigation('', $cm);
         print_header_simple(format_string($data->name), "", $navigation, "", "", true, '', navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -113,11 +109,7 @@
 /// Print the page header
     $strdata = get_string('modulenameplural','data');
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
-    $navigation = build_navigation($navlinks);
-
+    $navigation = build_navigation('', $cm);
     print_header_simple($data->name, '', $navigation,
                         '', $meta, true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
                         navmenu($course, $cm), '', '');

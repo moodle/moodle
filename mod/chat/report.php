@@ -39,13 +39,7 @@
 /// Print a session if one has been specified
 
     if ($start and $end and !$confirmdelete) {   // Show a full transcript
-        
-        $navlinks[] = array('name' => $strchats, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($chat->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-        $navlinks[] = array('name' => $strchatreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');
-        
-        $navigation = build_navigation($navlinks);
-        
+        $navigation = build_navigation($strchatreport, $cm);
         print_header_simple(format_string($chat->name).": $strchatreport", '', $navigation,
                       '', '', true, '', navmenu($course, $cm));
 
@@ -95,12 +89,7 @@
 
 
 /// Print the Sessions display
-    $navlinks[] = array('name' => $strchats, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($chat->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $navlinks[] = array('name' => $strchatreport, 'link' => '', 'type' => 'title');
-    
-    $navigation = build_navigation($navlinks);
-    
+    $navigation = build_navigation($strchatreport, $cm);
     print_header_simple(format_string($chat->name).": $strchatreport", '', $navigation,
                   '', '', true, '', navmenu($course, $cm));
 

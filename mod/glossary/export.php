@@ -37,12 +37,7 @@
     $strexportfile = get_string("exportfile", "glossary");
     $strexportentries = get_string('exportentries', 'glossary');
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-   
-    $navigation = build_navigation($navlinks);
-    
+    $navigation = build_navigation('', $cm);
     print_header_simple(format_string($glossary->name), "",$navigation,
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
