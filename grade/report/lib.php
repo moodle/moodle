@@ -336,9 +336,10 @@ class grade_report {
      * @param string $modulename The shortname of the module, will become the visible header
      * @param string $itemmodule The name of the module type (e.g. assignment, quiz...)
      * @param int $iteminstance The instance number of the module
+     * @param bool itemhidden - if the grade item is hidden
      * @return string HTML
      */
-    function get_module_link($modulename, $itemmodule=null, $iteminstance=null) {
+    function get_module_link($modulename, $itemmodule=null, $iteminstance=null, $itemhidden=false) {
         global $CFG;
 
         $link = null;
@@ -361,8 +362,11 @@ class grade_report {
             }
 
             $url .= "?id=$coursemodule->id";
-
-            return '<a href="' . $url . '">' . $modulename . '</a>';
+            if ($itemhidden && has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $coursemodule->course))) {
+                return '<a href="' . $url . '"><span class="dimmed_text">' . $modulename . '</div></a>';
+            } else {
+                return '<a href="' . $url . '">' . $modulename . '</a>';
+            }
         }
 
         return $modulename;
