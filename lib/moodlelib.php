@@ -4154,6 +4154,51 @@ function make_user_directory($userid, $test=false) {
     }
 
 /**
+ * Returns an array of full paths to user directories, indexed by their userids.
+ *
+ * @param bool $only_non_empty Only return directories that contain files
+ * @param bool $legacy Search for user directories in legacy location (dataroot/users/userid) instead of (dataroot/user/section/userid)
+ * @return array An associative array: userid=>array(basedir => $basedir, userfolder => $userfolder) 
+ */
+function get_user_directories($only_non_empty=true, $legacy=false) {
+    global $CFG;
+
+    $rootdir = $CFG->dataroot."/user";
+    
+    if ($legacy) {
+        $rootdir = $CFG->dataroot."/users"; 
+    }
+    $dirlist = array();
+
+    //Check if directory exists 
+    if (is_dir($rootdir)) { 
+        if ($legacy) {
+            if ($userlist = get_directory_list($rootdir, '', true, true, false)) {
+                foreach ($userlist as $userid) {
+                    $dirlist[$userid] = array('basedir' => $rootdir, 'userfolder' => $userid);
+                }
+            } else {
+                notify("no directories found under $rootdir");
+            } 
+        } else {
+            if ($grouplist =get_directory_list($rootdir, '', true, true, false)) { // directories will be in the form 0, 1000, 2000 etc...
+                foreach ($grouplist as $group) {
+                    if ($userlist = get_directory_list("$rootdir/$group", '', true, true, false)) {
+                        foreach ($userlist as $userid) {
+                            $dirlist[$userid] = array('basedir' => $rootdir, 'userfolder' => $group . '/' . $userid);
+                        }
+                    }
+                }
+            } 
+        }
+    } else {
+        notify("$rootdir does not exist!");
+        return false;
+    }
+    return $dirlist;
+}
+
+/**
  * Returns current name of file on disk if it exists.
  *
  * @param string $newfile File to be verified
