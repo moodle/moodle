@@ -3410,7 +3410,8 @@ function print_navigation ($navigation, $separator=0, $return=false) {
  * @uses $THEME
  *
  * @param mixed $extranavlinks - Normally an array of arrays, keys: name, link, type. If you 
- *      only want one extra item with no link, you can pass a string instead.
+ *      only want one extra item with no link, you can pass a string instead. If you don't want
+ *      any extra links, pass an empty string.
  * @param mixed $cm - optionally the $cm object, if you want this function to generate the 
  *      activity and activityinstance levels of navigation too.
  *
@@ -3421,7 +3422,11 @@ function build_navigation($extranavlinks, $cm = null) {
     global $CFG, $COURSE;
 
     if (is_string($extranavlinks)) {
-        $extranavlinks = array(array('name' => $extranavlinks, 'link' => '', 'type' => 'title'));
+        if ($extranavlinks == '') {
+            $extranavlinks = array();
+        } else {
+            $extranavlinks = array(array('name' => $extranavlinks, 'link' => '', 'type' => 'title'));
+        }
     }
 
     $navlinks = array();
