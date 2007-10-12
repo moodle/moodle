@@ -149,7 +149,7 @@
                 return false;
             }
             else {
-                if (rmdir($dir_subdirs[$i]) == FALSE) {
+                if (remove_dir($dir_subdirs[$i]) == FALSE) {
                 return false;
                 }
             }
