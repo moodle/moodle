@@ -1492,7 +1492,7 @@ function load_user_accessdata($userid) {
     $base = '/'.SYSCONTEXTID;
 
     $accessdata = get_user_access_sitewide($userid);
-        
+    $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID); 
     //
     // provide "default role" & set 'dr'
     //
