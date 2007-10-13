@@ -315,6 +315,7 @@
     **************************************************************************/
     else if ($action == 'reportdetail') {
 
+        $formattextdefoptions = new stdClass;
         $formattextdefoptions->para = false;  //I'll use it widely in this page
 
         $userid = optional_param('userid', NULL, PARAM_INT); // if empty, then will display the general detailed view
@@ -675,38 +676,38 @@
                             }
                             break;
                         case LESSON_MATCHING:
-                            if ($n == 0 && $useranswer->correct) {
+                            if ($n == 0 && $useranswer != NULL && $useranswer->correct) {
                                 if ($answer->response == NULL && $useranswer != NULL) {
                                     $answerdata->response = get_string("thatsthecorrectanswer", "lesson");
                                 } else {
                                     $answerdata->response = $answer->response;
                                 }
-                            } elseif ($n == 1 && !$useranswer->correct) {
+                            } elseif ($n == 1 && $useranswer != NULL && !$useranswer->correct) {
                                 if ($answer->response == NULL && $useranswer != NULL) {
                                     $answerdata->response = get_string("thatsthewronganswer", "lesson");
                                 } else {
                                     $answerdata->response = $answer->response;
                                 }
                             } elseif ($n > 1) {
-                                if ($n == 2 && $useranswer->correct && $useranswer != NULL) {
+                                if ($n == 2 && $useranswer != NULL && $useranswer->correct) {
                                     if ($lesson->custom) {
                                         $answerdata->score = get_string("pointsearned", "lesson").": ".$answer->score;
                                     } else {
                                         $answerdata->score = get_string("receivedcredit", "lesson");
                                     }
-                                } elseif ($n == 3 && !$useranswer->correct && $useranswer != NULL) {
+                                } elseif ($n == 3 && $useranswer != NULL && !$useranswer->correct) {
                                     if ($lesson->custom) {
                                         $answerdata->score = get_string("pointsearned", "lesson").": ".$answer->score;
                                     } else {
                                         $answerdata->score = get_string("didnotreceivecredit", "lesson");
                                     }
                                 }
-                                $data = "<select disabled=\"disabled\"><option selected>".strip_tags(format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions))."</option></select>";
+                                $data = "<select disabled=\"disabled\"><option selected=\"selected\">".strip_tags(format_string($answer->answer))."</option></select>";
                                 if ($useranswer != NULL) {
                                     $userresponse = explode(",", $useranswer->useranswer);
-                                    $data .= "<select disabled=\"disabled\"><option selected>".strip_tags(format_string($answers[$userresponse[$i]]->response,FORMAT_PLAIN,$formattextdefoptions))."</option></select>";
+                                    $data .= "<select disabled=\"disabled\"><option selected=\"selected\">".strip_tags(format_string($answers[$userresponse[$i]]->response))."</option></select>";
                                 } else {
-                                    $data .= "<select disabled=\"disabled\"><option selected>".strip_tags(format_string($answer->response,FORMAT_PLAIN,$formattextdefoptions))."</option></select>";
+                                    $data .= "<select disabled=\"disabled\"><option selected=\"selected\">".strip_tags(format_string($answer->response))."</option></select>";
                                 }
 
                                 if ($n == 2) {
