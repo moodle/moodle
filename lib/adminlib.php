@@ -322,6 +322,10 @@ function upgrade_activity_modules($return) {
                 if ($oldupgrade && function_exists($oldupgrade_function)) {
                     $db->debug = true;
                     $oldupgrade_status = $oldupgrade_function($currmodule->version, $module);
+                    if (!$oldupgrade_status) {
+                        notify ('Upgrade function ' . $oldupgrade_function .
+                                ' did not complete successfully.'); 
+                    }
                 } else if ($oldupgrade) {
                     notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
                              $mod . ': ' . $fullmod . '/db/' . $CFG->dbtype . '.php');
@@ -332,7 +336,7 @@ function upgrade_activity_modules($return) {
                 if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
                     $db->debug = true;
                     $newupgrade_status = $newupgrade_function($currmodule->version, $module);
-                } else if ($newupgrade) {
+                } else if ($newupgrade && $oldupgrade_status) {
                     notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                              $mod . ': ' . $fullmod . '/db/upgrade.php');
                 }
