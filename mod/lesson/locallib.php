@@ -228,7 +228,7 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     
     $strlessons = get_string('modulenameplural', 'lesson');
     $strlesson  = get_string('modulename', 'lesson');
-    $strname    = format_string($lesson->name, true);
+    $strname    = format_string($lesson->name, true, $course->id);
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
@@ -297,9 +297,9 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
                   '', $meta, true, $button, navmenu($course, $cm));
                   
     if (has_capability('mod/lesson:manage', $context)) {
-        print_heading_with_help(format_string($lesson->name, true), "overview", "lesson");
+        print_heading_with_help($strname, "overview", "lesson");
     } else {
-        print_heading($lesson->name);
+        print_heading($strname);
     }
     
     if (!empty($currenttab) and has_capability('mod/lesson:manage', $context)) {
