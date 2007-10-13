@@ -226,7 +226,8 @@ if (!defined("LESSON_RESPONSE_EDITOR")) {
 function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     global $CFG, $USER;
 
-    $strlesson  = get_string('modulename', 'lesson');
+    $strlesson = get_string('modulename', 'lesson');
+    $strname   = format_string($lesson->name, true, $course->id);
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -244,13 +245,13 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
                   '', '', true, $button, navmenu($course, $cm));
 
     if (has_capability('mod/lesson:manage', $context)) {
-        print_heading_with_help(format_string($lesson->name, true), "overview", "lesson");
+        print_heading_with_help($strname, "overview", "lesson");
 
         if (!empty($currenttab)) {
             include($CFG->dirroot.'/mod/lesson/tabs.php');
         }
     } else {
-        print_heading(format_string($lesson->name, true));
+        print_heading($strname);
     }
 
     lesson_print_messages();
