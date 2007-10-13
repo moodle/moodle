@@ -523,11 +523,13 @@
         
     }
 
-    $attemptsremaining = 0;
+    $attemptsremaining  = 0;
     $maxattemptsreached = 0;
+    $nodefaultresponse  = false; // Flag for redirecting when default feedback is turned off
 
     if ($noanswer) {
         $newpageid = $pageid; // display same page again
+        $feedback  = get_string('noanswer', 'lesson');
     } else {
         $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
         if (!has_capability('mod/lesson:manage', $context)) {
@@ -627,7 +629,6 @@
         }
 
         // Determine default feedback if necessary
-        $nodefaultresponse = false;  // Flag for redirecting when default feedback is turned off
         if (empty($response)) {
             if (!$lesson->feedback and !$noanswer and !($lesson->review and !$correctanswer and !$isessayquestion)) {
                 // These conditions have been met:
@@ -649,9 +650,7 @@
         // display response (if there is one - there should be!)
         // display: lesson title, page title, question text, student's answer(s) before feedback message
         
-        if ($noanswer) {
-            $feedback = get_string('noanswer', 'lesson');
-        } else if ($response) {
+        if ($response) {
             //optionally display question page title
             //if ($title = get_field("lesson_pages", "title", "id", $pageid)) {
             //    print_heading($title);
