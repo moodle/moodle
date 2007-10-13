@@ -700,7 +700,6 @@ function xmldb_main_upgrade($oldversion=0) {
     if ($result && $oldversion < 2007021532) {
         // Get list of users by browsing moodledata/user
         $oldusersdir = $CFG->dataroot . '/users';
-        $readmefilename = $oldusersdir . '/README.txt';
         $folders = get_directory_list($oldusersdir, '', false, true, false);
 
         foreach ($folders as $userid) {
@@ -730,6 +729,7 @@ function xmldb_main_upgrade($oldversion=0) {
         }
 
         // Leave a README in old users directory
+        $readmefilename = $oldusersdir . '/README.txt';
         if ($handle = fopen($readmefilename, 'w+b')) {
             if (!fwrite($handle, get_string('olduserdirectory'))) {
                 // Could not write to the readme file. No cause for huge concern
