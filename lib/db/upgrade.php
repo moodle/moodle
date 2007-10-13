@@ -697,17 +697,16 @@ function xmldb_main_upgrade($oldversion=0) {
         set_field('user', 'mnethostid', $CFG->mnet_localhost_id, 'username', 'guest');
     }
 
-    return $result;
-    
-    if ($result && $oldversion < 2007021531) {
+    if ($result && $oldversion < 2007021532) {
         // Get list of users by browsing moodledata/user
         $oldusersdir = $CFG->dataroot . '/users';
+        $readmefilename = $oldusersdir . '/README.txt';
         $folders = get_directory_list($oldusersdir, '', false, true, false);
-        
+
         foreach ($folders as $userid) {
             $olddir = $oldusersdir . '/' . $userid;
             $files = get_directory_list($olddir);
-            
+
             if (empty($files)) {
                 continue;
             }
@@ -731,10 +730,9 @@ function xmldb_main_upgrade($oldversion=0) {
         }
 
         // Leave a README in old users directory
-        $readmefilename = $oldusersdir . '/README.txt';
         if ($handle = fopen($readmefilename, 'w+b')) {
             if (!fwrite($handle, get_string('olduserdirectory'))) {
-                // Could not write to the readme file. No cause for huge concern 
+                // Could not write to the readme file. No cause for huge concern
                 notify("Could not write to the README.txt file in $readmefilename.");
             }
             fclose($handle);
@@ -742,10 +740,9 @@ function xmldb_main_upgrade($oldversion=0) {
             // Could not create the readme file. No cause for huge concern
             notify("Could not create the README.txt file in $readmefilename.");
         }
-    }    
+    }
 
-
-    return $result; 
+    return $result;
 
 }
 ?>
