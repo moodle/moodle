@@ -722,11 +722,6 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add field idnumber
         $result = $result && add_field($table, $field);
 
-    /// Define index idnumber (unique) to be added to course_modules
-        $table = new XMLDBTable('course_modules');
-        $index = new XMLDBIndex('idnumber');
-        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('idnumber'));
-
     /// Launch add index idnumber
         $result = $result && add_index($table, $index);
 
