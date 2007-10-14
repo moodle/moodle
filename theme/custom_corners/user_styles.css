@@ -209,6 +209,7 @@ div.sideblock table.minicalendar td.day {
 }
 div.sideblock table.minicalendar {
   border-style: none;
+  margin-bottom: 0;
 }
 body#admin-lang h2.main {
   font-size: 1em;
@@ -442,15 +443,13 @@ div.logininfo {
 }
 div.bt div {
   font-size: 1px;
-  line-height: 0;
+  line-height: 1%;
   height: 0;
-  color: transparent;
 }
 div.bb div {
   font-size: 1px;
-  line-height: 0;
+  line-height: 1%;
   height: 0;
-  color: transparent;
 }
 div.sideblock div.bt div {
   background-image: url(pix/box.png);
