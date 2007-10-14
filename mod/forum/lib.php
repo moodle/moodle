@@ -496,6 +496,8 @@ function forum_cron() {
 
     mtrace('Starting digest processing...');
 
+    @set_time_limit(300); // terminate if not able to fetch all digests in 5 minutes
+
     if (!isset($CFG->digestmailtimelast)) {    // To catch the first time
         set_config('digestmailtimelast', 0);
     }
@@ -506,6 +508,7 @@ function forum_cron() {
     // Delete any really old ones (normally there shouldn't be any)
     $weekago = $timenow - (7 * 24 * 3600);
     delete_records_select('forum_queue', "timemodified < $weekago");
+    mtrace ('Cleaned old digest records');
 
     if ($CFG->digestmailtimelast < $digesttime and $timenow > $digesttime) {
 
@@ -513,7 +516,9 @@ function forum_cron() {
 
         mtrace('Sending forum digests: '.userdate($timenow, '', $sitetimezone));
 
-        if ($digestposts = get_records('forum_queue')) {
+        $digestposts_rs = get_recordset('forum_queue');
+
+        if (!rs_EOF($digestposts_rs)) {
 
             // We have work to do
             $usermailcount = 0;
@@ -522,7 +527,7 @@ function forum_cron() {
             $discussionposts = array();
             $userdiscussions = array();
 
-            foreach ($digestposts as $digestpost) {
+            while ($digestpost = rs_fetch_next_record($digestposts_rs)) {
                 if (!isset($users[$digestpost->userid])) {
                     if ($user = get_record('user', 'id', $digestpost->userid)) {
                         $users[$digestpost->userid] = $user;
@@ -579,6 +584,7 @@ function forum_cron() {
                 $userdiscussions[$digestpost->userid][$digestpost->discussionid] = $digestpost->discussionid;
                 $discussionposts[$digestpost->discussionid][$digestpost->postid] = $digestpost->postid;
             }
+            rs_close($digestposts_rs); /// Finished iteration, let's close the resultset
 
             // Data collected, start sending out emails to each user
             foreach ($userdiscussions as $userid => $thesediscussions) {
