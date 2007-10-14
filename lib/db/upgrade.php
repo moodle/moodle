@@ -722,9 +722,6 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add field idnumber
         $result = $result && add_field($table, $field);
 
-    /// Launch add index idnumber
-        $result = $result && add_index($table, $index);
-
         upgrade_main_savepoint($result, 2007041100);
     }
 
