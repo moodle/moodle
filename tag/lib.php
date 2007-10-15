@@ -378,7 +378,7 @@ function tag_an_item($item_type, $item_id, $tag_names_or_ids_csv, $tag_type="def
     //tag instances of an item are ordered, get the last one
     $query = "
         SELECT
-            MAX(ordering) max_order
+            MAX(ordering) AS max_order
         FROM
             {$CFG->prefix}tag_instance ti
         WHERE
