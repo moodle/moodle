@@ -294,7 +294,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                 $popup = calendar_get_popup(true, false);
                 $cell = '<a href="#" '.$popup.'>'.$day.'</a>';
             }
-            $cell = '<span class="accesshide">'.$today.' </span>'.$cell;
+            $cell = get_accesshide($today.' ').$cell;
         }
 
         // Just display it

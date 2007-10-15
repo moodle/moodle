@@ -506,8 +506,8 @@ class flexible_table {
                         $fsortorder = get_string('asc');
                         $lsortorder = get_string('asc');
                     }
-                    $this->headers[$index] = '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'=firstname">'.get_string('firstname').'<span class="accesshide">'.get_string('sortby').' '.get_string('firstname').' '.$fsortorder.'</span></a> '.$icon_sort_first.' / '.
-                                          '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'=lastname">'.get_string('lastname').'<span class="accesshide">'.get_string('sortby').' '.get_string('lastname').' '.$lsortorder.'</span></a> '.$icon_sort_last;
+                    $this->headers[$index] = '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'=firstname">'.get_string('firstname').get_accesshide(get_string('sortby').' '.get_string('firstname').' '.$fsortorder).'</a> '.$icon_sort_first.' / '.
+                                          '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'=lastname">'.get_string('lastname').get_accesshide(get_string('sortby').' '.get_string('lastname').' '.$lsortorder).'</a> '.$icon_sort_last;
                 }
                 break;
 
@@ -529,7 +529,7 @@ class flexible_table {
                     } else {
                         $localsortorder = get_string('asc');  
                     }
-                    $this->headers[$index] = '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'='.$column.'">'.$this->headers[$index].'<span class="accesshide">'.get_string('sortby').' '.$this->headers[$index].' '.$localsortorder.'</span></a>';
+                    $this->headers[$index] = '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'='.$column.'">'.$this->headers[$index].get_accesshide(get_string('sortby').' '.$this->headers[$index].' '.$localsortorder).'</a>';
                 }
             }
 
