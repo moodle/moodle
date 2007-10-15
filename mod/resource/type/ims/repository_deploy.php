@@ -68,7 +68,7 @@
         
         $dirpath = "$CFG->repository/$file";
         $dir = opendir($dirpath);
-        while (false != ($filename = readdir($dir))) {
+        while (false !== ($filename = readdir($dir))) {
             if ($filename != '.' && $filename != '..') {
                 $path = $dirpath.'/'.$filename;
                 if (is_dir($path) && file_exists("$path/imsmanifest.xml")) {
