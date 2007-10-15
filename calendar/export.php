@@ -9,7 +9,9 @@ $action = optional_param('action', '', PARAM_ALPHA);
 $day  = optional_param('cal_d', 0, PARAM_INT);
 $mon  = optional_param('cal_m', 0, PARAM_INT);
 $yr   = optional_param('cal_y', 0, PARAM_INT);
-$courseid = optional_param('course', 0, PARAM_INT);
+if ($courseid = optional_param('course', 0, PARAM_INT)) {
+    $course = get_record('course', 'id', $courseid); 
+}
 
 require_login();
 
@@ -24,11 +26,17 @@ $pagetitle = get_string('export', 'calendar');
 $navlinks = array();
 $now = usergetdate(time());
 
+if ($course->id != SITEID) {
+    $navlinks[] = array('name' => $course->shortname,
+                        'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
+                        'type' => 'misc');
+}
 $navlinks[] = array('name' => get_string('calendar', 'calendar'),
-                    'link' =>calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$course.'&amp;',
+                    'link' =>calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$courseid.'&amp;',
                                                     $now['mday'], $now['mon'], $now['year']),
                     'type' => 'misc');
 $navlinks[] = array('name' => $pagetitle, 'link' => null, 'type' => 'misc');
+
 $navigation = build_navigation($navlinks);
 
 if(!checkdate($mon, $day, $yr)) {
@@ -105,13 +113,13 @@ list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
 $getvars = 'cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
 
 echo '<div class="minicalendarblock">';
-echo calendar_top_controls('display', array('id' => $course, 'm' => $prevmon, 'y' => $prevyr));
+echo calendar_top_controls('display', array('id' => $courseid, 'm' => $prevmon, 'y' => $prevyr));
 echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
 echo '</div><div class="minicalendarblock">';
-echo calendar_top_controls('display', array('id' => $course, 'm' => $mon, 'y' => $yr));
+echo calendar_top_controls('display', array('id' => $courseid, 'm' => $mon, 'y' => $yr));
 echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
 echo '</div><div class="minicalendarblock">';
-echo calendar_top_controls('display', array('id' => $course, 'm' => $nextmon, 'y' => $nextyr));
+echo calendar_top_controls('display', array('id' => $courseid, 'm' => $nextmon, 'y' => $nextyr));
 echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
 echo '</div>';
 

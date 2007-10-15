@@ -64,7 +64,7 @@
                             'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
                             'type' => 'misc');
     }
-    $navlinks[] = array('name' => $strpreferences, 'link' => 'view.php', 'type' => 'misc');
+    $navlinks[] = array('name' => $strpreferences, 'link' => 'null', 'type' => 'misc');
     $navigation = build_navigation($navlinks);
 
     print_header("$site->shortname: $strcalendar: $strpreferences", $strcalendar, $navigation,

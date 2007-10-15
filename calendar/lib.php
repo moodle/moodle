@@ -514,7 +514,11 @@ function calendar_print_event($event) {
 
     echo '</td></tr>';
     echo '<tr><td class="side">&nbsp;</td>';
-    echo '<td class="description '.$event->cssclass.'">';
+    if (isset($event->cssclass)) {
+        echo '<td class="description '.$event->cssclass.'">';
+    } else {
+        echo '<td class="description">'; 
+    }
     echo format_text($event->description, FORMAT_HTML);
     if (calendar_edit_event_allowed($event)) {
         echo '<div class="commands">';
