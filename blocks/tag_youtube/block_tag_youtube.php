@@ -156,13 +156,13 @@ class block_tag_youtube extends block_base {
         foreach($videos as $video){
             $text .= '<li>';
             $text .= '<a href="'. s($video['url']) . '">';
-            $text .= '<img alt="" class="youtube-thumb" style="padding:3px;" src="'. $video['thumbnail_url'] .'" /> <span>';
+            $text .= '<img alt="" class="youtube-thumb" src="'. $video['thumbnail_url'] .'" /> <span>';
             $text .= s($video['title']). '</span></a>';
-            $text .= '<br/>';
+            $text .= '<div>';
             $text .= format_time($video['length_seconds']);
-            $text .= "</li>\n";
+            $text .= "</div></li>\n";
         }
-        $text .= "</ul>\n";
+        $text .= "</ul><div class=\"clearer\"></div>\n";
 
         return $text;
     }

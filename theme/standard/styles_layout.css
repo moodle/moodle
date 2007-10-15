@@ -1398,12 +1398,13 @@ a.skip-block:focus, a.skip-block:active {
 }
 
 .block_tag_youtube .youtube-thumb {
- width:75px;
- height:50px;
+  padding: 3px;
+  padding-bottom: 0.5em;
+  display: block;
+  float: left;
 }
-.block_tag_youtube .yt-video-entry{
- font-size:10px;
- line-height:11px;
+.block_tag_youtube .yt-video-entry li {
+  clear: left;
 }
 
 .block_tag_flickr .flickr-photos {
