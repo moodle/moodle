@@ -46,7 +46,7 @@ $existing_tagtypes['default'] = get_string('tagtype_default', 'tag');
 switch($action) {
 
     case 'delete':
-        if (!data_submitted or !confirm_sesskey()) {
+        if (!data_submitted() or !confirm_sesskey()) {
             break;
         }
         $str_tagschecked = tag_name_from_string(implode($tagschecked, ','));
@@ -58,7 +58,7 @@ switch($action) {
         break;
 
     case 'reset':
-        if (!data_submitted or !confirm_sesskey()) {
+        if (!data_submitted() or !confirm_sesskey()) {
             break;
         }
         $str_tagschecked = tag_name_from_string(implode($tagschecked, ','));
@@ -70,7 +70,7 @@ switch($action) {
         break;
 
     case 'changetype':
-        if (!data_submitted or !confirm_sesskey()) {
+        if (!data_submitted() or !confirm_sesskey()) {
             break;
         }
 
@@ -99,7 +99,7 @@ switch($action) {
         break;
 
     case 'changename':
-        if (!data_submitted or !confirm_sesskey()) {
+        if (!data_submitted() or !confirm_sesskey()) {
             break;
         }
 
