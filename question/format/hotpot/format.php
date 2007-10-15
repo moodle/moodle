@@ -420,6 +420,9 @@ class qformat_hotpot extends qformat_default {
                 $question->answer = array();
                 $question->fraction = array();
                 $question->feedback = array();
+                $aa = 0;
+                $correct_answers = array();
+                $correct_answers_all_zero = true;
                 while (($answer = $answers."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
                     $correct = $xml->xml_value($tags, $answer."['correct'][0]['#']");
                     if (empty($correct)) {
@@ -439,11 +442,25 @@ class qformat_hotpot extends qformat_default {
                     }
                     $answertext = $this->hotpot_prepare_str($xml->xml_value($tags, $answer."['text'][0]['#']"));
                     if ($answertext!='') {
-                        $question->answer[] = $answertext;
-                        $question->fraction[] = $fraction;
-                        $question->feedback[] = $this->hotpot_prepare_str($xml->xml_value($tags, $answer."['feedback'][0]['#']"));
+                        $question->answer[$aa] = $answertext;
+                        $question->fraction[$aa] = $fraction;
+                        $question->feedback[$aa] = $this->hotpot_prepare_str($xml->xml_value($tags, $answer."['feedback'][0]['#']"));
+                        if ($correct) {
+                            if ($fraction) {
+                                $correct_answers_all_zero = false;
+                            }
+                            $correct_answers[] = $aa;
+                        }
+                        $aa++;
                     }
                     $a++;
+                }
+                if ($correct_answers_all_zero) {
+                    // correct answers all have score of 0%, 
+                    // so reset score for correct answers 100%
+                    foreach ($correct_answers as $aa) {
+                        $question->fraction[$aa] = 1;
+                    }
                 }
                 $questions[] = $question;
                 $q++;
