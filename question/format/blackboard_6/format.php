@@ -60,7 +60,7 @@ class qformat_blackboard_6 extends qformat_default {
         }
 
         // Loop through all directory entries, and construct two temporary arrays containing files and sub directories
-        while($entry = readdir($handle)) {
+        while(false !== ($entry = readdir($handle))) {
             if (is_dir($dir. $slash .$entry) && $entry != ".." && $entry != ".") {
                 $dir_subdirs[] = $dir. $slash .$entry;
             }

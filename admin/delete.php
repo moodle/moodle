@@ -54,7 +54,7 @@ function delete_subdirectories($rootdir) {
 
     $dir = opendir($rootdir);
 
-    while ($file = readdir($dir)) {
+    while (false !== ($file = readdir($dir))) {
         if ($file != '.' and $file != '..') {
             $fullfile = $rootdir .'/'. $file;
             if (filetype($fullfile) == 'dir') {

@@ -141,7 +141,7 @@ function ewiki_init_spages($dirs, $idprep="") {
 
       #-- read in one directory
       $dh = opendir($dir);
-      while ($fn = readdir($dh)) {
+      while (false !== ($fn = readdir($dh))) {
 
          #-- skip over . and ..
          if ($fn[0] == ".") { continue; }

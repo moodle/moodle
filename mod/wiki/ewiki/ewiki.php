@@ -3189,7 +3189,7 @@ function ewiki_eventually_initialize(&$id, &$data, &$action) {
       $path=EWIKI_INIT_PAGES;
       if (!empty($path)) {
         if ($dh = @opendir($path=EWIKI_INIT_PAGES)) {
-         while ($filename = readdir($dh)) {
+         while (false !== ($filename = readdir($dh))) {
 #### MOODLE CHANGE TO SOLVE BUG #3830. Original doesn't support dots in names.
     //Orig->if (preg_match('/^(['.EWIKI_CHARS_U.']+['.EWIKI_CHARS_L.']+\w*)+/', $filename)) {
             if ($filename == clean_filename($filename) && !is_dir($path.'/'.$filename)) {

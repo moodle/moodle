@@ -79,7 +79,7 @@ function ewiki_initialization_wizard($id, &$data, &$action) {
       else {
          ewiki_database("INIT", array());
          if ($dh = @opendir($path=EWIKI_INIT_PAGES)) {
-            while ($filename = readdir($dh)) {
+            while (false !== ($filename = readdir($dh))) {
                if (preg_match('/^(['.EWIKI_CHARS_U.']+['.EWIKI_CHARS_L.']+\w*)+/', $filename)) {
                   $found = ewiki_database("FIND", array($filename));
                   if (! $found[$filename]) {

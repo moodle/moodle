@@ -30,7 +30,7 @@
     
 /// Loops though dir building a list of all relevent entries. Ignores files.
 /// Asks for deploy if admin user AND no serialized file found.
-    while (false != ($filename = readdir($repository_dir))) {
+    while (false !== ($filename = readdir($repository_dir))) {
         if ($filename != '.' && $filename != '..' && is_dir("$CFG->repository/$directory/$filename")) {
             unset($item);
             $item->type = '';
