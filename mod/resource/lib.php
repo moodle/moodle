@@ -95,6 +95,7 @@ class resource_base {
     function resource_base($cmid=0) {
 
         global $CFG, $COURSE;
+        $this->navlinks = array();
 
         if ($cmid) {
             if (! $this->cm = get_coursemodule_from_id('resource', $cmid)) {
