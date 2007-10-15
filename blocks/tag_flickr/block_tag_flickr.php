@@ -33,7 +33,7 @@ class block_tag_flickr extends block_base {
         if ($this->content !== NULL) {
             return $this->content;
         }
-       
+
         $tagid       = optional_param('id',     0,      PARAM_INT);   // tag id
 
         //include related tags in the photo query ?
@@ -42,7 +42,7 @@ class block_tag_flickr extends block_base {
             $tags_csv .= ',' . tag_names_csv( get_item_tags('tag',$tagid));
         }
         $tags_csv = urlencode($tags_csv);
-        
+
         //number of photos to display
         $numberofphotos = DEFAULT_NUMBER_OF_PHOTOS;
         if( !empty($this->config->numberofphotos)) {
@@ -55,7 +55,6 @@ class block_tag_flickr extends block_base {
             $sortby = $this->config->sortby;
         }
 
-
         //pull photos from a specific photoset
         if(!empty($this->config->photoset)){
 
@@ -64,17 +63,17 @@ class block_tag_flickr extends block_base {
             $request .= '&photoset_id='.$this->config->photoset;
             $request .= '&per_page='.$numberofphotos;
             $request .= '&format=php_serial';
-            
+
             $response = $this->fetch_request($request);
-            
+
             $search = unserialize($response);
 
             foreach ($search['photoset']['photo'] as $p){
                 $p['owner'] = $search['photoset']['owner'];
             }
-            
+
             $photos = array_values($search['photoset']['photo']);
-            
+
         }
         //search for photos tagged with $tags_csv
         else{
@@ -85,15 +84,13 @@ class block_tag_flickr extends block_base {
             $request .= '&per_page='.$numberofphotos;
             $request .= '&sort='.$sortby;
             $request .= '&format=php_serial';
-            
+
             $response = $this->fetch_request($request);
-            
+
             $search = unserialize($response);
-            $photos = array_values($search['photos']['photo']);   
-                
-                
+            $photos = array_values($search['photos']['photo']);  
         }
-        
+
 
         if(strcmp($search['stat'], 'ok') != 0) return; //if no results were returned, exit...
 
@@ -110,15 +107,13 @@ class block_tag_flickr extends block_base {
         $this->content->footer = '';
 
         return $this->content;
-
     }
-    
-   function fetch_request($request){
-        
+
+    function fetch_request($request){
         global $CFG;
 
         make_upload_directory('/cache/flickr');
-        
+
         $cache = new RSSCache($CFG->dataroot . '/cache/flickr', FLICKR_CACHE_EXPIRATION);
         $cache_status = $cache->check_cache( $request);
 
@@ -143,7 +138,7 @@ class block_tag_flickr extends block_base {
 
         return $response;        
     }
-        
+
     function build_photo_url ($photo, $size='medium') {
         //receives an array (can use the individual photo data returned
         //from an API call) and returns a URL (doesn't mean that the
@@ -156,12 +151,12 @@ class block_tag_flickr extends block_base {
             'large' => '_b',
             'original' => '_o'
         );
-        
+
         $size = strtolower($size);
         if (!array_key_exists($size, $sizes)) {
             $size = 'medium';
         }
-        
+
         if ($size == 'original') {
             $url = 'http://farm' . $photo['farm'] . '.static.flickr.com/' . $photo['server'] . '/' . $photo['id'] . '_' . $photo['originalsecret'] . '_o' . '.' . $photo['originalformat'];
         } else {
@@ -170,4 +165,5 @@ class block_tag_flickr extends block_base {
         return $url;
     }    
 }
+
 ?>
