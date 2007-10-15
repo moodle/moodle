@@ -9,7 +9,7 @@ require_once($CFG->dirroot.'/backup/bb/xsl_emulate_xslt.inc');
   
 function get_subdirs($directory){
     $opendirectory = opendir( $directory );
-    while($filename = readdir($opendirectory)) {
+    while(false !== ($filename = readdir($opendirectory))) {
         if (is_dir($directory.$filename) and $filename != ".." and $filename != "."){
             $subdirs[] = $filename;
         }

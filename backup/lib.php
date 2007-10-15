@@ -118,7 +118,7 @@
         }
 
         // Loop through all directory entries, and construct two temporary arrays containing files and sub directories
-        while($entry = readdir($handle)) {
+        while(false !== ($entry = readdir($handle))) {
             if (is_dir($dir. $slash .$entry) && $entry != ".." && $entry != "." && $entry != $excludeddir) {
                 $dir_subdirs[] = $dir. $slash .$entry;
             }
@@ -195,7 +195,7 @@
         $results = null;
   
         $dir = opendir($rootdir);
-        while ($file=readdir($dir)) {
+        while (false !== ($file=readdir($dir))) {
             if ($file=="." || $file=="..") {
                 continue;
             }
@@ -214,7 +214,7 @@
         $results = "";
  
         $dir = opendir($rootdir);
-        while ($file=readdir($dir)) {
+        while (false !== ($file=readdir($dir))) {
             if ($file=="." || $file=="..") {
                 continue;
             }
@@ -301,7 +301,7 @@
             $status = mkdir($to_file,$CFG->directorypermissions);
         }
         $dir = opendir($from_file);
-        while ($file=readdir($dir)) {
+        while (false !== ($file=readdir($dir))) {
             if ($file=="." || $file=="..") {
                 continue;
             }
