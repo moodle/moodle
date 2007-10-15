@@ -29,11 +29,9 @@ class block_tag_youtube extends block_base {
 
     function get_content() {
 
-
         if ($this->content !== NULL) {
             return $this->content;
         }
-
 
         if(!empty($this->config->playlist)){
             //videos from a playlist
@@ -55,7 +53,6 @@ class block_tag_youtube extends block_base {
         $this->content->footer = '';
 
         return $this->content;
-
     }
 
     function get_videos_by_playlist(){
@@ -72,7 +69,6 @@ class block_tag_youtube extends block_base {
         $request .= "&per_page={$numberofvideos}";
 
         return $this->fetch_request($request);
-
     }
 
     function get_videos_by_tag(){
@@ -94,7 +90,6 @@ class block_tag_youtube extends block_base {
         $request .= "&per_page={$numberofvideos}";
 
         return $this->fetch_request($request);
-
     }
 
     function get_videos_by_tag_and_category(){
@@ -133,7 +128,6 @@ class block_tag_youtube extends block_base {
 
             $xmlobj = XML_unserialize($cached_response);
             return $this->render_video_list($xmlobj);
-
         }
 
         if ( $cache_status == 'STALE' ) {
