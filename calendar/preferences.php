@@ -60,9 +60,9 @@
 
     if ($course->id != SITEID) {
         $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
-                       <a href=\"view.php\">$strcalendar</a> -> $strpreferences";
+                       <a href=\"view.php?course=$course->id\">$strcalendar</a> -> $strpreferences";
     } else {
-        $navigation = "<a href=\"view.php\">$strcalendar</a> -> $strpreferences";
+        $navigation = "<a href=\"view.php?course=$course->id\">$strcalendar</a> -> $strpreferences";
     }
 
 
