@@ -152,7 +152,8 @@ table.formtable tbody th {
   background-color:#FFFFFF;
 }
 
-.dimmed_text {
+.dimmed_text,
+.dimmed_text a {
   color:#AAAAAA;
 }
 

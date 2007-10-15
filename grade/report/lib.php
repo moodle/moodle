@@ -362,11 +362,7 @@ class grade_report {
             }
 
             $url .= "?id=$coursemodule->id";
-            if ($itemhidden && has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $coursemodule->course))) {
-                return '<a href="' . $url . '"><span class="dimmed_text">' . $modulename . '</div></a>';
-            } else {
-                return '<a href="' . $url . '">' . $modulename . '</a>';
-            }
+            return '<a href="' . $url . '">' . $modulename . '</a>';
         }
 
         return $modulename;
