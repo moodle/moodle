@@ -165,7 +165,7 @@
 
     //Link to calendar export page
     echo '<div class="bottom">';
-    print_single_button('export.php', false, get_string('exportcalendar', 'calendar'));
+    print_single_button('export.php', array('course'=>$courseid), get_string('exportcalendar', 'calendar'));
 
     if (!empty($USER->id)) {
         $authtoken = sha1($USER->username . $USER->password);
