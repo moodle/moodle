@@ -476,7 +476,7 @@ function hotpot_add_chain(&$hotpot) {
 
         // get list of hotpot files in this folder
         if ($dh = @opendir($xml_quiz->filepath)) {
-            while ($file = @readdir($dh)) {
+            while (false !== ($file = @readdir($dh))) {
                 if (preg_match('/\.(jbc|jcl|jcw|jmt|jmx|jqz|htm|html)$/', $file)) {
                     $hotpot->references[] = "$xml_quiz->reference/$file";
                 }

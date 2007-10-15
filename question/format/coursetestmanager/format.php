@@ -427,7 +427,7 @@ class qformat_coursetestmanager extends qformat_default {
     function fulldelete($location) {
         if (is_dir($location)) {
             $currdir = opendir($location);
-            while ($file = readdir($currdir)) {
+            while (false !== ($file = readdir($currdir))) {
                 if ($file <> ".." && $file <> ".") {
                     $fullfile = $location."/".$file;
                     if (is_dir($fullfile)) {

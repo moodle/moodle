@@ -62,7 +62,7 @@ function assignment_upgrade($oldversion) {
         notify("Moving location of assignment files...");
 
         $basedir = opendir("$CFG->dataroot");
-        while ($dir = readdir($basedir)) {
+        while (false !== ($dir = readdir($basedir))) {
             if ($dir == "." || $dir == ".." || $dir == "users") {
                 continue;
             }
