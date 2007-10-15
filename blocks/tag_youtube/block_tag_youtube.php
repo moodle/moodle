@@ -150,24 +150,19 @@ class block_tag_youtube extends block_base {
     function render_video_list($xmlobj){
 
         $text = '';
-        $text .= '<table class="yt-video-entry">';
+        $text .= '<ul class="yt-video-entry unlist img-text">';
         $videos = $xmlobj['ut_response']['video_list']['video'];
 
         foreach($videos as $video){
-            $text .= '<tr>';
-            $text .= '<td>';
+            $text .= '<li>';
             $text .= '<a href="'. s($video['url']) . '">';
-            $text .= '<img alt="'.s($video['title']).'" class="youtube-thumb" title="'.s($video['title']).'" style="padding:3px;" src="' . $video['thumbnail_url'] . '"/>' ;
-            $text .= "</a>";
-            $text .= "</td>";
-            $text .= '<td>';
-            $text .= '<a href="'. s($video['url']) . '">'.s($video['title']). '</a>';
+            $text .= '<img alt="" class="youtube-thumb" style="padding:3px;" src="'. $video['thumbnail_url'] .'" /> <span>';
+            $text .= s($video['title']). '</span></a>';
             $text .= '<br/>';
             $text .= format_time($video['length_seconds']);
-            $text .= '</td>';
-            $text .= '</tr>';
+            $text .= "</li>\n";
         }
-        $text .= '</table>';
+        $text .= "</ul>\n";
 
         return $text;
     }

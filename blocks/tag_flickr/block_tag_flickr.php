@@ -94,13 +94,13 @@ class block_tag_flickr extends block_base {
 
         if(strcmp($search['stat'], 'ok') != 0) return; //if no results were returned, exit...
 
-        //render the list of photos
-        $text = '';
-        foreach ($photos as $photo) {
-            $text .= '<a href="http://www.flickr.com/photos/' . $photo['owner'] . '/' . $photo['id'] . '/">';
-            $text .= '<img title="'.s($photo['title']).'" alt="'.s($photo['title']).'" class="flickr-photos" src="' . $this->build_photo_url($photo, 'square') . '" /></a>' ;
-        }
-
+        //Accessibility: render the list of photos
+        $text = '<ul class="inline-list">';
+         foreach ($photos as $photo) {
+            $text .= '<li><a href="http://www.flickr.com/photos/' . $photo['owner'] . '/' . $photo['id'] . '/" title="'.s($photo['title']).'">';
+            $text .= '<img alt="'.s($photo['title']).'" class="flickr-photos" src="'. $this->build_photo_url($photo, 'square') ."\" /></a></li>\n";
+         }
+        $text .= "</ul>\n";
 
         $this->content = new stdClass;
         $this->content->text = $text;
