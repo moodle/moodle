@@ -36,6 +36,7 @@ $string['configurationcompletehead'] = 'Konfigurationen är  genomförd';
 $string['configurationcompletesub'] = 'Moodle gjorde ett försök att spara Din konfiguration i en fil i roten (root) på Din installation av Moodle.';
 $string['continue'] = 'Nästa';
 $string['curlrecommended'] = 'Vi rekommenderar starkt att Du installerar det valfria Curl-biblioteket för att aktivera Moodles funktionalitet för nätverkande.';
+$string['customcheck'] = 'Andra kontroller';
 $string['database'] = 'Databas';
 $string['databasecreationsettingshead'] = 'Nu behöver Du konfigurera inställningarna för den databas där den största delen av Moodles data kommer att lagras. Den här databasen kommer att skapas automatiskt av installationsprogrammet med de inställningar som är angivna här nedan.';
 $string['databasecreationsettingssub'] = '<b>Type (typ):</b> fixerad till \"mysql\" av installationsprogrammet<br />
@@ -120,8 +121,10 @@ $string['downloadlanguagenotneeded'] = 'Du kan fullfölja installationsprocessen
 $string['downloadlanguagesub'] = 'Du har nu möjligheten att ladda ner ett språkpaket och fortsätta installationen av det här språket.<br /><br />Om Du inte kan ladda ner språkpaketet så kommer installationen att fortsätta på engelska. Så snart installationen är klar så kan Du ladda ner och installera ytterligare språkpaket.';
 $string['environmenterrortodo'] = 'Du måste lösa de problem som har med den tekniska miljön att göra innan Du fortsätter med att installera den här versionen av Moodle!';
 $string['environmenthead'] = 'Undersöker Din miljö...';
+$string['environmentrecommendcustomcheck'] = 'Om det här testet misslyckas så signalerar det ett möjligt fel.';
 $string['environmentrecommendinstall'] = 'rekommenderas att bli installerad/aktiverad';
 $string['environmentrecommendversion'] = 'version $a->needed rekommenderas och Du använder  $a->current';
+$string['environmentrequirecustomcheck'] = 'det här testet måste resultera i ett godkänt';
 $string['environmentrequireinstall'] = 'är nödvändig att installera/aktivera';
 $string['environmentrequireversion'] = 'version $a->needed är nödvändig och Du använder $a->current';
 $string['environmentsub'] = 'Vi kontrollerar om de olika komponenterna i Ditt system svarar upp mot systemkraven.';
@@ -186,11 +189,14 @@ $string['phpversionhelp'] = '<p>Moodle kräver minst PHP 4.1.0</p>
 <p>Du måste uppgradera PHP eller flytta till en värd som har en nyare version av PHP!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Tidigare';
+$string['qtyperqpwillberemoved'] = 'Under uppgraderingen kommer RQP-frågan att tas bort. Du använde inte den här typen av frågor så Du bör inte stöta på några problem.';
+$string['qtyperqpwillberemovedanyway'] = 'Under uppgraderingen kommer RQP-frågan att tas bort. Du har några RQP-frågor i Din databas och de kommer att sluta att fungera om Du inte installerar om koden från http://moodle.org/mod/data/view.php?d=13&amp;rid=797 innan Du fortsätter med uppgraderingen.';
 $string['remotedownloadnotallowed'] = 'De är inte tillåtet att ladda upp komponenter till Din server (allow_url_fopen är avaktiverad). Du måste ladda ner filen <a href=\"$a->url\">$a->url</a> manuellt, kopiera den till \"$a->dest\" på Din server och packa upp den där.';
 $string['report'] = 'Rapport';
 $string['restricted'] = 'Begränsad';
 $string['safemode'] = 'Säkert läge';
 $string['safemodeerror'] = 'Moodle kan få problem om \'säkert läge\' (safe mode) är aktiverat';
+$string['serverchecks'] = 'Serverkontroller';
 $string['sessionautostart'] = 'Automatisk start av session';
 $string['sessionautostarterror'] = 'De här bör vara inställt till \'off\'.';
 $string['skipdbencodingtest'] = 'Hoppa över Test av DB Encoding';
