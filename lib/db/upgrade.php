@@ -2540,7 +2540,7 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007100903);
     }
     
-    if ($result && $oldversion < 2007101100) {
+    if ($result && $oldversion < 2007101500) {
         // Get list of users by browsing moodledata/user
         $oldusersdir = $CFG->dataroot . '/users';
         $folders = get_directory_list($oldusersdir, '', false, true, false);
