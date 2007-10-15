@@ -190,7 +190,7 @@ $query = "
            RIGHT JOIN {$CFG->prefix}tag tg ON tg.id = ti.tagid
            LEFT JOIN {$CFG->prefix}user u ON tg.userid = u.id
   {$where}
-  GROUP BY tg.id
+  GROUP BY tg.id, tg.name, tg.rawname, tg.tagtype, u.id, tg.flag, tg.timemodified, u.firstname, u.lastname
    {$sort}";
 
 
