@@ -673,7 +673,8 @@ function restore_is_samerole($rolea, $roleb) {
     }
     
     foreach ($rolea as $cap) {
-        if ($cap->permission != $roleb->capabilities[$cap->capability]->permission) {
+        if (isset($roleb->capabilities[$cap->capability]) &&
+                $cap->permission != $roleb->capabilities[$cap->capability]->permission) {
             return false; 
         }     
     }
