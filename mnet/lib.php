@@ -79,6 +79,9 @@ function mnet_get_public_key($uri, $application=null) {
         if (strlen(trim($public_certificate))) {
             $credentials = openssl_x509_parse($public_certificate);
             $host = $credentials['subject']['CN'];
+            if (array_key_exists( 'subjectAltName', $credentials['subject'])) {
+                $host = $credentials['subject']['subjectAltName'];
+            }
             if (strpos($uri, $host) !== false) {
                 mnet_set_public_key($uri, $public_certificate);
                 return $public_certificate;
@@ -310,7 +313,8 @@ function mnet_generate_keypair($dn = null, $days=28) {
            "localityName" => $locality,
            "organizationName" => $organization,
            "organizationalUnitName" => 'Moodle',
-           "commonName" => $CFG->wwwroot,
+           "commonName" => substr($CFG->wwwroot, 0, 64),
+           "subjectAltName" => $CFG->wwwroot,
            "emailAddress" => $email
         );
     }
