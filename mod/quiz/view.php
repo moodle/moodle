@@ -341,8 +341,6 @@
         }
     }
 
-
-
     // Print a button to start/continue an attempt, if appropriate.
     if (!$quiz->questions) {
         print_heading(get_string("noquestions", "quiz"));
@@ -452,6 +450,7 @@
 // Utility functions =================================================================
 
 function finish_page($course) {
+    global $THEME;
     if (!empty($THEME->customcorners)) print_custom_corners_end();
     echo '</td></tr></table>';
     print_footer($course);
