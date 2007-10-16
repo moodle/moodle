@@ -89,7 +89,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
 
         // session okay, try getting the user
-        if (!$user = get_complete_user_data('id', $mnet_session->userid)) {
+        if (!$user = get_record('user', 'id', $mnet_session->userid)) {
             echo mnet_server_fault(3, get_string('authfail_usermismatch', 'mnet'));
             exit;
         }
