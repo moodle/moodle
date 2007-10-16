@@ -45,6 +45,12 @@ class block_calendar_month extends block_base {
         // We 'll need this later
         calendar_set_referring_course($courseshown);
 
+        // MDL-9059, set to show this course when admins go into a course, then unset it.
+        if ($COURSE->id != SITEID && !isset($SESSION->cal_courses_shown[$COURSE->id]) && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM))) {
+            $courseset = true;
+            $SESSION->cal_courses_shown[$COURSE->id] = $COURSE;
+        }
+    
         // Be VERY careful with the format for default courses arguments!
         // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
         calendar_set_filters($courses, $group, $user, $filtercourse, $filtercourse);
@@ -62,6 +68,11 @@ class block_calendar_month extends block_base {
             $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
             $this->content->text .= '<div class="filters">'.calendar_filter_controls('course', '', $COURSE).'</div>';
             
+        }
+        
+        // MDL-9059, unset this so that it doesn't stay in session
+        if ($courseset) {
+            unset($SESSION->cal_courses_shown[$COURSE->id]);
         }
 
         return $this->content;
