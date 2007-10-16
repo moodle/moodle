@@ -132,8 +132,6 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
 
         if (false == $host_record_exists) {
             exit(mnet_server_fault(7020, 'wrong-wwwroot', $crypt_parser->remote_wwwroot));
-        } elseif (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] != $MNET_REMOTE_CLIENT->ip_address) {
-            exit(mnet_server_fault(7017, 'wrong-ip'));
         }
 
         if ($crypt_parser->payload_encrypted) {
