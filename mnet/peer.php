@@ -141,9 +141,19 @@ class mnet_peer {
     }
 
     function check_common_name($key) {
+        $credentials = $this->check_credentials($key);
+        return $credentials['validTo_time_t'];
+    }
+
+    function check_credentials($key) {
         $credentials = openssl_x509_parse($key);
         if ($credentials == false) {
             $this->error[] = array('code' => 3, 'text' => get_string("nonmatchingcert", 'mnet', array('','')));
+            return false;
+        } elseif (array_key_exists('subjectAltName', $credentials['subject']) && $credentials['subject']['subjectAltName'] != $this->wwwroot) {
+            $a[] = $credentials['subject']['subjectAltName'];
+            $a[] = $this->wwwroot;
+            $this->error[] = array('code' => 5, 'text' => get_string("nonmatchingcert", 'mnet', $a));
             return false;
         } elseif ($credentials['subject']['CN'] != $this->wwwroot) {
             $a[] = $credentials['subject']['CN'];
@@ -151,7 +161,12 @@ class mnet_peer {
             $this->error[] = array('code' => 4, 'text' => get_string("nonmatchingcert", 'mnet', $a));
             return false;
         } else {
-            return $credentials['validTo_time_t'];
+            if (array_key_exists('subjectAltName', $credentials['subject'])) {
+                $credentials['wwwroot'] = $credentials['subject']['subjectAltName'];
+            } else {
+                $credentials['wwwroot'] = $credentials['subject']['CN'];
+            }
+            return $credentials;
         }
     }
 
