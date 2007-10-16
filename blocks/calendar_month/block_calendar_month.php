@@ -72,7 +72,7 @@ class block_calendar_month extends block_base {
         }
         
         // MDL-9059, unset this so that it doesn't stay in session
-        if ($courseset) {
+        if (!empty($courseset)) {
             unset($SESSION->cal_courses_shown[$COURSE->id]);
         }
 
