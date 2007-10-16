@@ -512,8 +512,6 @@ function forum_cron() {
 
     if ($CFG->digestmailtimelast < $digesttime and $timenow > $digesttime) {
 
-        set_config('digestmailtimelast', $timenow);
-
         mtrace('Sending forum digests: '.userdate($timenow, '', $sitetimezone));
 
         $digestposts_rs = get_recordset('forum_queue');
@@ -738,6 +736,8 @@ function forum_cron() {
                 }
             }
         }
+    /// We have finishied all digest emails, update $CFG->digestmailtimelast
+        set_config('digestmailtimelast', $timenow);
     }
 
     if (!empty($usermailcount)) {
