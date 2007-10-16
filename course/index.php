@@ -46,13 +46,13 @@
 /// If data for a new category was submitted, then add it
     if ($form = data_submitted() and confirm_sesskey() and has_capability('moodle/category:create', $context)) {
         if (!empty($form->addcategory)) {
-            unset($newcategory);
-            $newcategory->name = stripslashes_safe($form->addcategory);
+            $newcategory = new object();
+            $newcategory->name = $form->addcategory;
             $newcategory->sortorder = 999;
             if (!insert_record('course_categories', $newcategory)) {
-                notify("Could not insert the new category '" . format_string($newcategory->name) . "'");
+                notify("Could not insert the new category '" . format_string(stripslashes($newcategory->name)) . "'");
             } else {
-                notify(get_string('categoryadded', '', format_string($newcategory->name)));
+                notify(get_string('categoryadded', '', format_string(stripslashes($newcategory->name))));
             }
         }
     }
