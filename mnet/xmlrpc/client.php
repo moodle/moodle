@@ -307,7 +307,12 @@ class mnet_xmlrpc_client {
                     $this->error[] = $this->response['faultCode'] . " : " . $this->response['faultString'];
                 }
             } else {
-                $this->error[] = $this->response['faultCode'] . " : " . $this->response['faultString'];
+                if (!empty($CFG->mnet_rpcdebug)) {
+                    $guidance = get_string('error'.$this->response['faultCode'], 'mnet');
+                } else {
+                    $guidance = '';
+                }
+                $this->error[] = $this->response['faultCode'] . " : " . $this->response['faultString'] ."\n".$guidance;
             }
         }
         return empty($this->error);
