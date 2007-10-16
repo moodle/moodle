@@ -1,3 +1,20 @@
+td#left-column {
+  padding-right: 0;
+  padding-left: 5px;
+}
+td#right-column {
+  padding-right: 5px;
+  padding-left: 0;
+}
+div.coursebox {
+  float: right;
+}
+div.sideblock div.content * {
+  text-align: right;
+}
+div.calendar-controls a.next {
+  text-align: left;
+}
 div.sideblock div.header div.bt  div {
   background-position: 100% 0;
   right: -13px;
@@ -6,6 +23,7 @@ div.sideblock div.header div.bt {
   background-position: 0 0;
   left: -13px;
   margin: 0 13px 0 0;
+  text-align: right;
 }
 div.sideblock div.bt  div {
   background-position: 100% 0;
@@ -34,7 +52,7 @@ td#middle-column div.bt {
   left: -13px;
   margin: 0 13px 0 0;
 }
-td#middle-column div.bb  div {
+td#middle-column div.bb div {
   background-position: 100% 100%;
   right: -13px;
 }

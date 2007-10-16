@@ -18,18 +18,46 @@ div#header div.i3 {
   font-size: 1%;
   line-height: 1%;
 }
+span.arrow {
+  font-family: Arial, sans-serif;
+}
+div.clearer {
+  font-size: 1%;
+  line-height: 1%;
+}
 body {
   background-image: none;
   background-color: #F1ECE6;
 }
+/*div.block_calendar_month div.calendar-controls span.hide {
+  display: none
+}
+div.block_calendar_month div.calendar-controls span.clearer {
+  display: none;
+}
+div.block_calendar_month div.calendar-controls span.current {
+  display: inline;
+}
+div.block_calendar_month div.calendar-controls a.previous {
+  float: left;
+}
+div.block_calendar_month div.calendar-controls a.next {
+  float: right;
+}*/
 div.sideblock div.bt div {
   background-image: url(pix/box.gif);
+}
+body.dir-rtl div.sideblock div.bt div {
+  margin-right: 1px;
 }
 div.sideblock div.bt {
   background-image: url(pix/box.gif);
 }
 div.sideblock div.header div.bt div {
   background-image: url(pix/box.gif);
+}
+body.dir-rtl div.sideblock div.header div.bt div {
+  margin-right: 1px;
 }
 div.sideblock div.header div.bt {
   background-image: url(pix/box.gif);
@@ -49,14 +77,29 @@ div.sideblock div.i2 {
 div.sideblock div.bb div {
   background-image: url(pix/beige_box.gif);
 }
+body.dir-rtl div.sideblock div.bb div {
+  margin-right: 1px;
+  right: 0;
+}
 div.sideblock div.bb {
   background-image: url(pix/beige_box.gif);
+}
+body.dir-rtl div.sideblock div.bb {
+  /*margin-left: 2px;*/
 }
 td#middle-column div.bt div {
   background-image: url(pix/box.gif);
 }
+body.dir-rtl td#middle-column div.bt div {
+  margin-right: 1px;
+  right: -13px;
+}
 td#middle-column div.bt {
   background-image: url(pix/box.gif);
+}
+body.dir-rtl td#middle-column div.bt {
+  margin-left: 2px;
+  margin-right: 12px;
 }
 td#middle-column div.i1 {
   background-image: url(pix/borders.gif);
@@ -67,11 +110,21 @@ td#middle-column div.i2 {
 td#middle-column div.bb div {
   background-image: url(pix/box.gif);
 }
+body.dir-rtl td#middle-column div.bb div {
+  margin-right: 1px;
+  right: -3px;
+}
 td#middle-column div.bb {
   background-image: url(pix/box.gif);
 }
+body.dir-rtl td#middle-column div.bb {
+  margin-left: 2px;
+}
 div#footer div.bt div {
   background-image: url(pix/beige_box.gif);
+}
+body.dir-rtl div#footer div.bt div {
+  margin-right: 1px;
 }
 div#footer div.bt {
   background-image: url(pix/beige_box.gif);
@@ -85,11 +138,17 @@ div#footer div.i2 {
 div#footer div.bb div {
   background-image: url(pix/beige_box.gif);
 }
+body.dir-rtl div#footer div.bb div {
+  margin-right: 1px;
+}
 div#footer div.bb {
   background-image: url(pix/beige_box.gif);
 }
 div#header div.bt div {
   background-image: url(pix/beige_box.gif);
+}
+body.dir-rtl div#header div.bt div {
+  margin-right: 1px;
 }
 div#header div.bt {
   background-image: url(pix/beige_box.gif);
@@ -103,11 +162,17 @@ div#header div.i2 {
 div#header div.bb div {
   background-image: url(pix/beige_box.gif);
 }
+body.dir-rtl div#header div.bb div {
+  margin-right: 1px;
+}
 div#header div.bb {
   background-image: url(pix/beige_box.gif);
 }
 div#header-home div.bt div {
   background-image: url(pix/beige_box.gif);
+}
+body.dir-rtl div#header-home div.bt div {
+  margin-right: 1px;
 }
 div#header-home div.bt {
   background-image: url(pix/beige_box.gif);
@@ -121,11 +186,18 @@ div#header-home div.i2 {
 div#header-home div.bb div {
   background-image: url(pix/beige_box.gif);
 }
+body.dir-rtl div#header-home div.bb div {
+  margin-right: 1px;
+  right: -3px;
+}
 div#header-home div.bb {
   background-image: url(pix/beige_box.gif);
 }
 body.nocoursepage div#content div.bt div {
   background-image: url(pix/box.gif);
+}
+body.nocoursepage.dir-rtl div#content div.bt div {
+  margin-right: 1px;
 }
 body.nocoursepage div#content div.bt {
   background-image: url(pix/box.gif);
@@ -139,8 +211,15 @@ body.nocoursepage div#content div.i2 {
 body.nocoursepage div#content div.bb div {
   background-image: url(pix/box.gif);
 }
+body.nocoursepage.dir-rtl div#content div.bb div {
+  margin-right: 1px;
+  right: -3px;
+}
 body.nocoursepage div#content div.bb {
   background-image: url(pix/box.gif);
+}
+body.nocoursepage.dir-rtl div#content div.bb {
+  margin-right: 1px;
 }
 th.header {
   background-image: url(pix/header.gif);
