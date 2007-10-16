@@ -101,7 +101,9 @@ class grade_report_overview extends grade_report {
         global $CFG;
         $numusers = $this->get_numusers();
 
-        if ($courses = get_courses('all', null, 'c.id, c.shortname')) {
+        // if ($courses = get_courses('all', null, 'c.id, c.shortname')) {
+        // MDL-11679, only show 'mycourses' instead of all courses
+        if ($courses = get_my_courses($this->user->id, 'c.sortorder ASC', 'id, shortname')) {
             foreach ($courses as $course) {
                 // Get course grade_item
                 if (!$grade_item = grade_item::fetch(array('itemtype' => 'course', 'courseid' => $course->id))) {
