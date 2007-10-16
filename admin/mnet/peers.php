@@ -103,7 +103,8 @@ if (($form = data_submitted()) && confirm_sesskey()) {
             } else {
                 $oldkey = $mnet_peer->public_key;
                 $mnet_peer->public_key = $form->public_key;
-                $mnet_peer->public_key_expires   = $mnet_peer->check_common_name($form->public_key);
+                $credentials = $mnet_peer->check_credentials($form->public_key);
+                $mnet_peer->public_key_expires = $credentials['validTo_time_t'];
                 if ($mnet_peer->public_key_expires == false) {
                     $mnet_peer->public_key == $oldkey;
                     $errmsg = '<br />';
@@ -114,6 +115,8 @@ if (($form = data_submitted()) && confirm_sesskey()) {
                     exit;
                 }
             }
+        } else {
+            $credentials = $mnet_peer->check_credentials($mnet_peer->public_key);
         }
 
         // PREVENT DUPLICATE RECORDS ///////////////////////////////////////////
@@ -141,6 +144,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
     if($currentkey == $mnet_peer->public_key) unset($currentkey);
     $form = new stdClass();
     if ($hostid != $CFG->mnet_all_hosts_id) {
+        $credentials = $mnet_peer->check_credentials($mnet_peer->public_key);
         include('./mnet_review.html');
     } else {
         include('./mnet_review_allhosts.html');

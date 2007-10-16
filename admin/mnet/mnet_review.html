@@ -126,6 +126,23 @@ if (isset($mnet_peer->ip_address) && '' != $mnet_peer->ip_address){
 
 <?php
 }
+if (!empty($credentials)) {
+?>
+<tr>
+    <td align="right" valign="top"><?php print_string('certdetails', 'mnet'); ?>:</td>
+    <td valign="top"><pre style="margin: 0px; border: 0px;"><?php 
+        foreach($credentials['subject'] as $key => $credential) {
+            if (is_scalar($credential)) {
+                echo str_pad($key, 16, " ", STR_PAD_LEFT).': '.$credential."\n";
+            } else {
+                echo str_pad($key, 16, " ", STR_PAD_LEFT).': '.var_export($credential,1)."\n";
+            }
+        }
+        ?></pre>
+    </td>
+</tr>
+<?php
+}
 ?>
 <tr>
     <td></td>
