@@ -651,10 +651,10 @@ class page_generic_activity extends page_base {
         if (empty($morenavlinks) && $this->user_allowed_editing()) {
             $buttons = '<table><tr><td>'.update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', $this->activityname)).'</td>';
             if (!empty($CFG->showblocksonmodpages)) {
-                $buttons .= '<td><form target="'.$CFG->framename.'" method="get" action="view.php">'.
+                $buttons .= '<td><form '.$CFG->frametarget.' method="get" action="view.php"><div>'.
                     '<input type="hidden" name="id" value="'.$this->modulerecord->id.'" />'.
                     '<input type="hidden" name="edit" value="'.($this->user_is_editing()?'off':'on').'" />'.
-                    '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></form></td>';
+                    '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></td>';
             }
             $buttons .= '</tr></table>';
         } else {
