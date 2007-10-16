@@ -631,6 +631,8 @@ $moodle_capabilities = array(
 
     'moodle/course:managegroups' => array(
 
+        'riskbitmask' => RISK_XSS,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
