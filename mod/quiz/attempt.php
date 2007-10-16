@@ -387,7 +387,9 @@
     }
 
     if ($finishattempt) {
-        unset($SESSION->passwordcheckedquizzes[$quiz->id]);
+        if (!empty($SESSION->passwordcheckedquizzes[$quiz->id])) {
+            unset($SESSION->passwordcheckedquizzes[$quiz->id]);
+        }
         redirect($CFG->wwwroot . '/mod/quiz/review.php?attempt='.$attempt->id, 0);
     }
 
