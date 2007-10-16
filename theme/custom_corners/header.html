@@ -20,7 +20,7 @@
         // either no custom corners or too much
 
         // all admin pages are build with the layout-table: sideblocks and content
-        if (!empty($PAGE) && ($PAGE->type == 'admin') && (strstr($bodytags, ' nocoursepage'))) {
+        if (!empty($PAGE) && ($PAGE->type == 'admin') && (strpos($bodytags, ' nocoursepage'))) {
             $bodytags = str_replace(' nocoursepage', '', $bodytags);
         }
 
@@ -29,23 +29,27 @@
             'my-index');
 
         if (!empty($PAGE) && (in_array($PAGE->type, $excludelist)) &&
-            (strstr($bodytags, ' nocoursepage'))) {
+            (strpos($bodytags, ' nocoursepage'))) {
             $bodytags = str_replace(' nocoursepage', '', $bodytags);
         }
 
-        // add 'nocoursepage' to the list of CLASSes on the admin-roles pages
-        preg_match('/id="([^"]*)"/i', $bodytags, $ids);
-        if (($ids[1] == 'admin-roles-assign') || ($ids[1] == 'admin-roles-override')) {
-            // exclude roles called from the admin area (courseid 1)
-            // include user roles for the Moodle user settings called
-            // from the start page
-            if (($COURSE->id > 1) || ($_GET['contextid'] == 30)) {
-                preg_match('/class="([^"]*)"/i', $bodytags, $classes);
-                $classlist = explode (' ', $classes[1]);
-                if (!in_array('nocoursepage', $classlist)) {
-                    array_push($classlist, 'nocoursepage');
-                    $bodytags = str_replace($classes[0],
-                        'class="'.implode(' ', $classlist).'"', $bodytags);
+        // add 'nocoursepage' to the list of CLASSes on several pages
+        if (strpos($bodytags, 'nocoursepage') === false) {
+            $includelist = array('admin-roles-assign', 'admin-roles-override', 
+                'mod-data-view');
+            preg_match('/id="([^"]*)"/i', $bodytags, $ids);
+            if (in_array($ids[1], $includelist)) {
+                // exclude roles called from the admin area (courseid 1)
+                // include user roles for the Moodle user settings called
+                // from the start page
+                if (($COURSE->id > 1) || ($_GET['contextid'] == 30)) {
+                    preg_match('/class="([^"]*)"/i', $bodytags, $classes);
+                    $classlist = explode (' ', $classes[1]);
+                    if (!in_array('nocoursepage', $classlist)) {
+                        array_push($classlist, 'nocoursepage');
+                        $bodytags = str_replace($classes[0],
+                            'class="'.implode(' ', $classlist).'"', $bodytags);
+                    }
                 }
             }
         }
