@@ -281,7 +281,7 @@ function mnet_server_fault_xml($code, $text) {
    </methodResponse>');
 
     if (!empty($CFG->mnet_rpcdebug)) {
-        trigger_error("XMLRPC Error Response");
+        trigger_error("XMLRPC Error Response $code: $text");
         trigger_error(print_r($return,1));
     }
 
