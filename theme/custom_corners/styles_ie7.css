@@ -14,3 +14,30 @@ div.i1 {
 div#header div.i3 {
     min-width: 0;
 }
+div.block_calendar_month div.calendar-controls span.hide {
+  display: none
+}
+div.block_calendar_month div.calendar-controls span.clearer {
+  display: none;
+}
+div.block_calendar_month div.calendar-controls span.current {
+  display: inline;
+}
+div.block_calendar_month div.calendar-controls a.previous {
+  float: left;
+}
+div.block_calendar_month div.calendar-controls a.next {
+  float: right;
+}
+body.dir-rtl div.block_calendar_month div.calendar-controls a.previous {
+  float: right;
+}
+body.dir-rtl div.block_calendar_month div.calendar-controls a.next {
+  float: left;
+}
+body.dir-rtl div.block_calendar_month div.i1 {
+  padding-left: 10px;
+}
+body.dir-rtl div.block_calendar_month div.i2 {
+  padding-right: 10px;
+}

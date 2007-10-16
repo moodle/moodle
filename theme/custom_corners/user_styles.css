@@ -177,6 +177,9 @@ ul.section li {
 div.sideblock div.content * {
   text-align: left;
 }
+div.calendar-controls a.next {
+  text-align: right;
+}
 div.block_login div.content div.c1 {
   text-align: right;
   margin: 0.3em 0;
@@ -231,6 +234,7 @@ div.sideblock table.minicalendar tr.weekdays {
 div.coursebox {
   border-style: solid;
   border-color: #F1ECE6;
+  /*float: none;*/
 }
 div.courseboxcontent {
   background-color: #EEEEEE;
@@ -317,8 +321,34 @@ td.courseboxcontent {
   background-color: #DCE7EC;
   border-color: #DCE7EC;
 }
+h3.eventskey {
+  font-size: 100%;
+}
+div.block_calendar_month div.content {
+  padding: 0;
+}
 div.sideblock div.calendar-controls span.current {
   text-align: center;
+}
+#calendar td.sidecalendar div.sideblock {
+  border-color: #ccc;
+}
+#calendar td.maincalendar {
+  border-color: #ccc;
+}
+#calendar .nottoday,
+.minicalendar .today {
+  border-color: #ccc;
+}
+#calendar .event_global,
+#calendar .event_course,
+#calendar .event_group,
+#calendar .event_user,
+.minicalendar .event_global,
+.minicalendar .event_course,
+.minicalendar .event_group,
+.minicalendar .event_user {
+  border: 1px solid  #ccc !important;
 }
 body.admin table.generaltable {
   width: 100%;
@@ -772,12 +802,17 @@ div#header-home div.i2 {
 }
 div#header-home div.i3 {
   background-color: #F1ECE6;
-  padding: 0 10px;
+  padding: 0;
   border-top-width: 1px;
   border-bottom-width: 1px;
   border-style: solid none;
   border-top-color: #F1ECE6;
   border-bottom-color: #F1ECE6;
+}
+div#header-home div.i3 div.wraphome {
+  background-color: #F1ECE6;
+  border: 1px solid #F1ECE6;
+  padding: 0 10px;
 }
 div#header-home div.bb div {
   background-image: url(pix/beige_box.png);
