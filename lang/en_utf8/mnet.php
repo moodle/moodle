@@ -235,4 +235,11 @@ $string['enrolcourseenrol_desc'] = 'Enrol/unenrol users from this course using M
 $string['host'] = 'host';
 $string['loginlinkmnetuser'] = '<br/>If you are a Moodle Network remote user and can <a href=\"$a\">confirm your email address here</a>, you can be redirected to your login page.<br />';
 
+$string['error7020'] = 'This error normally occurs if the remote site has created a record for you with the wrong wwwroot, for example, http://yoursite.com instead of http://www.yoursite.com. You should contact the administrator of the remote site with your wwwroot (as specified in config.php) asking her to update her record for your host.';
+$string['error7023'] = 'The remote site has tried to decrypt your message with all the keys it has on record for your site. They have all failed. You might be able to fix this problem by manually re-keying with the remote site. This is unlikely to occur unless you\'ve been out of communication with the remote site for a few months.';
+$string['error7022'] = 'The message you sent to the remote site was encrypted properly, but not signed. This is very unexpected; you should probably file a bug if this occurs (giving as much information as possible about the Moodle versions in question, etc.';
+$string['error7024'] = 'You send an unencrypted message to the remote site, but the remote site doesn\'t accept unencrypted communication from your site. This is very unexpected; you should probably file a bug if this occurs (giving as much information as possible about the Moodle versions in question, etc.';
+$string['error709']  = 'The remote site failed to obtain a SSL key from you.';
+$string['error7026'] = 'The key that your message was signed with differs from the key that the remote host has on file for your server. Further, the remote host attempted to fetch your current key and failed to do so. Please manually re-key with the remote host and try again.';
+
 ?>
