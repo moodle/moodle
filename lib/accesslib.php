@@ -4159,7 +4159,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     if (!empty($CFG->defaultfrontpageroleid) && ($context->id == $frontpagectx->id || strstr($context->path, '/'.$frontpagectx->id.'/'))) {
         $roles = get_roles_with_capability($capability, CAP_ALLOW, $context);
         if (in_array($CFG->defaultfrontpageroleid, array_keys($roles))) {
-            return get_records_sql("SELECT $fields FROM {$CFG->prefix}user ORDER BY $sort, $limitfrom, $limitnum"); 
+            return get_records_sql("SELECT $fields FROM {$CFG->prefix}user ORDER BY $sort", $limitfrom, $limitnum); 
         }
     }
 
