@@ -87,8 +87,8 @@ class quiz_report extends quiz_default_report {
         }
         $sql .= ' WHERE qa.quiz = '.$quiz->id.  // ULPGC ecastro
             ' AND ( qa.sumgrades >= '.$scorelimit.' ) ';
-        // ^^^^^^ es posible seleccionar aqu� TODOS los quizzes, como quiere Jussi,
-        // pero habr�a que llevar la cuenta ed cada quiz para restaura las preguntas (quizquestions, states)
+        // ^^^^^^ es posible seleccionar aqu TODOS los quizzes, como quiere Jussi,
+        // pero habra que llevar la cuenta ed cada quiz para restaura las preguntas (quizquestions, states)
 
         /// Fetch the attempts
         $attempts = get_records_sql($sql);
@@ -244,6 +244,7 @@ class quiz_report extends quiz_default_report {
         $table->define_baseurl($CFG->wwwroot.'/mod/quiz/report.php?q='.$quiz->id.'&amp;mode=analysis');
 
         $table->sortable(true);
+        $table->no_sorting('rpercent');
         $table->collapsible(true);
         $table->initialbars(false);
 
