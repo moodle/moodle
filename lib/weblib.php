@@ -271,6 +271,9 @@ function qualified_me() {
         }
     }
 
+    // TODO, this does not work in the situation described in MDL-11061, but
+    // I don't know how to fix it. Possibly believe $CFG->wwwroot ahead of what
+    // the server reports.
     if (isset($_SERVER['HTTPS'])) {
         $protocol = ($_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
     } else if (isset($_SERVER['SERVER_PORT'])) { # Apache2 does not export $_SERVER['HTTPS']
