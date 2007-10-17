@@ -119,14 +119,18 @@ switch ($action) {
         $post->action       = $action;
         $strformheading = get_string('updateentrywithid', 'blog');
 
-        if ($ptags = records_to_menu(get_item_tags('blog', $post->id, 'ti.ordering ASC', 'id,rawname', '', '', 'default'), 'id','rawname')) {           
-            $post->ptags = implode(', ', $ptags);
-        } else {
-            $post->ptags = '';
+        if ($itemptags = get_item_tags('blog', $post->id, 'ti.ordering ASC', 'id,rawname', '', '', 'default')) {
+            if ($ptags = records_to_menu($itemptags, 'id','rawname')) {           
+                $post->ptags = implode(', ', $ptags);
+            } else {
+                $post->ptags = '';
+            }
         }
         
-        if ($otags = records_to_menu(get_item_tags('blog', $post->id, 'ti.ordering ASC', 'id,rawname', '', '', 'official'), 'id','rawname')) {
-            $post->otags = array_keys($otags);
+        if ($itemotags = get_item_tags('blog', $post->id, 'ti.ordering ASC', 'id,rawname', '', '', 'official')) {
+            if ($otags = records_to_menu($itemotags, 'id','rawname')) {
+                $post->otags = array_keys($otags);
+            }
         }
     break;
     default :
@@ -327,8 +331,8 @@ function add_tags_info($postid) {
             // check for existance
             // it does not matter whether it is an offical tag or personal tag
             // we do not want to have 1 copy of offical tag and 1 copy of personal tag (for the same tag)
-            if ($ctag = tag_by_id($ptag)) {
-                tag_an_item('blog', $postid, $ctag);
+            if ($ctag = tag_by_name($ptag)) {
+                tag_an_item('blog', $postid, $ctag->id);
             } else { // create a personal tag
                 if ($tagid = tag_create($ptag)) {
                     if ($tagid = array_shift($tagid)) {
