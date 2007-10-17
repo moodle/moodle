@@ -476,11 +476,11 @@ class grade_grade extends grade_object {
      * Return array of grade item ids that are either hidden or indirectly depend
      * on hidden grades, excluded grades are not returned.
      * @static
-     * @param array $grades all course grades of one user
+     * @param array $grades all course grades of one user, & used for better internal caching
      * @param array $items $grade_items array of grade items, & used for better internal caching
      * @return array
      */
-    function get_hiding_affected($grade_grades, &$grade_items) {
+    function get_hiding_affected(&$grade_grades, &$grade_items) {
         if (count($grade_grades) !== count($grade_items)) {
             error("Incorrent size of arrays in params of grade_grade::get_hiding_affected()!");
         }

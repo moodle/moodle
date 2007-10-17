@@ -239,12 +239,20 @@ class grade_item extends grade_object {
     var $needsupdate = 1;
 
     /**
+     * Cached dependson array
+     */
+    var $dependson_cache = null;
+
+    /**
      * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.
      * Force regrading if necessary
      * @param string $source from where was the object inserted (mod/forum, manual, etc.)
      * @return boolean success
      */
     function update($source=null) {
+        // reset caches
+        $this->dependson_cache = null;
+
         // Retrieve scale and infer grademax/min from it if needed
         $this->load_scale();
 
@@ -1149,27 +1157,38 @@ class grade_item extends grade_object {
 
     /**
      * Finds out on which other items does this depend directly when doing calculation or category agregation
+     * @param bool $reset_cache
      * @return array of grade_item ids this one depends on
      */
-    function depends_on() {
+    function depends_on($reset_cache=false) {
         global $CFG;
+
+        if ($reset_cache) {
+            $this->dependson_cache = null;
+        } else if (isset($this->dependson_cache)) {
+            return $this->dependson_cache;
+        }
 
         if ($this->is_locked()) {
             // locked items do not need to be regraded
-            return array();
+            $this->dependson_cache = array();
+            return $this->dependson_cache;
         }
 
         if ($this->is_calculated()) {
             if (preg_match_all('/##gi(\d+)##/', $this->calculation, $matches)) {
-                return array_unique($matches[1]); // remove duplicates
+                $this->dependson_cache = array_unique($matches[1]); // remove duplicates
+                return $this->dependson_cache;
             } else {
-                return array();
+                $this->dependson_cache = array();
+                return $this->dependson_cache;
             }
 
         } else if ($grade_category = $this->load_item_category()) {
             //only items with numeric or scale values can be aggregated
             if ($this->gradetype != GRADE_TYPE_VALUE and $this->gradetype != GRADE_TYPE_SCALE) {
-                return array();
+                $this->dependson_cache = array();
+                return $this->dependson_cache;
             }
 
             // If global aggregateoutcomes is set, override category value
@@ -1217,13 +1236,16 @@ class grade_item extends grade_object {
             }
 
             if ($children = get_records_sql($sql)) {
-                return array_keys($children);
+                $this->dependson_cache = array_keys($children);
+                return $this->dependson_cache;
             } else {
-                return array();
+                $this->dependson_cache = array();
+                return $this->dependson_cache;
             }
 
         } else {
-            return array();
+            $this->dependson_cache = array();
+            return $this->dependson_cache;
         }
     }
 

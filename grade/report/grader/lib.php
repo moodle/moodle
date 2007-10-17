@@ -38,15 +38,9 @@ require_once($CFG->libdir.'/tablelib.php');
 class grade_report_grader extends grade_report {
     /**
      * The final grades.
-     * @var array $finalgrades
+     * @var array $grades
      */
-    var $finalgrades;
-
-    /**
-     * The grade items.
-     * @var array $items
-     */
-    var $items;
+    var $grades;
 
     /**
      * Array of errors for bulk grades updating.
@@ -341,14 +335,29 @@ class grade_report_grader extends grade_report {
         global $CFG;
 
         // please note that we must fetch all grade_grades fields if we want to contruct grade_grade object from it!
-        $sql = "SELECT g.*, gi.grademin, gi.grademax
+        $sql = "SELECT g.*
                   FROM {$CFG->prefix}grade_items gi,
                        {$CFG->prefix}grade_grades g
-                 WHERE g.itemid = gi.id AND gi.courseid = $this->courseid $this->userselect";
+                 WHERE g.itemid = gi.id AND gi.courseid = {$this->courseid} {$this->userselect}";
+
+        $userids = array_keys($this->users);
 
         if ($grades = get_records_sql($sql)) {
-            foreach ($grades as $grade) {
-                $this->finalgrades[$grade->userid][$grade->itemid] = $grade;
+            foreach ($grades as $graderec) {
+                if (in_array($graderec->userid, $userids)) {
+                    $this->grades[$graderec->userid][$graderec->itemid] = new grade_grade($graderec, false);
+                    $this->grades[$graderec->userid][$graderec->itemid]->grade_item =& $this->gtree->items[$graderec->itemid]; // db caching
+                }
+            }
+        }
+
+        // prefil grades that do not exist yet
+        foreach ($userids as $userid) {
+            foreach ($this->gtree->items as $itemid=>$unused) {
+                if (!isset($this->grades[$userid][$itemid])) {
+                    $this->grades[$userid][$itemid] = new grade_grade();
+                    $this->grades[$userid][$itemid]->grade_item =& $this->gtree->items[$itemid]; // db caching
+                }
             }
         }
     }
@@ -570,7 +579,6 @@ class grade_report_grader extends grade_report {
                         $icon = '<img src="'.$CFG->modpixpath.'/'.$object->itemmodule.'/icon.gif" class="icon" alt="'
                               .$this->get_lang_string('modulename', $object->itemmodule).'"/>';
                     } else if ($object->itemtype == 'manual') {
-                        //TODO: add manual grading icon
                         $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'
                                 .$this->get_lang_string('manualgrade', 'grades') .'"/>';
                     }
@@ -578,8 +586,6 @@ class grade_report_grader extends grade_report {
                     $headerlink = $this->get_module_link($element['object']->get_name(), $itemmodule, $iteminstance, $element['object']->is_hidden());
                     $headerhtml .= '<th class="header '.$columnclass.' '.$type.$catlevel.$dimmed.'" scope="col">'. $headerlink . $arrow;
                     $headerhtml .= $this->get_icons($element) . '</th>';
-
-                    $this->items[$element['object']->sortorder] =& $element['object'];
                 }
 
             }
@@ -605,7 +611,7 @@ class grade_report_grader extends grade_report {
         // Preload scale objects for items with a scaleid
         $scales_list = '';
         $tabindices = array();
-        foreach ($this->items as $item) {
+        foreach ($this->gtree->items as $item) {
             if (!empty($item->scaleid)) {
                 $scales_list .= "$item->scaleid,";
             }
@@ -623,6 +629,13 @@ class grade_report_grader extends grade_report {
         $canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->course->id));
 
         foreach ($this->users as $userid => $user) {
+
+            if ($canviewhidden) {
+                $hiding_affected = array();
+            } else {
+                $hiding_affected = grade_grade::get_hiding_affected($this->grades[$userid], $this->gtree->items);
+            }
+
             $columncount = 0;
             // Student name and link
             $user_pic = null;
@@ -634,35 +647,25 @@ class grade_report_grader extends grade_report {
                           . '<a href="' . $CFG->wwwroot . '/user/view.php?id='
                           . $user->id . '">' . fullname($user) . '</a></th>';
 
-            foreach ($this->items as $itemid=>$item) {
+            foreach ($this->gtree->items as $itemid=>$unused) {
+                $item =& $this->gtree->items[$itemid];
+
                 // Get the decimal points preference for this item
                 $decimalpoints = $item->get_decimals();
 
-                if (isset($this->finalgrades[$userid][$item->id])) {
-                    $gradeval = $this->finalgrades[$userid][$item->id]->finalgrade;
-                    $grade = new grade_grade($this->finalgrades[$userid][$item->id], false);
-                    $grade->feedback = stripslashes_safe($this->finalgrades[$userid][$item->id]->feedback);
-                    $grade->feedbackformat = $this->finalgrades[$userid][$item->id]->feedbackformat;
-
-                } else {
-                    $gradeval = null;
-                    $grade = new grade_grade(array('userid'=>$userid, 'itemid'=>$item->id), false);
-                    $grade->feedback = '';
-                }
+                $grade = $this->grades[$userid][$item->id];
+                $gradeval = $grade->finalgrade;
 
                 // MDL-11274
                 // Hide grades in the grader report if the current grader doesn't have 'moodle/grade:viewhidden'
-                if ($grade->is_hidden() && !$canviewhidden) {
-                    if (isset($grade->finalgrade)) {
+                if (!$canviewhidden and ($grade->is_hidden() or in_array($itemid, $hiding_affected))) {
+                    if (!is_null($gradeval) and $grade->is_hidden()) {
                         $studentshtml .= '<td class="cell c'.$columncount++.'">'.userdate($grade->timecreated,get_string('strftimedatetimeshort')).'</td>';
                     } else {
                         $studentshtml .= '<td class="cell c'.$columncount++.'">-</td>';
                     }
                     continue;
                 }
-
-                $grade->courseid = $this->courseid;
-                $grade->grade_item =& $this->items[$itemid]; // this speedsup is_hidden() and other grade_grade methods
 
                 // emulate grade element
                 $eid = $this->gtree->get_grade_eid($grade);
@@ -671,10 +674,10 @@ class grade_report_grader extends grade_report {
                 $cellclasses = 'cell c'.$columncount++;
                 if ($item->is_category_item()) {
                     $cellclasses .= ' cat';
-                }  
+                }
                 if ($item->is_course_item()) {
                     $cellclasses .= ' course';
-                }  
+                }
                 if ($grade->is_overridden()) {
                     $cellclasses .= ' overridden';
                 }
@@ -697,8 +700,6 @@ class grade_report_grader extends grade_report {
                     $studentshtml .= '<span class="gradingerror">'.get_string('error').'</span>';
 
                 } else if ($USER->gradeediting[$this->courseid]) {
-                    // We need to retrieve each grade_grade object from DB in order to
-                    // know if they are hidden/locked
 
                     if ($item->scaleid && !empty($scales_array[$item->scaleid])) {
                         $scale = $scales_array[$item->scaleid];
@@ -765,41 +766,20 @@ class grade_report_grader extends grade_report {
                 } else { // Not editing
                     $gradedisplaytype = $item->get_displaytype();
 
-                    $percentsign = '';
-                    $grademin = $item->grademin;
-                    $grademax = $item->grademax;
-
                     // If feedback present, surround grade with feedback tooltip: Open span here
                     if (!empty($grade->feedback)) {
                         $overlib = '';
-                        if ($grade->feedbackformat == 1) {
-                            $overlib = "return overlib('" . s(ltrim($grade->feedback)) . "', FULLHTML);";
-                        } else {
-                            $overlib = "return overlib('" . s($grade->feedback) . "', BORDER, 0, FGCLASS, 'feedback', "
-                                     . "CAPTIONFONTCLASS, 'caption', CAPTION, '$strfeedback');";
-                        }
-
-                        $studentshtml .= '<span onmouseover="' . $overlib . '" onmouseout="return nd();">';
+                        $feedback = addslashes_js(trim(format_string($grade->feedback, $grade->feedbackformat)));
+                        $overlib = "return overlib('$feedback', BORDER, 0, FGCLASS, 'feedback', "
+                                  ."CAPTIONFONTCLASS, 'caption', CAPTION, '$strfeedback');";
+                        $studentshtml .= '<span onmouseover="'.s($overlib).'" onmouseout="return nd();">';
                     }
 
                     if ($item->needsupdate) {
                         $studentshtml .= '<span class="gradingerror">'.get_string('error').'</span>';
-                    } elseif ($item->scaleid && !empty($scales_array[$item->scaleid])) {
-                        $scale = $scales_array[$item->scaleid];
-                        $scales = explode(",", $scale->scale);
 
-                        // invalid grade if gradeval < 1
-                        if ((int) $gradeval < 1) {
-                            $studentshtml .= '-';
-                        } else {
-                            $studentshtml .= $scales[$gradeval-1];
-                        }
                     } else {
-                        if (is_null($gradeval)) {
-                            $studentshtml .= '-';
-                        } else {
-                           $studentshtml .= grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null);
-                        }
+                        $studentshtml .= grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null);
                     }
 
                     // Close feedback span
@@ -896,7 +876,9 @@ class grade_report_grader extends grade_report {
 
             $columncount=1;
 
-            foreach ($this->items as $item) {
+            foreach ($this->gtree->items as $itemid=>$unused) {
+                $item =& $this->gtree->items[$itemid];
+
                 // If the user shouldn't see this grade_item, hide the average as well
                 // MDL-11576 If any of the grades are hidden and the user doesn't have permission to view them, hide average as well
                 if (!$canviewhidden and $item->is_hidden()) {
@@ -994,7 +976,8 @@ class grade_report_grader extends grade_report {
                        . '<th class="header c0 range" scope="row">'.$this->get_lang_string('range','grades').'</th>';
 
             $columncount = 1;
-            foreach ($this->items as $item) {
+            foreach ($this->gtree->items as $itemid=>$unused) {
+                $item =& $this->gtree->items[$itemid];
 
                 // Determine which display type to use for this average
                 if ($USER->gradeediting[$this->courseid]) {

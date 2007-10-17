@@ -735,7 +735,7 @@ class grade_seq {
         $this->elements = grade_seq::flatten($top_element, $category_grade_last, $nooutcomes);
 
         foreach ($this->elements as $key=>$unused) {
-            $this->items[$key] =& $this->elements[$key]['object'];
+            $this->items[$this->elements[$key]['object']->id] =& $this->elements[$key]['object'];
         }
     }
 
@@ -871,6 +871,11 @@ class grade_tree {
      * Course context
      */
     var $context;
+
+    /**
+     * Grade items
+     */
+    var $items;
 
     /**
      * Constructor, retrieves and stores a hierarchical array of all grade_category and grade_item
@@ -1011,6 +1016,7 @@ class grade_tree {
             $element['eid'] = 'c'.$element['object']->id;
         } else if (in_array($element['type'], array('item', 'courseitem', 'categoryitem'))) {
             $element['eid'] = 'i'.$element['object']->id;
+            $this->items[$element['object']->id] =& $element['object'];
         }
 
         $levels[$depth][] =& $element;

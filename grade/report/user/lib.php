@@ -127,7 +127,7 @@ class grade_report_user extends grade_report {
         $items =& $this->gseq->items;
         $grades = array();
 
-        $viewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->courseid));
+        $canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->courseid));
 
         foreach ($items as $key=>$unused) {
             $grade_item =& $items[$key];
@@ -136,15 +136,17 @@ class grade_report_user extends grade_report {
             $grades[$key]->grade_item =& $grade_item;
         }
 
-        $hiding_affected = grade_grade::get_hiding_affected($grades, $items);
+        if ($canviewhidden) {
+            $hiding_affected = array();
+        } else {
+            $hiding_affected = grade_grade::get_hiding_affected($grades, $items);
+        }
 
         foreach ($items as $key=>$unused) {
             $grade_item  =& $items[$key];
             $grade_grade =& $grades[$key];
 
             $data = array();
-
-            // TODO: indicate items that "needsupdate" - missing final calculation
 
             /// prints grade item name
             if ($grade_item->is_course_item() or $grade_item->is_category_item()) {
@@ -164,10 +166,13 @@ class grade_report_user extends grade_report {
                 $excluded = '';
             }
 
-            if (is_null($grade_grade->finalgrade)) {
+            if ($grade_item->needsupdate) {
+                $data[] = '<span class="gradingerror">'.get_string('error').'</span>';
+
+            } else if (is_null($grade_grade->finalgrade)) {
                 $data[] = $excluded . '-';
 
-            } else if (($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected)) and !$viewhidden) {
+            } else if (!$canviewhidden and ($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected))) {
                 // TODO: optinally do not show anything for hidden grades
                 // $data[] = '-';
                 if ($grade_grade->is_hidden()) {
@@ -181,11 +186,13 @@ class grade_report_user extends grade_report {
             }
 
             /// prints percentage
+            if ($grade_item->needsupdate) {
+                $data[] = '<span class="gradingerror">'.get_string('error').'</span>';
 
-            if (is_null($grade_grade->finalgrade)) {
+            } else if (is_null($grade_grade->finalgrade)) {
                 $data[] = '-';
 
-            } else if (($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected)) and !$viewhidden) {
+            } else if (!$canviewhidden and ($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected))) {
                 $data[] = '-';
 
             } else {
@@ -193,11 +200,14 @@ class grade_report_user extends grade_report {
             }
 
             /// prints rank
-            if (is_null($grade_grade->finalgrade)) {
+            if ($grade_item->needsupdate) {
+                $data[] = '<span class="gradingerror">'.get_string('error').'</span>';
+
+            } else if (is_null($grade_grade->finalgrade)) {
                 // no grade, no rank
                 $data[] = '-';
 
-            } else if (($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected)) and !$viewhidden) {
+            } else if (!$canviewhidden and ($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected))) {
                 $data[] = '-';
 
             } else {
@@ -215,7 +225,7 @@ class grade_report_user extends grade_report {
             if (empty($grade_grade->feedback)) {
                 $data[] = '&nbsp;';
 
-            } else if (($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected)) and !$viewhidden) {
+            } else if (!$canviewhidden and ($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected))) {
                 $data[] = '&nbsp;';
 
             } else {
