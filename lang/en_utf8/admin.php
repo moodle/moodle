@@ -36,6 +36,8 @@ $string['cachetext'] = 'Text cache lifetime';
 $string['cachetype'] = 'Cache Type';
 $string['calendar_weekend'] = 'Weekend Days';
 $string['calendarsettings'] = 'Calendar';
+$string['cfgwwwrootwarning'] = 'You have defined &#36;CFG->wwwroot incorrectly in your config.php file. It does not match the URL you are using to access this page. Please correct it, or you will experience strange bugs like <a href=\'http://tracker.moodle.org/browse/MDL-11061\'>MDL-11061</a>.';
+$string['cfgwwwrootslashwarning'] = 'You have defined &#36;CFG->wwwroot incorrectly in your config.php file. You have included a \'/\' character at the end. Please remove it, or you will experience strange bugs like <a href=\'http://tracker.moodle.org/browse/MDL-11061\'>MDL-11061</a>.';
 $string['change'] = 'change';
 $string['changesitelang'] = 'Change site language';
 $string['choosefiletoedit'] = 'Choose file to edit';
