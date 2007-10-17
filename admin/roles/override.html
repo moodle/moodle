@@ -30,7 +30,8 @@
         $component = '';
 
         $strrisks = s(get_string('risks', 'role'));
-        $strcapabilities = s(get_string('capabilities', 'role'));
+        // MDL-11687
+        $strcapabilities = 'Capabilities';//s(get_string('capabilities', 'role'));
 
         foreach ($capabilities as $capability) {
 
