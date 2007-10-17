@@ -34,6 +34,7 @@
 
     $showscales = ($template->name != 'ciqname');
 
+    $strsurvey = get_string("modulename", "survey");
     $navigation = build_navigation('', $cm);
     print_header_simple(format_string($survey->name), "", $navigation, "", "", true,
                   update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
