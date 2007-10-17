@@ -59,7 +59,7 @@
  * - has_capability_in_accessdata()
  * - is_siteadmin()
  * - get_user_access_sitewide()
- * - get_user_access_bycontext()
+ * - load_subcontext()
  * - get_role_access_bycontext()
  *
  * Name conventions
@@ -159,6 +159,7 @@ $context_cache_id = array();    // Index to above cache by id
 
 $DIRTYCONTEXTS = null; // dirty contexts cache
 $ACCESS = array(); // cache of caps for cron user switching and has_capability for other users (==not $USER)
+$RDEFS = array(); // role definitions cache - helps a lot with mem usage in cron
 
 function get_role_context_caps($roleid, $context) {
     //this is really slow!!!! - do not use above course context level!
@@ -358,6 +359,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         // not-logged-in user or $USER object set up manually first time here
         load_all_capabilities();
         $ACCESS = array(); // reset the cache for other users too, the dirty contexts are empty now
+        $RDEFS = array();
     }
 
     // Load dirty contexts list if needed
@@ -371,6 +373,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         // and then cleanup any marks of dirtyness... at least from our short
         // term memory! :-)
         $ACCESS = array();
+        $RDEFS = array();
 
         if (defined('FULLME') && FULLME === 'cron') {
             load_user_accessdata($userid);
@@ -404,8 +407,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
             error_log("loading access for context {$context->path} for $capability at {$context->contextlevel} {$context->id}");
             // $bt = debug_backtrace();
             // error_log("bt {$bt[0]['file']} {$bt[0]['line']}");
-            $USER->access = get_user_access_bycontext($USER->id, $context,
-                                                      $USER->access);
+            load_subcontext($USER->id, $context, $USER->access);
         }
         return has_capability_in_accessdata($capability, $context, $USER->access, $doanything);
     }
@@ -422,8 +424,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         error_log("loading access for context {$context->path} for $capability at {$context->contextlevel} {$context->id}");
         // $bt = debug_backtrace();
         // error_log("bt {$bt[0]['file']} {$bt[0]['line']}");
-        $ACCESS[$userid] = get_user_access_bycontext($userid, $context,
-                                                         $ACCESS[$userid]);
+        load_subcontext($userid, $context, $ACCESS[$userid]);
     }
     return has_capability_in_accessdata($capability, $context, $ACCESS[$userid], $doanything);
 }
@@ -1283,9 +1284,8 @@ function get_user_access_sitewide($userid) {
  * @param $userid  integer - the id of the user
  * @param $context context obj - needs path!
  * @param $accessdata array  accessdata array
- *
  */
-function get_user_access_bycontext($userid, $context, $accessdata=NULL) {
+function load_subcontext($userid, $context, &$accessdata) {
 
     global $CFG;
 
@@ -1297,14 +1297,6 @@ function get_user_access_bycontext($userid, $context, $accessdata=NULL) {
      *   - above this user's RAs
      *   - below this user's RAs - limited to course level
      */
-
-    // Roles already in use in this context
-    if (is_null($accessdata)) {
-        $accessdata           = array(); // named list
-        $accessdata['ra']     = array();
-        $accessdata['rdef']   = array();
-        $accessdata['loaded'] = array();
-    }
 
     $base = "/" . SYSCONTEXTID;
 
@@ -1394,22 +1386,27 @@ function get_user_access_bycontext($userid, $context, $accessdata=NULL) {
                     $wherelocalroles
             ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
 
+    $newrdefs = array();
     if ($rs = get_recordset_sql($sql)) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$rd->roleid}";
-            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
+            if (!array_key_exists($k, $newrdefs)) {
+                $newrdefs[$k] = array();
+            }
+            $newrdefs[$k][$rd->capability] = $rd->permission;
         }
         rs_close($rs);
     } else {
         debugging('Bad SQL encountered!');
     }
 
-    // TODO: compact capsets?
+    compact_rdefs($newrdefs);
+    foreach ($newrdefs as $key=>$value) {
+        $accessdata['rdef'][$key] =& $newrdefs[$key];
+    }
 
     error_log("loaded {$context->path}");
     $accessdata['loaded'][] = $context->path;
-
-    return $accessdata;
 }
 
 /**
@@ -1475,15 +1472,13 @@ function get_role_access_bycontext($roleid, $context, $accessdata=NULL) {
     return $accessdata;
 }
 
-/*
+/**
  * Load accessdata for a user
  * into the $ACCESS global
  *
  * Used by has_capability() - but feel free
  * to call it if you are about to run a BIG 
  * cron run across a bazillion users.
- *
- * TODO: share rdef tree to save mem
  *
  */ 
 function load_user_accessdata($userid) {
@@ -1521,8 +1516,31 @@ function load_user_accessdata($userid) {
     // for dirty timestamps in cron
     $accessdata['time'] = time();
 
-    $ACCESS[$userid] = $accessdata;  
+    $ACCESS[$userid] = $accessdata;
+    compact_rdefs($ACCESS[$userid]['rdef']);
+
     return true;
+}
+
+/**
+ * Use shared copy of role definistions stored in $RDEFS;
+ * @param array $rdefs array of role definitions in contexts
+ */
+function compact_rdefs(&$rdefs) {
+    global $RDEFS;
+
+    /*
+     * This is a basic sharing only, we could also
+     * use md5 sums of values. The main purpose is to
+     * reduce mem in cron jobs - many users in $ACCESS array.
+     */
+
+    foreach ($rdefs as $key => $value) {
+        if (!array_key_exists($key, $RDEFS)) {
+            $RDEFS[$key] = $rdefs[$key];
+        }
+        $rdefs[$key] =& $RDEFS[$key];
+    }
 }
 
 /**
