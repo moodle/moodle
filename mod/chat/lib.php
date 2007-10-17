@@ -366,8 +366,6 @@ function chat_get_latest_message($chatid, $groupid=0) {
 
     $result = rs_fetch_record($rs);
 
-    rs_close($result);
-
     return $result;
 }
 
