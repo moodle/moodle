@@ -297,7 +297,7 @@ function do_edit($post, $blogeditform) {
         // add them back
         add_tags_info($post->id);
 
-        add_to_log(SITEID, 'blog', 'update', 'index.php?userid='.$post->userid.'&postid='.$post->id, $post->subject);
+        add_to_log(SITEID, 'blog', 'update', 'index.php?userid='.$USER->id.'&postid='.$post->id, $post->subject);
 
     } else {
         error('There was an error updating this post in the database', $returnurl);
