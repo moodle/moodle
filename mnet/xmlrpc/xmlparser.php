@@ -42,6 +42,7 @@ class mnet_encxml_parser {
         $this->key_URI           = '';
         $this->payload_encrypted = false;
         $this->cipher            = array();
+        $this->error             = array();
         return true;
     }
 
@@ -88,6 +89,13 @@ class mnet_encxml_parser {
         global $MNET, $MNET_REMOTE_CLIENT;
 
         $p = xml_parse($this->parser, $data);
+
+        if ($p == 0) {
+            // Parse failed
+            $errcode = xml_get_error_code($this->parser);
+            $errstring = xml_error_string($errcode);
+            $this->error[] = array('code' => $errcode, 'string' => $errstring);
+        }
 
         if (count($this->cipher) > 0) {
             $this->cipher = array_values($this->cipher);
