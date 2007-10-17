@@ -1,9 +1,7 @@
 <?php //$Id$
 $string['usersinlist'] = 'Users in list';
-$string['addall'] = 'Add all available users';
-$string['addsel'] = 'Add selected available users';
-$string['removeall'] = 'Remove all available users';
-$string['removesel'] = 'Remove selected users';
+$string['addall'] = 'Add all to selection';
+$string['addsel'] = 'Add to selection';
 $string['deleteall'] = 'Clear all users';
 $string['deletesel'] = 'Clear selected users';
 $string['available'] = 'Available';
