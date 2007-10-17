@@ -34,8 +34,6 @@ class user_bulk_form extends moodleform {
         $objs = array();
         $objs[] =& $mform->createElement('submit', 'addone', get_string('addsel', 'bulkusers'));
         $objs[] =& $mform->createElement('submit', 'addall', get_string('addall', 'bulkusers'));
-        $objs[] =& $mform->createElement('submit', 'removesel', get_string('removesel', 'bulkusers'));
-        $objs[] =& $mform->createElement('submit', 'removeall', get_string('removeall', 'bulkusers'));
         $objs[] =& $mform->createElement('submit', 'deletesel', get_string('deletesel', 'bulkusers'));
         $objs[] =& $mform->createElement('submit', 'deleteall', get_string('deleteall', 'bulkusers'));
         $grp =& $mform->addElement('group', 'buttonsgrp', get_string('selectedlist', 'bulkusers'), $objs, array(' ', '<br />'), false);
@@ -91,14 +89,6 @@ class user_bulk_form extends moodleform {
         } else if(@$data->addone) {
             if(!empty($data->ausers)) {
                 $SESSION->bulk_susers = array_merge($SESSION->bulk_susers, array_values($data->ausers));
-            }
-        } else if(@$data->removeall) {
-            if(!empty($SESSION->bulk_ausers)) {
-                $SESSION->bulk_susers = array_diff($SESSION->bulk_susers, $SESSION->bulk_ausers);
-            }
-        } else if(@$data->removesel) {
-            if(!empty($data->susers)) {
-                $SESSION->bulk_susers = array_diff($SESSION->bulk_susers, array_values($data->susers));
             }
         } else if(@$data->deletesel) {
             if(!empty($data->susers)) {
