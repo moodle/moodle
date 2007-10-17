@@ -706,6 +706,11 @@ class grade_seq {
     var $items;
 
     /**
+     * 1D array of elements
+     */
+    var $elements;
+
+    /**
      * Course context
      */
     var $context;
@@ -727,7 +732,11 @@ class grade_seq {
         // get course grade tree
         $top_element = grade_category::fetch_course_tree($courseid, true);
 
-        $this->items = grade_seq::flatten($top_element, $category_grade_last, $nooutcomes);
+        $this->elements = grade_seq::flatten($top_element, $category_grade_last, $nooutcomes);
+
+        foreach ($this->elements as $key=>$unused) {
+            $this->items[$key] =& $this->elements[$key]['object'];
+        }
     }
 
     /**
@@ -758,10 +767,10 @@ class grade_seq {
         $result = array();
         foreach ($children as $child) {
             if ($child['type'] == 'category') {
-                $result = array_merge($result, grade_seq::flatten($child, $category_grade_last, $nooutcomes));
+                $result = $result + grade_seq::flatten($child, $category_grade_last, $nooutcomes);
             } else {
                 $child['eid'] = 'i'.$child['object']->id;
-                $result[] = $child;
+                $result[$child['object']->id] = $child;
             }
         }
 
@@ -809,7 +818,7 @@ class grade_seq {
         }
 
         // it is a category or item
-        foreach ($this->items as $element) {
+        foreach ($this->elements as $element) {
             if ($element['eid'] == $eid) {
                 return $element;
             }

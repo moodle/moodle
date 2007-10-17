@@ -471,5 +471,57 @@ class grade_grade extends grade_object {
         $standardised_value = $factor * $diff + $target_min;
         return $standardised_value;
     }
+
+    /**
+     * Return array of grade item ids that are either hidden or indirectly depend
+     * on hidden grades, excluded grades are not returned.
+     * @static
+     * @param array $grades all course grades of one user
+     * @param array $items $grade_items array of grade items, & used for better internal caching
+     * @return array
+     */
+    function get_hiding_affected($grade_grades, &$grade_items) {
+        if (count($grade_grades) !== count($grade_items)) {
+            error("Incorrent size of arrays in params of grade_grade::get_hiding_affected()!");
+        }
+
+        $dependson = array();
+        foreach($grade_items as $key=>$unused) {
+            $grade_item =& $grade_items[$key]; // reference for improved caching inside grade_item
+            $dependson[$grade_item->id] = $grade_item->depends_on();
+        }
+
+        $todo = array();
+        $hiding = array();
+        foreach($grade_grades as $grade_grade) {
+            if ($grade_grade->is_hidden() and !$grade_grade->is_excluded() and !is_null($grade_grade->finalgrade)) {
+                $hiding[] = $grade_grade->itemid;
+            } else {
+                $todo[] = $grade_grade->itemid;
+            }
+        }
+
+        $max = count($grade_items);
+        for($i=0; $i<$max; $i++) {
+            $found = false;
+            foreach($todo as $key=>$do) {
+                if (empty($dependson[$do])) {
+                    unset($todo[$key]);
+                    continue;
+
+                } else if (array_intersect($dependson[$do], $hiding)) {
+                    // this item depends on hidden grade indirectly
+                    $hiding[] = $do;
+                    unset($todo[$key]);
+                    $found = true;
+                }
+            }
+            if (!$found) {
+                break;
+            }
+        }
+
+        return $hiding;
+    }
 }
 ?>

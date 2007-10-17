@@ -124,103 +124,104 @@ class grade_report_user extends grade_report {
     function fill_table() {
         global $CFG;
         $numusers = $this->get_numusers(false); // total course users
+        $items =& $this->gseq->items;
+        $grades = array();
 
-        foreach ($this->gseq->items as $element) {
-            $grade_item = $element['object'];
-            $decimalpoints = $grade_item->get_decimals();
-            $data = array();
+        $viewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->courseid));
 
+        foreach ($items as $key=>$unused) {
+            $grade_item =& $items[$key];
             $grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$this->user->id));
-            $grade_grade->grade_item =& $grade_item;
+            $grades[$key] = $grade_grade;
+            $grades[$key]->grade_item =& $grade_item;
+        }
+
+        $hiding_affected = grade_grade::get_hiding_affected($grades, $items);
+
+        foreach ($items as $key=>$unused) {
+            $grade_item  =& $items[$key];
+            $grade_grade =& $grades[$key];
+
+            $data = array();
 
             // TODO: indicate items that "needsupdate" - missing final calculation
 
             /// prints grade item name
             if ($grade_item->is_course_item() or $grade_item->is_category_item()) {
-                $data[] = '<b>'.$grade_item->get_name().'</b>';
+                $data[] = '<div class="catname">'.$grade_item->get_name().'</div>';
             } else {
-                $data[] = $this->get_module_link($grade_item->get_name(), $grade_item->itemmodule, $grade_item->iteminstance);;
+                $data[] = '<div class="itemname">'.$this->get_module_link($grade_item->get_name(), $grade_item->itemmodule, $grade_item->iteminstance).'</div>';
             }
 
             /// prints category
             $cat = $grade_item->get_parent_category();
-            $data[] = $cat->fullname;
-
+            $data[] = $cat->get_name();
 
             /// prints the grade
-            $displaytype = $grade_item->get_displaytype();
-
             if ($grade_grade->is_excluded()) {
                 $excluded = get_string('excluded', 'grades').' ';
             } else {
                 $excluded = '';
             }
 
-            if ((int) $grade_grade->finalgrade < 1) {
-                $data[] = '-';
-            } elseif ($grade_grade->is_hidden() && !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $grade_item->courseid))) {
-                $data[] = get_string('gradedon', 'grades', userdate($grade_grade->timemodified));
-            } elseif ($grade_item->scaleid) {
-                if ($scale = get_record('scale', 'id', $grade_item->scaleid)) {
-                    $scales = explode(",", $scale->scale);
-                    // reindex because scale is off 1
-                    $data[] = $excluded.$scales[$grade_grade->finalgrade-1];
+            if (is_null($grade_grade->finalgrade)) {
+                $data[] = $excluded . '-';
+
+            } else if (($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected)) and !$viewhidden) {
+                // TODO: optinally do not show anything for hidden grades
+                // $data[] = '-';
+                if ($grade_grade->is_hidden()) {
+                    $data[] = $excluded . '<div class="gradeddate">'.get_string('gradedon', 'grades', userdate($grade_grade->timemodified, get_string('strftimedatetimeshort'))).'</div>';
+                } else {
+                    $data[] = $excluded . '-';
                 }
+
             } else {
-                $data[] = $excluded . grade_format_gradevalue($grade_grade->finalgrade, $grade_item, true, $displaytype, $decimalpoints);
+                $data[] = $excluded . grade_format_gradevalue($grade_grade->finalgrade, $grade_item, true);
             }
 
             /// prints percentage
 
-            if ($grade_grade->is_hidden() && !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $grade_item->courseid))) {
-                if ((int) $grade_grade->finalgrade < 1) {
-                    $data[] = '-';
-                } else {
-                    $data[] = get_string('gradedon', 'grades', userdate($grade_grade->timemodified));
-                }
+            if (is_null($grade_grade->finalgrade)) {
+                $data[] = '-';
+
+            } else if (($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected)) and !$viewhidden) {
+                $data[] = '-';
+
             } else {
-                if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
-                    // processing numeric grade
-                    if ($grade_grade->finalgrade) {
-                        $percentage = format_float(($grade_grade->finalgrade / $grade_item->grademax) * 100, $decimalpoints).'%';
-                    } else {
-                        $percentage = '-';
-                    }
-
-                } else if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
-                    // processing scale grade
-                    $scale = get_record('scale', 'id', $grade_item->scaleid);
-                    $scalevals = explode(",", $scale->scale);
-                    $percentage = format_float(($grade_grade->finalgrade) / count($scalevals) * 100, $decimalpoints).'%';
-
-                } else {
-                    // text grade
-                    $percentage = '-';
-                }
-
-                $data[] = $percentage;
+                $data[] = grade_format_gradevalue($grade_grade->finalgrade, $grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
             }
+
             /// prints rank
-            if ($grade_grade->finalgrade) {
+            if (is_null($grade_grade->finalgrade)) {
+                // no grade, no rank
+                $data[] = '-';
+
+            } else if (($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected)) and !$viewhidden) {
+                $data[] = '-';
+
+            } else {
                 /// find the number of users with a higher grade
                 $sql = "SELECT COUNT(DISTINCT(userid))
-                        FROM {$CFG->prefix}grade_grades
-                        WHERE finalgrade > $grade_grade->finalgrade
-                        AND itemid = $grade_item->id";
+                          FROM {$CFG->prefix}grade_grades
+                         WHERE finalgrade > {$grade_grade->finalgrade}
+                               AND itemid = {$grade_item->id}";
                 $rank = count_records_sql($sql) + 1;
 
                 $data[] = "$rank/$numusers";
-            } else {
-                // no grade, no rank
-                $data[] = "-";
             }
 
             /// prints notes
-            if (!empty($grade_grade->feedback)) {
-                $data[] = format_text($grade_grade->feedback, $grade_grade->feedbackformat);
-            } else {
+            if (empty($grade_grade->feedback)) {
                 $data[] = '&nbsp;';
+
+            } else if (($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected)) and !$viewhidden) {
+                $data[] = '&nbsp;';
+
+            } else {
+                $data[] = format_text($grade_grade->feedback, $grade_grade->feedbackformat);
             }
+
             $this->table->add_data($data);
         }
 

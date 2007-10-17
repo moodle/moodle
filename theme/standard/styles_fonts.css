@@ -509,6 +509,14 @@ body#grade-index .grades .header {
   font-weight: bold;
 }
 
+.grade-report-user .gradeddate {
+  font-size: 0.7em;
+}
+
+.grade-report-user .catname {
+  font-weight: bold;
+}
+
 /***
  *** Login
  ***/
