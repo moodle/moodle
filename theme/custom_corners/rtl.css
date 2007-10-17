@@ -1,3 +1,4 @@
+/* @override http://ubuntu.userver.lan/moodle_19/theme/custom_corners/rtl.css */
 td#left-column {
   padding-right: 0;
   padding-left: 5px;
@@ -15,7 +16,7 @@ div.sideblock div.content * {
 div.calendar-controls a.next {
   text-align: left;
 }
-div.sideblock div.header div.bt  div {
+div.sideblock div.header div.bt div {
   background-position: 100% 0;
   right: -13px;
 }
@@ -25,25 +26,51 @@ div.sideblock div.header div.bt {
   margin: 0 13px 0 0;
   text-align: right;
 }
-div.sideblock div.bt  div {
+div.sideblock div.header div.i1 {
+  background-position: 100% 0;
+  padding: 0;
+}
+div.sideblock div.header div.i2 {
+  background-position: 0 0;
+  padding: 0 12px;
+}
+div.sideblock div.header div.i3 {
+  /*background: transparent;*/
+}
+div.sideblock div.bt div {
   background-position: 100% 0;
   right: -13px;
 }
 div.sideblock div.bt {
   background-position: 0 0;
-  left: -13px;
+  left: 0;
   margin: 0 13px 0 0;
+  text-align: right;
 }
-div.sideblock div.bb  div {
+div.sideblock div.bb div {
+  background-repeat: no-repeat;
   background-position: 100% 100%;
+  left: 0;
   right: -13px;
 }
 div.sideblock div.bb {
+  background-repeat: no-repeat;
   background-position: 0 100%;
-  left: -13px;
   margin: 0 13px 0 0;
 }
-td#middle-column div.bt  div {
+div.sideblock div.i1 {
+  background-position: 100% 0;
+  padding: 0;
+}
+div.sideblock div.i2 {
+  background-position: 0 0;
+  padding: 0 12px;
+}
+div.sideblock div.i3 {
+  /*background: transparent;*/
+  border: 1px solid #f1ece6;
+}
+td#middle-column div.bt div {
   background-position: 100% 0;
   right: -13px;
 }
@@ -61,7 +88,18 @@ td#middle-column div.bb {
   left: -13px;
   margin: 0 13px 0 0;
 }
-div#footer div.bt  div {
+td#middle-column div.i1 {
+  background-position: 100% 0;
+  padding: 0;
+}
+td#middle-column div.i2 {
+  background-position: 0 0;
+  padding: 0 12px;
+}
+td#middle-column div.i3 {
+  /*background: transparent;*/
+}
+div#footer div.bt div {
   background-position: 100% 0;
   right: -13px;
 }
@@ -71,7 +109,7 @@ div#footer div.bt {
   margin: 0 13px 0 0;
   text-align: right;
 }
-div#footer div.bb  div {
+div#footer div.bb div {
   background-position: 100% 100%;
   right: -13px;
 }
@@ -80,6 +118,17 @@ div#footer div.bb {
   left: -13px;
   margin: 0 13px 0 0;
   text-align: right;
+}
+div#footer div.i1 {
+  background-position: 100% 0;
+  padding: 0;
+}
+div#footer div.i2 {
+  background-position: 0 0;
+  padding: 0 12px;
+}
+div#footer div.i3 {
+  /*background: transparent;*/
 }
 div#header div.bt div {
   background-position: 100% 0;
@@ -90,7 +139,7 @@ div#header div.bt {
   left: -13px;
   margin: 0 13px 0 0;
 }
-div#header div.bb  div {
+div#header div.bb div {
   background-position: 100% 100%;
   right: -13px;
 }
@@ -99,7 +148,18 @@ div#header div.bb {
   left: -13px;
   margin: 0 13px 0 0;
 }
-div#header-home div.bt  div {
+div#header div.i1 {
+  background-position: 100% 0;
+  padding: 0;
+}
+div#header div.i2 {
+  background-position: 0 0;
+  padding: 0 12px;
+}
+div#header div.i3 {
+  /*background: transparent;*/
+}
+div#header-home div.bt div {
   background-position: 100% 0;
   right: -13px;
 }
@@ -108,7 +168,7 @@ div#header-home div.bt {
   left: -13px;
   margin: 0 13px 0 0;
 }
-div#header-home div.bb  div {
+div#header-home div.bb div {
   background-position: 100% 100%;
   right: -13px;
 }
@@ -117,7 +177,18 @@ div#header-home div.bb {
   left: -13px;
   margin: 0 13px 0 0;
 }
-body.nocoursepage div#content div.bt  div {
+div#header-home div.i1 {
+  background-position: 100% 0;
+  padding: 0;
+}
+div#header-home div.i2 {
+  background-position: 0 0;
+  padding: 0 12px;
+}
+div#header-home div.i3 {
+  /*background: transparent;*/
+}
+body.nocoursepage div#content div.bt div {
   background-position: 100% 0;
   right: -13px;
 }
@@ -126,7 +197,7 @@ body.nocoursepage div#content div.bt {
   left: -13px;
   margin: 0 13px 0 0;
 }
-body.nocoursepage div#content div.bb  div {
+body.nocoursepage div#content div.bb div {
   background-position: 100% 100%;
   right: -13px;
 }
@@ -134,4 +205,15 @@ body.nocoursepage div#content div.bb {
   background-position: 0 100%;
   left: -13px;
   margin: 0 13px 0 0;
+}
+body.nocoursepage div#content div.i1 {
+  background-position: 100% 0;
+  padding: 0;
+}
+body.nocoursepage div#content div.i2 {
+  background-position: 0 0;
+  padding: 0 12px;
+}
+body.nocoursepage div#content div.i3 {
+  /*background: transparent;*/
 }

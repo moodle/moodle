@@ -8,19 +8,10 @@
                 top.document.getElementsByTagName('frameset')[0].rows = "117,30%,0,200";
             }
           
-			var w;
-            
-            // correct sideblock width for MSIE for columns with a calender 
-            if (window.browserIE6 !== undefined || window.browserIE7 !== undefined) {
-                var calendar = $('#right-column .block_calendar_month');
-                if (calendar.length) {
-                    w = $('#right-column').width();
-                    $('#right-column .sideblock').width(w);
-                }
-                calendar = $('#left-column .block_calendar_month');
-                if (calendar.length) {
-                    w = $('#left-column').width();
-                    $('#left-column .sideblock').width(w);
+            // correct some Safari 2 (webkit 419.3) rtl rendering issues 
+            if($.browser.version == '419.3') {
+                if ($('body.dir-rtl').length) {
+                    $('div.bb div,div.bt div').css('left','13px');
                 }
             }
         },
