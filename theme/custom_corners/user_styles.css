@@ -1,3 +1,4 @@
+/* @override http://ubuntu.userver.lan/moodle_19/theme/custom_corners/user_styles.css */
 div#infowrapper {
   position: fixed;
   overflow: auto;
@@ -41,6 +42,9 @@ a:hover {
   color: #0066FF;
   text-decoration: underline;
 }
+.arrow, .arrow_button input {
+  font-family:Arial,Helvetica,Courier,sans-serif;
+  font-size: 80%;}
 table.generaltable {
   background-color: #EEEEEE;
 }

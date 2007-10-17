@@ -48,7 +48,7 @@ div.sideblock div.bt div {
   background-image: url(pix/box.gif);
 }
 body.dir-rtl div.sideblock div.bt div {
-  margin-right: 1px;
+  right: -12px;
 }
 div.sideblock div.bt {
   background-image: url(pix/box.gif);
@@ -57,7 +57,7 @@ div.sideblock div.header div.bt div {
   background-image: url(pix/box.gif);
 }
 body.dir-rtl div.sideblock div.header div.bt div {
-  margin-right: 1px;
+  right: -12px;
 }
 div.sideblock div.header div.bt {
   background-image: url(pix/box.gif);
@@ -78,28 +78,19 @@ div.sideblock div.bb div {
   background-image: url(pix/beige_box.gif);
 }
 body.dir-rtl div.sideblock div.bb div {
-  margin-right: 1px;
-  right: 0;
+  right: -12px;
 }
 div.sideblock div.bb {
   background-image: url(pix/beige_box.gif);
-}
-body.dir-rtl div.sideblock div.bb {
-  /*margin-left: 2px;*/
 }
 td#middle-column div.bt div {
   background-image: url(pix/box.gif);
 }
 body.dir-rtl td#middle-column div.bt div {
-  margin-right: 1px;
-  right: -13px;
+  right: -12px;
 }
 td#middle-column div.bt {
   background-image: url(pix/box.gif);
-}
-body.dir-rtl td#middle-column div.bt {
-  margin-left: 2px;
-  margin-right: 12px;
 }
 td#middle-column div.i1 {
   background-image: url(pix/borders.gif);
@@ -111,20 +102,16 @@ td#middle-column div.bb div {
   background-image: url(pix/box.gif);
 }
 body.dir-rtl td#middle-column div.bb div {
-  margin-right: 1px;
-  right: -3px;
+  right: -12px;
 }
 td#middle-column div.bb {
   background-image: url(pix/box.gif);
-}
-body.dir-rtl td#middle-column div.bb {
-  margin-left: 2px;
 }
 div#footer div.bt div {
   background-image: url(pix/beige_box.gif);
 }
 body.dir-rtl div#footer div.bt div {
-  margin-right: 1px;
+  right: -12px;
 }
 div#footer div.bt {
   background-image: url(pix/beige_box.gif);
@@ -139,7 +126,7 @@ div#footer div.bb div {
   background-image: url(pix/beige_box.gif);
 }
 body.dir-rtl div#footer div.bb div {
-  margin-right: 1px;
+  right: -12px;
 }
 div#footer div.bb {
   background-image: url(pix/beige_box.gif);
@@ -148,7 +135,7 @@ div#header div.bt div {
   background-image: url(pix/beige_box.gif);
 }
 body.dir-rtl div#header div.bt div {
-  margin-right: 1px;
+  right: -12px;
 }
 div#header div.bt {
   background-image: url(pix/beige_box.gif);
@@ -163,7 +150,7 @@ div#header div.bb div {
   background-image: url(pix/beige_box.gif);
 }
 body.dir-rtl div#header div.bb div {
-  margin-right: 1px;
+  right: -12px;
 }
 div#header div.bb {
   background-image: url(pix/beige_box.gif);
@@ -172,7 +159,7 @@ div#header-home div.bt div {
   background-image: url(pix/beige_box.gif);
 }
 body.dir-rtl div#header-home div.bt div {
-  margin-right: 1px;
+  right: -12px;
 }
 div#header-home div.bt {
   background-image: url(pix/beige_box.gif);
@@ -187,8 +174,7 @@ div#header-home div.bb div {
   background-image: url(pix/beige_box.gif);
 }
 body.dir-rtl div#header-home div.bb div {
-  margin-right: 1px;
-  right: -3px;
+  right: -12px;
 }
 div#header-home div.bb {
   background-image: url(pix/beige_box.gif);
@@ -197,7 +183,7 @@ body.nocoursepage div#content div.bt div {
   background-image: url(pix/box.gif);
 }
 body.nocoursepage.dir-rtl div#content div.bt div {
-  margin-right: 1px;
+  right: -12px;
 }
 body.nocoursepage div#content div.bt {
   background-image: url(pix/box.gif);
@@ -212,14 +198,13 @@ body.nocoursepage div#content div.bb div {
   background-image: url(pix/box.gif);
 }
 body.nocoursepage.dir-rtl div#content div.bb div {
-  margin-right: 1px;
-  right: -3px;
+  right: -12px;
 }
 body.nocoursepage div#content div.bb {
   background-image: url(pix/box.gif);
 }
 body.nocoursepage.dir-rtl div#content div.bb {
-  margin-right: 1px;
+  right: -12px;
 }
 th.header {
   background-image: url(pix/header.gif);

@@ -35,9 +35,3 @@ body.dir-rtl div.block_calendar_month div.calendar-controls a.previous {
 body.dir-rtl div.block_calendar_month div.calendar-controls a.next {
   float: left;
 }
-body.dir-rtl div.block_calendar_month div.i1 {
-  padding-left: 10px;
-}
-body.dir-rtl div.block_calendar_month div.i2 {
-  padding-right: 10px;
-}
