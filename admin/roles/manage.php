@@ -121,9 +121,12 @@
                 mark_context_dirty($sitecontext->path);
 
                 if (empty($errors)) {
+                    $rolename = get_field('role', 'name', 'id', $newroleid);
+                    add_to_log(SITEID, 'role', 'add', 'admin/roles/manage.php?action=add', $rolename, '', $USER->id);
                     redirect('manage.php');
                 }
             }
+            
             break;
 
         case 'edit':
@@ -233,6 +236,7 @@
 
                     // edited a role sitewide...
                     mark_context_dirty($sitecontext->path);
+                    add_to_log(SITEID, 'role', 'edit', 'admin/roles/manage.php?action=edit&roleid='.$role->id, $role->name, '', $USER->id);
 
                     redirect('manage.php');
                 }
@@ -240,6 +244,7 @@
                 // edited a role sitewide - with errors, but still...
                 mark_context_dirty($sitecontext->path);
             }
+
             break;
 
         case 'delete':
@@ -360,6 +365,8 @@
                 mark_context_dirty($sitecontext->path);
 
             }
+            $rolename = get_field('role', 'name', 'id', $newrole);
+            add_to_log(SITEID, 'role', 'duplicate', 'admin/roles/manage.php?roleid='.$newrole.'&action=duplicate', $rolename, '', $USER->id);
             redirect('manage.php');
             break;
 
@@ -373,6 +380,9 @@
 
                 // reset a role sitewide...
                 mark_context_dirty($sitecontext->path);
+
+                $rolename = get_field('role', 'name', 'id', $roleid);
+                add_to_log(SITEID, 'role', 'reset', 'admin/roles/manage.php?roleid='.$roleid.'&action=reset', $rolename, '', $USER->id);
 
                 redirect('manage.php?action=view&amp;roleid='.$roleid);
 
