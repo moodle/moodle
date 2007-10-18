@@ -474,7 +474,7 @@ function path_inaccessdata($path, $accessdata) {
     // assume that contexts hang from sys or from a course
     // this will only work well with stuff that hangs from a course
     if (in_array($path, $accessdata['loaded'], true)) {
-            error_log("found it!");
+            // error_log("found it!");
         return true;
     }
     $base = '/' . SYSCONTEXTID;
@@ -1622,12 +1622,12 @@ function load_all_capabilities() {
 function reload_all_capabilities() {
     global $USER,$CFG;
 
-    error_log("reloading");
+    // error_log("reloading");
     // copy switchroles
     $sw = array();
     if (isset($USER->access['rsw'])) {
         $sw = $USER->access['rsw'];
-        error_log(print_r($sw,1));
+        // error_log(print_r($sw,1));
     }
 
     unset($USER->access);
