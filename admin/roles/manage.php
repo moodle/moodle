@@ -377,15 +377,13 @@
 
             if ($confirm and data_submitted() and confirm_sesskey()) {
                 reset_role_capabilities($roleid);
-<<<<<<< manage.php
 
                 // reset a role sitewide...
                 mark_context_dirty($sitecontext->path);
 
-=======
                 $rolename = get_field('role', 'name', 'id', $roleid);
                 add_to_log(SITEID, 'role', 'reset', 'admin/roles/manage.php?roleid='.$roleid.'&action=reset', $rolename, '', $USER->id);
->>>>>>> 1.42.2.9
+
                 redirect('manage.php?action=view&amp;roleid='.$roleid);
 
             } else {
