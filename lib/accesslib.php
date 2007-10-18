@@ -404,7 +404,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         }
         // Load accessdata for below-the-course contexts
         if (!path_inaccessdata($context->path,$USER->access)) {
-            error_log("loading access for context {$context->path} for $capability at {$context->contextlevel} {$context->id}");
+            // error_log("loading access for context {$context->path} for $capability at {$context->contextlevel} {$context->id}");
             // $bt = debug_backtrace();
             // error_log("bt {$bt[0]['file']} {$bt[0]['line']}");
             load_subcontext($USER->id, $context, $USER->access);
@@ -421,7 +421,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
     }
     // Load accessdata for below-the-course contexts as needed
     if (!path_inaccessdata($context->path, $ACCESS[$userid])) {
-        error_log("loading access for context {$context->path} for $capability at {$context->contextlevel} {$context->id}");
+        // error_log("loading access for context {$context->path} for $capability at {$context->contextlevel} {$context->id}");
         // $bt = debug_backtrace();
         // error_log("bt {$bt[0]['file']} {$bt[0]['line']}");
         load_subcontext($userid, $context, $ACCESS[$userid]);
@@ -1405,7 +1405,7 @@ function load_subcontext($userid, $context, &$accessdata) {
         $accessdata['rdef'][$key] =& $newrdefs[$key];
     }
 
-    error_log("loaded {$context->path}");
+    // error_log("loaded {$context->path}");
     $accessdata['loaded'][] = $context->path;
 }
 
