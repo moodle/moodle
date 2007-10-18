@@ -224,7 +224,9 @@
                     }
                 }
             }
-
+            
+            $rolename = get_field('role', 'name', 'id', $roleid);
+            add_to_log($course->id, 'role', 'assign', 'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
         } else if ($remove and !empty($frm->removeselect) and confirm_sesskey()) {
 
             $sitecontext = get_context_instance(CONTEXT_SYSTEM);
@@ -258,11 +260,16 @@
                     }
                 }
             }
-
+            
+            $rolename = get_field('role', 'name', 'id', $roleid);
+            add_to_log($course->id, 'role', 'unassign', 'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
         } else if ($showall) {
             $searchtext = '';
             $previoussearch = 0;
         }
+        
+        
+    
     }
 
     if ($context->contextlevel==CONTEXT_COURSE and $context->instanceid == SITEID) {

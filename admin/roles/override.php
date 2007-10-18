@@ -115,7 +115,8 @@
 
         // force accessinfo refresh for users visiting this context...
         mark_context_dirty($context->path);
-
+        $rolename = get_field('role', 'name', 'id', $roleid);
+        add_to_log($course->id, 'role', 'override', 'admin/roles/override.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
         redirect($baseurl);
     }
 
