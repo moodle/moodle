@@ -11,6 +11,8 @@
 require_once('../config.php');
 require_once('autogroup_form.php');
 
+define('AUTOGROUP_MIN_RATIO', 0.7);
+
 $courseid = required_param('courseid', PARAM_INT);
 
 if (!$course = get_record('course', 'id',$courseid)) {
@@ -93,14 +95,25 @@ if ($editform->is_cancelled()) {
     $groups = array();
     $i = 0;
     $cnt = 0;
-    
+       
+    // Plan the allocation
     if ($data->groupby == 'groups') {
     	$numgrps = $data->number;
         $userpergrp = ceil($usercnt/$numgrps);
     } else {
-    	$numgrps = ceil($data->number/$usercnt);
-        $userpergrp = $data->number;
+    	$numgrps = ceil($usercnt/$data->number);
+        $userpergrp = $data->number > $usercnt ? $usercnt : $data->number;
+
+        // If there would be one group with a small number of member reduce the number of groups
+        $remainder = $userpergrp - ($userpergrp * $numgrps - $usercnt);
+        if ($remainder && $remainder < $userpergrp * AUTOGROUP_MIN_RATIO) {
+           $numgrps--;
+        }
     }
+    
+    // Do the allocation
+    $remainggroups = $numgrps;
+    $remaingusers = $usercnt;
     
     foreach($users as $id => $user) {
     	if (!isset($groups[$i])) { // Create a new group
@@ -108,22 +121,29 @@ if ($editform->is_cancelled()) {
     	}
         @$groups[$i]['members'][] = &$users[$id];
         $cnt++;
-        if ($cnt == $userpergrp) {
+       
+        if ($cnt >= round($usercnt / $remainggroups)) {
+        	$usercnt -= $cnt;
         	$cnt = 0;
             $i++;
+            $remainggroups--;
         }
     }
    
    
     if (isset($data->preview)) {
        /// Print the groups preview
-    	$preview = '<ul>';
+       $preview = '';
+        if (isset($remainder) && $remainder != $userpergrp && $data->groupby == 'members') {
+            $preview .= '<p>'.get_string('evenallocation', 'group').'</p>';
+        }
+    	$preview .= '<ul>';
         foreach ($groups as $group) {
-        	$preview .= "<li>$group[name]\n<ul>";
+        	$preview .= "<li>$group[name] (".count($group['members'])." ".get_string('membersingroup', 'group').")\n<ul>";
             foreach ($group['members'] as $member) {
             	$preview .= '<li>'.fullname($member).'</li>';
             }
-            $preview .= "</ul>\n</li>\n";
+            $preview .= "</ul><br />\n</li>\n";
         }
         $preview .= '</ul>';
     } else {

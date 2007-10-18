@@ -125,4 +125,6 @@ $string['badnamingscheme'] = 'Must contain exactly one \'@\' or one \'#\'  chara
 $string['groupspreview'] = 'Groups preview';
 $string['nousersinrole'] = 'There are no suitable users in the selected role';
 $string['nogroupsassigned'] = 'No groups assigned';
+$string['evenallocation'] = 'Note: To keep group allocation even, the actual number of members per group differs from the number you specified.';
+$string['membersingroup'] = 'members';
 ?>
