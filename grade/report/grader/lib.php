@@ -356,6 +356,7 @@ class grade_report_grader extends grade_report {
             foreach ($this->gtree->items as $itemid=>$unused) {
                 if (!isset($this->grades[$userid][$itemid])) {
                     $this->grades[$userid][$itemid] = new grade_grade();
+                    $this->grades[$userid][$itemid]->itemid = $itemid;
                     $this->grades[$userid][$itemid]->grade_item =& $this->gtree->items[$itemid]; // db caching
                 }
             }
