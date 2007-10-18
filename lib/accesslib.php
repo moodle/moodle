@@ -2056,9 +2056,16 @@ function delete_role($roleid) {
     }
 
 // finally delete the role itself
+    // get this before the name is gone for logging
+    $rolename = get_field('role', 'name', 'id', $roleid);
+    
     if ($success and !delete_records('role', 'id', $roleid)) {
         debugging("Could not delete role record with ID $roleid!");
         $success = false;
+    }
+    
+    if ($success) {
+        add_to_log(SITEID, 'role', 'delete', 'admin/roles/action=delete&roleid='.$roleid, $rolename, '', $USER->id);
     }
 
     return $success;
