@@ -7,7 +7,7 @@
             if (top.user) {
                 top.document.getElementsByTagName('frameset')[0].rows = "117,30%,0,200";
             }
-             
+            
             // correct some Safari 2 (webkit 419.3) rtl rendering issues 
             if($.browser.version == '419.3') {
                 if ($('body.dir-rtl').length) {
