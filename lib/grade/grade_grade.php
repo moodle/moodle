@@ -142,7 +142,7 @@ class grade_grade extends grade_object {
      * Returns array of grades for given grade_item+users.
      * @param object $grade_item
      * @param array $userids
-     * @param bool $include_missing include grades taht do not exist yet
+     * @param bool $include_missing include grades that do not exist yet
      * @return array userid=>grade_grade array
      */
     function fetch_users_grades($grade_item, $userids, $include_missing=true) {
@@ -475,45 +475,136 @@ class grade_grade extends grade_object {
     /**
      * Return array of grade item ids that are either hidden or indirectly depend
      * on hidden grades, excluded grades are not returned.
+     * THIS IS A REALLY BIG HACK! to be replaced by conditional aggregation of hidden grades in 2.0
+     *
      * @static
      * @param array $grades all course grades of one user, & used for better internal caching
      * @param array $items $grade_items array of grade items, & used for better internal caching
      * @return array
      */
     function get_hiding_affected(&$grade_grades, &$grade_items) {
+        global $CFG;
+
         if (count($grade_grades) !== count($grade_items)) {
             error("Incorrent size of arrays in params of grade_grade::get_hiding_affected()!");
         }
 
         $dependson = array();
+        $todo = array();
+        $unknown = array();  // can not find altered
+        $altered = array();  // altered grades
+
         foreach($grade_items as $key=>$unused) {
             $grade_item =& $grade_items[$key]; // reference for improved caching inside grade_item
-            $dependson[$grade_item->id] = $grade_item->depends_on();
+            $dependson[$grade_items[$key]->id] = $grade_items[$key]->depends_on();
         }
 
-        $todo = array();
-        $hiding = array();
+        $hiddenfound = false;
         foreach($grade_grades as $grade_grade) {
-            if ($grade_grade->is_hidden() and !$grade_grade->is_excluded() and !is_null($grade_grade->finalgrade)) {
-                $hiding[] = $grade_grade->itemid;
-            } else {
+            if ($grade_grade->is_excluded()) {
+                //nothing to do, aggregation is ok
+            } else if ($grade_grade->is_hidden()) {
+                $hiddenfound = true;
+                // hidden null grade does not affect the aggregation
+                if (!is_null($grade_grade->finalgrade)) {
+                    $altered[$grade_grade->itemid] = null;
+                }
+            } else if (!empty($dependson[$grade_grade->itemid])) {
                 $todo[] = $grade_grade->itemid;
             }
         }
+        if (!$hiddenfound) {
+            return array('unknown'=>array(), 'altered'=>array());
+        }
 
-        $max = count($grade_items);
+        $max = count($todo);
         for($i=0; $i<$max; $i++) {
             $found = false;
             foreach($todo as $key=>$do) {
-                if (empty($dependson[$do])) {
-                    unset($todo[$key]);
-                    continue;
-
-                } else if (array_intersect($dependson[$do], $hiding)) {
+                if (array_intersect($dependson[$do], $unknown)) {
                     // this item depends on hidden grade indirectly
-                    $hiding[] = $do;
+                    $unknown[$do] = $do;
                     unset($todo[$key]);
                     $found = true;
+                    continue;
+
+                } else if (!array_intersect($dependson[$do], $todo)) {
+                    if (!array_intersect($dependson[$do], array_keys($altered))) {
+                        // hiding does not affect this grade
+                        unset($todo[$key]);
+                        $found = true;
+                        continue;
+
+                    } else {
+                        // depends on altered grades - we should try to recalculate if possible
+                        if ($grade_items[$do]->is_calculated() or (!$grade_items[$do]->is_category_item() and !$grade_items[$do]->is_course_item())) {
+                            $unknown[$do] = $do;
+                            unset($todo[$key]);
+                            $found = true;
+                            continue;
+                        } else {
+                            $grade_category = $grade_items[$do]->load_item_category();
+                            $values = array();
+                            foreach ($dependson[$do] as $itemid) {
+                                if (array_key_exists($itemid, $altered)) {
+                                    $values[$itemid] = $altered[$itemid];
+                                } else {
+                                    $values[$itemid] = $grade_grades[$itemid]->finalgrade;
+                                }
+                            }
+                            if ($CFG->grade_aggregateonlygraded != -1) {
+                                $grade_category->aggregateonlygraded = $CFG->grade_aggregateonlygraded;
+                            }
+                            
+                            if ($grade_category->aggregateonlygraded) {
+                                foreach ($values as $itemid=>$value) {
+                                    if (is_null($value)) {
+                                        unset($values[$itemid]);
+                                    }
+                                }
+                            } else {
+                                foreach ($values as $itemid=>$value) {
+                                    if (is_null($value)) {
+                                        $values[$itemid] = $grade_items[$itemid]->grademin;
+                                    }
+                                }
+                            }
+                            foreach ($values as $itemid=>$value) {
+                                if ($grade_grades[$itemid]->is_excluded()) {
+                                    unset($values[$itemid]);
+                                    continue;
+                                }
+                                $values[$itemid] = grade_grade::standardise_score($value, $grade_items[$itemid]->grademin, $grade_items[$itemid]->grademax, 0, 1);
+                            }
+
+                            // limit and sort
+                            $grade_category->apply_limit_rules($values);
+                            asort($values, SORT_NUMERIC);
+                    
+                            // let's see we have still enough grades to do any statistics
+                            if (count($values) == 0) {
+                                // not enough attempts yet
+                                $altered[$do] = null;
+                                unset($todo[$key]);
+                                $found = true;
+                                continue;
+                            }
+
+                            $agg_grade = $grade_category->aggregate_values($values, $grade_items);
+
+                            // recalculate the rawgrade back to requested range
+                            $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $grade_items[$itemid]->grademin, $grade_items[$itemid]->grademax);
+                    
+                            if (!is_null($finalgrade)) {
+                                $finalgrade = bounded_number($grade_items[$itemid]->grademin, $finalgrade, $grade_items[$itemid]->grademax);
+                            }
+
+                            $altered[$do] = $finalgrade;
+                            unset($todo[$key]);
+                            $found = true;
+                            continue;
+                        }
+                    }
                 }
             }
             if (!$found) {
@@ -521,7 +612,7 @@ class grade_grade extends grade_object {
             }
         }
 
-        return $hiding;
+        return array('unknown'=>$unknown, 'altered'=>$altered);
     }
 }
 ?>

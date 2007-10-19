@@ -342,9 +342,10 @@ class grade_report_grader extends grade_report {
 
         $userids = array_keys($this->users);
 
+
         if ($grades = get_records_sql($sql)) {
             foreach ($grades as $graderec) {
-                if (in_array($graderec->userid, $userids)) {
+                if (in_array($graderec->userid, $userids) and array_key_exists($graderec->itemid, $this->gtree->items)) { // some items may not be present!!
                     $this->grades[$graderec->userid][$graderec->itemid] = new grade_grade($graderec, false);
                     $this->grades[$graderec->userid][$graderec->itemid]->grade_item =& $this->gtree->items[$graderec->itemid]; // db caching
                 }
@@ -603,20 +604,23 @@ class grade_report_grader extends grade_report {
      */
     function get_studentshtml() {
         global $CFG, $USER;
+
         $studentshtml = '';
-        $strfeedback = $this->get_lang_string("feedback");
-        $strgrade = $this->get_lang_string('grade');
+        $strfeedback  = $this->get_lang_string("feedback");
+        $strgrade     = $this->get_lang_string('grade');
         $gradetabindex = 1;
         $showuserimage = $this->get_pref('showuserimage');
-        $numusers = count($this->users);
+        $numusers      = count($this->users);
 
         // Preload scale objects for items with a scaleid
         $scales_list = '';
         $tabindices = array();
+
         foreach ($this->gtree->items as $item) {
             if (!empty($item->scaleid)) {
                 $scales_list .= "$item->scaleid,";
             }
+
             $tabindices[$item->id]['grade'] = $gradetabindex;
             $tabindices[$item->id]['feedback'] = $gradetabindex + $numusers;
             $gradetabindex += $numusers * 2;
@@ -633,9 +637,13 @@ class grade_report_grader extends grade_report {
         foreach ($this->users as $userid => $user) {
 
             if ($canviewhidden) {
-                $hiding_affected = array();
+                $altered = array();
+                $unknown = array();
             } else {
                 $hiding_affected = grade_grade::get_hiding_affected($this->grades[$userid], $this->gtree->items);
+                $altered = $hiding_affected['altered'];
+                $unknown = $hiding_affected['unknown'];
+                unset($hiding_affected);
             }
 
             $columncount = 0;
@@ -651,17 +659,24 @@ class grade_report_grader extends grade_report {
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
+                $grade = $this->grades[$userid][$item->id];
 
                 // Get the decimal points preference for this item
                 $decimalpoints = $item->get_decimals();
 
-                $grade = $this->grades[$userid][$item->id];
-                $gradeval = $grade->finalgrade;
+                if (in_array($itemid, $unknown)) {
+                    $gradeval = null;
+                } else if (array_key_exists($itemid, $altered)) {
+                    $gradeval = $altered[$itemid];
+                } else {
+                    $gradeval = $grade->finalgrade;
+                }
 
                 // MDL-11274
                 // Hide grades in the grader report if the current grader doesn't have 'moodle/grade:viewhidden'
-                if (!$canviewhidden and ($grade->is_hidden() or in_array($itemid, $hiding_affected))) {
-                    if (!is_null($gradeval) and $grade->is_hidden()) {
+                if (!$canviewhidden and $grade->is_hidden()) {
+                    if (!empty($CFG->grade_hiddenasdate) and !is_null($grade->finalgrade) and !$item->is_category_item() and !$item->is_course_item()) {
+                        // the problem here is that we do not have the time when grade value was modified, 'timemodified' is general modification date for grade_grades records
                         $studentshtml .= '<td class="cell c'.$columncount++.'">'.userdate($grade->timecreated,get_string('strftimedatetimeshort')).'</td>';
                     } else {
                         $studentshtml .= '<td class="cell c'.$columncount++.'">-</td>';

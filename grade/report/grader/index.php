@@ -132,6 +132,8 @@ if ($perpageurl) {
 }
 
 $report->load_users();
+
+
 $numusers = $report->get_numusers();
 $report->load_final_grades();
 
