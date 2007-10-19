@@ -1,6 +1,7 @@
-<?php 
+<?php // $id$
 
 require_once($CFG->dirroot.'/tag/lib.php');
+require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/magpie/rss_cache.inc');
 
 define('FLICKR_DEV_KEY', '4fddbdd7ff2376beec54d7f6afad425e');
@@ -127,7 +128,7 @@ class block_tag_flickr extends block_base {
             $cached_response = $cache->get( $request );
         }
 
-        $response = file_get_contents($request);
+        $response = download_file_content($request);
 
         if(empty($response)){
             $response = $cached_response;
