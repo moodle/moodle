@@ -1,6 +1,7 @@
-<?php 
+<?php // $id$
 
 require_once($CFG->dirroot.'/tag/lib.php');
+require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/magpie/rss_cache.inc');
 require_once($CFG->libdir . '/phpxml/xml.php');
 
@@ -134,7 +135,7 @@ class block_tag_youtube extends block_base {
             $cached_response = $cache->get( $request );
         }
 
-        $response = file_get_contents($request);
+        $response = download_file_content($request);
 
         if(empty($response)){
             $response = $cached_response;
