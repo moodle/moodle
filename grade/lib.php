@@ -312,7 +312,7 @@ function grade_get_formatted_grades() {
     
 
         // if the user has selected a group to view by get the group members
-        if ($currentgroup = get_current_group($course->id)) {
+        if (($currentgroup = get_current_group($course->id)) && groupmode($course) != 0) {
             $groupmembers = get_group_users($currentgroup);
         }
 
@@ -1205,7 +1205,7 @@ function grade_download($download, $id) {
 /// Check to see if groups are being used in this course
     $currentgroup = get_current_group($course->id);
 
-    if ($currentgroup) {
+    if (($currentgroup = get_current_group($course->id)) && groupmode($course) != 0) {
         $students = get_group_students($currentgroup, "u.lastname ASC");
     } else {
         $students = grade_get_course_students($course->id);
