@@ -16,7 +16,9 @@ function download_file_content($url) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HEADER, false);
     if (!empty($CFG->proxyhost)) {
-        curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
+        // don't CONNECT for non-https connections
+        curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, false);
+
         if (empty($CFG->proxyport)) {
             curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost);
         } else {
@@ -27,6 +29,12 @@ function download_file_content($url) {
         }
     }
     $result = curl_exec($ch);
+
+    if (curl_errno($ch)) {
+        $curlerror = "CURL request for \"$url\" failed with: ". curl_error($ch);
+        debugging($curlerror, DEBUG_DEVELOPER);
+    }
+
     curl_close($ch);
     return $result;
 }
