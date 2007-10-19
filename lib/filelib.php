@@ -10,15 +10,17 @@ define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
  * @return mixed false if request failed or content of the file as string if ok.
  */
 function download_file_content($url) {
+    global $CFG;
+
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HEADER, false);
     if (!empty($CFG->proxyhost)) {
         curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
         if (empty($CFG->proxyport)) {
-            curl_setopt($ch, CURLOPT_PROXY, $CFG->proxy);
+            curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost);
         } else {
-            curl_setopt($ch, CURLOPT_PROXY, $CFG->proxy.':'.$CFG->proxyport);
+            curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost.':'.$CFG->proxyport);
         }
         if(!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
             curl_setopt($ch, CURLOPT_PROXYUSERPWD, $CFG->proxyuser.':'.$CFG->proxypassword);
