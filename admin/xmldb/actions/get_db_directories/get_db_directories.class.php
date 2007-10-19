@@ -142,6 +142,18 @@ class get_db_directories extends XMLDBAction {
             }
         }
 
+    /// Now, course formats (course/format/xxx/db)
+        if ($plugins = get_list_of_plugins('course/format', 'db')) {
+            foreach ($plugins as $plugin) {
+                $dbdir = new stdClass;
+                $dbdir->path = $CFG->dirroot . '/course/format/' . $plugin . '/db';
+                if (!isset($XMLDB->dbdirs[$dbdir->path])) {
+                    $XMLDB->dbdirs[$dbdir->path] = $dbdir;
+                }
+                $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
+            }
+        }
+
     /// Now, enrolment plugins (enrol/xxx/db)
         if ($plugins = get_list_of_plugins('enrol', 'db')) {
             foreach ($plugins as $plugin) {
