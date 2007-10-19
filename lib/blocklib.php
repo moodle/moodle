@@ -1319,7 +1319,9 @@ function upgrade_blocks_plugins($continueto) {
         } else {    // block not installed yet, so install it
 
             // If it allows multiples, start with it enabled
-            $block->multiple = $blockobj->instance_allow_multiple();
+            if ($blockobj->instance_allow_multiple()) {
+                $block->multiple = 1;
+            }
 
             // Set the block cron on install
             $block->cron = !empty($blockobj->cron) ? $blockobj->cron : 0;
