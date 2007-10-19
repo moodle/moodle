@@ -127,7 +127,9 @@
         $courses = array();
         foreach ($blocks as $block) {
             $courseid = $block->pageid;
-            if ($courseid==0) {
+            // MDL-11167, blocks can be placed on mymoodle, or the blogs page
+            // and it should not show up on course search page
+            if ($courseid==0 || $block->pagetype != 'course-view') {
                 continue;
             }
             if (!$course = get_record('course', 'id', $courseid)) {

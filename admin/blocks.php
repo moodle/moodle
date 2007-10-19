@@ -179,8 +179,13 @@
         if($blockobject->has_config()) {
             $settings = '<a href="block.php?block='.$blockid.'">'.$strsettings.'</a>';
         }
-
-        $count = count_records('block_instance', 'blockid', $blockid);
+       
+        // MDL-11167, blocks can be placed on mymoodle, or the blogs page
+        // and it should not show up on course search page
+        $count = count_records_sql('SELECT COUNT(*) 
+                                        FROM '.$CFG->prefix.'block_instance 
+                                        WHERE blockid = '.$blockid.' AND
+                                        pagetype = "course-view"');
         if ($count>0) {
             $blocklist = "<a href=\"{$CFG->wwwroot}/course/search.php?blocklist=$blockid&amp;sesskey={$USER->sesskey}\" ";
             $blocklist .= "title=\"$strshowblockcourse\" >$count</a>";
