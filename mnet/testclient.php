@@ -36,7 +36,7 @@ foreach ($hosts as $id => $host) {
     // Skip localhost
     if($host->wwwroot == $CFG->wwwroot) continue;
     // Skip non-moodle hosts
-    if($host->applicationid != 1) continue;
+    if($host->applicationid != 1 && $host->applicationid != 2) continue; //TODO: get rid of magic numbers.
     echo '<p><a href="testclient.php?hostid='.$host->id.'">'.$host->wwwroot."</a></p>\n";
 }
 
