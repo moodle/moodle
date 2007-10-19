@@ -10,8 +10,6 @@ $temp = new admin_settingpage('gradessettings', get_string('gradessettings', 'gr
 
 // enable outcomes checkbox
 $temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'grades'), get_string('configenableoutcomes', 'grades'), 0, PARAM_INT));
-// enable publishing in exports/imports
-$temp->add(new admin_setting_configcheckbox('gradepublishing', get_string('gradepublishing', 'grades'), get_string('configgradepublishing', 'grades'), 0, PARAM_INT));
 
 $temp->add(new admin_setting_configselect('grade_aggregationposition', get_string('aggregationposition', 'grades'),
                                           get_string('configaggregationposition', 'grades'), GRADE_REPORT_AGGREGATION_POSITION_LAST,
@@ -33,6 +31,11 @@ $temp->add(new admin_setting_configselect('grade_decimalpoints', get_string('dec
                                                  '4' => '4',
                                                  '5' => '5')));
 
+$temp->add(new admin_setting_configcheckbox('grade_hiddenasdate', get_string('hiddenasdate', 'grades'), get_string('confighiddenasdate', 'grades'), 0, PARAM_INT));
+
+// enable publishing in exports/imports
+$temp->add(new admin_setting_configcheckbox('gradepublishing', get_string('gradepublishing', 'grades'), get_string('configgradepublishing', 'grades'), 0, PARAM_INT));
+
 $temp->add(new admin_setting_configselect('grade_export_displaytype', get_string('gradeexportdisplaytype', 'grades'),
                                           get_string('configgradeexportdisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
                                           array(GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
@@ -46,19 +49,10 @@ $temp->add(new admin_setting_configselect('grade_export_decimalpoints', get_stri
                                                  '2' => '2',
                                                  '3' => '3',
                                                  '4' => '4',
-                                                 '5' => '5')));                                                 
-                                                 
+                                                 '5' => '5')));
+
 $temp->add(new admin_setting_special_gradeexport());
 $ADMIN->add('grades', $temp);
-
-/// Scales and outcomes
-
-$scales = new admin_externalpage('scales', get_string('scales'), $CFG->wwwroot.'/grade/edit/scale/index.php', 'moodle/grade:manage');
-$ADMIN->add('grades', $scales);
-$outcomes = new admin_externalpage('outcomes', get_string('outcomes', 'grades'), $CFG->wwwroot.'/grade/edit/outcome/index.php', 'moodle/grade:manage');
-$ADMIN->add('grades', $outcomes);
-$letters = new admin_externalpage('letters', get_string('letters', 'grades'), $CFG->wwwroot.'/grade/edit/letter/edit.php', 'moodle/grade:manageletters');
-$ADMIN->add('grades', $letters);
 
 /// Grade category settings
 $temp = new admin_settingpage('gradecategorysettings', get_string('gradecategorysettings', 'grades'));
@@ -95,6 +89,15 @@ $temp->add(new admin_setting_configselect('grade_droplow', get_string('droplow',
             get_string('droplowhelp', 'grades'), -1, $options));
 
 $ADMIN->add('grades', $temp);
+
+/// Scales and outcomes
+
+$scales = new admin_externalpage('scales', get_string('scales'), $CFG->wwwroot.'/grade/edit/scale/index.php', 'moodle/grade:manage');
+$ADMIN->add('grades', $scales);
+$outcomes = new admin_externalpage('outcomes', get_string('outcomes', 'grades'), $CFG->wwwroot.'/grade/edit/outcome/index.php', 'moodle/grade:manage');
+$ADMIN->add('grades', $outcomes);
+$letters = new admin_externalpage('letters', get_string('letters', 'grades'), $CFG->wwwroot.'/grade/edit/letter/edit.php', 'moodle/grade:manageletters');
+$ADMIN->add('grades', $letters);
 
 // The plugins must implement a settings.php file that adds their admin settings to the $settings object
 

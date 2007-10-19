@@ -839,7 +839,6 @@ class grade_seq {
             return 'g'.$grade_grade->id;
         }
     }
-
 }
 
 /**
@@ -919,6 +918,7 @@ class grade_tree {
         }
 
         grade_tree::fill_levels($this->levels, $this->top_element, 0);
+
     }
 
     /**
@@ -1343,6 +1343,61 @@ class grade_tree {
         }
 
         return $calculation_icon;
+    }
+
+    /**
+     * Returns icon of element
+     * @param object $element
+     * @param bool $spacerifnone return spacer if no icon found
+     * @return string icon or spacer
+     */
+    function get_element_icon(&$element, $spacerifnone=true) {
+        global $CFG;
+
+        switch ($element['type']) {
+            case 'item':
+            case 'courseitem':
+            case 'categoryitem':
+                if ($element['object']->is_calculated()) {
+                    return '<img src="'.$CFG->pixpath.'/i/calc.gif" class="icon" alt="'.get_string('calculation', 'grades').'"/>';
+
+                } else if (($element['object']->is_course_item() or $element['object']->is_category_item())
+                  and ($element['object']->gradetype == GRADE_TYPE_SCALE or $element['object']->gradetype == GRADE_TYPE_VALUE)) {
+                    if ($category = $element['object']->get_item_category()) {
+                        switch ($category->aggregation) {
+                            case GRADE_AGGREGATE_MEAN:
+                            case GRADE_AGGREGATE_MEDIAN:
+                            case GRADE_AGGREGATE_WEIGHTED_MEAN:
+                            case GRADE_AGGREGATE_EXTRACREDIT_MEAN:
+                                return '<img src="'.$CFG->pixpath.'/i/agg_mean.gif" class="icon" alt="'.get_string('aggregation', 'grades').'"/>';
+                            //case GRADE_AGGREGATE_SUM:
+                                //return '<img src="'.$CFG->pixpath.'/i/agg_sum.gif" class="icon" alt="'.get_string('aggregation', 'grades').'"/>';
+                        }
+                    }
+
+                } else if ($element['object']->itemtype == 'mod') {
+                    return '<img src="'.$CFG->modpixpath.'/'.$element['object']->itemmodule.'/icon.gif" class="icon" alt="'
+                           .get_string('modulename', $element['object']->itemmodule).'"/>';
+
+                } else if ($element['object']->itemtype == 'manual') {
+                    if ($element['object']->is_outcome_item()) {
+                        return '<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon" alt="'.get_string('outcome', 'grades').'"/>';
+                    } else {
+                        //TODO: add better icon
+                        return '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'.get_string('manualitem', 'grades').'"/>';
+                    }
+                }
+                break;
+
+            case 'category':
+                return '<img src="'.$CFG->pixpath.'/f/folder.gif" class="icon" alt="'.get_string('category', 'grades').'"/>';
+        }
+
+        if ($spacerifnone) {
+            return '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="icon" alt=""/>';
+        } else {
+            return '';
+        }
     }
 }
 

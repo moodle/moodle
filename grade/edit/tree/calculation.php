@@ -187,35 +187,9 @@ function get_grade_tree(&$gtree, $element, $current_itemid=null, $errors=null) {
         }
     }
 
-    $icon = '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="icon" alt=""/>' . "\n";
+    $icon = $gtree->get_element_icon($element);
     $last = '';
-    $catcourseitem = false;
-
-    switch ($type) {
-        case 'item':
-            if ($object->itemtype == 'mod') {
-                $icon = '<img src="'.$CFG->modpixpath.'/'.$object->itemmodule.'/icon.gif" class="icon" alt="'
-                      . get_string('modulename', $object->itemmodule).'"/>' . "\n";
-            } else if ($object->itemtype == 'manual') {
-                //TODO: add manual grading icon
-                if (empty($object->outcomeid)) {
-                    $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'
-                          . get_string('manualgrade', 'grades').'"/>' . "\n"; // TODO: localize
-                } else {
-                    $icon = '<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon" alt="'
-                          . get_string('outcome', 'grades').'"/>' . "\n";
-                }
-            }
-            break;
-        case 'courseitem':
-        case 'categoryitem':
-            $icon = '<img src="'.$CFG->pixpath.'/i/category_grade.gif" class="icon" alt="'.get_string('categorygrade').'"/>' . "\n"; // TODO: localize
-            $catcourseitem = true;
-            break;
-        case 'category':
-            $icon = '<img src="'.$CFG->pixpath.'/f/folder.gif" class="icon" alt="'.get_string('category').'"/>' . "\n";
-            break;
-    }
+    $catcourseitem = ($element['type'] == 'courseitem' or $element['type'] == 'categoryitem');
 
     if ($type != 'category') {
         $return_string .= '<li class="'.$type.'">'.$icon.$name.'</li>' . "\n";

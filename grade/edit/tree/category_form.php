@@ -42,7 +42,7 @@ class edit_category_form extends moodleform {
                                          GRADE_AGGREGATE_EXTRACREDIT_MEAN=>get_string('aggregateextracreditmean', 'grades'));
 
         // visible elements
-        $mform->addElement('header', 'general', get_string('gradecategory', 'grades'));
+        $mform->addElement('header', 'gradecat', get_string('gradecategory', 'grades'));
         $mform->addElement('text', 'fullname', get_string('categoryname', 'grades'));
 
         if ($CFG->grade_aggregation == -1) {
@@ -62,12 +62,14 @@ class edit_category_form extends moodleform {
             $mform->addElement('static', 'aggregateonlygraded', get_string('aggregateonlygraded', 'grades'));
         }
 
-        if (!empty($CFG->enableoutcomes) && $CFG->grade_aggregateoutcomes == -1) {
-            $mform->addElement('advcheckbox', 'aggregateoutcomes', get_string('aggregateoutcomes', 'grades'));
-            $mform->setHelpButton('aggregateoutcomes', array(false, get_string('aggregateoutcomes', 'grades'),
-                              false, true, false, get_string('aggregateoutcomeshelp', 'grades')));
-        } else {
-            $mform->addElement('static', 'aggregateoutcomes', get_string('aggregateoutcomes', 'grades'));
+        if (!empty($CFG->enableoutcomes)) {
+            if($CFG->grade_aggregateoutcomes == -1) {
+                $mform->addElement('advcheckbox', 'aggregateoutcomes', get_string('aggregateoutcomes', 'grades'));
+                $mform->setHelpButton('aggregateoutcomes', array(false, get_string('aggregateoutcomes', 'grades'),
+                                  false, true, false, get_string('aggregateoutcomeshelp', 'grades')));
+            } else {
+                $mform->addElement('static', 'aggregateoutcomes', get_string('aggregateoutcomes', 'grades'));
+            }
         }
 
         if ($CFG->grade_aggregatesubcats == -1) {
@@ -111,7 +113,7 @@ class edit_category_form extends moodleform {
         }
 
         // user preferences
-        $mform->addElement('header', 'general', get_string('userpreferences', 'grades'));
+        $mform->addElement('header', 'userpref', get_string('myreportpreferences', 'grades'));
         $options = array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'),
                          GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('fullmode', 'grades'),
                          GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY => get_string('aggregatesonly', 'grades'),
@@ -158,9 +160,11 @@ class edit_category_form extends moodleform {
             $agg_el->setValue($checkbox_values[$CFG->grade_aggregateonlygraded]);
         }
 
-        if ($CFG->grade_aggregateoutcomes != -1) {
-            $agg_el =& $mform->getElement('aggregateoutcomes');
-            $agg_el->setValue($checkbox_values[$CFG->grade_aggregateoutcomes]);
+        if (!empty($CFG->enableoutcomes)) {
+            if ($CFG->grade_aggregateoutcomes != -1) {
+                $agg_el =& $mform->getElement('aggregateoutcomes');
+                $agg_el->setValue($checkbox_values[$CFG->grade_aggregateoutcomes]);
+            }
         }
 
         if ($CFG->grade_aggregatesubcats != -1) {

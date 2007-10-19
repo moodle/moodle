@@ -521,7 +521,38 @@ class grade_category extends grade_object {
             return;
         }
 
-    /// start the aggregation
+        // do the maths
+        $agg_grade = $this->aggregate_values($grade_values, $items);
+
+    /// prepare update of new raw grade
+        $grade->rawgrademin = $this->grade_item->grademin;
+        $grade->rawgrademax = $this->grade_item->grademax;
+        $grade->rawscaleid  = $this->grade_item->scaleid;
+        $grade->rawgrade    = null; // categories do not use raw grades
+
+        // recalculate the rawgrade back to requested range
+        $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $this->grade_item->grademin, $this->grade_item->grademax);
+
+        if (!is_null($finalgrade)) {
+            $grade->finalgrade = bounded_number($this->grade_item->grademin, $finalgrade, $this->grade_item->grademax);
+        } else {
+            $grade->finalgrade = $finalgrade;
+        }
+
+        // update in db if changed
+        if (   $grade->finalgrade  !== $oldgrade->finalgrade
+            or $grade->rawgrade    !== $oldgrade->rawgrade
+            or $grade->rawgrademin !== $oldgrade->rawgrademin
+            or $grade->rawgrademax !== $oldgrade->rawgrademax
+            or $grade->rawscaleid  !== $oldgrade->rawscaleid) {
+
+            $grade->update('system');
+        }
+
+        return;
+    }
+
+    function aggregate_values($grade_values, $items) {
         switch ($this->aggregation) {
             case GRADE_AGGREGATE_MEDIAN: // Middle point value in the set: ignores frequencies
                 $num = count($grade_values);
@@ -593,34 +624,8 @@ class grade_category extends grade_object {
                 break;
         }
 
-    /// prepare update of new raw grade
-        $grade->rawgrademin = $this->grade_item->grademin;
-        $grade->rawgrademax = $this->grade_item->grademax;
-        $grade->rawscaleid  = $this->grade_item->scaleid;
-        $grade->rawgrade    = null; // categories do not use raw grades
-
-        // recalculate the rawgrade back to requested range
-        $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $this->grade_item->grademin, $this->grade_item->grademax);
-
-        if (!is_null($finalgrade)) {
-            $grade->finalgrade = bounded_number($this->grade_item->grademin, $finalgrade, $this->grade_item->grademax);
-        } else {
-            $grade->finalgrade = $finalgrade;
-        }
-
-        // update in db if changed
-        if (   $grade->finalgrade  !== $oldgrade->finalgrade
-            or $grade->rawgrade    !== $oldgrade->rawgrade
-            or $grade->rawgrademin !== $oldgrade->rawgrademin
-            or $grade->rawgrademax !== $oldgrade->rawgrademax
-            or $grade->rawscaleid  !== $oldgrade->rawscaleid) {
-
-            $grade->update('system');
-        }
-
-        return;
+        return $agg_grade;
     }
-
     /**
      * Given an array of grade values (numerical indices), applies droplow or keephigh
      * rules to limit the final array.

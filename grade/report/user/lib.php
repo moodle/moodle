@@ -137,14 +137,26 @@ class grade_report_user extends grade_report {
         }
 
         if ($canviewhidden) {
-            $hiding_affected = array();
+            $altered = array();
+            $unknown = array();
         } else {
             $hiding_affected = grade_grade::get_hiding_affected($grades, $items);
+            $altered = $hiding_affected['altered'];
+            $unknown = $hiding_affected['unknown'];
+            unset($hiding_affected);
         }
 
-        foreach ($items as $key=>$unused) {
-            $grade_item  =& $items[$key];
-            $grade_grade =& $grades[$key];
+        foreach ($items as $itemid=>$unused) {
+            $grade_item  =& $items[$itemid];
+            $grade_grade =& $grades[$itemid];
+
+            if (in_array($itemid, $unknown)) {
+                $gradeval = null;
+            } else if (array_key_exists($itemid, $altered)) {
+                $gradeval = $altered[$itemid];
+            } else {
+                $gradeval = $grade_grade->finalgrade;
+            }
 
             $data = array();
 
@@ -169,45 +181,29 @@ class grade_report_user extends grade_report {
             if ($grade_item->needsupdate) {
                 $data[] = '<span class="gradingerror">'.get_string('error').'</span>';
 
-            } else if (is_null($grade_grade->finalgrade)) {
-                $data[] = $excluded . '-';
-
-            } else if (!$canviewhidden and ($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected))) {
-                // TODO: optinally do not show anything for hidden grades
-                // $data[] = '-';
-                if ($grade_grade->is_hidden()) {
-                    $data[] = $excluded . '<div class="gradeddate">'.get_string('gradedon', 'grades', userdate($grade_grade->timemodified, get_string('strftimedatetimeshort'))).'</div>';
-                } else {
-                    $data[] = $excluded . '-';
-                }
+            } else if (!empty($CFG->grade_hiddenasdate) and !is_null($grade_grade->finalgrade) and !$canviewhidden and $grade_grade->is_hidden()
+                   and !$grade_item->is_category_item() and !$grade_item->is_course_item()) {
+                // the problem here is that we do not have the time when grade value was modified, 'timemodified' is general modification date for grade_grades records
+                $data[] = $excluded . '<div class="gradeddate">'.get_string('gradedon', 'grades', userdate($grade_grade->timemodified, get_string('strftimedatetimeshort'))).'</div>';
 
             } else {
-                $data[] = $excluded . grade_format_gradevalue($grade_grade->finalgrade, $grade_item, true);
+                $data[] = $excluded . grade_format_gradevalue($gradeval, $grade_item, true);
             }
 
             /// prints percentage
             if ($grade_item->needsupdate) {
                 $data[] = '<span class="gradingerror">'.get_string('error').'</span>';
 
-            } else if (is_null($grade_grade->finalgrade)) {
-                $data[] = '-';
-
-            } else if (!$canviewhidden and ($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected))) {
-                $data[] = '-';
-
             } else {
-                $data[] = grade_format_gradevalue($grade_grade->finalgrade, $grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
+                $data[] = grade_format_gradevalue($gradeval, $grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
             }
 
             /// prints rank
             if ($grade_item->needsupdate) {
                 $data[] = '<span class="gradingerror">'.get_string('error').'</span>';
 
-            } else if (is_null($grade_grade->finalgrade)) {
+            } else if (is_null($gradeval)) {
                 // no grade, no rank
-                $data[] = '-';
-
-            } else if (!$canviewhidden and ($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected))) {
                 $data[] = '-';
 
             } else {
@@ -225,7 +221,7 @@ class grade_report_user extends grade_report {
             if (empty($grade_grade->feedback)) {
                 $data[] = '&nbsp;';
 
-            } else if (!$canviewhidden and ($grade_grade->is_hidden() or in_array($grade_item->id, $hiding_affected))) {
+            } else if (!$canviewhidden and $grade_grade->is_hidden()) {
                 $data[] = '&nbsp;';
 
             } else {
