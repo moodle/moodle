@@ -613,12 +613,12 @@
                     $cols=40;
                     if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
                         $rows = ceil($valuelen / $cols);
-                        $o .= '<textarea name="stringXXX'.lang_form_string_key($key).'" cols="'.$cols.'" rows="'.$rows.'">'.$value.'</textarea>'."\n";
+                        $o .= '<textarea name="stringXXX'.lang_form_string_key($key).'" cols="'.$cols.'" rows="'.$rows.'" tabindex="'.$missingcounter.'">'.$value.'</textarea>'."\n";
                     } else {
                         if ($valuelen) {
                             $cols = $valuelen + 5;
                         }
-                        $o .= '<input type="text" name="stringXXX'.lang_form_string_key($key).'" value="'.$value.'" size="'.$cols.'" />';
+                        $o .= '<input type="text" name="stringXXX'.lang_form_string_key($key).'" value="'.$value.'" size="'.$cols.'" tabindex="'.$missingcounter.'" />';
                     }
                     if ($value2 <> '' && $value <> $value2) {
                         $o .= '<br /><span style="font-size:small">'.$value2.'</span>';
