@@ -1591,6 +1591,10 @@
                     // relink the descriptions
                     $user->description = restore_decode_absolute_links($user->description);
 
+                    if (!empty($CFG->disableuserimages)) {
+                        $user->picture = 0;
+                    }
+
                     //We need to analyse the AUTH field to recode it:
                     //   - if the field isn't set, we are in a pre 1.4 backup and we'll 
                     //     use manual
@@ -2612,30 +2616,27 @@
         if (is_dir($rootdir) && ($list = list_directories ($rootdir))) {
             $counter = 0;
             foreach ($list as $dir) {
-            // If there are directories in this folder, we are in the new user hierarchy
-            if ($newlist = list_directories("$rootdir/$dir")) {
-                foreach ($newlist as $userid) {
-                    $userlist[$userid] = "$rootdir/$dir/$userid";
+                // If there are directories in this folder, we are in the new user hierarchy
+                if ($newlist = list_directories("$rootdir/$dir")) {
+                    foreach ($newlist as $olduserid) {
+                        $userlist[$olduserid] = "$rootdir/$dir/$olduserid";
+                    }
+                } else {
+                    $userlist[$dir] = "$rootdir/$dir";
                 }
-            } else {
-                $userlist[$userid] = "$rootdir/$dir";
             }
-        }
 
-        foreach ($userlist as $userid => $backup_location) { 
+            foreach ($userlist as $olduserid => $backup_location) { 
                 //Look for dir like username in backup_ids
-            $data = get_record ("backup_ids","backup_code",$restore->backup_unique_code, "table_name","user", "old_id",$userid);
+                //If that user exists in backup_ids
+                if ($user = backup_getid($restore->backup_unique_code,"user",$olduserid)) {
+                    //Only if user has been created now or if it existed previously, but he hasn't got an image (see bug 1123)
+                    $newuserdir = make_user_directory($user->new_id, true); // Doesn't create the folder, just returns the location
 
-            //If that user exists in backup_ids
-                if ($data) {
-                //Only if user has been created now or if it existed previously, but he hasn't got an image (see bug 1123)
-                $newuserdir = make_user_directory($userid, true); // Doesn't create the folder, just returns the location
-
-                if ((strpos($data->info,"new") !== false) or (!check_dir_exists($newuserdir))) {
-                    //Copy the old_dir to its new location (and name) !! Only if destination doesn't exists
-                    if (!file_exists($newuserdir)) {
-                        make_user_directory($userid); // Creates the folder
-                        $status = backup_copy_file($backup_location, $newuserdir, true);
+                    // restore images if new user or image does not exist yet
+                    if (!empty($user->new) or !check_dir_exists($newuserdir)) {
+                        if (make_user_directory($user->new_id)) { // Creates the folder
+                            $status = backup_copy_file($backup_location, $newuserdir, true);
                             $counter ++;
                         }
                         //Do some output
