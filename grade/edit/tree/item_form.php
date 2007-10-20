@@ -101,8 +101,6 @@ class edit_item_form extends moodleform {
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
         $mform->addElement('text', 'aggregationcoef', get_string('aggregationcoef', 'grades'));
-        $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoef', 'grades'),
-                false, true, false, get_string('aggregationcoefhelp', 'grades')));
 
         /// grade display prefs
 
@@ -203,17 +201,29 @@ class edit_item_form extends moodleform {
             if ($grade_item->is_course_item()) {
                 $mform->removeElement('aggregationcoef');
 
-            } else if ($grade_item->is_category_item()) {
-                $category = $grade_item->get_item_category();
-                $parent_category = $category->get_parent_category();
-                if (!$parent_category->is_aggregationcoef_used()) {
-                    $mform->removeElement('aggregationcoef');
+            } else {
+                if ($grade_item->is_category_item()) {
+                    $category = $grade_item->get_item_category();
+                    $parent_category = $category->get_parent_category();
+                } else {
+                    $parent_category = $grade_item->get_parent_category();
                 }
 
-            } else {
-                $parent_category = $grade_item->get_parent_category();
+                $parent_category->apply_forced_settings();
+
                 if (!$parent_category->is_aggregationcoef_used()) {
                     $mform->removeElement('aggregationcoef');
+                } else {
+                    $agg_el =& $mform->getElement('aggregationcoef');
+                    if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
+                        $agg_el->setLabel(get_string('aggregationcoefweight', 'grades'));
+                        $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoefweight', 'grades'),
+                                false, true, false, get_string('aggregationcoefweighthelp', 'grades')));
+                    } else if ($parent_category->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
+                        $agg_el->setLabel(get_string('aggregationcoefextra', 'grades'));
+                        $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoefextra', 'grades'),
+                                false, true, false, get_string('aggregationcoefextrahelp', 'grades')));
+                    }
                 }
             }
 
@@ -222,9 +232,20 @@ class edit_item_form extends moodleform {
             $mform->removeElement('plusfactor');
             $mform->removeElement('multfactor');
 
-            $course_category = grade_category::fetch_course_category($COURSE->id);
-            if (!$course_category->is_aggregationcoef_used()) {
+            $parent_category = grade_category::fetch_course_category($COURSE->id);
+            if (!$parent_category->is_aggregationcoef_used()) {
                 $mform->removeElement('aggregationcoef');
+            } else {
+                $agg_el =& $mform->getElement('aggregationcoef');
+                if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
+                    $agg_el->setLabel(get_string('aggregationcoefweight', 'grades'));
+                    $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoefweight', 'grades'),
+                            false, true, false, get_string('aggregationcoefweighthelp', 'grades')));
+                } else if ($parent_category->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
+                    $agg_el->setLabel(get_string('aggregationcoefextra', 'grades'));
+                    $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoefextra', 'grades'),
+                            false, true, false, get_string('aggregationcoefextrahelp', 'grades')));
+                }
             }
         }
     }
