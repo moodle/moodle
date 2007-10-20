@@ -573,8 +573,10 @@
                 if (!$value) {
                     if (!$value2) {
                         $cellcolour = 'class="bothmissing"';
+                        $usetabindex = true;
                     } else {
                         $cellcolour = 'class="mastermissing"';
+                        $usetabindex = true;
                     }
                     $missingcounter++;
                     if (LANG_DISPLAY_MISSING_LINKS) {
@@ -591,8 +593,10 @@
                 } else {
                     if ($value <> $value2 && $value2 <> '') {
                         $cellcolour = 'class="localdifferent"';
+                        $usetabindex = true;
                     } else {
                         $cellcolour = '';
+                        $usetabindex = false;
                     }
                     $missingtarget = '';
                     $missingnext = '';
@@ -611,14 +615,19 @@
                         $valuelen = strlen($envalue);
                     }
                     $cols=40;
+                    if ($usetabindex) {
+                        $tabindex = 'tabindex="'.$missingcounter.'"';
+                    } else {
+                        $tabindex = '';
+                    }
                     if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
                         $rows = ceil($valuelen / $cols);
-                        $o .= '<textarea name="stringXXX'.lang_form_string_key($key).'" cols="'.$cols.'" rows="'.$rows.'" tabindex="'.$missingcounter.'">'.$value.'</textarea>'."\n";
+                        $o .= '<textarea name="stringXXX'.lang_form_string_key($key).'" cols="'.$cols.'" rows="'.$rows.'" '.$tabindex.'>'.$value.'</textarea>'."\n";
                     } else {
                         if ($valuelen) {
                             $cols = $valuelen + 5;
                         }
-                        $o .= '<input type="text" name="stringXXX'.lang_form_string_key($key).'" value="'.$value.'" size="'.$cols.'" tabindex="'.$missingcounter.'" />';
+                        $o .= '<input type="text" name="stringXXX'.lang_form_string_key($key).'" value="'.$value.'" size="'.$cols.'" '.$tabindex.' />';
                     }
                     if ($value2 <> '' && $value <> $value2) {
                         $o .= '<br /><span style="font-size:small">'.$value2.'</span>';
