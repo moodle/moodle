@@ -45,20 +45,29 @@ $returnurl = $gpr->get_return_url('index.php?id='.$course->id);
 
 
 $mform = new edit_category_form(null, array('gpr'=>$gpr));
-if ($category = get_record('grade_categories', 'id', $id, 'courseid', $course->id)) {
+
+if ($id) {
+    if (!$grade_category = grade_category::fetch(array('id'=>$id, 'courseid'=>$course->id))) {
+        error('Incorrect category id!');
+    }
+    $grade_category->apply_forced_settings();
+    $category = $grade_category->get_record_data(); 
     // Get Category preferences
     $category->pref_aggregationview = grade_report::get_pref('aggregationview', $id);
 
-    $mform->set_data($category);
 } else {
-    $mform->set_data(array('courseid'=>$course->id));
+    $grade_category = new grade_category();
+    $grade_category->courseid = $course->id;
+    $grade_category->apply_forced_settings();
+    $category = $grade_category->get_record_data(); 
 }
+
+$mform->set_data($category);
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data(false)) {
-    $grade_category = new grade_category(array('id'=>$id, 'courseid'=>$course->id));
     grade_category::set_properties($grade_category, $data);
 
     if (empty($grade_category->id)) {

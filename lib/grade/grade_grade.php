@@ -542,8 +542,10 @@ class grade_grade extends grade_object {
                             unset($todo[$key]);
                             $found = true;
                             continue;
+
                         } else {
                             $grade_category = $grade_items[$do]->load_item_category();
+
                             $values = array();
                             foreach ($dependson[$do] as $itemid) {
                                 if (array_key_exists($itemid, $altered)) {
@@ -552,10 +554,7 @@ class grade_grade extends grade_object {
                                     $values[$itemid] = $grade_grades[$itemid]->finalgrade;
                                 }
                             }
-                            if ($CFG->grade_aggregateonlygraded != -1) {
-                                $grade_category->aggregateonlygraded = $CFG->grade_aggregateonlygraded;
-                            }
-                            
+
                             if ($grade_category->aggregateonlygraded) {
                                 foreach ($values as $itemid=>$value) {
                                     if (is_null($value)) {
@@ -580,7 +579,7 @@ class grade_grade extends grade_object {
                             // limit and sort
                             $grade_category->apply_limit_rules($values);
                             asort($values, SORT_NUMERIC);
-                    
+
                             // let's see we have still enough grades to do any statistics
                             if (count($values) == 0) {
                                 // not enough attempts yet
@@ -594,7 +593,7 @@ class grade_grade extends grade_object {
 
                             // recalculate the rawgrade back to requested range
                             $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $grade_items[$itemid]->grademin, $grade_items[$itemid]->grademax);
-                    
+
                             if (!is_null($finalgrade)) {
                                 $finalgrade = bounded_number($grade_items[$itemid]->grademin, $finalgrade, $grade_items[$itemid]->grademax);
                             }
