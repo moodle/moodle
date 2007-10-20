@@ -1589,7 +1589,7 @@
                     //Unset the id because it's going to be inserted with a new one
                     unset ($user->id);
                     // relink the descriptions
-                    $user->description = restore_decode_absolute_links(addslashes($user->description));
+                    $user->description = restore_decode_absolute_links($user->description);
 
                     //We need to analyse the AUTH field to recode it:
                     //   - if the field isn't set, we are in a pre 1.4 backup and we'll 
