@@ -555,6 +555,14 @@ class grade_grade extends grade_object {
                                 }
                             }
 
+                            foreach ($values as $itemid=>$value) {
+                                if ($grade_grades[$itemid]->is_excluded()) {
+                                    unset($values[$itemid]);
+                                    continue;
+                                }
+                                $values[$itemid] = grade_grade::standardise_score($value, $grade_items[$itemid]->grademin, $grade_items[$itemid]->grademax, 0, 1);
+                            }
+
                             if ($grade_category->aggregateonlygraded) {
                                 foreach ($values as $itemid=>$value) {
                                     if (is_null($value)) {
@@ -564,16 +572,9 @@ class grade_grade extends grade_object {
                             } else {
                                 foreach ($values as $itemid=>$value) {
                                     if (is_null($value)) {
-                                        $values[$itemid] = $grade_items[$itemid]->grademin;
+                                        $values[$itemid] = 0;
                                     }
                                 }
-                            }
-                            foreach ($values as $itemid=>$value) {
-                                if ($grade_grades[$itemid]->is_excluded()) {
-                                    unset($values[$itemid]);
-                                    continue;
-                                }
-                                $values[$itemid] = grade_grade::standardise_score($value, $grade_items[$itemid]->grademin, $grade_items[$itemid]->grademax, 0, 1);
                             }
 
                             // limit and sort
@@ -592,10 +593,10 @@ class grade_grade extends grade_object {
                             $agg_grade = $grade_category->aggregate_values($values, $grade_items);
 
                             // recalculate the rawgrade back to requested range
-                            $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $grade_items[$itemid]->grademin, $grade_items[$itemid]->grademax);
+                            $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $grade_items[$do]->grademin, $grade_items[$do]->grademax);
 
                             if (!is_null($finalgrade)) {
-                                $finalgrade = bounded_number($grade_items[$itemid]->grademin, $finalgrade, $grade_items[$itemid]->grademax);
+                                $finalgrade = bounded_number($grade_items[$do]->grademin, $finalgrade, $grade_items[$do]->grademax);
                             }
 
                             $altered[$do] = $finalgrade;
