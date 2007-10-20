@@ -2203,7 +2203,7 @@
                     //Unset the id because it's going to be inserted with a new one
                     unset ($user->id);
                     // relink the descriptions
-                    $user->description = backup_todb($user->description);
+                    $user->description = stripslashes(backup_todb($user->description));
 
                     //We need to analyse the AUTH field to recode it:
                     //   - if the field isn't set, we are in a pre 1.4 backup and we'll
