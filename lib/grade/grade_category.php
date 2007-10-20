@@ -139,6 +139,11 @@ class grade_category extends grade_object {
     var $sortorder;
 
     /**
+     * List of options which can be "forced" from site settings.
+     */
+    var $forceable = array('aggregation', 'keephigh', 'droplow', 'aggregateonlygraded', 'aggregateoutcomes', 'aggregatesubcats');
+
+    /**
      * Builds this category's path string based on its parents (if any) and its own id number.
      * This is typically done just before inserting this object in the DB for the first time,
      * or when a new parent is added or changed. It is a recursive function: once the calling
@@ -194,6 +199,14 @@ class grade_category extends grade_object {
             $this->depth = substr_count($this->path, '/') - 1;
         }
 
+        $this->apply_forced_settings();
+
+		// these are exclusive
+        if ($this->droplow > 0) {
+            $this->keephigh = 0;
+        } else if ($this->keephigh > 0) {
+            $this->droplow = 0;
+        }
 
         // Recalculate grades if needed
         if ($this->qualifies_for_regrading()) {
@@ -303,6 +316,8 @@ class grade_category extends grade_object {
         $this->parent    = null;
         $this->aggregate = GRADE_AGGREGATE_MEAN;
 
+        $this->apply_forced_settings();
+
         if (!parent::insert('system')) {
             debugging("Could not insert this category: " . print_r($this, true));
             return false;
@@ -371,9 +386,7 @@ class grade_category extends grade_object {
             return true; // no need to recalculate locked items
         }
 
-        $this->grade_item->load_scale();
-
-        // find grade items of immediate children (category or grade items)
+        // find grade items of immediate children (category or grade items) and force site settings
         $depends_on = $this->grade_item->depends_on();
 
         if (empty($depends_on)) {
@@ -492,11 +505,6 @@ class grade_category extends grade_object {
             $grade_values[$itemid] = grade_grade::standardise_score($v, $items[$itemid]->grademin, $items[$itemid]->grademax, 0, 1);
         }
 
-        // If global aggregateonlygraded is set, override category value
-        if ($CFG->grade_aggregateonlygraded != -1) {
-            $this->aggregateonlygraded = $CFG->grade_aggregateonlygraded;
-        }
-
         // use min grade if grade missing for these types
         if (!$this->aggregateonlygraded) {
             foreach($items as $itemid=>$value) {
@@ -552,6 +560,9 @@ class grade_category extends grade_object {
         return;
     }
 
+    /**
+     * Internal function - aggregation maths.
+     */
     function aggregate_values($grade_values, $items) {
         switch ($this->aggregation) {
             case GRADE_AGGREGATE_MEDIAN: // Middle point value in the set: ignores frequencies
@@ -633,17 +644,6 @@ class grade_category extends grade_object {
      * @return array Limited grades.
      */
     function apply_limit_rules(&$grade_values) {
-        global $CFG;
-
-        // If global keephigh and/or droplow are set, override category variable
-        if ($CFG->grade_keephigh != -1) {
-            $this->keephigh = $CFG->grade_keephigh;
-        }
-
-        if ($CFG->grade_droplow != -1) {
-            $this->droplow = $CFG->grade_droplow;
-        }
-
         arsort($grade_values, SORT_NUMERIC);
         if (!empty($this->droplow)) {
             for ($i = 0; $i < $this->droplow; $i++) {
@@ -1107,6 +1107,34 @@ class grade_category extends grade_object {
                 }
             }
         }
+    }
+
+    /**
+     * Applies forced settings on this category
+     * @return bool true if anything changed
+     */
+    function apply_forced_settings() {
+        global $CFG;
+
+        $updated = false;
+        foreach ($this->forceable as $property) {
+            if (isset($CFG->{"grade_$property"}) and $CFG->{"grade_$property"} != -1) {
+                $this->$property = $CFG->{"grade_$property"};
+                $updated = true;
+            }
+        }
+
+        return $updated;
+    }
+
+    /**
+     * Notification of change in forced category settings.
+     * @static
+     */
+    function updated_forced_settings() {
+        global $CFG;
+        $sql = "UPDATE {$CFG->prefix}grade_items SET needsupdate=1 WHERE itemtype='course' or itemtype='category'";
+        execute_sql($sql, false);
     }
 }
 ?>

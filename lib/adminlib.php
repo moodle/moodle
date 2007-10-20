@@ -2765,6 +2765,33 @@ class admin_setting_special_debugdisplay extends admin_setting_configcheckbox {
 
 }
 
+/**
+ * Select config class with regrading when setting changes.
+ */
+class admin_category_regrade_select extends admin_setting_configselect {
+
+    function admin_category_regrade_select($name, $visiblename, $description, $defaultsetting, $choices) {
+        parent::admin_setting_configselect($name, $visiblename, $description, $defaultsetting, $choices);
+    }
+
+    function write_setting($data) {
+         global $CFG;
+
+         if (!in_array($data, array_keys($this->choices))) {
+             return 'Error setting ' . $this->visiblename . '<br />';
+         }
+
+         $old = get_config(NULL, $this->name);
+         set_config($this->name, $data);
+         if ($old !== $data) {
+            require_once($CFG->libdir.'/gradelib.php');
+            grade_category::updated_forced_settings();
+         }
+
+         return '';
+    }
+}
+
 
 // Code for a function that helps externalpages print proper headers and footers
 // N.B.: THIS FUNCTION HANDLES AUTHENTICATION

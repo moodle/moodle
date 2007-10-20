@@ -201,17 +201,7 @@ class grade_object {
 
         $this->timemodified = time();
 
-        // we need to do this to prevent infinite loops in addslashes_recursive - grade_item -> category ->grade_item
-        $data = new object();
-        foreach ($this as $var=>$value) {
-            if (in_array($var, $this->required_fields) or array_key_exists($var, $this->optional_fields)) {
-                if (is_object($value) or is_array($value)) {
-                    debugging("Incorrect property '$var' found when updating grade object");
-                } else {
-                    $data->$var = $value;
-                }
-            }
-        }
+        $data = $this->get_record_data();
 
         if (!update_record($this->table, addslashes_recursive($data))) {
             return false;
@@ -261,6 +251,24 @@ class grade_object {
     }
 
     /**
+     * Returns object with fields and values that are defined in database
+     */
+    function get_record_data() {
+        $data = new object();
+        // we need to do this to prevent infinite loops in addslashes_recursive - grade_item -> category ->grade_item
+        foreach ($this as $var=>$value) {
+            if (in_array($var, $this->required_fields) or array_key_exists($var, $this->optional_fields)) {
+                if (is_object($value) or is_array($value)) {
+                    debugging("Incorrect property '$var' found when inserting grade object");
+                } else {
+                    $data->$var = $value;
+                }
+            }
+        }
+        return $data;
+    }
+
+    /**
      * Records this object in the Database, sets its id to the returned value, and returns that value.
      * If successful this function also fetches the new object data from database and stores it
      * in object properties.
@@ -277,17 +285,7 @@ class grade_object {
 
         $this->timecreated = $this->timemodified = time();
 
-        // we need to do this to prevent infinite loops in addslashes_recursive - grade_item -> category ->grade_item
-        $data = new object();
-        foreach ($this as $var=>$value) {
-            if (in_array($var, $this->required_fields) or array_key_exists($var, $this->optional_fields)) {
-                if (is_object($value) or is_array($value)) {
-                    debugging("Incorrect property '$var' found when inserting grade object");
-                } else {
-                    $data->$var = $value;
-                }
-            }
-        }
+        $data = $this->get_record_data();
 
         if (!$this->id = insert_record($this->table, addslashes_recursive($data))) {
             debugging("Could not insert object into db");
