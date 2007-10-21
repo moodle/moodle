@@ -116,7 +116,7 @@ foreach (get_list_of_plugins('grade/report') as $plugin) {
     if (file_exists($CFG->dirroot.'/grade/report/'.$plugin.'/settings.php')) {
 
         $settings = new admin_settingpage('gradereport'.$plugin, get_string('modulename', 'gradereport_'.$plugin));
-        include_once($CFG->dirroot.'/grade/report/'.$plugin.'/settings.php');
+        include($CFG->dirroot.'/grade/report/'.$plugin.'/settings.php');
         $ADMIN->add('gradereports', $settings);
     }
 }
@@ -134,7 +134,7 @@ foreach (get_list_of_plugins('grade/import') as $plugin) {
         }
 
         $settings = new admin_settingpage('gradeimport'.$plugin, get_string('modulename', 'gradeimport_'.$plugin));
-        include_once($CFG->dirroot.'/grade/import/'.$plugin.'/settings.php');
+        include($CFG->dirroot.'/grade/import/'.$plugin.'/settings.php');
         $ADMIN->add('gradeimports', $settings);
     }
 }
@@ -152,7 +152,7 @@ foreach (get_list_of_plugins('grade/export') as $plugin) {
         }
 
         $settings = new admin_settingpage('gradeexport'.$plugin, get_string('modulename', 'gradeexport_'.$plugin));
-        include_once($CFG->dirroot.'/grade/export/'.$plugin.'/settings.php');
+        include($CFG->dirroot.'/grade/export/'.$plugin.'/settings.php');
         $ADMIN->add('gradeexports', $settings);
     }
 }
