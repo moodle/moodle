@@ -494,13 +494,9 @@ class grade_grade extends grade_object {
         $unknown = array();  // can not find altered
         $altered = array();  // altered grades
 
-        foreach($grade_items as $key=>$unused) {
-            $grade_item =& $grade_items[$key]; // reference for improved caching inside grade_item
-            $dependson[$grade_items[$key]->id] = $grade_items[$key]->depends_on();
-        }
-
         $hiddenfound = false;
-        foreach($grade_grades as $grade_grade) {
+        foreach($grade_grades as $itemid=>$unused) {
+            $grade_grade =& $grade_grades[$itemid];
             if ($grade_grade->is_excluded()) {
                 //nothing to do, aggregation is ok
             } else if ($grade_grade->is_hidden()) {
@@ -509,8 +505,13 @@ class grade_grade extends grade_object {
                 if (!is_null($grade_grade->finalgrade)) {
                     $altered[$grade_grade->itemid] = null;
                 }
-            } else if (!empty($dependson[$grade_grade->itemid])) {
-                $todo[] = $grade_grade->itemid;
+            } else if ($grade_grade->is_locked() or $grade_grade->is_overridden()) {
+                // no need to recalculate locked or overridden grades
+            } else {
+                $dependson[$grade_grade->itemid] = $grade_items[$grade_grade->itemid]->depends_on();
+                if (!empty($dependson[$grade_grade->itemid])) {
+                    $todo[] = $grade_grade->itemid;
+                }
             }
         }
         if (!$hiddenfound) {

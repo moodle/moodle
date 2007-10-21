@@ -137,11 +137,15 @@ class grade_report_user extends grade_report {
 
         $canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->courseid));
 
+        // fetch or create all grades
         foreach ($items as $key=>$unused) {
-            $grade_item =& $items[$key];
-            $grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$this->user->id));
+            if (!$grade_grade = grade_grade::fetch(array('itemid'=>$items[$key]->id, 'userid'=>$this->user->id))) {
+                $grade_grade = new grade_grade();
+                $grade_grade->userid = $this->user->id;
+                $grade_grade->itemid = $items[$key]->id;
+            }
             $grades[$key] = $grade_grade;
-            $grades[$key]->grade_item =& $grade_item;
+            $grades[$key]->grade_item =& $items[$key];
         }
 
         if ($canviewhidden) {
