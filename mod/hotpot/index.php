@@ -116,7 +116,7 @@
                 print ''
                 .   '<div align="center"><table border="0"><tr><td>'
                 .   '<form target="_parent" method="post" action="'.$ME.'">'
-                .   '<input type="hidden" name="id" value="'.$course->id.'">'
+                .   '<input type="hidden" name="id" value="'.$course->id.'" />'
                 .   '<input type="hidden" name="regrade" value="'.$regrade.'" />'
                 .   '<input type="hidden" name="confirm" value="1" />'
                 .   $sesskey
@@ -124,7 +124,7 @@
                 .   '</form>'
                 .   '</td><td> &nbsp; </td><td>'
                 .   '<form target="_parent" method="post" action="'.$ME.'">'
-                .   '<input type="hidden" name="id" value="'.$course->id.'">'
+                .   '<input type="hidden" name="id" value="'.$course->id.'" />'
                 .   $sesskey
                 .   '<input type="submit" value="'.get_string("no").'" />'
                 .   '</form>'
@@ -313,10 +313,10 @@
                     // Show the zoom boxes
                     if ($displaysection==$hotpot->section) {
                         $strshowall = get_string('showall'.$course->format);
-                        $printsection .= '<br /><a href="index.php?id='.$course->id.'&section=all" title="'.$strshowall.'"><img src="'.$CFG->pixpath.'/i/all.gif" style="height:25px; width:16px; border:0px" alt="'.$strshowall.'"></a><br />';
+                        $printsection .= '<br /><a href="index.php?id='.$course->id.'&amp;section=all" title="'.$strshowall.'"><img src="'.$CFG->pixpath.'/i/all.gif" style="height:25px; width:16px; border:0px" alt="'.$strshowall.'" /></a><br />';
                     } else {
                         $strshowone = get_string('showonly'.preg_replace('|s$|', '', $course->format, 1), '', $hotpot->section);
-                        $printsection .=  '<br /><a href="index.php?id='.$course->id.'&section='.$hotpot->section.'" title="'.$strshowone.'"><img src="'.$CFG->pixpath.'/i/one.gif" class="icon" alt="'.$strshowone.'"></a><br />';
+                        $printsection .=  '<br /><a href="index.php?id='.$course->id.'&amp;section='.$hotpot->section.'" title="'.$strshowone.'"><img src="'.$CFG->pixpath.'/i/one.gif" class="icon" alt="'.$strshowone.'" /></a><br />';
                     }
                 }
             }
@@ -327,7 +327,7 @@
         }
 
         $class = ($hotpot->visible) ? '' : 'class="dimmed" ';
-        $quizname = '<a '.$class.'href="view.php?id='.$hotpot->coursemodule.'">'.$hotpot->name.'</A>';
+        $quizname = '<a '.$class.'href="view.php?id='.$hotpot->coursemodule.'">'.$hotpot->name.'</a>';
         $quizclose = empty($hotpot->timeclose) ? $strneverclosed : userdate($hotpot->timeclose);
 
         // are there any totals for this hotpot?
@@ -369,7 +369,7 @@
 
         if (has_capability('moodle/course:manageactivities', $coursecontext)) {
             $updatebutton = ''
-            .   '<form '.$CFG->frametarget.'" method="get" action="'.$CFG->wwwroot.'/course/mod.php">'
+            .   '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/course/mod.php">'
             .   '<input type="hidden" name="update" value="'.$hotpot->coursemodule.'" />'
             .   $sesskey
             .   '<input type="submit" value="'.$strupdate.'" />'
@@ -388,7 +388,7 @@
                 $strregradecheck = get_string('regradecheck', 'hotpot', strtr($hotpot->name, $quotes));
                 $regradebutton = ''
                 .   '<form target="_parent" method="post" action="'.$ME.'" onsubmit="var x=window.confirm('."'$strregradecheck'".');this.confirm.value=x;return x;">'
-                .   '<input type="hidden" name="id" value="'.$course->id.'">'
+                .   '<input type="hidden" name="id" value="'.$course->id.'" />'
                 .   '<input type="hidden" name="regrade" value="'.$hotpot->id.'" />'
                 .   '<input type="hidden" name="confirm" value="" />'
                 .   $sesskey

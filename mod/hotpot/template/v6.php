@@ -98,7 +98,8 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->js_value('hotpot-config-file,global,incorrect-indicator');
     }
     function v6_expand_LastQCaption() {
-        return $this->parent->xml_value('hotpot-config-file,global,last-q-caption');
+        $caption = $this->parent->xml_value('hotpot-config-file,global,last-q-caption');
+        return ($caption=='<=' ? '&lt;=' : $caption);
     }
     function v6_expand_NextCorrect() {
         $value = $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',next-correct-part');
@@ -111,7 +112,8 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->int_value('hotpot-config-file,global,include-next-ex');
     }
     function v6_expand_NextExCaption() {
-        return $this->parent->xml_value('hotpot-config-file,global,next-ex-caption');
+        $caption = $this->parent->xml_value('hotpot-config-file,global,next-ex-caption');
+        return ($caption=='=>' ? '=&gt;' : $caption);
     }
     function v6_expand_NextQCaption() {
         return $this->parent->xml_value('hotpot-config-file,global,next-q-caption');
