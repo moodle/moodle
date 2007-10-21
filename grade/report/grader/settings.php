@@ -22,7 +22,6 @@
 //          http://www.gnu.org/copyleft/gpl.html                         //
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
-require_once($CFG->libdir.'/grade/constants.php');
 
 $strinherit             = get_string('inherit', 'grades');
 $strpercentage          = get_string('percentage', 'grades');

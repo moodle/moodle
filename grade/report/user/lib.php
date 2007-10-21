@@ -87,16 +87,24 @@ class grade_report_user extends grade_report {
      * Prepares the headers and attributes of the flexitable.
      */
     function setup_table() {
+        global $CFG;
         /*
-        * Table has 6 columns
-        *| pic  | itemname/description | grade (grade_final) | percentage | rank | feedback |
+        * Table has 5-6 columns
+        *| pic  | itemname/description | grade (grade_final) | percentage | rank (optional) | feedback |
         */
 
         // setting up table headers
-        $tablecolumns = array('itemname', 'category', 'grade', 'percentage', 'rank', 'feedback');
-        $tableheaders = array($this->get_lang_string('gradeitem', 'grades'), $this->get_lang_string('category'), $this->get_lang_string('grade'),
-            $this->get_lang_string('percent', 'grades'), $this->get_lang_string('rank', 'grades'),
-            $this->get_lang_string('feedback'));
+        if (!empty($CFG->grade_userreport_showrank)) {
+            // TODO: this is broken if hidden grades present!!
+            $tablecolumns = array('itemname', 'category', 'grade', 'percentage', 'rank', 'feedback');
+            $tableheaders = array($this->get_lang_string('gradeitem', 'grades'), $this->get_lang_string('category'), $this->get_lang_string('grade'),
+                $this->get_lang_string('percent', 'grades'), $this->get_lang_string('rank', 'grades'),
+                $this->get_lang_string('feedback'));
+        } else {
+            $tablecolumns = array('itemname', 'category', 'grade', 'percentage', 'feedback');
+            $tableheaders = array($this->get_lang_string('gradeitem', 'grades'), $this->get_lang_string('category'), $this->get_lang_string('grade'),
+                $this->get_lang_string('percent', 'grades'), $this->get_lang_string('feedback'));
+        }
 
         $this->table = new flexible_table('grade-report-user-'.$this->courseid);
 
@@ -150,6 +158,10 @@ class grade_report_user extends grade_report {
             $grade_item  =& $items[$itemid];
             $grade_grade =& $grades[$itemid];
 
+            if (empty($CFG->grade_userreport_showhiddenitems) and !$canviewhidden and $grade_item->is_hidden()) {
+                continue;
+            }
+
             if (in_array($itemid, $unknown)) {
                 $gradeval = null;
             } else if (array_key_exists($itemid, $altered)) {
@@ -199,22 +211,25 @@ class grade_report_user extends grade_report {
             }
 
             /// prints rank
-            if ($grade_item->needsupdate) {
-                $data[] = '<span class="gradingerror">'.get_string('error').'</span>';
-
-            } else if (is_null($gradeval)) {
-                // no grade, no rank
-                $data[] = '-';
-
-            } else {
-                /// find the number of users with a higher grade
-                $sql = "SELECT COUNT(DISTINCT(userid))
-                          FROM {$CFG->prefix}grade_grades
-                         WHERE finalgrade > {$grade_grade->finalgrade}
-                               AND itemid = {$grade_item->id}";
-                $rank = count_records_sql($sql) + 1;
-
-                $data[] = "$rank/$numusers";
+            if (!empty($CFG->grade_userreport_showrank)) {
+                // TODO: this is broken if hidden grades present!!
+                if ($grade_item->needsupdate) {
+                    $data[] = '<span class="gradingerror">'.get_string('error').'</span>';
+    
+                } else if (is_null($gradeval)) {
+                    // no grade, no rank
+                    $data[] = '-';
+    
+                } else {
+                    /// find the number of users with a higher grade
+                    $sql = "SELECT COUNT(DISTINCT(userid))
+                              FROM {$CFG->prefix}grade_grades
+                             WHERE finalgrade > {$grade_grade->finalgrade}
+                                   AND itemid = {$grade_item->id}";
+                    $rank = count_records_sql($sql) + 1;
+    
+                    $data[] = "$rank/$numusers";
+                }
             }
 
             /// prints notes
