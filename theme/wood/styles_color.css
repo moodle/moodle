@@ -405,3 +405,10 @@ table .flexible .r1,
     border-right:1px solid #330000;
     border-collapse: separate;
 }
+
+/** Changing some standard colors **/
+
+.grade-report-grader .gradestable tr.groupavg td.cell,
+.grade-report-grader .gradestable tr.avg td.cell {
+    color: #330000;
+}
