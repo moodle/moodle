@@ -2441,7 +2441,7 @@ END_OF_SCRIPT;
         $html .= $spacer
         .   '<a href="'
         .           $CFG->wwwroot.'/mod/hotpot/show.php'
-        .           '?course='.$course.'&location='.$location.'&reference='.urlencode($reference).'&action='.$action
+        .           '?course='.$course.'&amp;location='.$location.'&amp;reference='.urlencode($reference).'&amp;action='.$action
         .       '"'
         .       ' onclick="return setLink(this);"'
         .       ($new_window ? ' target="_blank"' : '')
