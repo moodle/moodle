@@ -58,7 +58,7 @@ class hotpot_report extends hotpot_default_report {
 			$name = fullname($u);
 			if ($is_html) {
 				$picture = print_user_picture($u->userid, $course->id, $u->picture, false, true);
-				$name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&course='.$course->id.'">'.$name.'</a>';
+				$name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&amp;course='.$course->id.'">'.$name.'</a>';
 			}
 			if (isset($user->grade)) {
 				$grade = $user->grade;
@@ -97,7 +97,7 @@ class hotpot_report extends hotpot_default_report {
 				// get attempt number
 				$attemptnumber= $attempt->attempt;
 				if ($is_html && $allow_review) {
-					$attemptnumber = '<a href="review.php?hp='.$hotpot->id.'&attempt='.$attempt->id.'">'.$attemptnumber.'</a>';
+					$attemptnumber = '<a href="review.php?hp='.$hotpot->id.'&amp;attempt='.$attempt->id.'">'.$attemptnumber.'</a>';
 				}
 				if ($is_best_grade) {
 					$score = '<span class="highlight">'.$attemptnumber.'</span>';
