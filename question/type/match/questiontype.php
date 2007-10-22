@@ -30,7 +30,7 @@ class question_match_qtype extends default_questiontype {
         // Insert all the new question+answer pairs
         foreach ($question->subquestions as $key => $questiontext) {
             $answertext = $question->subanswers[$key];
-            if (!empty($questiontext) or !empty($answertext)) {
+            if ($questiontext != '' || $answertext != '') {
                 if ($subquestion = array_shift($oldsubquestions)) {  // Existing answer, so reuse it
                     $subquestion->questiontext = $questiontext;
                     $subquestion->answertext   = $answertext;
@@ -55,7 +55,7 @@ class question_match_qtype extends default_questiontype {
                 }
                 $subquestions[] = $subquestion->id;
             }
-            if (!empty($questiontext) && empty($answertext)) {
+            if ($questiontext != '' && $answertext == '') {
                 $result->notice = get_string('nomatchinganswer', 'quiz', $questiontext);
             }
         }
@@ -219,7 +219,7 @@ class question_match_qtype extends default_questiontype {
         $responses = array();
         foreach ($state->options->subquestions as $sub) {
             foreach ($sub->options->answers as $answer) {
-                if (1 == $answer->fraction && $sub->questiontext) {
+                if (1 == $answer->fraction && $sub->questiontext != '') {
                     $responses[$sub->id] = $answer->id;
                 }
             }
@@ -268,7 +268,7 @@ class question_match_qtype extends default_questiontype {
 
         // Print the input controls
         foreach ($subquestions as $key => $subquestion) {
-            if ($subquestion->questiontext) {
+            if ($subquestion->questiontext != '') {
                 // Subquestion text:
                 $a = new stdClass;
                 $a->text = $this->format_text($subquestion->questiontext,
