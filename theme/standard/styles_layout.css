@@ -1,4 +1,3 @@
-/* @override http://moodle18.userver.lan/theme/standard/styles_layout.css */
 /*******************************************************************
  styles_layout.css
 
@@ -632,7 +631,7 @@ form#adminsettings div.htmlarea {
 
 /* form frozen */
 div.mform div.fitem div.fstatic{
- border-color : lightgrey;
+ border-color : #D3D3D3;
  border-style : dashed;
  border-width : thin;
 }
