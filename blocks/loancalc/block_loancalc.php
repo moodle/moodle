@@ -15,7 +15,7 @@ class block_loancalc extends block_base {
         
         $this->content->text = '
         <script type="text/javascript">
-        <![CDATA[
+       // <![CDATA[
     function Next()
     {
         submitScreen("Next");
@@ -148,7 +148,7 @@ function comp(v) { // general entry point for all cases
 
     }
 } // function comp
-]]>
+//]]>
 </script>
 
 <h1></h1>
