@@ -76,7 +76,6 @@ class grade_export {
             }
         }
 
-        $this->export_letters  = $export_letters;
         $this->export_feedback = $export_feedback;
         $this->userkey         = '';
         $this->previewrows     = false;
