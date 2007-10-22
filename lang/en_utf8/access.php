@@ -21,7 +21,7 @@ $string['skipblock'] = 'Skip block';
 $string['skipnavigation'] = 'Skip navigation';
 $string['tabledata'] = 'Data table, $a';
 $string['tablelayout'] = 'Layout table, $a';
-$string['tocontent'] = 'Go to main content';
+$string['tocontent'] = 'Skip to main content';
 $string['tonavigation'] = 'Go to navigation';
 $string['youarehere'] = 'You are here';
 

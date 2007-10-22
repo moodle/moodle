@@ -40,7 +40,7 @@
 
     echo '<td id="middle-column">';
     if (!empty($THEME->customcorners)) print_custom_corners_start();
-    echo '<a name="startofcontent"></a>';
+    echo skip_main_destination();
     if ($forum = forum_get_course_forum($course->id, 'social')) {
         print_heading_block(get_string('socialheadline'));
         

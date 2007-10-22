@@ -2257,6 +2257,13 @@ function get_html_lang($dir = false) {
     return ($direction.' lang="'.$language.'" xml:lang="'.$language.'"');
 }
 
+/**
+ * Return the markup for the destination of the 'Skip to main content' links.
+ */
+function skip_main_destination() {
+    return '<span id="maincontent"></span>';
+}
+
 
 /// STANDARD WEB PAGE PARTS ///////////////////////////////////////////////////
 
@@ -2496,6 +2503,15 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     include($CFG->header);
     $output = ob_get_contents();
     ob_end_clean();
+
+    /*// Skip to main content, TODO: 'site-index', 'course-index'
+    if ('course-view'==$pageid) {
+        $skiplink = '<a class="skip" href="#maincontent">'.get_string('tocontent', 'access').'</a>';
+        if (! preg_match('/(.*<div.*?page.>)(.*)/s', $output, $matches)) {
+            preg_match('/(.*<body.*?>)(.*)/s', $output, $matches);
+        }
+        $output = $matches[1]."\n". $skiplink .$matches[2];
+    }*/
 
     $output = force_strict_header($output);
 

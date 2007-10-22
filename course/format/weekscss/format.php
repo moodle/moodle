@@ -85,7 +85,7 @@
     }
 
 /// Start main column
-    echo '<div id="middle-column"><a name="startofcontent"></a>';
+    echo '<div id="middle-column">'. skip_main_destination();
 
     print_heading_block(get_string('weeklyoutline'), 'outline');
 

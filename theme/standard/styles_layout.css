@@ -668,12 +668,6 @@ div.phpinfo .center th {
  *** Header
  ***/
 
-.headerskip {
-  position:absolute;
-  right:20em;
-  font-size:0.8em;
-}
-
 #header-home {
 }
 
@@ -1179,16 +1173,17 @@ body#admin-modules table.generaltable td.c0
  ***/
 
 /*Accessibility: Skip block link, for keyboard-only users. */
-a.skip-block {
+a.skip-block, a.skip {
   position: absolute;
   top: -1000em;
   font-size: 0.85em;
 }
-a.skip-block:focus, a.skip-block:active {
+a.skip-block:focus, a.skip-block:active,
+a.skip:focus, a.skip:active {
   position: static;
   display: block;
 }
-.skip-block-to {
+.skip-block-to, #maincontent {
   display: block;
   height: 1px;
 }

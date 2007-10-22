@@ -97,12 +97,6 @@ input, select {
  *** Header
  ***/
 
-.headerskip {
-  position:absolute;
-  right:20em;
-  font-size:0.8em;
-}
-
 #header-home {
   /* padding:1em 0.5em; */
   height:100px;

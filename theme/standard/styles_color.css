@@ -203,12 +203,6 @@ table.formtable tbody th {
   color:#aaa;
 }
 
-.headerskip a:link,
-.headerskip a:visited,
-.headerskip a:hover {
-  color: #FFF;
-}
-
 .navigation select {
   background-color:#FFFFFF;
 }

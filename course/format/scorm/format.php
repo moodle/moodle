@@ -35,7 +35,7 @@
         echo '</td>';
     }
 
-    echo '<td id="middle-column"><a name="startofcontent"></a>';
+    echo '<td id="middle-column">'. skip_main_destination();
     $moduleformat = $module.'_course_format_display';
     if (function_exists($moduleformat)) {
         $moduleformat($USER,$course);

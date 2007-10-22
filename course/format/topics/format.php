@@ -93,7 +93,7 @@
 /// Start main column
     echo '<td id="middle-column">';
     if (!empty($THEME->customcorners)) print_custom_corners_start();
-    echo '<a name="startofcontent"></a>';
+    echo skip_main_destination();
 
     print_heading_block(get_string('topicoutline'), 'outline');
 
