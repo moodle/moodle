@@ -78,10 +78,10 @@ class question_edit_match_form extends question_edit_form {
         foreach ($questions as $key => $question){
             $trimmedquestion = trim($question);
             $trimmedanswer = trim($answers[$key]);
-            if (!empty($trimmedanswer) && !empty($trimmedquestion)){
+            if ($trimmedanswer != '' && $trimmedquestion != ''){
                 $questioncount++;
             }
-            if (!empty($trimmedquestion) && empty($trimmedanswer)){
+            if ($trimmedquestion != '' && $trimmedanswer == ''){
                 $errors['subanswers['.$key.']'] = get_string('nomatchinganswerforq', 'qtype_match', $trimmedquestion);
             }
         }
