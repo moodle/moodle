@@ -87,10 +87,17 @@ if ($action == 'delchoice') {
 
 /// Print the form
 
-    if ($choice->timeopen > time() ) {
-        print_simple_box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "center");
-        print_footer($course);
-        exit;
+    $timenow = time();
+    if ($choice->timeclose !=0) {
+        if ($choice->timeopen > $timenow ) {
+            print_simple_box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "center");
+            print_footer($course);
+            exit;
+        } else if ($timenow > $choice->timeclose) {
+            print_simple_box(get_string("expired", "choice", userdate($choice->timeclose)), "center");
+            print_footer($course);
+            exit;
+        }
     }
 
     if ( (!$current or $choice->allowupdate) and 
