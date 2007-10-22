@@ -227,6 +227,17 @@ class question_shortanswer_qtype extends default_questiontype {
         return preg_match($regexp, trim($string));
     }
 
+    /*
+     * Override the parent class method, to remove escaping from asterisks.
+     */
+    function get_correct_responses(&$question, &$state) {
+        $response = parent::get_correct_responses($question, $state);
+        if (is_array($response)) {
+            $response[''] = addslashes(str_replace('\*', '*', stripslashes($response[''])));
+        }
+        return $response;
+    }
+
     /// BACKUP FUNCTIONS ////////////////////////////
 
     /*
