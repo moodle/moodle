@@ -72,13 +72,13 @@ class hotpot_report extends hotpot_default_report {
 				$name = "$u->firstname $u->lastname";
 			}
 			if ($is_html) {
-				$name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&course='.$course->id.'">'.$name.'</a>';
+				$name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&amp;course='.$course->id.'">'.$name.'</a>';
 			}
 			$grade = isset($user->grade) ? $user->grade : $blank;
 			foreach ($user->attempts as $attempt) {
 				$attemptnumber = $attempt->attempt;
 				if ($allow_review) {
-					$attemptnumber = ' <a href="review.php?hp='.$hotpot->id.'&attempt='.$attempt->id.'">'.$attemptnumber.'</a>';
+					$attemptnumber = ' <a href="review.php?hp='.$hotpot->id.'&amp;attempt='.$attempt->id.'">'.$attemptnumber.'</a>';
 				}
 				$cells = array ($name, $grade, $attemptnumber);
 				// $name and $grade are only printed on first line per user
