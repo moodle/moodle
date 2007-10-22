@@ -207,9 +207,12 @@ class question_shortanswer_qtype extends default_questiontype {
         // Break the string on non-escaped asterisks.
         $bits = preg_split('/(?<!\\\\)\*/', $pattern);
         // Escape regexp special characters in the bits.
-        $bits = array_map('preg_quote', $bits);
+        $excapedbits = array();
+        foreach ($bits as $bit) {
+            $excapedbits[] = preg_quote(str_replace('\*', '*', $bit));
+        }
         // Put it back together to make the regexp.
-        $regexp = '|^' . implode('.*', $bits) . '$|u';
+        $regexp = '|^' . implode('.*', $excapedbits) . '$|u';
         
         // Make the match insensitive if requested to.
         if ($ignorecase) {
@@ -217,6 +220,17 @@ class question_shortanswer_qtype extends default_questiontype {
         }
         
         return preg_match($regexp, trim($string));
+    }
+
+    /*
+     * Override the parent class method, to remove escaping from asterisks.
+     */
+    function get_correct_responses(&$question, &$state) {
+        $response = parent::get_correct_responses($question, $state);
+        if (is_array($response)) {
+            $response[''] = addslashes(str_replace('\*', '*', stripslashes($response[''])));
+        }
+        return $response;
     }
 
     /// BACKUP FUNCTIONS ////////////////////////////
