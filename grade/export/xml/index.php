@@ -51,7 +51,7 @@ if (!empty($CFG->gradepublishing)) {
     $CFG->gradepublishing = has_capability('gradeexport/xml:publish', $context);
 }
 
-$mform = new grade_export_form(null, array('idnumberrequired'=>true, 'publishing' => true, 'updatedgrades' => true));
+$mform = new grade_export_form(null, array('idnumberrequired'=>true, 'publishing' => true));
 
 // process post information
 if ($data = $mform->get_data()) {
