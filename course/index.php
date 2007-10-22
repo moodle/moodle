@@ -62,6 +62,7 @@
             $navigation = build_navigation($navlinks);
             print_header("$site->shortname: $strcategories", $strcourses, $navigation, '', '', true, update_categories_button());
             print_heading($strcategories);
+            echo skip_main_destination();
             print_box_start('categorybox');
             print_whole_category_list();
             print_box_end();
@@ -71,6 +72,7 @@
             print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses,
                     build_navigation(array(array('name'=>$strfulllistofcourses, 'link'=>'','type'=>'misc'))),
                          '', '', true, update_categories_button());
+            echo skip_main_destination();
             print_box_start('courseboxes');
             print_courses(0);
             print_box_end();

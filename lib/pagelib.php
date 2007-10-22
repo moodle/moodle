@@ -438,8 +438,6 @@ class page_course extends page_base {
 
         print_header($title, $this->courserecord->fullname, $navigation,
                      '', $meta, true, $buttons, user_login_string($this->courserecord, $USER), false, $bodytags);
-
-        echo '<a class="skip" href="#maincontent">'.get_string('tocontent', 'access').'</a>';
     }
 
     // SELF-REPORTING SECTION

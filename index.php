@@ -134,7 +134,7 @@
     }
             break;
             case 'middle':
-    echo '<td id="middle-column">';
+    echo '<td id="middle-column">'. skip_main_destination();
 
     if (!empty($THEME->customcorners)) print_custom_corners_start();
 

@@ -2259,6 +2259,9 @@ function get_html_lang($dir = false) {
 
 /**
  * Return the markup for the destination of the 'Skip to main content' links.
+ *   Accessibility improvement for keyboard-only users.
+ *   Used in course formats, /index.php and /course/index.php
+ * @return string HTML element.
  */
 function skip_main_destination() {
     return '<span id="maincontent"></span>';
@@ -2504,14 +2507,14 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $output = ob_get_contents();
     ob_end_clean();
 
-    /*// Skip to main content, TODO: 'site-index', 'course-index'
-    if ('course-view'==$pageid) {
+    // Skip to main content, see skip_main_destination().
+    if ($pageid=='course-view' or $pageid=='site-index' or $pageid=='course-index') {
         $skiplink = '<a class="skip" href="#maincontent">'.get_string('tocontent', 'access').'</a>';
         if (! preg_match('/(.*<div.*?page.>)(.*)/s', $output, $matches)) {
             preg_match('/(.*<body.*?>)(.*)/s', $output, $matches);
         }
         $output = $matches[1]."\n". $skiplink .$matches[2];
-    }*/
+    }
 
     $output = force_strict_header($output);
 
