@@ -17,6 +17,7 @@ $string['choicetext'] = 'Choice text';
 $string['displayhorizontal'] = 'Display horizontally';
 $string['displaymode'] = 'Display Mode';
 $string['displayvertical'] = 'Display vertically';
+$string['expired'] = 'Sorry, this activity closed on $a and is no longer available';
 $string['fillinatleastoneoption'] = 'You need to provide at least two possible answers.';
 $string['full'] = '(Full)';
 $string['havetologin'] = 'You have to log in before you can submit your choice';
