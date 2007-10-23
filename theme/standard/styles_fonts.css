@@ -251,6 +251,7 @@ body#admin-index .copyright {
 }
 
 #admin-roles-override .cell.c1,
+#admin-roles-assign .cell.c3,
 #admin-roles-assign .cell.c1 {
   font-size: 0.7em;
 }

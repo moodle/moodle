@@ -6,6 +6,7 @@
     require_once($CFG->libdir.'/adminlib.php');
 
     define("MAX_USERS_PER_PAGE", 5000);
+    define("MAX_USERS_TO_LIST_PER_ROLE", 10);
 
     $contextid      = required_param('contextid',PARAM_INT); // context id
     $roleid         = optional_param('roleid', 0, PARAM_INT); // required role id
@@ -424,14 +425,27 @@
         $table->cellpadding = 5;
         $table->cellspacing = 0;
         $table->width = '60%';
-        $table->head = array(get_string('roles', 'role'), get_string('description'), get_string('users'));
-        $table->wrap = array('nowrap', '', 'nowrap');
-        $table->align = array('right', 'left', 'center');
+        $table->head = array(get_string('roles', 'role'), get_string('description'), get_string('users'), '');
+        $table->wrap = array('nowrap', '', 'nowrap', 'nowrap');
+        $table->align = array('right', 'left', 'center', 'left');
 
         foreach ($assignableroles as $roleid => $rolename) {
             $countusers = count_role_users($roleid, $context);
+            $strroleusers = '';
+            if (0 < $countusers && $countusers <= MAX_USERS_TO_LIST_PER_ROLE) {
+                $roleusers = get_role_users($roleid, $context, false, 'u.id, u.lastname, u.firstname');
+                if (!empty($roleusers)) {
+                    $strroleusers = array();
+                    foreach ($roleusers as $user) {
+                        $strroleusers[] = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $user->id . '" >' . fullname($user) . '</a>';
+                    }
+                    $strroleusers = implode('<br />', $strroleusers);
+                }
+            } else if ($countusers > MAX_USERS_TO_LIST_PER_ROLE) {
+                $strroleusers = get_string('morethan', 'role', MAX_USERS_TO_LIST_PER_ROLE);
+            }
             $description = format_string(get_field('role', 'description', 'id', $roleid));
-            $table->data[] = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>',$description, $countusers);
+            $table->data[] = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>',$description, $countusers, $strroleusers);
         }
 
         print_table($table);
