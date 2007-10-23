@@ -985,6 +985,7 @@ body#admin-modules table.generaltable td.c0
 }
 
 #admin-roles-override .cell.c1,
+#admin-roles-assign .cell.c3,
 #admin-roles-assign .cell.c1 {
   padding-top: 0.75em;
 }
