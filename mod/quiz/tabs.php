@@ -37,7 +37,7 @@ if (has_capability('mod/quiz:viewreports', $context)) {
 if (has_capability('mod/quiz:preview', $context)) {
     $row[] = new tabobject('preview', "$CFG->wwwroot/mod/quiz/attempt.php?q=$quiz->id", get_string('preview', 'quiz'));
 }
-if ($contexts->have_one_edit_tab_cap('editq')) {
+if (has_capability('mod/quiz:manage', $context)) {
     $row[] = new tabobject('edit', "$CFG->wwwroot/mod/quiz/edit.php?cmid=$cm->id", get_string('edit'));
 }
 
@@ -82,7 +82,7 @@ if ($currenttab == 'edit' and isset($mode)) {
     $strquiz = get_string('modulename', 'quiz');
     $streditingquiz = get_string("editinga", "moodle", $strquiz);
 
-    if ($contexts->have_one_edit_tab_cap('editq')) {
+    if (has_capability('mod/quiz:manage', $context) && $contexts->have_one_edit_tab_cap('editq')) {
         $row[] = new tabobject('editq', "$CFG->wwwroot/mod/quiz/edit.php?".$thispageurl->get_query_string(), $strquiz, $streditingquiz);
     }
     questionbank_navigation_tabs($row, $contexts, $thispageurl->get_query_string());
