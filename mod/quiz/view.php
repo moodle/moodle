@@ -167,17 +167,21 @@
     $gradebookfeedback = '';
 
     $grading_info = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $USER->id);
-    $item = $grading_info->items[0];
-    $grade = $item->grades[$USER->id];
-
-    if ($grade->overridden) {
-        $mygrade = $grade->grade + 0; // Convert to number.
-        $mygradeoverridden = true;
-    }
-    if (!empty($grade->str_feedback)) {
-        $gradebookfeedback = $grade->str_feedback;
-    }
+    if (!empty($grading_info->items)) {
+        $item = $grading_info->items[0];
+        if (isset($item->grades[$USER->id])) {
+            $grade = $item->grades[$USER->id];
     
+            if ($grade->overridden) {
+                $mygrade = $grade->grade + 0; // Convert to number.
+                $mygradeoverridden = true;
+            }
+            if (!empty($grade->str_feedback)) {
+                $gradebookfeedback = $grade->str_feedback;
+            }
+        }
+    }
+
     // Print table with existing attempts
     if ($attempts) {
 
