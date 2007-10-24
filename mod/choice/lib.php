@@ -226,7 +226,7 @@ function choice_show_form($choice, $user, $cm) {
         echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
         
         if ($choice->allowupdate && $aaa = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id)) {
-            echo "<br /><a href='view.php?id=".$cm->id."&action=delchoice'>".get_string("removemychoice","choice")."</a>";
+            echo "<br /><a href='view.php?id=".$cm->id."&amp;action=delchoice'>".get_string("removemychoice","choice")."</a>";
         }
         
     } else {
@@ -531,7 +531,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 if ($maxcolumn) {
                     $height = $COLUMN_HEIGHT * ((float)$column[$optionid] / (float)$maxcolumn);
                 }
-                echo "<td valign=\"bottom\" align=\"center\" class=\"col$count data\">";
+                echo "<td style=\"vertical-align:bottom\" align=\"center\" class=\"col$count data\">";
                 echo "<img src=\"column.png\" height=\"$height\" width=\"49\" alt=\"\" />";
                 echo "</td>";
                 $count++;
