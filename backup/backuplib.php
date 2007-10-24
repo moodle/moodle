@@ -1405,6 +1405,7 @@
         }
 
         $status = backup_gradebook_item_info($bf,$preferences, $backupall);
+        $status = backup_gradebook_grade_letters_info($bf,$preferences);
         $status = backup_gradebook_outcomes_info($bf, $preferences);
         $status = backup_gradebook_outcomes_courses_info($bf, $preferences);
 
@@ -1546,6 +1547,41 @@
         return $status;
     }
     //Backup gradebook_item (called from backup_gradebook_info
+
+    function backup_gradebook_grade_letters_info($bf, $preferences) {
+        global $CFG;
+        $status = true;
+
+        // getting grade categories, but make sure parents come before children
+        // because when we do restore, we need to recover the parents first
+        // we do this by getting the lowest depth first
+        $context = get_context_instance(CONTEXT_COURSE, $preferences->backup_course);
+        $grade_letters = get_records_sql("SELECT *
+                                          FROM {$CFG->prefix}grade_letters
+                                          WHERE contextid = $context->id");
+        if ($grade_letters) {
+            //Begin grade_categories tag
+            fwrite ($bf,start_tag("GRADE_LETTERS",3,true));
+            //Iterate for each category
+            foreach ($grade_letters as $grade_letter) {
+                //Begin grade_category
+                fwrite ($bf,start_tag("GRADE_LETTER",4,true));
+                //Output individual fields
+                fwrite ($bf,full_tag("ID",5,false,$grade_letter->id));
+
+                // not keeping path and depth because they can be derived
+                fwrite ($bf,full_tag("LOWERBOUNDARY",5,false,$grade_letter->lowerboundary));
+                fwrite ($bf,full_tag("LETTER",5,false,$grade_letter->letter));
+
+                //End grade_category
+                fwrite ($bf,end_tag("GRADE_LETTER",4,true));
+            }
+            //End grade_categories tag
+            $status = fwrite ($bf,end_tag("GRADE_LETTERS",3,true));
+        }
+
+        return $status;
+    }
 
     function backup_gradebook_outcomes_info($bf,$preferences) {
 
