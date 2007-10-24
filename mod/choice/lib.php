@@ -515,7 +515,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 if ($maxcolumn) {
                     $height = $COLUMN_HEIGHT * ((float)$column[$optionid] / (float)$maxcolumn);
                 }
-                echo "<td valign=\"bottom\" align=\"center\" class=\"col$count data\">";
+                echo "<td style=\"vertical-align:bottom\" align=\"center\" class=\"col$count data\">";
                 echo "<img src=\"column.png\" height=\"$height\" width=\"49\" alt=\"\" />";
                 echo "</td>";
                 $count++;
