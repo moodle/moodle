@@ -1194,6 +1194,7 @@
         // Count how many we have
         $categoriescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_categories');
         $itemscount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_items');
+        $letterscount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_letters');
         $outcomecount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_outcomes');
         $outcomescoursescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_outcomes_courses');
         $gchcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_categories_history');
@@ -1342,6 +1343,42 @@
                             }
                             backup_flush(300);
                         }
+                    }
+                }
+            }
+        }
+
+        // Process letters
+        
+        $context = get_context_instance(CONTEXT_COURSE, $restore->course_id);
+        // respect current grade letters if defined
+        if ($letterscount && $continue && !record_exists('grade_letters', 'contextid', $context->id)) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '<li>'.get_string('gradeletters','grades').'</li>';
+            }
+            $counter = 0;
+            while ($counter < $letterscount) {
+                // Fetch recordset_size records in each iteration
+                $recs = get_records_select("backup_ids","table_name = 'grade_letters' AND backup_code = '$restore->backup_unique_code'",
+                                            "old_id",
+                                            "old_id",
+                                            $counter,
+                                            $recordset_size);
+                if ($recs) {
+                    foreach ($recs as $rec) {
+                        // Get the full record from backup_ids
+                        $data = backup_getid($restore->backup_unique_code,'grade_letters',$rec->old_id);
+                        if ($data) {
+                            // Now get completed xmlized object
+                            $info = $data->info;
+                            $dbrec->contextid = $context->id;
+                            $dbrec->lowerboundary = backup_todb($info['GRADE_LETTER']['#']['LOWERBOUNDARY']['0']['#']);
+                            $dbrec->letter = backup_todb($info['GRADE_LETTER']['#']['LETTER']['0']['#']);
+                            // course might already have grade letters defined, if so, skip
+                            insert_record('grade_letters', $dbrec);
+        
+                        }
+                        $counter++;
                     }
                 }
             }
@@ -4048,7 +4085,7 @@
 
             //If we are under a GRADE_PREFERENCE, GRADE_LETTER or GRADE_CATEGORY tag under a GRADEBOOK zone, accumule it
             if (isset($this->tree[5]) and isset($this->tree[3])) {
-                if (($this->tree[5] == "GRADE_ITEM" || $this->tree[5] == "GRADE_CATEGORY" || $this->tree[5] == "GRADE_OUTCOME" || $this->tree[5] == "GRADE_OUTCOMES_COURSE" || $this->tree[5] == "GRADE_CATEGORIES_HISTORY" || $this->tree[5] == "GRADE_GRADES_HISTORY" || $this->tree[5] == "GRADE_TEXT_HISTORY" || $this->tree[5] == "GRADE_ITEM_HISTORY" || $this->tree[5] == "GRADE_OUTCOME_HISTORY") && ($this->tree[3] == "GRADEBOOK")) {
+                if (($this->tree[5] == "GRADE_ITEM" || $this->tree[5] == "GRADE_CATEGORY" || $this->tree[5] == "GRADE_LETTER" || $this->tree[5] == "GRADE_OUTCOME" || $this->tree[5] == "GRADE_OUTCOMES_COURSE" || $this->tree[5] == "GRADE_CATEGORIES_HISTORY" || $this->tree[5] == "GRADE_GRADES_HISTORY" || $this->tree[5] == "GRADE_TEXT_HISTORY" || $this->tree[5] == "GRADE_ITEM_HISTORY" || $this->tree[5] == "GRADE_OUTCOME_HISTORY") && ($this->tree[3] == "GRADEBOOK")) {
 
                     if (!isset($this->temp)) {
                         $this->temp = "";
@@ -5205,12 +5242,6 @@
                     //Call to xmlize for this portion of xml data (one PREFERENCE)
                     //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
                     $data = xmlize($xml_data,0);
-                    //echo strftime ("%X",time())."<p>";                                              //Debug
-                    //traverse_xmlize($data);                                                         //Debug
-                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
-                    //$GLOBALS['traverse_array']="";                                                  //Debug
-                    //Now, save data to db. We'll use it later
-                    //Get id and status from data
                     $item_id = $data["GRADE_ITEM"]["#"]["ID"]["0"]["#"];
                     $this->counter++;
                     //Save to db
@@ -5231,16 +5262,27 @@
                     //Call to xmlize for this portion of xml data (one CATECORY)
                     //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
                     $data = xmlize($xml_data,0);
-                    //echo strftime ("%X",time())."<p>";                                              //Debug
-                    //traverse_xmlize($data);                                                         //Debug
-                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
-                    //$GLOBALS['traverse_array']="";                                                  //Debug
-                    //Now, save data to db. We'll use it later
-                    //Get id and status from data
                     $category_id = $data["GRADE_CATEGORY"]["#"]["ID"]["0"]["#"];
                     $this->counter++;
                     //Save to db
                     $status = backup_putid($this->preferences->backup_unique_code, 'grade_categories' ,$category_id,
+                                           null,$data);
+                    //Create returning info
+                    $this->info = $this->counter;
+                    //Reset temp
+                    unset($this->temp);
+                }
+                
+                if (($this->level == 5) and ($tagName == "GRADE_LETTER")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one CATECORY)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
+                    $data = xmlize($xml_data,0);
+                    $letter_id = $data["GRADE_LETTER"]["#"]["ID"]["0"]["#"];
+                    $this->counter++;
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_letters' ,$letter_id,
                                            null,$data);
                     //Create returning info
                     $this->info = $this->counter;
@@ -5255,12 +5297,6 @@
                     //Call to xmlize for this portion of xml data (one CATECORY)
                     //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
                     $data = xmlize($xml_data,0);
-                    //echo strftime ("%X",time())."<p>";                                              //Debug
-                    //traverse_xmlize($data);                                                         //Debug
-                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
-                    //$GLOBALS['traverse_array']="";                                                  //Debug
-                    //Now, save data to db. We'll use it later
-                    //Get id and status from data
                     $outcome_id = $data["GRADE_OUTCOME"]["#"]["ID"]["0"]["#"];
                     $this->counter++;
                     //Save to db
@@ -5279,12 +5315,6 @@
                     //Call to xmlize for this portion of xml data (one CATECORY)
                     //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
                     $data = xmlize($xml_data,0);
-                    //echo strftime ("%X",time())."<p>";                                              //Debug
-                    //traverse_xmlize($data);                                                         //Debug
-                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
-                    //$GLOBALS['traverse_array']="";                                                  //Debug
-                    //Now, save data to db. We'll use it later
-                    //Get id and status from data
                     $outcomes_course_id = $data["GRADE_OUTCOMES_COURSE"]["#"]["ID"]["0"]["#"];
                     $this->counter++;
                     //Save to db
@@ -5302,12 +5332,6 @@
                     //Call to xmlize for this portion of xml data (one PREFERENCE)
                     //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
                     $data = xmlize($xml_data,0);
-                    //echo strftime ("%X",time())."<p>";                                              //Debug
-                    //traverse_xmlize($data);                                                         //Debug
-                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
-                    //$GLOBALS['traverse_array']="";                                                  //Debug
-                    //Now, save data to db. We'll use it later
-                    //Get id and status from data
                     $id = $data["GRADE_CATEGORIES_HISTORY"]["#"]["ID"]["0"]["#"];
                     $this->counter++;
                     //Save to db
@@ -5327,12 +5351,6 @@
                     //Call to xmlize for this portion of xml data (one PREFERENCE)
                     //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
                     $data = xmlize($xml_data,0);
-                    //echo strftime ("%X",time())."<p>";                                              //Debug
-                    //traverse_xmlize($data);                                                         //Debug
-                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
-                    //$GLOBALS['traverse_array']="";                                                  //Debug
-                    //Now, save data to db. We'll use it later
-                    //Get id and status from data
                     $id = $data["GRADE_GRADES_HISTORY"]["#"]["ID"]["0"]["#"];
                     $this->counter++;
                     //Save to db
@@ -5352,12 +5370,6 @@
                     //Call to xmlize for this portion of xml data (one PREFERENCE)
                     //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
                     $data = xmlize($xml_data,0);
-                    //echo strftime ("%X",time())."<p>";                                              //Debug
-                    //traverse_xmlize($data);                                                         //Debug
-                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
-                    //$GLOBALS['traverse_array']="";                                                  //Debug
-                    //Now, save data to db. We'll use it later
-                    //Get id and status from data
                     $id = $data["GRADE_ITEM_HISTORY"]["#"]["ID"]["0"]["#"];
                     $this->counter++;
                     //Save to db
@@ -5377,12 +5389,6 @@
                     //Call to xmlize for this portion of xml data (one PREFERENCE)
                     //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
                     $data = xmlize($xml_data,0);
-                    //echo strftime ("%X",time())."<p>";                                              //Debug
-                    //traverse_xmlize($data);                                                         //Debug
-                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
-                    //$GLOBALS['traverse_array']="";                                                  //Debug
-                    //Now, save data to db. We'll use it later
-                    //Get id and status from data
                     $id = $data["GRADE_OUTCOME_HISTORY"]["#"]["ID"]["0"]["#"];
                     $this->counter++;
                     //Save to db
