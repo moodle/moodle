@@ -380,6 +380,7 @@ class qformat_gift extends qformat_default {
                     $question->feedbacktrue = $feedback['wrong'];
                 }
 
+                $question->penalty = 1;
                 $question->correctanswer = $question->answer;
 
                 return $question;
