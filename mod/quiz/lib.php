@@ -518,7 +518,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $sincetime, $course
     }
 
     $quizzes = get_records_sql("SELECT qa.*, q.name, u.firstname, u.lastname, u.picture,
-                                       q.course, q.sumgrades as maxgrade, cm.instance, cm.section
+                                       q.course, q.sumgrades as maxgrade, cm.instance, cm.section, cm.id as cmid
                                   FROM {$CFG->prefix}quiz_attempts qa,
                                        {$CFG->prefix}quiz q,
                                        {$CFG->prefix}user u,
@@ -542,6 +542,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $sincetime, $course
           $tmpactivity->type = "quiz";
           $tmpactivity->defaultindex = $index;
           $tmpactivity->instance = $quiz->quiz;
+          $tmpactivity->cmid = $quiz->cmid;
 
           $tmpactivity->name = $quiz->name;
           $tmpactivity->section = $quiz->section;
@@ -584,7 +585,7 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
 
     }
 
-    if (has_capability('mod/quiz:grade', get_context_instance(CONTEXT_MODULE, $activity->instance))) {
+    if (has_capability('mod/quiz:grade', get_context_instance(CONTEXT_MODULE, $activity->cmid))) {
         $grades = "(" .  $activity->content->sumgrades . " / " . $activity->content->maxgrade . ") ";
         echo "<a href=\"$CFG->wwwroot/mod/quiz/review.php?q="
              . $activity->instance . "&amp;attempt="
