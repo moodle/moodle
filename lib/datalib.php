@@ -1836,7 +1836,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         VALUES (' . "'$timenow', '$userid', '$courseid', '$REMOTE_ADDR', '$module', '$cm', '$action', '$url', '$info')");
 
     // MDL-11893, alert $CFG->supportemail if insert into log failed
-    if (!result && $CFG->supportemail) {
+    if (!$result && $CFG->supportemail) {
         $site = get_site();
         $subject = 'Insert into log failed at your moodle site '.$site->fullname;
         $message = 'Insert into log table failed at '.date('l dS \of F Y h:i:s A').'. It is possible that your disk is full.';
