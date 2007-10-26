@@ -184,16 +184,20 @@
 
         // MDL-11167, blocks can be placed on mymoodle, or the blogs page
         // and it should not show up on course search page
+        
+        $totalcount = count_records('block_instance', 'blockid', $blockid);
+        
         $count = count_records_sql('SELECT COUNT(*) 
                                         FROM '.$CFG->prefix.'block_instance 
                                         WHERE blockid = '.$blockid.' AND
                                         pagetype = "course-view"');
+
         if ($count>0) {
             $blocklist = "<a href=\"{$CFG->wwwroot}/course/search.php?blocklist=$blockid&amp;sesskey={$USER->sesskey}\" ";
-            $blocklist .= "title=\"$strshowblockcourse\" >$count</a>";
+            $blocklist .= "title=\"$strshowblockcourse\" >$totalcount</a>";
         }
         else {
-            $blocklist = "$count";
+            $blocklist = "$totalcount";
         }
         $class = ''; // Nothing fancy, by default
 
