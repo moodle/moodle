@@ -1191,7 +1191,15 @@ class grade_item extends grade_object {
                 return $this->dependson_cache;
             }
 
-            $grade_category->apply_forced_settings();
+            // If global aggregateoutcomes is set, override category value
+            if ($CFG->grade_aggregateoutcomes != -1) {
+                $grade_category->aggregateoutcomes = $CFG->grade_aggregateoutcomes;
+            }
+
+            // If global aggregatesubcats is set, override category value
+            if ($CFG->grade_aggregatesubcats != -1) {
+                $grade_category->aggregatesubcats = $CFG->grade_aggregatesubcats;
+            }
 
             if (empty($CFG->enableoutcomes) or $grade_category->aggregateoutcomes) {
                 $outcomes_sql = "";
@@ -1658,13 +1666,9 @@ class grade_item extends grade_object {
         } else {
             $useditems = array();
         }
-        
-        // MDL-11902
-        // unset the value if formula is trying to reference to itself
-        // but array keys does not match itemid
+
         if (!empty($this->id)) {
-            $useditems = array_diff($useditems, array($this->id));
-            //unset($useditems[$this->id]);
+            unset($useditems[$this->id]);
         }
 
         // prepare formula and init maths library
