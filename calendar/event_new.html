@@ -2,7 +2,7 @@
     // The following is a hack to fix bug 1488
     $course = get_record('course', 'id', ($form->courseid) ? $form->courseid : $site->id);
 ?>
-<form method="post" action="event.php" name="new">
+<form method="post" action="event.php" id="eventform">
 <table cellpadding="5">
   <tr>
     <td style="vertical-align: top; text-align: right;">
@@ -29,9 +29,9 @@
       <?php print_string('eventdate', 'calendar'); ?>:
     </td>
     <td>
-      <?php print_date_selector('startday', 'startmon', 'startyr', $form->timestart);?>
+      <?php print_date_selector('startday', 'startmon', 'startyr', (int)$form->timestart);?>
       <?php print_string('eventtime', 'calendar');?>
-      <?php print_time_selector('starthr', 'startmin', $form->timestart) ?>
+      <?php print_time_selector('starthr', 'startmin', (int)$form->timestart) ?>
       <?php if (isset($err['timestart'])) formerr($err['timestart']); ?>
     </td>
   </tr>
@@ -97,7 +97,8 @@
 <input type="hidden" name="instance" value="<?php echo $form->instance?>" />
 <input type="hidden" name="format" value="<?php echo $form->format; ?>" />
 <input type="hidden" name="action" value="new" />
-<input type="hidden" name="type" value="defined" />
+<input type="hidden" name="type" value="<?php echo $form->type; ?>" />
+<input type="hidden" name="course" value="<?php p($urlcourse); ?>" />
 </p>
 </form>
 

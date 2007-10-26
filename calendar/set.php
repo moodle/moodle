@@ -9,14 +9,14 @@
 // Copyright (C) 2003-2004  Greek School Network            www.sch.gr     //
 //                                                                         //
 // Designed by:                                                            //
-//     Avgoustos Tsinakos (tsinakos@uom.gr)                                //
-//     Jon Papaioannou (pj@uom.gr)                                         //
+//     Avgoustos Tsinakos (tsinakos@teikav.edu.gr)                         //
+//     Jon Papaioannou (pj@moodle.org)                                     //
 //                                                                         //
 // Programming and development:                                            //
-//     Jon Papaioannou (pj@uom.gr)                                         //
+//     Jon Papaioannou (pj@moodle.org)                                     //
 //                                                                         //
 // For bugs, suggestions, etc contact:                                     //
-//     Jon Papaioannou (pj@uom.gr)                                         //
+//     Jon Papaioannou (pj@moodle.org)                                     //
 //                                                                         //
 // The current module was developed at the University of Macedonia         //
 // (www.uom.gr) under the funding of the Greek School Network (www.sch.gr) //
@@ -41,20 +41,30 @@
     require_once('../config.php');
     require_once($CFG->dirroot.'/calendar/lib.php');
 
-    require_variable($_GET['from']);
-    require_variable($_GET['var']);
-    optional_variable($_GET['value']);
-    optional_variable($_GET['id']);
-    optional_variable($_GET['cal_d']);
-    optional_variable($_GET['cal_m']);
-    optional_variable($_GET['cal_y']);
+    $from = required_param('from');
+    $var = required_param('var');
+    $value = optional_param('value');
+    $id = optional_param('id');
+    $cal_d = optional_param('cal_d');
+    $cal_m = optional_param('cal_m');
+    $cal_y = optional_param('cal_y');
 
-    switch($_GET['var']) {
+    // Initialize the session variables
+    calendar_session_vars();
+
+    // Ensure course id passed if relevant
+    // Required due to changes in view/lib.php mainly (calendar_session_vars())
+    $courseid = '';
+    if (!empty($id)) {
+        $courseid = '&amp;course='.$id;
+    }
+    
+    switch($var) {
         case 'setuser':
             // Not implemented yet (or possibly at all)
         break;
         case 'setcourse':
-            $id = intval($_GET['id']);
+            $id = intval($id);
             if($id == 0) {
                 $SESSION->cal_courses_shown = array();
                 calendar_set_referring_course(0);
@@ -64,7 +74,6 @@
                 calendar_set_referring_course(0);
             }
             else {
-                // We don't check for membership anymore: if(isstudent($id, $USER->id) || isteacher($id, $USER->id)) {
                 if(get_record('course', 'id', $id) === false) {
                     // There is no such course
                     $SESSION->cal_courses_shown = array();
@@ -94,21 +103,21 @@
         break;
     }
 
-    switch($_GET['from']) {
+    switch($from) {
         case 'event':
-            redirect(CALENDAR_URL.'event.php?action='.$_GET['action'].'&amp;type='.$_GET['type'].'&amp;id='.intval($_GET['id']));
+            redirect(CALENDAR_URL.'event.php?action='.$action.'&amp;type='.$type.'&amp;id='.intval($id));
         break;
         case 'month':
-            redirect(CALENDAR_URL.'view.php?view=month&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
+            redirect(CALENDAR_URL.'view.php?view=month'.$courseid.'&cal_d='.$cal_d.'&cal_m='.$cal_m.'&cal_y='.$cal_y);
         break;
         case 'upcoming':
-            redirect(CALENDAR_URL.'view.php?view=upcoming');
+            redirect(CALENDAR_URL.'view.php?view=upcoming'.$courseid);
         break;
         case 'day':
-            redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
+            redirect(CALENDAR_URL.'view.php?view=day'.$courseid.'&cal_d='.$cal_d.'&cal_m='.$cal_m.'&cal_y='.$cal_y);
         break;
         case 'course':
-            redirect($CFG->wwwroot.'/course/view.php?id='.intval($_GET['id']));
+            redirect($CFG->wwwroot.'/course/view.php?id='.intval($id));
         break;
         default:
 

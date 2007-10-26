@@ -54,6 +54,11 @@
     $eventid   = optional_param('id', 0, PARAM_INT);
     $eventtype = optional_param('type', 'select', PARAM_ALPHA);
     $urlcourse = optional_param('course', 0, PARAM_INT);
+    $cal_y = optional_param('cal_y');
+    $cal_m = optional_param('cal_m');
+    $cal_d = optional_param('cal_d');
+    
+    $focus = '';
 
     if(!$site = get_site()) {
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
@@ -62,7 +67,7 @@
     $strcalendar = get_string('calendar', 'calendar');
 
     $now = usergetdate(time());
-    $nav = calendar_get_link_tag($strcalendar, CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
+    $nav = calendar_get_link_tag($strcalendar, CALENDAR_URL.'view.php?view=upcoming&amp;course='.$urlcourse.'&amp;', $now['mday'], $now['mon'], $now['year']);
     $day = intval($now['mday']);
     $mon = intval($now['mon']);
     $yr = intval($now['year']);
@@ -165,7 +170,7 @@
                     }
 
                     // OK, now redirect to day view
-                    redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
+                    redirect(CALENDAR_URL.'view.php?view=day&amp;course='.$urlcourse.'&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
                 }
                 else {
                     foreach ($err as $key => $value) {
@@ -178,7 +183,9 @@
         case 'new':
             $title = get_string('newevent', 'calendar');
             $form = data_submitted();
-            if(!empty($form) && $form->type == 'defined') {
+            // new if criteria
+            // if(!empty($form) && $form->type == 'defined') {
+            if(!empty($form) && !empty($form->name)) {
 
                 $form->name = strip_tags($form->name, '<lang>');  // Strip all tags but <lang>
 
@@ -232,7 +239,7 @@
                     }
 
                     // OK, now redirect to day view
-                    redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
+                    redirect(CALENDAR_URL.'view.php?view=day&amp;course='.$urlcourse.'&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
                 }
                 else {
                     foreach ($err as $key => $value) {
@@ -240,6 +247,9 @@
                     }
                 }
             }
+        break;
+        default: // no action
+            $title='';
         break;
     }
     if(empty($focus)) $focus = '';
@@ -285,7 +295,7 @@
                     }
                 }
 
-                redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$_REQUEST['d'].'&cal_m='.$_REQUEST['m'].'&cal_y='.$_REQUEST['y']);
+                redirect(CALENDAR_URL.'view.php?view=day&amp;course='.$urlcourse.'&cal_d='.$_REQUEST['d'].'&cal_m='.$_REQUEST['m'].'&cal_y='.$_REQUEST['y']);
 
             }
             else {
@@ -515,7 +525,12 @@
     // START: Last column (3-month display)
 
     $defaultcourses = calendar_get_default_courses();
-    calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
+    //calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
+    
+    // when adding an event you can not be a guest, so I think it's reasonalbe to ignore defaultcourses
+    // MDL-10353
+    calendar_set_filters($courses, $groups, $users);
+
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
     
@@ -526,13 +541,13 @@
     echo '</div>';
     
     echo '<div class="minicalendarblock">';
-    echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
+    echo calendar_top_controls('display', array('id' => $urlcourse, 'm' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
     echo '</div><div class="minicalendarblock">';
-    echo calendar_top_controls('display', array('m' => $mon, 'y' => $yr));
+    echo calendar_top_controls('display', array('id' => $urlcourse, 'm' => $mon, 'y' => $yr));
     echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
     echo '</div><div class="minicalendarblock">';
-    echo calendar_top_controls('display', array('m' => $nextmon, 'y' => $nextyr));
+    echo calendar_top_controls('display', array('id' => $urlcourse, 'm' => $nextmon, 'y' => $nextyr));
     echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
     echo '</div>';
 
