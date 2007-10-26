@@ -956,8 +956,10 @@ body#admin-modules table.generaltable td.c0
 }
 
 #admin-roles-manage .selector,
+#admin-roles-assign .selector,
 #admin-roles-override .selector {
   text-align:center;
+  margin-bottom:1em;
 }
 
 #admin-roles-manage table.roledesc,

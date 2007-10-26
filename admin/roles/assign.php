@@ -80,7 +80,6 @@
     $strexistingusers = get_string('existingusers', 'role');
     $straction = get_string('assignroles', 'role');
     $strroletoassign = get_string('roletoassign', 'role');
-    $strcurrentcontext = get_string('currentcontext', 'role');
     $strsearch = get_string('search');
     $strshowall = get_string('showall');
     $strparticipants = get_string('participants');
@@ -276,7 +275,7 @@
     if ($context->contextlevel==CONTEXT_COURSE and $context->instanceid == SITEID) {
         print_heading_with_help(get_string('frontpageroles', 'admin'), 'assignroles');
     } else {
-        print_heading_with_help(get_string('assignroles', 'role'), 'assignroles');
+        print_heading_with_help(get_string('assignrolesin', 'role', print_context_name($context)), 'assignroles');
     }
 
     if ($context->contextlevel==CONTEXT_SYSTEM) {
@@ -393,7 +392,7 @@
 
         }
 
-        echo '<div style="text-align:center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';
+        echo '<div class="selector">';
         $assignableroles = array('0'=>get_string('listallroles', 'role').'...') + $assignableroles;
         popup_form("$CFG->wwwroot/$CFG->admin/roles/assign.php?userid=$userid&amp;courseid=$courseid&amp;contextid=$contextid&amp;roleid=",
             $assignableroles, 'switchrole', $roleid, '', '', '', false, 'self', $strroletoassign);

@@ -60,7 +60,6 @@
     $stroverrideusers  = get_string('overrideusers', 'role');
     $straction         = get_string('overrideroles', 'role');
     $strcurrentrole    = get_string('currentrole', 'role');
-    $strcurrentcontext = get_string('currentcontext', 'role');
     $strparticipants   = get_string('participants');
 
 /// Make sure this user can override that role
@@ -169,12 +168,11 @@
     }
 
 
-    print_heading_with_help(get_string('overrides', 'role'), 'overrides');
+    print_heading_with_help(get_string('overriderolesin', 'role', print_context_name($context)), 'overrides');
 
     if ($roleid) {
     /// prints a form to swap roles
         echo '<div class="selector">';
-        echo $strcurrentcontext.': '.print_context_name($context).'<br/>';
         $overridableroles = array('0'=>get_string('listallroles', 'role').'...') + $overridableroles;
         popup_form("$CFG->wwwroot/$CFG->admin/roles/override.php?userid=$userid&amp;courseid=$courseid&amp;contextid=$contextid&amp;roleid=",
             $overridableroles, 'switchrole', $roleid, '', '', '', false, 'self', $strroletooverride);
