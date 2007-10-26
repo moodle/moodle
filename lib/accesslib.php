@@ -4737,10 +4737,12 @@ function build_context_path($force=false, $feedback=false) {
                                        WHERE temp.id = ctx.id)
                        $ctxemptyclause";
         execute_sql($sql, $feedback);
+        
+        // this is needed after every loop
+        // MDL-11532
+        execute_sql($updatesql, $feedback);
+        execute_sql($udelsql, $feedback);
     }
-
-    execute_sql($updatesql, $feedback);
-    execute_sql($udelsql, $feedback);
 
     // Courses -- except sitecourse
     $sql = "INSERT INTO {$CFG->prefix}context_temp (id, path, depth)
