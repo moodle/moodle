@@ -1658,9 +1658,13 @@ class grade_item extends grade_object {
         } else {
             $useditems = array();
         }
-
+        
+        // MDL-11902
+        // unset the value if formula is trying to reference to itself
+        // but array keys does not match itemid
         if (!empty($this->id)) {
-            unset($useditems[$this->id]);
+            $useditems = array_diff($useditems, array($this->id));
+            //unset($useditems[$this->id]);
         }
 
         // prepare formula and init maths library
