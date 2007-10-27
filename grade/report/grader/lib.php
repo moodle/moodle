@@ -80,6 +80,11 @@ class grade_report_grader extends grade_report {
      */
     var $rowcount = 0;
 
+    /** 
+     * Capability check caching
+     * */
+    var $canviewhidden;
+
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
@@ -91,6 +96,8 @@ class grade_report_grader extends grade_report {
     function grade_report_grader($courseid, $gpr, $context, $page=null, $sortitemid=null) {
         global $CFG;
         parent::grade_report($courseid, $gpr, $context, $page);
+
+        $this->canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->course->id));
 
         // load collapsed settings for this report
         if ($collapsed = get_user_preferences('grade_report_grader_collapsed_categories')) {
@@ -387,7 +394,9 @@ class grade_report_grader extends grade_report {
             }
         }
 
-        $html .= $this->print_toggle('averages', true);
+        if ($this->canviewhidden) {
+            $html .= $this->print_toggle('averages', true);
+        }
 
         if (has_capability('moodle/grade:viewall', $this->context)
          and has_capability('moodle/site:accessallgroups', $this->context)
@@ -632,11 +641,9 @@ class grade_report_grader extends grade_report {
             $scales_array = get_records_list('scale', 'id', $scales_list);
         }
 
-        $canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->course->id));
-
         foreach ($this->users as $userid => $user) {
 
-            if ($canviewhidden) {
+            if ($this->canviewhidden) {
                 $altered = array();
                 $unknown = array();
             } else {
@@ -674,7 +681,7 @@ class grade_report_grader extends grade_report {
 
                 // MDL-11274
                 // Hide grades in the grader report if the current grader doesn't have 'moodle/grade:viewhidden'
-                if (!$canviewhidden and $grade->is_hidden()) {
+                if (!$this->canviewhidden and $grade->is_hidden()) {
                     if (!empty($CFG->grade_hiddenasdate) and !is_null($grade->finalgrade) and !$item->is_category_item() and !$item->is_course_item()) {
                         // the problem here is that we do not have the time when grade value was modified, 'timemodified' is general modification date for grade_grades records
                         $studentshtml .= '<td class="cell c'.$columncount++.'">'.userdate($grade->timecreated,get_string('strftimedatetimeshort')).'</td>';
@@ -824,22 +831,16 @@ class grade_report_grader extends grade_report {
     function get_avghtml($grouponly=false) {
         global $CFG, $USER;
 
+        if (!$this->canviewhidden) {
+            // totals might be affected by hiding, if user can not see hidden grades the aggregations might be altered
+            // better not show them at all if user can not see all hideen grades
+            return;
+        }
+
         $averagesdisplaytype   = $this->get_pref('averagesdisplaytype');
         $averagesdecimalpoints = $this->get_pref('averagesdecimalpoints');
         $meanselection         = $this->get_pref('meanselection');
         $shownumberofgrades    = $this->get_pref('shownumberofgrades');
-
-        $canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->course->id));
-
-        if ($canviewhidden) {
-            $hidingsql1 = "";
-            $hidingsql2 = "";
-
-        } else {
-            $now = round(time(), -2); //100 sec gradularity, we need some db caching speedup here
-            $hidingsql1 = "AND g.hidden!=1 AND (g.hidden=0 OR g.hidden<$now)";
-            //$hidingsql2 = "OR (g.hidden!=1 AND (g.hidden=0 OR g.hidden<$now))";
-        }
 
         $avghtml = '';
         $avgcssclass = 'avg';
@@ -872,7 +873,6 @@ class grade_report_grader extends grade_report {
                      {$CFG->prefix}user u ON g.userid = u.id
                      $groupsql
                 WHERE gi.courseid = $this->courseid
-                     $hidingsql1
                      $groupwheresql
                      AND g.userid IN (
                         SELECT DISTINCT(u.id)
@@ -896,24 +896,15 @@ class grade_report_grader extends grade_report {
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
 
-                // If the user shouldn't see this grade_item, hide the average as well
-                // MDL-11576 If any of the grades are hidden and the user doesn't have permission to view them, hide average as well
-                if (!$canviewhidden and $item->is_hidden()) {
-                    $avghtml .= '<td class="cell c' . $columncount++.'"> - </td>';
-                    continue;
-                }
-
                 if (empty($sum_array[$item->id])) {
                     $sum_array[$item->id] = 0;
                 }
                 // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
                 // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
-                // optionally plus number of hidden grades
                 $SQL = "SELECT COUNT(*) AS count FROM {$CFG->prefix}user u
                          WHERE u.id NOT IN
                            (SELECT userid FROM {$CFG->prefix}grade_grades g
-                             WHERE g.itemid = $item->id AND
-                               (g.finalgrade IS NOT NULL $hidingsql1)
+                             WHERE g.itemid = $item->id AND g.finalgrade IS NOT NULL
                            )
                            AND u.id IN (
                              SELECT DISTINCT(u.id)

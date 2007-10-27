@@ -47,6 +47,8 @@ class grader_report_preferences_form extends moodleform {
         $stryes                 = get_string('yes');
         $strno                  = get_string('no');
 
+        $canviewhidden = has_capability('moodle/grade:viewhidden', $context);
+
 
         $checkbox_default = array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*', 0 => $strno, 1 => $stryes);
 
@@ -64,11 +66,14 @@ class grader_report_preferences_form extends moodleform {
                                                          GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY => get_string('gradesonly', 'grades')));
 
 
-            $preferences['prefshow'] = array('showcalculations'  => $checkbox_default,
-                                             'showeyecons'       => $checkbox_default,
-                                             'showaverages'      => $checkbox_default,
-                                             'showgroups'        => $checkbox_default,
-                                             'showlocks'         => $checkbox_default);
+            $preferences['prefshow'] = array();
+            $preferences['prefshow']['showcalculations']  = $checkbox_default;
+            $preferences['prefshow']['showeyecons']       = $checkbox_default;
+            if ($canviewhidden) {
+                $preferences['prefshow']['showaverages']  = $checkbox_default;
+            }
+            $preferences['prefshow']['showgroups']        = $checkbox_default;
+            $preferences['prefshow']['showlocks']         = $checkbox_default;
 
             $preferences['prefrows'] = array(
                         'rangesdisplaytype'      => array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
@@ -78,19 +83,24 @@ class grader_report_preferences_form extends moodleform {
                                                           GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
                         'rangesdecimalpoints'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
                                                           GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
-                                                          0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5),
-                        'averagesdisplaytype'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
-                                                          GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
-                                                          GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                                                          GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
-                                                          GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
-                        'averagesdecimalpoints'  => array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
-                                                          GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
-                                                          0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5),
-                        'meanselection'          => array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
-                                                          GRADE_REPORT_MEAN_ALL => get_string('meanall', 'grades'),
-                                                          GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades')));
-            $advanced = array_merge($advanced, array('rangesdisplaytype', 'rangesdecimalpoints', 'averagesdisplaytype', 'averagesdecimalpoints'));
+                                                          0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5));
+            $advanced = array_merge($advanced, array('rangesdisplaytype', 'rangesdecimalpoints'));
+
+            if ($canviewhidden) {
+                $preferences['prefrows']['averagesdisplaytype'] = array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
+                                                                        GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
+                                                                        GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
+                                                                        GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                                                                        GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'));
+                $preferences['prefrows']['averagesdecimalpoints'] = array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
+                                                                          GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
+                                                                          0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);
+                $preferences['prefrows']['meanselection']  = array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
+                                                                   GRADE_REPORT_MEAN_ALL => get_string('meanall', 'grades'),
+                                                                   GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades'));
+
+                $advanced = array_merge($advanced, array('averagesdisplaytype', 'averagesdecimalpoints'));
+            }
         }
 
         // quickgrading and quickfeedback are conditional on grade:edit capability
@@ -112,7 +122,9 @@ class grader_report_preferences_form extends moodleform {
             $preferences['prefshow']['showactivityicons'] = $checkbox_default;
             $preferences['prefshow']['showranges'] = $checkbox_default;
 
-            $preferences['prefrows']['shownumberofgrades'] = $checkbox_default;
+            if ($canviewhidden) {
+                $preferences['prefrows']['shownumberofgrades'] = $checkbox_default;
+            }
 
             $advanced = array_merge($advanced, array('aggregationposition'));
         }
