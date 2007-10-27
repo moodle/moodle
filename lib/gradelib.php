@@ -522,7 +522,10 @@ function grade_format_gradevalue($value, &$grade_item, $localized=true, $display
     switch ($displaytype) {
         case GRADE_DISPLAY_TYPE_REAL:
             if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
-                $scale = $grade_item->load_scale();
+                if (!$scale = $grade_item->load_scale()) {
+                    return get_string('error');
+                }
+
                 $value = (int)bounded_number($grade_item->grademin, $value, $grade_item->grademax);
                 return format_string($scale->scale_items[$value-1]);
 
