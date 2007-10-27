@@ -129,7 +129,7 @@ class grade_report_user extends grade_report {
         $this->table->set_attribute('id', 'user-grade');
         $this->table->set_attribute('class', 'boxaligncenter generaltable');
 
-        // not sure tables should be sortable or not, because if we allow it then sorted resutls distort grade category structure and sortorder
+        // not sure tables should be sortable or not, because if we allow it then sorted results distort grade category structure and sortorder
         $this->table->set_control_variables(array(
                 TABLE_VAR_SORT    => 'ssort',
                 TABLE_VAR_HIDE    => 'shide',
@@ -298,7 +298,7 @@ function grade_report_user_settings_definition(&$mform) {
                       0 => get_string('hide'),
                       1 => get_string('show'));
 
-    if (empty($CFG->grade_userreport_showrank)) {
+    if (empty($CFG->grade_report_user_showrank)) {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
     } else {
         $options[-1] = get_string('defaultprev', 'grades', $options[1]);
@@ -313,7 +313,7 @@ function grade_report_user_settings_definition(&$mform) {
                       0 => get_string('hide'),
                       1 => get_string('show'));
 
-    if (empty($CFG->grade_userreport_showrank)) {
+    if (empty($CFG->grade_report_user_showhiddenitems)) {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
     } else {
         $options[-1] = get_string('defaultprev', 'grades', $options[1]);
