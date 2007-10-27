@@ -88,9 +88,6 @@ if ($access) {
     // Create a report instance
     $report = new grade_report_user($courseid, $gpr, $context, $userid);
 
-    $gradetotal = 0;
-    $gradesum = 0;
-
     // print the page
     print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
 
