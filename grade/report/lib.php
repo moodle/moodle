@@ -284,18 +284,26 @@ class grade_report {
 
     /**
      * Fetches and returns a count of all the users that will be shown on this page.
+     * @param boolean $groups include groups limit
      * @return int Count of users
      */
-    function get_numusers() {
+    function get_numusers($groups=true) {
         global $CFG;
+
+        $groupsql      = "";
+        $groupwheresql = "";
+        if ($groups) {
+            $groupsql      = $this->groupsql;
+            $groupwheresql = $this->groupsqlwhere;
+        }
 
         $countsql = "SELECT COUNT(DISTINCT u.id)
                     FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
                          {$CFG->prefix}user u ON u.id = g.userid
                          LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
-                         $this->groupsql
+                         $groupsql
                     WHERE ra.roleid in ($this->gradebookroles)
-                         $this->groupwheresql
+                         $groupwheresql
                     AND ra.contextid ".get_related_contexts_string($this->context);
         return count_records_sql($countsql);
     }
