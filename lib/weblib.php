@@ -2957,6 +2957,16 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
             }
         }
 
+        if (!isset($THEME->gradereportsheets) || $THEME->gradereportsheets) { // Search for styles.php in grade reports
+            if ($reports = get_list_of_plugins('grade/report')) {
+                foreach ($reports as $report) {
+                    if (file_exists($CFG->dirroot.'/grade/report/'.$report.'/styles.php')) {
+                        $files[] = array($CFG->dirroot, '/grade/report/'.$report.'/styles.php');
+                    }
+                }
+            }
+        }
+
         if (!empty($THEME->langsheets)) {     // Search for styles.php within the current language
             if (file_exists($CFG->dirroot.'/lang/'.$lang.'/styles.php')) {
                 $files[] = array($CFG->dirroot, '/lang/'.$lang.'/styles.php');
