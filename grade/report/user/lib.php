@@ -55,6 +55,16 @@ class grade_report_user extends grade_report {
     var $gseq;
 
     /**
+     * show student ranks
+     */
+    var $showrank;
+
+    /**
+     * Show hidden items even when user does not have required cap
+     */
+    var $showhiddenitems;
+
+    /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
      * @param object $gpr grade plugin return tracking object
@@ -64,6 +74,9 @@ class grade_report_user extends grade_report {
     function grade_report_user($courseid, $gpr, $context, $userid) {
         global $CFG;
         parent::grade_report($courseid, $gpr, $context);
+
+        $this->showrank        = grade_get_setting($this->courseid, 'report_user_showrank', !empty($CFG->grade_report_user_showrank));
+        $this->showhiddenitems = grade_get_setting($this->courseid, 'report_user_showhiddenitems', !empty($CFG->grade_report_user_showhiddenitems));
 
         $switch = grade_get_setting($this->courseid, 'aggregationposition', $CFG->grade_aggregationposition);
 
@@ -94,7 +107,7 @@ class grade_report_user extends grade_report {
         */
 
         // setting up table headers
-        if (!empty($CFG->grade_userreport_showrank)) {
+        if ($this->showrank) {
             // TODO: this is broken if hidden grades present!!
             $tablecolumns = array('itemname', 'category', 'grade', 'percentage', 'rank', 'feedback');
             $tableheaders = array($this->get_lang_string('gradeitem', 'grades'), $this->get_lang_string('category'), $this->get_lang_string('grade'),
@@ -162,7 +175,7 @@ class grade_report_user extends grade_report {
             $grade_item  =& $items[$itemid];
             $grade_grade =& $grades[$itemid];
 
-            if (empty($CFG->grade_userreport_showhiddenitems) and !$canviewhidden and $grade_item->is_hidden()) {
+            if (!$this->showhiddenitems and !$canviewhidden and $grade_item->is_hidden()) {
                 continue;
             }
 
@@ -215,15 +228,15 @@ class grade_report_user extends grade_report {
             }
 
             /// prints rank
-            if (!empty($CFG->grade_userreport_showrank)) {
+            if ($this->showrank) {
                 // TODO: this is broken if hidden grades present!!
                 if ($grade_item->needsupdate) {
                     $data[] = '<span class="gradingerror">'.get_string('error').'</span>';
-    
+
                 } else if (is_null($gradeval)) {
                     // no grade, no rank
                     $data[] = '-';
-    
+
                 } else {
                     /// find the number of users with a higher grade
                     $sql = "SELECT COUNT(DISTINCT(userid))
@@ -231,7 +244,7 @@ class grade_report_user extends grade_report {
                              WHERE finalgrade > {$grade_grade->finalgrade}
                                    AND itemid = {$grade_item->id}";
                     $rank = count_records_sql($sql) + 1;
-    
+
                     $data[] = "$rank/$numusers";
                 }
             }
@@ -276,6 +289,39 @@ class grade_report_user extends grade_report {
      */
     function process_data($data) {
     }
+}
+
+function grade_report_user_settings_definition(&$mform) {
+    global $CFG;
+
+    $options = array(-1 => get_string('default', 'grades'),
+                      0 => get_string('hide'),
+                      1 => get_string('show'));
+
+    if (empty($CFG->grade_userreport_showrank)) {
+        $options[-1] = get_string('defaultprev', 'grades', $options[0]);
+    } else {
+        $options[-1] = get_string('defaultprev', 'grades', $options[1]);
+    }
+
+    $mform->addElement('select', 'report_user_showrank', get_string('showrank', 'grades'), $options);
+    $mform->setHelpButton('report_user_showrank', array(false, get_string('showrank', 'grades'),
+                          false, true, false, get_string('configshowrank', 'grades')));
+
+
+    $options = array(-1 => get_string('default', 'grades'),
+                      0 => get_string('hide'),
+                      1 => get_string('show'));
+
+    if (empty($CFG->grade_userreport_showrank)) {
+        $options[-1] = get_string('defaultprev', 'grades', $options[0]);
+    } else {
+        $options[-1] = get_string('defaultprev', 'grades', $options[1]);
+    }
+
+    $mform->addElement('select', 'report_user_showhiddenitems', get_string('showhiddenitems', 'grades'), $options);
+    $mform->setHelpButton('report_user_showhiddenitems', array(false, get_string('showhiddenitems', 'grades'),
+                          false, true, false, get_string('configshowhiddenitems', 'grades')));
 
 }
 ?>

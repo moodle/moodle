@@ -25,8 +25,8 @@
 
 /// Add settings for this module to the $settings object (it's already defined)
 
-$settings->add(new admin_setting_configcheckbox('grade_userreport_showrank', get_string('showrank', 'grades'), get_string('configshowrank', 'grades'), 0, PARAM_INT));
+$settings->add(new admin_setting_configcheckbox('grade_report_user_showrank', get_string('showrank', 'grades'), get_string('configshowrank', 'grades'), 0, PARAM_INT));
 
-$settings->add(new admin_setting_configcheckbox('grade_userreport_showhiddenitems', get_string('showhiddenitems', 'grades'), get_string('configshowhiddenitems', 'grades'), 0, PARAM_INT));
+$settings->add(new admin_setting_configcheckbox('grade_report_user_showhiddenitems', get_string('showhiddenitems', 'grades'), get_string('configshowhiddenitems', 'grades'), 0, PARAM_INT));
 
 ?>

@@ -460,6 +460,24 @@ function grade_get_setting($courseid, $name, $default=null, $resetcache=false) {
 }
 
 /**
+ * Returns all course gradebook settings as object properties
+ * @param int $courseid
+ * @return object
+ */
+function grade_get_settings($courseid) {
+     $settings = new object();
+     $settings->id = $courseid;
+
+    if ($records = get_records('grade_settings', 'courseid', $courseid)) {
+        foreach ($records as $record) {
+            $settings->{$record->name} = $record->value;
+        }
+    }
+
+    return $settings;
+}
+
+/**
  * Add/update course gradebook setting
  * @param int $courseid
  * @param string $name of setting

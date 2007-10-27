@@ -29,7 +29,6 @@ require_once $CFG->libdir.'/gradelib.php';
 require_once 'form.php';
 
 $courseid  = optional_param('id', SITEID, PARAM_INT);
-$action   = optional_param('action', '', PARAM_ALPHA);
 
 if (!$course = get_record('course', 'id', $courseid)) {
     print_error('nocourseid');
@@ -50,32 +49,27 @@ $returnurl = $CFG->wwwroot.'/grade/index.php?id='.$course->id;
 
 $mform = new course_settings_form();
 
-$data = new object;
-$data->id                  = $course->id;
-$data->displaytype         = grade_get_setting($course->id, 'displaytype', -1);
-$data->decimalpoints       = grade_get_setting($course->id, 'decimalpoints',- 1);
-$data->aggregationposition = grade_get_setting($course->id, 'aggregationposition', -1);
+$settings = grade_get_settings($course->id);
 
-$mform->set_data($data);
+$mform->set_data($settings);
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data()) {
-    if ($data->displaytype == -1) {
-        $data->displaytype = null;
+    $data = (array)$data;
+    $general = array('displaytype', 'decimalpoints', 'aggregationposition');
+    foreach ($data as $key=>$value) {
+        if (!in_array($key, $general) and strpos($key, 'report_') !== 0
+                                      and strpos($key, 'import_') !== 0
+                                      and strpos($key, 'export_') !== 0) {
+            continue;
+        }
+        if ($value == -1) {
+            $value = null;
+        }
+        grade_set_setting($course->id, $key, $value);
     }
-    grade_set_setting($course->id, 'displaytype', $data->displaytype);
-
-    if ($data->decimalpoints == -1) {
-        $data->decimalpoints = null;
-    }
-    grade_set_setting($course->id, 'decimalpoints', $data->decimalpoints);
-
-    if ($data->aggregationposition == -1) {
-        $data->aggregationposition = null;
-    }
-    grade_set_setting($course->id, 'aggregationposition', $data->aggregationposition);
 
     redirect($returnurl);
 }
