@@ -59,11 +59,6 @@ class course_settings_form extends moodleform {
         $mform->setHelpButton('decimalpoints', array(false, get_string('decimalpoints', 'grades'),
                               false, true, false, get_string('configdecimalpoints', 'grades')));
 
-
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-
-
         $options = array(-1                                      => get_string('default', 'grades'),
                          GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
                          GRADE_REPORT_AGGREGATION_POSITION_LAST  => get_string('positionlast', 'grades'));
@@ -78,6 +73,25 @@ class course_settings_form extends moodleform {
         $mform->setHelpButton('aggregationposition', array(false, get_string('aggregationposition', 'grades'),
                               false, true, false, get_string('configaggregationposition', 'grades')));
 
+// add setting options for plugins
+        $types = array('report', 'export', 'import');
+
+        foreach($types as $type) {
+            foreach (get_list_of_plugins('grade/'.$type) as $plugin) {
+             // Include all the settings commands for this plugin if there are any
+                if (file_exists($CFG->dirroot.'/grade/'.$type.'/'.$plugin.'/lib.php')) {
+                    require_once($CFG->dirroot.'/grade/'.$type.'/'.$plugin.'/lib.php');
+                    $functionname = 'grade_'.$type.'_'.$plugin.'_settings_definition';
+                    if (function_exists($functionname)) {
+                        $mform->addElement('header', 'grade_'.$type.$plugin, get_string('modulename', 'grade'.$type.'_'.$plugin, NULL, $CFG->dirroot.'/grade/'.$type.'/'.$plugin.'/lang/'));
+                        $functionname($mform);
+                    }
+                }
+            }
+        }
+
+        $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
 
         $this->add_action_buttons();
     }
