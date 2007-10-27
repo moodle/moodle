@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.org                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -222,15 +222,16 @@ class grade_category_test extends grade_test {
         $category->generate_grades();
         $grades = get_records('grade_grades', 'itemid', $category->grade_item->id);
         $this->assertEqual(3, count($grades));
-
-        $rawvalues = array();
+        
+        // Category grades do not have raw values
+        $finalvalues = array();
         foreach ($grades as $grade) {
-            $this->assertWithinMargin($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
-            $rawvalues[] = (int)$grade->rawgrade;
+            $this->assertWithinMargin($grade->finalgrade, $grade->rawgrademin, $grade->rawgrademax);
+            $finalvalues[] = (int)$grade->finalgrade;
         }
-        sort($rawvalues);
+        sort($finalvalues);
         // calculated mean results
-        $this->assertEqual($rawvalues, array(20,50,100));
+        $this->assertEqual($finalvalues, array(20,50,100));
     }
 
     function test_grade_category_aggregate_grades() {

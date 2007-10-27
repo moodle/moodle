@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -1250,7 +1250,7 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Refetch grades from moudles, plugins.
+     * Refetch grades from modules, plugins.
      * @param int $userid optional, one user only
      */
     function refresh_grades($userid=0) {
@@ -1261,12 +1261,12 @@ class grade_item extends grade_object {
             }
 
             if (!$activity = get_record($this->itemmodule, 'id', $this->iteminstance)) {
-                debugging('Can not find activity');
+                debugging("Can not find $this->itemmodule activity with id $this->iteminstance");
                 return;
             }
 
-            if (! $cm = get_coursemodule_from_instance($this->itemmodule, $activity->id, $this->courseid)) {
-                debuggin('Can not find course module');
+            if (!$cm = get_coursemodule_from_instance($this->itemmodule, $activity->id, $this->courseid)) {
+                debugging('Can not find course module');
                 return;
             }
 

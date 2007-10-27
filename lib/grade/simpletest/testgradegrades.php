@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.org                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -122,17 +122,20 @@ class grade_grade_test extends grade_test {
 
         $this->assertTrue(empty($grade_item->locked));
         $this->assertTrue(empty($grade->locked));
-
+        
+        // Test locking the grade
         $this->assertTrue($grade->set_locked(true));
         $this->assertFalse(empty($grade->locked));
         $this->assertTrue($grade->set_locked(false));
         $this->assertTrue(empty($grade->locked));
 
-        $this->assertTrue($grade_item->set_locked(true));
+        // Test locking the grade item with cascading on
+        $this->assertTrue($grade_item->set_locked(true, true, false));
         $grade = new grade_grade($grade_item->get_final(1));
 
-        $this->assertFalse(empty($grade->locked));
-        $this->assertFalse($grade->set_locked(false));
+        // Grade should already be locked
+        $this->assertFalse(empty($grade->locked)); 
+        $this->assertTrue($grade->set_locked(false));
 
         $this->assertTrue($grade_item->set_locked(false));
         $grade = new grade_grade($grade_item->get_final(1));

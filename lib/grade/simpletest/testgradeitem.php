@@ -355,7 +355,7 @@ class grade_item_test extends grade_test {
         $this->assertTrue(empty($grade_item->locked));
         $this->assertTrue(empty($grade->locked));
 
-        $this->assertTrue($grade_item->set_locked(true));
+        $this->assertTrue($grade_item->set_locked(true, true));
         $grade = new grade_grade($grade_item->get_final(1));
 
         $this->assertFalse(empty($grade_item->locked));

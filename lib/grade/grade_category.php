@@ -364,7 +364,7 @@ class grade_category extends grade_object {
 
     /**
      * Generates and saves raw_grades in associated category grade item.
-     * These immediate children must alrady have their own final grades.
+     * These immediate children must already have their own final grades.
      * The category's aggregation method is used to generate raw grades.
      *
      * Please note that category grade is either calculated or aggregated - not both at the same time.
@@ -446,6 +446,13 @@ class grade_category extends grade_object {
 
     /**
      * internal function for category grades aggregation
+     * 
+     * @param int $userid
+     * @param array $items
+     * @param array $grade_values
+     * @param float $oldgrade
+     * @param bool $excluded
+     * @return boolean (just plain return;)
      */
     function aggregate_grades($userid, $items, $grade_values, $oldgrade, $excluded) {
         global $CFG;
