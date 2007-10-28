@@ -22,11 +22,8 @@ class block_admin_tree extends block_base {
     }
 
     function applicable_formats() {
-        if (block_admin_tree::has_admin_caps()) {
-            return array('site' => true, 'admin' => true, 'my' => true);
-        } else {
-            return array('site' => true);
-        }
+        //TODO: add 'my' only if user has role assigned in system or any course category context
+        return array('site' => true, 'admin' => true, 'my' => true);
     }
 
     function preferred_width() {
@@ -104,7 +101,8 @@ class block_admin_tree extends block_base {
             return $this->content;
         }
 
-        if (!($this->has_admin_caps())) {
+        if (isguestuser() or !isloggedin()) {
+            // these users can not change any settings
             $this->content = '';
             return '';
         }
@@ -212,28 +210,6 @@ class block_admin_tree extends block_base {
 
         return $this->content;
 
-    }
-
-    /**
-     * Return true
-     * if $USER has any caps that mean we should
-     * display this block...
-     */
-    function has_admin_caps() {
-
-        $sysctx = get_context_instance(CONTEXT_SYSTEM);
-
-        return (has_capability('moodle/site:config',             $sysctx)
-                || has_capability('moodle/site:langeditmaster',  $sysctx)
-                || has_capability('moodle/site:langeditlocal',   $sysctx)
-                || has_capability('moodle/site:manageblocks',    $sysctx)
-                || has_capability('moodle/user:delete',          $sysctx)
-                || has_capability('moodle/user:update',          $sysctx)
-                || has_capability('moodle/user:create',          $sysctx)
-                || has_capability('moodle/grade:manage',         $sysctx)
-                || has_capability('moodle/grade:manageletters',  $sysctx)
-                || has_capability('moodle/grade:managescales',   $sysctx)
-                || has_capability('moodle/site:readallmessages', $sysctx));
     }
 }
 

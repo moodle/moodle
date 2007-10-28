@@ -5,13 +5,13 @@
 if (get_site()) { //do not use during installation
     $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
 
-    if (has_capability('moodle/site:config',        $systemcontext)
+    if ($hassiteconfig
      or has_capability('moodle/course:update',      $frontpagecontext)
      or has_capability('moodle/role:assign',        $frontpagecontext)
      or has_capability('moodle/site:restore',       $frontpagecontext)
      or has_capability('moodle/site:backup',        $frontpagecontext)
-     or has_capability('moodle/course:managefiles', $frontpagecontext)
-     ) {
+     or has_capability('moodle/course:managefiles', $frontpagecontext)) {
+
         // "frontpage" settingpage
         $temp = new admin_settingpage('frontpagesettings', get_string('frontpagesettings','admin'), 'moodle/course:update', false, $frontpagecontext);
         $temp->add(new admin_setting_sitesettext('fullname', get_string('fullsitename'), '', NULL)); // no default
