@@ -1,5 +1,6 @@
 <?php // $Id$
 
+if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
 
 // "sitepolicies" settingpage
@@ -107,5 +108,7 @@ $temp->add(new admin_setting_configtext('quarantinedir', get_string('quarantined
 $temp->add(new admin_setting_configselect('clamfailureonupload', get_string('clamfailureonupload', 'admin'), get_string('configclamfailureonupload', 'admin'), 'donothing', array('donothing' => get_string('configclamdonothing', 'admin'),
                                                                                                                                                                                   'actlikevirus' => get_string('configclamactlikevirus', 'admin'))));
 $ADMIN->add('security', $temp);
+
+} // end of speedup
 
 ?>

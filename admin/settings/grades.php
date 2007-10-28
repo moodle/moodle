@@ -2,11 +2,14 @@
 
 // This file defines settingpages and externalpages under the "grades" section
 
+if (has_capability('moodle/grade:manage', $systemcontext)
+ or has_capability('moodle/grade:manageletters', $systemcontext)) { // speedup for non-admins, add all caps used on this page
+
 // General settings
 
 require_once $CFG->libdir.'/grade/constants.php';
 
-$temp = new admin_settingpage('gradessettings', get_string('gradessettings', 'grades'));
+$temp = new admin_settingpage('gradessettings', get_string('gradessettings', 'grades'), 'moodle/grade:manage');
 
 // enable outcomes checkbox
 $temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'grades'), get_string('configenableoutcomes', 'grades'), 0, PARAM_INT));
@@ -57,7 +60,7 @@ $temp->add(new admin_setting_special_gradeexport());
 $ADMIN->add('grades', $temp);
 
 /// Grade category settings
-$temp = new admin_settingpage('gradecategorysettings', get_string('gradecategorysettings', 'grades'));
+$temp = new admin_settingpage('gradecategorysettings', get_string('gradecategorysettings', 'grades'), 'moodle/grade:manage');
 
 $temp->add(new admin_setting_configcheckbox('grade_hideforcedsettings', get_string('hideforcedsettings', 'grades'), get_string('confighideforcedsettings', 'grades'), 0, PARAM_INT));
 
@@ -117,7 +120,7 @@ foreach (get_list_of_plugins('grade/report') as $plugin) {
 
     if (file_exists($CFG->dirroot.'/grade/report/'.$plugin.'/settings.php')) {
 
-        $settings = new admin_settingpage('gradereport'.$plugin, get_string('modulename', 'gradereport_'.$plugin));
+        $settings = new admin_settingpage('gradereport'.$plugin, get_string('modulename', 'gradereport_'.$plugin), 'moodle/grade:manage');
         include($CFG->dirroot.'/grade/report/'.$plugin.'/settings.php');
         $ADMIN->add('gradereports', $settings);
     }
@@ -135,7 +138,7 @@ foreach (get_list_of_plugins('grade/import') as $plugin) {
             $first = false;
         }
 
-        $settings = new admin_settingpage('gradeimport'.$plugin, get_string('modulename', 'gradeimport_'.$plugin));
+        $settings = new admin_settingpage('gradeimport'.$plugin, get_string('modulename', 'gradeimport_'.$plugin), 'moodle/grade:manage');
         include($CFG->dirroot.'/grade/import/'.$plugin.'/settings.php');
         $ADMIN->add('gradeimports', $settings);
     }
@@ -153,9 +156,12 @@ foreach (get_list_of_plugins('grade/export') as $plugin) {
             $first = false;
         }
 
-        $settings = new admin_settingpage('gradeexport'.$plugin, get_string('modulename', 'gradeexport_'.$plugin));
+        $settings = new admin_settingpage('gradeexport'.$plugin, get_string('modulename', 'gradeexport_'.$plugin), 'moodle/grade:manage');
         include($CFG->dirroot.'/grade/export/'.$plugin.'/settings.php');
         $ADMIN->add('gradeexports', $settings);
     }
 }
+
+} // end of speedup
+
 ?>

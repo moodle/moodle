@@ -6,6 +6,7 @@
 // are added to them.
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$hassiteconfig = has_capability('moodle/site:config', $systemcontext);
 
 $ADMIN->add('root', new admin_externalpage('adminnotifications', get_string('notifications'), "$CFG->wwwroot/$CFG->admin/index.php"));
 

@@ -2,6 +2,9 @@
 
 // This file defines settingpages and externalpages under the "server" category
 
+if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
+
+
 // "systempaths" settingpage
 $temp = new admin_settingpage('systempaths', get_string('systempaths','admin'));
 $temp->add(new admin_setting_configselect('gdversion', get_string('gdversion','admin'), get_string('configgdversion', 'admin'), check_gd_version(), array('0' => get_string('gdnot'),
@@ -215,5 +218,7 @@ $ADMIN->add('server', $temp);
 if (file_exists("$CFG->dirroot/$CFG->admin/mysql/frame.php")) {
     $ADMIN->add('server', new admin_externalpage('database', get_string('managedatabase'), "$CFG->wwwroot/$CFG->admin/mysql/frame.php"));
 }
+
+} // end of speedup
 
 ?>

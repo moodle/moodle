@@ -2,7 +2,7 @@
 
 // This file defines settingpages and externalpages under the "users" category
 
-if (has_capability('moodle/site:config',$systemcontext)) { // speedup for non-admins
+if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
 
 $ADMIN->add('users', new admin_externalpage('userauthentication', get_string('authentication','admin'), "$CFG->wwwroot/$CFG->admin/auth.php"));
@@ -108,6 +108,6 @@ $temp->add(new admin_setting_configmultiselect('hiddenuserfields', get_string('h
 
 $ADMIN->add('roles', $temp);
 
-} // end of admin tree capability if
+} // end of speedup
 
 ?>

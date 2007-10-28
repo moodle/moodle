@@ -2,6 +2,10 @@
 
 // This file defines settingpages and externalpages under the "courses" category
 
+if ($hassiteconfig
+ or has_capability('moodle/site:backup', $systemcontext)
+ or has_capability('moodle/category:update', $systemcontext)) { // speedup for non-admins, add all caps used on this page
+
 
 $ADMIN->add('courses', new admin_externalpage('coursemgmt', get_string('coursemgmt', 'admin'), $CFG->wwwroot . '/course/index.php?categoryedit=on','moodle/category:update'));
 
@@ -48,5 +52,6 @@ $temp->add(new admin_setting_special_backuptime());
 $temp->add(new admin_setting_special_backupsaveto());
 $ADMIN->add('courses', $temp);
 
+} // end of speedup
 
 ?>

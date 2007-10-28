@@ -2,6 +2,9 @@
 
 // This file defines settingpages and externalpages under the "appearance" category
 
+if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
+
+
 $ADMIN->add('appearance', new admin_category('themes', get_string('themes')));
 // "themesettings" settingpage
 $temp = new admin_settingpage('themesettings', get_string('themesettings', 'admin'));
@@ -124,4 +127,6 @@ $ADMIN->add('appearance', $temp);
 
 // link to tag management interface
 $ADMIN->add('appearance', new admin_externalpage('managetags', get_string('managetags', 'tag'), "$CFG->wwwroot/tag/manage.php"));
+
+} // end of speedup
 ?>
