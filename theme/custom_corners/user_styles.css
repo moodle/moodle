@@ -227,6 +227,9 @@ body#course-index table.generalbox {
   border-style: solid;
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
 }
+table.minicalendar th {
+  padding: 0px 1px;
+}
 table.minicalendar td.today {
   line-height: 1.4em;
   border: 2px solid #0066FF;
@@ -422,7 +425,6 @@ div#header-home {
   position: relative;
   margin: 0;
   padding: 5px 5px 0 0;
-  background-color: #F1ECE6;
 }
 div#header {
   position: relative;
