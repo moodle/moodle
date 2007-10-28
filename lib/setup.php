@@ -382,9 +382,12 @@ global $HTTPSPAGEREQUIRED;
             require_once($CFG->libdir. '/adodb/session/adodb-session2.php');
         }
     }
-/// Set sessioncookie variable if it isn't already
+/// Set sessioncookie and sessioncookiepath variable if it isn't already
     if (!isset($CFG->sessioncookie)) {
         $CFG->sessioncookie = '';
+    }
+    if (!isset($CFG->sessioncookiepath)) {
+        $CFG->sessioncookiepath = '/';
     }
 
 /// Configure ampersands in URLs
@@ -495,6 +498,7 @@ global $HTTPSPAGEREQUIRED;
 
     if (empty($nomoodlecookie)) {
         session_name('MoodleSession'.$CFG->sessioncookie);
+        session_set_cookie_params(0, $CFG->sessioncookiepath);
         @session_start();
         if (! isset($_SESSION['SESSION'])) {
             $_SESSION['SESSION'] = new object;
@@ -502,7 +506,7 @@ global $HTTPSPAGEREQUIRED;
             if (!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
                 $_SESSION['SESSION']->has_timed_out = true;
             }
-            setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, '/');
+            setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, $CFG->sessioncookiepath);
             $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] = $_SESSION['SESSION']->session_test;
         }
         if (! isset($_SESSION['USER']))    {

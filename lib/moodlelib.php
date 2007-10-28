@@ -2552,8 +2552,8 @@ function set_moodle_cookie($thing) {
     $days = 60;
     $seconds = DAYSECS*$days;
 
-    setCookie($cookiename, '', time() - HOURSECS, '/');
-    setCookie($cookiename, rc4encrypt($thing), time()+$seconds, '/');
+    setCookie($cookiename, '', time() - HOURSECS, $CFG->sessioncookiepath);
+    setCookie($cookiename, rc4encrypt($thing), time()+$seconds, $CFG->sessioncookiepath);
 }
 
 /**
@@ -4144,14 +4144,14 @@ function make_user_directory($userid, $test=false) {
 
     // Generate a two-level path for the userid. First level groups them by slices of 1000 users, second level is userid
     $level1 = floor($userid / 1000) * 1000;
-
+    
     $userdir = "user/$level1/$userid";
     if ($test) {
         return $CFG->dataroot . '/' . $userdir;
     } else {
         return make_upload_directory($userdir);
-        }
     }
+}
 
 /**
  * Returns an array of full paths to user directories, indexed by their userids.
