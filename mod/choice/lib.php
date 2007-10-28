@@ -137,7 +137,7 @@ function choice_show_form($choice, $user, $cm) {
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             if (!empty($countanswers)) {
                 foreach ($countanswers as $ca) { //only return enrolled users.
-                    if (has_capability('mod/choice:choose', $context)) {
+                    if (has_capability('mod/choice:choose', $context, $ca->userid, false)) {
                         $countans = $countans+1;
                     }
                 }
@@ -289,12 +289,15 @@ function choice_show_reportlink($choice, $courseid, $cmid, $groupmode) {
     if ($allanswers = get_records("choice_answers", "choiceid", $choice->id)) {
         $responsecount = 0;
         foreach ($allanswers as $aa) {
-            if ($groupmode and $currentgroup) {
-                if (groups_is_member($currentgroup, $aa->userid)) {
+            $context = get_context_instance(CONTEXT_MODULE, $cmid);
+            if (has_capability('mod/choice:choose', $context, $aa->userid, false)) { //check to make sure user is enrolled/has this capability.
+                if ($groupmode and $currentgroup) {
+                    if (groups_is_member($currentgroup, $aa->userid)) {
+                        $responsecount++;
+                    }
+                } else {
                     $responsecount++;
                 }
-            } else {
-                $responsecount++;
             }
         }
     } else {
@@ -324,7 +327,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
         $currentgroup = 0;
     }
 
-    $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', false);
+    $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', true);
 
     if (!empty($CFG->enablegroupings) && !empty($cm->groupingid) && !empty($users)) {
         $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
@@ -364,7 +367,10 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 $answer = $answers[$user->id];
                 $useranswer[(int)$answer->optionid][] = $user;
             } else {
-                $useranswer[0][] = $user;
+                $usershownotans = get_users_by_capability($context, 'mod/choice:choose', 'u.id', 'u.id ASC', '', '', $currentgroup, '', false);
+                if ($user->id == $usershownotans[$user->id]->id) {
+                    $useranswer[0][] = $user;
+                }
             }
         }
     }
