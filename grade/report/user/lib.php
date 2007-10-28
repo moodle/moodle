@@ -324,6 +324,30 @@ function grade_report_user_settings_definition(&$mform) {
     $mform->addElement('select', 'report_user_showhiddenitems', get_string('showhiddenitems', 'grades'), $options);
     $mform->setHelpButton('report_user_showhiddenitems', array(false, get_string('showhiddenitems', 'grades'),
                           false, true, false, get_string('configshowhiddenitems', 'grades')));
-
 }
+
+function grade_report_user_profilereport($course, $user) {
+    if (!empty($course->showgrades)) {
+
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
+        //first make sure we have proper final grades - this must be done before constructing of the grade tree
+        grade_regrade_final_grades($course->id);
+
+        /// return tracking object
+        $gpr = new grade_plugin_return(array('type'=>'report', 'plugin'=>'user', 'courseid'=>$course->id, 'userid'=>$user->id));
+        // Create a report instance
+        $report = new grade_report_user($course->id, $gpr, $context, $user->id);
+
+        // print the page
+        echo '<div class="grade-report-user">'; // css fix to share styles with real report page
+        print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+
+        if ($report->fill_table()) {
+            echo $report->print_table(true);
+        }
+        echo '</div>';
+    }
+}
+
 ?>

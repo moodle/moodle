@@ -1563,12 +1563,25 @@ class admin_setting_configselect extends admin_setting {
         parent::admin_setting($name, $visiblename, $description, $defaultsetting);
     }
 
+    /**
+     * This function may be used in ancestors for lazy loading of choices
+     */
+    function load_choices() {
+        /*
+        if (!empty($this->choices)) {
+            return;
+        }
+        .... load choices here
+        */
+    }
+
     function get_setting() {
         global $CFG;
         return (isset($CFG->{$this->name}) ? $CFG->{$this->name} : NULL);
     }
 
     function write_setting($data) {
+        $this->load_choices();
          // check that what we got was in the original choices
          // or that the data is the default setting - needed during install when choices can not be constructed yet
          if ($data != $this->defaultsetting and ! in_array($data, array_keys($this->choices))) {
@@ -1579,6 +1592,7 @@ class admin_setting_configselect extends admin_setting {
     }
 
     function output_html() {
+        $this->load_choices();
         if ($this->get_setting() === NULL) {
             $current = $this->defaultsetting;
         } else {
@@ -2790,6 +2804,35 @@ class admin_category_regrade_select extends admin_setting_configselect {
 
          return '';
     }
+}
+
+/**
+ * Selection of grade report in user ptofile
+ */
+class admin_setting_grade_profilereport extends admin_setting_configselect {
+    function admin_setting_grade_profilereport() {
+        parent::admin_setting_configselect('grade_profilereport', get_string('profilereport', 'grades'), get_string('configprofilereport', 'grades'), 'user', null);
+    }
+
+    function load_choices() {
+        if (!empty($this->choices)) {
+            return;
+        }
+        $this->choices = array();
+
+        global $CFG;
+        require_once($CFG->libdir.'/gradelib.php');
+
+        foreach (get_list_of_plugins('grade/report') as $plugin) {
+            if (file_exists($CFG->dirroot.'/grade/report/'.$plugin.'/lib.php')) {
+                require_once($CFG->dirroot.'/grade/report/'.$plugin.'/lib.php');
+                $functionname = 'grade_report_'.$plugin.'_profilereport';
+                if (function_exists($functionname)) {
+                    $this->choices[$plugin] = get_string('modulename', 'gradereport_'.$plugin, NULL, $CFG->dirroot.'/grade/report/'.$plugin.'/lang/');
+                }
+            }
+        }
+    }    
 }
 
 
