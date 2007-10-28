@@ -1,0 +1,102 @@
+<h2 align="center">RegExp Short Answer Questions</h2>
+<p>Like the Short Answer question, the RegExp Short Answer question expects the respondent to answer an &quot;open&quot; question with a word or a short phrase. However, the RegExp system system gives you access to a more powerful system for 
+          analysing the student's answers. For a complete introduction to Regular Expressions, 
+          see these sites <a href="http://www.zend.com/zend/tut/tutorial-delin2.php" target="_blank">regular-expressions 
+tutorial</a> or <a href="http://perso.wanadoo.fr/joseph.rezeau/eao/developpement/expandRegexpToString.htm#" 
+          target="_blank">rezeau.org</a>. </p>
+
+<h3>Correct answer matching a regular expression pattern </h3>
+<p>It is not possible to give complete examples of the vast possibilities offered 
+  by this system, and the following are just some possibilities. </p>
+<p><strong>Example 1.</strong> Suppose your question is &quot;What are the colors 
+  of the French flag?&quot;. In the Answer 1 box you would type the &quot;best&quot; answer, e.g. &quot;it's blue, white and red&quot;. For more details, see <a href="#firstcorrect">First&nbsp;correct&nbsp;answer</a> below. </p>
+<p>In the Answer 2 box you would type this regular 
+  expression: &quot;<span class="c_computeroutput">it&rsquo;s blue, white(,| and) 
+    red</span>/i&quot; (quotes should not be typed, of course) . This will match any of those 4 responses:</p>
+<ul>
+  <li>it&rsquo;s blue, white, red</li>
+  <li>it&rsquo;s blue, white and red</li>
+  <li>It&rsquo;s blue, white, red</li>
+  <li>It&rsquo;s blue, white and red </li>
+</ul>
+<p>Please note that by default a regular expression match is case sensitive; to 
+  make the match case insensitive you must add the <strong>/i</strong> parameter 
+  right at the end of your expression.</p>
+<p><strong>Example 2</strong>. Question: &quot;What is blue, or red, or yellow?&quot;. 
+  Answer: &quot;(|it's )a colou?r&quot;. This answer will match:</p>
+<ul>
+  <li>a colour</li>
+  <li> a color</li>
+  <li>it's a colour</li>
+  <li>it's a color</li>
+</ul>
+<p>Notes.- The beginning of this regular expression &quot;(|it's )&quot; will 
+  match either nothing or &quot;it's  &quot; (i.e. &quot;it's&quot; followed by 
+  a space). The ? (question-mark) means: preceding character zero or one time; 
+  it is used here to match British English as well as US spelling.</p>
+<p><strong>Example 3.</strong> Question: &quot;Name an animal whose name is made 
+  of 3 letters and the middle letter is the vowel <em>a</em>&quot;. Anwer: 
+  &quot;[bcr]at&quot;. This will match: bat, cat and rat. </p>
+<h3>Detecting missing required words or character strings</h3>
+<p>Regular expressions alone cannot detect absent character strings, so you have to 
+  add a little code in your Answer to take care of this. Any Teacher Answer which 
+  begins with a double hyphen will analyse the student&rsquo;s response to find out 
+  whether the following string is present or absent. If present, the analysis 
+  continues to the next question; if absent, the analysis stops and the relevant 
+  Feedback message is displayed.</p>
+<p><strong>Example 4. </strong></p>
+<ul>
+  <li>Answer 2: <span class="c_computeroutput">--.*blue.*</span>/i</li>
+  <li>student answer: &quot;it's red and white&quot; </li>
+  <li>Feedback 2: <span class="c_computeroutput">The color of the sky is missing!</span></li>
+</ul>
+<p>Here, the . (dot) stands for &ldquo;any character&rdquo; and the * (asterisk) 
+  means &ldquo;preceding special character repeated any number of times&rdquo;. 
+  The Answer2 regular expression above means: check whether the character string 
+  &quot;blue&quot;, preceded with anything and followed by anything is absent 
+  from the student's answer. Please note that the use of the asterisk is different 
+  in the normal Short Answer question type and in the RegExp question type.</p>
+<p><strong>Example 5.</strong> Question: &quot;Name an animal whose name is made of 
+  3 letters and the middle letter is the vowel <em>a</em>&quot;. Teacher Answer: &quot;--[b|c|r]&quot;. Feedback: &quot;Your answer should start with one of these letters: b, c or r&quot; </p>
+<h3>Escaping special characters </h3>
+<p>If you need to use (in your Answers) characters which are part of the regular expressions set 
+  of <em>special characters</em> (or <em>meta</em> characters), you need to &quot;escape&quot; them (i.e. precede 
+  them with a backslash). E.g. if you want to accept the answer &quot;My computer 
+  cost 1000$&quot;, you must write the regular expression as &quot;My computer cost 
+  1000\$&quot;. But please see <em>First correct answer</em> below. The special characters which must be escaped are the following <strong>.^$*()[]+?|{}</strong></p>
+<h3>Entering Answers in Edit Question mode (teacher)</h3>
+<p>[changes starting from February 2007 version of regexp question type] </p>
+<p>The Editing regular expression question interface screen has been slightly modified. </p>
+<h4>Display Hint Button</h4>
+<p>It is now possible for the teacher to tick a <strong>Display Hint Button</strong> box in order to allow the student to ask for a hint. This hint will add the next correct letter to the student's input response field and - if the penalty scheme has been enabled in the Quiz settings - will cost the student one penalty factor. When the student takes the quiz, mousing over the Hint button will display how much it will cost to &quot;buy&quot; a letter. By default Display Hint button value is set at No. Questions created prior to Feb. 2007 will have this No value. If you want to display the Hint button you'll have to edit those questions and select Yes and save. Please note that the Hint button will only be available to quizzes which have their Adaptive mode set to Yes, as it does not make sense to enable the Hint button for non-adaptive tests. </p>
+<p>Each time a student clicks the Hint button to buy a letter, an invisible paragraph character (&nbsp;&para;&nbsp;) is added to his response. When the teacher views the quiz results, that paragraph character is visible so the teacher knows that the Hint button was clicked for that response. </p>
+<h4><a name="firstcorrect" id="firstcorrect"></a>First correct answer</h4>
+<p>For a number of reasons, the way of entering the very first Answer (Answer 1) in your list of answers has been changed. For Answer 1 you must now enter an answer text which a) is the &quot;best&quot; possible answer; b) is <strong>not</strong> a regular expression or - more exactly - <em>will not be interpreted as a regular expression</em> but &quot;as is&quot; and c) has a Grade value of 100%. This means that you may have to edit regexp questions created prior to Feb. 2007 if they do not obey these rules. You will notice that when you create a new regexp question the Grade value for Answer 1 is already automatically set at 100%. You must not change this. If, however, you did, a warning message would be issued when you save your question, allowing you the opportunity to go back and set things right. In Moodle 1.8+ you won't be able to save your question if you have accidentally changed the 100% grade for Answer 1 for another value (this should not happen). </p>
+<p>Note.- There are two ways to enter an answer containing meta characters, according to whether this is Answer 1 or any of the subsequent Answers. Exemple question: how much did your computer cost?</p>
+<p>Answer 1: It cost $1,000.</p>
+<p>Answer 2: It cost ( me)?\$1,000\.</p>
+<p>In Anwer 1 you just type the expected answer &quot;as is&quot;. The text in Answer 2 will be interpreted as a regular expression, and thus you need to escape the two meta characters (the $ sign and the end-of-sentence full stop). Note that here I have added the optional pronoun &quot;me&quot;. </p>
+<h4>Other answers </h4>
+<p>Any answers with a Grade higher than 0% must be entered as valid regular expressions <em>which can yield acceptable alternative answers</em> (regardless of the Grade being less than 100%). </p>
+<p>This means that some regular expressions, which are perfectly valid and would correctly analyse the student's (correct) answer are not recommended. The only case where they would work is a) if your question's <strong>Display Hint Button</strong> is set at No and b) your quiz <strong>Adaptative Mode</strong> is set at No. This means  that you must <em>not</em> enter as an answer with a grade higher than 0% a regular expression beginning with a double hyphen &quot;--&quot;, used for detecting missing character strings. </p>
+<h3>Previewing questions in popup window (teacher only) </h3>
+<p>[changes starting from February 2007 version of regexp question type] </p>
+<p>When the teacher previews a question in the popup preview question window it is now possible to display all of the acceptable alternative answers. Those alternative answers are automatically generated from the regular expressions you have entered when creating the question which carry a grade higher than 0%. The very first acceptable answer is printed as is at the top of the list. This is followed by all the other alternative acceptable answers, consisting of a) the Grade attributed; b) a reminder of the regular expression you entered and c) a list of all alternative answers.</p>
+<p>The only check done by the programme for the validity of your regular expressions consists in checking that opened parentheses and square brackets are correctly closed. If your parentheses and square brackets are not correctly closed, a warning message will be displayed showing the number of each. You should immediately edit the faulty question. </p>
+<p> However this does not totally protect you from other errors. If you made an error in one of your regular expressions, either of the following can happen: a) a PHP error notice or warning will be displayed, something like [<em><strong>Fatal error</strong>:  Maximum execution time of 30 seconds exceeded etc.</em> ] or b) no error will be displayed but you will see by yourself that the alternative answers generated from your faulty regexp are in fact not acceptable. You should of course immediately edit the problem question, trying to find and correct the faulty regular expression. Hopefully a more robust and user-friendly checking mechanism will be available soon.</p>
+<p>It is highly recommended to use the preview popup window systematically immediately after having created or edited a regexp type question, and to click on the <strong>Show alternate answers</strong> button in order to check the validity of one's regular expressions. </p>
+<h3>Inserting regexp sub-questions in Cloze type questions</h3>
+<p>The syntax for inserting regexp sub-questions in Cloze type questions is as shown in the following examples.</p>
+<ul>
+  <li>The   colors 
+  of the French flag are {:REGEXP:=blue, white and red#Correct!~=<span class="c_computeroutput">it&rsquo;s blue, white(,| and) 
+  red</span>#Correct!~--.*blue.*#The color of the sky is missing.}  </li>
+  <li>The   colors 
+  of the French flag are {:REGEXP:%100%blue, white and red#Correct!~%100%<span class="c_computeroutput">it&rsquo;s blue, white(,| and) 
+  red</span>#Correct!~--.*blue.*#The color of the sky is missing.} </li>
+</ul>
+<p>Please note that, as explained above, the very first answer must be Graded 100% (in Cloze type question syntax, all correct is either <strong>=</strong> or <strong>100%</strong>) and it must not be a regular expression. If you forget to give a 100% grade to the very first answer, a warning message will be displayed upon saving the question: &quot;<em>Answer 1 must be correct and its grade must be 100%. Do you want to go back and correct this?</em>&quot;. However, if you see this message, <em><strong>you must not click the </strong></em><strong>Yes</strong><em><strong> button</strong></em>, because it would not take you back to your Cloze type editing window. You must click <strong>No</strong> and immediately edit the faulty Cloze question and correct the problem.</p>
+<p>Please note that the syntax of the sub-questions inside a Cloze-type question must be followed exactly and that you must never ever copy and paste any question text from e.g. a word-processor into the Cloze-type question editing window. Quite often Cloze-type questions yield errors because extraneous blank spaces, new lines, or any odd formatting character has made its way into the question text.</p>
+<p>Unfortunately the Hint button will not be available to the student for a regexp question inserted into a Cloze-type question. Maybe this will be available later on, when I'm retired and have more time on my hands.</p>
+<hr />
+<p>Updated by JR 28-Mar-2007</p>

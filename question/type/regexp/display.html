@@ -1,0 +1,65 @@
+<div class="qtext">
+  <?php echo $questiontext; ?>
+</div>
+
+<?php if ($image) { ?>
+  <img class="qimage" src="<?php echo $image; ?>" alt="" />
+<?php } ?>
+
+<div class="ablock clearfix">
+  <div class="prompt">
+    <?php echo get_string("answer", "quiz").': '; ?>
+  </div>
+
+  <div class="answer">
+    <input type="text" <?php echo "$readonly $inputname $value"; ?> size="80"/>&nbsp;
+  <?php 
+  // only print Hint button if all these conditions are met (readonly is set on Review page, where we do not want Hint button displayed)
+  if ($question->options->usehint && ($cmoptions->optionflags == QUESTION_ADAPTIVE) && !$readonly ) {	
+		$p = get_string("hintpenalty", "qtype_regexp", $question->penalty);
+		$q = 'resp'.$question->id.'_';
+		$q2 = $q.'submit';
+		$hint = get_string("hint", "qtype_regexp");
+		echo('<input  id ='.$q.' type="submit" name='.$q2.' value='.$hint.' title='.$p.' onclick="submittheform(this.id)" style="">');
+	}  
+	?>
+
+  </div>
+  <?php if ($feedback) { ?>
+    <div class="feedback">
+      <?php echo $feedback ?>
+    </div>
+  <?php } ?>
+  </div>
+  <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
+<?php if ($correctanswer) { ?>
+	<div class="correctness correct">
+    <?php echo get_string('correctanswer', 'quiz').': '. $correctanswer; ?>
+  </div> 
+<?php } ?>
+<!--js script for showing / hiding regexp generated alternative sentences (for teacher only)-->
+<?php 
+$show = get_string("showalternate", "qtype_regexp");
+$hide = get_string("hidealternate", "qtype_regexp");
+echo ("<script>
+function showdiv(id,thisbutton) {
+if (document.getElementById(id).style.display == 'none') {
+		document.getElementById(id).style.display = 'block'
+		thisbutton.value = '".$hide."'
+	} else {
+		document.getElementById(id).style.display = 'none'
+		thisbutton.value = '".$show."'
+	}
+	return;
+}
+function submittheform (myid) {
+	a = document.forms[0].action;
+	if (a.indexOf('preview.php')!=-1) {
+		document.forms[0].name = 'responseform';
+	}
+	a = document.getElementsByName(myid)[0].value;
+	document.getElementsByName(myid)[0].value = a + '\t';
+	this.document.forms.responseform.submit();
+}
+</script>");
+ ?>

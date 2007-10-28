@@ -1,0 +1,67 @@
+<h2 align="center">Questions à réponse courte avec expressions régulières </h2>
+<p>Tout comme la question à réponse courte, la question à réponse courte de type &quot;expression régulière&quot; attend de la part de l'élève une réponse à une question &quot;ouverte&quot;, consistant en un ou plusieurs mots ou une courte phrase. Cependant, l'utilisation des expressions régulières vous donne accès à un puissant système d'analyse de la réponse des élèves. Pour une introduction au système des expressions régulières, voir ces sites&nbsp;:  <a href="http://www.zend.com/zend/tut/tutorial-delin2.php" target="_blank">regular-expressions 
+tutorial</a> et <a href="http://perso.wanadoo.fr/joseph.rezeau/eao/developpement/expandRegexpToString.htm#" 
+          target="_blank">rezeau.org</a>. </p>
+<h3>Réponse correcte correspondant à une expression régulière </h3>
+<p>Il est impossible de fournir des exemples complets des vastes possibilités offertes par ce système, mais voici quelques possibilités. </p>
+<p><strong>Exemple 1</strong>. Supposons que votre question soit &quot;Donnes les couleurs du drapeau français&quot;. Dans le champ Solution 1 vous pourriez saisir cette expression régulière&nbsp;: &quot;(il est |)bleu, blanc(,| et) rouge/i&quot; (il ne faut pas taper les guillements, bien sûr ). Cette expression acceptera n'importe laquelle des réponses suivantes: </p>
+<ul>
+  <li>il est bleu, blanc, rouge</li>
+  <li>il est bleu, blanc et rouge</li>
+  <li>Il est bleu, blanc, rouge</li>
+  <li>Il est bleu, blanc et rouge</li>
+  <li>bleu, blanc, rouge</li>
+  <li>bleu, blanc et rouge    </li>
+</ul>
+<p>Notez que par défaut une expression régulière est sensible à la casse (minuscules/majuscules). Pour rendre l'expression insensible à la casse, vous ajouterez le paramètre <strong>/i</strong> tout à la fin de l'expression.</p>
+<p><strong>Example 2</strong>. (en anglais) Question&nbsp;: &quot;What is blue, or red, or yellow?&quot;. 
+  Réponse&nbsp;: &quot;(|it's )a colou?r&quot;. Cette expression acceptera n'importe laquelle des réponses suivantes&nbsp;:</p>
+<ul>
+  <li>a colour</li>
+  <li> a color</li>
+  <li>it's a colour</li>
+  <li>it's a color</li>
+</ul>
+<p><strong>Note</strong>.- Le début de cette expression régulière &quot;<strong>(|it's )</strong>&quot; acceptera comme réponse soit rien soit &quot;<strong>it's</strong> &quot; (attention&nbsp;: <strong>it's</strong> suivi d'une espace). Le point d'interrogation signifie&nbsp;: le caractère qui précède, employé zéro ou une fois&nbsp;; nous l'utilisons ici pour accepter aussi bien l'orthographe anglaise (<strong>colour</strong>) qu'américaine (<strong>color</strong>).  </p>
+<p><strong>Exemple 3.</strong> (en anglais encore) Question: &quot;Donnez en anglais le nom d'un animal qui fait 3 lettres et dont la lettreu du milieu ets la voyelle <em>a</em>&quot;. Réponse&nbsp;: 
+  &quot;[bcr]at&quot;. Ce qui acceptera les 3 réponses&nbsp;: <strong>bat</strong>, <strong>cat</strong> et <strong>rat</strong>. </p>
+<h3>Détection des mots ou chaînes de caractères manquants </h3>
+<p>Les expressions régulières seules ne permettent pas de détecter des mots ou groupes de lettres absents de la réponse d'un élève, il faudra donc ajouter un petit code pour y arriver. Toute réponse prévue par le professeur qui commencera par un double tiret analysera la réponse de l'élève pour voir si la chaîne de caractères qui suit est présente ou absente. Si cette chaîne est présente, l'analyse continuera jusqu'à la réponse prévue suivante&nbsp;; si la chaîne est absente, l'analyse s'arrêtera et le mesage de feedback prévu s'affichera.  </p>
+<p><strong>Exemple 4. </strong>Question sur les couleurs du drapeau français. </p>
+<ul>
+  <li>Réponse 2: <span class="c_computeroutput">--.*bleu.*</span>/i</li>
+  <li>réponse de l'élève : &quot;il est blanc et rouge &quot; </li>
+  <li>Feedback 2: <span class="c_computeroutput">Il manque la couleur du ciel !</span></li>
+</ul>
+<p>Ici, le point signifie &quot;n'importe quel caractère, et l'astérisque signifie &quot;le caractère qui précède, répété un nombre quelconque de fois&quot;. La réponse prévue n°&nbsp;2 ci-dessus signifie&nbsp;: vérifier si la chaîne de caractères &quot;bleu&quot;, précédée de n'importe quoi et suivie de n'importe quoi est absente de la réponse de l'élève. Notez que l'usage de l'astérisque est légèrement différent dans les questions de type Réponse Courte et dans les questions de type Réponse Courte avec expressions régulières. </p>
+<p><strong>Exemple 5.</strong> Question: &quot;Donnez en anglais le nom d'un animal qui fait 3 lettres et dont la lettreu du milieu ets la voyelle <em>a</em>&quot;. Réponse prévue&nbsp;: &quot;--[b|c|r]&quot;. Feedback: &quot;Votre réponse devrait commencer par l'une de ces 3 lettres : <strong>b</strong>, <strong>c</strong> ou <strong>r</strong>&quot;. </p>
+<h3>&Eacute;chapper les caractères spéciaux </h3>
+<p>Si vous avez besoin dans vos réponses prévues de caractères qui font partie de la liste des <strong>caractères spéciaux</strong> utilisés dans la syntaxe des expressions régulières, vous devrez les &quot;échapper&quot;, c-a-d les faire précéder d'une barre oblique inverse. Par exemple si vous voulez accepter la réponse &quot;Cet ordinateur vaut 1&nbsp;000$&quot;, vous écrirez ainsi l'expression régulière: &quot;Cet ordinateur vaut 1&nbsp;000\$&quot;. Voici la liste complète des caractères spéciaux qui doivent être échappés&nbsp;: <strong>^&nbsp;$&nbsp;*&nbsp;(&nbsp;)&nbsp;[&nbsp;]&nbsp;+&nbsp;?&nbsp;|&nbsp;{&nbsp;}</strong></p>
+<h3>Edition des Réponses en mode professeur </h3>
+<p>[modifications à dater de février 2007]</p>
+<p>L'écran d'édition des questions de type regexp a été légèrement modifié.</p>
+<h4>Affichage du bouton Indice</h4>
+<p>Il est désormais possible d'afficher un bouton <strong>Indice</strong> pour permettre à l'étudiant d'<em>acheter</em> une lettre.   Le bouton Indice ne sera disponible pour l'étudiant que si dans le Test le paramètre <strong>Mode adaptatif </strong>a été réglé sur <strong>Oui</strong>. Si le paramètre Appliquer les pénalités a été activé dans les réglages du test, une pénalité correspondant au Facteur de pénalité sera appliquée à chaque &quot;achat&quot; de lettre par l'étudiant. Lorsque l'étudiant fait le test et qu'un bouton Indice est présent, en passant la souris sur ce bouton il verra s'afficher la pénalité que lui coûtera l'achat d'une lettre. </p>
+<p>Chaque fois que l'étudiant clique sur le bouton Indice pour acheter une lettre, un caractère paragraphe invisible  (&nbsp;&para;&nbsp;) est ajouté au texte de sa réponse. Plus tard, lorsque le professeur visualise les résultats du test pour chaque étudiant, il peut voir ce caractère paragraphe à la fin de chaque réponse pour laquelle l'étudiant a demandé de l'aide. </p>
+<h4>Solution 1</h4>
+<p>Pour un certain nombre de raisons, la façon d'entrer les solutions dans Solution 1 a changé depuis la version de février 2007.  Pour la Solution 1 vous devez maintenant entrer un texte qui a) est la &quot;meilleure&quot; réponse attendue possible; b) <strong>n'est pas</strong> une expression régulière ou - plus exactement - ne sera pas interprété comme telle mais comme du texte normal et c) à laquelle vous affectez une Note de 100%. Ceci veut dire que si vous avez créé des questions de type regexp avant Février 2007 vous devrez les modifier une par une pour vérifier qu'elles répondent bien à ces nouvelles règles. Vous remarquerez que lors de la création d'une nouvelle question de type regexp, la Note attribuée à la Solution 1 est automatiquement mise sur 100%. Vous ne devez pas modifier ceci. Si par hasard vous le faisiez, un message d'erreur vous le signalerait lors de l'enregistrement de votre question, et vous donnerait la possibilité de faire marche arrière pour corriger l'erreur. Message: &quot;La Solution 1 doit être correcte et avoir un score de 100%. Voulez-vous retourner modifier ceci ?&quot; </p>
+<p>Note.- Il y a maintenant deux manières d'entrer une solution contenant des méta caractères (<strong>^&nbsp;$&nbsp;*&nbsp;(&nbsp;)&nbsp;[&nbsp;]&nbsp;+&nbsp;?&nbsp;|&nbsp;{&nbsp;}</strong>), selon qu'il s'agit de la Solution 1 ou de l'une des solutions suivantes. Exemple: combien coûte cet ordinateur américain? </p>
+<p>Solution  1: Il vaut 1 000$.</p>
+<p>Solution 2: Il (m')?a couté 1 000\$\.  </p>
+<p>Dans Solution 1 vous tapez la réponse attendue telle quelle. Dans la Solution 2 en revanche vous devez &quot;échapper&quot; les méta-caractères $ et point final.</p>
+<h4>Autres Solutions (Solution 2, 3, etc.) </h4>
+<p>Toute solution avec une Note supérieure à 0% doit être entrée sous forme d'une expression régulière qui peut générer des réponses alternatives acceptables (que la note soit de 100% ou inférieure). Ceci veut dire que vous ne pouvez pas entrer une solution ayant une Note supérieure à 0% et commençant par un double tiret --, syntaxe utilisée pour détecter l'absence de mots, comme expliqué plus haut.</p>
+<h3>Prévisualisation des questions dans une fenêtre popup (pour le professeur seulement)</h3>
+<p>[modifications à dater de février 2007]</p>
+<p>Lorsque le professeur prévisualise une question dans la fenêtre popup il peut désormais également voir la liste complète des solutions alternatives acceptables. Ces solutions alternatives sont automatiquement générées à partir des expressions régulières que vous avez entrées en créant la question et auxquelles vous avez attribué une note supérieure à 0%. La toute première solution (Solution 1) est affichée en tête de liste. Elle est suivie des autres solutions acceptables, sous la forme suivante: a) la note attribuée; b) un rappel de votre expression régulière et c) la liste des solutions générées par cette expression régulière.</p>
+<p>Actuellement le seul mécanisme de vérification de la validité des expressions régulières entrées par le professeur consiste à vérifier que les parenthèses ouvertes sont bien toutes refermées (ainsi que les crochets carrés, si vous les utilisez). Si le nombre de parenthèses (ou de crochets carrés) ouvertes ne correspond pas au nombre de parenthèses fermées, un message d'erreur vous en avertira, qui précisera l'expression régulière où l'erreur a été détectée ainsi que la nature de l'erreur (mais pas l'emplacement exact). Vous devrez immédiatement corriger l'expression régulière fautive dans la question en cours de prévisualisation. </p>
+<p>Toute autre erreur dans une expression régulière déclenchera l'un ou l'autre des comportements suivants lors de l'ouverture de la fenêtre popup de prévisualisation&nbsp;: a) une erreur de PHP du genre  [<em><strong>Fatal error</strong>:  Maximum execution time of 30 seconds exceeded etc.</em> ] ou bien b) pas de message d'erreur mais, en cliquant sur le bouton Afficher les réponses alternatives, vous pourrez constater que certaines des solutions générées par l'expression régulière fautive sont en fait inacceptables. Il vous faudra alors immédiatement revenir en mode édition pour essayer de repérer l'expression régulière fautive et la corriger. J'espère pouvoir bientôt proposer un système de détection des erreurs plus convivial...</p>
+<p>Insertion de sous-questions de type regexp dans une question de type Close</p>
+<p>Voici 2 exemples de syntaxe à utiliser pour ce type d'insertion:</p>
+<ul><li>Les couleurs du drapeau français sont&nbsp;:  {:REGEXP:=bleu, blanc, rouge#Correct!~=<span class="c_computeroutput">le bleu, le blanc(,| et) le rouge </span>#Correct!~--.*bleu.*#Il manque la couleur du ciel.} </li>
+-  <li>Les couleurs du drapeau français sont&nbsp;:  {:REGEXP:%100%bleu, blanc, rouge#Correct!~%100%<span class="c_computeroutput">le bleu, le blanc(,| et) le rouge </span>#Correct!~%0%--.*bleu.*#Il manque la couleur du ciel.} </li>
+-</ul>
+<p>Veuiller noter que, comme expliqué ci-dessus, la toute première solution doit avoir une note de 100% et ne doit pas être une expression régulière. Dans la syntaxe du type de question Cloze, une note de 100% s'écrit soit <strong>=</strong> soit <strong>%100%</strong>. Comme indiqué plus haut, si vous oubliez par hasard d'attribuer la note de 100% à la toute première solution de votre liste, au moment d'enregistrer votre question Cloze un message d'erreur vous en avertira. Toutefois, si vous voyez le message &quot;La Solution 1 doit être correcte et avoir un score de 100%. Voulez-vous retourner modifier ceci ?&quot; <em>vous ne devez pas cliquer sur le bouton Oui</em>, mais sur le bouton <strong>Non</strong>, puis retourner dans votre question Cloze et faire la correction nécessaire. </p>
+<p>Veuillez noter que la syntaxe des sous-questions insérées dans une question de type Cloze doit être suivie à la lettre et qu'il ne faut jamais copier-coller du texte depuis votre traitement de texte vers le texte d'une question de type Cloze sous peine d'en empêcher le bon fonctionnement.</p>
+<p>Malheureusement le bouton Indice n'est pas disponible pour une sous-question de type regexp insérée dans une question de type Cloze. Je ferai peut-être ça à la retraite... Un peu de patience! </p>
+
