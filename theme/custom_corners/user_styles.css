@@ -1,3 +1,4 @@
+/* @override http://ubuntu.userver.lan/moodle_19/theme/custom_corners/user_styles.css */
 div#infowrapper {
   position: fixed;
   overflow: auto;
@@ -13,9 +14,6 @@ div#infowrapper {
   border: 2px solid #FF0;
   min-height: 2px;
 }
-/*div#infooverlay {
-  height: 0;
-}*/
 body {
   font-size: 100%;
   color: #333333;
@@ -41,7 +39,11 @@ a:hover {
   color: #0066FF;
   text-decoration: underline;
 }
-.arrow, .arrow_button input {
+span.arrow {
+  font-family:Arial,Helvetica,Courier,sans-serif;
+  font-size: 80%;
+}
+p.arrow_button input {
   font-family:Arial,Helvetica,Courier,sans-serif;
   font-size: 80%;
 }
@@ -87,7 +89,7 @@ h2.headingblock {
   border-right-color: #F1ECE6;
   border-left-color: #F1ECE6;
 }
-.loginbox {
+div.loginbox {
   border: 1px solid #F1ECE6;
 }
 div.noticebox {
@@ -210,11 +212,11 @@ div.sideblock div.content {
   border-bottom-color: #DDDDDD;
   border-left-color: #FFFFFF;
 }
-div.sideblock table.minicalendar td.day {
+div.sideblock tabletable.minicalendar td.day {
   text-align: center;
   font-size: 0.9em;
 }
-div.sideblock table.minicalendar {
+div.sideblock tabletable.minicalendar {
   border-style: none;
   margin-bottom: 0;
 }
@@ -228,20 +230,19 @@ body#course-index table.generalbox {
   border-style: solid;
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
 }
-table.minicalendar th {
+tabletable.minicalendar th {
   padding: 0px 1px;
 }
-table.minicalendar td.today {
+tabletable.minicalendar td.today {
   line-height: 1.4em;
   border: 2px solid #0066FF;
 }
-div.sideblock table.minicalendar tr.weekdays {
+div.sideblock tabletable.minicalendar tr.weekdays {
   font-size: 0.8em;
 }
 div.coursebox {
   border-style: solid;
   border-color: #F1ECE6;
-  /*float: none;*/
 }
 div.courseboxcontent {
   background-color: #EEEEEE;
@@ -255,10 +256,10 @@ td.courseboxcontent {
   border-style: solid;
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
 }
-.tabrow td {
+ul.tabrow td {
   border: 1px solid #88DD55;
 }
-.tabrow td.selected {
+ul.tabrow td.selected {
   border-top-width: 1px;
   border-right-width: 1px;
   border-left-width: 1px;
@@ -267,64 +268,64 @@ td.courseboxcontent {
   border-right-color: #88DD55;
   border-left-color: #88DD55;
 }
-.sideblock .content .message {
+div.sideblock div.content div.message {
   text-align: left;
 }
-.sideblock .header .hide-show img.hide-show-image {
+div.sideblock div.header div.hide-show img.hide-show-image {
   background-image: url(../../pix/t/switch_minus.gif);
   background-repeat: no-repeat;
   margin-top: 0;
 }
-.sideblock.hidden .header .hide-show img.hide-show-image {
+div.sideblock.hidden div.header div.hide-show img.hide-show-image {
   background-image: url(../../pix/t/switch_plus.gif);
   background-repeat: no-repeat;
   margin-top: 0;
 }
-#calendar .event_global {
+table#calendar td.event_global {
   background-color: #D6F8CD;
   border-color: #D6F8CD;
 }
-.minicalendar .event_global {
+table.minicalendar td.event_global {
   background-color: #D6F8CD;
   border-color: #D6F8CD;
 }
-.block_calendar_month .event_global {
+div.block_calendar_month td.event_global {
   background-color: #D6F8CD;
   border-color: #D6F8CD;
 }
-#calendar .event_course {
+table#calendar td.event_course {
   background-color: #FFD3BD;
   border-color: #FFD3BD;
 }
-.minicalendar .event_course {
+table.minicalendar td.event_course {
   background-color: #FFD3BD;
   border-color: #FFD3BD;
 }
-.block_calendar_month .event_course {
+div.block_calendar_month td.event_course {
   background-color: #FFD3BD;
   border-color: #FFD3BD;
 }
-#calendar .event_group {
+table#calendar td.event_group {
   background-color: #FEE7AE;
   border-color: #FEE7AE;
 }
-.minicalendar .event_group {
+table.minicalendar td.event_group {
   background-color: #FEE7AE;
   border-color: #FEE7AE;
 }
-.block_calendar_month .event_group {
+div.block_calendar_month td.event_group {
   background-color: #FEE7AE;
   border-color: #FEE7AE;
 }
-#calendar .event_user {
+table#calendar td.event_user {
   background-color: #DCE7EC;
   border-color: #DCE7EC;
 }
-.minicalendar .event_user {
+table.minicalendar td.event_user {
   background-color: #DCE7EC;
   border-color: #DCE7EC;
 }
-.block_calendar_month .event_user {
+div.block_calendar_month td.event_user {
   background-color: #DCE7EC;
   border-color: #DCE7EC;
 }
@@ -337,24 +338,40 @@ div.block_calendar_month div.content {
 div.sideblock div.calendar-controls span.current {
   text-align: center;
 }
-#calendar td.sidecalendar div.sideblock {
+table#calendar td.sidecalendar div.sideblock {
   border-color: #ccc;
 }
-#calendar td.maincalendar {
+table#calendar td.maincalendar {
   border-color: #ccc;
 }
-#calendar .nottoday,
-.minicalendar .today {
+table#calendar td.nottoday {
   border-color: #ccc;
 }
-#calendar .event_global,
-#calendar .event_course,
-#calendar .event_group,
-#calendar .event_user,
-.minicalendar .event_global,
-.minicalendar .event_course,
-.minicalendar .event_group,
-.minicalendar .event_user {
+table.minicalendar td.today {
+  border-color: #ccc;
+}
+table.minicalendar td.event_user {
+  border: 1px solid  #ccc !important;
+}
+table.minicalendar td.event_group {
+  border: 1px solid  #ccc !important;
+}
+table.minicalendar td.event_course {
+  border: 1px solid  #ccc !important;
+}
+table.minicalendar td.event_global {
+  border: 1px solid  #ccc !important;
+}
+table#calendar td.event_user {
+  border: 1px solid  #ccc !important;
+}
+table#calendar td.event_group {
+  border: 1px solid  #ccc !important;
+}
+table#calendar td.event_course {
+  border: 1px solid  #ccc !important;
+}
+table#calendar td.event_global {
   border: 1px solid  #ccc !important;
 }
 body.admin table.generaltable {
@@ -1015,51 +1032,55 @@ a.dimmed:link,
 a.dimmed:visited {
   color: #AAAAAA;
 }
+span.dimmed_text {
+  color: #AAAAAA;
+}
 .dimmed_text {
   color: #AAAAAA;
 }
-#message-index #header,
-#message-discussion #header,
-#message-history #header,
-#message-user #header {
+body#message-index div#header,
+body#message-discussion div#header,
+body#message-history div#header,
+body#message-user div#header {
   display: none;
 }
-#message-index #footer,
-#message-discussion #footer,
-#message-history #footer {
+body#message-index div#footer,
+body#message-discussion div#footer,
+body#message-history div#footer {
   display: none;
 }
-#message-index #page,
-#message-user #page,
-#message-history #page {
+body#message-index div#page,
+body#message-user div#page,
+body#message-history div#page {
   width: auto;
 }
-#message-user #page {
+body#message-user div#page {
   margin: 0;
 }
-#message-user #content {
+body#message-user div#content {
   padding: 0;
 }
-body#grade-index .grades .header {
+body#grade-index .grades th.header {
   font-weight: bold;
   font-size: 0.7em;
 }
-
-.grade-edit-scale .scale_options {
+body.grade-edit-scale div.scale_options {
   font-size: 0.7em;
 }
-
-.grade-report-grader .gradestable tr.groupavg td.cell {
+body.grade-report-grader table.gradestable tr.groupavg td.cell {
   font-weight: bold;
   color: #006400;
 }
-
-.grade-report-grader .gradestable tr.avg td.cell {
+body.grade-report-grader table.gradestable {
+  width: auto;
+}
+body.grade-report-grader table.gradestable tr.avg td.cell {
   font-weight: bold;
   color: #00008B;
 }
-
-.grade-report-grader .gradestable td.cat,
-.grade-report-grader .gradestable td.course {
+body.grade-report-grader table.gradestable td.cat {
+  font-weight: bold;
+}
+body.grade-report-grader table.gradestable td.course {
   font-weight: bold;
 }
