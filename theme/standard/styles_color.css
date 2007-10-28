@@ -680,29 +680,12 @@ body#grade-index .grades .r1 {
   background-color: #f0f0f0;
 }
 
-/* new grades css*/
+/* grade edit */
 
-.grade-report-grader .catlevel1 {
-  background-color: #ffffff;
-}
-.grade-report-grader .catlevel2 {
-  background-color: #eeeeee;
-}
-.grade-report-grader .catlevel3 {
-  background-color: #dddddd;
+.grade-edit-tree .moving {
+  background-color: #E8EEF7;
 }
 
-.grade-report-grader td.overridden {
-  background-color: #dddddd;
-}
-
-.grade-report-grader .gradestable tr.avg td.cell {
-	background-color: #efefff;
-}
-
-.grade-report-grader .gradestable tr.groupavg td.cell {
-	background-color: #efffef;
-}
 /***
  *** Login
  ***/

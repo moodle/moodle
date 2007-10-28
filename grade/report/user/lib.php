@@ -80,7 +80,7 @@ class grade_report_user extends grade_report {
 
         $switch = grade_get_setting($this->courseid, 'aggregationposition', $CFG->grade_aggregationposition);
 
-        // Grab the grade_tree for this course
+        // Grab the grade_seq for this course
         $this->gseq = new grade_seq($this->courseid, $switch);
 
         // get the user (for full name)
@@ -90,9 +90,7 @@ class grade_report_user extends grade_report {
         $this->baseurl = $CFG->wwwroot.'/grade/report?id='.$courseid.'&amp;userid='.$userid;
         $this->pbarurl = $this->baseurl;
 
-        // always setup groups - no user preference here
-        $this->setup_groups();
-
+        // no groups on this report - rank is from all course users
         $this->setup_table();
     }
 
@@ -102,9 +100,9 @@ class grade_report_user extends grade_report {
     function setup_table() {
         global $CFG;
         /*
-        * Table has 5-6 columns
-        *| pic  | itemname/description | grade (grade_final) | percentage | rank (optional) | feedback |
-        */
+         * Table has 5-6 columns
+         *| itemname/description | final grade | percentage final grade | rank (optional) | feedback |
+         */
 
         // setting up table headers
         if ($this->showrank) {
@@ -179,6 +177,13 @@ class grade_report_user extends grade_report {
                 continue;
             }
 
+            $class = 'gradeitem';
+            if ($grade_item->is_course_item()) {
+                $class = 'courseitem';
+            } else if ($grade_item->is_category_item()) {
+                $class = 'categoryitem';
+            }
+
             if (in_array($itemid, $unknown)) {
                 $gradeval = null;
             } else if (array_key_exists($itemid, $altered)) {
@@ -191,14 +196,14 @@ class grade_report_user extends grade_report {
 
             /// prints grade item name
             if ($grade_item->is_course_item() or $grade_item->is_category_item()) {
-                $data[] = '<div class="catname">'.$grade_item->get_name().'</div>';
+                $data[] = '<span class="'.$class.'">'.$grade_item->get_name().'</span>';
             } else {
-                $data[] = '<div class="itemname">'.$this->get_module_link($grade_item->get_name(), $grade_item->itemmodule, $grade_item->iteminstance).'</div>';
+                $data[] = '<span class="'.$class.'">'.$this->get_module_link($grade_item->get_name(), $grade_item->itemmodule, $grade_item->iteminstance).'</span>';
             }
 
             /// prints category
             $cat = $grade_item->get_parent_category();
-            $data[] = $cat->get_name();
+            $data[] = '<span class="'.$class.'">'.$cat->get_name().'</span>';
 
             /// prints the grade
             if ($grade_grade->is_excluded()) {
@@ -208,34 +213,34 @@ class grade_report_user extends grade_report {
             }
 
             if ($grade_item->needsupdate) {
-                $data[] = '<span class="gradingerror">'.get_string('error').'</span>';
+                $data[] = '<span class="'.$class.' gradingerror">'.get_string('error').'</span>';
 
             } else if (!empty($CFG->grade_hiddenasdate) and !is_null($grade_grade->finalgrade) and !$canviewhidden and $grade_grade->is_hidden()
                    and !$grade_item->is_category_item() and !$grade_item->is_course_item()) {
                 // the problem here is that we do not have the time when grade value was modified, 'timemodified' is general modification date for grade_grades records
-                $data[] = $excluded . '<div class="gradeddate">'.get_string('gradedon', 'grades', userdate($grade_grade->timemodified, get_string('strftimedatetimeshort'))).'</div>';
+                $data[] = '<span class="'.$class.' gradeddate">'.$excluded.get_string('gradedon', 'grades', userdate($grade_grade->timemodified, get_string('strftimedatetimeshort'))).'</span>';
 
             } else {
-                $data[] = $excluded . grade_format_gradevalue($gradeval, $grade_item, true);
+                $data[] = '<span class="'.$class.'">'.$excluded.grade_format_gradevalue($gradeval, $grade_item, true);
             }
 
             /// prints percentage
             if ($grade_item->needsupdate) {
-                $data[] = '<span class="gradingerror">'.get_string('error').'</span>';
+                $data[] = '<span class="'.$class.'gradingerror">'.get_string('error').'</span>';
 
             } else {
-                $data[] = grade_format_gradevalue($gradeval, $grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
+                $data[] = '<span class="'.$class.'">'.grade_format_gradevalue($gradeval, $grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE).'</span>';
             }
 
             /// prints rank
             if ($this->showrank) {
                 // TODO: this is broken if hidden grades present!!
                 if ($grade_item->needsupdate) {
-                    $data[] = '<span class="gradingerror">'.get_string('error').'</span>';
+                    $data[] = '<span class="'.$class.'gradingerror">'.get_string('error').'</span>';
 
                 } else if (is_null($gradeval)) {
                     // no grade, no rank
-                    $data[] = '-';
+                    $data[] = '<span class="'.$class.'">-</span>';;
 
                 } else {
                     /// find the number of users with a higher grade
@@ -245,19 +250,16 @@ class grade_report_user extends grade_report {
                                    AND itemid = {$grade_item->id}";
                     $rank = count_records_sql($sql) + 1;
 
-                    $data[] = "$rank/$numusers";
+                    $data[] = '<span class="'.$class.'">'."$rank/$numusers".'</span>';
                 }
             }
 
-            /// prints notes
-            if (empty($grade_grade->feedback)) {
-                $data[] = '&nbsp;';
-
-            } else if (!$canviewhidden and $grade_grade->is_hidden()) {
-                $data[] = '&nbsp;';
+            /// prints feedback
+            if (empty($grade_grade->feedback) or (!$canviewhidden and $grade_grade->is_hidden())) {
+                $data[] = '<div class="feedbacktext">&nbsp;</div>';
 
             } else {
-                $data[] = format_text($grade_grade->feedback, $grade_grade->feedbackformat);
+                $data[] = '<div class="feedbacktext">'.format_text($grade_grade->feedback, $grade_grade->feedbackformat).'</div>';
             }
 
             $this->table->add_data($data);
