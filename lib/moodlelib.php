@@ -2552,8 +2552,8 @@ function set_moodle_cookie($thing) {
     $days = 60;
     $seconds = DAYSECS*$days;
 
-    setCookie($cookiename, '', time() - HOURSECS, '/');
-    setCookie($cookiename, rc4encrypt($thing), time()+$seconds, '/');
+    setCookie($cookiename, '', time() - HOURSECS, $CFG->sessioncookiepath);
+    setCookie($cookiename, rc4encrypt($thing), time()+$seconds, $CFG->sessioncookiepath);
 }
 
 /**
