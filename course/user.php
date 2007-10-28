@@ -87,11 +87,13 @@
                 $report = new grade_report_user($course->id, $gpr, $context, $user->id);
 
                 // print the page
+                echo '<div class="grade-report-user">'; // css fix to share styles with real report page
                 print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
 
                 if ($report->fill_table()) {
                     echo $report->print_table(true);
                 }
+                echo '</div>';
             }
             break;
 

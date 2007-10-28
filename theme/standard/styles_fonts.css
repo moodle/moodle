@@ -495,29 +495,6 @@ body#grade-index .grades .header {
   font-size: 0.7em;
 }
 
-.grade-report-grader .gradestable tr.groupavg td.cell {
-  font-weight: bold;
-  color: #006400;
-}
-
-.grade-report-grader .gradestable tr.avg td.cell {
-  font-weight: bold;
-  color: #00008B;
-}
-
-.grade-report-grader .gradestable td.cat,
-.grade-report-grader .gradestable td.course {
-  font-weight: bold;
-}
-
-.grade-report-user .gradeddate {
-  font-size: 0.7em;
-}
-
-.grade-report-user .catname {
-  font-weight: bold;
-}
-
 /***
  *** Login
  ***/
