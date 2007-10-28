@@ -31,9 +31,6 @@ class block_admin_bookmarks extends block_base {
     
         global $CFG, $USER, $PAGE;
     
-        require_once($CFG->libdir.'/adminlib.php');
-        $adminroot = admin_get_root();
-    
         if ($this->content !== NULL) {
             return $this->content;
         }
@@ -41,6 +38,10 @@ class block_admin_bookmarks extends block_base {
         $this->content = new stdClass;
         $this->content->text = '';
         if (get_user_preferences('admin_bookmarks')) {
+            // this is expensive! Only require when bookmakrs exist..
+            require_once($CFG->libdir.'/adminlib.php');
+            $adminroot = admin_get_root();
+    
             $bookmarks = explode(',',get_user_preferences('admin_bookmarks'));
             // hmm... just a liiitle (potentially) processor-intensive
             // (recall that $adminroot->locate is a huge recursive call... and we're calling it repeatedly here
