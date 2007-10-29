@@ -323,6 +323,7 @@ $string['frontpage'] = 'Front Page';
 $string['frontpagebackup'] = 'Front Page backup';
 $string['frontpagedefaultrole'] = 'Default frontpage role';
 $string['frontpageloggedin'] = 'Front page items when logged in';
+$string['frontpagequestions'] = 'Front Page questions';
 $string['frontpagerestore'] = 'Front Page restore';
 $string['frontpageroles'] = 'Front Page roles';
 $string['frontpagesettings'] = 'Front Page settings';
