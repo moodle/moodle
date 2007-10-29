@@ -16,6 +16,7 @@ class flexible_table {
     var $column_style    = array();
     var $column_class    = array();
     var $column_suppress = array();
+    var $column_nosort   = array('userpic');
     var $setup           = false;
     var $sess            = NULL;
     var $baseurl         = NULL;
@@ -49,6 +50,29 @@ class flexible_table {
         $this->is_sortable = $bool;
         $this->sort_default_column = $defaultcolumn;
         $this->sort_default_order  = $defaultorder;
+    }
+
+    /**
+     * Do not sort using this column
+     * @param string column name
+     */
+    function no_sorting($column) {
+        $this->column_nosort[] = $column;
+    }
+
+    /**
+     * Is the column sortable?
+     * @param string column name, null means table
+     * @return bool
+     */
+    function is_sortable($column=null) {
+        if (empty($column)) {
+            return $this->is_sortable;
+        }
+        if (!$this->is_sortable) {
+            return false;
+        }
+        return !in_array($column, $this->column_nosort);
     }
 
     function collapsible($bool) {
@@ -201,7 +225,7 @@ class flexible_table {
         }
 
         if(
-            !empty($_GET[$this->request[TABLE_VAR_SORT]]) &&
+            !empty($_GET[$this->request[TABLE_VAR_SORT]]) && $this->is_sortable($_GET[$this->request[TABLE_VAR_SORT]]) &&
             (isset($this->columns[$_GET[$this->request[TABLE_VAR_SORT]]]) ||
                 (($_GET[$this->request[TABLE_VAR_SORT]] == 'firstname' || $_GET[$this->request[TABLE_VAR_SORT]] == 'lastname') && isset($this->columns['fullname']))
             ))
@@ -464,7 +488,7 @@ class flexible_table {
             switch($column) {
 
                 case 'fullname':
-                if($this->is_sortable) {
+                if($this->is_sortable($column)) {
                     $icon_sort_first = $icon_sort_last = '';
                     if($primary_sort_column == 'firstname') {
                         if($primary_sort_order == SORT_ASC) {
@@ -488,7 +512,7 @@ class flexible_table {
                 break;
 
                 default:
-                if($this->is_sortable) {
+                if($this->is_sortable($column)) {
                     if($primary_sort_column == $column) {
                         if($primary_sort_order == SORT_ASC) {
                             $icon_sort = ' <img src="'.$CFG->pixpath.'/t/down.gif" />';
