@@ -154,3 +154,8 @@
   text-align: right;
 }
 
+.grade-report-grader .hidden,
+.grade-report-grader .hidden a {
+  color:#aaaaaa;
+}
+
