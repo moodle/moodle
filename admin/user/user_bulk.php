@@ -66,7 +66,7 @@
     // put the user filter form first
     $user_filter_form->display();
     // get the SQL filter
-    $where =& $user_filter_form->getSQLFilter('id<>1 AND NOT deleted');
+    $where =& $user_filter_form->getSQLFilter('id<>1 AND deleted <> 1');
     $ausercount = count_records_select('user', $where);
     // limit the number of options 
     $comment = null;
