@@ -256,9 +256,9 @@ class course_edit_form extends moodleform {
         $mform->addElement('header','', get_string('groups', 'group'));
 
         $choices = array();
-        $choices[NOGROUPS] = get_string('no');
-        $choices[SEPARATEGROUPS] = get_string('separate');
-        $choices[VISIBLEGROUPS] = get_string('visible');
+        $choices[NOGROUPS] = get_string('groupsnone', 'group');
+        $choices[SEPARATEGROUPS] = get_string('groupsseparate', 'group');
+        $choices[VISIBLEGROUPS] = get_string('groupsvisible', 'group');
         $mform->addElement('select', 'groupmode', get_string('groupmode'), $choices);
         $mform->setHelpButton('groupmode', array('groupmode', get_string('groupmode')), true);
         $mform->setDefault('groupmode', 0);
