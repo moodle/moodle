@@ -517,7 +517,7 @@ class grade_report_grader extends grade_report {
 
             if ($key == $numrows - 1) {
                 $headerhtml .= '<th class="header c'.$columncount++.' user" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
-                            . $strfirstname . '</a> ' //TODO: localize
+                            . $strfirstname . '</a> '
                             . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
             } else {
                 $headerhtml .= '<td class="cell c'.$columncount++.' topleft">&nbsp;</td>';
@@ -582,9 +582,9 @@ class grade_report_grader extends grade_report {
                         $arrow = $this->get_sort_arrow('move', $sort_link);
                     }
 
-                    $dimmed = '';
+                    $hidden = '';
                     if ($element['object']->is_hidden()) {
-                        $dimmed = ' dimmed_text ';
+                        $hidden = ' hidden ';
                     }
 
                     if ($object->itemtype == 'mod') {
@@ -596,7 +596,7 @@ class grade_report_grader extends grade_report {
                     }
 
                     $headerlink = $this->get_module_link($element['object']->get_name(), $itemmodule, $iteminstance, $element['object']->is_hidden());
-                    $headerhtml .= '<th class="header '.$columnclass.' '.$type.$catlevel.$dimmed.'" scope="col">'. $headerlink . $arrow;
+                    $headerhtml .= '<th class="header '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col">'. $headerlink . $arrow;
                     $headerhtml .= $this->get_icons($element) . '</th>';
                 }
 
@@ -717,11 +717,16 @@ class grade_report_grader extends grade_report {
                     $studentshtml .= $this->get_icons($element);
                 }
 
+                $hidden = '';
+                if ($grade->is_hidden()) {
+                    $hidden = ' hidden ';
+                }
+                
                 // if in editting mode, we need to print either a text box
                 // or a drop down (for scales)
                 // grades in item of type grade category or course are not directly editable
                 if ($item->needsupdate) {
-                    $studentshtml .= '<span class="gradingerror">'.get_string('error').'</span>';
+                    $studentshtml .= '<span class="gradingerror'.$hidden.'">'.get_string('error').'</span>';
 
                 } else if ($USER->gradeediting[$this->courseid]) {
 
@@ -753,10 +758,10 @@ class grade_report_grader extends grade_report {
 
                             // invalid grade if gradeval < 1
                             if ((int) $gradeval < 1) {
-                                $studentshtml .= '-';
+                                $studentshtml .= '<span class="gradevalue'.$hidden.'">-</span>';
                             } else {
                                 $gradeval = (int)bounded_number($grade->grade_item->grademin, $gradeval, $grade->grade_item->grademax); //just in case somebody changes scale
-                                $studentshtml .= $scales[$gradeval-1];
+                                $studentshtml .= '<span class="gradevalue'.$hidden.'">'.$scales[$gradeval-1].'</span>';
                             }
                         } else {
                             // no such scale, throw error?
@@ -770,7 +775,7 @@ class grade_report_grader extends grade_report {
                                           . '" type="text" title="'. $strgrade .'" name="grade_'
                                           .$userid.'_' .$item->id.'" value="'.$value.'" />';
                         } else {
-                            $studentshtml .= format_float($gradeval, $decimalpoints);
+                            $studentshtml .= '<span class="gradevalue'.$hidden.'">'.format_float($gradeval, $decimalpoints).'</span>';
                         }
                     }
 
@@ -800,10 +805,10 @@ class grade_report_grader extends grade_report {
                     }
 
                     if ($item->needsupdate) {
-                        $studentshtml .= '<span class="gradingerror">'.get_string('error').'</span>';
+                        $studentshtml .= '<span class="gradingerror'.$hidden.'">'.get_string('error').'</span>';
 
                     } else {
-                        $studentshtml .= grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null);
+                        $studentshtml .= '<span class="gradevalue'.$hidden.'">'.grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null).'</span>';
                     }
 
                     // Close feedback span
@@ -1015,7 +1020,12 @@ class grade_report_grader extends grade_report {
                     $grademax = grade_format_gradevalue($item->grademax, $item, true, $displaytype, $decimalpoints);
                 }
 
-                $scalehtml .= '<th class="header c'.$columncount++.' range">'. $grademin.'&ndash;'. $grademax.'</th>';
+                $hidden = '';
+                if ($item->is_hidden()) {
+                    $hidden = ' hidden ';
+                }
+
+                $scalehtml .= '<th class="header c'.$columncount++.' range"><span class="rangevalues'.$hidden.'">'. $grademin.'&ndash;'. $grademax.'</span></th>';
             }
             $scalehtml .= '</tr>';
         }
