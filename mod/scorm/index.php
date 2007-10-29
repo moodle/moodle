@@ -40,7 +40,7 @@
     }
 
     if (! $scorms = get_all_instances_in_course("scorm", $course)) {
-        notice("There are no scorms", "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', $strscorms), "../../course/view.php?id=$course->id");
         exit;
     }
 

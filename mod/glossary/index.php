@@ -36,7 +36,7 @@
 /// Get all the appropriate data
 
     if (! $glossarys = get_all_instances_in_course("glossary", $course)) {
-        notice("There are no glossaries", "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', $strglossarys), "../../course/view.php?id=$course->id");
         die;
     }
 

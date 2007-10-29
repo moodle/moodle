@@ -31,7 +31,7 @@
     print_header_simple("$strexercises", "", $navigation, "", "", true, "", navmenu($course));
 
     if (! $exercises = get_all_instances_in_course("exercise", $course)) {
-        notice("There are no exercises", "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', $strexercises), "../../course/view.php?id=$course->id");
         die;
     }
 

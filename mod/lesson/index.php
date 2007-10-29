@@ -39,7 +39,7 @@
 /// Get all the appropriate data
 
     if (! $lessons = get_all_instances_in_course("lesson", $course)) {
-        notice("There are no lessons", "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', $strlessons), "../../course/view.php?id=$course->id");
         die;
     }
 

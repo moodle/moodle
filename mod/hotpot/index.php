@@ -74,7 +74,7 @@
         }
     }
     if (empty($hotpots)) {
-        notice("There are no $strmodulenameplural", $next_url);
+        notice(get_string('thereareno', 'moodle', $strmodulenameplural), $next_url);
         exit;
     }
     $hotpotids = implode(',', array_keys($hotpots));

@@ -40,7 +40,7 @@
 
 // Get all the appropriate data
     if (!$quizzes = get_all_instances_in_course("quiz", $course)) {
-        notice("There are no quizzes", "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', $strquizzes), "../../course/view.php?id=$course->id");
         die;
     }
 

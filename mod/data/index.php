@@ -41,6 +41,7 @@
     $strtopic = get_string('topic');
     $strname = get_string('name');
     $strdata = get_string('modulename','data');
+    $strdataplural  = get_string('modulenameplural','data');
     
     $navlinks = array();
     $navlinks[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
@@ -49,7 +50,7 @@
     print_header_simple($strdata, '', $navigation, '', '', true, "", navmenu($course));
 
     if (! $datas = get_all_instances_in_course("data", $course)) {
-        notice("There are no databases", "$CFG->wwwroot/course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle',$strdataplural) , "$CFG->wwwroot/course/view.php?id=$course->id");
     }
 
     $timenow  = time();

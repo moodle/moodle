@@ -26,7 +26,7 @@
 
 
     if (! $journals = get_all_instances_in_course("journal", $course)) {
-        notice("There are no journals", "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', $strjournals), "../../course/view.php?id=$course->id");
         die;
     }
 

@@ -23,7 +23,7 @@
 
 
     if (! $choices = get_all_instances_in_course("choice", $course)) {
-        notice("There are no choices", "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', $strchoices), "../../course/view.php?id=$course->id");
     }
 
     if ( !empty($USER->id) and $allanswers = get_records("choice_answers", "userid", $USER->id)) {

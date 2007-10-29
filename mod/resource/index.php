@@ -31,7 +31,7 @@
                  "", "", true, "", navmenu($course));
 
     if (! $resources = get_all_instances_in_course("resource", $course)) {
-        notice("There are no resources", "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', $strresources), "../../course/view.php?id=$course->id");
         exit;
     }
 
