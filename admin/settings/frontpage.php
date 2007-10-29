@@ -52,6 +52,16 @@ if (get_site()) { //do not use during installation
 
         $ADMIN->add('frontpage', new admin_externalpage('frontpagerestore', get_string('frontpagerestore', 'admin'), $CFG->wwwroot.'/files/index.php?id='.SITEID.'&amp;wdir=/backupdata', 'moodle/site:restore', false, $frontpagecontext));
 
+        $questioncapabilites = array(
+                'moodle/question:add',
+                'moodle/question:editmine',
+                'moodle/question:editall',
+                'moodle/question:viewmine',
+                'moodle/question:viewall',
+                'moodle/question:movemine',
+                'moodle/question:moveall');
+        $ADMIN->add('frontpage', new admin_externalpage('frontpagequestions', get_string('frontpagequestions', 'admin'), $CFG->wwwroot.'/question/edit.php?courseid='.SITEID, $questioncapabilites, false, $frontpagecontext));
+
         $ADMIN->add('frontpage', new admin_externalpage('sitefiles', get_string('sitefiles'), $CFG->wwwroot . '/files/index.php?id=' . SITEID, 'moodle/course:managefiles', false, $frontpagecontext));
     }
 }
