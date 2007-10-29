@@ -243,7 +243,7 @@ function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $
     if ($countanswers) {
         $countans = 0;
         foreach ($countanswers as $ca) { //only return enrolled users.
-            if (has_capability('mod/choice:choose', $context)) {
+            if (has_capability('mod/choice:choose', $context, $ca->userid, false)) {
                 $countans = $countans+1;
             }
         }
