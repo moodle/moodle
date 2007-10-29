@@ -420,17 +420,16 @@
             sync_metacourse($course);
         }
 
-        $table->tablealign = 'center';
-        $table->cellpadding = 5;
-        $table->cellspacing = 0;
-        $table->width = '60%';
-        $table->head = array(get_string('roles', 'role'), get_string('description'), get_string('users'), '');
-        $table->wrap = array('nowrap', '', 'nowrap', 'nowrap');
-        $table->align = array('right', 'left', 'center', 'left');
-
+        // Get the names of role holders for roles with between 1 and MAX_USERS_TO_LIST_PER_ROLE users,
+        // and so determine whether to show the extra column. 
+        $rolehodlercount = array();
+        $rolehodlernames = array();
+        $strmorethanten = get_string('morethan', 'role', MAX_USERS_TO_LIST_PER_ROLE);
+        $showroleholders = false;
         foreach ($assignableroles as $roleid => $rolename) {
             $countusers = count_role_users($roleid, $context);
-            $strroleusers = '';
+            $rolehodlercount[$roleid] = $countusers;
+            $roleusers = '';
             if (0 < $countusers && $countusers <= MAX_USERS_TO_LIST_PER_ROLE) {
                 $roleusers = get_role_users($roleid, $context, false, 'u.id, u.lastname, u.firstname');
                 if (!empty($roleusers)) {
@@ -438,13 +437,37 @@
                     foreach ($roleusers as $user) {
                         $strroleusers[] = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $user->id . '" >' . fullname($user) . '</a>';
                     }
-                    $strroleusers = implode('<br />', $strroleusers);
+                    $rolehodlernames[$roleid] = implode('<br />', $strroleusers);
+                    $showroleholders = true;
                 }
             } else if ($countusers > MAX_USERS_TO_LIST_PER_ROLE) {
-                $strroleusers = get_string('morethan', 'role', MAX_USERS_TO_LIST_PER_ROLE);
+                $rolehodlernames[$roleid] = '<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$strmorethanten.'</a>';
+            } else {
+                $rolehodlernames[$roleid] = '';
             }
+        }
+
+        // Print overview table
+        $table->tablealign = 'center';
+        $table->cellpadding = 5;
+        $table->cellspacing = 0;
+        $table->width = '60%';
+        $table->head = array(get_string('roles', 'role'), get_string('description'), get_string('users'));
+        $table->wrap = array('nowrap', '', 'nowrap');
+        $table->align = array('right', 'left', 'center');
+        if ($showroleholders) {
+            $table->head[] = '';
+            $table->wrap[] = 'nowrap';
+            $table->align[] = 'left';
+        }
+
+        foreach ($assignableroles as $roleid => $rolename) {
             $description = format_string(get_field('role', 'description', 'id', $roleid));
-            $table->data[] = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>',$description, $countusers, $strroleusers);
+            $row = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>',$description, $rolehodlercount[$roleid]);
+            if ($showroleholders) {
+                $row[] = $rolehodlernames[$roleid];
+            }
+            $table->data[] = $row;
         }
 
         print_table($table);
