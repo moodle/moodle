@@ -833,7 +833,8 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
     }
 
     if (!empty($mycourses) && $reallimit) {
-        return array_slice($mycourses, 0, $reallimit, true);
+        //silence warnings in PHP 4.x - the last param was added in PHP 5.0.2
+        return @array_slice($mycourses, 0, $reallimit, true);
     } else {
         return $mycourses;
     }
