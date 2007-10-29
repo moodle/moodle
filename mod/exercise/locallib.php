@@ -2796,7 +2796,7 @@ function exercise_print_teacher_table($course) {
 // print how many assessments each teacher has done in each exercise
 
     if (! $exercises = get_all_instances_in_course("exercise", $course)) {
-        notice("There are no exercises", "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', get_string('modulenameplural', 'exercise')), "../../course/view.php?id=$course->id");
         die;
     }
 

@@ -33,7 +33,7 @@
 /// Get all the appropriate data
 
     if (! $lamss = get_all_instances_in_course("lams", $course)) {
-        notice("There are no lams", "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', $strlamss) , "../../course/view.php?id=$course->id");
         die;
     }
 

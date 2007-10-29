@@ -31,7 +31,7 @@
 /// Get all the appropriate data
 
     if (! $chats = get_all_instances_in_course('chat', $course)) {
-        notice('There are no chats', "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', $strchats), "../../course/view.php?id=$course->id");
         die();
     }
 

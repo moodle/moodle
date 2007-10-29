@@ -1428,6 +1428,7 @@ $string['thanks'] = 'Thanks';
 $string['theme'] = 'Theme';
 $string['themes'] = 'Themes';
 $string['themesaved'] = 'New theme saved';
+$string['thereareno'] = 'There are no $a in this course';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'English';

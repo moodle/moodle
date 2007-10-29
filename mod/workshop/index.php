@@ -30,7 +30,7 @@
     print_header_simple("$strworkshops", "", $navigation, "", "", true, "", navmenu($course));
 
     if (! $workshops = get_all_instances_in_course("workshop", $course)) {
-        notice("There are no workshops", "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', $strworkshops), "../../course/view.php?id=$course->id");
         die;
     }
 

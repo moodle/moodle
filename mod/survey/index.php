@@ -29,7 +29,7 @@
                  "", "", true, "", navmenu($course));
 
     if (! $surveys = get_all_instances_in_course("survey", $course)) {
-        notice("There are no surveys.", "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', $strsurveys), "../../course/view.php?id=$course->id");
     }
     
     if ($course->format == "weeks") {

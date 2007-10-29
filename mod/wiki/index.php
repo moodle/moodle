@@ -33,7 +33,7 @@
 /// Get all the appropriate data
 
     if (! $wikis = get_all_instances_in_course("wiki", $course)) {
-        notice("There are no wikis", "../../course/view.php?id=$course->id");
+        notice(get_string('thereareno', 'moodle', $strwikis), "../../course/view.php?id=$course->id");
         die;
     }
 
