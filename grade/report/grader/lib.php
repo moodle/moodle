@@ -660,9 +660,9 @@ class grade_report_grader extends grade_report {
                 $user_pic = '<div class="userpic">' . print_user_picture($user->id, $this->courseid, true, 0, true) . '</div>';
             }
 
-            $studentshtml .= '<tr class="r'.$this->rowcount++.'"><th class="header c'.$columncount++.' user" scope="row">' . $user_pic
-                          . '<a href="' . $CFG->wwwroot . '/user/view.php?id='
-                          . $user->id . '">' . fullname($user) . '</a></th>';
+            $studentshtml .= '<tr class="r'.$this->rowcount++.'"><th class="header c'.$columncount++.' user" scope="row">'.$user_pic
+                          .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
+                          .fullname($user).'</a></th>';
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
