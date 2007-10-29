@@ -282,6 +282,12 @@ class edit_item_form extends moodleform {
         }
         */
 
+        if (array_key_exists('gradetype', $data) and $data['gradetype'] == GRADE_TYPE_SCALE) {
+            if (empty($data['scaleid'])) {
+                $errors['scaleid'] = get_String('missingscale', 'grades');
+            }
+        }
+
         if (array_key_exists('grademin', $data) and array_key_exists('grademax', $data)) {
             if ($data['grademax'] == $data['grademin'] or $data['grademax'] < $data['grademin']) {
                 $errors['grademin'] = get_String('incorrectminmax', 'grades');

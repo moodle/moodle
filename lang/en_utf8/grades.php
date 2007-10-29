@@ -276,6 +276,7 @@ $string['meangraded'] = 'Non-empty grades';
 $string['meanselection'] = 'Grades selected for column averages';
 $string['median'] = 'Median';
 $string['min'] = 'Lowest';
+$string['missingscale'] = 'Scale must be selected';
 $string['mode'] = 'Mode';
 $string['movingelement'] = 'Moving $a';
 $string['multfactor'] = 'Multiplicator';
