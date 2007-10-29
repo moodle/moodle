@@ -3725,7 +3725,13 @@ function email_is_not_allowed($email) {
             if (!$allowedpattern) {
                 continue;
             }
-            if (strpos(strrev($email), strrev('@'.$allowedpattern)) === 0) { // Match!   (bug 5250)
+            if (strpos($allowedpattern, '.') === 0) {
+                if (strpos(strrev($email), strrev($allowedpattern)) === 0) {
+                    // subdomains are in a form ".example.com" - matches "xxx@anything.example.com"
+                    return false;
+                }
+
+            } else if (strpos(strrev($email), strrev('@'.$allowedpattern)) === 0) { // Match!   (bug 5250)
                 return false;
             }
         }
@@ -3738,7 +3744,13 @@ function email_is_not_allowed($email) {
             if (!$deniedpattern) {
                 continue;
             }
-            if (strpos(strrev($email), strrev('@'.$deniedpattern)) === 0) { // Match!   (bug 5250)
+            if (strpos($deniedpattern, '.') === 0) {
+                if (strpos(strrev($email), strrev($deniedpattern)) === 0) {
+                    // subdomains are in a form ".example.com" - matches "xxx@anything.example.com"
+                    return get_string('emailnotallowed', '', $CFG->denyemailaddresses);
+                }
+
+            } else if (strpos(strrev($email), strrev('@'.$deniedpattern)) === 0) { // Match!   (bug 5250)
                 return get_string('emailnotallowed', '', $CFG->denyemailaddresses);
             }
         }
