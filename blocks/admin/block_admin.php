@@ -139,6 +139,7 @@ class block_admin extends block_list {
 
     /// Manage questions
         if ($course->id!==SITEID){
+            $questionlink = '';
             $questioncaps = array(
                                     'moodle/question:add',
                                     'moodle/question:editmine',
@@ -147,15 +148,18 @@ class block_admin extends block_list {
                                     'moodle/question:viewall',
                                     'moodle/question:movemine',
                                     'moodle/question:moveall');
-            $questionpermission = false;
             foreach ($questioncaps as $questioncap){
                 if (has_capability($questioncap, $context)){
-                    $questionpermission = true;
+                    $questionlink = 'edit.php';
                     break;
                 }
             }
-            if ($questionpermission) {
-                $this->content->items[]='<a href="'.$CFG->wwwroot.'/question/edit.php?courseid='.$this->instance->pageid.'">'.get_string('questions', 'quiz').'</a>';
+            if (!$questionlink && has_capability('moodle/question:managecategory', $context)) {
+               $questionlink = 'category.php';
+            }
+            if ($questionlink) {
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/question/'.$questionlink.
+                        '?courseid='.$this->instance->pageid.'">'.get_string('questions', 'quiz').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/questions.gif" class="icon" alt="" />';
             }
         }
