@@ -1328,16 +1328,14 @@ function calendar_edit_event_allowed($event) {
 
     // if groupid is set, it's definitely a group event
     if ($event->groupid) {
-        //TODO:check.
-        if (! groups_group_exists($event->groupid)) {
-            return false;
-        }
-
-        // this is ok because if you have this capability at course level, you should be able
-        // to edit group calendar too
-        // there is no need to check membership, because if you have this capability
-        // you will have a role in this group context
-        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_GROUP, $event->groupid));
+        // Allow users to add/edit group events if:
+        // 1) They have manageentries (= entries for whole course)
+        // 2) They have managegroupentries AND are in the group
+        $group = get_record('groups', 'id', $event->groupid);
+        return $group && (
+            has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $group->courseid)) ||
+            (has_capability('moodle/calendar:managegroupentries', get_context_instance(CONTEXT_COURSE, $group->courseid))
+                && groups_is_member($event->groupid)));
     } else if ($event->courseid) {
     // if groupid is not set, but course is set,
     // it's definiely a course event
@@ -1524,13 +1522,20 @@ function calendar_get_allowed_types(&$allowed) {
     $allowed->courses = false; // This may change just below
     $allowed->site = has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, SITEID));
 
-    if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $SESSION->cal_course_referer))) {
+    if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID) {
         $course = get_record('course', 'id', $SESSION->cal_course_referer);
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $SESSION->cal_course_referer);
 
-        $allowed->courses = array($course->id => 1);
-
-        if($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
-            $allowed->groups = groups_get_all_groups($SESSION->cal_course_referer);
+        if(has_capability('moodle/calendar:manageentries', $coursecontext)) {
+            $allowed->courses = array($course->id => 1);
+    
+            if($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
+                $allowed->groups = groups_get_all_groups($SESSION->cal_course_referer);
+            }
+        } else if(has_capability('moodle/calendar:managegroupentries', $coursecontext)) {
+            if($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
+                $allowed->groups = groups_get_all_groups($SESSION->cal_course_referer, $USER->id);
+            }
         }
     }
 }

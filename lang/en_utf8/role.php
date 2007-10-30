@@ -16,6 +16,7 @@ $string['blog:managepersonaltags'] = 'Manage personal tags';
 $string['blog:view'] = 'View blog entries';
 $string['block:view'] = 'View block';
 $string['calendar:manageentries'] = 'Manage any calendar entries';
+$string['calendar:managegroupentries'] = 'Manage group calendar entries';
 $string['calendar:manageownentries'] = 'Manage own calendar entries';
 $string['capabilities'] = 'Capabilities';
 $string['capability'] = 'Capability';
