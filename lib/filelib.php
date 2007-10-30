@@ -345,6 +345,11 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
     //TODO: should we remove all those @ before the header()? Are all of the values supported on all servers?
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
 
+    // if user is using IE, urlencode the filename so that multibyte file name will show up correctly on popup
+    if (check_browser_version('MSIE')) {
+        $filename = urlencode($filename); 
+    }
+
     if ($forcedownload) {
         @header('Content-Disposition: attachment; filename='.$filename);
     } else {
