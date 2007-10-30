@@ -849,7 +849,6 @@ class qformat_xml extends qformat_default {
             $expout .= "    <correctfeedback>".$this->writetext($question->options->correctfeedback, 3)."</correctfeedback>\n";
             $expout .= "    <partiallycorrectfeedback>".$this->writetext($question->options->partiallycorrectfeedback, 3)."</partiallycorrectfeedback>\n";
             $expout .= "    <incorrectfeedback>".$this->writetext($question->options->incorrectfeedback, 3)."</incorrectfeedback>\n";
-            $expout .= "    <answernumbering>{$question->options->answernumbering}</answernumbering>\n";
             foreach($question->options->answers as $answer) {
                 $percent = $answer->fraction * 100;
                 $expout .= "      <answer fraction=\"$percent\">\n";
