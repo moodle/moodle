@@ -430,6 +430,28 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
 }
 
 /**
+ * This function returns whether the current user has any of the capabilities in the
+ * $capabilities array. This is a simple wrapper around has_capability for convinience.
+ *
+ * There are probably tricks that could be done to improve the performance here, for example,
+ * check the capabilities that are already cached first.
+ *
+ * @param array $capabilities - an array of capability names.
+ * @param object $context - a context object (record from context table)
+ * @param integer $userid - a userid number, empty if current $USER
+ * @param bool $doanything - if false, ignore do anything
+ * @return bool
+ */
+function has_any_capability($capabilities, $context, $userid=NULL, $doanything=true) {
+    foreach ($capabilities as $capability) {
+        if (has_any_capability($capability, $context, $userid, $doanything)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
  * Uses 1 DB query to answer whether a user is an admin at the sitelevel.
  * It depends on DB schema >=1.7 but does not depend on the new datastructures
  * in v1.9 (context.path, or $USER->access)
