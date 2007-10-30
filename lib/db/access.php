@@ -727,6 +727,19 @@ $moodle_capabilities = array(
         )
     ),
 
+    'moodle/calendar:managegroupentries' => array(
+
+        'riskbitmask' => RISK_SPAM,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
     'moodle/calendar:manageentries' => array(
 
         'riskbitmask' => RISK_SPAM,
