@@ -1022,7 +1022,7 @@ function quiz_print_overview($courses, &$htmlarray) {
 
 /// We want to list quizzes that are currently available, and which have a close date.
 /// This is the same as what the lesson does, and the dabate is in MDL-10568.
-    $now = date();
+    $now = time();
     foreach ($quizs as $quiz) {
         if ($quiz->timeclose >= $now && $quiz->timeopen < $now) {
         /// Give a link to the quiz, and the deadline.
@@ -1036,15 +1036,7 @@ function quiz_print_overview($courses, &$htmlarray) {
             $context = get_context_instance(CONTEXT_MODULE, $quiz->coursemodule);
             if (has_capability('mod/quiz:viewreports', $context)) {
             /// For teacher-like people, show a summary of the number of student attempts.
-                $a = new stdClass;
-                if ($a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0)) {
-                    $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
-                } else {
-                    $a->studentnum = 0;
-                    $a->attemptnum = 0;
-                }
-                $a->studentstring  = $course->students;
-                $str .= '<div class="info">' . get_string('numattempts', 'quiz', $a) . '</div>';
+                $str .= '<div class="info">' . quiz_num_attempt_summary($quiz, true) . '</div>';
             } else if (has_capability('mod/quiz:attempt', $context)){ // Student
             /// For student-like people, tell them how many attempts they have made.
                 if (isset($USER->id) && ($attempts = quiz_get_user_attempts($quiz->id, $USER->id))) {
@@ -1067,5 +1059,20 @@ function quiz_print_overview($courses, &$htmlarray) {
             }
         }
     }
+}
+
+/**
+ * Return a textual summary of the number of attemtps that have been made at a particular quiz,
+ * returns '' if no attemtps have been made yet, unless $returnzero is passed as true.
+ * @param object $quiz the quiz object. Only $quiz->id is used at the moment.
+ * @param boolean $returnzero if false (default), when no attempts have been made '' is returned instead of 'Attempts: 0'. 
+ * @return string a string like "Attempts: 123".
+ */
+function quiz_num_attempt_summary($quiz, $returnzero = false) {
+    $numattempts = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0);
+    if ($numattempts || $returnzero) {
+        return get_string('attemptsnum', 'quiz', $numattempts);
+    }
+    return '';
 }
 ?>

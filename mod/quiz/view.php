@@ -125,11 +125,8 @@
 
     // Show number of attempts summary to those who can view reports.
     if (has_capability('mod/quiz:viewreports', $context)) {
-        if ($a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0)) {
-            $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
-            $a->studentstring  = $course->students;
-
-            notify("<a href=\"report.php?mode=overview&amp;id=$cm->id\">".get_string('numattempts', 'quiz', $a).'</a>');
+        if ($strattemptnum = quiz_num_attempt_summary($quiz)) {
+            notify("<a href=\"report.php?mode=overview&amp;id=$cm->id\">" . $strattemptnum . '</a>');
         }
     }
 

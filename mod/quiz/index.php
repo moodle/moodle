@@ -112,17 +112,7 @@
         }
 
         if ($showing == 'stats') {
-
-            // Number of students who have attempted this quiz.
-            if ($a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0)) {
-                $a->studentnum = count_records_select('quiz_attempts',
-                        "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
-                $a->studentstring  = $course->students;
-                $data[] = "<a href=\"report.php?mode=overview&amp;q=$quiz->id\">" .
-                        get_string('numattempts', 'quiz', $a) . '</a>';
-            } else {
-                $data[] = '';
-            }
+            $data[] = quiz_num_attempt_summary($quiz);
         } else if ($showing = 'scores') {
 
             // Grade and feedback.

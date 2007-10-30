@@ -1891,8 +1891,7 @@ function default_export_filename($course,$category) {
     $export_name .= moodle_strtolower($export_categoryname)."-";
     //The date format
     $export_name .= userdate(time(),$export_date_format,99,false);
-    //The extension - no extension, supplied by format
-    // $export_name .= ".txt";
+    //Extension is supplied by format later.
 
     return $export_name;
 }
