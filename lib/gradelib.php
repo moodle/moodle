@@ -207,7 +207,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         }
 
         // update or insert the grade
-        if (!$grade_item->update_raw_grade($userid, $rawgrade, $source, null, $feedback, $feedbackformat, $usermodified)) {
+        if (!$grade_item->update_raw_grade($userid, $rawgrade, $source, $feedback, $feedbackformat, $usermodified)) {
             $failed = true;
         }
     }

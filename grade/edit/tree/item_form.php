@@ -191,7 +191,7 @@ class edit_item_form extends moodleform {
                 $mform->hardFreeze('scaleid');
 
             } else {
-                if ($grade_item->is_normal_item()) {
+                if ($grade_item->is_external_item()) {
                     // following items are set up from modules and should not be overrided by user
                     $mform->hardFreeze('itemname,idnumber,gradetype,grademax,grademin,scaleid');
                     //$mform->removeElement('calculation');

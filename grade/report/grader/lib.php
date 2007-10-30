@@ -160,7 +160,6 @@ class grade_report_grader extends grade_report {
         foreach ($data as $varname => $postedvalue) {
 
             $needsupdate = false;
-            $note = false; // TODO implement note??
 
             // skip, not a grade nor feedback
             if (strpos($varname, 'grade') === 0) {
@@ -210,7 +209,7 @@ class grade_report_grader extends grade_report {
                 }
             }
 
-            $grade_item->update_final_grade($userid, $finalgrade, 'gradebook', $note, $feedback);
+            $grade_item->update_final_grade($userid, $finalgrade, 'gradebook', $feedback, FORMAT_MOODLE);
         }
 
         return true;
