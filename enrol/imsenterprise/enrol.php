@@ -301,6 +301,7 @@ function cron() {
                 } // End of while-tags-are-detected
                 } // end of while loop
                 fclose($fh);
+                fix_course_sortorder();
             } // end of if(file_open) for first pass
 
             /*
@@ -555,7 +556,6 @@ function process_group_tag($tagcontents){
                     $section->section = 0;
                     $section->id = insert_record("course_sections", $section);
 
-                    fix_course_sortorder();
                     add_to_log(SITEID, "course", "new", "view.php?id=$course->id", "$course->fullname (ID $course->id)");
 
                     $this->log_line("Created course $coursecode in Moodle (Moodle ID is $course->id)");
