@@ -1093,6 +1093,15 @@ class grade_category extends grade_object {
     }
 
     /**
+     * Check grade hidden status. Uses data from both grade item and grade.
+     * @return boolean true if hiddenuntil, false if not
+     */
+    function is_hiddenuntil() {
+        $this->load_grade_item();
+        return $this->grade_item->is_hiddenuntil();
+    }
+
+    /**
      * Sets the grade_item's hidden variable and updates the grade_item.
      * Method named after grade_item::set_hidden().
      * @param int $hidden 0, 1 or a timestamp int(10) after which date the item will be hidden.

@@ -75,8 +75,8 @@ class grade_report_user extends grade_report {
         global $CFG;
         parent::grade_report($courseid, $gpr, $context);
 
-        $this->showrank        = grade_get_setting($this->courseid, 'report_user_showrank', !empty($CFG->grade_report_user_showrank));
-        $this->showhiddenitems = grade_get_setting($this->courseid, 'report_user_showhiddenitems', !empty($CFG->grade_report_user_showhiddenitems));
+        $this->showrank        = grade_get_setting($this->courseid, 'report_user_showrank', $CFG->grade_report_user_showrank);
+        $this->showhiddenitems = grade_get_setting($this->courseid, 'report_user_showhiddenitems', $CFG->grade_report_user_showhiddenitems);
 
         $switch = grade_get_setting($this->courseid, 'aggregationposition', $CFG->grade_aggregationposition);
 
@@ -173,8 +173,14 @@ class grade_report_user extends grade_report {
             $grade_item  =& $items[$itemid];
             $grade_grade =& $grades[$itemid];
 
-            if (!$this->showhiddenitems and !$canviewhidden and $grade_item->is_hidden()) {
-                continue;
+            if (!$canviewhidden and $grade_item->is_hidden()) {
+                if ($this->showhiddenitems == 0) {
+                    // no hidden items at all
+                    continue;
+                } else if ($this->showhiddenitems == 1 and !$grade_item->is_hiddenuntil()) {
+                    // hidden until that are still hidden are visible
+                    continue;
+                }
             }
 
             $class = 'gradeitem';
@@ -313,7 +319,8 @@ function grade_report_user_settings_definition(&$mform) {
 
     $options = array(-1 => get_string('default', 'grades'),
                       0 => get_string('hide'),
-                      1 => get_string('show'));
+                      1 => get_string('showhiddenuntilonly', 'grades'),
+                      2 => get_string('show'));
 
     if (empty($CFG->grade_report_user_showhiddenitems)) {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
