@@ -336,7 +336,7 @@
         foreach($questionidarray as $i) {
             if (!isset($actions[$i])) {
                 $actions[$i]->responses = array('' => '');
-                $actions[$i]->event = QUESTION_EVENTSAVE;
+                $actions[$i]->event = QUESTION_EVENTOPEN;
             }
             $actions[$i]->timestamp = $timestamp;
             question_process_responses($questions[$i], $states[$i], $actions[$i], $quiz, $attempt);
@@ -354,40 +354,35 @@
         // Set the attempt to be finished
         $attempt->timefinish = $timestamp;
 
-        // Find all the questions for this attempt for which the newest
-        // state is not also the newest graded state
-        if ($closequestions = get_records_select('question_sessions',
-         "attemptid = $attempt->uniqueid AND newest != newgraded", '', 'questionid, questionid')) {
-
-            // load all the questions
-            $closequestionlist = implode(',', array_keys($closequestions));
-            $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-                   "  FROM {$CFG->prefix}question q,".
-                   "       {$CFG->prefix}quiz_question_instances i".
-                   " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
-                   "   AND q.id IN ($closequestionlist)";
-            if (!$closequestions = get_records_sql($sql)) {
-                error('Questions missing');
-            }
-
-            // Load the question type specific information
-            if (!get_question_options($closequestions)) {
-                error('Could not load question options');
-            }
-
-            // Restore the question sessions
-            if (!$closestates = get_question_states($closequestions, $quiz, $attempt)) {
-                error('Could not restore question sessions');
-            }
-
-            foreach($closequestions as $key => $question) {
-                $action->event = QUESTION_EVENTCLOSE;
-                $action->responses = $closestates[$key]->responses;
-                $action->timestamp = $closestates[$key]->timestamp;
-                question_process_responses($question, $closestates[$key], $action, $quiz, $attempt);
-                save_question_session($question, $closestates[$key]);
-            }
+        // load all the questions
+        $closequestionlist = quiz_questions_in_quiz($attempt->layout);
+        $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
+               "  FROM {$CFG->prefix}question q,".
+               "       {$CFG->prefix}quiz_question_instances i".
+               " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
+               "   AND q.id IN ($closequestionlist)";
+        if (!$closequestions = get_records_sql($sql)) {
+            error('Questions missing');
         }
+
+        // Load the question type specific information
+        if (!get_question_options($closequestions)) {
+            error('Could not load question options');
+        }
+
+        // Restore the question sessions
+        if (!$closestates = get_question_states($closequestions, $quiz, $attempt)) {
+            error('Could not restore question sessions');
+        }
+
+        foreach($closequestions as $key => $question) {
+            $action->event = QUESTION_EVENTCLOSE;
+            $action->responses = $closestates[$key]->responses;
+            $action->timestamp = $closestates[$key]->timestamp;
+            question_process_responses($question, $closestates[$key], $action, $quiz, $attempt);
+            save_question_session($question, $closestates[$key]);
+        }
+
         add_to_log($course->id, 'quiz', 'close attempt',
                            "review.php?attempt=$attempt->id",
                            "$quiz->id", $cm->id);
