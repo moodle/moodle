@@ -272,9 +272,11 @@ function validateUrlSyntax( $urladdr, $options="" ){
                        // Tertiary Domain(s) - Optional - Multi - Although some sites may use other characters, the RFC says tertiary domains have the same naming restrictions as second level domains
     $domain_tertiary   = '(' . $alphanum . '(([a-zA-Z0-9-]{0,62})' . $alphanum . ')?\.)*';
 
+/* MDL-9295 - take out domain_secondary here and below, so that URLs like http://localhost/ and lan addresses like http://host/ are accepted.
                        // Second Level Domain - Required - First and last characters must be Alpha-numeric. Hyphens are allowed inside.
     $domain_secondary  = '(' . $alphanum . '(([a-zA-Z0-9-]{0,62})' . $alphanum . ')?\.)';
-    
+*/
+
 // we want more relaxed URLs in Moodle: MDL-11462
                        // Top Level Domain - First character must be Alpha. Last character must be AlphaNumeric. Hyphens are allowed inside.
     $domain_toplevel   = '([a-zA-Z](([a-zA-Z0-9-]*)[a-zA-Z0-9])?)';
@@ -284,11 +286,11 @@ function validateUrlSyntax( $urladdr, $options="" ){
 
                        // Address can be IP address or Domain
     if ($aOptions['I'] === '{0}') {       // IP Address Not Allowed
-        $address       = '(' . $domain_tertiary . $domain_secondary . $domain_toplevel . ')';
+        $address       = '(' . $domain_tertiary . /* MDL-9295 $domain_secondary . */ $domain_toplevel . ')';
     } elseif ($aOptions['I'] === '') {  // IP Address Required
         $address       = '(' . $ipaddress . ')';
     } else {                            // IP Address Optional
-        $address       = '((' . $ipaddress . ')|(' . $domain_tertiary . $domain_secondary . $domain_toplevel . '))';
+        $address       = '((' . $ipaddress . ')|(' . $domain_tertiary . /* MDL-9295 $domain_secondary . */ $domain_toplevel . '))';
     }
     $address = $address . $aOptions['a'];
     
