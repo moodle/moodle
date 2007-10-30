@@ -546,6 +546,14 @@ class grade_item extends grade_object {
     }
 
     /**
+     * Check grade hidden status. Uses data from both grade item and grade.
+     * @return boolean true if hiddenuntil, false if not
+     */
+    function is_hiddenuntil() {
+        return $this->hidden > 1;
+    }
+
+    /**
      * Check grade item hidden status.
      * @return int 0 means visible, 1 hidden always, timestamp hidden until
      */
