@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -1199,15 +1199,7 @@ class grade_item extends grade_object {
                 return $this->dependson_cache;
             }
 
-            // If global aggregateoutcomes is set, override category value
-            if ($CFG->grade_aggregateoutcomes != -1) {
-                $grade_category->aggregateoutcomes = $CFG->grade_aggregateoutcomes;
-            }
-
-            // If global aggregatesubcats is set, override category value
-            if ($CFG->grade_aggregatesubcats != -1) {
-                $grade_category->aggregatesubcats = $CFG->grade_aggregatesubcats;
-            }
+            $grade_category->apply_forced_settings();
 
             if (empty($CFG->enableoutcomes) or $grade_category->aggregateoutcomes) {
                 $outcomes_sql = "";
