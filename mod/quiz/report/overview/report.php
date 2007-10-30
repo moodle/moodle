@@ -74,14 +74,8 @@ class quiz_report extends quiz_default_report {
 
         // Print information on the number of existing attempts
         if (!$download) { //do not print notices when downloading
-            if ($attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0)) {
-                $a = new stdClass;
-                $a->attemptnum = $attemptnum;
-                $a->studentnum = count_records_select('quiz_attempts',
-                        "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
-                $a->studentstring = $course->students;
-
-                notify(get_string('numattempts', 'quiz', $a));
+            if ($strattemptnum = quiz_num_attempt_summary($quiz)) {
+                notify($strattemptnum);
             }
         }
 

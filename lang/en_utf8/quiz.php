@@ -60,6 +60,7 @@ $string['attemptsallowed'] = 'Attempts allowed';
 $string['attemptsdeleted'] = 'Quiz attempts deleted';
 $string['attemptselection'] = 'Select which attempts to analyze per user:';
 $string['attemptsexist'] = 'You can no longer add or remove questions.';
+$string['attemptsnum'] = 'Attempts: $a';
 $string['attemptsonly'] = 'Show only students with attempts';
 $string['attemptsunlimited'] = 'Unlimited attempts';
 $string['back'] = 'Back to preview question';

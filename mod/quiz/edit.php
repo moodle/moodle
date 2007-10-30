@@ -304,12 +304,8 @@
 
         print_box_start();
 
-        $a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0);
-        $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
-        $a->studentstring  = $course->students;
-
         echo "<div class=\"attemptsnotice\">\n";
-        echo "<a href=\"report.php?mode=overview&amp;id=$cm->id\">".get_string('numattempts', 'quiz', $a)."</a><br />".get_string("attemptsexist","quiz");
+        echo "<a href=\"report.php?mode=overview&amp;id=$cm->id\">".quiz_num_attempt_summary($quiz)."</a><br />".get_string("attemptsexist","quiz");
         echo "</div><br />\n";
 
         $sumgrades = quiz_print_question_list($quiz,  $thispageurl, false, $quiz_showbreaks, $quiz_reordertool);
