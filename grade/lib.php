@@ -1176,8 +1176,10 @@ class grade_tree {
         }
 
         static $stredit = null;
+        static $strfeedback = null;
         if (is_null($stredit)) {
             $stredit = get_string('edit');
+            $strfeedback = get_string('feedback');
         }
 
         $object = $element['object'];
@@ -1208,9 +1210,10 @@ class grade_tree {
                 }
                 $url = $gpr->add_url_params($url);
                 if (!empty($object->feedback)) {
-                    $feedback = format_text($object->feedback, $object->feedbackformat);
-                    $function = "return overlib('".s(ltrim($object->feedback)."', FULLHTML);");
-                    $overlib = 'onmouseover="'.$function.'" onmouseout="return nd();"';
+                    $feedback = addslashes_js(trim(format_string($object->feedback, $object->feedbackformat)));
+                    $function = "return overlib('$feedback', BORDER, 0, FGCLASS, 'feedback', "
+                              ."CAPTIONFONTCLASS, 'caption', CAPTION, '$strfeedback');";
+                    $overlib = 'onmouseover="'.s($function).'" onmouseout="return nd();"';
                 }
                 break;
 
@@ -1333,7 +1336,7 @@ class grade_tree {
             $streditcalculation = get_string('editcalculation', 'grades');
 
             // show calculation icon only when calculation possible
-            if ((!$object->is_normal_item() or $object->is_outcome_item())
+            if ((!$object->is_external_item() or $object->is_outcome_item())
               and ($object->gradetype == GRADE_TYPE_SCALE or $object->gradetype == GRADE_TYPE_VALUE)) {
                 $url = $CFG->wwwroot.'/grade/edit/tree/calculation.php?courseid='.$this->courseid.'&amp;id='.$object->id;
                 $url = $gpr->add_url_params($url);

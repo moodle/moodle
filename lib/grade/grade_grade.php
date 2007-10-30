@@ -243,9 +243,10 @@ class grade_grade extends grade_object {
     /**
      * Set the overridden status of grade
      * @param boolean $state requested overridden state
+     * @param boolean $refresh refresh grades from external activities if needed
      * @return boolean true is db state changed
      */
-    function set_overridden($state) {
+    function set_overridden($state, $refresh = true) {
         if (empty($this->overridden) and $state) {
             $this->overridden = time();
             $this->update();
@@ -254,6 +255,12 @@ class grade_grade extends grade_object {
         } else if (!empty($this->overridden) and !$state) {
             $this->overridden = 0;
             $this->update();
+
+            if ($refresh) {
+                //refresh when unlocking
+                $this->grade_item->refresh_grades($this->userid);
+            }
+
             return true;
         }
         return false;

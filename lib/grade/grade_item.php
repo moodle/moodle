@@ -874,11 +874,19 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Is the grade item normal - associated with module, plugin or something else?
+     * Is the grade item external - associated with module, plugin or something else?
      * @return boolean
      */
-    function is_normal_item() {
-        return ($this->itemtype != 'course' and $this->itemtype != 'category' and $this->itemtype != 'manual');
+    function is_external_item() {
+        return ($this->itemtype == 'mod');
+    }
+
+    /**
+     * Is the grade item overridable
+     * @return boolean
+     */
+    function is_overridable_item() {
+        return !$this->is_outcome_item() and ($this->is_external_item() or $this->is_calculated() or $this->is_course_item() or $this->is_category_item());
     }
 
     /**
@@ -886,7 +894,7 @@ class grade_item extends grade_object {
      * @return boolean
      */
     function is_raw_used() {
-        return ($this->is_normal_item() and !$this->is_calculated() and !$this->is_outcome_item());
+        return ($this->is_external_item() and !$this->is_calculated() and !$this->is_outcome_item());
     }
 
     /**
@@ -1291,7 +1299,7 @@ class grade_item extends grade_object {
      * @param int $feedbackformat
      * @return boolean success
      */
-    function update_final_grade($userid, $finalgrade=false, $source=NULL, $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
+    function update_final_grade($userid, $finalgrade=false, $source=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
         global $USER, $CFG;
 
         if (empty($usermodified)) {
@@ -1328,17 +1336,14 @@ class grade_item extends grade_object {
         $oldgrade->feedback       = $grade->feedback;
         $oldgrade->feedbackformat = $grade->feedbackformat;
 
-        if ($finalgrade !== false or $feedback !== false) {
-            if (($this->is_outcome_item() or $this->is_manual_item()) and !$this->is_calculated()) {
-                // final grades updated only by user - no need for overriding
-                $grade->overridden = 0;
-
-            } else {
+        // changed grade?
+        if ($finalgrade !== false) {
+            if ($this->is_overridable_item()) {
                 $grade->overridden = time();
+            } else {
+                $grade->overridden = 0;
             }
-        }
 
-        if ($finalgrade !== false)  {
             if (!is_null($finalgrade)) {
                 $finalgrade = bounded_number($this->grademin, $finalgrade, $this->grademax);
             } else {
@@ -1349,6 +1354,11 @@ class grade_item extends grade_object {
 
         // do we have comment from teacher?
         if ($feedback !== false) {
+            if ($this->is_external_item()) {
+                // external items (modules, plugins) may have own feedback
+                $grade->overridden = time();
+            }
+
             $grade->feedback       = $feedback;
             $grade->feedbackformat = $feedbackformat;
         }
@@ -1360,6 +1370,9 @@ class grade_item extends grade_object {
                 or $grade->feedback       !== $oldgrade->feedback
                 or $grade->feedbackformat !== $oldgrade->feedbackformat) {
             $result = $grade->update($source);
+        } else {
+            // no grade change
+            return $result;
         }
 
         if (!$result) {
@@ -1399,7 +1412,7 @@ class grade_item extends grade_object {
      * @param int $feedbackformat
      * @return boolean success
      */
-    function update_raw_grade($userid, $rawgrade=false, $source=NULL, $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
+    function update_raw_grade($userid, $rawgrade=false, $source=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
         global $USER;
 
         if (empty($usermodified)) {
@@ -1409,8 +1422,7 @@ class grade_item extends grade_object {
         $result = true;
 
         // calculated grades can not be updated; course and category can not be updated  because they are aggregated
-        if ($this->is_calculated() or $this->is_outcome_item() or !$this->is_normal_item()
-         or $this->gradetype == GRADE_TYPE_NONE or $this->is_locked()) {
+        if (!$this->is_raw_used() or $this->gradetype == GRADE_TYPE_NONE or $this->is_locked()) {
             return false;
         }
 

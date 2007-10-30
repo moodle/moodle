@@ -39,12 +39,17 @@ class edit_grade_form extends moodleform {
         $mform->addElement('static', 'user', get_string('user'));
         $mform->addElement('static', 'itemname', get_string('itemname', 'grades'));
 
+        $mform->addElement('checkbox', 'overridden', get_string('overridden', 'grades'));
+        $mform->setHelpButton('overridden', array(false, get_string('overridden', 'grades'),
+                false, true, false, get_string('overriddenhelp', 'grades')));
+
         /// actual grade - numeric or scale
         if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
             // numeric grade
             $mform->addElement('text', 'finalgrade', get_string('finalgrade', 'grades'));
             $mform->setHelpButton('finalgrade', array(false, get_string('finalgrade', 'grades'),
                     false, true, false, get_string('finalgradehelp', 'grades')));
+            $mform->disabledIf('finalgrade', 'overridden', 'notchecked');
 
         } else if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
             // scale grade
@@ -67,11 +72,9 @@ class edit_grade_form extends moodleform {
             $mform->addElement('select', 'finalgrade', get_string('finalgrade', 'grades'), $scaleopt);
             $mform->setHelpButton('finalgrade', array(false, get_string('finalgrade', 'grades'),
                     false, true, false, get_string('finalgradehelp', 'grades')));
+            $mform->disabledIf('finalgrade', 'overridden', 'notchecked');
         }
 
-        $mform->addElement('advcheckbox', 'overridden', get_string('overridden', 'grades'));
-        $mform->setHelpButton('overridden', array(false, get_string('overridden', 'grades'),
-                false, true, false, get_string('overriddenhelp', 'grades')));
         $mform->addElement('advcheckbox', 'excluded', get_string('excluded', 'grades'));
         $mform->setHelpButton('excluded', array(false, get_string('excluded', 'grades'),
                 false, true, false, get_string('excludedhelp', 'grades')));
@@ -99,9 +102,11 @@ class edit_grade_form extends moodleform {
         $mform->setType('text', PARAM_RAW); // to be cleaned before display, no XSS risk
         $mform->addElement('format', 'feedbackformat', get_string('format'));
         $mform->setHelpButton('feedbackformat', array('textformat', get_string('helpformatting')));
+        //TODO: unfortunately we can not disable html editor for external grades when overridden off :-(
 
         // hidden params
         $mform->addElement('hidden', 'oldgrade');
+        $mform->addElement('hidden', 'oldfeedback');
 
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);
@@ -160,6 +165,10 @@ class edit_grade_form extends moodleform {
         }
 
         $old_grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$userid));
+
+        if (!$grade_item->is_overridable_item()) {
+            $mform->removeElement('overridden');
+        }
 
         if ($grade_item->is_hidden()) {
             $mform->hardFreeze('hidden');

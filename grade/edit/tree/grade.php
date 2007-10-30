@@ -96,11 +96,15 @@ if ($grade = get_record('grade_grades', 'itemid', $grade_item->id, 'userid', $us
 
     // always clean existing feedback - grading should not have XSS risk
     if (can_use_html_editor()) {
-        $options = new object();
-        $options->smiley  = false;
-        $options->filter  = false;
-        $options->noclean = false;
-        $grade->feedback       = format_text($grade->feedback, $grade->feedbackformat, $options);
+        if (empty($grade->feedback)) {
+            $grade->feedback  = '';
+        } else {
+            $options = new object();
+            $options->smiley  = false;
+            $options->filter  = false;
+            $options->noclean = false;
+            $grade->feedback  = format_text($grade->feedback, $grade->feedbackformat, $options);
+        }
         $grade->feedbackformat = FORMAT_HTML;
     } else {
         $grade->feedback       = clean_text($grade->feedback, $grade->feedbackformat);
@@ -136,7 +140,8 @@ if ($grade = get_record('grade_grades', 'itemid', $grade_item->id, 'userid', $us
         $grade->finalgrade = format_float($grade->finalgrade, $grade_item->get_decimals());
     }
 
-    $grade->oldgrade = $grade->finalgrade;
+    $grade->oldgrade    = $grade->finalgrade;
+    $grade->oldfeedback = $grade->feedback;
 
     $mform->set_data($grade);
 
@@ -151,8 +156,12 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data(false)) {
     $old_grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true); //might not exist yet
 
+    if (!isset($data->overridden)) {
+        $data->overridden = 0; // checkbox
+    }
+
     // fix no grade for scales
-    if (!isset($data->finalgrade) or $data->finalgrade == $data->oldgrade) {
+    if (($grade_item->is_overridable_item() and !$data->overridden) or !isset($data->finalgrade) or $data->finalgrade == $data->oldgrade) {
         $data->finalgrade = $old_grade_grade->finalgrade;
 
     } else if ($grade_item->gradetype == GRADE_TYPE_SCALE and $data->finalgrade < 1) {
@@ -162,15 +171,20 @@ if ($mform->is_cancelled()) {
         $data->finalgrade = unformat_float($data->finalgrade);
     }
 
-    if (!isset($data->feedback)) {
+    // the overriding of feedback is tricky - we have to care about external items only
+    if (!array_key_exists('feedback', $data) or $data->feedback == $data->oldfeedback) {
         $data->feedback       = $old_grade_grade->feedback;
         $data->feedbackformat = $old_grade_grade->feedbackformat;
     }
     // update final grade or feedback
-    $grade_item->update_final_grade($data->userid, $data->finalgrade, NULL, 'editgrade', $data->feedback, $data->feedbackformat);
+    $grade_item->update_final_grade($data->userid, $data->finalgrade, 'editgrade', $data->feedback, $data->feedbackformat);
 
     $grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true);
     $grade_grade->grade_item =& $grade_item; // no db fetching
+
+    if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:edit', $context)) {
+        $grade_grade->set_overridden($data->overridden);
+    }
 
     if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:hide', $context)) {
         $hidden      = empty($data->hidden) ? 0: $data->hidden;
@@ -208,13 +222,6 @@ if ($mform->is_cancelled()) {
 
     if (isset($data->excluded) and has_capability('moodle/grade:manage', $context)) {
         $grade_grade->set_excluded($data->excluded);
-    }
-
-    if (isset($data->overridden) and has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:edit', $context)) {
-        // ignore overridden flag when changing final grade
-        if ($old_grade_grade->finalgrade == $grade_grade->finalgrade) {
-            $grade_grade->set_overridden($data->overridden);
-        }
     }
 
     // detect cases when we need to do full regrading
