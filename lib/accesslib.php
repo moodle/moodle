@@ -444,7 +444,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
  */
 function has_any_capability($capabilities, $context, $userid=NULL, $doanything=true) {
     foreach ($capabilities as $capability) {
-        if (has_any_capability($capability, $context, $userid, $doanything)) {
+        if (has_capability($capability, $context, $userid, $doanything)) {
             return true;
         }
     }
