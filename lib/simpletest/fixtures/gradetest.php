@@ -114,7 +114,7 @@ class grade_test extends UnitTestCase {
         /// Define table course_modules to be created
         $table = new XMLDBTable('course_modules');
 
-        if (!table_exists($table)) {
+        if ($result && !table_exists($table)) {
             /// Adding fields to table course_modules
             $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
             $table->addFieldInfo('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
@@ -151,7 +151,7 @@ class grade_test extends UnitTestCase {
         /// Define table modules to be created
         $table = new XMLDBTable('modules');
 
-        if (!table_exists($table)) {
+        if ($result && !table_exists($table)) {
 
             /// Adding fields to table modules
             $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
@@ -177,7 +177,7 @@ class grade_test extends UnitTestCase {
         /// Define table grade_items to be created
         $table = new XMLDBTable('grade_items');
 
-        if (!table_exists($table)) {
+        if ($result && !table_exists($table)) {
             $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
             $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
             $table->addFieldInfo('categoryid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
