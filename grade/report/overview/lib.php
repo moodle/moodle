@@ -114,7 +114,7 @@ class grade_report_overview extends grade_report {
 
         // MDL-11679, only show 'mycourses' instead of all courses
         if ($courses = get_my_courses($this->user->id, 'c.sortorder ASC', 'id, shortname')) {
-            $numusers = $this->get_numusers();
+            $numusers = $this->get_numusers(false);
 
             foreach ($courses as $course) {
                 $courselink = '<a href="'.$CFG->wwwroot.'/grade/report/user/index.php?id='.$course->id.'">'.$course->shortname.'</a>';
