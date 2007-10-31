@@ -346,7 +346,7 @@
 
         global $CFG;
 
-        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/user_files",true, true);
+        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/user_files",true);
 
         return $status;
     }
@@ -2327,8 +2327,7 @@
                 //check for dir structure and create recursively
                 $file = $fileobj->path;
                 $status = $status && check_dir_exists(dirname($CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/site_files/".$file), true, true);
-                $status = $status && backup_copy_file($rootdir."/".$file,
-                                   $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/site_files/".$file);
+                $status = $status && backup_copy_file($rootdir."/".$file, $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/site_files/".$file);
             }
         }
         return $status;
