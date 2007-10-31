@@ -885,6 +885,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         return $datasetmenus;
     }
 
+    function print_question_grading_details(&$question, &$state, &$cmoptions, &$options) {
+        $virtualqtype = $this->get_virtual_qtype();
+        $virtualqtype->print_question_grading_details($question, $state, $cmoptions, $options) ;
+    }
+
     function get_correct_responses(&$question, &$state) {
         $virtualqtype = $this->get_virtual_qtype();
         if($unit = $virtualqtype->get_default_numerical_unit($question)){
