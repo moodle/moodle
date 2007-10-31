@@ -346,7 +346,7 @@
 
         global $CFG;
 
-        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/user_files",true, true);
+        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/user_files",true);
 
         return $status;
     }
