@@ -359,9 +359,10 @@ class question_shortanswer_qtype extends default_questiontype {
         attempt and displays the overall grade obtained counting all previous
         responses (and penalties) */
 
+        global $QTYPES ;
         // MDL-7496 show correct answer after "Incorrect"
         $correctanswer = '';
-        if ($correctanswers = $this->get_correct_responses($question, $state)) {
+        if ($correctanswers =  $QTYPES[$question->qtype]->get_correct_responses($question, $state)) {
             if ($options->readonly && $options->correct_responses) {
                 $delimiter = '';
                 if ($correctanswers) {
