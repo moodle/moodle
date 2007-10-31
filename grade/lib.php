@@ -230,7 +230,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
     $menu = array();
-
+    $count = 0;
     $active = '';
 
 /// report plugins with its special structure
@@ -248,7 +248,8 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             if ($active_type == 'report' and $active_plugin == $plugin ) {
                 $active = $url;
             }
-            $reportnames[$url] = get_string('modulename', 'gradereport_'.$plugin, NULL, $CFG->dirroot.'/grade/report/'.$plugin.'/lang/');
+            $reportnames[$url] = get_string('modulename', 'gradereport_'.$plugin);
+            $count++;
         }
         asort($reportnames);
     }
@@ -272,7 +273,8 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             if ($active_type == 'import' and $active_plugin == $plugin ) {
                 $active = $url;
             }
-            $importnames[$url] = get_string('modulename', 'gradeimport_'.$plugin, NULL, $CFG->dirroot.'/grade/import/'.$plugin.'/lang/');
+            $importnames[$url] = get_string('modulename', 'gradeimport_'.$plugin);
+            $count++;
         }
         asort($importnames);
     }
@@ -296,7 +298,8 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             if ($active_type == 'export' and $active_plugin == $plugin ) {
                 $active = $url;
             }
-            $exportnames[$url] = get_string('modulename', 'gradeexport_'.$plugin, NULL, $CFG->dirroot.'/grade/export/'.$plugin.'/lang/');
+            $exportnames[$url] = get_string('modulename', 'gradeexport_'.$plugin);
+            $count++;
         }
         asort($exportnames);
     }
@@ -318,6 +321,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
                 $active = $url;
             }
             $menu[$url] = get_string('edittree', 'grades');
+            $count++;
         }
 
         if (has_capability('moodle/course:managescales', $context)) {
@@ -326,6 +330,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
                 $active = $url;
             }
             $menu[$url] = get_string('scales');
+            $count++;
         }
 
         if (!empty($CFG->enableoutcomes) && (has_capability('moodle/grade:manage', $context) or
@@ -339,6 +344,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
                 $active = $url;
             }
             $menu[$url] = get_string('outcomes', 'grades');
+            $count++;
         }
 
         if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:manageletters', $context)) {
@@ -347,6 +353,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
                 $active = $url;
             }
             $menu[$url] = get_string('letters', 'grades');
+            $count++;
         }
 
         if (has_capability('moodle/grade:manage', $context)) {
@@ -355,12 +362,18 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
                 $active = $url;
             }
             $menu[$url] = get_string('coursesettings', 'grades');
+            $count++;
         }
 
     }
 
 /// finally print/return the popup form
-    return popup_form($CFG->wwwroot.'/grade/', $menu, 'choosepluginreport', $active, 'choose', '', '', $return, 'self', get_string('view'));
+    if ($count > 1) {
+        return popup_form($CFG->wwwroot.'/grade/', $menu, 'choosepluginreport', $active, 'choose', '', '', $return, 'self', get_string('view'));
+    } else {
+        // only one option - no plugin selector needed
+        return '';
+    }
 }
 
 /**
