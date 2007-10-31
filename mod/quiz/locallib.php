@@ -553,31 +553,6 @@ function quiz_get_grading_option_name($option) {
 /// OTHER QUIZ FUNCTIONS ////////////////////////////////////////////////////
 
 /**
-* Print a box with quiz start and due dates
-*
-* @param object $quiz
-*/
-function quiz_view_dates($quiz) {
-    if (!$quiz->timeopen && !$quiz->timeclose) {
-        return;
-    }
-
-    print_simple_box_start('center', '', '', '', 'generalbox', 'dates');
-    echo '<table>';
-    if ($quiz->timeopen) {
-        echo '<tr><td class="c0">'.get_string("quizopen", "quiz").':</td>';
-        echo '    <td class="c1">'.userdate($quiz->timeopen).'</td></tr>';
-    }
-    if ($quiz->timeclose) {
-        echo '<tr><td class="c0">'.get_string("quizclose", "quiz").':</td>';
-        echo '    <td class="c1">'.userdate($quiz->timeclose).'</td></tr>';
-    }
-    echo '</table>';
-    print_simple_box_end();
-}
-
-
-/**
 * Parse field names used for the replace options on question edit forms
 */
 function quiz_parse_fieldname($name, $nameprefix='question') {

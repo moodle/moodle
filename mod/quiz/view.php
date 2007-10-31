@@ -107,7 +107,12 @@
             if ($quiz->timelimit) {
                 echo "<p>".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
             }
-            quiz_view_dates($quiz);
+            if ($quiz->timeopen) {
+                echo '<p>', get_string('quizopens', 'quiz'), ': ', userdate($quiz->timeopen), '</p>';
+            }
+            if ($quiz->timeclose) {
+                echo '<p>', get_string('quizcloses', 'quiz'), ': ', userdate($quiz->timeclose), '</p>';
+            }
         } else if ($timenow < $quiz->timeopen) {
             echo "<p>".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen))."</p>";
         } else {
