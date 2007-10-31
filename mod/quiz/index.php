@@ -47,32 +47,25 @@
 // Configure table for displaying the list of instances.
     $headings = array(get_string('name'), get_string('quizcloses', 'quiz'));
     $align = array('left', 'left');
-    $colsize = array('', '');
-    if ($course->format == "weeks" || $course->format == "weekscss") {
+    if ($course->format == 'weeks' or $course->format == 'weekscss') {
         array_unshift($headings, get_string('week'));
-        array_unshift($align, 'center');
-        array_unshift($colsize, 10);
-    } else if ($course->format == "topics") {
-        array_unshift($headings, get_string('topic'));
-        array_unshift($align, 'center');
-        array_unshift($colsize, 10);
+    } else {
+        array_unshift($headings, get_string('section'));
     }
+    array_unshift($align, 'center');
 
     if (has_capability('mod/quiz:viewreports', $coursecontext)) {
         array_push($headings, get_string('attempts', 'quiz'));
         array_push($align, 'left');
-        array_push($colsize, '');
         $showing = 'stats';
     } else if (has_capability('mod/quiz:attempt', $coursecontext)) {
         array_push($headings, get_string('bestgrade', 'quiz'), get_string('feedback', 'quiz'));
         array_push($align, 'left', 'left');
-        array_push($colsize, '', '');
         $showing = 'scores';
     }
 
     $table->head = $headings;
     $table->align = $align;
-    $table->size = $colsize;
 
 // Poplate the table with the list of instances.
     $currentsection = '';
@@ -84,16 +77,14 @@
 
         // Section number if necessary.
         $strsection = '';
-        if ($course->format == "weeks" || $course->format == "weekscss" || $course->format == "topics") {
-            if ($quiz->section !== $currentsection) {
-                if ($quiz->section) {
-                    $strsection = $quiz->section;
-                }
-                if ($currentsection !== "") {
-                    $table->data[] = 'hr';
-                }
-                $currentsection = $quiz->section;
+        if ($quiz->section != $currentsection) {
+            if ($quiz->section) {
+                $strsection = $quiz->section;
             }
+            if ($currentsection) {
+                $learningtable->data[] = 'hr';
+            }
+            $currentsection = $quiz->section;
         }
         $data[] = $strsection;
 
