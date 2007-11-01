@@ -289,7 +289,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         // add the remote user to the database if necessary, and if allowed
         // TODO: refactor into a separate function
-        if (! $localuser->id) {
+        if (empty($localuser) || ! $localuser->id) {
             if (empty($this->config->auto_add_remote_users)) {
                 error(get_string('nolocaluser', 'mnet'));
             }
