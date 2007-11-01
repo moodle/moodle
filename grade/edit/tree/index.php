@@ -77,6 +77,10 @@ $moving = false;
 switch ($action) {
     case 'delete':
         if ($eid) {
+            if ($element['type'] == 'item' and $object->is_external_item() and !$object->is_outcome_item()) {
+                // no deleting of external activities!
+                break;
+            }
             $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
             if ($confirm and confirm_sesskey()) {
@@ -185,9 +189,11 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr, $switch, $switchedl
     $actions .= $gtree->get_calculation_icon($element, $gpr);
 
     if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
-        $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='
-                 . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'
-                 . $strdelete.'" title="'.$strdelete.'"/></a>';
+        if (!($element['type'] == 'item' and $object->is_external_item() and !$object->is_outcome_item())) {
+            $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='
+                     . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'
+                     . $strdelete.'" title="'.$strdelete.'"/></a>';
+        }
         $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=moveselect&amp;eid='
                  . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="'
                  . $strmove.'" title="'.$strmove.'"/></a>';
