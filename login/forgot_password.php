@@ -21,6 +21,11 @@ $strlogin     = get_string('login');
 $navigation = build_navigation(array(array('name' => $strlogin, 'link' => "$CFG->wwwroot/login/index.php", 'type' => 'misc'),
                                      array('name' => $strforgotten, 'link' => null, 'type' => 'misc')));
 
+// if alternatepasswordurl is defined, then we'll just head there
+if (!empty($CFG->forgottenpasswordurl)) {
+    redirect($CFG->forgottenpasswordurl);
+}
+
 // if you are logged in then you shouldn't be here!
 if (isloggedin() and !isguestuser()) {
     redirect($CFG->wwwroot.'/index.php', get_string('loginalready'), 5);
