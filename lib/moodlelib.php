@@ -3858,7 +3858,7 @@ function get_user_directories($only_non_empty=true, $legacy=false) {
     $dirlist = array();
 
     //Check if directory exists 
-    if (is_dir($rootdir)) { 
+    if (check_dir_exists($rootdir, true)) { 
         if ($legacy) {
             if ($userlist = get_directory_list($rootdir, '', true, true, false)) {
                 foreach ($userlist as $userid) {
