@@ -24,7 +24,8 @@ ul.tabrow1 li a:visited,
 .sideblock .r0,
 .sideblock .r1,
 .generaltable .cell,
-div.sideblock table.minicalendar {
+div.sideblock table.minicalendar,
+.sideblock .hide-show a {
     border:none;
     background:none;
 }
