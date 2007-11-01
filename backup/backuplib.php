@@ -2215,11 +2215,23 @@
         $userlist = get_user_directories();
 
         foreach ($userlist as $userid => $userinfo) {
-                    //Look for dir like username in backup_ids
+            //Look for dir like username in backup_ids
             $data = count_records("backup_ids","backup_code",$preferences->backup_unique_code, "table_name","user", "old_id",$userid);
-                    //If exists, copy it
-                    if ($data) {
-                $status = backup_copy_file($userinfo['basedir'] . '/' . $userinfo['userfolder'], 
+            
+            //If exists, copy it
+            if ($data) {
+                $parts = explode('/', $userinfo['userfolder']);
+                $status = true;
+
+                if (is_array($parts)) {
+                    $group = $parts[0];
+                    $userid = $parts[1];
+
+                    // Create group dir first
+                    $status = check_dir_exists($userinfo['basedir'] . '/' . $group, true);
+                }
+
+                $status = $status && backup_copy_file($userinfo['basedir'] . '/' . $userinfo['userfolder'], 
                     "$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/{$userinfo['userfolder']}");
             }
         }
