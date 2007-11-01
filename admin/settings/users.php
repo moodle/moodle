@@ -2,7 +2,11 @@
 
 // This file defines settingpages and externalpages under the "users" category
 
-if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
+if ($hassiteconfig
+ or has_capability('moodle/site:uploadusers', $systemcontext)
+ or has_capability('moodle/user:create', $systemcontext)
+ or has_capability('moodle/user:update', $systemcontext)
+ or has_capability('moodle/user:delete', $systemcontext)) { // speedup for non-admins, add all caps used on this page
 
 
 $ADMIN->add('users', new admin_externalpage('userauthentication', get_string('authentication','admin'), "$CFG->wwwroot/$CFG->admin/auth.php"));
