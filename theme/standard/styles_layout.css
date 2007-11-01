@@ -1307,8 +1307,8 @@ a.skip:focus, a.skip:active {
   clear: left;
 }
 
-.sideblock .content .inline-list li {
-  display:inline;
+.sideblock .content .inline-list li, .inline-list li {
+  display: inline;
 }
 
 .sideblock .content ul.list li.listentry {

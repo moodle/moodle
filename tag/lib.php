@@ -1280,9 +1280,11 @@ function print_user_list($userlist, $return=false) {
 
     $output = '';
 
+    $output .= '<ul class="inline-list">';
     foreach ($userlist as $user){
-        $output .= print_user_box( $user , true);
+        $output .= '<li>'. print_user_box( $user , true) ."</li>\n";
     }
+    $output .= "</ul>\n";
 
     if ($return) {
         return $output;
@@ -1315,15 +1317,18 @@ function print_user_box($user, $return=false) {
 
     $output .= print_box_start('user-box', 'user'.$user->id, true);
 
+    $fullname = fullname($user);
+    $alt = '';
     if (!empty($profilelink)) {
         $output .= '<a href="'.$profilelink.'">';
+        $alt = $fullname;
     }
 
-    //print user image
+    //print user image - if image is only content of link it needs ALT text!
     if ($user->picture) {
-        $output .= '<img alt="" class="user-image" src="'. $CFG->wwwroot .'/user/pix.php/'. $user->id .'/f1.jpg"'.'/>';
+        $output .= '<img alt="'.$alt.'" class="user-image" src="'. $CFG->wwwroot .'/user/pix.php/'. $user->id .'/f1.jpg"'.'/>';
     } else {
-        $output .= '<img alt="" class="user-image" src="'. $CFG->wwwroot .'/pix/u/f1.png"'.'/>';
+        $output .= '<img alt="'.$alt.'" class="user-image" src="'. $CFG->wwwroot .'/pix/u/f1.png"'.'/>';
     }
 
     $output .= '<br />';
@@ -1332,7 +1337,6 @@ function print_user_box($user, $return=false) {
         $output .= '</a>';
     }
 
-    $fullname = fullname($user);
     //truncate name if it's too big
     if ($textlib->strlen($fullname) > 26) $fullname = $textlib->substr($fullname,0,26) . '...';
 
