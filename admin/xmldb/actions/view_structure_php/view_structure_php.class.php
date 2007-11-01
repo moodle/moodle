@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -214,6 +214,9 @@ class view_structure_php extends XMLDBAction {
         $result .= '    /// Launch create table for ' . $table->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && create_table($table);' . XMLDB_LINEFEED;
 
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
+
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
 
@@ -251,6 +254,9 @@ class view_structure_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch drop table for ' . $table->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && drop_table($table);' . XMLDB_LINEFEED;
+
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -290,9 +296,36 @@ class view_structure_php extends XMLDBAction {
         $result .= '    /// Launch rename table for ' . $table->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && rename_table($table, ' . "'NEWNAMEGOESHERE'" . ');' . XMLDB_LINEFEED;
 
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
+
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
 
+        return $result;
+    }
+
+    /**
+     * This function will generate the PHP code needed to
+     * implement the upgrade_xxxx_savepoint() php calls in
+     * upgrade code generated from the editor
+     *
+     * @param XMLDBStructure structure object containing all the info
+     * @return string PHP code to be used to stabilish a savepoint
+     */
+    function upgrade_savepoint_php ($structure) {
+
+        $path = $structure->getPath();
+
+        $result = '';
+
+        switch ($path) {
+            case 'lib/db':
+                $result = XMLDB_LINEFEED .
+                         '    /// Main savepoint reached' . XMLDB_LINEFEED .
+                         '        upgrade_main_savepoint($result, XXXXXXXXXX);' . XMLDB_LINEFEED;
+                break;
+        }
         return $result;
     }
 }
