@@ -337,43 +337,5 @@ class grade_report {
         $html = '<a href="'.$sort_link .'">' . $arrow . '</a>';
         return $html;
     }
-
-    /**
-     * Builds and returns a HTML link to the grade or view page of the module given.
-     * If no itemmodule is given, only the name of the category/item is returned, no link.
-     * @param string $modulename The shortname of the module, will become the visible header
-     * @param string $itemmodule The name of the module type (e.g. assignment, quiz...)
-     * @param int $iteminstance The instance number of the module
-     * @param bool itemhidden - if the grade item is hidden
-     * @return string HTML
-     */
-    function get_module_link($modulename, $itemmodule=null, $iteminstance=null, $itemhidden=false) {
-        global $CFG;
-
-        $link = null;
-        if (!is_null($itemmodule) AND !is_null($iteminstance)) {
-            // Add module icon if toggle is enabled
-            if ($this->get_pref('showactivityicons')) {
-                $modulename = '<img src="' . $CFG->modpixpath . '/' . $itemmodule
-                            . '/icon.gif" class="icon activity" alt="' . $modulename . '" />' . $modulename;
-            }
-
-            $coursemodule = get_coursemodule_from_instance($itemmodule, $iteminstance, $this->course->id);
-
-            $dir = $CFG->dirroot . "/mod/$itemmodule/";
-            $url = $CFG->wwwroot . "/mod/$itemmodule/";
-
-            if (file_exists($dir . 'grade.php')) {
-                $url .= 'grade.php';
-            } else {
-                $url .= 'view.php';
-            }
-
-            $url .= "?id=$coursemodule->id";
-            return '<a href="' . $url . '">' . $modulename . '</a>';
-        }
-
-        return $modulename;
-    }
 }
 ?>

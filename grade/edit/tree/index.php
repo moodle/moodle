@@ -174,8 +174,15 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr, $switch, $switchedl
     $object = $element['object'];
     $eid    = $element['eid'];
 
+    $header = $gtree->get_element_header($element, true, true, true);
+
+    if ($object->is_hidden()) {
+        $header = '<span class="dimmed_text">'.$header.'</span>';
+    }
+
 /// prepare actions
     $actions = $gtree->get_edit_icon($element, $gpr);
+    $actions .= $gtree->get_calculation_icon($element, $gpr);
 
     if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
         $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='
@@ -186,26 +193,12 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr, $switch, $switchedl
                  . $strmove.'" title="'.$strmove.'"/></a>';
     }
 
+    $actions .= $gtree->get_hiding_icon($element, $gpr);
     $actions .= $gtree->get_locking_icon($element, $gpr);
 
-    $name = $object->get_name();
-
-    //TODO: improve outcome visualisation
-    if ($element['type'] == 'item' and !empty($object->outcomeid)) {
-        $name = $name.' ('.get_string('outcome', 'grades').')';
-    }
-
-    if ($object->is_hidden()) {
-        $name = '<span class="dimmed_text">'.$name.'</span>';
-    }
-    $actions .= $gtree->get_hiding_icon($element, $gpr);
-
-/// prepare icon
-    $icon = $gtree->get_element_icon($element);
+/// prepare move target if needed
     $last = '';
     $catcourseitem = ($element['type'] == 'courseitem' or $element['type'] == 'categoryitem');
-
-/// prepare move target if needed
     $moveto = '';
     if ($moving) {
         $actions = ''; // no action icons when moving
@@ -217,21 +210,21 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr, $switch, $switchedl
 /// print the list items now
     if ($moving == $eid) {
         // do not diplay children
-        echo '<li class="'.$element['type'].' moving">'.$icon.$name.'('.get_string('move').')</li>';
+        echo '<li class="'.$element['type'].' moving">'.$header.'('.get_string('move').')</li>';
 
     } else if ($element['type'] != 'category') {
         if ($catcourseitem and $switch) {
             if ($switchedlast) {
-                echo '<li class="'.$element['type'].'">'.$icon.$name.$actions.'</li>';
+                echo '<li class="'.$element['type'].'">'.$header.$actions.'</li>';
             } else {
                 echo $moveto;
             }
         } else {
-            echo '<li class="'.$element['type'].'">'.$icon.$name.$actions.'</li>'.$moveto;
+            echo '<li class="'.$element['type'].'">'.$header.$actions.'</li>'.$moveto;
         }
 
     } else {
-        echo '<li class="'.$element['type'].'">'.$icon.$name.$actions;
+        echo '<li class="'.$element['type'].'">'.$header.$actions;
         echo '<ul class="catlevel'.$element['depth'].'">';
         $last = null;
         foreach($element['children'] as $child_el) {

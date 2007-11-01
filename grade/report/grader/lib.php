@@ -80,7 +80,7 @@ class grade_report_grader extends grade_report {
      */
     var $rowcount = 0;
 
-    /** 
+    /**
      * Capability check caching
      * */
     var $canviewhidden;
@@ -586,15 +586,7 @@ class grade_report_grader extends grade_report {
                         $hidden = ' hidden ';
                     }
 
-                    if ($object->itemtype == 'mod') {
-                        $icon = '<img src="'.$CFG->modpixpath.'/'.$object->itemmodule.'/icon.gif" class="icon" alt="'
-                              .$this->get_lang_string('modulename', $object->itemmodule).'"/>';
-                    } else if ($object->itemtype == 'manual') {
-                        $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'
-                                .$this->get_lang_string('manualgrade', 'grades') .'"/>';
-                    }
-
-                    $headerlink = $this->get_module_link($element['object']->get_name(), $itemmodule, $iteminstance, $element['object']->is_hidden());
+                    $headerlink = $this->gtree->get_element_header($element, true, $this->get_pref('showactivityicons'), false);
                     $headerhtml .= '<th class="header '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col">'. $headerlink . $arrow;
                     $headerhtml .= $this->get_icons($element) . '</th>';
                 }
@@ -681,9 +673,9 @@ class grade_report_grader extends grade_report {
                 // MDL-11274
                 // Hide grades in the grader report if the current grader doesn't have 'moodle/grade:viewhidden'
                 if (!$this->canviewhidden and $grade->is_hidden()) {
-                    if (!empty($CFG->grade_hiddenasdate) and $grade_grade->get_datesubmitted() and !$item->is_category_item() and !$item->is_course_item()) {
+                    if (!empty($CFG->grade_hiddenasdate) and $grade->get_datesubmitted() and !$item->is_category_item() and !$item->is_course_item()) {
                         // the problem here is that we do not have the time when grade value was modified, 'timemodified' is general modification date for grade_grades records
-                        $studentshtml .= '<td class="cell c'.$columncount++.'"><span class="datesubmitted">'.userdate($grade_grade->get_datesubmitted(),get_string('strftimedatetimeshort')).'</span></td>';
+                        $studentshtml .= '<td class="cell c'.$columncount++.'"><span class="datesubmitted">'.userdate($grade->get_datesubmitted(),get_string('strftimedatetimeshort')).'</span></td>';
                     } else {
                         $studentshtml .= '<td class="cell c'.$columncount++.'">-</td>';
                     }
@@ -720,7 +712,7 @@ class grade_report_grader extends grade_report {
                 if ($grade->is_hidden()) {
                     $hidden = ' hidden ';
                 }
-                
+
                 // if in editting mode, we need to print either a text box
                 // or a drop down (for scales)
                 // grades in item of type grade category or course are not directly editable
