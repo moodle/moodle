@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -339,6 +339,9 @@ class view_table_php extends XMLDBAction {
         $result .= '    /// Launch add field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && add_field($table, $field);' . XMLDB_LINEFEED;
 
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
+
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
 
@@ -381,6 +384,9 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch drop field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && drop_field($table, $field);' . XMLDB_LINEFEED;
+
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -425,6 +431,9 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch rename field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && rename_field($table, $field, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
+
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -479,6 +488,9 @@ class view_table_php extends XMLDBAction {
         $result .= '    /// Launch change of type for field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && change_field_type($table, $field);' . XMLDB_LINEFEED;
 
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
+
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
 
@@ -529,6 +541,9 @@ class view_table_php extends XMLDBAction {
         $result .= '    /// Launch change of precision for field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && change_field_precision($table, $field);' . XMLDB_LINEFEED;
 
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
+
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
 
@@ -575,6 +590,9 @@ class view_table_php extends XMLDBAction {
         $result .= '    /// Launch change of sign for field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && change_field_unsigned($table, $field);' . XMLDB_LINEFEED;
 
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
+
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
 
@@ -620,6 +638,9 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch change of nullability for field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && change_field_notnull($table, $field);' . XMLDB_LINEFEED;
+
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -668,6 +689,9 @@ class view_table_php extends XMLDBAction {
         $result .= '    /// Launch change of list of values for field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && change_field_enum($table, $field);' . XMLDB_LINEFEED;
 
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
+
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
 
@@ -714,6 +738,9 @@ class view_table_php extends XMLDBAction {
         $result .= '    /// Launch change of default for field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && change_field_default($table, $field);' . XMLDB_LINEFEED;
 
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
+
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
 
@@ -758,6 +785,9 @@ class view_table_php extends XMLDBAction {
         $result .= '    /// Launch add key ' . $key->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && add_key($table, $key);' . XMLDB_LINEFEED;
 
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
+
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
 
@@ -801,6 +831,9 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch drop key ' . $key->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && drop_key($table, $key);' . XMLDB_LINEFEED;
+
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -849,6 +882,9 @@ class view_table_php extends XMLDBAction {
         $result .= '    /// Launch rename key ' . $key->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && rename_key($table, $key, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
 
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
+
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
 
@@ -893,6 +929,9 @@ class view_table_php extends XMLDBAction {
         $result .= '    /// Launch add index ' . $index->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && add_index($table, $index);' . XMLDB_LINEFEED;
 
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
+
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
 
@@ -936,6 +975,9 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch drop index ' . $index->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && drop_index($table, $index);' . XMLDB_LINEFEED;
+
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -984,9 +1026,36 @@ class view_table_php extends XMLDBAction {
         $result .= '    /// Launch rename index ' . $index->getName() . XMLDB_LINEFEED;
         $result .= '        $result = $result && rename_index($table, $index, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
 
+    /// Add the proper upgrade_xxxx_savepoint call
+        $result .= $this->upgrade_savepoint_php ($structure);
+
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
 
+        return $result;
+    }
+
+    /**
+     * This function will generate the PHP code needed to
+     * implement the upgrade_xxxx_savepoint() php calls in
+     * upgrade code generated from the editor
+     *
+     * @param XMLDBStructure structure object containing all the info
+     * @return string PHP code to be used to stabilish a savepoint
+     */
+    function upgrade_savepoint_php ($structure) {
+
+        $path = $structure->getPath();
+
+        $result = '';
+
+        switch ($path) {
+            case 'lib/db':
+                $result = XMLDB_LINEFEED .
+                          '    /// Main savepoint reached' . XMLDB_LINEFEED .
+                          '        upgrade_main_savepoint($result, XXXXXXXXXX);' . XMLDB_LINEFEED;
+                break;
+        }
         return $result;
     }
 
