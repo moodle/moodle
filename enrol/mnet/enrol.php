@@ -425,6 +425,9 @@ class enrolment_plugin_mnet {
         $mnetrequest = new mnet_xmlrpc_client();
         $mnetrequest->set_method('enrol/mnet/enrol.php/available_courses');
 
+        // Initialise $message
+        $message = '';
+
         // TODO: cache for a while (10 minutes?)
 
         // Thunderbirds are go! Do RPC call and store response
