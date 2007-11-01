@@ -419,7 +419,7 @@ function config_form($frm) {
                   'enrol_db_autocreate', 'enrol_db_category', 'enrol_db_template', 
                   'enrol_db_localrolefield', 'enrol_db_remoterolefield',
                   'enrol_remotecoursefield', 'enrol_remoteuserfield',
-                  'enrol_db_ignorehiddencourse');
+                  'enrol_db_ignorehiddencourse', 'enrol_db_defaultcourseroleid');
 
     foreach ($vars as $var) {
         if (!isset($frm->$var)) {
