@@ -42,9 +42,11 @@ class page_my_moodle extends page_base {
         $button = update_mymoodle_icon($USER->id);
         $nav = get_string('mymoodle','my');
         $header = $site->shortname.': '.$nav;
+        $navlinks = array(array('name' => $nav, 'link' => '', 'type' => 'misc'));
+        $navigation = build_navigation($navlinks);
         
         $loggedinas = user_login_string($site);
-        print_header($title, $header,$nav,'','',true, $button, $loggedinas);
+        print_header($title, $header,$navigation,'','',true, $button, $loggedinas);
 
     }
     
