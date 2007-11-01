@@ -159,7 +159,7 @@ if (!empty($studentsperpage)) {
     print_paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
-$reporthtml = '<table class="gradestable flexible boxaligncenter generaltable">';
+$reporthtml = '<table id="user-grades" class="gradestable flexible boxaligncenter generaltable">';
 $reporthtml .= $report->get_headerhtml();
 $reporthtml .= $report->get_rangehtml();
 $reporthtml .= $report->get_studentshtml();

@@ -199,8 +199,6 @@ class grade_object {
     function update($source=null) {
         global $USER;
 
-        $this->timemodified = time();
-
         $data = $this->get_record_data();
 
         if (!update_record($this->table, addslashes_recursive($data))) {
@@ -282,8 +280,6 @@ class grade_object {
             debugging("Grade object already exists!");
             return false;
         }
-
-        $this->timecreated = $this->timemodified = time();
 
         $data = $this->get_record_data();
 

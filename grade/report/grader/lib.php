@@ -681,9 +681,9 @@ class grade_report_grader extends grade_report {
                 // MDL-11274
                 // Hide grades in the grader report if the current grader doesn't have 'moodle/grade:viewhidden'
                 if (!$this->canviewhidden and $grade->is_hidden()) {
-                    if (!empty($CFG->grade_hiddenasdate) and !is_null($grade->finalgrade) and !$item->is_category_item() and !$item->is_course_item()) {
+                    if (!empty($CFG->grade_hiddenasdate) and $grade_grade->get_datesubmitted() and !$item->is_category_item() and !$item->is_course_item()) {
                         // the problem here is that we do not have the time when grade value was modified, 'timemodified' is general modification date for grade_grades records
-                        $studentshtml .= '<td class="cell c'.$columncount++.'">'.userdate($grade->timecreated,get_string('strftimedatetimeshort')).'</td>';
+                        $studentshtml .= '<td class="cell c'.$columncount++.'"><span class="datesubmitted">'.userdate($grade_grade->get_datesubmitted(),get_string('strftimedatetimeshort')).'</span></td>';
                     } else {
                         $studentshtml .= '<td class="cell c'.$columncount++.'">-</td>';
                     }

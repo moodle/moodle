@@ -265,6 +265,8 @@ class grade_item extends grade_object {
             $this->force_regrading();
         }
 
+        $this->timemodified = time();
+
         return parent::update($source);
     }
 
@@ -383,6 +385,8 @@ class grade_item extends grade_object {
         if (empty($this->outcomeid)) {
             $this->outcomeid = null;
         }
+
+        $this->timecreated = $this->timemodified = time();
 
         if (parent::insert($source)) {
             // force regrading of items if needed
@@ -1302,10 +1306,6 @@ class grade_item extends grade_object {
     function update_final_grade($userid, $finalgrade=false, $source=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
         global $USER, $CFG;
 
-        if (empty($usermodified)) {
-            $usermodified = $USER->id;
-        }
-
         $result = true;
 
         // no grading used or locked
@@ -1316,7 +1316,11 @@ class grade_item extends grade_object {
         $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid));
         $grade->grade_item =& $this; // prevent db fetching of this grade_item
 
-        $grade->usermodified = $usermodified;
+        if (empty($usermodified)) {
+            $grade->usermodified = $USER->id;
+        } else {
+            $grade->usermodified = $usermodified;
+        }
 
         if ($grade->is_locked()) {
             // do not update locked grades at all
@@ -1364,11 +1368,14 @@ class grade_item extends grade_object {
         }
 
         if (empty($grade->id)) {
+            $grade->timecreated  = null;   // no submission yet
+            $grade->timemodified = time(); // overridden flag might take over, but anyway
             $result = (boolean)$grade->insert($source);
 
         } else if ($grade->finalgrade     !== $oldgrade->finalgrade
                 or $grade->feedback       !== $oldgrade->feedback
                 or $grade->feedbackformat !== $oldgrade->feedbackformat) {
+            $grade->timemodified = time(); // overridden flag might take over, but anyway
             $result = $grade->update($source);
         } else {
             // no grade change
@@ -1410,14 +1417,13 @@ class grade_item extends grade_object {
      * @param string $note optional note
      * @param mixed $feedback teachers feedback as string - false means do not change
      * @param int $feedbackformat
+     * @param int $usermodified - user which did the grading
+     * @param int $dategraded
+     * @param int $datesubmitted
      * @return boolean success
      */
-    function update_raw_grade($userid, $rawgrade=false, $source=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
+    function update_raw_grade($userid, $rawgrade=false, $source=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null, $dategraded=null, $datesubmitted=null) {
         global $USER;
-
-        if (empty($usermodified)) {
-            $usermodified = $USER->id;
-        }
 
         $result = true;
 
@@ -1429,7 +1435,21 @@ class grade_item extends grade_object {
         $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid));
         $grade->grade_item =& $this; // prevent db fetching of this grade_item
 
-        $grade->usermodified = $usermodified;
+        if (empty($usermodified)) {
+            $grade->usermodified = $USER->id;
+        } else {
+            $grade->usermodified = $usermodified;
+        }
+
+        // TODO: hack alert - create new fields for these
+
+        $grade->timecreated  = $datesubmitted;
+
+        if (empty($dategraded)) {
+            $grade->dategraded = time();
+        } else {
+            $grade->dategraded = $dategraded;
+        }
 
         if ($grade->is_locked()) {
             // do not update locked grades at all
@@ -1469,6 +1489,9 @@ class grade_item extends grade_object {
         }
 
         if (empty($grade->id)) {
+            if (is_null($grade->rawgrade)) {
+                $grade->dategraded = null;
+            }
             $result = (boolean)$grade->insert($source);
 
         } else if ($grade->finalgrade     !== $oldgrade->finalgrade
@@ -1478,7 +1501,9 @@ class grade_item extends grade_object {
                 or $grade->rawscaleid     !== $oldgrade->rawscaleid
                 or $grade->feedback       !== $oldgrade->feedback
                 or $grade->feedbackformat !== $oldgrade->feedbackformat) {
-
+            if (is_null($grade->rawgrade)) {
+                $grade->dategraded = null;
+            }
             $result = $grade->update($source);
         }
 
@@ -1678,7 +1703,7 @@ class grade_item extends grade_object {
         } else {
             $useditems = array();
         }
-        
+
         // MDL-11902
         // unset the value if formula is trying to reference to itself
         // but array keys does not match itemid

@@ -97,6 +97,28 @@ class grade_scale extends grade_object {
     }
 
     /**
+     * Records this object in the Database, sets its id to the returned value, and returns that value.
+     * If successful this function also fetches the new object data from database and stores it
+     * in object properties.
+     * @param string $source from where was the object inserted (mod/forum, manual, etc.)
+     * @return int PK ID if successful, false otherwise
+     */
+    function insert($source=null) {
+        $this->timemodified = time();
+        return parent::insert($source);
+    }
+
+    /**
+     * In addition to update() it also updates grade_outcomes_courses if needed
+     * @param string $source from where was the object inserted
+     * @return boolean success
+     */
+    function update($source=null) {
+        $this->timemodified = time();
+        return parent::update($source);
+    }
+
+    /**
      * Returns the most descriptive field for this object. This is a standard method used
      * when we do not know the exact type of an object.
      * @return string name
@@ -210,7 +232,7 @@ class grade_scale extends grade_object {
     function is_used() {
         global $CFG;
 
-        // count grade items excluding the 
+        // count grade items excluding the
         $sql = "SELECT COUNT(id) FROM {$CFG->prefix}grade_items WHERE scaleid = {$this->id} AND outcomeid IS NULL";
         if (count_records_sql($sql)) {
             return true;

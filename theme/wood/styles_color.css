@@ -408,7 +408,7 @@ table .flexible .r1,
 
 /** Changing some standard colors **/
 
-.grade-report-grader .gradestable tr.groupavg td.cell,
-.grade-report-grader .gradestable tr.avg td.cell {
+.grade-report-grader #user-grades tr.groupavg td.cell,
+.grade-report-grader #user-grades tr.avg td.cell {
     color: #330000;
 }
