@@ -1067,20 +1067,20 @@ body#grade-index .grades th.header {
 body.grade-edit-scale div.scale_options {
   font-size: 0.7em;
 }
-body.grade-report-grader table.gradestable tr.groupavg td.cell {
+body.grade-report-grader table#user-grades tr.groupavg td.cell {
   font-weight: bold;
   color: #006400;
 }
-body.grade-report-grader table.gradestable {
+body.grade-report-grader table#user-grades {
   width: auto;
 }
-body.grade-report-grader table.gradestable tr.avg td.cell {
+body.grade-report-grader table#user-grades tr.avg td.cell {
   font-weight: bold;
   color: #00008B;
 }
-body.grade-report-grader table.gradestable td.cat {
+body.grade-report-grader table#user-grades td.cat {
   font-weight: bold;
 }
-body.grade-report-grader table.gradestable td.course {
+body.grade-report-grader table#user-grades td.course {
   font-weight: bold;
 }

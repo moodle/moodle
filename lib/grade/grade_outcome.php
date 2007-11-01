@@ -105,6 +105,9 @@ class grade_outcome extends grade_object {
      * @return int PK ID if successful, false otherwise
      */
     function insert($source=null) {
+
+        $this->timecreated = $this->timemodified = time();
+
         if ($result = parent::insert($source)) {
             if (!empty($this->courseid)) {
                 $goc = new object();
@@ -122,6 +125,8 @@ class grade_outcome extends grade_object {
      * @return boolean success
      */
     function update($source=null) {
+        $this->timemodified = time();
+
         if ($result = parent::update($source)) {
             if (!empty($this->courseid)) {
                 if (!get_records('grade_outcomes_courses', 'courseid', $this->courseid, 'outcomeid', $this->id)) {

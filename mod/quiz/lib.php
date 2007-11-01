@@ -268,11 +268,13 @@ function quiz_get_user_grades($quiz, $userid=0) {
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, u.id AS userid, g.grade AS rawgrade
-              FROM {$CFG->prefix}user u, {$CFG->prefix}quiz_grades g
-             WHERE u.id = g.userid AND g.quiz = $quiz->id
-                   $user";
-
+    $sql = "SELECT u.id, u.id AS userid, g.grade AS rawgrade, g.timemodified AS dategraded, a.timefinish AS datesubmitted 
+              FROM {$CFG->prefix}user u, {$CFG->prefix}quiz_grades g, {$CFG->prefix}quiz_attempts a
+             WHERE u.id = g.userid AND g.quiz = {$quiz->id}
+                   $user
+                   AND a.timefinish = (SELECT MAX(aa.timefinish)
+                                         FROM {$CFG->prefix}quiz_attempts aa
+                                        WHERE aa.quiz = {$quiz->id} AND aa.userid = u.id AND aa.preview = 0)";
     return get_records_sql($sql);
 }
 
@@ -289,15 +291,14 @@ function quiz_update_grades($quiz=null, $userid=0, $nullifnone=true) {
     }
 
     if ($quiz != null) {
-        quiz_grade_item_update($quiz);  // Recreate it if necessary
         if ($grades = quiz_get_user_grades($quiz, $userid)) {
-            grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, $grades);
+            quiz_grade_item_update($quiz, $grades);
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
             $grade->userid   = $userid;
             $grade->rawgrade = NULL;
-            grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, $grade);
+            quiz_grade_item_update($quiz, $grade);
         }
 
     } else {
@@ -306,9 +307,10 @@ function quiz_update_grades($quiz=null, $userid=0, $nullifnone=true) {
                  WHERE m.name='quiz' AND m.id=cm.module AND cm.instance=a.id";
         if ($rs = get_recordset_sql($sql)) {
             while ($quiz = rs_fetch_next_record($rs)) {
-                quiz_grade_item_update($quiz);
                 if ($quiz->grade != 0) {
                     quiz_update_grades($quiz, 0, false);
+                } else {
+                    quiz_grade_item_update($quiz);
                 }
             }
             rs_close($rs);
@@ -320,9 +322,10 @@ function quiz_update_grades($quiz=null, $userid=0, $nullifnone=true) {
  * Create grade item for given quiz
  *
  * @param object $quiz object with extra cmidnumber
+ * @param mixed optional array/object of grade(s)
  * @return int 0 if ok, error code otherwise
  */
-function quiz_grade_item_update($quiz) {
+function quiz_grade_item_update($quiz, $grades=NULL) {
     global $CFG;
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
@@ -367,7 +370,7 @@ function quiz_grade_item_update($quiz) {
         $params['hidden'] = 0;
     }
 
-    return grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, NULL, $params);
+    return grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, $grades, $params);
 }
 
 /**

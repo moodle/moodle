@@ -1,43 +1,43 @@
 
-.grade-report-grader .catlevel1 {
+.grade-report-grader table#user-grades .catlevel1 {
   background-color: #ffffff;
 }
-.grade-report-grader .catlevel2 {
+.grade-report-grader table#user-grades .catlevel2 {
   background-color: #eeeeee;
 }
-.grade-report-grader .catlevel3 {
+.grade-report-grader table#user-grades .catlevel3 {
   background-color: #dddddd;
 }
 
-.grade-report-grader td.overridden {
+.grade-report-grader table#user-grades td.overridden {
   background-color: #dddddd;
 }
 
-.grade-report-grader .gradestable tr.avg td.cell {
+.grade-report-grader table#user-grades tr.avg td.cell {
     background-color: #efefff;
 }
 
-.grade-report-grader .gradestable tr.groupavg td.cell {
+.grade-report-grader table#user-grades tr.groupavg td.cell {
     background-color: #efffef;
 }
 
-.grade-report-grader .gradestable tr.groupavg td.cell {
+.grade-report-grader table#user-grades tr.groupavg td.cell {
   font-weight: bold;
   color: #006400;
 }
 
-.grade-report-grader .gradestable tr.avg td.cell {
+.grade-report-grader table#user-grades tr.avg td.cell {
   font-weight: bold;
   color: #00008B;
 }
 
-.grade-report-grader .gradestable td.cat,
-.grade-report-grader .gradestable td.course {
+.grade-report-grader table#user-grades td.cat,
+.grade-report-grader table#user-grades td.course {
   font-weight: bold;
 }
 
 
-.grade-report-grader table {
+.grade-report-grader table#user-grades {
   border-width:1px;
   border-style:solid;
   margin-top: 20px;
@@ -71,49 +71,49 @@
   text-align: center;
 }
 
-.grade-report-grader table td {
+.grade-report-grader table#user-grades td {
   border-width:1px;
   border-style:solid;
 }
 
-.grade-report-grader tr.heading {
+.grade-report-grader table#user-grades tr.heading {
   border-width:0px 0px 0px 0px;
   border-style:solid;
 }
 
-.grade-report-grader .heading td {
+.grade-report-grader table#user-grades .heading td {
   border-width:0px 0px 0px 0px;
   border-style:solid;
 }
 
-.grade-report-grader th.category {
+.grade-report-grader table#user-grades th.category {
   border-width:1px 1px 0px 1px;
   border-style:solid;
 }
 
-.grade-report-grader th.user {
+.grade-report-grader table#user-grades th.user {
   border-width:0px 0px 1px 0px;
   border-style:solid;
 }
 
-.grade-report-grader th.categoryitem,
-.grade-report-grader th.courseitem,
-.grade-report-grader td.topleft {
+.grade-report-grader table#user-grades th.categoryitem,
+.grade-report-grader table#user-grades th.courseitem,
+.grade-report-grader table#user-grades td.topleft {
   border-width:0px 1px 0px 1px;
   border-style:solid;
 }
 
-.grade-report-grader td.fillerfirst {
+.grade-report-grader table#user-grades td.fillerfirst {
   border-width:0px 0px 0px 1px;
   border-style:solid;
 }
 
-.grade-report-grader td.fillerlast {
+.grade-report-grader table#user-grades td.fillerlast {
   border-width:0px 1px 0px 0px;
   border-style:solid;
 }
 
-.grade-report-grader th.item {
+.grade-report-grader table#user-grades th.item {
   border-width:1px 1px 1px 1px;
   border-style:solid;
 }
@@ -123,30 +123,30 @@
   margin-left: 20px;
 }
 
-.grade-report-grader table.gradestable {
+.grade-report-grader table#user-grades {
   margin-left:auto;
   margin-right:auto;
 }
 
-.grade-report-grader .gradestable th.user {
+.grade-report-grader table#user-grades  th.user {
   text-align:left;
 }
 
-.grade-report-grader .gradestable td {
+.grade-report-grader table#user-grades  td {
   text-align:right;
 }
 
-.grade-report-grader th.range {
+.grade-report-grader table#user-grades th.range {
   border-width:1px 1px 1px 1px;
   border-style:solid;
 }
 
-.grade-report-grader .userpic {
+.grade-report-grader table#user-grades .userpic {
   display: inline;
   margin-right: 10px;
 }
 
-.grade-report-grader .quickfeedback {
+.grade-report-grader table#user-grades .quickfeedback {
   border: #000000 1px dashed;
 }
 
@@ -154,8 +154,16 @@
   text-align: right;
 }
 
-.grade-report-grader .hidden,
-.grade-report-grader .hidden a {
+.grade-report-grader table#user-grades .hidden,
+.grade-report-grader table#user-grades .hidden a {
   color:#aaaaaa;
 }
 
+.grade-report-grader table#user-grades .datesubmitted {
+  font-size: 0.7em;
+}
+
+.grade-report-grader table#user-grades td.cell {
+  padding-left: 5px;
+  padding-right: 5px;
+}

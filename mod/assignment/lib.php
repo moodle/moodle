@@ -244,13 +244,8 @@ class assignment_base {
             return;
         }
 
-        if ($grade->overridden) {
-            $graded_date = $grade->overridden;
-            $graded_by   = $grade->usermodified;
-        } else {
-            $graded_date = $submission->timemarked;
-            $graded_by   = $submission->teacher;
-        }
+        $graded_date = $grade->dategraded;
+        $graded_by   = $grade->usermodified;
 
     /// We need the teacher info
         $teacher = get_record('user', 'id', $graded_by);
@@ -2066,7 +2061,8 @@ function assignment_get_user_grades($assignment, $userid=0) {
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, u.id AS userid, s.grade AS rawgrade, s.submissioncomment AS feedback, s.format AS feedbackformat, s.teacher AS usermodified
+    $sql = "SELECT u.id, u.id AS userid, s.grade AS rawgrade, s.submissioncomment AS feedback, s.format AS feedbackformat,
+                   s.teacher AS usermodified, s.timemarked AS dategraded, s.timemodified AS datesubmitted
               FROM {$CFG->prefix}user u, {$CFG->prefix}assignment_submissions s
              WHERE u.id = s.userid AND s.assignment = $assignment->id
                    $user";
@@ -2093,8 +2089,7 @@ function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true)
                     $grades[$k]->rawgrade = null;
                 }
             }
-            assignment_grade_item_update($assignment);
-            grade_update('mod/assignment', $assignment->courseid, 'mod', 'assignment', $assignment->id, 0, $grades);
+            assignment_grade_item_update($assignment, $grades);
         }
 
     } else {
@@ -2103,9 +2098,10 @@ function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true)
                  WHERE m.name='assignment' AND m.id=cm.module AND cm.instance=a.id";
         if ($rs = get_recordset_sql($sql)) {
             while ($assignment = rs_fetch_next_record($rs)) {
-                assignment_grade_item_update($assignment);
-                if ($assignment->grade != 0) {
+                if ($assignment->grade == 0) {
                     assignment_update_grades($assignment);
+                } else {
+                    assignment_grade_item_update($assignment);
                 }
             }
             rs_close($rs);
@@ -2117,9 +2113,10 @@ function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true)
  * Create grade item for given assignment
  *
  * @param object $assignment object with extra cmidnumber
+ * @param mixed optional array/object of grade(s)
  * @return int 0 if ok, error code otherwise
  */
-function assignment_grade_item_update($assignment) {
+function assignment_grade_item_update($assignment, $grades=NULL) {
     global $CFG;
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
@@ -2144,7 +2141,7 @@ function assignment_grade_item_update($assignment) {
         $params['gradetype'] = GRADE_TYPE_NONE;
     }
 
-    return grade_update('mod/assignment', $assignment->courseid, 'mod', 'assignment', $assignment->id, 0, NULL, $params);
+    return grade_update('mod/assignment', $assignment->courseid, 'mod', 'assignment', $assignment->id, 0, $grades, $params);
 }
 
 /**

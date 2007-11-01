@@ -200,16 +200,31 @@ class grade_report_user extends grade_report {
 
             $data = array();
 
+            // all users should know which items are still hidden
+            $hidden = '';
+            if ($grade_item->is_hidden()) {
+                $hidden = ' hidden ';
+            }
+
             /// prints grade item name
             if ($grade_item->is_course_item() or $grade_item->is_category_item()) {
-                $data[] = '<span class="'.$class.'">'.$grade_item->get_name().'</span>';
+                $data[] = '<span class="'.$hidden.$class.'">'.$grade_item->get_name().'</span>';
             } else {
-                $data[] = '<span class="'.$class.'">'.$this->get_module_link($grade_item->get_name(), $grade_item->itemmodule, $grade_item->iteminstance).'</span>';
+                $data[] = '<span class="'.$hidden.$class.'">'.$this->get_module_link($grade_item->get_name(), $grade_item->itemmodule, $grade_item->iteminstance).'</span>';
             }
 
             /// prints category
             $cat = $grade_item->get_parent_category();
-            $data[] = '<span class="'.$class.'">'.$cat->get_name().'</span>';
+            $data[] = '<span class="'.$hidden.$class.'">'.$cat->get_name().'</span>';
+
+            $hidden = '';
+            if ($grade_item->is_hidden()) {
+                // can not see grades in hidden items
+                $hidden = ' hidden ';
+            } else if ($canviewhidden and $grade_grade->is_hidden()) {
+                // if user can see hidden grades, indicate which ones are hidden
+                $hidden = ' hidden ';
+            }
 
             /// prints the grade
             if ($grade_grade->is_excluded()) {
@@ -219,34 +234,34 @@ class grade_report_user extends grade_report {
             }
 
             if ($grade_item->needsupdate) {
-                $data[] = '<span class="'.$class.' gradingerror">'.get_string('error').'</span>';
+                $data[] = '<span class="'.$hidden.$class.' gradingerror">'.get_string('error').'</span>';
 
-            } else if (!empty($CFG->grade_hiddenasdate) and !is_null($grade_grade->finalgrade) and !$canviewhidden and $grade_grade->is_hidden()
+            } else if (!empty($CFG->grade_hiddenasdate) and $grade_grade->get_datesubmitted() and !$canviewhidden and $grade_grade->is_hidden()
                    and !$grade_item->is_category_item() and !$grade_item->is_course_item()) {
                 // the problem here is that we do not have the time when grade value was modified, 'timemodified' is general modification date for grade_grades records
-                $data[] = '<span class="'.$class.' gradeddate">'.$excluded.get_string('gradedon', 'grades', userdate($grade_grade->timemodified, get_string('strftimedatetimeshort'))).'</span>';
+                $data[] = '<span class="'.$hidden.$class.' datesubmitted">'.$excluded.get_string('submittedon', 'grades', userdate($grade_grade->get_datesubmitted(), get_string('strftimedatetimeshort'))).'</span>';
 
             } else {
-                $data[] = '<span class="'.$class.'">'.$excluded.grade_format_gradevalue($gradeval, $grade_item, true);
+                $data[] = '<span class="'.$hidden.$class.'">'.$excluded.grade_format_gradevalue($gradeval, $grade_item, true);
             }
 
             /// prints percentage
             if ($grade_item->needsupdate) {
-                $data[] = '<span class="'.$class.'gradingerror">'.get_string('error').'</span>';
+                $data[] = '<span class="'.$hidden.$class.'gradingerror">'.get_string('error').'</span>';
 
             } else {
-                $data[] = '<span class="'.$class.'">'.grade_format_gradevalue($gradeval, $grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE).'</span>';
+                $data[] = '<span class="'.$hidden.$class.'">'.grade_format_gradevalue($gradeval, $grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE).'</span>';
             }
 
             /// prints rank
             if ($this->showrank) {
                 // TODO: this is broken if hidden grades present!!
                 if ($grade_item->needsupdate) {
-                    $data[] = '<span class="'.$class.'gradingerror">'.get_string('error').'</span>';
+                    $data[] = '<span class="'.$hidden.$class.'gradingerror">'.get_string('error').'</span>';
 
                 } else if (is_null($gradeval)) {
                     // no grade, no rank
-                    $data[] = '<span class="'.$class.'">-</span>';;
+                    $data[] = '<span class="'.$hidden.$class.'">-</span>';;
 
                 } else {
                     /// find the number of users with a higher grade
@@ -256,16 +271,16 @@ class grade_report_user extends grade_report {
                                    AND itemid = {$grade_item->id}";
                     $rank = count_records_sql($sql) + 1;
 
-                    $data[] = '<span class="'.$class.'">'."$rank/$numusers".'</span>';
+                    $data[] = '<span class="'.$hidden.$class.'">'."$rank/$numusers".'</span>';
                 }
             }
 
             /// prints feedback
             if (empty($grade_grade->feedback) or (!$canviewhidden and $grade_grade->is_hidden())) {
-                $data[] = '<div class="feedbacktext">&nbsp;</div>';
+                $data[] = '<div class="'.$hidden.'feedbacktext">&nbsp;</div>';
 
             } else {
-                $data[] = '<div class="feedbacktext">'.format_text($grade_grade->feedback, $grade_grade->feedbackformat).'</div>';
+                $data[] = '<div class="'.$hidden.'feedbacktext">'.format_text($grade_grade->feedback, $grade_grade->feedbackformat).'</div>';
             }
 
             $this->table->add_data($data);

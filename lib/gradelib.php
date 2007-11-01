@@ -187,6 +187,9 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         $rawgrade       = false;
         $feedback       = false;
         $feedbackformat = FORMAT_MOODLE;
+        $usermodified   = $USER->id;
+        $datesubmitted  = null;
+        $dategraded     = null;
 
         if (array_key_exists('rawgrade', $grade)) {
             $rawgrade = $grade['rawgrade'];
@@ -202,12 +205,18 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 
         if (array_key_exists('usermodified', $grade)) {
             $usermodified = $grade['usermodified'];
-        } else {
-            $usermodified = $USER->id;
+        }
+
+        if (array_key_exists('datesubmitted', $grade)) {
+            $datesubmitted = $grade['datesubmitted'];
+        }
+
+        if (array_key_exists('dategraded', $grade)) {
+            $dategraded = $grade['dategraded'];
         }
 
         // update or insert the grade
-        if (!$grade_item->update_raw_grade($userid, $rawgrade, $source, $feedback, $feedbackformat, $usermodified)) {
+        if (!$grade_item->update_raw_grade($userid, $rawgrade, $source, $feedback, $feedbackformat, $usermodified, $dategraded, $datesubmitted)) {
             $failed = true;
         }
     }
@@ -324,6 +333,8 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
                         $grade->feedback       = $grade_grades[$userid]->feedback;
                         $grade->feedbackformat = $grade_grades[$userid]->feedbackformat;
                         $grade->usermodified   = $grade_grades[$userid]->usermodified;
+                        $grade->datesubmitted  = $grade_grades[$userid]->get_datesubmitted();
+                        $grade->dategraded     = $grade_grades[$userid]->get_dategraded();
 
                         // create text representation of grade
                         if (in_array($grade_item->id, $needsupdate)) {

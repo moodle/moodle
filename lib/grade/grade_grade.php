@@ -137,6 +137,18 @@ class grade_grade extends grade_object {
      */
     var $excluded = 0;
 
+    /**
+     * TODO: HACK: create a new field datesubmitted - the date of submission if any
+     * @var boolean $timecreated
+     */
+    var $timecreated = null;
+
+    /**
+     * TODO: HACK: create a new field dategraded - the date of grading
+     * @var boolean $timemodified
+     */
+    var $timemodified = null;
+
 
     /**
      * Returns array of grades for given grade_item+users.
@@ -238,6 +250,32 @@ class grade_grade extends grade_object {
      */
     function is_overridden() {
         return !empty($this->overridden);
+    }
+
+    /**
+     * Returns timestamp of submission related to this grade,
+     * might be null if not submitted.
+     * @return int
+     */
+    function get_datesubmitted() {
+        //TODO: HACK - create new fields in 2.0
+        return $this->timecreated;
+    }
+
+    /**
+     * Returns timestamp when last graded,
+     * might be null if no grade present.
+     * @return int
+     */
+    function get_dategraded() {
+        //TODO: HACK - create new fields in 2.0
+        if (is_null($this->finalgrade)) {
+            return null; // no grade == no date
+        } else if ($this->overridden) {
+            return $this->overridden;
+        } else {
+            return $this->timemodified;
+        }
     }
 
     /**
@@ -526,10 +564,7 @@ class grade_grade extends grade_object {
                 //nothing to do, aggregation is ok
             } else if ($grade_grade->is_hidden()) {
                 $hiddenfound = true;
-                // hidden null grade does not affect the aggregation
-                if (!is_null($grade_grade->finalgrade)) {
-                    $altered[$grade_grade->itemid] = null;
-                }
+                $altered[$grade_grade->itemid] = null;
             } else if ($grade_grade->is_locked() or $grade_grade->is_overridden()) {
                 // no need to recalculate locked or overridden grades
             } else {
