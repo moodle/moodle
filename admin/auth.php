@@ -59,6 +59,7 @@ switch ($action) {
             // save settings
             set_config('guestloginbutton', required_param('guestloginbutton', PARAM_BOOL));
             set_config('alternateloginurl', stripslashes(trim(required_param('alternateloginurl', PARAM_RAW))));
+            set_config('forgottenpasswordurl', stripslashes(trim(required_param('forgottenpasswordurl', PARAM_RAW))));
             set_config('registerauth', required_param('register', PARAM_SAFEDIR));
             set_config('auth_instructions', stripslashes(trim(required_param('auth_instructions', PARAM_RAW))));
 
@@ -289,8 +290,18 @@ echo '<div class="form-item" id="admin-alternateloginurl">';
 echo '<label for = "alternateloginurl">' . get_string("alternateloginurl", "auth");
 echo '<span class="form-shortname">alternateloginurl</span>';
 echo '</label>';
-echo '<input type="text" size="60" name="alternateloginurl" id="alternateloginurl" value="'.$CFG->alternateloginurl."\" />\n";
+echo '<input type="text" size="60" name="alternateloginurl" id="alternateloginurl" value="'.s($CFG->alternateloginurl)."\" />\n";
 echo '<div class="description">' . get_string("alternatelogin", "auth", htmlspecialchars($CFG->wwwroot.'/login/index.php')) . '</div>';
+echo '</div>';
+
+/// An alternate url for lost passwords. It means we can use external lost password
+/// recovery for all users. Effectively disables built-in processes!!!
+echo '<div class="form-item" id="admin-forgottenpasswordurl">';
+echo '<label for = "forgottenpasswordurl">' . get_string("forgottenpasswordurl", "auth");
+echo '<span class="form-shortname">forgottenpasswordurl</span>';
+echo '</label>';
+echo '<input type="text" size="60" name="forgottenpasswordurl" id="forgottenpasswordurl" value="'.s($CFG->forgottenpasswordurl)."\" />\n";
+echo '<div class="description">' . get_string("forgottenpassword", "auth" ) . '</div>';
 echo '</div>';
 
 /// Instructions about login/password
