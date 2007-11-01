@@ -206,12 +206,11 @@ class grade_report_user extends grade_report {
                 $hidden = ' hidden ';
             }
 
+            $element = $this->gseq->locate_element($this->gseq->get_item_eid($grade_item));
+            $header = $this->gseq->get_element_header($element, true, true, true);
+
             /// prints grade item name
-            if ($grade_item->is_course_item() or $grade_item->is_category_item()) {
-                $data[] = '<span class="'.$hidden.$class.'">'.$grade_item->get_name().'</span>';
-            } else {
-                $data[] = '<span class="'.$hidden.$class.'">'.$this->get_module_link($grade_item->get_name(), $grade_item->itemmodule, $grade_item->iteminstance).'</span>';
-            }
+            $data[] = '<span class="'.$hidden.$class.'">'.$header.'</span>';
 
             /// prints category
             $cat = $grade_item->get_parent_category();
