@@ -85,6 +85,9 @@ function mediaplugin_filter($courseid, $text) {
     if (is_null($newtext)) {
         $newtext = $text;
     }
+    
+    $newtext .= '<script defer="defer" src="' . $CFG->wwwroot . '/filter/mediaplugin/eolas_fix.js" type="text/javascript"></script>';
+
     return $newtext;
 }
 
