@@ -139,7 +139,7 @@ class question_shortanswer_qtype extends default_questiontype {
 
         /// Print input controls
 
-        if (isset($state->responses[''])) {
+        if (isset($state->responses['']) && $state->responses['']!='' ) {
             $value = ' value="'.s($state->responses[''], true).'" ';
         } else {
             $value = ' value="" ';
