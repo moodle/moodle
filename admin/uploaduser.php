@@ -57,8 +57,8 @@ if ( $formdata = $mform->get_data() ) {
     $updateaccounts = $formdata->updateaccounts;
     $allowrenames   = $formdata->allowrenames;
     $skipduplicates = $formdata->duplicatehandling;
-    
-    // make arrays of valid fields for error checking 
+
+    // make arrays of valid fields for error checking
     // the value associated to each field is: 0 = optional field, 1 = field required either in default values or in data file
     $fields = array(
         'firstname' => 1,
@@ -72,9 +72,10 @@ if ( $formdata = $mform->get_data() ) {
         'timezone' => 1,
         'mailformat' => 1,
         'maildisplay' => 1,
-        'htmleditor' => 1,
+        'htmleditor' => 0,
+        'ajax' => 0,
         'autosubscribe' => 1,
-        'mnethostid' => 0, 
+        'mnethostid' => 0,
         'institution' => 0,
         'department' => 0,
         'idnumber' => 0,
@@ -91,20 +92,38 @@ if ( $formdata = $mform->get_data() ) {
         'password' => !$createpassword,
     );
 
-    $fp = fopen($mform->get_userfile_name(), 'r');
-    $linenum = 1; // since header is line 1
-    // get header (field names) and remove Unicode BOM from first line, if any
-    $line = explode($csv_delimiter, $textlib->trim_utf8_bom(fgets($fp,LINE_MAX_SIZE)));
-    // check for valid field names
+    $text = $mform->get_file_content('userfile');
+    // convert to utf-8 encoding
+    $text = $textlib->convert($text, $formdata->encoding, 'utf-8');
+    // remove Unicode BOM from first line
+    $text = $textlib->trim_utf8_bom($text);
+    // Fix mac/dos newlines
+    $text = preg_replace('!\r\n?!', "\n", $text);
+
+    // find header row
     $headers = array();
-    foreach ($line as $key => $value) {
-        $value = trim($value); // remove whitespace
-        if (!in_array($value, $fields) && // if not a standard field and not an enrolment field, then we have an error 
-            !preg_match('/^course\d+$/', $value) && !preg_match('/^group\d+$/', $value) && 
-            !preg_match('/^type\d+$/', $value) && !preg_match('/^role\d+$/', $value)) {
-            error(get_string('invalidfieldname', 'error', $value), 'uploaduser.php?sesskey='.$USER->sesskey);
+    $linenum = 0;
+    $line = strtok($text, "\n");
+    while ($line !== false) {
+        $linenum++;
+        $line = trim($line);
+        if ($line == '') {
+            //ignore empty lines
+            $line = strtok("\n");
+            continue;
         }
-        $headers[$key] = $value; 
+        $line = explode($csv_delimiter, $line);
+        // check for valid field names
+        foreach ($line as $key => $value) {
+            $value = trim($value); // remove whitespace
+            if (!in_array($value, $fields) && // if not a standard field and not an enrolment field, then we have an error
+                !preg_match('/^course\d+$/', $value) && !preg_match('/^group\d+$/', $value) &&
+                !preg_match('/^type\d+$/', $value) && !preg_match('/^role\d+$/', $value)) {
+                error(get_string('invalidfieldname', 'error', $value), 'uploaduser.php?sesskey='.$USER->sesskey);
+            }
+            $headers[$key] = $value;
+        }
+        $line = false; // found header line
     }
 
     // check that required fields are present or a default value for them exists
@@ -112,13 +131,13 @@ if ( $formdata = $mform->get_data() ) {
     // disable the check if we also have deleting information (ie. deleted column)
     if (!in_array('deleted', $headers)) {
         foreach ($fields as $key => $required) {
-            if($required && !in_array($key, $headers) && (!isset($formdata->$key) || $formdata->$key==='')) { 
+            if($required && !in_array($key, $headers) && (!isset($formdata->$key) || $formdata->$key==='')) {
                 notify(get_string('missingfield', 'error', $key));
                 $headersOk = false;
             }
         }
     }
-    if($headersOk) {
+    if ($headersOk) {
         $usersnew     = 0;
         $usersupdated = 0;
         $userserrors  = 0;
@@ -136,13 +155,20 @@ if ( $formdata = $mform->get_data() ) {
         unset($tmp);
 
         echo '<p id="results">';
-        while (!feof ($fp)) {
+        $line = strtok("\n");
+        while ($line !== false) {
+            $linenum++;
+            $line = trim($line);
+            if ($line == '') {
+                //empty line??
+                $line = strtok("\n");
+                continue;
+            }
+            $line = explode($csv_delimiter, $line);
             $errors = '';
             $user = new object();
             // by default, use the local mnet id (this may be changed in the file)
             $user->mnethostid = $CFG->mnet_localhost_id;
-            $line = explode($csv_delimiter, fgets($fp,LINE_MAX_SIZE));
-            ++$linenum;
             // add fields to user object
             foreach ($line as $key => $value) {
                 if($value !== '') {
@@ -164,7 +190,7 @@ if ( $formdata = $mform->get_data() ) {
                     }
                 }
             }
-            
+
             // add default values for remaining fields
             foreach ($fields as $key => $required) {
                 if(isset($user->$key)) {
@@ -172,7 +198,7 @@ if ( $formdata = $mform->get_data() ) {
                 }
                 if(!isset($formdata->$key) || $formdata->$key==='') { // no default value was submited
                     // if the field is required, give an error only if we are adding the user or deleting a user with unkown username
-                    if($required && (empty($user->deleted) || $key == 'username')) { 
+                    if($required && (empty($user->deleted) || $key == 'username')) {
                         $errors .= get_string('missingfield', 'error', $key) . ' ';
                     }
                     continue;
@@ -192,7 +218,7 @@ if ( $formdata = $mform->get_data() ) {
                                 $len = $len * 10 + (int)$car;
                             } else if($car == '-') {
                                 $case = 1;
-                            } else if($car == '+') { 
+                            } else if($car == '+') {
                                 $case = 2;
                             } else if($car == 'f') { // first name
                                 $info = @$user->firstname;
@@ -211,7 +237,7 @@ if ( $formdata = $mform->get_data() ) {
                         }
                         $i = $j - 1;
                         // change case
-                        if($case == 1) { 
+                        if($case == 1) {
                             $info = $textlib->strtolower($info);
                         } else if($case == 2) {
                             $info = $textlib->strtoupper($info);
@@ -224,7 +250,7 @@ if ( $formdata = $mform->get_data() ) {
                         $value .= $template[$i];
                     }
                 }
-                
+
                 if($key == 'username') {
                     $value = $textlib->strtolower($value);
                     if(empty($CFG->extendedusernamechars)) {
@@ -249,7 +275,7 @@ if ( $formdata = $mform->get_data() ) {
                 continue;
             }
 
-            // delete user 
+            // delete user
             if(@$user->deleted) {
                 $info = ': ' . stripslashes($user->username) . '. ';
                 if($user =& get_record('user', 'username', $user->username, 'mnethostid', $user->mnethostid)) {
@@ -271,10 +297,10 @@ if ( $formdata = $mform->get_data() ) {
                 } else {
                     notify(get_string('erroronline', 'error', $linenum). ': ' . $strusernotdeletedmissing . $info);
                     ++$deleteerrors;
-                }            
+                }
                 continue;
             }
-            
+
             // save the user to the database
             $user->confirmed = 1;
             $user->timemodified = time();
@@ -327,8 +353,8 @@ if ( $formdata = $mform->get_data() ) {
                     $usersnew++;
                     if (empty($user->password) && $createpassword) {
                         // passwords will be created and sent out on cron
-                        insert_record('user_preferences', array( 'userid' => $user->id, 'name'   => 'create_password', 'value'  => 1));
-                        insert_record('user_preferences', array( 'userid' => $user->id, 'name'   => 'auth_forcepasswordchange', 'value'  => 1));
+                        set_user_preference('create_password', 1, $user->id);
+                        set_user_preference('auth_forcepasswordchange', 1, $user->id);
                     }
                 } else {
                     // Record not added -- possibly some other error
@@ -361,7 +387,7 @@ if ( $formdata = $mform->get_data() ) {
                             $ok = add_teacher($user->id, $course->id, 0);
                             break;
                         case 1:   // student
-                        default:  
+                        default:
                             $ok = enrol_student($user->id, $course->id);
                             break;
                     }
@@ -390,6 +416,8 @@ if ( $formdata = $mform->get_data() ) {
                     }
                 }
             }
+            //read next line
+            $line = strtok("\n");
         }
         echo '</p>';
         notify(get_string('userscreated', 'admin') . ': ' . $usersnew);
@@ -402,7 +430,6 @@ if ( $formdata = $mform->get_data() ) {
         }
         notify(get_string('errors', 'admin') . ': ' . $userserrors);
     }
-    fclose($fp);
     echo '<hr />';
 }
 
