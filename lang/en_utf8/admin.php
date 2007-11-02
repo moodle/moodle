@@ -231,6 +231,7 @@ $string['cronerrorclionly'] = 'Sorry, internet access to this page has been disa
 $string['cronerrorpassword'] = 'Sorry, you have not provided a valid password to access this page';
 $string['cronremotepassword'] = 'Cron password for remote access';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours.';
+$string['csvseparator'] = 'CSV separator';
 $string['curlrecommended'] = 'Installing the optional Curl library is highly recommended in order to enable Moodle Networking functionality.';
 $string['customcheck'] = 'Other Checks';
 $string['datarootsecuritywarning'] = 'Your site configuration might not be secure. Please make sure that your dataroot directory ($a) is not directly accessible via web.';
@@ -547,6 +548,7 @@ $string['riskspam'] = 'Users could send spam to site users or others';
 $string['riskspamshort'] = 'Spam risk';
 $string['riskxss'] = 'Users could add files and texts that allow cross-site scripting (XSS)';
 $string['riskxssshort'] = 'XSS risk';
+$string['rowpreviewnum'] = 'Preview rows';
 $string['runclamavonupload'] = 'Use clam AV on uploaded files';
 $string['savechanges'] = 'Save Changes';
 $string['search'] = 'Search';

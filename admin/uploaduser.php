@@ -1,28 +1,31 @@
-<?php
+<?php  // $Id$
 
 /// Bulk user registration script from a comma separated file
 /// Returns list of users with their user ids
 
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/textlib.class.php');
 require_once('uploaduser_form.php');
-define('LINE_MAX_SIZE', 1024);
 
-//Note: commas within a field should be encoded as &#44 (for comma separated csv files)
-//Note: semicolon within a field should be encoded as &#59 (for semicolon separated csv files)
-$csv_delimiter = isset($CFG->CSV_DELIMITER) ? $CFG->CSV_DELIMITER : ',';
-$csv_encode = '&#' . (isset($CFG->CSV_ENCODE) ? $CFG->CSV_ENCODE : ord($csv_delimiter));
+$uplid       = optional_param('uplid', '', PARAM_FILE);
+$previewrows = optional_param('previewrows', 10, PARAM_INT);
+$separator   = optional_param('separator', 'comma', PARAM_ALPHA);
 
-@set_time_limit(0);
-@raise_memory_limit('192M');
+if (!defined('UP_LINE_MAX_SIZE')) {
+    define('UP_LINE_MAX_SIZE', 4096);
+}
+
+@set_time_limit(3600); // 1 hour should be enough
+@raise_memory_limit('256M');
+if (function_exists('apache_child_terminate')) {
+    // if we are running from Apache, give httpd a hint that 
+    // it can recycle the process after it's done. Apache's 
+    // memory management is truly awful but we can help it.
+    @apache_child_terminate();
+}
 
 admin_externalpage_setup('uploadusers');
 require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM));
-
-if (! $site = get_site()) {
-    error('Could not find site-level course');
-}
 
 $textlib = textlib_get_instance();
 
@@ -45,85 +48,158 @@ $strcannotassignrole = get_string('cannotassignrole', 'error');
 $strduplicateusername = get_string('duplicateusername', 'error');
 $strindent = '-->';
 
-$mform = new admin_uploaduser_form();
+$return = $CFG->wwwroot.'/'.$CFG->admin.'/uploaduser.php';
 
-// Print the header
+// make arrays of valid fields for error checking
+// the value associated to each field is: 0 = optional field, 1 = field required either in default values or in data file
+$fields = array(
+    'firstname' => 1,
+    'lastname' => 1,
+    'username' => 1,
+    'email' => 1,
+    'city' => 1,
+    'country' => 1,
+    'lang' => 1,
+    'auth' => 1,
+    'timezone' => 1,
+    'mailformat' => 1,
+    'maildisplay' => 1,
+    'htmleditor' => 0,
+    'ajax' => 0,
+    'autosubscribe' => 1,
+    'mnethostid' => 0,
+    'institution' => 0,
+    'department' => 0,
+    'idnumber' => 0,
+    'icq' => 0,
+    'phone1' => 0,
+    'phone2' => 0,
+    'address' => 0,
+    'url' => 0,
+    'description' => 0,
+    'icq' => 0,
+    'oldusername' => 0,
+    'emailstop' => 1,
+    'deleted' => 0,
+    'password' => 0, // changed later
+);
 
-admin_externalpage_print_header();
+if (empty($uplid)) {
+    $mform = new admin_uploaduser_form1();
+
+    if ($formdata = $mform->get_data()) {
+        if (!$filename = make_upload_directory('temp/uploaduser/'.$USER->id, true)) {
+            error('Can not create temporary upload directory!', $return);
+        }
+        // use current (non-conflicting) time stamp
+        $uplid = time();
+        while (file_exists($filename.'/'.$uplid)) {
+            $uplid--;
+        }
+        $filename = $filename.'/'.$uplid;
+
+        $text = $mform->get_file_content('userfile');
+        // convert to utf-8 encoding
+        $text = $textlib->convert($text, $formdata->encoding, 'utf-8');
+        // remove Unicode BOM from first line
+        $text = $textlib->trim_utf8_bom($text);
+        // Fix mac/dos newlines
+        $text = preg_replace('!\r\n?!', "\n", $text);
+        //remove empty lines at the beginning and end
+        $text = trim($text);
+
+        // verify each line has the same number of separators - this detects major breakage in files
+        $line = strtok($text, "\n");
+        if ($line === false) {
+            error('Empty file', $return); //TODO: localize
+        }
+
+        // test headers
+        $csv_delimiter = get_upload_csv_delimiter($separator);
+        $col_count = substr_count($line, $csv_delimiter);
+        if ($col_count < 2) {
+            error('Not enough columns, please verify the separator setting!', $return); //TODO: localize
+        }
+
+        $line = explode($csv_delimiter, $line);
+        foreach ($line as $key => $value) {
+            $value = trim($value); // remove whitespace
+            if (!array_key_exists($value, $fields) && // if not a standard field and not an enrolment field, then we have an error
+                !preg_match('/^course\d+$/', $value) && !preg_match('/^group\d+$/', $value) &&
+                !preg_match('/^type\d+$/', $value) && !preg_match('/^role\d+$/', $value)) {
+                error(get_string('invalidfieldname', 'error', $value), $return);
+            }
+        }
+
+        $line = strtok("\n");
+        if ($line === false) {
+            error('Only one row present, can not continue!', $return); //TODO: localize
+        }
+
+        while ($line !== false) {
+            if (substr_count($line, $csv_delimiter) !== $col_count) {
+                error('Incorrect file format - number of columns is not constant!', $return); //TODO: localize
+            }
+            $line = strtok("\n");
+        }
+
+        // store file
+        $fp = fopen($filename, "w");
+        fwrite($fp,$text);
+        fclose($fp);
+        // continue to second form
+
+    } else {
+        admin_externalpage_print_header();
+        print_heading_with_help(get_string('uploadusers'), 'uploadusers2');
+        $mform->display();
+        admin_externalpage_print_footer();
+        die;
+    }
+}
+
+$mform = new admin_uploaduser_form2();
+// set initial date from form1
+$mform->set_data(array('separator'=>$separator, 'uplid'=>$uplid, 'previewrows'=>$previewrows));
 
 // If a file has been uploaded, then process it
-if ( $formdata = $mform->get_data() ) {
+if ($formdata = $mform->is_cancelled()) {
+    user_upload_cleanup($uplid);
+    redirect($return);
+
+} else if ($formdata = $mform->get_data()) {
+    // Print the header
+    admin_externalpage_print_header();
+    print_heading(get_string('uploadusers'));
+
     $createpassword = $formdata->createpassword;
     $updateaccounts = $formdata->updateaccounts;
     $allowrenames   = $formdata->allowrenames;
     $skipduplicates = $formdata->duplicatehandling;
 
-    // make arrays of valid fields for error checking
-    // the value associated to each field is: 0 = optional field, 1 = field required either in default values or in data file
-    $fields = array(
-        'firstname' => 1,
-        'lastname' => 1,
-        'username' => 1,
-        'email' => 1,
-        'city' => 1,
-        'country' => 1,
-        'lang' => 1,
-        'auth' => 1,
-        'timezone' => 1,
-        'mailformat' => 1,
-        'maildisplay' => 1,
-        'htmleditor' => 0,
-        'ajax' => 0,
-        'autosubscribe' => 1,
-        'mnethostid' => 0,
-        'institution' => 0,
-        'department' => 0,
-        'idnumber' => 0,
-        'icq' => 0,
-        'phone1' => 0,
-        'phone2' => 0,
-        'address' => 0,
-        'url' => 0,
-        'description' => 0,
-        'icq' => 0,
-        'oldusername' => 0,
-        'emailstop' => 1,
-        'deleted' => 0,
-        'password' => !$createpassword,
-    );
+    $fields['password'] = !$createpassword;
 
-    $text = $mform->get_file_content('userfile');
-    // convert to utf-8 encoding
-    $text = $textlib->convert($text, $formdata->encoding, 'utf-8');
-    // remove Unicode BOM from first line
-    $text = $textlib->trim_utf8_bom($text);
-    // Fix mac/dos newlines
-    $text = preg_replace('!\r\n?!', "\n", $text);
+    $filename = $CFG->dataroot.'/temp/uploaduser/'.$USER->id.'/'.$uplid;
+    if (!file_exists($filename)) {
+        user_upload_cleanup($uplid);
+        error('Error reading temporary file!', $return); //TODO: localize
+    }
+    if (!$fp = fopen($filename, "r")) {
+        user_upload_cleanup($uplid);
+        error('Error reading temporary file!', $return); //TODO: localize
+    }
+    
+    $csv_delimiter = get_upload_csv_delimiter($separator);
+    $csv_encode    = get_upload_csv_encode($csv_delimiter);
 
     // find header row
     $headers = array();
-    $linenum = 0;
-    $line = strtok($text, "\n");
-    while ($line !== false) {
-        $linenum++;
-        $line = trim($line);
-        if ($line == '') {
-            //ignore empty lines
-            $line = strtok("\n");
-            continue;
-        }
-        $line = explode($csv_delimiter, $line);
-        // check for valid field names
-        foreach ($line as $key => $value) {
-            $value = trim($value); // remove whitespace
-            if (!in_array($value, $fields) && // if not a standard field and not an enrolment field, then we have an error
-                !preg_match('/^course\d+$/', $value) && !preg_match('/^group\d+$/', $value) &&
-                !preg_match('/^type\d+$/', $value) && !preg_match('/^role\d+$/', $value)) {
-                error(get_string('invalidfieldname', 'error', $value), 'uploaduser.php?sesskey='.$USER->sesskey);
-            }
-            $headers[$key] = $value;
-        }
-        $line = false; // found header line
+    $linenum = 1;
+    $line = explode($csv_delimiter, fgets($fp, UP_LINE_MAX_SIZE));
+
+    // prepare headers
+    foreach ($line as $key => $value) {
+        $headers[$key] = trim($value);
     }
 
     // check that required fields are present or a default value for them exists
@@ -155,16 +231,9 @@ if ( $formdata = $mform->get_data() ) {
         unset($tmp);
 
         echo '<p id="results">';
-        $line = strtok("\n");
-        while ($line !== false) {
+        while (!feof($fp)) {
             $linenum++;
-            $line = trim($line);
-            if ($line == '') {
-                //empty line??
-                $line = strtok("\n");
-                continue;
-            }
-            $line = explode($csv_delimiter, $line);
+            $line = explode($csv_delimiter, fgets($fp, UP_LINE_MAX_SIZE));
             $errors = '';
             $user = new object();
             // by default, use the local mnet id (this may be changed in the file)
@@ -416,8 +485,6 @@ if ( $formdata = $mform->get_data() ) {
                     }
                 }
             }
-            //read next line
-            $line = strtok("\n");
         }
         echo '</p>';
         notify(get_string('userscreated', 'admin') . ': ' . $usersnew);
@@ -430,11 +497,119 @@ if ( $formdata = $mform->get_data() ) {
         }
         notify(get_string('errors', 'admin') . ': ' . $userserrors);
     }
+    fclose($fp);
+    user_upload_cleanup($uplid);
     echo '<hr />';
+    print_continue($return);
+    admin_externalpage_print_footer();
+    die;
 }
+
+// Print the header
+admin_externalpage_print_header();
 
 /// Print the form
 print_heading_with_help(get_string('uploadusers'), 'uploadusers2');
+
+/// Print csv file preview
+$filename = $CFG->dataroot.'/temp/uploaduser/'.$USER->id.'/'.$uplid;
+if (!file_exists($filename)) {
+    error('Error reading temporary file!', $return); //TODO: localize
+}
+if (!$fp = fopen($filename, "r")) {
+    error('Error reading temporary file!', $return); //TODO: localize
+}
+
+$csv_delimiter = get_upload_csv_delimiter($separator);
+$csv_encode    = get_upload_csv_encode($csv_delimiter);
+
+$header = explode($csv_delimiter, fgets($fp, UP_LINE_MAX_SIZE));
+
+$width = count($header);
+$columncount = 0;
+$rowcount = 0;
+echo '<table class="flexible boxaligncenter generaltable">';
+echo '<tr class="heading r'.$rowcount++.'">';
+foreach ($header as $h) {
+    echo '<th class="header c'.$columncount++.'">'.trim($h).'</th>';
+}
+echo '</tr>';
+
+while (!feof($fp) and $rowcount <= $previewrows+1) {
+    $columncount = 0;
+    $fields = explode($csv_delimiter, fgets($fp, UP_LINE_MAX_SIZE));
+    echo '<tr class="r'.$rowcount++.'">';
+    foreach ($fields as $field) {
+        echo '<td class=" c'.$columncount++.'">'.trim(str_replace($csv_encode, $csv_delimiter, $field)).'</td>';;
+    }
+    echo '</tr>';
+}
+if ($rowcount > $previewrows+1) {
+    echo '<tr class="r'.$rowcount++.'">';
+    foreach ($fields as $field) {
+        echo '<td class=" c'.$columncount++.'">...</td>';;
+    }
+}
+echo '</table>';
+fclose($fp);
+
 $mform->display();
 admin_externalpage_print_footer();
+die;
+
+/////////////////////////
+/// Utility functions ///
+/////////////////////////
+
+function user_upload_cleanup($uplid) {
+    global $USER, $CFG;
+    if (empty($uplid)) {
+        return;
+    }
+    $filename = $CFG->dataroot.'/temp/uploaduser/'.$USER->id.'/'.$uplid;
+    if (file_exists($filename)) {
+        @unlink($filename);
+    }
+}
+
+function get_uf_headers($uplid, $separator) {
+    global $USER, $CFG;
+
+    $filename = $CFG->dataroot.'/temp/uploaduser/'.$USER->id.'/'.$uplid;
+    if (!file_exists($filename)) {
+        return false;
+    }
+    $fp = fopen($filename, "r");
+    $line = fgets($fp, 2048);
+    fclose($fp);
+    if ($line === false) {
+        return false;
+    }
+
+    $csv_delimiter = get_upload_csv_delimiter($separator);
+    $headers = explode($csv_delimiter, $line);
+    foreach($headers as $key=>$val) {
+        $headers[$key] = trim($val);
+    }
+    return $headers;
+}
+
+function get_upload_csv_delimiter($separator) {
+    global $CFG;
+
+    switch ($separator) {
+        case 'semicolon' : return ';';
+        case 'colon'     : return ':';
+        case 'tab'       : return "\t";
+        case 'cfg'       : return isset($CFG->CSV_DELIMITER) ? $CFG->CSV_DELIMITER : ',';
+        default          : return ',';
+    }
+}
+
+function get_upload_csv_encode($delimiter) {
+//Note: commas within a field should be encoded as &#44 (for comma separated csv files)
+//Note: semicolon within a field should be encoded as &#59 (for semicolon separated csv files)
+    global $CFG;
+    return '&#' . (isset($CFG->CSV_ENCODE) ? $CFG->CSV_ENCODE : ord($delimiter));
+}
 ?>
