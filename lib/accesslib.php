@@ -3836,6 +3836,7 @@ function role_switch($roleid, $context) {
         unset($USER->switchrole[$context->id]);  // Delete old capabilities
         unset($USER->courseeditallowed);               // drop cache for course edit button
         load_all_capabilities();   //reload user caps
+        has_capability('clearcache'); // make sure we the cache is clear
         return true;
     }
 
@@ -3857,6 +3858,7 @@ function role_switch($roleid, $context) {
     unset($USER->courseeditallowed);                     // drop cache for course edit button
 
     load_all_capabilities();   //reload switched role caps
+    has_capability('clearcache'); // make sure we the cache is clear
 
 /// Add some permissions we are really going to always need, even if the role doesn't have them!
 
