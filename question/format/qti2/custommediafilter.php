@@ -1,4 +1,4 @@
-<?php // $id$
+<?php // $Id$
 
 // note: modified from the original filter/mediaplugin/filter.php
 

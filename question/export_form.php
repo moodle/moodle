@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php  // $Id$
 
 require_once($CFG->libdir.'/formslib.php');
 

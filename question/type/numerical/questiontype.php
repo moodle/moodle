@@ -84,7 +84,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
      * Save the units and the answers associated with this question.
      */
     function save_question_options($question) {
-        
         // Get old versions of the objects
         if (!$oldanswers = get_records('question_answers', 'question', $question->id, 'id ASC')) {
             $oldanswers = array();

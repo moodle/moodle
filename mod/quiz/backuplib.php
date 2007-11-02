@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php // $Id$
     //This php script contains all the stuff to backup quizzes
 
 //This is the "graphical" structure of the quiz mod:
