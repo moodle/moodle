@@ -6880,7 +6880,7 @@ function remove_dir($dir, $content_only=false) {
 /**
  * Function to check if a directory exists and optionally create it.
  *
- * @param string absolute directory path
+ * @param string absolute directory path (must be under $CFG->dataroot)
  * @param boolean create directory if does not exist
  * @param boolean create directory recursively
  *
@@ -6890,6 +6890,10 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
 
     global $CFG;
 
+    if (strstr($dir, $CFG->dataroot) === false) {
+        debugging('Warning. Wrong call to check_dir_exists(). $dir must be an absolute path under $CFG->dataroot ("' . $dir . '" is incorrect)', DEBUG_DEVELOPER);
+    }
+
     $status = true;
 
     if(!is_dir($dir)) {
@@ -6898,10 +6902,14 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
         } else {
             umask(0000);
             if ($recursive) {
-                // PHP 5.0 has recursive mkdir parameter, but 4.x does not :-(
+            /// PHP 5.0 has recursive mkdir parameter, but 4.x does not :-(
                 $dir = str_replace('\\', '/', $dir); //windows compatibility
-                $dirs = explode('/', $dir);
-                $dir = array_shift($dirs).'/'; //skip root or drive letter
+            /// We are going to make it recursive under $CFG->dataroot only
+            /// (will help sites running open_basedir security and others)
+                $dir = str_replace($CFG->dataroot . '/', '', $dir);
+                $dirs = explode('/', $dir); /// Extract path parts
+            /// Iterate over each part with start point $CFG->dataroot
+                $dir = $CFG->dataroot . '/';
                 foreach ($dirs as $part) {
                     if ($part == '') {
                         continue;
