@@ -210,11 +210,11 @@ div.sideblock div.content {
   border-bottom-color: #DDDDDD;
   border-left-color: #FFFFFF;
 }
-div.sideblock tabletable.minicalendar td.day {
+div.sideblock table.minicalendar td.day {
   text-align: center;
   font-size: 0.9em;
 }
-div.sideblock tabletable.minicalendar {
+div.sideblock table.minicalendar {
   border-style: none;
   margin-bottom: 0;
 }
@@ -228,14 +228,14 @@ body#course-index table.generalbox {
   border-style: solid;
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
 }
-tabletable.minicalendar th {
+table.minicalendar th {
   padding: 0px 1px;
 }
-tabletable.minicalendar td.today {
+table.minicalendar td.today {
   line-height: 1.4em;
   border: 2px solid #0066FF;
 }
-div.sideblock tabletable.minicalendar tr.weekdays {
+div.sideblock table.minicalendar tr.weekdays {
   font-size: 0.8em;
 }
 div.coursebox {
