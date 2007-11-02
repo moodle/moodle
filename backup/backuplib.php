@@ -1930,7 +1930,7 @@
                     $userid = $parts[1];
 
                     // Create group dir first
-                    $status = check_dir_exists($userinfo['basedir'] . '/' . $group, true);
+                    $status = check_dir_exists("$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/". $group, true);
                 }
                 $status = $status && backup_copy_file($userinfo['basedir'] . '/' . $userinfo['userfolder'], 
                     "$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/{$userinfo['userfolder']}");
