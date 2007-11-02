@@ -1,7 +1,46 @@
 <?php // $Id$
 require_once $CFG->libdir.'/formslib.php';
 
-class admin_uploaduser_form extends moodleform {
+class admin_uploaduser_form1 extends moodleform {
+    function definition (){
+        global $CFG, $USER;
+
+        $this->set_upload_manager(new upload_manager('userfile', false, false, null, false, 0, true, true, false));
+
+        $mform =& $this->_form;
+
+        $mform->addElement('header', 'settingsheader', get_string('upload'));
+
+        $mform->addElement('file', 'userfile', get_string('file'));
+        $mform->addRule('userfile', null, 'required');
+
+        $choices = array('comma'=>',', 'semicolon'=>';', 'colon'=>':', 'tab'=>'\\t');
+        if (isset($CFG->CSV_DELIMITER) and !in_array($CFG->CSV_DELIMITER, $choices)) {
+            $choices['cfg'] = $CFG->CSV_DELIMITER; 
+        }
+        $mform->addElement('select', 'separator', get_string('csvseparator', 'admin'), $choices);
+        if (array_key_exists('cfg', $choices)) {
+            $mform->setDefault('separator', 'cfg');
+        } else if (get_string('listsep') == ';') {
+            $mform->setDefault('separator', 'semicolon');
+        } else {
+            $mform->setDefault('separator', 'comma');
+        }
+
+        $textlib = textlib_get_instance();
+        $choices = $textlib->get_encodings();
+        $mform->addElement('select', 'encoding', get_string('encoding', 'admin'), $choices);
+        $mform->setDefault('encoding', 'UTF-8');
+
+        $choices = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000);
+        $mform->addElement('select', 'previewrows', get_string('rowpreviewnum', 'admin'), $choices);
+        $mform->setType('previewrows', PARAM_INT);
+
+        $this->add_action_buttons(false, get_string('uploadusers'));
+    }
+}
+
+class admin_uploaduser_form2 extends moodleform {
     function definition (){
         global $CFG, $USER;
 
@@ -12,14 +51,6 @@ class admin_uploaduser_form extends moodleform {
 
 // upload settings and file
         $mform->addElement('header', 'settingsheader', get_string('settings'));
-
-        $mform->addElement('file', 'userfile', get_string('file'));
-        $mform->addRule('userfile', null, 'required');
-
-        $textlib = textlib_get_instance();
-        $choices = $textlib->get_encodings();
-        $mform->addElement('select', 'encoding', get_string('encoding', 'admin'), $choices);
-        $mform->setDefault('encoding', 'UTF-8');
 
         $choices = array(0 => get_string('infilefield', 'auth'), 1 => get_string('createpasswordifneeded', 'auth'));
         $mform->addElement('select', 'createpassword', get_string('passwordhandling', 'auth'), $choices);
@@ -131,8 +162,32 @@ class admin_uploaduser_form extends moodleform {
         $mform->setType('address', PARAM_MULTILANG);
         $mform->setAdvanced('address');
 
-        $this->add_action_buttons(false, get_string('uploadusers'));
+// hidden fields
+        $mform->addElement('hidden', 'uplid');
+        $mform->setType('uplid', PARAM_FILE);
+
+        $mform->addElement('hidden', 'separator');
+        $mform->setType('separator', PARAM_ALPHA);
+
+        $mform->addElement('hidden', 'previewrows');
+        $mform->setType('previewrows', PARAM_ALPHA);
+
+        $this->add_action_buttons(true, get_string('uploadusers'));
     }
 
+    function definition_after_data() {
+        $mform =& $this->_form;
+
+        $separator = $mform->getElementValue('separator');
+        $uplid     = $mform->getElementValue('uplid');
+        
+        if ($headers = get_uf_headers($uplid, $separator)) {
+            foreach ($headers as $header) {
+                if ($mform->elementExists($header)) {
+                    $mform->removeElement($header);
+                }
+            }
+        }
+    }
 }
 ?>
