@@ -249,7 +249,22 @@ class mnet_xmlrpc_client {
             }
 
         } else {
-            $this->error[] = '1:Payload not encrypted ';
+
+            if (! empty($crypt_parser->error)) {
+                $crypt_parser_error = $crypt_parser->error[0];
+
+                $message = '3:XML Parse error in payload: '.$crypt_parser_error['string']."\n";
+                if (array_key_exists('lineno', $crypt_parser_error)) {
+                    $message .= 'At line number: '.$crypt_parser_error['lineno']."\n";
+                }
+                if (array_key_exists('line', $crypt_parser_error)) {
+                    $message .= 'Which reads: '.$crypt_parser_error['line']."\n";
+                }
+                $this->error[] = $message;
+            } else {
+                $this->error[] = '1:Payload not encrypted ';
+            }
+
             $crypt_parser->free_resource();
             return false;
         }
