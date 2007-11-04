@@ -2867,11 +2867,17 @@ function delete_user($user) {
     // now do a final accesslib cleanup - removes all role assingments in user context and context itself
     delete_context(CONTEXT_USER, $user->id);
 
+    // workaround for bulk deletes of users with the same email address
+    $delname = addslashes("$user->email.".time());
+    while (record_exists('user', 'username', $delname)) { // no need to use mnethostid here
+        $delname++;
+    }
+
     // mark internal user record as "deleted"
     $updateuser = new object();
     $updateuser->id           = $user->id;
     $updateuser->deleted      = 1;
-    $updateuser->username     = addslashes("$user->email.".time());  // Remember it just in case
+    $updateuser->username     = $delname;         // Remember it just in case
     $updateuser->email        = '';               // Clear this field to free it up
     $updateuser->idnumber     = '';               // Clear this field to free it up
     $updateuser->timemodified = time();
