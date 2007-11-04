@@ -183,7 +183,7 @@ function lesson_check_text_access($path, $itemtype, $this_id, $user, $group_id, 
         return false;
     }
 
-    if ($lesson->usepassword){
+    if ($lesson->usepassword && !lessonsuperuser){
         if (!empty($CFG->search_access_debug)) echo "search reject : password required, cannot output in searches ";
         return false;
     }
