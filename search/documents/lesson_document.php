@@ -136,7 +136,7 @@ function lesson_delete($info, $itemtype) {
 function lesson_db_names() {
     //[primary id], [table name], [time created field name], [time modified field name] [itemtype] [select for getting itemtype]
     return array(
-        array('id', 'lesson_pages', 'timecreated', 'timemodified', 'page', ''),
+        array('id', 'lesson_pages', 'timecreated', 'timemodified', 'page')
     );
 } //lesson_db_names
 
