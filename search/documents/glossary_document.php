@@ -10,6 +10,10 @@
 *
 * Functions for iterating and retrieving the necessary records are now also included
 * in this file, rather than mod/glossary/lib.php
+*
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package search
+* @version 2007110400
 **/
 
 require_once("$CFG->dirroot/search/documents/document.php");
@@ -207,12 +211,13 @@ function glossary_db_names() {
 * - user is legitimate in the surrounding context
 * - user may be guest and guest access is allowed to the module
 * - the function may perform local checks within the module information logic
-* @param path the access path to the module script code
-* @param itemtype the information subclassing (usefull for complex modules, defaults to 'standard')
-* @param this_id the item id within the information class denoted by itemtype. In glossaries, this id 
+* @param string $path the access path to the module script code
+* @param string $itemtype the information subclassing (usefull for complex modules, defaults to 'standard')
+* @param int $this_id the item id within the information class denoted by itemtype. In glossaries, this id 
 * points out the indexed glossary item.
-* @param user the user record denoting the user who searches
-* @param group_id the current group used by the user when searching
+* @param object $user the user record denoting the user who searches
+* @param int $group_id the current group used by the user when searching
+* @param int $context_id the current group used by the user when searching
 * @return true if access is allowed, false elsewhere
 */
 function glossary_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
@@ -221,13 +226,19 @@ function glossary_check_text_access($path, $itemtype, $this_id, $user, $group_id
     // get the glossary object and all related stuff
     $entry = get_record('glossary_entries', 'id', $id);
     $glossary = get_record('glossary', 'id', $entry->glossaryid);
-    $course = get_record('course', 'id', $glossary->course);
-    $module_context = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $module_context->instanceid);
-    if (!$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $module_context)) return false;
+    $context = get_record('context', 'id', $context_id);
+    $cm = get_record('course_modules', 'id', $context->instanceid);
+    // $cm = get_coursemodule_from_instance('glossary', $glossary->id, $glossary->course);
+    // $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if (!$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $context)) {
+        return false;
+    }
     
     //approval check : entries should be approved for being viewed, or belongs to the user unless the viewer can approve them or manage them 
-    if (!$entry->approved && $user != $entry->userid && !has_capability('mod/glossary:approve', $module_context) && !has_capability('mod/glossary:manageentries', $module_context)) return false;
+    if (!$entry->approved && $user != $entry->userid && !has_capability('mod/glossary:approve', $context) && !has_capability('mod/glossary:manageentries', $context)) {
+        return false;
+    }
     
     return true;
 } //glossary_check_text_access

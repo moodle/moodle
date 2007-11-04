@@ -9,6 +9,10 @@
 *
 * Functions for iterating and retrieving the necessary records are now also included
 * in this file, rather than mod/chat/lib.php
+*
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package search
+* @version 2007110400
 **/
 
 require_once("$CFG->dirroot/search/documents/document.php");
@@ -155,21 +159,24 @@ function chat_get_content_for_index(&$chat) {
     $documents = array();
     $course = get_record('course', 'id', $chat->course);
     $coursemodule = get_field('modules', 'id', 'name', 'chat');
-    $cm = get_record('course_modules', 'course', $course->id, 'module', $coursemodule, 'instance', $chat->id);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-    // getting records for indexing
-    $sessionTracks = chat_get_session_tracks($chat->id);
-    if ($sessionTracks){
-        foreach($sessionTracks as $aTrackId => $aTrack) {
-            foreach($aTrack->sessionusers as $aUserId){
-                $user = get_record('user', 'id', $aUserId);
-                $aTrack->authors = ($user) ? $user->firstname.' '.$user->lastname : '' ;
-                $documents[] = new ChatTrackSearchDocument(get_object_vars($aTrack), $cm->id, $chat->course, $aTrack->groupid, $context->id);
+    $cm = get_record('course_modules', 'course', $chat->course, 'module', $coursemodule, 'instance', $chat->id);
+    if ($cm){
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+        // getting records for indexing
+        $sessionTracks = chat_get_session_tracks($chat->id);
+        if ($sessionTracks){
+            foreach($sessionTracks as $aTrackId => $aTrack) {
+                foreach($aTrack->sessionusers as $aUserId){
+                    $user = get_record('user', 'id', $aUserId);
+                    $aTrack->authors = ($user) ? $user->firstname.' '.$user->lastname : '' ;
+                    $documents[] = new ChatTrackSearchDocument(get_object_vars($aTrack), $cm->id, $chat->course, $aTrack->groupid, $context->id);
+                }
             }
         }
+        return $documents;
     }
-    return $documents;
+    return array();
 } //chat_get_content_for_index
 
 /**
@@ -187,14 +194,18 @@ function chat_single_document($id, $itemtype) {
     $course = get_record('course', 'id', $chat->course);
     $coursemodule = get_field('modules', 'id', 'name', 'chat');
     $cm = get_record('course_modules', 'course', $course->id, 'module', $coursemodule, 'instance', $chat->id);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-    // should be only one
-    $tracks = chat_get_session_tracks($chat->id, $sessionstart, $sessionstart);
-    if ($tracks){
-        $aTrack = $tracks[0];
-        $documents[] = new ChatTrackSearchDocument(get_object_vars($aTrack), $cm->id, $chat->course, $aTrack->groupid, $context->id);
+    if ($cm){
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+        // should be only one
+        $tracks = chat_get_session_tracks($chat->id, $sessionstart, $sessionstart);
+        if ($tracks){
+            $aTrack = $tracks[0];
+            $document = new ChatTrackSearchDocument(get_object_vars($aTrack), $cm->id, $chat->course, $aTrack->groupid, $context->id);
+        }
+        return $document;
     }
+    return null;
 } //chat_single_document
 
 /**
@@ -241,20 +252,32 @@ function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
 
     // get the chat session and all related stuff
     $chat = get_record('chat', 'id', $chat_id);
-    $course = get_record('course', 'id', $chat->course);
-    $module_context = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $module_context->instanceid);
-    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $module_context)) return false;
+    $context = get_record('context', 'id', $context_id);
+    $cm = get_record('course_modules', 'id', $context->instanceid);
+    // $cm = get_coursemodule_from_instance('chat', $chat->id, $chat->course);
+    // $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)){
+        if (!empty($CFG->search_access_debug)) echo "search reject : hidden chat ";
+        return false;
+    }
     
     //group consistency check : checks the following situations about groups
     // trap if user is not same group and groups are separated
     $current_group = get_current_group($course->id);
-    if ((groupmode($course) == SEPARATEGROUPS) && !groups_is_member($group_id) && !has_capability('moodle/site:accessallgroups', $module_context)) return false;
+    $course = get_record('course', 'id', $chat->course);
+    if ((groupmode($course, $cm) == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $context)){ 
+        if (!empty($CFG->search_access_debug)) echo "search reject : chat element is in separated group ";
+        return false;
+    }
 
     //ownership check : checks the following situations about user
     // trap if user is not owner and has cannot see other's entries
     // TODO : typically may be stored into indexing cache
-    if (!has_capability('mod/chat:readlog', $module_context)) return false;
+    if (!has_capability('mod/chat:readlog', $context)){
+        if (!empty($CFG->search_access_debug)) echo "search reject : cannot read past sessions ";
+        return false;
+    }
         
     return true;
 } //chat_check_text_access

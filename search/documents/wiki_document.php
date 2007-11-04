@@ -11,6 +11,10 @@
 *
 * Functions for iterating and retrieving the necessary records are now also included
 * in this file, rather than mod/wiki/lib.php
+*
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package search
+* @version 2007110400
 **/
 
 require_once("$CFG->dirroot/search/documents/document.php");
@@ -157,24 +161,26 @@ function wiki_get_content_for_index(&$wiki) {
 
     $documents = array();
     $entries = wiki_get_entries($wiki);
-    foreach($entries as $entry) {
+    if ($entries){
         $coursemodule = get_field('modules', 'id', 'name', 'wiki');
-        $cm = get_record('course_modules', 'course', $entry->course, 'module', $coursemodule, 'instance', $entry->wikiid);
+        $cm = get_record('course_modules', 'course', $wiki->course, 'module', $coursemodule, 'instance', $wiki->id);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-        //all pages
-        //$pages = wiki_get_pages($entry);
-        
-        //latest pages
-        $pages = wiki_get_latest_pages($entry);
-        if (is_array($pages)) {
-            foreach($pages as $page) {
-                if (strlen($page->content) > 0) {
-                    $documents[] = new WikiSearchDocument(get_object_vars($page), $entry->wikiid, $entry->course, $entry->groupid, $page->userid, $context->id);
+        foreach($entries as $entry) {
+    
+            //all pages
+            //$pages = wiki_get_pages($entry);
+            
+            //latest pages
+            $pages = wiki_get_latest_pages($entry);
+            if (is_array($pages)) {
+                foreach($pages as $page) {
+                    if (strlen($page->content) > 0) {
+                        $documents[] = new WikiSearchDocument(get_object_vars($page), $entry->wikiid, $entry->course, $entry->groupid, $page->userid, $context->id);
+                    } 
                 } 
             } 
         } 
-    } 
+    }
     return $documents;
 } //wiki_get_content_for_index
 
@@ -232,14 +238,22 @@ function wiki_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     $page = get_record('wiki_pages', 'id', $id);
     $entry = get_record('wiki_entries', 'id', $page->wiki);
     $course = get_record('course', 'id', $entry->course);
-    $module_context = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $module_context->instanceid);
-    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $module_context)) return false;
+    $context = get_record('context', 'id', $context_id);
+    $cm = get_record('course_modules', 'id', $context->instanceid);
+    // $cm = get_coursemodule_from_instance('wiki', $wiki->id, $wiki->course);
+    // $context = get_record('context', 'id', $cm->id);
+    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
+        if (!empty($CFG->search_access_debug)) echo "search reject : hidden wiki ";
+        return false;
+    }
     
     //group consistency check : checks the following situations about groups
     // trap if user is not same group and groups are separated
     $current_group = get_current_group($course->id);
-    if ((groupmode($course) == SEPARATEGROUPS) && $group_id != $current_group && !has_capability('moodle/site:accessallgroups', $module_context)) return false;
+    if ((groupmode($course) == SEPARATEGROUPS) && $group_id != $current_group && !has_capability('moodle/site:accessallgroups', $context)) {
+        if (!empty($CFG->search_access_debug)) echo "search reject : separated group owner wiki ";
+        return false;
+    }
         
     return true;
 } //wiki_check_text_access

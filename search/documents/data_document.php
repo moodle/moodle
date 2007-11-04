@@ -9,6 +9,10 @@
 *
 * Functions for iterating and retrieving the necessary records are now also included
 * in this file, rather than mod/data/lib.php
+*
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package search
+* @version 2007110400
 **/
 
 require_once("$CFG->dirroot/search/documents/document.php");
@@ -328,42 +332,66 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
       return false;
     }
     $data = get_record('data', 'id', $record->dataid);
-    $course = get_record('course', 'id', $data->course);
-    $module_context = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $module_context->instanceid);
-    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $module_context)) return false;
+    $context = get_record('context', 'id', $context_id);
+    $cm = get_record('course_modules', 'id', $context->instanceid);
+    // $cm = get_coursemodule_from_instance('data', $data->id, $data->course);
+    // $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
+        if (!empty($CFG->search_access_debug)) echo "search reject : hidden database ";
+        return false;
+    }
     
     //group consistency check : checks the following situations about groups
     // trap if user is not same group and groups are separated
     $current_group = get_current_group($course->id);
-    if ((groupmode($course) == SEPARATEGROUPS) && !groups_is_member($group_id) && !has_capability('moodle/site:accessallgroups', $module_context)) return false;
+    $course = get_record('course', 'id', $data->course);
+    if ((groupmode($course, $cm) == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $context)){ 
+        if (!empty($CFG->search_access_debug)) echo "search reject : separated group owned resource ";
+        return false;
+    }
 
     //ownership check : checks the following situations about user
     // trap if user is not owner and has cannot see other's entries
     if ($itemtype == 'record'){
-        if ($user->id != $record->userid && !has_capability('mod/data:viewentry', $module_context) && !has_capability('mod/data:manageentries', $module_context)) return false;
+        if ($user->id != $record->userid && !has_capability('mod/data:viewentry', $context) && !has_capability('mod/data:manageentries', $context)){ 
+            if (!empty($CFG->search_access_debug)) echo "search reject : not owned resource ";
+            return false;
+        }
     }
 
     //approval check
     // trap if unapproved and has not approval capabilities
     // TODO : report a potential capability lack of : mod/data:approve
     $approval = get_field('data_records', 'approved', 'id', $record->id);
-    if (!$approval && !isteacher($data->course) && !has_capability('mod/data:manageentries', $module_context)) return false;
+    if (!$approval && !isteacher($data->course) && !has_capability('mod/data:manageentries', $context)){
+        if (!empty($CFG->search_access_debug)) echo "search reject : unapproved resource ";
+        return false;
+    }
 
     //minimum records to view check
     // trap if too few records
     // TODO : report a potential capability lack of : mod/data:viewhiddenentries
     $recordsAmount = count_records('data_records', 'dataid', $data->id);
-    if ($data->requiredentriestoview > $recordsAmount && !isteacher($data->course) && !has_capability('mod/data:manageentries', $module_context)) return false;
+    if ($data->requiredentriestoview > $recordsAmount && !isteacher($data->course) && !has_capability('mod/data:manageentries', $context)) {
+        if (!empty($CFG->search_access_debug)) echo "search reject : not enough records to view ";
+        return false;
+    }
 
     //opening periods check
     // trap if user has not capability to see hidden records and date is out of opening range
     // TODO : report a potential capability lack of : mod/data:viewhiddenentries
     $now = usertime(time());
     if ($data->timeviewfrom > 0)
-        if ($now < $data->timeviewfrom && !isteacher($data->course) && !has_capability('mod/data:manageentries', $module_context)) return false;
+        if ($now < $data->timeviewfrom && !isteacher($data->course) && !has_capability('mod/data:manageentries', $context)) {
+            if (!empty($CFG->search_access_debug)) echo "search reject : still not open activity ";
+            return false;
+        }
     if ($data->timeviewto > 0)
-        if ($now > $data->timeviewto && !isteacher($data->course) && !has_capability('mod/data:manageentries', $module_context)) return false;
+        if ($now > $data->timeviewto && !isteacher($data->course) && !has_capability('mod/data:manageentries', $context)) {
+            if (!empty($CFG->search_access_debug)) echo "search reject : closed activity ";
+            return false;
+        }
         
     return true;
 } // data_check_text_access

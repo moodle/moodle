@@ -10,6 +10,10 @@
 *
 * Functions for iterating and retrieving the necessary records are now also included
 * in this file, rather than mod/forum/lib.php
+*
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package search
+* @version 2007110400
 **/
 /* see wiki_document.php for descriptions */
 
@@ -34,7 +38,9 @@ class ForumSearchDocument extends SearchDocument {
         $doc->contextid    = $context_id;
 
         $doc->title        = $post['subject'];
-        $doc->author       = $post['firstname']." ".$post['lastname'];
+        
+        $user = get_record('user', 'id', $post['userid']);
+        $doc->author       = fullname($user);
         $doc->contents     = $post['message'];
         $doc->date         = $post['created'];
         $doc->url          = forum_make_link($post['discussion'], $post['id']);
@@ -95,7 +101,7 @@ function forum_get_content_for_index(&$forum) {
                 foreach($children as $aChild) {
                     $aChild->itemtype = 'post';
                     if (strlen($aChild->message) > 0) {
-                        $documents[] = new ForumSearchDocument(get_object_vars($child), $forum->id, $forum->course, 'post', $context->id);
+                        $documents[] = new ForumSearchDocument(get_object_vars($aChild), $forum->id, $forum->course, 'post', $context->id);
                     } 
                 } 
             } 
@@ -116,8 +122,12 @@ function forum_single_document($id, $itemtype) {
     $discussion = get_record('forum_discussions', 'id', $post->discussion);
     $coursemodule = get_field('modules', 'id', 'name', 'forum');
     $cm = get_record('course_modules', 'course', $discussion->course, 'module', $coursemodule, 'instance', $discussion->forum);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    return new ForumSearchDocument(get_object_vars($post), $discussion->forum, $discussion->course, $itemtype, $context->id);
+    if ($cm){
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $post->groupid = $discussion->groupid;
+        return new ForumSearchDocument(get_object_vars($post), $discussion->forum, $discussion->course, $itemtype, $context->id);
+    }
+    return null;
 } //forum_single_document
 
 /**
@@ -211,12 +221,17 @@ function forum_get_child_posts_fast($parent, $forum_id) {
             p.message, 
             p.created, 
             {$forum_id} AS forum,
-            p.userid, 
+            p.userid,
+            d.groupid,
             u.firstname, 
             u.lastname
         FROM 
-            {$CFG->prefix}forum_posts p
-        LEFT JOIN 
+            {$CFG->prefix}forum_discussions d
+        JOIN 
+            {$CFG->prefix}forum_posts p 
+        ON 
+            p.discussion = d.id
+        JOIN 
             {$CFG->prefix}user u 
         ON 
             p.userid = u.id
@@ -243,25 +258,36 @@ function forum_get_child_posts_fast($parent, $forum_id) {
 * @param group_id the current group used by the user when searching
 * @return true if access is allowed, false elsewhere
 */
-function forum_check_text_access($path, $itemtype, $this_id, $user, $group_id){
-    global $CFG;
+function forum_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
+    global $CFG, $USER;
     
     include_once("{$CFG->dirroot}/{$path}/lib.php");
 
-    // get the glossary object and all related stuff
+    // get the forum post and all related stuff
     $post = get_record('forum_posts', 'id', $this_id);
     $discussion = get_record('forum_discussions', 'id', $post->discussion);
-    $course = get_record('course', 'id', $discussion->course);
-    $cm = get_coursemodule_from_instance('forum', $discussion->forum, $course->id);
-    $context_module = get_context_instance(CONTEXT_MODULE, $cm->id);
-    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context_module)) return false;
+    $context = get_record('context', 'id', $context_id);
+    $cm = get_record('course_modules', 'id', $context->instanceid);
+    // $cm = get_coursemodule_from_instance('forum', $discussion->forum, $discussion->course);
+    // $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)){
+        if (!empty($CFG->search_access_debug)) echo "search reject : hidden forum resource ";
+        return false;
+    }
     
     // approval check : entries should be approved for being viewed, or belongs to the user 
-    if (!$post->mailed && !has_capability('mod/forum:viewhiddentimeposts', $context_module)) return false;
+    if (($post->userid != $USER->id) && !$post->mailed && !has_capability('mod/forum:viewhiddentimeposts', $context)){
+        if (!empty($CFG->search_access_debug)) echo "search reject : time hidden forum item";
+        return false;
+    }
 
     // group check : entries should be in accessible groups
-    $current_group = get_current_group($course->id);
-    if ((groupmode($course, $cm)  == SEPARATEGROUPS) && ($group_id != $current_group) && !has_capability('mod/forum:viewdiscussionsfromallgroups', $context_module)) return false;
+    $current_group = get_current_group($discussion->course);
+    $course = get_record('course', 'id', $discussion->course);
+    if ($group_id >= 0 && (groupmode($course, $cm)  == SEPARATEGROUPS) && ($group_id != $current_group) && !has_capability('mod/forum:viewdiscussionsfromallgroups', $context)){
+        if (!empty($CFG->search_access_debug)) echo "search reject : separated grouped forum item";
+        return false;
+    }
     
     return true;
 } //forum_check_text_access

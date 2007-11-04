@@ -5,6 +5,10 @@
 * 2007/08/02
 *
 * document handling for techproject activity module
+*
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package search
+* @version 2007110400
 */
 /* see wiki_document.php for descriptions */
 
@@ -83,6 +87,7 @@ function techproject_get_content_for_index(&$techproject) {
     foreach($entries as $anEntry) {
         if ($anEntry) {
             if (strlen($anEntry->description) > 0) {
+                $anEntry->author = '';
                 $documents[] = new TechprojectEntrySearchDocument(get_object_vars($anEntry), $techproject->course, $context->id);
             } 
         } 
@@ -93,7 +98,7 @@ function techproject_get_content_for_index(&$techproject) {
             if (strlen($aTask->description) > 0) {
                 if ($aTask->assignee){
                     $user = get_record('user', 'id', $aTask->assignee);
-                    $aTask->author = $user->firstname.' '.$user->lastname;
+                    $aTask->author = fullname($user);
                 }
                 $documents[] = new TechprojectEntrySearchDocument(get_object_vars($aTask), $techproject->course, $context->id);
             } 
@@ -136,10 +141,14 @@ function techproject_single_document($id, $itemtype) {
     $techprojet_course = get_field('techproject', 'course', 'id', $entry->projectid);
     $coursemodule = get_field('modules', 'id', 'name', 'techproject');
     $cm = get_record('course_modules', 'course', $techproject_course, 'module', $coursemodule, 'instance', $entry->projectid);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $entry->type = $itemtype;
-    $techproject = get_record('techproject', 'id', $requirement->projectid);
-    return new TechprojectEntrySearchDocument(get_object_vars($anEntry), $techproject->course, $context->id);
+    if ($cm){
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $entry->type = $itemtype;
+        $techproject = get_record('techproject', 'id', $requirement->projectid);
+        return new TechprojectEntrySearchDocument(get_object_vars($anEntry), $techproject->course, $context->id);    
+    }
+    return null;
+    
 } //techproject_single_document
 
 /**
@@ -250,27 +259,42 @@ function techproject_check_text_access($path, $entry_type, $this_id, $user, $gro
 
     // get the techproject object and all related stuff
     $techproject = get_record('techproject', 'id', $this_id);
-    $course = get_record('course', 'id', $techproject->course);
-    $module_context = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $module_context->instanceid);
-    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $module_context)) return false;
+    $context = get_record('context', 'id', $context_id);
+    $cm = get_record('course_modules', 'id', $context->instanceid);
+    // $cm = get_coursemodule_from_instance('techproject', $techproject->id, $techproject->course);
+    // $context = get_record('context', 'id', $cm->id);
+    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) return false;
     
     //group consistency check : checks the following situations about groups
     // if user is guest check access capabilities for guests :
     // guests can see default project, and other records if groups are liberal
     // TODO : change guestsallowed in a capability
+    $course = get_record('course', 'id', $techproject->course);
     if (isguest() && $techproject->guestsallowed){
-        if ($group_id && groupmode($course, $cm) == SEPARATEGROUPS)
+        if ($group_id && groupmode($course, $cm) == SEPARATEGROUPS){
+            if (!empty($CFG->search_access_debug)) echo "search reject : no group access for guests ";
             return false;
+        }
         return true;
     }
     
     // trap if user is not same group and groups are separated
     $current_group = get_current_group($course->id);
-    if ((groupmode($course) == SEPARATEGROUPS) && $group_id != $current_group && $group_id) return false;
+    if ((groupmode($course, $cm) == SEPARATEGROUPS) && $group_id != $current_group && $group_id) {
+        if (!empty($CFG->search_access_debug)) echo "search reject : resource not in my group when separated ";
+        return false;
+    }
     
     //trap if ungroupedsees is off in strict access mode and user is not teacher
-    if ((groupmode($course) == SEPARATEGROUPS) && !$techproject->ungroupedsees && !$group_id && isteacher($user->id)) return false;
+    if ((groupmode($course, $cm) == SEPARATEGROUPS) && !$techproject->ungroupedsees && !$group_id && isteacher($user->id)){
+        if (!empty($CFG->search_access_debug)) echo "search reject : ungrouped cannot see anything here, unless teacher ";
+        return false;
+    }
+
+    //opening periods check
+    // trap if user has not capability to see hidden records and date is out of opening range
+    // TODO : find a strategy
+    $now = usertime(time());
     
     return true;
 } //techproject_check_text_access
