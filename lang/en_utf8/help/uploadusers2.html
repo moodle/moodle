@@ -8,15 +8,17 @@ databases or letting the users create their own accounts. See the Authentication
 <ul>
   <li>Each line of the file contains one record</li>
   <li>Each record is a series of data separated by commas (or other delimiters)</li>
-  <li>The first record of the file is special, and contains a list of fieldnames. This defines the format of the rest of the file.
+  <li>The first record of the file is special, and contains a list of field names. This defines the format of the rest of the file.
     <blockquote>
-      <p><strong>Required fieldnames:</strong> these fields must be included in the first record, and defined for each user</p>
+      <p><strong>Required field names:</strong> these fields must be included in the first record, and defined for each user</p>
       <p><code>firstname, lastname</code> when inserting or <code>username</code> when updating</p>
-      <p><strong>Optional fieldnames:</strong> all of these are completely optional. If a values is present for the field in the file, then that value is used; else, the default value for that field is used.</p>
+      <p><strong>Optional field names:</strong> all of these are completely optional. If a values is present for the field in the file, then that value is used; else, the default value for that field is used.</p>
       <p><code>institution, department, city, country, lang, auth, ajax, timezone, idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, emailstop</code></p>
-      <p><strong>Special fieldnames:</strong> used for changing of usernames and deleting of users, see bellow</p>
+      <p><strong>Custom profile field names:</strong> optional, xxxxx is the real custom user profile field name</p>
+      <p><code>profile_field_xxxxx</code></p>
+      <p><strong>Special field names:</strong> used for changing of usernames and deleting of users, see bellow</p>
       <p><code>deleted, oldusername</code></p>
-      <p><strong>Enrolment fieldnames (optional):</strong> The course names are the &quot;shortnames&quot; of the courses - if present
+      <p><strong>Enrolment field names (optional):</strong> The course names are the &quot;shortnames&quot; of the courses - if present
          then the user will be enrolled in those courses. &quot;Type&quot; means type of role to be used for associated course enrolment.
          Value 1 is default course role, 2 is legacy Teacher role and 3 is legacy Non-editing Teacher. You can use role field instead
          to specify roles directly - use either role short name or id (numeric names of roles are not supported). Users may be also
