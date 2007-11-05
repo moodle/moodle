@@ -97,6 +97,7 @@ $string['unknownrole'] = 'Unknown role \"$a\"';
 $string['unknownuseraction'] = 'Sorry, I do not understand this user action.';
 $string['userautherror'] = 'Unknown auth plugin.';
 $string['userauthunsupported'] = 'Auth plugin not supported here.';
+$string['useremailduplicate'] = 'Duplicate address';
 $string['usernotaddedadmin'] = 'Can not delete admin accounts.';
 $string['usernotaddederror'] = 'User not added - error.';
 $string['usernotaddedregistered'] = 'User not added - already registered.';

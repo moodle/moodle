@@ -58,7 +58,7 @@ $strcannotassignrole        = get_string('cannotassignrole', 'error');
 $strduplicateusername       = get_string('duplicateusername', 'error');
 
 $struserauthunsupported     = get_string('userauthunsupported', 'error');
-
+$stremailduplicate          = get_string('useremailduplicate', 'error');;
 
 $errorstr                   = get_string('error');
 
@@ -72,7 +72,7 @@ $STD_FIELDS = array('firstname', 'lastname', 'username', 'email', 'city', 'count
 
 $PRF_FIELDS = array();
 
-if ($prof_fields = $fields = get_records_select('user_info_field')) {
+if ($prof_fields = get_records('user_info_field')) {
     foreach ($prof_fields as $prof_field) {
         $PRF_FIELDS[] = 'profile_field_'.$prof_field->shortname;
     }
@@ -128,12 +128,13 @@ if ($formdata = $mform->is_cancelled()) {
 
     $optype = $formdata->uutype;
 
-    $createpasswords = (!empty($formdata->uupasswordnew) and $optype != UU_UPDATE);
-    $updatepasswords = (!empty($formdata->uupasswordold)  and $optype != UU_ADDNEW and $optype != UU_ADDINC);
-    $allowrenames    = (!empty($formdata->uuallowrenames) and $optype != UU_ADDNEW and $optype != UU_ADDINC);
-    $allowdeletes    = (!empty($formdata->uuallowdeletes) and $optype != UU_ADDNEW and $optype != UU_ADDINC);
-    $updatetype      = isset($formdata->uuupdatetype) ? $formdata->uuupdatetype : 0;
-    $bulk            = $formdata->uubulk;
+    $createpasswords   = (!empty($formdata->uupasswordnew) and $optype != UU_UPDATE);
+    $updatepasswords   = (!empty($formdata->uupasswordold)  and $optype != UU_ADDNEW and $optype != UU_ADDINC);
+    $allowrenames      = (!empty($formdata->uuallowrenames) and $optype != UU_ADDNEW and $optype != UU_ADDINC);
+    $allowdeletes      = (!empty($formdata->uuallowdeletes) and $optype != UU_ADDNEW and $optype != UU_ADDINC);
+    $updatetype        = isset($formdata->uuupdatetype) ? $formdata->uuupdatetype : 0;
+    $bulk              = $formdata->uubulk;
+    $noemailduplicates = $formdata->uunoemailduplicates;
 
     // verification moved to two places: after upload and into form2
     $usersnew     = 0;
@@ -337,7 +338,7 @@ if ($formdata = $mform->is_cancelled()) {
                 continue;
             }
 
-            if ($olduser = get_record('user', 'username', addslashes($oldusername), 'mnethostid', $user->mnethostid)) {
+            if ($olduser = get_record('user', 'username', addslashes($oldusername), 'mnethostid', addslashes($user->mnethostid))) {
                 $upt->track('id', $olduser->id, 'normal', false);
                 if (has_capability('moodle/site:doanything', $systemcontext, $olduser->id)) {
                     $upt->track('status', $strusernotrenamedadmin, 'error');
@@ -438,6 +439,18 @@ if ($formdata = $mform->is_cancelled()) {
                             continue;
                         }
                         if ($existinguser->$column !== $user->$column) {
+                            if ($column == 'email') {
+                                if (record_exists('user', 'email', addslashes($user->email))) {
+                                    if ($noemailduplicates) {
+                                        $upt->track('email', $stremailduplicate, 'error');
+                                        $upt->track('status', $strusernotupdated, 'error');
+                                        $userserrors++;
+                                        continue 2;
+                                    } else {
+                                        $upt->track('email', $stremailduplicate, 'warning');
+                                    }
+                                }
+                            }
                             if ($column != 'password' and in_array($column, $upt->columns)) {
                                 $upt->track($column, '', 'normal', false); // clear previous
                                 $upt->track($column, $existinguser->$column.'-->'.$user->$column, 'info');
@@ -499,6 +512,17 @@ if ($formdata = $mform->is_cancelled()) {
                 }
             }
 
+            if (record_exists('user', 'email', addslashes($user->email))) {
+                if ($noemailduplicates) {
+                    $upt->track('email', $stremailduplicate, 'error');
+                    $upt->track('status', $strusernotaddederror, 'error');
+                    $userserrors++;
+                    continue;
+                } else {
+                    $upt->track('email', $stremailduplicate, 'warning');
+                }
+            }
+
             if ($user->id = insert_record('user', addslashes_recursive($user))) {
                 $info = ': ' . $user->username .' (ID = ' . $user->id . ')';
                 $upt->track('status', $struseradded);
@@ -535,7 +559,7 @@ if ($formdata = $mform->is_cancelled()) {
 
             $shortname = $user->{'course'.$i};
             if (!array_key_exists($shortname, $ccache)) {
-                if (!$course = get_record('course', 'shortname', $shortname, '', '', '', '', 'id, shortname, defaultrole')) {
+                if (!$course = get_record('course', 'shortname', addslashes($shortname), '', '', '', '', 'id, shortname, defaultrole')) {
                     $upt->track('enrolments', get_string('unknowncourse', 'error', $shortname), 'error');
                     continue;
                 }
@@ -837,7 +861,7 @@ function increment_username($username, $mnethostid) {
         $username = $matches[1][0].($matches[2][0]+1);
     }
 
-    if (record_exists('user', 'username', addslashes($username), 'mnethostid', $mnethostid)) {
+    if (record_exists('user', 'username', addslashes($username), 'mnethostid', addslashes($mnethostid))) {
         return increment_username($username, $mnethostid);
     } else {
         return $username;
