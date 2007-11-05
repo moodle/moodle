@@ -20,6 +20,7 @@ require_once($CFG->libdir.'/filelib.php');
 
 function mediaplugin_filter($courseid, $text) {
     global $CFG;
+    static $eolas_fix_applied = false;
 
     include 'defaultsettings.php';
 
@@ -86,7 +87,10 @@ function mediaplugin_filter($courseid, $text) {
         $newtext = $text;
     }
     
-    $newtext .= '<script defer="defer" src="' . $CFG->wwwroot . '/filter/mediaplugin/eolas_fix.js" type="text/javascript"></script>';
+    if (!$eolas_fix_applied) {
+        $newtext .= '<script defer="defer" src="' . $CFG->wwwroot . '/filter/mediaplugin/eolas_fix.js" type="text/javascript">// <![CDATA[ ]]></script>';
+        $eolas_fix_applied = true;
+    }
 
     return $newtext;
 }
