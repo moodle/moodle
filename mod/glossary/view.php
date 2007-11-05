@@ -337,10 +337,10 @@
         } else {
             $fullsearchchecked = '';
         }
-        echo '<input type="checkbox" name="fullsearch" value="1" '.$fullsearchchecked.' alt="'.$strsearchindefinition.'" />';
+        echo '<input type="checkbox" name="fullsearch" id="fullsearch" value="1" '.$fullsearchchecked.' />';
         echo '<input type="hidden" name="mode" value="search" />';
         echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
-        echo $strsearchindefinition;
+        echo '<label for="fullsearch">'.$strsearchindefinition.'</label>';
         echo '</td></tr></table>';
 
         echo '</form>';
@@ -439,11 +439,11 @@
                         print_user_picture($user->id, $course->id, $user->picture);
                         $pivottoshow = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
                     } else {
-                        echo '<td align="center">';
+                        echo '<th >';
                     }
 
-                    echo "<strong> $pivottoshow</strong>" ;
-                    echo '</td></tr></table></div>';
+                    print_heading($pivottoshow);
+                    echo '</th></tr></table></div>';
 
                 }
             }

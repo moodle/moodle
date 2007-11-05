@@ -16,17 +16,17 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         print_user_picture($user->id, $course->id, $user->picture);
     
         echo '</td>';
-        echo '<td class="entryheader">';
+        echo '<th class="entryheader">';
         echo '<span class="concept">';
         glossary_print_entry_concept($entry);
-        echo '</span><br />';
+        echo '</span>';
 
         $fullname = fullname($user);
         $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
         $by->date = userdate($entry->timemodified);
         echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>';
 
-        echo '</td>';
+        echo '</th>';
         
         echo '<td class="entryapproval">';
         glossary_print_entry_approval($cm, $entry, $mode);
