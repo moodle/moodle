@@ -5,26 +5,23 @@ class admin_uploaduser_form1 extends moodleform {
     function definition (){
         global $CFG, $USER;
 
-        $this->set_upload_manager(new upload_manager('userfile', false, false, null, false, 0, true, true, false));
-
         $mform =& $this->_form;
+
+        $this->set_upload_manager(new upload_manager('userfile', false, false, null, false, 0, true, true, false));
 
         $mform->addElement('header', 'settingsheader', get_string('upload'));
 
-        $mform->addElement('file', 'userfile', get_string('file'));
+        $mform->addElement('file', 'userfile', get_string('file'), 'size="40"');
         $mform->addRule('userfile', null, 'required');
 
-        $choices = array('comma'=>',', 'semicolon'=>';', 'colon'=>':', 'tab'=>'\\t');
-        if (isset($CFG->CSV_DELIMITER) and !in_array($CFG->CSV_DELIMITER, $choices)) {
-            $choices['cfg'] = $CFG->CSV_DELIMITER; 
-        }
-        $mform->addElement('select', 'separator', get_string('csvseparator', 'admin'), $choices);
+        $choices = csv_import_reader::get_delimiter_list();
+        $mform->addElement('select', 'delimiter_name', get_string('csvdelimiter', 'admin'), $choices);
         if (array_key_exists('cfg', $choices)) {
-            $mform->setDefault('separator', 'cfg');
+            $mform->setDefault('delimiter_name', 'cfg');
         } else if (get_string('listsep') == ';') {
-            $mform->setDefault('separator', 'semicolon');
+            $mform->setDefault('delimiter_name', 'semicolon');
         } else {
-            $mform->setDefault('separator', 'comma');
+            $mform->setDefault('delimiter_name', 'comma');
         }
 
         $textlib = textlib_get_instance();
@@ -44,35 +41,103 @@ class admin_uploaduser_form2 extends moodleform {
     function definition (){
         global $CFG, $USER;
 
-        $mform =& $this->_form;
+        //no editors here - we need proper empty fields
+        $CFG->htmleditor = null;
 
-        // I am the tamplate user
+        $mform   =& $this->_form;
+        $columns =& $this->_customdata;
+
+        // I am the template user, why should it be the administrator? we have roles now, other ppl may use this script ;-)
         $templateuser = $USER;
 
 // upload settings and file
         $mform->addElement('header', 'settingsheader', get_string('settings'));
 
+        $choices = array(UU_ADDNEW    => get_string('uuoptype_addnew', 'admin'),
+                         UU_ADDINC    => get_string('uuoptype_addinc', 'admin'),
+                         UU_ADD_UPDATE => get_string('uuoptype_addupdate', 'admin'),
+                         UU_UPDATE     => get_string('uuoptype_update', 'admin'));
+        $mform->addElement('select', 'uutype', get_string('uuoptype', 'admin'), $choices);
+
         $choices = array(0 => get_string('infilefield', 'auth'), 1 => get_string('createpasswordifneeded', 'auth'));
-        $mform->addElement('select', 'createpassword', get_string('passwordhandling', 'auth'), $choices);
+        $mform->addElement('select', 'uupasswordnew', get_string('uupasswordnew', 'admin'), $choices);
+        $mform->disabledIf('uupasswordnew', 'uutype', 'eq', UU_UPDATE);
 
-        $mform->addElement('selectyesno', 'updateaccounts', get_string('updateaccounts', 'admin'));
-        $mform->addElement('selectyesno', 'allowrenames', get_string('allowrenames', 'admin'));
+        $choices = array(0 => get_string('nochanges', 'admin'),
+                         1 => get_string('uuupdatefromfile', 'admin'),
+                         2 => get_string('uuupdateall', 'admin'),
+                         3 => get_string('uuupdatemissing', 'admin'));
+        $mform->addElement('select', 'uuupdatetype', get_string('uuupdatetype', 'admin'), $choices);
+        $mform->disabledIf('uuupdatetype', 'uutype', 'eq', UU_ADDNEW);
+        $mform->disabledIf('uuupdatetype', 'uutype', 'eq', UU_ADDINC);
 
-        $choices = array(0 => get_string('addcounter', 'admin'), 1 => get_string('skipuser', 'admin'));
-        $mform->addElement('select', 'duplicatehandling', get_string('newusernamehandling', 'admin'), $choices);
-        $mform->setDefault('duplicatehandling', 1); // better skip, bc and safer
+        $choices = array(0 => get_string('nochanges', 'admin'), 1 => get_string('update'));
+        $mform->addElement('select', 'uupasswordold', get_string('uupasswordold', 'admin'), $choices);
+        $mform->disabledIf('uupasswordold', 'uutype', 'eq', UU_ADDNEW);
+        $mform->disabledIf('uupasswordold', 'uutype', 'eq', UU_ADDINC);
+        $mform->disabledIf('uupasswordold', 'uuupdatetype', 'eq', 0);
+        $mform->disabledIf('uupasswordold', 'uuupdatetype', 'eq', 3);
+
+        $mform->addElement('selectyesno', 'uuallowrenames', get_string('allowrenames', 'admin'));
+        $mform->disabledIf('uuallowrenames', 'uutype', 'eq', UU_ADDNEW);
+        $mform->disabledIf('uuallowrenames', 'uutype', 'eq', UU_ADDINC);
+
+        $mform->addElement('selectyesno', 'uuallowdeletes', get_string('allowdeletes', 'admin'));
+        $mform->disabledIf('uuallowdeletes', 'uutype', 'eq', UU_ADDNEW);
+        $mform->disabledIf('uuallowdeletes', 'uutype', 'eq', UU_ADDINC);
+
+        $choices = array(0 => get_string('no'),
+                         1 => get_string('uubulknew', 'admin'),
+                         2 => get_string('uubulkupdated', 'admin'),
+                         3 => get_string('uubulkall', 'admin'));
+        $mform->addElement('select', 'uubulk', get_string('uubulk', 'admin'), $choices);
+
+// roles selection
+        $showroles = false;
+        foreach ($columns as $column) {
+            if (preg_match('/^type\d+$/', $column)) {
+                $showroles = true;
+                break;
+            }
+        }
+        if ($showroles) {
+            $mform->addElement('header', 'rolesheader', get_string('roles'));
+
+            $choices = uu_allowed_roles(true);
+
+            $choices[0] = get_string('uucoursedefaultrole', 'admin');
+            $mform->addElement('select', 'uulegacy1', get_string('uulegacy1role', 'admin'), $choices);
+            $mform->setDefault('uulegacy1', 0);
+            unset($choices[0]);
+
+            $mform->addElement('select', 'uulegacy2', get_string('uulegacy2role', 'admin'), $choices);
+            if ($editteacherroles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW)) {
+                $editteacherrole = array_shift($editteacherroles);   /// Take the first one
+                $mform->setDefault('uulegacy2', $editteacherrole->id);
+                unset($editteacherroles);
+            } else {
+                $mform->setDefault('uulegacy2', $CFG->defaultcourseroleid);
+            }
+
+            $mform->addElement('select', 'uulegacy3', get_string('uulegacy3role', 'admin'), $choices);
+            if ($teacherroles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
+                $teacherrole = array_shift($teacherroles);   /// Take the first one
+                $mform->setDefault('uulegacy3', $teacherrole->id);
+                unset($teacherroles);
+            } else {
+                $mform->setDefault('uulegacy3', $CFG->defaultcourseroleid);
+            }
+        }
 
 // default values
         $mform->addElement('header', 'defaultheader', get_string('defaultvalues', 'admin'));
-        $mform->addElement('text', 'username', get_string('username'), 'size="20"');
 
-        // only enabled plugins
-        $aplugins = get_enabled_auth_plugins();
-        $auth_options = array();
-        foreach ($aplugins as $module) {
-            $auth_options[$module] = get_string('auth_'.$module.'title', 'auth');
-        }
-        $mform->addElement('select', 'auth', get_string('chooseauthmethod','auth'), $auth_options);
+        $mform->addElement('text', 'username', get_string('username'), 'size="20"');
+        $mform->addRule('username', get_string('requiredtemplate', 'admin'), 'required', null, 'client');
+
+        // only enabled and known to work plugins
+        $choices = uu_allowed_auths();
+        $mform->addElement('select', 'auth', get_string('chooseauthmethod','auth'), $choices);
         $mform->setDefault('auth', 'manual'); // manual is a sensible backwards compatible default
         $mform->setHelpButton('auth', array('authchange', get_string('chooseauthmethod','auth')));
         $mform->setAdvanced('auth');
@@ -162,31 +227,99 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->setType('address', PARAM_MULTILANG);
         $mform->setAdvanced('address');
 
-// hidden fields
-        $mform->addElement('hidden', 'uplid');
-        $mform->setType('uplid', PARAM_FILE);
+        /// Next the profile defaults
+        profile_definition($mform);
 
-        $mform->addElement('hidden', 'separator');
-        $mform->setType('separator', PARAM_ALPHA);
+// hidden fields
+        $mform->addElement('hidden', 'iid');
+        $mform->setType('iid', PARAM_INT);
 
         $mform->addElement('hidden', 'previewrows');
-        $mform->setType('previewrows', PARAM_ALPHA);
+        $mform->setType('previewrows', PARAM_INT);
+
+        $mform->addElement('hidden', 'readcount');
+        $mform->setType('readcount', PARAM_INT);
 
         $this->add_action_buttons(true, get_string('uploadusers'));
     }
 
+    /**
+     * Form tweaks that depend on current data.
+     */
     function definition_after_data() {
-        $mform =& $this->_form;
+        $mform   =& $this->_form;
+        $columns =& $this->_customdata;
 
-        $separator = $mform->getElementValue('separator');
-        $uplid     = $mform->getElementValue('uplid');
-        
-        if ($headers = get_uf_headers($uplid, $separator)) {
-            foreach ($headers as $header) {
-                if ($mform->elementExists($header)) {
-                    $mform->removeElement($header);
-                }
+        foreach ($columns as $column) {
+            if ($mform->elementExists($column)) {
+                $mform->removeElement($column);
             }
+        }
+    }
+
+    /**
+     * Server side validation.
+     */
+    function validation($data) {
+        $errors  = array();
+        $columns =& $this->_customdata;
+        $optype  = $data['uutype'];
+
+        // detect if password column needed in file
+        if (!in_array('password', $columns)) {
+            switch ($optype) {
+                case UU_UPDATE:
+                    if (!empty($data['uupasswordold'])) {
+                        $errors['uupasswordold'] = get_string('missingfield', 'error', 'password');
+                    }
+                    break;
+
+                case UU_ADD_UPDATE:
+                    if (empty($data['uupasswordnew'])) {
+                        $errors['uupasswordnew'] = get_string('missingfield', 'error', 'password');
+                    }
+                    if  (!empty($data['uupasswordold'])) {
+                        $errors['uupasswordold'] = get_string('missingfield', 'error', 'password');
+                    }
+                    break;
+
+                case UU_ADDNEW:
+                case UU_ADDINC:
+                    if (empty($data['uupasswordnew'])) {
+                        $errors['uupasswordnew'] = get_string('missingfield', 'error', 'password');
+                    }
+                    break;
+             }
+        }
+
+        // look for other required data
+        if ($optype != UU_UPDATE) {
+            if (!in_array('firstname', $columns)) {
+                $errors['uutype'] = get_string('missingfield', 'error', 'firstname');
+            }
+
+            if (!in_array('lastname', $columns)) {
+                if (isset($errors['uutype'])) {
+                    $errors['uutype'] = '';
+                } else {
+                    $errors['uutype'] = ' ';
+                }
+                $errors['uutype'] .= get_string('missingfield', 'error', 'lastname');
+            }
+
+            if (!in_array('email', $columns) and empty($data['email'])) {
+                $errors['email'] = get_string('requiredtemplate', 'admin');
+            }
+
+            if (!in_array('city', $columns) and empty($data['city'])) {
+                $errors['city'] = get_string('required');
+            }
+        }
+
+        if (0 == count($errors)){
+            return true;
+        } else {
+            return $errors;
         }
     }
 }

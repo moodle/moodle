@@ -373,6 +373,18 @@ table.flexible .r1 {
     background-color : lime;
 }
 
+#admin-uploaduser .uuinfo {
+    background-color: #8e8;
+}
+
+#admin-uploaduser .uuwarning {
+    background-color: #ee8;
+}
+
+#admin-uploaduser .uuerror {
+    background-color: #e99;
+}
+
 /***
  *** Blocks
  ***/

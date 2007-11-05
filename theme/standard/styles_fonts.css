@@ -260,6 +260,12 @@ body#admin-index .copyright {
   font-size: 0.75em;
 }
 
+#admin-uploaduser table#uupreview {
+  font-size: 0.8em;
+}
+#admin-uploaduser table#uuresults {
+  font-size: 0.9em;
+}
 
 /***
  *** Blocks
