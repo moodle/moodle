@@ -543,6 +543,9 @@ if ($formdata = $mform->is_cancelled()) {
             // save custom profile fields data
             profile_save_data($user);
 
+            // make sure user context exists
+            get_context_instance(CONTEXT_PERSONAL, $user->id);
+
             if ($bulk == 1 or $bulk == 3) {
                 if (!in_array($user->id, $SESSION->bulk_susers)) {
                     $SESSION->bulk_susers[] = $user->id;
