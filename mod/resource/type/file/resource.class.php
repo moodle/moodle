@@ -535,15 +535,6 @@ function display() {
             echo '</div>';
 
         } else if ($resourcetype == "quicktime") {
-            echo '<style type="text/css">';
-            echo '/* class to hide nested objects in IE */';
-            echo '/* hides the second object from all versions of IE */';
-            echo '* html object.hiddenObjectForIE { display: none; }';
-            echo '/* display the second object only for IE5 Mac */';
-            echo '/* IE Mac \*//*/';
-            echo '* html object.hiddenObjectForIE { display: inline; }';
-            echo '/**/';
-            echo '</style>';
             echo '<div class="resourcecontent resourceqt">';
             
             echo '<object classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
@@ -554,13 +545,17 @@ function display() {
             echo '<param name="controller" value="true" />';
             echo '<param name="scale" value="aspect" />';
             
-            echo "<object class=\"hiddenObjectForIE\" type=\"video/quicktime\" data=\"$fullurl\">";
+            echo '<!--[if !IE]>-->';
+            echo "<object type=\"video/quicktime\" data=\"$fullurl\">";
             echo '<param name="controller" value="true" />';
             echo '<param name="autoplay" value="true" />';
             echo '<param name="loop" value="true" />';
             echo '<param name="scale" value="aspect" />';
-            echo '</object>';
+            echo '<!--<![endif]-->';
             echo '<a href="' . $fullurl . '">' . $fullurl . '</a>';
+            echo '<!--[if !IE]>-->';
+            echo '</object>';
+            echo '<!--<![endif]-->';
             echo '</object>';
             echo '</div>';
         }  else if ($resourcetype == "flash") { 
