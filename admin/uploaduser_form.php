@@ -61,6 +61,7 @@ class admin_uploaduser_form2 extends moodleform {
 
         $choices = array(0 => get_string('infilefield', 'auth'), 1 => get_string('createpasswordifneeded', 'auth'));
         $mform->addElement('select', 'uupasswordnew', get_string('uupasswordnew', 'admin'), $choices);
+        $mform->setDefault('uupasswordnew', 0);
         $mform->disabledIf('uupasswordnew', 'uutype', 'eq', UU_UPDATE);
 
         $choices = array(0 => get_string('nochanges', 'admin'),
@@ -68,29 +69,37 @@ class admin_uploaduser_form2 extends moodleform {
                          2 => get_string('uuupdateall', 'admin'),
                          3 => get_string('uuupdatemissing', 'admin'));
         $mform->addElement('select', 'uuupdatetype', get_string('uuupdatetype', 'admin'), $choices);
+        $mform->setDefault('uuupdatetype', 0);
         $mform->disabledIf('uuupdatetype', 'uutype', 'eq', UU_ADDNEW);
         $mform->disabledIf('uuupdatetype', 'uutype', 'eq', UU_ADDINC);
 
         $choices = array(0 => get_string('nochanges', 'admin'), 1 => get_string('update'));
         $mform->addElement('select', 'uupasswordold', get_string('uupasswordold', 'admin'), $choices);
+        $mform->setDefault('uupasswordold', 0);
         $mform->disabledIf('uupasswordold', 'uutype', 'eq', UU_ADDNEW);
         $mform->disabledIf('uupasswordold', 'uutype', 'eq', UU_ADDINC);
         $mform->disabledIf('uupasswordold', 'uuupdatetype', 'eq', 0);
         $mform->disabledIf('uupasswordold', 'uuupdatetype', 'eq', 3);
 
         $mform->addElement('selectyesno', 'uuallowrenames', get_string('allowrenames', 'admin'));
+        $mform->setDefault('uuallowrenames', 0);
         $mform->disabledIf('uuallowrenames', 'uutype', 'eq', UU_ADDNEW);
         $mform->disabledIf('uuallowrenames', 'uutype', 'eq', UU_ADDINC);
 
         $mform->addElement('selectyesno', 'uuallowdeletes', get_string('allowdeletes', 'admin'));
+        $mform->setDefault('uuallowdeletes', 0);
         $mform->disabledIf('uuallowdeletes', 'uutype', 'eq', UU_ADDNEW);
         $mform->disabledIf('uuallowdeletes', 'uutype', 'eq', UU_ADDINC);
+
+        $mform->addElement('selectyesno', 'uunoemailduplicates', get_string('uunoemailduplicates', 'admin'));
+        $mform->setDefault('uunoemailduplicates', 0);
 
         $choices = array(0 => get_string('no'),
                          1 => get_string('uubulknew', 'admin'),
                          2 => get_string('uubulkupdated', 'admin'),
                          3 => get_string('uubulkall', 'admin'));
         $mform->addElement('select', 'uubulk', get_string('uubulk', 'admin'), $choices);
+        $mform->setDefault('uubulk', 0);
 
 // roles selection
         $showroles = false;

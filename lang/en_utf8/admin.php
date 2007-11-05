@@ -659,6 +659,7 @@ $string['uucoursedefaultrole'] = 'Default course role';
 $string['uulegacy1role'] = '(Original Student) typeN=1';
 $string['uulegacy2role'] = '(Original Teacher) typeN=2';
 $string['uulegacy3role'] = '(Original Non-editing teacher) typeN=3';
+$string['uunoemailduplicates'] = 'Prevent email address duplicates';
 $string['uuoptype_addinc'] = 'Add all, append counter to usernames if needed';
 $string['uuoptype_addnew'] = 'Add new only, skip existing users';
 $string['uuoptype_addupdate'] = 'Add new and update existing users';
