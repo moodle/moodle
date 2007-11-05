@@ -237,6 +237,14 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
         $track->timemodified = time();
         $id = insert_record('scorm_scoes_track',$track);
     }
+    
+    // MDL-9552, update the gradebook everything raw score is sent
+    if (strstr($element, '.score.raw')) {
+        $scorm = get_record('scorm', 'id', $scormid);
+        include_once('lib.php');
+        scorm_update_grades($scorm, $userid);    
+    }
+    
     return $id;
 }
 
