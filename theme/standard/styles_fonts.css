@@ -734,8 +734,15 @@ body#mod-forum-index .generalbox .cell {
 .glossarypost .time {
   font-size: 0.8em;
 }
-.concept {
-  font-weight: bold;
+.glossarycategoryheader h2 {
+  margin: 0;
+} 
+.glossarypost .concept h3 {
+  margin: 0;
+}
+.glossarypost .entryheader {
+  font-weight: normal;
+  text-align: left;
 }
 .glossarycomment .author {
   font-size: 0.8em;

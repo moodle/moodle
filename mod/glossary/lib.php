@@ -639,7 +639,7 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook=''
 
  //Default (old) print format used if custom function doesn't exist in format
 function glossary_print_entry_default ($entry) {
-    echo '<b>'. strip_tags($entry->concept) . ': </b>';
+    echo '<h3>'. strip_tags($entry->concept) . ': </h3>';
 
     $definition = $entry->definition;
 
@@ -671,7 +671,7 @@ function glossary_print_entry_default ($entry) {
 function  glossary_print_entry_concept($entry) {
     $options = new object();
     $options->para = false;
-    $text = format_text('<span class="nolink">' . $entry->concept . '</span>', FORMAT_MOODLE, $options);
+    $text = format_text('<h3 class="nolink">' . $entry->concept . '</h3>', FORMAT_MOODLE, $options);
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
@@ -839,6 +839,8 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
 
 
     $return = '<span class="commands">';
+    // Differentiate links for each entry.
+    $altsuffix = ': '.$entry->concept;
     if (!$entry->approved) {
         $output = true;
         $return .= get_string('entryishidden','glossary');
@@ -847,7 +849,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
 
     if (has_capability('mod/glossary:comment', $context) and $glossary->allowcomments) {
         $output = true;
-        $return .= ' <a title="' . get_string('addcomment','glossary') . '" href="comment.php?action=add&amp;eid='.$entry->id.'"><img src="comment.gif" class="iconsmall" alt="'.get_string('addcomment','glossary').'" /></a>';
+        $return .= ' <a title="' . get_string('addcomment','glossary') . '" href="comment.php?action=add&amp;eid='.$entry->id.'"><img src="comment.gif" class="iconsmall" alt="'.get_string('addcomment','glossary').$altsuffix.'" /></a>';
     }
 
 
@@ -857,7 +859,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $mainglossary = get_record('glossary','mainglossary',1,'course',$course->id);
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
                 $output = true;
-                $return .= ' <a title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$cm->id.'&amp;entry='.$entry->id.'&amp;mode='.$mode.'&amp;hook='.$hook.'"><img src="export.gif" class="iconsmall" alt="'.get_string('exporttomainglossary','glossary').'" /></a>';
+                $return .= ' <a title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$cm->id.'&amp;entry='.$entry->id.'&amp;mode='.$mode.'&amp;hook='.$hook.'"><img src="export.gif" class="iconsmall" alt="'.get_string('exporttomainglossary','glossary').$altsuffix.'" /></a>';
             }
         }
 
@@ -875,9 +877,9 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $output = true;
             $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&amp;mode=delete&amp;entry=$entry->id&amp;prevmode=$mode&amp;hook=$hook\"><img src=\"";
             $return .= $icon;
-            $return .= "\" class=\"iconsmall\" alt=\"" . get_string("delete") . "\" /></a> ";
+            $return .= "\" class=\"iconsmall\" alt=\"" . get_string("delete") .$altsuffix."\" /></a> ";
 
-            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&amp;e=$entry->id&amp;mode=$mode&amp;hook=$hook\"><img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"" . get_string("edit") . "\" /></a>";
+            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&amp;e=$entry->id&amp;mode=$mode&amp;hook=$hook\"><img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"" . get_string("edit") .$altsuffix. "\" /></a>";
         } elseif ( $importedentry ) {
             $return .= " <font size=\"-1\">" . get_string("exportedentry","glossary") . "</font>";
         }

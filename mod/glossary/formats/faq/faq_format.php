@@ -8,16 +8,16 @@ function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="", $hoo
         echo '<table class="glossarypost faq" cellspacing="0">';
 
         echo '<tr valign="top">';
-        echo '<td class="entryheader">';
+        echo '<th class="entryheader">';
         $entry->course = $course->id;
 
         echo '<span class="concept">' . get_string('question','glossary') . ': ';
         glossary_print_entry_concept($entry);
-        echo '</span><br />';
+        echo '</span>';
 
         echo '<span class="time">('.get_string('lastedited').': '.
              userdate($entry->timemodified).')</span>';
-        echo '</td>';
+        echo '</th>';
         echo '<td class="entryattachment">';
 
         glossary_print_entry_approval($cm, $entry, $mode);
