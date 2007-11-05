@@ -792,7 +792,7 @@ function grade_set_uncategorized() {
                                     // get instance name from db.
                                     $instance = get_record($mod->modname, 'id', $mod->instance);
                                     // see if the item is already in the category table and if it is call category select with the id so it is selected
-                                    get_record('modules', 'name', $mod->modname);
+                                    // get_record('modules', 'name', $mod->modname);
                                     $item = get_record('grade_item', 'courseid', $course->id, 'modid', $mod->module, 'cminstance', $mod->instance);
                                     if (!$item) {
                                         // set the item to uncategorized in grade_item
