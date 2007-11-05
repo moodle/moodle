@@ -461,7 +461,7 @@ function scorm_update_grades($scorm=null, $userid=0, $nullifnone=true) {
 
     if ($scorm != null) {
         if ($grades = scorm_get_user_grades($scorm, $userid)) {
-            grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, $grades);
+            grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, $grades[$userid]);
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
