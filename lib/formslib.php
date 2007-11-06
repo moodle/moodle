@@ -214,7 +214,7 @@ class moodleform {
                     }
                     $errors[$elname] = $this->_upload_manager->files[$elname]['uploadlog'];
 
-                } else if ($this->_upload_manager->files[$elname]['clear']) {
+                } else if (!empty($this->_upload_manager->files[$elname]['clear'])) {
                     $files[$elname] = $this->_upload_manager->files[$elname]['tmp_name'];
                 }
             } else {
