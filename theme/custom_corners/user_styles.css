@@ -609,7 +609,7 @@ td#left-column div.hidden div.header {
 td#right-column div.hidden div.header {
   border-bottom-style: none;
 }
-td#middle-column div.bt div {
+td#middle-column div.bt div, div#middle-column div.bt div {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -619,7 +619,7 @@ td#middle-column div.bt div {
   position: relative;
   width: 13px;
 }
-td#middle-column div.bt {
+td#middle-column div.bt, div#middle-column div.bt {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 100% 0;
@@ -627,14 +627,14 @@ td#middle-column div.bt {
   height: 12px;
   background-color: transparent;
 }
-td#middle-column div.i1 {
+td#middle-column div.i1, div#middle-column div.i1 {
   background-image: url(pix/borders.png);
   background-repeat: repeat-y;
   background-position: 0 0;
   background-color: transparent;
   padding: 0 0 0 12px;
 }
-td#middle-column div.i2 {
+td#middle-column div.i2, div#middle-column div.i2 {
   background-image: url(pix/borders.png);
   background-repeat: repeat-y;
   background-attachment: scroll;
@@ -642,14 +642,14 @@ td#middle-column div.i2 {
   background-color: transparent;
   padding: 0 12px 0 0;
 }
-td#middle-column div.i3 {
+td#middle-column div.i3, div#middle-column div.i3 {
   background-color: #FFFFFF;
   padding: 0 10px;
   border-width: 1px 0;
   border-style: solid;
   border-color: #FFFFFF;
 }
-td#middle-column div.bb div {
+td#middle-column div.bb div, div#middle-column div.bb div {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 0 100%;
@@ -659,7 +659,7 @@ td#middle-column div.bb div {
   position: relative;
   width: 13px;
 }
-td#middle-column div.bb {
+td#middle-column div.bb, div#middle-column div.bb {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 100% 100%;
@@ -667,7 +667,7 @@ td#middle-column div.bb {
   height: 12px;
   background-color: transparent;
 }
-td#middle-column div.bt div {
+td#middle-column div.bt div, div#middle-column div.bt div {
   z-index: 10;
 }
 div#footer div.bt div {
@@ -913,7 +913,7 @@ body.nocoursepage div#content div.bb {
   height: 12px;
   background-color: transparent;
 }
-td#middle-column tr.section {
+td#middle-column tr.section, div#middle-column li.section {
   background-image: url(pix/bottom_shadow_to_top.png);
   background-repeat: repeat-x;
   background-position: center bottom;

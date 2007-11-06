@@ -1793,6 +1793,9 @@ border-width:0px;
   display:inline;
 }
 
+.weekscss-format, .topicscss-format {
+    margin-top: 8px;
+}
 
 /*#course-view ul.section li.activity ul li,
 #site-index ul.section li.activity ul li {
@@ -1800,53 +1803,71 @@ border-width:0px;
 }*/
 
 /*Accessibility: No-tables course format. */
-#course-view ul.weekscss {
+#course-view ul.weekscss , #course-view ul.topicscss{
   margin: 0;
   padding: 0;
   list-style: none;
 }
 /* Window-width: 800 pixels.
    IE doesn't support, see inline IE conditional comment. */
-.weekscss-format {
+.weekscss-format, .topicscss-format {
   min-width: 763px;
 }
-.weekscss-format .block_adminblock select,
-.weekscss-format .block_calendar_month .minicalendar {
+.topicscss-format .block_adminblock select,
+.weekscss-format .block_calendar_month .minicalendar,
+.topicscss-format .block_calendar_month .minicalendar {
   width: 100%;
   padding: 0;
 }
 .weekscss-format .block_calendar_month .minicalendar th,
-.weekscss-format .block_calendar_month .minicalendar td {
+.topicscss-format .block_calendar_month .minicalendar th, 
+.weekscss-format .block_calendar_month .minicalendar td,
+.topicscss-format .block_calendar_month .minicalendar td, {
   padding: 0.1em 0 0.1em 1px;
 }
-.weekscss-format #middle-column {
+.weekscss-format #middle-column ,
+.topicscss-format #middle-column {
   margin: 0 12.5em 0 12.5em;
 }
 .weekscss-format #left-column,
-.weekscss-format #right-column {
+.weekscss-format #right-column,
+.topicscss-format #left-column,
+.topicscss-format #right-column {
   width: 11.5em;
 }
-.weekscss-format #left-column {
+.weekscss-format #left-column,
+.topicscss-format #left-column {
   float: left;
 }
-.weekscss-format #right-column {
+.weekscss-format #right-column,
+.topicscss-format #right-column {
   float: right;
 }
-.weekscss li.section {
+.weekscss li.section ,
+.topicscss li.section {
   margin-bottom: 0.5em;
   border-style:solid;
   border-width:1px;
 }
 .weekscss .content,
-.weekscss .side {
+.topicscss .content {
   padding: 5px;
-}
-.weekscss .content {
   margin: 0 1.7em 0 1.7em;
 }
-.weekscss .right {
+.weekscss .right,
+.weekscss .left,
+.topicscss .right,
+.topicscss .left {
   width: 1.6em;
-  float: right;
+  padding: 5px 0;
+}
+.weekscss .left,
+.topicscss .left {
+    float: left;
+}
+.weekscss .right,
+.topicscss .right {
+    float: right;
   text-align:center;
 }
 

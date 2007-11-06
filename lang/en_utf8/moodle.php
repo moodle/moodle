@@ -643,6 +643,7 @@ $string['formatsocial'] = 'Social format';
 $string['formattext'] = 'Moodle auto-format';
 $string['formattexttype'] = 'Formatting';
 $string['formattopics'] = 'Topics format';
+$string['formattopicscss'] = 'Topics format - CSS/No tables';
 $string['formattopicsajax'] = 'Topics format - AJAX';
 $string['formatweeks'] = 'Weekly format';
 $string['formatweekscss'] = 'Weekly format - CSS/No tables';
