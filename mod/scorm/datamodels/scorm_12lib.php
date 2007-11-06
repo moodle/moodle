@@ -353,7 +353,10 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         }
         
         if ($play) {
-            $sco = scorm_get_sco($scoid);
+            // it is possible that scoid is still not set, in this case we dont want an empty object
+            if ($scoid) {
+                $sco = scorm_get_sco($scoid);
+            }
             $sco->previd = $previd;
             $sco->nextid = $nextid;
             $result->sco = $sco;
