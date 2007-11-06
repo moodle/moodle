@@ -35,7 +35,7 @@ if (!empty($file)) {
     if (empty($forcelang)) {
         $langs = array(current_language(), get_string('parentlanguage'), 'en_utf8');  // Fallback
     } else {
-        $langs = array($forcelang);
+        $langs = array($forcelang, 'en_utf8');
     }
 
     // Work through the possible languages, starting with the most specific.
