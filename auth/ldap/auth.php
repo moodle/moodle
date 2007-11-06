@@ -431,7 +431,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                 do {
                     $value = ldap_get_values_len($ldapconnection, $entry, $this->config->user_attribute);
                     $value = $textlib->convert($value[0], $this->config->ldapencoding, 'utf-8');
-                    array_push($fresult, $value);
+                    // usernames are __always__ lowercase.
+                    array_push($fresult, moodle_strtolower($value));
                     if (count($fresult) >= $bulk_insert_records) {
                         $this->ldap_bulk_insert($fresult, $temptable);
                         $fresult = array();
