@@ -105,7 +105,7 @@
 
     if (!empty($THEME->customcorners)) print_custom_corners_start();
 
-    echo '<a name="startofcontent"></a>';
+    echo skip_main_destination();
 
     print_heading_block(get_string('topicoutline'), 'outline');
 
@@ -211,7 +211,7 @@
 
             echo '<li id="section-'.$section.'" class="section main'.$sectionstyle.'" >'; //'<div class="left side">&nbsp;</div>';
 
-	    echo '<div class="left side">'.$section.'</div>';
+	        echo '<div class="left side">'.$currenttext.$section.'</div>';
             // Note, 'right side' is BEFORE content.
             echo '<div class="right side">';
             
