@@ -1,4 +1,8 @@
 
+.grade-report-grader table#user-grades tr.marked td.cell {
+    background-color: #FFCC99 ;
+}
+
 .grade-report-grader table#user-grades .catlevel1 {
   background-color: #ffffff;
 }
