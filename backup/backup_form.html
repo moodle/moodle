@@ -65,7 +65,7 @@
     $backup_user_files = optional_param('backup_user_files',1);
     $backup_course_files = optional_param('backup_course_files',1);
     $backup_site_files = optional_param('backup_site_files',1);
-    $backup_gradebook_history =  optional_param('backup_gradebook_history', 1, PARAM_INT);
+    $backup_gradebook_history =  optional_param('backup_gradebook_history', 0, PARAM_INT);
     $backup_messages = optional_param('backup_messages',1);
 
     if ($count == 0) {
