@@ -2098,7 +2098,7 @@ function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true)
                  WHERE m.name='assignment' AND m.id=cm.module AND cm.instance=a.id";
         if ($rs = get_recordset_sql($sql)) {
             while ($assignment = rs_fetch_next_record($rs)) {
-                if ($assignment->grade == 0) {
+                if ($assignment->grade != 0) {
                     assignment_update_grades($assignment);
                 } else {
                     assignment_grade_item_update($assignment);
