@@ -734,11 +734,14 @@ body#mod-forum-index .generalbox .cell {
 .glossarypost .time {
   font-size: 0.8em;
 }
-.glossarycategoryheader h2 {
-  margin: 0;
-} 
+.glossarycategoryheader h2,
 .glossarypost .concept h3 {
+  font-size: 1em;
   margin: 0;
+}
+.glossarypost div.concept h3,
+.glossarypost.continuous .concept {
+  display: inline;
 }
 .glossarypost .entryheader {
   font-weight: normal;

@@ -9,15 +9,15 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
         echo '<table class="glossarypost fullwithoutauthor" cellspacing="0">';
         echo '<tr valign="top">';
 
-        echo '<td class="entryheader">';
+        echo '<th class="entryheader">';
 
-        echo '<span class="concept">';
+        echo '<div class="concept">';
         glossary_print_entry_concept($entry);
-        echo '</span><br />';
+        echo '</div>';
 
         echo '<span class="time">('.get_string('lastedited').': '.
              userdate($entry->timemodified).')</span>';
-        echo '</td>';
+        echo '</th>';
         echo '<td class="entryattachment">';
 
         glossary_print_entry_approval($cm, $entry, $mode);

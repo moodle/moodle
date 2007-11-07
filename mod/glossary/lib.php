@@ -668,10 +668,13 @@ function glossary_print_entry_default ($entry) {
     echo '<br /><br />';
 }
 
+/**
+ * Print glossary concept/term as a heading &lt;h3>
+ */
 function  glossary_print_entry_concept($entry) {
     $options = new object();
     $options->para = false;
-    $text = format_text('<h3 class="nolink">' . $entry->concept . '</h3>', FORMAT_MOODLE, $options);
+    $text = format_text(print_heading($entry->concept, '', 3, 'nolink'), FORMAT_MOODLE, $options);
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }

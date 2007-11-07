@@ -433,7 +433,7 @@
                     $pivottoshow = $currentpivot;
                     if ( isset($entry->userispivot) ) {
                     // printing the user icon if defined (only when browsing authors)
-                        echo '<td align="left">';
+                        echo '<th align="left">';
 
                         $user = get_record("user","id",$entry->userid);
                         print_user_picture($user->id, $course->id, $user->picture);
@@ -443,7 +443,7 @@
                     }
 
                     print_heading($pivottoshow);
-                    echo '</th></tr></table></div>';
+                    echo "</th></tr></table></div>\n";
 
                 }
             }
