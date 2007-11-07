@@ -1549,7 +1549,7 @@
                                 $dbrec->categoryid = $coursecat->id;
                             } else if (!empty($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']) && $info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']!='$@NULL@$') {
                                 $category = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']));
-                                if ($category->new_id) {
+                                if (!empty($category->new_id)) {
                                     $dbrec->categoryid = $category->new_id;
                                 } else { 
                                     // this could be restoring into existing course, and grade item points to the old course grade item (category)

@@ -12,7 +12,7 @@
       error( 'course_header object missing from session' );
     }
 
-    $restore_gradebook_history =  optional_param('restore_gradebook_history', 1, PARAM_INT);
+    $restore_gradebook_history =  optional_param('restore_gradebook_history', 0, PARAM_INT);
 
     //Check that we have all we need
     //backup_unique_code
