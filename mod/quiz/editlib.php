@@ -1,14 +1,13 @@
 <?php // $Id$
 /**
-* Functions used by edit.php to edit quizzes
-*
-* @version $Id$
-* @author Martin Dougiamas and many others. This has recently been extensively
-*         rewritten by members of the Serving Mathematics project
-*         {@link http://maths.york.ac.uk/serving_maths}
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
-*/
+ * Functions used by edit.php to edit quizzes
+ *
+ * @author Martin Dougiamas and many others. This has recently been extensively
+ *         rewritten by members of the Serving Mathematics project
+ *         {@link http://maths.york.ac.uk/serving_maths}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package quiz
+ */
 
 require_once("locallib.php");
 

@@ -1,12 +1,11 @@
 <?php // $Id$
 /**
-* This page lists all the instances of quiz in a particular course
-*
-* @version $Id$
-* @author Martin Dougiamas and many others.
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
-*/
+ * This page lists all the instances of quiz in a particular course
+ *
+ * @author Martin Dougiamas and many others.
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package quiz
+ */
     require_once("../../config.php");
     require_once("locallib.php");
 
