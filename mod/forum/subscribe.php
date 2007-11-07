@@ -60,7 +60,7 @@
         exit;
     }
 
-    $returnto = forum_go_back_to("index.php?id=$course->id");
+    $returnto = forum_go_back_to("view.php?f=$id");
 
     if ($force and has_capability('mod/forum:managesubscriptions', $context)) {
         if (forum_is_forcesubscribed($forum->id)) {
