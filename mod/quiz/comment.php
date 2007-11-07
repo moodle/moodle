@@ -1,11 +1,10 @@
 <?php  // $Id$
 /**
-* This page prints a review of a particular question attempt
-*
-* @version $Id$
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
-*/
+ * This page prints a review of a particular question attempt
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package quiz
+ */
 
     require_once('../../config.php');
     require_once('locallib.php');
