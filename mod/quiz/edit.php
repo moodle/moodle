@@ -1,31 +1,30 @@
 <?php // $Id$
 /**
-* Page to edit quizzes
-*
-* This page generally has two columns:
-* The right column lists all available questions in a chosen category and
-* allows them to be edited or more to be added. This column is only there if
-* the quiz does not already have student attempts
-* The left column lists all questions that have been added to the current quiz.
-* The lecturer can add questions from the right hand list to the quiz or remove them
-*
-* The script also processes a number of actions:
-* Actions affecting a quiz:
-* up and down  Changes the order of questions and page breaks
-* addquestion  Adds a single question to the quiz
-* add          Adds several selected questions to the quiz
-* addrandom    Adds a certain number of random questions to the quiz
-* repaginate   Re-paginates the quiz
-* delete       Removes a question from the quiz
-* savechanges  Saves the order and grades for questions in the quiz
-*
-* @version $Id$
-* @author Martin Dougiamas and many others. This has recently been extensively
-*         rewritten by Gustav Delius and other members of the Serving Mathematics project
-*         {@link http://maths.york.ac.uk/serving_maths}
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
-*/
+ * Page to edit quizzes
+ *
+ * This page generally has two columns:
+ * The right column lists all available questions in a chosen category and
+ * allows them to be edited or more to be added. This column is only there if
+ * the quiz does not already have student attempts
+ * The left column lists all questions that have been added to the current quiz.
+ * The lecturer can add questions from the right hand list to the quiz or remove them
+ *
+ * The script also processes a number of actions:
+ * Actions affecting a quiz:
+ * up and down  Changes the order of questions and page breaks
+ * addquestion  Adds a single question to the quiz
+ * add          Adds several selected questions to the quiz
+ * addrandom    Adds a certain number of random questions to the quiz
+ * repaginate   Re-paginates the quiz
+ * delete       Removes a question from the quiz
+ * savechanges  Saves the order and grades for questions in the quiz
+ *
+ * @author Martin Dougiamas and many others. This has recently been extensively
+ *         rewritten by Gustav Delius and other members of the Serving Mathematics project
+ *         {@link http://maths.york.ac.uk/serving_maths}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package quiz
+ */
     require_once("../../config.php");
     require_once($CFG->dirroot.'/mod/quiz/editlib.php');
 
