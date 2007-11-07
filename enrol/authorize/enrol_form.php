@@ -216,7 +216,7 @@ class enrol_authorize_form extends moodleform
         return (empty($errors) ? true : $errors);
     }
 
-    function other_method_available($currentmethod)
+    private function other_method_available($currentmethod)
     {
         $course = $this->_customdata['course'];
 
@@ -240,7 +240,7 @@ class enrol_authorize_form extends moodleform
         }
     }
 
-    function validate_aba($aba)
+    private function validate_aba($aba)
     {
         if (ereg("^[0-9]{9}$", $aba)) {
             $n = 0;
@@ -254,7 +254,7 @@ class enrol_authorize_form extends moodleform
         return false;
     }
 
-    function validate_cc($Num, $Name = "n/a", $Exp = "")
+    private function validate_cc($Num, $Name = "n/a", $Exp = "")
     {
         // Check the expiration date first
         if (strlen($Exp))
