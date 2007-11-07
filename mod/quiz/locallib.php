@@ -7,7 +7,7 @@
  * This script also loads the code in {@link questionlib.php} which holds
  * the module-indpendent code for handling questions and which in turn
  * initialises all the questiontype classes.
- * @version $Id$
+ *
  * @author Martin Dougiamas and many others. This has recently been completely
  *         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
  *         the Serving Mathematics project
