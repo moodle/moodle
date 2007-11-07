@@ -16,7 +16,7 @@ class enrolment_plugin_authorize
      * @var string
      * @access public
      */
-    var $log;
+    public $log;
 
 
     /**
@@ -25,7 +25,8 @@ class enrolment_plugin_authorize
      * @param object $course Course info
      * @access public
      */
-    function print_entry($course) {
+    public function print_entry($course)
+    {
         global $CFG, $USER, $form;
 
         $zerocost = zero_cost($course);
@@ -114,7 +115,7 @@ class enrolment_plugin_authorize
      * @param object $course Course info
      * @access public
      */
-    function check_entry($form, $course)
+    public function check_entry($form, $course)
     {
         global $CFG;
 
@@ -136,7 +137,7 @@ class enrolment_plugin_authorize
      * @param object $course Course info
      * @access private
      */
-    function cc_submit($form, $course)
+    private function cc_submit($form, $course)
     {
         global $CFG, $USER, $SESSION;
         require_once('authorizenetlib.php');
@@ -297,7 +298,7 @@ class enrolment_plugin_authorize
      * @param object $course Course info
      * @access private
      */
-    function echeck_submit($form, $course)
+    private function echeck_submit($form, $course)
     {
         global $CFG, $USER, $SESSION;
         require_once('authorizenetlib.php');
@@ -372,8 +373,8 @@ class enrolment_plugin_authorize
      * @return string
      * @access public
      */
-    function get_access_icons($course) {
-
+    public function get_access_icons($course)
+    {
         $manual = enrolment_factory::factory('manual');
         $str = $manual->get_access_icons($course);
         $curcost = get_course_cost($course);
@@ -405,7 +406,7 @@ class enrolment_plugin_authorize
      * @param object $frm
      * @access public
      */
-    function config_form($frm)
+    public function config_form($frm)
     {
         global $CFG;
         $mconfig = get_config('enrol/authorize');
@@ -466,7 +467,7 @@ class enrolment_plugin_authorize
      * @return bool true if it will be saved.
      * @access public
      */
-    function process_config($config)
+    public function process_config($config)
     {
         global $CFG;
         $mconfig = get_config('enrol/authorize');
@@ -567,7 +568,7 @@ class enrolment_plugin_authorize
      *
      * @access public
      */
-    function cron()
+    public function cron()
     {
         global $CFG;
         require_once($CFG->dirroot.'/enrol/authorize/authorizenetlib.php');
@@ -692,7 +693,7 @@ class enrolment_plugin_authorize
      *
      * @access private
      */
-    function cron_daily()
+    private function cron_daily()
     {
         global $CFG, $SITE;
         require_once($CFG->dirroot.'/enrol/authorize/authorizenetlib.php');
