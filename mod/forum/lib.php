@@ -3299,7 +3299,7 @@ function forum_post_subscription($post) {
  *      at the top of the function.
  * @param 
  */
-function forum_get_subscribe_link($forum, $context, $messages = array(), $cantaccessagroup = false, $fakelink=true) {
+function forum_get_subscribe_link($forum, $context, $messages = array(), $cantaccessagroup = false, $fakelink=true, $backtoindex=false) {
     global $CFG, $USER;
     $defaultmessages = array(
         'subscribed' => get_string('unsubscribe', 'forum'),
@@ -3325,18 +3325,19 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
             $linktitle = get_string('subscribestart', 'forum');
         }
 
+        $backtoindexlink=($backtoindex ? '&amp;backtoindex=1' : '');
         $link = '';
         if ($fakelink) {
             $link .= '<script type="text/javascript">';
             $link .= '//<![CDATA['."\n";
             $link .= 'document.getElementById("subscriptionlink").innerHTML = "<a title=\"' . $linktitle . '\" href=\"' . $CFG->wwwroot .
-               '/mod/forum/subscribe.php?id=' . $forum->id . '\">' . $linktext . '<\/a>";';
+               '/mod/forum/subscribe.php?id=' . $forum->id . $backtoindexlink.'\">' . $linktext . '<\/a>";';
             $link .= '//]]>';
             $link .= '</script>';
             // use <noscript> to print button in case javascript is not enabled
             $link .= '<noscript>';
         }
-        $link .= print_single_button($CFG->wwwroot . '/mod/forum/subscribe.php?id=' . $forum->id,
+        $link .= print_single_button($CFG->wwwroot . '/mod/forum/subscribe.php?id=' . $forum->id.$backtoindexlink,
                 '', $linktext, 'post', '_self', true, $linktitle);
         if ($fakelink) {
             $link .= '</noscript>';
