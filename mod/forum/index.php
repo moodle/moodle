@@ -376,7 +376,7 @@
                 if ($can_subscribe) {
                     $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
                         'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
-                        'cantsubscribe' => '-'), $cantaccessagroup, false);
+                        'cantsubscribe' => '-'), $cantaccessagroup, false, true);
                 }
                 
                 //If this forum has RSS activated, calculate it
