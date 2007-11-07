@@ -107,6 +107,13 @@ class enrolment_plugin_authorize
     }
 
 
+    function print_enrolmentkeyfrom($course)
+    {
+        $manual = enrolment_factory::factory('manual');
+        $manual->print_enrolmentkeyfrom($course);
+    }
+
+
     /**
      * Validates registration forms and enrols student to course.
      *
