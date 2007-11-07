@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -104,6 +104,7 @@ class grade_scale extends grade_object {
      * @return int PK ID if successful, false otherwise
      */
     function insert($source=null) {
+        $this->timecreated = time();
         $this->timemodified = time();
         return parent::insert($source);
     }

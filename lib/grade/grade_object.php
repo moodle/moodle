@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -127,11 +127,9 @@ class grade_object {
     /**
      * Factory method - uses the parameters to retrieve matching instance from the DB.
      * @static final protected
-     * @return mixed object insatnce or false if not found
+     * @return mixed object instance or false if not found
      */
     function fetch_helper($table, $classname, $params) {
-        // we have to do use this hack because of the incomplete OOP implementation in PHP4 :-(
-        // in PHP5 we could do it much better
         if ($instances = grade_object::fetch_all_helper($table, $classname, $params)) {
             if (count($instances) > 1) {
                 // we should not tolerate any errors here - problems might appear later
@@ -149,8 +147,6 @@ class grade_object {
      * @return mixed array of object instances or false if not found
      */
     function fetch_all_helper($table, $classname, $params) {
-        // we have to do use this hack because of the incomplete OOP implementation in PHP4 :-(
-        // in PHP5 we could do it much better
         $instance = new $classname();
 
         $classvars = (array)$instance;

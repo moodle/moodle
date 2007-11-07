@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -283,6 +283,7 @@ class grade_category extends grade_object {
 
         if (empty($this->courseid)) {
             error('Can not insert grade category without course id!');
+            return false;
         }
 
         if (empty($this->parent)) {
@@ -314,11 +315,11 @@ class grade_category extends grade_object {
      * @return bool success
      */
     function insert_course_category($courseid) {
-        $this->courseid  = $courseid;
-        $this->fullname  = get_string('coursegradecategory', 'grades');
-        $this->path      = null;
-        $this->parent    = null;
-        $this->aggregate = GRADE_AGGREGATE_MEAN;
+        $this->courseid    = $courseid;
+        $this->fullname    = get_string('coursegradecategory', 'grades');
+        $this->path        = null;
+        $this->parent      = null;
+        $this->aggregation = GRADE_AGGREGATE_MEAN;
 
         $this->apply_forced_settings();
 
