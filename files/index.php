@@ -747,7 +747,7 @@ function displaydir ($wdir) {
     echo "<hr/>";
     echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"640\" class=\"files\">";
     echo "<tr>";
-    echo "<th scope=\"col\"></th>";
+    echo "<th class=\"header\" scope=\"col\"></th>";
     echo "<th class=\"header name\" scope=\"col\">$strname</th>";
     echo "<th class=\"header size\" scope=\"col\">$strsize</th>";
     echo "<th class=\"header date\" scope=\"col\">$strmodified</th>";
