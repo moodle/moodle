@@ -282,6 +282,14 @@ function print_moodle_environment($result, $environment_results) {
  * @return string the normalized version
  */
 function normalize_version($version) {
+ 
+/// 1.9 Beta 2 should be read 1.9 on enviromental checks, not 1.9.2
+/// we can discard everything after the first space
+    $version = trim($version);
+    $versionarr = explode(" ",$version);
+    if (!empty($versionarr)) {
+        $version = $versionarr[0];
+    }
 /// Replace everything but numbers and dots by dots
     $version = preg_replace('/[^\.\d]/', '.', $version);
 /// Combine multiple dots in one
