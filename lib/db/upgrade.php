@@ -2583,6 +2583,20 @@ function xmldb_main_upgrade($oldversion=0) {
             // Could not create the readme file. No cause for huge concern
             notify("Could not create the README.txt file in $readmefilename.");
         } 
+    }
+    
+    if ($result && $oldversion < 2007101502) {
+
+    /// Define key userid-itemid (unique) to be added to grade_grades
+        $table = new XMLDBTable('grade_grades');
+        $key = new XMLDBKey('userid-itemid');
+        $key->setAttributes(XMLDB_KEY_UNIQUE, array('userid', 'itemid'));
+
+    /// Launch add key userid-itemid
+        $result = $result && add_key($table, $key);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101502);
     }    
 
     return $result;
