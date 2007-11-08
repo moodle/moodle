@@ -1449,6 +1449,9 @@ a.skip:focus, a.skip:active {
 {
   text-align: center;
 }
+#calendar .sideblock h2 {
+  text-align: left;
+}
 
 #calendar .maincalendar,
 #calendar .sidecalendar
