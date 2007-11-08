@@ -128,10 +128,10 @@
         break;
         }
     ?>
-        <option value="letter" <?php p($sletter)?>>letter</option>
-        <option value="cat" <?php p($scat)?>>cat</option>
-        <option value="date" <?php p($sdate)?>>date</option>
-        <option value="author" <?php p($sauthor)?>>author</option>
+        <option value="letter" <?php p($sletter)?>><?php print_string("letter", "glossary"); ?></option>
+        <option value="cat" <?php p($scat)?>><?php print_string("cat", "glossary"); ?></option>
+        <option value="date" <?php p($sdate)?>><?php print_string("date", "glossary"); ?></option>
+        <option value="author" <?php p($sauthor)?>><?php print_string("author", "glossary"); ?></option>
         </select>
         </td>
         <td width="60%">
@@ -238,7 +238,7 @@
         </td>
     </tr>
     <tr valign="top">
-        <td align="right" width="20%">Include Group Breaks:</td>
+        <td align="right" width="20%"><?php print_string("includegroupbreaks", "glossary"); ?>:</td>
         <td>
         <select size="1" name="showgroup">
     <?php
