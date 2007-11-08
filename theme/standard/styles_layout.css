@@ -464,7 +464,7 @@ form.popupform label {
 
 img.icon {
   vertical-align:middle;
-  margin-right:4px;
+  /*margin-right:4px;*/
   width:16px;
   height:16px;
   border:0px;
@@ -1449,6 +1449,9 @@ a.skip:focus, a.skip:active {
 {
   text-align: center;
 }
+#calendar .sideblock h2 {
+  text-align: left;
+}
 
 #calendar .maincalendar,
 #calendar .sidecalendar
@@ -1793,7 +1796,7 @@ border-width:0px;
   display:inline;
 }
 
-.weekscss-format, .topicscss-format {
+.weeks-format, .topics-format {
     margin-top: 8px;
 }
 
@@ -1803,73 +1806,75 @@ border-width:0px;
 }*/
 
 /*Accessibility: No-tables course format. */
-#course-view ul.weekscss , #course-view ul.topicscss{
+#course-view ul.weeks , #course-view ul.topics{
   margin: 0;
   padding: 0;
   list-style: none;
 }
 /* Window-width: 800 pixels.
    IE doesn't support, see inline IE conditional comment. */
-.weekscss-format, .topicscss-format {
+.weeks-format, .topics-format {
   min-width: 763px;
 }
-.topicscss-format .block_adminblock select,
-.weekscss-format .block_calendar_month .minicalendar,
-.topicscss-format .block_calendar_month .minicalendar {
+.topics-format .block_adminblock select,
+.weeks-format .block_calendar_month .minicalendar,
+.topics-format .block_calendar_month .minicalendar {
   width: 100%;
   padding: 0;
 }
-.weekscss-format .block_calendar_month .minicalendar th,
-.topicscss-format .block_calendar_month .minicalendar th, 
-.weekscss-format .block_calendar_month .minicalendar td,
-.topicscss-format .block_calendar_month .minicalendar td, {
+.weeks-format .block_calendar_month .minicalendar th,
+.topics-format .block_calendar_month .minicalendar th, 
+.weeks-format .block_calendar_month .minicalendar td,
+.topics-format .block_calendar_month .minicalendar td, {
   padding: 0.1em 0 0.1em 1px;
 }
-.weekscss-format #middle-column ,
-.topicscss-format #middle-column {
+.weeks-format #middle-column ,
+.topics-format #middle-column {
   margin: 0 12.5em 0 12.5em;
 }
-.weekscss-format #left-column,
-.weekscss-format #right-column,
-.topicscss-format #left-column,
-.topicscss-format #right-column {
+.weeks-format #left-column,
+.weeks-format #right-column,
+.topics-format #left-column,
+.topics-format #right-column {
   width: 11.5em;
 }
-.weekscss-format #left-column,
-.topicscss-format #left-column {
+.weeks-format #left-column,
+.topics-format #left-column {
   float: left;
 }
-.weekscss-format #right-column,
-.topicscss-format #right-column {
+.weeks-format #right-column,
+.topics-format #right-column {
   float: right;
 }
-.weekscss li.section ,
-.topicscss li.section {
+.weeks li.section ,
+.topics li.section {
   margin-bottom: 0.5em;
   border-style:solid;
   border-width:1px;
 }
-.weekscss .content,
-.topicscss .content {
+.weeks .content,
+.topics .content {
   padding: 5px;
   margin: 0 1.7em 0 1.7em;
 }
-.weekscss .right,
-.weekscss .left,
-.topicscss .right,
-.topicscss .left {
+.weeks .right,
+.weeks .left,
+.topics .right,
+.topics .left {
   width: 1.6em;
   padding: 5px 0;
+  text-align: center;
 }
-.weekscss .left,
-.topicscss .left {
-    float: left;
+
+.weeks .left,
+.topics .left {
+  float: left;
 }
-.weekscss .right,
-.topicscss .right {
-    float: right;
-  text-align:center;
-}
+
+.weeks .right,
+.topics .right {
+  float: right;
+} 
 
 .section .activity img.activityicon {
   vertical-align:middle;

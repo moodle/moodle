@@ -191,14 +191,14 @@
     $getvars = 'id='.$courseid.'&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
 
     echo '<div class="sideblock">';
-    echo '<div class="header">'.get_string('eventskey', 'calendar').'</div>';
+    echo '<div class="header"><h2>'.get_string('eventskey', 'calendar').'</h2></div>';
     echo '<div class="filters">';
     echo calendar_filter_controls($view, $getvars, NULL, $courses);
     echo '</div>';
     echo '</div>';
 
     echo '<div class="sideblock">';
-    echo '<div class="header">'.get_string('monthlyview', 'calendar').'</div>';
+    echo '<div class="header"><h2>'.get_string('monthlyview', 'calendar').'</h2></div>';
 
     echo '<div class="minicalendarblock minicalendartop">';
     echo calendar_top_controls('display', array('id' => $courseid, 'm' => $prevmon, 'y' => $prevyr));
