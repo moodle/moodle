@@ -189,9 +189,9 @@
     }
 
 
-    mtrace('Starting grade job ...', '');
+    mtrace('Starting main gradebook job ...');
     grade_cron();
-    mtrace('Done ...');
+    mtrace('done.');
 
 
 /// Run all core cron jobs, but not every time since they aren't too important.
@@ -471,13 +471,13 @@
             }
         }
     }
-    
+
     // run gradebook import/export/report cron
     if ($gradeimports = get_list_of_plugins('grade/import')) {
         foreach ($gradeimports as $gradeimport) {           
-            if (file_exists($CFG->dirroot.'/grade/import/lib.php')) {
-                require_once($CFG->dirroot.'/grade/import/lib.php');
-                $cron_function = 'gradeimport_'.$gradeimport.'_cron';                                    
+            if (file_exists($CFG->dirroot.'/grade/import/'.$gradeimport.'/lib.php')) {
+                require_once($CFG->dirroot.'/grade/import/'.$gradeimport.'/lib.php');
+                $cron_function = 'grade_import_'.$gradeimport.'_cron';                                    
                 if (function_exists($cron_function)) {
                     mtrace("Processing gradebook import function $cron_function ...", '');
                     $cron_function;  
@@ -488,9 +488,9 @@
 
     if ($gradeexports = get_list_of_plugins('grade/export')) {
         foreach ($gradeexports as $gradeexport) {           
-            if (file_exists($CFG->dirroot.'/grade/export/lib.php')) {
-                require_once($CFG->dirroot.'/grade/export/lib.php');
-                $cron_function = 'gradeexport_'.$gradeexport.'_cron';                                    
+            if (file_exists($CFG->dirroot.'/grade/export/'.$gradeexport.'/lib.php')) {
+                require_once($CFG->dirroot.'/grade/export/'.$gradeexport.'/lib.php');
+                $cron_function = 'grade_export_'.$gradeexport.'_cron';                                    
                 if (function_exists($cron_function)) {
                     mtrace("Processing gradebook export function $cron_function ...", '');
                     $cron_function;  
@@ -498,12 +498,12 @@
             }
         }
     }
-    
+
     if ($gradereports = get_list_of_plugins('grade/report')) {
         foreach ($gradereports as $gradereport) {           
-            if (file_exists($CFG->dirroot.'/grade/report/lib.php')) {
-                require_once($CFG->dirroot.'/grade/report/lib.php');
-                $cron_function = 'gradereport_'.$gradereport.'_cron';                                    
+            if (file_exists($CFG->dirroot.'/grade/report/'.$gradereport.'/lib.php')) {
+                require_once($CFG->dirroot.'/grade/report/'.$gradereport.'/lib.php');
+                $cron_function = 'grade_report_'.$gradereport.'_cron';                                    
                 if (function_exists($cron_function)) {
                     mtrace("Processing gradebook report function $cron_function ...", '');
                     $cron_function;  
