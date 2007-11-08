@@ -1,0 +1,89 @@
+Cette distribution partielle contient une refonte du moteur de 
+recherche globalde Moodle.
+
+Le moteur de recherche est capable d'indexer et de rechercher 
+des informations dans un grand nombre de contenus stockés
+dans la plate-forme à travers la manipulation des activités et
+des blocs.
+
+Le moteur de recherche procède à une première indexation des
+ressources disponibles par action de l'administrateur. Une fois
+cette indexation effectuée, le moteur maintient régulièrement les
+indexes, en ajoutant les nouvelles entrées et en nettoyant les 
+entrées obsolètes.
+
+La recherche permet d'obtenir des références d'accès au contexte
+qui diffuse cette information, au nom de l'utilisateur courant.
+Le filtrage des résultats enlève de la liste des réponses toute
+ressource que la situation de l'utilisateur empêcherait de voir
+s'il y accédait dans son contexte habituel.
+
+Mise en oeuvre
+##############
+
+Pour déployer le moteur : 
+
+
+* Copie de fichiers
+
+1. Ajouter les deux librairies fournies aux librairies de Moodle
+2. Ecraser le répertoire "search" par le répertoire fourni
+3. Ecraser le bloc "blocs/search" par le bloc fourni.
+
+* Installation logique
+
+4. Aller dans les notifications administratives et dérouler la procédure d'installation/mise à jour du bloc. L'installation crée la table image
+des documents indexés et utilisés dans le module search.
+
+5. Insérer un nouveau bloc de recherche globale dans la plate-forme
+
+6. Effectuer une recherche vide (en administrateur)
+
+7. Aller sur la page des statistiques
+
+8. Activer l'indexation (indexsplash.php). Attention, si la plate-form contient beaucoup de contenus cette indexation peut être TRES LONGUE.
+
+Pour effectuer des recherches, une fois la première indexation terminée, retourner au bloc de recherche et tenter une recherche.
+
+Eléments pris en charge
+#######################
+
+Dans l'état actuel, les éléments indexés par le moteur sont :
+
+- les entrées de forum
+- les fiches de base de données
+- les commentaires sur fiches de données
+- les entrées de glossaire
+- les commentaires sur entrées de glossaire
+- les ressources natives Moodle
+- les ressources physiques de type MSWord
+- les ressources physiques de type PDF
+- les ressources physiques de type fichier texte (.txt)
+- les ressources physiques de type HTML (.htm et .html)
+- les ressources physiques de type XML (.xml)
+- les ressources physiques de type (Microsoft) Powerpoint (.ppt)
+- les pages de wiki
+- les entités de projet technique
+- les sessions de chat
+
+Extensions
+##########
+
+L'API du moteur de recherche permet désormais : 
+
+- l'indexation de contenus de blocs.
+- l'indexation de modules contenant une information complexe ou de plusieurs types distincts
+- la sécurisation des informations indexées lors des extractions de résultats
+- l'indexation de tout module tiers par ajout d'un fichier php calibré
+- l'indexation de toute nouvelle resource physique par ajout d'un fichier php calibré
+
+Extensions futures
+##################
+
+- De nouvelles prises en charge de contenus tels que les attachements des forums, les attachement des glossaires, ainsi que d'autres modules non encore
+implémentés.
+
+- l'extension mnet de la recherche dans un réseau de moodle interconnectés.
+
+ 
+
