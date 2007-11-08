@@ -1143,6 +1143,20 @@ function grade_cron() {
         rs_close($rs);
     }
 
+    //TODO: do not run this cleanup every cron invocation
+    // cleanup history tables
+        if (!empty($CFG->gradehistorylifetime)) {  // value in days
+            $histlifetime = $now - ($CFG->gradehistorylifetime * 3600 * 24);
+            $tables = array('grade_outcomes_history', 'grade_categories_history', 'grade_items_history', 'grade_grades_history', 'scale_history');
+            foreach ($tables as $table) {
+                if (delete_records_select($table, "timemodified < '$histlifetime'")) {
+                    mtrace("    Deleted old grade history records from '$table'");
+                }
+                
+            }
+        }
+
+
 }
 
 ?>

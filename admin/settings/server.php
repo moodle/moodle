@@ -182,6 +182,21 @@ $temp->add(new admin_setting_configselect('loglifetime', get_string('loglifetime
                                                                                                                                                 60 => get_string('numdays', '', 60),
                                                                                                                                                 30 => get_string('numdays', '', 30))));
 
+
+$temp->add(new admin_setting_configcheckbox('disablegradehistory', get_string('disablegradehistory', 'grades'),
+                                            get_string('configdisablegradehistory', 'grades'), 0, PARAM_INT));
+
+$temp->add(new admin_setting_configselect('gradehistorylifetime', get_string('gradehistorylifetime', 'grades'),
+                                          get_string('configgradehistorylifetime', 'grades'), 0, array(0 => get_string('neverdeletehistory', 'grades'),
+                                                                                                   1000 => get_string('numdays', '', 1000),
+                                                                                                    365 => get_string('numdays', '', 365),
+                                                                                                    180 => get_string('numdays', '', 180),
+                                                                                                    150 => get_string('numdays', '', 150),
+                                                                                                    120 => get_string('numdays', '', 120),
+                                                                                                     90 => get_string('numdays', '', 90),
+                                                                                                     60 => get_string('numdays', '', 60),
+                                                                                                     30 => get_string('numdays', '', 30))));
+
 $ADMIN->add('server', $temp);
 
 

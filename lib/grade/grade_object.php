@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -127,11 +127,9 @@ class grade_object {
     /**
      * Factory method - uses the parameters to retrieve matching instance from the DB.
      * @static final protected
-     * @return mixed object insatnce or false if not found
+     * @return mixed object instance or false if not found
      */
     function fetch_helper($table, $classname, $params) {
-        // we have to do use this hack because of the incomplete OOP implementation in PHP4 :-(
-        // in PHP5 we could do it much better
         if ($instances = grade_object::fetch_all_helper($table, $classname, $params)) {
             if (count($instances) > 1) {
                 // we should not tolerate any errors here - problems might appear later
@@ -149,8 +147,6 @@ class grade_object {
      * @return mixed array of object instances or false if not found
      */
     function fetch_all_helper($table, $classname, $params) {
-        // we have to do use this hack because of the incomplete OOP implementation in PHP4 :-(
-        // in PHP5 we could do it much better
         $instance = new $classname();
 
         $classvars = (array)$instance;
@@ -197,7 +193,12 @@ class grade_object {
      * @return boolean success
      */
     function update($source=null) {
-        global $USER;
+        global $USER, $CFG;
+
+        if (empty($this->id)) {
+            debugging('Can not update grade object, no id!');
+            return false;
+        }
 
         $data = $this->get_record_data();
 
@@ -205,14 +206,15 @@ class grade_object {
             return false;
         }
 
-        // track history
-        // TODO: add history disable switch
-        unset($data->timecreated);
-        $data->action     = GRADE_HISTORY_UPDATE;
-        $data->oldid      = $this->id;
-        $data->source     = $source;
-        $data->userlogged = $USER->id;
-        insert_record($this->table.'_history', addslashes_recursive($data));
+        if (empty($CFG->disablegradehistory)) {
+            unset($data->timecreated);
+            $data->action       = GRADE_HISTORY_UPDATE;
+            $data->oldid        = $this->id;
+            $data->source       = $source;
+            $data->timemodified = time();
+            $data->userlogged   = $USER->id;
+            insert_record($this->table.'_history', addslashes_recursive($data));
+        }
 
         return true;
     }
@@ -223,22 +225,24 @@ class grade_object {
      * @return boolean success
      */
     function delete($source=null) {
-        global $USER;
+        global $USER, $CFG;
 
-        // track history
-        // TODO: add history disable switch
-        if ($data = get_record($this->table, 'id', $this->id)) {
-            unset($data->id);
-            unset($data->timecreated);
-            $data->action       = GRADE_HISTORY_DELETE;
-            $data->oldid        = $this->id;
-            $data->source       = $source;
-            $data->timemodified = time();
-            $data->userlogged   = $USER->id;
+        if (empty($this->id)) {
+            debugging('Can not delete grade object, no id!');
+            return false;
         }
 
+        $data = $this->get_record_data();
+
         if (delete_records($this->table, 'id', $this->id)) {
-            if ($data) {
+            if (empty($CFG->disablegradehistory)) {
+                unset($data->id);
+                unset($data->timecreated);
+                $data->action       = GRADE_HISTORY_DELETE;
+                $data->oldid        = $this->id;
+                $data->source       = $source;
+                $data->timemodified = time();
+                $data->userlogged   = $USER->id;
                 insert_record($this->table.'_history', addslashes_recursive($data));
             }
             return true;
@@ -274,7 +278,7 @@ class grade_object {
      * @return int PK ID if successful, false otherwise
      */
     function insert($source=null) {
-        global $USER;
+        global $USER, $CFG;
 
         if (!empty($this->id)) {
             debugging("Grade object already exists!");
@@ -291,14 +295,17 @@ class grade_object {
         // set all object properties from real db data
         $this->update_from_db();
 
-        // track history
-        // TODO: add history disable switch
-        unset($data->timecreated);
-        $data->action     = GRADE_HISTORY_INSERT;
-        $data->oldid      = $this->id;
-        $data->source     = $source;
-        $data->userlogged = $USER->id;
-        insert_record($this->table.'_history', addslashes_recursive($data));
+        $data = $this->get_record_data();
+
+        if (empty($CFG->disablegradehistory)) {
+            unset($data->timecreated);
+            $data->action       = GRADE_HISTORY_INSERT;
+            $data->oldid        = $this->id;
+            $data->source       = $source;
+            $data->timemodified = time();
+            $data->userlogged   = $USER->id;
+            insert_record($this->table.'_history', addslashes_recursive($data));
+        }
 
         return $this->id;
     }
@@ -338,6 +345,5 @@ class grade_object {
             }
         }
     }
-
 }
 ?>
