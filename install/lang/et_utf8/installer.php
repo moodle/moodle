@@ -84,6 +84,7 @@ $string['environmenterrortodo']='Sa pead lahendama kõik keskkonna probleemid (v
 $string['environmenthead']='Keskkonna kontrollimine...';
 $string['environmentrecommendcustomcheck']='kui see test ebaõnnestub, siis see võib saada potentsiaalseks probleemiks';
 $string['environmentrecommendinstall']='on soovitatav, et oleks installeeritud ja võimaldatud';
+$string['environmentrequirecustomcheck']='see test peab olema edukalt läbitud';
 $string['environmentrequireinstall']='on nõutud, et oleks installeeritud ja võimaldatud';
 $string['environmentrequireversion']="versioon \$a->needed on nõutud, Sinul on jooksmas versioon \$a->current";
 $string['error']='Viga';
