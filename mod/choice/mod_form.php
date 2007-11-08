@@ -49,7 +49,7 @@ class mod_choice_mod_form extends moodleform_mod {
         $mform->setType('limit', PARAM_INT);
 
         $repeateloptions['option']['helpbutton'] = array('options', get_string('modulenameplural', 'choice'), 'choice');
-        $mform->setType('option', PARAM_TEXT);
+        $mform->setType('option', PARAM_CLEANHTML);
 
         $mform->setType('optionid', PARAM_INT);
 
