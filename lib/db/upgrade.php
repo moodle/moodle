@@ -2599,6 +2599,11 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101502);
     }    
 
+    if ($result && $oldversion < 2007110800) {
+        // Update courses that used weekscss to weeks
+        $result = $result && set_field('course', 'format', 'weeks', 'format', 'weekscss');
+    }
+
     return $result;
 }
 
