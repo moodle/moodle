@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20071010" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20071108" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1301,7 +1301,8 @@
         <KEY NAME="itemid" TYPE="foreign" FIELDS="itemid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="itemid" NEXT="rawscaleid"/>
         <KEY NAME="rawscaleid" TYPE="foreign" FIELDS="rawscaleid" REFTABLE="scale" REFFIELDS="id" PREVIOUS="userid" NEXT="usermodified"/>
-        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="rawscaleid"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="rawscaleid" NEXT="userid-itemid"/>
+        <KEY NAME="userid-itemid" TYPE="unique" FIELDS="userid, itemid" COMMENT="one entry per user per item" PREVIOUS="usermodified"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="locked-locktime" UNIQUE="false" FIELDS="locked, locktime" COMMENT="used in grading cron"/>
