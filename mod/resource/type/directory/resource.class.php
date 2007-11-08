@@ -42,6 +42,7 @@ function display() {
 
     $formatoptions = new object();
     $formatoptions->noclean = true;
+    $formatoptions->para = false; // MDL-12061, <p> in html editor breaks xhtml strict
 
     add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
 
