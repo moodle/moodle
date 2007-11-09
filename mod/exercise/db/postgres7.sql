@@ -39,7 +39,8 @@ CREATE TABLE prefix_exercise_submissions (
   timecreated INT8  NOT NULL default '0',
   resubmit INT  NOT NULL default '0',
   mailed INT  NOT NULL default '0',
-  isexercise INT  NOT NULL default '0'
+  isexercise INT  NOT NULL default '0',
+  late INT4 NOT NULL default '0'
 );
 CREATE INDEX prefix_exercise_submissions_userid_idx ON prefix_exercise_submissions (userid);
 CREATE INDEX prefix_exercise_submissions_exerciseid_idx ON prefix_exercise_submissions (exerciseid);

@@ -17,6 +17,19 @@ CREATE TABLE prefix_question_rqp (
 
 CREATE INDEX prefix_question_rqp_question_idx ON prefix_question_rqp (question);
 
+# --------------------------------------------------------
+
+#
+# Table structure for table prefix_question_rqp_servers
+#
+
+CREATE TABLE prefix_question_rqp_servers (
+  id SERIAL PRIMARY KEY,
+  typeid integer NOT NULL default '0',
+  url varchar(255) NOT NULL default '',
+  can_render INT4 NOT NULL default '0',
+  can_author INT4 NOT NULL default '0'
+);
 
 # --------------------------------------------------------
 
