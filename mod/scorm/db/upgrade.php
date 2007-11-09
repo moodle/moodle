@@ -274,6 +274,15 @@ function xmldb_scorm_upgrade($oldversion=0) {
         }
     }
 
+	// Adding missing 'version' field to table scorm
+    if ($result && $oldversion < 2007070301) {
+        $table = new XMLDBTable('scorm');
+        $field = new XMLDBField('version');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '9', null, XMLDB_NOTNULL, null, null, null, 'scorm_12', 'summary');
+
+        $result = $result && add_field($table, $field);
+    }
+
     return $result;
 }
 

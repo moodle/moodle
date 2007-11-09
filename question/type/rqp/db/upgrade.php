@@ -23,14 +23,20 @@ function xmldb_qtype_rqp_upgrade($oldversion=0) {
 
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one 
-/// block of code similar to the next one. Please, delete 
-/// this comment lines once this file start handling proper
-/// upgrade code.
+    if ($result && $oldversion < 2006032201) {
+        $table = new XMLDBTable('question_rqp_servers');
 
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of "/lib/ddllib.php" function calls
-/// }
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table->addFieldInfo('typeid', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, 0);
+        $table->addFieldInfo('url', XMLDB_TYPE_CHAR, 255);
+        $table->addFieldInfo('can_render', XMLDB_TYPE_INTEGER, 2, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, 0);
+        $table->addFieldInfo('can_author', XMLDB_TYPE_INTEGER, 2, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, 0);
+
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('typeid', XMLDB_KEY_FOREIGN, array('typeid'), 'rqp_types', array('id'));
+
+        $result = $result && create_table($table);
+    }
 
     return $result;
 }
