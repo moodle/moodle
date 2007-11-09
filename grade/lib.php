@@ -680,6 +680,12 @@ function grade_get_grades() {
                 if (file_exists($libfile)) {
                     require_once($libfile);
                     $gradefunction = $mod->modname."_grades";
+                    
+                    // MDL-12043, skip this mod there is no such function, to prevent fatal errors.
+                    if (!function_exists($gradefunction)) {
+                        continue; 
+                    }
+                    
                     if ($grades["$mod->cname"]["$mod->modid"]["$mod->cminstance"] = $gradefunction($mod->cminstance)) {
                         // added grades for particular mod
                         // now get the grade_item modifiers ie. scale_grade and extra credit
