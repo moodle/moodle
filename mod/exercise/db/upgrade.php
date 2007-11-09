@@ -28,9 +28,12 @@ function xmldb_exercise_upgrade($oldversion=0) {
 /// this comment lines once this file start handling proper
 /// upgrade code.
 
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of "/lib/ddllib.php" function calls
-/// }
+    if ($result && $oldversion < 2006091202) {
+        $table = new XMLDBTable('exercise_submissions');
+        $field = new XMLDBField('late');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '3', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, 0, 'isexercise');
+        $result = $result && add_field($table, $field);
+    }
 
     return $result;
 }
