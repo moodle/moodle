@@ -439,30 +439,33 @@ function grade_get_formatted_grades() {
                     if ($grades_by_student["$exception->userid"]["$exception->catname"]) {
                         $assgn = get_record($exception->modname, 'id', $exception->cminstance, 'course', $course->id);
                         $grades_by_student["$exception->userid"]['student_data']['totalpoints'] = $grades_by_student["$exception->userid"]['student_data']['totalpoints'] - $all_categories["$exception->catname"]["$assgn->name"]['maxgrade'];
-            //total point should not be smaller than grade against
-            if ($grades_by_student["$exception->userid"]["$exception->catname"]['stats']['totalpoints'] - $all_categories["$exception->catname"]["$assgn->name"]['grade_against'] != 0 ) {
+                        
+                        //total point should not be smaller than grade against
+                        if ($grades_by_student["$exception->userid"]["$exception->catname"]['stats']['totalpoints'] - $all_categories["$exception->catname"]["$assgn->name"]['grade_against'] != 0 ) {
                             $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['totalpoints'] = $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['totalpoints'] - $all_categories["$exception->catname"]["$assgn->name"]['grade_against'];
-            }
+                        }
                         $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['grade_items'] = $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['grade_items'] - 1;
                         if ($grades_by_student["$exception->userid"]["$exception->catname"]['stats']['grade_items'] < 0) {
                             $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['grade_items'] = 0;
-            }
+                        }
                         if ($all_categories["$exception->catname"]['stats']['drop'] == 0) {
                             $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['points'] = $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['points'] - $grades_by_student["$exception->userid"]["$exception->catname"]["$assgn->name"]['grade'];
                         }
+                        
                         $grades_by_student["$exception->userid"]["$exception->catname"]["$assgn->name"]['maxgrade'] = $strexcluded;
                         $grades_by_student["$exception->userid"]["$exception->catname"]["$assgn->name"]['grade'] = $strexcluded;
+                        
                         // see if they are excluded entirely from a category
                         if ($grades_by_student["$exception->userid"]["$exception->catname"]['stats']['totalpoints'] == 0) {
+
                             $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['totalpoints'] = $strexcluded;
                             $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['percent'] = $strexcluded;
                             $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['points'] = $strexcluded;
                             $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['weight'] = $strexcluded;
                             $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['weighted'] = $strexcluded;
                         }
-                    }
-                }
-                else {
+                    }                
+                } else {
                     // the user had exceptions, but was unenrolled from the course... we could delete it here, but we will leave it because the user may be re-added to the course
                 }
             }
@@ -477,7 +480,8 @@ function grade_get_formatted_grades() {
                 foreach($categories as $category => $assignments) {
                     if ($category != 'student_data') {
                         // set the student's total points earned 
-                        if ($grades_by_student["$student"]["$category"]['stats']['points'] != $strexcluded) {
+                        /// MDL-11235, 0 == 'Excluded', so we need to do type equality check too
+                        if ($grades_by_student["$student"]["$category"]['stats']['points'] !== $strexcluded) {
                             if ($grades_by_student["$student"]["$category"]['stats']['points'] != '-') {
                                 $grades_by_student["$student"]['student_data']['points'] = $grades_by_student["$student"]['student_data']['points'] + $grades_by_student["$student"]["$category"]['stats']['points'];
                             }
@@ -487,7 +491,7 @@ function grade_get_formatted_grades() {
                         // set percents and weights for each assignment
                         foreach($assignments as $assignment => $info) {
                             if ($assignment != 'stats') {
-                                if ($grades_by_student["$student"]["$category"]["$assignment"]['grade'] != $strexcluded) {    
+                                if ($grades_by_student["$student"]["$category"]["$assignment"]['grade'] !== $strexcluded) {    
                                     if ($grades_by_student["$student"]["$category"]["$assignment"]['maxgrade'] != 0) {
                                         $grades_by_student["$student"]["$category"]["$assignment"]['percent'] = round($grades_by_student["$student"]["$category"]["$assignment"]['grade']/$grades_by_student["$student"]["$category"]["$assignment"]['maxgrade']*100,2);
                                     }
@@ -521,14 +525,14 @@ function grade_get_formatted_grades() {
                             $grades_by_student["$student"]["$category"]['stats']['weighted'] = round($grades_by_student["$student"]["$category"]['stats']['points']/$grades_by_student["$student"]["$category"]['stats']['totalpoints']*$grades_by_student["$student"]["$category"]['stats']['weight'],2);
                         }
                         else {
-                            if ($grades_by_student["$student"]["$category"]['stats']['totalpoints'] != $strexcluded) {
+                            if ($grades_by_student["$student"]["$category"]['stats']['totalpoints'] !== $strexcluded) {
                                 $grades_by_student["$student"]["$category"]['stats']['percent'] = 0.00;
                                 $grades_by_student["$student"]["$category"]['stats']['weighted'] = 0.00;
                             }
                         }
                                 
                         // set students overall weight (this is what percent they will be graded against)
-                        if ($grades_by_student["$student"]["$category"]['stats']['weight'] != $strexcluded) {
+                        if ($grades_by_student["$student"]["$category"]['stats']['weight'] !== $strexcluded) {
                             $grades_by_student["$student"]['student_data']['weight'] = $grades_by_student["$student"]['student_data']['weight'] + $grades_by_student["$student"]["$category"]['stats']['weight'];
                         }
                         
@@ -543,7 +547,7 @@ function grade_get_formatted_grades() {
                 }
                 
                 // set the percent and weight overall
-                if ($grades_by_student["$student"]['student_data']['totalpoints'] != 0 && $grades_by_student["$student"]['student_data']['totalpoints'] != $strexcluded) {
+                if ($grades_by_student["$student"]['student_data']['totalpoints'] != 0 && $grades_by_student["$student"]['student_data']['totalpoints'] !== $strexcluded) {
                     $grades_by_student["$student"]['student_data']['percent'] = round($grades_by_student["$student"]['student_data']['points']/$grades_by_student["$student"]['student_data']['totalpoints']*100,2);
                     if ($grades_by_student["$student"]['student_data']['weight'] != 0) {
                         $grades_by_student["$student"]['student_data']['weighted'] = round($grades_by_student["$student"]['student_data']['weighted']/$grades_by_student["$student"]['student_data']['weight']*100,2);
