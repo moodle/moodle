@@ -16,12 +16,13 @@
     if (! $course = get_record("course", "id", $id)) {
         error("Course id is incorrect.");
     }
-
+    
     if (! $user = get_record("user", "id", $user)) {
         error("User ID is incorrect");
     }
-
-    require_login($course);
+    
+    //require_login($course);
+    $COURSE = clone($course);
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
     $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
