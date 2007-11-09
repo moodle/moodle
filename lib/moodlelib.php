@@ -4707,6 +4707,7 @@ function places_to_search_for_lang_strings() {
         'gradereport_' => array('grade/report'),
         'gradeimport_' => array('grade/import'),
         'gradeexport_' => array('grade/export'),
+        'profilefield_' => array('user/profile/field'),
         '' => array('mod')
     );
 }
