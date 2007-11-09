@@ -24,6 +24,7 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
         //Use this code to show author's name
         //Comments: Configuration not supported
         $fullname = fullname($user);
+        $by = new object();
         $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
         $by->date = userdate($entry->timemodified);
         echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>' . '<br />';
@@ -67,12 +68,12 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
         echo '<tr valign="top">';
         echo '<td class="entry">';
 
-        //Use this function to print the concept
+        //Use this function to print the concept in a heading <h3>
         //Comments: Configuration not supported
         glossary_print_entry_concept($entry);
 
-        //Line separator to show this template fine. :-)
-        echo "<br />\n";
+        //Line separator not normally needed now.
+        //echo "<br />\n";
 
         //Use this function to show the definition 
         //Comments: Configuration not supported

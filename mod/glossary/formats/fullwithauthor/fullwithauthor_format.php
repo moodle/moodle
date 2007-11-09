@@ -16,18 +16,19 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
         print_user_picture($user->id, $course->id, $user->picture);
         echo '</td>';
         
-        echo '<td class="entryheader">';
+        echo '<th class="entryheader">';
 
-        echo '<span class="concept">';
+        echo '<div class="concept">';
         glossary_print_entry_concept($entry);
-        echo '</span><br />';
+        echo '</div>';
 
         $fullname = fullname($user);
+        $by = new object();
         $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
         $by->date = userdate($entry->timemodified);
         echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>';
 
-        echo '</td>';
+        echo '</th>';
         echo '<td class="entryattachment">';
 
         glossary_print_entry_approval($cm, $entry, $mode);

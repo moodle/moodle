@@ -17,9 +17,9 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
     
         echo '</td>';
         echo '<th class="entryheader">';
-        echo '<span class="concept">';
+        echo '<div class="concept">';
         glossary_print_entry_concept($entry);
-        echo '</span>';
+        echo '</div>';
 
         $fullname = fullname($user);
         $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
