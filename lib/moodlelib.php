@@ -4368,6 +4368,7 @@ function places_to_search_for_lang_strings() {
         'quiz_' => array('mod/quiz/report'),
         'report_' => array($CFG->admin.'/report', 'course/report'),
         'resource_' => array('mod/resource/type'),
+        'profilefield_' => array('user/profile/field'),
         '' => array('mod')
     );
 }
