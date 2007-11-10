@@ -107,7 +107,7 @@ class question_essay_qtype extends default_questiontype {
     function grade_responses(&$question, &$state, $cmoptions) {
         // All grading takes place in Manual Grading
 
-        clean_param($state->responses[''], PARAM_CLEANHTML);
+        $state->responses[''] = clean_param($state->responses[''], PARAM_CLEAN);
         
         $state->raw_grade = 0;
         $state->penalty = 0;
