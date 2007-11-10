@@ -6651,5 +6651,21 @@ function fix_align_rtl($align) {
 }
 
 
+/**
+ * Returns true if the page is displayed in a popup window.
+ * Gets the information from the URL parameter inpopup.
+ *
+ * @return boolean
+ *
+ * TODO Use a central function to create the popup calls allover Moodle and 
+ * TODO In the moment only works with resources and probably questions.
+ */
+function get_in_popup() {
+    $inpopup = optional_param('inpopup', '', PARAM_BOOL);
+    
+    return ($inpopup);
+}
+
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
