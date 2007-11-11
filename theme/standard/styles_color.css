@@ -416,6 +416,10 @@ table.flexible .r1 {
   background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
+/* Accessibility: for Windows High Contrast, partial fix MDL-7493. */
+.sideblock .hide-show a {
+  border:1px solid white;
+}
 
 
 /***
@@ -592,17 +596,20 @@ table.minicalendar {
   border-color:#DDDDDD;
 }
 
-#course-view .weekscss .section,
+#course-view .weeks .section,
+#course-view .topics .section,
 #course-view .section td {
   border-color:#DDDDDD;
 }
 
 /* .content should match the body background, sides are white. */
-#course-view .weekscss .content {
+#course-view .weeks .content ,
+#course-view .topics .content {
   background: #FAFAFA;
 }
 
-#course-view .weekscss .section,
+#course-view .weeks .section,
+#course-view .topics .section,
 #course-view .section td.side {
   background: #FFFFFF;
 }
@@ -616,22 +623,18 @@ table.minicalendar {
 #course-view .section .right {
 }
 
-#course-view .weekscss .current,
+#course-view .weeks .current,
+#course-view .topics .current,
 #course-view .current td.side {
   background: #FFD991;
 }
 
-#course-view .weekscss .hidden,
+#course-view .weeks .hidden,
+#course-view .topics .hidden,
 #course-view .hidden td.side {
   background: #DDDDDD;
 }
 
-
-#course-view .topics {
-}
-
-#course-view .weeks {
-}
 
 #course-view .section .spacer {
 }
@@ -640,7 +643,8 @@ table.minicalendar {
   color: #777777;
 }
 
-#course-view .weekscss .weekdates {
+#course-view .weeks .weekdates ,
+#course-view .topics .weekdates {
   color: #333333;
 }
 
@@ -1066,9 +1070,4 @@ form.mform .fdescription.required {
 }
 form.mform .required .fgroup span label {
   color:#000;
-}
-
-/* Accessibility: for Windows High Contrast, partial fix MDL-7493. */
-.sideblock .hide-show a {
-  border:1px solid white;
 }
