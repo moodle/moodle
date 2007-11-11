@@ -1825,7 +1825,7 @@ border-width:0px;
 .weeks-format .block_calendar_month .minicalendar th,
 .topics-format .block_calendar_month .minicalendar th, 
 .weeks-format .block_calendar_month .minicalendar td,
-.topics-format .block_calendar_month .minicalendar td, {
+.topics-format .block_calendar_month .minicalendar td {
   padding: 0.1em 0 0.1em 1px;
 }
 .weeks-format #middle-column ,
@@ -1999,7 +1999,7 @@ body#course-info .generalbox.info {
 
 .coursebox {
   width: 100%;
-  float:left;
+  /* float:left; */
   margin-bottom: 15px;
   border-width:1px;
   border-style:solid;
