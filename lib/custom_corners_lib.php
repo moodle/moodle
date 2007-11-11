@@ -61,6 +61,12 @@ function print_custom_corners_start($clearfix=false, $return=false, $idbase=null
 function print_custom_corners_end($return=false, $idbase=null) {
     global $THEME;
 
+    if ($THEME->customcornersopen <= 0) {
+    	return '';
+    }
+    
+    $THEME->customcornersopen -= ($THEME->customcornersopen > 0) ? 1 : 0;
+    
 /// Analise if we want ids for the custom corner elements
     $idbb = '';
 
@@ -74,7 +80,6 @@ function print_custom_corners_end($return=false, $idbase=null) {
     $output .= '<div '.$idbb.'class="bb"><div>&nbsp;</div></div>'."\n";
     $output .= '</div>';
     
-    $THEME->customcornersopen -= ($THEME->customcornersopen > 0) ? 1 : 0;
     
     if ($return) {
         return $output;
