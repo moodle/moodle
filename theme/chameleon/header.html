@@ -28,7 +28,7 @@
     <div class="navbar clearfix">
         &nbsp;
     </div>
-<?php } else {  // This is what gets printed on any other page with a heading
+<?php } else if ($heading) {  // This is what gets printed on any other page with a heading
 ?>
     <div id="header" class="clearfix">
       <h1 class="headermain"><?php echo $heading ?></h1>
