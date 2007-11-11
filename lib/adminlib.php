@@ -2928,7 +2928,7 @@ function admin_externalpage_print_header() {
 
                 case 'middle':
         echo '<td id="middle-column">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start();
+        if (!empty($THEME->customcorners)) print_custom_corners_start(true);
                 break;
 
                 case 'right':
