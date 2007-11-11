@@ -389,6 +389,7 @@
             }
             $userresponse = implode(",", $userresponse);
 
+            $response = '';
             if ($ncorrect == count($answers)-2) {  // dont count correct/wrong responses in the total.
                 foreach ($answers as $answer) {
                     if ($answer->response == NULL && $answer->answer != NULL) {
