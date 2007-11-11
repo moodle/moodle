@@ -416,6 +416,10 @@ table.flexible .r1 {
   background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
+/* Accessibility: for Windows High Contrast, partial fix MDL-7493. */
+.sideblock .hide-show a {
+  border:1px solid white;
+}
 
 
 /***
@@ -1066,9 +1070,4 @@ form.mform .fdescription.required {
 }
 form.mform .required .fgroup span label {
   color:#000;
-}
-
-/* Accessibility: for Windows High Contrast, partial fix MDL-7493. */
-.sideblock .hide-show a {
-  border:1px solid white;
 }
