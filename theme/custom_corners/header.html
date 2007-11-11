@@ -15,6 +15,12 @@
     <?php
 
         global $PAGE;
+        
+        if (function_exists('get_in_popup')) {
+            $inpopup = get_in_popup();
+        } else {
+            $inpopup = false;
+        }
 
         // handle pages which get displayed wrong
         // either no custom corners or too much
@@ -53,6 +59,7 @@
                 }
             }
         }
+        
     ?>
 </head>
 
@@ -66,20 +73,20 @@
     <?php if(!empty($infooutput)) { ?>
         <div id="infowrapper"><div id="infooverlay"><?php echo $infooutput; ?></div></div>
     <?php } ?>
-<div id="page">
+<div id="page"<?php echo (' class="'.(($inpopup) ? 'inpopup' : 'notinpopup').'"'); ?>>
 
-<?php if ($home) {  // This is what gets printed on the home page only
+<?php if (!$inpopup) { 
+    if ($home) {  // This is what gets printed on the home page only
 ?>
     <div id="header-home" class="clearfix">
       <?php print_custom_corners_start(); ?>
-          <div class="wraphome">
+          <div class="wraphome clearfix">
               <h1 class="headermain"><?php echo $heading ?></h1>
               <div class="headermenu"><?php echo $menu ?></div>
-              <div class="clearer">&nbsp;</div>
           </div>
       <?php print_custom_corners_end(); ?>
     </div>
-<?php } else {  // This is what gets printed on any other page with a heading
+<?php } else if ($heading) {  // This is what gets printed on any other page with a heading
 ?>
     <div id="header" class="clearfix">
         <?php print_custom_corners_start(); ?>
@@ -94,7 +101,9 @@
     </div>
     <?php print_custom_corners_end(); ?>
     </div>
-<?php } ?>
+<?php }
+    }
+?>
     <!-- END OF HEADER -->
 <div id="content">
     <?php print_custom_corners_start(true, false, 'content'); ?>

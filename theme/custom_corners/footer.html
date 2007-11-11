@@ -1,7 +1,16 @@
 <?php print_custom_corners_end(false, 'content'); ?>
 </div> <!-- end div containerContent -->
 <!-- START OF FOOTER -->
-<?php global $CFG, $COURSE; ?>
+<?php 
+    global $CFG, $COURSE; 
+    if (function_exists('get_in_popup')) {
+        $inpopup = get_in_popup();
+    } else {
+        $inpopup = false;
+    }
+    
+    if (!$inpopup) { 
+?>
 <div id="footer">
     <?php print_custom_corners_start(); ?>
 <?php
@@ -16,7 +25,6 @@
 ?>
     <?php print_custom_corners_end(); ?>
 </div>
-</div>
 <?php 
      $useridarray = array(2 // MD
                           );
@@ -24,8 +32,13 @@
      if (!empty($performanceinfo) && isloggedin() && in_array($USER->id, $useridarray)) {
           echo $performanceinfo;
      }
-?>
 
+     } // end if inpopup
+?>
+</div> <!-- end page div -->
+<?php 
+    print_custom_corners_end();
+?>
 <script type="text/javascript">
 /* <![CDATA[ */
     $(document).ready(function() {
