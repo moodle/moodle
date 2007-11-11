@@ -589,7 +589,8 @@ fieldset.fdate_selector label {
 .mform input, .mform select {
   width: auto;
 }
-.mform ftextarea {
+.mform .ftextarea #id_alltext {
+    width: 100%;
 }
 .mform br {
   clear: left;
