@@ -6660,7 +6660,7 @@ function fix_align_rtl($align) {
  * TODO Use a central function to create the popup calls allover Moodle and 
  * TODO In the moment only works with resources and probably questions.
  */
-function get_in_popup() {
+function is_in_popup() {
     $inpopup = optional_param('inpopup', '', PARAM_BOOL);
     
     return ($inpopup);
