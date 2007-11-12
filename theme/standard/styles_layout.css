@@ -1,3 +1,4 @@
+/* @override http://ubuntu.userver.lan/moodle_19/theme/standard/styles_layout.css */
 /*******************************************************************
  styles_layout.css
 
@@ -2713,7 +2714,9 @@ body.notes .notesgroup {
 }
 
 
-.tabrow0 .here a:link, .tabrow0 .here a:visited {
+.tabrow0 .here a:link, 
+.tabrow0 .here a:visited,
+.tabrow0 .here a.nolink {
   position:relative;
   z-index:102;
 }
@@ -2729,7 +2732,7 @@ body.notes .notesgroup {
 .tabrow0 ul {
   position: absolute;
   left: 0;
-  top: 2.0em;
+  top: 1.95em;
   width: 100%;
   margin: 0;
   padding: 0.25em 0;
