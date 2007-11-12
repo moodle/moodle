@@ -726,6 +726,10 @@ class grade_report_grader extends grade_report {
 
                         $scales = explode(",", $scale->scale);
                         // reindex because scale is off 1
+                        
+                        // MDL-12104 some previous scales might have taken up part of the array
+                        // so this needs to be reset
+                        unset($scaleopt);
                         $i = 0;
                         foreach ($scales as $scaleoption) {
                             $i++;
