@@ -1163,10 +1163,25 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
     if(is_string($SESSION->cal_courses_shown)) {
         $SESSION->cal_courses_shown = intval($SESSION->cal_courses_shown);
     }
-
     if($courseeventsfrom === NULL) {
-        $courseeventsfrom = $SESSION->cal_courses_shown;
+        $courseeventsfrom = $SESSION->cal_courses_shown;    
     }
+    
+    // MDL-9059, $courseeventsfrom can be an int, or an array of ints, or an array of course objects
+    // convert all to array of objects
+    // we probably should do some clean up and make sure that session is set to use the proper form
+    if (is_int($courseeventsfrom)) { // case of an int, e.g. calendar view page
+        $c = array();
+        $c[$courseeventsfrom] = get_record('course', 'id', $courseeventsfrom);
+        $courseeventsfrom = $c;
+    } else if (is_array($courseeventsfrom)) { // case of an array of ints, e.g. course home page
+        foreach ($courseeventsfrom as $i=>$courseid) {
+            if (is_int($courseid)) {
+                $courseeventsfrom[$i] = get_record('course', 'id', $courseid);
+            } 
+        }    
+    }
+
     if($groupeventsfrom === NULL) {
         $groupeventsfrom = $SESSION->cal_courses_shown;
     }
