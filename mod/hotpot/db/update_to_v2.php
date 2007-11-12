@@ -1,4 +1,9 @@
 <?PHP
+if (file_exists("$CFG->dirroot/lib/ddllib.php")) {
+    // Moodle 1.8+
+    include_once "$CFG->dirroot/lib/ddllib.php";
+}
+
 function hotpot_update_to_v2_2() {
     global $CFG;
     $ok = true;
@@ -522,35 +527,69 @@ function hotpot_update_to_v2_from_hotpotatoes() {
 }
 function hotpot_create_table($table) {
     global $CFG;
-    $ok = true;
+
     static $sql;
-    if (empty($sql)) { // first time only
-        $filepath = "$CFG->dirroot/mod/hotpot/db/$CFG->dbtype.sql";
-        if (function_exists('file_get_contents')) {
-            $sql = file_get_contents($filepath);
-        } else { // PHP < 4.3
-            $sql = file($filepath);
-            if (is_array($sql)) {
-                 $sql = implode('', $sql);
-            }
-        }
-        if(empty($sql)) { // $sql==false
-             $sql = '';
-        }
-    }
+    static $xmldb_file;
+
     // check table does not already exist
-    if (!hotpot_db_table_exists($table)) {
-        // extract and execute all CREATE statements relating to this table
-        if (preg_match_all("/CREATE (TABLE|INDEX)(\s[^;]*)? prefix_{$table}(\s[^;]*)?;/s", $sql, $strings)) {
-            foreach ($strings[0] as $string) {
-                $ok = $ok && modify_database('', $string);
+    if (hotpot_db_table_exists($table)) {
+        return true;
+    }
+
+    if (! isset($xmldb_file)) { // first time only
+        if (class_exists('XMLDBFile')) {
+            $xmldb_file = new XMLDBFile("$CFG->dirroot/mod/hotpot/db/install.xml");
+            if (! $xmldb_file->fileExists() || !$xmldb_file->loadXMLStructure() || !$xmldb_file->isLoaded()) {
+                unset($xmldb_file);
             }
-        } else {
-            // no CREATE statements found for this $table
-            $ok = false;
+        }
+        if (empty($xmldb_file)) {
+            $xmldb_file = false;
         }
     }
-    return $ok;
+
+    if ($xmldb_file) {
+        // Moodle 1.8 (and later)
+        $ok = false;
+        foreach ($xmldb_file->xmldb_structure->tables as $xmldb_table) {
+            if ($xmldb_table->name==$table) {
+                $ok = create_table($xmldb_table);
+                break;
+            }
+        }
+        return $ok;
+    } 
+
+    // Moodle 1.7 (and earlier)
+
+    if (! isset($sql)) { // first time only
+        $sqlfilepath = "$CFG->dirroot/mod/hotpot/db/$CFG->dbtype.sql";
+        if (file_exists($sqlfilepath)) {
+            if (function_exists('file_get_contents')) {
+                $sql = file_get_contents($sqlfilepath);
+            } else { // PHP < 4.3
+                $sql = file($sqlfilepath);
+                if (is_array($sql)) {
+                     $sql = implode('', $sql);
+                }
+            }
+        }
+        if (empty($sql)) {
+            $sql = '';
+        }
+    }
+
+    // extract and execute all CREATE statements relating to this table
+    if (preg_match_all("/CREATE (TABLE|INDEX)(\s[^;]*)? prefix_{$table}(\s[^;]*)?;/s", $sql, $strings)) {
+        $ok = true;
+        foreach ($strings[0] as $string) {
+            $ok = $ok && modify_database('', $string);
+        }
+        return $ok;
+    }
+
+    // table could not be created
+    return false;
 }
 function hotpot_transfer_records($oldtable, $table, $foreignkeys, $primarykey, &$new) {
     global $db;
