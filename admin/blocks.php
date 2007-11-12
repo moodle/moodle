@@ -185,7 +185,7 @@
         $count = count_records_sql('SELECT COUNT(*) 
                                         FROM '.$CFG->prefix.'block_instance 
                                         WHERE blockid = '.$blockid.' AND
-                                        pagetype = "course-view"');
+                                        pagetype = \'course-view\'');
         if ($count>0) {
             $blocklist = "<a href=\"{$CFG->wwwroot}/course/search.php?blocklist=$blockid&amp;sesskey={$USER->sesskey}\" ";
             $blocklist .= "title=\"$strshowblockcourse\" >$count</a>";
