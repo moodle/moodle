@@ -16,8 +16,8 @@
 
         global $PAGE;
         
-        if (function_exists('get_in_popup')) {
-            $inpopup = get_in_popup();
+        if (function_exists('is_in_popup')) {
+            $inpopup = is_in_popup();
         } else {
             $inpopup = false;
         }
