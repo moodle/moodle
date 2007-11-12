@@ -100,7 +100,7 @@ function execute_sql($command, $feedback=true) {
             notify('<strong>' . get_string('error') . '</strong>');
         }
         // these two may go to difference places
-        debugging($db->ErrorMsg() .'<br /><br />'. $command);
+        debugging($db->ErrorMsg() .'<br /><br />'. s($command));
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $command");
@@ -681,7 +681,7 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
         $rs = $db->Execute($sql);
     }
     if (!$rs) {
-        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
+        debugging($db->ErrorMsg() .'<br /><br />'. s($sql));
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql with limits ($limitfrom, $limitnum)");
@@ -1095,7 +1095,7 @@ function get_field_sql($sql) {
 /// Strip potential LIMIT uses arriving here, debugging them (MDL-7173)
     $newsql = preg_replace('/ LIMIT [0-9, ]+$/is', '', $sql);
     if ($newsql != $sql) {
-        debugging('Incorrect use of LIMIT clause (not cross-db) in call to get_field_sql(): ' . $sql, DEBUG_DEVELOPER);
+        debugging('Incorrect use of LIMIT clause (not cross-db) in call to get_field_sql(): ' . s($sql), DEBUG_DEVELOPER);
         $sql = $newsql;
     }
 
@@ -1152,7 +1152,7 @@ function get_fieldset_sql($sql) {
 
     $rs = $db->Execute($sql);
     if (!$rs) {
-        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
+        debugging($db->ErrorMsg() .'<br /><br />'. s($sql));
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
@@ -1293,7 +1293,7 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
     $sql = 'UPDATE '. $CFG->prefix . $table .' SET '.$update.' '.$select;
     $rs = $db->Execute($sql);
     if (!$rs) {
-        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
+        debugging($db->ErrorMsg() .'<br /><br />'. s($sql));
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
@@ -1342,7 +1342,7 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
     $sql = 'DELETE FROM '. $CFG->prefix . $table .' '. $select;
     $rs = $db->Execute($sql);
     if (!$rs) {
-        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
+        debugging($db->ErrorMsg() .'<br /><br />'. s($sql));
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
@@ -1380,7 +1380,7 @@ function delete_records_select($table, $select='') {
     $sql = 'DELETE FROM '. $CFG->prefix . $table .' '. $select;
     $rs = $db->Execute($sql);
     if (!$rs) {
-        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
+        debugging($db->ErrorMsg() .'<br /><br />'. s($sql));
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
@@ -1519,7 +1519,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
 /// Run the SQL statement
     if (!$rs = $db->Execute($insertSQL)) {
-        debugging($db->ErrorMsg() .'<br /><br />'.$insertSQL);
+        debugging($db->ErrorMsg() .'<br /><br />'.s($insertSQL));
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $insertSQL");
@@ -1673,7 +1673,7 @@ function update_record($table, $dataobject) {
         }
 
         if (!$rs = $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $update .' WHERE id = \''. $dataobject->id .'\'')) {
-            debugging($db->ErrorMsg() .'<br /><br />UPDATE '. $CFG->prefix . $table .' SET '. $update .' WHERE id = \''. $dataobject->id .'\'');
+            debugging($db->ErrorMsg() .'<br /><br />UPDATE '. $CFG->prefix . $table .' SET '. s($update) .' WHERE id = \''. $dataobject->id .'\'');
             if (!empty($CFG->dblogerror)) {
                 $debug=array_shift(debug_backtrace());
                 error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  UPDATE $CFG->prefix$table SET $update WHERE id = '$dataobject->id'");
@@ -2078,7 +2078,7 @@ function column_type($table, $column) {
 
     $sql = 'SELECT '.$column.' FROM '.$CFG->prefix.$table.' WHERE 1=2';
     if(!$rs = $db->Execute($sql)) {
-        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
+        debugging($db->ErrorMsg() .'<br /><br />'. s($sql));
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
@@ -2394,7 +2394,7 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
             if (!$db->UpdateClob($CFG->prefix.$table, $key, $value, $sqlcondition)) {
                 $status = false;
                 $statement = "UpdateClob('$CFG->prefix$table', '$key', '" . substr($value, 0, 100) . "...', '$sqlcondition')";
-                debugging($db->ErrorMsg() ."<br /><br />$statement");
+                debugging($db->ErrorMsg() ."<br /><br />".s($statement));
                 if (!empty($CFG->dblogerror)) {
                     $debug=array_shift(debug_backtrace());
                     error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $statement");
@@ -2416,7 +2416,7 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
             if(!$db->UpdateBlob($CFG->prefix.$table, $key, $value, $sqlcondition)) {
                 $status = false;
                 $statement = "UpdateBlob('$CFG->prefix$table', '$key', '" . substr($value, 0, 100) . "...', '$sqlcondition')";
-                debugging($db->ErrorMsg() ."<br /><br />$statement");
+                debugging($db->ErrorMsg() ."<br /><br />".s($statement));
                 if (!empty($CFG->dblogerror)) {
                     $debug=array_shift(debug_backtrace());
                     error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $statement");
