@@ -1,7 +1,7 @@
 /*******************************************************************
  styles_color.css
-  
- This CSS file contains all color definitions like 
+
+ This CSS file contains all color definitions like
  background-color, font-color, border-color etc.
 
  Styles are organised into the following sections:
@@ -17,6 +17,7 @@
   doc
   login
   message
+  question
   tabs
   user
 
@@ -45,7 +46,7 @@ a:hover {
 a.autolink:link,
 a.autolink:visited {
   color:#000000;
-  background-color: #DDDDDD;
+  background: #DDDDDD;
 }
 
 a.autolink.glossary:hover {
@@ -79,7 +80,8 @@ div.header {
 }
 
 table.formtable tbody th {
-  background-color: none;
+  background-color: transparent;
+  background-image: none;
 }
 
 .highlight {
@@ -87,15 +89,15 @@ table.formtable tbody th {
 }
 
 .highlight2 {
-  color:#AA0000;/* highlight missing terms in forum search */
+  color:#AA0000; /* highlight missing terms in forum search */
 }
 
 /* Alternate rows even */
-.r0 {  
+.r0 {
 }
 
 /* Alternate rows odd */
-.r1 {  
+.r1 {
 }
 
 /* notification messages (can be good or bad) */
@@ -105,20 +107,21 @@ table.formtable tbody th {
 .notifysuccess {
   color:#006600;
 }
+.notifytiny {
+  color:#000044;
+}
 
 #admin-auth_config .required {
   background-color:#DDDDDD;
 }
 
-.generalbox .generalboxcontent {
+.generalbox {
   border-color:#9999FF;
   background-color:#FFFFFF;
 }
-
 .informationbox {
   border-color:#9999FF;
 }
-
 .feedbackbox {
   border-color: #888888;
 }
@@ -148,12 +151,12 @@ table.formtable tbody th {
 }
 
 .sitetopiccontent {
-  border-color:#DDDDDD;
   background-color:#FFFFFF;
   border-color:#9999FF;
 }
 
-.dimmed_text {
+.dimmed_text,
+.dimmed_text a {
   color:#AAAAAA;
 }
 
@@ -162,12 +165,12 @@ table.formtable tbody th {
 }
 
 .unread {
-  background-color: #FFD991;
-} 
+  background: #FFD991;
+}
 
 .censoredtext {
   color:#000000;
-  background-color:#000000;
+  background:#000000;
 }
 
 
@@ -184,26 +187,63 @@ table.formtable tbody th {
 }
 
 
+.generaltable .cell {
+  background-color:#FFFFFF;
+  border-color:#EEEEEE;
+}
+
+.generaltable {
+  border-color:#EEEEEE;
+}
+
+
 
 /***
  *** Header
  ***/
 
-.breadcrumb .sep {
+.breadcrumb .sep, #admin-report-simpletest-index .sep {
   color:#6666CC;
 }
+
+.navigation select {
+  background-color:#FFFFFF;
+}
+
+.navigation optgroup {
+  background-color:#EEEEEE;
+}
+
+.navigation optgroup option {
+  background-color:#FFFFFF;
+}
+
 /***
  *** Footer
  ***/
 
-.homelink a:link,
+/*Accessibility: .debugwarn */
+.debugwarn {
+  text-align: center;
+  background: #FDD;
+}
+
+homelink a:link,
 .homelink a:visited {
-  background-color: #FFFFFF;
   color: #000066;
+  background: #FFFFFF;
   border-top: 1px solid #cecece;
   border-bottom: 2px solid #4a4a4a;
   border-left: 1px solid #cecece;
   border-right: 2px solid #4a4a4a;
+}
+.homelink a:hover {
+  color: #FF0000;
+  background: #FFFFFF;
+  border-bottom: 1px solid #cecece;
+  border-top: 2px solid #4a4a4a;
+  border-right: 1px solid #cecece;
+  border-left: 2px solid #4a4a4a;
 }
 
 
@@ -211,8 +251,17 @@ table.formtable tbody th {
  *** Admin
  ***/
 
+.admin .generalboxcontent {
+  background-color:#EEEEEE;
+}
+
+.admin .generalbox {
+  border-color:#9999FF;
+  background-color:#EEEEEE;
+}
+
 .admin .informationbox {
-  border-color:#BBBBBB;
+  border-color:#9999FF;
   background-color:#FFFFFF;
 }
 
@@ -242,25 +291,42 @@ table.flexible .r1 {
   background-color: #fafafa;
 }
 
-body#admin-lang .generalbox {
-  border-color:#9999FF;
-  background-color:#FFFFFF;
+#admin-report-simpletest-index span.notice {
+  color: teal;
 }
 
-#adminsettings {
-  background-color: #FFFFFF;
-  border-color: #9999FF;
-  color: #000066;
+#admin-report-simpletest-index b.pass {
+  color: green;
+}
+
+#admin-report-simpletest-index b.fail, b.exception {
+  color: red;
+}
+
+#admin-report-simpletest-index .exception, .exception pre {
+  background-color: #fdd;
+}
+
+#admin-report-simpletest-index .unittestsummary {
+  color: white;
+}
+
+#admin-report-simpletest-index .unittestsummary.failed {
+  background-color: red;
+}
+
+#admin-report-simpletest-index .unittestsummary.passed {
+  background-color: green;
 }
 
 #adminsettings fieldset {
-  background-color: #FFFFFF;
-  border-color: #9999FF;
-  color: #000066;
+    background-color: #FFFFFF;
+    border-color: #9999FF;
+    color: #000066;
 }
 
 #adminsettings .form-shortname {
-  color: #888888;
+    color: #888;
 }
 
 .block_admin_tree.sideblock .link.current {
@@ -268,21 +334,70 @@ body#admin-lang .generalbox {
   color: #FFFFFF;
 }
 
+#admin-lang .translator {
+  border-color: #dddddd;
+}
+
+#admin-lang .translator tr.r0 {
+  background-color: #f0f0f0;
+}
+
+#admin-lang .translator tr.r1 {
+  background-color: #fafafa;
+}
+
+#admin-lang .translator .strkey {
+  color: #666666;
+}
+
+#admin-lang .translator .bothmissing {
+  background-color: #ef6868;
+}
+
+#admin-lang .translator .mastermissing {
+  background-color: #feff7f;
+}
+
+#admin-lang .translator .localdifferent {
+  background-color: #aaffaa;
+}
+
+.environmenttable .error {
+    background-color : red;
+    color : inherit;
+}
+
+.environmenttable .warn {
+    background-color : yellow;
+}
+
+.environmenttable .ok {
+    background-color : lime;
+}
+
+#admin-uploaduser .uuinfo {
+    background-color: #8e8;
+}
+
+#admin-uploaduser .uuwarning {
+    background-color: #ee8;
+}
+
+#admin-uploaduser .uuerror {
+    background-color: #e99;
+}
+
 /***
  *** Blocks
  ***/
 
-.sideblock {
-  border-color:#9999FF;
-}
-
 .sideblock .header {
-  border-color: #dddddd;
+  border-color: #9999FF;
 }
 
 .sideblock .content {
-  border-color: #dddddd;
-  background-color:#FCFCFC;
+  border-color: #9999FF;
+  background-color:#FFFFFF;
 }
 
 .sideblock .content hr {
@@ -303,29 +418,25 @@ body#admin-lang .generalbox {
   background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
-.blockconfigtable {
-  background-color:#FFFFFF;
-  border-left:1px solid;
-  border-right:1px solid;
-  border-bottom:1px solid;
-  border-color:#AAAAAA;
+/* Accessibility: for Windows High Contrast, partial fix MDL-7493. */
+.sideblock .hide-show a {
+  border:1px solid white;
 }
-
 
 /***
  *** Blogs
  ***/
 
 .blogpost.blogdraft .content {
-  background-color:#FFFFFF;
+  background-color:#EEEEEE;
 }
 
 .block_blog_tags .official {
-  color: #0000FF;
+  color: #0000cc;
 }
 
 .block_blog_tags .personal {
-  color: #0066CC;
+  color: #666699;
 }
 
 
@@ -361,6 +472,12 @@ table.minicalendar {
   color:#999999;
 }
 
+/*Accessibility: increase contrast, darker link/weekend colors, lighter event backgrounds. */
+.minicalendar a,
+.calendarmonth a {
+  color:#000077;
+}
+
 #calendar .event_global,
 .minicalendar .event_global,
 .block_calendar_month .event_global {
@@ -374,6 +491,7 @@ table.minicalendar {
   border-color:#FF9966 !important;
   background-color:#FF9966;
 }
+
 
 #calendar .event_group,
 .minicalendar .event_group,
@@ -401,6 +519,24 @@ table.minicalendar {
   border-bottom-color:#FF9966 !important;
 }
 
+#calendar .duration_course0,
+.minicalendar .duration_course0 {
+  border-top-color:#FF9966 !important;
+  border-bottom-color:#FF9966 !important;
+}
+
+#calendar .duration_course1,
+.minicalendar .duration_course1 {
+  border-top-color:#0099FF !important;
+  border-bottom-color:#0099FF !important;
+}
+
+#calendar .duration_course2,
+.minicalendar .duration_course2 {
+  border-top-color:#FFFF00 !important;
+  border-bottom-color:#FFFF00 !important;
+}
+
 #calendar .duration_group,
 .minicalendar .duration_group {
   border-top-color:#FBBB23 !important;
@@ -423,6 +559,11 @@ table.minicalendar {
   border-color:#000000 !important;
 }
 
+#calendar .nottoday,
+.minicalendar .nottoday {
+  border-color:#eeeeee;
+}
+
 .cal_popup_fg {
   background-color:#FFFFFF;
 }
@@ -435,9 +576,12 @@ table.minicalendar {
 #calendar .maincalendar .filters table,
 #calendar .sidecalendar .filters table,
 .block_calendar_month .filters table {
-  background-color: #FFFFFF;
+  background-color: #EEEEEE;
 }
 
+#calendar td.sidecalendar .sideblock {
+  border-color: #DDDDDD;
+}
 
 
 /***
@@ -454,16 +598,25 @@ table.minicalendar {
   border-color:#9999FF;
 }
 
+#course-view .weeks .section,
+#course-view .topics .section,
 #course-view .section td {
   border-color:#9999FF;
 }
 
-#course-view .section .content {
+/* .content should match the body background, sides are white. */
+#course-view .weeks .content ,
+#course-view .topics .content {
   background-color: #FFFFFF;
 }
 
+#course-view .weeks .section,
+#course-view .topics .section,
+#course-view .section td.side {
+  background: #FFFFFF;
+}
+
 #course-view .section .side {
-  background-color: #FFFFFF;
 }
 
 #course-view .section .left {
@@ -472,20 +625,29 @@ table.minicalendar {
 #course-view .section .right {
 }
 
-#course-view .current .side{
-  background-color: #FFD991;
+#course-view .weeks .current,
+#course-view .topics .current,
+#course-view .current td.side {
+  background: #FFD991;
 }
 
-#course-view .topics {
+#course-view .weeks .hidden,
+#course-view .topics .hidden,
+#course-view .hidden td.side {
+  background: #DDDDDD;
 }
 
-#course-view .weeks {
-}
 
 #course-view .section .spacer {
 }
 
 #course-view .section .weekdates {
+  color: #777777;
+}
+
+#course-view .weeks .weekdates ,
+#course-view .topics .weekdates {
+  color: #333333;
 }
 
 .categoryboxcontent,
@@ -497,6 +659,7 @@ body#course-user .section {
   border-color:#AAAAAA;
 }
 
+#admin-report .plugin,
 #course-report .plugin,
 #course-import .plugin {
   margin-bottom: 20px;
@@ -536,6 +699,11 @@ body#grade-index .grades .r1 {
   background-color: #f0f0f0;
 }
 
+/* grade edit */
+
+.grade-edit-tree .moving {
+  background-color: #E8EEF7;
+}
 
 /***
  *** Login
@@ -545,10 +713,6 @@ body#grade-index .grades .r1 {
 .loginbox.twocolumns .loginpanel,
 .loginbox .subcontent {
   border-color:#9999FF;
-}
-
-.loginbox .content {
-  background-color: #FFFFFF;
 }
 
 
@@ -561,26 +725,61 @@ table.message_search_results td {
 }
 
 .message.other .author {
-  color: #8888CC;
+  color: #000066;
 }
 
 .message.me .author {
-  color: #999999;
+  color: #555555;
 }
 
 .message .time {
-  color: #999999;
+  color: #555555;
 }
 
 .message .content {
 }
 
 /***
+ *** Question
+ ***/
+
+.que {
+    border-color: #DDD;
+}
+.que .r0 {
+    background-color: #F5F5F5;
+}
+.que .r1 {
+    background-color: #EEE;
+}
+.calculated .answer,
+.numerical .answer,
+.shortanswer .answer {
+    background-color: #EEE;
+}
+.que .feedback {
+  border-color: #DDD;
+}
+.que .incorrect {
+}
+
+.que.multianswer .incorrect {
+    background-color: #faa;
+}
+.que .partiallycorrect {
+    background-color: #ff9;
+}
+.que .correct {
+    background-color: #afa;
+}
+
+
+/***
  *** Logs
  ***/
 
 .logtable .r1 {
-  background-color:#FFFFFF;
+  background-color:#EEEEEE;
 }
 
 
@@ -588,81 +787,44 @@ table.message_search_results td {
  *** Tabs
  ***/
 
-.tablink a:link,
-.tablink a:visited {
-  color:#888888;
-}
 
-.selected .tablink a:link,
-.selected .tablink a:visited {
-  color:#000066;
-}
-.tabs .side,
-.tabrow td {
-  border-color: #AAAAAA;
-}
-.tabrow td {
-  background:url(pix/tab/left.gif) top left no-repeat;
-}
-.tabrow td .tablink {
-  background:url(pix/tab/right.gif) top right no-repeat;
-}
-.tabrow td:hover {
-  background-image:url(pix/tab/left_hover.gif);
-}
-.tabrow td:hover .tablink {
-  background-image:url(pix/tab/right_hover.gif);
-}
-.tabrow .last {
-  background: transparent url(pix/tab/right_end.gif) top right no-repeat;
-}
-.tabrow .selected {
-  background:url(pix/tab/left_active.gif) top left no-repeat;
-}
-.tabrow .selected .tablink {
-  background:url(pix/tab/right_active.gif) top right no-repeat;
-}
-.tabrow td.selected:hover {
-  background-image:url(pix/tab/left_active_hover.gif);
-}
-.tabrow td.selected:hover .tablink {
-  background-image:url(pix/tab/right_active_hover.gif);
-}
-.tabs .r0,
-.tabs .r1 {
-  background-color: #AAAAFF;
-}
 
 /***
  *** User
  ***/
 
 .userpicture {
-  background-color: #FFFFFF;
 }
 
 .userinfobox {
   border-color: #DDDDDD;
-  background-color: #FFFFFF;
 }
 .groupinfobox {
   border-color: #DDDDDD;
-}
-
-#user-edit .formtable {
-  background-color: #FFFFFF;
 }
 
 /***
  *** Modules: Chat
  ***/
 
+#mod-chat-gui_basic .text,
 #mod-chat-gui_header_js-jsupdate .text {
   color:#000
 }
+
+#mod-chat-gui_basic .event,
+#mod-chat-gui_basic .title,
 #mod-chat-gui_header_js-jsupdate .event,
 #mod-chat-gui_header_js-jsupdate .title {
   color:#888
+}
+
+#mod-chat-gui_header_js-chatinput .wait {
+    background: #dddddd;
+}
+
+#mod-chat-view #chatcurrentusers .idletime {
+  color: #888888;
 }
 
 /***
@@ -679,11 +841,11 @@ table.message_search_results td {
 }
 
 .forumpost .content {
-  background-color: #FFFFFF;
+  background: #FFFFFF;
 }
 
 .forumpost .left {
-  background-color:#EEEEEE;
+  background:#EEEEEE;
 }
 
 .forumpost .topic {
@@ -691,11 +853,11 @@ table.message_search_results td {
 }
 
 .forumpost .starter {
-  background-color:#EEEEEE;
+  background:#DDDDDD;
 }
 
 .forumheaderlist .discussion .starter {
-  background-color:#EEEEEE;
+  background:#DDDDDD;
 }
 
 .forumheaderlist td {
@@ -707,21 +869,22 @@ table.message_search_results td {
 }
 
 .forumthread .unread {
-  background-color: #FFD991;
+  background: #FFD991;
 }
 #mod-forum-discuss .forumpost {
-  background-color: none;
+  background: none;
 }
 
 #mod-forum-discuss .forumpost.unread .content {
   border-color: #FFD991;
-} 
+}
 
 #mod-forum-discuss .forumthread .unread {
-} 
+}
 
 #mod-forum-index .unread {
 }
+
 
 /***
  *** Modules: Glossary
@@ -761,6 +924,10 @@ table.message_search_results td {
 
 }
 
+#mod-glossary-report .generalbox .teacher {
+  background: #F0F0F0;
+}
+
 .glossarycategoryheader {
   background-color: #dddddd;
 }
@@ -791,21 +958,20 @@ table.message_search_results td {
  *** Modules: Quiz
  ***/
 
-body#mod-quiz-report table#attempts td {
-  border-color: #dddddd;
-}
-body#mod-quiz-report table#attempts .r1 {
-  background-color: #FFFFFF;
+table.quizattemptsummary .bestrow td {
+  background-color: #e8e8e8;
 }
 
+table.quizreviewsummary th.cell {
+  background: #f0f0f0;
+}
+table.quizreviewsummary td.cell {
+  background: #fafafa;
+}
 
 /***
  *** Modules: Resource
  ***/
-
-#mod-resource-view table {
-  background-color: #FFFFFF;
-}
 
 .ims-nav-dimmed {
   color: #AAAAAA;
@@ -835,6 +1001,11 @@ body#mod-quiz-report table#attempts .r1 {
   border-left: 2px solid #4a4a4a;
 }
 
+#ims-contentframe,
+#ims-contentframe-no-nav {
+  border-color: #cecece;
+}
+
 
 /***
  *** Modules: Scorm
@@ -845,7 +1016,7 @@ body#mod-quiz-report table#attempts .r1 {
  ***/
 
 #mod-survey-view .r0 {
-  background-color: #FFFFFF;
+  background-color: #EEEEEE;
 }
 #mod-survey-view .r1 {
   background-color: #DDDDDD;
@@ -870,4 +1041,36 @@ body#mod-quiz-report table#attempts .r1 {
 
 .error {
   color:#ff0000;
+}
+
+#admin-roles-override .capcurrent {
+  background-color:#FFFFFF;
+  border: 1px solid #cecece;
+}
+
+#admin-roles-manage .capdefault {
+  background-color:#dddddd;
+  border: 1px solid #cecece;
+}
+
+#admin-roles-manage .rolecap,
+#admin-roles-override .rolecap {
+  border:none;
+  border-bottom:1px solid;
+  border-bottom-color: #cecece;
+}
+
+#admin-roles-manage .rolecap .cap-desc .cap-name,
+#admin-roles-override .rolecap .cap-desc .cap-name {
+  color: #888;
+}
+
+form.mform .required label {
+  color:#a00;
+}
+form.mform .fdescription.required {
+  color:#a00;
+}
+form.mform .required .fgroup span label {
+  color:#000;
 }
