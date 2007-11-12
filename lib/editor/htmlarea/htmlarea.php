@@ -801,12 +801,18 @@ HTMLArea.prototype.generate = function () {
     var width = (this.config.width == "auto" ? (this._toolbar.offsetWidth) : this.config.width);
     width = Math.max(parseInt(width), 588);
 
+    width = String(width);
+    if (width.match(/^\d+$/)) { // is this a pure int? if so, let it be in px
+        width=width+"px";
+    }
+
     if (!HTMLArea.is_ie) {
         height -= 2;
         width -= 2;
     }
 
-    iframe.style.width = width + "px";
+    iframe.style.width = width;
+
     if (this.config.sizeIncludesToolbar) {
         // substract toolbar height
         height -= this._toolbar.offsetHeight;
