@@ -1,4 +1,9 @@
 <?PHP
+if (file_exists("$CFG->dirroot/lib/ddllib.php")) {
+    // Moodle 1.8+
+    include_once "$CFG->dirroot/lib/ddllib.php";
+}
+
 function hotpot_update_to_v2_2() {
     global $CFG;
     $ok = true;
@@ -10,7 +15,7 @@ function hotpot_update_to_v2_2() {
         $index = "{$CFG->prefix}{$table}_{$field}_idx";
     } else {
         $index = "{$table}_{$field}_idx";
-    }
+	}
     hotpot_db_delete_index("{$CFG->prefix}$table", $index);
     
     // add new hotpot_questions.md5key field (and index)
@@ -34,7 +39,7 @@ function hotpot_update_to_v2_2() {
         $index = "{$CFG->prefix}{$table}_{$field}_idx";
     } else {
         $index = "{$table}_{$field}_idx";
-    }
+	}
     hotpot_db_delete_index("{$CFG->prefix}$table", $index);
 
     // add new hotpot_strings.md5key field (and index)
@@ -61,6 +66,7 @@ function hotpot_update_to_v2_1_21() {
         // ensure setting of default values on certain fields
         // this was originally done in postgres7.php, but was found to be incompatible with PG7 :-(
         $table="hotpot";
+        execute_sql("UPDATE {$CFG->prefix}$table SET studentfeedbackurl = '' WHERE studentfeedbackurl IS NULL");
         $ok = $ok && hotpot_db_update_field_type($table, '', 'studentfeedbackurl', 'VARCHAR', 255, '',         'NOT NULL', '');
         $ok = $ok && hotpot_db_update_field_type($table, '', 'studentfeedback',    'INTEGER', 4,   'UNSIGNED', 'NOT NULL', 0);
         $ok = $ok && hotpot_db_update_field_type($table, '', 'clickreporting',     'INTEGER', 4,   'UNSIGNED', 'NOT NULL', 0);
@@ -77,7 +83,9 @@ function hotpot_update_to_v2_1_21() {
         $ok = $ok && hotpot_db_update_field_type($table, '', 'score',     'INTEGER', 4,   'UNSIGNED', 'NOT NULL', 0);
         $ok = $ok && hotpot_db_update_field_type($table, '', 'weighting', 'INTEGER', 4,   'UNSIGNED', 'NOT NULL', 0);
         $ok = $ok && hotpot_db_update_field_type($table, '', 'correct',   'VARCHAR', 255, '',         'NOT NULL', '');
+        execute_sql("UPDATE {$CFG->prefix}$table SET wrong = '' WHERE wrong IS NULL");
         $ok = $ok && hotpot_db_update_field_type($table, '', 'wrong',     'VARCHAR', 255, '',         'NOT NULL', '');
+        execute_sql("UPDATE {$CFG->prefix}$table SET ignored = '' WHERE ignored IS NULL");
         $ok = $ok && hotpot_db_update_field_type($table, '', 'ignored',   'VARCHAR', 255, '',         'NOT NULL', '');
         $ok = $ok && hotpot_db_update_field_type($table, '', 'hints',     'INTEGER', 4,   'UNSIGNED', 'NOT NULL', 0);
         $ok = $ok && hotpot_db_update_field_type($table, '', 'clues',     'INTEGER', 4,   'UNSIGNED', 'NOT NULL', 0);
@@ -270,7 +278,7 @@ function hotpot_update_to_v2_1_2() {
         GROUP BY userid, hotpot
         HAVING COUNT(*)>1 AND MIN(status)=1
     ");
-    if ($rs && !$rs->EOF) {
+    if ($rs && $rs->RecordCount()) {
         $records = $rs->GetArray();
 
         // start message to browser
@@ -519,35 +527,69 @@ function hotpot_update_to_v2_from_hotpotatoes() {
 }
 function hotpot_create_table($table) {
     global $CFG;
-    $ok = true;
+
     static $sql;
-    if (empty($sql)) { // first time only
-        $filepath = "$CFG->dirroot/mod/hotpot/db/$CFG->dbtype.sql";
-        if (function_exists('file_get_contents')) {
-            $sql = file_get_contents($filepath);
-        } else { // PHP < 4.3
-            $sql = file($filepath);
-            if (is_array($sql)) {
-                 $sql = implode('', $sql);
-            }
-        }
-        if(empty($sql)) { // $sql==false
-             $sql = '';
-        }
-    }
+    static $xmldb_file;
+
     // check table does not already exist
-    if (!hotpot_db_table_exists($table)) {
-        // extract and execute all CREATE statements relating to this table
-        if (preg_match_all("/CREATE (TABLE|INDEX)(\s[^;]*)? prefix_{$table}(\s[^;]*)?;/s", $sql, $strings)) {
-            foreach ($strings[0] as $string) {
-                $ok = $ok && modify_database('', $string);
+    if (hotpot_db_table_exists($table)) {
+        return true;
+    }
+
+    if (! isset($xmldb_file)) { // first time only
+        if (class_exists('XMLDBFile')) {
+            $xmldb_file = new XMLDBFile("$CFG->dirroot/mod/hotpot/db/install.xml");
+            if (! $xmldb_file->fileExists() || !$xmldb_file->loadXMLStructure() || !$xmldb_file->isLoaded()) {
+                unset($xmldb_file);
             }
-        } else {
-            // no CREATE statements found for this $table
-            $ok = false;
+        }
+        if (empty($xmldb_file)) {
+            $xmldb_file = false;
         }
     }
-    return $ok;
+
+    if ($xmldb_file) {
+        // Moodle 1.8 (and later)
+        $ok = false;
+        foreach ($xmldb_file->xmldb_structure->tables as $xmldb_table) {
+            if ($xmldb_table->name==$table) {
+                $ok = create_table($xmldb_table);
+                break;
+            }
+        }
+        return $ok;
+    } 
+
+    // Moodle 1.7 (and earlier)
+
+    if (! isset($sql)) { // first time only
+        $sqlfilepath = "$CFG->dirroot/mod/hotpot/db/$CFG->dbtype.sql";
+        if (file_exists($sqlfilepath)) {
+            if (function_exists('file_get_contents')) {
+                $sql = file_get_contents($sqlfilepath);
+            } else { // PHP < 4.3
+                $sql = file($sqlfilepath);
+                if (is_array($sql)) {
+                     $sql = implode('', $sql);
+                }
+            }
+        }
+        if (empty($sql)) {
+            $sql = '';
+        }
+    }
+
+    // extract and execute all CREATE statements relating to this table
+    if (preg_match_all("/CREATE (TABLE|INDEX)(\s[^;]*)? prefix_{$table}(\s[^;]*)?;/s", $sql, $strings)) {
+        $ok = true;
+        foreach ($strings[0] as $string) {
+            $ok = $ok && modify_database('', $string);
+        }
+        return $ok;
+    }
+
+    // table could not be created
+    return false;
 }
 function hotpot_transfer_records($oldtable, $table, $foreignkeys, $primarykey, &$new) {
     global $db;
@@ -921,7 +963,7 @@ function hotpot_db_index_exists($table, $index, $feedback=false) {
     switch (strtolower($CFG->dbfamily)) {
         case 'mysql' : 
             $rs = $db->Execute("SHOW INDEX FROM `$table`");
-            if ($rs && !$rs->EOF) {
+            if ($rs && $rs->RecordCount()>0) {
                 $records = $rs->GetArray();
                 foreach ($records as $record) {
                     if (isset($record['Key_name']) && $record['Key_name']==$index) {
@@ -933,7 +975,7 @@ function hotpot_db_index_exists($table, $index, $feedback=false) {
         break;
         case 'postgres' :
             $rs = $db->Execute("SELECT relname FROM pg_class WHERE relname = '$index' AND relkind='i'");
-            if ($rs && !$rs->EOF) {
+            if ($rs && $rs->RecordCount()>0) {
                 $exists = true;
             }
         break;
@@ -1042,7 +1084,7 @@ function hotpot_db_object_exists($table, $field='', $feedback=false) {
     if (empty($rs) && debugging()) {
         notify($db->ErrorMsg()."<br /><br />$sql");
     }
-    return ($rs && !$rs->EOF);
+    return ($rs && $rs->RecordCount()>0);
 }
 function hotpot_db_remove_table($table, $feedback=true) {
     global $CFG;
@@ -1208,7 +1250,7 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
             //    (except lib/adodb/drivers/adodb-postgre64-inc.php)
             $dbversion = '';
             $rs = $db->Execute("SELECT version()");
-            if ($rs && !$rs->EOF) {
+            if ($rs && $rs->RecordCount()>0) {
                 $records = $rs->GetArray();
                 if (preg_match('/\d+\.\d+/', $records[0][0], $matches)) {
                     $dbversion = $matches[0];
