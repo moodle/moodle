@@ -1258,12 +1258,14 @@ function get_user_access_sitewide($userid) {
         $rs = get_recordset_sql($sql);
         unset($clauses);
 
-        while ($rd = rs_fetch_next_record($rs)) {
-            $k = "{$rd->path}:{$rd->roleid}";
-            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
+        if ($rs) {
+            while ($rd = rs_fetch_next_record($rs)) {
+                $k = "{$rd->path}:{$rd->roleid}";
+                $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
+            }
+            unset($rd);
+            rs_close($rs);
         }
-        unset($rd);
-        rs_close($rs);
     }
 
     //
@@ -1289,13 +1291,14 @@ function get_user_access_sitewide($userid) {
             ORDER BY sctx.depth, sctx.path, ra.roleid";
 
     $rs = get_recordset_sql($sql);
-    while ($rd = rs_fetch_next_record($rs)) {
-        $k = "{$rd->path}:{$rd->roleid}";
-        $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
+    if ($rs) {
+        while ($rd = rs_fetch_next_record($rs)) {
+            $k = "{$rd->path}:{$rd->roleid}";
+            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
+        }
+        unset($rd);
+        rs_close($rs);
     }
-    unset($rd);
-    rs_close($rs);
-
     return $accessdata;
 }
 
