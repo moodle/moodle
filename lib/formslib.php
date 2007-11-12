@@ -138,22 +138,32 @@ class moodleform {
      *                  first element if no errors. Use this as a parameter
      *                  when calling print_header
      */
-    function focus($name=NULL){
+    function focus($name=NULL) {
         $form =& $this->_form;
-        $elkeys=array_keys($form->_elementIndex);
+        $elkeys = array_keys($form->_elementIndex);
+        $error = false;
         if (isset($form->_errors) &&  0 != count($form->_errors)){
             $errorkeys = array_keys($form->_errors);
             $elkeys = array_intersect($elkeys, $errorkeys);
+            $error = true;
         }
-        $names=null;
-        while (!$names){
-            $el = array_shift($elkeys);
-            $names = $form->_getElNamesRecursive($el);
+
+        if ($error or empty($name)) {
+            $names = array();
+            while (empty($names) and !empty($elkeys)) {
+                $el = array_shift($elkeys);
+                $names = $form->_getElNamesRecursive($el);
+            }
+            if (!empty($names)) {
+                $name = array_shift($names);
+            }
         }
-        if (empty($name)) {
-            $name=array_shift($names);
+
+        $focus = '';
+        if (!empty($name)) {
+            $focus = 'forms[\''.$form->getAttribute('id').'\'].elements[\''.$name.'\']';
         }
-        $focus='forms[\''.$this->_form->getAttribute('id').'\'].elements[\''.$name.'\']';
+
         return $focus;
      }
 
@@ -214,7 +224,7 @@ class moodleform {
                     }
                     $errors[$elname] = $this->_upload_manager->files[$elname]['uploadlog'];
 
-                } else if ($this->_upload_manager->files[$elname]['clear']) {
+                } else if (!empty($this->_upload_manager->files[$elname]['clear'])) {
                     $files[$elname] = $this->_upload_manager->files[$elname]['tmp_name'];
                 }
             } else {
@@ -803,8 +813,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     * @access public
     * @return void
     */
-    function accept(&$renderer)
-    {
+    function accept(&$renderer) {
         if (method_exists($renderer, 'setAdvancedElements')){
             //check for visible fieldsets where all elements are advanced
             //and mark these headers as advanced as well.
@@ -815,14 +824,19 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             $anyAdvanced = false;
             foreach (array_keys($this->_elements) as $elementIndex){
                 $element =& $this->_elements[$elementIndex];
+
+                // if closing header and any contained element was advanced then mark it as advanced
                 if ($element->getType()=='header' || in_array($element->getName(), $stopFields)){
-                    if ($anyAdvanced && ($lastHeader!==null)){
+                    if ($anyAdvanced && !is_null($lastHeader)){
                         $this->setAdvanced($lastHeader->getName());
                     }
                     $lastHeaderAdvanced = false;
+                    unset($lastHeader);
+                    $lastHeader = null;
                 } elseif ($lastHeaderAdvanced) {
                     $this->setAdvanced($element->getName());
                 }
+
                 if ($element->getType()=='header'){
                     $lastHeader =& $element;
                     $anyAdvanced = false;
@@ -830,6 +844,10 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                 } elseif (isset($this->_advancedElements[$element->getName()])){
                     $anyAdvanced = true;
                 }
+            }
+            // the last header may not be closed yet...
+            if ($anyAdvanced && !is_null($lastHeader)){
+                $this->setAdvanced($lastHeader->getName());
             }
             $renderer->setAdvancedElements($this->_advancedElements);
 
@@ -1286,6 +1304,10 @@ function validate_' . $this->_formName . '(frm) {
                     $i = 0;
                     foreach ($dependents as $dependent) {
                         $elements = $this->_getElNamesRecursive($dependent);
+                        if (empty($elements)) {
+                            // probably element inside of some group
+                            $elements = array($dependent);
+                        }
                         foreach($elements as $element) {
                             if ($element == $dependentOn) {
                                 continue;
@@ -1303,38 +1325,37 @@ function validate_' . $this->_formName . '(frm) {
         return $js;
     }
 
-    function _getElNamesRecursive($element, $group=null){
-        if ($group==null){
+    function _getElNamesRecursive($element) {
+        if (is_string($element)) {
             if (!$this->elementExists($element)) {
                 return array();
             }
-            $el = $this->getElement($element);
-        } else {
-            $el = &$element;
+            $element = $this->getElement($element);
         }
-        if (is_a($el, 'HTML_QuickForm_group')){
-            $group = $el;
-            $elsInGroup = $group->getElements();
+
+        if (is_a($element, 'HTML_QuickForm_group')) {
+            $elsInGroup = $element->getElements();
             $elNames = array();
             foreach ($elsInGroup as $elInGroup){
-                $elNames = array_merge($elNames, $this->_getElNamesRecursive($elInGroup, $group));
+                $elNames = array_merge($elNames, $this->_getElNamesRecursive($elInGroup));
             }
-        }else{
-            if ($group != null){
-                $elNames = array($group->getElementName($el->getName()));
-            } elseif (is_a($el, 'HTML_QuickForm_header')) {
-                return null;
-            } elseif (is_a($el, 'HTML_QuickForm_hidden')) {
-                return null;
-            } elseif (method_exists($el, 'getPrivateName')) {
-                return array($el->getPrivateName());
-            } else {
-                $elNames = array($el->getName());
-            }
-        }
-        return $elNames;
 
+        } else if (is_a($element, 'HTML_QuickForm_header')) {
+            return array();
+
+        } else if (is_a($element, 'HTML_QuickForm_hidden')) {
+            return array();
+
+        } else if (method_exists($element, 'getPrivateName')) {
+            return array($element->getPrivateName());
+
+        } else {
+            $elNames = array($element->getName());
+        }
+
+        return $elNames;
     }
+
     /**
      * Adds a dependency for $elementName which will be disabled if $condition is met.
      * If $condition = 'notchecked' (default) then the condition is that the $dependentOn element
