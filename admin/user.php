@@ -120,11 +120,7 @@
             if (update_record('user', $updateuser)) {
                 // Removing a user may have more requirements than just removing their role assignments.
                 // Use 'role_unassign' to make sure that all necessary actions occur.
-                if ($userroles = get_records('role_assignments', 'userid', $user->id, '', 'id,roleid')) {
-                    foreach ($userroles as $userrole) {
-                        role_unassign($userrole->roleid, $user->id);
-                    }
-                }
+                role_unassign(0, $user->id);
                 // remove all context assigned on this user?
                 notify(get_string('deletedactivity', '', fullname($user, true)) );
             } else {
