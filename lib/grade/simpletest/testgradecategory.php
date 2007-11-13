@@ -60,7 +60,6 @@ class grade_category_test extends grade_test {
         $parent1->parent = null;
         $parent1->id = 1;
         $obj->lib_wrapper->setReturnValueAt(1, 'get_record', $parent1);
-       var_dump($grade_category); 
         $path = $grade_category->build_path($grade_category);
         $this->assertEqual($grade_category->path, $path);
     }
@@ -75,6 +74,13 @@ class grade_category_test extends grade_test {
 
         $grade_category = &new partial_mock($this);
         $grade_category->grade_category($this->grade_categories[1], false);
+        
+        // There is a static call to grade_category::build_path(): prepare the static instance 
+        $obj = grade_object::get_instance('grade_category');
+        $parent = new stdClass();
+        $parent->parent = null;
+        $parent->id = 1;
+        $obj->lib_wrapper->setReturnValue('get_record', $parent);
 
         $this->assertTrue(method_exists($grade_category, 'update'));
 
@@ -555,7 +561,6 @@ class grade_category_test extends grade_test {
         $cascading = true;
         $grade_category = new mock_grade_category_for_set_locked($this);
         $obj = grade_object::get_instance('grade_item');
-        $obj->expectOnce('fetch_all');
         $obj->setReturnValue('fetch_all', array(fullclone($grade_item), fullclone($grade_item)));
         $grade_category->expectOnce('load_grade_item');
         $grade_category->grade_item = $grade_item;
@@ -563,33 +568,35 @@ class grade_category_test extends grade_test {
         $this->assertTrue($grade_category->set_locked($lockedstate, $cascade, $refresh));
     }
 
-/*
-    function test_grade_category_is_hidden() {
-        $grade_category = new grade_category($this->grade_categories[0]);
-        $this->assertTrue(method_exists($grade_category, 'is_hidden'));
-        $grade_category->load_grade_item();
-        $this->assertEqual($grade_category->is_hidden(), $grade_category->grade_item->is_hidden());
-    }
-
     function test_grade_category_set_hidden() {
-        $grade_category = new grade_category($this->grade_categories[0]);
+        $methods_to_mock = array('load_grade_item', 'instantiate_new_grade_item', 'fetch_all');
+        
+        $hiddenstate = true;
+        $cascade = false;
+        
+        // Test non-cascading set_hidden
+        Mock::generatePartial('grade_category', 'mock_grade_category_for_set_hidden', $methods_to_mock);
+        $grade_item = new mock_grade_item();
+        $grade_item->expectCallCount('set_hidden', 2, array($hiddenstate, $cascade));
+        $grade_item->setReturnValue('set_hidden', true); 
+        $grade_item->expectNever('fetch_all');
+        $grade_category = new mock_grade_category_for_set_hidden($this);
+        $grade_category->expectOnce('load_grade_item');
+        $grade_category->expectNever('instantiate_new_grade_item');
         $this->assertTrue(method_exists($grade_category, 'set_hidden'));
-        $grade_category->set_hidden(1);
-        $grade_category->load_grade_item();
-        $this->assertEqual(true, $grade_category->grade_item->is_hidden());
-    }
+        $grade_category->grade_item = $grade_item;
 
-    function generate_random_raw_grade($item, $userid) {
-        $grade = new grade_grade();
-        $grade->itemid = $item->id;
-        $grade->userid = $userid;
-        $grade->grademin = 0;
-        $grade->grademax = 1;
-        $valuetype = "grade$item->gradetype";
-        $grade->rawgrade = rand(0, 1000) / 1000;
-        $grade->insert();
-        return $grade->rawgrade;
-    }
-    */
+        $grade_category->set_hidden($hiddenstate, $cascade);
+        
+        // Test cascading set_hidden
+        $cascading = true;
+        $grade_category = new mock_grade_category_for_set_hidden($this);
+        $obj = grade_object::get_instance('grade_item');
+        $obj->setReturnValue('fetch_all', array(fullclone($grade_item), fullclone($grade_item)));
+        $grade_category->expectOnce('load_grade_item');
+        $grade_category->grade_item = $grade_item;
+
+        $grade_category->set_hidden($hiddenstate, $cascade);
+    } 
 }
 ?>

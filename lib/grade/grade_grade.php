@@ -387,14 +387,14 @@ class grade_grade extends grade_object {
         $items_sql = implode(',', $items);
 
         $now = time(); // no rounding needed, this is not supposed to be called every 10 seconds
-
-        if ($rs = $this->lib_wrapper->get_recordset_select('grade_grades', "itemid IN ($items_sql) AND locked = 0 AND locktime > 0 AND locktime < $now")) {
-            while ($grade = $this->lib_wrapper->rs_fetch_next_record($rs)) {
-                $grade_grade = $this->get_instance('grade_grade', $grade, false);
+        $obj = grade_object::get_instance('grade_grade');
+        if ($rs = $obj->lib_wrapper->get_recordset_select('grade_grades', "itemid IN ($items_sql) AND locked = 0 AND locktime > 0 AND locktime < $now")) {
+            while ($grade = $obj->lib_wrapper->rs_fetch_next_record($rs)) {
+                $grade_grade = $obj->get_instance('grade_grade', $grade, false);
                 $grade_grade->locked = time();
                 $grade_grade->update('locktime');
             }
-            $this->lib_wrapper->rs_close($rs);
+            $obj->lib_wrapper->rs_close($rs);
         }
     }
 

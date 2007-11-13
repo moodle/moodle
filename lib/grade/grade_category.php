@@ -159,7 +159,7 @@ class grade_category extends grade_object {
         } else {
             $obj = grade_object::get_instance('grade_category');
             $parent = $obj->lib_wrapper->get_record('grade_categories', 'id', $grade_category->parent);
-       var_dump($parent);
+
             return grade_category::build_path($parent).$grade_category->id.'/';
         }
     }
@@ -1125,7 +1125,6 @@ class grade_category extends grade_object {
         if ($cascade) {
             //process all children - items and categories
             $grade_item = grade_object::get_instance('grade_item');
-            var_dump($grade_item);
             if ($children = $grade_item->fetch_all(array('categoryid'=>$this->id))) {
                 foreach($children as $child) {
                     $child->set_locked($lockedstate, true, false);
