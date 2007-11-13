@@ -10,8 +10,16 @@ white-space:normal;
   whitespace: nowrap;
 }
 
-.grade-report-grader table#user-grades tr.marked td.cell {
-    background-color: #FFCC99 ;
+.grade-report-grader table#user-grades td.vmarked {
+    background-color: #ffcc33;
+}
+
+.grade-report-grader table#user-grades td.hmarked {
+    background-color: #ffff99;
+}
+
+.grade-report-grader table#user-grades td.hmarked.vmarked{
+    background-color: #ffcc99;
 }
 
 .grade-report-grader table#user-grades .catlevel1 {
