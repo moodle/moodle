@@ -157,8 +157,10 @@ class grade_category extends grade_object {
         if (empty($grade_category->parent)) {
             return '/'.$grade_category->id.'/';
         } else {
-            $parent = $this->lib_wrapper->get_record('grade_categories', 'id', $grade_category->parent);
-            return $this->build_path($parent).$grade_category->id.'/';
+            $obj = grade_object::get_instance('grade_category');
+            $parent = $obj->lib_wrapper->get_record('grade_categories', 'id', $grade_category->parent);
+       var_dump($parent); 
+            return grade_category::build_path($parent).$grade_category->id.'/';
         }
     }
 
@@ -197,7 +199,7 @@ class grade_category extends grade_object {
 
         // force recalculation of path;
         if (empty($this->path)) {
-            $this->path  = $this->build_path($this);
+            $this->path  = grade_category::build_path($this);
             $this->depth = substr_count($this->path, '/') - 1;
         }
 
@@ -519,8 +521,7 @@ class grade_category extends grade_object {
                 unset($grade_values[$itemid]);
                 continue;
             }
-            $grade_grade = grade_object::get_instance('grade_grade');
-            $grade_values[$itemid] = $grade_grade->standardise_score($v, $items[$itemid]->grademin, $items[$itemid]->grademax, 0, 1);
+            $grade_values[$itemid] = grade_grade::standardise_score($v, $items[$itemid]->grademin, $items[$itemid]->grademax, 0, 1);
         }
 
         // use min grade if grade missing for these types
@@ -557,8 +558,7 @@ class grade_category extends grade_object {
         $grade->rawgrade    = null; // categories do not use raw grades
         
         // recalculate the rawgrade back to requested range
-        $grade_grade= grade_object::get_instance('grade_grade');
-        $finalgrade = $grade_grade->standardise_score($agg_grade, 0, 1, $this->grade_item->grademin, $this->grade_item->grademax);
+        $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $this->grade_item->grademin, $this->grade_item->grademax);
 
         if (!is_null($finalgrade)) {
             $grade->finalgrade = bounded_number($this->grade_item->grademin, $finalgrade, $this->grade_item->grademax);
@@ -1080,6 +1080,7 @@ class grade_category extends grade_object {
         if ($cascade) {
             //process all children - items and categories
             $grade_item = grade_object::get_instance('grade_item');
+            var_dump($grade_item);
             if ($children = $grade_item->fetch_all(array('categoryid'=>$this->id))) {
                 foreach($children as $child) {
                     $child->set_locked($lockedstate, true, false);

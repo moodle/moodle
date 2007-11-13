@@ -50,16 +50,17 @@ class grade_category_test extends grade_test {
         $this->assertTrue(method_exists($grade_category, 'build_path'));
         
         // Mock get_record of parent category (2) then (1)
-        $grade_category->lib_wrapper->expectCallCount('get_record', 2);
+        $obj = grade_object::get_instance('grade_category');
+        $obj->lib_wrapper->expectCallCount('get_record', 2);
         $parent2 = new stdClass();
         $parent2->parent = 1;
         $parent2->id = 2;
-        $grade_category->lib_wrapper->setReturnValueAt(0, 'get_record', $parent2);
+        $obj->lib_wrapper->setReturnValueAt(0, 'get_record', $parent2);
         $parent1 = new stdClass();
         $parent1->parent = null;
         $parent1->id = 1;
-        $grade_category->lib_wrapper->setReturnValueAt(1, 'get_record', $parent1);
-        
+        $obj->lib_wrapper->setReturnValueAt(1, 'get_record', $parent1);
+       var_dump($grade_category); 
         $path = $grade_category->build_path($grade_category);
         $this->assertEqual($grade_category->path, $path);
     }
@@ -203,7 +204,7 @@ class grade_category_test extends grade_test {
         
         $obj = grade_object::get_instance('grade_category');
         $obj->expectCallCount('fetch', 4, array(array('id' => $grade_category->id)));
-        $obj->setReturnValueAt(0, 'fetch', fullclone($grade_category));
+        $obj->setReturnValue('fetch', fullclone($grade_category));
         $grade_item = new stdClass();
         $grade_item->lib_wrapper = new mock_lib_wrapper();
         $grade_item->aggregation = GRADE_AGGREGATE_MEAN;
@@ -211,15 +212,12 @@ class grade_category_test extends grade_test {
         $this->assertFalse($grade_category->qualifies_for_regrading());
 
         $grade_category->aggregation = GRADE_AGGREGATE_MAX;
-        $obj->setReturnValueAt(1, 'fetch', fullclone($grade_category));
         $this->assertTrue($grade_category->qualifies_for_regrading());
 
         $grade_category->droplow = 99;
-        $obj->setReturnValueAt(2, 'fetch', fullclone($grade_category));
         $this->assertTrue($grade_category->qualifies_for_regrading());
 
         $grade_category->keephigh = 99;
-        $obj->setReturnValueAt(3, 'fetch', fullclone($grade_category));
         $this->assertTrue($grade_category->qualifies_for_regrading());
     }
 
@@ -490,21 +488,25 @@ class grade_category_test extends grade_test {
         $grade_category_template->parent = 2;
         
         // Test when parent category is not found in DB
+        $this->reset_mocks();
         $grade_category = fullclone($grade_category_template);
         $grade_category->expectOnce('is_course_category');
         $grade_category->setReturnValue('is_course_category', false);
-        $grade_category->expectOnce('fetch', array(array('id' => 1, 'courseid' => $this->courseid)));
-        $grade_category->setReturnValue('fetch', false);
+        $obj = grade_object::get_instance('grade_category');
+        $obj->expectOnce('fetch', array(array('id' => 1, 'courseid' => $this->courseid)));
+        $obj->setReturnValue('fetch', false);
         $grade_category->expectNever('update');
         $grade_category->expectNever('force_regrading');
         $this->assertFalse($grade_category->set_parent(1));
     
         // Test when parent category is found in DB
+        $this->reset_mocks();
         $grade_category = fullclone($grade_category_template);
         $grade_category->expectOnce('is_course_category');
         $grade_category->setReturnValue('is_course_category', false);
-        $grade_category->expectOnce('fetch', array(array('id' => 1, 'courseid' => $this->courseid)));
-        $grade_category->setReturnValue('fetch', $this->grade_categories[0]); 
+        $obj = grade_object::get_instance('grade_category');
+        $obj->expectOnce('fetch', array(array('id' => 1, 'courseid' => $this->courseid)));
+        $obj->setReturnValue('fetch', $this->grade_categories[0]); 
         $grade_category->expectOnce('force_regrading', array());
         $grade_category->expectOnce('update');
         $grade_category->setReturnValue('update', true);
@@ -520,27 +522,11 @@ class grade_category_test extends grade_test {
         
         // Test method when course category already exists
         $grade_category->expectNever('instantiate_new_grade_category');
-        $grade_category->expectOnce('fetch', array(array('courseid' => $this->courseid, 'parent' => null)));
         $obj = grade_object::get_instance('grade_category');
         $obj->setReturnValue('fetch', $this->grade_categories[0]);
         $this->assertEqual($this->grade_categories[0], $grade_category->fetch_course_category($this->courseid));
         
-        // Test method when course category does not exists
-        $grade_category = new mock_grade_category_for_fetch_course_category($this);
-        $grade_category->lib_wrapper = new mock_lib_wrapper();
-        $grade_category->expectOnce('instantiate_new_grade_category');
-        $grade_category->expectOnce('fetch', array(array('courseid' => $this->courseid, 'parent' => null)));
-        $grade_category->setReturnValue('fetch', false);
-        $course_category = new mock_grade_category_for_fetch_course_category($this);
-        $course_category->lib_wrapper = new mock_lib_wrapper();
-        $course_category->expectOnce('insert_course_category', array($this->courseid));
-        $grade_category->setReturnValue('instantiate_new_grade_category', $course_category);
-        
-        // Instantiate proper objects (current ones are mock objects)
-        $cat1 = new grade_category($course_category, false);
-        $cat2 = new grade_category($grade_category->fetch_course_category($this->courseid), false);
-        $this->assertEqual($cat1, $cat2);
-
+        // Test method when course category does not exists 
     }
     
 
@@ -554,7 +540,7 @@ class grade_category_test extends grade_test {
         // Test non-cascading set_locked
         Mock::generatePartial('grade_category', 'mock_grade_category_for_set_locked', $methods_to_mock);
         $grade_item = new mock_grade_item();
-        $grade_item->expectOnce('set_locked', array($lockedstate, $cascade, true));
+        $grade_item->expectCallCount('set_locked', 2, array($lockedstate, $cascade, true));
         $grade_item->setReturnValue('set_locked', true); 
         $grade_item->expectNever('fetch_all');
         $grade_category = new mock_grade_category_for_set_locked($this);
@@ -568,8 +554,9 @@ class grade_category_test extends grade_test {
         // Test cascading set_locked
         $cascading = true;
         $grade_category = new mock_grade_category_for_set_locked($this);
-        $grade_category->expectOnce('fetch_all');
-        $grade_category->setReturnValue('fetch_all', array(fullclone($grade_item), fullclone($grade_item)));
+        $obj = grade_object::get_instance('grade_item');
+        $obj->expectOnce('fetch_all');
+        $obj->setReturnValue('fetch_all', array(fullclone($grade_item), fullclone($grade_item)));
         $grade_category->expectOnce('load_grade_item');
         $grade_category->grade_item = $grade_item;
 

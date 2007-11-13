@@ -715,8 +715,7 @@ class grade_item extends grade_object {
             // Standardise score to the new grade range
             // NOTE: this is not compatible with current assignment grading
             if ($rawmin != $this->grademin or $rawmax != $this->grademax) {
-                $grade_grade = grade_object::get_instance('grade_grade');
-                $rawgrade = $grade_grade->standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
+                $rawgrade = grade_grade::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
             // Apply other grade_item factors
@@ -741,8 +740,7 @@ class grade_item extends grade_object {
             // Convert scale if needed
             // NOTE: this is not compatible with current assignment grading
             if ($rawmin != $this->grademin or $rawmax != $this->grademax) {
-                $grade_grade = grade_object::get_instance('grade_grade');
-                $rawgrade = $grade_grade->standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
+                $rawgrade = grade_grade::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
             return (int)bounded_number(0, round($rawgrade+0.00001), $this->grademax);

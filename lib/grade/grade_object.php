@@ -376,13 +376,8 @@ class grade_object {
             }
             
             if (in_array($class, $classes)) {
-                // Only set the static instance if it isn't already a mock object
-                if (!isset($grade_instances[$class]) || get_class($grade_instances[$class]) != get_class($object)) {
-                    $grade_instances[$class] =& $object;
-                    return true;
-                } else {
-                    return false;
-                }
+                $grade_instances[$class] =& $object;
+                return true;
             } else {
                 debugging("grade_object::set_instance was given an object that is not supported ($class)!");
                 return false;

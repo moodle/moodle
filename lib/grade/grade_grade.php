@@ -556,8 +556,6 @@ class grade_grade extends grade_object {
      */
     function get_hiding_affected(&$grade_grades, &$grade_items) {
         global $CFG;
-        
-        $obj = grade_object::get_instance('grade_grade');
 
         if (count($grade_grades) !== count($grade_items)) {
             error('Incorrent size of arrays in params of grade_grade::get_hiding_affected()!');
@@ -632,7 +630,7 @@ class grade_grade extends grade_object {
                                     unset($values[$itemid]);
                                     continue;
                                 }
-                                $values[$itemid] = $obj->standardise_score($value, $grade_items[$itemid]->grademin, $grade_items[$itemid]->grademax, 0, 1);
+                                $values[$itemid] = grade_grade::standardise_score($value, $grade_items[$itemid]->grademin, $grade_items[$itemid]->grademax, 0, 1);
                             }
 
                             if ($grade_category->aggregateonlygraded) {
@@ -665,7 +663,7 @@ class grade_grade extends grade_object {
                             $agg_grade = $grade_category->aggregate_values($values, $grade_items);
 
                             // recalculate the rawgrade back to requested range
-                            $finalgrade = $obj->standardise_score($agg_grade, 0, 1, $grade_items[$do]->grademin, $grade_items[$do]->grademax);
+                            $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $grade_items[$do]->grademin, $grade_items[$do]->grademax);
 
                             if (!is_null($finalgrade)) {
                                 $finalgrade = bounded_number($grade_items[$do]->grademin, $finalgrade, $grade_items[$do]->grademax);
