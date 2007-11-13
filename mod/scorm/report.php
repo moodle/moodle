@@ -266,7 +266,7 @@
                 $elements = array('raw' => 'cmi.score.raw',
                                   'min' => 'cmi.score.min',
                                   'max' => 'cmi.score.max',
-                                  'status' => 'cmi.completition_status',
+                                  'status' => 'cmi.completion_status',
                                   'time' => 'cmi.total_time');
             } else {
                 $elements = array('raw' => 'cmi.core.score.raw',
