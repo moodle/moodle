@@ -69,10 +69,9 @@ class grade_category_test extends grade_test {
         $grade_category->lib_wrapper = new mock_lib_wrapper();
         $this->assertTrue(method_exists($grade_category, 'fetch'));
         
-        $grade_category->lib_wrapper->expectOnce('get_records_select');
-        $grade_category->lib_wrapper->setReturnValue('get_records_select', array($this->grade_categories[1]));
-
-        $grade_category = $grade_category->fetch(array('id'=>$this->grade_categories[1]->id));
+        $obj = grade_object::get_instance('grade_category');
+        $obj->setReturnValue('fetch', $this->grade_categories[1]);
+        $grade_category = $obj->fetch(array('id'=>$this->grade_categories[1]->id));
         $this->assertEqual($this->grade_categories[1]->id, $grade_category->id);
         $this->assertEqual($this->grade_categories[1]->fullname, $grade_category->fullname);
     }
@@ -82,10 +81,10 @@ class grade_category_test extends grade_test {
         $grade_category->lib_wrapper = new mock_lib_wrapper();
         $this->assertTrue(method_exists($grade_category, 'fetch_all'));
 
-        $grade_category->lib_wrapper->expectOnce('get_records_select');
-        $grade_category->lib_wrapper->setReturnValue('get_records_select', $this->grade_categories);
+        $obj = grade_object::get_instance('grade_category');
+        $obj->setReturnValue('fetch_all', $this->grade_categories);
         
-        $grade_categories = $grade_category->fetch_all(array('courseid'=>$this->courseid));
+        $grade_categories = $obj->fetch_all(array('courseid'=>$this->courseid));
         $this->assertEqual(count($this->grade_categories), count($grade_categories));
     }
 

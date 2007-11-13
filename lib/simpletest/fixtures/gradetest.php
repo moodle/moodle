@@ -46,6 +46,13 @@ Mock::generate('grade_lib_wrapper', 'mock_lib_wrapper');
 Mock::generate('ADODB_' . $CFG->dbtype, 'mock_db');
 Mock::generate('ADORecordSet_' . $CFG->dbtype, 'mock_rs');
 
+// Prepare partial mocks for the static grade object instances
+Mock::generatePartial('grade_category', 'mock_grade_category_partial', array('fetch', 'fetch_all'));
+Mock::generatePartial('grade_item', 'mock_grade_item_partial', array('fetch', 'fetch_all'));
+Mock::generatePartial('grade_grade', 'mock_grade_grade_partial', array('fetch', 'fetch_all'));
+Mock::generatePartial('grade_outcome', 'mock_grade_outcome_partial', array('fetch', 'fetch_all'));
+Mock::generatePartial('grade_scale', 'mock_grade_scale_partial', array('fetch', 'fetch_all'));
+
 /**
  * Here is a brief explanation of the test data set up in these unit tests.
  * category1 => array(category2 => array(grade_item1, grade_item2), category3 => array(grade_item3))
@@ -106,6 +113,11 @@ class grade_test extends UnitTestCase {
         $CFG->disablegradehistory = false;
 		$this->real_db = fullclone($db);
         // $this->reset_mocks();
+        grade_object::get_instance('grade_item', null, false, true, new mock_grade_item_partial($this));
+        grade_object::get_instance('grade_category', null, false, true, new mock_grade_category_partial($this));
+        grade_object::get_instance('grade_grade', null, false, true, new mock_grade_grade_partial($this));
+        grade_object::get_instance('grade_outcome', null, false, true, new mock_grade_outcome_partial($this));
+        grade_object::get_instance('grade_scale', null, false, true, new mock_grade_scale_partial($this)); 
     }
 
     /**

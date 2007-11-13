@@ -310,7 +310,8 @@ class grade_item extends grade_object {
      * @return object grade_item instance or false if none found.
      */
     function fetch($params) {
-        return $this->fetch_helper('grade_items', 'grade_item', $params);
+        $obj = grade_object::get_instance('grade_item');
+        return $obj->fetch_helper('grade_items', 'grade_item', $params);
     }
 
     /**
@@ -321,7 +322,8 @@ class grade_item extends grade_object {
      * @return array array of grade_item insatnces or false if none found.
      */
     function fetch_all($params) {
-        return $this->fetch_all_helper('grade_items', 'grade_item', $params);
+        $obj = grade_object::get_instance('grade_item');
+        return $obj->fetch_all_helper('grade_items', 'grade_item', $params);
     }
 
     /**

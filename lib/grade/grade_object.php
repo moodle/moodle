@@ -360,20 +360,46 @@ class grade_object {
      * The following function is a helper for making the code more testable. It allows
      * unit tests to mock the objects instantiated and used within method bodies. If no params are given,
      * a static instance is returned.
+     * @param string $class
+     * @param array $params
+     * @param bool $fetch
+     * @param bool $set Whether or not to set the instance instead of getting it
      */
-    function get_instance($class, $params=NULL, $fetch=true) {
+    function get_instance($class, $params=NULL, $fetch=true, $set=false, $object=null) {
+        static $grade_instances = array();  
         $classes = array('grade_item', 'grade_category', 'grade_grade', 'grade_outcome', 'grade_scale');
-        if (!in_array($class, $classes)) {
-            return false;
-        } elseif (is_null($params)) {
-            static $grade_instances = array();  
-            if (!array_key_exists($class, $grade_instances)) {
-                $grade_instances[$class] =& new $class;
+        
+        if ($set) {
+            if (!is_object($object)) {
+                debugging('grade_object::set_instance was given a non-object as parameter!');
+                return false;
             }
-            $instance =& $grade_instances[$class];
-            return $instance;
-        } else { 
-            return new $class($params, $fetch);
+            
+            if (in_array($class, $classes)) {
+                // Only set the static instance if it isn't already a mock object
+                if (!isset($grade_instances[$class]) || get_class($grade_instances[$class]) != get_class($object)) {
+                    $grade_instances[$class] =& $object;
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                debugging("grade_object::set_instance was given an object that is not supported ($class)!");
+                return false;
+            }
+
+        } else {
+            if (!in_array($class, $classes)) {
+                return false;
+            } elseif (is_null($params)) {
+                if (!array_key_exists($class, $grade_instances)) {
+                    $grade_instances[$class] =& new $class;
+                }
+                $instance =& $grade_instances[$class];
+                return $instance;
+            } else { 
+                return new $class($params, $fetch);
+            } 
         }
     }
 }
