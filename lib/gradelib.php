@@ -38,6 +38,7 @@ require_once($CFG->libdir . '/grade/grade_item.php');
 require_once($CFG->libdir . '/grade/grade_grade.php');
 require_once($CFG->libdir . '/grade/grade_scale.php');
 require_once($CFG->libdir . '/grade/grade_outcome.php');
+require_once($CFG->libdir . '/grade/lib_wrapper.php');
 
 /***** PUBLIC GRADE API - only these functions should be used in modules *****/
 

@@ -92,7 +92,7 @@ class grade_outcome extends grade_object {
      */
     function delete($source=null) {
         if (!empty($this->courseid)) {
-            delete_records('grade_outcomes_courses', 'outcomeid', $this->id, 'courseid', $this->courseid);
+            $this->lib_wrapper->delete_records('grade_outcomes_courses', 'outcomeid', $this->id, 'courseid', $this->courseid);
         }
         return parent::delete($source);
     }
@@ -113,7 +113,7 @@ class grade_outcome extends grade_object {
                 $goc = new object();
                 $goc->courseid = $this->courseid;
                 $goc->outcomeid = $this->id;
-                insert_record('grade_outcomes_courses', $goc);
+                $this->lib_wrapper->insert_record('grade_outcomes_courses', $goc);
             }
         }
         return $result;
@@ -129,11 +129,11 @@ class grade_outcome extends grade_object {
 
         if ($result = parent::update($source)) {
             if (!empty($this->courseid)) {
-                if (!get_records('grade_outcomes_courses', 'courseid', $this->courseid, 'outcomeid', $this->id)) {
+                if (!$this->lib_wrapper->get_records('grade_outcomes_courses', 'courseid', $this->courseid, 'outcomeid', $this->id)) {
                     $goc = new object();
                     $goc->courseid = $this->courseid;
                     $goc->outcomeid = $this->id;
-                    insert_record('grade_outcomes_courses', $goc);
+                    $this->lib_wrapper->insert_record('grade_outcomes_courses', $goc);
                 }
             }
         }
@@ -148,7 +148,7 @@ class grade_outcome extends grade_object {
      * @return object grade_outcome instance or false if none found.
      */
     function fetch($params) {
-        return grade_object::fetch_helper('grade_outcomes', 'grade_outcome', $params);
+        return $this->fetch_helper('grade_outcomes', 'grade_outcome', $params);
     }
 
     /**
@@ -159,7 +159,7 @@ class grade_outcome extends grade_object {
      * @return array array of grade_outcome insatnces or false if none found.
      */
     function fetch_all($params) {
-        return grade_object::fetch_all_helper('grade_outcomes', 'grade_outcome', $params);
+        return $this->fetch_all_helper('grade_outcomes', 'grade_outcome', $params);
     }
 
     /**
@@ -168,7 +168,8 @@ class grade_outcome extends grade_object {
      */
     function load_scale() {
         if (empty($this->scale->id) or $this->scale->id != $this->scaleid) {
-            $this->scale = grade_scale::fetch(array('id'=>$this->scaleid));
+            $grade_scale = $this->get_instance('grade_scale');
+            $this->scale = $grade_scale->fetch(array('id'=>$this->scaleid));
             $this->scale->load_items();
         }
         return $this->scale;
@@ -180,7 +181,7 @@ class grade_outcome extends grade_object {
      * @return object
      */
     function fetch_all_global() {
-        if (!$outcomes = grade_outcome::fetch_all(array('courseid'=>null))) {
+        if (!$outcomes = $this->fetch_all(array('courseid'=>null))) {
             $outcomes = array();
         }
         return $outcomes;
@@ -193,7 +194,7 @@ class grade_outcome extends grade_object {
      * @return object
      */
     function fetch_all_local($courseid) {
-        if (!$outcomes =grade_outcome::fetch_all(array('courseid'=>$courseid))) {
+        if (!$outcomes =$this->fetch_all(array('courseid'=>$courseid))) {
             $outcomes = array();
         }
         return $outcomes;
@@ -216,8 +217,8 @@ class grade_outcome extends grade_object {
 
         if ($datas = get_records_sql($sql)) {
             foreach($datas as $data) {
-                $instance = new grade_outcome();
-                grade_object::set_properties($instance, $data);
+                $instance = $this->get_instance('grade_outcome');
+                $this->set_properties($instance, $data);
                 $result[$instance->id] = $instance;
             }
         }
@@ -269,7 +270,7 @@ class grade_outcome extends grade_object {
             return 1;
         }
 
-        return count_records('grade_outcomes_courses', 'outcomeid', $this->id);
+        return $this->lib_wrapper->count_records('grade_outcomes_courses', 'outcomeid', $this->id);
     }
 
     /**
@@ -277,7 +278,7 @@ class grade_outcome extends grade_object {
      * @return int
      */
     function get_item_uses_count() {
-        return count_records('grade_items', 'outcomeid', $this->id);
+        return $this->lib_wrapper->count_records('grade_items', 'outcomeid', $this->id);
     }
 
     /**
@@ -301,7 +302,7 @@ class grade_outcome extends grade_object {
         }
 
         if ($average === false && $items === false) {
-            debugging('Either the 1st or 2nd param of grade_outcome::get_grade_info() must be true, or both, but not both false!');
+            debugging('Either the 1st or 2nd param of $this->get_grade_info() must be true, or both, but not both false!');
             return false;
         }
 
@@ -322,7 +323,7 @@ class grade_outcome extends grade_object {
                    AND {$CFG->prefix}grade_outcomes.id = $this->id
                    $wheresql";
 
-        $grades = get_records_sql($sql);
+        $grades = $this->lib_wrapper->get_records_sql($sql);
         $retval = array();
 
         if ($average !== false && count($grades) > 0) {
@@ -343,7 +344,7 @@ class grade_outcome extends grade_object {
 
         if ($items !== false) {
             foreach ($grades as $grade) {
-                $retval['items'][$grade->id] = new grade_item($grade);
+                $retval['items'][$grade->id] = $this->get_instance('grade_item', $grade);
             }
         }
 

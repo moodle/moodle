@@ -63,8 +63,8 @@ class grade_grade_test extends grade_test {
     }
 
     function test_grade_grade_insert() {
-        global $db;
         $grade_grade = new grade_grade();
+        $grade_grade->lib_wrapper = new mock_lib_wrapper();
         $this->assertTrue(method_exists($grade_grade, 'insert'));
 
         $grade_grade->itemid = $this->grade_items[0]->id;
@@ -79,13 +79,10 @@ class grade_grade_test extends grade_test {
         // Check the grade_item's needsupdate variable first
         $this->assertFalse($grade_grade->grade_item->needsupdate);
         
-        // Mock insert of data in history table
-        $this->rs->setReturnValue('RecordCount', 1);
-        $this->rs->fields = array(1); 
-        
-        // Mock insert of outcome object
-        $db->setReturnValue('GetInsertSQL', true);
-        $db->setReturnValue('Insert_ID', 1);
+        $grade_grade->lib_wrapper->expectCallCount('insert_record', 2); // main insert and history table insert 
+        $grade_grade->lib_wrapper->setReturnValue('insert_record', 1);
+        $grade_grade->lib_wrapper->expectOnce('get_record'); // for update_from_db() method
+        $grade_grade->lib_wrapper->setReturnValue('get_record', array(1));
 
         $grade_grade->insert();
 
@@ -98,21 +95,22 @@ class grade_grade_test extends grade_test {
 
     function test_grade_grade_update() {
         $grade_grade = new grade_grade($this->grade_grades[0], false);
+        $grade_grade->lib_wrapper = new mock_lib_wrapper();
+        $grade_grade->lib_wrapper->expectOnce('update_record');
+        $grade_grade->lib_wrapper->setReturnValue('update_record', true);
         $this->assertTrue(method_exists($grade_grade, 'update'));
+        $grade_grade->update();
     }
 
     function test_grade_grade_fetch() {
-        global $db;
         $grade_grade = new grade_grade($this->grade_grades[0], false);
+        $grade_grade->lib_wrapper = new mock_lib_wrapper();
         $this->assertTrue(method_exists($grade_grade, 'fetch'));
 
-        // Mock fetch
-        $column = new stdClass();
-        $column->name = 'id';
-        $this->rs->setReturnValue('FetchField', $column); // Fetching the name of the first column
-        $this->rs->setReturnValue('GetAssoc', array($grade_grade->id => (array) $grade_grade)); 
+        $grade_grade->lib_wrapper->expectOnce('get_records_select');
+        $grade_grade->lib_wrapper->setReturnValue('get_records_select', array($this->grade_grades[0]));
         
-        $grades = grade_grade::fetch(array('id'=>$grade_grade->id));
+        $grades = $grade_grade->fetch(array('id'=>$grade_grade->id));
 
         $this->assertEqual($grade_grade->id, $grades->id);
         $this->assertEqual($grade_grade->rawgrade, $grades->rawgrade);
@@ -120,35 +118,25 @@ class grade_grade_test extends grade_test {
 
     function test_grade_grade_fetch_all() {
         $grade_grade = new grade_grade();
+        $grade_grade->lib_wrapper = new mock_lib_wrapper();
         $this->assertTrue(method_exists($grade_grade, 'fetch_all'));
 
-        // Mock fetch_all
-        $return_array = array();
-        foreach ($this->grade_grades as $gg) {
-            $return_array[$gg->id] = (array) $gg;
-        }
+        $grade_grade->lib_wrapper->expectOnce('get_records_select');
+        $grade_grade->lib_wrapper->setReturnValue('get_records_select', $this->grade_grades);
 
-        $column = new stdClass();
-        $column->name = 'id';
-        $this->rs->setReturnValue('FetchField', $column); // Fetching the name of the first column
-        $this->rs->setReturnValue('GetAssoc', $return_array); 
-        
-        $grades = grade_grade::fetch_all(array());
+        $grades = $grade_grade->fetch_all(array());
         $this->assertEqual(count($this->grade_grades), count($grades)); 
     }
 
     function test_grade_grade_load_grade_item() {
         $grade_grade = new grade_grade($this->grade_grades[0], false);
+        $grade_grade->lib_wrapper = new mock_lib_wrapper();
         $this->assertTrue(method_exists($grade_grade, 'load_grade_item'));
         $this->assertNull($grade_grade->grade_item);
         $this->assertTrue($grade_grade->itemid);
         
-        // Mock fetch
-        $grade_item = $this->grade_items[0];
-        $column = new stdClass();
-        $column->name = 'id';
-        $this->rs->setReturnValue('FetchField', $column); // Fetching the name of the first column
-        $this->rs->setReturnValue('GetAssoc', array($grade_item->id => (array) $grade_item)); 
+        $grade_grade->lib_wrapper->expectOnce('get_records_select');
+        $grade_grade->lib_wrapper->setReturnValue('get_records_select', array($this->grade_items[0]));
         
         $this->assertNotNull($grade_grade->load_grade_item());
         $this->assertNotNull($grade_grade->grade_item);
@@ -165,9 +153,11 @@ class grade_grade_test extends grade_test {
      * would otherwise trigger the refresh_grades method, which is not being tested here.
      */ 
     function test_grade_grade_set_locked() {
-        global $db;
         $grade_item = new grade_item($this->grade_items[0], false);
-        $grade = new grade_grade($grade_item->get_final(1), false);
+        $grade = new grade_grade($this->grade_grades[0], false);
+        $grade->lib_wrapper = new mock_lib_wrapper();
+        $grade->lib_wrapper->expectCallCount('update_record', 2);
+        $grade->lib_wrapper->setReturnValue('update_record', true);
         $grade->grade_item = $grade_item;
         $grade->itemid = $grade_item->id;
 
@@ -182,17 +172,15 @@ class grade_grade_test extends grade_test {
 
         // Test locking the grade when needsupdate is false
         $grade->grade_item->needsupdate = false;
-        
-        $column = new stdClass();
-        $column->name = 'locked';
-        $db->setReturnValue('MetaColumns', array($column));
-
         $this->assertTrue($grade->set_locked(true, false, false));
         $this->assertFalse(empty($grade->locked));
         $this->assertTrue($grade->set_locked(false, false, false));
         $this->assertTrue(empty($grade->locked));
 
-        $grade = new grade_grade($grade_item->get_final(1), false);
+        $grade = new grade_grade($this->grade_grades[0], false);
+        $grade->lib_wrapper = new mock_lib_wrapper();
+        $grade->lib_wrapper->expectOnce('update_record');
+        $grade->lib_wrapper->setreturnvalue('update_record', true);
         $grade->grade_item = $grade_item;
         $grade->itemid = $grade_item->id;
 
@@ -211,20 +199,17 @@ class grade_grade_test extends grade_test {
     }
 
     function test_grade_grade_set_hidden() {
-        global $db;
-
         $grade_item = new grade_item($this->grade_items[0], false);
-        $grade = new grade_grade($grade_item->get_final(1), false);
+        $grade = new grade_grade($this->grade_grades[0], false);
+        $grade->lib_wrapper = new mock_lib_wrapper();
+        $grade->lib_wrapper->expectCallCount('update_record', 2);
+        $grade->lib_wrapper->setreturnvalue('update_record', true);
         $grade->grade_item = $grade_item;
         $grade->itemid = $grade_item->id;
         $this->assertTrue(method_exists($grade, 'set_hidden'));
 
         $this->assertEqual(0, $grade_item->hidden);
         $this->assertEqual(0, $grade->hidden);
-
-        $column = new stdClass();
-        $column->name = 'hidden';
-        $db->setReturnValue('MetaColumns', array($column));
         
         $grade->set_hidden(0);
         $this->assertEqual(0, $grade->hidden);

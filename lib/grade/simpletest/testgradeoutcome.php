@@ -59,21 +59,18 @@ class grade_outcome_test extends grade_test {
     }
 
     function test_grade_outcome_insert() {
-        global $db;
         $grade_outcome = new grade_outcome();
+        $grade_outcome->lib_wrapper = new mock_lib_wrapper();
         $this->assertTrue(method_exists($grade_outcome, 'insert'));
 
         $grade_outcome->courseid = $this->courseid;
         $grade_outcome->shortname = 'tw';
         $grade_outcome->fullname = 'Team work';
         
-        // Mock insert of data in history table
-        $this->rs->setReturnValue('RecordCount', 1);
-        $this->rs->fields = array(1); 
-        
-        // Mock insert of outcome object
-        $db->setReturnValue('GetInsertSQL', true);
-        $db->setReturnValue('Insert_ID', 1);
+        $grade_outcome->lib_wrapper->expectCallCount('insert_record', 3); // main insert, history table insert and grade_outcomes_courses insert
+        $grade_outcome->lib_wrapper->setReturnValue('insert_record', 1);
+        $grade_outcome->lib_wrapper->expectOnce('get_record'); // for update_from_db() method
+        $grade_outcome->lib_wrapper->setReturnValue('get_record', array(1));
 
         $grade_outcome->insert();
 
@@ -81,91 +78,71 @@ class grade_outcome_test extends grade_test {
         $this->assertFalse(empty($grade_outcome->timecreated));
         $this->assertFalse(empty($grade_outcome->timemodified));
     }
-
+    
     function test_grade_outcome_update() {
-        global $db;
-
         $grade_outcome = new grade_outcome($this->grade_outcomes[0], false);
+        $grade_outcome->lib_wrapper = new mock_lib_wrapper();
         $grade_outcome->timecreated = time() - 200000;
+        $grade_outcome->timemodified = $grade_outcome->timecreated;
         $grade_outcome->timemodified = $grade_outcome->timecreated;
         $timemodified = $grade_outcome->timemodified;
         $timecreated = $grade_outcome->timecreated;
-        $grade_outcome->courseid = null;
+        $grade_outcome->courseid = $this->courseid;
 
         $this->assertTrue(method_exists($grade_outcome, 'update'));
         $grade_outcome->shortname = 'Team work';
         
-        // Mock update: MetaColumns is first returned to compare existing data with new
-        $column = new stdClass();
-        $column->name = 'shortname';
-        $db->setReturnValue('MetaColumns', array($column));
-        
+        $grade_outcome->lib_wrapper->expectOnce('update_record');
+        $grade_outcome->lib_wrapper->setReturnValue('update_record', true);
+        $grade_outcome->lib_wrapper->expectOnce('get_records');
+        $grade_outcome->lib_wrapper->setReturnValue('get_records', false); // Pretend there is no record in grade_outcoms_courses table
+        $grade_outcome->lib_wrapper->expectCallCount('insert_record', 2); // 1. grade_outcome_courses, 2. grade_outcomes_history
+
         $this->assertTrue($grade_outcome->update());
         
         // We expect timecreated to be unchanged, and timemodified to be updated
         $this->assertTrue($grade_outcome->timemodified > $timemodified);
         $this->assertTrue($grade_outcome->timemodified > $grade_outcome->timecreated);
         $this->assertTrue($grade_outcome->timecreated == $timecreated);
-
-        // @TODO When the grade_outcome has a courseid but no match in the grade_outcomes_courses table, the update method should insert a new record in that table
-        
-        // @TODO If history switch is on, an insert should be performed in the grade_outcomes_history table
-
     }
 
     function test_grade_outcome_delete() {
-        global $db; 
         $grade_outcome = new grade_outcome($this->grade_outcomes[0], false);
+        $grade_outcome->courseid = $this->courseid;
+        $grade_outcome->lib_wrapper = new mock_lib_wrapper();
         
-        // Mock delete 
+        $grade_outcome->lib_wrapper->expectCallCount('delete_records', 2);
+        $grade_outcome->lib_wrapper->expectAt(0, 'delete_records', array('grade_outcomes_courses', 'outcomeid', $grade_outcome->id, 'courseid', $this->courseid));
+        $grade_outcome->lib_wrapper->expectAt(1, 'delete_records', array('grade_outcomes', 'id', $grade_outcome->id));
+        $grade_outcome->lib_wrapper->setReturnValue('delete_records', true);
+
+        $grade_outcome->lib_wrapper->expectOnce('insert_record'); // grade_history entry
+
         $this->assertTrue(method_exists($grade_outcome, 'delete')); 
         $this->assertTrue($grade_outcome->delete());
-
-        // @TODO If history switch is on, an insert should be performed in the grade_outcomes_history table
-
-        // @TODO If grade_outcome has a courseid, associated records from grade_outcomes_courses should be deleted also
     }
 
     function test_grade_outcome_fetch() {
-        global $db;
-
         $grade_outcome = new grade_outcome();
+        $grade_outcome->lib_wrapper = new mock_lib_wrapper();
+        $grade_outcome->lib_wrapper->expectOnce('get_records_select');
+        $grade_outcome->lib_wrapper->setReturnValue('get_records_select', array($this->grade_outcomes[0]));
         $this->assertTrue(method_exists($grade_outcome, 'fetch'));
-        
-        // Mock fetch
-        $column = new stdClass();
-        $column->name = 'id';
-        $this->rs->setReturnValue('FetchField', $column); // Fetching the name of the first column
-        $this->rs->setReturnValue('GetAssoc', array($this->grade_outcomes[0]->id => (array) $this->grade_outcomes[0])); 
 
-        $grade_outcome = grade_outcome::fetch(array('id'=>$this->grade_outcomes[0]->id));
+        $grade_outcome = $grade_outcome->fetch(array('id'=>$this->grade_outcomes[0]->id));
+       
         $this->assertEqual($this->grade_outcomes[0]->id, $grade_outcome->id);
         $this->assertEqual($this->grade_outcomes[0]->shortname, $grade_outcome->shortname);
-        
-        // Mock fetching of scale object
-        $this->reset_mocks();
-        $this->rs->setReturnValue('FetchField', $column); // Fetching the name of the first column
-        $this->rs->setReturnValue('GetAssoc', array($this->scale[2]->id => (array) $this->scale[2])); 
-        $grade_outcome->load_scale();
-        $this->assertEqual($this->scale[2]->id, $grade_outcome->scale->id);
     }
 
     function test_grade_outcome_fetch_all() {
         $grade_outcome = new grade_outcome();
+        $grade_outcome->lib_wrapper = new mock_lib_wrapper();
+        $grade_outcome->lib_wrapper->expectOnce('get_records_select');
+        $grade_outcome->lib_wrapper->setReturnValue('get_records_select', $this->grade_outcomes);
         $this->assertTrue(method_exists($grade_outcome, 'fetch_all'));
-        
-        // Mock fetch_all
-        $return_array = array();
-        foreach ($this->grade_outcomes as $go) {
-            $return_array[$go->id] = (array) $go;
-        }
 
-        $column = new stdClass();
-        $column->name = 'id';
-        $this->rs->setReturnValue('FetchField', $column); // Fetching the name of the first column
-        $this->rs->setReturnValue('GetAssoc', $return_array); 
-
-        $grade_outcomes = grade_outcome::fetch_all(array());
+        $grade_outcomes = $grade_outcome->fetch_all(array());
         $this->assertEqual(count($this->grade_outcomes), count($grade_outcomes));
     }
 }
