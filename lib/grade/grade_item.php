@@ -1334,6 +1334,11 @@ class grade_item extends grade_object {
             return false;
         }
 
+        // we need proper floats here for !== comparison later
+        if (!is_null($grade->finalgrade)) {
+            $grade->finalgrade = (float)$grade->finalgrade;
+        }
+
         $oldgrade = new object();
         $oldgrade->finalgrade     = $grade->finalgrade;
         $oldgrade->overridden     = $grade->overridden;
@@ -1348,12 +1353,11 @@ class grade_item extends grade_object {
                 $grade->overridden = 0;
             }
 
-            if (!is_null($finalgrade)) {
-                $finalgrade = bounded_number($this->grademin, $finalgrade, $this->grademax);
+            if (is_null($finalgrade)) {
+                $grade->finalgrade = null;
             } else {
-                $finalgrade = $finalgrade;
+                $grade->finalgrade = (float)bounded_number($this->grademin, $finalgrade, $this->grademax);
             }
-            $grade->finalgrade = $finalgrade;
         }
 
         // do we have comment from teacher?
@@ -1446,9 +1450,9 @@ class grade_item extends grade_object {
         $grade->timecreated  = $datesubmitted;
 
         if (empty($dategraded)) {
-            $grade->dategraded = time();
+            $grade->timemodified = time();
         } else {
-            $grade->dategraded = $dategraded;
+            $grade->timemodified = $dategraded;
         }
 
         if ($grade->is_locked()) {
@@ -1461,6 +1465,11 @@ class grade_item extends grade_object {
             // do not update grades that should be already locked and force regrade
             $this->force_regrading();
             return false;
+        }
+
+        // we need proper floats here for !== comparison later
+        if (!is_null($grade->rawgrade)) {
+            $grade->rawgrade = (float)$grade->rawgrade;
         }
 
         $oldgrade = new object();
@@ -1488,10 +1497,11 @@ class grade_item extends grade_object {
             $grade->feedbackformat = $feedbackformat;
         }
 
+        if (is_null($grade->rawgrade)) {
+            $grade->timemodified = null; // dategraded hack - not graded if no grade present, comments do not count here as grading
+        }
+
         if (empty($grade->id)) {
-            if (is_null($grade->rawgrade)) {
-                $grade->dategraded = null;
-            }
             $result = (boolean)$grade->insert($source);
 
         } else if ($grade->finalgrade     !== $oldgrade->finalgrade
@@ -1501,9 +1511,6 @@ class grade_item extends grade_object {
                 or $grade->rawscaleid     !== $oldgrade->rawscaleid
                 or $grade->feedback       !== $oldgrade->feedback
                 or $grade->feedbackformat !== $oldgrade->feedbackformat) {
-            if (is_null($grade->rawgrade)) {
-                $grade->dategraded = null;
-            }
             $result = $grade->update($source);
         }
 
