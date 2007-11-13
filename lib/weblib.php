@@ -2410,11 +2410,13 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
 
 
-    $meta = '<meta http-equiv="content-type" content="text/html; charset=utf-8" />' .
+    $meta = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' .
             "\n" . $meta . "\n";
     if (!$usexml) {
-        @header('Content-type: text/html; charset=utf-8');
+        @header('Content-Type: text/html; charset=utf-8');
     }
+    @header('Content-Script-Type: text/javascript');
+    @header('Content-Style-Type: text/css');
 
     //Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
     $direction = get_html_lang($dir=true);
