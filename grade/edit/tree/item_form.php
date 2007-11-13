@@ -197,6 +197,7 @@ class edit_item_form extends moodleform {
                     //$mform->removeElement('calculation');
                 }
             }
+
             //remove the aggregation coef element if not needed
             if ($grade_item->is_course_item()) {
                 $mform->removeElement('aggregationcoef');
@@ -223,6 +224,23 @@ class edit_item_form extends moodleform {
                         $agg_el->setLabel(get_string('aggregationcoefextra', 'grades'));
                         $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoefextra', 'grades'),
                                 false, true, false, get_string('aggregationcoefextrahelp', 'grades')));
+                    }
+                }
+            }
+
+            if ($category = $grade_item->get_item_category()) {
+                if ($category->aggregation == GRADE_AGGREGATE_SUM) {
+                    if ($mform->elementExists('gradetype')) {
+                        $mform->hardFreeze('gradetype');
+                    }
+                    if ($mform->elementExists('grademin')) {
+                        $mform->hardFreeze('grademin');
+                    }
+                    if ($mform->elementExists('grademax')) {
+                        $mform->hardFreeze('grademax');
+                    }
+                    if ($mform->elementExists('scaleid')) {
+                        $mform->removeElement('scaleid');
                     }
                 }
             }
