@@ -32,6 +32,7 @@ function censor_filter($courseid, $text) {
         }
         foreach ($badwords as $badword) {
             $badword = trim($badword);
+            // See MDL-3964 for explanation of leaving the badword in the span title 
             $words[] = new filterobject($badword, '<span class="censoredtext" title="'.$badword.'">', '</span>', 
                                         false, false, str_pad('',strlen($badword),'*'));
         }
