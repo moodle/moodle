@@ -159,7 +159,7 @@ class grade_category extends grade_object {
         } else {
             $obj = grade_object::get_instance('grade_category');
             $parent = $obj->lib_wrapper->get_record('grade_categories', 'id', $grade_category->parent);
-       var_dump($parent); 
+       var_dump($parent);
             return grade_category::build_path($parent).$grade_category->id.'/';
         }
     }
@@ -474,7 +474,9 @@ class grade_category extends grade_object {
         }
 
         if ($oldgrade) {
-            if (!is_null($oldgrade->finalgrade)) {
+            if (is_null($oldgrade->finalgrade)) {
+                $oldfinalgrade = null;
+            } else {
                 // we need proper floats here for !== comparison later
                 $oldfinalgrade = (float)$oldgrade->finalgrade;
             }
@@ -913,7 +915,7 @@ class grade_category extends grade_object {
         } else {
             $params = array('courseid'=>$this->courseid, 'itemtype'=>'category', 'iteminstance'=>$this->id);
         }
-        
+
         $grade_item = grade_object::get_instance('grade_item');
 
         if (!$grade_items = $grade_item->fetch_all($params)) {
@@ -1088,7 +1090,7 @@ class grade_category extends grade_object {
 
         return $course_category;
     }
-    
+
     /**
      * Is grading object editable?
      * @return boolean

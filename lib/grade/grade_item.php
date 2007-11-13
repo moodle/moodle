@@ -24,6 +24,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require_once('grade_object.php');
+
 /**
  * Class representing a grade item. It is responsible for handling its DB representation,
  * modifying and returning its metadata.
@@ -335,7 +336,7 @@ class grade_item extends grade_object {
         if (!$this->is_course_item()) {
             $this->force_regrading();
         }
-        
+
         $grade_grade = grade_object::get_instance('grade_grade');
         if ($grades = $grade_grade->fetch_all(array('itemid'=>$this->id))) {
             foreach ($grades as $grade) {
@@ -1638,17 +1639,20 @@ class grade_item extends grade_object {
 
         // insert final grade - will be needed later anyway
         if ($oldgrade) {
+            if (is_null($oldgrade->finalgrade)) {
+                $oldfinalgrade = null;
+            } else {
+                // we need proper floats here for !== comparison later
+                $oldfinalgrade = (float)$oldgrade->finalgrade;
+            }
             $grade = $this->get_instance('grade_grade', $oldgrade, false); // fetching from db is not needed
             $grade->grade_item =& $this;
 
         } else {
             $grade = $this->get_instance('grade_grade', array('itemid'=>$this->id, 'userid'=>$userid), false);
-            $grade->insert('system');
             $grade->grade_item =& $this;
-
-            $oldgrade = new object();
-            $oldgrade->finalgrade  = $grade->finalgrade;
-            $oldgrade->rawgrade    = $grade->rawgrade;
+            $grade->insert('system');
+            $oldfinalgrade = null;
         }
 
         // no need to recalculate locked or overridden grades
@@ -1660,10 +1664,6 @@ class grade_item extends grade_object {
         $this->formula->set_params($params);
         $result = $this->formula->evaluate();
 
-        // no raw grade for calculated grades - only final
-        $grade->rawgrade = null;
-
-
         if ($result === false) {
             $grade->finalgrade = null;
 
@@ -1673,14 +1673,12 @@ class grade_item extends grade_object {
             if ($this->gradetype == GRADE_TYPE_SCALE) {
                 $result = round($result+0.00001); // round scales upwards
             }
-            $grade->finalgrade = $result;
+            $grade->finalgrade = (float)$result;
         }
 
         // update in db if changed
-        if (   $grade->finalgrade  !== $oldgrade->finalgrade
-            or $grade->rawgrade    !== $oldgrade->rawgrade) {
-
-            $grade->update('system');
+        if ($grade->finalgrade !== $oldfinalgrade) {
+            $grade->update('compute');
         }
 
         if ($result !== false) {
