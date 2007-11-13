@@ -42,7 +42,8 @@ class edit_category_form extends moodleform {
         // visible elements
         $mform->addElement('header', 'gradecat', get_string('gradecategory', 'grades'));
         $mform->addElement('text', 'fullname', get_string('categoryname', 'grades'));
-
+        $mform->addRule('fullname', null, 'required', null, 'client');
+        
         $mform->addElement('select', 'aggregation', get_string('aggregation', 'grades'), $options);
         $mform->setHelpButton('aggregation', array('aggregation', get_string('aggregation', 'grades'), 'grade'));
 
