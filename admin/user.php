@@ -118,8 +118,13 @@
             $updateuser->idnumber     = '';               // Clear this field to free it up
             $updateuser->timemodified = time();
             if (update_record('user', $updateuser)) {
-                // not sure if this is needed. unenrol_student($user->id);  // From all courses
-                delete_records('role_assignments', 'userid', $user->id); // unassign all roles
+                // Removing a user may have more requirements than just removing their role assignments.
+                // Use 'role_unassign' to make sure that all necessary actions occur.
+                if ($userroles = get_records('role_assignments', 'userid', $user->id, '', 'id,roleid')) {
+                    foreach ($userroles as $userrole) {
+                        role_unassign($userrole->roleid, $user->id);
+                    }
+                }
                 // remove all context assigned on this user?
                 notify(get_string('deletedactivity', '', fullname($user, true)) );
             } else {
