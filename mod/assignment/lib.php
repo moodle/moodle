@@ -153,7 +153,7 @@ class assignment_base {
                      navmenu($this->course, $this->cm));
 
         $groupmode = groups_get_activity_groupmode($this->cm);
-        $currentgroup = groups_get_activity_group($this->cm);
+        $this->currentgroup = groups_get_activity_group($this->cm);
         groups_print_activity_menu($this->cm, 'view.php?id=' . $this->cm->id);
 
         echo '<div class="reportlink">'.$this->submittedlink().'</div>';
@@ -309,7 +309,7 @@ class assignment_base {
             if (!has_capability('moodle/course:managegroups', $context) and (groups_get_activity_groupmode($this->cm) == SEPARATEGROUPS)) {
                 $count = $this->count_real_submissions($this->currentgroup);  // Only their groups
             } else {
-                $count = $this->count_real_submissions();                     // Everyone
+                $count = $this->count_real_submissions($this->currentgroup);  // Everyone
             }
             $submitted = '<a href="submissions.php?id='.$this->cm->id.'">'.
                          get_string('viewsubmissions', 'assignment', $count).'</a>';
