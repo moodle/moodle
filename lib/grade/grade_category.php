@@ -462,7 +462,7 @@ class grade_category extends grade_object {
      * @param int $userid
      * @param array $items
      * @param array $grade_values
-     * @param float $oldgrade
+     * @param object $oldgrade
      * @param bool $excluded
      * @return boolean (just plain return;)
      */
@@ -476,7 +476,7 @@ class grade_category extends grade_object {
         if ($oldgrade) {
             if (!is_null($oldgrade->finalgrade)) {
                 // we need proper floats here for !== comparison later
-                $oldgrade->finalgrade = (float)$oldgrade->finalgrade;
+                $oldfinalgrade = (float)$oldgrade->finalgrade;
             }
             $grade = $this->get_instance('grade_grade', $oldgrade, false);
             $grade->grade_item =& $this->grade_item;
@@ -484,15 +484,11 @@ class grade_category extends grade_object {
         } else {
             // insert final grade - it will be needed later anyway
             $grade = $this->get_instance('grade_grade', array('itemid'=>$this->grade_item->id, 'userid'=>$userid), false);
-            $grade->insert('system');
             $grade->grade_item =& $this->grade_item;
-
-            $oldgrade = new object();
-            $oldgrade->finalgrade  = $grade->finalgrade;
+            $grade->insert('system');
+            $oldfinalgrade = null;
         }
-        
-        $grade->itemid = $this->grade_item->id; // For testability, avoids the need for load_grade_item()
-        
+
         // no need to recalculate locked or overridden grades
         if ($grade->is_locked() or $grade->is_overridden()) {
             return;
@@ -501,20 +497,22 @@ class grade_category extends grade_object {
         // can not use own final category grade in calculation
         unset($grade_values[$this->grade_item->id]);
 
+
+    /// sum is a special aggregation types - it adjusts the min max, does not use relative values
+        if ($this->aggregation == GRADE_AGGREGATE_SUM) {
+            $this->sum_grades($grade, $oldfinalgrade, $items, $grade_values, $excluded);
+            return;
+        }
+
         // if no grades calculation possible or grading not allowed clear final grade
         if (empty($grade_values) or empty($items) or ($this->grade_item->gradetype != GRADE_TYPE_VALUE and $this->grade_item->gradetype != GRADE_TYPE_SCALE)) {
             $grade->finalgrade = null;
-            if ($grade->finalgrade !== $oldgrade->finalgrade) {
+            if ($grade->finalgrade !== $oldfinalgrade) {
                 $grade->update('aggregation');
             }
             return;
         }
 
-    /// sum is a special aggregation types - it adjusts the min max, does not use relative values
-        if ($this->aggregation == GRADE_AGGREGATE_SUM) {
-            $this->sum_grades($grade, $oldgrade, $items, $grade_values, $excluded);
-            return;
-        }
     /// normalize the grades first - all will have value 0...1
         // ungraded items are not used in aggregation
         foreach ($grade_values as $itemid=>$v) {
@@ -546,7 +544,7 @@ class grade_category extends grade_object {
         if (count($grade_values) == 0) {
             // not enough attempts yet
             $grade->finalgrade = null;
-            if ($grade->finalgrade !== $oldgrade->finalgrade) {
+            if ($grade->finalgrade !== $oldfinalgrade) {
                 $grade->update('aggregation');
             }
             return;
@@ -558,14 +556,14 @@ class grade_category extends grade_object {
         // recalculate the grade back to requested range
         $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $this->grade_item->grademin, $this->grade_item->grademax);
 
-        if (!is_null($finalgrade)) {
-            $grade->finalgrade = bounded_number($this->grade_item->grademin, $finalgrade, $this->grade_item->grademax);
+        if (is_null($finalgrade)) {
+            $grade->finalgrade = null;
         } else {
-            $grade->finalgrade = $finalgrade;
+            $grade->finalgrade = (float)bounded_number($this->grade_item->grademin, $finalgrade, $this->grade_item->grademax);
         }
 
         // update in db if changed
-        if ($grade->finalgrade !== $oldgrade->finalgrade) {
+        if ($grade->finalgrade !== $oldfinalgrade) {
             $grade->update('aggregation');
         }
 
@@ -650,18 +648,18 @@ class grade_category extends grade_object {
         return $agg_grade;
     }
 
-
     /**
      * internal function for category grades summing
      *
+     * @param object $grade
      * @param int $userid
+     * @param float $oldfinalgrade
      * @param array $items
      * @param array $grade_values
-     * @param float $oldgrade
      * @param bool $excluded
      * @return boolean (just plain return;)
      */
-    function sum_grades(&$grade, &$oldgrade, $items, $grade_values, $excluded) {
+    function sum_grades(&$grade, $oldfinalgrade, $items, $grade_values, $excluded) {
         // ungraded and exluded items are not used in aggregation
         foreach ($grade_values as $itemid=>$v) {
             if (is_null($v)) {
@@ -691,10 +689,10 @@ class grade_category extends grade_object {
         $this->apply_limit_rules($grade_values);
 
         $sum = array_sum($grade_values);
-        $grade->finalgrade = bounded_number($this->grade_item->grademin, $sum, $this->grade_item->grademax);
+        $grade->finalgrade = (float)bounded_number($this->grade_item->grademin, $sum, $this->grade_item->grademax);
 
         // update in db if changed
-        if ($grade->finalgrade !== $oldgrade->finalgrade) {
+        if ($grade->finalgrade !== $oldfinalgrade) {
             $grade->update('aggregation');
         }
 
