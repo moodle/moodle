@@ -1,21 +1,28 @@
-/**
- * enables highlight and marking of rows in data tables
- *
- */
-function markRowsInit() {
-    // for every table row ...
-    var rows = document.getElementById('user-grades').getElementsByTagName('tr');
-    for ( var i = 0; i < rows.length; i++ ) {
-        // ... with the class 'odd' or 'even' ...
-        // ... and to mark the row on click ...
-        rows[i].onmousedown = function() {
-            
-            if (this.className.search(/marked/) != -1) {
-                this.className = this.className.replace(' marked', '');   
+/** highlight/unset the row of a table **/
+function set_row(idx) {
+    var table = document.getElementById('user-grades');
+    var rowsize = table.rows[idx].cells.length;
+    for (var i = 1; i < rowsize; i++) {
+        if (table.rows[idx].cells[i]) {
+            if (table.rows[idx].cells[i].className.search(/hmarked/) != -1) {
+                table.rows[idx].cells[i].className = table.rows[idx].cells[i].className.replace(' hmarked', '');
             } else {
-                this.className += ' marked';
+                table.rows[idx].cells[i].className += ' hmarked';
             }
         }
     }
 }
-window.onload=markRowsInit;
+
+/** highlight/unset the column of a table **/
+function set_col(idx) {
+    var table = document.getElementById('user-grades');
+    for (var i = 1; i < table.rows.length; i++) {
+        if (table.rows[i].cells[idx]) {
+            if (table.rows[i].cells[idx].className.search(/vmarked/) != -1) {
+                table.rows[i].cells[idx].className = table.rows[i].cells[idx].className.replace(' vmarked', '');
+            } else {
+                table.rows[i].cells[idx].className += ' vmarked';
+            }
+        }
+    }
+}
