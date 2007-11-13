@@ -468,7 +468,9 @@ class grade_category extends grade_object {
         }
 
         if ($oldgrade) {
-            if (!is_null($oldgrade->finalgrade)) {
+            if (is_null($oldgrade->finalgrade)) {
+                $oldfinalgrade = null;
+            } else {
                 // we need proper floats here for !== comparison later
                 $oldfinalgrade = (float)$oldgrade->finalgrade;
             }

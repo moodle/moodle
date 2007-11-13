@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -1621,17 +1621,20 @@ class grade_item extends grade_object {
 
         // insert final grade - will be needed later anyway
         if ($oldgrade) {
+            if (is_null($oldgrade->finalgrade)) {
+                $oldfinalgrade = null;
+            } else {
+                // we need proper floats here for !== comparison later
+                $oldfinalgrade = (float)$oldgrade->finalgrade;
+            }
             $grade = new grade_grade($oldgrade, false); // fetching from db is not needed
             $grade->grade_item =& $this;
 
         } else {
             $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid), false);
-            $grade->insert('system');
             $grade->grade_item =& $this;
-
-            $oldgrade = new object();
-            $oldgrade->finalgrade  = $grade->finalgrade;
-            $oldgrade->rawgrade    = $grade->rawgrade;
+            $grade->insert('system');
+            $oldfinalgrade = null;
         }
 
         // no need to recalculate locked or overridden grades
@@ -1643,10 +1646,6 @@ class grade_item extends grade_object {
         $this->formula->set_params($params);
         $result = $this->formula->evaluate();
 
-        // no raw grade for calculated grades - only final
-        $grade->rawgrade = null;
-
-
         if ($result === false) {
             $grade->finalgrade = null;
 
@@ -1656,14 +1655,12 @@ class grade_item extends grade_object {
             if ($this->gradetype == GRADE_TYPE_SCALE) {
                 $result = round($result+0.00001); // round scales upwards
             }
-            $grade->finalgrade = $result;
+            $grade->finalgrade = (float)$result;
         }
 
         // update in db if changed
-        if (   $grade->finalgrade  !== $oldgrade->finalgrade
-            or $grade->rawgrade    !== $oldgrade->rawgrade) {
-
-            $grade->update('system');
+        if ($grade->finalgrade !== $oldfinalgrade) {
+            $grade->update('compute');
         }
 
         if ($result !== false) {
