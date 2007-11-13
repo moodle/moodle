@@ -169,7 +169,7 @@ if ($formdata = $mform->is_cancelled()) {
 
     // clear bilk selection
     if ($bulk) {
-        $SESSION->bulk_susers = array();
+        $SESSION->bulk_users = array();
     }
 
     // init csv import helper
@@ -483,8 +483,8 @@ if ($formdata = $mform->is_cancelled()) {
             }
 
             if ($bulk == 2 or $bulk == 3) {
-                if (!in_array($user->id, $SESSION->bulk_susers)) {
-                    $SESSION->bulk_susers[] = $user->id;
+                if (!in_array($user->id, $SESSION->bulk_users)) {
+                    $SESSION->bulk_users[] = $user->id;
                 }
             }
 
@@ -547,8 +547,8 @@ if ($formdata = $mform->is_cancelled()) {
             get_context_instance(CONTEXT_PERSONAL, $user->id);
 
             if ($bulk == 1 or $bulk == 3) {
-                if (!in_array($user->id, $SESSION->bulk_susers)) {
-                    $SESSION->bulk_susers[] = $user->id;
+                if (!in_array($user->id, $SESSION->bulk_users)) {
+                    $SESSION->bulk_users[] = $user->id;
                 }
             }
         }

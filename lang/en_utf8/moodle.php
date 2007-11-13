@@ -1082,6 +1082,7 @@ $string['notincluded'] = 'Not included';
 $string['notingroup'] = 'Sorry, but you need to be part of a group to see this activity.';
 $string['notpublic'] = 'Not public!';
 $string['nousersmatching'] = 'No users matching \'$a\' were found';
+$string['nousersfound'] = 'No users found';
 $string['nousersyet'] = 'There are no users yet';
 $string['now'] = 'now';
 $string['novalidcourses'] = 'No valid courses to be shown';
