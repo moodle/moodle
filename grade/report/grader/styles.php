@@ -1,3 +1,14 @@
+.flexible th {
+white-space:normal;
+}
+
+.gradestable th.user img {
+  width: 20px;
+}
+
+.gradestable th.user, .gradestable th.range {
+  whitespace: nowrap;
+}
 
 .grade-report-grader table#user-grades tr.marked td.cell {
     background-color: #FFCC99 ;
