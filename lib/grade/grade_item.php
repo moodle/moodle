@@ -336,7 +336,7 @@ class grade_item extends grade_object {
             $this->force_regrading();
         }
         
-        $grade_grade = $this->get_instance('grade_grade');
+        $grade_grade = grade_object::get_instance('grade_grade');
         if ($grades = $grade_grade->fetch_all(array('itemid'=>$this->id))) {
             foreach ($grades as $grade) {
                 $grade->delete($source);
@@ -362,7 +362,7 @@ class grade_item extends grade_object {
         $this->load_scale();
 
         // add parent category if needed
-        $grade_category = $this->get_instance('grade_category');
+        $grade_category = grade_object::get_instance('grade_category');
         if (empty($this->categoryid) and !$this->is_course_item() and !$this->is_category_item()) {
             $course_category = $grade_category->fetch_course_category($this->courseid);
             $this->categoryid = $course_category->id;
@@ -445,7 +445,7 @@ class grade_item extends grade_object {
         }
 
         if (!empty($userid)) {
-            $grade_grade = $this->get_instance('grade_grade');
+            $grade_grade = grade_object::get_instance('grade_grade');
             if ($grade = $grade_grade->fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
                 $grade->grade_item =& $this; // prevent db fetching of cached grade_item
                 return $grade->is_locked();
@@ -494,7 +494,7 @@ class grade_item extends grade_object {
             $this->update();
 
             if ($cascade) {
-                $grade_grade = $this->get_instance('grade_grade');
+                $grade_grade = grade_object::get_instance('grade_grade');
                 if ($grades = $grade_grade->fetch_all(array('itemid'=>$this->id))) {
                     foreach($grades as $grade) {
                         $grade->grade_item =& $this;
@@ -581,7 +581,7 @@ class grade_item extends grade_object {
         $this->update();
 
         if ($cascade) {
-            $grade_grade = $this->get_instance('grade_grade');
+            $grade_grade = grade_object::get_instance('grade_grade');
             if ($grades = $grade_grade->fetch_all(array('itemid'=>$this->id))) {
                 foreach($grades as $grade) {
                     $grade->grade_item =& $this;
@@ -661,7 +661,7 @@ class grade_item extends grade_object {
 
         // normal grade item - just new final grades
         $result = true;
-        $grade_inst = $this->get_instance('grade_grade');
+        $grade_inst = grade_object::get_instance('grade_grade');
         $fields = implode(',', $grade_inst->required_fields);
         if ($userid) {
             $rs = $this->lib_wrapper->get_recordset_select('grade_grades', "itemid={$this->id} AND userid=$userid", '', $fields);
@@ -715,7 +715,7 @@ class grade_item extends grade_object {
             // Standardise score to the new grade range
             // NOTE: this is not compatible with current assignment grading
             if ($rawmin != $this->grademin or $rawmax != $this->grademax) {
-                $grade_grade = $this->get_instance('grade_grade');
+                $grade_grade = grade_object::get_instance('grade_grade');
                 $rawgrade = $grade_grade->standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
@@ -741,7 +741,7 @@ class grade_item extends grade_object {
             // Convert scale if needed
             // NOTE: this is not compatible with current assignment grading
             if ($rawmin != $this->grademin or $rawmax != $this->grademax) {
-                $grade_grade = $this->get_instance('grade_grade');
+                $grade_grade = grade_object::get_instance('grade_grade');
                 $rawgrade = $grade_grade->standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
@@ -782,7 +782,7 @@ class grade_item extends grade_object {
         if (!empty($this->scaleid)) {
             //do not load scale if already present
             if (empty($this->scale->id) or $this->scale->id != $this->scaleid) {
-                $grade_scale = $this->get_instance('grade_scale');
+                $grade_scale = grade_object::get_instance('grade_scale');
                 $this->scale = $grade_scale->fetch(array('id'=>$this->scaleid));
                 $this->scale->load_items();
             }
@@ -806,7 +806,7 @@ class grade_item extends grade_object {
      */
     function load_outcome() {
         if (!empty($this->outcomeid)) {
-            $grade_outcome = $this->get_instance('grade_outcome');
+            $grade_outcome = grade_object::get_instance('grade_outcome');
             $this->outcome = $grade_outcome->fetch(array('id'=>$this->outcomeid));
         }
         return $this->outcome;
@@ -823,7 +823,7 @@ class grade_item extends grade_object {
             return $this->get_item_category();
 
         } else {
-            $grade_category = $this->get_instance('grade_category');
+            $grade_category = grade_object::get_instance('grade_category');
             return $grade_category->fetch(array('id'=>$this->categoryid));
         }
     }
@@ -849,7 +849,7 @@ class grade_item extends grade_object {
         if (!$this->is_course_item() and !$this->is_category_item()) {
             return false;
         }
-        $grade_category = $this->get_instance('grade_category');
+        $grade_category = grade_object::get_instance('grade_category');
         return $grade_category->fetch(array('id'=>$this->iteminstance));
     }
 
@@ -927,13 +927,13 @@ class grade_item extends grade_object {
      * @return course item object
      */
     function fetch_course_item($courseid) {
-        $obj = new grade_item();
+        $obj = grade_object::get_instance('grade_item');;
         if ($course_item = $obj->fetch(array('courseid'=>$courseid, 'itemtype'=>'course'))) {
             return $course_item;
         }
 
         // first get category - it creates the associated grade item
-        $grade_category = $obj->get_instance('grade_category');
+        $grade_category = grade_object::get_instance('grade_category');
         $course_category = $grade_category->fetch_course_category($courseid);
 
         return $obj->fetch(array('courseid'=>$courseid, 'itemtype'=>'course'));
@@ -1010,7 +1010,8 @@ class grade_item extends grade_object {
         // denormalize formula - convert ##giXX## to [[idnumber]]
         if (preg_match_all('/##gi(\d+)##/', $formula, $matches)) {
             foreach ($matches[1] as $id) {
-                if ($grade_item = $this->fetch(array('id'=>$id, 'courseid'=>$courseid))) {
+                $obj = grade_object::get_instance('grade_item');;
+                if ($grade_item = $obj->fetch(array('id'=>$id, 'courseid'=>$courseid))) {
                     if (!empty($grade_item->idnumber)) {
                         $formula = str_replace('##gi'.$grade_item->id.'##', '[['.$grade_item->idnumber.']]', $formula);
                     }
@@ -1037,7 +1038,8 @@ class grade_item extends grade_object {
         }
 
         // normalize formula - we want grade item ids ##giXXX## instead of [[idnumber]]
-        if ($grade_items = $this->fetch_all(array('courseid'=>$courseid))) {
+        $obj = grade_object::get_instance('grade_item');;
+        if ($grade_items = $obj->fetch_all(array('courseid'=>$courseid))) {
             foreach ($grade_items as $grade_item) {
                 $formula = str_replace('[['.$grade_item->idnumber.']]', '##gi'.$grade_item->id.'##', $formula);
             }
@@ -1176,7 +1178,7 @@ class grade_item extends grade_object {
         }
 
         // find parent and check course id
-        $grade_category = $this->get_instance('grade_category');
+        $grade_category = grade_object::get_instance('grade_category');
         if (!$parent_category = $grade_category->fetch(array('id'=>$parentid, 'courseid'=>$this->courseid))) {
             return false;
         }
@@ -1407,7 +1409,8 @@ class grade_item extends grade_object {
             }
 
         } else if (!$this->needsupdate) {
-            $course_item = $this->fetch_course_item($this->courseid);
+            $obj = grade_object::get_instance('grade_item');;
+            $course_item = $obj->fetch_course_item($this->courseid);
             if (!$course_item->needsupdate) {
                 if (!grade_regrade_final_grades($this->courseid, $userid, $this)) {
                     $this->force_regrading();
@@ -1527,7 +1530,8 @@ class grade_item extends grade_object {
             $this->force_regrading();
 
         } else if (!$this->needsupdate) {
-            $course_item = $this->fetch_course_item($this->courseid);
+            $obj = grade_object::get_instance('grade_item');;
+            $course_item = $obj->fetch_course_item($this->courseid);
             if (!$course_item->needsupdate) {
                 if (!grade_regrade_final_grades($this->courseid, $userid, $this)) {
                     $this->force_regrading();
@@ -1575,7 +1579,7 @@ class grade_item extends grade_object {
             $usersql = "";
         }
 
-        $grade_inst = $this->get_instance('grade_grade');
+        $grade_inst = grade_object::get_instance('grade_grade');
         $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
 
         $sql = "SELECT $fields

@@ -180,7 +180,7 @@ class grade_grade extends grade_object {
         if ($include_missing) {
             foreach ($userids as $userid) {
                 if (!array_key_exists($userid, $result)) {
-                    $grade_grade = $this->get_instance('grade_grade');
+                    $grade_grade = grade_object::get_instance('grade_grade');
                     $grade_grade->userid = $userid;
                     $grade_grade->itemid = $grade_item->id;
                     $result[$userid] = $grade_grade;
@@ -203,7 +203,7 @@ class grade_grade extends grade_object {
         }
 
         if (empty($this->grade_item)) {
-            $grade_item = $this->get_instance('grade_item');
+            $grade_item = grade_object::get_instance('grade_item');
             $this->grade_item = $grade_item->fetch(array('id'=>$this->itemid));
 
         } else if ($this->grade_item->id != $this->itemid) {
@@ -504,7 +504,8 @@ class grade_grade extends grade_object {
      * @return object grade_grade instance or false if none found.
      */
     function fetch($params) {
-        return $this->fetch_helper('grade_grades', 'grade_grade', $params);
+        $obj = grade_object::get_instance('grade_grade');
+        return $obj->fetch_helper('grade_grades', 'grade_grade', $params);
     }
 
     /**
@@ -515,7 +516,8 @@ class grade_grade extends grade_object {
      * @return array array of grade_grade insatnces or false if none found.
      */
     function fetch_all($params) {
-        return $this->fetch_all_helper('grade_grades', 'grade_grade', $params);
+        $obj = grade_object::get_instance('grade_grade');
+        return $obj->fetch_all_helper('grade_grades', 'grade_grade', $params);
     }
 
     /**
@@ -554,9 +556,11 @@ class grade_grade extends grade_object {
      */
     function get_hiding_affected(&$grade_grades, &$grade_items) {
         global $CFG;
+        
+        $obj = grade_object::get_instance('grade_grade');
 
         if (count($grade_grades) !== count($grade_items)) {
-            error("Incorrent size of arrays in params of $this->get_hiding_affected()!");
+            error('Incorrent size of arrays in params of grade_grade::get_hiding_affected()!');
         }
 
         $dependson = array();
@@ -628,7 +632,7 @@ class grade_grade extends grade_object {
                                     unset($values[$itemid]);
                                     continue;
                                 }
-                                $values[$itemid] = $this->standardise_score($value, $grade_items[$itemid]->grademin, $grade_items[$itemid]->grademax, 0, 1);
+                                $values[$itemid] = $obj->standardise_score($value, $grade_items[$itemid]->grademin, $grade_items[$itemid]->grademax, 0, 1);
                             }
 
                             if ($grade_category->aggregateonlygraded) {
@@ -661,7 +665,7 @@ class grade_grade extends grade_object {
                             $agg_grade = $grade_category->aggregate_values($values, $grade_items);
 
                             // recalculate the rawgrade back to requested range
-                            $finalgrade = $this->standardise_score($agg_grade, 0, 1, $grade_items[$do]->grademin, $grade_items[$do]->grademax);
+                            $finalgrade = $obj->standardise_score($agg_grade, 0, 1, $grade_items[$do]->grademin, $grade_items[$do]->grademax);
 
                             if (!is_null($finalgrade)) {
                                 $finalgrade = bounded_number($grade_items[$do]->grademin, $finalgrade, $grade_items[$do]->grademax);

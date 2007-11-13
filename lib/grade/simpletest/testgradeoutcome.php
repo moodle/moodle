@@ -122,28 +122,5 @@ class grade_outcome_test extends grade_test {
         $this->assertTrue($grade_outcome->delete());
     }
 
-    function test_grade_outcome_fetch() {
-        $grade_outcome = new grade_outcome();
-        $grade_outcome->lib_wrapper = new mock_lib_wrapper();
-        $grade_outcome->lib_wrapper->expectOnce('get_records_select');
-        $grade_outcome->lib_wrapper->setReturnValue('get_records_select', array($this->grade_outcomes[0]));
-        $this->assertTrue(method_exists($grade_outcome, 'fetch'));
-
-        $grade_outcome = $grade_outcome->fetch(array('id'=>$this->grade_outcomes[0]->id));
-       
-        $this->assertEqual($this->grade_outcomes[0]->id, $grade_outcome->id);
-        $this->assertEqual($this->grade_outcomes[0]->shortname, $grade_outcome->shortname);
-    }
-
-    function test_grade_outcome_fetch_all() {
-        $grade_outcome = new grade_outcome();
-        $grade_outcome->lib_wrapper = new mock_lib_wrapper();
-        $grade_outcome->lib_wrapper->expectOnce('get_records_select');
-        $grade_outcome->lib_wrapper->setReturnValue('get_records_select', $this->grade_outcomes);
-        $this->assertTrue(method_exists($grade_outcome, 'fetch_all'));
-
-        $grade_outcomes = $grade_outcome->fetch_all(array());
-        $this->assertEqual(count($this->grade_outcomes), count($grade_outcomes));
-    }
 }
 ?>

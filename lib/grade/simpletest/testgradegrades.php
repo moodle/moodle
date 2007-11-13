@@ -102,42 +102,18 @@ class grade_grade_test extends grade_test {
         $grade_grade->update();
     }
 
-    function test_grade_grade_fetch() {
-        $grade_grade = new grade_grade($this->grade_grades[0], false);
-        $grade_grade->lib_wrapper = new mock_lib_wrapper();
-        $this->assertTrue(method_exists($grade_grade, 'fetch'));
-
-        $grade_grade->lib_wrapper->expectOnce('get_records_select');
-        $grade_grade->lib_wrapper->setReturnValue('get_records_select', array($this->grade_grades[0]));
-        
-        $grades = $grade_grade->fetch(array('id'=>$grade_grade->id));
-
-        $this->assertEqual($grade_grade->id, $grades->id);
-        $this->assertEqual($grade_grade->rawgrade, $grades->rawgrade);
-    }
-
-    function test_grade_grade_fetch_all() {
-        $grade_grade = new grade_grade();
-        $grade_grade->lib_wrapper = new mock_lib_wrapper();
-        $this->assertTrue(method_exists($grade_grade, 'fetch_all'));
-
-        $grade_grade->lib_wrapper->expectOnce('get_records_select');
-        $grade_grade->lib_wrapper->setReturnValue('get_records_select', $this->grade_grades);
-
-        $grades = $grade_grade->fetch_all(array());
-        $this->assertEqual(count($this->grade_grades), count($grades)); 
-    }
-
     function test_grade_grade_load_grade_item() {
         $grade_grade = new grade_grade($this->grade_grades[0], false);
         $grade_grade->lib_wrapper = new mock_lib_wrapper();
+        $grade_grade->itemid = $this->grade_items[0]->id;
         $this->assertTrue(method_exists($grade_grade, 'load_grade_item'));
         $this->assertNull($grade_grade->grade_item);
         $this->assertTrue($grade_grade->itemid);
         
-        $grade_grade->lib_wrapper->expectOnce('get_records_select');
-        $grade_grade->lib_wrapper->setReturnValue('get_records_select', array($this->grade_items[0]));
-        
+        $grade_item = grade_object::get_instance('grade_item');
+        $grade_item->expectOnce('fetch', array(array('id' => $grade_grade->itemid)));
+        $gi = $this->grade_items[0];
+        $grade_item->setReturnReference('fetch', $gi);
         $this->assertNotNull($grade_grade->load_grade_item());
         $this->assertNotNull($grade_grade->grade_item);
         $this->assertEqual($this->grade_items[0]->id, $grade_grade->grade_item->id);

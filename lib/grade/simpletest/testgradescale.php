@@ -125,18 +125,6 @@ class grade_scale_test extends grade_test {
         $this->assertTrue($grade_scale->delete());
     }
 
-    function test_grade_scale_fetch() {
-        $grade_scale = new grade_scale();
-        $grade_scale->lib_wrapper = new mock_lib_wrapper();
-        $grade_scale->lib_wrapper->expectOnce('get_records_select');
-        $grade_scale->lib_wrapper->setReturnValue('get_records_select', array($this->scale[0]));
-        $this->assertTrue(method_exists($grade_scale, 'fetch'));
-
-        $grade_scale = $grade_scale->fetch(array('id'=>$this->scale[0]->id));
-        $this->assertEqual($this->scale[0]->id, $grade_scale->id);
-        $this->assertEqual($this->scale[0]->name, $grade_scale->name);
-    }
-
     function test_scale_load_items() {
         $scale = new grade_scale($this->scale[0], false);
         $this->assertTrue(method_exists($scale, 'load_items'));

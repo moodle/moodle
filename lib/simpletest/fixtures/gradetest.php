@@ -113,11 +113,21 @@ class grade_test extends UnitTestCase {
         $CFG->disablegradehistory = false;
 		$this->real_db = fullclone($db);
         // $this->reset_mocks();
-        grade_object::get_instance('grade_item', null, false, true, new mock_grade_item_partial($this));
-        grade_object::get_instance('grade_category', null, false, true, new mock_grade_category_partial($this));
-        grade_object::get_instance('grade_grade', null, false, true, new mock_grade_grade_partial($this));
-        grade_object::get_instance('grade_outcome', null, false, true, new mock_grade_outcome_partial($this));
-        grade_object::get_instance('grade_scale', null, false, true, new mock_grade_scale_partial($this)); 
+        $mock_gi = new mock_grade_item_partial($this);
+        $mock_gc = new mock_grade_category_partial($this);
+        $mock_gg = new mock_grade_grade_partial($this);
+        $mock_go = new mock_grade_outcome_partial($this);
+        $mock_gs = new mock_grade_scale_partial($this);
+        $mock_gi->lib_wrapper = new mock_lib_wrapper();
+        $mock_gc->lib_wrapper = new mock_lib_wrapper();
+        $mock_gg->lib_wrapper = new mock_lib_wrapper();
+        $mock_go->lib_wrapper = new mock_lib_wrapper();
+        $mock_gs->lib_wrapper = new mock_lib_wrapper();
+        grade_object::get_instance('grade_item', null, false, true, $mock_gi);
+        grade_object::get_instance('grade_category', null, false, true, $mock_gc);
+        grade_object::get_instance('grade_grade', null, false, true, $mock_gg);
+        grade_object::get_instance('grade_outcome', null, false, true, $mock_go);
+        grade_object::get_instance('grade_scale', null, false, true, $mock_gs); 
     }
 
     /**

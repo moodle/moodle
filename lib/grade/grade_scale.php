@@ -82,7 +82,7 @@ class grade_scale extends grade_object {
      * @return object grade_scale instance or false if none found.
      */
     function fetch($params) {
-        $obj = new grade_scale();
+        $obj = grade_object::get_instance('grade_scale');
         return $obj->fetch_helper('scale', 'grade_scale', $params);
     }
 
@@ -94,7 +94,8 @@ class grade_scale extends grade_object {
      * @return array array of grade_scale insatnces or false if none found.
      */
     function fetch_all($params) {
-        return $this->fetch_all_helper('scale', 'grade_scale', $params);
+        $obj = grade_object::get_instance('grade_scale');
+        return $obj->fetch_all_helper('scale', 'grade_scale', $params);
     }
 
     /**
@@ -208,7 +209,8 @@ class grade_scale extends grade_object {
      * @return object
      */
     function fetch_all_global() {
-        return $this->fetch_all(array('courseid'=>0));
+        $obj = grade_object::get_instance('grade_scale');
+        return $obj->fetch_all(array('courseid'=>0));
     }
 
     /**
@@ -216,7 +218,8 @@ class grade_scale extends grade_object {
      * @return object
      */
     function fetch_all_local($courseid) {
-        return $this->fetch_all(array('courseid'=>$courseid));
+        $obj = grade_object::get_instance('grade_scale');
+        return $obj->fetch_all(array('courseid'=>$courseid));
     }
 
     /**

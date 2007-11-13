@@ -148,7 +148,8 @@ class grade_outcome extends grade_object {
      * @return object grade_outcome instance or false if none found.
      */
     function fetch($params) {
-        return $this->fetch_helper('grade_outcomes', 'grade_outcome', $params);
+        $obj = grade_object::get_instance('grade_outcome');
+        return $obj->fetch_helper('grade_outcomes', 'grade_outcome', $params);
     }
 
     /**
@@ -159,7 +160,8 @@ class grade_outcome extends grade_object {
      * @return array array of grade_outcome insatnces or false if none found.
      */
     function fetch_all($params) {
-        return $this->fetch_all_helper('grade_outcomes', 'grade_outcome', $params);
+        $obj = grade_object::get_instance('grade_outcome');
+        return $obj->fetch_all_helper('grade_outcomes', 'grade_outcome', $params);
     }
 
     /**
@@ -168,7 +170,7 @@ class grade_outcome extends grade_object {
      */
     function load_scale() {
         if (empty($this->scale->id) or $this->scale->id != $this->scaleid) {
-            $grade_scale = $this->get_instance('grade_scale');
+            $grade_scale = grade_object::get_instance('grade_scale');
             $this->scale = $grade_scale->fetch(array('id'=>$this->scaleid));
             $this->scale->load_items();
         }
@@ -181,7 +183,8 @@ class grade_outcome extends grade_object {
      * @return object
      */
     function fetch_all_global() {
-        if (!$outcomes = $this->fetch_all(array('courseid'=>null))) {
+        $obj = grade_object::get_instance('grade_outcome');
+        if (!$outcomes = $obj->fetch_all(array('courseid'=>null))) {
             $outcomes = array();
         }
         return $outcomes;
@@ -194,7 +197,8 @@ class grade_outcome extends grade_object {
      * @return object
      */
     function fetch_all_local($courseid) {
-        if (!$outcomes =$this->fetch_all(array('courseid'=>$courseid))) {
+        $obj = grade_object::get_instance('grade_outcome');
+        if (!$outcomes =$obj->fetch_all(array('courseid'=>$courseid))) {
             $outcomes = array();
         }
         return $outcomes;
@@ -209,6 +213,8 @@ class grade_outcome extends grade_object {
     function fetch_all_available($courseid) {
         global $CFG;
 
+        $obj = grade_object::get_instance('grade_outcome');
+
         $result = array();
         $sql = "SELECT go.*
                   FROM {$CFG->prefix}grade_outcomes go, {$CFG->prefix}grade_outcomes_courses goc
@@ -217,8 +223,8 @@ class grade_outcome extends grade_object {
 
         if ($datas = get_records_sql($sql)) {
             foreach($datas as $data) {
-                $instance = $this->get_instance('grade_outcome');
-                $this->set_properties($instance, $data);
+                $instance = grade_object::get_instance('grade_outcome');
+                $obj->set_properties($instance, $data);
                 $result[$instance->id] = $instance;
             }
         }
