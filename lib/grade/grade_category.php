@@ -99,7 +99,7 @@ class grade_category extends grade_object {
      * Aggregate only graded items
      * @var int $aggregateonlygraded
      */
-    var $aggregateonlygraded = 0;
+    var $aggregateonlygraded = 1;
 
     /**
      * Aggregate outcomes together with normal items
