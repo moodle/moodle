@@ -124,6 +124,15 @@ function get_access_icons($course) {
     return $str;
 }
 
+/**
+ * This is needed, solely because we use the 'manual' plug-in to display course key.
+ */
+function print_enrolmentkeyfrom($course) {
+    global $CFG;
+
+    require_once($CFG->dirroot.'/enrol/manual/enrol.php');
+    return enrolment_plugin_manual::print_enrolmentkeyfrom($course);
+}
 
 /// Override the base class config_form() function
 function config_form($frm) {
