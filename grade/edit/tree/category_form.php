@@ -37,24 +37,30 @@ class edit_category_form extends moodleform {
                          GRADE_AGGREGATE_MAX             =>get_string('aggregatemax', 'grades'),
                          GRADE_AGGREGATE_MODE            =>get_string('aggregatemode', 'grades'),
                          GRADE_AGGREGATE_WEIGHTED_MEAN   =>get_string('aggregateweightedmean', 'grades'),
-                         GRADE_AGGREGATE_EXTRACREDIT_MEAN=>get_string('aggregateextracreditmean', 'grades'));
+                         GRADE_AGGREGATE_EXTRACREDIT_MEAN=>get_string('aggregateextracreditmean', 'grades'),
+                         GRADE_AGGREGATE_SUM             =>get_string('aggregatesum', 'grades'));
 
         // visible elements
         $mform->addElement('header', 'gradecat', get_string('gradecategory', 'grades'));
         $mform->addElement('text', 'fullname', get_string('categoryname', 'grades'));
         $mform->addRule('fullname', null, 'required', null, 'client');
-        
+
         $mform->addElement('select', 'aggregation', get_string('aggregation', 'grades'), $options);
         $mform->setHelpButton('aggregation', array('aggregation', get_string('aggregation', 'grades'), 'grade'));
 
-        $mform->addElement('advcheckbox', 'aggregateonlygraded', get_string('aggregateonlygraded', 'grades'));
+        $mform->addElement('checkbox', 'aggregateonlygraded', get_string('aggregateonlygraded', 'grades'));
         $mform->setHelpButton('aggregateonlygraded', array(false, get_string('aggregateonlygraded', 'grades'),
                           false, true, false, get_string('aggregateonlygradedhelp', 'grades')));
+        $mform->disabledIf('aggregateonlygraded', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
 
-        if (!empty($CFG->enableoutcomes)) {
-            $mform->addElement('advcheckbox', 'aggregateoutcomes', get_string('aggregateoutcomes', 'grades'));
+        if (empty($CFG->enableoutcomes)) {
+            $mform->addElement('hidden', 'aggregateoutcomes');
+            $mform->setType('aggregateoutcomes', PARAM_INT);
+        } else {
+            $mform->addElement('checkbox', 'aggregateoutcomes', get_string('aggregateoutcomes', 'grades'));
             $mform->setHelpButton('aggregateoutcomes', array(false, get_string('aggregateoutcomes', 'grades'),
                               false, true, false, get_string('aggregateoutcomeshelp', 'grades')));
+            $mform->disabledIf('aggregateoutcomes', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
         }
 
         $mform->addElement('advcheckbox', 'aggregatesubcats', get_string('aggregatesubcats', 'grades'));

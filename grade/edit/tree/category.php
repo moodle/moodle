@@ -51,7 +51,7 @@ if ($id) {
         error('Incorrect category id!');
     }
     $grade_category->apply_forced_settings();
-    $category = $grade_category->get_record_data(); 
+    $category = $grade_category->get_record_data();
     // Get Category preferences
     $category->pref_aggregationview = grade_report::get_pref('aggregationview', $id);
 
@@ -59,7 +59,7 @@ if ($id) {
     $grade_category = new grade_category();
     $grade_category->courseid = $course->id;
     $grade_category->apply_forced_settings();
-    $category = $grade_category->get_record_data(); 
+    $category = $grade_category->get_record_data();
 }
 
 $mform->set_data($category);
@@ -68,6 +68,12 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data(false)) {
+    if (!isset($data->aggregateonlygraded)) {
+        $data->aggregateonlygraded = 0;
+    }
+    if (!isset($data->aggregateoutcomes)) {
+        $data->aggregateoutcomes = 0;
+    }
     grade_category::set_properties($grade_category, $data);
 
     if (empty($grade_category->id)) {

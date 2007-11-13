@@ -23,6 +23,7 @@ $string['aggregateoutcomes'] = 'Include outcomes in aggregation';
 $string['aggregateoutcomeshelp'] = 'Including outcomes in aggregation may not lead to the desired overall grade, so you have the option to include or leave them out.';
 $string['aggregatesubcats'] = 'Aggregate including subcategories';
 $string['aggregatesubcatshelp'] = 'The aggregation is usually done only with immediate children, it is also possible to aggregate grades in all subcategories excluding other aggregated grades.';
+$string['aggregatesum'] = 'Sum of grades';
 $string['aggregatesonly'] = 'Aggregates only';
 $string['aggregateweightedmean'] = 'Weighted mean of grades';
 $string['aggregation'] = 'Aggregation';
