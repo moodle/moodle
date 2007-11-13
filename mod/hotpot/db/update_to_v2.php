@@ -11,7 +11,7 @@ function hotpot_update_to_v2_2() {
     // remove the index on hotpot_questions.name
     $table = 'hotpot_questions';
     $field = 'name';
-    if (strtolower($CFG->dbfamily)=='postgres') {
+    if (strtolower($CFG->dbtype)=='postgres7') {
         $index = "{$CFG->prefix}{$table}_{$field}_idx";
     } else {
         $index = "{$table}_{$field}_idx";
@@ -35,7 +35,7 @@ function hotpot_update_to_v2_2() {
     // remove the index on hotpot_strings.string
     $table = 'hotpot_strings';
     $field = 'string';
-    if (strtolower($CFG->dbfamily)=='postgres') {
+    if (strtolower($CFG->dbtype)=='postgres7') {
         $index = "{$CFG->prefix}{$table}_{$field}_idx";
     } else {
         $index = "{$table}_{$field}_idx";
@@ -62,7 +62,7 @@ function hotpot_update_to_v2_1_21() {
     global $CFG;
     $ok = true;
 
-    if (strtolower($CFG->dbfamily)=='postgres') {
+    if (strtolower($CFG->dbtype)=='postgres7') {
         // ensure setting of default values on certain fields
         // this was originally done in postgres7.php, but was found to be incompatible with PG7 :-(
         $table="hotpot";
@@ -191,7 +191,7 @@ function hotpot_update_to_v2_1_16() {
     // make sure type of 'name' is a text field (not varchar 255)
     $ok = $ok && hotpot_db_update_field_type('hotpot_questions', 'name', 'name', 'TEXT',   '',  '', 'NOT NULL', '');
 
-    if (strtolower($CFG->dbfamily)=='mysql') {
+    if (strtolower($CFG->dbtype)=='mysql') {
 
         // set default values on certain VARCHAR(255) fields
         $fields = array(
@@ -225,7 +225,7 @@ function hotpot_index_remove_prefix($table, $field) {
 function hotpot_update_to_v2_1_8() {
     global $CFG;
     $ok = true;
-    if (strtolower($CFG->dbfamily)=='postgres') {
+    if (strtolower($CFG->dbtype)=='postgres7') {
         // add, delete and rename certain fields and indexes
         // that were not correctly setup by postgres7.sql
 
@@ -241,7 +241,7 @@ function hotpot_update_to_v2_1_6() {
     global $CFG;
     $ok = true;
 
-    if (strtolower($CFG->dbfamily)=='postgres') {
+    if (strtolower($CFG->dbtype)=='postgres7') {
         // add, delete and rename certain fields and indexes
         // that were not correctly setup by postgres7.sql
 
@@ -334,11 +334,11 @@ function hotpot_update_to_v2_1() {
     // hotpot_questions: change type of "name" field to "text"
     $ok = $ok && hotpot_db_update_field_type('hotpot_questions', 'name', 'name', 'TEXT',   '',  '', 'NOT NULL', '');
     // hotpot_questions: nullify empty and non-numeric (shouldn't be any) values in "text" field
-    switch (strtolower($CFG->dbfamily)) {
+    switch (strtolower($CFG->dbtype)) {
         case 'mysql' : 
             $NOT_REGEXP = 'NOT REGEXP';
         break;
-        case 'postgres' :
+        case 'postgres7' :
             $NOT_REGEXP = '!~';
         break;
         default:
@@ -357,9 +357,9 @@ function hotpot_update_to_v2_1() {
         // do nothing
     } else {
         $ok = $ok && hotpot_create_table($table);
-        switch (strtolower($CFG->dbfamily)) {
+        switch (strtolower($CFG->dbtype)) {
             case 'mysql' : 
-            case 'postgres' :
+            case 'postgres7' :
                 $sql = "
                     INSERT INTO {$CFG->prefix}$table (attempt, details) 
                     SELECT a.id AS attempt, a.details AS details
@@ -960,7 +960,7 @@ function hotpot_db_index_exists($table, $index, $feedback=false) {
     // save and switch off SQL message echo
     $debug = $db->debug;
     $db->debug = $feedback;
-    switch (strtolower($CFG->dbfamily)) {
+    switch (strtolower($CFG->dbtype)) {
         case 'mysql' : 
             $rs = $db->Execute("SHOW INDEX FROM `$table`");
             if ($rs && $rs->RecordCount()>0) {
@@ -973,7 +973,7 @@ function hotpot_db_index_exists($table, $index, $feedback=false) {
                 }
             }
         break;
-        case 'postgres' :
+        case 'postgres7' :
             $rs = $db->Execute("SELECT relname FROM pg_class WHERE relname = '$index' AND relkind='i'");
             if ($rs && $rs->RecordCount()>0) {
                 $exists = true;
@@ -989,11 +989,11 @@ function hotpot_db_delete_index($table, $index, $feedback=false) {
     $ok = true;
     // check index exists
     if (hotpot_db_index_exists($table, $index)) {
-        switch (strtolower($CFG->dbfamily)) {
+        switch (strtolower($CFG->dbtype)) {
             case 'mysql' : 
                 $sql = "ALTER TABLE `$table` DROP INDEX `$index`";
             break;
-            case 'postgres' :
+            case 'postgres7' :
                 $sql = "DROP INDEX $index";
             break;
             default: // unknown database type
@@ -1016,7 +1016,7 @@ function hotpot_db_delete_index($table, $index, $feedback=false) {
 function hotpot_db_add_index($table, $field, $length='') {
     global $CFG, $db;
 
-    if (strtolower($CFG->dbfamily)=='postgres') {
+    if (strtolower($CFG->dbtype)=='postgres7') {
         $index = "{$CFG->prefix}{$table}_{$field}_idx";
     } else {
         // mysql (and others)
@@ -1027,11 +1027,11 @@ function hotpot_db_add_index($table, $field, $length='') {
     // delete $index if it already exists
     $ok = hotpot_db_delete_index($table, $index);
 
-    switch (strtolower($CFG->dbfamily)) {
+    switch (strtolower($CFG->dbtype)) {
         case 'mysql' :
             $ok = $ok && $db->Execute("ALTER TABLE `$table` ADD INDEX `$index` (`$field`)");
         break;
-        case 'postgres' :
+        case 'postgres7' :
             $ok = $ok && $db->Execute("CREATE INDEX $index ON $table (\"$field\")");
         break;
         default: // unknown database type
@@ -1054,7 +1054,7 @@ function hotpot_db_object_exists($table, $field='', $feedback=false) {
     // expand table name
     $table = "{$CFG->prefix}$table";
     // set $sql
-    switch (strtolower($CFG->dbfamily)) {
+    switch (strtolower($CFG->dbtype)) {
         case 'mysql' : 
             if (empty($field)) {
                 $sql = "SHOW TABLES LIKE '$table'";
@@ -1062,7 +1062,7 @@ function hotpot_db_object_exists($table, $field='', $feedback=false) {
                 $sql = "SHOW COLUMNS FROM `$table` LIKE '$field'";
             }
         break;
-        case 'postgres' :
+        case 'postgres7' :
             if (empty($field)) {
                 $sql = "SELECT relname FROM pg_class WHERE relname = '$table' AND relkind='r'";
             } else {
@@ -1072,6 +1072,8 @@ function hotpot_db_object_exists($table, $field='', $feedback=false) {
                 ";
             }
         break;
+        default:
+            return false;
     }
     // save and switch off SQL message echo
     $debug = $db->debug;
@@ -1126,11 +1128,11 @@ function hotpot_db_append_table($oldtable, $table, $feedback=true) {
             if (empty($fieldnames)) {
                 $ok = false;
             } else {
-                switch (strtolower($CFG->dbfamily)) {
+                switch (strtolower($CFG->dbtype)) {
                     case 'mysql':
                         $ok = execute_sql("INSERT INTO `$table` ($fieldnames) SELECT $fieldnames FROM `$oldtable` WHERE 1");
                         break;
-                    case 'postgres':
+                    case 'postgres7':
                         $ok = execute_sql("INSERT INTO $table ($fieldnames) SELECT $fieldnames FROM $oldtable");
                         break;
                     default:
@@ -1149,11 +1151,11 @@ function hotpot_db_append_table($oldtable, $table, $feedback=true) {
 function hotpot_db_set_table_comment($table, $comment, $feedback=true) {
     global $CFG;
     $ok = true;
-    switch (strtolower($CFG->dbfamily)) {
+    switch (strtolower($CFG->dbtype)) {
         case 'mysql' :
             $ok = execute_sql("ALTER TABLE {$CFG->prefix}$table COMMENT='$comment'");
             break;
-        case 'postgres' :
+        case 'postgres7' :
             $ok = execute_sql("COMMENT ON TABLE {$CFG->prefix}$table IS '$comment'");
             break;
     }
@@ -1192,7 +1194,7 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
     // set full table name
     $table = "{$CFG->prefix}$table";
     // update the field in the database
-    switch (strtolower($CFG->dbfamily)) {
+    switch (strtolower($CFG->dbtype)) {
         case 'mysql':
             // optimize integer types
             switch (strtoupper($type)) {
@@ -1244,7 +1246,7 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
             }
             $ok = $ok && execute_sql("ALTER TABLE `$table` $action `$field` $fieldtype");
         break;
-        case 'postgres':
+        case 'postgres7':
             // get db version 
             //    N.B. $db->ServerInfo() usually returns blank 
             //    (except lib/adodb/drivers/adodb-postgre64-inc.php)
@@ -1312,7 +1314,7 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
                 execute_sql('VACUUM FULL '.$table);
             }
         break;
-    } // end switch $CGF->dbfamily
+    } // end switch $CGF->dbtype
     return $ok;
 }
 function hotpot_db_update_record($table, $record, $forcenull=false) {
