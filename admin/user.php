@@ -2,6 +2,7 @@
 
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
+    require_once($CFG->dirroot.'/user/filters/lib.php');
 
     $delete       = optional_param('delete', 0, PARAM_INT);
     $confirm      = optional_param('confirm', '', PARAM_ALPHANUM);   //md5 confirmation hash
@@ -10,9 +11,6 @@
     $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
     $page         = optional_param('page', 0, PARAM_INT);
     $perpage      = optional_param('perpage', 30, PARAM_INT);        // how many per page
-    $search       = trim(optional_param('search', '', PARAM_RAW));
-    $lastinitial  = optional_param('lastinitial', '', PARAM_CLEAN);  // only show students with this last initial
-    $firstinitial = optional_param('firstinitial', '', PARAM_CLEAN); // only show students with this first initial
     $ru           = optional_param('ru', '2', PARAM_INT);            // show remote users
     $lu           = optional_param('lu', '2', PARAM_INT);            // show local users
     $acl          = optional_param('acl', '0', PARAM_INT);           // id of user to tweak mnet ACL (requires $access)
@@ -20,37 +18,7 @@
 
     admin_externalpage_setup('editusers');
 
-    // Let's see if we have *any* mnet users. Just ask for a single record
-    $mnet_users = get_records_select('user', " auth='mnet' AND mnethostid != '{$CFG->mnet_localhost_id}' ", '', '*', '0', '1');
-    if(is_array($mnet_users) && count($mnet_users) > 0) {
-        $mnet_auth_users = true;
-    } else {
-        $mnet_auth_users = false;
-    }
-    
-    if($mnet_auth_users) {
-        // Determine which users we are looking at (local, remote, or both). Start with both.
-        if (!isset($_SESSION['admin-user-remoteusers'])) {
-            $_SESSION['admin-user-remoteusers'] = 1;
-            $_SESSION['admin-user-localusers']  = 1;
-        }
-        if ($ru == 0 or $ru == 1) {
-            $_SESSION['admin-user-remoteusers'] = $ru;
-        }
-        if ($lu == 0 or $lu == 1) {
-             $_SESSION['admin-user-localusers'] = $lu;
-        }
-        $remoteusers = $_SESSION['admin-user-remoteusers'];
-        $localusers  = $_SESSION['admin-user-localusers'];
-    
-        // if neither remote nor local, set to sensible local only
-        if (!$remoteusers and !$localusers) {
-            $_SESSION['admin-user-localusers'] = 1;
-            $localusers = 1;
-        }
-    }
-
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
     $site = get_site();
 
     if (!has_capability('moodle/user:update', $sitecontext) and !has_capability('moodle/user:delete', $sitecontext)) {
@@ -60,7 +28,6 @@
     $stredit   = get_string('edit');
     $strdelete = get_string('delete');
     $strdeletecheck = get_string('deletecheck');
-    $strsearch = get_string('search');
     $strshowallusers = get_string('showallusers');
 
     if (empty($CFG->loginhttps)) {
@@ -151,6 +118,9 @@
                 . "' access now set to '$accessctrl'.");
     }
 
+    // create the user filter form
+    $ufiltering = new user_filtering();
+
     // Carry on with the user listing
 
     $columns = array("firstname", "lastname", "email", "city", "country", "lastaccess");
@@ -174,28 +144,19 @@
             $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" alt=\"\" />";
 
         }
-        $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir&amp;search=".urlencode(stripslashes($search))."&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial\">".$string[$column]."</a>$columnicon";
+        $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir\">".$string[$column]."</a>$columnicon";
     }
 
     if ($sort == "name") {
         $sort = "firstname";
     }
-    
-    // tell the query which users we are looking at (local, remote, or both)
-    $remotewhere = '';
-    if($mnet_auth_users && ($localusers XOR $remoteusers)) {
-        if ($localusers) {
-            $remotewhere .= " and mnethostid = {$CFG->mnet_localhost_id} ";
-        } else {
-            $remotewhere .= " and mnethostid <> {$CFG->mnet_localhost_id} ";
-        }
-    }
-    
-    $users = get_users_listing($sort, $dir, $page*$perpage, $perpage, $search, $firstinitial, $lastinitial, $remotewhere);
-    $usercount = get_users(false);
-    $usersearchcount = get_users(false, $search, true, "", "", $firstinitial, $lastinitial);
 
-    if ($search or $firstinitial or $lastinitial) {
+    $extrasql = $ufiltering->get_sql_filter();
+    $users = get_users_listing($sort, $dir, $page*$perpage, $perpage, '', '', '', $extrasql);
+    $usercount = get_users(false);
+    $usersearchcount = get_users(false, '', true, "", "", '', '', '', '', '*', $extrasql);
+
+    if ($extrasql !== '') {
         print_heading("$usersearchcount / $usercount ".get_string('users'));
         $usercount = $usersearchcount;
     } else {
@@ -205,65 +166,15 @@
     $alphabet = explode(',', get_string('alphabet'));
     $strall = get_string('all');
 
-
-    /// Bar of first initials
-
-    echo "<p style=\"text-align:center\">";
-    echo get_string("firstname")." : ";
-    if ($firstinitial) {
-        echo " <a href=\"user.php?sort=firstname&amp;dir=ASC&amp;".
-             "perpage=$perpage&amp;lastinitial=$lastinitial\">$strall</a> ";
-    } else {
-        echo " <b>$strall</b> ";
-    }
-    foreach ($alphabet as $letter) {
-        if ($letter == $firstinitial) {
-            echo " <b>$letter</b> ";
-        } else {
-            echo " <a href=\"user.php?sort=firstname&amp;dir=ASC&amp;".
-                 "perpage=$perpage&amp;lastinitial=$lastinitial&amp;firstinitial=$letter\">$letter</a> ";
-        }
-    }
-    echo "<br />";
-
-    /// Bar of last initials
-
-    echo get_string("lastname")." : ";
-    if ($lastinitial) {
-        echo " <a href=\"user.php?sort=lastname&amp;dir=ASC&amp;".
-             "perpage=$perpage&amp;firstinitial=$firstinitial\">$strall</a> ";
-    } else {
-        echo " <b>$strall</b> ";
-    }
-    foreach ($alphabet as $letter) {
-        if ($letter == $lastinitial) {
-            echo " <b>$letter</b> ";
-        } else {
-            echo " <a href=\"user.php?sort=lastname&amp;dir=ASC&amp;".
-                 "perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$letter\">$letter</a> ";
-        }
-    }
-    echo "</p>";
-
     print_paging_bar($usercount, $page, $perpage,
-            "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=".urlencode(stripslashes($search))."&amp;");
+            "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;");
 
     flush();
 
 
     if (!$users) {
         $match = array();
-        if ($search !== '') {
-           $match[] = s($search);
-        }
-        if ($firstinitial) {
-           $match[] = get_string('firstname').": $firstinitial"."___";
-        }
-        if ($lastinitial) {
-           $match[] = get_string('lastname').": $lastinitial"."___";
-        }
-        $matchstring = implode(", ", $match);
-        print_heading(get_string('nousersmatching', '', $matchstring));
+        print_heading(get_string('nousersfound'));
 
         $table = NULL;
 
@@ -367,34 +278,9 @@
         }
     }
 
-    if($mnet_auth_users) {
-        echo "<p style=\"text-align:center\">";
-        if ($localusers == 1 && $remoteusers == 1) {
-            echo '<a href="?lu=0">'.get_string('hidelocal','mnet').'</a> | ';
-        } elseif ($localusers == 0)  {
-            echo '<a href="?lu=1">'.get_string('showlocal','mnet').'</a> | ';
-        } else {
-            echo get_string('hidelocal','mnet').' | ';
-        }
-        if ($localusers == 1 && $remoteusers == 1) {
-            echo '<a href="?ru=0">'.get_string('hideremote','mnet').'</a>';
-        } elseif ($remoteusers == 0) {
-            echo '<a href="?ru=1">'.get_string('showremote','mnet').'</a>';
-        } else {
-            echo get_string('hideremote','mnet');
-        }
-        echo "</p>";
-    }
-
-    echo "<table class=\"searchbox\" style=\"margin-left:auto;margin-right:auto\" cellpadding=\"10\"><tr><td>";
-    echo "<form action=\"user.php\" method=\"get\"><fieldset class=\"invisiblefieldset\">";
-    echo "<input type=\"text\" name=\"search\" value=\"".s($search, true)."\" size=\"20\" />";
-    echo "<input type=\"submit\" value=\"$strsearch\" />";
-    if ($search) {
-        echo "<input type=\"button\" onclick=\"document.location='user.php';\" value=\"$strshowallusers\" />";
-    }
-    echo "</fieldset></form>";
-    echo "</td></tr></table>";
+    // add filters
+    $ufiltering->display_add();
+    $ufiltering->display_active();
 
     if (has_capability('moodle/user:create', $sitecontext)) {
         print_heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
@@ -402,13 +288,11 @@
     if (!empty($table)) {
         print_table($table);
         print_paging_bar($usercount, $page, $perpage,
-                         "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage".
-                         "&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=".urlencode(stripslashes($search))."&amp;");
+                         "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;");
         if (has_capability('moodle/user:create', $sitecontext)) {
             print_heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
         }
     }
-
 
     admin_externalpage_print_footer();
 

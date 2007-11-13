@@ -215,7 +215,7 @@ function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') 
  * @return object|false|int  {@link $USER} records unless get is false in which case the integer count of the records found is returned. False is returned if an error is encountered.
  */
 function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sort='firstname ASC',
-                   $firstinitial='', $lastinitial='', $page='', $recordsperpage='', $fields='*') {
+                   $firstinitial='', $lastinitial='', $page='', $recordsperpage='', $fields='*', $extraselect='') {
 
     global $CFG;
 
@@ -251,6 +251,10 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
         $select .= ' AND lastname '. $LIKE .' \''. $lastinitial .'%\'';
     }
 
+    if ($extraselect) {
+        $select .= " AND $extraselect ";
+    }
+
     if ($get) {
         return get_records_select('user', $select, $sort, $fields, $page, $recordsperpage);
     } else {
@@ -277,7 +281,7 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
  */
 
 function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=0,
-                           $search='', $firstinitial='', $lastinitial='', $remotewhere='') {
+                           $search='', $firstinitial='', $lastinitial='', $extraselect='') {
 
     global $CFG;
 
@@ -299,7 +303,9 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
         $select .= ' AND lastname '. $LIKE .' \''. $lastinitial .'%\' ';
     }
 
-    $select .= $remotewhere;
+    if ($extraselect) {
+        $select .= " AND $extraselect ";
+    }
 
     if ($sort) {
         $sort = ' ORDER BY '. $sort .' '. $dir;

@@ -1,61 +1,46 @@
 <?php //$Id$
 
-require_once($CFG->dirroot . '/user/filters/lib.php'); 
+require_once($CFG->dirroot.'/user/filters/lib.php');
 
 /**
  * User filter based on values of custom profile fields.
  */
 class user_filter_profilefield extends user_filter_type {
-    /**
-     * operator used for comparison of data
-     */
-    var $_operator;
-    /**
-     * profile field to look at (0 - all fields)
-     */
-    var $_profile_field;
+
     /**
      * Constructor
      * @param string $name the name of the filter instance
      * @param string $label the label of the filter instance
-     * @param string $field the field used for filtering data
-     * @param string $value the value of the profile field (used for filtering data)
-     * @param int $profile_field id of the profile field to look in
-     * @param int $operator code of the comparison operator
+     * @param boolean $advanced advanced form element flag
      */
-    function user_filter_profilefield($name, $label, $field='id', $value=null, $profile_field=0, $operator=0) {
-        parent::user_filter_type($name, $label, $field, $value);
-        $this->_operator = $operator;
-        $this->_profile_field = $profile_field;
+    function user_filter_profilefield($name, $label, $advanced) {
+        parent::user_filter_type($name, $label, $advanced);
     }
-    
+
     /**
      * Returns an array of comparison operators
      * @return array of comparison operators
      */
-    function getOperators() {
-        return array(
-            get_string('contains', 'filters'),
-            get_string('doesnotcontain','filters'),
-            get_string('isequalto','filters'),
-            get_string('startswith','filters'),
-            get_string('endswith','filters'),
-            get_string('isempty','filters'),
-            get_string('isnotdefined','filters'),
-            get_string('isdefined','filters'),
-        );
+    function get_operators() {
+        return array(0 => get_string('contains', 'filters'),
+                     1 => get_string('doesnotcontain','filters'),
+                     2 => get_string('isequalto','filters'),
+                     3 => get_string('startswith','filters'),
+                     4 => get_string('endswith','filters'),
+                     5 => get_string('isempty','filters'),
+                     6 => get_string('isnotdefined','filters'),
+                     7 => get_string('isdefined','filters'));
     }
-    
+
     /**
      * Returns an array of custom profile fields
      * @return array of profile fields
      */
-    function getProfileFields() {
-        $fields =& get_records_select('user_info_field', '', 'shortname', 'id,shortname');
-        if(empty($fields)) {
+    function get_profile_fields() {
+        if (!$fields = get_records_select('user_info_field', '', 'shortname', 'id,shortname')) {
             return null;
         }
-        $res[0] = get_string('anyfield','filters');
+        $res = array(0 => get_string('anyfield', 'filters'));
         foreach($fields as $k=>$v) {
             $res[$k] = $v->shortname;
         }
@@ -67,116 +52,123 @@ class user_filter_profilefield extends user_filter_type {
      * @param object $mform a MoodleForm object to setup
      */
     function setupForm(&$mform) {
-        $profile_fields =& $this->getProfileFields();
-        if(empty($profile_fields)) {
+        $profile_fields = $this->get_profile_fields();
+        if (empty($profile_fields)) {
             return;
         }
         $objs = array();
-        $objs[] =& $mform->createElement('select', $this->_name . '_fld', null, $profile_fields);
-        $objs[] =& $mform->createElement('select', $this->_name . '_op', null, $this->getOperators());
+        $objs[] =& $mform->createElement('select', $this->_name.'_fld', null, $profile_fields);
+        $objs[] =& $mform->createElement('select', $this->_name.'_op', null, $this->get_operators());
         $objs[] =& $mform->createElement('text', $this->_name, null);
-        $grp =& $mform->addElement('group', $this->_name . '_grp', $this->_label, $objs, '', false);
+        $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
         $grp->setHelpButton(array('profilefield','','filters'));
-        $mform->setDefault($this->_name . '_fld', $this->_profile_field);
-        $mform->setDefault($this->_name . '_op', $this->_operator);
-        $mform->setDefault($this->_name, $this->_value);
+        if ($this->_advanced) {
+            $mform->setAdvanced($this->_name.'_grp');
+        }
     }
-    
+
     /**
      * Retrieves data from the form data
      * @param object $formdata data submited with the form
+     * @return mixed array filter data or false when filter not set
      */
-    function checkData($formdata) {
-        $field = $this->_name;
-        $operator = $field . '_op';
-        $profile_field = $field . '_fld';
-        $this->_value = (string)@$formdata->$field;
-        $this->_operator = (int)@$formdata->$operator;
-        $this->_profile_field = (int)@$formdata->$profile_field;
+    function check_data($formdata) {
+        $field    = $this->_name;
+        $operator = $field.'_op';
+        $profile  = $field.'_fld';
+
+        if (array_key_exists($profile, $formdata)) {
+            if ($formdata->$operator < 5 and $formdata->$field === '') {
+                return false;
+            }
+
+            return array('value'    => (string)$formdata->$field,
+                         'operator' => (int)$formdata->$operator,
+                         'profile'  => (int)$formdata->$profile);
+        }
     }
 
     /**
      * Returns the condition to be used with SQL where
+     * @param array $data filter settings
      * @return string the filtering condition or null if the filter is disabled
      */
-    function getSQLFilter() {
+    function get_sql_filter($data) {
         global $CFG;
-        $where = '';
-        $op = ' IN ';
-        switch($this->_operator) {
-        case 0: // contains
-            if(empty($this->_value)) {
-                return null;
-            }
-            $where = 'data ' . sql_ilike(). ' "%' . $this->_value . '%"';
-            break;
-        case 1: // does not contain
-            if(empty($this->_value)) {
-                return null;
-            }
-            $where = 'data NOT ' . sql_ilike(). ' "%' . $this->_value . '%"';
-            break;
-        case 2: // equal to
-            if(empty($this->_value)) {
-                return null;
-            }
-            $where = 'data="' . $this->_value . '"';
-            break;
-        case 3: // starts with
-            if(empty($this->_value)) {
-                return null;
-            }
-            $where = 'data ' . sql_ilike(). ' "' . $this->_value . '%"';
-            break;
-        case 4: // ends with 
-            if(empty($this->_value)) {
-                return null;
-            }
-            $where = 'data ' . sql_ilike(). ' "%' . $this->_value . '"';
-            break;
-        case 5: // empty
-            $where = 'data=""';
-            break;
-        case 6: // is not defined
-            $op = ' NOT IN ';
-            break;
-        case 7: // is defined
-            break;
+
+        $profile  = $data['profile'];
+        $operator = $data['operator'];
+        $value    = addslashes($data['value']);
+
+        $where = "";
+        $op = " IN ";
+        $ilike = sql_ilike();
+
+        if ($operator < 5 and $value === '') {
+            return '';
         }
-        if(!empty($this->_profile_field)) {
-            if(!empty($where)) {
-                $where = ' AND ' . $where;
+
+        switch($operator) {
+            case 0: // contains
+                $where = "data $ilike '%$value%'"; break;
+            case 1: // does not contain
+                $where = "data NOT $ilike '%$value%'"; break;
+            case 2: // equal to
+                $where = "data $ilike '$value'"; break;
+            case 3: // starts with
+                $where = "data $ilike '$value%'"; break;
+            case 4: // ends with
+                $where = "data $ilike '%$value'"; break;
+            case 5: // empty
+                $where = "data=''"; break;
+            case 6: // is not defined
+                $op = " NOT IN "; break;
+            case 7: // is defined
+                break;
+        }
+        if ($profile) {
+            if ($where !== '') {
+                $where = " AND $where";
             }
-            $where = 'fieldid=' . $this->_profile_field . $where;
+            $where = "fieldid=$profile $where";
         }
-        if(!empty($where)) {
-            $where = ' WHERE ' . $where;
+        if ($where !== '') {
+            $where = "WHERE $where";
         }
-        return $this->_field . $op . "(SELECT userid FROM {$CFG->prefix}user_info_data" . $where . ')';
+        return "id $op (SELECT userid FROM {$CFG->prefix}user_info_data $where)";
     }
-    
+
     /**
-     * Returns a human friendly description of the filter.
-     * @return string filter description
+     * Returns a human friendly description of the filter used as label.
+     * @param array $data filter settings
+     * @return string active filter label
      */
-    function getDescription() {
-        $res = '';
-        $operators =& $this->getOperators();
-        $profilefields =& $this->getProfileFields();
-        switch($this->_operator) {
-        case 0: // contains
-        case 1: // doesn't contain
-        case 2: // equal to
-        case 3: // starts with
-        case 4: // ends with 
-            $res = $this->_label . ': '. $profilefields[$this->_profile_field] . ' ' . $operators[$this->_operator]. ' "' . stripslashes($this->_value) . '"';
-            break;
-        case 5: // empty
-        case 6: // is not defined
-        case 7: // is defined
-            $res = $this->_label . ': '. $profilefields[$this->_profile_field] . ' ' . $operators[$this->_operator];
-            break;
+    function get_label($data) {
+        $operators     = $this->get_operators();
+        $profilefields = $this->get_profile_fields();
+
+        $profile  = $data['profile'];
+        $operator = $data['operator'];
+        $value    = $data['value'];
+
+        $a = new object();
+        $a->label    = $this->_label;
+        $a->value    = $value;
+        $a->profile  = $profilefields[$profile];
+        $a->operator = $operators[$operator];
+
+        switch($operator) {
+            case 0: // contains
+            case 1: // doesn't contain
+            case 2: // equal to
+            case 3: // starts with
+            case 4: // ends with
+                return get_string('profilelabel', 'filters', $a);
+            case 5: // empty
+            case 6: // is not defined
+            case 7: // is defined
+                return get_string('profilelabelnovalue', 'filters', $a);
         }
-        return $res;
+        return '';
     }
 }

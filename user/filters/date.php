@@ -1,112 +1,133 @@
 <?php //$Id$
 
-require_once($CFG->dirroot . '/user/filters/lib.php'); 
+require_once($CFG->dirroot.'/user/filters/lib.php');
 
 /**
  * Generic filter based on a date.
  */
 class user_filter_date extends user_filter_type {
     /**
-     * the end Unix timestamp (0 if disabled) 
-     */
-    var $_value2;
-    /**
      * the fields available for comparisson
      */
-    var $_fields;
+    var $_field;
+
     /**
      * Constructor
      * @param string $name the name of the filter instance
      * @param string $label the label of the filter instance
-     * @param string $field the field used for filtering data
-     * @param int $start the start Unix timestamp (0 if disabled) 
-     * @param int $end the end Unix timestamp (0 if disabled)
+     * @param boolean $advanced advanced form element flag
+     * @param string $field user table filed name
      */
-    function user_filter_date($name, $label, $field, $fields=null, $start=0, $end=0) {
-        parent::user_filter_type($name, $label, $field, $start);
-        $this->_value2 = $end;
-        $this->_fields = $fields;
+    function user_filter_date($name, $label, $advanced, $field) {
+        parent::user_filter_type($name, $label, $advanced);
+        $this->_field = $field;
     }
-    
+
     /**
      * Adds controls specific to this filter in the form.
      * @param object $mform a MoodleForm object to setup
      */
     function setupForm(&$mform) {
         $objs = array();
-        if(is_array($this->_fields)) {
-            $objs[] =& $mform->createElement('select', $this->_name . '_fld', null, $this->_fields);
-        }
-        $objs[] =& $mform->createElement('checkbox', $this->_name . '_sck', null, get_string('isafter', 'filters'));
-        $objs[] =& $mform->createElement('date_selector', $this->_name . '_sdt', null);
-        $objs[] =& $mform->createElement('checkbox', $this->_name . '_eck', null, get_string('isbefore', 'filters'));
-        $objs[] =& $mform->createElement('date_selector', $this->_name . '_edt', null);
-        $grp =& $mform->addElement('group', $this->_name . '_grp', $this->_label, $objs, '', false);
+
+        $objs[] =& $mform->createElement('checkbox', $this->_name.'_sck', null, get_string('isafter', 'filters'));
+        $objs[] =& $mform->createElement('date_selector', $this->_name.'_sdt', null);
+        $objs[] =& $mform->createElement('checkbox', $this->_name.'_eck', null, get_string('isbefore', 'filters'));
+        $objs[] =& $mform->createElement('date_selector', $this->_name.'_edt', null);
+        $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
         $grp->setHelpButton(array('date','','filters'));
-        $mform->setDefault($this->_name . '_sck', !empty($this->_value));
-        $mform->setDefault($this->_name . '_eck', !empty($this->_value2));
-        $mform->setDefault($this->_name . '_sdt', $this->_value);
-        $mform->setDefault($this->_name . '_edt', $this->_value2);
-        if(is_array($this->_fields)) {
-            $mform->setDefault($this->_name . '_fld', $this->_field);
+
+        if ($this->_advanced) {
+            $mform->setAdvanced($this->_name.'_grp');
         }
-        $mform->disabledIf($this->_name . '_sdt', $this->_name . '_sck');
-        $mform->disabledIf($this->_name . '_edt', $this->_name . '_eck');
+
+        $mform->disabledIf($this->_name.'_sdt[day]', $this->_name.'_sck', 'notchecked');
+        $mform->disabledIf($this->_name.'_sdt[month]', $this->_name.'_sck', 'notchecked');
+        $mform->disabledIf($this->_name.'_sdt[year]', $this->_name.'_sck', 'notchecked');
+        $mform->disabledIf($this->_name.'_edt[day]', $this->_name.'_eck', 'notchecked');
+        $mform->disabledIf($this->_name.'_edt[month]', $this->_name.'_eck', 'notchecked');
+        $mform->disabledIf($this->_name.'_edt[year]', $this->_name.'_eck', 'notchecked');
     }
-    
+
     /**
      * Retrieves data from the form data
      * @param object $formdata data submited with the form
+     * @return mixed array filter data or false when filter not set
      */
-    function checkData($formdata) {
-        $fld = $this->_name . '_fld';
-        $sdt = $this->_name . '_sdt';
-        $edt = $this->_name . '_edt';
-        $sck = $this->_name . '_sck';
-        $eck = $this->_name . '_eck';
-        if(@$formdata->$fld) {
-            $this->_field = @$formdata->$fld;
+    function check_data($formdata) {
+        $sck = $this->_name.'_sck';
+        $sdt = $this->_name.'_sdt';
+        $eck = $this->_name.'_eck';
+        $edt = $this->_name.'_edt';
+
+        if (!array_key_exists($sck, $formdata) and !array_key_exists($eck, $formdata)) {
+            return false;
         }
-        $this->_value = @$formdata->$sck ? (int)@$formdata->$sdt : 0;
-        $this->_value2 = @$formdata->$eck ? (int)@$formdata->$edt : 0;
+
+        $data = array();
+        if (array_key_exists($sck, $formdata)) {
+            $data['after'] = $formdata->$sdt;
+        } else {
+            $data['after'] = 0;
+        }
+        if (array_key_exists($eck, $formdata)) {
+            $data['before'] = $formdata->$edt;
+        } else {
+            $data['before'] = 0;
+        }
+        return $data;
     }
 
     /**
      * Returns the condition to be used with SQL where
+     * @param array $data filter settings
      * @return string the filtering condition or null if the filter is disabled
      */
-    function getSQLFilter() {
-        if(empty($this->_value) && empty($this->_value2)) {
-            return null;
+    function get_sql_filter($data) {
+        $after  = $data['after'];
+        $before = $data['before'];
+        $field  = $this->_field;
+
+        if (empty($after) and empty($before)) {
+            return '';
         }
-        $res = $this->_field . '>0' ;
-        if($this->_value) {
-            $res .= ' AND ' . $this->_field . '>=' . $this->_value;
+
+        $res = "$field > 0" ;
+
+        if ($after) {
+            $res .= " AND $field >= $after";
         }
-        if($this->_value2) {
-            $res .= ' AND ' . $this->_field . '<=' . $this->_value2;
+        if ($before) {
+            $res .= " AND $field <= $before";
         }
         return $res;
     }
-    
+
     /**
-     * Returns a human friendly description of the filter.
-     * @return string filter description
+     * Returns a human friendly description of the filter used as label.
+     * @param array $data filter settings
+     * @return string active filter label
      */
-    function getDescription() {
-        if(is_array($this->_fields)) {
-            $res = $this->_fields[$this->_field] . ' ';
-        } else {
-            $res = $this->_label . ' ';
+    function get_label($data) {
+        $after  = $data['after'];
+        $before = $data['before'];
+        $field  = $this->_field;
+
+        $a = new object();
+        $a->label  = $this->_label;
+        $a->after  = userdate($after);
+        $a->before = userdate($before);
+
+        if ($after and $before) {
+            return get_string('datelabelisbetween', 'filters', $a);
+
+        } else if ($after) {
+            return get_string('datelabelisafter', 'filters', $a);
+
+        } else if ($before) {
+            return get_string('datelabelisbefore', 'filters', $a);
         }
-        if($this->_value && $this->_value2) {
-            $res .= get_string('isbetween', 'filters', array(userdate($this->_value), userdate($this->_value2)));
-        } else if($this->_value) {
-            $res .= get_string('isafter', 'filters', userdate($this->_value));
-        } else {
-            $res .= get_string('isbefore', 'filters', userdate($this->_value2));
-        }
-        return $res;
+        return '';
     }
 }
 ?>
