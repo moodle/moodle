@@ -171,6 +171,17 @@ function scorm_parse_aicc($pkgdir,$scormid) {
         }
         if (isset($id->ort)) {
             $rows = file($pkgdir.'/'.$id->ort);
+            $columns = scorm_get_aicc_columns($rows[0],'course_element');
+            $regexp = scorm_forge_cols_regexp($columns->columns,'(.+)?,');
+            for ($i=1;$i<count($rows);$i++) {
+                if (preg_match($regexp,$rows[$i],$matches)) {
+                    for ($j=0;$j<count($matches)-1;$j++) {
+                        if ($j != $columns->mastercol) {
+                            $courses[$courseid]->elements[substr(trim($matches[$j+1]),1,-1)]->parent = substr(trim($matches[$columns->mastercol+1]),1,-1);
+                        }
+                    }
+                }
+            }
         }
         if (isset($id->pre)) {
             $rows = file($pkgdir.'/'.$id->pre);
@@ -193,7 +204,7 @@ function scorm_parse_aicc($pkgdir,$scormid) {
     $launch = 0;
     if (isset($courses)) {
         foreach ($courses as $course) {
-            unset($sco);
+            $sco = new object();
             $sco->identifier = $course->id;
             $sco->scorm = $scormid;
             $sco->organization = '';
@@ -220,7 +231,8 @@ function scorm_parse_aicc($pkgdir,$scormid) {
                     $sco->scorm = $scormid;
                     $sco->organization = $course->id;
                     $sco->title = $element->title;
-                    if (strtolower($element->parent) == 'root') {
+                 
+                    if (!isset($element->parent) || strtolower($element->parent) == 'root') {
                         $sco->parent = '/';
                     } else {
                         $sco->parent = $element->parent;
@@ -228,37 +240,49 @@ function scorm_parse_aicc($pkgdir,$scormid) {
                     if (isset($element->file_name)) {
                         $sco->launch = $element->file_name;
                         $sco->scormtype = 'sco';
-                    } else {
-                        $element->file_name = '';
-                        $sco->scormtype = '';
-                    }
-                    if (!isset($element->prerequisites)) {
-                        $element->prerequisites = '';
-                    }
-                    $sco->prerequisites = $element->prerequisites;
-                    if (!isset($element->max_time_allowed)) {
-                        $element->max_time_allowed = '';
-                    }
-                    $sco->maxtimeallowed = $element->max_time_allowed;
-                    if (!isset($element->time_limit_action)) {
-                        $element->time_limit_action = '';
-                    }
-                    $sco->timelimitaction = $element->time_limit_action;
-                    if (!isset($element->mastery_score)) {
-                        $element->mastery_score = '';
-                    }
-                    $sco->masteryscore = $element->mastery_score;
-                    $sco->previous = 0;
-                    $sco->next = 0;
-                    if ($oldscoid = scorm_array_search('identifier',$sco->identifier,$oldscoes)) {
-                        $sco->id = $oldscoid;
-                        $id = update_record('scorm_scoes',$sco);
-                        unset($oldscoes[$oldscoid]);
-                    } else {
-                        $id = insert_record('scorm_scoes',$sco);
-                    }
-                    if ($launch==0) {
-                        $launch = $id;
+                        $sco->previous = 0;
+                        $sco->next = 0;
+                        $id = null;
+                        if ($oldscoid = scorm_array_search('identifier',$sco->identifier,$oldscoes)) {
+                            $sco->id = $oldscoid;
+                            $id = update_record('scorm_scoes',$sco);
+                            delete_records('scorm_scoes_data','scoid',$oldscoid);
+                            unset($oldscoes[$oldscoid]);
+                        } else {
+                            $id = insert_record('scorm_scoes',$sco);
+                        }
+                        if (!empty($id)) {
+                            unset($scodata);
+                            $scodata->scoid = $id;
+                            if (isset($element->web_launch)) {
+                                $scodata->name = 'parameters';
+                                $scodata->value = $element->web_launch;
+                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                            }
+                            if (isset($element->prerequisites)) {
+                                $scodata->name = 'prerequisites';
+                                $scodata->value = $element->prerequisites;
+                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                            }
+                            if (isset($element->max_time_allowed)) {
+                                $scodata->name = 'max_time_allowed';
+                                $scodata->value = $element->max_time_allowed;
+                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                            }
+                            if (isset($element->time_limit_action)) {
+                                $scodata->name = 'time_limit_action';
+                                $scodata->value = $element->time_limit_action;
+                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                            }
+                            if (isset($element->mastery_score)) {
+                                $scodata->name = 'mastery_score';
+                                $scodata->value = $element->mastery_score;
+                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                            }
+                        }
+                        if ($launch==0) {
+                            $launch = $id;
+                        }
                     }
                 }
             }
@@ -285,7 +309,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     $scormpixdir = $CFG->modpixpath.'/scorm/pix';
     
     $result = new stdClass();
-    $result->toc = "<ul id='0' class='$liststyle'>\n";
+    $result->toc = "<ul id='s0' class='$liststyle'>\n";
     $tocmenus = array();
     $result->prerequisites = true;
     $incomplete = false;
@@ -307,7 +331,6 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     if (empty($attempt)) {
         $attempt = scorm_get_last_attempt($scorm->id, $user->id);
     }
-
     $result->attemptleft = $scorm->maxattempt - $attempt;
     if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
         //
@@ -333,6 +356,14 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $parents[$level]='/';
         
         foreach ($scoes as $sco) {
+            $isvisible = false;
+            if ($optionaldatas = scorm_get_sco($sco->id, SCO_DATA)) {
+                if (!isset($optionaldatas->isvisible) || (isset($optionaldatas->isvisible) && ($optionaldatas->isvisible == 'true'))) {
+                    $isvisible = true;
+                }
+            }
+            else
+				$isvisible = true;
             if ($parents[$level]!=$sco->parent) {
                 if ($newlevel = array_search($sco->parent,$parents)) {
                     for ($i=0; $i<($level-$newlevel); $i++) {
@@ -351,7 +382,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         if (isset($_COOKIE['hide:SCORMitem'.$sco->id])) {
                             $style = ' style="display: none;"';
                         }
-                        $result->toc .= "\t\t<li><ul id='$sublist' class='$liststyle'$style>\n";
+                        $result->toc .= "\t\t<li><ul id='s$sublist' class='$liststyle'$style>\n";
                         $level++;
                     } else {
                         $result->toc .= $closelist;
@@ -360,86 +391,97 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                     $parents[$level]=$sco->parent;
                 }
             }
-            $result->toc .= "\t\t<li>";
+            if ($isvisible) {
+                $result->toc .= "\t\t<li>";
+            }
             $nextsco = next($scoes);
-            if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
+            $nextisvisible = false;
+            if (($nextsco !== false) && ($optionaldatas = scorm_get_sco($nextsco->id, SCO_DATA))) {
+                if (!isset($optionaldatas->isvisible) || (isset($optionaldatas->isvisible) && ($optionaldatas->isvisible == 'true'))) {
+                    $nextisvisible = true;
+                }
+            }
+            if ($nextisvisible && ($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                 $sublist++;
                 $icon = 'minus';
                 if (isset($_COOKIE['hide:SCORMitem'.$nextsco->id])) {
                     $icon = 'plus';
                 }
-                $result->toc .= '<a href="javascript:expandCollide(img'.$sublist.','.$sublist.','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
-            } else {
+                $result->toc .= '<a href="javascript:expandCollide(\'img'.$sublist.'\',s'.$sublist.','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
+            } else if ($isvisible) {
                 $result->toc .= '<img src="'.$scormpixdir.'/spacer.gif" />';
             }
             if (empty($sco->title)) {
                 $sco->title = $sco->identifier;
             }
             if (!empty($sco->launch)) {
-                $startbold = '';
-                $endbold = '';
-                $score = '';
-                if (empty($scoid) && ($mode != 'normal')) {
-                    $scoid = $sco->id;
-                }
-                if (isset($usertracks[$sco->identifier])) {
-                    $usertrack = $usertracks[$sco->identifier];
-                    $strstatus = get_string($usertrack->status,'scorm');
-                    if ($sco->scormtype == 'sco') {
-                        $statusicon .= '<img src="'.$scormpixdir.'/'.$usertrack->status.'.gif" alt="'.$strstatus.'" title="'.$strstatus.'" />';
-                    } else {
-                        $statusicon = '<img src="'.$scormpixdir.'/assetc.gif" alt="'.get_string('assetlaunched','scorm').'" title="'.get_string('assetlaunched','scorm').'" />';
+                if ($isvisible) {
+                    $startbold = '';
+                    $endbold = '';
+                    $score = '';
+                    if (empty($scoid) && ($mode != 'normal')) {
+                        $scoid = $sco->id;
                     }
+                    if (isset($usertracks[$sco->identifier])) {
+                        $usertrack = $usertracks[$sco->identifier];
+                        $strstatus = get_string($usertrack->status,'scorm');
+                        if ($sco->scormtype == 'sco') {
+                            $statusicon = '<img src="'.$scormpixdir.'/'.$usertrack->status.'.gif" alt="'.$strstatus.'" title="'.$strstatus.'" />';
+                        } else {
+                            $statusicon = '<img src="'.$scormpixdir.'/assetc.gif" alt="'.get_string('assetlaunched','scorm').'" title="'.get_string('assetlaunched','scorm').'" />';
+                        }
                     
-                    if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
-                        $incomplete = true;
+                        if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
+                            $incomplete = true;
+                            if ($play && empty($scoid)) {
+                                $scoid = $sco->id;
+                            }
+                        }
+                        if ($usertrack->score_raw != '') {
+                            $score = '('.get_string('score','scorm').':&nbsp;'.$usertrack->score_raw.')';
+                        }
+                        $strsuspended = get_string('suspended','scorm');
+                        if (isset($usertrack->{'cmi.core.exit'}) && ($usertrack->{'cmi.core.exit'} == 'suspend')) {
+                            $statusicon = '<img src="'.$scormpixdir.'/suspend.gif" alt="'.$strstatus.' - '.$strsuspended.'" title="'.$strstatus.' - '.$strsuspended.'" />';
+                        }
+                    } else {
                         if ($play && empty($scoid)) {
                             $scoid = $sco->id;
                         }
+                        $incomplete = true;
+                        if ($sco->scormtype == 'sco') {
+                            $statusicon = '<img src="'.$scormpixdir.'/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                        } else {
+                            $statusicon = '<img src="'.$scormpixdir.'/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                        }
                     }
-                    if ($usertrack->score_raw != '') {
-                        $score = '('.get_string('score','scorm').':&nbsp;'.$usertrack->score_raw.')';
+                    if ($sco->id == $scoid) {
+                        $scodata = scorm_get_sco($sco->id, SCO_DATA);
+                        $startbold = '<b>';
+                        $endbold = '</b>';
+                        $findnext = true;
+                        $shownext = isset($scodata->next) ? $scodata->next : 0;
+                        $showprev = isset($scodata->previous) ? $scodata->previous : 0;
                     }
-                    $strsuspended = get_string('suspended','scorm');
-                    if ($usertrack->{'cmi.core.exit'} == 'suspend') {
-                        $statusicon = '<img src="'.$scormpixdir.'/suspend.gif" alt="'.$strstatus.' - '.$strsuspended.'" title="'.$strstatus.' - '.$strsuspended.'" />';
-                    }
-                } else {
-                    if ($play && empty($scoid)) {
-                        $scoid = $sco->id;
-                    }
-                    $incomplete = true;
-                    if ($sco->scormtype == 'sco') {
-                        $statusicon = '<img src="'.$scormpixdir.'/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
-                    } else {
-                        $statusicon = '<img src="'.$scormpixdir.'/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
-                    }
-                }
-                if ($sco->id == $scoid) {
-                    $startbold = '<b>';
-                    $endbold = '</b>';
-                    $findnext = true;
-                    $shownext = $sco->next;
-                    $showprev = $sco->previous;
-                }
                 
-                if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ($nextsco!==false) && (!$findnext)) {
-                    if (!empty($sco->launch)) {
-                        $previd = $sco->id;
+                    if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ($nextsco!==false) && (!$findnext)) {
+                        if (!empty($sco->launch)) {
+                            $previd = $sco->id;
+                        }
                     }
-                }
-                if (empty($sco->prerequisites) || scorm_eval_prerequisites($sco->prerequisites,$usertracks)) {
-                    if ($sco->id == $scoid) {
-                        $result->prerequisites = true;
+                    if (empty($sco->prerequisites) || scorm_eval_prerequisites($sco->prerequisites,$usertracks)) {
+                        if ($sco->id == $scoid) {
+                            $result->prerequisites = true;
+                        }
+                        $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.$modestr.'&amp;scoid='.$sco->id;
+                        $result->toc .= $statusicon.'&nbsp;'.$startbold.'<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score.$endbold."</li>\n";
+                        $tocmenus[$sco->id] = scorm_repeater('&minus;',$level) . '&gt;' . format_string($sco->title);
+                    } else {
+                        if ($sco->id == $scoid) {
+                            $result->prerequisites = false;
+                        }
+                        $result->toc .= $statusicon.'&nbsp;'.$sco->title."</li>\n";
                     }
-                    $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.$modestr.'&amp;scoid='.$sco->id;
-                    $result->toc .= $statusicon.'&nbsp;'.$startbold.'<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score.$endbold."</li>\n";
-                    $tocmenus[$sco->id] = scorm_repeater('&minus;',$level) . '&gt;' . format_string($sco->title);
-                } else {
-                    if ($sco->id == $scoid) {
-                        $result->prerequisites = false;
-                    }
-                    $result->toc .= '&nbsp;'.$sco->title."</li>\n";
                 }
             } else {
                 $result->toc .= '&nbsp;'.$sco->title."</li>\n";
@@ -455,7 +497,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         }
         
         if ($play) {
-            $sco = get_record('scorm_scoes','id',$scoid);
+            $sco = scorm_get_sco($scoid);
             $sco->previd = $previd;
             $sco->nextid = $nextid;
             $result->sco = $sco;
@@ -474,13 +516,13 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                   var w3c=document.getElementById?true:false
                   var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
                   var mid=w3c?").style":".style";
-
+                  which = which.substring(0,(which.length));
                   if (eval(beg+list+mid+".display") != "none") {
-                      which.src = "'.$scormpixdir.'/plus.gif";
+                      document.getElementById(which).src = "'.$scormpixdir.'/plus.gif";
                       eval(beg+list+mid+".display=\'none\';");
                       new cookie("hide:SCORMitem" + item, 1, 356, "/").set();
                   } else {
-                      which.src = "'.$scormpixdir.'/minus.gif";
+                      document.getElementById(which).src = "'.$scormpixdir.'/minus.gif";
                       eval(beg+list+mid+".display=\'block\';");
                       new cookie("hide:SCORMitem" + item, 1, -1, "/").set();
                   }
