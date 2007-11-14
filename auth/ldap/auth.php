@@ -81,6 +81,33 @@ class auth_plugin_ldap extends auth_plugin_base {
             return false;
         }
 
+        //
+        // Before we connect to LDAP, check if this is an AD SSO login
+        //
+        if (!empty($this->ntlmsso_enabled)) {
+            $key      = $_SERVER['REMOTE_ADDR'];
+            if ($cookie   = get_config('auth/ldap/ntlmsess', $key)) {
+                // These checks match the work done
+                if (preg_match('/^(\d+):.{10}:(.+)$/',$cookie,$matches)) {
+                    // $matches[0] is the whole matched string...
+                    $time         = $matches[1];
+                    $sesskey      = $matches[2];
+                    $sessusername = $matches[3];
+                    if (((int)$time < now() - 6) // timewindow for the process, in secs...
+                        && $sesskey === sesskey()
+                        && $sesskey === $password
+                        && $sessusername === $username) {
+                        return true;
+                    }
+                }
+            }
+            unset($cookie);
+            unset($key);
+            unset($time);
+            unset($sessusername);
+        }
+
+
         $textlib = textlib_get_instance();
         $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->ldapencoding);
         $extpassword = $textlib->convert(stripslashes($password), 'utf-8', $this->config->ldapencoding);
@@ -1729,26 +1756,56 @@ class auth_plugin_ldap extends auth_plugin_base {
      * "Integrated Windows Authentication". 
      *
      * If successful, it will set a special "cookie" (not an HTTP cookie!) 
-     * in config_plugin under the "auth/ldap/ntlmsess" "plugin" and redirect.
+     * in config_plugin under the "auth/ldap/ntlmsess" "plugin" and return true.
      * The "cookie" will be picked up by ntlmsso_finish() to complete the
      * process.
      *
      * On failure it will return false for the caller to display an appropriate
-     * error message.
+     * error message (probably saying that Integrated Windows Auth isn't enabled!)
      *
      * NOTE that this code will execute under the OS user credentials, 
      * so we MUST avoid dealing with files -- such as session files.
      *
      */
-    function ntlmsso_attempt() {
-
+    function ntlmsso_magic($sesskey) {
+        if (isset($_SERVER['REMOTE_USER']) && !empty($_SERVER['REMOTE_USER'])) {
+            $username = $_SERVER['REMOTE_USER'];
+            $username = substr(strrchr($username, '\\'), 1); //strip domain info
+            $username = strtolower($username); //compatibility hack
+            $key      = $_SERVER['REMOTE_ADDR']; // add sesskey?
+            $value    = now() . ':' . $sesskey . ':' . $username;
+            return set_config($key, $value, 'auth/ldap/ntlmsess');
+        }
+        return false;
     }
 
     /**
+     * Find the session set by ntlmsso_magic(), validate it and 
+     * call authenticate_user_login() to authenticate the user through
+     * the auth machinery.
      * 
+     * It is complemented by a similar check in user_login().
+     * 
+     * If it succeeds, it never returns. 
+     *
      */
     function ntlmsso_finish() {
-
+        $key      = $_SERVER['REMOTE_ADDR']; // add sesskey?
+        if ($cookie   = get_config('auth/ldap/ntlmsess', $key)) {
+            if (preg_match('/^(\d+):.{10}:(.+)$/',$cookie,$matches)) {
+                // $matches[0] is the whole matched string...
+                $time     = $matches[1];
+                $sesskey  = $matches[2];
+                $username = $matches[3];
+                if (((int)$time < now() - 6) // timewindow for the process, in secs...
+                    && $sesskey === sesskey()) {
+                    // Here we want to trigger the whole authentication machinery
+                    // to make sure no step is bypassed...
+                    authenticate_user_login($username, $sesskey);
+                }
+            }
+        }
+        return false;
     }    
 
     /**
