@@ -1777,7 +1777,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      * "Integrated Windows Authentication". 
      *
      * If successful, it will set a special "cookie" (not an HTTP cookie!) 
-     * in config_plugin under the "auth/ldap/ntlmsess" "plugin" and return true.
+     * in cache_flags under the "auth/ldap/ntlmsess" "plugin" and return true.
      * The "cookie" will be picked up by ntlmsso_finish() to complete the
      * process.
      *
@@ -1794,9 +1794,8 @@ class auth_plugin_ldap extends auth_plugin_base {
             $username = $_SERVER['REMOTE_USER'];
             $username = substr(strrchr($username, '\\'), 1); //strip domain info
             $username = moodle_strtolower($username); //compatibility hack
-            $key      = $sesskey;
-            $value    = time() . ':' . $username;
-            return set_config($key, $value, 'auth/ldap/ntlmsess');
+            set_cache_flag('auth/ldap/ntlmsess', $sesskey, $username, AUTH_NTLMTIMEOUT);
+            return true;
         }
         return false;
     }
@@ -1814,42 +1813,39 @@ class auth_plugin_ldap extends auth_plugin_base {
     function ntlmsso_finish() {
         global $CFG, $USER;
 
-        $key      = sesskey();
-        if ($cookie   = get_config('auth/ldap/ntlmsess', $key)) {
-            if (preg_match('/^(\d+):(.+)$/',$cookie,$matches)) {
-                // $matches[0] is the whole matched string...
-                $time     = $matches[1];
-                $username = $matches[2];
-                if (((time() - ((int)$time)) < AUTH_NTLMTIMEOUT)) {
-                    // Here we want to trigger the whole authentication machinery
-                    // to make sure no step is bypassed...
-                    $user = authenticate_user_login($username, $key);
-                    if ($user) {
-                        add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID,
-                                   $user->id, 0, $user->id);
-                        $USER = complete_user_login($user);
-
-                        // Cleanup the key to prevent reuse...
-                        // and to allow re-logins with normal credentials
-                        set_config($key, NULL, 'auth/ldap/ntlmsess');
-
-                        /// Redirection
-                        if (user_not_fully_set_up($USER)) {
-                            $urltogo = $CFG->wwwroot.'/user/edit.php';
-                            // We don't delete $SESSION->wantsurl yet, so we get there later
-                        } else if (isset($SESSION->wantsurl) and (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0)) {
-                            $urltogo = $SESSION->wantsurl;    /// Because it's an address in this site
-                            unset($SESSION->wantsurl);
-                        } else {
-                            // no wantsurl stored or external - go to homepage
-                            $urltogo = $CFG->wwwroot.'/';
-                            unset($SESSION->wantsurl);
-                        }
-                        redirect($urltogo);
-                    }
-                }
-            }
+        $key = sesskey();
+        $cf = get_cached_flags('auth/ldap/ntlmsess');
+        if (!isset($cf[$key]) && $cf[$key] !== '') {
+            return false;
         }
+        $username   = $cf[$key];
+        // Here we want to trigger the whole authentication machinery
+        // to make sure no step is bypassed...
+        $user = authenticate_user_login($username, $key);
+        if ($user) {
+            add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID,
+                       $user->id, 0, $user->id);
+            $USER = complete_user_login($user);
+
+            // Cleanup the key to prevent reuse...
+            // and to allow re-logins with normal credentials
+            unset_cache_flag('auth/ldap/ntlmsess', $key);
+
+            /// Redirection
+            if (user_not_fully_set_up($USER)) {
+                $urltogo = $CFG->wwwroot.'/user/edit.php';
+                // We don't delete $SESSION->wantsurl yet, so we get there later
+            } else if (isset($SESSION->wantsurl) and (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0)) {
+                $urltogo = $SESSION->wantsurl;    /// Because it's an address in this site
+                unset($SESSION->wantsurl);
+            } else {
+                // no wantsurl stored or external - go to homepage
+                $urltogo = $CFG->wwwroot.'/';
+                unset($SESSION->wantsurl);
+            }
+            redirect($urltogo);
+        }
+        // Should never reach here.
         return false;
     }    
 
