@@ -102,7 +102,19 @@ class auth_plugin_ldap extends auth_plugin_base {
                         unset($key);
                         unset($time);
                         unset($sessusername);
-                        return true;
+
+                        // Check that the user is inside one of the configured LDAP contexts
+                        $validuser = false;
+                        $ldapconnection = $this->ldap_connect();
+                        if ($ldapconnection) {
+                            // if the user is not inside the configured contexts,
+                            // ldap_find_userdn returns false.
+                            if ($this->ldap_find_userdn($ldapconnection, $extusername)) {
+                                $validuser = true;
+                            }
+                            ldap_close($ldapconnection);
+                        }
+                        return $validuser;
                     }
                 }
             }
