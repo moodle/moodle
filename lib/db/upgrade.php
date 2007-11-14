@@ -2587,6 +2587,32 @@ function xmldb_main_upgrade($oldversion=0) {
     
     if ($result && $oldversion < 2007101502) {
 
+    /// try to remove duplicate entries
+    
+        $SQL = "SELECT id, userid, itemid
+               FROM {$CFG->prefix}grade_grades
+               GROUP BY userid, itemid
+               HAVING COUNT( * ) >1";
+        // duplicates found
+        if ($dups = get_records_sql($SQL)) {
+            // for each set of userid, itemid
+            foreach ($dups as $dup) {
+                if ($thisdups = get_records_sql("SELECT id,id FROM {$CFG->prefix}grade_grades 
+                                                 WHERE itemid = $dup->itemid AND userid = $dup->userid
+                                                 ORDER BY timemodified DESC")) {
+
+                    $processed = 0; // keep the first one
+                    foreach ($thisdups as $thisdup) {
+                        if ($processed) {
+                            // remove the duplicates
+                            delete_records('grade_grades', 'id', $thisdup->id);
+                        }
+                        $processed++;
+                    }
+                }
+            }
+        }
+
     /// Define key userid-itemid (unique) to be added to grade_grades
         $table = new XMLDBTable('grade_grades');
         $key = new XMLDBKey('userid-itemid');
