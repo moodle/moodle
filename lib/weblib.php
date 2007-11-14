@@ -3668,7 +3668,7 @@ function print_continue($link, $return=false) {
 
     $output .= '<div class="continuebutton">';
 
-    $output .= print_single_button($link, NULL, get_string('continue'), 'post', $CFG->framename, true);
+    $output .= print_single_button($link, NULL, get_string('continue'), 'get', $CFG->framename, true);
     $output .= '</div>'."\n";
 
     if ($return) {
