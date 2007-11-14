@@ -2921,6 +2921,10 @@ function guest_user() {
  *
  * Uses auth_ functions from the currently active auth module
  *
+ * After authenticate_user_login() returns success, you will need to
+ * log that the user has logged in, and call complete_user_login() to set
+ * the session up.
+ *
  * @uses $CFG
  * @param string $username  User's username (with system magic quotes)
  * @param string $password  User's password (with system magic quotes)
@@ -3003,6 +3007,57 @@ function authenticate_user_login($username, $password) {
     add_to_log(0, 'login', 'error', 'index.php', $username);
     error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
     return false;
+}
+
+/**
+ * Call to complete the user login process after authenticate_user_login()
+ * has succeeded. It will setup the $USER variable and other required bits
+ * and pieces.
+ * 
+ * NOTE:
+ * - It will NOT log anything -- up to the caller to decide what to log.
+ *
+ *
+ *
+ * @uses $CFG, $USER
+ * @param string $user obj
+ * @return user|flase A {@link $USER} object or false if error
+ */
+function complete_user_login($user) {
+    global $CFG, $USER;
+    
+    $USER = $user; // should not be needed, but cover for legacy code
+
+    update_user_login_times();
+    if (empty($CFG->nolastloggedin)) {
+        set_moodle_cookie($USER->username);
+    } else {
+        // do not store last logged in user in cookie
+        // auth plugins can temporarily override this from loginpage_hook()
+        // do not save $CFG->nolastloggedin in database!
+        set_moodle_cookie('nobody');
+    }
+    set_login_session_preferences();
+
+    /// This is what lets the user do anything on the site :-)
+    load_all_capabilities();
+
+    /// Select password change url
+    $userauth = get_auth_plugin($USER->auth);
+
+    /// check whether the user should be changing password
+    if (get_user_preferences('auth_forcepasswordchange', false)){
+        if ($userauth->can_change_password()) {
+            if ($changeurl = $userauth->change_password_url()) {
+                redirect($changeurl);
+            } else {
+                redirect($CFG->httpswwwroot.'/login/change_password.php');
+            }
+        } else {
+            error(get_string('nopasswordchangeforced', 'auth'));
+        }
+    }
+    return $USER;
 }
 
 /**
