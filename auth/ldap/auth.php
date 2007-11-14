@@ -1745,7 +1745,9 @@ class auth_plugin_ldap extends auth_plugin_base {
     function loginpage_hook() {
         global $CFG;
 
-        if (!empty($this->config->ntlmsso_enabled)  // SSO enabled
+        if ($_SERVER['REQUEST_METHOD'] === 'GET'    // Only on initial GET 
+                                                    // of loginpage
+            &&!empty($this->config->ntlmsso_enabled)// SSO enabled
             && !empty($this->config->ntlmsso_subnet)// have a subnet to test for
             && empty($_GET['authldap_skipntlmsso']) // haven't failed it yet
             && (isguestuser() || !isloggedin())     // guestuser or not-logged-in users
