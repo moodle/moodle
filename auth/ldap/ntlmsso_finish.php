@@ -1,6 +1,6 @@
 <?php
 
-require_once("../../config.php");
+require_once(dirname(dirname(dirname(__FILE__)))."/config.php");
 
 //HTTPS is potentially required in this page
 httpsrequired();
