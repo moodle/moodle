@@ -67,33 +67,36 @@ $temp->add(new admin_setting_configcheckbox('grade_hideforcedsettings', get_stri
 $strnoforce = get_string('noforce', 'grades');
 
 // Aggregation type
-$options = array(-1                              =>$strnoforce,
-                 GRADE_AGGREGATE_MEAN            =>get_string('aggregatemean', 'grades'),
+$options = array(GRADE_AGGREGATE_MEAN            =>get_string('aggregatemean', 'grades'),
                  GRADE_AGGREGATE_MEDIAN          =>get_string('aggregatemedian', 'grades'),
                  GRADE_AGGREGATE_MIN             =>get_string('aggregatemin', 'grades'),
                  GRADE_AGGREGATE_MAX             =>get_string('aggregatemax', 'grades'),
                  GRADE_AGGREGATE_MODE            =>get_string('aggregatemode', 'grades'),
                  GRADE_AGGREGATE_WEIGHTED_MEAN   =>get_string('aggregateweightedmean', 'grades'),
-                 GRADE_AGGREGATE_EXTRACREDIT_MEAN=>get_string('aggregateextracreditmean', 'grades'));
-$temp->add(new admin_category_regrade_select('grade_aggregation', get_string('aggregation', 'grades'), get_string('aggregationhelp', 'grades'), -1, $options));
+                 GRADE_AGGREGATE_EXTRACREDIT_MEAN=>get_string('aggregateextracreditmean', 'grades'),
+                 GRADE_AGGREGATE_SUM             =>get_string('aggregatesum', 'grades'));
+$defaults = array('value'=>GRADE_AGGREGATE_MEAN, 'forced'=>false, 'adv'=>false);
+$temp->add(new admin_setting_gradecat_combo('grade_aggregation', get_string('aggregation', 'grades'), get_string('aggregationhelp', 'grades'), $defaults, $options));
 
-$options = array(-1 => $strnoforce, 0 => get_string('forceoff', 'grades'), 1 => get_string('forceon', 'grades'));
-$temp->add(new admin_category_regrade_select('grade_aggregateonlygraded', get_string('aggregateonlygraded', 'grades'),
-            get_string('aggregateonlygradedhelp', 'grades'), -1, $options));
-$temp->add(new admin_category_regrade_select('grade_aggregateoutcomes', get_string('aggregateoutcomes', 'grades'),
-            get_string('aggregateoutcomeshelp', 'grades'), -1, $options));
-$temp->add(new admin_category_regrade_select('grade_aggregatesubcats', get_string('aggregatesubcats', 'grades'),
-            get_string('aggregatesubcatshelp', 'grades'), -1, $options));
+$options = array(0 => get_string('no'), 1 => get_string('yes'));
 
-$options = array(-1 => $strnoforce, 0 => get_string('none'));
+$defaults = array('value'=>0, 'forced'=>false, 'adv'=>true);
+$temp->add(new admin_setting_gradecat_combo('grade_aggregateonlygraded', get_string('aggregateonlygraded', 'grades'),
+            get_string('aggregateonlygradedhelp', 'grades'), $defaults, $options));
+$temp->add(new admin_setting_gradecat_combo('grade_aggregateoutcomes', get_string('aggregateoutcomes', 'grades'),
+            get_string('aggregateoutcomeshelp', 'grades'), $defaults, $options));
+$temp->add(new admin_setting_gradecat_combo('grade_aggregatesubcats', get_string('aggregatesubcats', 'grades'),
+            get_string('aggregatesubcatshelp', 'grades'), $defaults, $options));
+
+$options = array(0 => get_string('none'));
 for ($i=1; $i<=20; $i++) {
     $options[$i] = $i;
 }
 
-$temp->add(new admin_category_regrade_select('grade_keephigh', get_string('keephigh', 'grades'),
-            get_string('keephighhelp', 'grades'), -1, $options));
-$temp->add(new admin_category_regrade_select('grade_droplow', get_string('droplow', 'grades'),
-            get_string('droplowhelp', 'grades'), -1, $options));
+$temp->add(new admin_setting_gradecat_combo('grade_keephigh', get_string('keephigh', 'grades'),
+            get_string('keephighhelp', 'grades'), $defaults, $options));
+$temp->add(new admin_setting_gradecat_combo('grade_droplow', get_string('droplow', 'grades'),
+            get_string('droplowhelp', 'grades'), $defaults, $options));
 
 $ADMIN->add('grades', $temp);
 

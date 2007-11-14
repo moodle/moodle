@@ -2779,30 +2779,83 @@ class admin_setting_special_debugdisplay extends admin_setting_configcheckbox {
 
 }
 
-/**
- * Select config class with regrading when setting changes.
- */
-class admin_category_regrade_select extends admin_setting_configselect {
 
-    function admin_category_regrade_select($name, $visiblename, $description, $defaultsetting, $choices) {
-        parent::admin_setting_configselect($name, $visiblename, $description, $defaultsetting, $choices);
+class admin_setting_gradecat_combo extends admin_setting {
+
+    var $choices;
+
+    function admin_setting_gradecat_combo($name, $visiblename, $description, $defaultsetting, $choices) {
+        $this->choices = $choices;
+        parent::admin_setting($name, $visiblename, $description, $defaultsetting);
+    }
+
+    function get_setting() {
+        global $CFG;
+
+        if (!isset($CFG->{$this->name}) or !isset($CFG->{$this->name.'_flag'})) {
+            return NULL;
+        }
+
+        $flag   = (int)$CFG->{$this->name.'_flag'};
+        $forced = (boolean)(1 & $flag); // first bit
+        $adv    = (boolean)(2 & $flag); // second bit
+    
+        return array('value' => $CFG->{$this->name}, 'forced' => $forced, 'adv' => $adv);
     }
 
     function write_setting($data) {
-         global $CFG;
+        global $CFG;
 
-         if (!in_array($data, array_keys($this->choices))) {
-             return 'Error setting ' . $this->visiblename . '<br />';
-         }
+        $value  = $data['value'];
+        $forced = empty($data['forced']) ? 0 : 1;
+        $adv    = empty($data['adv'])    ? 0 : 2;
+        $flag   = ($forced | $adv); //bitwise or
+ 
+        if (!in_array($value, array_keys($this->choices))) {
+            return 'Error setting ' . $this->visiblename . '<br />';
+        }
 
-         $old = get_config(NULL, $this->name);
-         set_config($this->name, $data);
-         if ($old !== $data) {
-            require_once($CFG->libdir.'/gradelib.php');
-            grade_category::updated_forced_settings();
-         }
+        $oldvalue  = get_config(NULL, $this->name);
+        $oldflag   = (int)get_config(NULL, $this->name.'_flag');
+        $oldforced = (1 & $oldflag); // first bit
 
-         return '';
+        $result = (boolean)set_config($this->name, $value);
+        $result = $result && (boolean)set_config($this->name.'_flag', $flag);
+
+        if ($result) {
+            // force regrade if needed
+            if ($oldforced != $forced or ($forced and $value != $oldvalue)) {
+               require_once($CFG->libdir.'/gradelib.php');
+               grade_category::updated_forced_settings();
+            }
+
+            return '';
+        } else {
+            return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
+        }
+    }
+
+    function output_html() {
+
+        if ($this->get_setting() === NULL) {
+            $current = $this->defaultsetting;
+        } else {
+            $current = $this->get_setting();
+        }
+        $value  = $current['value'];
+        $forced = !empty($current['forced']);
+        $adv    = !empty($current['adv']);
+
+        $return = '<select class="form-select" id="id_s_'.$this->name.'" name="s_' . $this->name .'[value]">';
+        foreach ($this->choices as $key => $val) {
+            // the string cast is needed because key may be integer - 0 is equal to most strings!
+            $return .= '<option value="'.$key.'"'.((string)$key==$value ? ' selected="selected"' : '').'>'.$val.'</option>';
+        }
+        $return .= '</select>'; // TODO: localise
+        $return .= '<label for="id_s_'.$this->name.'force">'.get_string('force').'</label><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'force" name="s_'.$this->name.'[forced]" value="1" ' . ($forced ? 'checked="checked"' : '') . ' />';
+        $return .= '<label for="id_s_'.$this->name.'adv">'.get_string('advanced').'</label><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'adv" name="s_'.$this->name.'[adv]" value="1" ' . ($adv ? 'checked="checked"' : '') . ' />';
+
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
     }
 }
 

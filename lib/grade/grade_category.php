@@ -99,7 +99,7 @@ class grade_category extends grade_object {
      * Aggregate only graded items
      * @var int $aggregateonlygraded
      */
-    var $aggregateonlygraded = 1;
+    var $aggregateonlygraded = 0;
 
     /**
      * Aggregate outcomes together with normal items
@@ -326,6 +326,7 @@ class grade_category extends grade_object {
         $this->parent      = null;
         $this->aggregation = GRADE_AGGREGATE_MEAN;
 
+        $this->apply_default_settings();
         $this->apply_forced_settings();
 
         $this->timecreated = $this->timemodified = time();
@@ -1191,6 +1192,23 @@ class grade_category extends grade_object {
     }
 
     /**
+     * Applies default settings on this category
+     * @return bool true if anything changed
+     */
+    function apply_default_settings() {
+        global $CFG;
+
+        foreach ($this->forceable as $property) {
+            if (isset($CFG->{"grade_$property"})) {
+                if ($CFG->{"grade_$property"} == -1) {
+                    continue; //temporary bc before version bump
+                }
+                $this->$property = $CFG->{"grade_$property"};
+            }
+        }
+    }
+
+    /**
      * Applies forced settings on this category
      * @return bool true if anything changed
      */
@@ -1199,7 +1217,10 @@ class grade_category extends grade_object {
 
         $updated = false;
         foreach ($this->forceable as $property) {
-            if (isset($CFG->{"grade_$property"}) and $CFG->{"grade_$property"} != -1) {
+            if (isset($CFG->{"grade_$property"}) and isset($CFG->{"grade_{$property}_flag"}) and ((int)$CFG->{"grade_{$property}_flag"} & 1)) {
+                if ($CFG->{"grade_$property"} == -1) {
+                    continue; //temporary bc before version bump
+                }
                 $this->$property = $CFG->{"grade_$property"};
                 $updated = true;
             }
