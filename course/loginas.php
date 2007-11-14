@@ -90,6 +90,7 @@
     $USER = get_complete_user_data('id', $userid);
     $USER->realuser = $olduserid;
     $USER->loginascontext = $context;
+    check_enrolment_plugins($USER);
     load_all_capabilities();   // reload capabilities
 
     if (isset($SESSION->currentgroup)) {    // Remember current cache setting for later
