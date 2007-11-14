@@ -808,13 +808,10 @@ HTMLArea.prototype.generate = function () {
     // width = Math.max(parseInt(width), 598);
 
     width = String(width);
-    if (width.match(/^\d+$/)) { // is this a pure int? if so, let it be in px
-        width=width+"px";
-    }
-
-    if (!HTMLArea.is_ie) {
+    if (width.match(/^\d+$/)) { // is this a pure int? if so, let it be in px, and remove 2px
         height -= 2;
-        width -= 2;
+        width  -= 2;
+        width=width+"px";
     }
 
     iframe.style.width = width;
