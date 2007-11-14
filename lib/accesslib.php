@@ -1570,7 +1570,10 @@ function compact_rdefs(&$rdefs) {
 
 /**
  *  A convenience function to completely load all the capabilities 
- *  for the current user.   This is what gets called from login, for example.
+ *  for the current user.   This is what gets called from complete_user_login()
+ *  for example. Call it only _after_ you've setup $USER and called
+ *  check_enrolment_plugins();
+ *
  */
 function load_all_capabilities() {
     global $USER, $CFG, $DIRTYCONTEXTS;
@@ -1587,8 +1590,6 @@ function load_all_capabilities() {
 
 
     } else if (isloggedin()) {
-
-        check_enrolment_plugins($USER);
 
         $accessdata = get_user_access_sitewide($USER->id);
 

@@ -3039,6 +3039,9 @@ function complete_user_login($user) {
     }
     set_login_session_preferences();
 
+    // Call enrolment plugins
+    check_enrolment_plugins($user);
+
     /// This is what lets the user do anything on the site :-)
     load_all_capabilities();
 
