@@ -48,6 +48,14 @@ class edit_category_form extends moodleform {
         $mform->addElement('select', 'aggregation', get_string('aggregation', 'grades'), $options);
         $mform->setHelpButton('aggregation', array('aggregation', get_string('aggregation', 'grades'), 'grade'));
 
+//GVA Patch
+        $mform->addElement('checkbox', 'weightcourse', 'Weight grades for course'); //To Do Localize
+        $mform->addElement('text', 'aggregationcoef', get_string('aggregationcoefweight', 'grades'));
+        $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoefweight', 'grades'),
+                                false, true, false, get_string('aggregationcoefweighthelp', 'grades')));
+        $mform->disabledIf('aggregationcoef', 'weightcourse', 'notchecked');
+//End Patch
+
         $mform->addElement('checkbox', 'aggregateonlygraded', get_string('aggregateonlygraded', 'grades'));
         $mform->setHelpButton('aggregateonlygraded', array(false, get_string('aggregateonlygraded', 'grades'),
                           false, true, false, get_string('aggregateonlygradedhelp', 'grades')));
@@ -116,7 +124,7 @@ class edit_category_form extends moodleform {
 
 /// tweak the form - depending on existing data
     function definition_after_data() {
-        global $CFG;
+        global $CFG, $COURSE;
 
         $mform =& $this->_form;
 
@@ -144,11 +152,52 @@ class edit_category_form extends moodleform {
                 $mform->removeElement('droplow');
             }
         }
+        
+//GVA Patch
+        if (!$id = $mform->getElementValue('id')) {
+            $mform->setDefault('aggregateonlygraded',1);
+            $parent_category = grade_category::fetch_course_category($COURSE->id);
+            if ($parent_category->is_aggregationcoef_used()) {
+                if ($mform->elementExists('weightcourse')) {
+                    $mform->removeElement('weightcourse');
+                }
+            }
+        }
+//End Patch
 
         if ($id = $mform->getElementValue('id')) {
             $grade_category = grade_category::fetch(array('id'=>$id));
             $grade_item = $grade_category->load_grade_item();
 
+//GVA Patch
+            $category = $grade_item->get_item_category();
+            if(!$category->aggregateonlygraded) {
+                $mform->setAdvanced('aggregateonlygraded', false);
+            }
+            if ($grade_item->is_course_item()) {  //An actual course, not a category, etc.
+
+                if ($mform->elementExists('aggregationcoef')) {
+                    $mform->removeElement('aggregationcoef');
+                }
+                if ($mform->elementExists('weightcourse')) {
+                    $mform->removeElement('weightcourse');
+                }
+            }
+            
+            if (!$grade_item->is_category_item()) {
+                if ($mform->elementExists('weightcourse')) {
+                    $mform->removeElement('weightcourse');
+                }
+            } else {
+                $category = $grade_item->get_item_category();
+                $parent_category = $category->get_parent_category();
+                if ($parent_category->is_aggregationcoef_used()) {
+                    if ($mform->elementExists('weightcourse')) {
+                        $mform->removeElement('weightcourse');
+                    }
+                }
+            }
+//End Patch
             if ($grade_item->is_calculated()) {
                 // following elements are ignored when calculation formula used
                 if ($mform->elementExists('aggregation')) {
