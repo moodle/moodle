@@ -72,6 +72,7 @@
                 }
             }
 
+            check_enrolment_plugins($USER);
             load_all_capabilities();     /// This is what lets the user do anything on the site  :-)
 
             redirect($urltogo);
