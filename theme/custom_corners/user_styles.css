@@ -1042,6 +1042,12 @@ span.dimmed_text {
 .dimmed_text {
   color: #AAAAAA;
 }
+tr.hidden div.summary {
+  color: #AAAAAA;
+}
+tr.hidden td.left {
+  color: #AAAAAA;
+}
 body#message-index div#header,
 body#message-discussion div#header,
 body#message-history div#header,
