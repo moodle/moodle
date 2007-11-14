@@ -295,7 +295,7 @@
                 $elements = array($interactionid,
                                   'cmi.interactions.'.$i.'.type',
                                   'cmi.interactions.'.$i.'.result',
-                                  'cmi.interactions.'.$i.'.student_response');
+                                  'cmi.interactions.'.$i.'.learner_response');
                 $row = array();
                 foreach ($elements as $element) {
                     if (isset($trackdata->$element)) {
