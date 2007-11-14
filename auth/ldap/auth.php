@@ -1709,6 +1709,49 @@ class auth_plugin_ldap extends auth_plugin_base {
     }
 
     /**
+     * Will get called before the login page is shown, if NTLM SSO
+     * is enabled, and the user is in the right network, we'll redirect
+     * to the magic NTLM page for SSO...
+     *
+     */
+    function loginpage_hook() {
+        if (!empty($this->config->ntlmsso_enabled)  // SSO enabled
+            && !empty($this->config->ntlmsso_subnet)// have a subnet to test for
+            && empty($_GET['authldap_skipntlmsso']) // haven't failed it yet
+            && (isguestuser() || !isloggedin())     // guestuser or not-logged-in users
+            && address_in_subnet($_SERVER['REMOTE_ADDR'],$this->config->ntlmsso_subnet)) {
+            redirect("{$CFG->wwwroot}/auth/ldap/ntlmsso_attempt.php");
+        }
+    }
+
+    /**
+     * To be called from a page running under NTLM's
+     * "Integrated Windows Authentication". 
+     *
+     * If successful, it will set a special "cookie" (not an HTTP cookie!) 
+     * in config_plugin under the "auth/ldap/ntlmsess" "plugin" and redirect.
+     * The "cookie" will be picked up by ntlmsso_finish() to complete the
+     * process.
+     *
+     * On failure it will return false for the caller to display an appropriate
+     * error message.
+     *
+     * NOTE that this code will execute under the OS user credentials, 
+     * so we MUST avoid dealing with files -- such as session files.
+     *
+     */
+    function ntlmsso_attempt() {
+
+    }
+
+    /**
+     * 
+     */
+    function ntlmsso_finish() {
+
+    }    
+
+    /**
      * Sync roles for this user
      *
      * @param $user object user object (without system magic quotes)
