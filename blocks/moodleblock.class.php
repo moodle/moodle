@@ -126,6 +126,28 @@ class block_base {
     }
 
     /**
+     * Will be called before an instance of this block is backed up, so that any links in
+     * any links in any HTML fields on config can be encoded. For example, for the HTML block
+     * we need to do $config->text = backup_encode_absolute_links($config->text);. 
+     *
+     * @param object $config the config field for an insance of this class.
+     */
+    function backup_encode_absolute_links_in_config(&$config) {
+    }
+
+    /**
+     * Undo the effect of backup_encode_absolute_links_in_config. For exmaple, in the
+     * HTML block we need to do $config->text = restore_decode_absolute_links($config->text);
+     *
+     * @param object $config the config field for an insance of this class.
+     * @return boolean return true if something has changed, so the database can be updated,
+     *       false if not, for efficiency reasons.
+     */
+    function restore_decode_absolute_links_in_config(&$config) {
+        return false;
+    }
+
+    /**
      * Returns the block name, as present in the class name,
      * the database, the block directory, etc etc.
      *

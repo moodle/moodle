@@ -90,8 +90,29 @@
             }
         }
 
-        // TODO: process all html text also in blocks too
-
+        // Process all html text also in blocks too
+        if (!defined('RESTORE_SILENTLY')) {
+            echo '<li>' . get_string ('from') . ' ' . get_string('blocks');
+        }
+        if (!empty($restore->blockinstanceids)) {
+            $blocks = blocks_get_record();
+            $instances = get_records_list('block_instance', 'id', implode(',', $restore->blockinstanceids), '', 'id,blockid,configdata');
+            foreach ($instances as $instance) {
+                if (!isset($blocks[$instance->blockid]->blockobject)) {
+                    $blocks[$instance->blockid]->blockobject = block_instance($blocks[$instance->blockid]->name);
+                }
+                $config = unserialize(base64_decode($instance->configdata));
+                if ($blocks[$instance->blockid]->blockobject->restore_decode_absolute_links_in_config($config)) {
+echo '<p>Updating config for block ', $instance->id, '.</p>';
+                    $instance->configdata = base64_encode(serialize($config));
+                    $status = $status && update_record('block_instance', $instance);
+                }
+            }
+        }
+        if (!defined('RESTORE_SILENTLY')) {
+            echo '</li>';
+        }
+        
         // Restore links in questions.
         require_once("$CFG->dirroot/question/restorelib.php");
         if (!defined('RESTORE_SILENTLY')) {
@@ -759,6 +780,11 @@
     function restore_create_block_instances($restore,$xml_file) {
 
         $status = true;
+
+        // Tracks which blocks we create during the restore.
+        // This is used in restore_decode_content_links.
+        $restore->blockinstanceids = array();
+
         //Check it exists
         if (!file_exists($xml_file)) {
             $status = false;
@@ -851,6 +877,7 @@
                         if (!empty($instance->id)) { // this will only be set if we come from 1.7 and above backups
                             backup_putid ($restore->backup_unique_code,"block_instance",$instance->id,$newid);
                         }
+                        $restore->blockinstanceids[] = $newid;
                     } else {
                         $status = false;
                         break;
