@@ -85,7 +85,7 @@ function lesson_add_instance($lesson) {
     $event->timeduration = ($lesson->deadline - $lesson->available);
 
     if ($event->timeduration > LESSON_MAX_EVENT_LENGTH) {  /// Long durations create two events
-        $event2 = $event;
+        $event2 = clone($event);
 
         $event->name         .= ' ('.get_string('lessonopens', 'lesson').')';
         $event->timeduration  = 0;
@@ -178,7 +178,7 @@ function lesson_update_instance($lesson) {
     $event->timeduration = ($lesson->deadline - $lesson->available);
 
     if ($event->timeduration > LESSON_MAX_EVENT_LENGTH) {  /// Long durations create two events
-        $event2 = $event;
+        $event2 = clone($event);
 
         $event->name         .= ' ('.get_string('lessonopens', 'lesson').')';
         $event->timeduration  = 0;
