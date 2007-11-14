@@ -55,6 +55,10 @@
         {$config->changepasswordurl = ''; }
     if (!isset($config->removeuser))
         {$config->removeuser = 0; }
+    if (!isset($config->ntlmsso_enabled))
+        {$config->ntlmsso_enabled = 0; }
+    if (!isset($config->ntlmsso_subnet))
+        {$config->ntlmsso_subnet = ''; }
 
     $yesno = array( get_string('no'), get_string('yes') );
 
@@ -436,6 +440,32 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     </td>
     <td>
     <?php print_string('auth_remove_user','auth') ?>
+    </td>
+</tr>
+
+<tr>
+   <td colspan="2">
+        <h4><?php print_string('auth_ntlmsso', 'auth') ?> </h4>
+   </td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><label for="ntlmsso_enabled"><?php print_string('auth_ntlmsso_enabled_key','auth') ?></label></td>
+    <td>
+    <?php
+       choose_from_menu($yesno, 'ntlmsso_enabled', $config->ntlmsso_enabled, '0');
+    ?>
+    </td>
+    <td>
+    <?php print_string('auth_ntlmsso_enabled','auth') ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><label for="ntlmsso_subnet"><?php print_string('auth_ntlmsso_subnet_key','auth') ?></label></td>
+    <td><input name="ntlmsso_subnet" id="ntlmsso_subnet" type="text" size="30" value="<?php p($config->ntlmsso_subnet) ?>"
+    </td>
+    <td>
+    <?php print_string('auth_ntlmsso_subnet','auth') ?>
     </td>
 </tr>
 
