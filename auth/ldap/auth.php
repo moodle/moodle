@@ -1811,7 +1811,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      *
      */
     function ntlmsso_finish() {
-        global $CFG, $USER;
+        global $CFG, $USER, $SESSION;
 
         $key = sesskey();
         $cf = get_cached_flags('auth/ldap/ntlmsess');

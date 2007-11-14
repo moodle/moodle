@@ -1,4 +1,4 @@
-README     $Id$
+README      $Id$
 ------
 
 QUICK INSTALL
