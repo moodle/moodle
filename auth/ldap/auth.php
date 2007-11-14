@@ -1765,6 +1765,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      *
      * NOTE that this code will execute under the OS user credentials, 
      * so we MUST avoid dealing with files -- such as session files.
+     * (The caller should set $nomoodlecookie before including config.php)
      *
      */
     function ntlmsso_magic($sesskey) {

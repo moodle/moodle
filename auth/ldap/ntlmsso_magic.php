@@ -1,8 +1,12 @@
 <?php
 
-// Disable session handling here?
-require_once("../../config.php");
-session_write_close();
+// Don't let lib/setup.php set any cookies
+// as we will be executing under the OS security
+// context of the user we are trying to login, rather than
+// of the webserver.
+$nomoodlecookie=true;
+
+require_once(dirname(dirname(dirname(__FILE__)))."/config.php");
 
 //HTTPS is potentially required in this page
 httpsrequired();
@@ -18,10 +22,12 @@ if (empty($authplugin->config->ntlmsso_enabled)) {
 }
 
 $sesskey = required_param('sesskey', PARAM_RAW);
-if ($authplugin->ntlmsso_magic($sesskey)) {
+$file = $CFG->dirroot . '/pix/spacer.gif';
+
+if ($authplugin->ntlmsso_magic($sesskey) 
+    && file_exists($file)) {
+
     // Serve GIF
-    $file = $CFG->dirroot . '/pix/spacer.gif';
-    
     // Type
     header('Content-Type: image/gif');
     header('Content-Length: '.filesize($file));
