@@ -84,27 +84,28 @@ class auth_plugin_ldap extends auth_plugin_base {
         //
         // Before we connect to LDAP, check if this is an AD SSO login
         //
-        if (!empty($this->ntlmsso_enabled)) {
+        if (!empty($this->config->ntlmsso_enabled)) {
             $key      = $_SERVER['REMOTE_ADDR'];
             if ($cookie   = get_config('auth/ldap/ntlmsess', $key)) {
                 // These checks match the work done
-                if (preg_match('/^(\d+):.{10}:(.+)$/',$cookie,$matches)) {
+                if (preg_match('/^(\d+):(.{10}):(.+)$/',$cookie,$matches)) {
                     // $matches[0] is the whole matched string...
                     $time         = $matches[1];
                     $sesskey      = $matches[2];
                     $sessusername = $matches[3];
-                    if (((int)$time < now() - 6) // timewindow for the process, in secs...
+                    if (((time() - ((int)$time)) < 6) // timewindow for the process, in secs...
                         && $sesskey === sesskey()
                         && $sesskey === $password
                         && $sessusername === $username) {
+
+                        unset($cookie);
+                        unset($key);
+                        unset($time);
+                        unset($sessusername);
                         return true;
                     }
                 }
             }
-            unset($cookie);
-            unset($key);
-            unset($time);
-            unset($sessusername);
         }
 
 
@@ -1742,6 +1743,8 @@ class auth_plugin_ldap extends auth_plugin_base {
      *
      */
     function loginpage_hook() {
+        global $CFG;
+
         if (!empty($this->config->ntlmsso_enabled)  // SSO enabled
             && !empty($this->config->ntlmsso_subnet)// have a subnet to test for
             && empty($_GET['authldap_skipntlmsso']) // haven't failed it yet
@@ -1774,7 +1777,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             $username = substr(strrchr($username, '\\'), 1); //strip domain info
             $username = strtolower($username); //compatibility hack
             $key      = $_SERVER['REMOTE_ADDR']; // add sesskey?
-            $value    = now() . ':' . $sesskey . ':' . $username;
+            $value    = time() . ':' . $sesskey . ':' . $username;
             return set_config($key, $value, 'auth/ldap/ntlmsess');
         }
         return false;
@@ -1791,14 +1794,16 @@ class auth_plugin_ldap extends auth_plugin_base {
      *
      */
     function ntlmsso_finish() {
+        global $CFG;
+
         $key      = $_SERVER['REMOTE_ADDR']; // add sesskey?
         if ($cookie   = get_config('auth/ldap/ntlmsess', $key)) {
-            if (preg_match('/^(\d+):.{10}:(.+)$/',$cookie,$matches)) {
+            if (preg_match('/^(\d+):(.{10}):(.+)$/',$cookie,$matches)) {
                 // $matches[0] is the whole matched string...
                 $time     = $matches[1];
                 $sesskey  = $matches[2];
                 $username = $matches[3];
-                if (((int)$time < now() - 6) // timewindow for the process, in secs...
+                if (((time() - ((int)$time)) < 6) // timewindow for the process, in secs...
                     && $sesskey === sesskey()) {
                     // Here we want to trigger the whole authentication machinery
                     // to make sure no step is bypassed...
