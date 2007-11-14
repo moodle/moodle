@@ -85,6 +85,10 @@ class auth_plugin_ldap extends auth_plugin_base {
             return false;
         }
 
+        $textlib = textlib_get_instance();
+        $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->ldapencoding);
+        $extpassword = $textlib->convert(stripslashes($password), 'utf-8', $this->config->ldapencoding);
+
         //
         // Before we connect to LDAP, check if this is an AD SSO login
         // if we succeed in this block, we'll return success early.
@@ -124,10 +128,6 @@ class auth_plugin_ldap extends auth_plugin_base {
         } // End SSO processing
         unset($key);
 
-
-        $textlib = textlib_get_instance();
-        $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->ldapencoding);
-        $extpassword = $textlib->convert(stripslashes($password), 'utf-8', $this->config->ldapencoding);
 
         $ldapconnection = $this->ldap_connect();
 
