@@ -227,6 +227,13 @@ $string['auth_ldap_noextension'] = 'Warning: The PHP LDAP module does not seem t
 $string['auth_ldapextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>LDAP fields</b> that you specify here. <p>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.</p><p>In either case, the user will be able to edit all of these fields after they log in.</p>';
 $string['auth_ldaptitle'] = 'LDAP server';
 $string['auth_ldapnotinstalled'] = 'Cannot use LDAP authentication. The PHP LDAP module is not installed.';
+$string['auth_ntlmsso'] = 'NTLM SSO';
+$string['auth_ntlmsso_enabled_key'] = 'Enable';
+$string['auth_ntlmsso_enabled'] = 'Set to yes to attempt Single Sign On with the NTLM domain. <strong>Note:</strong> this requires additional setup on the webserver to work, see <a href=\"http://docs.moodle.org/en/NTLM_authentication\">http://docs.moodle.org/en/NTLM_authentication</a>';
+$string['auth_ntlmsso_subnet_key'] = 'Subnet';
+$string['auth_ntlmsso_subnet'] = 'If set, it will only attempt SSO with clients in this subnet. Format: xxx.xxx.xxx.xxx/bitmask';
+$string['ntlmsso_attempting'] = 'Attempting Single Sign On via NTLM...';
+$string['ntlmsso_failed'] = 'Auto-login failed, try the normal login page...';
 
 // Manual plugin
 $string['auth_manualdescription'] = 'This method removes any way for users to create their own accounts.  All accounts must be manually created by the admin user.';
