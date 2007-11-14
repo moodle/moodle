@@ -61,6 +61,7 @@ if ($id) {
 } else {
     $grade_category = new grade_category();
     $grade_category->courseid = $course->id;
+    $grade_category->apply_default_settings();
     $grade_category->apply_forced_settings();
     $category = $grade_category->get_record_data();
 }

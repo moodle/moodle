@@ -47,6 +47,9 @@ class edit_category_form extends moodleform {
 
         $mform->addElement('select', 'aggregation', get_string('aggregation', 'grades'), $options);
         $mform->setHelpButton('aggregation', array('aggregation', get_string('aggregation', 'grades'), 'grade'));
+        if ((int)$CFG->grade_aggregation_flag & 2) {
+            $mform->setAdvanced('aggregation');
+        }
 
 //GVA Patch
         $mform->addElement('checkbox', 'weightcourse', 'Weight grades for course'); //To Do Localize
@@ -60,6 +63,9 @@ class edit_category_form extends moodleform {
         $mform->setHelpButton('aggregateonlygraded', array(false, get_string('aggregateonlygraded', 'grades'),
                           false, true, false, get_string('aggregateonlygradedhelp', 'grades')));
         $mform->disabledIf('aggregateonlygraded', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
+        if ((int)$CFG->grade_aggregateonlygraded_flag & 2) {
+            $mform->setAdvanced('aggregateonlygraded');
+        }
 
         if (empty($CFG->enableoutcomes)) {
             $mform->addElement('hidden', 'aggregateoutcomes');
@@ -69,11 +75,17 @@ class edit_category_form extends moodleform {
             $mform->setHelpButton('aggregateoutcomes', array(false, get_string('aggregateoutcomes', 'grades'),
                               false, true, false, get_string('aggregateoutcomeshelp', 'grades')));
             $mform->disabledIf('aggregateoutcomes', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
+            if ((int)$CFG->grade_aggregateoutcomes_flag & 2) {
+                $mform->setAdvanced('aggregateoutcomes');
+            }
         }
 
         $mform->addElement('advcheckbox', 'aggregatesubcats', get_string('aggregatesubcats', 'grades'));
         $mform->setHelpButton('aggregatesubcats', array(false, get_string('aggregatesubcats', 'grades'),
                           false, true, false, get_string('aggregatesubcatshelp', 'grades')));
+        if ((int)$CFG->grade_aggregatesubcats_flag & 2) {
+            $mform->setAdvanced('aggregatesubcats');
+        }
 
         $options = array(0 => get_string('none'));
         for ($i=1; $i<=20; $i++) {
@@ -83,11 +95,17 @@ class edit_category_form extends moodleform {
         $mform->addElement('select', 'keephigh', get_string('keephigh', 'grades'), $options);
         $mform->setHelpButton('keephigh', array(false, get_string('keephigh', 'grades'),
                           false, true, false, get_string('keephighhelp', 'grades')));
+        if ((int)$CFG->grade_keephigh_flag & 2) {
+            $mform->setAdvanced('keephigh');
+        }
 
         $mform->addElement('select', 'droplow', get_string('droplow', 'grades'), $options);
         $mform->setHelpButton('droplow', array(false, get_string('droplow', 'grades'),
                           false, true, false, get_string('droplowhelp', 'grades')));
         $mform->disabledIf('droplow', 'keephigh', 'noteq', 0);
+        if ((int)$CFG->grade_droplow_flag & 2) {
+            $mform->setAdvanced('droplow');
+        }
 
         $mform->disabledIf('keephigh', 'droplow', 'noteq', 0);
         $mform->disabledIf('droplow', 'keephigh', 'noteq', 0);
@@ -104,6 +122,7 @@ class edit_category_form extends moodleform {
         $mform->setHelpButton('pref_aggregationview', array(false, get_string('aggregationview', 'grades'),
                               false, true, false, get_string('configaggregationview', 'grades')));
         $mform->setDefault('pref_aggregationview', GRADE_REPORT_PREFERENCE_DEFAULT);
+        $mform->setAdvanced('pref_aggregationview');
 
         // hidden params
         $mform->addElement('hidden', 'id', 0);
@@ -130,7 +149,7 @@ class edit_category_form extends moodleform {
 
         $somecat = new grade_category();
         foreach ($somecat->forceable as $property) {
-            if ($CFG->{"grade_$property"} != -1) {
+            if ((int)$CFG->{"grade_{$property}_flag"} & 1) {
                 if ($mform->elementExists($property)) {
                     if (empty($CFG->grade_hideforcedsettings)) {
                         $mform->hardFreeze($property);
