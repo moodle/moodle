@@ -454,6 +454,7 @@ $string['useweighted'] = 'Use weighted';
 $string['viewbygroup'] = 'Group';
 $string['viewgrades'] = 'View grades';
 $string['weight'] = 'weight';
+$string['weightcourse'] = 'Use weighted grades for course';
 $string['weightedascending'] = 'Sort by weighted percent ascending';
 $string['weighteddescending'] = 'Sort by weighted percent descending';
 $string['weightedpct'] = 'weighted %%';

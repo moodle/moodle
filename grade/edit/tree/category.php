@@ -54,7 +54,10 @@ if ($id) {
     $category = $grade_category->get_record_data();
     // Get Category preferences
     $category->pref_aggregationview = grade_report::get_pref('aggregationview', $id);
-
+//GVA Patch
+    $grade_item = $grade_category->load_grade_item();
+    $category->aggregationcoef = $grade_item->aggregationcoef;
+//End Patch
 } else {
     $grade_category = new grade_category();
     $grade_category->courseid = $course->id;
@@ -89,7 +92,25 @@ if ($mform->is_cancelled()) {
             error("Could not set preference aggregationview to $value for this grade category");
         }
     }
+//GVA Patch
 
+    if (isset($data->weightcourse)) {
+        global $COURSE;
+        $course_category = grade_category::fetch_course_category($COURSE->id);
+        $course_category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN;
+        $course_category->update();
+    }
+
+    if (!isset($grade_item)) {
+        $grade_item = $grade_category->load_grade_item();
+    }
+    if (isset($data->aggregationcoef)){
+        $data_item->aggregationcoef = $data->aggregationcoef;
+        grade_item::set_properties($grade_item, $data_item);
+        $grade_item->update();
+    }
+
+//End Patch
     redirect($returnurl);
 }
 
