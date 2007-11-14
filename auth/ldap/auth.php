@@ -1796,7 +1796,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      *
      */
     function ntlmsso_finish() {
-        global $CFG;
+        global $CFG, $USER;
 
         $key      = $_SERVER['REMOTE_ADDR']; // add sesskey?
         if ($cookie   = get_config('auth/ldap/ntlmsess', $key)) {
@@ -1809,7 +1809,26 @@ class auth_plugin_ldap extends auth_plugin_base {
                     && $sesskey === sesskey()) {
                     // Here we want to trigger the whole authentication machinery
                     // to make sure no step is bypassed...
-                    authenticate_user_login($username, $sesskey);
+                    $user = authenticate_user_login($username, $sesskey);
+                    if ($user) {
+                        add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID,
+                                   $user->id, 0, $user->id);
+                        $USER = complete_user_login($user);
+
+                        /// Redirection
+                        if (user_not_fully_set_up($USER)) {
+                            $urltogo = $CFG->wwwroot.'/user/edit.php';
+                            // We don't delete $SESSION->wantsurl yet, so we get there later
+                        } else if (isset($SESSION->wantsurl) and (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0)) {
+                            $urltogo = $SESSION->wantsurl;    /// Because it's an address in this site
+                            unset($SESSION->wantsurl);
+                        } else {
+                            // no wantsurl stored or external - go to homepage
+                            $urltogo = $CFG->wwwroot.'/';
+                            unset($SESSION->wantsurl);
+                        }
+                        redirect($urltogo);
+                    }
                 }
             }
         }
