@@ -89,8 +89,8 @@ class auth_plugin_ldap extends auth_plugin_base {
         // Before we connect to LDAP, check if this is an AD SSO login
         // if we succeed in this block, we'll return success early.
         //
-        if (!empty($this->config->ntlmsso_enabled)) {
-            $key      = sesskey();
+        $key = sesskey();
+        if (!empty($this->config->ntlmsso_enabled) && $key === $password) {
             if ($cookie   = get_config('auth/ldap/ntlmsess', $key)) {
                 // These checks match the work done
                 if (preg_match('/^(\d+):(.+)$/',$cookie,$matches)) {
@@ -98,11 +98,9 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $time         = $matches[1];
                     $sessusername = $matches[2];
                     if (((time() - ((int)$time)) < AUTH_NTLMTIMEOUT)
-                        && $key          === $password
                         && $sessusername === $username) {
 
                         unset($cookie);
-                        unset($key);
                         unset($time);
                         unset($sessusername);
 
@@ -124,6 +122,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 }
             }
         } // End SSO processing
+        unset($key);
 
 
         $textlib = textlib_get_instance();
@@ -1821,11 +1820,10 @@ class auth_plugin_ldap extends auth_plugin_base {
                 // $matches[0] is the whole matched string...
                 $time     = $matches[1];
                 $username = $matches[2];
-                if (((time() - ((int)$time)) < AUTH_NTLMTIMEOUT) // timewindow for the process, in secs...
-                    && $sesskey === sesskey()) {
+                if (((time() - ((int)$time)) < AUTH_NTLMTIMEOUT)) {
                     // Here we want to trigger the whole authentication machinery
                     // to make sure no step is bypassed...
-                    $user = authenticate_user_login($username, $sesskey);
+                    $user = authenticate_user_login($username, $key);
                     if ($user) {
                         add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID,
                                    $user->id, 0, $user->id);
