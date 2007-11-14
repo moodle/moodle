@@ -1803,6 +1803,10 @@ class auth_plugin_ldap extends auth_plugin_base {
             {$config->changepasswordurl = ''; }
         if (!isset($config->removeuser))
             {$config->removeuser = 0; }
+        if (!isset($config->ntlmsso_enabled))
+            {$config->ntlmsso_enabled = 0; }
+        if (!isset($config->ntlmsso_subnet))
+            {$config->ntlmsso_subnet = ''; }
 
         // save settings
         set_config('host_url', $config->host_url, 'auth/ldap');
@@ -1833,6 +1837,8 @@ class auth_plugin_ldap extends auth_plugin_base {
         set_config('passtype', $config->passtype, 'auth/ldap');
         set_config('changepasswordurl', $config->changepasswordurl, 'auth/ldap');
         set_config('removeuser', $config->removeuser, 'auth/ldap');
+        set_config('ntlmsso_enabled', (int)$config->ntlmsso_enabled, 'auth/ldap');
+        set_config('ntlmsso_subnet', $config->ntlmsso_subnet, 'auth/ldap');
 
         return true;
     }
