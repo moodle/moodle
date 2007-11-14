@@ -597,6 +597,8 @@ function clean_param($param, $type) {
  * Can also be used to update keys for plugin-scoped configs in config_plugin table.
  * In that case it doesn't affect $CFG.
  *
+ * A NULL value will delete the entry.
+ *
  * @param string $name the key to set
  * @param string $value the value to set (without magic quotes)
  * @param string $plugin (optional) the plugin scope
@@ -612,8 +614,16 @@ function set_config($name, $value, $plugin=NULL) {
         $CFG->$name = $value;  // So it's defined for this invocation at least
 
         if (get_field('config', 'name', 'name', $name)) {
-            return set_field('config', 'value', addslashes($value), 'name', $name);
+            if ($value===null) {
+                unset($CFG->$name);
+                return delete_records('config', 'name', $name);
+            } else {
+                return set_field('config', 'value', addslashes($value), 'name', $name);
+            }
         } else {
+            if ($value===null) {
+                return true;
+            }
             $config = new object();
             $config->name = $name;
             $config->value = addslashes($value);
@@ -621,8 +631,15 @@ function set_config($name, $value, $plugin=NULL) {
         }
     } else { // plugin scope
         if ($id = get_field('config_plugins', 'id', 'name', $name, 'plugin', $plugin)) {
-            return set_field('config_plugins', 'value', addslashes($value), 'id', $id);
+            if ($value===null) {
+                return delete_records('config_plugins', 'name', $name, 'plugin', $plugin);
+            } else {
+                return set_field('config_plugins', 'value', addslashes($value), 'id', $id);
+            }
         } else {
+            if ($value===null) {
+                return true;
+            }
             $config = new object();
             $config->plugin = addslashes($plugin);
             $config->name   = $name;
