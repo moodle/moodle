@@ -159,10 +159,6 @@ $headings['delete'] = '';
 $acl = get_records('mnet_sso_access_control', '', '', "$sort $dir", '*'); //, $page * $perpage, $perpage);
 $aclcount = count_records('mnet_sso_access_control');
 
-if (empty($CFG->mnet_mode) || $CFG->mnet_mode !== 'strict') {
-    print_box(get_string('mnetdisabled','mnet'));
-}
-
 if (!$acl) {
     print_heading(get_string('noaclentries','mnet'));
     $table = NULL;
