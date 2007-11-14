@@ -238,9 +238,6 @@
     }
     echo '</tbody></table>';
 
-    // Button to go back to the course page
-    echo '<p align="center"><a href="'.$CFG->wwwroot.'/course/view.php?id='.$quiz->course.'">'.get_string('gobacktocourse', 'quiz').'</a></p>';
-
 /// Print the navigation panel if required
     $numpages = quiz_number_of_pages($attempt->layout);
     if ($numpages > 1 and !$showall) {
