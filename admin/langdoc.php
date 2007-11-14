@@ -243,7 +243,7 @@ function langdoc_preview_url($currentfile) {
         $currentfile = substr($currentfile, 5);
         $currentpathexp = explode('/', $currentfile);
         if (count($currentpathexp) > 1) {
-            $url = '/help.php?module='.$currentpathexp[0].'&amp;file='.$currentpathexp[1];
+            $url = '/help.php?module='.implode('/',array_slice($currentpathexp,0,count($currentpathexp)-1)).'&amp;file='.end($currentpathexp); 
         } else {
             $url = '/help.php?module=moodle&amp;file='.$currentfile;
         }
