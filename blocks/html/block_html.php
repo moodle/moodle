@@ -35,5 +35,16 @@ class block_html extends block_base {
 
         return $this->content;
     }
+
+    function backup_encode_absolute_links_in_config(&$config) {
+        $config->text = backup_encode_absolute_links($config->text);
+    }
+
+    function restore_decode_absolute_links_in_config(&$config) {
+        debugging("In block_html::restore_decode_absolute_links_in_config"); // DONOTCOMMIT
+        $oldtext = $config->text;
+        $config->text = restore_decode_absolute_links($oldtext);
+        return $config->text != $oldtext;
+    }
 }
 ?>

@@ -957,8 +957,16 @@
                         if(empty($blocks[$instance->blockid]->name)) {
                             continue;
                         }
-                        //Begin Block
 
+                        //Give the block a chance to process any links in configdata.
+                        if (!isset($blocks[$instance->blockid]->blockobject)) {
+                            $blocks[$instance->blockid]->blockobject = block_instance($blocks[$instance->blockid]->name);
+                        }
+                        $config = unserialize(base64_decode($instance->configdata));
+                        $blocks[$instance->blockid]->blockobject->backup_encode_absolute_links_in_config($config);
+                        $instance->configdata = base64_encode(serialize($config));
+
+                        //Begin Block
                         fwrite ($bf,start_tag('BLOCK',3,true));
                         fwrite ($bf,full_tag('ID', 4, false,$instance->id));
                         fwrite ($bf,full_tag('NAME',4,false,$blocks[$instance->blockid]->name));
