@@ -23,7 +23,7 @@ if (empty($authplugin->config->ntlmsso_enabled)) {
 $sesskey = sesskey();
 
 //print_header("$site->fullname: $loginsite", $site->fullname, $loginsite, $focus, '', true);
-$msg = '<p>Attempting SSO...</p>'
+$msg = '<p>'.get_string('ntlmsso_attempting','auth').'</p>'
     . '<img width="1", height="1" '
     . ' src="' . $CFG->wwwroot . '/auth/ldap/ntlmsso_magic.php?sesskey='
     . $sesskey . '" />';

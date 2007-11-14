@@ -25,6 +25,6 @@ if (empty($authplugin->config->ntlmsso_enabled)) {
 if (!$authplugin->ntlmsso_finish()) {
     // Redirect to login, saying "don't try again!"
     redirect($CFG->wwwroot . '/login/index.php?authldap_skipntlmsso=1', 
-             "Single Sign On failed, proceed to normal login", 3);
+             get_string('ntlmsso_failed','auth'), 3);
 }
 ?>
