@@ -256,7 +256,6 @@ $string['giftnonumericalanswers'] = 'No answers found for numerical question';
 $string['giftnovalidquestion'] = 'No valid question found';
 $string['giftqtypenotset'] = 'Question type is not set';
 $string['giftrightbraceerror'] = 'Could not find a }';
-$string['gobacktocourse'] = 'Click here to go back to the course';
 $string['grade'] = 'Grade';
 $string['gradeall'] = 'Grade All';
 $string['gradeaverage'] = 'Average grade';
