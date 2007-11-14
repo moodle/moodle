@@ -234,6 +234,7 @@ $string['auth_ntlmsso_subnet_key'] = 'Subnet';
 $string['auth_ntlmsso_subnet'] = 'If set, it will only attempt SSO with clients in this subnet. Format: xxx.xxx.xxx.xxx/bitmask';
 $string['ntlmsso_attempting'] = 'Attempting Single Sign On via NTLM...';
 $string['ntlmsso_failed'] = 'Auto-login failed, try the normal login page...';
+$string['ntlmsso_isdisabled'] = 'NTLM SSO is disabled.';
 
 // Manual plugin
 $string['auth_manualdescription'] = 'This method removes any way for users to create their own accounts.  All accounts must be manually created by the admin user.';
