@@ -150,47 +150,15 @@ httpsrequired();
                 die;
             }
 
+            if ($frm->password == 'changeme') {
+                //force the change
+                set_user_preference('auth_forcepasswordchange', true, $user->id);
+            }
+
         /// Let's get them all set up.
-            $USER = $user;
-
-            add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
-
-
-            update_user_login_times();
-            if (empty($CFG->nolastloggedin)) {
-                set_moodle_cookie($USER->username);
-            } else {
-                // do not store last logged in user in cookie
-                // auth plugins can temporarily override this from loginpage_hook()
-                // do not save $CFG->nolastloggedin in database!
-                set_moodle_cookie('nobody');
-            }
-            set_login_session_preferences();
-
-        /// This is what lets the user do anything on the site :-)
-            load_all_capabilities();
-
-        /// Select password change url
-            $userauth = get_auth_plugin($USER->auth);
-
-        /// check whether the user should be changing password
-            if (get_user_preferences('auth_forcepasswordchange', false) || $frm->password == 'changeme'){
-                if ($frm->password == 'changeme') {
-                    //force the change
-                    set_user_preference('auth_forcepasswordchange', true);
-                }
-                //Select password change url
-                if ($userauth->can_change_password()) {
-                    if ($changeurl = $userauth->change_password_url()) {
-                        redirect($changeurl);
-                    } else {
-                        redirect($CFG->httpswwwroot.'/login/change_password.php');
-                    }
-                } else {
-                    error(get_string('nopasswordchangeforced', 'auth'));
-                }
-            }
-
+            add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID,
+                       $user->id, 0, $user->id);
+            $USER = complete_user_login($user);
 
         /// Prepare redirection
             if (user_not_fully_set_up($USER)) {
