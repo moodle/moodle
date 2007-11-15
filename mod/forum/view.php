@@ -154,7 +154,7 @@
         }
 
         if (($forum->trackingtype == FORUM_TRACKING_OPTIONAL) && forum_tp_can_track_forums($forum)) {
-            echo '<div class="helplink" id="trackinglink">'. forum_get_tracking_link($forum). '</div';
+            echo '<div class="helplink" id="trackinglink">'. forum_get_tracking_link($forum). '</div>';
         }
 
     }
