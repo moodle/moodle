@@ -2351,9 +2351,13 @@ function assignment_get_coursemodule_info($coursemodule) {
 
     require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
     $assignmentclass = "assignment_$assignment->assignmenttype";
-    $ass = new $assignmentclass($coursemodule->id, $assignment);
-
-    return $ass->get_coursemodule_info($coursemodule);
+    
+    // MDL-12160, get_coursemodule should not touch context_creation code as the function is called during upgrade
+    // prior to creation of context_rel table
+    return call_user_func(array($assignmentclass, 'get_coursemodule_info'), $coursemodule);
+    
+    //$ass = new $assignmentclass($coursemodule->id, $assignment);
+    //return $ass->get_coursemodule_info($coursemodule);
 }
 
 
