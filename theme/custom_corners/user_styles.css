@@ -940,6 +940,10 @@ form.mform legend {
   color: #0066ff;
   font-size: 120%;
 }
+form#adminsettings span.form-shortname {
+  color: #AAAAAA;
+  font-style: italic;
+}
 div.coursebox div.summary {
   width: 45%;
 }
