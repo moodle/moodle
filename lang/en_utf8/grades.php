@@ -340,6 +340,7 @@ $string['overridden'] = 'Overridden';
 $string['overriddenhelp'] = 'When on, the overridden flag prevents any future attempts to automatically adjust the value of the grade. This flag is often set internally by the gradebook, but can be switched on and off manually using this form element.';
 $string['overriddennotice'] = 'Your final grade from this activity was manually adjusted.';
 $string['overallavg'] = 'Overall average';
+$string['parentcategory'] = 'Parent category';
 $string['pctoftotalgrade'] = '%% of total grade';
 $string['percent'] = 'Percent';
 $string['percentage'] = 'Percentage';
