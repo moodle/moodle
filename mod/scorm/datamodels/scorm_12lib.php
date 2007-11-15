@@ -341,7 +341,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                     }
                 }
             } else {
-                $result->toc .= '&nbsp;'.$sco->title."</li>\n";
+                $result->toc .= '&nbsp;'.format_string($sco->title)."</li>\n";
             }
             if (($nextsco !== false) && ($nextid == 0) && ($findnext)) {
                 if (!empty($nextsco->launch)) {
