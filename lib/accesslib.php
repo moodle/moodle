@@ -2874,8 +2874,8 @@ function fetch_context_capabilities($context) {
             $cb = get_record('block_instance', 'id', $context->instanceid);
             $block = get_record('block', 'id', $cb->blockid);
 
-            $SQL = "select * from {$CFG->prefix}capabilities where contextlevel = ".CONTEXT_BLOCK."
-                    and component = 'block/$block->name'";
+            $SQL = "select * from {$CFG->prefix}capabilities where (contextlevel = ".CONTEXT_BLOCK." AND component = 'moodle')
+                    OR (component = 'block/$block->name')";
         break;
 
         default:
