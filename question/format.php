@@ -199,7 +199,7 @@ class qformat_default {
         }
 
         // STAGE 2: Write data to database
-        notify( get_string('importingquestions','quiz',count($questions)) );
+        notify( get_string('importingquestions','quiz',$this->count_questions($questions)) );
 
         // check for errors before we continue
         if ($this->stoponerror and ($this->importerrors>0)) {
@@ -303,6 +303,27 @@ class qformat_default {
         }
         return true;
     }
+    /**
+     * Count all non-category questions in the questions array.
+     * 
+     * @param array questions An array of question objects.
+     * @return int The count.
+     * 
+     */
+    function count_questions($questions) {
+        $count = 0;
+        if (!is_array($questions)) {
+            return $count;
+        }
+        foreach ($questions as $question) {
+            if (!is_object($question) || !isset($question->qtype) || ($question->qtype == 'category')) {
+                continue;
+            }
+            $count++;
+        }
+        return $count;
+    }
+
     /**
      * find and/or create the category described by a delimited list
      * e.g. $course$/tom/dick/harry or tom/dick/harry
