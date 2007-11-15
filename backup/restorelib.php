@@ -227,10 +227,10 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
     }
 
     //This function read the xml file and store its data from the blocks in a object
-    function restore_read_xml_blocks ($xml_file) {
+    function restore_read_xml_blocks ($restore, $xml_file) {
 
         //We call the main read_xml function, with todo = BLOCKS
-        $info = restore_read_xml ($xml_file,'BLOCKS',false);
+        $info = restore_read_xml ($xml_file,'BLOCKS',$restore);
 
         return $info;
     }
@@ -778,8 +778,9 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
     //This function creates all the block_instances from xml when restoring in a
     //new course
     function restore_create_block_instances($restore,$xml_file) {
-
+        global $CFG;
         $status = true;
+        $CFG->restore_blockinstanceids = array();
 
         // Tracks which blocks we create during the restore.
         // This is used in restore_decode_content_links.
@@ -791,7 +792,7 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
         }
         //Get info from xml
         if ($status) {
-            $info = restore_read_xml_blocks($xml_file);
+            $info = restore_read_xml_blocks($restore,$xml_file);
         }
 
         if(empty($info->instances)) {
@@ -873,9 +874,35 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
                     //Add this instance
                     $instance->blockid = $blocks[$instance->name]->id;
 
-                    if ($newid = insert_record('block_instance', $instance)) {
-                        if (!empty($instance->id)) { // this will only be set if we come from 1.7 and above backups
-                            backup_putid ($restore->backup_unique_code,"block_instance",$instance->id,$newid);
+                    // This will only be set if we come from 1.7 and above backups
+                    //  Also, must do this before insert (insert_record unsets id)
+                    if (!empty($instance->id)) { 
+                        $oldid = $instance->id;
+                    } else {
+                        $oldid = 0;
+                    }
+
+                    if ($instance->id = insert_record('block_instance', $instance)) {
+                        // Save the new ID for later+                        
+                        $CFG->restore_blockinstanceids[] = $instance->id;
+                        // Create block instance
+                        if (!$blockobj = block_instance($instance->name, $instance)) {
+                            $status = false;
+                            break;
+                        }
+                        // Run the block restore if needed
+                        if ($blockobj->backuprestore_enabled()) {
+                            // Get restore information
+                            $data = backup_getid($restore->backup_unique_code,'block_instance',$oldid);
+                            $data->new_id = $instance->id;  // For completeness
+                            if (!$blockobj->instance_restore($restore, $data)) {
+                                $status = false;
+                                break;
+                            }
+                        }
+                        // Save oldid after block restore process because info will be over-written with blank string
+                        if ($oldid) {
+                            backup_putid ($restore->backup_unique_code,"block_instance",$oldid,$instance->id);
                         }
                         $restore->blockinstanceids[] = $newid;
                     } else {
@@ -885,8 +912,9 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
 
                     //Get an object for the block and tell it it's been restored so it can update dates
                     //etc. if necessary
-                    $blockobj=block_instance($instance->name,$instance);
-                    $blockobj->after_restore($restore);
+                    if ($blockobj = block_instance($instance->name,$instance)) {
+                        $blockobj->after_restore($restore);
+                    }
 
                     //Now we can increment the weight counter
                     ++$maxweights[$instance->position];
@@ -4043,6 +4071,17 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
             //Check if we are into BLOCKS zone
             //if ($this->tree[3] == "BLOCKS")                                                         //Debug
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+            
+            
+            //If we are under a BLOCK tag under a BLOCKS zone, accumule it
+            if (isset($this->tree[4]) and isset($this->tree[3])) {  //
+                if ($this->tree[4] == "BLOCK" and $this->tree[3] == "BLOCKS") {
+                    if (!isset($this->temp)) {
+                        $this->temp = "";
+                    }
+                    $this->temp .= "<".$tagName.">";
+                }
+            }
         }
 
         //This is the startTag handler we use where we are reading the sections zone (todo="SECTIONS")
@@ -4806,6 +4845,13 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
                 //if (trim($this->content))                                                                     //Debug
                 //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
                 //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                
+                // Collect everything into $this->temp
+                if (!isset($this->temp)) {
+                    $this->temp = "";
+                }
+                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";    
+                
                 //Dependig of different combinations, do different things
                 if ($this->level == 4) {
                     switch ($tagName) {
@@ -4813,6 +4859,37 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
                             //We've finalized a block, get it
                             $this->info->instances[] = $this->info->tempinstance;
                             unset($this->info->tempinstance);
+                                                        
+                            //Also, xmlize INSTANCEDATA and save to db
+                            //Prepend XML standard header to info gathered
+                            $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                            //Call to xmlize for this portion of xml data (one BLOCK)
+                            //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                //Debug
+                            $data = xmlize($xml_data,0);         
+                            //echo strftime ("%X",time())."<p>";                                                          //Debug
+                            //traverse_xmlize($data);                                                                     //Debug
+                            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                            //$GLOBALS['traverse_array']="";                                                              //Debug
+                            //Check for instancedata, is exists, then save to DB
+                            if (isset($data['BLOCK']['#']['INSTANCEDATA']['0']['#'])) {
+                                //Get old id
+                                $oldid = $data['BLOCK']['#']['ID']['0']['#'];
+                                //Get instancedata
+                                
+                                if ($data = $data['BLOCK']['#']['INSTANCEDATA']['0']['#']) {
+                                    //Restore code calls this multiple times - so might already have the newid
+                                    if ($newid = backup_getid($this->preferences->backup_unique_code,'block_instance',$oldid)) {
+                                        $newid = $newid->new_id;
+                                    } else {
+                                        $newid = null;
+                                    }
+                                    //Save to DB, we will use it later
+                                    $status = backup_putid($this->preferences->backup_unique_code,'block_instance',$oldid,$newid,$data);
+                                }
+                            }
+                            //Reset temp
+                            unset($this->temp);
+                            
                             break;
                         default:
                             die($tagName);
@@ -7684,7 +7761,7 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("creatingblocksroles").'</li>';
             }
-            $blocks = restore_read_xml_blocks($xmlfile);
+            $blocks = restore_read_xml_blocks($restore, $xmlfile);
             if (isset($blocks->instances)) {
                 foreach ($blocks->instances as $instance) {
                     if (isset($instance->roleassignments) && !$isimport) {

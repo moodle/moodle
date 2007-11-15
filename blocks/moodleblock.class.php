@@ -126,6 +126,49 @@ class block_base {
     }
 
     /**
+     * Enable the block for backup and restore.
+     * 
+     * If return true, then {@link instance_backup()} and
+     * {@link instance_restore()} will be called during
+     * backup/restore routines.
+     *
+     * @return boolean
+     **/
+    function backuprestore_enabled() {
+        return false;
+    }
+
+    /**
+     * Allows the block class to have a backup routine.  Handy 
+     * when the block has its own tables that have foreign keys to 
+     * other tables (example: user table).
+     * 
+     * Note: at the time of writing this comment, the indent level 
+     * for the {@link full_tag()} should start at 5.
+     *
+     * @param resource $bf Backup File
+     * @param object $preferences Backup preferences
+     * @return boolean
+     **/
+    function instance_backup($bf, $preferences) {
+        return true;
+    }
+
+    /**
+     * Allows the block class to restore its backup routine.
+     * 
+     * Should not return false if data is empty 
+     * because old backups would not contain block instance backup data.
+     * 
+     * @param object $restore Standard restore object
+     * @param object $data Object from backup_getid for this block instance
+     * @return boolean
+     **/
+    function instance_restore($restore, $data) {
+        return true;
+    }
+
+    /**
      * Will be called before an instance of this block is backed up, so that any links in
      * any links in any HTML fields on config can be encoded. For example, for the HTML block
      * we need to do $config->text = backup_encode_absolute_links($config->text);. 

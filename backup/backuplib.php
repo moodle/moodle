@@ -957,6 +957,11 @@
                         if(empty($blocks[$instance->blockid]->name)) {
                             continue;
                         }
+                        
+                        if (!$blockobj = block_instance($blocks[$instance->blockid]->name, $instance)) {
+                            // Invalid block
+                            continue;
+                        }                        
 
                         //Give the block a chance to process any links in configdata.
                         if (!isset($blocks[$instance->blockid]->blockobject)) {
@@ -975,8 +980,13 @@
                         fwrite ($bf,full_tag('POSITION',4,false,$instance->position));
                         fwrite ($bf,full_tag('WEIGHT',4,false,$instance->weight));
                         fwrite ($bf,full_tag('VISIBLE',4,false,$instance->visible));
-                        fwrite ($bf,full_tag('CONFIGDATA',4,false,$instance->configdata));
-
+                        fwrite ($bf,full_tag('CONFIGDATA',4,false,$instance->configdata));                        
+                        // Write instance data if needed+                        
+                        if ($blockobj->backuprestore_enabled()) {
+                            fwrite ($bf,start_tag('INSTANCEDATA',4,true));
+                            $status = $blockobj->instance_backup($bf, $preferences);
+                            fwrite ($bf,end_tag('INSTANCEDATA',4,true));
+                        }
                         $context = get_context_instance(CONTEXT_BLOCK, $instance->id);
                         write_role_overrides_xml($bf, $context, 4);
                         /// write role_assign code here
