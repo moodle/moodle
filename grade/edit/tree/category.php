@@ -54,16 +54,19 @@ if ($id) {
     $category = $grade_category->get_record_data();
     // Get Category preferences
     $category->pref_aggregationview = grade_report::get_pref('aggregationview', $id);
-//GVA Patch
+    // Load agg coef
     $grade_item = $grade_category->load_grade_item();
-    $category->aggregationcoef = $grade_item->aggregationcoef;
-//End Patch
+    $category->aggregationcoef = format_float($grade_item->aggregationcoef, 4);
+    // set parent
+    $category->parentcategory = $grade_category->parent;
+
 } else {
-    $grade_category = new grade_category();
-    $grade_category->courseid = $course->id;
+    $grade_category = new grade_category(array('courseid'=>$courseid), false);
     $grade_category->apply_default_settings();
     $grade_category->apply_forced_settings();
+
     $category = $grade_category->get_record_data();
+    $category->aggregationcoef = format_float(0, 4);
 }
 
 $mform->set_data($category);
@@ -93,25 +96,20 @@ if ($mform->is_cancelled()) {
             error("Could not set preference aggregationview to $value for this grade category");
         }
     }
-//GVA Patch
 
-    if (isset($data->weightcourse)) {
-        global $COURSE;
-        $course_category = grade_category::fetch_course_category($COURSE->id);
-        $course_category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN;
-        $course_category->update();
+    // set parent if needed
+    if (isset($data->parentcategory)) {
+        $grade_category->set_parent($data->parentcategory, 'gradebook');
     }
 
-    if (!isset($grade_item)) {
+    // update agg coef if needed
+    if (isset($data->aggregationcoef)) {
+        $data->aggregationcoef = unformat_float($data->aggregationcoef);
         $grade_item = $grade_category->load_grade_item();
-    }
-    if (isset($data->aggregationcoef)){
-        $data_item->aggregationcoef = $data->aggregationcoef;
-        grade_item::set_properties($grade_item, $data_item);
+        $grade_item->aggregationcoef = $data->aggregationcoef;
         $grade_item->update();
     }
 
-//End Patch
     redirect($returnurl);
 }
 

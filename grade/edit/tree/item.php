@@ -49,17 +49,31 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-if ($item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
+if ($grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
     // redirect if outcomeid present
-    if (!empty($item->outcomeid) && !empty($CFG->enableoutcomes)) {
+    if (!empty($grade_item->outcomeid) && !empty($CFG->enableoutcomes)) {
         $url = $CFG->wwwroot.'/grade/edit/tree/outcomeitem.php?id='.$id.'&amp;courseid='.$courseid;
         redirect($gpr->add_url_params($url));
     }
-    $item->calculation = grade_item::denormalize_formula($item->calculation, $courseid);
+    $item = $grade_item->get_record_data();
+
+    if ($grade_item->is_course_item()) {
+        $item->parentcategory = 0;
+    } else if ($grade_item->is_category_item()) {
+        $parent_category = $grade_item->get_parent_category();
+        $parent_category = $parent_category->get_parent_category();
+        $item->parentcategory = $parent_category->id;
+    } else {
+        $parent_category = $grade_item->get_parent_category();
+        $item->parentcategory = $parent_category->id;
+    }
 } else {
-    $item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'), false);
+    $grade_item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'), false);
+    $item = $grade_item->get_record_data();
+    $parent_category = grade_category::fetch_course_category($courseid);
+    $item->parentcategory = $parent_category->id;
 }
-$decimalpoints = $item->get_decimals();
+$decimalpoints = $grade_item->get_decimals();
 
 if ($item->hidden > 1) {
     $item->hiddenuntil = $item->hidden;
@@ -80,9 +94,6 @@ $item->aggregationcoef = format_float($item->aggregationcoef, 4);
 $mform->set_data($item);
 
 if ($data = $mform->get_data(false)) {
-    if (array_key_exists('calculation', $data)) {
-        $data->calculation = grade_item::normalize_formula($data->calculation, $course->id);
-    }
 
     $hidden      = empty($data->hidden) ? 0: $data->hidden;
     $hiddenuntil = empty($data->hiddenuntil) ? 0: $data->hiddenuntil;
@@ -116,6 +127,11 @@ if ($data = $mform->get_data(false)) {
 
     } else {
         $grade_item->update();
+    }
+
+    // set parent if needed
+    if (isset($data->parentcategory)) {
+        $grade_item->set_parent($data->parentcategory, 'gradebook');
     }
 
     // update hiding flag
