@@ -213,13 +213,14 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         
         foreach ($scoes as $sco) {
             $isvisible = false;
+            $sco->title = stripslashes($sco->title);
             if ($optionaldatas = scorm_get_sco($sco->id, SCO_DATA)) {
                 if (!isset($optionaldatas->isvisible) || (isset($optionaldatas->isvisible) && ($optionaldatas->isvisible == 'true'))) {
                     $isvisible = true;
                 }
+            } else {
+                $isvisible = true;
             }
-            else
-				$isvisible = true;
             if ($parents[$level]!=$sco->parent) {
                 if ($newlevel = array_search($sco->parent,$parents)) {
                     for ($i=0; $i<($level-$newlevel); $i++) {
@@ -336,7 +337,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         if ($sco->id == $scoid) {
                             $result->prerequisites = false;
                         }
-                        $result->toc .= $statusicon.'&nbsp;'.$sco->title."</li>\n";
+                        $result->toc .= $statusicon.'&nbsp;'.format_string($sco->title)."</li>\n";
                     }
                 }
             } else {
