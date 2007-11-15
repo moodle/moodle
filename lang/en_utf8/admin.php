@@ -478,6 +478,7 @@ $string['pgcluster'] = 'PostgreSQL Cluster';
 $string['pgclusterdescription'] = 'PostgreSQL version/cluster parameter for command line operations. If you only have one postgresql on your system or you are not sure what this is, leave this blank.';
 $string['php50restricted'] = 'PHP 5.0.x has a number of known problems, please upgrade to 5.1.x or downgrade to 4.3.x or 4.4.x';
 $string['pleaseregister'] = 'Please register your site to remove this button';
+$string['pleaserefreshregistration'] = 'Your site has been registered with moodle.org, please consider updating the registration if significant changes happened since your last update, on $a';
 $string['plugins'] = 'Modules';
 $string['profilecategory'] = 'Category';
 $string['profilecategoryname'] = 'Category name (must be unique)';

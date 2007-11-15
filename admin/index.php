@@ -25,7 +25,7 @@
     require_once($CFG->libdir.'/adminlib.php');  // Contains various admin-only functions
     require_once($CFG->libdir.'/ddllib.php'); // Install/upgrade related db functions
 
-    $id             = optional_param('id', '', PARAM_ALPHANUM);
+    $id             = optional_param('id', '', PARAM_TEXT);
     $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
     $confirmrelease = optional_param('confirmrelease', 0, PARAM_BOOL);
     $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
@@ -605,18 +605,19 @@
     }
 
 
-/// Print slightly annoying registration button every six months   ;-)
-/// You can set the "registered" variable to something far in the future
-/// if you really want to prevent this.   eg  9999999999
-    if (!isset($CFG->registered) || $CFG->registered < (time() - 3600*24*30*6)) {
-        $options = array();
-        $options['sesskey'] = $USER->sesskey;
-        print_box_start('generalbox adminwarning');
-        print_string('pleaseregister', 'admin');
-        print_single_button('register.php', $options, get_string('registration'));
-        print_box_end();
-        $registrationbuttonshown = true;
+/// Print slightly annoying registration button
+    $options = array();
+    $options['sesskey'] = $USER->sesskey;
+    print_box_start('generalbox adminwarning');
+    if(!isset($CFG->registered)) {
+       print_string('pleaseregister', 'admin');
     }
+    else { /* if (isset($CFG->registered) && $CFG->registered < (time() - 3600*24*30*6)) { */
+       print_string('pleaserefreshregistration', 'admin', userdate($CFG->registered));
+    }
+    print_single_button('register.php', $options, get_string('registration'));
+    print_box_end();
+
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
     ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
@@ -628,15 +629,6 @@
     print_box($copyrighttext, 'copyright');
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-    if (empty($registrationbuttonshown)) {
-        $options = array();
-        $options['sesskey'] = $USER->sesskey;
-        print_single_button('register.php', $options, get_string('registration'));
-    }
-
-
     admin_externalpage_print_footer();
-
 
 ?>
