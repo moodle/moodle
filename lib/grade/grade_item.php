@@ -283,16 +283,16 @@ class grade_item extends grade_object {
 
         $db_item = $this->get_instance('grade_item', array('id' => $this->id));
 
-        $calculationdiff = $db_item->calculation != $this->calculation;
-        $categorydiff    = $db_item->categoryid  != $this->categoryid;
-        $gradetypediff   = $db_item->gradetype   != $this->gradetype;
-        $grademaxdiff    = $db_item->grademax    != $this->grademax;
-        $grademindiff    = $db_item->grademin    != $this->grademin;
-        $scaleiddiff     = $db_item->scaleid     != $this->scaleid;
-        $outcomeiddiff   = $db_item->outcomeid   != $this->outcomeid;
-        $multfactordiff  = $db_item->multfactor  != $this->multfactor;
-        $plusfactordiff  = $db_item->plusfactor  != $this->plusfactor;
-        $locktimediff    = $db_item->locktime    != $this->locktime;
+        $calculationdiff = $db_item->calculation     != $this->calculation;
+        $categorydiff    = $db_item->categoryid      != $this->categoryid;
+        $gradetypediff   = $db_item->gradetype       != $this->gradetype;
+        $grademaxdiff    = $db_item->grademax        != $this->grademax;
+        $grademindiff    = $db_item->grademin        != $this->grademin;
+        $scaleiddiff     = $db_item->scaleid         != $this->scaleid;
+        $outcomeiddiff   = $db_item->outcomeid       != $this->outcomeid;
+        $multfactordiff  = $db_item->multfactor      != $this->multfactor;
+        $plusfactordiff  = $db_item->plusfactor      != $this->plusfactor;
+        $locktimediff    = $db_item->locktime        != $this->locktime;
         $acoefdiff       = $db_item->aggregationcoef != $this->aggregationcoef;
 
         $needsupdatediff = !$db_item->needsupdate &&  $this->needsupdate;    // force regrading only if setting the flag first time

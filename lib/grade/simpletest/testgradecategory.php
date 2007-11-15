@@ -286,6 +286,7 @@ class grade_category_test extends grade_test {
         $arg_oldgrade = new stdClass();
         $arg_oldgrade->finalgrade = null; // These two are set to null to avoid a grade_grade->update() in the aggregate_grades() method
         $arg_oldgrade->rawgrade = null;
+        $arg_oldgrade->itemid = 1;
         $arg_oldgrade->rawgrademin = 0;
         $arg_oldgrade->rawgrademax = 100;
         $arg_oldgrade->rawscaleid = null;

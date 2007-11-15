@@ -40,7 +40,11 @@ require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
 @set_time_limit(0);
 
 class grade_item_test extends grade_test {
-
+    
+    function setUp() {
+        parent::setUp();
+        $this->load_grade_items();        
+    }
     function test_grade_item_construct() {
         $params = new stdClass();
 
@@ -84,181 +88,262 @@ class grade_item_test extends grade_test {
         $this->assertFalse(empty($grade_item->timecreated));
         $this->assertFalse(empty($grade_item->timemodified));
     }
-/*
+
     function test_grade_item_delete() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        
+        $source = 'unit tests';
+        
+        Mock::generatePartial('grade_item', 'mock_grade_item_for_delete', array('is_course_item', 'force_regrading'));
+        Mock::generatePartial('grade_grade', 'mock_grade_grade_for_item_delete', array('delete'));
+        
+        $grade_item =& new mock_grade_item_for_delete($this);
+        $grade_item->lib_wrapper = new mock_lib_wrapper();
+        $grade_item->id = 1;
+        
+        $grade_item->lib_wrapper->expectOnce('delete_records', array($grade_item->table, 'id', $grade_item->id));
+        $grade_item->lib_wrapper->setReturnValue('delete_records', true);
+        
+        $grade_grade_instance = grade_object::get_instance('grade_grade');
+        
+        $grade_grades = array();
+        $grade_grades[1] = new mock_grade_grade_for_item_delete($this);
+        $grade_grades[1]->expectOnce('delete', array($source));
+        $grade_grades[2] = new mock_grade_grade_for_item_delete($this);
+        $grade_grades[2]->expectOnce('delete', array($source));
+        $grade_grades[3] = new mock_grade_grade_for_item_delete($this);
+        $grade_grades[3]->expectOnce('delete', array($source));
+        
+        $grade_grade_instance->expectOnce('fetch_all', array(array('itemid' => $grade_item->id)));
+        $grade_grade_instance->setReturnValue('fetch_all', $grade_grades);
+         
         $this->assertTrue(method_exists($grade_item, 'delete'));
 
-        $this->assertTrue($grade_item->delete());
-
-        $this->assertFalse(get_record('grade_items', 'id', $grade_item->id));
+        $this->assertTrue($grade_item->delete($source));
     }
 
     function test_grade_item_update() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        
+        Mock::generatePartial('grade_item', 'mock_grade_item_for_update', array('force_regrading', 'qualifies_for_regrading', 'load_scale'));
+        $grade_item = new mock_grade_item_for_update($this);
+        grade_object::set_properties($grade_item, $this->grade_items[0]);
+        $grade_item->iteminfo = 'Updated info for this unittest grade_item';
+        $grade_item->lib_wrapper = new mock_lib_wrapper();
+        $grade_item->lib_wrapper->expectOnce('update_record', array($grade_item->table, addslashes_recursive($grade_item->get_record_data())));
+        $grade_item->lib_wrapper->setReturnValue('update_record', true);
         $this->assertTrue(method_exists($grade_item, 'update'));
 
-        $grade_item->iteminfo = 'Updated info for this unittest grade_item';
-
-        $this->assertTrue($grade_item->update());
-
-        $grade_item->grademin = 14;
-        $this->assertTrue($grade_item->qualifies_for_regrading());
-        $this->assertTrue($grade_item->update());
-
-        $iteminfo = get_field('grade_items', 'iteminfo', 'id', $this->grade_items[0]->id);
-        $this->assertEqual($grade_item->iteminfo, $iteminfo);
+        $grade_item->expectOnce('load_scale', array());
+        $grade_item->expectOnce('qualifies_for_regrading', array());
+        $grade_item->setReturnValue('qualifies_for_regrading', true);
+        $grade_item->expectOnce('force_regrading', array());
+        
+        $this->assertTrue($grade_item->update()); 
     }
 
     function test_grade_item_load_scale() {
-        $grade_item = new grade_item($this->grade_items[2]);
+        $grade_item = new grade_item($this->grade_items[2], false);
         $this->assertTrue(method_exists($grade_item, 'load_scale'));
-        $scale = $grade_item->load_scale();
-        $this->assertFalse(empty($grade_item->scale));
-        $this->assertEqual($scale->id, $this->grade_items[2]->scaleid);
+        $grade_item->lib_wrapper = new mock_lib_wrapper();
+        $grade_item->gradetype = GRADE_TYPE_VALUE; // Should return null
+        $this->assertNull($grade_item->load_scale());
+
+        $grade_item->gradetype = GRADE_TYPE_SCALE;
+        $grade_item->scaleid = 1;
+        $grade_scale = grade_object::get_instance('grade_scale');
+        $grade_scale->expectOnce('fetch', array(array('id' => $grade_item->scaleid)));
+        $item_grade_scale = new mock_grade_scale();
+        $item_grade_scale->expectOnce('load_items', array());
+        $item_grade_scale->scale_items = array(1, 2, 3);
+        $grade_scale->setReturnValue('fetch', $item_grade_scale);
+        $grade_item->scale = $grade_scale;
+        
+        $this->assertEqual($item_grade_scale, $grade_item->load_scale());
+        $this->assertEqual(3, $grade_item->grademax);
+        $this->assertEqual(1, $grade_item->grademin);
     }
 
     function test_grade_item_load_outcome() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $this->load_grade_outcomes();
+        $grade_item = new grade_item($this->grade_items[0], false);
+        $grade_item->outcomeid = 1;
         $this->assertTrue(method_exists($grade_item, 'load_outcome'));
-        //TODO: add tests
+        $grade_item->lib_wrapper = new mock_lib_wrapper();
+        $grade_outcome = grade_object::get_instance('grade_outcome');
+        $grade_outcome->expectOnce('fetch', array(array('id' => $grade_item->outcomeid)));
+        $return_outcome = new grade_outcome($this->grade_outcomes[0], false);
+        $grade_outcome->setReturnValue('fetch', $return_outcome);
+        $this->assertEqual($return_outcome, $grade_item->load_outcome());
     }
 
     function test_grade_item_qualifies_for_regrading() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        // Setup
+        Mock::generatePartial('grade_item', 'mock_grade_item_for_qualifies', array('get_instance')); 
+        $grade_item = new mock_grade_item_for_qualifies($this);
         $this->assertTrue(method_exists($grade_item, 'qualifies_for_regrading'));
+        grade_object::set_properties($grade_item, $this->grade_items[0]);
 
+        // Should return false when no item->id given
+        $grade_item->id = null; 
         $this->assertFalse($grade_item->qualifies_for_regrading());
 
-        $grade_item->iteminfo = 'Updated info for this unittest grade_item';
-
-        $this->assertFalse($grade_item->qualifies_for_regrading());
-
-        $grade_item->grademin = 14;
-
+        // Returns false because new record is identical to original
+        $grade_item->id = 1;
+        $grade_item->expectCallCount('get_instance', 2, array('grade_item', array('id' => $grade_item->id)));
+        $db_item = grade_object::get_instance('grade_item', $this->grade_items[0], false);
+        $grade_item->setReturnValue('get_instance', $db_item); 
+        $this->assertFalse($grade_item->qualifies_for_regrading()); 
+        
+        // Should return true when one of the fields is different
+        $grade_item->gradetype = GRADE_TYPE_NONE;
         $this->assertTrue($grade_item->qualifies_for_regrading());
     }
 
     function test_grade_item_force_regrading() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
+        $grade_item->lib_wrapper = new mock_lib_wrapper();
+        $grade_item->lib_wrapper->expectOnce('set_field_select', array('grade_items', 'needsupdate', 1, '*'));
         $this->assertTrue(method_exists($grade_item, 'force_regrading'));
 
         $this->assertEqual(0, $grade_item->needsupdate);
 
         $grade_item->force_regrading();
         $this->assertEqual(1, $grade_item->needsupdate);
-        $grade_item->update_from_db();
-        $this->assertEqual(1, $grade_item->needsupdate);
     }
 
     function test_grade_item_get_all_finals() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'get_final'));
+        $grade_item->lib_wrapper = new mock_lib_wrapper();
+        $grade_item->lib_wrapper->expectOnce('get_records', array('grade_grades', 'itemid', $grade_item->id));
+        $grade_grades = array();
+        $grade_grades[1] = new mock_grade_grade();
+        $grade_grades[1]->userid = 1;
+        $grade_grades[2] = new mock_grade_grade();
+        $grade_grades[2]->userid = 2;
+        $grade_grades[3] = new mock_grade_grade();
+        $grade_grades[3]->userid = 3;
+        $grade_grades[4] = new mock_grade_grade(); // final grades are indexed by userid, so if 2 are given with the same userid, the last one will override the first
+        $grade_grades[4]->userid = 3;
+        $grade_item->lib_wrapper->setReturnValue('get_records', $grade_grades);
 
         $final_grades = $grade_item->get_final();
         $this->assertEqual(3, count($final_grades));
-    }
-
+    } 
 
     function test_grade_item_get_final() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $this->load_grade_grades();
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'get_final'));
+        $grade_item->lib_wrapper = new mock_lib_wrapper();
+        $grade_item->lib_wrapper->expectOnce('get_record', array('grade_grades', 'itemid', $grade_item->id, 'userid', $this->userid));
+        $grade_item->lib_wrapper->setReturnValue('get_record', $this->grade_grades[0]);
         $final_grade = $grade_item->get_final($this->userid);
         $this->assertEqual($this->grade_grades[0]->finalgrade, $final_grade->finalgrade);
     }
 
-    function test_grade_item_get_sortorder() {
-        $grade_item = new grade_item($this->grade_items[0]);
-        $this->assertTrue(method_exists($grade_item, 'get_sortorder'));
-        $sortorder = $grade_item->get_sortorder();
-        $this->assertEqual($this->grade_items[0]->sortorder, $sortorder);
-    }
-
     function test_grade_item_set_sortorder() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        Mock::generatePartial('grade_item', 'mock_grade_item_for_set_sortorder', array('update'));
+
+        $grade_item = new mock_grade_item_for_set_sortorder($this);
         $this->assertTrue(method_exists($grade_item, 'set_sortorder'));
+        $grade_item->expectOnce('update', array());
+        $grade_item->sortorder = 1;
         $grade_item->set_sortorder(999);
         $this->assertEqual($grade_item->sortorder, 999);
     }
 
     function test_grade_item_move_after_sortorder() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        Mock::generatePartial('grade_item', 'mock_grade_item_for_move_after', array('set_sortorder'));
+        
+        $sortorder = 5;
+        $grade_item = new mock_grade_item_for_move_after($this);
         $this->assertTrue(method_exists($grade_item, 'move_after_sortorder'));
-        $grade_item->move_after_sortorder(5);
-        $this->assertEqual($grade_item->sortorder, 6);
-
-        $grade_item = grade_item::fetch(array('id'=>$this->grade_items[0]->id));
-        $this->assertEqual($grade_item->sortorder, 6);
-
-        $after = grade_item::fetch(array('id'=>$this->grade_items[6]->id));
-        $this->assertEqual($after->sortorder, 8);
-    }
-
-    function test_grade_item_get_name() {
-        $grade_item = new grade_item($this->grade_items[0]);
-        $this->assertTrue(method_exists($grade_item, 'get_name'));
-
-        $name = $grade_item->get_name();
-        $this->assertEqual($this->grade_items[0]->itemname, $name);
+        $grade_item->lib_wrapper = new mock_lib_wrapper();
+        $grade_item->lib_wrapper->expectOnce('execute_sql', array('*', false));
+        $grade_item->expectOnce('set_sortorder', array($sortorder + 1));
+        $grade_item->move_after_sortorder($sortorder);
     }
 
     function test_grade_item_set_parent() {
-        $grade_item = new grade_item($this->grade_items[0]);
+
+        Mock::generatePartial('grade_item', 'mock_grade_item_for_set_parent', array('force_regrading', 'update'));
+        $grade_item = new mock_grade_item_for_set_parent($this);
+        $grade_item->lib_wrapper = new mock_lib_wrapper();
         $this->assertTrue(method_exists($grade_item, 'set_parent'));
+    
+        // When categoryid == $parentid param, method should return true but no force_regrading or update should be called
+        $grade_item->categoryid = 1;
+        $grade_item->expectNever('update');
+        $grade_item->expectNever('force_regrading');
+        $this->assertTrue($grade_item->set_parent(1));
 
-        $old = $grade_item->get_parent_category();
-        $new = new grade_category($this->grade_categories[3]);
-        $new_item = $new->get_grade_item();
-
-        $this->assertTrue($grade_item->set_parent($new->id));
-
-        $new_item->update_from_db();
-        $grade_item->update_from_db();
-
-        $this->assertEqual($grade_item->categoryid, $new->id);
+        // When parentid param is different from categoryid, force_regrading and update must be called
+        $grade_item = new mock_grade_item_for_set_parent($this);
+        $grade_item->categoryid = 2;
+        $grade_item->courseid = $this->courseid;
+        $parentid = 4;
+        $grade_item->expectOnce('update', array());
+        $grade_item->setReturnValue('update', true);
+        $grade_item->expectOnce('force_regrading', array());
+        $grade_category = grade_object::get_instance('grade_category');
+        $parent_category = new mock_grade_category();
+        $parent_category->id = 1;
+        $grade_category->expectOnce('fetch', array(array('id' => $parentid, 'courseid' => $this->courseid)));
+        $grade_category->setReturnValue('fetch', $parent_category);
+        $this->assertTrue($grade_item->set_parent($parentid)); 
     }
 
     function test_grade_item_get_parent_category() {
-        $grade_item = new grade_item($this->grade_items[0]);
-        $this->assertTrue(method_exists($grade_item, 'get_parent_category'));
-
-        $category = $grade_item->get_parent_category();
-        $this->assertEqual($this->grade_categories[1]->fullname, $category->fullname);
-    }
-
-    function test_grade_item_load_parent_category() {
-        $grade_item = new grade_item($this->grade_items[0]);
-        $this->assertTrue(method_exists($grade_item, 'load_parent_category'));
-
-        $category = $grade_item->load_parent_category();
-        $this->assertEqual($this->grade_categories[1]->fullname, $category->fullname);
-        $this->assertEqual($this->grade_categories[1]->fullname, $grade_item->parent_category->fullname);
-    }
-
-    function test_grade_item_get_item_category() {
-        $grade_item = new grade_item($this->grade_items[3]);
-        $this->assertTrue(method_exists($grade_item, 'get_item_category'));
-
-        $category = $grade_item->get_item_category();
-        $this->assertEqual($this->grade_categories[0]->fullname, $category->fullname);
-    }
-
-    function test_grade_item_load_item_category() {
-        $grade_item = new grade_item($this->grade_items[3]);
-        $this->assertTrue(method_exists($grade_item, 'load_item_category'));
-
-        $category = $grade_item->load_item_category();
-        $this->assertEqual($this->grade_categories[0]->fullname, $category->fullname);
-        $this->assertEqual($this->grade_categories[0]->fullname, $grade_item->item_category->fullname);
+        Mock::generatePartial('grade_item', 'mock_grade_item_for_get_parent_category', array('is_category_item', 'is_course_item', 'get_item_category'));
+        
+        // When item is a course or category item, the method should return the item category
+        $grade_item = new mock_grade_item_for_get_parent_category($this);
+        $grade_item->expectOnce('is_category_item', array());
+        $grade_item->expectOnce('is_course_item', array());
+        $grade_item->expectOnce('get_item_category', array());
+        $grade_item->setReturnValue('is_category_item', false);
+        $grade_item->setReturnValue('is_course_item', true);
+        $grade_item->setReturnValue('get_item_category', 'item_category');
+        $this->assertEqual('item_category', $grade_item->get_parent_category());
+        
+        // When the item is a normal grade item, the method should return the parent category
+        $grade_item = new mock_grade_item_for_get_parent_category($this);
+        $grade_item->expectOnce('is_category_item', array());
+        $grade_item->expectOnce('is_course_item', array());
+        $grade_item->setReturnValue('is_category_item', false);
+        $grade_item->setReturnValue('is_course_item', false);
+        $grade_item->categoryid = 4;
+        $grade_category = grade_object::get_instance('grade_category');
+        $grade_category->expectOnce('fetch', array(array('id' => $grade_item->categoryid)));
+        $grade_category->setReturnValue('fetch', true);
+        $this->assertTrue($grade_item->get_parent_category());
     }
 
     function test_grade_item_regrade_final_grades() {
-        $grade_item = new grade_item($this->grade_items[0]);
-        $this->assertTrue(method_exists($grade_item, 'regrade_final_grades'));
-        $this->assertEqual(true, $grade_item->regrade_final_grades());
-        //TODO: add more tests
+
+        Mock::generatePartial('grade_item', 'mock_grade_item_for_regrade_final', array('is_locked', 'is_calculated', 'compute', 'is_outcome_item', 
+                'is_category_item', 'is_course_item', 'get_item_category', 'is_manual_item', 'is_raw_used', 'get_instance', 'adjust_raw_grade')); 
+
+        // If grade_item is locked, no regrading occurs but the method returns true
+        $grade_item = new mock_grade_item_for_regrade_final($this);
+        $grade_item->expectOnce('is_locked', array());
+        $grade_item->setReturnValue('is_locked', true);
+        $grade_item->expectNever('get_item_category');
+        $this->assertTrue($grade_item->regrade_final_grades());
+        
+        // If the item is calculated and the computation is OK, no regrading occurs and the method returns true
+        $grade_item = new mock_grade_item_for_regrade_final($this);
+        $grade_item->expectOnce('is_calculated', array());
+        $grade_item->setReturnValue('is_calculated', true);
+        $grade_item->expectOnce('compute', array($this->userid));
+        $grade_item->setReturnValue('compute', true);
+
+        $grade_item->expectNever('get_item_category');
+        $this->assertTrue($grade_item->regrade_final_grades($this->userid));
+
     }
 
+/*
     function test_grade_item_adjust_raw_grade() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'adjust_raw_grade'));

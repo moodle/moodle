@@ -99,6 +99,10 @@ class grade_lib_wrapper {
     function count_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
         return count_records($table, $field1, $value1, $field2, $value2, $field3, $value3);
     }
+    
+    function count_records_sql($sql) {
+        return count_records_sql($sql);
+    }
 
     function rs_close(&$rs) {
         return;

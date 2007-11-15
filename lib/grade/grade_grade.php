@@ -158,7 +158,8 @@ class grade_grade extends grade_object {
      * @return array userid=>grade_grade array
      */
     function fetch_users_grades($grade_item, $userids, $include_missing=true) {
-
+        
+        $obj = grade_object::get_instance('grade_grade');
         // hmm, there might be a problem with length of sql query
         // if there are too many users requested - we might run out of memory anyway
         $limit = 2000;
@@ -167,14 +168,14 @@ class grade_grade extends grade_object {
             $half = (int)($count/2);
             $first  = array_slice($userids, 0, $half);
             $second = array_slice($userids, $half);
-            return $this->fetch_users_grades($grade_item, $first, $include_missing) + $this->fetch_users_grades($grade_item, $second, $include_missing);
+            return $obj->fetch_users_grades($grade_item, $first, $include_missing) + $obj->fetch_users_grades($grade_item, $second, $include_missing);
         }
 
         $user_ids_cvs = implode(',', $userids);
         $result = array();
-        if ($grade_records = $this->lib_wrapper->get_records_select('grade_grades', "itemid={$grade_item->id} AND userid IN ($user_ids_cvs)")) {
+        if ($grade_records = $obj->lib_wrapper->get_records_select('grade_grades', "itemid={$grade_item->id} AND userid IN ($user_ids_cvs)")) {
             foreach ($grade_records as $record) {
-                $result[$record->userid] = $this->get_instance('grade_grade', $record, false);
+                $result[$record->userid] = $obj->get_instance('grade_grade', $record, false);
             }
         }
         if ($include_missing) {
