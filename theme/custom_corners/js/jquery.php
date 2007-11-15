@@ -14,6 +14,15 @@
                     $('div.bb div,div.bt div').css('left','13px');
                 }
             }
+            
+            // check for layouttabel and add haslayouttable class to body
+            // remove nocoursepage class from body
+            var layoutTable = $('#layout-table');
+            
+            if (layoutTable.length) {
+                $('body').addClass('haslayouttable');
+                $('body').removeClass('nocoursepage');
+            }
         },
         
         info: function() {
