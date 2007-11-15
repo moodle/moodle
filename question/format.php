@@ -229,7 +229,7 @@ class qformat_default {
             if ($question->qtype=='category') {
                 if ($this->catfromfile) {
                     // find/create category object
-                    $catpath = $question->category;
+                    $catpath = $question->category['text'][0]['#'];
                     $newcategory = create_category_path( $catpath, '/', $this->course->id );
                     if (!empty($newcategory)) {
                         $this->category = $newcategory;
