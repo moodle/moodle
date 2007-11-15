@@ -343,6 +343,7 @@ $string['langmenu'] = 'Display language menu';
 $string['langpackremoved'] = 'Language pack was uninstalled';
 $string['langpacks'] = 'Language packs';
 $string['langpackupdated'] = 'Language pack $a was successfully installed';
+$string['langpackwillbeupdated'] = 'Note for translators: During the upgrade, Moodle will try to update your language pack. Your modifications in non-local language folders will be overwritten.';
 $string['languagesettings'] = 'Language settings';
 $string['langupdatecomplete'] = 'Language pack update completed';
 $string['latexpreamble'] = 'LaTeX preamble';

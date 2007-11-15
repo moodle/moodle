@@ -282,11 +282,16 @@
                 require_once($CFG->libdir.'/environmentlib.php');
                 print_heading(get_string('environment', 'admin'));
                 if (!check_moodle_environment($release, $environment_results, true)) {
+                    print_box_start('generalbox', 'notice'); // MDL-8330
+                    print_string('langpackwillbeupdated', 'admin');
+                    print_box_end();
                     notice_yesno(get_string('environmenterrorupgrade', 'admin'), 
                                  'index.php?confirmupgrade=1&confirmrelease=1', 'index.php');
                 } else {
                     notify(get_string('environmentok', 'admin'), 'notifysuccess');
-
+                    print_box_start('generalbox', 'notice'); // MDL-8330
+                    print_string('langpackwillbeupdated', 'admin');
+                    print_box_end();  
                     echo '<form action="index.php"><div>';
                     echo '<input type="hidden" name="confirmupgrade" value="1" />';
                     echo '<input type="hidden" name="confirmrelease" value="1" />';
