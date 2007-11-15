@@ -180,7 +180,6 @@ class edit_item_form extends moodleform {
             $mform->addElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
             $mform->setHelpButton('aggregationcoef', array(false, get_string($coefstring, 'grades'),
                                     false, true, false, get_string($coefstring.'help', 'grades')));
-            $mform->setAdvanced('aggregationcoef');
         }
 
 /// hidden params
