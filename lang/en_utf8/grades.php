@@ -26,6 +26,7 @@ $string['aggregatesubcatshelp'] = 'The aggregation is usually done only with imm
 $string['aggregatesum'] = 'Sum of grades';
 $string['aggregatesonly'] = 'Aggregates only';
 $string['aggregateweightedmean'] = 'Weighted mean of grades';
+$string['aggregateweightedmean2'] = 'Simple weighted mean of grades';
 $string['aggregation'] = 'Aggregation';
 $string['aggregationcoef'] = 'Aggregation coefficient';
 $string['aggregationcoefextra'] = 'Extra credit';
