@@ -2488,8 +2488,8 @@ class admin_setting_special_calendar_weekend extends admin_setting {
 
 }
 
-/*
- * this is used in config->appearance->gradeconfig
+/**
+ * this is used in config->grades
  */
 class admin_setting_special_gradebookroles extends admin_setting {
 
@@ -2851,7 +2851,7 @@ class admin_setting_gradecat_combo extends admin_setting {
             // the string cast is needed because key may be integer - 0 is equal to most strings!
             $return .= '<option value="'.$key.'"'.((string)$key==$value ? ' selected="selected"' : '').'>'.$val.'</option>';
         }
-        $return .= '</select>'; // TODO: localise
+        $return .= '</select>';
         $return .= '<label for="id_s_'.$this->name.'force">'.get_string('force').'</label><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'force" name="s_'.$this->name.'[forced]" value="1" ' . ($forced ? 'checked="checked"' : '') . ' />';
         $return .= '<label for="id_s_'.$this->name.'adv">'.get_string('advanced').'</label><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'adv" name="s_'.$this->name.'[adv]" value="1" ' . ($adv ? 'checked="checked"' : '') . ' />';
 
@@ -2859,8 +2859,9 @@ class admin_setting_gradecat_combo extends admin_setting {
     }
 }
 
+
 /**
- * Selection of grade report in user ptofile
+ * Selection of grade report in user profile
  */
 class admin_setting_grade_profilereport extends admin_setting_configselect {
     function admin_setting_grade_profilereport() {

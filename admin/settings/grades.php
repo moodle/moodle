@@ -9,7 +9,10 @@ if (has_capability('moodle/grade:manage', $systemcontext)
 
 require_once $CFG->libdir.'/grade/constants.php';
 
-$temp = new admin_settingpage('gradessettings', get_string('gradessettings', 'grades'), 'moodle/grade:manage');
+$temp = new admin_settingpage('gradessettings', get_string('generalsettings', 'grades'), 'moodle/grade:manage');
+
+// new CFG variable for gradebook (what roles to display)
+$temp->add(new admin_setting_special_gradebookroles());
 
 // enable outcomes checkbox
 $temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'grades'), get_string('configenableoutcomes', 'grades'), 0, PARAM_INT));
@@ -20,21 +23,6 @@ $temp->add(new admin_setting_configselect('grade_aggregationposition', get_strin
                                           get_string('configaggregationposition', 'grades'), GRADE_REPORT_AGGREGATION_POSITION_LAST,
                                           array(GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
                                                 GRADE_REPORT_AGGREGATION_POSITION_LAST => get_string('positionlast', 'grades'))));
-
-$temp->add(new admin_setting_configselect('grade_displaytype', get_string('gradedisplaytype', 'grades'),
-                                          get_string('configgradedisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
-                                          array(GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                                                GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
-                                                GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'))));
-
-$temp->add(new admin_setting_configselect('grade_decimalpoints', get_string('decimalpoints', 'grades'),
-                                          get_string('configdecimalpoints', 'grades'), 2,
-                                          array( '0' => '0',
-                                                 '1' => '1',
-                                                 '2' => '2',
-                                                 '3' => '3',
-                                                 '4' => '4',
-                                                 '5' => '5')));
 
 $temp->add(new admin_setting_configcheckbox('grade_hiddenasdate', get_string('hiddenasdate', 'grades'), get_string('confighiddenasdate', 'grades'), 0, PARAM_INT));
 
@@ -99,6 +87,49 @@ $temp->add(new admin_setting_gradecat_combo('grade_droplow', get_string('droplow
             get_string('droplowhelp', 'grades'), $defaults, $options));
 
 $ADMIN->add('grades', $temp);
+
+
+/// Grade item settings
+$temp = new admin_settingpage('gradeitemsettings', get_string('gradeitemsettings', 'grades'), 'moodle/grade:manage');
+
+
+$temp->add(new admin_setting_configselect('grade_displaytype', get_string('gradedisplaytype', 'grades'),
+                                          get_string('configgradedisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
+                                          array(GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
+                                                GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                                                GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'))));
+
+$temp->add(new admin_setting_configselect('grade_decimalpoints', get_string('decimalpoints', 'grades'),
+                                          get_string('configdecimalpoints', 'grades'), 2,
+                                          array( '0' => '0',
+                                                 '1' => '1',
+                                                 '2' => '2',
+                                                 '3' => '3',
+                                                 '4' => '4',
+                                                 '5' => '5')));
+
+$temp->add(new admin_setting_configmultiselect('grade_item_advanced', get_string('gradeitemadvanced', 'grades'), get_string('configgradeitemadvanced', 'grades'),
+                                               array('iteminfo', 'idnumber', 'gradepass', 'plusfactor', 'multfactor', 'display', 'decimals', 'hiddenuntil', 'locktime'),
+                                               array('iteminfo' => get_string('iteminfo', 'grades'),
+                                                     'idnumber' => get_string('idnumber'),
+                                                     'gradetype' => get_string('gradetype', 'grades'),
+                                                     'scaleid' => get_string('scale'),
+                                                     'grademin' => get_string('grademin', 'grades'),
+                                                     'grademax' => get_string('grademax', 'grades'),
+                                                     'gradepass' => get_string('gradepass', 'grades'),
+                                                     'plusfactor' => get_string('plusfactor', 'grades'),
+                                                     'multfactor' => get_string('multfactor', 'grades'),
+                                                     'display' => get_string('gradedisplaytype', 'grades'),
+                                                     'decimals' => get_string('decimalpoints', 'grades'),
+                                                     'hidden' => get_string('hidden', 'grades'),
+                                                     'hiddenuntil' => get_string('hiddenuntil', 'grades'),
+                                                     'locked' => get_string('locked', 'grades'),
+                                                     'locktime' => get_string('locktime', 'grades'),
+                                                     'aggregationcoef' => get_string('aggregationcoef', 'grades'),
+                                                     'parentcategory' => get_string('parentcategory', 'grades'))));
+
+$ADMIN->add('grades', $temp);
+
 
 /// Scales and outcomes
 

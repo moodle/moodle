@@ -109,11 +109,6 @@ $temp = new admin_settingpage('mymoodle', get_string('mymoodle', 'admin'));
 $temp->add(new admin_setting_configcheckbox('mymoodleredirect', get_string('mymoodleredirect', 'admin'), get_string('configmymoodleredirect', 'admin'), 0));
 $ADMIN->add('appearance', $temp);
 
-// new CFG variable for gradebook (what roles to display)
-$temp = new admin_settingpage('gradebook', get_string('gradebook', 'admin'));
-$temp->add(new admin_setting_special_gradebookroles());
-$ADMIN->add('appearance', $temp);
-
 // new CFG variable for coursemanager (what roles to display)
 $temp = new admin_settingpage('coursemanager', get_string('coursemanager', 'admin'));
 $temp->add(new admin_setting_special_coursemanager());
