@@ -599,7 +599,7 @@ class grade_category extends grade_object {
                 $agg_grade = reset($modes);
                 break;
 
-            case GRADE_AGGREGATE_WEIGHTED_MEAN: // Weighted average of all existing final grades
+            case GRADE_AGGREGATE_WEIGHTED_MEAN: // Weighted average of all existing final grades, weight specified in coef
                 $weightsum = 0;
                 $sum       = 0;
                 foreach($grade_values as $itemid=>$grade_value) {
@@ -608,6 +608,24 @@ class grade_category extends grade_object {
                     }
                     $weightsum += $items[$itemid]->aggregationcoef;
                     $sum       += $items[$itemid]->aggregationcoef * $grade_value;
+                }
+                if ($weightsum == 0) {
+                    $agg_grade = null;
+                } else {
+                    $agg_grade = $sum / $weightsum;
+                }
+                break;
+
+            case GRADE_AGGREGATE_WEIGHTED_MEAN2: // Weighted average of all existing final grades, weight is the range of grade (ususally grademax)
+                $weightsum = 0;
+                $sum       = 0;
+                foreach($grade_values as $itemid=>$grade_value) {
+                    $weight = $items[$itemid]->grademax - $items[$itemid]->grademin;
+                    if ($weight <= 0) {
+                        continue;
+                    }
+                    $weightsum += $weight;
+                    $sum       += $weight * $grade_value;
                 }
                 if ($weightsum == 0) {
                     $agg_grade = null;

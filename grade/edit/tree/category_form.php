@@ -37,6 +37,7 @@ class edit_category_form extends moodleform {
                          GRADE_AGGREGATE_MAX             =>get_string('aggregatemax', 'grades'),
                          GRADE_AGGREGATE_MODE            =>get_string('aggregatemode', 'grades'),
                          GRADE_AGGREGATE_WEIGHTED_MEAN   =>get_string('aggregateweightedmean', 'grades'),
+                         GRADE_AGGREGATE_WEIGHTED_MEAN2  =>get_string('aggregateweightedmean2', 'grades'),
                          GRADE_AGGREGATE_EXTRACREDIT_MEAN=>get_string('aggregateextracreditmean', 'grades'),
                          GRADE_AGGREGATE_SUM             =>get_string('aggregatesum', 'grades'));
 

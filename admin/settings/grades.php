@@ -61,6 +61,7 @@ $options = array(GRADE_AGGREGATE_MEAN            =>get_string('aggregatemean', '
                  GRADE_AGGREGATE_MAX             =>get_string('aggregatemax', 'grades'),
                  GRADE_AGGREGATE_MODE            =>get_string('aggregatemode', 'grades'),
                  GRADE_AGGREGATE_WEIGHTED_MEAN   =>get_string('aggregateweightedmean', 'grades'),
+                 GRADE_AGGREGATE_WEIGHTED_MEAN2  =>get_string('aggregateweightedmean2', 'grades'),
                  GRADE_AGGREGATE_EXTRACREDIT_MEAN=>get_string('aggregateextracreditmean', 'grades'),
                  GRADE_AGGREGATE_SUM             =>get_string('aggregatesum', 'grades'));
 $defaults = array('value'=>GRADE_AGGREGATE_MEAN, 'forced'=>false, 'adv'=>false);
