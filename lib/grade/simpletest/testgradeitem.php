@@ -128,7 +128,7 @@ class grade_item_test extends grade_test {
         grade_object::set_properties($grade_item, $this->grade_items[0]);
         $grade_item->iteminfo = 'Updated info for this unittest grade_item';
         $grade_item->lib_wrapper = new mock_lib_wrapper();
-        $grade_item->lib_wrapper->expectOnce('update_record', array($grade_item->table, addslashes_recursive($grade_item->get_record_data())));
+        $grade_item->lib_wrapper->expectOnce('update_record', array($grade_item->table, '*'));
         $grade_item->lib_wrapper->setReturnValue('update_record', true);
         $this->assertTrue(method_exists($grade_item, 'update'));
 
@@ -340,7 +340,47 @@ class grade_item_test extends grade_test {
 
         $grade_item->expectNever('get_item_category');
         $this->assertTrue($grade_item->regrade_final_grades($this->userid));
+        
+        // If the item is calculated but the grades cannot be calculated, method should return an error message
+        $grade_item = new mock_grade_item_for_regrade_final($this);
+        $grade_item->expectOnce('is_calculated', array());
+        $grade_item->setReturnValue('is_calculated', true);
+        $grade_item->expectOnce('compute', array($this->userid));
+        $grade_item->setReturnValue('compute', false);
+        $this->assertEqual("Could not calculate grades for grade item", $grade_item->regrade_final_grades($this->userid)); 
 
+        // If the item is an outcome item, return true before regrading
+        $grade_item = new mock_grade_item_for_regrade_final($this);
+        $grade_item->expectOnce('is_outcome_item', array());
+        $grade_item->setReturnValue('is_outcome_item', true); 
+        $this->assertTrue($grade_item->regrade_final_grades($this->userid)); 
+
+        // If the item is a category or course item, category must generate grades, then return true
+        $grade_item = new mock_grade_item_for_regrade_final($this);
+        $grade_item->expectCallCount('is_category_item', 2, array());
+        $grade_item->expectCallCount('is_course_item', 2, array());
+        $grade_item->setReturnValue('is_category_item', false); 
+        $grade_item->setReturnValue('is_course_item', true);
+        $grade_item->expectCallCount('get_item_category', 2, array());
+        $category = new mock_grade_category();
+        $category->expectCallCount('generate_grades', 2, array($this->userid));
+        $category->setReturnValueAt(0, 'generate_grades', true);
+        $category->setReturnValueAt(1, 'generate_grades', false); // if generate_grades() is false, method should return false
+        $grade_item->setReturnValue('get_item_category', $category);
+        $this->assertTrue($grade_item->regrade_final_grades($this->userid)); 
+        $this->assertEqual("Could not aggregate final grades for category:".$grade_item->id, $grade_item->regrade_final_grades($this->userid)); 
+
+        // If the item is a manual item, method should return true before regrading
+        $grade_item = new mock_grade_item_for_regrade_final($this);
+        $grade_item->expectOnce('is_manual_item', array());
+        $grade_item->setReturnValue('is_manual_item', true); 
+        $this->assertTrue($grade_item->regrade_final_grades($this->userid)); 
+
+        // If the item is not using raw grades, method should return true without regrading 
+        $grade_item = new mock_grade_item_for_regrade_final($this);
+        $grade_item->expectOnce('is_raw_used', array());
+        $grade_item->setReturnValue('is_raw_used', false); 
+        $this->assertTrue($grade_item->regrade_final_grades($this->userid)); 
     }
 
 /*
