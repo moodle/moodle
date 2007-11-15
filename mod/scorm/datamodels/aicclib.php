@@ -357,6 +357,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         
         foreach ($scoes as $sco) {
             $isvisible = false;
+            $sco->title = stripslashes($sco->title);
             if ($optionaldatas = scorm_get_sco($sco->id, SCO_DATA)) {
                 if (!isset($optionaldatas->isvisible) || (isset($optionaldatas->isvisible) && ($optionaldatas->isvisible == 'true'))) {
                     $isvisible = true;
