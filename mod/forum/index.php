@@ -172,7 +172,7 @@
                 $groupmode = NOGROUPS;
             }
             $currentgroup = groups_get_activity_group($cm);
-            $cantaccessagroup = $groupmode and !has_capability('moodle/site:accessallgroups', $context) and !mygroupid($course->id);
+            $cantaccessagroup = $groupmode && !has_capability('moodle/site:accessallgroups', $context) && !mygroupid($course->id);
 
             // this is potentially wrong logic. could possibly check for if user has the right to hmmm
             if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
@@ -309,7 +309,7 @@
                 $groupmode = groups_get_activity_groupmode($cm);
                 
  
-                $cantaccessagroup = $groupmode and !has_capability('moodle/site:accessallgroups', $context) and !mygroupid($course->id);
+                $cantaccessagroup = $groupmode && !has_capability('moodle/site:accessallgroups', $context) && !mygroupid($course->id);
 
                 if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
                     $count = count_records("forum_discussions", "forum", "$forum->id", "groupid", $currentgroup);
