@@ -69,13 +69,9 @@ class edit_outcomeitem_form extends moodleform {
                 false, true, false, get_string('linkedactivityhelp', 'grades')));
         $mform->setDefault('cmid', 0);
 
-        //$mform->addElement('text', 'calculation', get_string('calculation', 'grades'));
-
         /*$mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
         $mform->setHelpButton('gradepass', array(false, get_string('gradepass', 'grades'),
                 false, true, false, get_string('gradepasshelp', 'grades')));*/
-
-        $mform->addElement('text', 'aggregationcoef', get_string('aggregationcoef', 'grades'));
 
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!
@@ -91,6 +87,45 @@ class edit_outcomeitem_form extends moodleform {
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
         $mform->setHelpButton('locktime', array('locktime', get_string('locktime', 'grades'), 'grade'));
 
+/// parent category related settings
+        $mform->addElement('header', 'headerparent', get_string('parentcategory', 'grades'));
+
+        $options = array();
+        $default = '';
+        $coefstring = '';
+        $categories = grade_category::fetch_all(array('courseid'=>$COURSE->id));
+        foreach ($categories as $cat) {
+            $cat->apply_forced_settings();
+            $options[$cat->id] = $cat->get_name();
+            if ($cat->is_course_category()) {
+                $default = $cat->id;
+            }
+            if ($cat->is_aggregationcoef_used()) {
+                if ($cat->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
+                    $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefweight') ? 'aggregationcoefweight' : 'aggregationcoef';
+
+                } else if ($cat->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
+                    $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefextra') ? 'aggregationcoefextra' : 'aggregationcoef';
+
+                } else {
+                    $coefstring = 'aggregationcoef';
+                }
+            } else {
+                $mform->disabledIf('aggregationcoef', 'parentcategory', 'eq', $cat->id);
+            }
+        }
+
+        if (count($categories) > 1) {
+            $mform->addElement('select', 'parentcategory', get_string('gradecategory', 'grades'), $options);
+            $mform->disabledIf('parentcategory', 'cmid', 'noteq', 0);
+        }
+
+        if ($coefstring !== '') {
+            $mform->addElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
+            $mform->setHelpButton('aggregationcoef', array(false, get_string($coefstring, 'grades'),
+                                    false, true, false, get_string($coefstring.'help', 'grades')));
+        }
+
 /// hidden params
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);
@@ -102,6 +137,15 @@ class edit_outcomeitem_form extends moodleform {
         $gpr = $this->_customdata['gpr'];
         $gpr->add_mform_elements($mform);
 
+/// mark advanced according to site settings
+        if (isset($CFG->grade_item_advanced)) {
+            $advanced = explode(',', $CFG->grade_item_advanced);
+            foreach ($advanced as $el) {
+                if ($mform->elementExists($el)) {
+                    $mform->setAdvanced($el);
+                }
+            }
+        }
 //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();
@@ -119,9 +163,19 @@ class edit_outcomeitem_form extends moodleform {
 
             //remove the aggregation coef element if not needed
             if ($grade_item->is_course_item()) {
-                $mform->removeElement('aggregationcoef');
+                if ($mform->elementExists('parentcategory')) {
+                    $mform->removeElement('parentcategory');
+                }
+                if ($mform->elementExists('aggregationcoef')) {
+                    $mform->removeElement('aggregationcoef');
+                }
 
             } else {
+                // if we wanted to change parent of existing item - we would have to verify there are no circular references in parents!!!
+                if ($mform->elementExists('parentcategory')) {
+                    $mform->hardFreeze('parentcategory');
+                }
+
                 if ($grade_item->is_category_item()) {
                     $category = $grade_item->get_item_category();
                     $parent_category = $category->get_parent_category();
@@ -131,38 +185,32 @@ class edit_outcomeitem_form extends moodleform {
 
                 $parent_category->apply_forced_settings();
 
-                if (!$parent_category->is_aggregationcoef_used() or !$parent_category->aggregateoutcomes) {
-                    $mform->removeElement('aggregationcoef');
+                if (!$parent_category->is_aggregationcoef_used()) {
+                    if ($mform->elementExists('aggregationcoef')) {
+                        $mform->removeElement('aggregationcoef');
+                    }
                 } else {
+                    //fix label if needed
                     $agg_el =& $mform->getElement('aggregationcoef');
+                    $aggcoef = '';
                     if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-                        $agg_el->setLabel(get_string('aggregationcoefweight', 'grades'));
-                        $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoefweight', 'grades'),
-                                false, true, false, get_string('aggregationcoefweighthelp', 'grades')));
+                        $aggcoef = 'aggregationcoefweight';
                     } else if ($parent_category->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
-                        $agg_el->setLabel(get_string('aggregationcoefextra', 'grades'));
-                        $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoefextra', 'grades'),
-                                false, true, false, get_string('aggregationcoefextrahelp', 'grades')));
+                        $aggcoef = 'aggregationcoefextra';
+                    }
+                    if ($aggcoef !== '') {
+                        $agg_el->setLabel(get_string($aggcoef, 'grades'));
+                        $mform->setHelpButton('aggregationcoef', array(false, get_string($aggcoef, 'grades'),
+                                false, true, false, get_string($aggcoef.'help', 'grades')));
                     }
                 }
             }
 
-        } else {
-            $parent_category = grade_category::fetch_course_category($COURSE->id);
-            if (!$parent_category->is_aggregationcoef_used() or !$parent_category->aggregateoutcomes) {
-                $mform->removeElement('aggregationcoef');
-            } else {
-                $agg_el =& $mform->getElement('aggregationcoef');
-                if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-                    $agg_el->setLabel(get_string('aggregationcoefweight', 'grades'));
-                    $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoefweight', 'grades'),
-                            false, true, false, get_string('aggregationcoefweighthelp', 'grades')));
-                } else if ($parent_category->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
-                    $agg_el->setLabel(get_string('aggregationcoefextra', 'grades'));
-                    $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoefextra', 'grades'),
-                            false, true, false, get_string('aggregationcoefextrahelp', 'grades')));
-                }
-            }
+        }
+
+        // no parent header for course category
+        if (!$mform->elementExists('aggregationcoef') and !$mform->elementExists('parentcategory')) {
+            $mform->removeElement('headerparent');
         }
     }
 

@@ -50,15 +50,25 @@ if ($mform->is_cancelled() || empty($CFG->enableoutcomes)) {
     redirect($returnurl);
 }
 
-if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
-    $item = new grade_item($item, false);
-
+if ($grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
     // redirect if outcomeid present
     if (empty($item->outcomeid)) {
         $url = $CFG->wwwroot.'/grade/edit/tree/item.php?id='.$id.'&amp;courseid='.$courseid;
         redirect($gpr->add_url_params($url));
     }
-    $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
+    $item = $grade_item->get_record_data();
+
+    if ($grade_item->is_course_item()) {
+        $item->parentcategory = 0;
+    } else if ($grade_item->is_category_item()) {
+        $parent_category = $grade_item->get_parent_category();
+        $parent_category = $parent_category->get_parent_category();
+        $item->parentcategory = $parent_category->id;
+    } else {
+        $parent_category = $grade_item->get_parent_category();
+        $item->parentcategory = $parent_category->id;
+    }
+
     if ($item->itemtype == 'mod') {
         $cm = get_coursemodule_from_instance($item->itemmodule, $item->iteminstance, $item->courseid);
         $item->cmid = $cm->id;
@@ -67,11 +77,14 @@ if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
     }
 
 } else {
-    $item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'));
+    $grade_item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'), false);
+    $item = $grade_item->get_record_data();
     $item->cmid = 0;
+    $parent_category = grade_category::fetch_course_category($courseid);
+    $item->parentcategory = $parent_category->id;
 }
 
-$decimalpoints = $item->get_decimals();
+$decimalpoints = $grade_item->get_decimals();
 
 if ($item->hidden > 1) {
     $item->hiddenuntil = $item->hidden;
@@ -164,10 +177,19 @@ if ($data = $mform->get_data(false)) {
                 $grade_item->set_parent($item->categoryid);
                 $grade_item->move_after_sortorder($item->sortorder);
             }
+        } else {
+            // set parent if needed
+            if (isset($data->parentcategory)) {
+                $grade_item->set_parent($data->parentcategory, 'gradebook');
+            }
         }
 
     } else {
         $grade_item->update();
+        // set parent if needed
+        if (isset($data->parentcategory)) {
+            $grade_item->set_parent($data->parentcategory, 'gradebook');
+        }
     }
 
     // update hiding flag
