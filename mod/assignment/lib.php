@@ -1042,8 +1042,9 @@ class assignment_base {
         groups_print_activity_menu($cm, 'submissions.php?id=' . $this->cm->id);
 
         /// Get all ppl that are allowed to submit assignments
-        $users = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', $currentgroup, '', false);
-        $users = array_keys($users);
+        if ($users = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', $currentgroup, '', false)) {
+            $users = array_keys($users);
+        }
 
         if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
             $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
