@@ -1600,7 +1600,8 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
                          u.firstname,
                          u.lastname,
                          u.email,
-                         u.picture
+                         u.picture,
+                         u.imagealt
                     FROM $fromsql
                    WHERE $selectsql
                 ORDER BY p.modified DESC";
