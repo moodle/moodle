@@ -364,7 +364,12 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
 
     // Load dirty contexts list if needed
     if (!isset($DIRTYCONTEXTS)) {
-        $DIRTYCONTEXTS = get_dirty_contexts($USER->access['time']);
+        if (isset($USER->access['time'])) {
+            $DIRTYCONTEXTS = get_dirty_contexts($USER->access['time']);
+        }
+        else {
+            $DIRTYCONTEXTS = array();
+        }
     }
 
     // Careful check for staleness...
