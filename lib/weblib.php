@@ -3743,6 +3743,80 @@ function print_box_end($return=false) {
 
 
 /**
+ * Function adds custom_corners to boxes
+ *
+ * @param string $message, the content of the box
+ * @param string $classes, space-separated class names.
+ * @param string $ids, space-separated id names.
+ * @param boolean $return, return as string or just print it
+ */
+function print_custom_corners_box($message, $classes='generalbox', $ids='', $return=false) {
+
+    $output  = print_custom_corners_box_start($classes, $ids, true);
+    $output .= stripslashes_safe($message);
+    $output .= print_custom_corners_box_end(true);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+
+/**
+ * Function adds custom_corners to boxes
+ * Calls print_box_start
+ *
+ * @param string $classes, space-separated class names.
+ * @param string $ids, space-separated id names.
+ * @param boolean $return, return as string or just print it
+ */
+function print_custom_corners_box_start($classes='generalbox', $ids='', $return=false) {
+    global $CFG, $THEME;
+    
+    $output = print_box_start('ccbox '.$classes, $ids, true);
+    
+    if (!empty($THEME->customcorners)) {
+        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
+        
+        $output .= print_custom_corners_start(true, true);
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+
+/**
+ * Function adds custom_corners to boxes
+ * Calls print_box_end
+ *
+ * @param boolean $return, return as string or just print it
+ */
+function print_custom_corners_box_end($return=false) {
+    global $CFG, $THEME;
+        
+    if (!empty($THEME->customcorners)) {
+        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
+        
+        $output .= print_custom_corners_end(true);
+    }
+
+    $output .= print_box_end(true);;
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+
+/**
  * Print a self contained form with a single submit button.
  *
  * @param string $link ?
