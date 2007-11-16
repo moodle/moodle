@@ -245,7 +245,7 @@ class assignment_base {
         }
 
         $graded_date = $grade->dategraded;
-        $graded_by   = $grade->usermodified;
+            $graded_by   = $grade->usermodified;
 
     /// We need the teacher info
         $teacher = get_record('user', 'id', $graded_by);
@@ -1727,6 +1727,22 @@ class assignment_base {
         } else {
             return ($this->assignment->timeavailable <= $time);
         }
+    }
+
+    
+    /*
+     * Return true if is set description is hidden till available date
+     *
+     * This is needed by calendar so that hidden descriptions do not 
+     * come up in upcoming events.
+     *
+     * Check that description is hidden till available date   
+     * By default return false
+     * Assignments types should implement this method if needed
+     * @return boolen
+     */                               
+    function description_is_hidden() {
+        return false;
     }
 
     /**
