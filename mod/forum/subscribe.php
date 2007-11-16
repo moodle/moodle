@@ -94,6 +94,9 @@
                     !has_capability('mod/forum:managesubscriptions', $context)) {
             error(get_string('disallowsubscribe'),$_SERVER["HTTP_REFERER"]);
         }
+        if (!has_capability('mod/forum:viewdiscussion', $context)) {
+            error("Could not subscribe you to that forum", $_SERVER["HTTP_REFERER"]);
+        }
         if (forum_subscribe($user->id, $forum->id) ) {
             add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
             redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
