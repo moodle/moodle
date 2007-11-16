@@ -220,7 +220,7 @@
 
         case 'eachuser':
             if (!empty($forum->intro)) {
-                print_box(format_text($forum->intro), 'generalbox', 'intro');
+                print_custom_corners_box(format_text($forum->intro), 'generalbox', 'intro');
             }
             echo '<p align="center">';
             if (forum_user_can_post_discussion($forum)) {
@@ -246,7 +246,7 @@
 
         default:
             if (!empty($forum->intro)) {
-                print_box(format_text($forum->intro), 'generalbox', 'intro');
+                print_custom_corners_box(format_text($forum->intro), 'generalbox', 'intro');
             }
             echo '<br />';
             if (!empty($showall)) {
