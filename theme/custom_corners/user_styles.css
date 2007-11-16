@@ -99,6 +99,9 @@ div.noticebox {
 div.generalbox {
   border: 1px solid #F1ECE6;
 }
+div.generalbox.ccbox {
+  border-style: none;
+}
 table.generalbox {
   border-top-width: 1px;
   border-style: solid none none;
@@ -911,6 +914,39 @@ body.nocoursepage div#content div.bb {
   height: 12px;
   background-color: transparent;
 }
+/*info box section start */
+div#content div.ccbox div.bt div {
+  background-image: url(pix/mask_box.png);
+}
+div#content div.ccbox div.bt {
+  background-image: url(pix/mask_box.png);
+}
+div#content div.ccbox div.i1 {
+  background-image: url(pix/mask_borders_le.png);
+}
+div#content div.ccbox div.i2 {
+  background-image: url(pix/mask_borders_re.png);
+}
+div#content div.ccbox div.i3 {
+  background-color: transparent;
+  border-color: transparent;
+}
+div#content div.ccbox div.bb div {
+  background-image: url(pix/mask_box.png);
+}
+div#content div.ccbox div.bb {
+  background-image: url(pix/mask_box.png);
+}
+div#content div.ccbox div.bt div {
+  z-index: 10;
+}
+div#content div.ccbox {
+  background-image: url(pix/info_gradient.png);
+  background-repeat: repeat-x;
+  background-position: 50% 50%;
+  padding: 0;
+}
+/*info box section end */
 td#middle-column tr.section {
   background-image: url(pix/bottom_shadow_to_top.png);
   background-repeat: repeat-x;
