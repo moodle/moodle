@@ -73,6 +73,12 @@ class user_filter_profilefield extends user_filter_type {
      * @return mixed array filter data or false when filter not set
      */
     function check_data($formdata) {
+        $profile_fields = $this->get_profile_fields();
+
+        if (empty($profile_fields)) {
+            return false;
+        }
+
         $field    = $this->_name;
         $operator = $field.'_op';
         $profile  = $field.'_fld';
@@ -96,9 +102,18 @@ class user_filter_profilefield extends user_filter_type {
     function get_sql_filter($data) {
         global $CFG;
 
+        $profile_fields = $this->get_profile_fields();
+        if (empty($profile_fields)) {
+            return '';
+        }
+
         $profile  = $data['profile'];
         $operator = $data['operator'];
         $value    = addslashes($data['value']);
+
+        if (!array_key_exists($profile, $profile_fields)) {
+            return '';
+        } 
 
         $where = "";
         $op = " IN ";
@@ -144,17 +159,25 @@ class user_filter_profilefield extends user_filter_type {
      * @return string active filter label
      */
     function get_label($data) {
-        $operators     = $this->get_operators();
-        $profilefields = $this->get_profile_fields();
+        $operators      = $this->get_operators();
+        $profile_fields = $this->get_profile_fields();
+
+        if (empty($profile_fields)) {
+            return '';
+        }
 
         $profile  = $data['profile'];
         $operator = $data['operator'];
         $value    = $data['value'];
 
+        if (!array_key_exists($profile, $profile_fields)) {
+            return '';
+        } 
+
         $a = new object();
         $a->label    = $this->_label;
         $a->value    = $value;
-        $a->profile  = $profilefields[$profile];
+        $a->profile  = $profile_fields[$profile];
         $a->operator = $operators[$operator];
 
         switch($operator) {
