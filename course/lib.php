@@ -1836,7 +1836,7 @@ function print_course($course) {
 
     $linkcss = $course->visible ? '' : ' class="dimmed" ';
 
-    echo '<div class="coursebox">';
+    echo '<div class="coursebox clearfix">';
     echo '<div class="info">';
     echo '<div class="name"><a title="'.get_string('entercourse').'"'.
          $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
@@ -1893,7 +1893,6 @@ function print_course($course) {
     echo format_text($course->summary, FORMAT_MOODLE, $options,  $course->id);
     echo '</div>';
     echo '</div>';
-    echo '<div class="clearer"></div>';
 }
 
 
@@ -2013,7 +2012,7 @@ function print_remote_course($course, $width="100%") {
 
     $url = "{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$course->hostid}&amp;wantsurl=/course/view.php?id={$course->remoteid}";
 
-    echo '<div class="coursebox remotecoursebox">';
+    echo '<div class="coursebox remotecoursebox clearfix">';
     echo '<div class="info">';
     echo '<div class="name"><a title="'.get_string('entercourse').'"'.
          $linkcss.' href="'.$url.'">'
@@ -2028,7 +2027,6 @@ function print_remote_course($course, $width="100%") {
     echo format_text($course->summary, FORMAT_MOODLE, $options);
     echo '</div>';
     echo '</div>';
-    echo '<div class="clearer"></div>';
 }
 
 function print_remote_host($host, $width="100%") {
@@ -2037,7 +2035,7 @@ function print_remote_host($host, $width="100%") {
 
     $linkcss = '';
 
-    echo '<div class="coursebox">';
+    echo '<div class="coursebox clearfix">';
     echo '<div class="info">';
     echo '<div class="name">';
     echo '<img src="'.$CFG->pixpath.'/i/mnethost.gif" class="icon" alt="'.get_string('course').'" />';
@@ -2047,7 +2045,6 @@ function print_remote_host($host, $width="100%") {
     echo '</div>';
     echo '</div>';
     echo '</div>';
-    echo '<div class="clearer"></div>';
 }
 
 
