@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-$THEME->sheets = array('gradients', 'styles_color', 'styles_layout');
+$THEME->sheets = array('gradients', 'styles_color');
 
 /// This variable is an array containing the names of all the 
 /// stylesheet files you want included in this theme, and in what order
