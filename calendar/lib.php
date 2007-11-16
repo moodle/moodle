@@ -419,10 +419,35 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     if($events !== false) {
 
         foreach($events as $event) {
+
             if(!empty($event->modulename)) {
                 $mod = get_coursemodule_from_instance($event->modulename, $event->instance);
                 if (!groups_course_module_visible($mod)) {
                     continue;
+                }
+            }
+            
+           
+            if ($event->modulename == 'assignment'){
+                if(!calendar_edit_event_allowed($event)){ // cannot manage entries, eg. student  
+                    if(!$assignment = get_record('assignment','id',$event->instance)){
+                        // error("assignment ID was incorrect");
+                        continue;
+                    }
+                    // assign assignment to assignment object to use hidden_is_hidden method
+                    require_once($CFG->dirroot.'/mod/assignment/lib.php');
+                        
+                    if (!file_exists($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php')) {
+                        continue;
+                    }
+                    require_once ($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
+                       
+                    $assignmentclass = 'assignment_'.$assignment->assignmenttype;
+                    $assignmentinstance = new $assignmentclass($mod->id,$assignment);
+                        
+                    if ($assignmentinstance->description_is_hidden()){//force not to show description before availability
+                        $event->description = get_string('notavailableyet', 'assignment');
+                    }
                 }
             }
 

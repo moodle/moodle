@@ -1729,6 +1729,22 @@ class assignment_base {
         }
     }
 
+    
+    /*
+     * Return true if is set description is hidden till available date
+     *
+     * This is needed by calendar so that hidden descriptions do not 
+     * come up in upcoming events.
+     *
+     * Check that description is hidden till available date   
+     * By default return false
+     * Assignments types should implement this method if needed
+     * @return boolen
+     */                               
+    function description_is_hidden() {
+        return false;
+    }
+
     /**
      * Return an outline of the user's interaction with the assignment
      *

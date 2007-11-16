@@ -204,6 +204,16 @@ class assignment_upload extends assignment_base {
             //no submission yet
         }
     }
+    
+    
+    /*
+     * Return true if var3 == hide description till available day
+     * 
+     *@return boolean
+     */                  
+    function description_is_hidden() {
+        return ($this->assignment->var3 && (time() <= $this->assignment->timeavailable));
+    }
 
     function custom_feedbackform($submission, $return=false) {
         global $CFG;
