@@ -173,7 +173,7 @@ class edit_item_form extends moodleform {
         }
 
         if (count($categories) > 1) {
-            $mform->addElement('select', 'parentcategory', get_string('parentcategory', 'grades'), $options);
+            $mform->addElement('select', 'parentcategory', get_string('gradecategory', 'grades'), $options);
         }
 
         if ($coefstring !== '') {
