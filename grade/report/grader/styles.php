@@ -1,13 +1,13 @@
 .flexible th {
-white-space:normal;
+    white-space:normal;
 }
 
 .gradestable th.user img {
-  width: 20px;
+    width: 20px;
 }
 
 .gradestable th.user, .gradestable th.range {
-  whitespace: nowrap;
+    white-space: nowrap;
 }
 
 .grade-report-grader table#user-grades td.vmarked {
