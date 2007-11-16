@@ -1801,12 +1801,16 @@ function print_courses($category) {
     }
 
     if ($courses) {
+        echo '<ul class="unlist">';
         foreach ($courses as $course) {
             if ($course->visible == 1
                 || has_capability('moodle/course:viewhidden',$course->context)) {
+                echo '<li>';
                 print_course($course);
+                echo "</li>\n";
             }
         }
+        echo "</ul>\n";
     } else {
         print_heading(get_string("nocoursesyet"));
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
@@ -1917,12 +1921,16 @@ function print_my_moodle() {
     if (!empty($courses) || !empty($rcourses) || !empty($rhosts)) {
 
         if (!empty($courses)) {
+            echo '<ul class="unlist">';
             foreach ($courses as $course) {
                 if ($course->id == SITEID) {
                     continue;
                 }
+                echo '<li>';
                 print_course($course, "100%");
+                echo "</li>\n";
             }
+            echo "</ul>\n";
         }
 
         // MNET
@@ -1979,21 +1987,21 @@ function print_course_search($value="", $return=false, $format="plain") {
         $output  = '<form id="'.$id.'" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
         $output .= '<label for="coursesearchbox">'.$strsearchcourses.': </label>';
-        $output .= '<input type="text" id="coursesearchbox" size="30" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
+        $output .= '<input type="text" id="coursesearchbox" size="30" name="search" value="'.s($value, true).'" />';
         $output .= '<input type="submit" value="'.get_string('go').'" />';
         $output .= '</fieldset></form>';
     } else if ($format == 'short') {
         $output  = '<form id="'.$id.'" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
         $output .= '<label for="coursesearchbox">'.$strsearchcourses.': </label>';
-        $output .= '<input type="text" id="coursesearchbox" size="12" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
+        $output .= '<input type="text" id="coursesearchbox" size="12" name="search" value="'.s($value, true).'" />';
         $output .= '<input type="submit" value="'.get_string('go').'" />';
         $output .= '</fieldset></form>';
     } else if ($format == 'navbar') {
         $output  = '<form id="coursesearchnavbar" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
         $output .= '<label for="coursesearchbox">'.$strsearchcourses.': </label>';
-        $output .= '<input type="text" id="coursesearchbox" size="20" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
+        $output .= '<input type="text" id="coursesearchbox" size="20" name="search" value="'.s($value, true).'" />';
         $output .= '<input type="submit" value="'.get_string('go').'" />';
         $output .= '</fieldset></form>';
     }
