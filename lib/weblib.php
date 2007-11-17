@@ -3517,7 +3517,7 @@ function build_navigation($extranavlinks, $cm = null) {
     // install & upgrade for example -- where we cannot count on the
     // roles infrastructure to be defined. Hence the $CFG->rolesactive check.
     if (!isset($CFG->hideactivitytypenavlink)) {
-        $CFG->hideactivitytypenavlink == 0;
+        $CFG->hideactivitytypenavlink = 0;
     }
     if ($CFG->hideactivitytypenavlink == 2) {
         $hideactivitylink = true;
