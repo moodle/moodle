@@ -1724,14 +1724,23 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
 
         if (isset($this->_advancedElements[$name])){
+            // this is tricky - the first submit button on form is "clicked" if user presses enter
+            // we do not want to "submit" using advanced button if javascript active
             $showtext="'".get_string('showadvanced', 'form')."'";
             $hidetext="'".get_string('hideadvanced', 'form')."'";
             //onclick returns false so if js is on then page is not submitted.
             $onclick = 'return showAdvancedOnClick(this, '.$hidetext.', '.$showtext.');';
-            $button = '<input name="'.$elementName.'" value="'.$buttonlabel.'" type="submit" onclick="'.$onclick.'" />';
-            $header_html =str_replace('{button}', $button, $header_html);
+            $button_js = '<input name="'.$elementName.'" value="'.$buttonlabel.'" type="button" onclick="'.$onclick.'" />';
+            $button_nojs = '<input name="'.$elementName.'" value="'.$buttonlabel.'" type="submit" />';
+            $button = '<script type="text/javascript">
+//<![CDATA[
+document.write("'.addslashes_js($button_js).'")
+//]]>
+</script><noscript><div style="display:inline">'.$button_nojs.'</div></noscript>';  // the extra div should fix xhtml validation
+            
+            $header_html = str_replace('{button}', $button, $header_html);
         } else {
-            $header_html =str_replace('{button}', '', $header_html);
+            $header_html = str_replace('{button}', '', $header_html);
         }
 
         if ($this->_fieldsetsOpen > 0) {
