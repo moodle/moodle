@@ -3774,12 +3774,12 @@ function print_custom_corners_box($message, $classes='generalbox', $ids='', $ret
  */
 function print_custom_corners_box_start($classes='generalbox', $ids='', $return=false) {
     global $CFG, $THEME;
-    
+
     $output = print_box_start('ccbox '.$classes, $ids, true);
-    
+
     if (!empty($THEME->customcorners)) {
         require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-        
+
         $output .= print_custom_corners_start(true, true);
     }
 
@@ -3799,10 +3799,12 @@ function print_custom_corners_box_start($classes='generalbox', $ids='', $return=
  */
 function print_custom_corners_box_end($return=false) {
     global $CFG, $THEME;
-        
+
+    $output = '';
+
     if (!empty($THEME->customcorners)) {
         require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-        
+
         $output .= print_custom_corners_end(true);
     }
 
