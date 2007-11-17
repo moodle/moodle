@@ -6,7 +6,12 @@
 // are added to them.
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-$hassiteconfig = has_capability('moodle/site:config', $systemcontext);
+if (get_site()) {
+    $hassiteconfig = has_capability('moodle/site:config', $systemcontext);
+} else {
+    // installation starts - no permission checks
+    $hassiteconfig = true;
+}
 
 $ADMIN->add('root', new admin_externalpage('adminnotifications', get_string('notifications'), "$CFG->wwwroot/$CFG->admin/index.php"));
 
