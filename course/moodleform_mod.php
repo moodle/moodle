@@ -65,8 +65,8 @@ class moodleform_mod extends moodleform {
             }
         }
 
-        if ($mform->elementExists('groupmode')) {
-            if ($COURSE->groupmodeforce) {
+        if ($COURSE->groupmodeforce) {
+            if ($mform->elementExists('groupmode')) {
                 $mform->hardFreeze('groupmode'); // groupmode can not be changed if forced from course settings
             }
         }
@@ -181,8 +181,12 @@ class moodleform_mod extends moodleform {
         }
 
         $mform->addElement('header', 'modstandardelshdr', get_string('modstandardels', 'form'));
-        if ($features->groups){
-            $mform->addElement('modgroupmode', 'groupmode', get_string('groupmode'));
+        if ($features->groups) {
+            $options = array(NOGROUPS       => get_string('groupsnone'),
+                             SEPARATEGROUPS => get_string('groupsseparate'),
+                             VISIBLEGROUPS  => get_string('groupsvisible'));
+            $mform->addElement('select', 'groupmode', get_string('groupmode'), $options, NOGROUPS);
+            $mform->setHelpButton('groupmode', array('groupmode', get_string('groupmode')));
         }
 
         if (!empty($CFG->enablegroupings)) {
