@@ -28,6 +28,12 @@ $string['continue']='Jätka';
 $string['curlrecommended']='Fakultatiivse Curl teegi installeerimine on väga soovitatav, millega võimaldatakse Moodle võrgunduse funktsionaalsus.';
 $string['customcheck']='Muud kontrollid';
 $string['database']='Andmebaas';
+$string['databasecreationsettingssub']='<b>Tüüp:</b> määratud "mysql" paigaldaja poolt<br />
+       <b>Host:</b> määratud "localhost" paigaldaja poolt<br />
+       <b>Nimi:</b> andmebaasi nimi, nt. moodle<br />
+       <b>User:</b> määratud "root" paigaldaja poolt<br />
+       <b>Parool:</b> Sinu andmebaasi parool<br />
+       <b>Tabelite prefiks:</b> fakultatiivne prefiks kasutamaks tabeli nimetes';
 $string['databasesettingshead']='Nüüd on vaja seadistada andmebaas, kus enamus Moodle andmeid hakatakse hoidma. See andmebaas peab olema eelnevalt loodud ning ka konto, millel ligipääs antud andmebaasile.';
 $string['databasesettingssub']='<b>Tüüp:</b> mysql või postgres7<br />
 	<b>Host:</b> näiteks localhost või db.isp.com<br />
@@ -80,6 +86,8 @@ $string['dbtype']='Tüüp';
 $string['dirroot']='Moodle kataloog';
 $string['dirrooterror']='Moodle kataloogi seadistus näib olevat vigane -  me ei suuda sealt leida Moodle installatsiooni. Allpool olev väärtus on nullitud.';
 $string['download']='Lae alla';
+$string['downloadlanguagebutton']='Tõmba alla &quot;$a&quot; keelepakett';
+$string['downloadlanguagehead']='Tõmba alla keelepakett';
 $string['environmenterrortodo']='Sa pead lahendama kõik keskkonna probleemid (vead), mis leiti ülal, et hakata installeerima vastavat Moodle versiooni!';
 $string['environmenthead']='Keskkonna kontrollimine...';
 $string['environmentrecommendcustomcheck']='kui see test ebaõnnestub, siis see võib saada potentsiaalseks probleemiks';
@@ -101,6 +109,8 @@ $string['help']='Abi';
 $string['info']='Informatsioon';
 $string['installation']='Installeerimine';
 $string['invalidmd5']='Vigane md5';
+$string['langdownloaderror']='Kahjuks keelt "$a" ei paigaldatud. Paigaldamine jätkub inglise keeles.';
+$string['langdownloadok']='Keel "$a" paigaldati edukalt. Paigaldamisprotsess jätkub selles keeles.';
 $string['language']='Keel';
 $string['magicquotesruntime']='Magic Quotes talitlusaeg';
 $string['magicquotesruntimeerror']='See peaks olema välja lülitatud';
@@ -120,15 +130,20 @@ See lubab Moodle\'il ise mälu limiiti määrata.</li>
 $string['moodledocslink']='Moodle dokumendid käesoleva lehe kohta';
 $string['mssql']='SQL*Server (mssql)';
 $string['mssql_n']='SQL*Server UTF-8 toetusega (mssql_n)';
+$string['mssqlextensionisnotpresentinphp']='PHP laiendus MSSQL ei ole korralikult seadistatud, mistõttu ei saa ühenduda SQL*Server\'iga. Palun kontrolli oma php.ini faili või kompileeri PHP uuesti.';
 $string['mysql']='MySQL (mysql)';
 $string['mysqlextensionisnotpresentinphp']='PHP ei ole MySQL laiendiga õigesti konfigureeritud, seega ei saa ta MySQL\'ga suhelda. Palun kontrolli oma php.ini faili või kompileeri PHP uuesti.';
 $string['name']='Nimi';
 $string['next']='Järgmine';
 $string['oci8po']='Oracle (oci8po)';
+$string['ociextensionisnotpresentinphp']='PHP laiendus OCI8 ei ole korralikult seadistatud, mistõttu ei saa ühenduda Oracle\'ga. Palun kontrolli oma php.ini faili või kompileeri PHP uuesti.';
+$string['odbc_mssql']='SQL*Server üle ODBC (odbc_mssql)';
+$string['odbcextensionisnotpresentinphp']='PHP laiendus ODBC ei ole korralikult seadistatud, mistõttu ei saa ühenduda SQL*Server\'iga. Palun kontrolli oma php.ini faili või kompileeri PHP uuesti.';
 $string['ok']='OK';
 $string['opensslrecommended']='Fakultatiivse OpenSSL teegi installeerimine on väga soovitatav, millega võimaldatakse Moodle võrgunduse funktsionaalsus.';
 $string['pass']='Korras';
 $string['password']='Salasõna';
+$string['pgsqlextensionisnotpresentinphp']='PHP laiendus PGSQL ei ole korralikult seadistatud, mistõttu ei saa ühenduda PostgreSQL\'iga. Palun kontrolli oma php.ini faili või kompileeri PHP uuesti.';
 $string['php50restricted']='PHP 5.0.x omab mitmeid probleeme. Palun uuenda 5.1.x või lase tagasi 4.3.x or 4.4.x PHP versioonile';
 $string['phpversion']='PHP versioon';
 $string['phpversionerror']='PHP versioon peab olema vähemalt 4.1.0';
@@ -143,6 +158,7 @@ $string['safemodeerror']='Moodle\'il võib ohutus režiimis komplikatsioone tekk
 $string['serverchecks']='Serveri kontrollid';
 $string['sessionautostart']='Sessioonide automaatne algatamine';
 $string['sessionautostarterror']='See peaks olema välja lülitatud';
+$string['skipdbencodingtest']='Jäta vahele andmebaasi kodeeringu test';
 $string['status']='Staatus';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
@@ -150,6 +166,7 @@ $string['thislanguage'] = 'Eesti';
 $string['unicoderecommended']='Soovitatav on kõikide andmete salvestamine UTF-8\'s (unicode). Uued paigaldamised peaksid olema tehtud andmebaasi, mille vaikimisi kodeering on Unicode. Kui uuendada, siis peaksid teostama UTF-8\'sse üleviimise protsessi (vaata Admin lehte).';
 $string['user']='Kasutaja';
 $string['welcomep10']='\$a->installername (\$a->installerversion)';
+$string['welcomep70']='Vajuta \"Järgmine\" nuppu all jätkamaks <strong>Moodle</strong> paigaldamisega.';
 $string['wrongdestpath']='Vale sihtkoha rada.';
 $string['wrongzipfilename']='Vale ZIP failinimi.';
 $string['wwwroot']='Veebiaadress';
