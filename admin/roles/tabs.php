@@ -159,48 +159,41 @@ if ($currenttab != 'update') {
 }
 
 
+$toprow = array();
+$inactive = array();
+$activetwo = array();
+
+
 if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything except SYSTEM context
 
-    if ($context->contextlevel == CONTEXT_MODULE) { // only show update button if module?
+    if ($context->contextlevel == CONTEXT_MODULE) {  // Only show update button if module
 
         $toprow[] = new tabobject('update', $CFG->wwwroot.'/course/mod.php?update='.
-                       $context->instanceid.'&amp;return=true&amp;sesskey='.sesskey(), get_string('update'));
+                        $context->instanceid.'&amp;return=true&amp;sesskey='.sesskey(), get_string('settings'));
 
     }
 
-    $toprow[] = new tabobject('roles', $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
-                               $context->id, get_string('roles'));
-
-    if (!empty($tabsmode)) {
-
-        if (!empty($assignableroles)) {
-            $secondrow[] = new tabobject('assign',
-                                         $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id,
-                                         get_string('assignroles', 'role'),
-                                         get_string('showallroles', 'role'),
-                                         true);
-        }
-
-        if (!empty($overridableroles)) {
-            $secondrow[] = new tabobject('override',
-                               $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$context->id,
-                               get_string('overrideroles', 'role'),
-                               get_string('showallroles', 'role'),
-                               true);
-        }
-
-        $inactive[] = 'roles';
-        $activetwo = array('roles');
-        $currenttab = $tabsmode;
-
-    } else {
-        $inactive[] = '';
-        $activetwo = array();
+    if (!empty($assignableroles)) {
+        $toprow[] = new tabobject('assign',
+                        $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id,
+                        get_string('localroles', 'role'),
+                        get_string('showallroles', 'role'),
+                        true);
     }
+
+    if (!empty($overridableroles)) {
+        $toprow[] = new tabobject('override',
+                        $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$context->id,
+                        get_string('overridepermissions', 'role'),
+                        get_string('showallroles', 'role'),
+                        true);
+    }
+
+}
 
 /// Here other core tabs should go (always calling tabs.php files)
-/// All the logic to decide what to show must be self-cointained in the tabs file
-/// ej.:
+/// All the logic to decide what to show must be self-contained in the tabs file
+/// eg:
 /// include_once($CFG->dirroot . '/grades/tabs.php');
 
 /// Finally, we support adding some 'on-the-fly' tabs here
@@ -209,7 +202,7 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
         if ($extratabs = explode(',', $CFG->extratabs)) {
             asort($extratabs);
             foreach($extratabs as $extratab) {
-            /// Each extra tab mus be one $CFG->dirroot relative file
+            /// Each extra tab must be one $CFG->dirroot relative file
                 if (file_exists($CFG->dirroot . '/' . $extratab)) {
                     include_once($CFG->dirroot . '/' . $extratab);
                 }
@@ -217,13 +210,11 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
         }
     }
 
-    if (!empty($secondrow)) {
-        $tabs = array($toprow, $secondrow);
-    } else {
-        $tabs = array($toprow);
-    }
+    $inactive = array($currenttab);
+
+    $tabs = array($toprow);
 
     print_tabs($tabs, $currenttab, $inactive, $activetwo);
-}
+
 
 ?>

@@ -430,6 +430,8 @@
 
         if (!empty($cm->id)) {
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $overridableroles = get_overridable_roles($context);
+            $assignableroles  = get_assignable_roles($context);
             $currenttab = 'update';
             include_once($CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php');
         }

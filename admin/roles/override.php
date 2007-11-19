@@ -147,12 +147,10 @@
         require_once($CFG->libdir.'/adminlib.php');
         admin_externalpage_setup('frontpageroles');
         admin_externalpage_print_header();
-        $currenttab = '';
-        $tabsmode = 'override';
+        $currenttab = 'override';
         include_once('tabs.php');
     } else {
-        $currenttab = '';
-        $tabsmode = 'override';
+        $currenttab = 'override';
         include_once('tabs.php');
     }
 
@@ -168,7 +166,7 @@
     }
 
 
-    print_heading_with_help(get_string('overriderolesin', 'role', print_context_name($context)), 'overrides');
+    print_heading_with_help(get_string('overridepermissionsin', 'role', print_context_name($context)), 'overrides');
 
     if ($roleid) {
     /// prints a form to swap roles
