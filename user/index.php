@@ -442,7 +442,12 @@
             error('That role does not exist');
         }
         $a->number = $totalcount;
-        $a->role = $currentrole->name;
+        // MDL-12217, use course specific rolename
+        if (isset($rolenames[$currentrole->id])){
+            $a->role = $rolenames[$currentrole->id];
+        }else{                
+            $a->role = $currentrole->name;//safety net
+        }
         $heading = format_string(get_string('xuserswiththerole', 'role', $a));
         if (user_can_assign($context, $roleid)) {
             $heading .= ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
