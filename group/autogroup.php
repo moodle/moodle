@@ -12,7 +12,9 @@ require_once('../config.php');
 require_once('lib.php');
 require_once('autogroup_form.php');
 
-define('AUTOGROUP_MIN_RATIO', 0.7);
+if (!defined('AUTOGROUP_MIN_RATIO')) {
+    define('AUTOGROUP_MIN_RATIO', 0.7); // means minimum member count is 70% in the smallest group
+}
 
 $courseid = required_param('courseid', PARAM_INT);
 
@@ -104,7 +106,7 @@ if ($editform->is_cancelled()) {
         if (!empty($data->nosmallgroups) and $usercnt % $data->number != 0) {
             // If there would be one group with a small number of member reduce the number of groups
             $missing = $userpergrp * $numgrps - $usercnt;
-            if ($missing > $userpergrp * AUTOGROUP_MIN_RATIO) {
+            if ($missing > $userpergrp * (1-AUTOGROUP_MIN_RATIO)) {
                 $numgrps--;
                 $userpergrp = ceil($usercnt/$numgrps);
             }
