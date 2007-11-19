@@ -195,7 +195,14 @@ class jsportal {
         $output .= "    main.portal.blocks = new Array(".$blocksoutput.");\n";
         $output .= "    main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";
         $output .= "    main.portal.strings['pixpath']='".$CFG->pixpath."';\n";
+        $output .= "    main.portal.strings['marker']='".get_string('markthistopic', '', '_var_')."';\n";
+        $output .= "    main.portal.strings['marked']='".get_string('markedthistopic', '', '_var_')."';\n";
+        $output .= "    main.portal.strings['hide']='".get_string('hide')."';\n";
+        $output .= "    main.portal.strings['hidesection']='".get_string('hidesection', '', '_var_')."';\n";
+        $output .= "    main.portal.strings['show']='".get_string('show')."';\n";
+        $output .= "    main.portal.strings['delete']='".get_string('delete')."';\n";
         $output .= "    main.portal.strings['move']='".get_string('move')."';\n";
+        $output .= "    main.portal.strings['movesection']='".get_string('movesection', '', '_var_')."';\n";
         $output .= "    main.portal.strings['moveleft']='".get_string('moveleft')."';\n";
         $output .= "    main.portal.strings['moveright']='".get_string('moveright')."';\n";
         $output .= "    main.portal.strings['update']='".get_string('update')."';\n";
