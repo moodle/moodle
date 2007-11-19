@@ -7,14 +7,15 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */
- 
+
 require_once('../config.php');
 
-$courseid = required_param('id', PARAM_INT);
-$groupid = optional_param('groupid', 0, PARAM_INT);
-$groupingid = optional_param('groupingid', 0, PARAM_INT);
+$courseid   = required_param('id', PARAM_INT);
+$groupid    = optional_param('group', 0, PARAM_INT);
+$groupingid = optional_param('grouping', 0, PARAM_INT);
 
 $returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid;
+$rooturl   = $CFG->wwwroot.'/group/overview.php?id='.$courseid;
 
 if (!$course = get_record('course', 'id',$courseid)) {
     error('invalidcourse');
@@ -26,17 +27,76 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $courseid);
 require_capability('moodle/course:managegroups', $context);
 
+$strgroups           = get_string('groups');
+$strparticipants     = get_string('participants');
+$stroverview         = get_string('overview', 'group');
+$strgrouping         = get_string('grouping', 'group');
+$strgroup            = get_string('group', 'group');
+$strnotingrouping    = get_string('notingrouping', 'group');
+$strfiltergroups     = get_string('filtergroups', 'group');
+$strnogroups         = get_string('nogroups', 'group');
+$strdescription      = get_string('description');
 
+// Get all groupings
+if (empty($CFG->enablegroupings)) {
+    $groupings  = array();
+    $members    = array(-1 => array()); //groups not in a grouping
+    $groupingid = 0;
+} else {
+    if (!$groupings = get_records('groupings', 'courseid', $courseid, 'name')) {
+        $groupings = array();
+    }
+    $members = array();
+    foreach ($groupings as $grouping) {
+        $members[$grouping->id] = array();
+    }
+    $members[-1] = array(); //groups not in a grouping
+}
 
-$strgroups = get_string('groups');
-$strparticipants = get_string('participants');
-$stroverview = get_string('overview', 'group');
-$strgrouping = get_string('grouping', 'group');
-$strgroup = get_string('group', 'group');
-$strnotingrouping = get_string('notingrouping', 'group');
-$strfiltergroups = get_string('filtergroups', 'group');
-$strnogroups = get_string('nogroups', 'group');
-$strnogroupsassigned = get_string('nogroupsassigned', 'group');
+// Get all groups
+if (!$groups = get_records('groups', 'courseid', $courseid, 'name')) {
+    $groups = array();
+}
+
+if (empty($CFG->enablegroupings)) {
+    $groupwhere    = $groupid ? "AND g.id = $groupid" : "";
+    $sql = "SELECT g.id AS groupid, NULL AS groupingid, u.id AS userid, u.firstname, u.lastname, u.idnumber, u.username
+              FROM {$CFG->prefix}groups g
+                   LEFT JOIN {$CFG->prefix}groups_members gm ON g.id = gm.groupid
+                   LEFT JOIN {$CFG->prefix}user u ON gm.userid = u.id
+             WHERE g.courseid = {$course->id} $groupwhere
+          ORDER BY g.name, u.lastname, u.firstname";
+} else {
+    $groupingwhere = $groupingid ? "AND gg.groupingid = $groupingid" : "";
+    $groupwhere    = $groupid ? "AND g.id = $groupid" : "";
+    $sql = "SELECT g.id AS groupid, gg.groupingid, u.id AS userid, u.firstname, u.lastname, u.idnumber, u.username
+              FROM {$CFG->prefix}groups g
+                   LEFT JOIN {$CFG->prefix}groupings_groups gg ON g.id = gg.groupid
+                   LEFT JOIN {$CFG->prefix}groups_members gm ON g.id = gm.groupid
+                   LEFT JOIN {$CFG->prefix}user u ON gm.userid = u.id
+             WHERE g.courseid = {$course->id} $groupingwhere $groupwhere
+          ORDER BY g.name, u.lastname, u.firstname";
+}
+
+if ($rs = get_recordset_sql($sql)) {
+    while ($row = rs_fetch_next_record($rs)) {
+        $user = new object();
+        $user->id        = $row->userid;
+        $user->firstname = $row->firstname;
+        $user->lastname  = $row->lastname;
+        $user->username  = $row->username;
+        $user->idnumber  = $row->idnumber;
+        if (!$row->groupingid) {
+            $row->groupingid = -1;
+        }
+        if (!array_key_exists($row->groupid, $members[$row->groupingid])) {
+            $members[$row->groupingid][$row->groupid] = array();
+        }
+        $members[$row->groupingid][$row->groupid][] = $user;
+    }
+    rs_close($rs);
+}
+
 
 // Print the page and form
 $navlinks = array(array('name'=>$strparticipants, 'link'=>$CFG->wwwroot.'/user/index.php?id='.$courseid, 'type'=>'misc'),
@@ -45,162 +105,80 @@ $navigation = build_navigation($navlinks);
 
 /// Print header
 print_header_simple($strgroups, ': '.$strgroups, $navigation, '', '', true, '', navmenu($course));
+// Add tabs
+$currenttab = 'overview';
+require('tabs.php');
 
+/// Print overview
+print_heading(format_string($course->shortname) .' '.$stroverview, 'center', 3);
+
+echo $strfiltergroups;
 
 if (!empty($CFG->enablegroupings)) {
-    // Add tabs
-    $currenttab = 'overview';
-    require('tabs.php');
-}
-
-$groupings= array();
-
-// Get groupings and child group id's
-if (!empty($CFG->enablegroupings)) {
-	$sql = "SELECT gs.id, gs.name, gg.groupid " .
-           "FROM {$CFG->prefix}groupings gs " .
-                "LEFT JOIN {$CFG->prefix}groupings_groups gg ON gs.id = gg.groupingid " .
-           "WHERE gs.courseid = {$course->id} " .
-           "ORDER BY gs.name, gs.id ";
-
-    $rs = get_recordset_sql($sql);
-    while ($row = rs_fetch_next_record($rs)) {
-        $groupings[] = $row;
-    }
-}
-
-// Get groups & group members
-$sql = "SELECT g.id AS groupid, g.name, u.id AS userid, u.firstname, u.lastname, u.idnumber, u.username " .
-       "FROM {$CFG->prefix}groups g " .
-            "LEFT JOIN {$CFG->prefix}groups_members gm ON g.id = gm.groupid " .
-            "LEFT JOIN {$CFG->prefix}user u ON gm.userid = u.id " .
-       "WHERE g.courseid = {$course->id} " .
-       "ORDER BY g.name, g.id ";
-       
-$rs = get_recordset_sql($sql);
-
-$groupsmembers = array();
-
-// Build a hash of keyed on groupid and userid;
-while ($row = rs_fetch_next_record($rs)) {
-	$groupsmembers[$row->groupid]->name = $row->name;
-    $groupsmembers[$row->groupid]->groupid = $row->groupid;
-    $groupsmembers[$row->groupid]->users[$row->userid] = $row;
-    $groupsmembers[$row->groupid]->printed = false;
-}
-
-if (empty($groupsmembers)) {
-    print_box($strnogroups);
-} else {
-	
-    /// Print overview filter form
-    
-    echo '<form method="get" action="overview.php">';
-    echo "<input type=\"hidden\" name=\"id\" value=\"{$course->id}\" />";
-    echo "<label for=\"groupingselect\">$strfiltergroups $strgrouping </label>";
-    echo '<select id="groupingselect" name="groupingid" onchange="this.parentNode.submit();">';
-    echo '    <option value=""></option>';
-    $lastgroupingid = false;
+    $options = array();
+    $options[0] = get_string('all');
     foreach ($groupings as $grouping) {
-        if ($lastgroupingid === false || $lastgroupingid != $grouping->id) {
-            $selected = $grouping->id == $groupingid ? 'selected="selected"':'';
-            echo "<option value=\"{$grouping->id}\" $selected>".format_string($grouping->name)."</option>\n";
-        }
-        $lastgroupingid = $grouping->id;
+        $options[$grouping->id] = strip_tags(format_string($grouping->name));
     }
-    echo '</select>';
-    
-    echo "<label for=\"groupselect\"> $strgroup </label>";
-    echo '<select id="groupselect" name="groupid" onchange="this.parentNode.submit();">';
-    echo '    <option value=""></option>';
-    $lastgroupid = false;
-    
-    foreach ($groupsmembers as $group) {
-        if ($lastgroupid === false || $lastgroupid != $group->groupid) {
-            $selected = $group->groupid == $groupid ? 'selected="selected"':'';
-            echo "<option value=\"{$group->groupid}\" $selected>".format_string($group->name)."</option>\n";
-        }
-        $lastgroupid = $group->groupid ;
-    }
-    echo '</select>';
-    
-    echo '</form>';
-    
-    
-    /// Print overview
-    print_heading(format_string($course->shortname) .' '.$stroverview, 'center', 3);
-    
+    popup_form($rooturl.'&amp;group='.$groupid.'&amp;grouping=', $options, 'selectgrouping', $groupingid, '', '', '', false, 'self', $strgrouping);
+}
 
-    
-    echo '<div id="grouping-groups-overview"><ul>';
-    
-    if (!empty($CFG->enablegroupings) && isset($groupings)) {
-    	$lastgroupingid = false;
-    	foreach ($groupings as $grouping) {
-    		if (!empty($groupingid) && $groupingid != $grouping->id) {
-                continue;
-            }
-            if (!empty($groupid) && $groupid != $grouping->groupid) {
-                continue;
-            }
-    		if ($lastgroupingid === false || $lastgroupingid != $grouping->id) {
-    			if($lastgroupingid !== false) {
-                    echo '</ul></li>';
-                }
-    
-                echo "<li>$strgrouping: {$grouping->name}<ul>\n";
-                $lastgroupingid = $grouping->id;
-            }
-            if (isset($groupsmembers[$grouping->groupid])) {
-                echo "<li>{$strgroup}: ".format_string($groupsmembers[$grouping->groupid]->name)."<ul>\n";
-                foreach ($groupsmembers[$grouping->groupid]->users as $user) {
-                    echo "<li><a href=\"{$CFG->wwwroot}/user/view.php?id={$user->userid}\">".fullname($user)."</a></li>\n";
-                }
-                echo "</ul></li>";
-            }
-            else {
-            	echo "<li>$strnogroupsassigned</li>";
-            }
-            if (isset($groupsmembers[$grouping->groupid])) {
-                $groupsmembers[$grouping->groupid]->printed = true;
-            }
-    	}
+$options = array();
+$options[0] = get_string('all');
+foreach ($groups as $group) {
+    $options[$group->id] = strip_tags(format_string($group->name));
+}
+popup_form($rooturl.'&amp;grouping='.$groupingid.'&amp;group=', $options, 'selectgroup', $groupid, '', '', '', false, 'self', $strgroup);
+
+
+/// Print table
+$printed = false;
+foreach ($members as $gpgid=>$groupdata) {
+    if ($groupingid and $groupingid != $gpgid) {
+        continue; // do not show
     }
-    if ($lastgroupingid !== false) {
-    	echo '</ul></li>';
-    }
-    echo '</ul>';
-    
-    // Print Groups not in a grouping
-    
-    
-    if (empty($groupingid)) {
-        
-        $labelprinted = false;
-        foreach($groupsmembers as $groupmembers) {
-        	if ($groupmembers->printed) {
-        		continue;
-        	}
-            if (!empty($groupid) && $groupid != $groupmembers->groupid) {
-                continue;
-            }
-            if ($labelprinted === false) {
-            	echo "<ul><li>$strnotingrouping<ul>";
-                $labelprinted = true;
-            }
-            
-            echo '<li>'.format_string($groupmembers->name).'<ul>';
-            
-            foreach ($groupmembers->users as $user) {
-                echo "<li><a href=\"{$CFG->wwwroot}/user/view.php?id={$user->userid}\">".fullname($user)."</a></li>\n";
-            } 
-            echo "</ul></li>"; 	
+    $table = new object();
+    $table->head  = array(get_string('groupscount', 'group', count($groupdata)), get_string('groupmembers', 'group'), get_string('usercount', 'group'));
+    $table->size  = array('20%', '70%', '10%');
+    $table->align = array('left', 'left', 'center');
+    $table->width = '90%';
+    $table->data  = array();
+    foreach ($groupdata as $gpid=>$users) {
+        if ($groupid and $groupid != $gpid) {
+            continue;
         }
-        if ($labelprinted !== false) {
-            echo '</ul></li></ul>';
+        $line = array();
+        $name = format_string($groups[$gpid]->name);
+        $jsdescription = addslashes_js(trim($groups[$gpid]->description));
+        if (empty($jsdescription)) {
+            $line[] = $name;
+        } else {
+            $jsstrdescription = addslashes_js($strdescription);
+            $overlib = "return overlib('$jsdescription', BORDER, 0, FGCLASS, 'description', "
+                      ."CAPTIONFONTCLASS, 'caption', CAPTION, '$jsstrdescription');";
+            $line[] = '<span onmouseover="'.s($overlib).'" onmouseout="return nd();">'.$name.'</span>';
+        }
+        $fullnames = array();
+        foreach ($users as $user) {
+            $fullnames[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user, true).'</a>';
+        }
+        $line[] = implode(', ', $fullnames);
+        $line[] = count($users);
+        $table->data[] = $line;
+    }
+    if ($groupid and empty($table->data)) {
+        continue;
+    }
+    if (!empty($CFG->enablegroupings)) {
+        if ($gpgid < 0) {
+            print_heading($strnotingrouping, '', 3);
+        } else {
+            print_heading(format_string($groupings[$gpgid]->name), '', 3);
+            print_box($groupings[$gpgid]->description, 'generalbox boxwidthnarrow boxaligncenter');
         }
     }
-    echo '</div>';
+    print_table($table, false);
+    $printed = true;
 }
 
 print_footer($course);

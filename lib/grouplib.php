@@ -82,6 +82,15 @@ function groups_get_group($groupid) {
 }
 
 /**
+ * Get the grouping object
+ * @param groupingid ID of the group.
+ * @return group object
+ */
+function groups_get_grouping($groupingid) {
+    return get_record('groupings', 'id', $groupingid);
+}
+
+/**
  * Gets array of all groups in a specified course.
  * @param int $courseid The id of the course.
  * @param int $userid optional user id, returns only groups of the user.
@@ -166,9 +175,9 @@ function groups_is_member($groupid, $userid=null) {
  */
 function groups_has_membership($cm, $userid=null) {
     global $CFG, $USER;
-    
+
     static $cache = array();
-    
+
     // groupings are ignored when not enabled
     if (empty($CFG->enablegroupings)) {
         $cm->groupingid = 0;
@@ -195,9 +204,9 @@ function groups_has_membership($cm, $userid=null) {
                   FROM {$CFG->prefix}groups_members gm, {$CFG->prefix}groups g
                  WHERE gm.userid = $userid AND gm.groupid = g.id AND g.courseid = {$cm->course}";
     }
-    
+
     $cache[$cachekey] = record_exists_sql($sql);
-    
+
     return $cache[$cachekey];
 }
 
@@ -329,15 +338,15 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
 /**
  * Print group menu selector for activity.
  * @param object $cm course module object
- * @param string $urlroot return address that users get to if they choose an option; 
+ * @param string $urlroot return address that users get to if they choose an option;
  *   should include any parameters needed, e.g. 'view.php?id=34'
  * @param boolean $return return as string instead of printing
- * @param boolean $hideallparticipants If true, this prevents the 'All participants' 
- *   option from appearing in cases where it normally would. This is intended for 
- *   use only by activities that cannot display all groups together. (Note that 
- *   selecting this option does not prevent groups_get_activity_group from 
- *   returning 0; it will still do that if the user has chosen 'all participants' 
- *   in another activity, or not chosen anything.) 
+ * @param boolean $hideallparticipants If true, this prevents the 'All participants'
+ *   option from appearing in cases where it normally would. This is intended for
+ *   use only by activities that cannot display all groups together. (Note that
+ *   selecting this option does not prevent groups_get_activity_group from
+ *   returning 0; it will still do that if the user has chosen 'all participants'
+ *   in another activity, or not chosen anything.)
  * @return mixed void or string depending on $return param
  */
 function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallparticipants=false) {
@@ -366,7 +375,7 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
     $activegroup = groups_get_activity_group($cm, true);
 
     $groupsmenu = array();
-    if ((!$allowedgroups or $groupmode == VISIBLEGROUPS or 
+    if ((!$allowedgroups or $groupmode == VISIBLEGROUPS or
       has_capability('moodle/site:accessallgroups', $context)) and !$hideallparticipants) {
         $groupsmenu[0] = get_string('allparticipants');
     }
@@ -547,7 +556,7 @@ function groups_get_activity_group($cm, $update=false) {
 }
 
 /**
- * Gets a list of groups that the user is allowed to access within the 
+ * Gets a list of groups that the user is allowed to access within the
  * specified activity.
  * @param object $cm Course-module
  * @param int $userid User ID (defaults to current user)
@@ -559,19 +568,19 @@ function groups_get_activity_allowed_groups($cm,$userid=0) {
     if(!$userid) {
         $userid=$USER->id;
     }
-    
+
     // Get groupmode for activity, taking into account course settings
     $groupmode=groups_get_activity_groupmode($cm);
 
     // If visible groups mode, or user has the accessallgroups capability,
     // then they can access all groups for the activity...
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);    
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
-        return groups_get_all_groups($cm->course, 0, $cm->groupingid); 
+        return groups_get_all_groups($cm->course, 0, $cm->groupingid);
     } else {
         // ...otherwise they can only access groups they belong to
-        return groups_get_all_groups($cm->course, $userid, $cm->groupingid); 
-    }    
+        return groups_get_all_groups($cm->course, $userid, $cm->groupingid);
+    }
 }
 
 /**
@@ -583,7 +592,7 @@ function groups_get_activity_allowed_groups($cm,$userid=0) {
  */
 function groups_course_module_visible($cm, $userid=null) {
     global $CFG, $USER;
-    
+
     if (empty($userid)) {
         $userid = $USER->id;
     }

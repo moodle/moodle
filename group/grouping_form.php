@@ -32,7 +32,7 @@ class grouping_form extends moodleform {
 
         $errors = array();
 
-        $name = stripslashes($data['name']);
+        $name = trim(stripslashes($data['name']));
         if ($data['id'] and $grouping = get_record('groupings', 'id', $data['id'])) {
             if ($grouping->name != $name) {
                 if (groups_get_grouping_by_name($COURSE->id,  $name)) {

@@ -86,7 +86,7 @@ if ($editform->is_cancelled()) {
         }
     } else {
         if (!$id = groups_create_group($data, $editform->_upload_manager)) {
-            error('Error updating group');
+            error('Error creating group');
         }
         $returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&amp;group='.$id;
     }

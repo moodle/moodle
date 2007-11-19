@@ -47,7 +47,7 @@ class group_form extends moodleform {
 
         $errors = array();
 
-        $name = stripslashes($data['name']);
+        $name = trim(stripslashes($data['name']));
         if ($data['id'] and $group = get_record('groups', 'id', $data['id'])) {
             if ($group->name != $name) {
                 if (groups_get_group_by_name($COURSE->id,  $name)) {

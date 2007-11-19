@@ -70,7 +70,7 @@ switch ($action) {
 
     case 'showautocreategroupsform':
         redirect('autogroup.php?courseid='.$courseid);
-        break;        
+        break;
 
     case 'showgroupsettingsform':
         redirect('group.php?courseid='.$courseid.'&amp;id='.$groupid);
@@ -106,12 +106,9 @@ $navigation = build_navigation($navlinks);
 
 /// Print header
 print_header_simple($strgroups, ': '.$strgroups, $navigation, '', '', true, '', navmenu($course));
-
-if (!empty($CFG->enablegroupings)) {
-    // Add tabs
-    $currenttab = 'groups';
-    require('tabs.php');
-}
+// Add tabs
+$currenttab = 'groups';
+require('tabs.php');
 
 $disabled = 'disabled="disabled"';
 
@@ -145,7 +142,7 @@ echo '<p><label for="groups"><span id="groupslabel">'.get_string('groups').':</s
 if (ajaxenabled()) {
     $onchange = 'membersCombo.refreshMembers(this.options[this.selectedIndex].value);';
 } else {
-    $onchange = ''; 
+    $onchange = '';
 }
 
 
@@ -184,7 +181,7 @@ echo '<p><input type="submit" '. $deletegroup_disabled . ' name="act_deletegroup
 
 echo '<p><input type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="'
         . get_string('creategroup', 'group') . '" /></p>'."\n";
-        
+
 echo '<p><input type="submit" name="act_showautocreategroupsform" id="showautocreategroupsform" value="'
         . get_string('autocreategroups', 'group') . '" /></p>'."\n";
 

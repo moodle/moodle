@@ -67,6 +67,7 @@ if ($groupings = get_records('groupings', 'courseid', $course->id)) {
         $data[] = $line;
     }
 }
+$tabke = new object();
 $table->head  = array($strgrouping, $strgroups, $struses, $stredit);
 $table->size  = array('30%', '50%', '10%', '10%');
 $table->align = array('left', 'left', 'center', 'center');

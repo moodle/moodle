@@ -426,42 +426,6 @@ form.popupform label {
   width: 14em;
 }
 
-
-#grouping-groups-overview {
-  margin: auto;
-  width: 90%;
-}
-
-#grouping-groups-overview ul {
-  list-style: none;
-  padding-left: 0;
-  margin-left: 0px;
-  font-weight: bold;
-}
-
-/* First level list items i.e. groupings */
-#grouping-groups-overview ul li {
-  padding-bottom: 1.8em;
-}
-
-/* Second level list items i.e. groups */
-#grouping-groups-overview ul li ul li {
-  font-style: italic;
-  font-weight: normal;
-  background-color: #ffffff;
-  border: 1px solid #DDDDDD;
-  padding: 1.1em;
-  margin: 0.1em; 
-}
-
-/* Third level list items i.e. group members */
-#grouping-groups-overview ul li ul li ul li {
-  font-style: normal;
-  border: none;
-  padding: 0;
-}
-
-
 img.icon {
   vertical-align:middle;
   margin-right:4px;

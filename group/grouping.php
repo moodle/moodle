@@ -82,16 +82,13 @@ if ($editform->is_cancelled()) {
     $success = true;
 
     if ($data->id) {
-        $data->timemodified = time();
-        if (!update_record('groupings', $data)) {
-            error('Error updating group');
+        if (!groups_update_grouping($data)) {
+            error('Error updating grouping');
         }
 
     } else {
-        $data->timecreated = time();
-        $data->timemodified = $data->timecreated;
-        if (!$data->id = insert_record('groupings', $data)) {
-            error('Error updating grouping');
+        if (!groups_create_grouping($data)) {
+            error('Error creating grouping');
         }
     }
 
