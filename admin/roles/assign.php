@@ -153,12 +153,10 @@
     } else if ($context->contextlevel==CONTEXT_COURSE and $context->instanceid == SITEID) {
         admin_externalpage_setup('frontpageroles');
         admin_externalpage_print_header();
-        $currenttab = '';
-        $tabsmode = 'assign';
+        $currenttab = 'assign';
         include_once('tabs.php');
     } else {
-        $currenttab = '';
-        $tabsmode = 'assign';
+        $currenttab = 'assign';
         include_once('tabs.php');
     }
 
