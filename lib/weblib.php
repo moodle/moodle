@@ -3665,10 +3665,16 @@ function print_continue($link, $return=false) {
             $link = $CFG->wwwroot .'/';
         }
     }
-
+    
+    $options = array();
+    $linkparts = parse_url($link);
+    if (isset($linkparts['query'])) {
+        parse_str($linkparts['query'], $options);
+    }
+    
     $output .= '<div class="continuebutton">';
 
-    $output .= print_single_button($link, NULL, get_string('continue'), 'get', $CFG->framename, true);
+    $output .= print_single_button($link, $options, get_string('continue'), 'get', $CFG->framename, true);
     $output .= '</div>'."\n";
 
     if ($return) {
