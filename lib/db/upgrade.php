@@ -2594,22 +2594,25 @@ function xmldb_main_upgrade($oldversion=0) {
                GROUP BY userid, itemid
                HAVING COUNT( * ) >1";
         // duplicates found
-        if ($dups = get_records_sql($SQL)) {
-            // for each set of userid, itemid
-            foreach ($dups as $dup) {
-                if ($thisdups = get_records_sql("SELECT id FROM {$CFG->prefix}grade_grades 
-                                                 WHERE itemid = $dup->itemid AND userid = $dup->userid
-                                                 ORDER BY timemodified DESC")) {
+        
+        if ($rs = get_recordset_sql($SQL)) {
+            if ($rs && $rs->RecordCount() > 0) {
+                while ($dup = rs_fetch_next_record($rs)) {
+                    if ($thisdups = get_records_sql("SELECT id FROM {$CFG->prefix}grade_grades 
+                                                    WHERE itemid = $dup->itemid AND userid = $dup->userid
+                                                    ORDER BY timemodified DESC")) {
 
-                    $processed = 0; // keep the first one
-                    foreach ($thisdups as $thisdup) {
-                        if ($processed) {
-                            // remove the duplicates
-                            delete_records('grade_grades', 'id', $thisdup->id);
+                        $processed = 0; // keep the first one
+                        foreach ($thisdups as $thisdup) {
+                            if ($processed) {
+                                // remove the duplicates
+                                delete_records('grade_grades', 'id', $thisdup->id);
+                            }
+                            $processed++;
                         }
-                        $processed++;
                     }
                 }
+                rs_close($rs);
             }
         }
 
