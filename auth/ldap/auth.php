@@ -1826,7 +1826,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         global $CFG, $USER, $SESSION;
 
         $key = sesskey();
-        $cf = get_cached_flags('auth/ldap/ntlmsess');
+        $cf = get_cache_flags('auth/ldap/ntlmsess');
         if (!isset($cf[$key]) && $cf[$key] !== '') {
             return false;
         }
