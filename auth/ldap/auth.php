@@ -1827,7 +1827,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         $key = sesskey();
         $cf = get_cache_flags('auth/ldap/ntlmsess');
-        if (!isset($cf[$key]) && $cf[$key] !== '') {
+        if (!isset($cf[$key]) || $cf[$key] === '') {
             return false;
         }
         $username   = $cf[$key];
