@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 /**
  * Add/remove group from grouping.
  * @package groups
@@ -31,22 +31,12 @@ if ($frm = data_submitted() and confirm_sesskey()) {
 
     } else if (isset($frm->add) and !empty($frm->addselect)) {
         foreach ($frm->addselect as $groupid) {
-            $groupid = (int)$groupid;
-            if (record_exists('groupings_groups', 'groupingid', $grouping->id, 'groupid', $groupid)) {
-                continue;
-            }
-            $assign = new object();
-            $assign->groupingid = $grouping->id;
-            $assign->groupid = $groupid;
-            $assign->timeadded = time();
-            insert_record('groupings_groups', $assign);
+            groups_assign_grouping($grouping->id, (int)$groupid);
         }
 
     } else if (isset($frm->remove) and !empty($frm->removeselect)) {
-
         foreach ($frm->removeselect as $groupid) {
-            $groupid = (int)$groupid;
-            delete_records('groupings_groups', 'groupingid', $grouping->id, 'groupid', $groupid);
+            groups_unassign_grouping($grouping->id, (int)$groupid);
         }
     }
 }
@@ -81,20 +71,6 @@ if ($currentmembers) {
             $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
             $managers = get_role_users($roleid, $context, true, 'u.id', 'u.id ASC', $canseehidden);
         }
-    }
-    
-    if ($potentialmembers != false) {
-        // Put the groupings into a hash and sorts them
-        foreach ($potentialmembers as $user) {
-            if(!empty($managers[$user->id])) {
-                $nonmembers[$user->id] = '#'.$user->firstname.' '.$user->lastname;
-            }
-            else {
-                $nonmembers[$user->id] = $user->firstname.' '.$user->lastname;
-            }
-            $potentialmemberscount++;
-        }
-        natcasesort($nonmembers);
     }
 } else {
     $currentmembersoptions .= '<option>&nbsp;</option>';
@@ -133,7 +109,6 @@ print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '
     <form id="assignform" method="post" action="">
     <div>
     <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
-    <input type="hidden" name="group" value="<?php echo $groupid; ?>" />
 
     <table summary="" cellpadding="5" cellspacing="0">
     <tr>
@@ -147,7 +122,6 @@ print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '
           <?php echo $currentmembersoptions ?>
           </select></td>
       <td valign="top">
-<?php // Hidden assignment? ?>
 
         <?php check_theme_arrows(); ?>
         <p class="arrow_button">

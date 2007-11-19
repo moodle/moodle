@@ -52,15 +52,6 @@ $string['addgroupstogroupings'] = 'Add/remove groups';  //'from group'
 $string['groupingname'] = 'Grouping name';
 $string['defaultgroupingname'] = 'Grouping';
 $string['groupingdescription'] = 'Grouping description';
-$string['prefixforgroupnames'] = 'Prefix for group names';
-$string['defaultgroupprefix'] = 'Group ';
-$string['distributealphabetically'] = 'Distribute into groups alphabetically by last name';
-$string['usestudentsonlyfromselectedgroup'] = 'Only use students from currently selected group';
-$string['selectnumberineachgroup'] = 'Select number in each group';
-$string['numberofstudents'] = 'Number of students';
-$string['distributeevenly'] = 'Distribute leftover students evenly';
-$string['selectnumberofgroups'] = 'Select number of groups';
-$string['numberofgroups'] = 'Number of groups';
 $string['creategrouping'] = 'Create grouping';
 $string['creategroup'] = 'Create group';
 $string['createorphangroup'] = 'Create orphan group';
@@ -73,10 +64,7 @@ $string['groupdescription'] = 'Group description';
 $string['enrolmentkey'] = 'Enrolment key';
 $string['hidepicture'] = 'Hide picture';
 $string['newpicture'] = 'New picture';
-
-$string['defaultgroupdescription'] = 'Default group description';
-
-$string['displaygrouping'] = 'Display grouping';
+$string['newgrouping'] = 'New grouping';
 
 $string['backtogroups'] = 'Back to groups';
 $string['backtogroupings'] = 'Back to groupings';
@@ -101,6 +89,7 @@ $string['groupsseparate'] = 'Separate groups';
 $string['groupsvisible'] = 'Visible groups';
 $string['groupmembersonly'] = 'Available for group members only';
 $string['groupmembersonlyerror'] = 'Sorry, you must be member of at least one group that is used in this activity.';
+$string['grouptemplate'] = 'Group @';
 
 $string['groupaddedsuccesfully'] = 'Group $a added succesfully';
 $string['nopermissionforcreation'] = 'Can\'t create group \"$a\" as you dont have the required permissions';
@@ -110,21 +99,33 @@ $string['filtergroups'] = 'Filter groups by: ';
 $string['nogroups'] = 'There are no groups setup in this course yet';
 
 $string['autocreategroups'] = 'Auto-create groups';
-$string['selectfromrole'] = 'Role to select members from';
-$string['groupby'] = 'Create groups based on the number of ';
+$string['selectfromrole'] = 'Select members from role';
+$string['groupby'] = 'Specify';
+$string['numgroups'] = 'Number of groups';
+$string['nummembers'] = 'Members per group';
+$string['nosmallgroups'] = 'Prevent last small group';
+
+$string['groupscount'] = 'Groups ($a)';
+$string['usercounttotal'] = 'User count ($a)';
+$string['usercount'] = 'User count';
+
 $string['members'] = 'Members per group';
-$string['number'] = 'Number of groups or members per group';
+$string['number'] = 'Group/member count';
 $string['allocateby'] = 'Allocate members';
-$string['random'] = 'randomly';
-$string['firstname'] = 'alphabetically by first name';
-$string['lastname'] = 'alphabetically by last name';
+$string['noallocation'] = 'No allocation';
+$string['random'] = 'Randomly';
+$string['byfirstname'] = 'Alphabetically by first name, last name';
+$string['bylastname'] = 'Alphabetically by last name, first name';
+$string['byidnumber'] = 'Alphabetically by ID number';
+$string['createingrouping'] = 'Create in grouping';
+
 $string['namingscheme'] = 'Naming scheme';
-$string['namingschemehelp'] = 'note: Use \'@\' to represent the group letter or \'#\' to represent the group number';
+$string['namingschemehelp'] = 'Use @ character to represent the group letter (A-Z) or # to represent the group number.';
 $string['toomanygroups'] = 'Insufficient users to populate this number of groups - there are only $a users in the selected role.';
 $string['badnamingscheme'] = 'Must contain exactly one \'@\' or one \'#\'  character';
 $string['groupspreview'] = 'Groups preview';
 $string['nousersinrole'] = 'There are no suitable users in the selected role';
 $string['nogroupsassigned'] = 'No groups assigned';
 $string['evenallocation'] = 'Note: To keep group allocation even, the actual number of members per group differs from the number you specified.';
-$string['membersingroup'] = 'members';
+
 ?>
