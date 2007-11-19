@@ -107,8 +107,9 @@ if ($editform->is_cancelled()) {
             // If there would be one group with a small number of member reduce the number of groups
             $missing = $userpergrp * $numgrps - $usercnt;
             if ($missing > $userpergrp * (1-AUTOGROUP_MIN_RATIO)) {
+                // spread the users from the last small group
                 $numgrps--;
-                $userpergrp = ceil($usercnt/$numgrps);
+                $userpergrp = floor($usercnt/$numgrps);
             }
         }
     }
