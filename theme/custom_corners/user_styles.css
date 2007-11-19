@@ -1125,3 +1125,24 @@ body.grade-report-grader table#user-grades td.cat {
 body.grade-report-grader table#user-grades td.course {
   font-weight: bold;
 }
+#admin-roles-override .capcurrent {
+  background-color:#eeeeee;
+  border: 1px solid #cccccc;
+}
+
+#admin-roles-manage .capdefault {
+  background-color:#dddddd;
+  border: 1px solid #cecece;
+}
+
+#admin-roles-manage .rolecap,
+#admin-roles-override .rolecap {
+  border:none;
+  border-bottom:1px solid;
+  border-bottom-color: #cecece;
+}
+
+#admin-roles-manage .rolecap .cap-desc .cap-name,
+#admin-roles-override .rolecap .cap-desc .cap-name {
+  color: #888;
+}
