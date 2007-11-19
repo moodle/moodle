@@ -56,7 +56,8 @@
         foreach ($coursemanagerroles as $roleid) {
             $role = get_record('role','id',$roleid);
             $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
-            if ($users = get_role_users($role->id, $context, true, '', 'u.lastname ASC', $canseehidden)) {
+            $roleid = (int) $roleid;
+            if ($users = get_role_users($roleid, $context, true, '', 'u.lastname ASC', $canseehidden)) {
                 foreach ($users as $teacher) {
                     $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context)); 
                     $namesarray[] = format_string($role->name).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
