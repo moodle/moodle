@@ -2589,7 +2589,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// try to remove duplicate entries
     
-        $SQL = "SELECT id, userid, itemid
+        $SQL = "SELECT userid, itemid, COUNT(*)
                FROM {$CFG->prefix}grade_grades
                GROUP BY userid, itemid
                HAVING COUNT( * ) >1";
@@ -2597,7 +2597,7 @@ function xmldb_main_upgrade($oldversion=0) {
         if ($dups = get_records_sql($SQL)) {
             // for each set of userid, itemid
             foreach ($dups as $dup) {
-                if ($thisdups = get_records_sql("SELECT id,id FROM {$CFG->prefix}grade_grades 
+                if ($thisdups = get_records_sql("SELECT id FROM {$CFG->prefix}grade_grades 
                                                  WHERE itemid = $dup->itemid AND userid = $dup->userid
                                                  ORDER BY timemodified DESC")) {
 
