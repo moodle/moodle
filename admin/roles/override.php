@@ -34,6 +34,7 @@
     } else {
         $course = clone($SITE);
         $courseid = SITEID;
+        $coursecontext = $context;
     }
 
     require_login($course);
