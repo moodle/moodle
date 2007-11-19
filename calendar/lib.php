@@ -1049,7 +1049,7 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
             else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
                 $typesbyday[$eventdaystart]['startcourse'] = true;
                 // Set event class for course event
-                //$events[$event->id]->class = 'event_course';
+                $events[$event->id]->class = 'event_course';
             }
             else if($event->groupid) {
                 $typesbyday[$eventdaystart]['startgroup'] = true;

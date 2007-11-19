@@ -447,15 +447,6 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
 
         // Special visual fx if an event is defined
         if(isset($eventsbyday[$day])) {
-            if(isset($typesbyday[$day]['startglobal'])) { 	 
-	            $class .= ' event_global'; 	 
-	        } else if(isset($typesbyday[$day]['startcourse'])) { 	 
-	            $class .= ' event_course'; 	 
-	        } else if(isset($typesbyday[$day]['startgroup'])) { 	 
-	           $class .= ' event_group'; 	 
-	        } else if(isset($typesbyday[$day]['startuser'])) { 	 
-	            $class .= ' event_user'; 	 
-	        }    
             if(count($eventsbyday[$day]) == 1) {
                 $title = get_string('oneevent', 'calendar');
             }
