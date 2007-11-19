@@ -1443,8 +1443,11 @@ class auth_plugin_ldap extends auth_plugin_base {
 
     /**
      * checks if user belong to specific group(s)
+     * or is in a subtree.
      *
-     * Returns true if user belongs group in grupdns string.
+     * Returns true if user belongs group in grupdns string OR
+     * if the DN of the user is in a subtree pf the DN provided
+     * as "group"
      *
      * @param mixed $username    username
      * @param mixed $groupdns    string of group dn separated by ;
@@ -1478,6 +1481,15 @@ class auth_plugin_ldap extends auth_plugin_base {
             if (empty($group)) {
                 continue;
             }
+
+            // check cheaply if the user's DN sits in a subtree
+            // of the "group" DN provided. Granted, this isn't
+            // a proper LDAP group, but it's a popular usage.
+            if (strpos(strrev($memberuser), strrev($group))===0) {
+                $result = true;
+                break;
+            }
+
             //echo "Checking group $group for member $username\n";
             $search = ldap_read($ldapconnection, $group,  '('.$this->config->memberattribute.'='.$this->filter_addslashes($memberuser).')', array($this->config->memberattribute));
             if (!empty($search) and ldap_count_entries($ldapconnection, $search)) {
