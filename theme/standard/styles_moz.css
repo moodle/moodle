@@ -180,6 +180,17 @@ table.minicalendar td {
   -moz-border-radius:4px;
 }
 
+#calendar .maincalendar li.event_course,
+#calendar .maincalendar li.event_global,
+#calendar .maincalendar li.event_user,
+#calendar .maincalendar li.event_group,
+#calendar .filters td.event_course,
+#calendar .filters td.event_global,
+#calendar .filters td.event_user,
+#calendar .filters td.event_group {
+  -moz-border-radius:4px;
+}
+
 /***
  *** Course
  ***/
