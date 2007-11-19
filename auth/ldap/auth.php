@@ -95,42 +95,37 @@ class auth_plugin_ldap extends auth_plugin_base {
         //
         $key = sesskey();
         if (!empty($this->config->ntlmsso_enabled) && $key === $password) {
-            if ($cookie   = get_config('auth/ldap/ntlmsess', $key)) {
-                // These checks match the work done
-                if (preg_match('/^(\d+):(.+)$/',$cookie,$matches)) {
-                    // $matches[0] is the whole matched string...
-                    $time         = $matches[1];
-                    $sessusername = $matches[2];
-                    if (((time() - ((int)$time)) < AUTH_NTLMTIMEOUT)
-                        && $sessusername === $username) {
+            $cf = get_cache_flags('auth/ldap/ntlmsess');
+            // We only get the cache flag if we retrieve it before
+            // it expires (AUTH_NTLMTIMEOUT seconds).
+            if (!isset($cf[$key]) || $cf[$key] === '') {
+                return false;
+            }
 
-                        unset($cookie);
-                        unset($time);
-                        unset($sessusername);
+            $sessusername = $cf[$key];
+            if ($username === $sessusername) {
+                unset($sessusername);
+                unset($cf);
 
-                        // Check that the user is inside one of the configured LDAP contexts
-                        $validuser = false;
-                        $ldapconnection = $this->ldap_connect();
-                        if ($ldapconnection) {
-                            // if the user is not inside the configured contexts,
-                            // ldap_find_userdn returns false.
-                            if ($this->ldap_find_userdn($ldapconnection, $extusername)) {
-                                $validuser = true;
-                            }
-                            ldap_close($ldapconnection);
-                        }
-
-                        // Shortcut here - SSO confirmed
-                        return $validuser;
+                // Check that the user is inside one of the configured LDAP contexts
+                $validuser = false;
+                $ldapconnection = $this->ldap_connect();
+                if ($ldapconnection) {
+                    // if the user is not inside the configured contexts,
+                    // ldap_find_userdn returns false.
+                    if ($this->ldap_find_userdn($ldapconnection, $extusername)) {
+                        $validuser = true;
                     }
+                    ldap_close($ldapconnection);
                 }
+
+                // Shortcut here - SSO confirmed
+                return $validuser;
             }
         } // End SSO processing
         unset($key);
 
-
         $ldapconnection = $this->ldap_connect();
-
         if ($ldapconnection) {
             $ldap_user_dn = $this->ldap_find_userdn($ldapconnection, $extusername);
 
