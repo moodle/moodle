@@ -17,9 +17,10 @@ class enrol_authorize_form extends moodleform
         $mform =& $this->_form;
         $course = $this->_customdata['course'];
 
-        $mform->addElement('header', '', '&nbsp;&nbsp;' . get_string('paymentrequired'), '');
-        if ($othermethodstr = $this->other_method_available($paymentmethod)) {
-            $mform->addElement('static', '', '<div align="right">' . $othermethodstr . '&nbsp;&nbsp;</div>', '');
+        $mform->addElement('header', 'general', get_string('paymentrequired'));
+        $othermethodstr = $this->other_method_available($paymentmethod);
+        if ($othermethodstr) {
+            $mform->addElement('static', '', '<div align="right">' . $othermethodstr . '</div>', '');
         }
 
         $mform->addElement('hidden', 'id', $course->id);
@@ -28,11 +29,10 @@ class enrol_authorize_form extends moodleform
         $mform->addElement('hidden', 'paymentmethod', $paymentmethod);
         $mform->setType('paymentmethod', PARAM_ALPHA);
 
-        $firstlastnamestr = (AN_METHOD_CC == $paymentmethod) ?
-                             get_string('nameoncard', 'enrol_authorize') : get_string('echeckfirslasttname', 'enrol_authorize');
+        $firstlastnamestr = (AN_METHOD_CC == $paymentmethod) ? get_string('nameoncard', 'enrol_authorize') : get_string('echeckfirslasttname', 'enrol_authorize');
         $firstlastnamegrp = array();
-        $firstlastnamegrp[] = &MoodleQuickForm::createElement('text', 'firstname', '', 'size="8"');
-        $firstlastnamegrp[] = &MoodleQuickForm::createElement('text', 'lastname', '', 'size="8"');
+        $firstlastnamegrp[] = &$mform->createElement('text', 'firstname', '', 'size="16"');
+        $firstlastnamegrp[] = &$mform->createElement('text', 'lastname', '', 'size="16"');
         $mform->addGroup($firstlastnamegrp, 'firstlastgrp', $firstlastnamestr, '&nbsp;', false);
         $firstlastnamegrprules = array();
         $firstlastnamegrprules['firstname'][] = array(get_string('missingfirstname'), 'required', null, 'client');
@@ -45,31 +45,21 @@ class enrol_authorize_form extends moodleform
 
         if (AN_METHOD_CC == $paymentmethod)
         {
-            $mform->addElement('text', 'cc', get_string('ccno', 'enrol_authorize'), 'size="20"');
+            $mform->addElement('passwordunmask', 'cc', get_string('ccno', 'enrol_authorize'), 'size="20"');
             $mform->setType('cc', PARAM_ALPHANUM);
             $mform->setDefault('cc', '');
             $mform->addRule('cc', get_string('missingcc', 'enrol_authorize'), 'required', null, 'client');
             $mform->addRule('cc', get_string('ccinvalid', 'enrol_authorize'), 'numeric', null, 'client');
 
-            $creditcardsmenu = array('' => get_string('choose')) + get_list_of_creditcards();
-            $mform->addElement('select', 'cctype', get_string('cctype', 'enrol_authorize'), $creditcardsmenu);
-            $mform->setType('cctype', PARAM_ALPHA);
-            $mform->addRule('cctype', get_string('missingcctype', 'enrol_authorize'), 'required', null, 'client');
-            $mform->setDefault('cctype', '');
-
             $monthsmenu = array('' => get_string('choose'));
             for ($i = 1; $i <= 12; $i++) {
                 $monthsmenu[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), "%B");
             }
-            $yearsmenu = array('' => get_string('choose'));
             $nowdate = getdate();
-            $nowyear = $nowdate["year"] - 1;
-            for ($i = $nowyear; $i <= $nowyear + 11; $i++) {
-                $yearsmenu[$i] = $i;
-            }
+            $yearsmenu = array('' => get_string('choose')) + range($nowdate["year"] - 1, $nowdate["year"] + 15);
             $ccexpiregrp = array();
-            $ccexpiregrp[] = &MoodleQuickForm::createElement('select', 'ccexpiremm', '', $monthsmenu);
-            $ccexpiregrp[] = &MoodleQuickForm::createElement('select', 'ccexpireyyyy', '', $yearsmenu);
+            $ccexpiregrp[] = &$mform->createElement('select', 'ccexpiremm', '', $monthsmenu);
+            $ccexpiregrp[] = &$mform->createElement('select', 'ccexpireyyyy', '', $yearsmenu);
             $mform->addGroup($ccexpiregrp, 'ccexpiregrp', get_string('ccexpire', 'enrol_authorize'), '&nbsp;', false);
             $ccexpiregrprules = array();
             $ccexpiregrprules['ccexpiremm'][] = array(get_string('missingccexpire', 'enrol_authorize'), 'required', null, 'client');
@@ -79,7 +69,13 @@ class enrol_authorize_form extends moodleform
             $mform->setType('ccexpireyyyy', PARAM_INT);
             $mform->setDefault('ccexpiremm', '');
             $mform->setDefault('ccexpireyyyy', '');
-
+            
+            $creditcardsmenu = array('' => get_string('choose')) + get_list_of_creditcards();
+            $mform->addElement('select', 'cctype', get_string('cctype', 'enrol_authorize'), $creditcardsmenu);
+            $mform->setType('cctype', PARAM_ALPHA);
+            $mform->addRule('cctype', get_string('missingcctype', 'enrol_authorize'), 'required', null, 'client');
+            $mform->setDefault('cctype', '');
+            
             $mform->addElement('text', 'cvv', get_string('ccvv', 'enrol_authorize'), 'size="4"');
             $mform->setHelpButton('cvv', array('cvv',get_string('ccvv', 'enrol_authorize'),'enrol/authorize'), true);
             $mform->setType('cvv', PARAM_ALPHANUM);
@@ -89,11 +85,12 @@ class enrol_authorize_form extends moodleform
 
             if (!empty($CFG->an_authcode)) {
                 $ccauthgrp = array();
-                $ccauthgrp[] = &MoodleQuickForm::createElement('checkbox', 'haveauth', null, get_string('haveauthcode', 'enrol_authorize'));
-                $ccauthgrp[] = &MoodleQuickForm::createElement('static', 'nextline', null, '<br />');
-                $ccauthgrp[] = &MoodleQuickForm::createElement('text', 'ccauthcode', '', 'size="8"');
+                $ccauthgrp[] = &$mform->createElement('checkbox', 'haveauth', null, get_string('haveauthcode', 'enrol_authorize'));
+                $ccauthgrp[] = &$mform->createElement('static', 'nextline', null, '<br />');
+                $ccauthgrp[] = &$mform->createElement('text', 'ccauthcode', '', 'size="8"');
                 $mform->addGroup($ccauthgrp, 'ccauthgrp', get_string('authcode', 'enrol_authorize'), '&nbsp;', false);
                 $mform->setHelpButton('ccauthgrp', array('authcode',get_string('authcode', 'enrol_authorize'),'enrol/authorize'), true);
+                
                 $ccauthgrprules = array();
                 $ccauthgrprules['ccauthcode'][] = array(get_string('missingccauthcode', 'enrol_authorize'), 'numeric', null, 'client');
                 $mform->addGroupRule('ccauthgrp', $ccauthgrprules);
@@ -110,9 +107,9 @@ class enrol_authorize_form extends moodleform
                 $mform->addRule('ccaddress', get_string('missingaddress', 'enrol_authorize'), 'required', null, 'client');
 
                 $citystategrp = array();
-                $citystategrp[] = &MoodleQuickForm::createElement('text', 'cccity', '', 'size="14"');
-                $citystategrp[] = &MoodleQuickForm::createElement('static', 'sep', null, ' - ');
-                $citystategrp[] = &MoodleQuickForm::createElement('text', 'ccstate', '', 'size="8"');
+                $citystategrp[] = &$mform->createElement('text', 'cccity', '', 'size="14"');
+                $citystategrp[] = &$mform->createElement('static', 'sep', null, ' - ');
+                $citystategrp[] = &$mform->createElement('text', 'ccstate', '', 'size="8"');
                 $mform->addGroup($citystategrp, 'citystategrp', get_string('city') . ' - ' . get_string('state'), '&nbsp;', false);
                 $citystategrprules = array();
                 $citystategrprules['cccity'][] = array(get_string('missingcity'), 'required', null, 'client');
@@ -170,7 +167,6 @@ class enrol_authorize_form extends moodleform
         $mform->setType('cczip', PARAM_ALPHANUM);
         $mform->setDefault('cczip', '');
         $mform->addRule('cczip', get_string('missingzip', 'enrol_authorize'), 'required', null, 'client');
-        $mform->addRule('cczip', get_string('missingzip', 'enrol_authorize'), 'numeric', null, 'client');
 
         $this->add_action_buttons(false, get_string('sendpaymentbutton', 'enrol_authorize'));
     }
