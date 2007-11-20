@@ -511,10 +511,11 @@ class moodleform {
      *
      * @param array $data array of ("fieldname"=>value) of submitted data
      * @param array $files array of uploaded files "element_name"=>tmp_file_path
-     * @return bool array of errors or true if ok "element_name"=>"error_description"
+     * @return mixed an array of "element_name"=>"error_description" if there are errors.
+     *      true or an empty array if everything is OK.
      */
     function validation($data, $files) {
-        return true;
+        return array();
     }
 
     /**
