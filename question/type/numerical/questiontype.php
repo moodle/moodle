@@ -60,12 +60,16 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     }
 
     function get_numerical_units(&$question) {
-        if ($question->options->units = get_records('question_numerical_units',
+        if ($units = get_records('question_numerical_units',
                                          'question', $question->id, 'id ASC')) {
-            $question->options->units  = array_values($question->options->units);
+            $units  = array_values($question->options->units);
         } else {
-            $question->options->units = array();
+            $units = array();
         }
+        foreach ($units as $key => $unit) {
+            $units[$key]->multiplier = clean_param($unit->multiplier, PARAM_NUMBER);
+        }
+        $question->options->units = $units;
         return true;
     }
 
