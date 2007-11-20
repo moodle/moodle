@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -903,13 +903,13 @@ class resource_ims extends resource_base {
         $cm = $resource_obj->cm;
         $resource = $resource_obj->resource;
 
-        $strtoc = get_string('toc', 'resource');
+        $strtoc = get_string('tableofcontentsabbrev', 'resource');
 
         $contents = '';
 
         if (!empty($resource_obj->parameters->tableofcontents)) {  //The toc is enabled
             $page = 0;
-            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\">TOC</a></span>";
+            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\">{$strtoc}</a></span>";
         }
 
         return $contents;
