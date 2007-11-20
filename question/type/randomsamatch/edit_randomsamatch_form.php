@@ -47,9 +47,9 @@ class question_edit_randomsamatch_form extends question_edit_form {
         return 'randomsamatch';
     }
 
-    function validation($data){
+    function validation($data, $files){
         global $QTYPES;
-        $errors = parent::validation($data);
+        $errors = parent::validation($data, $files);
         $saquestions = $QTYPES['randomsamatch']->get_sa_candidates($data['category']);
         $numberavailable = count($saquestions);
         if ($saquestions === false){

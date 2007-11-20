@@ -73,10 +73,10 @@ class question_edit_multianswer_form extends question_edit_form {
         parent::set_data($question);
     }
 
-    function validation($data){
+    function validation($data, $files){
         //TODO would be nice to parse the question text here and output some error
         //messages if there is a problem with the text.
-        $errors = parent::validation($data);
+        $errors = parent::validation($data, $files);
         //extra check to make sure there is something in the htmlarea besides a <br />
         $questiontext= trim(strip_tags($data['questiontext']));
         if ($questiontext==''){
