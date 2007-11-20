@@ -130,12 +130,14 @@ function resource_get_content_for_index(&$notneeded) {
         $resources = get_records_sql($query);
         
         // invokes external content extractor if exists.
-        foreach($resources as $aResource){
-            // fetches a physical indexable document and adds it to documents passed by ref
-            $coursemodule = get_field('modules', 'id', 'name', 'resource');
-            $cm = get_record('course_modules', 'id', $aResource->id);
-            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-            resource_get_physical_file($aResource, $context->id, false, $documents);
+        if ($resources){
+            foreach($resources as $aResource){
+                // fetches a physical indexable document and adds it to documents passed by ref
+                $coursemodule = get_field('modules', 'id', 'name', 'resource');
+                $cm = get_record('course_modules', 'id', $aResource->id);
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                resource_get_physical_file($aResource, $context->id, false, $documents);
+            }
         }
     }
     return $documents;

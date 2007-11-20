@@ -79,26 +79,29 @@ function techproject_get_content_for_index(&$techproject) {
     $cm = get_record('course_modules', 'course', $techproject->course, 'module', $coursemodule, 'instance', $techproject->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    $entries = array_merge($requirements, $specifications, $milestones, $deliverables);
-    foreach($entries as $anEntry) {
-        if ($anEntry) {
-            if (strlen($anEntry->description) > 0) {
-                $documents[] = new TechprojectEntrySearchDocument(get_object_vars($anEntry), $techproject->course, $context->id);
+    $entries = @array_merge($requirements, $specifications, $milestones, $deliverables);
+    if ($entries){
+        foreach($entries as $anEntry) {
+            if ($anEntry) {
+                if (strlen($anEntry->description) > 0) {
+                    $documents[] = new TechprojectEntrySearchDocument(get_object_vars($anEntry), $techproject->course, $context->id);
+                } 
             } 
         } 
-    } 
-
-    foreach($tasks as $aTask) {
-        if ($aTask) {
-            if (strlen($aTask->description) > 0) {
-                if ($aTask->assignee){
-                    $user = get_record('user', 'id', $aTask->assignee);
-                    $aTask->author = $user->firstname.' '.$user->lastname;
-                }
-                $documents[] = new TechprojectEntrySearchDocument(get_object_vars($aTask), $techproject->course, $context->id);
+    }
+    if ($tasks){
+        foreach($tasks as $aTask) {
+            if ($aTask) {
+                if (strlen($aTask->description) > 0) {
+                    if ($aTask->assignee){
+                        $user = get_record('user', 'id', $aTask->assignee);
+                        $aTask->author = $user->firstname.' '.$user->lastname;
+                    }
+                    $documents[] = new TechprojectEntrySearchDocument(get_object_vars($aTask), $techproject->course, $context->id);
+                } 
             } 
         } 
-    } 
+    }
     return $documents;
 } //techproject_get_content_for_index
 
