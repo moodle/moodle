@@ -45,7 +45,7 @@ class enrol_authorize_form extends moodleform
 
         if (AN_METHOD_CC == $paymentmethod)
         {
-            $mform->addElement('passwordunmask', 'cc', get_string('ccno', 'enrol_authorize'), 'size="20"');
+            $mform->addElement('passwordreveal', 'cc', get_string('ccno', 'enrol_authorize'), 'size="20"');
             $mform->setType('cc', PARAM_ALPHANUM);
             $mform->setDefault('cc', '');
             $mform->addRule('cc', get_string('missingcc', 'enrol_authorize'), 'required', null, 'client');
