@@ -27,6 +27,7 @@ function get_module_from_cmid($cmid){
     }
     $modrec->instance = $modrec->id;
     $modrec->cmid = $cmrec->id;
+    $cmrec->name = $modrec->name;
 
     return array($modrec, $cmrec);
 }
