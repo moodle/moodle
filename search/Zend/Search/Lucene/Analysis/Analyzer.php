@@ -97,10 +97,9 @@ abstract class Zend_Search_Lucene_Analysis_Analyzer
      * @param string $data
      * @return array
      */
-    public function tokenize($data, $encoding = '')
+    public function tokenize($data, $encoding = 'UTF-8')
     {
         $this->setInput($data, $encoding);
-
         $tokenList = array();
         while (($nextToken = $this->nextToken()) !== null) {
             $tokenList[] = $nextToken;
@@ -161,7 +160,7 @@ abstract class Zend_Search_Lucene_Analysis_Analyzer
     public static function getDefault()
     {
         if (!self::$_defaultImpl instanceof Zend_Search_Lucene_Analysis_Analyzer) {
-            self::$_defaultImpl = new Zend_Search_Lucene_Analysis_Analyzer_Common_Text_CaseInsensitive();
+            self::$_defaultImpl = new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8();
         }
 
         return self::$_defaultImpl;

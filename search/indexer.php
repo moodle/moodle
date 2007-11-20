@@ -64,7 +64,7 @@ require_once("$CFG->dirroot/search/indexlib.php");
 mtrace('<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8" /></head><body>');
 mtrace('<pre>Server Time: '.date('r',time())."\n");
 
-if ($CFG->search_indexer_busy == '1') {
+if (isset($CFG->search_indexer_busy) && $CFG->search_indexer_busy == '1') {
     //means indexing was not finished previously
     mtrace("Warning: Indexing was not successfully completed last time, restarting.\n");
 }

@@ -40,7 +40,7 @@ $startindextime = time();
 
 $indexdate = $CFG->search_indexer_run_date;
 
-mtrace('<pre>Starting index update (additions)...');
+mtrace('Starting index update (additions)...');
 mtrace('Index size before: '.$CFG->search_index_size."\n");
 
 //get all modules
@@ -139,6 +139,6 @@ set_config("search_index_size", (int)$CFG->search_index_size + (int)$addition_co
 
 // print some additional info
 mtrace("Added $addition_count documents.");
-mtrace('Index size after: '.$index->count().'</pre>');
+mtrace('Index size after: '.$index->count());
 
 ?>

@@ -38,7 +38,7 @@ $dbcontrol = new IndexDBControl();
 $deletion_count = 0;
 $startcleantime = time();
 
-mtrace('<pre>Starting clean-up of removed records...');
+mtrace('Starting clean-up of removed records...');
 mtrace('Index size before: '.$CFG->search_index_size."\n");
 
 if ($mods = get_records_select('modules')) {
@@ -127,6 +127,6 @@ set_config("search_indexer_cleanup_date", $startcleantime);
 set_config("search_index_size", (int)$CFG->search_index_size - (int)$deletion_count);
 
 mtrace("Finished $deletion_count removals.");
-mtrace('Index size after: '.$index->count().'</pre>');
+mtrace('Index size after: '.$index->count());
 
 ?>

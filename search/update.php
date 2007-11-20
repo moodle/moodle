@@ -39,7 +39,7 @@ $update_count = 0;
 $indexdate = $CFG->search_indexer_update_date;
 $startupdatedate = time();
 
-mtrace("<pre>Starting index update (updates)...\n");
+mtrace("Starting index update (updates)...\n");
 
 if ($mods = get_records_select('modules')) {
     $mods = array_merge($mods, search_get_additional_modules());
@@ -138,6 +138,6 @@ $index->commit();
 //update index date
 set_config("search_indexer_update_date", $startupdatedate);
 
-mtrace("Finished $update_count updates.</pre>");
+mtrace("Finished $update_count updates");
 
 ?>

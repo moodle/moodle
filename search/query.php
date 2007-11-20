@@ -132,11 +132,14 @@ if (!$site = get_site()) {
     redirect("index.php");
 } 
 
-$strsearch = get_string('search', 'search'); 
+$strsearch = get_string('search', 'search');
 $strquery  = get_string('enteryoursearchquery', 'search');
 
-print_header("$site->shortname: $strsearch: $strquery", "$site->fullname",
-               "<a href=\"index.php\">$strsearch</a> -> $strquery");
+$navlinks[] = array('name' => $strsearch, 'link' => "index.php", 'type' => 'misc');
+$navlinks[] = array('name' => $strquery, 'link' => null, 'type' => 'misc');
+$navigation = build_navigation($navlinks);
+$course = get_site();
+print_header("$strsearch", "$strsearch" , $navigation, "", "", true, "&nbsp;", navmenu($course));
 
 //keep things pretty, even if php5 isn't available
 if (!$check) {
@@ -154,7 +157,9 @@ $vars = get_object_vars($adv);
 
 if (isset($vars)) {
     foreach ($vars as $key => $value) {
-        $adv->$key = stripslashes(htmlentities($value));
+        // htmlentities breaks non-ascii chars
+        $adv->key = stripslashes($value);
+        //$adv->$key = stripslashes(htmlentities($value));
     } 
 }
 ?>
@@ -305,11 +310,15 @@ if ($sq->is_valid()) {
         $scorestr = get_string('score', 'search');
         $authorstr = get_string('author', 'search');
         foreach ($hits as $listing) {
-            if ($CFG->unicodedb) $listing->title = mb_convert_encoding($listing->title, 'auto', 'UTF8');
+            //if ($CFG->unicodedb) {
+            //$listing->title = mb_convert_encoding($listing->title, 'auto', 'UTF8');
+            //}
             $title_post_processing_function = $listing->doctype.'_link_post_processing';
             require_once "{$CFG->dirroot}/search/documents/{$listing->doctype}_document.php";
-            if (function_exists($title_post_processing_function))
+            if (function_exists($title_post_processing_function)) {
                 $listing->title = $title_post_processing_function($listing->title);
+            }
+
             print "<li value='".($listing->number+1)."'><a href='".str_replace('DEFAULT_POPUP_SETTINGS', DEFAULT_POPUP_SETTINGS ,$listing->url)."'>$listing->title</a><br />\n"
                ."<em>".search_shorten_url($listing->url, 70)."</em><br />\n"
                ."{$typestr}: ".$listing->doctype.", {$scorestr}: ".round($listing->score, 3).", {$authorstr}: ".$listing->author."\n"
