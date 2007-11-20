@@ -80,7 +80,7 @@ class IndexInfo {
         }
         
         //check if the busy flag is set
-        if ($CFG->search_indexer_busy == '1') {
+        if (isset($CFG->search_indexer_busy) && $CFG->search_indexer_busy == '1') {
             $this->complete = false;
         } 
         else {

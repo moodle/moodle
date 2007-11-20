@@ -11,15 +11,15 @@ try{
     $maxmemoryamount = ini_get('memory_limit');
     ini_set('memory_limit', '48M');
 
-    mtrace("<pre>Starting cron...\n");
-    mtrace("--DELETE----");
+    mtrace("\n--DELETE----");
     require_once("$CFG->dirroot/search/delete.php");
     mtrace("--UPDATE----");
     require_once("$CFG->dirroot/search/update.php");
     mtrace("--ADD-------");
     require_once("$CFG->dirroot/search/add.php");
     mtrace("------------");
-    mtrace("cron finished.</pre>");
+    //mtrace("cron finished.</pre>");
+    mtrace('done');
 
     // set back normal values for php limits
     ini_set('max_execution_time', $maxtimelimit);
