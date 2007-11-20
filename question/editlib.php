@@ -268,7 +268,7 @@ function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
     echo '<form method="post" action="edit.php">';
     echo '<fieldset class="invisiblefieldset" style="display: block;">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-    echo $pageurl->hidden_params_out(array('qsortorder'));
+    echo $pageurl->hidden_params_out();
     echo '<table id="categoryquestions" style="width: 100%"><tr>';
     echo "<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
 
