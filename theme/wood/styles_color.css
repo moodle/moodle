@@ -204,6 +204,7 @@ table.files th,
 legend,
 #mod-assignment-submissions table.submissions th,
 #mod-assignment-submissions .feedback tr,
+.que .feedback,
 #footer-bar {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
@@ -244,7 +245,9 @@ legend,
 .generaltable,
 .forumheaderlist,
 .forumpost,
-#course-user .section, 
+.que,
+.que .answer,
+#course-user .section,
 #site-index .sitetopic .sitetopiccontent,
 #calendar .maincalendar .filters table,
 #calendar .sidecalendar,
