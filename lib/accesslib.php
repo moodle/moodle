@@ -593,10 +593,13 @@ function has_capability_in_accessdata($capability, $context, $accessdata, $doany
         $ignoreguest = $accessdata['dr'];
     }
 
+    // Coerce it to an int
+    $CAP_PROHIBIT = (int)CAP_PROHIBIT;
 
     $cc = count($contexts);
 
     $can = 0;
+    $capdepth = 0;
 
     //
     // role-switches loop
@@ -616,18 +619,19 @@ function has_capability_in_accessdata($capability, $context, $accessdata, $doany
                 // check for that role _plus_ the default user role
                 $ras = array($accessdata['rsw'][$ctxp],$CFG->defaultuserroleid);
                 for ($rn=0;$rn<2;$rn++) {
-                    $roleid = $ras[$rn];
+                    $roleid = (int)$ras[$rn];
                     // Walk the path for capabilities
                     // from the bottom up...
                     for ($m=$cc-1;$m>=0;$m--) {
                         $capctxp = $contexts[$m];
                         if (isset($accessdata['rdef']["{$capctxp}:$roleid"][$capability])) {
-                            $perm = $accessdata['rdef']["{$capctxp}:$roleid"][$capability];
+                            $perm = (int)$accessdata['rdef']["{$capctxp}:$roleid"][$capability];
+
                             // The most local permission (first to set) wins
                             // the only exception is CAP_PROHIBIT
                             if ($can === 0) {
                                 $can = $perm;
-                            } elseif ($perm == CAP_PROHIBIT) {
+                            } elseif ($perm === $CAP_PROHIBIT) {
                                 $can = $perm;
                                 break;
                             }
@@ -662,11 +666,14 @@ function has_capability_in_accessdata($capability, $context, $accessdata, $doany
         if (isset($accessdata['ra'][$ctxp])) {
             // Found role assignments on this leaf
             $ras = $accessdata['ra'][$ctxp];
-            $rc  = count($ras);
-            $ctxcan = 0;
+
+            $rc          = count($ras);
+            $ctxcan      = 0;
+            $ctxcapdepth = 0;
             for ($rn=0;$rn<$rc;$rn++) {
-                $roleid  = $ras[$rn];
+                $roleid  = (int)$ras[$rn];
                 $rolecan = 0;
+                $rolecapdepth = 0;
                 // Walk the path for capabilities
                 // from the bottom up...
                 for ($m=$cc-1;$m>=0;$m--) {
@@ -681,29 +688,48 @@ function has_capability_in_accessdata($capability, $context, $accessdata, $doany
                             continue;
                     }
                     if (isset($accessdata['rdef']["{$capctxp}:$roleid"][$capability])) {
-                        $perm = $accessdata['rdef']["{$capctxp}:$roleid"][$capability];
+                        $perm = (int)$accessdata['rdef']["{$capctxp}:$roleid"][$capability];
                         // The most local permission (first to set) wins
                         // the only exception is CAP_PROHIBIT
                         if ($rolecan === 0) {
-                            $rolecan = $perm;
-                        } elseif ($perm == CAP_PROHIBIT) {
-                            $rolecan = $perm;
+                            $rolecan      = $perm;
+                            $rolecapdepth = $m;
+                        } elseif ($perm === $CAP_PROHIBIT) {
+                            $rolecan      = $perm;
+                            $rolecapdepth = $m;
                             break;
                         }
                     }
                 }
-                // Permissions at the same
-                // ctxlevel are added together
-                $ctxcan += $rolecan;
+                // Rules for RAs at the same context...
+                // - prohibits always wins
+                // - permissions at the same ctxlevel & capdepth are added together
+                // - deeper capdepth wins
+                if ($ctxcan === $CAP_PROHIBIT || $rolecan === $CAP_PROHIBIT) {
+                    $ctxcan      = $CAP_PROHIBIT;
+                    $ctxcapdepth = 0;
+                } elseif ($ctxcapdepth === $rolecapdepth) {
+                    $ctxcan += $rolecan;
+                } elseif ($ctxcapdepth < $rolecapdepth) {
+                    $ctxcan      = $rolecan;
+                    $ctxcapdepth = $rolecapdepth;
+                } else { // ctxcaptdepth is deeper
+                    // rolecap ignored
+                }
             }
             // The most local RAs with a defined
             // permission ($ctxcan) win, except
             // for CAP_PROHIBIT
-            if ($can === 0) {
-                $can = $ctxcan;
-            } elseif ($ctxcan == CAP_PROHIBIT) {
+            // NOTE: If we want the deepest RDEF to
+            // win regardless of the depth of the RA,
+            // change the elseif below to read
+            // ($can === 0 || $capdepth < $ctxcapdepth) {
+            if ($ctxcan === $CAP_PROHIBIT) {
                 $can = $ctxcan;
                 break;
+            } elseif ($can === 0) { // see note above
+                $can      = $ctxcan;
+                $capdepth = $ctxcapdepth;
             }
         }
     }
