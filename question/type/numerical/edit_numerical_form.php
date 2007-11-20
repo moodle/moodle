@@ -62,7 +62,7 @@ class question_edit_numerical_form extends question_edit_form {
         $mform->setType('unit', PARAM_NOTAGS);
 
         $repeated[] =& $mform->createElement('text', 'multiplier', get_string('multiplier', 'quiz'));
-        $mform->setType('multiplier', PARAM_NOTAGS);
+        $mform->setType('multiplier', PARAM_NUMBER);
 
         if (isset($this->question->options)){
             $countunits = count($this->question->options->units);
