@@ -28,6 +28,10 @@
         require_login();
     }
 
+    if (!(course_parent_visible($course) || $course->visible) && !has_capability('moodle/course:viewhiddencourses', $context)) {
+        error(get_string('coursehidden'), $CFG->wwwroot .'/'); 
+    }  
+    
     print_header(get_string("summaryof", "", $course->fullname));
 
     print_heading(format_string($course->fullname) . '<br />(' . format_string($course->shortname) . ')');
