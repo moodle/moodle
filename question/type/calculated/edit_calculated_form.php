@@ -171,8 +171,8 @@ class question_edit_calculated_form extends question_edit_form {
         return 'calculated';
     }
 
-    function validation($data){
-        $errors = parent::validation($data);
+    function validation($data, $files){
+        $errors = parent::validation($data, $files);
         //verifying for errors in {=...} in question text;
         $qtext = "";
         $qtextremaining = $data['questiontext'] ;

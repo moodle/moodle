@@ -66,8 +66,8 @@ class question_edit_missingtype_form extends question_edit_form {
         return 'missingtype';
     }
 
-    function validation($data){
-        $errors = parent::validation($data);
+    function validation($data, $files){
+        $errors = parent::validation($data, $files);
         $answers = $data['answer'];
         $answercount = 0;
 
