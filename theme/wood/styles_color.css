@@ -195,6 +195,7 @@ table.files th,
 #admin-index table.environmenttable th.header,
 .tabrow0 ul,
 legend,
+.que .feedback,
 #footer-bar {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
@@ -234,6 +235,8 @@ legend,
 .entrybox,
 .userinfobox,
 .generaltable,
+.que,
+.que .answer,
 #course-user .section, 
 #site-index .sitetopic .sitetopiccontent,
 #calendar .maincalendar .filters table,
