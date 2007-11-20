@@ -285,8 +285,17 @@ class default_questiontype {
                 error('Could not update question!');
             }
         } else {         // Question is a new one
+            if (isset($form->categorymoveto)){
+                // Doing save as new question, and we have move rights.
+                list($question->category, $notused) = explode(',', $form->categorymoveto);
+                //don't need to test add permission of category we are moving question to.
+                //Only categories that we have permission to add
+                //a question to will get through the form cleaning code for the select box.
+            } else {
+                // Really a new question.
+                list($question->category, $notused) = explode(',', $form->category);
+            }
             // Set the unique code
-            list($question->category,$notused) = explode(',', $form->category);
             $question->stamp = make_unique_id_code();
             $question->createdby = $USER->id;
             $question->modifiedby = $USER->id;
