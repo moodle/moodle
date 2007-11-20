@@ -138,8 +138,8 @@ $strquery  = get_string('enteryoursearchquery', 'search');
 $navlinks[] = array('name' => $strsearch, 'link' => "index.php", 'type' => 'misc');
 $navlinks[] = array('name' => $strquery, 'link' => null, 'type' => 'misc');
 $navigation = build_navigation($navlinks);
-$course = get_site();
-print_header("$strsearch", "$strsearch" , $navigation, "", "", true, "&nbsp;", navmenu($course));
+$site = get_site();
+print_header("$strsearch", "$site->fullname" , $navigation, "", "", true, "&nbsp;", navmenu($site));
 
 //keep things pretty, even if php5 isn't available
 if (!$check) {

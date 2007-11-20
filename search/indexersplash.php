@@ -34,6 +34,16 @@ require_once("$CFG->dirroot/search/indexlib.php");
 $indexinfo = new IndexInfo();
 
 if ($indexinfo->valid()) {
+    $strsearch = get_string('search', 'search');
+    $strquery  = get_string('stats');
+    
+    $navlinks[] = array('name' => $strsearch, 'link' => "index.php", 'type' => 'misc');
+    $navlinks[] = array('name' => $strquery, 'link' => "stats.php", 'type' => 'misc');
+    $navlinks[] = array('name' => get_string('runindexer','search'), 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+    $site = get_site();
+    print_header("$strsearch", "$site->fullname" , $navigation, "", "", true, "&nbsp;", navmenu($site));
+ 
     mtrace("<pre>The data directory ($indexinfo->path) contains $indexinfo->filecount files, and\n"
           ."there are ".$indexinfo->dbcount." records in the <em>block_search_documents</em> table.\n"
           ."\n"
@@ -48,6 +58,7 @@ if ($indexinfo->valid()) {
           ."<a href='tests/index.php'>Test indexing</a> or "
           ."<a href='indexer.php?areyousure=yes'>Continue indexing</a> or <a href='index.php'>Back to query page</a>."
           ."</pre>");
+    print_footer();
 } 
 else {
     header('Location: indexer.php?areyousure=yes');
