@@ -2916,9 +2916,9 @@ function hpIsStrict() {
 // **************
 //  initialization
 // **************
-//hpInterceptFeedback();
-//hpInterceptHints();
-//hpInterceptClues();
+hpInterceptFeedback();
+hpInterceptHints();
+hpInterceptClues();
 hpInterceptChecks();
 function hpFindForm(formname, w) {
 	if (w==null) w = self;
