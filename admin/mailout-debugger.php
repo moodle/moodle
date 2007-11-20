@@ -8,8 +8,8 @@
    * It is not Moodle specific - use it anywhere by setting the php
    * "sendmail_path" setting to this file with a logfile parameter.
    *
-   * - Set in config.php:
-   *     set_ini('sendmail_path', $CFG->dirroot.'/admin/mailout-debugger.php');
+   * - Set in php.ini (not settable in config.php):
+   *     sendmail_path=/path-to-moodle/admin/mailout-debugger.php');
    *   Or from the commandline
    *     php -d sendmail_path='/path-to-moodle/admin/mailout-debugger.php' /path/to/cron.php
    *
@@ -22,16 +22,17 @@
    * - Run your admin/cron.php
    *
    * - Read /tmp/moodle-mailout.log
+   *   
    *
    * This script will create logfiles in /tmp/ or in $TMPDIR if set.
-   *
+   * On windows, use php -r 'print sys_get_temp_dir()' to see where the file is saved.
    */
 
 // Security check.
 if (!file_exists(dirname(__FILE__).'/mailout-debugger.enable')) {
     mdie("Disabled.");
 }
-$tmpdir='/tmp'; // default
+$tmpdir=sys_get_temp_dir(); // default
 
 if (isset($_SERVER['REMOTE_ADDR'])) {
     mdie("should not be called from web server!");
