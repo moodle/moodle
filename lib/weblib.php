@@ -2348,11 +2348,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     $meta = $meta."\n".$metapage;
 
-
-/// Add the required JavaScript Libraries for AJAX
-//    if (!empty($CFG->enableajax)) {  // This is the way all JS should be included, so get rid of the test.
-        $meta .= "\n".require_js();
-//    }
+    $meta .= "\n".require_js('',1);
 
 /// Set up some navigation variables
 
@@ -2524,12 +2520,125 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $output .= message_popup_window();
     }
 
+    // Add in any extra JavaScript libraries that occurred during the header
+    $output .= require_js('', 2);
+
     if ($return) {
         return $output;
     } else {
         echo $output;
     }
 }
+
+define('REQUIREJS_BEFOREHEADER',0);
+define('REQUIREJS_INHEADER',1);
+define('REQUIREJS_AFTERHEADER',2);
+
+/**
+ * Used to include JavaScript libraries.
+ *
+ * When the $lib parameter is given, the function will ensure that the
+ * named library is loaded onto the page - either in the HTML <head>,
+ * just after the header, or at an arbitrary later point in the page,
+ * depending on where this function is called.
+ *
+ * Libraries will not be included more than once, so this works like
+ * require_once in PHP.
+ *
+ * There are two special-case calls to this function which are both used only
+ * by weblib print_header:
+ * $extracthtml = 1: this is used before printing the header.
+ *    It returns the script tag code that should go inside the <head>.
+ * $extracthtml = 2: this is used after printing the header and handles any
+ *    require_js calls that occurred within the header itself.
+ *
+ * @param mixed $lib - string or array of strings
+ *                     string(s) should be the shortname for the library or the
+ *                     full path to the library file.
+ * @param int $extracthtml Do not set this parameter usually (leave 0), only
+ *                     weblib should set this to 1 or 2 in print_header function.
+ * @return mixed No return value, except when using $extracthtml it returns the html code.
+ */
+function require_js($lib,$extracthtml=0) {
+    global $CFG;
+    static $loadlibs = array();
+
+    static $state = REQUIREJS_BEFOREHEADER;
+    static $latecode = '';
+
+    if (!empty($lib)) {
+        // Add the lib to the list of libs to be loaded, if it isn't already
+        // in the list.
+        if (is_array($lib)) {
+            foreach($lib as $singlelib) {
+                require_js($singlelib);
+            }
+        } else {
+            $libpath = ajax_get_lib($lib);
+            if (array_search($libpath, $loadlibs) === false) {
+                $loadlibs[] = $libpath;
+
+                // For state other than 0 we need to take action as well as just
+                // adding it to loadlibs
+                if($state != REQUIREJS_BEFOREHEADER) {
+                    // Get the script statement for this library
+                    $scriptstatement=get_require_js_code(array($libpath));
+
+                    if($state == REQUIREJS_AFTERHEADER) {
+                        // After the header, print it immediately
+                        print $scriptstatement;
+                    } else {
+                        // Haven't finished the header yet. Add it after the
+                        // header
+                        $latecode .= $scriptstatement;
+                    }
+                }
+            }
+        }
+    } else if($extracthtml==1) {
+        if($state !== REQUIREJS_BEFOREHEADER) {
+            debugging('Incorrect state in require_js (expected BEFOREHEADER): be careful not to call with empty $lib (except in print_header)');
+        } else {
+            $state = REQUIREJS_INHEADER;
+        }
+
+        return get_require_js_code($loadlibs);
+    } else if($extracthtml==2) {
+        if($state !== REQUIREJS_INHEADER) {
+            debugging('Incorrect state in require_js (expected INHEADER): be careful not to call with empty $lib (except in print_header)');
+            return '';
+        } else {
+            $state = REQUIREJS_AFTERHEADER;
+            return $latecode;
+        }
+    } else {
+        debugging('Unexpected value for $extracthtml');
+    }
+}
+
+/**
+ * Should not be called directly - use require_js. This function obtains the code
+ * (script tags) needed to include JavaScript libraries.
+ * @param array $loadlibs Array of library files to include
+ * @return string HTML code to include them
+ */
+function get_require_js_code($loadlibs) {
+    global $CFG;
+    // Return the html needed to load the JavaScript files defined in
+    // our list of libs to be loaded.
+    $output = '';
+    foreach ($loadlibs as $loadlib) {
+        $output .= '<script type="text/javascript" ';
+        $output .= " src=\"$loadlib\"></script>\n";
+        if ($loadlib == $CFG->wwwroot.'/lib/yui/logger/logger-min.js') {
+            // Special case, we need the CSS too.
+            $output .= '<link type="text/css" rel="stylesheet" ';
+            $output .= " href=\"{$CFG->wwwroot}/lib/yui/logger/assets/logger.css\" />\n";
+        }
+    }
+    return $output;
+}
+
 
 /**
  * Debugging aid: serve page as 'application/xhtml+xml' where possible,
