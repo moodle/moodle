@@ -117,6 +117,7 @@ $string['serverurl'] = 'Server URL ($a->wwwroot)';
 $string['showcourseblocks'] = 'Show the course blocks';
 $string['skipsubmenus'] = 'Skip sub-menu pages';
 $string['tableofcontents'] = 'Table of contents';
+$string['tableofcontentsabbrev'] = 'TOC';
 $string['upbutton'] = 'Up';
 $string['variablename'] = 'Variable name';
 $string['viewims'] = 'View IMS Content Package';
