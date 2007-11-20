@@ -100,8 +100,8 @@ if (!$dbcontrol->checkDB()) {
 }
 */
 // New regeneration
-mtrace("Deleting old index entries.");
-delete_records('search_documents');
+mtrace('Deleting old index entries.');
+delete_records(SEARCH_DATABASE_TABLE);
 
 //begin timer
 search_stopwatch();
@@ -192,12 +192,12 @@ mtrace(".<br/><a href='index.php'>Back to query page</a>.");
 mtrace('</pre>');
 
 //finished, turn busy flag off
-set_config("search_indexer_busy", "0");
+set_config('search_indexer_busy', '0');
 
 //mark the time we last updated
-set_config("search_indexer_run_date", time());
+set_config('search_indexer_run_date', time());
 
 //and the index size
-set_config("search_index_size", (int)$index->count());
+set_config('search_index_size', (int)$index->count());
 
 ?>
