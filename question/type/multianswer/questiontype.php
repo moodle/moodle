@@ -74,6 +74,24 @@ class embedded_cloze_qtype extends default_questiontype {
             // if we still have some old wrapped question ids, reuse the next of them
             if ($oldwrappedid = array_shift($oldwrappedids)) {
                 $wrapped->id = $oldwrappedid;
+                //
+                $oldqtype = get_field('question', 'qtype', 'id',$oldwrappedid) ;
+                if($oldqtype != $wrapped->qtype ) {
+                    echo "<p>oldqtype $oldqtype newqtype".$wrapped->qtype."</p>";
+                    switch ($oldqtype) {
+                        case 'multichoice':
+                             delete_records('question_multichoice', 'question', $oldwrappedid);
+                            break;
+                        case 'shortanswer':
+                             delete_records('question_shortanswer', 'question', $oldwrappedid);
+                            break;
+                        case 'numerical':
+                             delete_records('question_numerical', 'question', $oldwrappedid);
+                            break;
+                        default:
+                            error("questiontype $wrapped->qtype not recognized");
+                    }
+                }
             }
             $wrapped->name = $question->name;
             $wrapped->parent = $question->id;
@@ -85,8 +103,9 @@ class embedded_cloze_qtype extends default_questiontype {
 
         // Delete redundant wrapped questions
         if(is_array($oldwrappedids) && count($oldwrappedids)){ 
-            $oldwrappedids = implode(',', $oldwrappedids);
-            delete_records_select('question', "id IN ($oldwrappedids)");
+            foreach ($oldwrappedids as $id) {
+                delete_question($id) ;
+            }
         }
 
         if (!empty($sequence)) {
