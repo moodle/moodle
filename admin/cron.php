@@ -521,7 +521,7 @@
     $difftime = microtime_diff($starttime, microtime());
     mtrace("Execution took ".$difftime." seconds"); 
 
-/// finishe the IE hack
+/// finish the IE hack
     if (check_browser_version('MSIE')) {
         echo "</xmp>";
     }
