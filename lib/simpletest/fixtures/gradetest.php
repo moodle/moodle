@@ -38,6 +38,22 @@ require_once($CFG->libdir . '/gradelib.php');
 require_once($CFG->libdir . '/dmllib.php');
 require_once($CFG->libdir . '/ddllib.php');
 
+Mock::generate('grade_item', 'mock_grade_item');
+Mock::generate('grade_scale', 'mock_grade_scale');
+Mock::generate('grade_category', 'mock_grade_category');
+Mock::generate('grade_grade', 'mock_grade_grade');
+Mock::generate('grade_outcome', 'mock_grade_outcome');
+Mock::generate('grade_lib_wrapper', 'mock_lib_wrapper');
+Mock::generate('ADODB_' . $CFG->dbtype, 'mock_db');
+Mock::generate('ADORecordSet_' . $CFG->dbtype, 'mock_rs');
+
+// Prepare partial mocks for the static grade object instances
+Mock::generatePartial('grade_category', 'mock_grade_category_partial', array('fetch', 'fetch_all'));
+Mock::generatePartial('grade_item', 'mock_grade_item_partial', array('fetch', 'fetch_all'));
+Mock::generatePartial('grade_grade', 'mock_grade_grade_partial', array('fetch', 'fetch_all'));
+Mock::generatePartial('grade_outcome', 'mock_grade_outcome_partial', array('fetch', 'fetch_all'));
+Mock::generatePartial('grade_scale', 'mock_grade_scale_partial', array('fetch', 'fetch_all'));
+
 /**
  * Here is a brief explanation of the test data set up in these unit tests.
  * category1 => array(category2 => array(grade_item1, grade_item2), category3 => array(grade_item3))
