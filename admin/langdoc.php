@@ -33,6 +33,9 @@
 
     admin_externalpage_print_header();
 
+    notify('NOTICE: This interface is obsolete now and will be removed. You should use 
+        improved <a href="lang.php?mode=helpfiles">lang.php</a> interface.');
+
     $currentlang = current_language();
     $langdir = "$CFG->dataroot/lang/$currentlang";
     $enlangdir = "$CFG->dirroot/lang/en_utf8";
