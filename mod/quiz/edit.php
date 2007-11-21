@@ -99,14 +99,10 @@
     $streditingquestions = get_string('editquestions', "quiz");
     $streditingquiz = get_string('editinga', 'moodle', $strquiz);
 
-
-
-
     // Get the course object and related bits.
     if (! $course = get_record("course", "id", $quiz->course)) {
         error("This course doesn't exist");
     }
-
 
     // Log this visit.
     add_to_log($cm->course, 'quiz', 'editquestions',
@@ -247,7 +243,7 @@
                 $key = $matches[1];
                 $quiz->grades[$key] = $value;
                 quiz_update_question_instance($quiz->grades[$key], $key, $quiz->instance);
-            } elseif (preg_match('!^q([0-9]+)$!', $key, $matches)) {   // Parse input for ordering info
+            } elseif (preg_match('!^o([0-9]+)$!', $key, $matches)) {   // Parse input for ordering info
                 $key = $matches[1];
                 $questions[$value] = $oldquestions[$key];
             }
