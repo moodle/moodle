@@ -3388,34 +3388,35 @@ body#question-preview .quemodname, body#question-preview .controls {
 }
 
 .smalltext {
-  font-size:0.6em;
+  font-size: 0.75em;
 }
 
-.smalltextcell,
-.screenreadertext {
-  width:10%;
-  text-align:center;
+#surveyform th {
+  font-weight: normal;
+  text-align: left;
+}
+#surveyform th.hresponse {
+  text-align: center;
+  width: 9%;
+}
+
+.rblock label {
+  display: block;
+  text-align: center;
 }
 
 .foundthat,
 .preferthat {
-  width:10%;
   white-space: nowrap;
 }
 
-.qnumtopcell {
-  width:10px;
-  vertical-align:top;
-}
-
 .qnummiddlecell {
-  width:10px;
   vertical-align:middle;
 }
 
 .optioncell {
-  width:40%;
-  vertical-align:middle;
+  width: 50%;
+  vertical-align: top;
 }
 
 .buttoncell {
