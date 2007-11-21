@@ -193,6 +193,7 @@ $string['question'] = 'Question';
 $string['questions'] = 'Questions';
 $string['questionsnotanswered'] = 'Some of the multiple choice questions have not been answered.';
 $string['report'] = 'Survey report';
+$string['responses'] = 'Responses';
 $string['savednotes'] = 'Your notes were saved';
 $string['scaleagree5'] = 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree';
 $string['scales'] = 'Scales';
