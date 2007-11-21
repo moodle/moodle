@@ -16,11 +16,11 @@
     if (! $course = get_record("course", "id", $id)) {
         error("Course id is incorrect.");
     }
-    
+
     if (! $user = get_record("user", "id", $user)) {
         error("User ID is incorrect");
     }
-    
+
     //require_login($course);
     $COURSE = clone($course);
 
