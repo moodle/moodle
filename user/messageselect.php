@@ -17,12 +17,7 @@
     }
 
     require_login();
-    require_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_COURSE, $id));
-    
-    // fix for MDL-10112
-    if (empty($CFG->messaging)) {
-        error("Messaging is disabled on this site");  
-    }
+    require_capability('moodle/course:bulkmessaging', get_context_instance(CONTEXT_COURSE, $id));
 
     if (empty($SESSION->emailto)) {
         $SESSION->emailto = array();
@@ -67,6 +62,10 @@
 
     print_header($strtitle,$strtitle,"<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> <a href=\"index.php?id=$course->id\">".get_string("participants")."</a> -> ".$strtitle,$formstart);
 
+    // if messaging is disabled on site, we can still allow users with capabilities to send emails instead
+    if (empty($CFG->messaging)) {
+        notify("Messaging is disabled on this site, emails will be sent instead");  
+    }
 
     if ($count) {
         if ($count == 1) {

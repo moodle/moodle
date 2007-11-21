@@ -46,6 +46,7 @@
               scrolling="yes" marginwidth="10" marginheight="10" frameborder="0" />
        <frame src="refresh.php?id=<?php p($user->id)?>&amp;name=<?php echo urlencode(fullname($user)) ?>"  name="refresh"
               scrolling="no"  marginwidth="0" marginheight="0" frameborder="0" />
+       
        <frame src="send.php?id=<?php p($user->id)?>"     name="send"
               scrolling="no"  marginwidth="2" marginheight="2" frameborder="0" />
      </frameset>

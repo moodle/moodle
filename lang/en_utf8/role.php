@@ -112,6 +112,7 @@ $string['site:import'] = 'Import other courses into a course';
 $string['site:manageblocks'] = 'Manage site-level blocks';
 $string['site:readallmessages'] = 'Read all messages on site';
 $string['site:restore'] = 'Restore courses';
+$string['site:sendmessage'] = 'Send messages to any user';
 $string['site:trustcontent'] = 'Trust submitted content';
 $string['site:uploadusers'] = 'Upload new users from file';
 $string['site:viewfullnames'] = 'Always see full names of users';

@@ -419,7 +419,7 @@
         echo '</form>';
     }
 
-    if (!empty($CFG->messaging) and !isguest()) {
+    if (!empty($CFG->messaging) and !isguest() and has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTEM))) {
         if (!empty($USER->id) and ($USER->id == $user->id)) {
             if ($countmessages = count_records('message', 'useridto', $user->id)) {
                 $messagebuttonname = get_string("messages", "message")."($countmessages)";
