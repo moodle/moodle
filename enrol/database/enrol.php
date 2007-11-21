@@ -150,10 +150,13 @@ function setup_enrolments(&$user) {
 
             /// We have some courses left that we might need to unenrol from
             /// Note: we only process enrolments that we (ie 'database' plugin) made
-            foreach ($existing as $role_assignment) {
-                if ($role_assignment->enrol == 'database') {
-                    //error_log('[ENROL_DB] Removing user from context '.$role_assignment->contextid);
-                    role_unassign($role_assignment->roleid, $user->id, '', $role_assignment->contextid);
+            /// Do not unenrol anybody if the disableunenrol option is 'yes'
+            if (!$CFG->enrol_db_disableunenrol) {
+                foreach ($existing as $role_assignment) {
+                    if ($role_assignment->enrol == 'database') {
+                        //error_log('[ENROL_DB] Removing user from context '.$role_assignment->contextid);
+                        role_unassign($role_assignment->roleid, $user->id, '', $role_assignment->contextid);
+                    } 
                 }
             }
         } else {
@@ -422,7 +425,8 @@ function config_form($frm) {
                   'enrol_db_autocreate', 'enrol_db_category', 'enrol_db_template',
                   'enrol_db_localrolefield', 'enrol_db_remoterolefield',
                   'enrol_remotecoursefield', 'enrol_remoteuserfield',
-                  'enrol_db_ignorehiddencourse', 'enrol_db_defaultcourseroleid');
+                  'enrol_db_ignorehiddencourse', 'enrol_db_defaultcourseroleid',
+                  'enrol_db_disableunenrol');
 
     foreach ($vars as $var) {
         if (!isset($frm->$var)) {
@@ -520,6 +524,11 @@ function process_config($config) {
     }
     set_config('enrol_db_ignorehiddencourse', $config->enrol_db_ignorehiddencourse );
 
+    if (!isset($config->enrol_db_disableunenrol)) {
+        $config->enrol_db_disableunenrol = '';
+    }
+    set_config('enrol_db_disableunenrol', $config->enrol_db_disableunenrol );
+
     return true;
 }
 
@@ -607,6 +616,14 @@ function create_course ($course,$skip_fix_course_sortorder=0){
     }
 
     return $newcourseid;
+}
+
+/**
+ * Test the database connection
+ * @return true if it works
+ */
+function test() {
+    return true;
 }
 
 /// DB Connect

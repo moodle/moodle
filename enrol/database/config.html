@@ -234,4 +234,18 @@
     </td>
 </tr>
 
+<tr>
+    <td align="right">enrol_db_disableunenrol:</td>
+    <td>
+    <?php
+        choose_from_menu($yesno, "enrol_db_disableunenrol", $frm->enrol_db_disableunenrol, "");
+        if (isset($err['enrol_db_disableunenrol'])) {
+            formerr($err['enrol_db_disableunenrol']);
+        }
+    ?>
+    </td>
+    <td>
+        <?php print_string('disableunenrol', 'enrol_database' ); ?>
+    </td>
+</tr>
 </table>
