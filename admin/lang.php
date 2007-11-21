@@ -7,6 +7,8 @@
     * @param bool $uselocal save translations into *_local pack?
     */
 
+    $dbg = '';  // debug output;
+
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
 
@@ -18,15 +20,21 @@
     define('LANG_SUBMIT_REPEAT_EVERY', 20);     // if so, after how many lines?
     define('LANG_DISPLAY_MISSING_LINKS', 1);    // display "go to first/next missing string" links?
     define('LANG_DEFAULT_FILE', '');            // default file to translate. Empty allowed
+    define('LANG_DEFAULT_HELPFILE', '');        // default helpfile to translate. Empty allowed
     define('LANG_LINK_MISSING_STRINGS', 1);     // create links from "missing" page to "compare" page?
     define('LANG_DEFAULT_USELOCAL', 0);         // should *_utf8_local be used by default?
     define('LANG_MISSING_TEXT_MAX_LEN', 60);    // maximum length of the missing text to display
     define('LANG_KEEP_ORPHANS', 1);             // keep orphaned strings (i.e. strings w/o English reference)
     define('LANG_SEARCH_EXTRA', 1);             // search lang files in extra locations
 
-    $mode        = optional_param('mode', '', PARAM_ALPHA);
-    $currentfile = optional_param('currentfile', LANG_DEFAULT_FILE, PARAM_FILE);
-    $uselocal    = optional_param('uselocal', -1, PARAM_INT);
+    $mode = optional_param('mode', '', PARAM_ALPHA);
+    if ($mode == 'helpfiles') {
+        // use different PARAM_ options according to mode
+        $currentfile = optional_param('currentfile', LANG_DEFAULT_HELPFILE, PARAM_PATH);
+    } else {
+        $currentfile = optional_param('currentfile', LANG_DEFAULT_FILE, PARAM_FILE);
+    }
+    $uselocal = optional_param('uselocal', -1, PARAM_INT);
 
     if ($uselocal == -1) {
         if (isset($SESSION->langtranslateintolocal)) {
@@ -70,6 +78,9 @@
     $strlangpackmaintaining = get_string('langpackmaintaining', 'admin');
     $strnomissingstrings = get_string('nomissingstrings', 'admin');
     $streditingnoncorelangfile = get_string('editingnoncorelangfile', 'admin');
+    $strlanglocalpackage = get_string('langlocalpackage', 'admin');
+    $strlangmasterpackage = get_string('langmasterpackage', 'admin');
+    $strlangmasterenglish = get_string('langmasterenglish', 'admin');
 
     $currentlang = current_language();
 
@@ -82,6 +93,8 @@
         case "compare":
             $title = $streditstrings;
             break;
+        case "helpfiles":
+            $title = $stredithelpdocs;
         default:
             $title = $strlanguage;
             break;
@@ -116,14 +129,13 @@
     }
     $secondrow[] = new tabobject('missing', $CFG->wwwroot.'/admin/lang.php?mode=missing', $strmissingstrings );
     $secondrow[] = new tabobject('compare', $CFG->wwwroot.'/admin/lang.php?mode=compare', $streditstrings );
-    // TODO
-    // langdoc.php functionality is planned to be merged into lang.php
-    $secondrow[] = new tabobject('langdoc', $CFG->wwwroot.'/admin/langdoc.php', $stredithelpdocs );
+    $secondrow[] = new tabobject('helpfiles', $CFG->wwwroot.'/admin/lang.php?mode=helpfiles', $stredithelpdocs );
     $tabs = array($firstrow, $secondrow);
     print_tabs($tabs, $currenttab, $inactive, $activated);
 
 
     if (!$mode) {
+        // TODO this is a very nice place to put some translation statistics
         print_box_start();
         $currlang = current_language();
         $langs = get_list_of_languages(false, true);
@@ -143,17 +155,30 @@
         $langdir = "$langbase/$currentlang";
     }
     $locallangdir = "$langbase/{$currentlang}_local";
+    $saveto = $uselocal ? $locallangdir : $langdir;
 
-    // get the list of all English stringfiles
-    $stringfiles = lang_standard_locations();
-    if (LANG_SEARCH_EXTRA) {
-        $stringfiles += lang_extra_locations();
-    }
-    if (count($stringfiles) == 0) {
-        error("Could not find English language pack!");
+    if (($mode == 'missing') || ($mode == 'compare')) {
+        // get the list of all English stringfiles
+        $stringfiles = lang_standard_locations();
+        if (LANG_SEARCH_EXTRA) {
+            $stringfiles += lang_extra_locations();
+        }
+        if (count($stringfiles) == 0) {
+            error("Could not find English language pack!");
+        }
+    } elseif ($mode == 'helpfiles') {
+        $helpfiles = lang_help_standard_locations();
+        if (LANG_SEARCH_EXTRA) {
+            $helpfiles += lang_help_extra_locations();
+        }
+        if (count($helpfiles) == 0) {
+            error("Could not find help files in the English language pack!");
+        }
     }
 
-    if ($mode == "missing") {
+
+
+    if ($mode == 'missing') {
         if (!file_exists($langdir)) {
             error ('to edit this language pack, you need to put it in '.$CFG->dataroot.'/lang');
         }
@@ -334,7 +359,7 @@
             notice(get_string("languagegood"), "lang.php" );
         }
 
-    } else if ($mode == "compare") {
+    } else if ($mode == 'compare') {
 
         if (!file_exists($langbase) ){
             if (!lang_make_directory($langbase) ){
@@ -436,7 +461,7 @@
             }
              
             if (lang_save_file($saveinto, $currentfile, $newstrings, $uselocal, $packstring)) {
-                notify(get_string("changessaved")." ($saveinto/$currentfile)", "green");
+                notify(get_string("changessaved")." ($saveinto/$currentfile)", "notifysuccess");
             } else {
                 error("Could not save the file '$saveinto/$currentfile'!", "lang.php?mode=compare&amp;currentfile=$currentfile");
             }
@@ -458,20 +483,16 @@
             }
             $menufiles[$item_key] = $item_label;
         }
+        $selectionlabel = '<code class="path">';
+        //$selectionlabel .= $strfilestoredin;
+        $selectionlabel .= $uselocal ? "{$currentlang}_local" : $currentlang;
+        $selectionlabel .= '/</code>';
         popup_form("$CFG->wwwroot/$CFG->admin/lang.php?mode=compare&amp;currentfile=", $menufiles, "choosefile",
-            $currentfile, $strchoosefiletoedit);
-
-        echo '<div class="filestorageinfobox">';
-        echo $strfilestoredin;
-        echo '<code class="path">';
-        echo $uselocal ? "{$currentlang}_local" : $currentlang;
-        echo '</code>';
+            $currentfile, $strchoosefiletoedit, '', '', false, 'self', $selectionlabel);
         helpbutton('langswitchstorage', $strfilestoredinhelp, 'moodle');
-        echo '</div>';
         print_box_end();
-
+        
         if ($currentfile <> '') {
-            $saveto = $uselocal ? $locallangdir : $langdir;
             error_reporting(0);
             if (!isset($editable) || $editable) {
                 if (!file_exists("$saveto/$currentfile")) {
@@ -669,7 +690,212 @@
             // no $currentfile specified
             // no useful information to display - maybe some help? instructions?
         }
-    }
+
+    } elseif ($mode == 'helpfiles') {
+
+        $saveto = $saveto.'/help';                      // the edited content will be saved to
+        $enlangdir = $enlangdir.'/help';                // English master help files localtion
+        $langdir = $langdir.'/help';                    // current language master help files location
+        $locallangdir = $locallangdir.'/help';          // local modifications of help files location
+        $altdir = $uselocal ? $langdir : $locallangdir; // alternative to $saveto
+
+        $fileeditorrows = 10;           // number of textareas' rows
+        $fileeditorcols = 100;          // dtto cols
+        $filemissingmark = ' (***)';    // mark to add to non-existing or zero-length files
+        $fileoldmark = ' (old?)';       // mark to add to filenames in selection form if the English version is newer
+        $filetemplate = '';             // template for new files, e.g. CVS identification
+
+        if (isset($_POST['currentfile'])) {  // Save a file
+            if (!confirm_sesskey()) {
+                error(get_string('confirmsesskeybad', 'error'));
+            }
+            if (lang_help_save_file($saveto, $currentfile, $_POST['filedata'])) {
+                notify(get_string("changessaved")." ($saveto/$currentfile)", "notifysuccess");
+            } else {
+                error("Could not save the file '$currentfile'!", "lang.php?mode=helpfiles&amp;currentfile=$currentfile&amp;sesskey=$USER->sesskey");
+            }
+        }
+
+        print_box_start('generalbox editstrings');
+        $menufiles = array();
+        $menufiles_coregrp = 1;
+        $origlocation = ''; // the location of the currentfile's English source will be stored here
+        $origplugin = '';   // dtto plugin
+        foreach ($helpfiles as $helppath => $helpfile) {
+            $item_key = $helpfile['filename'];
+            $item_label = $helpfile['filename'];
+            if ((!file_exists($saveto.'/'.$helpfile['filename'])) || (filesize($saveto.'/'.$helpfile['filename']) == 0)) {
+                $item_label .= $filemissingmark;
+            } else {
+                if (filemtime($saveto.'/'.$helpfile['filename']) < filemtime($helppath)) {
+                    $item_label .= $fileoldmark;
+                }
+                if ($helpfile['location'] != '' && $helpfile['plugin'] != '') {
+                    $item_label .= ' ('.$helpfile['location'].'/'.$helpfile['plugin'].')';
+                    if ($menufiles_coregrp == 1) {
+                        $menufiles['extra'] = '------------';
+                        $menufiles_coregrp = 0;
+                    }
+                }
+            }
+            $menufiles[$item_key] = $item_label;
+            if ($currentfile == $helpfile['filename']) {
+                $origlocation = $helpfile['location'];
+                $origplugin = $helpfile['plugin'];
+            }
+        }
+        $selectionlabel = '<code class="path">';
+        //$selectionlabel .= $strfilestoredin;
+        $selectionlabel .= $uselocal ? "{$currentlang}_local" : $currentlang;
+        $selectionlabel .= '/help/</code>';
+        popup_form("$CFG->wwwroot/$CFG->admin/lang.php?mode=helpfiles&amp;currentfile=", $menufiles, "choosefile",
+            $currentfile, $strchoosefiletoedit, '', '', false, 'self', $selectionlabel);
+        helpbutton('langswitchstorage', $strfilestoredinhelp, 'moodle');
+        print_box_end();
+
+        if (!empty($currentfile)) {
+
+            if (!file_exists("$saveto/$currentfile")) {
+                $dbg .= "File does not exist: $saveto/$currentfile\n";
+                //check if directory exist
+                if (!file_exists(dirname("$saveto/$currentfile"))) {
+                     if(!lang_make_directory(dirname("$saveto/$currentfile"))) {
+                         echo ('Cannot create directory: '.dirname("$saveto/$currentfile"));
+                     }
+                }
+                //
+                // file doesn't exist - let's check webserver's permission to create it
+                //
+                if (!@touch("$saveto/$currentfile")) {
+                    //
+                    // webserver is unable to create new file
+                    //
+                    notify(get_string('filemissing', '', "$saveto/$currentfile" ));
+                    notify(get_string('makeeditable', '', "$saveto/$currentfile"));
+                    $editable = false;
+                } else {
+                    //
+                    // webserver can create new file - we can delete it now and let
+                    // it create again if its filesize() > 0
+                    //
+                    $editable = true;
+                    unlink("$saveto/$currentfile");
+                }
+            } elseif (is_writable("$saveto/$currentfile")) {
+                $editable = true;
+            } else {
+                //
+                // file exists but it is not writeable by web server process :-(
+                //
+                $editable = false;
+                notify(get_string('makeeditable', '', "$saveto/$currentfile"));
+            }
+
+            // master en_utf8 in dataroot is not editable
+            if ((!$uselocal) && ($currentlang == 'en_utf8')) {
+                $editable = false;
+            }
+
+            echo '<div>';
+
+            if ($uselocal) {
+                $strsavetotitle = $strlanglocalpackage . helpbutton('langpackages', $strlanglocalpackage, 'moodle', true, false, '', true);
+                $straltdirtitle = $strlangmasterpackage . helpbutton('langpackages', $strlangmasterpackage, 'moodle', true, false, '', true);
+            } else {
+                $straltdirtitle = $strlanglocalpackage . helpbutton('langpackages', $strlanglocalpackage, 'moodle', true, false, '', true);
+                $strsavetotitle = $strlangmasterpackage . helpbutton('langpackages', $strlangmasterpackage, 'moodle', true, false, '', true);
+
+            }
+
+            if ($editable) {
+                // generate an editor for the current help file in $saveto
+                echo '<fieldset><legend>'.$strsavetotitle.'</legend>';
+                echo "<form id=\"helpfileeditor\" action=\"lang.php\" method=\"post\">";
+                echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+                echo '<input type="hidden" name="currentfile" value="'.$currentfile.'" />';
+                echo '<input type="hidden" name="mode" value="helpfiles" />';
+                echo "<div align=\"center\">\n";
+                echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"filedata\">";
+                if (file_exists("$saveto/$currentfile")) {
+                    echo htmlspecialchars(file_get_contents("$saveto/$currentfile"));
+                } else {
+                    echo ($filetemplate);
+                }
+                echo "</textarea>\n</div>\n";
+                echo '<div align="center"><input type="submit" value="'.get_string('savechanges').'" /></div>';
+                echo '</form>';
+                $preview_url = lang_help_preview_url($currentfile, !$uselocal);
+                if ($preview_url) {
+                    link_to_popup_window($preview_url, 'popup', get_string('preview'));
+                }
+                echo '</fieldset>';
+            }
+
+            if (is_readable("$altdir/$currentfile")) {
+                // show the content of the same help file in alternative location
+                echo '<fieldset><legend>'.$straltdirtitle.'</legend>';
+                echo "<div align=\"center\">\n";
+                echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"\">";
+                if (file_exists("$altdir/$currentfile")) {
+                    echo htmlspecialchars(file_get_contents("$altdir/$currentfile"));
+                } else {
+                    echo ($filetemplate);
+                }
+                echo "</textarea>\n</div>\n";
+                $preview_url = lang_help_preview_url($currentfile, $uselocal);
+                if ($preview_url) {
+                    link_to_popup_window($preview_url, 'popup', get_string('preview'));
+                }
+                echo '</fieldset>';
+            }
+
+            // show the content of the original English file either in core space or plugin space
+            if ($origlocation != '' && $origplugin != '') {
+                // non-core help file
+                $ensrc = "$CFG->dirroot/$origlocation/$origplugin/lang/en_utf8/help/$currentfile";
+            } else {
+                // core help file
+                $ensrc = "$enlangdir/$currentfile";
+            }
+            if (is_readable($ensrc)) {
+                echo '<fieldset><legend>'.$strlangmasterenglish;
+                helpbutton('langpackages', $strlangmasterenglish);
+                echo '</legend>';
+                echo "<div align=\"center\">\n<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"\">";
+                echo htmlspecialchars(file_get_contents($ensrc));
+                echo "</textarea>\n</div>\n";
+                $preview_url = lang_help_preview_url($currentfile, true, 'en_utf8');   // do not display en_utf8_local
+                if ($preview_url) {
+                    link_to_popup_window($preview_url, 'popup', get_string('preview'));
+                }
+                echo '</fieldset>';
+            }
+
+            echo '</div>'; // translator box
+            error_reporting($CFG->debug);
+        }
+
+        if (false && $CFG->debugdisplay && debugging('', DEBUG_DEVELOPER) ) {
+            echo '<hr />';
+            print_heading('Debugging info');
+            echo '<pre class="notifytiny">';
+            print_r($dbg);
+            print_r("\n\$currentfile = $currentfile");
+            print_r("\n\$enlangdir = $enlangdir");
+            print_r("\n\$langdir = $langdir");
+            print_r("\n\$locallangdir = $locallangdir");
+            print_r("\n\$saveto = $saveto");
+            print_r("\n\$altdir = $altdir");
+            print_r("\n\$origlocation = $origlocation");
+            print_r("\n\$origplugin = $origplugin");
+            print_r("\n\$ensrc = $ensrc");
+            print_r("\n\$helpfiles = ");
+            print_r($helpfiles);
+            echo '</pre>';
+        }
+
+    } // fi $mode == 'helpfiles'
+
 
     admin_externalpage_print_footer();
 
@@ -790,6 +1016,8 @@ function lang_fix_value_before_save($value='') {
 /**
  * Try and create a new language directory.
  *
+ * Uses PHP>=5.0 syntax of mkdir and tries to create directories recursively.
+ *
  * @uses $CFG
  * @param string $directory full path to the directory under $langbase
  * @return string|false Returns full path to directory if successful, false if not
@@ -798,7 +1026,7 @@ function lang_make_directory($dir, $shownotices=true) {
     global $CFG;
     umask(0000);
     if (! file_exists($dir)) {
-        if (! @mkdir($dir, $CFG->directorypermissions)) {
+        if (! @mkdir($dir, $CFG->directorypermissions, true)) { // recursive=true; PHP>=5.0 needed
             return false;
         }
         //@chmod($dir, $CFG->directorypermissions);  // Just in case mkdir didn't do it
@@ -1001,5 +1229,142 @@ function lang_get_file_info($currentfile, $stringfiles) {
         return null;
     }
 }
+
+/**
+ * Returns all English help files in the standard lang/en_utf8/help location.
+ *
+ * Core help files should always be stored here and not in the module space (MDL-10920).
+ * The English version of the file may be found in
+ *  $CFG->dirroot/lang/en_utf8/help/filename
+ * The localised version of the found file should be saved into
+ *  $CFG->dataroot/lang/currentlang[_local]/help/filename
+ * where "filename" is returned as a part of the file record.
+ *
+ * @return array Array of a file information. Compatible format with {@link lang_extra_locations()}
+ */
+function lang_help_standard_locations() {
+    global $CFG;
+    $files = array();
+    // Standard location of master English help files.
+    $places = array($CFG->dirroot.'/lang/en_utf8/help');
+        foreach ($places as $place) {
+            foreach (get_directory_list($place, 'CVS') as $file) {
+                if ((substr($file, -5) == '.html') || (substr($file, -4) == '.txt' )) {
+                    $fullpath = $place.'/'.$file;
+                    $files[$fullpath] = array(
+                        'filename' => $file,
+                        'location' => '',
+                        'plugin' => '',
+                        'prefix' => '',
+                    );
+                }
+            }
+        }
+    return $files;
+}
+
+/**
+ * Returns all English help files in non-standard location.
+ *
+ * Searches for lang/en_utf8/help/* files in various types of plugins (blocks, database presets, question types,
+ * 3rd party modules etc.) and returns an array of found files details.
+ *
+ * The English version of the file may be found in
+ *  $CFG->dirroot/location/plugin/lang/en_utf8/help/filename
+ * The localised version of the found file should be saved into
+ *  $CFG->dataroot/lang/currentlang[_local]/help/prefix_plugin/filename (XXX is "prefix" here right?)
+ * where "location", "plugin", "prefix" and "filename" are returned as a part of the file record.
+ *
+ * @return array Array of a file information. Compatible format with {@link lang_standard_locations()}
+ */
+function lang_help_extra_locations() {
+    global $CFG;
+    $files = array();
+    $places = places_to_search_for_lang_strings();
+    foreach ($places as $prefix => $directories) {
+        if ($prefix != '__exceptions') {
+            foreach ($directories as $directory) {
+                foreach (get_list_of_plugins($directory) as $plugin) {
+                    $enlangdirlocation = $CFG->dirroot.'/'.$directory.'/'.$plugin.'/lang/en_utf8/help';
+                    foreach (get_directory_list($enlangdirlocation, 'CVS') as $file) {
+                        if ((substr($file, -5) == '.html') || (substr($file, -4) == '.txt' )) {
+                            $fullpath = $enlangdirlocation.'/'.$file;
+                            $files[$fullpath] = array(
+                                'filename' => $file,
+                                'location' => $directory,
+                                'plugin' => $plugin,
+                                'prefix' => $prefix,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return $files;
+}
+
+/**
+ * Return a preview URL for help file, if available.
+ *
+ * @param string $currentfile The relative path to the help file, e.g. "assignment/types.html" - MDL-12291
+ * @param bool $skiplocal Force displaying the helpfile from a master lang pack
+ * @param string $forcelang Force language of the help, e.g. "en_utf8"
+ * @return string $url
+ */
+function lang_help_preview_url($currentfile, $skiplocal=false, $forcelang = '') {
+    $currentpathexp = explode('/', $currentfile);
+    if (count($currentpathexp) > 1) {
+        $url = '/help.php?module='.implode('/',array_slice($currentpathexp,0,count($currentpathexp)-1)).'&amp;file='.end($currentpathexp);
+    } else {
+        $url = '/help.php?module=moodle&amp;file='.$currentfile;
+    }
+    if ($skiplocal) {
+        $url .= '&amp;skiplocal=1';
+    }
+    if ($forcelang) {
+        $url .= '&amp;forcelang='.$forcelang;
+    }
+    return $url;
+}
+
+
+/**
+ * Saves (overwrites) translated help file.
+ *
+ * @param string $helproot The path to the "help" folder
+ * @param string $file The relative path to the html help file
+ * @param string $content HTML data to be saved
+ * @return bool False if save failed, true otherwise
+ */
+function lang_help_save_file($helproot, $file, $content) {
+    global $CFG, $USER;
+
+    $content = str_replace("\r", "",$content);              // Remove linefeed characters
+    $content = preg_replace("/\n{3,}/", "\n\n", $content);  // Collapse runs of blank lines
+    $content = trim($content);                              // Delete leading/trailing whitespace
+    if (is_readable("$helproot/$file") && filesize("$helproot/$file") > 0 && $content == '') {
+        notify(get_string('langrmyourself', 'admin'));
+        return true;
+    }
+
+    error_reporting(0);
+    if (!$f = fopen("$helproot/$file","w")) {
+        error_reporting($CFG->debug);
+        return false;
+    }
+    error_reporting($CFG->debug);
+
+    fwrite($f, stripslashes($content));
+    fclose($f);
+
+    // Remove file if its empty
+    if (filesize("$helproot/$file") == 0) {
+        unlink("$helproot/$file");
+    }
+
+    return true;
+}
+
 
 ?>
