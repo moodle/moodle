@@ -113,9 +113,11 @@ function message_print_contacts() {
                     print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
                     echo '</td>';
                     echo '<td class="contact">';
+                    
                     link_to_popup_window("/message/discussion.php?id=$contact->id", "message_$contact->id",
                                          $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
                                          'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
+
                     echo '</td>';
                     echo '<td class="link">'.$strcontact.'&nbsp;'.$strhistory.'</td>';
                     echo '</tr>';
@@ -148,8 +150,9 @@ function message_print_contacts() {
                 echo '</td>';
                 echo '<td class="contact">';
                 link_to_popup_window("/message/discussion.php?id=$contact->id", "message_$contact->id",
-                        $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
-                        'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
+                            $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
+                            'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
+
                 echo '</td>';
                 echo '<td class="link">'.$strcontact.'&nbsp;'.$strhistory.'</td>';
                 echo '</tr>';
@@ -180,9 +183,11 @@ function message_print_contacts() {
                 print_user_picture($messageuser->useridfrom, SITEID, $messageuser->picture, 20, false, true, 'userwindow');
                 echo '</td>';
                 echo '<td class="contact">';
+                
                 link_to_popup_window("/message/discussion.php?id=$messageuser->useridfrom", "message_$messageuser->useridfrom",
                                      $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
                                      'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
+
                 echo '</td>';
                 echo '<td class="link">&nbsp;'.$strcontact.'&nbsp;'.$strblock.'&nbsp;'.$strhistory.'</td>';
                 echo '</tr>';
@@ -396,6 +401,7 @@ function message_print_search_results($frm) {
                 link_to_popup_window("/message/discussion.php?id=$user->id", "message_$user->id", fullname($user),
                                      500, 500, get_string('sendmessageto', 'message', fullname($user)),
                                      'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
+
                 echo '</td>';
 
                 echo '<td class="link">'.$strcontact.'</td>';
@@ -564,6 +570,7 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
             message_contact_link($user->id, 'block');
         }
         echo '<br />';
+
         link_to_popup_window("/message/discussion.php?id=$user->id", "message_$user->id",
                              fullname($user), 400, 400, get_string('sendmessageto', 'message', fullname($user)),
                              'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
@@ -987,22 +994,28 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     $savemessage->timecreated   = time();
     $savemessage->messagetype   = 'direct';
 
-    if (!$savemessage->id = insert_record('message', $savemessage)) {
-        return false;
+    if ($CFG->messaging) {
+        if (!$savemessage->id = insert_record('message', $savemessage)) {
+            return false;
+        }
+        $emailforced = false;
+    } else { // $CFG->messaging is not on, we need to force sending of emails
+        $emailforced = true;
+        $savemessage->id = true; 
     }
 
 /// Check to see if anything else needs to be done with it
 
     $preference = (object)get_user_preferences(NULL, NULL, $userto->id);
 
-    if (!isset($preference->message_emailmessages) || $preference->message_emailmessages) {  // Receiver wants mail forwarding
+    if ($emailforced || (!isset($preference->message_emailmessages) || $preference->message_emailmessages)) {  // Receiver wants mail forwarding
         if (!isset($preference->message_emailtimenosee)) {
             $preference->message_emailtimenosee = 10;
         }
         if (!isset($preference->message_emailformat)) {
             $preference->message_emailformat = FORMAT_HTML;
         }
-        if ((time() - $userto->lastaccess) > ((int)$preference->message_emailtimenosee * 60)) { // Long enough
+        if ($emailforced || (time() - $userto->lastaccess) > ((int)$preference->message_emailtimenosee * 60)) { // Long enough
 
             $message = stripslashes_safe($message);
             $tagline = get_string('emailtagline', 'message', $SITE->shortname);
@@ -1014,7 +1027,10 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
 
             if (isset($preference->message_emailformat) and $preference->message_emailformat == FORMAT_HTML) {
                 $messagehtml  = format_text($message, $format);
-                $messagehtml .= '<hr /><p><a href="'.$CFG->wwwroot.'/message/index.php?popup=1">'.$tagline.'</a></p>';
+                // MDL-10294, do not print link if messaging is disabled
+                if ($CFG->messaging) {
+                    $messagehtml .= '<hr /><p><a href="'.$CFG->wwwroot.'/message/index.php?popup=1">'.$tagline.'</a></p>';
+                }
             } else {
                 $messagehtml = NULL;
             }
@@ -1022,9 +1038,11 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
             if (!empty($preference->message_emailaddress)) {
                 $userto->email = $preference->message_emailaddress;   // Use custom messaging address
             }
+
             if (email_to_user($userto, $userfrom, $messagesubject, $messagetext, $messagehtml)) {
                 $CFG->messagewasjustemailed = true;
             }
+
             sleep(3);
         }
     }

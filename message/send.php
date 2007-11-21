@@ -1,17 +1,20 @@
 <?php // $Id$
 
-    require('../config.php');
-    require('lib.php');
+require('../config.php');
+require('lib.php');
 
-    require_login();
+require_login();
 
-    if (isguest()) {
-        redirect($CFG->wwwroot);
-    }
+if (isguest()) {
+    redirect($CFG->wwwroot);
+}
 
-    if (empty($CFG->messaging)) {
-        error("Messaging is disabled on this site");
-    }
+if (empty($CFG->messaging)) {
+    error("Messaging is disabled on this site");
+}
+
+if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTEM))) {
+
 
 /// Don't use print_header, for more speed
     $stylesheetshtml = '';
@@ -121,5 +124,5 @@
     echo "\n-->\n</script>\n\n";
 
     echo '</body></html>';
-
+}
 ?>
