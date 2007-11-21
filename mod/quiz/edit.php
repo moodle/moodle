@@ -252,6 +252,10 @@
         // If ordering info was given, reorder the questions
         if ($questions) {
             ksort($questions);
+            // Make sure that the quiz does not start with a page break.
+            while (reset($questions) == '0') {
+                array_shift($questions);
+            }
             $quiz->questions = implode(",", $questions);
             // Always have a page break at the end
             $quiz->questions = $quiz->questions . ',0';
