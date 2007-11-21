@@ -642,15 +642,12 @@
         echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> ';
         echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
         $displaylist = array();
-        // fix for MDL-8885, only show this if user has capability
-        if (has_capability('moodle/site:readallmessages', $context) && !empty($CFG->messaging)) {
-            $displaylist['messageselect.php'] = get_string('messageselectadd');
-        }
+        $displaylist['messageselect.php'] = get_string('messageselectadd');
         if (has_capability('moodle/notes:manage', $context) && $context->id != $frontpagectx->id) {
             $displaylist['addnote.php'] = get_string('addnewnote', 'notes');
             $displaylist['groupaddnote.php'] = get_string('groupaddnewnote', 'notes');
         }
-        
+
         if ($context->id != $frontpagectx->id) {
             $displaylist['extendenrol.php'] = get_string('extendenrol');
             $displaylist['groupextendenrol.php'] = get_string('groupextendenrol');

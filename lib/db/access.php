@@ -120,6 +120,18 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW
         )
     ),
+    
+    'moodle/site:sendmessage' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'admin' => CAP_ALLOW,
+            'user' => CAP_ALLOW
+        )
+    ),   
 
     'moodle/site:approvecourse' => array(
 
