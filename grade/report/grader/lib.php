@@ -291,12 +291,9 @@ class grade_report_grader extends grade_report {
             } elseif ($this->sortitemid == 'firstname') {
                 $sort2 = ', u.lastname ' . $this->sortorder;
             }
-
             $this->users = get_role_users($this->gradebookroles, $this->context, false,
-                                'u.id, u.firstname, u.lastname', 'u.'.$this->sortitemid .' '. $this->sortorder . $sort2,
-                                false, $this->page * $this->get_pref('studentsperpage'), $this->get_pref('studentsperpage'),
-                                $this->currentgroup);
-            // need to cut users down by groups
+                            'u.id, u.firstname, u.lastname', 'u.'.$this->sortitemid .' '. $this->sortorder . $sort2,
+                            false, $this->currentgroup, $this->page * $this->get_pref('studentsperpage'), $this->get_pref('studentsperpage'));
 
         }
 
