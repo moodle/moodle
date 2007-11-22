@@ -67,9 +67,8 @@ class grade_scale_test extends grade_test {
     }
 
     function test_grade_scale_insert() {
+        global $db;
         $grade_scale = new grade_scale();
-        $grade_scale->lib_wrapper = new mock_lib_wrapper();
-
         $this->assertTrue(method_exists($grade_scale, 'insert'));
 
         $grade_scale->name        = 'unittestscale3';
@@ -78,11 +77,14 @@ class grade_scale_test extends grade_test {
         $grade_scale->scale       = 'Distinction, Very Good, Good, Pass, Fail';
         $grade_scale->description = 'This scale is used to mark standard assignments.';
 
-        $grade_scale->lib_wrapper->expectCallCount('insert_record', 2); // main insert and history table insert 
-        $grade_scale->lib_wrapper->setReturnValue('insert_record', 1);
-        $grade_scale->lib_wrapper->expectOnce('get_record'); // for update_from_db() method
-        $grade_scale->lib_wrapper->setReturnValue('get_record', array(1));
+        // Mock insert of data in history table
+        $this->rs->setReturnValue('RecordCount', 1);
+        $this->rs->fields = array(1); 
         
+        // Mock insert of outcome object
+        $db->setReturnValue('GetInsertSQL', true);
+        $db->setReturnValue('Insert_ID', 1);
+
         $grade_scale->insert();
 
         $this->assertEqual($grade_scale->id, 1);
@@ -91,8 +93,8 @@ class grade_scale_test extends grade_test {
     }
 
     function test_grade_scale_update() {
+        global $db;
         $grade_scale = new grade_scale($this->scale[0], false);
-        $grade_scale->lib_wrapper = new mock_lib_wrapper();
         $this->assertTrue(method_exists($grade_scale, 'update'));
         
         $grade_scale->timecreated = time() - 200000;
@@ -100,8 +102,10 @@ class grade_scale_test extends grade_test {
         $timemodified = $grade_scale->timemodified;
         $timecreated = $grade_scale->timecreated;
 
-        $grade_scale->lib_wrapper->expectOnce('update_record');
-        $grade_scale->lib_wrapper->setReturnValue('update_record', true);
+        // Mock update: MetaColumns is first returned to compare existing data with new
+        $column = new stdClass();
+        $column->name = 'name';
+        $db->setReturnValue('MetaColumns', array($column));
         
         $grade_scale->name = 'Updated info for this unittest grade_scale';
         $this->assertTrue($grade_scale->update());
@@ -114,25 +118,24 @@ class grade_scale_test extends grade_test {
 
     function test_grade_scale_delete() {
         $grade_scale = new grade_scale($this->scale[0], false);
-        $grade_scale->lib_wrapper = new mock_lib_wrapper();
         $this->assertTrue(method_exists($grade_scale, 'delete'));
 
-        $grade_scale->lib_wrapper->expectOnce('delete_records', array('scale', 'id', $grade_scale->id));
-        $grade_scale->lib_wrapper->setReturnValue('delete_records', true);
-        
-        $grade_scale->lib_wrapper->expectOnce('insert_record'); // grade_history entry
-        
         $this->assertTrue($grade_scale->delete());
     }
 
     function test_grade_scale_fetch() {
+        global $db;
+
         $grade_scale = new grade_scale();
-        $grade_scale->lib_wrapper = new mock_lib_wrapper();
-        $grade_scale->lib_wrapper->expectOnce('get_records_select');
-        $grade_scale->lib_wrapper->setReturnValue('get_records_select', array($this->scale[0]));
         $this->assertTrue(method_exists($grade_scale, 'fetch'));
 
-        $grade_scale = $grade_scale->fetch(array('id'=>$this->scale[0]->id));
+        // Mock fetch
+        $column = new stdClass();
+        $column->name = 'id';
+        $this->rs->setReturnValue('FetchField', $column); // Fetching the name of the first column
+        $this->rs->setReturnValue('GetAssoc', array($this->scale[0]->id => (array) $this->scale[0])); 
+        
+        $grade_scale = grade_scale::fetch(array('id'=>$this->scale[0]->id));
         $this->assertEqual($this->scale[0]->id, $grade_scale->id);
         $this->assertEqual($this->scale[0]->name, $grade_scale->name);
     }
