@@ -62,7 +62,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     function get_numerical_units(&$question) {
         if ($units = get_records('question_numerical_units',
                                          'question', $question->id, 'id ASC')) {
-            $units  = array_values($question->options->units);
+            $units  = array_values($units);
         } else {
             $units = array();
         }
