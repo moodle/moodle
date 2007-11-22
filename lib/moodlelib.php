@@ -1145,13 +1145,13 @@ function usertimezone($timezone=99) {
     }
 
     if($tz == 0) {
-        return 'GMT';
+        return 'UTC';
     }
     else if($tz > 0) {
-        return 'GMT+'.$tz;
+        return 'UTC+'.$tz;
     }
     else {
-        return 'GMT'.$tz;
+        return 'UTC'.$tz;
     }
 
 }
@@ -4943,7 +4943,7 @@ function get_list_of_timezones() {
     asort($timezones);
 
     for ($i = -13; $i <= 13; $i += .5) {
-        $tzstring = 'GMT';
+        $tzstring = 'UTC';
         if ($i < 0) {
             $timezones[sprintf("%.1f", $i)] = $tzstring . $i;
         } else if ($i > 0) {
