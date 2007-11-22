@@ -158,8 +158,7 @@ class grade_grade extends grade_object {
      * @return array userid=>grade_grade array
      */
     function fetch_users_grades($grade_item, $userids, $include_missing=true) {
-        
-        $obj = grade_object::get_instance('grade_grade');
+
         // hmm, there might be a problem with length of sql query
         // if there are too many users requested - we might run out of memory anyway
         $limit = 2000;
@@ -168,20 +167,20 @@ class grade_grade extends grade_object {
             $half = (int)($count/2);
             $first  = array_slice($userids, 0, $half);
             $second = array_slice($userids, $half);
-            return $obj->fetch_users_grades($grade_item, $first, $include_missing) + $obj->fetch_users_grades($grade_item, $second, $include_missing);
+            return grade_grade::fetch_users_grades($grade_item, $first, $include_missing) + grade_grade::fetch_users_grades($grade_item, $second, $include_missing);
         }
 
         $user_ids_cvs = implode(',', $userids);
         $result = array();
-        if ($grade_records = $obj->lib_wrapper->get_records_select('grade_grades', "itemid={$grade_item->id} AND userid IN ($user_ids_cvs)")) {
+        if ($grade_records = get_records_select('grade_grades', "itemid={$grade_item->id} AND userid IN ($user_ids_cvs)")) {
             foreach ($grade_records as $record) {
-                $result[$record->userid] = $obj->get_instance('grade_grade', $record, false);
+                $result[$record->userid] = new grade_grade($record, false);
             }
         }
         if ($include_missing) {
             foreach ($userids as $userid) {
                 if (!array_key_exists($userid, $result)) {
-                    $grade_grade = grade_object::get_instance('grade_grade');
+                    $grade_grade = new grade_grade();
                     $grade_grade->userid = $userid;
                     $grade_grade->itemid = $grade_item->id;
                     $result[$userid] = $grade_grade;
@@ -204,12 +203,11 @@ class grade_grade extends grade_object {
         }
 
         if (empty($this->grade_item)) {
-            $grade_item = grade_object::get_instance('grade_item');
-            $this->grade_item = $grade_item->fetch(array('id'=>$this->itemid));
+            $this->grade_item = grade_item::fetch(array('id'=>$this->itemid));
 
         } else if ($this->grade_item->id != $this->itemid) {
             debugging('Itemid mismatch');
-            $this->grade_item = $grade_item->fetch(array('id'=>$this->itemid));
+            $this->grade_item = grade_item::fetch(array('id'=>$this->itemid));
         }
 
         return $this->grade_item;
@@ -388,14 +386,14 @@ class grade_grade extends grade_object {
         $items_sql = implode(',', $items);
 
         $now = time(); // no rounding needed, this is not supposed to be called every 10 seconds
-        $obj = grade_object::get_instance('grade_grade');
-        if ($rs = $obj->lib_wrapper->get_recordset_select('grade_grades', "itemid IN ($items_sql) AND locked = 0 AND locktime > 0 AND locktime < $now")) {
-            while ($grade = $obj->lib_wrapper->rs_fetch_next_record($rs)) {
-                $grade_grade = $obj->get_instance('grade_grade', $grade, false);
+
+        if ($rs = get_recordset_select('grade_grades', "itemid IN ($items_sql) AND locked = 0 AND locktime > 0 AND locktime < $now")) {
+            while ($grade = rs_fetch_next_record($rs)) {
+                $grade_grade = new grade_grade($grade, false);
                 $grade_grade->locked = time();
                 $grade_grade->update('locktime');
             }
-            $obj->lib_wrapper->rs_close($rs);
+            rs_close($rs);
         }
     }
 
@@ -505,8 +503,7 @@ class grade_grade extends grade_object {
      * @return object grade_grade instance or false if none found.
      */
     function fetch($params) {
-        $obj = grade_object::get_instance('grade_grade');
-        return $obj->fetch_helper('grade_grades', 'grade_grade', $params);
+        return grade_object::fetch_helper('grade_grades', 'grade_grade', $params);
     }
 
     /**
@@ -517,8 +514,7 @@ class grade_grade extends grade_object {
      * @return array array of grade_grade insatnces or false if none found.
      */
     function fetch_all($params) {
-        $obj = grade_object::get_instance('grade_grade');
-        return $obj->fetch_all_helper('grade_grades', 'grade_grade', $params);
+        return grade_object::fetch_all_helper('grade_grades', 'grade_grade', $params);
     }
 
     /**
@@ -559,7 +555,7 @@ class grade_grade extends grade_object {
         global $CFG;
 
         if (count($grade_grades) !== count($grade_items)) {
-            error('Incorrent size of arrays in params of grade_grade::get_hiding_affected()!');
+            error('Incorrect size of arrays in params of grade_grade::get_hiding_affected()!');
         }
 
         $dependson = array();

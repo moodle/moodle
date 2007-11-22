@@ -60,35 +60,27 @@ class grade_object {
     var $timemodified;
 
     /**
-     * A wrapper object around moodle procedural functions (especially dmllib).
-     * @var object $lib_wrapper
-     */
-    var $lib_wrapper;
-
-    /**
      * Constructor. Optionally (and by default) attempts to fetch corresponding row from DB.
      * @param array $params an array with required parameters for this grade object.
      * @param boolean $fetch Whether to fetch corresponding row from DB or not,
      *        optional fields might not be defined if false used
      */
     function grade_object($params=NULL, $fetch=true) {
-        $this->lib_wrapper = new grade_lib_wrapper();
-
         if (!empty($params) and (is_array($params) or is_object($params))) {
             if ($fetch) {
                 if ($data = $this->fetch($params)) {
-                    $this->set_properties($this, $data);
+                    grade_object::set_properties($this, $data);
                 } else {
-                    $this->set_properties($this, $this->optional_fields);//apply defaults for optional fields
-                    $this->set_properties($this, $params);
+                    grade_object::set_properties($this, $this->optional_fields);//apply defaults for optional fields
+                    grade_object::set_properties($this, $params);
                 }
 
             } else {
-                $this->set_properties($this, $params);
+                grade_object::set_properties($this, $params);
             }
 
         } else {
-            $this->set_properties($this, $this->optional_fields);//apply defaults for optional fields
+            grade_object::set_properties($this, $this->optional_fields);//apply defaults for optional fields
         }
     }
 
@@ -105,7 +97,7 @@ class grade_object {
             if (empty($this->id)) {
                 $this->$field = $default;
             } else {
-                $this->$field = $this->lib_wrapper->get_field($this->table, $field, 'id', $this->id);
+                $this->$field = get_field($this->table, $field, 'id', $this->id);
             }
         }
     }
@@ -138,8 +130,7 @@ class grade_object {
      * @return mixed object instance or false if not found
      */
     function fetch_helper($table, $classname, $params) {
-        $obj = new grade_object();
-        if ($instances = $obj->fetch_all_helper($table, $classname, $params)) {
+        if ($instances = grade_object::fetch_all_helper($table, $classname, $params)) {
             if (count($instances) > 1) {
                 // we should not tolerate any errors here - problems might appear later
                 error('Found more than one record in fetch() !');
@@ -156,7 +147,6 @@ class grade_object {
      * @return mixed array of object instances or false if not found
      */
     function fetch_all_helper($table, $classname, $params) {
-        $obj = new grade_object();
         $instance = new $classname();
 
         $classvars = (array)$instance;
@@ -183,11 +173,11 @@ class grade_object {
             $wheresql = implode("AND", $wheresql);
         }
 
-        if ($datas = $obj->lib_wrapper->get_records_select($table, $wheresql, 'id')) {
+        if ($datas = get_records_select($table, $wheresql, 'id')) {
             $result = array();
             foreach($datas as $data) {
                 $instance = new $classname();
-                $obj->set_properties($instance, $data);
+                grade_object::set_properties($instance, $data);
                 $result[$instance->id] = $instance;
             }
             return $result;
@@ -212,7 +202,7 @@ class grade_object {
 
         $data = $this->get_record_data();
 
-        if (!$this->lib_wrapper->update_record($this->table, addslashes_recursive($data))) {
+        if (!update_record($this->table, addslashes_recursive($data))) {
             return false;
         }
 
@@ -223,7 +213,7 @@ class grade_object {
             $data->source       = $source;
             $data->timemodified = time();
             $data->userlogged   = $USER->id;
-            $this->lib_wrapper->insert_record($this->table.'_history', addslashes_recursive($data));
+            insert_record($this->table.'_history', addslashes_recursive($data));
         }
 
         return true;
@@ -244,7 +234,7 @@ class grade_object {
 
         $data = $this->get_record_data();
 
-        if ($this->lib_wrapper->delete_records($this->table, 'id', $this->id)) {
+        if (delete_records($this->table, 'id', $this->id)) {
             if (empty($CFG->disablegradehistory)) {
                 unset($data->id);
                 unset($data->timecreated);
@@ -253,7 +243,7 @@ class grade_object {
                 $data->source       = $source;
                 $data->timemodified = time();
                 $data->userlogged   = $USER->id;
-                $this->lib_wrapper->insert_record($this->table.'_history', addslashes_recursive($data));
+                insert_record($this->table.'_history', addslashes_recursive($data));
             }
             return true;
 
@@ -297,7 +287,7 @@ class grade_object {
 
         $data = $this->get_record_data();
 
-        if (!$this->id = $this->lib_wrapper->insert_record($this->table, addslashes_recursive($data))) {
+        if (!$this->id = insert_record($this->table, addslashes_recursive($data))) {
             debugging("Could not insert object into db");
             return false;
         }
@@ -314,7 +304,7 @@ class grade_object {
             $data->source       = $source;
             $data->timemodified = time();
             $data->userlogged   = $USER->id;
-            $this->lib_wrapper->insert_record($this->table.'_history', addslashes_recursive($data));
+            insert_record($this->table.'_history', addslashes_recursive($data));
         }
 
         return $this->id;
@@ -332,12 +322,12 @@ class grade_object {
             return false;
         }
 
-        if (!$params = $this->lib_wrapper->get_record($this->table, 'id', $this->id)) {
+        if (!$params = get_record($this->table, 'id', $this->id)) {
             debugging("Object with this id:{$this->id} does not exist in table:{$this->table}, can not update from db!");
             return false;
         }
 
-        $this->set_properties($this, $params);
+        grade_object::set_properties($this, $params);
 
         return true;
     }
@@ -353,48 +343,6 @@ class grade_object {
             if (in_array($var, $instance->required_fields) or array_key_exists($var, $instance->optional_fields)) {
                 $instance->$var = $value;
             }
-        }
-    }
-    
-    /**
-     * The following function is a helper for making the code more testable. It allows
-     * unit tests to mock the objects instantiated and used within method bodies. If no params are given,
-     * a static instance is returned.
-     * @param string $class
-     * @param array $params
-     * @param bool $fetch
-     * @param bool $set Whether or not to set the instance instead of getting it
-     */
-    function get_instance($class, $params=NULL, $fetch=true, $set=false, $object=null) {
-        static $grade_instances = array();  
-        $classes = array('grade_item', 'grade_category', 'grade_grade', 'grade_outcome', 'grade_scale');
-        
-        if ($set) {
-            if (!is_object($object)) {
-                debugging('grade_object::set_instance was given a non-object as parameter!');
-                return false;
-            }
-            
-            if (in_array($class, $classes)) {
-                $grade_instances[$class] =& $object;
-                return true;
-            } else {
-                debugging("grade_object::set_instance was given an object that is not supported ($class)!");
-                return false;
-            }
-
-        } else {
-            if (!in_array($class, $classes)) {
-                return false;
-            } elseif (is_null($params)) {
-                if (!array_key_exists($class, $grade_instances)) {
-                    $grade_instances[$class] =& new $class;
-                }
-                $instance =& $grade_instances[$class];
-                return $instance;
-            } else { 
-                return new $class($params, $fetch);
-            } 
         }
     }
 }

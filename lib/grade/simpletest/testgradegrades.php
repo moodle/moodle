@@ -38,15 +38,6 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
 
 class grade_grade_test extends grade_test {
-    
-    function setUp() {
-        parent::setUp();
-        $this->load_grade_grades();
-    }
-
-    function tearDown() {
-        parent::tearDown();
-    }
 
     function test_grade_grade_construct() {
         $params = new stdClass();
@@ -64,7 +55,6 @@ class grade_grade_test extends grade_test {
 
     function test_grade_grade_insert() {
         $grade_grade = new grade_grade();
-        $grade_grade->lib_wrapper = new mock_lib_wrapper();
         $this->assertTrue(method_exists($grade_grade, 'insert'));
 
         $grade_grade->itemid = $this->grade_items[0]->id;
@@ -72,101 +62,86 @@ class grade_grade_test extends grade_test {
         $grade_grade->rawgrade = 88;
         $grade_grade->rawgrademax = 110;
         $grade_grade->rawgrademin = 18;
-        
-        $grade_item = new grade_item($this->grade_items[0], false);
-        $grade_grade->grade_item = $grade_item;
 
         // Check the grade_item's needsupdate variable first
+        $grade_grade->load_grade_item();
         $this->assertFalse($grade_grade->grade_item->needsupdate);
-        
-        $grade_grade->lib_wrapper->expectCallCount('insert_record', 2); // main insert and history table insert 
-        $grade_grade->lib_wrapper->setReturnValue('insert_record', 1);
-        $grade_grade->lib_wrapper->expectOnce('get_record'); // for update_from_db() method
-        $grade_grade->lib_wrapper->setReturnValue('get_record', array(1));
 
         $grade_grade->insert();
 
-        $this->assertEqual($grade_grade->id, 1);
+        $last_grade_grade = end($this->grade_grades);
 
-        // timecreated doesn't refer to creation in the DB, but to time of submission. Timemodified refers to date of grading
-        $this->assertTrue(empty($grade_grade->timecreated));
-        $this->assertTrue(empty($grade_grade->timemodified));
+        $this->assertEqual($grade_grade->id, $last_grade_grade->id + 1);
+        $this->assertFalse(empty($grade_grade->timecreated));
+        $this->assertFalse(empty($grade_grade->timemodified));
     }
 
     function test_grade_grade_update() {
-        $grade_grade = new grade_grade($this->grade_grades[0], false);
-        $grade_grade->lib_wrapper = new mock_lib_wrapper();
-        $grade_grade->lib_wrapper->expectOnce('update_record');
-        $grade_grade->lib_wrapper->setReturnValue('update_record', true);
+        $grade_grade = new grade_grade($this->grade_grades[0]);
         $this->assertTrue(method_exists($grade_grade, 'update'));
-        $grade_grade->update();
+    }
+
+    function test_grade_grade_fetch() {
+        $grade_grade = new grade_grade();
+        $this->assertTrue(method_exists($grade_grade, 'fetch'));
+
+        $grades = grade_grade::fetch(array('id'=>$this->grade_grades[0]->id));
+        $this->assertEqual($this->grade_grades[0]->id, $grades->id);
+        $this->assertEqual($this->grade_grades[0]->rawgrade, $grades->rawgrade);
+    }
+
+    function test_grade_grade_fetch_all() {
+        $grade_grade = new grade_grade();
+        $this->assertTrue(method_exists($grade_grade, 'fetch_all'));
+
+        $grades = grade_grade::fetch_all(array());
+        $this->assertEqual(count($this->grade_grades), count($grades));
     }
 
     function test_grade_grade_load_grade_item() {
-        $grade_grade = new grade_grade($this->grade_grades[0], false);
-        $grade_grade->lib_wrapper = new mock_lib_wrapper();
-        $grade_grade->itemid = $this->grade_items[0]->id;
+        $grade_grade = new grade_grade($this->grade_grades[0]);
         $this->assertTrue(method_exists($grade_grade, 'load_grade_item'));
         $this->assertNull($grade_grade->grade_item);
         $this->assertTrue($grade_grade->itemid);
-        
-        $grade_item = grade_object::get_instance('grade_item');
-        $grade_item->expectOnce('fetch', array(array('id' => $grade_grade->itemid)));
-        $gi = $this->grade_items[0];
-        $grade_item->setReturnReference('fetch', $gi);
         $this->assertNotNull($grade_grade->load_grade_item());
         $this->assertNotNull($grade_grade->grade_item);
         $this->assertEqual($this->grade_items[0]->id, $grade_grade->grade_item->id);
     }
+
 
     function test_grade_grade_standardise_score() {
         $this->assertEqual(4, round(grade_grade::standardise_score(6, 0, 7, 0, 5)));
         $this->assertEqual(40, grade_grade::standardise_score(50, 30, 80, 0, 100));
     }
 
-    /**
-     * In this test we always set the 2nd param of set_locked() to false, because it 
-     * would otherwise trigger the refresh_grades method, which is not being tested here.
-     */ 
-    function test_grade_grade_set_locked() {
-        $grade_item = new grade_item($this->grade_items[0], false);
-        $grade = new grade_grade($this->grade_grades[0], false);
-        $grade->lib_wrapper = new mock_lib_wrapper();
-        $grade->lib_wrapper->expectCallCount('update_record', 2);
-        $grade->lib_wrapper->setReturnValue('update_record', true);
-        $grade->grade_item = $grade_item;
-        $grade->itemid = $grade_item->id;
 
+    function test_grade_grade_set_locked() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $grade = new grade_grade($grade_item->get_final(1));
         $this->assertTrue(method_exists($grade, 'set_locked'));
 
         $this->assertTrue(empty($grade_item->locked));
         $this->assertTrue(empty($grade->locked));
-        
-        // Test locking the grade when needsupdate is true
-        $grade->grade_item->needsupdate = true;
-        $this->assertFalse($grade->set_locked(true, false, false)); 
 
-        // Test locking the grade when needsupdate is false
-        $grade->grade_item->needsupdate = false;
-        $this->assertTrue($grade->set_locked(true, false, false));
+        $this->assertTrue($grade->set_locked(true));
         $this->assertFalse(empty($grade->locked));
-        $this->assertTrue($grade->set_locked(false, false, false));
+        $this->assertTrue($grade->set_locked(false));
         $this->assertTrue(empty($grade->locked));
 
-        $grade = new grade_grade($this->grade_grades[0], false);
-        $grade->lib_wrapper = new mock_lib_wrapper();
-        $grade->lib_wrapper->expectOnce('update_record');
-        $grade->lib_wrapper->setreturnvalue('update_record', true);
-        $grade->grade_item = $grade_item;
-        $grade->itemid = $grade_item->id;
+        $this->assertTrue($grade_item->set_locked(true));
+        $grade = new grade_grade($grade_item->get_final(1));
 
-        $this->assertTrue($grade->set_locked(false, false, false));
+        $this->assertFalse(empty($grade->locked));
+        $this->assertFalse($grade->set_locked(false));
+
+        $this->assertTrue($grade_item->set_locked(false));
+        $grade = new grade_grade($grade_item->get_final(1));
+
+        $this->assertTrue($grade->set_locked(false));
     }
 
-
     function test_grade_grade_is_locked() {
-        $grade = new grade_grade($this->grade_grades[0], false);
-        $grade->grade_item = new grade_item($this->grade_items[0], false);
+        $grade = new grade_grade($this->grade_grades[0]);
         $this->assertTrue(method_exists($grade, 'is_locked'));
 
         $this->assertFalse($grade->is_locked());
@@ -175,30 +150,22 @@ class grade_grade_test extends grade_test {
     }
 
     function test_grade_grade_set_hidden() {
-        $grade_item = new grade_item($this->grade_items[0], false);
-        $grade = new grade_grade($this->grade_grades[0], false);
-        $grade->lib_wrapper = new mock_lib_wrapper();
-        $grade->lib_wrapper->expectCallCount('update_record', 2);
-        $grade->lib_wrapper->setreturnvalue('update_record', true);
-        $grade->grade_item = $grade_item;
-        $grade->itemid = $grade_item->id;
+        $grade_item = new grade_item($this->grade_items[0]);
+        $grade = new grade_grade($grade_item->get_final(1));
         $this->assertTrue(method_exists($grade, 'set_hidden'));
 
         $this->assertEqual(0, $grade_item->hidden);
         $this->assertEqual(0, $grade->hidden);
-        
+
         $grade->set_hidden(0);
         $this->assertEqual(0, $grade->hidden);
 
         $grade->set_hidden(1);
         $this->assertEqual(1, $grade->hidden);
-
-        // @TODO test with cascading on (2nd param set to true)
     }
 
     function test_grade_grade_is_hidden() {
-        $grade = new grade_grade($this->grade_grades[0], false);
-        $grade->grade_item = new grade_item($this->grade_items[0], false);
+        $grade = new grade_grade($this->grade_grades[0]);
         $this->assertTrue(method_exists($grade, 'is_hidden'));
 
         $this->assertFalse($grade->is_hidden());
@@ -211,5 +178,7 @@ class grade_grade_test extends grade_test {
         $grade->hidden = time()+666;
         $this->assertTrue($grade->is_hidden());
     }
+
+
 }
 ?>

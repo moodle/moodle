@@ -82,8 +82,7 @@ class grade_scale extends grade_object {
      * @return object grade_scale instance or false if none found.
      */
     function fetch($params) {
-        $obj = grade_object::get_instance('grade_scale');
-        return $obj->fetch_helper('scale', 'grade_scale', $params);
+        return grade_object::fetch_helper('scale', 'grade_scale', $params);
     }
 
     /**
@@ -94,8 +93,7 @@ class grade_scale extends grade_object {
      * @return array array of grade_scale insatnces or false if none found.
      */
     function fetch_all($params) {
-        $obj = grade_object::get_instance('grade_scale');
-        return $obj->fetch_all_helper('scale', 'grade_scale', $params);
+        return grade_object::fetch_all_helper('scale', 'grade_scale', $params);
     }
 
     /**
@@ -192,7 +190,7 @@ class grade_scale extends grade_object {
      */
     function get_nearest_item($grade) {
         // Obtain nearest scale item from average
-        $scales_array = $this->lib_wrapper->get_records_list('scale', 'id', $this->id);
+        $scales_array = get_records_list('scale', 'id', $this->id);
         $scale = $scales_array[$this->id];
         $scales = explode(",", $scale->scale);
 
@@ -209,8 +207,7 @@ class grade_scale extends grade_object {
      * @return object
      */
     function fetch_all_global() {
-        $obj = grade_object::get_instance('grade_scale');
-        return $obj->fetch_all(array('courseid'=>0));
+        return grade_scale::fetch_all(array('courseid'=>0));
     }
 
     /**
@@ -218,8 +215,7 @@ class grade_scale extends grade_object {
      * @return object
      */
     function fetch_all_local($courseid) {
-        $obj = grade_object::get_instance('grade_scale');
-        return $obj->fetch_all(array('courseid'=>$courseid));
+        return grade_scale::fetch_all(array('courseid'=>$courseid));
     }
 
     /**
@@ -239,18 +235,18 @@ class grade_scale extends grade_object {
 
         // count grade items excluding the
         $sql = "SELECT COUNT(id) FROM {$CFG->prefix}grade_items WHERE scaleid = {$this->id} AND outcomeid IS NULL";
-        if ($this->lib_wrapper->count_records_sql($sql)) {
+        if (count_records_sql($sql)) {
             return true;
         }
 
         // count outcomes
         $sql = "SELECT COUNT(id) FROM {$CFG->prefix}grade_outcomes WHERE scaleid = {$this->id}";
-        if ($this->lib_wrapper->count_records_sql($sql)) {
+        if (count_records_sql($sql)) {
             return true;
         }
 
         $legacy_mods = false;
-        if ($mods = $this->lib_wrapper->get_records('modules', 'visible', 1)) {
+        if ($mods = get_records('modules', 'visible', 1)) {
             foreach ($mods as $mod) {
                 //Check cm->name/lib.php exists
                 if (file_exists($CFG->dirroot.'/mod/'.$mod->name.'/lib.php')) {
@@ -274,12 +270,12 @@ class grade_scale extends grade_object {
         // some mods are missing the new xxx_scale_used_anywhere() - use the really slow old way
         if ($legacy_mods) {
             if (!empty($this->courseid)) {
-                if ($this->lib_wrapper->course_scale_used($this->courseid,$this->id)) {
+                if (course_scale_used($this->courseid,$this->id)) {
                     return true;
                 }
             } else {
                 $courses = array();
-                if ($this->lib_wrapper->site_scale_used($this->id,$courses)) {
+                if (site_scale_used($this->id,$courses)) {
                     return true;
                 }
             }

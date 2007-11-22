@@ -157,9 +157,7 @@ class grade_category extends grade_object {
         if (empty($grade_category->parent)) {
             return '/'.$grade_category->id.'/';
         } else {
-            $obj = grade_object::get_instance('grade_category');
-            $parent = $obj->lib_wrapper->get_record('grade_categories', 'id', $grade_category->parent);
-
+            $parent = get_record('grade_categories', 'id', $grade_category->parent);
             return grade_category::build_path($parent).$grade_category->id.'/';
         }
     }
@@ -172,8 +170,7 @@ class grade_category extends grade_object {
      * @return object grade_category instance or false if none found.
      */
     function fetch($params) {
-        $obj = grade_object::get_instance('grade_category');
-        return $obj->fetch_helper('grade_categories', 'grade_category', $params);
+        return grade_object::fetch_helper('grade_categories', 'grade_category', $params);
     }
 
     /**
@@ -184,8 +181,7 @@ class grade_category extends grade_object {
      * @return array array of grade_category insatnces or false if none found.
      */
     function fetch_all($params) {
-        $obj = grade_object::get_instance('grade_category');
-        return $obj->fetch_all_helper('grade_categories', 'grade_category', $params);
+        return grade_object::fetch_all_helper('grade_categories', 'grade_category', $params);
     }
 
     /**
@@ -229,10 +225,9 @@ class grade_category extends grade_object {
      */
     function delete($source=null) {
         $grade_item = $this->load_grade_item();
-        $obj = grade_object::get_instance('grade_category');
 
         if ($this->is_course_category()) {
-            if ($categories = $obj->fetch_all(array('courseid'=>$this->courseid))) {
+            if ($categories = grade_category::fetch_all(array('courseid'=>$this->courseid))) {
                 foreach ($categories as $category) {
                     if ($category->id == $this->id) {
                         continue; // do not delete course category yet
@@ -241,7 +236,7 @@ class grade_category extends grade_object {
                 }
             }
 
-            if ($items = $grade_item->fetch_all(array('courseid'=>$this->courseid))) {
+            if ($items = grade_item::fetch_all(array('courseid'=>$this->courseid))) {
                 foreach ($items as $item) {
                     if ($item->id == $grade_item->id) {
                         continue; // do not delete course item yet
@@ -256,12 +251,12 @@ class grade_category extends grade_object {
             $parent = $this->load_parent_category();
 
             // Update children's categoryid/parent field first
-            if ($children = $grade_item->fetch_all(array('categoryid'=>$this->id))) {
+            if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
                 foreach ($children as $child) {
                     $child->set_parent($parent->id);
                 }
             }
-            if ($children = $obj->fetch_all(array('parent'=>$this->id))) {
+            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
                 foreach ($children as $child) {
                     $child->set_parent($parent->id);
                 }
@@ -288,11 +283,10 @@ class grade_category extends grade_object {
 
         if (empty($this->courseid)) {
             error('Can not insert grade category without course id!');
-            return false;
         }
 
         if (empty($this->parent)) {
-            $course_category = $obj->fetch_course_category($this->courseid);
+            $course_category = grade_category::fetch_course_category($this->courseid);
             $this->parent = $course_category->id;
         }
 
@@ -353,8 +347,8 @@ class grade_category extends grade_object {
             debugging("Can not regrade non existing category");
             return false;
         }
-        $obj = grade_object::get_instance('grade_category');
-        $db_item = $obj->fetch(array('id'=>$this->id));
+
+        $db_item = grade_category::fetch(array('id'=>$this->id));
 
         $aggregationdiff = $db_item->aggregation         != $this->aggregation;
         $keephighdiff    = $db_item->keephigh            != $this->keephigh;
@@ -409,7 +403,7 @@ class grade_category extends grade_object {
             $sql = "SELECT *
                       FROM {$CFG->prefix}grade_items
                      WHERE id IN ($gis)";
-            $items = $this->lib_wrapper->get_records_sql($sql);
+            $items = get_records_sql($sql);
         }
 
         if ($userid) {
@@ -418,7 +412,7 @@ class grade_category extends grade_object {
             $usersql = "";
         }
 
-        $grade_inst = grade_object::get_instance('grade_grade');
+        $grade_inst = new grade_grade();
         $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
 
         // where to look for final grades - include grade of this item too, we will store the results there
@@ -429,12 +423,12 @@ class grade_category extends grade_object {
               ORDER BY g.userid";
 
         // group the results by userid and aggregate the grades for this user
-        if ($rs = $this->lib_wrapper->get_recordset_sql($sql)) {
+        if ($rs = get_recordset_sql($sql)) {
             $prevuser = 0;
             $grade_values = array();
             $excluded     = array();
             $oldgrade     = null;
-            while ($used = $this->lib_wrapper->rs_fetch_next_record($rs)) {
+            while ($used = rs_fetch_next_record($rs)) {
                 if ($used->userid != $prevuser) {
                     $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade, $excluded);
                     $prevuser = $used->userid;
@@ -451,7 +445,7 @@ class grade_category extends grade_object {
                 }
             }
             $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade, $excluded);//the last one
-            $this->lib_wrapper->rs_close($rs);
+            rs_close($rs);
         }
 
         return true;
@@ -481,12 +475,12 @@ class grade_category extends grade_object {
                 // we need proper floats here for !== comparison later
                 $oldfinalgrade = (float)$oldgrade->finalgrade;
             }
-            $grade = $this->get_instance('grade_grade', $oldgrade, false);
+            $grade = new grade_grade($oldgrade, false);
             $grade->grade_item =& $this->grade_item;
 
         } else {
             // insert final grade - it will be needed later anyway
-            $grade = $this->get_instance('grade_grade', array('itemid'=>$this->grade_item->id, 'userid'=>$userid), false);
+            $grade = new grade_grade(array('itemid'=>$this->grade_item->id, 'userid'=>$userid), false);
             $grade->grade_item =& $this->grade_item;
             $grade->insert('system');
             $oldfinalgrade = null;
@@ -758,14 +752,13 @@ class grade_category extends grade_object {
      * @return array
      */
     function fetch_course_tree($courseid, $include_category_items=false) {
-        $obj = grade_object::get_instance('grade_category');
-        $course_category = $obj->fetch_course_category($courseid);
+        $course_category = grade_category::fetch_course_category($courseid);
         $category_array = array('object'=>$course_category, 'type'=>'category', 'depth'=>1,
                                 'children'=>$course_category->get_children($include_category_items));
         $sortorder = 1;
         $course_category->set_sortorder($sortorder);
         $course_category->sortorder = $sortorder;
-        return $obj->_fetch_course_tree_recursion($category_array, $sortorder);
+        return grade_category::_fetch_course_tree_recursion($category_array, $sortorder);
     }
 
     function _fetch_course_tree_recursion($category_array, &$sortorder) {
@@ -789,12 +782,12 @@ class grade_category extends grade_object {
             $cat_item_id = null;
             foreach($category_array['children'] as $oldorder=>$child_array) {
                 if ($child_array['type'] == 'courseitem' or $child_array['type'] == 'categoryitem') {
-                    $result['children'][$sortorder] = $this->_fetch_course_tree_recursion($child_array, $sortorder);
+                    $result['children'][$sortorder] = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
                 }
             }
             foreach($category_array['children'] as $oldorder=>$child_array) {
                 if ($child_array['type'] != 'courseitem' and $child_array['type'] != 'categoryitem') {
-                    $result['children'][++$sortorder] = $this->_fetch_course_tree_recursion($child_array, $sortorder);
+                    $result['children'][++$sortorder] = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
                 }
             }
         }
@@ -814,8 +807,8 @@ class grade_category extends grade_object {
         // fetch all course grade items and categories into memory - we do not expect hundreds of these in course
         // we have to limit the number of queries though, because it will be used often in grade reports
 
-        $cats  = $this->lib_wrapper->get_records('grade_categories', 'courseid', $this->courseid);
-        $items = $this->lib_wrapper->get_records('grade_items', 'courseid', $this->courseid);
+        $cats  = get_records('grade_categories', 'courseid', $this->courseid);
+        $items = get_records('grade_items', 'courseid', $this->courseid);
 
         // init children array first
         foreach ($cats as $catid=>$cat) {
@@ -859,6 +852,7 @@ class grade_category extends grade_object {
 
                 $cats[$cat->parent]->children[$sortorder] = $cat;
             }
+
             if ($catid == $this->id) {
                 $category = &$cats[$catid];
             }
@@ -867,7 +861,7 @@ class grade_category extends grade_object {
         unset($items); // not needed
         unset($cats); // not needed
 
-        $children_array = $this->_get_children_recursion($category);
+        $children_array = grade_category::_get_children_recursion($category);
 
         ksort($children_array);
 
@@ -880,7 +874,7 @@ class grade_category extends grade_object {
         $children_array = array();
         foreach($category->children as $sortorder=>$child) {
             if (array_key_exists('itemtype', $child)) {
-                $grade_item = $this->get_instance('grade_item', $child, false);
+                $grade_item = new grade_item($child, false);
                 if (in_array($grade_item->itemtype, array('course', 'category'))) {
                     $type  = $grade_item->itemtype.'item';
                     $depth = $category->depth;
@@ -891,8 +885,8 @@ class grade_category extends grade_object {
                 $children_array[$sortorder] = array('object'=>$grade_item, 'type'=>$type, 'depth'=>$depth);
 
             } else {
-                $children = $this->_get_children_recursion($child);
-                $grade_category = $this->get_instance('grade_category', $child, false);
+                $children = grade_category::_get_children_recursion($child);
+                $grade_category = new grade_category($child, false);
                 if (empty($children)) {
                     $children = array();
                 }
@@ -935,11 +929,9 @@ class grade_category extends grade_object {
             $params = array('courseid'=>$this->courseid, 'itemtype'=>'category', 'iteminstance'=>$this->id);
         }
 
-        $grade_item = grade_object::get_instance('grade_item');
-
-        if (!$grade_items = $grade_item->fetch_all($params)) {
+        if (!$grade_items = grade_item::fetch_all($params)) {
             // create a new one
-            $grade_item = $this->get_instance('grade_item', $params, false);
+            $grade_item = new grade_item($params, false);
             $grade_item->gradetype = GRADE_TYPE_VALUE;
             $grade_item->insert('system');
 
@@ -974,7 +966,7 @@ class grade_category extends grade_object {
      */
     function get_parent_category() {
         if (!empty($this->parent)) {
-            $parent_category = $this->get_instance('grade_category', array('id' => $this->parent));
+            $parent_category = new grade_category(array('id' => $this->parent));
             return $parent_category;
         } else {
             return null;
@@ -988,7 +980,7 @@ class grade_category extends grade_object {
      */
     function get_name() {
         if (empty($this->parent)) {
-            $course = $this->lib_wrapper->get_record('course', 'id', $this->courseid);
+            $course = get_record('course', 'id', $this->courseid);
             return format_string($course->fullname);
         } else {
             return $this->fullname;
@@ -1014,8 +1006,7 @@ class grade_category extends grade_object {
         }
 
         // find parent and check course id
-        $obj = grade_object::get_instance('grade_category');
-        if (!$parent_category = $obj->fetch(array('id'=>$parentid, 'courseid'=>$this->courseid))) {
+        if (!$parent_category = grade_category::fetch(array('id'=>$parentid, 'courseid'=>$this->courseid))) {
             return false;
         }
 
@@ -1098,13 +1089,12 @@ class grade_category extends grade_object {
     function fetch_course_category($courseid) {
 
         // course category has no parent
-        $obj = grade_object::get_instance('grade_category');
-        if ($course_category = $obj->fetch(array('courseid'=>$courseid, 'parent'=>null))) {
+        if ($course_category = grade_category::fetch(array('courseid'=>$courseid, 'parent'=>null))) {
             return $course_category;
         }
 
         // create a new one
-        $course_category = grade_object::get_instance('grade_category');
+        $course_category = new grade_category();
         $course_category->insert_course_category($courseid);
 
         return $course_category;
@@ -1143,8 +1133,7 @@ class grade_category extends grade_object {
 
         if ($cascade) {
             //process all children - items and categories
-            $grade_item = grade_object::get_instance('grade_item');
-            if ($children = $grade_item->fetch_all(array('categoryid'=>$this->id))) {
+            if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
                 foreach($children as $child) {
                     $child->set_locked($lockedstate, true, false);
                     if (empty($lockedstate) and $refresh) {
@@ -1153,8 +1142,7 @@ class grade_category extends grade_object {
                     }
                 }
             }
-            $obj = grade_object::get_instance('grade_category');
-            if ($children = $obj->fetch_all(array('parent'=>$this->id))) {
+            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
                 foreach($children as $child) {
                     $child->set_locked($lockedstate, true, true);
                 }
@@ -1194,14 +1182,12 @@ class grade_category extends grade_object {
         $this->load_grade_item();
         $this->grade_item->set_hidden($hidden);
         if ($cascade) {
-            $grade_item = grade_object::get_instance('grade_item');
-            if ($children = $grade_item->fetch_all(array('categoryid'=>$this->id))) {
+            if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
                 foreach($children as $child) {
                     $child->set_hidden($hidden, $cascade);
                 }
             }
-            $obj = grade_object::get_instance('grade_category');
-            if ($children = $obj->fetch_all(array('parent'=>$this->id))) {
+            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
                 foreach($children as $child) {
                     $child->set_hidden($hidden, $cascade);
                 }
@@ -1254,7 +1240,7 @@ class grade_category extends grade_object {
     function updated_forced_settings() {
         global $CFG;
         $sql = "UPDATE {$CFG->prefix}grade_items SET needsupdate=1 WHERE itemtype='course' or itemtype='category'";
-        $this->lib_wrapper->execute_sql($sql, false);
+        execute_sql($sql, false);
     }
 }
 ?>
