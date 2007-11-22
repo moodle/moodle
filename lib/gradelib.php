@@ -467,12 +467,17 @@ function grade_get_grade_items_for_activity($cm) {
     
     // Get grade_item object for this course module (or array of grade_items)
     $grade_items = grade_item::fetch_all(array('iteminstance' => $cm->instance, 'courseid' => $cm->courseid));
-    if (count($grade_items) == 0 || empty($grade_items)) {
+    $std_grade_items = array();
+    foreach ($grade_items as $key => $gi) {
+        $std_grade_items[$key] = $gi->get_record_data();
+    }
+
+    if (count($std_grade_items) == 0 || empty($std_grade_items)) {
         return null; 
-    } elseif (count($grade_items) == 1) {
-        return reset($grade_items);
+    } elseif (count($std_grade_items) == 1) {
+        return reset($std_grade_items);
     } else {
-        return $grade_items;
+        return $std_grade_items;
     } 
 }
 
@@ -517,8 +522,12 @@ function grade_get_grade_items($courseid = null, $type = null) {
         $params['itemtype'] = 'mod';
         $params['itemmodule'] = $type;
     }
-
-    return $grade_items = grade_item::fetch_all($params); 
+    $grade_items = $grade_items = grade_item::fetch_all($params);
+    $std_grade_items = array();
+    foreach ($grade_items as $key => $gi) {
+        $std_grade_items[$key] = $gi->get_record_data();
+    }
+    return $std_grade_items;
 } 
 
 /**
@@ -528,15 +537,10 @@ function grade_get_grade_items($courseid = null, $type = null) {
  * @param object $user A user object or a userid (int)
  * @return float 
  */
-function grade_get_user_grade($gradeitem, $user) {
+function grade_get_user_grade($gradeitem, $userid) {
     if (!method_exists($gradeitem, 'get_final')) {
         $fetch_from_db = empty($gradeitem->id); 
         $gradeitem = new grade_item($gradeitem, $fetch_from_db);
-    }
-    
-    $userid = $user;
-    if (isset($user->id)) {
-        $userid = $user->id;
     }
     
     if ($final = $gradeitem->get_final($userid)) {
@@ -554,17 +558,7 @@ function grade_get_user_grade($gradeitem, $user) {
  * @param object $course A course object or a courseid (int)
  * @return mixed Course grade or array of course grades if $course param is not given
  */
-function grade_get_course_grade($user, $course = null) {
-    $userid = $user;
-    if (isset($user->id)) {
-        $userid = $user->id;
-    }
-
-    $courseid = $course;
-    if (isset($course->id)) {
-        $courseid = $course->id;
-    }
-    
+function grade_get_course_grade($userid, $courseid = null) {
     $coursegrades = array();
 
     // Get the course item(s)
