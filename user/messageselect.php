@@ -64,7 +64,7 @@
 
     // if messaging is disabled on site, we can still allow users with capabilities to send emails instead
     if (empty($CFG->messaging)) {
-        notify("Messaging is disabled on this site, emails will be sent instead");  
+        notify(get_string('messagingdisabled','message'));  
     }
 
     if ($count) {

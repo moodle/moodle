@@ -32,6 +32,7 @@ $string['message'] = 'Message';
 $string['messagehistory'] = 'Message History';
 $string['messages'] = 'Messages';
 $string['messaging'] = 'Messaging';
+$string['messagingdisabled'] = 'Messaging is disabled on this site, emails will be sent instead';
 $string['mycontacts'] = 'My Contacts';
 $string['newsearch'] = 'New search';
 $string['newonlymsg'] = 'Show only new';
