@@ -515,7 +515,7 @@ class grade_report_grader extends grade_report {
             $headerhtml .= '<tr class="heading r'.$this->rowcount++.'">';
 
             if ($key == $numrows - 1) {
-                $headerhtml .= '<th class="header c'.$columncount++.' user" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
+                $headerhtml .= '<th class="header c'.$columncount++.'" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
                             . $strfirstname . '</a> '
                             . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
             } else {
