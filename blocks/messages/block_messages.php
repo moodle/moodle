@@ -9,6 +9,10 @@ class block_messages extends block_base {
     function get_content() {
         global $USER, $CFG;
 
+        if (!$CFG->messaging) {
+            return ''; 
+        }
+
         if ($this->content !== NULL) {
             return $this->content;
         }
