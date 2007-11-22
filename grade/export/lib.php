@@ -236,7 +236,7 @@ class grade_export {
                 $status = $g->track($grade_grade);
 
                 if ($this->updatedgradesonly && ($status == 'nochange' || $status == 'unknown')) {
-                    echo '<td>'.get_string('unchangedgrade', 'grade').'</td>';
+                    echo '<td>'.get_string('unchangedgrade', 'grades').'</td>';
                 } else {
                     echo "<td>$gradetxt</td>";
                 }
