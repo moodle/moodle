@@ -25,8 +25,8 @@ class course_import_activities_form_1 extends moodleform {
 
     }
 
-    function validation($data) {
-        return true;
+    function validation($data, $files) {
+        return parent::validation($data, $files);
     }
 
 }
@@ -52,7 +52,7 @@ class course_import_activities_form_2 extends moodleform {
 
     }
 
-    function validation($data) {
+    function validation($data, $files) {
         return true;
     }
 

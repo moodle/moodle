@@ -216,8 +216,8 @@ class edit_outcomeitem_form extends moodleform {
 
 
 /// perform extra validation before submission
-    function validation($data){
-        $errors= array();
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
 
         if (array_key_exists('idnumber', $data)) {
             if ($data['id']) {
@@ -230,11 +230,7 @@ class edit_outcomeitem_form extends moodleform {
             }
         }
 
-        if (0 == count($errors)){
-            return true;
-        } else {
-            return $errors;
-        }
+        return $errors;
     }
 
 }

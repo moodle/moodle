@@ -107,7 +107,7 @@ class question_edit_numerical_form extends question_edit_form {
         }
         parent::set_data($question);
     }
-    function validation($data, $files){
+    function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
         // Check the answers.

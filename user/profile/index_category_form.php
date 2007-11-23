@@ -25,24 +25,20 @@ class category_form extends moodleform {
     } /// End of function
 
 /// perform some moodle validation
-    function validation ($data) {
+    function validation($data, $files) {
         global $CFG;
+        $errors = parent::validation($data, $files);
 
         $data  = (object)$data;
-        $err = array();
 
         $category = get_record('user_info_category', 'id', $data->id);
 
         /// Check the name is unique
         if ($category and ($category->name !== $data->name) and (record_exists('user_info_category', 'name', $data->name))) {
-            $err['name'] = get_string('profilecategorynamenotunique', 'admin');
+            $errors['name'] = get_string('profilecategorynamenotunique', 'admin');
         }
 
-        if (count($err) == 0){
-            return true;
-        } else {
-            return $err;
-        }
+        return $errors;
     }
 }
 

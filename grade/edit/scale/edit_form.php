@@ -107,10 +107,10 @@ class edit_scale_form extends moodleform {
     }
 
 /// perform extra validation before submission
-    function validation($data){
+    function validation($data, $files) {
         global $CFG, $COURSE;
 
-        $errors = array();
+        $errors = parent::validation($data, $files);
 
         // we can not allow 2 scales with the same exact scale as this creates
         // problems for backup/restore
@@ -148,11 +148,7 @@ class edit_scale_form extends moodleform {
             }
         }
 
-        if (0 == count($errors)){
-            return true;
-        } else {
-            return $errors;
-        }
+        return $errors;
     }
 }
 

@@ -226,7 +226,7 @@ class question_dataset_dependent_items_form extends moodleform {
         parent::set_data((object)($formdata + (array)$question));
     }
 
-    function validation($data){
+    function validation($data, $files) {
         $errors = array();
         if (isset($data['backtoquiz']) && ($this->noofitems==0)){
             $errors['warning'] = get_string('warning', 'mnet');

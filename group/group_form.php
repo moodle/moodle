@@ -42,10 +42,10 @@ class group_form extends moodleform {
         $this->add_action_buttons();
     }
 
-    function validation($data) {
+    function validation($data, $files) {
         global $COURSE;
 
-        $errors = array();
+        $errors = parent::validation($data, $files);
 
         $name = trim(stripslashes($data['name']));
         if ($data['id'] and $group = get_record('groups', 'id', $data['id'])) {
@@ -59,11 +59,7 @@ class group_form extends moodleform {
             $errors['name'] = get_string('groupnameexists', 'group', $name);
         }
 
-        if (count($errors) > 0) {
-            return $errors;
-        } else {
-            return true;
-        }
+        return $errors;
     }
 
     function get_um() {

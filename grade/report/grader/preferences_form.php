@@ -191,13 +191,8 @@ class grader_report_preferences_form extends moodleform {
     }
 
 /// perform some extra moodle validation
-    function validation($data){
-        $errors= array();
-        if (0 == count($errors)){
-            return true;
-        } else {
-            return $errors;
-        }
+    function validation($data, $files) {
+        return parent::validation($data, $files);
     }
 }
 ?>

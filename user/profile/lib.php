@@ -329,7 +329,7 @@ function profile_definition_after_data(&$mform) {
     }*/
 }
 
-function profile_validation($usernew) {
+function profile_validation($usernew, $files) {
     global $CFG;
 
     $err = array();
@@ -338,7 +338,7 @@ function profile_validation($usernew) {
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
             $newfield = 'profile_field_'.$field->datatype;
             $formfield = new $newfield($field->id, $usernew->id);
-            $err += $formfield->edit_validate_field($usernew);
+            $err += $formfield->edit_validate_field($usernew, $files);
         }
     }
     return $err;

@@ -70,7 +70,7 @@ class question_edit_match_form extends question_edit_form {
         return 'match';
     }
 
-    function validation($data, $files){
+    function validation($data, $files) {
         $errors = parent::validation($data, $files);
         $answers = $data['subanswers'];
         $questions = $data['subquestions'];

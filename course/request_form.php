@@ -31,8 +31,8 @@ class course_request_form extends moodleform {
         $this->add_action_buttons();
     }
 
-    function validation($data) {
-        $errors = array();
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
         $foundcourses = null;
         $foundreqcourses = null;
 
@@ -67,12 +67,8 @@ class course_request_form extends moodleform {
                 }
             }
         }
-        if (0 == count($errors)){
-            return true;
-        } else {
-            return $errors;
-        }
 
+        return $errors;
     }
 
 }

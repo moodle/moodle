@@ -405,8 +405,8 @@ class course_edit_form extends moodleform {
         
 
 /// perform some extra moodle validation
-    function validation($data){
-        $errors= array();
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
         if ($foundcourses = get_records('course', 'shortname', $data['shortname'])) {
             if (!empty($data['id'])) {
                 unset($foundcourses[$data['id']]);
@@ -426,11 +426,7 @@ class course_edit_form extends moodleform {
             }
         }
 
-        if (0 == count($errors)){
-            return true;
-        } else {
-            return $errors;
-        }
+        return $errors;
     }
 }
 ?>

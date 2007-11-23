@@ -269,8 +269,8 @@ class admin_uploaduser_form2 extends moodleform {
     /**
      * Server side validation.
      */
-    function validation($data) {
-        $errors  = array();
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
         $columns =& $this->_customdata;
         $optype  = $data['uutype'];
 
@@ -325,11 +325,7 @@ class admin_uploaduser_form2 extends moodleform {
             }
         }
 
-        if (0 == count($errors)){
-            return true;
-        } else {
-            return $errors;
-        }
+        return $errors;
     }
 }
 ?>

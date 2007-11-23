@@ -73,7 +73,7 @@ class question_edit_multianswer_form extends question_edit_form {
         parent::set_data($question);
     }
 
-    function validation($data, $files){
+    function validation($data, $files) {
         //TODO would be nice to parse the question text here and output some error
         //messages if there is a problem with the text.
         $errors = parent::validation($data, $files);

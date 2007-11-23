@@ -27,10 +27,10 @@ class grouping_form extends moodleform {
         $this->add_action_buttons();
     }
 
-    function validation($data) {
+    function validation($data, $files) {
         global $COURSE;
 
-        $errors = array();
+        $errors = parent::validation($data, $files);
 
         $name = trim(stripslashes($data['name']));
         if ($data['id'] and $grouping = get_record('groupings', 'id', $data['id'])) {
@@ -44,11 +44,7 @@ class grouping_form extends moodleform {
             $errors['name'] = get_string('groupingnameexists', 'group', $name);
         }
 
-        if (count($errors) > 0) {
-            return $errors;
-        } else {
-            return true;
-        }
+        return $errors;
     }
 
 }

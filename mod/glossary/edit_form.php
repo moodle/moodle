@@ -94,9 +94,9 @@ class mod_glossary_entry_form extends moodleform {
         $this->add_action_buttons();
     }
 
-    function validation($data){
+    function validation($data, $files) {
         global $CFG, $USER;
-        $errors = array();
+        $errors = parent::validation($data, $files);
         $e = $this->_customdata['e'];
         $glossary = $this->_customdata['glossary'];
         $context = $this->_customdata['context'];

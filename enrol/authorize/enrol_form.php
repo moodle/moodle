@@ -171,11 +171,10 @@ class enrol_authorize_form extends moodleform
         $this->add_action_buttons(false, get_string('sendpaymentbutton', 'enrol_authorize'));
     }
 
-    function validation($data)
+    function validation($data, $files)
     {
         global $CFG;
-
-        $errors = array();
+        $errors = parent::validation($data, $files);
 
         if (AN_METHOD_CC == $data['paymentmethod'])
         {
@@ -209,7 +208,7 @@ class enrol_authorize_form extends moodleform
             }
         }
 
-        return (empty($errors) ? true : $errors);
+        return $errors;
     }
 
     function other_method_available($currentmethod)

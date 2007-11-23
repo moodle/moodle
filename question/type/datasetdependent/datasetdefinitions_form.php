@@ -111,8 +111,8 @@ class question_dataset_dependent_definitions_form extends moodleform {
         $mform->addElement('hidden', 'wizard', 'datasetitems');
         $mform->setType('wizard', PARAM_ALPHA);
     }
-    function validation($data){
-        $errors = array();
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
         $datasets = $data['dataset'];
         $countvalid = 0 ;
         foreach ($datasets as $key => $dataset){

@@ -84,7 +84,7 @@ class grade_import_form extends moodleform {
     }
 
     function validation($data, $files) {
-        $err = array();
+        $err = parent::validation($data, $files);
         if (empty($data['url']) and empty($files['userfile'])) {
             if (array_key_exists('url', $data)) {
                 $err['url'] = get_string('required');
@@ -97,11 +97,7 @@ class grade_import_form extends moodleform {
             $err['url'] = get_string('error');
         }
 
-        if (count($err) == 0){
-            return true;
-        } else {
-            return $err;
-        }
+        return $err;
     }
 }
 ?>

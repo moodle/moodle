@@ -86,8 +86,9 @@ class moodleform_mod extends moodleform {
     }
 
     // form verification
-    function validation($data) {
+    function validation($data, $files) {
         global $COURSE;
+        $errors = parent::validation($data, $files);
 
         $mform =& $this->_form;
 
@@ -115,11 +116,7 @@ class moodleform_mod extends moodleform {
             }
         }
 
-        if (count($errors) == 0) {
-            return true;
-        } else {
-            return $errors;
-        }
+        return $errors;
     }
 
     /**

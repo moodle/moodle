@@ -309,11 +309,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
     }
 
-    function validation($data){
-        $errors = parent::validation($data);
-        if ($errors === true) {
-            $errors = array();
-        }
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
 
         // Check open and close times are consistent.
         if ($data['timeopen'] != 0 && $data['timeclose'] != 0 && $data['timeclose'] < $data['timeopen']) {

@@ -135,8 +135,8 @@ class edit_outcome_form extends moodleform {
     }
 
 /// perform extra validation before submission
-    function validation($data){
-        $errors = array();
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
 
         if ($data['scaleid'] < 1) {
             $errors['scaleid'] = get_string('required');
@@ -149,11 +149,7 @@ class edit_outcome_form extends moodleform {
             }
         }
 
-        if (0 == count($errors)){
-            return true;
-        } else {
-            return $errors;
-        }
+        return $errors;
     }
 
 

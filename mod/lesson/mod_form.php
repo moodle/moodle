@@ -327,21 +327,14 @@ class mod_lesson_mod_form extends moodleform_mod {
      * @param object $data Post data to validate
      * @return array
      **/
-    function validation($data) {
-        $errors = parent::validation($data);
-        if ($errors === true) {
-            $errors = array();
-        }
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
 
         if (empty($data['maxtime']) and !empty($data['timed'])) {
             $errors['timedgrp'] = get_string('err_numeric', 'form');
         }
 
-        if (count($errors) == 0) {
-            return true;
-        } else {
-            return $errors;
-        }
+        return $errors;
     }
 }
 ?>
