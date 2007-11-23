@@ -147,6 +147,7 @@
     add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
 
     if ($course->id != SITEID) {
+        $user->lastaccess = false;
         if ($lastaccess = get_record('user_lastaccess', 'userid', $user->id, 'courseid', $course->id)) {
             $user->lastaccess = $lastaccess->timeaccess;
         }
