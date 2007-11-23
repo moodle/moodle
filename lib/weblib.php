@@ -2797,6 +2797,11 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
         $menu = '';
     }
 
+/// there should be exactly one open container 'content'
+    if (open_containers() != 1) {
+        debugging('Unexpected number of open containers: '.open_containers().', expecting 1.', DEBUG_DEVELOPER);
+    }
+
 /// Provide some performance info if required
     $performanceinfo = '';
     if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
@@ -3911,7 +3916,7 @@ function print_container_end($return=false) {
     global $THEME;
 
     if (empty($THEME->open_containers)) {
-        debugging('Incorrect closing of custom corners - no more open containers');
+        debugging('Incorrect closing of custom corners - no more open containers.', DEBUG_DEVELOPER);
         $idbase = '';
     } else {
         $idbase = array_pop($THEME->open_containers);
@@ -3928,6 +3933,20 @@ function print_container_end($return=false) {
     } else {
         echo $output;
     }
+}
+
+/**
+ * Returns number of currently open containers
+ * @return int number of open containers
+ */
+function open_containers() {
+    global $THEME;
+
+    if (!isset($THEME->open_containers)) {
+        $THEME->open_containers = array();
+    }
+
+    return count($THEME->open_containers);
 }
 
 /**
