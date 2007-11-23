@@ -9,10 +9,13 @@
     define('USER_LARGE_CLASS', 200);  // Above this is considered large
     define('DEFAULT_PAGE_SIZE', 20);
     define('SHOW_ALL_PAGE_SIZE', 5000);
+    define('MODE_BRIEF', 0);
+    define('MODE_USERDETAILS', 1);
+    define('MODE_ENROLDETAILS', 2);
 
     $page         = optional_param('page', 0, PARAM_INT);                     // which page to show
     $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
-    $mode         = optional_param('mode', NULL);                             // '0' for less details, '1' for more
+    $mode         = optional_param('mode', NULL);                             // use the MODE_ constants
     $accesssince  = optional_param('accesssince',0,PARAM_INT);               // filter by last access. -1 = never
     $search       = optional_param('search','',PARAM_CLEAN);
     $roleid       = optional_param('roleid', 0, PARAM_INT);                 // optional roleid
@@ -112,11 +115,12 @@
     $datestring->secs  = get_string('secs');
 
     if ($mode !== NULL) {
-        $SESSION->userindexmode = $fullmode = ($mode == 1);
+        $mode = (int)$mode;
+        $SESSION->userindexmode = $mode;
     } else if (isset($SESSION->userindexmode)) {
-        $fullmode = $SESSION->userindexmode;
+        $mode = (int)$SESSION->userindexmode;
     } else {
-        $fullmode = false;
+        $mode = MODE_BRIEF;
     }
 
 /// Check to see if groups are being used in this forum
@@ -242,11 +246,30 @@
         echo '</td>';
     }
 
+    // Decide wheteher we will fetch extra enrolment/groups data.
+    //
+    // MODE_ENROLDETAILS is expensive, and only suitable where the listing is small
+    // (at or below DEFAULT_PAGE_SIZE) and $USER can enrol/unenrol
+    // (will take 1 extra DB query - 2 on Oracle)
+    //
+    if ($course->id != SITEID && $perpage <= DEFAULT_PAGE_SIZE 
+        && has_capability('moodle/role:assign',$context)) {
+        $allowenroldetails=true;
+    } else {
+        $allowenroldetails=false;
+    }
+    if ($mode === MODE_ENROLDETAILS && !($allowenroldetails)) {
+        // conditions haven't been met - reset
+        $mode = MODE_BRIEF;
+    }
 
     echo '<td class="right">';
-    $formatmenu = array( '0' => get_string('detailedless'),
-                         '1' => get_string('detailedmore'));
-    popup_form($baseurl.'&amp;mode=', $formatmenu, 'formatmenu', $fullmode, '', '', '', false, 'self', get_string('userlist'));
+    $formatmenu = array( '0' => get_string('brief'),
+                         '1' => get_string('userdetails'));
+    if ($allowenroldetails) {
+        $formatmenu['2']= get_string('enroldetails');
+    }
+    popup_form($baseurl.'&amp;mode=', $formatmenu, 'formatmenu', $mode, '', '', '', false, 'self', get_string('userlist'));
     echo '</td></tr></table>';
 
     if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', $context))) {    /// Display info about the group
@@ -268,28 +291,15 @@
         }
     }
 
-    // Decide wheteher we will fetch extra enrolment/groups data.
-    //
-    // If the listing is small (at or below DEFAULT_PAGE_SIZE)
-    // and $USER can enrol/unenrol, display extra enrolments & groups information.
-    // (will take 1 extra DB query - 2 on Oracle)
-    //
-    if ($fullmode === false              && $course->id != SITEID
-        && $perpage <= DEFAULT_PAGE_SIZE && has_capability('moodle/role:assign',$context)) {
-        $showenroldata = true;
-    } else {
-        $showenroldata = false;
-    }
-
     /// Define a table showing a list of users in the current role selection
 
     $tablecolumns = array('userpic', 'fullname');
     $tableheaders = array(get_string('userpic'), get_string('fullname'));
-    if (!isset($hiddenfields['city'])) {
+    if ($mode === MODE_BRIEF && !isset($hiddenfields['city'])) {
         $tablecolumns[] = 'city';
         $tableheaders[] = get_string('city');
     }
-    if (!isset($hiddenfields['country'])) {
+    if ($mode === MODE_BRIEF && !isset($hiddenfields['country'])) {
         $tablecolumns[] = 'country';
         $tableheaders[] = get_string('country');
     }
@@ -303,7 +313,7 @@
         $tableheaders[] = get_string('enrolmentend');
     }
 
-    if ($showenroldata) {
+    if ($mode === MODE_ENROLDETAILS) {
         $tablecolumns[] = 'roles';
         $tableheaders[] = get_string('roles');
         if ($groupmode != 0) {
@@ -462,7 +472,7 @@
     // but this is much cheaper. And in any case, it is only doable with limited numbers
     // of rows anyway. On a large course it will explode badly...
     //
-    if ($showenroldata) {
+    if ($mode===MODE_ENROLDETAILS) {
         $userids = array();
 
         while ($user = rs_fetch_next_record($userlist)) {
@@ -555,7 +565,7 @@
         echo '<p id="longtimenosee">('.get_string('unusedaccounts', '', $CFG->longtimenosee).')</p>';
     }
 
-    if ($fullmode) {    // Print simple listing
+    if ($mode===MODE_USERDETAILS) {    // Print simple listing
         if ($totalcount < 1) {
             print_heading(get_string('nothingtodisplay'));
         } else {
@@ -672,10 +682,10 @@
                         print_user_picture($user, $course->id, $user->picture, false, true, $piclink),
                         $profilelink);
 
-                if (!isset($hiddenfields['city'])) {
+                if ($mode === MODE_BRIEF && !isset($hiddenfields['city'])) {
                     $data[] = $user->city;
                 }
-                if (!isset($hiddenfields['country'])) {
+                if ($mode === MODE_BRIEF && !isset($hiddenfields['country'])) {
                     $data[] = $country;
                 }
                 if (!isset($hiddenfields['lastaccess'])) {
@@ -695,9 +705,9 @@
                     foreach ($ras AS $key=>$ra) {
                         $rolename = $rolenames [ $ra['roleid'] ] ;
                         if ($ra['ctxlevel'] == CONTEXT_COURSECAT) {
-                            $rastring .= $rolename. ' @ ' . s($ra['ccname']);
+                            $rastring .= $rolename. ' @ ' . '<a href="'.$CFG->wwwroot.'/course/category.php?id='.$ra['ctxinstanceid'].'">'.s($ra['ccname']).'</a>';
                         } elseif ($ra['ctxlevel'] == CONTEXT_SYSTEM) {
-                            $rastring .= $rolename. ' @ ' . get_string('globalrole','role');
+                            $rastring .= $rolename. ' - ' . get_string('globalrole','role');
                         } else {
                             $rastring .= $rolename;
                         }
