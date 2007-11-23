@@ -8,10 +8,6 @@
       
 
     require_once($CFG->libdir.'/ajax/ajaxlib.php');
-    
-    if (!empty($THEME->customcorners)) {
-        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-    }
   
     $topic = optional_param('topic', -1, PARAM_INT);
 
@@ -82,9 +78,9 @@
 
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width:'.$preferred_width_left.'px" id="left-column">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start();
+        print_container_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        if (!empty($THEME->customcorners)) print_custom_corners_end();
+        print_container_end();
         echo '</td>';
     }
 
@@ -92,7 +88,7 @@
             case 'middle':
 /// Start main column
     echo '<td id="middle-column">';
-    if (!empty($THEME->customcorners)) print_custom_corners_start();
+    print_container_start();
     echo skip_main_destination();
 
     print_heading_block(get_string('topicoutline'), 'outline');
@@ -276,7 +272,7 @@
         echo '</div>';
     }
 
-    if (!empty($THEME->customcorners)) print_custom_corners_end();
+    print_container_end();
     echo '</td>';
 
             break;
@@ -284,9 +280,9 @@
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
         echo '<td style="width:'.$preferred_width_right.'px" id="right-column">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start();
+        print_container_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-        if (!empty($THEME->customcorners)) print_custom_corners_end();
+        print_container_end();
         echo '</td>';
     }
 

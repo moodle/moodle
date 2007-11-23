@@ -2809,14 +2809,6 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
         }
     }
 
-/// Close eventually open custom_corner divs
-    if ((!empty($THEME->customcorners)) && ($THEME->customcornersopen > 1)) {
-        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-        while ($THEME->customcornersopen > 1) {
-            print_custom_corners_end();
-        }
-    }
-
 /// Include the actual footer file
 
     ob_start();
@@ -3825,21 +3817,16 @@ function print_box($message, $classes='generalbox', $ids='', $return=false) {
  * @param boolean $return, return as string or just print it
  */
 function print_box_start($classes='generalbox', $ids='', $return=false) {
-    $output = '';
+    global $THEME;
 
-    if ($ids) {
-        $ids = ' id="'.$ids.'"';
-    }
-
-    $output .= '<div'.$ids.' class="box '.$classes.'">';
-
-    if ($return) {
-        return $output;
+    if (!empty($THEME->customcorners)) {
+        $classes .= ' ccbox box';
     } else {
-        echo $output;
+        $classes .= ' box';
     }
-}
 
+    return print_container_start(false, $classes, $ids, $return);
+}
 
 /**
  * Simple function to end a box (see above)
@@ -3848,28 +3835,22 @@ function print_box_start($classes='generalbox', $ids='', $return=false) {
  * @param boolean $return, return as string or just print it
  */
 function print_box_end($return=false) {
-    $output = '</div>';
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    return print_container_end($return);
 }
 
-
 /**
- * Function adds custom_corners to boxes
+ * Print a message in a standard themed container.
  *
- * @param string $message, the content of the box
+ * @param string $message, the content of the container
  * @param string $classes, space-separated class names.
  * @param string $ids, space-separated id names.
  * @param boolean $return, return as string or just print it
  */
-function print_custom_corners_box($message, $classes='generalbox', $ids='', $return=false) {
+function print_container($message, $clearfix=false, $classes='', $idbase='', $return=false) {
 
-    $output  = print_custom_corners_box_start($classes, $ids, true);
+    $output  = print_container_start($clearfix, $classes, $idbase, true);
     $output .= stripslashes_safe($message);
-    $output .= print_custom_corners_box_end(true);
+    $output .= print_container_end(true);
 
     if ($return) {
         return $output;
@@ -3878,24 +3859,41 @@ function print_custom_corners_box($message, $classes='generalbox', $ids='', $ret
     }
 }
 
-
 /**
- * Function adds custom_corners to boxes
- * Calls print_box_start
+ * Starts a container using divs
  *
  * @param string $classes, space-separated class names.
  * @param string $ids, space-separated id names.
  * @param boolean $return, return as string or just print it
  */
-function print_custom_corners_box_start($classes='generalbox', $ids='', $return=false) {
-    global $CFG, $THEME;
+function print_container_start($clearfix=false, $classes='', $idbase='', $return=false) {
+    global $THEME;
 
-    $output = print_box_start('ccbox '.$classes, $ids, true);
+    if (!isset($THEME->open_containers)) {
+        $THEME->open_containers = array();
+    }
+    $THEME->open_containers[] = $idbase;
+
 
     if (!empty($THEME->customcorners)) {
-        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-
-        $output .= print_custom_corners_start(true, true);
+        $output = _print_custom_corners_start($clearfix, $classes, $idbase);
+    } else {
+        if ($idbase) {
+            $id = ' id="'.$idbase.'"';
+        } else {
+            $id = '';
+        }
+        if ($clearfix) {
+            $clearfix = ' clearfix';
+        } else {
+            $clearfix = '';
+        }
+        if ($classes or $clearfix) {
+            $class = ' class="'.$classes.$clearfix.'"';
+        } else {
+            $class = '';
+        }
+        $output = '<div'.$id.$class.'>';
     }
 
     if ($return) {
@@ -3905,31 +3903,107 @@ function print_custom_corners_box_start($classes='generalbox', $ids='', $return=
     }
 }
 
-
 /**
- * Function adds custom_corners to boxes
- * Calls print_box_end
- *
+ * Simple function to end a container (see above)
  * @param boolean $return, return as string or just print it
  */
-function print_custom_corners_box_end($return=false) {
-    global $CFG, $THEME;
+function print_container_end($return=false) {
+    global $THEME;
+
+    if (empty($THEME->open_containers)) {
+        debugging('Incorrect closing of custom corners - no more open containers');
+        $idbase = '';
+    } else {
+        $idbase = array_pop($THEME->open_containers);
+    }
+
+    if (!empty($THEME->customcorners)) {
+        $output = _print_custom_corners_end($idbase);
+    } else {
+        $output = '</div>';
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Force closing of all open containers except the main content one.
+ * @param boolean $return, return as string or just print it
+ */
+function print_container_end_all($return=false) {
+    global $THEME;
 
     $output = '';
-
-    if (!empty($THEME->customcorners)) {
-        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-
-        $output .= print_custom_corners_end(true);
+    if (!empty($THEME->open_containers)) {
+        while(count($THEME->open_containers) > 1) { // the last one is the 'content' container
+            $output .= print_container_end($return);
+        }
     }
-
-    $output .= print_box_end(true);;
 
     if ($return) {
         return $output;
     } else {
         echo $output;
     }
+}
+
+/**
+ * Internal function - do not use directly!
+ * Starting part of the surrounding divs for custom corners
+ *
+ * @param boolean $clearfix, add CLASS "clearfix" to the inner div against collapsing
+ * @param mixed   $idbase, optionally, define one idbase to be added to all the elements in the corners
+ */
+function _print_custom_corners_start($clearfix=false, $classes='', $idbase='') {
+/// Analise if we want ids for the custom corner elements
+    $id = '';
+    $idbt = '';
+    $idi1 = '';
+    $idi2 = '';
+    $idi3 = '';
+
+    if ($idbase) {
+        $id   = 'id="'.$idbase.'" ';
+        $idbt = 'id="'.$idbase.'-bt" ';
+        $idi1 = 'id="'.$idbase.'-i1" ';
+        $idi2 = 'id="'.$idbase.'-i2" ';
+        $idi3 = 'id="'.$idbase.'-i3" ';
+    }
+
+/// Output begins
+    $output = '<div '.$id.'class="wrap '.$classes.'">'."\n";
+    $output .= '<div '.$idbt.'class="bt"><div>&nbsp;</div></div>';
+    $output .= "\n";
+    $output .= '<div '.$idi1.'class="i1"><div '.$idi2.'class="i2">';
+    $output .= (!empty($clearfix)) ? '<div '.$idi3.'class="i3 clearfix">' : '<div '.$idi3.'class="i3">';
+
+    return $output;
+}
+
+
+/**
+ * Internal function - do not use directly!
+ * Ending part of the surrounding divs for custom corners
+ */
+function _print_custom_corners_end($idbase) {
+/// Analise if we want ids for the custom corner elements
+    $idbb = '';
+
+    if ($idbase) {
+        $idbb = 'id="' . $idbase . '-bb" ';
+    }
+
+/// Output begins
+    $output = '</div></div></div>';
+    $output .= "\n";
+    $output .= '<div '.$idbb.'class="bb"><div>&nbsp;</div></div>'."\n";
+    $output .= '</div>';
+
+    return $output;
 }
 
 
@@ -5537,6 +5611,8 @@ function error ($message, $link='') {
         //header not yet printed
         @header('HTTP/1.0 404 Not Found');
         print_header(get_string('error'));
+    } else {
+        print_container_end_all();
     }
 
     echo '<br />';
@@ -5791,6 +5867,8 @@ function editorshortcutshelpbutton() {
 function notice ($message, $link='', $course=NULL) {
     global $CFG, $SITE;
 
+    print_container_end_all();
+
     $message = clean_text($message);
 
     print_box($message, 'generalbox', 'notice');
@@ -5929,6 +6007,8 @@ function redirect($url, $message='', $delay=-1) {
         // this type of redirect might not be working in some browsers - such as lynx :-(
         print_header('', '', '', '', $errorprinted ? '' : ('<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />'));
         $delay += 3; // double redirect prevention, it was sometimes breaking upgrades before 1.7
+    } else {
+        print_container_end_all();
     }
     echo '<div style="text-align:center">';
     echo '<div>'. $message .'</div>';
@@ -6232,10 +6312,6 @@ function print_side_block_start($heading='', $attributes = array()) {
 
     global $CFG, $THEME;
 
-    if (!empty($THEME->customcorners)) {
-        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-    }
-
     // If there are no special attributes, give a default CSS class
     if (empty($attributes) || !is_array($attributes)) {
         $attributes = array('class' => 'sideblock');
@@ -6293,7 +6369,6 @@ function print_side_block_start($heading='', $attributes = array()) {
     if (!empty($THEME->customcorners)) {
         echo '<div class="i1"><div class="i2">';
         echo '<div class="i3">';
-        $THEME->customcornersopen += 1;
     }
     echo '<div class="content">';
 
@@ -6309,8 +6384,7 @@ function print_side_block_end($attributes = array()) {
     echo '</div>';
 
     if (!empty($THEME->customcorners)) {
-        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-        print_custom_corners_end();
+        echo '</div></div></div><div class="bb"><div>&nbsp;</div></div></div>';
     }
 
     echo '</div>';

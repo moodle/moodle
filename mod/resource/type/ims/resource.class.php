@@ -482,10 +482,9 @@ class resource_ims extends resource_base {
         /// Now, let's print the footer. It's harcoded here to save some space
         /// because it's impossible to use print_footer() to print NOTHING
         /// Added programatic support to customcorners themes.
-            if (!empty($THEME->customcorners)) {
-                print_custom_corners_end(false, 'content');
-            }
-            echo '</div></div></body></html>'; /// Close everything.
+            // this is hack!
+            print_container_end(); // container "content" started in header
+            echo '</div></body></html>'; // close page div started in header
 
         /// log it.
             add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);

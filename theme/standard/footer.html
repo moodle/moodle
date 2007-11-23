@@ -1,39 +1,39 @@
-
-</div> <!-- end div containerContent -->
-<!-- START OF FOOTER -->
-<div id="footer">
-
 <?php
+
+    print_container_end(); // content container
+
+    print_container_start(false, '', 'footer');
+
     echo '<p class="helplink">';
     echo page_doc_link(get_string('moodledocslink'));
     echo '</p>';
-?>
 
-<?php if ($navigation and false) { ?>
+
+    if ($navigation and false) { ?>
     <div class="navbar clearfix">
         <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
         <div class="menu"><?php echo $menu; ?></div>
     </div>
-<?php } ?>
+<?php }
 
-<?php echo $loggedinas ?>
-<?php echo $homelink ?>
+    echo $loggedinas;
+    echo $homelink;
 
-<?php if (!empty($performanceinfo)) {
-          echo $performanceinfo;
-} ?>
+    if (!empty($performanceinfo)) {
+        echo $performanceinfo;
+    }
 
-<?php if (debugging()) {
-?>
+    if (debugging()) { ?>
         <div class="validators"><ul>
           <li><a href="http://validator.w3.org/check?verbose=1&amp;ss=1&amp;uri=<?php echo urlencode(qualified_me()) ?>">Validate HTML</a></li>
           <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&amp;url1=<?php echo urlencode(qualified_me()) ?>">Section 508 Check</a></li>
           <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=0&amp;warnp2n3e=1&amp;url1=<?php echo urlencode(qualified_me()) ?>">WCAG 1 (2,3) Check</a></li>
         </ul></div>
-<?php } ?>
+<?php }
 
+    print_container_end();
+?>
 
-</div>
 </div>
 </body>
 </html>

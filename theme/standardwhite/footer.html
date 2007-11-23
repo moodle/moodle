@@ -1,21 +1,18 @@
-
-</div> <!-- end div content -->
-
-<div id="footer">
-<hr />
-
 <?php
+
+    print_container_end(); // content container
+
+    print_container_start(false, '', 'footer');
+    echo "<hr />";
+
     echo '<p class="helplink">';
     echo page_doc_link(get_string('moodledocslink'));
     echo '</p>';
-?>
 
-<?php echo $loggedinas ?>
-<?php echo $homelink ?>
+    echo $loggedinas;
+    echo $homelink;
 
-
-<?php
-    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !empty($performanceinfo)) { 
+    if (!empty($performanceinfo) and has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) { 
         echo $performanceinfo;
     }
 
@@ -26,10 +23,10 @@
           <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&amp;url1=<?php echo urlencode(qualified_me()) ?>">Section 508 Check</a></li>
           <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=0&amp;warnp2n3e=1&amp;url1=<?php echo urlencode(qualified_me()) ?>">WCAG 1 (2,3) Check</a></li>
         </ul></div>
-<?php } ?>
+<?php } 
+    print_container_end();
+?>
 
-
-</div>
 </div>
 </body>
 </html>

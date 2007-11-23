@@ -287,8 +287,7 @@
         </div> <!-- SCORM box  -->
     </div> <!-- SCORM content -->
     <?php if (!empty($THEME->customcorners)) {
-        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-        print_custom_corners_end();
+        print_container_end();
     } ?>
     <div class="clearer">&nbsp;</div>
 <?php print_footer(); ?>

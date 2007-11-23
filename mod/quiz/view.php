@@ -8,10 +8,6 @@
     require_once($CFG->dirroot.'/mod/quiz/locallib.php');
     require_once($CFG->dirroot.'/mod/quiz/pagelib.php');
 
-    if (!empty($THEME->customcorners)) {
-        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-    }
-
     $id   = optional_param('id', 0, PARAM_INT); // Course Module ID, or
     $q    = optional_param('q',  0, PARAM_INT);  // quiz ID
     $edit = optional_param('edit', -1, PARAM_BOOL);
@@ -68,14 +64,14 @@
 
     if(!empty($CFG->showblocksonmodpages) && (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
         echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start();
+        print_container_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        if (!empty($THEME->customcorners)) print_custom_corners_end();
+        print_container_end();
         echo '</td>';
     }
 
     echo '<td id="middle-column">';
-    if (!empty($THEME->customcorners)) print_custom_corners_start();
+    print_container_start();
 
     // Print the main part of the page
 
@@ -457,7 +453,7 @@
 
 function finish_page($course) {
     global $THEME;
-    if (!empty($THEME->customcorners)) print_custom_corners_end();
+    print_container_end();
     echo '</td></tr></table>';
     print_footer($course);
     exit;
