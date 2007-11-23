@@ -306,11 +306,13 @@
     if ($showenroldata) {
         $tablecolumns[] = 'roles';
         $tableheaders[] = get_string('roles');
-        $tablecolumns[] = 'groups';
-        $tableheaders[] = get_string('groups');
-        if (!empty($CFG->enablegroupings)) {
-            $tablecolumns[] = 'groupings';
-            $tableheaders[] = get_string('groupings', 'group');
+        if ($groupmode != 0) {
+            $tablecolumns[] = 'groups';
+            $tableheaders[] = get_string('groups');
+            if (!empty($CFG->enablegroupings)) {
+                $tablecolumns[] = 'groupings';
+                $tableheaders[] = get_string('groupings', 'group');
+            }
         }
     }
 
@@ -706,14 +708,13 @@
                         }
                     }
                     $data[] = $rastring; 
-                    if ($course->groupmode != 0) {
+                    if ($groupmode != 0) {
                         // htmlescape with s() and implode the array
                         $data[] = implode(', ', array_map('s',$userlist_extra[$user->id]['group']));
+                        if (!empty($CFG->enablegroupings)) {
+                            $data[] = implode(', ', array_map('s', $userlist_extra[$user->id]['gping']));
+                        }
                     }
-                    if (!empty($CFG->enablegroupings)) {
-                        $data[] = implode(', ', array_map('s', $userlist_extra[$user->id]['gping']));
-                    }
-
                 }
 
                 if ($bulkoperations) {
