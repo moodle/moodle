@@ -295,22 +295,24 @@ function sync_enrolments($role = null) {
         // When the user logs in though, their role list will be updated
         // correctly.
         //
-        $to_prune = get_records_sql("
-         SELECT ra.*
-         FROM {$CFG->prefix}role_assignments ra
-          JOIN {$CFG->prefix}user u ON ra.userid = u.id
-         WHERE ra.enrol = 'database'
-          AND ra.contextid = {$context->id}
-          AND ra.roleid = ". $role->id . ($extenrolments
-            ? " AND u.{$CFG->enrol_localuserfield} NOT IN (".join(", ", array_map(array(&$db, 'quote'), $extenrolments)).")"
-            : ''));
+        if (!$CFG->enrol_db_disableunenrol) {
+            $to_prune = get_records_sql("
+             SELECT ra.*
+             FROM {$CFG->prefix}role_assignments ra
+              JOIN {$CFG->prefix}user u ON ra.userid = u.id
+             WHERE ra.enrol = 'database'
+              AND ra.contextid = {$context->id}
+              AND ra.roleid = ". $role->id . ($extenrolments
+                ? " AND u.{$CFG->enrol_localuserfield} NOT IN (".join(", ", array_map(array(&$db, 'quote'), $extenrolments)).")"
+                : ''));
 
-        if ($to_prune) {
-            foreach ($to_prune as $role_assignment) {
-                if (role_unassign($role->id, $role_assignment->userid, 0, $role_assignment->contextid)){
-                    error_log( "Unassigned {$role->shortname} assignment #{$role_assignment->id} for course {$course->id} (" . format_string($course->shortname) . "); user {$role_assignment->userid}");
-                } else {
-                    error_log( "Failed to unassign {$role->shortname} assignment #{$role_assignment->id} for course {$course->id} (" . format_string($course->shortname) . "); user {$role_assignment->userid}");
+            if ($to_prune) {
+                foreach ($to_prune as $role_assignment) {
+                    if (role_unassign($role->id, $role_assignment->userid, 0, $role_assignment->contextid)){
+                        error_log( "Unassigned {$role->shortname} assignment #{$role_assignment->id} for course {$course->id} (" . format_string($course->shortname) . "); user {$role_assignment->userid}");
+                    } else {
+                        error_log( "Failed to unassign {$role->shortname} assignment #{$role_assignment->id} for course {$course->id} (" . format_string($course->shortname) . "); user {$role_assignment->userid}");
+                    }
                 }
             }
         }
@@ -370,36 +372,39 @@ function sync_enrolments($role = null) {
     // When the user logs in though, their role list will be updated
     // correctly.
     //
-    $sql = "
-        SELECT ra.roleid, ra.userid, ra.contextid
-        FROM {$CFG->prefix}role_assignments ra
-         LEFT OUTER JOIN ({$CFG->prefix}context cn
-           JOIN {$CFG->prefix}course c ON cn.contextlevel = ".CONTEXT_COURSE." AND cn.instanceid = c.id)
-          ON ra.contextid = cn.id
-        WHERE ra.enrol = 'database'" .
-            ($have_role ? ' AND ra.roleid = '.$role->id : '') .
-            ($extcourses
-                ? " AND (c.id IS NULL OR c.{$CFG->enrol_localcoursefield} NOT IN (" . join(",", array_map(array(&$db, 'quote'), $extcourses)) . "))"
-                : '');
+    if (!$CFG->enrol_db_disableunenrol) {
+        $sql = "
+            SELECT ra.roleid, ra.userid, ra.contextid
+            FROM {$CFG->prefix}role_assignments ra
+             LEFT OUTER JOIN ({$CFG->prefix}context cn
+               JOIN {$CFG->prefix}course c ON cn.contextlevel = ".CONTEXT_COURSE." AND cn.instanceid = c.id)
+              ON ra.contextid = cn.id
+            WHERE ra.enrol = 'database'" .
+                ($have_role ? ' AND ra.roleid = '.$role->id : '') .
+                ($extcourses
+                    ? " AND (c.id IS NULL OR c.{$CFG->enrol_localcoursefield} NOT IN (" . join(",", array_map(array(&$db, 'quote'), $extcourses)) . "))"
+                    : '');
 
-    $ers = $db->Execute($sql);
-    if (!$ers) {
-        trigger_error($db->ErrorMsg() .' STATEMENT: '. $sql);
-        return false;
-    }
-    if ( !$ers->EOF ) {
-        while ($user_obj = rs_fetch_next_record($ers)) {
-            $roleid     = $user_obj->roleid;
-            $user       = $user_obj->userid;
-            $contextid  = $user_obj->contextid;
-            if (role_unassign($roleid, $user, 0, $contextid)){
-                error_log( "Unassigned role {$roleid} from user $user in context $contextid");
-            } else {
-                error_log( "Failed unassign role {$roleid} from user $user in context $contextid");
-            }
+        $ers = $db->Execute($sql);
+        if (!$ers) {
+            trigger_error($db->ErrorMsg() .' STATEMENT: '. $sql);
+            return false;
         }
-        rs_close($ers); // release the handle
+        if ( !$ers->EOF ) {
+            while ($user_obj = rs_fetch_next_record($ers)) {
+                $roleid     = $user_obj->roleid;
+                $user       = $user_obj->userid;
+                $contextid  = $user_obj->contextid;
+                if (role_unassign($roleid, $user, 0, $contextid)){
+                    error_log( "Unassigned role {$roleid} from user $user in context $contextid");
+                } else {
+                    error_log( "Failed unassign role {$roleid} from user $user in context $contextid");
+                }
+            }
+            rs_close($ers); // release the handle
+        }
     }
+
     commit_sql();
 
     // we are done now, a bit of housekeeping
@@ -616,14 +621,6 @@ function create_course ($course,$skip_fix_course_sortorder=0){
     }
 
     return $newcourseid;
-}
-
-/**
- * Test the database connection
- * @return true if it works
- */
-function test() {
-    return true;
 }
 
 /// DB Connect
