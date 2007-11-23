@@ -45,8 +45,8 @@ class question_context_move_form extends moodleform {
 
     }
 
-    function validation($data){
-        $errors = array();
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
         $tocoursefilesid = $this->_customdata['tocoursefilesid'];
         $fromcoursefilesid = $this->_customdata['fromcoursefilesid'];
         if (isset($data['urls'])  && (count($data['urls']))){

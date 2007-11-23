@@ -91,7 +91,7 @@ class autogroup_form extends moodleform {
 
     function validation($data, $files) {
     	global $CFG, $COURSE;
-        $errors = array();
+        $errors = parent::validation($data, $files);
 
         if ($data['allocateby'] != 'no') {
             if (!$users = groups_get_potential_members($data['courseid'], $data['roleid'])) {

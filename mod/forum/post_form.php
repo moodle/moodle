@@ -115,13 +115,13 @@ class mod_forum_post_form extends moodleform {
 
     }
 
-    function validation($data) {
-        $error = array();
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
         if (($data['timeend']!=0) && ($data['timestart']!=0)
             && $data['timeend'] <= $data['timestart']) {
-                $error['timeend'] = get_string('timestartenderror', 'forum');
+                $errors['timeend'] = get_string('timestartenderror', 'forum');
             }
-        return (count($error)==0) ? true : $error;
+        return $errors;
     }
 
 }

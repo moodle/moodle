@@ -335,15 +335,16 @@ class moodleform {
 
             $data = $mform->exportValues(null, true);
             $moodle_val = $this->validation($data, $files);
-            if ($moodle_val !== true) {
-                if ((is_array($moodle_val) && count($moodle_val)!==0)) {
-                    foreach ($moodle_val as $element=>$msg) {
-                        $mform->setElementError($element, $msg);
-                    }
-                    $moodle_val = false;
-                } else {
-                    $moodle_val = true;
+            if ((is_array($moodle_val) && count($moodle_val)!==0)) {
+                // non-empty array means errors
+                foreach ($moodle_val as $element=>$msg) {
+                    $mform->setElementError($element, $msg);
                 }
+                $moodle_val = false;
+
+            } else {
+                // anything else means validation ok
+                $moodle_val = true;
             }
 
             $validated = ($internal_val and $moodle_val and $file_val);
@@ -511,8 +512,8 @@ class moodleform {
      *
      * @param array $data array of ("fieldname"=>value) of submitted data
      * @param array $files array of uploaded files "element_name"=>tmp_file_path
-     * @return mixed an array of "element_name"=>"error_description" if there are errors.
-     *      true or an empty array if everything is OK.
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *               or an empty array if everything is OK (true allowed for backwards compatibility too).
      */
     function validation($data, $files) {
         return array();

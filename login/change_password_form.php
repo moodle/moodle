@@ -40,9 +40,9 @@ class login_change_password_form extends moodleform {
     }
 
 /// perform extra password change validation
-    function validation($data){
+    function validation($data, $files) {
         global $USER;
-        $errors = array();
+        $errors = parent::validation($data, $files);
 
         update_login_count();
 
@@ -73,7 +73,7 @@ class login_change_password_form extends moodleform {
             return $errors;
         }
 
-        return true;
+        return $errors;
     }
 }
 ?>

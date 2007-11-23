@@ -235,11 +235,8 @@ class mod_scorm_mod_form extends moodleform_mod {
         }
     }
 
-    function validation($data) {
-        $errors = parent::validation($data);
-        if ($errors === true) {
-            $errors = array();
-        }
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
 
         $validate = scorm_validate($data);
 
@@ -247,11 +244,7 @@ class mod_scorm_mod_form extends moodleform_mod {
             $errors = $errors + $validate->errors;
         }
 
-        if (count($errors) == 0) {
-            return true;
-        } else {
-            return $errors;
-        }
+        return $errors;
     }
 
 }

@@ -79,9 +79,9 @@ class login_signup_form extends moodleform {
         $mform->applyFilter('username', 'trim');
     }
 
-    function validation($data) {
+    function validation($data, $files) {
         global $CFG;
-        $errors = array();
+        $errors = parent::validation($data, $files);
 
         $authplugin = get_auth_plugin($CFG->registerauth);
 
@@ -122,15 +122,12 @@ class login_signup_form extends moodleform {
 
         }
 
+        $errmsg = '';
         if (!check_password_policy($data['password'], $errmsg)) {
             $errors['password'] = $errmsg;
         }
 
-        if (0 == count($errors)){
-            return true;
-        } else {
-            return $errors;
-        }
+        return $errors;
 
 
     }

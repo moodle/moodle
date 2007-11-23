@@ -190,17 +190,8 @@ class question_edit_multianswer_form extends question_edit_form {
         parent::set_data($question);
     }
 
-    function validation($data, $files){
-
-        $errors =array();
-        $parenterrors = parent::validation($data, $files);
-        if (is_array($parenterrors) && count($parenterrors)) {
-            if (is_array($errors)) {
-                $errors = array_merge($errors,$parenterrors);
-            } else {
-                $errors =$parenterrors ;
-            }
-        }
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
                  
         if (isset($this->questiondisplay->options->questions)) {
                 

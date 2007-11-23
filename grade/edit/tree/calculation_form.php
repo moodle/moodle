@@ -82,8 +82,8 @@ class edit_calculation_form extends moodleform {
     }
 
 /// perform extra validation before submission
-    function validation($data){
-        $errors = array();
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
 
         $mform =& $this->_form;
 
@@ -97,11 +97,7 @@ class edit_calculation_form extends moodleform {
             }
         }
 
-        if (0 == count($errors)){
-            return true;
-        } else {
-            return $errors;
-        }
+        return $errors;
     }
 
 }

@@ -70,19 +70,15 @@ class profile_define_base {
      * @param   object   data from the add/edit profile field form
      * @return  array    associative array of error messages
      */
-    function define_validate($data) {
+    function define_validate($data, $files) {
 
         $data = (object)$data;
         $err = array();
 
-        $err += $this->define_validate_common($data);
-        $err += $this->define_validate_specific($data);
+        $err += $this->define_validate_common($data, $files);
+        $err += $this->define_validate_specific($data, $files);
 
-        if (count($err) == 0){
-            return true;
-        } else {
-            return $err;
-        }
+        return $err;
     }
 
     /**
@@ -92,7 +88,7 @@ class profile_define_base {
      * @param   object   data from the add/edit profile field form
      * @return  array    associative array of error messages
      */
-    function define_validate_common($data) {
+    function define_validate_common($data, $files) {
         global $USER;
         
         $err = array();
@@ -111,7 +107,6 @@ class profile_define_base {
         }
 
         /// No further checks necessary as the form class will take care of it
-
         return $err;
     }
 
@@ -121,7 +116,7 @@ class profile_define_base {
      * @param   object   data from the add/edit profile field form
      * @return  array    associative array of error messages
      */
-    function define_validate_specific($data) {
+    function define_validate_specific($data, $files) {
         /// do nothing - overwrite if necessary
         return array();
     }

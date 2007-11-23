@@ -91,32 +91,29 @@ class user_edit_form extends moodleform {
 
     }
 
-    function validation ($usernew) {
+    function validation($usernew, $files) {
         global $CFG;
+
+        $errors = parent::validation($usernew, $files);
 
         $usernew = (object)$usernew;
         $user    = get_record('user', 'id', $usernew->id);
-        $err     = array();
 
         // validate email
         if (!validate_email($usernew->email)) {
-            $err['email'] = get_string('invalidemail');
+            $errors['email'] = get_string('invalidemail');
         } else if (($usernew->email !== $user->email) and record_exists('user', 'email', $usernew->email, 'mnethostid', $CFG->mnet_localhost_id)) {
-            $err['email'] = get_string('emailexists');
+            $errors['email'] = get_string('emailexists');
         }
 
         if ($usernew->email === $user->email and over_bounce_threshold($user)) {
-            $err['email'] = get_string('toomanybounces');
+            $errors['email'] = get_string('toomanybounces');
         }
 
         /// Next the customisable profile fields
-        $err += profile_validation($usernew);
+        $errors += profile_validation($usernew, $files);
 
-        if (count($err) == 0){
-            return true;
-        } else {
-            return $err;
-        }
+        return $errors;
     }
 
     function get_um() {

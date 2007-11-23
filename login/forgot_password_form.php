@@ -19,10 +19,10 @@ class login_forgot_password_form extends moodleform {
         $this->add_action_buttons(true, get_string('ok'));
     }
 
-    function validation($data) {
+    function validation($data, $files) {
         global $CFG;
 
-        $errors = array();
+        $errors = parent::validation($data, $files);
 
         if ((!empty($data['username']) and !empty($data['email'])) or (empty($data['username']) and empty($data['email']))) {
             $errors['username'] = get_string('usernameoremail');
@@ -57,11 +57,7 @@ class login_forgot_password_form extends moodleform {
             }
         }
 
-        if (0 == count($errors)){
-            return true;
-        } else {
-            return $errors;
-        }
+        return $errors;
     }
 
 }

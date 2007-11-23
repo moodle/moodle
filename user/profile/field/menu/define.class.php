@@ -12,7 +12,7 @@ class profile_define_menu extends profile_define_base {
         $form->setType('defaultdata', PARAM_MULTILANG);
     }
 
-    function define_validate_specific($data) {
+    function define_validate_specific($data, $files) {
         $err = array();
 
         $data->param1 = str_replace("\r", '', $data->param1);
