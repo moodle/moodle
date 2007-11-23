@@ -274,8 +274,8 @@
     // and $USER can enrol/unenrol, display extra enrolments & groups information.
     // (will take 1 extra DB query - 2 on Oracle)
     //
-    if ($fullmode === false &&
-        $perpage <= DEFAULT_PAGE_SIZE && has_capability('moodle/role:assign',$context)) {
+    if ($fullmode === false              && $course->id != SITEID
+        && $perpage <= DEFAULT_PAGE_SIZE && has_capability('moodle/role:assign',$context)) {
         $showenroldata = true;
     } else {
         $showenroldata = false;
