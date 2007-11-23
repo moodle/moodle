@@ -268,6 +268,19 @@
         }
     }
 
+    // Decide wheteher we will fetch extra enrolment/groups data.
+    //
+    // If the listing is small (at or below DEFAULT_PAGE_SIZE)
+    // and $USER can enrol/unenrol, display extra enrolments & groups information.
+    // (will take 1 extra DB query - 2 on Oracle)
+    //
+    if ($fullmode === false &&
+        $perpage <= DEFAULT_PAGE_SIZE && has_capability('moodle/role:assign',$context)) {
+        $showenroldata = true;
+    } else {
+        $showenroldata = false;
+    }
+
     /// Define a table showing a list of users in the current role selection
 
     $tablecolumns = array('userpic', 'fullname');
@@ -290,8 +303,19 @@
         $tableheaders[] = get_string('enrolmentend');
     }
 
+    if ($showenroldata) {
+        $tablecolumns[] = 'roles';
+        $tableheaders[] = get_string('roles');
+        $tablecolumns[] = 'groups';
+        $tableheaders[] = get_string('groups');
+        if (!empty($CFG->enablegroupings)) {
+            $tablecolumns[] = 'groupings';
+            $tableheaders[] = get_string('groupings', 'group');
+        }
+    }
+
     if ($bulkoperations) {
-        $tablecolumns[] = '';
+        $tablecolumns[] = 'select';
         $tableheaders[] = get_string('select');
     }
 
@@ -302,6 +326,10 @@
     $table->define_baseurl($baseurl);
 
     $table->sortable(true, 'lastaccess', SORT_DESC);
+    $table->no_sorting('roles');
+    $table->no_sorting('groups');
+    $table->no_sorting('groupings');
+    $table->no_sorting('select');
 
     $table->set_attribute('cellspacing', '0');
     $table->set_attribute('id', 'participants');
@@ -425,6 +453,30 @@
 
     $userlist = get_recordset_sql($select.$from.$where.$wheresearch.$sort,
             $table->get_page_start(),  $table->get_page_size());
+
+    //
+    // The SELECT behind get_participants_extra() is cheaper if we pass an array
+    // if IDs. We could pass the SELECT we did before (with the limit bits - tricky!)
+    // but this is much cheaper. And in any case, it is only doable with limited numbers
+    // of rows anyway. On a large course it will explode badly...
+    //
+    if ($showenroldata) {
+        $userids = array();
+
+        while ($user = rs_fetch_next_record($userlist)) {
+            $userids[] = $user->id;
+        }
+        $userlist_extra = get_participants_extra($userids, $avoidroles, $course, $context);
+
+        // Only Oracle cannot seek backwards
+        // and must re-query...
+        if ($userlist->canSeek === true) {
+            $userlist->MoveFirst();
+        } else {
+            $userlist = get_recordset_sql($select.$from.$where.$wheresearch.$sort,
+                                          $table->get_page_start(),  $table->get_page_size());
+        }
+    }
 
     /// If there are multiple Roles in the course, then show a drop down menu for switching
 
@@ -566,6 +618,15 @@
 
 
         if ($userlist)  {
+
+            // only show the plugin if multiple enrolment plugins
+            // are enabled...
+            if (strpos($CFG->enrol_plugins_enabled, ',')=== false) {
+                $showenrolplugin = true;
+            } else {
+                $showenrolplugin = false;
+            }
+            
             while ($user = rs_fetch_next_record($userlist)) {
                 $user = make_context_subobj($user);
                 if ($user->hidden) {
@@ -625,6 +686,36 @@
                         $data[] = get_string('unlimited');
                     }
                 }
+
+                if (isset($userlist_extra) && isset($userlist_extra[$user->id])) {
+                    $ras = $userlist_extra[$user->id]['ra'];
+                    $rastring = '';
+                    foreach ($ras AS $key=>$ra) {
+                        $rolename = $rolenames [ $ra['roleid'] ] ;
+                        if ($ra['ctxlevel'] == CONTEXT_COURSECAT) {
+                            $rastring .= $rolename. ' @ ' . s($ra['ccname']);
+                        } elseif ($ra['ctxlevel'] == CONTEXT_SYSTEM) {
+                            $rastring .= $rolename. ' @ ' . get_string('globalrole','role');
+                        } else {
+                            $rastring .= $rolename;
+                        }
+                        if ($showenrolplugin) {
+                            $rastring .= '<br />';
+                        } else {
+                            $rastring .= ' ('. $ra['enrolplugin'] .')<br />';
+                        }
+                    }
+                    $data[] = $rastring; 
+                    if ($course->groupmode != 0) {
+                        // htmlescape with s() and implode the array
+                        $data[] = implode(', ', array_map('s',$userlist_extra[$user->id]['group']));
+                    }
+                    if (!empty($CFG->enablegroupings)) {
+                        $data[] = implode(', ', array_map('s', $userlist_extra[$user->id]['gping']));
+                    }
+
+                }
+
                 if ($bulkoperations) {
                     $data[] = '<input type="checkbox" name="user'.$user->id.'" />';
                 }
@@ -692,6 +783,118 @@ function get_lastaccess_sql($accesssince='') {
     } else {
         return ' AND ul.timeaccess != 0 AND timeaccess < '.$accesssince;
     }
+}
+
+function get_participants_extra ($userids, $avoidroles, $course, $context) {
+
+    global $CFG;
+
+    if (count($userids) === 0 || count($avoidroles) === 0) {
+        return array();
+    }
+
+    $userids = implode(',', $userids);
+
+    // turn the path into a list of context ids
+    $contextids = substr($context->path, 1); // kill leading slash
+    $contextids = str_replace('/', ',', $contextids);;
+
+    if (count($avoidroles) > 0) {
+        $avoidroles = implode(',', $avoidroles);
+        $avoidrolescond = " AND ra.roleid NOT IN ($avoidroles) ";
+    } else {
+        $avoidrolescond = '';
+    }
+
+    if (!empty($CFG->enablegroupings)) {
+        $gpjoin = "LEFT OUTER JOIN {$CFG->prefix}groupings_groups gpg
+                     ON gpg.groupid=g.id
+                   LEFT OUTER JOIN {$CFG->prefix}groupings gp
+                     ON (gp.courseid={$course->id} AND gp.id=gpg.groupingid)";
+        $gpselect = ',gp.id AS gpid, gp.name AS gpname ';
+    } else {
+        $gpjoin   = '';
+        $gpselect = '';
+    }
+
+    // Note: this returns strange redundant rows, perhaps
+    // due to the multiple OUTER JOINs. If we can tweak the
+    // JOINs to avoid it ot
+    $sql = "SELECT DISTINCT ra.userid, 
+                   ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth AS ctxdepth, 
+                   ctx.contextlevel AS ctxlevel, ctx.instanceid AS ctxinstanceid,
+                   cc.name  AS ccname, 
+                   ra.roleid AS roleid,
+                   ra.enrol AS enrolplugin,
+                   g.id     AS gid, g.name AS gname
+                   $gpselect
+            FROM {$CFG->prefix}role_assignments ra
+            JOIN {$CFG->prefix}context ctx
+              ON (ra.contextid=ctx.id)
+            LEFT OUTER JOIN {$CFG->prefix}course_categories cc
+              ON (ctx.contextlevel=40 AND ctx.instanceid=cc.id)
+
+            /* only if groups active */
+            LEFT OUTER JOIN {$CFG->prefix}groups_members gm
+              ON (ra.userid=gm.userid)
+            LEFT OUTER JOIN {$CFG->prefix}groups g
+              ON (gm.groupid=g.id AND g.courseid={$course->id})
+            /* and if groupings is enabled... */
+            $gpjoin
+
+            WHERE ra.userid IN ( $userids ) 
+                  AND ra.contextid in ( $contextids ) 
+                  $avoidrolescond
+
+            ORDER BY ra.userid, ctx.depth DESC";
+
+    $rs = get_recordset_sql($sql);
+    $extra = array();
+
+    // Data structure -
+    // $extra [ $userid ] [ 'group' ] [ $groupid => 'group name']
+    //                    [ 'gping' ] [ $gpingid => 'gping name']
+    //                    [ 'ra' ] [  [ "$ctxid:$roleid" => [ctxid => $ctxid
+    //                                                       ctxdepth =>  $ctxdepth, 
+    //                                                       ctxpath => $ctxpath,
+    //                                                       ctxname => 'name' (categories only)
+    //                                                       ctxinstid => 
+    //                                                       roleid => $roleid
+    //                                                       enrol => $pluginname
+    //
+    // Might be interesting to add to RA timestart, timeend, timemodified,
+    // and modifierid (with an outer join to mdl_user!
+    //
+
+    while ($rec = rs_fetch_next_record($rs)) {
+        $userid = $rec->userid;
+
+        // Prime an initial user rec...
+        if (!isset($extra[$userid])) {
+            $extra[$userid] = array( 'group' => array(),
+                                     'gping' => array(),
+                                     'ra'    => array() );
+        }
+
+        if (!empty($rec->gid)) {
+            $extra[$userid]['group'][$rec->gid]= $rec->gname;
+        }
+        if (!empty($rec->gpid)) {
+            $extra[$userid]['gping'][$rec->gpid]= $rec->gpname;
+        }
+        $rakey = $rec->ctxid . ':' . $rec->roleid;
+        if (!isset($extra[$userid]['ra'][$rakey])) {
+            $extra[$userid]['ra'][$rakey] = array('ctxid'         => $rec->ctxid,
+                                                  'ctxlevel'       => $rec->ctxlevel,
+                                                  'ctxinstanceid' => $rec->ctxinstanceid,
+                                                  'ccname'        => $rec->ccname,
+                                                  'roleid'        => $rec->roleid,
+                                                  'enrolplugin'   => $rec->enrolplugin);
+
+        }
+    }
+    return $extra;
+
 }
 
 ?>
