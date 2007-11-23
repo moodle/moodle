@@ -28,10 +28,10 @@ $string['continue']='Jätka';
 $string['curlrecommended']='Fakultatiivse Curl teegi installeerimine on väga soovitatav, millega võimaldatakse Moodle võrgunduse funktsionaalsus.';
 $string['customcheck']='Muud kontrollid';
 $string['database']='Andmebaas';
-$string['databasecreationsettingssub']='<b>Tüüp:</b> määratud "mysql" paigaldaja poolt<br />
-       <b>Host:</b> määratud "localhost" paigaldaja poolt<br />
+$string['databasecreationsettingssub']='<b>Tüüp:</b> määratud \"mysql\" paigaldaja poolt<br />
+       <b>Host:</b> määratud \"localhost\" paigaldaja poolt<br />
        <b>Nimi:</b> andmebaasi nimi, nt. moodle<br />
-       <b>User:</b> määratud "root" paigaldaja poolt<br />
+       <b>User:</b> määratud \"root\" paigaldaja poolt<br />
        <b>Parool:</b> Sinu andmebaasi parool<br />
        <b>Tabelite prefiks:</b> fakultatiivne prefiks kasutamaks tabeli nimetes';
 $string['databasesettingshead']='Nüüd on vaja seadistada andmebaas, kus enamus Moodle andmeid hakatakse hoidma. See andmebaas peab olema eelnevalt loodud ning ka konto, millel ligipääs antud andmebaasile.';
@@ -94,7 +94,7 @@ $string['environmentrecommendcustomcheck']='kui see test ebaõnnestub, siis see 
 $string['environmentrecommendinstall']='on soovitatav, et oleks installeeritud ja võimaldatud';
 $string['environmentrequirecustomcheck']='see test peab olema edukalt läbitud';
 $string['environmentrequireinstall']='on nõutud, et oleks installeeritud ja võimaldatud';
-$string['environmentrequireversion']="versioon \$a->needed on nõutud, Sinul on jooksmas versioon \$a->current";
+$string['environmentrequireversion']='versioon $a->needed on nõutud, Sinul on jooksmas versioon \$a->current';
 $string['error']='Viga';
 $string['fail']='Fail';
 $string['fileuploads']='Failide üleslaadimine';
@@ -109,8 +109,8 @@ $string['help']='Abi';
 $string['info']='Informatsioon';
 $string['installation']='Installeerimine';
 $string['invalidmd5']='Vigane md5';
-$string['langdownloaderror']='Kahjuks keelt "$a" ei paigaldatud. Paigaldamine jätkub inglise keeles.';
-$string['langdownloadok']='Keel "$a" paigaldati edukalt. Paigaldamisprotsess jätkub selles keeles.';
+$string['langdownloaderror']='Kahjuks keelt \"$a\" ei paigaldatud. Paigaldamine jätkub inglise keeles.';
+$string['langdownloadok']='Keel \"$a\" paigaldati edukalt. Paigaldamisprotsess jätkub selles keeles.';
 $string['language']='Keel';
 $string['magicquotesruntime']='Magic Quotes talitlusaeg';
 $string['magicquotesruntimeerror']='See peaks olema välja lülitatud';
@@ -160,9 +160,9 @@ $string['sessionautostart']='Sessioonide automaatne algatamine';
 $string['sessionautostarterror']='See peaks olema välja lülitatud';
 $string['skipdbencodingtest']='Jäta vahele andmebaasi kodeeringu test';
 $string['status']='Staatus';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Eesti';
+$string['thischarset']='UTF-8';
+$string['thisdirection']='ltr';
+$string['thislanguage']='Eesti';
 $string['unicoderecommended']='Soovitatav on kõikide andmete salvestamine UTF-8\'s (unicode). Uued paigaldamised peaksid olema tehtud andmebaasi, mille vaikimisi kodeering on Unicode. Kui uuendada, siis peaksid teostama UTF-8\'sse üleviimise protsessi (vaata Admin lehte).';
 $string['user']='Kasutaja';
 $string['welcomep10']='\$a->installername (\$a->installerversion)';
