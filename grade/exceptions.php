@@ -17,7 +17,7 @@
     print_header("$course->shortname: ".get_string('grades'), $course->fullname, grade_nav($course, $action));
 
     $groupmode = groupmode($course);
-    $group = setup_and_print_groups($course, $groupmode, 'exceptions.php?id=' . $course->id);
+    $group = setup_and_print_groups($course, $groupmode, 'exceptions.php?id=' . $course->id. '&amp;action=excepts');
     echo '<div class="clearer"></div>';
 
     grade_preferences_menu($action, $course);
@@ -82,16 +82,26 @@
     $grade_items = array();
     $grade_items = get_records('grade_item', 'courseid', $course->id);
     $grade_itemcount = count($grade_items);
-    
+
+    // get current group of students and assign that to be the working list of students
+    if (groupmode($course) !=0) {
+ 	  	if ($currentgroup = get_current_group($course->id)) { //groupmode is either separate or visible and there is a group
+ 	  	    $students = get_group_users($group);
+ 	  	} else {//groupmode is either separate or visible and the current group is all participants
+ 	  	    $students = grade_get_course_students($course->id);
+ 	  	}
+    } else {
+        $students = grade_get_course_students($course->id); //groupmode is not set (all participants)
+ 	}
     // we need to create a multidimensional array keyed by grade_itemid with all_students at each level
     if (isset($grade_items)) {
+
         foreach($grade_items as $grade_item) {
             $nonmembers[$grade_item->id] = array();
-            if ($students = get_course_students($course->id)) {
+            if ($students) {
                 foreach ($students as $student) {
                     $nonmembers[$grade_item->id][$student->id] = fullname($student, true);
                 }
-                unset($students);
             }
         }
     }
@@ -106,9 +116,12 @@
             $listmembers[$grade_item->id] = array();
             if ($grade_itemexceptions = grade_get_grade_item_exceptions($grade_item->id)) {
                 foreach ($grade_itemexceptions as $grade_itemexception) {
-                    $listmembers[$grade_item->id][$grade_itemexception->userid] = $nonmembers[$grade_item->id][$grade_itemexception->userid];
-                    unset($nonmembers[$grade_item->id][$grade_itemexception->userid]);
-                    $countusers++;
+                    //if the excepted user is part of the current group of users then list them
+                    if (isset($nonmembers[$grade_item->id][$grade_itemexception->userid])) {                  
+                        $listmembers[$grade_item->id][$grade_itemexception->userid] = $nonmembers[$grade_item->id][$grade_itemexception->userid];
+                        unset($nonmembers[$grade_item->id][$grade_itemexception->userid]);
+                        $countusers++;
+                    }
                 }
             }
             $listgrade_items[$grade_item->id] = strip_tags(format_string($grade_item->name,true))." ($countusers)";

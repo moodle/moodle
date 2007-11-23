@@ -311,9 +311,13 @@ function grade_get_formatted_grades() {
         }
     
 
-        // if the user has selected a group to view by get the group members
-        if (($currentgroup = get_current_group($course->id)) && groupmode($course) != 0) {
-            $groupmembers = get_group_users($currentgroup);
+        // if the user has selected a group to view by get the group members unless the course is not using 
+        if (groupmode($course) != 0) {
+            if ($currentgroup = get_current_group($course->id)) { // get the current group
+ 	  	         $groupmembers = get_group_users($currentgroup); // group members of the group
+	  	    }
+        } else {// if not groupmode then the group is the entire course so get all course students
+	  	    $groupmembers = grade_get_course_students($course->id); 	                  
         }
 
         // this next block catches any students who do not have a grade for any item in a particular category
