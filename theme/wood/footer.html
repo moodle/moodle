@@ -1,23 +1,24 @@
-
-</div> <!-- end div content -->
-
-<div id="footer">
-
 <?php
+
+    print_container_end(); // content container
+
+    print_container_start(false, '', 'footer');
+
     echo "<div id=\"footer-bar\">";
     echo '<span class="helplink">';
     echo '&nbsp;'.page_doc_link(get_string('moodledocslink'));
     echo '</span>';
     echo "</div>";
+
+    echo $loggedinas;
+    echo $homelink;
+
+    if (!empty($performanceinfo)) {
+        echo $performanceinfo;
+    }
+
+    print_container_end();
 ?>
-
-<?php echo $loggedinas ?>
-<?php echo $homelink ?>
-
-<?php if (!empty($performanceinfo)) {
-    echo $performanceinfo;
-} ?>
-</div>
 </div>
 </body>
 </html>

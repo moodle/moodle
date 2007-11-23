@@ -87,10 +87,8 @@
 
     echo '</td></tr></table>';
 
-    if (!empty($THEME->customcorners)) {
-        print_custom_corners_end(false, 'content');
-    }
-
-    echo '</div></div></body></html>'; // Close possible theme tables off
+    // this is hack!
+    print_container_end(); // container "content" started in header
+    echo '</div></body></html>'; // close page div started in header
 
 ?>

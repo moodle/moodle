@@ -1,30 +1,31 @@
-
-</div> <!-- end div containerContent -->
-<!-- START OF FOOTER -->
-<div id="footer">
-
 <?php
+
+    print_container_end(); // content container
+
+    print_container_start(false, '', 'footer');
+
     echo '<p class="helplink">';
     echo page_doc_link(get_string('moodledocslink'));
     echo '</p>';
-?>
 
-<?php if ($navigation and false) { ?>
+
+    if ($navigation and false) { ?>
     <div class="navbar clearfix">
         <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
         <div class="menu"><?php echo $menu; ?></div>
     </div>
-<?php } ?>
+<?php }
 
-<?php echo $loggedinas ?>
-<?php echo $homelink ?>
+    echo $loggedinas;
+    echo $homelink;
 
-<?php if (!empty($performanceinfo)) {
-          echo $performanceinfo;
-} ?>
+    if (!empty($performanceinfo)) {
+        echo $performanceinfo;
+    }
 
-</div>
-</div>
+    print_container_end();
+?>
+
 </div>
 </body>
 </html>

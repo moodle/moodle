@@ -1,10 +1,6 @@
 <?php // $Id$
       // format.php - course format featuring social forum
       //              included from view.php
-
-    if (!empty($THEME->customcorners)) {
-        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-    }
     
     // Bounds for block widths
     // more flexible for theme designers taken from theme config.php
@@ -32,14 +28,14 @@
 
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width:'.$preferred_width_left.'px" id="left-column">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start();
+        print_container_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        if (!empty($THEME->customcorners)) print_custom_corners_end();
+        print_container_end();
         echo '</td>';
     }
 
     echo '<td id="middle-column">';
-    if (!empty($THEME->customcorners)) print_custom_corners_start();
+    print_container_start();
     echo skip_main_destination();
     if ($forum = forum_get_course_forum($course->id, 'social')) {
         print_heading_block(get_string('socialheadline'));
@@ -52,15 +48,15 @@
     } else {
         notify('Could not find or create a social forum here');
     }
-    if (!empty($THEME->customcorners)) print_custom_corners_end();
+    print_container_end();
     echo '</td>';
 
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
         echo '<td style="width:'.$preferred_width_right.'px" id="right-column">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start();
+        print_container_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-        if (!empty($THEME->customcorners)) print_custom_corners_end();
+        print_container_end();
         echo '</td>';
     }
 

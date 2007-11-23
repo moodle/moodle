@@ -10,8 +10,6 @@
     <?php include("$CFG->javascript"); ?>
     <?php include('js/jquery.php'); ?>
 
-    <?php require_once($CFG->dirroot.'/lib/custom_corners_lib.php'); ?>
-
     <?php
 
         global $PAGE;
@@ -78,32 +76,27 @@
 <?php if (!$inpopup) { 
     if ($home) {  // This is what gets printed on the home page only
 ?>
-    <div id="header-home" class="clearfix">
-      <?php print_custom_corners_start(); ?>
-          <div class="wraphome clearfix">
-              <h1 class="headermain"><?php echo $heading ?></h1>
-              <div class="headermenu"><?php echo $menu ?></div>
-          </div>
-      <?php print_custom_corners_end(); ?>
-    </div>
+    <?php print_container_start(true, '', 'header-home'); ?>
+        <div class="wraphome clearfix">
+            <h1 class="headermain"><?php echo $heading ?></h1>
+            <div class="headermenu"><?php echo $menu ?></div>
+        </div>
+    <?php print_container_end(); ?>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading
 ?>
-    <div id="header" class="clearfix">
-        <?php print_custom_corners_start(); ?>
+    <?php print_container_start(true, '', 'header'); ?>
           <h1 class="headermain"><?php echo $heading ?></h1>
           <div class="headermenu"><?php echo $menu ?></div>
-        <div class="navbar clearfix">
-    <?php if ($navigation) { // This is the navigation table with breadcrumbs
-    ?>
+      <div class="navbar clearfix">
+        <?php if ($navigation) { // This is the navigation table with breadcrumbs
+        ?>
         <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
         <div class="navbutton"><?php echo $button; ?></div>
-    <?php } ?>
-    </div>
-    <?php print_custom_corners_end(); ?>
-    </div>
+        <?php } ?>
+      </div>
+    <?php print_container_end(); ?>
 <?php }
     }
 ?>
     <!-- END OF HEADER -->
-<div id="content">
-    <?php print_custom_corners_start(true, false, 'content'); ?>
+<?php print_container_start(false, '', 'content'); ?>

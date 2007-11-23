@@ -27,10 +27,6 @@
 
     require_once($CFG->libdir.'/ajax/ajaxlib.php');
 
-    if (!empty($THEME->customcorners)) {
-	require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-    }
-
     $week = optional_param('week', -1, PARAM_INT);
 
     if ($week != -1) {
@@ -78,22 +74,25 @@
 /// The left column ...
 
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
+        print_container_start();
         echo '<div id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</div>';
+        print_container_end();
     }
     
 /// The right column, BEFORE the middle-column.
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
+        print_container_start();
         echo '<div id="right-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
         echo '</div>';
+        print_container_end();
     }
 
 /// Start main column
     echo '<div id="middle-column">';
-
-    if (!empty($THEME->customcorners)) print_custom_corners_start();
+    print_container_start();
 
     echo skip_main_destination();
  
@@ -280,9 +279,7 @@
         echo '</div>';
     }
 
-    if (!empty($THEME->customcorners)) print_custom_corners_end();
-
-    echo '</div>';
+    print_container_end();
 
     echo '</div>';
     echo '<div class="clearer"></div>';

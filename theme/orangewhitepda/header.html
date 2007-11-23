@@ -19,19 +19,19 @@
 
 <?php if ($home) {  // This is what gets printed on the home page only
 ?>
-    <div id="header-home">
+    <?php print_container_start(true, '', 'header-home'); ?>
         <h1 class="headermain"><?php echo $heading ?></h1>
         <div class="headermenu"><?php echo $menu ?></div>
-    </div>
+    <?php print_container_end(); ?>
     <div class="navbar">
     </div>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading
 ?>
-    <div id="header">
+    <?php print_container_start(true, '', 'header'); ?>
         <h1 class="headermain"><?php echo $heading ?></h1>
         <div class="headermenu"><?php echo $menu ?></div>
         <!-- <div class="headermenu"><div id="new-menu"><?php echo $navmenulist ?></div></div> -->
-    </div>
+    <?php print_container_end(); ?>
 <?php } ?>
 <?php if ($navigation) { // This is the navigation table with breadcrumbs
 ?>
@@ -41,4 +41,4 @@
     </div>
 <?php } ?>
     <!-- END OF HEADER -->
-<div id="content">
+    <?php print_container_start(false, '', 'content'); ?>

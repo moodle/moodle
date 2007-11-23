@@ -1,44 +1,37 @@
-<?php print_custom_corners_end(false, 'content'); ?>
-</div> <!-- end div containerContent -->
+<?php print_container_end(); ?><!-- end container Content -->
 <!-- START OF FOOTER -->
 <?php 
-    global $CFG, $COURSE; 
-    if (function_exists('is_in_popup')) {
-        $inpopup = is_in_popup();
-    } else {
-        $inpopup = false;
-    }
+
+global $CFG, $COURSE; 
+if (function_exists('is_in_popup')) {
+    $inpopup = is_in_popup();
+} else {
+    $inpopup = false;
+}
+
+if (!$inpopup) { 
+    print_container_start(false, '', 'footer');
     
-    if (!$inpopup) { 
-?>
-<div id="footer">
-    <?php print_custom_corners_start(); ?>
-<?php
-  if (function_exists('page_doc_link')) {
     echo '<p class="helplink">';
     echo page_doc_link(get_string('moodledocslink'));
     echo '</p>';
-  }
-?>
-<?php echo $loggedinas ?>
-<?php echo $homelink;
-?>
-    <?php print_custom_corners_end(); ?>
-</div>
-<?php 
-     $useridarray = array(2 // MD
-                          );
-     
-     if (!empty($performanceinfo) && isloggedin() && in_array($USER->id, $useridarray)) {
-          echo $performanceinfo;
-     }
+    
+    echo $loggedinas;
+    echo $homelink;
 
-     } // end if inpopup
+    $useridarray = array(2 // MD
+                          );
+    
+    if (!empty($performanceinfo) && isloggedin() && in_array($USER->id, $useridarray)) {
+        echo $performanceinfo;
+    }
+
+    print_container_end();
+
+} // end if inpopup
+
 ?>
 </div> <!-- end page div -->
-<?php 
-    print_custom_corners_end();
-?>
 <script type="text/javascript">
 /* <![CDATA[ */
     $(document).ready(function() {

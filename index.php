@@ -34,10 +34,6 @@
     require_once($CFG->dirroot .'/course/lib.php');
     require_once($CFG->dirroot .'/lib/blocklib.php');
 
-    if (!empty($THEME->customcorners)) {
-        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-    }
-
     if (empty($SITE)) {
         redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
     }
@@ -127,16 +123,16 @@
             case 'left':
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start();
+        print_container_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        if (!empty($THEME->customcorners)) print_custom_corners_end();
+        print_container_end();
         echo '</td>';
     }
             break;
             case 'middle':
     echo '<td id="middle-column">'. skip_main_destination();
 
-    if (!empty($THEME->customcorners)) print_custom_corners_start();
+    print_container_start();
 
 /// Print Section
     if ($SITE->numsections > 0) {
@@ -253,7 +249,7 @@
         echo '<br />';
     }
 
-    if (!empty($THEME->customcorners)) print_custom_corners_end();
+    print_container_end();
 
     echo '</td>';
             break;
@@ -261,13 +257,13 @@
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || $PAGE->user_allowed_editing()) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start();
+        print_container_start();
         if ($PAGE->user_allowed_editing()) {
             echo '<div style="text-align:center">'.update_course_icon($SITE->id).'</div>';
             echo '<br />';
         }
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-        if (!empty($THEME->customcorners)) print_custom_corners_end();
+        print_container_end();
         echo '</td>';
     }
             break;

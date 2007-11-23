@@ -2950,10 +2950,6 @@ function admin_externalpage_print_header() {
 
     global $CFG, $PAGE, $SITE, $THEME;
 
-    if (!empty($THEME->customcorners)) {
-        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-    }
-
     define('ADMIN_EXT_HEADER_PRINTED', 'true');
 
     if (!empty($SITE->fullname)) {
@@ -2962,6 +2958,10 @@ function admin_externalpage_print_header() {
         $preferred_width_left = bounded_number(BLOCK_L_MIN_WIDTH,
                                                blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
                                                BLOCK_L_MAX_WIDTH);
+        $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH,
+                                               blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
+                                               BLOCK_R_MAX_WIDTH);
+
         $PAGE->print_header();
         echo '<table id="layout-table" summary=""><tr>';
 
@@ -2974,23 +2974,23 @@ function admin_externalpage_print_header() {
             switch ($column) {
                 case 'left':
         echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start();
+        print_container_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        if (!empty($THEME->customcorners)) print_custom_corners_end();
+        print_container_end();
         echo '</td>';
                 break;
 
                 case 'middle':
         echo '<td id="middle-column">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start(true);
+        print_container_start(true);
                 break;
 
                 case 'right':
         if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
             echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
-            if (!empty($THEME->customcorners)) print_custom_corners_start();
+            print_container_start();
             blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-            if (!empty($THEME->customcorners)) print_custom_corners_end();
+            print_container_end();
             echo '</td>';
         }
                 break;
@@ -3005,14 +3005,13 @@ function admin_externalpage_print_footer() {
 
     global $CFG, $PAGE, $SITE, $THEME;
 
-    if (!empty($THEME->customcorners)) {
-        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-    }
-
     define('ADMIN_EXT_FOOTER_PRINTED', 'true');
 
     if (!empty($SITE->fullname)) {
         $pageblocks = blocks_setup($PAGE);
+        $preferred_width_left = bounded_number(BLOCK_L_MIN_WIDTH,
+                                               blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
+                                               BLOCK_L_MAX_WIDTH);
         $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH,
                                                 blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
                                                 BLOCK_R_MAX_WIDTH);
@@ -3029,24 +3028,24 @@ function admin_externalpage_print_footer() {
             switch ($column) {
                 case 'left':
         echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start();
+        print_container_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        if (!empty($THEME->customcorners)) print_custom_corners_end();
+        print_container_end();
         echo '</td>';
                 break;
 
                 case 'middle':
-        if (!empty($THEME->customcorners)) print_custom_corners_end();
+        print_container_end();
         echo '</td>';
                 break;
 
                 case 'right':
         if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
             echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
-            if (!empty($THEME->customcorners)) print_custom_corners_start();
+            print_container_start();
             blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
 
-            if (!empty($THEME->customcorners)) print_custom_corners_end();
+            print_container_end();
             echo '</td>';
         }
                 break;
