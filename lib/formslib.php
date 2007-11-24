@@ -1339,7 +1339,12 @@ function validate_' . $this->_formName . '(frm) {
             $elsInGroup = $element->getElements();
             $elNames = array();
             foreach ($elsInGroup as $elInGroup){
-                $elNames = array_merge($elNames, $this->_getElNamesRecursive($elInGroup));
+                if (is_a($elInGroup, 'HTML_QuickForm_group')) {
+                    // not sure if this would work - groups nested in groups
+                    $elNames = array_merge($elNames, $this->_getElNamesRecursive($elInGroup));
+                } else {
+                    $elNames[] = $element->getElementName($elInGroup->getName());
+                }
             }
 
         } else if (is_a($element, 'HTML_QuickForm_header')) {
