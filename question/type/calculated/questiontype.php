@@ -966,7 +966,6 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $maxstr=get_string('max', 'quiz');
         $rangeofvaluestr=get_string('minmax','qtype_datasetdependent');
         $questionusingstr = get_string('usedinquestion','qtype_calculated');
-        $wildcardstr =  get_string('wildcard', 'qtype_calculated');
         $itemscountstr = get_string('itemscount','qtype_datasetdependent');
        $text ='';
         if (!empty($form->category)) {           

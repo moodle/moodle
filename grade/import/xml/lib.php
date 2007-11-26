@@ -61,11 +61,11 @@ function import_xml_grades($text, $course, &$error) {
                 break;
             }
 
-            // check if user exist and convert idnember to user id
+            // check if user exist and convert idnumber to user id
             if (!$user = get_record('user', 'idnumber', addslashes($result['#']['student'][0]['#']))) {
                 // no user found, abort
                 $status = false;
-                $error = get_string('baduserid', 'grades');
+                $error = get_string('baduser', 'grades');
                 break;
             }
 

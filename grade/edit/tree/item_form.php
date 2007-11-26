@@ -66,7 +66,7 @@ class edit_item_form extends moodleform {
             }
         }
         $mform->addElement('select', 'scaleid', get_string('scale'), $options);
-        $mform->setHelpButton('scaleid', array(false, get_string('scaleid', 'grades'),
+        $mform->setHelpButton('scaleid', array(false, get_string('scale', 'grades'),
                 false, true, false, get_string('scaleidhelp', 'grades', get_string('gradeitem', 'grades'))));
         $mform->disabledIf('scaleid', 'gradetype', 'noteq', GRADE_TYPE_SCALE);
 
@@ -340,14 +340,14 @@ class edit_item_form extends moodleform {
 
         if (array_key_exists('gradetype', $data) and $data['gradetype'] == GRADE_TYPE_SCALE) {
             if (empty($data['scaleid'])) {
-                $errors['scaleid'] = get_String('missingscale', 'grades');
+                $errors['scaleid'] = get_string('missingscale', 'grades');
             }
         }
 
         if (array_key_exists('grademin', $data) and array_key_exists('grademax', $data)) {
             if ($data['grademax'] == $data['grademin'] or $data['grademax'] < $data['grademin']) {
-                $errors['grademin'] = get_String('incorrectminmax', 'grades');
-                $errors['grademax'] = get_String('incorrectminmax', 'grades');
+                $errors['grademin'] = get_string('incorrectminmax', 'grades');
+                $errors['grademax'] = get_string('incorrectminmax', 'grades');
             }
         }
 

@@ -196,7 +196,7 @@
     if ($mode != 'csstemplate' and $mode != 'jstemplate') {
         // Add all the available fields for this data.
         echo '<label for="availabletags">'.get_string('availabletags','data').'</label>';
-        helpbutton('tags', get_string('tags','data'), 'data');
+        helpbutton('tags', get_string('tags'), 'data');
         echo '<br />';
 
 

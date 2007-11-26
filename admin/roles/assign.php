@@ -75,7 +75,6 @@
 
 /// Get some language strings
 
-    $strassignusers = get_string('assignusers', 'role');
     $strpotentialusers = get_string('potentialusers', 'role');
     $strexistingusers = get_string('existingusers', 'role');
     $straction = get_string('assignroles', 'role');

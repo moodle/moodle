@@ -7,7 +7,6 @@ class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {     /// This function just displays the report
         global $CFG, $SESSION, $QTYPES;
-        $strnoquiz = get_string('noquiz','quiz');
         $strnoattempts = get_string('noattempts','quiz');
     /// Only print headers if not asked to download data
         $download = optional_param('download', NULL);

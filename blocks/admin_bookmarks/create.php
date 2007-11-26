@@ -32,7 +32,7 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT) and confirm_sesskey
 
     } else {
 
-        error(get_string('invaludsection','admin'));
+        error(get_string('invalidsection','admin'));
         die;
 
     }

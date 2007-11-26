@@ -30,7 +30,7 @@ class blog_edit_form extends moodleform {
         $mform->addElement('file', 'attachment', get_string('attachment', 'forum'));
 
         $mform->addElement('select', 'publishstate', get_string('publishto', 'blog'), blog_applicable_publish_states());
-        $mform->setHelpButton('publishstate', array('publish_state', get_string('helppublish', 'blog'), 'blog'));
+        $mform->setHelpButton('publishstate', array('publish_state', get_string('publishto', 'blog'), 'blog'));
 
 
         if (!empty($CFG->usetags)) {
