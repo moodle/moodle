@@ -327,7 +327,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
         $currentgroup = 0;
     }
 
-    $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', true);
+    $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', false, true);
 
     if (!empty($CFG->enablegroupings) && !empty($cm->groupingid) && !empty($users)) {
         $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
