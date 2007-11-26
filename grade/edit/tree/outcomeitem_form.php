@@ -53,7 +53,7 @@ class edit_outcomeitem_form extends moodleform {
             }
         }
         $mform->addElement('select', 'outcomeid', get_string('outcome', 'grades'), $options);
-        $mform->setHelpButton('outcomeid', array(false, get_string('outcomeid', 'grades'),
+        $mform->setHelpButton('outcomeid', array(false, get_string('outcome', 'grades'),
                 false, true, false, get_string('outcomeidhelp', 'grades')));
         $mform->addRule('outcomeid', get_string('required'), 'required');
 

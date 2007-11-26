@@ -1938,12 +1938,10 @@ class PresetImporter {
         }
 
         $strblank = get_string('blank', 'data');
-        $strnofields = get_string('nofields', 'data');
         $strcontinue = get_string('continue');
         $strwarning = get_string('mappingwarning', 'data');
         $strfieldmappings = get_string('fieldmappings', 'data');
         $strnew = get_string('new');
-        $strold = get_string('old');
 
         $sesskey = sesskey();
 

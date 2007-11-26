@@ -1144,6 +1144,7 @@ $string['paymentsorry'] = 'Thank you for your payment!  Unfortunately your payme
 $string['paymentthanks'] = 'Thank you for your payment!  You are now enrolled in your course:<br />\"$a\"';
 $string['people'] = 'People';
 $string['periodending'] = 'Period ending ($a)';
+$string['personal'] = 'Personal';
 $string['personalprofile'] = 'Personal profile';
 $string['pictureof'] = 'Picture of $a';
 $string['phone'] = 'Phone';

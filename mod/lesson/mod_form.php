@@ -49,7 +49,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'maxanswers', get_string('maximumnumberofanswersbranches', 'lesson'), $numbers);
         $mform->setDefault('maxanswers', 4);
-        $mform->setHelpButton('maxanswers', array('maxanswers', get_string('displayformat', 'lesson'), 'lesson'));
+        $mform->setHelpButton('maxanswers', array('maxanswers', get_string('maximumnumberofanswersbranches', 'lesson'), 'lesson'));
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('gradeoptions', 'lesson'));
@@ -68,7 +68,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'grade', get_string('maximumgrade'), $grades);
         $mform->setDefault('grade', 0);
-        $mform->setHelpButton('grade', array('grade', get_string('maximumgrade', 'lesson'), 'lesson'));
+        $mform->setHelpButton('grade', array('grade', get_string('maximumgrade'), 'lesson'));
 
         $mform->addElement('selectyesno', 'retake', get_string('canretake', 'lesson', $COURSE->student));
         $mform->setHelpButton('retake', array('retake', get_string('canretake', 'lesson', $COURSE->student), 'lesson'));
@@ -203,7 +203,7 @@ class mod_lesson_mod_form extends moodleform_mod {
             }
         }
         $mform->addElement('select', 'dependency', get_string('dependencyon', 'lesson'), $options);
-        $mform->setHelpButton('dependency', array('dependency', get_string('dependency', 'lesson'), 'lesson'));
+        $mform->setHelpButton('dependency', array('dependency', get_string('dependencyon', 'lesson'), 'lesson'));
         $mform->setDefault('dependency', 0);
 
         $mform->addElement('text', 'timespent', get_string('timespentminutes', 'lesson'));

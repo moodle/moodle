@@ -58,7 +58,6 @@
 /// Get some language strings
 
     $strroletooverride = get_string('roletooverride', 'role');
-    $stroverrideusers  = get_string('overrideusers', 'role');
     $straction         = get_string('overrideroles', 'role');
     $strcurrentrole    = get_string('currentrole', 'role');
     $strparticipants   = get_string('participants');

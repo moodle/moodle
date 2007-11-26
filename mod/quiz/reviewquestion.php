@@ -86,7 +86,6 @@
 /// Print the page header
 
     $strquizzes = get_string('modulenameplural', 'quiz');
-    $strreviewquestion  = get_string('reviewquestion', 'quiz');
 
     print_header();
 
