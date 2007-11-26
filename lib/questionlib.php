@@ -1963,7 +1963,7 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
     if (!is_object($question)){
         if (!isset($questions[$question])){
             if (!$questions[$question] = get_record('question', 'id', $question)){
-                print_error('invalidcategory', 'quiz');
+                print_error('questiondoesnotexist', 'question');
             }
         }
         $question = $questions[$question];
