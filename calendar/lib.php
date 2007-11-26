@@ -136,17 +136,10 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
 
     // Get the events matching our criteria. Don't forget to offset the timestamps for the user's TZ!
-    $whereclause = calendar_sql_where(
+    $events = calendar_get_events(
         usertime($display->tstart) - dst_offset_on($display->tstart),
         usertime($display->tend) - dst_offset_on($display->tend),
         $users, $groups, $courses);
-
-    if($whereclause === false) {
-        $events = array();
-    }
-    else {
-        $events = get_records_select('event', $whereclause, 'timestart');
-    }
 
     // Set event course class for course events
     if (!empty($events)) {
@@ -396,12 +389,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     $display->tend = usergetmidnight($display->tstart + DAYSECS * $display->range + 3 * HOURSECS) - 1;
 
     // Get the events matching our criteria
-    $whereclause = calendar_sql_where($display->tstart, $display->tend, $users, $groups, $courses);
-    if ($whereclause === false) {
-        $events = false;
-    } else {
-        $events = get_records_select('event', $whereclause, 'timestart');
-    }
+    $events = calendar_get_events($display->tstart, $display->tend, $users, $groups, $courses);
 
     // This is either a genius idea or an idiot idea: in order to not complicate things, we use this rule: if, after
     // possibly removing SITEID from $courses, there is only one course left, then clicking on a day in the month
@@ -570,11 +558,23 @@ function calendar_print_event($event) {
 
 }
 
-function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withduration=true, $ignorehidden=true) {
+/**
+ * Get calendar events
+ * @param int $tstart Start time of time range for events
+ * @param int $tend   End time of time range for events
+ * @param array/int/boolean $users array of users, user id or boolean for all/no user events
+ * @param array/int/boolean $groups array of groups, group id or boolean for all/no group events
+ * @param array/int/boolean $courses array of courses, course id or boolean for all/no course events
+ * @param boolean $withduration whether only events starting within time range selected
+ *                              or events in progress/already started selected as well
+ * @param boolean $ignorehidden whether to select only visible events or all events
+ * @return array of selected events or an empty array if there aren't any (or there was an error)
+ */
+function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withduration=true, $ignorehidden=true) {
     $whereclause = '';
     // Quick test
     if(is_bool($users) && is_bool($groups) && is_bool($courses)) {
-        return false;
+        return array();
     }
 
     if(is_array($users) && !empty($users)) {
@@ -642,7 +642,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
     // events no matter what. Allowing the code to proceed might return a completely
     // valid query with only time constraints, thus selecting ALL events in that time frame!
     if(empty($whereclause)) {
-        return false;
+        return array();
     }
 
     if($withduration) {
@@ -664,7 +664,11 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         $whereclause .= ' AND visible = 1';
     }
 
-    return $whereclause;
+    $events = get_records_select('event', $whereclause, 'timestart');
+    if ($events === false) {
+        $events = array();
+    }
+    return $events;
 }
 
 function calendar_top_controls($type, $data) {

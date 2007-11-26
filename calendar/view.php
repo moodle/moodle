@@ -361,13 +361,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
     }
 
     // Get events from database
-    $whereclause = calendar_sql_where(usertime($display->tstart), usertime($display->tend), $users, $groups, $courses);
-    if($whereclause === false) {
-        $events = array();
-    }
-    else {
-        $events = get_records_select('event', $whereclause, 'timestart');
-    }
+    $events = calendar_get_events(usertime($display->tstart), usertime($display->tend), $users, $groups, $courses);
     if (!empty($events)) {
         foreach($events as $eventid => $event) {
             if (!empty($event->modulename)) {
