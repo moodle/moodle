@@ -2215,9 +2215,10 @@
                                                   sql_compare_text($literal_description);
                         }
                         $gro_db = get_record_sql("SELECT *
-                                                  FROM {$CFG->prefix}groups
-                                                  WHERE courseid = $restore->course_id AND
-                                                        name = '{$gro->name}'" . $description_clause);
+                                                  FROM {$CFG->prefix}groups g, {$CFG->prefix}groups_courses_groups gcg
+                                                  WHERE gcg.courseid = $restore->course_id 
+                                                        AND g.id = gcg.groupid
+                                                        AND g.name = '{$gro->name}'" . $description_clause, true);
                         //If it doesn't exist, create
                         if (!$gro_db) {
                             $create_group = true;
