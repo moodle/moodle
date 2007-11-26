@@ -125,13 +125,13 @@ if ($data = $mform->get_data(false)) {
         $grade_item->itemtype = 'manual'; // all new items to be manual only
         $grade_item->insert();
 
+        // set parent if needed
+        if (isset($data->parentcategory)) {
+            $grade_item->set_parent($data->parentcategory, 'gradebook');
+        }
+
     } else {
         $grade_item->update();
-    }
-
-    // set parent if needed
-    if (isset($data->parentcategory)) {
-        $grade_item->set_parent($data->parentcategory, 'gradebook');
     }
 
     // update hiding flag

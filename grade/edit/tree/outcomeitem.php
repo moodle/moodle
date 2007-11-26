@@ -186,10 +186,6 @@ if ($data = $mform->get_data(false)) {
 
     } else {
         $grade_item->update();
-        // set parent if needed
-        if (isset($data->parentcategory)) {
-            $grade_item->set_parent($data->parentcategory, 'gradebook');
-        }
     }
 
     // update hiding flag
