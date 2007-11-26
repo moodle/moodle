@@ -2900,7 +2900,7 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
                 if (!$gro_db = get_record_sql("SELECT *
                                           FROM {$CFG->prefix}groups
                                           WHERE courseid = $restore->course_id AND
-                                                name = '{$gro->name}'" . $description_clause)) {
+                                                name = '{$gro->name}'" . $description_clause, true)) {
                     //If it doesn't exist, create
                     $newid = insert_record('groups', $gro);
 
