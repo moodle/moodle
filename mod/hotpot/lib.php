@@ -1730,7 +1730,8 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
             // make sure the Moodle media plugin is available
             global $CFG;
-            include_once "$CFG->dirroot/filter/mediaplugin/filter.php";
+            //include_once "$CFG->dirroot/filter/mediaplugin/filter.php";
+            include_once "$CFG->dirroot/mod/hotpot/mediaplayers/moodle/filter.php";
 
             // exclude swf files from the filter
             //$CFG->filter_mediaplugin_ignore_swf = true;
@@ -1757,7 +1758,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
             $link_url = "/{$tagopen}a{$space}href=$quote($filepath)$quote.*?$tagclose.*?$tagreopen\/A$tagclose/is";
 
             // extract <object> tags
-            preg_match_all("/{$tagopen}object\s.*?{$tagclose}(.*?){$tagreopen}\/object{$tagclose}/is", $this->html, $objects);
+            preg_match_all("/{$tagopen}object\s.*?{$tagclose}(.*?)(?:{$tagreopen}\/object{$tagclose})+/is", $this->html, $objects);
 
             $i_max = count($objects[0]);
             for ($i=0; $i<$i_max; $i++) {
@@ -1776,7 +1777,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
                     $url = preg_replace('/^[^?]*\?([^=]+=[^&]*&)*[^=]+=([^&]*)$/', '$2', $url, 1);
                     $link = '<a href="'.$url.'">'.$txt.'</a>';
 
-                    $new_object = mediaplugin_filter($this->filedir, $link);
+                    $new_object = hotpot_mediaplayer_moodle($this, $link);
                     $new_object = str_replace($link, '', $new_object);
                     $new_object = str_replace('&amp;', '&', $new_object);
 
