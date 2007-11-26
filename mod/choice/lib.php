@@ -319,7 +319,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
         $currentgroup = 0;
     }
 
-    $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', false);
+    $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', false, true);
 
     if (!$users) {
         print_heading(get_string("nousersyet"));
