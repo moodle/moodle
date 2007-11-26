@@ -4822,33 +4822,45 @@ function forum_delete_userdata($data, $showfeedback=true) {
               WHERE discussion IN (
                 SELECT fd.id FROM {$CFG->prefix}forum_discussions fd, {$CFG->prefix}forum f
                   WHERE f.course={$data->courseid} AND f.id=fd.forum "; // closing ) added bellow
-
+    
     $strreset = get_string('reset');
-
+    
+    $attforumtype = '';
+    $postsarr = array();
     if (!empty($data->reset_forum_news)) {
         $select = "$sql AND f.type = 'news' )";
+        $postsarr = forum_get_posts_with_attachments($data->courseid," 'news' ",$postsarr);//select posts from news forum with attachments
         if (execute_sql($select, false) and $showfeedback) {
             notify($strreset.': '.get_string('namenews','forum'), 'notifysuccess');
         }
     }
     if (!empty($data->reset_forum_single)) {
-        $select = "$sql AND f.type = 'single' ) AND parent <> 0";
+        $select = "$sql AND f.type = 'single' ) AND parent <> 0 ";
+        $postsarr = forum_get_posts_with_attachments($data->courseid," 'single' AND fp.parent<>0 ",$postsarr);
         if (execute_sql($select, false) and $showfeedback) {
             notify($strreset.': '.get_string('singleforum','forum'), 'notifysuccess');
         }
     }
     if (!empty($data->reset_forum_eachuser)) {
         $select = "$sql AND f.type = 'eachuser' )";
+        $postsarr = forum_get_posts_with_attachments($data->courseid," 'eachuser' ",$postsarr);
         if (execute_sql($select, false) and $showfeedback) {
             notify($strreset.': '.get_string('eachuserforum','forum'), 'notifysuccess');
         }
     }
     if (!empty($data->reset_forum_general)) {
         $select = "$sql AND f.type = 'general' )";
+        $postsarr = forum_get_posts_with_attachments($data->courseid," 'general' ",$postsarr);
         if (execute_sql($select, false) and $showfeedback) {
             notify($strreset.': '.get_string('generalforum','forum'), 'notifysuccess');
         }
     }
+    
+    //selected posts with attachments to delete attachments files  
+    foreach($postsarr as $post){
+        forum_delete_old_attachments($post); 
+    }
+    
     if (!empty($data->reset_forum_subscriptions)) {
         $subscripsql = "DELETE FROM {$CFG->prefix}forum_subscriptions
                           WHERE forum IN (
@@ -4861,6 +4873,29 @@ function forum_delete_userdata($data, $showfeedback=true) {
     }
 }
 
+/*
+ * Gets posts from selected course and forum type with attachments to delete this attachements files
+ * 
+ * @param int $courseid  course id
+ * @param string $ftype  type of forum
+ * @param array $postsarr array of selected posts, we are adding to this array new posts
+ * 
+ * @return mixed an array of objects, or false if no records were found or an error occured.
+ */       
+function forum_get_posts_with_attachments($courseid,$ftype,$postsarr){
+    global $CFG;
+    $attquery = "SELECT fp.*,fd.course,fd.forum 
+                FROM {$CFG->prefix}forum_discussions fd,{$CFG->prefix}forum_posts fp,{$CFG->prefix}forum f
+                WHERE fd.course = $courseid 
+                    AND fd.id = fp.discussion
+                    AND fp.attachment <>''
+                    AND f.id = fd.forum
+                    AND f.type = $ftype ";
+    if ($records = get_records_sql($attquery)){
+        return array_merge((array)$postsarr,$records);
+    }
+    return $postsarr;    
+}
 
 /**
  * Called by course/reset.php
