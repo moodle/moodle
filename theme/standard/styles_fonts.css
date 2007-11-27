@@ -501,6 +501,19 @@ body#grade-index .grades .header {
   font-size: 0.7em;
 }
 
+#grade-aggregation-help dt {
+    font-weight: bold;
+}
+
+
+#grade-aggregation-help dd.example {
+    font-style: italic;
+}
+
+#grade-aggregation-help code {
+    font-style: normal;
+}
+
 /***
  *** Login
  ***/
