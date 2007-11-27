@@ -223,7 +223,7 @@ class IndexDBControl {
         $doc->itemtype  = $document->itemtype;
         $doc->title     = search_escape_string($document->title);
         $doc->url       = search_escape_string($document->url);
-        $doc->update    = time();
+        $doc->updated   = time();
         $doc->docdate   = $document->date;
         $doc->courseid  = $document->course_id;
         $doc->groupid   = $document->group_id;
