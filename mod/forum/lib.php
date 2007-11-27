@@ -1676,7 +1676,7 @@ function forum_mark_old_posts_as_mailed($endtime) {
 function forum_get_user_posts($forumid, $userid) {
     global $CFG;
 
-    return get_records_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture
+    return get_records_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture, u.imagealt
                               FROM {$CFG->prefix}forum f,
                                    {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}forum_posts p,
