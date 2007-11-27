@@ -604,12 +604,12 @@ table.minicalendar {
 
 /* .content should match the body background, sides are white. */
 #course-view .weeks .content ,
-#course-view .topics .content {
+#course-view .topics .content, 
+#course-view .weeks .section,
+#course-view .topics .section {
   background: #FAFAFA;
 }
 
-#course-view .weeks .section,
-#course-view .topics .section,
 #course-view .section td.side {
   background: #FFFFFF;
 }
