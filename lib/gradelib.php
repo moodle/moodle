@@ -466,19 +466,22 @@ function grade_get_grade_items_for_activity($cm) {
     }
     
     // Get grade_item object for this course module (or array of grade_items)
-    $grade_items = grade_item::fetch_all(array('iteminstance' => $cm->instance, 'courseid' => $cm->courseid));
-    $std_grade_items = array();
-    foreach ($grade_items as $key => $gi) {
-        $std_grade_items[$key] = $gi->get_record_data();
-    }
+    if ($grade_items = grade_item::fetch_all(array('iteminstance' => $cm->instance, 'courseid' => $cm->courseid))) {
+        $std_grade_items = array();
+        foreach ($grade_items as $key => $gi) {
+            $std_grade_items[$key] = $gi->get_record_data();
+        }
 
-    if (count($std_grade_items) == 0 || empty($std_grade_items)) {
-        return null; 
-    } elseif (count($std_grade_items) == 1) {
-        return reset($std_grade_items);
+        if (count($std_grade_items) == 0 || empty($std_grade_items)) {
+            return null; 
+        } elseif (count($std_grade_items) == 1) {
+            return reset($std_grade_items);
+        } else {
+            return $std_grade_items;
+        }
     } else {
-        return $std_grade_items;
-    } 
+        return null;
+    }
 }
 
 /**
@@ -509,7 +512,7 @@ function grade_get_grade_activities($courseid = null, $type = null) {
  * Returns an array of $gradeitem objects.
  *
  * @param int $courseid If provided then restrict to one course.
- * @param string $type If defined (could be 'forum', 'assignment' etc) then only that type are returned.
+ * @param string $type If defined (could be 'forum', 'assignment' etc) then only that type are returned. 'course' can be used to get the course item.
  * @return array $gradeitem objects
  */
 function grade_get_grade_items($courseid = null, $type = null) {
@@ -519,9 +522,14 @@ function grade_get_grade_items($courseid = null, $type = null) {
         $params['courseid'] = $courseid;
     }
     if (!empty($type)) {
-        $params['itemtype'] = 'mod';
-        $params['itemmodule'] = $type;
+        if ($type == 'course' && !empty($courseid)) {
+            $params['itemtype'] = 'course';
+        } else {
+            $params['itemtype'] = 'mod';
+            $params['itemmodule'] = $type;
+        }
     }
+
     $grade_items = $grade_items = grade_item::fetch_all($params);
     $std_grade_items = array();
     foreach ($grade_items as $key => $gi) {
@@ -669,7 +677,7 @@ function grade_set_setting($courseid, $name, $value) {
  * @param float $value grade value
  * @param object $grade_item - by reference to prevent scale reloading
  * @param bool $localized use localised decimal separator
- * @param int $display type of display - raw, letter, percentage
+ * @param int $displaytype type of display - raw, letter, percentage
  * @param int $decimalplaces number of decimal places when displaying float values
  * @return string
  */
