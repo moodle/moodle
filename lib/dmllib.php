@@ -544,8 +544,9 @@ function get_record_select($table, $select='', $fields='*') {
  *
  * If $fields is specified, only those fields are returned.
  *
- * This function is internal to datalib, and should NEVER should be called directly
- * from general Moodle scripts.  Use get_record, get_records etc.
+ * Since this method is a little less readable, use of it should be restricted to 
+ * code where it's possible there might be large datasets being returned.  For known 
+ * small datasets use get_records - it leads to simpler code.
  *
  * If you only want some of the records, specify $limitfrom and $limitnum.
  * The query will skip the first $limitfrom records (according to the sort
@@ -639,8 +640,9 @@ function get_recordset_list($table, $field='', $values='', $sort='', $fields='*'
 
 /**
  * Get a number of records as an ADODB RecordSet.  $sql must be a complete SQL query.
- * This function is internal to datalib, and should NEVER should be called directly
- * from general Moodle scripts.  Use get_record, get_records etc.
+ * Since this method is a little less readable, use of it should be restricted to 
+ * code where it's possible there might be large datasets being returned.  For known 
+ * small datasets use get_records_sql - it leads to simpler code.
  *
  * The return type is as for @see function get_recordset.
  *
