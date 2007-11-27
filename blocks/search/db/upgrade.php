@@ -107,6 +107,28 @@ function xmldb_block_search_upgrade($oldversion=0) {
         $result = $result && change_field_default($table, $field);
     }
 
+    if ($result && $oldversion < 2007112700) {
+    
+    /// Truncate the block_search_documents table
+        execute_sql("TRUNCATE TABLE {$CFG->prefix}block_search_documents", true);
+    
+    /// Changing type of field docdate on table block_search_documents to int
+        $table = new XMLDBTable('block_search_documents');
+        $field = new XMLDBField('docdate');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'url');
+
+    /// Launch change of type for field docdate
+        $result = $result && change_field_type($table, $field);
+        
+    /// Changing type of field updated on table block_search_documents to int
+        $table = new XMLDBTable('block_search_documents');
+        $field = new XMLDBField('updated');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'docdate');
+
+    /// Launch change of type for field updated
+        $result = $result && change_field_type($table, $field);
+    }
+    
     return $result;
 }
 
