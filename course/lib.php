@@ -1856,9 +1856,20 @@ function print_course($course) {
             if (count($course->managers)) {
                 $rusers = $course->managers;
                 $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
+                
+                 /// Rename some of the role names if needed
+                if (isset($context)) {
+                    $aliasnames = get_records('role_names', 'contextid', $context->id,'','roleid,contextid,text');
+                }
+
                 foreach ($rusers as $ra) {
                     if ($ra->hidden == 0 || $canseehidden) {
                         $fullname = fullname($ra->user, $canviewfullnames); 
+
+                        if (isset($aliasnames[$ra->roleid])) {
+                            $ra->rolename = $aliasnames[$ra->roleid]->text;
+                        }
+
                         $namesarray[] = format_string($ra->rolename) 
                             . ': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$ra->user->id.'&amp;course='.SITEID.'">'
                             . $fullname . '</a>'; 
