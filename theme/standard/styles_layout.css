@@ -2202,6 +2202,19 @@ body#doc-contents ul {
   margin-right: auto;
 }
 
+#grade-aggregation-help dt {
+    margin-top: 15px; 
+}
+
+#grade-aggregation-help dd.example {
+    margin-top: 7px;
+}
+
+#grade-aggregation-help code {
+    display: block;
+    margin-top: 7px;
+}
+
 /***
  *** Login
  ***/
