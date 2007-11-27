@@ -609,6 +609,8 @@ class resource_file extends resource_base {
 
             if ($inpopup) {
                 echo "<div class=\"popupnotice\">(<a href=\"$fullurl\">$strdirectlink</a>)</div>";
+                echo "</div>"; // MDL-12098
+                print_footer($course); // MDL-12098
             } else {
                 print_spacer(20,20);
                 print_footer($course);
