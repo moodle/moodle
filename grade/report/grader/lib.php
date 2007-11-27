@@ -710,6 +710,11 @@ class grade_report_grader extends grade_report {
                     $hidden = ' hidden ';
                 }
 
+                $gradepass = ' gradefail '; 
+                if ($grade->is_passed($item)) {
+                    $gradepass = ' gradepass ';
+                }
+
                 // if in editting mode, we need to print either a text box
                 // or a drop down (for scales)
                 // grades in item of type grade category or course are not directly editable
@@ -750,10 +755,10 @@ class grade_report_grader extends grade_report {
 
                             // invalid grade if gradeval < 1
                             if ((int) $gradeval < 1) {
-                                $studentshtml .= '<span class="gradevalue'.$hidden.'">-</span>';
+                                $studentshtml .= '<span class="gradevalue'.$hidden.$gradepass.'">-</span>';
                             } else {
                                 $gradeval = (int)bounded_number($grade->grade_item->grademin, $gradeval, $grade->grade_item->grademax); //just in case somebody changes scale
-                                $studentshtml .= '<span class="gradevalue'.$hidden.'">'.$scales[$gradeval-1].'</span>';
+                                $studentshtml .= '<span class="gradevalue'.$hidden.$gradepass.'">'.$scales[$gradeval-1].'</span>';
                             }
                         } else {
                             // no such scale, throw error?
@@ -767,7 +772,7 @@ class grade_report_grader extends grade_report {
                                           . '" type="text" title="'. $strgrade .'" name="grade_'
                                           .$userid.'_' .$item->id.'" value="'.$value.'" />';
                         } else {
-                            $studentshtml .= '<span class="gradevalue'.$hidden.'">'.format_float($gradeval, $decimalpoints).'</span>';
+                            $studentshtml .= '<span class="gradevalue'.$hidden.$gradepass.'">'.format_float($gradeval, $decimalpoints).'</span>';
                         }
                     }
 
@@ -797,10 +802,10 @@ class grade_report_grader extends grade_report {
                     }
 
                     if ($item->needsupdate) {
-                        $studentshtml .= '<span class="gradingerror'.$hidden.'">'.get_string('error').'</span>';
+                        $studentshtml .= '<span class="gradingerror'.$hidden.$gradepass.'">'.get_string('error').'</span>';
 
                     } else {
-                        $studentshtml .= '<span class="gradevalue'.$hidden.'">'.grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null).'</span>';
+                        $studentshtml .= '<span class="gradevalue'.$hidden.$gradepass.'">'.grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null).'</span>';
                     }
 
                     // Close feedback span
