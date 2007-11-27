@@ -78,11 +78,7 @@ class mod_wiki_mod_form extends moodleform_mod {
         $mform->setType('pagename', PARAM_NOTAGS);
         $mform->setAdvanced('pagename');
 
-        if ($wikihasentries){
-            $mform->addElement('choosecoursefile', 'initialcontent', get_string('initialcontent', 'wiki'));
-        } else {
-            $mform->addElement('static', 'initialcontent', get_string('initialcontent', 'wiki'));
-        }
+        $mform->addElement('choosecoursefile', 'initialcontent', get_string('initialcontent', 'wiki'));
         $mform->setHelpButton('initialcontent', array('initialcontent', get_string('initialcontent', 'wiki'), 'wiki'));
         $mform->setAdvanced('initialcontent');
 
