@@ -257,13 +257,13 @@
                 $timetaken = format_time($quiz->timeclose - $attempt->timestart);
                 $datecompleted = userdate($quiz->timeclose);
             } else {
-                // Something wheird happened.
+                // Something weird happened.
                 $timetaken = '';
                 $datecompleted = '';
             }
             $row[] = $datecompleted;
 
-            if ($markcolumn) {
+            if ($markcolumn && $attempt->timefinish > 0) {
                 if ($attemptoptions->scores) {
                     $row[] = make_review_link(round($attempt->sumgrades, $quiz->decimalpoints), $quiz, $attempt);
                 } else {
@@ -275,7 +275,7 @@
             $attemptgrade = quiz_rescale_grade($attempt->sumgrades, $quiz);
 
             if ($gradecolumn) {
-                if ($attemptoptions->scores) {
+                if ($attemptoptions->scores && $attempt->timefinish > 0) {
                     $formattedgrade = $attemptgrade;
                     // highlight the highest grade if appropriate
                     if ($overallstats && $numattempts > 1 && !is_null($mygrade) && $attemptgrade == $mygrade && $quiz->grademethod == QUIZ_GRADEHIGHEST) {
@@ -288,7 +288,7 @@
                 }
             }
 
-            if ($feedbackcolumn) {
+            if ($feedbackcolumn && $attempt->timefinish > 0) {
                 if ($attemptoptions->overallfeedback) {
                     $row[] = quiz_feedback_for_grade($attemptgrade, $quiz->id);
                 } else {
