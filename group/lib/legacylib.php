@@ -112,7 +112,7 @@ function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='',
     if (!empty($extrafield)) {
         $extrafield = ','.$extrafield;
     }
-    return get_records_sql("SELECT DISTINCT $fields $extrafield
+    return get_records_sql("SELECT $fields $extrafield
                               FROM {$CFG->prefix}user u,
                                    {$CFG->prefix}groups_members m
                              WHERE m.groupid = '$groupid'
