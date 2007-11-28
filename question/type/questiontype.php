@@ -686,10 +686,8 @@ class default_questiontype {
     */
     // ULPGC ecastro
     function get_actual_response($question, $state) {
-       // change length to truncate responses here if you want
-       $lmax = 40;
        if (!empty($state->responses)) {
-           $responses[] = shorten_text(stripslashes($state->responses['']), 45);
+           $responses[] = stripslashes($state->responses['']);
        } else {
            $responses[] = '';
        }
