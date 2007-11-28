@@ -331,6 +331,16 @@ class grade_item extends grade_object {
      * @return boolean success
      */
     function delete($source=null) {
+        $this->delete_all_grades($source);
+        return parent::delete($source);
+    }
+
+    /**
+     * Delete all grades
+     * @param string $source from where was the object deleted (mod/forum, manual, etc.)
+     * @return boolean success
+     */
+    function delete_all_grades($source=null) {
         if (!$this->is_course_item()) {
             $this->force_regrading();
         }
@@ -341,7 +351,7 @@ class grade_item extends grade_object {
             }
         }
 
-        return parent::delete($source);
+        return true;
     }
 
     /**
