@@ -681,5 +681,22 @@ class grade_grade extends grade_object {
 
         return array('unknown'=>$unknown, 'altered'=>$altered);
     }
+
+    /**
+     * Returns true if the grade's value is superior or equal to the grade item's gradepass value, false otherwise.
+     * @param object $grade_item An optional grade_item of which gradepass value we can use, saves having to load the grade_grade's grade_item
+     * @return boolean
+     */
+    function is_passed($grade_item = null) {
+        if (empty($grade_item)) {
+            if (!isset($this->grade_item)) {
+                $this->load_grade_item();
+            }
+        } else {
+            $this->grade_item = $grade_item;
+            $this->itemid = $grade_item->id;
+        }
+        return $this->finalgrade >= $this->grade_item->gradepass;
+    }
 }
 ?>
