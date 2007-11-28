@@ -105,6 +105,10 @@ if ($contextmoveform->is_cancelled()){
             $source = $CFG->dataroot."/$fromcoursefilesid/".$flipurls[$key];
             $destination = $flipurls[$key];
             if (($urlaction != QUESTION_FILEDONOTHING) && ($urlaction != QUESTION_FILEMOVELINKSONLY)){
+                // Ensure the target folder exists.
+                check_dir_exists(dirname($CFG->dataroot."/$tocoursefilesid/".$destination), true);
+
+                // Then make sure the destination file name does not exist. If it does, change the name to be unique.
                 while (file_exists($CFG->dataroot."/$tocoursefilesid/".$destination)){
                     $matches = array();
                     //check for '_'. copyno after filename, before extension.
@@ -120,19 +124,19 @@ if ($contextmoveform->is_cancelled()){
             switch ($urlaction){
                 case QUESTION_FILECOPY :
                     if (!copy($source, $CFG->dataroot."/$tocoursefilesid/".$destination)){
-                        print_error('errorfilecannotbecopied', 'question', $onerrorurl, $source);
+                        print_error('errorfilecannotbecopied', 'question', $returnurl, $source);
                     }
                     break;
                 case QUESTION_FILEMOVE :
                     if (!rename($source, $CFG->dataroot."/$tocoursefilesid/".$destination)){
-                        print_error('errorfilecannotbemoved', 'question', $onerrorurl, $source);
+                        print_error('errorfilecannotbemoved', 'question', $returnurl, $source);
                     }
                     break;
                 case QUESTION_FILEMOVELINKSONLY :
                 case QUESTION_FILEDONOTHING :
                     break;
                 default :
-                    error('Invalid action selected!', $onerrorurl);
+                    error('Invalid action selected!', $returnurl);
             }
             //now search and replace urls in questions.
             switch ($urlaction){
@@ -148,7 +152,7 @@ if ($contextmoveform->is_cancelled()){
                 case  QUESTION_FILEDONOTHING :
                     break;
                 default :
-                    error('Invalid action selected!', $onerrorurl);
+                    error('Invalid action selected!', $returnurl);
                     break;
             }
 
@@ -157,7 +161,7 @@ if ($contextmoveform->is_cancelled()){
     }
     //now move questions
     if (!execute_sql("UPDATE {$CFG->prefix}question SET category = {$tocat->id} WHERE id IN ({$ids})", false)){
-        error("Could not move the questions {$ids} to category ".$tocat->name, $onerrorurl);
+        error("Could not move the questions {$ids} to category ".$tocat->name, $returnurl);
     }
     redirect($returnurl);
 }

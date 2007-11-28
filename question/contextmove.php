@@ -99,6 +99,10 @@
                 $source = $CFG->dataroot."/$fromcoursefilesid/".$flipurls[$key];
                 $destination = $flipurls[$key];
                 if (($urlaction != QUESTION_FILEDONOTHING) && ($urlaction != QUESTION_FILEMOVELINKSONLY)){
+                    // Ensure the target folder exists.
+                    check_dir_exists(dirname($CFG->dataroot."/$tocoursefilesid/".$destination), true);
+
+                    // Then make sure the destination file name does not exist. If it does, change the name to be unique.
                     while (file_exists($CFG->dataroot."/$tocoursefilesid/".$destination)){
                         $matches = array();
                         //check for '_'. copyno after filename, before extension.
