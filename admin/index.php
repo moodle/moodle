@@ -275,6 +275,7 @@
                         "", "", false, "&nbsp;", "&nbsp;");
 
                 notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=1', 'index.php');
+                print_footer('none');
                 exit;
 
             } else if (empty($confirmrelease)){
