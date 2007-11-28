@@ -1336,8 +1336,15 @@ function forum_get_readable_forums($userid, $courseid=0) {
                                 ORDER BY f.name ASC";
 
         if ($forums = get_records_sql($selectforums)) {
-
-            $group = user_group($course->id, $userid);
+ 
+            $groups = array();
+            if ($group = user_group($course->id, $userid)) {          
+                foreach($group as $grp) {
+                    if (isset($grp->id)) {
+                        $groups[] = $grp->id;
+                    }
+                }
+            }
 
             foreach ($forums as $forum) {
                 $forumcontext = get_context_instance(CONTEXT_MODULE, $forum->cmid);
@@ -1353,7 +1360,7 @@ function forum_get_readable_forums($userid, $courseid=0) {
                     if ($forum->cmgroupmode == SEPARATEGROUPS
                             && !has_capability('moodle/site:accessallgroups', $forumcontext)) {
                         $forum->accessallgroups = false;
-                        $forum->accessgroup = $group->id;  // The user can only access
+                        $forum->accessgroup = $groups;  // The user can only access
                                                            // discussions for this group.
                     } else {
                         $forum->accessallgroups = true;
@@ -1435,7 +1442,8 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
         }
         if (!$forums[$i]->accessallgroups) {
             if (!empty($forums[$i]->accessgroup)) {
-                $selectdiscussion .= " AND (d.groupid = {$forums[$i]->accessgroup}";
+                $groups = rtrim(implode(",", $forums[$i]->accessgroup),",");
+                $selectdiscussion .= " AND (d.groupid in ($groups)"; 
                 $selectdiscussion .= ' OR d.groupid = -1)';  // -1 means open for all groups.
             } else {
                 // User isn't in any group. Only search discussions that are
