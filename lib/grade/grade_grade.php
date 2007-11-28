@@ -240,8 +240,11 @@ class grade_grade extends grade_object {
      */
     function is_locked() {
         $this->load_grade_item();
-
-        return !empty($this->locked) or $this->grade_item->is_locked();
+        if (empty($this->grade_item)) {
+            return !empty($this->locked);
+        } else {
+            return !empty($this->locked) or $this->grade_item->is_locked();
+        }
     }
 
     /**
@@ -429,8 +432,11 @@ class grade_grade extends grade_object {
      */
     function is_hidden() {
         $this->load_grade_item();
-
-        return $this->hidden == 1 or ($this->hidden != 0 and $this->hidden > time()) or $this->grade_item->is_hidden();
+        if (empty($this->grade_item)) {
+            return $this->hidden == 1 or ($this->hidden != 0 and $this->hidden > time());
+        } else {
+            return $this->hidden == 1 or ($this->hidden != 0 and $this->hidden > time()) or $this->grade_item->is_hidden();
+        } 
     }
 
     /**
@@ -549,7 +555,7 @@ class grade_grade extends grade_object {
         global $CFG;
 
         if (count($grade_grades) !== count($grade_items)) {
-            error("Incorrent size of arrays in params of grade_grade::get_hiding_affected()!");
+            error('Incorrect size of arrays in params of grade_grade::get_hiding_affected()!');
         }
 
         $dependson = array();
