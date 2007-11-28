@@ -47,7 +47,7 @@ require_once($CFG->libdir . '/grade/grade_outcome.php');
  * or key means do not change existing.
  *
  * Only following grade item properties can be changed 'itemname', 'idnumber', 'gradetype', 'grademax',
- * 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted' and 'hidden'.
+ * 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted' and 'hidden'. 'reset' means delete all current grades including locked ones.
  *
  * Manual, course or category items can not be updated by this function.
 
@@ -151,6 +151,12 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
                 $grade_item->update();
             }
         }
+    }
+
+/// reset grades if requested
+    if (!empty($itemdetails['reset'])) {
+        $grade_item->delete_all_grades('reset');
+        return GRADE_UPDATE_OK;
     }
 
 /// Some extra checks
@@ -952,35 +958,17 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
 /**
  * For backwards compatibility with old third-party modules, this function can
  * be used to import all grades from activities with legacy grading.
- * @param int $courseid or null if all courses
+ * @param int $courseid
  */
-function grade_grab_legacy_grades($courseid=null) {
-
+function grade_grab_legacy_grades($courseid) {
     global $CFG;
 
     if (!$mods = get_list_of_plugins('mod') ) {
         error('No modules installed!');
     }
 
-    if ($courseid) {
-        $course_sql = " AND cm.course=$courseid";
-    } else {
-        $course_sql = "";
-    }
-
     foreach ($mods as $mod) {
-
         if ($mod == 'NEWMODULE') {   // Someone has unzipped the template, ignore it
-            continue;
-        }
-
-        if (!$module = get_record('modules', 'name', $mod)) {
-            //not installed
-            continue;
-        }
-
-        if (!$module->visible) {
-            //disabled module
             continue;
         }
 
@@ -993,46 +981,40 @@ function grade_grab_legacy_grades($courseid=null) {
             // if present sync the grades with new grading system
             $gradefunc = $mod.'_grades';
             if (function_exists($gradefunc)) {
-
-                // get all instance of the activity
-                $sql = "SELECT a.*, cm.idnumber as cmidnumber, m.name as modname
-                          FROM {$CFG->prefix}$mod a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-                         WHERE m.name='$mod' AND m.id=cm.module AND cm.instance=a.id $course_sql";
-
-                if ($modinstances = get_records_sql($sql)) {
-                    foreach ($modinstances as $modinstance) {
-                        grade_update_mod_grades($modinstance);
-                    }
-                }
+                grade_grab_course_grades($courseid, $mod);
             }
         }
     }
 }
 
 /**
- * For testing purposes mainly, reloads grades from all non legacy modules into gradebook.
+ * Refetches data from all course activities
+ * @param int $courseid
+ * @param string $modname
+ * @return success
  */
-function grade_grab_grades() {
-
+function grade_grab_course_grades($courseid, $modname=null) {
     global $CFG;
+
+    if ($modname) {
+        $sql = "SELECT a.*, cm.idnumber as cmidnumber, m.name as modname
+                  FROM {$CFG->prefix}$modname a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                 WHERE m.name='$modname' AND m.visible=1 AND m.id=cm.module AND cm.instance=a.id AND cm.course=$courseid";
+
+        if ($modinstances = get_records_sql($sql)) {
+            foreach ($modinstances as $modinstance) {
+                grade_update_mod_grades($modinstance);
+            }
+        }
+        return;
+    }
 
     if (!$mods = get_list_of_plugins('mod') ) {
         error('No modules installed!');
     }
 
     foreach ($mods as $mod) {
-
         if ($mod == 'NEWMODULE') {   // Someone has unzipped the template, ignore it
-            continue;
-        }
-
-        if (!$module = get_record('modules', 'name', $mod)) {
-            //not installed
-            continue;
-        }
-
-        if (!$module->visible) {
-            //disabled module
             continue;
         }
 
@@ -1040,12 +1022,15 @@ function grade_grab_grades() {
 
         // include the module lib once
         if (file_exists($fullmod.'/lib.php')) {
-            include_once($fullmod.'/lib.php');
-            // look for modname_grades() function - old gradebook pulling function
-            // if present sync the grades with new grading system
-            $gradefunc = $mod.'_update_grades';
-            if (function_exists($gradefunc)) {
-                $gradefunc();
+            // get all instance of the activity
+            $sql = "SELECT a.*, cm.idnumber as cmidnumber, m.name as modname
+                      FROM {$CFG->prefix}$mod a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                     WHERE m.name='$mod' AND m.visible=1 AND m.id=cm.module AND cm.instance=a.id AND cm.course=$courseid";
+
+            if ($modinstances = get_records_sql($sql)) {
+                foreach ($modinstances as $modinstance) {
+                    grade_update_mod_grades($modinstance);
+                }
             }
         }
     }
@@ -1301,18 +1286,38 @@ function grade_cron() {
 
     //TODO: do not run this cleanup every cron invocation
     // cleanup history tables
-        if (!empty($CFG->gradehistorylifetime)) {  // value in days
-            $histlifetime = $now - ($CFG->gradehistorylifetime * 3600 * 24);
-            $tables = array('grade_outcomes_history', 'grade_categories_history', 'grade_items_history', 'grade_grades_history', 'scale_history');
-            foreach ($tables as $table) {
-                if (delete_records_select($table, "timemodified < '$histlifetime'")) {
-                    mtrace("    Deleted old grade history records from '$table'");
-                }
-                
+    if (!empty($CFG->gradehistorylifetime)) {  // value in days
+        $histlifetime = $now - ($CFG->gradehistorylifetime * 3600 * 24);
+        $tables = array('grade_outcomes_history', 'grade_categories_history', 'grade_items_history', 'grade_grades_history', 'scale_history');
+        foreach ($tables as $table) {
+            if (delete_records_select($table, "timemodified < $histlifetime")) {
+                mtrace("    Deleted old grade history records from '$table'");
             }
         }
+    }
+}
 
+/**
+ * Resel all course grades
+ * @param int $courseid
+ * @return success
+ */
+function grade_course_reset($courseid) {
 
+    // no recalculations
+    grade_force_full_regrading($courseid);
+
+    $grade_items = grade_item::fetch_all(array('courseid'=>$courseid));
+    foreach ($grade_items as $gid=>$grade_item) {
+        $grade_item->delete_all_grades('reset');
+    }
+
+    //refetch all grades
+    grade_grab_course_grades($courseid);
+
+    // recalculate all grades
+    grade_regrade_final_grades($courseid);
+    return true;
 }
 
 ?>
