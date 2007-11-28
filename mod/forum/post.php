@@ -488,6 +488,15 @@
             if (!forum_update_post($updatepost, $message)) {
                 error(get_string("couldnotupdate", "forum"), $errordestination);
             }
+            
+            // MDL-11818
+            if (($forum->type == 'single') && ($updatepost->parent == '0')){ // updating first post of single discussion type -> updating forum intro
+                $forum->intro = $updatepost->message;
+                $forum->timemodified = time();
+                if (!update_record("forum", $forum)) {
+                    error(get_string("couldnotupdate", "forum"), $errordestination);
+                }
+            }
 
             $timemessage = 2;
             if (!empty($message)) { // if we're printing stuff about the file upload
