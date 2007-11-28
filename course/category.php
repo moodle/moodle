@@ -33,7 +33,9 @@
     if (!$category = get_record("course_categories", "id", $id)) {
         error("Category not known!");
     }
-
+    
+    $category->name = format_text($category->name,FORMAT_HTML);//for multilang filter to catch up
+    
     if (has_capability('moodle/course:create', $context)) {
         if ($categoryedit !== -1) {
             $USER->categoryediting = $categoryedit;
@@ -91,7 +93,6 @@
         }
     }
 
-
 /// Print headings
 
     $numcategories = count_records("course_categories");
@@ -145,7 +146,7 @@
 /// Print current category description
     if (!$creatorediting && $category->description) {
         print_box_start();
-        echo $category->description;
+        echo format_text($category->description,FORMAT_HTML); // for multilang filter
         print_box_end();
     }
 
