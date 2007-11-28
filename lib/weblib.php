@@ -3993,8 +3993,11 @@ function _print_custom_corners_start($clearfix=false, $classes='', $idbase='') {
         $idi3 = 'id="'.$idbase.'-i3" ';
     }
 
+/// Calculate current level
+    $level = open_containers();
+
 /// Output begins
-    $output = '<div '.$id.'class="wrap '.$classes.'">'."\n";
+    $output = '<div '.$id.'class="wrap wraplevel'.$level.' '.$classes.'">'."\n";
     $output .= '<div '.$idbt.'class="bt"><div>&nbsp;</div></div>';
     $output .= "\n";
     $output .= '<div '.$idi1.'class="i1"><div '.$idi2.'class="i2">';
