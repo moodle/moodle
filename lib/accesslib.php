@@ -1804,35 +1804,6 @@ function check_enrolment_plugins(&$user) {
 }
 
 /**
- * A print form function. This should either grab all the capabilities from
- * files or a central table for that particular module instance, then present
- * them in check boxes. Only relevant capabilities should print for known
- * context.
- * @param $mod - module id of the mod
- */
-function print_capabilities($modid=0) {
-    global $CFG;
-
-    $capabilities = array();
-
-    if ($modid) {
-        // We are in a module specific context.
-
-        // Get the mod's name.
-        // Call the function that grabs the file and parse.
-        $cm = get_record('course_modules', 'id', $modid);
-        $module = get_record('modules', 'id', $cm->module);
-
-    } else {
-        // Print all capabilities.
-        foreach ($capabilities as $capability) {
-            // Prints the check box component.
-        }
-    }
-}
-
-
-/**
  * Installs the roles system.
  * This function runs on a fresh install as well as on an upgrade from the old
  * hard-coded student/teacher/admin etc. roles to the new roles system.
