@@ -2507,6 +2507,16 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $pageclass .= ' drag';
     }
 
+    /* give pages without heading or navigation special classes, to 
+     * allow theming of very simple windows (popups and others) */ 
+    if ($heading == '') {
+        $pageclass .= ' noheader';
+    }
+
+    if ($navigation == '') {
+        $pageclass .= ' nonavigation';
+    }
+
     $pageclass .= ' dir-'.get_string('thisdirection');
 
     $pageclass .= ' lang-'.$currentlanguage;
