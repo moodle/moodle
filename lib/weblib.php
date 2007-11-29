@@ -669,51 +669,11 @@ if (!function_exists('stripos')) {    /// Only exists in PHP 5
 }
 
 /**
- * This function will create a HTML link that will work on both
- * Javascript and non-javascript browsers.
- * Relies on the Javascript function openpopup in javascript.php
- *
- * $url must be relative to home page  eg /mod/survey/stuff.php
- * @param string $url Web link relative to home page
- * @param string $name Name to be assigned to the popup window
- * @param string $linkname Text to be displayed as web link
- * @param int $height Height to assign to popup window
- * @param int $width Height to assign to popup window
- * @param string $title Text to be displayed as popup page title
- * @param string $options List of additional options for popup window
- * @todo Add code examples and list of some options that might be used.
- * @param boolean $return Should the link to the popup window be returned as a string (true) or printed immediately (false)?
- * @return string
- * @uses $CFG
- */
-function link_to_popup_window ($url, $name='popup', $linkname='click here',
-                               $height=400, $width=500, $title='Popup window',
-                               $options='none', $return=false) {
-
-    global $CFG;
-
-    if ($options == 'none') {
-        $options = 'menubar=0,location=0,scrollbars,resizable,width='. $width .',height='. $height;
-    }
-    $fullscreen = 0;
-
-    if (!(strpos($url,$CFG->wwwroot) === false)) { // some log url entries contain _SERVER[HTTP_REFERRER] in which case wwwroot is already there.
-        $url = substr($url, strlen($CFG->wwwroot));
-    }
-
-    $link = '<a title="'. s(strip_tags($title)) .'" href="'. $CFG->wwwroot . $url .'" '.
-           "onclick=\"this.target='$name'; return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>";
-    if ($return) {
-        return $link;
-    } else {
-        echo $link;
-    }
-}
-
-/**
- * This function will print a button submit form element
+ * This function will print a button/link/etc. form element
  * that will work on both Javascript and non-javascript browsers.
  * Relies on the Javascript function openpopup in javascript.php
+ *
+ * All parameters default to null, only $type and $url are mandatory.
  *
  * $url must be relative to home page  eg /mod/survey/stuff.php
  * @param string $url Web link relative to home page
@@ -724,34 +684,87 @@ function link_to_popup_window ($url, $name='popup', $linkname='click here',
  * @param string $title Text to be displayed as popup page title
  * @param string $options List of additional options for popup window
  * @param string $return If true, return as a string, otherwise print
+ * @param string $id id added to the element
+ * @param string $class class added to the element
  * @return string
  * @uses $CFG
  */
-function button_to_popup_window ($url, $name='popup', $linkname='click here',
-                                 $height=400, $width=500, $title='Popup window', $options='none', $return=false,
-                                 $id='', $class='') {
+function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=null,
+                                  $height=400, $width=500, $title=null, 
+                                  $options=null, $return=false, $id=null, $class=null) {
+
+    if (is_null($url)) { error('There must be an url to the popup. Can\'t create popup window.'); }
 
     global $CFG;
 
-    if ($options == 'none') {
-        $options = 'menubar=0,location=0,scrollbars,resizable,width='. $width .',height='. $height;
+    if ($options == 'none') { /* 'none' is legacy, should be removed in v2.0 */
+        $options = null; 
     }
 
-    if ($id) {
-        $id = ' id="'.$id.'" ';
-    }
-    if ($class) {
-        $class = ' class="'.$class.'" ';
-    }
-    $fullscreen = 0;
+    // add some sane default options for popup windows
+    if (!$options) { $options = 'menubar=0,location=0,scrollbars,resizable'; }
+    if ($width) { $options .= ',width='. $width; }
+    if ($height) { $options .= ',height='. $height; }
+    if ($id) { $id = ' id="'.$id.'" '; }
+    if ($class) { $class = ' class="'.$class.'" '; }
 
-    $button = '<input type="button" name="'.$name.'" title="'. $title .'" value="'. $linkname .' ..." '.$id.$class.
-              "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\" />\n";
+    // get some default string, using the localized version of legacy defaults
+    if (!$name) { $name = get_string('popup'); }
+    if (!$linkname) { $linkname = get_string('click here'); }
+    if (!$title) { $title = get_string('Popup window'); }
+
+    $fullscreen = 0; // must be passed to openpopup 
+    $element = '';
+
+    switch ($type) {
+        case 'button' : 
+            $element = '<input type="button" name="'. $name .'" title="'. $title .'" value="'. $linkname .'" '. $id . $class .
+                       "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\" />\n";
+            break;
+        case 'link' :
+            // some log url entries contain _SERVER[HTTP_REFERRER] in which case wwwroot is already there.
+            if (!(strpos($url,$CFG->wwwroot) === false)) { 
+                $url = substr($url, strlen($CFG->wwwroot));
+            }
+            $element = '<a title="'. s(strip_tags($title)) .'" href="'. $CFG->wwwroot . $url .'" '.
+                       "onclick=\"this.target='$name'; return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>";
+            break;
+        default :
+            error('Undefined element - can\'t create popup window.');
+            break;
+    }
+
     if ($return) {
-        return $button;
+        return $element;
     } else {
-        echo $button;
+        echo $element;
     }
+}
+
+/**
+ * Creates and displays (or returns) a link to a popup window, using element_to_popup_window function.
+ *
+ * @return string html code to display a link to a popup window.
+ * @see element_to_popup_window()
+ */
+function link_to_popup_window ($url, $name=null, $linkname=null,
+                               $height=400, $width=500, $title=null,
+                               $options=null, $return=false) {
+
+    return element_to_popup_window('link', $url, $name, $linkname, $height, $width, $title, $options, $return, null, null);
+}
+
+/**
+ * Creates and displays (or returns) a buttons to a popup window, using element_to_popup_window function.
+ *
+ * @return string html code to display a button to a popup window.
+ * @see element_to_popup_window()
+ */
+function button_to_popup_window ($url, $name=null, $linkname=null,
+                                 $height=400, $width=500, $title=null, $options=null, $return=false,
+                                 $id=null, $class=null) {
+
+    return element_to_popup_window('button', $url, $name, $linkname, $height, $width, $title, $options, $return, $id, $class);
 }
 
 
