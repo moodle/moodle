@@ -225,7 +225,8 @@ class qformat_gift extends qformat_default {
 
         // give plugins first try
         // plugins must promise not to intercept standard qtypes
-        if ($try_question = $this->try_importing_using_qtypes( $lines, $question, $answertext )) {
+        // MDL-12346, this could be called from lesson mod which has its own base class =(
+        if (method_exists($this, 'try_importing_using_qtypes') && ($try_question = $this->try_importing_using_qtypes( $lines, $question, $answertext ))) {
             return $try_question;
         }
 
