@@ -32,6 +32,7 @@ class assignment_base {
     var $usehtmleditor;
     var $defaultformat;
     var $context;
+    var $type;
 
     /**
      * Constructor for the base assignment class
@@ -1730,18 +1731,18 @@ class assignment_base {
         }
     }
 
-    
-    /*
+
+    /**
      * Return true if is set description is hidden till available date
      *
-     * This is needed by calendar so that hidden descriptions do not 
+     * This is needed by calendar so that hidden descriptions do not
      * come up in upcoming events.
      *
-     * Check that description is hidden till available date   
+     * Check that description is hidden till available date
      * By default return false
      * Assignments types should implement this method if needed
      * @return boolen
-     */                               
+     */
     function description_is_hidden() {
         return false;
     }
@@ -1851,6 +1852,51 @@ class assignment_base {
         //no plugin cron by default - override if needed
     }
 
+    /**
+     * Reset all submissions
+     */
+    function reset_userdata($data) {
+        global $CFG;
+        require_once($CFG->libdir.'/filelib.php');
+
+        if (!count_records('assignment', 'course', $data->courseid, 'assignmenttype', $this->type)) {
+            return array(); // no assignments of this type present
+        }
+
+        $componentstr = get_string('modulenameplural', 'assignment');
+        $status = array();
+
+        $typestr = get_string('type'.$this->type, 'assignment');
+
+        if (!empty($data->reset_assignment_submissions)) {
+            $assignmentssql = "SELECT a.id
+                                 FROM {$CFG->prefix}assignment a
+                                WHERE a.course={$data->courseid} AND a.assignmenttype='{$this->type}'";
+
+            delete_records_select('assignment_submissions', "assignment IN ($assignmentssql)");
+
+            if ($assignments = get_records_sql($assignmentssql)) {
+                foreach ($assignments as $assignmentid=>$unused) {
+                    fulldelete($CFG->dataroot.'/'.$data->courseid.'/moddata/assignment/'.$assignmentid);
+                }
+            }
+
+            $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallsubmissions','assignment').': '.$typestr, 'error'=>false);
+            
+            if (empty($data->reset_gradebook_grades)) {
+                // remove all grades from gradebook
+                assignment_reset_gradebook($data->courseid, $this->type);
+            }
+        }
+
+        /// updating dates - shift may be negative too
+        if ($data->timeshift) {
+            shift_course_mod_dates('assignment', array('timedue', 'timeavailable'), $data->timeshift, $data->courseid);
+            $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged').': '.$typestr, 'error'=>false);
+        }
+
+        return $status;
+    }
 } ////// End of the assignment_base class
 
 
@@ -2130,7 +2176,7 @@ function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true)
  * Create grade item for given assignment
  *
  * @param object $assignment object with extra cmidnumber
- * @param mixed optional array/object of grade(s)
+ * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
  */
 function assignment_grade_item_update($assignment, $grades=NULL) {
@@ -2156,6 +2202,11 @@ function assignment_grade_item_update($assignment, $grades=NULL) {
 
     } else {
         $params['gradetype'] = GRADE_TYPE_NONE;
+    }
+
+    if ($grades  === 'reset') {
+        $params['reset'] = true;
+        $grades = NULL;
     }
 
     return grade_update('mod/assignment', $assignment->courseid, 'mod', 'assignment', $assignment->id, 0, $grades, $params);
@@ -2801,6 +2852,66 @@ function assignment_get_types() {
     $types[] = $type;
 
     return $types;
+}
+
+/**
+ * Removes all grades from gradebook
+ * @param int $courseid
+ * @param string optional type
+ */
+function assignment_reset_gradebook($courseid, $type='') {
+    global $CFG;
+
+    $type = $type ? "AND a.assignmenttype='$type'" : '';
+
+    $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid
+              FROM {$CFG->prefix}assignment a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+             WHERE m.name='assignment' AND m.id=cm.module AND cm.instance=a.id AND a.course=$courseid $type";
+
+    if ($assignments = get_records_sql($sql)) {
+        foreach ($assignments as $assignment) {
+            assignment_grade_item_update($assignment, 'reset');
+        }
+    }
+}
+
+/**
+ * This function is used by the reset_course_userdata function in moodlelib.
+ * This function will remove all posts from the specified assignment
+ * and clean up any related data.
+ * @param $data the data submitted from the reset course.
+ * @return array status array
+ */
+function assignment_reset_userdata($data) {
+    global $CFG;
+
+    $status = array();
+
+    foreach (get_list_of_plugins('mod/assignment/type') as $type) {
+        require_once("$CFG->dirroot/mod/assignment/type/$type/assignment.class.php");
+        $assignmentclass = "assignment_$type";
+        $ass = new $assignmentclass();
+        $status = array_merge($status, $ass->reset_userdata($data));
+    }
+
+    return $status;
+}
+
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the assignment.
+ * @param $mform form passed by reference
+ */
+function assignment_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'assignmentheader', get_string('modulenameplural', 'assignment'));
+    $mform->addElement('advcheckbox', 'reset_assignment_submissions', get_string('deleteallsubmissions','assignment'));
+}
+
+/**
+ * Course reset form defaults.
+ */
+function assignment_reset_course_form_defaults($course) {
+    return array('reset_assignment_submissions'=>1);
 }
 
 ?>

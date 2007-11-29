@@ -686,4 +686,53 @@ function chat_print_overview($courses, &$htmlarray) {
     }
 }
 
+
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the chat.
+ * @param $mform form passed by reference
+ */
+function chat_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'chatheader', get_string('modulenameplural', 'chat'));
+    $mform->addElement('advcheckbox', 'reset_chat', get_string('removemessages','chat'));
+}
+
+/**
+ * Course reset form defaults.
+ */
+function chat_reset_course_form_defaults($course) {
+    return array('reset_chat'=>1);
+}
+
+/**
+ * Actual implementation of the rest coures functionality, delete all the
+ * chat messages for course $data->courseid.
+ * @param $data the data submitted from the reset course.
+ * @return array status array
+ */
+function chat_reset_userdata($data) {
+    global $CFG;
+
+    $componentstr = get_string('modulenameplural', 'chat');
+    $status = array();
+
+    if (!empty($data->reset_chat)) {
+        $chatessql = "SELECT ch.id
+                        FROM {$CFG->prefix}chat ch
+                       WHERE ch.course={$data->courseid}";
+
+        delete_records_select('chat_messages', "chatid IN ($chatessql)");
+        delete_records_select('chat_users', "chatid IN ($chatessql)");
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('removemessages', 'chat'), 'error'=>false);
+    }
+
+    /// updating dates - shift may be negative too
+    if ($data->timeshift) {
+        shift_course_mod_dates('chat', array('chattime'), $data->timeshift, $data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+    }
+
+    return $status;
+}
+
 ?>

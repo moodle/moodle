@@ -373,9 +373,10 @@ function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
  * Create/update grade item for given glossary
  *
  * @param object $glossary object with extra cmidnumber
+ * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int, 0 if ok, error code otherwise
  */
-function glossary_grade_item_update($glossary) {
+function glossary_grade_item_update($glossary, $grades=NULL) {
     global $CFG;
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
@@ -396,7 +397,12 @@ function glossary_grade_item_update($glossary) {
         $params['scaleid']   = -$glossary->scale;
     }
 
-    return grade_update('mod/glossary', $glossary->course, 'mod', 'glossary', $glossary->id, 0, NULL, $params);
+    if ($grades  === 'reset') {
+        $params['reset'] = true;
+        $grades = NULL;
+    }
+
+    return grade_update('mod/glossary', $glossary->course, 'mod', 'glossary', $glossary->id, 0, $grades, $params);
 }
 
 /**
@@ -2121,6 +2127,205 @@ function glossary_get_view_actions() {
 
 function glossary_get_post_actions() {
     return array('add category','add comment','add entry','approve entry','delete category','delete comment','delete entry','edit category','update comment','update entry');
+}
+
+
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the glossary.
+ * @param $mform form passed by reference
+ */
+function glossary_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'glossaryheader', get_string('modulenameplural', 'glossary'));
+    $mform->addElement('checkbox', 'reset_glossary_all', get_string('resetglossariesall','glossary'));
+
+    $mform->addElement('select', 'reset_glossary_types', get_string('resetglossaries', 'glossary'),
+                       array('main'=>get_string('mainglossary', 'glossary'), 'secondary'=>get_string('secondaryglossary', 'glossary')), array('multiple' => 'multiple'));
+    $mform->setAdvanced('reset_glossary_types');
+    $mform->disabledIf('reset_glossary_types', 'reset_glossary_all', 'checked');
+
+    $mform->addElement('checkbox', 'reset_glossary_notenrolled', get_string('deletenotenrolled', 'glossary'));
+    $mform->disabledIf('reset_glossary_notenrolled', 'reset_glossary_all', 'checked');
+
+    $mform->addElement('checkbox', 'reset_glossary_ratings', get_string('deleteallratings'));
+    $mform->disabledIf('reset_glossary_ratings', 'reset_glossary_all', 'checked');
+
+    $mform->addElement('checkbox', 'reset_glossary_comments', get_string('deleteallcomments'));
+    $mform->disabledIf('reset_glossary_comments', 'reset_glossary_all', 'checked');
+}
+
+/**
+ * Course reset form defaults.
+ */
+function glossary_reset_course_form_defaults($course) {
+    return array('reset_glossary_all'=>0, 'reset_glossary_ratings'=>1, 'reset_glossary_comments'=>1, 'reset_glossary_notenrolled'=>0);
+}
+
+/**
+ * Removes all grades from gradebook
+ * @param int $courseid
+ * @param string optional type
+ */
+function glossary_reset_gradebook($courseid, $type='') {
+    global $CFG;
+
+    switch ($type) {
+        case 'main'      : $type = "AND g.mainglossary=1"; break;
+        case 'secondary' : $type = "AND g.mainglossary=0"; break;
+        default          : $type = ""; //all
+    }
+
+    $sql = "SELECT g.*, cm.idnumber as cmidnumber, g.course as courseid
+              FROM {$CFG->prefix}glossary g, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+             WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id AND g.course=$courseid $type";
+
+    if ($glossarys = get_records_sql($sql)) {
+        foreach ($glossarys as $glossary) {
+            glossary_grade_item_update($glossary, 'reset');
+        }
+    }
+}
+/**
+ * Actual implementation of the rest coures functionality, delete all the
+ * glossary responses for course $data->courseid.
+ * @param $data the data submitted from the reset course.
+ * @return array status array
+ */
+function glossary_reset_userdata($data) {
+    global $CFG;
+    require_once($CFG->libdir.'/filelib.php');
+
+    $componentstr = get_string('modulenameplural', 'glossary');
+    $status = array();
+
+    $allentriessql = "SELECT e.id
+                        FROM {$CFG->prefix}glossary_entries e
+                             INNER JOIN {$CFG->prefix}glossary g ON e.glossaryid = g.id
+                       WHERE g.course = {$data->courseid}";
+
+    $allglossariessql = "SELECT g.id
+                            FROM {$CFG->prefix}glossary g
+                           WHERE g.course={$data->courseid}";
+
+    // delete entries if requested
+    if (!empty($data->reset_glossary_all)
+         or (!empty($data->reset_glossary_types) and in_array('main', $data->reset_glossary_types) and in_array('secondary', $data->reset_glossary_types))) {
+
+        delete_records_select('glossary_ratings', "entryid IN ($allentriessql)");
+        delete_records_select('glossary_comments', "entryid IN ($allentriessql)");
+        delete_records_select('glossary_entries', "glossaryid IN ($allglossariessql)");
+
+        if ($glossaries = get_records_sql($allglossariessql)) {
+            foreach ($glossaries as $glossaryid=>$unused) {
+                fulldelete($CFG->dataroot."/$data->courseid/moddata/glossary/$glossaryid");
+            }
+        }
+
+        // remove all grades from gradebook
+        if (empty($data->reset_gradebook_grades)) {
+            glossary_reset_gradebook($data->courseid);
+        }
+
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('resetglossariesall', 'glossary'), 'error'=>false);
+
+    } else if (!empty($data->reset_glossary_types)) {
+        $mainentriessql         = "$allentries AND g.mainglossary=1";
+        $secondaryentriessql    = "$allentries AND g.mainglossary=0";
+
+        $mainglossariessql      = "$allglossariessql AND g.mainglossary=1";
+        $secondaryglossariessql = "$allglossariessql AND g.mainglossary=0";
+
+        if (in_array('main', $data->reset_glossary_types)) {
+            delete_records_select('glossary_ratings', "entryid IN ($mainentriessql)");
+            delete_records_select('glossary_comments', "entryid IN ($mainentriessql)");
+            delete_records_select('glossary_entries', "glossaryid IN ($mainglossariessql)");
+
+            if ($glossaries = get_records_sql($mainglossariessql)) {
+                foreach ($glossaries as $glossaryid=>$unused) {
+                    fulldelete("$CFG->dataroot/$data->courseid/moddata/glossary/$glossaryid");
+                }
+            }
+
+            // remove all grades from gradebook
+            if (empty($data->reset_gradebook_grades)) {
+                glossary_reset_gradebook($data->courseid, 'main');
+            }
+
+            $status[] = array('component'=>$componentstr, 'item'=>get_string('resetglossaries', 'glossary'), 'error'=>false);
+
+        } else if (in_array('secondary', $data->reset_glossary_types)) {
+            delete_records_select('glossary_ratings', "entryid IN ($secondaryentriessql)");
+            delete_records_select('glossary_comments', "entryid IN ($secondaryentriessql)");
+            delete_records_select('glossary_entries', "glossaryid IN ($secondaryglossariessql)");
+            // remove exported source flag from entries in main glossary
+            execute_sql("UPDATE {$CFG->prefix}glossary_entries
+                            SET sourceglossaryid=0
+                          WHERE glossaryid IN ($mainglossariessql)", false);
+
+            if ($glossaries = get_records_sql($secondaryglossariessql)) {
+                foreach ($glossaries as $glossaryid=>$unused) {
+                    fulldelete("$CFG->dataroot/$data->courseid/moddata/glossary/$glossaryid");
+                }
+            }
+
+            // remove all grades from gradebook
+            if (empty($data->reset_gradebook_grades)) {
+                glossary_reset_gradebook($data->courseid, 'secondary');
+            }
+
+            $status[] = array('component'=>$componentstr, 'item'=>get_string('resetglossaries', 'glossary').': '.get_string('secondaryglossary', 'glossary'), 'error'=>false);
+        }
+    }
+
+    // remove entries by users not enrolled into course
+    if (!empty($data->reset_glossary_notenrolled)) {
+        $entriessql = "SELECT e.id, e.userid, e.glossaryid, u.id AS userexists, u.deleted AS userdeleted
+                         FROM {$CFG->prefix}glossary_entries e
+                              INNER JOIN {$CFG->prefix}glossary g ON e.glossaryid = g.id
+                              LEFT OUTER JOIN {$CFG->prefix}user u ON e.userid = u.id
+                        WHERE g.course = {$data->courseid} AND e.userid > 0";
+
+        $course_context = get_context_instance(CONTEXT_COURSE, $data->courseid);
+        $notenrolled = array();
+        if ($rs = get_recordset_sql($entriessql)) {
+            while ($entry = rs_fetch_next_record($rs)) {
+                if (array_key_exists($entry->userid, $notenrolled) or !$entry->userexists or $entry->userdeleted
+                  or !has_capability('moodle/course:view', $course_context , $entry->userid)) {
+                    delete_records('glossary_ratings', 'entryid', $entry->id);
+                    delete_records('glossary_comments', 'entryid', $entry->id);
+                    delete_records('glossary_entries', 'id', $entry->id);
+                    fulldelete("$CFG->dataroot/$data->courseid/moddata/glossary/$entry->glossaryid");
+                    $notenrolled[$entry->userid] = true;
+                }
+            }
+            rs_close($rs);
+            $status[] = array('component'=>$componentstr, 'item'=>get_string('deletenotenrolled', 'glossary'), 'error'=>false);
+        }
+    }
+
+    // remove all ratings
+    if (!empty($data->reset_glossary_ratings)) {
+        delete_records_select('glossary_ratings', "entryid IN ($allentriessql)");
+        // remove all grades from gradebook
+        if (empty($data->reset_gradebook_grades)) {
+            glossary_reset_gradebook($data->courseid);
+        }
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallratings'), 'error'=>false);
+    }
+
+    // remove all comments
+    if (!empty($data->reset_glossary_comments)) {
+        delete_records_select('glossary_comments', "entryid IN ($allentriessql)");
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);
+    }
+
+    /// updating dates - shift may be negative too
+    if ($data->timeshift) {
+        shift_course_mod_dates('glossary', array('assesstimestart', 'assesstimefinish'), $data->timeshift, $data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+    }
+
+    return $status;
 }
 
 ?>

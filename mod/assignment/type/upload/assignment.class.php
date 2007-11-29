@@ -11,7 +11,7 @@ class assignment_upload extends assignment_base {
 
     function assignment_upload($cmid='staticonly', $assignment=NULL, $cm=NULL, $course=NULL) {
         parent::assignment_base($cmid, $assignment, $cm, $course);
-
+        $this->type = 'upload';
     }
 
     function view() {

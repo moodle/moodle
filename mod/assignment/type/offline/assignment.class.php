@@ -8,6 +8,7 @@ class assignment_offline extends assignment_base {
 
     function assignment_offline($cmid='staticonly', $assignment=NULL, $cm=NULL, $course=NULL) {
         parent::assignment_base($cmid, $assignment, $cm, $course);
+        $this->type = 'offline';
     }
 
     function display_lateness($timesubmitted) {

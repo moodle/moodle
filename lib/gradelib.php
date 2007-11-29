@@ -1077,32 +1077,35 @@ function grade_update_mod_grades($modinstance, $userid=0) {
                 return false;
             }
 
-            $grades = array();
-            foreach ($oldgrades->grades as $uid=>$usergrade) {
-                if ($userid and $uid != $userid) {
-                    continue;
+            if (!empty($oldgrades->grades)) {
+                $grades = array();
+
+                foreach ($oldgrades->grades as $uid=>$usergrade) {
+                    if ($userid and $uid != $userid) {
+                        continue;
+                    }
+                    $grade = new object();
+                    $grade->userid = $uid;
+
+                    if ($usergrade == '-') {
+                        // no grade
+                        $grade->rawgrade = null;
+
+                    } else if ($scaleid) {
+                        // scale in use, words used
+                        $gradescale = explode(",", $scale->scale);
+                        $grade->rawgrade = array_search($usergrade, $gradescale) + 1;
+
+                    } else {
+                        // good old numeric value
+                        $grade->rawgrade = $usergrade;
+                    }
+                    $grades[] = $grade;
                 }
-                $grade = new object();
-                $grade->userid = $uid;
 
-                if ($usergrade == '-') {
-                    // no grade
-                    $grade->rawgrade = null;
-
-                } else if ($scaleid) {
-                    // scale in use, words used
-                    $gradescale = explode(",", $scale->scale);
-                    $grade->rawgrade = array_search($usergrade, $gradescale) + 1;
-
-                } else {
-                    // good old numeric value
-                    $grade->rawgrade = $usergrade;
-                }
-                $grades[] = $grade;
+                grade_update('legacygrab', $grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule,
+                             $grade_item->iteminstance, $grade_item->itemnumber, $grades);
             }
-
-            grade_update('legacygrab', $grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule,
-                         $grade_item->iteminstance, $grade_item->itemnumber, $grades);
         }
 
     } else if (function_exists($updategradesfunc) and function_exists($updateitemfunc)) {

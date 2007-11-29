@@ -796,9 +796,10 @@ function data_update_grades($data=null, $userid=0, $nullifnone=true) {
  * Update/create grade item for given data
  *
  * @param object $data object with extra cmidnumber
+ * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return object grade_item
  */
-function data_grade_item_update($data) {
+function data_grade_item_update($data, $grades=NULL) {
     global $CFG;
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
@@ -819,7 +820,12 @@ function data_grade_item_update($data) {
         $params['scaleid']   = -$data->scale;
     }
 
-    return grade_update('mod/data', $data->course, 'mod', 'data', $data->id, 0, NULL, $params);
+    if ($grades  === 'reset') {
+        $params['reset'] = true;
+        $grades = NULL;
+    }
+
+    return grade_update('mod/data', $data->course, 'mod', 'data', $data->id, 0, $grades, $params);
 }
 
 /**
@@ -2091,5 +2097,157 @@ function data_preset_path($course, $userid, $shortname) {
     }
 
     return 'Does it disturb you that this code will never run?';
+}
+
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the data.
+ * @param $mform form passed by reference
+ */
+function data_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'dataheader', get_string('modulenameplural', 'data'));
+    $mform->addElement('checkbox', 'reset_data', get_string('deleteallentries','data'));
+
+    $mform->addElement('checkbox', 'reset_data_notenrolled', get_string('deletenotenrolled', 'data'));
+    $mform->disabledIf('reset_data_notenrolled', 'reset_data', 'checked');
+
+    $mform->addElement('checkbox', 'reset_data_ratings', get_string('deleteallratings'));
+    $mform->disabledIf('reset_data_ratings', 'reset_data', 'checked');
+
+    $mform->addElement('checkbox', 'reset_data_comments', get_string('deleteallcomments'));
+    $mform->disabledIf('reset_data_comments', 'reset_data', 'checked');
+}
+
+/**
+ * Course reset form defaults.
+ */
+function data_reset_course_form_defaults($course) {
+    return array('reset_data'=>0, 'reset_data_ratings'=>1, 'reset_data_comments'=>1, 'reset_data_notenrolled'=>0);
+}
+
+/**
+ * Removes all grades from gradebook
+ * @param int $courseid
+ * @param string optional type
+ */
+function data_reset_gradebook($courseid, $type='') {
+    global $CFG;
+
+    $sql = "SELECT d.*, cm.idnumber as cmidnumber, d.course as courseid
+              FROM {$CFG->prefix}data d, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+             WHERE m.name='data' AND m.id=cm.module AND cm.instance=d.id AND d.course=$courseid";
+
+    if ($datas = get_records_sql($sql)) {
+        foreach ($datas as $data) {
+            data_grade_item_update($data, 'reset');
+        }
+    }
+}
+
+/**
+ * Actual implementation of the rest coures functionality, delete all the
+ * data responses for course $data->courseid.
+ * @param $data the data submitted from the reset course.
+ * @return array status array
+ */
+function data_reset_userdata($data) {
+    global $CFG;
+    require_once($CFG->libdir.'/filelib.php');
+
+    $componentstr = get_string('modulenameplural', 'data');
+    $status = array();
+
+    $allrecordssql = "SELECT r.id
+                        FROM {$CFG->prefix}data_records r
+                             INNER JOIN {$CFG->prefix}data d ON r.dataid = d.id
+                       WHERE d.course = {$data->courseid}";
+
+    $alldatassql = "SELECT d.id
+                      FROM {$CFG->prefix}data d
+                     WHERE d.course={$data->courseid}";
+
+    // delete entries if requested
+    if (!empty($data->reset_data)) {
+        delete_records_select('data_ratings', "recordid IN ($allrecordssql)");
+        delete_records_select('data_comments', "recordid IN ($allrecordssql)");
+        delete_records_select('data_content', "recordid IN ($allrecordssql)");
+        delete_records_select('data_records', "dataid IN ($alldatassql)");
+
+        if ($datas = get_records_sql($alldatassql)) {
+            foreach ($datas as $dataid=>$unused) {
+                fulldelete("$CFG->dataroot/$data->courseid/moddata/data/$dataid");
+            }
+        }
+
+        if (empty($data->reset_gradebook_grades)) {
+            // remove all grades from gradebook
+            data_reset_gradebook($data->courseid);
+        }
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallentries', 'data'), 'error'=>false);
+    }
+
+    // remove entries by users not enrolled into course
+    if (!empty($data->reset_data_notenrolled)) {
+        $recordssql = "SELECT r.id, r.userid, r.dataid, u.id AS userexists, u.deleted AS userdeleted
+                         FROM {$CFG->prefix}data_records r
+                              INNER JOIN {$CFG->prefix}data d ON r.dataid = d.id
+                              LEFT OUTER JOIN {$CFG->prefix}user u ON r.userid = u.id
+                        WHERE d.course = {$data->courseid} AND r.userid > 0";
+
+        $course_context = get_context_instance(CONTEXT_COURSE, $data->courseid);
+        $notenrolled = array();
+        $fields = array();
+        if ($rs = get_recordset_sql($recordssql)) {
+            while ($record = rs_fetch_next_record($rs)) {
+                if (array_key_exists($record->userid, $notenrolled) or !$record->userexists or $record->userdeleted
+                  or !has_capability('moodle/course:view', $course_context , $record->userid)) {
+                    delete_records('data_ratings', 'recordid', $record->id);
+                    delete_records('data_comments', 'recordid', $record->id);
+                    delete_records('data_content', 'recordid', $record->id);
+                    delete_records('data_records', 'id', $record->id);
+                    // HACK: this is ugly - the recordid should be before the fieldid!
+                    if (!array_key_exists($record->dataid, $fields)) {
+                        if ($fs = get_records('data_fields', 'dataid', $record->dataid)) {
+                            $fields[$record->dataid] = array_keys($fs);
+                        } else {
+                            $fields[$record->dataid] = array();
+                        }
+                    }
+                    foreach($fields[$record->dataid] as $fieldid) {
+                        fulldelete("$CFG->dataroot/$data->courseid/moddata/data/$record->dataid/$fieldid/$record->id");
+                    }
+                    $notenrolled[$record->userid] = true;
+                }
+            }
+            rs_close($rs);
+            $status[] = array('component'=>$componentstr, 'item'=>get_string('deletenotenrolled', 'data'), 'error'=>false);
+        }
+    }
+
+    // remove all ratings
+    if (!empty($data->reset_data_ratings)) {
+        delete_records_select('data_ratings', "recordid IN ($allrecordssql)");
+
+        if (empty($data->reset_gradebook_grades)) {
+            // remove all grades from gradebook
+            data_reset_gradebook($data->courseid);
+        }
+
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallratings'), 'error'=>false);
+    }
+
+    // remove all comments
+    if (!empty($data->reset_data_comments)) {
+        delete_records_select('data_comments', "recordid IN ($allrecordssql)");
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);
+    }
+
+    /// updating dates - shift may be negative too
+    if ($data->timeshift) {
+        shift_course_mod_dates('data', array('timeavailablefrom', 'timeavailableto', 'timeviewfrom', 'timeviewto'), $data->timeshift, $data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+    }
+
+    return $status;
 }
 ?>

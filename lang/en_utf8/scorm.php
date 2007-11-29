@@ -110,6 +110,7 @@ $string['position_error'] = 'The $a->tag tag can\'t be child of $a->parent tag';
 $string['prev'] = 'Previous';
 $string['raw'] = 'Raw score';
 $string['regular'] = 'Regular Manifest';
+$string['deleteallattempts'] = 'Delete all SCORM attempts';
 $string['report'] = 'Report';
 $string['resizable'] = 'Allow the window to be resized';
 $string['result'] = 'Result';

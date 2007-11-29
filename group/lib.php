@@ -163,6 +163,8 @@ function groups_delete_group($groupid) {
         return false;
     }
 
+    // delete group calendar events
+    delete_records('event', 'groupid', $groupid);
     //first delete usage in groupings_groups
     delete_records('groupings_groups', 'groupid', $groupid);
     //delete members
@@ -195,7 +197,7 @@ function groups_delete_grouping($groupingid) {
 }
 
 /**
- * Remove all users from group
+ * Remove all users from all groups in course
  * @param int $courseid
  * @param bool $showfeedback
  * @return bool success
@@ -203,12 +205,30 @@ function groups_delete_grouping($groupingid) {
 function groups_delete_group_members($courseid, $showfeedback=false) {
     global $CFG;
 
-    $sql = "DELETE FROM {$CFG->prefix}groups_members
-             WHERE groupid in (SELECT id FROM {$CFG->prefix}groups g WHERE g.courseid = $courseid)";
+    $groupssql = "SELECT id FROM {$CFG->prefix}groups g WHERE g.courseid = $courseid";
+    delete_records_select('groups_members', "groupid IN ($groupssql)");
 
-    execute_sql($sql, false);
     if ($showfeedback) {
         notify(get_string('deleted').' groups_members');
+    }
+
+    return true;
+}
+
+/**
+ * Remove all groups from all groupings in course
+ * @param int $courseid
+ * @param bool $showfeedback
+ * @return bool success
+ */
+function groups_delete_groupings_groups($courseid, $showfeedback=false) {
+    global $CFG;
+
+    $groupssql = "SELECT id FROM {$CFG->prefix}groups g WHERE g.courseid = $courseid";
+    delete_records_select('groupings_groups', "groupid IN ($groupssql)");
+
+    if ($showfeedback) {
+        notify(get_string('deleted').' groupings_groups');
     }
 
     return true;
@@ -224,12 +244,11 @@ function groups_delete_groups($courseid, $showfeedback=false) {
     global $CFG;
     require_once($CFG->libdir.'/gdlib.php');
 
-    // delete any uses of groups
-    $sql = "DELETE FROM {$CFG->prefix}groupings_groups
-             WHERE groupid in (SELECT id FROM {$CFG->prefix}groups g WHERE g.courseid = $courseid)";
-    execute_sql($sql, false);
+    $groupssql = "SELECT id FROM {$CFG->prefix}groups g WHERE g.courseid = $courseid";
 
-    groups_delete_group_members($courseid, false);
+    // delete any uses of groups
+    groups_delete_groupings_groups($courseid, $showfeedback);
+    groups_delete_group_members($courseid, $showfeedback);
 
     // delete group pictures
     if ($groups = get_records('groups', 'courseid', $courseid)) {
@@ -237,6 +256,9 @@ function groups_delete_groups($courseid, $showfeedback=false) {
             delete_profile_image($group->id, 'groups');
         }
     }
+
+    // delete group calendar events
+    delete_records_select('event', "groupid IN ($groupssql)");
 
     delete_records('groups', 'courseid', $courseid);
     if ($showfeedback) {

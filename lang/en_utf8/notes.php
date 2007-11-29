@@ -22,4 +22,5 @@ $string['personal'] = 'personal';
 $string['course'] = 'course';
 $string['site'] = 'site';
 $string['editnote'] = 'Edit note';
+$string['deletenotes'] = 'Delete all notes';
 ?>
