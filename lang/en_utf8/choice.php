@@ -38,6 +38,7 @@ $string['publishalways'] = 'Always show results to students';
 $string['publishanonymous'] = 'Publish anonymous results, do not show student names';
 $string['publishnames'] = 'Publish full results, showing names and their choices';
 $string['publishnot'] = 'Do not publish results to students';
+$string['removeresponses'] = 'Remove all responses';
 $string['responses'] = 'Responses';
 $string['responsesto'] = 'Responses to $a';
 $string['savemychoice'] = 'Save my choice';

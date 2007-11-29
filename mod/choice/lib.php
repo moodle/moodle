@@ -668,4 +668,52 @@ function choice_get_post_actions() {
     return array('choose','choose again');
 }
 
+
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the choice.
+ * @param $mform form passed by reference
+ */
+function choice_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'choiceheader', get_string('modulenameplural', 'choice'));
+    $mform->addElement('advcheckbox', 'reset_choice', get_string('removeresponses','choice'));
+}
+
+/**
+ * Course reset form defaults.
+ */
+function choice_reset_course_form_defaults($course) {
+    return array('reset_choice'=>1);
+}
+
+/**
+ * Actual implementation of the rest coures functionality, delete all the
+ * choice responses for course $data->courseid.
+ * @param $data the data submitted from the reset course.
+ * @return array status array
+ */
+function choice_reset_userdata($data) {
+    global $CFG;
+
+    $componentstr = get_string('modulenameplural', 'choice');
+    $status = array();
+
+    if (!empty($data->reset_choice)) {
+        $choicessql = "SELECT ch.id
+                         FROM {$CFG->prefix}choice ch
+                        WHERE ch.course={$data->courseid}";
+
+        delete_records_select('choice_answers', "choiceid IN ($choicessql)");
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('removeresponses', 'choice'), 'error'=>false);
+    }
+
+    /// updating dates - shift may be negative too
+    if ($data->timeshift) {
+        shift_course_mod_dates('choice', array('timeopen', 'timeclose'), $data->timeshift, $data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+    }
+
+    return $status;
+}
+
 ?>

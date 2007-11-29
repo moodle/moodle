@@ -223,6 +223,7 @@ $string['previewlesson'] = 'Preview $a';
 $string['previouspage'] = 'Previous page';
 $string['progressbar'] = 'Progress Bar';
 $string['progressbarteacherwarning'] = 'Progress Bar does not display for $a';
+$string['deleteallattempts'] = 'Delete all lesson attempts';
 $string['qtype'] = 'Page type';
 $string['question'] = 'Question';
 $string['questionoption'] = 'Question';

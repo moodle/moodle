@@ -17,6 +17,7 @@ $string['dayview'] = 'Day View';
 $string['daywithnoevents'] = 'There are no events this day.';
 $string['default'] = 'Default';
 $string['deleteevent'] = 'Delete event';
+$string['deleteevents'] = 'Delete events';
 $string['detailedmonthview'] = 'Detailed Month View';
 $string['durationminutes'] = 'Duration in minutes';
 $string['durationnone'] = 'Without duration';

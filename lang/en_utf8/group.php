@@ -128,4 +128,9 @@ $string['nousersinrole'] = 'There are no suitable users in the selected role';
 $string['nogroupsassigned'] = 'No groups assigned';
 $string['evenallocation'] = 'Note: To keep group allocation even, the actual number of members per group differs from the number you specified.';
 
+$string['removegroupsmembers'] = 'Remove all group members';
+$string['removegroupingsmembers'] = 'Remove all groups from groupings';
+$string['deleteallgroups'] = 'Delete all groups';
+$string['deleteallgroupings'] = 'Delete all groupings';
+
 ?>

@@ -322,7 +322,7 @@ function quiz_update_grades($quiz=null, $userid=0, $nullifnone=true) {
  * Create grade item for given quiz
  *
  * @param object $quiz object with extra cmidnumber
- * @param mixed optional array/object of grade(s)
+ * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
  */
 function quiz_grade_item_update($quiz, $grades=NULL) {
@@ -368,6 +368,11 @@ function quiz_grade_item_update($quiz, $grades=NULL) {
         // a) both open and closed enabled
         // b) open enabled, closed disabled - we can not "hide after", grades are kept visible even after closing
         $params['hidden'] = 0;
+    }
+
+    if ($grades  === 'reset') {
+        $params['reset'] = true;
+        $grades = NULL;
     }
 
     return grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, $grades, $params);
@@ -895,12 +900,37 @@ function quiz_question_list_instances($questionid) {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the quiz.
- * @param $course The course id of the course the user is thinking of resetting.
+ * @param $mform form passed by reference
  */
-function quiz_reset_course_form($course) {
-    echo '<p>';
-    print_checkbox('reset_quiz_attempts', 1, true, get_string('removeallquizattempts','quiz'));
-    echo '</p>';
+function quiz_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'forumheader', get_string('modulenameplural', 'quiz'));
+    $mform->addElement('advcheckbox', 'reset_quiz_attempts', get_string('removeallquizattempts','quiz'));
+}
+
+/**
+ * Course reset form defaults.
+ */
+function quiz_reset_course_form_defaults($course) {
+    return array('reset_quiz_attempts'=>1);
+}
+
+/**
+ * Removes all grades from gradebook
+ * @param int $courseid
+ * @param string optional type
+ */
+function quiz_reset_gradebook($courseid, $type='') {
+    global $CFG;
+
+    $sql = "SELECT q.*, cm.idnumber as cmidnumber, q.course as courseid
+              FROM {$CFG->prefix}quiz q, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+             WHERE m.name='quiz' AND m.id=cm.module AND cm.instance=q.id AND q.course=$courseid";
+
+    if ($quizs = get_records_sql($sql)) {
+        foreach ($quizs as $quiz) {
+            quiz_grade_item_update($quiz, 'reset');
+        }
+    }
 }
 
 /**
@@ -909,73 +939,63 @@ function quiz_reset_course_form($course) {
  * set and true.
  *
  * Also, move the quiz open and close dates, if the course start date is changing.
- *
- * @param $data the data submitted from the reset course forum.
- * @param $showfeedback whether to output progress information as the reset
- *      progresses.
+ * @param $data the data submitted from the reset course.
+ * @return array status array
  */
-function quiz_delete_userdata($data, $showfeedback=true) {
-    global $CFG;
+function quiz_reset_userdata($data) {
+    global $CFG, $QTYPES;
+
+    $componentstr = get_string('modulenameplural', 'quiz');
+    $status = array();
 
     /// Delete attempts.
     if (!empty($data->reset_quiz_attempts)) {
-        $conditiononquizids = 'quiz IN (SELECT id FROM ' .
-                $CFG->prefix . 'quiz q WHERE q.course = ' . $data->courseid . ')';
-    
-        $attemptids = get_records_select('quiz_attempts', $conditiononquizids, '', 'id, uniqueid');
-        if ($attemptids) {
-            if ($showfeedback) {
-                echo '<div class="notifysuccess">', get_string('deletingquestionattempts', 'quiz');
-                $divider = ': ';
-            }
-            foreach ($attemptids as $attemptid) {
-                delete_attempt($attemptid->uniqueid);
-                if ($showfeedback) {
-                    echo $divider, $attemptid->uniqueid;
-                    $divider = ', ';
-                }
-            }
-            if ($showfeedback) {
-                echo "</div><br />\n";
+
+        $stateslistsql = "SELECT s.id
+                            FROM {$CFG->prefix}question_states s
+                                 INNER JOIN {$CFG->prefix}quiz_attempts qza ON s.attempt=qza.uniqueid
+                                 INNER JOIN {$CFG->prefix}quiz q ON qza.quiz=q.id
+                           WHERE q.course={$data->courseid}";
+
+        $attemptssql   = "SELECT a.uniqueid
+                            FROM {$CFG->prefix}quiz_attempts a, {$CFG->prefix}quiz q
+                           WHERE q.course={$data->courseid} AND a.quiz=q.id";
+
+        $quizessql     = "SELECT q.id
+                            FROM {$CFG->prefix}quiz q
+                           WHERE q.course={$data->courseid}";
+
+        if ($states = get_records_sql($stateslistsql)) {
+            //TODO: not sure if this works
+            $stateslist = implode(',', array_keys($states));
+            foreach ($QTYPES as $qtype) {
+                $qtype->delete_states($stateslist);
             }
         }
-        if (delete_records_select('quiz_grades', $conditiononquizids) && $showfeedback) {
-            notify(get_string('gradesdeleted','quiz'), 'notifysuccess');
+
+        delete_records_select('question_states', "attempt IN ($attemptssql)");
+        delete_records_select('question_sessions', "attemptid IN ($attemptssql)");
+        delete_records_select('question_attempts', "id IN ($attemptssql)");
+
+        // remove all grades from gradebook
+        if (empty($data->reset_gradebook_grades)) {
+            quiz_reset_gradebook($data->courseid);
         }
-        if (delete_records_select('quiz_attempts', $conditiononquizids) && $showfeedback) {
-            notify(get_string('attemptsdeleted','quiz'), 'notifysuccess');
-        }
+
+        delete_records_select('quiz_grades', "quiz IN ($quizessql)");
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('gradesdeleted','quiz'), 'error'=>false);
+
+        delete_records_select('quiz_attempts', "quiz IN ($quizessql)");
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('attemptsdeleted','quiz'), 'error'=>false);
     }
 
-    /// Update open and close dates
-    if (!empty($data->reset_start_date)) {
-        /// Work out offset.
-        $olddate = get_field('course', 'startdate', 'id', $data->courseid);
-        $olddate = usergetmidnight($olddate); // time part of $olddate should be zero
-        $newdate = make_timestamp($data->startyear, $data->startmonth, $data->startday);
-        $interval = $newdate - $olddate;
-        
-        /// Apply it to quizzes with an open or close date.
-        $success = true;
-        begin_sql();
-        $success = $success && execute_sql(
-                "UPDATE {$CFG->prefix}quiz
-                    SET timeopen = timeopen + $interval
-                    WHERE course = {$data->courseid} AND timeopen <> 0", false);
-        $success = $success && execute_sql(
-                "UPDATE {$CFG->prefix}quiz
-                    SET timeclose = timeclose + $interval
-                    WHERE course = {$data->courseid} AND timeclose <> 0", false);
-
-        if ($success) {
-            commit_sql();
-            if ($showfeedback) {
-                notify(get_string('openclosedatesupdated', 'quiz'), 'notifysuccess');
-            }
-        } else {
-            rollback_sql();
-        }
+    /// updating dates - shift may be negative too
+    if ($data->timeshift) {
+        shift_course_mod_dates('quiz', array('timeopen', 'timeclose'), $data->timeshift, $data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('openclosedatesupdated', 'quiz'), 'error'=>false);
     }
+
+    return $status;
 }
 
 /**

@@ -9,6 +9,7 @@ class assignment_online extends assignment_base {
 
     function assignment_online($cmid='staticonly', $assignment=NULL, $cm=NULL, $course=NULL) {
         parent::assignment_base($cmid, $assignment, $cm, $course);
+        $this->type = 'online';
     }
 
     function view() {

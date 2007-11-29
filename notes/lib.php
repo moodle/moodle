@@ -254,4 +254,12 @@ function note_print_notes($header, $addcourseid = 0, $viewnotes = true, $coursei
     }
 }
 
+/**
+ * Delete all notes about users in course-
+ * @param int $courseid
+ * @return bool success
+ */
+function note_delete_all($courseid) {
+    return delete_records('post', 'module', 'notes', 'courseid', $courseid);
+}
 ?>

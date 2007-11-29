@@ -19,6 +19,9 @@ define('FORUM_TRACKING_ON', 2);
 
 define('FORUM_UNSET_POST_RATING', -999);
 
+// this file may be included from some functions, we must define these as global explicitly
+global $FORUM_LAYOUT_MODES, $FORUM_TYPES, $FORUM_TYPES_ALL, $FORUM_OPEN_MODES;
+
 $FORUM_LAYOUT_MODES = array ( FORUM_MODE_FLATOLDEST => get_string('modeflatoldestfirst', 'forum'),
                               FORUM_MODE_FLATNEWEST => get_string('modeflatnewestfirst', 'forum'),
                               FORUM_MODE_THREADED   => get_string('modethreaded', 'forum'),
@@ -28,8 +31,15 @@ $FORUM_LAYOUT_MODES = array ( FORUM_MODE_FLATOLDEST => get_string('modeflatoldes
 $FORUM_TYPES   = array ('general'    => get_string('generalforum', 'forum'),
                         'eachuser'   => get_string('eachuserforum', 'forum'),
                         'single'     => get_string('singleforum', 'forum'),
-                        'qanda'      => get_string('qandaforum', 'forum')
-                        );
+                        'qanda'      => get_string('qandaforum', 'forum'));
+
+$FORUM_TYPES_ALL = array ('news'       => get_string('namenews','forum'),
+                          'social'     => get_string('namesocial','forum'),
+                          'general'    => get_string('generalforum', 'forum'),
+                          'eachuser'   => get_string('eachuserforum', 'forum'),
+                          'single'     => get_string('singleforum', 'forum'),
+                          'qanda'      => get_string('qandaforum', 'forum'));
+
 
 $FORUM_OPEN_MODES   = array ('2' => get_string('openmode2', 'forum'),
                              '1' => get_string('openmode1', 'forum'),
@@ -905,6 +915,7 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
 function forum_user_outline($course, $user, $mod, $forum) {
 
     if ($posts = forum_get_user_posts($forum->id, $user->id)) {
+        $result = new object();
         $result->info = get_string("numposts", "forum", count($posts));
 
         $lastpost = array_pop($posts);
@@ -1189,9 +1200,10 @@ function forum_update_grades($forum=null, $userid=0, $nullifnone=true) {
  * Create/update grade item for given forum
  *
  * @param object $forum object with extra cmidnumber
+ * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok
  */
-function forum_grade_item_update($forum) {
+function forum_grade_item_update($forum, $grades=NULL) {
     global $CFG;
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
@@ -1212,7 +1224,12 @@ function forum_grade_item_update($forum) {
         $params['scaleid']   = -$forum->scale;
     }
 
-    return grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 0, NULL, $params);
+    if ($grades  === 'reset') {
+        $params['reset'] = true;
+        $grades = NULL;
+    }
+
+    return grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 0, $grades, $params);
 }
 
 /**
@@ -2023,6 +2040,7 @@ function forum_get_course_forum($courseid, $type) {
         notify("Could not find forum module!!");
         return false;
     }
+    $mod = new object();
     $mod->course = $courseid;
     $mod->module = $module->id;
     $mod->instance = $forum->id;
@@ -2276,6 +2294,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     echo '<div class="author">';
     $fullname = fullname($post, has_capability('moodle/site:viewfullnames', $post->modcontext));
+    $by = new object();
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
                 $post->userid.'&amp;course='.$courseid.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified);
@@ -2577,6 +2596,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     echo '<td class="lastpost">';
     $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
     $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent='.$post->lastpostid;
+    $usermodified = new object();
     $usermodified->id        = $post->usermodified;
     $usermodified->firstname = $post->umfirstname;
     $usermodified->lastname  = $post->umlastname;
@@ -3082,6 +3102,7 @@ function forum_add_discussion($discussion,&$message) {
     // The first post is stored as a real post, and linked
     // to from the discuss entry.
 
+    $post = new object();
     $post->discussion  = 0;
     $post->parent      = 0;
     $post->userid      = $USER->id;
@@ -3254,6 +3275,7 @@ function forum_subscribe($userid, $forumid) {
         return true;
     }
 
+    $sub = new object();
     $sub->userid  = $userid;
     $sub->forum = $forumid;
 
@@ -3285,6 +3307,7 @@ function forum_post_subscription($post) {
         return "";
     }
 
+    $info = new object();
     $info->name  = fullname($USER);
     $info->forum = $forum->name;
 
@@ -4070,6 +4093,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
                 if (!forum_user_can_see_post($post->forum,$post->discussion,$post)) {
                     continue;
                 }
+                $by = new object();
                 $by->name = fullname($post, $canviewfullnames);
                 $by->date = userdate($post->modified);
 
@@ -4313,7 +4337,7 @@ function forum_role_assign($userid, $context, $roleid) {
 }
 
 
-/*
+/**
  * This function gets run whenever a role is assigned to a user in a context
  *
  * @param integer $userid
@@ -4321,7 +4345,14 @@ function forum_role_assign($userid, $context, $roleid) {
  * @return bool
  */
 function forum_role_unassign($userid, $context) {
-    return forum_remove_user_subscriptions($userid, $context);
+    if (empty($context->contextlevel)) {
+        return false;
+    }
+
+    forum_remove_user_subscriptions($userid, $context);
+    forum_remove_user_tracking($userid, $context);
+
+    return true;
 }
 
 
@@ -4400,9 +4431,9 @@ function forum_add_user_default_subscriptions($userid, $context) {
  * Remove subscriptions for a user in a context
  */
 function forum_remove_user_subscriptions($userid, $context) {
-    
+
     global $CFG;
-    
+
     if (empty($context->contextlevel)) {
         return false;
     }
@@ -4412,14 +4443,12 @@ function forum_remove_user_subscriptions($userid, $context) {
         case CONTEXT_SYSTEM:   // For the whole site
             //if ($courses = get_my_courses($userid)) {
             // find all courses in which this user has a forum subscription
-            if ($courses = get_records_sql("SELECT c.* 
-                                            FROM {$CFG->prefix}course c,
-                                                 {$CFG->prefix}forum_subscriptions fs,
-                                                 {$CFG->prefix}forum f                                               
-                                            WHERE c.id = f.course
-                                            AND   f.id = fs.forum
-                                            AND   fs.userid = $userid")) {
-                    
+            if ($courses = get_records_sql("SELECT c.id
+                                              FROM {$CFG->prefix}course c,
+                                                   {$CFG->prefix}forum_subscriptions fs,
+                                                   {$CFG->prefix}forum f
+                                             WHERE c.id = f.course AND f.id = fs.forum AND fs.userid = $userid")) {
+
                 foreach ($courses as $course) {
                     $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
                     forum_remove_user_subscriptions($userid, $subcontext);
@@ -4428,13 +4457,13 @@ function forum_remove_user_subscriptions($userid, $context) {
             break;
 
         case CONTEXT_COURSECAT:   // For a whole category
-             if ($courses = get_records('course', 'category', $context->instanceid)) {
+             if ($courses = get_records('course', 'category', $context->instanceid, '', 'id')) {
                  foreach ($courses as $course) {
                      $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
                      forum_remove_user_subscriptions($userid, $subcontext);
                  }
              }
-             if ($categories = get_records('course_categories', 'parent', $context->instanceid)) {
+             if ($categories = get_records('course_categories', 'parent', $context->instanceid, '', 'id')) {
                  foreach ($categories as $category) {
                      $subcontext = get_context_instance(CONTEXT_COURSECAT, $category->id);
                      forum_remove_user_subscriptions($userid, $subcontext);
@@ -4443,21 +4472,17 @@ function forum_remove_user_subscriptions($userid, $context) {
              break;
 
         case CONTEXT_COURSE:   // For a whole course
-             if ($course = get_record('course', 'id', $context->instanceid)) {
+             if ($course = get_record('course', 'id', $context->instanceid, '', '', '', '', 'id')) {
                 // find all forums in which this user has a subscription, and its coursemodule id
                 if ($forums = get_records_sql("SELECT f.id, cm.id as coursemodule
-                                                FROM {$CFG->prefix}forum f,
-                                                     {$CFG->prefix}modules m,
-                                                     {$CFG->prefix}course_modules cm,
-                                                     {$CFG->prefix}forum_subscriptions fs
-                                                WHERE fs.userid = $userid
-                                                AND   fs.forum = f.id
-                                                AND   f.course = $context->instanceid
-                                                AND   cm.instance = f.id
-                                                AND   cm.module = m.id
-                                                AND   m.name = 'forum'")) {                                                   
-                 
-                 //if ($forums = get_all_instances_in_course('forum', $course, $userid, true)) {
+                                                 FROM {$CFG->prefix}forum f,
+                                                      {$CFG->prefix}modules m,
+                                                      {$CFG->prefix}course_modules cm,
+                                                      {$CFG->prefix}forum_subscriptions fs
+                                                WHERE fs.userid = $userid AND f.course = $context->instanceid
+                                                      AND fs.forum = f.id AND cm.instance = f.id
+                                                      AND cm.module = m.id AND m.name = 'forum'")) {
+
                      foreach ($forums as $forum) {
                          if ($modcontext = get_context_instance(CONTEXT_MODULE, $forum->coursemodule)) {
                              if (!has_capability('mod/forum:viewdiscussion', $modcontext, $userid)) {
@@ -4484,45 +4509,139 @@ function forum_remove_user_subscriptions($userid, $context) {
 }
 
 // Functions to do with read tracking.
+
 /**
- * 
+ * Remove post tracking for a user in a context
  */
-function forum_tp_add_read_record($userid, $postid, $discussionid=-1, $forumid=-1) {
-    if (($readrecord = forum_tp_get_read_records($userid, $postid)) === false) {
+function forum_remove_user_tracking($userid, $context) {
+
+    global $CFG;
+
+    if (empty($context->contextlevel)) {
+        return false;
+    }
+
+    switch ($context->contextlevel) {
+
+        case CONTEXT_SYSTEM:   // For the whole site
+            // find all courses in which this user has tracking info
+            $allcourses = array();
+            if ($courses = get_records_sql("SELECT c.id
+                                              FROM {$CFG->prefix}course c,
+                                                   {$CFG->prefix}forum_read fr,
+                                                   {$CFG->prefix}forum f
+                                             WHERE c.id = f.course AND f.id = fr.forumid AND fr.userid = $userid")) {
+
+                $allcourses = $allcourses + $courses;
+            }
+            if ($courses = get_records_sql("SELECT c.id
+                                              FROM {$CFG->prefix}course c,
+                                                   {$CFG->prefix}forum_track_prefs ft,
+                                                   {$CFG->prefix}forum f
+                                             WHERE c.id = f.course AND f.id = ft.forumid AND ft.userid = $userid")) {
+
+                $allcourses = $allcourses + $courses;
+            }
+            foreach ($allcourses as $course) {
+                $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                forum_remove_user_tracking($userid, $subcontext);
+            }
+            break;
+
+        case CONTEXT_COURSECAT:   // For a whole category
+             if ($courses = get_records('course', 'category', $context->instanceid, '', 'id')) {
+                 foreach ($courses as $course) {
+                     $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                     forum_remove_user_tracking($userid, $subcontext);
+                 }
+             }
+             if ($categories = get_records('course_categories', 'parent', $context->instanceid, '', 'id')) {
+                 foreach ($categories as $category) {
+                     $subcontext = get_context_instance(CONTEXT_COURSECAT, $category->id);
+                     forum_remove_user_tracking($userid, $subcontext);
+                 }
+             }
+             break;
+
+        case CONTEXT_COURSE:   // For a whole course
+             if ($course = get_record('course', 'id', $context->instanceid, '', '', '', '', 'id')) {
+                // find all forums in which this user has reading tracked
+                if ($forums = get_records_sql("SELECT f.id, cm.id as coursemodule
+                                                 FROM {$CFG->prefix}forum f,
+                                                      {$CFG->prefix}modules m,
+                                                      {$CFG->prefix}course_modules cm,
+                                                      {$CFG->prefix}forum_read fr
+                                                WHERE fr.userid = $userid AND f.course = $context->instanceid
+                                                      AND fr.forumid = f.id AND cm.instance = f.id
+                                                      AND cm.module = m.id AND m.name = 'forum'")) {
+
+                     foreach ($forums as $forum) {
+                         if ($modcontext = get_context_instance(CONTEXT_MODULE, $forum->coursemodule)) {
+                             if (!has_capability('mod/forum:viewdiscussion', $modcontext, $userid)) {
+                                forum_tp_delete_read_records($userid, -1, -1, $forum->id);
+                             }
+                         }
+                     }
+                 }
+
+                // find all forums in which this user has a disabled tracking
+                if ($forums = get_records_sql("SELECT f.id, cm.id as coursemodule
+                                                 FROM {$CFG->prefix}forum f,
+                                                      {$CFG->prefix}modules m,
+                                                      {$CFG->prefix}course_modules cm,
+                                                      {$CFG->prefix}forum_track_prefs ft
+                                                WHERE ft.userid = $userid AND f.course = $context->instanceid
+                                                      AND ft.forumid = f.id AND cm.instance = f.id
+                                                      AND cm.module = m.id AND m.name = 'forum'")) {
+
+                     foreach ($forums as $forum) {
+                         if ($modcontext = get_context_instance(CONTEXT_MODULE, $forum->coursemodule)) {
+                             if (!has_capability('mod/forum:viewdiscussion', $modcontext, $userid)) {
+                                delete_records('forum_track_prefs', 'userid', $userid, 'forumid', $forum->id);
+                             }
+                         }
+                     }
+                 }
+             }
+             break;
+
+        case CONTEXT_MODULE:   // Just one forum
+             if ($cm = get_coursemodule_from_id('forum', $context->instanceid)) {
+                 if ($forum = get_record('forum', 'id', $cm->instance)) {
+                     if (!has_capability('mod/forum:viewdiscussion', $context, $userid)) {
+                        delete_records('forum_track_prefs', 'userid', $userid, 'forumid', $forum->id);
+                        forum_tp_delete_read_records($userid, -1, -1, $forum->id);
+                     }
+                 }
+             }
+             break;
+    }
+
+    return true;
+}
+
+/**
+ *
+ */
+function forum_tp_add_read_record($userid, $postid, $discussionid, $forumid) {
+    if (!$readrecords = forum_tp_get_read_records($userid, $postid)) {
         // New read record
-        unset($readrecord);
-        $readrecord->userid = $userid;
-        $readrecord->postid = $postid;
+        $readrecord = new object();
+        $readrecord->userid       = $userid;
+        $readrecord->postid       = $postid;
         $readrecord->discussionid = $discussionid;
-        $readrecord->forumid = $forumid;
-        $readrecord->firstread = time();
-        $readrecord->lastread = $readrecord->firstread;
+        $readrecord->forumid      = $forumid;
+        $readrecord->firstread    = time();
+        $readrecord->lastread     = $readrecord->firstread;
         return insert_record('forum_read', $readrecord, true);
 
     } else {
         // Update read record
-        $readrecord = reset($readrecord);
-        $readrecord->lastread = time();
-
-        $update = NULL;
-        $update->id = $readrecord->id;
-        $update->lastread = $readrecord->lastread;
-
-        // This shouldn't happen, but just in case...
-        if (!$readrecord->firstread) {
-            // Update the 'firstread' field.
-            $update->firstread = $readrecord->lastread;
-        }
-        if ($discussionid > -1) {
-            // Update the 'discussionid' field.
-            $update->discussionid = $discussionid;
-        }
-        if ($forumid > -1) {
-            // Update the 'forumid' field.
-            $update->forumid = $forumid;
-        }
-
-        return update_record('forum_read', $update);
+        $readrecord = reset($readrecords);
+        $readrecord->lastread     = time();
+        $readrecord->discussionid = $discussionid;
+        $readrecord->forumid      = $forumid;
+        return update_record('forum_read', $readrecord);
     }
 }
 
@@ -5042,6 +5161,7 @@ function forum_check_throttling($forum) {
                                   .' ON p.discussion = d.id WHERE d.forum = '.$forum->id
                                   .' AND p.userid = '.$USER->id.' AND p.created > '.$timeafter);
 
+    $a = new object();
     $a->blockafter = $forum->blockafter;
     $a->numposts = $numposts;
     $a->blockperiod = get_string('secondstotime'.$forum->blockperiod);
@@ -5058,106 +5178,180 @@ function forum_check_throttling($forum) {
 
 
 /**
- * This function is used by the remove_course_userdata function in moodlelib.
- * If this function exists, remove_course_userdata will execute it.
- * This function will remove all posts from the specified forum.
+ * Removes all grades from gradebook
+ * @param int $courseid
+ * @param string optional type
  */
-function forum_delete_userdata($data, $showfeedback=true) {
+function forum_reset_gradebook($courseid, $type='') {
     global $CFG;
 
-    $sql = "DELETE FROM {$CFG->prefix}forum_posts
-              WHERE discussion IN (
-                SELECT fd.id FROM {$CFG->prefix}forum_discussions fd, {$CFG->prefix}forum f
-                  WHERE f.course={$data->courseid} AND f.id=fd.forum "; // closing ) added bellow
-    
-    $strreset = get_string('reset');
-    
-    $attforumtype = '';
-    $postsarr = array();
-    if (!empty($data->reset_forum_news)) {
-        $select = "$sql AND f.type = 'news' )";
-        $postsarr = forum_get_posts_with_attachments($data->courseid," 'news' ",$postsarr);//select posts from news forum with attachments
-        if (execute_sql($select, false) and $showfeedback) {
-            notify($strreset.': '.get_string('namenews','forum'), 'notifysuccess');
-        }
-    }
-    if (!empty($data->reset_forum_single)) {
-        $select = "$sql AND f.type = 'single' ) AND parent <> 0 ";
-        $postsarr = forum_get_posts_with_attachments($data->courseid," 'single' AND fp.parent<>0 ",$postsarr);
-        if (execute_sql($select, false) and $showfeedback) {
-            notify($strreset.': '.get_string('singleforum','forum'), 'notifysuccess');
-        }
-    }
-    if (!empty($data->reset_forum_eachuser)) {
-        $select = "$sql AND f.type = 'eachuser' )";
-        $postsarr = forum_get_posts_with_attachments($data->courseid," 'eachuser' ",$postsarr);
-        if (execute_sql($select, false) and $showfeedback) {
-            notify($strreset.': '.get_string('eachuserforum','forum'), 'notifysuccess');
-        }
-    }
-    if (!empty($data->reset_forum_general)) {
-        $select = "$sql AND f.type = 'general' )";
-        $postsarr = forum_get_posts_with_attachments($data->courseid," 'general' ",$postsarr);
-        if (execute_sql($select, false) and $showfeedback) {
-            notify($strreset.': '.get_string('generalforum','forum'), 'notifysuccess');
-        }
-    }
-    
-    //selected posts with attachments to delete attachments files  
-    foreach($postsarr as $post){
-        forum_delete_old_attachments($post); 
-    }
-    
-    if (!empty($data->reset_forum_subscriptions)) {
-        $subscripsql = "DELETE FROM {$CFG->prefix}forum_subscriptions
-                          WHERE forum IN (
-                            SELECT id FROM {$CFG->prefix}forum
-                              WHERE course = {$data->courseid} )";
+    $type = $type ? "AND f.type='$type'" : '';
 
-        if (execute_sql($subscripsql, false) and $showfeedback) {
-            notify($strreset.': '.get_string('resetsubscriptions','forum'), 'notifysuccess');
+    $sql = "SELECT f.*, cm.idnumber as cmidnumber, f.course as courseid
+              FROM {$CFG->prefix}forum f, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+             WHERE m.name='forum' AND m.id=cm.module AND cm.instance=f.id AND f.course=$courseid $type";
+
+    if ($forums = get_records_sql($sql)) {
+        foreach ($forums as $forum) {
+            forum_grade_item_update($forum, 'reset');
         }
     }
 }
 
-/*
- * Gets posts from selected course and forum type with attachments to delete this attachements files
- * 
- * @param int $courseid  course id
- * @param string $ftype  type of forum
- * @param array $postsarr array of selected posts, we are adding to this array new posts
- * 
- * @return mixed an array of objects, or false if no records were found or an error occured.
- */       
-function forum_get_posts_with_attachments($courseid,$ftype,$postsarr){
-    global $CFG;
-    $attquery = "SELECT fp.*,fd.course,fd.forum 
-                FROM {$CFG->prefix}forum_discussions fd,{$CFG->prefix}forum_posts fp,{$CFG->prefix}forum f
-                WHERE fd.course = $courseid 
-                    AND fd.id = fp.discussion
-                    AND fp.attachment <>''
-                    AND f.id = fd.forum
-                    AND f.type = $ftype ";
-    if ($records = get_records_sql($attquery)){
-        return array_merge((array)$postsarr,$records);
+/**
+ * This function is used by the reset_course_userdata function in moodlelib.
+ * This function will remove all posts from the specified forum
+ * and clean up any related data.
+ * @param $data the data submitted from the reset course.
+ * @return array status array
+ */
+function forum_reset_userdata($data) {
+    global $CFG, $FORUM_TYPES_ALL;
+    require_once($CFG->libdir.'/filelib.php');
+
+    $componentstr = get_string('modulenameplural', 'forum');
+    $status = array();
+
+    $removeposts = false;
+    if (!empty($data->reset_forum_all)) {
+        $removeposts = true;
+        $typesql     = "";
+        $typesstr    = get_string('resetforumsall', 'forum');
+        $types       = array();
+
+    } else if (!empty($data->reset_forum_types)){
+        $removeposts = true;
+        $typesql     = "";
+        $types       = array();
+        foreach ($data->reset_forum_types as $type) {
+            if (!array_key_exists($type, $FORUM_TYPES_ALL)) {
+                continue;
+            }
+            $typesql .= " AND f.type='$type'";
+            $types[] = $FORUM_TYPES_ALL[$type];
+        }
+        $typesstr = get_string('resetforums', 'forum').': '.implode(', ', $types);
+
     }
-    return $postsarr;    
+
+    $alldiscussionssql = "SELECT fd.id
+                            FROM {$CFG->prefix}forum_discussions fd, {$CFG->prefix}forum f
+                           WHERE f.course={$data->courseid} AND f.id=fd.forum";
+
+    $allforumssql      = "SELECT f.id
+                            FROM {$CFG->prefix}forum f
+                           WHERE f.course={$data->courseid}";
+
+    $allpostssql       = "SELECT fp.id
+                            FROM {$CFG->prefix}forum_posts fp, {$CFG->prefix}forum_discussions fd, {$CFG->prefix}forum f
+                           WHERE f.course={$data->courseid} AND f.id=fd.forum AND fd.id=fp.discussion";
+
+    if ($removeposts) {
+        $discussionssql = "$alldiscussionssql $typesql";
+        $forumssql      = "$allforumssql $typesql";
+        $postssql       = "$allpostssql $typesql";
+
+        // first delete all read flags
+        delete_records_select('forum_read', "forumid IN ($forumssql)");
+
+        // remove tracking prefs
+        delete_records_select('forum_track_prefs', "forumid IN ($forumssql)");
+
+        // remove posts from queue
+        delete_records_select('forum_queue', "discussionid IN ($discussionssql)");
+
+        // remove ratings
+        delete_records_select('forum_ratings', "post IN ($postssql)");
+
+        // all posts
+        delete_records_select('forum_posts', "discussion IN ($discussionssql)");
+
+        // finally all discussions
+        delete_records_select('forum_discussions', "forum IN ($forumssql)");
+
+        // now get rid of all attachments
+        if ($forums = get_records_sql($forumssql)) {
+            foreach ($forums as $forumid=>$unused) {
+                fulldelete($CFG->dataroot.'/'.$data->courseid.'/moddata/forum/'.$forumid);
+            }
+        }
+
+        // remove all grades from gradebook
+        if (empty($data->reset_gradebook_grades)) {
+            if (empty($types)) {
+                forum_reset_gradebook($data->courseid);
+            } else {
+                foreach ($types as $type) {
+                    forum_reset_gradebook($data->courseid, $type);
+                }
+            }
+        }
+
+        $status[] = array('component'=>$componentstr, 'item'=>$typesstr, 'error'=>false);
+    }
+
+    // remove all ratings
+    if (!empty($data->reset_forum_ratings)) {
+        delete_records_select('forum_ratings', "post IN ($allpostssql)");
+        // remove all grades from gradebook
+        if (empty($data->reset_gradebook_grades)) {
+            forum_reset_gradebook($data->courseid);
+        }
+    }
+
+    // remove all subscriptions unconditionally - even for users still enrolled in course
+    if (!empty($data->reset_forum_subscriptions)) {
+        delete_records_select('forum_subscriptions', "forum IN ($allforumssql)");
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('resetsubscriptions','forum'), 'error'=>false);
+    }
+
+    // remove all tracking prefs unconditionally - even for users still enrolled in course
+    if (!empty($data->reset_forum_track_prefs)) {
+        delete_records_select('forum_track_prefs', "forumid IN ($allforumssql)");
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('resettrackprefs','forum'), 'error'=>false);
+    }
+
+    /// updating dates - shift may be negative too
+    if ($data->timeshift) {
+        shift_course_mod_dates('forum', array('assesstimestart', 'assesstimefinish'), $data->timeshift, $data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+    }
+
+    return $status;
 }
 
 /**
  * Called by course/reset.php
+ * @param $mform form passed by reference
  */
-function forum_reset_course_form($course) {
-    echo get_string('resetforums', 'forum'); echo ':<br />';
-    print_checkbox('reset_forum_news', 1, true, get_string('namenews','forum'), '', '');  echo '<br />';
-    print_checkbox('reset_forum_single', 1, true, get_string('singleforum','forum'), '', '');  echo '<br />';
-    print_checkbox('reset_forum_eachuser', 1, true, get_string('eachuserforum','forum'), '', '');  echo '<br />';
-    print_checkbox('reset_forum_general', 1, true, get_string('generalforum','forum'), '', '');  echo '<br />';
-    echo '<p>';
-    print_checkbox('reset_forum_subscriptions', 1, true, get_string('resetsubscriptions','forum'), '', '');
-    echo '</p>';
+function forum_reset_course_form_definition(&$mform) {
+    global $FORUM_TYPES_ALL;
+
+    $mform->addElement('header', 'forumheader', get_string('modulenameplural', 'forum'));
+
+    $mform->addElement('checkbox', 'reset_forum_all', get_string('resetforumsall','forum'));
+
+    $mform->addElement('select', 'reset_forum_types', get_string('resetforums', 'forum'), $FORUM_TYPES_ALL, array('multiple' => 'multiple'));
+    $mform->setAdvanced('reset_forum_types');
+    $mform->disabledIf('reset_forum_types', 'reset_forum_all', 'checked');
+
+    $mform->addElement('checkbox', 'reset_forum_subscriptions', get_string('resetsubscriptions','forum'));
+    $mform->setAdvanced('reset_forum_subscriptions');
+
+    $mform->addElement('checkbox', 'reset_forum_track_prefs', get_string('resettrackprefs','forum'));
+    $mform->setAdvanced('reset_forum_track_prefs');
+    $mform->disabledIf('reset_forum_track_prefs', 'reset_forum_all', 'checked');
+
+    $mform->addElement('checkbox', 'reset_forum_ratings', get_string('deleteallratings'));
+    $mform->disabledIf('reset_forum_ratings', 'reset_forum_all', 'checked');
 }
 
+/**
+ * Course reset form defaults.
+ */
+function forum_reset_course_form_defaults($course) {
+    return array('reset_forum_all'=>1, 'reset_forum_subscriptions'=>0, 'reset_forum_track_prefs'=>0, 'reset_forum_ratings'=>1);
+}
 
 /**
  * Converts a forum to use the Roles System

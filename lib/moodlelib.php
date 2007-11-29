@@ -3544,110 +3544,208 @@ function remove_course_contents($courseid, $showfeedback=true) {
     return $result;
 }
 
+/**
+ * Change dates in module - used from course reset.
+ * @param strin $modname forum, assignent, etc
+ * @param array $fields array of date fields from mod table
+ * @param int $timeshift time difference
+ * @return success
+ */
+function shift_course_mod_dates($modname, $fields, $timeshift, $courseid) {
+    global $CFG;
+    include_once($CFG->dirroot.'/mod/'.$modname.'/lib.php');
+
+    $return = true;
+    foreach ($fields as $field) {
+        $updatesql = "UPDATE {$CFG->prefix}$modname
+                          SET $field = $field + ($timeshift)
+                        WHERE course=$courseid AND $field<>0 AND $field<>0";
+        $return = execute_sql($updatesql, false) && $return;
+    }
+
+    $refreshfunction = $modname.'_refresh_events';
+    if (function_exists($refreshfunction)) {
+        $refreshfunction($courseid);
+    }
+
+    return $return;
+}
 
 /**
- * This function will empty a course of USER data as much as
-/// possible. It will retain the activities and the structure
-/// of the course.
- *
- * @uses $USER
- * @uses $SESSION
- * @uses $CFG
- * @param object $data an object containing all the boolean settings and courseid
- * @param bool $showfeedback  if false then do it all silently
- * @return bool
- * @todo Finish documenting this function
+ * This function will empty a course of user data.
+ * It will retain the activities and the structure of the course.
+ * @param object $data an object containing all the settings including courseid (without magic quotes)
+ * @return array status array of array component, item, error
  */
-function reset_course_userdata($data, $showfeedback=true) {
-
-    global $CFG, $USER, $SESSION;
+function reset_course_userdata($data) {
+    global $CFG, $USER;
+    require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/group/lib.php');
 
-    $result = true;
-
-    $strdeleted = get_string('deleted');
-
-    // Look in every instance of every module for data to delete
-
-    if ($allmods = get_records('modules') ) {
-        foreach ($allmods as $mod) {
-            $modname = $mod->name;
-            $modfile = $CFG->dirroot .'/mod/'. $modname .'/lib.php';
-            $moddeleteuserdata = $modname .'_delete_userdata';   // Function to delete user data
-            if (file_exists($modfile)) {
-                @include_once($modfile);
-                if (function_exists($moddeleteuserdata)) {
-                    $moddeleteuserdata($data, $showfeedback);
-                }
-            }
-        }
-    } else {
-        error('No modules are installed!');
-    }
-
-    // Delete other stuff
+    $data->courseid = $data->id;
     $context = get_context_instance(CONTEXT_COURSE, $data->courseid);
 
-    if (!empty($data->reset_students) or !empty($data->reset_teachers)) {
-        $teachers     = array_keys(get_users_by_capability($context, 'moodle/course:update'));
-        $participants = array_keys(get_users_by_capability($context, 'moodle/course:view'));
-        $students     = array_diff($participants, $teachers);
-
-        if (!empty($data->reset_students)) {
-            foreach ($students as $studentid) {
-                role_unassign(0, $studentid, 0, $context->id);
-            }
-            if ($showfeedback) {
-                notify($strdeleted .' '.get_string('students'), 'notifysuccess');
-            }
-
-            /// Delete group members (but keep the groups)
-            $result = groups_delete_group_members($data->courseid, $showfeedback) && $result;
-        }
-
-        if (!empty($data->reset_teachers)) {
-            foreach ($teachers as $teacherid) {
-                role_unassign(0, $teacherid, 0, $context->id);
-            }
-            if ($showfeedback) {
-                notify($strdeleted .' '.get_string('teachers'), 'notifysuccess');
-            }
-        }
+    // calculate the time shift of dates
+    if (!empty($data->reset_start_date)) {
+        // time part of course startdate should be zero
+        $data->timeshift = $data->reset_start_date - usergetmidnight($data->reset_start_date_old);
+    } else {
+        $data->timeshift = 0;
     }
 
-    if (!empty($data->reset_groups)) {
-            $result = groups_delete_groupings($data->courseid, $showfeedback) && $result;
-            $result = groups_delete_groups($data->courseid, $showfeedback) && $result;
-    }
+    // result array: component, item, error
+    $status = array();
 
-    if (!empty($data->reset_events)) {
-        if (delete_records('event', 'courseid', $data->courseid)) {
-            if ($showfeedback) {
-                notify($strdeleted .' event', 'notifysuccess');
-            }
-        } else {
-            $result = false;
-        }
+    // start the resetting
+    $componentstr = get_string('general');
+
+    // move the course start time
+    if (!empty($data->reset_start_date) and $data->timeshift) {
+        // change course start data
+        set_field('course', 'startdate', $data->reset_start_date, 'id', $data->courseid);
+        // update all course and group events - do not move activity events
+        $updatesql = "UPDATE {$CFG->prefix}event
+                         SET timestart = timestart + ({$data->timeshift})
+                       WHERE courseid={$data->courseid} AND instance=0";
+        execute_sql($updatesql, false);
+
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
     }
 
     if (!empty($data->reset_logs)) {
-        if (delete_records('log', 'course', $data->courseid)) {
-            if ($showfeedback) {
-                notify($strdeleted .' log', 'notifysuccess');
+        delete_records('log', 'course', $data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deletelogs'), 'error'=>false);
+    }
+
+    if (!empty($data->reset_events)) {
+        delete_records('event', 'courseid', $data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteevents', 'calendar'), 'error'=>false);
+    }
+
+    if (!empty($data->reset_notes)) {
+        require_once($CFG->dirroot.'/notes/lib.php');
+        note_delete_all($data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deletenotes', 'notes'), 'error'=>false);
+    }
+
+    $componentstr = get_string('roles');
+
+    if (!empty($data->reset_roles_overrides)) {
+        $children = get_child_contexts($context);
+        foreach ($children as $child) {
+            delete_records('role_capabilities', 'contextid', $child->id);
+        }
+        delete_records('role_capabilities', 'contextid', $context->id);
+        //force refresh for logged in users
+        mark_context_dirty($context->path);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deletecourseoverrides', 'role'), 'error'=>false);
+    }
+
+    if (!empty($data->reset_roles_local)) {
+        $children = get_child_contexts($context);
+        foreach ($children as $child) {
+            role_unassign(0, 0, 0, $child->id);
+        }
+        //force refresh for logged in users
+        mark_context_dirty($context->path);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deletelocalroles', 'role'), 'error'=>false);
+    }
+
+    // First unenrol users - this cleans some of related user data too, such as forum subscriptions, tracking, etc.
+    $data->unenrolled = array();
+    if (!empty($data->reset_roles)) {
+        foreach($data->reset_roles as $roleid) {
+            if ($users = get_role_users($roleid, $context, false, 'u.id', 'u.id ASC')) {
+                foreach ($users as $user) {
+                    role_unassign($roleid, $user->id, 0, $context->id);
+                    if (!has_capability('moodle/course:view', $context, $user->id)) {
+                        $data->unenrolled[$user->id] = $user->id;
+                    }
+                }
             }
-        } else {
-            $result = false;
+        }
+    }
+    if (!empty($data->unenrolled)) {
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('unenrol').' ('.count($data->unenrolled).')', 'error'=>false);
+    }
+
+
+    $componentstr = get_string('groups');
+
+    // remove all group members
+    if (!empty($data->reset_groups_members)) {
+        groups_delete_group_members($data->courseid, false);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('removegroupsmembers', 'group'), 'error'=>false);
+    }
+
+    // remove all groups
+    if (!empty($data->reset_groups_remove)) {
+        groups_delete_groups($data->courseid, false);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallgroups', 'group'), 'error'=>false);
+    }
+
+    // remove all grouping members
+    if (!empty($data->reset_groupings_members)) {
+        groups_delete_groupings_groups($data->courseid, false);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('removegroupingsmembers', 'group'), 'error'=>false);
+    }
+
+    // remove all groupings
+    if (!empty($data->reset_groupings_remove)) {
+        groups_delete_groupings($data->courseid, false);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallgroupings', 'group'), 'error'=>false);
+    }
+
+    // Look in every instance of every module for data to delete
+    $unsupported_mods = array();
+    if ($allmods = get_records('modules') ) {
+        foreach ($allmods as $mod) {
+            $modname = $mod->name;
+            if (!count_records($modname, 'course', $data->courseid)) {
+                continue; // skip mods with no instances
+            }
+            $modfile = $CFG->dirroot.'/mod/'. $modname.'/lib.php';
+            $moddeleteuserdata = $modname.'_reset_userdata';   // Function to delete user data
+            if (file_exists($modfile)) {
+                include_once($modfile);
+                if (function_exists($moddeleteuserdata)) {
+                    $modstatus = $moddeleteuserdata($data);
+                    if (is_array($modstatus)) {
+                        $status = array_merge($status, $modstatus);
+                    } else {
+                        debugging('Module '.$modname.' returned incorrect staus - must be an array!');
+                    }
+                } else {
+                    $unsupported_mods[] = $mod;
+                }
+            } else {
+                debugging('Missing lib.php in '.$modname.' module!');
+            }
         }
     }
 
-    // deletes all role assignments, and local override,
-    // these have no courseid in table and needs separate process
-    delete_records('role_capabilities', 'contextid', $context->id);
+    // mention unsupported mods
+    if (!empty($unsupported_mods)) {
+        foreach($unsupported_mods as $mod) {
+            $status[] = array('component'=>get_string('modulenameplural', $mod->name), 'item'=>'', 'error'=>get_string('resetnotimplemented'));
+        }
+    }
 
-    // force accessinfo refresh for users visiting this context...
-    mark_context_dirty($context->path);
 
-    return $result;
+    $componentstr = get_string('gradebook', 'grades');
+    // reset gradebook
+    if (!empty($data->reset_gradebook_items)) {
+        remove_course_grades($data->courseid, false);
+        grade_grab_course_grades($data->courseid);
+        grade_regrade_final_grades($data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('removeallcourseitems', 'grades'), 'error'=>false);
+
+    } else if (!empty($data->reset_gradebook_grades)) {
+        grade_course_reset($data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('removeallcoursegrades', 'grades'), 'error'=>false);
+    }
+
+    return $status;
 }
 
 function generate_email_processing_address($modid,$modargs) {

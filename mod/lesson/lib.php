@@ -407,9 +407,10 @@ function lesson_update_grades($lesson=null, $userid=0, $nullifnone=true) {
  * Create grade item for given lesson
  *
  * @param object $lesson object with extra cmidnumber
+ * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
  */
-function lesson_grade_item_update($lesson) {
+function lesson_grade_item_update($lesson, $grades=NULL) {
     global $CFG;
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
@@ -432,7 +433,12 @@ function lesson_grade_item_update($lesson) {
         $params['multfactor'] = 1.0;
     }
 
-    return grade_update('mod/lesson', $lesson->course, 'mod', 'lesson', $lesson->id, 0, NULL, $params);
+    if ($grades  === 'reset') {
+        $params['reset'] = true;
+        $grades = NULL;
+    }
+
+    return grade_update('mod/lesson', $lesson->course, 'mod', 'lesson', $lesson->id, 0, $grades, $params);
 }
 
 /**
@@ -578,6 +584,83 @@ function lesson_process_post_save(&$lesson) {
             add_event($event);
         }
     }
+}
+
+
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the lesson.
+ * @param $mform form passed by reference
+ */
+function lesson_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'lessonheader', get_string('modulenameplural', 'lesson'));
+    $mform->addElement('advcheckbox', 'reset_lesson', get_string('deleteallattempts','lesson'));
+}
+
+/**
+ * Course reset form defaults.
+ */
+function lesson_reset_course_form_defaults($course) {
+    return array('reset_lesson'=>1);
+}
+
+/**
+ * Removes all grades from gradebook
+ * @param int $courseid
+ * @param string optional type
+ */
+function lesson_reset_gradebook($courseid, $type='') {
+    global $CFG;
+
+    $sql = "SELECT l.*, cm.idnumber as cmidnumber, l.course as courseid
+              FROM {$CFG->prefix}lesson l, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+             WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id AND l.course=$courseid";
+
+    if ($lessons = get_records_sql($sql)) {
+        foreach ($lessons as $lesson) {
+            lesson_grade_item_update($lesson, 'reset');
+        }
+    }
+}
+
+/**
+ * Actual implementation of the rest coures functionality, delete all the
+ * lesson attempts for course $data->courseid.
+ * @param $data the data submitted from the reset course.
+ * @return array status array
+ */
+function lesson_reset_userdata($data) {
+    global $CFG;
+
+    $componentstr = get_string('modulenameplural', 'lesson');
+    $status = array();
+
+    if (!empty($data->reset_lesson)) {
+        $lessonssql = "SELECT l.id
+                         FROM {$CFG->prefix}lesson l
+                        WHERE l.course={$data->courseid}";
+
+
+        delete_records_select('lesson_timer', "lessonid IN ($lessonssql)");
+        delete_records_select('lesson_high_scores', "lessonid IN ($lessonssql)");
+        delete_records_select('lesson_grades', "lessonid IN ($lessonssql)");
+        delete_records_select('lesson_attempts', "lessonid IN ($lessonssql)");
+
+        // remove all grades from gradebook
+        if (empty($data->reset_gradebook_grades)) {
+            lesson_reset_gradebook($data->courseid);
+        }
+
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallattempts', 'lesson'), 'error'=>false);
+    }
+
+    /// updating dates - shift may be negative too
+    if ($data->timeshift) {
+        shift_course_mod_dates('lesson', array('available', 'deadline'), $data->timeshift, $data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+    }
+
+    return $status;
 }
 
 ?>

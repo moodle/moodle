@@ -510,4 +510,55 @@ function survey_get_post_actions() {
     return array('submit');
 }
 
+
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the survey.
+ * @param $mform form passed by reference
+ */
+function survey_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'surveyheader', get_string('modulenameplural', 'survey'));
+    $mform->addElement('checkbox', 'reset_survey_answers', get_string('deleteallanswers','survey'));
+    $mform->addElement('checkbox', 'reset_survey_analysis', get_string('deleteanalysis','survey'));
+    $mform->disabledIf('reset_survey_analysis', 'reset_survey_answers', 'checked');
+}
+
+/**
+ * Course reset form defaults.
+ */
+function survey_reset_course_form_defaults($course) {
+    return array('reset_survey_answers'=>1, 'reset_survey_analysis'=>1);
+}
+
+/**
+ * Actual implementation of the rest coures functionality, delete all the
+ * survey responses for course $data->courseid.
+ * @param $data the data submitted from the reset course.
+ * @return array status array
+ */
+function survey_reset_userdata($data) {
+    global $CFG;
+
+    $componentstr = get_string('modulenameplural', 'survey');
+    $status = array();
+
+    $surveyssql = "SELECT ch.id
+                     FROM {$CFG->prefix}survey ch
+                    WHERE ch.course={$data->courseid}";
+
+    if (!empty($data->reset_survey_answers)) {
+        delete_records_select('survey_answers', "survey IN ($surveyssql)");
+        delete_records_select('survey_analysis', "survey IN ($surveyssql)");
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallanswers', 'survey'), 'error'=>false);
+    }
+
+    if (!empty($data->reset_survey_analysis)) {
+        delete_records_select('survey_analysis', "survey IN ($surveyssql)");
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallanswers', 'survey'), 'error'=>false);
+    }
+
+    // no date shifting
+    return $status;
+}
+
 ?>
