@@ -95,8 +95,8 @@ function forum_get_content_for_index(&$forum) {
                 foreach($children as $aChild) {
                     $aChild->itemtype = 'post';
                     if (strlen($aChild->message) > 0) {
-                        $documents[] = new ForumSearchDocument(get_object_vars($child), $forum->id, $forum->course, 'post', $context->id);
-                    } 
+                        $documents[] = new ForumSearchDocument(get_object_vars($aChild), $forum->id, $forum->course, 'post', $context->id);
+                    }
                 } 
             } 
         } 
