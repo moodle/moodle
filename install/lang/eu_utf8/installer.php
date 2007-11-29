@@ -144,6 +144,7 @@ $string['name'] = 'Izena';
 $string['next'] = 'Hurrengoa';
 $string['oci8po'] = 'Oracle (oci8po)';
 $string['ok'] = 'Ongi';
+$string['parentlanguage'] = 'es>>';
 $string['pass'] = 'Zuzena';
 $string['password'] = 'Pasahitza';
 $string['php50restricted'] = 'PHP 5.0.x-k hainbat arazo ezagun ditu; mesedez, eguneratu 5.1.x bertsiora edo erabili 4.3.x edo 4.4.x bertsioak.';

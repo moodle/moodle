@@ -11,6 +11,8 @@
 
 $string['admindirerror']='Valitud administreerimiskataloog on vale';
 $string['admindirname']='Administreerimiskataloog';
+$string['cannotcreatelangdir']='Ei saa luua lang kataloogi';
+$string['cannotcreatetempdir']='Ei saa luua temp kataloogi';
 $string['cannotdownloadcomponents']='Ei saa alla tõmmata komponente.';
 $string['cannotdownloadzipfile']='Ei saa alla tõmmata ZIP faili.';
 $string['cannotfindcomponent']='Ei leia komponenti.';
@@ -86,6 +88,7 @@ $string['dbtype']='Tüüp';
 $string['dirroot']='Moodle kataloog';
 $string['dirrooterror']='Moodle kataloogi seadistus näib olevat vigane -  me ei suuda sealt leida Moodle installatsiooni. Allpool olev väärtus on nullitud.';
 $string['download']='Lae alla';
+$string['downloadedfilecheckfailed']='Alla laetud faili kontroll ebaõnnestus.';
 $string['downloadlanguagebutton']='Tõmba alla &quot;$a&quot; keelepakett';
 $string['downloadlanguagehead']='Tõmba alla keelepakett';
 $string['environmenterrortodo']='Sa pead lahendama kõik keskkonna probleemid (vead), mis leiti ülal, et hakata installeerima vastavat Moodle versiooni!';
@@ -106,6 +109,7 @@ $string['gdversionhelp']='<p>Sinu serveril ei paista GD installeeritud olevat.</
 <p>GD lisamiseks PHP\'le Unixi operatsioonisüsteemis tuleb kompileerida PHP-d, kasutates --with-gd parameetrit.</p>
 <p>Windowsis saad sa tavaliselt muuta php.ini faili ja kommenteerida sisse libdg.dll\'le vastava rea.</p>';
 $string['help']='Abi';
+$string['iconvrecommended']='Fakultatiivse ICONV teegi installeerimine on tungivalt soovitatav tõstmaks õpikeskkonna jõudlust, eriti kui õpikeskkond toetab mitte ladinatähistikuga keeli (näiteks eesti keelt).';
 $string['info']='Informatsioon';
 $string['installation']='Installeerimine';
 $string['invalidmd5']='Vigane md5';
@@ -127,6 +131,7 @@ See lubab Moodle\'il ise mälu limiiti määrata.</li>
 <li>Mõnedes PHP serverites saad luua Moodle kataloogi .htaccess faili, mis sisaldab seda rida:<p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Kuigi mõnedes serverites tõkestab see <b>kõigi</b> PHP lehekülgede tööd (sa näed veateateid, kui vaatad lehti), nii et pead eemaldama .htaccess faili.</p></li>
 </ol>';
+$string['missingrequiredfield']='Mõned nõutud väljad on puudu';
 $string['moodledocslink']='Moodle dokumendid käesoleva lehe kohta';
 $string['mssql']='SQL*Server (mssql)';
 $string['mssql_n']='SQL*Server UTF-8 toetusega (mssql_n)';
@@ -152,6 +157,7 @@ $string['phpversionhelp']='<p>Moodle vajab vähemalt PHP versiooni 4.1.0</p>
 <p>Sa pead oma PHP-d uuendama või kolima hosti, kus on uuem PHP versioon!</p>';
 $string['postgres7']='PostgreSQL (postgres7)';
 $string['previous']='Eelmine';
+$string['remotedownloadnotallowed']='Komponentide alla tõmbamine ei ole Sinu serverisse lubatud (sest allow_url_fopen keelatud).<br /><br />Sa pead tõmbama alla faili <a href=\"$a->url\">$a->URL</a> käsitsti, kopeerima \"$a->dest\" oma serveris ja sinna lahti pakkima.';
 $string['report']='Ülevaade';
 $string['safemode']='Ohutu režiim';
 $string['safemodeerror']='Moodle\'il võib ohutus režiimis komplikatsioone tekkida';
@@ -168,6 +174,7 @@ $string['user']='Kasutaja';
 $string['welcomep10']='\$a->installername (\$a->installerversion)';
 $string['welcomep70']='Vajuta \"Järgmine\" nuppu all jätkamaks <strong>Moodle</strong> paigaldamisega.';
 $string['wrongdestpath']='Vale sihtkoha rada.';
+$string['wrongsourcebase']='Vale allika URL\'i baas.';
 $string['wrongzipfilename']='Vale ZIP failinimi.';
 $string['wwwroot']='Veebiaadress';
 $string['wwwrooterror']='Veebiaadress näib vigane - Moodle installatsiooni ei paista seal olevat.';
