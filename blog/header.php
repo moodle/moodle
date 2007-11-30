@@ -191,9 +191,6 @@ $navlinks = array();
                     print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
 
                 } else {
-                    $navlinks[] = array('name' => $course->shortname,
-                                        'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
-                                        'type' => 'misc');
                     $navlinks[] = array('name' => $participants,
                                         'link' => "$CFG->wwwroot/user/index.php?id=$course->id",
                                         'type' => 'misc');
