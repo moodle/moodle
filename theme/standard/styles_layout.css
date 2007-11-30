@@ -2471,6 +2471,10 @@ body.notes .notesgroup {
   margin-top: 0;
 }
 
+.questioncatategories h3 {
+  margin-top: 0;
+}
+
 .que {
   text-align: left;
   margin: 0 auto 1.8em auto;
