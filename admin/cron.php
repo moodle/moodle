@@ -511,6 +511,15 @@
             }
         }
     }
+    
+    // run any customized cronjobs, if any
+    // looking for functions in lib/local/cron.php
+    if (file_exists($CFG->libdir.'/local/cron.php')) {
+        mtrace('Processing customized cron script ...', '');
+        include_once($CFG->libdir.'/local/cron.php');
+        mtrace('done.');
+    }
+
 
     //Unset session variables and destroy it
     @session_unset();
