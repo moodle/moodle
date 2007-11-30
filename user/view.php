@@ -61,7 +61,9 @@
     $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursecontext));
 
     $navlinks = array();
-    $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+    if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
+        $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+    }
 
 /// If the user being shown is not ourselves, then make sure we are allowed to see them!
 
