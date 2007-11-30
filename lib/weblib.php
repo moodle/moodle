@@ -693,25 +693,43 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
                                   $height=400, $width=500, $title=null, 
                                   $options=null, $return=false, $id=null, $class=null) {
 
-    if (is_null($url)) { error('There must be an url to the popup. Can\'t create popup window.'); }
+    if (is_null($url)) { 
+        error('There must be an url to the popup. Can\'t create popup window.'); 
+    }
 
     global $CFG;
 
-    if ($options == 'none') { /* 'none' is legacy, should be removed in v2.0 */
+    if ($options == 'none') { // 'none' is legacy, should be removed in v2.0
         $options = null; 
     }
 
     // add some sane default options for popup windows
-    if (!$options) { $options = 'menubar=0,location=0,scrollbars,resizable'; }
-    if ($width) { $options .= ',width='. $width; }
-    if ($height) { $options .= ',height='. $height; }
-    if ($id) { $id = ' id="'.$id.'" '; }
-    if ($class) { $class = ' class="'.$class.'" '; }
+    if (!$options) { 
+        $options = 'menubar=0,location=0,scrollbars,resizable'; 
+    }
+    if ($width) { 
+        $options .= ',width='. $width; 
+    }
+    if ($height) { 
+        $options .= ',height='. $height; 
+    }
+    if ($id) { 
+        $id = ' id="'.$id.'" '; 
+    }
+    if ($class) { 
+        $class = ' class="'.$class.'" '; 
+    }
 
     // get some default string, using the localized version of legacy defaults
-    if (!$name) { $name = get_string('popup'); }
-    if (!$linkname) { $linkname = get_string('click here'); }
-    if (!$title) { $title = get_string('Popup window'); }
+    if (!$name) { 
+        $name = get_string('popup'); 
+    }
+    if (!$linkname) { 
+        $linkname = get_string('click here'); 
+    }
+    if (!$title) { 
+        $title = get_string('Popup window'); 
+    }
 
     $fullscreen = 0; // must be passed to openpopup 
     $element = '';
