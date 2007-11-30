@@ -87,19 +87,16 @@ class question_category_list_item extends list_item {
         $questionbankurl = "{$CFG->wwwroot}/question/edit.php?".
                 $this->parentlist->pageurl->get_query_string(array('category'=>"$category->id,$category->contextid"));
         $catediturl = $this->parentlist->pageurl->out(false, array('edit'=>$this->id));
-        $item = "<a title=\"{$str->edit}\" href=\"$catediturl\">".$category->name ."</a> <a title=\"$editqestions\" href=\"$questionbankurl\">".'('.$category->questioncount.')</a>';
+        $item = "<b><a title=\"{$str->edit}\" href=\"$catediturl\">".$category->name ."</a></b> <a title=\"$editqestions\" href=\"$questionbankurl\">".'('.$category->questioncount.')</a>';
 
         $item .= '&nbsp;'. $category->info;
 
-
         if (count($this->parentlist->records)!=1){ // don't allow delete if this is the last category in this context.
             $item .=  '<a title="' . $str->delete . '" href="'.$this->parentlist->pageurl->out_action(array('delete'=>$this->id)).'">
-                    <img src="' . $pixpath . '/t/delete.gif" class="iconsmall" alt="' .$str->delete. '" /></a> ';
+                    <img src="' . $pixpath . '/t/delete.gif" class="iconsmall" alt="' .$str->delete. '" /></a>';
         }
 
         return $item;
-
-
     }
 
 }
@@ -234,8 +231,8 @@ class question_category_object {
         foreach ($this->editlists as $context => $list){
             $listhtml = $list->to_html(0, array('str'=>$this->str));
             if ($listhtml){
+                print_box_start('boxwidthwide boxaligncenter generalbox questioncatategories contextlevel' . $list->context->contextlevel);
                 print_heading(get_string('questioncatsfor', 'question', print_context_name(get_context_instance_by_id($context))), '', 3);
-                print_box_start('boxwidthwide boxaligncenter generalbox');
                 echo $listhtml;
                 print_box_end();
             }
