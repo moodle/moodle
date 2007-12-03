@@ -2015,49 +2015,29 @@ function cleanAttributes2($htmlArray){
 function replace_smilies(&$text) {
 ///
     global $CFG;
-
     $lang = current_language();
-
-/// this builds the mapping array only once
+    $emoticonstring = $CFG->emoticons;
     static $e = array();
     static $img = array();
-    static $emoticons = array(
-        ':-)'  => 'smiley',
-        ':)'   => 'smiley',
-        ':-D'  => 'biggrin',
-        ';-)'  => 'wink',
-        ':-/'  => 'mixed',
-        'V-.'  => 'thoughtful',
-        ':-P'  => 'tongueout',
-        'B-)'  => 'cool',
-        '^-)'  => 'approve',
-        '8-)'  => 'wideeyes',
-        ':o)'  => 'clown',
-        ':-('  => 'sad',
-        ':('   => 'sad',
-        '8-.'  => 'shy',
-        ':-I'  => 'blush',
-        ':-X'  => 'kiss',
-        '8-o'  => 'surprise',
-        'P-|'  => 'blackeye',
-        '8-['  => 'angry',
-        'xx-P' => 'dead',
-        '|-.'  => 'sleepy',
-        '}-]'  => 'evil',
-        '(h)'  => 'heart',
-        '(heart)'  => 'heart',
-        '(y)'  => 'yes',
-        '(n)'  => 'no',
-        '(martin)'  => 'martin',
-        '( )'  => 'egg'
-        );
+    static $emoticons = null;
+
+    if (is_null($emoticons)) {
+        $emoticons = array();
+        if ($emoticonstring) {
+            $items = explode('{;}', $CFG->emoticons);
+            foreach ($items as $item) {
+               $item = explode('{:}', $item);
+              $emoticons[$item[0]] = $item[1]; 
+            }
+        }
+    }
+
 
     if (empty($img[$lang])) {  /// After the first time this is not run again
         $e[$lang] = array();
         $img[$lang] = array();
         foreach ($emoticons as $emoticon => $image){
             $alttext = get_string($image, 'pix');
-
             $e[$lang][] = $emoticon;
             $img[$lang][] = '<img alt="'. $alttext .'" width="15" height="15" src="'. $CFG->pixpath .'/s/'. $image .'.gif" />';
         }

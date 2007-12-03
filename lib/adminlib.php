@@ -2043,6 +2043,148 @@ class admin_setting_special_editorfontlist extends admin_setting {
 
 }
 
+class admin_setting_emoticons extends admin_setting {
+
+    var $items;
+
+    function admin_setting_emoticons() {
+        global $CFG;
+        $name = 'emoticons';
+        $visiblename = get_string('emoticons', 'admin');
+        $description = get_string('configemoticons', 'admin');
+        $defaults = array('k0' => ':-)',
+                          'v0' => 'smiley',
+                          'k1' => ':)',
+                          'v1' => 'smiley',
+                          'k2' => ':-D',
+                          'v2' => 'biggrin',
+                          'k3' => ';-)',
+                          'v3' => 'wink',
+                          'k4' => ':-/',
+                          'v4' => 'mixed',
+                          'k5' => 'V-.',
+                          'v5' => 'thoughtful',
+                          'k6' => ':-P',
+                          'v6' => 'tongueout',
+                          'k7' => 'B-)',
+                          'v7' => 'cool',
+                          'k8' => '^-)',
+                          'v8' => 'approve',
+                          'k9' => '8-)',
+                          'v9' => 'wideeyes',
+                          'k10' => ':o)',
+                          'v10' => 'clown',
+                          'k11' => ':-(',
+                          'v11' => 'sad',
+                          'k12' => ':(',
+                          'v12' => 'sad',
+                          'k13' => '8-.',
+                          'v13' => 'shy',
+                          'k14' => ':-I',
+                          'v14' => 'blush',
+                          'k15' => ':-X',
+                          'v15' => 'kiss',
+                          'k16' => '8-o',
+                          'v16' => 'surprise',
+                          'k17' => 'P-|',
+                          'v17' => 'blackeye',
+                          'k18' => '8-[',
+                          'v18' => 'angry',
+                          'k19' => 'xx-P',
+                          'v19' => 'dead',
+                          'k20' => '|-.',
+                          'v20' => 'sleepy',
+                          'k21' => '}-]',
+                          'v21' => 'evil',
+                          'k22' => '(h)',
+                          'v22' => 'heart',
+                          'k23' => '(heart)',
+                          'v23' => 'heart',
+                          'k24' => '(y)',
+                          'v24' => 'yes',
+                          'k25' => '(n)',
+                          'v25' => 'no',
+                          'k26' => '(martin)',
+                          'v26' => 'martin',
+                          'k27' => '( )',
+                          'v27' => 'egg');
+        parent::admin_setting($name, $visiblename, $description, $defaults);
+    }
+
+    function get_setting() {
+        global $CFG;
+        if (isset($CFG->emoticons)) {
+            $i = 0;
+            $currentsetting = array();
+            $items = explode('{;}', $CFG->emoticons);
+            foreach ($items as $item) {
+              $item = explode('{:}', $item);
+              $currentsetting['k' . $i] = $item[0];
+              $currentsetting['v' . $i] = $item[1];
+              $i++;
+            }
+            return $currentsetting;
+        } else {
+            return NULL;
+        }
+    }
+
+    function write_setting($data) {
+
+        // there miiight be an easier way to do this :)
+        // if this is changed, make sure the $defaults array above is modified so that this
+        // function processes it correctly
+
+        $keys = array();
+        $values = array();
+
+        foreach ($data as $key => $value) {
+            if (substr($key,0,1) == 'k') {
+                $keys[substr($key,1)] = $value;
+            } elseif (substr($key,0,1) == 'v') {
+                $values[substr($key,1)] = $value;
+            }
+        }
+
+        $result = '';
+        for ($i = 0; $i < count($keys); $i++) {
+            if (($keys[$i] !== '') && ($values[$i] !== '')) {
+                $result .= clean_param($keys[$i],PARAM_NOTAGS) . '{:}' . clean_param($values[$i], PARAM_NOTAGS) . '{;}';
+            }
+        }
+
+        $result = substr($result, 0, -3); // trim the last separator
+
+        return (set_config($this->name, $result) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
+    }
+
+    function output_html() {
+
+        if ($this->get_setting() === NULL) {
+            $currentsetting = $this->defaultsetting;
+        } else {
+            $currentsetting = $this->get_setting();
+        }
+
+        $return = '<div class="form-group">';
+        for ($i = 0; $i < count($currentsetting) / 2; $i++) {
+            $return .= '<input type="text" class="form-text" name="s_emoticons[k' . $i . ']" value="' . $currentsetting['k' . $i] . '" />';
+            $return .= '&nbsp;&nbsp;';
+            $return .= '<input type="text" class="form-text" name="s_emoticons[v' . $i . ']" value="' . $currentsetting['v' . $i] . '" /><br />';
+        }
+        $return .= '<input type="text" class="form-text" name="s_emoticons[k' . $i . ']" value="" />';
+        $return .= '&nbsp;&nbsp;';
+        $return .= '<input type="text" class="form-text" name="s_emoticons[v' . $i . ']" value="" /><br />';
+        $return .= '<input type="text" class="form-text" name="s_emoticons[k' . ($i + 1) . ']" value="" />';
+        $return .= '&nbsp;&nbsp;';
+        $return .= '<input type="text" class="form-text" name="s_emoticons[v' . ($i + 1) . ']" value="" />';
+        $return .= '</div>';
+
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description, false);
+    }
+
+}
+
 class admin_setting_special_editordictionary extends admin_setting_configselect {
 
     function admin_setting_special_editordictionary() {

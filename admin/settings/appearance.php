@@ -97,6 +97,7 @@ if (!empty($CFG->aspellpath)) { // make aspell settings disappear if path isn't 
   $temp->add(new admin_setting_special_editordictionary());
 }
 $temp->add(new admin_setting_special_editorhidebuttons());
+$temp->add(new admin_setting_emoticons());
 $ADMIN->add('appearance', $temp);
 
 // "documentation" settingpage
