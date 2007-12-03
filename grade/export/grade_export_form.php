@@ -63,15 +63,6 @@ class grade_export_form extends moodleform {
         $mform->addElement('select', 'display', get_string('gradeexportdisplaytype', 'grades'), $options);  
         $mform->setDefault('display', $CFG->grade_export_displaytype);
         
-        $mform->addElement('advcheckbox', 'test1', 'Test 1', null, array('group' => 2));
-        $mform->addElement('advcheckbox', 'test2', 'Test 2', null, array('group' => 2));
-        $mform->addElement('selectallornone', 2);
-        $mform->addElement('advcheckbox', 'test3', 'Test 3', null, array('group' => 3));
-        $mform->addElement('advcheckbox', 'test4', 'Test 4', null, array('group' => 3));
-        $mform->addElement('selectallornone', 3, get_string("checkallornone"), array('style' => 'font-weight: bold;'), 1);
-        $mform->setDefault('test3', 1);
-        $mform->setDefault('test4', 1);
-        
         //$default_gradedecimals = $CFG->grade_export_decimalpoints;
         $options = array(0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);
         $mform->addElement('select', 'decimals', get_string('gradeexportdecimalpoints', 'grades'), $options);
