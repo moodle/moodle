@@ -1832,7 +1832,7 @@ function sql_concat_join($separator="' '", $elements=array()) {
  *     ... AND ' . sql_isempty('tablename', 'fieldname', true/false, true/false);
  *
  * (see parameters description below)
- * 
+ *
  * @param string $tablename name of the table (without prefix). Not used for now but can be
  *                          necessary in the future if we want to use some introspection using
  *                          meta information against the DB. /// TODO ///
@@ -1845,28 +1845,28 @@ function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
 
     global $CFG;
 
-    $sql = $fieldname . " = '' ";
+    $sql = $fieldname . " = ''";
 
     switch ($CFG->dbfamily) {
         case 'mssql':
             if ($textfield) {
-                $sql = sql_compare_text($fieldname) . " = '' ";
+                $sql = sql_compare_text($fieldname) . " = ''";
             }
             break;
         case 'oracle':
             if ($nullablefield) {
-                $sql = $fieldname . " IS NULL ";                     /// empties in nullable fields are stored as
-            } else {                                                 /// NULLs
+                $sql = $fieldname . " IS NULL";                     /// empties in nullable fields are stored as
+            } else {                                                /// NULLs
                 if ($textfield) {
-                    $sql = sql_compare_text($fieldname) . " = ' ' "; /// oracle_dirty_hack inserts 1-whitespace 
-                } else {                                             /// in NOT NULL varchar and text columns so
-                    $sql =  $fieldname . " = ' ' ";                  /// we need to look for that in any situation
+                    $sql = sql_compare_text($fieldname) . " = ' '"; /// oracle_dirty_hack inserts 1-whitespace
+                } else {                                            /// in NOT NULL varchar and text columns so
+                    $sql =  $fieldname . " = ' '";                  /// we need to look for that in any situation
                 }
             }
             break;
     }
 
-    return $sql;
+    return ' ' . $sql . ' '; /// Adding spaces to avoid wrong SQLs due to concatenation
 }
 
 /**
@@ -1886,7 +1886,7 @@ function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
  *     ... AND ' . sql_isnotempty('tablename', 'fieldname', true/false, true/false);
  *
  * (see parameters description below)
- * 
+ *
  * @param string $tablename name of the table (without prefix). Not used for now but can be
  *                          necessary in the future if we want to use some introspection using
  *                          meta information against the DB. /// TODO ///
@@ -1897,7 +1897,7 @@ function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
  */
 function sql_isnotempty($tablename, $fieldname, $nullablefield, $textfield) {
 
-    return '( NOT ' . sql_isempty($tablename, $fieldname, $nullablefield, $textfield) . ')';
+    return ' ( NOT ' . sql_isempty($tablename, $fieldname, $nullablefield, $textfield) . ') ';
 }
 
 /**
