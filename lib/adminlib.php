@@ -3222,4 +3222,43 @@ function any_new_admin_settings(&$node) {
 
 }
 
+
+/**
+ * Moved from admin/replace.php so that we can use this in cron
+ * @param string $search - string to look for
+ * @param string $replace - string to replace
+ * @return bool - success or fail
+ */
+function db_replace($search, $replace) {
+    
+    global $db, $CFG;
+    
+    /// Turn off time limits, sometimes upgrades can be slow.
+    @set_time_limit(0);
+    @ob_implicit_flush(true);
+    while(@ob_end_flush());
+    
+    if (!$tables = $db->Metatables() ) {    // No tables yet at all.
+        return false;
+    }
+    foreach ($tables as $table) {
+    
+        if (in_array($table, array($CFG->prefix.'config'))) {      // Don't process these
+            continue;
+        }
+        
+        if ($columns = $db->MetaColumns($table, false)) {
+            foreach ($columns as $column => $data) {
+                if (in_array($data->type, array('text','mediumtext','longtext','varchar'))) {  // Text stuff only
+                    $db->debug = true;
+                    execute_sql("UPDATE $table SET $column = REPLACE($column, '$search', '$replace');");
+                    $db->debug = false;
+                }
+            }
+        }
+    }
+    
+    return true;
+}
+
 ?>
