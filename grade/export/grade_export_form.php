@@ -125,16 +125,20 @@ class grade_export_form extends moodleform {
             $total = $grade_items[1];
             unset($grade_items[1]);
             $grade_items[] = $total;          
-            
+            $needs_multiselect = false;
             foreach ($grade_items as $grade_item) {
                 if (!empty($features['idnumberrequired']) and empty($grade_item->idnumber)) {
                     $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name(), get_string('noidnumber', 'grades'));
                     $mform->hardFreeze('itemids['.$grade_item->id.']');
-
                 } else {
-                    $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name());
+                    $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name(), null, array('group' => 1));
                     $mform->setDefault('itemids['.$grade_item->id.']', 1);
+                    $needs_multiselect = true;
                 }
+                }
+            
+            if ($needs_multiselect) {
+                $mform->addElement('selectallornone', 1, null, null, 1); // 2nd argument is group name, 3rd is link text, 4th is attributes and 5th is original value
             }
         }
 

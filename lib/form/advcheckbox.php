@@ -17,6 +17,13 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
      * @var string
      */
     var $_helpbutton='';
+
+    /**
+     * Group to which this checkbox belongs (for select all/select none button)
+     * @var string $_group
+     */
+    var $_group;
+
     /**
      * Class constructor
      *
@@ -36,6 +43,34 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
         if ($values === null){
             $values = array(0, 1);
         }
+        
+        if (!is_null($attributes['group'])) {
+        
+            $select_value = optional_param('select'. $attributes['group'], null, PARAM_INT);
+            if ($select_value == 1) {
+                $this->setValue(1);
+            } elseif ($select_value == 0) {
+                $this->setValue(0);
+            }
+            
+            $this->_group = 'checkboxgroup' . $attributes['group'];
+            unset($attributes['group']);
+            if (is_null($attributes)) {
+                $attributes = array();
+                $attributes['class'] .= " $this->_group"; 
+            } elseif (is_array($attributes)) {
+                if (isset($attributes['class'])) {
+                    $attributes['class'] .= " $this->_group";
+                } else {
+                    $attributes['class'] = $this->_group; 
+                }
+            } elseif ($strpos = stripos($attributes, 'class="')) {
+                $attributes = str_ireplace('class="', 'class="' . $this->_group . ' ', $attributes);
+            } else {
+                $attributes .= ' class="' . $this->_group . '"';
+            } 
+        } 
+        
         parent::HTML_QuickForm_advcheckbox($elementName, $elementLabel, $text, $attributes, $values);
     } //end constructor
 
