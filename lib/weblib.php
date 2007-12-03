@@ -4996,7 +4996,8 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
         $module = 'moodle';
     }
 
-    $tooltip = get_string('helpprefix2', '', trim($title, ". \t"));
+    // Warn users about new window for Accessibility
+    $tooltip = get_string('helpprefix2', '', trim($title, ". \t")) .' ('.get_string('newwindow').')';
 
     $linkobject = '';
 
@@ -5015,8 +5016,6 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
     } else {
         $linkobject .= $tooltip;
     }
-
-    $tooltip .= ' ('.get_string('newwindow').')';   // Warn users about new window for Accessibility
 
     // fix for MDL-7734
     if ($text) {
