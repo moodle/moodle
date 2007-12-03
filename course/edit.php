@@ -13,6 +13,12 @@
 
 /// basic access control checks
     if ($id) { // editing course
+
+        if($id == SITEID){
+            // don't allow editing of  'site course' using this from
+            error('You cannot edit the site course using this form');
+        }
+
         if (!$course = get_record('course', 'id', $id)) {
             error('Course ID was incorrect');
         }
