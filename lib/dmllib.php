@@ -1813,6 +1813,94 @@ function sql_concat_join($separator="' '", $elements=array()) {
 }
 
 /**
+ * Returns the proper SQL to know if one field is empty.
+ *
+ * Note that the function behavior strongly relies on the
+ * parameters passed describing the field so, please,  be accurate
+ * when speciffying them.
+ *
+ * Also, note that this function is not suitable to look for
+ * fields having NULL contents at all. It's all for empty values!
+ *
+ * This function should be applied in all the places where conditins of
+ * the type:
+ *
+ *     ... AND fieldname = '';
+ *
+ * are being used. Final result should be:
+ *
+ *     ... AND ' . sql_isempty('tablename', 'fieldname', true/false, true/false);
+ *
+ * (see parameters description below)
+ * 
+ * @param string $tablename name of the table (without prefix). Not used for now but can be
+ *                          necessary in the future if we want to use some introspection using
+ *                          meta information against the DB. /// TODO ///
+ * @param string $fieldname name of the field we are going to check
+ * @param boolean $nullablefield to specify if the field us nullable (true) or no (false) in the DB
+ * @param boolean $textfield to specify if it is a text (also called clob) field (true) or a varchar one (false)
+ * @return string the sql code to be added to check for empty values
+ */
+function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
+
+    global $CFG;
+
+    $sql = $fieldname . " = '' ";
+
+    switch ($CFG->dbfamily) {
+        case 'mssql':
+            if ($textfield) {
+                $sql = sql_compare_text($fieldname) . " = '' ";
+            }
+            break;
+        case 'oracle':
+            if ($nullablefield) {
+                $sql = $fieldname . " IS NULL ";                     /// empties in nullable fields are stored as
+            } else {                                                 /// NULLs
+                if ($textfield) {
+                    $sql = sql_compare_text($fieldname) . " = ' ' "; /// oracle_dirty_hack inserts 1-whitespace 
+                } else {                                             /// in NOT NULL varchar and text columns so
+                    $sql =  $fieldname . " = ' ' ";                  /// we need to look for that in any situation
+                }
+            }
+            break;
+    }
+
+    return $sql;
+}
+
+/**
+ * Returns the proper SQL to know if one field is not empty.
+ *
+ * Note that the function behavior strongly relies on the
+ * parameters passed describing the field so, please,  be accurate
+ * when speciffying them.
+ *
+ * This function should be applied in all the places where conditions of
+ * the type:
+ *
+ *     ... AND fieldname != '';
+ *
+ * are being used. Final result should be:
+ *
+ *     ... AND ' . sql_isnotempty('tablename', 'fieldname', true/false, true/false);
+ *
+ * (see parameters description below)
+ * 
+ * @param string $tablename name of the table (without prefix). Not used for now but can be
+ *                          necessary in the future if we want to use some introspection using
+ *                          meta information against the DB. /// TODO ///
+ * @param string $fieldname name of the field we are going to check
+ * @param boolean $nullablefield to specify if the field us nullable (true) or no (false) in the DB
+ * @param boolean $textfield to specify if it is a text (also called clob) field (true) or a varchar one (false)
+ * @return string the sql code to be added to check for non empty values
+ */
+function sql_isnotempty($tablename, $fieldname, $nullablefield, $textfield) {
+
+    return '( NOT ' . sql_isempty($tablename, $fieldname, $nullablefield, $textfield) . ')';
+}
+
+/**
  * Returns the proper SQL to do IS NULL
  * @uses $CFG
  * @param string $fieldname The field to add IS NULL to
