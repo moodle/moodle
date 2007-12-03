@@ -227,11 +227,19 @@ class grade_report_grader extends grade_report {
 
         if ($this->sortitemid) {
             if (!isset($SESSION->gradeuserreport->sort)) {
-                $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
+                if ($this->sortitemid == 'firstname' || $this->sortitemid == 'lastname') {
+                    $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
+                } else {
+                    $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
+                }
             } else {
                 // this is the first sort, i.e. by last name
                 if (!isset($SESSION->gradeuserreport->sortitemid)) {
-                    $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
+                    if ($this->sortitemid == 'firstname' || $this->sortitemid == 'lastname') {
+                        $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';    
+                    } else {
+                        $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
+                    }
                 } else if ($SESSION->gradeuserreport->sortitemid == $this->sortitemid) {
                     // same as last sort
                     if ($SESSION->gradeuserreport->sort == 'ASC') {
@@ -240,7 +248,11 @@ class grade_report_grader extends grade_report {
                         $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
                     }
                 } else {
-                    $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
+                    if ($this->sortitemid == 'firstname' || $this->sortitemid == 'lastname') {
+                        $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
+                    } else {
+                        $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
+                    }
                 }
             }
             $SESSION->gradeuserreport->sortitemid = $this->sortitemid;
