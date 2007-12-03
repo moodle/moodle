@@ -45,7 +45,7 @@ class grade_export_form extends moodleform {
         $mform->addElement('select', 'previewrows', get_string('previewrows', 'grades'), $options); 
 
         $mform->addElement('advcheckbox', 'updatedgradesonly', get_string('updatedgradesonly', 'grades'));
-        
+
         /// selections for decimal points and format, MDL-11667, defaults to site settings, if set
         //$default_gradedisplaytype = $CFG->grade_export_displaytype;
         $options = array(GRADE_DISPLAY_TYPE_REAL       => get_string('real', 'grades'),
@@ -62,6 +62,15 @@ class grade_export_form extends moodleform {
         */
         $mform->addElement('select', 'display', get_string('gradeexportdisplaytype', 'grades'), $options);  
         $mform->setDefault('display', $CFG->grade_export_displaytype);
+        
+        $mform->addElement('advcheckbox', 'test1', 'Test 1', null, array('group' => 2));
+        $mform->addElement('advcheckbox', 'test2', 'Test 2', null, array('group' => 2));
+        $mform->addElement('selectallornone', 2);
+        $mform->addElement('advcheckbox', 'test3', 'Test 3', null, array('group' => 3));
+        $mform->addElement('advcheckbox', 'test4', 'Test 4', null, array('group' => 3));
+        $mform->addElement('selectallornone', 3, get_string("checkallornone"), array('style' => 'font-weight: bold;'), 1);
+        $mform->setDefault('test3', 1);
+        $mform->setDefault('test4', 1);
         
         //$default_gradedecimals = $CFG->grade_export_decimalpoints;
         $options = array(0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);
@@ -125,15 +134,20 @@ class grade_export_form extends moodleform {
             $total = $grade_items[1];
             unset($grade_items[1]);
             $grade_items[] = $total; 
+            $needs_multiselect = false;
             foreach ($grade_items as $grade_item) {
                 if (!empty($features['idnumberrequired']) and empty($grade_item->idnumber)) {
                     $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name(), get_string('noidnumber', 'grades'));
                     $mform->hardFreeze('itemids['.$grade_item->id.']');
-
                 } else {
-                    $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name());
+                    $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name(), null, array('group' => 1));
                     $mform->setDefault('itemids['.$grade_item->id.']', 1);
+                    $needs_multiselect = true;
                 }
+            }
+            
+            if ($needs_multiselect) {
+                $mform->addElement('selectallornone', 1, null, null, 1); // 2nd argument is group name, 3rd is link text, 4th is attributes and 5th is original value
             }
         }
 
