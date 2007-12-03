@@ -65,6 +65,10 @@
     require_once($CFG->libdir . '/xmlize.php');
 /**
  * Add a new field to a table, or modify an existing one (if oldfield is defined).
+ *
+ * WARNING: This function is deprecated and will be removed in future versions.
+ * Please use XMLDB (see http://docs.moodle.org/en/Development:DDL_functions ).
+ *
  * Warning: Please be careful on primary keys, as this function will eat auto_increments
  *
  * @uses $CFG
