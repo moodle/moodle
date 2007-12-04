@@ -1941,7 +1941,7 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
                             FROM {$CFG->prefix}log
                            WHERE userid = '$userid'
                              AND time > '$coursestart' $courseselect
-                        GROUP BY day ");
+                        GROUP BY floor((time - $coursestart)/". DAYSECS .") ");
 }
 
 /**
@@ -1968,7 +1968,7 @@ function get_logs_userday($userid, $courseid, $daystart) {
                             FROM {$CFG->prefix}log
                            WHERE userid = '$userid'
                              AND time > '$daystart' $courseselect
-                        GROUP BY hour ");
+                        GROUP BY floor((time - $daystart)/". HOURSECS .") ");
 }
 
 /**
