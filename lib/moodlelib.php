@@ -4873,6 +4873,7 @@ function places_to_search_for_lang_strings() {
         'datafield_' => array('mod/data/field'),
         'datapreset_' => array('mod/data/preset'),
         'enrol_' => array('enrol'),
+        'filter_' => array('filter'),
         'format_' => array('course/format'),
         'qtype_' => array('question/type'),
         'report_' => array($CFG->admin.'/report', 'course/report', 'mod/quiz/report'),
