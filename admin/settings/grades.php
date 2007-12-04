@@ -50,7 +50,7 @@ $ADMIN->add('grades', $temp);
 /// Grade category settings
 $temp = new admin_settingpage('gradecategorysettings', get_string('gradecategorysettings', 'grades'), 'moodle/grade:manage');
 
-$temp->add(new admin_setting_configcheckbox('grade_hideforcedsettings', get_string('hideforcedsettings', 'grades'), get_string('confighideforcedsettings', 'grades'), 0, PARAM_INT));
+$temp->add(new admin_setting_configcheckbox('grade_hideforcedsettings', get_string('hideforcedsettings', 'grades'), get_string('confighideforcedsettings', 'grades'), 1, PARAM_INT));
 
 $strnoforce = get_string('noforce', 'grades');
 
@@ -64,12 +64,12 @@ $options = array(GRADE_AGGREGATE_MEAN            =>get_string('aggregatemean', '
                  GRADE_AGGREGATE_MAX             =>get_string('aggregatemax', 'grades'),
                  GRADE_AGGREGATE_MODE            =>get_string('aggregatemode', 'grades'),
                  GRADE_AGGREGATE_SUM             =>get_string('aggregatesum', 'grades'));
-$defaults = array('value'=>GRADE_AGGREGATE_MEAN, 'forced'=>false, 'adv'=>false);
+$defaults = array('value'=>GRADE_AGGREGATE_WEIGHTED_MEAN, 'forced'=>false, 'adv'=>false);
 $temp->add(new admin_setting_gradecat_combo('grade_aggregation', get_string('aggregation', 'grades'), get_string('aggregationhelp', 'grades'), $defaults, $options));
 
 $options = array(0 => get_string('no'), 1 => get_string('yes'));
 
-$defaults = array('value'=>0, 'forced'=>false, 'adv'=>true);
+$defaults = array('value'=>1, 'forced'=>false, 'adv'=>true);
 $temp->add(new admin_setting_gradecat_combo('grade_aggregateonlygraded', get_string('aggregateonlygraded', 'grades'),
             get_string('aggregateonlygradedhelp', 'grades'), $defaults, $options));
 $temp->add(new admin_setting_gradecat_combo('grade_aggregateoutcomes', get_string('aggregateoutcomes', 'grades'),
@@ -82,8 +82,11 @@ for ($i=1; $i<=20; $i++) {
     $options[$i] = $i;
 }
 
+$defaults['value'] = 0;
+$defaults['forced'] = true;
 $temp->add(new admin_setting_gradecat_combo('grade_keephigh', get_string('keephigh', 'grades'),
             get_string('keephighhelp', 'grades'), $defaults, $options));
+$defaults['forced'] = false;
 $temp->add(new admin_setting_gradecat_combo('grade_droplow', get_string('droplow', 'grades'),
             get_string('droplowhelp', 'grades'), $defaults, $options));
 
