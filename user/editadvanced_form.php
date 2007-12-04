@@ -104,7 +104,7 @@ class user_editadvanced_form extends moodleform {
         profile_definition_after_data($mform);
     }
 
-    function validation($usernew) {
+    function validation($usernew, $files) {
         global $CFG;
 
         $usernew = (object)$usernew;
@@ -150,7 +150,7 @@ class user_editadvanced_form extends moodleform {
         }
 
         /// Next the customisable profile fields
-        $err += profile_validation($usernew);
+        $err += profile_validation($usernew, $files);
 
         if (count($err) == 0){
             return true;
