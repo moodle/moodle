@@ -56,8 +56,10 @@ $string['downloadlanguagehead'] = 'Scarica language pack';
 $string['downloadlanguagenotneeded'] = 'È possibile continuare l\'installazione utilizzando il language pack standard, \"$a\"';
 $string['environmenterrortodo'] = 'Dovete risolvere tutti i problemi relativi all\'ambiente (errori) trovati qui sopra prima di procedere con l\'installazione di questa versione di Moodle!';
 $string['environmenthead'] = 'Controllo del vostro sistema';
+$string['environmentrecommendcustomcheck'] = 'Se questo test non ha successo, esiste un potenziale problema.';
 $string['environmentrecommendinstall'] = 'è raccomandata l\'installazione/abilitazione';
 $string['environmentrecommendversion'] = 'è raccomandata la versione $a->needed e la vostra versione attuale è $a->current';
+$string['environmentrequirecustomcheck'] = 'questo test deve passare con successo';
 $string['environmentrequireinstall'] = 'è necessaria l\'installazione/abilitazione';
 $string['environmentrequireversion'] = 'è necessaria la versione $a->needed e la vostra versione attuale è $a->current';
 $string['environmentsub'] = 'Stiamo controllando se i diversi conponenti del vostro sistema coincidano con le richieste del sistema';
@@ -115,6 +117,8 @@ $string['phpversionhelp'] = '<p>Moodle richiede come minimo la versione 4.1.0 de
 <p>Attualmente state utilizzando la versione $a</p>
 <p>È necessario aggiornare il PHP o spostarsi su un server con una versione di PHP più recente!</p>';
 $string['previous'] = 'Precedente';
+$string['qtyperqpwillberemoved'] = 'Durante l\'aggiornamento, il tipo di domanda RQP sarà rimosso. Il sito non ha utilizzato tale tipo di domanda, per cui non si dovrebbe manifestare alcun problema.';
+$string['qtyperqpwillberemovedanyway'] = 'Durante l\'aggiornamento, il tipo di domanda RQP sarà rimosso. Il sito ha alcune domande RPQ nel database e queste non funzioneranno più a meno di reinstallare il codice da http://moodle.org/mod/data/view.php?d=13&amp;rid=797 prima di continuare con l\'aggiornamento.';
 $string['remotedownloadnotallowed'] = 'Non è permesso scaricare i componenti su vostro server (allow_url_fopen è disabilitato). <br /><br /> È necessario scaricare manualmente il file <a href=\"$a->url\">$a->url</a>, copiarlo in \"$a->dest\" sul vostro server e scompattarlo la.';
 $string['report'] = 'Rapporto';
 $string['restricted'] = 'Ridotto';
