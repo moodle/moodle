@@ -775,7 +775,7 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
                 FROM
                     {$CFG->prefix}role_assignments ra
                     INNER JOIN {$CFG->prefix}context x ON x.id = ra.contextid
-                    INNER JOIN {$CFG->prefix}course_categories a ON a.path LIKE ".sql_concat("'%/'", 'x.instanceid', "'/%'")." OR x.instanceid = a.id
+                    INNER JOIN {$CFG->prefix}course_categories a ON a.path LIKE ".sql_concat("'%/'", 'CAST(x.instanceid AS varchar(10))', "'/%'")." OR x.instanceid = a.id
                     INNER JOIN {$CFG->prefix}course c ON c.category = a.id
                 WHERE
                     ra.userid = $userid AND
