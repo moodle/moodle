@@ -2750,8 +2750,8 @@ function assignment_print_overview($courses, &$htmlarray) {
             $submissions = 0; // init
             if ($students = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', 0, '', false)) {
                  foreach ($students as $student) {
-                    if (get_records_sql("SELECT id,id FROM {$CFG->prefix}assignment_submissions
-                                         WHERE assignment = $assignment->id AND
+                    if (record_exists_sql("SELECT id FROM {$CFG->prefix}assignment_submissions
+                                           WHERE assignment = $assignment->id AND
                                                userid = $student->id AND
                                                teacher = 0 AND
                                                timemarked = 0")) {
