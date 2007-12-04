@@ -702,10 +702,12 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
  * @return mixed mixed an array of objects, or false if an error occured or the RecordSet was empty.
  */
 function recordset_to_array($rs) {
-
     global $CFG;
 
+    $debugging = debugging('', DEBUG_DEVELOPER);
+
     if ($rs && !rs_EOF($rs)) {
+        $objects = array();
     /// First of all, we are going to get the name of the first column
     /// to introduce it back after transforming the recordset to assoc array
     /// See http://docs.moodle.org/en/XMLDB_Problems, fetch mode problem.
@@ -720,6 +722,9 @@ function recordset_to_array($rs) {
                 }
             /// End of DIRTY HACK
                 $record[$firstcolumn->name] = $key;/// Re-add the assoc field
+                if ($debugging && array_key_exists($key, $objects)) {
+                    debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$key' found in column '$firstcolumn'.", DEBUG_DEVELOPER);
+                }
                 $objects[$key] = (object) $record; /// To object
             }
             return $objects;
@@ -732,6 +737,9 @@ function recordset_to_array($rs) {
                     array_walk($record, 'onespace2empty');
                 }
             /// End of DIRTY HACK
+                if ($debugging && array_key_exists($record[$firstcolumn->name], $objects)) {
+                    debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$key' found in column '$firstcolumn'.", DEBUG_DEVELOPER);
+                }
                 $objects[$record[$firstcolumn->name]] = (object) $record; /// The key is the first column value (like Assoc)
             }
             return $objects;
