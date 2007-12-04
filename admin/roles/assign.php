@@ -95,7 +95,10 @@
     $today = time();
     $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
 
-    $basemenu[0] = get_string('startdate') . ' (' . userdate($course->startdate, $timeformat) . ')';
+    // MDL-12420, preventing course start date showing up as an option at system context and front page roles.
+    if ($course->startdate != 0) {
+        $basemenu[0] = get_string('startdate') . ' (' . userdate($course->startdate, $timeformat) . ')';
+    }
     if ($course->enrollable != 2 || ($course->enrolstartdate == 0 || $course->enrolstartdate <= $today) && ($course->enrolenddate == 0 || $course->enrolenddate > $today)) {
         $basemenu[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
     }
