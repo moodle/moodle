@@ -49,7 +49,7 @@ if ($CFG->debug >= DEBUG_ALL){
 
 /**
  * Moodle specific wrapper that separates quickforms syntax from moodle code. You won't directly
- * use this class you should write a class defintion which extends this class or a more specific
+ * use this class you should write a class definition which extends this class or a more specific
  * subclass such a moodleform_mod for each form you want to display and/or process with formslib.
  *
  * You will write your own definition() method which performs the form set up.
@@ -618,6 +618,79 @@ class moodleform {
 
         return $repeats;
     }
+
+    /**
+     * Adds a link/button that controls the checked state of a group of checkboxes.
+     * @param int    $groupid The id of the group of advcheckboxes this element controls
+     * @param string $text The text of the link. Defaults to "select all/none"
+     * @param array  $attributes associative array of HTML attributes
+     * @param int    $originalValue The original general state of the checkboxes before the user first clicks this element
+     */
+    function add_checkbox_controller($groupid, $buttontext, $attributes, $originalValue = 0) { 
+        global $CFG;
+        if (empty($text)) {
+            $text = get_string('selectallornone', 'form');
+        }
+
+        $mform = $this->_form;
+        $select_value = optional_param('checkbox_controller'. $groupid, null, PARAM_INT);
+
+        if ($select_value == 0 || is_null($select_value)) {
+            $new_select_value = 1;
+        } else {
+            $new_select_value = 0;
+        }
+
+        $mform->addElement('hidden', "checkbox_controller$groupid");
+        $mform->setConstants(array("checkbox_controller$groupid" => $new_select_value));
+        
+        // Locate all checkboxes for this group and set their value, IF the optional param was given
+        if (!is_null($select_value)) {
+            foreach ($this->_form->_elements as $element) {
+                if ($element->getAttribute('class') == "checkboxgroup$groupid") {
+                    $mform->setConstants(array($element->getAttribute('name') => $select_value));
+                }
+            }
+        }
+
+        $checkbox_controller_name = 'nosubmit_checkbox_controller' . $groupid;
+        $mform->registerNoSubmitButton($checkbox_controller_name);
+        
+        // Prepare Javascript for submit element
+        $js = "\n//<![CDATA[\n";
+        if (!defined('HTML_QUICKFORM_CHECKBOXCONTROLLER_EXISTS')) {
+            $js .= <<<EOS
+function html_quickform_toggle_checkboxes(group) {
+    var checkboxes = getElementsByClassName(document, 'input', 'checkboxgroup' + group);
+    var newvalue = false;
+    var global = eval('html_quickform_checkboxgroup' + group + ';');
+    if (global == 1) {
+        eval('html_quickform_checkboxgroup' + group + ' = 0;'); 
+        newvalue = '';
+    } else {
+        eval('html_quickform_checkboxgroup' + group + ' = 1;'); 
+        newvalue = 'checked';
+    }
+
+    for (i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = newvalue; 
+    }
+}
+EOS;
+            define('HTML_QUICKFORM_CHECKBOXCONTROLLER_EXISTS', true);
+        }
+        $js .= "\nvar html_quickform_checkboxgroup$groupid=$originalValue;\n";
+        
+        $js .= "//]]>\n";
+        
+        require_once("$CFG->libdir/form/submitlink.php");
+        $submitlink = new MoodleQuickForm_submitlink($checkbox_controller_name, $attributes);
+        $submitlink->_js = $js;
+        $submitlink->_onclick = "html_quickform_toggle_checkboxes($groupid); return false;";
+        $mform->addElement($submitlink); 
+        $mform->setDefault($checkbox_controller_name, $text);
+    }
+
     /**
      * Use this method to a cancel and submit button to the end of your form. Pass a param of false
      * if you don't want a cancel button in your form. If you have a cancel button make sure you
@@ -649,7 +722,7 @@ class moodleform {
 
 /**
  * You never extend this class directly. The class methods of this class are available from
- * the private $this->_form property on moodleform and it's children. You generally only
+ * the private $this->_form property on moodleform and its children. You generally only
  * call methods on this class from within abstract methods that you override on moodleform such
  * as definition and definition_after_data
  *
@@ -1786,7 +1859,7 @@ MoodleQuickForm::registerElementType('passwordunmask', "$CFG->libdir/form/passwo
 MoodleQuickForm::registerElementType('radio', "$CFG->libdir/form/radio.php", 'MoodleQuickForm_radio');
 MoodleQuickForm::registerElementType('select', "$CFG->libdir/form/select.php", 'MoodleQuickForm_select');
 MoodleQuickForm::registerElementType('selectgroups', "$CFG->libdir/form/selectgroups.php", 'MoodleQuickForm_selectgroups');
-MoodleQuickForm::registerElementType('selectallornone', "$CFG->libdir/form/selectallornone.php", 'MoodleQuickForm_selectallornone');
+MoodleQuickForm::registerElementType('submitlink', "$CFG->libdir/form/submitlink.php", 'MoodleQuickForm_submitlink');
 MoodleQuickForm::registerElementType('text', "$CFG->libdir/form/text.php", 'MoodleQuickForm_text');
 MoodleQuickForm::registerElementType('textarea', "$CFG->libdir/form/textarea.php", 'MoodleQuickForm_textarea');
 MoodleQuickForm::registerElementType('date_selector', "$CFG->libdir/form/dateselector.php", 'MoodleQuickForm_date_selector');

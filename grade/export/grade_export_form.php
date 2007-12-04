@@ -138,13 +138,13 @@ class grade_export_form extends moodleform {
                 }
             
             if ($needs_multiselect) {
-                $mform->addElement('selectallornone', 1, null, null, 1); // 2nd argument is group name, 3rd is link text, 4th is attributes and 5th is original value
+                $this->add_checkbox_controller(1, null, null, 1); // 1st argument is group name, 2nd is link text, 3rd is attributes and 4th is original value
             }
         }
 
         $mform->addElement('hidden', 'id', $COURSE->id);
-
         $this->add_action_buttons(false, get_string('submit'));
+
     }
 }
 ?>

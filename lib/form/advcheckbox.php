@@ -46,13 +46,6 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
         
         if (!is_null($attributes['group'])) {
         
-            $select_value = optional_param('select'. $attributes['group'], null, PARAM_INT);
-            if ($select_value == 1) {
-                $this->setValue(1);
-            } elseif ($select_value == 0) {
-                $this->setValue(0);
-            }
-            
             $this->_group = 'checkboxgroup' . $attributes['group'];
             unset($attributes['group']);
             if (is_null($attributes)) {
