@@ -4720,10 +4720,10 @@ function build_context_path($force=false, $feedback=false) {
         $updatesql = "UPDATE {$CFG->prefix}context ct
                          SET (ct.path, ct.depth) =
                              (SELECT temp.path, temp.depth
-                                FROM {$CFG->prefix}$temptable temp
+                                FROM {$CFG->prefix}context_temp temp
                                WHERE temp.id=ct.id)
                        WHERE EXISTS (SELECT 'x'
-                                       FROM {$CFG->prefix}$temptable temp
+                                       FROM {$CFG->prefix}context_temp temp
                                        WHERE temp.id = ct.id)";
     } else {
         $updatesql = "UPDATE {$CFG->prefix}context
