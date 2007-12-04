@@ -68,7 +68,6 @@ class block_course_list extends block_list {
                     $this->content->items[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">" . format_string($category->name) . "</a>";
                     $this->content->icons[]=$icon;
                 }
-                $this->content->footer .= "<a href=\"$CFG->wwwroot/course/index.php\">".get_string('searchcourses').'</a> ...<br />';
             /// If we can update any course of the view all isn't hidden, show the view all courses link
                 if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) || empty($CFG->block_course_list_hideallcourseslink)) {
                     $this->content->footer .= "<a href=\"$CFG->wwwroot/course/index.php\">".get_string('fulllistofcourses').'</a> ...';
