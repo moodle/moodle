@@ -225,7 +225,7 @@
             }
             // $enstring = English strings distributed either in the core space or in plugin space
             include($enfilepath);
-            $enstring = $string;
+            $enstring = isset($string) ? $string : array();
             unset($string);
             ksort($enstring);
             
@@ -234,7 +234,7 @@
             if (file_exists($lcfilepath)) {
                 include($lcfilepath);
                 $localfileismissing = 0;
-                if (is_array($string)) {
+                if (isset($string) && is_array($string)) {
                     $lcstring = $string;
                 }
                 unset($string);
@@ -519,9 +519,9 @@
             
             unset($string);
             include($enfilepath);
-            $enstring = $string;
+            $enstring = isset($string) ? $string : array();
             //
-            // TODO/FIXME: IMHO following should not be here as the strings have moved into langconfig.php -- mudrd8mz
+            // Following strings have moved into langconfig.php, but keep the here for backward compatibility
             //
             if ($currentlang != 'en' and $currentfile == 'moodle.php') {
                 $enstring['thislanguage'] = "<< TRANSLATORS: Specify the name of your language here.  If possible use Unicode Numeric Character References >>";
