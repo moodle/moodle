@@ -41,8 +41,15 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 require_capability('gradereport/grader:view', $context);
 
+require('preferences_form.php');
+$mform = new grader_report_preferences_form('preferences.php', compact('course'));
+
+if ($mform->is_cancelled()){
+    redirect($CFG->wwwroot . '/grade/report/grader/index.php?id='.$courseid);
+}
+
 // If data submitted, then process and store.
-if ($data = data_submitted()) {
+if ($data = $mform->get_data()) {
     foreach ($data as $preference => $value) {
         if (substr($preference, 0, 6) !== 'grade_') {
             continue;
@@ -84,9 +91,7 @@ if (has_capability('moodle/site:config', $systemcontext)) {
 
 print_simple_box_start("center");
 
-require('preferences_form.php');
-$mform = new grader_report_preferences_form('preferences.php', compact('course'));
-echo $mform->display();
+$mform->display();
 print_simple_box_end();
 
 print_footer($course);
