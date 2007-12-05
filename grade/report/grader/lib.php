@@ -303,7 +303,8 @@ class grade_report_grader extends grade_report {
             } elseif ($this->sortitemid == 'firstname') {
                 $sort2 = ', u.lastname ' . $this->sortorder;
             }
-            $this->users = get_role_users($this->gradebookroles, $this->context, false,
+            $roles = explode(',', $this->gradebookroles);
+            $this->users = get_role_users($roles, $this->context, false,
                             'u.id, u.firstname, u.lastname', 'u.'.$this->sortitemid .' '. $this->sortorder . $sort2,
                             false, $this->currentgroup, $this->page * $this->get_pref('studentsperpage'), $this->get_pref('studentsperpage'));
 

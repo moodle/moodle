@@ -4343,7 +4343,7 @@ function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.l
 
     if (is_array($roleid)) {
         $roleselect = ' AND ra.roleid IN (' . implode(',',$roleid) .')';
-    } elseif (is_int($roleid)) {
+    } elseif (!empty($roleid)) { // should not test for int, because it can come in as a string
         $roleselect = "AND ra.roleid = $roleid";
     } else {
         $roleselect = '';
