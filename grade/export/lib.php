@@ -220,13 +220,13 @@ class grade_export {
         $gui->init();
         while ($userdata = $gui->next_user()) {
             // number of preview rows
-            if ($this->previewrows and $this->previewrows < ++$i) {
+            if ($this->previewrows and $this->previewrows <= $i) {
                 break;
             }
             $user = $userdata->user;
-
-            echo '<tr>';
-            echo "<td>$user->firstname</td><td>$user->lastname</td><td>$user->idnumber</td><td>$user->institution</td><td>$user->department</td><td>$user->email</td>";
+            
+            $gradeupdated = false; // if no grade is update at all for this user, do not display this row
+            $rowstr = '';
             foreach ($this->columns as $itemid=>$unused) {
                 $gradetxt = $this->format_grade($userdata->grades[$itemid]);
                 
@@ -236,16 +236,28 @@ class grade_export {
                 $status = $g->track($grade_grade);
 
                 if ($this->updatedgradesonly && ($status == 'nochange' || $status == 'unknown')) {
-                    echo '<td>'.get_string('unchangedgrade', 'grades').'</td>';
+                    $rowstr .= '<td>'.get_string('unchangedgrade', 'grades').'</td>';
                 } else {
-                    echo "<td>$gradetxt</td>";
+                    $rowstr .= "<td>$gradetxt</td>";
+                    $gradeupdated = true;
                 }
                 
                 if ($this->export_feedback) {
-                    echo '<td>'.$this->format_feedback($userdata->feedbacks[$itemid]).'</td>';
+                    $rowstr .=  '<td>'.$this->format_feedback($userdata->feedbacks[$itemid]).'</td>';
                 }
             }
+
+            // if we are requesting updated grades only, we are not interested in this user at all            
+            if (!$gradeupdated && $this->updatedgradesonly) {
+                continue; 
+            }
+
+            echo '<tr>';
+            echo "<td>$user->firstname</td><td>$user->lastname</td><td>$user->idnumber</td><td>$user->institution</td><td>$user->department</td><td>$user->email</td>";           
+            echo $rowstr;
             echo "</tr>";
+            
+            $i++; // increment the counter
         }
         echo '</table>';
         $gui->close();
