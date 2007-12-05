@@ -2070,10 +2070,11 @@ class PresetImporter {
 
         // existing valuas MUST be sent too - it can not work without them!
         foreach ($this->data as $prop=>$unused) {
-            if (array_key_exists($prop, $settings)) {
-                $this->$prop = $settings->$prop;
+            if (array_key_exists($prop, (array)$settings)) {
+                $this->data->$prop = $settings->$prop;
             }
         }
+
         data_update_instance(addslashes_object($this->data));
 
         if (strstr($this->folder, '/temp/')) clean_preset($this->folder); /* Removes the temporary files */
