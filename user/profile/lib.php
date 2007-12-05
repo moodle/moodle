@@ -384,7 +384,7 @@ function profile_display_fields($userid) {
 function profile_signup_fields(&$mform) {
     global $CFG;
     
-    if ($fields = get_records('user_info_field', 'signup', 1)) {
+    if ($fields = get_records('user_info_field', 'signup', 1, 'sortorder ASC')) {
         foreach ($fields as $field) {
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
             $newfield = 'profile_field_'.$field->datatype;
