@@ -10,7 +10,6 @@ require_once('lib.php');
 require_once($CFG->libdir.'/uploadlib.php');
 require_once($CFG->libdir.'/xmlize.php');
 
-
 $id       = optional_param('id', 0, PARAM_INT);    // course module id
 $d        = optional_param('d', 0, PARAM_INT);     // database activity id
 $action   = optional_param('action', 'base', PARAM_ALPHANUM); // current action
@@ -203,8 +202,6 @@ switch ($action) {
         echo '</div>';
         break;
 
-
-
         /***************** Exporting *****************/
     case 'save1':
         if (!data_submitted() or !confirm_sesskey()) {
@@ -319,24 +316,19 @@ $options->d = $data->id;
 $options->sesskey = sesskey();
 print_single_button('preset.php', $options, $strsave, 'post');
 echo '</td></tr>';
-
-
 echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strimport.'</h3></td></tr>';
-
 echo '<tr><td><label for="fromfile">'.$strfromfile.'</label>';
 helpbutton('importfromfile', '', 'data');
 echo '</td><td>';
-
 echo '<form id="uploadpreset" method="post" action="preset.php">';
 echo '<fieldset class="invisiblefieldset">';
 echo '<input type="hidden" name="d" value="'.$data->id.'" />';
 echo '<input type="hidden" name="action" value="importzip" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-echo '<input name="file" size="20" value="" id="fromfile" type="text" /><input name="coursefiles" value="'.$strchooseorupload.'" onclick="return openpopup('."'/files/index.php?id=2&amp;choose=uploadpreset.file', 'coursefiles', 'menubar=0,location=0,scrollbars,resizable,width=750,height=500', 0".');" type="button" />';
+echo '<input name="file" size="20" value="" id="fromfile" type="text" /><input name="coursefiles" value="'.$strchooseorupload.'" onclick="return openpopup('."'/files/index.php?id={$course->id}&amp;choose=uploadpreset.file', 'coursefiles', 'menubar=0,location=0,scrollbars,resizable,width=750,height=500', 0".');" type="button" />';
 echo '<input type="submit" value="'.$strimport.'" />';
 echo '</fieldset></form>';
 echo '</td></tr>';
-
 
 echo '<tr valign="top"><td><label>'.$strusestandard.'</label>';
 helpbutton('usepreset', '', 'data');
@@ -380,8 +372,5 @@ echo '</table>';
 echo '</div>';
 
 print_footer($course);
-
-
-
 
 ?>
