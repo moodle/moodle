@@ -24,7 +24,7 @@ function get_text_for_indexing_doc(&$resource){
             mtrace('Error with MSWord to text converter command : exectuable not found.');
         }
         else{
-            $file = $CFG->dataroot.'/'.$resource->course.'/'.$resource->reference;
+            $file = escapeshellarg($CFG->dataroot.'/'.$resource->course.'/'.$resource->reference);
             $text_converter_cmd = "{$CFG->dirroot}/{$CFG->block_search_word_to_text_cmd} $file";
             if ($CFG->block_search_word_to_text_env){
                 putenv($CFG->block_search_word_to_text_env);

@@ -21,7 +21,7 @@ function get_text_for_indexing_pdf(&$resource){
             mtrace('Error with pdf to text converter command : exectuable not found.');
         }
         else{
-            $file = $CFG->dataroot.'/'.$resource->course.'/'.$resource->reference;
+            $file = escapeshellarg($CFG->dataroot.'/'.$resource->course.'/'.$resource->reference);
             $text_converter_cmd = "{$CFG->dirroot}/{$CFG->block_search_pdf_to_text_cmd} $file -";
             $result = shell_exec($text_converter_cmd);
             if ($result){
