@@ -38,7 +38,7 @@
 /// GLOBAL CONSTANTS /////////////////////////////////////////////////////////
 
 $empty_rs_cache = array();   // Keeps copies of the recordsets used in one invocation
-$metadata_cache = array();   // Keeps copies of the MetaColumns() for each table used in one invocations
+$metadata_cache = array();   // Kereeps copies of the MetaColumns() for each table used in one invocations
 
 $rcache = new StdClass;      // Cache simple get_record results
 $rcache->data   = array();
@@ -723,7 +723,7 @@ function recordset_to_array($rs) {
             /// End of DIRTY HACK
                 $record[$firstcolumn->name] = $key;/// Re-add the assoc field
                 if ($debugging && array_key_exists($key, $objects)) {
-                    debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$key' found in column '$firstcolumn'.", DEBUG_DEVELOPER);
+                    debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$key' found in column '".$firstcolumn->name."'.", DEBUG_DEVELOPER);
                 }
                 $objects[$key] = (object) $record; /// To object
             }
@@ -738,7 +738,7 @@ function recordset_to_array($rs) {
                 }
             /// End of DIRTY HACK
                 if ($debugging && array_key_exists($record[$firstcolumn->name], $objects)) {
-                    debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$key' found in column '$firstcolumn'.", DEBUG_DEVELOPER);
+                    debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '".$record[$firstcolumn->name]."' found in column '".$firstcolumn->name."'.", DEBUG_DEVELOPER);
                 }
                 $objects[$record[$firstcolumn->name]] = (object) $record; /// The key is the first column value (like Assoc)
             }
