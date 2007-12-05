@@ -578,16 +578,16 @@ if ($info->backup_moodle_version < 2006092801) {
         }
 
         foreach ($roles->roles as $roleid=>$role) {
-         
+
             $mappableroles = $siteroleschoicearray;
-         
+
             echo ('<tr><td align="right">');
             echo $role->name." (".($role->shortname).")";
             echo ('</td><td align="left">');
 
             /// first, we see if any exact role definition is found
             /// if found, that is the only option of restoring to
-            
+
             if ($samerole = restore_samerole($roleid, $role)) {
                 $matchrole = $samerole->id;
                 // if an exact role is found, it does not matter whether this user can assign this role or not,
@@ -627,56 +627,77 @@ echo ('</table>'); // end of role mappings table
 
 <?php
 
-/* 
- * If there is a role with exactly the same definition, we pull it out from db
+/**
+ * Look for a role in the database with exactly the same definition as the one in the backup file.
+ * 
+ * @param integer $roleid the id that the role in the backup files had on the old server.
+ * @param object $role the rest of the definition of the role from the backup file. 
  */
-function restore_samerole($roleid, $role) {
+function restore_samerole($roleid, $rolefromxml) {
     global $CFG;
-    
-    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-    // first let's use the id
 
-    if ($trole = get_records_sql("SELECT roleid,capability,permission
-                                   FROM {$CFG->prefix}role_capabilities
-                                   WHERE roleid = $roleid")) {
-        
-        if (restore_is_samerole($trole, $role)) {
-            $firstcap = array_shift($trole);
-            return get_record('role', 'id', $firstcap->roleid); 
-        } 
-    }   
-    
-    // unfortunately then we have to loop all roles with the same number of capabiltiies
-    if ($proles = get_records_sql("SELECT roleid, roleid
-                                   FROM {$CFG->prefix}role_capabilities
-                                   GROUP BY roleid
-                                   HAVING COUNT(capability) = ".count($role->capabilities))) {                    
-        foreach ($proles as $proleid=>$proleobj) {
-            if ($prole = get_records('role_capabilities', 'roleid', $proleid)) {
-                if (restore_is_samerole($prole, $role)) {
-                    return get_record('role', 'id', $proleid); 
-                }
-            }       
-        }                               
+    // First we try some intelligent guesses, then, if none of those work, we do a more extensive
+    // search.
+
+    // First guess, try let's use the id
+    if (restore_is_samerole($roleid, $rolefromxml)) {
+        return get_record('role', 'id', $roleid); 
     }
- 
+
+    // Second guess, try the shortname
+    $testroleid = get_field('role', 'id', 'shortname', $rolefromxml->shortname);
+    if ($testroleid && restore_is_samerole($testroleid, $rolefromxml)) {
+        return get_record('role', 'id', $testroleid); 
+    }
+
+    // Finally, search all other roles. In orter to speed things up, we exclude the ones we have
+    // already tested, and we only search roles with the same number of capabilities set in their
+    // definition.
+    $extracondition = '';
+    if ($testroleid) {
+        $extracondition = "AND roleid <> $testroleid";
+    }
+    $candidateroleids = get_records_sql("SELECT roleid
+           FROM {$CFG->prefix}role_capabilities
+           WHERE roleid <> $roleid $extracondition
+           GROUP BY roleid
+           HAVING COUNT(capability) = ".count($rolefromxml->capabilities));
+    if (!empty($candidateroleids)) {
+        foreach ($candidateroleids as $testroleid => $notused) {
+            if (restore_is_samerole($testroleid, $rolefromxml)) {
+                return get_record('role', 'id', $testroleid);
+            }
+        }
+    }
+
     return false;
 }
 
-/* 
- * rolea from db, roleb from xml
+/**
+ * Compare a role in the database with one loaded from the backup file, and determine whether
+ * they have identical permissions for each capability.
+ * @param integer $testroleid the id of the role from the database to test against.
+ * @param object $rolefromxml the role definition loaded from the backup file.
+ * @return boolean true if the two roles are identical.
  */
-function restore_is_samerole($rolea, $roleb) {
-  
-    if (count($rolea) != count($roleb->capabilities)) {
-        return false; 
+function restore_is_samerole($testroleid, $rolefromxml) {
+    // Load the role definition from the databse.
+    $rolefromdb = get_records('role_capabilities', 'roleid', $testroleid, '', 'capability,permission'); 
+    if (!$rolefromdb) {
+        return false;
     }
-    
-    foreach ($rolea as $cap) {
-        if (isset($roleb->capabilities[$cap->capability]) &&
-                $cap->permission != $roleb->capabilities[$cap->capability]->permission) {
-            return false; 
-        }     
+
+    // Quick check, do they have the permissions on the same number of capabilities?
+    if (count($rolefromdb) != count($rolefromxml->capabilities)) {
+        return false;
+    }
+
+    // If they do, check each one.
+    foreach ($rolefromdb as $capability => $permissions) {
+        if (!isset($rolefromxml->capabilities[$capability]) ||
+                $permissions->permission != $rolefromxml->capabilities[$capability]->permission) {
+            return false;
+        }
     }
     return true;
 }
