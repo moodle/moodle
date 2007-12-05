@@ -4177,11 +4177,17 @@ function get_default_course_role($course) {
 
 
 /**
- * who has this capability in this context
- * does not handling user level resolving!!!
- * (!)pleaes note if $fields is empty this function attempts to get u.*
- * which can get rather large.
- * i.e 1 person has 2 roles 1 allow, 1 prevent, this will not work properly
+ * This function is supposed to return a list of all the users who have a particular capability in
+ * a particular context.
+ *
+ * However, at the moment it is buggy. For example it does not resolve conflicting capabilities
+ * properly - that is if a person has 2 roles, one with allow and one with prevent, they
+ * will incorrectly be included. In pracitce, this very rarely occurrs, so using this function is
+ * still the best things you can do, and hopefully one day it will be fixed.
+ *
+ * Pleaes note if you do not pass in $fields, then this function attempts to get u.*
+ * which can be rather large.
+ *
  * @param $context - object
  * @param $capability - string capability
  * @param $fields - fields to be pulled
@@ -4207,7 +4213,8 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     global $CFG;
 
 /// check for front page course, and see if default front page role has the required capability
-    
+
+    // TODO This bit will break if $fields, $sort or sort are not passed in, and also it ignores $exceptions. There may be other problems too.
     $frontpagectx = get_context_instance(CONTEXT_COURSE, SITEID);
     if (!empty($CFG->defaultfrontpageroleid) && ($context->id == $frontpagectx->id || strstr($context->path, '/'.$frontpagectx->id.'/'))) {
         $roles = get_roles_with_capability($capability, CAP_ALLOW, $context);
