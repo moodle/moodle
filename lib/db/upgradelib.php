@@ -131,7 +131,7 @@ function upgrade_18_gradebook($courseid) {
     $course_category->courseid     = $courseid;
     $course_category->fullname     = get_string('coursegradecategory', 'grades');
     $course_category->parent       = null;
-    $course_category->aggregation  = GRADE_AGGREGATE_MEAN;
+    $course_category->aggregation  = GRADE_AGGREGATE_WEIGHTED_MEAN2;
     $course_category->timemodified = $course_category->timecreated = time();
     if (!$course_category->id = insert_record('grade_categories', $course_category)) {
         return false;
@@ -173,7 +173,7 @@ function upgrade_18_gradebook($courseid) {
             $category->fullname     = addslashes($oldcat->name);
             $category->parent       = $course_category->id;
             $category->droplow      = $oldcat->drop_x_lowest;
-            $category->aggregation  = GRADE_AGGREGATE_MEAN;
+            $category->aggregation  = GRADE_AGGREGATE_WEIGHTED_MEAN2;
             $category->timemodified = $category->timecreated = time();
             if (!$category->id = insert_record('grade_categories', $category)) {
                 return false;
@@ -205,7 +205,7 @@ function upgrade_18_gradebook($courseid) {
             }
         }
 
-        $course_category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN;
+        $course_category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN2;
         update_record('grade_categories', $course_category);
     }
     unset($oldcats);
