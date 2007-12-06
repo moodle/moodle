@@ -69,9 +69,10 @@ $temp->add(new admin_setting_gradecat_combo('grade_aggregation', get_string('agg
 
 $options = array(0 => get_string('no'), 1 => get_string('yes'));
 
-$defaults = array('value'=>1, 'forced'=>false, 'adv'=>true);
+$defaults = array('value'=>0, 'forced'=>false, 'adv'=>true);
 $temp->add(new admin_setting_gradecat_combo('grade_aggregateonlygraded', get_string('aggregateonlygraded', 'grades'),
             get_string('aggregateonlygradedhelp', 'grades'), $defaults, $options));
+$defaults['value'] = 1;
 $temp->add(new admin_setting_gradecat_combo('grade_aggregateoutcomes', get_string('aggregateoutcomes', 'grades'),
             get_string('aggregateoutcomeshelp', 'grades'), $defaults, $options));
 $temp->add(new admin_setting_gradecat_combo('grade_aggregatesubcats', get_string('aggregatesubcats', 'grades'),
