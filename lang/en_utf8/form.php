@@ -35,4 +35,6 @@ $string['showadvanced']='Show Advanced';
 $string['timing'] = 'Timing';
 $string['security'] = 'Security';
 $string['display'] = 'Display';
+
+$string['selectallornone'] = 'Select all/none';
 ?>
