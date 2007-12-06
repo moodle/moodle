@@ -904,7 +904,7 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
                         if ($oldid) {
                             backup_putid ($restore->backup_unique_code,"block_instance",$oldid,$instance->id);
                         }
-                        $restore->blockinstanceids[] = $newid;
+                        $restore->blockinstanceids[] = $instance->id;
                     } else {
                         $status = false;
                         break;
