@@ -109,6 +109,7 @@ function xmldb_block_search_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2007112700) {
     
+    /*
     /// Truncate the block_search_documents table
         execute_sql("TRUNCATE TABLE {$CFG->prefix}block_search_documents", true);
     
@@ -127,6 +128,37 @@ function xmldb_block_search_upgrade($oldversion=0) {
 
     /// Launch change of type for field updated
         $result = $result && change_field_type($table, $field);
+    */    
+        
+        
+    /// MDL-12352, postgres can not cope with change_field_type(), so dropping the fields and adding again
+    
+    /// Define field docdate to be dropped from block_search_documents
+        $table = new XMLDBTable('block_search_documents');
+        $field = new XMLDBField('docdate');
+
+    /// Launch drop field docdate
+        $result = $result && drop_field($table, $field);
+        
+    /// Define field updated to be dropped from block_search_documents
+        $field = new XMLDBField('updated');
+
+    /// Launch drop field updated
+        $result = $result && drop_field($table, $field);
+
+    /// Define field docdate to be added to block_search_documents
+        $field = new XMLDBField('docdate');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'url');
+
+    /// Launch add field docdate
+        $result = $result && add_field($table, $field);      
+        
+    /// Define field updated to be added to block_search_documents
+        $field = new XMLDBField('updated');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'docdate');
+
+    /// Launch add field updated
+        $result = $result && add_field($table, $field);  
     }
     
     return $result;
