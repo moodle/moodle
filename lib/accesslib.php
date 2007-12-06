@@ -4212,14 +4212,26 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         $view=false, $useviewallgroups=false) {
     global $CFG;
 
-/// check for front page course, and see if default front page role has the required capability
+/// Sorting out exceptions
+    $exceptionsql = $exceptions ? "AND u.id NOT IN ($exceptions)" : '';
 
-    // TODO This bit will break if $fields, $sort or sort are not passed in, and also it ignores $exceptions. There may be other problems too.
+/// check for front page course, and see if default front page role has the required capability
+/// if it does, we can just return all users, and we do not need to check further, just return all users
+
     $frontpagectx = get_context_instance(CONTEXT_COURSE, SITEID);
     if (!empty($CFG->defaultfrontpageroleid) && ($context->id == $frontpagectx->id || strstr($context->path, '/'.$frontpagectx->id.'/'))) {
+        
         $roles = get_roles_with_capability($capability, CAP_ALLOW, $context);
+        // if this condition is satisfied, then everyone is selected, no need to check further
         if (in_array($CFG->defaultfrontpageroleid, array_keys($roles))) {
-            return get_records_sql("SELECT $fields FROM {$CFG->prefix}user u ORDER BY $sort", $limitfrom, $limitnum); 
+            if (empty($fields)) {
+                $fields = 'u.*';
+            }
+        
+            if (empty($sort)) {
+                $sort = 'u.lastaccess';
+            }
+            return get_records_sql("SELECT $fields FROM {$CFG->prefix}user u $exceptionsql ORDER BY $sort", $limitfrom, $limitnum); 
         }
     }
 
@@ -4244,9 +4256,6 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     } else {
         $groupsql = '';
     }
-
-/// Sorting out exceptions
-    $exceptionsql = $exceptions ? "AND u.id NOT IN ($exceptions)" : '';
 
 /// Set up default fields
     if (empty($fields)) {
