@@ -589,9 +589,7 @@ class page_generic_activity extends page_base {
         if(empty($this->activityname)) {
             error('Page object derived from page_generic_activity but did not define $this->activityname');
         }
-        $module = get_record('modules', 'name', $this->activityname);
-        $this->modulerecord = get_record('course_modules', 'module', $module->id, 'instance', $this->id);
-        if(empty($this->modulerecord)) {
+        if (!$this->modulerecord = get_coursemodule_from_instance($this->activityname, $this->id)) {
             error('Cannot fully initialize page: invalid '.$this->activityname.' instance id '. $this->id);
         }
         $this->courserecord = get_record('course', 'id', $this->modulerecord->course);
