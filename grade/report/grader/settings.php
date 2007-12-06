@@ -31,7 +31,7 @@ $strinherit             = get_string('inherit', 'grades');
 
 /// Add settings for this module to the $settings object (it's already defined)
 $settings->add(new admin_setting_configtext('grade_report_studentsperpage', get_string('studentsperpage', 'grades'),
-                                        get_string('configstudentsperpage', 'grades'), 20));
+                                        get_string('configstudentsperpage', 'grades'), 100));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_quickgrading', get_string('quickgrading', 'grades'),
                                             get_string('configquickgrading', 'grades'), 1));
@@ -52,7 +52,7 @@ $settings->add(new admin_setting_configselect('grade_report_aggregationview', ge
                                                 GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY => get_string('gradesonly', 'grades'))));
 
 $settings->add(new admin_setting_configselect('grade_report_meanselection', get_string('meanselection', 'grades'),
-                                          get_string('configmeanselection', 'grades'), GRADE_REPORT_MEAN_ALL,
+                                          get_string('configmeanselection', 'grades'), GRADE_REPORT_MEAN_GRADED,
                                           array(GRADE_REPORT_MEAN_ALL => get_string('meanall', 'grades'),
                                                 GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades'))));
 
@@ -66,7 +66,7 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showeyecons', get_
                                             get_string('configshoweyecons', 'grades'), 0));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showaverages', get_string('showaverages', 'grades'),
-                                            get_string('configshowaverages', 'grades'), 0));
+                                            get_string('configshowaverages', 'grades'), 1));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showgroups', get_string('showgroups', 'grades'),
                                             get_string('configshowgroups', 'grades'), 0));

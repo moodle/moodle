@@ -59,6 +59,9 @@
   font-weight: bold;
 }
 
+.grade-report-grader table#user-grades {
+    font-size: 80%;
+}
 
 .grade-report-grader table#user-grades {
   border-width:1px;
@@ -112,6 +115,7 @@
 .grade-report-grader table#user-grades th.category {
   border-width:1px 1px 0px 1px;
   border-style:solid;
+  vertical-align: top;
 }
 
 .grade-report-grader table#user-grades th.user {
@@ -124,6 +128,11 @@
 .grade-report-grader table#user-grades td.topleft {
   border-width:0px 1px 0px 1px;
   border-style:solid;
+  vertical-align: top;
+}
+
+.grade-report-grader table#participants th {
+  vertical-align: top; 
 }
 
 .grade-report-grader table#user-grades td.fillerfirst {
@@ -139,6 +148,7 @@
 .grade-report-grader table#user-grades th.item {
   border-width:1px 1px 1px 1px;
   border-style:solid;
+  vertical-align: top;
 }
 
 .grade-report-grader div.gradertoggle {

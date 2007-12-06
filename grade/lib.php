@@ -837,6 +837,32 @@ class grade_structure {
         return 'i'.$grade_item->id;
     }
 
+    function get_params_for_iconstr($element) {
+        $strparams = new stdClass();
+        $strparams->category = '';
+        $strparams->itemname = '';
+        $strparams->itemmodule = '';
+        if (!method_exists($element['object'], 'get_name')) {
+            return $strparams;
+        }
+        
+        $strparams->itemname = $element['object']->get_name();
+
+        // If element name is categorytotal, get the name of the parent category
+        if ($strparams->itemname == get_string('categorytotal', 'grades')) {
+            $parent = $element['object']->get_parent_category();
+            $strparams->category = $parent->get_name() . ' ';
+        } else {
+            $strparams->category = '';
+        }
+
+        $strparams->itemmodule = null;
+        if (isset($element['object']->itemmodule)) {
+            $strparams->itemmodule = $element['object']->itemmodule;
+        } 
+        return $strparams;
+    }
+
     /**
      * Return edit icon for give element
      * @param object $element
@@ -860,6 +886,10 @@ class grade_structure {
             $strfeedback = get_string('feedback');
         }
 
+        $strparams = $this->get_params_for_iconstr($element);
+        if ($element['type'] == 'item' or $element['type'] == 'category') { 
+        }
+        
         $object = $element['object'];
         $overlib = '';
 
@@ -867,6 +897,7 @@ class grade_structure {
             case 'item':
             case 'categoryitem':
             case 'courseitem':
+                $stredit = get_string('editverbose', 'grades', $strparams);
                 if (empty($object->outcomeid) || empty($CFG->enableoutcomes)) {
                     $url = $CFG->wwwroot.'/grade/edit/tree/item.php?courseid='.$this->courseid.'&amp;id='.$object->id;
                 } else {
@@ -876,6 +907,7 @@ class grade_structure {
                 break;
 
             case 'category':
+                $stredit = get_string('editverbose', 'grades', $strparams);
                 $url = $CFG->wwwroot.'/grade/edit/tree/category.php?courseid='.$this->courseid.'&amp;id='.$object->id;
                 $url = $gpr->add_url_params($url);
                 break;
@@ -919,12 +951,9 @@ class grade_structure {
             return '';
         }
 
-        static $strshow = null;
-        static $strhide   = null;
-        if (is_null($strshow)) {
-            $strshow = get_string('show');
-            $strhide = get_string('hide');
-        }
+        $strparams = $this->get_params_for_iconstr($element); 
+        $strshow = get_string('showverbose', 'grades', $strparams);
+        $strhide = get_string('hideverbose', 'grades', $strparams); 
 
         if ($element['object']->is_hidden()) {
             $icon = 'show';
@@ -957,12 +986,9 @@ class grade_structure {
     function get_locking_icon($element, $gpr) {
         global $CFG;
 
-        static $strunlock = null;
-        static $strlock   = null;
-        if (is_null($strunlock)) {
-            $strunlock = get_string('unlock', 'grades');
-            $strlock   = get_string('lock', 'grades');
-        }
+        $strparams = $this->get_params_for_iconstr($element); 
+        $strunlock = get_string('unlockverbose', 'grades', $strparams);
+        $strlock = get_string('lockverbose', 'grades', $strparams);
 
         if ($element['object']->is_locked()) {
             $icon = 'unlock';
@@ -1010,8 +1036,10 @@ class grade_structure {
         $type   = $element['type'];
         $object = $element['object'];
 
+
         if ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') {
-            $streditcalculation = get_string('editcalculation', 'grades');
+            $strparams = $this->get_params_for_iconstr($element); 
+            $streditcalculation = get_string('editcalculationverbose', 'grades', $strparams);
 
             // show calculation icon only when calculation possible
             if ((!$object->is_external_item() or $object->is_outcome_item())

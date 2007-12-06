@@ -566,7 +566,7 @@ class grade_report_grader extends grade_report {
 // Element is a category
                 else if ($type == 'category') {
                     $headerhtml .= '<th class="header '. $columnclass.' category'.$catlevel.'" '.$colspan.' scope="col">'
-                                . $element['object']->get_name();
+                                . shorten_text($element['object']->get_name());
                     $headerhtml .= $this->get_collapsing_icon($element);
 
                     // Print icons
@@ -597,8 +597,9 @@ class grade_report_grader extends grade_report {
                     }
 
                     $headerlink = $this->gtree->get_element_header($element, true, $this->get_pref('showactivityicons'), false);
-                    $headerhtml .= '<th class="header '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col" onclick="set_col(this.cellIndex)">'. $headerlink . $arrow;
-                    $headerhtml .= $this->get_icons($element) . '</th>';
+                    $headerhtml .= '<th class="header '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col" onclick="set_col(this.cellIndex)">'
+                                . shorten_text($headerlink) . $arrow;
+                    $headerhtml .= '</th>';
                 }
 
             }
@@ -1040,6 +1041,34 @@ class grade_report_grader extends grade_report {
             $scalehtml .= '</tr>';
         }
         return $scalehtml;
+    }
+    
+    /**
+     * Builds and return the HTML row of ranges for each column (i.e. range).
+     * @return string HTML
+     */
+    function get_iconshtml() {
+        global $USER;
+
+        $iconshtml = '';
+            if ($USER->gradeediting[$this->courseid]) {
+
+            $iconshtml = '<tr class="r'.$this->rowcount++.'">'
+                       . '<th class="header c0 range" scope="row">'.$this->get_lang_string('controls','grades').'</th>';
+
+            $columncount = 1;
+            foreach ($this->gtree->items as $itemid=>$unused) {
+                // emulate grade element
+                $item =& $this->gtree->items[$itemid];
+                 
+                $eid = $this->gtree->get_item_eid($item);
+                $element = $this->gtree->locate_element($eid);
+
+                $iconshtml .= '<td class="cell c'.$columncount++.' icons">' . $this->get_icons($element) . '</td>';
+            }
+            $iconshtml .= '</tr>';
+        }
+        return $iconshtml;
     }
 
     /**
