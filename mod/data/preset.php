@@ -327,7 +327,7 @@ echo '<fieldset class="invisiblefieldset">';
 echo '<input type="hidden" name="d" value="'.$data->id.'" />';
 echo '<input type="hidden" name="action" value="importzip" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-echo '<input name="file" size="20" value="" id="fromfile" type="text" /><input name="coursefiles" value="'.$strchooseorupload.'" onclick="return openpopup('."'/files/index.php?id=2&amp;choose=uploadpreset.file', 'coursefiles', 'menubar=0,location=0,scrollbars,resizable,width=750,height=500', 0".');" type="button" />';
+echo '<input name="file" size="20" value="" id="fromfile" type="text" /><input name="coursefiles" value="'.$strchooseorupload.'" onclick="return openpopup('."'/files/index.php?id={$course->id}&amp;choose=uploadpreset.file', 'coursefiles', 'menubar=0,location=0,scrollbars,resizable,width=750,height=500', 0".');" type="button" />';
 echo '<input type="submit" value="'.$strimport.'" />';
 echo '</fieldset></form>';
 echo '</td></tr>';
