@@ -6,7 +6,8 @@
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->libdir.'/olson.php');
-
+    require_once($CFG->libdir.'/snoopy/Snoopy.class.inc');
+    
     admin_externalpage_setup('timezoneimport');
 
     $ok = optional_param('ok', 0, PARAM_BOOL);
@@ -62,19 +63,20 @@
     }
 
 /// Otherwise, let's try moodle.org's copy
+    $snoopy = new Snoopy;
+    $snoopy->proxy_host = $CFG->proxyhost;
+    $snoopy->proxy_port = $CFG->proxyport;
 
     $source = 'http://download.moodle.org/timezones/';
-    if (!$importdone and ini_get('allow_url_fopen')) {
-        if (is_readable($source) && $contents = file_get_contents($source)) {  // Grab whole page
-            if ($file = fopen($CFG->dataroot.'/temp/timezones.txt', 'w')) {            // Make local copy
-                fwrite($file, $contents);
-                fclose($file);
-                if ($timezones = get_records_csv($CFG->dataroot.'/temp/timezones.txt', 'timezone')) {  // Parse it
-                    update_timezone_records($timezones);
-                    $importdone = $source;
-                }
-                unlink($CFG->dataroot.'/temp/timezones.txt');
+    if (!$importdone && $snoopy->fetch($source)) {
+        if ($file = fopen($CFG->dataroot.'/temp/timezones.txt', 'w')) {            // Make local copy
+            fwrite($file, $snoopy->results);
+            fclose($file);
+            if ($timezones = get_records_csv($CFG->dataroot.'/temp/timezones.txt', 'timezone')) {  // Parse it
+                update_timezone_records($timezones);
+                $importdone = $source;
             }
+            unlink($CFG->dataroot.'/temp/timezones.txt');
         }
     }
 

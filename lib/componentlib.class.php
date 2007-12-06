@@ -124,6 +124,8 @@
 // error to be retrieved by one standard get_string() call against the error.php lang file.
 //
 // That's all!
+global $CFG;
+require_once($CFG->libdir.'/snoopy/Snoopy.class.inc');
 
 // Some needed constants
 define('ERROR',           0);
@@ -141,7 +143,7 @@ define('INSTALLED',       3);
  */
 class component_installer {
 
-    var $sourcebase;   /// Full http URL, base for downloadeable items
+    var $sourcebase;   /// Full http URL, base for downloadable items
     var $zippath;      /// Relative path (from sourcebase) where the 
                        /// downloadeable item resides.
     var $zipfilename;  /// Name of the .zip file to be downloaded
@@ -271,7 +273,14 @@ class component_installer {
     /// Download zip file and save it to temp
         $source = $this->sourcebase.'/'.$this->zippath.'/'.$this->zipfilename;
         $zipfile= $CFG->dataroot.'/temp/'.$this->zipfilename;
-        if ($contents = file_get_contents($source)) {
+
+    /// Prepare Snoopy client and set up proxy info
+        $snoopy = new Snoopy;
+        global $CFG;
+        $snoopy->proxy_host = $CFG->proxyhost;
+        $snoopy->proxy_port = $CFG->proxyport;
+        if($snoopy->fetch($source)) {
+            $contents = $snoopy->results;
             if ($file = fopen($zipfile, 'w')) {
                 if (!fwrite($file, $contents)) {
                     fclose($file);
@@ -458,12 +467,20 @@ class component_installer {
         } else {
         /// Not downloaded, let's do it now
             $availablecomponents = array();
-            if ($fp = fopen($source, 'r')) {
-            /// Read from URL, each line will be one component
-                while(!feof ($fp)) {
-                    $availablecomponents[] = split(',', fgets($fp,1024));
+
+            /// Prepare Snoopy client and set up proxy info
+            $snoopy = new Snoopy;
+            global $CFG;
+            $snoopy->proxy_host = $CFG->proxyhost;
+            $snoopy->proxy_port = $CFG->proxyport;
+
+            if ($snoopy->fetch($source)) {
+            /// Split text into lines
+                $lines=preg_split('/\r?\n/',$snoopy->results);
+            /// Each line will be one component
+                foreach($lines as $line) {
+                    $availablecomponents[] = split(',', $line);
                 }
-                fclose($fp);
             /// If no components have been found, return error
                 if (empty($availablecomponents)) {
                     $this->errorstring='cannotdownloadcomponents';
