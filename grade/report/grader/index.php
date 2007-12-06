@@ -163,6 +163,7 @@ $reporthtml = '<script src="functions.js" type="text/javascript"></script>';
 
 $reporthtml .= '<table id="user-grades" class="gradestable flexible boxaligncenter generaltable">';
 $reporthtml .= $report->get_headerhtml();
+$reporthtml .= $report->get_iconshtml();
 $reporthtml .= $report->get_rangehtml();
 $reporthtml .= $report->get_studentshtml();
 $reporthtml .= $report->get_avghtml(true);
