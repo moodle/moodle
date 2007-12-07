@@ -1316,7 +1316,6 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
                             // get the new grade category parent
                             
                             //if (!empty($info['GRADE_CATEGORY']['#']['PARENT']['0']['#']) && $info['GRADE_CATEGORY']['#']['PARENT']['0']['#'] != '$@NULL@$') {
-                             
                             $parent = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_CATEGORY']['#']['PARENT']['0']['#']));
                             if (isset($parent->new_id)) {
                                 $dbrec->parent = $parent->new_id;
@@ -6330,58 +6329,41 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
         xml_set_object($xml_parser,$moodle_parser);
         //Depending of the todo we use some element_handler or another
         if ($todo == "INFO") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementInfo", "endElementInfo");
         } else if ($todo == "ROLES") {
-            // Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementRoles", "endElementRoles");
         } else if ($todo == "COURSE_HEADER") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementCourseHeader", "endElementCourseHeader");
         } else if ($todo == 'BLOCKS') {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementBlocks", "endElementBlocks");
         } else if ($todo == "SECTIONS") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementSections", "endElementSections");
         } else if ($todo == 'FORMATDATA') {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementFormatData", "endElementFormatData");
         } else if ($todo == "METACOURSE") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementMetacourse", "endElementMetacourse");
-        } else if ($todo == "GRADEBOOK") {
-            //Define handlers to that zone
+        } else if ($todo == "GRADEBOOK" && $preferences->backup_version >= 2007101000) {
+            // atm we can not handle old gradebook backups
             xml_set_element_handler($xml_parser, "startElementGradebook", "endElementGradebook");
         } else if ($todo == "USERS") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementUsers", "endElementUsers");
         } else if ($todo == "MESSAGES") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementMessages", "endElementMessages");
         } else if ($todo == "QUESTIONS") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementQuestions", "endElementQuestions");
         } else if ($todo == "SCALES") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementScales", "endElementScales");
         } else if ($todo == "GROUPS") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementGroups", "endElementGroups");
         } else if ($todo == "GROUPINGS") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementGroupings", "endElementGroupings");
         } else if ($todo == "GROUPINGSGROUPS") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementGroupingsGroups", "endElementGroupingsGroups");
         } else if ($todo == "EVENTS") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementEvents", "endElementEvents");
         } else if ($todo == "MODULES") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementModules", "endElementModules");
         } else if ($todo == "LOGS") {
-            //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementLogs", "endElementLogs");
         } else {
             //Define default handlers (must no be invoked when everything become finished)
