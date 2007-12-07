@@ -478,6 +478,10 @@ function forum_cron() {
 
     // Now see if there are any digest mails waiting to be sent, and if we should send them
 
+    mtrace('Starting digest processing...');
+
+    @set_time_limit(300); // terminate if not able to fetch all digests in 5 minutes
+
     if (!isset($CFG->digestmailtimelast)) {    // To catch the first time
         set_config('digestmailtimelast', 0);
     }
@@ -485,13 +489,16 @@ function forum_cron() {
     $timenow = time();
     $digesttime = usergetmidnight($timenow, $sitetimezone) + ($CFG->digestmailtime * 3600);
 
-    if ($CFG->digestmailtimelast < $digesttime and $timenow > $digesttime) {
+    // Delete any really old ones (normally there shouldn't be any)
+    $weekago = $timenow - (7 * 24 * 3600);
+    mtrace ('Cleaned old digest records');
 
-        set_config('digestmailtimelast', $timenow);
+    if ($CFG->digestmailtimelast < $digesttime and $timenow > $digesttime) {
 
         mtrace('Sending forum digests: '.userdate($timenow, '', $sitetimezone));
 
-        if ($digestposts = get_records('forum_queue')) {
+        $digestposts_rs = get_recordset('forum_queue');
+        if (!$digestposts_rs->EOF) {
 
             // We have work to do
             $usermailcount = 0;
@@ -500,7 +507,7 @@ function forum_cron() {
             $discussionposts = array();
             $userdiscussions = array();
 
-            foreach ($digestposts as $digestpost) {
+            while ($digestpost = rs_fetch_next_record($digestposts_rs)) {
                 if (!isset($users[$digestpost->userid])) {
                     if ($user = get_record('user', 'id', $digestpost->userid)) {
                         $users[$digestpost->userid] = $user;
@@ -557,6 +564,7 @@ function forum_cron() {
                 $userdiscussions[$digestpost->userid][$digestpost->discussionid] = $digestpost->discussionid;
                 $discussionposts[$digestpost->discussionid][$digestpost->postid] = $digestpost->postid;
             }
+            rs_close($digestposts_rs); /// Finished iteration, let's close the resultset
 
             // Data collected, start sending out emails to each user
             foreach ($userdiscussions as $userid => $thesediscussions) {
@@ -710,6 +718,8 @@ function forum_cron() {
                 }
             }
         }
+        /// We have finishied all digest emails, update $CFG->digestmailtimelast
+        set_config('digestmailtimelast', $timenow);
     }
 
     if (!empty($usermailcount)) {
@@ -1241,7 +1251,7 @@ function forum_scale_used_anywhere($scaleid) {
 function forum_get_post_full($postid) {
     global $CFG;
 
-    return get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture
+    return get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture, u.imagealt
                             FROM {$CFG->prefix}forum_posts p
                        LEFT JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id
                        LEFT JOIN {$CFG->prefix}user u ON p.userid = u.id
@@ -1256,7 +1266,7 @@ function forum_get_post_full($postid) {
 function forum_get_discussion_posts($discussion, $sort, $forumid) {
     global $CFG;
 
-    return get_records_sql("SELECT p.*, $forumid AS forum, u.firstname, u.lastname, u.email, u.picture
+    return get_records_sql("SELECT p.*, $forumid AS forum, u.firstname, u.lastname, u.email, u.picture, u.imagealt
                               FROM {$CFG->prefix}forum_posts p
                          LEFT JOIN {$CFG->prefix}user u ON p.userid = u.id
                              WHERE p.discussion = $discussion
@@ -1271,7 +1281,7 @@ function forum_get_discussion_posts($discussion, $sort, $forumid) {
 function forum_get_child_posts($parent, $forumid) {
     global $CFG;
 
-    return get_records_sql("SELECT p.*, $forumid AS forum, u.firstname, u.lastname, u.email, u.picture
+    return get_records_sql("SELECT p.*, $forumid AS forum, u.firstname, u.lastname, u.email, u.picture, u.imagealt
                               FROM {$CFG->prefix}forum_posts p
                          LEFT JOIN {$CFG->prefix}user u ON p.userid = u.id
                              WHERE p.parent = '$parent'
@@ -1804,7 +1814,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     //TODO: there must be a nice way to do this that keeps both postgres and mysql 3.2x happy but I can't find it right now.
     if ($CFG->dbfamily == 'postgres' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'oracle') {
         return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
-                                   u.firstname, u.lastname, u.email, u.picture $umfields
+                                   u.firstname, u.lastname, u.email, u.picture, u.imagealt $umfields
                               FROM {$CFG->prefix}forum_discussions d
                               JOIN {$CFG->prefix}forum_posts p ON p.discussion = d.id
                               JOIN {$CFG->prefix}user u ON p.userid = u.id
@@ -1815,7 +1825,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                           ORDER BY $forumsort", $limitfrom, $limitnum);
     } else { // MySQL query. TODO: Check if this is needed (MySQL 4.1 should work with the above query)
         return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
-                                   u.firstname, u.lastname, u.email, u.picture $umfields
+                                   u.firstname, u.lastname, u.email, u.picture, u.imagealt $umfields
                               FROM ({$CFG->prefix}forum_posts p,
                                    {$CFG->prefix}user u,
                                    {$CFG->prefix}forum_discussions d)
@@ -2086,12 +2096,16 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     static $strmarkread, $strmarkunread, $istracked;
 
 
-    $discussion = get_record('forum_discussions', 'id', $post->discussion);
-    if (!$cm = get_coursemodule_from_instance('forum', $discussion->forum)) {
-        error('Course Module ID was incorrect');
+    if (empty($post->modcontext)) {   // Have to generate it, which is expensive!  Should always be set.
+        if (empty($post->forum)) {
+            $discussion = get_record('forum_discussions', 'id', $post->discussion);
+            $post->forum = $discussion->forum;
+        }
+        if (!$cm = get_coursemodule_from_instance('forum', $post->forum)) {
+            error('Course Module ID was incorrect');
+        }   
+        $post->modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-
 
     if (!forum_user_can_see_post($post->forum,$post->discussion,$post)) {
         if (empty($SESSION->forum_search)) {
@@ -2162,8 +2176,16 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo '<a id="p'.$post->id.'"></a>';
     echo '<table cellspacing="0" class="forumpost'.$read_style.'">';
 
+    // Picture
+    $postuser = new object;
+    $postuser->id = $post->userid;
+    $postuser->firstname = $post->firstname;
+    $postuser->lastname = $post->lastname;
+    $postuser->imagealt = $post->imagealt;
+    $postuser->picture = $post->picture;
+
     echo '<tr class="header"><td class="picture left">';
-    print_user_picture($post->userid, $courseid, $post->picture);
+    print_user_picture($postuser, $courseid);
     echo '</td>';
 
     if ($post->parent) {
@@ -2175,7 +2197,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo '<div class="subject">'.format_string($post->subject).'</div>';
 
     echo '<div class="author">';
-    $fullname = fullname($post, has_capability('moodle/site:viewfullnames', $modcontext));
+    $fullname = fullname($post, has_capability('moodle/site:viewfullnames', $post->modcontext));
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
                 $post->userid.'&amp;course='.$courseid.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified);
@@ -2260,16 +2282,18 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         }
     }
 
-    $forumtype = get_field('forum', 'type', 'id', $post->forum);
+    if (!isset($post->forumtype)) {
+        $post->forumtype = get_field('forum', 'type', 'id', $post->forum);
+    }
 
     $age = time() - $post->created;
     // Hack for allow to edit news posts those are not displayed yet until they are displayed
     if (!$post->parent
-        && $forumtype == 'news'
+        && $post->forumtype == 'news'
         && get_field_sql("SELECT id FROM {$CFG->prefix}forum_discussions WHERE id = $post->discussion AND timestart > ".time())) {
         $age = 0;
     }
-    $editanypost = has_capability('mod/forum:editanypost', $modcontext);
+    $editanypost = has_capability('mod/forum:editanypost', $post->modcontext);
 
 
 
@@ -2279,16 +2303,16 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         }
     }
 
-    if (has_capability('mod/forum:splitdiscussions', $modcontext)
-                && $post->parent && $forumtype != 'single') {
+    if (has_capability('mod/forum:splitdiscussions', $post->modcontext)
+                && $post->parent && $post->forumtype != 'single') {
 
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?prune='.$post->id.
                       '" title="'.$strpruneheading.'">'.$strprune.'</a>';
     }
 
     if (($ownpost and $age < $CFG->maxeditingtime
-                and has_capability('mod/forum:deleteownpost', $modcontext))
-                or has_capability('mod/forum:deleteanypost', $modcontext)) {
+                and has_capability('mod/forum:deleteownpost', $post->modcontext))
+                or has_capability('mod/forum:deleteanypost', $post->modcontext)) {
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?delete='.$post->id.'">'.$strdelete.'</a>';
     }
 
@@ -2315,7 +2339,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         if ($useratings) {
             $mypost = ($USER->id == $post->userid);
 
-            $canviewallratings = has_capability('mod/forum:viewanyrating', $modcontext);
+            $canviewallratings = has_capability('mod/forum:viewanyrating', $post->modcontext);
 
             if ($canviewallratings and !$mypost) {
                 forum_print_ratings_mean($post->id, $ratings->scale, $canviewallratings);
@@ -2378,19 +2402,19 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
  * @param boolean $canviewparticipants True if user has the viewparticipants permission for this course
  */
 function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring="",
-                                        $cantrack=true, $forumtracked=true, $canviewparticipants=true) {
+                                        $cantrack=true, $forumtracked=true, $canviewparticipants=true, $modcontext=NULL) {
 
     global $USER, $CFG;
 
     static $rowcount;
     static $strmarkalldread;
 
-
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-        error('Course Module ID was incorrect');
+    if (empty($modcontext)) {
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+            error('Course Module ID was incorrect');
+        }   
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-
 
     if (!isset($rowcount)) {
         $rowcount = 0;
@@ -2410,8 +2434,15 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     echo "</td>\n";
 
     // Picture
+    $postuser = new object;
+    $postuser->id = $post->userid;
+    $postuser->firstname = $post->firstname;
+    $postuser->lastname = $post->lastname;
+    $postuser->imagealt = $post->imagealt;
+    $postuser->picture = $post->picture;
+
     echo '<td class="picture">';
-    print_user_picture($post->userid, $forum->course, $post->picture);
+    print_user_picture($postuser, $forum->course);
     echo "</td>\n";
 
     // User name
@@ -3446,12 +3477,14 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL) {
  *
  */
 function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $displayformat='plain', $sort='',
-                                        $currentgroup=-1, $groupmode=-1, $page=-1) {
+                                        $currentgroup=-1, $groupmode=-1, $page=-1, $cm=NULL) {
     global $CFG, $USER;
-
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-        error('Course Module ID was incorrect');
-    }
+    
+    if (!$cm) {
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+            error('Course Module ID was incorrect');
+        }
+    }   
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 
@@ -3635,7 +3668,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                     $group = -1;
                 }
                 forum_print_discussion_header($discussion, $forum, $group, $strdatestring, $cantrack, $forumtracked,
-                    $canviewparticipants);
+                    $canviewparticipants, $context);
             break;
             default:
                 if ($canreply or $discussion->replies) {
@@ -3721,6 +3754,17 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
         $user_read_array = array();
     }
 
+    if (empty($post->modcontext)) {   // Have to generate it, which is expensive!  Should always be set.
+        if (empty($post->forum)) {
+            $discussion = get_record('forum_discussions', 'id', $post->discussion);
+            $post->forum = $discussion->forum;
+        }
+        if (!$cm = get_coursemodule_from_instance('forum', $post->forum)) {
+            error('Course Module ID was incorrect');
+        }
+        $post->modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    }
+
     if (forum_print_post($post, $course->id, $ownpost, $reply, $link=false, $ratings,
                          '', '', (!$forumtracked || isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
         $ratingsmenuused = true;
@@ -3731,21 +3775,21 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
         case FORUM_MODE_FLATNEWEST :
         default:
             if (forum_print_posts_flat($post->discussion, $course->id, $mode, $ratings, $reply,
-                                       $user_read_array, $post->forum)) {
+                                       $user_read_array, $post->forum, $post->modcontext)) {
                 $ratingsmenuused = true;
             }
             break;
 
         case FORUM_MODE_THREADED :
             if (forum_print_posts_threaded($post->id, $course->id, 0, $ratings, $reply,
-                                           $user_read_array, $post->forum)) {
+                                           $user_read_array, $post->forum, $post->modcontext)) {
                 $ratingsmenuused = true;
             }
             break;
 
         case FORUM_MODE_NESTED :
             if (forum_print_posts_nested($post->id, $course->id, $ratings, $reply,
-                                         $user_read_array, $post->forum)) {
+                                         $user_read_array, $post->forum, $post->modcontext)) {
                 $ratingsmenuused = true;
             }
             break;
@@ -3772,7 +3816,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
 /**
  * TODO document
  */
-function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $reply, &$user_read_array, $forumid=0) {
+function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $reply, &$user_read_array, $forumid=0, $modcontext=NULL) {
     global $USER, $CFG;
 
     $link  = false;
@@ -3788,6 +3832,7 @@ function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $r
         foreach ($posts as $post) {
 
             $post->subject = format_string($post->subject);
+            $post->modcontext = $modcontext;
 
             $ownpost = ($USER->id == $post->userid);
             if (forum_print_post($post, $courseid, $ownpost, $reply, $link, $ratings,
@@ -3804,7 +3849,7 @@ function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $r
 /**
  * TODO document
  */
-function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply, &$user_read_array, $forumid=0) {
+function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply, &$user_read_array, $forumid=0, $modcontext=NULL) {
     global $USER, $CFG;
 
     $link  = false;
@@ -3814,10 +3859,6 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
 
     if ($posts = forum_get_child_posts($parent, $forumid)) {
 
-        if (!$cm = get_coursemodule_from_instance('forum', $forumid, $courseid)) {
-            error('Course Module ID was incorrect');
-        }
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $modcontext);
 
         foreach ($posts as $post) {
@@ -3825,8 +3866,8 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
             echo '<div class="indent">';
             if ($depth > 0) {
                 $ownpost = ($USER->id == $post->userid);
-
                 $post->subject = format_string($post->subject);
+                $post->modcontext = $modcontext;
 
                 if (forum_print_post($post, $courseid, $ownpost, $reply, $link, $ratings,
                                      '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
@@ -3855,7 +3896,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
             }
 
             if (forum_print_posts_threaded($post->id, $courseid, $depth-1, $ratings, $reply,
-                                           $user_read_array, $forumid)) {
+                                           $user_read_array, $forumid, $modcontext)) {
                 $ratingsmenuused = true;
             }
             echo "</div>\n";
@@ -3867,7 +3908,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
 /**
  * TODO document
  */
-function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_read_array, $forumid=0) {
+function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_read_array, $forumid=0, $modcontext=NULL) {
     global $USER, $CFG;
 
     $link  = false;
@@ -3885,11 +3926,13 @@ function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_r
 
             $post->subject = format_string($post->subject);
 
+            $post->modcontext = $modcontext;
+
             if (forum_print_post($post, $courseid, $ownpost, $reply, $link, $ratings,
                                  '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
                 $ratingsmenuused = true;
             }
-            if (forum_print_posts_nested($post->id, $courseid, $ratings, $reply, $user_read_array, $forumid)) {
+            if (forum_print_posts_nested($post->id, $courseid, $ratings, $reply, $user_read_array, $forumid, $modcontext)) {
                 $ratingsmenuused = true;
             }
             echo "</div>\n";

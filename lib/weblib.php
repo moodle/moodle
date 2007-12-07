@@ -3330,7 +3330,10 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
 /**
  * Print the specified user's avatar.
  *
- * @param int $userid ?
+ * If you pass a $user object that has id, picture, imagealt, firstname, lastname
+ * you save a DB query.
+ *
+ * @param int $userid takes a userid, or a userobj
  * @param int $courseid ?
  * @param boolean $picture Print the user picture?
  * @param int $size Size in pixels.  Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatability
@@ -3341,14 +3344,46 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
  * return string
  * @todo Finish documenting this function
  */
-function print_user_picture($userid, $courseid, $picture, $size=0, $return=false, $link=true, $target='', $alttext=true) {
+function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
     global $CFG, $HTTPSPAGEREQUIRED;
+
+    $needrec = false;
+    // only touch the DB if we are missing data...
+    if (is_object($user)) {
+        // Note - both picture and imagealt _can_ be empty
+		// what we are trying to see here is if they have been fetched
+		// from the DB. We should use isset() _except_ that some installs
+		// have those fields as nullable, and isset() will return false
+		// on null. The only safe thing is to ask array_key_exists()
+		// which works on objects. property_exists() isn't quite
+		// what we want here...
+		if (! (array_key_exists('picture', $user)
+		   	   && ($alttext && array_key_exists('imagealt', $user)
+				   || (isset($user->firstname) && isset($user->lastname)))) ) {
+			$needrec = true;
+			$user = $user->id;
+		}
+	} else {
+		if ($alttext) {
+			// we need firstname, lastname, imagealt, can't escape...
+			$needrec = true;
+		} else {
+			$userobj = new StdClass; // fake it to save DB traffic
+			$userobj->id = $user;
+			$userobj->picture = $picture;
+			$user = clone($userobj);
+			unset($userobj);
+		}
+	}
+	if ($needrec) {
+		$user = get_record('user','id',$user, '', '', '', '', 'id,firstname,lastname,imagealt');
+	}
 
     if ($link) {
         if ($target) {
             $target=' target="_blank"';
         }
-        $output = '<a '.$target.' href="'. $CFG->wwwroot .'/user/view.php?id='. $userid .'&amp;course='. $courseid .'">';
+        $output = '<a '.$target.' href="'. $CFG->wwwroot .'/user/view.php?id='. $user->id .'&amp;course='. $courseid .'">';
     } else {
         $output = '';
     }
@@ -3369,19 +3404,23 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $return=false
     } else {
         $wwwroot = $CFG->wwwroot;
     } 
+	
+	if (is_null($picture)) {
+		$picture = $user->picture;
+	}
 
     if ($picture) {  // Print custom user picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $src =  $wwwroot .'/user/pix.php/'. $userid .'/'. $file .'.jpg';
+            $src =  $wwwroot .'/user/pix.php/'. $user->id .'/'. $file .'.jpg';
         } else {
-            $src =  $wwwroot .'/user/pix.php?file=/'. $userid .'/'. $file .'.jpg';
+            $src =  $wwwroot .'/user/pix.php?file=/'. $user->id .'/'. $file .'.jpg';
         }
     } else {         // Print default user pictures (use theme version if available)
         $class .= " defaultuserpic";
         $src =  "$CFG->pixpath/u/$file.png";
     }
     $imagealt = '';
-    if ($alttext and $user = get_record('user','id',$userid)) {
+    if ($alttext) {
         if (!empty($user->imagealt)) {
             $imagealt = $user->imagealt;
         } else {
