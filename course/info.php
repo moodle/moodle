@@ -28,7 +28,8 @@
         require_login();
     }
 
-    if (!(course_parent_visible($course) || $course->visible) && !has_capability('moodle/course:viewhiddencourses', $context)) {
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    if ((!(course_parent_visible($course) && $CFG->allowvisiblecoursesinhiddencategories) || (! $course->visible)) && !has_capability('moodle/course:viewhiddencourses', $context)) {
         error(get_string('coursehidden'), $CFG->wwwroot .'/'); 
     }  
     
@@ -54,7 +55,7 @@
 
     echo filter_text(text_to_html($course->summary),$course->id);
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
     if ($managerroles = get_config('', 'coursemanager')) {
         $coursemanagerroles = split(',', $managerroles);
         foreach ($coursemanagerroles as $roleid) {
