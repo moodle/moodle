@@ -55,7 +55,7 @@ $mform = new grade_export_form(null, array('publishing' => true));
 
 // process post information
 if ($data = $mform->get_data()) {
-    $export = new grade_export_ods($course, groups_get_course_group($course), '', false, $data->updatedgradesonly, $data->display, $data->decimals);
+    $export = new grade_export_ods($course, groups_get_course_group($course), '', false, false, $data->display, $data->decimals);
 
     // print the grades on screen for feedbacks
     $export->process_form($data);
