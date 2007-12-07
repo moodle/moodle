@@ -6,7 +6,6 @@
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->libdir.'/olson.php');
-    require_once($CFG->libdir.'/snoopy/Snoopy.class.inc');
     
     admin_externalpage_setup('timezoneimport');
 
@@ -63,14 +62,10 @@
     }
 
 /// Otherwise, let's try moodle.org's copy
-    $snoopy = new Snoopy;
-    $snoopy->proxy_host = $CFG->proxyhost;
-    $snoopy->proxy_port = $CFG->proxyport;
-
     $source = 'http://download.moodle.org/timezones/';
-    if (!$importdone && $snoopy->fetch($source)) {
+    if (!$importdone && ($content=download_file_content($source))) {
         if ($file = fopen($CFG->dataroot.'/temp/timezones.txt', 'w')) {            // Make local copy
-            fwrite($file, $snoopy->results);
+            fwrite($file, $content);
             fclose($file);
             if ($timezones = get_records_csv($CFG->dataroot.'/temp/timezones.txt', 'timezone')) {  // Parse it
                 update_timezone_records($timezones);
@@ -82,7 +77,6 @@
 
 
 /// Final resort, use the copy included in Moodle
-
     $source = $CFG->dirroot.'/lib/timezones.txt';
     if (!$importdone and is_readable($source)) {  // Distribution file
         if ($timezones = get_records_csv($source, 'timezone')) {
