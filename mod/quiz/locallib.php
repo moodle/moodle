@@ -357,7 +357,7 @@ function quiz_has_feedback($quizid) {
     static $cache = array();
     if (!array_key_exists($quizid, $cache)) {
         $cache[$quizid] = record_exists_select('quiz_feedback',
-                "quizid = $quizid AND feedbacktext <> ''");
+                "quizid = $quizid AND " . sql_isnotempty('quiz_feedback', 'feedbacktext', false, true));
     }
     return $cache[$quizid];
 }
