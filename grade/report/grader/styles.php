@@ -40,6 +40,15 @@
     background-color: #efefff;
 }
 
+.grade-report-grader table#user-grades tr.odd td.cell {
+    background-color: #efefef;
+}
+
+.grade-report-grader table#user-grades tr.odd th.header { 
+    background-color: #efefef;
+    background-image: none;
+}
+
 .grade-report-grader table#user-grades tr.groupavg td.cell {
     background-color: #efffef;
 }

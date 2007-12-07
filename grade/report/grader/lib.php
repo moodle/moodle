@@ -645,6 +645,8 @@ class grade_report_grader extends grade_report {
         
         $row_classes = array(' even ', ' odd ');
 
+        $row_classes = array(' even ', ' odd ');
+
         foreach ($this->users as $userid => $user) {
 
             if ($this->canviewhidden) {
