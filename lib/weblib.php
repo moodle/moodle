@@ -4594,9 +4594,7 @@ function print_table($table, $return=false) {
                 $align[$key] = '';
             }
 
-            $output .= '<th class="header c'.$key.'" scope="col">'. $heading .'</th>';
-            // commenting the following code out as <th style does not validate MDL-7861
-            //$output .= '<th sytle="vertical-align:top;'. $align[$key].$size[$key] .';white-space:nowrap;" class="header c'.$key.'" scope="col">'. $heading .'</th>';
+            $output .= '<th style="vertical-align:top;'. $align[$key].$size[$key] .';white-space:nowrap;" class="header c'.$key.'" scope="col">'. $heading .'</th>';
         }
         $output .= '</tr>'."\n";
     }
