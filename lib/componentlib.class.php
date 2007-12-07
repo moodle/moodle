@@ -124,8 +124,6 @@
 // error to be retrieved by one standard get_string() call against the error.php lang file.
 //
 // That's all!
-global $CFG;
-require_once($CFG->libdir.'/snoopy/Snoopy.class.inc');
 
 // Some needed constants
 define('ERROR',           0);
@@ -274,13 +272,7 @@ class component_installer {
         $source = $this->sourcebase.'/'.$this->zippath.'/'.$this->zipfilename;
         $zipfile= $CFG->dataroot.'/temp/'.$this->zipfilename;
 
-    /// Prepare Snoopy client and set up proxy info
-        $snoopy = new Snoopy;
-        global $CFG;
-        $snoopy->proxy_host = $CFG->proxyhost;
-        $snoopy->proxy_port = $CFG->proxyport;
-        if($snoopy->fetch($source)) {
-            $contents = $snoopy->results;
+        if($contents = download_file_content($source)) {
             if ($file = fopen($zipfile, 'w')) {
                 if (!fwrite($file, $contents)) {
                     fclose($file);
@@ -468,15 +460,9 @@ class component_installer {
         /// Not downloaded, let's do it now
             $availablecomponents = array();
 
-            /// Prepare Snoopy client and set up proxy info
-            $snoopy = new Snoopy;
-            global $CFG;
-            $snoopy->proxy_host = $CFG->proxyhost;
-            $snoopy->proxy_port = $CFG->proxyport;
-
-            if ($snoopy->fetch($source)) {
+            if ($contents = download_file_content($source)) {
             /// Split text into lines
-                $lines=preg_split('/\r?\n/',$snoopy->results);
+                $lines=preg_split('/\r?\n/',$contents);
             /// Each line will be one component
                 foreach($lines as $line) {
                     $availablecomponents[] = split(',', $line);
