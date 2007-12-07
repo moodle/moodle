@@ -298,13 +298,7 @@
     echo '</table>';
 
     echo '<div class="buttons">';
-    /// Print link to create a new course
-    if (has_capability('moodle/course:create', $context)) {
-        unset($options);
-        $options['category'] = $category->id;
-        print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
-    }
-    
+
     if (has_capability('moodle/site:approvecourse', get_context_instance(CONTEXT_SYSTEM, SITEID))  and !empty($CFG->enablecourserequests)) {
         print_single_button('pending.php',NULL, get_string('coursespending'), 'get');
     }
