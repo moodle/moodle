@@ -124,6 +124,8 @@
 // error to be retrieved by one standard get_string() call against the error.php lang file.
 //
 // That's all!
+global $CFG;
+require_once($CFG->libdir.'/filelib.php');
 
 // Some needed constants
 define('ERROR',           0);
