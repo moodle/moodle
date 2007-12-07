@@ -64,15 +64,14 @@ $options = array(GRADE_AGGREGATE_MEAN            =>get_string('aggregatemean', '
                  GRADE_AGGREGATE_MAX             =>get_string('aggregatemax', 'grades'),
                  GRADE_AGGREGATE_MODE            =>get_string('aggregatemode', 'grades'),
                  GRADE_AGGREGATE_SUM             =>get_string('aggregatesum', 'grades'));
-$defaults = array('value'=>GRADE_AGGREGATE_WEIGHTED_MEAN, 'forced'=>false, 'adv'=>false);
+$defaults = array('value'=>GRADE_AGGREGATE_WEIGHTED_MEAN2, 'forced'=>false, 'adv'=>false);
 $temp->add(new admin_setting_gradecat_combo('grade_aggregation', get_string('aggregation', 'grades'), get_string('aggregationhelp', 'grades'), $defaults, $options));
 
 $options = array(0 => get_string('no'), 1 => get_string('yes'));
 
-$defaults = array('value'=>0, 'forced'=>false, 'adv'=>true);
+$defaults = array('value'=>1, 'forced'=>false, 'adv'=>true);
 $temp->add(new admin_setting_gradecat_combo('grade_aggregateonlygraded', get_string('aggregateonlygraded', 'grades'),
             get_string('aggregateonlygradedhelp', 'grades'), $defaults, $options));
-$defaults['value'] = 1;
 $temp->add(new admin_setting_gradecat_combo('grade_aggregateoutcomes', get_string('aggregateoutcomes', 'grades'),
             get_string('aggregateoutcomeshelp', 'grades'), $defaults, $options));
 $temp->add(new admin_setting_gradecat_combo('grade_aggregatesubcats', get_string('aggregatesubcats', 'grades'),

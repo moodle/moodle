@@ -318,7 +318,7 @@ class grade_category extends grade_object {
         $this->fullname    = get_string('coursegradecategory', 'grades');
         $this->path        = null;
         $this->parent      = null;
-        $this->aggregation = GRADE_AGGREGATE_MEAN;
+        $this->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN2;
 
         $this->apply_default_settings();
         $this->apply_forced_settings();
