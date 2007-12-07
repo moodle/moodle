@@ -563,27 +563,46 @@ function data_decode_content_links_caller($restore) {
     global $CFG;
     $status = true;
 
-/// Process every DATA (intro) in the course
-    if ($datas = get_records_sql ("SELECT d.id, d.intro
+/// Process every DATA (intro, all HTML templates) in the course
+/// Supported fields for main table:
+    $supportedfields = array('intro','singletemplate','listtemplate',
+        'listtemplateheader','addtemplate','rsstemplate','rsstitletemplate');
+    if ($datas = get_records_sql ("SELECT d.id, ".implode(',',$supportedfields)."
                                   FROM {$CFG->prefix}data d
                                   WHERE d.course = $restore->course_id")) {
-    /// Iterate over each data->intro
+    /// Iterate over each data
         $i = 0;   //Counter to send some output to the browser to avoid timeouts
         foreach ($datas as $data) {
         /// Increment counter
             $i++;
-            $content = $data->intro;
-            $result = restore_decode_content_links_worker($content,$restore);
-            if ($result != $content) {
-            /// Update record
-                $data->intro = addslashes($result);
-                $status = update_record("data",$data);
-                if (debugging()) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
+
+        /// Make a new copy of the data object with nothing in, to use if
+        /// changes are necessary (allows us to do update_record without
+        /// worrying about every single field being included and needing
+        /// slashes).
+            $newdata = new stdClass;
+            $newdata->id=$data->id;
+
+        /// Loop through handling each supported field
+            $changed = false;
+            foreach($supportedfields as $field) {
+                $result = restore_decode_content_links_worker($data->{$field},$restore);
+                if ($result != $data->{$field}) {
+                    $newdata->{$field} = addslashes($result);
+                    $changed = true;
+                    if (debugging()) {
+                        if (!defined('RESTORE_SILENTLY')) {
+                            echo '<br /><hr />'.s($data->{$field}).'<br />changed to<br />'.s($result).'<hr /><br />';
+                        }
                     }
                 }
             }
+
+        /// Update record if any field changed
+            if($changed) {
+                $status = update_record("data",$newdata);
+            }
+
         /// Do some output
             if (($i+1) % 5 == 0) {
                 if (!defined('RESTORE_SILENTLY')) {
