@@ -514,9 +514,9 @@
     
     // run any customized cronjobs, if any
     // looking for functions in lib/local/cron.php
-    if (file_exists($CFG->libdir.'/local/cron.php')) {
+    if (file_exists($CFG->dirroot.'/local/cron.php')) {
         mtrace('Processing customized cron script ...', '');
-        include_once($CFG->libdir.'/local/cron.php');
+        include_once($CFG->dirroot.'/local/cron.php');
         mtrace('done.');
     }
 
