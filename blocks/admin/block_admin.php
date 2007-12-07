@@ -70,10 +70,20 @@ class block_admin extends block_list {
         }
 
     /// View course grades (or just your own grades, same link)
-        if ((has_capability('moodle/grade:viewall', $context) or
-            (has_capability('moodle/grade:view', $context) && $course->showgrades)) && ($course->id!==SITEID)) {
-            $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/report/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" class="icon" alt="" />';
+    /// find all accessible reports
+        if ($course->id!==SITEID) {
+            if ($reports = get_list_of_plugins('grade/report', 'CVS')) {     // Get all installed reports
+                foreach ($reports as $key => $plugin) {                      // Remove ones we can't see
+                    if (!has_capability('gradereport/'.$plugin.':view', $context)) {
+                        unset($reports[$key]);
+                    }
+                }
+            }
+
+            if (!empty($reports)) {
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/report/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" class="icon" alt="" />';
+            }
         }
 
     /// Course outcomes (to help give it more prominence because it's important)
