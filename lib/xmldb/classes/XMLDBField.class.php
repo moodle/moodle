@@ -789,9 +789,10 @@ class XMLDBField extends XMLDBObject {
         } else {
             $result .= 'null, ';
         }
-    /// Unsigned
+    /// Unsigned (only applicable to numbers)
         $unsigned = $this->getUnsigned();
-        if (!empty($unsigned)) {
+        if (!empty($unsigned) &&
+           ($this->getType() == XMLDB_TYPE_INTEGER || $this->getType() == XMLDB_TYPE_NUMBER || $this->getType() == XMLDB_TYPE_FLOAT)) {
             $result .= 'XMLDB_UNSIGNED' . ', ';
         } else {
             $result .= 'null, ';
