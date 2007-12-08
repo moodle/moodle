@@ -80,7 +80,7 @@ function upgrade_18_letters() {
 /// Changing the default of field letter on table grade_letters to drop it
     $table = new XMLDBTable('grade_letters');
     $field = new XMLDBField('letter');
-    $field->setAttributes(XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'lowerboundary');
+    $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'lowerboundary');
 
 /// Launch change of default for field letter
     $result = $result && change_field_precision($table, $field);
