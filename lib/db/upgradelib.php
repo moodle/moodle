@@ -80,7 +80,7 @@ function upgrade_18_letters() {
 /// Changing the default of field letter on table grade_letters to drop it
     $table = new XMLDBTable('grade_letters');
     $field = new XMLDBField('letter');
-    $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'lowerboundary');
+    $field->setAttributes(XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'lowerboundary');
 
 /// Launch change of default for field letter
     $result = $result && change_field_precision($table, $field);
@@ -131,8 +131,9 @@ function upgrade_18_gradebook($courseid) {
     $course_category->courseid     = $courseid;
     $course_category->fullname     = get_string('coursegradecategory', 'grades');
     $course_category->parent       = null;
-    $course_category->aggregation  = GRADE_AGGREGATE_MEAN;
+    $course_category->aggregation  = GRADE_AGGREGATE_WEIGHTED_MEAN2;
     $course_category->timemodified = $course_category->timecreated = time();
+    $course_category->aggregateonlygraded = 0;
     if (!$course_category->id = insert_record('grade_categories', $course_category)) {
         return false;
     }
@@ -148,6 +149,7 @@ function upgrade_18_gradebook($courseid) {
     $course_item->itemtype     = 'course';
     $course_item->iteminstance = $course_category->id;
     $course_item->gradetype    = GRADE_TYPE_VALUE;
+    $course_item->display = GRADE_DISPLAY_TYPE_PERCENTAGE;
     $course_item->sortorder    = $order++;
     $course_item->timemodified = $course_item->timecreated = $course_category->timemodified;
     $course_item->needsupdate  = 1;
@@ -173,8 +175,9 @@ function upgrade_18_gradebook($courseid) {
             $category->fullname     = addslashes($oldcat->name);
             $category->parent       = $course_category->id;
             $category->droplow      = $oldcat->drop_x_lowest;
-            $category->aggregation  = GRADE_AGGREGATE_MEAN;
+            $category->aggregation  = GRADE_AGGREGATE_WEIGHTED_MEAN2;
             $category->timemodified = $category->timecreated = time();
+            $category->aggregateonlygraded = 0;
             if (!$category->id = insert_record('grade_categories', $category)) {
                 return false;
             }
@@ -191,6 +194,7 @@ function upgrade_18_gradebook($courseid) {
             $item->itemtype        = 'category';
             $item->iteminstance    = $category->id;
             $item->gradetype       = GRADE_TYPE_VALUE;
+            $item->display         = GRADE_DISPLAY_TYPE_PERCENTAGE;
             $item->plusfactor      = $oldcat->bonus_points;
             $item->hidden          = $oldcat->hidden;
             $item->aggregationcoef = $oldcat->weight;
@@ -205,7 +209,7 @@ function upgrade_18_gradebook($courseid) {
             }
         }
 
-        $course_category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN;
+        $course_category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN2;
         update_record('grade_categories', $course_category);
     }
     unset($oldcats);

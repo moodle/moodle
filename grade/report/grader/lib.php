@@ -642,6 +642,10 @@ class grade_report_grader extends grade_report {
             $scales_list = substr($scales_list, 0, -1);
             $scales_array = get_records_list('scale', 'id', $scales_list);
         }
+        
+        $row_classes = array(' even ', ' odd ');
+
+        $row_classes = array(' even ', ' odd ');
 
         foreach ($this->users as $userid => $user) {
 
@@ -662,7 +666,8 @@ class grade_report_grader extends grade_report {
                 $user_pic = '<div class="userpic">' . print_user_picture($user->id, $this->courseid, true, 0, true) . '</div>';
             }
 
-            $studentshtml .= '<tr class="r'.$this->rowcount++.'"><th class="header c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
+            $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
+                          .'<th class="header c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
                           .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
                           .fullname($user).'</a></th>';
 

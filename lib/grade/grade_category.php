@@ -318,7 +318,7 @@ class grade_category extends grade_object {
         $this->fullname    = get_string('coursegradecategory', 'grades');
         $this->path        = null;
         $this->parent      = null;
-        $this->aggregation = GRADE_AGGREGATE_MEAN;
+        $this->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN2;
 
         $this->apply_default_settings();
         $this->apply_forced_settings();
@@ -1205,7 +1205,7 @@ class grade_category extends grade_object {
         foreach ($this->forceable as $property) {
             if (isset($CFG->{"grade_$property"})) {
                 if ($CFG->{"grade_$property"} == -1) {
-                    continue; //use class defaults
+                    continue; //temporary bc before version bump
                 }
                 $this->$property = $CFG->{"grade_$property"};
             }
@@ -1223,7 +1223,7 @@ class grade_category extends grade_object {
         foreach ($this->forceable as $property) {
             if (isset($CFG->{"grade_$property"}) and isset($CFG->{"grade_{$property}_flag"}) and ((int)$CFG->{"grade_{$property}_flag"} & 1)) {
                 if ($CFG->{"grade_$property"} == -1) {
-                    continue; //use class defaults
+                    continue; //temporary bc before version bump
                 }
                 $this->$property = $CFG->{"grade_$property"};
                 $updated = true;
