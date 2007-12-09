@@ -1058,11 +1058,15 @@ function _adodb_backtrace($printOrArr=true,$levels=9999,$skippy=0)
 	if (!function_exists('debug_backtrace')) return '';
 	 
 	$html =  (isset($_SERVER['HTTP_USER_AGENT']));
-	$fmt =  ($html) ? "</font><font color=#808080 size=-1> %% line %4d, file: <a href=\"file:/%s\">%s</a></font>" : "%% line %4d, file: %s";
+// moodle change start - see readme_moodle.txt
+	$fmt =  ($html) ? "</font><font color=\"#808080\" size=\"-1\"> %% line %4d, file: <a href=\"file:/%s\">%s</a></font>" : "%% line %4d, file: %s";
+// moodle change end
 
 	$MAXSTRLEN = 128;
 
-	$s = ($html) ? '<pre align=left>' : '';
+// moodle change start - see readme_moodle.txt
+	$s = ($html) ? '<pre align="left">' : '';
+// moodle change end
 	
 	if (is_array($printOrArr)) $traceArr = $printOrArr;
 	else $traceArr = debug_backtrace();
