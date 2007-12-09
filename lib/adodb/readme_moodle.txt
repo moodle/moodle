@@ -15,6 +15,9 @@ Added:
 
 Our changes:
  * adodb-lib.inc.php - forced conversion to proper numeric type in _adodb_column_sql()
+ * adodb-lib.inc.php - modify some debug output to be correct XHTML. MDL-12378.
+       Reported to ADOdb at: http://phplens.com/lens/lensforum/msgs.php?id=17133
+       Once fixed by adodb guys, we'll return to their official distro.
  * drivers/adodb-mssql_n.inc.php - Fixed one bug in the N' parser when one value start by '
         Once fixed by adodb guys, we'll return to their official distro.
  * drivers/adodb-odbc_mssql.inc.php - Fixed one buggy function (ServerInfo) that was not
