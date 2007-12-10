@@ -272,6 +272,7 @@
             $olduserid = backup_todb($dis_info['#']['USERID']['0']['#']);
 
             //Now, build the FORUM_DISCUSSIONS record structure
+            $discussion = new object();
             $discussion->forum = $forum_id;
             $discussion->course = $restore->course_id;
             $discussion->name = backup_todb($dis_info['#']['NAME']['0']['#']);
@@ -293,7 +294,7 @@
             }
 
             //We have to recode the groupid field
-            $group = backup_getid($restore->backup_unique_code, 'groups', $discussion->groupid);
+            $group = restore_group_getid($restore, $discussion->groupid);
             if ($group) {
                 $discussion->groupid = $group->new_id;
             }

@@ -77,6 +77,14 @@
         $restore_users = 1;
     }
 
+    if (!isset($restore_groups)) {
+        if (empty($CFG->enablegroupings)) {
+            $restore_groups = RESTORE_GROUPS_ONLY;
+        } else {
+            $restore_groups = RESTORE_GROUPS_GROUPINGS;
+        }
+    }
+
     if (!isset($restore_logs)) {
         $restore_logs = 1;
     }
@@ -409,6 +417,29 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "<input type=\"hidden\" name=\"restore_users\" value=\"2\" />";
 
         }
+        echo "</td></tr>";
+
+        //Now print the Groups tr (assume there is no $info->backup_groups)
+        echo "<tr>";
+        echo "<td align=\"right\" colspan=\"2\"><b>";
+        $helplink = helpbutton('grouprestore', get_string('groups'), '', true, false, '', true);
+        if (empty($CFG->enablegroupings)) {
+            echo get_string('groups').$helplink.":";
+            echo "</b></td><td colspan=\"2\">";
+            $group_options[RESTORE_GROUPS_NONE] = get_string('no');
+            $group_options[RESTORE_GROUPS_ONLY] = get_string('yes');
+        } else {
+            echo get_string('groupsgroupings', 'group').$helplink.":";
+            echo "</b></td><td colspan=\"2\">";
+            $group_options[RESTORE_GROUPS_NONE] = get_string('none');
+            $group_options[RESTORE_GROUPINGS_ONLY] = get_string('groupingsonly', 'group');
+            $group_options[RESTORE_GROUPS_GROUPINGS] = get_string('groupsgroupings', 'group'); //all.
+
+        } /*else {
+            echo get_string('none');
+            echo "<input type=\"hidden\" name=\"restore_groups\" value=\"2\" />";
+        }*/
+        choose_from_menu($group_options, 'restore_groups', $restore_groups, '');
         echo "</td></tr>";
 
         //Now print the Logs tr

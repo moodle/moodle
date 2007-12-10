@@ -1,0 +1,33 @@
+<h1>Restoring Groups</h1>
+
+<p>You can now choose whether you want to restore groups<?php
+global $CFG;
+if (empty($CFG->enablegroupings)) {
+    echo '. ';
+} else {
+    echo ', and groupings. ';
+}
+?>
+The options are:</p>
+
+<dl>
+<?php if (empty($CFG->enablegroupings)) { ?>
+  <dt>No</dt>
+  <dd>Do not restore groups.</dd>
+  <dt>Yes</dt>
+  <dd>Restore groups.</dd>
+<?php } else { ?>
+  <dt>None</dt>
+  <dd>Do not restore groups or groupings. The grouping for grouping activities is reset to 'None'.</dd>
+  <dt>Groupings only</dt>
+  <dd>Groupings are restored, empty. The grouping selected for grouping activities 
+  is maintained, and groups are not restored.</dd>
+  <dt>Groups &amp; groupings</dt>
+  <dd>Groups and groupings are restored, and all related settings are maintained.</dd>
+<?php } ?>
+</dl>
+
+<h2>Group mode for course and activities</h2>
+<p>Whichever option is chosen the separate or visible groups setting for the course and activities is maintained.
+ We hope this is useful for users who wish to recreate groups after restoring a course.
+</p>

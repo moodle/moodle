@@ -84,6 +84,8 @@
         $restore_metacourse = required_param('restore_metacourse');
         //restore_users
         $restore_users = required_param('restore_users');
+
+        $restore_groups = required_param('restore_groups');
         //restore_logs
         $restore_logs = required_param('restore_logs');
         //restore_user_files
@@ -126,6 +128,7 @@
         $restore->restoreto=$restore_restoreto;
         $restore->metacourse=$restore_metacourse;
         $restore->users=$restore_users;
+        $restore->groups=$restore_groups;
         $restore->logs=$restore_logs;
         $restore->user_files=$restore_user_files;
         $restore->course_files=$restore_course_files;

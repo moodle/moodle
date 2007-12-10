@@ -1,6 +1,26 @@
 <?php //$Id$
     //Functions used in restore
 
+/**
+ * Group backup/restore constants, 0.
+ */
+define('RESTORE_GROUPS_NONE', 0);
+
+/**
+ * Group backup/restore constants, 1.
+ */
+define('RESTORE_GROUPS_ONLY', 1);
+
+/**
+ * Group backup/restore constants, 2.
+ */
+define('RESTORE_GROUPINGS_ONLY', 2);
+
+/**
+ * Group backup/restore constants, course/all.
+ */
+define('RESTORE_GROUPS_GROUPINGS', 3);
+
     //This function unzips a zip file in the same directory that it is
     //It automatically uses pclzip or command line unzip
     function restore_unzip ($file) {
@@ -458,6 +478,17 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
             //Users info
             $tab[$elem][0] = "<b>".get_string("users").":</b>";
             $tab[$elem][1] = get_string($info->backup_users);
+            $elem++;
+            //Groups info
+            if (empty($CFG->enablegroupings)) {
+                $tab[$elem][0] = "<b>".get_string('groups').":</b>";
+            } else {
+                $tab[$elem][0] = "<b>".get_string('groupsgroupings','group').":</b>";
+            }
+            if (!isset($info->backup_groups)) {  //Backwards compatibility.
+                $info->backup_groups = 'course';
+            }
+            $tab[$elem][1] = get_string($info->backup_groups);
             $elem++;
             //Logs info
             $tab[$elem][0] = "<b>".get_string("logs").":</b>";
@@ -1038,7 +1069,8 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
                                         $course_module->indent = $mod->indent;
                                         $course_module->visible = $mod->visible;
                                         $course_module->groupmode = $mod->groupmode;
-                                        if ($mod->groupingid and $grouping = backup_getid($restore->backup_unique_code,"groupings",$mod->groupingid)) {
+                                        if( ($restore->groups == RESTORE_GROUPINGS_ONLY or $restore->groups == RESTORE_GROUPS_GROUPINGS)
+                                            and $mod->groupingid and $grouping = backup_getid($restore->backup_unique_code,"groupings",$mod->groupingid) ) {
                                             $course_module->groupingid = $grouping->new_id;
                                         } else {
                                             $course_module->groupingid = 0;
@@ -2839,6 +2871,20 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
         return $status;
     }
 
+    /**
+     * Recode group ID field, and set group ID based on restore options.
+     * @return object Group object with new_id field.
+     */
+    function restore_group_getid($restore, $groupid) {
+        //We have to recode the groupid field
+        $group = backup_getid($restore->backup_unique_code, 'groups', $groupid);
+        
+        if ($restore->groups == RESTORE_GROUPS_NONE or $restore->groups == RESTORE_GROUPINGS_ONLY) {
+            $group->new_id = 0;
+        }
+        return $group;
+    }
+
     //This function creates all the groups
     function restore_create_groups($restore,$xml_file) {
 
@@ -3017,7 +3063,14 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
                 $gro = new Object();
                 ///$gro->id = backup_todb($info['GROUPING']['#']['ID']['0']['#']);
                 $gro->courseid    = $restore->course_id;
-                $gro->name        = backup_todb($info['GROUPING']['#']['NAME']['0']['#']);
+                $oldname          = backup_todb($info['GROUPING']['#']['NAME']['0']['#']);
+                $oldshortname     = $restore->course_shortname;
+                if (false===strpos($oldname, $oldshortname)) {
+                    $gro->name = $oldname;
+                }
+                elseif ($shortname = get_field('course', 'shortname', 'id', $restore->course_id)) {
+                    $gro->name = preg_replace("/$oldshortname/", $shortname, $oldname);
+                }
                 $gro->description = backup_todb($info['GROUPING']['#']['DESCRIPTION']['0']['#']);
                 $gro->configdata  = backup_todb($info['GROUPING']['#']['CONFIGDATA']['0']['#']);
                 $gro->timecreated = backup_todb($info['GROUPING']['#']['TIMECREATED']['0']['#']);
@@ -6922,7 +6975,7 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
 
 
         //Now create groups as needed
-        if ($status) {
+        if ($status and ($restore->groups == RESTORE_GROUPS_ONLY or $restore->groups == RESTORE_GROUPS_GROUPINGS)) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("creatinggroups");
             }
@@ -6940,7 +6993,7 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
         }
 
         //Now create groupings as needed
-        if ($status) {
+        if ($status and ($restore->groups == RESTORE_GROUPINGS_ONLY or $restore->groups == RESTORE_GROUPS_GROUPINGS)) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("creatinggroupings");
             }
@@ -6958,7 +7011,7 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
         }
 
         //Now create groupingsgroups as needed
-        if ($status) {
+        if ($status and $restore->groups == RESTORE_GROUPS_GROUPINGS) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("creatinggroupingsgroups");
             }

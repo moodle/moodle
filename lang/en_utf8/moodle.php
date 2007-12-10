@@ -1603,6 +1603,7 @@ $string['writinggeneralinfo'] = 'Writing general info';
 $string['writinggradebookinfo'] = 'Writing gradebook info';
 $string['writinggroupsinfo'] = 'Writing groups info';
 $string['writinggroupingsinfo'] = 'Writing groupings info';
+$string['writinggroupingsgroupsinfo'] = 'Writing groupings-groups info';
 $string['writingheader'] = 'Writing header';
 $string['writingloginfo'] = 'Writing logs info';
 $string['writingmessagesinfo'] = 'Writing messages info';
