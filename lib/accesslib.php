@@ -2418,45 +2418,45 @@ function create_contexts($contextlevel=null, $buildpaths=true, $feedback=false) 
 function cleanup_contexts() {
     global $CFG;
 
-    $sql = "  SELECT " . CONTEXT_COURSECAT . " AS level,
+    $sql = "  SELECT c.contextlevel,
                      c.instanceid AS instanceid
               FROM {$CFG->prefix}context c
-              LEFT OUTER JOIN {$CFG->prefix}course_categories AS t
+              LEFT OUTER JOIN {$CFG->prefix}course_categories t
                 ON c.instanceid = t.id
               WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_COURSECAT . "
             UNION
-              SELECT " . CONTEXT_COURSE . " AS level,
-                     c.instanceid AS instanceid
+              SELECT c.contextlevel,
+                     c.instanceid
               FROM {$CFG->prefix}context c
-              LEFT OUTER JOIN {$CFG->prefix}course AS t
+              LEFT OUTER JOIN {$CFG->prefix}course t
                 ON c.instanceid = t.id
               WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_COURSE . "
             UNION
-              SELECT " . CONTEXT_MODULE . " AS level,
-                     c.instanceid AS instanceid
+              SELECT c.contextlevel,
+                     c.instanceid
               FROM {$CFG->prefix}context c
-              LEFT OUTER JOIN {$CFG->prefix}course_modules AS t
+              LEFT OUTER JOIN {$CFG->prefix}course_modules t
                 ON c.instanceid = t.id
               WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_MODULE . "
             UNION
-              SELECT " . CONTEXT_USER . " AS level,
-                     c.instanceid AS instanceid
+              SELECT c.contextlevel,
+                     c.instanceid
               FROM {$CFG->prefix}context c
-              LEFT OUTER JOIN {$CFG->prefix}user AS t
+              LEFT OUTER JOIN {$CFG->prefix}user t
                 ON c.instanceid = t.id
               WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_USER . "
             UNION
-              SELECT " . CONTEXT_BLOCK . " AS level,
-                     c.instanceid AS instanceid
+              SELECT c.contextlevel,
+                     c.instanceid
               FROM {$CFG->prefix}context c
-              LEFT OUTER JOIN {$CFG->prefix}block_instance AS t
+              LEFT OUTER JOIN {$CFG->prefix}block_instance t
                 ON c.instanceid = t.id
               WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_BLOCK . "
             UNION
-              SELECT " . CONTEXT_GROUP . " AS level,
-                     c.instanceid AS instanceid
+              SELECT c.contextlevel,
+                     c.instanceid
               FROM {$CFG->prefix}context c
-              LEFT OUTER JOIN {$CFG->prefix}groups AS t
+              LEFT OUTER JOIN {$CFG->prefix}groups t
                 ON c.instanceid = t.id
               WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_GROUP . "
            ";
@@ -2464,7 +2464,7 @@ function cleanup_contexts() {
         begin_sql();
         $tx = true;
         while ($tx && $ctx = rs_fetch_next_record($rs)) {
-            $tx = $tx && delete_context($ctx->level, $ctx->instanceid);
+            $tx = $tx && delete_context($ctx->contextlevel, $ctx->instanceid);
         }
         rs_close($rs);
         if ($tx) {
@@ -3743,7 +3743,7 @@ function get_child_contexts($context) {
             // Just get all the contexts except for CONTEXT_SYSTEM level
             // and hope we don't OOM in the process - don't cache
             $sql = 'SELECT c.*'.
-                     'FROM '.$CFG->prefix.'context AS c '.
+                     'FROM '.$CFG->prefix.'context c '.
                     'WHERE contextlevel != '.CONTEXT_SYSTEM;
 
             return get_records_sql($sql);
