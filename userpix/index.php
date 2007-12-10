@@ -23,7 +23,7 @@
     
     foreach ($users as $user) {
         $fullname = fullname($user);
-        echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=1\"".
+        echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=1\" ".
              "title=\"$fullname\">";
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             echo '<img src="'. $CFG->wwwroot .'/user/pix.php/'.$user->id.'/f1.jpg"'.
