@@ -344,7 +344,7 @@ class EvalMath {
                         if (is_null($args[] = $stack->pop())) return $this->trigger("internal error");
                     }
                     $res = call_user_func(array('EvalMathCalcEmul', $fnn), $args);
-                    if ($res == FALSE) {
+                    if ($res === FALSE) {
                         return $this->trigger("internal error");
                     }
                     $stack->push($res);
