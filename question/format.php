@@ -12,6 +12,7 @@ class qformat_default {
 
     var $displayerrors = true;
     var $category = NULL;
+    var $questions = array();
     var $course = NULL;
     var $filename = '';
     var $matchgrades = 'error';
@@ -43,7 +44,23 @@ class qformat_default {
      * @param object category the category object
      */
     function setCategory( $category ) {
+    	if (count($this->questions)){
+    		debugging('You shouldn\'t call setCategory after setQuestions');
+    	}
         $this->category = $category;
+    }
+
+    /**
+     * Set the specific questions to export. Should not include questions with
+     * parents (sub questions of cloze question type).
+     * Only used for question export.
+     * @param array of question objects
+     */
+    function setQuestions( $questions ) {
+    	if ($this->category !== null){
+    		debugging('You shouldn\'t call setQuestions after setCategory');
+    	}
+        $this->questions = $questions;
     }
 
     /**
@@ -607,7 +624,11 @@ class qformat_default {
 
         // get the questions (from database) in this category
         // only get q's with no parents (no cloze subquestions specifically)
-        $questions = get_questions_category( $this->category, true );
+        if ($this->category){
+            $questions = get_questions_category( $this->category, true );
+        } else {
+            $questions = $this->questions;
+        }
 
         notify( get_string('exportingquestions','quiz') );
         $count = 0;
@@ -661,11 +682,11 @@ class qformat_default {
 
         // continue path for following error checks
         $course = $this->course;
-        $continuepath = "$CFG->wwwroot/question/export.php?courseid=$course->id"; 
+        $continuepath = "$CFG->wwwroot/question/export.php?courseid=$course->id";
 
         // did we actually process anything
         if ($count==0) {
-            print_error( 'noquestions','quiz',$continuepath );        
+            print_error( 'noquestions','quiz',$continuepath );
         }
 
         // final pre-process on exported data
