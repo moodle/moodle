@@ -156,6 +156,17 @@
             // remove entent handlers and dequeue pending events
             events_uninstall('mod/'.$module->name);
 
+            // Perform any custom uninstall tasks
+            if (file_exists($CFG->dirroot . '/mod/' . $module->name . '/lib.php')) {
+                require_once($CFG->dirroot . '/mod/' . $module->name . '/lib.php');
+                $uninstallfunction = $module->name . '_uninstall';
+                if (function_exists($uninstallfunction)) {
+                    if (! $uninstallfunction() ) {
+                        notify('Encountered a problem running uninstall function for '. $module->name.'!');
+                    }
+                }
+            }
+
             $a->module = $strmodulename;
             $a->directory = "$CFG->dirroot/mod/$delete";
             notice(get_string("moduledeletefiles", "", $a), "modules.php");
