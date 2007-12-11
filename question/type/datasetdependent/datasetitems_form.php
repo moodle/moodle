@@ -74,6 +74,7 @@ class question_dataset_dependent_items_form extends moodleform {
         $j = (($this->noofitems) * count($this->datasetdefs))+1;
         foreach ($this->datasetdefs as $defkey => $datasetdef){
             $mform->addElement('text', "number[$j]", get_string('param', 'qtype_datasetdependent', $datasetdef->name));
+            $mform->setType("number[$j]", PARAM_NUMBER);
             $this->qtypeobj->custom_generator_tools_part(&$mform, $idx, $j);
             $idx++;
             $mform->addElement('hidden', "definition[$j]");
@@ -90,7 +91,7 @@ class question_dataset_dependent_items_form extends moodleform {
         for ($i=10; $i<=100 ; $i+=10){
              $addremoveoptions["$i"]="$i";
         }
-                    $mform->addElement('header', 'additemhdr', get_string('add', 'moodle'));
+        $mform->addElement('header', 'additemhdr', get_string('add', 'moodle'));
         $mform->closeHeaderBefore('additemhdr');
 
         if ($this->qtypeobj->supports_dataset_item_generation()){
@@ -128,10 +129,12 @@ class question_dataset_dependent_items_form extends moodleform {
             $mform->addElement('header', '', get_string('itemno', 'qtype_datasetdependent', $i));
             foreach ($this->datasetdefs as $defkey => $datasetdef){
                 $mform->addElement('text', "number[$j]", get_string('param', 'qtype_datasetdependent', $datasetdef->name));
-
+                $mform->setType("number[$j]", PARAM_NUMBER);
                 $mform->addElement('hidden', "itemid[$j]");
+                $mform->setType("itemid[$j]", PARAM_INT);
 
                 $mform->addElement('hidden', "definition[$j]");
+                $mform->setType("definition[$j]", PARAM_NOTAGS);
 
                 $j--;
             }
@@ -139,10 +142,6 @@ class question_dataset_dependent_items_form extends moodleform {
                 $repeated[] =& $mform->addElement('static', "answercomment[$i]", $strquestionlabel);
             }
         }
-        $mform->setType('number', PARAM_NUMBER);
-        $mform->setType('itemid', PARAM_INT);
-        $mform->setType('definition', PARAM_NOTAGS);
-
 
 //------------------------------------------------------------------------------------------------------------------------------
         //non standard name for button element needed so not using add_action_buttons
