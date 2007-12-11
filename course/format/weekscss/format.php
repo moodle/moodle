@@ -228,12 +228,14 @@
             }
             echo '</div>';
 
+            $weekperiod = $weekday.' - '.$endweekday;
+
             echo '<div class="content">';
             if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
-                echo '<div class="weekdates">'.$currenttext.$weekday.' - '.$endweekday.' ('.get_string('notavailable').')</div>';
+                print_heading($currenttext.$weekperiod.' ('.get_string('notavailable').')', null, 3, 'weekdates');
 
             } else {
-                echo '<div class="weekdates">'.$currenttext.$weekday.' - '.$endweekday.'</div>';
+                print_heading($currenttext.$weekperiod, null, 3, 'weekdates');
 
                 echo '<div class="summary">';
                 $summaryformatoptions->noclean = true;
