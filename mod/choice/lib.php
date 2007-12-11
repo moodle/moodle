@@ -367,10 +367,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 $answer = $answers[$user->id];
                 $useranswer[(int)$answer->optionid][] = $user;
             } else {
-                $usershownotans = get_users_by_capability($context, 'mod/choice:choose', 'u.id', 'u.id ASC', '', '', $currentgroup, '', false);
-                if ($user->id == $usershownotans[$user->id]->id) {
-                    $useranswer[0][] = $user;
-                }
+                $useranswer[0][] = $user;
             }
         }
     }
