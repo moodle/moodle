@@ -43,16 +43,11 @@ class grade_export_form extends moodleform {
 
         $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000);
         $mform->addElement('select', 'previewrows', get_string('previewrows', 'grades'), $options); 
-<<<<<<< grade_export_form.php
-
-        $mform->addElement('advcheckbox', 'updatedgradesonly', get_string('updatedgradesonly', 'grades'));
-        
-=======
         
         if (!empty($features['updategradesonly'])) {
             $mform->addElement('advcheckbox', 'updatedgradesonly', get_string('updatedgradesonly', 'grades'));
         }
->>>>>>> 1.27.2.6
+
         /// selections for decimal points and format, MDL-11667, defaults to site settings, if set
         //$default_gradedisplaytype = $CFG->grade_export_displaytype;
         $options = array(GRADE_DISPLAY_TYPE_REAL       => get_string('real', 'grades'),
@@ -118,20 +113,13 @@ class grade_export_form extends moodleform {
         }
 
         $mform->addElement('header', 'gradeitems', get_string('gradeitemsinc', 'grades'));
+        
+        $switch = grade_get_setting($COURSE->id, 'aggregationposition', $CFG->grade_aggregationposition);
 
-        if ($all_grade_items = grade_item::fetch_all(array('courseid'=>$COURSE->id))) {
-            // follow proper sort order, MDL-11715
-            $grade_items = array();
-            foreach ($all_grade_items as $item) {
-                $grade_items[$item->sortorder] = $item;
-            }
-            unset($all_grade_items);
-            ksort($grade_items);
+        // Grab the grade_seq for this course
+        $gseq = new grade_seq($COURSE->id, $switch);
 
-            // Put course total at the end
-            $total = $grade_items[1];
-            unset($grade_items[1]);
-            $grade_items[] = $total;          
+        if ($grade_items = $gseq->items) {
             $needs_multiselect = false;
             foreach ($grade_items as $grade_item) {
                 if (!empty($features['idnumberrequired']) and empty($grade_item->idnumber)) {
