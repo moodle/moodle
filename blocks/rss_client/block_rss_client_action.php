@@ -72,6 +72,7 @@ $link = $CFG->wwwroot.'/course/view.php?id='.$id;
 if (empty($course)) {
     $link = '';
 }
+$navlinks = array();
 // $navlinks = array(array('name' => $course->shortname, 'link' => $link, 'type' => 'misc'));
 $navigation = build_navigation($navlinks);
 print_header($straddedit, $straddedit, $navigation);
