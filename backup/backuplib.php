@@ -1506,6 +1506,11 @@
                 // do not restore if this grade_item is a mod, and
                 if ($grade_item->itemtype == 'mod') {
                     // this still needs to be included, though grades can be ignored
+                    
+                    //MDL-12463 - exclude grade_items of instances not chosen for backup
+                    if (empty($preferences->mods[$grade_item->itemmodule]->instances[$grade_item->iteminstance]->backup)) {
+                        continue;
+                    }
                 } else if ($grade_item->itemtype == 'category') {
                     // if not all grade items are being backed up
                     // we ignore this type of grade_item and grades associated
