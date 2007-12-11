@@ -79,6 +79,9 @@
     $strquizzes = get_string("modulenameplural", "quiz");
     $popup = $quiz->popup && !$ispreviewing; // Controls whether this is shown in a javascript-protected window.
 
+/// We intentionally do not check open and close times here. Instead we do it lower down.
+/// This is to deal with what happens when someone submits close to the exact moment when the quiz closes.
+
 /// Check number of attempts
     $numberofpreviousattempts = count_records_select('quiz_attempts', "quiz = '{$quiz->id}' AND " .
         "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1");
@@ -87,12 +90,8 @@
     }
 
 /// Check subnet access
-    if ($quiz->subnet and !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
-        if ($ispreviewing) {
-            notify(get_string('subnetnotice', 'quiz'));
-        } else {
-            error(get_string("subneterror", "quiz"), "view.php?id=$cm->id");
-        }
+    if (!$ispreviewing && $quiz->subnet && !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
+        error(get_string("subneterror", "quiz"), "view.php?id=$cm->id");
     }
 
 /// Check password access
@@ -374,22 +373,16 @@
         quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm);
     }
 
-/// Check access to quiz page
-
-    // check the quiz times
-    if ($timestamp < $quiz->timeopen || ($quiz->timeclose and $timestamp > $quiz->timeclose)) {
-        if ($ispreviewing) {
-            notify(get_string('notavailabletostudents', 'quiz'));
-        } else {
-            notice(get_string('notavailable', 'quiz'), "view.php?id={$cm->id}");
-        }
-    }
-
     if ($finishattempt) {
         if (!empty($SESSION->passwordcheckedquizzes[$quiz->id])) {
             unset($SESSION->passwordcheckedquizzes[$quiz->id]);
         }
         redirect($CFG->wwwroot . '/mod/quiz/review.php?attempt='.$attempt->id, 0);
+    }
+
+// Now is the right time to check the open and close times.
+    if (!$ispreviewing && ($timestamp < $quiz->timeopen || ($quiz->timeclose && $timestamp > $quiz->timeclose))) {
+        error(get_string('notavailable', 'quiz'), "view.php?id={$cm->id}");
     }
 
 /// Print the quiz page ////////////////////////////////////////////////////////
@@ -422,8 +415,15 @@
         $buttonoptions['q'] = $quiz->id;
         $buttonoptions['forcenew'] = true;
         print_single_button($CFG->wwwroot.'/mod/quiz/attempt.php', $buttonoptions, get_string('startagain', 'quiz'));
+    /// Notices about restrictions that would affect students.
         if ($quiz->popup) {
             notify(get_string('popupnotice', 'quiz'));
+        }
+        if ($timestamp < $quiz->timeopen || ($quiz->timeclose && $timestamp > $quiz->timeclose)) {
+            notify(get_string('notavailabletostudents', 'quiz'));
+        }
+        if ($quiz->subnet && !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
+            notify(get_string('subnetnotice', 'quiz'));
         }
     } else {
         if ($quiz->attempts != 1) {
