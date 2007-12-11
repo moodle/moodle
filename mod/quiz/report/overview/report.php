@@ -476,16 +476,19 @@ class quiz_report extends quiz_default_report {
                     }
 
                     // Grades columns.
-                    if ($showgrades && $attempt->sumgrades) {
-                        $grade = round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints);
-                        if (!$download) {
-                            $row[] = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$grade.'</a>';
+                    if ($showgrades) {
+                        if ($attempt->timefinish) {
+                            $grade = round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints);
+                            if (!$download) {
+                                $row[] = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$grade.'</a>';
+                            } else {
+                                $row[] = $grade;
+                            }
                         } else {
-                            $row[] = $grade;
+                            $row[] = '-';
                         }
-                    } else {
-                        $row[] = '-';
                     }
+
                     if($detailedmarks) {
                         if(empty($attempt->attempt)) {
                             foreach($questionids as $questionid) {
