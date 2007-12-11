@@ -623,9 +623,10 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         // Select a dataset in the following format:
         // An array indexed by the variable names (d.name) pointing to the value
         // to be substituted
+        //the value is rounded following the decimals setting
         global $CFG;
         if (!$dataset = get_records_sql(
-                        "SELECT d.name, i.value
+                        "SELECT d.name, i.value, d.options
                         FROM {$CFG->prefix}question_dataset_definitions d,
                              {$CFG->prefix}question_dataset_items i,
                              {$CFG->prefix}question_datasets q
@@ -637,6 +638,14 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                   "question! (question: {$question->id}, " .
                   "datasetitem: {$datasetitem})");
         }
+        foreach($dataset as $dset ){
+            list($distribution, $min, $max,$dec) = explode(':', $dset->options, 4);
+            if ($dec == "") {
+                $dec = 0 ;
+            }
+            unset($dset->options);
+        }
+        $dset->value = sprintf("%.".$dec."f",$dset->value);
         array_walk($dataset, create_function('&$val', '$val = $val->value;'));
         return $dataset;
     }
