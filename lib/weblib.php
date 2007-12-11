@@ -5802,7 +5802,7 @@ function editorhelpbutton(){
  * @return string
  * @todo Finish documenting this function
  */
-function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=false, $text='', $return=false,
+function helpbutton ($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false,
                      $imagetext='') {
     global $CFG, $COURSE;
 
@@ -5815,6 +5815,10 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
 
     if ($module == '') {
         $module = 'moodle';
+    }
+
+    if ($title == '' && $linktext == '') {
+        debugging('Error in call to helpbutton function: at least one of $title and $linktext is required');
     }
 
     // Warn users about new window for Accessibility
