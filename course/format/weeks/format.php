@@ -193,10 +193,10 @@
 
             echo '<td class="content">';
             if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
-                echo '<div class="weekdates">'.$weekperiod.' ('.get_string('notavailable').')</div>';
+                print_heading($weekperiod.' ('.get_string('notavailable').')', null, 3, 'weekdates');
 
             } else {
-                echo '<div class="weekdates">'.$weekperiod.'</div>';
+                print_heading($weekperiod, null, 3, 'weekdates');
 
                 echo '<div class="summary">';
                 $summaryformatoptions->noclean = true;
