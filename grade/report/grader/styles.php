@@ -10,18 +10,6 @@
     white-space: nowrap;
 }
 
-.grade-report-grader table#user-grades td.vmarked {
-    background-color: #ffcc33;
-}
-
-.grade-report-grader table#user-grades td.hmarked {
-    background-color: #ffff99;
-}
-
-.grade-report-grader table#user-grades td.hmarked.vmarked{
-    background-color: #ffcc99;
-}
-
 .grade-report-grader table#user-grades .catlevel1 {
   background-color: #ffffff;
 }
@@ -48,6 +36,18 @@
     background-color: #efefef;
     background-image: none;
 }
+
+.grade-report-grader table#user-grades td.vmarked, .grade-report-grader table#user-grades tr.odd td.vmarked {
+    background-color: #ffcc33;
+}
+
+.grade-report-grader table#user-grades td.hmarked, .grade-report-grader table#user-grades tr.odd td.hmarked {
+    background-color: #ffff99;
+}
+
+.grade-report-grader table#user-grades td.hmarked.vmarked, .grade-report-grader table#user-grades tr.odd td.hmarked.vmarked{
+    background-color: #ffcc99;
+} 
 
 .grade-report-grader table#user-grades tr.groupavg td.cell {
     background-color: #efffef;
