@@ -434,6 +434,12 @@ table.minicalendar {
   line-height:1em;
 }
 
+#course-view .section .weekdates {
+  margin: 0;
+  font-weight: normal;
+  font-size: 1em;
+}
+
 #course-view .section .left {
   font-weight:bold;
 }
