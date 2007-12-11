@@ -2234,7 +2234,7 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
             //in backup_ids->info will be the real info (serialized)
             $info = restore_read_xml_users($restore,$xml_file);
         }
-
+        
         //Now, get evey user_id from $info and user data from $backup_ids
         //and create the necessary records (users, user_students, user_teachers
         //user_course_creators and user_admins
@@ -2248,6 +2248,14 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
             foreach ($info->users as $userid) {
                 $rec = backup_getid($restore->backup_unique_code,"user",$userid);
                 $user = $rec->info;
+                foreach (array_keys(get_object_vars($user)) as $field) {
+                    if (!is_array($user->$field)) {
+                        $user->$field = backup_todb($user->$field);
+                        if (is_null($user->$field)) {
+                            $user->$field = '';
+                        }
+                    }
+                }
 
                 //Now, recode some languages (Moodle 1.5)
                 if ($user->lang == 'ma_nt') {
@@ -2326,7 +2334,7 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
                     //Unset the id because it's going to be inserted with a new one
                     unset ($user->id);
                     // relink the descriptions
-                    $user->description = stripslashes(backup_todb($user->description));
+                    $user->description = stripslashes($user->description);
 
                     if (!empty($CFG->disableuserimages)) {
                         $user->picture = 0;
@@ -2362,6 +2370,7 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
 
                     //We are going to create the user
                     //The structure is exactly as we need
+
                     $newid = insert_record ("user", addslashes_recursive($user));
                     //Put the new id
                     $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"new");
