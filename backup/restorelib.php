@@ -1497,7 +1497,7 @@
             //in backup_ids->info will be the real info (serialized)
             $info = restore_read_xml_users($restore,$xml_file);
         }
-
+        
         //Now, get evey user_id from $info and user data from $backup_ids
         //and create the necessary records (users, user_students, user_teachers
         //user_course_creators and user_admins
@@ -1509,8 +1509,16 @@
             $languages = get_list_of_languages();
 
             foreach ($info->users as $userid) {
-                $rec = backup_getid($restore->backup_unique_code,"user",$userid); 
+                $rec = backup_getid($restore->backup_unique_code,"user",$userid);
                 $user = $rec->info;
+                foreach (array_keys(get_object_vars($user)) as $field) {
+                    if (!is_array($user->$field)) {
+                        $user->$field = backup_todb($user->$field);
+                        if (is_null($user->$field)) {
+                            $user->$field = '';
+                        }
+                    }
+                }
 
                 //Now, recode some languages (Moodle 1.5)
                 if ($user->lang == 'ma_nt') {
