@@ -35,7 +35,7 @@ class user_filter_date extends user_filter_type {
         $objs[] =& $mform->createElement('checkbox', $this->_name.'_eck', null, get_string('isbefore', 'filters'));
         $objs[] =& $mform->createElement('date_selector', $this->_name.'_edt', null);
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
-        $grp->setHelpButton(array('date','','filters'));
+        $grp->setHelpButton(array('date',$this->_label,'filters'));
 
         if ($this->_advanced) {
             $mform->setAdvanced($this->_name.'_grp');
