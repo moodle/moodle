@@ -50,6 +50,13 @@ class quiz_report extends quiz_default_report {
         $nocleanformatoptions = new stdClass;
         $nocleanformatoptions->noclean = true;
 
+        // Prepare list of available actions to perform on attempts - we only want to show the checkbox.
+        // Column on the table if there are options.
+        $attemptactions = array();
+        if (has_capability('mod/quiz:deleteattempts', $context)) {
+            $attemptactions['delete'] = get_string('delete');
+        }
+
         // Work out some display options - whether there is feedback, and whether scores should be shown.
         $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;
         $fakeattempt = new stdClass();
@@ -95,16 +102,21 @@ class quiz_report extends quiz_default_report {
         }
 
         // Define table columns
-        $tablecolumns = array('checkbox', 'picture', 'fullname', 'timestart', 'timefinish', 'duration');
-        $tableheaders = array(NULL, '', get_string('name'), get_string('startedon', 'quiz'),
+        $tablecolumns = array('picture', 'fullname', 'timestart', 'timefinish', 'duration');
+        $tableheaders = array('', get_string('name'), get_string('startedon', 'quiz'),
                 get_string('timecompleted','quiz'), get_string('attemptduration', 'quiz'));
+
+        if (!empty($attemptactions)) {
+            array_unshift($tablecolumns, 'checkbox');
+            array_unshift($tableheaders, NULL);
+        }
 
         if ($showgrades) {
             $tablecolumns[] = 'sumgrades';
             $tableheaders[] = get_string('grade', 'quiz').'/'.$quiz->grade;
         }
 
-        if($detailedmarks) {
+        if ($detailedmarks) {
             // we want to display marks for all questions
             // Start by getting all questions
             $questionlist = quiz_questions_in_quiz($quiz->questions);
@@ -118,7 +130,7 @@ class quiz_report extends quiz_default_report {
                 error('No questions found');
             }
             $number = 1;
-            foreach($questionids as $key => $id) {
+            foreach ($questionids as $key => $id) {
                 if ($questions[$id]->length) {
                     // Only print questions of non-zero length
                     $tablecolumns[] = '$'.$id;
@@ -417,10 +429,10 @@ class quiz_report extends quiz_default_report {
         }
 
         // Build table rows
-
         if (!$download) {
             $table->initialbars($totalinitials>20);
         }
+
         if(!empty($attempts) || !empty($noattempts)) {
             if ($attempts) {
                 foreach ($attempts as $attempt) {
@@ -441,7 +453,9 @@ class quiz_report extends quiz_default_report {
                     // Username columns.
                     $row = array();
                     if (!$download) {
-                        $row[] = '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />';
+                        if (!empty($attemptactions)) {
+                            $row[] = '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />';
+                        }
                         $row[] = $picture;
                         $row[] = $userlink;
                     } else {
@@ -550,14 +564,8 @@ class quiz_report extends quiz_default_report {
                 // Print table
                 $table->print_html();
 
-                // Prepare list of available options.
-                $options = array();
-                if (has_capability('mod/quiz:deleteattempts', $context)) {
-                    $options['delete'] = get_string('delete');
-                }
-
                 // Print "Select all" etc.
-                if (!empty($attempts) && !empty($options)) {
+                if (!empty($attempts) && !empty($attemptactions)) {
                     echo '<table id="commands">';
                     echo '<tr><td>';
                     echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.
@@ -565,7 +573,7 @@ class quiz_report extends quiz_default_report {
                     echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.
                             get_string('selectnone', 'quiz').'</a> ';
                     echo '&nbsp;&nbsp;';
-                    choose_from_menu($options, 'action', '', get_string('withselected', 'quiz'),
+                    choose_from_menu($attemptactions, 'action', '', get_string('withselected', 'quiz'),
                             'if(this.selectedIndex > 0) submitFormById(\'attemptsform\');');
                     echo '<noscript id="noscriptmenuaction" style="display: inline;"><div>';
                     echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
