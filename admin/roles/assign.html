@@ -61,7 +61,7 @@
           <?php
             $i=0;
             if (!empty($searchtext)) {
-                echo "<optgroup label=\"$strsearchresults (" . $availableusers->_numOfRows . ")\">\n";
+                echo "<optgroup label=\"$strsearchresults (" . $usercount . ")\">\n";
                 while ($user = rs_fetch_next_record($availableusers)) {
                     $fullname = fullname($user, true);
                     echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
