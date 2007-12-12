@@ -335,7 +335,7 @@
     }
 /// printing roles
     
-    if ($rolestring = get_user_roles_in_context($id, $coursecontext->id)) {
+    if ($rolestring = get_user_roles_in_context($id, $coursecontext)) {
         print_row(get_string('roles').':', format_string($rolestring, false));
     }
 

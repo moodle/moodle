@@ -3375,19 +3375,22 @@ function get_roles_used_in_context($context, $view = false) {
 
 /** this function is used to print roles column in user profile page.
  * @param int userid
- * @param int contextid
+ * @param object context
  * @return string
  */
-function get_user_roles_in_context($userid, $contextid){
-    global $CFG;
+function get_user_roles_in_context($userid, $context, $view=true){
+    global $CFG, $USER;
 
     $rolestring = '';
-    $SQL = 'select * from '.$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'role r where ra.userid='.$userid.' and ra.contextid='.$contextid.' and ra.roleid = r.id';
+    $SQL = 'select * from '.$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'role r where ra.userid='.$userid.' and ra.contextid='.$context->id.' and ra.roleid = r.id';
     if ($roles = get_records_sql($SQL)) {
         foreach ($roles as $userrole) {
+            // MDL-12544, if we are in view mode and current user has no capability to view hidden assignment, skip it
+            if ($userrole->hidden && $view && !has_capability('moodle/role:viewhiddenassigns', $context)) {
+                continue;
+            }
             $rolestring .= '<a href="'.$CFG->wwwroot.'/user/index.php?contextid='.$userrole->contextid.'&amp;roleid='.$userrole->roleid.'">'.$userrole->name.'</a>, ';
         }
-
     }
     return rtrim($rolestring, ', ');
 }
