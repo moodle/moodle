@@ -210,9 +210,14 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
         }
     }
 
-    $inactive = array($currenttab);
+    $inactive[] = $currenttab;
 
     $tabs = array($toprow);
+
+/// If there are any secondrow defined, let's introduce it
+    if (isset($secondrow) && is_array($secondrow) && !empty($secondrow)) {
+        $tabs[] = $secondrow;
+    }
 
     print_tabs($tabs, $currenttab, $inactive, $activetwo);
 
