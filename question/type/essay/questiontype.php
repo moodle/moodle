@@ -95,10 +95,10 @@ class question_essay_qtype extends default_questiontype {
             $answer = format_text($value, FORMAT_MOODLE,
                                   $safeformatoptions, $cmoptions->course);
         }
-        
+
         include("$CFG->dirroot/question/type/essay/display.html");
 
-        if ($usehtmleditor) {
+        if ($usehtmleditor && empty($options->readonly)) {
             use_html_editor($inputname);
             $htmleditorused = true;
         }
