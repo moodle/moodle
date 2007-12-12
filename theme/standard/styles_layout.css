@@ -3764,7 +3764,7 @@ table.quizreviewsummary td.cell {
 }
 
 #mod-quiz-edit #page .controls,
-#mod-quiz-edit #page .attemptsnotice
+#mod-quiz-edit #page .quizattemptcounts
 {
   text-align: center;
 }
@@ -3899,6 +3899,10 @@ table.quizreviewsummary td.cell {
 
 .mod-quiz .gradingdetails {
   font-size: small;
+}
+.quizattemptcounts {
+  text-align: center;
+  margin: 6px 0;
 }
 /***
  *** Modules: Resource
