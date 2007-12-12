@@ -102,7 +102,7 @@ class question_essay_qtype extends default_questiontype {
 
         include("$CFG->dirroot/question/type/essay/display.html");
 
-        if ($usehtmleditor) {
+        if ($usehtmleditor && empty($options->readonly)) {
             use_html_editor($inputname);
             $htmleditorused = true;
         }
