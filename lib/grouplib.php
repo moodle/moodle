@@ -258,6 +258,7 @@ function groups_get_course_groupmode($course) {
 /**
  * Returns effective groupmode used in activity, course setting
  * overrides activity setting if groupmodeforce enabled.
+ * @param $cm the course module object. Only the ->course and ->groupmode need to be set.
  * @return integer group mode
  */
 function groups_get_activity_groupmode($cm) {

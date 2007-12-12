@@ -1678,15 +1678,21 @@ function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $incl
 }
 
 /**
- * Returns an array of all the active instances of a particular module in a given course, sorted in the order they are defined
+ * Returns an array of all the active instances of a particular module in a given course,
+ * sorted in the order they are defined.
  *
  * Returns an array of all the active instances of a particular
  * module in a given course, sorted in the order they are defined
- * in the course.   Returns false on any errors.
+ * in the course. Returns an empty array on any errors.
+ *
+ * The returned objects includle the columns cw.section, cm.visible,
+ * cm.groupmode and cm.groupingid, and are indexed by cm.id.
  *
  * @uses $CFG
- * @param string  $modulename The name of the module to get instances for
- * @param object(course)  $course This depends on an accurate $course->modinfo
+ * @param string $modulename The name of the module to get instances for
+ * @param object $course This depends on an accurate $course->modinfo
+ * @return array of module instance objects, including some extra fields from the course_modules
+ *          and course_sections tables, or an empty array if an error occurred.
  */
 function get_all_instances_in_course($modulename, $course, $userid=NULL, $includeinvisible=false) {
 
