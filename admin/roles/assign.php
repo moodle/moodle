@@ -300,8 +300,9 @@
             
                     $availableusers = get_recordset_sql($select . $from . $where . $selectsql . $excsql);         
                 }
-                
-                $usercount =  count_records_sql($countselect . $from . $where) - count($contextusers);
+
+                $usercount =  $availableusers->_numOfRows;
+
             }
 
         } else { 
@@ -327,8 +328,9 @@
                                                     AND r.roleid = '.$roleid.'
                                                     '.$selectsql.')
                                                 ORDER BY lastname ASC, firstname ASC');
-            $usercount = count_records_select('user', $select) - count($contextusers);
-   
+
+            $usercount = $availableusers->_numOfRows;         
+
         }
     
         echo '<div style="text-align:center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';
