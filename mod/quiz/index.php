@@ -102,7 +102,9 @@
         }
 
         if ($showing == 'stats') {
-            $data[] = quiz_num_attempt_summary($quiz);
+            // The $quiz objects returned by get_all_instances_in_course have the necessary $cm 
+            // fields set to make the following call work.
+            $data[] = quiz_num_attempt_summary($quiz, $quiz);
         } else if ($showing = 'scores') {
 
             // Grade and feedback.

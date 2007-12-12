@@ -72,19 +72,19 @@ class quiz_report extends quiz_default_report {
         $reporturlwithoptions = $reporturl . '&amp;id=' . $cm->id . '&amp;noattempts=' . $noattempts .
                 '&amp;detailedmarks=' . $detailedmarks . '&amp;pagesize=' . $pagesize;
 
-        // Print information on the number of existing attempts
-        if (!$download) { //do not print notices when downloading
-            if ($strattemptnum = quiz_num_attempt_summary($quiz)) {
-                notify($strattemptnum);
-            }
-        }
-
         /// find out current groups mode
         $currentgroup = groups_get_activity_group($cm, true);
 
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$download) {
                 groups_print_activity_menu($cm, $reporturlwithoptions);
+            }
+        }
+
+        // Print information on the number of existing attempts
+        if (!$download) { //do not print notices when downloading
+            if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, false, $currentgroup)) {
+                echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
             }
         }
 

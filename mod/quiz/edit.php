@@ -303,9 +303,11 @@
 
         print_box_start();
 
-        echo "<div class=\"attemptsnotice\">\n";
-        echo "<a href=\"report.php?mode=overview&amp;id=$cm->id\">".quiz_num_attempt_summary($quiz)."</a><br />".get_string("attemptsexist","quiz");
-        echo "</div><br />\n";
+        echo "<div class=\"quizattemptcounts\">\n";
+        echo '<a href="report.php?mode=overview&amp;id=' . $cm->id . '">' .
+                quiz_num_attempt_summary($quiz, $cm) . '</a><br />' .
+                get_string('cannoteditafterattempts', 'quiz');
+        echo "</div>\n";
 
         $sumgrades = quiz_print_question_list($quiz,  $thispageurl, false, $quiz_showbreaks, $quiz_reordertool);
         if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $quiz->instance)) {

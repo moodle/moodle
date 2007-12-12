@@ -1036,7 +1036,7 @@ function quiz_print_overview($courses, &$htmlarray) {
         return array();
     }
 
-    if (!$quizs = get_all_instances_in_courses('quiz', $courses)) {
+    if (!$quizzes = get_all_instances_in_courses('quiz', $courses)) {
         return;
     }
 
@@ -1047,7 +1047,7 @@ function quiz_print_overview($courses, &$htmlarray) {
 /// We want to list quizzes that are currently available, and which have a close date.
 /// This is the same as what the lesson does, and the dabate is in MDL-10568.
     $now = time();
-    foreach ($quizs as $quiz) {
+    foreach ($quizzes as $quiz) {
         if ($quiz->timeclose >= $now && $quiz->timeopen < $now) {
         /// Give a link to the quiz, and the deadline.
             $str = '<div class="quiz overview">' .
@@ -1060,6 +1060,8 @@ function quiz_print_overview($courses, &$htmlarray) {
             $context = get_context_instance(CONTEXT_MODULE, $quiz->coursemodule);
             if (has_capability('mod/quiz:viewreports', $context)) {
             /// For teacher-like people, show a summary of the number of student attempts.
+                // The $quiz objects returned by get_all_instances_in_course have the necessary $cm 
+                // fields set to make the following call work.
                 $str .= '<div class="info">' . quiz_num_attempt_summary($quiz, true) . '</div>';
             } else if (has_capability('mod/quiz:attempt', $context)){ // Student
             /// For student-like people, tell them how many attempts they have made.
@@ -1089,12 +1091,34 @@ function quiz_print_overview($courses, &$htmlarray) {
  * Return a textual summary of the number of attemtps that have been made at a particular quiz,
  * returns '' if no attemtps have been made yet, unless $returnzero is passed as true.
  * @param object $quiz the quiz object. Only $quiz->id is used at the moment.
- * @param boolean $returnzero if false (default), when no attempts have been made '' is returned instead of 'Attempts: 0'. 
- * @return string a string like "Attempts: 123".
+ * @param object $cm the cm object. Only $cm->course, $cm->groupmode and $cm->groupingid fields are used at the moment.
+ * @param boolean $returnzero if false (default), when no attempts have been made '' is returned instead of 'Attempts: 0'.
+ * @param int $currentgroup if there is a concept of current group where this method is being called
+ *         (e.g. a report) pass it in here. Default 0 which means no current group.
+ * @return string a string like "Attempts: 123", "Attemtps 123 (45 from your groups)" or
+ *          "Attemtps 123 (45 from this group)".
  */
-function quiz_num_attempt_summary($quiz, $returnzero = false) {
+function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup = 0) {
+    global $CFG, $USER;
     $numattempts = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0);
     if ($numattempts || $returnzero) {
+        if (groups_get_activity_groupmode($cm)) {
+            $a->total = $numattempts;
+            if ($currentgroup) {
+                $a->group = count_records_sql('SELECT count(1) FROM ' .
+                        $CFG->prefix . 'quiz_attempts qa JOIN ' .
+                        $CFG->prefix . 'groups_members gm ON qa.userid = gm.userid ' .
+                        'WHERE quiz = ' . $quiz->id . ' AND preview = 0 AND groupid = ' . $currentgroup);
+                return get_string('attemptsnumthisgroup', 'quiz', $a);
+            } else if ($groups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid)) { 
+                $a->group = count_records_sql('SELECT count(1) FROM ' .
+                        $CFG->prefix . 'quiz_attempts qa JOIN ' .
+                        $CFG->prefix . 'groups_members gm ON qa.userid = gm.userid ' .
+                        'WHERE quiz = ' . $quiz->id . ' AND preview = 0 AND ' .
+                        'groupid IN (' . implode(',', array_keys($groups)) . ')');
+                return get_string('attemptsnumyourgroups', 'quiz', $a);
+            }
+        }
         return get_string('attemptsnum', 'quiz', $numattempts);
     }
     return '';
