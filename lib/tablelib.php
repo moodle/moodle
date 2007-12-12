@@ -153,9 +153,13 @@ class flexible_table {
     }
 
     /**
-     * Sets the given $column index to true in $this->column_suppress.
-     * @param integer $column
-     * @return void
+     * I think that what this method does is set the column so that if the same data appears in 
+     * consecutive rows, then it is not repeated.
+     * 
+     * For example, in the quiz overview report, the fullname column is set to be suppressed, so
+     * that when one student has made multiple attempts, their name is only printed in the row
+     * for their first attempt.
+     * @param integer $column the index of a column.
      */
     function column_suppress($column) {
         if(isset($this->column_suppress[$column])) {
