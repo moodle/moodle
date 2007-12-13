@@ -40,6 +40,8 @@ define('SEARCH_TYPE_DATA', 'data');
 define('PATH_FOR_SEARCH_TYPE_DATA', 'mod/data');
 define('SEARCH_TYPE_CHAT', 'chat');
 define('PATH_FOR_SEARCH_TYPE_CHAT', 'mod/chat');
+define('SEARCH_TYPE_LESSON', 'lesson');
+define('PATH_FOR_SEARCH_TYPE_LESSON', 'mod/lesson');
 
 /**
 * returns all the document type constants
