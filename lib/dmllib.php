@@ -2013,6 +2013,50 @@ function sql_order_by_text($fieldname, $numchars=32) {
 }
 
 /**
+ * Returns the SQL to be used in order to CAST one CHAR column to INTEGER.
+ *
+ * Be aware that the CHAR column you're trying to cast contains really
+ * int values or the RDBMS will throw an error!
+ *
+ * @param string fieldname the name of the field to be casted
+ * @param boolean text to specify if the original column is one TEXT (CLOB) column (true). Defaults to false.
+ * @return string the piece of SQL code to be used in your statement.
+ */
+function sql_cast_char2int($fieldname, $text=false) {
+
+    global $CFG;
+
+    $sql = '';
+
+    switch ($CFG->dbfamily) {
+        case 'mysql':
+            $sql = ' CAST(' . $fieldname . ' AS SIGNED) ';
+            break;
+        case 'postgres':
+            $sql = ' CAST(' . $fieldname . ' AS INT) ';
+            break;
+        case 'mssql':
+            if (!$text) {
+                $sql = ' CAST(' . $fieldname . ' AS INT) ';
+            } else {
+                $sql = ' CAST(' . sql_compare_text($fieldname) . ' AS INT) ';
+            }
+            break;
+        case 'oracle':
+            if (!$text) {
+                $sql = ' CAST(' . $fieldname . ' AS INT) ';
+            } else {
+                $sql = ' CAST(' . sql_compare_text($fieldname) . ' AS INT) ';
+            }
+            break;
+        default:
+            $sql = ' ' . $fieldname . ' ';
+    }
+
+    return $sql;
+}
+
+/**
  * Returns the SQL text to be used in order to perform one bitwise AND operation
  * between 2 integers.
  * @param integer int1 first integer in the operation
