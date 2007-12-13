@@ -121,18 +121,12 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 // Initialise the grader report object
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 
-/// processing posted grades & feedback here
-if ($data = data_submitted() and confirm_sesskey()) {
-    $report->process_data($data);
-}
-
 // Override perpage if set in URL
 if ($perpageurl) {
     $report->user_prefs['studentsperpage'] = $perpageurl;
 }
 
 $report->load_users();
-
 
 $numusers = $report->get_numusers();
 $report->load_final_grades();
@@ -149,10 +143,14 @@ $currenttab = 'graderreport';
 require('tabs.php');
 
 echo $report->group_selector;
-
 echo '<div class="clearer"></div>';
-
 echo $report->get_toggles_html();
+
+/// processing posted grades & feedback here
+if ($data = data_submitted() and confirm_sesskey()) {
+    $report->process_data($data);
+}
+
 $studentsperpage = $report->get_pref('studentsperpage');
 // Don't use paging if studentsperpage is empty or 0 at course AND site levels
 if (!empty($studentsperpage)) {
