@@ -46,7 +46,7 @@
                 // exclude roles called from the admin area (courseid 1)
                 // include user roles for the Moodle user settings called
                 // from the start page
-                if (($COURSE->id > 1) || ($_GET['contextid'] == 30)) {
+                if (($COURSE->id > 1) || ($_GET['contextid'] == 30) || ($_GET['contextid'] == 61)) {
                     preg_match('/class="([^"]*)"/i', $bodytags, $classes);
                     $classlist = explode (' ', $classes[1]);
                     if (!in_array('nocoursepage', $classlist)) {

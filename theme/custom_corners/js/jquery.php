@@ -17,11 +17,13 @@
             
             // check for layouttabel and add haslayouttable class to body
             // remove nocoursepage class from body
-            var layoutTable = $('#layout-table');
+            var layoutTable = $('#layout-table #middle-column');
             
             if (layoutTable.length) {
                 $('body').addClass('haslayouttable');
                 $('body').removeClass('nocoursepage');
+            } else {
+                $('body').addClass('nolayouttable');
             }
         },
         
