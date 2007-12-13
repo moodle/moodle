@@ -1366,6 +1366,18 @@ class grade_item extends grade_object {
             if (is_null($finalgrade)) {
                 $grade->finalgrade = null;
             } else {
+                // MDL-12517, warn user if grade is out of bounds
+                if ($finalgrade < $this->grademin) {
+                    $user = get_record('user', 'id', $grade->userid,'','','','','id, firstname, lastname');
+                    $gradestr->username = fullname($user);
+                    $gradestr->itemname = $this->get_name();
+                    notify(get_string('lessthanmin', 'grades', $gradestr)); 
+                } else if ($finalgrade > $this->grademax) {
+                    $user = get_record('user', 'id', $grade->userid,'','','','','id, firstname, lastname');
+                    $gradestr->username = fullname($user);
+                    $gradestr->itemname = $this->get_name();
+                    notify(get_string('morethanmax', 'grades', $gradestr));
+                }
                 $grade->finalgrade = (float)bounded_number($this->grademin, $finalgrade, $this->grademax);
             }
         }
