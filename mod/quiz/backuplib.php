@@ -103,7 +103,7 @@
             //put the ids of the used questions from all these categories into the db.
             $status = $status && execute_sql("INSERT INTO {$CFG->prefix}backup_ids
                                        (backup_code, table_name, old_id, info)
-                                       SELECT '$backup_unique_code', 'question', q.id, ''
+                                       SELECT DISTINCT $backup_unique_code, 'question', q.id, ''
                                        FROM {$CFG->prefix}question q,
                                        $from
                                        {$CFG->prefix}question_categories qc,
@@ -139,7 +139,8 @@
             // those subcategories also need to be backed up. (The categories themselves
             // and their parents will already have been included.)
             $categorieswithrandom = get_records_sql("
-                    SELECT question.category AS id, SUM(question.questiontext) as questiontext
+                    SELECT question.category AS id, SUM(" .
+                            sql_cast_char2int('questiontext', true) . ") AS numqsusingsubcategories
                     FROM {$CFG->prefix}quiz_question_instances qqi,
                          $from
                          {$CFG->prefix}question question
@@ -151,7 +152,7 @@
             $randomselectedquestions = array();
             if ($categorieswithrandom) {
                 foreach ($categorieswithrandom as $category) {
-                    if ($category->questiontext){
+                    if ($category->numqsusingsubcategories > 0) {
                         $status = $status && quiz_backup_add_sub_categories($categories, $randomselectedquestions, $category->id);
                     }
                 }
