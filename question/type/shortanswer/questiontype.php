@@ -32,7 +32,7 @@ class question_shortanswer_qtype extends default_questiontype {
 
         if (!$question->options->answers = get_records('question_answers', 'question',
                 $question->id, 'id ASC')) {
-            notify('Error: Missing question answers!');
+            notify('Error: Missing question answers for shortanswer question ' . $question->id . '!');
             return false;
         }
         return true;

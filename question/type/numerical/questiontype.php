@@ -39,7 +39,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                                 "WHERE a.question = $question->id " .
                                 "    AND   a.id = n.answer " .
                                 "ORDER BY a.id ASC")) {
-            notify('Error: Missing question answer!');
+            notify('Error: Missing question answer for numerical question ' . $question->id . '!');
             return false;
         }
         $this->get_numerical_units($question);
