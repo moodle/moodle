@@ -241,7 +241,7 @@ class grade_report_user extends grade_report {
                 $data[] = '<span class="'.$hidden.$class.' datesubmitted">'.$excluded.get_string('submittedon', 'grades', userdate($grade_grade->get_datesubmitted(), get_string('strftimedatetimeshort'))).'</span>';
 
             } else {
-                $data[] = '<span class="'.$hidden.$class.'">'.$excluded.grade_format_gradevalue($gradeval, $grade_item, true);
+                $data[] = '<span class="'.$hidden.$class.'">'.$excluded.grade_format_gradevalue($gradeval, $grade_item, true).'</span>';
             }
 
             /// prints percentage
