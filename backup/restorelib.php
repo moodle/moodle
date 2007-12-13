@@ -103,7 +103,6 @@
                 }
                 $config = unserialize(base64_decode($instance->configdata));
                 if ($blocks[$instance->blockid]->blockobject->restore_decode_absolute_links_in_config($config)) {
-echo '<p>Updating config for block ', $instance->id, '.</p>';
                     $instance->configdata = base64_encode(serialize($config));
                     $status = $status && update_record('block_instance', $instance);
                 }
@@ -112,7 +111,7 @@ echo '<p>Updating config for block ', $instance->id, '.</p>';
         if (!defined('RESTORE_SILENTLY')) {
             echo '</li>';
         }
-        
+
         // Restore links in questions.
         require_once("$CFG->dirroot/question/restorelib.php");
         if (!defined('RESTORE_SILENTLY')) {

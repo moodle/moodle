@@ -106,7 +106,7 @@
                 //search COURSECATEGORYLEVEL steps up the course cat tree or
                 //to the top of the tree if steps are exhausted.
                 $catno = $contextinfo['COURSECATEGORYLEVEL'][0]['#'];
-                $catid = get_field('course', 'parent', 'id', $restore->course_id);
+                $catid = get_field('course', 'category', 'id', $restore->course_id);
                 while ($catno > 1){
                     $nextcatid = get_field('course_categories', 'parent', 'id', $catid);
                     if ($nextcatid == 0){
@@ -235,7 +235,7 @@
             //recode all parents to point at their old parent cats no matter what context the parent is now in
             foreach ($categories as $category) {
                 $restoredcategory = get_record('question_categories','id',$category->new_id);
-                if ($restoredcategory->parent != 0) {
+                if ($restoredcategory && $restoredcategory->parent != 0) {
                     $updateobj = new object();
                     $updateobj->id = $restoredcategory->id;
                     $idcat = backup_getid($restore->backup_unique_code,'question_categories',$restoredcategory->parent);
@@ -253,7 +253,7 @@
             $toupdate = array();
             foreach ($categories as $category) {
                 $restoredcategory = get_record('question_categories','id',$category->new_id);
-                if ($restoredcategory->parent != 0) {
+                if ($restoredcategory && $restoredcategory->parent != 0) {
                     $nextparentid = $restoredcategory->parent;
                     do {
                         if (!$parent = get_record('question_categories', 'id', $nextparentid)){
@@ -262,7 +262,7 @@
                             }
                             break;//record fetch failed finish loop
                         } else {
-                            $nextparentid = $nextparent->parent;
+                            $nextparentid = $parent->parent;
                         }
                     } while (($nextparentid != 0) && ($parent->contextid != $restoredcategory->contextid));
                     if (!$parent || ($parent->id != $restoredcategory->parent)){
@@ -862,7 +862,7 @@
             $session->newgraded = backup_todb($res_info['#']['NEWGRADED']['0']['#']);
             $session->sumpenalty = backup_todb($res_info['#']['SUMPENALTY']['0']['#']);
 
-            if ($res_info['#']['MANUALCOMMENT']['0']['#']) {
+            if (isset($res_info['#']['MANUALCOMMENT']['0']['#'])) {
                 $session->manualcomment = backup_todb($res_info['#']['MANUALCOMMENT']['0']['#']);
             } else { // pre 1.7 backups
                 $session->manualcomment = backup_todb($res_info['#']['COMMENT']['0']['#']);

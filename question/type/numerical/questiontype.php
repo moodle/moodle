@@ -436,7 +436,11 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $status = true;
 
         //Get the numerical array
-        $numericals = $info['#']['NUMERICAL'];
+        if (isset($info['#']['NUMERICAL'])) {
+            $numericals = $info['#']['NUMERICAL'];
+        } else {
+            $numericals = array();
+        }
 
         //Iterate over numericals
         for($i = 0; $i < sizeof($numericals); $i++) {
