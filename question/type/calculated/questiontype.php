@@ -28,7 +28,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                                 "WHERE a.question = $question->id " .
                                 "AND   a.id = c.answer ".
                                 "ORDER BY a.id ASC")) {
-            notify('Error: Missing question answer!');
+            notify('Error: Missing question answer for calculated question ' . $question->id . '!');
             return false;
         }
 

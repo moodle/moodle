@@ -107,7 +107,7 @@ class question_truefalse_qtype extends default_questiontype {
         }
         // Load the answers
         if (!$question->options->answers = get_records('question_answers', 'question', $question->id, 'id ASC')) {
-           notify('Error: Missing question answers!');
+           notify('Error: Missing question answers for truefalse question ' . $question->id . '!');
            return false;
         }
 
