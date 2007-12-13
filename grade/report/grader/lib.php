@@ -199,6 +199,20 @@ class grade_report_grader extends grade_report {
                     $finalgrade = unformat_float($postedvalue);
                 }
 
+                // Warn if the grade is out of bounds.
+                $errorstr = '';
+                if ($finalgrade < $grade_item->grademax) {
+                    $errorstr = 'lessthanmin';
+                } else if ($finalgrade > $grade_item->grademax) {
+                    $errorstr = 'morethanmax';
+                }
+                if ($errorstr) {
+                    $user = get_record('user', 'id', $userid,'','','','','id, firstname, lastname');
+                    $gradestr->username = fullname($user);
+                    $gradestr->itemname = $grade_item->get_name();
+                    notify(get_string($errorstr, 'grades', $gradestr)); 
+                }
+
             } else if ($data_type == 'feedback') {
                 $finalgrade = false;
                 $trimmed = trim($postedvalue);
