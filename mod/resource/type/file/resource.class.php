@@ -414,7 +414,7 @@ class resource_file extends resource_base {
                         get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
                 echo '</div>';
             }
-            echo '</div></div></body></html>';
+            print_footer('empty');
             exit;
         }
 

@@ -71,6 +71,6 @@ function reloadusers() {
         <input type="hidden" name="chat_msgidnr" value="0" />
         <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
     </form>
-</body>
-
-</html>
+<?php
+    print_footer('empty');
+?>

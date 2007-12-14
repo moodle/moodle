@@ -3115,26 +3115,27 @@ function admin_externalpage_print_header() {
         foreach ($lt1 as $column) {
             switch ($column) {
                 case 'left':
-        echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
-        print_container_start();
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        print_container_end();
-        echo '</td>';
+                    echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
+                    print_container_start();
+                    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+                    print_container_end();
+                    echo '</td>';
                 break;
 
                 case 'middle':
-        echo '<td id="middle-column">';
-        print_container_start(true);
+                    echo '<td id="middle-column">';
+                    print_container_start(true);
+                    $THEME->open_header_containers++; // this is hacky workaround for the error()/notice() autoclosing problems on admin pages
                 break;
 
                 case 'right':
-        if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
-            echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
-            print_container_start();
-            blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-            print_container_end();
-            echo '</td>';
-        }
+                    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
+                        echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
+                        print_container_start();
+                        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+                        print_container_end();
+                        echo '</td>';
+                    }
                 break;
             }
         }
@@ -3169,27 +3170,27 @@ function admin_externalpage_print_footer() {
         foreach ($lt as $column) {
             switch ($column) {
                 case 'left':
-        echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
-        print_container_start();
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        print_container_end();
-        echo '</td>';
+                    echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
+                    print_container_start();
+                    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+                    print_container_end();
+                    echo '</td>';
                 break;
 
                 case 'middle':
-        print_container_end();
-        echo '</td>';
+                    print_container_end();
+                    $THEME->open_header_containers--; // this is hacky workaround for the error()/notice() autoclosing problems on admin pages
+                    echo '</td>';
                 break;
 
                 case 'right':
-        if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
-            echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
-            print_container_start();
-            blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-
-            print_container_end();
-            echo '</td>';
-        }
+                    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
+                        echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
+                        print_container_start();
+                        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+                        print_container_end();
+                        echo '</td>';
+                    }
                 break;
             }
         }

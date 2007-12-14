@@ -181,5 +181,5 @@
         }
     }
 
-    echo '</div></div></body></html>';
+    print_footer('empty');
 ?>

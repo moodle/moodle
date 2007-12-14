@@ -87,8 +87,6 @@
 
     echo '</td></tr></table>';
 
-    // this is hack!
-    print_container_end(); // container "content" started in header
-    echo '</div></body></html>'; // close page div started in header
+    print_footer('empty');
 
 ?>

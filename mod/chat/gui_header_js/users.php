@@ -135,7 +135,8 @@
         echo '</td></tr>';
     }
     // added 2 </div>s, xhtml strict complaints
-    echo '</table></div></div></body></html>';
+    echo '</table>';
+    print_footer('empty');
 
     //
     // Support HTTP Keep-Alive by printing Content-Length
