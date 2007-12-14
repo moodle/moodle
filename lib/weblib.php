@@ -3222,6 +3222,78 @@ function print_box_end($return=false) {
     }
 }
 
+/**
+ * Print a message in a standard themed container.
+ *
+ * @param string $message, the content of the container
+ * @param boolean $clearfix clear both sides
+ * @param string $classes, space-separated class names.
+ * @param string $idbase
+ * @param boolean $return, return as string or just print it
+ * @return string or void
+ */
+function print_container($message, $clearfix=false, $classes='', $idbase='', $return=false) {
+
+    $output  = print_container_start($clearfix, $classes, $idbase, true);
+    $output .= stripslashes_safe($message);
+    $output .= print_container_end(true);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Starts a container using divs
+ *
+ * @param boolean $clearfix clear both sides
+ * @param string $classes, space-separated class names.
+ * @param string $idbase
+ * @param boolean $return, return as string or just print it
+ * @return mixed string or void
+ */
+function print_container_start($clearfix=false, $classes='', $idbase='', $return=false) {
+    if ($idbase) {
+        $id = ' id="'.$idbase.'"';
+    } else {
+        $id = '';
+    }
+    if ($clearfix) {
+        $clearfix = ' clearfix';
+    } else {
+        $clearfix = '';
+    }
+    if ($classes or $clearfix) {
+        $class = ' class="'.$classes.$clearfix.'"';
+    } else {
+        $class = '';
+    }
+    $output = '<div'.$id.$class.'>';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Simple function to end a container (see above)
+ * @param boolean $return, return as string or just print it
+ * @return mixed string or void
+ */
+function print_container_end($return=false) {
+    $output = '</div>';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
 
 /**
  * Print a self contained form with a single submit button.
