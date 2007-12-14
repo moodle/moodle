@@ -3290,7 +3290,7 @@
             $this->tree[$this->level] = $tagName;
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into INFO zone
             //if ($this->tree[2] == "INFO")                                                             //Debug
@@ -3304,7 +3304,7 @@
             $this->tree[$this->level] = $tagName;
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into INFO zone
             //if ($this->tree[2] == "INFO")                                                             //Debug
@@ -3319,7 +3319,7 @@
             $this->tree[$this->level] = $tagName;
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into COURSE_HEADER zone
             //if ($this->tree[3] == "HEADER")                                                           //Debug
@@ -3333,7 +3333,7 @@
             $this->tree[$this->level] = $tagName;   
             
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into BLOCKS zone
             //if ($this->tree[3] == "BLOCKS")                                                         //Debug
@@ -3347,7 +3347,7 @@
             $this->tree[$this->level] = $tagName;   
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into SECTIONS zone
             //if ($this->tree[3] == "SECTIONS")                                                         //Debug
@@ -3361,7 +3361,7 @@
             $this->tree[$this->level] = $tagName;   
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Accumulate all the data inside this tag
             if (isset($this->tree[3]) && $this->tree[3] == "FORMATDATA") {
@@ -3384,7 +3384,7 @@
             $this->tree[$this->level] = $tagName;   
             
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into METACOURSE zone
             //if ($this->tree[3] == "METACOURSE")                                                         //Debug
@@ -3399,7 +3399,7 @@
             $this->tree[$this->level] = $tagName;
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into GRADEBOOK zone
             //if ($this->tree[3] == "GRADEBOOK")                                                         //Debug
@@ -3435,7 +3435,7 @@
             $this->tree[$this->level] = $tagName;
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into MESSAGES zone
             //if ($this->tree[3] == "MESSAGES")                                                          //Debug
@@ -3462,7 +3462,7 @@
             //}                                                                                        //Debug
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into QUESTION_CATEGORIES zone
             //if ($this->tree[3] == "QUESTION_CATEGORIES")                                              //Debug
@@ -3490,7 +3490,7 @@
             //}                                                                                        //Debug
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into SCALES zone
             //if ($this->tree[3] == "SCALES")                                                           //Debug
@@ -3517,7 +3517,7 @@
             //}                                                                                        //Debug
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into GROUPS zone
             //if ($this->tree[3] == "GROUPS")                                                           //Debug
@@ -3544,7 +3544,7 @@
             //}                                                                                        //Debug
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into GROUPINGS zone
             //if ($this->tree[3] == "GROUPINGS")                                                           //Debug
@@ -3572,7 +3572,7 @@
             //}                                                                                        //Debug
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into EVENTS zone
             //if ($this->tree[3] == "EVENTS")                                                           //Debug
@@ -3600,7 +3600,7 @@
             //}                                                                                           //Debug
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into MODULES zone
             //if ($this->tree[3] == "MODULES")                                                          //Debug
@@ -3628,7 +3628,7 @@
             //}                                                                                           //Debug
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             //Check if we are into LOGS zone
             //if ($this->tree[3] == "LOGS")                                                             //Debug
@@ -3651,7 +3651,7 @@
             $this->tree[$this->level] = $tagName;
 
             //Output something to avoid browser timeouts...
-            backup_flush();
+            //backup_flush();
 
             echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
@@ -5484,11 +5484,20 @@
         $fp = fopen($xml_file,"r")
             or $status = false;
         if ($status) {
-            while ($data = fread($fp, 4096) and !$moodle_parser->finished)
-                    xml_parse($xml_parser, $data, feof($fp))
-                            or die(sprintf("XML error: %s at line %d",
-                            xml_error_string(xml_get_error_code($xml_parser)),
-                                    xml_get_current_line_number($xml_parser)));
+            // MDL-9290 performance improvement on reading large xml
+            $lasttime = time(); // crmas
+            while ($data = fread($fp, 4096) and !$moodle_parser->finished) {
+             
+                if ((time() - $lasttime) > 5) {
+                    $lasttime = time();
+                    backup_flush(1);
+                }
+             
+                xml_parse($xml_parser, $data, feof($fp))
+                        or die(sprintf("XML error: %s at line %d",
+                        xml_error_string(xml_get_error_code($xml_parser)),
+                                xml_get_current_line_number($xml_parser)));
+            }
             fclose($fp);
         }
         //Get info from parser
