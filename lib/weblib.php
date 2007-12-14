@@ -81,6 +81,13 @@ define('TRUSTTEXT', '#####TRUSTTEXT#####');
 
 
 /**
+ * Javascript related defines
+ */
+define('REQUIREJS_BEFOREHEADER', 0);
+define('REQUIREJS_INHEADER',     1);
+define('REQUIREJS_AFTERHEADER',  2);
+
+/**
  * Allowed tags - string of html tags that can be tested against for safe html tags
  * @global string $ALLOWED_TAGS
  */
@@ -2526,6 +2533,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $output = ob_get_contents();
     ob_end_clean();
 
+    // container debugging info
+    $THEME->open_header_containers = open_containers();
+
     // Skip to main content, see skip_main_destination().
     if ($pageid=='course-view' or $pageid=='site-index' or $pageid=='course-index') {
         $skiplink = '<a class="skip" href="#maincontent">'.get_string('tocontent', 'access').'</a>';
@@ -2550,10 +2560,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         echo $output;
     }
 }
-
-define('REQUIREJS_BEFOREHEADER',0);
-define('REQUIREJS_INHEADER',1);
-define('REQUIREJS_AFTERHEADER',2);
 
 /**
  * Used to include JavaScript libraries.
@@ -2758,12 +2764,14 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
 /**
  * Can provide a course object to make the footer contain a link to
  * to the course home page, otherwise the link will go to the site home
- *
- * @uses $CFG
  * @uses $USER
- * @param course $course {@link $COURSE} object containing course information
- * @param ? $usercourse ?
- * @todo Finish documenting this function
+ * @param mixed $course course object, used for course link button or
+ *                      'none' means no user link, only docs link
+ *                      'empty' means nothing printed in footer
+ *                      'home' special frontpage footer
+ * @param object $usercourse course used in user link
+ * @param boolean $return output as string
+ * @return mixed string or void
  */
 function print_footer($course=NULL, $usercourse=NULL, $return=false) {
     global $USER, $CFG, $THEME, $COURSE;
@@ -2773,23 +2781,45 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
         return;
     }
 
-/// Course links
+/// Course links or special footer
     if ($course) {
-        if (is_string($course) && $course == 'none') {          // Don't print any links etc
+        if ($course === 'empty') {
+            // special hack - sometimes we do not want even the docs link in footer
+            $output = '';
+            if (!empty($THEME->open_header_containers)) {
+                for ($i=0; $i<$THEME->open_header_containers; $i++) {
+                    $output .= print_container_end_all(); // containers opened from header
+                }
+            } else {
+                //1.8 theme compatibility
+                $output .= "\n</div>"; // content div
+            }
+            $output .= "\n</div>\n</body>\n</html>"; // close page div started in header
+            if ($return) {
+                return $output;
+            } else {
+                echo $output;
+                return;
+            }
+
+        } else if ($course === 'none') {          // Don't print any links etc
             $homelink = '';
             $loggedinas = '';
             $home  = false;
-        } else if (is_string($course) && $course == 'home') {   // special case for site home page - please do not remove
+
+        } else if ($course === 'home') {   // special case for site home page - please do not remove
             $course = get_site();
             $homelink  = '<div class="sitelink">'.
                '<a title="moodle '. $CFG->release .' ('. $CFG->version .')" href="http://moodle.org/">'.
                '<img style="width:100px;height:30px" src="pix/moodlelogo.gif" alt="moodlelogo" /></a></div>';
             $home  = true;
+
         } else {
             $homelink = '<div class="homelink"><a '.$CFG->frametarget.' href="'.$CFG->wwwroot.
                         '/course/view.php?id='.$course->id.'">'.format_string($course->shortname).'</a></div>';
             $home  = false;
         }
+
     } else {
         $course = get_site();  // Set course as site course by default
         $homelink = '<div class="homelink"><a '.$CFG->frametarget.' href="'.$CFG->wwwroot.'/">'.get_string('home').'</a></div>';
@@ -2818,9 +2848,9 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
         $menu = '';
     }
 
-/// there should be exactly one open container 'content'
-    if (open_containers() != 1) {
-        debugging('Unexpected number of open containers: '.open_containers().', expecting 1.', DEBUG_DEVELOPER);
+/// there should be exactly the same number of open containers as after the header
+    if ($THEME->open_header_containers != open_containers()) {
+        debugging('Unexpected number of open containers: '.open_containers().', expecting '.$THEME->open_header_containers, DEBUG_DEVELOPER);
     }
 
 /// Provide some performance info if required
@@ -3818,8 +3848,9 @@ function print_continue($link, $return=false) {
  *
  * @param string $message, the content of the box
  * @param string $classes, space-separated class names.
- * @param string $ids, space-separated id names.
+ * @param string $idbase
  * @param boolean $return, return as string or just print it
+ * @return mixed string or void
  */
 function print_box($message, $classes='generalbox', $ids='', $return=false) {
 
@@ -3839,8 +3870,9 @@ function print_box($message, $classes='generalbox', $ids='', $return=false) {
  * Replaces print_simple_box_start (see deprecatedlib.php)
  *
  * @param string $classes, space-separated class names.
- * @param string $ids, space-separated id names.
+ * @param string $idbase
  * @param boolean $return, return as string or just print it
+ * @return mixed string or void
  */
 function print_box_start($classes='generalbox', $ids='', $return=false) {
     global $THEME;
@@ -3868,9 +3900,11 @@ function print_box_end($return=false) {
  * Print a message in a standard themed container.
  *
  * @param string $message, the content of the container
+ * @param boolean $clearfix clear both sides
  * @param string $classes, space-separated class names.
- * @param string $ids, space-separated id names.
+ * @param string $idbase
  * @param boolean $return, return as string or just print it
+ * @return string or void
  */
 function print_container($message, $clearfix=false, $classes='', $idbase='', $return=false) {
 
@@ -3888,9 +3922,11 @@ function print_container($message, $clearfix=false, $classes='', $idbase='', $re
 /**
  * Starts a container using divs
  *
+ * @param boolean $clearfix clear both sides
  * @param string $classes, space-separated class names.
- * @param string $ids, space-separated id names.
+ * @param string $idbase
  * @param boolean $return, return as string or just print it
+ * @return mixed string or void
  */
 function print_container_start($clearfix=false, $classes='', $idbase='', $return=false) {
     global $THEME;
@@ -3932,12 +3968,13 @@ function print_container_start($clearfix=false, $classes='', $idbase='', $return
 /**
  * Simple function to end a container (see above)
  * @param boolean $return, return as string or just print it
+ * @return mixed string or void
  */
 function print_container_end($return=false) {
     global $THEME;
 
     if (empty($THEME->open_containers)) {
-        debugging('Incorrect closing of custom corners - no more open containers.', DEBUG_DEVELOPER);
+        debugging('Incorrect request to end container - no more open containers.', DEBUG_DEVELOPER);
         $idbase = '';
     } else {
         $idbase = array_pop($THEME->open_containers);
@@ -3971,17 +4008,15 @@ function open_containers() {
 }
 
 /**
- * Force closing of all open containers except the main content one.
+ * Force closing of open containers
  * @param boolean $return, return as string or just print it
+ * @param int $keep number of containers to be kept open - usually theme or page containers
+ * @return mixed string or void
  */
-function print_container_end_all($return=false) {
-    global $THEME;
-
+function print_container_end_all($return=false, $keep=0) {
     $output = '';
-    if (!empty($THEME->open_containers)) {
-        while(count($THEME->open_containers) > 1) { // the last one is the 'content' container
-            $output .= print_container_end($return);
-        }
+    while (open_containers() > $keep) {
+        $output .= print_container_end($return);
     }
 
     if ($return) {
@@ -3996,7 +4031,9 @@ function print_container_end_all($return=false) {
  * Starting part of the surrounding divs for custom corners
  *
  * @param boolean $clearfix, add CLASS "clearfix" to the inner div against collapsing
- * @param mixed   $idbase, optionally, define one idbase to be added to all the elements in the corners
+ * @param string $classes
+ * @param mixed $idbase, optionally, define one idbase to be added to all the elements in the corners
+ * @return string
  */
 function _print_custom_corners_start($clearfix=false, $classes='', $idbase='') {
 /// Analise if we want ids for the custom corner elements
@@ -4031,6 +4068,8 @@ function _print_custom_corners_start($clearfix=false, $classes='', $idbase='') {
 /**
  * Internal function - do not use directly!
  * Ending part of the surrounding divs for custom corners
+ * @param string $idbase
+ * @return string
  */
 function _print_custom_corners_end($idbase) {
 /// Analise if we want ids for the custom corner elements
@@ -5639,7 +5678,7 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  */
 function error ($message, $link='') {
 
-    global $CFG, $SESSION;
+    global $CFG, $SESSION, $THEME;
     $message = clean_text($message);   // In case nasties are in here
 
     if (defined('FULLME') && FULLME == 'cron') {
@@ -5653,7 +5692,7 @@ function error ($message, $link='') {
         @header('HTTP/1.0 404 Not Found');
         print_header(get_string('error'));
     } else {
-        print_container_end_all();
+        print_container_end_all(false, $THEME->open_header_containers);
     }
 
     echo '<br />';
@@ -5909,17 +5948,28 @@ function editorshortcutshelpbutton() {
  * @todo Finish documenting this function
  */
 function notice ($message, $link='', $course=NULL) {
-    global $CFG, $SITE;
+    global $CFG, $SITE, $THEME, $COURSE;
 
-    print_container_end_all();
+    $message = clean_text($message);   // In case nasties are in here
 
-    $message = clean_text($message);
+    if (defined('FULLME') && FULLME == 'cron') {
+        // notices in cron should be mtrace'd.
+        mtrace($message);
+        die;
+    }
+
+    if (! defined('HEADER_PRINTED')) {
+        //header not yet printed
+        print_header(get_string('notice'));
+    } else {
+        print_container_end_all(false, $THEME->open_header_containers);
+    }
 
     print_box($message, 'generalbox', 'notice');
     print_continue($link);
 
     if (empty($course)) {
-        print_footer($SITE);
+        print_footer($COURSE);
     } else {
         print_footer($course);
     }
@@ -5978,7 +6028,7 @@ if (!function_exists('error_get_last')) {
  */
 function redirect($url, $message='', $delay=-1) {
 
-    global $CFG;
+    global $CFG, $THEME;
 
     if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
        $url = sid_process_url($url);
@@ -6052,7 +6102,7 @@ function redirect($url, $message='', $delay=-1) {
         print_header('', '', '', '', $errorprinted ? '' : ('<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />'));
         $delay += 3; // double redirect prevention, it was sometimes breaking upgrades before 1.7
     } else {
-        print_container_end_all();
+        print_container_end_all(false, $THEME->open_header_containers);
     }
     echo '<div style="text-align:center">';
     echo '<div>'. $message .'</div>';

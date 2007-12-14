@@ -1077,6 +1077,7 @@ $string['notenrolledprofile'] = 'This profile is not available because this user
 $string['noteuserschangednonetocourse'] = 'Note: course users need to be restored when restoring user data (in activities, files or messages). This setting has been changed for you.';
 $string['nothingnew'] = 'Nothing new since your last login';
 $string['nothingtodisplay'] = 'Nothing to display';
+$string['notice'] = 'Notice';
 $string['noticenewerbackup'] = 'This backup file has been created with Moodle $a->backuprelease ($a->backupversion) and it\'s newer than your currently installed Moodle $a->serverrelease ($a->serverversion). This could cause some inconsistencies because backwards compatibility of backup files cannot be guaranteed.';
 $string['notifications'] = 'Notifications';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, User: $a->info';

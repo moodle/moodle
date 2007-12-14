@@ -52,6 +52,6 @@
     </form>
     </fieldset>
     </div>
-
-    </body>
-    </html>
+<?php
+    print_footer('empty');
+?>
