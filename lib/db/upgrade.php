@@ -742,6 +742,25 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2007021534) {
+
+    /// Changing precision of field dst_time on table timezone to (6)
+        $table = new XMLDBTable('timezone');
+        $field = new XMLDBField('dst_time');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '6', null, XMLDB_NOTNULL, null, null, null, '00:00', 'dst_skipweeks');
+
+    /// Launch change of precision for field dst_time
+        $result = $result && change_field_precision($table, $field);
+
+    /// Changing precision of field std_time on table timezone to (6)
+        $table = new XMLDBTable('timezone');
+        $field = new XMLDBField('std_time');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '6', null, XMLDB_NOTNULL, null, null, null, '00:00', 'std_skipweeks');
+
+    /// Launch change of precision for field std_time
+        $result = $result && change_field_precision($table, $field);
+    }
+
     return $result;
 
 }
