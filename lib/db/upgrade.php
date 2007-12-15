@@ -2054,6 +2054,12 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch create table for context_temp
         $result = $result && create_table($table);
 
+    /// make sure category depths, parents and paths are ok, categories from 1.5 may not be properly initialized (MDL-12585)
+        $sql = "UPDATE {$CFG->prefix}course_categories
+                   SET depth = 1, parent = 0, path = ".sql_concat("'/'", "id")."
+                 WHERE depth = 0 OR parent = 0";
+        execute_sql($sql); 
+
     /// Recalculate depths, paths and so on
         if (!empty($CFG->rolesactive)) {
             cleanup_contexts();
@@ -2582,9 +2588,9 @@ function xmldb_main_upgrade($oldversion=0) {
         } else {
             // Could not create the readme file. No cause for huge concern
             notify("Could not create the README.txt file in $readmefilename.");
-        } 
-    }
-    
+        }
+    }    
+
     if ($result && $oldversion < 2007101502) {
 
     /// try to remove duplicate entries
