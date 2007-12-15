@@ -8,7 +8,7 @@
       <td valign="top">
           <label for="removeselect"><?php echo count($alreadycourses) . " ". $stralreadycourses ?></label>
           <br />
-          <select name="removeselect[]" size="20" id="removeselect" multiple
+          <select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
                   onFocus="getElementById('studentform').add.disabled=true;
                            getElementById('studentform').remove.disabled=false;
                            getElementById('studentform').addselect.selectedIndex=-1;">
@@ -29,7 +29,7 @@
       <td valign="top">
           <label for="addselect"><?php echo $numcourses . " " . $strpotentialcourses ?></label>
           <br />
-          <select name="addselect[]" size="20" id="addselect" multiple
+          <select name="addselect[]" size="20" id="addselect" multiple="multiple"
                   onFocus="getElementById('studentform').add.disabled=false;
                            getElementById('studentform').remove.disabled=true;
                            getElementById('studentform').removeselect.selectedIndex=-1;">
