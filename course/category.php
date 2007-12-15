@@ -33,9 +33,7 @@
     if (!$category = get_record("course_categories", "id", $id)) {
         error("Category not known!");
     }
-    
-    $category->name = format_text($category->name,FORMAT_HTML);//for multilang filter to catch up
-    
+
     if (has_capability('moodle/course:create', $context)) {
         if ($categoryedit !== -1) {
             $USER->categoryediting = $categoryedit;
@@ -104,7 +102,7 @@
 
     $navlinks = array();
     $navlinks[] = array('name' => $strcategories, 'link' => 'index.php', 'type' => 'misc');
-    $navlinks[] = array('name' => $category->name, 'link' => null, 'type' => 'misc');
+    $navlinks[] = array('name' => format_string($category->name), 'link' => null, 'type' => 'misc');
     $navigation = build_navigation($navlinks);
 
     if ($creatorediting) {
@@ -146,7 +144,7 @@
 /// Print current category description
     if (!$creatorediting && $category->description) {
         print_box_start();
-        echo format_text($category->description,FORMAT_HTML); // for multilang filter
+        echo format_text($category->description); // for multilang filter
         print_box_end();
     }
 
