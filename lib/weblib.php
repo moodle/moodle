@@ -3187,6 +3187,11 @@ function theme_setup($theme = '', $params=NULL) {
 
     global $CFG, $THEME, $SESSION, $USER, $HTTPSPAGEREQUIRED;
 
+/// Do not mess with THEME if header already printed - this would break all the extra stuff in global $THEME from print_header()!!
+    if (defined('HEADER_PRINTED')) {
+        return;
+    }
+
     if (empty($theme)) {
         $theme = current_theme();
     }
