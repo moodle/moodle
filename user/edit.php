@@ -55,8 +55,10 @@
 
     // check access control
     if ($user->id == $USER->id) {
-        //editing own profile
-        require_capability('moodle/user:editownprofile', $systemcontext);
+        //editing own profile - require_login() MUST NOT be used here, it would result in infinite loop!
+        if (!has_capability('moodle/user:editownprofile', $systemcontext)) {
+            error('Can not edit own profile, sorry.');
+        }
 
     } else {
         // teachers, parents, etc.
