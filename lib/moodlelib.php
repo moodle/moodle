@@ -7697,7 +7697,7 @@ function setup_lang_from_browser() {
 
     global $CFG, $SESSION, $USER;
 
-    if (!empty($SESSION->lang) or !empty($USER->lang)) {
+    if (!empty($SESSION->lang) or !empty($USER->lang) or empty($CFG->autolang)) {
         // Lang is defined in session or user profile, nothing to do
         return;
     }
