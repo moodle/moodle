@@ -31,7 +31,11 @@ function mediaplugin_filter($courseid, $text) {
 
     // We're using the UFO technique for flash to attain XHTML Strict 1.0
     // See: http://www.bobbyvandersluis.com/ufo/
-    $newtext = fullclone($text);
+    if (!is_string($text)) {
+        // non string data can not be filtered anyway
+        return $text;
+    }
+    $newtext = $text; // fullclone is slow and not needed here
 
     if ($CFG->filter_mediaplugin_enable_mp3) {
         $search = '/<a.*?href="([^<]+\.mp3)"[^>]*>.*?<\/a>/is';
@@ -83,8 +87,9 @@ function mediaplugin_filter($courseid, $text) {
         $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $newtext);
     }
 
-    if (is_null($newtext)) {
-        $newtext = $text;
+    if (is_null($newtext) or $newtext === $text) {
+        // error or not filtered
+        return $text;
     }
     
     if (!$eolas_fix_applied) {
