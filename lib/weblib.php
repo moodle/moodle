@@ -1394,6 +1394,9 @@ function format_text_menu() {
  * Given text in a variety of format codings, this function returns
  * the text as safe HTML.
  *
+ * This function should mainly be used for long strings like posts, 
+ * answers, glossary items etc. For short strings @see format_string().
+ *
  * @uses $CFG
  * @uses FORMAT_MOODLE
  * @uses FORMAT_HTML
@@ -1579,7 +1582,11 @@ function text_format_name( $key ) {
 
 
 /** Given a simple string, this function returns the string
- *  processed by enabled filters if $CFG->filterall is enabled
+ *  processed by enabled string filters if $CFG->filterall is enabled
+ *
+ *  This function should be used to print short strings (non html) that 
+ *  need filter processing e.g. activity titles, post subjects, 
+ *  glossary concepts.
  *
  *  @param string  $string     The string to be filtered.
  *  @param boolean $striplinks To strip any link in the result text (Moodle 1.8 default changed from false to true! MDL-8713)
