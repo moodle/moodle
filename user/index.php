@@ -568,9 +568,9 @@
         if ($userlist)  {
             while ($user = rs_fetch_next_record($userlist)) {
                 $user = make_context_subobj($user);
-                if ($user->hidden) {
+                if ( !empty($user->hidden) ) {
                 // if the assignment is hidden, display icon
-                    $hidden = "<img src=\"{$CFG->pixpath}/t/hide.gif\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
+                    $hidden = " <img src=\"{$CFG->pixpath}/t/hide.gif\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
                 } else {
                     $hidden = '';
                 }
@@ -607,7 +607,7 @@
 
                 $data = array (
                         print_user_picture($user, $course->id, $user->picture, false, true, $piclink),
-                        $profilelink);
+                        $profilelink . $hidden);
 
                 if (!isset($hiddenfields['city'])) {
                     $data[] = $user->city;
