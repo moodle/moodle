@@ -1007,7 +1007,7 @@ $moodle_capabilities = array(
     'moodle/grade:viewall' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_COURSE, // and CONTEXT_USER
         'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
@@ -1018,7 +1018,7 @@ $moodle_capabilities = array(
 
     'moodle/grade:view' => array(
         'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE, // and CONTEXT_PERSONAL too
+        'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
             'student' => CAP_ALLOW
         )
@@ -1027,7 +1027,7 @@ $moodle_capabilities = array(
     'moodle/grade:viewhidden' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE, // and CONTEXT_PERSONAL too
+        'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
