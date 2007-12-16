@@ -501,17 +501,38 @@ div.bt div {
   font-size: 1px;
   line-height: 1%;
   height: 0;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-color: transparent;
+}
+div.bt {
+  background-repeat: no-repeat;
+  background-position: 100% 0;
 }
 div.bb div {
   font-size: 1px;
   line-height: 1%;
   height: 0;
-}
-div.sideblock div.bt div {
-  background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 0 0;
   background-color: transparent;
+}
+div.bb {
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+}
+div.i1 {
+  background-repeat: repeat-y;
+  background-position: 0 0;
+  background-color: transparent;
+}
+div.i2 {
+  background-repeat: repeat-y;
+  background-position: 100% 0;
+  background-color: transparent;
+}
+div.sideblock div.bt div {
+  background-image: url(pix/box.png);
   height: 12px;
   left: -13px;
   position: relative;
@@ -519,8 +540,6 @@ div.sideblock div.bt div {
 }
 div.sideblock div.bt {
   background-image: url(pix/box.png);
-  background-repeat: no-repeat;
-  background-position: 100% 0;
   margin: 0 0 0 13px;
   height: 12px;
   background-color: transparent;
