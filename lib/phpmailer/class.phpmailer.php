@@ -1469,7 +1469,7 @@ class PHPMailer
         $tz = date("Z");
         $tzs = ($tz < 0) ? "-" : "+";
         $tz = abs($tz);
-        $tz = ($tz/3600)*100 + ($tz%3600)/60;
+        $tz = (($tz - ($tz%3600) )/3600)*100 + ($tz%3600)/60; // moodle change - MDL-12596
         $result = sprintf("%s %s%04d", date("D, j M Y H:i:s"), $tzs, $tz);
 
         return $result;
