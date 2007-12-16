@@ -41,7 +41,7 @@ if (!$user = get_complete_user_data('id', $userid)) {
 }
 
 $context     = get_context_instance(CONTEXT_COURSE, $course->id);
-$usercontext = get_context_instance(CONTEXT_PERSONAL, $user->id);
+$usercontext = get_context_instance(CONTEXT_USER, $user->id);
 require_capability('gradereport/overview:view', $context);
 
 $access = true;
@@ -51,7 +51,7 @@ if (has_capability('moodle/grade:viewall', $context)) {
 } else if ($user->id == $USER->id and has_capability('moodle/grade:view', $context) and $course->showgrades) {
     //ok - can view own grades
 
-} else if (has_capability('moodle/grade:view', $usercontext) and $course->showgrades) {
+} else if (has_capability('moodle/grade:viewall', $usercontext) and $course->showgrades) {
     // ok - can view grades of this user- parent most probably
 
 } else {
