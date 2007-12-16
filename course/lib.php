@@ -1507,7 +1507,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
                 continue;
             }
 
-            require_once("$CFG->dirroot/mod/$modname/lib.php");
+            include_once("$CFG->dirroot/mod/$modname/lib.php");
             $gettypesfunc =  $modname.'_get_types';
             if (function_exists($gettypesfunc)) {
                 $types = $gettypesfunc();
@@ -1842,7 +1842,7 @@ function print_course($course) {
 
     echo '<div class="coursebox clearfix">';
     echo '<div class="info">';
-    echo '<div class="name"><a '.
+    echo '<div class="name"><a title="'.get_string('entercourse').'"'.
          $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
          format_string($course->fullname).'</a></div>';   
     
