@@ -1,4 +1,4 @@
-<?
+<?php
 $string['blockname'] = 'Globaal zoeken';
 $string['configbuttonlabel'] = 'Tekst op de knop';
 $string['configenablefileindexing'] = 'Indexeren van bestanden aan';
