@@ -803,6 +803,8 @@ function require_capability($capability, $context, $userid=NULL, $doanything=tru
      * Originally there was a check for loaded permissions - it is not needed here.
      * Context is now required parameter, the cached $CONTEXT was only hiding errors.
      */
+    $errorlink = '';
+
     if (empty($userid)) {
         if ($context->contextlevel == CONTEXT_COURSE) {
             require_login($context->instanceid);
@@ -815,6 +817,7 @@ function require_capability($capability, $context, $userid=NULL, $doanything=tru
                 error('Incorrect course.');
             }
             require_course_login($course, true, $cm);
+            $errorlink = $CFG->wwwroot.'/course/view.php?id='.$cm->course;
 
         } else if ($context->contextlevel == CONTEXT_SYSTEM) {
             if (!empty($CFG->forcelogin)) {
@@ -830,7 +833,7 @@ function require_capability($capability, $context, $userid=NULL, $doanything=tru
 
     if (!has_capability($capability, $context, $userid, $doanything)) {
         $capabilityname = get_capability_string($capability);
-        print_error($errormessage, $stringfile, '', $capabilityname);
+        print_error($errormessage, $stringfile, $errorlink, $capabilityname);
     }
 }
 
@@ -4218,7 +4221,6 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
 /// check for front page course, and see if default front page role has the required capability
 /// if it does, we can just return all users, and we do not need to check further, just return all users
-
     $frontpagectx = get_context_instance(CONTEXT_COURSE, SITEID);
     if (!empty($CFG->defaultfrontpageroleid) && ($context->id == $frontpagectx->id || strstr($context->path, '/'.$frontpagectx->id.'/'))) {
         
