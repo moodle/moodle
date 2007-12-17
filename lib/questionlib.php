@@ -688,6 +688,7 @@ function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid =
                 // Restore the state so that the responses will be restored
                 restore_question_state($questions[$i], $laststate);
                 $states[$i] = clone($laststate);
+                unset($states[$i]->id);
             } else {
                 // create a new empty state
                 $states[$i] = new object;
