@@ -754,6 +754,9 @@ table.message_search_results td {
 .shortanswer .answer {
     background-color: #EEE;
 }
+.essay .answerreview {
+    background-color: #EEE;
+}
 .que .feedback {
   border-color: #DDD;
 }
