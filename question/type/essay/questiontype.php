@@ -98,6 +98,7 @@ class question_essay_qtype extends default_questiontype {
             $safeformatoptions->para = false;
             $answer = format_text($value, FORMAT_MOODLE,
                                   $safeformatoptions, $cmoptions->course);
+            $answer = '<div class="answerreview">' . $answer . '</div>';
         }
 
         include("$CFG->dirroot/question/type/essay/display.html");
