@@ -414,7 +414,9 @@
         unset($buttonoptions);
         $buttonoptions['q'] = $quiz->id;
         $buttonoptions['forcenew'] = true;
+        echo '<div class="controls">';
         print_single_button($CFG->wwwroot.'/mod/quiz/attempt.php', $buttonoptions, get_string('startagain', 'quiz'));
+        echo '</div>';
     /// Notices about restrictions that would affect students.
         if ($quiz->popup) {
             notify(get_string('popupnotice', 'quiz'));

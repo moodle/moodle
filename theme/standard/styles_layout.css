@@ -3737,9 +3737,10 @@ body#question-preview .quemodname, body#question-preview .controls {
   text-align: center;
 }
 
+#mod-quiz-attempt #page .controls,
 #mod-quiz-review #page .controls {
   text-align: center;
-  margin: 1.5em auto;
+  margin: 8px auto;
 }
 #mod-quiz-review .pagingbar {
   margin: 1.5em auto;
