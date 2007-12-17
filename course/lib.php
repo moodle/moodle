@@ -1507,7 +1507,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
                 continue;
             }
 
-            require_once("$CFG->dirroot/mod/$modname/lib.php");
+            include_once("$CFG->dirroot/mod/$modname/lib.php");
             $gettypesfunc =  $modname.'_get_types';
             if (function_exists($gettypesfunc)) {
                 $types = $gettypesfunc();
@@ -1580,6 +1580,32 @@ function rebuild_course_cache($courseid=0) {
 }
 
 
+function get_child_categories($parent) {
+/// Returns an array of the children categories for the given category
+/// ID by caching all of the categories in a static hash
+
+    static $allcategories = null;
+
+    // only fill in this variable the first time
+    if (null == $allcategories) {
+        $allcategories = array();
+
+        $categories = get_categories();
+        foreach ($categories as $category) {
+            if (empty($allcategories[$category->parent])) {
+                $allcategories[$category->parent] = array();
+            }
+            $allcategories[$category->parent][] = $category;
+        }
+    }
+
+    if (empty($allcategories[$parent])) {
+        return array();
+    } else {
+        return $allcategories[$parent];
+    }
+}
+
 
 function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 /// Given an empty array, this function recursively travels the
@@ -1605,7 +1631,7 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
         $category->id = 0;
     }
 
-    if ($categories = get_categories($category->id)) {   // Print all the children recursively
+    if ($categories = get_child_categories($category->id)) {   // Print all the children recursively
         foreach ($categories as $cat) {
             if (!empty($category->id)) {
                 if (isset($parents[$category->id])) {
@@ -1643,7 +1669,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
         $category->id = "0";
     }
 
-    if ($categories = get_categories($category->id)) {   // Print all the children recursively
+    if ($categories = get_child_categories($category->id)) {   // Print all the children recursively
         $countcats = count($categories);
         $count = 0;
         $first = true;
@@ -1782,7 +1808,7 @@ function print_courses($category) {
     global $CFG;
 
     if (!is_object($category) && $category==0) {
-        $categories = get_categories(0);  // Parent = 0   ie top-level categories only
+        $categories = get_child_categories(0);  // Parent = 0   ie top-level categories only
         if (is_array($categories) && count($categories) == 1) {
             $category   = array_shift($categories);
             $courses    = get_courses_wmanagers($category->id, 
