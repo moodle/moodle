@@ -43,7 +43,7 @@ if ($reports = get_list_of_plugins('grade/report', 'CVS')) {     // Get all inst
 }
 
 if (empty($reports)) {
-    error('No reports accessible', $CFG->wwwroot.'/course/view.php:id='.$course->id); // TODO: localize
+    error('No reports accessible', $CFG->wwwroot.'/course/view.php?id='.$course->id); // TODO: localize
 }
 
 if (!isset($USER->grade_last_report)) {
