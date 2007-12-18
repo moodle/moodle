@@ -34,6 +34,13 @@ class quiz_report extends quiz_default_report {
 
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="grading");
 
+        // Check permissions
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        if (!has_capability('mod/quiz:grade', $context)) {
+            notify(get_string('gradingnotallowed', 'quiz_grading'));
+            return true;
+        }
+
         if (!empty($questionid)) {
             if (! $question = get_record('question', 'id', $questionid)) {
                 error("Question with id $questionid not found");
