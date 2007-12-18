@@ -241,7 +241,7 @@ class assignment_base {
             return;
         }
 
-        if ($grade->grade === null and empty($feedback)) {   /// Nothing to show yet
+        if ($grade->grade === null and empty($grade->str_feedback)) {   /// Nothing to show yet
             return;
         }
 
