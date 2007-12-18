@@ -77,8 +77,9 @@ $moving = false;
 switch ($action) {
     case 'delete':
         if ($eid) {
-            if ($element['type'] == 'item' and $object->is_external_item() and !$object->is_outcome_item()) {
-                // no deleting of external activities!
+            if ($element['type'] == 'item' and $object->is_external_item() and !$object->is_outcome_item() and $object->gradetype != GRADE_TYPE_NONE) {
+                // no deleting of external activities - they would be recreated anyway!
+                // exception is activity without grading
                 break;
             }
             $confirm = optional_param('confirm', 0, PARAM_BOOL);
@@ -189,7 +190,7 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr, $switch, $switchedl
     $actions .= $gtree->get_calculation_icon($element, $gpr);
 
     if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
-        if (!($element['type'] == 'item' and $object->is_external_item() and !$object->is_outcome_item())) {
+        if (!($element['type'] == 'item' and $object->is_external_item() and !$object->is_outcome_item() and $object->gradetype != GRADE_TYPE_NONE)) {
             $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='
                      . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'
                      . $strdelete.'" title="'.$strdelete.'"/></a>';
