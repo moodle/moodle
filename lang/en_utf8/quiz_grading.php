@@ -4,5 +4,6 @@
 
 $string['essayonly'] = 'The following questions need to be graded manually';
 $string['grading'] = 'Manual grading';
+$string['gradingnotallowed'] = 'You do not have permission to manually grade responses in this quiz';
 
 ?>
