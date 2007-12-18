@@ -50,9 +50,15 @@ if ($currenttab == 'reports' and isset($mode)) {
     $inactive[] = 'reports';
     $activated[] = 'reports';
     
-    $allreports = get_list_of_plugins("mod/quiz/report");
-    $reportlist = array ('overview', 'regrade', 'grading', 'analysis');   // Standard reports we want to show first
+    // Standard reports we want to show first.
+    $reportlist = array ('overview', 'regrade', 'grading', 'analysis');
+    // Reports that are restricted by capability.
+    $reportrestrictions = array(
+        'regrade' => 'mod/quiz:grade',
+        'grading' => 'mod/quiz:grade'
+    );
 
+    $allreports = get_list_of_plugins("mod/quiz/report");
     foreach ($allreports as $report) {
         if (!in_array($report, $reportlist)) {
             $reportlist[] = $report;
@@ -62,10 +68,12 @@ if ($currenttab == 'reports' and isset($mode)) {
     $row  = array();
     $currenttab = '';
     foreach ($reportlist as $report) {
-        $row[] = new tabobject($report, "$CFG->wwwroot/mod/quiz/report.php?q=$quiz->id&amp;mode=$report",
-                                get_string($report, 'quiz_'.$report));
-        if ($report == $mode) {
-            $currenttab = $report;
+        if (!isset($reportrestrictions[$report]) || has_capability($reportrestrictions[$report], $context)) {
+            $row[] = new tabobject($report, "$CFG->wwwroot/mod/quiz/report.php?q=$quiz->id&amp;mode=$report",
+                                    get_string($report, 'quiz_'.$report));
+            if ($report == $mode) {
+                $currenttab = $report;
+            }
         }
     }
     $tabs[] = $row;
