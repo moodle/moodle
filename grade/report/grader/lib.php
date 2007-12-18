@@ -146,14 +146,12 @@ class grade_report_grader extends grade_report {
 
     /**
      * Processes the data sent by the form (grades and feedbacks).
-     * @var array $data
-     * @return bool Success or Failure (array of errors).
+     * Caller is reposible for all access control checks
+     * @param array $data form submission (with magic quotes)
+     * @return array empty array if success, array of warnings if something fails.
      */
     function process_data($data) {
-
-        if (!has_capability('moodle/grade:edit', $this->context)) {
-            return false;
-        }
+        $warnings = array();
 
         // always initialize all arrays
         $queue = array();
@@ -209,11 +207,11 @@ class grade_report_grader extends grade_report {
                     $errorstr = 'morethanmax';
                 }
                 if ($errorstr) {
-                    $user = get_record('user', 'id', $userid,'','','','','id, firstname, lastname');
+                    $user = get_record('user', 'id', $userid, '', '', '', '', 'id, firstname, lastname');
                     $gradestr = new object();
                     $gradestr->username = fullname($user);
                     $gradestr->itemname = $grade_item->get_name();
-                    notify(get_string($errorstr, 'grades', $gradestr)); 
+                    $warnings[] = get_string($errorstr, 'grades', $gradestr); 
                 }
 
             } else if ($data_type == 'feedback') {
@@ -229,7 +227,7 @@ class grade_report_grader extends grade_report {
             $grade_item->update_final_grade($userid, $finalgrade, 'gradebook', $feedback, FORMAT_MOODLE);
         }
 
-        return true;
+        return $warnings;
     }
 
 
