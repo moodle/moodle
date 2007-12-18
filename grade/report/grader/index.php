@@ -126,7 +126,7 @@ $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid)
 if ($data = data_submitted() and confirm_sesskey() and has_capability('moodle/grade:edit', $context)) {
     $warnings = $report->process_data($data);
 } else {
-    $warings = array();
+    $warnings = array();
 }
 
 
