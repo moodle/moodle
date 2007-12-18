@@ -36,6 +36,7 @@ $string['configurationcompletehead'] = 'Yapılandırma tamamlandı';
 $string['configurationcompletesub'] = 'Ana moodle dizine yapılandırma dosyasının kaydedilmesi için girişimde bulunuldu.';
 $string['continue'] = 'Devam';
 $string['curlrecommended'] = 'Moodle Ağının işlevsel bir şekilde çalışması için isteğe bağlı Curl kütüphanesinin kurulması şiddetle tavsiye edilir.';
+$string['customcheck'] = 'Diğer Kontroller';
 $string['database'] = 'Veritabanı';
 $string['databasecreationsettingshead'] = 'Şimdi, Moodle verilerinin saklanacağı veritabanını
 oluşturmanız gerekiyor. Bu veritabanı kurulum programı tarafından aşağıdaki ayarlara göre otomatik olarak oluşturulacak.';
@@ -217,6 +218,7 @@ $string['report'] = 'Rapor';
 $string['restricted'] = 'Sınırlandırıldı';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle, safe mode\'ın açık olması durumunda bazı sorunlar çıkartabilir';
+$string['serverchecks'] = 'Sunucu Kontrolleri';
 $string['sessionautostart'] = 'Otomatik Oturum Başlama';
 $string['sessionautostarterror'] = 'Bu kapalı olmalı';
 $string['skipdbencodingtest'] = 'Veritabanı Dil Kodlama Testini Atla';
