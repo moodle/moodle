@@ -298,7 +298,7 @@ echo '<table class="presets" cellpadding="5">';
 echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strexport.'</h3></td></tr>';
 
 echo '<tr><td><label>'.$strexportaszip.'</label>';
-helpbutton('exportzip', '', 'data');
+helpbutton('exportzip', '', 'data', true, true);
 echo '</td><td>';
 $options = new object();
 $options->action = 'export';
@@ -308,7 +308,7 @@ print_single_button('preset.php', $options, $strexport, 'post');
 echo '</td></tr>';
 
 echo '<tr><td><label>'.$strsaveaspreset.'</label>';
-helpbutton('savepreset', '', 'data');
+helpbutton('savepreset', '', 'data', true, true);
 echo '</td><td>';
 $options = new object();
 $options->action = 'save1';
@@ -318,7 +318,7 @@ print_single_button('preset.php', $options, $strsave, 'post');
 echo '</td></tr>';
 echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strimport.'</h3></td></tr>';
 echo '<tr><td><label for="fromfile">'.$strfromfile.'</label>';
-helpbutton('importfromfile', '', 'data');
+helpbutton('importfromfile', '', 'data', true, true);
 echo '</td><td>';
 echo '<form id="uploadpreset" method="post" action="preset.php">';
 echo '<fieldset class="invisiblefieldset">';
@@ -331,7 +331,7 @@ echo '</fieldset></form>';
 echo '</td></tr>';
 
 echo '<tr valign="top"><td><label>'.$strusestandard.'</label>';
-helpbutton('usepreset', '', 'data');
+helpbutton('usepreset', '', 'data', true, true);
 echo '</td><td>';
 
 echo '<form id="presets" method="post" action="preset.php" >';
