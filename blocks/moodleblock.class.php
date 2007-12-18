@@ -332,16 +332,16 @@ class block_base {
         $title = '<div class="title">';
 
         if (!empty($CFG->allowuserblockhiding)) {
-            //Accessibility: added static 'alt' text for the +- icon.
-            //TODO (nfreear): language string 'hide OR show block'
-            $title .= '<div class="hide-show">'.
-                '<a title="'.get_string('showhideblock','access').
-                '" href="#" onclick="elementToggleHide(this, true, function(el) {'.
-                'return findParentNode(el, \'DIV\', \'sideblock\'); '.
-                '}, \''.$CFG->pixpath.'\' ); return false;">'.
-                '<img src="'.$CFG->pixpath.'/spacer.gif" '.
-                'id = "togglehide_inst'.$this->instance->id.'" '.
-                'alt="'.get_string('showhideblock','access').'" class="hide-show-image" /></a></div>';
+            //Accessibility: added 'alt' text for the +- icon.
+            //Theme the buttons using, Admin - Miscellaneous - smartpix.
+            $strshow = addslashes_js(get_string('showblocka', 'access', $this->title));
+            $strhide = addslashes_js(get_string('hideblocka', 'access', $this->title));
+            $title .= '<input type="image" src="'.$CFG->pixpath.'/t/switch_minus.gif" '. 
+                'id="togglehide_inst'.$this->instance->id.'" '.
+                'onclick="elementToggleHide(this, true, function(el) {'.
+                'return findParentNode(el, \'DIV\', \'sideblock\'); },'.
+                ' \''.$strshow.'\', \''.$strhide.'\'); return false;" '.
+                'alt="'.$strhide.'" title="'.$strhide.'" class="hide-show-image" />';
         }
 
         //Accesssibility: added H2 (was in, weblib.php: print_side_block)
