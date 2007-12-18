@@ -121,13 +121,22 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 // Initialise the grader report object
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 
+
+/// processing posted grades & feedback here
+if ($data = data_submitted() and confirm_sesskey() and has_capability('moodle/grade:edit', $context)) {
+    $warnings = $report->process_data($data);
+} else {
+    $warings = array();
+}
+
+
 // Override perpage if set in URL
 if ($perpageurl) {
     $report->user_prefs['studentsperpage'] = $perpageurl;
 }
 
+// final grades MUST be loaded after the processing
 $report->load_users();
-
 $numusers = $report->get_numusers();
 $report->load_final_grades();
 
@@ -146,9 +155,9 @@ echo $report->group_selector;
 echo '<div class="clearer"></div>';
 echo $report->get_toggles_html();
 
-/// processing posted grades & feedback here
-if ($data = data_submitted() and confirm_sesskey()) {
-    $report->process_data($data);
+//show warnings if any
+foreach($warnings as $warning) {
+    notify($warning);
 }
 
 $studentsperpage = $report->get_pref('studentsperpage');
