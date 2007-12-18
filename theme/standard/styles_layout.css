@@ -1184,11 +1184,8 @@ a.skip:focus, a.skip:active {
   padding:0;
 }
 
-.sideblock .header .hide-show {
+.sideblock .header .hide-show-image {
   float:right;
-}
-
-.sideblock .header .hide-show img.hide-show-image {
   height:11px;
   width:11px;
   margin-top:0.25em;
