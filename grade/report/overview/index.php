@@ -55,7 +55,7 @@ if (has_capability('moodle/grade:viewall', $context)) {
     // ok - can view grades of this user- parent most probably
 
 } else {
-    $acces = false;
+    $access = false;
 }
 
 /// return tracking object
