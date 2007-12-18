@@ -303,7 +303,7 @@ function quiz_get_best_grade($quiz, $userid) {
 
     // Need to detect errors/no result, without catching 0 scores.
     if (is_numeric($grade)) {
-        return round($grade,$quiz->decimalpoints);
+        return round($grade, $quiz->decimalpoints);
     } else {
         return NULL;
     }
@@ -317,12 +317,16 @@ function quiz_get_best_grade($quiz, $userid) {
  * @param object $quiz the quiz object. Only the fields grade, sumgrades and decimalpoints are used.
  * @return float the rescaled grade.
  */
-function quiz_rescale_grade($rawgrade, $quiz) {
+function quiz_rescale_grade($rawgrade, $quiz, $round = true) {
     if ($quiz->sumgrades) {
-        return round($rawgrade*$quiz->grade/$quiz->sumgrades, $quiz->decimalpoints);
+        $grade = $rawgrade * $quiz->grade / $quiz->sumgrades;
+        if ($round) {
+            $grade = round($grade, $quiz->decimalpoints);
+        }
     } else {
-        return 0;
+        $grade = 0;
     }
+    return $grade;
 }
 
 /**

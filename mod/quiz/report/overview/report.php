@@ -492,7 +492,7 @@ class quiz_report extends quiz_default_report {
                     // Grades columns.
                     if ($showgrades) {
                         if ($attempt->timefinish) {
-                            $grade = round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints);
+                            $grade = quiz_rescale_grade($attempt->sumgrades, $quiz);
                             if (!$download) {
                                 $row[] = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$grade.'</a>';
                             } else {
