@@ -803,6 +803,8 @@ function require_capability($capability, $context, $userid=NULL, $doanything=tru
      * Originally there was a check for loaded permissions - it is not needed here.
      * Context is now required parameter, the cached $CONTEXT was only hiding errors.
      */
+    $errorlink = '';
+
     if (empty($userid)) {
         if ($context->contextlevel == CONTEXT_COURSE) {
             require_login($context->instanceid);
@@ -815,6 +817,7 @@ function require_capability($capability, $context, $userid=NULL, $doanything=tru
                 error('Incorrect course.');
             }
             require_course_login($course, true, $cm);
+            $errorlink = $CFG->wwwroot.'/course/view.php?id='.$cm->course;
 
         } else if ($context->contextlevel == CONTEXT_SYSTEM) {
             if (!empty($CFG->forcelogin)) {
@@ -830,7 +833,7 @@ function require_capability($capability, $context, $userid=NULL, $doanything=tru
 
     if (!has_capability($capability, $context, $userid, $doanything)) {
         $capabilityname = get_capability_string($capability);
-        print_error($errormessage, $stringfile, '', $capabilityname);
+        print_error($errormessage, $stringfile, $errorlink, $capabilityname);
     }
 }
 
@@ -4981,4 +4984,67 @@ function is_contextpath_dirty($pathcontexts, $dirty) {
     return false;
 }
 
-?>
+/**
+ * 
+ * switch role order (used in admin/roles/manage.php)
+ *
+ * @param int $first id of role to move down
+ * @param int $second id of role to move up
+ *
+ * @return bool success or failure
+ */
+function switch_roles($first, $second) {
+    $status = true;
+    //first find temorary sortorder number
+    $tempsort = count_records('role') + 3;
+    while (get_record('role','sortorder', $tempsort)) {
+        $tempsort += 3;
+    }
+
+    $r1 = new object();
+    $r1->id = $first->id;
+    $r1->sortorder = $tempsort;
+    $r2 = new object();
+    $r2->id = $second->id;
+    $r2->sortorder = $first->sortorder;
+
+    if (!update_record('role', $r1)) {
+        debugging("Can not update role with ID $r1->id!");
+        $status = false;
+    }
+
+    if (!update_record('role', $r2)) {
+        debugging("Can not update role with ID $r2->id!");
+        $status = false;
+    }
+
+    $r1->sortorder = $second->sortorder;
+    if (!update_record('role', $r1)) {
+        debugging("Can not update role with ID $r1->id!");
+        $status = false;
+    }
+
+    return $status;
+}
+
+/**
+ * duplicates all the base definitions of a role
+ *
+ * @param int $sourcerole id of role to copy from
+ * @param int $targetrole id of role to copy to
+ *
+ * @return void
+ */
+function role_cap_duplicate($sourcerole, $targetrole) {
+    global $CFG;
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    $caps = get_records_sql("SELECT * FROM {$CFG->prefix}role_capabilities
+                             WHERE roleid = $sourcerole->id
+                             AND contextid = $systemcontext->id");
+    // adding capabilities
+    foreach ($caps as $cap) {
+        unset($cap->id);
+        $cap->roleid = $targetrole;
+        insert_record('role_capabilities', $cap);
+    }
+}?>
