@@ -401,15 +401,6 @@ table.flexible .r1 {
   border-bottom-color: #dddddd;
 }
 
-.sideblock .header .hide-show img.hide-show-image {
-  background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
-}
-
-.sideblock.hidden .header .hide-show img.hide-show-image {
-  background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
-}
-
-
 
 /***
  *** Blogs

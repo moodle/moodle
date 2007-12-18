@@ -5589,7 +5589,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
 
     }
 
-    print_side_block_end($attributes);
+    print_side_block_end($attributes, $title);
     echo $skip_dest;
 }
 
@@ -5665,7 +5665,7 @@ function print_side_block_start($heading='', $attributes = array()) {
 /**
  * Print table ending tags for a side block box.
  */
-function print_side_block_end($attributes = array()) {
+function print_side_block_end($attributes = array(), $title='') {
     global $CFG, $THEME;
 
     echo '</div>';
@@ -5677,10 +5677,13 @@ function print_side_block_end($attributes = array()) {
 
     echo '</div>';
 
+    $strshow = addslashes_js(get_string('showblocka', 'access', $title));
+    $strhide = addslashes_js(get_string('hideblocka', 'access', $title));
+
     // IE workaround: if I do it THIS way, it works! WTF?
     if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
-        echo '<script type="text/javascript">'."\n//<![CDATA[\n".'elementCookieHide("'.$attributes['id'].'"); '.
-             "\n//]]>\n".'</script>';
+        echo '<script type="text/javascript">'."\n//<![CDATA[\n".'elementCookieHide("'.$attributes['id'].
+             '","'.$strshow.'","'.$strhide."\");\n//]]>\n".'</script>';
     }
 
 }
