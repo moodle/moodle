@@ -7,8 +7,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', true);
     require_login();
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('mnetpeers', $adminroot);
+    admin_externalpage_setup('mnetpeers');
 
     $context = get_context_instance(CONTEXT_SYSTEM);
 

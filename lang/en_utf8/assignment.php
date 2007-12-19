@@ -74,6 +74,7 @@ $string['helpuploadsingle'] = '<p>This type of assignment allows each participan
    single file, of any type.</p> <p>This might be a Word processor document, an image, 
    a zipped web site, or anything you ask them to submit.</p>';
 $string['hideintro'] = 'Hide description before available date';
+$string['itemstocount'] = 'Count';
 $string['late'] = '$a late';
 $string['maximumgrade'] = 'Maximum grade';
 $string['maximumsize'] = 'Maximum size';

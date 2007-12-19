@@ -45,54 +45,6 @@ $FORUM_OPEN_MODES   = array ('2' => get_string('openmode2', 'forum'),
                              '1' => get_string('openmode1', 'forum'),
                              '0' => get_string('openmode0', 'forum') );
 
-if (!isset($CFG->forum_displaymode)) {
-    set_config('forum_displaymode', FORUM_MODE_NESTED);
-}
-
-if (!isset($CFG->forum_shortpost)) {
-    set_config('forum_shortpost', 300);  // Less non-HTML characters than this is short
-}
-
-if (!isset($CFG->forum_longpost)) {
-    set_config('forum_longpost', 600);  // More non-HTML characters than this is long
-}
-
-if (!isset($CFG->forum_manydiscussions)) {
-    set_config('forum_manydiscussions', 100);  // Number of discussions on a page
-}
-
-if (!isset($CFG->forum_maxbytes)) {
-    set_config('forum_maxbytes', 512000);  // Default maximum size for all forums
-}
-
-if (!isset($CFG->forum_trackreadposts)) {
-    set_config('forum_trackreadposts', true);  // Default whether user needs to mark a post as read
-}
-
-if (!isset($CFG->forum_oldpostdays)) {
-    set_config('forum_oldpostdays', 14);  // Default number of days that a post is considered old
-}
-
-if (!isset($CFG->forum_usermarksread)) {
-    set_config('forum_usermarksread', false);  // Default whether user needs to mark a post as read
-}
-
-if (!isset($CFG->forum_cleanreadtime)) {
-    set_config('forum_cleanreadtime', 2);  // Default time (hour) to execute 'clean_read_records' cron
-}
-
-if (!isset($CFG->forum_replytouser)) {
-    set_config('forum_replytouser', true);  // Default maximum size for all forums
-}
-
-if (empty($USER->id) or isguest()) {
-    $CFG->forum_trackreadposts = false;  // This feature never works when a user isn't logged in
-}
-
-if (!isset($CFG->forum_enabletimedposts)) {   // Newish feature that is not quite ready for production in 1.6
-    $CFG->forum_enabletimedposts = false;
-}
-
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 

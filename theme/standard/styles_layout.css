@@ -585,11 +585,6 @@ fieldset.fdate_selector label {
   margin-right:3px;
 }
 
-form#adminsettings div.htmlarea {
-  clear: left;
-  padding-top: 5px;
-}
-
 .mform label .req, .mform label .adv {
   cursor: help;
 }
@@ -989,6 +984,43 @@ body#admin-modules table.generaltable td.c0
   margin:20px;
 }
 
+/* Admin settings */
+#adminsettings div.form-item {
+  clear: both;
+  margin: 1em 0 2em 0;
+}
+
+#adminsettings .form-label {
+  display: block;
+  float: left;
+  width: 12.5em;
+  text-align: right;
+}
+
+#adminsettings .form-shortname {
+  display: block;
+}
+
+#adminsettings .form-setting {
+  display: block;
+  margin-left: 13em;
+  text-align: left;
+}
+
+#adminsettings .form-description {
+  display: block;
+  margin: 0.5em 0 0em 13em;
+  text-align: left;
+}
+
+#adminsettings span.defaultinfo {
+  margin-left: 0.5em;
+}
+
+#adminsettings div.defaultinfo {
+  margin-left: 3px;
+}
+
 #adminsettings fieldset {
   margin-top: 1em;
   padding: 1em 0.5em;
@@ -998,91 +1030,54 @@ body#admin-modules table.generaltable td.c0
   display: none;
 }
 
-#adminsettings .form-group {
-  float: left;
+#adminsettings fieldset.error {
+  margin: 0.2em 0 0.5em 0;
+  padding: 0.5em 0 0 0;
 }
 
-#adminsettings .form-item {
-  margin: 0;
-}
-
-#adminsettings label {
-  display: block;
-  float: left;
-  width: 150px;
-  text-align: right;
-}
-
-#adminsettings .form-shortname {
+#adminsettings fieldset.error legend {
   display: block;
 }
 
-#adminsettings select,
-#adminsettings input {
-  float: left;
-  margin: 0 0 0 10px;
+#adminsettings .form-multicheckbox li {
+  list-style: none;
 }
 
-#adminsettings textarea {
-  float: left;
-  margin: 0 0 0 10px;
-  width: 65%;
+#adminsettings .form-multicheckbox ul {
+  padding:0;
+  margin:0;
 }
 
-#adminsettings .form-group select,
-#adminsettings .form-group input {
-  display: inline;
-  float: none;
+#adminsettings .form-text input {
+  width: 20em;
 }
 
-
-/* #adminsettings .admin-configtime .form-select {
-  display: inline;
-  float: none;
+#adminsettings .form-password input[type="text"],
+#adminsettings .form-password input[type="password"] {
+    width: 20em;
 }
 
-#adminsettings div.admin-frontpage div.form-group select.form-select {
-  display: inline;
-  float: none;
-} */
-
-#adminsettings .description {
-  clear: both;
-  margin: 0 1em 0 160px;
-  padding: 0.3em 0 1.5em 0;
+#adminsettings .form-text input.number {
+  width: 5em;
 }
 
-#adminsettings .form-item .unmask input {
-  margin-left:5px;
-  margin-right:3px;
+#adminsettings .form-executable input,
+#adminsettings .form-directory  input {
+    width: 30em;
 }
 
-#adminsettings .form-item .unmask label {
-  width: auto;
-  text-align: left;
+#adminsettings .form-item .pathok,
+#adminsettings .form-item .patherror {
+  margin-left: 0.5em;
 }
+
 
 .environmentbox {
   margin-top: 1em;
 }
 
 .form-buttons {
-  margin: 10px 0 0 160px;
-}
-
-.form-text {
-  width: 20em;
-}
-.form-textarea { }
-.form-select { }
-.form-checkbox { }
-.form-radio { }
-.form-submit { }
-.form-reset { }
-
-.admin-frontpagedesc .htmlarea {
-  margin: 0 auto 10px auto;
-  width : 600px;
+  margin: 10px 0 0 13em;
 }
 
 .adminsearchform {
@@ -1091,6 +1086,22 @@ body#admin-modules table.generaltable td.c0
 
 .block_admin_tree .admintree {
   text-align:left;
+}
+
+.block_admin_tree .admintree .depth1 {
+  padding-left: 16px;
+}
+
+.block_admin_tree .admintree .depth2 {
+  padding-left: 32px;
+}
+
+.block_admin_tree .admintree .depth3 {
+  padding-left: 48px;
+}
+
+.block_admin_tree .admintree .depth4 {
+  padding-left: 64px;
 }
 
 #admin-lang .translator {

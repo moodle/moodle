@@ -2,18 +2,13 @@
     /// This file allows to manage the default behaviour of the display formats
 
     require_once("../../config.php");
+    require_once($CFG->libdir.'/adminlib.php');
     require_once("lib.php");
-    global $CFG;
 
-    $id = required_param('id', PARAM_INT);
+    $id   = required_param('id', PARAM_INT);
     $mode = optional_param('mode');
 
-    require_login();
-    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
-    
-    if (!$site = get_site()) {
-        error("Site isn't defined!");
-    }
+    admin_externalpage_setup('managemodules'); // this is hacky, tehre should be a special hidden page for it
 
     if ( !$displayformat = get_record("glossary_formats","id",$id) ) {
         error ("Invalid Glossary Format");
@@ -29,7 +24,7 @@
             }
             update_record("glossary_formats",$displayformat);
         }
-        redirect("../../$CFG->admin/module.php?sesskey=$USER->sesskey&module=glossary#formats");
+        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=modsettingglossary#glossary_formats_header");
         die;
     } elseif ( $mode == 'edit' and $form) {
 
@@ -41,26 +36,14 @@
         $displayformat->sortorder   = $form->sortorder;
 
         update_record("glossary_formats",$displayformat);
-        redirect("../../$CFG->admin/module.php?sesskey=$USER->sesskey&module=glossary#formats");
+        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=modsettingglossary#glossary_formats_header");
         die;
     }
 
-    $stradmin = get_string("administration");
-    $strconfiguration = get_string("configuration");
-    $strmanagemodules = get_string("managemodules");
     $strmodulename = get_string("modulename", "glossary");
     $strdisplayformats = get_string("displayformats","glossary");
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $stradmin, 'link' => "../../$CFG->admin/index.php", 'type' => 'core');
-    $navlinks[] = array('name' => $strconfiguration, 'link' => "../../$CFG->admin/configure.php", 'type' => 'core');
-    $navlinks[] = array('name' => $strmanagemodules, 'link' => "../../$CFG->admin/modules.php", 'type' => 'core');
-    $navlinks[] = array('name' => $strmodulename, 'link' => "../../$CFG->admin/module.php?module=glossary&amp;sesskey=$USER->sesskey", 'type' => 'core');
-    $navlinks[] = array('name' => $strdisplayformats, 'link' => '', 'type' => 'core');
-
-    $navigation = build_navigation($navlinks);
-
-    print_header("$strmodulename: $strconfiguration", $site->fullname, $navigation);
+    admin_externalpage_print_header();
 
     print_heading($strmodulename . ': ' . get_string("displayformats","glossary"));
 

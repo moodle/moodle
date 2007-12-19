@@ -250,6 +250,10 @@ body#admin-index .copyright {
   font-size: 0.75em;
 }
 
+#adminsettings .form-item .defaultinfo {
+  font-size: 0.8em;
+}
+
 #admin-roles-override .cell.c1,
 #admin-roles-assign .cell.c3,
 #admin-roles-assign .cell.c1 {

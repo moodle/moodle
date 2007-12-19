@@ -3,7 +3,7 @@
 class block_admin_tree extends block_base {
 
     var $currentdepth;
-    var $spancounter;
+    var $divcounter;
     var $tempcontent;
     var $pathtosection;
     var $expandjavascript;
@@ -14,7 +14,7 @@ class block_admin_tree extends block_base {
         $this->title = get_string('administrationsite');
         $this->version = 2006090300;
         $this->currentdepth = 0;
-        $this->spancounter = 1;
+        $this->divcounter = 1;
         $this->tempcontent = '';
         $this->section = (isset($PAGE->section) ? $PAGE->section : '');
         $this->pathtosection = array();
@@ -34,49 +34,51 @@ class block_admin_tree extends block_base {
         global $CFG;
         $strfolderopened = s(get_string('folderopened'));
 
-        for ($i = 0; $i < $this->currentdepth; $i++) {
-            $this->tempcontent .= "&nbsp; &nbsp;";
-        }
-        $this->tempcontent .= '<a href="#" onclick="toggle(\'vh_span' . $this->spancounter . '\');return false">';
-        $this->tempcontent .= '<span id="vh_span' . $this->spancounter . 'indicator"><img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" /></span> ';
-        $this->tempcontent .= $visiblename . '</a><br /><span id="vh_span' . $this->spancounter . '">' . "\n";
+        $this->tempcontent .= '<div class="depth'.$this->currentdepth.'"><a href="#" onclick="toggle(\'vh_div'.$this->divcounter.'\');return false">';
+        $this->tempcontent .= '<span id="vh_div'.$this->divcounter.'indicator"><img src="'.$CFG->wwwroot.'/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" /></span> ';
+        $this->tempcontent .= $visiblename.'</a></div><div id="vh_div'.$this->divcounter.'">'."\n";
         $this->currentdepth++;
-        $this->spancounter++;
+        $this->divcounter++;
     }
 
     function close_folder() {
         $this->currentdepth--;
-        $this->tempcontent .= "</span>\n";
+        $this->tempcontent .= "</div>\n";
     }
 
     function create_item($visiblename,$link,$icon,$class) {
         global $CFG;
-        for ($i = 0; $i < $this->currentdepth; $i++) {
-            $this->tempcontent .= "&nbsp; &nbsp;";
-        }
-        $this->tempcontent .= '<a class="'.$class.'" href="'.$link.'"><img src="'.$icon.'" alt="" />'.
-                               $visiblename.'</a><br />'."\n";
+        $this->tempcontent .= '<div class="depth'.$this->currentdepth.'"><a class="'.$class.'" href="'.$link.'"><img src="'.$icon.'" alt="" />'.
+                               $visiblename.'</a></div>'."\n";
     }
 
     function build_tree (&$content) {
         global $CFG;
         if (is_a($content, 'admin_settingpage')) {
-            if ($content->check_access() and !$content->is_hidden()) {
+            // show hidden pages in tree if hidden page active
+            if ($content->check_access() and (($content->name == $this->section) or !$content->is_hidden())) {
                 $class = ($content->name == $this->section) ? 'link current' : 'link';
-                $this->create_item($content->visiblename,$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=' . $content->name,$CFG->wwwroot .'/blocks/admin_tree/item.gif', $class);
+                if ($content->is_hidden()) {
+                    $class .= ' hidden';
+                }
+                $this->create_item($content->visiblename, $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section='.$content->name, $CFG->wwwroot.'/blocks/admin_tree/item.gif', $class);
             }
         } else if (is_a($content, 'admin_externalpage')) {
-            if ($content->check_access() and !$content->is_hidden()) {
+            // show hidden pages in tree if hidden page active
+            if ($content->check_access() and (($content->name == $this->section) or !$content->is_hidden())) {
                 $class = ($content->name == $this->section) ? 'link current' : 'link';
-                $this->create_item($content->visiblename, $content->url, $CFG->wwwroot . '/blocks/admin_tree/item.gif', $class);
+                if ($content->is_hidden()) {
+                    $class .= ' hidden';
+                }
+                $this->create_item($content->visiblename, $content->url, $CFG->wwwroot.'/blocks/admin_tree/item.gif', $class);
             }
         } else if (is_a($content, 'admin_category')) {
             if ($content->check_access() and !$content->is_hidden()) {
 
                 // check if the category we're currently printing is a parent category for the current page; if it is, we
                 // make a note (in the javascript) that it has to be expanded after the page has loaded
-                if ($this->pathtosection[count($this->pathtosection) - 1] == $content->name) {
-                    $this->expandjavascript .= 'expand("vh_span' . ($this->spancounter) . '");' . "\n";
+                if ($this->section != '' and $this->pathtosection[count($this->pathtosection) - 1] == $content->name) {
+                    $this->expandjavascript .= 'expand("vh_div'.($this->divcounter).'");'."\n";
                     array_pop($this->pathtosection);
                 }
 
@@ -108,10 +110,10 @@ class block_admin_tree extends block_base {
         }
 
         require_once($CFG->libdir.'/adminlib.php');
-        $adminroot = admin_get_root();
+        $adminroot =& admin_get_root(false, false); // settings not required - only pages
 
-        if ($this->pathtosection = $adminroot->path($this->section)) {
-            $this->pathtosection = array_reverse($this->pathtosection);
+        if ($current = $adminroot->locate($this->section, true)) {
+            $this->pathtosection = $current->path;
             array_pop($this->pathtosection);
         }
 
@@ -130,53 +132,53 @@ class block_admin_tree extends block_base {
             $strfolderopened = s(get_string('folderopened'));
             $strfolderclosed = s(get_string('folderclosed'));
 
-            $this->content = new stdClass;
+            $this->content = new object();
             $this->content->text  = '<script type="text/javascript">'."\n";
             $this->content->text .= '//<![CDATA[' . "\n";
-            $this->content->text .= 'var vh_numspans = ' . ($this->spancounter - 1) . ';' . "\n";
+            $this->content->text .= 'var vh_numdivs = ' . ($this->divcounter - 1) . ';' . "\n";
             $this->content->text .= 'var vh_content = new Array();' . "\n";
-            $this->content->text .= 'function getspan(spanid) {' . "\n";
+            $this->content->text .= 'function getdiv(divid) {' . "\n";
             $this->content->text .= '  if (document.getElementById) {' . "\n";
-            $this->content->text .= '    return document.getElementById(spanid);' . "\n";
-            $this->content->text .= '  } else if (window[spanid]) {' . "\n";
-            $this->content->text .= '    return window[spanid];' . "\n";
+            $this->content->text .= '    return document.getElementById(divid);' . "\n";
+            $this->content->text .= '  } else if (window[divid]) {' . "\n";
+            $this->content->text .= '    return window[divid];' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '  return null;' . "\n";
             $this->content->text .= '}' . "\n";
 
-            $this->content->text .= 'function toggle(spanid) {' . "\n";
-            $this->content->text .= '  if (getspan(spanid).innerHTML == "") {' . "\n";
-            $this->content->text .= '    getspan(spanid).innerHTML = vh_content[spanid];' . "\n";
-            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" />\';' . "\n";
+            $this->content->text .= 'function toggle(divid) {' . "\n";
+            $this->content->text .= '  if (getdiv(divid).innerHTML == "") {' . "\n";
+            $this->content->text .= '    getdiv(divid).innerHTML = vh_content[divid];' . "\n";
+            $this->content->text .= '    getdiv(divid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" />\';' . "\n";
             $this->content->text .= '  } else {' . "\n";
-            $this->content->text .= '    vh_content[spanid] = getspan(spanid).innerHTML;' . "\n";
-            $this->content->text .= '    getspan(spanid).innerHTML = "";' . "\n";
-            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" alt="'.$strfolderclosed.'" />\';' . "\n";
+            $this->content->text .= '    vh_content[divid] = getdiv(divid).innerHTML;' . "\n";
+            $this->content->text .= '    getdiv(divid).innerHTML = "";' . "\n";
+            $this->content->text .= '    getdiv(divid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" alt="'.$strfolderclosed.'" />\';' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
 
-            $this->content->text .= 'function collapse(spanid) {' . "\n";
-            $this->content->text .= '  if (getspan(spanid).innerHTML !== "") {' . "\n";
-            $this->content->text .= '    vh_content[spanid] = getspan(spanid).innerHTML;' . "\n";
-            $this->content->text .= '    getspan(spanid).innerHTML = "";' . "\n";
-            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" alt="'.$strfolderclosed.'" />\';' . "\n";
+            $this->content->text .= 'function collapse(divid) {' . "\n";
+            $this->content->text .= '  if (getdiv(divid).innerHTML !== "") {' . "\n";
+            $this->content->text .= '    vh_content[divid] = getdiv(divid).innerHTML;' . "\n";
+            $this->content->text .= '    getdiv(divid).innerHTML = "";' . "\n";
+            $this->content->text .= '    getdiv(divid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" alt="'.$strfolderclosed.'" />\';' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
 
-            $this->content->text .= 'function expand(spanid) {' . "\n";
-            $this->content->text .= '  getspan(spanid).innerHTML = vh_content[spanid];' . "\n";
-            $this->content->text .= '  getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" />\';' . "\n";
+            $this->content->text .= 'function expand(divid) {' . "\n";
+            $this->content->text .= '  getdiv(divid).innerHTML = vh_content[divid];' . "\n";
+            $this->content->text .= '  getdiv(divid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" />\';' . "\n";
             $this->content->text .= '}' . "\n";
 
             $this->content->text .= 'function expandall() {' . "\n";
-            $this->content->text .= '  for (i = 1; i <= vh_numspans; i++) {' . "\n";
-            $this->content->text .= '    expand("vh_span" + String(i));' . "\n";
+            $this->content->text .= '  for (i = 1; i <= vh_numdivs; i++) {' . "\n";
+            $this->content->text .= '    expand("vh_div" + String(i));' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
 
             $this->content->text .= 'function collapseall() {' . "\n";
-            $this->content->text .= '  for (i = vh_numspans; i > 0; i--) {' . "\n";
-            $this->content->text .= '    collapse("vh_span" + String(i));' . "\n";
+            $this->content->text .= '  for (i = vh_numdivs; i > 0; i--) {' . "\n";
+            $this->content->text .= '    collapse("vh_div" + String(i));' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
 
@@ -195,10 +197,10 @@ class block_admin_tree extends block_base {
             $this->content->text .= '//]]>' . "\n";
             $this->content->text .= '</script>' . "\n";
 
-            $searchcontent = isset($CFG->adminsearchquery) ? $CFG->adminsearchquery : '';
+            $searchcontent = $adminroot->search;
 
             $this->content->footer = '<div class="adminsearchform">'.
-                                     '<form action="'.$CFG->wwwroot.'/admin/search.php" method="get"><div>'.
+                                     '<form action="'.$CFG->wwwroot.'/'.$CFG->admin.'/search.php" method="get"><div>'.
                                      '<label for="query" class="accesshide">'.get_string('searchinsettings', 'admin').'</label>'.
                                      '<input type="text" name="query" id="query" size="8" value="'.s($searchcontent).'" />'.
                                      '<input type="submit" value="'.get_string('search').'" /></div>'.

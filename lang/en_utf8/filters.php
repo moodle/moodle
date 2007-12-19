@@ -7,6 +7,7 @@ $string['anyfield'] = 'any field';
 $string['anyrole'] = 'any role';
 $string['anyvalue'] = 'any value';
 $string['categoryrole'] = 'Category role';
+$string['tablenosave'] = 'Changes in table above are saved automatically.';
 $string['contains'] = 'contains';
 $string['courserole'] = 'Course role';
 $string['courserolelabel'] = '$a->label is $a->rolename in $a->coursename from $a->categoryname';

@@ -52,3 +52,10 @@ form.mform textarea {
 .que .info {
   margin-left: 0.6em;
 }
+
+#adminsettings .form-setting,
+#adminsettings .form-description {
+  display:inline-block; padding-left:2px;
+}
+
+

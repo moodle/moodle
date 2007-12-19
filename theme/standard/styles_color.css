@@ -318,19 +318,50 @@ table.flexible .r1 {
   background-color: green;
 }
 
+/* Admin settings */
+
 #adminsettings fieldset {
     background-color: #EEE;
     border-color: #BBB;
     color: #000;
 }
 
+#adminsettings fieldset.error {
+  border: 1px solid red;
+}
+
+#adminsettings fieldset.error legend {
+  color: red;
+}
+
 #adminsettings .form-shortname {
     color: #888;
+}
+
+#adminsettings .form-overridden {
+    background-color: #fbb;
+}
+
+#adminsettings .form-item .defaultinfo {
+    color: #888;
+}
+
+#adminsettings .form-item .pathok {
+    color: green;
+}
+
+#adminsettings .form-item .patherror {
+    color: red;
 }
 
 .block_admin_tree.sideblock .link.current {
   background-color:#EEEEEE;
 }
+
+.block_admin_tree.sideblock .link.hidden {
+  color:#999999;
+}
+
 
 #admin-lang .translator {
   border-color: #dddddd;

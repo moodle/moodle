@@ -30,21 +30,12 @@
 // then converts the TeX to gif images using
 // mimetex.cgi obtained from http://www.forkosh.com/mimetex.html authored by
 // John Forkosh john@forkosh.com. The mimetex.cgi ELF binary compiled for Linux i386
-// as well as AlgParser.pm are included with this distribution. 
+// as well as AlgParser.pm are included with this distribution.
 // Note that there may be patent restrictions on the production of gif images
 // in Canada and some parts of Western Europe and Japan until July 2004.
 //-------------------------------------------------------------------------
 // You will then need to edit your moodle/config.php to invoke mathml_filter.php
 //-------------------------------------------------------------------------
-
-
-/// Edit these lines to correspond to your installation
-// File path to the directory where mathml_filter.php resides
-    $CFG->algebrafilterdir = "filter/algebra";
-    $CFG->texfilterdir = "filter/tex";
-    if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows") ) {
-      $CFG->algebrafilterdirwin = "filter\\algebra";
-    }
 
 function string_file_picture_algebra($imagefile, $tex= "", $height="", $width="", $align="middle") {
   // Given the path to a picture file in a course, or a URL,
@@ -70,20 +61,20 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
   }
   $style .= '"';
   if ($imagefile) {
-    if (!file_exists("$CFG->dataroot/$CFG->algebrafilterdir/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-      $output .= "<a href=\"$CFG->wwwroot/$CFG->algebrafilterdir/algebradebug.php\">";
+    if (!file_exists("$CFG->dataroot/filter/algebra/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+      $output .= "<a href=\"$CFG->wwwroot/filter/algebra/algebradebug.php\">";
     } else {
       $output .= "<a target=\"popup\" title=\"TeX\" href=";
-      $output .= "\"$CFG->wwwroot/$CFG->texfilterdir/displaytex.php?";
-      $output .= urlencode($tex) . "\" onclick=\"return openpopup('/$CFG->texfilterdir/displaytex.php?";
+      $output .= "\"$CFG->wwwroot/filter/algebra/displaytex.php?";
+      $output .= urlencode($tex) . "\" onclick=\"return openpopup('/filter/algebra/displaytex.php?";
       $output .= urlencode($tex) . "', 'popup', 'menubar=0,location=0,scrollbars,";
       $output .= "resizable,width=300,height=240', 0);\">";
     }
     $output .= "<img $title alt=\"".s($origtex)."\" src=\"";
     if ($CFG->slasharguments) {        // Use this method if possible for better caching
-      $output .= "$CFG->wwwroot/$CFG->algebrafilterdir/pix.php/$imagefile";
+      $output .= "$CFG->wwwroot/filter/algebra/pix.php/$imagefile";
     } else {
-      $output .= "$CFG->wwwroot/$CFG->algebrafilterdir/pix.php?file=$imagefile";
+      $output .= "$CFG->wwwroot/filter/algebra/pix.php?file=$imagefile";
     }
     $output .= "\" $style />";
     $output .= "</a>";
@@ -97,7 +88,7 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
 function algebra_filter ($courseid, $text) {
 
     global $CFG;
-    
+
     /// Do a quick check using stripos to avoid unnecessary wor
     if (!preg_match('/<algebra/i',$text) && !strstr($text,'@@')) {
         return $text;
@@ -120,7 +111,7 @@ function algebra_filter ($courseid, $text) {
 #        return $text;
 #    }
 
-    
+
     $text .= ' ';
 
     preg_match_all('/@(@@+)([^@])/',$text,$matches);
@@ -128,11 +119,11 @@ function algebra_filter ($courseid, $text) {
         $replacement = str_replace('@','&#x00040;',$matches[1][$i]).$matches[2][$i];
         $text = str_replace($matches[0][$i],$replacement,$text);
     }
-     
+
     // <algebra> some algebraic input expression </algebra>
     // or @@ some algebraic input expression @@
 
-    preg_match_all('/<algebra>(.+?)<\/algebra>|@@(.+?)@@/is', $text, $matches);  
+    preg_match_all('/<algebra>(.+?)<\/algebra>|@@(.+?)@@/is', $text, $matches);
     for ($i=0; $i<count($matches[0]); $i++) {
         $algebra = $matches[1][$i] . $matches[2][$i];
         $algebra = str_replace('<nolink>','',$algebra);
@@ -166,9 +157,9 @@ function algebra_filter ($courseid, $text) {
            $algebra = preg_replace('!\r\n?!',' ',$algebra);
            $algebra = escapeshellarg($algebra);
            if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows") ) {
-              $cmd  = "cd $CFG->dirroot\\$CFG->algebrafilterdirwin & algebra2tex.pl $algebra";
-           } else {      
-              $cmd  = "cd $CFG->dirroot/$CFG->algebrafilterdir; ./algebra2tex.pl $algebra";
+              $cmd  = "cd $CFG->dirroot\\filter\\algebra & algebra2tex.pl $algebra";
+           } else {
+              $cmd  = "cd $CFG->dirroot/filter/algebra; ./algebra2tex.pl $algebra";
            }
            $texexp = `$cmd`;
            if (preg_match('/parsehilight/',$texexp)) {
@@ -182,8 +173,8 @@ function algebra_filter ($courseid, $text) {
               $texexp = str_replace('\right}','}',$texexp);
               $texexp = str_replace('\fun',' ',$texexp);
               $texexp = str_replace('infty','\infty',$texexp);
-              $texexp = str_replace('alpha','\alpha',$texexp);  
-              $texexp = str_replace('gamma','\gamma',$texexp); 
+              $texexp = str_replace('alpha','\alpha',$texexp);
+              $texexp = str_replace('gamma','\gamma',$texexp);
               $texexp = str_replace('iota','\iota',$texexp);
               $texexp = str_replace('kappa','\kappa',$texexp);
               $texexp = str_replace('lambda','\lambda',$texexp);
@@ -239,7 +230,7 @@ function algebra_filter ($courseid, $text) {
            $text = str_replace( $matches[0][$i], string_file_picture_algebra($filename, $texcache->rawtext), $text);
         }
     }
-    return $text; 
+    return $text;
 }
 
 ?>

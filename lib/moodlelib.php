@@ -611,11 +611,17 @@ function set_config($name, $value, $plugin=NULL) {
     global $CFG;
 
     if (empty($plugin)) {
-        $CFG->$name = $value;  // So it's defined for this invocation at least
+        if (!array_key_exists($name, $CFG->config_php_settings)) {
+            // So it's defined for this invocation at least
+            if (is_null($value)) {
+                unset($CFG->$name);
+            } else {
+                $CFG->$name = $value;
+            }
+        }
 
         if (get_field('config', 'name', 'name', $name)) {
             if ($value===null) {
-                unset($CFG->$name);
                 return delete_records('config', 'name', $name);
             } else {
                 return set_field('config', 'value', addslashes($value), 'name', $name);
@@ -697,13 +703,8 @@ function get_config($plugin=NULL, $name=NULL) {
             foreach ($configs as $config) {
                 if (!isset($localcfg[$config->name])) {
                     $localcfg[$config->name] = $config->value;
-                } else {
-                    if ($localcfg[$config->name] != $config->value ) {
-                        // complain if the DB has a different
-                        // value than config.php does
-                        error_log("\$CFG->{$config->name} in config.php ({$localcfg[$config->name]}) overrides database setting ({$config->value})");
-                    }
                 }
+                // do not complain anymore if config.php overrides settings from db
             }
 
             $localcfg = (object)$localcfg;

@@ -8,13 +8,6 @@
 DEFINE ('ASSIGNMENT_COUNT_WORDS', 1);
 DEFINE ('ASSIGNMENT_COUNT_LETTERS', 2);
 
-if (!isset($CFG->assignment_maxbytes)) {
-    set_config("assignment_maxbytes", 1024000);  // Default maximum size for all assignments
-}
-if (!isset($CFG->assignment_itemstocount)) {
-    set_config("assignment_itemstocount", ASSIGNMENT_COUNT_WORDS);  // Default item to count
-}
-
 /**
  * Standard base class for all assignment submodules (assignment types).
  */

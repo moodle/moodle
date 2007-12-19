@@ -29,10 +29,6 @@
     $strmultiple = get_string('blockmultiple', 'admin');
     $strshowblockcourse = get_string('showblockcourse');
 
-    admin_externalpage_print_header();
-
-    print_heading($strmanageblocks);
-
 /// If data submitted, then process and store.
 
     if (!empty($hide) && confirm_sesskey()) {
@@ -40,6 +36,7 @@
             error("Block doesn't exist!");
         }
         set_field('block', 'visible', '0', 'id', $block->id);      // Hide block
+        admin_get_root(true, false);  // settings not required - only pages
     }
 
     if (!empty($show) && confirm_sesskey() ) {
@@ -47,6 +44,7 @@
             error("Block doesn't exist!");
         }
         set_field('block', 'visible', '1', 'id', $block->id);      // Show block
+        admin_get_root(true, false);  // settings not required - only pages
     }
 
     if (!empty($multiple) && confirm_sesskey()) {
@@ -55,9 +53,12 @@
         }
         $block->multiple = !$block->multiple;
         update_record('block', $block);
+        admin_get_root(true, false);  // settings not required - only pages
     }
 
     if (!empty($delete) && confirm_sesskey()) {
+        admin_externalpage_print_header();
+        print_heading($strmanageblocks);
 
         if (!$block = blocks_get_record($delete)) {
             error("Block doesn't exist!");
@@ -130,6 +131,9 @@
         }
     }
 
+    admin_externalpage_print_header();
+    print_heading($strmanageblocks);
+
 /// Main display starts here
 
 /// Get and sort the existing blocks
@@ -174,21 +178,26 @@
     foreach ($blockbyname as $blockname => $blockid) {
 
         $blockobject = $blockobjects[$blockid];
+        $block       = $blocks[$blockid];
 
         $delete = '<a href="blocks.php?delete='.$blockid.'&amp;sesskey='.$USER->sesskey.'">'.$strdelete.'</a>';
 
         $settings = ''; // By default, no configuration
-        if($blockobject->has_config()) {
-            $settings = '<a href="block.php?block='.$blockid.'">'.$strsettings.'</a>';
+        if ($blockobject->has_config()) {
+            if (file_exists($CFG->dirroot.'/blocks/'.$block->name.'/settings.php')) {
+                $settings = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=blocksetting'.$block->name.'">'.$strsettings.'</a>';
+            } else {
+                $settings = '<a href="block.php?block='.$blockid.'">'.$strsettings.'</a>';
+            }
         }
 
         // MDL-11167, blocks can be placed on mymoodle, or the blogs page
         // and it should not show up on course search page
-        
+
         $totalcount = count_records('block_instance', 'blockid', $blockid);
-        
-        $count = count_records_sql('SELECT COUNT(*) 
-                                        FROM '.$CFG->prefix.'block_instance 
+
+        $count = count_records_sql('SELECT COUNT(*)
+                                        FROM '.$CFG->prefix.'block_instance
                                         WHERE blockid = '.$blockid.' AND
                                         pagetype = \'course-view\'');
 

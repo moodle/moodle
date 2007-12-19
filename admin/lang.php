@@ -99,7 +99,7 @@
             $title = $strlanguage;
             break;
     }
-    $navlinks[] = array('name' => $strlanguage, 'link' => "$CFG->wwwroot/admin/lang.php", 'type' => 'misc');
+    $navlinks[] = array('name' => $strlanguage, 'link' => "$CFG->wwwroot/$CFG->admin/lang.php", 'type' => 'misc');
     $navigation = build_navigation($navlinks);
 
     admin_externalpage_print_header();
@@ -119,17 +119,17 @@
     }
     if (has_capability('moodle/site:langeditlocal', $context, $USER->id, false)) {
         $firstrow[] = new tabobject('uselocal',
-            $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=1",
+            "$CFG->wwwroot/$CFG->admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=1",
             $strlocalstringcustomization );
     }
     if (has_capability('moodle/site:langeditmaster', $context, $USER->id, false)) {
         $firstrow[] = new tabobject('usemaster',
-            $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=0",
+            "$CFG->wwwroot/$CFG->admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=0",
             $strlangpackmaintaining );
     }
-    $secondrow[] = new tabobject('missing', $CFG->wwwroot.'/admin/lang.php?mode=missing', $strmissingstrings );
-    $secondrow[] = new tabobject('compare', $CFG->wwwroot.'/admin/lang.php?mode=compare', $streditstrings );
-    $secondrow[] = new tabobject('helpfiles', $CFG->wwwroot.'/admin/lang.php?mode=helpfiles', $stredithelpdocs );
+    $secondrow[] = new tabobject('missing', "$CFG->wwwroot/$CFG->admin/lang.php?mode=missing", $strmissingstrings );
+    $secondrow[] = new tabobject('compare', "$CFG->wwwroot/$CFG->admin/lang.php?mode=compare", $streditstrings );
+    $secondrow[] = new tabobject('helpfiles', "$CFG->wwwroot/$CFG->admin/lang.php?mode=helpfiles", $stredithelpdocs );
     $tabs = array($firstrow, $secondrow);
     print_tabs($tabs, $currenttab, $inactive, $activated);
 

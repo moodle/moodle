@@ -4,7 +4,10 @@
 
 $string['addresource'] = 'Add a resource';
 $string['affectedresources'] = 'Affected resources';
+$string['allowlocalfiles'] = 'Allow local files';
+$string['autofilerename'] = 'Update link if file renamed';
 $string['back'] = 'Back';
+$string['blockdeletingfile'] = 'BLock deleting of referenced files';
 $string['browserepository'] = 'Browse repository';
 $string['choose'] = 'Choose';
 $string['chooseafile'] = 'Choose or upload a file';
@@ -46,6 +49,7 @@ $string['fetchservererror'] = 'An error was found with the remote server while t
 $string['filename'] = 'File name';
 $string['filtername'] = 'Resource Names Auto-linking';
 $string['frameifpossible'] = 'Put resource in a frame to keep site navigation visible';
+$string['framesize'] = 'Frame size';
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML fragment';
 $string['imspackageloaded'] = 'Package loaded';
@@ -95,6 +99,7 @@ $string['previous'] = 'Previous';
 $string['redeploy'] = 'Deploy again';
 $string['repository'] = 'IMS repository';
 $string['resource:view'] = 'View resource';
+$string['resourcedefaulturl'] = 'Default URL';
 $string['resourcetype'] = 'Type of resource';
 $string['resourcetype1'] = 'Reference';
 $string['resourcetype2'] = 'Web Page';
@@ -124,5 +129,6 @@ $string['viewims'] = 'View IMS Content Package';
 $string['vol'] = 'Vol';
 $string['warningblockingdelete'] = 'Warning: Delete operation is blocked by existing resource. Either update your resources first or ask administartor to disable this safety mechanism in global Resource configuration.';
 $string['warningdisabledrename'] = 'Warning: The automatic renaming of references in resources is disabled. Please update affected resources manually if needed. Administrator can also enable automatic renaming in global Resource configuration.';
+$string['websearchdefault'] = 'Websearch default';
 
 ?>

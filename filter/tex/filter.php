@@ -24,8 +24,8 @@
 // NOTE: This Moodle text filter converts TeX expressions delimited
 // by either $$...$$ or by <tex...>...</tex> tags to gif images using
 // mimetex.cgi obtained from http://www.forkosh.com/mimetex.html authored by
-// John Forkosh john@forkosh.com.  Several binaries of this areincluded with 
-// this distribution. 
+// John Forkosh john@forkosh.com.  Several binaries of this areincluded with
+// this distribution.
 // Note that there may be patent restrictions on the production of gif images
 // in Canada and some parts of Western Europe and Japan until July 2004.
 //-------------------------------------------------------------------------
@@ -36,11 +36,11 @@
 //       filter/tex/filter.php                                             //
 /////////////////////////////////////////////////////////////////////////////
 
-$CFG->texfilterdir = "filter/tex";
-
-
-function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $align="middle") {
-    // Given the path to a picture file in a course, or a URL,
+function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $align="middle", $alt='') {
+    if($alt==='') {
+        $alt=s($tex);
+    }
+// Given the path to a picture file in a course, or a URL,
     // this function includes the picture in the page.
     global $CFG;
 
@@ -53,6 +53,11 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
         $tex = str_replace('>','&gt;',$tex);
         $tex = str_replace('"','&quot;',$tex);
         $tex = str_replace("\'",'&#39;',$tex);
+        // Note that we retain the title tag as TeX format rather than using
+        // the alt text, even if supplied. The alt text is intended for blind 
+        // users (to provide a text equivalent to the equation) while the title 
+        // is there as a convenience for sighted users who want to see the TeX 
+        // code. 
         $title = "title=\"$tex\"";
     }
     if ($height) {
@@ -63,20 +68,20 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
     }
     $style .= '"';
     if ($imagefile) {
-        if (!file_exists("$CFG->dataroot/$CFG->texfilterdir/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-          $output .= "<a href=\"$CFG->wwwroot/$CFG->texfilterdir/texdebug.php\">";
+        if (!file_exists("$CFG->dataroot/filter/tex/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+          $output .= "<a href=\"$CFG->wwwroot/filter/tex/texdebug.php\">";
         } else {
           $output .= "<a target=\"popup\" title=\"TeX\" href=";
-          $output .= "\"$CFG->wwwroot/$CFG->texfilterdir/displaytex.php?";
-          $output .= urlencode($tex) . "\" onclick=\"return openpopup('/$CFG->texfilterdir/displaytex.php?";
+          $output .= "\"$CFG->wwwroot/filter/tex/displaytex.php?";
+          $output .= urlencode($tex) . "\" onclick=\"return openpopup('/filter/tex/displaytex.php?";
           $output .= urlencode($tex) . "', 'popup', 'menubar=0,location=0,scrollbars,";
           $output .= "resizable,width=300,height=240', 0);\">";
         }
-        $output .= "<img class=\"texrender\" $title alt=\"".s($origtex)."\" src=\"";
+        $output .= "<img class=\"texrender\" $title alt=\"$alt\" src=\"";
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= "$CFG->wwwroot/$CFG->texfilterdir/pix.php/$imagefile";
+            $output .= "$CFG->wwwroot/filter/tex/pix.php/$imagefile";
         } else {
-            $output .= "$CFG->wwwroot/$CFG->texfilterdir/pix.php?file=$imagefile";
+            $output .= "$CFG->wwwroot/filter/tex/pix.php?file=$imagefile";
         }
         $output .= "\" $style />";
         $output .= "</a>";
@@ -119,12 +124,14 @@ function tex_filter ($courseid, $text) {
     }
 
     // <tex> TeX expression </tex>
+    // or <tex alt="My alternative text to be used instead of the TeX form"> TeX expression </tex>
     // or $$ TeX expression $$
     // or \[ TeX expression \]          // original tag of MathType and TeXaide (dlnsk)
     // or [tex] TeX expression [/tex]   // somtime it's more comfortable than <tex> (dlnsk)
-    preg_match_all('/<tex>(.+?)<\/tex>|\$\$(.+?)\$\$|\\\\\[(.+?)\\\\\]|\\[tex\\](.+?)\\[\/tex\\]/is', $text, $matches);
+    preg_match_all('/<tex(?:\s+alt=["\'](.*?)["\'])?>(.+?)<\/tex>|\$\$(.+?)\$\$|\\\\\[(.+?)\\\\\]|\\[tex\\](.+?)\\[\/tex\\]/is', $text, $matches);
     for ($i=0; $i<count($matches[0]); $i++) {
-        $texexp = $matches[1][$i] . $matches[2][$i] . $matches[3][$i] . $matches[4][$i];
+        $texexp = $matches[2][$i] . $matches[3][$i] . $matches[4][$i] . $matches[5][$i];
+        $alt = $matches[1][$i];
         $texexp = str_replace('<nolink>','',$texexp);
         $texexp = str_replace('</nolink>','',$texexp);
         $texexp = str_replace('<span class="nolink">','',$texexp);
@@ -148,10 +155,9 @@ function tex_filter ($courseid, $text) {
             insert_record("cache_filters",$texcache, false);
         }
         $filename = $md5 . ".gif";
-        $text = str_replace( $matches[0][$i], string_file_picture_tex($filename, $texexp, '', '', $align), $text);
+        $text = str_replace( $matches[0][$i], string_file_picture_tex($filename, $texexp, '', '', $align, $alt), $text);
     }
-    return $text; 
+    return $text;
 }
-
 
 ?>
