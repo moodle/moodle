@@ -2162,6 +2162,19 @@ class admin_setting_configselect extends admin_setting {
             $defaultinfo = '';
         }
 
+        $current = $this->get_setting();
+        $warning = '';
+        if (is_null($current)) {
+            //first run
+        } else if (empty($current) and (array_key_exists('', $this->choices) or array_key_exists(0, $this->choices))) {
+            // no warning
+        } else if (!array_key_exists($current, $this->choices)) {
+            $warning = get_string('warningcurrentsetting', 'admin', s($current));
+            if (!is_null($default) and $data==$current) {
+                $data = $default; // use default instead of first value when showing the form
+            }
+        }
+
         $return = '<div class="form-select"><select id="'.$this->get_id().'" name="'.$this->get_full_name().'">';
         foreach ($this->choices as $key => $value) {
             // the string cast is needed because key may be integer - 0 is equal to most strings!
@@ -2169,7 +2182,7 @@ class admin_setting_configselect extends admin_setting {
         }
         $return .= '</select>'.$defaultinfo.'</div>';
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, $warning);
     }
 
 }
@@ -4243,7 +4256,7 @@ function apply_default_exception_settings($defaults) {
  * @param string $description
  * @param bool $label link label to id
  */
-function format_admin_setting($setting, $title='', $form='', $description='', $label=true) {
+function format_admin_setting($setting, $title='', $form='', $description='', $label=true, $warning='') {
     global $CFG;
 
     $name     = $setting->name;
@@ -4257,14 +4270,18 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
     }
 
     if (empty($setting->plugin) and array_key_exists($name, $CFG->config_php_settings)) {
-        $override = '<span class="form-overridden">'.get_string('configoverride', 'admin').'</span>';
+        $override = '<div class="form-overridden">'.get_string('configoverride', 'admin').'</div>';
     } else {
         $override = '';
     }
 
+    if ($warning !== '') {
+        $warning = '<div class="form-warning">'.$warning.'</div>';
+    }
+
     $str = '
 <div class="form-item" id="admin-'.$setting->name.'">
-<div class="form-label"><label '.$labelfor.'>'.$title.'<span class="form-shortname">'.$name.'</span>'.$override.'</label></div>
+<div class="form-label"><label '.$labelfor.'>'.$title.'<span class="form-shortname">'.$name.'</span>'.$override.$warning.'</label></div>
 <div class="form-setting">'.$form.'</div>
 <div class="form-description">'.$description.'</div>
 </div>';

@@ -616,7 +616,7 @@ function set_config($name, $value, $plugin=NULL) {
             if (is_null($value)) {
                 unset($CFG->$name);
             } else {
-                $CFG->$name = $value;
+                $CFG->$name = (string)$value; // settings from db are always strings
             }
         }
 
