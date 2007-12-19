@@ -20,14 +20,8 @@
     disable_debugging();
 
     require_once($CFG->libdir.'/filelib.php');
-    require_once('defaultsettings.php' );
-    require_once('latex.php');
-
-    $CFG->texfilterdir = 'filter/tex';
-    $CFG->teximagedir  = 'filter/tex';
-
-    // check/initialise default configuration for filter (in defaultsettings.php)
-    tex_defaultsettings();
+    require_once($CFG->dirroot.'/filter/tex/lib.php');
+    require_once($CFG->dirroot.'/filter/tex/latex.php');
 
     $cmd    = '';               // Initialise these variables
     $status = '';
@@ -40,7 +34,7 @@
 
     if (count($args) == 1) {
         $image    = $args[0];
-        $pathname = $CFG->dataroot.'/'.$CFG->teximagedir.'/'.$image;
+        $pathname = $CFG->dataroot.'/filter/tex/'.$image;
     } else {
         error('No valid arguments supplied');
     }
@@ -48,67 +42,28 @@
     if (!file_exists($pathname)) {
         $md5 = str_replace('.gif','',$image);
         if ($texcache = get_record('cache_filters', 'filter', 'tex', 'md5key', $md5)) {
-            if (!file_exists($CFG->dataroot.'/'.$CFG->teximagedir)) {
-                make_upload_directory($CFG->teximagedir);
+            if (!file_exists($CFG->dataroot.'/filter/tex')) {
+                make_upload_directory('filter/tex');
             }
 
             // try and render with latex first
             $latex = new latex();
             $density = $CFG->filter_tex_density;
             $background = $CFG->filter_tex_latexbackground;
-            $texexp = html_entity_decode( $texcache->rawtext );
-            $latex_path = $latex->render( $texexp, $md5, 12, $density, $background );
-            if ($latex_path) {    
-                copy( $latex_path, $pathname );
-                $latex->clean_up( $md5 );
-            }
-            else {                    
+            $texexp = html_entity_decode($texcache->rawtext);
+            $latex_path = $latex->render($texexp, $md5, 12, $density, $background);
+            if ($latex_path) {
+                copy($latex_path, $pathname);
+                $latex->clean_up($md5);
+
+            } else {
                 // failing that, use mimetex
                 $texexp = $texcache->rawtext;
-                $texexp = str_replace('&lt;','<',$texexp);
-                $texexp = str_replace('&gt;','>',$texexp);
-                $texexp = preg_replace('!\r\n?!',' ',$texexp);
-                $texexp = '\Large ' . $texexp;
-                $texexp = escapeshellarg($texexp);
-
-                if ((PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {
-                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
-                    $cmd = str_replace(' ','^ ',$cmd);
-                    $cmd .= " ++ -e  \"$pathname\" -- $texexp";
-                } else if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
-
-                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname -- $texexp";
-
-                } else {                                                           /// Auto-detect the right TeX binary
-                    switch (PHP_OS) {
-
-                        case "Linux":
-                            $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" -- $texexp";
-                        break;
-
-                        case "Darwin":
-                            $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" -- $texexp";
-                        break;
-
-                        case "FreeBSD":
-                            $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.freebsd\" -e \"$pathname\" $texexp";
-                        break;
-
-                        default:      /// Nothing was found, so tell them how to fix it.
-                            if (debugging()) {
-                                echo "Make sure you have an appropriate MimeTeX binary here:\n\n";
-                                echo "    $CFG->dirroot/$CFG->texfilterdir/mimetex\n\n";
-                                echo "and that it has the right permissions set on it as executable program.\n\n";
-                                echo "You can get the latest binaries for your ".PHP_OS." platform from: \n\n";
-                                echo "    http://moodle.org/download/mimetex/";
-                            } else {
-                                echo "Mimetex executable was not found,\n";
-                                echo "Please turn on debug mode in site configuration to see more info here.";
-                            }
-                             die;
-                        break;
-                    }
-                }
+                $texexp = str_replace('&lt;', '<', $texexp);
+                $texexp = str_replace('&gt;', '>', $texexp);
+                $texexp = preg_replace('!\r\n?!', ' ', $texexp);
+                $texexp = '\Large '.$texexp;
+                $cmd = tex_filter_get_cmd($pathname, $texexp);
                 system($cmd, $status);
             }
         }
@@ -120,10 +75,10 @@
         if (debugging()) {
             echo "The shell command<br />$cmd<br />returned status = $status<br />\n";
             echo "Image not found!<br />";
-            echo "Please try the <a href=\"$CFG->wwwroot/$CFG->texfilterdir/texdebug.php\">debugging script</a>";
+            echo "Please try the <a href=\"$CFG->wwwroot/filter/tex/texdebug.php\">debugging script</a>";
         } else {
             echo "Image not found!<br />";
-            echo "Please try the <a href=\"$CFG->wwwroot/$CFG->texfilterdir/texdebug.php\">debugging script</a><br />";
+            echo "Please try the <a href=\"$CFG->wwwroot/filter/tex/texdebug.php\">debugging script</a><br />";
             echo "Please turn on debug mode in site configuration to see more info here.";
         }
     }

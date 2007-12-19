@@ -24,8 +24,8 @@
 // NOTE: This Moodle text filter converts TeX expressions delimited
 // by either $$...$$ or by <tex...>...</tex> tags to gif images using
 // mimetex.cgi obtained from http://www.forkosh.com/mimetex.html authored by
-// John Forkosh john@forkosh.com.  Several binaries of this areincluded with 
-// this distribution. 
+// John Forkosh john@forkosh.com.  Several binaries of this areincluded with
+// this distribution.
 // Note that there may be patent restrictions on the production of gif images
 // in Canada and some parts of Western Europe and Japan until July 2004.
 //-------------------------------------------------------------------------
@@ -35,8 +35,6 @@
 //                                                                         //
 //       filter/tex/filter.php                                             //
 /////////////////////////////////////////////////////////////////////////////
-
-$CFG->texfilterdir = "filter/tex";
 
 function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $align="middle", $alt='') {
     if($alt==='') {
@@ -70,20 +68,20 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
     }
     $style .= '"';
     if ($imagefile) {
-        if (!file_exists("$CFG->dataroot/$CFG->texfilterdir/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-          $output .= "<a href=\"$CFG->wwwroot/$CFG->texfilterdir/texdebug.php\">";
+        if (!file_exists("$CFG->dataroot/filter/tex/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+          $output .= "<a href=\"$CFG->wwwroot/filter/tex/texdebug.php\">";
         } else {
           $output .= "<a target=\"popup\" title=\"TeX\" href=";
-          $output .= "\"$CFG->wwwroot/$CFG->texfilterdir/displaytex.php?";
-          $output .= urlencode($tex) . "\" onclick=\"return openpopup('/$CFG->texfilterdir/displaytex.php?";
+          $output .= "\"$CFG->wwwroot/filter/tex/displaytex.php?";
+          $output .= urlencode($tex) . "\" onclick=\"return openpopup('/filter/tex/displaytex.php?";
           $output .= urlencode($tex) . "', 'popup', 'menubar=0,location=0,scrollbars,";
           $output .= "resizable,width=300,height=240', 0);\">";
         }
         $output .= "<img class=\"texrender\" $title alt=\"$alt\" src=\"";
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= "$CFG->wwwroot/$CFG->texfilterdir/pix.php/$imagefile";
+            $output .= "$CFG->wwwroot/filter/tex/pix.php/$imagefile";
         } else {
-            $output .= "$CFG->wwwroot/$CFG->texfilterdir/pix.php?file=$imagefile";
+            $output .= "$CFG->wwwroot/filter/tex/pix.php?file=$imagefile";
         }
         $output .= "\" $style />";
         $output .= "</a>";
@@ -159,8 +157,7 @@ function tex_filter ($courseid, $text) {
         $filename = $md5 . ".gif";
         $text = str_replace( $matches[0][$i], string_file_picture_tex($filename, $texexp, '', '', $align, $alt), $text);
     }
-    return $text; 
+    return $text;
 }
-
 
 ?>

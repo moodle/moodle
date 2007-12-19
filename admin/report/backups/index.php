@@ -5,11 +5,9 @@
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->dirroot.'/backup/lib.php');
 
-    $adminroot = admin_get_root();
+    admin_externalpage_setup('reportbackups');
 
-    admin_externalpage_setup('reportbackups', $adminroot);
-
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     $courseid = optional_param('courseid', 0, PARAM_INT);
 
@@ -135,6 +133,6 @@
         print_simple_box_end();
     }
 
-    admin_externalpage_print_footer($adminroot);
+    print_footer();
 
 ?>

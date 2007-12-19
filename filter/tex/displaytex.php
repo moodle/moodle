@@ -2,7 +2,6 @@
       // This script displays tex source code.
 
     require_once('../../config.php');
-    require_once($CFG->libdir.'/moodlelib.php');
 
     $texexp = urldecode($_SERVER['QUERY_STRING']);
     // entities are usually encoded twice, first in HTML editor then in tex/filter.php

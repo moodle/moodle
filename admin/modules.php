@@ -29,10 +29,6 @@
     $stractivitymodule = get_string("activitymodule");
     $strshowmodulecourse = get_string('showmodulecourse');
 
-    admin_externalpage_print_header();
-
-    print_heading($stractivities);
-
 /// If data submitted, then process and store.
 
     if (!empty($hide) and confirm_sesskey()) {
@@ -55,6 +51,7 @@
                              FROM {$CFG->prefix}course_modules
                              WHERE visibleold=1 AND module={$module->id})";
         execute_sql($sql, false);
+        admin_get_root(true, false);  // settings not required - only pages
     }
 
     if (!empty($show) and confirm_sesskey()) {
@@ -72,9 +69,12 @@
                              FROM {$CFG->prefix}course_modules
                              WHERE visible=1 AND module={$module->id})";
         execute_sql($sql, false);
+        admin_get_root(true, false);  // settings not required - only pages
     }
 
     if (!empty($delete) and confirm_sesskey()) {
+        admin_externalpage_print_header();
+        print_heading($stractivities);
 
         $strmodulename = get_string("modulename", "$delete");
 
@@ -173,6 +173,9 @@
         }
     }
 
+    admin_externalpage_print_header();
+    print_heading($stractivities);
+
 /// Get and sort the existing modules
 
     if (!$modules = get_records("modules")) {
@@ -206,7 +209,9 @@
 
         $delete = "<a href=\"modules.php?delete=$module->name&amp;sesskey=$USER->sesskey\">$strdelete</a>";
 
-        if (file_exists("$CFG->dirroot/mod/$module->name/config.html")) {
+        if (file_exists("$CFG->dirroot/mod/$module->name/settings.php")) {
+            $settings = "<a href=\"settings.php?section=modsetting$module->name\">$strsettings</a>";
+        } else if (file_exists("$CFG->dirroot/mod/$module->name/config.html")) {
             $settings = "<a href=\"module.php?module=$module->name\">$strsettings</a>";
         } else {
             $settings = "";
@@ -237,11 +242,11 @@
         }
 
         $table->add_data(array(
-            '<span'.$class.'>'.$icon.' '.$modulename.'</span>', 
-            $countlink, 
-            '<span'.$class.'>'.$module->version.'</span>', 
-            $visible, 
-            $delete, 
+            '<span'.$class.'>'.$icon.' '.$modulename.'</span>',
+            $countlink,
+            '<span'.$class.'>'.$module->version.'</span>',
+            $visible,
+            $delete,
             $settings
         ));
     }

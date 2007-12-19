@@ -6,18 +6,17 @@
 require_once '../config.php';
 require_once $CFG->libdir.'/adminlib.php';
 
-admin_externalpage_setup('userauthentication');
 $auth = required_param('auth', PARAM_SAFEDIR);
+
+admin_externalpage_setup('authsetting'.$auth);
+
 $authplugin = get_auth_plugin($auth);
 $err = array();
 
+$returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageauths";
+
 // save configuration changes
-if ($frm = data_submitted()) {
-
-    if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
-    }
-
+if ($frm = data_submitted() and confirm_sesskey()) {
     $frm = stripslashes_recursive($frm);
 
     $authplugin->validate_form($frm, $err);
@@ -37,7 +36,7 @@ if ($frm = data_submitted()) {
                     }
                 }
             }
-            redirect("auth.php");
+            redirect($returnurl);
             exit;
         }
     } else {

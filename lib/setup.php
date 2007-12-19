@@ -89,6 +89,9 @@ global $HTTPSPAGEREQUIRED;
         die;
     }
 
+/// store settings from config.php in array in $CFG - we can use it later to detect problems and overrides
+    $CFG->config_php_settings = (array)$CFG;
+
 /// Set httpswwwroot default value (this variable will replace $CFG->wwwroot
 /// inside some URLs used in HTTPSPAGEREQUIRED pages.
     $CFG->httpswwwroot = $CFG->wwwroot;

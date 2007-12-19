@@ -84,7 +84,7 @@ include('tabs.php');
 
 // If USER has admin capability, print a link to the site config page for this report
 if (has_capability('moodle/site:config', $systemcontext)) {
-    echo '<div id="siteconfiglink"><a href="' . $CFG->wwwroot . '/admin/settings.php?section=gradereportgrader">';
+    echo '<div id="siteconfiglink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=gradereportgrader">';
     echo get_string('changereportdefaults', 'grades');
     echo "</a></div>\n";
 }

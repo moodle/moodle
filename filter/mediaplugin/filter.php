@@ -22,8 +22,6 @@ function mediaplugin_filter($courseid, $text) {
     global $CFG;
     static $eolas_fix_applied = false;
 
-    include 'defaultsettings.php';
-
     // You should never modify parameters passed to a method or function, it's BAD practice. Create a copy instead.
     // The reason is that you must always be able to refer to the original parameter that was passed.
     // For this reason, I changed $text = preg_replace(..,..,$text) into $newtext = preg.... (NICOLAS CONNAULT)

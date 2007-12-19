@@ -16,13 +16,8 @@
         }
     }
 
-    $CFG->texfilterdir = "filter/tex";
-    $CFG->algebrafilterdir = "filter/algebra";
-    $CFG->algebraimagedir = "filter/algebra";
-    if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows") ) {
-      $CFG->algebrafilterdirwin = "filter\\algebra";
-    }
-
+    require_once($CFG->libdir.'/filelib.php');
+    require_once($CFG->dirroot.'/filter/tex/lib.php');
 
     $query = urldecode($_SERVER['QUERY_STRING']);
     error_reporting(E_ALL);
@@ -77,7 +72,7 @@
         } else {
           slasharguments($output, $md5);
         }
-      } else {   
+      } else {
         outputText($output);
       }
       exit;
@@ -102,35 +97,35 @@ function algebra2tex($algebra) {
   $algebra = escapeshellarg($algebra);
 
   if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows") ) {
-    $cmd  = "cd $CFG->dirroot\\$CFG->algebrafilterdirwin & algebra2tex.pl x/2";
+    $cmd  = "cd $CFG->dirroot\\filter\\algebra & algebra2tex.pl x/2";
     $test = `$cmd`;
     if ($test != '\frac{x}{2}') {
       echo "There is a problem with either Perl or the script algebra2tex.pl<br/>";
       $ecmd = $cmd . " 2>&1";
       echo `$ecmd` . "<br/>\n";
       echo "The shell command<br/>$cmd<br/>returned status = $status<br/>\n";
-      $commandpath = "$CFG->dirroot\\$CFG->algebrafilterdirwin\\algebra2tex.pl";
+      $commandpath = "$CFG->dirroot\\filter\\algebra\\algebra2tex.pl";
       if (file_exists($commandpath)) {
         echo "The file permissions of algebra2tex.pl are: " . decoct(fileperms($commandpath)) . "<br/>";
       }
       die;
     }
-    $cmd  = "cd $CFG->dirroot\\$CFG->algebrafilterdirwin & algebra2tex.pl $algebra";
-  } else {      
-    $cmd  = "cd $CFG->dirroot/$CFG->algebrafilterdir; ./algebra2tex.pl x/2";
+    $cmd  = "cd $CFG->dirroot\\filter\\algebra & algebra2tex.pl $algebra";
+  } else {
+    $cmd  = "cd $CFG->dirroot/filter/algebra; ./algebra2tex.pl x/2";
     $test = `$cmd`;
     if ($test != '\frac{x}{2}') {
       echo "There is a problem with either Perl or the script algebra2tex.pl<br/>";
       $ecmd = $cmd . " 2>&1";
       echo `$ecmd` . "<br/>\n";
       echo "The shell command<br/>$cmd<br/>returned status = $status<br/>\n";
-      $commandpath = "$CFG->dirroot/$CFG->algebrafilterdir/algebra2tex.pl";
+      $commandpath = "$CFG->dirroot/filter/algebra/algebra2tex.pl";
       if (file_exists($commandpath)) {
         echo "The file permissions of algebra2tex.pl are: " . decoct(fileperms($commandpath)) . "<br/>";
       }
       die;
     }
-    $cmd  = "cd $CFG->dirroot/$CFG->algebrafilterdir; ./algebra2tex.pl $algebra";
+    $cmd  = "cd $CFG->dirroot/filter/algebra; ./algebra2tex.pl $algebra";
   }
   $texexp = `$cmd`;
   return $texexp;
@@ -206,109 +201,67 @@ function outputText($texexp) {
 
 function tex2image($texexp, $md5, $return=false) {
     global $CFG;
-    $error_message1 = "Your system is not configured to run mimeTeX. ";
-    $error_message1 .= "You need to download the appropriate<br /> executable ";
-    $error_message1 .= "from <a href=\"http://moodle.org/download/mimetex/\">";
-    $error_message1 .= "http://moodle.org/download/mimetex/</a>, or obtain the ";
-    $error_message1 .= "C source<br /> from <a href=\"http://www.forkosh.com/mimetex.zip\">";
-    $error_message1 .= "http://www.forkosh.com/mimetex.zip</a>, compile it and ";
-    $error_message1 .= "put the executable into your<br /> moodle/filter/tex/ directory. ";
-    $error_message1 .= "You also need to edit your moodle/filter/algebra/pix.php file<br />";
-    $error_message1 .= ' by adding the line<br /><pre>       case "' . PHP_OS . "\":\n";
-    $error_message1 .= "           \$cmd = \"\\\\\"\$CFG->dirroot/\$CFG->texfilterdir/";
-    $error_message1 .= 'mimetex.' . strtolower(PHP_OS) . "\\\\\" -e \\\\\"\$pathname\\\\\" \". escapeshellarg(\$texexp);";
-    $error_message1 .= "</pre>You also need to add this to your algebradebug.php file.";
 
-    if ($texexp) {
-        $texexp = '\Large ' . $texexp;
-        $lifetime = 86400;
-        $image  = $md5 . ".gif";
-        $filetype = 'image/gif';
-        if (!file_exists("$CFG->dataroot/$CFG->algebraimagedir")) {
-            make_upload_directory($CFG->algebraimagedir);
-        }
-        $pathname = "$CFG->dataroot/$CFG->algebraimagedir/$image";
-        if (file_exists($pathname)) {
-            unlink($pathname);
-        } 
-        $commandpath = "";
-        $cmd = "";
-        $texexp = escapeshellarg($texexp);
-        switch (PHP_OS) {
-            case "Linux":
-                $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.linux";
-                $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" $texexp";
-            break;
-            case "WINNT":
-            case "WIN32":
-            case "Windows":
-                $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
-                $cmd = str_replace(' ','^ ',$commandpath);
-                $cmd .= " ++ -e  \"$pathname\" $texexp";
-            break;
-            case "Darwin":
-                $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin";
-                $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" $texexp";
-            break;
-        }
-        if (!$cmd) {
-            if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
-                $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex";
-                $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname $texexp";
-            } else {
-                error($error_message1);
-            }
-        }
-        system($cmd, $status);
+    if (!$texexp) {
+        echo 'No tex expresion specified';
+        return;
     }
+
+    $texexp = '\Large ' . $texexp;
+    $image  = $md5 . ".gif";
+    $filetype = 'image/gif';
+    if (!file_exists("$CFG->dataroot/filter/algebra")) {
+        make_upload_directory("filter/algebra");
+    }
+    $pathname = "$CFG->dataroot/filter/algebra/$image";
+    if (file_exists($pathname)) {
+        unlink($pathname);
+    }
+    $commandpath = tex_filter_get_executable(true);
+    $cmd = tex_filter_get_cmd($pathname, $texexp);
+    system($cmd, $status);
+
     if ($return) {
         return $image;
     }
-    if ($texexp && file_exists($pathname)) {
-           $lastmodified = filemtime($pathname);
-           header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
-           header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
-           header("Cache-control: max_age = $lifetime"); // a day
-           header("Pragma: ");
-           header("Content-disposition: inline; filename=$image");
-           header("Content-length: ".filesize($pathname));
-           header("Content-type: $filetype");
-           readfile("$pathname");
+    if (file_exists($pathname)) {
+        send_file($pathname, $image);
+
     } else {
-           $ecmd = "$cmd 2>&1";
-           echo `$ecmd` . "<br />\n";
-           echo "The shell command<br />$cmd<br />returned status = $status<br />\n";
-           if ($status == 4) {
-             echo "Status corresponds to illegal instruction<br />\n";
-           } else if ($status == 11) {
-             echo "Status corresponds to bus error<br />\n";
-           } else if ($status == 22) {
-             echo "Status corresponds to abnormal termination<br />\n";
-           }
-           if (file_exists($commandpath)) {
-              echo "File size of mimetex executable  $commandpath is " . filesize($commandpath) . "<br />";
-              echo "The file permissions are: " . decoct(fileperms($commandpath)) . "<br />";
-              if (function_exists("md5_file")) {
+        $ecmd = "$cmd 2>&1";
+        echo `$ecmd` . "<br />\n";
+        echo "The shell command<br />$cmd<br />returned status = $status<br />\n";
+        if ($status == 4) {
+            echo "Status corresponds to illegal instruction<br />\n";
+        } else if ($status == 11) {
+            echo "Status corresponds to bus error<br />\n";
+        } else if ($status == 22) {
+            echo "Status corresponds to abnormal termination<br />\n";
+        }
+        if (file_exists($commandpath)) {
+            echo "File size of mimetex executable  $commandpath is " . filesize($commandpath) . "<br />";
+            echo "The file permissions are: " . decoct(fileperms($commandpath)) . "<br />";
+            if (function_exists("md5_file")) {
                 echo "The md5 checksum of the file is " . md5_file($commandpath) . "<br />";
-              } else {
+            } else {
                 $handle = fopen($commandpath,"rb");
                 $contents = fread($handle,16384);
                 fclose($handle);
                 echo "The md5 checksum of the first 16384 bytes is " . md5($contents) . "<br />";
-              }
-           } else {
-              echo "mimetex executable $commandpath not found!<br />";
-           }
-           echo "Image not found!";
+            }
+        } else {
+            echo "mimetex executable $commandpath not found!<br />";
+        }
+        echo "Image not found!";
     }
 }
 
 function slasharguments($texexp, $md5) {
   global $CFG;
-  $admin = $CFG->wwwroot . '/' . $CFG->admin . '/config.php';
+  $admin = $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=http';
   $image = tex2image($texexp,$md5,true);
   echo "<p>If the following image displays correctly, set your ";
-  echo "<a href=\"$admin\" target=\"_blank\">Administration->Configuration->Variables</a> ";
+  echo "<a href=\"$admin\" target=\"_blank\">Administration->Server->HTTP</a> ";
   echo "setting for slasharguments to file.php/1/pic.jpg: ";
   echo "<img src=\"pix.php/$image\" align=\"absmiddle\"></p>\n";
   echo "<p>Otherwise set it to file.php?file=/1/pic.jpg ";
@@ -316,7 +269,7 @@ function slasharguments($texexp, $md5) {
   echo "<img src=\"pix.php?file=$image\" align=\"absmiddle\"></p>\n";
   echo "<p>If neither equation image displays correctly, please seek ";
   echo "further help at moodle.org at the ";
-  echo "<a href=\"http://moodle.org/mod/forum/view.php?id=752&username=guest\" target=\"_blank\">";
+  echo "<a href=\"http://moodle.org/mod/forum/view.php?id=752&loginguest=true\" target=\"_blank\">";
   echo "Mathematics Tools Forum</a></p>";
 }
 

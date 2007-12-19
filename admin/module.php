@@ -4,8 +4,6 @@
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
 
-    admin_externalpage_setup('managemodules');
-
 /// If data submitted, then process and store.
 
     if ($config = data_submitted()) {
@@ -17,6 +15,7 @@
 
         if ($module != '') {
             require_once("$CFG->dirroot/mod/$module/lib.php");
+            admin_externalpage_setup('modsetting'.$module);
             // if the config.html contains a hidden form field giving
             // the module name then the form does not have to prefix all
             // its variable names, we will do it here.
@@ -28,6 +27,8 @@
                 $moduleconfig($config);
             }
         } else {
+            admin_externalpage_setup('managemodules');
+
             $moduleprefix = '';
         }
 
@@ -44,6 +45,7 @@
 /// Otherwise print the form.
     $module = required_param('module', PARAM_SAFEDIR);
     require_once("$CFG->dirroot/mod/$module/lib.php");
+    admin_externalpage_setup('modsetting'.$module);
 
     $strmodulename = get_string("modulename", $module);
 

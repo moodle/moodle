@@ -355,9 +355,6 @@
             $db->debug = false;
             if ($status) {
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
-                    //initialize default backup settings now
-                    $adminroot = admin_get_root();
-                    apply_default_settings($adminroot->locate('backups'));
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_version), "green");
                     print_continue($continueto);

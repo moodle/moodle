@@ -26,6 +26,7 @@ $string['csvemptyfile'] = 'The CSV file is empty.';
 $string['csvcolumnduplicates'] = 'Duplicate columns detected.';
 $string['csvfewcolumns'] = 'Not enough columns, please verify the delimiter setting.';
 $string['csvweirdcolumns'] = 'Invalid CSV file format - number of columns is not constant!';
+$string['dbupdatefailed'] = 'Database update failed.';
 $string['downloadedfilecheckfailed'] = 'Downloaded file check failed.';
 $string['duplicateusername'] = 'Duplicate username - skiping record';
 $string['errorcleaningdirectory'] = 'Error cleaning directory \"$a\"';

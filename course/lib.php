@@ -13,11 +13,11 @@ define('COURSE_MAX_RECENT_PERIOD', 172800);     // Two days, in seconds
 define('COURSE_MAX_SUMMARIES_PER_PAGE', 10);    // courses
 define('COURSE_MAX_COURSES_PER_DROPDOWN',1000); //  max courses in log dropdown before switching to optional
 define('COURSE_MAX_USERS_PER_DROPDOWN',1000);   //  max users in log dropdown before switching to optional
-define('FRONTPAGENEWS', 0);
-define('FRONTPAGECOURSELIST',     1);
-define('FRONTPAGECATEGORYNAMES',  2);
-define('FRONTPAGETOPICONLY',      3);
-define('FRONTPAGECATEGORYCOMBO',  4);
+define('FRONTPAGENEWS',           '0');
+define('FRONTPAGECOURSELIST',     '1');
+define('FRONTPAGECATEGORYNAMES',  '2');
+define('FRONTPAGETOPICONLY',      '3');
+define('FRONTPAGECATEGORYCOMBO',  '4');
 define('FRONTPAGECOURSELIMIT',    200);         // maximum number of courses displayed on the frontpage
 define('EXCELROWS', 65535);
 define('FIRSTUSEDEXCELROW', 3);

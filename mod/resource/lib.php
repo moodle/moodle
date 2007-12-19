@@ -1,69 +1,13 @@
 <?php  // $Id$
 
-if (!isset($CFG->resource_framesize)) {
-    set_config("resource_framesize", 130);
-}
-
-if (!isset($CFG->resource_websearch)) {
-    set_config("resource_websearch", "http://google.com/");
-}
-
-if (!isset($CFG->resource_defaulturl)) {
-    set_config("resource_defaulturl", "http://");
-}
-
-if (!isset($CFG->resource_filterexternalpages)) {
-    set_config("resource_filterexternalpages", false);
-}
-
-if (!isset($CFG->resource_secretphrase)) {
-    set_config("resource_secretphrase", random_string(20));
-}
-
-if (!isset($CFG->resource_popup)) {
-    set_config("resource_popup", "");
-}
-
-if (!isset($CFG->resource_windowsettings)) {
-    set_config("resource_windowsettings", "0");
-}
-
-if (!isset($CFG->resource_parametersettings)) {
-    set_config("resource_parametersettings", "0");
-}
-
-if (!isset($CFG->resource_allowlocalfiles)) {
-    set_config("resource_allowlocalfiles", "0");
-}
-
-if (!isset($CFG->resource_hide_repository)) {
-    set_config("resource_hide_repository", "1");
-}
-
-if (!isset($CFG->resource_autofilerename)) {
-    set_config("resource_autofilerename", "1");
-}
-
-if (!isset($CFG->resource_blockdeletingfile)) {
-    set_config("resource_blockdeletingfile", "1");
-}
-
 define('RESOURCE_LOCALPATH', 'LOCALPATH');
 
+global $RESOURCE_WINDOW_OPTIONS; // must be global because it might be included from a function!
 $RESOURCE_WINDOW_OPTIONS = array('resizable', 'scrollbars', 'directories', 'location',
                                  'menubar', 'toolbar', 'status', 'width', 'height');
 
-foreach ($RESOURCE_WINDOW_OPTIONS as $popupoption) {
-    $popupoption = "resource_popup$popupoption";
-    if (!isset($CFG->$popupoption)) {
-        if ($popupoption == 'resource_popupheight') {
-            set_config($popupoption, 450);
-        } else if ($popupoption == 'resource_popupwidth') {
-            set_config($popupoption, 620);
-        } else {
-            set_config($popupoption, 'checked');
-        }
-    }
+if (!isset($CFG->resource_hide_repository)) {
+    set_config("resource_hide_repository", "1");
 }
 
 /**

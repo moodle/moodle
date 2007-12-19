@@ -8,17 +8,20 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $return = optional_param('return', '', PARAM_ALPHA);
 
+$adminroot =& admin_get_root(); // need all settings
 admin_externalpage_setup('upgradesettings'); // now hidden page
 
-// a caveat: we're depending on only having one admin access this page at once. why? the following line
-// (the function call to find_new_settings) must have the EXACT SAME RETURN VALUE both times that this
-// page is loaded (i.e. both when we're displaying the form and then when we process the form's input).
-// if the return values don't match, we could potentially lose changes that the admin is making.
+// now we'll deal with the case that the admin has submitted the form with new settings
+if ($data = data_submitted() and confirm_sesskey()) {
+    $count = admin_write_settings($data);
+    $adminroot =& admin_get_root(true); //reload tree
+}
 
-$newsettingshtml = output_new_settings_by_page(admin_get_root());
+$newsettingshtml = admin_output_new_settings_by_page($adminroot);
+$focus = '';
 
-// first we deal with the case where there are no new settings to be set
-if ($newsettingshtml == '') {
+if (empty($adminroot->errors) and $newsettingshtml === '') {
+    // there must be either redirect without message or continue button or else upgrade would be sometimes broken
     if ($return == 'site') {
         redirect("$CFG->wwwroot/");
     } else {
@@ -26,128 +29,33 @@ if ($newsettingshtml == '') {
     }
 }
 
-// now we'll deal with the case that the admin has submitted the form with new settings
-if ($data = data_submitted()) {
-    $unslashed = (array)stripslashes_recursive($data);
-    if (confirm_sesskey()) {
-        $newsettings = find_new_settings(admin_get_root());
-        $errors = '';
-
-        foreach($newsettings as $newsetting) {
-            if (isset($unslashed['s_' . $newsetting->name])) {
-                $errors .= $newsetting->write_setting($unslashed['s_' . $newsetting->name]);
-            } else {
-                $errors .= $newsetting->write_setting($newsetting->defaultsetting);
-            }
-        }
-
-        if (empty($errors)) {
-            // there must be either redirect without message or continue button or else upgrade would be sometimes broken
-            if ($return == 'site') {
-                redirect("$CFG->wwwroot/");
-            } else {
-                redirect("$CFG->wwwroot/$CFG->admin/index.php");
-            }
-        } else {
-            $url = "$CFG->wwwroot/$CFG->admin/upgradesettings.php?return=$return";
-            error(get_string('errorwithsettings', 'admin') . ' <br />' . $errors, $url);
-        }
-    } else {
-        error(get_string('confirmsesskeybad', 'error'));
-    }
-
+if (!empty($adminroot->errors)) {
+    $firsterror = reset($adminroot->errors);
+    $focus = $firsterror->id;
 }
 
 // and finally, if we get here, then there are new settings and we have to print a form
 // to modify them
-admin_externalpage_print_header();
+admin_externalpage_print_header($focus);
 
-print_simple_box(get_string('upgradesettingsintro','admin'),'','100%','',5,'generalbox','');
+print_box(get_string('upgradesettingsintro','admin'), 'generalbox');
 
 echo '<form action="upgradesettings.php" method="post" id="adminsettings">';
+echo '<div>';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 echo '<input type="hidden" name="return" value="'.$return.'" />';
 echo '<fieldset>';
 echo '<div class="clearer"><!-- --></div>';
 echo $newsettingshtml;
 echo '</fieldset>';
-echo '<div class="form-buttons"><input class="form-submit" type="submit" value="' . get_string('savechanges','admin') . '" /></div>';
+echo '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges','admin').'" /></div>';
+echo '</div>';
 echo '</form>';
 
-admin_externalpage_print_footer();
-
-
-/**
- * Find settings that have not been initialized (e.g. during initial install or an upgrade).
- *
- * Tests each setting's get_setting() method. If the result is NULL, we consider the setting
- * to be uninitialized.
- *
- * @param string &$node The node at which to start searching. Should be $ADMIN for all external calls to this function.
- * @return array An array containing admin_setting objects that haven't yet been initialized
- */
-function find_new_settings(&$node) {
-
-    if (is_a($node, 'admin_category')) {
-        $return = array();
-        $entries = array_keys($node->children);
-        foreach ($entries as $entry) {
-            $return = array_merge($return, find_new_settings($node->children[$entry]));
-        }
-        return $return;
-    }
-
-    if (is_a($node, 'admin_settingpage')) {
-        $return = array();
-        foreach ($node->settings as $setting) {
-            if ($setting->get_setting() === NULL) {
-                $return[] =& $setting;
-            }
-            unset($setting); // needed to prevent odd (imho) reference behaviour
-                             // see http://www.php.net/manual/en/language.references.whatdo.php#AEN6399
-        }
-        return $return;
-    }
-
-    return array();
-
+if (!empty($CFG->adminusehtmleditor)) {
+    use_html_editor();
 }
 
-function output_new_settings_by_page(&$node) {
-
-    if (is_a($node, 'admin_category')) {
-        $entries = array_keys($node->children);
-        $return = '';
-        foreach ($entries as $entry) {
-            $return .= output_new_settings_by_page($node->children[$entry]);
-        }
-        return $return;
-    }
-
-    if (is_a($node, 'admin_settingpage')) {
-        $newsettings = array();
-        foreach ($node->settings as $setting) {
-            if ($setting->get_setting() === NULL) {
-                $newsettings[] =& $setting;
-            }
-            unset($setting); // needed to prevent odd (imho) reference behaviour
-                             // see http://www.php.net/manual/en/language.references.whatdo.php#AEN6399
-        }
-        $return = '';
-        if (count($newsettings) > 0) {
-            $return .= print_heading(get_string('upgradesettings','admin').' - '.$node->visiblename, '', 2, 'main', true);
-            $return .= '<fieldset class="adminsettings">' . "\n";
-            foreach ($newsettings as $newsetting) {
-                $return .= '<div class="clearer"><!-- --></div>' . "\n";
-                $return .= $newsetting->output_html();
-            }
-            $return .= '</fieldset>';
-        }
-        return $return;
-    }
-
-    return '';
-
-}
+print_footer();
 
 ?>

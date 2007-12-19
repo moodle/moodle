@@ -6,20 +6,18 @@
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/tablelib.php');
 
-    admin_externalpage_setup('managefilters');
-
     // get parameters
     $param = new Object;
 
-    $param->filter = required_param('filter', PARAM_PATH);
-    $param->submit = optional_param('submit', 0, PARAM_BOOL);
-    $param->reset  = optional_param('reset', 0, PARAM_BOOL);
+    $filterfull = required_param('filter', PARAM_PATH);
+    $forcereset  = optional_param('reset', 0, PARAM_BOOL);
 
-    $filtername =  substr($param->filter, strpos( $param->filter, '/' )+1 ) ;
+    $filtername =  substr($filterfull, strpos( $filterfull, '/' )+1 ) ;
 
-    // $CFG->pagepath is used to generate the body and id attributes for the body tag
-    // of the page. It is also used to generate the link to the Moodle Docs for this view.
-    $CFG->pagepath = 'filter/' . $filtername . '/config';
+    admin_externalpage_setup('filtersetting'.str_replace('/', '', $filterfull));
+
+    $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=managefilters";
+
 
     // get translated strings for use on page
     $txt = new Object;
@@ -32,12 +30,7 @@
     //======================
 
     // if reset pressed let filter config page handle it
-    $forcereset = false;
-    if (!empty($param->reset)) {
-        $forcereset = true;
-    }
-    else
-    if ($config = data_submitted()) {
+    if ($config = data_submitted() and !$forcereset) {
 
         // check session key
         if (!confirm_sesskey()) {
@@ -61,7 +54,7 @@
                 set_config($name, stripslashes($value));
             }
         }
-        redirect("$CFG->wwwroot/$CFG->admin/filters.php");
+        redirect($returnurl);
         exit;
     }
 
@@ -79,11 +72,11 @@
     print_simple_box_start("center",'');
 
     ?>
-    <form action="filter.php?filter=<?php echo urlencode($param->filter); ?>" method="post">
+    <form action="filter.php?filter=<?php echo urlencode($filterfull); ?>" method="post">
     <div style="text-align: center">
     <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
 
-    <?php include "$CFG->dirroot/$param->filter/filterconfig.html"; ?>
+    <?php include "$CFG->dirroot/$filterfull/filterconfig.html"; ?>
 
         <input type="submit" name="submit" value="<?php print_string('savechanges'); ?>" />
         <input type="submit" name="reset" value="<?php echo print_string('resettodefaults'); ?>" />
