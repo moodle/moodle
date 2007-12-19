@@ -1717,7 +1717,7 @@ class admin_setting_configtextarea extends admin_setting_configtext {
     var $rows;
     var $cols;
 
-    function admin_setting_configtextarea($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW, $cols='80', $rows='8') {
+    function admin_setting_configtextarea($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW, $cols='60', $rows='8') {
         $this->rows = $rows;
         $this->cols = $cols;
         parent::admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype);
