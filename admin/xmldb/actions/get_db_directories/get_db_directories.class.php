@@ -166,6 +166,16 @@ class get_db_directories extends XMLDBAction {
             }
         }
 
+    /// Local database changes, if the local folder exists.
+        if (file_exists($CFG->dirroot . '/local')) {
+            $dbdir = new stdClass;
+            $dbdir->path = $CFG->dirroot . '/local/db';
+            if (!isset($XMLDB->dbdirs[$dbdir->path])) {
+                $XMLDB->dbdirs[$dbdir->path] = $dbdir;
+            }
+            $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
+        }
+
     /// Sort by key
         ksort($XMLDB->dbdirs);
 
