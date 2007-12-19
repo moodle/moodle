@@ -68,7 +68,7 @@ class graded_users_iterator {
             return false;
         }
 
-        if (strpos($CFG->gradebookroles, ',') !== false) {
+        if (strpos($CFG->gradebookroles, ',') === false) {
             $gradebookroles = " = {$CFG->gradebookroles}";
         } else {
             $gradebookroles = " IN ({$CFG->gradebookroles})";
