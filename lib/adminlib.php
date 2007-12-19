@@ -3811,7 +3811,7 @@ function admin_externalpage_setup($section) {
     $extpage =& $adminroot->locate($section);
 
     if (empty($extpage) or !is_a($extpage, 'admin_externalpage')) {
-        error(get_string('sectionerror','admin'));
+        error(get_string('sectionerror','admin'), "$CFG->wwwroot/$CFG->admin/");
         die;
     }
 
