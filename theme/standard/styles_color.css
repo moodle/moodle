@@ -339,7 +339,11 @@ table.flexible .r1 {
 }
 
 #adminsettings .form-overridden {
-    background-color: #fbb;
+    background-color: #ff6;
+}
+
+#adminsettings .form-warning {
+    background-color: #f88;
 }
 
 #adminsettings .form-item .defaultinfo {

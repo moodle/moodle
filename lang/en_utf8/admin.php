@@ -697,6 +697,7 @@ $string['uuupdatefromfile'] = 'Override with file';
 $string['uuupdatemissing'] = 'Fill in missing from file and defaults';
 $string['uuupdatetype'] = 'Existing user details';
 $string['validateerror'] = 'This value was not valid:';
+$string['warningcurrentsetting'] = 'Invalid current value: $a';
 $string['xmlstrictheaders'] = 'XML strict headers';
 
 ?>
