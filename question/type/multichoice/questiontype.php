@@ -641,13 +641,18 @@ class question_multichoice_qtype extends default_questiontype {
     function replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination){
         parent::replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination);
         // replace links in the question_match_sub table.
+        // We need to use a separate object, because in load_question_options, $question->options->answers
+        // is changed from a comma-separated list of ids to an array, so calling update_record on
+        // $question->options stores 'Array' in that column, breaking the question.
         $optionschanged = false;
-        $question->options->correctfeedback = question_replace_file_links_in_html($question->options->correctfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
-        $question->options->partiallycorrectfeedback  = question_replace_file_links_in_html($question->options->partiallycorrectfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
-        $question->options->incorrectfeedback = question_replace_file_links_in_html($question->options->incorrectfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
+        $newoptions = new stdClass;
+        $newoptions->id = $question->options->id;
+        $newoptions->correctfeedback = question_replace_file_links_in_html($question->options->correctfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
+        $newoptions->partiallycorrectfeedback  = question_replace_file_links_in_html($question->options->partiallycorrectfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
+        $newoptions->incorrectfeedback = question_replace_file_links_in_html($question->options->incorrectfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
         if ($optionschanged){
-            if (!update_record('question_multichoice', addslashes_recursive($question->options))) {
-                error('Couldn\'t update \'question_multichoice\' record '.$question->options->id);
+            if (!update_record('question_multichoice', addslashes_recursive($newoptions))) {
+                error('Couldn\'t update \'question_multichoice\' record '.$newoptions->id);
             }
         }
         $answerchanged = false;
