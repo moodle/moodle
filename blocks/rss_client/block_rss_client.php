@@ -275,7 +275,7 @@
             // if the feed has a title
             if (!empty($feedtitle) and ($feedtitle != '<a href="'. $rss->channel['link'] .'"></a>')) {
                 // set the block's title to the feed's title
-                $this->title = $feedtitle;
+                $this->title = strip_tags($feedtitle);
             }
         }
         return $returnstring;
