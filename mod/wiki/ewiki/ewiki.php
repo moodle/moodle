@@ -858,8 +858,7 @@ function ewiki_script($asid="", $id=false, $params="", $bin=0, $html=1, $script=
    if (strlen($params)) {
       $url .= (strpos($url,"?")!==false ? "&":"?") . $params;
    }
-
-   #-- fin
+   #-- fin
    if ($html) {
       //Don't replace & if it's part of encoded character (bug 2209)
       $url = preg_replace("/&(?![A-Za-z]{0,4}\w{2,3};|#[0-9]{2,5};)/","&amp;", $url);
@@ -1779,7 +1778,7 @@ function ewiki_format (
 
    #-- pre-processing plugins (working on wiki source)
    if ($pf_source = $ewiki_plugins["format_source"]) {
-      foreach ($pf_source as $pf) $pf(&$iii[0][0]);
+      foreach ($pf_source as $pf) $pf($iii[0][0]);
    }
 
    #-- simple markup
@@ -2447,7 +2446,7 @@ function ewiki_link_regex_callback($uu, $force_noimg=0) {
          }
          $align = array('', ' align="right"', ' align="left"', ' align="center"');
          $align = $align[$spaces_l + 2*$spaces_r];
-         $str = ($obj ? '<embed width="70%"' : '<img') . ' src="' . $href . '"' .
+        $str = ($obj ? '<embed width="70%"' : '<img') . ' src="' . $href . '"' .
                 ' alt="' . ($title) . '"' .
                 (@$states["titled"] ? ' title="' . ($title) . '"' : '').
         ($x && $y ? " width=\"$x\" height=\"$y\"" : "") .
