@@ -544,7 +544,7 @@ if ($formdata = $mform->is_cancelled()) {
             profile_save_data($user);
 
             // make sure user context exists
-            get_context_instance(CONTEXT_PERSONAL, $user->id);
+            get_context_instance(CONTEXT_USER, $user->id);
 
             if ($bulk == 1 or $bulk == 3) {
                 if (!in_array($user->id, $SESSION->bulk_users)) {
