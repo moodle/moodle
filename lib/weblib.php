@@ -4104,13 +4104,17 @@ function _print_custom_corners_end($idbase) {
 /**
  * Print a self contained form with a single submit button.
  *
- * @param string $link ?
- * @param array $options ?
- * @param string $label ?
- * @param string $method ?
- * @todo Finish documenting this function
+ * @param string $link used as the action attribute on the form, so the URL that will be hit if the button is clicked.
+ * @param array $options these become hidden form fields, so these options get passed to the script at $link.
+ * @param string $label the caption that appears on the button.
+ * @param string $method HTTP method used on the request of the button is clicked. 'get' or 'post'.
+ * @param string $target no longer used.
+ * @param boolean $return if false, output the form directly, otherwise return the HTML as a string. 
+ * @param string $tooltip a tooltip to add to the button as a title attribute.
+ * @param boolean $disabled if true, the button will be disabled.
+ * @return string / nothing depending on the $return paramter.
  */
-function print_single_button($link, $options, $label='OK', $method='get', $target='_self', $return=false, $tooltip='') {
+function print_single_button($link, $options, $label='OK', $method='get', $target='_self', $return=false, $tooltip='', $disabled = false) {
     $output = '';
     $link = str_replace('"', '&quot;', $link); //basic XSS protection
     $output .= '<div class="singlebutton">';
@@ -4127,7 +4131,12 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
     } else {
         $tooltip = '';
     }
-    $output .= '<input type="submit" value="'. s($label) .'" ' . $tooltip . ' /></div></form></div>';
+    if ($disabled) {
+        $disabled = 'disabled="disabled"';
+    } else {
+        $disabled = '';
+    }
+    $output .= '<input type="submit" value="'. s($label) ."\" $tooltip $disabled/></div></form></div>";
 
     if ($return) {
         return $output;
