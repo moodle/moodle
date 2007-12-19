@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -23,14 +23,14 @@
 /**
  * Zend_Search_Lucene_Search_Weight
  */
-require_once 'Zend/Search/Lucene/Search/Weight.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Weight.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Search_Weight_Phrase extends Zend_Search_Lucene_Search_Weight
@@ -38,7 +38,7 @@ class Zend_Search_Lucene_Search_Weight_Phrase extends Zend_Search_Lucene_Search_
     /**
      * IndexReader.
      *
-     * @var Zend_Search_Lucene
+     * @var Zend_Search_Lucene_Interface
      */
     private $_reader;
 
@@ -50,13 +50,6 @@ class Zend_Search_Lucene_Search_Weight_Phrase extends Zend_Search_Lucene_Search_
     private $_query;
 
     /**
-     * Weight value
-     *
-     * @var float
-     */
-    private $_value;
-
-    /**
      * Score factor
      *
      * @var float
@@ -64,44 +57,17 @@ class Zend_Search_Lucene_Search_Weight_Phrase extends Zend_Search_Lucene_Search_
     private $_idf;
 
     /**
-     * Normalization factor
-     *
-     * @var float
-     */
-    private $_queryNorm;
-
-
-    /**
-     * Query weight
-     *
-     * @var float
-     */
-    private $_queryWeight;
-
-
-    /**
      * Zend_Search_Lucene_Search_Weight_Phrase constructor
      *
      * @param Zend_Search_Lucene_Search_Query_Phrase $query
-     * @param Zend_Search_Lucene $reader
+     * @param Zend_Search_Lucene_Interface           $reader
      */
-    public function __construct(Zend_Search_Lucene_Search_Query_Phrase $query, Zend_Search_Lucene $reader)
+    public function __construct(Zend_Search_Lucene_Search_Query_Phrase $query,
+                                Zend_Search_Lucene_Interface           $reader)
     {
         $this->_query  = $query;
         $this->_reader = $reader;
     }
-
-
-    /**
-     * The weight for this query
-     *
-     * @return float
-     */
-    public function getValue()
-    {
-        return $this->_value;
-    }
-
 
     /**
      * The sum of squared weights of contained query clauses.

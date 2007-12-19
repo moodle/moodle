@@ -15,64 +15,79 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Analysis_Analyzer_Common */
-require_once 'Zend/Search/Lucene/Analysis/Analyzer/Common.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/Analyzer/Common.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 class Zend_Search_Lucene_Analysis_Analyzer_Common_Text extends Zend_Search_Lucene_Analysis_Analyzer_Common
 {
     /**
-     * Tokenize text to a terms
-     * Returns array of Zend_Search_Lucene_Analysis_Token objects
+     * Current position in a stream
      *
-     * @param string $data
-     * @return array
+     * @var integer
      */
-    public function tokenize($data)
+    private $_position;
+
+    /**
+     * Reset token stream
+     */
+    public function reset()
     {
-        $tokenStream = array();
+        $this->_position = 0;
 
-        $position = 0;
-        while ($position < strlen($data)) {
-            // skip white space
-            while ($position < strlen($data) && !ctype_alpha( $data{$position} )) {
-                $position++;
-            }
-
-            $termStartPosition = $position;
-
-            // read token
-            while ($position < strlen($data) && ctype_alpha( $data{$position} )) {
-                $position++;
-            }
-
-            // Empty token, end of stream.
-            if ($position == $termStartPosition) {
-                break;
-            }
-
-            $token = new Zend_Search_Lucene_Analysis_Token(substr($data,
-                                             $termStartPosition,
-                                             $position-$termStartPosition),
-                                      $termStartPosition,
-                                      $position);
-            $tokenStream[] = $this->normalize($token);
+        if ($this->_input === null) {
+            return;
         }
 
-        return $tokenStream;
+        // convert input into ascii
+        $this->_input = iconv($this->_encoding, 'ASCII//TRANSLIT', $this->_input);
+        $this->_encoding = 'ASCII';
+    }
+
+    /**
+     * Tokenization stream API
+     * Get next token
+     * Returns null at the end of stream
+     *
+     * @return Zend_Search_Lucene_Analysis_Token|null
+     */
+    public function nextToken()
+    {
+        if ($this->_input === null) {
+            return null;
+        }
+
+
+        do {
+            if (! preg_match('/[a-zA-Z]+/', $this->_input, $match, PREG_OFFSET_CAPTURE, $this->_position)) {
+                // It covers both cases a) there are no matches (preg_match(...) === 0)
+                // b) error occured (preg_match(...) === FALSE)
+            	return null;
+            }
+
+            $str = $match[0][0];
+            $pos = $match[0][1];
+            $endpos = $pos + strlen($str);
+
+            $this->_position = $endpos;
+
+            $token = $this->normalize(new Zend_Search_Lucene_Analysis_Token($str, $pos, $endpos));
+        } while ($token === null); // try again if token is skipped
+
+        return $token;
     }
 }
 

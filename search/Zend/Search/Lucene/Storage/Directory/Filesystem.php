@@ -15,16 +15,16 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Storage
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Storage_Directory */
-require_once 'Zend/Search/Lucene/Storage/Directory.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Storage/Directory.php';
 
 /** Zend_Search_Lucene_Storage_File_Filesystem */
-require_once 'Zend/Search/Lucene/Storage/File/Filesystem.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Storage/File/Filesystem.php';
 
 
 /**
@@ -33,7 +33,7 @@ require_once 'Zend/Search/Lucene/Storage/File/Filesystem.php';
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Storage
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Storage_Directory_Filesystem extends Zend_Search_Lucene_Storage_Directory
@@ -64,7 +64,7 @@ class Zend_Search_Lucene_Storage_Directory_Filesystem extends Zend_Search_Lucene
      * @return boolean
      */
 
-    static public function mkdirs($dir, $mode = 0777, $recursive = true)
+    public static function mkdirs($dir, $mode = 0777, $recursive = true)
     {
         if (is_null($dir) || $dir === '') {
             return false;
@@ -113,7 +113,7 @@ class Zend_Search_Lucene_Storage_Directory_Filesystem extends Zend_Search_Lucene
             $fileObject->close();
         }
 
-        unset($this->_fileHandlers);
+        $this->_fileHandlers = array();
     }
 
 
@@ -127,15 +127,14 @@ class Zend_Search_Lucene_Storage_Directory_Filesystem extends Zend_Search_Lucene
         $result = array();
 
         $dirContent = opendir( $this->_dirPath );
-        while ($file = readdir($dirContent)) {
+        while (($file = readdir($dirContent)) !== false) {
             if (($file == '..')||($file == '.'))   continue;
-
-            $fullName = $this->_dirPath . '/' . $file;
 
             if( !is_dir($this->_dirPath . '/' . $file) ) {
                 $result[] = $file;
             }
         }
+        closedir($dirContent);
 
         return $result;
     }
@@ -165,11 +164,17 @@ class Zend_Search_Lucene_Storage_Directory_Filesystem extends Zend_Search_Lucene
      */
     public function deleteFile($filename)
     {
+        /**
+         * @todo add support of "deletable" file
+         * "deletable" is used on Windows systems if file can't be deleted
+         * (while it is still open).
+         */
+
         if (isset($this->_fileHandlers[$filename])) {
             $this->_fileHandlers[$filename]->close();
         }
         unset($this->_fileHandlers[$filename]);
-        unlink($this->_dirPath .'/'. $filename);
+        unlink($this->_dirPath . '/' . $filename);
     }
 
 
@@ -219,24 +224,40 @@ class Zend_Search_Lucene_Storage_Directory_Filesystem extends Zend_Search_Lucene
      * @param string $from
      * @param string $to
      * @return void
+     * @throws Zend_Search_Lucene_Exception
      */
     public function renameFile($from, $to)
     {
-        if ($this->_fileHandlers[$from] !== null) {
+        global $php_errormsg;
+
+        if (isset($this->_fileHandlers[$from])) {
             $this->_fileHandlers[$from]->close();
         }
         unset($this->_fileHandlers[$from]);
 
-        if ($this->_fileHandlers[$to] !== null) {
+        if (isset($this->_fileHandlers[$to])) {
             $this->_fileHandlers[$to]->close();
         }
         unset($this->_fileHandlers[$to]);
 
         if (file_exists($this->_dirPath . '/' . $to)) {
-            unlink($this->_dirPath . '/' . $to);
+            if (!unlink($this->_dirPath . '/' . $to)) {
+                throw new Zend_Search_Lucene_Exception('Delete operation failed');
+            }
         }
 
-        return @rename($this->_dirPath . '/' . $from, $this->_dirPath . '/' . $to);
+        $trackErrors = ini_get('track_errors');
+        ini_set('track_errors', '1');
+
+        $success = @rename($this->_dirPath . '/' . $from, $this->_dirPath . '/' . $to);
+        if (!$success) {
+            ini_set('track_errors', $trackErrors);
+            throw new Zend_Search_Lucene_Exception($php_errormsg);
+        }
+
+        ini_set('track_errors', $trackErrors);
+
+        return $success;
     }
 
 
@@ -255,17 +276,29 @@ class Zend_Search_Lucene_Storage_Directory_Filesystem extends Zend_Search_Lucene
     /**
      * Returns a Zend_Search_Lucene_Storage_File object for a given $filename in the directory.
      *
+     * If $shareHandler option is true, then file handler can be shared between File Object
+     * requests. It speed-ups performance, but makes problems with file position.
+     * Shared handler are good for short atomic requests.
+     * Non-shared handlers are useful for stream file reading (especial for compound files).
+     *
      * @param string $filename
+     * @param boolean $shareHandler
      * @return Zend_Search_Lucene_Storage_File
      */
-    public function getFileObject($filename)
+    public function getFileObject($filename, $shareHandler = true)
     {
+        $fullFilename = $this->_dirPath . '/' . $filename;
+
+        if (!$shareHandler) {
+            return new Zend_Search_Lucene_Storage_File_Filesystem($fullFilename);
+        }
+
         if (isset( $this->_fileHandlers[$filename] )) {
             $this->_fileHandlers[$filename]->seek(0);
             return $this->_fileHandlers[$filename];
         }
 
-        $this->_fileHandlers[$filename] = new Zend_Search_Lucene_Storage_File_Filesystem($this->_dirPath . '/' . $filename);
+        $this->_fileHandlers[$filename] = new Zend_Search_Lucene_Storage_File_Filesystem($fullFilename);
         return $this->_fileHandlers[$filename];
     }
 }

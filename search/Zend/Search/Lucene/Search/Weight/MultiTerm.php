@@ -15,20 +15,20 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Search_Weight */
-require_once 'Zend/Search/Lucene/Search/Weight.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Weight.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Search_Weight_MultiTerm extends Zend_Search_Lucene_Search_Weight
@@ -36,14 +36,14 @@ class Zend_Search_Lucene_Search_Weight_MultiTerm extends Zend_Search_Lucene_Sear
     /**
      * IndexReader.
      *
-     * @var Zend_Search_Lucene
+     * @var Zend_Search_Lucene_Interface
      */
     private $_reader;
 
     /**
      * The query that this concerns.
      *
-     * @var Zend_Search_Lucene_Search_Query_MultiTerm
+     * @var Zend_Search_Lucene_Search_Query
      */
     private $_query;
 
@@ -61,10 +61,11 @@ class Zend_Search_Lucene_Search_Weight_MultiTerm extends Zend_Search_Lucene_Sear
      * query - the query that this concerns.
      * reader - index reader
      *
-     * @param Zend_Search_Lucene_Search_Query_MultiTerm $query
-     * @param Zend_Search_Lucene $reader
+     * @param Zend_Search_Lucene_Search_Query $query
+     * @param Zend_Search_Lucene_Interface    $reader
      */
-    public function __construct($query, $reader)
+    public function __construct(Zend_Search_Lucene_Search_Query $query,
+                                Zend_Search_Lucene_Interface    $reader)
     {
         $this->_query   = $query;
         $this->_reader  = $reader;
@@ -72,10 +73,10 @@ class Zend_Search_Lucene_Search_Weight_MultiTerm extends Zend_Search_Lucene_Sear
 
         $signs = $query->getSigns();
 
-        foreach ($query->getTerms() as $num => $term) {
-            if ($signs === null || $signs[$num] === null || $signs[$num]) {
-                $this->_weights[$num] = new Zend_Search_Lucene_Search_Weight_Term($term, $query, $reader);
-                $query->setWeight($num, $this->_weights[$num]);
+        foreach ($query->getTerms() as $id => $term) {
+            if ($signs === null || $signs[$id] === null || $signs[$id]) {
+                $this->_weights[$id] = new Zend_Search_Lucene_Search_Weight_Term($term, $query, $reader);
+                $query->setWeight($id, $this->_weights[$id]);
             }
         }
     }
@@ -83,6 +84,7 @@ class Zend_Search_Lucene_Search_Weight_MultiTerm extends Zend_Search_Lucene_Sear
 
     /**
      * The weight for this query
+     * Standard Weight::$_value is not used for boolean queries
      *
      * @return float
      */

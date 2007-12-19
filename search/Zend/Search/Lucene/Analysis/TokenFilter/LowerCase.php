@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Analysis_TokenFilter */
-require_once 'Zend/Search/Lucene/Analysis/TokenFilter.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/TokenFilter.php';
 
 
 /**
@@ -30,7 +30,7 @@ require_once 'Zend/Search/Lucene/Analysis/TokenFilter.php';
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -44,10 +44,10 @@ class Zend_Search_Lucene_Analysis_TokenFilter_LowerCase extends Zend_Search_Luce
      */
     public function normalize(Zend_Search_Lucene_Analysis_Token $srcToken)
     {
-        $newToken = new Zend_Search_Lucene_Analysis_Token(strtolower( $srcToken->getTermText() ),
+        $newToken = new Zend_Search_Lucene_Analysis_Token(
+                                     strtolower( $srcToken->getTermText() ),
                                      $srcToken->getStartOffset(),
-                                     $srcToken->getEndOffset(),
-                                     $srcToken->getType());
+                                     $srcToken->getEndOffset());
 
         $newToken->setPositionIncrement($srcToken->getPositionIncrement());
 

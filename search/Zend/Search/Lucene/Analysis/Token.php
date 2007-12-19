@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -24,7 +24,7 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Analysis_Token
@@ -49,13 +49,6 @@ class Zend_Search_Lucene_Analysis_Token
      * @var integer
      */
     private $_endOffset;
-
-    /**
-     * Lexical type.
-     *
-     * @var string
-     */
-    private $_type;
 
     /**
      * The position of this token relative to the previous Token.
@@ -90,12 +83,11 @@ class Zend_Search_Lucene_Analysis_Token
      * @param integer $end
      * @param string  $type
      */
-    public function __construct($text, $start, $end, $type = 'word' )
+    public function __construct($text, $start, $end)
     {
         $this->_termText    = $text;
         $this->_startOffset = $start;
         $this->_endOffset   = $end;
-        $this->_type        = $type;
 
         $this->_positionIncrement = 1;
     }
@@ -156,16 +148,6 @@ class Zend_Search_Lucene_Analysis_Token
     public function getEndOffset()
     {
         return $this->_endOffset;
-    }
-
-    /**
-     * Returns this Token's lexical type.  Defaults to 'word'.
-     *
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->_type;
     }
 }
 

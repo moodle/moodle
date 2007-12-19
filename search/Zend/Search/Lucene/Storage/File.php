@@ -15,21 +15,21 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Storage
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 
 /** Zend_Search_Lucene_Exception */
-require_once 'Zend/Search/Lucene/Exception.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Exception.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Storage
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Search_Lucene_Storage_File
@@ -70,6 +70,15 @@ abstract class Zend_Search_Lucene_Storage_File
     abstract public function tell();
 
     /**
+     * Flush output.
+     *
+     * Returns true on success or false on failure.
+     *
+     * @return boolean
+     */
+    abstract public function flush();
+
+    /**
      * Writes $length number of bytes (all, if $length===null) to the end
      * of the file.
      *
@@ -78,6 +87,20 @@ abstract class Zend_Search_Lucene_Storage_File
      */
     abstract protected function _fwrite($data, $length=null);
 
+    /**
+     * Lock file
+     *
+     * Lock type may be a LOCK_SH (shared lock) or a LOCK_EX (exclusive lock)
+     *
+     * @param integer $lockType
+     * @return boolean
+     */
+    abstract public function lock($lockType, $nonBlockinLock = false);
+
+    /**
+     * Unlock file
+     */
+    abstract public function unlock();
 
     /**
      * Reads a byte from the current position in the file
