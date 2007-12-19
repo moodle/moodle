@@ -271,6 +271,11 @@ body#admin-index .copyright {
   font-size: 0.9em;
 }
 
+#adminsettings .form-warning,
+#adminsettings .form-overridden {
+  font-size: 0.8em;
+}
+
 /***
  *** Blocks
  ***/
