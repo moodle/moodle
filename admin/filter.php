@@ -6,9 +6,6 @@
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/tablelib.php');
 
-    // get parameters
-    $param = new Object;
-
     $filterfull = required_param('filter', PARAM_PATH);
     $forcereset  = optional_param('reset', 0, PARAM_BOOL);
 
