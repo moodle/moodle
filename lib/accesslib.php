@@ -5030,7 +5030,7 @@ function switch_roles($first, $second) {
 /**
  * duplicates all the base definitions of a role
  *
- * @param int $sourcerole id of role to copy from
+ * @param object $sourcerole role to copy from
  * @param int $targetrole id of role to copy to
  *
  * @return void
