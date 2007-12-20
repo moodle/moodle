@@ -84,6 +84,10 @@ class block_base {
 
     var $cron          = NULL;
 
+    /**
+     * Indicates blocked is pinned - can not be moved, always present, does not have own context
+     */
+    var $pinned        = false;
 
 /// Class Functions
 
@@ -223,7 +227,11 @@ class block_base {
      */
     function is_empty() {
 
-        $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+        if (empty($this->instance->pinned)) {
+            $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+        } else {
+            $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
+        }
         
         if ( !has_capability('moodle/block:view', $context) ) {
             return true;
@@ -323,8 +331,11 @@ class block_base {
     function _add_edit_controls($options) {
         global $CFG, $USER, $PAGE;
         
-        // this is the context relevant to this particular block instance
-        $blockcontext = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+        if (empty($this->instance->pinned)) {
+            $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+        } else {
+            $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
+        }
         
         // context for site or course, i.e. participant list etc
         // check to see if user can edit site or course blocks.
@@ -332,7 +343,7 @@ class block_base {
 
         switch ($this->instance->pagetype) {
             case 'course-view':
-                if (!has_capability('moodle/site:manageblocks', $blockcontext)) {
+                if (!has_capability('moodle/site:manageblocks', $context)) {
                     return null;
                 }
             break;
@@ -384,7 +395,7 @@ class block_base {
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
 
         if (empty($this->instance->pinned)) {
-            $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$blockcontext->id.'">' .
+            $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">' .
                             '<img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$this->str->assignroles.'" /></a>';
         }
      
@@ -713,7 +724,11 @@ class block_list extends block_base {
 
     function is_empty() {
 
-        $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+        if (empty($this->instance->pinned)) {
+            $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+        } else {
+            $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
+        }
         
         if ( !has_capability('moodle/block:view', $context) ) {
             return true;
