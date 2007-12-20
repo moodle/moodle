@@ -40,8 +40,8 @@ function tex_filter_get_cmd($pathname, $texexp) {
     $executable = tex_filter_get_executable(false);
 
     if ((PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {
-        $cmd = str_replace(' ', '^ ', $executable);
-        return " ++ -e  \"$pathname\" -- $texexp";
+        $executable = str_replace(' ', '^ ', $executable);
+        return "$executable ++ -e  \"$pathname\" -- $texexp";
 
     } else {
         return "\"$executable\" -e \"$pathname\" -- $texexp";
