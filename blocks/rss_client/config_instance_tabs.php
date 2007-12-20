@@ -6,7 +6,11 @@ global $USER;
 $tabs = $row = array();
 
 
-$context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+if (empty($this->instance->pinned)) {
+    $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+} else {
+    $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
+}
 
 if (has_capability('moodle/site:manageblocks', $context)) {
     $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock', 'id' => $id, 'section' => 'rss'));
