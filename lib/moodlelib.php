@@ -234,6 +234,7 @@ define('PARAM_BASE64',   0x20000);
  * PAGE_COURSE_VIEW is a definition of a page type. For more information on the page class see moodle/lib/pagelib.php.
  */
 define('PAGE_COURSE_VIEW', 'course-view');
+define('PAGE_MOD_VIEW', 'mod-view');
 
 /// Debug levels ///
 /** no warnings at all */
