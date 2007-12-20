@@ -77,8 +77,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_special_coursemanager());
     $ADMIN->add('appearance', $temp);
 
-    $ADMIN->add('appearance', new admin_externalpage('stickyblocks', get_string('stickyblocks', 'admin'), "$CFG->wwwroot/$CFG->admin/stickyblocks.php"));
-
     $temp = new admin_settingpage('ajax', get_string('ajaxuse'));
     $temp->add(new admin_setting_configcheckbox('enableajax', get_string('enableajax', 'admin'), get_string('configenableajax', 'admin'), 0));
     $ADMIN->add('appearance', $temp);
