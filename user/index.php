@@ -48,13 +48,9 @@
     $frontpagectx = get_context_instance(CONTEXT_COURSE, SITEID);
 
     if ($context->id != $frontpagectx->id) {
-        if (!has_capability('moodle/course:viewparticipants', $context)) {
-            print_error('nopermissions');
-        }     
+        require_capability('moodle/course:viewparticipants', $context);
     } else {
-        if (!has_capability('moodle/site:viewparticipants', $sitecontext)) {
-            print_error('nopermissions');
-        }
+        require_capability('moodle/site:viewparticipants', $sitecontext);
     }
 
     /// front page course is different
