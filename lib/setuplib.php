@@ -255,6 +255,48 @@ function set_dbfamily() {
     return $CFG->dbfamily;
 }
 
+/**
+ * This internal function, called from setup.php BEFORE stabilishing the DB
+ * connection, defines the $CFG->dbfamily global -by calling set_dbfamily()-
+ * and predefines some constants needed by ADOdb to switch some default
+ * behaviours.
+ *
+ * This function must contain all the pre-connection code needed for each
+ * dbtype supported.
+ */
+function preconfigure_dbconnection() {
+
+    global $CFG;
+
+/// Define dbfamily
+    set_dbfamily();
+
+/// Based on $CFG->dbfamily, set some ADOdb settings
+    switch ($CFG->dbfamily) {
+        /// list here family types where we know
+        /// the fieldnames will come in lowercase
+        /// so we can avoid expensive tolower()
+        case 'postgres':
+        case 'mysql':
+        case 'mssql':
+            define ('ADODB_ASSOC_CASE', 2);
+            break;
+        case 'oracle':
+            define ('ADODB_ASSOC_CASE', 0); /// Use lowercase fieldnames for ADODB_FETCH_ASSOC
+                                            /// (only meaningful for oci8po, it's the default
+                                            /// for other DB drivers so this won't affect them)
+            /// Row prefetching uses a bit of memory but saves a ton
+            /// of network latency. With current AdoDB and PHP, only
+            /// Oracle uses this setting.
+            define ('ADODB_PREFETCH_ROWS', 1000);
+            break;
+        default:
+            /// if we have to lowercase it, set to 0
+            /// - note that the lowercasing is very expensive
+            define ('ADODB_ASSOC_CASE', 0); //Use lowercase fieldnames for ADODB_FETCH_ASSOC
+    }
+}
+
 function init_memcached() {
     global $CFG, $MCACHE;
 
