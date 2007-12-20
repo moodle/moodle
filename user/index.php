@@ -456,7 +456,7 @@
 
     $matchcount = count_records_sql('SELECT COUNT(distinct u.id) '.$from.$where.$wheresearch);
 
-    $table->initialbars($totalcount > $perpage);
+    $table->initialbars(true);
     $table->pagesize($perpage, $matchcount);
 
     $userlist = get_recordset_sql($select.$from.$where.$wheresearch.$sort,
