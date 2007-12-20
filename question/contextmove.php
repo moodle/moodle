@@ -226,16 +226,8 @@
     $cattomove->contextto = $contexttostring;
     if (count($urls)){
         $defaults = array();
-        for ($default_key =0; $default_key < count($urls); $default_key++){
-            switch ($tocoursefilesid){
-                case SITEID:
-                    $defaults['urls'][$default_key] = QUESTION_FILEMOVE;
-                    break;
-                default :
-                    $defaults['urls'][$default_key] = QUESTION_FILECOPY;
-                    break;
-
-            }
+        for ($default_key = 0; $default_key < count($urls); $default_key++){
+            $defaults['urls'][$default_key] = QUESTION_FILECOPY;
         }
         $contextmoveform->set_data($defaults);
         //some parameters for get_string
