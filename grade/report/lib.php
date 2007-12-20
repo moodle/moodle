@@ -135,7 +135,7 @@ class grade_report {
     function grade_report($courseid, $gpr, $context, $page=null) {
         global $CFG, $COURSE;
 
-        if (!$CFG->gradebookroles) {
+        if (empty($CFG->gradebookroles)) {
             error ('no roles defined in admin->appearance->graderoles');
         }
 
