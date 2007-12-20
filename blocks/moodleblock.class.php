@@ -334,8 +334,8 @@ class block_base {
         if (!empty($CFG->allowuserblockhiding)) {
             //Accessibility: added 'alt' text for the +- icon.
             //Theme the buttons using, Admin - Miscellaneous - smartpix.
-            $strshow = addslashes_js(get_string('showblocka', 'access', $this->title));
-            $strhide = addslashes_js(get_string('hideblocka', 'access', $this->title));
+            $strshow = addslashes_js(get_string('showblocka', 'access', strip_tags($this->title)));
+            $strhide = addslashes_js(get_string('hideblocka', 'access', strip_tags($this->title)));
             $title .= '<input type="image" src="'.$CFG->pixpath.'/t/switch_minus.gif" '. 
                 'id="togglehide_inst'.$this->instance->id.'" '.
                 'onclick="elementToggleHide(this, true, function(el) {'.
