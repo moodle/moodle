@@ -3557,7 +3557,8 @@ class admin_setting_manageauths extends admin_setting {
 
         //add always enabled plugins first
         $displayname = "<span>".$displayauths['manual']."</span>";
-        $settings = "<a href=\"settings.php?section=authsettingmanual\">{$txt->settings}</a>";
+        $settings = "<a href=\"auth_config.php?auth=manual\">{$txt->settings}</a>";
+        //$settings = "<a href=\"settings.php?section=authsettingmanual\">{$txt->settings}</a>";
         $table->data[] = array($displayname, '', '', $settings);
         $displayname = "<span>".$displayauths['nologin']."</span>";
         $settings = "<a href=\"auth_config.php?auth=nologin\">{$txt->settings}</a>";
