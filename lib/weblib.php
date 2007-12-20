@@ -2749,6 +2749,11 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
 
     global $COURSE, $CFG;
 
+    // if we have no navigation specified, build it
+    if( empty($navigation) ){
+       $navigation = build_navigation('');
+    }
+
     // If old style nav prepend course short name otherwise leave $navigation object alone
     if (!is_newnav($navigation)) {
         if ($COURSE->id != SITEID) {
