@@ -51,7 +51,7 @@ $temp->add(new admin_setting_configselect('digestmailtime', get_string('digestma
 $charsets = get_list_of_charsets();
 unset($charsets['UTF-8']); // not needed here
 $options = array();
-$options['0'] = get_string('none');
+$options['0'] = 'UTF-8';
 $options = array_merge($options, $charsets);
 $temp->add(new admin_setting_configselect('sitemailcharset', get_string('sitemailcharset', 'admin'), get_string('configsitemailcharset','admin'), '0', $options));
 $temp->add(new admin_setting_configcheckbox('allowusermailcharset', get_string('allowusermailcharset', 'admin'), get_string('configallowusermailcharset', 'admin'), 0));
