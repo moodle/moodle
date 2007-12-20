@@ -1036,7 +1036,12 @@ class admin_category extends parentable_part_of_admin_tree {
     function search($query) {
         $result = array();
         foreach ($this->children as $child) {
-            $result = array_merge($result, $child->search($query));
+            $subsearch = $child->search($query);
+            if (!is_array($subsearch)) {
+                debugging('Incorrect search result from '.$child->name);
+                continue;
+            }
+            $result = array_merge($result, $subsearch);
         }
         return $result;
     }
@@ -3374,8 +3379,8 @@ class admin_page_managemods extends admin_externalpage {
     }
 
     function search($query) {
-        if (parent::search($query)) {
-            return true;
+        if ($result = parent::search($query)) {
+            return $result;
         }
 
         $found = false;
@@ -3415,8 +3420,8 @@ class admin_page_manageblocks extends admin_externalpage {
 
     function search($query) {
         global $CFG;
-        if (parent::search($query)) {
-            return true;
+        if ($result = parent::search($query)) {
+            return $result;
         }
 
         $found = false;
