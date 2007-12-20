@@ -117,10 +117,9 @@ global $HTTPSPAGEREQUIRED;
 
 /// Connect to the database using adodb
 
-/// Some defines required BEFORE including AdoDB library
-    define ('ADODB_ASSOC_CASE', 0); //Use lowercase fieldnames for ADODB_FETCH_ASSOC
-                                    //(only meaningful for oci8po, it's the default
-                                    //for other DB drivers so this won't affect them)
+/// Set $CFG->dbfamily global
+/// and configure some other specific variables for each db BEFORE attempting the connection
+    preconfigure_dbconnection();
 
     require_once($CFG->libdir .'/adodb/adodb.inc.php'); // Database access functions
 

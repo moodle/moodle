@@ -2263,8 +2263,7 @@ function execute_sql_arr($sqlarr, $continue=true, $feedback=true) {
 /**
  * This internal function, called from setup.php, sets all the configuration
  * needed to work properly against any DB. It setups connection encoding
- * and some other variables. Also, ir defines the $CFG->dbfamily variable
- * to handle conditional code better than using $CFG->dbtype directly.
+ * and some other variables.
  *
  * This function must contain the init code needed for each dbtype supported.
  */
@@ -2304,8 +2303,6 @@ function configure_dbconnection() {
         ///       or to turn off magic_quotes to allow Moodle to do it properly
             break;
     }
-/// Finally define dbfamily
-    set_dbfamily();
 }
 
 /**
