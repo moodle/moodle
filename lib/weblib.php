@@ -2749,6 +2749,11 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
 
     global $COURSE, $CFG;
 
+    // if we have no navigation specified, build it
+    if( empty($navigation) ){
+       $navigation = build_navigation('');
+    }
+
     // If old style nav prepend course short name otherwise leave $navigation object alone
     if (!is_newnav($navigation)) {
         if ($COURSE->id != SITEID) {
@@ -3654,7 +3659,7 @@ function build_navigation($extranavlinks, $cm = null) {
     if (is_object($cm)) {
         if (!isset($cm->modname)) {
             debugging('The field $cm->modname should be set if you call build_navigation with '.
-                    'a $cm parameter. If you get $cm using get_coursemodule_from_instance or ',
+                    'a $cm parameter. If you get $cm using get_coursemodule_from_instance or '.
                     'get_coursemodule_from_id, this will be done automatically.', DEBUG_DEVELOPER);
             if (!$cm->modname = get_field('modules', 'name', 'id', $cm->module)) {
                 error('Cannot get the module type in build navigation.');
@@ -3662,7 +3667,7 @@ function build_navigation($extranavlinks, $cm = null) {
         }
         if (!isset($cm->name)) {
             debugging('The field $cm->name should be set if you call build_navigation with '.
-                    'a $cm parameter. If you get $cm using get_coursemodule_from_instance or ',
+                    'a $cm parameter. If you get $cm using get_coursemodule_from_instance or '.
                     'get_coursemodule_from_id, this will be done automatically.', DEBUG_DEVELOPER);
             if (!$cm->name = get_field($cm->modname, 'name', 'id', $cm->instance)) {
                 error('Cannot get the module name in build navigation.');
