@@ -115,7 +115,7 @@ class autogroup_form extends moodleform {
         }
 
         // check grouping name duplicates
-        if ($data['grouping'] == '-1') {
+        if ( isset($data['grouping']) && $data['grouping'] == '-1') {
             $name = trim(stripslashes($data['groupingname']));
             if (empty($name)) {
                 $errors['groupingname'] = get_string('required');
