@@ -21,6 +21,9 @@ class user_bulk_action_form extends moodleform {
             $actions[3] = get_string('delete');
         }
         $actions[4] = get_string('displayonpage');
+        if (has_capability('moodle/user:update', $syscontext)) {
+            $actions[5] = get_string('download', 'admin');
+        }
 
         $objs = array();
         $objs[] =& $mform->createElement('select', 'action', null, $actions);
@@ -86,7 +89,7 @@ class user_bulk_form extends moodleform {
 
 
         $grp =& $mform->addElement('group', 'usersgrp', get_string('users'), $objs, ' ', false);
-        $grp->setHelpButton(array('lists','','bulkusers'));
+        $grp->setHelpButton(array('lists', get_string('users'), 'bulkusers'));
 
         $mform->addElement('static', 'comment');
 
@@ -96,7 +99,7 @@ class user_bulk_form extends moodleform {
         $objs[] =& $mform->createElement('submit', 'addall', get_string('addall', 'bulkusers'));
         $objs[] =& $mform->createElement('submit', 'removeall', get_string('removeall', 'bulkusers'));
         $grp =& $mform->addElement('group', 'buttonsgrp', get_string('selectedlist', 'bulkusers'), $objs, array(' ', '<br />'), false);
-        $grp->setHelpButton(array('selectedlist','','bulkusers'));
+        $grp->setHelpButton(array('selectedlist', get_string('selectedlist', 'bulkusers'), 'bulkusers'));
 
         $renderer =& $mform->defaultRenderer();
         $template = '<label class="qflabel" style="vertical-align:top">{label}</label> {element}';
