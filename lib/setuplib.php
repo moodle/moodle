@@ -213,7 +213,7 @@ function setup_is_unicodedb() {
 
 /**
  * This internal function sets and returns the proper value for $CFG->dbfamily based on $CFG->dbtype
- * It's called by configure_dbconnection() and at install time. Shouldn't be used
+ * It's called by preconfigure_dbconnection() and at install time. Shouldn't be used
  * in other places. Code should rely on dbfamily to perform conditional execution
  * instead of using dbtype directly. This allows quicker adoption of different
  * drivers going against the same DB backend.
