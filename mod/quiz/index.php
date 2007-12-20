@@ -104,7 +104,12 @@
         if ($showing == 'stats') {
             // The $quiz objects returned by get_all_instances_in_course have the necessary $cm 
             // fields set to make the following call work.
-            $data[] = quiz_num_attempt_summary($quiz, $quiz);
+            $attemptcount = quiz_num_attempt_summary($quiz, $quiz);
+            if ($attemptcount) {
+                $data[] = "<a$class href=\"report.php?id=$quiz->coursemodule\">$attemptcount</a>";
+            } else {
+                $data[] = '';
+            }
         } else if ($showing = 'scores') {
 
             // Grade and feedback.
