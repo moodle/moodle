@@ -527,6 +527,7 @@ $string['profilefieldtypemenu'] = 'Menu of choices';
 $string['profilefieldtypetext'] = 'Text input';
 $string['profilefieldtypetextarea'] = 'Text area';
 $string['profilefieldmaxlength'] = 'Maximum length';
+$string['profilefieldispassword'] = 'Is this a password field?';
 $string['profileforceunique'] = 'Should the data be unique?';
 $string['profileinvaliddata'] = 'Invalid value';
 $string['profilelocked'] = 'Is this field locked?';
