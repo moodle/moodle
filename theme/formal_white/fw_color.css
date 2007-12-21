@@ -153,14 +153,6 @@ h1.headermain {
   border-top-color:#C6BDA8;
 }
 
-.sideblock .header .hide-show img.hide-show-image {
-  background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
-}
-
-.sideblock.hidden .header .hide-show img.hide-show-image {
-  background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
-}
-
 .sideblock .content .post .head .date,
 .sideblock .content .post .head .name {
   color: #000000;

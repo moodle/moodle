@@ -25,7 +25,7 @@ ul.tabrow1 li a:visited,
 .sideblock .r1,
 .generaltable .cell,
 div.sideblock table.minicalendar,
-.sideblock .hide-show a {
+.sideblock .hide-show-image {
     border:none;
     background:none;
 }
@@ -180,14 +180,6 @@ ul.tabrow1 li.here a:visited {
 #right-column .hidden .header
 {
   border-bottom-color:#330000;
-}
-
-.sideblock .header .hide-show img.hide-show-image {
-  background: url('pix/t/switch_minus.gif') no-repeat bottom;
-}
-
-.sideblock.hidden .header .hide-show img.hide-show-image {
-  background: url('pix/t/switch_plus.gif') no-repeat bottom;
 }
 
 /** Places using the horizontal medium wood texture with borders **/
