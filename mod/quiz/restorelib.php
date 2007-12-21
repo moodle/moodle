@@ -502,7 +502,6 @@
         }
 
         //Link to quiz view by moduleid
-
         $searchstring='/\$@(QUIZVIEWBYID)\*([0-9]+)@\$/';
         //We look for it
         preg_match_all($searchstring,$result,$foundset);
@@ -522,6 +521,30 @@
                 } else {
                     //It's a foreign link so leave it as original
                     $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/quiz/view.php?id='.$old_id,$result);
+                }
+            }
+        }
+
+        //Link to quiz view by quizid
+        $searchstring='/\$@(QUIZVIEWBYQ)\*([0-9]+)@\$/';
+        //We look for it
+        preg_match_all($searchstring,$result,$foundset);
+        //If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) {
+            //print_object($foundset);                                     //Debug
+            //Iterate over foundset[2]. They are the old_ids
+            foreach($foundset[2] as $old_id) {
+                //We get the needed variables here (course_modules id)
+                $rec = backup_getid($restore->backup_unique_code,'quiz',$old_id);
+                //Personalize the searchstring
+                $searchstring='/\$@(QUIZVIEWBYQ)\*('.$old_id.')@\$/';
+                //If it is a link to this course, update the link to its new location
+                if($rec->new_id) {
+                    //Now replace it
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/quiz/view.php?q='.$rec->new_id,$result);
+                } else {
+                    //It's a foreign link so leave it as original
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/quiz/view.php?q='.$old_id,$result);
                 }
             }
         }
