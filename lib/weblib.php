@@ -5677,8 +5677,8 @@ function print_side_block_end($attributes = array(), $title='') {
 
     echo '</div>';
 
-    $strshow = addslashes_js(get_string('showblocka', 'access', $title));
-    $strhide = addslashes_js(get_string('hideblocka', 'access', $title));
+    $strshow = addslashes_js(get_string('showblocka', 'access', strip_tags($title)));
+    $strhide = addslashes_js(get_string('hideblocka', 'access', strip_tags($title)));
 
     // IE workaround: if I do it THIS way, it works! WTF?
     if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
