@@ -12,17 +12,18 @@
 $string['admindirerror'] = 'Podany katalod admin jest nieprawidłowy';
 $string['admindirname'] = 'Katalog admin';
 $string['admindirsettinghead'] = 'Ustawienia katalogu administratora ...';
-$string['admindirsettingsub'] = 'Niektóre webhost’y używają / admin jako specjalne URL w celu akcesu do panela kontrolnego a także w innych celach. Niestety powoduje to konflikt ze standardową lokalizacją dla stron administratora w Moodle. Powyższy konflikt można naprawić zmieniając nazwę katalogu administratora podczas instalacji i wstawiając nową nazwę. Na przykład: 
+$string['admindirsettingsub'] = 'Niewiele webhost’ów używa /admin jako specjalnego URL w celu akcesu do panela kontrolnego a także w innych celach. Niestety powoduje to konflikt ze standardową lokalizacją dla stron administratora w Moodle. Powyższy konflikt można naprawić, zmieniając nazwę katalogu administratora podczas instalacji i wstawiając nową nazwę. Na przykład: 
 <br /> <br /><b>moodleadmin</b><br /> <br />
-Zostaną również poprawione linki administratora w Moodle';
+
+To naprawi linki administratora w Moodle.';
 $string['bypassed'] = 'Ominięty';
-$string['cannotcreatelangdir'] = 'Nie można utworzyć katelogu do \"paczki językowej\" (lang)';
+$string['cannotcreatelangdir'] = 'Nie można utworzyć katalogu językowego';
 $string['cannotcreatetempdir'] = 'Nie można utworzyć katalogu tymczasowego';
 $string['cannotdownloadcomponents'] = 'Nie można pobrać składowych (komponentów)';
 $string['cannotdownloadzipfile'] = 'Nie można pobrać spakowanego pliku (ZIP)';
-$string['cannotfindcomponent'] = 'Nie można znaleźć składowej (komponentu)';
+$string['cannotfindcomponent'] = 'Nie można znaleźć komponentu';
 $string['cannotsavemd5file'] = 'Nie mozna zapisać pliku md5';
-$string['cannotsavezipfile'] = 'Nie można zapisać spakowanego pliku ZIP';
+$string['cannotsavezipfile'] = 'Nie można zapisać spakowanego pliku';
 $string['cannotunzipfile'] = 'Nie można rozpakować pliku ZIP';
 $string['caution'] = 'Ostrzeżenie';
 $string['check'] = 'Sprawdź';
@@ -31,7 +32,7 @@ $string['chooselanguagesub'] = 'Proszę wybrać język TYLKO do instalacji. Stro
 $string['closewindow'] = 'Zamknij to okno';
 $string['compatibilitysettingshead'] = 'Sprawdzanie Twoich ustawień PHP';
 $string['compatibilitysettingssub'] = 'Twój serwer powinien przejść wszystkie te testy, by Moodle działał poprawnie.';
-$string['componentisuptodate'] = 'Składowa (komponent) jest aktualny';
+$string['componentisuptodate'] = 'Komponent jest aktualny';
 $string['configfilenotwritten'] = 'Instalator nie mógł automatycznie utworzyć plik config.php zawierający Twoje parametry instalacyjne, prawdopodobnie dlatego że katalog Moodle nie ma prawa zapisu. Musisz ręcznie przekopiować poniższy kod do pliku config.php, który powinien znajdować się w głównym katalogu Moodle.';
 $string['configfilewritten'] = 'config.php został pomyślnie stworzony';
 $string['configurationcompletehead'] = 'Konfiguracja skończona';
@@ -39,7 +40,19 @@ $string['configurationcompletesub'] = 'Moodle starał sie zapisać twoją konfig
 $string['continue'] = 'Kontynuuj';
 $string['database'] = 'Baza danych';
 $string['databasecreationsettingshead'] = 'Teraz musisz skonfigurować ustawienia bazy danych, w której będzie przechowywana większa część danych Moodle. Zostanie ona stworzona automatycznie w czasie instalacji z wyszczególnionymi poniżej ustawieniami.';
+$string['databasecreationsettingssub'] = '<b>Typ:</b> Instalator ustalił  \"mysql\"<br/>
+<b>Host:</b> Instalator ustalił \"localhost\"<br />
+<b>Nazwa:</b> Nazwa Twojej bazy danych, np. Moodle<br/>
+<b>Użytkownik:</b> Użytkownik Twojej bazy danych<br />
+<b>Hasło:</b> Hasło dostępu do bazy danych<br />
+<b>Prefiksy tabel:</b> opcjonalny prefiks używany przed wszystkimi nazwami tabeli';
 $string['databasesettingshead'] = 'Teraz musisz skonfigurować baze danych, w której będzie przechowywana większa część danych Moodle. Ta baza danych musi już być utworzona, podobnie jak nazwa użytkownika i hasło jej przypisane.';
+$string['databasesettingssub'] = '<b>Typ:</b>  mysql or postgres7<br/>
+<b>Host:</b> np. localhost lub db.isp.com<br />
+<b>Nazwa:</b> Nazwa Twojej bazy danych, np. Moodle<br/>
+<b>Użytkownik:</b> Użytkownik Twojej bazy danych<br />
+<b>Hasło:</b> Hasło dostępu do bazy danych<br />
+<b>Prefiksy tabel:</b> opcjonalny prefiks używany przed wszystkimi nazwami tabeli';
 $string['dataroot'] = 'Katalog z danymi';
 $string['datarooterror'] = 'Katalog z danymi który podałeś nie może być znaleziony lub utworzony. Popraw ścieżkę lub utwórz katalog ręcznie.';
 $string['dbconnectionerror'] = 'Nie można połączyć się z podaną bazą danych. Sprawdź ustawienia Twojej bazy danych.';
@@ -66,18 +79,18 @@ $string['download'] = 'Pobierz';
 $string['downloadedfilecheckfailed'] = 'Pobierany plik jest uszkodzony';
 $string['downloadlanguagebutton'] = 'Pobierz \"$a\" pakiet językowy';
 $string['downloadlanguagehead'] = 'Pobierz pakiet językowy';
-$string['downloadlanguagenotneeded'] = 'Możesz kontynuować proces instalacji używając domyślnego pakietu językowego \"$a\".';
-$string['downloadlanguagesub'] = 'Teraz masz możliwość załadowania pakietu językowego I kontynuowania procesu instalacji w tym języku.<br/><br/> Jeśli nie możesz załadować pakietu, instalacja będzie się odbywać dalej po angielsku (kiedy się skończy, będziesz mieć możliwość załadowania i zainstalowania dodatkowych pakietów językowych)';
-$string['environmenthead'] = 'Sprawdzam środowisko (ustwienia) ...';
+$string['downloadlanguagenotneeded'] = 'Możesz kontynuować proces instalacji, używając domyślnego pakietu językowego \"$a\".';
+$string['downloadlanguagesub'] = 'Teraz masz możliwość załadowania pakietu językowego i kontynuowania procesu instalacji w tym języku.<br/><br/>Jeśli nie możesz załadować pakietu, instalacja będzie się odbywać dalej po angielsku (kiedy się skończy, będziesz mieć możliwość załadowania i zainstalowania dodatkowych pakietów językowych)';
+$string['environmenthead'] = 'Sprawdzam środowisko (ustawienia) ...';
 $string['environmentrecommendinstall'] = 'jest zalecane, żeby było zainstalowane/włączone';
 $string['environmentrequireinstall'] = 'jest niezbędnę, żeby było zainstalowane/włączone';
 $string['environmentsub'] = 'Sprawdzamy, czy różne komponenty systemu spełniają wymagania systemu';
 $string['error'] = 'Błąd';
-$string['fail'] = 'zawieść';
+$string['fail'] = 'Nie udało się';
 $string['fileuploads'] = 'Plik pobrany';
 $string['fileuploadserror'] = 'Powinno być włączone';
-$string['gdversion'] = 'versja biblioteki GD';
-$string['gdversionerror'] = 'Aby przeprowadzać operacje i kreować obrazy niezbędna jest biblioteka GD';
+$string['gdversion'] = 'Wersja biblioteki GD';
+$string['gdversionerror'] = 'Aby przeprowadzać operacje i kreować obrazy, niezbędna jest biblioteka GD';
 $string['gdversionhelp'] = '<p> Nie masz zainstalowanego GD na swoim serwerze.</p>
 <p>„GD jest biblioteką wymaganą przez PHP w celu umożliwienia Moodle operacji na obrazach (takich jak ikony profilu użytkownika) i w celu tworzenia nowych obrazów (takich jak wykresy logowań). Moodle będzie pracował bez GD – te możliwości nie będą jednak dla Ciebie dostępne.</p>
 <p> Aby dodać GD do PHP pod Unix-em, skompiluj PHP używając parametru -- with-gd. </p>
@@ -110,25 +123,30 @@ Pozwoli to Moodle ustawić samoczynnie limit pamięci. </li>
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p> jednakże na niektórych serwerach będzie uniemożliwiało to działanie <b> wszystkich </b> stron PHP (ujrzysz błędy na stronie), a więc będziesz zmuszony usunąć plik .htaccess. </p></li></ol>”';
 $string['missingrequiredfield'] = 'Brak wymaganego pola';
-$string['moodledocslink'] = 'Dokumentacja moodle dla tej strony';
+$string['moodledocslink'] = 'Dokumentacja Moodle dla tej strony';
+$string['mssql'] = 'SQL*Server (mssql)';
+$string['mssql_n'] = 'SQL*Server z UTF-8 support (mssql_n)';
+$string['mysql'] = 'MySQL (mysql)';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP nie został prawidłowo skonfigurowany z rozszerzeniem MySQL, co może zostać zakomunikowane przez MySQL. Sprawdź proszę swój plik php.ini lub przekompiluj PHP';
 $string['name'] = 'Nazwa';
 $string['next'] = 'Następne';
-$string['ok'] = 'OK.';
-$string['parentlanguage'] = '<<DO TŁUMACZY: Jeżeli Twój język ma Język nadrzędny który powinien być użyty w przypadku braku tlumaczenia, wpisz tutaj odpowiedni kod (np: nl). Pozostawienia pustego powoduje używanie języka angielskiego.';
+$string['ok'] = 'OK';
+$string['parentlanguage'] = '<<DO TŁUMACZY: Jeżeli Twój język ma Język nadrzędny który powinien być użyty w przypadku braku tlumaczenia, wpisz tutaj odpowiedni kod (np: nl). Pozostawienia pustego powoduje używanie języka angielskiego.>>';
 $string['password'] = 'Hasło';
 $string['php50restricted'] = 'PHP 5.0.x posiada kilka znanych błędów, proszę uaktualnić do wersji 5.1.x lub zredukować do wersji 4.3.x lub 4.4.x';
-$string['phpversion'] = 'wersja PHP';
-$string['phpversionerror'] = 'Wersja PHP musi być ca najmniej 4.1.0';
+$string['phpversion'] = 'Wersja PHP';
+$string['phpversionerror'] = 'Wersja PHP musi być co najmniej 4.1.0';
 $string['phpversionhelp'] = '<p> Moodle wymaga wersji PHP co najmniej 4.1.0. </p> 
 <p>Obecnie jest uruchomiona wersja $a</p>
 <p> Musisz uaktualnić wersje PHP lub przenieść na host z nowszą wersją PHP!</p>';
+$string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Poprzedni';
-$string['remotedownloadnotallowed'] = 'Pobieranie komponentów na Twój serwer jest niedozowolone. Musisz pobrać pliki ręcznie z <a href=\"$a->url\">$a->url</a> i skopiować do \"$a->dest\" na swoim serwerze i tam go otworzyć';
+$string['remotedownloadnotallowed'] = 'Pobieranie komponentów na Twój serwer jest niedozwolone. Musisz pobrać pliki ręcznie z <a href=\"$a->url\">$a->url</a> i skopiować do \"$a->dest\" na swoim serwerze i tam go otworzyć';
 $string['report'] = 'Raport';
 $string['restricted'] = 'Ograniczony';
 $string['safemode'] = 'Bezpieczny tryb';
 $string['safemodeerror'] = 'Moodle ma trudności z włączeniem bezpiecznego trybu';
+$string['sessionautostart'] = 'Automatyczny start sesji';
 $string['sessionautostarterror'] = 'To powinno być wyłączone';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
@@ -137,11 +155,12 @@ $string['thislanguage'] = 'Polski';
 $string['unicoderecommended'] = 'Zalecane jest składowanie danych w formacie Unicode (UTF-8).Nowe instalacje muszą być wykonane w bazach danych których domyślne znaki są ustawione jako Unicode. Jeżeli dokonywane jest uaktualnienie, należy przeprowadzić proces migracji UTF-8 (zobacz stronę Administratora).';
 $string['unicoderequired'] = 'Wymagane jest aby składować wszystkie dane w formacie unicode (UTF-8). Nowe instalacje muszą być wykonane w bazach danych których domyślne kodowanie są ustawione jako Unicode. Jeżeli dokonywane jest uaktualnienie, należy przeprowadzić proces migracji UTF-8 (zobacz stronę Administratora).';
 $string['user'] = 'Użytkownik';
-$string['welcomep20'] = 'Widzisz tę stronę ponieważ z powodzeniem zainstalowałeś i uruchomiłeś <strong>$a->packname $a->packversion</strong>  na swoim komputerze. Gratulacje';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['welcomep20'] = 'Widzisz tę stronę, ponieważ z powodzeniem zainstalowałeś i uruchomiłeś <strong>$a->packname $a->packversion</strong>  na swoim komputerze.';
 $string['welcomep30'] = 'Ten instalator <strong>$a->installername</strong> zawiera aplikacje, by stworzyć środowisko, w którym będzie działać <strong>Moodle</strong>, czyli';
 $string['welcomep40'] = 'Pakiet zawiera<strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
-$string['welcomep50'] = 'Wszystkie aplikacje w tym pakiecie maja własne, oddzielne licencje. Kompletny pakiet <strong>$a->installername</strong> jest <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> i jest dystrybuowany na <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> licencji..';
-$string['welcomep60'] = 'Nastepujące strony przeprowadzą cię przez instalację Moodle na twoim komputerze. Możesz zaakceptować ustawienia domyślne lub, opcjonalnie, dostosować je do swoich potrzeb';
+$string['welcomep50'] = 'Wszystkie aplikacje w tym pakiecie maja własne, oddzielne licencje. Kompletny pakiet <strong>$a->installername</strong> jest <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> i jest dystrybuowany na <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> licencji.';
+$string['welcomep60'] = 'Nastepujące strony przeprowadzą cię przez instalację Moodle na twoim komputerze. Możesz zaakceptować ustawienia domyślne lub, opcjonalnie, dostosować je do swoich potrzeb.';
 $string['welcomep70'] = 'Kliknij \"Dalej\" żeby kontynuować instalację Moodle';
 $string['wrongdestpath'] = 'Błędna scieżka docelowa';
 $string['wrongsourcebase'] = 'Błędne żródło bazy URL';
