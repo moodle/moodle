@@ -1234,7 +1234,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
                 $modnamesplural[$mod->name] = get_string("modulenameplural", "$mod->name");
             }
         }
-        asort($modnames);
+        asort($modnames, SORT_LOCALE_STRING);
     } else {
         error("No modules are installed!");
     }
