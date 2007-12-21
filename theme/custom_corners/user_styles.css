@@ -274,14 +274,7 @@ ul.tabrow td.selected {
 div.sideblock div.content div.message {
   text-align: left;
 }
-div.sideblock div.header div.hide-show img.hide-show-image {
-  background-image: url(../../pix/t/switch_minus.gif);
-  background-repeat: no-repeat;
-  margin-top: 0;
-}
-div.sideblock.hidden div.header div.hide-show img.hide-show-image {
-  background-image: url(../../pix/t/switch_plus.gif);
-  background-repeat: no-repeat;
+.sideblock .header .hide-show-image {
   margin-top: 0;
 }
 table#calendar td.event_global {

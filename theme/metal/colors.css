@@ -242,14 +242,6 @@ body#admin-index .c0 {
 
 .sideblock .list {
 }
-.sideblock .header .hide-show img.hide-show-image {
-  background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
-}
-
-.sideblock.hidden .header .hide-show img.hide-show-image {
-  background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
-}
-
 
 
 /***

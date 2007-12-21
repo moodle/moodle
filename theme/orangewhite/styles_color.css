@@ -255,12 +255,6 @@ body#admin-index .c0 {
 }
 .sideblock .list {
 }
-.sideblock .header .hide-show img.hide-show-image {
-  background:url('pix/switch_minus.gif') no-repeat bottom
-}
-.sideblock.hidden .header .hide-show img.hide-show-image {
-  background:url('pix/switch_plus.gif') no-repeat bottom
-}
 #left-column .sideblock .header {
   background-color:#DAE0E4;
   border-bottom-color:#F9FAFA
