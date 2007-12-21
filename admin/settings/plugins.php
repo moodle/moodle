@@ -41,13 +41,11 @@ if ($hassiteconfig) {
         $blockbyname = array();
 
         foreach ($blocks as $block) {
-            $strblockname = get_string('blockname', 'block_'.$block->name);
-            // Deal with blocks which are lacking the language string
-            if ($strblockname == '[[blockname]]') {
-                $textlib = textlib_get_instance();
-                $strblockname = $textlib->strtotitle($block->name);
+            if(($blockobject = block_instance($block->name)) === false) {
+                // Failed to load
+                continue;
             }
-            $blockbyname[$strblockname] = $block;
+            $blockbyname[$blockobject->get_title()] = $block;
         }
         ksort($blockbyname);
 
