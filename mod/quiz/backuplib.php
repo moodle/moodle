@@ -584,6 +584,10 @@
         $buscar="/(".$base."\/mod\/quiz\/view.php\?id\=)([0-9]+)/";
         $result= preg_replace($buscar,'$@QUIZVIEWBYID*$2@$',$result);
 
+        //Link to quiz view by quizid
+        $buscar="/(".$base."\/mod\/quiz\/view.php\?q\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@QUIZVIEWBYQ*$2@$',$result);
+
         return $result;
     }
 
