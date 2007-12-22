@@ -6,6 +6,9 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
+/// no guest autologin
+require_login(0, false);
+
 $adminroot = admin_get_root();
 admin_externalpage_setup('upgradesettings', $adminroot); // now hidden page
 
