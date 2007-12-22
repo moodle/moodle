@@ -521,8 +521,8 @@
         create_admin_user();
     }
 
-/// Check for valid admin user
-    require_login();
+/// Check for valid admin user - no guest autologin
+    require_login(0, false);
 
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 

@@ -8,6 +8,9 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $return = optional_param('return', '', PARAM_ALPHA);
 
+/// no guest autologin
+require_login(0, false);
+
 $adminroot =& admin_get_root(); // need all settings
 admin_externalpage_setup('upgradesettings'); // now hidden page
 
