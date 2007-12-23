@@ -283,25 +283,39 @@ global $HTTPSPAGEREQUIRED;
 /// Shared-Memory cache init -- will set $MCACHE
 /// $MCACHE is a global object that offers at least add(), set() and delete()
 /// with similar semantics to the memcached PHP API http://php.net/memcache
+/// Ensure we define rcache - so we can later check for it
+/// with a really fast and unambiguous $CFG->rcache === false
     if (!empty($CFG->cachetype)) {
+        if (array_key_exists('rcache', $CFG->config_php_settings)) {
+            $CFG->rcache = (bool)$CFG->config_php_settings['rcache']; // always use config.php setting if present
+        } else if (empty($CFG->rcache)) {
+            $CFG->rcache = false;
+        } else {
+            $CFG->rcache = true;
+        }
+
+        // do not try to initialize if cache disabled
+        if (!$CFG->rcache) {
+            $CFG->cachetype = '';
+        }
+
         if ($CFG->cachetype === 'memcached' && !empty($CFG->memcachedhosts)) {
             if (!init_memcached()) {
                 debugging("Error initialising memcached");
             }
-        } elseif ($CFG->cachetype === 'eaccelerator') {
+            $CFG->cachetype = '';
+            $CFG->rcache = false;
+        } else if ($CFG->cachetype === 'eaccelerator') {
             if (!init_eaccelerator()) {
                 debugging("Error initialising eaccelerator cache");
             }
+            $CFG->cachetype = '';
+            $CFG->rcache = false;
         }
+
     } else { // just make sure it is defined
         $CFG->cachetype = '';
-    }
-/// Ensure we define rcache - so we can later check for it
-/// with a really fast and unambiguous $CFG->rcache === false
-    if (empty($CFG->rcache)) {
-        $CFG->rcache = false;
-    } else {
-        $CFG->rcache = true;
+        $CFG->rcache    = false;
     }
 
 /// Set a default enrolment configuration (see bug 1598)
