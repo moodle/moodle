@@ -14,6 +14,13 @@
     $userid  = optional_param('user', 0, PARAM_INT);          //course
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
+    if($userid == $USER->id){
+        // the rest of this code assumes $userid=0 means 
+        // you are unassigning yourself, so set this for the
+        // correct capabiliy checks & language later
+        $userid = 0;
+    }
+
     if (! $course = get_record('course', 'id', $id) ) {
         error('Invalid course id');
     }
