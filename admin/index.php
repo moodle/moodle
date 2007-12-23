@@ -202,10 +202,6 @@
             // install core event handlers
             events_update_definition();
 
-            // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
-            // (this should only have any effect during initial install).
-            admin_apply_default_settings(NULL, true);
-
             /// This is used to handle any settings that must exist in $CFG but which do not exist in
             /// admin_get_root()/$ADMIN as admin_setting objects (there are some exceptions).
             apply_default_exception_settings(array('auth' => 'email',
@@ -216,6 +212,10 @@
                                                    'template' => 'default',
                                                    'theme' => 'standardwhite',
                                                    'filter_multilang_converted' => 1));
+
+            // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
+            // (this should only have any effect during initial install).
+            admin_apply_default_settings(NULL, true);
 
             notify($strdatabasesuccess, "green");
             require_once $CFG->dirroot.'/mnet/lib.php';
