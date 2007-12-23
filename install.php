@@ -1282,10 +1282,11 @@ function toggledbinfo() {
 }
 
 /**
- * Add slashes for single quotes so they can be
- * included in single quoted string
+ * Add slashes for single quotes and backslashes
+ * so they can be included in single quoted string
+ * (for config.php)
  */
 function addsingleslashes($input){
-    return str_replace("'", "\'", $input);
+    return preg_replace("/(['\\\])/", "\\\\$1", $input);
 }
 ?>
