@@ -33,7 +33,7 @@ $ADMIN->add('root', new admin_category('server', get_string('server','admin')));
 $ADMIN->add('root', new admin_category('mnet', get_string('net','mnet')));
 
 $ADMIN->add('root', new admin_category('reports', get_string('reports')));
-foreach (get_list_of_plugins('admin/report') as $plugin) {
+foreach (get_list_of_plugins($CFG->admin.'/report') as $plugin) {
 /// This snippet is temporary until simpletest can be fixed to use xmldb.   See MDL-7377   XXX TODO
     if ($plugin == 'simpletest' && $CFG->dbfamily != 'mysql' && $CFG->dbfamily != 'postgres') {
         continue;
