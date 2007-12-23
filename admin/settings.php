@@ -9,7 +9,8 @@ $section      = required_param('section', PARAM_SAFEDIR);
 $return       = optional_param('return','', PARAM_ALPHA);
 $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
 
-require_login();
+/// no guest autologin
+require_login(0, false);
 
 $adminroot =& admin_get_root(); // need all settings
 $page      =& $adminroot->locate($section);
