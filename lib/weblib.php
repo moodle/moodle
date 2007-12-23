@@ -2321,7 +2321,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     if (gettype($navigation) == 'string' && strlen($navigation) != 0 && $navigation != 'home') {
         debugging("print_header() was sent a string as 3rd ($navigation) parameter. "
-                . "This is deprecated in favour of an array built by build_navigation(). Please upgrade your code.");
+                . "This is deprecated in favour of an array built by build_navigation(). Please upgrade your code.", DEBUG_DEVELOPER);
     }
 
     $heading = format_string($heading); // Fix for MDL-8582
@@ -7054,7 +7054,6 @@ function is_in_popup() {
     
     return ($inpopup);
 }
-
 
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
