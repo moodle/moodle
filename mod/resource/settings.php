@@ -21,9 +21,9 @@ $settings->add(new admin_setting_configpasswordunmask('resource_secretphrase', g
 $settings->add(new admin_setting_configcheckbox('resource_allowlocalfiles', get_string('allowlocalfiles', 'resource'),
                    get_string('configallowlocalfiles', 'resource'), 0));
 
-$woptions = array(0 => get_string('pagewindow', 'resource'), 1 => get_string('newwindow', 'resource'));
+$woptions = array('' => get_string('pagewindow', 'resource'), 'checked' => get_string('newwindow', 'resource'));
 $settings->add(new admin_setting_configselect('resource_popup', get_string('display', 'resource'),
-                   get_string('configpopup', 'resource'), 0, $woptions));
+                   get_string('configpopup', 'resource'), '', $woptions));
 
 foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
     $popupoption = "resource_popup$optionname";
