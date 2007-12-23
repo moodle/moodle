@@ -525,8 +525,9 @@ if ($nextstage == SAVE) {
     $str .= '$CFG->dbhost    = \''.addslashes($INSTALL['dbhost'])."';\r\n";
     if (!empty($INSTALL['dbname'])) {
         $str .= '$CFG->dbname    = \''.$INSTALL['dbname']."';\r\n";
-        $str .= '$CFG->dbuser    = \''.$INSTALL['dbuser']."';\r\n";
-        $str .= '$CFG->dbpass    = \''.$INSTALL['dbpass']."';\r\n";
+        // support single quotes in db user/passwords
+        $str .= '$CFG->dbuser    = \''.addsingleslashes($INSTALL['dbuser'])."';\r\n";
+        $str .= '$CFG->dbpass    = \''.addsingleslashes($INSTALL['dbpass'])."';\r\n";
     }
     $str .= '$CFG->dbpersist =  false;'."\r\n";
     $str .= '$CFG->prefix    = \''.$INSTALL['prefix']."';\r\n";
@@ -1278,5 +1279,13 @@ function toggledbinfo() {
 </script>
 
 <?php
+}
+
+/**
+ * Add slashes for single quotes so they can be
+ * included in single quoted string
+ */
+function addsingleslashes($input){
+    return str_replace("'", "\'", $input);
 }
 ?>
