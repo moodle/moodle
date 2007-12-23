@@ -19,9 +19,6 @@ if ($currenttab != 'update') {
             print_header($SITE->fullname, "$SITE->fullname", $navigation);
             break;
 
-        case CONTEXT_PERSONAL:
-            break;
-
         case CONTEXT_USER:
             print_header();
             break;
