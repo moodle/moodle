@@ -137,7 +137,6 @@ define('CAP_PROHIBIT', -1000);
 
 // context definitions
 define('CONTEXT_SYSTEM', 10);
-define('CONTEXT_PERSONAL', 20);
 define('CONTEXT_USER', 30);
 define('CONTEXT_COURSECAT', 40);
 define('CONTEXT_COURSE', 50);
@@ -2226,9 +2225,6 @@ function create_context($contextlevel, $instanceid) {
         case CONTEXT_USER:
             // default to basepath
             break;
-        case CONTEXT_PERSONAL:
-            // default to basepath
-            break;
     }
 
     // if grandparents unknown, maybe rebuild_context_path() will solve it later
@@ -2492,7 +2488,7 @@ function cleanup_contexts() {
 function get_context_instance($contextlevel, $instance=0) {
 
     global $context_cache, $context_cache_id;
-    static $allowed_contexts = array(CONTEXT_SYSTEM, CONTEXT_PERSONAL, CONTEXT_USER, CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_GROUP, CONTEXT_MODULE, CONTEXT_BLOCK);
+    static $allowed_contexts = array(CONTEXT_SYSTEM, CONTEXT_USER, CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_GROUP, CONTEXT_MODULE, CONTEXT_BLOCK);
 
     if ($contextlevel === 'clearcache') {
         // TODO: Remove for v2.0
@@ -3364,10 +3360,6 @@ function print_context_name($context, $withprefix = true, $short = false) {
             $name = get_string('coresystem');
             break;
 
-        case CONTEXT_PERSONAL:
-            $name = get_string('personal');
-            break;
-
         case CONTEXT_USER:
             if ($user = get_record('user', 'id', $context->instanceid)) {
                 if ($withprefix){
@@ -3475,10 +3467,6 @@ function fetch_context_capabilities($context) {
 
         case CONTEXT_SYSTEM: // all
             $SQL = "select * from {$CFG->prefix}capabilities";
-        break;
-
-        case CONTEXT_PERSONAL:
-            $SQL = "select * from {$CFG->prefix}capabilities where contextlevel = ".CONTEXT_PERSONAL;
         break;
 
         case CONTEXT_USER:
@@ -3735,11 +3723,6 @@ function get_child_contexts($context) {
             return array();
         break;
 
-        case CONTEXT_PERSONAL:
-            // No children.
-            return array();
-        break;
-
         case CONTEXT_SYSTEM:
             // Just get all the contexts except for CONTEXT_SYSTEM level
             // and hope we don't OOM in the process - don't cache
@@ -3845,10 +3828,6 @@ function get_component_string($component, $contextlevel) {
             } else {
                 $string = get_string('coresystem');
             }
-        break;
-
-        case CONTEXT_PERSONAL:
-            $string = get_string('personal');
         break;
 
         case CONTEXT_USER:
