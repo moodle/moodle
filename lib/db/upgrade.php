@@ -2653,6 +2653,19 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101505);
     }
 
+    if ($result && $oldversion < 2007101506) {
+
+    /// CONTEXT_PERSONAL was never implemented - removing
+        $sql = "DELETE
+                  FROM {$CFG->prefix}context
+                 WHERE contextlevel=20";
+ 
+        execute_sql($sql);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101506);
+    }
+
     return $result;
 }
 
