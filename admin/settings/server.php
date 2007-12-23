@@ -207,14 +207,14 @@ $ADMIN->add('server', new admin_externalpage('phpinfo', get_string('phpinfo'), "
 
 // "performance" settingpage
 $temp = new admin_settingpage('performance', get_string('performance', 'admin'));
-$temp->add(new admin_setting_configselect('cachetype', get_string('cachetype', 'admin'),
+$temp->add(new admin_setting_special_selectsetup('cachetype', get_string('cachetype', 'admin'),
                                           get_string('configcachetype', 'admin'), '',
                                           array( '' => get_string('none'),
                                                  'internal' => 'internal',
                                                  'memcached' => 'memcached',
                                                  'eaccelerator' => 'eaccelerator')));
 // NOTE: $CFG->rcache is forced to bool in lib/setup.php
-$temp->add(new admin_setting_configselect('rcache', get_string('rcache', 'admin'),
+$temp->add(new admin_setting_special_selectsetup('rcache', get_string('rcache', 'admin'),
                                           get_string('configrcache', 'admin'), 0,
                                           array( '0' => get_string('no'),
                                                  '1' => get_string('yes'))));

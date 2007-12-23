@@ -2383,6 +2383,25 @@ class admin_setting_special_adminseesall extends admin_setting_configcheckbox {
 }
 
 /**
+ * Special select for settings that are altered in setup.php and can not be altered on the fly
+ */
+class admin_setting_special_selectsetup extends admin_setting_configselect {
+    function get_setting() {
+        // read directly from db!
+        return get_config(NULL, $this->name);
+    }
+
+    function write_setting($data) {
+        global $CFG;
+        // do not change active CFG setting!
+        $current = $CFG->{$this->name};
+        $result = parent::write_setting($data);
+        $CFG->{$this->name} = $current;
+        return $result;
+    }
+}
+
+/**
  * Special select for frontpage - stores data in course table
  */
 class admin_setting_sitesetselect extends admin_setting_configselect {
@@ -2402,7 +2421,6 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
         $record->timemodified = time();
         return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
     }
-
 }
 
 /**
