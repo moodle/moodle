@@ -47,6 +47,10 @@ class HTMLPurifier_URIFilter_MakeAbsolute extends HTMLPurifier_URIFilter
             // absolute URI already: don't change
             if (!is_null($uri->host)) return true;
             $scheme_obj = $uri->getSchemeObj($config, $context);
+            if (!$scheme_obj) {
+                // scheme not recognized
+                return false;
+            }
             if (!$scheme_obj->hierarchical) {
                 // non-hierarchal URI with explicit scheme, don't change
                 return true;

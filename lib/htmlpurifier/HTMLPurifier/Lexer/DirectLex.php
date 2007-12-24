@@ -160,9 +160,15 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                 
                 $segment = substr($html, $cursor, $strlen_segment);
                 
+                if ($segment === false) {
+                    // somehow, we attempted to access beyond the end of
+                    // the string, defense-in-depth, reported by Nate Abele
+                    break;
+                }
+                
                 // Check if it's a comment
                 if (
-                    substr($segment, 0, 3) == '!--'
+                    substr($segment, 0, 3) === '!--'
                 ) {
                     // re-determine segment length, looking for -->
                     $position_comment_end = strpos($html, '-->', $cursor);
@@ -237,7 +243,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                 // trailing slash. Remember, we could have a tag like <br>, so
                 // any later token processing scripts must convert improperly
                 // classified EmptyTags from StartTags.
-                $is_self_closing= (strrpos($segment,'/') === $strlen_segment-1);
+                $is_self_closing = (strrpos($segment,'/') === $strlen_segment-1);
                 if ($is_self_closing) {
                     $strlen_segment--;
                     $segment = substr($segment, 0, $strlen_segment);

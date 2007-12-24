@@ -26,8 +26,6 @@ class HTMLPurifier_Lexer_PH5P extends HTMLPurifier_Lexer_DOMLex {
     
 }
 
-// begin PHP5P source code here
-
 /*
 
 Copyright 2007 Jeroen van der Meer <http://jero.net/> 
@@ -3722,7 +3720,7 @@ class HTML5TreeConstructer {
         }
     }
 
-    private function generateImpliedEndTags(array $exclude = array()) {
+    private function generateImpliedEndTags($exclude = array()) {
         /* When the steps below require the UA to generate implied end tags,
         then, if the current node is a dd element, a dt element, an li element,
         a p element, a td element, a th  element, or a tr element, the UA must
@@ -3736,7 +3734,8 @@ class HTML5TreeConstructer {
         }
     }
 
-    private function getElementCategory($name) {
+    private function getElementCategory($node) {
+        $name = $node->tagName;
         if(in_array($name, $this->special))
             return self::SPECIAL;
 
@@ -3884,3 +3883,4 @@ class HTML5TreeConstructer {
         return $this->dom;
     }
 }
+?>

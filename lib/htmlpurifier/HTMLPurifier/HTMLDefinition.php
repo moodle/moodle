@@ -236,13 +236,26 @@ class HTMLPurifier_HTMLDefinition extends HTMLPurifier_Definition
     /**
      * Adds a custom element to your HTML definition
      * @note See HTMLPurifier_HTMLModule::addElement for detailed 
-     *       parameter descriptions.
+     *       parameter and return value descriptions.
      */
-    function addElement($element_name, $type, $contents, $attr_collections, $attributes) {
+    function &addElement($element_name, $type, $contents, $attr_collections, $attributes) {
         $module =& $this->getAnonymousModule();
         // assume that if the user is calling this, the element
         // is safe. This may not be a good idea
-        $module->addElement($element_name, true, $type, $contents, $attr_collections, $attributes);
+        $element =& $module->addElement($element_name, true, $type, $contents, $attr_collections, $attributes);
+        return $element;
+    }
+    
+    /**
+     * Adds a blank element to your HTML definition, for overriding
+     * existing behavior
+     * @note See HTMLPurifier_HTMLModule::addBlankElement for detailed
+     *       parameter and return value descriptions.
+     */
+    function &addBlankElement($element_name) {
+        $module  =& $this->getAnonymousModule();
+        $element =& $module->addBlankElement($element_name);
+        return $element;
     }
     
     /**

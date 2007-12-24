@@ -116,6 +116,7 @@ class HTMLPurifier_Strategy_RemoveForeignElements extends HTMLPurifier_Strategy
                     // mostly everything's good, but
                     // we need to make sure required attributes are in order
                     if (
+                        ($token->type === 'start' || $token->type === 'empty') &&
                         $definition->info[$token->name]->required_attr &&
                         ($token->name != 'img' || $remove_invalid_img) // ensure config option still works
                     ) {
@@ -134,7 +135,6 @@ class HTMLPurifier_Strategy_RemoveForeignElements extends HTMLPurifier_Strategy
                         $token->armor['ValidateAttributes'] = true;
                     }
                     
-                    // CAN BE GENERICIZED
                     if (isset($hidden_elements[$token->name]) && $token->type == 'start') {
                         $textify_comments = $token->name;
                     } elseif ($token->name === $textify_comments && $token->type == 'end') {
