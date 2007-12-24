@@ -350,7 +350,7 @@ if ($INSTALL['stage'] == DATABASE) {
         if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
             /// The following doesn't seem to work but we're working on it
             /// If you come up with a solution for creating a database in MySQL
-            /// feel free to put it in and let us know
+            /// feel free to put it in and let us know - see MDL-9609
             if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) {
                 switch ($INSTALL['dbtype']) {   /// Try to create a database
                     case 'mysql':
@@ -1282,10 +1282,11 @@ function toggledbinfo() {
 }
 
 /**
- * Add slashes for single quotes so they can be
- * included in single quoted string
+ * Add slashes for single quotes and backslashes
+ * so they can be included in single quoted string
+ * (for config.php)
  */
 function addsingleslashes($input){
-    return str_replace("'", "\'", $input);
+    return preg_replace("/(['\\\])/", "\\\\$1", $input);
 }
 ?>
