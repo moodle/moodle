@@ -13,11 +13,14 @@ if (version_compare(PHP_VERSION, "5", ">=")) {
 }
 
 HTMLPurifier_ConfigSchema::define(
-    'Core', 'AcceptFullDocuments', true, 'bool',
-    'This parameter determines whether or not the filter should accept full '.
-    'HTML documents, not just HTML fragments.  When on, it will '.
-    'drop all sections except the content between body.'
-);
+    'Core', 'ConvertDocumentToFragment', true, 'bool', '
+This parameter determines whether or not the filter should convert
+input that is a full document with html and body tags to a fragment
+of just the contents of a body tag. This parameter is simply something
+HTML Purifier can do during an edge-case: for most inputs, this
+processing is not necessary.
+');
+HTMLPurifier_ConfigSchema::defineAlias('Core', 'AcceptFullDocuments', 'Core', 'ConvertDocumentToFragment');
 
 HTMLPurifier_ConfigSchema::define(
     'Core', 'LexerImpl', null, 'mixed/null', '
@@ -316,7 +319,7 @@ class HTMLPurifier_Lexer
     function normalize($html, $config, &$context) {
         
         // extract body from document if applicable
-        if ($config->get('Core', 'AcceptFullDocuments')) {
+        if ($config->get('Core', 'ConvertDocumentToFragment')) {
             $html = $this->extractBody($html);
         }
         

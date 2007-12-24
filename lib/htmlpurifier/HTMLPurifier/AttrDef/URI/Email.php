@@ -1,7 +1,6 @@
 <?php
 
 require_once 'HTMLPurifier/AttrDef.php';
-require_once 'HTMLPurifier/AttrDef/URI/Email/SimpleCheck.php';
 
 class HTMLPurifier_AttrDef_URI_Email extends HTMLPurifier_AttrDef
 {
@@ -15,3 +14,5 @@ class HTMLPurifier_AttrDef_URI_Email extends HTMLPurifier_AttrDef
     
 }
 
+// sub-implementations
+require_once 'HTMLPurifier/AttrDef/URI/Email/SimpleCheck.php';

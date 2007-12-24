@@ -6,10 +6,6 @@ require_once 'HTMLPurifier/IDAccumulator.php';
 
 require_once 'HTMLPurifier/AttrValidator.php';
 
-HTMLPurifier_ConfigSchema::define(
-    'Attr', 'IDBlacklist', array(), 'list',
-    'Array of IDs not allowed in the document.');
-
 /**
  * Validate all attributes in the tokens.
  */
@@ -18,11 +14,6 @@ class HTMLPurifier_Strategy_ValidateAttributes extends HTMLPurifier_Strategy
 {
     
     function execute($tokens, $config, &$context) {
-        
-        // setup id_accumulator context
-        $id_accumulator = new HTMLPurifier_IDAccumulator();
-        $id_accumulator->load($config->get('Attr', 'IDBlacklist'));
-        $context->register('IDAccumulator', $id_accumulator);
         
         // setup validator
         $validator = new HTMLPurifier_AttrValidator();
@@ -44,8 +35,6 @@ class HTMLPurifier_Strategy_ValidateAttributes extends HTMLPurifier_Strategy
             
             $tokens[$key] = $token; // for PHP 4
         }
-        
-        $context->destroy('IDAccumulator');
         $context->destroy('CurrentToken');
         
         return $tokens;

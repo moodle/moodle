@@ -15,7 +15,10 @@ class HTMLPurifier_ChildDef_Optional extends HTMLPurifier_ChildDef_Required
     var $type = 'optional';
     function validateChildren($tokens_of_children, $config, &$context) {
         $result = parent::validateChildren($tokens_of_children, $config, $context);
-        if ($result === false) return array();
+        if ($result === false) {
+            if (empty($tokens_of_children)) return true;
+            else return array();
+        }
         return $result;
     }
 }

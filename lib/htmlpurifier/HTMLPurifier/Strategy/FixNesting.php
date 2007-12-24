@@ -195,7 +195,7 @@ class HTMLPurifier_Strategy_FixNesting extends HTMLPurifier_Strategy
             //################################################################//
             // Process result by interpreting $result
             
-            if ($result === true) {
+            if ($result === true || $child_tokens === $result) {
                 // leave the node as is
                 
                 // register start token as a parental node start

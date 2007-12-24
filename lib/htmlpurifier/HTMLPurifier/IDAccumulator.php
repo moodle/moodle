@@ -1,11 +1,15 @@
 <?php
 
+HTMLPurifier_ConfigSchema::define(
+    'Attr', 'IDBlacklist', array(), 'list',
+    'Array of IDs not allowed in the document.'
+);
+
 /**
  * Component of HTMLPurifier_AttrContext that accumulates IDs to prevent dupes
  * @note In Slashdot-speak, dupe means duplicate.
- * @note This class does not accept $config or $context, thus, it is the
- *       burden of the callee to register the appropriate errors or
- *       configuration.
+ * @note The default constructor does not accept $config or $context objects:
+ *       use must use the static build() factory method to perform initialization.
  */
 class HTMLPurifier_IDAccumulator
 {
@@ -15,6 +19,19 @@ class HTMLPurifier_IDAccumulator
      * @public
      */
     var $ids = array();
+    
+    /**
+     * Builds an IDAccumulator, also initializing the default blacklist
+     * @param $config Instance of HTMLPurifier_Config
+     * @param $context Instance of HTMLPurifier_Context
+     * @return Fully initialized HTMLPurifier_IDAccumulator
+     * @static
+     */
+    function build($config, &$context) {
+        $id_accumulator = new HTMLPurifier_IDAccumulator();
+        $id_accumulator->load($config->get('Attr', 'IDBlacklist'));
+        return $id_accumulator;
+    }
     
     /**
      * Add an ID to the lookup table.

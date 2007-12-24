@@ -35,7 +35,6 @@ require_once 'HTMLPurifier/HTMLModule/Object.php';
 require_once 'HTMLPurifier/HTMLModule/Tidy.php';
 require_once 'HTMLPurifier/HTMLModule/Tidy/XHTMLAndHTML4.php';
 require_once 'HTMLPurifier/HTMLModule/Tidy/XHTML.php';
-require_once 'HTMLPurifier/HTMLModule/Tidy/XHTMLStrict.php';
 require_once 'HTMLPurifier/HTMLModule/Tidy/Proprietary.php';
 
 HTMLPurifier_ConfigSchema::define(
@@ -209,7 +208,7 @@ class HTMLPurifier_HTMLModuleManager
         $this->doctypes->register(
             'XHTML 1.0 Strict', true,
             array_merge($common, $xml, $non_xml),
-            array('Tidy_Strict', 'Tidy_XHTML', 'Tidy_XHTMLStrict', 'Tidy_Proprietary'),
+            array('Tidy_Strict', 'Tidy_XHTML', 'Tidy_Strict', 'Tidy_Proprietary'),
             array(),
             '-//W3C//DTD XHTML 1.0 Strict//EN',
             'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'
@@ -218,7 +217,7 @@ class HTMLPurifier_HTMLModuleManager
         $this->doctypes->register(
             'XHTML 1.1', true,
             array_merge($common, $xml, array('Ruby')),
-            array('Tidy_Strict', 'Tidy_XHTML', 'Tidy_Proprietary', 'Tidy_XHTMLStrict'), // Tidy_XHTML1_1
+            array('Tidy_Strict', 'Tidy_XHTML', 'Tidy_Proprietary', 'Tidy_Strict'), // Tidy_XHTML1_1
             array(),
             '-//W3C//DTD XHTML 1.1//EN',
             'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'

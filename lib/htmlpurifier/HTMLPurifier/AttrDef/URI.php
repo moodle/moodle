@@ -102,7 +102,7 @@ class HTMLPurifier_AttrDef_URI extends HTMLPurifier_AttrDef
             $result = $uri->validate($config, $context);
             if (!$result) break;
             
-            // chained validation
+            // chained filtering
             $uri_def =& $config->getDefinition('URI');
             $result = $uri_def->filter($uri, $config, $context);
             if (!$result) break;

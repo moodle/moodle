@@ -4,6 +4,9 @@
  * Injects tokens into the document while parsing for well-formedness.
  * This enables "formatter-like" functionality such as auto-paragraphing,
  * smiley-ification and linkification to take place.
+ * 
+ * @todo Allow injectors to request a re-run on their output. This 
+ *       would help if an operation is recursive.
  */
 class HTMLPurifier_Injector
 {
@@ -106,6 +109,13 @@ class HTMLPurifier_Injector
      * Handler that is called when a start or empty token is processed
      */
     function handleElement(&$token) {}
+    
+    /**
+     * Notifier that is called when an end token is processed
+     * @note This differs from handlers in that the token is read-only
+     */
+    function notifyEnd($token) {}
+    
     
 }
 

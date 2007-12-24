@@ -23,6 +23,13 @@ class HTMLPurifier_AttrValidator
         $definition = $config->getHTMLDefinition();
         $e =& $context->get('ErrorCollector', true);
         
+        // initialize IDAccumulator if necessary
+        $ok =& $context->get('IDAccumulator', true);
+        if (!$ok) {
+            $id_accumulator = HTMLPurifier_IDAccumulator::build($config, $context);
+            $context->register('IDAccumulator', $id_accumulator);
+        }
+        
         // initialize CurrentToken if necessary
         $current_token =& $context->get('CurrentToken', true);
         if (!$current_token) $context->register('CurrentToken', $token);

@@ -6,19 +6,27 @@ HTMLPurifier_ConfigSchema::define(
     'AutoFormat', 'AutoParagraph', false, 'bool', '
 <p>
   This directive turns on auto-paragraphing, where double newlines are
-  converted in to paragraphs whenever possible. Auto-paragraphing
-  applies when:
+  converted in to paragraphs whenever possible. Auto-paragraphing:
 </p>
 <ul>
-  <li>There are inline elements or text in the root node</li>
-  <li>There are inline elements or text with double newlines or
-      block elements in nodes that allow paragraph tags</li>
-  <li>There are double newlines in paragraph tags</li>
+  <li>Always applies to inline elements or text in the root node,</li>
+  <li>Applies to inline elements or text with double newlines in nodes
+      that allow paragraph tags,</li>
+  <li>Applies to double newlines in paragraph tags</li>
 </ul>
 <p>
   <code>p</code> tags must be allowed for this directive to take effect.
   We do not use <code>br</code> tags for paragraphing, as that is
   semantically incorrect.
+</p>
+<p>
+  To prevent auto-paragraphing as a content-producer, refrain from using
+  double-newlines except to specify a new paragraph or in contexts where
+  it has special meaning (whitespace usually has no meaning except in
+  tags like <code>pre</code>, so this should not be difficult.) To prevent
+  the paragraphing of inline text adjacent to block elements, wrap them
+  in <code>div</code> tags (the behavior is slightly different outside of
+  the root node.)
 </p>
 <p>
   This directive has been available since 2.0.1.
@@ -62,19 +70,27 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
                 $ok = false;
                 // test if up-coming tokens are either block or have
                 // a double newline in them
+                $nesting = 0;
                 for ($i = $this->inputIndex + 1; isset($this->inputTokens[$i]); $i++) {
                     if ($this->inputTokens[$i]->type == 'start'){
                         if (!$this->_isInline($this->inputTokens[$i])) {
-                            $ok = true;
+                            // we haven't found a double-newline, and
+                            // we've hit a block element, so don't paragraph
+                            $ok = false;
+                            break;
                         }
-                        break;
+                        $nesting++;
                     }
-                    if ($this->inputTokens[$i]->type == 'end') break;
+                    if ($this->inputTokens[$i]->type == 'end') {
+                        if ($nesting <= 0) break;
+                        $nesting--;
+                    }
                     if ($this->inputTokens[$i]->type == 'text') {
+                        // found it!
                         if (strpos($this->inputTokens[$i]->data, "\n\n") !== false) {
                             $ok = true;
+                            break;
                         }
-                        if (!$this->inputTokens[$i]->is_whitespace) break;
                     }
                 }
                 if ($ok) {
