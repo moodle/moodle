@@ -7490,25 +7490,33 @@ function apd_get_profiling() {
     return shell_exec('pprofp -u ' . ini_get('apd.dumpdir') . '/pprof.' . getmypid() . '.*');
 }
 
+/**
+ * Delete directory or only it's content
+ * @param string $dir directory path
+ * @param bool $content_only
+ * @return bool success, true also if dir does not exist
+ */
 function remove_dir($dir, $content_only=false) {
-    // if content_only=true then delete all but
-    // the directory itself
-
+    if (!file_exists($dir)) {
+        // nothing to do
+        return true;
+    }
     $handle = opendir($dir);
+    $result = true;
     while (false!==($item = readdir($handle))) {
         if($item != '.' && $item != '..') {
             if(is_dir($dir.'/'.$item)) {
-                remove_dir($dir.'/'.$item);
+                $result = remove_dir($dir.'/'.$item) && $result;
             }else{
-                unlink($dir.'/'.$item);
+                $result = unlink($dir.'/'.$item) && $result;
             }
         }
     }
     closedir($handle);
     if ($content_only) {
-        return true;
+        return $result;
     }
-    return rmdir($dir);
+    return rmdir($dir); // if anything left the result will be false, noo need for && $result
 }
 
 /**
@@ -7524,7 +7532,7 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
 
     global $CFG;
 
-    if (strstr($dir, $CFG->dataroot) === false) {
+    if (strstr($dir, $CFG->dataroot.'/') === false) {
         debugging('Warning. Wrong call to check_dir_exists(). $dir must be an absolute path under $CFG->dataroot ("' . $dir . '" is incorrect)', DEBUG_DEVELOPER);
     }
 
