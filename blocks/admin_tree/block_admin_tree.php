@@ -34,7 +34,7 @@ class block_admin_tree extends block_base {
         global $CFG;
         $strfolderopened = s(get_string('folderopened'));
 
-        $this->tempcontent .= '<div class="depth'.$this->currentdepth.'"><a href="#" onclick="toggle(\'vh_div'.$this->divcounter.'\');return false">';
+        $this->tempcontent .= '<div class="depth'.$this->currentdepth.'"><a href="#" onclick="toggle(\''.$this->divcounter.'\');return false">';
         $this->tempcontent .= '<span id="vh_div'.$this->divcounter.'indicator"><img src="'.$CFG->wwwroot.'/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" /></span> ';
         $this->tempcontent .= $visiblename.'</a></div><div id="vh_div'.$this->divcounter.'">'."\n";
         $this->currentdepth++;
@@ -78,7 +78,7 @@ class block_admin_tree extends block_base {
                 // check if the category we're currently printing is a parent category for the current page; if it is, we
                 // make a note (in the javascript) that it has to be expanded after the page has loaded
                 if ($this->section != '' and $this->pathtosection[count($this->pathtosection) - 1] == $content->name) {
-                    $this->expandjavascript .= 'expand("vh_div'.($this->divcounter).'");'."\n";
+                    $this->expandjavascript .= 'expand('.$this->divcounter.');'."\n";
                     array_pop($this->pathtosection);
                 }
 
@@ -129,84 +129,90 @@ class block_admin_tree extends block_base {
         }
 
         if ($this->tempcontent !== '') {
-            $strfolderopened = s(get_string('folderopened'));
-            $strfolderclosed = s(get_string('folderclosed'));
+            $closedimg = '<img src="'.$CFG->wwwroot.'/blocks/admin_tree/closed.gif" alt="'.s(get_string('folderclosed')).'" />';
+            $openedimg = '<img src="'.$CFG->wwwroot.'/blocks/admin_tree/open.gif" alt="'.s(get_string('folderopened')).'" />';
 
             $this->content = new object();
-            $this->content->text  = '<script type="text/javascript">'."\n";
-            $this->content->text .= '//<![CDATA[' . "\n";
-            $this->content->text .= 'var vh_numdivs = ' . ($this->divcounter - 1) . ';' . "\n";
-            $this->content->text .= 'var vh_content = new Array();' . "\n";
-            $this->content->text .= 'function getdiv(divid) {' . "\n";
-            $this->content->text .= '  if (document.getElementById) {' . "\n";
-            $this->content->text .= '    return document.getElementById(divid);' . "\n";
-            $this->content->text .= '  } else if (window[divid]) {' . "\n";
-            $this->content->text .= '    return window[divid];' . "\n";
-            $this->content->text .= '  }' . "\n";
-            $this->content->text .= '  return null;' . "\n";
-            $this->content->text .= '}' . "\n";
+            $this->content->text  = '
+<script type="text/javascript">
+//<![CDATA[
+var vh_numdivs = '.($this->divcounter - 1).';
+var parkplatz  = new Array();
+for (var i=1; i<=vh_numdivs; i++) {
+    parkplatz[i] = null;
+}
 
-            $this->content->text .= 'function toggle(divid) {' . "\n";
-            $this->content->text .= '  if (getdiv(divid).innerHTML == "") {' . "\n";
-            $this->content->text .= '    getdiv(divid).innerHTML = vh_content[divid];' . "\n";
-            $this->content->text .= '    getdiv(divid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" />\';' . "\n";
-            $this->content->text .= '  } else {' . "\n";
-            $this->content->text .= '    vh_content[divid] = getdiv(divid).innerHTML;' . "\n";
-            $this->content->text .= '    getdiv(divid).innerHTML = "";' . "\n";
-            $this->content->text .= '    getdiv(divid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" alt="'.$strfolderclosed.'" />\';' . "\n";
-            $this->content->text .= '  }' . "\n";
-            $this->content->text .= '}' . "\n";
+function toggle(i) {
+    i = parseInt(i);
+    if (parkplatz[i] === null) {
+        collapse(i);
+    } else {
+        expand(i);
+    }
+}
 
-            $this->content->text .= 'function collapse(divid) {' . "\n";
-            $this->content->text .= '  if (getdiv(divid).innerHTML !== "") {' . "\n";
-            $this->content->text .= '    vh_content[divid] = getdiv(divid).innerHTML;' . "\n";
-            $this->content->text .= '    getdiv(divid).innerHTML = "";' . "\n";
-            $this->content->text .= '    getdiv(divid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" alt="'.$strfolderclosed.'" />\';' . "\n";
-            $this->content->text .= '  }' . "\n";
-            $this->content->text .= '}' . "\n";
+function collapse(i) {
+    if (parkplatz[i] !== null) {
+        return;
+    }
+    var obj = document.getElementById("vh_div"+String(i));
+    if (obj === null) {
+        return;
+    }
+    var nothing = document.createElement("span");
+    nothing.setAttribute("id", "vh_div"+String(i));
+    parkplatz[i] = obj;
+    obj.parentNode.replaceChild(nothing, obj);
+    var icon = document.getElementById("vh_div"+String(i)+"indicator");
+    icon.innerHTML = "'.addslashes_js($closedimg).'";
+}
 
-            $this->content->text .= 'function expand(divid) {' . "\n";
-            $this->content->text .= '  getdiv(divid).innerHTML = vh_content[divid];' . "\n";
-            $this->content->text .= '  getdiv(divid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" />\';' . "\n";
-            $this->content->text .= '}' . "\n";
+function expand(i) {
+    if (parkplatz[i] === null) {
+        return;
+    }
+    var nothing = document.getElementById("vh_div"+String(i));
+    var obj = parkplatz[i];
+    parkplatz[i] = null;
+    nothing.parentNode.replaceChild(obj, nothing);
+    var icon = document.getElementById("vh_div"+String(i)+"indicator");
+    icon.innerHTML = "'.addslashes_js($openedimg).'";
+}
 
-            $this->content->text .= 'function expandall() {' . "\n";
-            $this->content->text .= '  for (i = 1; i <= vh_numdivs; i++) {' . "\n";
-            $this->content->text .= '    expand("vh_div" + String(i));' . "\n";
-            $this->content->text .= '  }' . "\n";
-            $this->content->text .= '}' . "\n";
+function expandall() {
+    for (i=1; i<=vh_numdivs; i++) {
+        expand(i);
+    }
+}
 
-            $this->content->text .= 'function collapseall() {' . "\n";
-            $this->content->text .= '  for (i = vh_numdivs; i > 0; i--) {' . "\n";
-            $this->content->text .= '    collapse("vh_div" + String(i));' . "\n";
-            $this->content->text .= '  }' . "\n";
-            $this->content->text .= '}' . "\n";
+function collapseall() {
+    for (var i=vh_numdivs; i>0; i--) {
+        collapse(i);
+    }
+}
 
-            $this->content->text .= '//]]>' . "\n";
-            $this->content->text .= '</script>' . "\n";
-            $this->content->text .= '<div class="admintree">' . "\n";
+//]]>
+</script>
+<div class="admintree">
 
-            $this->content->text .= $this->tempcontent;
+'.$this->tempcontent.'
 
-            $this->content->text .= '</div>' . "\n";
-            $this->content->text .= '<script type="text/javascript">' . "\n";
-            $this->content->text .= '//<![CDATA[' . "\n";
-            $this->content->text .= 'collapseall();' . "\n";
-            $this->content->text .= $this->expandjavascript;
-
-            $this->content->text .= '//]]>' . "\n";
-            $this->content->text .= '</script>' . "\n";
-
-            $searchcontent = $adminroot->search;
+</div>
+<script type="text/javascript">
+//<![CDATA[
+collapseall();
+'.$this->expandjavascript.';
+//]]>
+</script>';
 
             $this->content->footer = '<div class="adminsearchform">'.
                                      '<form action="'.$CFG->wwwroot.'/'.$CFG->admin.'/search.php" method="get"><div>'.
                                      '<label for="query" class="accesshide">'.get_string('searchinsettings', 'admin').'</label>'.
-                                     '<input type="text" name="query" id="query" size="8" value="'.s($searchcontent).'" />'.
+                                     '<input type="text" name="query" id="query" size="8" value="'.s($adminroot->search).'" />'.
                                      '<input type="submit" value="'.get_string('search').'" /></div>'.
                                      '</form></div>';
         } else {
-            $this->content = new stdClass;
+            $this->content = new object();
             $this->content->text = '';
         }
 
