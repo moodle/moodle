@@ -1926,7 +1926,7 @@ function forum_subscribed_users($course, $forum, $groupid=0, $cache=false) {
         $results = get_course_users($course->id);     // Otherwise get everyone in the course
     } else {
         $results = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest, u.emailstop, u.imagealt,
-                                   u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.theme, u.lang, u.trackforums
+                                   u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.theme, u.lang, u.trackforums, u.mnethostid
                               FROM {$CFG->prefix}user u,
                                    {$CFG->prefix}forum_subscriptions s $grouptables
                              WHERE s.forum = '$forum->id'
