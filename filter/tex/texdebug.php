@@ -82,7 +82,11 @@
 
     // Action: Show Tex command line output
     if ($action=='ShowOutputTex') {
-        TexOutput($texexp);
+        if (debugging()) {
+            TexOutput($texexp);
+        } else {
+            echo "Can not output detailed information due to security concerns, please turn on debug mode first.";
+        }
         exit;
     }
 
@@ -140,7 +144,7 @@
         if (file_exists($pathname)) {
             send_file($pathname, $image);
 
-        } else {
+        } else if (debugging()) {
             $ecmd = "$cmd 2>&1";
             echo `$ecmd` . "<br />\n";
             echo "The shell command<br />$cmd<br />returned status = $status<br />\n";
@@ -166,6 +170,8 @@
                 echo "mimetex executable $commandpath not found!<br />";
             }
             echo "Image not found!";
+        } else {
+            echo "Can not output detailed information due to security concerns, please turn on debug mode first.";
         }
     }
 
@@ -284,18 +290,18 @@
             </center>
            <p>The following tests are available:</p>
            <ol>
-           <li><input type="radio" name="action" value="ShowDB" />
-               See the cache_filters database entry for this expression (if any).</li>
-           <li><input type="radio" name="DeleteDB" value="DeleteDB" />
-               Delete the cache_filters database entry for this expression (if any).</li>
-           <li><input type="radio" name="action" value="ShowImageMimetex" />
-               Show a graphic image of the algebraic expression rendered with mimetex.</li>
-           <li><input type="radio" name="action" value="ShowImageTex" />
-               Show a graphic image of the algebraic expression rendered with Tex/Ghostscript.</li>
-           <li><input type="radio" name="action" value="ShowOutputTex" />
-               Show command execution output from the algebraic expression rendered with Tex/Ghostscript.</li>
-           <li><input type="radio" name="action" value="SlashArguments" />
-               Check slasharguments setting.</li>
+           <li><input type="radio" name="action" value="ShowDB" id="ShowDB" />
+               <label for="ShowDB">See the cache_filters database entry for this expression (if any).</label></li>
+           <li><input type="radio" name="DeleteDB" value="DeleteDB" id="DeleteDB" />
+               <label for="DeleteDB">Delete the cache_filters database entry for this expression (if any).</label></li>
+           <li><input type="radio" name="action" value="ShowImageMimetex" id="ShowImageMimetex  checked="checked" />
+               <label for="ShowImageMimetex">Show a graphic image of the algebraic expression rendered with mimetex.</label></li>
+           <li><input type="radio" name="action" value="ShowImageTex" id="ShowImageTex" />
+               <label for="ShowImageTex">Show a graphic image of the algebraic expression rendered with Tex/Ghostscript.</label></li>
+           <li><input type="radio" name="action" value="ShowOutputTex" id="ShowOutputTex" />
+               <label for="ShowOutputTex">Show command execution output from the algebraic expression rendered with Tex/Ghostscript.</label></li>
+           <li><input type="radio" name="action" value="SlashArguments" id="SlashArguments" />
+               <label for="SlashArguments">Check slasharguments setting.</label></li>
            </ol>
            <input type="submit" value="Do it!" />
           </form> <br /> <br />
