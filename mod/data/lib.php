@@ -767,13 +767,16 @@ function data_update_grades($data=null, $userid=0, $nullifnone=true) {
 
     if ($data != null) {
         if ($grades = data_get_user_grades($data, $userid)) {
-            grade_update('mod/data', $data->course, 'mod', 'data', $data->id, 0, $grades);
+            data_grade_item_update($data, $grades);
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
             $grade->userid   = $userid;
             $grade->rawgrade = NULL;
-            grade_update('mod/data', $data->course, 'mod', 'data', $data->id, 0, $grade);
+            data_grade_item_update($data, $grade);
+
+        } else {
+            data_grade_item_update($data);
         }
 
     } else {
@@ -782,9 +785,10 @@ function data_update_grades($data=null, $userid=0, $nullifnone=true) {
                  WHERE m.name='data' AND m.id=cm.module AND cm.instance=d.id";
         if ($rs = get_recordset_sql($sql)) {
             while ($data = rs_fetch_next_record($rs)) {
-                data_grade_item_update($data);
                 if ($data->assessed) {
                     data_update_grades($data, 0, false);
+                } else {
+                    data_grade_item_update($data);
                 }
             }
             rs_close($rs);

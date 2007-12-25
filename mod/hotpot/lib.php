@@ -1230,13 +1230,16 @@ function hotpot_update_grades($hotpot=null, $userid=0, $nullifnone=true) {
     }
     if ($hotpot) {
         if ($grades = hotpot_get_user_grades($hotpot, $userid)) {
-            grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, $grades);
+            hotpot_grade_item_update($hotpot, $grades);
 
         } else if ($userid && $nullifnone) {
             $grade = new object();
             $grade->userid   = $userid;
             $grade->rawgrade = null;
-            grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, $grade);
+            hotpot_grade_item_update($hotpot, $grade);
+
+        } else {
+            hotpot_grade_item_update($hotpot);            
         }
     } else {
         $sql = "SELECT h.*, cm.idnumber as cmidnumber
@@ -1244,7 +1247,6 @@ function hotpot_update_grades($hotpot=null, $userid=0, $nullifnone=true) {
                  WHERE m.name='hotpot' AND m.id=cm.module AND cm.instance=s.id";
         if ($rs = get_recordset_sql($sql)) {
             while ($hotpot = rs_fetch_next_record($rs)) {
-                hotpot_grade_item_update($hotpot);
                 hotpot_update_grades($hotpot, 0, false);
             }
             rs_close($rs);
@@ -1255,9 +1257,10 @@ function hotpot_update_grades($hotpot=null, $userid=0, $nullifnone=true) {
  * Update/create grade item for given hotpot
  *
  * @param object $hotpot object with extra cmidnumber
+ * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return object grade_item
  */
-function hotpot_grade_item_update($hotpot) {
+function hotpot_grade_item_update($hotpot, $grades=NULL) {
     global $CFG;
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
@@ -1278,7 +1281,7 @@ function hotpot_grade_item_update($hotpot) {
         $params['gradetype'] = GRADE_TYPE_NONE;
     }
 
-    return grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, NULL, $params);
+    return grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, $grades, $params);
 }
 /**
  * Delete grade item for given hotpot

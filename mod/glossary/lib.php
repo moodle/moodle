@@ -318,13 +318,16 @@ function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
 
     if ($glossary != null) {
         if ($grades = glossary_get_user_grades($glossary, $userid)) {
-            grade_update('mod/glossary', $glossary->course, 'mod', 'glossary', $glossary->id, 0, $grades);
+            glossary_grade_item_update($glossary, $grades);
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
             $grade->userid   = $userid;
             $grade->rawgrade = NULL;
-            grade_update('mod/glossary', $glossary->course, 'mod', 'glossary', $glossary->id, 0, $grade);
+            glossary_grade_item_update($glossary, $grade);
+
+        } else {
+            glossary_grade_item_update($glossary);
         }
 
     } else {
@@ -333,9 +336,10 @@ function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
                  WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id";
         if ($rs = get_recordset_sql($sql)) {
             while ($glossary = rs_fetch_next_record($rs)) {
-                glossary_grade_item_update($glossary);
                 if ($glossary->assessed) {
                     glossary_update_grades($glossary, 0, false);
+                } else {
+                    glossary_grade_item_update($glossary);
                 }
             }
             rs_close($rs);

@@ -299,6 +299,9 @@ function quiz_update_grades($quiz=null, $userid=0, $nullifnone=true) {
             $grade->userid   = $userid;
             $grade->rawgrade = NULL;
             quiz_grade_item_update($quiz, $grade);
+
+        } else {
+            quiz_grade_item_update($quiz);
         }
 
     } else {
