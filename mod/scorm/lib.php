@@ -461,13 +461,16 @@ function scorm_update_grades($scorm=null, $userid=0, $nullifnone=true) {
 
     if ($scorm != null) {
         if ($grades = scorm_get_user_grades($scorm, $userid)) {
-            grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, $grades[$userid]);
+            scorm_grade_item_update($scorm, $grades[$userid]);
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
             $grade->userid   = $userid;
             $grade->rawgrade = NULL;
-            grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, $grade);
+            scorm_grade_item_update($scorm, $grade);
+
+        } else {
+            scorm_grade_item_update($scorm);
         }
 
     } else {
@@ -476,7 +479,6 @@ function scorm_update_grades($scorm=null, $userid=0, $nullifnone=true) {
                  WHERE m.name='scorm' AND m.id=cm.module AND cm.instance=s.id";
         if ($rs = get_recordset_sql($sql)) {
             while ($scorm = rs_fetch_next_record($rs)) {
-                scorm_grade_item_update($scorm);
                 scorm_update_grades($scorm, 0, false);
             }
             rs_close($rs);

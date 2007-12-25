@@ -2147,7 +2147,7 @@ function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true)
             }
             assignment_grade_item_update($assignment, $grades);
         } else {
-            assignment_grade_item_update($assignment, NULL);
+            assignment_grade_item_update($assignment);
         }
 
     } else {

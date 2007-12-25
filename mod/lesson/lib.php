@@ -378,13 +378,16 @@ function lesson_update_grades($lesson=null, $userid=0, $nullifnone=true) {
 
     if ($lesson != null) {
         if ($grades = lesson_get_user_grades($lesson, $userid)) {
-            grade_update('mod/lesson', $lesson->course, 'mod', 'lesson', $lesson->id, 0, $grades);
+            lesson_grade_item_update($lesson, $grades);
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
             $grade->userid   = $userid;
             $grade->rawgrade = NULL;
-            grade_update('mod/lesson', $lesson->course, 'mod', 'lesson', $lesson->id, 0, $grade);
+            lesson_grade_item_update($lesson, $grade);
+
+        } else {
+            lesson_grade_item_update($lesson);
         }
 
     } else {
@@ -393,9 +396,10 @@ function lesson_update_grades($lesson=null, $userid=0, $nullifnone=true) {
                  WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id";
         if ($rs = get_recordset_sql($sql)) {
             while ($lesson = rs_fetch_next_record($rs)) {
-                lesson_grade_item_update($lesson);
                 if ($lesson->grade != 0) {
                     lesson_update_grades($lesson, 0, false);
+                } else {
+                    lesson_grade_item_update($lesson);
                 }
             }
             rs_close($rs);

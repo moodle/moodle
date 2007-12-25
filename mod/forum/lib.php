@@ -1123,13 +1123,16 @@ function forum_update_grades($forum=null, $userid=0, $nullifnone=true) {
     if ($forum != null) {
         require_once($CFG->libdir.'/gradelib.php');
         if ($grades = forum_get_user_grades($forum, $userid)) {
-            grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 0, $grades);
+            forum_grade_item_update($forum, $grades);
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
             $grade->userid   = $userid;
             $grade->rawgrade = NULL;
-            grade_update('mod/forum', $data->course, 'mod', 'forum', $forum->id, 0, $grade);
+            forum_grade_item_update($forum, $grade);
+
+        } else {
+            forum_grade_item_update($forum);
         }
 
     } else {
@@ -1138,9 +1141,10 @@ function forum_update_grades($forum=null, $userid=0, $nullifnone=true) {
                  WHERE m.name='forum' AND m.id=cm.module AND cm.instance=f.id";
         if ($rs = get_recordset_sql($sql)) {
             while ($forum = rs_fetch_next_record($rs)) {
-                forum_grade_item_update($forum);
                 if ($forum->assessed) {
                     forum_update_grades($forum, 0, false);
+                } else {
+                    forum_grade_item_update($forum);
                 }
             }
             rs_close($rs);
