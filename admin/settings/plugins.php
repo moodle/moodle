@@ -68,9 +68,10 @@ if ($hassiteconfig) {
     // "filtersettings" settingpage
     $temp = new admin_settingpage('managefilters', get_string('filtersettings', 'admin'));
     if ($ADMIN->fulltree) {
-        $temp->add(new admin_setting_managefilters());
-        $temp->add(new admin_setting_heading('managefilterscommonheading', get_string('commonsettings', 'admin'), ''));
-        $temp->add(new admin_setting_configselect('cachetext', get_string('cachetext', 'admin'), get_string('configcachetext', 'admin'), 60, array(604800 => get_string('numdays','',7),
+        $items = array();
+        $items[] = new admin_setting_managefilters();
+        $items[] = new admin_setting_heading('managefilterscommonheading', get_string('commonsettings', 'admin'), '');
+        $items[] = new admin_setting_configselect('cachetext', get_string('cachetext', 'admin'), get_string('configcachetext', 'admin'), 60, array(604800 => get_string('numdays','',7),
                                                                                                                                                86400 => get_string('numdays','',1),
                                                                                                                                                43200 => get_string('numhours','',12),
                                                                                                                                                10800 => get_string('numhours','',3),
@@ -90,13 +91,17 @@ if ($hassiteconfig) {
                                                                                                                                                120 => get_string('numminutes','',2),
                                                                                                                                                60 => get_string('numminutes','',1),
                                                                                                                                                30 => get_string('numseconds','',30),
-                                                                                                                                               0 => get_string('no'))));
-        $temp->add(new admin_setting_configselect('filteruploadedfiles', get_string('filteruploadedfiles', 'admin'), get_string('configfilteruploadedfiles', 'admin'), 0, array('0' => get_string('none'),
+                                                                                                                                               0 => get_string('no')));
+        $items[] = new admin_setting_configselect('filteruploadedfiles', get_string('filteruploadedfiles', 'admin'), get_string('configfilteruploadedfiles', 'admin'), 0, array('0' => get_string('none'),
                                                                                                                                                                                 '1' => get_string('allfiles'),
-                                                                                                                                                                                '2' => get_string('htmlfilesonly'))));
-        $temp->add(new admin_setting_configcheckbox('filtermatchoneperpage', get_string('filtermatchoneperpage', 'admin'), get_string('configfiltermatchoneperpage', 'admin'), 0));
-        $temp->add(new admin_setting_configcheckbox('filtermatchonepertext', get_string('filtermatchonepertext', 'admin'), get_string('configfiltermatchonepertext', 'admin'), 0));
-        $temp->add(new admin_setting_configcheckbox('filterall', get_string('filterall', 'admin'), get_string('configfilterall', 'admin'), 0));
+                                                                                                                                                                                '2' => get_string('htmlfilesonly')));
+        $items[] = new admin_setting_configcheckbox('filtermatchoneperpage', get_string('filtermatchoneperpage', 'admin'), get_string('configfiltermatchoneperpage', 'admin'), 0);
+        $items[] = new admin_setting_configcheckbox('filtermatchonepertext', get_string('filtermatchonepertext', 'admin'), get_string('configfiltermatchonepertext', 'admin'), 0);
+        $items[] = new admin_setting_configcheckbox('filterall', get_string('filterall', 'admin'), get_string('configfilterall', 'admin'), 0);
+        foreach ($items as $item) {
+            $item->set_updatedcallback('reset_text_filters_cache');
+            $temp->add($item);
+        }
     }
     $ADMIN->add('filtersettings', $temp);
 

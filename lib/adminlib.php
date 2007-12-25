@@ -1599,15 +1599,6 @@ class admin_setting {
 }
 
 /**
- * Dummy settings class - workaround for keeping empty categories visible
- */
-class admin_setting_dummy extends admin_setting {
-    function admin_setting_dummy() {
-        parent::admin_setting('dummy', 'dummy', 'dummy', NULL);
-    }
-}
-
-/**
  * No setting - just heading and text.
  */
 class admin_setting_heading extends admin_setting {

@@ -53,6 +53,8 @@ function tex_filter_get_cmd($pathname, $texexp) {
  */
 function filter_tex_updatedcallback($name) {
     global $CFG;
+    reset_text_filters_cache();
+
     if (file_exists("$CFG->dataroot/filter/tex")) {
         remove_dir("$CFG->dataroot/filter/tex");
     }
