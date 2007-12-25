@@ -1580,6 +1580,17 @@ function text_format_name( $key ) {
   return $value;
 }
 
+/**
+ * Resets all data related to filters, called during upgrade or when filter settings change.
+ * @return void
+ */
+function reset_text_filters_cache() {
+    global $CFG;
+
+    delete_records('cache_text');
+    $purifdir = $CFG->dataroot.'/cache/htmlpurifier';
+    remove_dir($purifdir, true);
+}
 
 /** Given a simple string, this function returns the string
  *  processed by enabled string filters if $CFG->filterall is enabled
@@ -1925,15 +1936,18 @@ function clean_text($text, $format=FORMAT_MOODLE) {
 function purify_html($text) {
     global $CFG;
 
+    // this can not be done only once because we sometimes need to reset the cache
+    $cachedir = $CFG->dataroot.'/cache/htmlpurifier/';
+    $status = check_dir_exists($cachedir, true, true);
+
     static $purifier = false;
-    if (!$purifier) {
-        make_upload_directory('cache/htmlpurifier', false);
+    if ($purifier === false) {
         require_once $CFG->libdir.'/htmlpurifier/HTMLPurifier.auto.php';
         $config = HTMLPurifier_Config::createDefault();
         $config->set('Core', 'AcceptFullDocuments', false);
         $config->set('Core', 'Encoding', 'UTF-8');
         $config->set('HTML', 'Doctype', 'XHTML 1.0 Transitional');
-        $config->set('Cache', 'SerializerPath', $CFG->dataroot.'/cache/htmlpurifier');
+        $config->set('Cache', 'SerializerPath', $cachedir);
         $config->set('URI', 'AllowedSchemes', array('http'=>1, 'https'=>1, 'ftp'=>1, 'irc'=>1, 'nntp'=>1, 'news'=>1, 'rtsp'=>1, 'teamspeak'=>1, 'gopher'=>1, 'mms'=>1));
         $purifier = new HTMLPurifier($config);
     }
@@ -2321,7 +2335,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     if (gettype($navigation) == 'string' && strlen($navigation) != 0 && $navigation != 'home') {
         debugging("print_header() was sent a string as 3rd ($navigation) parameter. "
-                . "This is deprecated in favour of an array built by build_navigation(). Please upgrade your code.");
+                . "This is deprecated in favour of an array built by build_navigation(). Please upgrade your code.", DEBUG_DEVELOPER);
     }
 
     $heading = format_string($heading); // Fix for MDL-8582

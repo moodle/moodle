@@ -94,8 +94,9 @@
         break;
     }
 
-    // save and return
+    // save, reset cache and return
     set_config('textfilters', implode(',', $activefilters));
+    reset_text_filters_cache();
     redirect($returnurl);
 
 ?>

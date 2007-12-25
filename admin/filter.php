@@ -51,6 +51,9 @@
                 set_config($name, stripslashes($value));
             }
         }
+
+        reset_text_filters_cache();
+
         redirect($returnurl);
         exit;
     }
