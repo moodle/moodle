@@ -131,12 +131,13 @@
 
 
     // AJAX-capable course format?
-    $CFG->useajax = false; 
+    $useajax = false; 
     $ajaxformatfile = $CFG->dirroot.'/course/format/'.$course->format.'/ajax.php';
     $bodytags = '';
 
-    if (file_exists($ajaxformatfile)) {      // Needs to exist otherwise no AJAX by default
+    if (empty($CFG->disablecourseajax) and file_exists($ajaxformatfile)) {      // Needs to exist otherwise no AJAX by default
 
+        // TODO: stop abusing CFG global here
         $CFG->ajaxcapable = false;           // May be overridden later by ajaxformatfile
         $CFG->ajaxtestedbrowsers = array();  // May be overridden later by ajaxformatfile
 
@@ -173,12 +174,12 @@
                 // function is called, since that function needs to set some
                 // stuff in the javascriptportal object.
                 $COURSE->javascriptportal = new jsportal();
-                $CFG->useajax = true;
+                $useajax = true;
             }
         }
     }
 
-    $CFG->blocksdrag = $CFG->useajax;   // this will add a new class to the header so we can style differently
+    $CFG->blocksdrag = $useajax;   // this will add a new class to the header so we can style differently
 
 
     $PAGE->print_header(get_string('course').': %fullname%', NULL, '', $bodytags);
@@ -218,7 +219,7 @@
 
 
     // Use AJAX?
-    if ($CFG->useajax && has_capability('moodle/course:manageactivities', $context)) {
+    if ($useajax && has_capability('moodle/course:manageactivities', $context)) {
         // At the bottom because we want to process sections and activities
         // after the relevant html has been generated. We're forced to do this
         // because of the way in which lib/ajax/ajaxcourse.js is written.
