@@ -100,7 +100,7 @@ if (!$dbcontrol->checkDB()) {
 }
 */
 // New regeneration
-mtrace("Deleting old index entries.");
+mtrace('Deleting old index entries.');
 delete_records(SEARCH_DATABASE_TABLE);
 
 //begin timer
