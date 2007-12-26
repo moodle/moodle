@@ -234,7 +234,6 @@ define('PARAM_BASE64',   0x20000);
  * PAGE_COURSE_VIEW is a definition of a page type. For more information on the page class see moodle/lib/pagelib.php.
  */
 define('PAGE_COURSE_VIEW', 'course-view');
-define('PAGE_MOD_VIEW', 'mod-view');
 
 /// Debug levels ///
 /** no warnings at all */
@@ -243,10 +242,10 @@ define ('DEBUG_NONE', 0);
 define ('DEBUG_MINIMAL', 5);
 /** E_ERROR | E_PARSE | E_WARNING | E_NOTICE */
 define ('DEBUG_NORMAL', 15);
-/** E_ALL without E_STRICT and E_RECOVERABLE_ERROR for now */
-define ('DEBUG_ALL', 2047);
+/** E_ALL without E_STRICT for now, do show recoverable fatal errors */
+define ('DEBUG_ALL', 6143);
 /** DEBUG_ALL with extra Moodle debug messages - (DEBUG_ALL | 32768) */
-define ('DEBUG_DEVELOPER', 34815);
+define ('DEBUG_DEVELOPER', 38911);
 
 /**
  * Blog access level constant declaration
