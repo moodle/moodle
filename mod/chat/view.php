@@ -62,9 +62,6 @@
         exit;
 
     } else {
-        $navigation = build_navigation('', $cm);
-        print_header_simple(format_string($chat->name), '', $navigation,
-                      '', '', true, '', navmenu($course, $cm));
         require_capability('mod/chat:chat', $context);
     }
 
