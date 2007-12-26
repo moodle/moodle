@@ -120,7 +120,7 @@ $string['auth_emailnoemail'] = 'Tried to send you an email but failed!';
 
 // FirstClass plugin
 $string['auth_fccreators'] = 'List of groups whose members are allowed to create new courses. Separate multiple groups with \';\'. Names must be spelled exactly as on FirstClass server. System is case-sensitive.';
-$string['auth_fcdescription'] = 'This method uses a FisrtClass server to check whether a given username and password is valid.';
+$string['auth_fcdescription'] = 'This method uses a FirstClass server to check whether a given username and password is valid.';
 $string['auth_fcfppport'] = 'Server port (3333 is the most common)';
 $string['auth_fchost'] = 'The FirstClass server address. Use the IP number or DNS name.';
 $string['auth_fcpasswd'] = 'Password for the account above.';
