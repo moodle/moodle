@@ -675,7 +675,7 @@
         }
 
     } else {
-        error("No action was specfied");
+        error("No action was specified");
     }
 
     require_login($course->id); // needed to setup proper $COURSE
