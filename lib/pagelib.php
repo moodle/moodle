@@ -366,7 +366,7 @@ class page_course extends page_base {
 
     // This function prints out the common part of the page's header.
     // You should NEVER print the header "by hand" in other code.
-    function print_header($title, $morebreadcrumbs=NULL, $meta='', $bodytags='') {
+    function print_header($title, $morebreadcrumbs=NULL, $meta='', $bodytags='', $extrabuttons='') {
         global $USER, $CFG;
 
         $this->init_full();
@@ -404,6 +404,11 @@ class page_course extends page_base {
         // (i.e., no breadcrumbs other than the default one added inside this function)
         $buttons = switchroles_form($this->courserecord->id) . update_course_icon($this->courserecord->id );
         $buttons = empty($morebreadcrumbs) ? $buttons : '&nbsp;';
+
+        // Add any extra buttons requested (by the resource module, for example)
+        if ($extrabuttons != '') {
+            $buttons = ($buttons == '&nbsp;') ? $extrabuttons : $buttons.$extrabuttons;
+        }
 
         print_header($title, $this->courserecord->fullname, $crumbtext,
                      '', $meta, true, $buttons, user_login_string($this->courserecord, $USER), false, $bodytags);

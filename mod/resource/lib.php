@@ -163,7 +163,8 @@ function display_course_blocks_start() {
     $morebreadcrumbs = array($this->strresources   => 'index.php?id='.$this->course->id,
                              $this->resource->name => '');
 
-    $PAGE->print_header($this->course->shortname.': %fullname%', $morebreadcrumbs);
+    $PAGE->print_header($this->course->shortname.': %fullname%', $morebreadcrumbs, "", "", 
+                        update_module_button($this->cm->id, $this->course->id, $this->strresource));
 
     echo '<table id="layout-table"><tr>';
 
