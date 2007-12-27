@@ -104,7 +104,8 @@ class resource_base {
         $morenavlinks = array($this->strresources   => 'index.php?id='.$this->course->id,
                                  $this->resource->name => '');
 
-        $PAGE->print_header($this->course->shortname.': %fullname%', $morenavlinks);
+        $PAGE->print_header($this->course->shortname.': %fullname%', $morenavlinks, "", "", 
+                            update_module_button($this->cm->id, $this->course->id, $this->strresource));
 
         echo '<table id="layout-table"><tr>';
 

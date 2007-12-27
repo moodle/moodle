@@ -409,7 +409,7 @@ class page_course extends page_base {
 
     // This function prints out the common part of the page's header.
     // You should NEVER print the header "by hand" in other code.
-    function print_header($title, $morenavlinks=NULL, $meta='', $bodytags='') {
+    function print_header($title, $morenavlinks=NULL, $meta='', $bodytags='', $extrabuttons='') {
         global $USER, $CFG;
 
         $this->init_full();
@@ -435,6 +435,11 @@ class page_course extends page_base {
             $buttons .= update_course_icon($this->courserecord->id );
         }
         $buttons = empty($morenavlinks) ? $buttons : '&nbsp;';
+
+        // Add any extra buttons requested (by the resource module, for example)
+        if ($extrabuttons != '') {
+            $buttons = ($buttons == '&nbsp;') ? $extrabuttons : $buttons.$extrabuttons;
+        }
 
         print_header($title, $this->courserecord->fullname, $navigation,
                      '', $meta, true, $buttons, user_login_string($this->courserecord, $USER), false, $bodytags);
@@ -589,9 +594,7 @@ class page_generic_activity extends page_base {
         if(empty($this->activityname)) {
             error('Page object derived from page_generic_activity but did not define $this->activityname');
         }
-        $module = get_record('modules', 'name', $this->activityname);
-        $this->modulerecord = get_record('course_modules', 'module', $module->id, 'instance', $this->id);
-        if(empty($this->modulerecord)) {
+        if (!$this->modulerecord = get_coursemodule_from_instance($this->activityname, $this->id)) {
             error('Cannot fully initialize page: invalid '.$this->activityname.' instance id '. $this->id);
         }
         $this->courserecord = get_record('course', 'id', $this->modulerecord->course);
