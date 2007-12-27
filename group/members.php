@@ -116,7 +116,6 @@ if ($potentialmemberscount <=  MAX_USERS_PER_PAGE) {
         foreach ($potentialmembers as $userid => $user) {
             $nonmembers[$userid] = fullname($user)." (".@count($usergroups[$userid]).")";
         }
-        natcasesort($nonmembers);
 
         // Print out the HTML
         foreach($nonmembers as $id => $name) {
