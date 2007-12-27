@@ -4298,7 +4298,7 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
     }
 
     $str = '
-<div class="form-item" id="admin-'.$setting->name.'">
+<div class="form-item clearfix" id="admin-'.$setting->name.'">
 <div class="form-label"><label '.$labelfor.'>'.$title.'<span class="form-shortname">'.$name.'</span>'.$override.$warning.'</label></div>
 <div class="form-setting">'.$form.'</div>
 <div class="form-description">'.$description.'</div>
