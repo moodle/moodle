@@ -77,13 +77,14 @@ switch($action) {
         $changed = array();
 
         foreach ($tagschecked as $tag_id) {
-            if (!in_array($tagtypes[$tag_id], $existing_tagtypes)) {
+            if (!array_key_exists($tagtypes[$tag_id], $existing_tagtypes)) {
                 //can not add new types here!!
                 continue;
             }
 
             // update tag type;
             $tag = tag_by_id($tag_id);
+            $tag->timemodified = time();
             $tag->tagtype = $tagtypes[$tag_id];
 
             if (update_record('tag', $tag)) {
