@@ -308,7 +308,7 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
  * This function was changed to get_users_by_capability style
  * mostly because of the searchtext requirement
  */
-function groups_get_users_not_in_group($courseid, $groupid, $searchtext='') {
+function groups_get_users_not_in_group($courseid, $groupid, $searchtext='', $sort = 'u.lastname ASC') {
 
     global $CFG;
 
@@ -369,8 +369,9 @@ function groups_get_users_not_in_group($courseid, $groupid, $searchtext='') {
                                    WHERE groupid = $groupid)
                   $wheresearch";
     $groupby = " GROUP BY u.id, u.firstname, u.lastname ";
+    $orderby = " ORDER BY $sort";
 
-    return get_records_sql($select.$from.$where.$groupby);
+    return get_records_sql($select.$from.$where.$groupby.$orderby);
 }
 
 
