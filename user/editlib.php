@@ -168,7 +168,7 @@ function useredit_shared_definition(&$mform) {
     $mform->setDefault('screenreader', 0);
     $mform->setAdvanced('screenreader');
 
-    $mform->addElement('text', 'city', get_string('city'), 'maxlength="100" size="25"');
+    $mform->addElement('text', 'city', get_string('city'), 'maxlength="20" size="21"');
     $mform->setType('city', PARAM_MULTILANG);
     $mform->addRule('city', $strrequired, 'required', null, 'client');
 
