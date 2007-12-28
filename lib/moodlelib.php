@@ -3770,13 +3770,18 @@ function email_welcome_message_to_user($course, $user=NULL) {
     }
 
     if (!empty($course->welcomemessage)) {
-        $subject = get_string('welcometocourse', '', format_string($course->fullname));
-
+        $message = $course->welcomemessage;
+    } else {
+        $a = new Object();
         $a->coursename = $course->fullname;
         $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";
-        //$message = get_string("welcometocoursetext", "", $a);
-        $message = $course->welcomemessage;
+        $message = get_string("welcometocoursetext", "", $a);
+    }
 
+    /// If you don't want a welcome message sent, then make the message string blank.
+    if (!empty($message)) {
+        $subject = get_string('welcometocourse', '', format_string($course->fullname));
+    
         if (! $teacher = get_teacher($course->id)) {
             $teacher = get_admin();
         }
