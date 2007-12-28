@@ -6575,9 +6575,10 @@ function swapshuffle($array) {
  * @return array
  */
 function swapshuffle_assoc($array) {
-///
 
+    $newarray = array();
     $newkeys = swapshuffle(array_keys($array));
+
     foreach ($newkeys as $newkey) {
         $newarray[$newkey] = $array[$newkey];
     }
