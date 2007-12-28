@@ -409,7 +409,7 @@ class page_course extends page_base {
 
     // This function prints out the common part of the page's header.
     // You should NEVER print the header "by hand" in other code.
-    function print_header($title, $morenavlinks=NULL, $meta='', $bodytags='') {
+    function print_header($title, $morenavlinks=NULL, $meta='', $bodytags='', $extrabuttons='') {
         global $USER, $CFG;
 
         $this->init_full();
@@ -435,6 +435,11 @@ class page_course extends page_base {
             $buttons .= update_course_icon($this->courserecord->id );
         }
         $buttons = empty($morenavlinks) ? $buttons : '&nbsp;';
+
+        // Add any extra buttons requested (by the resource module, for example)
+        if ($extrabuttons != '') {
+            $buttons = ($buttons == '&nbsp;') ? $extrabuttons : $buttons.$extrabuttons;
+        }
 
         print_header($title, $this->courserecord->fullname, $navigation,
                      '', $meta, true, $buttons, user_login_string($this->courserecord, $USER), false, $bodytags);
