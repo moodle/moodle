@@ -1019,6 +1019,21 @@ class auth_plugin_ldap extends auth_plugin_base {
             return true; // just change auth and skip update
         }
 
+        $attrmap = $this->ldap_attributes();
+
+        // Before doing anything else, make sure really need to update anything
+        // in the external LDAP server.
+        $update_external = false;
+        foreach ($attrmap as $key => $ldapkeys) {
+            if (!empty($this->config->{'field_updateremote_'.$key})) {
+                $update_external = true;
+                break;
+            }
+        }
+        if (!$update_external) {
+            return true;
+        }
+
         $textlib = textlib_get_instance();
         $extoldusername = $textlib->convert($olduser->username, 'utf-8', $this->config->ldapencoding);
 
@@ -1026,7 +1041,6 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         $search_attribs = array();
 
-        $attrmap = $this->ldap_attributes();
         foreach ($attrmap as $key => $values) {
             if (!is_array($values)) {
                 $values = array($values);
@@ -1047,9 +1061,16 @@ class auth_plugin_ldap extends auth_plugin_base {
 
             $user_entry = $this->ldap_get_entries($ldapconnection, $user_info_result);
             if (empty($user_entry)) {
+                $error = 'ldap: Could not find user while updating externally. '.
+                         'Details follow: search base: \''.$user_dn.'\'; search filter: \''.
+                         $this->config->objectclass.'\'; search attributes: ';
+                foreach ($search_attribs as $attrib) {
+                    $error .= $attrib.' ';
+                }
+                error_log($error);
                 return false; // old user not found!
             } else if (count($user_entry) > 1) {
-                trigger_error("ldap: Strange! More than one user record found in ldap. Only using the first one.");
+                error_log('ldap: Strange! More than one user record found in ldap. Only using the first one.');
                 return false;
             }
             $user_entry = $user_entry[0];
