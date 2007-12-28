@@ -320,8 +320,7 @@
 
             //close available langs table
             echo '</td></tr></table>';
-            print_simple_box_end();
-
+            print_box_end();
         break;
 
     }    //close of main switch
