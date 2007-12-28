@@ -817,13 +817,27 @@ function auth_user_update($olduser, $newuser) {
     global $USER , $CFG;
 
     $pcfg = get_config('auth/ldap');
-    
+
+    $attrmap = auth_ldap_attributes();  
+
+    // Before doing anything else, make sure we really need to update anything
+    // in the external LDAP server.
+    $update_external = false;
+    foreach ($attrmap as $key => $ldapkeys) {
+        if (!empty($pcfg->{'field_updateremote_'.$key})) {
+            $update_external = true;
+            break;
+        }
+    }
+    if (!$update_external) {
+        return true;
+    }
+
     $ldapconnection = auth_ldap_connect();
     
     $result = array();
     $search_attribs = array();
 
-    $attrmap = auth_ldap_attributes();  
     foreach ($attrmap as $key=>$values) {
         if (!is_array($values)) {
             $values = array($values);
@@ -842,8 +856,18 @@ function auth_user_update($olduser, $newuser) {
     if ($user_info_result){
 
         $user_entry = auth_ldap_get_entries($ldapconnection, $user_info_result);
-        if (count($user_entry) > 1) {
-            trigger_error("ldap: Strange! More than one user record found in ldap. Only using the first one.");
+        if (empty($user_entry)) {
+            $error = 'ldap: Could not find user while updating externally. '.
+                     'Details follow: search base: \''.$user_dn.'\'; search filter: \''.
+                     $CFG->ldap_objectclass.'\'; search attributes: ';
+            foreach ($search_attribs as $attrib) {
+                $error .= $attrib.' ';
+            }
+            error_log($error);
+            return false; // old user not found!
+        } else if (count($user_entry) > 1) {
+            error_log('ldap: Strange! More than one user record found in ldap. Only using the first one.');
+            return false;
         }
         $user_entry = $user_entry[0];
 
