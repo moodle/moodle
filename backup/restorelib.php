@@ -3169,19 +3169,6 @@
                                 $eve->userid = $adminid;
                             }
 
-                            //We must recode the repeatid if the event has it
-                            if (!empty($eve->repeatid)) {
-                                $repeat_rec = backup_getid($restore->backup_unique_code,"event_repeatid",$eve->repeatid);
-                                if ($repeat_rec) {    //Exists, so use it...
-                                    $eve->repeatid = $repeat_rec->new_id;
-                                } else {              //Doesn't exists, calculate the next and save it
-                                    $oldrepeatid = $eve->repeatid;
-                                    $max_rec = get_record_sql('SELECT 1, MAX(repeatid) AS repeatid FROM '.$CFG->prefix.'event');
-                                    $eve->repeatid = empty($max_rec) ? 1 : $max_rec->repeatid + 1;
-                                    backup_putid($restore->backup_unique_code,"event_repeatid", $oldrepeatid, $eve->repeatid);
-                                }
-                            }
-
                             //We have to recode the groupid field
                             $group = backup_getid($restore->backup_unique_code,"groups",$eve->groupid);
                             if ($group) {
@@ -3193,6 +3180,22 @@
 
                             //The structure is equal to the db, so insert the event
                             $newid = insert_record ("event",$eve);
+
+                            //We must recode the repeatid if the event has it
+                            //The repeatid now refers to the id of the original event. (see Bug#5956)
+                            if ($newid && !empty($eve->repeatid)) {
+                                $repeat_rec = backup_getid($restore->backup_unique_code,"event_repeatid",$eve->repeatid);
+                                if ($repeat_rec) {    //Exists, so use it...
+                                    $eve->repeatid = $repeat_rec->new_id;
+                                } else {              //Doesn't exists, calculate the next and save it
+                                    $oldrepeatid = $eve->repeatid;
+                                    $eve->repeatid = $newid;
+                                    backup_putid($restore->backup_unique_code,"event_repeatid", $oldrepeatid, $eve->repeatid);
+                                }
+                                $eve->id = $newid;
+                                // update the record to contain the correct repeatid
+                                update_record('event',$eve);
+                            }
                         } else {
                             //get current event id
                             $newid = $eve_db->id;
