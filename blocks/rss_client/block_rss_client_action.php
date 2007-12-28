@@ -47,7 +47,7 @@ $act            = optional_param('act', NULL, PARAM_ALPHA);
 $rssid          = optional_param('rssid', NULL, PARAM_INT);
 $id             = optional_param('id', SITEID, PARAM_INT);
 //$url            = clean_param($url, PARAM_URL);
-$preferredtitle = optional_param('preferredtitle', '', PARAM_ALPHA);
+$preferredtitle = optional_param('preferredtitle', '', PARAM_TEXT);
 $shared         = optional_param('shared', 0, PARAM_INT);
 
 
