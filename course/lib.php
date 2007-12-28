@@ -1122,23 +1122,27 @@ function print_recent_activity($course) {
     $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
     foreach ($mods as $mod) {      // Each module gets it's own logs and prints them
-        include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
-        $print_recent_activity = $mod->name.'_print_recent_activity';
-        if (function_exists($print_recent_activity)) {
-            //
-            // NOTE:
-            //   $isteacher (second parameter below) is to be deprecated!
-            //
-            // TODO:
-            //   1) Make sure that all _print_recent_activity functions are
-            //      not using the $isteacher value.
-            //   2) Eventually, remove the $isteacher parameter from the
-            //      function calls.
-            //
-            $modcontent = $print_recent_activity($course, $viewfullnames, $timestart);
-            if ($modcontent) {
-                $content = true;
+        if (file_exists($CFG->dirroot.'/mod/'.$mod->name.'/lib.php')) {
+            include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
+            $print_recent_activity = $mod->name.'_print_recent_activity';
+            if (function_exists($print_recent_activity)) {
+                //
+                // NOTE:
+                //   $isteacher (second parameter below) is to be deprecated!
+                //
+                // TODO:
+                //   1) Make sure that all _print_recent_activity functions are
+                //      not using the $isteacher value.
+                //   2) Eventually, remove the $isteacher parameter from the
+                //      function calls.
+                //
+                $modcontent = $print_recent_activity($course, $viewfullnames, $timestart);
+                if ($modcontent) {
+                    $content = true;
+                }
             }
+        } else {
+            /// Really need to indicate an error here to admins. Is there a way to do this?
         }
     }
 
