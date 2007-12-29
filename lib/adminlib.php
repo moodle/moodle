@@ -4177,6 +4177,7 @@ function admin_search_settings_html($query) {
     $adminroot =& admin_get_root();
     $findings = $adminroot->search($query);
     $return = '';
+    $savebutton = false;
 
     foreach ($findings as $found) {
         $page     = $found->page;
@@ -4193,6 +4194,7 @@ function admin_search_settings_html($query) {
             continue;
         }
         if (!empty($settings)) {
+            $savebutton = true;
             $return .= '<fieldset class="adminsettings">'."\n";
             foreach ($settings as $setting) {
                 $return .= '<div class="clearer"><!-- --></div>'."\n";
@@ -4209,6 +4211,10 @@ function admin_search_settings_html($query) {
             }
             $return .= '</fieldset>';
         }
+    }
+
+    if ($savebutton) {
+         $return .= '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges','admin').'" /></div>';
     }
 
     return $return;
