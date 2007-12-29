@@ -308,5 +308,21 @@ class mod_lesson_mod_form extends moodleform_mod {
             }
         }
     }
+
+    /**
+     * Enforce validation rules here
+     *
+     * @param object $data Post data to validate
+     * @return array
+     **/
+    function validation($data) {
+        $errors = array();
+
+        if (empty($data['maxtime'])) {
+            $errors['maxtime'] = get_string('err_numeric', 'form');
+        }
+
+        return $errors;
+    }
 }
 ?>
