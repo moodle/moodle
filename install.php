@@ -599,9 +599,13 @@ if (isset($_GET['help'])) {
                   /// from the standard one to show better instructions for each DB
                 if ($nextstage == DATABASE) {
                     echo '<script type="text/javascript" defer="defer">window.onload=toggledbinfo;</script>';
-                    echo '<div id="mysql" name="mysql">' . get_string('databasesettingssub_mysql', 'install') . '</div>';
+                    echo '<div id="mysql" name="mysql">' . get_string('databasesettingssub_mysql', 'install');
+                    echo '<p align="center">' . get_string('databasesettingswillbecreated', 'install') . '</p>';
+                    echo '</div>';
 
-                    echo '<div id="mysqli" name="mysqli">' . get_string('databasesettingssub_mysqli', 'install') . '</div>';
+                    echo '<div id="mysqli" name="mysqli">' . get_string('databasesettingssub_mysqli', 'install');
+                    echo '<p align="center">' . get_string('databasesettingswillbecreated', 'install') . '</p>';
+                    echo '</div>';
 
                     echo '<div id="postgres7" name="postgres7">' . get_string('databasesettingssub_postgres7', 'install') . '</div>';
 
