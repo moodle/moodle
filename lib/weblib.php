@@ -4377,7 +4377,7 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     if (empty($string)) {     // Cache all the strings for the rest of the page
 
         $string->email       = get_string('email');
-        $string->location    = get_string('location');
+        $string->city = get_string('city');
         $string->lastaccess  = get_string('lastaccess');
         $string->activity    = get_string('activity');
         $string->unenrol     = get_string('unenrol');
@@ -4424,7 +4424,7 @@ has_capability('moodle/course:viewhiddenuserfields', $context)) {
         $output .= $string->email .': <a href="mailto:'. $user->email .'">'. $user->email .'</a><br />';
     }
     if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
-        $output .= $string->location .': ';
+        $output .= $string->city .': ';
         if ($user->city && !isset($hiddenfields['city'])) {
             $output .= $user->city;
         }
