@@ -442,14 +442,17 @@
             if(has_capability('mod/lesson:manage', $context)) {
                 lesson_set_message(get_string('teachertimerwarning', 'lesson'));
             } else {
-                if ((($timer->starttime + $lesson->maxtime * 60) - time()) <= 0) {
+                $timeleft = ($timer->starttime + $lesson->maxtime * 60) - time();
+
+                if ($timeleft <= 0) {
+                    // Out of time
                     lesson_set_message(get_string('eolstudentoutoftime', 'lesson'));
-                    redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=".LESSON_EOL."&amp;outoftime=normal", get_string("outoftime", "lesson"));
-                }
-                // update clock when viewing a new page... no special treatment
-                if ((($timer->starttime + $lesson->maxtime * 60) - time()) < 60) {
+                    redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=".LESSON_EOL."&amp;outoftime=normal");
+                    die; // Shouldn't be reached, but make sure
+                } else if ($timeleft < 60) {
+                    // One minute warning
                     lesson_set_message(get_string('studentoneminwarning', 'lesson'));
-                }    
+                }
             }
         }
 
@@ -622,7 +625,6 @@
                     break;
                     
                 case LESSON_MATCHING :
-                    echo '<tr><td><table width="100%">';
                     // don't suffle answers (could be an option??)
                     foreach ($answers as $answer) {
                         // get all the response
@@ -663,7 +665,7 @@
                             } 
                         }
                     }
-                    echo '</table></td></tr></table>';
+                    echo '</table>';
                     print_simple_box_end();
                     lesson_print_submit_link(get_string('pleasematchtheabovepairs', 'lesson'), 'answerform');
                     break;
