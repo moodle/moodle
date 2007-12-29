@@ -19,7 +19,6 @@
 
     // This is the code updates the lesson time for a timed test
     // get time information for this user
-    $outoftime = false;
     $timer = new stdClass;
     if (!has_capability('mod/lesson:manage', $context)) {
         if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
@@ -29,16 +28,16 @@
         }
         
         if ($lesson->timed) {
-            if ((($timer->starttime + $lesson->maxtime * 60) - time()) < 60 && !((($timer->starttime + $lesson->maxtime * 60) - time()) < 0)) {
-                lesson_set_message(get_string("studentoneminwarning", "lesson"));
-            } else if (($timer->starttime + $lesson->maxtime * 60) < time()) {
-                lesson_set_message(get_string("studentoutoftime", "lesson"));
-                $outoftime = true;
-            }
-            if ((($timer->starttime + $lesson->maxtime * 60) - time()) <= 0) {
+            $timeleft = ($timer->starttime + $lesson->maxtime * 60) - time();
+
+            if ($timeleft <= 0) {
                 // Out of time
                 lesson_set_message(get_string('eolstudentoutoftime', 'lesson'));
-                redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=".LESSON_EOL."&outoftime=normal", get_string("outoftime", "lesson"));
+                redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=".LESSON_EOL."&outoftime=normal");
+                die; // Shouldn't be reached, but make sure
+            } else if ($timeleft < 60) {
+                // One minute warning
+                lesson_set_message(get_string("studentoneminwarning", "lesson"));
             }
         }
         
@@ -567,15 +566,12 @@
             }
             
             $attempt->timeseen = time();
-            // dont want to insert the attempt if they ran out of time
-            if (!$outoftime) {
-                // if allow modattempts, then update the old attempt record, otherwise, insert new answer record
-                if (isset($USER->modattempts[$lesson->id])) {
-                    $attempt->retry = $nretakes - 1; // they are going through on review, $nretakes will be too high
-                }
-                if (!$newattemptid = insert_record("lesson_attempts", $attempt)) {
-                    error("Continue: attempt not inserted");
-                }
+            // if allow modattempts, then update the old attempt record, otherwise, insert new answer record
+            if (isset($USER->modattempts[$lesson->id])) {
+                $attempt->retry = $nretakes - 1; // they are going through on review, $nretakes will be too high
+            }
+            if (!$newattemptid = insert_record("lesson_attempts", $attempt)) {
+                error("Continue: attempt not inserted");
             }
             // "number of attempts remaining" message if $lesson->maxattempts > 1
             // displaying of message(s) is at the end of page for more ergonomic display
@@ -703,9 +699,7 @@
     }
 
     // TODO: merge with the jump code above.  This is where some jump numbers are interpreted
-    if($outoftime) {
-        $newpageid = LESSON_EOL;  // ran out of time for the test, so go to eol
-    } elseif (isset($USER->modattempts[$lesson->id])) {
+    if (isset($USER->modattempts[$lesson->id])) {
         // make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time
         if ($USER->modattempts[$lesson->id] == $pageid) {  // remember, this session variable holds the pageid of the last page that the user saw
             $newpageid = LESSON_EOL;
