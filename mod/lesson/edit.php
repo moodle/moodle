@@ -73,10 +73,17 @@
                 
                 while ($pageid != 0) {
                     $page = $pages[$pageid];
-                        
+
+                    if ($page->qtype == LESSON_MATCHING) {
+                        // The jumps for matching question type is stored
+                        // in the 3rd and 4rth answer record.
+                        $limitfrom = $limitnum = 2;
+                    } else {
+                        $limitfrom = $limitnum = '';
+                    }
+
                     $jumps = array();
-                    if($answers = get_records_select("lesson_answers", "lessonid = $lesson->id and pageid = $pageid")) {
-                        
+                    if($answers = get_records_select("lesson_answers", "lessonid = $lesson->id and pageid = $pageid", 'id', '*', $limitfrom, $limitnum)) {
                         foreach ($answers as $answer) {
                             $jumps[] = lesson_get_jump_name($answer->jumpto);
                         }
@@ -213,7 +220,7 @@
                                         echo "</td><td style=\"width:80%;\">\n";
                                         echo format_text($answer->answer, FORMAT_MOODLE, $options);
                                         echo "</td></tr>\n";
-                                        echo "<tr><td align=\"right\" valign=\"top\">'<span class=\"label\">'.".get_string("matchesanswer", "lesson")." $i</span>: \n";
+                                        echo "<tr><td align=\"right\" valign=\"top\"><span class=\"label\">".get_string("matchesanswer", "lesson")." $i</span>: \n";
                                         echo "</td><td>\n";
                                         echo format_text($answer->response, FORMAT_MOODLE, $options); 
                                         echo "</td></tr>\n";
