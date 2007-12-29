@@ -209,8 +209,8 @@ $string['phpversionhelp'] = '<p>Moodle precisa da vesão 4.3.0 ou 5.1.0 do PHP (
 (No caso da versão 5.0.x, poderá regredir para uma versão 4.4.x)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Prévio';
-$string['qtyperqpwillberemoved'] = 'Durante a actualização, as perguntas do tipo RQP serão eliminadas. Não deverá experimentar nenhumar problema, porque não estava a usar esse tipo de perguntas.';
-$string['qtyperqpwillberemovedanyway'] = 'Durante a actualização, as perguntas do tipo RQP serão eliminadas. Tem algumas perguntas desse tipo na sua base de dados, que deixarão de funcionar, a menos que instale novamente o código em http://moodle.org/mod/data/view.php?d=13&amp;rid=797  antes de proceder com a actualização.';
+$string['qtyperqpwillberemoved'] = 'Durante a actualização, as perguntas do tipo RQP serão eliminadas. Não deverá experimentar nenhumar problema, porque não estava a usar esse tipo de perguntas.'; // ORPHANED
+$string['qtyperqpwillberemovedanyway'] = 'Durante a actualização, as perguntas do tipo RQP serão eliminadas. Tem algumas perguntas desse tipo na sua base de dados, que deixarão de funcionar, a menos que instale novamente o código em http://moodle.org/mod/data/view.php?d=13&amp;rid=797  antes de proceder com a actualização.'; // ORPHANED
 $string['remotedownloadnotallowed'] = 'O seu servidor não permite descarregar componentes  (a variável allow_url_fopen está desactivada).<br /><br />Terá que descarregar <a href=\"$a->url\">$a->url</a> manualmente, copia-lo para  \"$a->dest\" no seu servidor e descompacta-lo.';
 $string['report'] = 'Relatório';
 $string['restricted'] = 'Restrito';
