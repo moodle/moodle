@@ -132,7 +132,7 @@
 
 
             if (!$availablelangs = proxy_url($source)) {
-                error ('can not read from course');
+                print_error('cannotdownloadlanguageupdatelist');
             }
 
             //and build an associative array
@@ -360,39 +360,23 @@
     }
 
     //returns an array of languages, or false if can not read from source
-    //uses a socket if proxy is set as a config variable
     function proxy_url($url) {
         global $CFG;
 
-        if ($CFG->proxyhost && $CFG->proxyport) {
+        $availablelangs = array();
 
-            $proxy_fp = fsockopen($CFG->proxyhost, $CFG->proxyport);
-            if (!$proxy_fp) {
-                return false;    //failed
-            }
-            fputs($proxy_fp, "GET $url HTTP/1.0\r\nHost: $CFG->proxyhost\r\n\r\n");
+        if( $content = download_file_content($url) ){
 
-            $headers_done = false;
-            while(!feof($proxy_fp)) {
-                $string = fgets($proxy_fp, 1024);
-                if(!$headers_done){
-                    // A new line indicates end of HTTP headers
-                    $headers_done = ("\r\n" == $string);
-                } else {
-                    $availablelangs[] = split(',', $string);
+            $alllines = split("\n", $content);
+            foreach($alllines as $line){
+                if(!empty($line)){
+                    $availablelangs[] = split(',', $line);
                 }
             }
-            fclose($proxy_fp);
 
-        } else {    //proxy not in use
-            if ($fp = fopen($url, 'r')){    /// attempt to get the list from Moodle.org.
-                while(!feof ($fp)) {
-                    $availablelangs[] = split(',', fgets($fp,1024));
-                }
-            } else {    /// fopen failed, return false.
-                return false;
-            }
+            return $availablelangs;
+        }else{
+            return false;
         }
-        return $availablelangs;
     }
 ?>
