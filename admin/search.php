@@ -51,7 +51,6 @@ echo '<fieldset>';
 echo '<div class="clearer"><!-- --></div>';
 if ($resultshtml != '') {
     echo $resultshtml;
-    echo '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges','admin').'" /></div>';
 } else {
     echo get_string('noresults','admin');
 }
