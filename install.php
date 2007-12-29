@@ -348,14 +348,12 @@ if ($INSTALL['stage'] == DATABASE) {
         error_reporting(0);  // Hide errors
 
         if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
-            /// The following doesn't seem to work but we're working on it
-            /// If you come up with a solution for creating a database in MySQL
-            /// feel free to put it in and let us know - see MDL-9609
-            if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) {
+            $db->database = ''; // reset database name cached by ADODB. Trick from MDL-9609
+            if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) { /// Try to connect without DB
                 switch ($INSTALL['dbtype']) {   /// Try to create a database
                     case 'mysql':
                     case 'mysqli':
-                        if ($db->Execute("CREATE DATABASE {$INSTALL['dbname']};")) {
+                        if ($db->Execute("CREATE DATABASE {$INSTALL['dbname']} DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;")) {
                             $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
                         } else {
                             $errormsg = get_string('dbcreationerror', 'install');
