@@ -234,6 +234,8 @@
                 $nhits = 0;
                 $correctresponse = '';
                 $wrongresponse = '';
+                $correctanswerid = 0;
+                $wronganswerid = 0;
                 // store student's answers for displaying on feedback page
                 foreach ($answers as $answer) {
                     foreach ($useranswers as $key => $answerid) {
@@ -260,6 +262,10 @@
                                 // leave in its "raw" state - will converted into a proper page id later
                                 $correctpageid = $answer->jumpto;
                             }
+                            // save the answer id for scoring
+                            if ($correctanswerid == 0) {
+                                $correctanswerid = $answer->id;
+                            }
                             // ...also save any response from the correct answers...
                             if (trim(strip_tags($answer->response))) {
                                 $correctresponse = $answer->response;
@@ -269,6 +275,10 @@
                             if (!isset($wrongpageid)) {   
                                 // leave in its "raw" state - will converted into a proper page id later
                                 $wrongpageid = $answer->jumpto;
+                            }
+                            // save the answer id for scoring
+                            if ($wronganswerid == 0) {
+                                $wronganswerid = $answer->id;
                             }
                             // ...and from the incorrect ones, don't know which to use at this stage
                             if (trim(strip_tags($answer->response))) {
@@ -290,6 +300,10 @@
                                 // leave in its "raw" state - will converted into a proper page id later
                                 $correctpageid = $answer->jumpto;
                             }
+                            // save the answer id for scoring
+                            if ($correctanswerid == 0) {
+                                $correctanswerid = $answer->id;
+                            }
                             // ...also save any response from the correct answers...
                             if (trim(strip_tags($answer->response))) {
                                 $correctresponse = $answer->response;
@@ -299,6 +313,10 @@
                             if (!isset($wrongpageid)) {   
                                 // leave in its "raw" state - will converted into a proper page id later
                                 $wrongpageid = $answer->jumpto;
+                            }
+                            // save the answer id for scoring
+                            if ($wronganswerid == 0) {
+                                $wronganswerid = $answer->id;
                             }
                             // ...and from the incorrect ones, don't know which to use at this stage
                             if (trim(strip_tags($answer->response))) {
@@ -311,9 +329,11 @@
                     $correctanswer = true;
                     $response  = $correctresponse;
                     $newpageid = $correctpageid;
+                    $answerid  = $correctanswerid;
                 } else {
                     $response  = $wrongresponse;
                     $newpageid = $wrongpageid;
+                    $answerid  = $wronganswerid;
                 }
             } else {
                 // only one answer allowed
