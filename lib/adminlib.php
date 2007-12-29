@@ -4181,7 +4181,8 @@ function admin_search_settings_html($query) {
     foreach ($findings as $found) {
         $page     = $found->page;
         $settings = $found->settings;
-        if ($page->hidden) {
+        if ($page->is_hidden()) {
+            // hidden pages are not displayed in search results
             continue;
         }
         if (is_a($page, 'admin_externalpage')) {
