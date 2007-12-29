@@ -106,7 +106,7 @@
         print_header("$site->shortname: $strcourserestore", $site->fullname,
                      "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> $strcourserestore");
         print_heading(get_string("restorecancelled"));
-        print_continue("$CFG->wwwroot/$CFG->admin/index.php");
+        print_continue("$CFG->wwwroot/course/view.php?id=".$id);
         print_footer();
         exit;
     }
