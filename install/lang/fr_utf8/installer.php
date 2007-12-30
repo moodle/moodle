@@ -94,6 +94,7 @@ $string['databasesettingssub_postgres7'] = '<strong>Type&nbsp;:</strong> Postgre
 <strong>Utilisateur&nbsp;:</strong> le nom d\'utilisateur de la base de données<br />
 <strong>Mot de passe&nbsp;:</strong> le mot de passe de la base de données<br />
 <strong>Préfixe des tables&nbsp;:</strong> le préfixe à utiliser pour les noms de toutes les tables (requis)';
+$string['databasesettingswillbecreated'] = '<b>Remarque&nbsp;:</b> l\'installeur va essayer de créer automatiquement la base de données, si elle n\'existe pas encore.';
 $string['dataroot'] = 'Dossier de données';
 $string['datarooterror'] = 'Le dossier de données indiqué n\'a pas pu être trouvé ou créé. Veuillez corriger le paramètre ou créer manuellement le dossier.';
 $string['dbconnectionerror'] = 'Moodle n\'a pas pu se connecter à la base de données indiquée. Veuillez vérifier les paramètres de votre base de données';
