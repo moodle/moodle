@@ -124,6 +124,7 @@ postgres7
 previous
 qtyperqpwillberemoved
 qtyperqpwillberemovedanyway
+remotedownloaderror
 remotedownloadnotallowed
 report
 restricted

@@ -68,7 +68,7 @@
             $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
             switch ($status) {
                 case ERROR:
-                    if ($cd->get_error() == 'remotedownloadnotallowed') {
+                    if ($cd->get_error() == 'remotedownloaderror') {
                         $a = new stdClass();
                         $a->url = 'http://download.moodle.org/environment/environment.zip';
                         $a->dest= $CFG->dataroot.'/';

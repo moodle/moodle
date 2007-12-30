@@ -83,6 +83,7 @@ $string['pagenotexist'] = 'An unusual error occurred (tried to reach a page that
 $string['pleasereport'] = 'If you have time, please let us know what you were trying to do when the error occurred:';
 $string['pluginrequirementsnotmet'] = 'Plugin \"$a->pluginname\" ($a->pluginversion) could not be installed.  It requires a newer version of Moodle (currently you are using $a->currentmoodle, you need $a->requiremoodle).';
 $string['processingstops'] = 'Processing stops here. Remaining records ignored.';
+$string['remotedownloaderror'] = 'Download of component to your server failed, please verify proxy settings, PHP cURL extension is highly recommended.<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['restricteduser'] = 'Sorry, but your current account \"$a\" is restricted from doing that.';
 $string['scheduledbackupsdisabled'] = 'Scheduled backups have been disabled by the server admin';
