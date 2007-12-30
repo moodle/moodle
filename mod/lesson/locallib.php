@@ -234,17 +234,15 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     
     // Changed the update_module_button and added another button when a teacher is checking the navigation of the lesson
     if (has_capability('mod/lesson:edit', $context)) {
-        
-        $button = update_module_button($cm->id, $course->id, $strlesson);
+        $button  = '<span class="edit_buttons">';
+        $button .= update_module_button($cm->id, $course->id, $strlesson);
 
         if ($currenttab == 'view') {
             if (!$pageid = optional_param('pageid', 0, PARAM_INT)) {
                 $pageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0);
             }
             if (!empty($pageid) and $pageid != LESSON_EOL) {
-                $button =  '<table><tr><td>'.$button.
-                           '</td><td>'.
-                           '<form '.$CFG->frametarget.' method="get" action="'. $CFG->wwwroot .'/mod/lesson/lesson.php">'.
+                $button .= '<form '.$CFG->frametarget.' method="get" action="'. $CFG->wwwroot .'/mod/lesson/lesson.php">'.
                            '<div>'.
                            '<input type="hidden" name="id" value="'. $cm->id .'" />'.
                            '<input type="hidden" name="action" value="editpage" />'.
@@ -252,10 +250,10 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
                            '<input type="hidden" name="pageid" value="'. $pageid .'" />'.
                            '<input type="submit" value="'. get_string('editpagecontent', 'lesson') .'" />'.
                            '</div>'.
-                           '</form>'.
-                           '</td></tr></table>';
+                           '</form>';
             }
         }
+        $button .= '</span>';
     } else {
         $button = '';
     }
