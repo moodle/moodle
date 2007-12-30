@@ -331,7 +331,7 @@
     /**
      * Returns a list of available language packs from a
      * local copy shipped with standard moodle distro
-     * this is for site that can't perform fopen
+     * this is for site that can't download components.
      * @return array
      */
     function get_local_list_of_languages() {
