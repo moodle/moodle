@@ -95,6 +95,7 @@ $string['databasesettingssub_postgres7'] = '<b>タイプ:</b> PostgreSQL<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
 <b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 (必須)';
+$string['databasesettingswillbecreated'] = '<b>メモ:</b> データベースが存在していない場合、インストーラーはデータベースの自動作成を試みます。';
 $string['dataroot'] = 'データディレクトリ';
 $string['datarooterror'] = 'あなたが指定した「データディレクトリ」が見つからないか、作成されませんでした。パスを訂正するか、ディレクトリを手動で作成してください。';
 $string['dbconnectionerror'] = 'あなたが指定したデータベースに接続できませんでした。データベース設定を確認してください。';
