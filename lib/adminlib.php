@@ -1663,20 +1663,36 @@ class admin_setting_configtext extends admin_setting {
 
     function write_setting($data) {
         // $data is a string
-        if (!$this->validate($data)) {
-            return get_string('validateerror', 'admin');
+        $validated = $this->validate($data); 
+        if ($validated !== true) {
+            return $validated;
         }
         return ($this->config_write($this->name, $data) ? '' : get_string('errorsetting', 'admin'));
     }
 
+    /**
+     * Validate data before storage
+     * @param string data
+     * @return mixed true if ok string if error found
+     */
     function validate($data) {
         if (is_string($this->paramtype)) {
-            return preg_match($this->paramtype, $data);
+            if (preg_match($this->paramtype, $data)) {
+                return true;
+            } else {
+                return get_string('validateerror', 'admin');
+            }
+
         } else if ($this->paramtype === PARAM_RAW) {
             return true;
+
         } else {
-            $cleaned = clean_param($data, $this->paramtype);
-            return ("$data" == "$cleaned"); // implicit conversion to string is needed to do exact comparison
+            $cleaned = stripslashes(clean_param(addslashes($data), $this->paramtype));
+            if ("$data" == "$cleaned") { // implicit conversion to string is needed to do exact comparison
+                return true;
+            } else {
+                return get_string('validateerror', 'admin');
+            }
         }
     }
 
@@ -2528,17 +2544,22 @@ class admin_setting_sitesettext extends admin_setting_configtext {
     }
 
     function validate($data) {
-        $cleaned = stripslashes(clean_param($data, PARAM_MULTILANG));
-        if ($cleaned == '') {
-            return false; // can not be empty
+        $cleaned = stripslashes(clean_param(addslashes($data), PARAM_MULTILANG));
+        if ($cleaned === '') {
+            return get_string('required');
         }
-        return ($data == $cleaned);
+        if ("$data" == "$cleaned") { // implicit conversion to string is needed to do exact comparison
+            return true;
+        } else {
+            return get_string('validateerror', 'admin');
+        }
     }
 
     function write_setting($data) {
         $data = trim($data);
-        if (!$this->validate($data)) {
-            return get_string('required');
+        $validated = $this->validate($data); 
+        if ($validated !== true) {
+            return $validated;
         }
 
         $record = new object();
