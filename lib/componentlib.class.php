@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -27,19 +27,19 @@
 // This library includes all the necessary stuff to use the one-click
 // download and install feature of Moodle, used to keep updated some
 // items like languages, pear, enviroment... i.e, components.
-// 
-// It has been developed harcoding some important limits that are 
+//
+// It has been developed harcoding some important limits that are
 // explained below:
 //    - It only can check, download and install items under moodledata.
 //    - Every downloadeable item must be one zip file.
 //    - The zip file root content must be 1 directory, i.e, everything
 //      is stored under 1 directory.
-//    - Zip file name and root directory must have the same name (but 
+//    - Zip file name and root directory must have the same name (but
 //      the .zip extension, of course).
 //    - Every .zip file must be defined in one .md5 file that will be
 //      stored in the same remote directory than the .zip file.
 //    - The name of such .md5 file is free, although it's recommended
-//      to use the same name than the .zip (that's the default 
+//      to use the same name than the .zip (that's the default
 //      assumption if no specified).
 //    - Every remote .md5 file will be a comma separated (CVS) file where each
 //      line will follow this format:
@@ -52,7 +52,6 @@
 //        - Will contain the md5 od the latest installed component
 // With all these details present, the process will perform this tasks:
 //    - Perform security checks. Only admins are allowed to use this for now.
-//    - Perform server checks. fopen must allow to open remote URLs.
 //    - Read the .md5 file from source (1).
 //    - Extract the correct line for the .zip being requested.
 //    - Compare it with the local .md5 file (2).
@@ -68,21 +67,20 @@
 //        - If different:
 //            - ERROR. Old package won't be modified. We shouldn't
 //              reach here ever.
-//    - If fopen is not available, a message text about how to do
-//      the process manually (remotedownloadnotallowed) must be
-//      built to explain it.
+//    - If component download is not possible, a message text about how to do
+//      the process manually (remotedownloaderror) must be displayed to explain it.
 //
 // General Usage:
 //
 // To install one component:
 //
 //     require_once($CFG->libdir.'/componentlib.class.php');
-//     if ($cd = new component_installer('http://download.moodle.org', 'lang16', 
+//     if ($cd = new component_installer('http://download.moodle.org', 'lang16',
 //                                       'es_utf8.zip', 'languages.md5', 'lang')) {
 //         $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
 //         switch ($status) {
-//             case ERROR: 
-//                 if ($cd->get_error() == 'remotedownloadnotallowed') {
+//             case ERROR:
+//                 if ($cd->get_error() == 'remotedownloaderror') {
 //                     $a = new stdClass();
 //                     $a->url = 'http://download.moodle.org/lang16/es_utf8.zip';
 //                     $a->dest= $CFG->dataroot.'/lang';
@@ -144,7 +142,7 @@ define('INSTALLED',       3);
 class component_installer {
 
     var $sourcebase;   /// Full http URL, base for downloadable items
-    var $zippath;      /// Relative path (from sourcebase) where the 
+    var $zippath;      /// Relative path (from sourcebase) where the
                        /// downloadeable item resides.
     var $zipfilename;  /// Name of the .zip file to be downloaded
     var $md5filename;  /// Name of the .md5 file to be read
@@ -166,12 +164,12 @@ class component_installer {
      * without performing any check at all.
      *
      * @param string Full http URL, base for downloadeable items
-     * @param string Relative path (from sourcebase) where the 
+     * @param string Relative path (from sourcebase) where the
      *               downloadeable item resides
      * @param string Name of the .zip file to be downloaded
-     * @param string Name of the .md5 file to be read (default '' = same 
+     * @param string Name of the .md5 file to be read (default '' = same
      *               than zipfilename)
-     * @param string Relative path (from moodledata) where the .zip file will 
+     * @param string Relative path (from moodledata) where the .zip file will
      *               be expanded (default='' = moodledataitself)
      * @return object
      */
@@ -193,8 +191,7 @@ class component_installer {
 
     /**
      * This function will check if everything is properly set to begin
-     * one installation. It'll check for fopen wrappers enabled and
-     * admin privileges. Also, it will check for required settings
+     * one installation. Also, it will check for required settings
      * and will fill everything as needed.
      *
      * @return boolean true/false (plus detailed error in errorstring)
@@ -204,11 +201,6 @@ class component_installer {
 
         $this->requisitesok = false;
 
-        /// Check for fopen remote enabled
-        if (!ini_get('allow_url_fopen')) {
-            $this->errorstring='remotedownloadnotallowed';
-            return false;
-        }
     /// Check that everything we need is present
         if (empty($this->sourcebase) || empty($this->zippath) || empty($this->zipfilename)) {
             $this->errorstring='missingrequiredfield';
@@ -231,7 +223,7 @@ class component_installer {
                 return false;
             }
         }
-    /// Calculate the componentnamea
+    /// Calculate the componentname
         $pos = stripos($this->zipfilename, '.zip');
         $this->componentname = substr($this->zipfilename, 0, $pos);
     /// Calculate md5filename if it's empty
@@ -304,7 +296,7 @@ class component_installer {
         $destinationdir = $CFG->dataroot.'/'.$this->destpath;
         $destinationcomponent = $destinationdir.'/'.$this->componentname;
         @remove_dir($destinationcomponent.'_old');     //Deleting possible old components before
-        @rename ($destinationcomponent, $destinationcomponent.'_old');  //Moving to a safe place  
+        @rename ($destinationcomponent, $destinationcomponent.'_old');  //Moving to a safe place
     /// Unzip new version
         if (!unzip_file($zipfile, $destinationdir, false)) {
         /// Error so, go back to the older
@@ -359,7 +351,7 @@ class component_installer {
        }
     }
 
-    /** 
+    /**
      * This function will change the zip file to install on the fly
      * to allow the class to process different components of the
      * same md5 file without intantiating more objects.
@@ -416,7 +408,9 @@ class component_installer {
         }
     /// Get all components of md5 file
         if (!$comp_arr = $this->get_all_components_md5()) {
-            $this->errorstring='cannotdownloadcomponents';
+            if (empty($this->errorstring)) {
+                $this->errorstring='cannotdownloadcomponents';
+            }
             return false;
         }
     /// Search for the componentname component
@@ -436,8 +430,8 @@ class component_installer {
         return $component[1];
     }
 
-    /** 
-     * This function allows you to retrieve the complete array of components found in 
+    /**
+     * This function allows you to retrieve the complete array of components found in
      * the md5filename
      *
      * @return array array of components in md5 file or false if error
@@ -493,12 +487,15 @@ class component_installer {
                 $this->cachedmd5components[$source] = $comp_arr;
             } else {
             /// Return error
-                $this->errorstring='cannotdownloadcomponents';
+                $this->errorstring='remotedownloaderror';
                 return false;
             }
         }
-    /// If there is no commponents, error
-        if (empty($comp_arr)) {
+    /// If there is no commponents or erros found, error
+        if (!empty($this->errorstring)) {
+             return false;
+
+        } else if (empty($comp_arr)) {
              $this->errorstring='cannotdownloadcomponents';
              return false;
         }
@@ -515,7 +512,7 @@ class component_installer {
     }
 
     /** This function returns the extramd5 field (optional in md5 file)
-     * 
+     *
      * @return string the extramd5 field
      */
     function get_extra_md5_field() {
