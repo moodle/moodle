@@ -1662,6 +1662,10 @@ class admin_setting_configtext extends admin_setting {
     }
 
     function write_setting($data) {
+        if ($this->paramtype === PARAM_INT and $data === '') {
+            // do not complain if '' used instead of 0
+            $data = 0;
+        }
         // $data is a string
         $validated = $this->validate($data); 
         if ($validated !== true) {
