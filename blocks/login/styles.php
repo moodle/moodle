@@ -7,7 +7,11 @@
 }
 
 .block_login .loginform .c1 input {
-  width:5em;
+  width:6em;
+}
+
+.block_login .loginform label {
+  padding-right: 4px;
 }
 
 .block_login .loginform div {
