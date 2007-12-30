@@ -171,8 +171,11 @@ $string['configpathtoclam'] = 'Path to clam AV.  Probably something like /usr/bi
 $string['configpathtodu'] = 'Path to du. Probably something like /usr/bin/du. If you enter this, pages that display directory contents will run much faster for directories with a lot of files.';
 $string['configperfdebug'] = 'If you turn this on, performance info will be printed in the footer of the standard theme';
 $string['configprotectusernames'] = 'By default forget_password.php does not display any hints that would allow guessing of usernames or email addresses.';
-$string['configproxyhost'] = 'If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
+$string['configproxyhost'] = 'If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname here.  Otherwise leave it blank.';
+$string['configproxypassword'] = 'Password needed to access internet through proxy if required, empty if none (PHP cURL extension required).';
 $string['configproxyport'] = 'If this server needs to use a proxy computer, then provide the proxy port here.';
+$string['configproxyuser'] = 'Username needed to access internet through proxy if required, empty if none (PHP cURL extension required).';
+$string['configproxytype'] = 'Type of web proxy (PHP5 and cURL extension required for SOCKS5 support).';
 $string['configquarantinedir'] = 'If you want clam AV to move infected files to a quarantine directory, enter it here. It must be writable by the webserver.  If you leave this blank, or if you enter a directory that doesn\'t exist or isn\'t writable, infected files will be deleted.  Do not include a trailing slash.';
 $string['configcronclionly'] = 'If this is set, then the cron script can only be run from the commandline instead of via the web.  This overrides the cron password setting below.';
 $string['configcronremotepassword'] = 'This means that the cron.php script cannot be run from a web browser without supplying the password using the following form of URL:<pre>
@@ -244,7 +247,7 @@ $string['cronerrorpassword'] = 'Sorry, you have not provided a valid password to
 $string['cronremotepassword'] = 'Cron password for remote access';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours.';
 $string['csvdelimiter'] = 'CSV delimiter';
-$string['curlrecommended'] = 'Installing the optional Curl library is highly recommended in order to enable Moodle Networking functionality.';
+$string['curlrecommended'] = 'Installing the optional cURL library is highly recommended in order to enable Moodle Networking functionality.';
 $string['customcheck'] = 'Other Checks';
 $string['datarootsecuritywarning'] = 'Your site configuration might not be secure. Please make sure that your dataroot directory ($a) is not directly accessible via web.';
 $string['dbmigrate'] = 'Moodle Database Migration';
@@ -551,6 +554,9 @@ $string['profilevisible'] = 'Who is this field visible to?';
 $string['protectusernames'] = 'Protect usernames';
 $string['proxyhost'] = 'Proxy host';
 $string['proxyport'] = 'Proxy port';
+$string['proxypassword'] = 'Proxy password';
+$string['proxyuser'] = 'Proxy username';
+$string['proxytype'] = 'Proxy type';
 $string['qtyperqpwillberemoved'] = 'During the upgrade, the RQP question type will be removed. You were not using this question type, so you should not experience any problems.';
 $string['qtyperqpwillberemovedanyway'] = 'During the upgrade, the RQP question type will be removed. You have some RQP questions in your database, and these will stop working unless you reinstall the code from http://moodle.org/mod/data/view.php?d=13&amp;rid=797 before continuing with the upgrade.';
 $string['quarantinedir'] = 'Quarantine directory';
@@ -701,6 +707,8 @@ $string['uuupdatemissing'] = 'Fill in missing from file and defaults';
 $string['uuupdatetype'] = 'Existing user details';
 $string['validateerror'] = 'This value was not valid:';
 $string['warningcurrentsetting'] = 'Invalid current value: $a';
+$string['webproxy'] = 'Web proxy';
+$string['webproxyinfo'] = 'Fill in following options if your Moodle server can not access internet directly. Internet access is required for download of environment data, language packs, RSS feeds, timezones, etc.<br /><em>PHP cURL extension is highly recommended.</em>';
 $string['xmlstrictheaders'] = 'XML strict headers';
 
 ?>

@@ -1,21 +1,53 @@
 <?php //$Id$
 
-require_once($CFG->libdir.'/libcurlemu/libcurlemu.inc.php'); // might be moved to setup.php later
-
 define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
 
 /**
- * Fetches content of file from Internet (using proxy if defined).
- *
+ * Fetches content of file from Internet (using proxy if defined). Uses cURL extension if present.
+ * @param string $url file url
  * @return mixed false if request failed or content of the file as string if ok.
  */
 function download_file_content($url) {
     global $CFG;
 
+    if (!extension_loaded('curl')) {
+        require_once($CFG->libdir.'/snoopy/Snoopy.class.inc');
+        $snoopy = new Snoopy();
+        $snoopy->proxy_host = $CFG->proxyhost;
+        $snoopy->proxy_port = $CFG->proxyport;
+        if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
+            // this will probably fail, but let's try it anyway
+            $snoopy->proxy_user     = $CFG->proxyuser;
+            $snoopy->proxy_password = $CFG->proxypassword;
+        }
+        if ($snoopy->fetch($url)) {
+            if (strpos($snoopy->response_code, '200') === false) {
+                debugging("Snoopy request for \"$url\" failed, http response code: ".$snoopy->response_code, DEBUG_ALL);
+                return false;
+            } else {
+                return $snoopy->results;
+            }
+        } else {
+            debugging("Snoopy request for \"$url\" failed with: ".$snoopy->error, DEBUG_ALL);
+            return false;
+        }
+    }
+
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HEADER, false);
     if (!empty($CFG->proxyhost)) {
+        // SOCKS supported in PHP5 only
+        if (!empty($CFG->proxytype) and ($CFG->proxytype == 'SOCKS5')) {
+            if (defined('CURLPROXY_SOCKS5')) {
+                curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+            } else {
+                debugging("SOCKS5 proxies are supported only in PHP5 when cURL extension loaded.", DEBUG_ALL);
+                curl_close($ch);
+                return false;
+            }
+        }
+
         // don't CONNECT for non-https connections
         curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, false);
 
@@ -24,15 +56,70 @@ function download_file_content($url) {
         } else {
             curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost.':'.$CFG->proxyport);
         }
-        if(!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
+
+        if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
             curl_setopt($ch, CURLOPT_PROXYUSERPWD, $CFG->proxyuser.':'.$CFG->proxypassword);
+            if (defined('CURLOPT_PROXYAUTH')) {
+                // any proxy authentication if PHP 5.1
+                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC | CURLAUTH_NTLM);
+            }
         }
     }
     $result = curl_exec($ch);
 
     if (curl_errno($ch)) {
-        $curlerror = "CURL request for \"$url\" failed with: ". curl_error($ch);
-        debugging($curlerror, DEBUG_DEVELOPER);
+        debugging("CURL request for \"$url\" failed with: ".curl_error($ch), DEBUG_ALL);
+        $result = false;
+
+    } else {
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($code != 200) {
+            $codes = array(
+                        100=>'Continue',
+                        101=>'Switching Protocols',
+                        200=>'OK',
+                        201=>'Created',
+                        202=>'Accepted',
+                        203=>'Non-Authoritative Information',
+                        204=>'No Content',
+                        205=>'Reset Content',
+                        206=>'Partial Content',
+                        300=>'Multiple Choices',
+                        301=>'Moved Permanently',
+                        302=>'Found',
+                        303=>'See Other',
+                        304=>'Not Modified',
+                        305=>'Use Proxy',
+                        306=>'(Unused)',
+                        307=>'Temporary Redirect',
+                        400=>'Bad Request',
+                        401=>'Unauthorized',
+                        402=>'Payment Required',
+                        403=>'Forbidden',
+                        404=>'Not Found',
+                        405=>'Method Not Allowed',
+                        406=>'Not Acceptable',
+                        407=>'Proxy Authentication Required',
+                        408=>'Request Timeout',
+                        409=>'Conflict',
+                        410=>'Gone',
+                        411=>'Length Required',
+                        412=>'Precondition Failed',
+                        413=>'Request Entity Too Large',
+                        414=>'Request-URI Too Long',
+                        415=>'Unsupported Media Type',
+                        416=>'Requested Range Not Satisfiable',
+                        417=>'Expectation Failed',
+                        500=>'Internal Server Error',
+                        501=>'Not Implemented',
+                        502=>'Bad Gateway',
+                        503=>'Service Unavailable',
+                        504=>'Gateway Timeout',
+                        505=>'HTTP Version Not Supported');
+    
+            debugging("CURL request for \"$url\" failed, http response code: ".$code.' '.$codes[$code], DEBUG_ALL);
+            $result = false;
+        }
     }
 
     curl_close($ch);
@@ -347,7 +434,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
 
     // if user is using IE, urlencode the filename so that multibyte file name will show up correctly on popup
     if (check_browser_version('MSIE')) {
-        $filename = urlencode($filename); 
+        $filename = urlencode($filename);
     }
 
     if ($forcedownload) {
