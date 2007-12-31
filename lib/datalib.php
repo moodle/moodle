@@ -1536,6 +1536,9 @@ function update_timezone_records($timezones) {
 
 /// Insert all the new stuff
     foreach ($timezones as $timezone) {
+        if (is_array($timezone)) {
+            $timezone = (object)$timezone;
+        }
         insert_record('timezone', $timezone);
     }
 }
