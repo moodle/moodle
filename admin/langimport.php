@@ -47,10 +47,10 @@
 
                 if ($cd = new component_installer('http://download.moodle.org', 'lang16',
                                                     $pack.'.zip', 'languages.md5', 'lang')) {
-                    $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
+                    $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
                     switch ($status) {
 
-                        case ERROR:
+                        case COMPONENT_ERROR:
                             if ($cd->get_error() == 'remotedownloaderror') {
                                 $a = new object();
                                 $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
@@ -61,11 +61,11 @@
                             }
                         break;
 
-                        case INSTALLED:
+                        case COMPONENT_INSTALLED:
                             $notice_ok[] = get_string('langpackinstalled','admin',$pack);
                         break;
 
-                        case UPTODATE:
+                        case COMPONENT_UPTODATE:
                         break;
 
                     }
@@ -180,10 +180,10 @@
 
                 if ($cd = new component_installer('http://download.moodle.org', 'lang16',
                                        $pack.'.zip', 'languages.md5', 'lang')) {
-                $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
+                $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
                 switch ($status) {
 
-                    case ERROR:
+                    case COMPONENT_ERROR:
                         if ($cd->get_error() == 'remotedownloaderror') {
                             $a = new stdClass();
                             $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
@@ -193,10 +193,10 @@
                             error(get_string($cd->get_error(), 'error')); // not probable
                         }
                     break;
-                    case UPTODATE:
+                    case COMPONENT_UPTODATE:
                         //Print error string or whatever you want to do
                     break;
-                    case INSTALLED:
+                    case COMPONENT_INSTALLED:
                         $notice_ok[] = get_string('langpackupdated', 'admin', $pack);
                         $updated = true;
                         //Print/do whatever you want

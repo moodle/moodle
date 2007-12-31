@@ -467,9 +467,9 @@ if ($INSTALL['stage'] == DOWNLOADLANG && $INSTALL['downloadlangpack']) {
 /// Download and install component
     if (($cd = new component_installer('http://download.moodle.org', 'lang16',
         $INSTALL['language'].'.zip', 'languages.md5', 'lang')) && empty($errormsg)) {
-        $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
+        $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
         switch ($status) {
-            case ERROR:
+            case COMPONENT_ERROR:
                 if ($cd->get_error() == 'remotedownloaderror') {
                     $a = new stdClass();
                     $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
@@ -479,8 +479,8 @@ if ($INSTALL['stage'] == DOWNLOADLANG && $INSTALL['downloadlangpack']) {
                     $downloaderror = get_string($cd->get_error(), 'error');
                 }
             break;
-            case UPTODATE:
-            case INSTALLED:
+            case COMPONENT_UPTODATE:
+            case COMPONENT_INSTALLED:
                 $downloadsuccess = true;
             break;
             default:

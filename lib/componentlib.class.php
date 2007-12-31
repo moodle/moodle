@@ -77,9 +77,9 @@
 //     require_once($CFG->libdir.'/componentlib.class.php');
 //     if ($cd = new component_installer('http://download.moodle.org', 'lang16',
 //                                       'es_utf8.zip', 'languages.md5', 'lang')) {
-//         $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
+//         $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
 //         switch ($status) {
-//             case ERROR:
+//             case COMPONENT_ERROR:
 //                 if ($cd->get_error() == 'remotedownloaderror') {
 //                     $a = new stdClass();
 //                     $a->url = 'http://download.moodle.org/lang16/es_utf8.zip';
@@ -89,10 +89,10 @@
 //                     error(get_string($cd->get_error(), 'error'));
 //                 }
 //                 break;
-//             case UPTODATE:
+//             case COMPONENT_UPTODATE:
 //                 //Print error string or whatever you want to do
 //                 break;
-//             case INSTALLED:
+//             case COMPONENT_INSTALLED:
 //                 //Print/do whatever you want
 //                 break;
 //             default:
@@ -112,7 +112,7 @@
 //
 // To check if current component needs to be updated
 //
-//     $status = $cd->need_upgrade();  //returns ERROR | UPTODATE | NEEDUPDATE
+//     $status = $cd->need_upgrade();  //returns COMPONENT_(ERROR | UPTODATE | NEEDUPDATE)
 //
 // To get the 3rd field of the md5 file (optional)
 //
@@ -126,10 +126,10 @@ global $CFG;
 require_once($CFG->libdir.'/filelib.php');
 
 // Some needed constants
-define('ERROR',           0);
-define('UPTODATE',        1);
-define('NEEDUPDATE',      2);
-define('INSTALLED',       3);
+define('COMPONENT_ERROR',           0);
+define('COMPONENT_UPTODATE',        1);
+define('COMPONENT_NEEDUPDATE',      2);
+define('COMPONENT_INSTALLED',       3);
 
 /**
  * This class is used to check, download and install items from
@@ -240,7 +240,7 @@ class component_installer {
      * compare md5 values, download, unzip, install and regenerate
      * local md5 file
      *
-     * @return int ERROR | UPTODATE | INSTALLED
+     * @return int COMPONENT_(ERROR | UPTODATE | INSTALLED)
      */
     function install() {
 
@@ -248,19 +248,19 @@ class component_installer {
 
     /// Check requisites are passed
         if (!$this->requisitesok) {
-            return ERROR;
+            return COMPONENT_ERROR;
         }
     /// Confirm we need upgrade
-        if ($this->need_upgrade() === ERROR) {
-            return ERROR;
-        } else if ($this->need_upgrade() === UPTODATE) {
+        if ($this->need_upgrade() === COMPONENT_ERROR) {
+            return COMPONENT_ERROR;
+        } else if ($this->need_upgrade() === COMPONENT_UPTODATE) {
             $this->errorstring='componentisuptodate';
-            return UPTODATE;
+            return COMPONENT_UPTODATE;
         }
     /// Create temp directory if necesary
         if (!make_upload_directory('temp', false)) {
              $this->errorstring='cannotcreatetempdir';
-             return ERROR;
+             return COMPONENT_ERROR;
         }
     /// Download zip file and save it to temp
         $source = $this->sourcebase.'/'.$this->zippath.'/'.$this->zipfilename;
@@ -271,26 +271,26 @@ class component_installer {
                 if (!fwrite($file, $contents)) {
                     fclose($file);
                     $this->errorstring='cannotsavezipfile';
-                    return ERROR;
+                    return COMPONENT_ERROR;
                 }
             } else {
                 $this->errorstring='cannotsavezipfile';
-                return ERROR;
+                return COMPONENT_ERROR;
             }
             fclose($file);
         } else {
             $this->errorstring='cannotdownloadzipfile';
-            return ERROR;
+            return COMPONENT_ERROR;
         }
     /// Calculate its md5
         $new_md5 = md5($contents);
     /// Compare it with the remote md5 to check if we have the correct zip file
         if (!$remote_md5 = $this->get_component_md5()) {
-            return ERROR;
+            return COMPONENT_ERROR;
         }
         if ($new_md5 != $remote_md5) {
             $this->errorstring='downloadedfilecheckfailed';
-            return ERROR;
+            return COMPONENT_ERROR;
         }
     /// Move current revision to a safe place
         $destinationdir = $CFG->dataroot.'/'.$this->destpath;
@@ -303,7 +303,7 @@ class component_installer {
             @remove_dir($destinationcomponent);
             @rename ($destinationcomponent.'_old', $destinationcomponent);
             $this->errorstring='cannotunzipfile';
-            return ERROR;
+            return COMPONENT_ERROR;
         }
     /// Delete old component version
         @remove_dir($destinationcomponent.'_old');
@@ -312,42 +312,42 @@ class component_installer {
             if (!fwrite($file, $new_md5)) {
                 fclose($file);
                 $this->errorstring='cannotsavemd5file';
-                return ERROR;
+                return COMPONENT_ERROR;
             }
         } else  {
             $this->errorstring='cannotsavemd5file';
-            return ERROR;
+            return COMPONENT_ERROR;
         }
         fclose($file);
     /// Delete temp zip file
         @unlink($zipfile);
 
-        return INSTALLED;
+        return COMPONENT_INSTALLED;
     }
 
     /**
      * This function will detect if remote component needs to be installed
      * because it's different from the local one
      *
-     * @return int ERROR | UPTODATE | NEEDUPDATE
+     * @return int COMPONENT_(ERROR | UPTODATE | NEEDUPDATE)
      */
     function need_upgrade() {
 
     /// Check requisites are passed
         if (!$this->requisitesok) {
-            return ERROR;
+            return COMPONENT_ERROR;
         }
     /// Get local md5
         $local_md5 = $this->get_local_md5();
     /// Get remote md5
         if (!$remote_md5 = $this->get_component_md5()) {
-            return ERROR;
+            return COMPONENT_ERROR;
         }
     /// Return result
        if ($local_md5 == $remote_md5) {
-           return UPTODATE;
+           return COMPONENT_UPTODATE;
        } else {
-           return NEEDUPDATE;
+           return COMPONENT_NEEDUPDATE;
        }
     }
 
