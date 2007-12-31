@@ -4,7 +4,9 @@ define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
 
 /**
  * Fetches content of file from Internet (using proxy if defined). Uses cURL extension if present.
- * @param string $url file url
+ * Due to security concerns only downloads from http(s) sources are supported.
+ *
+ * @param string $url file url starting with http(s)://
  * @param array $headers http headers, null if none
  * @param array $postdata array means use POST request with given parameters
  * @param bool $fullresponse return headers, responses, etc in a similar way snoopy does
@@ -13,6 +15,29 @@ define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
  */
 function download_file_content($url, $headers=null, $postdata=null, $fullresponse=false, $timeout=20) {
     global $CFG;
+
+    // some extra security
+    $newlines = array("\r", "\n");
+    if (is_array($headers) ) {
+        foreach ($headers as $key => $value) {
+            $headers[$key] = str_replace($newlines, '', $value);
+        }
+    }
+    $url = str_replace($newlines, '', $url);
+    if (!preg_match('|^https?://|i', $url)) {
+        if ($fullresponse) {
+            $response = new object();
+            $response->status        = 0;
+            $response->headers       = array();
+            $response->response_code = 'Invalid protocol specified in url';
+            $response->results       = '';
+            $response->error         = 'Invalid protocol specified in url';
+            return $response;
+        } else {
+            return false;
+        }
+    }
+
 
     if (!extension_loaded('curl') or ($ch = curl_init($url)) === false) {
         require_once($CFG->libdir.'/snoopy/Snoopy.class.inc');
@@ -72,12 +97,10 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
         }
     }
 
-    // set extra headers, trim all newlines for extra security
+    // set extra headers
     if (is_array($headers) ) {
         $headers2 = array();
         foreach ($headers as $key => $value) {
-            $value = str_replace("\n", '', $value);
-            $value = str_replace("\r", '', $value);
             $headers2[] = "$key: $value";
         }
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers2);
@@ -97,7 +120,7 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
     curl_setopt($ch, CURLOPT_HEADER, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
     if (!ini_get('open_basedir') and !ini_get('safe_mode')) {
-        // TODO: add version check for '7.10.5'
+        // TODO: add version test for '7.10.5'
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
     }
@@ -108,9 +131,19 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
             if (defined('CURLPROXY_SOCKS5')) {
                 curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
             } else {
-                debugging("SOCKS5 proxies are supported only in PHP5 when cURL extension loaded.", DEBUG_ALL);
                 curl_close($ch);
-                return false;
+                if ($fullresponse) {
+                    $response = new object();
+                    $response->status        = '0';
+                    $response->headers       = array();
+                    $response->response_code = 'SOCKS5 proxy is not supported in PHP4';
+                    $response->results       = '';
+                    $response->error         = 'SOCKS5 proxy is not supported in PHP4';
+                    return $response;
+                } else {
+                    debugging("SOCKS5 proxy is not supported in PHP4.", DEBUG_ALL);
+                    return false;
+                }
             }
         }
 
@@ -131,12 +164,12 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
         }
     }
 
-    $result = curl_exec($ch);
+    $data = curl_exec($ch);
 
-    // detect encoding problems
+    // try to detect encoding problems
     if ((curl_errno($ch) == 23 or curl_errno($ch) == 61) and defined('CURLOPT_ENCODING')) {
         curl_setopt($ch, CURLOPT_ENCODING, 'none');
-        $result = curl_exec($ch);
+        $data = curl_exec($ch);
     }
 
     if (curl_errno($ch)) {
@@ -157,30 +190,42 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
             $response->error         = $error;
             return $response;
         } else {
-            debugging("CURL request for \"$url\" failed with: $error ($error_no)", DEBUG_ALL);
+            debugging("cURL request for \"$url\" failed with: $error ($error_no)", DEBUG_ALL);
             return false;
         }
 
     } else {
         $info = curl_getinfo($ch);
         curl_close($ch);
-        // strip redirect headers and constrct headers array and body
-        $result = explode("\r\n\r\n", $result, $info['redirect_count'] + 2);
-        $results = array_pop($result);
-        $headers = array_pop($result);
-        $headers = explode("\r\n", trim($headers));
 
-        $response = new object();;
-        $response->status        = (string)$info['http_code'];
-        $response->headers       = $headers;
-        $response->response_code = $headers[0];
-        $response->results       = $results;
-        $response->error         = '';
+        if (empty($info['http_code'])) {
+            // for security reasons we support only true http connections (Location: file:// exploit prevention)
+            $response = new object();
+            $response->status        = '0';
+            $response->headers       = array();
+            $response->response_code = 'Unknown cURL error';
+            $response->results       = ''; // do NOT change this!
+            $response->error         = 'Unknown cURL error';
+
+        } else {
+            // strip redirect headers and get headers array and content
+            $data = explode("\r\n\r\n", $data, $info['redirect_count'] + 2);
+            $results = array_pop($data);
+            $headers = array_pop($data);
+            $headers = explode("\r\n", trim($headers));
+
+            $response = new object();;
+            $response->status        = (string)$info['http_code'];
+            $response->headers       = $headers;
+            $response->response_code = $headers[0];
+            $response->results       = $results;
+            $response->error         = '';
+        }
 
         if ($fullresponse) {
             return $response;
         } else if ($info['http_code'] != 200) {
-            debugging("CURL request for \"$url\" failed, http response code: $response_code", DEBUG_ALL);
+            debugging("cURL request for \"$url\" failed, HTTP response code: ".$response->response_code, DEBUG_ALL);
             return false;
         } else {
             return $response->results;
