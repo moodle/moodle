@@ -259,7 +259,7 @@ class Snoopy
                 break;
             default:
                 // not a valid protocol
-                $this->error    =    'Invalid protocol "'.$URI_PARTS["scheme"].'"\n';
+                $this->error    =    'Invalid protocol "'.$URI_PARTS["scheme"]; // moodlefix
                 return false;
                 break;
         }        
@@ -425,7 +425,7 @@ class Snoopy
                 
             default:
                 // not a valid protocol
-                $this->error    =    'Invalid protocol "'.$URI_PARTS["scheme"].'"\n';
+                $this->error    =    'Invalid protocol "'.$URI_PARTS["scheme"]; //moodlefix
                 return false;
                 break;
         }        
@@ -720,13 +720,13 @@ class Snoopy
                             chr(176),
                             chr(39),
                             chr(128),
-                            "ä",
-                            "ö",
-                            "ü",
-                            "Ä",
-                            "Ö",
-                            "Ü",
-                            "ß",
+                            "ï¿½",
+                            "ï¿½",
+                            "ï¿½",
+                            "ï¿½",
+                            "ï¿½",
+                            "ï¿½",
+                            "ï¿½",
                         );
                     
         $text = preg_replace($search,$replace,$document);
