@@ -182,6 +182,6 @@ print_box_start();
   print_box_start();
   rss_display_feeds($id, $USER->id, '', $context);
   rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
-  // Do NOT print_box_end() here, this is taken care of by blocks/moodleblock.class.php:582
+  print_box_end();
 }
 ?>
