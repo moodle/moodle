@@ -40,7 +40,7 @@ $string['configfilewritten'] = 'config.php has been successfully created';
 $string['configurationcompletehead'] = 'Configuration completed';
 $string['configurationcompletesub'] = 'Moodle made an attempt to save your configuration in a file in the root of your Moodle installation.';
 $string['continue'] = 'Continue';
-$string['curlrecommended'] = 'Installing the optional Curl library is highly recommended in order to enable Moodle Networking functionality.';
+$string['curlrecommended'] = 'Installing the optional cURL library is highly recommended in order to enable Moodle Networking functionality.';
 $string['customcheck'] = 'Other Checks';
 $string['database'] = 'Database';
 $string['databasecreationsettingshead'] = 'Now you need to configure the database settings where most Moodle data
@@ -234,6 +234,7 @@ $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Previous';
 $string['qtyperqpwillberemoved'] = 'During the upgrade, the RQP question type will be removed. You were not using this question type, so you should not experience any problems.';
 $string['qtyperqpwillberemovedanyway'] = 'During the upgrade, the RQP question type will be removed. You have some RQP questions in your database, and these will stop working unless you reinstall the code from http://moodle.org/mod/data/view.php?d=13&amp;rid=797 before continuing with the upgrade.';
+$string['remotedownloaderror'] = 'Download of component to your server failed, please verify proxy settings, PHP cURL extension is highly recommended.<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['report'] = 'Report';
 $string['restricted'] = 'Restricted';
