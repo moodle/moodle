@@ -30,13 +30,12 @@ if (!defined('MAGPIE_DIR')) {
 require_once( MAGPIE_DIR . 'rss_parse.inc' );
 require_once( MAGPIE_DIR . 'rss_cache.inc' );
 
-// for including 3rd party libraries
+// moodlefix start
 // for including 3rd party libraries
 //define('MAGPIE_EXTLIB', MAGPIE_DIR . 'extlib' . DIR_SEP);
 //require_once( MAGPIE_EXTLIB . 'Snoopy.class.inc');
-// Modified by Daryl Hawes for Moodle integration - use Snoopy file in moodle/lib/snoopy
-require_once( $CFG->libdir .'/snoopy/Snoopy.class.inc');
-
+require_once($CFG->libdir.'/filelib.php');
+// modolefix end
 
 /* 
  * CONSTANTS - redefine these in your script to change the
@@ -200,7 +199,7 @@ function fetch_rss ($url, $postdata=null) {
                 elseif ( $resp->error ) {
                     # compensate for Snoopy's annoying habbit to tacking
                     # on '\n'
-                    $http_error = substr($resp->error, 0, -2); 
+                    $http_error = trim($resp->error); // moodle fix 
                     $errormsg .= "(HTTP Error: $http_error)";
                 }
                 else {
@@ -277,6 +276,9 @@ function magpie_error ($errormsg="") {
     Output:     an HTTP response object (see Snoopy.class.inc)  
 \*=======================================================================*/
 function _fetch_remote_file ($url, $headers = "", $postdata=null ) {
+    // moodlefix
+    return download_file_content($url, $headers, $postdata, true, MAGPIE_FETCH_TIME_OUT);
+/*
     // Snoopy is an HTTP client in PHP
     $client = new Snoopy();
     $client->proxy_host = MAGPIE_PROXY_HOST;
@@ -293,6 +295,8 @@ function _fetch_remote_file ($url, $headers = "", $postdata=null ) {
         @$client->fetch($url);
     }
     return $client;
+*/
+    // end of moodlefix
 
 }
 

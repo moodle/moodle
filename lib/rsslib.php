@@ -270,6 +270,7 @@ function rss_geterrorxmlfile() {
 
     //XML item
     if ($return) {
+        $item = new object();
         $item->title = "RSS Error";
         $item->link = $CFG->wwwroot;
         $item->pubdate = time();
@@ -341,9 +342,7 @@ if (!isset($CFG->block_rss_client_timeout) ) {
 }
 
 // Defines for moodle's use of magpierss classes
-define('MAGPIE_PROXY_HOST', $CFG->proxyhost);   // Could be empty, that's OK
-define('MAGPIE_PROXY_PORT', $CFG->proxyport);   // Could be empty, that's OK
-define('MAGPIE_DIR', $CFG->dirroot.'/lib/magpie/');
+define('MAGPIE_DIR', $CFG->libdir.'/magpie/');
 define('MAGPIE_CACHE_DIR', $CFG->dataroot .'/cache/rsscache');
 define('MAGPIE_CACHE_ON', true); //might want to expose as an admin config option, but perhaps this is something that should truly just be on unless the code is tweaked
 define('MAGPIE_CACHE_FRESH_ONLY', false); //should be exposed as an admin config option
