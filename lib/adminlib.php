@@ -2151,6 +2151,25 @@ class admin_setting_configselect extends admin_setting {
         return true;
     }
 
+    function is_related($query) {
+        if (parent::is_related($query)) {
+            return true;
+        }
+        if (!$this->load_choices()) {
+            return false;
+        }
+        $textlib = textlib_get_instance();
+        foreach ($this->choices as $key=>$value) {
+            if (strpos($textlib->strtolower($key), $query) !== false) {
+                return true;
+            }
+            if (strpos($textlib->strtolower($value), $query) !== false) {
+                return true;
+            }
+        }         
+        return false;
+    }
+
     function get_setting() {
         return $this->config_read($this->name);
     }
