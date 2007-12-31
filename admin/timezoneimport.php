@@ -98,6 +98,9 @@
 
         $timezonelist = array();
         foreach ($timezones as $timezone) {
+            if (is_array($timezone)) {
+                $timezone = (object)$timezone;
+            }
             if (isset($timezonelist[$timezone->name])) {
                 $timezonelist[$timezone->name]++;
             } else {
