@@ -4367,9 +4367,9 @@ function upgrade_language_pack($lang='') {
     require_once($CFG->libdir.'/componentlib.class.php');
 
     if ($cd = new component_installer('http://download.moodle.org', 'lang16', $lang.'.zip', 'languages.md5', 'lang')) {
-        $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
+        $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
 
-        if ($status == INSTALLED) {
+        if ($status == COMPONENT_INSTALLED) {
             debugging('Downloading successful: '.$lang);
             @unlink($CFG->dataroot.'/cache/languages');
             return true;
