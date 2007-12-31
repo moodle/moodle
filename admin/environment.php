@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -65,9 +65,9 @@
         if ($cd = new component_installer('http://download.moodle.org', 
                                           'environment', 
                                           'environment.zip')) {
-            $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
+            $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
             switch ($status) {
-                case ERROR:
+                case COMPONENT_ERROR:
                     if ($cd->get_error() == 'remotedownloaderror') {
                         $a = new stdClass();
                         $a->url = 'http://download.moodle.org/environment/environment.zip';
@@ -77,10 +77,10 @@
                         print_simple_box(get_string($cd->get_error(), 'error'), 'center', '', '', 5, 'errorbox');
                     }
                     break;
-                case UPTODATE:
+                case COMPONENT_UPTODATE:
                     print_simple_box(get_string($cd->get_error(), 'error'), 'center');
                     break;
-                case INSTALLED:
+                case COMPONENT_INSTALLED:
                     print_simple_box(get_string('componentinstalled', 'admin'), 'center');
                     break;
             }
