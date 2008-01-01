@@ -874,9 +874,15 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
     foreach ($searchterms as $searchterm) {
 
+        $NOT = ''; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
+                   /// will use it to simulate the "-" operator with LIKE clause
+
     /// Under Oracle and MSSQL, trim the + and - operators and perform
-    /// simpler LIKE search
+    /// simpler LIKE (or NOT LIKE) queries
         if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') {
+            if (substr($searchterm, 0, 1) == '-') {
+                $NOT = ' NOT ';
+            }
             $searchterm = trim($searchterm, '+-');
         }
 
@@ -896,13 +902,13 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
             $summarysearch .= " summary $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
             $fullnamesearch .= " fullname $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
         } else {
-            $summarysearch .= ' summary '. $LIKE .' \'%'. $searchterm .'%\' ';
-            $fullnamesearch .= ' fullname '. $LIKE .' \'%'. $searchterm .'%\' ';
+            $summarysearch .= ' summary '. $NOT . $LIKE .' \'%'. $searchterm .'%\' ';
+            $fullnamesearch .= ' fullname '. $NOT . $LIKE .' \'%'. $searchterm .'%\' ';
         }
 
     }
 
-    $selectsql = $CFG->prefix .'course WHERE ('. $fullnamesearch .' OR '. $summarysearch .') AND category > \'0\'';
+    $selectsql = $CFG->prefix .'course WHERE (('. $fullnamesearch .') OR ('. $summarysearch .')) AND category > \'0\'';
 
     $totalcount = count_records_sql('SELECT COUNT(*) FROM '. $selectsql);
 
