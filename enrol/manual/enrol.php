@@ -188,15 +188,16 @@ function check_entry($form, $course) {
 * @param    password  the submitted enrolment key
 */
 function check_group_entry ($courseid, $password) {
-    $ingroup = false;
-    if (($groups = groups_get_all_groups($courseid))) {
+
+    if ($groups = groups_get_all_groups($courseid)) {
         foreach ($groups as $group) {
             if ( !empty($group->enrolmentkey) and (stripslashes($password) == $group->enrolmentkey) ) {
-                $ingroup = $group->id;
+                return $group->id;
             }
         }
     }
-    return $ingroup;
+
+    return false;
 }
 
 
