@@ -1788,19 +1788,43 @@ document.write(\'<span class="unmask"><input id="'.$id.'unmask" value="1" type="
 }
 
 /**
- * Path to executable file
+ * Path to directory
  */
-class admin_setting_configexecutable extends admin_setting_configtext {
+class admin_setting_configfile extends admin_setting_configtext {
     /**
      * Constructor
      * @param string $name of setting
      * @param string $visiblename localised
      * @param string $description long localised info
-     * @param string $defautpath default path
+     * @param string $defaultdirectory default directory location
      */
-    function admin_setting_configexecutable($name, $visiblename, $description, $defaultpath) {
-        parent::admin_setting_configtext($name, $visiblename, $description, $defaultpath, PARAM_RAW);
+    function admin_setting_configfile($name, $visiblename, $description, $defaultdirectory) {
+        parent::admin_setting_configtext($name, $visiblename, $description, $defaultdirectory, PARAM_RAW);
     }
+
+    function output_html($data, $query='') {
+        $default = $this->get_defaultsetting();
+
+        if ($data) {
+            if (file_exists($data)) {
+                $executable = '<span class="pathok">&#x2714;</span>';
+            } else {
+                $executable = '<span class="patherror">&#x2718;</span>';
+            }
+        } else {
+            $executable = '';
+        }
+
+        return format_admin_setting($this, $this->visiblename,
+                '<div class="form-file defaultsnext"><input type="text" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
+                $this->description, true, '', $default, $query);
+    }
+}
+
+/**
+ * Path to executable file
+ */
+class admin_setting_configexecutable extends admin_setting_configfile {
 
     function output_html($data, $query='') {
         $default = $this->get_defaultsetting();
@@ -1816,7 +1840,7 @@ class admin_setting_configexecutable extends admin_setting_configtext {
         }
 
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-executable defaultsnext"><input type="text" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
+                '<div class="form-file defaultsnext"><input type="text" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
                 $this->description, true, '', $default, $query);
     }
 }
@@ -1824,18 +1848,7 @@ class admin_setting_configexecutable extends admin_setting_configtext {
 /**
  * Path to directory
  */
-class admin_setting_configdirectory extends admin_setting_configtext {
-    /**
-     * Constructor
-     * @param string $name of setting
-     * @param string $visiblename localised
-     * @param string $description long localised info
-     * @param string $defaultdirectory default directory location
-     */
-    function admin_setting_configdirectory($name, $visiblename, $description, $defaultdirectory) {
-        parent::admin_setting_configtext($name, $visiblename, $description, $defaultdirectory, PARAM_RAW);
-    }
-
+class admin_setting_configdirectory extends admin_setting_configfile {
     function output_html($data, $query='') {
         $default = $this->get_defaultsetting();
 
@@ -1850,7 +1863,7 @@ class admin_setting_configdirectory extends admin_setting_configtext {
         }
 
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-directory defaultsnext"><input type="text" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
+                '<div class="form-file defaultsnext"><input type="text" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
                 $this->description, true, '', $default, $query);
     }
 }
