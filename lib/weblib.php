@@ -2201,7 +2201,8 @@ function convert_urls_into_links(&$text) {
  */
 function highlight($needle, $haystack, $case=0,
                     $left_string='<span class="highlight">', $right_string='</span>') {
-    if (empty($needle)) {
+
+    if (empty($needle) or empty($haystack)) {
         return $haystack;
     }
 
@@ -2260,7 +2261,15 @@ function highlight($needle, $haystack, $case=0,
  */
 function highlightfast($needle, $haystack) {
 
+    if (empty($needle) or empty($haystack)) {
+        return $haystack;
+    }
+
     $parts = explode(moodle_strtolower($needle), moodle_strtolower($haystack));
+
+    if (count($parts) === 1) {
+        return $haystack;
+    }
 
     $pos = 0;
 
@@ -2272,7 +2281,7 @@ function highlightfast($needle, $haystack) {
         $pos += strlen($needle);
     }
 
-    return (join('', $parts));
+    return str_replace('<span class="highlight"></span>', '', join('', $parts));
 }
 
 /**
