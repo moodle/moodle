@@ -35,7 +35,7 @@ require_once( MAGPIE_DIR . 'rss_cache.inc' );
 //define('MAGPIE_EXTLIB', MAGPIE_DIR . 'extlib' . DIR_SEP);
 //require_once( MAGPIE_EXTLIB . 'Snoopy.class.inc');
 require_once($CFG->libdir.'/filelib.php');
-// modolefix end
+// moodlefix end
 
 /* 
  * CONSTANTS - redefine these in your script to change the
