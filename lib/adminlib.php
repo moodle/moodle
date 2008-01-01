@@ -1566,7 +1566,7 @@ class admin_setting {
      * @param mixed data array or string depending on setting
      * @return string
      */
-    function output_html($data) {
+    function output_html($data, $query='') {
         // should be overridden
         return;
     }
@@ -1593,6 +1593,22 @@ class admin_setting {
         }
         if (strpos($textlib->strtolower($this->description), $query) !== false) {
             return true;
+        }
+        $current = $this->get_setting();
+        if (!is_null($current)) {
+            if (is_string($current)) {
+                if (strpos($textlib->strtolower($current), $query) !== false) {
+                    return true;
+                }
+            }
+        }
+        $default = $this->get_defaultsetting();
+        if (!is_null($default)) {
+            if (is_string($default)) {
+                if (strpos($textlib->strtolower($default), $query) !== false) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -1625,13 +1641,13 @@ class admin_setting_heading extends admin_setting {
         return '';
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         $return = '';
         if ($this->visiblename != '') {
-            $return .= print_heading('<a name="'.$this->name.'">'.$this->visiblename.'</a>', '', 3, 'main', true);
+            $return .= print_heading('<a name="'.$this->name.'">'.highlightfast($query, $this->visiblename).'</a>', '', 3, 'main', true);
         }
         if ($this->description != '') {
-            $return .= print_box($this->description, 'generalbox formsettingheading', '', true);
+            $return .= print_box(highlight($query, $this->description), 'generalbox formsettingheading', '', true);
         }
         return $return;
     }
@@ -1700,17 +1716,8 @@ class admin_setting_configtext extends admin_setting {
         }
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         $default = $this->get_defaultsetting();
-
-        if (!is_null($default)) {
-            if ($default === '') {
-                $default = get_string('emptysettingvalue', 'admin');
-            }
-            $defaultinfo = '<span class="defaultinfo">'.get_string('defaultsettinginfo', 'admin', s($default)).'</span>';
-        } else {
-            $defaultinfo = '';
-        }
 
         if ($this->paramtype === PARAM_INT) {
             $paramclass = 'class="number"';
@@ -1719,10 +1726,8 @@ class admin_setting_configtext extends admin_setting {
         }
 
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-text">'
-                .'<input type="text" '.$paramclass.' id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'
-                .$defaultinfo.'</div>',
-                $this->description);
+                '<div class="form-text defaultsnext"><input type="text" '.$paramclass.' id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" /></div>',
+                $this->description, true, '', $default, $query);
     }
 }
 
@@ -1739,21 +1744,17 @@ class admin_setting_configtextarea extends admin_setting_configtext {
         parent::admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype);
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         $default = $this->get_defaultsetting();
 
-        if (!is_null($default)) {
-            if ($default === '') {
-                $default = get_string('emptysettingvalue', 'admin');
-            }
-            $defaultinfo = '<div class="defaultinfo">'.get_string('defaultsettinginfo', 'admin', '<br />'.format_text($default, FORMAT_PLAIN)).'</div>';
-        } else {
-            $defaultinfo = '';
-        }
+        $defaultinfo = $default;
+        if (!is_null($default) and $default !== '') {
+            $defaultinfo = "\n".$default;
+        } 
 
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-textarea" ><textarea rows="'.$this->rows.'" cols="'.$this->cols.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'">'.s($data).'</textarea>'.$defaultinfo.'</div>',
-                $this->description);
+                '<div class="form-textarea" ><textarea rows="'.$this->rows.'" cols="'.$this->cols.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'">'.s($data).'</textarea></div>',
+                $this->description, true, '', $defaultinfo, $query);
     }
 }
 
@@ -1772,7 +1773,7 @@ class admin_setting_configpasswordunmask extends admin_setting_configtext {
         parent::admin_setting_configtext($name, $visiblename, $description, $defaultsetting, PARAM_RAW);
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         $id = $this->get_id();
         $unmask = get_string('unmaskpassword', 'form');
         $unmaskjs = '<script type="text/javascript">
@@ -1782,7 +1783,7 @@ document.write(\'<span class="unmask"><input id="'.$id.'unmask" value="1" type="
 </script>';
         return format_admin_setting($this, $this->visiblename,
                 '<div class="form-password"><input type="password" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$unmaskjs.'</div>',
-                $this->description);
+                $this->description, true, '', NULL, $query);
     }
 }
 
@@ -1801,17 +1802,8 @@ class admin_setting_configexecutable extends admin_setting_configtext {
         parent::admin_setting_configtext($name, $visiblename, $description, $defaultpath, PARAM_RAW);
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         $default = $this->get_defaultsetting();
-
-        if (!is_null($default)) {
-            if ($default === '') {
-                $default = get_string('emptysettingvalue', 'admin');
-            }
-            $defaultinfo = '<span class="defaultinfo">'.get_string('defaultsettinginfo', 'admin', s($default)).'</span>';
-        } else {
-            $defaultinfo = '';
-        }
 
         if ($data) {
             if (file_exists($data) and is_executable($data)) {
@@ -1824,10 +1816,8 @@ class admin_setting_configexecutable extends admin_setting_configtext {
         }
 
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-executable">'
-                .'<input type="text" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable
-                .$defaultinfo.'</div>',
-                $this->description);
+                '<div class="form-executable defaultsnext"><input type="text" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
+                $this->description, true, '', $default, $query);
     }
 }
 
@@ -1846,17 +1836,8 @@ class admin_setting_configdirectory extends admin_setting_configtext {
         parent::admin_setting_configtext($name, $visiblename, $description, $defaultdirectory, PARAM_RAW);
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         $default = $this->get_defaultsetting();
-
-        if (!is_null($default)) {
-            if ($default === '') {
-                $default = get_string('emptysettingvalue', 'admin');
-            }
-            $defaultinfo = '<span class="defaultinfo">'.get_string('defaultsettinginfo', 'admin', s($default)).'</span>';
-        } else {
-            $defaultinfo = '';
-        }
 
         if ($data) {
             if (file_exists($data) and is_dir($data)) {
@@ -1869,10 +1850,8 @@ class admin_setting_configdirectory extends admin_setting_configtext {
         }
 
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-directory">'
-                .'<input type="text" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable
-                .$defaultinfo.'</div>',
-                $this->description);
+                '<div class="form-directory defaultsnext"><input type="text" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
+                $this->description, true, '', $default, $query);
     }
 }
 
@@ -1911,18 +1890,17 @@ class admin_setting_configcheckbox extends admin_setting {
         return ($this->config_write($this->name, $data) ? '' : get_string('errorsetting', 'admin'));
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         $default = $this->get_defaultsetting();
 
         if (!is_null($default)) {
             if ((string)$default === $this->yes) {
-                $str = get_string('checkboxyes', 'admin');
+                $defaultinfo = get_string('checkboxyes', 'admin');
             } else {
-                $str = get_string('checkboxno', 'admin');
+                $defaultinfo = get_string('checkboxno', 'admin');
             }
-            $defaultinfo = '<span class="defaultinfo">'.get_string('defaultsettinginfo', 'admin', $str).'</span>';
         } else {
-            $defaultinfo = '';
+            $defaultinfo = NULL;
         }
 
         if ((string)$data === $this->yes) { // convert to strings before comparison
@@ -1932,10 +1910,9 @@ class admin_setting_configcheckbox extends admin_setting {
         }
 
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-checkbox" ><input type="hidden" name="'.$this->get_full_name().'" value="'.s($this->no).'" /> '
-                .'<input type="checkbox" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($this->yes).'" '.$checked.' />'
-                .$defaultinfo.'</div>',
-                $this->description);
+                '<div class="form-checkbox defaultsnext" ><input type="hidden" name="'.$this->get_full_name().'" value="'.s($this->no).'" /> '
+                .'<input type="checkbox" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($this->yes).'" '.$checked.' /></div>',
+                $this->description, true, '', $defaultinfo, $query);
     }
 }
 
@@ -2022,7 +1999,7 @@ class admin_setting_configmulticheckbox extends admin_setting {
         return $this->config_write($this->name, implode(',', $result)) ? '' : get_string('errorsetting', 'admin');
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         if (!$this->load_choices() or empty($this->choices)) {
             return '';
         }
@@ -2051,13 +2028,15 @@ class admin_setting_configmulticheckbox extends admin_setting {
             }
 
             $options[] = '<input type="checkbox" id="'.$this->get_id().'_'.$key.'" name="'.$this->get_full_name().'['.$key.']" value="1" '.$checked.' />'
-                         .'<label for="'.$this->get_id().'_'.$key.'">'.$description.'</label>';
+                         .'<label for="'.$this->get_id().'_'.$key.'">'.highlightfast($query, $description).'</label>';
         }
 
-        if (!empty($defaults)) {
-            $defaultinfo = '<div class="defaultinfo">'.get_string('defaultsettinginfo', 'admin', implode(', ', $defaults)).'</div>';
+        if (is_null($default)) {
+            $defaultinfo = NULL;
+        } else if (!empty($defaults)) {
+            $defaultinfo = implode(', ', $defaults);
         } else {
-            $defaultinfo = '';
+            $defaultinfo = get_string('none');
         }
 
         $return = '<div class="form-multicheckbox">';
@@ -2069,9 +2048,10 @@ class admin_setting_configmulticheckbox extends admin_setting {
             }
             $return .= '</ul>';
         }
-        $return .= $defaultinfo.'</div>';
+        $return .= '</div>';
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false);
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', $defaultinfo, $query);
+        
     }
 }
 
@@ -2185,16 +2165,16 @@ class admin_setting_configselect extends admin_setting {
         return ($this->config_write($this->name, $data) ? '' : get_string('errorsetting', 'admin'));
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         if (!$this->load_choices() or empty($this->choices)) {
             return '';
         }
         $default = $this->get_defaultsetting();
 
         if (!is_null($default) and array_key_exists($default, $this->choices)) {
-            $defaultinfo = '<span class="defaultinfo">'.get_string('defaultsettinginfo', 'admin', s($this->choices[$default])).'</span>';
+            $defaultinfo = $this->choices[$default];
         } else {
-            $defaultinfo = '';
+            $defaultinfo = NULL;
         }
 
         $current = $this->get_setting();
@@ -2210,14 +2190,14 @@ class admin_setting_configselect extends admin_setting {
             }
         }
 
-        $return = '<div class="form-select"><select id="'.$this->get_id().'" name="'.$this->get_full_name().'">';
+        $return = '<div class="form-select defaultsnext"><select id="'.$this->get_id().'" name="'.$this->get_full_name().'">';
         foreach ($this->choices as $key => $value) {
             // the string cast is needed because key may be integer - 0 is equal to most strings!
             $return .= '<option value="'.$key.'"'.((string)$key==$data ? ' selected="selected"' : '').'>'.$value.'</option>';
         }
-        $return .= '</select>'.$defaultinfo.'</div>';
+        $return .= '</select></div>';
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, $warning);
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, $warning, $defaultinfo, $query);
     }
 
 }
@@ -2292,7 +2272,7 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
         return false;
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         if (!$this->load_choices() or empty($this->choices)) {
             return '';
         }
@@ -2321,14 +2301,16 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
             $return .= '<option value="'.s($key).'" '.$selected.'>'.$description.'</option>';
         }
 
-        if (!empty($defaults)) {
-            $defaultinfo = '<div class="defaultinfo">'.get_string('defaultsettinginfo', 'admin', implode(', ', $defaults)).'</div>';
+        if (is_null($default)) {
+            $defaultinfo = NULL;
+        } if (!empty($defaults)) {
+            $defaultinfo = implode(', ', $defaults);
         } else {
-            $defaultinfo = '';
+            $defaultinfo = get_string('none');
         }
 
-        $return .= '</select>'.$defaultinfo.'</div>';
-        return format_admin_setting($this, $this->visiblename, $return, $this->description);
+        $return .= '</select></div>';
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, '', $defaultinfo, $query);
     }
 }
 
@@ -2372,16 +2354,16 @@ class admin_setting_configtime extends admin_setting {
         return ($result ? '' : get_string('errorsetting', 'admin'));
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         $default = $this->get_defaultsetting();
 
         if (is_array($default)) {
-            $defaultinfo = '<span class="defaultinfo">'.get_string('defaultsettinginfo', 'admin', $default['h'].':'.$default['m']).'</span>';
+            $defaultinfo = $default['h'].':'.$default['m'];
         } else {
-            $defaultinfo = '';
+            $defaultinfo = NULL;
         }
 
-        $return = '<div class="form-time">'.
+        $return = '<div class="form-time defaultsnext">'.
                   '<select id="'.$this->get_id().'h" name="'.$this->get_full_name().'[h]">';
         for ($i = 0; $i < 24; $i++) {
             $return .= '<option value="'.$i.'"'.($i == $data['h'] ? ' selected="selected"' : '').'>'.$i.'</option>';
@@ -2390,8 +2372,8 @@ class admin_setting_configtime extends admin_setting {
         for ($i = 0; $i < 60; $i += 5) {
             $return .= '<option value="'.$i.'"'.($i == $data['m'] ? ' selected="selected"' : '').'>'.$i.'</option>';
         }
-        $return .= '</select>'.$defaultinfo.'</div>';
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false);
+        $return .= '</select></div>';
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', $defaultinfo, $query);
     }
 
 }
@@ -2509,7 +2491,7 @@ class admin_setting_courselist_frontpage extends admin_setting {
         return ($this->config_write($this->name, implode(',', $save)) ? '' : get_string('errorsetting', 'admin'));
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         $this->load_choices();
         $currentsetting = array();
         foreach ($data as $key) {
@@ -2534,7 +2516,7 @@ class admin_setting_courselist_frontpage extends admin_setting {
         }
         $return .= '</div>';
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false);
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
     }
 }
 
@@ -2614,13 +2596,13 @@ class admin_setting_special_frontpagedesc extends admin_setting {
         return(update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         global $CFG;
 
         $CFG->adminusehtmleditor = can_use_html_editor();
         $return = '<div class="form-htmlarea">'.print_textarea($CFG->adminusehtmleditor, 15, 60, 0, 0, $this->get_full_name(), $data, 0, true).'</div>';
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false);
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
     }
 }
 
@@ -2699,7 +2681,7 @@ class admin_setting_special_editorfontlist extends admin_setting {
         return ($this->config_write($this->name, implode(';', $result)) ? '' : get_string('errorsetting', 'admin'));
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         $fullname = $this->get_full_name();
         $return = '<div class="form-group">';
         for ($i = 0; $i < count($data) / 2; $i++) {
@@ -2715,7 +2697,7 @@ class admin_setting_special_editorfontlist extends admin_setting {
         $return .= '<input type="text" class="form-text" name="'.$fullname.'[v'.($i + 1).']" value="" />';
         $return .= '</div>';
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false);
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
     }
 
 }
@@ -2833,7 +2815,7 @@ class admin_setting_emoticons extends admin_setting {
         return ($this->config_write($this->name, implode('{;}', $result)) ? '' : get_string('errorsetting', 'admin').$this->visiblename.'<br />');
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         $fullname = $this->get_full_name();
         $return = '<div class="form-group">';
         for ($i = 0; $i < count($data) / 2; $i++) {
@@ -2849,7 +2831,7 @@ class admin_setting_emoticons extends admin_setting {
         $return .= '<input type="text" class="form-text" name="'.$fullname.'[v'.($i + 1).']" value="" />';
         $return .= '</div>';
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false);
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
     }
 
 }
@@ -2997,7 +2979,7 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
         return ($this->config_write($this->name, implode(' ', $result)) ? '' : get_string('errorsetting', 'admin'));
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
 
         global $CFG;
 
@@ -3027,7 +3009,7 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
         $return .= '</table>';
         $return .= '</div>';
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false);
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
     }
 }
 
@@ -3144,7 +3126,7 @@ class admin_setting_special_calendar_weekend extends admin_setting {
         return ($this->config_write($this->name, $result) ? '' : get_string('errorsetting', 'admin'));
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         // The order matters very much because of the implied numeric keys
         $days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
         $return = '<table><thead><tr>';
@@ -3158,7 +3140,7 @@ class admin_setting_special_calendar_weekend extends admin_setting {
         }
         $return .= '</tr></tbody></table>';
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false);
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
 
     }
 }
@@ -3330,7 +3312,7 @@ class admin_setting_gradecat_combo extends admin_setting {
         }
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         $value  = $data['value'];
         $forced = !empty($data['forced']);
         $adv    = !empty($data['adv']);
@@ -3341,12 +3323,12 @@ class admin_setting_gradecat_combo extends admin_setting {
             $return .= '<option value="'.$key.'"'.((string)$key==$value ? ' selected="selected"' : '').'>'.$val.'</option>';
         }
         $return .= '</select>';
-        $return .= '</label><input type="checkbox" class="form-checkbox" id="'.$this->get_id().'force" name="'.$this->get_full_name().'[forced]" value="1" '.($forced ? 'checked="checked"' : '').' />'
-                  .'<label for="'.$this->get_id().'force">'.get_string('force');
-        $return .= '</label><input type="checkbox" class="form-checkbox" id="'.$this->get_id().'adv" name="'.$this->get_full_name().'[adv]" value="1" '.($adv ? 'checked="checked"' : '').' />'
-                  .'<label for="'.$this->get_id().'adv">'.get_string('advanced');
+        $return .= '<input type="checkbox" class="form-checkbox" id="'.$this->get_id().'force" name="'.$this->get_full_name().'[forced]" value="1" '.($forced ? 'checked="checked"' : '').' />'
+                  .'<label for="'.$this->get_id().'force">'.get_string('force').'</label>';
+        $return .= '<input type="checkbox" class="form-checkbox" id="'.$this->get_id().'adv" name="'.$this->get_full_name().'[adv]" value="1" '.($adv ? 'checked="checked"' : '').' />'
+                  .'<label for="'.$this->get_id().'adv">'.get_string('advanced').'</label>';
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, '', NULL, $query);
     }
 }
 
@@ -3549,7 +3531,7 @@ class admin_setting_manageauths extends admin_setting {
         return false;
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         global $CFG;
 
 
@@ -3678,7 +3660,7 @@ class admin_setting_manageauths extends admin_setting {
         $return .= print_table($table, true);
         $return .= get_string('configauthenticationplugins', 'admin').'<br />'.get_string('tablenosave', 'filters');
         $return .= print_box_end(true);
-        return $return;
+        return highlight($query, $return);
     }
 }
 /**
@@ -3724,7 +3706,7 @@ class admin_setting_managefilters extends admin_setting {
         return false;
     }
 
-    function output_html($data) {
+    function output_html($data, $query='') {
         global $CFG;
 
         $strname     = get_string('name');
@@ -3859,7 +3841,7 @@ class admin_setting_managefilters extends admin_setting {
         $return .= print_table($table, true);
         $return .= get_string('tablenosave', 'filters');
         $return .= print_box_end(true);
-        return $return;
+        return highlight($query, $return);
     }
 }
 
@@ -4251,7 +4233,7 @@ function admin_search_settings_html($query) {
                         $data = $setting->get_defaultsetting();
                     }
                 }
-                $return .= highlight($query, $setting->output_html($data));
+                $return .= $setting->output_html($data, $query);
             }
             $return .= '</fieldset>';
         }
@@ -4321,11 +4303,14 @@ function apply_default_exception_settings($defaults) {
  * Format admin settings
  * @param string $object setting
  * @param string $title label element
- * @param string $form form fragment, html code
+ * @param string $form form fragment, html code - not highlighed automaticaly
  * @param string $description
  * @param bool $label link label to id
+ * @param string $warning warning text
+ * @param sting $defaultinfo defaults info, null means nothing, '' is converted to "Empty" string
+ * @param string $query search query to be highlighted
  */
-function format_admin_setting($setting, $title='', $form='', $description='', $label=true, $warning='') {
+function format_admin_setting($setting, $title='', $form='', $description='', $label=true, $warning='', $defaultinfo=NULL, $query='') {
     global $CFG;
 
     $name     = $setting->name;
@@ -4348,11 +4333,26 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
         $warning = '<div class="form-warning">'.$warning.'</div>';
     }
 
+    if (is_null($defaultinfo)) {
+        $defaultinfo = '';
+    } else {
+        if ($defaultinfo === '') {
+            $defaultinfo = get_string('emptysettingvalue', 'admin');
+        }
+        $defaultinfo = highlight($query, nl2br(s($defaultinfo)));
+        $defaultinfo = '<div class="form-defaultinfo">'.get_string('defaultsettinginfo', 'admin', $defaultinfo).'</div>';
+    }
+
+
     $str = '
 <div class="form-item clearfix" id="admin-'.$setting->name.'">
-<div class="form-label"><label '.$labelfor.'>'.$title.'<span class="form-shortname">'.$name.'</span>'.$override.$warning.'</label></div>
-<div class="form-setting">'.$form.'</div>
-<div class="form-description">'.$description.'</div>
+  <div class="form-label">
+    <label '.$labelfor.'>'.highlightfast($query, $title).'<span class="form-shortname">'.highlightfast($query, $name).'</span>
+      '.$override.$warning.'
+    </label>
+  </div>
+  <div class="form-setting">'.$form.$defaultinfo.'</div>
+  <div class="form-description">'.highlight($query, $description).'</div>
 </div>';
 
     $adminroot =& admin_get_root();

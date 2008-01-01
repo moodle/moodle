@@ -1007,18 +1007,19 @@ body#admin-modules table.generaltable td.c0
   text-align: left;
 }
 
+#adminsettings .form-defaultinfo {
+  display: inline;
+}
+
+#adminsettings .defaultsnext {
+  margin-right: 0.5em;
+  display: inline;
+}
+
 #adminsettings .form-description {
   display: block;
   margin: 0.5em 0 0em 13em;
   text-align: left;
-}
-
-#adminsettings span.defaultinfo {
-  margin-left: 0.5em;
-}
-
-#adminsettings div.defaultinfo {
-  margin-left: 3px;
 }
 
 #adminsettings fieldset {
