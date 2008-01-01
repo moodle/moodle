@@ -416,7 +416,7 @@ function clean_param($param, $type) {
             return ereg_replace('/(\./)+', '/', $param);
 
         case PARAM_HOST:         // allow FQDN or IPv4 dotted quad
-            preg_replace('/[^\.\d\w-]/','', $param ); // only allowed chars
+            $param = preg_replace('/[^\.\d\w-]/','', $param ); // only allowed chars
             // match ipv4 dotted quad
             if (preg_match('/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/',$param, $match)){
                 // confirm values are ok
