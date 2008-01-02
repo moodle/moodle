@@ -363,7 +363,7 @@ class XMLDBField extends XMLDBObject {
         }
 
         if (isset($xmlarr['@']['ENUMVALUES'])) {
-            $enumvalues = strtolower(trim($xmlarr['@']['ENUMVALUES']));
+            $enumvalues = trim($xmlarr['@']['ENUMVALUES']);
             if (!$this->enum) {
                 $this->errormsg = 'Wrong ENUMVALUES attribute (not ENUM)';
                 $this->debug($this->errormsg);
