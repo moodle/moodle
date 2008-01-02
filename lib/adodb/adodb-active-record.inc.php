@@ -1,7 +1,7 @@
 <?php
 /*
 
-@version V4.94 23 Jan 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+@version V4.96 24 Sept 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
   Latest version is available at http://adodb.sourceforge.net
  
   Released under both BSD license and Lesser GPL library license. 
@@ -10,7 +10,7 @@
   
   Active Record implementation. Superset of Zend Framework's.
   
-  Version 0.07
+  Version 0.08
   
   See http://www-128.ibm.com/developerworks/java/library/j-cb03076/?ca=dgr-lnxw01ActiveRecord 
   	for info on Ruby on Rails Active Record implementation
@@ -340,9 +340,10 @@ class ADODB_Active_Record {
 			return false;
 		}
 		
+		$keys = array_keys($row);
 		$cnt = 0;
 		foreach($table->flds as $name=>$fld) {
-			$this->$name = $row[$cnt];
+			$this->$name = $row[$keys[$cnt]];
 			$cnt += 1;
 		}
 		$this->_original = $row;

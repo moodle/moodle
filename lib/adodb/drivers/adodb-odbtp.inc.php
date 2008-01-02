@@ -1,6 +1,6 @@
 <?php
 /*
-  V4.94 23 Jan 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V4.96 24 Sept 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence. See License.txt.
@@ -192,7 +192,7 @@ class ADODB_odbtp extends ADOConnection{
 				$this->_canSelectDb = true;
 				$this->substr = "substring";
 				$this->length = 'len';
-				$this->identitySQL = 'select @@IDENTITY';
+				$this->identitySQL = 'select SCOPE_IDENTITY()';
 				$this->metaDatabasesSQL = "select name from master..sysdatabases where name <> 'master'";
 				$this->_canPrepareSP = true;
 				break;
@@ -240,7 +240,7 @@ class ADODB_odbtp extends ADOConnection{
 				$this->rightOuter = '=*';
 				$this->hasInsertID = true;
 				$this->hasTransactions = true;
-				$this->identitySQL = 'select @@IDENTITY';
+				$this->identitySQL = 'select SCOPE_IDENTITY()';
 				break;
 			default:
 				$this->databaseType = 'odbtp';

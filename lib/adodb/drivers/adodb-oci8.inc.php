@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V4.94 23 Jan 2007 (c) 2000-2007 John Lim. All rights reserved.
+  version V4.96 24 Sept 2007 (c) 2000-2007 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -541,6 +541,12 @@ NATSOFT.DOMAIN =
 		return $s. "')";
 	}
 	
+	function GetRandRow($sql, $arr = false)
+	{
+		$sql = "SELECT * FROM ($sql ORDER BY dbms_random.value) WHERE rownum = 1";
+		
+		return $this->GetRow($sql,$arr);
+	}
 	
 	/*
 	This algorithm makes use of
@@ -567,7 +573,7 @@ NATSOFT.DOMAIN =
 				$sql = preg_replace('/^[ \t\n]*select/i','SELECT /*+FIRST_ROWS*/',$sql);
 		}
 		
-		if ($offset < $this->selectOffsetAlg1) {
+		if ($offset < $this->selectOffsetAlg1 && 0 < $nrows  && $nrows < 1000) {
 			if ($nrows > 0) {	
 				if ($offset > 0) $nrows += $offset;
 				//$inputarr['adodb_rownum'] = $nrows;
@@ -748,7 +754,6 @@ NATSOFT.DOMAIN =
 		}
 		if ($inputarr) {
 			#if (!is_array($inputarr)) $inputarr = array($inputarr);
-			
 			$element0 = reset($inputarr);
 			
 			# is_object check because oci8 descriptors can be passed in

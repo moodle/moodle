@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.94 23 Jan 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+V4.96 24 Sept 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -156,7 +156,25 @@ having count(*) > 100)",'These are sql statements that should be using bind vari
 		'random page cost' => array('COST',
 			"select value from v\$parameter where name = 'optimizer_index_cost_adj'",
 			'=WarnPageCost'),
-		
+	
+	'Backup',
+		'Achivelog Mode' => array('BACKUP', 'select log_mode from v$database', 'To turn on archivelog:<br>
+	<pre>
+        SQLPLUS> connect sys as sysdba;
+        SQLPLUS> shutdown immediate;
+
+        SQLPLUS> startup mount exclusive;
+        SQLPLUS> alter database archivelog;
+        SQLPLUS> archive log start;
+        SQLPLUS> alter database open;
+</pre>'),
+	
+		'DBID' => array('BACKUP','select dbid from v$database','Primary key of database, used for recovery with an RMAN Recovery Catalog'),
+		'Archive Log Dest' => array('BACKUP', "SELECT NVL(v1.value,v2.value) 
+FROM v\$parameter v1, v\$parameter v2 WHERE v1.name='log_archive_dest' AND v2.name='log_archive_dest_10'", ''),
+	
+	'Flashback Area' => array('BACKUP', "select nvl(value,'Flashback Area not used') from v\$parameter where name=lower('DB_RECOVERY_FILE_DEST')", 'Flashback area is a folder where all backup data and logs can be stored and managed by Oracle. If Error: message displayed, then it is not in use.'),
+		'Control File Keep Time' => array('BACKUP', "select value from v\$parameter where name='control_file_record_keep_time'",'No of days to keep RMAN info in control file. I recommend it be set to x2 or x3 times the frequency of your full backup.'),
 		false
 		
 	);
@@ -184,7 +202,7 @@ having count(*) > 100)",'These are sql statements that should be using bind vari
 		else $s = '';
 		
 		return $s.'Percentage of indexed data blocks expected in the cache.
-			Recommended is 20 (fast disk array) to 50 (slower hard disks). Default is 0.
+			Recommended is 20 (fast disk array) to 30 (slower hard disks). Default is 0.
 			 See <a href=http://www.dba-oracle.com/oracle_tips_cbo_part1.htm>optimizer_index_caching</a>.';
 		}
 	
@@ -250,7 +268,7 @@ CREATE TABLE PLAN_TABLE (
 	
 		if ($partial) {
 			$sqlq = $this->conn->qstr($sql.'%');
-			$arr = $this->conn->GetArray("select distinct distinct sql1 from adodb_logsql where sql1 like $sqlq");
+			$arr = $this->conn->GetArray("select distinct sql1 from adodb_logsql where sql1 like $sqlq");
 			if ($arr) {
 				foreach($arr as $row) {
 					$sql = reset($row);
@@ -505,5 +523,28 @@ order by
 		return $s;
 	}
 	
+	function clearsql() 
+	{
+	$this->conn->debug=1;
+		$perf_table = adodb_perf::table();
+	// using the naive "delete from $perf_table where created<".$this->conn->sysTimeStamp will cause the table to lock, possibly
+	// for a long time
+		$sql = 
+"DECLARE cnt pls_integer;
+BEGIN
+	cnt := 0;
+	FOR rec IN (SELECT ROWID AS rr FROM $perf_table WHERE created<SYSDATE) 
+	LOOP
+	  cnt := cnt + 1;
+	  DELETE FROM $perf_table WHERE ROWID=rec.rr;
+	  IF cnt = 10000 THEN
+	  	COMMIT;
+		cnt := 0;
+	  END IF;
+	END LOOP;
+END;";
+
+		$ok = $this->conn->Execute($sql);
+	}
 }
 ?>
