@@ -13,13 +13,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $options[0] = get_string('choose') .'...';
     $temp->add(new admin_setting_configselect('country', get_string('country', 'admin'), get_string('configcountry', 'admin'), 0, $options));
 
-    $iplookups = array();
-    if ($plugins = get_list_of_plugins('iplookup')) {
-        foreach ($plugins as $plugin) {
-            $iplookups[$plugin] = $plugin;
-        }
-    }
-    $temp->add(new admin_setting_configselect('iplookup', get_string('iplookup', 'admin'), get_string('configiplookup', 'admin'), 'hostip', $iplookups));
+    $temp->add(new admin_setting_heading('iplookup', get_string('iplookup', 'admin'), get_string('iplookupinfo', 'admin')));
+    $temp->add(new admin_setting_configfile('geoipfile', get_string('geoipfile', 'admin'), get_string('configgeoipfile', 'admin', $CFG->dataroot.'/geoip/'), $CFG->dataroot.'/geoip/GeoLiteCity.dat'));
+    $temp->add(new admin_setting_configtext('googlemapkey', get_string('googlemapkey', 'admin'), get_string('configgooglemapkey', 'admin', $CFG->wwwroot), ''));
 
     $ADMIN->add('location', $temp);
 

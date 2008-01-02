@@ -120,6 +120,8 @@ $string['configfrontpage'] = 'The items selected above will be displayed on the 
 $string['configfrontpageloggedin'] = 'The items selected above will be displayed on the site\'s front page when a user is logged in.';
 $string['configfullnamedisplay'] = 'This defines how names are shown when they are displayed in full. For most mono-lingual sites the most efficient setting is the default \"First name + Surname\", but you may choose to hide surnames altogether, or to leave it up to the current language pack to decide (some languages have different conventions).';
 $string['configgdversion'] = 'Indicate the version of GD that is installed.  The version shown by default is the one that has been auto-detected.  Don\'t change this unless you really know what you\'re doing.';
+$string['configgeoipfile'] = 'Location of GeoIP City binary data file. This file is not part of Moodle distribution and must be obtained separately from <a href=\"http://www.maxmind.com/\">MaxMind</a>. You can either buy a commercial version or use the free version.<br />Simply download <a href=\"http://www.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz\">http://www.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz</a> and extract it into \"$a\" directory on your server.';
+$string['configgooglemapkey'] = 'You need to enter a special key to use Google Maps for IP address lookup visualization. You can obtain the key free of charge at <a href=\"http://code.google.com/apis/maps/signup.html\">http://code.google.com/apis/maps/signup.html</a>.<br />Your web site URL is: $a';
 $string['configgradebookroles'] = 'This setting allows you to control who appears on the gradebook.  Users need to have at least one of these roles in a course to be shown in the gradebook for that course.';
 $string['configgradeexport'] = 'Choose which gradebook export formats are your primary methods for exporting grades.  Chosen plugins will then set and use a \"last exported\" field for every grade.  For example, this might result in exported records being identified as being \"new\" or \"updated\".  If you are not sure about this then leave everything unchecked.';
 $string['configguestroleid'] = 'This role is automatically assigned to the guest user. It is also temporarily assigned to not enrolled users when they enter course that allows guests without password. Please verify that the role has moodle/legacy:guest and moodle/course:view capability.';
@@ -352,7 +354,9 @@ $string['frontpagesettings'] = 'Front Page settings';
 $string['fullnamedisplay'] = 'Full Name Format';
 $string['gdversion'] = 'GD version';
 $string['generalsettings'] = 'General settings';
+$string['geoipfile'] = 'GeoIP City data file';
 $string['globalsquoteswarning'] = '<p><strong>Security Warning</strong>: to operate properly, Moodle requires <br />that you make certain changes to your current PHP settings.<p/><p>You <em>must</em> set <code>register_globals=off</code> and/or <code>magic_quotes_gpc=on</code>. <br />If possible, you should set <code>register_globals=off</code> to improve general <br /> server security, setting <code>magic_quotes_gpc=on</code> is also recommended.<p/><p>These settings are controlled by editing your <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file.</p>';
+$string['googlemapkey'] = 'Google Maps API key';
 $string['gotofirst'] = 'Go to first missing string';
 $string['gradebook'] = 'Gradebook';
 $string['gradebookroles'] = 'Graded roles';
@@ -387,6 +391,12 @@ $string['intcachemax'] = 'Int. cache max';
 $string['invalidsection'] = 'Invalid section.';
 $string['invaliduserchangeme'] = 'Username \"changeme\" is reserved -- you cannot create an account with it.';
 $string['iplookup'] = 'IP address lookup';
+$string['iplookupinfo'] = '
+By default Moodle uses the free online NetGeo (The Internet Geographic Database) server to lookup location of IP addresses, unfortunately this database is not maintained anymore and may return <em>wildly incorrect</em> data.
+It is recommended to install local copy of free GeoLite City database from MaxMind.<br />
+IP address location is displayed on simple map or using Google Maps. Please note that you need to have a Google account and apply for free Google Maps API key to enable interactive maps.';
+$string['iplookupmaxmindnote'] = 'This product includes GeoLite data created by MaxMind, available from <a href=\"http://www.maxmind.com/\">http://www.maxmind.com/</a>.';
+$string['iplookupnetgeonote'] = 'The NetGeo server is currently being used to look up geographical information. For more accurate results we recommend installing a local copy of the MaxMind GeoLite database.';
 $string['keeptagnamecase'] = 'Keep tag name casing';
 $string['lang'] = 'Default language';
 $string['lang16notify'] = 'Moodle 1.6 and above allows you to install and update language packs directly from download.moodle.org by following the link below';

@@ -675,6 +675,14 @@ body#user-index #longtimenosee {
   font-size: 0.8em;
 }
 
+.iplookup #header h1.headermain {
+  font-size:1em;
+}
+
+.iplookup #note {
+  font-size:0.8em;
+  font-style: italic;
+}
 
 /***
  *** Modules: Assignment

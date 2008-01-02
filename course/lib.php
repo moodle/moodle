@@ -530,14 +530,14 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         echo "<td class=\"cell c1\" align=\"right\">".userdate($log->time, '%a').
              ' '.userdate($log->time, $strftimedatetime)."</td>\n";
         echo "<td class=\"cell c2\">\n";
-        link_to_popup_window("/iplookup/index.php?ip=$log->ip&amp;user=$log->userid", 'iplookup',$log->ip, 400, 700);
+        link_to_popup_window("/iplookup/index.php?ip=$log->ip&amp;user=$log->userid", 'iplookup',$log->ip, 440, 700);
         echo "</td>\n";
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         echo "<td class=\"cell c3\">\n";
         echo "    <a href=\"$CFG->wwwroot/user/view.php?id={$log->userid}&amp;course={$log->course}\">$fullname</a>\n";
         echo "</td>\n";
         echo "<td class=\"cell c4\">\n";
-        link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',"$log->module $log->action", 400, 600);
+        link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',"$log->module $log->action", 440, 700);
         echo "</td>\n";;
         echo "<td class=\"cell c5\">{$log->info}</td>\n";
         echo "</tr>\n";

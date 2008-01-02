@@ -1,0 +1,44 @@
+	* Fix bug where PHP API didn't work with new edition of GeoIP ISP
+
+1.6	2007-1-10
+	* Added AX/Aland Islands, GG/Guernsey, IM/Isle of Man, JE/Jersey (ISO-3166-1 changes)
+	* Replaced CS/Serbia and Montenegro with RS/Serbia, removed ZR/Zaire, added ME/Montenegro
+	* geoip_country_(code|name)_by_addr now work against Geo(IP|Lite) City (Frank Mather)
+	* Added code to lookup zoneinfo timezone given country and region (Frank Mather)
+	* TP/East Timor changed to TL/Timor-Leste, reflecting changes in ISO-3166
+
+1.5	2005-11-1
+	* Added Shared Memory support for GeoIP City (Frank Mather)
+	* Replaced Yugoslavia with Serbia and Montenegro
+	* Removed global declaration for $GEOIP_COUNTRY_CODE_TO_NUMBER, $GEOIP_COUNTRY_CODES,
+		and $GEOIP_COUNTRY_CODES3 
+
+1.4	2005-01-13   Andrew Hill, Awarez Ltd. (http://www.awarez.net)
+ *              Formatted file according to PEAR library standards.
+ *              Moved $GEOIP_COUNTRY_CODE_TO_NUMBER, $GEOIP_COUNTRY_CODES,
+ *                  $GEOIP_COUNTRY_CODES3 and $GEOIP_COUNTRY_NAMES into the
+ *                  GeoIP class, so that library will still work even when
+ *                  not included in the $GLOBAL context.
+
+	* Updated geoip_country_code_by_addr to work with PHP5 (Eric of Host Ultra)
+	* Replaced bit operators (| and &) with logical operators (|| and &&)
+	* Defined GEOIP_ISP_EDITION
+
+1.3	2004-8-4
+	* Changed license from GPL to LGPL so code can be included in PEAR
+	* added global definitions to prevent undefined variables error when including from function (Cédric Dufour)
+	* Updated country names
+	* Added support for GeoIP City, version 1 with DMA and Area codes
+
+1.2	2003-10-28
+	* Added support for Shared Memory (Jason Priebe)
+	* Added support for Distributed queries
+	* Added support for GeoIP Region, version 1
+	* Added Anonymous Proxy and Satellite Provider code/labels
+	* Changed Taiwan, Province of China to Taiwan
+
+1.1	2003-01-15
+	* Added support for GeoIP Region and GeoIP City
+
+1.0	2002-11-21
+        * Initial checkin to CVS
