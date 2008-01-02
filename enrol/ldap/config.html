@@ -129,7 +129,7 @@ if (!isset($frm->enrol_ldap_template)) {
 <tr>
     <td align="right">ldap_bind_pw:</td>
     <td>
-    <input name="enrol_ldap_bind_pw" type="text" size="30" value="<?php echo $frm->enrol_ldap_bind_pw?>" />
+    <input name="enrol_ldap_bind_pw" type="password" size="30" value="<?php echo $frm->enrol_ldap_bind_pw?>" />
     <?php  if (isset($err["enrol_ldap_bind_pw"])) formerr($err["enrol_ldap_bind_pw"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_bind_pw","enrol_ldap") ?>
