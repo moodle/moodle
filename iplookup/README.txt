@@ -1,18 +1,25 @@
-iplookup 
---------
+iplookup info
+-------------
 
-These plugins will show you something about an IP address.
+1/ old plugins are not supported anymore
 
-Moodle scripts call the index.php in this directory like this:
-   
-   /iplookup/index.php?ip=222.222.222.222&user=1
+2/ general information in admin settings "Site Administration/Location/Location settings"
 
-Both parameters are optional, they default to the current user.
+3/ technical info:
 
-index.php loads the lib.php from a specified subdirectory 
-to actually display some sort of map or description.
+xplanet commadline
+  xplanet -projection rectangular -latitude 0.00  -longitude 0.00  -num_times 1  -geometry 620x310  -output earth.jpeg -quality 90 -config config.txt
 
-The current plugin is selected using $CFG->iplookup.
+config.txt
+  [earth]
+  shade=100
 
-Cheers,
-Martin
+original Earth map from:
+  http://www.radcyberzine.com/xglobe/
+
+marker.gif
+  custom made in Inkscape
+
+Petr Skoda (skodak), January 2008  
+
+$Id$

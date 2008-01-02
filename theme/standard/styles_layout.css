@@ -3150,6 +3150,14 @@ body#user-index .rolesform {
   height:100%;
 }
 
+.iplookup #map {
+  margin:auto;
+}
+
+.iplookup #note {
+  text-align:center;
+}
+
 /***
  *** Modules: Assignment
  ***/
