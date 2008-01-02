@@ -14,7 +14,7 @@
 /**
 	\mainpage 	
 	
-	 @version V4.94 23 Jan 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+	 @version V4.96 24 Sept 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. You can choose which license
 	you prefer.
@@ -176,7 +176,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V4.94 23 Jan 2007 (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V4.96 24 Sept 2007 (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -920,7 +920,9 @@
 		} 
 		
 		if ($this->_queryID === true) { // return simplified recordset for inserts/updates/deletes with lower overhead
-			$rs = new ADORecordSet_empty();
+			$rsclass = $this->rsPrefix.'empty';
+			$rs = (class_exists($rsclass)) ? new $rsclass():  new ADORecordSet_empty();
+			
 			return $rs;
 		}
 		
@@ -1303,7 +1305,9 @@
 		$ret = false;
 		$rs = &$this->Execute($sql,$inputarr);
 		if ($rs) {	
-			if (!$rs->EOF) $ret = reset($rs->fields);
+			if ($rs->EOF) $ret = null;
+			else $ret = reset($rs->fields);
+			
 			$rs->Close();
 		}
 		$ADODB_COUNTRECS = $crecs;
@@ -1315,7 +1319,8 @@
 		$ret = false;
 		$rs = &$this->CacheExecute($secs2cache,$sql,$inputarr);
 		if ($rs) {		
-			if (!$rs->EOF) $ret = reset($rs->fields);
+			if ($rs->EOF) $ret = null;
+			else $ret = reset($rs->fields);
 			$rs->Close();
 		} 
 		
@@ -1443,7 +1448,12 @@
 		return $arr;
 	}
 	
-	
+	function GetRandRow($sql, $arr= false)
+	{
+		$rezarr = $this->GetAll($sql, $arr);
+		$sz = sizeof($rez);
+		return $rezarr[abs(rand()) % $sz];
+	}
 	
 	/**
 	* Return one row of sql statement. Recordset is disposed for you.

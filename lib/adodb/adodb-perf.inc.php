@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.94 23 Jan 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+V4.96 24 Sept 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -640,13 +640,20 @@ Committed_AS:   348732 kB
 		else return '';
 	}
 	
+	function clearsql()
+	{
+		$perf_table = adodb_perf::table();
+		$this->conn->Execute("delete from $perf_table where created<".$this->conn->sysTimeStamp);
+	}
+	
 	/***********************************************************************************************/
 	//                                    HIGH LEVEL UI FUNCTIONS
 	/***********************************************************************************************/
-
+	
 	
 	function UI($pollsecs=5)
 	{
+	global $ADODB_LOG_CONN;
 	
     $perf_table = adodb_perf::table();
 	$conn = $this->conn;
@@ -659,7 +666,7 @@ Committed_AS:   348732 kB
 	$savelog = $this->conn->LogSQL(false);	
 	$info = $conn->ServerInfo();
 	if (isset($_GET['clearsql'])) {
-		$this->conn->Execute("delete from $perf_table");
+		$this->clearsql();
 	}
 	$this->conn->LogSQL($savelog);
 	
@@ -702,9 +709,13 @@ Committed_AS:   348732 kB
 	 	switch ($do) {
 		default:
 		case 'stats':
+		
+			if (empty($ADODB_LOG_CONN))
+				echo "<p>&nbsp; <a href=\"?do=viewsql&clearsql=1\">Clear SQL Log</a><br>";
 			echo $this->HealthCheck();
 			//$this->conn->debug=1;
 			echo $this->CheckMemory();
+			global $ADODB_LOG_CONN;
 			break;
 		case 'poll':
 			echo "<iframe width=720 height=80% 

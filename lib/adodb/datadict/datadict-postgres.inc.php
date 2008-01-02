@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.94 23 Jan 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V4.96 24 Sept 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -162,13 +162,68 @@ class ADODB2_postgres extends ADODB_DataDict {
 	 * @param array/ $tableoptions options for the new table see CreateTableSQL, default ''
 	 * @return array with SQL strings
 	 */
-	function AlterColumnSQL($tabname, $flds, $tableflds='',$tableoptions='')
+	/*function AlterColumnSQL($tabname, $flds, $tableflds='',$tableoptions='')
 	{
 		if (!$tableflds) {
 			if ($this->debug) ADOConnection::outp("AlterColumnSQL needs a complete table-definiton for PostgreSQL");
 			return array();
 		}
 		return $this->_recreate_copy_table($tabname,False,$tableflds,$tableoptions);
+	}*/
+	
+	function AlterColumnSQL($tabname, $flds, $tableflds='',$tableoptions='')
+	{
+	   // Check if alter single column datatype available - works with 8.0+
+	   $has_alter_column = 8.0 <= (float) @$this->serverInfo['version'];
+	
+	   if ($has_alter_column) {
+	      $tabname = $this->TableName($tabname);
+	      $sql = array();
+	      list($lines,$pkey) = $this->_GenFields($flds);
+	      $alter = 'ALTER TABLE ' . $tabname . $this->alterCol . ' ';
+	      foreach($lines as $v) {
+	         if ($not_null = preg_match('/NOT NULL/i',$v)) {
+	            $v = preg_replace('/NOT NULL/i','',$v);
+	         }
+	         // this next block doesn't work - there is no way that I can see to 
+	         // explicitly ask a column to be null using $flds
+	         else if ($set_null = preg_match('/NULL/i',$v)) {
+	            // if they didn't specify not null, see if they explicitely asked for null
+	            $v = preg_replace('/\sNULL/i','',$v);
+	         }
+	         
+	         if (preg_match('/^([^ ]+) .*DEFAULT ([^ ]+)/',$v,$matches)) {
+	            list(,$colname,$default) = $matches;
+	            $v = preg_replace('/^' . preg_quote($colname) . '\s/', '', $v);
+	            $sql[] = $alter . $colname . ' TYPE ' . str_replace('DEFAULT '.$default,'',$v);
+	            $sql[] = 'ALTER TABLE '.$tabname.' ALTER COLUMN '.$colname.' SET DEFAULT ' . $default;
+	         } 
+	         else {
+	            // drop default?
+	            preg_match ('/^\s*(\S+)\s+(.*)$/',$v,$matches);
+	            list (,$colname,$rest) = $matches;
+	            $sql[] = $alter . $colname . ' TYPE ' . $rest;
+	         }
+	
+	         list($colname) = explode(' ',$v);
+	         if ($not_null) {
+	            // this does not error out if the column is already not null
+	            $sql[] = 'ALTER TABLE '.$tabname.' ALTER COLUMN '.$colname.' SET NOT NULL';
+	         }
+	         if ($set_null) {
+	            // this does not error out if the column is already null
+	            $sql[] = 'ALTER TABLE '.$tabname.' ALTER COLUMN '.$colname.' DROP NOT NULL';
+	         }
+	      }
+	      return $sql;
+	   }
+	
+	   // does not have alter column
+	   if (!$tableflds) {
+	      if ($this->debug) ADOConnection::outp("AlterColumnSQL needs a complete table-definiton for PostgreSQL");
+	      return array();
+	   }
+	   return $this->_recreate_copy_table($tabname,False,$tableflds,$tableoptions);
 	}
 	
 	/**
@@ -291,6 +346,20 @@ class ADODB2_postgres extends ADODB_DataDict {
 			return False;
 		}
 		return "DROP SEQUENCE ".$seq;
+	}
+	
+	function RenameTableSQL($tabname,$newname)
+	{
+		if (!empty($this->schema)) {
+			$rename_from = $this->TableName($tabname);
+			$schema_save = $this->schema;
+			$this->schema = false;
+			$rename_to = $this->TableName($newname);
+			$this->schema = $schema_save;
+			return array (sprintf($this->renameTable, $rename_from, $rename_to));
+		}
+
+		return array (sprintf($this->renameTable, $this->TableName($tabname),$this->TableName($newname)));
 	}
 	
 	/*
