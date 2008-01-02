@@ -14,6 +14,12 @@
 
     // ensure errors are well explained
     $CFG->debug=E_ALL;
+
+    if (!is_enabled_enrol('database')) {
+         error_log("Database enrol plugin not enabled!");
+         die;
+    }
+
     // update enrolments -- these handlers should autocreate courses if required
     $enrol = new enrolment_plugin_database();
 
