@@ -100,25 +100,9 @@
                 notify("Error occurred while deleting the $strblockname record from blocks table");
             }
 
-            // Then the tables themselves
-            if ($tables = $db->Metatables()) {
-                $prefix = $CFG->prefix.$block->name;
-                $prefix2 = $CFG->prefix.'block_'.$block->name;
-                foreach ($tables as $table) {
-                    if (strpos($table, $prefix) === 0 || strpos($table, $prefix2) === 0) {
-                    /// If the match has been due to the 1st condition, debug to developers
-                        if (strpos($table, $prefix) === 0) {
-                            debugging('This block has some wrongly named tables. See Moodle Docs coding guidelines (and MDL-6786)', DEBUG_DEVELOPER);
-                        }
-                    /// Strip prefix from $table
-                        $table = preg_replace("/^{$CFG->prefix}/", '', $table);
-                        $xmldb_table = new XMLDBTable($table);
-                        if (!drop_table($xmldb_table, true, false)) {
-                            notify("ERROR: while trying to drop table $table");
-                        }
-                    }
-                }
-            }
+            drop_plugin_tables($block->name, "$CFG->dirroot/blocks/$block->name/db/install.xml", false); // old obsoleted table names
+            drop_plugin_tables('block_'.$block->name, "$CFG->dirroot/blocks/$block->name/db/install.xml", false);
+
             // Delete the capabilities that were defined by this block
             capabilities_cleanup('block/'.$block->name);
 
