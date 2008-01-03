@@ -95,6 +95,7 @@ $string['databasesettingssub_postgres7'] = '<b>Type:</b> PostgreSQL<br />
 <b>Gebruiker:</b> de gebruikersnaam voor jouw database<br />
 <b>Wachtwoord:</b> het wachtwoord voor je databank<br />
 <b>Tabelvoorvoegsel:</b>voorvoegsel voor alle tabelnamen (verplicht)';
+$string['databasesettingswillbecreated'] = '<b>Opmerking:</b> het installatieprogramma zal proberen een databank te maken als die nog niet bestaat.';
 $string['dataroot'] = 'Gegevens';
 $string['datarooterror'] = 'De \'data-map\' die je opgaf kon niet gevonden of gemaakt worden. Verbeter ofwel het pad of maak die map manueel.';
 $string['dbconnectionerror'] = 'We konden geen verbinding maken met de databank die je opgegeven hebt. Controleer je databankinstellingen';
@@ -202,6 +203,7 @@ $string['postgres7'] = 'PostgreSQL (postgres 7)';
 $string['previous'] = 'Vorige';
 $string['qtyperqpwillberemoved'] = 'Tijdens de upgrade zal het RQP vraagtype verwijderd worden. Je gebruikte deze vraag niet, dus je zult hier geen problemen mee krijgen.';
 $string['qtyperqpwillberemovedanyway'] = 'Tijdens de upgrade zal het RQP vraagtype verwijderd worden. Er zijn vragen van dit type in je database. Die zullen stoppen met werken, tenzij je de code herinstalleert van  http://moodle.org/mod/data/view.php?d=13&amp;rid=797 voor je verder gaat met de upgrade.';
+$string['remotedownloaderror'] = 'De download van de component naar jouw server is mislukt, controleer je proxy-instellingen, de PHP cURL-extentie wordt ten zeerste aanbevolen te installeren.<br /><br />Je moet je <a href=\"$a->url\">$a->url</a> bestand manueel downloaden , kopiëren naar de map \"$a->dest\" op je server en het daar unzippen.';
 $string['remotedownloadnotallowed'] = 'Het downloaden van componenten naar je server is niet toegelaten (allow_url_fopen is uitgeschakeld)<br /><br />Je moet het <a href=\"$a->url\">$a->url</a>bestand manueel downloaden en het kopiëren naar \"$a->dest\" op je server en het daar unzippen.';
 $string['report'] = 'Rapport';
 $string['restricted'] = 'Beperkt';
