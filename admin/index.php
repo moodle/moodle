@@ -258,8 +258,9 @@
             $CFG->debug = DEBUG_MINIMAL;
             error_reporting($CFG->debug);
 
-            // logout in case we are upgrading from pre 1.7 version - prevention of weird session problems
-            if ($CFG->version < 2006050600) {
+            // logo ut in case we are upgrading from pre 1.9 version in order to prevent
+            // weird session/role problems caused by incorrect data in USER and SESSION
+            if ($CFG->version < 2007101500) {
                 require_logout();
             }
 
