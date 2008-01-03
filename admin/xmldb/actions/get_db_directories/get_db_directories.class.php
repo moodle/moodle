@@ -70,111 +70,17 @@ class get_db_directories extends XMLDBAction {
         if (!isset($XMLDB->dbdirs)) {
             $XMLDB->dbdirs = array();
         }
-    /// First, the main one (lib/db)
-        $dbdir = new stdClass;
-        $dbdir->path = $CFG->libdir . '/db';
-        if (!isset($XMLDB->dbdirs[$dbdir->path])) {
-            $XMLDB->dbdirs[$dbdir->path] = $dbdir;
-        }
-        $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
 
-    /// Now, activity modules (mod/xxx/db)
-        if ($plugins = get_list_of_plugins('mod')) {
-            foreach ($plugins as $plugin) {
-                $dbdir = new stdClass;
-                $dbdir->path = $CFG->dirroot . '/mod/' . $plugin . '/db';
-                if (!isset($XMLDB->dbdirs[$dbdir->path])) {
-                    $XMLDB->dbdirs[$dbdir->path] = $dbdir;
-                }
-                $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
-            }
-        }
-
-    /// Now, assignment submodules (mod/assignment/type/xxx/db)
-        if ($plugins = get_list_of_plugins('mod/assignment/type')) {
-            foreach ($plugins as $plugin) {
-                $dbdir = new stdClass;
-                $dbdir->path = $CFG->dirroot . '/mod/assignment/type/' . $plugin . '/db';
-                if (!isset($XMLDB->dbdirs[$dbdir->path])) {
-                    $XMLDB->dbdirs[$dbdir->path] = $dbdir;
-                }
-                $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
-            }
-        }
-
-    /// Now, question types (question/type/xxx/db)
-        if ($plugins = get_list_of_plugins('question/type')) {
-            foreach ($plugins as $plugin) {
-                $dbdir = new stdClass;
-                $dbdir->path = $CFG->dirroot . '/question/type/' . $plugin . '/db';
-                if (!isset($XMLDB->dbdirs[$dbdir->path])) {
-                    $XMLDB->dbdirs[$dbdir->path] = $dbdir;
-                }
-                $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
-            }
-        }
-
-    /// Now, backup/restore stuff (backup/db)
-        $dbdir = new stdClass;
-        $dbdir->path = $CFG->dirroot . '/backup/db';
-        if (!isset($XMLDB->dbdirs[$dbdir->path])) {
-            $XMLDB->dbdirs[$dbdir->path] = $dbdir;
-        }
-        $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
-
-    /// Now, block system stuff (blocks/db)
-        $dbdir = new stdClass;
-        $dbdir->path = $CFG->dirroot . '/blocks/db';
-        if (!isset($XMLDB->dbdirs[$dbdir->path])) {
-            $XMLDB->dbdirs[$dbdir->path] = $dbdir;
-        }
-        $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
-
-    /// Now, blocks (blocks/xxx/db)
-        if ($plugins = get_list_of_plugins('blocks', 'db')) {
-            foreach ($plugins as $plugin) {
-                $dbdir = new stdClass;
-                $dbdir->path = $CFG->dirroot . '/blocks/' . $plugin . '/db';
-                if (!isset($XMLDB->dbdirs[$dbdir->path])) {
-                    $XMLDB->dbdirs[$dbdir->path] = $dbdir;
-                }
-                $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
-            }
-        }
-
-    /// Now, course formats (course/format/xxx/db)
-        if ($plugins = get_list_of_plugins('course/format', 'db')) {
-            foreach ($plugins as $plugin) {
-                $dbdir = new stdClass;
-                $dbdir->path = $CFG->dirroot . '/course/format/' . $plugin . '/db';
-                if (!isset($XMLDB->dbdirs[$dbdir->path])) {
-                    $XMLDB->dbdirs[$dbdir->path] = $dbdir;
-                }
-                $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
-            }
-        }
-
-    /// Now, enrolment plugins (enrol/xxx/db)
-        if ($plugins = get_list_of_plugins('enrol', 'db')) {
-            foreach ($plugins as $plugin) {
-                $dbdir = new stdClass;
-                $dbdir->path = $CFG->dirroot . '/enrol/' . $plugin . '/db';
-                if (!isset($XMLDB->dbdirs[$dbdir->path])) {
-                    $XMLDB->dbdirs[$dbdir->path] = $dbdir;
-                }
-                $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
-            }
-        }
-
-    /// Local database changes, if the local folder exists.
-        if (file_exists($CFG->dirroot . '/local')) {
+    /// get list of all dirs and create objects with status
+        $db_direcotries = get_db_directories();
+        foreach ($db_direcotries as $path) {
             $dbdir = new stdClass;
-            $dbdir->path = $CFG->dirroot . '/local/db';
+            $dbdir->path = $path;
             if (!isset($XMLDB->dbdirs[$dbdir->path])) {
                 $XMLDB->dbdirs[$dbdir->path] = $dbdir;
-            }
+             }
             $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
-        }
+         }
 
     /// Sort by key
         ksort($XMLDB->dbdirs);

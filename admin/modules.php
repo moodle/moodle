@@ -5,6 +5,7 @@
     require_once('../course/lib.php');
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/tablelib.php');
+    require_once($CFG->libdir.'/ddllib.php');
 
     // defines
     define('MODULE_TABLE','module_administration_table');
@@ -139,17 +140,8 @@
             }
 
             // Then the tables themselves
+            drop_plugin_tables($module->name, "$CFG->dirroot/mod/$module->name/db/install.xml", false);
 
-            if ($tables = $db->Metatables()) {
-                $prefix = $CFG->prefix.$module->name;
-                foreach ($tables as $table) {
-                    if (strpos($table, $prefix) === 0) {
-                        if (!execute_sql("DROP TABLE $table", false)) {
-                            notify("ERROR: while trying to drop table $table");
-                        }
-                    }
-                }
-            }
             // Delete the capabilities that were defined by this module
             capabilities_cleanup('mod/'.$module->name);
 

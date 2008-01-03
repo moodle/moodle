@@ -636,6 +636,193 @@ function install_from_xmldb_file($file) {
 }
 
 /**
+ * This function will all tables found in XMLDB file from db
+ *
+ * @uses $CFG, $db
+ * @param $file full path to the XML file to be used
+ * @param $feedback
+ * @return boolean (true on success, false on error)
+ */
+function delete_tables_from_xmldb_file($file, $feedback=true ) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+
+    $xmldb_file = new XMLDBFile($file);
+
+    if (!$xmldb_file->fileExists()) {
+        return false;
+    }
+
+    $loaded    = $xmldb_file->loadXMLStructure();
+    $structure =& $xmldb_file->getStructure();
+
+    if (!$loaded || !$xmldb_file->isLoaded()) {
+    /// Show info about the error if we can find it
+        if ($feedback and $structure) {
+            if ($errors = $structure->getAllErrors()) {
+                notify('Errors found in XMLDB file: '. implode (', ', $errors));
+            }
+        }
+        return false;
+    }
+
+    if ($tables = $structure->getTables()) {
+        foreach($tables as $table) {
+            if (table_exists($table)) {
+                drop_table($table, true, $feedback);
+            }
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Delete all plugin tables
+ * @name string name of plugin, used as table prefix
+ * @file string path to install.xml file
+ * @feedback boolean
+ */
+function drop_plugin_tables($name, $file, $feedback=true) {
+    global $CFG, $db;
+
+    // first try normal delete
+    if (delete_tables_from_xmldb_file($file, $feedback)) {
+        return true;
+    }
+
+    // then try to find all tables that start with name and are not in any xml file
+    $used_tables = get_used_table_names();
+
+    $tables = $db->MetaTables();
+    /// Iterate over, fixing id fields as necessary
+    foreach ($tables as $table) {
+        if (strlen($CFG->prefix)) {
+            if (strpos($table, $CFG->prefix) !== 0) {
+                continue;
+            }
+            $table = substr($table, strlen($CFG->prefix));
+        }
+        $table = strtolower($table);
+        if (strpos($table, $name) !== 0) {
+            continue;
+        }
+        if (in_array($table, $used_tables)) {
+            continue;
+        }
+
+        // found orphan table --> delete it
+        $table = new XMLDBTable($table);
+        if (table_exists($table)) {
+            drop_table($table, true, $feedback);
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Returns names of all known tables == tables that moodle knowns about.
+ * @return array of lowercase table names
+ */
+function get_used_table_names() {
+    $table_names = array();
+    $dbdirs = get_db_directories();
+
+    foreach ($dbdirs as $dbdir) {
+        $file = $dbdir.'/install.xml';
+
+        $xmldb_file = new XMLDBFile($file);
+
+        if (!$xmldb_file->fileExists()) {
+            continue;
+        }
+
+        $loaded    = $xmldb_file->loadXMLStructure();
+        $structure =& $xmldb_file->getStructure();
+
+        if ($loaded and $tables = $structure->getTables()) {
+            foreach($tables as $table) {
+                $table_names[] = strtolower($table->name);
+            }
+        }
+    }
+
+    return $table_names;
+}
+
+/**
+ * Returns list of all directories where we expect install.xml files
+ * @return array of paths
+ */
+function get_db_directories() {
+    global $CFG;
+
+    $dbdirs = array();
+
+/// First, the main one (lib/db)
+    $dbdirs[] = $CFG->libdir.'/db';
+
+/// Now, activity modules (mod/xxx/db)
+    if ($plugins = get_list_of_plugins('mod')) {
+        foreach ($plugins as $plugin) {
+            $dbdirs[] = $CFG->dirroot.'/mod/'.$plugin.'/db';
+        }
+    }
+
+/// Now, assignment submodules (mod/assignment/type/xxx/db)
+    if ($plugins = get_list_of_plugins('mod/assignment/type')) {
+        foreach ($plugins as $plugin) {
+            $dbdirs[] = $CFG->dirroot.'/mod/assignment/type/'.$plugin.'/db';
+        }
+    }
+
+/// Now, question types (question/type/xxx/db)
+    if ($plugins = get_list_of_plugins('question/type')) {
+        foreach ($plugins as $plugin) {
+            $dbdirs[] = $CFG->dirroot.'/question/type/'.$plugin.'/db';
+        }
+    }
+
+/// Now, backup/restore stuff (backup/db)
+    $dbdirs[] = $CFG->dirroot.'/backup/db';
+
+/// Now, block system stuff (blocks/db)
+    $dbdirs[] = $CFG->dirroot.'/blocks/db';
+
+/// Now, blocks (blocks/xxx/db)
+    if ($plugins = get_list_of_plugins('blocks', 'db')) {
+        foreach ($plugins as $plugin) {
+            $dbdirs[] = $CFG->dirroot.'/blocks/'.$plugin.'/db';
+        }
+    }
+
+/// Now, course formats (course/format/xxx/db)
+    if ($plugins = get_list_of_plugins('course/format', 'db')) {
+        foreach ($plugins as $plugin) {
+            $dbdirs[] = $CFG->dirroot.'/course/format/'.$plugin.'/db';
+        }
+    }
+
+/// Now, enrolment plugins (enrol/xxx/db)
+    if ($plugins = get_list_of_plugins('enrol', 'db')) {
+        foreach ($plugins as $plugin) {
+            $dbdirs[] = $CFG->dirroot.'/enrol/'.$plugin.'/db';
+        }
+    }
+
+/// Local database changes, if the local folder exists.
+    if (file_exists($CFG->dirroot . '/local')) {
+        $dbdirs[] = $CFG->dirroot.'/local/db';
+    }
+
+    return $dbdirs;
+}
+
+/**
  * This function will create the table passed as argument with all its
  * fields/keys/indexes/sequences, everything based in the XMLDB object
  *
