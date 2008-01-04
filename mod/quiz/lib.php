@@ -268,13 +268,12 @@ function quiz_get_user_grades($quiz, $userid=0) {
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, u.id AS userid, g.grade AS rawgrade, g.timemodified AS dategraded, a.timefinish AS datesubmitted 
-              FROM {$CFG->prefix}user u, {$CFG->prefix}quiz_grades g, {$CFG->prefix}quiz_attempts a
-             WHERE u.id = g.userid AND g.quiz = {$quiz->id}
-                   $user
-                   AND a.timefinish = (SELECT MAX(aa.timefinish)
-                                         FROM {$CFG->prefix}quiz_attempts aa
-                                        WHERE aa.quiz = {$quiz->id} AND aa.userid = u.id AND aa.preview = 0)";
+    $sql = "SELECT u.id, u.id AS userid, g.grade AS rawgrade, g.timemodified AS dategraded, MAX(a.timefinish) AS datesubmitted
+            FROM {$CFG->prefix}user u, {$CFG->prefix}quiz_grades g, {$CFG->prefix}quiz_attempts a
+            WHERE u.id = g.userid AND g.quiz = 8 AND u.id = a.userid AND a.quiz = {$quiz->id}
+                  $user
+            GROUP BY u.id, g.grade, g.timemodified";
+
     return get_records_sql($sql);
 }
 
