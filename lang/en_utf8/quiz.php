@@ -180,6 +180,7 @@ $string['event9'] = 'Manual Grade';
 $string['examview'] = 'Examview';
 $string['export'] = 'Export';
 $string['exporterror'] = 'An error occurred during export processing';
+$string['exportcategory'] = 'export category';
 $string['exportfilename'] = 'quiz';
 $string['exportingquestions'] = 'Questions are being exported to file';
 $string['exportname'] = 'File name';
