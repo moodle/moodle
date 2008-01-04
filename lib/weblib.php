@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -6852,15 +6852,16 @@ function doc_link($path='', $text='', $iconpath='') {
     if (empty($CFG->docroot)) {
         return '';
     }
+    
+    $lang = str_replace('_utf8', '', current_language());
+    $url = $CFG->docroot. '/' .$lang. '/' .$path;
 
     $target = '';
     if (!empty($CFG->doctonewwindow)) {
-        $target = ' target="_blank"';
+        $target = " onclick=\"window.open('$url'); return false;\""; 
     }
 
-    $lang = str_replace('_utf8', '', current_language());
-
-    $str = '<a href="' .$CFG->docroot. '/' .$lang. '/' .$path. '"' .$target. '>';
+    $str = "<a href=\"$url\"$target>";
 
     if (empty($iconpath)) {
         $iconpath = $CFG->httpswwwroot . '/pix/docs.gif';
