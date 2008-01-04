@@ -94,7 +94,8 @@ $string['databasesettingssub_postgres7'] = '<b>종류:</b>  PostgreSQL<br />
 <b>사용자:</b> 데이터베이스 사용자명<br />
 <b>암호:</b> 데이터베이스 암호<br />
 <b>테이블 접두어:</b> 모든 테이블에 사용할 접두어 (필수)';
-$string['dataroot'] = '데이타 경로';
+$string['databasesettingswillbecreated'] = '<b>노트:</b>만일 데이터베이스가 존재하지 않으면 인스톨러가 데이터베이스를 자동으로 생성할 것입니다.';
+$string['dataroot'] = '데이타디렉토리 경로';
 $string['datarooterror'] = '당신이 지정한 \'데이타 경로\'가 없거나 생성되지 않았습니다. 정확한 경로를 적거나 수동으로 그 디렉토리를 생성해 놓으시오.';
 $string['dbconnectionerror'] = '지정한 데이터베이스에 연결할 수 없습니다. 데이타베이스의 설정을 점검하시오.';
 $string['dbcreationerror'] = '데이터베이스 생성 오류. 주어진 사용자명 및 암호로 데이터베이스 이름을 생성할 수 없습니다.';
@@ -206,8 +207,9 @@ $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = '이전으로';
 $string['qtyperqpwillberemoved'] = '갱신과정에서 RQP 문제 유형은 제거될 것입니다. 만일 이 유형의 문제를 사용하지 않았다면, 추후에는 어떤 문제도 발생하지 않을 것입니다.';
 $string['qtyperqpwillberemovedanyway'] = '갱신과정에서 RQP 문제 유형은 제거될 것입니다. 데이터베이스에 RQP 문제가 탑재되어 있다면, 비록 갱신하기 전에 http://moodle.org/mod/data/view.php?d=13&amp;rid=797  에서 코드를 다시 불러들였다 하더라도 작업이 중단될 것입니다.';
+$string['remotedownloaderror'] = '서버로 구성요소를 다운로드하는데 실패하였습니다. 프록시 설정을 확인하십시요.PHP cURL 확장라이브러리를 추천합니다. <br /><br /> <a href=\"$a->url\">$a->url</a> 파일을 수동으로 다운로드해야 해서 서버의 \"$a->dest\"로 복사한 다음 거기서 압축을 해제하십시요.';
 $string['remotedownloadnotallowed'] = '서버로 구성요소를 내려받는 것이 허용되지 않습니다. (allow_url_fopen 이 비활성화 됨).<br /><br /> 수동으로 <a href=\"$a->url\">$a->url</a> 파일을 다운로드 하고, 서버의 \"$a->dest\" 에 복사한 후 압축을 푸셔야 합니다.';
-$string['report'] = '보고';
+$string['report'] = '보고서';
 $string['restricted'] = '제한됨';
 $string['safemode'] = '안전모드';
 $string['safemodeerror'] = '아마 안전모드(Safe Mode)가 작동되어서 문제가 생겼을 것입니다.';
