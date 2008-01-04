@@ -47,8 +47,8 @@ if ($currenttab != 'update') {
                 $course = get_record('course', 'id', $context->instanceid);
 
                 require_login($course);
-                $navlinks[] = array('name' => $course->shortname,
-                                    'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
+                $navlinks[] = array('name' => get_string('roles'),
+                                    'link' => "$CFG->wwwroot/admin/roles/assign.php?contextid=$context->id",
                                     'type' => 'misc');
                 $navigation = build_navigation($navlinks);
                 print_header($streditcoursesettings, $course->fullname, $navigation);
