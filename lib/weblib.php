@@ -5993,14 +5993,15 @@ function page_doc_link($text='', $iconpath='') {
 function doc_link($path='', $text='', $iconpath='') {
     global $CFG;
 
+    $lang = str_replace('_utf8', '', current_language());
+    $url = $CFG->docroot. '/' .$lang. '/' .$path;
+
     $target = '';
     if (!empty($CFG->doctonewwindow)) {
-        $target = ' target="_blank"';
+        $target = " onclick=\"window.open('$url'); return false;\"";
     }
 
-    $lang = str_replace('_utf8', '', current_language());
-
-    $str = '<a href="' .$CFG->docroot. '/' .$lang. '/' .$path. '"' .$target. '>';
+    $str = "<a href=\"$url\"$target>";
 
     if (empty($iconpath)) {
         $iconpath = $CFG->httpswwwroot . '/pix/docs.gif';
