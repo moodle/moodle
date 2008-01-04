@@ -6856,6 +6856,9 @@ function doc_link($path='', $text='', $iconpath='') {
     $lang = str_replace('_utf8', '', current_language());
     $url = $CFG->docroot. '/' .$lang. '/' .$path;
 
+    $lang = str_replace('_utf8', '', current_language());
+    $url = $CFG->docroot. '/' .$lang. '/' .$path;
+    
     $target = '';
     if (!empty($CFG->doctonewwindow)) {
         $target = " onclick=\"window.open('$url'); return false;\""; 
