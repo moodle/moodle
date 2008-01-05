@@ -1363,7 +1363,7 @@ function auth_ldap_connect($binddn='',$bindpwd=''){
         }
 
         // Fix MDL-10921
-        if ($this->config->user_type == 'ad') {
+        if ($CFG->ldap_user_type == 'ad') {
              ldap_set_option($connresult, LDAP_OPT_REFERRALS, 0);
         }
 
