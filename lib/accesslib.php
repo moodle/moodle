@@ -4281,7 +4281,9 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
     /// Set up hidden role-assignments sql
     if ($view && !has_capability('moodle/role:viewhiddenassigns', $context)) {
-        $wherecond['hiddenra'] = ' ra.hidden = 0 ';
+        $condhiddenra = 'AND ra.hidden = 0 ';
+    } else {
+        $condhiddenra = '';
     }
 
     // Collect WHERE conditions
@@ -4293,9 +4295,9 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     /// Set up default fields
     if (empty($fields)) {
         if ($iscoursepage) {
-            $fields = 'u.*, ul.timeaccess as lastaccess, ra.hidden';
+            $fields = 'u.*, ul.timeaccess as lastaccess';
         } else {
-            $fields = 'u.*, ra.hidden';
+            $fields = 'u.*';
         }
     }
 
@@ -4352,6 +4354,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
                           FROM {$CFG->prefix}role_assignments ssra
                           WHERE ssra.contextid IN ($ctxids)
                                 AND ssra.roleid IN (".implode(',',$roleids) .")
+                                $condhiddenra
                           ) ra ON ra.userid = u.id
                     $uljoin ";
         $where  = " WHERE u.deleted = 0 ";
@@ -4407,15 +4410,14 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         // with a SELECT FROM user LEFT OUTER JOIN against ra -
         // This is expensive on the SQL and PHP sides -
         // moves a ton of data across the wire.
-
-        // TODO -- test!
         $ss = "SELECT u.id as userid, ra.roleid,
                       ctx.depth
                FROM {$CFG->prefix}user u
                LEFT OUTER JOIN {$CFG->prefix}role_assignments ra 
                  ON (ra.userid = u.id
                      AND ra.contextid IN ($ctxids)
-                     AND ra.roleid IN (".implode(',',$roleids) ."))
+                     AND ra.roleid IN (".implode(',',$roleids) .")
+                     $condhiddenra)
                LEFT OUTER JOIN {$CFG->prefix}context ctx
                  ON ra.contextid=ctx.id
                WHERE u.deleted=0";
@@ -4428,6 +4430,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
                JOIN {$CFG->prefix}context ctx
                  ON ra.contextid=ctx.id
                WHERE ra.contextid IN ($ctxids)
+                     $condhiddenra
                      AND ra.roleid IN (".implode(',',$roleids) .")";
     }
 
