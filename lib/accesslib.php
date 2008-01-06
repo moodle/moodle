@@ -4458,6 +4458,20 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     // state machine to track the cap/perms and at what RA-depth
     // and RC-depth they were defined.
     //
+    // So what we do here is:
+    // - loop over rows, checking pagination limits
+    // - when we find a new user, if we are in the page add it to the
+    //   $results, and start building $ras array with its role-assignments
+    // - when we are dealing with the next user, or are at the end of the userlist
+    //   (last rec or last in page), trigger the check-permission idiom
+    // - the check permission idiom will
+    //   - add the default enrolment if needed
+    //   - call has_capability_from_rarc(), which based on RAs and RCs will return a bool
+    //     (should be fairly tight code ;-) )
+    // - if the user has permission, all is good, just $c++ (counter)
+    // - ...else, decrease the counter - so pagination is kept straight,
+    //      and (if we are in the page) remove from the results
+    // 
     $results = array();
 
     // pagination controls
@@ -4465,27 +4479,17 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     $limitfrom = (int)$limitfrom;
     $limitnum = (int)$limitnum;
 
-    // What caps we are tracking
-    $caps = array($capability);
-    if ($doanything) {
-        $caps[] = 'moodle/site:candoanything';
-    }
-
     //
-    // Mini-state machine, using $lastuserid and $hascap
-    // $hascap[ 'moodle/foo:bar' ]->perm = CAP_SOMETHING (numeric constant)
-    // $hascap[ 'moodle/foo:bar' ]->radepth = depth of the role assignment that set it
-    // $hascap[ 'moodle/foo:bar' ]->rcdepth = depth of the rolecap that set it
-    // -- when resolving conflicts, we need to look into radepth first, if unresolved
+    // Track our last user id so we know when we are dealing
+    // with a new user... 
     //
     $lastuserid  = 0;
-    foreach ($caps as $cap) {
-        $hascap[$cap]->perm = 0; // the main cap we are lookin
-        $hascap[$cap]->radepth = 0;
-        $hascap[$cap]->rcdepth = 0;
-    }
-    unset($cap);
-
+    //
+    // In this loop, we 
+    // $ras: role assignments, multidimensional array
+    // treat as a stack - going from local to general
+    // $ras = (( roleid=> x, $depth=>y) , ( roleid=> x, $depth=>y))
+    //
     while ($user = rs_fetch_next_record($rs)) {
 
         //error_log(" Record: " . print_r($user,1));
@@ -4500,9 +4504,12 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
             // Did the last user end up with a positive permission?
             if ($lastuserid !=0) {
-                if ($hascap[$capability]->perm > 0
-                    || ($doanything && isset($hascap['moodle/site:candoanything'])
-                        && $hascap['moodle/site:candoanything']->perm > 0)) {                          
+                if ($defaultroleinteresting) {
+                    // add the role at the end of $ras
+                    $ras[] = array( 'roleid' => $CFG->defaultuserroleid,
+                                    'depth'  => 1 );
+                }
+                if (has_capability_from_rarc($ras, $roleperms, $capability, $doanything)) {
                     $c++;
                 } else {
                     // remove the user from the result set,
@@ -4518,26 +4525,13 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
                 break;
             }
 
-            // New user setup, and state machine init
-            $newuser = true;
+            // New user setup, and $ras reset
             $lastuserid = $user->id;
-
-            $hascap = array();
-            foreach ($caps as $cap) {
-                // Do not set, unless it's interesting
-                // (we evaluate for isset() later)
-                if ($defaultroleinteresting) {
-                    if (isset($roleperms[$cap][$CFG->defaultuserroleid])) {
-                        $defroleperms = $roleperms[$cap][$CFG->defaultuserroleid];
-                        $hascap[$cap] = new StdClass;
-                        $hascap[$cap]->perm    = $defroleperms->perm;
-                        $hascap[$cap]->rcdepth = $defroleperms->rcdepth;
-                        $hascap[$cap]->radepth = 1; // site-level
-                    }
-                }
-                unset($defroleperms);
+            $ras = array();
+            if (!empty($user->roleid)) {
+                $ras[] = array( 'roleid' => (int)$user->roleid,
+                                'depth'  => (int)$user->depth );
             }
-            unset($cap);
 
             // if we are 'in the page', also add the rec
             // to the results...
@@ -4545,95 +4539,137 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
                 $results[$user->id] = $user; // trivial
             }
         } else {
-            $newuser = false;
+            // Additional RA for $lastuserid
+            $ras[] = array( 'roleid'=>(int)$user->roleid,
+                            'depth'=>(int)$user->depth );
         }
 
-        //
-        // Compute which permission/roleassignment/rolecap
-        // wins for each capability we are walking
-        // 
-        if (!$newuser || $defaultroleinteresting) {
-            foreach ($caps as $cap) {
-                if (!isset($roleperms[$cap][$user->roleid])) {
-                    // nothing set for this cap - skip
-                    continue;
-                }
-                // We explicitly clone here as we
-                // add more properties to it
-                // that must stay separate from the
-                // original roleperm data structure
-                $rp = clone($roleperms[$cap][$user->roleid]);
-                $rp->radepth = $user->depth;
+    } // end while(fetch)
 
-                // Trivial case, we are the first to set
-                if ($hascap[$cap]->radepth === 0) {
-                    $hascap[$cap] = $rp;
-                }
-
-                //
-                // Resolve who prevails, in order of precendence
-                // - Prohibits always wins
-                // - Locality of RA
-                // - Locality of RC
-                //
-                //// Prohibits...
-                if ($rp->perm === CAP_PROHIBIT) {
-                    $hascap[$cap] = $rp;
-                    continue;
-                }
-                if ($hascap[$cap]->perm === CAP_PROHIBIT) {
-                    continue;
-                }
-
-                // Locality of RA - the look is ordered by depth DESC
-                // so from local to general -
-                // Higher RA loses to local RA... unless perm===0
-                /// Thanks to the order of the records, $rp->radepth <= $hascap[$cap]->radepth
-                /// _except_ for the default enrolment -- when it's interesting
-                if ($rp->radepth > $hascap[$cap]->radepth) {
-                    // override the default enrolment - 
-                    // this is BUGGY because the default enrolment
-                    // cannot "resolve" a pair of conflicted lower-level RAs
-                    // TODO: Move the default enrolment to the tail of processing
-                    $hascap[$cap] = $rp;
-                }
-                if ($rp->radepth < $hascap[$cap]->radepth) {
-                    if ($hascap[$cap]->perm!==0) {
-                        // Wider RA loses to local RAs...
-                        continue;
-                    } else {
-                        // "Higher RA resolves conflict" case,
-                        // local RAs had cancelled eachother
-                        $hascap[$cap] = $rp;
-                        continue;
-                    }
-                }
-                // Same ralevel - locality of RC wins
-                if ($rp->rcdepth  > $hascap[$cap]->rcdepth) {
-                    $hascap[$cap] = $rp;
-                    continue;
-                }
-                if ($rp->rcdepth  > $hascap[$cap]->rcdepth) {
-                    continue;
-                }
-                // We match depth - add them                
-                $hascap[$cap]->perm += $rp->perm;
-            }
+    // Prune last entry if necessary
+    if ($lastuserid !=0) {
+        if ($defaultroleinteresting) {
+            // add the role at the end of $ras
+            $ras[] = array( 'roleid' => $CFG->defaultuserroleid,
+                            'depth'  => 1 );
         }
-        // Prune last entry if necessary
-        if (!($hascap[$capability]->perm > 0
-              || ($doanything && isset($hascap['moodle/site:candoanything'])
-                  && $hascap['moodle/site:candoanything']->perm > 0))) {                          
+        if (!has_capability_from_rarc($ras, $roleperms, $capability, $doanything)) {
             // remove the user from the result set,
             // only if we are 'in the page'
-            if (isset($results[$lastuserid])) {
-                unset($results[$lastuserid]);
+            if ($limitfrom === 0 || $c >= $limitfrom) {
+                if (isset($results[$lastuserid])) {
+                    unset($results[$lastuserid]);
+                }
             }
         }
     }
-    
-    //error_log(print_r($results,1));
+
     return $results;
+}
+
+/*
+ * Fast (fast!) utility function to resolve if a capability is granted,
+ * based on Role Assignments and Role Capabilities.
+ *
+ * Used (at least) by get_users_by_capability().
+ *
+ * If PHP had fast built-in memoize functions, we could
+ * add a $contextid parameter and memoize the return values.
+ *
+ * @param array $ras - role assignments
+ * @param array $roleperms - role permissions
+ * @param string $capability - name of the capability
+ * @param bool $doanything
+ * @return boolean
+ * 
+ */
+function has_capability_from_rarc($ras, $roleperms, $capability, $doanything) {
+    // Mini-state machine, using $hascap
+    // $hascap[ 'moodle/foo:bar' ]->perm = CAP_SOMETHING (numeric constant)
+    // $hascap[ 'moodle/foo:bar' ]->radepth = depth of the role assignment that set it
+    // $hascap[ 'moodle/foo:bar' ]->rcdepth = depth of the rolecap that set it
+    // -- when resolving conflicts, we need to look into radepth first, if unresolved
+    
+    $caps = array($capability);
+    if ($doanything) {
+        $caps[] = 'moodle/site:candoanything';
+    }
+
+    $hascap = array();
+
+    //
+    // Compute which permission/roleassignment/rolecap
+    // wins for each capability we are walking
+    //
+    foreach ($ras as $ra) {
+        foreach ($caps as $cap) {
+            if (!isset($roleperms[$cap][$ra['roleid']])) {
+                // nothing set for this cap - skip
+                continue;
+            }
+            // We explicitly clone here as we
+            // add more properties to it
+            // that must stay separate from the
+            // original roleperm data structure
+            $rp = clone($roleperms[$cap][$ra['roleid']]);
+            $rp->radepth = $ra['depth'];
+
+            // Trivial case, we are the first to set
+            if (!isset($hascap[$cap])) {
+                $hascap[$cap] = $rp;
+            }
+
+            //
+            // Resolve who prevails, in order of precendence
+            // - Prohibits always wins
+            // - Locality of RA
+            // - Locality of RC
+            //
+            //// Prohibits...
+            if ($rp->perm === CAP_PROHIBIT) {
+                $hascap[$cap] = $rp;
+                continue;
+            }
+            if ($hascap[$cap]->perm === CAP_PROHIBIT) {
+                continue;
+            }
+
+            // Locality of RA - the look is ordered by depth DESC
+            // so from local to general -
+            // Higher RA loses to local RA... unless perm===0
+            /// Thanks to the order of the records, $rp->radepth <= $hascap[$cap]->radepth
+            if ($rp->radepth > $hascap[$cap]->radepth) {
+                error_log('Should not happen @ ' . __FUNCTION__.':'.__LINE__);
+            }
+            if ($rp->radepth < $hascap[$cap]->radepth) {
+                if ($hascap[$cap]->perm!==0) {
+                    // Wider RA loses to local RAs...
+                    continue;
+                } else {
+                    // "Higher RA resolves conflict" case,
+                    // local RAs had cancelled eachother
+                    $hascap[$cap] = $rp;
+                    continue;
+                }
+            }
+            // Same ralevel - locality of RC wins
+            if ($rp->rcdepth  > $hascap[$cap]->rcdepth) {
+                $hascap[$cap] = $rp;
+                continue;
+            }
+            if ($rp->rcdepth  > $hascap[$cap]->rcdepth) {
+                continue;
+            }
+            // We match depth - add them                
+            $hascap[$cap]->perm += $rp->perm;
+        }
+    }
+    if ($hascap[$capability]->perm > 0
+        || ($doanything && isset($hascap['moodle/site:candoanything'])
+            && $hascap['moodle/site:candoanything']->perm > 0)) {
+        return true;
+    }
+    return false;
 }
 
 /**
