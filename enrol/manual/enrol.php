@@ -315,7 +315,7 @@ function cron() {
 
                 if ($a->current || $a->past) {
                     if ($teachers = get_users_by_capability($context, 'moodle/course:update',
-                                                            'u.*,ra.hidden', 'r.sortorder ASC',
+                                                            'u.*', 'u.username ASC',
                                                             '', '', '', '', false)) {
                         foreach ($teachers as $teacher) {
                             email_to_user($teacher, $admin, $a->coursename .' '. $strexpirynotify, $strexpirynotifyemail);
@@ -395,7 +395,7 @@ function print_enrolmentkeyfrom($course) {
     // (show the first person with update rights)
     if (!$contactslisted) {
         if ($teachers = get_users_by_capability(get_context_instance(CONTEXT_COURSE, $course->id), 'moodle/course:update',
-            'u.*,ra.hidden', 'r.sortorder ASC', 0, 1, '', '', false, true)) {
+            'u.*', 'u.id ASC', 0, 1, '', '', false, true)) {
             $teacher = array_shift($teachers);
         }
         if (!empty($teacher)) {
