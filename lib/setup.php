@@ -211,7 +211,6 @@ global $HTTPSPAGEREQUIRED;
     configure_dbconnection();
 
 /// Load up any configuration from the config table
-    unset($CFG->rcache);
     $CFG = get_config();
 
 /// Turn on SQL logging if required
@@ -286,9 +285,7 @@ global $HTTPSPAGEREQUIRED;
 /// Ensure we define rcache - so we can later check for it
 /// with a really fast and unambiguous $CFG->rcache === false
     if (!empty($CFG->cachetype)) {
-        if (array_key_exists('rcache', $CFG->config_php_settings)) {
-            $CFG->rcache = (bool)$CFG->config_php_settings['rcache']; // always use config.php setting if present
-        } else if (empty($CFG->rcache)) {
+        if (empty($CFG->rcache)) {
             $CFG->rcache = false;
         } else {
             $CFG->rcache = true;
