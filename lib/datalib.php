@@ -58,7 +58,8 @@ function get_admin () {
 }
 
 /**
- * Returns list of all admins
+ * Returns list of all admins, using 1 DB query. It depends on DB schema v1.7
+ * but does not depend on the v1.9 datastructures (context.path, etc).
  *
  * @uses $CFG
  * @return object
@@ -67,10 +68,26 @@ function get_admins() {
 
     global $CFG;
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $sql = "SELECT ra.userid, SUM(rc.permission) AS permission, MIN(ra.id) AS adminid
+            FROM " . $CFG->prefix . "role_capabilities rc
+            JOIN " . $CFG->prefix . "context ctx
+              ON ctx.id=rc.contextid
+            JOIN " . $CFG->prefix . "role_assignments ra
+              ON ra.roleid=rc.roleid AND ra.contextid=ctx.id
+            WHERE ctx.contextlevel=10
+              AND rc.capability IN ('moodle/site:config',
+                                    'moodle/legacy:admin',
+                                    'moodle/site:doanything')       
+            GROUP BY ra.userid
+            HAVING SUM(rc.permission) > 0";
 
-    return get_users_by_capability($context, 'moodle/site:doanything', 'u.*, ra.id as adminid', 'ra.id ASC'); // only need first one
+    $sql = "SELECT u.*, ra.adminid
+            FROM  " . $CFG->prefix . "user u
+            JOIN ($sql) ra
+              ON u.id=ra.userid
+            ORDER BY ra.adminid ASC";
 
+    return get_records_sql($sql);
 }
 
 
