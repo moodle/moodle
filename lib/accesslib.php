@@ -4526,7 +4526,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
             }
 
             // Did we hit pagination limit?
-            if ($limitnum !==0 && $c > ($limitfrom+$limitnum)) { // we are done!
+            if ($limitnum !==0 && $c >= ($limitfrom+$limitnum)) { // we are done!
                 break;
             }
 
