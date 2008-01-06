@@ -4678,6 +4678,87 @@ function has_capability_from_rarc($ras, $roleperms, $capability, $doanything) {
 }
 
 /**
+ * Will re-sort a $users results array (from get_users_by_capability(), usually)
+ * based on a sorting policy. This is to support the odd practice of
+ * sorting teachers by 'authority', where authority was "lowest id of the role
+ * assignment".
+ *
+ * Will execute 1 database query. Only suitable for small numbers of users, as it
+ * uses an u.id IN() clause.
+ *
+ * Notes about the sorting criteria.
+ *
+ * As a default, we cannot rely on role.sortorder because then
+ * admins/coursecreators will always win. That is why the sane
+ * rule "is locality matters most", with sortorder as 2nd
+ * consideration.
+ *
+ * If you want role.sortorder, use the 'sortorder' policy, and
+ * name explicitly what roles you want to cover. It's probably
+ * a good idea to see what roles have the capabilities you want
+ * (array_diff() them against roiles that have 'can-do-anything'
+ * to weed out admin-ish roles. Or fetch a list of roles from
+ * variables like $CFG->coursemanagers .
+ *
+ * @param array users Users' array, keyed on userid
+ * @param object context
+ * @param array roles - ids of the roles to include, optional
+ * @param string policy - defaults to locality, more about
+ * @return array - sorted copy of the array
+ */
+function sort_by_roleassignment_authority($users, $context, $roles=array(), $sortpolicy='locality') {
+    global $CFG;
+
+    $userswhere = ' ra.userid IN (' . implode(',',array_keys($users)) . ')';
+    $contextwhere = ' ra.contextid IN ('.str_replace('/', ',',substr($context->path, 1)).')';
+    if (empty($roles)) {
+        $roleswhere = '';
+    } else {
+        $roleswhere = ' AND ra.roleid IN ('.implode(',',$roles).')';
+    }
+
+    $sql = "SELECT ra.userid
+            FROM {$CFG->prefix}role_assignments ra
+            JOIN {$CFG->prefix}role r
+              ON ra.roleid=r.id
+            JOIN {$CFG->prefix}context ctx
+              ON ra.contextid=ctx.id
+            WHERE
+                    $userswhere
+                AND $contextwhere
+                $roleswhere
+            ";
+
+    // Default 'locality' policy -- read PHPDoc notes
+    // about sort policies...
+    $orderby = 'ORDER BY
+                    ctx.depth DESC, /* locality wins */
+                    r.sortorder ASC, /* rolesorting 2nd criteria */
+                    ra.id           /* role assignment order tie-breaker */';
+    if ($sortpolicy === 'sortorder') {
+        $orderby = 'ORDER BY
+                        r.sortorder ASC, /* rolesorting 2nd criteria */
+                        ra.id           /* role assignment order tie-breaker */';
+    }
+
+    $sortedids = get_fieldset_sql($sql . $orderby);
+    $sortedusers = array();
+    $seen = array();
+
+    foreach ($sortedids as $id) {
+        // Avoid duplicates
+        if (isset($seen[$id])) {
+            continue;
+        }
+        $seen[$id] = true;
+
+        // assign
+        $sortedusers[$id] = $users[$id];
+    }
+    return $sortedusers;
+}
+
+/**
  * gets all the users assigned this role in this context or higher
  * @param int roleid (can also be an array of ints!)
  * @param int contextid
