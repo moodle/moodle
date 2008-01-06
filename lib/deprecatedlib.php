@@ -518,6 +518,7 @@ function get_teacher($courseid) {
     // Pass $view=true to filter hidden caps if the user cannot see them
     if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC',
                                          '', '', '', '', false, true)) {
+        $users = sort_by_roleassignment_authority($users, $context);
         return array_shift($users);
     }
 
@@ -743,7 +744,11 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
         }
     }
 
-    return get_users_by_capability($context, 'moodle/course:update', 'u.*, ul.timeaccess as lastaccess', $sort, '','','',$exceptions, false);
+    $users = get_users_by_capability($context, 'moodle/course:update',
+                                     'u.*, ul.timeaccess as lastaccess',
+                                     $sort, '','','',$exceptions, false);
+    return sort_by_roleassignment_authority($users, $context);
+
     /// some fields will be missing, like authority, editall
     /*
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest,
