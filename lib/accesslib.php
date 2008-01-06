@@ -4282,8 +4282,10 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     /// Set up hidden role-assignments sql
     if ($view && !has_capability('moodle/role:viewhiddenassigns', $context)) {
         $condhiddenra = 'AND ra.hidden = 0 ';
+        $sscondhiddenra = 'AND ssra.hidden = 0 ';
     } else {
         $condhiddenra = '';
+        $sscondhiddenra = '';
     }
 
     // Collect WHERE conditions
@@ -4354,7 +4356,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
                           FROM {$CFG->prefix}role_assignments ssra
                           WHERE ssra.contextid IN ($ctxids)
                                 AND ssra.roleid IN (".implode(',',$roleids) .")
-                                $condhiddenra
+                                $sscondhiddenra
                           ) ra ON ra.userid = u.id
                     $uljoin ";
         $where  = " WHERE u.deleted = 0 ";
