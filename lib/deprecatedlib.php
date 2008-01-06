@@ -515,13 +515,10 @@ function get_teacher($courseid) {
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
-    if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*,ra.hidden', 'r.sortorder ASC',
-                                         '', '', '', '', false)) {
-        foreach ($users as $user) {
-            if (!$user->hidden || has_capability('moodle/role:viewhiddenassigns', $context)) {
-                return $user;
-            }
-        }
+    // Pass $view=true to filter hidden caps if the user cannot see them
+    if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC',
+                                         '', '', '', '', false, true)) {
+        return array_shift($users);
     }
 
     return false;
@@ -746,7 +743,7 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
         }
     }
 
-    return get_users_by_capability($context, 'moodle/course:update', 'u.*, ul.timeaccess as lastaccess, ra.hidden', $sort, '','','',$exceptions, false);
+    return get_users_by_capability($context, 'moodle/course:update', 'u.*, ul.timeaccess as lastaccess', $sort, '','','',$exceptions, false);
     /// some fields will be missing, like authority, editall
     /*
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest,
