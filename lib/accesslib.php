@@ -4309,7 +4309,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     // User lastaccess JOIN
     if ($iscoursepage) {
         $uljoin = "LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul 
-                         ON (ul.userid = u.id AND ul.courseid = $courseid)";
+                         ON (ul.userid = u.id AND ul.courseid = {$context->instanceid})";
     } else {
         $uljoin = '';
     }
