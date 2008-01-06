@@ -4189,17 +4189,55 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         $view=false, $useviewallgroups=false) {
     global $CFG;
 
-/// check for front page course, and see if default front page role has the required capability
-    
-    $frontpagectx = get_context_instance(CONTEXT_COURSE, SITEID);
-    if (!empty($CFG->defaultfrontpageroleid) && ($context->id == $frontpagectx->id || strstr($context->path, '/'.$frontpagectx->id.'/'))) {
-        $roles = get_roles_with_capability($capability, CAP_ALLOW, $context);
-        if (in_array($CFG->defaultfrontpageroleid, array_keys($roles))) {
-            return get_records_sql("SELECT $fields FROM {$CFG->prefix}user u ORDER BY $sort", $limitfrom, $limitnum); 
+    $ctxids = substr($context->path, 1); // kill leading slash
+    $ctxids = str_replace('/', ',', $ctxids);
+
+    // Context is the frontpage
+    $isfrontpage = false;
+    $iscoursepage = false; // coursepage other than fp
+    if ($context->contextlevel == CONTEXT_COURSE) {
+        if ($context->instanceid == SITEID) {
+            $isfrontpage = true;
+        } else {
+            $iscoursepage = true;
         }
     }
 
-/// Sorting out groups
+    // What roles/rolecaps are interesting?
+    $caps = "'$capability'";
+    if ($doanything===true) {
+        $caps.=",'moodle/site:doanything'";
+    }
+    $sql = "SELECT rc.id, rc.roleid, rc.permission, rc.capability,
+                   ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
+            FROM {$CFG->prefix}role_capabilities rc
+            JOIN {$CFG->prefix}context ctx on rc.contextid = ctx.id
+            WHERE rc.capability IN ($caps) AND ctx.id IN ($ctxids)
+            ORDER BY rc.roleid, ctx.depth";
+    // fetch all records - we'll walk several
+    // times over them, and should be a small set
+    $capdefs = get_records_sql($sql);
+
+    $negperm = false; // has any negative (<0) permission?
+    $roleids = array();
+    foreach ($capdefs AS $rcid=>$rc) {
+        //$c = make_context_subobj($c);
+        $roleids[] = (int)$rc->roleid;
+        if ($rc->permission < 0) {
+            $negperm = true;
+        }
+    }
+    $roleids = array_unique($roleids);
+
+    if (count($roleids)===0) { // noone here!
+        return false;
+    }
+
+    //
+    // Prepare query clauses
+    //
+    $wherecond = array();
+    /// Groups
     if ($groups) {
         if (is_array($groups)) {
             $grouptest = 'gm.groupid IN (' . implode(',', $groups) . ')';
@@ -4212,82 +4250,101 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         if ($useviewallgroups) {
             $viewallgroupsusers = get_users_by_capability($context,
                     'moodle/site:accessallgroups', 'u.id, u.id', '', '', '', '', $exceptions);
-            $groupsql = ' AND (' . $grouptest . ' OR ra.userid IN (' .
-                    implode(',', array_keys($viewallgroupsusers)) . '))';
+            $wherecond['groups'] =  '('. $grouptest . ' OR ra.userid IN (' .
+                                    implode(',', array_keys($viewallgroupsusers)) . ')))';
         } else {
-            $groupsql = ' AND ' . $grouptest;
+            $wherecond['groups'] =  '(' . $grouptest .')';
         }
-    } else {
-        $groupsql = '';
     }
 
-/// Sorting out exceptions
-    $exceptionsql = $exceptions ? "AND u.id NOT IN ($exceptions)" : '';
+    /// User exceptions
+    if (!empty($exceptions)) {
+        $wherecond['userexceptions'] = ' u.id NOT IN ('.$exceptions.')';
+    }
 
-/// Set up default fields
+    /// Set up hidden role-assignments sql
+    if ($view && !has_capability('moodle/role:viewhiddenassigns', $context)) {
+        $wherecond['hiddenra'] = ' ra.hidden = 0 ';
+    }
+
+    // Collect WHERE conditions
+    $where = implode(' AND ', array_values($wherecond));
+    if ($where != '') {
+        $where = 'WHERE ' . $where;
+    }
+
+    /// Set up default fields
     if (empty($fields)) {
-        $fields = 'u.*, ul.timeaccess as lastaccess, ra.hidden';
+        if ($iscoursepage) {
+            $fields = 'u.*, ul.timeaccess as lastaccess, ra.hidden';
+        } else {
+            $fields = 'u.*, ra.hidden';
+        }
     }
 
-/// Set up default sort
-    if (empty($sort)) {
-        $sort = 'ul.timeaccess';
+    /// Set up default sort
+    if (empty($sort)) { // default to course lastaccess or just lastaccess
+        if ($iscoursepage) {
+            $sort = 'ul.timeaccess';
+        } else {
+            $sort = 'u.lastaccess';
+        }
     }
-
     $sortby = $sort ? " ORDER BY $sort " : '';
-/// Set up hidden sql
-    $hiddensql = ($view && !has_capability('moodle/role:viewhiddenassigns', $context))? ' AND ra.hidden = 0 ':'';
 
-/// If context is a course, then construct sql for ul
-    if ($context->contextlevel == CONTEXT_COURSE) {
-        $courseid = $context->instanceid;
-        $coursesql1 = "AND ul.courseid = $courseid";
+    // User lastaccess JOIN
+    if ($iscoursepage) {
+        $uljoin = "LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul 
+                         ON (ul.userid = u.id AND ul.courseid = $courseid)";
     } else {
-        $coursesql1 = '';
+        $uljoin = '';
     }
 
-/// Sorting out roles with this capability set
-    if ($possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context)) {
-        if (!$doanything) {
-            if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
-                return false;    // Something is seriously wrong
-            }
-            $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
+    //
+    // Simple cases - No negative permissions means we can take shortcuts
+    //
+    if (!$negperm) { 
+
+        // at the frontpage, and all site users have it - easy!
+        if ($isfrontpage && !empty($CFG->defaultfrontpageroleid)
+            && in_array((int)$CFG->defaultfrontpageroleid, $roleids, true)) {
+            
+            return get_records_sql("SELECT $fields
+                                    FROM {$CFG->prefix}user u
+                                    ORDER BY $sort",
+                                   $limitfrom, $limitnum);
         }
 
-        $validroleids = array();
-        foreach ($possibleroles as $possiblerole) {
-            if (!$doanything) {
-                if (isset($doanythingroles[$possiblerole->id])) {  // We don't want these included
-                    continue;
-                }
-            }
-            if ($caps = role_context_capabilities($possiblerole->id, $context, $capability)) { // resolved list
-                if (isset($caps[$capability]) && $caps[$capability] > 0) { // resolved capability > 0
-                    $validroleids[] = $possiblerole->id;
-                }
-            }
+        // all site users have it, anyway
+        if (in_array((int)$CFG->defaultuserroleid, $roleids, true)) {
+            $sql = "SELECT $fields
+                    FROM {$CFG->prefix}user u
+                    $uljoin
+                    $where
+                    ORDER BY $sort";
+            return get_records_sql($sql, $limitfrom, $limitnum);
         }
-        if (empty($validroleids)) {
-            return false;
+
+        /// Simple SQL assuming no negative rolecaps
+        $select = " SELECT $fields";
+        $from   = " FROM {$CFG->prefix}user u
+                    INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
+                    INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid ";
+        if ($context->contextlevel==CONTEXT_COURSE && !$isfrontpage) {
+            $from .= " LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul 
+                         ON (ul.userid = u.id AND ul.courseid = $courseid)";
         }
-        $roleids =  '('.implode(',', $validroleids).')';
-    } else {
-        return false;  // No need to continue, since no roles have this capability set
+        $where  = " WHERE ra.contextid IN ($ctxids)
+                          AND u.deleted = 0
+                          AND ra.roleid IN (".implode(',',$roleids) .")";
+        if (count(array_keys($wherecond))) {
+            $where .= ' AND ' . implode(' AND ', array_values($wherecond));
+        }
+        return get_records_sql($select.$from.$where.$sortby, $limitfrom, $limitnum);
     }
 
-/// Construct the main SQL
-    $select = " SELECT $fields";
-    $from   = " FROM {$CFG->prefix}user u
-                INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
-                INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid
-                LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul ON (ul.userid = u.id $coursesql1)";
-    $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
-                  AND u.deleted = 0
-                  AND ra.roleid in $roleids
-                      $exceptionsql
-                      $groupsql
-                      $hiddensql";
+    // This will be more complex - 
+
 
     return get_records_sql($select.$from.$where.$sortby, $limitfrom, $limitnum);
 }
