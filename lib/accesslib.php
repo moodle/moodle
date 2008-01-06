@@ -4218,7 +4218,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
             FROM {$CFG->prefix}role_capabilities rc
             JOIN {$CFG->prefix}context ctx on rc.contextid = ctx.id
             WHERE rc.capability IN ($caps) AND ctx.id IN ($ctxids)
-            ORDER BY rc.roleid, ctx.depth";
+            ORDER BY rc.roleid ASC, ctx.depth ASC";
     // fetch all records - we'll walk several
     // times over them, and should be a small set
     $capdefs = get_records_sql($sql);
@@ -4226,7 +4226,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     $negperm = false; // has any negative (<0) permission?
     $roleids = array();
     foreach ($capdefs AS $rcid=>$rc) {
-        //$c = make_context_subobj($c);
+
         $roleids[] = (int)$rc->roleid;
         if ($rc->permission < 0) {
             $negperm = true;
@@ -4333,12 +4333,8 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         /// Simple SQL assuming no negative rolecaps
         $select = " SELECT $fields";
         $from   = " FROM {$CFG->prefix}user u
-                    INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
-                    INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid ";
-        if ($context->contextlevel==CONTEXT_COURSE && !$isfrontpage) {
-            $from .= " LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul 
-                         ON (ul.userid = u.id AND ul.courseid = $courseid)";
-        }
+                    JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
+                    $uljoin ";
         $where  = " WHERE ra.contextid IN ($ctxids)
                           AND u.deleted = 0
                           AND ra.roleid IN (".implode(',',$roleids) .")";
@@ -4348,10 +4344,176 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         return get_records_sql($select.$from.$where.$sortby, $limitfrom, $limitnum);
     }
 
-    // This will be more complex - 
+    //
+    // If there are any negative rolecaps, we need to
+    // work through a subselect - which is a lot more complex,
+    // and we cannot do the job in pure SQL (not without SQL stored
+    // procedures anyway). We will have to select with multiple-rows
+    // and apply $limitfrom/$limitnum on the PHP side.
+    //
+    // Did I say yuck?
+    //
 
+    // Prepare the role permissions datastructure for fast lookups
+    $roleperms = array(); // each role cap and depth
+    foreach ($capdefs AS $rcid=>$rc) {
 
-    return get_records_sql($select.$from.$where.$sortby, $limitfrom, $limitnum);
+        $rid   = (int)$rc->roleid;
+        $perm  = (int)$rc->permission;
+        $depth = (int)$rc->ctxdepth;
+        if (!isset($roleperms[$rid])) {
+            $roleperms[$rid] = (object)array('perm'  => $perm,
+                                             'depth' => $depth);
+        } else {
+            if ($roleperms[$rid]->perm == CAP_PROHIBIT) {
+                continue;
+            }
+            // override - as we are going
+            // from general to local perms
+            // (as per the ORDER BY...depth ASC above)
+            // and local perms win...
+            $roleperms[$rid] = (object)array('perm'  => $perm,
+                                             'depth' => $depth);
+        }
+        
+    }
+
+    if ($context->contextlevel == CONTEXT_SYSTEM
+        || $isfrontpage
+        || in_array((int)$CFG->defaultuserroleid, $roleids, true)) {
+
+        // Handle system / sitecourse / defaultcap-with-neg-overrides
+        // with a SELECT FROM user LEFT OUTER JOIN against ra -
+        // This is expensive on the SQL and PHP sides -
+        // moves a ton of data across the wire.
+
+        // TODO -- test!
+        $ss = "SELECT u.id as userid, ra.roleid,
+                      ctx.depth
+               FROM {$CFG->prefix}user u
+               LEFT OUTER {$CFG->prefix}role_assignments ra 
+                 ON (ra.userid = u.id
+                     AND ra.contextid IN ($ctxids)
+                     AND ra.roleid IN (".implode(',',$roleids) .")
+               LEFT OUTER JOIN {$CFG->prefix}context ctx
+                 ON ra.contextid=ctx.id
+               WHERE u.deleted=0";
+    } else {
+        // "Normal" case - the rolecaps we are after will
+        // be defined in a role assignment somewhere.
+        $ss = "SELECT ra.userid as userid, ra.roleid,
+                      ctx.depth
+               FROM {$CFG->prefix}role_assignments ra 
+               JOIN {$CFG->prefix}context ctx
+                 ON ra.contextid=ctx.id
+               WHERE ra.contextid IN ($ctxids)
+                     AND ra.roleid IN (".implode(',',$roleids) .")";
+    }
+
+    $select = "SELECT $fields ,ra.roleid, ra.depth ";
+    $from   = "FROM ($ss) ra
+               JOIN {$CFG->prefix}user u
+                 ON ra.userid=u.id
+               $uljoin ";
+    $where  = "WHERE u.deleted = 0 ";
+    if (count(array_keys($wherecond))) {
+        $where .= ' AND ' . implode(' AND ', array_values($wherecond));
+    }
+
+    // Each user's entries should come clustered together
+    // and RAs ordered in depth DESC - the role/cap resolution
+    // code depends on this.
+    $sort .= ' , ra.userid ASC, ra.depth DESC';
+    $sortby .= ' , ra.userid ASC, ra.depth DESC ';
+
+    $rs = get_recordset_sql($select.$from.$where.$sortby);
+
+    // Process the user accounts, folding repeats together...
+    $users = array();
+    $lastuserid = 0;
+    $c = 0;
+    $limitfrom = (int)$limitfrom;
+    $limitnum = (int)$limitnum;
+
+    while ($user = rs_fetch_next_record($rs)) {
+
+        // Pagination controls
+        if ($lastuserid != $user->id) {
+            $lastuserid = $user->id;
+            $c++;
+            $newuser = true;
+            if ($limitnum !==0 && $c > ($limitfrom+$limitnum)) { // we are done!
+                break;
+            }
+        } else {
+            $newuser = false;
+        }
+        if ($limitfrom !==0 && $c <= $limitfrom) {
+            continue;
+        }
+
+        // provide a default enrolment where needed
+        if (empty($user->roleid)) {
+            $user->roleid = (int)$CFG->defaultuserroleid;
+            $user->depth  = 1;
+        }
+
+        // Add the users - adding the perms that win
+        if ($newuser) {
+            $users[$user->id] = $user; // trivial
+        } else {
+
+            $inplace = $users[$user->id];
+
+            //
+            // Resolve who wins, in order of precendence
+            // - Prohibits always wins
+            // - Locality of RA
+            // - Locality of RC
+            //
+            //// Prohibits...
+            if ($roleperms[$user->roleid]->perm == CAP_PROHIBIT) {
+                $users[$user->id] = $user;
+                continue;
+            }
+            if ($roleperms[$inplace->roleid]->perm == CAP_PROHIBIT) {
+                continue;
+            }
+
+            // Locality of RA -- we order by depth DESC
+            // so what's in $users already should win, unless its perm is 0
+
+            // Higher RA loses to local RA...
+            if ($user->depth < $inplace->depth) {
+                if (!empty($users[$user->id]->mergedperm)) {
+                    // Wider RA loses to local RA...
+                    continue;
+                } else {
+                    // "Resolve conflict" case, more local RAs had cancelled eachother
+                    $users[$user->id] = $user;
+                    continue;
+                }
+            }
+            // Same-level RA - Locality of RC wins
+            if ($roleperms[$user->roleid]->depth > $roleperms[$inplace->roleid]->depth) {
+                $users[$user->id] = $user;
+                continue;
+            }
+            if ($roleperms[$user->roleid]->depth < $roleperms[$inplace->roleid]->depth) {
+                continue;
+            }
+            // We match depth - add them
+            if (isset($inplace->mergedperm)) {
+                $users[ $user->id ]->mergedperm = ($inplace->mergedperm 
+                                                   + $roleperms[$user->roleid]->perm);
+            } else {
+                $users[ $user->id ]->mergedperm = ($roleperms[$inplace->roleid]->perms
+                                                   + $roleperms[$user->roleid]->perm);
+            }
+        }
+    }
+
+    return $users;
 }
 
 /**
