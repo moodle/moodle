@@ -4216,12 +4216,32 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     $caps = "'$capability'";
     if ($doanything===true) {
         $caps.=",'moodle/site:doanything'";
+        $doanything_join='';
+        $doanything_cond='';
+    } else {
+        // This is an outer join against
+        // admin-ish roleids. Any row that succeeds
+        // in JOINing here ends up removed from
+        // the resultset. This means we remove
+        // rolecaps from roles that also have
+        // 'doanything' capabilities.
+        $doanything_join="LEFT OUTER JOIN (
+                              SELECT DISTINCT rc.roleid
+                              FROM {$CFG->prefix}role_capabilities rc
+                              WHERE rc.capability='moodle/site:doanything'
+                                    AND rc.permission=".CAP_ALLOW."
+                                    AND rc.contextid IN ($ctxids)
+                          ) dar
+                             ON rc.roleid=dar.roleid";
+        $doanything_cond="AND dar.roleid IS NULL";
     }
     $sql = "SELECT rc.id, rc.roleid, rc.permission, rc.capability,
                    ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
             FROM {$CFG->prefix}role_capabilities rc
             JOIN {$CFG->prefix}context ctx on rc.contextid = ctx.id
+            $doanything_join
             WHERE rc.capability IN ($caps) AND ctx.id IN ($ctxids)
+                  $doanything_cond
             ORDER BY rc.roleid ASC, ctx.depth ASC";
     // fetch all records - we'll walk several
     // times over them, and should be a small set
@@ -4236,6 +4256,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
             $negperm = true;
         }
     }
+        
     $roleids = array_unique($roleids);
 
     if (count($roleids)===0) { // noone here!
