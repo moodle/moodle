@@ -4165,11 +4165,15 @@ function get_default_course_role($course) {
 
 
 /**
- * who has this capability in this context
- * does not handling user level resolving!!!
- * (!)pleaes note if $fields is empty this function attempts to get u.*
- * which can get rather large.
- * i.e 1 person has 2 roles 1 allow, 1 prevent, this will not work properly
+ * Who has this capability in this context?
+ *
+ * This can be a very expensive call - use sparingly and keep
+ * the results if you are going to need them again soon.
+ * 
+ * Note if $fields is empty this function attempts to get u.*
+ * which can get rather large - and has a serious perf impact
+ * on some DBs.
+ *
  * @param $context - object
  * @param $capability - string capability
  * @param $fields - fields to be pulled
@@ -4236,6 +4240,14 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
     if (count($roleids)===0) { // noone here!
         return false;
+    }
+
+    // is the default role interesting? does it have
+    // a relevant rolecap? (we use this a lot later)
+    if (in_array((int)$CFG->defaultuserroleid, $roleids, true)) {
+        $defaultroleinteresting = true;
+    } else {
+        $defaultroleinteresting = false;
     }
 
     //
@@ -4321,7 +4333,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         }
 
         // all site users have it, anyway
-        if (in_array((int)$CFG->defaultuserroleid, $roleids, true)) {
+        if ($defaultroleinteresting) {
             $sql = "SELECT $fields
                     FROM {$CFG->prefix}user u
                     $uljoin
@@ -4351,43 +4363,47 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
     //
     // If there are any negative rolecaps, we need to
-    // work through a subselect - which is a lot more complex,
-    // and we cannot do the job in pure SQL (not without SQL stored
-    // procedures anyway). We will have to select with multiple-rows
-    // and apply $limitfrom/$limitnum on the PHP side.
+    // work through a subselect that will bring several rows
+    // per user (one per RA).
+    // Since we cannot do the job in pure SQL (not without SQL stored
+    // procedures anyway), we end up tied to processing the data in PHP
+    // all the way down to pagination.
     //
-    // Did I say yuck?
+    // In some cases, this will mean bringing across a ton of data --
+    // when paginating, we have to walk the permisisons of all the rows
+    // in the _previous_ pages to get the pagination correct in the case
+    // of users that end up not having the permission - this removed.
     //
 
     // Prepare the role permissions datastructure for fast lookups
     $roleperms = array(); // each role cap and depth
     foreach ($capdefs AS $rcid=>$rc) {
 
-        $rid   = (int)$rc->roleid;
-        $perm  = (int)$rc->permission;
-        $depth = (int)$rc->ctxdepth;
-        if (!isset($roleperms[$rid])) {
-            $roleperms[$rid] = (object)array('perm'  => $perm,
-                                             'depth' => $depth);
+        $rid       = (int)$rc->roleid;
+        $perm      = (int)$rc->permission;
+        $rcdepth   = (int)$rc->ctxdepth;
+        if (!isset($roleperms[$rc->capability][$rid])) {
+            $roleperms[$rc->capability][$rid] = (object)array('perm'  => $perm,
+                                                              'rcdepth' => $rcdepth);
         } else {
-            if ($roleperms[$rid]->perm == CAP_PROHIBIT) {
+            if ($roleperms[$rc->capability][$rid]->perm == CAP_PROHIBIT) {
                 continue;
             }
             // override - as we are going
             // from general to local perms
             // (as per the ORDER BY...depth ASC above)
             // and local perms win...
-            $roleperms[$rid] = (object)array('perm'  => $perm,
-                                             'depth' => $depth);
+            $roleperms[$rc->capability][$rid] = (object)array('perm'  => $perm,
+                                                              'rcdepth' => $rcdepth);
         }
         
     }
 
     if ($context->contextlevel == CONTEXT_SYSTEM
         || $isfrontpage
-        || in_array((int)$CFG->defaultuserroleid, $roleids, true)) {
+        || $defaultroleinteresting) {
 
-        // Handle system / sitecourse / defaultcap-with-neg-overrides
+        // Handle system / sitecourse / defaultrole-with-perhaps-neg-overrides
         // with a SELECT FROM user LEFT OUTER JOIN against ra -
         // This is expensive on the SQL and PHP sides -
         // moves a ton of data across the wire.
@@ -4396,15 +4412,15 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         $ss = "SELECT u.id as userid, ra.roleid,
                       ctx.depth
                FROM {$CFG->prefix}user u
-               LEFT OUTER {$CFG->prefix}role_assignments ra 
+               LEFT OUTER JOIN {$CFG->prefix}role_assignments ra 
                  ON (ra.userid = u.id
                      AND ra.contextid IN ($ctxids)
-                     AND ra.roleid IN (".implode(',',$roleids) .")
+                     AND ra.roleid IN (".implode(',',$roleids) ."))
                LEFT OUTER JOIN {$CFG->prefix}context ctx
                  ON ra.contextid=ctx.id
                WHERE u.deleted=0";
     } else {
-        // "Normal" case - the rolecaps we are after will
+        // "Normal complex case" - the rolecaps we are after will
         // be defined in a role assignment somewhere.
         $ss = "SELECT ra.userid as userid, ra.roleid,
                       ctx.depth
@@ -4425,7 +4441,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         $where .= ' AND ' . implode(' AND ', array_values($wherecond));
     }
 
-    // Each user's entries should come clustered together
+    // Each user's entries MUST come clustered together
     // and RAs ordered in depth DESC - the role/cap resolution
     // code depends on this.
     $sort .= ' , ra.userid ASC, ra.depth DESC';
@@ -4433,92 +4449,193 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
     $rs = get_recordset_sql($select.$from.$where.$sortby);
 
-    // Process the user accounts, folding repeats together...
-    $users = array();
-    $lastuserid = 0;
+    //
+    // Process the user accounts+RAs, folding repeats together...
+    //
+    // The processing for this recordset is tricky - to fold
+    // the role/perms of users with multiple role-assignments
+    // correctly while still processing one-row-at-a-time
+    // we need to add a few additional 'private' fields to
+    // the results array - so we can treat the rows as a
+    // state machine to track the cap/perms and at what RA-depth
+    // and RC-depth they were defined.
+    //
+    $results = array();
+
+    // pagination controls
     $c = 0;
     $limitfrom = (int)$limitfrom;
     $limitnum = (int)$limitnum;
 
+    // What caps we are tracking
+    $caps = array($capability);
+    if ($doanything) {
+        $caps[] = 'moodle/site:candoanything';
+    }
+
+    //
+    // Mini-state machine, using $lastuserid and $hascap
+    // $hascap[ 'moodle/foo:bar' ]->perm = CAP_SOMETHING (numeric constant)
+    // $hascap[ 'moodle/foo:bar' ]->radepth = depth of the role assignment that set it
+    // $hascap[ 'moodle/foo:bar' ]->rcdepth = depth of the rolecap that set it
+    // -- when resolving conflicts, we need to look into radepth first, if unresolved
+    //
+    $lastuserid  = 0;
+    foreach ($caps as $cap) {
+        $hascap[$cap]->perm = 0; // the main cap we are lookin
+        $hascap[$cap]->radepth = 0;
+        $hascap[$cap]->rcdepth = 0;
+    }
+    unset($cap);
+
     while ($user = rs_fetch_next_record($rs)) {
 
-        // Pagination controls
+        //error_log(" Record: " . print_r($user,1));
+
+        //
+        // Pagination controls 
+        // Note that we might end up removing a user
+        // that ends up _not_ having the rights,
+        // therefore rolling back $c
+        //
         if ($lastuserid != $user->id) {
-            $lastuserid = $user->id;
-            $c++;
-            $newuser = true;
+
+            // Did the last user end up with a positive permission?
+            if ($lastuserid !=0) {
+                if ($hascap[$capability]->perm > 0
+                    || ($doanything && isset($hascap['moodle/site:candoanything'])
+                        && $hascap['moodle/site:candoanything']->perm > 0)) {                          
+                    $c++;
+                } else {
+                    // remove the user from the result set,
+                    // only if we are 'in the page'
+                    if ($limitfrom === 0 || $c >= $limitfrom) {
+                        unset($results[$lastuserid]);
+                    }
+                }
+            }
+
+            // Did we hit pagination limit?
             if ($limitnum !==0 && $c > ($limitfrom+$limitnum)) { // we are done!
                 break;
+            }
+
+            // New user setup, and state machine init
+            $newuser = true;
+            $lastuserid = $user->id;
+
+            $hascap = array();
+            foreach ($caps as $cap) {
+                // Do not set, unless it's interesting
+                // (we evaluate for isset() later)
+                if ($defaultroleinteresting) {
+                    if (isset($roleperms[$cap][$CFG->defaultuserroleid])) {
+                        $defroleperms = $roleperms[$cap][$CFG->defaultuserroleid];
+                        $hascap[$cap] = new StdClass;
+                        $hascap[$cap]->perm    = $defroleperms->perm;
+                        $hascap[$cap]->rcdepth = $defroleperms->rcdepth;
+                        $hascap[$cap]->radepth = 1; // site-level
+                    }
+                }
+                unset($defroleperms);
+            }
+            unset($cap);
+
+            // if we are 'in the page', also add the rec
+            // to the results...
+            if ($limitfrom === 0 || $c >= $limitfrom) {
+                $results[$user->id] = $user; // trivial
             }
         } else {
             $newuser = false;
         }
-        if ($limitfrom !==0 && $c <= $limitfrom) {
-            continue;
-        }
 
-        // provide a default enrolment where needed
-        if (empty($user->roleid)) {
-            $user->roleid = (int)$CFG->defaultuserroleid;
-            $user->depth  = 1;
-        }
-
-        // Add the users - adding the perms that win
-        if ($newuser) {
-            $users[$user->id] = $user; // trivial
-        } else {
-
-            $inplace = $users[$user->id];
-
-            //
-            // Resolve who wins, in order of precendence
-            // - Prohibits always wins
-            // - Locality of RA
-            // - Locality of RC
-            //
-            //// Prohibits...
-            if ($roleperms[$user->roleid]->perm == CAP_PROHIBIT) {
-                $users[$user->id] = $user;
-                continue;
-            }
-            if ($roleperms[$inplace->roleid]->perm == CAP_PROHIBIT) {
-                continue;
-            }
-
-            // Locality of RA -- we order by depth DESC
-            // so what's in $users already should win, unless its perm is 0
-
-            // Higher RA loses to local RA...
-            if ($user->depth < $inplace->depth) {
-                if (!empty($users[$user->id]->mergedperm)) {
-                    // Wider RA loses to local RA...
-                    continue;
-                } else {
-                    // "Resolve conflict" case, more local RAs had cancelled eachother
-                    $users[$user->id] = $user;
+        //
+        // Compute which permission/roleassignment/rolecap
+        // wins for each capability we are walking
+        // 
+        if (!$newuser || $defaultroleinteresting) {
+            foreach ($caps as $cap) {
+                if (!isset($roleperms[$cap][$user->roleid])) {
+                    // nothing set for this cap - skip
                     continue;
                 }
+                // We explicitly clone here as we
+                // add more properties to it
+                // that must stay separate from the
+                // original roleperm data structure
+                $rp = clone($roleperms[$cap][$user->roleid]);
+                $rp->radepth = $user->depth;
+
+                // Trivial case, we are the first to set
+                if ($hascap[$cap]->radepth === 0) {
+                    $hascap[$cap] = $rp;
+                }
+
+                //
+                // Resolve who prevails, in order of precendence
+                // - Prohibits always wins
+                // - Locality of RA
+                // - Locality of RC
+                //
+                //// Prohibits...
+                if ($rp->perm === CAP_PROHIBIT) {
+                    $hascap[$cap] = $rp;
+                    continue;
+                }
+                if ($hascap[$cap]->perm === CAP_PROHIBIT) {
+                    continue;
+                }
+
+                // Locality of RA - the look is ordered by depth DESC
+                // so from local to general -
+                // Higher RA loses to local RA... unless perm===0
+                /// Thanks to the order of the records, $rp->radepth <= $hascap[$cap]->radepth
+                /// _except_ for the default enrolment -- when it's interesting
+                if ($rp->radepth > $hascap[$cap]->radepth) {
+                    // override the default enrolment - 
+                    // this is BUGGY because the default enrolment
+                    // cannot "resolve" a pair of conflicted lower-level RAs
+                    // TODO: Move the default enrolment to the tail of processing
+                    $hascap[$cap] = $rp;
+                }
+                if ($rp->radepth < $hascap[$cap]->radepth) {
+                    if ($hascap[$cap]->perm!==0) {
+                        // Wider RA loses to local RAs...
+                        continue;
+                    } else {
+                        // "Higher RA resolves conflict" case,
+                        // local RAs had cancelled eachother
+                        $hascap[$cap] = $rp;
+                        continue;
+                    }
+                }
+                // Same ralevel - locality of RC wins
+                if ($rp->rcdepth  > $hascap[$cap]->rcdepth) {
+                    $hascap[$cap] = $rp;
+                    continue;
+                }
+                if ($rp->rcdepth  > $hascap[$cap]->rcdepth) {
+                    continue;
+                }
+                // We match depth - add them                
+                $hascap[$cap]->perm += $rp->perm;
             }
-            // Same-level RA - Locality of RC wins
-            if ($roleperms[$user->roleid]->depth > $roleperms[$inplace->roleid]->depth) {
-                $users[$user->id] = $user;
-                continue;
-            }
-            if ($roleperms[$user->roleid]->depth < $roleperms[$inplace->roleid]->depth) {
-                continue;
-            }
-            // We match depth - add them
-            if (isset($inplace->mergedperm)) {
-                $users[ $user->id ]->mergedperm = ($inplace->mergedperm 
-                                                   + $roleperms[$user->roleid]->perm);
-            } else {
-                $users[ $user->id ]->mergedperm = ($roleperms[$inplace->roleid]->perms
-                                                   + $roleperms[$user->roleid]->perm);
+        }
+        // Prune last entry if necessary
+        if (!($hascap[$capability]->perm > 0
+              || ($doanything && isset($hascap['moodle/site:candoanything'])
+                  && $hascap['moodle/site:candoanything']->perm > 0))) {                          
+            // remove the user from the result set,
+            // only if we are 'in the page'
+            if (isset($results[$lastuserid])) {
+                unset($results[$lastuserid]);
             }
         }
     }
-
-    return $users;
+    
+    //error_log(print_r($results,1));
+    return $results;
 }
 
 /**
