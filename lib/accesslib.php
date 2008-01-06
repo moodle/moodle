@@ -4330,14 +4330,19 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
             return get_records_sql($sql, $limitfrom, $limitnum);
         }
 
-        /// Simple SQL assuming no negative rolecaps
+        /// Simple SQL assuming no negative rolecaps.
+        /// We use a subselect to grab the role assignments
+        /// ensuring only one row per user -- even if they
+        /// have many "relevant" role assignments.
         $select = " SELECT $fields";
         $from   = " FROM {$CFG->prefix}user u
-                    JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
+                    JOIN (SELECT DISTINCT ssra.userid
+                          FROM {$CFG->prefix}role_assignments ssra
+                          WHERE ssra.contextid IN ($ctxids)
+                                AND ssra.roleid IN (".implode(',',$roleids) .")
+                          ) ra ON ra.userid = u.id
                     $uljoin ";
-        $where  = " WHERE ra.contextid IN ($ctxids)
-                          AND u.deleted = 0
-                          AND ra.roleid IN (".implode(',',$roleids) .")";
+        $where  = " WHERE u.deleted = 0 ";
         if (count(array_keys($wherecond))) {
             $where .= ' AND ' . implode(' AND ', array_values($wherecond));
         }
