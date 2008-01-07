@@ -11,9 +11,12 @@
 
 $string['admindirerror'] = 'O directório da administração especificado está errado';
 $string['admindirname'] = 'Directório de Administração';
+$string['admindirsetting'] = 'Alguns servidores Web utilizam /admin como endereço especial para acedera um painel de controlo, ou semelhante. Desafortunadamente, isso cria conflictos com o endereço padrão das páginas de gestão do Moodle. Poderá resolver o problema renomeando o directório admin na sua instalação do Moodle, e escrevendo aqui o novo nome que utilizou. Por exemplo:<br /><br /><b>moodleadmin</b><br /><br />
+Assim resolverá o acesso às páginas de gestão do Moodle.';
 $string['admindirsettinghead'] = 'A configurar o directório de gestão...';
 $string['admindirsettingsub'] = 'Alguns servidores Web utilizam /admin como endereço especial para aceder a um painel de controlo, ou semelhante. Isso cria conflictos com o endereço padrão das páginas de gestão do Moodle. Poderá resolver o problema renomeando o directório admin na sua instalção do Moodle, e escrevendo aqui o novo nome que utilizou. Por exemplo:<br /><br /><b>moodleadmin</b><br /><br />
 Assim resolverá o acesso às páginas de gestão do Moodle.';
+$string['availablelangs'] = 'Pacotes linguísticos disponíveis';
 $string['bypassed'] = 'Ultrapassada';
 $string['cannotcreatelangdir'] = 'Não é possível criar o directório para pacotes linguísticos';
 $string['cannotcreatetempdir'] = 'Não é possível criar o directório temporal';
@@ -25,25 +28,44 @@ $string['cannotsavezipfile'] = 'Não  é possível gravar ficheiro ZIP';
 $string['cannotunzipfile'] = 'Não é possível descompactar ficheiro ZIP';
 $string['caution'] = 'Advertência';
 $string['check'] = 'Verificar';
+$string['chooselanguage'] = 'Escolha uma língua';
 $string['chooselanguagehead'] = 'Escolha uma língua';
 $string['chooselanguagesub'] = 'Escolha a língua substituta';
 $string['closewindow'] = 'Fechar esta janela';
+$string['compatibilitysettings'] = 'A conferir a configuração do PHP...';
 $string['compatibilitysettingshead'] = 'A conferir a configuração do PHP...';
 $string['compatibilitysettingssub'] = 'A conferir a língua substituta...';
 $string['componentisuptodate'] = 'O componente está actualizado';
 $string['configfilenotwritten'] = 'O script de instalação não conseguiu criar o ficheiro config.php em forma automática, provavelmente por não ter autorização para escrever no directório do Moodle. Poderá copiar manualmente o código que se segue para um ficheiro que deverá chamar config.php, no directório principal do Moodle.';
 $string['configfilewritten'] = 'O ficheiro config.php foi criado com sucesso';
+$string['configurationcomplete'] = 'Configuração concluida';
 $string['configurationcompletehead'] = 'Configuração concluida';
 $string['configurationcompletesub'] = 'Configuração de substituições concluida';
 $string['continue'] = 'Continue';
 $string['curlrecommended'] = 'Instalar a livraria opcional \"Curl\"  é altamente recomendada para activar a funcionalidade de rede do Moodle.';
 $string['customcheck'] = 'Outros testes';
 $string['database'] = 'Base de dados';
+$string['databasecreationsettings'] = 'Agora terá que configurar a base de dados onde a maior parte dos dados do Moodle serão armazenados. Essa base de dados será criada automaticamente pelo programa de instalação, usando as seguintes definições:<br />
+<br /><br />
+<b>Tipo:</b> o instalador selecciona inicialmente \"mysql\"<br />
+<b>Servidor:</b> nome do servidor; o instalador selecciona inicialmente \"localhost\"<br />
+<b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
+<b>Utilizador:</b> para aceder à base de dados; o instalador selecciona inicialmente \"root\"<br />
+<b>Senha:</b> para aceder à base de dados<br />
+<p>Prefixo das tabelas:</b> um prefixo optativo para os nomes de todas as tabelas na base de dados';
 $string['databasecreationsettingshead'] = 'Agora terá que configurar a base de dados onde a maior parte dos dados do Moodle serão armazenados. Essa base de dados será criada automaticamente pelo programa de instalação, usando as seguintes definições:';
 $string['databasecreationsettingssub'] = '<b>Tipo:</b> o instalador selecciona inicialmente \"mysql\"<br />
 <b>Servidor:</b> nome do servidor; o instalador selecciona inicialmente \"localhost\"<br />
 <b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
 <b>Utilizador:</b> para aceder à base de dados; o instaldor selecciona inicialmente \"root\"<br />
+<b>Senha:</b> para aceder à base de dados<br />
+<p>Prefixo das tabelas:</b> um prefixo optativo para os nomes de todas as tabelas na base de dados';
+$string['databasesettings'] = 'Agora terá que configurar a base de dados onde a maior parte dos dados do Moodle serão armazenados. Essa base de dados deverá ter sido criada previamente, incluindo um nome de utilizador e senha para acedé-la.<br />
+<br /><br />
+<b>Tipo:</b>mysql ou postgres7<br />
+<b>Servidor:</b> por exemplo, localhost ou db.isp.com<br />
+<b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
+<b>Utilizador:</b> para aceder à base de dados<br />
 <b>Senha:</b> para aceder à base de dados<br />
 <p>Prefixo das tabelas:</b> um prefixo optativo para os nomes de todas as tabelas na base de dados';
 $string['databasesettingshead'] = 'Agora terá que configurar a base de dados onde a maior parte dos dados do Moodle serão armazenados. Essa base de dados deverá ter sido criada previamente, incluindo um nome de utilizador e senha para acedé-la.';
@@ -100,12 +122,23 @@ $string['datarooterror'] = 'Não foi possível encontrar ou criar o directório 
 $string['dbconnectionerror'] = 'Não foi possível estabelecer a ligação à base de dados que indicou. Por favor verifique as definições dessa base de dados.';
 $string['dbcreationerror'] = 'Erro na criação da base de dados. Não foi possível criar a base de dados com o nome e definições que indicou.';
 $string['dbhost'] = 'Servidor';
+$string['dbpass'] = 'Senha';
 $string['dbprefix'] = 'Prefixo das tabelas';
 $string['dbtype'] = 'Tipo';
 $string['dbwrongencoding'] = 'A base de dados seleccionada está a funcionar com uma codificação de caracteres não recomendada ($a). Seria melhor usar uma base de dados com codificação Unicode (UTF-8). De qualquer forma, poderá proceder com a base de dados que indicou, seleccionando \"Não testar codificação da Base de Dados\" aqui em baixo, mas poderá ter problemas no futuro.';
 $string['dbwronghostserver'] = 'Deverá usar \"Regras do Servidor\" como se explica acima.';
 $string['dbwrongnlslang'] = 'A variável de configuração NLS_LANG no seu servidor Web deverá usar os caracteres AL32UTF8. Consulte como configurar correctamente o OCI8, na documentação do PHP.';
 $string['dbwrongprefix'] = 'Deverá usar um \"Prefixo das Tabelas\" como se explica acima.';
+$string['directorysettings'] = '<p>Por favor confira as localizações para esta instalação do Moodle</p>
+
+<p><b>Endereço Web:</b>
+Indique o endereço web completo que será usado para aceder ao Moodle. Se o seu sítio pode ser acedido com vários URL diferentes, seleccione o que seja mais natural para os alunos que usarem o Moodle. Não inclua a barra (/) no fim do URL.</p>
+
+<p><b>Directório do Moodle:</b>
+Indique o caminho completo do directório desta instalação, no disco do servidor. Tenha atenção com a distinção entre maiúsculas e minúsculas.</p>
+
+<p><b>Directório de dados:</b>
+Precisa de um local onde armazenar os ficheiros enviados para o Moodle. Esse directório deverá dar permissões de escrita e leitura ao utilizador que estiver a executar o servidor Web (geralmente, \'nobody\', \'apache\' ou \'www-data\'), mas não deverá ser acessível directamente via Web.</p>';
 $string['directorysettingshead'] = 'Por favor confira as localizações para esta instalação do Moodle';
 $string['directorysettingssub'] = '<b>Endereço Web:</b>
 Indique o endereço web completo que será usado para aceder ao Moodle. Se o seu sítio pode ser acedido com vários URL diferentes, seleccione o que seja mais natural para os alunos que usarem o Moodle. Não inclua a barra (/) no fim do URL.
@@ -125,6 +158,7 @@ $string['downloadlanguagebutton'] = 'Descarregar o pacote linguístico &quot;$a&
 $string['downloadlanguagehead'] = 'Descarregar pacote linguístico';
 $string['downloadlanguagenotneeded'] = 'Pode continuar com o processo de instalação usando o pacote linguístico por omissão, \"$a\".';
 $string['downloadlanguagesub'] = 'Agora, se quiser, pode descarregar um pacote linguístico e continuar com o processo de instalação nessa língua.<br /><br />Se não conseguir descarregar o pacote linguístico, o processo de instalação continuará em inglês. (Uma vez a instalação for concluida, terá a oportunidade de descarregar e instalar pacotes linguísticos adicionais.)';
+$string['doyouagree'] = 'Compreendeu estas condições e concorda?';
 $string['environmenterrortodo'] = 'Deve resolver todos os problemas (erros) do ambiente que encontrou acima antes de proceder à instalação dessa versão do Moodle!';
 $string['environmenthead'] = 'A verificar o seu ambiente ...';
 $string['environmentrecommendcustomcheck'] = 'se este teste falhar, indicará que existe um possível problema';
@@ -139,6 +173,11 @@ $string['error'] = 'Erro';
 $string['fail'] = 'Falha';
 $string['fileuploads'] = 'Envio de ficheiros';
 $string['fileuploadserror'] = 'Isto deveria estar activo';
+$string['fileuploadshelp'] = '<p>O envio de ficheiros parece não estar habilitado no seu servidor.</p>
+
+<p>Moodle poderá ainda ser instalado, mas sem essa funcionalidade, não poderá enviar ficheiros de uma disciplina nem fotografias de utilizadores.</p>
+
+<p>Para habilitar o envio de ficheiros terá que editar (ou pedir ao administrador do sistema que o faça) o ficheiro principal php.ini do seu sistema, modificando o valor de <b>file_upload</b> para \'1\', e reiniciando o servidor Web.</p>';
 $string['gdversion'] = 'Versão do GD';
 $string['gdversionerror'] = 'A biblioteca GD deverá estar instalada para processar e criar imagens.';
 $string['gdversionhelp'] = '<p>O seu servidor não parece ter GD instalado.</p>
@@ -150,16 +189,33 @@ $string['gdversionhelp'] = '<p>O seu servidor não parece ter GD instalado.</p>
 <p>Em Windows, normalmente poderá editar php.ini e descomentar a linha que faz referência a php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Variáveis Globais manipuladas em forma insegura';
 $string['globalsquoteserror'] = 'Corrija as suas definições do PHP: desactive o register_globals e/ou active magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Não se recomenda a combinação simultânea de Magic Quotes GPC desactivada e Register Globals activa.</p>
+
+<p>A definição recomendada no seu ficheiro php.ini é <b>magic_quotes_gpc = On</b> e <b>register_globals = Off</b>
+
+<p>Se não tiver acesso ao seu ficheiro php.ini, poderá colocar as linhas seguintes num ficheiro com nome .htaccess, no seu directório do Moodle:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = 'Ajuda';
 $string['iconvrecommended'] = 'A instalação da biblioteca opcional ICONV é altamente recomendada para trazer uma maior performance ao site, principalmente se o seu site suporta linguagens não latinas.';
 $string['info'] = 'Informação';
 $string['installation'] = 'Instalação';
+$string['invalidemail'] = 'Endereço de correio não válido';
 $string['invalidmd5'] = 'md5 não válido';
+$string['invalidurl'] = 'URL inválido';
 $string['langdownloaderror'] = 'A língua \"$a\" não foi instalada. O processo de instalação continuará em inglês.';
 $string['langdownloadok'] = 'A língua \"$a\" foi instalada com êxito. O processo de instalação continuará nessa língua.';
 $string['language'] = 'Língua';
 $string['magicquotesruntime'] = '\"Magic Quotes Run Time\"';
 $string['magicquotesruntimeerror'] = 'Isto deveria estar desactivado';
+$string['magicquotesruntimehelp'] = '<p>\"Magic Quotes Run Time\" deveria ser desactivado para que o Moodle funcione correctamente</p>
+
+<p>Normalmente, encontra-se desactivado por omissão...confira o estado de <b>magic_quotes_runtime</b> no seu ficheiro php.ini.</p>
+
+<p>Se não tiver acesso ao seu ficheiro php.ini, poderá colocar a linha seguinte num ficheiro com nome .htaccess, no seu directório do Moodle:
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'A instalação da biblioteca opcional MBSTRING é altamente recomendada na medida em que vai aumentar o desempenho do seu sítio, particularmente se o seu sítio suporta línguas não-latinas.';
 $string['memorylimit'] = 'Limite de memoria';
 $string['memorylimiterror'] = 'O limite de memoria imposto ao PHP é muito baixo... poderá ter problemas mais tarde.';
@@ -211,14 +267,23 @@ $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Prévio';
 $string['qtyperqpwillberemoved'] = 'Durante a actualização, as perguntas do tipo RQP serão eliminadas. Não deverá experimentar nenhumar problema, porque não estava a usar esse tipo de perguntas.'; // ORPHANED
 $string['qtyperqpwillberemovedanyway'] = 'Durante a actualização, as perguntas do tipo RQP serão eliminadas. Tem algumas perguntas desse tipo na sua base de dados, que deixarão de funcionar, a menos que instale novamente o código em http://moodle.org/mod/data/view.php?d=13&amp;rid=797  antes de proceder com a actualização.'; // ORPHANED
+$string['releasenoteslink'] = 'Para ter informação sobre esta versão do Moodle, veja, online, as <a target=\"_new\" href=\"$a\">Notas Publicadas</a>';
 $string['remotedownloadnotallowed'] = 'O seu servidor não permite descarregar componentes  (a variável allow_url_fopen está desactivada).<br /><br />Terá que descarregar <a href=\"$a->url\">$a->url</a> manualmente, copia-lo para  \"$a->dest\" no seu servidor e descompacta-lo.';
 $string['report'] = 'Relatório';
 $string['restricted'] = 'Restrito';
 $string['safemode'] = 'Modo seguro';
 $string['safemodeerror'] = 'Moodle poderá ter problemas com o modo seguro';
+$string['safemodehelp'] = '<p>Moodle poderá ter uma variedade de problemas com o modo seguro activo; um dos piores problemas é que provavelmente não terá autorização para criar novos ficheiros.</p>
+
+<p>Geralmente o modo seguro só é activado por alguns  administradores paranoicos de sítios Web públicos, assim que poderá ter que procurar outra entidade para alojar o seu sítio Moodle.</p>
+
+<p>Se quiser, pode tentar avançar com a instalação, mas esteja preparado para possíveis problemas mais tarde.</p>';
 $string['serverchecks'] = 'Testes do servidor';
 $string['sessionautostart'] = 'Auto-início de sessão';
 $string['sessionautostarterror'] = 'Isto deveria estar desactivado';
+$string['sessionautostarthelp'] = 'Moodle precisa do suporte de sessões e não funciona sem ele.</p>
+
+<p>O uso de sessões poderá ser activado no ficheiro php.ini... procure o parâmetro session.auto_start.</p>';
 $string['skipdbencodingtest'] = 'Não testar codificação da Base de Dados';
 $string['status'] = 'Regime';
 $string['thischarset'] = 'UTF-8';

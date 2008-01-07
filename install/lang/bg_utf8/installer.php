@@ -11,9 +11,11 @@
 
 $string['closewindow'] = 'Затваряне на прозореца';
 $string['continue'] = 'Напред';
+$string['doyouagree'] = 'Прочетохте ли и разбрахте ли условията?';
 $string['error'] = 'Грешка';
 $string['help'] = 'Помощ';
 $string['info'] = "Information";
+$string['invalidemail'] = 'Невалиден електронен адрес';
 $string['language'] = 'Език';
 $string['name'] = 'Име';
 $string['next'] = 'Напред';
