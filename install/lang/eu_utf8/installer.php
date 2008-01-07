@@ -11,9 +11,12 @@
 
 $string['admindirerror'] = 'Adminerako zehaztu den direktorioa ez da zuzena';
 $string['admindirname'] = 'Admin direktorioa';
+$string['admindirsetting'] = '<p>Oso web zerbitzari gutxik erabiltzen dute /admin kontrol-panel edo antzekora era sartzeko URL berezi gisa. Zoritxorrez, hau ez dator bat Moodlen lehenetsitako administrazio-orrien kokapenarekin. Nahi izanez gero, zure instalazioko admin direktorioaren izena alda dezakezu, hemen izen berria idatziz. Adibidez: <blockquote> moodleadmin</blockquote>.
+Horrela Moodleko admin loturak berrezarriko dira.</p>';
 $string['admindirsettinghead'] = 'Admin direktorioa aukeratu...';
 $string['admindirsettingsub'] = '<p>Oso web zerbitzari gutxik erabiltzen dute /admin kontrol-panel edo antzekora era sartzeko URL berezi gisa. Zoritxorrez, hau ez dator bat Moodlen lehenetsitako administrazio-orrien kokapenarekin. Nahi izanez gero, zure instalazioko admin direktorioaren izena alda dezakezu, hemen izen berria idatziz. Adibidez: <blockquote> moodleadmin</blockquote>.
 Horrela Moodleko admin loturak berrezarriko dira.</p>';
+$string['availablelangs'] = 'Hizkuntza eskuragarriak';
 $string['bypassed'] = 'Saihestua';
 $string['cannotcreatelangdir'] = 'Lang direktorioa ezin da sortu.';
 $string['cannotcreatetempdir'] = 'Temp direktorioa ezin da sortu.';
@@ -25,19 +28,30 @@ $string['cannotsavezipfile'] = 'ZIP fitxategia ezin da gorde.';
 $string['cannotunzipfile'] = 'Ezin da fitxategia deskonprimatu.';
 $string['caution'] = 'Kontuz';
 $string['check'] = 'Egiaztatu';
+$string['chooselanguage'] = 'Hizkuntza aukeratu';
 $string['chooselanguagehead'] = 'Hizkuntza aukeratu';
 $string['chooselanguagesub'] = 'Instalazio-prozesurako hizkuntza aukeratu, mesedez.';
 $string['closewindow'] = 'Itxi leiho hau';
+$string['compatibilitysettings'] = 'PHP ezarpenak konprobatzen...';
 $string['compatibilitysettingshead'] = 'PHPren zure ezarpenak konprobatzen...';
 $string['compatibilitysettingssub'] = 'Zure zerbitzariak baldintza hauek guztiak bete beharko ditu Moodle bertan egokiro funtzionatzeko.';
 $string['componentisuptodate'] = 'Osagaia eguneratu da.';
 $string['configfilenotwritten'] = 'Instalazioaren scriptak ezin izan du aukeratutako zehaztapen guztiak beteko dituen config.php fitxategia automatikoki sortu. Mesedez, kode hau config.php izeneko fitxategi batean kopiatu eta Moodleren sustraiko direktorioan itsatsi.';
 $string['configfilewritten'] = 'config.php arrakastaz sortu da';
+$string['configurationcomplete'] = 'Ezarpen osatua';
 $string['configurationcompletehead'] = 'Ezarpen osatua';
 $string['configurationcompletesub'] = 'Moodlek ezarpen-fitxategia sortu du';
 $string['continue'] = 'Jarraitu';
 $string['customcheck'] = 'Beste konprobazio batzuk';
 $string['database'] = 'Datu-basea';
+$string['databasecreationsettings'] = 'Orain Moodleren datu gehienak bilduko dituen datu-basearen ezarpenak zehaztu behar dituzu. Instalatzaileak, beherago zehaztutako ezarpenen arabera, datu-basea sortuko du.<br />
+<br /> <br />
+<b>Mota:</b> lehenetsitako balorea \"mysql\" da<br />
+<b>Zerbitzaria:</b> lehenetsitako balorea \"localhost\"da<br />
+<b>Izena:</b> datu-basearen izena, ad., moodle<br />
+<b>Erabiltzailea:</b> lehenetsitako balorea  \"root\" da<br />
+<b>Pasahitza:</b> datu-basearen pasahitza<br />
+<b>Taulen aurrizkia:</b> taula guztietarako aukerazko aurrizkia';
 $string['databasecreationsettingshead'] = 'Orain Moodleren datu gehienak bilduko dituen datu-basearen ezarpenak zehaztu behar dituzu. Instalatzaileak, beherago zehaztutako ezarpenen arabera, datu-basea sortuko du.';
 $string['databasecreationsettingssub'] = '<b>Mota:</b> lehenetsitako balorea \"mysql\" da<br />
 <b>Zerbitzaria:</b> lehenetsitako balorea \"localhost\" da<br />
@@ -45,6 +59,14 @@ $string['databasecreationsettingssub'] = '<b>Mota:</b> lehenetsitako balorea \"m
 <b>Erabiltzailea:</b> lehenetsitako balorea  \"root\" da<br />
 <b>Pasahitza:</b> datu-basearen pasahitza<br />
 <b>Taulen aurrizkia:</b> taula guztietarako aukerazko aurrizkia';
+$string['databasesettings'] = 'Orain Moodleren datu gehienak bilduko dituen datu-basearen ezarpenak zehaztu behar dituzu. Datu-base hori aldez aurretik sortu behar zen eta erabiltzaile-izena eta sarbide-pasahitza izan beharko lituzke.<br />
+<br /> <br />
+<b>Mota:</b> mysql edo postgres7<br />
+<b>Zerbitzaria:</b> ad., localhost edo db.isp.com<br />
+<b>Izena:</b> datu-basearen izena, ad., moodle<br />
+<b>Erabiltzailea:</b> datu-basearen erabiltzaile-izena<br />
+<b>Pasahitza:</b> datu-basearen pasahitza<br />
+<b>Taulen aurrizkia:</b> taula-izen guztietan erabiliko den aurrizkia';
 $string['databasesettingshead'] = 'Orain Moodleren datu gehienak bilduko dituen datu-basearen ezarpenak zehaztu behar dituzu. Datu-base hori aldez aurretik sortu behar zen eta erabiltzaile-izena eta sarbide-pasahitza izan beharko lituzke.';
 $string['databasesettingssub'] = '<b>Mota:</b> mysql edo postgres7<br />
 <b>Zerbitzaria:</b> p.ej.: localhost edo db.zuredomeinua.com<br />
@@ -56,9 +78,17 @@ $string['datarooterror'] = '\'Datu-direktorioa\' ezin izan da sortu edo aurkitu.
 $string['dbconnectionerror'] = 'Datu-basearekiko konexio-errorea. Mesedez, datu-basearen ezarpenak aztertu.';
 $string['dbcreationerror'] = 'Errorea datu-basea sortzean. Ezin izan da datu-basea sortu emandako izen eta ezarpenekin';
 $string['dbhost'] = 'Zerbitzaria';
+$string['dbpass'] = 'Pasahitza';
 $string['dbprefix'] = 'Taulen aurrizkia';
 $string['dbtype'] = 'Mota';
 $string['dbwrongencoding'] = 'Aukeratutako datu-basea aholkatzen ez den kodifikazio baten menpean egikaritzen ari da ($a). Horren ordez, Unicode (UTF-8) kodifikazioko datu-basea erabiltzea komenigarria da. Edozein kasutan, proba hau kontuan hartu nahi ez baduzu \"DBaren kodifikazio-proba kontuan ez izan\" aukera dezakezu, etorkizunean arazorik izan zenezakeen arren.';
+$string['directorysettings'] = '<p><b>WWW:</b>
+Moodleri non dagoen kokaturik esan behar diozu. Moodle instalatu den interneteko helbide osoa zehaztu. Zure webgunera URL ezberdinetatik sartzea badago, zure ikasleek normalean erabiliko dutena idatzi. Azken barra ez jarri.</p>
+<p><b>Direktorioa:</b>
+Kokapen honetarako bide osoa zehaztu.
+Maiuskulak eta minuskulak ongi daudela ziurtatu.</p>
+<p><b>Datuak:</b>
+Moodlek igotako fitxategiak gordeko ditueneko tokia behar duzu. Direktorio horretan web zerbatzariko erabiltzaileek irakurri eta IDATZI ahal izango dute (normalean \'nobody\' edo \'apache\'), baina ez da komenigarria webetik zuzenean sartu ahal izatea.</p>';
 $string['directorysettingshead'] = 'Zure instalazioaren kokapen hauek baieztatu, mesedez';
 $string['directorysettingssub'] = '<b>Web helbidea:</b>
 Moodlera sartzeko web helbide osoa zehaztu.
@@ -82,6 +112,7 @@ $string['downloadlanguagebutton'] = '\"$a\" hizkuntza-paketea jaitsi';
 $string['downloadlanguagehead'] = 'Hizkuntza-paketea jaitsi';
 $string['downloadlanguagenotneeded'] = 'Instalazio-prozesua lehenetsitako hizkuntzaz jarrai dezakezu, \"$a\".';
 $string['downloadlanguagesub'] = 'Orain zure hizkuntza-paketea jaisteko eta hizkuntza horretan instalazioarekin jarraitzeko aukera daukazu.<br /><br />Jaitsiera eskuragarri ez balitz, prozesuak ingelesez jarraituko luke (instalazioa burututakoan, beste hizkuntzak jaitsi eta instalatu ahal izango dituzu).';
+$string['doyouagree'] = 'Baldintza hauek irakurri eta ulertu dituzu?';
 $string['environmenterrortodo'] = 'Moodle-ren bertsio hau instalatu aurretik goian aurkitutako inguru-arazo (errore) guztiak zuzendu behar dituzu.';
 $string['environmenthead'] = 'Zure ingurunea konprobatzen';
 $string['environmentrecommendinstall'] = 'gomendagarria da instalatuta/gaituta egotea';
@@ -94,6 +125,11 @@ $string['error'] = 'Errorea';
 $string['fail'] = 'Errorea';
 $string['fileuploads'] = 'Fitxategien igoerak';
 $string['fileuploadserror'] = 'Aktibatuta egon behar du';
+$string['fileuploadshelp'] = '<p>Zure zerbitzarian fitxategien igoera ez dagoela aktibatuta dirudi.</p>
+
+<p>Moodle oraindik instala daiteke, baina ezingo dituzu fitxategirik, ezta erabiltzaileen irudirik ere, ikastaroetara igo.</p>
+
+<p>Fitxategien igoera ahalbidetzeko, zeuk (edo sistemaren administratzaileak) jatorrizko php.ini fitxategia editatu eta <b>file_uploads</b> ezarpena \'1\'ra aldatu behar duzu.</p>';
 $string['gdversion'] = 'GD bertsioa';
 $string['gdversionerror'] = 'GD liburutegiak bertan egon behar luke irudiak sortu eta prozesatzeko';
 $string['gdversionhelp'] = '<p>Zure zerbitzariak GDa instalaturik ez daukala dirudi.</p>
@@ -105,16 +141,32 @@ $string['gdversionhelp'] = '<p>Zure zerbitzariak GDa instalaturik ez daukala dir
 <p>Windows ingurunean, php.ini edita dezakezu, php_gd2.dll-ri dagozkion iruzkinen lerroa kenduz.</p>';
 $string['globalsquotes'] = 'Ezarpen orokorren erabilera ez segurua';
 $string['globalsquoteserror'] = 'PHP ezarpenak zehaztu: register_globals indargabetu edo/eta magic_quotes_gpc ezarri';
+$string['globalsquoteshelp'] = '<p>Ez da aholkatzen Magic Quotes GPC indargabetzea eta Register Globals ezartzea batera.</p>
+
+<p>Aholkatzen den ezarpena zera da: <b>magic_quotes_gpc = On</b> eta <b>register_globals = Off</b> zure php.ini fitxategian</p>
+
+<p>php.ini fitxategira sarbiderik ez baduzu, Moodleren direktorioaren barruko .htaccess izeneko fitxategian lerro hau idatzi beharko duzu:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = 'Laguntza';
 $string['iconvrecommended'] = 'ICONV aukerako libreria instalatzea gomendagarria da  oso gunearen errendimendua hobetzeko, batez ere zure guneak latindarrak ez diren hizkuntzak erabiltzen baditu.';
 $string['info'] = 'Informazioa';
 $string['installation'] = 'Instalazioa';
+$string['invalidemail'] = 'E-posta helbide baliogabea';
 $string['invalidmd5'] = 'md5 ez da baliagarria';
 $string['langdownloaderror'] = '\"$a\" hizkuntza ezin izan da instalatu. Instalazio-prozesuak ingelesez jarraituko du.';
 $string['langdownloadok'] = '\"$a\" hizkuntza zuzen instalatu da. Instalazio-prozesuak hizkuntza horretan jarraituko du.';
 $string['language'] = 'Hizkuntza';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Aktibatuta egon behar du';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime desaktibatu behar da Moodlek ongi funtzionatzeko.</p>
+
+<p>Desaktibazioa lehenetsita egoten da... Zure php.ini fitxategiko <b>magic_quotes_runtime</b> ezarpena ikusi.</p>
+
+<p>php.ini fitxategira sarbiderik ez baduzu, Moodleren direktorioaren barruko .htaccess izeneko fitxategian lerro hau idatzi beharko duzu:
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'MBSTRING aukerako libreria instalatzea gomendagarria da  oso gunearen errendimendua hobetzeko, batez ere zure guneak latindarrak ez diren hizkuntzak erabiltzen baditu.';
 $string['memorylimit'] = 'Memoriaren muga';
 $string['memorylimiterror'] = 'PHP memoriaren muga baxuegia da... Beranduago arazoak izan ditzakezu.';
@@ -154,13 +206,22 @@ $string['phpversionhelp'] = '<p>Moodlek PHP 4.1.0 edo geroagoko bertsioa behar d
 <p>Zure bertsioa: $a</p>
 <p>PHP eguneratu edo PHP bertsio berriagoa duen zerbitzari batera jo</p>';
 $string['previous'] = 'Aurrekoa';
+$string['releasenoteslink'] = 'Moodle-ren bertsio honi buruzko informazioa nahi baduzu, mesedez begiratu <a target=\"_new\" href=\"$a\">Bertsio oharrak</a>';
 $string['remotedownloadnotallowed'] = 'Osagaiak ezin dira zure zerbitzarira jaitsi (allow_url_fopen ez dago aktibatuta).<br /><br /><a href=\"$a->url\">$a->url</a> fitxategia eskuz jaitsi eta \"$a->dest\" kokapenean kopiatu behar duzu.';
 $string['report'] = 'Txostena';
 $string['restricted'] = 'Baimena behar da';
 $string['safemode'] = 'Modu segurua';
 $string['safemodeerror'] = 'Moodlek arazoak izan ditzake \'modu segurua\' ezarriz gero';
+$string['safemodehelp'] = '<p>Moodlek arazo ezberdinak izan ditzake \'modu segurua\' ezarriz gero, eta baliteke fitxategi berriak ezin sortu izana.</p>
+
+<p>Normalean \'modu segurua\' web zerbitzari publiko paranoideek soilik aktibatzen dute. Hori dela eta, zure Moodle webgunerako beste enpresa bilatu beharko duzu.</p>
+
+<p>Nahi izanez gero, zure instalazioarekin jarrai dezakezu, baina aurrerago arazoak izango dituzu.</p>';
 $string['sessionautostart'] = 'Saioaren hasiera automatikoa';
 $string['sessionautostarterror'] = 'Indargabetuta egon behar du';
+$string['sessionautostarthelp'] = '<p>Moodlek saioko laguntza behar du eta horren ezean ez du funtzionatuko.</p>
+
+<p>Saioak php.ini fitxategian aktibatu behar dira session.auto_start parametroari dagokionez.</p>';
 $string['skipdbencodingtest'] = 'Datu-basearen dekodifikazio-testa ez kontuan hartu';
 $string['status'] = 'Egoera';
 $string['thischarset'] = 'UTF-8';

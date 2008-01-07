@@ -12,6 +12,7 @@
 $string['closewindow'] = 'इस विन्डो को बन्द कीजिए';
 $string['continue'] = 'जारी रखें';
 $string['database'] = 'डेटाबेस';
+$string['doyouagree'] = 'क्या आपने इन शर्तों को पढ़कर समझ लिया है?';
 $string['language'] = 'भाषा';
 $string['name'] = 'नाम';
 $string['next'] = 'अगला';

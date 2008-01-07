@@ -11,8 +11,10 @@
 
 $string['admindirerror'] = 'Belirtilen yönetici dizini hatalı';
 $string['admindirname'] = 'Yönetici Dizini';
+$string['admindirsetting'] = 'Bazı web hostingler kontrol paneline ulaşmak için /admin olarak belirtilmiş bir URL kullanıyor. Maalesef, bu Moodle yönetici sayfalarıyla karışıklığa sebep olmaktadır. Yönetici dizininin ismini kurulum sırasında değiştirerek bu sorunu ortadan kaldırabilirsiniz. Örnek: <br /><br /><b>moodleadmin</b><br /> <br />Bu Moodle içinde yönetici linklerini düzeltecektir.';
 $string['admindirsettinghead'] = 'Yönetici dizini ayarlanıyor...';
 $string['admindirsettingsub'] = 'Bazı web hostingler kontrol paneline ulaşmak için /admin olarak belirtilmiş bir URL kullanıyor. Maalesef, bu Moodle yönetici sayfalarıyla karışıklığa sebep olmaktadır. Yönetici dizininin ismini kurulum sırasında değiştirerek bu sorunu ortadan kaldırabilirsiniz. Örnek: <br /><br /><b>moodleadmin</b><br /> <br />Bu Moodle içinde yönetici linklerini düzeltecektir.';
+$string['availablelangs'] = 'Kullanılabilir dil paketleri';
 $string['bypassed'] = 'Geçti';
 $string['cannotcreatelangdir'] = 'Dil dizini oluşturulamıyor.';
 $string['cannotcreatetempdir'] = 'Geçici dizin oluşturulamıyor.';
@@ -24,26 +26,48 @@ $string['cannotsavezipfile'] = 'ZIP dosyası kaydedilemedi.';
 $string['cannotunzipfile'] = 'Dosya arşivi açılamadı.';
 $string['caution'] = 'Dikkat';
 $string['check'] = 'Kontrol et';
+$string['chooselanguage'] = 'Bir dil seçin';
 $string['chooselanguagehead'] = 'Bir dil seçin';
 $string['chooselanguagesub'] = 'Lütfen, SADECE kurulum için bir dil seçin. Site ve kullanıcı dillerini sonraki ekranda seçebilirsiniz.';
 $string['closewindow'] = 'Bu pencereyi kapat';
+$string['compatibilitysettings'] = 'PHP ayarlarınız kontrol ediliyor...';
 $string['compatibilitysettingshead'] = 'PHP ayarlarınız kontrol ediliyor...';
 $string['compatibilitysettingssub'] = 'Moodle\'ın düzgün çalışması için sunucunuz bütün testleri geçti.';
 $string['componentisuptodate'] = 'Bileşen günceldir.';
 $string['configfilenotwritten'] = 'Kurulum programı, Moodle dizini yazılabilir olmadığından dolayı seçtiğiniz ayarları içeren bir config.php dosyası oluşturamıyor.  Aşağıdaki kodu kopyalayıp bu kodu config.php dosyası içine yapıştırıp Moodle kök dizinine oluşturduğunuz dosyayı yükleyebilirsiniz.';
 $string['configfilewritten'] = 'config.php dosyası başarıyla oluşturuldu';
+$string['configurationcomplete'] = 'Yapılandırma tamamlandı';
 $string['configurationcompletehead'] = 'Yapılandırma tamamlandı';
 $string['configurationcompletesub'] = 'Ana moodle dizine yapılandırma dosyasının kaydedilmesi için girişimde bulunuldu.';
 $string['continue'] = 'Devam';
 $string['curlrecommended'] = 'Moodle Ağının işlevsel bir şekilde çalışması için isteğe bağlı Curl kütüphanesinin kurulması şiddetle tavsiye edilir.';
 $string['customcheck'] = 'Diğer Kontroller';
 $string['database'] = 'Veritabanı';
+$string['databasecreationsettings'] = 'Şimdi, Moodle verilerinin saklanacağı veritabanını
+oluşturmanız gerekiyor. Bu veritabanı kurulum programı tarafından aşağıdaki ayarlara göre otomatik olarak oluşturulacak.<br />
+<br /> <br />
+<b>Tipi:</b> kurulum tarafından mysql olarak sabitlendi<br />
+<b>Sunucu:</b> kurulum tarafından localhost olarak sabitlendi<br />
+<b>Adı:</b> veritabanı adı, ör: moodle<br />
+<b>Kullanıcı:</b> kurulum tarafından root olarak sabitlendi<br />
+<b>Şifre:</b> kullanıcı şifresi<br />
+<b>Tablo öneki:</b> tüm tablo isimleri için isteğe bağlı önek';
 $string['databasecreationsettingshead'] = 'Şimdi, Moodle verilerinin saklanacağı veritabanını
 oluşturmanız gerekiyor. Bu veritabanı kurulum programı tarafından aşağıdaki ayarlara göre otomatik olarak oluşturulacak.';
 $string['databasecreationsettingssub'] = '<b>Tipi:</b> kurulum tarafından mysql olarak sabitlendi<br />
 <b>Sunucu:</b> kurulum tarafından localhost olarak sabitlendi<br />
 <b>Adı:</b> veritabanı adı, ör: moodle<br />
 <b>Kullanıcı:</b> kurulum tarafından root olarak sabitlendi<br />
+<b>Şifre:</b> kullanıcı şifresi<br />
+<b>Tablo öneki:</b> tüm tablo isimleri için isteğe bağlı önek';
+$string['databasesettings'] = 'Şimdi, Moodle verilerinin saklanacağı veritabanını
+oluşturmanız gerekiyor. Bu veritabanı önceden oluşturulmalı
+ve bu veritabanına erişmek için kullanıcı adı - şifre ayarlanmalı.<br />
+<br /><br />
+<b>Tipi:</b> mysql veya postgres7<br />
+<b>Sunucu:</b> ör: localhost veya db.iss.com<br />
+<b>Adı:</b> veritabanı adı, ör: moodle<br />
+<b>Kullanıcı:</b> veritabanı kullanıcısı<br />
 <b>Şifre:</b> kullanıcı şifresi<br />
 <b>Tablo öneki:</b> tüm tablo isimleri için isteğe bağlı önek';
 $string['databasesettingshead'] = 'Şimdi, Moodle verilerinin saklanacağı veritabanını
@@ -96,12 +120,26 @@ $string['datarooterror'] = 'Belirtilen \'Veri Dizini\' bulunamadı veya oluştur
 $string['dbconnectionerror'] = 'Belirtiğiniz veritabanına bağlantı kuramadık. Lütfen veritabanı ayarlarını kontrol edin.';
 $string['dbcreationerror'] = 'Veritabanı oluşturma hatası. Belirtilen ayarlardan sağlanan isimle bir veritabanı oluşturulamadı.';
 $string['dbhost'] = 'Veritabanı Sunucusu';
+$string['dbpass'] = 'Şifre';
 $string['dbprefix'] = 'Tablo öneki';
 $string['dbtype'] = 'Tipi';
 $string['dbwrongencoding'] = 'Seçili veritabanı tavsiye edilmeyen dil kodlamasında ($a) çalışıyor. Bunun yerine bir Unicode (UTF-8) kodlamasını kullanmanız daha iyi. Yine de aşağıdaki \'Veritabanı Dil Kodlama Testini Atla\' kutucuğunu seçerek bu kısmı geçebilirsiniz, ancak ilerde sorunlar yaşabilirsiniz.';
 $string['dbwronghostserver'] = 'Yukarıda tanımlandığı gibi \"Sunucu\" kurallarına uymalısınız.';
 $string['dbwrongnlslang'] = 'Web sunucunuzdaki NLS_LANG ortam değişkeni AL32UTF8 karakter setini kullanmalı. OCI8\'i düzgün bir şekilde yapılandırmak için PHP belgelerine bakın.';
 $string['dbwrongprefix'] = 'Yukarıda tanımlandığı gibi \"Tablo öneki\" kurallarına uymalısınız.';
+$string['directorysettings'] = '<p>Lütfen, Bu Moodle kurulumu için yolları onaylayın.</p>
+
+<p><b>Web Adresi:</b>
+Moodle\'a erişilecek olan tam web adresini belirtin. Web siteniz bir çok URL\'den erişilebiliyorsa, öğrencilerinizin
+en sık kullanacağı bir tanesini seçin.
+Sonuna / (slash) ekleMEyin.</p>
+
+<p><b>Moodle Dizini:</b>
+Bu kurulama ait tam fiziksel klasör yolunu belirtin. BÜYÜK/küçük harflerin doğru olduğundan emin olun.</p>
+
+<p><b>Veri Dizini:</b>
+Siteye yüklenen dosyaların nereye kaydedileceğini belirtin. Bu dizin sunucu kullanıcısı tarafından okunabilir ve YAZILABİLİR olmalı. (genellikle \'nobody\',\'apache\',\'www\' olur)
+Ancak, bu dizine direkt olarak webden erişim olMAMAlı.</p>';
 $string['directorysettingshead'] = 'Lütfen, Bu Moodle kurulumu için yolları onaylayın';
 $string['directorysettingssub'] = '<b>Web Adresi:</b>
 Moodle\'a erişilecek olan tam web adresini belirtin. Web siteniz bir çok URL\'den erişilebiliyorsa, öğrencilerinizin
@@ -124,6 +162,7 @@ $string['downloadlanguagebutton'] = 'Dil paketini $a indir';
 $string['downloadlanguagehead'] = 'Dil paketi indir';
 $string['downloadlanguagenotneeded'] = 'Varsayılan dil paketini \"$a\" kullanarak kurulum işlemine devam edebilirsiniz.';
 $string['downloadlanguagesub'] = 'Şu anda bir dil paketi indirme ve bu dilde kuruluma devam etme seçeneğiniz var.<br /><br />Dil paketini indiremezseniz kurulum işlemi İngilizce ile devam edecektir. (Kurulum işlemi bittiğinde ek dil paketlerini indirme ve kurma fırsatınız vardır.)';
+$string['doyouagree'] = 'Şartları okuyup kabul ediyor musunuz?';
 $string['environmenterrortodo'] = 'Bu Moodle sürümünü kurmaya başlamadan önce yukarıda bulunan bütün ortam sorunlarını (hatalarını) çözmeniz gerekiyor!';
 $string['environmenthead'] = 'Ortam kontrol ediliyor...';
 $string['environmentrecommendinstall'] = 'yüklenmesi/etkinleştirilmesi tavsiye edilir';
@@ -136,6 +175,12 @@ $string['error'] = 'Hata';
 $string['fail'] = 'Hata';
 $string['fileuploads'] = 'Dosya Göndermeleri';
 $string['fileuploadserror'] = 'Bu açık olmalı';
+$string['fileuploadshelp'] = '<p>Bu sunucuda, Dosya yüklemesi etkinleştirilmemiş görünüyor.</p>
+
+<p>Moodle hala kurulabilir, fakat bu özellik olmadan, yeni kullanıcı resimleri ve kurslara dosya gönderilemez.</p>
+
+<p>Dosya yüklemesini etkinleştirmeniz için (veya sistem yöneticiniz) sisteminizin php.ini dosyasınındaki <b>file_uploads</b> ayarı \'1\'
+olarak değiştirilmeli.</p>';
 $string['gdversion'] = 'GD sürümü';
 $string['gdversionerror'] = 'GD kütüphanesi resimleri oluşturma ve işleme özelliği sunmalı';
 $string['gdversionhelp'] = '<p>Sunucunuzda GD kütüphanesi kurulu görülmüyor.</p>
@@ -149,16 +194,33 @@ Moodle GD olmadan da çalışır, ancak yukarıda bahsedilen özelliklerden yara
 <p>Windows altında php.ini dosyasını düzenler ve php_gd2.dll\'yi referans eden satırdaki yorumları kaldırırsınız.</p>';
 $string['globalsquotes'] = 'Güvensiz Global Değişkenler';
 $string['globalsquoteserror'] = 'PHP ayarlarınızı düzeltin. register_globals\'ı kapalı ve/veya magic_quotes_gpc açık tutun.';
+$string['globalsquoteshelp'] = '<p>Pasifleştirilmiş Magic Quotes GPC ve etkinleştirilmiş Register Globals\'ın bir arada kullanımı tavsiye edilmez.</p>
+
+<p>Php.ini\'deki tavsiye edilen ayar <b>magic_quotes_gpc = On</b> ve <b>register_globals = Off</b></p>
+
+<p>Php.ini\'ye erişim hakkınız yoksa Moodle dizinindeki .htaccess dosyasına şu satırları ekleyebilirsiniz:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = 'Yardım';
 $string['iconvrecommended'] = 'Sitenizde latin olmayan dilleri kullanıyorsanız isteğe bağlı ICONV kütüphanesinin kurulması site performansını arttırmak için şiddetle tavsiye edilir.';
 $string['info'] = 'Bilgi';
 $string['installation'] = 'Kurulum';
+$string['invalidemail'] = 'Geçersiz e-posta adresi';
 $string['invalidmd5'] = 'Geçersiz md5';
 $string['langdownloaderror'] = 'Maalesef \"$a\" dil paketi kurulamadı. Kuruluma İngilizce olarak devam edilecek.';
 $string['langdownloadok'] = 'Dil paketi \"$a\" başarıyla kuruldu. Kurulum bu dilde devam edecek.';
 $string['language'] = 'Dil';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Bu kapalı olmalı';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime ayarı, Moodle\'ın işlevsel çalışması için kapalı olmalı.</p>
+
+<p>Normalde de zaten bu varsayılan olarak kapalıdır ...  php.ini dosyasındaki <b>magic_quotes_runtime</b> ayarına bakın.</p>
+
+<p>php.ini dosyasına erişim hakkınız yoksa, Moodle klasöründe yer alan .htaccess isimli dosyada şu ayarı yapın:
+
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'Sitenizde latin olmayan dilleri kullanıyorsanız isteğe bağlı MBSTRING kütüphanesinin kurulması site performansını arttırmak için şiddetle tavsiye edilir.';
 $string['memorylimit'] = 'Bellek Limiti';
 $string['memorylimiterror'] = 'PHP bellek limiti ayarı çok düşük... Daha sonra bu ayardan dolayı bazı sorunlar oluşabilir.';
@@ -213,14 +275,21 @@ $string['phpversionhelp'] = '<p>Moodle, PHP sürümünün en az 4.3.0 veya 5.1.0
 <p>PHP\'yi güncellemeli veya PHP\'nin yeni sürümünü kullananan bir hostinge taşınmalısınız!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Önceki';
+$string['releasenoteslink'] = 'Moodle\'ın bu sürümü hakkında bilgi için lütfen çevrimiçi <a target=\"_new\" href=\"$a\">Sürüm Notlarına</a> bakınız';
 $string['remotedownloadnotallowed'] = 'Sunucunuza bileşen indirmeye izin verilmiyor. (allow_url_fopen pasif).<br /><br />Arşivlenmiş dosyayı <a href=\"$a->url\">$a->url</a> elle indirip buraya \"$a->dest\" açmalısınız.';
 $string['report'] = 'Rapor';
 $string['restricted'] = 'Sınırlandırıldı';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle, safe mode\'ın açık olması durumunda bazı sorunlar çıkartabilir';
+$string['safemodehelp'] = '<p>Moodle, safe mode\'un açık olması durumunda bazı sorunlar çıkartabilir. Moodle tarafından en azından bazı dosyaların oluşturulması gerekiyor, ama bu mod yeni dosyaların oluşturulmasına izin vermiyor.</p>
+<p>Safe mode sadece paranoyak web hostinglerince kullanılmaktadır. Bu durumda Moodle için başka bir web hosting firması bulmanız gerekiyor.</p>
+<p>İsterseniz devam edebilirsiniz, ama daha sonra bir çok sorunla karşılaşırsınız.</p>';
 $string['serverchecks'] = 'Sunucu Kontrolleri';
 $string['sessionautostart'] = 'Otomatik Oturum Başlama';
 $string['sessionautostarterror'] = 'Bu kapalı olmalı';
+$string['sessionautostarthelp'] = '<p>Moodle, oturum desteği gerektirir ve bu olmadan işlevsel çalışamaz.</p>
+
+<p>Oturum desteği php.ini dosyasından ayarlanabilir ... session.auto_start parametresine bakın.</p>';
 $string['skipdbencodingtest'] = 'Veritabanı Dil Kodlama Testini Atla';
 $string['status'] = 'Durum';
 $string['thischarset'] = 'UTF-8';

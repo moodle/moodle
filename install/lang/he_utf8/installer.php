@@ -11,9 +11,12 @@
 
 $string['admindirerror'] = 'ספריית מנהל המערכת המצויינת שגויה';
 $string['admindirname'] = 'ספריית מנהל המערכת';
+$string['admindirsetting'] = 'שירותי אירוח אתרים מעטים משתמשים/מתנהלים כ-Url מיוחד עבורך כדי לגשת ללוח הבקרה למשל. למרבה הצער דבר זה עומד נגד המיקום התקני של עמודי מנהל המערכת של Moodle. תוכל לתקן זאת ע\"י שינוי שם ספריית ה-admin בהתקנה שלך והכנסת שם חדש זה כאן. למשל:<br /> <br /><b>moodleadmin</b><br /> <br />
+דבר זה יתקן את קישורי ה-admin ב-Moodle.';
 $string['admindirsettinghead'] = 'הגדר את ספריית מנהל המערכת...';
 $string['admindirsettingsub'] = 'שירותי אירוח אתרים מעטים משתמשים/מתנהלים כ-Url מיוחד עבורך כדי לגשת ללוח הבקרה למשל. למרבה הצער דבר זה עומד נגד המיקום התקני של עמודי מנהל המערכת של Moodle. תוכל לתקן זאת ע\"י שינוי שם ספריית ה-admin בהתקנה שלך והכנסת שם חדש זה כאן. למשל:<br /> <br /><b>moodleadmin</b><br /> <br />
 דבר זה יתקן את קישורי ה-admin ב-Moodle.';
+$string['availablelangs'] = 'חבילות שפה זמינות';
 $string['bypassed'] = 'נעקף';
 $string['cannotcreatelangdir'] = 'לא ניתן ליצור סיפריית שפה.';
 $string['cannotcreatetempdir'] = 'לא ניתן ליצור סיפרייה זמנית.';
@@ -25,26 +28,48 @@ $string['cannotsavezipfile'] = 'לא ניתן לשמור קובץ ZIP.';
 $string['cannotunzipfile'] = 'לא ניתן לפתוח את קובץ ה-ZIP.';
 $string['caution'] = 'אזהרה';
 $string['check'] = 'בדוק';
+$string['chooselanguage'] = 'בחר שפה';
 $string['chooselanguagehead'] = 'בחר שפה';
 $string['chooselanguagesub'] = 'אנא בחר שפה עבור ההתקנה בלבד. תוכל לבחור בשפה שונה לאתר ולמשתמש באחד מהמסכים הבאים.';
 $string['closewindow'] = 'סגור את החלון הזה';
+$string['compatibilitysettings'] = 'בדיקת הגדרות ה-PHP שלך...';
 $string['compatibilitysettingshead'] = 'בדיקת הגדרות ה-PHP שלך...';
 $string['compatibilitysettingssub'] = 'השרת שלך צריך לעבור את כל בדיקות אלו כדי להפעיל את Moodle כהלכה.';
 $string['componentisuptodate'] = 'הרכיב מעודכן.';
 $string['configfilenotwritten'] = 'סקריפט ההתקנה לא הצליח ליצור באופן אוטומטי את קובץ config.php המכיל את בחירת ההגדרות שלך, ייתכן שהדבר קרה בגלל שספריית ה-Moodle שלך איננה ניתנת לכתיבה. תוכל באופן ידני להעתיק את הקוד הבא לתוך קובץ config.php בספריית האם של Moodle.';
 $string['configfilewritten'] = 'קובץ config.php נוצר בהצלחה';
+$string['configurationcomplete'] = 'הגדרות התצורה הושלמו';
 $string['configurationcompletehead'] = 'הגדרות התצורה הושלמו';
 $string['configurationcompletesub'] = 'Moodle ניסה לשמור את הגדרות התצורה שלך בקובץ בספריית ה-root של התקנת ה-Moodle.';
 $string['continue'] = 'המשך';
 $string['curlrecommended'] = 'התקנת ספריית Curl, האופציונלית, מומלצת ביותר בכדי לאפשר ל-Moodle את פונקציונליות התקשורת';
 $string['customcheck'] = 'בדיקות אחרות';
 $string['database'] = 'מסד נתונים';
+$string['databasecreationsettings'] = 'כעת נותר לך לעצב את הגדרות מסד הנתונים שלך היכן שרוב נתוני Moodle יאוחסנו. מסד נתונים זה ייווצר באופן אוטומטי ע\"י ההתקנה
+עם ההגדרות המצויינות להלן:
+</br>
+<br /> <br />
+<b>סוג:</b> תוקן ל\"mysql\" ע\"י קובץ ההתקנה<br />
+<b>מחשב מארח:</b> תוקן ל\"localhost\" ע\"י קובץ ההתקנה<br />
+<b>שם:</b> שם מסד הנתונים, למשל: Moodle <br />
+<b>שם משתמש מסד הנתונים:</b> תוקן ל\"root\" ע\"י קובץ ההתקנה<br />
+<b>סיסמה:</b> סיסמת מסד הנתונים שלך<br />
+<b>תחילית הטבלאות:</b> תחילית רשות לכל שמות הטבלאות';
 $string['databasecreationsettingshead'] = 'כעת נותר לך לעצב את הגדרות מסד הנתונים שלך היכן שרוב נתוני Moodle יאוחסנו. מסד נתונים זה ייווצר באופן אוטומטי ע\"י ההתקנה
 עם ההגדרות המצויינות להלן.';
 $string['databasecreationsettingssub'] = '<b>סוג:</b> תוקן ל\"mysql\" ע\"י קובץ ההתקנה<br />
 <b>מחשב מארח:</b> תוקן ל\"localhost\" ע\"י קובץ ההתקנה<br />
 <b>שם:</b> שם מסד הנתונים, למשל: Moodle <br />
 <b>שם משתמש מסד הנתונים:</b> תוקן ל\"root\" ע\"י קובץ ההתקנה<br />
+<b>סיסמה:</b> סיסמת מסד הנתונים שלך<br />
+<b>תחילית הטבלאות:</b> תחילית רשות לכל שמות הטבלאות';
+$string['databasesettings'] = 'כעת נותר לך לעצב את הגדרות מסד הנתונים שלך היכן שרוב נתוני Moodle יאוחסנו. מסד נתונים זה חייב כבר להיות קיים בנוסף שם משתמש וסיסמה לשם גישה אליו. 
+.<br />
+<br /> <br />
+<b>סוג:</b> mysql או postgres7<br />
+<b>מחשב מארח:</b> לדוגמה localhost או db.isp.com<br />
+<b>שם:</b> database שם מסד הנתונים למשל-moodle<br />
+<b>שם משתמש:</b> שם משתמש מסד הנתונים שלך<br />
 <b>סיסמה:</b> סיסמת מסד הנתונים שלך<br />
 <b>תחילית הטבלאות:</b> תחילית רשות לכל שמות הטבלאות';
 $string['databasesettingshead'] = 'כעת נותר לך לעצב את הגדרות מסד הנתונים שלך היכן שרוב נתוני Moodle יאוחסנו. מסד נתונים זה חייב כבר להיות קיים בנוסף שם משתמש וסיסמה לשם גישה אליו.';
@@ -94,12 +119,20 @@ $string['datarooterror'] = 'ספריית \"נתוני Moodle\" שציינת לא
 $string['dbconnectionerror'] = 'לא הצלחנו להתחבר למסד הנתונים שציינת. אנא בדוק את הגדרות מסד הנתונים שלך.';
 $string['dbcreationerror'] = 'חלה שגיאה ביצירת מסד הנתונים. המערכת לא הצליחה ליצור את שם מסד הנתונים שציינת עם ההגדרות שסופקו.';
 $string['dbhost'] = 'שרת מארח';
+$string['dbpass'] = 'סיסמה';
 $string['dbprefix'] = 'Tables prefix';
 $string['dbtype'] = 'סוג';
 $string['dbwrongencoding'] = 'מסד הנתונים שציינת פועל תחת קידוד לא מומלץ ($a). יהיה זה עדיף להשתמש באחד מקידודי ה- Unicode (UTF-8) במקום. בכל אופן, תוכל לעקוף את נסיון זה ע\"י בחירה ב\"דלג על DB Encoding Test\" המצויין למטה, אך תוכל להתקל בבעיות שוב בעתיד.';
 $string['dbwronghostserver'] = 'הינך חייב לעקוב אחר תפקידי ה\"מארח\" כמתואר למעלה.';
 $string['dbwrongnlslang'] = 'משתנה הסביבה NLS_LANG בשרת האתר שלךחייב להשתמש בקבוצת קידוד התווים AL32UTF8. ראה תיעוד ה-PHP על איך להגדיר כהלכה את OCI8.';
 $string['dbwrongprefix'] = 'אתה חייב לעקוב אחר תפקידי ה-\"Table Prefix\" כמוסבר למעלה';
+$string['directorysettings'] = '<p> אנא וודא את מיקומי התקנת Moodle זו.</p>
+<p><b>כתובת האתר:</b>
+ציין את כתובת האתר המלאה אשר Moodle יופעל ממנה. אם שרת האתר שלך ניתן לגישה דרך Url-ים מרובים בחר באחד הטבעיים בו הסטודנטים ישתמשו. אל תכיל בתוך הכתובת זנב של לוכסן.</p>
+<p><b>ספריית Moodle </b>
+ציין את הנתיב הספרייה המלא עבור התקנה זו. שים לב כי כי האותיות הקטנות או גדולות נכונות.
+<p><b>ספריית הנתונים:</b>
+תצטרך למצוא מיקום עבור שמירת קבצים שהועלו לאתר Moodle שלך. ספרייה זו חייבת להיות בעלת הרשאת כתיבה וקריאה ע\"י משתמש שרת האתר (בדרך כלל \'nobody\' או \'apache\'), אולם אסור שתהיה ברת גישה מהרשת.';
 $string['directorysettingshead'] = 'אנא אשר את מיקומי התקנת Moodle זה.';
 $string['directorysettingssub'] = '<p> אנא וודא את מיקומי התקנת Moodle זו.</p>
 <p><b>כתובת האתר:</b>
@@ -122,6 +155,7 @@ $string['downloadlanguagenotneeded'] = 'אתה יכול להמשיך את תהל
 $string['downloadlanguagesub'] = 'כעת יש באפשרותך להוריד חבילת שפה ולהמשיך את תהליך ההתקנה עם שפה זו.
 <br/><br/>
 אם אינך מצליח להוריד את חבילת השפה, תהליך ההתקנה ימשיך בשפה האנגלית (כאשר תהליך ההתקנה הסתיים, תיהיה לך את האפשרות להוריד ולהתקין אילו חבילות שפה נוספות שתחפוץ).';
+$string['doyouagree'] = 'האם קראת והבנת תנאים אלו?';
 $string['environmenterrortodo'] = 'אתה חייב לפתור את כל הבעיות (השגיאות) הסביבתיות הנמצאות למעלה לפני המשך הליך התקנת גירסה זו של Moodle.';
 $string['environmenthead'] = 'בודק את הסביבה שלך...';
 $string['environmentrecommendcustomcheck'] = 'אם בדיקה זו נכשלת, היא מצביע על בעיה פוטנציאלית.';
@@ -136,6 +170,9 @@ $string['error'] = 'טעות';
 $string['fail'] = 'כישלון';
 $string['fileuploads'] = 'העלאת קבצים';
 $string['fileuploadserror'] = 'חייב לאפשר זאת';
+$string['fileuploadshelp'] = '<p> העלאת קובץ נראה כמנוטרלת בשרת שלך.</p>
+<p> Moodle יכול עדיין להיות מותקן, אך בלי יכולת זו לא תוכל להעלות קבצי קורסים או תמונות פרופילי משתמש חדשות.</p>
+<p> בכדי לאפשר את תכונה זו של העלאת קבצים (בניהול המערכת שלך), תצטרך  לערוך את קובץ php.ini ולשנות את המשתנה <b> file_uploads</b> ל-1 </p>';
 $string['gdversion'] = 'גרסת GD';
 $string['gdversionerror'] = 'ספריית GD אמורה לפעול וליצור תמונות';
 $string['gdversionhelp'] = '<p> כנראה שלשרת שלך אין GD מותקן.</p>
@@ -145,16 +182,39 @@ GD היא ספרייה אשר נדרשת ע\"י PHP לאפשר ל-Moodle להפ�
 <p> תחת Windows תוכל בפשטות לערוך את קובץ ה-php.ini ולהסיר את הערה תחץ הפרמטר של php_gd2.dll. </p>';
 $string['globalsquotes'] = 'טיפול לא בטוח של משתנים גלובלים';
 $string['globalsquoteserror'] = 'תקן את הגדרות ה-PHP שלך: נטרל את register_globals  ו/או אפשר את magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>צירוף נטרול של Magic Quotes GPC ואיפשור Register Globals בו זמנית לא מומלץ.</p>
+<p>
+ההגדרה המומלצת היא
+<b>
+magic_quotes_gpc = On
+</b> ו- 
+<b>
+register_globals = Off
+</b>
+בקובץ ה-php.ini שלך
+</p>
+<p> אם אין לך גישה לקובץ ה-php.ini שלך יתכן ותוכל להחליף את השורה הבאה בקובץ שנקרא .htaccess בתוך ספריית ה-Moodle שלך.
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = 'עזרה';
 $string['iconvrecommended'] = 'התקנת ספריית ICONV האופציונלית מומלצת ביותר על-מנת לשפר את ביצועי האתר, במיוחד אם האתר נתמך בשפות לא-לטיניות.';
 $string['info'] = 'מידע';
 $string['installation'] = 'התקנה';
+$string['invalidemail'] = 'כתובת דואר אלקטרוני לא תקפה';
 $string['invalidmd5'] = 'md5 לא חוקי';
+$string['invalidurl'] = 'URL לא חוקי';
 $string['langdownloaderror'] = 'לצערינו השפה \"$a\" לא הותקנה. תהליך ההתקנה ימשיך באנגלית.';
 $string['langdownloadok'] = 'השפה \"$a\" הותקנה בהצלחה. תהליך ההתקנה ימשיך בשפה זו.';
 $string['language'] = 'חבילת שפה';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'חייב לנטרל זאת';
+$string['magicquotesruntimehelp'] = '<p>רצוי שמשתנה Magic quotes runtime  יהיה כבוי עבור Moodle בכדי שיעבור כהלכה.
+</p>
+<p> בד\"כ משתנה זה כבוי כברירת מחדל... ראה בהגדות קובץ ה-php.ini את משתנה זה <b> magic_quotes_runtime </b>
+<p> אם אין לך גישה לקובץ ה-php.ini, תוכל להחליף את השורה הבאה בקובץ שנקרא .htaccess בתוך ספריית ה-Moodle שלך.
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'מתקין את ספריית MBSTRING האופציונלית מומלצת ביותר על-מנת לשפר את ביצועי האתר, במיוחד אם האתר נתמך בשפות לא-לטיניות.';
 $string['memorylimit'] = 'גבול הזיכרון';
 $string['memorylimiterror'] = 'משתנה גבול הזיכרון (memory limit) של ה-PHP הוגדר לרמה נמוכה... תוכל להגדיר זאת יותר מאוחר';
@@ -213,14 +273,23 @@ $string['postgres7'] = 'PostgreSQL (postgres7';
 $string['previous'] = 'קודם';
 $string['qtyperqpwillberemoved'] = 'במהלך השדרוג, סוג שאלת ה-RQP תוסר. לא השתמשת בסוג השאלה, כך שאינך אמור להיתקל בבעיות כלשהן.';
 $string['qtyperqpwillberemovedanyway'] = 'במהלך השדרוג, סוג שאלת ה-RQP תוסר. יש לך כמה שאלות RQP במסד הנתונים ,והם יופסקו לעבוד אלא אם כן תתקין מחדש את הקוד מ- http://moodle.org/mod/data/view.php?d=13&amp;rid=797 לפני שתמשיך עם השדרוג.';
+$string['releasenoteslink'] = 'למידע על גירסה זו של Moodle, אנא בקר ב <a target=\"new\" href=\"$a\"> שחרור גירסה </a>';
 $string['remotedownloadnotallowed'] = 'לא מורשה הורדה של רכיבים לשרת שלך (פונקצייתallow_url_fopen מנוטרלת).<br /><br />עליך להוריד את קובץ ה<a href=\"$a->url\">$a->url</a> באופן ידני, להעתיק אותו לתוך \"$a->dest\" בשרת שלך, ולפתוח אותו שם.';
 $string['report'] = 'דוח';
 $string['restricted'] = 'מוגבל';
 $string['safemode'] = 'מצב בטוח (Safe Mode)';
 $string['safemodeerror'] = 'ל-Moodle קיימת בעיה עם איפשור מצב הבטוח (safe mode)';
+$string['safemodehelp'] = '<p>
+קיימות מספר בעיות ל-Moodle כאשר ה\"מצב הבטוח\" דלוק, כנראה לא תיהיה אפשרות ליצור קבצים חדשים. </p>
+<p> מצב בטוח (safe mode) מאופשר בד\"כ ע\"י מארחי שרתים ציבוריים פרנואידים, כך שתצטרך כנראה להחליף את חברת שרת המחשב המארח של אתר ה-Moodle שלך ולמצוא אחת חדשה.
+<p> תוכל להמשיך בהתקנה אם תרצה, אך צפה לבעיות בהמשך.';
 $string['serverchecks'] = 'בדיקות שרת';
 $string['sessionautostart'] = 'פתיחת מושב אוטומטית';
 $string['sessionautostarterror'] = 'חייב לכבות זאת';
+$string['sessionautostarthelp'] = '<p>
+Moodle דורש תמיכת מושב ולא יכול לעבוד בלעדיו.
+<p>
+מושבים (sessions) ניתנים לאיפשור בקובץ php.ini... חפש את פרמטר session.auto_start';
 $string['skipdbencodingtest'] = 'דלג על DB Encoding Test';
 $string['status'] = 'מצב';
 $string['thischarset'] = 'UTF-8';

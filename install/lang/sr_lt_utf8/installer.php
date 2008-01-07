@@ -11,9 +11,12 @@
 
 $string['admindirerror'] = 'Specificirani administratorski direktorijum je netačan';
 $string['admindirname'] = 'Administratorski direktorijum';
+$string['admindirsetting'] = 'Poneki Web serveri koriste /admin kao specijalni URL za pristup raznim podešavanjima ili nečem drugom. Nažalost to je u konfliktu sa standardnom Moodle lokacijom za administratorske stranice. Možete rešiti problem preimenovanjem administratorskog direktorijuma u Vašoj instalaciji, i navođenjem tog novog naziva ovde. Na primer: <br /> <br /><b>moodleadmin</b><br /> <br />
+Ovo podešavanje će prepraviti administratorske linkove u Moodle sistemu.';
 $string['admindirsettinghead'] = 'Podešavanje administratorskog direktorijuma';
 $string['admindirsettingsub'] = 'Poneki Web serveri koriste /admin kao specijalni URL za pristup raznim podešavanjima ili nečem drugom. Nažalost to je u konfliktu sa standardnom Moodle lokacijom za administratorske stranice. Možete rešiti problem preimenovanjem administratorskog direktorijuma u Vašoj instalaciji, i navođenjem tog novog naziva ovde. Na primer: <br /> <br /><b>moodleadmin</b><br /> <br />
 Ovo podešavanje će prepraviti administratorske linkove u Moodle sistemu.';
+$string['availablelangs'] = 'Dostupni jezički paketi';
 $string['bypassed'] = 'Izbegnuto';
 $string['cannotcreatelangdir'] = 'Nije moguće kreiranje direktorijuma jezika';
 $string['cannotcreatetempdir'] = 'Nije moguće kreiranje privremenog direktorijuma.';
@@ -25,20 +28,31 @@ $string['cannotsavezipfile'] = 'Nije moguće čuvanje arhive.';
 $string['cannotunzipfile'] = 'Nije moguće raspakivanje datoteke.';
 $string['caution'] = 'Oprez';
 $string['check'] = 'Proveri';
+$string['chooselanguage'] = 'Izaberite jezik';
 $string['chooselanguagehead'] = 'Izaberite jezik';
 $string['chooselanguagesub'] = 'Molimo izaberite jezik koji će se koristiti samo tokom instalacije. Kasnije ćete moći da izaberete jezička podešavanja na nivou sajta i korisnika.';
 $string['closewindow'] = 'Zatvorite ovaj prozor';
+$string['compatibilitysettings'] = 'Provera Vaših PHP podešavanja...';
 $string['compatibilitysettingshead'] = 'Provera Vaših PHP podešavanja...';
 $string['compatibilitysettingssub'] = 'Vaš server bi trebao proći sve ove testove da bi Moodle na njemu uspešno funkcionisao';
 $string['componentisuptodate'] = 'Komponenta je dostupna u svojoj najnovijoj verziji.';
 $string['configfilenotwritten'] = 'Instalacioni skript nije bio u mogućnosti da automatski kreira datoteku config.php koja bi sadržavala Vaša odabrana podešavanja, verojatno zbog toga što nema prava na pisanje (menjanje sadržaja) u Vašem Moodle direktorijumu. Ako to želite, možete ručno kopirati kod u datoteku config.php u osnovnom direktorijumu Vaše Moodle instalacije.';
 $string['configfilewritten'] = 'config.php je uspešno kreiran';
+$string['configurationcomplete'] = 'Konfiguracija je završena';
 $string['configurationcompletehead'] = 'Konfiguracija je završena';
 $string['configurationcompletesub'] = 'Moodle je pokušao da sačuva Vašu konfiguraciju u datoteci smeštenoj u korenskom direktorijumu Moodle instalacije.';
 $string['continue'] = 'Nastavak';
 $string['curlrecommended'] = 'Instaliranje opcione Curl biblioteke je vrlo preporučljivo, jer je ona neophodna za uspešno korišćenje funkcija za umrežavanje.';
 $string['customcheck'] = 'Druge provere';
 $string['database'] = 'Baza podataka';
+$string['databasecreationsettings'] = 'Sada je potrebno konfigurisati podešavanja baze podataka u kojoj će se čuvati najveći deo Moodle podataka. Ta baza podataka će biti kreirana automatski prilikom instalacije, sa podešavanjima specificiranim ispod. <br />
+<br /> <br />
+<b>Tip:</b> postavljeno na \"mysql\" prilikom instalacije<br />
+<b>Server:</b> postavljeno na \"localhost\" prilikom instalacije<br />
+<b>Naziv:</b> naziv baze podataka, npr. moodle<br />
+<b>Korisnik:</b> postavljeno na \"root\" prilikom instalacije<br />
+<b>Lozinka:</b> Vaša lozinka za pristup bazi podataka<br />
+<b>Prefiks tabela:</b> opcioni prefiks koji će se koristiti u nazivima svih tabela';
 $string['databasecreationsettingshead'] = 'Sada je potrebno konfigurisati podešavanja baze podataka u kojoj će se čuvati najveći deo Moodle podataka. Ta baza podataka će biti kreirana automatski prilikom instalacije, sa podešavanjima specificiranim ispod.';
 $string['databasecreationsettingssub'] = '<b>Tip:</b> postavljeno na \"mysql\" prilikom instalacije<br />
 <b>Server:</b> postavljeno na \"localhost\" prilikom instalacije<br />
@@ -46,6 +60,14 @@ $string['databasecreationsettingssub'] = '<b>Tip:</b> postavljeno na \"mysql\" p
 <b>Korisnik:</b> postavljeno na \"root\" prilikom instalacije<br />
 <b>Lozinka:</b> Vaša lozinka za bazu podataka<br />
 <b>Prefiks tabela:</b> opcioni prefiks koji će se koristiti u nazivima svih tabela';
+$string['databasesettings'] = 'Sada je potrebno konfigurisati bazu podataka u kojoj će se čuvati veći deo Moodle podataka. Ta baza podataka mora već biti kreirana, kao i korisničko ime i lozinka za pristup istoj.<br/>
+<br /> <br />
+<b>Tip:</b> mysql ili postgres7<br />
+<b>Server:</b> npr. localhost ili ime.servera.yu<br />
+<b>Naziv:</b> naziv baze podataka, npr. moodle<br />
+<b>Korisnik:</b> korisničko ime za pristup bazi podataka<br />
+<b>Lozinka:</b> lozinka za pristup bazi podataka<br />
+<b>Prefiks tabela:</b>opcioni prefiks koji će se koristiti u nazivima svih tabela';
 $string['databasesettingshead'] = 'Sada je potrebno konfigurisati bazu podataka u kojoj će se čuvati veći deo Moodle podataka. Ta baza podataka mora već biti kreirana, kao i korisničko ime i lozinka za pristup istoj.';
 $string['databasesettingssub'] = '<b>Tip:</b> mysql ili postgres7<br />
 <b>Server:</b> npr. localhost ili db.isp.com<br />
@@ -100,12 +122,25 @@ $string['datarooterror'] = '\'Direktorijum podataka\' koji ste naveli ne može b
 $string['dbconnectionerror'] = 'Nemoguće je uspostaviti vezu sa bazom podataka koju ste naveli. Molimo proverite podešavanja baze podataka.';
 $string['dbcreationerror'] = 'Greška pri kreiranju baze podataka. Nije bilo moguće kreirati bazu navedenog imena uz zadata podešavanja';
 $string['dbhost'] = 'Server';
+$string['dbpass'] = 'Lozinka';
 $string['dbprefix'] = 'Prefiks tabele';
 $string['dbtype'] = 'Tip';
 $string['dbwrongencoding'] = 'Izabrana baza podataka radi pod nepreporučljivim kodnim rasporedom ($a). Bilo bi bolje da umesto nje koristite Unicode (UTF-8) kodiranu bazu. U svakom slučaju, možete izbeći ovaj test biranjem opcije \"Preskočiti test kodnog rasporeda baze podataka\" ispod, ali se u budućnosti možete suočiti sa problemima pri korišćenju izabrane baze.';
 $string['dbwronghostserver'] = 'Morate pratiti pravila \"Servera\" kao što je objašnjeno iznad.';
 $string['dbwrongnlslang'] = 'NLS_LANG promenljiva okruženja Vašeg web servera mora da koristi AL32UTF8 skup karaktera. Pogledajte PHP dokumentaciju o tome kako da pravilno podesite OCI8.';
 $string['dbwrongprefix'] = 'Morate pratiti pravila \"Prefiksi tabela\" kao što je gore objašnjeno.';
+$string['directorysettings'] = '<p>Molimo potvrdite lokacije ove Moodle instalacije</p>
+
+<p><b>Web adresa:</b>
+Specificirajte potpunu web adresu na kojoj će se pristupati Moodle sistemu.
+Ako je Vašem web sajtu moguće pristupiti preko više URL-ova, izaberite onaj koji će najverovatnije koristiti Vaši studenti. Nemojte navoditi krajnju kosu crtu.</p>
+
+<p><b>Moodle direktorijum:</b>
+Specificirajte potpunu putanju do ove instalacije
+Vodite računa o velikim i malim slovima.</p>
+
+<p><b>Direktorijum podataka:</b>
+Morate odrediti mesto na kom će Moodle čuvati postavljene datoteke. Korisnik web servera (obično \'niko\' ili \'apache\') bi morao imati mogućnost da čita podatke iz tog direktorijuma, ali i da ih u njega upisuje, ali oni ne bi trebali biti dostupni direktno preko web-a.</p>';
 $string['directorysettingshead'] = 'Molimo potvrdite lokacije ove Moodle instalacije';
 $string['directorysettingssub'] = '<b>Web adresa:</b>
 Specificirajte potpunu web adresu na kojoj će se pristupati Moodle sistemu.
@@ -127,6 +162,7 @@ $string['downloadlanguagebutton'] = 'Preuzmi \"$a\" jezički paket';
 $string['downloadlanguagehead'] = 'Preuzmi jezički paket';
 $string['downloadlanguagenotneeded'] = 'Možete nastaviti proces instalacije korišćenjem podrazumevanog jezičkog paketa, \"$a\".';
 $string['downloadlanguagesub'] = 'Sada imate mogućnost preuzimanja željenog jezičkog paketa i nastavka instalacionog procesa na tom jeziku.<br /><br />Ako niste u mogućnosti da preuzmete jezički paket, instalacioni proces će se nastaviti na engleskom jeziku. (Kada se instalacija završi, imaćete mogućnost da preuzmete i instalirate dodatne jezičke pakete.)';
+$string['doyouagree'] = 'Jeste li pročitali navedene uslove i razumeli ih u potpunosti?';
 $string['environmenterrortodo'] = 'Morate rešiti sve probleme okruženja (greške) navedene iznad pre nastavka instalacije ove Moodle verzije!';
 $string['environmenthead'] = 'Proveravanje Vašeg okruženja...';
 $string['environmentrecommendcustomcheck'] = 'ukoliko ovaj test ne prođe, postoji mogućnost pojavljivanja potencijalnog problema.';
@@ -141,6 +177,11 @@ $string['error'] = 'Greška';
 $string['fail'] = 'Nije prošlo';
 $string['fileuploads'] = 'Postavljanje datoteka';
 $string['fileuploadserror'] = 'Ova opcija bi trebala biti uključena';
+$string['fileuploadshelp'] = '<p>Postavljanje datoteka je izgleda nedostupno na Vašem serveru.</p>
+
+<p>Moodle još uvek može biti instaliran, ali bez ove mogućnosti, nećete biti u mogućnosti da učitavate datoteke kursa ili nove slike za korisničke profile.</p>
+
+<p>Da učitavanje datoteke bude dostupno Vi (ili Vaš sistem administrator) treba da promenite php.ini datoteku na Vašem sistemu i postavite podešavanje za <b>file_uploads</b> na \'1\'.</p>';
 $string['gdversion'] = 'GD verzija';
 $string['gdversionerror'] = 'GD datoteka sa izvornim kodom trebala bi prezentirati proces i kreirati slike';
 $string['gdversionhelp'] = '<p>Na Vašem serveru izgleda nije instaliran GD.</p>
@@ -152,16 +193,32 @@ $string['gdversionhelp'] = '<p>Na Vašem serveru izgleda nije instaliran GD.</p>
 <p>Pod Windows-om obično možete izmeniti php.ini i skinuti oznaku komentara u liniji koja se odnosi na php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Nesigurno rukovanje globalnim varijablama';
 $string['globalsquoteserror'] = 'Popravite svoja PHP podešavanja: onemogućite register_globals i/ili omogućite magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Kombinacija istovremeno onemogućenog podešavanja Magic Quotes GPC i omogućenog Register Globals nije preporučljiva.</p>
+
+<p>Preporučeno podešavanje je <b>magic_quotes_gpc = On</b> i <b>register_globals = Off</b> u Vašoj datoteci php.ini</p>
+
+<p>Ako nemate pristup svojoj php.ini datoteci, možda možete da stavite sledeći red u datoteku pod nazivom .htaccess u Vašem Moodle direktorijumu:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = 'Pomoć';
 $string['iconvrecommended'] = 'Instaliranje opcione ICONV biblioteke je vrlo preporučljivo u cilju unapređivanja performansi sajta, pogotovo ako Vaš sajt podržava jezike koji ne koriste latinično pismo.';
 $string['info'] = 'Informacija';
 $string['installation'] = 'Instalacija';
+$string['invalidemail'] = 'Nevažeća adresa elektronske pošte';
 $string['invalidmd5'] = 'Nevalidna md5 datoteka';
+$string['invalidurl'] = 'Nevalidni url';
 $string['langdownloaderror'] = 'Nažalost jezik \"$a\" nije instaliran. Instalacioni proces će biti nastavljen na engleskom jeziku.';
 $string['langdownloadok'] = 'Jezik \"$a\" je uspešno instaliran. Instalacioni proces će biti nastavljen na ovom jeziku.';
 $string['language'] = 'Jezik';
 $string['magicquotesruntime'] = 'Magic Quotes vreme izvršavanja';
 $string['magicquotesruntimeerror'] = 'Ova opcija bi trebala biti isključena';
+$string['magicquotesruntimehelp'] = '<p>Magic Quotes vreme izvršavanja bi trebalo isključiti da Moodle propisno funkcioniše.</p>
+
+<p>Normalno ovo je isključeno po podrazumevanoj vrednosti... pogledajte podešavanje <b>magic_quotes_runtime</b> u svojoj php.ini datoteci.</p>
+
+<p>Ako nemate pristup php.ini datoteci, možda možete da stavite sledeći red u datoteku pod nazivom .htaccess koja se nalazi u Vašem Moodle direktorijumu: <blocquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'Instaliranje opcione MBSTRING biblioteke je vrlo preporučljivo u cilju unapređivanja performansi sajta, pogotovo ako Vaš sajt podržava jezike koji ne koriste latinično pismo.';
 $string['memorylimit'] = 'Ograničenje memorije';
 $string['memorylimiterror'] = 'PHP ograničenje memorije je podešeno na prilično nizak nivo... kasnije može doći do problema.';
@@ -210,14 +267,23 @@ $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Prethodni';
 $string['qtyperqpwillberemoved'] = 'Tokom nadogradnje, RQP tipovi pitanja biće uklonjeni. Nećete koristiti ovaj tip pitanja, tako da ne očekujte probleme u vezi s tim.';
 $string['qtyperqpwillberemovedanyway'] = 'Tokom nadogradnje biće uklonjen RQP tip pitanja. Kako imate neka RQP pitanja u svojoj bazi, preporučuje se da ponovo instalirate dodatak sa http://moodle.org/mod/data/view.php?d=13&amp;rid=797 pre nastavka nadogradnje da bi ona mogla i dalje nesmetano da se koriste.';
+$string['releasenoteslink'] = 'Za informacije o ovoj Moodle verziji, molimo pogledajte online <a target=\"_new\" href=\"$a\">Beleške o izdanju</a>';
 $string['remotedownloadnotallowed'] = 'Nije dozvoljeno preuzimanje komponenti na Vaš server (opcija allow_url_fopen je onemogućena).<br /><br />Morate ručno preuzeti datoteku <a href=\"$a->url\">$a->url</a>, kopirati je u \"$a->dest\" na svom serveru i tamo je raspakovati.';
 $string['report'] = 'Izveštaj';
 $string['restricted'] = 'Ograničeno';
 $string['safemode'] = 'Bezbedan mod';
 $string['safemodeerror'] = 'Moodle može imati problema sa uključenim bezbednim modom rada';
+$string['safemodehelp'] = '<p>Moodle može imati različite probleme sa uključenim bezbednim modom rada, od kojih je jedan od bitnijih taj da najverovatnije neće imati dozvolu da kreira nove datoteke.</p>
+   
+<p>Bezbedni mod rada je obično jedino dozvoljen na paranoičnim javnim Web serverima, tako da možete prosto naći web server kod neke druge kuće za Vaš Moodle sajt.</p>
+   
+<p>Možete pokušati nastaviti sa instalacijom ako želite, ali očekujte nekoliko problema kasnije.</p>';
 $string['serverchecks'] = 'Provere servera';
 $string['sessionautostart'] = 'Automatski početak akcije';
 $string['sessionautostarterror'] = 'Ova opcija bi trebala biti isključena';
+$string['sessionautostarthelp'] = '<p>Moodle zahteva podršku za sesije i neće funcionisati bez nje.</p>
+
+<p>Rad sa sesijama se može omogućiti u php.ini datoteci... potražite session.auto_start parametar.</p>';
 $string['skipdbencodingtest'] = 'Preskočiti test kodnog rasporeda baze podataka';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
