@@ -149,7 +149,7 @@ function include_help_for_each_module($file, $langs, $helpdir) {
         $strmodulename = get_string('modulename', $mod->name);
         $modulebyname[$strmodulename] = $mod;
     }
-    ksort($modulebyname);
+    ksort($modulebyname, SORT_LOCALE_STRING);
 
     foreach ($modulebyname as $mod) {
         foreach ($langs as $lang) {
