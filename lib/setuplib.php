@@ -266,6 +266,9 @@ function set_dbfamily() {
  */
 function preconfigure_dbconnection() {
 
+    if (defined('ADODB_ASSOC_CASE')) { 
+        return; // when in cli mode, it's possible for this to be called twice (eg cli installer)
+    }
     global $CFG;
 
 /// Define dbfamily

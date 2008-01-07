@@ -2349,6 +2349,16 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     $heading = format_string($heading); // Fix for MDL-8582
 
+    if (defined('CLI_UPGRADE') && CLI_UPGRADE ) {
+        $output = $heading;
+        if ($return) {
+            return $output;
+        } else {
+            console_write(STDOUT,$output,'',false);
+            return;
+        }
+    }
+
 /// This makes sure that the header is never repeated twice on a page
     if (defined('HEADER_PRINTED')) {
         debugging('print_header() was called more than once - this should not happen.  Please check the code for this page closely. Note: error() and redirect() are now safe to call after print_header().');
@@ -3787,18 +3797,33 @@ function print_headline($text, $size=2, $return=false) {
  * @param int $size The size to set the font for text display.
  */
 function print_heading($text, $align='', $size=2, $class='main', $return=false) {
+    global $verbose;
     if ($align) {
         $align = ' style="text-align:'.$align.';"';
     }
     if ($class) {
         $class = ' class="'.$class.'"';
     }
+    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
     $output = "<h$size $align $class>".stripslashes_safe($text)."</h$size>";
+    } else if ( CLI_UPGRADE ) {
+        $output = stripslashes_safe($text);
+        if ($size == 1) {
+            $output = '=>'.$output;
+        } else if ($size == 2) {
+            $output = '-->'.$output;
+        }
+    }
 
     if ($return) {
         return $output;
     } else {
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
         echo $output;
+        } else if (CLI_UPGRADE && ($verbose > CLI_NO) ) {
+            console_write(STDOUT,$output,'',false);
+            print_newline();
+        }
     }
 }
 
@@ -5730,6 +5755,11 @@ function error ($message, $link='') {
     global $CFG, $SESSION, $THEME;
     $message = clean_text($message);   // In case nasties are in here
 
+    if (defined('CLI_UPGRADE') || CLI_UPGRADE) {
+        console_write(STDERR,$message,'',false);
+        die ;
+    }
+
     if (defined('FULLME') && FULLME == 'cron') {
         // Errors in cron should be mtrace'd.
         mtrace($message);
@@ -6185,13 +6215,19 @@ function redirect($url, $message='', $delay=-1) {
  * @param bool $return whether to return an output string or echo now
  */
 function notify($message, $style='notifyproblem', $align='center', $return=false) {
+    global $db;
+
     if ($style == 'green') {
         $style = 'notifysuccess';  // backward compatible with old color system
     }
 
     $message = clean_text($message);
-
+    if(!defined('CLI_UPGRADE')||!CLI_UPGRADE) {
     $output = '<div class="'.$style.'" style="text-align:'. $align .'">'. $message .'</div>'."\n";
+    } else if (CLI_UPGRADE && $db->debug) {
+        $output = '++'.$message.'++';
+        return ;
+    }
 
     if ($return) {
         return $output;

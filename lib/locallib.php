@@ -90,26 +90,43 @@ function upgrade_local_db($continueto) {
 
     if ($local_version > $CFG->local_version) { // upgrade!
         $strdatabaseupgrades = get_string('databaseupgrades');
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
         print_header($strdatabaseupgrades, $strdatabaseupgrades,
             build_navigation(array(array('name' => $strdatabaseupgrades, 'link' => null, 'type' => 'misc'))), '', upgrade_get_javascript());
+        }
 
         upgrade_log_start();
         require_once ($CFG->dirroot .'/local/db/upgrade.php');
 
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
         $db->debug=true;
+        }
         if (xmldb_local_upgrade($CFG->local_version)) {
+            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             $db->debug=false;
+            }
             if (set_config('local_version', $local_version)) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradelocal', '', $local_version), 'notifysuccess');
+                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                 print_continue($continueto);
                 print_footer('none');
                 exit;
+                } else if (CLI_UPGRADE && ($interactive > CLI_SEMI) ) {
+                    console_write(STDOUT,'askcontinue');
+                    if (read_boolean()){
+                        return ;
+                    }else {
+                        console_write(STDERR,'','',false);
+                    }
+                }
             } else {
                 error('Upgrade of local database customisations failed! (Could not update version in config table)');
             }
         } else {
+            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             $db->debug=false;
+            }
             error('Upgrade failed!  See local/version.php');
         }
 

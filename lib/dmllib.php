@@ -65,7 +65,9 @@ function execute_sql($command, $feedback=true) {
     $olddebug = $db->debug;
 
     if (!$feedback) {
+        if ( !defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
         $db->debug = false;
+    }
     }
 
     if ($CFG->version >= 2006101007) { //Look for trailing ; from Moodle 1.7.0
@@ -97,7 +99,11 @@ function execute_sql($command, $feedback=true) {
         return true;
     } else {
         if ($feedback) {
+            if ( defined('CLI_UPGRADE') && CLI_UPGRADE ) {
+                notify (get_string('error'));
+            } else {
             notify('<strong>' . get_string('error') . '</strong>');
+            }
         }
         // these two may go to difference places
         debugging($db->ErrorMsg() .'<br /><br />'. s($command));

@@ -49,7 +49,7 @@ function upgrade_blocks_savepoint($result, $version, $type) {
  * @param string $return The url to prompt the user to continue to
  */
 function upgrade_plugins($type, $dir, $return) {
-    global $CFG, $db;
+    global $CFG, $db, $interactive;
 
 /// Let's know if the header has been printed, so the funcion is being called embedded in an outer page
     $embedded = defined('HEADER_PRINTED');
@@ -123,7 +123,9 @@ function upgrade_plugins($type, $dir, $return) {
             $updated_plugins = true;
             upgrade_log_start();
             print_heading($dir.'/'. $plugin->name .' plugin needs upgrading');
-            $db->debug = true;
+            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
+                $db->debug = true;
+            }
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
             if ($CFG->$pluginversion == 0) {    // It's a new install of this plugin
@@ -137,8 +139,9 @@ function upgrade_plugins($type, $dir, $return) {
                 } else {
                     $status = true;
                 }
-
-                $db->debug = false;
+                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
+                    $db->debug = false;
+                }
             /// Continue with the instalation, roles and other stuff
                 if ($status) {
                 /// OK so far, now update the plugins record
@@ -174,7 +177,9 @@ function upgrade_plugins($type, $dir, $return) {
             /// First, the old function if exists
                 $oldupgrade_status = true;
                 if ($oldupgrade && function_exists($oldupgrade_function)) {
-                    $db->debug = true;
+                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
+                        $db->debug = true;
+                    }
                     $oldupgrade_status = $oldupgrade_function($CFG->$pluginversion);
                 } else if ($oldupgrade) {
                     notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
@@ -184,14 +189,17 @@ function upgrade_plugins($type, $dir, $return) {
             /// Then, the new function if exists and the old one was ok
                 $newupgrade_status = true;
                 if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
-                    $db->debug = true;
+                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
+                        $db->debug = true;
+                    }
                     $newupgrade_status = $newupgrade_function($CFG->$pluginversion);
                 } else if ($newupgrade) {
                     notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                              $fullplug . '/db/upgrade.php');
                 }
-
-                $db->debug=false;
+                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
+                    $db->debug=false;
+                }
             /// Now analyze upgrade results
                 if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
                     // OK so far, now update the plugins record
@@ -205,7 +213,9 @@ function upgrade_plugins($type, $dir, $return) {
                     notify('Upgrading '. $plugin->name .' from '. $CFG->$pluginversion .' to '. $plugin->version .' FAILED!');
                 }
             }
-            echo '<hr />';
+            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
+                echo '<hr />';
+            }
         } else {
             upgrade_log_start();
             error('Version mismatch: '. $plugin->name .' can\'t downgrade '. $CFG->$pluginversion .' -> '. $plugin->version .' !');
@@ -215,9 +225,18 @@ function upgrade_plugins($type, $dir, $return) {
     upgrade_log_finish();
 
     if ($updated_plugins && !$embedded) {
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
         print_continue($return);
         print_footer('none');
         die;
+        } else if (CLI_UPGRADE && ($interactive > CLI_SEMI )) {
+            console_write(STDOUT,'askcontinue');
+            if (read_boolean()){
+                return ;
+            }else {
+                console_write(STDERR,'','',false);
+            }
+        }
     }
 }
 
@@ -231,7 +250,7 @@ function upgrade_plugins($type, $dir, $return) {
  */
 function upgrade_activity_modules($return) {
 
-    global $CFG, $db;
+    global $CFG, $db, $interactive;
 
     if (!$mods = get_list_of_plugins('mod') ) {
         error('No modules installed!');
@@ -311,6 +330,7 @@ function upgrade_activity_modules($return) {
                             upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
                 }
                 upgrade_log_start();
+
                 print_heading($module->name .' module needs upgrading');
 
             /// Run de old and new upgrade functions for the module
@@ -320,7 +340,9 @@ function upgrade_activity_modules($return) {
             /// First, the old function if exists
                 $oldupgrade_status = true;
                 if ($oldupgrade && function_exists($oldupgrade_function)) {
+                    if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE) {
                     $db->debug = true;
+                    }
                     $oldupgrade_status = $oldupgrade_function($currmodule->version, $module);
                     if (!$oldupgrade_status) {
                         notify ('Upgrade function ' . $oldupgrade_function .
@@ -334,14 +356,17 @@ function upgrade_activity_modules($return) {
             /// Then, the new function if exists and the old one was ok
                 $newupgrade_status = true;
                 if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
+                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                     $db->debug = true;
+                    }
                     $newupgrade_status = $newupgrade_function($currmodule->version, $module);
                 } else if ($newupgrade && $oldupgrade_status) {
                     notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                              $mod . ': ' . $fullmod . '/db/upgrade.php');
                 }
-
+                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                 $db->debug=false;
+                }
             /// Now analyze upgrade results
                 if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
                     // OK so far, now update the modules record
@@ -351,7 +376,9 @@ function upgrade_activity_modules($return) {
                     }
                     remove_dir($CFG->dataroot . '/cache', true); // flush cache
                     notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
+                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
                     echo '<hr />';
+                    }
                 } else {
                     notify('Upgrading '. $module->name .' from '. $currmodule->version .' to '. $module->version .' FAILED!');
                 }
@@ -371,14 +398,19 @@ function upgrade_activity_modules($return) {
 
         } else {    // module not installed yet, so install it
             if (!$updated_modules) {
+                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                 print_header($strmodulesetup, $strmodulesetup,
                         build_navigation(array(array('name' => $strmodulesetup, 'link' => null, 'type' => 'misc'))), '',
                         upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
             }
+            }
             upgrade_log_start();
             print_heading($module->name);
             $updated_modules = true;
+            // To avoid unnecessary output from the SQL queries in the CLI version
+            if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE ) {
             $db->debug = true;
+            }
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
         /// Both old .sql files and new install.xml are supported
@@ -389,7 +421,9 @@ function upgrade_activity_modules($return) {
                 $status = modify_database($fullmod .'/db/'. $CFG->dbtype .'.sql'); //Old method
             }
 
+            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             $db->debug = false;
+            }
 
         /// Continue with the installation, roles and other stuff
             if ($status) {
@@ -412,7 +446,9 @@ function upgrade_activity_modules($return) {
                     }
 
                     notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
+                    if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE ) {
                     echo '<hr />';
+                    }
                 } else {
                     error($module->name .' module could not be added to the module list!');
                 }
@@ -427,7 +463,6 @@ function upgrade_activity_modules($return) {
         if (function_exists($submoduleupgrade)) {
             $submoduleupgrade();
         }
-
 
     /// Run any defaults or final code that is necessary for this module
 
@@ -448,9 +483,18 @@ function upgrade_activity_modules($return) {
     upgrade_log_finish(); // finish logging if started
 
     if ($updated_modules) {
+        if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE ) {
         print_continue($return);
         print_footer('none');
         die;
+        } else if ( CLI_UPGRADE && ($interactive > CLI_SEMI) ) {
+            console_write(STDOUT,'askcontinue');
+            if (read_boolean()){
+                return ;
+            }else {
+                console_write(STDERR,'','',false);
+            }
+        }
     }
 }
 
@@ -554,7 +598,7 @@ function upgrade_get_javascript() {
     return $linktoscrolltoerrors;
 }
 
-function create_admin_user() {
+function create_admin_user($user_input=NULL) {
     global $CFG, $USER;
 
     if (empty($CFG->rolesactive)) {   // No admin user yet.
@@ -572,6 +616,9 @@ function create_admin_user() {
         $user->maildisplay  = 1;
         $user->timemodified = time();
 
+        if ($user_input) {
+            $user = $user_input;
+        }
         if (!$user->id = insert_record('user', $user)) {
             error('SERIOUS ERROR: Could not create admin user record !!!');
         }
@@ -596,7 +643,9 @@ function create_admin_user() {
         $USER->newadminuser = 1;
         load_all_capabilities();
 
+        if (!defined('CLI_UPGRADE')||!CLI_UPGRADE) {
         redirect("$CFG->wwwroot/user/editadvanced.php?id=$user->id");  // Edit thyself
+        }
     } else {
         error('Can not create admin!');
     }

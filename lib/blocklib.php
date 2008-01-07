@@ -1036,20 +1036,22 @@ function upgrade_blocks_db($continueto) {
 /// This function upgrades the blocks tables, if necessary
 /// It's called from admin/index.php
 
-    global $CFG, $db;
+    global $CFG, $db, $interactive;
 
     require_once ($CFG->dirroot .'/blocks/version.php');  // Get code versions
 
     if (empty($CFG->blocks_version)) {                  // Blocks have never been installed.
         $strdatabaseupgrades = get_string('databaseupgrades');
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
         print_header($strdatabaseupgrades, $strdatabaseupgrades,
                 build_navigation(array(array('name' => $strdatabaseupgrades, 'link' => null, 'type' => 'misc'))), '',
                 upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
-
+        }
         upgrade_log_start();
         print_heading('blocks');
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
         $db->debug=true;
-
+        }
     /// Both old .sql files and new install.xml are supported
     /// but we priorize install.xml (XMLDB) if present
         $status = false;
@@ -1058,15 +1060,25 @@ function upgrade_blocks_db($continueto) {
         } else if (file_exists($CFG->dirroot . '/blocks/db/' . $CFG->dbtype . '.sql')) {
             $status = modify_database($CFG->dirroot . '/blocks/db/' . $CFG->dbtype . '.sql'); //Old method
         }
-
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
         $db->debug = false;
+        }
         if ($status) {
             if (set_config('blocks_version', $blocks_version)) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradeblocks', '', $blocks_version), 'notifysuccess');
+                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                 print_continue($continueto);
                 print_footer('none');
                 exit;
+                } else if (CLI_UPGRADE && ($interactive > CLI_SEMI) ) {
+                    console_write(STDOUT,'askcontinue');
+                    if (read_boolean()){
+                        return ;
+                    }else {
+                        console_write(STDERR,'','',false);
+                    }
+                }
             } else {
                 error('Upgrade of blocks system failed! (Could not update version in config table)');
             }
@@ -1089,10 +1101,12 @@ function upgrade_blocks_db($continueto) {
 
     if ($blocks_version > $CFG->blocks_version) {       // Upgrade tables
         $strdatabaseupgrades = get_string('databaseupgrades');
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
         print_header($strdatabaseupgrades, $strdatabaseupgrades,
                 build_navigation(array(array('name' => $strdatabaseupgrades, 'link' => null, 'type' => 'misc'))), '', upgrade_get_javascript());
-
+        }
         upgrade_log_start();
+
         print_heading('blocks');
 
     /// Run de old and new upgrade functions for the module
@@ -1102,7 +1116,9 @@ function upgrade_blocks_db($continueto) {
     /// First, the old function if exists
         $oldupgrade_status = true;
         if ($oldupgrade && function_exists($oldupgrade_function)) {
+            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             $db->debug = true;
+            }
             $oldupgrade_status = $oldupgrade_function($CFG->blocks_version);
         } else if ($oldupgrade) {
             notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
@@ -1112,22 +1128,27 @@ function upgrade_blocks_db($continueto) {
     /// Then, the new function if exists and the old one was ok
         $newupgrade_status = true;
         if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
+            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             $db->debug = true;
+            }
             $newupgrade_status = $newupgrade_function($CFG->blocks_version);
         } else if ($newupgrade) {
             notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                      '/blocks/db/upgrade.php');
         }
-
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
         $db->debug=false;
+        }
     /// Now analyze upgrade results
         if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
             if (set_config('blocks_version', $blocks_version)) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradeblocks', '', $blocks_version), 'notifysuccess');
+                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                 print_continue($continueto);
                 print_footer('none');
                 exit;
+                }
             } else {
                 error('Upgrade of blocks system failed! (Could not update version in config table)');
             }
@@ -1146,7 +1167,7 @@ function upgrade_blocks_db($continueto) {
 //into blocks table or do all the upgrade process if newer
 function upgrade_blocks_plugins($continueto) {
 
-    global $CFG, $db;
+    global $CFG, $db, $interactive;
 
     $blocktitles = array();
     $invalidblocks = array();
@@ -1255,12 +1276,15 @@ function upgrade_blocks_plugins($continueto) {
             } else if ($currblock->version < $block->version) {
                 if (empty($updated_blocks)) {
                     $strblocksetup    = get_string('blocksetup');
+                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                     print_header($strblocksetup, $strblocksetup,
                             build_navigation(array(array('name' => $strblocksetup, 'link' => null, 'type' => 'misc'))), '',
                             upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
+                    }
                 }
                 $updated_blocks = true;
                 upgrade_log_start();
+
                 print_heading('New version of '.$blocktitle.' ('.$block->name.') exists');
                 @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
@@ -1271,7 +1295,9 @@ function upgrade_blocks_plugins($continueto) {
             /// First, the old function if exists
                 $oldupgrade_status = true;
                 if ($oldupgrade && function_exists($oldupgrade_function)) {
+                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                     $db->debug = true;
+                    }
                     $oldupgrade_status = $oldupgrade_function($currblock->version, $block);
                 } else if ($oldupgrade) {
                     notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
@@ -1281,14 +1307,17 @@ function upgrade_blocks_plugins($continueto) {
             /// Then, the new function if exists and the old one was ok
                 $newupgrade_status = true;
                 if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
+                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                     $db->debug = true;
+                    }
                     $newupgrade_status = $newupgrade_function($currblock->version, $block);
                 } else if ($newupgrade) {
                     notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                              $fullblock . '/db/upgrade.php');
                 }
-
+                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                 $db->debug=false;
+                }
             /// Now analyze upgrade results
                 if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
 
@@ -1310,7 +1339,9 @@ function upgrade_blocks_plugins($continueto) {
                 } else {
                     notify('Upgrading block '. $block->name .' from '. $currblock->version .' to '. $block->version .' FAILED!');
                 }
+                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                 echo '<hr />';
+                }
             } else {
                 upgrade_log_start();
                 error('Version mismatch: block '. $block->name .' can\'t downgrade '. $currblock->version .' -> '. $block->version .'!');
@@ -1332,18 +1363,26 @@ function upgrade_blocks_plugins($continueto) {
             if($conflictblock !== false && $conflictblock !== NULL) {
                 // Duplicate block titles are not allowed, they confuse people
                 // AND PHP's associative arrays ;)
+                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                 error('<strong>Naming conflict</strong>: block <strong>'.$block->name.'</strong> has the same title with an existing block, <strong>'.$conflictblock.'</strong>!');
+                } else if (CLI_UPGRADE) {
+                    error('Naming conflict: block "'.$block->name.'" has the same title with an existing block, "'.$conflictblock.'"!');
+                }
             }
             if (empty($updated_blocks)) {
                 $strblocksetup    = get_string('blocksetup');
+                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
                 print_header($strblocksetup, $strblocksetup,
                         build_navigation(array(array('name' => $strblocksetup, 'link' => null, 'type' => 'misc'))), '',
                         upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
             }
+            }
             $updated_blocks = true;
             upgrade_log_start();
             print_heading($block->name);
+            if (!defined('CLI_UPGRADE')||!CLI_UPGRADE) {
             $db->debug = true;
+            }
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
         /// Both old .sql files and new install.xml are supported
@@ -1356,8 +1395,9 @@ function upgrade_blocks_plugins($continueto) {
             } else {
                 $status = true;
             }
-
+            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             $db->debug = false;
+            }
             if ($status) {
                 if ($block->id = insert_record('block', $block)) {
                     $blockobj->after_install();
@@ -1368,7 +1408,9 @@ function upgrade_blocks_plugins($continueto) {
 
                     events_update_definition($component);
                     notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
+                    if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE) {
                     echo '<hr />';
+                    }
                 } else {
                     error($block->name .' block could not be added to the block list!');
                 }
@@ -1410,9 +1452,18 @@ function upgrade_blocks_plugins($continueto) {
     upgrade_log_finish();
 
     if (!empty($updated_blocks)) {
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
         print_continue($continueto);
         print_footer('none');
         die;
+        } else if ( CLI_UPGRADE && ($interactive > CLI_SEMI) ) {
+            console_write(STDOUT,'askcontinue');
+            if (read_boolean()){
+                return ;
+            }else {
+                console_write(STDERR,'','',false);
+            }
+        }
     }
 }
 

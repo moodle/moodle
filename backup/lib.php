@@ -326,7 +326,7 @@
     /// This function upgrades the backup tables, if necessary
     /// It's called from admin/index.php, also backup.php and restore.php
 
-        global $CFG, $db;
+        global $CFG, $db, $interactive;
 
         require_once ("$CFG->dirroot/backup/version.php");  // Get code versions
 
@@ -336,12 +336,16 @@
             $navlinks[] = array('name' => $strdatabaseupgrades, 'link' => null, 'type' => 'misc');
             $navigation = build_navigation($navlinks);
 
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             print_header($strdatabaseupgrades, $strdatabaseupgrades, $navigation, "",
                     upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
+        }
 
             upgrade_log_start();
             print_heading('backup');
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             $db->debug=true;
+        }
 
         /// Both old .sql files and new install.xml are supported
         /// but we priorize install.xml (XMLDB) if present
@@ -351,15 +355,25 @@
             } else if (file_exists($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.sql')) {
                 $status = modify_database($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.sql'); //Old method
             }
-
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             $db->debug = false;
+        }
             if ($status) {
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_version), "green");
+                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                     print_continue($continueto);
                     print_footer('none');
                     exit;
+                } else if ( CLI_UPGRADE && ($interative > CLI_SEMI ) ) {
+                    console_write(STDOUT,'askcontinue');
+                    if (read_boolean()){
+                        return ;
+                    }else {
+                        console_write(STDERR,'','',false);
+                    }
+                }
                 } else {
                     error("Upgrade of backup system failed! (Could not update version in config table)");
                 }
@@ -405,22 +419,34 @@
         /// Then, the new function if exists and the old one was ok
             $newupgrade_status = true;
             if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
+            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
                 $db->debug = true;
+            }
                 $newupgrade_status = $newupgrade_function($CFG->backup_version);
             } else if ($newupgrade) {
                 notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                         '/backup/db/upgrade.php');
             }
-
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
             $db->debug=false;
+        }
         /// Now analyze upgrade results
             if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_version), "green");
+                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
                     print_continue($continueto);
                     print_footer('none');
                     exit;
+                } else if (CLI_UPGRADE) {
+                    console_write(STDOUT,'askcontinue');
+                    if (read_boolean()){
+                        return ;
+                    }else {
+                        console_write(STDERR,'','',false);
+                    }
+                }
                 } else {
                     error("Upgrade of backup system failed! (Could not update version in config table)");
                 }
