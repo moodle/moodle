@@ -209,6 +209,16 @@ function check_entry($form, $course) {
     }
 }
 
+/**
+ * Provides method to print the enrolment key form code. This method is called
+ * from /enrol/manual/enrol.html if it's included
+ * @param  object a valid course object
+ */
+function print_enrolmentkeyfrom($course) {
+    $manual = enrolment_factory::factory('manual');
+    $manual->print_enrolmentkeyfrom($course);
+}
+
 } // end of class definition
 
 ?>
