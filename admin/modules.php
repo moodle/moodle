@@ -182,7 +182,7 @@
         }
         $modulebyname[$strmodulename] = $module;
     }
-    ksort($modulebyname);
+    ksort($modulebyname, SORT_LOCALE_STRING);
 
 /// Print the table of all modules
     // construct the flexible table ready to display

@@ -1259,7 +1259,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
             }
         }
         if ($modnamesused) {
-            asort($modnamesused);
+            asort($modnamesused, SORT_LOCALE_STRING);
         }
     }
 }
