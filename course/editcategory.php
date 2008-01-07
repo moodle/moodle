@@ -72,7 +72,7 @@ if ($mform->is_cancelled()){
         } else {
             $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
             mark_context_dirty($newcategory->context->path);
-            redirect('index.php?categoryedit=on', get_string('categoryadded', null, $newcategory->name));
+            redirect('index.php?categoryedit=on', get_string('categoryadded', null, stripslashes($newcategory->name)));
         }
     } elseif (has_capability('moodle/category:update', $context)) {
         $newcategory->id = $category->id;
