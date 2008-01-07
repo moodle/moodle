@@ -11,6 +11,12 @@
 
 $string['admindirerror'] = 'Določen skrbniški imenik ni pravilen';
 $string['admindirname'] = 'Skrbniški imenik';
+$string['admindirsetting'] = '    Le redka spletna mesta uporabljajo /admin kot poseben URL za dostop
+    do nadzorne plošče ali česa drugega.  Žal je to v sporu s
+    standardno lokacijo Moodle skrbniških stran.  To lahko popravite s
+    preimenovanjem skrbniškega imenika v vaši namestitvi in vstavljanjem tega
+    novega imena tu.  Na primer: <br /> <br /><b>moodleadmin</b><br /> <br />
+    To bo popravilo skrbniške povezave za Moodle.';
 $string['admindirsettinghead'] = 'Nastavitev skrbniškega imenika ...';
 $string['admindirsettingsub'] = '    Le redka spletna mesta uporabljajo /admin kot poseben URL za dostop
     do nadzorne plošče ali česa drugega.  Žal je to v sporu s
@@ -18,6 +24,7 @@ $string['admindirsettingsub'] = '    Le redka spletna mesta uporabljajo /admin k
     preimenovanjem skrbniškega imenika v vaši namestitvi in vstavljanjem tega
     novega imena tu.  Na primer: <br /> <br /><b>moodleadmin</b><br /> <br />
     To bo popravilo skrbniške povezave za Moodle.';
+$string['availablelangs'] = 'Jezikovni paketi na voljo';
 $string['bypassed'] = 'Preskočeno';
 $string['cannotcreatelangdir'] = 'Ni možno ustvariti imenika jezika.';
 $string['cannotcreatetempdir'] = 'Ni možno ustvariti začasnega imenika.';
@@ -29,18 +36,31 @@ $string['cannotsavezipfile'] = 'Ni možno shraniti datoteke ZIP.';
 $string['cannotunzipfile'] = 'Ni možno razširiti datoteke.';
 $string['caution'] = 'Pozor';
 $string['check'] = 'Potrditev';
+$string['chooselanguage'] = 'Izberite jezik';
 $string['chooselanguagehead'] = 'Izberite jezik';
 $string['chooselanguagesub'] = 'Izberite jezika SAMO za namestitev. Pozneje boste lahko izbrali tudi jezike strani in uporabniške jezike.';
 $string['closewindow'] = 'Zapri to okno';
+$string['compatibilitysettings'] = 'Preverjanje vaših PHP nastavitev ...';
 $string['compatibilitysettingshead'] = 'Preverjanje vaših PHP nastavitev ...';
 $string['compatibilitysettingssub'] = 'Da bi Moodle pravilno deloval, mora vaš strežnik opraviti vse naslednje preizkuse';
 $string['componentisuptodate'] = 'Komponenta je posodobljena.';
 $string['configfilenotwritten'] = 'Skripta nameščanja ni mogla samodejno ustvariti datoteke config.php, ki bi vsebovala vaše izbrane nastavitve. Verjetno v Moodle imenik ni možno zapisovanje. Ročno lahko prekopirate sledečo kodo v datoteko z imenom config.php v korenskem imeniku Moodle.';
 $string['configfilewritten'] = 'datoteka config.php je bila uspešno ustvarjena';
+$string['configurationcomplete'] = 'Konfiguracija je dokončana';
 $string['configurationcompletehead'] = 'Konfiguracija je dokončana';
 $string['configurationcompletesub'] = 'Moodle je poskušal shraniti vašo konfiguracijo v datoteko v korenu vaše namestitve Moodle.';
 $string['continue'] = 'Nadaljuj';
 $string['database'] = 'Podatkovna zbirka';
+$string['databasecreationsettings'] = '    Zdaj morate konfigurirati nastavitve podatkovne zbirke, kjer bo večina Moodle podatkov
+    shranjenih.  Ta podatkovno zbirko bo samodejno ustvaril namestitveni program
+    s spodaj določenimi nastavitvami.<br />
+    <br /> <br />
+       <b>Vrsta:</b> določeno \"mysql\" s strani namestitvenega programa<br />
+       <b>Gostitelj:</b> določeno \"localhost\" s strani namestitvenega programa<br />
+       <b>Ime:</b> ime podatkovne zbirke, npr. moodle<br />
+       <b>Uporabnik:</b> določeno \"root\" s strani namestitvenega programa<br />
+       <b>Geslo:</b> vaše geslo podatkovne zbirke<br />
+       <b>Predpona tabel:</b> dodatna predpona za vsa imena tabel';
 $string['databasecreationsettingshead'] = '    Zdaj morate konfigurirati nastavitve podatkovne zbirke, kjer bo večina Moodle podatkov
     shranjenih.  Ta podatkovno zbirko bo samodejno ustvaril namestitveni program
     s spodaj določenimi nastavitvami.';
@@ -48,6 +68,16 @@ $string['databasecreationsettingssub'] = '<b>Vrsta:</b> določeno \"mysql\" s st
        <b>Gostitelj:</b> določeno \"localhost\" s strani namestitvenega programa<br />
        <b>Ime:</b> ime podatkovne zbirke, npr. moodle<br />
        <b>Uporabnik:</b> določeno \"root\" s strani namestitvenega programa<br />
+       <b>Geslo:</b> vaše geslo podatkovne zbirke<br />
+       <b>Predpona tabel:</b> dodatna predpona za vsa imena tabel';
+$string['databasesettings'] = '    Zdaj morate konfigurirati podatkovno zbirko, kjer bo večina Moodle podatkov
+    shranjenih.  Ta podatkovna zbirka mora biti že ustvarjena
+    in tudi uporabniško ime in geslo za dostop do nje.<br />
+    <br /> <br />
+       <b>Vrsta:</b> mysql ali postgres7<br />
+       <b>Gostitelj:</b> npr. localhost ali db.isp.com<br />
+       <b>Ime:</b> ime podatkovne zbirke, npr. moodle<br />
+       <b>Uporabnik:</b> vaše uporabniško ime podatkovne zbirke<br />
        <b>Geslo:</b> vaše geslo podatkovne zbirke<br />
        <b>Predpona tabel:</b> dodatna predpona za vsa imena tabel';
 $string['databasesettingshead'] = '    Zdaj morate konfigurirati podatkovno zbirko, kjer bo večina Moodle podatkov
@@ -64,9 +94,27 @@ $string['datarooterror'] = '\'Imenika za podatke\', ki ste ga navedli ni možno 
 $string['dbconnectionerror'] = 'Povezave ni mogoče vzpostaviti s podatkovno zbirko, ki ste jo navedli. Prosimo, preverite vaše nastavitve podatkovne zbirke.';
 $string['dbcreationerror'] = 'Napaka ustvarjanja podatkovne zbirke. S podanimi nastavitvami ni možno ustvariti podatkovne zbirke z navedenim imenom';
 $string['dbhost'] = 'Gostiteljski strežnik';
+$string['dbpass'] = 'Geslo';
 $string['dbprefix'] = 'Predpona tabel';
 $string['dbtype'] = 'Vrsta';
 $string['dbwrongencoding'] = 'Izbrana podatkovna zbirka uporablja kodno tabelo, ki ni priporočena ($a). Bolje bi bilo namesto nje uporabiti podatkovno zbirko, ki bi uporabljala Unicode (UTF-8). Kljub temu lahko preskočite ta preizkus z izborom \"Preskoči preizkus kodne tabele podatkovne zbirke\" spodaj, vendar lahko naletite na težave v prihodnje.';
+$string['directorysettings'] = '<p>Prosimo, potrdite lokacije te namestitve Moodle.</p>
+
+<p><b>Spletni naslov:</b>
+Navedite polni spletni naslov za dostop do Moodle.  
+Če je vaše spletno mesto dostopno prek večih URL naslovov izberite
+najbolj pogostega, ki ga bodo uporabljali udeleženci.  Ne vključite 
+zaključne poševnice.</p>
+
+<p><b>Imenik Moodle:</b>
+Navedite polno pot imenika do te namestitve
+Pazite, da bodo pravilne velike in male črke.</p>
+
+<p><b>Imenik za podatke:</b>
+Potrebujete prostor kamor lahko Moodle shranjuje naložene datoteke.  Ta
+imenik mora omogočati branje IN PISANJE za uporabniško ime spletnega strežnika
+(običajno \'nobody\' ali \'apache\'), a ne sme biti dostopen
+neposredno prek spleta.</p>';
 $string['directorysettingshead'] = 'Potrdite lokacije te namestitve Moodle';
 $string['directorysettingssub'] = '<b>Spletni naslov:</b>
 Navedite polni spletni naslov za dostop do Moodle.  
@@ -93,6 +141,7 @@ $string['downloadlanguagebutton'] = 'Prenesite jezikovni paket &quot;$a&quot;';
 $string['downloadlanguagehead'] = 'Prenos jezikovnega paketa';
 $string['downloadlanguagenotneeded'] = 'Nadaljujete lahko postopek namestitve z uporabo privzetega jezikovnega paketa, \"$a\".';
 $string['downloadlanguagesub'] = 'Zdaj imate možnost prenosa jezikovnega paketa in nadaljevanja s postopkom namestitve v tem jeziku.<br /><br />Če ne morete prenesti jezikovnega paketa, se bo namestitveni postopek nadaljeval v angleščini. (Ko bo namestitveni postopek zaključen, boste imeli možnost prenosa in namestitve dodatnih jezikovnih paketov.)';
+$string['doyouagree'] = 'Ste prebrali te pogoje in jih razumeli?';
 $string['environmenterrortodo'] = 'Pred nadaljevanjem namestitve te različice Moodle morate razrešiti zgoraj odkrite težave okolja (napake).';
 $string['environmenthead'] = 'Preverjanje vašega okolja ...';
 $string['environmentrecommendinstall'] = 'namestitev oz. omogočanje je priporočeno';
@@ -105,6 +154,14 @@ $string['error'] = 'Napaka';
 $string['fail'] = 'Neuspeh';
 $string['fileuploads'] = 'Nalaganje datotek';
 $string['fileuploadserror'] = 'To bi moralo biti vključeno';
+$string['fileuploadshelp'] = '<p>Nalaganje datotek je kot kaže onemogočeno na vašem strežniku.</p>
+
+<p>Moodle je še vedno možno namestiti, vendar brez te možnosti, ne boste mogli 
+   nalagati datotek predmetov ali novih slik uporabniških profilov.</p>
+
+<š>Za omogočanje nalaganja datotek boste (ali vaš skrbnik sistema) morali 
+   urediti glavno datoteko php.ini na vašem sistemu in spremeniti nastavitev za 
+   <b>file_uploads</b> na \'1\'.</p>';
 $string['gdversion'] = 'Različica GD';
 $string['gdversionerror'] = 'Knjižnica GD mora biti prisotno za obdelavo in ustvarjanje slik';
 $string['gdversionhelp'] = '<p>Na vašem strežniku kot kaže ni nameščen GD.</p>
@@ -119,16 +176,36 @@ $string['gdversionhelp'] = '<p>Na vašem strežniku kot kaže ni nameščen GD.<
 <p>V okolju Windows lahko običajno uredite php.ini in odkomentirate vrstico, ki se sklicuje na php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Nevarna obravnava globalnih spremenljivk';
 $string['globalsquoteserror'] = 'Popravite vaše PHP nastavitve: onemogočite register_globals in / ali omogočite magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Kombinacija hkrati onemogočenega Magic Quotes GPC in omogočenega Register Globals ni priporočena.</p>
+
+<p>Priporočena nastavitev je <b>magic_quotes_gpc = On</b> in <b>register_globals = Off</b> v vaši datoteki php.ini</p>
+
+<p>Če nimate dostopa do datoteke php.ini, boste morda lahko vstavili sledečo vrstico v datoteko 
+   imenovano .htaccess v vašem imeniku Moodle:
+   <blockquote>php_value magic_quotes_gpc On</blockquote>
+   <blockquote>php_value register_globals Off</blockquote>
+</p>   
+   ';
 $string['help'] = 'Pomoč';
 $string['iconvrecommended'] = 'Namestitev dodatne knjižnice ICONV je zelo priporočljiva za izboljšanje zmogljivosti strani, še posebej, če stran uporablja dodatne jezike.';
 $string['info'] = 'Informacije';
 $string['installation'] = 'Namestitev';
+$string['invalidemail'] = 'Neveljaven e-poštni naslov';
 $string['invalidmd5'] = 'Neveljaven MD5';
 $string['langdownloaderror'] = 'Žal jezik \"$a\" ni bil nameščen. Postopek namestitve se bo nadaljeval v angleščini.';
 $string['langdownloadok'] = 'Jezik \"$a\" je bil uspešno nameščen. Postopek namestitve se bo nadaljeval v tem jeziku.';
 $string['language'] = 'Jezik';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'To bi moralo biti izključeno';
+$string['magicquotesruntimehelp'] = '<p>Možnost Magic quotes runtime bi morala biti izključena za pravilno delovanje Moodle.</p>
+
+<p>Po navadi je privzeta vrednost izključena ... poglejte nastavitev <b>magic_quotes_runtime</b> v vaši datoteki php.ini.</p>
+
+<p>Če nimate dostopa do datoteke php.ini, boste morda lahko vstavili sledečo vrstico v datoteko 
+   imenovano .htaccess v vašem imeniku Moodle:
+   <blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>   
+   ';
 $string['mbstringrecommended'] = 'Namestitev dodatne knjižnice MBSTRING je zelo priporočljiva za izboljšanje zmogljivosti strani, še posebej, če stran uporablja dodatne jezike.';
 $string['memorylimit'] = 'Omejitev pomnilnika';
 $string['memorylimiterror'] = 'Omejitev pomnilnika PHP je nastavljena precej nizko ... pozneje lahko pride do težav.';
@@ -169,13 +246,24 @@ $string['phpversionhelp'] = '<p>Moodle zahteva različico PHP vsaj 4.3.0 ali 5.1
 <p>Posodobiti in nadgraditi morate PHP ali premakniti program na strežnik s novejšo različico PHP!<br />
 (V primeru različice 5.0.x lahko namestite tudi različico 4.4.x)</p>';
 $string['previous'] = 'Prejšnje';
+$string['releasenoteslink'] = 'Za informacije o tej različici Moodle si oglejte spletne <a target=\"_new\" href=\"$a\">Opombe o različici</a>';
 $string['remotedownloadnotallowed'] = 'Nalaganje komponent na vaš strežnik ni dovoljeno (allow_url_fopen je onemogočen).<br /><br />Ročno morate prenesti datoteko <a href=\"$a->url\">$a->url</a>, jo kopirati v imenik \"$a->dest\" na vašem strežniku in jo tam razširiti.';
 $string['report'] = 'Poročilo';
 $string['restricted'] = 'Omejeno';
 $string['safemode'] = 'Varni način';
 $string['safemodeerror'] = 'Moodle lahko ima težave z vključenim varnim načinom';
+$string['safemodehelp'] = '<p>Moodle ima lahko razne težave z vključenim varnim načinom. Ne samo, da
+   verjetno ne bo smel ustvarjati novih datotek.</p>
+   
+<p>Varni način je običajno vključen pri paranoidnih javnih spletnih gostiteljih in boste morda morali
+   poiskati novo podjetje za gostovanje vašega Moodle spletnega mesta.</p>
+   
+<p>Če želite lahko poskusite nadaljevati z namestitvijo, a pričakujte nekaj težav pozneje.</p>';
 $string['sessionautostart'] = 'Samodejni začetek seje';
 $string['sessionautostarterror'] = 'To bi moralo biti izključeno';
+$string['sessionautostarthelp'] = '<p>Moodle zahteva podporo za seje in ne bo deloval brez tega.</p>
+
+<p>Seje lahko omogočite v datoteki php.ini ... poiščite parameter session.auto_start.</p>';
 $string['skipdbencodingtest'] = 'Preskoči preizkus kodne tabele podatkovne zbirke';
 $string['status'] = 'Stanje';
 $string['thischarset'] = 'UTF-8';

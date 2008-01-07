@@ -11,9 +11,11 @@
 
 $string['closewindow'] = 'Փակեք պատուհանը';
 $string['continue'] = 'Շարունակել';
+$string['doyouagree'] = 'Կարդացե՞լ եք Դուք պայմանները:';
 $string['error'] = 'Սխալ';
 $string['help'] = 'Օգնություն';
 $string['info'] = 'Տեղեկատվություն';
+$string['invalidemail'] = 'Էլ. փոստի համար սխալ ձեվաչափ';
 $string['language'] = 'Լեղու';
 $string['name'] = 'Անվանում';
 $string['next'] = 'Հաջորդը';

@@ -11,27 +11,72 @@
 
 $string['admindirerror'] = 'Thư mục quản trị được chỉ ra chưa đúng';
 $string['admindirname'] = 'Thư mục quản trị';
+$string['admindirsetting'] = '    Một số webhosts sử dụng /quản trị như là một URL đặc biệt để bạn có thể truy cập 
+    một bảng điều khiển hoặc một cái gì đó. Không may là điều này xung đột với 
+    vị trí chuẩn đối với những trang quản trị Moodle. Bạn có thể cố định điều này bởi 
+    đổi lại tên thư mục quản trị trong phần cài đặt của bạn, và đặt nó tên mới ở đây. 
+    Ví dụ: <br/> <br /><b>moodleadmin</b><br /> <br />
+    Điều này sẽ cố định các kết nối quản trị trong Moodle.';
+$string['availablelangs'] = 'Các gói ngôn ngữ đã có sẵn';
 $string['caution'] = 'Cảnh báo';
+$string['chooselanguage'] = 'Chọn một ngôn ngữ';
 $string['closewindow'] = 'Đóng cửa sổ này';
+$string['compatibilitysettings'] = 'Kiểm tra các thiết lập PHP của bạn ...';
 $string['configfilenotwritten'] = 'Kịch bản cài đặt không có khả năng tự động tạo một file config.php file chứa các thiết lập chọn lựa của bạn, có thể thư mục Moodle không có khả năng ghi. Bạn có thể copy bằng tay đoạn mã sau vào một file đặt tên là config.php trong thư mục gốc của Moodle.';
 $string['configfilewritten'] = 'config.php được tạo một cách thành công';
+$string['configurationcomplete'] = 'Việc cấu hình được hoàn thành';
 $string['continue'] = 'Tiếp tục';
 $string['database'] = 'Cơ sở dữ liệu';
+$string['databasesettings'] = 'Bây giờ bạn cần cấu hình cơ sở dữ liệu ở đó tất cả dữ liệu của Moodle sẽ được lưu trữ. Cơ sở dữ liệu này phải được tạo và một tên đăng nhập và mật khẩu phải được tạo để truy cập.<br />
+<br /> <br />
+       <b>Kiểu:</b> mysql hay postgres7<br />
+       <b>Máy chủ:</b> ví dụ localhost hay db.isp.com<br />
+       <b>Tên:</b> tên cơ sở dữ liệu, ví dụ moodle<br />
+       <b>Người dùng:</b> tên đăng nhập cơ sở dữ liệu của bạn<br />
+       <b>Mật khẩu:</b> mật khẩu đối với cơ sở dữ liệu của bạn<br />
+       <b> Các bảng cố định trước:</b> tuỳ chọn cố định trước để sử dụng cho tất cả tên các bảng';
 $string['dataroot'] = 'Thư mục dữ liệu';
 $string['datarooterror'] = ' \'Thư mục dữ liệu\' bạn chỉ ra không thể được tìm thấy hoặc được tạo. Hoặc đường dẫn đúng hoặc tạo thư mục   Either correct the path or create that directory manually.';
 $string['dbconnectionerror'] = 'Chúng tôi không thể kết nối cơ sở dữ liệu bạn chỉ ra. Vui lòng kiểm tra các thiết lập cơ sở dữ liệu.';
 $string['dbcreationerror'] = 'Lỗi tạo cơ sở dữ liệu. Không thể tạo tên cơ sở dữ liệu với các thiết lập được cung cấp';
 $string['dbhost'] = 'Host Server';
+$string['dbpass'] = 'Mật khẩu';
 $string['dbprefix'] = 'Các bảng cố định trước';
 $string['dbtype'] = 'Type';
+$string['directorysettings'] = '<p>Vui lòng xác nhận các vị trí của việc cài đặt Moodle này.</p>
+
+<p><b> Địa chỉ web: </b>
+Chỉ ra địa chỉ web đầy đủ ở đó Moodle sẽ được truy cập.  
+Nếu web site của bạn có khả năng truy cập qua nhiều URL thì chọn một cái tự nhiên nhất 
+mà các học viên của bạn có thể sử dụng. Không bao gồm một vạch chéo 
+.</p>
+
+<p><b> Thư mục Moodle:</b>
+Chỉ ra đường dẫn thư mục đầy đủ cho việc cài đặt này
+Đảm bảo rằng chữ hoa/chữ thường thì đúng.</p>
+
+<p><b>Thư mục dữ liệu:</b>
+Bạn cần một vị trí ở đó Moodle có thể cất những file được tải lên. Thư mục
+này nên có khả năng đọc và khả năng viết bởi người dùng web server 
+(thông thường \'không ai\' hoặc \'apache\'), nhưng nó không nên có khả năng truy cập trực tiếp qua web 
+.</p>';
 $string['dirroot'] = 'Thư mục Moodle';
 $string['dirrooterror'] = '  Thiết lập \'Thư mục Moodle\' dường như không đúng - chúng tôi không thể tìm thấy các file cài đặt Moodle ở đó. Giá trị dưới đây được đặt lại.';
 $string['download'] = 'Tải xuống';
+$string['doyouagree'] = 'Có phải bạn đã đọc những điều kiện này và hiểu chúng ?';
 $string['environmentrequireinstall'] = 'cầnphải được cài hay kích hoạt.';
 $string['error'] = 'Lỗi';
 $string['fail'] = 'Thất bại';
 $string['fileuploads'] = 'File tải lên';
 $string['fileuploadserror'] = 'Điều này sẽ là';
+$string['fileuploadshelp'] = '<p>File tải lên dường như bị vô hiệu hoá trên máy chủ của bạn.</p>
+
+<p>Moodle vẫn có thể được cài đặt, nhưng không có khả năng này, bạn sẽ không có khả 
+   năng tải lên các tài liệu cua học hoặc các ảnh trong hồ sơ người dùng.</p>
+
+<p>Để có thể tải file lên (hoặc nhà quản trị hệ thống của bạn ) sẽ cần 
+   soạn thảo file php.ini trên hệ thống của bạn và thay đổi thiết lập đối với 
+   <b>file tải lên</b> thành \'1\'.</p>';
 $string['gdversion'] = 'Phiên bản GD';
 $string['gdversionerror'] = 'Thư viện GD nên được cho phép để xử lý và tạo các hình ảnh';
 $string['gdversionhelp'] = '<p> Máy chủ của bạn hình như không cài GD.</p>
@@ -46,9 +91,19 @@ $string['gdversionhelp'] = '<p> Máy chủ của bạn hình như không cài GD
 <p>Dưới hệ điều hành Windows bạn có thể soạn thảo file php.ini và bỏ dấu chú thích dòng tham chiếu đến php_gd2.dll.</p>';
 $string['help'] = 'Trợ giúp';
 $string['installation'] = 'Cài đặt';
+$string['invalidemail'] = 'Địa chỉ email không hợp lệ';
 $string['language'] = 'Ngôn ngữ';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Điều này nên là off';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime nên được tắt để Moodle hoạt động đúng.</p>
+
+<p>Bình thường theo mặc định nó là off...nhìn thiết lập <b>magic_quotes_runtime</b> trong file php.ini của bạn.</p>
+
+<p>Nếu bạn không thể truy cập file php.ini của bạn, bạn có thể đặt dòng sau trong một file  
+   gọi là .htaccess trong thư mục Moodle của bạn:
+   <blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>   
+   ';
 $string['memorylimit'] = 'Giới hạn bộ nhớ';
 $string['memorylimiterror'] = 'PHP thiết lập giới hạn bộ nhớ quá thấp... you may run into problems later.';
 $string['memorylimithelp'] = '<p> PHP thiết lập giới hạn bộ nhớ cho máy chủ của bạn hiện tại là $a.</p>
@@ -85,8 +140,18 @@ $string['phpversionhelp'] = '<p>Moodle yêu cầu một phiên bản PHP ít nh�
 $string['previous'] = 'Trước';
 $string['safemode'] = 'Chế độ an toàn ';
 $string['safemodeerror'] = 'Moodle có thể gặp một số sự cố với chế độ an toàn';
+$string['safemodehelp'] = '<p>Moodle có thể có một số vấn đề với chế độ an toàn, 
+	đặc biệt là nếu nó không được phép tạo các file mới.</p>
+   
+<p>Chế độ an toàn thường được các host web bật lên, do đó bạn có thể
+   phải tìm cung cấp một công ty host web mới cho site Moodle của bạn.</p>
+   
+<p>Bạn có thể thử tiếp tục cài đặt nếu bạn thích, nhưng có thể phát sinh một số vấn đề sau này.</p>';
 $string['sessionautostart'] = 'Bắt đầu tự động Session ';
 $string['sessionautostarterror'] = 'Điều này nên là tắt';
+$string['sessionautostarthelp'] = '<p>Moodle yêu cầu hỗ trợ session và sẽ không làm việc nếu không có nó.</p>
+
+<p>Sessions có thể được cho phép trong file php.ini ... tìm kiếm tham số session.auto_start.</p>';
 $string['status'] = 'Trạng thái';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';

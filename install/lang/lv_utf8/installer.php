@@ -11,8 +11,10 @@
 
 $string['closewindow'] = 'Aizvērt šo logu';
 $string['continue'] = 'Turpināt';
+$string['doyouagree'] = 'Vai izlasījāt nosacījumus un sapratāt tos?';
 $string['error'] = 'Kļūda';
 $string['help'] = 'Palīdzība';
+$string['invalidemail'] = 'Nederīga e-pasta adrese';
 $string['language'] = 'Valoda';
 $string['name'] = 'Nosaukums';
 $string['next'] = 'Tālāk';

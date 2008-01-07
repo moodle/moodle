@@ -11,8 +11,10 @@
 
 $string['closewindow'] = 'Dún an fhuinneog seo';
 $string['continue'] = 'Lean ar aghaidh';
+$string['doyouagree'] = 'An bhfuil na coinníollacha seo léite agus tuigthe agat?';
 $string['error'] = 'Earráid';
 $string['help'] = 'Cuidigh';
+$string['invalidemail'] = 'Seoladh r-phoist neamhbhailí';
 $string['language'] = 'Teanga';
 $string['name'] = 'Ainm';
 $string['next'] = 'Ar aghaidh';

@@ -11,8 +11,10 @@
 
 $string['closewindow'] = 'Mbylle këtë dritare';
 $string['continue'] = 'Vazhdo';
+$string['doyouagree'] = 'I keni lexuar dhe kuptuar këto kushte?';
 $string['error'] = 'Gabim';
 $string['help'] = 'Ndihmë';
+$string['invalidemail'] = 'Adresa email nuk është e vlefshme';
 $string['language'] = 'Gjuha';
 $string['name'] = 'Emri';
 $string['next'] = 'Pasardhësi';
