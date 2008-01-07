@@ -97,7 +97,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         }
         else {
             @ldap_close($ldapconnection);
-            print_error('auth_ldap_noconnect','auth',$this->config->host_url);
+            print_error('auth_ldap_noconnect','auth','',$this->config->host_url);
         }
         return false;
     }
@@ -273,7 +273,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $newuser['userpassword']  = $extpassword;
                 break;
             default:
-               print_error('auth_ldap_unsupportedusertype','auth',$this->config->user_type);
+               print_error('auth_ldap_unsupportedusertype','auth','',$this->config->user_type);
         }
         $uadd = ldap_add($ldapconnection, $this->config->user_attribute.'="'.$this->ldap_addslashes($userobject->username).','.$this->config->create_context.'"', $newuser);
         ldap_close($ldapconnection);
@@ -695,7 +695,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         $user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id);
         if (empty($user)) { // trouble
             error_log("Cannot update non-existent user: ".stripslashes($username));
-            print_error('auth_dbusernotexist','auth',$username);
+            print_error('auth_dbusernotexist','auth','',$username);
             die;
         }
 
@@ -1389,7 +1389,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         }
 
         //If any of servers are alive we have already returned connection
-        print_error('auth_ldap_noconnect_all','auth',$this->config->user_type);
+        print_error('auth_ldap_noconnect_all','auth', '', $debuginfo);
         return false;
     }
 
