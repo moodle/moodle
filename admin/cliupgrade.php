@@ -1195,7 +1195,11 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
             $cat = new Object();
             $cat->name = get_string('miscellaneous');
-            if (insert_record('course_categories', $cat)) {
+            $cat->depth = 1;
+            if ($catid = insert_record('course_categories', $cat)) {
+                // make sure category context exists
+                get_context_instance(CONTEXT_COURSECAT, $catid);
+                mark_context_dirty('/'.SYSCONTEXTID);
                 // do nothing
             } else {
                 error("Serious Error! Could not set up a default course category!");
