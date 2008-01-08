@@ -1834,7 +1834,7 @@ function print_courses($category) {
         echo '<ul class="unlist">';
         foreach ($courses as $course) {
             if ($course->visible == 1
-                || has_capability('moodle/course:viewhidden',$course->context)) {
+                || has_capability('moodle/course:viewhiddencourses',$course->context)) {
                 echo '<li>';
                 print_course($course);
                 echo "</li>\n";
