@@ -163,7 +163,7 @@ class block_glossary_random extends block_base {
 
         $glossaryid = $this->config->glossary;
 
-        if(! $glossary = get_record('glossary', 'id', $glossaryid) ){
+        if(! $glossary = get_record('glossary', 'id', $glossaryid, 'course', $this->course->id) ){
             // we can get here if the glossary has been deleted, so
             // unconfigure the glossary from the block..
             $this->config->glossary = 0;
