@@ -322,9 +322,9 @@
 
                     // Outcome grade_item.itemnumber start at 1000
                     $max_itemnumber = 999;
+                    $exists = false;
                     if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$fromform->modulename,
                                  'iteminstance'=>$fromform->instance, 'courseid'=>$COURSE->id))) {
-                        $exists = false;
                         foreach($items as $item) {
                             if ($item->outcomeid == $outcome->id) {
                                 $exists = true;
