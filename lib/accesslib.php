@@ -327,6 +327,16 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         return false;
     }
 
+/// Some sanity checks
+    if (debugging('',DEBUG_DEVELOPER)) {
+        if (!record_exists('capabilities', 'name', $capability)) {
+            debugging('Capability "'.$capability.'" was not found! This should be fixed in code.');
+        }
+        if ($doanything != true and $doanything != false) {
+            debugging('Capability parameter "doanything" is wierd ("'.$doanything.'"). This should be fixed in code.');
+        }
+    }
+
     if (empty($userid)) { // we must accept null, 0, '0', '' etc. in $userid
         $userid = $USER->id;
     }
