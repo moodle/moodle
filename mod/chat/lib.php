@@ -205,13 +205,14 @@ function chat_cron () {
     chat_delete_old_users();
 
     /// Delete old messages
-    $keepdays = "SELECT c.keepdays
-                   FROM {$CFG->prefix}chat c
-                  WHERE c.id = {$CFG->prefix}chat_messages.chatid AND c.keepdays > 0";
+    /// single SQL query.
+    $subselect = "SELECT c.keepdays
+                    FROM {$CFG->prefix}chat c
+                   WHERE c.id = {$CFG->prefix}chat_messages.chatid";
 
-    $sql = "DELETE 
+    $sql = "DELETE
               FROM {$CFG->prefix}chat_messages
-             WHERE timestamp < ( ".time()." - COALESCE(($keepdays), 999999) * 24 * 3600)";
+             WHERE ($subselect) > 0 AND timestamp < ( ".time()." -($subselect) * 24 * 3600)"; 
 
     execute_sql($sql, false);
 
