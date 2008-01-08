@@ -423,7 +423,7 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
     // If we're caching records, store this one
     // (supposing we got something - we don't cache failures)
     if ($docache) {
-        if (isset($record)) {
+        if ($record !== false) {
             rcache_set($table, $value1, $record);
         } else {
             rcache_releaseforfill($table, $value1);
