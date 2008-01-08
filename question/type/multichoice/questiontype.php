@@ -312,7 +312,11 @@ class question_multichoice_qtype extends default_questiontype {
                 $a->class = question_get_feedback_class(1);
             }
             if (($options->feedback && $chosen) || $options->correct_responses) {
-                $a->feedbackimg = question_get_feedback_image($answer->fraction > 0 ? 1 : 0, $chosen && $options->feedback);
+                if ($type == ' type="checkbox" ') {
+                    $a->feedbackimg = question_get_feedback_image($answer->fraction > 0 ? 1 : 0, $chosen && $options->feedback);
+                } else {
+                    $a->feedbackimg = question_get_feedback_image($answer->fraction, $chosen && $options->feedback);
+                }
             }
 
             // Print the answer text
