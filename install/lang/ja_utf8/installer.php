@@ -16,8 +16,17 @@ $string['admindirsetting'] = 'まれに、コントロールパネルまたは�
 $string['admindirsettinghead'] = '管理ディレクトリの設定中 ...';
 $string['admindirsettingsub'] = 'まれなケースですが /admin をコントロールパネルまたはその他のページにアクセスするための特別なURIとして使用しているウェブホストがあります。残念ですが、これは標準的なMoodle管理ページのロケーションと衝突します。あなたのインストールに関するadminディレクトリをリネームすることで、この衝突を回避できます。例えば: <br /> <br /><b>moodleadmin</b><br /> <br />
 これによりMoodleの管理ページへのリンクは修正されます。';
-$string['availablelangs'] = '利用可能な言語パック';
+$string['adminemail'] = 'メールアドレス :';
+$string['adminfirstname'] = '名 :';
+$string['admininfo'] = '管理者詳細';
+$string['adminlastname'] = '姓 :';
+$string['adminpassword'] = 'パスワード :';
+$string['adminusername'] = 'ユーザ名 :';
+$string['askcontinue'] = '続ける (yes/no) :';
+$string['availabledbtypes'] = '利用可能なデータベースタイプ';
+$string['availablelangs'] = '利用可能な言語一覧';
 $string['bypassed'] = 'バイパス';
+$string['cannotconnecttodb'] = 'データベースに接続できません。';
 $string['cannotcreatelangdir'] = 'langディレクトリを作成できません。';
 $string['cannotcreatetempdir'] = 'tempディレクトリを作成できません。';
 $string['cannotdownloadcomponents'] = 'コンポーネットをダウンロードできません。';
@@ -28,6 +37,7 @@ $string['cannotsavezipfile'] = 'ZIPファイルを保存できません。';
 $string['cannotunzipfile'] = 'ZIPファイルを解凍できません。';
 $string['caution'] = '警告';
 $string['check'] = 'チェック';
+$string['checkingphpsettings'] = 'PHP設定の確認';
 $string['chooselanguage'] = '言語を選択してください。';
 $string['chooselanguagehead'] = '言語を選択してください。';
 $string['chooselanguagesub'] = 'インストールのみに使用する言語を選択してください。後に表示される画面で、サイトおよびユーザの言語を選択することができます。';
@@ -36,12 +46,16 @@ $string['compatibilitysettings'] = 'PHP設定を確認しています ...';
 $string['compatibilitysettingshead'] = 'PHP設定を確認しています ...';
 $string['compatibilitysettingssub'] = 'Moodleを適切に動作させるためには、あなたのサーバがこれらすべてのテストに通る必要があります。';
 $string['componentisuptodate'] = 'コンポーネントは最新です。';
+$string['configfilecreated'] = 'config.phpファイルが正常に作成されました。';
+$string['configfiledoesnotexist'] = 'config.phpファイルがありません!!!';
 $string['configfilenotwritten'] = 'インストールスクリプトは、自動的にあなたの選択した設定を反映したconfig.phpファイルを作成することができませんでした。おそらく、Moodleディレクトリに書き込み権が無いためだと思われます。下記のコードをconfig.phpという名称のファイルとしてMoodleのルートディレクトリにコピーすることができます。';
 $string['configfilewritten'] = 'config.phpが正常に作成されました。';
 $string['configurationcomplete'] = '設定が完了しました。';
 $string['configurationcompletehead'] = '設定が完了しました。';
 $string['configurationcompletesub'] = 'Moodleは、Moodleインストレーションルートへの設定内容の保存を試みました。';
+$string['configurationfileexist'] = 'config.phpファイルは、すでに作成されています!';
 $string['continue'] = '続ける';
+$string['creatingconfigfile'] = 'config.phpファイルを作成しています ...';
 $string['curlrecommended'] = 'Moodleネットワーキング機能を有効にするため、cURLライブラリのインストールを強くお勧めします。';
 $string['customcheck'] = 'その他のチェック';
 $string['database'] = 'データベース';
@@ -60,6 +74,9 @@ $string['databasecreationsettingssub'] = '<b>タイプ:</b> インストーラ�
 <b>ユーザ名:</b> インストーラーにより「root」に修正されました。<br />
 <b>パスワード:</b> あなたのデータベースパスワードです。<br />
 <b>テーブル接頭辞:</b> すべてのテーブル名に使用される任意の接頭辞です。';
+$string['databasehost'] = 'データベースホスト :';
+$string['databasename'] = 'データベース名 :';
+$string['databasepass'] = 'データベースパスワード :';
 $string['databasesettings'] = 'ほとんどのMoodleデータが保存されるデータベース設定を行います。このデータベースは、アクセスするためのユーザ名およびパスワードとともにすでに作成されている必要があります。<br/>
 <br /> <br />
 <b>タイプ:</b> mysql または postgres7<br />
@@ -68,6 +85,7 @@ $string['databasesettings'] = 'ほとんどのMoodleデータが保存される�
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
 <b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 (任意)';
+$string['databasesettingsformoodle'] = 'Moodleのデータベース設定';
 $string['databasesettingshead'] = 'ほとんどのMoodleデータが保存されるデータベース設定を行います。このデータベースは、アクセスするためのユーザ名およびパスワードとともにすでに作成されている必要があります。';
 $string['databasesettingssub'] = '<b>タイプ:</b> mysql または postgres7<br />
 <b>ホスト:</b> 例 localhost または db.isp.com<br />
@@ -118,6 +136,8 @@ $string['databasesettingssub_postgres7'] = '<b>タイプ:</b> PostgreSQL<br />
 <b>パスワード:</b> データベースのパスワード<br />
 <b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 (必須)';
 $string['databasesettingswillbecreated'] = '<b>メモ:</b> データベースが存在していない場合、インストーラーはデータベースの自動作成を試みます。';
+$string['databasetype'] = 'データベースタイプ :';
+$string['databaseuser'] = 'データベースユーザ :';
 $string['dataroot'] = 'データディレクトリ';
 $string['datarooterror'] = 'あなたが指定した「データディレクトリ」が見つからないか、作成されませんでした。パスを訂正するか、ディレクトリを手動で作成してください。';
 $string['dbconnectionerror'] = 'あなたが指定したデータベースに接続できませんでした。データベース設定を確認してください。';
@@ -153,13 +173,16 @@ Moodleにアクセスする完全なウェブアドレスを指定してくだ�
 アップロードされたファイルをMoodleが保存する場所が必要です。 このディレクトリは、ウェブサーバのユーザ (通常は「nobody」または「apache」) が読み込みおよび書き込みできるようにしてください。しかし、ウェブから直接アクセスできないようにしてください。</p>';
 $string['dirroot'] = 'Moodleディレクトリ';
 $string['dirrooterror'] = '「Moodleディレクトリ」設定が間違っているようです - インストール済みMoodleが見つかりませんでした。下記の値がリセットされました。';
+$string['disagreelicense'] = 'GPLに不同意のため、アップグレードを開始できません!';
 $string['download'] = 'ダウンロード';
 $string['downloadedfilecheckfailed'] = 'ダウンロードファイルのチェックが失敗しました。';
 $string['downloadlanguagebutton'] = '「 $a 」言語パックをダウンロードする';
 $string['downloadlanguagehead'] = '言語パックのダウンロード';
 $string['downloadlanguagenotneeded'] = 'デフォルトの言語パック「 $a 」でインストール処理を続けることができます。';
+$string['downloadlanguagepack'] = '言語パックをダウンロードしますか? (yes/no) :';
 $string['downloadlanguagesub'] = 'あなたは、この言語パックをダウンロードして、インストール処理を継続することができます。<br /><br />言語パックのダウンロードを無効にしている場合、インストール処理は英語で継続されます。 (インストール処理が完了した後、他の言語パックをダウンロードして、インストールすることができます。)';
-$string['doyouagree'] = 'これらの要件を読んで理解できましたか?';
+$string['downloadsuccess'] = '言語パックが正常にダウンロードされました。';
+$string['doyouagree'] = '同意しますか ? (yes/no):';
 $string['environmenterrortodo'] = 'このバージョンのMoodleをインストールする前に、発見された動作環境の問題 (エラー) を解消してください!';
 $string['environmenthead'] = 'あなたの環境を確認しています ...';
 $string['environmentrecommendcustomcheck'] = 'このテストに不適合の場合、潜在的な問題があることを意味します。';
@@ -171,6 +194,7 @@ $string['environmentrequireversion'] = 'バージョン $a->needed以上が必�
 $string['environmentsub'] = 'あなたのシステムに関する様々な要素が、システム要件に合致するか確認しています。';
 $string['environmentxmlerror'] = '環境データ ($a->error_code) の読み込み中にエラーが発生しました。';
 $string['error'] = 'エラー';
+$string['errorsinenvironment'] = '環境エラー';
 $string['fail'] = '失敗';
 $string['fileuploads'] = 'ファイルアップロード';
 $string['fileuploadserror'] = 'これは有効にしてください。';
@@ -199,13 +223,29 @@ $string['globalsquoteshelp'] = '<p>Magic Quotes GPCの無効化およびRegister
 $string['help'] = 'ヘルプ';
 $string['iconvrecommended'] = 'より良いパフォーマンスを得るため、ICONVライブラリのインストールおよび稼動を強くお勧めします。あなたのサイトがラテン文字以外をサポートしている場合、特にお勧めします。';
 $string['info'] = '情報';
+$string['inputdatadirectory'] = 'データディレクトリ :';
+$string['inputwebadress'] = 'ウェブアドレス :';
+$string['inputwebdirectory'] = 'Moodleディレクトリ :';
 $string['installation'] = 'インストレーション';
-$string['invalidemail'] = '不正なメールアドレスです。';
+$string['installationiscomplete'] = 'インストールが完了しました!';
+$string['invalidargumenthelp'] = 'エラー: 無効な引数
+使用方法: $php cliupgrade.php オプション
+--help オプションを使用することで、さらにヘルプが表示されます。';
+$string['invalidemail'] = '無効なメールアドレス';
+$string['invalidhost'] = '無効なホスト';
+$string['invalidint'] = 'エラー: 値が整数ではありません。';
+$string['invalidintrange'] = 'エラー: 値が有効範囲を超えています。';
 $string['invalidmd5'] = '無効なmp5ファイルです。';
-$string['invalidurl'] = '無効なURIです。';
+$string['invalidpath'] = '無効なパス';
+$string['invalidsetelement'] = 'エラー: 与えられた値は、既定のオプションにありません。';
+$string['invalidtextvalue'] = '無効なテキスト値';
+$string['invalidurl'] = '無効なURI';
+$string['invalidvalueforlanguage'] = '--lang オプションに対して無効な値です。詳細は、--helpをご覧ください。';
+$string['invalidyesno'] = 'エラー: 値は有効な yes/no 引数ではありません。';
 $string['langdownloaderror'] = '残念ですが、言語「 $a 」がインストールされていません。インストール処理は英語で継続されます。';
 $string['langdownloadok'] = '言語「 $a 」が正常にインストールされました。インストール処理は、この言語で継続されます。';
 $string['language'] = '言語設定';
+$string['locationanddirectories'] = 'ロケーションおよびディレクトリ';
 $string['magicquotesruntime'] = 'Magic Quotesランタイム';
 $string['magicquotesruntimeerror'] = 'これは無効にしてください。';
 $string['magicquotesruntimehelp'] = '<p>Moodleを正常に動作させるためには、Magic quotesランタイムを無効にする必要があります。</p>
@@ -262,7 +302,7 @@ $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = '前へ';
 $string['qtyperqpwillberemoved'] = 'アップグレード中、RQP問題タイプは削除されます。あなたはこの問題タイプを使用していませんので、トラブルが発生することはありません。';
 $string['qtyperqpwillberemovedanyway'] = 'アップグレード中、RQP問題タイプは削除されます。あなたのデータベース内にRQP問題タイプが登録されています。アップグレードを続ける前に、 http://moodle.org/mod/data/view.php?d=13&amp;rid=797 から対応するプログラムをインストールしない場合、これらの問題は動作しなくなります。';
-$string['releasenoteslink'] = 'このバージョンのMoodleに関する詳細情報は、<a target=\"_blank\" href=\"$a\">オンラインリリースノート</a>をご覧ください。';
+$string['releasenoteslink'] = 'このバージョンのMoodleに関する情報は、$a のリリースノートをご覧ください。';
 $string['remotedownloaderror'] = 'あなたのサーバへのコンポーネントのダウンロードに失敗しました。プロクシ設定を確認してください。PHP cURL拡張モジュールの使用を強くお勧めします。<br /><br /><a href=\"$a->url\">$a->url</a>ファイルを手動でダウンロードした後、あなたのサーバの「$a->dest」にコピーおよび解凍してください。';
 $string['remotedownloadnotallowed'] = 'あなたのサーバーにコンポーネントをダウンロードすることができません (allow_url_fopen が無効)。<br /><br /><a href=\"$a->url\">$a->url</a> ファイルを手動でダウンロードして、サーバの「 $a->dest 」にコピーした後、解凍してください。';
 $string['report'] = 'レポート';
@@ -272,19 +312,70 @@ $string['safemodeerror'] = 'セーフモードが有効の場合、Moodleに問�
 $string['safemodehelp'] = '<p>セーフモードが有効にされている場合、Moodleには様々な問題が発生する場合があります。 特に新しいファイルを作成することができません。</p>
 <p>通常セーフモードは、被害妄想を持ったウェブホストで有効にされています。Moodleサイト用に別の新しいウェブホスティング会社を探してください。</p>
 <p>セーフモード環境下で、インストール作業を続けることも可能ですが、後でいくつかの問題が発生することが予想されます。</p>';
+$string['selectlanguage'] = 'インストールで使用する言語の選択';
 $string['serverchecks'] = 'サーバチェック';
 $string['sessionautostart'] = 'セッション自動スタート';
 $string['sessionautostarterror'] = 'これは無効にしてください。';
 $string['sessionautostarthelp'] = '<p>Moodleはセッションサポートを必要とします。また、セッションサポートなしでは動作しません。</p>
 <p>セッションは、php.iniファイルで有効にすることができます ... session.auto_startパラメータを探してください。</p>';
+$string['sitefullname'] = '長いサイト名 :';
+$string['siteinfo'] = 'サイト詳細';
+$string['sitenewsitems'] = 'ニュースアイテムの表示件数 :';
+$string['siteshortname'] = '短いサイト名 :';
+$string['sitesummary'] = 'フロントページの説明 :';
 $string['skipdbencodingtest'] = 'DBエンコーディングテストをスキップ';
 $string['status'] = '状態';
+$string['tableprefix'] = 'テーブル接頭辞 :';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = '日本語';
 $string['unicoderecommended'] = 'あなたのすべてのデータをユニコードフォーマット (UTF-8) で保存することをお勧めします。Moodleの新しいインストールは、ユニコードがデフォルトキャラクタにセットされたデータベースに実行される必要があります。アップグレードの場合、UTF-8移行プロセスを実行してださい (詳細は管理ページをご覧ください)。';
 $string['unicoderequired'] = 'あなたのすべてのデータをユニコードフォーマット (UTF-8) で保存することが必須です。Moodleの新しいインストールは、ユニコードがデフォルトキャラクタにセットされたデータベースに実行される必要があります。アップグレードの場合、UTF-8移行プロセスを実行してださい (詳細は管理ページをご覧ください)。';
+$string['unsafedirname'] = 'エラー: ディレクトリ名に安全でない文字が含まれています。有効な文字は、「a-zA-Z0-9_」です。';
+$string['upgradingactivitymodule'] = '活動モジュールのアップグレード';
+$string['upgradingbackupdb'] = 'バックアップデータのアップブレード';
+$string['upgradingblocksdb'] = 'ブロックデータベースのアップグレード';
+$string['upgradingblocksplugin'] = 'ブロックプラグインのアップグレード';
+$string['upgradingcompleted'] = 'アップグレードが完了しました ...';
+$string['upgradingcourseformatplugin'] = 'コースフォーマットプラグインのアップグレード';
+$string['upgradingenrolplugin'] = 'ユーザ登録プラグインのアップグレード';
+$string['upgradinggradeexportplugin'] = '評定エクスポートプラグインのアップグレード';
+$string['upgradinggradeimportplugin'] = '評定インポートプラグインのアップグレード';
+$string['upgradinggradereportplugin'] = '評定レポートプラグインのアップグレード';
+$string['upgradinglocaldb'] = 'ローカルデータベースのアップグレード';
+$string['upgradingmessageoutputpluggin'] = 'メッセージ出力プラグインのアップグレード';
+$string['upgradingqtypeplugin'] = '問題/タイププラグインのアップグレード';
+$string['upgradingrpcfunctions'] = 'RPC機能のアップグレード';
+$string['usagehelp'] = '概要:
+$php cliupgrade.php オプション
+オプション
+--lang インストールに使用する有効なインストール済み言語パックです。デフォルトは、英語 (en) です。
+--webaddr Moodleサイトのウェブアドレスです。
+--moodledir Moodleウェブフォルダのロケーションです。
+--datadir Moodleデータフォルダのロケーションです (ウェブから閲覧できないようにしてください)。
+--dbtype データベースタイプです。デフォルトは「mysql」です。
+--dbhost データベースホストです。デフォルトは「localhost」です。
+--dbname データベース名です。デフォルトは「moodle」です。
+--dbuser データベースユーザです。デフォルトは、空白です。
+--dbpass データベースパスワードです。デフォルトは、空白です。
+--prefix 上記データベーステーブルのテーブル接頭辞です。デフォルトは「mdl」です。
+--verbose 0 出力なし、1 要約の出力 (デフォルト)、2 詳細出力
+--interactivelevel 0 インタラクティブなし、1 セミ・インタラクティブ (デフォルト)、2 インタラクティブ
+--agreelicense Yes(デフォルト) または No
+--confirmrelease Yes(デフォルト) または No
+--sitefullname 長いサイト名です。デフォルトは : Moodle Site (サイト名を変更してください!!)
+--siteshortname 短いサイト名です。デフォルトは: moodle
+--sitesummary フロントページの説明です。デフォルトは、空白です。
+--adminfirstname 管理者の名です。デフォルトは「Admin」です。
+--adminlastname 管理者の姓です。デフォルトは「User」です。
+--adminusername 管理者のユーザ名です。デフォルトは「admin」です。
+--adminpassword 管理者のパスワードです。デフォルトは「admin」です。
+--adminemail 管理者のメールアドレスです。デフォルトは「root@localhost」です。
+--help このヘルプを出力します。
+使用方法:
+$php cliupgrade.php --lang=ja --webaddr=http://www.example.com --moodledir=/var/www/html/moodle --datadir=/var/moodledata --dbtype=mysql --dbhost=localhost --dbname=moodle --dbuser=root --prefix=mdl --agreelicense=yes --confirmrelease=yes --sitefullname=\"Example Moodle Site\" --siteshortname=moodle --sitesummary=siteforme --adminfirstname=Admin --adminlastname=User --adminusername=admin --adminpassword=admin --adminemail=admin@example.com --verbose=1 --interactivelevel=2';
 $string['user'] = 'ユーザ';
+$string['versionerror'] = 'バージョンエラーのため中断しました。';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'インストールが正常に完了したため、このページをご覧いただいています。あなたのコンピュータで <strong>$a->packname $a->packversion</strong> パッケージを起動してください。おめでとうございます!';
 $string['welcomep30'] = 'このリリース <strong>$a->installername</strong> には、<strong>Moodle</strong> で環境を作成するアプリケーションが含まれています。すなわち:';
@@ -292,9 +383,12 @@ $string['welcomep40'] = 'パッケージには <strong>Moodle $a->moodlerelease 
 $string['welcomep50'] = 'このパッケージ内のすべてのアプリケーションの使用は個々のライセンスによって規定されています。全体の <strong>$a->installername</strong> パッケージは <a href=\"http://www.opensource.org/docs/definition_plain.html\">オープンソース</a> であり、<a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>ライセンスの下で配布されています。';
 $string['welcomep60'] = '次からのページは、あなたのコンピュータに <strong>Moodle</strong> を簡単に設定およびセットアップする手順にしたがって進みます。デフォルトの設定を使用することも、必要に応じて任意で設定を変更することもできます。';
 $string['welcomep70'] = '<strong>Moodle</strong>のセットアップを続けるには「次へ」ボタンをクリックしてください。';
+$string['welcometext'] = '---Moodleコマンドラインインストーラーへようこそ---';
+$string['writetoconfigfilefaild'] = 'エラー: config.phpファイルの書き込みに失敗しました。';
 $string['wrongdestpath'] = '宛先パスが正しくありません。';
 $string['wrongsourcebase'] = 'ソースURIベースが正しくありません。';
 $string['wrongzipfilename'] = 'ZIPファイル名が正しくありません。';
 $string['wwwroot'] = 'ウェブアドレス';
 $string['wwwrooterror'] = '「ウェブアドレス」が正しくありません - インストール済みMoodleはそこに表示されません。下記の値はリセットされました。';
+$string['yourchoice'] = 'あなたの選択 :';
 ?>
