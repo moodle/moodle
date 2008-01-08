@@ -394,7 +394,7 @@ $string['upgradingcompleted'] = 'Upgrading completed...\n';
 $string['upgradingcourseformatplugin'] = 'Upgrading Course Format Pluggin';
 $string['upgradingenrolplugin'] = 'Upgrading Enrol Plugin';
 $string['upgradinggradeexportplugin'] = 'Upgrading Grade Export Plugin';
-$string['upgradinggradeimportplugin'] = 'Upgrading Grame Import Plugin';
+$string['upgradinggradeimportplugin'] = 'Upgrading Grade Import Plugin';
 $string['upgradinggradereportplugin'] = 'Upgrading Grade Report Plugin';
 $string['upgradinglocaldb'] = 'Upgrading Local Database';
 $string['upgradingmessageoutputpluggin'] = 'Upgrading Message Output Plugin';
@@ -408,8 +408,8 @@ OPTIONS
 --webaddr           Web address for the Moodle site
 --moodledir         Location of the moodle web folder
 --datadir           Location of the moodle data folder (should not be web visible)
---dbtype            Database type. Default it mysql
---dbhost            Database host. Default localhost
+--dbtype            Database type. Default is mysql
+--dbhost            Database host. Default is localhost
 --dbname            Database name. Default is moodle
 --dbuser            Database user. Default is blank
 --dbpass            Database password. Default is blank
