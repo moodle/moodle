@@ -2324,7 +2324,7 @@ function rcache_set($table, $id, $rec) {
     global $CFG, $MCACHE, $rcache;
 
     if ($CFG->cachetype === 'internal') {
-        $rcache->data[$table][$id] = fullclone($rec);
+        $rcache->data[$table][$id] = clone($rec);
     } else {
         $key   = $table . '|' . $id;
 
@@ -2388,7 +2388,7 @@ function rcache_get($table, $id) {
     if ($CFG->cachetype === 'internal') {
         if (isset($rcache->data[$table][$id])) {
             $rcache->hits++;
-            return $rcache->data[$table][$id];
+            return clone($rcache->data[$table][$id]);
         } else {
             $rcache->misses++;
             return false;
