@@ -459,7 +459,7 @@ img.iconkbhelp {
 /*Accessibility: text 'seen' by screen readers but not visual users. Fixed for RTL languages, example Farsi. */
 .accesshide {
   position:absolute;
-  top:-1000px;
+  top:-100000px;
   left:10px;
   font-weight:normal;
   font-size:1em;
