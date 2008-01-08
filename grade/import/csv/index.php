@@ -222,6 +222,11 @@ if ($formdata = $mform->get_data()) {
             // add something
             $line = split($csv_delimiter, fgets($fp,1024));
 
+            if(count($line) <= 1){
+                // there is no data on this line, move on
+                continue;
+            }
+
             // array to hold all grades to be inserted
             $newgrades = array();
             // array to hold all feedback
