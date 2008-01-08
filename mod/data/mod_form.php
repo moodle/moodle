@@ -48,7 +48,9 @@ class mod_data_mod_form extends moodleform_mod {
         $mform->addElement('select', 'approval', get_string('requireapproval', 'data'), $ynoptions);
         $mform->setHelpButton('approval', array('requireapproval', get_string('requireapproval', 'data'), 'data'));
 
-        $mform->addElement('select', 'rssarticles', get_string('numberrssarticles', 'data') , $countoptions);
+        if($CFG->enablerssfeeds && $CFG->data_enablerssfeeds){
+            $mform->addElement('select', 'rssarticles', get_string('numberrssarticles', 'data') , $countoptions);
+        }
 
         $mform->addElement('checkbox', 'assessed', get_string('allowratings', 'data') , get_string('ratingsuse', 'data'));
 
