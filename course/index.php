@@ -291,11 +291,18 @@
 
     echo '<div class="buttons">';
     
-    // Print link to create a new course
-    if (has_capability('moodle/course:create', $context)) {
-        unset($options);
-        if (!empty($category->id)) {
+    if (!empty($category->id)) {
+        // Print link to create a new course in current category
+        if (has_capability('moodle/course:create', $context)) {
+            $options = array();
             $options['category'] = $category->id;
+            print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
+        }
+    }else{
+        if (has_capability('moodle/course:create', $sysctx)) {  
+            // print create course link to first category
+            $options = array();
+            $options = array('category' => get_field('course_categories', 'id', 'parent', '0'));
             print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
         }
     }
