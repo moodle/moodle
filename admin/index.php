@@ -473,6 +473,7 @@
 
         $cat = new object();
         $cat->name = get_string('miscellaneous');
+        $cat->depth = 1;
         if (!$catid = insert_record('course_categories', $cat)) {
             error("Serious Error! Could not set up a default course category!");
         }
