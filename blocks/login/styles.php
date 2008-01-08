@@ -6,8 +6,8 @@
   display:inline;
 }
 
-.block_login .loginform .c1 input {
-  width:6em;
+.block_login .loginform .fld input {
+  width:5em;
 }
 
 .block_login .loginform label {
