@@ -103,6 +103,7 @@ if (isset($_POST['stage'])) {
         $nextstage = $_POST['stage'];
     }
 
+    $nextstage = (int)$nextstage;
 
     if ($nextstage < 0) {
         $nextstage = WELCOME;
@@ -804,31 +805,31 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             <tr>
                 <td class="td_left"><p><?php print_string('dbhost', 'install') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="dbhost" value="<?php echo $INSTALL['dbhost'] ?>" />
+                    <input type="text" size="40" name="dbhost" value="<?php p($INSTALL['dbhost']) ?>" />
                 </td>
             </tr>
             <tr>
                 <td class="td_left"><p><?php print_string('database', 'install') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="dbname" value="<?php echo $INSTALL['dbname'] ?>" />
+                    <input type="text" size="40" name="dbname" value="<?php p($INSTALL['dbname']) ?>" />
                 </td>
             </tr>
             <tr>
                 <td class="td_left"><p><?php print_string('user') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="dbuser" value="<?php echo $INSTALL['dbuser'] ?>" />
+                    <input type="text" size="40" name="dbuser" value="<?php p($INSTALL['dbuser']) ?>" />
                 </td>
             </tr>
             <tr>
                 <td class="td_left"><p><?php print_string('password') ?></p></td>
                 <td class="td_right">
-                    <input type="password" size="40" name="dbpass" value="<?php echo $INSTALL['dbpass'] ?>" />
+                    <input type="password" size="40" name="dbpass" value="<?php p($INSTALL['dbpass']) ?>" />
                 </td>
             </tr>
             <tr>
                 <td class="td_left"><p><?php print_string('dbprefix', 'install') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="prefix" value="<?php echo $INSTALL['prefix'] ?>" />
+                    <input type="text" size="40" name="prefix" value="<?php p($INSTALL['prefix']) ?>" />
                 </td>
             </tr>
 
@@ -840,7 +841,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             <tr>
                 <td class="td_left"><p><?php print_string('admindirname', 'install') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="admindirname" value="<?php echo $INSTALL['admindirname'] ?>" />
+                    <input type="text" size="40" name="admindirname" value="<?php p($INSTALL['admindirname']) ?>" />
                 </td>
             </tr>
 
