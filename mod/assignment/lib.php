@@ -2480,7 +2480,7 @@ function assignment_print_recent_mod_activity($activity, $course, $detail=false)
 
     }
 
-    if (has_capability('moodle/course:viewrecent', get_context_instance(CONTEXT_COURSE, $course))) {
+    if (has_capability('moodle/grade:viewall', get_context_instance(CONTEXT_COURSE, $course))) {
         $grades = "(" .  $activity->content->grade . " / " . $activity->content->maxgrade . ") ";
 
         $assignment->id = $activity->instance;
