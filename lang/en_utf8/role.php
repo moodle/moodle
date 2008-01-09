@@ -74,6 +74,7 @@ $string['errorbadroleshortname'] = 'Incorrect role name';
 $string['errorexistsrolename'] = 'Role name already exists';
 $string['errorexistsroleshortname'] = 'Role name already exists';
 $string['existingusers'] = '$a existing users';
+$string['globalrole'] = 'System role';
 $string['globalroleswarning'] = 'WARNING! Any roles you assign from this page will apply to the assigned users throughout the entire system, including the front page and all the courses.';
 $string['inherit'] = 'Inherit';
 $string['legacy:admin'] = 'LEGACY ROLE: Administrator';
