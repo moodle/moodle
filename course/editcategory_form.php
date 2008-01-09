@@ -28,7 +28,7 @@ class editcategory_form extends moodleform {
         $mform->addElement('hidden', 'id', null);
         $mform->addElement('hidden', 'categoryadd', 0);
         $mform->setType('id', PARAM_INT);
-        $this->add_action_buttons(false, get_string('submit'));
+        $this->add_action_buttons(true, get_string('savechanges'));
     }
 } 
 ?>

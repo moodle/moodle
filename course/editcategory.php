@@ -50,7 +50,7 @@ if (!empty($category)) {
     
 if ($mform->is_cancelled()){
     if (empty($category)) {
-        redirect($CFG->wwwroot);
+        redirect($CFG->wwwroot .'/course/index.php?categoryedit=on');
     } else {
         redirect($CFG->wwwroot.'/course/category.php?categoryedit=on&id='.$category->id);
     } 
