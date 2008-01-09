@@ -17,16 +17,23 @@
     }
     require_login($course->id);
 
+    if ($course->id == SITEID) {
+        $coursecontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
+    } else {
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
+    }
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+
     if ($id == -1) {
         // creating new user
-        require_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM));
+        require_capability('moodle/user:create', $systemcontext);
         $user = new object();
         $user->id = -1;
         $user->auth = 'manual';
         $user->confirmed = 1;
     } else {
         // editing existing user
-        require_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM));
+        require_capability('moodle/user:update', $systemcontext);
         if (!$user = get_record('user', 'id', $id)) {
             error('User ID was incorrect');
         }
@@ -178,7 +185,9 @@
         $userfullname     = fullname($user, true);
 
         $navlinks = array();
-        $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+        if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
+            $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+        }
         $navlinks[] = array('name' => $userfullname,
                             'link' => "view.php?id=$user->id&amp;course=$course->id",
                             'type' => 'misc');

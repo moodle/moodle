@@ -18,8 +18,9 @@
 
     require_login();
 
-    require_capability('moodle/course:bulkmessaging', get_context_instance(CONTEXT_COURSE, $id));
-
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $id);   // Course context
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
+    require_capability('moodle/course:bulkmessaging', $coursecontext);
 
     if (empty($SESSION->emailto)) {
         $SESSION->emailto = array();
@@ -63,7 +64,9 @@
     }
 
     $navlinks = array();
-    $navlinks[] = array('name' => get_string('participants'), 'link' => "index.php?id=$course->id", 'type' => 'misc');
+    if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
+        $navlinks[] = array('name' => get_string('participants'), 'link' => "index.php?id=$course->id", 'type' => 'misc');
+    }
     $navlinks[] = array('name' => $strtitle, 'link' => null, 'type' => 'misc');
     $navigation = build_navigation($navlinks);
 
