@@ -18,7 +18,7 @@ to one of four values:
     gets assigned to someone (eg in a course) that has this permission for 
     a capability, then the actual permission they'll have will just be 
     the same as they already had at higher-level contexts (eg categories
-    or site level).  Ultimately, if permission is never allowed at any 
+    or system level).  Ultimately, if permission is never allowed at any 
     level, then the user will have no permission for that capability.
     </dd>
 
@@ -42,9 +42,9 @@ to one of four values:
     deny permissions to a role in a way that can NOT be overridden at 
     any lower context.  A good example of when you might need this is 
     when an admin wants to prohibit one person from starting new 
-    discussions in any forum on the whole site.   In this case they 
+    discussions in any forum on the whole system.   In this case they 
     can create a role with that capability set to "Prohibit" and then 
-    assign it to that user in the site context.
+    assign it to that user in the system context.
   </dd>
 
 </dl>
@@ -64,7 +64,7 @@ to one of four values:
     
 <p> For example, a student has two roles in a course, one that allows 
     them to start new discussions, one that prevents them.  In this case, 
-    we check the categories and the site contexts, looking for another 
+    we check the categories and the system contexts, looking for another 
     defined permission to help us decide.  If we don't find one, then 
     permission is PREVENT by default (because the two settings cancelled 
     each other out, and thus you have no permission).
