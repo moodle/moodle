@@ -3942,13 +3942,20 @@ function print_box($message, $classes='generalbox', $ids='', $return=false) {
 function print_box_start($classes='generalbox', $ids='', $return=false) {
     global $THEME;
 
+    if (strpos($classes, 'clearfix') !== false) {
+        $clearfix = true;
+        $classes = trim(str_replace('clearfix', '', $classes));
+    } else {
+        $clearfix = false;
+    }
+    
     if (!empty($THEME->customcorners)) {
         $classes .= ' ccbox box';
     } else {
         $classes .= ' box';
     }
 
-    return print_container_start(false, $classes, $ids, $return);
+    return print_container_start($clearfix, $classes, $ids, $return);
 }
 
 /**

@@ -3,6 +3,8 @@
 <script type="text/javascript" charset="utf-8">
 /* <![CDATA[ */
     var script = {
+        themepath: '<?php echo $CFG->themewww .'/'. current_theme() ?>',
+        
         corrections: function () {
             if (top.user) {
                 top.document.getElementsByTagName('frameset')[0].rows = "117,30%,0,200";
@@ -24,6 +26,15 @@
                 $('body').removeClass('nocoursepage');
             } else {
                 $('body').addClass('nolayouttable');
+            }
+            
+            // set a smaller right and left padding on the admin pages
+            // with a htmlarea
+            var htmlarea = $('#adminsettings .form-htmlarea');
+            var docwidth = $(document).width();
+            
+            if (htmlarea.length && (docwidth <= 1024)) {
+                $('#page').css('margin', '0 1%');
             }
         },
         

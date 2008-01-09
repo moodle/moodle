@@ -154,6 +154,10 @@ div.groupselector {
   display:inline;
 }
 
+.box {
+  clear: both;
+}
+
 .generalbox {
   border-width:1px;
   border-style:solid;
@@ -253,6 +257,14 @@ div.groupselector {
 }
 
 .feedback {
+}
+
+.rsslink {
+  padding:  0 0 0 0.3em;
+}
+
+.printicon {
+  padding:  0 0 0 0.3em;
 }
 
 .generaltable {
@@ -3431,7 +3443,19 @@ body#mod-forum-search .introcontent {
   white-space: nowrap;
 }
 
+#mod-forum-view .groupmenu {
+  float: left;
+  text-align:left;
+  white-space: nowrap;
+}
+
 #mod-forum-view .forumcontrol .subscription {
+  float: right;
+  text-align:right;
+  white-space: nowrap;
+}
+
+#mod-forum-view .subscription {
   float: right;
   text-align:right;
   white-space: nowrap;
@@ -3471,6 +3495,10 @@ body#mod-forum-search .introcontent {
   border-width: 0px 1px 0px 0px;
   border-style: solid;
   text-align:center;
+}
+
+#mod-forum-view .subscription {
+  margin: 5px 0;
 }
 
 /***
@@ -3615,6 +3643,7 @@ body#mod-forum-search .introcontent {
 .mod-glossary .glossarydisplay .tabs {
   margin-bottom: 0px;
 }
+
 .mod-glossary .glossarydisplay .tabs .side {
   border-style: none;
   border-width: 0px;
@@ -3634,6 +3663,7 @@ body#mod-forum-search .introcontent {
   float: right;
   text-align:right;
   white-space: nowrap;
+  margin: 5px 0;
 }
 
 /***

@@ -2,6 +2,13 @@
  * These styles are ONLY included for IE 6 (via meta.php)
  */
 
+.sep.arrow {
+    padding-left: 0.5em;
+}
+.tabrow0 div,
+.tabrow0 ul {
+    top: 4.2em;
+}
 div.navbar {
     height: 2em;
 }
@@ -29,6 +36,28 @@ body {
   background-image: none;
   background-color: #F1ECE6;
 }
+th.header {
+  background-image: url(pix/header.gif);
+}
+table.forumpost tr.header {
+  background-image: url(pix/header.gif);
+}
+.loginbox h2 {
+  font-size: 1.5em;
+}
+div.sideblock ul.list li {
+  clear: left;
+  padding-left: 18px;
+  margin-left: 19px;
+}
+#notes-index #content-i3,
+#mod-chat-view #content-i3 {
+  padding-bottom: 15px;
+}
+#notes-index #content-i3 .ccbox,
+#mod-chat-view #content-i3 .ccbox {
+  margin-bottom: 0;
+}
 /*div.block_calendar_month div.calendar-controls span.hide {
   display: none
 }
@@ -44,6 +73,10 @@ div.block_calendar_month div.calendar-controls a.previous {
 div.block_calendar_month div.calendar-controls a.next {
   float: right;
 }*/
+#header div.bt,
+#header div.bb {
+  position: relative;
+}
 div.sideblock div.bt div {
   background-image: url(pix/box.gif);
 }
@@ -88,6 +121,10 @@ td#middle-column div.bt div {
 }
 body.dir-rtl td#middle-column div.bt div {
   right: -12px;
+}
+body.dir-rtl #header div.bt,
+body.dir-rtl #header div.bb {
+  left: 0;
 }
 td#middle-column div.bt {
   background-image: url(pix/box.gif);
@@ -206,9 +243,33 @@ body.nocoursepage div#content div.bb {
 body.nocoursepage.dir-rtl div#content div.bb {
   right: -12px;
 }
-th.header {
-  background-image: url(pix/header.gif);
+div#content div.ccbox div.bt div {
+  background-image: url(pix/mask_box.gif);
 }
-table.forumpost tr.header {
-  background-image: url(pix/header.gif);
+div#content div.ccbox div.bt {
+  background-image: url(pix/mask_box.gif);
+}
+div#content div.ccbox div.i1 {
+  background-image: url(pix/mask_borders_le.gif);
+}
+div#content div.ccbox div.i2 {
+  background-image: url(pix/mask_borders_re.gif);
+}
+div#content div.ccbox div.bb div {
+  background-image: url(pix/mask_box.gif);
+}
+div#content div.ccbox div.bb {
+  background-image: url(pix/mask_box.gif);
+}
+div#content div.ccbox div.i3 {
+  border-color: #f9f6f3;
+}
+body.dir-rtl div#content div.ccbox div.i1 {
+  background-image: url(pix/mask_borders_re.gif);
+}
+body.dir-rtl div#content div.ccbox div.i2 {
+  background-image: url(pix/mask_borders_le.gif);
+}
+div#content div.ccbox {
+  border-style: none;
 }

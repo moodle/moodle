@@ -282,7 +282,8 @@
         }
 
     /// Start to print glossary controls
-        print_box_start('glossarycontrol');
+//        print_box_start('glossarycontrol clearfix');
+        echo '<div class="glossarycontrol" style="text-align: right">';
         echo $availableoptions;
 
     /// If rss are activated at site and glossary level and this glossary has rss defined, show link
@@ -295,23 +296,28 @@
             } else {
                 $userid = $USER->id;
             }
-            print_box_start('rsslink');
+//            print_box_start('rsslink');
+            echo '<span class="wrap rsslink">';
             rss_print_link($course->id, $userid, "glossary", $glossary->id, $tooltiptext);
-            print_box_end();
+            echo '</span>';
+//            print_box_end();
         }
 
     /// The print icon
         if ( $showcommonelements and $mode != 'search') {
             if (has_capability('mod/glossary:manageentries', $context) or $glossary->allowprintview) {
-                print_box_start('printicon');
+//                print_box_start('printicon');
+                echo '<span class="wrap printicon">';
                 echo " <a title =\"". get_string("printerfriendly","glossary") ."\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=".urlencode($hook)."&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\"><img class=\"icon\" src=\"print.gif\" alt=\"". get_string("printerfriendly","glossary") . "\" /></a>";
-                print_box_end();
+                echo '</span>';
+//                print_box_end();
             }
         }
     /// End glossary controls
-        print_box_end(); /// glossarycontrol
-
-        print_box('&nbsp;', 'clearer');
+//        print_box_end(); /// glossarycontrol
+        echo '</div>';
+        
+//        print_box('&nbsp;', 'clearer');
     }
 
 /// Info box
