@@ -23,7 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**
- * Library of functions for gradebook
+ * Library of functions for gradebook - both public and internal
  *
  * @author Moodle HQ developers
  * @version  $Id$
@@ -39,7 +39,9 @@ require_once($CFG->libdir . '/grade/grade_grade.php');
 require_once($CFG->libdir . '/grade/grade_scale.php');
 require_once($CFG->libdir . '/grade/grade_outcome.php');
 
-/***** PUBLIC GRADE API - only these functions should be used in modules *****/
+/////////////////////////////////////////////////////////////////////
+///// Start of public API for communication with modules/blocks /////
+/////////////////////////////////////////////////////////////////////
 
 /**
  * Submit new or update grade; update/create grade_item definition. Grade must have userid specified,
@@ -50,7 +52,7 @@ require_once($CFG->libdir . '/grade/grade_outcome.php');
  * 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted' and 'hidden'. 'reset' means delete all current grades including locked ones.
  *
  * Manual, course or category items can not be updated by this function.
-
+ * @public
  * @param string $source source of the grade such as 'mod/assignment'
  * @param int $courseid id of course
  * @param string $itemtype type of grade item - mod, block
@@ -237,6 +239,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 /**
  * Updates outcomes of user
  * Manual outcomes can not be updated.
+ * @public
  * @param string $source source of the grade such as 'mod/assignment'
  * @param int $courseid id of course
  * @param string $itemtype 'mod', 'block'
@@ -260,14 +263,15 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
 /**
  * Returns grading information for given activity - optionally with users grades
  * Manual, course or category items can not be queried.
+ * @public
  * @param int $courseid id of course
  * @param string $itemtype 'mod', 'block'
  * @param string $itemmodule 'forum, 'quiz', etc.
  * @param int $iteminstance id of the item module
- * @param int $userid optional id of the graded user; if userid not used, returns only information about grade_item
+ * @param int $userid_or_ids optional id of the graded user or array of ids; if userid not used, returns only information about grade_item
  * @return array of grade information objects (scaleid, name, grade and locked status, etc.) indexed with itemnumbers
  */
-function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $userid_or_ids=0) {
+function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $userid_or_ids=null) {
     global $CFG;
 
     $return = new object();
@@ -439,164 +443,15 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
     return $return;
 }
 
-/**
- * Returns whether or not there are any grades yet for the given course module object. A userid can be given to check for a single user's grades.
- *
- * @param object $cm
- * @param int $userid
- * @return bool True if grades are present, false otherwise
- */
-function grade_exists($cm, $userid = null) {
+///////////////////////////////////////////////////////////////////
+///// End of public API for communication with modules/blocks /////
+///////////////////////////////////////////////////////////////////
 
-    $grade_items = grade_get_grade_items_for_activity($cm);
-    $grades_exist = false;
 
-    // Query each grade_item for existing grades
-    foreach ($grade_items as $gi) {
-        $grades = $gi->get_final($userid);
-        $grades_exist = $grades_exist || !empty($grades); // get_final should return false, an empty array or an array of grade_grade objects
-    }
 
-    return $grades_exist; 
-}
-
-/**
- * For a given activity module $cm object, return the related grade item object (or array of objects if there are more than one, or NULL if there are none).
- *
- * @param object $cm A course module object
- * @return mixed the related grade item object (or array of objects if there are more than one, or NULL if there are none)
- */
-function grade_get_grade_items_for_activity($cm) {
-    if (!isset($cm->instance) || !isset($cm->courseid)) {
-        error("The coursemodule object you gave to grade_exists() isn't set up correctly. Either instance ($cm->instance) or courseid ($cm->courseid) field isn't set.");
-    }
-    
-    // Get grade_item object for this course module (or array of grade_items)
-    if ($grade_items = grade_item::fetch_all(array('iteminstance' => $cm->instance, 'courseid' => $cm->courseid))) {
-      $std_grade_items = array();
-      foreach ($grade_items as $key => $gi) {
-          $std_grade_items[$key] = $gi->get_record_data();
-      }
-  
-      if (count($std_grade_items) == 0 || empty($std_grade_items)) {
-          return null; 
-      } elseif (count($std_grade_items) == 1) {
-          return reset($std_grade_items);
-      } else {
-          return $std_grade_items;
-      } 
-    } else {
-        return null;
-    }
-}
-
-/**
- * Returns an array of activities (defined as $cm objects) for which grade_items are defined. 
- *  
- * @param int $courseid If provided then restrict to one course.
- * @param string $type If defined (could be 'forum', 'assignment' etc) then only that type are returned.
- * @return array $cm objects
- */
-function grade_get_grade_activities($courseid = null, $type = null) {
-    if ($grade_items = grade_get_grade_items($courseid, $type)) {
-        $cms = array();
-
-        foreach ($grade_items as $gi) {
-            // Get moduleid
-            $moduleid = get_field('modules', 'id', 'name', $gi->itemmodule);
-            if ($cm = get_record('course_modules', 'instance', $gi->iteminstance, 'course', $gi->courseid, 'module', $moduleid)) {
-                $cms[$cm->id] = $cm;
-            }
-        }
-        return $cms;
-    } else {
-        return false;
-    }
-}
-
-/**
- * Returns an array of $gradeitem objects.
- *
- * @param int $courseid If provided then restrict to one course.
- * @param string $type If defined (could be 'forum', 'assignment' etc) then only that type are returned. 'course' can be used to get the course item.
- * @return array $gradeitem objects
- */
-function grade_get_grade_items($courseid = null, $type = null) {
-    // Get list of grade_items for the given course, of the given type
-    $params = array();
-    if (!empty($courseid)) {
-        $params['courseid'] = $courseid;
-    }
-    if (!empty($type)) {
-        if ($type == 'course' && !empty($courseid)) {
-            $params['itemtype'] = 'course';
-        } else {
-           $params['itemtype'] = 'mod';
-           $params['itemmodule'] = $type;
-       }
-    }
-
-    $grade_items = $grade_items = grade_item::fetch_all($params);
-    $std_grade_items = array();
-    foreach ($grade_items as $key => $gi) {
-        $std_grade_items[$key] = $gi->get_record_data();
-    }
-    return $std_grade_items;
-} 
-
-/**
- * Returns the float grade for the given user in the given grade_item / column. NULL if it doesn't exist. 
- *
- * @param object $gradeitem A grade_item object (properly instantiated, or plain stdClass)
- * @param object $user A user object or a userid (int)
- * @return float 
- */
-function grade_get_user_grade($gradeitem, $userid) {
-    if (!method_exists($gradeitem, 'get_final')) {
-        $fetch_from_db = empty($gradeitem->id); 
-        $gradeitem = new grade_item($gradeitem, $fetch_from_db);
-    }
-    
-    if ($final = $gradeitem->get_final($userid)) {
-        return $final->finalgrade;
-    } else {
-        return null;
-    }
-} 
-
-/**
- * Returns the course grade(s) for the given user. 
- * If $course is not specified, then return an array of all the course grades for all the courses that user is a part of.
- *
- * @param object $user A user object or a userid (int)
- * @param object $course A course object or a courseid (int)
- * @return mixed Course grade or array of course grades if $course param is not given
- */
-function grade_get_course_grade($userid, $courseid = null) {
-    $coursegrades = array();
-
-    // Get the course item(s)
-    if (!empty($courseid)) {
-        $courseitem  = grade_item::fetch_course_item($courseid);
-        if ($final = $courseitem->get_final($userid)) { 
-            return $final->finalgrade;
-        } else {
-            return null;
-        }
-    } else {
-        $courses = get_my_courses($userid);
-        foreach ($courses as $course_object) {
-            $courseitem = grade_item::fetch_course_item($course_object->id);
-            if ($final = $courseitem->get_final($userid)) {
-                $coursegrades[$course_object->id] = $final->finalgrade;
-            }
-        }
-        return $coursegrades;
-    }
-} 
-
-/***** END OF PUBLIC API *****/
-
+///////////////////////////////////////////////////////////////////
+///// Internal API: used by gradebook plugins and Moodle core /////
+///////////////////////////////////////////////////////////////////
 
 /**
  * Returns course gradebook setting
@@ -683,7 +538,7 @@ function grade_set_setting($courseid, $name, $value) {
  * @param float $value grade value
  * @param object $grade_item - by reference to prevent scale reloading
  * @param bool $localized use localised decimal separator
- * @param int $displaytype type of display - raw, letter, percentage
+ * @param int $displaytype type of display - GRADE_DISPLAY_TYPE_REAL, GRADE_DISPLAY_TYPE_PERCENTAGE, GRADE_DISPLAY_TYPE_LETTER
  * @param int $decimalplaces number of decimal places when displaying float values
  * @return string
  */
@@ -1233,17 +1088,6 @@ function remove_course_grades($courseid, $showfeedback) {
     if ($showfeedback) {
         notify($strdeleted.' - '.get_string('settings', 'grades'));
     }
-}
-
-/**
- * Builds an array of percentages indexed by integers for the purpose of building a select drop-down element.
- * @param int $steps The value between each level.
- * @param string $order 'asc' for 0-100 and 'desc' for 100-0
- * @param int $lowest The lowest value to include
- * @param int $highest The highest value to include
- */
-function build_percentages_array($steps=1, $order='desc', $lowest=0, $highest=100) {
-    // TODO reject or implement
 }
 
 /**
