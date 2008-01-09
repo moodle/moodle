@@ -4,7 +4,6 @@
 
     require_once("../config.php");
     require_once("lib.php");
-    require_once('category_add_form.php');
 
     $categoryedit = optional_param('categoryedit', -1,PARAM_BOOL);
     $delete   = optional_param('delete',0,PARAM_INT);
