@@ -8,7 +8,7 @@ $string['allowassign'] = 'Allow role assignments';
 $string['allowoverride'] = 'Allow role overrides';
 $string['assignroles'] = 'Assign roles';
 $string['assignrolesin'] = 'Assign roles in $a';
-$string['assignglobalroles'] = 'Assign global roles';
+$string['assignglobalroles'] = 'Assign system roles';
 $string['blog:create'] = 'Create new blog entries';
 $string['blog:manageentries'] = 'Edit and manage entries';
 $string['blog:manageofficialtags'] = 'Manage official tags';
@@ -74,8 +74,12 @@ $string['errorbadroleshortname'] = 'Incorrect role name';
 $string['errorexistsrolename'] = 'Role name already exists';
 $string['errorexistsroleshortname'] = 'Role name already exists';
 $string['existingusers'] = '$a existing users';
+<<<<<<< role.php
 $string['globalrole'] = 'Global role';
 $string['globalroleswarning'] = 'WARNING! Any roles you assign from this page will apply to the assigned users throughout the entire site, including the front page and all the courses.';
+=======
+$string['globalroleswarning'] = 'WARNING! Any roles you assign from this page will apply to the assigned users throughout the entire system, including the front page and all the courses.';
+>>>>>>> 1.23.2.11
 $string['inherit'] = 'Inherit';
 $string['legacy:admin'] = 'LEGACY ROLE: Administrator';
 $string['legacy:coursecreator'] = 'LEGACY ROLE: Course Creator';
