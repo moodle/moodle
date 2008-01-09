@@ -212,7 +212,7 @@ function chat_cron () {
 
     $sql = "DELETE
               FROM {$CFG->prefix}chat_messages
-             WHERE ($subselect) IS NOT NULL AND timestamp < ( ".time()." -($subselect) * 24 * 3600)"; 
+             WHERE ($subselect) > 0 AND timestamp < ( ".time()." -($subselect) * 24 * 3600)"; 
 
     execute_sql($sql, false);
 
