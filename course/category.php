@@ -5,7 +5,6 @@
 
     require_once("../config.php");
     require_once("lib.php");
-    require_once('category_add_form.php');
 
     $id           = required_param('id', PARAM_INT);          // Category id
     $page         = optional_param('page', 0, PARAM_INT);     // which page to show
