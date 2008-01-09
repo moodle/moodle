@@ -172,16 +172,19 @@ $navlinks = array();
             }
 
             if ($course->id != SITEID) {
-                if ($tagid || !empty($tag)) {
-                    $navlinks[] = array('name' => $course->shortname,
-                                        'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
-                                        'type' => 'misc');
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
+                $systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
+
+                if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
                     $navlinks[] = array('name' => $participants,
                                         'link' => "$CFG->wwwroot/user/index.php?id=$course->id",
                                         'type' => 'misc');
-                    $navlinks[] = array('name' => fullname($user),
-                                        'link' => "$CFG->wwwroot/user/view.php?id=$filterselect&amp;course=$course->id",
-                                        'type' => 'misc');
+                }
+                $navlinks[] = array('name' => fullname($user),
+                                    'link' => "$CFG->wwwroot/user/view.php?id=$filterselect&amp;course=$course->id",
+                                    'type' => 'misc');
+
+                if ($tagid || !empty($tag)) {
                     $navlinks[] = array('name' => $blogstring,
                                         'link' => "index.php?courseid=$course->id&amp;filtertype=user&amp;filterselect=$filterselect",
                                         'type' => 'misc');
@@ -191,12 +194,6 @@ $navlinks = array();
                     print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
 
                 } else {
-                    $navlinks[] = array('name' => $participants,
-                                        'link' => "$CFG->wwwroot/user/index.php?id=$course->id",
-                                        'type' => 'misc');
-                    $navlinks[] = array('name' => fullname($user),
-                                        'link' => "$CFG->wwwroot/user/view.php?id=$filterselect&amp;course=$course->id",
-                                        'type' => 'misc');
                     $navlinks[] = array('name' => $blogstring, 'link' => null, 'type' => 'misc');
                     $navigation = build_navigation($navlinks);
                     print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
