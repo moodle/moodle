@@ -25,10 +25,9 @@
 
 require_once $CFG->libdir.'/gradelib.php';
 
-
 /**
  * This class iterates over all users that are graded in a course.
- * Returns fetailed info about users and their grades.
+ * Returns detailed info about users and their grades.
  */
 class graded_users_iterator {
     var $course;
@@ -676,30 +675,6 @@ function grade_build_nav($path, $pagename=null, $id=null) {
     $navigation = build_navigation($navlinks);
 
     return $navigation;
-}
-
-/**
- * Computes then returns the percentage value of the grade value within the given range.
- * @param float $gradeval
- * @param float $grademin
- * @param float $grademx
- * @return float $percentage
- */
-function grade_to_percentage($gradeval, $grademin, $grademax) {
-    if ($grademin >= $grademax) {
-        debugging("The minimum grade ($grademin) was higher than or equal to the maximum grade ($grademax)!!! Cannot proceed with computation.");
-    }
-
-    // If given gradevalue is lower than grademin, adjust it to grademin
-    if ($gradeval < $grademin || empty($gradeval)) {
-        $gradeval = $grademin;
-    }
-
-    $offset_value = $gradeval - $grademin;
-    $offset_max = $grademax - $grademin;
-    $factor = 100 / $offset_max;
-    $percentage = $offset_value * $factor;
-    return $percentage;
 }
 
 /**

@@ -209,7 +209,6 @@ class grade_report {
      * @param mixed $pref_value The value of the preference.
      * @param int $itemid An optional itemid to which the preference will be assigned
      * @return bool Success or failure.
-     * TODO print visual feedback
      */
     function set_pref($pref, $pref_value='default', $itemid=null) {
         $fullprefname = 'grade_report_' . $pref;
@@ -252,34 +251,6 @@ class grade_report {
             $this->lang_strings[$strcode] = get_string($strcode, $section);
         }
         return $this->lang_strings[$strcode];
-    }
-
-    /**
-     * Computes then returns the percentage value of the grade value within the given range.
-     * @param float $gradeval
-     * @param float $grademin
-     * @param float $grademx
-     * @return float $percentage
-     */
-    function grade_to_percentage($gradeval, $grademin, $grademax) {
-        if ($grademin >= $grademax) {
-            debugging("The minimum grade ($grademin) was higher than or equal to the maximum grade ($grademax)!!! Cannot proceed with computation.");
-        }
-        $offset_value = $gradeval - $grademin;
-        $offset_max = $grademax - $grademin;
-        $factor = 100 / $offset_max;
-        $percentage = $offset_value * $factor;
-        return $percentage;
-    }
-
-    /**
-     * Fetches and returns an array of grade letters indexed by their grade boundaries, as stored in course item settings or site preferences.
-     * @return array
-     */
-    function get_grade_letters() {
-        global $COURSE;
-        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-        return grade_get_letters($context);
     }
 
     /**
