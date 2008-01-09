@@ -111,9 +111,10 @@
     }
 
 
-    print_box_start('forumcontrol');
+//    print_box_start('forumcontrol clearfix');
 
-    print_box_start('subscription');
+//    print_box_start('subscription clearfix');
+    echo '<div class="subscription">';
 
     if (!empty($USER->id) && !has_capability('moodle/legacy:guest', $context, NULL, false)) {
         $SESSION->fromdiscussion = "$FULLME";
@@ -173,16 +174,19 @@
         } else {
             $userid = $USER->id;
         }
-        print_box_start('rsslink');
+//        print_box_start('rsslink');
+        echo '<span class="wrap rsslink">';
         rss_print_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
-        print_box_end(); // subscription
+        echo '</span>';
+//        print_box_end(); // subscription
 
     }
-    print_box_end(); // subscription
+//    print_box_end(); // subscription
+    echo '</div>';
 
-    print_box_end();  // forumcontrol
+//    print_box_end();  // forumcontrol
 
-    print_box('&nbsp;', 'clearer'); 
+//    print_box('&nbsp;', 'clearer'); 
 
 
     if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {

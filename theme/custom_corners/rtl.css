@@ -15,6 +15,12 @@ div.sideblock div.content * {
 div.calendar-controls a.next {
   text-align: left;
 }
+div.bt {
+  text-align: right;
+}
+div.bb {
+  text-align: right;
+}
 div.sideblock div.header div.bt div {
   background-position: 100% 0;
   right: -13px;
@@ -215,4 +221,10 @@ body.nocoursepage div#content div.i2 {
 }
 body.nocoursepage div#content div.i3 {
   /*background: transparent;*/
+}
+div#content div.ccbox div.i1 {
+  background-image: url(pix/mask_borders_re.gif);
+}
+div#content div.ccbox div.i2 {
+  background-image: url(pix/mask_borders_le.gif);
 }

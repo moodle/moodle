@@ -36,7 +36,11 @@
             (strpos($bodytags, ' nocoursepage'))) {
             $bodytags = str_replace(' nocoursepage', '', $bodytags);
         }
-
+        
+        // get class list
+        preg_match('/class="([^"]*)"/i', $bodytags, $classes);
+        $classlist = explode (' ', $classes[1]);
+        
         // add 'nocoursepage' to the list of CLASSes on several pages
         if (strpos($bodytags, 'nocoursepage') === false) {
             $includelist = array('admin-roles-assign', 'admin-roles-override', 
@@ -47,16 +51,22 @@
                 // include user roles for the Moodle user settings called
                 // from the start page
                 if (($COURSE->id > 1) || ($_GET['contextid'] == 30) || ($_GET['contextid'] == 61)) {
-                    preg_match('/class="([^"]*)"/i', $bodytags, $classes);
-                    $classlist = explode (' ', $classes[1]);
                     if (!in_array('nocoursepage', $classlist)) {
                         array_push($classlist, 'nocoursepage');
-                        $bodytags = str_replace($classes[0],
-                            'class="'.implode(' ', $classlist).'"', $bodytags);
                     }
                 }
             }
         }
+        
+        // add "inpopup" or "notinpopup" to class list
+        if ($inpopup) {
+            array_push($classlist, 'inpopup');
+        } else {
+            array_push($classlist, 'notinpopup');
+        }
+        
+        //replace classlist with new one
+        $bodytags = str_replace($classes[0], 'class="'.implode(' ', $classlist).'"', $bodytags);
         
     ?>
 </head>
@@ -71,29 +81,27 @@
     <?php if(!empty($infooutput)) { ?>
         <div id="infowrapper"><div id="infooverlay"><?php echo $infooutput; ?></div></div>
     <?php } ?>
-<div id="page"<?php echo (' class="'.(($inpopup) ? 'inpopup' : 'notinpopup').'"'); ?>>
+<div id="page">
 
 <?php if (!$inpopup) { 
     if ($home) {  // This is what gets printed on the home page only
 ?>
     <?php print_container_start(true, '', 'header-home'); ?>
-        <div class="wraphome clearfix">
-            <h1 class="headermain"><?php echo $heading ?></h1>
-            <div class="headermenu"><?php echo $menu ?></div>
-        </div>
+        <h1 class="headermain"><?php echo $heading ?></h1>
+        <div class="headermenu"><?php echo $menu ?></div>
     <?php print_container_end(); ?>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading
 ?>
     <?php print_container_start(true, '', 'header'); ?>
-          <h1 class="headermain"><?php echo $heading ?></h1>
-          <div class="headermenu"><?php echo $menu ?></div>
-      <div class="navbar clearfix">
-        <?php if ($navigation) { // This is the navigation table with breadcrumbs
-        ?>
-        <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
-        <div class="navbutton"><?php echo $button; ?></div>
-        <?php } ?>
-      </div>
+        <h1 class="headermain"><?php echo $heading ?></h1>
+        <div class="headermenu"><?php echo $menu ?></div>
+        <div class="navbar clearfix">
+            <?php if ($navigation) { // This is the navigation table with breadcrumbs
+            ?>
+            <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
+            <div class="navbutton"><?php echo $button; ?></div>
+            <?php } ?>
+        </div>
     <?php print_container_end(); ?>
 <?php }
     }
