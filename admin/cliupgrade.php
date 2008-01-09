@@ -177,6 +177,7 @@ if ( realpath($_SERVER['argv'][0]) == __FILE__ && count($args)>1) {
 //detect erros in the options
 if (PEAR::isError($console_opt)) {
     console_write(STDOUT,'invalidargumenthelp');
+    console_write(STDOUT, "\n", '', false);
     die();
 }
 
@@ -187,6 +188,7 @@ $options=get_options($console_opt);
 if (is_array($options)) {
     if(array_key_exists('help',$options)){
         console_write(STDOUT,'usagehelp');
+        console_write(STDOUT, "\n", '', false);
         die ;
     }
 }
@@ -231,7 +233,11 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     //welcome message
     if ($verbose > CLI_NO) {
+        console_write(STDOUT, "\n", '', false);
+        console_write(STDOUT, "\n", '', false);
         console_write(STDOUT,'welcometext','install');
+        console_write(STDOUT, "\n", '', false);
+        console_write(STDOUT, "\n", '', false);
     }
     //============================================================================//
     //Language selection for the installation
@@ -239,14 +245,19 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['lang'])) ) ) {
         $langs=get_installer_list_of_languages();
 
+        console_write(STDOUT, "\n", '', false);
+        console_write(STDOUT, "\n", '', false);
         console_write(STDOUT,'selectlanguage','install');
+        console_write(STDOUT, "\n", '', false);
         console_write(STDOUT,'availablelangs','install');
+        console_write(STDOUT, "\n", '', false);
         //output available languages
         foreach ( $langs as $language ) {
             console_write(STDOUT,"\t",'',false);
             console_write(STDOUT,$language,'',false);
             console_write(STDOUT,"\n",'',false);
         }
+        console_write(STDOUT, "\n", '', false);
         console_write(STDOUT,'yourchoice','install');
         $short_code_langs = get_short_codes($langs);
 
@@ -261,7 +272,9 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     if ($verbose == CLI_NO) {
         $silent=true;
     }else{
+        console_write(STDOUT, "\n", '', false);
         console_write(STDOUT,'checkingphpsettings','install');
+        console_write(STDOUT, "\n", '', false);
     }
     /// Check that PHP is of a sufficient version
     check_compatibility(inst_check_php_version(), get_string('phpversion', 'install'), get_string('phpversionerror', 'install'),false,$silent);
@@ -288,7 +301,11 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
 
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['dirroot']) || !isset($INSTALL['wwwroot']) || !isset($INSTALL['dataroot']) ) ) ) {
+        console_write(STDOUT, "\n", '', false);
+        console_write(STDOUT, "\n", '', false);
         console_write(STDOUT,'locationanddirectories','install');
+        console_write(STDOUT, "\n", '', false);
+        console_write(STDOUT, "\n", '', false);
     }
 
     //input the web directory
@@ -338,7 +355,11 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     // Database section heading
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['dbhost']) || !isset($INSTALL['dbname']) || !isset($INSTALL['dbtype']) || !isset($INSTALL['dbuser']) ||  !isset($INSTALL['dbpass']) || !isset($INSTALL['prefix']) ) ) ) {
+        console_write(STDOUT, "\n", '', false);
+        console_write(STDOUT, "\n", '', false);
         console_write(STDOUT,'databasesettingsformoodle','install');
+        console_write(STDOUT, "\n", '', false);
+        console_write(STDOUT, "\n", '', false);
     }
 
     //Input dialogs
@@ -352,7 +373,9 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     }
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['dbtype']) ))) {
         $dbtypes=array('mysql','oci8po','postgres7','mssql','mssql_n','odbc_mssql');
+        console_write(STDOUT, "\n", '', false);
         console_write(STDOUT,'availabledbtypes','install');
+        console_write(STDOUT, "\n", '', false);
         foreach ($dbtypes as $dbtype) {
             console_write(STDOUT,"\t",'',false);
             console_write(STDOUT,$dbtype,'install');
@@ -458,7 +481,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         $db->SetFetchMode(ADODB_FETCH_ASSOC);
 
         if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
-            $errormsg= get_string('cannotconnecttodb','install');
+            $errormsg= get_string('cannotconnecttodb','install') . "\n";
         } else {
             /// We have been able to connect properly, just test the database encoding now.
             /// It must be Unicode for 1.8 installations.
@@ -507,7 +530,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     if ($dbconnected) {
         /// Execute environment check, printing results
         if (!check_moodle_environment($INSTALL['release'], $environment_results, false)) {
-            $errormsg = get_string('errorsinenvironment', 'install');
+            $errormsg = get_string('errorsinenvironment', 'install') . "\n";
         }
     } else {
         /// We never should reach this because DB has been tested before arriving here
@@ -531,6 +554,8 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['downloadlangaugepack']) ))) {
         $site_langs=get_list_of_languages();
         if (!key_exists($INSTALL['lang'],$site_langs)) {
+            console_write(STDOUT, "\n", '', false);
+            console_write(STDOUT, "\n", '', false);
             console_write(STDOUT,'downloadlanguagepack','install');
             $download_lang_pack=read_yes_no();
             if($download_lang_pack == 'yes'){
@@ -574,7 +599,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         }
     }
     
-    if ( $verbose > CLI_NO && $downloadsuccess) {
+    if ( $verbose > CLI_NO && !empty($downloadsuccess)) {
         //print success message if language pack download is successful
         console_write(STDOUT,'downloadsuccess');
         print_newline();
@@ -603,6 +628,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     if ($verbose > CLI_NO) {
         console_write(STDOUT,'creatingconfigfile','install');
+        console_write(STDOUT, "\n", '', false);
     }
 
     $str  = '<?php  /// Moodle Configuration File '."\r\n";
@@ -644,12 +670,17 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         fclose($fh);
         if ($verbose > CLI_NO) {
             console_write(STDOUT,'configfilecreated','install');
+            console_write(STDOUT, "\n", '', false);
         }
     } else {
-        console_write(STDERR,'writeconfigfilefailed','install');
+        console_write(STDOUT,'configfilenotwritten','install');
+        console_write(STDOUT, "\n", '', false);
+        console_write(STDOUT, "\n", '', false);
+        console_write(STDERR, $str, '', false);
     }
     if ( $verbose ) {
         console_write(STDOUT,'installationiscomplete','install');
+        console_write(STDOUT, "\n", '', false);
     }
 }
 
@@ -657,6 +688,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     // This is what happens if there is no upgrade....
     //console_write(STDERR,'configurationfileexist','install');
+    //console_write(STDOUT, "\n", '', false);
     //die;
 
 
@@ -1305,6 +1337,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     if ( $verbose > CLI_NO ) {
         print_newline();
         console_write(STDOUT,'upgradingcompleted');
+        console_write(STDOUT, "\n", '', false);
     }
 }
 

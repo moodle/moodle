@@ -240,6 +240,7 @@ function validate_option_values($options){
     if (isset($values['lang'])) {
         if (!valid_language($INSTALL['lang'])) {
             console_write(STDERR,'invalidvalueforlanguage');
+        console_write(STDOUT, "\n", '', false);
         }
     }
     if (isset($values['webdir'])) {
@@ -370,7 +371,7 @@ function console_write($stream,$identifier,$module='install',$use_string_lib=tru
         fwrite($stream,$identifier);
     }
     if ($stream == STDERR) {
-        fwrite($stream,get_string('aborting',$module));
+        fwrite($stream, "\n\n" . get_string('aborting',$module) . "\n\n");
         die;
     }
 }
@@ -397,6 +398,7 @@ function read_int() {
         return $input;
     } else {
         console_write(STDERR,'invalidint');
+        console_write(STDOUT, "\n", '', false);
     }
 }
 //=========================================================================//
@@ -413,6 +415,7 @@ function read_int_range($start,$end) {
         return $input;
     } else {
         console_write(STDERR,'invalidintrange');
+        console_write(STDOUT, "\n", '', false);
     }
 
 }
@@ -432,6 +435,7 @@ function read_yes_no() {
         }
     } else {
         console_write(STDERR,'invalidyesno');
+        console_write(STDOUT, "\n", '', false);
     }
 }
 
@@ -459,6 +463,7 @@ function read_element($set=array()) {
         return $input;
     } else {
         console_write(STDERR,'invalidsetelement');
+        console_write(STDOUT, "\n", '', false);
     }
 }
 //=========================================================================//
@@ -576,18 +581,22 @@ function inst_check_php_version() {
  * @param array $env, of type object
  */
 function print_environment_status($env = array()) {
-    console_write(STDOUT,"Status\t\tInfo\t\tPart\n\r",'',false);
+    console_write(STDOUT, get_string('name') . "\t\t\t" . get_string('info') . "\t" . get_string('status') . "\n\r", '', false);
+    //console_write(STDOUT,"Status\t\tInfo\t\tPart\n\r",'',false);
     foreach ( $env as  $object) {
-
+        console_write(STDOUT,$object->part,'',false);
+        console_write(STDOUT,"\t\t",'',false);
+        if (!empty($object->info)) {
+            console_write(STDOUT, $object->info, '', false);
+        } else {
+            console_write(STDOUT, "\t", '', false);
+        }
+        console_write(STDOUT, "\t\t", '', false);
         if ($object->status == 1 ) {
             console_write(STDOUT,'ok','',false);
         } else {
             console_write(STDOUT,'fail','',false);
         }
-        console_write(STDOUT,"\t\t",'',false);
-        console_write(STDOUT,$object->info,'',false);
-        console_write(STDOUT,"\t\t",'',false);
-        console_write(STDOUT,$object->part,'',false);
         console_write(STDOUT,"\n\r",'',false);
     }
 }
@@ -627,6 +636,6 @@ function print_environment_status_detailed($env = array()) {
  */
 
 function print_newline() {
-    console_write(STDOUT,'newline','install');
+    console_write(STDOUT, "\n", '', false);
 }
 ?>

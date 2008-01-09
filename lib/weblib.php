@@ -2354,7 +2354,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         if ($return) {
             return $output;
         } else {
-            console_write(STDOUT,$output,'',false);
+            console_write(STDOUT,$output . "\n",'',false);
             return;
         }
     }
@@ -5762,7 +5762,7 @@ function error ($message, $link='') {
     global $CFG, $SESSION, $THEME;
     $message = clean_text($message);   // In case nasties are in here
 
-    if (defined('CLI_UPGRADE') || CLI_UPGRADE) {
+    if (defined('CLI_UPGRADE') && CLI_UPGRADE) {
         console_write(STDERR,$message,'',false);
         die ;
     }

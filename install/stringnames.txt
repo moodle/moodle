@@ -208,7 +208,6 @@ thisdirection
 thislanguage
 unicoderecommended
 unicoderequired
-unsafedirname
 upgradingactivitymodule
 upgradingbackupdb
 upgradingblocksdb
