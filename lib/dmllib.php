@@ -1417,7 +1417,7 @@ function delete_records_select($table, $select='') {
  * @param string $table The database table to be checked against.
  * @param object $dataobject A data object with values for one or more fields in the record
  * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
- * @param string $primarykey The primary key of the table we are inserting into (almost always "id")
+ * @param string $primarykey (obsolete) This is now forced to be 'id'. 
  */
 function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
