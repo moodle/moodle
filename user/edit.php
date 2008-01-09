@@ -50,6 +50,11 @@
         redirect($CFG->wwwroot . "/user/view.php?course={$course->id}");
     }
 
+    if ($course->id == SITEID) {
+        $coursecontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
+    } else {
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
+    }
     $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
     $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 
@@ -145,7 +150,9 @@
     $userfullname     = fullname($user, true);
 
     $navlinks = array();
-    $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+    if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
+        $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+    }
     $navlinks[] = array('name' => $userfullname,
                         'link' => "view.php?id=$user->id&amp;course=$course->id",
                         'type' => 'misc');
