@@ -249,7 +249,6 @@ function make_log_url($module, $url) {
         case 'login':
         case 'lib':
         case 'admin':
-        case 'message':
         case 'calendar':
         case 'mnet course':
             return "/course/$url";
@@ -263,6 +262,9 @@ function make_log_url($module, $url) {
         case 'library':
         case '':
             return '/';
+            break;
+        case 'message':
+            return "/message/$url";
             break;
         default:
             return "/mod/$module/$url";
