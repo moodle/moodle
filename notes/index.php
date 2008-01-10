@@ -48,10 +48,18 @@
 
 
 /// output HTML
-
+    if ($course->id == SITEID) {
+        $coursecontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
+    } else {
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
+    }
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
+    
     $strnotes = get_string('notes', 'notes');
     $nav = array();
-    $nav[] = array('name' => get_string('participants'), 'link' => $CFG->wwwroot . '/user/index.php?id=' . $course->id, 'type' => 'misc');
+    if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
+        $nav[] = array('name' => get_string('participants'), 'link' => $CFG->wwwroot . '/user/index.php?id=' . $course->id, 'type' => 'misc');
+    }
     if ($userid) {
         $nav[] = array('name' => fullname($user), 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id. '&amp;course=' . $course->id, 'type' => 'misc');
     }

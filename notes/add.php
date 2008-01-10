@@ -31,7 +31,7 @@
     require_once('edit_form.php');
 
 /// create form
-    $noteform = new note_edit_form(null, $extradata);
+    $noteform = new note_edit_form();
 
 /// if form was cancelled then return to the previous notes list
     if ($noteform->is_cancelled()) {
@@ -69,7 +69,9 @@
 
 /// output HTML
     $nav = array();
-    $nav[] = array('name' => get_string('participants'), 'link' => $CFG->wwwroot . '/user/index.php?id=' . $course->id, 'type' => 'misc');
+    if (has_capability('moodle/course:viewparticipants', $context) || has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM))) {
+        $nav[] = array('name' => get_string('participants'), 'link' => $CFG->wwwroot . '/user/index.php?id=' . $course->id, 'type' => 'misc');
+    }
     $nav[] = array('name' => fullname($user), 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id. '&amp;course=' . $course->id, 'type' => 'misc');
     $nav[] = array('name' => get_string('notes', 'notes'), 'link' => $CFG->wwwroot . '/notes/index.php?course=' . $course->id . '&amp;user=' . $user->id, 'type' => 'misc');
     $nav[] = array('name' => $strnotes, 'link' => '', 'type' => 'activity');
