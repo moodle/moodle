@@ -57,8 +57,9 @@
             print_error('nologinas');
         }
         $context = $systemcontext;
-    } else if (has_capability('moodle/user:loginas', $coursecontext)) {
+    } else {
         require_login($course);
+        require_capability('moodle/user:loginas', $coursecontext);
         if (!has_capability('moodle/course:view', $coursecontext, $userid, false)) {
             error('This user is not in this course!');
         }
