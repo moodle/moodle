@@ -416,6 +416,9 @@
 /// first old *.php update and then the new upgrade.php script
     upgrade_plugins('enrol', 'enrol', "$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
+/// Check all auth plugins and upgrade if necessary
+    upgrade_plugins('auth','auth',"$CFG->wwwroot/$CFG->admin/index.php");
+
 /// Check all course formats and upgrade if necessary
     upgrade_plugins('format','course/format',"$CFG->wwwroot/$CFG->admin/index.php");
 
