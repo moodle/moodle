@@ -70,7 +70,7 @@ if ($action == 'delchoice') {
     groups_print_activity_menu($cm, 'view.php?id='.$id);
                                    
     if (has_capability('mod/choice:readresponses', $context)) {
-        choice_show_reportlink($choice, $course->id, $cm->id, $groupmode);
+        choice_show_reportlink($choice, $course->id, $cm, $groupmode);
     }
 
     echo '<div class="clearer"></div>';

@@ -283,28 +283,27 @@ function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $
 }
 
 
-function choice_show_reportlink($choice, $courseid, $cmid, $groupmode) {
-    //TODO: rewrite with SQL
-    $currentgroup = get_current_group($courseid);
-    if ($allanswers = get_records("choice_answers", "choiceid", $choice->id)) {
-        $responsecount = 0;
-        foreach ($allanswers as $aa) {
-            $context = get_context_instance(CONTEXT_MODULE, $cmid);
-            if (has_capability('mod/choice:choose', $context, $aa->userid, false)) { //check to make sure user is enrolled/has this capability.
-                if ($groupmode and $currentgroup) {
-                    if (groups_is_member($currentgroup, $aa->userid)) {
-                        $responsecount++;
-                    }
-                } else {
-                    $responsecount++;
-                }
-            }
-        }
+function choice_show_reportlink($choice, $courseid, $cm, $groupmode) {
+
+    if ($groupmode > 0) {
+        $currentgroup = groups_get_activity_group($cm);
     } else {
-        $responsecount = 0;
+        $currentgroup = 0;
     }
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $availableusers = get_users_by_capability($context, 'mod/choice:choose', 'u.id', '','','',$currentgroup, '', false, true);
+
+    $responsecount = 0;
+
+    if(!empty($availableusers)){
+        // flatten the users to get a list of userids
+        $userids = implode( ', ', array_keys($availableusers));
+        $responsecount = count_records_select('choice_answers', "choiceid = {$choice->id} AND userid IN ( $userids );");
+    }
+
     echo '<div class="reportlink">';
-    echo "<a href=\"report.php?id=$cmid\">".get_string("viewallresponses", "choice", $responsecount)."</a>";
+    echo "<a href=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</a>";
     echo '</div>';
 }
 
