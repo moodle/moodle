@@ -15,6 +15,12 @@ if (!$note = note_load($noteid)) {
 if (!$course = get_record('course', 'id', $note->courseid)) {
     error('Incorrect course id found');
 }
+
+// locate user information
+    if (!$user = get_record('user', 'id', $note->userid)) {
+        error('Incorrect user id found');
+    }
+
 // require login to access notes
 require_login($course->id);
 
@@ -42,8 +48,13 @@ if (data_submitted() && confirm_sesskey()) {
     $optionsno = array('course'=>$course->id, 'user'=>$note->userid);
 
 // output HTML
-    $crumbs = array(array('name' => $strnotes, 'link' => '', 'type' => 'activity'));
-    print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($crumbs));
+    if (has_capability('moodle/course:viewparticipants', $context) || has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM))) {
+        $nav[] = array('name' => get_string('participants'), 'link' => $CFG->wwwroot . '/user/index.php?id=' . $course->id, 'type' => 'misc');
+    }
+    $nav[] = array('name' => fullname($user), 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id. '&amp;course=' . $course->id, 'type' => 'misc');
+    $nav[] = array('name' => get_string('notes', 'notes'), 'link' => $CFG->wwwroot . '/notes/index.php?course=' . $course->id . '&amp;user=' . $user->id, 'type' => 'misc');
+    $nav[] = array('name' => get_string('delete'), 'link' => '', 'type' => 'activity');
+    print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($nav));
     notice_yesno(get_string('deleteconfirm', 'notes'), 'delete.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
     echo '<br />';
     note_print($note, NOTES_SHOW_BODY | NOTES_SHOW_HEAD);

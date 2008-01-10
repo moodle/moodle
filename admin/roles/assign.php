@@ -131,7 +131,9 @@
         /// course header
         $navlinks = array();
         if ($courseid != SITEID) {
-            $navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'misc');
+            if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                $navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'misc');
+            }
             $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
             $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
             $navigation = build_navigation($navlinks);

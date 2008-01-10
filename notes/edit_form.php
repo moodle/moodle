@@ -13,7 +13,6 @@ class note_edit_form extends moodleform {
         $mform->addElement('textarea', 'content', $strcontent, array('rows'=>15, 'cols'=>40));
         $mform->setType('content', PARAM_RAW);
         $mform->addRule('content', get_string('nocontent', 'notes'), 'required', null, 'client');
-        $mform->setHelpButton('content', 'writing');
 
         $mform->addElement('select', 'publishstate', $strpublishstate, note_get_state_names());
         $mform->setDefault('publishstate', NOTES_STATE_PUBLIC);

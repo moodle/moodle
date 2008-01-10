@@ -45,7 +45,7 @@
 
     $navlinks = array();
 
-    if ($course->id != SITEID) {
+    if ($course->id != SITEID && has_capability('moodle/course:viewparticipants', $coursecontext)) {
         $navlinks[] = array('name' => $strparticipants, 'link' => "../user/index.php?id=$course->id", 'type' => 'misc');
     }
 
