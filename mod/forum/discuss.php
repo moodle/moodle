@@ -154,30 +154,34 @@
         $capname = 'mod/forum:replypost';
     }
     
-    $groupmode = groups_get_activity_groupmode($cm);  
-    if ($canreply = has_capability($capname, $modcontext)) {
-         
-        if ($groupmode && !has_capability('moodle/site:accessallgroups', $modcontext)) {   
-            // Groups must be kept separate
-            //change this to groups_is_member
-            $mygroupid = mygroupid($course->id); //only useful if 0, otherwise it's an array now
-            if ($groupmode == SEPARATEGROUPS) {
-                require_login();
-
-                if ((empty($mygroupid) and $discussion->groupid == -1) || (groups_is_member($discussion->groupid) || $mygroupid == $discussion->groupid)) {
-                    // $canreply = true;
-                } elseif ($discussion->groupid == -1) {
-                    $canreply = false;
-                } else {
-                    print_heading("Sorry, you can't see this discussion because you are not in this group");
-                    print_footer($course);
-                    die;
+    $canreply = false;
+    if (has_capability($capname, $modcontext)) {
+        $groupmode = groups_get_activity_groupmode($cm);
+        if ($groupmode) {
+            if (has_capability('moodle/site:accessallgroups', $modcontext)) {
+                $canreply = true;
+            } else {
+                if ($groupmode == SEPARATEGROUPS) {
+                    require_login();
+                    if ($discussion->groupid == -1) {
+                        // can not reply to discussions for "All participants" in separate mode without accessallgroups cap
+                    } else if (groups_is_member($discussion->groupid)) {
+                        $canreply = true;
+                    } else {
+                        // this should not happen
+                        print_heading("Sorry, you can't see this discussion because you are not in this group");
+                        print_footer($course);
+                        die;
+                    }
+    
+                } else if ($groupmode == VISIBLEGROUPS) {
+                    if ($discussion->groupid == -1 or groups_is_member($discussion->groupid)) {
+                        $canreply = true;
+                    }
                 }
-
-            } else if ($groupmode == VISIBLEGROUPS) {
-                $canreply = ( (empty($mygroupid) && $discussion->groupid == -1) ||
-                    (groups_is_member($discussion->groupid) || $mygroupid == $discussion->groupid) );
-            }
+            }   
+        } else {
+            $canreply = true;
         }
     } else { // allow guests to see the link
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
