@@ -41,15 +41,16 @@ function import_xml_grades($text, $course, &$error) {
         $results = $content['results']['#']['result'];
 
         foreach ($results as $i => $result) {
-            if (!$grade_items = grade_item::fetch_all(array('idnumber'=>$result['#']['assignment'][0]['#'], 'courseid'=>$course->id))) {
+            $gradeidnumber = $result['#']['assignment'][0]['#'];
+            if (!$grade_items = grade_item::fetch_all(array('idnumber'=>$gradeidnumber, 'courseid'=>$course->id))) {
                 // gradeitem does not exist
                 // no data in temp table so far, abort
                 $status = false;
-                $error  = get_string('errincorrectidnumber', 'gradeimport_xml');
+                $error  = get_string('errincorrectgradeidnumber', 'gradeimport_xml', $gradeidnumber);
                 break;
             } else if (count($grade_items) != 1) {
                 $status = false;
-                $error  = get_string('errduplicateidnumber', 'gradeimport_xml');
+                $error  = get_string('errduplicategradeidnumber', 'gradeimport_xml', $gradeidnumber);
                 break;
             } else {
                 $grade_item = reset($grade_items);
@@ -63,10 +64,11 @@ function import_xml_grades($text, $course, &$error) {
             }
 
             // check if user exist and convert idnumber to user id
-            if (!$user = get_record('user', 'idnumber', addslashes($result['#']['student'][0]['#']))) {
+            $useridnumber = $result['#']['student'][0]['#'];
+            if (!$user = get_record('user', 'idnumber', addslashes($useridnumber))) {
                 // no user found, abort
                 $status = false;
-                $error = get_string('baduser', 'grades');
+                $error = get_string('errincorrectuseridnumber', 'gradeimport_xml', $useridnumber);
                 break;
             }
 
