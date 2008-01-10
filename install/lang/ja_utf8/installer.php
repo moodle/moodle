@@ -331,7 +331,6 @@ $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = '日本語';
 $string['unicoderecommended'] = 'あなたのすべてのデータをユニコードフォーマット (UTF-8) で保存することをお勧めします。Moodleの新しいインストールは、ユニコードがデフォルトキャラクタにセットされたデータベースに実行される必要があります。アップグレードの場合、UTF-8移行プロセスを実行してださい (詳細は管理ページをご覧ください)。';
 $string['unicoderequired'] = 'あなたのすべてのデータをユニコードフォーマット (UTF-8) で保存することが必須です。Moodleの新しいインストールは、ユニコードがデフォルトキャラクタにセットされたデータベースに実行される必要があります。アップグレードの場合、UTF-8移行プロセスを実行してださい (詳細は管理ページをご覧ください)。';
-$string['unsafedirname'] = 'エラー: ディレクトリ名に安全でない文字が含まれています。有効な文字は、「a-zA-Z0-9_」です。';
 $string['upgradingactivitymodule'] = '活動モジュールのアップグレード';
 $string['upgradingbackupdb'] = 'バックアップデータのアップブレード';
 $string['upgradingblocksdb'] = 'ブロックデータベースのアップグレード';
