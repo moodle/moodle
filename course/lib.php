@@ -1734,8 +1734,8 @@ function print_category_info($category, $depth, $files = false) {
 
     echo "\n\n".'<table class="categorylist">';
 
+    $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.guest,c.cost,c.currency');
     if ($files and $coursecount) {
-        $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.guest,c.cost,c.currency');
 
         echo '<tr>';
 
@@ -1798,8 +1798,8 @@ function print_category_info($category, $depth, $files = false) {
         echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'. format_string($category->name).'</a>';
         echo '</td>';
         echo '<td valign="top" class="category number">';
-        if ($category->coursecount) {
-            echo $category->coursecount;
+        if (count($courses)) {
+           echo count($courses);
         }
         echo '</td></tr>';
     }
