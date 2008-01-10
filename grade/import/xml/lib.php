@@ -37,7 +37,8 @@ function import_xml_grades($text, $course, &$error) {
 
     $content = xmlize($text);
 
-    if ($results = $content['results']['#']['result']) {
+    if (!empty($content['results']['#']['result'])) {
+        $results = $content['results']['#']['result'];
 
         foreach ($results as $i => $result) {
             if (!$grade_items = grade_item::fetch_all(array('idnumber'=>$result['#']['assignment'][0]['#'], 'courseid'=>$course->id))) {
