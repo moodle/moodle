@@ -12,7 +12,7 @@
 *   adds documents created since the last index run
 */
 
-    require_once('../config.php');
+    require_once("$CFG->dirroot/config.php");
     require_once("$CFG->dirroot/search/lib.php");
 
     if (!search_check_php5()) {
