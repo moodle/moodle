@@ -2525,11 +2525,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     $pageclass .= ' course-'.$COURSE->id;
 
-    if (($pageid != 'site-index') && ($pageid != 'course-view') &&
-        (strstr($pageid, 'admin') === FALSE)) {
-        $pageclass .= ' nocoursepage';
-    }
-
     if (!isloggedin()) {
         $pageclass .= ' notloggedin';
     }
