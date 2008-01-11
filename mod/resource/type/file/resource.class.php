@@ -687,7 +687,7 @@ class resource_file extends resource_base {
 
         if (!empty($CFG->resource_websearch)) {
             $searchbutton = $mform->addElement('button', 'searchbutton', get_string('searchweb', 'resource').'...');
-            $buttonattributes = array('title'=>get_string('localfilechoose', 'resource'), 'onclick'=>"return window.open('"
+            $buttonattributes = array('title'=>get_string('searchweb', 'resource'), 'onclick'=>"return window.open('"
                               . "$CFG->resource_websearch', 'websearch', 'menubar=1,location=1,directories=1,toolbar=1,"
                               . "scrollbars,resizable,width=800,height=600');");
             $searchbutton->updateAttributes($buttonattributes);
