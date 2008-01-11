@@ -45,56 +45,57 @@ $string['databasecreationsettingssub'] = '<b>Tipo:</b> o instalador selecciona i
 <b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
 <b>Utilizador:</b> para aceder à base de dados; o instaldor selecciona inicialmente \"root\"<br />
 <b>Senha:</b> para aceder à base de dados<br />
-<p>Prefixo das tabelas:</b> um prefixo optativo para os nomes de todas as tabelas na base de dados';
+<b>Prefixo das tabelas:</b> um prefixo optativo para os nomes de todas as tabelas na base de dados';
 $string['databasesettingshead'] = 'Agora terá que configurar a base de dados onde a maior parte dos dados do Moodle serão armazenados. Essa base de dados deverá ter sido criada previamente, incluindo um nome de utilizador e senha para acedé-la.';
 $string['databasesettingssub'] = '<b>Tipo:</b>mysql ou postgres7<br />
 <b>Servidor:</b> por exemplo, localhost ou db.isp.com<br />
 <b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
 <b>Utilizador:</b> para aceder à base de dados<br />
 <b>Senha:</b> para aceder à base de dados<br />
-<p>Prefixo das tabelas:</b> um prefixo optativo para os nomes de todas as tabelas na base de dados';
+<b>Prefixo das tabelas:</b> um prefixo optativo para os nomes de todas as tabelas na base de dados';
 $string['databasesettingssub_mssql'] = '<b>Tipo:</b> SQL*Server (sem UTF-8) <b><font color=\"red\">Experimental! (não deverá ser usado em produção)</font></b><br />
 <b>Servidor:</b> por exemplo, localhost ou db.isp.com<br />
 <b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
 <b>Utilizador:</b> para aceder à base de dados<br />
 <b>Senha:</b> para aceder à base de dados<br />
-<p>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório)';
+<b>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório)';
 $string['databasesettingssub_mssql_n'] = '<b>Tipo:</b> SQL*Server (com UTF-8) <br />
 <b>Servidor:</b> por exemplo, localhost ou db.isp.com<br />
 <b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
 <b>Utilizador:</b> para aceder à base de dados<br />
 <b>Senha:</b> para aceder à base de dados<br />
-<p>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório)';
+<b>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório)';
 $string['databasesettingssub_mysql'] = '<b>Tipo:</b> MySQL<br />
 <b>Servidor:</b> por exemplo, localhost ou db.isp.com<br />
 <b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
 <b>Utilizador:</b> para aceder à base de dados<br />
 <b>Senha:</b> para aceder à base de dados<br />
-<p>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (optativo)';
+<b>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (optativo)';
 $string['databasesettingssub_mysqli'] = '<b>Tipo:</b> MySQL Melhorado<br />
 <b>Servidor:</b> por exemplo, localhost ou db.isp.com<br />
 <b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
 <b>Utilizador:</b> para aceder à base de dados<br />
 <b>Senha:</b> para aceder à base de dados<br />
-<p>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (optativo)';
+<b>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (optativo)';
 $string['databasesettingssub_oci8po'] = '<b>Tipo:</b> Oracle<br />
 <b>Servidor:</b> não se aplica; deverá ficar em branco<br />
 <b>Nome:</b> nome dado à logação tnsnames.ora<br />
 <b>Utilizador:</b> para aceder à base de dados<br />
 <b>Senha:</b> para aceder à base de dados<br />
-<p>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório; máx. 2 caracteres)';
+<b>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório; máx. 2 caracteres)';
 $string['databasesettingssub_odbc_mssql'] = '<b>Tipo:</b> SQL*Server (sobre ODBC) <b><font color=\"red\">Experimental! (não deverá ser usado em produção)</font></b><br />
 <b>Servidor:</b> nome do servidor DSN no painel de controlo do ODBC<br />
 <b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
 <b>Utilizador:</b> para aceder à base de dados<br />
 <b>Senha:</b> para aceder à base de dados<br />
-<p>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório)';
+<b>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório)';
 $string['databasesettingssub_postgres7'] = '<b>Tipo:</b> PostgreSQL<br />
 <b>Servidor:</b> por exemplo, localhost ou db.isp.com<br />
 <b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
 <b>Utilizador:</b> para aceder à base de dados<br />
 <b>Senha:</b> para aceder à base de dados<br />
-<p>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório)';
+<b>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório)';
+$string['databasesettingswillbecreated'] = '<b>Nota:</b> O instalador tentará criar a base de dados automaticamente, se ainda não existir.';
 $string['dataroot'] = 'Directório de dados';
 $string['datarooterror'] = 'Não foi possível encontrar ou criar o directório de dados que indicou. Terá que tentar corrigir o caminho que indicou, ou criar o directório manualmente.';
 $string['dbconnectionerror'] = 'Não foi possível estabelecer a ligação à base de dados que indicou. Por favor verifique as definições dessa base de dados.';
@@ -121,11 +122,11 @@ $string['dirroot'] = 'Directório do Moodle';
 $string['dirrooterror'] = 'O \'Directório do Moodle\' indicado parece estar errado; não conseguimos encontrar uma instalação do Moodle nesse directório. O nome foi alterado para o que se mostra em baixo';
 $string['download'] = 'Descarregar';
 $string['downloadedfilecheckfailed'] = 'Falhou a verificação do ficheiro descarregado.';
-$string['downloadlanguagebutton'] = 'Descarregar o pacote linguístico &quot;$a&quot;';
+$string['downloadlanguagebutton'] = 'Descarregar o pacote linguístico \"$a\"';
 $string['downloadlanguagehead'] = 'Descarregar pacote linguístico';
 $string['downloadlanguagenotneeded'] = 'Pode continuar com o processo de instalação usando o pacote linguístico por omissão, \"$a\".';
 $string['downloadlanguagesub'] = 'Agora, se quiser, pode descarregar um pacote linguístico e continuar com o processo de instalação nessa língua.<br /><br />Se não conseguir descarregar o pacote linguístico, o processo de instalação continuará em inglês. (Uma vez a instalação for concluida, terá a oportunidade de descarregar e instalar pacotes linguísticos adicionais.)';
-$string['environmenterrortodo'] = 'Deve resolver todos os problemas (erros) do ambiente que encontrou acima antes de proceder à instalação dessa versão do Moodle!';
+$string['environmenterrortodo'] = 'Deve resolver todos os problemas (erros) do ambiente que encontrou acima antes de proceder à instalação desta versão do Moodle!';
 $string['environmenthead'] = 'A verificar o seu ambiente ...';
 $string['environmentrecommendcustomcheck'] = 'se este teste falhar, indicará que existe um possível problema';
 $string['environmentrecommendinstall'] = 'recomenda-se a sua instalação/activação';
@@ -133,7 +134,7 @@ $string['environmentrecommendversion'] = 'é recomendada a versão $a->needed e 
 $string['environmentrequirecustomcheck'] = 'este teste tem que ser aprovado';
 $string['environmentrequireinstall'] = 'é necessário estar instalada/activa';
 $string['environmentrequireversion'] = 'É requerida a versão $a->needed e está a correr a versão $a->current';
-$string['environmentsub'] = 'Estamos a verificar que os vários componentes do seu sistema estejam de acordo com os requerimentos do sistema';
+$string['environmentsub'] = 'Estamos a verificar que os vários componentes do seu sistema estejam de acordo com os requerimentos do Moodle';
 $string['environmentxmlerror'] = 'Erros ao ler dados do ambiente ($a->error_code)';
 $string['error'] = 'Erro';
 $string['fail'] = 'Falha';
@@ -209,8 +210,8 @@ $string['phpversionhelp'] = '<p>Moodle precisa da vesão 4.3.0 ou 5.1.0 do PHP (
 (No caso da versão 5.0.x, poderá regredir para uma versão 4.4.x)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Prévio';
-$string['qtyperqpwillberemoved'] = 'Durante a actualização, as perguntas do tipo RQP serão eliminadas. Não deverá experimentar nenhumar problema, porque não estava a usar esse tipo de perguntas.'; // ORPHANED
-$string['qtyperqpwillberemovedanyway'] = 'Durante a actualização, as perguntas do tipo RQP serão eliminadas. Tem algumas perguntas desse tipo na sua base de dados, que deixarão de funcionar, a menos que instale novamente o código em http://moodle.org/mod/data/view.php?d=13&amp;rid=797  antes de proceder com a actualização.'; // ORPHANED
+$string['qtyperqpwillberemoved'] = 'Durante a actualização, as perguntas do tipo RQP serão eliminadas. Não deverá experimentar nenhumar problema, porque não estava a usar esse tipo de perguntas.';
+$string['qtyperqpwillberemovedanyway'] = 'Durante a actualização, as perguntas do tipo RQP serão eliminadas. Tem algumas perguntas desse tipo na sua base de dados, que deixarão de funcionar, a menos que instale novamente o código em http://moodle.org/mod/data/view.php?d=13&amp;rid=797  antes de proceder com a actualização.';
 $string['remotedownloadnotallowed'] = 'O seu servidor não permite descarregar componentes  (a variável allow_url_fopen está desactivada).<br /><br />Terá que descarregar <a href=\"$a->url\">$a->url</a> manualmente, copia-lo para  \"$a->dest\" no seu servidor e descompacta-lo.';
 $string['report'] = 'Relatório';
 $string['restricted'] = 'Restrito';
