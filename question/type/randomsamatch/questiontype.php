@@ -246,6 +246,26 @@ class question_randomsamatch_qtype extends question_match_qtype {
          "AND hidden = '0'" .
          "AND id NOT IN ($questionsinuse)");
     }
+    function get_all_responses($question, $state) {
+        $answers = array();
+        if (is_array($question->options->subquestions)) {
+            foreach ($question->options->subquestions as $aid => $answer) {
+                if ($answer->questiontext) {
+                    foreach($answer->options->answers as $ans ){
+                       $answer->answertext = $ans->answer ;
+                    } 
+                    $r = new stdClass;
+                    $r->answer = $answer->questiontext . ": " . $answer->answertext;
+                    $r->credit = 1;
+                    $answers[$aid] = $r;
+                }
+            }
+        }
+        $result = new stdClass;
+        $result->id = $question->id;
+        $result->responses = $answers;
+        return $result;
+    }
     
 /// BACKUP FUNCTIONS ////////////////////////////
 

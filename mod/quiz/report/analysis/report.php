@@ -154,6 +154,9 @@ class quiz_report extends quiz_default_report {
                     continue;
                 }
                 $qtype = ($quizquestions[$i]->qtype=='random') ? $states[$i]->options->question->qtype : $quizquestions[$i]->qtype;
+                if($quizquestions[$i]->qtype =='randomsamatch'){
+                    $quizquestions[$i]->options =$states[$i]->options ;
+                }   
                 $q = get_question_responses($quizquestions[$i], $states[$i]);
                 if (empty($q)){
                     continue;
