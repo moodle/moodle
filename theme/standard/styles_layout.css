@@ -3116,7 +3116,7 @@ body#tag-manage table#tag-management-list {
 }
 
 body#tag-manage table#tag-management-list td,
-body#tag-manage table#tag-management-list, th,
+body#tag-manage table#tag-management-list th,
 body#user-index table#participants td,
 body#user-index table#participants th {
   vertical-align: middle;
