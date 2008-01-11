@@ -2,9 +2,9 @@
 
 // This file defines settingpages and externalpages under the "appearance" category
 
-if ($hassiteconfig 
+if ($hassiteconfig
     or has_capability('moodle/site:langeditmaster', $systemcontext)
-    or has_capability('moodle/site:langeditmaster', $systemcontext)) { // speedup for non-admins, add all caps used on this page
+    or has_capability('moodle/site:langeditlocal', $systemcontext)) { // speedup for non-admins, add all caps used on this page
 
     // "languageandlocation" settingpage
     $temp = new admin_settingpage('langsettings', get_string('languagesettings', 'admin'));
