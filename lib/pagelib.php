@@ -602,7 +602,7 @@ class page_generic_activity extends page_base {
             error('Cannot fully initialize page: invalid course id '. $this->modulerecord->course);
         }
         $this->activityrecord = get_record($this->activityname, 'id', $this->id);
-        if(empty($this->courserecord)) {
+        if(empty($this->activityrecord)) {
             error('Cannot fully initialize page: invalid '.$this->activityname.' id '. $this->id);
         }
         $this->full_init_done = true;
