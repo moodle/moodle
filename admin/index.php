@@ -547,8 +547,8 @@
         print_box(get_string("upgrade$CFG->upgrade", "admin", "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"));
     }
 
-    if (ini_get_bool('register_globals') && !ini_get_bool('magic_quotes_gpc')) {
-        print_box(get_string('globalsquoteswarning', 'admin'), 'generalbox adminwarning');
+    if (ini_get_bool('register_globals')) {
+        print_box(get_string('globalswarning', 'admin'), 'generalbox adminwarning');
     }
 
     if (is_dataroot_insecure()) {
