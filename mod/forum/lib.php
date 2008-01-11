@@ -1780,15 +1780,12 @@ function forum_count_unrated_posts($discussionid, $userid) {
 /**
  * Get all discussions in a forum
  */
-function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
-                               $user=0, $fullpost=true, $currentgroup=-1, $limit=0, $userlastmodified=false) {
+function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=true, $currentgroup=-1, $limit=0, $userlastmodified=false) {
     global $CFG, $USER;
 
     $timelimit = '';
 
-    if (!$cm = get_coursemodule_from_instance('forum', $forum)) {
-        error('Course Module ID was incorrect');
-    }
+    $modcontext = null;
 
     if (!empty($CFG->forum_enabletimedposts)) {
 
@@ -1804,27 +1801,41 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         }
     }
 
-    if ($user) {
-        $userselect = " AND u.id = '$user' ";
-    } else {
-        $userselect = "";
-    }
-
     $limitfrom = 0;
     $limitnum = 0;
     if ($limit) {
         $limitnum = $limit;
     }
 
+    $groupmode = groups_get_activity_groupmode($cm);
     if ($currentgroup == -1) {
-        $currentgroup = get_current_group($cm->course);
+        $currentgroup = groups_get_activity_group($cm);
     }
 
-    if ($currentgroup) {
-        $groupselect = " AND (d.groupid = '$currentgroup' OR d.groupid = -1) ";
+    if ($groupmode) {
+        if (empty($modcontext)) {
+            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        }
+
+        if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $modcontext)) {
+            if ($currentgroup) {
+                $groupselect = "AND (d.groupid = '$currentgroup' OR d.groupid = -1)";
+            } else {
+                $groupselect = "";
+            }
+
+        } else {
+            //seprate groups without access all
+            if ($currentgroup) {
+                $groupselect = "AND (d.groupid = '$currentgroup' OR d.groupid = -1)";
+            } else {
+                $groupselect = "AND d.groupid = -1";
+            }
+        }
     } else {
         $groupselect = "";
     }
+
 
     if (empty($forumsort)) {
         $forumsort = "d.timemodified DESC";
@@ -1836,38 +1847,22 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     }
 
     if (empty($userlastmodified)) {  // We don't need to know this
-        $umfields = '';
-        $umtable = '';
+        $umfields = "";
+        $umtable  = "";
     } else {
-        $umfields = ', um.firstname AS umfirstname, um.lastname AS umlastname';
-        $umtable = ' LEFT JOIN '.$CFG->prefix.'user um on (d.usermodified = um.id)';
+        $umfields = ", um.firstname AS umfirstname, um.lastname AS umlastname";
+        $umtable  = " LEFT JOIN {$CFG->prefix}user um on (d.usermodified = um.id)";
     }
 
-    //TODO: there must be a nice way to do this that keeps both postgres and mysql 3.2x happy but I can't find it right now.
-    if ($CFG->dbfamily == 'postgres' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'oracle') {
-        return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
+    return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
                                    u.firstname, u.lastname, u.email, u.picture, u.imagealt $umfields
                               FROM {$CFG->prefix}forum_discussions d
-                              JOIN {$CFG->prefix}forum_posts p ON p.discussion = d.id
-                              JOIN {$CFG->prefix}user u ON p.userid = u.id
+                                   JOIN {$CFG->prefix}forum_posts p ON p.discussion = d.id
+                                   JOIN {$CFG->prefix}user u ON p.userid = u.id
                                    $umtable
-                             WHERE d.forum = '$forum'
-                               AND p.parent = 0
-                                   $timelimit $groupselect $userselect
+                             WHERE d.forum = {$cm->instance} AND p.parent = 0
+                                   $timelimit $groupselect
                           ORDER BY $forumsort", $limitfrom, $limitnum);
-    } else { // MySQL query. TODO: Check if this is needed (MySQL 4.1 should work with the above query)
-        return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
-                                   u.firstname, u.lastname, u.email, u.picture, u.imagealt $umfields
-                              FROM ({$CFG->prefix}forum_posts p,
-                                   {$CFG->prefix}user u,
-                                   {$CFG->prefix}forum_discussions d)
-                                   $umtable
-                             WHERE d.forum = '$forum'
-                               AND p.discussion = d.id
-                               AND p.parent = 0
-                               AND p.userid = u.id $timelimit $groupselect $userselect
-                          ORDER BY $forumsort", $limitfrom, $limitnum);
-    }
 }
 
 
@@ -3388,14 +3383,19 @@ function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
 
 
 /**
- * 
+ * Returns true if user created new discussion already
+ * @param int $forumid
+ * @param int $userid
+ * @return bool
  */
 function forum_user_has_posted_discussion($forumid, $userid) {
-    if ($discussions = forum_get_discussions($forumid, '', $userid)) {
-        return true;
-    } else {
-        return false;
-    }
+    global $CFG;
+
+    $sql = "SELECT 'x'
+              FROM {$CFG->prefix}forum_discussions d, {$CFG->prefix}forum_posts p
+             WHERE d.forum = $forumid AND p.discussion = d.id AND p.parent = 0";
+
+    return record_exists_sql($sql);
 }
 
 /**
@@ -3708,7 +3708,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 
     $getuserlastmodified = ($displayformat == 'header');
 
-    if (! $discussions = forum_get_discussions($forum->id, $sort, 0, $fullpost, $currentgroup,0,$getuserlastmodified) ) {
+    if (! $discussions = forum_get_discussions($cm, $sort, $fullpost, $currentgroup, 0, $getuserlastmodified) ) {
         echo '<div class="forumnodiscuss">';
         if ($forum->type == 'news') {
             echo '('.get_string('nonews', 'forum').')';
