@@ -50,7 +50,7 @@ class block_news_items extends block_base {
 
         /// Get all the recent discussions we're allowed to see
 
-            if (! $discussions = forum_get_discussions($forum->id, 'p.modified DESC', 0, false, 
+            if (! $discussions = forum_get_discussions($cm, 'p.modified DESC', false, 
                                                        $currentgroup, $COURSE->newsitems) ) {
                 $text .= '('.get_string('nonews', 'forum').')';
                 $this->content->text = $text;
