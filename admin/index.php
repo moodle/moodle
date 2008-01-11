@@ -488,8 +488,8 @@
         print_spacer(10,10);
     }
 
-    if (ini_get_bool('register_globals') && !ini_get_bool('magic_quotes_gpc')) {
-        print_simple_box(get_string('globalsquoteswarning', 'admin'), 'center', '60%');
+    if (ini_get_bool('register_globals')) {
+        print_simple_box(get_string('globalswarning', 'admin'), 'center', '60%');
     }
 
     if (is_dataroot_insecure()) {
