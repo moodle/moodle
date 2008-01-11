@@ -193,33 +193,33 @@ div#header-home div.i2 {
 div#header-home div.i3 {
   /*background: transparent;*/
 }
-body.nocoursepage div#content div.bt div {
+body.nolayouttable div#content div.bt div {
   background-position: 100% 0;
   right: -13px;
 }
-body.nocoursepage div#content div.bt {
+body.nolayouttable div#content div.bt {
   background-position: 0 0;
   left: -13px;
   margin: 0 13px 0 0;
 }
-body.nocoursepage div#content div.bb div {
+body.nolayouttable div#content div.bb div {
   background-position: 100% 100%;
   right: -13px;
 }
-body.nocoursepage div#content div.bb {
+body.nolayouttable div#content div.bb {
   background-position: 0 100%;
   left: -13px;
   margin: 0 13px 0 0;
 }
-body.nocoursepage div#content div.i1 {
+body.nolayouttable div#content div.i1 {
   background-position: 100% 0;
   padding: 0;
 }
-body.nocoursepage div#content div.i2 {
+body.nolayouttable div#content div.i2 {
   background-position: 0 0;
   padding: 0 12px;
 }
-body.nocoursepage div#content div.i3 {
+body.nolayouttable div#content div.i3 {
   /*background: transparent;*/
 }
 div#content div.ccbox div.i1 {

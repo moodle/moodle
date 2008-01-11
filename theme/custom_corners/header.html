@@ -11,52 +11,18 @@
     <?php include($CFG->themedir.'/custom_corners/js/jquery.php'); ?>
 
     <?php
-
-        global $PAGE;
         
+        // check if page is opened within a popup window
         if (function_exists('is_in_popup')) {
             $inpopup = is_in_popup();
         } else {
             $inpopup = false;
-        }
-
-        // handle pages which get displayed wrong
-        // either no custom corners or too much
-
-        // all admin pages are build with the layout-table: sideblocks and content
-        if (!empty($PAGE) && ($PAGE->type == 'admin') && (strpos($bodytags, ' nocoursepage'))) {
-            $bodytags = str_replace(' nocoursepage', '', $bodytags);
-        }
-
-        // list of pages using the layout-table to be able to view sideblocks
-        $excludelist = array('mod-chat-view', 'mod-data-view', 'mod-quiz-view',
-            'my-index');
-
-        if (!empty($PAGE) && (in_array($PAGE->type, $excludelist)) &&
-            (strpos($bodytags, ' nocoursepage'))) {
-            $bodytags = str_replace(' nocoursepage', '', $bodytags);
         }
         
         // get class list
         preg_match('/class="([^"]*)"/i', $bodytags, $classes);
         $classlist = explode (' ', $classes[1]);
         
-        // add 'nocoursepage' to the list of CLASSes on several pages
-        if (strpos($bodytags, 'nocoursepage') === false) {
-            $includelist = array('admin-roles-assign', 'admin-roles-override', 
-                'mod-data-view');
-            preg_match('/id="([^"]*)"/i', $bodytags, $ids);
-            if (in_array($ids[1], $includelist)) {
-                // exclude roles called from the admin area (courseid 1)
-                // include user roles for the Moodle user settings called
-                // from the start page
-                if (($COURSE->id > 1) || ($_GET['contextid'] == 30) || ($_GET['contextid'] == 61)) {
-                    if (!in_array('nocoursepage', $classlist)) {
-                        array_push($classlist, 'nocoursepage');
-                    }
-                }
-            }
-        }
         
         // add "inpopup" or "notinpopup" to class list
         if ($inpopup) {
@@ -67,6 +33,9 @@
         
         //replace classlist with new one
         $bodytags = str_replace($classes[0], 'class="'.implode(' ', $classlist).'"', $bodytags);
+        
+
+//        $infooutput = '<div id="infocontent">&nbsp;</div>';
         
     ?>
 </head>

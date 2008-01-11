@@ -216,31 +216,31 @@ body.dir-rtl div#header-home div.bb div {
 div#header-home div.bb {
   background-image: url(pix/beige_box.gif);
 }
-body.nocoursepage div#content div.bt div {
+body.nolayouttable div#content div.bt div {
   background-image: url(pix/box.gif);
 }
-body.nocoursepage.dir-rtl div#content div.bt div {
+body.nolayouttable.dir-rtl div#content div.bt div {
   right: -12px;
 }
-body.nocoursepage div#content div.bt {
+body.nolayouttable div#content div.bt {
   background-image: url(pix/box.gif);
 }
-body.nocoursepage div#content div.i1 {
+body.nolayouttable div#content div.i1 {
   background-image: url(pix/borders.gif);
 }
-body.nocoursepage div#content div.i2 {
+body.nolayouttable div#content div.i2 {
   background-image: url(pix/borders.gif);
 }
-body.nocoursepage div#content div.bb div {
+body.nolayouttable div#content div.bb div {
   background-image: url(pix/box.gif);
 }
-body.nocoursepage.dir-rtl div#content div.bb div {
+body.nolayouttable.dir-rtl div#content div.bb div {
   right: -12px;
 }
-body.nocoursepage div#content div.bb {
+body.nolayouttable div#content div.bb {
   background-image: url(pix/box.gif);
 }
-body.nocoursepage.dir-rtl div#content div.bb {
+body.nolayouttable.dir-rtl div#content div.bb {
   right: -12px;
 }
 div#content div.ccbox div.bt div {

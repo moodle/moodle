@@ -996,7 +996,7 @@ div#header-home div.bb {
   height: 12px;
   background-color: transparent;
 }
-body.nocoursepage div#content div.bt div {
+body.nolayouttable div#content div.bt div {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -1006,7 +1006,7 @@ body.nocoursepage div#content div.bt div {
   position: relative;
   width: 13px;
 }
-body.nocoursepage div#content div.bt {
+body.nolayouttable div#content div.bt {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 100% 0;
@@ -1014,14 +1014,14 @@ body.nocoursepage div#content div.bt {
   height: 12px;
   background-color: transparent;
 }
-body.nocoursepage div#content div.i1 {
+body.nolayouttable div#content div.i1 {
   background-image: url(pix/borders.png);
   background-repeat: repeat-y;
   background-position: 0 0;
   background-color: transparent;
   padding: 0 0 0 12px;
 }
-body.nocoursepage div#content div.i2 {
+body.nolayouttable div#content div.i2 {
   background-image: url(pix/borders.png);
   background-repeat: repeat-y;
   background-attachment: scroll;
@@ -1029,14 +1029,14 @@ body.nocoursepage div#content div.i2 {
   background-color: transparent;
   padding: 0 12px 0 0;
 }
-body.nocoursepage div#content div.i3 {
+body.nolayouttable div#content div.i3 {
   background-color: #FFFFFF;
   padding: 0 10px;
   border-width: 1px 0;
   border-style: solid;
   border-color: #FFFFFF;
 }
-body.nocoursepage div#content div.bb div {
+body.nolayouttable div#content div.bb div {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 0 100%;
@@ -1046,7 +1046,7 @@ body.nocoursepage div#content div.bb div {
   position: relative;
   width: 13px;
 }
-body.nocoursepage div#content div.bb {
+body.nolayouttable div#content div.bb {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 100% 100%;
@@ -1292,9 +1292,15 @@ body.grade-report-grader table#user-grades td.cat {
 body.grade-report-grader table#user-grades td.course {
   font-weight: bold;
 }
-body#admin-roles-override td.cell.c1 {  padding-top: 0.5em;}
-body#admin-roles-assign td.cell.c3 {  padding-top: 0.5em;}
-body#admin-roles-assign td.cell.c1 {  padding-top: 0.5em;}
+body#admin-roles-override td.cell.c1 {
+  padding-top: 0.5em;
+}
+body#admin-roles-assign td.cell.c3 {
+  padding-top: 0.5em;
+}
+body#admin-roles-assign td.cell.c1 {
+  padding-top: 0.5em;
+}
 
 #admin-roles-override .capcurrent {
   background-color:#eeeeee;

@@ -1,9 +1,8 @@
-<script src="<?php echo $CFG->themewww .'/'. current_theme() ?>/js/jquery-latest.pack.js" type="text/javascript"></script>
+<script src="<?php echo $CFG->themewww ?>/custom_corners/js/jquery-latest.pack.js" type="text/javascript"></script>
 
 <script type="text/javascript" charset="utf-8">
 /* <![CDATA[ */
     var script = {
-        themepath: '<?php echo $CFG->themewww .'/'. current_theme() ?>',
         
         corrections: function () {
             if (top.user) {
@@ -18,12 +17,10 @@
             }
             
             // check for layouttabel and add haslayouttable class to body
-            // remove nocoursepage class from body
             var layoutTable = $('#layout-table #middle-column');
             
             if (layoutTable.length) {
                 $('body').addClass('haslayouttable');
-                $('body').removeClass('nocoursepage');
             } else {
                 $('body').addClass('nolayouttable');
             }
@@ -39,6 +36,8 @@
         },
         
         info: function() {
+            $('#infooverlay').text($('body').attr('class'));
+            
             window.setTimeout(function(){$('#infowrapper').click();}, 4000);
             $('#infowrapper').toggle(function() {
                 $('#infooverlay').animate({height: 'toggle'}, "fast");
@@ -51,7 +50,7 @@
         
         init: function() {
             script.corrections();
-            // script.info();
+//            script.info();
         }
     };
 /* ]]> */
