@@ -180,10 +180,9 @@
           <ON_OK message="questioncwqpfsok" />
         </FEEDBACK>
       </CUSTOM_CHECK>
-      <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_register_globals_and_fopen" level="optional">
+      <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_register_globals" level="optional">
         <FEEDBACK>
-          <ON_CHECK message="phpcheckregisterglobalsfopenfailed" />
-          <ON_OK message="phpcheckregisterglobalsfopenpassed" />
+          <ON_CHECK message="globalswarning" />
         </FEEDBACK>
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
@@ -243,10 +242,9 @@
           <ON_OK message="qtyperqpwillberemoved" />
         </FEEDBACK>
       </CUSTOM_CHECK>
-      <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_register_globals_and_fopen" level="optional">
+      <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_register_globals" level="optional">
         <FEEDBACK>
-          <ON_CHECK message="phpcheckregisterglobalsfopenfailed" />
-          <ON_OK message="phpcheckregisterglobalsfopenpassed" />
+          <ON_CHECK message="globalswarning" />
         </FEEDBACK>
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
