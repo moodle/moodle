@@ -141,6 +141,7 @@ function display_course_blocks_start() {
 
     global $CFG;
     global $USER;
+    global $THEME;
 
     require_once($CFG->libdir.'/blocklib.php');
     require_once($CFG->libdir.'/pagelib.php');
@@ -167,16 +168,36 @@ function display_course_blocks_start() {
                         update_module_button($this->cm->id, $this->course->id, $this->strresource));
 
     echo '<table id="layout-table"><tr>';
-
-    if((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
-        echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        echo '</td>';
+    
+    $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+    foreach ($lt as $column) {
+        $lt1[] = $column;
+        if ($column == 'middle') break;
     }
+    foreach ($lt1 as $column) {
+        switch ($column) {
+            case 'left':
+                if((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
+                    echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
+                    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+                    echo '</td>';
+                }
+            break;
 
-    echo '<td id="middle-column">';
-    echo '<div id="resource">';
+            case 'middle':
+                echo '<td id="middle-column">';
+                echo '<div id="resource">';
+            break;
 
+            case 'right':
+                if((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
+                    echo '<td style="width: '.$blocks_preferred_width.'px;" id="right-column">';
+                    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+                    echo '</td>';
+                }
+            break;
+        }
+    }
 }
 
 
@@ -186,18 +207,43 @@ function display_course_blocks_start() {
 function display_course_blocks_end() {
 
     global $CFG;
+    global $THEME;
 
     $PAGE = $this->PAGE;
     $pageblocks = blocks_setup($PAGE);
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
 
-    echo '</div>';
-    echo '</td>';
+    $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+    foreach ($lt as $column) {
+        if ($column != 'middle') {
+            array_shift($lt);
+        } else if ($column == 'middle') {
+            break;
+        }
+    }
+    foreach ($lt as $column) {
+        switch ($column) {
+            case 'left':
+                if((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
+                    echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
+                    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+                    echo '</td>';
+                }
+            break;
 
-    if((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
-        echo '<td style="width: '.$blocks_preferred_width.'px;" id="right-column">';
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-        echo '</td>';
+            case 'middle':
+                echo '</div>';
+                echo '</td>';
+            break;
+
+            case 'right':
+                if((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
+                    echo '<td style="width: '.$blocks_preferred_width.'px;" id="right-column">';
+                    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+                    echo '</td>';
+                }
+            break;
+        }
     }
 
     echo '</tr></table>';
