@@ -4167,9 +4167,10 @@ function _print_custom_corners_end($idbase) {
  * @param boolean $return if false, output the form directly, otherwise return the HTML as a string. 
  * @param string $tooltip a tooltip to add to the button as a title attribute.
  * @param boolean $disabled if true, the button will be disabled.
+ * @param string $jsconfirmmessage if not empty then display a confirm dialogue with this string as the question.
  * @return string / nothing depending on the $return paramter.
  */
-function print_single_button($link, $options, $label='OK', $method='get', $target='_self', $return=false, $tooltip='', $disabled = false) {
+function print_single_button($link, $options, $label='OK', $method='get', $target='_self', $return=false, $tooltip='', $disabled = false, $jsconfirmmessage='') {
     $output = '';
     $link = str_replace('"', '&quot;', $link); //basic XSS protection
     $output .= '<div class="singlebutton">';
@@ -4191,7 +4192,11 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
     } else {
         $disabled = '';
     }
-    $output .= '<input type="submit" value="'. s($label) ."\" $tooltip $disabled/></div></form></div>";
+    if ($jsconfirmmessage){
+    	$jsconfirmmessage = addslashes_js($jsconfirmmessage);
+    	$jsconfirmmessage = 'onclick="'.s('return confirm("'.$jsconfirmmessage.'");').'"';
+    }
+    $output .= '<input type="submit" value="'. s($label) ."\" $tooltip $disabled $jsconfirmmessage/></div></form></div>";
 
     if ($return) {
         return $output;
