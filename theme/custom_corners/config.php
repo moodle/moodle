@@ -88,6 +88,14 @@ $THEME->block_r_max_width = 210;
 /// values are taken.
 
 
+// $THEME->layouttable = array('left', 'middle', 'right');
+
+/// $THEME->layouttable defines the way the columns are displayed
+/// on the pages. You can rearange the columns to have the content
+/// left and the two columns on the right page side.
+/// $THEME->layouttable = array('middle', 'left', 'right');
+
+
 $THEME->courseformatsheets = true;
 
 /// When this is enabled, this theme will search for files 
