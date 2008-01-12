@@ -1,3 +1,32 @@
-<h3>Chameleon, the flexible Moodle theme.</h3>
+<h3>
+    Chameleon, the flexible Moodle theme.
+</h3>
 
-<p>A Moodle Theme from <strong>Urs Hunkler, <a href="http://www.unodo.de" target="_blank">unodo</a> and Andrew Walker, <a href="http://www.altoncollege.ac.uk/" title="External link">Alton College</a></strong>.</p>
+<h4>
+    Some basic information:
+</h4>
+
+<p>
+    You must not write hooks as comma separated lists of elements like 
+<pre>
+td#middle-column div.bt, 
+div#middle-column div.bt {
+    ...
+}
+</pre>
+    in Chameleon themes because the Chameleon engine can't handle these comma lists. 
+    Please write two seperate statements instead.
+<pre>
+td#middle-column div.bt {
+    ...
+}
+div#middle-column div.bt {
+    ...
+}
+</pre>
+</p>
+
+<p>
+    A Moodle Theme from <strong>Urs Hunkler, <a href="http://www.unodo.de" target="_blank">unodo</a> 
+    and Andrew Walker, <a href="http://www.altoncollege.ac.uk/" title="External link">Alton College</a></strong>.
+</p>
