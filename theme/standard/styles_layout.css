@@ -1269,6 +1269,10 @@ a.skip-block:focus, a.skip-block:active {
   margin-right: auto;
 }
 
+.block_adminblock {
+  width: 180px;
+}
+
 .block_messages .content {
   text-align:left;
   font-size:0.75em;
