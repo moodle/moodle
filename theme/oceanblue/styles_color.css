@@ -79,7 +79,7 @@ div.header {
 }
 
 table.formtable tbody th {
-  background-color: none;
+  background-color: transparent;
 }
 
 .highlight {
@@ -710,7 +710,7 @@ table.message_search_results td {
   background-color: #FFD991;
 }
 #mod-forum-discuss .forumpost {
-  background-color: none;
+  background-color: transparent;
 }
 
 #mod-forum-discuss .forumpost.unread .content {
