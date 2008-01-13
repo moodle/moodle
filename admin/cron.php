@@ -281,7 +281,7 @@
     if (!empty($CFG->enablestats) and empty($CFG->disablestatsprocessing)) {
 
         // check we're not before our runtime
-        $timetocheck = strtotime("$CFG->statsruntimestarthour:$CFG->statsruntimestartminute today");
+        $timetocheck = strtotime("today $CFG->statsruntimestarthour:$CFG->statsruntimestartminute");
 
         if (time() > $timetocheck) {
             $time = 60*60*20; // set it to 20 here for first run... (overridden by $CFG)
