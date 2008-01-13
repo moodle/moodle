@@ -94,8 +94,10 @@
 <input type="hidden" name="id" value="'.$id.'" />
 <input type="hidden" name="format" value="'.$format.'" />
 ';
-                echo "<h3>".get_string('previewhtml')."</h3><div class=\"messagepreview\">\n".format_text(stripslashes($messagebody),$format)."\n</div>";
-                echo "\n<p align=\"center\"><input type=\"submit\" name=\"send\" value=\"Send\" /> <input type=\"submit\" name=\"edit\" value=\"Edit\" /></p>\n</form>";
+                echo "<h3>".get_string('previewhtml')."</h3><div class=\"messagepreview\">\n".format_text(stripslashes($messagebody),$format)."\n</div>\n";
+                echo '<p align="center"><input type="submit" name="send" value="'.get_string('sendmessage', 'message').'" />'."\n";
+                echo '<input type="submit" name="edit" value="'.get_string('edit').'" /></p>';
+                echo "\n</form>";
             } elseif ($send) {
                 $good = 1;
                 $teachers = array();
