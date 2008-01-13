@@ -3901,6 +3901,56 @@ function print_box($message, $classes='generalbox', $ids='', $return=false) {
 }
 
 /**
+ * Starts a box as a simple wrapper div
+ * Doesn't include the advanced container handling
+ * Replaces print_simple_box_start (see deprecatedlib.php)
+ *
+ * @param string $classes, space-separated class names.
+ * @param string $idname
+ * @param boolean $return, return as string or just print it
+ * @return mixed string or void
+ */
+function print_simplewrapper_start($classes='generalbox', $idname='', $return=false) {
+
+    if ($idname) {
+        $id = ' id="'.$idname.'"';
+    } else {
+        $id = '';
+    }
+
+    if ($classes) {
+        $class = ' class="box '.$classes.'"';
+    } else {
+        $class = ' class="box"';
+    }
+    
+    $output = '<div'.$id.$class.'>';
+    
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Simple function to end a wrapper box (see above)
+ * Replaces print_simple_box_end (see deprecatedlib.php)
+ *
+ * @param boolean $return, return as string or just print it
+ */
+function print_simplewrapper_end($return=false) {
+
+    $output = '</div>';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
  * Starts a box using divs
  * Replaces print_simple_box_start (see deprecatedlib.php)
  *
