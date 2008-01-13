@@ -33,6 +33,12 @@ a.dimmed:visited {
 table.generaltable {
   background-color: #EEEEEE;
 }
+span.arrow {
+  font-family: Arial, Helvetica, Courier, sans-serif; 
+}
+p.arrow_button input {
+  font-family: Arial, Helvetica, Courier, sans-serif; 
+}
 img.resize {
   width: 1em;
   height: 1em;
