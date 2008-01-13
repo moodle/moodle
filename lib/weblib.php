@@ -697,58 +697,58 @@ if (!function_exists('stripos')) {    /// Only exists in PHP 5
  * @uses $CFG
  */
 function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=null,
-                                  $height=400, $width=500, $title=null, 
+                                  $height=400, $width=500, $title=null,
                                   $options=null, $return=false, $id=null, $class=null) {
 
-    if (is_null($url)) { 
-        error('There must be an url to the popup. Can\'t create popup window.'); 
+    if (is_null($url)) {
+        error('There must be an url to the popup. Can\'t create popup window.');
     }
 
     global $CFG;
 
     if ($options == 'none') { // 'none' is legacy, should be removed in v2.0
-        $options = null; 
+        $options = null;
     }
 
     // add some sane default options for popup windows
-    if (!$options) { 
-        $options = 'menubar=0,location=0,scrollbars,resizable'; 
+    if (!$options) {
+        $options = 'menubar=0,location=0,scrollbars,resizable';
     }
-    if ($width) { 
-        $options .= ',width='. $width; 
+    if ($width) {
+        $options .= ',width='. $width;
     }
-    if ($height) { 
-        $options .= ',height='. $height; 
+    if ($height) {
+        $options .= ',height='. $height;
     }
-    if ($id) { 
-        $id = ' id="'.$id.'" '; 
+    if ($id) {
+        $id = ' id="'.$id.'" ';
     }
-    if ($class) { 
-        $class = ' class="'.$class.'" '; 
+    if ($class) {
+        $class = ' class="'.$class.'" ';
     }
 
     // get some default string, using the localized version of legacy defaults
-    if (!$name) { 
-        $name = get_string('popup'); 
+    if (!$name) {
+        $name = get_string('popup');
     }
-    if (!$linkname) { 
-        $linkname = get_string('click here'); 
+    if (!$linkname) {
+        $linkname = get_string('click here');
     }
-    if (!$title) { 
-        $title = get_string('Popup window'); 
+    if (!$title) {
+        $title = get_string('Popup window');
     }
 
-    $fullscreen = 0; // must be passed to openpopup 
+    $fullscreen = 0; // must be passed to openpopup
     $element = '';
 
     switch ($type) {
-        case 'button' : 
+        case 'button' :
             $element = '<input type="button" name="'. $name .'" title="'. $title .'" value="'. $linkname .'" '. $id . $class .
                        "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\" />\n";
             break;
         case 'link' :
             // some log url entries contain _SERVER[HTTP_REFERRER] in which case wwwroot is already there.
-            if (!(strpos($url,$CFG->wwwroot) === false)) { 
+            if (!(strpos($url,$CFG->wwwroot) === false)) {
                 $url = substr($url, strlen($CFG->wwwroot));
             }
             $element = '<a title="'. s(strip_tags($title)) .'" href="'. $CFG->wwwroot . $url .'" '.
@@ -1394,7 +1394,7 @@ function format_text_menu() {
  * Given text in a variety of format codings, this function returns
  * the text as safe HTML.
  *
- * This function should mainly be used for long strings like posts, 
+ * This function should mainly be used for long strings like posts,
  * answers, glossary items etc. For short strings @see format_string().
  *
  * @uses $CFG
@@ -1595,8 +1595,8 @@ function reset_text_filters_cache() {
 /** Given a simple string, this function returns the string
  *  processed by enabled string filters if $CFG->filterall is enabled
  *
- *  This function should be used to print short strings (non html) that 
- *  need filter processing e.g. activity titles, post subjects, 
+ *  This function should be used to print short strings (non html) that
+ *  need filter processing e.g. activity titles, post subjects,
  *  glossary concepts.
  *
  *  @param string  $string     The string to be filtered.
@@ -2055,7 +2055,7 @@ function replace_smilies(&$text) {
             $items = explode('{;}', $CFG->emoticons);
             foreach ($items as $item) {
                $item = explode('{:}', $item);
-              $emoticons[$item[0]] = $item[1]; 
+              $emoticons[$item[0]] = $item[1];
             }
         }
     }
@@ -2547,8 +2547,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $pageclass .= ' drag';
     }
 
-    /* give pages without heading or navigation special classes, to 
-     * allow theming of very simple windows (popups and others) */ 
+    /* give pages without heading or navigation special classes, to
+     * allow theming of very simple windows (popups and others) */
     if ($heading == '') {
         $pageclass .= ' noheader';
     }
@@ -3311,9 +3311,9 @@ function theme_setup($theme = '', $params=NULL) {
 
 // RTL support - only for RTL languages, add RTL CSS
     if (get_string('thisdirection') == 'rtl') {
-    	$CFG->stylesheets[] = $CFG->themewww.'/standard/rtl.css'.$paramstring;
-    	$CFG->stylesheets[] = $CFG->themewww.'/'.$theme.'/rtl.css'.$paramstring;
-	}
+        $CFG->stylesheets[] = $CFG->themewww.'/standard/rtl.css'.$paramstring;
+        $CFG->stylesheets[] = $CFG->themewww.'/'.$theme.'/rtl.css'.$paramstring;
+    }
 }
 
 
@@ -3422,13 +3422,13 @@ function check_theme_arrows() {
             $THEME->rarrow = '&gt;';
             $THEME->larrow = '&lt;';
         }
-		
+
     /// RTL support - in RTL languages, swap r and l arrows
-	    if (right_to_left()) {
-			$t = $THEME->rarrow;
-			$THEME->rarrow = $THEME->larrow;
-			$THEME->larrow = $t;
-		}
+        if (right_to_left()) {
+            $t = $THEME->rarrow;
+            $THEME->rarrow = $THEME->larrow;
+            $THEME->larrow = $t;
+        }
     }
 }
 
@@ -3628,9 +3628,9 @@ function print_navigation ($navigation, $separator=0, $return=false) {
  * array(array('name' => $linktext, 'link' => '', 'type' => 'title'))
  * However, becuase this is a very common case, you can use a shortcut syntax, and just
  * pass the string 'Editing forum', instead of an array as $extranavlinks.
- * 
+ *
  * At the moment, the link types only have limited significance. Type 'activity' is
- * recognised in order to implement the $CFG->hideactivitytypenavlink feature. Types 
+ * recognised in order to implement the $CFG->hideactivitytypenavlink feature. Types
  * that are known to appear are 'home', 'course', 'activity', 'activityinstance' and 'title'.
  * This really needs to be documented better. In the mean time, try to be consistent, it will
  * enable people to customise the navigation more in future.
@@ -3641,14 +3641,14 @@ function print_navigation ($navigation, $separator=0, $return=false) {
  * If you don't have $cm->modname or $cm->name, this fuction will attempt to find them using
  * the $cm->module and $cm->instance fields, but this takes extra database queries, so a
  * warning is printed in developer debug mode.
- * 
+ *
  * @uses $CFG
  * @uses $THEME
  *
- * @param mixed $extranavlinks - Normally an array of arrays, keys: name, link, type. If you 
+ * @param mixed $extranavlinks - Normally an array of arrays, keys: name, link, type. If you
  *      only want one extra item with no link, you can pass a string instead. If you don't want
  *      any extra links, pass an empty string.
- * @param mixed $cm - optionally the $cm object, if you want this function to generate the 
+ * @param mixed $cm - optionally the $cm object, if you want this function to generate the
  *      activity and activityinstance levels of navigation too.
  *
  * @return $navigation as an object so it can be differentiated from old style
@@ -3943,7 +3943,7 @@ function print_box_start($classes='generalbox', $ids='', $return=false) {
     } else {
         $clearfix = false;
     }
-    
+
     if (!empty($THEME->customcorners)) {
         $classes .= ' ccbox box';
     } else {
@@ -4164,7 +4164,7 @@ function _print_custom_corners_end($idbase) {
  * @param string $label the caption that appears on the button.
  * @param string $method HTTP method used on the request of the button is clicked. 'get' or 'post'.
  * @param string $target no longer used.
- * @param boolean $return if false, output the form directly, otherwise return the HTML as a string. 
+ * @param boolean $return if false, output the form directly, otherwise return the HTML as a string.
  * @param string $tooltip a tooltip to add to the button as a title attribute.
  * @param boolean $disabled if true, the button will be disabled.
  * @param string $jsconfirmmessage if not empty then display a confirm dialogue with this string as the question.
@@ -4193,8 +4193,8 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
         $disabled = '';
     }
     if ($jsconfirmmessage){
-    	$jsconfirmmessage = addslashes_js($jsconfirmmessage);
-    	$jsconfirmmessage = 'onclick="'.s('return confirm("'.$jsconfirmmessage.'");').'"';
+        $jsconfirmmessage = addslashes_js($jsconfirmmessage);
+        $jsconfirmmessage = 'onclick="'.s('return confirm("'.$jsconfirmmessage.'");').'"';
     }
     $output .= '<input type="submit" value="'. s($label) ."\" $tooltip $disabled $jsconfirmmessage/></div></form></div>";
 
@@ -4283,9 +4283,9 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
  * Print the specified user's avatar.
  *
  * If you pass a $user object that has id, picture, imagealt, firstname, lastname
- * you save a DB query. 
+ * you save a DB query.
  *
- * @param int $user takes a userid, or a userobj 
+ * @param int $user takes a userid, or a userobj
  * @param int $courseid ?
  * @param boolean $picture Print the user picture?
  * @param int $size Size in pixels.  Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatability
@@ -4328,7 +4328,7 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
         }
     }
     if ($needrec) {
-        $user = get_record('user','id',$user, '', '', '', '', 'id,firstname,lastname,imagealt');   
+        $user = get_record('user','id',$user, '', '', '', '', 'id,firstname,lastname,imagealt');
     }
 
     if ($link) {
@@ -4355,12 +4355,12 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
         $wwwroot = $CFG->httpswwwroot;
     } else {
         $wwwroot = $CFG->wwwroot;
-    } 
+    }
 
     if (is_null($picture)) {
         $picture = $user->picture;
     }
-    
+
     if ($picture) {  // Print custom user picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             $src =  $wwwroot .'/user/pix.php/'. $user->id .'/'. $file .'.jpg';
@@ -6895,16 +6895,16 @@ function doc_link($path='', $text='', $iconpath='') {
     if (empty($CFG->docroot)) {
         return '';
     }
-    
+
     $lang = str_replace('_utf8', '', current_language());
     $url = $CFG->docroot. '/' .$lang. '/' .$path;
 
     $lang = str_replace('_utf8', '', current_language());
     $url = $CFG->docroot. '/' .$lang. '/' .$path;
-    
+
     $target = '';
     if (!empty($CFG->doctonewwindow)) {
-        $target = " onclick=\"window.open('$url'); return false;\""; 
+        $target = " onclick=\"window.open('$url'); return false;\"";
     }
 
     $str = "<a href=\"$url\"$target>";
@@ -7089,7 +7089,7 @@ function right_to_left() {
     if (isset($result)) {
         return $result;
     }
-	return $result = (get_string('thisdirection') == 'rtl');
+    return $result = (get_string('thisdirection') == 'rtl');
 }
 
 
@@ -7101,12 +7101,12 @@ function right_to_left() {
  * @return string
  */
 function fix_align_rtl($align) {
-	if (!right_to_left()) {
+    if (!right_to_left()) {
         return $align;
     }
-	if ($align=='left')  { return 'right'; }
-	if ($align=='right') { return 'left'; }
-	return $align;
+    if ($align=='left')  { return 'right'; }
+    if ($align=='right') { return 'left'; }
+    return $align;
 }
 
 
@@ -7116,12 +7116,12 @@ function fix_align_rtl($align) {
  *
  * @return boolean
  *
- * TODO Use a central function to create the popup calls allover Moodle and 
+ * TODO Use a central function to create the popup calls allover Moodle and
  * TODO In the moment only works with resources and probably questions.
  */
 function is_in_popup() {
     $inpopup = optional_param('inpopup', '', PARAM_BOOL);
-    
+
     return ($inpopup);
 }
 
