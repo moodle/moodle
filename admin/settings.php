@@ -21,6 +21,7 @@ $PAGE->init_extra($section); // hack alert!
 $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
 $return       = optional_param('return','', PARAM_ALPHA);
 
+<<<<<<< settings.php
 if (!isset($USER->adminediting)) {
     $USER->adminediting = false;
 }
@@ -34,6 +35,10 @@ if ($PAGE->user_allowed_editing()) {
 }
 
 $adminroot = admin_get_root();
+=======
+/// no guest autologin
+require_login(0, false);
+>>>>>>> 1.40.2.3
 
 $root = $adminroot->locate($PAGE->section);
 
