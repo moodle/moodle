@@ -170,7 +170,7 @@
         $item = $grading_info->items[0];
         if (isset($item->grades[$USER->id])) {
             $grade = $item->grades[$USER->id];
-    
+
             if ($grade->overridden) {
                 $mygrade = $grade->grade + 0; // Convert to number.
                 $mygradeoverridden = true;
@@ -314,7 +314,7 @@
 
     if ($numattempts && $quiz->sumgrades && !is_null($mygrade)) {
         $resultinfo = '';
-        
+
         if ($overallstats) {
             if ($available && $moreattempts) {
                 $a = new stdClass;
@@ -399,14 +399,16 @@
             if ($unfinished) {
                 $strconfirmstartattempt = '';
             } else if ($quiz->timelimit && $quiz->attempts) {
-                $strconfirmstartattempt = addslashes(get_string('confirmstartattempttimelimit','quiz', $quiz->attempts));
+                $strconfirmstartattempt = get_string('confirmstartattempttimelimit','quiz', $quiz->attempts);
             } else if ($quiz->timelimit) {
-                $strconfirmstartattempt = addslashes(get_string('confirmstarttimelimit','quiz'));
+                $strconfirmstartattempt = get_string('confirmstarttimelimit','quiz');
             } else if ($quiz->attempts) {
-                $strconfirmstartattempt = addslashes(get_string('confirmstartattemptlimit','quiz', $quiz->attempts));
+                $strconfirmstartattempt = get_string('confirmstartattemptlimit','quiz', $quiz->attempts);
             } else {
                 $strconfirmstartattempt =  '';
             }
+            // Determine the URL to use.
+            $attempturl = "attempt.php?id=$cm->id";
 
             // Prepare options depending on whether the quiz should be a popup.
             if (!empty($quiz->popup)) {
@@ -415,22 +417,20 @@
                         "width='+window.screen.width+', channelmode=yes, fullscreen=yes, " .
                         "scrollbars=yes, resizeable=no, directories=no, toolbar=no, " .
                         "titlebar=no, location=no, status=no, menubar=no";
+                if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
+                    $attempturl = sid_process_url($attempturl);
+                }
+
+                echo '<input type="button" value="'.$buttontext.'" onclick="javascript:';
+                if ($strconfirmstartattempt) {
+                    $strconfirmstartattempt = addslashes($strconfirmstartattempt);
+                    echo "if (confirm('".addslashes_js($strconfirmstartattempt)."')) ";
+                }
+                echo "window.open('$attempturl','$window','$windowoptions');", '" />';
             } else {
-                $window = '_self';
-                $windowoptions = '';
+                print_single_button("attempt.php", array('id'=>$cm->id), $buttontext, 'get', '', false, '', false, $strconfirmstartattempt);
             }
 
-            // Determine the URL to use.
-            $attempturl = "attempt.php?id=$cm->id";
-            if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
-                $attempturl = sid_process_url($attempturl);
-            }
-            
-            echo '<input type="button" value="'.$buttontext.'" onclick="javascript:';
-            if ($strconfirmstartattempt) {
-                echo "if (confirm('".addslashes_js($strconfirmstartattempt)."')) ";
-            } 
-            echo "window.open('$attempturl','$window','$windowoptions');", '" />';   
 
 ?>
 <noscript>
