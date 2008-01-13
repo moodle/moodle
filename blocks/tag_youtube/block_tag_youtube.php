@@ -28,6 +28,10 @@ class block_tag_youtube extends block_base {
         return true;
     }
 
+    function preferred_width() {
+        return 140;
+    } 
+
     function get_content() {
 
         if ($this->content !== NULL) {
@@ -156,9 +160,10 @@ class block_tag_youtube extends block_base {
 
         foreach($videos as $video){
             $text .= '<li>';
+            $text .= '<div class="clearfix">';
             $text .= '<a href="'. s($video['url']) . '">';
-            $text .= '<img alt="" class="youtube-thumb" src="'. $video['thumbnail_url'] .'" /> <span>';
-            $text .= s($video['title']). '</span></a>';
+            $text .= '<img alt="" class="youtube-thumb" src="'. $video['thumbnail_url'] .'" /></a>';
+            $text .= '</div><span><a href="'. s($video['url']) . '">'.s($video['title']).'</a></span>';
             $text .= '<div>';
             $text .= format_time($video['length_seconds']);
             $text .= "</div></li>\n";
