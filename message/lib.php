@@ -27,19 +27,19 @@ function message_print_contacts() {
 
 
     /// get lists of contacts and unread messages
-    $onlinecontacts = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, mc.blocked
+    $onlinecontacts = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt, mc.blocked
                                        FROM {$CFG->prefix}user u, {$CFG->prefix}message_contacts mc
                                        WHERE mc.userid='$USER->id' AND u.id=mc.contactid AND u.lastaccess>=$timefrom
                                          AND mc.blocked='0'
                                        ORDER BY u.firstname ASC");
 
-    $offlinecontacts = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, mc.blocked
+    $offlinecontacts = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt, mc.blocked
                                        FROM {$CFG->prefix}user u, {$CFG->prefix}message_contacts mc
                                        WHERE mc.userid='$USER->id' AND u.id=mc.contactid AND u.lastaccess<$timefrom
                                          AND mc.blocked='0'
                                        ORDER BY u.firstname ASC");
 
-    $unreadmessages = get_records_sql("SELECT m.id, m.useridfrom, u.firstname, u.lastname, u.picture
+    $unreadmessages = get_records_sql("SELECT m.id, m.useridfrom, u.firstname, u.lastname, u.picture, u.imagealt
                                        FROM {$CFG->prefix}user u, {$CFG->prefix}message m
                                        WHERE m.useridto='$USER->id' AND u.id=m.useridfrom");
 
@@ -110,7 +110,7 @@ function message_print_contacts() {
                     $strhistory = message_history_link($contact->id, 0, true, '', '', 'icon');
 
                     echo '<tr><td class="pix">';
-                    print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
+                    print_user_picture($contact, SITEID, $contact->picture, 20, false, true, 'userwindow');
                     echo '</td>';
                     echo '<td class="contact">';
                     
@@ -146,7 +146,7 @@ function message_print_contacts() {
                 $strhistory = message_history_link($contact->id, 0, true, '', '', 'icon');
 
                 echo '<tr><td class="pix">';
-                print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
+                print_user_picture($contact, SITEID, $contact->picture, 20, false, true, 'userwindow');
                 echo '</td>';
                 echo '<td class="contact">';
                 link_to_popup_window("/message/discussion.php?id=$contact->id", "message_$contact->id",
@@ -168,6 +168,10 @@ function message_print_contacts() {
             echo '</td></tr>';
 
             foreach ($unknownmessages as $messageuser) {
+
+                // set id to be userid so functions expecting a user id have it
+                $messageuser->id = $messageuser->useridfrom;
+
                 $fullname = fullname($messageuser);
                 $fullnamelink = $fullname;
                 if ($messageuser->count) {
@@ -180,7 +184,7 @@ function message_print_contacts() {
                 $strhistory = message_history_link($messageuser->useridfrom, 0, true, '', '', 'icon');
 
                 echo '<tr><td class="pix">';
-                print_user_picture($messageuser->useridfrom, SITEID, $messageuser->picture, 20, false, true, 'userwindow');
+                print_user_picture($messageuser, SITEID, $messageuser->picture, 20, false, true, 'userwindow');
                 echo '</td>';
                 echo '<td class="contact">';
                 
