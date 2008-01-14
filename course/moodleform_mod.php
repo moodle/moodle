@@ -111,7 +111,7 @@ class moodleform_mod extends moodleform {
 
         if ($mform->elementExists('cmidnumber')) {
             // verify the idnumber
-            if (!grade_verify_idnumber($data['cmidnumber'], $grade_item, $cm)) {
+            if (!grade_verify_idnumber($data['cmidnumber'], $COURSE->id, $grade_item, $cm)) {
                 $errors['cmidnumber'] = get_string('idnumbertaken');
             }
         }

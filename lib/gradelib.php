@@ -657,11 +657,12 @@ function grade_get_letters($context=null) {
 /**
  * Verify new value of idnumber - checks for uniqueness of new idnumbers, old are kept intact
  * @param string idnumber string (with magic quotes)
+ * @param int $courseid - id numbers are course unique only
  * @param object $cm used for course module idnumbers and items attached to modules
  * @param object $gradeitem is item idnumber
  * @return boolean true means idnumber ok
  */
-function grade_verify_idnumber($idnumber, $grade_item=null, $cm=null) {
+function grade_verify_idnumber($idnumber, $courseid, $grade_item=null, $cm=null) {
     if ($idnumber == '') {
         //we allow empty idnumbers
         return true;
@@ -674,11 +675,11 @@ function grade_verify_idnumber($idnumber, $grade_item=null, $cm=null) {
         return true;
     }
 
-    if (get_records('course_modules', 'idnumber', $idnumber)) {
+    if (get_records_select('course_modules', "course = $courseid AND idnumber='$idnumber'")) {
         return false;
     }
 
-    if (get_records('grade_items', 'idnumber', $idnumber)) {
+    if (get_records_select('grade_items', "courseid = $courseid AND idnumber='$idnumber'")) {
         return false;
     }
 

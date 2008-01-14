@@ -84,7 +84,7 @@ if ($data = $mform->get_data(false)) {
                 $cm = null;
             }
 
-            if (!grade_verify_idnumber($value, $gi, $cm)) {
+            if (!grade_verify_idnumber($value, $COURSE->id, $gi, $cm)) {
                 $errors[$giid] = get_string('idnumbertaken');
                 continue;
             }
