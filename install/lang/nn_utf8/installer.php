@@ -10,7 +10,7 @@
 /// using strings defined in installer_strings (same dir)
 
 $string['check'] = 'Sjekk';
-$string['closewindow'] = 'Lukk dette vinduet';
+$string['closewindow'] = 'Lukk dette vindauget';
 $string['continue'] = 'Hald fram';
 $string['error'] = 'Feil';
 $string['help'] = 'Hjelp';
@@ -23,6 +23,6 @@ $string['password'] = 'Passord';
 $string['previous'] = 'Forrige';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
-$string['thislanguage'] = 'Norsk - Nynorsk';
+$string['thislanguage'] = 'Norsk - nynorsk';
 $string['user'] = 'Brukar';
 ?>
