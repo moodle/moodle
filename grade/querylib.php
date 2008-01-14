@@ -1,7 +1,7 @@
 <?php  //$Id$
 
 /**
- * Returns the aggregated or calculated course grade for the given user(s).
+ * Returns the aggregated or calculated course grade(s) in given course.
  * @public
  * @param int $courseid id of course
  * @param int $userid_or_ids optional id of the graded user or array of ids; if userid not used, returns only information about grade_item
@@ -16,7 +16,6 @@ function grade_get_course_grades($courseid, $userid_or_ids=null) {
     }
 
     $item = new object();
-    $item->itemnumber = $grade_item->itemnumber;
     $item->scaleid    = $grade_item->scaleid;
     $item->name       = $grade_item->get_name();
     $item->grademin   = $grade_item->grademin;
@@ -65,7 +64,6 @@ function grade_get_course_grades($courseid, $userid_or_ids=null) {
             $grade->feedback       = $grade_grades[$userid]->feedback;
             $grade->feedbackformat = $grade_grades[$userid]->feedbackformat;
             $grade->usermodified   = $grade_grades[$userid]->usermodified;
-            $grade->datesubmitted  = $grade_grades[$userid]->get_datesubmitted();
             $grade->dategraded     = $grade_grades[$userid]->get_dategraded();
 
             // create text representation of grade
@@ -92,6 +90,109 @@ function grade_get_course_grades($courseid, $userid_or_ids=null) {
     }
 
     return $item;
+}
+
+/**
+ * Returns the aggregated or calculated course grade for the given user(s).
+ * @public
+ * @param int $userid
+ * @param int $courseid optional id of course or array of ids, empty means all uses courses (returns array if not present)
+ * @return mixed grade info or grades array including item info, false if error
+ */
+function grade_get_course_grade($userid, $courseid_or_ids=null) {
+
+    if (!is_array($courseid_or_ids)) {
+        if (empty($courseid_or_ids)) {
+            if (!$courses = get_my_courses($userid, $sort='visible DESC,sortorder ASC', 'id')) {
+                return false;
+            }
+            $courseids = array_keys($courses);
+            return grade_get_course_grade($userid, $courseids);
+        }
+        if (!is_numeric($courseid_or_ids)) {
+            return false;
+        }
+        if (!$grades = grade_get_course_grade($userid, array($courseid_or_ids))) {
+            return false;
+        } else {
+            // only one grade - not array
+            $grade = reset($grades);
+            return $grade;
+        }
+    }
+
+    foreach ($courseid_or_ids as $courseid) {
+        $grade_item = grade_item::fetch_course_item($courseid);
+        $course_items[$grade_item->courseid] = $grade_item;
+    }
+
+    $grades = array();
+    foreach ($course_items as $grade_item) {
+        if ($grade_item->needsupdate) {
+            grade_regrade_final_grades($courseid);
+        }
+
+        $item = new object();
+        $item->scaleid    = $grade_item->scaleid;
+        $item->name       = $grade_item->get_name();
+        $item->grademin   = $grade_item->grademin;
+        $item->grademax   = $grade_item->grademax;
+        $item->gradepass  = $grade_item->gradepass;
+        $item->locked     = $grade_item->is_locked();
+        $item->hidden     = $grade_item->is_hidden();
+
+        switch ($grade_item->gradetype) {
+            case GRADE_TYPE_NONE:
+                continue;
+
+            case GRADE_TYPE_VALUE:
+                $item->scaleid = 0;
+                break;
+
+            case GRADE_TYPE_TEXT:
+                $item->scaleid   = 0;
+                $item->grademin   = 0;
+                $item->grademax   = 0;
+                $item->gradepass  = 0;
+                break;
+        }
+        $grade_grade = new grade_grade(array('userid'=>$userid, 'itemid'=>$grade_item->id));
+        $grade_grade->grade_item =& $grade_item;
+
+        $grade = new object();
+        $grade->grade          = $grade_grade->finalgrade;
+        $grade->locked         = $grade_grade->is_locked();
+        $grade->hidden         = $grade_grade->is_hidden();
+        $grade->overridden     = $grade_grade->overridden;
+        $grade->feedback       = $grade_grade->feedback;
+        $grade->feedbackformat = $grade_grade->feedbackformat;
+        $grade->usermodified   = $grade_grade->usermodified;
+        $grade->dategraded     = $grade_grade->get_dategraded();
+        $grade->item           = $item;
+
+        // create text representation of grade
+        if ($grade_item->needsupdate) {
+            $grade->grade     = false;
+            $grade->str_grade = get_string('error');
+
+        } else if (is_null($grade->grade)) {
+            $grade->str_grade = '-';
+
+        } else {
+            $grade->str_grade = grade_format_gradevalue($grade->grade, $grade_item);
+        }
+
+        // create html representation of feedback
+        if (is_null($grade->feedback)) {
+            $grade->str_feedback = '';
+        } else {
+            $grade->str_feedback = format_text($grade->feedback, $grade->feedbackformat);
+        }
+
+        $grades[$grade_item->courseid] = $grade;
+    }
+
+    return $grades;
 }
 
 /**
