@@ -1,0 +1,16 @@
+*** version 0.12.2 ***
+
+* var Tab is now private
+* fixed Element.configureAttribute
+
+*** version 0.12.1 ***
+
+* tabs.css renamed to tabview.css
+* calls to "set" now queued so they can be made before "contentReady"
+
+
+*** version 0.12.0 ***
+
+* TabView widget introduced
+
+* Note: border_tabs.css included as basic skin to enable "tabs" look
