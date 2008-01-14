@@ -56,7 +56,12 @@ class enrol_authorize_form extends moodleform
                 $monthsmenu[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), "%B");
             }
             $nowdate = getdate();
-            $yearsmenu = array('' => get_string('choose')) + range($nowdate["year"] - 1, $nowdate["year"] + 15);
+            $startyear = $nowdate["year"] - 1;
+            $endyear = $startyear + 20;
+            $yearsmenu = array('' => get_string('choose'));
+            for ($i = $startyear; $i < $endyear; $i++) {
+            	$yearsmenu[$i] = $i;
+            }
             $ccexpiregrp = array();
             $ccexpiregrp[] = &$mform->createElement('select', 'ccexpiremm', '', $monthsmenu);
             $ccexpiregrp[] = &$mform->createElement('select', 'ccexpireyyyy', '', $yearsmenu);
