@@ -217,6 +217,8 @@ class edit_outcomeitem_form extends moodleform {
 
 /// perform extra validation before submission
     function validation($data, $files) {
+        global $COURSE;
+
         $errors = parent::validation($data, $files);
 
         if (array_key_exists('idnumber', $data)) {
@@ -225,7 +227,7 @@ class edit_outcomeitem_form extends moodleform {
             } else {
                 $grade_item = null;
             }
-            if (!grade_verify_idnumber($data['idnumber'], $grade_item, null)) {
+            if (!grade_verify_idnumber($data['idnumber'], $COURSE->id, $grade_item, null)) {
                 $errors['idnumber'] = get_string('idnumbertaken');
             }
         }
