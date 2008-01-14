@@ -4125,6 +4125,9 @@ function &admin_get_root($reload=false, $requirefulltree=true) {
                 include($file);
             }
         }
+        if (file_exists($CFG->dirroot.'/local/localsettings.php')) {
+            include_once($CFG->dirroot.'/local/localsettings.php');
+        }
     }
 
     return $ADMIN;
