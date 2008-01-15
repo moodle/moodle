@@ -3146,6 +3146,9 @@ function get_cached_capabilities($component='moodle') {
     if ($component == 'moodle') {
         $storedcaps = get_records_select('capabilities',
                         "name LIKE 'moodle/%:%'");
+    } else if ($component == 'local') {
+        $storedcaps = get_records_select('capabilities', 
+                        "name LIKE 'moodle/local:%'");
     } else {
         $storedcaps = get_records_select('capabilities',
                         "name LIKE '$component:%'");
@@ -3792,7 +3795,11 @@ function get_capability_string($capabilityname) {
         break;
 
         case 'moodle':
-            $string = get_string($stringname, 'role');
+            if ($componentname == 'local') {
+                $string = get_string($stringname, 'local');
+            } else {
+                $string = get_string($stringname, 'role');
+            }
         break;
 
         case 'enrol':
@@ -3840,6 +3847,9 @@ function get_component_string($component, $contextlevel) {
             } else if (preg_match('|^block/|', $component)) {
                 $langname = str_replace('/', '_', $component);
                 $string = get_string('blockname', $langname);
+            } else if (preg_match('|^local|', $component)) {
+                $langname = str_replace('/', '_', $component);
+                $string = get_string('local');
             } else {
                 $string = get_string('coresystem');
             }

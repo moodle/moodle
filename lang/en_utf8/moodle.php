@@ -830,6 +830,7 @@ $string['list'] = 'List';
 $string['listfiles'] = 'List of files in $a';
 $string['listofallpeople'] = 'List of all people';
 $string['livelogs'] = 'Live logs from the past hour';
+$string['local'] = 'Local';
 $string['locale'] = 'en_AU.UTF-8';
 $string['location'] = 'Location';
 $string['log_excel_date_format'] = 'yyyy mmmm d h:mm';
