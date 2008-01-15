@@ -55,7 +55,7 @@ class question_import_form extends moodleform {
         $this->set_upload_manager(new upload_manager('newfile', true, false, $COURSE, false, 0, false, true, false));
         $mform->addElement('file', 'newfile', get_string('upload'));
 //--------------------------------------------------------------------------------
-        $this->add_action_buttons(true, get_string('uploadthisfile'));
+        $mform->addElement('submit', 'submitbutton', get_string('uploadthisfile'));
 
 //--------------------------------------------------------------------------------
         if (has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $COURSE->id))){
@@ -63,9 +63,11 @@ class question_import_form extends moodleform {
 
             $mform->addElement('choosecoursefile', 'choosefile', get_string('choosefile','quiz'));
 //--------------------------------------------------------------------------------
-            $this->add_action_buttons(true, get_string('importfromthisfile','quiz'));
+            $mform->addElement('submit', 'submitbutton', get_string('importfromthisfile','quiz'));
         }
 //--------------------------------------------------------------------------------
+        $mform->addElement('static', 'dummy', '');
+        $mform->closeHeaderBefore('dummy');
     }
     function get_importfile_name(){
         if ($this->is_submitted() and $this->is_validated()) {
