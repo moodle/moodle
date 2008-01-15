@@ -69,18 +69,6 @@ if (!isset($frm->acceptechecktypes)) {
     </td>
 </tr>
 
-<?php if (substr($CFG->wwwroot, 0, 5) !== 'https') { /* https && loginhttps */ ?>
-<tr valign="top">
-    <td align="right">loginhttps:</td>
-    <td><?php
-          echo (empty($CFG->loginhttps) ? "<span style=\"color:red\"><b>off</b></span>" : "<font color=\"green\">on</font>");
-          $a->url = "$CFG->wwwroot/$CFG->admin/settings.php?section=httpsecurity";
-          echo '<br />'; print_string("logindesc", "enrol_authorize", $a);
-        ?>
-    </td>
-</tr>
-<?php } /* end: https && loginhttps */ ?>
-
 <tr valign="top"><td colspan="2"><h4><?php print_string("adminauthorizesettings", "enrol_authorize") ?></h4></td></tr>
 
 <tr valign="top">
@@ -130,7 +118,7 @@ if (!isset($frm->acceptechecktypes)) {
 <tr valign="top">
     <td align="right">an_authcode:</td>
     <td><?php print_checkbox('an_authcode', '1', !empty($frm->an_authcode)) ?>
-        <?php helpbutton('authcode', '', 'enrol/authorize'); ?><br />
+        <?php helpbutton('authcode', 'authcode', 'enrol/authorize'); ?><br />
         <?php print_string("adminauthcode", "enrol_authorize") ?></td>
 </tr>
 
@@ -148,7 +136,7 @@ if (!isset($frm->acceptechecktypes)) {
     foreach ($allpaymentmethods as $key) {
         if ($key == AN_METHOD_CC) {
             print_checkbox('acceptmethods[]', AN_METHOD_CC, in_array(AN_METHOD_CC, $paymentmethodsenabled), get_string('method'.AN_METHOD_CC,'enrol_authorize'));
-            echo("<ul>"); // blockquote breaks <span> and <br> tags 
+            echo("<ul>"); // blockquote breaks <span> and <br> tags
             $acceptedccs = array_keys(get_list_of_creditcards());
             $allccs = get_list_of_creditcards(true);
             foreach ($allccs as $key => $val) {
@@ -160,7 +148,7 @@ if (!isset($frm->acceptechecktypes)) {
         }
         elseif ($key == AN_METHOD_ECHECK) {
             print_checkbox('acceptmethods[]', AN_METHOD_ECHECK, in_array(AN_METHOD_ECHECK, $paymentmethodsenabled), get_string('method'.AN_METHOD_ECHECK,'enrol_authorize'));
-            echo("<ul>"); // blockquote breaks <span> and <br> tags 
+            echo("<ul>"); // blockquote breaks <span> and <br> tags
             $echecktypesenabled = get_list_of_bank_account_types();
             $allechecktypes = get_list_of_bank_account_types(true);
             foreach ($allechecktypes as $key) {
@@ -175,7 +163,7 @@ if (!isset($frm->acceptechecktypes)) {
 </tr>
 
 <tr valign="top"><td colspan="2"><h4><?php print_string("adminauthorizeccapture", "enrol_authorize") ?>
-                                     <?php helpbutton('orderreview', '', 'enrol/authorize'); ?>
+                                     <?php helpbutton('orderreview', 'orderreview', 'enrol/authorize'); ?>
                                  </h4></td></tr>
 
 <tr valign="top">
