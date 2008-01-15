@@ -498,7 +498,7 @@ class qformat_xml extends qformat_default {
     function import_category( $question ) {
         $qo = new stdClass;
         $qo->qtype = 'category';
-        $qo->category = $question['#']['category'][0]['#'];
+        $qo->category = $this->import_text($question['#']['category'][0]['#']['text']);
         return $qo;
     }
 
