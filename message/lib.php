@@ -495,9 +495,9 @@ function message_print_search_results($frm) {
 function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
     global $USER;
     if ($user === false) {
-        print_user_picture($USER->id, SITEID, $USER->picture, 20, false, true, 'userwindow');
+        print_user_picture($USER, SITEID, $USER->picture, 20, false, true, 'userwindow');
     } else {
-        print_user_picture($user->id, SITEID, $user->picture, 20, false, true, 'userwindow');
+        print_user_picture($user, SITEID, $user->picture, 20, false, true, 'userwindow');
         echo '&nbsp;';
         if ($iscontact) {
             message_contact_link($user->id, 'remove');
