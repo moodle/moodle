@@ -99,7 +99,6 @@ class enrolment_plugin_authorize
 
         if ($course->password) {
             $password = '';
-            $teacher = get_teacher($course->id);
             include($CFG->dirroot.'/enrol/manual/enrol.html');
         }
 
@@ -417,7 +416,7 @@ class enrolment_plugin_authorize
         global $CFG;
         $mconfig = get_config('enrol/authorize');
 
-        if (! check_openssl_loaded()) {
+        if (!check_openssl_loaded()) {
             notify('PHP must be compiled with SSL support (--with-openssl)');
         }
 
@@ -527,8 +526,7 @@ class enrolment_plugin_authorize
         set_config('an_sorttype', $sorttype);
 
         // https and openssl library is required
-        if ((substr($CFG->wwwroot, 0, 5) !== 'https' and empty($CFG->loginhttps)) or
-            !check_openssl_loaded()) {
+        if ((substr($CFG->wwwroot, 0, 5) !== 'https' and empty($CFG->loginhttps)) or !check_openssl_loaded()) {
             return false;
         }
 
@@ -596,10 +594,7 @@ class enrolment_plugin_authorize
         }
 
         mtrace("    scheduled capture", ": ");
-        if (empty($CFG->an_review) or
-           (!empty($CFG->an_test)) or
-           (intval($CFG->an_capture_day) < 1) or
-           (!check_openssl_loaded())) {
+        if (empty($CFG->an_review) or (!empty($CFG->an_test)) or (intval($CFG->an_capture_day) < 1) or (!check_openssl_loaded())) {
             mtrace("disabled");
             return; // order review disabled or test mode or manual capture or openssl wasn't loaded.
         }
@@ -727,8 +722,7 @@ class enrolment_plugin_authorize
         // get_users_by_capability() does not handling user level resolving
         // After user resolving, get_admin() to get_users_by_capability()
         $adminuser = get_admin();
-        $select = "status IN(".AN_STATUS_UNDERREVIEW.",".AN_STATUS_APPROVEDREVIEW.") " .
-                  "AND (timecreated<'$onepass') AND (timecreated>'$timediff60')";
+        $select = "status IN(".AN_STATUS_UNDERREVIEW.",".AN_STATUS_APPROVEDREVIEW.") AND (timecreated<'$onepass') AND (timecreated>'$timediff60')";
         $count = count_records_select('enrol_authorize', $select);
         if ($count) {
             $a = new stdClass;
