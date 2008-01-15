@@ -48,6 +48,17 @@
  * with $oldversion set to 0, so that all the updates run.
  *
  *
+ * Local admin menu items
+ * ----------------------
+ *
+ * It is possible to add new items to the admin_tree block.  
+ * To do this, create a file, local/settings.php
+ * which can access the $ADMIN variable directly and add things to it.
+ * You might do something like:
+ * $ADMIN->add('root', new admin_category($name, $title);
+ * $ADMIN->add('foo', new admin_externalpage($name, $title, $url, $cap);
+ *
+ *
  * Course deletion
  * ---------------
  *
