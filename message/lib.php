@@ -321,8 +321,8 @@ function message_print_search_results($frm) {
             echo '<table class="message_users">';
             foreach ($users as $user) {
 
-                if (($contact = message_get_contact($user->id)) !== false)  {
-                    if ($contact->blocked == 0) { /// not blocked
+                if ( $user->contactlistid )  {
+                    if ($user->blocked == 0) { /// not blocked
                         $strcontact = message_contact_link($user->id, 'remove', true);
                         $strblock   = message_contact_link($user->id, 'block', true);
                     } else { // blocked
@@ -336,7 +336,7 @@ function message_print_search_results($frm) {
                 $strhistory = message_history_link($user->id, 0, true, '', '', 'icon');
 
                 echo '<tr><td class="pix">';
-                print_user_picture($user->id, SITEID, $user->picture, 20, false, true, 'userwindow');
+                print_user_picture($user, SITEID, $user->picture, 20, false, true, 'userwindow');
                 echo '</td>';
                 echo '<td class="contact">';
                 link_to_popup_window("/message/discussion.php?id=$user->id", "message_$user->id", fullname($user),
@@ -617,7 +617,7 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
  * If $coursid specifies the site course then this function searches
  * through all undeleted and confirmed users
  *
- * @uses $CFG
+ * @uses $CFG, $USER
  * @uses SITEID
  * @param int $courseid The course in question.
  * @param string $searchtext ?
@@ -627,7 +627,7 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
  * @todo Finish documenting this function
  */
 function message_search_users($courseid, $searchtext, $sort='', $exceptions='') {
-    global $CFG;
+    global $CFG, $USER;
 
     $fullname = sql_fullname();
     $LIKE     = sql_ilike();
@@ -645,11 +645,13 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
     }
 
     $select = 'u.deleted = \'0\' AND u.confirmed = \'1\'';
-    $fields = 'u.id, u.firstname, u.lastname, u.picture';
+    $fields = 'u.id, u.firstname, u.lastname, u.picture, u.imagealt, mc.id as contactlistid, mc.blocked';
 
     if (!$courseid or $courseid == SITEID) {
         return get_records_sql("SELECT $fields
                       FROM {$CFG->prefix}user u
+                      LEFT OUTER JOIN {$CFG->prefix}message_contacts mc
+                      ON mc.contactid = u.id AND mc.userid = {$USER->id} 
                       WHERE $select
                           AND ($fullname $LIKE '%$searchtext%')
                           $except $order");
@@ -660,11 +662,13 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
 
         // everyone who has a role assignement in this course or higher
         $users = get_records_sql("SELECT $fields
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}role_assignments ra
+                                 FROM {$CFG->prefix}user u
+                                 JOIN {$CFG->prefix}role_assignments ra
+                                 ON ra.userid = u.id
+                                 LEFT OUTER JOIN {$CFG->prefix}message_contacts mc
+                                 ON mc.contactid = u.id AND mc.userid = {$USER->id} 
                                  WHERE $select
                                        AND ra.contextid $contextlists
-                                       AND u.id = ra.userid
                                        AND ($fullname $LIKE '%$searchtext%')
                                        $except $order");
 
