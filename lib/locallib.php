@@ -48,6 +48,16 @@
  * with $oldversion set to 0, so that all the updates run.
  *
  *
+ * Local language support
+ * ----------------------
+ *
+ * Moodle supports looking in the local/ directory for language files.
+ * You would need to create local/lang/en_utf8/local.php 
+ * and then could call strings like get_string('key', 'local');
+ * Make sure you don't call the language file something that moodle already has one of, 
+ * stick to local or $clientname)
+ * 
+ *
  * Local admin menu items
  * ----------------------
  *

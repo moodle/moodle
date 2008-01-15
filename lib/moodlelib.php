@@ -5005,6 +5005,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     } else {
         $locations[] = $CFG->dataroot.'/lang/';
         $locations[] = $CFG->dirroot.'/lang/';
+        $locations[] = $CFG->dirroot.'/local/lang/';
     }
 
 /// Add extra places to look for strings for particular plugin types.
