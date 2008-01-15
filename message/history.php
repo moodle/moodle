@@ -42,7 +42,7 @@
     print_simple_box_start('center');
     echo '<table align="center" cellpadding="10"><tr>';
     echo '<td align="center">';
-    echo print_user_picture($user1->id, SITEID, $user1->picture, 100, true, true, 'userwindow').'<br />';
+    echo print_user_picture($user1, SITEID, $user1->picture, 100, true, true, 'userwindow').'<br />';
     echo fullname($user1);
     echo '</td>';
     echo '<td align="center">';
@@ -50,7 +50,7 @@
     echo '<img src="'.$CFG->wwwroot.'/pix/t/right.gif" alt="'.get_string('to').'" />';
     echo '</td>';
     echo '<td align="center">';
-    echo print_user_picture($user2->id, SITEID, $user2->picture, 100, true, true, 'userwindow').'<br />';
+    echo print_user_picture($user2, SITEID, $user2->picture, 100, true, true, 'userwindow').'<br />';
     echo fullname($user2);
     echo '</td>';
     echo '</tr></table>';
