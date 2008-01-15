@@ -47,6 +47,27 @@
  * when your moodle instance is first installed, xmldb_local_upgrade() will be called
  * with $oldversion set to 0, so that all the updates run.
  *
+ * Local capabilities
+ * ------------------
+ *
+ * If your local customisations require their own capabilities, use
+ * 
+ * local/db/access.php
+ *
+ * You should create an array called $local_capabilities, which looks like:
+ * 
+ * $local_capabilities = array(
+ *         'moodle/local:capability' => array(
+ *         'captype' => 'read',
+ *         'contextlevel' => CONTEXT_SYSTEM,
+ *      ),
+ * );
+ *
+ * Note that for all local capabilities you add, you'll need to add language strings.
+ * Moodle will expect to find them in local/lang/en_utf8/local.php (eg for English)
+ * with a key (following the above example) of local:capability
+ * See the next section for local language support.
+ *
  *
  * Local language support
  * ----------------------
