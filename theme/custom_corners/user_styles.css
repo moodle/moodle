@@ -70,7 +70,7 @@ h2.main {
   background-repeat: repeat-x;
   background-position: center top;
   padding: 5px 5px 6px;
-  color: #444;
+  color: #333;
   font-size: 120%;
   border-right-width: 1px;
   border-left-width: 1px;
@@ -84,7 +84,7 @@ h2.headingblock {
   background-repeat: repeat-x;
   background-position: center top;
   padding: 5px 5px 6px;
-  color: #444;
+  color: #333;
   font-size: 100%;
   border-right-width: 1px;
   border-left-width: 1px;
@@ -213,6 +213,9 @@ div.block_login div.content div.c1 {
 div.block_login div.content div.btn input {
   text-align: center;
 }
+div.block_adminblock {
+  min-width: 210px;
+}
 div.sideblock ul.list span.c1 {
   padding-left: 0;
 }
@@ -223,14 +226,10 @@ div.sideblock div.title h2 {
 div.sideblock div.header {
   padding: 0;
   border-style: none;
-  border-color: #DDDDDD #CCCCCC #88DD55 #DDDDDD;
 }
 div.sideblock div.content {
   padding: 0.3em 0.3em 0.5em;
   border-style: none;
-  border-right-color: #DDDDDD;
-  border-bottom-color: #DDDDDD;
-  border-left-color: #FFFFFF;
 }
 div.sideblock table.minicalendar td.day {
   text-align: center;
@@ -538,7 +537,7 @@ body#admin-auth td#middle-column {
   padding-bottom: 10px;
 }
 div.sideblock h2 {
-  color: #666666;
+  color: #333;
 }
 table.cal_popup_bg {
   background-color: #ffffff;
