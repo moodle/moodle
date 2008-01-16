@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.8 dev (2006112200)
+      // enrol_authorize.php - created with Moodle 2.0 dev (2007101506)
 
 
 $string['adminacceptccs'] = 'Which credit card types will be accepted?';
@@ -195,6 +195,8 @@ $string['unenrolstudent'] = 'Unenrol student?';
 $string['uploadcsv'] = 'Upload a CSV file';
 $string['usingccmethod'] = 'Enrol using <a href=\"$a->url\"><strong>Credit Card</strong></a>';
 $string['usingecheckmethod'] = 'Enrol using <a href=\"$a->url\"><strong>eCheck</strong></a>';
+$string['verifyaccount'] = 'Verify your authorize.net account';
+$string['verifyaccountresult'] = 'Verification result: $a';
 $string['void'] = 'Void';
 $string['voidyes'] = 'The transaction will be cancelled. Are you sure?';
 $string['welcometocoursesemail'] = 'Dear student,
