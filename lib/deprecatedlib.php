@@ -853,6 +853,29 @@ function get_group_teachers($courseid, $groupid) {
 
 ########### FROM weblib.php ##########################################################################
 
+/**
+ * Creates a nicely formatted table and returns it.
+ *
+ * @param array $table is an object with several properties.
+ *     <ul<li>$table->head - An array of heading names.
+ *     <li>$table->align - An array of column alignments
+ *     <li>$table->size  - An array of column sizes
+ *     <li>$table->wrap - An array of "nowrap"s or nothing
+ *     <li>$table->data[] - An array of arrays containing the data.
+ *     <li>$table->class -  A css class name
+ *     <li>$table->fontsize - Is the size of all the text
+ *     <li>$table->tablealign  - Align the whole table
+ *     <li>$table->width  - A percentage of the page
+ *     <li>$table->cellpadding  - Padding on each cell
+ *     <li>$table->cellspacing  - Spacing between cells
+ * </ul>
+ * @return string
+ * @todo Finish documenting this function
+ */
+function make_table($table) {
+    return print_table($table, true);
+}
+
 
 /**
  * Print a message in a standard themed box.

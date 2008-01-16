@@ -933,7 +933,7 @@ class default_questiontype {
                                                 );
                     }
                 }
-                $history = make_table($table);
+                $history = print_table($table, true);
             }
         }
         return $history;
