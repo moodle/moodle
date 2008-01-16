@@ -4708,11 +4708,11 @@ function print_table($table, $return=false) {
         $table->tablealign = 'center';
     }
 
-    if (empty($table->cellpadding)) {
+    if (!isset($table->cellpadding)) {
         $table->cellpadding = '5';
     }
 
-    if (empty($table->cellspacing)) {
+    if (!isset($table->cellspacing)) {
         $table->cellspacing = '1';
     }
 
