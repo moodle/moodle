@@ -44,6 +44,7 @@ function message_print_contacts() {
                       ON u.id = mc.contactid
                    LEFT OUTER JOIN {$CFG->prefix}message m
                       ON m.useridfrom = mc.contactid
+                      AND m.useridto = {$USER->id}
                    WHERE mc.userid = {$USER->id}
                          AND mc.blocked = 0 
                    GROUP BY u.id, u.firstname, u.lastname, u.picture,
