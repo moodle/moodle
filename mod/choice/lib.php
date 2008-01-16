@@ -292,7 +292,7 @@ function choice_show_reportlink($choice, $courseid, $cm, $groupmode) {
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $availableusers = get_users_by_capability($context, 'mod/choice:choose', 'u.id', '','','',$currentgroup, '', false, true);
+    $availableusers = get_users_by_capability($context, 'mod/choice:choose', 'u.id', '','','',$currentgroup, '', true, true);
 
     $responsecount = 0;
 
@@ -326,7 +326,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
         $currentgroup = 0;
     }
 
-    $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', false, true);
+    $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', true, true);
 
     if (!empty($CFG->enablegroupings) && !empty($cm->groupingid) && !empty($users)) {
         $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
@@ -422,7 +422,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 // MDL-7861
                 echo "<table class=\"choiceresponse\"><tr><td></td></tr>";
                 foreach ($userlist as $user) {
-                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false)) {
+                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false) AND !($optionid== 0 AND has_capability('moodle/site:doanything', $context, $user->id, false))) {
                         $columncount[$optionid] += 1;
                         echo "<tr>";
                         if (has_capability('mod/choice:readresponses', $context) && $optionid!=0) {
@@ -514,7 +514,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 }
                 $column[$optionid] = 0;
                 foreach ($userlist as $user) {
-                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false)) {
+                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false) AND !($optionid== 0 AND has_capability('moodle/site:doanything', $context, $user->id, false))) {
                          $column[$optionid]++;
                     }
                 }
