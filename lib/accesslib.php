@@ -329,10 +329,22 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
 
 /// Some sanity checks
     if (debugging('',DEBUG_DEVELOPER)) {
-        if (!record_exists('capabilities', 'name', $capability)) {
-            debugging('Capability "'.$capability.'" was not found! This should be fixed in code.');
+        static $capsnames = null; // one request per page only
+        
+        if (is_null($capsnames)) {
+            if ($caps = get_records('capabilities', '', '', '', 'id, name')) {
+                $capsnames = array();
+                foreach ($caps as $cap) {
+                    $capsnames[$cap->name] = true;
+                }
+            }
         }
-        if ($doanything != true and $doanything != false) {
+        if ($capsnames) { // ignore if can not fetch caps
+            if (!isset($capsnames[$capability])) {
+                debugging('Capability "'.$capability.'" was not found! This should be fixed in code.');
+            }
+        }
+        if (!is_bool($doanything)) {
             debugging('Capability parameter "doanything" is wierd ("'.$doanything.'"). This should be fixed in code.');
         }
     }
