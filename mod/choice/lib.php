@@ -283,28 +283,27 @@ function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $
 }
 
 
-function choice_show_reportlink($choice, $courseid, $cmid, $groupmode) {
-    //TODO: rewrite with SQL
-    $currentgroup = get_current_group($courseid);
-    if ($allanswers = get_records("choice_answers", "choiceid", $choice->id)) {
-        $responsecount = 0;
-        foreach ($allanswers as $aa) {
-            $context = get_context_instance(CONTEXT_MODULE, $cmid);
-            if (has_capability('mod/choice:choose', $context, $aa->userid, false)) { //check to make sure user is enrolled/has this capability.
-                if ($groupmode and $currentgroup) {
-                    if (groups_is_member($currentgroup, $aa->userid)) {
-                        $responsecount++;
-                    }
-                } else {
-                    $responsecount++;
-                }
-            }
-        }
+function choice_show_reportlink($choice, $courseid, $cm, $groupmode) {
+
+    if ($groupmode > 0) {
+        $currentgroup = groups_get_activity_group($cm);
     } else {
-        $responsecount = 0;
+        $currentgroup = 0;
     }
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $availableusers = get_users_by_capability($context, 'mod/choice:choose', 'u.id', '','','',$currentgroup, '', true, true);
+
+    $responsecount = 0;
+
+    if(!empty($availableusers)){
+        // flatten the users to get a list of userids
+        $userids = implode( ', ', array_keys($availableusers));
+        $responsecount = count_records_select('choice_answers', "choiceid = {$choice->id} AND userid IN ( $userids );");
+    }
+
     echo '<div class="reportlink">';
-    echo "<a href=\"report.php?id=$cmid\">".get_string("viewallresponses", "choice", $responsecount)."</a>";
+    echo "<a href=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</a>";
     echo '</div>';
 }
 
@@ -327,7 +326,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
         $currentgroup = 0;
     }
 
-    $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', false, true);
+    $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', true, true);
 
     if (!empty($CFG->enablegroupings) && !empty($cm->groupingid) && !empty($users)) {
         $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
@@ -423,7 +422,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 // MDL-7861
                 echo "<table class=\"choiceresponse\"><tr><td></td></tr>";
                 foreach ($userlist as $user) {
-                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false)) {
+                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false) AND !($optionid== 0 AND has_capability('moodle/site:doanything', $context, $user->id, false))) {
                         $columncount[$optionid] += 1;
                         echo "<tr>";
                         if (has_capability('mod/choice:readresponses', $context) && $optionid!=0) {
@@ -515,7 +514,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 }
                 $column[$optionid] = 0;
                 foreach ($userlist as $user) {
-                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false)) {
+                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false) AND !($optionid== 0 AND has_capability('moodle/site:doanything', $context, $user->id, false))) {
                          $column[$optionid]++;
                     }
                 }
