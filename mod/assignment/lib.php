@@ -1128,7 +1128,7 @@ class assignment_base {
             $sort = ' ORDER BY '.$sort;
         }
 
-        $select = 'SELECT u.id, u.firstname, u.lastname, u.picture,
+        $select = 'SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt,
                           s.id AS submissionid, s.grade, s.submissioncomment,
                           s.timemodified, s.timemarked,
                           COALESCE(SIGN(SIGN(s.timemarked) + SIGN(s.timemarked - s.timemodified)), 0) AS status ';
@@ -1152,7 +1152,7 @@ class assignment_base {
                 $final_grade = $grading_info->items[0]->grades[$auser->id];
             /// Calculate user status
                 $auser->status = ($auser->timemarked > 0) && ($auser->timemarked >= $auser->timemodified);
-                $picture = print_user_picture($auser->id, $course->id, $auser->picture, false, true);
+                $picture = print_user_picture($auser, $course->id, $auser->picture, false, true);
 
                 if (empty($auser->submissionid)) {
                     $auser->grade = -1; //no submission yet
