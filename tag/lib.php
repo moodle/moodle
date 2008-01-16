@@ -1158,7 +1158,7 @@ function print_tag_management_box($tag_object, $return=false) {
 
     if (!isguestuser()) {
 
-        $output .= print_simplewrapper_start('box','tag-management-box', true);
+        $output .= print_box_start('box','tag-management-box', true);
 
         $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 
@@ -1184,7 +1184,7 @@ function print_tag_management_box($tag_object, $return=false) {
 
         $output .= implode(' | ', $links);
 
-        $output .= print_simplewrapper_end(true);
+        $output .= print_box_end(true);
 
     }
 
@@ -1215,7 +1215,7 @@ function print_tag_description_box($tag_object, $return=false) {
     $output = '';
 
     if ($content) {
-        $output .= print_simplewrapper_start('generalbox', 'tag-description',true);
+        $output .= print_box_start('generalbox', 'tag-description',true);
     }
 
     if (!empty($tag_object->description)) {
@@ -1229,7 +1229,7 @@ function print_tag_description_box($tag_object, $return=false) {
     }
 
     if ($content) {
-        $output .= print_simplewrapper_end(true);
+        $output .= print_box_end(true);
     }
 
     if ($return) {
@@ -1315,7 +1315,7 @@ function print_user_box($user, $return=false) {
 
     $output = '';
 
-    $output .= print_simplewrapper_start('user-box', 'user'.$user->id, true);
+    $output .= print_box_start('user-box', 'user'.$user->id, true);
 
     $fullname = fullname($user);
     $alt = '';
@@ -1342,7 +1342,7 @@ function print_user_box($user, $return=false) {
 
     $output .= '<strong>' . $fullname . '</strong>';
 
-    $output .= print_simplewrapper_end(true);
+    $output .= print_box_end(true);
 
     if ($return) {
         return $output;

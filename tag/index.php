@@ -36,18 +36,16 @@ if (($edit != -1) and $PAGE->user_allowed_editing()) {
 $PAGE->print_header();
 
 
-echo '<table id="layout-table" summary="layout">';
-echo '<tr>';
+echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
+echo '<tr valign="top">';
 
 //----------------- left column -----------------
 
 $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 
 if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing()) {
-    echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
-    print_container_start();
+    echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="left-column">';
     blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-    print_container_end();
     echo '</td>';
 }
 
@@ -56,8 +54,6 @@ if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing()
 //----------------- middle column -----------------
 
 echo '<td valign="top" id="middle-column">';
-
-print_container_start(true, 'middle-column-wrap');
 
 $tagname  = tag_display_name($tag);
 
@@ -78,7 +74,7 @@ $usercount = count_items_tagged_with($tag->id,'user');
 if ($usercount > 0) {
 
     //user table box
-    print_simplewrapper_start('clearfix generalbox', 'tag-user-table');
+    print_box_start('generalbox', 'tag-user-table');
 
     $heading = get_string('userstaggedwith', 'tag', $tagname) . ': ' . $usercount;
     print_heading($heading, '', 3);
@@ -89,7 +85,7 @@ if ($usercount > 0) {
 
     print_tagged_users_table($tag, $userpage * $perpage, $perpage);
 
-    print_simplewrapper_end();
+    print_box_end();
 
 }
 
@@ -127,12 +123,11 @@ if ($blogs = blog_fetch_entries('', 10, 0, 'site', '', $tag->id)) {
     }
     echo '</ul>';
 
-    echo '<p class="moreblogs"><a href="'.$CFG->wwwroot.'/blog/index.php?filtertype=site&amp;filterselect=0&amp;tagid='.$tag->id.'">'.get_string('seeallblogs', 'tag').'</a>...</p>';
+    echo '<p class="moreblogs"><a href="'.$CFG->wwwroot.'/blog/index.php?filtertype=site&filterselect=0&tagid='.$tag->id.'">'.get_string('seeallblogs', 'tag').'</a>...</p>';
 
     print_box_end();
 }
 
-print_container_end();
 
 echo '</td>';
 
@@ -142,10 +137,8 @@ echo '</td>';
 $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
 
 if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing()) {
-    echo '<td style="width: '.$blocks_preferred_width.'px;" id="right-column">';
-    print_container_start();
+    echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="right-column">';
     blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-    print_container_end();
     echo '</td>';
 }
 
