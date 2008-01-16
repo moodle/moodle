@@ -104,8 +104,6 @@ if ($um->preprocess_files() && confirm_sesskey()) {
             "maildisplay" => 1,
             "htmleditor" => 1,
             "autosubscribe" => 1,
-            "idnumber" => 1,
-            "icq" => 1,
             "course1" => 1,
             "course2" => 1,
             "course3" => 1,
