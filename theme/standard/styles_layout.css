@@ -2856,6 +2856,7 @@ div.user-box {
  text-align:center;
  display:block;
  float:left;
+ clear: none;
 }
 
 img.user-image {
