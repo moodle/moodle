@@ -1344,7 +1344,6 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// upgrade the old 1.8 gradebook - migrade data into new grade tables
         if ($result) {
-            require_once($CFG->libdir.'/db/upgradelib.php');
             if ($rs = get_recordset('course')) {
                 while ($course = rs_fetch_next_record($rs)) {
                     // this function uses SQL only, it must not be changed after 1.9 goes stable!!
@@ -1648,7 +1647,6 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2007081302) {
-        require_once($CFG->libdir.'/db/upgradelib.php');
 
         if (table_exists(new XMLDBTable('groups_groupings'))) {
     /// IF 'groups_groupings' table exists, this is for 1.8.* only.
@@ -2278,7 +2276,6 @@ function xmldb_main_upgrade($oldversion=0) {
 
 /// migrade grade letters - we can not do this in normal grades upgrade becuase we need all course contexts
     if ($result && $oldversion < 2007092806) {
-        require_once($CFG->libdir.'/db/upgradelib.php');
 
         $result = upgrade_18_letters();
 
