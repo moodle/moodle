@@ -127,7 +127,7 @@ if ($blogs = blog_fetch_entries('', 10, 0, 'site', '', $tag->id)) {
     }
     echo '</ul>';
 
-    echo '<p class="moreblogs"><a href="'.$CFG->wwwroot.'/blog/index.php?filtertype=site&filterselect=0&tagid='.$tag->id.'">'.get_string('seeallblogs', 'tag').'</a>...</p>';
+    echo '<p class="moreblogs"><a href="'.$CFG->wwwroot.'/blog/index.php?filtertype=site&amp;filterselect=0&amp;tagid='.$tag->id.'">'.get_string('seeallblogs', 'tag').'</a>...</p>';
 
     print_box_end();
 }
