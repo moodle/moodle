@@ -172,4 +172,43 @@ function check_openssl_loaded()
     return extension_loaded('openssl');
 }
 
+
+function authorize_verify_account(&$message)
+{
+    global $CFG, $USER, $SITE;
+    require_once('authorizenetlib.php');
+
+    $CFG->an_test = 1; // Test mode
+
+    $order = new stdClass();
+    $order->id = -1;
+    $order->paymentmethod = AN_METHOD_CC;
+    $order->refundinfo = '1111';
+    $order->ccname = 'Test User';
+    $order->courseid = $SITE->id;
+    $order->userid = $USER->id;
+    $order->status = AN_STATUS_NONE;
+    $order->settletime = 0;
+    $order->transid = 0;
+    $order->timecreated = time();
+    $order->amount = '0.01';
+    $order->currency = 'USD';
+
+    $extra = new stdClass();
+    $extra->x_card_num = '4111111111111111';
+    $extra->x_card_code = '123';
+    $extra->x_exp_date = "129999";
+    $extra->x_currency_code = $order->currency;
+    $extra->x_amount = $order->amount;
+    $extra->x_first_name = 'Test';
+    $extra->x_last_name = 'User';
+    $extra->x_country = $USER->country;
+
+    $extra->x_invoice_num = $order->id;
+    $extra->x_description = 'Verify Account';
+
+    $message = '';
+    return authorize_action($order, $message, $extra, AN_ACTION_AUTH_CAPTURE, 'vis');
+}
+
 ?>

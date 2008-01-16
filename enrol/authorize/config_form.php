@@ -73,7 +73,10 @@ if (!isset($frm->acceptechecktypes)) {
 
 <tr valign="top">
     <td align="right">&nbsp;&nbsp;</td>
-    <td><?php print_string("logininfo", "enrol_authorize") ?></td>
+    <td><?php print_string("logininfo", "enrol_authorize") ?><br />
+    <?php if (isset($mconfig->an_login) && (isset($mconfig->an_tran_key) || isset($mconfig->an_password))) { ?>
+        <br /><a href="enrol_config.php?enrol=authorize&verifyaccount=1"><b><?php print_string("verifyaccount", "enrol_authorize") ?></b></a><br />
+    <?php } ?></td>
 </tr>
 
 <tr valign="top">
