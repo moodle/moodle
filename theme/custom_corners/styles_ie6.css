@@ -89,6 +89,9 @@ div.sideblock div.bt {
 div.sideblock div.header div.bt div {
   background-image: url(pix/box.gif);
 }
+div.block_adminblock {
+  width: 100%;
+}
 body.dir-rtl div.sideblock div.header div.bt div {
   right: -12px;
 }
