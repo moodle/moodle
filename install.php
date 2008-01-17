@@ -217,7 +217,7 @@ if ($INSTALL['stage'] == DIRECTORY) {
     error_reporting(0);
 
     /// check wwwroot
-    if (ini_get('allow_url_fopen')) {
+    if (ini_get('allow_url_fopen') && false) {  /// This was not reliable
         if (($fh = @fopen($INSTALL['wwwrootform'].'/install.php', 'r')) === false) {
             $errormsg .= get_string('wwwrooterror', 'install').'<br />';
             $INSTALL['wwwrootform'] = $INSTALL['wwwroot'];
