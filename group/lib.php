@@ -300,20 +300,19 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
 /* =================================== */
 
 /**
- * Gets the users for a course who are not in a specified group
+ * Gets the users for a course who are not in a specified group, and returns
+ * them in an array organised by role. For the array format, see 
+ * groups_get_members_by_role.
  * @param int $groupid The id of the group
  * @param string searchtext similar to searchtext in role assign, search
- * @return array An array of the userids of the non-group members,  or false if
- * an error occurred.
- * This function was changed to get_users_by_capability style
- * mostly because of the searchtext requirement
+ * @return array An array of role id or '*' => information about that role 
+ *   including a list of users
  */
-function groups_get_users_not_in_group($courseid, $groupid, $searchtext='', $sort = 'u.lastname ASC') {
+function groups_get_users_not_in_group_by_role($courseid, $groupid, $searchtext='', $sort = 'u.lastname ASC') {
 
     global $CFG;
-
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
-
+    
     if ($searchtext !== '') {   // Search for a subset of remaining users
         $LIKE      = sql_ilike();
         $FULLNAME  = sql_fullname();
@@ -322,6 +321,41 @@ function groups_get_users_not_in_group($courseid, $groupid, $searchtext='', $sor
         $wheresearch = '';
     }
 
+/// Get list of allowed roles     
+    if(!($validroleids=groups_get_possible_roles($context))) {
+        return;
+    }
+    $roleids = '('.implode(',', $validroleids).')';
+
+/// Construct the main SQL
+    $select = " SELECT r.id AS roleid,r.shortname AS roleshortname,r.name AS rolename,
+                       u.id AS userid, u.firstname, u.lastname";
+    $from   = " FROM {$CFG->prefix}user u
+                INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
+                INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid";
+
+    $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
+                  AND u.deleted = 0
+                  AND ra.roleid in $roleids
+                  AND u.id NOT IN (SELECT userid
+                                   FROM {$CFG->prefix}groups_members
+                                   WHERE groupid = $groupid)
+                  $wheresearch";
+    $orderby = " ORDER BY $sort";
+
+    return groups_calculate_role_people(get_recordset_sql(
+        $select.$from.$where.$orderby));
+}
+
+
+/**
+ * Obtains a list of the possible roles that group members might come from,
+ * on a course. Generally this includes all the roles who would have 
+ * course:view on that course, except the doanything roles.
+ * @param object $context Context of course
+ * @return Array of role ID integers, or false if error/none.
+ */
+function groups_get_possible_roles($context) {
     $capability = 'moodle/course:view';
     $doanything = false;
 
@@ -350,28 +384,10 @@ function groups_get_users_not_in_group($courseid, $groupid, $searchtext='', $sor
         if (empty($validroleids)) {
             return false;
         }
-        $roleids =  '('.implode(',', $validroleids).')';
+        return $validroleids;
     } else {
         return false;  // No need to continue, since no roles have this capability set
-    }
-
-/// Construct the main SQL
-    $select = " SELECT u.id, u.firstname, u.lastname";
-    $from   = " FROM {$CFG->prefix}user u
-                INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
-                INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid";
-
-    $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
-                  AND u.deleted = 0
-                  AND ra.roleid in $roleids
-                  AND u.id NOT IN (SELECT userid
-                                   FROM {$CFG->prefix}groups_members
-                                   WHERE groupid = $groupid)
-                  $wheresearch";
-    $groupby = " GROUP BY u.id, u.firstname, u.lastname ";
-    $orderby = " ORDER BY $sort";
-
-    return get_records_sql($select.$from.$where.$groupby.$orderby);
+    }    
 }
 
 
@@ -489,6 +505,129 @@ function groups_assign_grouping($groupingid, $groupid) {
  */
 function groups_unassign_grouping($groupingid, $groupid) {
     return delete_records('groupings_groups', 'groupingid', $groupingid, 'groupid', $groupid);
+}
+
+/**
+ * Lists users in a group based on their role on the course.
+ * Returns false if there's an error or there are no users in the group. 
+ * Otherwise returns an array of role ID => role data, where role data includes:
+ * (role) $id, $shortname, $name
+ * $users: array of objects for each user which include the specified fields
+ * Users who do not have a role are stored in the returned array with key '-'
+ * and pseudo-role details (including a name, 'No role'). Users with multiple
+ * roles, same deal with key '*' and name 'Multiple roles'. You can find out
+ * which roles each has by looking in the $roles array of the user object.
+ * @param int $groupid
+ * @param int $courseid Course ID (should match the group's course)
+ * @param string $fields List of fields from user table prefixed with u, default 'u.*'
+ * @param string $sort SQL ORDER BY clause, default 'u.lastname ASC'
+ * @return array Complex array as described above
+ */
+function groups_get_members_by_role($groupid, $courseid, $fields='u.*', $sort='u.lastname ASC') {
+    global $CFG;
+
+    // Retrieve information about all users and their roles on the course or
+    // parent ('related') contexts 
+    $context=get_context_instance(CONTEXT_COURSE,$courseid);
+    $rs=get_recordset_sql($crap="SELECT r.id AS roleid,r.shortname AS roleshortname,r.name AS rolename,
+                                        u.id AS userid,$fields
+                                  FROM {$CFG->prefix}groups_members gm
+                            INNER JOIN {$CFG->prefix}user u ON u.id = gm.userid
+                            INNER JOIN {$CFG->prefix}role_assignments ra 
+                                       ON ra.userid = u.id 
+                            INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid
+                                 WHERE gm.groupid='$groupid'
+                                   AND ra.contextid ".get_related_contexts_string($context)."
+                              ORDER BY r.sortorder,$sort");
+
+    return groups_calculate_role_people($rs);
+}
+
+/**
+ * Internal function used by groups_get_members_by_role to handle the
+ * results of a database query that includes a list of users and possible
+ * roles on a course.
+ *
+ * @param object $rs The record set (may be false)
+ * @return array As described in groups_get_members_by_role 
+ */
+function groups_calculate_role_people($rs) {
+    global $CFG;
+    if(!$rs) {
+        return false;
+    }
+
+    // Array of all involved roles
+    $roles=array();
+    // Array of all retrieved users
+    $users=array();
+    // Fill arrays
+    while($rec=rs_fetch_next_record($rs)) {
+        // Create information about user if this is a new one
+        if(!array_key_exists($rec->userid,$users)) {
+            // User data includes all the optional fields, but not any of the
+            // stuff we added to get the role details
+            $userdata=clone($rec);
+            unset($userdata->roleid);
+            unset($userdata->roleshortname);
+            unset($userdata->rolename);
+            unset($userdata->userid);
+            $userdata->id=$rec->userid;
+
+            // Make an array to hold the list of roles for this user
+            $userdata->roles=array();
+            $users[$rec->userid]=$userdata;
+        }
+        // If user has a role...
+        if(!is_null($rec->roleid)) {
+            // Create information about role if this is a new one
+            if(!array_key_exists($rec->roleid,$roles)) {
+                $roledata=new StdClass;
+                $roledata->id=$rec->roleid;
+                $roledata->shortname=$rec->roleshortname;
+                $roledata->name=$rec->rolename;
+                $roledata->users=array();
+                $roles[$roledata->id]=$roledata;
+            }
+            // Record that user has role
+            $users[$rec->userid]->roles[] = $roles[$rec->roleid];
+        }
+    }
+    rs_close($rs);
+
+    // Return false if there weren't any users
+    if(count($users)==0) {
+        return false;
+    }
+
+    // Add pseudo-role for multiple roles
+    $roledata=new StdClass;
+    $roledata->name=get_string('multipleroles','role');
+    $roledata->users=array();
+    $roles['*']=$roledata;
+
+    // Now we rearrange the data to store users by role
+    foreach($users as $userid=>$userdata) {
+        $rolecount=count($userdata->roles);
+        if($rolecount==0) {
+            debugging("Unexpected: user $userid is missing roles");
+        } else if($rolecount>1) {
+            $roleid='*';
+        } else {
+            $roleid=$userdata->roles[0]->id;
+        }
+        $roles[$roleid]->users[$userid]=$userdata;
+    }
+
+    // Delete roles not used
+    foreach($roles as $key=>$roledata) {
+        if(count($roledata->users)===0) {
+            unset($roles[$key]);
+        }
+    }
+
+    // Return list of roles containing their users
+    return $roles;
 }
 
 ?>

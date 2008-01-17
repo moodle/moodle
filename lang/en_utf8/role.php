@@ -90,6 +90,7 @@ $string['localroles'] = 'Locally assigned roles';
 $string['manageroles'] = 'Manage roles';
 $string['metaassignerror'] = 'Can not assign this role to user \"$a\" because Manage metacourse capability is needed.';
 $string['metaunassignerror'] = 'Role of user \"$a\" was automatically reassigned, please unassign the role in child courses instead.';
+$string['multipleroles'] = 'Multiple roles';
 $string['overridepermissions'] = 'Override permissions';
 $string['overridepermissionsin'] = 'Override permissions in $a';
 $string['morethan'] = 'More than $a';

@@ -77,12 +77,16 @@ if ($frm = data_submitted() and confirm_sesskey()) {
 $groupmembersoptions = '';
 $groupmemberscount = 0;
 
-if ($groupmembers = groups_get_members($groupid)) {
-    foreach($groupmembers as $member) {
-        $groupmembersoptions .= '<option value="'.$member->id.'">'.fullname($member, true).'</option>';
-        $groupmemberscount ++;
+// Get members, organised by role, and display
+if ($groupmemberroles = groups_get_members_by_role($groupid,$courseid,'u.id,u.firstname,u.lastname')) {
+    foreach($groupmemberroles as $roleid=>$roledata) {
+        $groupmembersoptions .= '<optgroup label="'.htmlspecialchars($roledata->name).'">';
+        foreach($roledata->users as $member) {
+            $groupmembersoptions .= '<option value="'.$member->id.'">'.fullname($member, true).'</option>';
+            $groupmemberscount ++;
+        }
+        $groupmembersoptions .= '</optgroup>';
     }
-
 } else {
     $groupmembersoptions .= '<option>&nbsp;</option>';
 }
@@ -91,35 +95,42 @@ $potentialmembers = array();
 $potentialmembersoptions = '';
 $potentialmemberscount = 0;
 
-$potentialmembers = groups_get_users_not_in_group($courseid, $groupid, $searchtext);
-if (!empty($potentialmembers)) {
-    $potentialmemberscount = count($potentialmembers);
-} else {
-    $potentialmemberscount = 0;
+// Get potential members, organised by role, and count them
+$potentialmembersbyrole = groups_get_users_not_in_group_by_role($courseid, $groupid, $searchtext);
+$potentialmemberscount=0;
+$potentialmembersids=array();
+if (!empty($potentialmembersbyrole)) {
+    foreach($potentialmembersbyrole as $roledata) {
+        $potentialmemberscount+=count($roledata->users);
+        $potentialmembersids=array_merge($potentialmembersids,array_keys($roledata->users));
+    }
 }
+
 if ($potentialmemberscount <=  MAX_USERS_PER_PAGE) {
 
-    if ($potentialmembers != false) {
+    if ($potentialmemberscount != 0) {
         // Get other groups user already belongs to
         $sql = "SELECT u.id AS userid, g.* FROM {$CFG->prefix}user u " .
                     "INNER JOIN {$CFG->prefix}groups_members gm ON u.id = gm.userid " .
                     "INNER JOIN {$CFG->prefix}groups g ON gm.groupid = g.id " .
-               "WHERE u.id IN (".implode(',',array_keys($potentialmembers)).") AND g.courseid = {$course->id} ";
+               "WHERE u.id IN (".implode(',',$potentialmembersids).") AND g.courseid = {$course->id} ";
         $rs = get_recordset_sql($sql);
         $groups = array();
         $usergroups = array();
         while ($usergroup =  rs_fetch_next_record($rs)) {
             $usergroups[$usergroup->userid][$usergroup->id] = $usergroup;
         }
+        rs_close($rs);
 
-        // Put the groupings into a hash and sorts them
-        foreach ($potentialmembers as $userid => $user) {
-            $nonmembers[$userid] = fullname($user)." (".@count($usergroups[$userid]).")";
-        }
-
-        // Print out the HTML
-        foreach($nonmembers as $id => $name) {
-            $potentialmembersoptions .= "<option value=\"$id\">$name</option>\n";
+        foreach($potentialmembersbyrole as $roleid=>$roledata) {
+            $potentialmembersoptions .= '<optgroup label="'.htmlspecialchars($roledata->name).'">';
+            foreach($roledata->users as $member) {
+                $name=htmlspecialchars(fullname($member, true));
+                $potentialmembersoptions .= '<option value="'.$member->id.
+                    '" title="'.$name.'">'.$name.
+                    ' ('.@count($usergroups[$member->id]).')</option>';
+            }
+            $potentialmembersoptions .= '</optgroup>';
         }
     } else {
         $potentialmembersoptions .= '<option>&nbsp;</option>';
