@@ -28,7 +28,7 @@ require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/user/lib.php';
 
 $courseid = required_param('id');
-$userid   = optional_param('userid', $USER->id, PARAM_INT);
+$userid   = optional_param('userid', $USER->id, PARAM_ALPHANUM);
 
 /// basic access checks
 if (!$course = get_record('course', 'id', $courseid)) {
@@ -36,19 +36,20 @@ if (!$course = get_record('course', 'id', $courseid)) {
 }
 require_login($course);
 
-if (!$user = get_complete_user_data('id', $userid)) {
+
+if ($userid != 'all' && !$user = get_complete_user_data('id', $userid)) {
     error("Incorrect userid");
 }
 
 $context     = get_context_instance(CONTEXT_COURSE, $course->id);
-$usercontext = get_context_instance(CONTEXT_USER, $user->id);
+$usercontext = get_context_instance(CONTEXT_USER, $userid);
 require_capability('gradereport/user:view', $context);
 
 $access = true;
 if (has_capability('moodle/grade:viewall', $context)) {
     //ok - can view all course grades
 
-} else if ($user->id == $USER->id and has_capability('moodle/grade:view', $context) and $course->showgrades) {
+} else if ($userid == $USER->id and has_capability('moodle/grade:view', $context) and $course->showgrades) {
     //ok - can view own grades
 
 } else if (has_capability('moodle/grade:viewall', $usercontext) and $course->showgrades) {
@@ -80,19 +81,48 @@ print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation,
 /// Print the plugin selector at the top
 print_grade_plugin_selector($courseid, 'report', 'user');
 
+/// Print graded user selector at the top
+echo '<div id="graded_users_selector">';
+print_graded_users_selector($course, 'report/user/index.php?id=' . $course->id, $userid);
+echo '</div>';
+
 if ($access) {
 
     //first make sure we have proper final grades - this must be done before constructing of the grade tree
     grade_regrade_final_grades($courseid);
 
-    // Create a report instance
-    $report = new grade_report_user($courseid, $gpr, $context, $userid);
+    if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all student reports
+        if ($userid == 'all') {
+            $gui = new graded_users_iterator($course);
+            $gui->init();
+            while ($userdata = $gui->next_user()) {
+                $user = $userdata->user;
+                $report = new grade_report_user($courseid, $gpr, $context, $user->id);
+                print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+                if ($report->fill_table()) {
+                    echo $report->print_table(true);
+                }
+                echo "<p style = 'page-break-after: always;'></p>";
+            }
+            $gui->close();
+        } elseif ($userid) { // Only show one user's report
+            $report = new grade_report_user($courseid, $gpr, $context, $userid);
+            print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+            if ($report->fill_table()) {
+                echo $report->print_table(true);
+            } 
+        }
+    } else { //Students will see just their own report 
 
-    // print the page
-    print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+        // Create a report instance
+        $report = new grade_report_user($courseid, $gpr, $context, $userid);
 
-    if ($report->fill_table()) {
-        echo $report->print_table(true);
+        // print the page
+        print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+
+        if ($report->fill_table()) {
+            echo $report->print_table(true);
+        }
     }
 
 } else {

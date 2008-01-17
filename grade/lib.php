@@ -36,17 +36,29 @@ class graded_users_iterator {
     var $users_rs;
     var $grades_rs;
     var $gradestack;
+    var $sortfield1;
+    var $sortorder1;
+    var $sortfield2;
+    var $sortorder2;
 
     /**
      * Constructor
-     * @param $coruse object
+     * @param $course object
      * @param array grade_items array of grade items, if not specified only user info returned
      * @param int $groupid iterate only group users if present
+     * @param string $sortfield1 The first field of the users table by which the array of users will be sorted
+     * @param string $sortorder1 The order in which the first sorting field will be sorted (ASC or DESC)
+     * @param string $sortfield2 The second field of the users table by which the array of users will be sorted
+     * @param string $sortorder2 The order in which the second sorting field will be sorted (ASC or DESC)
      */
-    function graded_users_iterator($course, $grade_items=null, $groupid=0) {
+    function graded_users_iterator($course, $grade_items=null, $groupid=0, $sortfield1='lastname', $sortorder1='ASC', $sortfield2='firstname', $sortorder2='ASC') {
         $this->course      = $course;
         $this->grade_items = $grade_items;
         $this->groupid     = $groupid;
+        $this->sortfield1  = $sortfield1;
+        $this->sortorder1  = $sortorder1;
+        $this->sortfield2  = $sortfield2;
+        $this->sortorder2  = $sortorder2;
 
         $this->gradestack  = array();
     }
@@ -89,8 +101,16 @@ class graded_users_iterator {
                              $groupsql
                        WHERE ra.roleid $gradebookroles
                              AND ra.contextid $relatedcontexts
-                             $groupwheresql
-                    ORDER BY u.id ASC";
+                             $groupwheresql";
+        
+        // If only sortfield2 is given, it will be ignored
+        if (!empty($this->sortfield1)) {
+            $users_sql .= "ORDER BY u.$this->sortfield1 $this->sortorder1";
+            if (!empty($this->sortfield2)) {
+                $users_sql .= ", $this->sortfield2 $this->sortorder2";
+            }
+        } 
+
         $this->users_rs  = get_recordset_sql($users_sql);
 
         if (!empty($this->grade_items)) {
@@ -109,8 +129,19 @@ class graded_users_iterator {
                          ORDER BY g.userid ASC, g.itemid ASC";
             $this->grades_rs = get_recordset_sql($grades_sql);
         }
-
         return true;
+    }
+    
+    /**
+     * Returns the number of graded users in the course. Needs to be called after init(), otherwise returns null.
+     * @return int Number of users in course
+     */
+    function users_count() {
+        if (method_exists($this->users_rs, 'RecordCount')) {
+            return $this->users_rs->RecordCount();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -148,18 +179,20 @@ class graded_users_iterator {
 
         $grades = array();
         $feedbacks = array();
-
-        foreach ($this->grade_items as $grade_item) {
-            if (array_key_exists($grade_item->id, $grade_records)) {
-                $feedbacks[$grade_item->id]->feedback       = $grade_records[$grade_item->id]->feedback;
-                $feedbacks[$grade_item->id]->feedbackformat = $grade_records[$grade_item->id]->feedbackformat;
-                unset($grade_records[$grade_item->id]->feedback);
-                unset($grade_records[$grade_item->id]->feedbackformat);
-                $grades[$grade_item->id] = new grade_grade($grade_records[$grade_item->id], false);
-            } else {
-                $feedbacks[$grade_item->id]->feedback       = '';
-                $feedbacks[$grade_item->id]->feedbackformat = FORMAT_MOODLE;
-                $grades[$grade_item->id] = new grade_grade(array('userid'=>$user->id, 'itemid'=>$grade_item->id), false);
+        
+        if (!empty($this->grade_items)) {
+            foreach ($this->grade_items as $grade_item) {
+                if (array_key_exists($grade_item->id, $grade_records)) {
+                    $feedbacks[$grade_item->id]->feedback       = $grade_records[$grade_item->id]->feedback;
+                    $feedbacks[$grade_item->id]->feedbackformat = $grade_records[$grade_item->id]->feedbackformat;
+                    unset($grade_records[$grade_item->id]->feedback);
+                    unset($grade_records[$grade_item->id]->feedbackformat);
+                    $grades[$grade_item->id] = new grade_grade($grade_records[$grade_item->id], false);
+                } else {
+                    $feedbacks[$grade_item->id]->feedback       = '';
+                    $feedbacks[$grade_item->id]->feedbackformat = FORMAT_MOODLE;
+                    $grades[$grade_item->id] = new grade_grade(array('userid'=>$user->id, 'itemid'=>$grade_item->id), false);
+                }
             }
         }
 
@@ -212,6 +245,40 @@ class graded_users_iterator {
             return array_pop($this->gradestack);
         }
     }
+}
+
+/**
+ * Print a selection popup form of the graded users in a course.
+ *
+ * @param int $courseid id of the course
+ * @param string $actionpage The page receiving the data from the popoup form
+ * @param int $userid   id of the currently selected user (or 'all' if they are all selected)
+ * @param bool $return If true, will return the HTML, otherwise, will print directly
+ * @return null
+ */
+function print_graded_users_selector($course, $actionpage, $userid='all', $return=false) {
+    global $CFG;
+
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
+    $menu = array(); // Will be a list of userid => user name
+
+    $gui = new graded_users_iterator($course);
+    $gui->init();
+    
+    if ($userid != 'all') {
+        $menu['all'] = get_string('allusers', 'grades') . ' (' . $gui->users_count() . ')';
+    }
+    
+    while ($userdata = $gui->next_user()) {
+        $user = $userdata->user;
+        $menu[$user->id] = fullname($user);
+    }
+
+    $gui->close();
+
+    return popup_form($CFG->wwwroot.'/grade/' . $actionpage . '&amp;userid=', $menu, 'choosegradeduser', $userid, 'choose', '', '', 
+                        $return, 'self', get_string('selectalloroneuser', 'grades')); 
 }
 
 /**
