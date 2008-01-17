@@ -375,7 +375,7 @@ if ($INSTALL['stage'] == DATABASE) {
 /// If we can open a file then we know that the admin name is correct.
 
 if ($nextstage == ADMIN or $INSTALL['stage'] == ADMIN) {
-    if (!ini_get('allow_url_fopen')) {
+    if (!ini_get('allow_url_fopen') || true) { // MDL-4218 fopen URL is not reliable
         $nextstage = ($goforward) ? ENVIRONMENT : DATABASE;
     } else if (($fh = @fopen($INSTALL['wwwrootform'].'/'.$INSTALL['admindirname'].'/site.html', 'r')) !== false) {
         $nextstage = ($goforward) ? ENVIRONMENT : DATABASE;
