@@ -46,18 +46,23 @@ switch ($action) {
         break;
 
     case 'ajax_getmembersingroup':
-        $members = array();
-        if ($members = groups_get_members($groupid)) {
-            $member_names = array();
-            foreach($members as $member) {
-                $user = new object();
-                $user->id   = $member->id;
-                $user->name = fullname($member, true);
-                $member_names[] = $user;
+        $roles = array();
+        if ($groupmemberroles = groups_get_members_by_role($groupid,$courseid,'u.id,u.firstname,u.lastname')) {
+            foreach($groupmemberroles as $roleid=>$roledata) {
+                $shortroledata=new StdClass;
+                $shortroledata->name=$roledata->name;
+                $shortroledata->users=array();
+                foreach($roledata->users as $member) {
+                    $shortmember=new StdClass;
+                    $shortmember->id=$member->id;
+                    $shortmember->name=fullname($member, true);
+                    $shortroledata->users[]=$shortmember;
+                }
+                $roles[]=$shortroledata;
             }
-            $json = new Services_JSON();
-            echo $json->encode($member_names);
         }
+        $json = new Services_JSON();
+        echo $json->encode($roles);
         die;  // Client side JavaScript takes it from here.
 
     case 'deletegroup':
@@ -194,21 +199,22 @@ echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseou
 
 $member_names = array();
 
+$atleastonemember = false;
 if ($sel_groupid) {
-    if ($members = groups_get_members($groupid)) {
-        foreach($members as $member) {
-            $member_names[$member->id] = fullname($member, true);
+
+    if ($groupmemberroles = groups_get_members_by_role($groupid,$courseid,'u.id,u.firstname,u.lastname')) {
+        foreach($groupmemberroles as $roleid=>$roledata) {
+            echo '<optgroup label="'.htmlspecialchars($roledata->name).'">';
+            foreach($roledata->users as $member) {
+                echo '<option value="'.$member->id.'">'.fullname($member, true).'</option>';
+                $atleastonemember = true;
+            }
+            echo '</optgroup>';        
         }
-    }
+    } 
 }
-
-if ($member_names) {
-    // Put the groupings into a hash and sort them
-    foreach ($member_names as $userid=>$username) {
-        echo "<option value=\"{$userid}\" title=\"{$username}\">{$username}</option>\n";
-    }
-
-} else {
+    
+if (!$atleastonemember) {
     // Print an empty option to avoid the XHTML error of having an empty select element
     echo '<option>&nbsp;</option>';
 }

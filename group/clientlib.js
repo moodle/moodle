@@ -21,7 +21,7 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
                 var membersComboEl = document.getElementById("members");
 
                 if (membersComboEl) {
-                    // Clear the members combo box.
+                    // Clear the members list box.
                     while (membersComboEl.firstChild) {
                         membersComboEl.removeChild(membersComboEl.firstChild);
                     }
@@ -30,7 +30,7 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
         	    if (groupsComboEl && o.responseText) {
         	        var groups = eval("("+o.responseText+")");
 
-        	        // Populate the groups combo box.
+        	        // Populate the groups list box.
                     for (var i=0; i<groups.length; i++) {
                         var optionEl = document.createElement("option");
                         optionEl.setAttribute("value", groups[i].id);
@@ -51,7 +51,7 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
 
     };
 
-    // Add onchange event to groups combo box.
+    // Add onchange event to groups list box.
     // Okay, this is not working in IE. The onchange is never fired...
     // I'm hard coding the onchange in ../index.php. Not ideal, but it works
     // then. vyshane AT moodle DOT com.
@@ -80,21 +80,27 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
         	if (o.responseText !== undefined) {
                 var selectEl = document.getElementById("members");
         	    if (selectEl && o.responseText) {
-        	        var members = eval("("+o.responseText+")");
+                    var roles = eval("("+o.responseText+")");
 
-                    // Clear the members combo box.
+                    // Clear the members list box.
                     if (selectEl) {
                         while (selectEl.firstChild) {
                             selectEl.removeChild(selectEl.firstChild);
                         }
                     }
-        	        // Populate the members combo box.
-                    for (var i=0; i<members.length; i++) {
-                        var optionEl = document.createElement("option");
-                        optionEl.setAttribute("value", members[i].id);
-                        optionEl.title = members[i].name;
-                        optionEl.innerHTML = members[i].name;
-                        selectEl.appendChild(optionEl);
+                    // Populate the members list box.
+                    for (var i=0; i<roles.length; i++) {
+                        var optgroupEl = document.createElement("optgroup");
+                        optgroupEl.setAttribute("label",roles[i].name);
+
+                        for(var j=0; j<roles[i].users.length; j++) {
+                            var optionEl = document.createElement("option");
+                            optionEl.setAttribute("value", roles[i].users[j].id);
+                            optionEl.title = roles[i].users[j].name;
+                            optionEl.innerHTML = roles[i].users[j].name;
+                            optgroupEl.appendChild(optionEl);
+                        }
+                        selectEl.appendChild(optgroupEl);
                     }
                 }
         	}
@@ -128,7 +134,7 @@ UpdatableMembersCombo.prototype.refreshMembers = function (groupId) {
         spanEl.innerHTML = selectEl.options[selectEl.selectedIndex].title;
     }
 
-    // Clear the members combo box.
+    // Clear the members list box.
     selectEl = document.getElementById("members");
     if (selectEl) {
         while (selectEl.firstChild) {
