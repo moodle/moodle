@@ -28,7 +28,7 @@ require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/user/lib.php';
 
 $courseid = required_param('id');
-$userid   = optional_param('userid', $USER->id, PARAM_ALPHANUM);
+$userid   = optional_param('userid', $USER->id, PARAM_INT);
 
 /// basic access checks
 if (!$course = get_record('course', 'id', $courseid)) {
@@ -37,7 +37,7 @@ if (!$course = get_record('course', 'id', $courseid)) {
 require_login($course);
 
 
-if ($userid != 'all' && !$user = get_complete_user_data('id', $userid)) {
+if ($userid !== 0 && !$user = get_complete_user_data('id', $userid)) {
     error("Incorrect userid");
 }
 
@@ -93,7 +93,7 @@ if ($access) {
         print_graded_users_selector($course, 'report/user/index.php?id=' . $course->id, $userid);
         echo '</div>';
         
-        if ($userid == 'all') {
+        if ($userid === 0) {
             $gui = new graded_users_iterator($course);
             $gui->init();
             while ($userdata = $gui->next_user()) {

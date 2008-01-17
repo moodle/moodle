@@ -131,18 +131,6 @@ class graded_users_iterator {
         }
         return true;
     }
-    
-    /**
-     * Returns the number of graded users in the course. Needs to be called after init(), otherwise returns null.
-     * @return int Number of users in course
-     */
-    function users_count() {
-        if (method_exists($this->users_rs, 'RecordCount')) {
-            return $this->users_rs->RecordCount();
-        } else {
-            return null;
-        }
-    }
 
     /**
      * Returns information about the next user
@@ -256,8 +244,12 @@ class graded_users_iterator {
  * @param bool $return If true, will return the HTML, otherwise, will print directly
  * @return null
  */
-function print_graded_users_selector($course, $actionpage, $userid='all', $return=false) {
-    global $CFG;
+function print_graded_users_selector($course, $actionpage, $userid=null, $return=false) {
+    global $CFG, $USER;
+    
+    if (is_null($userid)) {
+        $userid = $USER->id;
+    }
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
@@ -266,8 +258,8 @@ function print_graded_users_selector($course, $actionpage, $userid='all', $retur
     $gui = new graded_users_iterator($course);
     $gui->init();
     
-    if ($userid != 'all') {
-        $menu['all'] = get_string('allusers', 'grades') . ' (' . $gui->users_count() . ')';
+    if ($userid !== 0) {
+        $menu[0] = get_string('allusers', 'grades');
     }
     
     while ($userdata = $gui->next_user()) {
@@ -276,6 +268,10 @@ function print_graded_users_selector($course, $actionpage, $userid='all', $retur
     }
 
     $gui->close();
+    
+    if ($userid !== 0) {
+        $menu[0] .= " (" . (count($menu) - 1) . ")";
+    }
 
     return popup_form($CFG->wwwroot.'/grade/' . $actionpage . '&amp;userid=', $menu, 'choosegradeduser', $userid, 'choose', '', '', 
                         $return, 'self', get_string('selectalloroneuser', 'grades')); 
