@@ -328,6 +328,8 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
 
     $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', true, true);
 
+    $allusersnothidden = get_users_by_capability($context, 'mod/choice:choose', 'u.id', 'u.firstname ASC', '', '', $currentgroup, '', true, false); ///MDL-12331 ugly hack to prevent hidden users from being displayed in the unanswered column. needs fixing!
+
     if (!empty($CFG->enablegroupings) && !empty($cm->groupingid) && !empty($users)) {
         $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
         foreach($users as $key => $user) {
@@ -422,7 +424,10 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 // MDL-7861
                 echo "<table class=\"choiceresponse\"><tr><td></td></tr>";
                 foreach ($userlist as $user) {
-                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false) AND !($optionid== 0 AND has_capability('moodle/site:doanything', $context, $user->id, false))) {
+                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false) AND //only get enrolled users that have access
+                     !($optionid==0 AND has_capability('moodle/site:doanything', $context, $user->id, false)) AND //remove doanything users
+                     !($optionid==0 AND isset($allusersnothidden[$user->id]))) { //MDL-12331 ugly hack part 2
+
                         $columncount[$optionid] += 1;
                         echo "<tr>";
                         if (has_capability('mod/choice:readresponses', $context) && $optionid!=0) {
@@ -514,7 +519,10 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 }
                 $column[$optionid] = 0;
                 foreach ($userlist as $user) {
-                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false) AND !($optionid== 0 AND has_capability('moodle/site:doanything', $context, $user->id, false))) {
+                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false) AND //only get enrolled users that have access
+                     !($optionid==0 AND has_capability('moodle/site:doanything', $context, $user->id, false)) AND //remove doanything users
+                     !($optionid==0 AND isset($allusersnothidden[$user->id]))) { //MDL-12331 ugly hack part 2
+
                          $column[$optionid]++;
                     }
                 }
