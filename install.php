@@ -128,6 +128,7 @@ $CFG->running_installer = true;
 require_once('./lib/adminlib.php');
 require_once('./lib/setuplib.php');
 require_once('./lib/moodlelib.php');
+require_once('./lib/deprecatedlib.php');
 require_once('./lib/weblib.php');
 require_once('./lib/adodb/adodb.inc.php');
 require_once('./lib/environmentlib.php');
@@ -699,7 +700,7 @@ if ($nextstage == SAVE) {
         echo "<td width=\"33.3%\">&nbsp;</td>\n";
         echo "<td width=\"33.3%\">&nbsp;</td>\n";
         echo "<td width=\"33.3%\" align=\"right\">\n";
-        print_single_button("index.php", $options, get_string('continue')."  &raquo;");
+        print_single_button("index.php", $options, get_string('continue'));
         echo "</td>\n";
         echo "</tr>\n";
         echo "</table>\n";
@@ -716,7 +717,7 @@ if ($nextstage == SAVE) {
         print_single_button("install.php", $installoptions, get_string('download', 'install'));
         echo "</td>\n";
         echo "<td width=\"33.3%\" align=\"right\">\n";
-        print_single_button("index.php", $options, get_string('continue')."  &raquo;");
+        print_single_button("index.php", $options, get_string('continue'));
         echo "</td>\n";
         echo "</tr>\n";
         echo "</table>\n";
