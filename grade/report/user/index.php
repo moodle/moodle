@@ -28,7 +28,7 @@ require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/user/lib.php';
 
 $courseid = required_param('id');
-$userid   = optional_param('userid', $USER->id, PARAM_ALPHANUM);
+$userid   = optional_param('userid', $USER->id, PARAM_INT);
 
 /// basic access checks
 if (!$course = get_record('course', 'id', $courseid)) {
@@ -36,14 +36,18 @@ if (!$course = get_record('course', 'id', $courseid)) {
 }
 require_login($course);
 
+$context     = get_context_instance(CONTEXT_COURSE, $course->id);
+require_capability('gradereport/user:view', $context);
 
-if ($userid != 'all' && !$user = get_complete_user_data('id', $userid)) {
+if (empty($userid)) {
+    require_capability('moodle/grade:viewall', $context);
+
+} else {
+    if (!get_complete_user_data('id', $userid)) {
     error("Incorrect userid");
 }
 
-$context     = get_context_instance(CONTEXT_COURSE, $course->id);
-$usercontext = get_context_instance(CONTEXT_USER, $userid);
-require_capability('gradereport/user:view', $context);
+}
 
 $access = true;
 if (has_capability('moodle/grade:viewall', $context)) {
@@ -52,7 +56,7 @@ if (has_capability('moodle/grade:viewall', $context)) {
 } else if ($userid == $USER->id and has_capability('moodle/grade:view', $context) and $course->showgrades) {
     //ok - can view own grades
 
-} else if (has_capability('moodle/grade:viewall', $usercontext) and $course->showgrades) {
+} else if ($has_capability('moodle/grade:viewall', get_context_instance(CONTEXT_USER, $userid)) and $course->showgrades) {
     // ok - can view grades of this user- parent most probably
 
 } else {
@@ -92,7 +96,7 @@ if ($access) {
         print_graded_users_selector($course, 'report/user/index.php?id=' . $course->id, $userid);
         echo '</div>';
         
-        if ($userid == 'all') {
+        if ($userid === 0) {
             $gui = new graded_users_iterator($course);
             $gui->init();
             while ($userdata = $gui->next_user()) {
