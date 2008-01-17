@@ -3553,6 +3553,8 @@ function print_user($user, $course, $messageselect=false, $return=false) {
         $datestring->mins    = get_string('mins');
         $datestring->sec     = get_string('sec');
         $datestring->secs    = get_string('secs');
+        $datestring->year    = get_string('year');
+        $datestring->years   = get_string('years');
 
         $countries = get_list_of_countries();
     }
