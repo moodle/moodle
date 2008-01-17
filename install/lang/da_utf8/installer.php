@@ -35,7 +35,7 @@ $string['closewindow'] = 'Luk dette vindue';
 $string['compatibilitysettings'] = 'Kontrollerer dine PHP-indstillinger...';
 $string['compatibilitysettingshead'] = 'Kontrollerer dine PHP-indstillinger...';
 $string['compatibilitysettingssub'] = 'For at Moodle kan køre uden problemer skal din server \"bestå\" alle disse test.';
-$string['componentisuptodate'] = 'Komponenten er up to date';
+$string['componentisuptodate'] = 'Komponenten er ajour';
 $string['configfilenotwritten'] = 'Installationsscriptet var ikke i stand til at oprette config.php-filen, der indeholder de valgte indstillinger, sandsynligvis fordi  Moodlebiblioteket er skrivebeskyttet. Du kan manuelt kopiere den følgende kode ind i en fil med navnet \"config.php\" i roden af Moodle-biblioteket.';
 $string['configfilewritten'] = 'config.php er blevet oprettet';
 $string['configurationcomplete'] = 'Konfigurationen er færdig.';
@@ -109,6 +109,7 @@ $string['databasesettingssub_postgres7'] = '<b>Type:</b> PostgreSQL<br />
 <b>Bruger:</b> dit databasebrugernavn<br />
 <b>Password:</b> dit database password<br />
 <b>Tables Præfix:</b> præfix der bruges foran alle tabelnavnene (nødvendigt)';
+$string['databasesettingswillbecreated'] = '<b>Note:</b> Installationsprocessen vil søge at oprette en database hvis ikke den findes allerede.';
 $string['dataroot'] = 'Databibliotek';
 $string['datarooterror'] = 'Data-biblioteket du specificerede kan ikke findes eller oprettes. Ret stien til biblioteket eller opret det manuelt.';
 $string['dbconnectionerror'] = 'Den angive database kunne ikke kontaktes. Kontroller eller ret venligst databaseinformationerne.';
@@ -146,7 +147,7 @@ Det sted, hvor Moodle placerer uploadede filer. Dette bibliotek skal være læse
 $string['dirroot'] = 'Moodle-bibliotek';
 $string['dirrooterror'] = 'Det angivne Moodle-bibliotek lader ikke til at være rigtigt - der kan ikke findes en Moodle-installation. Den nedenstående værdi er blevet fjernet.';
 $string['download'] = 'Download';
-$string['downloadedfilecheckfailed'] = '\"Downloadet fil-tjek fejlede';
+$string['downloadedfilecheckfailed'] = 'Downloadet fil-tjek fejlede';
 $string['downloadlanguagebutton'] = 'Download \"$a\"-sprogpakken';
 $string['downloadlanguagehead'] = 'Download sprogpakke';
 $string['downloadlanguagenotneeded'] = 'Du kan fortsætte installationen med standard-sprogpakken,\"$a\".';
@@ -199,6 +200,7 @@ $string['info'] = 'Information';
 $string['installation'] = 'Installation';
 $string['invalidemail'] = 'Ugyldig e-mail-adresse';
 $string['invalidmd5'] = 'Ugyldig md5';
+$string['invalidurl'] = 'Ugyldig URL';
 $string['langdownloaderror'] = 'Sproget \"$a\" blev desværre ikke installeret. Installationen vil fortsætte på engelsk.';
 $string['langdownloadok'] = 'Sproget \"$a\" blev installeret. Installationen vil fortsætte på dette sprog.';
 $string['language'] = 'Sprog';
@@ -276,8 +278,8 @@ $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Dansk';
-$string['unicoderecommended'] = 'Alle data skal helst gemmes i Unicode (UTF-8). Nye installationer skal helst installeres i databaser der har UTF-8 som standard karaktersæt. Hvis du opgradere fra en tidligere installation bør du migrere eksisterende data til UTF-8 (se Admin siderne)';
-$string['unicoderequired'] = 'Alle data skal gemmes i Unicode (UTF-8). Nye installationer skal helst installeres i databaser der har UTF-8 som standard karaktersæt. Hvis du opgradere fra en tidligere installation bør du migrere eksisterende data til UTF-8 (se Admin siderne)';
+$string['unicoderecommended'] = 'Alle data skal helst gemmes i Unicode (UTF-8). Nye installationer skal helst installeres i databaser der har UTF-8 som standard karaktersæt. Hvis du opgraderer fra en tidligere installation bør du migrere eksisterende data til UTF-8 (se Admin siderne)';
+$string['unicoderequired'] = 'Alle data skal gemmes i Unicode (UTF-8). Nye installationer skal helst installeres i databaser der har UTF-8 som standard karaktersæt. Hvis du opgraderer fra en tidligere installation bør du migrere eksisterende data til UTF-8 (se Admin siderne)';
 $string['user'] = 'Bruger';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Du ser denne side fordi du med succes har installeret og åbnet pakken <strong>$a->packname $a->packversion</strong> på din computer.
@@ -287,8 +289,8 @@ $string['welcomep40'] = 'Pakken indeholder også <strong>Moodle $a->moodlereleas
 $string['welcomep50'] = 'Brugen af programmerne i denne pakke er styret af deres respektive licenser. Hele <strong>$a->installername</strong>-pakken er <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> og distribueret under <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>-licensen.';
 $string['welcomep60'] = 'De følgende sider vil hjælpe dig gennem nogle nemme trin til konfiguration og opsætning af <strong>Moodle</strong> på din computer. Du kan acceptere standardindstillingerne eller vælge at ændre dem så de bedre svarer til dine egne behov.';
 $string['welcomep70'] = 'Klik på \"Næste\" herunder for at forsætte opsætningen af <strong>Moodle</strong>.';
-$string['wrongdestpath'] = 'Forkert  destinations sti';
-$string['wrongsourcebase'] = 'Forkert kilde URL';
+$string['wrongdestpath'] = 'Forkert destinationssti';
+$string['wrongsourcebase'] = 'Forkert kilde-URL';
 $string['wrongzipfilename'] = 'Forkert zip-filnavn.';
 $string['wwwroot'] = 'Web-adresse';
 $string['wwwrooterror'] = 'Webadressen lader ikke til at være korrekt - Moodle-installationen kunne ikke findes der.';
