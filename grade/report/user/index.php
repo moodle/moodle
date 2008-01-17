@@ -81,10 +81,6 @@ print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation,
 /// Print the plugin selector at the top
 print_grade_plugin_selector($courseid, 'report', 'user');
 
-/// Print graded user selector at the top
-echo '<div id="graded_users_selector">';
-print_graded_users_selector($course, 'report/user/index.php?id=' . $course->id, $userid);
-echo '</div>';
 
 if ($access) {
 
@@ -92,6 +88,11 @@ if ($access) {
     grade_regrade_final_grades($courseid);
 
     if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all student reports
+        /// Print graded user selector at the top
+        echo '<div id="graded_users_selector">';
+        print_graded_users_selector($course, 'report/user/index.php?id=' . $course->id, $userid);
+        echo '</div>';
+        
         if ($userid == 'all') {
             $gui = new graded_users_iterator($course);
             $gui->init();
