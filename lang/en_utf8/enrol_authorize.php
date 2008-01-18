@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // enrol_authorize.php - created with Moodle 2.0 dev (2007101506)
 
 
@@ -199,17 +199,16 @@ $string['verifyaccount'] = 'Verify your authorize.net account';
 $string['verifyaccountresult'] = 'Verification result: $a';
 $string['void'] = 'Void';
 $string['voidyes'] = 'The transaction will be cancelled. Are you sure?';
-$string['welcometocoursesemail'] = 'Dear student,
+$string['welcometocoursesemail'] = 'Dear $a->name,
 
 Thanks for your payments. You have enrolled these courses:
 
 $a->courses
 
-You may edit your profile:
- $a->profileurl
 
-You may view your payment details:
- $a->paymenturl';
+You may view your payment details or edit your profile:
+ $a->paymenturl
+ $a->profileurl';
 $string['youcantdo'] = 'You can\'t do this action: $a->action';
 $string['zipcode'] = 'Zip Code';
 
