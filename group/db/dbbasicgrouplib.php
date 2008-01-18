@@ -513,7 +513,7 @@ function groups_members_from_sql() {
 function groups_members_join_sql($groupid=false) {    
     $sql = ' JOIN '.groups_members_from_sql().' ON u.id = gm.userid ';
     if ($groupid) {
-        $sql = "AND gm.groupid = '$groupid' ";
+        $sql .= "AND gm.groupid = '$groupid' ";
     }
     return $sql;
     //return ' INNER JOIN '.$CFG->prefix.'role_assignments ra ON u.id=ra.userid'.
