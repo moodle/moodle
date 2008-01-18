@@ -65,7 +65,7 @@
             'type' => 'activityinstance');
     $navlinks[] = array(
             'name' => $strsubmissions,
-            'link' => ,
+            'link' => '',
             'type' => 'title');
     
     $navigation = build_navigation($navlinks);
