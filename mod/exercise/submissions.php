@@ -50,7 +50,25 @@
     $strsubmissions = get_string("submissions", "exercise");
 
     // ... print the header and...
-    $navigation = build_navigation($strsubmissions, $cm);
+    $navlinks = array();
+    $navlinks[] = array(
+            'name' => get_string('grades'),
+            'link' => $CFG->wwwroot . '/grade/report/index.php?id=' . $cm->course,
+            'type' => 'link');
+    $navlinks[] = array(
+            'name' => get_string('modulenameplural', $cm->modname),
+            'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/index.php?id=' . $cm->course,
+            'type' => 'activity');
+    $navlinks[] = array(
+            'name' => format_string($cm->name),
+            'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/view.php?id=' . $cm->id,
+            'type' => 'activityinstance');
+    $navlinks[] = array(
+            'name' => $strsubmissions,
+            'link' => ,
+            'type' => 'title');
+    
+    $navigation = build_navigation($navlinks);
     print_header_simple(format_string($exercise->name), "", $navigation,
                   "", "", true);
 

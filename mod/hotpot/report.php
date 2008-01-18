@@ -399,6 +399,7 @@ function hotpot_delete_selected_attempts(&$hotpot, $del) {
 /// report selector menus
 
 function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
+    global $CFG;
     $strmodulenameplural = get_string("modulenameplural", "hotpot");
     $strmodulename  = get_string("modulename", "hotpot");
 
@@ -406,6 +407,22 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
     $heading = $course->fullname;
     
     $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+    $navlinks = array();
+    $navlinks[] = array(
+            'name' => get_string('grades'),
+            'link' => $CFG->wwwroot . '/grade/report/index.php?id=' . $cm->course,
+            'type' => 'link');
+    $navlinks[] = array(
+            'name' => get_string('modulenameplural', $cm->modname),
+            'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/index.php?id=' . $cm->course,
+            'type' => 'activity');
+    $navlinks[] = array(
+            'name' => format_string($cm->name),
+            'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/view.php?id=' . $cm->id,
+            'type' => 'activityinstance');
+    
+
     if (has_capability('mod/hotpot:viewreport',$modulecontext)) {
         if ($mode=='overview' || $mode=='simplestat' || $mode=='fullstat') {
             $module = "quiz";
@@ -413,10 +430,18 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
             $module = "hotpot";
         }
 
-        $navigation = build_navigation(get_string("report$mode", $module), $cm);
+        $navlinks[] = array(
+                'name' => get_string("report$mode", $module),
+                'link' => '',
+                'type' => 'title');
     } else {
-        $navigation = build_navigation(get_string("report", "quiz"), $cm);
+        $navlinks[] = array(
+                'name' => get_string("report", "quiz"),
+                'link' => '',
+                'type' => 'title');
     }
+    
+    $navigation = build_navigation($navlinks);
 
     $button = update_module_button($cm->id, $course->id, $strmodulename);
     print_header($title, $heading, $navigation, "", "", true, $button, navmenu($course, $cm));
