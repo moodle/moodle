@@ -730,13 +730,13 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
 
     // get some default string, using the localized version of legacy defaults
     if (!$name) {
-        $name = get_string('popup');
+        $name = get_string('popupwindow');
     }
     if (!$linkname) {
-        $linkname = get_string('click here');
+        $linkname = get_string('clickhere');
     }
     if (!$title) {
-        $title = get_string('Popup window');
+        $title = get_string('popupwindowname');
     }
 
     $fullscreen = 0; // must be passed to openpopup
