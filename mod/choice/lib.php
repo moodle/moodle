@@ -130,11 +130,17 @@ function choice_show_form($choice, $user, $cm) {
     $cdisplay = array();
 
     $aid = 0;
+    $choicefull = false;
+
+    if ($choice->limitanswers) { //set choicefull to true by default if limitanswers.
+        $choicefull = true;
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     foreach ($choice->option as $optionid => $text) {
         if (isset($text)) { //make sure there are no dud entries in the db with blank text values.
             $countanswers = (get_records("choice_answers", "optionid", $optionid));
             $countans = 0;
-            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             if (!empty($countanswers)) {
                 foreach ($countanswers as $ca) { //only return enrolled users.
                     if (has_capability('mod/choice:choose', $context, $ca->userid, false)) {
@@ -163,6 +169,9 @@ function choice_show_form($choice, $user, $cm) {
                 $cdisplay[$aid]->disabled = ' disabled="disabled" ';
             } else {
                 $cdisplay[$aid]->disabled = '';
+                if ($choice->limitanswers && ($countans < $maxans)) {
+                    $choicefull = false; //set $choicefull to false - as the above condition hasn't been set.
+                }
             }
             $aid++;
         }
@@ -222,13 +231,16 @@ function choice_show_form($choice, $user, $cm) {
     //show save choice button
     echo '<div class="button">';
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-    if (!isguest()) { //don't show save button if the logged in user is the guest user.
-        echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
-        
+    if (has_capability('mod/choice:choose', $context, $user->id, false)) { //don't show save button if the logged in user is the guest user.
+        if ($choicefull) {
+            print_string('choicefull', 'choice');
+            echo "</br>";
+        } else {
+            echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
+        }
         if ($choice->allowupdate && $aaa = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id)) {
             echo "<br /><a href='view.php?id=".$cm->id."&amp;action=delchoice'>".get_string("removemychoice","choice")."</a>";
         }
-        
     } else {
         print_string('havetologin', 'choice');
     }
