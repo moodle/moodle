@@ -149,7 +149,7 @@ foreach ($members as $gpgid=>$groupdata) {
         }
         $line = array();
         $name = format_string($groups[$gpid]->name);
-        $jsdescription = addslashes_js(trim($groups[$gpid]->description));
+        $jsdescription = addslashes_js(trim(format_text($groups[$gpid]->description)));
         if (empty($jsdescription)) {
             $line[] = $name;
         } else {
@@ -174,7 +174,7 @@ foreach ($members as $gpgid=>$groupdata) {
             print_heading($strnotingrouping, '', 3);
         } else {
             print_heading(format_string($groupings[$gpgid]->name), '', 3);
-            print_box($groupings[$gpgid]->description, 'generalbox boxwidthnarrow boxaligncenter');
+            print_box(format_text($groupings[$gpgid]->description), 'generalbox boxwidthnarrow boxaligncenter');
         }
     }
     print_table($table, false);
