@@ -22,6 +22,7 @@ if ($id) {
     if (!$grouping = get_record('groupings', 'id', $id)) {
         error('Group ID was incorrect');
     }
+    $grouping->description = clean_text($grouping->description);
     if (empty($courseid)) {
         $courseid = $grouping->courseid;
 
