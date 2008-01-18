@@ -11,6 +11,7 @@ $string['choice:deleteresponses'] = 'Delete responses';
 $string['choice:downloadresponses'] = 'Download responses';
 $string['choice:readresponses'] = 'Read responses';
 $string['choiceclose'] = 'Until';
+$string['choicefull'] = 'This choice is full and there are no available places.';
 $string['choicename'] = 'Choice name';
 $string['choiceopen'] = 'Open';
 $string['choicetext'] = 'Choice text';
