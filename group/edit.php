@@ -17,15 +17,16 @@ require_once('edit_form.php');
 
 /// get url variables
 $courseid    = required_param('courseid', PARAM_INT);
-$id          = optional_param('id', false, PARAM_INT);         
-$groupingid  = optional_param('grouping', false, PARAM_INT);
-$newgrouping = optional_param('newgrouping', false, PARAM_INT);
+$id          = optional_param('id', 0, PARAM_INT);         
+$groupingid  = optional_param('grouping', GROUP_NOT_IN_GROUPING, PARAM_INT);
+$newgrouping = optional_param('newgrouping', GROUP_NOT_IN_GROUPING, PARAM_INT);
 $delete      = optional_param('delete', 0, PARAM_BOOL);
 $confirm     = optional_param('confirm', 0, PARAM_BOOL);
 
 if (empty($CFG->enablegroupings)) {
     // NO GROUPINGS YET!
-    $groupingid = GROUP_NOT_IN_GROUPING;
+    $groupingid  = GROUP_NOT_IN_GROUPING;
+    $newgrouping = GROUP_NOT_IN_GROUPING;
 }
 
 /// Course must be valid 
@@ -33,40 +34,63 @@ if (!$course = get_record('course', 'id', $courseid)) {
     error('Course ID was incorrect');
 }
 
-/// Delete action should not be called without a group id
-if ($delete && !$id) {
-    error(get_string('errorinvalidgroup'));
-}
+$context = get_context_instance(CONTEXT_COURSE, $course->id);
+require_capability('moodle/course:managegroups', $context);
 
-if ($delete && !$confirm) {
-    print_header(get_string('deleteselectedgroup', 'group'), get_string('deleteselectedgroup', 'group'));
-    $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
-    $optionsno  = array('id'=>$courseid);
-    if (!$group = get_record('groups', 'id', $id)) {
-        error('Group ID was incorrect');
-    } 
-    notice_yesno(get_string('deletegroupconfirm', 'group', $group->name), 'edit.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
-    print_footer();
-    die;
-}
+$group = false;
 
-/// basic access control checks
 if ($id) {
     if (!$group = get_record('groups', 'id', $id)) {
         error('Group ID was incorrect');
     } 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    require_capability('moodle/course:managegroups', $context);
-    
-    // If group given but no groupingid, retrieve grouping id
-    if (empty($groupingid)) {
-        $groupings = groups_get_groupings_for_group($id);
-        if (empty($groupings)) {
-            $groupingid = -1;
-        } else {
+    $group->description = clean_text($group->description);
+
+    if (!groups_group_belongs_to_course($group->id, $course->id)) {
+        error('Group not from this course.');
+    }
+
+    $groupings = groups_get_groupings_for_group($id);
+    if (empty($groupings)) {
+        $groupingid = -1;
+    } else {
+        if (!isset($groupings[$groupingid])) {
             $groupingid = $groupings[0];
         }
-    } 
+    }
+}
+
+if ($groupingid != GROUP_NOT_IN_GROUPING and !groups_db_grouping_belongs_to_course($groupingid, $course->id)) {
+    error('Grouping not from this course.');
+}
+
+if ($newgrouping != GROUP_NOT_IN_GROUPING and !groups_db_grouping_belongs_to_course($newgrouping, $course->id)) {
+    error('Grouping not from this course.');
+}
+
+// Process delete action
+if ($delete and $group) {
+    if (!$group) {
+        /// Delete action should not be called without a group id
+        error(get_string('errorinvalidgroup'));
+
+    } else if (!$confirm) {
+        print_header(get_string('deleteselectedgroup', 'group'), get_string('deleteselectedgroup', 'group'));
+        $optionsyes = array('id'=>$group->id, 'delete'=>1, 'courseid'=>$course->id, 'sesskey'=>sesskey(), 'confirm'=>1);
+        $optionsno  = array('id'=>$course->id);
+        notice_yesno(get_string('deletegroupconfirm', 'group', $group->name), 'edit.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
+        print_footer();
+        die;
+
+    } else {
+        if (!confirm_sesskey()) {
+            error('Sesskey error');
+        }
+        if (groups_delete_group($group->id)) {
+            redirect(groups_home_url($course->id, null, $groupingid, false));
+        } else {
+            print_error('erroreditgroup', 'group', groups_home_url($course->id));
+        }
+    }
 }
 
 /// First create the form
@@ -75,18 +99,6 @@ $editform = new group_edit_form('edit.php', compact('group', 'groupingid', 'newg
 /// Override defaults if group is set
 if (!empty($group)) {
     $editform->set_data($group);
-}
-
-// Process delete action
-if ($delete) {
-    if (!confirm_sesskey()) {
-        error('Sesskey error');
-    }
-    if (groups_delete_group($id)) {
-        redirect(groups_home_url($course->id, null, $groupingid, false));
-    } else {
-        print_error('erroreditgroup', 'group', groups_home_url($course->id));
-    }
 }
 
 $error = null;
