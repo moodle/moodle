@@ -132,6 +132,7 @@ function groups_get_group_settings($groupid, $courseid=false, $alldata=false) {
  * @return string The path of the image for the group
  */
 function groups_get_group_image_path($groupid) {
+    global $CFG;
     //TODO: groupid=1, /user/pixgroup.php/1/f1.jpg ??
 	return $CFG->wwwroot.'/pixgroup.php/'.$groupid.'/f1.jpg';
 }
