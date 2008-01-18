@@ -19,7 +19,7 @@
         require_login($course);
     } else if (!isloggedin()) {
         if (empty($SESSION->wantsurl)) {
-            $SESSION->wantsurl = $CFG->httpswwwroot.'/edit/user.php';
+            $SESSION->wantsurl = $CFG->httpswwwroot.'/user/edit.php';
         }
         redirect($CFG->httpswwwroot.'/login/index.php');
     }
