@@ -438,7 +438,6 @@ class enrolment_plugin_authorize
 
         if (optional_param('verifyaccount', 0, PARAM_INT)) {
             notify(authorize_verify_account());
-            return;
         }
 
         if (!empty($frm->an_review)) {

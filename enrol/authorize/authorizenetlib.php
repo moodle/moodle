@@ -94,11 +94,11 @@ function authorize_expired(&$order)
 function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $cctype=NULL)
 {
     global $CFG;
-    static $conststring;
+    static $constpd;
 
-    if (!isset($conststring)) {
+    if (!isset($constpd)) {
         $mconfig = get_config('enrol/authorize');
-        $constdata = array(
+        $constpd = array(
              'x_version'         => '3.1',
              'x_delim_data'      => 'True',
              'x_delim_char'      => AN_DELIM,
@@ -106,16 +106,13 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
              'x_relay_response'  => 'FALSE',
              'x_login'           => rc4decrypt($mconfig->an_login)
         );
-        $str = '';
-        foreach($constdata as $ky => $vl) {
-            $str .= $ky . '=' . urlencode($vl) . '&';
-        }
-        $str .= (!empty($mconfig->an_tran_key)) ?
-                'x_tran_key=' . urlencode(rc4decrypt($mconfig->an_tran_key)):
-                'x_password=' . urlencode(rc4decrypt($mconfig->an_password));
 
-        $conststring = $str;
-        $str = '';
+        if (!empty($mconfig->an_tran_key)) {
+            $constpd['x_tran_key'] = rc4decrypt($mconfig->an_tran_key);
+        }
+        else {
+            $constpd['x_password'] = rc4decrypt($mconfig->an_password);
+        }
     }
 
     if (empty($order) or empty($order->id)) {
@@ -140,11 +137,10 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         }
     }
 
-    $poststring = $conststring;
-    $poststring .= '&x_method=' . $method;
-
+    $pd = $constpd;
+    $pd['x_method'] = $method;
     $test = !empty($CFG->an_test);
-    $poststring .= '&x_test_request=' . ($test ? 'TRUE' : 'FALSE');
+    $pd['x_test_request'] = ($test ? 'TRUE' : 'FALSE');
 
     switch ($action) {
         case AN_ACTION_AUTH_ONLY:
@@ -165,11 +161,11 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
             }
 
             $ext = (array)$extra;
-            $poststring .= '&x_type=' . (($action==AN_ACTION_AUTH_ONLY)
-                                          ? 'AUTH_ONLY' :( ($action==AN_ACTION_CAPTURE_ONLY)
-                                                            ? 'CAPTURE_ONLY' : 'AUTH_CAPTURE'));
+            $pd['x_type'] = (($action==AN_ACTION_AUTH_ONLY)
+                              ? 'AUTH_ONLY' :( ($action==AN_ACTION_CAPTURE_ONLY)
+                                                ? 'CAPTURE_ONLY' : 'AUTH_CAPTURE'));
             foreach($ext as $k => $v) {
-                $poststring .= '&' . $k . '=' . urlencode($v);
+                $pd[$k] = $v;
             }
             break;
         }
@@ -184,7 +180,8 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 $message = "Transaction must be captured within 30 days. EXPIRED!";
                 return AN_RETURNZERO;
             }
-            $poststring .= '&x_type=PRIOR_AUTH_CAPTURE&x_trans_id=' . urlencode($order->transid);
+            $pd['x_type'] = 'PRIOR_AUTH_CAPTURE';
+            $pd['x_trans_id'] = $order->transid;
             break;
         }
 
@@ -213,12 +210,13 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 $message = "Can be credited up to original amount.";
                 return AN_RETURNZERO;
             }
-            $poststring .= '&x_type=CREDIT&x_trans_id=' . urlencode($order->transid);
-            $poststring .= '&x_currency_code=' . urlencode($order->currency);
-            $poststring .= '&x_invoice_num=' . urlencode($extra->orderid);
-            $poststring .= '&x_amount=' . urlencode($extra->amount);
+            $pd['x_type'] = 'CREDIT';
+            $pd['x_trans_id'] = $order->transid;
+            $pd['x_currency_code'] = $order->currency;
+            $pd['x_invoice_num'] = $extra->orderid;
+            $pd['x_amount'] = $extra->amount;
             if ($method == AN_METHOD_CC) {
-                $poststring .= '&x_card_num=' . sprintf("%04d", intval($order->refundinfo));
+                $pd['x_card_num'] = sprintf("%04d", intval($order->refundinfo));
             }
             elseif ($method == AN_METHOD_ECHECK && empty($order->refundinfo)) {
                 $message = "Business checkings can be refunded only.";
@@ -233,7 +231,8 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 $message = "The transaction cannot be voided due to the fact that it is expired or settled.";
                 return AN_RETURNZERO;
             }
-            $poststring .= '&x_type=VOID&x_trans_id=' . urlencode($order->transid);
+            $pd['x_type'] = 'VOID';
+            $pd['x_trans_id'] = $order->transid;
             break;
         }
 
@@ -243,27 +242,20 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         }
     }
 
-    $header = 'Connection: close' . "\r\n" .
-              'Content-type: application/x-www-form-urlencoded' . "\r\n" .
-              'Content-length: ' . strlen($poststring);
-
+    $headers = array('Connection' => 'close');
     if (! (empty($CFG->an_referer) || $CFG->an_referer == "http://")) {
-        $header .= "\r\n" . 'Referer: ' . $CFG->an_referer;
+        $headers['Referer'] = $CFG->an_referer;
     }
 
-    $contextopts = array('http' => array('method' => 'POST',
-                                         'header' => $header,
-                                         'content' => $poststring));
-
-    $host = $test ? 'certification.authorize.net' : 'secure.authorize.net';
-    $context = stream_context_create($contextopts);
     @ignore_user_abort(true);
     if (intval(ini_get('max_execution_time')) > 0) {
         @set_time_limit(300);
     }
-    $data = file_get_contents("https://$host:443/gateway/transact.dll", false, $context);
+
+    $host = $test ? 'certification.authorize.net' : 'secure.authorize.net';
+    $data = download_file_content("https://$host:443/gateway/transact.dll", $headers, $pd, false, 60);
     if (!$data) {
-        $message =  "no connection to https://$host:443/gateway/transact.dll";
+        $message = "No connection to https://$host:443";
         return AN_RETURNZERO;
     }
     $response = explode(AN_ENCAP.AN_DELIM.AN_ENCAP, $data);
