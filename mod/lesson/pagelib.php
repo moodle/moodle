@@ -125,7 +125,7 @@ class page_lesson extends page_generic_activity {
         // }
 
         $navigation = build_navigation($morenavlinks, $this->modulerecord);
-        // print_header($title, $this->courserecord->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord));
+        print_header($title, $this->courserecord->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord));
 
         if (has_capability('mod/lesson:manage', $context)) {
             print_heading_with_help($activityname, 'overview', 'lesson');
