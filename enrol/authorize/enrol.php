@@ -436,14 +436,8 @@ class enrolment_plugin_authorize
             return; // notice breaks the form and xhtml later
         }
 
-        if (optional_param('verifyaccount', 0, PARAM_INT))
-        {
-            $message = '';
-            if (AN_APPROVED == authorize_verify_account($message)) {
-                notify(get_string('verifyaccountresult', 'enrol_authorize', get_string('success')));
-            } else {
-                notify(get_string('verifyaccountresult', 'enrol_authorize', $message));
-            }
+        if (optional_param('verifyaccount', 0, PARAM_INT)) {
+            notify(authorize_verify_account());
             return;
         }
 

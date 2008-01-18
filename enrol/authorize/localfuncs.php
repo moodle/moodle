@@ -148,21 +148,22 @@ function send_welcome_messages($orderdata)
         $sender = get_admin();
     }
 
-    $ei = reset($emailinfo);
-    while ($ei !== false) {
+    for($ei = reset($emailinfo); $ei !== false; ) {
         $usercourses = array();
         $lastuserid = $ei->userid;
-        for ($current = $ei; $current !== false && $current->userid == $lastuserid; $current = next($emailinfo)) {
+        for($current = $ei; $current !== false && $current->userid == $lastuserid; $current = next($emailinfo)) {
             $usercourses[] = $current->fullname;
         }
         $ei = $current;
-        $a = new stdClass;
-        $a->courses = implode("\n", $usercourses);
-        $a->profileurl = "$CFG->wwwroot/user/view.php?id=$lastuserid";
-        $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
-        $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
-        $user = get_record('user', 'id', $lastuserid);
-        @email_to_user($user, $sender, get_string("enrolmentnew", '', $SITE->shortname), $emailmessage);
+        if ($user = get_record('user', 'id', $lastuserid)) {
+            $a = new stdClass;
+            $a->name = $user->firstname;
+            $a->courses = implode("\n", $usercourses);
+            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$lastuserid";
+            $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
+            $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
+            @email_to_user($user, $sender, get_string("enrolmentnew", '', $SITE->shortname), $emailmessage);
+        }
     }
 }
 
@@ -173,7 +174,7 @@ function check_openssl_loaded()
 }
 
 
-function authorize_verify_account(&$message)
+function authorize_verify_account()
 {
     global $CFG, $USER, $SITE;
     require_once('authorizenetlib.php');
@@ -207,8 +208,12 @@ function authorize_verify_account(&$message)
     $extra->x_invoice_num = $order->id;
     $extra->x_description = 'Verify Account';
 
-    $message = '';
-    return authorize_action($order, $message, $extra, AN_ACTION_AUTH_CAPTURE, 'vis');
+    if (AN_APPROVED == authorize_action($order, $message, $extra, AN_ACTION_AUTH_CAPTURE, 'vis')) {
+        return get_string('verifyaccountresult', 'enrol_authorize', get_string('success'));
+    }
+    else {
+        return get_string('verifyaccountresult', 'enrol_authorize', $message);
+    }
 }
 
 ?>

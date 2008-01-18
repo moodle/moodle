@@ -243,46 +243,29 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         }
     }
 
-    $referer = '';
+    $header = 'Connection: close' . "\r\n" .
+              'Content-type: application/x-www-form-urlencoded' . "\r\n" .
+              'Content-length: ' . strlen($poststring);
+
     if (! (empty($CFG->an_referer) || $CFG->an_referer == "http://")) {
-        $referer = "Referer: $CFG->an_referer\r\n";
+        $header .= "\r\n" . 'Referer: ' . $CFG->an_referer;
     }
 
-    $errno = 0; $errstr = '';
+    $contextopts = array('http' => array('method' => 'POST',
+                                         'header' => $header,
+                                         'content' => $poststring));
+
     $host = $test ? 'certification.authorize.net' : 'secure.authorize.net';
-    $fp = fsockopen("ssl://$host", 443, $errno, $errstr, 60);
-    if (!$fp) {
-        $message =  "no connection: $errstr ($errno)";
-        return AN_RETURNZERO;
-    }
-
-    // critical section
+    $context = stream_context_create($contextopts);
     @ignore_user_abort(true);
     if (intval(ini_get('max_execution_time')) > 0) {
         @set_time_limit(300);
     }
-
-    fwrite($fp, "POST /gateway/transact.dll HTTP/1.0\r\n" .
-                "Host: $host\r\n" . $referer .
-                "Content-type: application/x-www-form-urlencoded\r\n" .
-                "Connection: close\r\n" .
-                "Content-length: " . strlen($poststring) . "\r\n\r\n" .
-                $poststring . "\r\n"
-    );
-
-    $tmpstr = '';
-    while(!feof($fp) && !stristr($tmpstr, 'content-length')) {
-        $tmpstr = fgets($fp, 4096);
-    }
-    if (!stristr($tmpstr, 'content-length')) {
-        $message =  "content-length error";
-        @fclose($fp);
+    $data = file_get_contents("https://$host:443/gateway/transact.dll", false, $context);
+    if (!$data) {
+        $message =  "no connection to https://$host:443/gateway/transact.dll";
         return AN_RETURNZERO;
     }
-    $length = trim(substr($tmpstr, strpos($tmpstr,'content-length')+15));
-    fgets($fp, 4096);
-    $data = fgets($fp, $length);
-    @fclose($fp);
     $response = explode(AN_ENCAP.AN_DELIM.AN_ENCAP, $data);
     if ($response === false) {
         $message = "response error";
