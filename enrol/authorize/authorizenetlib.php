@@ -95,6 +95,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
 {
     global $CFG;
     static $constpd;
+    require_once($CFG->libdir.'/filelib.php');
 
     if (!isset($constpd)) {
         $mconfig = get_config('enrol/authorize');
