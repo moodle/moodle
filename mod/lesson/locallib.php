@@ -238,7 +238,25 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     }
 
 /// Header setup
-    $navigation = build_navigation('', $cm);
+    if (in_array($currenttab, array('reportoverview', 'reportdetail'))) {
+        $navlinks = array();
+        $navlinks[] = array(
+                'name' => get_string('grades'),
+                'link' => $CFG->wwwroot . '/grade/report/index.php?id=' . $cm->course,
+                'type' => 'link');
+        $navlinks[] = array(
+                'name' => get_string('modulenameplural', $cm->modname),
+                'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/index.php?id=' . $cm->course,
+                'type' => 'activity');
+        $navlinks[] = array(
+                'name' => format_string($cm->name),
+                'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/view.php?id=' . $cm->id,
+                'type' => 'activityinstance');
+
+        $navigation = build_navigation($navlinks);
+    } else {
+        $navigation = build_navigation('', $cm);
+    }
     
 /// Print header, heading, tabs and messages
     print_header("$course->shortname: $strname", $course->fullname, $navigation,

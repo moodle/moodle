@@ -1020,7 +1020,26 @@ class assignment_base {
 
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
 
-        $navigation = build_navigation($this->strsubmissions, $this->cm);
+        $navlinks = array();
+        $navlinks[] = array(
+                'name' => get_string('grades'),
+                'link' => $CFG->wwwroot . '/grade/report/index.php?id=' . $cm->course,
+                'type' => 'link');
+        $navlinks[] = array(
+                'name' => get_string('modulenameplural', $cm->modname),
+                'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/index.php?id=' . $cm->course,
+                'type' => 'activity');
+        $navlinks[] = array(
+                'name' => format_string($cm->name),
+                'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/view.php?id=' . $cm->id,
+                'type' => 'activityinstance');
+        $navlinks[] = array(
+                'name' => $this->strsubmissions,
+                'link' => '',
+                'type' => 'link');
+        
+        $navigation = build_navigation($navlinks);
+
         print_header_simple(format_string($this->assignment->name,true), "", $navigation,
                 '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
 
@@ -1128,7 +1147,7 @@ class assignment_base {
             $sort = ' ORDER BY '.$sort;
         }
 
-        $select = 'SELECT u.id, u.firstname, u.lastname, u.picture,
+        $select = 'SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt,
                           s.id AS submissionid, s.grade, s.submissioncomment,
                           s.timemodified, s.timemarked,
                           COALESCE(SIGN(SIGN(s.timemarked) + SIGN(s.timemarked - s.timemodified)), 0) AS status ';
@@ -1152,7 +1171,7 @@ class assignment_base {
                 $final_grade = $grading_info->items[0]->grades[$auser->id];
             /// Calculate user status
                 $auser->status = ($auser->timemarked > 0) && ($auser->timemarked >= $auser->timemodified);
-                $picture = print_user_picture($auser->id, $course->id, $auser->picture, false, true);
+                $picture = print_user_picture($auser, $course->id, $auser->picture, false, true);
 
                 if (empty($auser->submissionid)) {
                     $auser->grade = -1; //no submission yet

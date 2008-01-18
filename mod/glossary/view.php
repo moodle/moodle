@@ -225,16 +225,35 @@
     $strwaitingapproval = get_string('waitingapproval', 'glossary');
 
 /// If we are in approval mode, prit special header
+    $navlinks = array();
+    $navlinks[] = array(
+            'name' => get_string('grades'),
+            'link' => $CFG->wwwroot . '/grade/report/index.php?id=' . $cm->course,
+            'type' => 'link');
+    $navlinks[] = array(
+            'name' => get_string('modulenameplural', $cm->modname),
+            'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/index.php?id=' . $cm->course,
+            'type' => 'activity');
+    $navlinks[] = array(
+            'name' => format_string($cm->name),
+            'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/view.php?id=' . $cm->id,
+            'type' => 'activityinstance');
+    
     if ($tab == GLOSSARY_APPROVAL_VIEW) {
         require_capability('mod/glossary:approve', $context);
 
-        $navigation = build_navigation($strwaitingapproval, $cm);
+        $navlinks[] = array(
+                'name' => $strwaitingapproval,
+                'link' => '',
+                'type' => 'title');
+        
+        $navigation = build_navigation($navlinks);
         print_header_simple(format_string($glossary->name), "", $navigation, "", "", true,
             update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
 
         print_heading($strwaitingapproval);
     } else { /// Print standard header
-        $navigation = build_navigation('', $cm);
+        $navigation = build_navigation($navlinks);
         print_header_simple(format_string($glossary->name), "", $navigation, "", "", true,
             update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
     }
