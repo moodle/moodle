@@ -40,7 +40,7 @@ require('tabs.php');
 print_heading($strgroupings);
 
 $data = array();
-if ($groupings = get_records('groupings', 'courseid', $course->id)) {
+if ($groupings = get_records('groupings', 'courseid', $course->id, 'name')) {
     foreach($groupings as $grouping) {
         $line = array();
         $line[0] = format_string($grouping->name);
