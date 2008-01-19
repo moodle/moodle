@@ -3044,7 +3044,9 @@ function authenticate_user_login($username, $password) {
 function complete_user_login($user) {
     global $CFG, $USER;
     
-    $USER = $user; // should not be needed, but cover for legacy code
+    $USER = $user; // this is required because we need to access preferences here!
+
+    reload_user_preferences();
 
     update_user_login_times();
     if (empty($CFG->nolastloggedin)) {
