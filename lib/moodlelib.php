@@ -7825,5 +7825,3 @@ function object_array_unique($array, $keep_key_assoc = true) {
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
-        if (!set_field('user_preferences', 'value', addslashes((string)$value), 'id', $preference->id)) {
-        $preference->value  = addslashes((string)$value);
