@@ -18,6 +18,7 @@ $file   = optional_param('file', '', PARAM_PATH);
 $text   = optional_param('text', 'No text to display', PARAM_CLEAN);
 $module = optional_param('module', 'moodle', PARAM_ALPHAEXT);
 $forcelang = optional_param('forcelang', '', PARAM_SAFEDIR);
+$skiplocal = optional_param('skiplocal', 0, PARAM_INT);     // shall _local help files be skipped?
 
 // Start the output.
 print_header(get_string('help'));
@@ -38,17 +39,18 @@ if (!empty($file)) {
         $langs = array($forcelang, 'en_utf8');
     }
     
-    // _local language packs take precedence with both forced language and non-forced language settings
-    $xlangs = array();
-    foreach ($langs as $lang) {
-        if (!empty($lang)) {
-            $xlangs[] = $lang . '_local';
-            $xlangs[] = $lang;
+    if (!$skiplocal) {
+        // _local language packs take precedence with both forced language and non-forced language settings
+        $xlangs = array();
+        foreach ($langs as $lang) {
+            if (!empty($lang)) {
+                $xlangs[] = $lang . '_local';
+                $xlangs[] = $lang;
+            }
         }
+        $langs = $xlangs;
+        unset($xlangs);
     }
-    $langs = $xlangs;
-    unset($xlangs);
-
 
 // Define possible locations for help file similar to locations for language strings
 // Note: Always retain module directory as before
