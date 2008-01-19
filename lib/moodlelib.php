@@ -3044,7 +3044,9 @@ function authenticate_user_login($username, $password) {
 function complete_user_login($user) {
     global $CFG, $USER;
     
-    $USER = $user; // should not be needed, but cover for legacy code
+    $USER = $user; // this is required because we need to access preferences here!
+
+    reload_user_preferences();
 
     update_user_login_times();
     if (empty($CFG->nolastloggedin)) {
@@ -7823,3 +7825,5 @@ function object_array_unique($array, $keep_key_assoc = true) {
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
+        if (!set_field('user_preferences', 'value', addslashes((string)$value), 'id', $preference->id)) {
+        $preference->value  = addslashes((string)$value);
