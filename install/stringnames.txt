@@ -79,6 +79,7 @@ gdversionerror
 gdversionhelp
 globalsquotes
 globalsquoteserror
+globalswarning
 help
 iconvrecommended
 info
