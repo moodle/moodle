@@ -5,6 +5,12 @@
 
 
 /**
+ * Simple class
+ */
+class object {};
+
+
+/**
  * Initializes our performance info early.
  *
  * Pairs up with get_performance_info() which is actually
