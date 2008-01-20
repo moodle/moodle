@@ -117,6 +117,7 @@ gdversionhelp
 globalsquotes
 globalsquoteserror
 globalsquoteshelp
+globalswarning
 help
 iconvrecommended
 info
