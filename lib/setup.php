@@ -488,8 +488,6 @@ global $HTTPSPAGEREQUIRED;
 
 /// Load up global environment variables
 
-    class object {};
-
     //discard session ID from POST, GET and globals to tighten security,
     //this session fixation prevention can not be used in cookieless mode
     if (empty($CFG->usesid)) {
