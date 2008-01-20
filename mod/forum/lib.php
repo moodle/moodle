@@ -1918,7 +1918,11 @@ function forum_subscribed_users($course, $forum, $groupid=0, $cache=false) {
     }
 
     if (forum_is_forcesubscribed($forum)) {
-        $results = get_course_users($course->id);     // Otherwise get everyone in the course
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $sort = "u.email ASC";
+        $fields ="u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest, u.emailstop, u.imagealt,
+                  u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.theme, u.lang, u.trackforums, u.mnethostid";
+        $results = get_users_by_capability($context, 'mod/forum:initialsubscriptions', $fields, $sort, '','','','', false, true);
     } else {
         $results = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest, u.emailstop, u.imagealt,
                                    u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.theme, u.lang, u.trackforums, u.mnethostid
