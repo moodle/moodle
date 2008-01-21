@@ -279,11 +279,8 @@ function hotpot_set_form_values(&$hotpot) {
         $hotpot->errors['reference']= get_string('error_nofilename', 'hotpot');
     }
 
-    if ($hotpot->studentfeedbackurl=='http://') {
+    if (empty($hotpot->studentfeedbackurl) || $hotpot->studentfeedbackurl=='http://') {
         $hotpot->studentfeedbackurl = '';
-    }
-
-    if (empty($hotpot->studentfeedbackurl)) {
         switch ($hotpot->studentfeedback) {
             case HOTPOT_FEEDBACK_WEBPAGE:
                 $ok = false;
@@ -1076,9 +1073,15 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
 
     global $CFG, $THEME, $USER;
 
+    if (isset($THEME->cellcontent2)) {
+        $bgcolor =  ' bgcolor="'.$THEME->cellcontent2.'"';
+    } else {
+        $bgcolor = '';
+    }
+
     print '<table border="0" cellpadding="3" cellspacing="0">';
 
-    print '<tr><td bgcolor="'.$THEME->cellcontent2.'" class="forumpostpicture" width="35" valign="top">';
+    print '<tr><td'.$bgcolor.' class="forumpostpicture" width="35" valign="top">';
     print_user_picture($activity->user->userid, $course, $activity->user->picture);
     print '</td><td width="100%"><font size="2">';
 
