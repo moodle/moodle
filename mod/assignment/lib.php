@@ -269,7 +269,7 @@ class assignment_base {
         echo '<td class="left side">&nbsp;</td>';
         echo '<td class="content">';
         echo '<div class="grade">';
-        echo get_string("grade").': '.$grade->str_grade;
+        echo get_string("grade").': '.$grade->str_long_grade;
         echo '</div>';
         echo '<div class="clearer"></div>';
 
