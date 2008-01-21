@@ -105,6 +105,11 @@
                 }
             }
 
+            // delete calendar events
+            if (!delete_records("event", "modulename", $delete)) {
+                notify("Error occurred while deleting all $strmodulename records in calendar event table");
+            }
+
             // clear course.modinfo for courses
             // that used this module...
             $sql = "UPDATE {$CFG->prefix}course
