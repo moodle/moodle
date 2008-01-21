@@ -116,7 +116,7 @@ function setup_enrolments(&$user) {
     foreach ($ldap_assignments as $ra) {
         if($ra->enrol === 'ldap') {
             error_log("Unassigning role_assignment with id '{$ra->id}' from user {$user->id} ({$user->username})");
-            role_unassign($ra->id, $user->id, 0, $ra->contextid, 'ldap');
+            role_unassign($ra->roleid, $user->id, 0, $ra->contextid, 'ldap');
         }
     }
 
