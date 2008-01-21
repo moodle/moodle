@@ -223,6 +223,7 @@ $string['globalsquoteshelp'] = '<p>Não se recomenda a combinação simultânea 
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
 </p>';
+$string['globalswarning'] = '<p><strong>Anúncio de segurança</strong>: para funcionar devidamente, o Moodle precisa que altere às suas definições actuais do PHP.<p/><p> <em>Deverá</em> usar <code>register_globals=off</code>.<p>Essa opção altera-se editando o seu ficheiro  <code>php.ini</code>, ou os ficheiros de configuração do Apache/IIS <br />ou o ficheiro <code>.htaccess</code>, e reiniciando o servidor.</p>';
 $string['help'] = 'Ajuda';
 $string['iconvrecommended'] = 'A instalação da biblioteca opcional ICONV é altamente recomendada para um melhor desempenho do sítio, principalmente se o seu sítio suporta linguagens não latinas.';
 $string['info'] = 'Informação';

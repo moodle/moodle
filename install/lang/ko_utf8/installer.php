@@ -218,6 +218,7 @@ $string['globalsquoteshelp'] = '<p>magic_quotes_gpc = Off 과 register_globals =
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
 </p>';
+$string['globalswarning'] = '<p><strong>보안 경고</strong>  : 무들이 바르게 작동하기 위해서는, 현재의 일부 PHP설정을 바꿔야 합니다.<p/><p><em>반드시</em>  <code>register_globals=off</code>로 설정해야 합니다.<br /> 이는 <code>php.ini</code>나 Apache/IIS의  <code>.htaccess</code> 파일의 변수를 조정하면 됩니다.</p>';
 $string['help'] = '도움';
 $string['iconvrecommended'] = '당신의 사이트가 라틴언어계열이 아닌 언어를 지원하는 경우, 사이트의 성능을 향상시키기 위해서는 ICONV라이브러리를 설치할 것을 권장합니다.';
 $string['info'] = '정보';
