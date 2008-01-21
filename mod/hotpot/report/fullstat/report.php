@@ -259,7 +259,7 @@ class hotpot_report extends hotpot_default_report {
 			$br = $is_html ? '<br />' : "\n";
 			$space = $is_html ? '&nbsp;' : "";
 			$no_value = $is_html ? '--' : "";
-			$help_button = $is_html ? helpbutton("discrimination", "", "quiz", true, false, "", true) : "";
+			$help_button = $is_html ? helpbutton("discrimination", get_string('discrimination', 'quiz'), "quiz", true, false, "", true) : "";
 			// table properties
 			unset($table);
 			$table->border = 1;
