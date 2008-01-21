@@ -68,32 +68,7 @@
     }
 
     // ...display header...
-
-    if ($action == 'teachersview') {
-        $navlinks = array();
-        $navlinks[] = array(
-                'name' => get_string('grades'),
-                'link' => $CFG->wwwroot . '/grade/report/index.php?id=' . $cm->course,
-                'type' => 'link');
-        $navlinks[] = array(
-                'name' => get_string('modulenameplural', $cm->modname),
-                'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/index.php?id=' . $cm->course,
-                'type' => 'activity');
-        $navlinks[] = array(
-                'name' => format_string($cm->name),
-                'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/view.php?id=' . $cm->id,
-                'type' => 'activityinstance');
-        $navlinks[] = array(
-                'name' => $action,
-                'link' => '',
-                'type' => 'title');
-        
-
-        $navigation = build_navigation($navlinks);    
-    } else {
     $navigation = build_navigation($action, $cm);    
-    }
-
     print_header_simple(format_string($workshop->name), "", $navigation,
                   "", "", true, update_module_button($cm->id, $course->id, $strworkshop), navmenu($course, $cm));
 
