@@ -261,6 +261,9 @@ define ('BLOG_GLOBAL_LEVEL', 5);
  */
 define('TAG_MAX_LENGTH', 50);
 
+if (!defined('SORT_LOCALE_STRING')) { // PHP < 4.4.0 - TODO: remove in 2.0
+    define('SORT_LOCALE_STRING', SORT_STRING);
+}
 
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
