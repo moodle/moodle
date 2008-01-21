@@ -193,15 +193,24 @@
         $groupby = 'userid';
         $records = hotpot_get_records_groupby($function, $fieldnames, $table, $select, $groupby);
 
-        $ids = array();
-        foreach ($records as $record) {
-            $ids[] = $record->clickreportid;
+        $select = '';
+        if ($records) {
+            $ids = array();
+            foreach ($records as $record) {
+                $ids[] = $record->clickreportid;
+            }
+            if (count($ids)) {
+                $select = "a.clickreportid IN (".join(',', $ids).")";
+            }
         }
-        $select = "a.clickreportid IN (".join(',', $ids).")";
     }
 
     // pick out last attempt in each clickreport series
-    $cr_attempts = hotpot_get_records_groupby('MAX', array('timefinish', 'id'), $table, $select, 'clickreportid');
+    if ($select) {
+        $cr_attempts = hotpot_get_records_groupby('MAX', array('timefinish', 'id'), $table, $select, 'clickreportid');
+    } else {
+        $cr_attempts = array();
+    }
 
     $fields = 'a.*, u.firstname, u.lastname, u.picture';
     if ($mode=='click') {
