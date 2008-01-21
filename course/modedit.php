@@ -112,13 +112,31 @@
         $form->return           = $return;
         $form->update           = $update;
 
-        // add existing outcomes
         if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$form->modulename,
                                            'iteminstance'=>$form->instance, 'courseid'=>$COURSE->id))) {
+            // add existing outcomes
             foreach ($items as $item) {
                 if (!empty($item->outcomeid)) {
                     $form->{'outcome_'.$item->outcomeid} = 1;
                 }
+            }
+
+            // set category if present
+            $gradecat = false;
+            foreach ($items as $item) {
+                if ($gradecat === false) {
+                    $gradecat = $item->categoryid;
+                    continue;
+                }
+                if ($gradecat != $item->categoryid) {
+                    //mixed categories
+                    $gradecat = false;
+                    break;
+                }
+            }
+            if ($gradecat !== false) {
+                // do not set if mixed categories present
+                $form->gradecat = $gradecat;
             }
         }
 
@@ -300,12 +318,37 @@
             error("Data submitted is invalid.");
         }
 
-        //sync idnumber with grade_item
+        // sync idnumber with grade_item
         if ($grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$fromform->modulename,
                      'iteminstance'=>$fromform->instance, 'itemnumber'=>0, 'courseid'=>$COURSE->id))) {
             if ($grade_item->idnumber != $fromform->cmidnumber) {
                 $grade_item->idnumber = $fromform->cmidnumber;
                 $grade_item->update();
+            }
+        }
+
+        $items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$fromform->modulename,
+                                             'iteminstance'=>$fromform->instance, 'courseid'=>$COURSE->id));
+
+        // create parent category if requested and move to correct parent category
+        if ($items and isset($fromform->gradecat)) {
+            if ($fromform->gradecat == -1) {
+                $grade_category = new grade_category();
+                $grade_category->courseid = $COURSE->id;
+                $grade_category->fullname = stripslashes($fromform->name);
+                $grade_category->insert();
+                if ($grade_item) {
+                    $parent = $grade_item->get_parent_category();
+                    $grade_category->set_parent($parent->id);
+                }
+                $fromform->gradecat = $grade_category->id;
+            }
+            foreach ($items as $itemid=>$unused) {
+                $items[$itemid]->set_parent($fromform->gradecat);
+                if ($item->id == $grade_item->id) {
+                    // use updated grade_item
+                    $grade_item = $item;
+                }
             }
         }
 
@@ -318,12 +361,9 @@
 
                 if (array_key_exists($elname, $fromform) and $fromform->$elname) {
                     // we have a request for new outcome grade item
-                    $grade_item = new grade_item();
-
                     // Outcome grade_item.itemnumber start at 1000
                     $max_itemnumber = 999;
-                    if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$fromform->modulename,
-                                 'iteminstance'=>$fromform->instance, 'courseid'=>$COURSE->id))) {
+                    if ($items) {
                         $exists = false;
                         foreach($items as $item) {
                             if ($item->outcomeid == $outcome->id) {
@@ -341,61 +381,26 @@
                     if ($exists) {
                         continue;
                     }
-                    $grade_item->courseid     = $COURSE->id;
-                    $grade_item->itemtype     = 'mod';
-                    $grade_item->itemmodule   = $fromform->modulename;
-                    $grade_item->iteminstance = $fromform->instance;
-                    $grade_item->itemnumber   = $max_itemnumber + 1;
-                    $grade_item->itemname     = $outcome->fullname;
-                    $grade_item->outcomeid    = $outcome->id;
-                    $grade_item->gradetype    = GRADE_TYPE_SCALE;
-                    $grade_item->scaleid      = $outcome->scaleid;
 
-                    $grade_item->insert();
+                    $outcome_item = new grade_item();
+                    $outcome_item->courseid     = $COURSE->id;
+                    $outcome_item->itemtype     = 'mod';
+                    $outcome_item->itemmodule   = $fromform->modulename;
+                    $outcome_item->iteminstance = $fromform->instance;
+                    $outcome_item->itemnumber   = $max_itemnumber + 1;
+                    $outcome_item->itemname     = $outcome->fullname;
+                    $outcome_item->outcomeid    = $outcome->id;
+                    $outcome_item->gradetype    = GRADE_TYPE_SCALE;
+                    $outcome_item->scaleid      = $outcome->scaleid;
+                    $outcome_item->insert();
 
-                    // TODO comment on these next 4 lines
-                    if ($item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$grade_item->itemmodule,
-                                 'iteminstance'=>$grade_item->iteminstance, 'itemnumber'=>0, 'courseid'=>$COURSE->id))) {
-                        $grade_item->set_parent($item->categoryid);
-                        $grade_item->move_after_sortorder($item->sortorder);
-                    }
-                    $grade_items[] = $grade_item;
-                }
-            }
+                    // move the new outcome into correct category and fix sortorder if needed
+                    if ($grade_item) {
+                        $outcome_item->set_parent($grade_item->categoryid);
+                        $outcome_item->move_after_sortorder($grade_item->sortorder);
 
-            // Create a grade_category to represent this module, if outcomes have been attached
-            if (!empty($grade_items)) {
-                // Add the module's normal grade_item as a child of this category
-                $item_params = array('itemtype'=>'mod',
-                                     'itemmodule'=>$fromform->modulename,
-                                     'iteminstance'=>$fromform->instance,
-                                     'itemnumber'=>0,
-                                     'courseid'=>$COURSE->id);
-                $item = grade_item::fetch($item_params);
-
-                // Only create the category if it will contain at least 2 items
-                if ($item OR count($grade_items) > 1) { // If we are here it means there is at least 1 outcome
-                    $cat_params = array('courseid'=>$COURSE->id, 'fullname'=>$fromform->name);
-                    $grade_category = grade_category::fetch($cat_params);
-
-                    if (!$grade_category) {
-                        $grade_category = new grade_category($cat_params);
-                        $grade_category->courseid = $COURSE->id;
-                        $grade_category->fullname = $fromform->name;
-                        $grade_category->insert();
-                    }
-
-                    $sortorder = $grade_category->sortorder;
-
-                    if ($item) {
-                        $item->set_parent($grade_category->id);
-                        $sortorder = $item->sortorder;
-                    }
-
-                    // Add the outcomes as children of this category
-                    foreach ($grade_items as $gi) {
-                        $gi->set_parent($grade_category->id);
-                        $gi->move_after_sortorder($sortorder);
+                    } else if (isset($fromform->gradecat)) {
+                        $outcome_item->set_parent($fromform->gradecat);
                     }
                 }
             }

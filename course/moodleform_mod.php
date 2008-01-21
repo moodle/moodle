@@ -28,6 +28,10 @@ class moodleform_mod extends moodleform {
      * @var mixed
      */
     var $_cm;
+    /**
+     * List of modform features
+     */
+    var $_features;
 
     function moodleform_mod($instance, $section, $cm) {
         $this->_instance = $instance;
@@ -44,22 +48,52 @@ class moodleform_mod extends moodleform {
     function data_preprocessing(&$default_values){
     }
 
+    /**
+     * Each module which defines definition_after_data() must call this method using parent::definition_after_data();
+     */
     function definition_after_data() {
-        global $COURSE;
+        global $CFG, $COURSE;
         $mform =& $this->_form;
 
         if ($id = $mform->getElementValue('update')) {
             $modulename = $mform->getElementValue('modulename');
             $instance   = $mform->getElementValue('instance');
 
-            if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename,
-                                               'iteminstance'=>$instance, 'courseid'=>$COURSE->id))) {
-                foreach ($items as $item) {
-                    if (!empty($item->outcomeid)) {
-                        $elname = 'outcome_'.$item->outcomeid;
-                        if ($mform->elementExists($elname)) {
-                            $mform->hardFreeze($elname); // prevent removing of existing outcomes
+            if ($this->_features->gradecat) {
+                $gradecat = false;
+                if (!empty($CFG->enableoutcomes) and $this->_features->outcomes) {
+                    if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
+                        $gradecat = true;
+                    }
+                }
+                if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename,
+                                                   'iteminstance'=>$instance, 'courseid'=>$COURSE->id))) {
+                    foreach ($items as $item) {
+                        if (!empty($item->outcomeid)) {
+                            $elname = 'outcome_'.$item->outcomeid;
+                            if ($mform->elementExists($elname)) {
+                                $mform->hardFreeze($elname); // prevent removing of existing outcomes
+                            }
                         }
+                    }
+                    foreach ($items as $item) {
+                        if (is_bool($gradecat)) {
+                            $gradecat = $item->categoryid;
+                            continue;
+                        }
+                        if ($gradecat != $item->categoryid) {
+                            //mixed categories
+                            $gradecat = false;
+                            break;
+                        }
+                    }
+                }
+
+                if ($gradecat === false) {
+                    // items and outcomes in different categories - remove the option
+                    // TODO: it might be better to add a "Mixed categories" text instead
+                    if ($mform->elementExists('gradecat')) {
+                        $mform->removeElement('gradecat');
                     }
                 }
             }
@@ -76,7 +110,7 @@ class moodleform_mod extends moodleform {
 
         } else if (!$mform->elementExists('groupmode') and $mform->elementExists('groupmembersonly')) {
             $mform->disabledIf('groupingid', 'groupmembersonly', 'notchecked');
-            
+
         } else if (!$mform->elementExists('groupmode') and !$mform->elementExists('groupmembersonly')) {
             // groupings have no use without groupmode or groupmembersonly
             if ($mform->elementExists('groupingid')) {
@@ -146,29 +180,40 @@ class moodleform_mod extends moodleform {
         // deal with legacy $supportgroups param
         if ($features === true or $features === false) {
             $groupmode = $features;
-            $features = new object();
-            $features->groups = $groupmode;
+            $this->_features = new object();
+            $this->_features->groups = $groupmode;
 
         } else if (is_array($features)) {
-            $features = (object)$features;
+            $this->_features = (object)$features;
 
         } else if (empty($features)) {
-            $features = new object();
+            $this->_features = new object();
+
+        } else {
+            $this->_features = $features;
         }
 
-        if (!isset($features->groups)) {
-            $features->groups = true;
+        if (!isset($this->_features->groups)) {
+            $this->_features->groups = true;
         }
 
-        if (!isset($features->groupings)) {
-            $features->groupings = false;
+        if (!isset($this->_features->groupings)) {
+            $this->_features->groupings = false;
         }
 
-        if (!isset($features->groupmembersonly)) {
-            $features->groupmembersonly = false;
+        if (!isset($this->_features->groupmembersonly)) {
+            $this->_features->groupmembersonly = false;
         }
 
-        if (!empty($CFG->enableoutcomes)) {
+        if (!isset($this->_features->outcomes)) {
+            $this->_features->outcomes = true;
+        }
+
+        if (!isset($this->_features->gradecat)) {
+            $this->_features->gradecat = true;
+        }
+
+        if (!empty($CFG->enableoutcomes) and $this->_features->outcomes) {
             if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
                 $mform->addElement('header', 'modoutcomes', get_string('outcomes', 'grades'));
                 foreach($outcomes as $outcome) {
@@ -178,7 +223,7 @@ class moodleform_mod extends moodleform {
         }
 
         $mform->addElement('header', 'modstandardelshdr', get_string('modstandardels', 'form'));
-        if ($features->groups) {
+        if ($this->_features->groups) {
             $options = array(NOGROUPS       => get_string('groupsnone'),
                              SEPARATEGROUPS => get_string('groupsseparate'),
                              VISIBLEGROUPS  => get_string('groupsvisible'));
@@ -187,7 +232,7 @@ class moodleform_mod extends moodleform {
         }
 
         if (!empty($CFG->enablegroupings)) {
-            if ($features->groupings or $features->groupmembersonly) {
+            if ($this->_features->groupings or $this->_features->groupmembersonly) {
                 //groupings selector - used for normal grouping mode or also when restricting access with groupmembersonly
                 $options = array();
                 $options[0] = get_string('none');
@@ -200,7 +245,7 @@ class moodleform_mod extends moodleform {
                 $mform->setAdvanced('groupingid');
             }
 
-            if ($features->groupmembersonly) {
+            if ($this->_features->groupmembersonly) {
                 $mform->addElement('checkbox', 'groupmembersonly', get_string('groupmembersonly', 'group'));
                 $mform->setAdvanced('groupmembersonly');
             }
@@ -208,6 +253,11 @@ class moodleform_mod extends moodleform {
 
         $mform->addElement('modvisible', 'visible', get_string('visible'));
         $mform->addElement('text', 'cmidnumber', get_string('idnumber'));
+
+        if ($this->_features->gradecat) {
+            $categories = grade_get_categories_menu($COURSE->id, true);
+            $mform->addElement('select', 'gradecat', get_string('gradecategory', 'grades'), $categories);
+        }
 
         $this->standard_hidden_coursemodule_elements();
     }
