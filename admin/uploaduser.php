@@ -100,7 +100,7 @@ if (empty($iid)) {
 
     } else {
         admin_externalpage_print_header();
-        print_heading_with_help(get_string('uploadusers'), 'uploadusers2');
+        print_heading_with_help(get_string('uploadusers'), 'uploadusers3');
         $mform->display();
         admin_externalpage_print_footer();
         die;
