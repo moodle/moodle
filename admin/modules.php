@@ -144,6 +144,10 @@
                 notify("Error occurred while deleting the $strmodulename records from the config table");
             }
 
+            // cleanup the gradebook
+            require_once($CFG->libdir.'/gradelib.php');
+            grade_uninstalled_module($module->name);
+
             // Then the tables themselves
             drop_plugin_tables($module->name, "$CFG->dirroot/mod/$module->name/db/install.xml", false);
 

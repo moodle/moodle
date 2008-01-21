@@ -1136,6 +1136,26 @@ function remove_course_grades($courseid, $showfeedback) {
 }
 
 /**
+ * Does gradebook cleanup when module uninstalled.
+ */
+function grade_uninstalled_module($modname) {
+    global $CFG;
+
+    $sql = "SELECT *
+              FROM {$CFG->prefix}grade_items
+             WHERE itemtype='mod' AND itemmodule='$modname'";
+
+    // go all items for this module and delete them including the grades
+    if ($rs = get_recordset_sql($sql)) {
+        while ($item = rs_fetch_next_record($rs)) {
+            $grade_item = new grade_item($item, false);
+            $grade_item->delete('moduninstall');
+        }
+        rs_close($rs);
+    }
+}
+
+/**
  * Grading cron job
  */
 function grade_cron() {
