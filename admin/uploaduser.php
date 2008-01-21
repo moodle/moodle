@@ -553,7 +553,7 @@ if ($formdata = $mform->is_cancelled()) {
             }
         }
 
-        // find course enrolments, groups and roles/types
+        // find course enrolments, groups, roles/types and enrol periods
         foreach ($columns as $column) {
             if (!preg_match('/^course\d+$/', $column)) {
                 continue;
@@ -607,11 +607,23 @@ if ($formdata = $mform->is_cancelled()) {
                     $rid = $ccache[$shortname]->defaultrole;
                 }
             }
+
+            // find duration
+            $timestart = 0;
+            $timeend   = 0;
+            if (!empty($user->{'enrolperiod'.$i})) {
+                $duration = (int)$user->{'enrolperiod'.$i} * 86400; // convert days to seconds
+                if ($duration > 0) { // sanity check
+                    $timestart = time();
+                    $timeend   = $timestart + $duration;
+                }
+            }
+
             if ($rid) {
                 $a = new object();
                 $a->course = $shortname;
                 $a->role   = $rolecache[$rid]->name;
-                if (role_assign($rid, $user->id, 0, $coursecontext->id)) {
+                if (role_assign($rid, $user->id, 0, $coursecontext->id, $timestart, $timeend)) {
                     $upt->track('enrolments', get_string('enrolledincourserole', '', $a));
                 } else {
                     $upt->track('enrolments', get_string('enrolledincoursenotrole', '', $a), 'error');
@@ -840,7 +852,8 @@ function validate_user_upload_columns(&$columns) {
         $field = $columns[$key];
         if (!in_array($field, $STD_FIELDS) && !in_array($field, $PRF_FIELDS) &&// if not a standard field and not an enrolment field, then we have an error
             !preg_match('/^course\d+$/', $field) && !preg_match('/^group\d+$/', $field) &&
-            !preg_match('/^type\d+$/', $field) && !preg_match('/^role\d+$/', $field)) {
+            !preg_match('/^type\d+$/', $field) && !preg_match('/^role\d+$/', $field) &&
+            !preg_match('/^enrolperiod\d+$/', $field)) {
             return get_string('invalidfieldname', 'error', $field);
         }
         if (in_array($field, $processed)) {
