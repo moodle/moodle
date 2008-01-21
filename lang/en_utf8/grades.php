@@ -207,6 +207,7 @@ $string['gradeletter'] = 'Grade letter';
 $string['gradeletters'] = 'Grade letters';
 $string['gradeletterhelp'] = 'Grade letter Help';
 $string['gradeletternote'] = 'To delete a grade letter just empty any of the<br /> three text areas for that letter and click submit.';
+$string['gradelong'] = '$a->grade / $a->max';
 $string['grademax'] = 'Maximum grade';
 $string['grademaxhelp'] = 'The maximum allowable grade for this grade item.';
 $string['grademin'] = 'Minimum grade';

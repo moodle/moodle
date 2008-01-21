@@ -348,14 +348,24 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
 
                         // create text representation of grade
                         if (in_array($grade_item->id, $needsupdate)) {
-                            $grade->grade     = false;
-                            $grade->str_grade = get_string('error');
+                            $grade->grade          = false;
+                            $grade->str_grade      = get_string('error');
+                            $grade->str_long_grade = $grade->str_grade;
 
                         } else if (is_null($grade->grade)) {
-                            $grade->str_grade = '-';
+                            $grade->str_grade      = '-';
+                            $grade->str_long_grade = $grade->str_grade;
 
                         } else {
                             $grade->str_grade = grade_format_gradevalue($grade->grade, $grade_item);
+                            if ($grade_item->gradetype == GRADE_TYPE_SCALE or $grade_item->get_displaytype() != GRADE_DISPLAY_TYPE_REAL) {
+                                $grade->str_long_grade = $grade->str_grade;
+                            } else {
+                                $a = new object();
+                                $a->grade = $grade->str_grade;
+                                $a->max   = grade_format_gradevalue($grade_item->grademax, $grade_item);
+                                $grade->str_long_grade = get_string('gradelong', 'grades', $a);
+                            }
                         }
 
                         // create html representation of feedback
