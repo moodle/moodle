@@ -620,6 +620,40 @@ function grade_format_gradevalue($value, &$grade_item, $localized=true, $display
 }
 
 /**
+ * Returns grade options for gradebook category menu
+ * @param int $courseid
+ * @param bool $includenew include option for new category (-1)
+ * @return array of grade categories in course
+ */
+function grade_get_categories_menu($courseid, $includenew=false) {
+    $result = array();
+    if (!$categories = grade_category::fetch_all(array('courseid'=>$courseid))) {
+        //make sure course category exists
+        if (!grade_category::fetch_course_category()) {
+            debugging('Can not create course grade category!');
+            return $result;
+        }
+        $categories = grade_category::fetch_all(array('courseid'=>$courseid));
+    }
+    foreach ($categories as $key=>$category) {
+        if ($category->is_course_category()) {
+            $result[$category->id] = get_string('uncategorised', 'grades');
+            unset($categories[$key]);
+        }
+    }
+    if ($includenew) {
+        $result[-1] = get_string('newcategory', 'grades');
+    }
+    $cats = array();
+    foreach ($categories as $category) {
+        $cats[$category->id] = $category->get_name();
+    }
+    asort($cats, SORT_LOCALE_STRING);
+
+    return ($result+$cats);
+}
+
+/**
  * Returns grade letters array used in context
  * @param object $context object or null for defaults
  * @return array of grade_boundary=>letter_string
