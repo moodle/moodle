@@ -629,7 +629,7 @@ function grade_get_categories_menu($courseid, $includenew=false) {
     $result = array();
     if (!$categories = grade_category::fetch_all(array('courseid'=>$courseid))) {
         //make sure course category exists
-        if (!grade_category::fetch_course_category()) {
+        if (!grade_category::fetch_course_category($courseid)) {
             debugging('Can not create course grade category!');
             return $result;
         }
