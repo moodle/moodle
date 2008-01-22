@@ -12,7 +12,7 @@
 $string['admindirerror'] = 'Belirtilen yönetici dizini hatalı';
 $string['admindirname'] = 'Yönetici Dizini';
 $string['admindirsettinghead'] = 'Yönetici dizini ayarlanıyor...';
-$string['admindirsettingsub'] = 'Bazı web hostingler kontrol paneline ulaşmak için /admin olarak belirtilmiş bir URL kullanıyor. Maalesef, bu Moodle yönetici sayfalarıyla karışıklığa sebep olmaktadır. Yönetici dizininin ismini kurulum sırasında değiştirerek bu sorunu ortadan kaldırabilirsiniz. Örnek: <br /><br /><b>moodleadmin</b><br /> <br />Bu Moodle içinde yönetici linklerini düzeltecektir.';
+$string['admindirsettingsub'] = 'Bazı web hostingler, kontrol paneline erişmek için /admin olarak belirtilmiş bir URL kullanır. Maalesef, bu Moodle yönetici sayfalarıyla karışıklığa sebep olmaktadır. Yönetici dizininin ismini kurulum sırasında değiştirerek bu sorunu ortadan kaldırabilirsiniz. Örnek: <br /><br /><b>moodleadmin</b><br /> <br />Bu Moodle içinde yönetici linklerini düzeltecektir.';
 $string['bypassed'] = 'Geçti';
 $string['cannotcreatelangdir'] = 'Dil dizini oluşturulamıyor.';
 $string['cannotcreatetempdir'] = 'Geçici dizin oluşturulamıyor.';
@@ -30,7 +30,7 @@ $string['closewindow'] = 'Bu pencereyi kapat';
 $string['compatibilitysettingshead'] = 'PHP ayarlarınız kontrol ediliyor...';
 $string['compatibilitysettingssub'] = 'Moodle\'ın düzgün çalışması için sunucunuz bütün testleri geçti.';
 $string['componentisuptodate'] = 'Bileşen günceldir.';
-$string['configfilenotwritten'] = 'Kurulum programı, Moodle dizini yazılabilir olmadığından dolayı seçtiğiniz ayarları içeren bir config.php dosyası oluşturamıyor.  Aşağıdaki kodu kopyalayıp bu kodu config.php dosyası içine yapıştırıp Moodle kök dizinine oluşturduğunuz dosyayı yükleyebilirsiniz.';
+$string['configfilenotwritten'] = 'Kurulum programı, Moodle dizini yazılabilir olmadığından dolayı seçtiğiniz ayarları içeren bir config.php dosyası oluşturamıyor. Aşağıdaki kodu kopyalayıp bu kodu config.php dosyası içine yapıştırıp Moodle kök dizinine oluşturduğunuz dosyayı yükleyebilirsiniz.';
 $string['configfilewritten'] = 'config.php dosyası başarıyla oluşturuldu';
 $string['configurationcompletehead'] = 'Yapılandırma tamamlandı';
 $string['configurationcompletesub'] = 'Ana moodle dizine yapılandırma dosyasının kaydedilmesi için girişimde bulunuldu.';
@@ -73,6 +73,12 @@ $string['databasesettingssub_mysql'] = '<b>Tipi:</b> MySQL<br />
 <b>Kullanıcı:</b> veritabanı kullanıcısı<br />
 <b>Şifre:</b> kullanıcı şifresi<br />
 <b>Tablo öneki:</b> tüm tablo isimleri için ön ek (isteğe bağlı)';
+$string['databasesettingssub_mysqli'] = '<b>Tipi:</b> Geliştirilmiş MySQL<br />
+<b>Sunucu:</b> ör: localhost veya db.iss.com<br />
+<b>Adı:</b> veritabanı adı, ör: moodle<br />
+<b>Kullanıcı:</b> veritabanı kullanıcısı<br />
+<b>Şifre:</b> kullanıcı şifresi<br />
+<b>Tablo öneki:</b> tüm tablo isimleri için ön ek (isteğe bağlı)';
 $string['databasesettingssub_oci8po'] = '<b>Tipi:</b> Oracle<br />
 <b>Sunucu:</b> kullanılmaz, boş bırakılmalı<br />
 <b>Adı:</b> tnsnames.ora bağlantısına verilen ad<br />
@@ -91,6 +97,7 @@ $string['databasesettingssub_postgres7'] = '<b>Tipi:</b> PostgreSQL<br />
 <b>Kullanıcı:</b> veritabanı kullanıcısı<br />
 <b>Şifre:</b> kullanıcı şifresi<br />
 <b>Tablo öneki:</b> tüm tablo isimleri için ön ek (gerekli)';
+$string['databasesettingswillbecreated'] = '<b>Not:</b> Kurulum programı veritabanı yoksa otomatikmen veritabanını oluşturmayı deneyecektir.';
 $string['dataroot'] = 'Veri Dizini';
 $string['datarooterror'] = 'Belirtilen \'Veri Dizini\' bulunamadı veya oluşturulamadı. Dizin yolunu düzenleyin veya bu dizini kendiniz oluşturun.';
 $string['dbconnectionerror'] = 'Belirtiğiniz veritabanına bağlantı kuramadık. Lütfen veritabanı ayarlarını kontrol edin.';
@@ -120,21 +127,23 @@ $string['dirroot'] = 'Moodle Dizini';
 $string['dirrooterror'] = '\'Moodle Dizini\' ayarları hatalı görünüyor - Burada bir Moodle kurulumu bulunamadı. Aşağıdaki değer yeniden ayarlandı.';
 $string['download'] = 'İndir';
 $string['downloadedfilecheckfailed'] = 'İndirilmiş dosya kontrol hatası';
-$string['downloadlanguagebutton'] = 'Dil paketini $a indir';
+$string['downloadlanguagebutton'] = '&quot;$a&quot; dil paketini indir';
 $string['downloadlanguagehead'] = 'Dil paketi indir';
 $string['downloadlanguagenotneeded'] = 'Varsayılan dil paketini \"$a\" kullanarak kurulum işlemine devam edebilirsiniz.';
-$string['downloadlanguagesub'] = 'Şu anda bir dil paketi indirme ve bu dilde kuruluma devam etme seçeneğiniz var.<br /><br />Dil paketini indiremezseniz kurulum işlemi İngilizce ile devam edecektir. (Kurulum işlemi bittiğinde ek dil paketlerini indirme ve kurma fırsatınız vardır.)';
+$string['downloadlanguagesub'] = 'Şu anda bir dil paketi indirme ve bu dilde kuruluma devam etme seçeneğiniz var.<br /><br />Dil paketini indiremezseniz kurulum işlemi İngilizce ile devam edecektir. (Kurulum işlemi bittiğinde ek dil paketlerini indirme ve kurma imkanınız vardır.)';
 $string['environmenterrortodo'] = 'Bu Moodle sürümünü kurmaya başlamadan önce yukarıda bulunan bütün ortam sorunlarını (hatalarını) çözmeniz gerekiyor!';
 $string['environmenthead'] = 'Ortam kontrol ediliyor...';
+$string['environmentrecommendcustomcheck'] = 'bu test hata verirse önemli bir sorunu gösterir';
 $string['environmentrecommendinstall'] = 'yüklenmesi/etkinleştirilmesi tavsiye edilir';
 $string['environmentrecommendversion'] = 'sürüm $a->needed tavsiye edilir ve şu anda $a->current çalışıyor';
+$string['environmentrequirecustomcheck'] = 'bu test geçmeli';
 $string['environmentrequireinstall'] = 'yüklenmesi/etkinleştirilmesi gerekli';
 $string['environmentrequireversion'] = 'sürüm $a->needed gerekli ve şu anda $a->current çalışıyor';
-$string['environmentsub'] = 'Çeşitli bileşenlerin sisteminizle uyum içinde olup olmadığını kontrol ediyoruz';
+$string['environmentsub'] = 'Çeşitli bileşenlerin sisteminizle uyum içinde olup olmadığı kontrol ediliyor';
 $string['environmentxmlerror'] = 'Ortam verisini okurken hata ($a->error_code)';
 $string['error'] = 'Hata';
 $string['fail'] = 'Hata';
-$string['fileuploads'] = 'Dosya Göndermeleri';
+$string['fileuploads'] = 'Dosya Yüklemeleri';
 $string['fileuploadserror'] = 'Bu açık olmalı';
 $string['gdversion'] = 'GD sürümü';
 $string['gdversionerror'] = 'GD kütüphanesi resimleri oluşturma ve işleme özelliği sunmalı';
@@ -194,6 +203,8 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Siteniz SADECE iso-8859-1 (latin) dillerini kullanıyorsa şimdiki kurulu  MySQL 4.1.12 (veya yüksek) veritabanını kullanmaya devam edebilirsiniz.';
 $string['mysql416required'] = 'Moodle 1.6 için ilerde tüm verilerin UTF-8\'e çevrilebilmesinin garantilenmesi için en az MySQL 4.1.16 kurulu olması gerekir.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP, MySQL ile iletişim kurabilmek için mysql uzantısı düzgün bir şekilde yapılandırılmamış. Lütfen php.ini dosyasını kontrol edin veya PHP\'yi tekrar derleyin.';
+$string['mysqli'] = 'Geliştirilmiş MySQL (mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP, MySQLi ile iletişim kurabilmek için mysqli uzantısı düzgün bir şekilde yapılandırılmamış. Lütfen php.ini dosyasını kontrol edin veya PHP\'yi tekrar derleyin. MySQLi uzantısı PHP4 te kullanılamaz.';
 $string['name'] = 'Ad';
 $string['next'] = 'Sonraki';
 $string['oci8po'] = 'Oracle (oci8po)';
