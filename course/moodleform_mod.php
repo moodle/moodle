@@ -213,8 +213,10 @@ class moodleform_mod extends moodleform {
             $this->_features->gradecat = true;
         }
 
+        $outcomesused = false; 
         if (!empty($CFG->enableoutcomes) and $this->_features->outcomes) {
             if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
+                $outcomesused = true; 
                 $mform->addElement('header', 'modoutcomes', get_string('outcomes', 'grades'));
                 foreach($outcomes as $outcome) {
                     $mform->addElement('advcheckbox', 'outcome_'.$outcome->id, $outcome->get_name());
@@ -255,7 +257,7 @@ class moodleform_mod extends moodleform {
         $mform->addElement('text', 'cmidnumber', get_string('idnumber'));
 
         if ($this->_features->gradecat) {
-            $categories = grade_get_categories_menu($COURSE->id, true);
+            $categories = grade_get_categories_menu($COURSE->id, $outcomesused);
             $mform->addElement('select', 'gradecat', get_string('gradecategory', 'grades'), $categories);
         }
 
