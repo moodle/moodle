@@ -282,6 +282,7 @@
     }
 
     print_container_end();
+    echo '</div>';
 
     echo '</div>';
     echo '<div class="clearer"></div>';
