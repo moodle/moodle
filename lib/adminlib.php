@@ -3379,7 +3379,27 @@ class admin_setting_gradecat_combo extends admin_setting {
         $forced = !empty($data['forced']);
         $adv    = !empty($data['adv']);
 
-        $return = '<select class="form-select" id="'.$this->get_id().'" name="'.$this->get_full_name().'[value]">';
+        $default = $this->get_defaultsetting();
+        if (!is_null($default)) {
+            $defaultinfo = array();
+            if (isset($this->choices[$default['value']])) {
+                $defaultinfo[] = $this->choices[$default['value']];
+            }
+            if (!empty($default['forced'])) {
+                $defaultinfo[] = get_string('force');
+            }
+            if (!empty($default['adv'])) {
+                $defaultinfo[] = get_string('advanced');
+            }
+            $defaultinfo = implode(', ', $defaultinfo);
+            
+        } else {
+            $defaultinfo = NULL;
+        }
+
+
+        $return = '<div class="form-group">';
+        $return .= '<select class="form-select" id="'.$this->get_id().'" name="'.$this->get_full_name().'[value]">';
         foreach ($this->choices as $key => $val) {
             // the string cast is needed because key may be integer - 0 is equal to most strings!
             $return .= '<option value="'.$key.'"'.((string)$key==$value ? ' selected="selected"' : '').'>'.$val.'</option>';
@@ -3389,8 +3409,9 @@ class admin_setting_gradecat_combo extends admin_setting {
                   .'<label for="'.$this->get_id().'force">'.get_string('force').'</label>';
         $return .= '<input type="checkbox" class="form-checkbox" id="'.$this->get_id().'adv" name="'.$this->get_full_name().'[adv]" value="1" '.($adv ? 'checked="checked"' : '').' />'
                   .'<label for="'.$this->get_id().'adv">'.get_string('advanced').'</label>';
+        $return .= '</div>';
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, '', NULL, $query);
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, '', $defaultinfo, $query);
     }
 }
 
