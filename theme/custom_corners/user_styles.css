@@ -480,7 +480,7 @@ form#adminsettings div.form-item {
 }
 form#adminsettings .form-label {
   padding-right: 0.3em;
-  border-right: 1px solid #F1ECE6};
+  border-right: 1px solid #F1ECE6;
 }
 form#adminsettings div.form-htmlarea {
   width: 600px;
