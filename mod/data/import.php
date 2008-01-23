@@ -60,20 +60,7 @@
     require_login($course, false, $cm);
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/data:uploadentries', $context);
-
-    if (has_capability('mod/data:managetemplates', $context)) {
-        if (!count_records('data_fields','dataid',$data->id)) {      // Brand new database!
-            redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
-        }
-    }
-
-    if ($rid){    //editting a record, do you have access to edit this?
-        if (!has_capability('mod/data:manageentries', $context) or !data_isowner($rid) or !confirm_sesskey()){
-            error (get_string('noaccess','data'));
-        }
-    }
-
+    require_capability('mod/data:manageentries', $context);
 
 /// Print the page header
     $strdata = get_string('modulenameplural','data');
