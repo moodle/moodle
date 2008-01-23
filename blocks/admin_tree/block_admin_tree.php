@@ -41,7 +41,8 @@ class block_admin_tree extends block_base {
             $this->tempcontent .= "&nbsp; &nbsp;";
         }
         $this->tempcontent .= '<a href="#" onclick="toggle(\'vh_span'. $this->spancounter .'\');return false">';
-        $this->tempcontent .= '<span id="vh_span' . $this->spancounter . 'indicator"><img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" /></span> ';
+        $this->tempcontent .= '<span id="vh_span' . $this->spancounter . 'indicator"><img src="' . $CFG->pixpath . '/i/open.gif" alt="'.$strfolderopened.'" /></span> ';
+        
         $this->tempcontent .= $visiblename . '</a><br /><span id="vh_span' . $this->spancounter . '">' . "\n";
         $this->currentdepth++;
         $this->spancounter++;
@@ -66,12 +67,12 @@ class block_admin_tree extends block_base {
         if (is_a($content, 'admin_settingpage')) {
             if ($content->check_access() and !$content->is_hidden()) {
                 $class = ($content->name == $this->section) ? 'link current' : 'link';
-                $this->create_item($content->visiblename,$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=' . $content->name,$CFG->wwwroot .'/blocks/admin_tree/item.gif', $class);
+                $this->create_item($content->visiblename,$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=' . $content->name,$CFG->pixpath .'/i/item.gif', $class);
             }
         } else if (is_a($content, 'admin_externalpage')) {
             if ($content->check_access() and !$content->is_hidden()) {
                 $class = ($content->name == $this->section) ? 'link current' : 'link';
-                $this->create_item($content->visiblename, $content->url, $CFG->wwwroot . '/blocks/admin_tree/item.gif', $class);
+                $this->create_item($content->visiblename, $content->url, $CFG->pixpath . '/i/item.gif', $class);
             }
         } else if (is_a($content, 'admin_category')) {
             if ($content->check_access() and !$content->is_hidden()) {
@@ -144,11 +145,11 @@ class block_admin_tree extends block_base {
             $this->content->text .= 'function toggle(spanid) {' . "\n";
             $this->content->text .= '  if (getspan(spanid).innerHTML == "") {' . "\n";
             $this->content->text .= '    getspan(spanid).innerHTML = vh_content[spanid];' . "\n";
-            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" />\';' . "\n";
+            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->pixpath . '/i/open.gif" alt="'.$strfolderopened.'" />\';' . "\n";
             $this->content->text .= '  } else {' . "\n";
             $this->content->text .= '    vh_content[spanid] = getspan(spanid).innerHTML;' . "\n";
             $this->content->text .= '    getspan(spanid).innerHTML = "";' . "\n";
-            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" alt="'.$strfolderclosed.'" />\';' . "\n";
+            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->pixpath . '/i/closed.gif" alt="'.$strfolderclosed.'" />\';' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
 
@@ -156,13 +157,13 @@ class block_admin_tree extends block_base {
             $this->content->text .= '  if (getspan(spanid).innerHTML !== "") {' . "\n";
             $this->content->text .= '    vh_content[spanid] = getspan(spanid).innerHTML;' . "\n";
             $this->content->text .= '    getspan(spanid).innerHTML = "";' . "\n";
-            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" alt="'.$strfolderclosed.'" />\';' . "\n";
+            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->pixpath . '/i/closed.gif" alt="'.$strfolderclosed.'" />\';' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
 
             $this->content->text .= 'function expand(spanid) {' . "\n";
             $this->content->text .= '  getspan(spanid).innerHTML = vh_content[spanid];' . "\n";
-            $this->content->text .= '  getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" />\';' . "\n";
+            $this->content->text .= '  getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->pixpath . '/i/open.gif" alt="'.$strfolderopened.'" />\';' . "\n";
             $this->content->text .= '}' . "\n";
 
             $this->content->text .= 'function expandall() {' . "\n";
