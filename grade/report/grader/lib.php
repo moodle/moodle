@@ -902,22 +902,20 @@ class grade_report_grader extends grade_report {
 
         if ($showaverages) {
 
+            $gsql = str_replace('u.id', 'g.userid', $groupsql); // hack
+            
             // the first join on user is needed for groupsql
             $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum
-                FROM {$CFG->prefix}grade_items gi LEFT JOIN
-                     {$CFG->prefix}grade_grades g ON gi.id = g.itemid LEFT JOIN
-                     {$CFG->prefix}user u ON g.userid = u.id
-                     $groupsql
-                WHERE gi.courseid = $this->courseid
-                     $groupwheresql
-                     AND g.userid IN (
-                        SELECT DISTINCT(u.id)
-                        FROM {$CFG->prefix}user u LEFT JOIN
-                             {$CFG->prefix}role_assignments ra ON u.id = ra.userid
-                        WHERE ra.roleid in ($this->gradebookroles)
-                             AND ra.contextid ".get_related_contexts_string($this->context)."
-                     )
-                GROUP BY g.itemid";
+                      FROM {$CFG->prefix}grade_items gi
+                           LEFT JOIN {$CFG->prefix}grade_grades g ON g.itemid = gi.id 
+                           $gsql
+                     WHERE gi.courseid = $this->courseid
+                           $groupwheresql
+                           AND g.userid IN (SELECT ra.userid
+                                              FROM {$CFG->prefix}role_assignments ra
+                                             WHERE ra.roleid in ($this->gradebookroles)
+                                                   AND ra.contextid ".get_related_contexts_string($this->context).")
+                  GROUP BY g.itemid";
             $sum_array = array();
             if ($sums = get_records_sql($SQL)) {
                 foreach ($sums as $itemid => $csum) {
@@ -929,30 +927,33 @@ class grade_report_grader extends grade_report {
 
             $columncount=1;
 
+            $gsql = str_replace('u.id', 'ra.userid', $groupsql); // hack
+
+            // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
+            // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
+            $SQL = "SELECT gi.id, COUNT(u.id) AS count
+                      FROM {$CFG->prefix}grade_items gi, {$CFG->prefix}user u
+                     WHERE gi.courseid = $this->courseid
+                           AND u.id IN (SELECT ra.userid
+                                          FROM {$CFG->prefix}role_assignments ra
+                                               $gsql
+                                         WHERE ra.roleid in ($this->gradebookroles)
+                                               AND ra.contextid ".get_related_contexts_string($this->context)."
+                                               $groupwheresql)
+                           AND u.id NOT IN (SELECT g.userid
+                                              FROM {$CFG->prefix}grade_grades g
+                                             WHERE g.itemid = gi.id AND g.finalgrade IS NOT NULL)
+                  GROUP BY gi.id";
+            $ungraded_counts = get_records_sql($SQL);
+
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
 
                 if (empty($sum_array[$item->id])) {
                     $sum_array[$item->id] = 0;
                 }
-                // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
-                // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
-                $SQL = "SELECT COUNT(*) AS count FROM {$CFG->prefix}user u
-                         WHERE u.id NOT IN
-                           (SELECT userid FROM {$CFG->prefix}grade_grades g
-                             WHERE g.itemid = $item->id AND g.finalgrade IS NOT NULL
-                           )
-                           AND u.id IN (
-                             SELECT DISTINCT(u.id)
-                              FROM {$CFG->prefix}user u LEFT JOIN
-                                   {$CFG->prefix}role_assignments ra ON u.id = ra.userid
-                                   $groupsql
-                             WHERE ra.roleid in ($this->gradebookroles)
-                               AND ra.contextid ".get_related_contexts_string($this->context)."
-                               $groupwheresql
-                           )";
 
-                $ungraded_count = get_field_sql($SQL);
+                $ungraded_count = $ungraded_counts[$itemid]->count;
 
                 if ($meanselection == GRADE_REPORT_MEAN_GRADED) {
                     $mean_count = $totalcount - $ungraded_count;
