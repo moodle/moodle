@@ -296,7 +296,7 @@ class grade_report_grader extends grade_report {
         global $CFG;
 
         if (is_numeric($this->sortitemid)) {
-            $sql = "SELECT u.id, u.firstname, u.lastname
+            $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture
                     FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
                          {$CFG->prefix}user u ON (u.id = g.userid AND g.itemid = $this->sortitemid)
                          LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
@@ -678,7 +678,7 @@ class grade_report_grader extends grade_report {
             // Student name and link
             $user_pic = null;
             if ($showuserimage) {
-                $user_pic = '<div class="userpic">' . print_user_picture($user->id, $this->courseid, true, 0, true) . '</div>';
+                $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, true, 0, true) . '</div>';
             }
 
             $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
@@ -765,7 +765,7 @@ class grade_report_grader extends grade_report {
                         
                         // MDL-12104 some previous scales might have taken up part of the array
                         // so this needs to be reset
-                        unset($scaleopt);
+                        $scaleopt = array();
                         $i = 0;
                         foreach ($scales as $scaleoption) {
                             $i++;
