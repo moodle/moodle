@@ -215,7 +215,7 @@ function display() {
     $formatoptions = new object();
     $formatoptions->noclean = true;
     
-    if ($resource->options == "frame") { // TODO nicolasconnault 14-03-07: This option should be renamed "embed"
+    if ($resource->options != "bogusoption_usedtobe_frame") { // TODO nicolasconnault 14-03-07: This option should be renamed "embed"
         if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
             $resourcetype = "image";
             $embedded = true;
