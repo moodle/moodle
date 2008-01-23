@@ -35,7 +35,7 @@ class block_admin_tree extends block_base {
         $strfolderopened = s(get_string('folderopened'));
 
         $this->tempcontent .= '<div class="depth'.$this->currentdepth.'"><a href="#" onclick="toggle(\''.$this->divcounter.'\');return false">';
-        $this->tempcontent .= '<span id="vh_div'.$this->divcounter.'indicator"><img src="'.$CFG->wwwroot.'/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" /></span> ';
+        $this->tempcontent .= '<span id="vh_div'.$this->divcounter.'indicator"><img src="'.$CFG->pixpath.'/i/open.gif" alt="'.$strfolderopened.'" /></span> ';
         $this->tempcontent .= $visiblename.'</a></div><div id="vh_div'.$this->divcounter.'">'."\n";
         $this->currentdepth++;
         $this->divcounter++;
@@ -61,7 +61,7 @@ class block_admin_tree extends block_base {
                 if ($content->is_hidden()) {
                     $class .= ' hidden';
                 }
-                $this->create_item($content->visiblename, $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section='.$content->name, $CFG->wwwroot.'/blocks/admin_tree/item.gif', $class);
+                $this->create_item($content->visiblename, $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section='.$content->name,$CFG->pixpath.'/i/item.gif', $class);
             }
         } else if (is_a($content, 'admin_externalpage')) {
             // show hidden pages in tree if hidden page active
@@ -70,7 +70,7 @@ class block_admin_tree extends block_base {
                 if ($content->is_hidden()) {
                     $class .= ' hidden';
                 }
-                $this->create_item($content->visiblename, $content->url, $CFG->wwwroot.'/blocks/admin_tree/item.gif', $class);
+                $this->create_item($content->visiblename, $content->url, $CFG->pixpath.'/i/item.gif', $class);
             }
         } else if (is_a($content, 'admin_category')) {
             if ($content->check_access() and !$content->is_hidden()) {
@@ -129,8 +129,8 @@ class block_admin_tree extends block_base {
         }
 
         if ($this->tempcontent !== '') {
-            $closedimg = '<img src="'.$CFG->wwwroot.'/blocks/admin_tree/closed.gif" alt="'.s(get_string('folderclosed')).'" />';
-            $openedimg = '<img src="'.$CFG->wwwroot.'/blocks/admin_tree/open.gif" alt="'.s(get_string('folderopened')).'" />';
+            $closedimg = '<img src="'.$CFG->pixpath.'/i/closed.gif" alt="'.s(get_string('folderclosed')).'" />';
+            $openedimg = '<img src="'.$CFG->pixpath.'/i/open.gif" alt="'.s(get_string('folderopened')).'" />';
 
             $this->content = new object();
             $this->content->text  = '
