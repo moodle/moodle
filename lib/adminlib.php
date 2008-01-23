@@ -4502,7 +4502,12 @@ function db_replace($search, $replace) {
     return true;
 }
 
-function print_modules_table() {
+/**
+ * Prints tables of detected plugins, one table per plugin type,
+ * and prints whether they are part of the standard Moodle 
+ * distribution or not.
+ */
+function print_plugin_tables() {
     $compatlist = array();
     $compatlist['mods'] = array('assignment',
                                 'chat',

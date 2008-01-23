@@ -316,7 +316,7 @@
                 print_box_start('generalbox', 'notice'); // MDL-8330
                 print_string('pluginchecknotice');
                 print_box_end();
-                print_modules_table();
+                print_plugin_tables();
                 echo "<br />";
                 print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1&amp;confirmplugincheck=1');
                 print_footer('none');
