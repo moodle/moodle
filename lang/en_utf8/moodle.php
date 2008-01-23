@@ -1052,6 +1052,7 @@ $string['nomoreidnumber'] = 'Not using an idnumber to avoid collisions';
 $string['none'] = 'None';
 $string['noneditingteacher'] = 'Non-editing teacher';
 $string['noneditingteacherdescription'] = 'Non-editing teachers can teach in courses and grade students, but may not alter activities.';
+$string['nonstandard'] = 'Non-standard';
 $string['nopendingcourses'] = 'There are no courses pending approval';
 $string['nopotentialadmins'] = 'No potential admins';
 $string['nopotentialcreators'] = 'No potential course creators';
@@ -1156,6 +1157,10 @@ $string['pictureof'] = 'Picture of $a';
 $string['phone'] = 'Phone';
 $string['phpinfo'] = 'PHP info';
 $string['pleaseclose'] = 'Please close this window now.';
+$string['plugincheck'] = 'Plugins check';
+$string['pluginchecknotice'] = 'The following tables show the modules, blocks and filters that have been detected in your current Moodle installation; 
+They indicate which plugins are standard, and which are not. All non-standard plugins should be checked and upgraded to their most recent versions 
+before continuing with this Moodle upgrade.';
 $string['pluginsetup'] = 'Setting up plugin tables';
 $string['policyaccept'] = 'I understand and agree';
 $string['policyagree'] = 'You must agree to this policy to continue using this site.  Do you agree?';
@@ -1363,6 +1368,7 @@ $string['someerrorswerefound'] = 'Some information was missing or incorrect. Loo
 $string['sortby'] = 'Sort by';
 $string['sourcerole'] = 'Source role';
 $string['specifyname'] = 'You must specify a name.';
+$string['standard'] = 'Standard';
 $string['starpending'] = '([*] = course pending approval)';
 $string['startdate'] = 'Course start date';
 $string['startsignup'] = 'Create new account';

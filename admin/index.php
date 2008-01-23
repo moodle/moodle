@@ -32,6 +32,7 @@
     $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
     $autopilot      = optional_param('autopilot', 0, PARAM_BOOL);
     $ignoreupgradewarning = optional_param('ignoreupgradewarning', 0, PARAM_BOOL);
+    $confirmplugincheck = optional_param('confirmplugincheck', 0, PARAM_BOOL);
 
 /// check upgrade status first
     if ($ignoreupgradewarning and !empty($_SESSION['upgraderunning'])) {
@@ -123,6 +124,7 @@
             }
         }
     }
+    
     if (! $maintables) {
     /// hide errors from headers in case debug enabled in config.php
         $origdebug = $CFG->debug;
@@ -305,6 +307,20 @@
 
                 print_footer('none');
                 die;
+            } elseif (empty($confirmplugincheck)) { 
+                $strplugincheck = get_string('plugincheck');
+                $navigation = build_navigation(array(array('name'=>$strplugincheck, 'link'=>null, 'type'=>'misc')));
+                print_header($strplugincheck, $strplugincheck, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+                print_heading($strplugincheck);
+                print_box_start('generalbox', 'notice'); // MDL-8330
+                print_string('pluginchecknotice');
+                print_box_end();
+                print_plugin_tables();
+                echo "<br />";
+                print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1&amp;confirmplugincheck=1');
+                print_footer('none');
+                die();
+    
             } else {
                 $strdatabasesuccess  = get_string("databasesuccess");
                 $navigation = build_navigation(array(array('name'=>$strdatabasesuccess, 'link'=>null, 'type'=>'misc')));
@@ -362,7 +378,7 @@
             /// Main upgrade not success
                 } else {
                     notify('Main Upgrade failed!  See lib/db/upgrade.php');
-                    print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1');
+                    print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1&amp;confirmplugincheck=1');
                     print_footer('none');
                     die;
                 }
