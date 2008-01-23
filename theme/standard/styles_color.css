@@ -318,6 +318,15 @@ table.flexible .r1 {
   background-color: green;
 }
 
+.plugincompattable td.standard {
+    color: #008000;
+}
+
+.plugincompattable td.nonstandard {
+    color: #FF7500;
+    font-weight: bold;
+}
+
 /* Admin settings */
 
 #adminsettings fieldset {

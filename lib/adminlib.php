@@ -4502,4 +4502,99 @@ function db_replace($search, $replace) {
     return true;
 }
 
+function print_modules_table() {
+    $compatlist = array();
+    $compatlist['mods'] = array('assignment',
+                                'chat',
+                                'choice',
+                                'data',
+                                'exercise',
+                                'forum',
+                                'glossary',
+                                'hotpot',
+                                'journal',
+                                'label',
+                                'lams',
+                                'lesson',
+                                'quiz',
+                                'resource',
+                                'scorm',
+                                'survey',
+                                'wiki',
+                                'workshop');
+    
+    $compatlist['blocks'] = array('activity_modules',
+                                  'admin',
+                                  'admin_bookmarks',
+                                  'admin_tree',
+                                  'blog_menu',
+                                  'blog_tags',
+                                  'calendar_month',
+                                  'calendar_upcoming',
+                                  'course_list',
+                                  'course_summary',
+                                  'db',
+                                  'glossary_random',
+                                  'html',
+                                  'loancalc',
+                                  'login',
+                                  'mentees',
+                                  'messages',
+                                  'mnet_hosts',
+                                  'news_items',
+                                  'online_users',
+                                  'participants',
+                                  'quiz_results',
+                                  'recent_activity',
+                                  'rss_client',
+                                  'search',
+                                  'search_forums',
+                                  'section_links',
+                                  'site_main_menu',
+                                  'social_activities',
+                                  'tag_flickr',
+                                  'tag_youtube',
+                                  'tags');
+    
+    $compatlist['filters'] = array('activitynames',
+                                   'algebra',
+                                   'censor',
+                                   'emailprotect',
+                                   'filter',
+                                   'mediaplugin',
+                                   'multilang',
+                                   'tex',
+                                   'tidy');
+
+    
+    $plugins = array();
+    $plugins['mods'] = get_list_of_plugins();
+    $plugins['blocks'] = get_list_of_plugins('blocks');
+    $plugins['filters'] = get_list_of_plugins('filter');
+    
+    $strstandard    = get_string('standard');
+    $strnonstandard = get_string('nonstandard');
+
+    $html = '';
+
+    foreach ($plugins as $cat => $list) {
+        $html .= '<table class="plugincompattable generaltable boxaligncenter" cellspacing="1" cellpadding="5" '
+              . 'id="' . $cat . 'compattable" summary="compatibility table"><caption>' . ucfirst($cat) . '</caption>' . "\n";
+        $row = 0;      
+        foreach ($list as $k => $plugin) {
+            $standard = 'standard';
+
+            if (!in_array($plugin, $compatlist[$cat])) {
+                $standard = 'nonstandard';
+            }    
+
+            $html .= "<tr class=\"r$row\"><td class=\"cell c0\">" . ucfirst($plugin) . "</td><td class=\"$standard cell c1\">" . ${'str' . $standard} . "</td></tr>\n";
+            $row++;
+        } 
+        $html .= '</table><br />';
+    }
+    
+    echo $html;
+}
+
 ?>
