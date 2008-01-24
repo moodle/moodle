@@ -29,7 +29,8 @@
     }
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
     require_login($course->id, false);
-  
+    require_capability('moodle/question:manage', $context);
+
     $SESSION->returnurl = $FULLME;
 
     // Print basic page layout.
