@@ -1673,28 +1673,31 @@
         if ($grades = get_records('grade_grades', 'itemid', $itemid)) {
             fwrite ($bf,start_tag("GRADE_GRADES",5,true));
             foreach ($grades as $grade) {
-                fwrite ($bf,start_tag("GRADE",6,true));
-                fwrite ($bf,full_tag("ID",7,false,$grade->id));
-                fwrite ($bf,full_tag("USERID",7,false,$grade->userid));
-                fwrite ($bf,full_tag("RAWGRADE",7,false,$grade->rawgrade));
-                fwrite ($bf,full_tag("RAWGRADEMAX",7,false,$grade->rawgrademax));
-                fwrite ($bf,full_tag("RAWGRADEMIN",7,false,$grade->rawgrademin));
-                fwrite ($bf,full_tag("RAWSCALEID",7,false,$grade->rawscaleid));
-                fwrite ($bf,full_tag("USERMODIFIED",7,false,$grade->usermodified));
-                fwrite ($bf,full_tag("FINALGRADE",7,false,$grade->finalgrade));
-                fwrite ($bf,full_tag("HIDDEN",7,false,$grade->hidden));
-                fwrite ($bf,full_tag("LOCKED",7,false,$grade->locked));
-                fwrite ($bf,full_tag("LOCKTIME",7,false,$grade->locktime));
-                fwrite ($bf,full_tag("EXPORTED",7,false,$grade->exported));
-                fwrite ($bf,full_tag("OVERRIDDEN",7,false,$grade->overridden));
-                fwrite ($bf,full_tag("EXCLUDED",7,false,$grade->excluded));
-                fwrite ($bf,full_tag("FEEDBACK",7,false,$grade->feedback));
-                fwrite ($bf,full_tag("FEEDBACKFORMAT",7,false,$grade->feedbackformat));
-                fwrite ($bf,full_tag("INFORMATION",7,false,$grade->information));
-                fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$grade->informationformat));
-                fwrite ($bf,full_tag("TIMECREATED",7,false,$grade->timecreated));
-                fwrite ($bf,full_tag("TIMEMODIFIED",7,false,$grade->timemodified));
-                fwrite ($bf,end_tag("GRADE",6,true));
+            /// Grades are only sent to backup if the user is one target user
+                if (backup_getid($preferences->backup_unique_code, 'user', $grade->userid)) {
+                    fwrite ($bf,start_tag("GRADE",6,true));
+                    fwrite ($bf,full_tag("ID",7,false,$grade->id));
+                    fwrite ($bf,full_tag("USERID",7,false,$grade->userid));
+                    fwrite ($bf,full_tag("RAWGRADE",7,false,$grade->rawgrade));
+                    fwrite ($bf,full_tag("RAWGRADEMAX",7,false,$grade->rawgrademax));
+                    fwrite ($bf,full_tag("RAWGRADEMIN",7,false,$grade->rawgrademin));
+                    fwrite ($bf,full_tag("RAWSCALEID",7,false,$grade->rawscaleid));
+                    fwrite ($bf,full_tag("USERMODIFIED",7,false,$grade->usermodified));
+                    fwrite ($bf,full_tag("FINALGRADE",7,false,$grade->finalgrade));
+                    fwrite ($bf,full_tag("HIDDEN",7,false,$grade->hidden));
+                    fwrite ($bf,full_tag("LOCKED",7,false,$grade->locked));
+                    fwrite ($bf,full_tag("LOCKTIME",7,false,$grade->locktime));
+                    fwrite ($bf,full_tag("EXPORTED",7,false,$grade->exported));
+                    fwrite ($bf,full_tag("OVERRIDDEN",7,false,$grade->overridden));
+                    fwrite ($bf,full_tag("EXCLUDED",7,false,$grade->excluded));
+                    fwrite ($bf,full_tag("FEEDBACK",7,false,$grade->feedback));
+                    fwrite ($bf,full_tag("FEEDBACKFORMAT",7,false,$grade->feedbackformat));
+                    fwrite ($bf,full_tag("INFORMATION",7,false,$grade->information));
+                    fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$grade->informationformat));
+                    fwrite ($bf,full_tag("TIMECREATED",7,false,$grade->timecreated));
+                    fwrite ($bf,full_tag("TIMEMODIFIED",7,false,$grade->timemodified));
+                    fwrite ($bf,end_tag("GRADE",6,true));
+                }
             }
             $status = fwrite ($bf,end_tag("GRADE_GRADES",5,true));
         }
@@ -1746,32 +1749,35 @@
                                              AND ggh.itemid = gi.id")) {
             fwrite ($bf,start_tag("GRADE_GRADES_HISTORIES",5,true));
             foreach ($chs as $ch) {
-                fwrite ($bf,start_tag("GRADE_GRADES_HISTORY",6,true));
-                fwrite ($bf,full_tag("ID",7,false,$ch->id));
-                fwrite ($bf,full_tag("ACTION",7,false,$ch->action));
-                fwrite ($bf,full_tag("OLDID",7,false,$ch->oldid));
-                fwrite ($bf,full_tag("SOURCE",7,false,$ch->source));
-                fwrite ($bf,full_tag("TIMEMODIFIED",7,false,$ch->timemodified));
-                fwrite ($bf,full_tag("LOGGEDUSER",7,false,$ch->loggeduser));
-                fwrite ($bf,full_tag("ITEMID",7,false,$ch->itemid));
-                fwrite ($bf,full_tag("USERID",7,false,$ch->userid));
-                fwrite ($bf,full_tag("RAWGRADE",7,false,$ch->rawgrade));
-                fwrite ($bf,full_tag("RAWGRADEMAX",7,false,$ch->rawgrademax));
-                fwrite ($bf,full_tag("RAWGRADEMIN",7,false,$ch->rawgrademin));
-                fwrite ($bf,full_tag("RAWSCALEID",7,false,$ch->rawscaleid));
-                fwrite ($bf,full_tag("USERMODIFIED",7,false,$ch->usermodified));
-                fwrite ($bf,full_tag("FINALGRADE",7,false,$ch->finalgrade));
-                fwrite ($bf,full_tag("HIDDEN",7,false,$ch->hidden));
-                fwrite ($bf,full_tag("LOCKED",7,false,$ch->locked));
-                fwrite ($bf,full_tag("LOCKTIME",7,false,$ch->locktime));
-                fwrite ($bf,full_tag("EXPORTED",7,false,$ch->exported));
-                fwrite ($bf,full_tag("OVERRIDDEN",7,false,$ch->overridden));
-                fwrite ($bf,full_tag("EXCLUDED",7,false,$ch->excluded));
-                fwrite ($bf,full_tag("FEEDBACK",7,false,$ch->feedback));
-                fwrite ($bf,full_tag("FEEDBACKFORMAT",7,false,$ch->feedbackformat));
-                fwrite ($bf,full_tag("INFORMATION",7,false,$ch->information));
-                fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$ch->informationformat));
-                fwrite ($bf,end_tag("GRADE_GRADES_HISTORY",6,true));
+            /// Grades are only sent to backup if the user is one target user
+                if (backup_getid($preferences->backup_unique_code, 'user', $ch->userid)) {
+                    fwrite ($bf,start_tag("GRADE_GRADES_HISTORY",6,true));
+                    fwrite ($bf,full_tag("ID",7,false,$ch->id));
+                    fwrite ($bf,full_tag("ACTION",7,false,$ch->action));
+                    fwrite ($bf,full_tag("OLDID",7,false,$ch->oldid));
+                    fwrite ($bf,full_tag("SOURCE",7,false,$ch->source));
+                    fwrite ($bf,full_tag("TIMEMODIFIED",7,false,$ch->timemodified));
+                    fwrite ($bf,full_tag("LOGGEDUSER",7,false,$ch->loggeduser));
+                    fwrite ($bf,full_tag("ITEMID",7,false,$ch->itemid));
+                    fwrite ($bf,full_tag("USERID",7,false,$ch->userid));
+                    fwrite ($bf,full_tag("RAWGRADE",7,false,$ch->rawgrade));
+                    fwrite ($bf,full_tag("RAWGRADEMAX",7,false,$ch->rawgrademax));
+                    fwrite ($bf,full_tag("RAWGRADEMIN",7,false,$ch->rawgrademin));
+                    fwrite ($bf,full_tag("RAWSCALEID",7,false,$ch->rawscaleid));
+                    fwrite ($bf,full_tag("USERMODIFIED",7,false,$ch->usermodified));
+                    fwrite ($bf,full_tag("FINALGRADE",7,false,$ch->finalgrade));
+                    fwrite ($bf,full_tag("HIDDEN",7,false,$ch->hidden));
+                    fwrite ($bf,full_tag("LOCKED",7,false,$ch->locked));
+                    fwrite ($bf,full_tag("LOCKTIME",7,false,$ch->locktime));
+                    fwrite ($bf,full_tag("EXPORTED",7,false,$ch->exported));
+                    fwrite ($bf,full_tag("OVERRIDDEN",7,false,$ch->overridden));
+                    fwrite ($bf,full_tag("EXCLUDED",7,false,$ch->excluded));
+                    fwrite ($bf,full_tag("FEEDBACK",7,false,$ch->feedback));
+                    fwrite ($bf,full_tag("FEEDBACKFORMAT",7,false,$ch->feedbackformat));
+                    fwrite ($bf,full_tag("INFORMATION",7,false,$ch->information));
+                    fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$ch->informationformat));
+                    fwrite ($bf,end_tag("GRADE_GRADES_HISTORY",6,true));
+                }
             }
             $status = fwrite ($bf,end_tag("GRADE_GRADES_HISTORIES",5,true));
         }
