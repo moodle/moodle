@@ -4509,7 +4509,7 @@ function db_replace($search, $replace) {
  */
 function print_plugin_tables() {
     $compatlist = array();
-    $compatlist['mods'] = array('assignment',
+    $compatlist['mod'] = array('assignment',
                                 'chat',
                                 'choice',
                                 'data',
@@ -4538,7 +4538,6 @@ function print_plugin_tables() {
                                   'calendar_upcoming',
                                   'course_list',
                                   'course_summary',
-                                  'db',
                                   'glossary_random',
                                   'html',
                                   'loancalc',
@@ -4561,7 +4560,7 @@ function print_plugin_tables() {
                                   'tag_youtube',
                                   'tags');
     
-    $compatlist['filters'] = array('activitynames',
+    $compatlist['filter'] = array('activitynames',
                                    'algebra',
                                    'censor',
                                    'emailprotect',
@@ -4571,11 +4570,22 @@ function print_plugin_tables() {
                                    'tex',
                                    'tidy');
 
-    
+    $installed_list = array();
+    $installed_mods = get_records_list('modules', '', '', '', 'name');
+    $installed_blocks = get_records_list('block', '', '', '', 'name');
+
+    foreach($installed_mods as $mod) {
+        $installed_list['mod'][] = $mod->name;
+    }
+
+    foreach($installed_blocks as $block) {
+        $installed_list['blocks'][] = $block->name;
+    }
+
     $plugins = array();
-    $plugins['mods'] = get_list_of_plugins();
-    $plugins['blocks'] = get_list_of_plugins('blocks');
-    $plugins['filters'] = get_list_of_plugins('filter');
+    $plugins['mod'] = get_list_of_plugins('mod', 'db');
+    $plugins['blocks'] = get_list_of_plugins('blocks', 'db');
+    $plugins['filter'] = get_list_of_plugins('filter', 'db');
     
     $strstandard    = get_string('standard');
     $strnonstandard = get_string('nonstandard');
@@ -4583,17 +4593,63 @@ function print_plugin_tables() {
     $html = '';
 
     foreach ($plugins as $cat => $list) {
+        $strcaption = get_string($cat);
+        if ($cat == 'mod') {
+            $strcaption = get_string('activitymodule');
+        } elseif ($cat == 'filter') {
+            $strcaption = get_string('managefilters');
+        }
+
         $html .= '<table class="plugincompattable generaltable boxaligncenter" cellspacing="1" cellpadding="5" '
-              . 'id="' . $cat . 'compattable" summary="compatibility table"><caption>' . ucfirst($cat) . '</caption>' . "\n";
-        $row = 0;      
+              . 'id="' . $cat . 'compattable" summary="compatibility table"><caption>' . $strcaption . '</caption>' . "\n";
+        $html .= '<tr class="r0"><th class="header c0">' . get_string('directory') . "</th>\n"
+               . '<th class="header c1">' . get_string('name') . "</th>\n"
+               . '<th class="header c2">' . get_string('status') . "</th>\n";
+        
+        $row = 1;      
+
         foreach ($list as $k => $plugin) {
             $standard = 'standard';
 
             if (!in_array($plugin, $compatlist[$cat])) {
                 $standard = 'nonstandard';
             }    
+            
+            // Get real name and full path of plugin
+            $plugin_name = "[[$plugin]]";
+            
+            global $CFG;
+            $plugin_path = $CFG->dirroot . "/$cat/$plugin";
 
-            $html .= "<tr class=\"r$row\"><td class=\"cell c0\">" . ucfirst($plugin) . "</td><td class=\"$standard cell c1\">" . ${'str' . $standard} . "</td></tr>\n";
+            if ($cat == 'mod') {
+                $plugin_name = get_string('modulename', $plugin);
+            } elseif ($cat == 'blocks') {
+                $plugin_name = get_string('blockname', "block_$plugin");
+                if (empty($plugin_name) || $plugin_name == '[[blockname]]') {
+                    if (($block = block_instance($plugin)) !== false) {
+                        $plugin_name = $block->get_title();
+                    } else {
+                        $plugin_name = "[[$plugin]]";
+                    }
+                }
+            } elseif ($cat == 'filter') {
+                $plugin_name = trim(get_string('filtername', $plugin));
+                if (empty($plugin_name) or ($plugin_name == '[[filtername]]')) {
+                    $textlib = textlib_get_instance();
+                    $plugin_name = $textlib->strtotitle($plugin);
+                } 
+            }
+            
+            // Determine if the plugin is about to be installed
+            $strabouttobeinstalled = '';
+            if ($cat != 'filter' && !in_array($plugin, $installed_list[$cat])) {
+                $strabouttobeinstalled = ' (' . get_string('abouttobeinstalled') . ')';
+            }
+
+            $html .= "<tr class=\"r$row\">\n"
+                  .  "<td class=\"cell c0\">$plugin_path</td>\n"
+                  .  "<td class=\"cell c1\">$plugin_name</td>\n"
+                  .  "<td class=\"$standard cell c2\">" . ${'str' . $standard} . $strabouttobeinstalled . "</td>\n</tr>\n";
             $row++;
         } 
         $html .= '</table><br />';

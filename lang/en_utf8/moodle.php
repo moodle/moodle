@@ -2,6 +2,7 @@
       // moodle.php - created with Moodle 1.7 beta + (2006101003)
 
 
+$string['abouttobeinstalled'] = 'about to be installed';
 $string['action'] = 'Action';
 $string['actions'] = 'Actions';
 $string['active'] = 'Active';
@@ -384,6 +385,7 @@ $string['description'] = 'Description';
 $string['deselectall'] = 'Deselect all';
 $string['detailedless'] = 'Less detailed';
 $string['detailedmore'] = 'More detailed';
+$string['directory'] = 'Directory';
 $string['directorypaths'] = 'Directory Paths';
 $string['disable'] = 'Disable';
 $string['displayingfirst'] = 'Only the first $a->count $a->things are displayed';
