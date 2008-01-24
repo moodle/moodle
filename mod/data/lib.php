@@ -1966,7 +1966,7 @@ class PresetImporter {
 
         if (!empty($currentfields) && !empty($newfields)) {
             echo "<h3>$strfieldmappings ";
-            helpbutton('fieldmappings', '', 'data');
+            helpbutton('fieldmappings', $strfieldmappings, 'data');
             echo '</h3><table>';
 
             foreach ($newfields as $nid => $newfield) {
