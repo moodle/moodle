@@ -2,7 +2,7 @@
 require_once ($CFG->libdir.'/formslib.php');
 /**
  * This class adds extra methods to form wrapper specific to be used for module
- * add / update forms (mod/{modname}.mod_form.php replaces deprecared mod/{modname}/mod.html
+ * add / update forms (mod/{modname}.mod_form.php replaces deprecated mod/{modname}/mod.html
  *
  */
 class moodleform_mod extends moodleform {
@@ -148,6 +148,38 @@ class moodleform_mod extends moodleform {
             $visible = 0;
         }
         return array('visible'=>$visible);
+    }
+
+	/**
+     * Overriding formslib's add_action_buttons() method, to add an extra submit "save changes and return" button.
+     * 
+     * @param bool $cancel
+     * @param string $submitlabel
+     * @param string $submit2label
+     * @return void
+     */ 
+    function add_action_buttons($cancel=true, $submitlabel=null, $submit2label=null) {
+        if (is_null($submitlabel)) {
+            $submitlabel = get_string('savechangesanddisplay');
+        }
+        
+        if (is_null($submit2label)) {
+            $submit2label = get_string('savechangesandreturntocourse');
+        }
+        
+        $mform =& $this->_form;
+        
+        //when two elements we need a group
+        $buttonarray=array();
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton2', $submit2label);
+        
+        if ($cancel) {
+            $buttonarray[] = &$mform->createElement('cancel');
+        }
+
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('buttonar');
     }
 
 }

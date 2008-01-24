@@ -12,6 +12,8 @@
     //return to course/view.php if false or mod/modname/view.php if true
     $return        = optional_param('return', 0, PARAM_BOOL);
     $type          = optional_param('type', '', PARAM_ALPHANUM);
+    $submitbutton  = optional_param('submitbutton', null, PARAM_ALPHANUM);
+    $submitbutton2 = optional_param('submitbutton2', null, PARAM_ALPHANUM);
 
     if (!empty($add)) {
         $section = required_param('section', PARAM_INT);
@@ -270,7 +272,11 @@
 
         rebuild_course_cache($course->id);
 
-        redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$fromform->coursemodule");
+        if ($submitbutton) {
+            redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$fromform->coursemodule");
+        } elseif ($submitbutton2) { 
+            redirect("$CFG->wwwroot/course/view.php?id=$course->id");
+        }
         exit;
 
     } else {
