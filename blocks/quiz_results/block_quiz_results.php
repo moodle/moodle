@@ -183,6 +183,16 @@ class block_quiz_results extends block_base {
                 $this->content->text .= '<h1><a href="'.$CFG->wwwroot.'/mod/quiz/view.php?q='.$quizid.'">'.$quiz->name.'</a></h1>';
             }
 
+            if ($nameformat = B_QUIZRESULTS_NAME_FORMAT_FULL) {
+                if (has_capability('moodle/course:managegroups', $context)) {
+                    $grouplink = $CFG->wwwroot.'/group/overview.php?courseid='.$courseid.'&amp;id=';
+                } else if (has_capability('moodle/course:viewparticipants', $context)) {
+                    $grouplink = $CFG->wwwroot.'/user/index.php?id='.$courseid.'&amp;group=';
+                } else {
+                    $grouplink = '';
+                }
+            }
+
             $rank = 0;
             if(!empty($best)) {
                 $this->content->text .= '<table class="grades"><caption>';
@@ -196,7 +206,11 @@ class block_quiz_results extends block_base {
                         break;
                         default:
                         case B_QUIZRESULTS_NAME_FORMAT_FULL:
-                            $thisname = '<a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a>';
+                            if ($grouplink) {
+                                $thisname = '<a href="'.$grouplink.$groupid.'">'.$groupgrades[$groupid]['group'].'</a>';
+                            } else {
+                                $thisname = $groupgrades[$groupid]['group'];
+                            }
                         break;
                     }
                     $this->content->text .= '<tr><td>'.(++$rank).'.</td><td>'.$thisname.'</td><td>';
