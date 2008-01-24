@@ -255,6 +255,7 @@ class moodleform_mod extends moodleform {
 
         $mform->addElement('modvisible', 'visible', get_string('visible'));
         $mform->addElement('text', 'cmidnumber', get_string('idnumber'));
+        $mform->setHelpButton('cmidnumber', array('cmidnumber', get_string('idnumber')), true);
 
         if ($this->_features->gradecat) {
             $categories = grade_get_categories_menu($COURSE->id, $outcomesused);
