@@ -64,21 +64,7 @@
 
 
 /// Print header.
-    $navlinks = array();
-    $navlinks[] = array(
-            'name' => get_string('grades'),
-            'link' => $CFG->wwwroot . '/grade/report/index.php?id=' . $cm->course,
-            'type' => 'link');
-    $navlinks[] = array(
-            'name' => get_string('modulenameplural', $cm->modname),
-            'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/index.php?id=' . $cm->course,
-            'type' => 'activity');
-    $navlinks[] = array(
-            'name' => format_string($cm->name),
-            'link' => $CFG->wwwroot . '/mod/' . $cm->modname . '/view.php?id=' . $cm->id,
-            'type' => 'activityinstance');
-    
-    $navigation = build_navigation($navlinks);
+    $navigation = build_navigation('', $cm);
     print_header_simple(format_string($forum->name), "",
                  $navigation, "", "", true, $buttontext, navmenu($course, $cm));
 
