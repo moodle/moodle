@@ -150,7 +150,7 @@
     $module = get_record('modules','id',$moduleid);
     $modulename = get_string('modulename',$module->name);
 
-    require_once($CFG->dirroot.'/mod/'.$module->name.'/lib.php');
+    include_once($CFG->dirroot.'/mod/'.$module->name.'/lib.php');
 
     $viewfun = $module->name.'_get_view_actions';
     $postfun = $module->name.'_get_post_actions';

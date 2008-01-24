@@ -14,7 +14,7 @@
         }
 
         if ($module != '') {
-            require_once("$CFG->dirroot/mod/$module/lib.php");
+            include_once("$CFG->dirroot/mod/$module/lib.php");
             admin_externalpage_setup('modsetting'.$module);
             // if the config.html contains a hidden form field giving
             // the module name then the form does not have to prefix all
@@ -44,7 +44,7 @@
 
 /// Otherwise print the form.
     $module = required_param('module', PARAM_SAFEDIR);
-    require_once("$CFG->dirroot/mod/$module/lib.php");
+    include_once("$CFG->dirroot/mod/$module/lib.php");
     admin_externalpage_setup('modsetting'.$module);
 
     $strmodulename = get_string("modulename", $module);
