@@ -1643,6 +1643,28 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
 }
 
 /**
+ * Returns all course modules of given activity in course
+ * @param string $modulename (forum, quiz, etc.)
+ * @param int $courseid
+ * @param string $extrafields extra fields starting with m.
+ * @return array of cm objects, false if not found or error
+ */
+function get_coursemodules_in_course($modulename, $courseid, $extrafields='') {
+    global $CFG;
+
+    if (!empty($extrafields)) {
+        $extrafields = ", $extrafields";
+    }
+    return get_records_sql("SELECT cm.*, m.name, md.name as modname $extrafields
+                              FROM {$CFG->prefix}course_modules cm,
+                                   {$CFG->prefix}modules md,
+                                   {$CFG->prefix}$modulename m
+                             WHERE cm.course = $courseid AND
+                                   cm.instance = m.id AND
+                                   md.name = '$modulename' AND
+                                   md.id = cm.module");
+}
+/**
  * Returns an array of all the active instances of a particular module in given courses, sorted in the order they are defined
  *
  * Returns an array of all the active instances of a particular
@@ -1781,7 +1803,7 @@ function get_all_instances_in_course($modulename, $course, $userid=NULL, $includ
  *
  * Given a valid module object with info about the id and course,
  * and the module's type (eg "forum") returns whether the object
- * is visible or not
+ * is visible or not, groupmembersonly visibility not tested
  *
  * @uses $CFG
  * @param $moduletype Name of the module eg 'forum'
@@ -1802,11 +1824,35 @@ function instance_is_visible($moduletype, $module) {
                                              cm.instance = '$module->id'")) {
 
             foreach ($records as $record) { // there should only be one - use the first one
-                return $record->visible && groups_course_module_visible($record);
+                return $record->visible;
             }
         }
     }
     return true;  // visible by default!
+}
+
+/**
+ * Determine whether a course module is visible within a course,
+ * this is different from instance_is_visible() - faster and visibility for user
+ *
+ * @param object $cm object
+ * @param int $userid empty means current user
+ * @return bool
+ */
+function coursemodule_visible_for_user($cm, $userid=0) {
+    global $USER;
+
+    if (empty($cm->id)) {
+        debugging("Incorrect course module parameter!", DEBUG_DEVELOPER);
+        return false;
+    }
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
+        return false;
+    }
+    return groups_course_module_visible($cm, $userid);
 }
 
 

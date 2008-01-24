@@ -2,10 +2,6 @@
    // Library of useful functions
 
 
-if (defined('COURSE_MAX_LOG_DISPLAY')) {  // Being included again - should never happen!!
-    return;
-}
-
 define('COURSE_MAX_LOG_DISPLAY', 150);          // days
 define('COURSE_MAX_LOGS_PER_PAGE', 1000);       // records
 define('COURSE_LIVELOG_REFRESH', 60);           // Seconds
@@ -24,221 +20,6 @@ define('FIRSTUSEDEXCELROW', 3);
 
 define('MOD_CLASS_ACTIVITY', 0);
 define('MOD_CLASS_RESOURCE', 1);
-
-
-function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0, $selecteddate="lastlogin",
-                                    $mod="", $modid="activity/All", $modaction="", $selectedgroup="", $selectedsort="default") {
-
-    global $USER, $CFG;
-
-    if ($advancedfilter) {
-
-        // Get all the possible users
-        $users = array();
-
-        if ($courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname')) {
-            foreach ($courseusers as $courseuser) {
-                $users[$courseuser->id] = fullname($courseuser, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
-            }
-        }
-        if ($guest = get_guest()) {
-            $users[$guest->id] = fullname($guest);
-        }
-
-        if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-            if ($ccc = get_records("course", "", "", "fullname")) {
-                foreach ($ccc as $cc) {
-                    if ($cc->category) {
-                        $courses["$cc->id"] = "$cc->fullname";
-                    } else {
-                        $courses["$cc->id"] = " $cc->fullname (Site)";
-                    }
-                }
-            }
-            asort($courses);
-        }
-
-        $activities = array();
-
-        $selectedactivity = $modid;
-
-    /// Casting $course->modinfo to string prevents one notice when the field is null
-        if ($modinfo = unserialize((string)$course->modinfo)) {
-            $section = 0;
-            if ($course->format == 'weeks') {  // Body
-                $strsection = get_string("week");
-            } else {
-                $strsection = get_string("topic");
-            }
-
-            $activities["activity/All"] = "All activities";
-            $activities["activity/Assignments"] =  "All assignments";
-            $activities["activity/Chats"] = "All chats";
-            $activities["activity/Forums"] = "All forums";
-            $activities["activity/Quizzes"] = "All quizzes";
-            $activities["activity/Workshops"] = "All workshops";
-
-            $activities["section/individual"] = "------------- Individual Activities --------------";
-
-            foreach ($modinfo as $mod) {
-                if ($mod->mod == "label") {
-                    continue;
-                }
-                if (!$mod->visible and !has_capability('moodle/course:viewhiddenactivities',get_context_instance(CONTEXT_MODULE, $mod->cm))) {
-                    continue;
-                }
-                $mod->id = $mod->cm;
-                if (!groups_course_module_visible($mod)) {
-                    continue;
-                }
-
-                if ($mod->section > 0 and $section <> $mod->section) {
-                    $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
-                }
-                $section = $mod->section;
-                $mod->name = strip_tags(format_string(urldecode($mod->name),true));
-                if (strlen($mod->name) > 55) {
-                    $mod->name = substr($mod->name, 0, 50)."...";
-                }
-                if (!$mod->visible) {
-                    $mod->name = "(".$mod->name.")";
-                }
-                $activities["$mod->cm"] = $mod->name;
-
-                if ($mod->cm == $modid) {
-                    $selectedactivity = "$mod->cm";
-                }
-            }
-        }
-
-        $strftimedate = get_string("strftimedate");
-        $strftimedaydate = get_string("strftimedaydate");
-
-        asort($users);
-
-        // Get all the possible dates
-        // Note that we are keeping track of real (GMT) time and user time
-        // User time is only used in displays - all calcs and passing is GMT
-
-        $timenow = time(); // GMT
-
-        // What day is it now for the user, and when is midnight that day (in GMT).
-        $timemidnight = $today = usergetmidnight($timenow);
-
-        $dates = array();
-        $dates["$USER->lastlogin"] = get_string("lastlogin").", ".userdate($USER->lastlogin, $strftimedate);
-        $dates["$timemidnight"] = get_string("today").", ".userdate($timenow, $strftimedate);
-
-        if (!$course->startdate or ($course->startdate > $timenow)) {
-            $course->startdate = $course->timecreated;
-        }
-
-        $numdates = 1;
-        while ($timemidnight > $course->startdate and $numdates < 365) {
-            $timemidnight = $timemidnight - 86400;
-            $timenow = $timenow - 86400;
-            $dates["$timemidnight"] = userdate($timenow, $strftimedaydate);
-            $numdates++;
-        }
-
-        if ($selecteddate === "lastlogin") {
-            $selecteddate = $USER->lastlogin;
-        }
-
-        echo '<form action="recent.php" method="get">';
-        echo '<input type="hidden" name="chooserecent" value="1" />';
-        echo "<center>";
-        echo "<table>";
-
-        if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-            echo "<tr><td><b>" . get_string("courses") . "</b></td><td>";
-            choose_from_menu ($courses, "id", $course->id, "");
-            echo "</td></tr>";
-        } else {
-            echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-        }
-
-        $sortfields = array("default" => get_string("bycourseorder"),"dateasc" => get_string("datemostrecentlast"), "datedesc" => get_string("datemostrecentfirst"));
-
-        echo "<tr><td><b>" . get_string("participants") . "</b></td><td>";
-        choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
-        echo "</td>";
-
-        echo '<td align="right"><b>' . get_string("since") . '</b></td><td>';
-        choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
-        echo "</td></tr>";
-
-        echo "<tr><td><b>" . get_string("activities") . "</b></td><td>";
-        choose_from_menu ($activities, "modid", $selectedactivity, "");
-        echo "</td>";
-
-        echo '<td align="right"><b>' . get_string("sortby") . "</b></td><td>";
-        choose_from_menu ($sortfields, "sortby", $selectedsort, "");
-        echo "</td></tr>";
-
-        echo '<tr>';
-
-        $groupmode =  groups_get_course_groupmode($course);
-
-        if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {
-            if ($groups = groups_get_all_groups($course->id)) {
-                $group_names = array();
-                foreach($groups as $group) {
-                    $group_names[$group->id] = format_string($group->name);
-                }
-                echo '<td><b>';
-                if ($groupmode == VISIBLEGROUPS) {
-                    print_string('groupsvisible');
-                } else {
-                    print_string('groupsseparate');
-                }
-                echo ':</b></td><td>';
-                choose_from_menu($group_names, "selectedgroup", $selectedgroup, get_string("allgroups"), "", "");
-                echo '</td>';
-            }
-        }
-
-
-        echo '<td colspan="2" align="right">';
-        echo '<input type="submit" value="'.get_string('showrecent').'" />';
-        echo "</td></tr>";
-
-        echo "</table>";
-
-        $advancedlink = "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&amp;advancedfilter=0\">" . get_string("normalfilter") . "</a>";
-        print_heading($advancedlink);
-        echo "</center>";
-        echo "</form>";
-
-    } else {
-
-        $day_list = array("1","7","14","21","30");
-        $strsince = get_string("since");
-        $strlastlogin = get_string("lastlogin");
-        $strday = get_string("day");
-        $strdays = get_string("days");
-
-        $heading = "";
-        foreach ($day_list as $count)  {
-            if ($count == "1") {
-              $day = $strday;
-            } else {
-              $day = $strdays;
-            }
-            $tmpdate = time() - ($count * 3600 * 24);
-            $heading = $heading .
-                "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&amp;date=$tmpdate\"> $count $day</a> | ";
-        }
-
-        $heading = $strsince . ": <a href=\"$CFG->wwwroot/course/recent.php?id=$course->id\">$strlastlogin</a>" . " | " . $heading;
-        print_heading($heading);
-
-        $advancedlink = "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&amp;advancedfilter=1\">" . get_string("advancedfilter") . "</a>";
-        print_heading($advancedlink);
-
-    }
-
-}
 
 
 function make_log_url($module, $url) {
@@ -1018,7 +799,9 @@ function print_recent_activity($course) {
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-    $timestart = time() - COURSE_MAX_RECENT_PERIOD;
+    $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
+
+    $timestart = round(time() - COURSE_MAX_RECENT_PERIOD, -2); // better db caching for guests - 100 seconds
 
     if (!has_capability('moodle/legacy:guest', $context, NULL, false)) {
         if (!empty($USER->lastcourseaccess[$course->id])) {
@@ -1037,123 +820,119 @@ function print_recent_activity($course) {
 
     echo "</div>\n";
 
-
-    // Firstly, have there been any new enrolments?
-
-    $heading = false;
     $content = false;
+
+/// Firstly, have there been any new enrolments?
 
     $users = get_recent_enrolments($course->id, $timestart);
 
     //Accessibility: new users now appear in an <OL> list.
     if ($users) {
         echo '<div class="newusers">';
-        if (! $heading) {
-            print_headline(get_string("newusers").':', 3);
-            $heading = true;
-            $content = true;
-        }
+        print_headline(get_string("newusers").':', 3);
+        $content = true;
         echo "<ol class=\"list\">\n";
         foreach ($users as $user) {
-
-            $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
-            echo '<li class="name"><a href="'.$CFG->wwwroot."/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></li>\n";
+            $fullname = fullname($user, $viewfullnames);
+            echo '<li class="name"><a href="'."$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></li>\n";
         }
         echo "</ol>\n</div>\n";
     }
 
-    // Next, have there been any modifications to the course structure?
+/// Next, have there been any modifications to the course structure?
 
-    $logs = get_records_select('log', "time > '$timestart' AND course = '$course->id' AND
-                                       module = 'course' AND action LIKE '% mod'", "time ASC");
+    $modinfo =& get_fast_modinfo($course);
+
+    $changelist = array();
+
+    $logs = get_records_select('log', "time > $timestart AND course = $course->id AND
+                                       module = 'course' AND
+                                       (action = 'add mod' OR action = 'update mod' OR action = 'delete mod')",
+                               "id ASC");
 
     if ($logs) {
+        $actions  = array('add mod', 'update mod', 'delete mod');
+        $newgones = array(); // added and later deleted items
         foreach ($logs as $key => $log) {
+            if (!in_array($log->action, $actions)) {
+                continue;
+            }
             $info = split(' ', $log->info);
 
-            if ($info[0] == 'label') {     // Labels are special activities
+            if ($info[0] == 'label') {     // Labels are ignored in recent activity
                 continue;
             }
 
-            $modname = get_field($info[0], 'name', 'id', $info[1]);
-            //Create a temp valid module structure (course,id)
-            $tempmod->course = $log->course;
-            $tempmod->id = $info[1];
-            //Obtain the visible property from the instance
-            $modvisible = instance_is_visible($info[0],$tempmod);
+            if (count($info) != 2) {
+                debugging("Incorrect log entry info: id = ".$log->id, DEBUG_DEVELOPER);
+                continue;
+            }
 
-            //Only if the mod is visible
-            if ($modvisible) {
-                switch ($log->action) {
-                    case 'add mod':
-                        $stradded = get_string('added', 'moodle', get_string('modulename', $info[0]));
-                        $changelist[$log->info] = array ('operation' => 'add', 'text' => "$stradded:<br /><a href=\"$CFG->wwwroot/course/$log->url\">".format_string($modname,true)."</a>");
-                    break;
-                    case 'update mod':
-                       $strupdated = get_string('updated', 'moodle', get_string('modulename', $info[0]));
-                       if (empty($changelist[$log->info])) {
-                           $changelist[$log->info] = array ('operation' => 'update', 'text' => "$strupdated:<br /><a href=\"$CFG->wwwroot/course/$log->url\">".format_string($modname,true)."</a>");
-                       }
-                    break;
-                    case 'delete mod':
-                       if (!empty($changelist[$log->info]['operation']) and
-                                  $changelist[$log->info]['operation'] == 'add') {
-                           $changelist[$log->info] = NULL;
-                       } else {
-                           $strdeleted = get_string('deletedactivity', 'moodle', get_string('modulename', $info[0]));
-                           $changelist[$log->info] = array ('operation' => 'delete', 'text' => $strdeleted);
-                       }
-                    break;
+            $modname    = $info[0];
+            $instanceid = $info[1];
+
+            if ($log->action == 'delete mod') {
+                // unfortunately we do not know if the mod was visible
+                if (!array_key_exists($log->info, $newgones)) {
+                    $strdeleted = get_string('deletedactivity', 'moodle', get_string('modulename', $modname));
+                    $changelist[$log->info] = array ('operation' => 'delete', 'text' => $strdeleted);
+                }
+            } else {
+                if (!isset($modinfo->instances[$modname][$instanceid])) {
+                    if ($log->action == 'add mod') {
+                        // do not display added and later deleted activities
+                        $newgones[$log->info] = true;
+                    }
+                    continue;
+                }
+                $cm = $modinfo->instances[$modname][$instanceid];
+                if (!$cm->uservisible) {
+                    //continue;
+                }
+
+                if ($log->action == 'add mod') {
+                    $stradded = get_string('added', 'moodle', get_string('modulename', $modname));
+                    $changelist[$log->info] = array('operation' => 'add', 'text' => "$stradded:<br /><a href=\"$CFG->wwwroot/mod/$cm->modname/view.php?id={$cm->id}\">".format_string($cm->name, true)."</a>");
+
+                } else if ($log->action == 'update mod' and empty($changelist[$log->info])) {
+                    $strupdated = get_string('updated', 'moodle', get_string('modulename', $modname));
+                    $changelist[$log->info] = array('operation' => 'update', 'text' => "$strupdated:<br /><a href=\"$CFG->wwwroot/mod/$cm->modname/view.php?id={$cm->id}\">".format_string($cm->name, true)."</a>");
                 }
             }
         }
     }
 
     if (!empty($changelist)) {
+        print_headline(get_string('courseupdates').':', 3);
+        $content = true;
         foreach ($changelist as $changeinfo => $change) {
-            if ($change) {
-                $changes[$changeinfo] = $change;
-            }
-        }
-        if (isset($changes)){
-            if (count($changes) > 0) {
-                print_headline(get_string('courseupdates').':', 3);
-                $content = true;
-                foreach ($changes as $changeinfo => $change) {
-                    echo '<p class="activity">'.$change['text'].'</p>';
-                }
-            }
+            echo '<p class="activity">'.$change['text'].'</p>';
         }
     }
 
-    // Now display new things from each module
+/// Now display new things from each module
 
-    $mods = get_records('modules', 'visible', '1', 'name', 'id, name');
+    $usedmodules = array();
+    foreach($modinfo->cms as $cm) {
+        if (isset($usedmodules[$cm->modname])) {
+            continue;
+        }
+        if (!$cm->uservisible) {
+            continue;
+        }
+        $usedmodules[$cm->modname] = $cm->modname;
+    }
 
-    $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
-
-    foreach ($mods as $mod) {      // Each module gets it's own logs and prints them
-        if (file_exists($CFG->dirroot.'/mod/'.$mod->name.'/lib.php')) {
-            include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
-            $print_recent_activity = $mod->name.'_print_recent_activity';
+    foreach ($usedmodules as $modname) {      // Each module gets it's own logs and prints them
+        if (file_exists($CFG->dirroot.'/mod/'.$modname.'/lib.php')) {
+            include_once($CFG->dirroot.'/mod/'.$modname.'/lib.php');
+            $print_recent_activity = $modname.'_print_recent_activity';
             if (function_exists($print_recent_activity)) {
-                //
-                // NOTE:
-                //   $isteacher (second parameter below) is to be deprecated!
-                //
-                // TODO:
-                //   1) Make sure that all _print_recent_activity functions are
-                //      not using the $isteacher value.
-                //   2) Eventually, remove the $isteacher parameter from the
-                //      function calls.
-                //
-                $modcontent = $print_recent_activity($course, $viewfullnames, $timestart);
-                if ($modcontent) {
-                    $content = true;
-                }
+                // NOTE: original $isteacher (second parameter below) was replaced with $viewfullnames!
+                $content = $print_recent_activity($course, $viewfullnames, $timestart) || $content;
             }
         } else {
-            /// Really need to indicate an error here to admins. Is there a way to do this?
+            debugging("Missing lib.php in lib/{$mod->name} - please reinstall files or uninstall the module");  
         }
     }
 
@@ -1180,7 +959,7 @@ function get_array_of_activities($courseid) {
     $mod = array();
 
     if (!$rawmods = get_course_mods($courseid)) {
-        return NULL;
+        return $mod; // always return array
     }
 
     if ($sections = get_records("course_sections", "course", $courseid, "section ASC")) {
@@ -1191,14 +970,16 @@ function get_array_of_activities($courseid) {
                    if (empty($rawmods[$seq])) {
                        continue;
                    }
-                   $mod[$seq]->cm = $rawmods[$seq]->id;
-                   $mod[$seq]->mod = $rawmods[$seq]->modname;
-                   $mod[$seq]->section = $section->section;
-                   $mod[$seq]->name = urlencode(get_field($rawmods[$seq]->modname, "name", "id", $rawmods[$seq]->instance));
-                   $mod[$seq]->visible = $rawmods[$seq]->visible;
-                   $mod[$seq]->groupingid = $rawmods[$seq]->groupingid;
+                   $mod[$seq]->id               = $rawmods[$seq]->instance;
+                   $mod[$seq]->cm               = $rawmods[$seq]->id;
+                   $mod[$seq]->mod              = $rawmods[$seq]->modname;
+                   $mod[$seq]->section          = $section->section;
+                   $mod[$seq]->name             = urlencode(get_field($rawmods[$seq]->modname, "name", "id", $rawmods[$seq]->instance));
+                   $mod[$seq]->visible          = $rawmods[$seq]->visible;
+                   $mod[$seq]->groupmode        = $rawmods[$seq]->groupmode;
+                   $mod[$seq]->groupingid       = $rawmods[$seq]->groupingid;
                    $mod[$seq]->groupmembersonly = $rawmods[$seq]->groupmembersonly;
-                   $mod[$seq]->extra = "";
+                   $mod[$seq]->extra            = "";
 
                    $modname = $mod[$seq]->mod;
                    $functionname = $modname."_get_coursemodule_info";
@@ -1223,15 +1004,141 @@ function get_array_of_activities($courseid) {
 }
 
 
+/**
+ * Returns reference to full info about modules in course (including visibility).
+ * Cached and as fast as possible (0 or 1 db query).
+ * @param $course object or 'reset' string to reset caches
+ * @return mixed courseinfo object or nothing if resetting
+ */
+function &get_fast_modinfo($course, $userid=0) {
+    global $CFG, $USER;
+
+    static $cache = array();
+
+    if ($course === 'reset') {
+        $cache = array();
+        $nothing = null;
+        return $nothing; // we must return some reference
+    }
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    if (array_key_exists($course->id, $cache) and $cache[$course->id]->userid == $userid) {
+        return $cache[$course->id];
+    }
+
+    if (empty($course->modinfo)) {
+        // no modinfo yet - load it
+        rebuild_course_cache($course->id);
+        if (!$course = get_record('course', 'id', $course->id)) {
+            error("Can not find course id: $course->id");
+        }
+    }
+
+    $modinfo = new object();
+    $modinfo->courseid  = $course->id;
+    $modinfo->userid    = $userid;
+    $modinfo->sections  = array();
+    $modinfo->cms       = array();
+    $modinfo->instances = array();
+    $modinfo->groups    = null; // loaded only when really needed - the only one db query
+
+    $info = unserialize($course->modinfo);
+    if (!is_array($info)) {
+        // hmm, something is wrong - lets try to fix it
+        rebuild_course_cache($course->id);
+        if (!$course = get_record('course', 'id', $course->id)) {
+            error("Can not find course id: $course->id");
+        }
+        $info = unserialize($course->modinfo);
+        if (!is_array($info)) {
+            return $modinfo;
+        }
+    }
+
+    if ($info) {
+        // detect if upgrade required
+        $first = reset($info);
+        if (!isset($first->id)) {
+            rebuild_course_cache($course->id);
+            if (!$course = get_record('course', 'id', $course->id)) {
+                error("Can not find course id: $course->id");
+            }
+            $info = unserialize($course->modinfo);
+            if (!is_array($info)) {
+                return $modinfo;
+            }
+        }
+    }
+
+    $modlurals = array();
+
+    foreach ($info as $mod) {
+        // reconstruct minimalistic $cm
+        $cm = new object();
+        $cm->id               = $mod->cm;
+        $cm->instance         = $mod->id;
+        $cm->course           = $course->id;
+        $cm->modname          = $mod->mod;
+        $cm->name             = urldecode($mod->name);
+        $cm->visible          = $mod->visible;
+        $cm->section          = $mod->section;
+        $cm->groupmode        = $mod->groupmode;
+        $cm->groupingid       = $mod->groupingid;
+        $cm->groupmembersonly = $mod->groupmembersonly;
+        $cm->extra            = isset($mod->extra) ? urldecode($mod->extra) : '';
+        $cm->icon             = isset($mod->icon) ? $mod->icon : '';
+        $cm->uservisible      = true;
+
+        // preload long names plurals - used very often
+        if (!isset($modlurals[$cm->modname])) {
+            $modlurals[$cm->modname] = get_string('modulenameplural', $cm->modname);
+        }
+        $cm->modplural = $modlurals[$cm->modname];
+
+        if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
+            $cm->uservisible = false;
+
+        } else if (!empty($CFG->enablegroupings) and !empty($cm->groupmembersonly)
+                and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
+            if (is_null($modinfo->groups)) {
+                $modinfo->groups = groups_get_user_groups($course->id, $userid);
+            }
+            if (empty($modinfo->groups[$cm->groupingid])) {
+                $cm->uservisible = false;
+            }
+        }
+
+        if (!isset($modinfo->instances[$cm->modname])) {
+            $modinfo->instances[$cm->modname] = array();
+        }
+        $modinfo->instances[$cm->modname][$cm->instance] =& $cm;
+        $modinfo->cms[$cm->id] =& $cm;
+
+        // reconstruct sections
+        if (!isset($modinfo->sections[$cm->section])) {
+            $modinfo->sections[$cm->section] = array();
+        }
+        $modinfo->sections[$cm->section][] = $cm->id;
+
+        unset($cm);
+    }
+
+    $cache[$course->id] = $modinfo;
+
+    return $cache[$course->id];
+}
 
 
 function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modnamesused) {
 // Returns a number of useful structures for course displays
 
-    $mods          = NULL;    // course modules indexed by id
-    $modnames      = NULL;    // all course module names (except resource!)
-    $modnamesplural= NULL;    // all course module names (plural form)
-    $modnamesused  = NULL;    // course module names used
+    $mods          = array();    // course modules indexed by id
+    $modnames      = array();    // all course module names (except resource!)
+    $modnamesplural= array();    // all course module names (plural form)
+    $modnamesused  = array();    // course module names used
 
     if ($allmods = get_records("modules")) {
         foreach ($allmods as $mod) {
@@ -1250,15 +1157,16 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
             if (empty($modnames[$mod->modname])) {
                 continue;
             }
+            $mods[$mod->id] = $mod;
+            $mods[$mod->id]->modfullname = $modnames[$mod->modname];
+            if (!$mod->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $courseid))) {
+                continue;
+            }
             // Check groupings
             if (!groups_course_module_visible($mod)) {
                 continue;
             }
-            $mods[$mod->id] = $mod;
-            $mods[$mod->id]->modfullname = $modnames[$mod->modname];
-            if ($mod->visible or has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $courseid))) {
-                $modnamesused[$mod->modname] = $modnames[$mod->modname];
-            }
+            $modnamesused[$mod->modname] = $modnames[$mod->modname];
         }
         if ($modnamesused) {
             asort($modnamesused, SORT_LOCALE_STRING);
@@ -1285,6 +1193,7 @@ function course_set_display($courseid, $display=0) {
     } else if (record_exists("course_display", "userid", $USER->id, "course", $courseid)) {
         set_field("course_display", "display", $display, "userid", $USER->id, "course", $courseid);
     } else {
+        $record = new object();
         $record->userid = $USER->id;
         $record->course = $courseid;
         $record->display = $display;
@@ -1317,41 +1226,43 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 /// Prints a section full of activity modules
     global $CFG, $USER;
 
+    static $initialised;
+
     static $groupbuttons;
     static $groupbuttonslink;
-    static $isteacher;
     static $isediting;
     static $ismoving;
     static $strmovehere;
     static $strmovefull;
     static $strunreadpostsone;
-
     static $untracked;
     static $usetracking;
+    static $groupings;
 
-    $labelformatoptions = New stdClass;
 
-    if (!isset($isteacher)) {
+    if (!isset($initialised)) {
         $groupbuttons     = ($course->groupmode or (!$course->groupmodeforce));
         $groupbuttonslink = (!$course->groupmodeforce);
-        $isediting = isediting($course->id);
-        $ismoving = $isediting && ismoving($course->id);
+        $isediting        = isediting($course->id);
+        $ismoving         = $isediting && ismoving($course->id);
         if ($ismoving) {
-            $strmovehere = get_string("movehere");
-            $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
+            $strmovehere  = get_string("movehere");
+            $strmovefull  = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
         }
         include_once($CFG->dirroot.'/mod/forum/lib.php');
         if ($usetracking = forum_tp_can_track_forums()) {
-            $strunreadpostsone    = get_string('unreadpostsone', 'forum');
-            $untracked = forum_tp_get_untracked_forums($USER->id, $course->id);
+            $strunreadpostsone = get_string('unreadpostsone', 'forum');
+            $untracked         = forum_tp_get_untracked_forums($USER->id, $course->id);
         }
+        $initialised = true;
     }
+
+    $labelformatoptions = new object();
     $labelformatoptions->noclean = true;
 
 /// Casting $course->modinfo to string prevents one notice when the field is null
-    $modinfo = unserialize((string)$course->modinfo);
+    $modinfo = get_fast_modinfo($course);
     
-    $groupings = groups_get_all_groupings($course->id);
 
     //Acccessibility: replace table with list <ul>, but don't output empty list.
     if (!empty($section->sequence)) {
@@ -1364,120 +1275,131 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             if (empty($mods[$modnumber])) {
                 continue;
             }
+
             $mod = $mods[$modnumber];
 
-            if (($mod->visible or has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $course->id))) &&
-                (!$ismoving || $mod->id != $USER->activitycopy) &&
-                groups_course_module_visible($mod)) {
-                echo '<li class="activity '.$mod->modname.'" id="module-'.$modnumber.'">';  // Unique ID
-                if ($ismoving) {
-                    echo '<a title="'.$strmovefull.'"'.
-                         ' href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                         '<img class="movetarget" src="'.$CFG->pixpath.'/movehere.gif" '.
-                         ' alt="'.$strmovehere.'" /></a><br />
-                         ';
-                }
-                $instancename = urldecode($modinfo[$modnumber]->name);
-                $instancename = format_string($instancename, true,  $course->id);
+            if ($ismoving and $mod->id == $USER->activitycopy) {
+                // do not display moving mod
+                continue;
+            }
 
-                if (!empty($modinfo[$modnumber]->extra)) {
-                    $extra = urldecode($modinfo[$modnumber]->extra);
-                } else {
-                    $extra = "";
+            if (isset($modinfo->cms[$modnumber])) {
+                if (!$modinfo->cms[$modnumber]->uservisible) {
+                    // visibility shortcut
+                    continue;
+                }
+            } else {
+                if (!coursemodule_visible_for_user($mod)) {
+                    // full visibility check
+                    continue;
+                }
+            }
+
+            echo '<li class="activity '.$mod->modname.'" id="module-'.$modnumber.'">';  // Unique ID
+            if ($ismoving) {
+                echo '<a title="'.$strmovefull.'"'.
+                     ' href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                     '<img class="movetarget" src="'.$CFG->pixpath.'/movehere.gif" '.
+                     ' alt="'.$strmovehere.'" /></a><br />
+                     ';
+            }
+
+            if ($mod->indent) {
+                print_spacer(12, 20 * $mod->indent, false);
+            }
+
+            $extra = $modinfo->cms[$modnumber]->extra;
+
+            if ($mod->modname == "label") {
+                if (!$mod->visible) {
+                    echo "<span class=\"dimmed_text\">";
+                }
+                echo format_text($extra, FORMAT_HTML, $labelformatoptions);
+                if (!$mod->visible) {
+                    echo "</span>";
                 }
 
-                if (!empty($modinfo[$modnumber]->icon)) {
-                    $icon = "$CFG->pixpath/".urldecode($modinfo[$modnumber]->icon);
+            } else { // Normal activity
+                $instancename = format_string($modinfo->cms[$modnumber]->name, true,  $course->id);
+
+                if (!empty($modinfo->cms[$modnumber]->icon)) {
+                    $icon = "$CFG->pixpath/".$modinfo->cms[$modnumber]->icon;
                 } else {
                     $icon = "$CFG->modpixpath/$mod->modname/icon.gif";
                 }
 
-                if ($mod->indent) {
-                    print_spacer(12, 20 * $mod->indent, false);
-                }
+                //Accessibility: for files get description via icon.
+                $altname = '';
+                if ('resource'==$mod->modname) {
+                    if (!empty($modinfo->cms[$modnumber]->icon)) {
+                        $possaltname = $modinfo->cms[$modnumber]->icon;
 
-                if ($mod->modname == "label") {
-                    if (!$mod->visible) {
-                        echo "<span class=\"dimmed_text\">";
-                    }
-                    echo format_text($extra, FORMAT_HTML, $labelformatoptions);
-                    if (!$mod->visible) {
-                        echo "</span>";
-                    }
-
-                } else { // Normal activity
-
-                    //Accessibility: for files get description via icon.
-                    $altname = '';
-                    if ('resource'==$mod->modname) {
-                        if (!empty($modinfo[$modnumber]->icon)) {
-                            $possaltname = $modinfo[$modnumber]->icon;
-
-                            $mimetype = mimeinfo_from_icon('type', $possaltname);
-                            $altname = get_mimetype_description($mimetype);
-                        } else {
-                            $altname = $mod->modfullname;
-                        }
+                        $mimetype = mimeinfo_from_icon('type', $possaltname);
+                        $altname = get_mimetype_description($mimetype);
                     } else {
                         $altname = $mod->modfullname;
                     }
-                    // Avoid unnecessary duplication.
-                    if (false!==stripos($instancename, $altname)) {
-                        $altname = '';
-                    }
-                    // File type after name, for alphabetic lists (screen reader).
-                    if ($altname) {
-                        $altname = get_accesshide(' '.$altname);
-                    }
-
-                    $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
-                    echo '<a '.$linkcss.' '.$extra.        // Title unnecessary!
-                         ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
-                         '<img src="'.$icon.'" class="activityicon" alt="" /> <span>'.
-                         $instancename.$altname.'</span></a>';
-
-                    if (!empty($CFG->enablegroupings) && !empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
-                        echo " <span class=\"groupinglabel\"> - ".format_string($groupings[$mod->groupingid]->name).'</span>';
-                    }
+                } else {
+                    $altname = $mod->modfullname;
                 }
-                if ($usetracking && $mod->modname == 'forum') {
-                    $groupmode = groups_get_course_groupmode($course, $mod);
-                    $groupid = ($groupmode == SEPARATEGROUPS && !has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) ?
-                               groups_get_course_group($course, true) : false;
-
-                    if (forum_tp_can_track_forums() && !isset($untracked[$mod->instance])) {
-                        $unread = forum_tp_count_forum_unread_posts($USER->id, $mod->instance, $groupid);
-                        if ($unread) {
-                            echo '<span class="unread"> <a href="'.$CFG->wwwroot.'/mod/forum/view.php?id='.$mod->id.'">';
-                            if ($unread == 1) {
-                                echo $strunreadpostsone;
-                            } else {
-                                print_string('unreadpostsnumber', 'forum', $unread);
-                            }
-                            echo '</a> </span>';
-                        }
-                    }
+                // Avoid unnecessary duplication.
+                if (false!==stripos($instancename, $altname)) {
+                    $altname = '';
+                }
+                // File type after name, for alphabetic lists (screen reader).
+                if ($altname) {
+                    $altname = get_accesshide(' '.$altname);
                 }
 
-                if ($isediting) {
-                    // TODO: we must define this as mod property!
-                    if ($groupbuttons and $mod->modname != 'label' and $mod->modname != 'resource' and $mod->modname != 'glossary') {
-                        if (! $mod->groupmodelink = $groupbuttonslink) {
-                            $mod->groupmode = $course->groupmode;
-                        }
+                $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
+                echo '<a '.$linkcss.' '.$extra.        // Title unnecessary!
+                     ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
+                     '<img src="'.$icon.'" class="activityicon" alt="" /> <span>'.
+                     $instancename.$altname.'</span></a>';
 
-                    } else {
-                        $mod->groupmode = false;
+                if (!empty($CFG->enablegroupings) && !empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                    if (!isset($groupings)) {
+                        $groupings = groups_get_all_groupings($course->id);
                     }
-                    echo '&nbsp;&nbsp;';
-                    echo make_editing_buttons($mod, $absolute, true, $mod->indent, $section->section);
+                    echo " <span class=\"groupinglabel\"> - ".format_string($groupings[$mod->groupingid]->name).'</span>';
                 }
-                echo "</li>\n";
             }
+            if ($usetracking && $mod->modname == 'forum') {
+                if ($usetracking and !isset($untracked[$mod->instance])) {
+                    $groupid = groups_get_activity_group($mod);
+                    $unread  = forum_tp_count_forum_unread_posts($USER->id, $mod->instance, $groupid);
+                    if ($unread) {
+                        echo '<span class="unread"> <a href="'.$CFG->wwwroot.'/mod/forum/view.php?id='.$mod->id.'">';
+                        if ($unread == 1) {
+                            echo $strunreadpostsone;
+                        } else {
+                            print_string('unreadpostsnumber', 'forum', $unread);
+                        }
+                        echo '</a> </span>';
+                    }
+                }
+            }
+
+            if ($isediting) {
+                // TODO: we must define this as mod property!
+                if ($groupbuttons and $mod->modname != 'label' and $mod->modname != 'resource' and $mod->modname != 'glossary') {
+                    if (! $mod->groupmodelink = $groupbuttonslink) {
+                        $mod->groupmode = $course->groupmode;
+                    }
+
+                } else {
+                    $mod->groupmode = false;
+                }
+                echo '&nbsp;&nbsp;';
+                echo make_editing_buttons($mod, $absolute, true, $mod->indent, $section->section);
+            }
+            echo "</li>\n";
         }
+
     } elseif ($ismoving) {
         echo "<ul class=\"section\">\n";
     }
+
     if ($ismoving) {
         echo '<li><a title="'.$strmovefull.'"'.
              ' href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.$USER->sesskey.'">'.
@@ -1565,6 +1487,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
 }
 
 function rebuild_course_cache($courseid=0) {
+    global $COURSE;
 // Rebuilds the cached list of course activities stored in the database
 // If a courseid is not specified, then all are rebuilt
 
@@ -1581,10 +1504,15 @@ function rebuild_course_cache($courseid=0) {
             if (!set_field("course", "modinfo", $modinfo, "id", $course->id)) {
                 notify("Could not cache module information for course '" . format_string($course->fullname) . "'!");
             }
+            // update cached global COURSE too ;-)
+            if ($course->id == $COURSE->id) {
+                $COURSE->modinfo = $modinfo; 
+            }
         }
     }
+    // reset the fast modinfo cache
+    get_fast_modinfo('reset');
 }
-
 
 function get_child_categories($parent) {
 /// Returns an array of the children categories for the given category
@@ -2640,9 +2568,7 @@ function print_visible_setting($form, $course=NULL) {
     echo '<tr valign="top">';
     echo '<td align="right"><b>'.get_string('visible', '').':</b></td>';
     echo '<td align="left">';
-    unset($choices);
-    $choices[1] = get_string('show');
-    $choices[0] = get_string('hide');
+    $choices = array(1 => get_string('show'), 0 => get_string('hide'));
     choose_from_menu($choices, 'visible', $visible, '', '', 0, false, $hiddensection);
     echo '</td></tr>';
 }
@@ -2654,8 +2580,10 @@ function update_restricted_mods($course,$mods) {
     }
     else {
         foreach ($mods as $mod) {
-            if ($mod == 0)
+            if ($mod == 0) {
                 continue; // this is the 'allow none' option
+            }
+            $am = new object();
             $am->course = $course->id;
             $am->module = $mod;
             insert_record("course_allowed_modules",$am);

@@ -357,20 +357,6 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
 }
 
 /**
-* Given a list of logs, assumed to be those since the last login
-* this function prints a short list of changes related to this module
-* If isteacher is true then perhaps additional information is printed.
-* This function is called from course/lib.php: print_recent_activity()
-*
-* @param reference $logs Logs reference
-* @param boolean $isteacher
-* @return boolean
-*/
-function scorm_print_recent_activity(&$logs, $isteacher=false) {
-    return false;  // True if anything was printed, otherwise false
-}
-
-/**
 * Function to be run periodically according to the moodle cron
 * This function searches for things that need to be done, such
 * as sending out mail, toggling flags etc ...

@@ -132,44 +132,58 @@ function survey_user_complete($course, $user, $mod, $survey) {
     }
 }
 
-function survey_print_recent_activity($course, $isteacher, $timestart) {
+function survey_print_recent_activity($course, $viewfullnames, $timestart) {
     global $CFG;
 
-    $content = false;
-    $surveys = NULL;
+    $modinfo = get_fast_modinfo($course);
+    $ids = array();
+    foreach ($modinfo->cms as $cm) {
+        if ($cm->modname != 'survey') {
+            continue;
+        }
+        if (!$cm->uservisible) {
+            continue;
+        }
+        $ids[$cm->instance] = $cm->instance;
+    }
 
-    if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
-                                           'course = \''.$course->id.'\' AND '.
-                                           'module = \'survey\' AND '.
-                                           'action = \'submit\' ', 'time ASC')) {
+    if (!$ids) {
         return false;
     }
 
-    foreach ($logs as $log) {
-        //Create a temp valid module structure (course,id)
-        $tempmod->course = $log->course;
-        $tempmod->id = $log->info;
-        //Obtain the visible property from the instance
-        $modvisible = instance_is_visible($log->module,$tempmod);
-   
-        //Only if the mod is visible
-        if ($modvisible) {
-            $surveys[$log->id] = survey_log_info($log);
-            $surveys[$log->id]->time = $log->time;
-            $surveys[$log->id]->url = str_replace('&', '&amp;', $log->url);
-        }
+    $slist = implode(',', $ids); // there should not be hundreds of glossaries in one course, right?
+
+    if (!$rs = get_recordset_sql("SELECT sa.userid, sa.survey, sa.time,
+                                         u.firstname, u.lastname, u.email, u.picture
+                                    FROM {$CFG->prefix}survey_answers sa
+                                         JOIN {$CFG->prefix}user u ON u.id = sa.userid
+                                   WHERE sa.survey IN ($slist) AND sa.time > $timestart
+                                GROUP BY sa.userid, sa.survey
+                                ORDER BY sa.id ASC")) {
+        return false;
     }
 
-    if ($surveys) {
-        $content = true;
-        print_headline(get_string('newsurveyresponses', 'survey').':');
-        foreach ($surveys as $survey) {
-            print_recent_activity_note($survey->time, $survey, $survey->name,
-                                       $CFG->wwwroot.'/mod/survey/'.$survey->url);
-        }
+    $surveys = array();
+
+    while ($survey = rs_fetch_next_record($rs)) {
+        $cm = $modinfo->instances['survey'][$survey->survey];
+        $survey->name = $cm->name;
+        $survey->cmid = $cm->id;
+        $surveys[] = $survey;
+    } 
+    rs_close($rs);
+
+    if (!$surveys) {
+        return false;
+    }
+
+    print_headline(get_string('newsurveyresponses', 'survey').':');
+    foreach ($surveys as $survey) {
+        $url = $CFG->wwwroot.'/mod/survey/view.pgp?id='.$survey->cmid;
+        print_recent_activity_note($survey->time, $survey, $survey->name, $url, false, $viewfullnames);
     }
  
-    return $content;
+    return true;
 }
 
 function survey_get_participants($surveyid) {

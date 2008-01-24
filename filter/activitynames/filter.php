@@ -6,10 +6,10 @@
 
     function activitynames_filter($courseid, $text) {
 
-        global $CFG;
+        global $CFG, $COURSE;
 
         // Trivial-cache - keyed on $cachedcourseid
-        static $activitylist;
+        static $activitylist = null;
         static $cachedcourseid;
 
         if (empty($courseid)) {
@@ -18,15 +18,25 @@
 
         // Initialise/invalidate our trivial cache if dealing with a different course
         if (!isset($cachedcourseid) || $cachedcourseid !== (int)$courseid) {
-            $activitylist = array();
+            $activitylist = null;
         } 
         $cachedcourseid = (int)$courseid;
 
         /// It may be cached
 
-        if (empty($activitylist)) {
+        if (is_null($activitylist)) {
+            $activitylist = array();
 
-            $course = get_record("course","id",$courseid);
+            if ($COURSE->id == $courseid) {
+                $course = $COURSE;
+            } else {
+                $course = get_record("course", "id", $courseid);
+            }
+
+            if (!isset($course->modinfo)) {
+                return $text;
+            }
+
         /// Casting $course->modinfo to string prevents one notice when the field is null
             $modinfo = unserialize((string)$course->modinfo);
 
@@ -35,15 +45,14 @@
                 $activitylist = array();      /// We will store all the activities here
 
                 //Sort modinfo by name length
-                usort($modinfo,'comparemodulenamesbylength');
+                usort($modinfo, 'comparemodulenamesbylength');
 
                 foreach ($modinfo as $activity) {
-                    //Exclude labels and hidden items
-                    if ($activity->mod != "label" && $activity->visible) {
-                        $title = trim(strip_tags(urldecode($activity->name)));
+                    //Exclude labels, hidden activities and activities for group members only 
+                    if ($activity->mod != "label" and $activity->visible and empty($activity->groupmembersonly)) {
+                        $title = s(trim(strip_tags(urldecode($activity->name))));
                         /// Avoid empty or unlinkable activity names
                         if (!empty($title)) {
-                            $title = str_replace('"', "'", $title);
                             $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\" $CFG->frametarget>";
                             $currentname = urldecode($activity->name);
                             if ($currentname = trim($currentname)) {
@@ -55,7 +64,11 @@
             }
         }
 
-        return $text = filter_phrases ($text, $activitylist);
+        if ($activitylist) {
+            return $text = filter_phrases ($text, $activitylist);
+        } else {
+            return $text;
+        }
     }
 
 

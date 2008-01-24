@@ -82,16 +82,6 @@ function lams_user_complete($course, $user, $mod, $lams) {
   return true;
 }
 
-function lams_print_recent_activity($course, $isteacher, $timestart) {
-/// Given a course and a time, this module should find recent activity
-/// that has occurred in lams activities and print it out.
-/// Return true if there was output, or false is there was none.
-
-  global $CFG;
-
-  return false;  //  True if anything was printed, otherwise false
-}
-
 function lams_cron () {
 /// Function to be run periodically according to the moodle cron
 /// This function searches for things that need to be done, such

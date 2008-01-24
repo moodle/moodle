@@ -46,8 +46,8 @@ function xmldb_main_upgrade($oldversion=0) {
                 // Hide all activities
                 set_field('course_modules', 'visible', '0', 'module', $module->id);
 
-                require_once($CFG->dirroot.'/course/lib.php');
-                rebuild_course_cache();  // Rebuld cache for all modules because they might have changed
+                //require_once($CFG->dirroot.'/course/lib.php');
+                //rebuild_course_cache();  // Rebuld cache for all modules because they might have changed
             }
         }
 
@@ -2667,6 +2667,18 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2007101506);
     }
+
+    if ($result && $oldversion < 2007101507) {
+        $db->debug = false;
+        require_once($CFG->dirroot.'/course/lib.php');
+        notify('Started rebuilding of course cache...', 'notifysuccess');
+        rebuild_course_cache();  // Rebuild course cache - new group related fields there
+        notify('...finished rebuilding of course cache.', 'notifysuccess');
+        $db->debug = true;
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101507);
+    }
+
 
     return $result;
 }

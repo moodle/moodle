@@ -69,9 +69,13 @@
 // Poplate the table with the list of instances.
     $currentsection = '';
     foreach ($quizzes as $quiz) {
-
-        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+        $cm      = get_coursemodule_from_instance('quiz', $quiz->id);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        if (!coursemodule_visible_for_user($cm)) {
+            continue;
+        }
+
         $data = array();
 
         // Section number if necessary.
@@ -102,7 +106,7 @@
         }
 
         if ($showing == 'stats') {
-            // The $quiz objects returned by get_all_instances_in_course have the necessary $cm 
+            // The $quiz objects returned by get_all_instances_in_course have the necessary $cm
             // fields set to make the following call work.
             $attemptcount = quiz_num_attempt_summary($quiz, $quiz);
             if ($attemptcount) {

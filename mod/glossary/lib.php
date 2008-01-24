@@ -209,57 +209,79 @@ function glossary_user_complete($course, $user, $mod, $glossary) {
     }
 }
 
-function glossary_print_recent_activity($course, $isteacher, $timestart) {
+function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
 /// Given a course and a time, this module should find recent activity
 /// that has occurred in glossary activities and print it out.
 /// Return true if there was output, or false is there was none.
 
-    global $CFG;
+    global $CFG, $USER;
 
-    if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
-                                           'course = \''.$course->id.'\' AND '.
-                                           'module = \'glossary\' AND '.
-                                           '(action = \'add entry\' OR '.
-                                           ' action  = \'approve entry\')', 'time ASC')) {
+    //TODO: use timestamp in approved field instead of changing timemodified when approving in 2.0
+
+    $modinfo = get_fast_modinfo($course);
+    $ids = array();
+    foreach ($modinfo->cms as $cm) {
+        if ($cm->modname != 'glossary') {
+            continue;
+        }
+        if (!$cm->uservisible) {
+            continue;
+        }
+        $ids[$cm->instance] = $cm->instance;
+    }
+
+    if (!$ids) {
         return false;
     }
 
-    $entries = array();
+    $glist = implode(',', $ids); // there should not be hundreds of glossaries in one course, right?
 
-    foreach ($logs as $log) {
-        //Create a temp valid module structure (course,id)
-        $tempmod = new object();
-        $tempmod->course = $log->course;
-        $entry           = get_record('glossary_entries','id',$log->info);
-        if (!$entry) {
+    if (!$entries = get_records_sql("SELECT ge.id, ge.concept, ge.approved, ge.timemodified, ge.glossaryid,
+                                            ge.userid, u.firstname, u.lastname, u.email, u.picture
+                                       FROM {$CFG->prefix}glossary_entries ge
+                                            JOIN {$CFG->prefix}user u ON u.id = ge.userid
+                                      WHERE ge.glossaryid IN ($glist) AND ge.timemodified > $timestart
+                                   ORDER BY ge.timemodified ASC")) {
+        return false;
+    }
+
+    $editor  = array();
+
+    foreach ($entries as $entryid=>$entry) {
+        if ($entry->approved) {
             continue;
         }
-        $tempmod->id = $entry->glossaryid;
-        //Obtain the visible property from the instance
-        $modvisible = instance_is_visible($log->module,$tempmod);
 
-        //Only if the mod is visible
-        if ($modvisible and $entry->approved) {
-            $entries[$log->info] = glossary_log_info($log);
-            $entries[$log->info]->time = $log->time;
-            $entries[$log->info]->url  = str_replace('&', '&amp;', $log->url);
+        if (!isset($editor[$entry->glossaryid])) {
+            $editor[$entry->glossaryid] = has_capability('mod/glossary:approve', get_context_instance(CONTEXT_MODULE, $modinfo->instances['glossary'][$entry->glossaryid]->id));
+        }
+
+        if (!$editor[$entry->glossaryid]) {
+            unset($entries[$entryid]);
         }
     }
 
-    $content = false;
-    if ($entries) {
-        $content = true;
-        print_headline(get_string('newentries', 'glossary').':');
-        foreach ($entries as $entry) {
-            $user = get_record('user','id',$entry->userid, '','', '','', 'firstname,lastname');
+    if (!$entries) {
+        return false;
+    }
+    print_headline(get_string('newentries', 'glossary').':');
 
-            print_recent_activity_note($entry->timemodified, $user, $entry->concept,
-                                       $CFG->wwwroot.'/mod/glossary/view.php?g='.$entry->glossaryid.
-                                       '&amp;mode=entry&amp;hook='.$entry->id);
+    $strftimerecent = get_string('strftimerecent');
+    foreach ($entries as $entry) {
+        $link = $CFG->wwwroot.'/mod/glossary/view.php?g='.$entry->glossaryid.'&amp;mode=entry&amp;hook='.$entry->id;
+        if ($entry->approved) {
+            $dimmed = '';
+        } else {
+            $dimmed = ' dimmed_text';
         }
+        echo '<div class="head'.$dimmed.'">';
+        echo '<div class="date">'.userdate($entry->timemodified, $strftimerecent).'</div>';
+        echo '<div class="name">'.fullname($entry, $viewfullnames).'</div>';
+        echo '</div>';
+        echo '<div class="info"><a href="'.$link.'">'.format_text($entry->concept, true).'</a></div>';
     }
 
-    return $content;
+    return true;
 }
 
 

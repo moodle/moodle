@@ -16,12 +16,12 @@
     $strjournals = get_string("modulenameplural", "journal");
     $strweek = get_string("week");
     $strtopic = get_string("topic");
-    
+
     $navlinks = array();
     $navlinks[] = array('name' => $strjournals, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
 
-    print_header_simple("$strjournals", "", $navigation, 
+    print_header_simple("$strjournals", "", $navigation,
                  "", "", true, "", navmenu($course));
 
 
@@ -41,6 +41,12 @@
     }
 
     foreach ($journals as $journal) {
+        $cm = get_coursemodule_from_instance('journal', $journal->id, $course->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        if (!coursemodule_visible_for_user($cm)) {
+            continue;
+        }
 
         $journal->timestart  = $course->startdate + (($journal->section - 1) * 608400);
         if (!empty($journal->daysopen)) {
@@ -58,5 +64,5 @@
     echo "<br />";
 
     print_footer($course);
- 
+
 ?>

@@ -49,7 +49,7 @@ class block_admin extends block_list {
 
     /// Course editing on/off
 
-        if (has_capability('moodle/course:update', $context) && ($course->id!==SITEID)) {
+        if ($course->id !== SITEID and has_capability('moodle/course:update', $context)) {
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/edit.gif" class="icon" alt="" />';
             if (isediting($this->instance->pageid)) {
                 $this->content->items[]='<a href="view.php?id='.$this->instance->pageid.'&amp;edit=off&amp;sesskey='.sesskey().'">'.get_string('turneditingoff').'</a>';
@@ -63,7 +63,7 @@ class block_admin extends block_list {
 
     /// Assign roles to the course
 
-        if (has_capability('moodle/role:assign', $context) && ($course->id!==SITEID)) {
+        if ($course->id !== SITEID and has_capability('moodle/role:assign', $context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">'.get_string('assignroles', 'role').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/roles.gif" class="icon" alt="" />';
 
@@ -71,16 +71,20 @@ class block_admin extends block_list {
 
     /// View course grades (or just your own grades, same link)
     /// find all accessible reports
-        if ($course->id!==SITEID) {
-            if ($reports = get_list_of_plugins('grade/report', 'CVS')) {     // Get all installed reports
-                foreach ($reports as $key => $plugin) {                      // Remove ones we can't see
-                    if (!has_capability('gradereport/'.$plugin.':view', $context)) {
-                        unset($reports[$key]);
+        if ($course->id !== SITEID) {
+            $reportavailable = false;
+            if ($reports = get_list_of_plugins('grade/report')) {     // Get all installed reports
+                arsort($reports); // user is last, we want to test it first
+                foreach ($reports as $plugin) {
+                    if (has_capability('gradereport/'.$plugin.':view', $context)) {
+                        //stop when fisrt visible found
+                        $reportavailable = true;
+                        break;
                     }
                 }
             }
 
-            if (!empty($reports)) {
+            if ($reportavailable) {
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/report/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" class="icon" alt="" />';
             }
@@ -88,7 +92,7 @@ class block_admin extends block_list {
 
     /// Course outcomes (to help give it more prominence because it's important)
         if (!empty($CFG->enableoutcomes)) {
-            if (has_capability('moodle/course:update', $context) && ($course->id!==SITEID)) {
+            if ($course->id!==SITEID and has_capability('moodle/course:update', $context)) {
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$this->instance->pageid.'">'.get_string('outcomes', 'grades').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon" alt="" />';
             }
@@ -110,7 +114,7 @@ class block_admin extends block_list {
 
     /// Manage groups in this course
 
-        if (($course->groupmode || !$course->groupmodeforce) && has_capability('moodle/course:managegroups', $context) && ($course->id!==SITEID)) {
+        if (($course->id!==SITEID) && ($course->groupmode || !$course->groupmodeforce) && has_capability('moodle/course:managegroups', $context)) {
             $strgroups = get_string('groups');
             $this->content->items[]='<a title="'.$strgroups.'" href="'.$CFG->wwwroot.'/group/index.php?id='.$this->instance->pageid.'">'.$strgroups.'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/group.gif" class="icon" alt="" />';
@@ -118,37 +122,37 @@ class block_admin extends block_list {
 
     /// Backup this course
 
-        if (has_capability('moodle/site:backup', $context)&& ($course->id!==SITEID)) {
+        if ($course->id!==SITEID and has_capability('moodle/site:backup', $context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.$this->instance->pageid.'">'.get_string('backup').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/backup.gif" class="icon" alt="" />';
         }
 
     /// Restore to this course
-        if (has_capability('moodle/site:restore', $context) && ($course->id!==SITEID)) {
+        if ($course->id !== SITEID and has_capability('moodle/site:restore', $context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.$this->instance->pageid.'&amp;wdir=/backupdata">'.get_string('restore').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" class="icon" alt="" />';
         }
 
     /// Import data from other courses
-        if (has_capability('moodle/site:import', $context) && ($course->id!==SITEID)) {
+        if ($course->id !== SITEID and has_capability('moodle/site:import', $context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/import.php?id='.$this->instance->pageid.'">'.get_string('import').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" class="icon" alt="" />';
         }
 
     /// Reset this course
-        if (has_capability('moodle/course:reset', $context) && ($course->id!==SITEID)) {
+        if ($course->id!==SITEID and has_capability('moodle/course:reset', $context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/reset.php?id='.$this->instance->pageid.'">'.get_string('reset').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/return.gif" class="icon" alt="" />';
         }
 
     /// View course reports
-        if (has_capability('moodle/site:viewreports', $context) && ($course->id!==SITEID)) {
+        if ($course->id !== SITEID and has_capability('moodle/site:viewreports', $context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/report.php?id='.$this->instance->pageid.'">'.get_string('reports').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/stats.gif" class="icon" alt="" />';
         }
 
     /// Manage questions
-        if ($course->id!==SITEID){
+        if ($course->id !== SITEID){
             $questionlink = '';
             $questioncaps = array(
                                     'moodle/question:add',
@@ -176,7 +180,7 @@ class block_admin extends block_list {
 
 
     /// Manage files
-        if (has_capability('moodle/course:managefiles', $context) && ($course->id!==SITEID)) {
+        if ($course->id !== SITEID and has_capability('moodle/course:managefiles', $context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.$this->instance->pageid.'">'.get_string('files').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/files.gif" class="icon" alt="" />';
         }

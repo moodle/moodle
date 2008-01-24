@@ -129,6 +129,42 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0) {
 }
 
 /**
+ * Returns info about user's groups in course.
+ * @param int $courseid
+ * @param int $userid $USER if not specified
+ * @return array[groupingid][groupid] including grouping id 0 which means all groups
+ */
+function groups_get_user_groups($courseid, $userid=0) {
+    global $CFG, $USER;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    if (!$groups = get_records_sql("SELECT g.id, gg.groupingid
+                                      FROM {$CFG->prefix}groups g
+                                           JOIN {$CFG->prefix}groups_members gm        ON gm.groupid = g.id
+                                           LEFT JOIN {$CFG->prefix}groupings_groups gg ON gg.groupid = g.id
+                                     WHERE gm.userid = $userid AND g.courseid = $courseid")) {
+        return array('0' => array());
+    }
+
+    $result = array('0' => array_keys($groups)); // all groups
+
+    foreach ($groups as $group) {
+        if (is_null($group->groupingid)) {
+            continue;
+        }
+        if (!array_key_exists($group->groupingid, $result)) {
+            $result[$group->groupingid] = array();
+        }
+        $result[$group->groupingid][$group->id] = $group->id;
+    }
+
+    return $result;
+}
+
+/**
  * Gets array of all groupings in a specified course.
  * @param int $courseid return only groupings in this with this courseid
  * @return array | false Returns an array of the grouping objects or false if no records
@@ -259,13 +295,16 @@ function groups_get_course_groupmode($course) {
  * Returns effective groupmode used in activity, course setting
  * overrides activity setting if groupmodeforce enabled.
  * @param $cm the course module object. Only the ->course and ->groupmode need to be set.
+ * @param $course object optional course object to improve perf
  * @return integer group mode
  */
-function groups_get_activity_groupmode($cm) {
+function groups_get_activity_groupmode($cm, $course=null) {
     global $COURSE;
 
     // get course object (reuse COURSE if possible)
-    if ($cm->course == $COURSE->id) {
+    if (isset($course->id) and $course->id == $cm->course) {
+        //ok
+    } else if ($cm->course == $COURSE->id) {
         $course = $COURSE;
     } else {
         if (!$course = get_record('course', 'id', $cm->course)) {
@@ -302,13 +341,13 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
             if (!array_key_exists($SESSION->activegroup[$course->id][VISIBLEGROUPS][0], $allowedgroups)) {
                 // active does not exist anymore
                 unset($SESSION->activegroup[$course->id][VISIBLEGROUPS][0]);
-            } 
+            }
         }
         if (!empty($SESSION->activegroup[$course->id]['aag'][0])) {
             if (!array_key_exists($SESSION->activegroup[$course->id]['aag'][0], $allowedgroups)) {
                 // active group does not exist anymore
                 unset($SESSION->activegroup[$course->id]['aag'][0]);
-            } 
+            }
         }
 
     } else {
@@ -324,7 +363,7 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
                 if (!array_key_exists($SESSION->activegroup[$course->id][SEPARATEGROUPS][0], $allowedgroups)) {
                     // active group not allowed or does not exist anymore
                     unset($SESSION->activegroup[$course->id][SEPARATEGROUPS][0]);
-                } 
+                }
             }
         }
     }
@@ -402,13 +441,13 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
             if (!array_key_exists($SESSION->activegroup[$cm->course][VISIBLEGROUPS][$cm->groupingid], $allowedgroups)) {
                 // active group does not exist anymore
                 unset($SESSION->activegroup[$cm->course][VISIBLEGROUPS][$cm->groupingid]);
-            } 
+            }
         }
         if (!empty($SESSION->activegroup[$cm->course]['aag'][$cm->groupingid])) {
             if (!array_key_exists($SESSION->activegroup[$cm->course]['aag'][$cm->groupingid], $allowedgroups)) {
                 // active group does not exist anymore
                 unset($SESSION->activegroup[$cm->course]['aag'][$cm->groupingid]);
-            } 
+            }
         }
 
     } else {
@@ -424,7 +463,7 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
                 if (!array_key_exists($SESSION->activegroup[$cm->course][SEPARATEGROUPS][$cm->groupingid], $allowedgroups)) {
                     // active group not allowed or does not exist anymore
                     unset($SESSION->activegroup[$cm->course][SEPARATEGROUPS][$cm->groupingid]);
-                } 
+                }
             }
         }
     }
@@ -654,15 +693,15 @@ function groups_course_module_visible($cm, $userid=null) {
         $userid = $USER->id;
     }
     if (empty($CFG->enablegroupings)) {
-        return(true);
+        return true;
     }
     if (empty($cm->groupmembersonly)) {
-        return(true);
+        return true;
     }
-    if (groups_has_membership($cm, $userid) || has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
-        return(true);
+    if (has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id), $userid) or groups_has_membership($cm, $userid)) {
+        return true;
     }
-    return(false);
+    return false;
 }
 
 ?>

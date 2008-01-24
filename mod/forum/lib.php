@@ -1002,90 +1002,102 @@ function forum_print_overview($courses,&$htmlarray) {
  * Given a course and a date, prints a summary of all the new
  * messages posted in the course since that date
  */
-function forum_print_recent_activity($course, $isteacher, $timestart) {
+function forum_print_recent_activity($course, $viewfullnames, $timestart) {
+    global $CFG, $USER;
 
-    global $CFG;
-    $LIKE = sql_ilike();
+    // do not use log table if possible, it may be huge and is expensive to join with other tables
 
-    $heading = false;
-    $content = false;
-
-    if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
-                                           'course = \''.$course->id.'\' AND '.
-                                           'module = \'forum\' AND '.
-                                           'action '.$LIKE.' \'add %\' ', 'time ASC')){
-        return false;
+    if (!$posts = get_records_sql("SELECT p.*, f.type AS forumtype, d.forum, d.groupid,
+                                          d.timestart, d.timeend, d.userid AS duserid,
+                                          u.firstname, u.lastname, u.email, u.picture
+                                     FROM {$CFG->prefix}forum_posts p
+                                          JOIN {$CFG->prefix}forum_discussions d ON d.id = p.discussion
+                                          JOIN {$CFG->prefix}forum f             ON f.id = d.forum
+                                          JOIN {$CFG->prefix}user u              ON u.id = p.userid
+                                    WHERE p.created > $timestart AND f.course = {$course->id}
+                                 ORDER BY p.id ASC")) { // order by initial posting date
+         return false;
     }
+
+    $modinfo =& get_fast_modinfo($course);
+
+    $groupmodes = array();
+    $cms    = array();
 
     $strftimerecent = get_string('strftimerecent');
 
-    $mygroupid = mygroupid($course->id);
-    $groupmode = array();   // To cache group modes
-
-    $count = 0;
-    foreach ($logs as $log) {
-        //Get post info, I'll need it later
-        if ($post = forum_get_post_from_log($log)) {
-            //Create a temp valid module structure (course,id)
-            $tempmod = new object;
-            $tempmod->course = $log->course;
-            $tempmod->id = $post->forum;
-            //Obtain the visible property from the instance
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $tempmod->course);
-            $modvisible = instance_is_visible('forum', $tempmod)
-                            || has_capability('moodle/course:viewhiddenactivities', $coursecontext);
+    $printposts = array();
+    foreach ($posts as $post) {
+        if (!isset($modinfo->instances['forum'][$post->forum])) {
+            // not visible
+            continue;
+        }
+        $cm = $modinfo->instances['forum'][$post->forum];
+        if (!$cm->uservisible) {
+            continue;
         }
 
-        //Only if the post exists and mod is visible
-        if ($post && $modvisible) {
-
-            if (!isset($cm[$post->forum])) {
-                $cm[$post->forum] = get_coursemodule_from_instance('forum', $post->forum, $course->id);
+        if (!empty($CFG->forum_enabletimedposts) and $USER->id != $post->duserid
+          and (($post->timestart > 0 and $post->timestart > time()) or ($post->timeend > 0 and $post->timeend < time()))) {
+            if (!has_capability('mod/forum:viewhiddentimedposts', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+                continue;
             }
-            $modcontext = get_context_instance(CONTEXT_MODULE, $cm[$post->forum]->id);
+        }
 
-            // Check whether this is belongs to a discussion in a group that
-            // should NOT be accessible to the current user
-            if (!has_capability('moodle/site:accessallgroups', $modcontext)
-                    && $post->groupid != -1) {   // Open discussions have groupid -1
+        $groupmode = groups_get_activity_groupmode($cm, $course);
 
-                $groupmode[$post->forum] = groups_get_activity_groupmode($cm[$post->forum]);
+        if ($groupmode) {
+            if ($post->groupid == -1 or $groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cms[$post->forum]->id))) {
+                // oki (Open discussions have groupid -1)
+            } else {
+                // separate mode
+                if (isguestuser()) {
+                    // shortcut
+                    continue;
+                }
 
-                if ($groupmode[$post->forum]) {
-                    //hope i didn't break anything
-                    if (!@in_array($mygroupid, $post->groupid))/*$mygroupid != $post->groupid*/{
-                        continue;
-                    }
+                if (is_null($modinfo->groups)) {
+                    $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
+                }
+
+                if (!array_key_exists($post->groupid, $modinfo->groups[0])) {
+                    continue;
                 }
             }
-
-            if (! $heading) {
-                print_headline(get_string('newforumposts', 'forum').':', 3);
-                $heading = true;
-                $content = true;
-            }
-            $date = userdate($post->modified, $strftimerecent);
-
-            $subjectclass = ($log->action == 'add discussion') ? ' bold' : '';
-
-            //Accessibility: markup as a list.
-            if ($count < 1) {
-                echo "\n<ul class='unlist'>\n";
-            }
-            $count++;
-            echo '<li><div class="head">'.
-                   '<div class="date">'.$date.'</div>'.
-                   '<div class="name">'.fullname($post, has_capability('moodle/site:viewfullnames', $coursecontext)).'</div>'.
-                 '</div>';
-            echo '<div class="info'.$subjectclass.'">';
-            echo '"<a href="'.$CFG->wwwroot.'/mod/forum/'.str_replace('&', '&amp;', $log->url).'">';
-            $post->subject = break_up_long_words(format_string($post->subject,true));
-            echo $post->subject;
-            echo "</a>\"</div></li>\n";
         }
+
+        $printposts[] = $post;
     }
+    unset($posts);
+
+    if (!$printposts) {
+        return false;
+    }
+
+    print_headline(get_string('newforumposts', 'forum').':', 3);
+    echo "\n<ul class='unlist'>\n";
+
+    foreach ($printposts as $post) {
+        $subjectclass = empty($post->parent) ? ' bold' : '';
+
+        echo '<li><div class="head">'.
+               '<div class="date">'.userdate($post->modified, $strftimerecent).'</div>'.
+               '<div class="name">'.fullname($post, $viewfullnames).'</div>'.
+             '</div>';
+        echo '<div class="info'.$subjectclass.'">';
+        if (empty($post->parent)) {
+            echo '"<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'">';
+        } else {
+            echo '"<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'&amp;parent='.$post->parent.'#p'.$post->id.'">';
+        }
+        $post->subject = break_up_long_words(format_string($post->subject, true));
+        echo $post->subject;
+        echo "</a>\"</div></li>\n";
+    }
+
     echo "</ul>\n";
-    return $content;
+
+    return true;
 }
 
 /**
@@ -1492,8 +1504,12 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
             if (is_array($forums[$i]->onlydiscussions)) {
                 // Show question posts as well as posts from discussions in
                 // which the user has posted a reply.
-                $onlydiscussions = implode(' OR d.id = ', $forums[$i]->onlydiscussions);
-                $selectdiscussion .= " AND ((d.id = $onlydiscussions) OR p.parent = 0)";
+                if (!empty($forums[$i]->onlydiscussions)) {
+                    $onlydiscussions = "(d.id = ".implode(' OR d.id = ', $forums[$i]->onlydiscussions).") OR";
+                } else {
+                    $onlydiscussions = "";
+                }
+                $selectdiscussion .= " AND ($onlydiscussions p.parent = 0)";
             } else {
                 // Show only the question posts.
                 $selectdiscussion .= ' AND (p.parent = 0)';
@@ -3023,8 +3039,19 @@ function forum_update_post($post,&$message) {
 
     $post->modified = time();
 
-    if (!$post->parent) {   // Post is a discussion starter - update discussion title too
-        set_field("forum_discussions", "name", $post->subject, "id", $post->discussion);
+    $updatediscussion = new object();
+    $updatediscussion->id           = $post->discussion;
+    $updatediscussion->timemodified = $post->modified; // last modified tracking
+    $updatediscussion->usermodified = $post->userid;   // last modified tracking
+
+    if (!$post->parent) {   // Post is a discussion starter - update discussion title and times too
+        $updatediscussion->name      = $post->subject;
+        $updatediscussion->timestart = $post->timestart;
+        $updatediscussion->timeend   = $post->timeend;
+    }
+
+    if (!update_record('forum_discussions', $updatediscussion)) {
+        return false;
     }
 
     if ($newfilename = forum_add_attachment($post, 'attachment',$message)) {
@@ -3033,15 +3060,11 @@ function forum_update_post($post,&$message) {
         unset($post->attachment);
     }
 
-    // Update discussion modified date
-    set_field("forum_discussions", "timemodified", $post->modified, "id", $post->discussion);
-    set_field("forum_discussions", "usermodified", $post->userid, "id", $post->discussion);
-
     if (forum_tp_can_track_forums($post->forum) && forum_tp_is_tracked($post->forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
     }
 
-    return update_record("forum_posts", $post);
+    return update_record('forum_posts', $post);
 }
 
 /**
@@ -4119,81 +4142,113 @@ function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_r
 }
 
 /**
- * TODO document
+ * Returns all forum posts since a given time in specified forum.
  */
-function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $cmid="0", $user="", $groupid="") {
-// Returns all forum posts since a given time.  If forum is specified then
-// this restricts the results
+function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0)  {
+    global $CFG, $COURSE, $USER;
 
-    global $CFG;
-
-    if ($cmid) {
-        $forumselect = " AND cm.id = '$cmid'";
+    if ($COURSE->id == $courseid) {
+        $course = $COURSE;
     } else {
-        $forumselect = "";
+        $course = get_record('course', 'id', $courseid);
     }
 
-    if ($user) {
-        $userselect = " AND u.id = '$user'";
+    $modinfo =& get_fast_modinfo($course);
+
+    $cm = $modinfo->cms[$cmid];
+
+    if ($userid) {
+        $userselect = "AND u.id = $userid";
     } else {
         $userselect = "";
     }
 
-    $posts = get_records_sql("SELECT p.*, d.name, u.firstname, u.lastname,
-                                     u.picture, d.groupid, cm.instance, f.name,
-                                     cm.section, cm.id AS cmid
-                               FROM {$CFG->prefix}forum_posts p,
-                                    {$CFG->prefix}forum_discussions d,
-                                    {$CFG->prefix}user u,
-                                    {$CFG->prefix}course_modules cm,
-                                    {$CFG->prefix}forum f
-                              WHERE p.modified > '$sincetime' $forumselect
-                                AND p.userid = u.id $userselect
-                                AND d.course = '$courseid'
-                                AND p.discussion = d.id
-                                AND cm.instance = f.id
-                                AND cm.course = d.course
-                                AND cm.course = f.course
-                                AND f.id = d.forum
-                              ORDER BY p.discussion ASC,p.created ASC");
+    if ($groupid) {
+        $groupselect = "AND gm.groupid = $groupid";
+        $groupjoin   = "JOIN {$CFG->prefix}groups_members gm ON  gm.userid=u.id";
+    } else {
+        $groupselect = "";
+        $groupjoin   = "";
+    }
 
-    if (empty($posts)) {
+    if (!$posts = get_records_sql("SELECT p.*, f.type AS forumtype, d.forum, d.groupid,
+                                          d.timestart, d.timeend, d.userid AS duserid,
+                                          u.firstname, u.lastname, u.email, u.picture
+                                     FROM {$CFG->prefix}forum_posts p
+                                          JOIN {$CFG->prefix}forum_discussions d ON d.id = p.discussion
+                                          JOIN {$CFG->prefix}forum f             ON f.id = d.forum
+                                          JOIN {$CFG->prefix}user u              ON u.id = p.userid
+                                          $groupjoin
+                                    WHERE p.created > $timestart AND f.id = $cm->instance
+                                          $userselect $groupselect
+                                 ORDER BY p.id ASC")) { // order by initial posting date
+         return;
+    }
+
+    $groupmode       = groups_get_activity_groupmode($cm, $course);
+    $cm_context      = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $viewhiddentimed = has_capability('mod/forum:viewhiddentimedposts', $cm_context);
+    $accessallgroups = has_capability('moodle/site:accessallgroups', $cm_context);
+    $viewfullnames   = has_capability('moodle/site:viewfullnames', $cm_context);
+
+    if (is_null($modinfo->groups)) {
+        $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
+    }
+
+    $printposts = array();
+    foreach ($posts as $post) {
+
+        if (!empty($CFG->forum_enabletimedposts) and $USER->id != $post->duserid
+          and (($post->timestart > 0 and $post->timestart > time()) or ($post->timeend > 0 and $post->timeend < time()))) {
+            if (!$viewhiddentimed) {
+                continue;
+            }
+        }
+
+        if ($groupmode) {
+            if ($post->groupid == -1 or $groupmode == VISIBLEGROUPS or $accessallgroups) {
+                // oki (Open discussions have groupid -1)
+            } else {
+                // separate mode
+                if (isguestuser()) {
+                    // shortcut
+                    continue;
+                }
+
+                if (!array_key_exists($post->groupid, $modinfo->groups[0])) {
+                    continue;
+                }
+            }
+        }
+
+        $printposts[] = $post;
+    }
+
+    if (!$printposts) {
         return;
     }
 
-    foreach ($posts as $post) {
+    $aname = format_string($cm->name,true);
 
-        $modcontext = get_context_instance(CONTEXT_MODULE, $post->cmid);
-        $canviewallgroups = has_capability('moodle/site:accessallgroups', $modcontext);
+    foreach ($printposts as $post) {
+        $tmpactivity = new object();
 
-        if ($groupid and ($post->groupid != -1 and $groupid != $post->groupid and !$canviewallgroups)) {
-            continue;
-        }
-        if (!groups_course_module_visible($post->cmid)) {
-            continue;
-        }
+        $tmpactivity->type         = 'forum';
+        $tmpactivity->cmid         = $cm->id;
+        $tmpactivity->name         = $aname;
+        $tmpactivity->section      = $cm->section;
+        $tmpactivity->timestamp    = $post->modified;
 
-        $tmpactivity = new Object;
-
-        $tmpactivity->type = "forum";
-        $tmpactivity->defaultindex = $index;
-        $tmpactivity->instance = $post->instance;
-        $tmpactivity->name = $post->name;
-        $tmpactivity->section = $post->section;
-
-        $tmpactivity->content->id = $post->id;
+        $tmpactivity->content->id         = $post->id;
         $tmpactivity->content->discussion = $post->discussion;
-        $tmpactivity->content->subject = $post->subject;
-        $tmpactivity->content->parent = $post->parent;
+        $tmpactivity->content->subject    = format_string($post->subject);
+        $tmpactivity->content->parent     = $post->parent;
 
-        $tmpactivity->user->userid = $post->userid;
-        $tmpactivity->user->fullname = fullname($post);
-        $tmpactivity->user->picture = $post->picture;
+        $tmpactivity->user->userid   = $post->userid;
+        $tmpactivity->user->fullname = fullname($post, $viewfullnames);
+        $tmpactivity->user->picture  = $post->picture;
 
-        $tmpactivity->timestamp = $post->modified;
-        $activities[] = $tmpactivity;
-
-        $index++;
+        $activities[$index++] = $tmpactivity;
     }
 
     return;
@@ -4202,39 +4257,36 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
 /**
  * 
  */
-function forum_print_recent_mod_activity($activity, $course, $detail=false) {
-
+function forum_print_recent_mod_activity($activity, $courseid, $detail, $modnames) {
     global $CFG;
 
-    echo '<table border="0" cellpadding="3" cellspacing="0">';
-
     if ($activity->content->parent) {
-        $openformat = "<font size=\"2\"><i>";
-        $closeformat = "</i></font>";
+        $class = 'reply';
     } else {
-        $openformat = "<b>";
-        $closeformat = "</b>";
+        $class = 'discussion';
     }
 
-    echo "<tr><td class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
-    print_user_picture($activity->user->userid, $course, $activity->user->picture);
-    echo "</td><td>$openformat";
+    echo '<table border="0" cellpadding="3" cellspacing="0" class="forum-recent">';
 
+    echo "<tr><td class=\"userpicture\" valign=\"top\">";
+    print_user_picture($activity->user->userid, $courseid, $activity->user->picture);
+    echo "</td><td class=\"$class\">";
+
+    echo '<div class="title">';
     if ($detail) {
+        $aname = s($activity->name);
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-             "class=\"icon\" alt=\"".strip_tags(format_string($activity->name,true))."\" />  ";
+             "class=\"icon\" alt=\"{$aname}\" />";
     }
-    echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=" . $activity->content->discussion
-         . "#p" . $activity->content->id . "\">";
+    echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d={$activity->content->discussion}"
+         ."#p{$activity->content->id}\">{$activity->content->subject}</a>";
+    echo '</div>';
 
-    echo format_string($activity->content->subject,true);
-    echo "</a>$closeformat";
-
-    echo "<br /><font size=\"2\">";
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id=" . $activity->user->userid . "&amp;course=" . "$course\">"
-         . $activity->user->fullname . "</a>";
-    echo " - " . userdate($activity->timestamp) . "</font></td></tr>";
-    echo "</table>";
+    echo '<div class="user">';
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id={$activity->user->userid}&amp;course=$courseid\">"
+         ."{$activity->user->fullname}</a> - ".userdate($activity->timestamp);
+    echo '</div>';
+      echo "</td></tr></table>";
 
     return;
 }

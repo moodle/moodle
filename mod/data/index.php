@@ -42,14 +42,14 @@
     $strname = get_string('name');
     $strdata = get_string('modulename','data');
     $strdataplural  = get_string('modulenameplural','data');
-    
+
     $navlinks = array();
-    $navlinks[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
+    $navlinks[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navigation = build_navigation($navlinks);
 
     print_header_simple($strdata, '', $navigation, '', '', true, "", navmenu($course));
 
-    if (! $datas = get_all_instances_in_course("data", $course)) {
+    if (!$cms = get_coursemodules_in_course('data', $course->id, 'm.intro, m.approval, m.rssarticles')) {
         notice(get_string('thereareno', 'moodle',$strdataplural) , "$CFG->wwwroot/course/view.php?id=$course->id");
     }
 
@@ -82,49 +82,48 @@
 
     $currentsection = "";
 
-    foreach ($datas as $data) {
+    foreach ($cms as $cm) {
+        if (!coursemodule_visible_for_user($cm)) {
+            continue;
+        }
 
         $printsection = "";
 
-        //Calculate the href
-        if (!$data->visible) {
-            //Show dimmed if the mod is hidden
-            $link = "<a class=\"dimmed\" href=\"view.php?id=$data->coursemodule\">".format_string($data->name,true)."</a>";
-        } else {
-            //Show normal if the mod is visible
-            $link = "<a href=\"view.php?id=$data->coursemodule\">".format_string($data->name,true)."</a>";
-        }
+        $class = $cm->visible ? '' : 'class="dimmed"';
+        $link = "<a $class href=\"view.php?id=$cm->id\">".format_string($cm->name,true)."</a>";
+
+        // TODO: add group restricted counts here, and limit unapproved to ppl with approve cap only + link to approval page
 
         $numrecords = count_records_sql('SELECT COUNT(r.id) FROM '.$CFG->prefix.
-                'data_records r WHERE r.dataid ='.$data->id);
+                'data_records r WHERE r.dataid ='.$cm->instance);
 
-        if ($data->approval == 1) {
+        if ($cm->approval == 1) {
             $numunapprovedrecords = count_records_sql('SELECT COUNT(r.id) FROM '.$CFG->prefix.
-                    'data_records r WHERE r.dataid ='.$data->id.
+                    'data_records r WHERE r.dataid ='.$cm->instance.
                     ' AND r.approved <> 1');
         } else {
             $numunapprovedrecords = '-';
         }
 
         $rsslink = '';
-        if ($rss && $data->rssarticles > 0) {
-            $rsslink = rss_get_link($course->id, $USER->id, 'data', $data->id, 'RSS');
+        if ($rss && $cm->rssarticles > 0) {
+            $rsslink = rss_get_link($course->id, $USER->id, 'data', $cm->instance, 'RSS');
         }
 
         if ($course->format == 'weeks' or $course->format == 'topics') {
-            if ($data->section !== $currentsection) {
-                if ($data->section) {
-                    $printsection = $data->section;
+            if ($cm->section !== $currentsection) {
+                if ($cm->section) {
+                    $printsection = $cm->section;
                 }
                 if ($currentsection !== '') {
                     $table->data[] = 'hr';
                 }
-                $currentsection = $data->section;
+                $currentsection = $cm->section;
             }
-            $row = array ($printsection, $link, $data->intro, $numrecords, $numunapprovedrecords);
+            $row = array ($printsection, $link, $cm->intro, $numrecords, $numunapprovedrecords);
 
         } else {
-            $row = array ($link, $data->intro, $numrecords, $numunapprovedrecords);
+            $row = array ($link, $cm->intro, $numrecords, $numunapprovedrecords);
         }
 
         if ($rss) {

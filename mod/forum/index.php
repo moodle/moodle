@@ -80,7 +80,7 @@
 
     $generalforums = array();            // For now
     $learningforums = get_all_instances_in_course("forum", $course);
-    
+
     if ($forums = get_records("forum", "course", $id, "name ASC")) {  // All known forums
 
         if ($learningforums) {           // Copy "full" data into this complete array
@@ -91,7 +91,7 @@
         }
 
         foreach ($forums as $forum) {
-            
+
             $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             
@@ -101,15 +101,13 @@
                 }
                 continue;
             }
-            if (!isset($forum->visible)) {
-                $forum->visible = instance_is_visible("forum", $forum);
-                if (!$forum->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
-                    if (isset($forum->keyreference)) {
-                        unset($learningforums[$forum->keyreference]);
-                    }
-                    continue;
+            if (!coursemodule_visible_for_user($cm)) {
+                if (isset($forum->keyreference)) {
+                    unset($learningforums[$forum->keyreference]);
                 }
+                continue;
             }
+
             switch ($forum->type) {
                 case "news":
                 case "social":
@@ -159,10 +157,10 @@
 
     if ($generalforums) {
         foreach ($generalforums as $forum) {
-           
+
             $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-            
+
             if (!groups_course_module_visible($cm)) {
                 continue;
             }
@@ -296,19 +294,16 @@
         if ($learningforums) {
             $currentsection = "";
             foreach ($learningforums as $key => $forum) {
-                $forum->visible = instance_is_visible("forum", $forum)
-                                    || has_capability('moodle/course:view', $coursecontext);
-                
                 $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
-                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-                
-                if (!groups_course_module_visible($cm)) {
+                if (!coursemodule_visible_for_user($cm)) {
                     continue;
                 }
+
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
                 $currentgroup = groups_get_activity_group($cm);
                 $groupmode = groups_get_activity_groupmode($cm);
-                
- 
+
                 $cantaccessagroup = $groupmode && !has_capability('moodle/site:accessallgroups', $context) && !mygroupid($course->id);
 
                 if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {

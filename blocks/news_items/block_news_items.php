@@ -32,9 +32,11 @@ class block_news_items extends block_base {
                 return '';
             }
 
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $COURSE->id)) {
+            $modinfo = get_fast_modinfo($COURSE);
+            if (empty($modinfo->instances['forum'][$forum->id])) {
                 return '';
             }
+            $cm = $modinfo->instances['forum'][$forum->id];
 
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
