@@ -835,7 +835,7 @@ function update_tag_correlations($item_type, $item_id) {
  * @param number $min_correlation cutoff percentage (optional, default is 0.25)
  * @param int $limitnum return a subset comprising this many records (optional, default is 10)
  */
-function cache_correlated_tags($tag_name_or_id, $min_correlation=0.25, $limitnum=10) {
+function cache_correlated_tags($tag_name_or_id, $min_correlation=2, $limitnum=10) {
     global $CFG;
 
     $tag_id = tag_id_from_string($tag_name_or_id);
@@ -845,17 +845,17 @@ function cache_correlated_tags($tag_name_or_id, $min_correlation=0.25, $limitnum
     $query = "SELECT tb.tagid , COUNT(*) nr
                 FROM {$CFG->prefix}tag_instance ta
                      INNER JOIN {$CFG->prefix}tag_instance tb ON ta.itemid = tb.itemid
-               WHERE ta.tagid = {$tag_id}
+               WHERE ta.tagid = {$tag_id} AND tb.tagid != {$tag_id}
             GROUP BY tb.tagid
             ORDER BY nr DESC";
 
     $correlated = array();
 
-    if ($tag_correlations = get_records_sql($query, 0, $limitnum)) {
-        $cutoff = $tag_correlations[$tag_id]->nr * $min_correlation;
-
+    // Correlated tags happen when they appear together in more occasions 
+    // than $min_correlation.
+    if ($tag_correlations = get_records_sql($query, 0, 10)) {
         foreach($tag_correlations as $correlation) {
-            if($correlation->nr >= $cutoff && $correlation->tagid != $tag_id ){
+            if($correlation->nr >= $min_correlation){
                 $correlated[] = $correlation->tagid;
             }
         }
