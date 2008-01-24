@@ -11,13 +11,13 @@ class block_site_main_menu extends block_list {
     }
 
     function get_content() {
-        global $USER, $CFG;
+        global $USER, $CFG, $COURSE;
 
         if ($this->content !== NULL) {
             return $this->content;
         }
 
-        $this->content = new stdClass;
+        $this->content = new object();
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';
@@ -26,19 +26,57 @@ class block_site_main_menu extends block_list {
             return $this->content;
         }
 
-        $course = get_record('course', 'id', $this->instance->pageid);
+        if ($COURSE->id == $this->instance->pageid) {
+            $course = $COURSE;
+        } else {
+            $course = get_record('course', 'id', $this->instance->pageid);
+        }
+
+        require_once($CFG->dirroot.'/course/lib.php');
+
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-
         $isediting = isediting($this->instance->pageid) && has_capability('moodle/course:manageactivities', $context);
-        $ismoving  = ismoving($this->instance->pageid);
+        $modinfo =& get_fast_modinfo($course);
 
+/// extra fast view mode
+        if (!$isediting) {
+            if (!empty($modinfo->sections[0])) {
+                foreach($modinfo->sections[0] as $cmid) {
+                    $cm = $modinfo->cms[$cmid];
+                    if (!$cm->uservisible) {
+                        continue;
+                    }
+                    if ($cm->modname == 'label') {
+                        $this->content->items[] = format_text($cm->extra, FORMAT_HTML);
+                        $this->content->icons[] = '';
+                    } else {
+                        $linkcss = $cm->visible ? '' : ' class="dimmed" ';
+                        $instancename = format_string($cm->name, true, $course->id);
+                        $this->content->items[] = '<a title="'.$cm->modplural.'" '.$linkcss.' '.$cm->extra.
+                            ' href="'.$CFG->wwwroot.'/mod/'.$cm->modname.'/view.php?id='.$cm->id.'">'.$instancename.'</a>';
+                        //Accessibility: incidental image - should be empty Alt text
+                        if (!empty($cm->icon)) {
+                            $icon = $CFG->pixpath.'/'.$cm->icon;
+                        } else {
+                            $icon = $CFG->modpixpath.'/'.$cm->modname.'/icon.gif';
+                        }
+                        $this->content->icons[] = '<img src="'.$icon.'" class="icon" alt="" />';
+                    }
+                }
+            }
+            return $this->content;
+        }
+
+
+/// slow & hacky editing mode
+        $ismoving = ismoving($this->instance->pageid);
         $sections = get_all_sections($this->instance->pageid);
 
         if(!empty($sections) && isset($sections[0])) {
             $section = $sections[0];
         }
 
-        if (!empty($section) || $isediting) {
+        if (!empty($section)) {
             get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
         }
 
@@ -52,8 +90,6 @@ class block_site_main_menu extends block_list {
             $stractivityclipboard = $USER->activitycopyname;
         }
     /// Casting $course->modinfo to string prevents one notice when the field is null
-        $modinfo = unserialize((string)$course->modinfo);
-
         $editbuttons = '';
 
         if ($ismoving) {
@@ -68,7 +104,7 @@ class block_site_main_menu extends block_list {
                     continue;
                 }
                 $mod = $mods[$modnumber];
-                if ($isediting && !$ismoving) {
+                if (!$ismoving) {
                     if ($groupbuttons) {
                         if (! $mod->groupmodelink = $groupbuttonslink) {
                             $mod->groupmode = $course->groupmode;
@@ -89,17 +125,17 @@ class block_site_main_menu extends block_list {
                         $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.$USER->sesskey.'">'.
                             '<img style="height:16px; width:80px; border:0px" src="'.$CFG->pixpath.'/movehere.gif" alt="'.$strmovehere.'" /></a>';
                         $this->content->icons[] = '';
-                   }
-                    $instancename = urldecode($modinfo[$modnumber]->name);
+                    }
+                    $instancename = $modinfo->cms[$modnumber]->name;
                     $instancename = format_string($instancename, true, $this->instance->pageid);
                     $linkcss = $mod->visible ? '' : ' class="dimmed" ';
-                    if (!empty($modinfo[$modnumber]->extra)) {
-                        $extra = urldecode($modinfo[$modnumber]->extra);
+                    if (!empty($modinfo->cms[$modnumber]->extra)) {
+                        $extra = $modinfo->cms[$modnumber]->extra;
                     } else {
                         $extra = '';
                     }
-                    if (!empty($modinfo[$modnumber]->icon)) {
-                        $icon = $CFG->pixpath.'/'.urldecode($modinfo[$modnumber]->icon);
+                    if (!empty($modinfo->cms[$modnumber]->icon)) {
+                        $icon = $CFG->pixpath.'/'.$modinfo->cms[$modnumber]->icon;
                     } else {
                         $icon = $CFG->modpixpath.'/'.$mod->modname.'/icon.gif';
                     }
@@ -110,7 +146,7 @@ class block_site_main_menu extends block_list {
                     } else {
                         $this->content->items[] = '<a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
                             ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.$instancename.'</a>'.$editbuttons;
-                        //Accessibility: incidental image - should be empty Alt text 
+                        //Accessibility: incidental image - should be empty Alt text
                         $this->content->icons[] = '<img src="'.$icon.'" class="icon" alt="" />';
                     }
                 }
@@ -123,7 +159,7 @@ class block_site_main_menu extends block_list {
             $this->content->icons[] = '';
         }
 
-        if ($isediting && $modnames) {
+        if ($modnames) {
             $this->content->footer = print_section_add_menus($course, 0, $modnames, true, true);
         } else {
             $this->content->footer = '';

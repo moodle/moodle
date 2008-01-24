@@ -48,6 +48,13 @@
     }
 
     foreach ($workshops as $workshop) {
+        $cm      = get_coursemodule_from_instance('workshop', $workshop->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        if (!coursemodule_visible_for_user($cm)) {
+            continue;
+        }
+
         if (workshop_is_teacher($workshop, $USER->id)) { // teacher see info (students see grade)
             $info = workshop_phase($workshop, 'short');
             if (time() > $workshop->submissionstart) {

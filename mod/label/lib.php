@@ -70,14 +70,13 @@ function label_get_coursemodule_info($coursemodule) {
 /// this activity in a course listing.
 ///
 /// See get_array_of_activities() in course/lib.php
-
-   $info = NULL;
-
-   if ($label = get_record("label", "id", $coursemodule->instance)) {
-       $info->extra = urlencode($label->content);
-   }
-
-   return $info;
+    if ($label = get_record("label", "id", $coursemodule->instance)) {
+        $info = new object();
+        $info->extra = urlencode($label->content);
+        return $info;
+    } else {
+        return null;
+    }
 }
 
 function label_get_view_actions() {

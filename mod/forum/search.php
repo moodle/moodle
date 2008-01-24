@@ -386,30 +386,18 @@ function forum_menu_list($course)  {
 
     $menu = array();
 
-    if ($forums = get_all_instances_in_course("forum", $course)) {
+    if ($cms = get_coursemodules_in_course('forum', $course->id)) {
         if ($course->format == 'weeks') {
             $strsection = get_string('week');
         } else {
             $strsection = get_string('topic');
         }
 
-        foreach ($forums as $forum) {
-            if ($cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-                $currentgroup = groups_get_activity_group($cm);
-                if (!isset($forum->visible)) {
-                    if (!instance_is_visible("forum", $forum) &&
-                            !has_capability('moodle/course:viewhiddenactivities', $context)) {
-                        continue;
-                    }
-                }
-                $groupmode = groups_get_activity_groupmode($cm);   // Groups are being used
-                if ($groupmode == SEPARATEGROUPS && ($currentgroup === false) &&
-                                  !has_capability('moodle/site:accessallgroups', $context)) {
-                    continue;
-                }
+        foreach ($cms as $cm) {
+            if (!coursemodule_visible_for_user($cm)) {
+                continue;
             }
-            $menu[$forum->id] = format_string($forum->name,true);
+            $menu[$cm->instance] = format_string($cm->name,true);
         }
     }
 

@@ -188,33 +188,31 @@ function wiki_print_recent_activity($course, $isteacher, $timestart) {
         return false;
     }
 
+    $modinfo = get_fast_modinfo($course);
+    $wikis = array();
+
     foreach ($logs as $log) {
-        //Create a temp valid module structure (course,id)
-        $tempmod = new Object();
-        $tempmod->course = $log->course;
-        $tempmod->id = $log->instance;
-        
-        //Obtain the visible property from the instance
-        $modvisible = instance_is_visible($log->module,$tempmod);
-
-        //Only if the mod is visible
-        if ($modvisible) {
-            $wikis[$log->info] = wiki_log_info($log);
-            $wikis[$log->info]->pagename = $log->info;
-            $wikis[$log->info]->time = $log->time;
-            $wikis[$log->info]->url  = str_replace('&', '&amp;', $log->url);
+        $cm = $modinfo->instances['wiki'][$log->instance];
+        if (!$cm->uservisible) {
+            continue;
         }
+
+        $wikis[$log->info] = wiki_log_info($log);
+        $wikis[$log->info]->pagename = $log->info;
+        $wikis[$log->info]->time = $log->time;
+        $wikis[$log->info]->url  = str_replace('&', '&amp;', $log->url);
     }
 
-    if (isset($wikis)) {
-        $content = true;
-        print_headline(get_string('updatedwikipages', 'wiki').':', 3);
-        foreach ($wikis as $wiki) {
-            print_recent_activity_note($wiki->time, $wiki, $wiki->pagename,
-                                       $CFG->wwwroot.'/mod/wiki/'.$wiki->url);
-        }
+    if (!$wikis) {
+        return false;
     }
-    return true;  //  True if anything was printed, otherwise false
+    print_headline(get_string('updatedwikipages', 'wiki').':', 3);
+    foreach ($wikis as $wiki) {
+        print_recent_activity_note($wiki->time, $wiki, $wiki->pagename,
+                                   $CFG->wwwroot.'/mod/wiki/'.$wiki->url);
+    }
+
+    return false;
 }
 
 function wiki_log_info($log) {

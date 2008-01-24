@@ -326,37 +326,23 @@ function exercise_grades($exerciseid) {
 
 
 /*******************************************************************/
-function exercise_print_recent_activity($course, $isteacher, $timestart) {
+function exercise_print_recent_activity($course, $viewfullanmes, $timestart) {
     global $CFG;
+
+    $isteacher = has_capability('mod/exercise:assess', get_context_instance(CONTEXT_COURSE, $course->id));
+
+    $modinfo = get_fast_modinfo($course);
 
     // have a look for new submissions (only show to teachers)
     $submitcontent = false;
     if ($isteacher) {
         if ($logs = exercise_get_submit_logs($course, $timestart)) {
-            // got some, see if any belong to a visible module
-            foreach ($logs as $log) {
-                // Create a temp valid module structure (only need courseid, moduleid)
-                $tempmod->course = $course->id;
-                $tempmod->id = $log->exerciseid;
-                //Obtain the visible property from the instance
-                if (instance_is_visible('exercise',$tempmod)) {
-                    $submitcontent = true;
-                    break;
-                    }
-                }
             // if we got some 'live' ones then output them
-            if ($submitcontent) {
-                print_headline(get_string('exercisesubmissions', 'exercise').':');
-                foreach ($logs as $log) {
-                    //Create a temp valid module structure (only need courseid, moduleid)
-                    $tempmod->course = $course->id;
-                    $tempmod->id = $log->exerciseid;
-                    //Obtain the visible property from the instance
-                    if (instance_is_visible('exercise',$tempmod)) {
-                        print_recent_activity_note($log->time, $log, $log->name,
-                                                   $CFG->wwwroot.'/mod/exercise/'.str_replace('&', '&amp;', $log->url));
-                    }
-                }
+            $submitcontent = true;
+            print_headline(get_string('exercisesubmissions', 'exercise').':');
+            foreach ($logs as $log) {
+                print_recent_activity_note($log->time, $log, $log->name,
+                                           $CFG->wwwroot.'/mod/exercise/'.str_replace('&', '&amp;', $log->url));
             }
         }
     }
@@ -365,28 +351,20 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
     $gradecontent = false;
     if ($logs = exercise_get_grade_logs($course, $timestart)) {
         // got some, see if any belong to a visible module
-        foreach ($logs as $log) {
-            // Create a temp valid module structure (only need courseid, moduleid)
-            $tempmod->course = $course->id;
-            $tempmod->id = $log->exerciseid;
-            //Obtain the visible property from the instance
-            if (instance_is_visible("exercise",$tempmod)) {
-                $gradecontent = true;
-                break;
+        foreach ($logs as $id=>$log) {
+            $cm = $modinfo->instances['exercise'][$log->exerciseid];
+            if (!$cm->uservisible) {
+                unset($logs[$id]);
+                continue;
             }
         }
         // if we got some "live" ones then output them
-        if ($gradecontent) {
+        if ($logs) {
+            $gradecontent = true;
             print_headline(get_string('exercisefeedback', 'exercise').':');
             foreach ($logs as $log) {
-                //Create a temp valid module structure (only need courseid, moduleid)
-                $tempmod->course = $course->id;
-                $tempmod->id = $log->exerciseid;
-                //Obtain the visible property from the instance
-                if (instance_is_visible('exercise',$tempmod)) {
-                    print_recent_activity_note($log->time, $log, $log->name,
-                                               $CFG->wwwroot.'/mod/exercise/'.str_replace('&', '&amp;', $log->url));
-                }
+                print_recent_activity_note($log->time, $log, $log->name,
+                                           $CFG->wwwroot.'/mod/exercise/'.str_replace('&', '&amp;', $log->url));
             }
         }
     }
@@ -396,28 +374,20 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
     if (!$isteacher) { // teachers only need to see submissions
         if ($logs = exercise_get_assess_logs($course, $timestart)) {
             // got some, see if any belong to a visible module
-            foreach ($logs as $log) {
-                // Create a temp valid module structure (only need courseid, moduleid)
-                $tempmod->course = $course->id;
-                $tempmod->id = $log->exerciseid;
-                //Obtain the visible property from the instance
-                if (instance_is_visible("exercise",$tempmod)) {
-                    $assesscontent = true;
-                    break;
-                    }
+            foreach ($logs as $id=>$log) {
+                $cm = $modinfo->instances['exercise'][$log->exerciseid];
+                if (!$cm->uservisible) {
+                    unset($logs[$id]);
+                    continue;
                 }
+            }
             // if we got some "live" ones then output them
-            if ($assesscontent) {
+            if ($logs) {
+                $assesscontent = true;
                 print_headline(get_string('exerciseassessments', 'exercise').':');
                 foreach ($logs as $log) {
-                    //Create a temp valid module structure (only need courseid, moduleid)
-                    $tempmod->course = $course->id;
-                    $tempmod->id = $log->exerciseid;
-                    //Obtain the visible property from the instance
-                    if (instance_is_visible('exercise',$tempmod)) {
-                        print_recent_activity_note($log->time, $log, $log->name,
-                                                   $CFG->wwwroot.'/mod/exercise/'.str_replace('&', '&amp;', $log->url));
-                    }
+                    print_recent_activity_note($log->time, $log, $log->name,
+                                               $CFG->wwwroot.'/mod/exercise/'.str_replace('&', '&amp;', $log->url));
                 }
             }
         }

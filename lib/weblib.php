@@ -4742,23 +4742,22 @@ function print_table($table, $return=false) {
     return true;
 }
 
-function print_recent_activity_note($time, $user, $text, $link, $return=false) {
-    static $strftimerecent;
+function print_recent_activity_note($time, $user, $text, $link, $return=false, $viewfullnames=null) {
+    static $strftimerecent = null;
     $output = '';
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-    $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
+    if (is_null($viewfullnames)) {
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
+    }
 
-    if (empty($strftimerecent)) {
+    if (is_null($strftimerecent)) {
         $strftimerecent = get_string('strftimerecent');
     }
 
-    $date = userdate($time, $strftimerecent);
-    $name = fullname($user, $viewfullnames);
-
     $output .= '<div class="head">';
-    $output .= '<div class="date">'.$date.'</div> '.
-         '<div class="name">'.fullname($user, $viewfullnames).'</div>';
+    $output .= '<div class="date">'.userdate($time, $strftimerecent).'</div>';
+    $output .= '<div class="name">'.fullname($user, $viewfullnames).'</div>';
     $output .= '</div>';
     $output .= '<div class="info"><a href="'.$link.'">'.format_string($text,true).'</a></div>';
 
@@ -5222,10 +5221,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     $strjumpto = get_string('jumpto');
 
-/// Casting $course->modinfo to string prevents one notice when the field is null
-    if (!$modinfo = unserialize((string)$course->modinfo)) {
-        return '';
-    }
+    $modinfo = get_fast_modinfo($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     $section = -1;
@@ -5246,21 +5242,20 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
         $THEME->navmenulist = navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $width, $cm);
     }
 
-    foreach ($modinfo as $mod) {
-        if ($mod->mod == 'label') {
+    foreach ($modinfo->cms as $mod) {
+        if ($mod->modname == 'label') {
             continue;
         }
 
         if ($mod->section > $course->numsections) {   /// Don't show excess hidden sections
             break;
         }
-        $mod->id = $mod->cm;
-        $mod->course = $course->id;
-        if (!groups_course_module_visible($mod)) {
+
+        if (!$mod->uservisible) { // do not icnlude empty sections at all
             continue;
         }
 
-        if ($mod->section > 0 and $section <> $mod->section) {
+        if ($mod->section > 0 and $section != $mod->section) {
             $thissection = $sections[$mod->section];
 
             if ($thissection->visible or !$course->hiddensections or
@@ -5275,41 +5270,39 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
                         $menu[] = '--'.substr($thissection->summary, 0, $width).'...';
                     }
                 }
-            }
-        }
-
-        $section = $mod->section;
-
-        //Only add visible or teacher mods to jumpmenu
-        if ($mod->visible or has_capability('moodle/course:viewhiddenactivities',
-                                             get_context_instance(CONTEXT_MODULE, $mod->cm))) {
-            $url = $mod->mod .'/view.php?id='. $mod->cm;
-            if ($flag) { // the current mod is the "next" mod
-                $nextmod = $mod;
-                $flag = false;
-            }
-            if ($cm == $mod->cm) {
-                $selected = $url;
-                $selectmod = $mod;
-                $backmod = $previousmod;
-                $flag = true; // set flag so we know to use next mod for "next"
-                $mod->name = $strjumpto;
-                $strjumpto = '';
+                $section = $mod->section;
             } else {
-                $mod->name = strip_tags(format_string(urldecode($mod->name),true));
-                if (strlen($mod->name) > ($width+5)) {
-                    $mod->name = substr($mod->name, 0, $width).'...';
-                }
-                if (!$mod->visible) {
-                    $mod->name = '('.$mod->name.')';
-                }
+                // no activities from this hidden section shown
+                continue;
             }
-            $menu[$url] = $mod->name;
-            if (empty($THEME->navmenuiconshide)) {
-                $menustyle[$url] = 'style="background-image: url('.$CFG->modpixpath.'/'.$mod->mod.'/icon.gif);"';  // Unfortunately necessary to do this here
-            }
-            $previousmod = $mod;
         }
+
+        $url = $mod->modname.'/view.php?id='. $mod->id;
+        if ($flag) { // the current mod is the "next" mod
+            $nextmod = $mod;
+            $flag = false;
+        }
+        if ($cm == $mod->id) {
+            $selected = $url;
+            $selectmod = $mod;
+            $backmod = $previousmod;
+            $flag = true; // set flag so we know to use next mod for "next"
+            $mod->name = $strjumpto;
+            $strjumpto = '';
+        } else {
+            $mod->name = strip_tags(format_string(urldecode($mod->name),true));
+            if (strlen($mod->name) > ($width+5)) {
+                $mod->name = substr($mod->name, 0, $width).'...';
+            }
+            if (!$mod->visible) {
+                $mod->name = '('.$mod->name.')';
+            }
+        }
+        $menu[$url] = $mod->name;
+        if (empty($THEME->navmenuiconshide)) {
+            $menustyle[$url] = 'style="background-image: url('.$CFG->modpixpath.'/'.$mod->modname.'/icon.gif);"';  // Unfortunately necessary to do this here
+        }
+        $previousmod = $mod;
     }
     //Accessibility: added Alt text, replaced &gt; &lt; with 'silent' character and 'accesshide' text.
 
@@ -5318,23 +5311,23 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
         $logslink = '<li>'."\n".'<a title="'.$logstext.'" '.
                     $CFG->frametarget.'onclick="this.target=\''.$CFG->framename.'\';"'.' href="'.
                     $CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;user=0&amp;date=0&amp;id='.
-                       $course->id.'&amp;modid='.$selectmod->cm.'">'.
+                       $course->id.'&amp;modid='.$selectmod->id.'">'.
                     '<img class="icon log" src="'.$CFG->pixpath.'/i/log.gif" alt="'.$logstext.'" /></a>'."\n".'</li>';
 
     }
     if ($backmod) {
         $backtext= get_string('activityprev', 'access');
-        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.
+        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->modname.'/view.php" '.
                    'onclick="this.target=\''.$CFG->framename.'\';"'.'><fieldset class="invisiblefieldset">'.
-                   '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
+                   '<input type="hidden" name="id" value="'.$backmod->id.'" />'.
                    '<button type="submit" title="'.$backtext.'">'.link_arrow_left($backtext, $url='', $accesshide=true).
                    '</button></fieldset></form></li>';
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.
+        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->modname.'/view.php"  '.
                    'onclick="this.target=\''.$CFG->framename.'\';"'.'><fieldset class="invisiblefieldset">'.
-                   '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
+                   '<input type="hidden" name="id" value="'.$nextmod->id.'" />'.
                    '<button type="submit" title="'.$nexttext.'">'.link_arrow_right($nexttext, $url='', $accesshide=true).
                    '</button></fieldset></form></li>';
     }
@@ -5362,21 +5355,15 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
     global $CFG;
 
     $section = -1;
-    $selected = '';
     $url = '';
-    $previousmod = NULL;
-    $backmod = NULL;
-    $nextmod = NULL;
-    $selectmod = NULL;
-    $logslink = NULL;
-    $flag = false;
     $menu = array();
+    $doneheading = false;
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
     $menu[] = '<ul class="navmenulist"><li class="jumpto section"><span>'.$strjumpto.'</span><ul>';
-    foreach ($modinfo as $mod) {
-        if ($mod->mod == 'label') {
+    foreach ($modinfo->cms as $mod) {
+        if ($mod->modname == 'label') {
             continue;
         }
 
@@ -5384,13 +5371,17 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
             break;
         }
 
-        if ($mod->section >= 0 and $section <> $mod->section) {
+        if (!$mod->uservisible) { // do not icnlude empty sections at all
+            continue;
+        }
+
+        if ($mod->section >= 0 and $section != $mod->section) {
             $thissection = $sections[$mod->section];
 
             if ($thissection->visible or !$course->hiddensections or
                       has_capability('moodle/course:viewhiddensections', $coursecontext)) {
                 $thissection->summary = strip_tags(format_string($thissection->summary,true));
-                if (!empty($doneheading)) {
+                if (!$doneheading) {
                     $menu[] = '</ul></li>';
                 }
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
@@ -5405,33 +5396,29 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
                 $menu[] = '<li class="section"><span>'.$item.'</span>';
                 $menu[] = '<ul>';
                 $doneheading = true;
+
+                $section = $mod->section;
+            } else {
+                // no activities from this hidden section shown
+                continue;
             }
         }
 
-        $section = $mod->section;
-
-        //Only add visible or teacher mods to jumpmenu
-        if ($mod->visible or has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $mod->cm))) {
-            $url = $mod->mod .'/view.php?id='. $mod->cm;
-            if ($flag) { // the current mod is the "next" mod
-                $nextmod = $mod;
-                $flag = false;
-            }
-            $mod->name = strip_tags(format_string(urldecode($mod->name),true));
-            if (strlen($mod->name) > ($width+5)) {
-                $mod->name = substr($mod->name, 0, $width).'...';
-            }
-            if (!$mod->visible) {
-                $mod->name = '('.$mod->name.')';
-            }
-            $class = 'activity '.$mod->mod;
-            $class .= ($cmid == $mod->cm) ? ' selected' : '';
-            $menu[] = '<li class="'.$class.'">'.
-                      '<img src="'.$CFG->modpixpath.'/'.$mod->mod.'/icon.gif" alt="" />'.
-                      '<a href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
-            $previousmod = $mod;
+        $url = $mod->modname .'/view.php?id='. $mod->id;
+        $mod->name = strip_tags(format_string(urldecode($mod->name),true));
+        if (strlen($mod->name) > ($width+5)) {
+            $mod->name = substr($mod->name, 0, $width).'...';
         }
+        if (!$mod->visible) {
+            $mod->name = '('.$mod->name.')';
+        }
+        $class = 'activity '.$mod->modname;
+        $class .= ($cmid == $mod->cm) ? ' selected' : '';
+        $menu[] = '<li class="'.$class.'">'.
+                  '<img src="'.$CFG->modpixpath.'/'.$mod->modname.'/icon.gif" alt="" />'.
+                  '<a href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
     }
+
     if ($doneheading) {
         $menu[] = '</ul></li>';
     }

@@ -24,10 +24,11 @@ class block_course_summary extends block_base {
             return '';
         }
 
-        $this->content = New stdClass;
+        $this->content = new object();
+        $options = new object();
         $options->noclean = true;    // Don't clean Javascripts etc
         $this->content->text = format_text($COURSE->summary, FORMAT_HTML, $options);
-        if(isediting($COURSE->id)) {
+        if (isediting($COURSE->id)) { // ?? courseid param not there??
             if($COURSE->id == SITEID) {
                 $editpage = $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=frontpagesettings';
             } else {

@@ -509,108 +509,135 @@ function quiz_refresh_events($courseid = 0) {
     return true;
 }
 
+/**
+ * Returns all quiz graded users since a given time for specified quiz
+ */
+function quiz_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0)  {
+    global $CFG, $COURSE, $USER;
 
-function quiz_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $quiz="0", $user="", $groupid="") {
-// Returns all quizzes since a given time.  If quiz is specified then
-// this restricts the results
-
-    global $CFG;
-
-    if ($quiz) {
-        $quizselect = " AND cm.id = '$quiz'";
+    if ($COURSE->id == $courseid) {
+        $course = $COURSE;
     } else {
-        $quizselect = "";
+        $course = get_record('course', 'id', $courseid);
     }
-    if ($user) {
-        $userselect = " AND u.id = '$user'";
+
+    $modinfo =& get_fast_modinfo($course);
+
+    $cm = $modinfo->cms[$cmid];
+
+    if ($userid) {
+        $userselect = "AND u.id = $userid";
     } else {
         $userselect = "";
     }
 
-    $quizzes = get_records_sql("SELECT qa.*, q.name, u.firstname, u.lastname, u.picture,
-                                       q.course, q.sumgrades as maxgrade, cm.instance, cm.section, cm.id as cmid
-                                  FROM {$CFG->prefix}quiz_attempts qa,
-                                       {$CFG->prefix}quiz q,
-                                       {$CFG->prefix}user u,
-                                       {$CFG->prefix}course_modules cm
-                                 WHERE qa.timefinish > '$sincetime'
-                                   AND qa.userid = u.id $userselect
-                                   AND qa.quiz = q.id $quizselect
-                                   AND cm.instance = q.id
-                                   AND cm.course = '$courseid'
-                                   AND q.course = cm.course
-                                 ORDER BY qa.timefinish ASC");
+    if ($groupid) {
+        $groupselect = "AND gm.groupid = $groupid";
+        $groupjoin   = "JOIN {$CFG->prefix}groups_members gm ON  gm.userid=u.id";
+    } else {
+        $groupselect = "";
+        $groupjoin   = "";
+    }
 
-    if (empty($quizzes))
-      return;
+    if (!$attempts = get_records_sql("SELECT qa.*, q.sumgrades AS maxgrade,
+                                             u.firstname, u.lastname, u.email, u.picture 
+                                        FROM {$CFG->prefix}quiz_attempts qa
+                                             JOIN {$CFG->prefix}quiz q ON q.id = qa.quiz
+                                             JOIN {$CFG->prefix}user u ON u.id = qa.userid
+                                             $groupjoin
+                                       WHERE qa.timefinish > $timestart AND q.id = $cm->instance
+                                             $userselect $groupselect
+                                    ORDER BY qa.timefinish ASC")) {
+         return;
+    }
 
-    foreach ($quizzes as $quiz) {
-        if (empty($groupid) || groups_is_member($groupid, $quiz->userid)) {
 
-          $tmpactivity = new Object;
+    $cm_context      = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $grader          = has_capability('moodle/grade:viewall', $cm_context);
+    $accessallgroups = has_capability('moodle/site:accessallgroups', $cm_context);
+    $viewfullnames   = has_capability('moodle/site:viewfullnames', $cm_context);
+    $grader          = has_capability('mod/quiz:grade', $cm_context);
+    $groupmode       = groups_get_activity_groupmode($cm, $course);
 
-          $tmpactivity->type = "quiz";
-          $tmpactivity->defaultindex = $index;
-          $tmpactivity->instance = $quiz->quiz;
-          $tmpactivity->cmid = $quiz->cmid;
+    if (is_null($modinfo->groups)) {
+        $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
+    }
 
-          $tmpactivity->name = $quiz->name;
-          $tmpactivity->section = $quiz->section;
+    $aname = format_string($cm->name,true);
+    foreach ($attempts as $attempt) {
+        if ($attempt->userid != $USER->id) {
+            if (!$grader) {
+                // grade permission required
+                continue;
+            }
 
-          $tmpactivity->content->attemptid = $quiz->id;
-          $tmpactivity->content->sumgrades = $quiz->sumgrades;
-          $tmpactivity->content->maxgrade = $quiz->maxgrade;
-          $tmpactivity->content->attempt = $quiz->attempt;
+            if ($groupmode == SEPARATEGROUPS and !$accessallgroups) { 
+                $usersgroups = groups_get_all_groups($course->id, $attempt->userid, $cm->groupingid);
+                if (!is_array($usersgroups)) {
+                    continue;
+                }
+                $usersgroups = array_keys($usersgroups);
+                $interset = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
+                if (empty($intersect)) {
+                    continue;
+                }
+            }
+       }
 
-          $tmpactivity->user->userid = $quiz->userid;
-          $tmpactivity->user->fullname = fullname($quiz);
-          $tmpactivity->user->picture = $quiz->picture;
+        $tmpactivity = new object();
 
-          $tmpactivity->timestamp = $quiz->timefinish;
-
-          $activities[] = $tmpactivity;
-
-          $index++;
-        }
+        $tmpactivity->type      = 'quiz';
+        $tmpactivity->cmid      = $cm->id;
+        $tmpactivity->name      = $aname;
+        $tmpactivity->section   = $cm->section;
+        $tmpactivity->timestamp = $attempt->timefinish;
+        
+        $tmpactivity->content->attemptid = $attempt->id;
+        $tmpactivity->content->sumgrades = $attempt->sumgrades;
+        $tmpactivity->content->maxgrade  = $attempt->maxgrade;
+        $tmpactivity->content->attempt   = $attempt->attempt;
+        
+        $tmpactivity->user->userid   = $attempt->userid;
+        $tmpactivity->user->fullname = fullname($attempt, $viewfullnames);
+        $tmpactivity->user->picture  = $attempt->picture;
+        
+        $activities[$index++] = $tmpactivity;
     }
 
   return;
 }
 
 
-function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
+function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames) {
     global $CFG;
 
-    echo '<table border="0" cellpadding="3" cellspacing="0">';
+    echo '<table border="0" cellpadding="3" cellspacing="0" class="forum-recent">';
 
-    echo "<tr><td class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
-    print_user_picture($activity->user->userid, $course, $activity->user->picture);
-    echo "</td><td style=\"width:100%;\"><font size=\"2\">";
+    echo "<tr><td class=\"userpicture\" valign=\"top\">";
+    print_user_picture($activity->user->userid, $courseid, $activity->user->picture);
+    echo "</td><td>";
 
     if ($detail) {
-        echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-             "class=\"icon\" alt=\"$activity->type\" />  ";
-        echo "<a href=\"$CFG->wwwroot/mod/quiz/view.php?id=" . $activity->instance . "\">"
-             . format_string($activity->name,true) . "</a> - ";
-
+        $modname = $modnames[$activity->type];
+        echo '<div class="title">';
+        echo "<img src=\"$CFG->modpixpath/{$activity->type}/icon.gif\" ".
+             "class=\"icon\" alt=\"$modname\" />";
+        echo "<a href=\"$CFG->wwwroot/mod/quiz/view.php?id={$activity->cmid}\">{$activity->name}</a>";
+        echo '</div>';
     }
 
-    if (has_capability('mod/quiz:grade', get_context_instance(CONTEXT_MODULE, $activity->cmid))) {
-        $grades = "(" .  $activity->content->sumgrades . " / " . $activity->content->maxgrade . ") ";
-        echo "<a href=\"$CFG->wwwroot/mod/quiz/review.php?q="
-             . $activity->instance . "&amp;attempt="
-             . $activity->content->attemptid . "\">" . $grades . "</a> ";
+    echo '<div class="grade">';
+    echo  get_string("attempt", "quiz")." {$activity->content->attempt}: ";
+    $grades = "({$activity->content->sumgrades} / {$activity->content->maxgrade})";
+    echo "<a href=\"$CFG->wwwroot/mod/quiz/review.php?attempt={$activity->content->attemptid}\">$grades</a>";
+    echo '</div>';
 
-        echo  get_string("attempt", "quiz") . " - " . $activity->content->attempt . "<br />";
-    }
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id="
-         . $activity->user->userid . "&amp;course=$course\">"
-         . $activity->user->fullname . "</a> ";
+    echo '<div class="user">';
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id={$activity->user->userid}&amp;course=$courseid\">"
+         ."{$activity->user->fullname}</a> - ".userdate($activity->timestamp);
+    echo '</div>';
 
-    echo " - " . userdate($activity->timestamp);
-
-    echo "</font></td></tr>";
-    echo "</table>";
+    echo "</td></tr></table>";
 
     return;
 }

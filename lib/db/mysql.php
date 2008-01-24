@@ -712,8 +712,8 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2004042600) {     /// Rebuild course caches for resource icons
-        include_once("$CFG->dirroot/course/lib.php");
-        rebuild_course_cache();
+        //include_once("$CFG->dirroot/course/lib.php");
+        //rebuild_course_cache();
     }
 
     if ($oldversion < 2004042700) {     /// Increase size of lang fields

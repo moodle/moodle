@@ -895,21 +895,6 @@ function data_get_participants($dataid) {
     return $participants;
 }
 
-function data_get_coursemodule_info($coursemodule) {
-/// Given a course_module object, this function returns any
-/// "extra" information that may be needed when printing
-/// this activity in a course listing.
-///
-/// See get_array_of_activities() in course/lib.php
-///
-
-   global $CFG;
-
-   $info = NULL;
-
-   return $info;
-}
-
 ///junk functions
 /************************************************************************
  * takes a list of records, the current data, a search string,          *

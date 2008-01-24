@@ -75,25 +75,37 @@ class block_section_links extends block_base {
         } else {
             $link = '#section-';
         }
-        $text = '<ol class="inline-list">';
-        for ($i = $inc; $i <= $course->numsections; $i += $inc) {
-            $isvisible = get_field('course_sections', 'visible', 'course', $this->instance->pageid, 'section', $i);
-            if (!$isvisible and !has_capability('moodle/course:update', $context)) {
-                continue;
-            }
-            $style = ($isvisible) ? '' : ' class="dimmed"';
-            if ($i == $highlight) {
-                $text .= "<li><a href=\"$link$i\"$style><strong>$i</strong></a></li>\n";
-            } else {
-                $text .= "<li><a href=\"$link$i\"$style>$i</a></li>\n";
-            }
-        }
-        $text .= '</ol>';
-        if ($highlight) {
-            $isvisible = get_field('course_sections', 'visible', 'course', $this->instance->pageid, 'section', $highlight);
-            if ($isvisible or has_capability('moodle/course:update', $context)) {
+
+        $sql = "SELECT section, visible
+                  FROM {$CFG->prefix}course_sections
+                 WHERE course = $course->id AND
+                       section < ".($course->numsections+1)."
+              ORDER BY section";
+
+        if ($sections = get_records_sql($sql)) {
+            $text = '<ol class="inline-list">';
+            for ($i = $inc; $i <= $course->numsections; $i += $inc) {
+                if (!isset($sections[$i])) {
+                    continue;
+                }
+                $isvisible = $sections[$i]->visible;
+                if (!$isvisible and !has_capability('moodle/course:update', $context)) {
+                    continue;
+                }
                 $style = ($isvisible) ? '' : ' class="dimmed"';
-                $text .= "\n<a href=\"$link$highlight\"$style>$linktext</a>";
+                if ($i == $highlight) {
+                    $text .= "<li><a href=\"$link$i\"$style><strong>$i</strong></a></li>\n";
+                } else {
+                    $text .= "<li><a href=\"$link$i\"$style>$i</a></li>\n";
+                }
+            }
+            $text .= '</ol>';
+            if ($highlight and isset($sections[$highlight])) {
+                $isvisible = $sections[$highlight]->visible;
+                if ($isvisible or has_capability('moodle/course:update', $context)) {
+                    $style = ($isvisible) ? '' : ' class="dimmed"';
+                    $text .= "\n<a href=\"$link$highlight\"$style>$linktext</a>";
+                }
             }
         }
 

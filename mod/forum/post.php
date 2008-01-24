@@ -473,18 +473,8 @@
                 error("You can not update this post");
             }
 
-            if ($forum->type == 'news' && !$fromform->parent) {
-                $updatediscussion = new object;
-                $updatediscussion->id = $fromform->discussion;
-                $updatediscussion->timestart = $fromform->timestart;
-                $updatediscussion->timeend = $fromform->timeend;
-                if (!update_record('forum_discussions', $updatediscussion)) {
-                    error(get_string("couldnotupdate", "forum"), $errordestination);
-                }
-            }
-
-            $updatepost=$fromform; //realpost
-            $updatepost->forum=$forum->id;
+            $updatepost = $fromform; //realpost
+            $updatepost->forum = $forum->id;
             if (!forum_update_post($updatepost, $message)) {
                 error(get_string("couldnotupdate", "forum"), $errordestination);
             }
@@ -741,7 +731,7 @@
                                         'format'=>$post->format):
                                     array())+
 
-                                (isset($dicussion->timestart)?array(
+                                (isset($discussion->timestart)?array(
                                         'timestart'=>$discussion->timestart):
                                     array())+
 

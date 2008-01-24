@@ -133,60 +133,139 @@ function chat_user_complete($course, $user, $mod, $chat) {
     return true;
 }
 
-function chat_print_recent_activity($course, $isteacher, $timestart) {
-/// Given a course and a date, prints a summary of all chat rooms
-/// that currently have people in them.
+function chat_print_recent_activity($course, $viewfullnames, $timestart) {
+/// Given a course and a date, prints a summary of all chat rooms past and present
 /// This function is called from course/lib.php: print_recent_activity()
 
-    global $CFG;
+    global $CFG, $USER;
 
-    $timeold = time() - $CFG->chat_old_ping;
+    // this is approximate only, but it is really fast ;-)
+    $timeout = $CFG->chat_old_ping * 10;
 
-    $lastpingsearch = ($CFG->chat_method == 'sockets') ? '': 'AND cu.lastping > \''.$timeold.'\'';
+    if (!$cms = get_records_sql("SELECT cm.*, ch.name, 'chat' AS modname, MAX(chm.timestamp) AS lasttime
+                                   FROM {$CFG->prefix}course_modules cm
+                                        JOIN {$CFG->prefix}modules md        ON md.id = cm.module
+                                        JOIN {$CFG->prefix}chat ch           ON ch.id = cm.instance
+                                        JOIN {$CFG->prefix}chat_messages chm ON chm.chatid = ch.id
+                                  WHERE chm.timestamp > $timestart AND ch.course = {$course->id} AND md.name = 'chat'
+                               GROUP BY cm.id
+                               ORDER BY chm.timestamp ASC")) {
+         return false;
+    }
 
-    if (!$chatusers = get_records_sql("SELECT u.id, cu.chatid, u.firstname, u.lastname
-                                        FROM {$CFG->prefix}chat_users cu,
-                                             {$CFG->prefix}chat ch,
-                                             {$CFG->prefix}user u
-                                       WHERE cu.userid = u.id
-                                         AND cu.chatid = ch.id $lastpingsearch
-                                         AND ch.course = '$course->id'
-                                       ORDER BY cu.chatid ASC") ) {
+    $past     = array();
+    $current  = array();
+    $modinfo =& get_fast_modinfo($course); // reference needed because we might load the groups
+
+    foreach ($cms as $cm) {
+        if (!array_key_exists($cm->id, $modinfo->cms)) {
+            continue;
+        }
+        if (!$modinfo->cms[$cm->id]->uservisible) {
+            continue;
+        }
+
+        if (groups_get_activity_groupmode($cm) != SEPARATEGROUPS
+         or has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+            if ($timeout > time() - $cm->lasttime) {
+                $current[] = $cm;
+            } else {
+                $past[] = $cm;
+            }
+
+            continue;
+        }
+
+        if (is_null($modinfo->groups)) {
+            $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
+        }
+
+        // verify groups in separate mode
+        if (!$mygroupids = $modinfo->groups[$cm->groupingid]) {
+            continue;
+        }
+
+        // ok, last post was not for my group - we have to query db to get last message from one of my groups
+        // only minor problem is that the order will not be correct
+        $mygroupids = implode(',', $mygroupids);
+        $cm->mygroupids = $mygroupids;
+
+        if (!$cm = get_record_sql("SELECT cm.*, ch.name, 'chat' AS modname, MAX(chm.timestamp) AS lasttime
+                                     FROM {$CFG->prefix}course_modules cm
+                                          JOIN {$CFG->prefix}chat ch           ON ch.id = cm.instance
+                                          JOIN {$CFG->prefix}chat_messages chm ON chm.chatid = ch.id
+                                    WHERE chm.timestamp > $timestart AND cm.id = {$cm->id} AND
+                                          (chm.groupid IN ($mygroupids) OR chm.groupid = 0)
+                                 GROUP BY cm.id")) {
+             continue;
+        }
+        if ($timeout > time() - $cm->lasttime) {
+            $current[] = $cm;
+        } else {
+            $past[] = $cm;
+        }
+    }
+
+    if (!$past and !$current) {
         return false;
     }
 
-    $outputstarted = false;
-    $current = 0;
-    foreach ($chatusers as $chatuser) {
-        if ($current != $chatuser->chatid) {
-            if ($current) {
-                echo '</ul></div>';  // room
-                $current = 0;
-            }
-            if ($chat = get_record('chat', 'id', $chatuser->chatid)) {
+    $strftimerecent = get_string('strftimerecent');
 
-                // we find the course module id
-                $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id);
-                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if ($past) {
+        print_headline(get_string('pastchats', 'chat').':');
 
-                // needs to be fixed
-                if (!(has_capability('mod/chat:readlog', $context) or instance_is_visible('chat', $chat))) {  // Chat hidden to students
-                    continue;
-                }
-                if (!$outputstarted) {
-                    print_headline(get_string('currentchats', 'chat').':');
-                    $outputstarted = true;
-                }
-                echo '<div class="room"><p class="head"><a href="'.$CFG->wwwroot.'/mod/chat/view.php?c='.$chat->id.'">'.format_string($chat->name,true).'</a></p><ul>';
-            }
-            $current = $chatuser->chatid;
+        foreach ($past as $cm) {
+            $link = $CFG->wwwroot.'/mod/chat/view.php?id='.$cm->id;
+            $date = userdate($cm->lasttime, $strftimerecent);
+            echo '<div class="head"><div class="date">'.$date.'</div></div>';
+            echo '<div class="info"><a href="'.$link.'">'.format_string($cm->name,true).'</a></div>';
         }
-        $fullname = fullname($chatuser, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
-        echo '<li class="info name">'.$fullname.'</li>';
     }
 
     if ($current) {
-        echo '</ul></div>';  // room
+        print_headline(get_string('currentchats', 'chat').':');
+
+        $oldest = floor((time()-$CFG->chat_old_ping)/10)*10;  // better db caching
+
+        $timeold    = time() - $CFG->chat_old_ping;
+        $timeold    = floor($timeold/10)*10;  // better db caching
+        $timeoldext = time() - ($CFG->chat_old_ping*10); // JSless gui_basic needs much longer timeouts
+        $timeoldext = floor($timeoldext/10)*10;  // better db caching
+
+        $timeout = "AND (chu.version<>'basic' AND chu.lastping<$timeold) OR (chu.version='basic' AND chu.lastping<$timeoldext)";
+
+        foreach ($current as $cm) {
+            //count users first
+            if (isset($cm->mygroupids)) {
+                $groupselect = "AND (chu.groupid IN ({$cm->mygroupids}) OR chu.groupid = 0)";
+            } else {
+                $groupselect = "";
+            }
+            if (!$users = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email, u.picture
+                                             FROM {$CFG->prefix}course_modules cm
+                                             JOIN {$CFG->prefix}chat ch        ON ch.id = cm.instance
+                                             JOIN {$CFG->prefix}chat_users chu ON chu.chatid = ch.id
+                                             JOIN {$CFG->prefix}user u         ON u.id = chu.userid
+                                            WHERE cm.id = {$cm->id} $timeout $groupselect
+                                         GROUP BY u.id")) {
+            }
+
+            $link = $CFG->wwwroot.'/mod/chat/view.php?id='.$cm->id;
+            $date = userdate($cm->lasttime, $strftimerecent);
+
+            echo '<div class="head"><div class="date">'.$date.'</div></div>';
+            echo '<div class="info"><a href="'.$link.'">'.format_string($cm->name,true).'</a></div>';
+            echo '<div class="userlist">';
+            if ($users) {
+                echo '<ul>';
+                    foreach ($users as $user) {
+                        echo '<li>'.fullname($user, $viewfullnames).'</li>';
+                    }
+                echo '</ul>';
+            }
+            echo '</div>';
+        }
     }
 
     return true;

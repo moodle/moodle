@@ -26,6 +26,11 @@ class block_mnet_hosts extends block_list {
             return false;
         }
 
+        if (!is_enabled_auth('mnet')) {
+            // no need to query anything remote related
+            return '';
+        }
+
         // check for outgoing roaming permission first
         if (!has_capability('moodle/site:mnetlogintoremote', get_context_instance(CONTEXT_SYSTEM), NULL, false)) {
             return '';

@@ -30,12 +30,12 @@
     $navlinks = array();
     $navlinks[] = array('name' => $strglossarys, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navigation = build_navigation($navlinks);
-    
+
     print_header_simple("$strglossarys", "", $navigation, "", "", true, "", navmenu($course));
 
 /// Get all the appropriate data
 
-    if (! $glossarys = get_all_instances_in_course("glossary", $course)) {
+    if (!$cms = get_coursemodules_in_course('data', $course->id, 'm.rsstype, m.rssarticles')) {
         notice(get_string('thereareno', 'moodle', $strglossarys), "../../course/view.php?id=$course->id");
         die;
     }
@@ -67,43 +67,42 @@
 
     $currentsection = "";
 
-    foreach ($glossarys as $glossary) {
-        if (!$glossary->visible && has_capability('moodle/course:viewhiddenactivities', $context)) {
-            // Show dimmed if the mod is hidden.
-            $link = "<a class=\"dimmed\" href=\"view.php?id=$glossary->coursemodule\">".format_string($glossary->name,true)."</a>";
-        } else if ($glossary->visible) {
-            // Show normal if the mod is visible.
-            $link = "<a href=\"view.php?id=$glossary->coursemodule\">".format_string($glossary->name,true)."</a>";
-        } else {
-            // Don't show the glossary.
+    foreach ($cms as $cm) {
+        if (!coursemodule_visible_for_user($cm)) {
             continue;
         }
+
+        $class = $cm->visible ? '' : 'class="dimmed"';
+        $link = "<a class=\"dimmed\" href=\"view.php?id=$cm->id\">".format_string($cm->name)."</a>";
+
         $printsection = "";
-        if ($glossary->section !== $currentsection) {
-            if ($glossary->section) {
-                $printsection = $glossary->section;
+        if ($cm->section !== $currentsection) {
+            if ($cm->section) {
+                $printsection = $cm->section;
             }
             if ($currentsection !== "") {
                 $table->data[] = 'hr';
             }
-            $currentsection = $glossary->section;
+            $currentsection = $cm->section;
         }
 
-        $count = count_records_sql("SELECT COUNT(*) FROM {$CFG->prefix}glossary_entries where (glossaryid = $glossary->id or sourceglossaryid = $glossary->id)");
+        // TODO: count only approved if not allowed to see them
+
+        $count = count_records_sql("SELECT COUNT(*) FROM {$CFG->prefix}glossary_entries where (glossaryid = $cm->instance or sourceglossaryid = $cm->instance)");
 
         //If this glossary has RSS activated, calculate it
         if ($show_rss) {
             $rsslink = '';
-            if ($glossary->rsstype and $glossary->rssarticles) {
+            if ($cm->rsstype and $cm->rssarticles) {
                 //Calculate the tolltip text
-                $tooltiptext = get_string("rsssubscriberss","glossary",format_string($glossary->name));
+                $tooltiptext = get_string("rsssubscriberss","glossary",format_string($cm->name));
                 if (empty($USER->id)) {
                     $userid = 0;
                 } else {
                     $userid = $USER->id;
                 }
                 //Get html code for RSS link
-                $rsslink = rss_get_link($course->id, $userid, "glossary", $glossary->id, $tooltiptext);
+                $rsslink = rss_get_link($course->id, $userid, "glossary", $cm->instance, $tooltiptext);
             }
         }
 

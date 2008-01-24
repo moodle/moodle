@@ -41,6 +41,8 @@ class assignment_base {
      * @param course   object, usually null, but if we have it we pass it to save db access
      */
     function assignment_base($cmid='staticonly', $assignment=NULL, $cm=NULL, $course=NULL) {
+        global $COURSE;
+
         if ($cmid == 'staticonly') {
             //use static functions only!
             return;
@@ -54,10 +56,12 @@ class assignment_base {
             error('Course Module ID was incorrect');
         }
 
-        $this->context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
+        $this->context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
 
         if ($course) {
             $this->course = $course;
+        } else if ($this->cm->course == $COURSE->id) {
+            $this->course = $COURSE;
         } else if (! $this->course = get_record('course', 'id', $this->cm->course)) {
             error('Course is misconfigured');
         }
@@ -147,8 +151,8 @@ class assignment_base {
                      navmenu($this->course, $this->cm));
 
         $groupmode = groups_get_activity_groupmode($this->cm);
-        $this->currentgroup = groups_get_activity_group($this->cm);
         groups_print_activity_menu($this->cm, 'view.php?id=' . $this->cm->id);
+        $this->currentgroup = groups_get_activity_group($this->cm); // must be done after the printing!
 
         echo '<div class="reportlink">'.$this->submittedlink().'</div>';
         echo '<div class="clearer"></div>';
@@ -288,25 +292,28 @@ class assignment_base {
      * For teachers it gives the number of submitted assignments with a link
      * For students it gives the time of their submission.
      * This will be suitable for most assignment types.
+     * @param bool $allgroup print all groups info if user can access all groups, suitable for index.php
      * @return string
      */
-    function submittedlink() {
+    function submittedlink($allgroups=false) {
         global $USER;
 
         $submitted = '';
 
         $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
         if (has_capability('mod/assignment:grade', $context)) {
-
-        // if this user can mark and is put in a group
-        // then he can only see/mark submission in his own groups
-            if (!has_capability('moodle/course:managegroups', $context) and (groups_get_activity_groupmode($this->cm) == SEPARATEGROUPS)) {
-                $count = $this->count_real_submissions($this->currentgroup);  // Only their groups
+            if ($allgroups and has_capability('moodle/site:accessallgroups', $context)) {
+                $group = 0;
             } else {
-                $count = $this->count_real_submissions($this->currentgroup);  // Everyone
+                $group = $this->currentgroup;
             }
-            $submitted = '<a href="submissions.php?id='.$this->cm->id.'">'.
-                         get_string('viewsubmissions', 'assignment', $count).'</a>';
+            if ($count = $this->count_real_submissions($group)) {
+                $submitted = '<a href="submissions.php?id='.$this->cm->id.'">'.
+                             get_string('viewsubmissions', 'assignment', $count).'</a>';
+            } else {
+                $submitted = '<a href="submissions.php?id='.$this->cm->id.'">'.
+                             get_string('noattempts', 'assignment').'</a>';
+            }
         } else {
             if (!empty($USER->id)) {
                 if ($submission = $this->get_submission($USER->id)) {
@@ -767,6 +774,7 @@ class assignment_base {
 
         global $CFG;
         require_once($CFG->libdir.'/gradelib.php');
+        require_once($CFG->libdir.'/tablelib.php');
 
         $userid = required_param('userid', PARAM_INT);
         $offset = required_param('offset', PARAM_INT);//offset for where to start looking for student.
@@ -796,30 +804,39 @@ class assignment_base {
         /// Get all ppl that can submit assignments
 
         $currentgroup = groups_get_activity_group($cm);
+        if ($users = get_users_by_capability($context, 'mod/assignment:submit', 'u.id', '', '', '', $currentgroup, '', false)) {
+            $users = array_keys($users);
+        }
 
-        $users = get_users_by_capability($context, 'mod/assignment:submit', 'u.id, u.id', '', '', '', $currentgroup, '', false);
-
-        $select = 'SELECT u.id, u.firstname, u.lastname, u.picture,
-                          s.id AS submissionid, s.grade, s.submissioncomment,
-                          s.timemodified, s.timemarked,
-                          COALESCE(SIGN(SIGN(s.timemarked) + SIGN(s.timemarked - s.timemodified)), 0) AS status ';
-        $sql = 'FROM '.$CFG->prefix.'user u '.
-               'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid
-                                                                  AND s.assignment = '.$this->assignment->id.' '.
-               'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
-
-        require_once($CFG->libdir.'/tablelib.php');
-
-        if ($sort = flexible_table::get_sql_sort('mod-assignment-submissions')) {
-            $sort = 'ORDER BY '.$sort.' ';
+        // if groupmembersonly used, remove users who are not in any group
+        if ($users and !empty($CFG->enablegroupings) and $cm->groupmembersonly) {
+            if ($groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id')) {
+                $users = array_intersect($users, array_keys($groupingusers));
+            }
         }
 
         $nextid = 0;
-        if (($auser = get_records_sql($select.$sql.$sort, $offset+1, 1)) !== false) {
-            $nextuser = array_shift($auser);
-        /// Calculate user status
-            $nextuser->status = ($nextuser->timemarked > 0) && ($nextuser->timemarked >= $nextuser->timemodified);
-            $nextid = $nextuser->id;
+
+        if ($users) {
+            $select = 'SELECT u.id, u.firstname, u.lastname, u.picture,
+                              s.id AS submissionid, s.grade, s.submissioncomment,
+                              s.timemodified, s.timemarked,
+                              COALESCE(SIGN(SIGN(s.timemarked) + SIGN(s.timemarked - s.timemodified)), 0) AS status ';
+            $sql = 'FROM '.$CFG->prefix.'user u '.
+                   'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid
+                                                                      AND s.assignment = '.$this->assignment->id.' '.
+                   'WHERE u.id IN ('.implode(',', $users).') ';
+
+            if ($sort = flexible_table::get_sql_sort('mod-assignment-submissions')) {
+                $sort = 'ORDER BY '.$sort.' ';
+            }
+
+            if (($auser = get_records_sql($select.$sql.$sort, $offset+1, 1)) !== false) {
+                $nextuser = array_shift($auser);
+            /// Calculate user status
+                $nextuser->status = ($nextuser->timemarked > 0) && ($nextuser->timemarked >= $nextuser->timemodified);
+                $nextid = $nextuser->id;
+            }
         }
 
         print_header(get_string('feedback', 'assignment').':'.fullname($user, true).':'.format_string($this->assignment->name));
@@ -1006,7 +1023,6 @@ class assignment_base {
             $uses_outcomes = false;
         }
 
-        $teacherattempts = true; /// Temporary measure
         $page    = optional_param('page', 0, PARAM_INT);
         $strsaveallfeedback = get_string('saveallfeedback', 'assignment');
 
@@ -1030,20 +1046,23 @@ class assignment_base {
 
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
+    /// Check to see if groups are being used in this assignment
+
         /// find out current groups mode
         $groupmode = groups_get_activity_groupmode($cm);
         $currentgroup = groups_get_activity_group($cm, true);
         groups_print_activity_menu($cm, 'submissions.php?id=' . $this->cm->id);
 
         /// Get all ppl that are allowed to submit assignments
-        if ($users = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', $currentgroup, '', false)) {
+        if ($users = get_users_by_capability($context, 'mod/assignment:submit', 'u.id', '', '', '', $currentgroup, '', false)) {
             $users = array_keys($users);
         }
 
-        if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
-            $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
-            $users = array_intersect($users, array_keys($groupingusers));
-
+        // if groupmembersonly used, remove users who are not in any group
+        if ($users and !empty($CFG->enablegroupings) and $cm->groupmembersonly) {
+            if ($groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id')) {
+                $users = array_intersect($users, array_keys($groupingusers));
+            }
         }
 
         $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status', 'finalgrade');
@@ -1101,20 +1120,8 @@ class assignment_base {
         // Start working -- this is necessary as soon as the niceties are over
         $table->setup();
 
-    /// Check to see if groups are being used in this assignment
-
-        if (!$teacherattempts) {
-            $teachers = get_course_teachers($course->id);
-            if (!empty($teachers)) {
-                $keys = array_keys($teachers);
-            }
-            foreach ($keys as $key) {
-                unset($users[$key]);
-            }
-        }
-
         if (empty($users)) {
-            print_heading(get_string('noattempts','assignment'));
+            print_heading(get_string('nosubmitusers','assignment'));
             return true;
         }
 
@@ -1503,7 +1510,7 @@ class assignment_base {
      * @return int The number of submissions
      */
     function count_real_submissions($groupid=0) {
-        return assignment_count_real_submissions($this->assignment, $groupid);
+        return assignment_count_real_submissions($this->cm, $groupid);
     }
 
     /**
@@ -1875,7 +1882,7 @@ class assignment_base {
             }
 
             $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallsubmissions','assignment').': '.$typestr, 'error'=>false);
-            
+
             if (empty($data->reset_gradebook_grades)) {
                 // remove all grades from gradebook
                 assignment_reset_gradebook($data->courseid, $this->type);
@@ -2348,111 +2355,219 @@ function assignment_refresh_events($courseid = 0) {
  *
  * This is used by the recent activity block
  */
-function assignment_print_recent_activity($course, $isteacher, $timestart) {
-    global $CFG;
+function assignment_print_recent_activity($course, $viewfullnames, $timestart) {
+    global $CFG, $USER;
 
-    $content = false;
-    $assignments = array();
+    // do not use log table if possible, it may be huge
 
-    if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
-                                           'course = \''.$course->id.'\' AND '.
-                                           'module = \'assignment\' AND '.
-                                           'action = \'upload\' ', 'time ASC')) {
+    if (!$submissions = get_records_sql("SELECT asb.id, asb.timemodified, cm.id AS cmid, asb.userid,
+                                                u.firstname, u.lastname, u.email, u.picture
+                                           FROM {$CFG->prefix}assignment_submissions asb
+                                                JOIN {$CFG->prefix}assignment a      ON a.id = asb.assignment
+                                                JOIN {$CFG->prefix}course_modules cm ON cm.instance = a.id
+                                                JOIN {$CFG->prefix}modules md        ON md.id = cm.module
+                                                JOIN {$CFG->prefix}user u            ON u.id = asb.userid
+                                          WHERE asb.timemodified > $timestart AND
+                                                a.course = {$course->id} AND
+                                                md.name = 'assignment'
+                                       ORDER BY asb.timemodified ASC")) {
+         return false;
+    }
+
+    $modinfo =& get_fast_modinfo($course); // reference needed because we might load the groups
+    $show    = array();
+    $grader  = array();
+
+    foreach($submissions as $submission) {
+        if (!array_key_exists($submission->cmid, $modinfo->cms)) {
+            continue;
+        }
+        $cm = $modinfo->cms[$submission->cmid];
+        if (!$cm->uservisible) {
+            continue;
+        }
+        if ($submission->userid == $USER->id) {
+            $show[] = $submission;
+            continue;
+        }
+
+        // the act of sumitting of assignemnt may be considered private - only graders will see it if specified
+        if (empty($CFG->assignment_showrecentsubmissions)) {
+            if (!array_key_exists($cm->id, $grader)) {
+                $grader[$cm->id] = has_capability('moodle/grade:viewall', get_context_instance(CONTEXT_MODULE, $cm->id));
+            }
+            if (!$grader[$cm->id]) {
+                continue;
+            }
+        }
+
+        $groupmode = groups_get_activity_groupmode($cm, $course);
+
+        if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+            if (isguestuser()) {
+                // shortcut - guest user does not belong into any group
+                continue;
+            }
+
+            if (is_null($modinfo->groups)) {
+                $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
+            }
+
+            // this will be slow - show only users that share group with me in this cm
+            if (empty($modinfo->groups[$cm->id])) {
+                continue;
+            }
+            $usersgroups =  groups_get_all_groups($course->id, $cm->userid, $cm->groupingid);
+            if (is_array($usersgroups)) {
+                $usersgroups = array_keys($usersgroups);
+                $interset = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
+                if (empty($intersect)) {
+                    continue;
+                }
+            }
+        }
+        $show[] = $submission;
+    }
+
+    if (empty($show)) {
         return false;
     }
 
-    foreach ($logs as $log) {
-        //Create a temp valid module structure (course,id)
-        $tempmod = new object();
-        $tempmod->course = $log->course;
-        $tempmod->id = $log->info;
-        //Obtain the visible property from the instance
-        $modvisible = instance_is_visible($log->module,$tempmod);
+    print_headline(get_string('newsubmissions', 'assignment').':');
 
-        //Only if the mod is visible
-        if ($modvisible) {
-            if ($info = assignment_log_info($log)) {
-                $assignments[$log->info] = $info;
-                $assignments[$log->info]->time = $log->time;
-                $assignments[$log->info]->url  = str_replace('&', '&amp;', $log->url);
-            }
-        }
+    foreach ($show as $submission) {
+        $cm = $modinfo->cms[$submission->cmid];
+        $link = $CFG->wwwroot.'/mod/assignment/view.php?id='.$cm->id;
+        print_recent_activity_note($submission->timemodified, $submission, $cm->name, $link, false, $viewfullnames);
     }
 
-    if (!empty($assignments)) {
-        print_headline(get_string('newsubmissions', 'assignment').':');
-        foreach ($assignments as $assignment) {
-            print_recent_activity_note($assignment->time, $assignment, $assignment->name,
-                                       $CFG->wwwroot.'/mod/assignment/'.$assignment->url);
-        }
-        $content = true;
-    }
-
-    return $content;
+    return true;
 }
 
 
 /**
- * Returns all assignments since a given time.
- *
- * If assignment is specified then this restricts the results
+ * Returns all assignments since a given time in specified forum.
  */
-function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $assignment="0", $user="", $groupid="")  {
+function assignment_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0)  {
 
-    global $CFG;
+    global $CFG, $COURSE, $USER;
 
-    if ($assignment) {
-        $assignmentselect = " AND cm.id = '$assignment'";
+    if ($COURSE->id == $courseid) {
+        $course = $COURSE;
     } else {
-        $assignmentselect = "";
+        $course = get_record('course', 'id', $courseid);
     }
-    if ($user) {
-        $userselect = " AND u.id = '$user'";
+
+    $modinfo =& get_fast_modinfo($course);
+
+    $cm = $modinfo->cms[$cmid];
+
+    if ($userid) {
+        $userselect = "AND u.id = $userid";
     } else {
         $userselect = "";
     }
 
-    $assignments = get_records_sql("SELECT asub.*, u.firstname, u.lastname, u.picture, u.id as userid,
-                                           a.grade as maxgrade, name, cm.instance, cm.section, a.assignmenttype
-                                  FROM {$CFG->prefix}assignment_submissions asub,
-                                       {$CFG->prefix}user u,
-                                       {$CFG->prefix}assignment a,
-                                       {$CFG->prefix}course_modules cm
-                                 WHERE asub.timemodified > '$sincetime'
-                                   AND asub.userid = u.id $userselect
-                                   AND a.id = asub.assignment $assignmentselect
-                                   AND cm.course = '$courseid'
-                                   AND cm.instance = a.id
-                                 ORDER BY asub.timemodified ASC");
+    if ($groupid) {
+        $groupselect = "AND gm.groupid = $groupid";
+        $groupjoin   = "JOIN {$CFG->prefix}groups_members gm ON  gm.userid=u.id";
+    } else {
+        $groupselect = "";
+        $groupjoin   = "";
+    }
 
-    if (empty($assignments))
-      return;
+    if (!$submissions = get_records_sql("SELECT asb.id, asb.timemodified, asb.userid,
+                                                u.firstname, u.lastname, u.email, u.picture
+                                           FROM {$CFG->prefix}assignment_submissions asb
+                                                JOIN {$CFG->prefix}assignment a      ON a.id = asb.assignment
+                                                JOIN {$CFG->prefix}user u            ON u.id = asb.userid
+                                                $groupjoin
+                                          WHERE asb.timemodified > $timestart AND a.id = $cm->instance
+                                                $userselect $groupselect
+                                       ORDER BY asb.timemodified ASC")) {
+         return;
+    }
 
-    foreach ($assignments as $assignment) {
-        if (empty($groupid) || groups_is_member($groupid, $assignment->userid)) {
+    $groupmode       = groups_get_activity_groupmode($cm, $course);
+    $cm_context      = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $grader          = has_capability('moodle/grade:viewall', $cm_context);
+    $accessallgroups = has_capability('moodle/site:accessallgroups', $cm_context);
+    $viewfullnames   = has_capability('moodle/site:viewfullnames', $cm_context);
 
-          $tmpactivity = new Object;
+    if (is_null($modinfo->groups)) {
+        $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
+    }
 
-          $tmpactivity->type = "assignment";
-          $tmpactivity->defaultindex = $index;
-          $tmpactivity->instance = $assignment->instance;
-          $tmpactivity->name = $assignment->name;
-          $tmpactivity->section = $assignment->section;
+    $show = array();
 
-          $tmpactivity->content->grade = $assignment->grade;
-          $tmpactivity->content->maxgrade = $assignment->maxgrade;
-          $tmpactivity->content->type = $assignment->assignmenttype;
-
-          $tmpactivity->user->userid = $assignment->userid;
-          $tmpactivity->user->fullname = fullname($assignment);
-          $tmpactivity->user->picture = $assignment->picture;
-
-          $tmpactivity->timestamp = $assignment->timemodified;
-
-          $activities[] = $tmpactivity;
-
-          $index++;
+    foreach($submissions as $submission) {
+        if ($submission->userid == $USER->id) {
+            $show[] = $submission;
+            continue;
         }
+
+        // the act of sumitting of assignemnt may be considered private - only graders will see it if specified
+        if (!empty($CFG->assignment_limitrecentsubmissions)) {
+            if (!$grader) {
+                continue;
+            }
+        }
+
+        if ($groupmode == SEPARATEGROUPS and !$accessallgroups) {
+            if (isguestuser()) {
+                // shortcut - guest user does not belong into any group
+                continue;
+            }
+
+            // this will be slow - show only users that share group with me in this cm
+            if (empty($modinfo->groups[$cm->id])) {
+                continue;
+            }
+            $usersgroups = groups_get_all_groups($course->id, $cm->userid, $cm->groupingid);
+            if (is_array($usersgroups)) {
+                $usersgroups = array_keys($usersgroups);
+                $interset = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
+                if (empty($intersect)) {
+                    continue;
+                }
+            }
+        }
+        $show[] = $submission;
+    }
+
+    if (empty($show)) {
+        return;
+    }
+
+    if ($grader) {
+        require_once($CFG->libdir.'/gradelib.php');
+        $userids = array();
+        foreach ($show as $id=>$submission) {
+            $userids[] = $submission->userid;
+
+        }
+        $grades = grade_get_grades($courseid, 'mod', 'assignment', $cm->instance, $userids);
+    }
+
+    $aname = format_string($cm->name,true);
+    foreach ($show as $submission) {
+        $tmpactivity = new object();
+
+        $tmpactivity->type         = 'assignment';
+        $tmpactivity->cmid         = $cm->id;
+        $tmpactivity->name         = $aname;
+        $tmpactivity->section      = $cm->section;
+        $tmpactivity->timestamp    = $submission->timemodified;
+
+        if ($grader) {
+            $tmpactivity->grade = $grades->items[0]->grades[$submission->userid]->str_long_grade;
+        }
+
+        $tmpactivity->user->userid   = $submission->userid;
+        $tmpactivity->user->fullname = fullname($submission, $viewfullnames);
+        $tmpactivity->user->picture  = $submission->picture;
+
+        $activities[$index++] = $tmpactivity;
     }
 
     return;
@@ -2463,41 +2578,37 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $
  *
  * This is used by course/recent.php
  */
-function assignment_print_recent_mod_activity($activity, $course, $detail=false)  {
+function assignment_print_recent_mod_activity($activity, $courseid, $detail, $modnames)  {
     global $CFG;
 
-    echo '<table border="0" cellpadding="3" cellspacing="0">';
+    echo '<table border="0" cellpadding="3" cellspacing="0" class="assignment-recent">';
 
     echo "<tr><td class=\"userpicture\" valign=\"top\">";
-    print_user_picture($activity->user->userid, $course, $activity->user->picture);
-    echo "</td><td width=\"100%\"><font size=2>";
+    print_user_picture($activity->user->userid, $courseid, $activity->user->picture);
+    echo "</td><td>";
 
     if ($detail) {
-        echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-             "class=\"icon\" alt=\"$activity->type\">  ";
-        echo "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id=" . $activity->instance . "\">"
-             . format_string($activity->name,true) . "</a> - ";
-
+        $modname = $modnames[$activity->type];
+        echo '<div class="title">';
+        echo "<img src=\"$CFG->modpixpath/assignment/icon.gif\" ".
+             "class=\"icon\" alt=\"$modname\">";
+        echo "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id={$activity->cmid}\">{$activity->name}</a>";
+        echo '</div>';
     }
 
-    if (has_capability('moodle/grade:viewall', get_context_instance(CONTEXT_COURSE, $course))) {
-        $grades = "(" .  $activity->content->grade . " / " . $activity->content->maxgrade . ") ";
-
-        $assignment->id = $activity->instance;
-        $assignment->course = $course;
-        $user->id = $activity->user->userid;
-
-        echo $grades;
-        echo "<br />";
+    if (isset($activity->grade)) {
+        echo '<div class="grade">';
+        echo get_string('grade').': ';
+        echo $activity->grade;
+        echo '</div>';
     }
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id="
-         . $activity->user->userid . "&amp;course=$course\">"
-         . $activity->user->fullname . "</a> ";
 
-    echo " - " . userdate($activity->timestamp);
+    echo '<div class="user">';
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id={$activity->user->userid}&amp;course=$courseid\">"
+         ."{$activity->user->fullname}</a>  - ".userdate($activity->timestamp);
+    echo '</div>';
 
-    echo "</font></td></tr>";
-    echo "</table>";
+    echo "</td></tr></table>";
 }
 
 /// GENERIC SQL FUNCTIONS
@@ -2555,38 +2666,34 @@ function assignment_get_unmailed_submissions($starttime, $endtime) {
  * @param $groupid int optional If nonzero then count is restricted to this group
  * @return int The number of submissions
  */
-function assignment_count_real_submissions($assignment, $groupid=0) {
+function assignment_count_real_submissions($cm, $groupid=0) {
     global $CFG;
 
-    if ($groupid) {     /// How many in a particular group?
-        return count_records_sql("SELECT COUNT(DISTINCT g.userid, g.groupid)
-                                     FROM {$CFG->prefix}assignment_submissions a,
-                                          {$CFG->prefix}groups_members g
-                                    WHERE a.assignment = $assignment->id
-                                      AND a.timemodified > 0
-                                      AND g.groupid = '$groupid'
-                                      AND a.userid = g.userid ");
-    } else {
-        $cm = get_coursemodule_from_instance('assignment', $assignment->id);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-        // this is all the users with this capability set, in this context or higher
-        if ($users = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', 0, '', false)) {
-            foreach ($users as $user) {
-                $array[] = $user->id;
-            }
+    // this is all the users with this capability set, in this context or higher
+    if ($users = get_users_by_capability($context, 'mod/assignment:submit', 'u.id', '', '', '', $groupid, '', false)) {
+        $users = array_keys($users);
+    }
 
-            $userlists = '('.implode(',',$array).')';
-
-            return count_records_sql("SELECT COUNT(*)
-                                      FROM {$CFG->prefix}assignment_submissions
-                                     WHERE assignment = '$assignment->id'
-                                       AND timemodified > 0
-                                       AND userid IN $userlists ");
-        } else {
-            return 0; // no users enroled in course
+    // if groupmembersonly used, remove users who are not in any group
+    if ($users and !empty($CFG->enablegroupings) and $cm->groupmembersonly) {
+        if ($groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id')) {
+            $users = array_intersect($users, array_keys($groupingusers));
         }
     }
+
+    if (empty($users)) {
+        return 0;
+    }
+
+    $userlists = implode(',', $users);
+
+    return count_records_sql("SELECT COUNT('x')
+                                FROM {$CFG->prefix}assignment_submissions
+                               WHERE assignment = $cm->instance AND
+                                     timemodified > 0 AND
+                                     userid IN ($userlists)");
 }
 
 

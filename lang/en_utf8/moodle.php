@@ -99,6 +99,7 @@ $string['allfieldsrequired'] = 'All fields are required';
 $string['allfiles'] = 'All files';
 $string['allgroups'] = 'All groups';
 $string['alllogs'] = 'All logs';
+$string['allmods'] = 'All $a';
 $string['allow'] = 'Allow';
 $string['allowguests'] = 'This course allows guest users to enter';
 $string['allowinternal'] = 'Allow internal methods as well';

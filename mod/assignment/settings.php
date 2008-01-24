@@ -10,4 +10,7 @@ $options = array(ASSIGNMENT_COUNT_WORDS   => trim(get_string('numwords', '')),
 $settings->add(new admin_setting_configselect('assignment_itemstocount', get_string('itemstocount', 'assignment'),
                    get_string('configitemstocount', 'assignment'), ASSIGNMENT_COUNT_WORDS, $options));
 
+$settings->add(new admin_setting_configcheckbox('assignment_showrecentsubmissions', get_string('showrecentsubmissions', 'assignment'),
+                   get_string('configshowrecentsubmissions', 'assignment'), 1));
+
 ?>

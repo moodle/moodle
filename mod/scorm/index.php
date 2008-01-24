@@ -25,7 +25,7 @@
     $strsummary = get_string("summary");
     $strreport = get_string("report",'scorm');
     $strlastmodified = get_string("lastmodified");
-    
+
     $navlinks = array();
     $navlinks[] = array('name' => $strscorms, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
@@ -56,8 +56,13 @@
     }
 
     foreach ($scorms as $scorm) {
+        $cm      = get_coursemodule_from_instance('scorm', $forum->id, $course->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-        $context = get_context_instance(CONTEXT_MODULE,$scorm->coursemodule);
+        if (!coursemodule_visible_for_user($cm)) {
+            continue;
+        }
+
         $tt = "";
         if ($course->format == "weeks" or $course->format == "topics") {
             if ($scorm->section) {
@@ -77,17 +82,12 @@
         } else if (has_capability('mod/scorm:viewscores', $context)) {
             require_once('locallib.php');
             $report = scorm_grade_user($scorm, $USER->id);
-            $reportshow = get_string('score','scorm').": ".$report;       
+            $reportshow = get_string('score','scorm').": ".$report;
         }
-        if (!$scorm->visible) {
-           //Show dimmed if the mod is hidden
-           $table->data[] = array ($tt, "<a class=\"dimmed\" href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name,true)."</a>",
-                                   format_text($scorm->summary), $reportshow);
-        } else {
-           //Show normal if the mod is visible
-           $table->data[] = array ($tt, "<a href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name,true)."</a>",
-                                   format_text($scorm->summary), $reportshow);
-        }
+
+        $class = $cm->visible ? '' : 'class="dimmed"';
+        $table->data[] = array ($tt, "<a $class href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name)."</a>",
+                                format_text($scorm->summary), $reportshow);
     }
 
     echo "<br />";

@@ -27,12 +27,12 @@
     $navlinks = array();
     $navlinks[] = array('name' => $strwikis, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navigation = build_navigation($navlinks);
-    
+
     print_header_simple("$strwikis", "", $navigation, "", "", true, "", navmenu($course));
 
 /// Get all the appropriate data
 
-    if (! $wikis = get_all_instances_in_course("wiki", $course)) {
+    if (!$cms = get_coursemodules_in_course('wiki', $course->id, 'm.summary, m.wtype, m.timemodified')) {
         notice(get_string('thereareno', 'moodle', $strwikis), "../../course/view.php?id=$course->id");
         die;
     }
@@ -58,20 +58,19 @@
         $table->align = array ('LEFT', 'LEFT', 'LEFT', 'LEFT');
     }
 
-    foreach ($wikis as $wiki) {
-        if (!$wiki->visible) {
-            //Show dimmed if the mod is hidden
-            $link = '<a class="dimmed" href="view.php?id='.$wiki->coursemodule.'">'.format_string($wiki->name,true).'</a>';
-        } else {
-            //Show normal if the mod is visible
-            $link = '<a href="view.php?id='.$wiki->coursemodule.'">'.format_string($wiki->name,true).'</a>';
+    foreach ($cms as $cm) {
+        if (!coursemodule_visible_for_user($cm)) {
+            continue;
         }
 
-        $timmod = '<span class="smallinfo">'.userdate($wiki->timemodified).'</span>';
-        $summary = '<span class="smallinfo">'.format_text($wiki->summary).'</span>';
+        $class = $cm->visible ? '' : 'class="dimmed"';
+        $link = '<a '.$class.' href="view.php?id='.$cm->id.'">'.format_string($cm->name).'</a>';
+
+        $timmod = '<span class="smallinfo">'.userdate($cm->timemodified).'</span>';
+        $summary = '<span class="smallinfo">'.format_text($cm->summary).'</span>';
 
         $site = get_site();
-        switch ($wiki->wtype) {
+        switch ($cm->wtype) {
 
         case 'teacher':
             $wtype = $site->teacher;
@@ -90,7 +89,7 @@
         $wtype = '<span class="smallinfo">'.$wtype.'</span>';
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($wiki->section, $link, $summary, $wtype, $timmod);
+            $table->data[] = array ($cm->section, $link, $summary, $wtype, $timmod);
         } else {
             $table->data[] = array ($link, $summary, $wtype, $timmod);
         }

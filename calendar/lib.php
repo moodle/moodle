@@ -69,7 +69,7 @@ $CALENDARDAYS = array('sunday','monday','tuesday','wednesday','thursday','friday
 function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false) {
     global $CFG, $USER;
 
-    $display = &New stdClass;
+    $display = new stdClass;
     $display->minwday = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
     $display->maxwday = $display->minwday + 6;
 
@@ -363,9 +363,9 @@ function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
 }
 
 function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime=0) {
-    global $CFG;
+    global $CFG, $COURSE;
 
-    $display = &new stdClass;
+    $display = new stdClass;
     $display->range = $daysinfuture; // How many days in the future we 'll look
     $display->maxevents = $maxevents;
 
@@ -404,42 +404,55 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
         }
     }
 
-    if($events !== false) {
+    if ($events !== false) {
+
+        $modinfo =& get_fast_modinfo($COURSE);
 
         foreach($events as $event) {
 
-            if(!empty($event->modulename)) {
-                $mod = get_coursemodule_from_instance($event->modulename, $event->instance);
-                if (!groups_course_module_visible($mod)) {
-                    continue;
+
+            if (!empty($event->modulename)) {
+                if ($event->courseid == $COURSE->id) {
+                    if (isset($modinfo->instances[$event->modulename][$event->instance])) {
+                        $cm = $modinfo->instances[$event->modulename][$event->instance];
+                        if (!$cm->uservisible) {
+                            continue;
+                        }
+                    }
+                } else {
+                    if (!$cm = get_coursemodule_from_instance($event->modulename, $event->instance)) {
+                        continue;
+                    }
+                    if (!coursemodule_visible_for_user($cm)) {
+                        continue;
+                    }
                 }
-            }
-            
-           
-            if ($event->modulename == 'assignment'){
-                if(!calendar_edit_event_allowed($event)){ // cannot manage entries, eg. student  
-                    if(!$assignment = get_record('assignment','id',$event->instance)){
-                        // error("assignment ID was incorrect");
-                        continue;
-                    }
-                    // assign assignment to assignment object to use hidden_is_hidden method
-                    require_once($CFG->dirroot.'/mod/assignment/lib.php');
-                        
-                    if (!file_exists($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php')) {
-                        continue;
-                    }
-                    require_once ($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
-                       
-                    $assignmentclass = 'assignment_'.$assignment->assignmenttype;
-                    $assignmentinstance = new $assignmentclass($mod->id,$assignment);
-                        
-                    if ($assignmentinstance->description_is_hidden()){//force not to show description before availability
-                        $event->description = get_string('notavailableyet', 'assignment');
+                if ($event->modulename == 'assignment'){
+                    // TODO: rewrite this hack somehow
+                    if (!calendar_edit_event_allowed($event)){ // cannot manage entries, eg. student  
+                        if(!$assignment = get_record('assignment','id',$event->instance)){
+                            // error("assignment ID was incorrect");
+                            continue;
+                        }
+                        // assign assignment to assignment object to use hidden_is_hidden method
+                        require_once($CFG->dirroot.'/mod/assignment/lib.php');
+
+                        if (!file_exists($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php')) {
+                            continue;
+                        }
+                        require_once ($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
+
+                        $assignmentclass = 'assignment_'.$assignment->assignmenttype;
+                        $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm);
+
+                        if ($assignmentinstance->description_is_hidden()){//force not to show description before availability
+                            $event->description = get_string('notavailableyet', 'assignment');
+                        }
                     }
                 }
             }
 
-            if($processed >= $display->maxevents) {
+            if ($processed >= $display->maxevents) {
                 break;
             }
 
@@ -1121,7 +1134,7 @@ function calendar_get_course_cached(&$coursecache, $courseid) {
     return $coursecache[$courseid];
 }
 
-function calendar_session_vars() {
+function calendar_session_vars($course=null) {
     global $SESSION, $USER;
 
     if(!empty($USER->id) && isset($USER->realuser) && !isset($SESSION->cal_loggedinas)) {
@@ -1158,9 +1171,12 @@ function calendar_session_vars() {
     if(!isset($SESSION->cal_show_user)) {
         $SESSION->cal_show_user = true;
     }
-   // if(empty($SESSION->cal_courses_shown)) {
+    if (isset($course)) {
+        // speedup hack for calendar related blocks
+        $SESSION->cal_courses_shown = array($course->id => $course);
+    } else {    
         $SESSION->cal_courses_shown = calendar_get_default_courses(true);
-    //}
+    }
     if(empty($SESSION->cal_users_shown)) {
         // The empty() instead of !isset() here makes a whole world of difference,
         // as it will automatically change to the user's id when the user first logs
@@ -1204,7 +1220,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         $c[$courseeventsfrom] = get_record('course', 'id', $courseeventsfrom);
         $courseeventsfrom = $c;
     } else if (is_array($courseeventsfrom)) { // case of an array of ints, e.g. course home page
-        foreach ($courseeventsfrom as $i=>$courseid) {
+        foreach ($courseeventsfrom as $i=>$courseid) { // TODO: this seems wrong, the array is often constructed as [courseid] => 1 ???
             if (is_int($courseid)) {
                 $courseeventsfrom[$i] = get_record('course', 'id', $courseid);
             } 

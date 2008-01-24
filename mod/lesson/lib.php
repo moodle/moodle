@@ -232,17 +232,6 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
     return true;
 }
 
-/*******************************************************************/
-function lesson_print_recent_activity($course, $isteacher, $timestart) {
-/// Given a course and a time, this module should find recent activity
-/// that has occurred in lesson activities and print it out.
-/// Return true if there was output, or false is there was none.
-
-    global $CFG;
-
-    return false;  //  True if anything was printed, otherwise false
-}
-
 /**
  * Prints lesson summaries on MyMoodle Page
  *
