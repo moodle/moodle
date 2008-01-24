@@ -189,6 +189,7 @@ function addslashes_js($var) {
 
 /**
  * Returns the URL of the HTTP_REFERER, less the querystring portion if required
+ * @param boolean $stripquery if true, also removes the query part of the url.
  * @return string
  */
 function get_referer($stripquery=true) {
@@ -795,6 +796,9 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
 
 /**
  * Prints a simple button to close a window
+ * @param string $name name of the window to close
+ * @param boolean $return whether this function should return a string or output it
+ * @return string if $return is true, nothing otherwise
  */
 function close_window_button($name='closewindow', $return=false) {
     global $CFG;
@@ -816,6 +820,7 @@ function close_window_button($name='closewindow', $return=false) {
 
 /*
  * Try and close the current window immediately using Javascript
+ * @param int $delay the delay in seconds before closing the window
  */
 function close_window($delay=0) {
 ?>
@@ -910,6 +915,12 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
 /**
  * Choose value 0 or 1 from a menu with options 'No' and 'Yes'.
  * Other options like choose_from_menu.
+ * @param string $name
+ * @param string $selected 
+ * @param string $string (defaults to '')
+ * @param boolean $return whether this function should return a string or output it (defaults to false)
+ * @param boolean $disabled (defaults to false)
+ * @param int $tabindex
  */
 function choose_from_menu_yesno($name, $selected, $script = '',
         $return = false, $disabled = false, $tabindex = 0) {
