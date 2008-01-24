@@ -973,7 +973,7 @@ function print_overview($courses) {
     if ($modules = get_records('modules')) {
         foreach ($modules as $mod) {
             if (file_exists(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php')) {
-                require_once(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php');
+                include_once(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php');
                 $fname = $mod->name.'_print_overview';
                 if (function_exists($fname)) {
                     $fname($courses,$htmlarray);
@@ -1490,7 +1490,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
                 continue;
             }
 
-            require_once("$CFG->dirroot/mod/$modname/lib.php");
+            include_once("$CFG->dirroot/mod/$modname/lib.php");
             $gettypesfunc =  $modname.'_get_types';
             if (function_exists($gettypesfunc)) {
                 $types = $gettypesfunc();

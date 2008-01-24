@@ -54,7 +54,7 @@ if ($modid == '0') { // special
 }
 else {
     $modname = get_field("modules","name","id",$modid);
-    require_once('mod/'.$modname.'/lib.php');
+    include_once('mod/'.$modname.'/lib.php');
 }
 $function = $modname.'_process_email';
 

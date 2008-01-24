@@ -16,7 +16,7 @@
         }
 
         if ($module != '') {
-            require_once("$CFG->dirroot/mod/$module/lib.php");
+            include_once("$CFG->dirroot/mod/$module/lib.php");
             // if the config.html contains a hidden form field giving
             // the module name then the form does not have to prefix all
             // its variable names, we will do it here.
@@ -43,7 +43,7 @@
 
 /// Otherwise print the form.
     $module = required_param('module', PARAM_SAFEDIR);
-    require_once("$CFG->dirroot/mod/$module/lib.php");
+    include_once("$CFG->dirroot/mod/$module/lib.php");
 
     $strmodulename = get_string("modulename", $module);
 
