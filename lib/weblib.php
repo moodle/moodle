@@ -5671,6 +5671,13 @@ function error ($message, $link='') {
         die;
     }
 
+    if (defined('UNITTEST')) {
+        // Errors in unit test become exceptions, so you can unit test
+        // code that might call error().
+        throw new Exception('error() call: '.
+            $message.($link!=='' ? ' ['.$link.']' : ''));
+    }
+
     if (! defined('HEADER_PRINTED')) {
         //header not yet printed
         @header('HTTP/1.0 404 Not Found');
