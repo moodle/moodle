@@ -1827,7 +1827,7 @@ function data_presets_export($course, $cm, $data) {
 
     $presetxml .= "<settings>\n";
     foreach ($settingssaved as $setting) {
-        $presetxml .= "<$setting>{$data->$setting}</$setting>\n";
+        $presetxml .= "<$setting>".htmlentities($data->$setting)."</$setting>\n";
     }
     $presetxml .= "</settings>\n\n";
 
@@ -1837,7 +1837,7 @@ function data_presets_export($course, $cm, $data) {
             $presetxml .= "<field>\n";
             foreach ($field as $key => $value) {
                 if ($value != '' && $key != 'id' && $key != 'dataid') {
-                    $presetxml .= "<$key>$value</$key>\n";
+                    $presetxml .= "<$key>".htmlentities($value)."</$key>\n";
                 }
             }
             $presetxml .= "</field>\n\n";
