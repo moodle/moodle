@@ -102,14 +102,16 @@ class backuplib_test extends UnitTestCase {
         backup_copy_user_files($preferences);
         
         // Check for the existence of the backup file
-        $this->assertTrue(file_exists("$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files"));
+        $backupfile = "$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files";
+        $this->assertTrue(file_exists($backupfile));
 
         // Check for the existence of the user files in the backup file
         foreach ($this->testfiles as $file) {
             $parts = explode('/', $file);
             $section = $parts[0];
             $userid = $parts[1]; 
-            $this->assertTrue(file_exists("$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/$section/$userid/f1.gif"));
+            $userimage = "$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/$section/$userid/f1.gif";
+            $this->assertTrue(file_exists($userimage));
         }
     }
 

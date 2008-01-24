@@ -102,6 +102,7 @@
             $olduserid = backup_todb($mes_info['#']['USERID']['0']['#']);
 
             //Now, build the CHAT_MESSAGES record structure
+            $message = new object();
             $message->chatid = $new_chat_id;
             $message->userid = backup_todb($mes_info['#']['USERID']['0']['#']);
             $message->groupid = backup_todb($mes_info['#']['GROUPID']['0']['#']);

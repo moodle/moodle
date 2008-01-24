@@ -359,7 +359,13 @@ function forum_print_big_search_form($course) {
 }
 
 /**
- * @todo Document this function
+ * This function takes each word out of the search string, makes sure they are at least 
+ * two characters long and returns an array containing every good word.
+ * 
+ * @param string $words String containing space-separated strings to search for
+ * @param string $prefix String to prepend to the each token taken out of $words
+ * @returns array 
+ * @todo Take the hardcoded limit out of this function and put it into a user-specified parameter
  */
 function forum_clean_search_terms($words, $prefix='') {
     $searchterms = explode(' ', $words);

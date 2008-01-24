@@ -755,8 +755,8 @@ class grade_item extends grade_object {
             return null;
 
         } else {
-            dubugging("Unkown grade type");
-            return null;;
+            debugging("Unknown grade type");
+            return null;
         }
     }
 

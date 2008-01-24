@@ -104,6 +104,7 @@ class grade_scale extends grade_object {
      * @return int PK ID if successful, false otherwise
      */
     function insert($source=null) {
+        $this->timecreated = time();
         $this->timemodified = time();
         return parent::insert($source);
     }

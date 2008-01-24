@@ -272,6 +272,7 @@
             $olduserid = backup_todb($dis_info['#']['USERID']['0']['#']);
 
             //Now, build the FORUM_DISCUSSIONS record structure
+            $discussion = new object();
             $discussion->forum = $forum_id;
             $discussion->course = $restore->course_id;
             $discussion->name = backup_todb($dis_info['#']['NAME']['0']['#']);

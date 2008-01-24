@@ -204,7 +204,7 @@ function chat_cron () {
 
     chat_delete_old_users();
 
-    /// Delete old messages
+    /// Delete old messages with a
     /// single SQL query.
     $subselect = "SELECT c.keepdays
                     FROM {$CFG->prefix}chat c
