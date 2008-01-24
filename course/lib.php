@@ -984,7 +984,7 @@ function print_overview($courses) {
     if ($modules = get_records('modules')) {
         foreach ($modules as $mod) {
             if (file_exists(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php')) {
-                require_once(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php');
+                include_once(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php');
                 $fname = $mod->name.'_print_overview';
                 if (function_exists($fname)) {
                     $fname($courses,$htmlarray);
