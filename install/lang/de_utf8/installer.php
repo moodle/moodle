@@ -96,6 +96,7 @@ $string['databasesettingssub_postgres7'] = '<b>Typ:</b> PostgreSQL<br />
 <b>User:</b> Ihr Anmeldename für die Datenbank<br />
 <b>Password:</b> Ihr Passwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (notwendig)';
+$string['databasesettingswillbecreated'] = '<b>Hinweis: </b> Das Installationsprogramm wird versuchen, automatisch eine Datenbank anzulegen, sofern diese noch nicht besteht.';
 $string['dataroot'] = 'Datenverzeichnis';
 $string['datarooterror'] = 'Das angegebene Datenverzeichnis ist nicht vorhanden und kann nicht angelegt werden. Korrigieren Sie die Pfad-Eingabe oder legen Sie das Verzeichnis manuell an.';
 $string['dbconnectionerror'] = 'Eine Verbindung zur angegebenen Datenbank konnte nicht hergestellt werden. Bitte überprüfen Sie Ihre Eingaben.';
@@ -204,6 +205,7 @@ $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Frühere';
 $string['qtyperqpwillberemoved'] = 'Während des Updates wird der Fragentyp RQP entfernt. Da Sie diesen Fragentyp nicht benutzen, sollten Sie keinerlei Probleme bekommen.';
 $string['qtyperqpwillberemovedanyway'] = 'Während des Updates wird der Fragentyp RQP entfernt. Sie haben einige RQP Fragen in Ihrer Datenbank, die nicht mehr funktionieren werden, falls Sie nicht den dafür notwendigen Code vor der Fortsetzung dieses Updates installieren. http://moodle.org/mod/data/view.php?d=13&amp;rid=797';
+$string['remotedownloaderror'] = 'Der Download auf Ihren Server konnte nicht ausgeführt werden. Prüfen Sie bitte die Proxy-Einstellungen, die PHP CURL Erweiterung wird dringend empfohlen.<br /><br />Die Datei <a href=\"$a->url\">$a->url</a> muss nun manuell herunter geladen, entpackt und auf den Server nach \"$a->dest\" kopiert werden. there.';
 $string['remotedownloadnotallowed'] = 'Der Download von Komponenten auf Ihren Server ist nicht erlaubt (allow_url_fopen ist deaktiviert). <br /><br /> Die Datei <a href=\"$a->url\">$a->url</a> muss manuell heruntergeladen werden. Kopieren Sie die Datei nach \"$a->dest\" auf Ihren Server und entpacken Sie sie dort.';
 $string['report'] = 'Bericht';
 $string['restricted'] = 'Eingeschränkt';
@@ -225,7 +227,7 @@ $string['welcomep20'] = 'Sie haben das Paket <strong>$a->packname $a->packversio
 $string['welcomep30'] = 'Diese Version von <strong>$a->installername</strong> enthält folgende Anwendungen, mit denen Sie <strong>Moodle</strong> ausführen können:';
 $string['welcomep40'] = 'Das Paket enthält: <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
 $string['welcomep50'] = 'Die Nutzung dieser Anwendungen ist lizenzrechtlich geprüft. Alle Anwendungen von <strong>$a->installername</strong> sind
-<a href=\"http://www.opensource.org/docs/definition_plain.html\">Open Source</a> und unterliegen der <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> Lizenz.';
+<a href=\"http://www.opensource.org/docs/definition_plain.html\"> Open Source </a> und unterliegen der <a href=\"http://www.gnu.org/copyleft/gpl.html\"> GPL</a> Lizenz.';
 $string['welcomep60'] = 'Die folgenden Seiten führen Sie in einfachen Schritten durch die Konfiguration und Installation von <strong>Moodle</strong> auf Ihrem Computer. Sie können die vorgeschlagenen Einstellungen übernehmen oder an Ihre Bedürfnisse anpassen.';
 $string['welcomep70'] = 'Klicken Sie auf den \"Weiter\"-Button, um mit dem Setup von <string>Moodle</string> fortzufahren.';
 $string['wrongdestpath'] = 'Falscher Pfad';
