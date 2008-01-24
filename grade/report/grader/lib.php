@@ -276,7 +276,10 @@ class grade_report_grader extends grade_report {
 
             if (isset($SESSION->gradeuserreport->sortitemid)) {
                 $this->sortitemid = $SESSION->gradeuserreport->sortitemid;
+            }else{
+                $this->sortitemid = 'lastname';
             }
+
             if (isset($SESSION->gradeuserreport->sort)) {
                 $this->sortorder = $SESSION->gradeuserreport->sort;
             } else {
