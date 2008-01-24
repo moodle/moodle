@@ -200,9 +200,6 @@
     $number = 1;
     echo '<form method="post" action="'.$url->out(true).'" enctype="multipart/form-data" id="responseform">', "\n";
     print_question($questions[$id], $curstate, $number, $quiz, $options);
-    echo '<br />';
-
-
 
     echo '<div class="controls">';
     echo $url->hidden_params_out();
