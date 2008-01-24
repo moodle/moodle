@@ -721,7 +721,7 @@
             /// write local course overrides here?
             write_role_overrides_xml($bf, $context, 3);
             /// write role_assign code here
-            write_role_assignments_xml($bf, $context, 3, $preferences);
+            write_role_assignments_xml($bf, $preferences, $context, 3);
             //Print header end
             fwrite ($bf,end_tag("HEADER",2,true));
         } else {
@@ -990,7 +990,7 @@
                         $context = get_context_instance(CONTEXT_BLOCK, $instance->id);
                         write_role_overrides_xml($bf, $context, 4);
                         /// write role_assign code here
-                        write_role_assignments_xml($bf, $context, 4, $preferences);
+                        write_role_assignments_xml($bf, $preferences, $context, 4);
                         //End Block
                         fwrite ($bf,end_tag('BLOCK',3,true));
                     }
@@ -1128,7 +1128,7 @@
                // get all the role_capabilities overrides in this mod
                write_role_overrides_xml($bf, $context, 6);
                /// write role_assign code here
-               write_role_assignments_xml($bf, $context, 6, $preferences);         
+               write_role_assignments_xml($bf, $preferences, $context, 6);
                /// write role_assign code here
 
                fwrite ($bf,end_tag("MOD",5,true));
@@ -1288,7 +1288,7 @@
 
                 write_role_overrides_xml($bf, $context, 4);
                 /// write role_assign code here
-                write_role_assignments_xml($bf, $context, 4, $preferences);
+                write_role_assignments_xml($bf, $preferences, $context, 4);
                 //End User tag
                 fwrite ($bf,end_tag("USER",3,true));
                 //Do some output
@@ -2670,12 +2670,13 @@
     }
 
     /* function to print xml for assignment */
-    function write_role_assignments_xml($bf, $context, $startlevel, $preferences) {
+    function write_role_assignments_xml($bf, $preferences, $context, $startlevel) {
     /// write role_assign code here
         fwrite ($bf, start_tag("ROLES_ASSIGNMENTS", $startlevel, true));
 
         if ($roles = get_roles_with_assignment_on_context($context)) {
             foreach ($roles as $role) {
+            /// Skip non-selected roles
                 if (!isset($preferences->backuproleassignments[$role->id])) {
                     continue;
                 }
@@ -2686,19 +2687,22 @@
                 fwrite ($bf, start_tag("ASSIGNMENTS", $startlevel+2, true));
                 if ($assignments = get_users_from_role_on_context($role, $context)) {
                     foreach ($assignments as $assignment) {
-                        fwrite ($bf, start_tag("ASSIGNMENT", $startlevel+3, true));
-                        fwrite ($bf, full_tag("USERID", $startlevel+4, false, $assignment->userid));
-                        fwrite ($bf, full_tag("HIDDEN", $startlevel+4, false, $assignment->hidden));
-                        fwrite ($bf, full_tag("TIMESTART", $startlevel+4, false, $assignment->timestart));
-                        fwrite ($bf, full_tag("TIMEEND", $startlevel+4, false, $assignment->timeend));
-                        fwrite ($bf, full_tag("TIMEMODIFIED", $startlevel+4, false, $assignment->timemodified));
-                        if (!isset($assignment->modifierid)) {
-                            $assignment->modifierid = 0;
+                    /// Role assignments are only sent to backup if the user is one target user
+                        if (backup_getid($preferences->backup_unique_code, 'user', $assignment->userid)) {
+                            fwrite ($bf, start_tag("ASSIGNMENT", $startlevel+3, true));
+                            fwrite ($bf, full_tag("USERID", $startlevel+4, false, $assignment->userid));
+                            fwrite ($bf, full_tag("HIDDEN", $startlevel+4, false, $assignment->hidden));
+                            fwrite ($bf, full_tag("TIMESTART", $startlevel+4, false, $assignment->timestart));
+                            fwrite ($bf, full_tag("TIMEEND", $startlevel+4, false, $assignment->timeend));
+                            fwrite ($bf, full_tag("TIMEMODIFIED", $startlevel+4, false, $assignment->timemodified));
+                            if (!isset($assignment->modifierid)) {
+                                $assignment->modifierid = 0;
+                            }
+                            fwrite ($bf, full_tag("MODIFIERID", $startlevel+4, false, $assignment->modifierid));
+                            fwrite ($bf, full_tag("ENROL", $startlevel+4, false, $assignment->enrol));
+                            fwrite ($bf, full_tag("SORTORDER", $startlevel+4, false, $assignment->sortorder));
+                            fwrite ($bf, end_tag("ASSIGNMENT", $startlevel+3, true));
                         }
-                        fwrite ($bf, full_tag("MODIFIERID", $startlevel+4, false, $assignment->modifierid));
-                        fwrite ($bf, full_tag("ENROL", $startlevel+4, false, $assignment->enrol));
-                        fwrite ($bf, full_tag("SORTORDER", $startlevel+4, false, $assignment->sortorder));
-                        fwrite ($bf, end_tag("ASSIGNMENT", $startlevel+3, true));
                     }
                 }
                 fwrite ($bf, end_tag("ASSIGNMENTS", $startlevel+2, true));
