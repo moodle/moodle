@@ -1,5 +1,4 @@
 <?php //$Id$
-    require_once("$CFG->dirroot/question/backuplib.php");
     //This page prints the backup todo list to see everything
 
     //Check login
@@ -66,30 +65,57 @@
 
     }
 
-
     //Here we check if backup_users = None. Then, we switch off every module
     //user info, user_files, logs and exercises, workshop and messages backups. A Warning is showed to
     //inform the user.
+    // TODO: Move this logic to one function to be shared by any (manual, scheduled) backup
     if ($backupprefs->backup_users == 2) {
-        if ($allmods = get_records("modules") ) {
+        if ($allmods = get_records('modules') ) {
             foreach ($allmods as $mod) {
+            /// Reset global user_info settings to "no" (0)
                 $modname = $mod->name;
-                $var = "backup_user_info_".$modname;
+                $var = 'backup_user_info_'.$modname;
                 if (isset($backupprefs->$var)) {
                     $backupprefs->$var = 0;
                 }
-                $var = "backup_".$modname;
-                if (isset($backupprefs->$var)) {
-                    if ($modname == "exercise" || $modname == "workshop") {
+            /// Reset each instance userinfo settings to "no" (0)
+                if (isset($backupprefs->mods[$modname])) {
+                /// Set the module userinfo to no (0)
+                    $backupprefs->mods[$modname]->userinfo = 0;
+                /// Set the instances to no (o)
+                    foreach ($backupprefs->mods[$modname]->instances as $key => $instance) {
+                        $backupprefs->mods[$modname]->instances[$key]->userinfo = 0;
+                        $var = 'backup_user_info_' . $modname . '_instance_' . $key;
                         $backupprefs->$var = 0;
                     }
                 }
+            /// If modules are workshop or exercise, disable their backup completely
+                if ($modname == 'exercise' || $modname == 'workshop') {
+                    $var = 'backup_'.$modname;
+                    if (isset($backupprefs->$var)) {
+                        $backupprefs->$var = 0;
+                    /// Reset each instance backup settings to "no" (0)
+                        if (isset($backupprefs->mods[$modname])) {
+                        /// Set the module backup to no (0)
+                            $backupprefs->mods[$modname]->backup = 0;
+                            $var = 'backup_' . $modname . '_instances';
+                            $backupprefs->$var = 0;
+                        /// Set the instances backup to no (o)
+                            foreach ($backupprefs->mods[$modname]->instances as $key => $instance) {
+                                $backupprefs->mods[$modname]->instances[$key]->backup = 0;
+                                $var = 'backup_' . $modname . '_instance_' . $key;
+                                $backupprefs->$var = 0;
+                            }
+                        }
+                    }
+                }
             }
-            $backupprefs->backup_user_files = 0;
-            $backupprefs->backup_logs = 0;
-            $backupprefs->backup_messages = 0;
-            $backupprefs->backuproleassignments = array();
         }
+        $backupprefs->backup_user_files = 0;
+        $backupprefs->backup_logs = 0;
+        $backupprefs->backup_messages = 0;
+        $backupprefs->backuproleassignments = array();
+
         print_simple_box("<font color=\"red\">".get_string("backupnoneusersinfo")."</font>","center", "70%", '', "20", "noticebox");
         echo "<hr />";
     }
