@@ -1145,6 +1145,10 @@ function get_context_users_bycap ($context, $capability='moodle/course:view', $f
     rs_close($rs);
     $roles = implode(',', $roles);
 
+    if (empty($roles)) {
+        return array();
+    }
+
     //
     // User permissions subselect SQL
     //
