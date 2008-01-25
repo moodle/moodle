@@ -29,7 +29,7 @@
     }
     
     $context = get_context_instance(CONTEXT_COURSE, $course->id); 
-    if ((!(course_parent_visible($course) && $CFG->allowvisiblecoursesinhiddencategories) || (! $course->visible)) && !has_capability('moodle/course:viewhiddencourses', $context)) {
+    if ((!course_parent_visible($course) || (! $course->visible)) && !has_capability('moodle/course:viewhiddencourses', $context)) {
         error(get_string('coursehidden'), $CFG->wwwroot .'/'); 
     }  
     
