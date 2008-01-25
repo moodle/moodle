@@ -186,7 +186,7 @@
     // Course wrapper start.
     echo '<div class="course-content">';
 
-
+    $modinfo =& get_fast_modinfo($course);
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
     if (! $sections = get_all_sections($course->id)) {   // No sections found
@@ -201,16 +201,6 @@
             error('Error finding or creating section structures for this course');
         }
     }
-
-
-    if (empty($course->modinfo)) {
-        // Course cache was never made.
-        rebuild_course_cache($course->id);
-        if (! $course = get_record('course', 'id', $course->id) ) {
-            error("That's an invalid course id");
-        }
-    }
-
 
     // Include the actual course format.
     require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');

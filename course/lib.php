@@ -1007,10 +1007,10 @@ function get_array_of_activities($courseid) {
 /**
  * Returns reference to full info about modules in course (including visibility).
  * Cached and as fast as possible (0 or 1 db query).
- * @param $course object or 'reset' string to reset caches
+ * @param $course object or 'reset' string to reset caches, modinfo may be updated in db
  * @return mixed courseinfo object or nothing if resetting
  */
-function &get_fast_modinfo($course, $userid=0) {
+function &get_fast_modinfo(&$course, $userid=0) {
     global $CFG, $USER;
 
     static $cache = array();
@@ -1032,9 +1032,7 @@ function &get_fast_modinfo($course, $userid=0) {
     if (empty($course->modinfo)) {
         // no modinfo yet - load it
         rebuild_course_cache($course->id);
-        if (!$course = get_record('course', 'id', $course->id)) {
-            error("Can not find course id: $course->id");
-        }
+        $course->modinfo = get_field('course', 'modinfo', 'id', $coure->id);
     }
 
     $modinfo = new object();
@@ -1049,9 +1047,7 @@ function &get_fast_modinfo($course, $userid=0) {
     if (!is_array($info)) {
         // hmm, something is wrong - lets try to fix it
         rebuild_course_cache($course->id);
-        if (!$course = get_record('course', 'id', $course->id)) {
-            error("Can not find course id: $course->id");
-        }
+        $course->modinfo = get_field('course', 'modinfo', 'id', $coure->id);
         $info = unserialize($course->modinfo);
         if (!is_array($info)) {
             return $modinfo;
@@ -1063,9 +1059,7 @@ function &get_fast_modinfo($course, $userid=0) {
         $first = reset($info);
         if (!isset($first->id)) {
             rebuild_course_cache($course->id);
-            if (!$course = get_record('course', 'id', $course->id)) {
-                error("Can not find course id: $course->id");
-            }
+            $course->modinfo = get_field('course', 'modinfo', 'id', $coure->id);
             $info = unserialize($course->modinfo);
             if (!is_array($info)) {
                 return $modinfo;
@@ -1511,7 +1505,8 @@ function rebuild_course_cache($courseid=0) {
         }
     }
     // reset the fast modinfo cache
-    get_fast_modinfo('reset');
+    $reset = 'reset';
+    get_fast_modinfo($reset);
 }
 
 function get_child_categories($parent) {
