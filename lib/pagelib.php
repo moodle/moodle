@@ -64,7 +64,7 @@ function page_create_object($type, $id = NULL) {
 
     $classname = page_map_class($type);
 
-    $object = &new $classname;
+    $object = new $classname;
     // TODO: subclassing check here
 
     if ($object->get_type() !== $type) {
@@ -156,10 +156,6 @@ class page_base {
         $this->construct();
     }
 
-    function __construct() {
-        $this->construct();
-    }
-
     function construct() {
         page_id_and_class($this->body_id, $this->body_class);
     }
@@ -181,7 +177,7 @@ class page_base {
     // HTML OUTPUT SECTION
 
     // We have absolutely no idea what derived pages are all about
-    function print_header($title, $morenavlinks) {
+    function print_header($title, $morenavlinks=NULL) {
         trigger_error('Page class does not implement method <strong>print_header()</strong>', E_USER_WARNING);
         return;
     }
