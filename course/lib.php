@@ -1032,7 +1032,7 @@ function &get_fast_modinfo(&$course, $userid=0) {
     if (empty($course->modinfo)) {
         // no modinfo yet - load it
         rebuild_course_cache($course->id);
-        $course->modinfo = get_field('course', 'modinfo', 'id', $coure->id);
+        $course->modinfo = get_field('course', 'modinfo', 'id', $course->id);
     }
 
     $modinfo = new object();
@@ -1047,7 +1047,7 @@ function &get_fast_modinfo(&$course, $userid=0) {
     if (!is_array($info)) {
         // hmm, something is wrong - lets try to fix it
         rebuild_course_cache($course->id);
-        $course->modinfo = get_field('course', 'modinfo', 'id', $coure->id);
+        $course->modinfo = get_field('course', 'modinfo', 'id', $course->id);
         $info = unserialize($course->modinfo);
         if (!is_array($info)) {
             return $modinfo;
@@ -1059,7 +1059,7 @@ function &get_fast_modinfo(&$course, $userid=0) {
         $first = reset($info);
         if (!isset($first->id)) {
             rebuild_course_cache($course->id);
-            $course->modinfo = get_field('course', 'modinfo', 'id', $coure->id);
+            $course->modinfo = get_field('course', 'modinfo', 'id', $course->id);
             $info = unserialize($course->modinfo);
             if (!is_array($info)) {
                 return $modinfo;
