@@ -842,7 +842,7 @@ function cache_correlated_tags($tag_name_or_id, $min_correlation=2) {
 
     // query that counts how many times any tag appears together in items
     // with the tag passed as argument ($tag_id)
-    $query = "SELECT tb.tagid , COUNT(*) nr
+    $query = "SELECT tb.tagid , COUNT(*) AS nr
                 FROM {$CFG->prefix}tag_instance ta
                      INNER JOIN {$CFG->prefix}tag_instance tb ON ta.itemid = tb.itemid
                WHERE ta.tagid = {$tag_id} AND tb.tagid != {$tag_id}
