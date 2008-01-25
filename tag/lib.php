@@ -770,7 +770,7 @@ function related_tags($tag_name_or_id, $limitnum=10) {
     }
 
     //gets the correlated tags
-    $automatic_related_tags = correlated_tags($tag_id);
+    $automatic_related_tags = correlated_tags($tag_id, $limitnum);
 
     $related_tags = array_merge($manual_related_tags, $automatic_related_tags);
 
@@ -784,7 +784,7 @@ function related_tags($tag_name_or_id, $limitnum=10) {
  * @param string $tag_name_or_id is a single **normalized** tag name or the id of a tag
  * @return array an array of tag objects, or empty array if none
  */
-function correlated_tags($tag_name_or_id) {
+function correlated_tags($tag_name_or_id, $limitnum=null) {
 
     $tag_id = tag_id_from_string($tag_name_or_id);
 
@@ -796,7 +796,7 @@ function correlated_tags($tag_name_or_id) {
         return array();
     }
 
-    if (!$result = get_records_select('tag', "id IN ({$tag_correlation->correlatedtags})", '', DEFAULT_TAG_TABLE_FIELDS)) {
+    if (!$result = get_records_select('tag', "id IN ({$tag_correlation->correlatedtags})", '', DEFAULT_TAG_TABLE_FIELDS, 0, $limitnum)) {
         return array();
     }
 
@@ -835,7 +835,7 @@ function update_tag_correlations($item_type, $item_id) {
  * @param number $min_correlation cutoff percentage (optional, default is 0.25)
  * @param int $limitnum return a subset comprising this many records (optional, default is 10)
  */
-function cache_correlated_tags($tag_name_or_id, $min_correlation=2, $limitnum=10) {
+function cache_correlated_tags($tag_name_or_id, $min_correlation=2) {
     global $CFG;
 
     $tag_id = tag_id_from_string($tag_name_or_id);
@@ -853,7 +853,7 @@ function cache_correlated_tags($tag_name_or_id, $min_correlation=2, $limitnum=10
 
     // Correlated tags happen when they appear together in more occasions 
     // than $min_correlation.
-    if ($tag_correlations = get_records_sql($query, 0, 10)) {
+    if ($tag_correlations = get_records_sql($query)) {
         foreach($tag_correlations as $correlation) {
             if($correlation->nr >= $min_correlation){
                 $correlated[] = $correlation->tagid;
