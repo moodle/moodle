@@ -926,6 +926,7 @@ $string['missingcountry'] = 'Missing country';
 $string['missingdescription'] = 'Missing description';
 $string['missingemail'] = 'Missing email address';
 $string['missingfirstname'] = 'Missing given name';
+$string['missingfromdisk'] = 'Missing from disk';
 $string['missingfullname'] = 'Missing full name';
 $string['missinglastname'] = 'Missing surname';
 $string['missingname'] = 'Missing name';

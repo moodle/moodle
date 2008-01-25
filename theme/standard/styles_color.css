@@ -327,6 +327,11 @@ table.flexible .r1 {
     font-weight: bold;
 }
 
+.plugincompattable td.missingplugin {
+    color: #FF7500;
+    font-weight: bold;
+}
+
 /* Admin settings */
 
 #adminsettings fieldset {

@@ -7826,5 +7826,44 @@ function object_array_unique($array, $keep_key_assoc = true) {
     return $keep_key_assoc ? $array : array_values($array);
 }
 
+/**
+ * Returns the language string for the given plugin.
+ * 
+ * @param string $plugin the plugin code name
+ * @param string $type the type of plugin (mod, block, filter)
+ * @return string The plugin language string
+ */
+function get_plugin_name($plugin, $type='mod') {
+    $plugin_name = '';
+
+    switch ($type) {
+        case 'mod': 
+            $plugin_name = get_string('modulename', $plugin);
+            break;
+        case 'blocks':
+            $plugin_name = get_string('blockname', "block_$plugin");
+            if (empty($plugin_name) || $plugin_name == '[[blockname]]') {
+                if (($block = block_instance($plugin)) !== false) {
+                    $plugin_name = $block->get_title();
+                } else {
+                    $plugin_name = "[[$plugin]]";
+                }
+            } 
+            break;
+        case 'filter':
+            $plugin_name = trim(get_string('filtername', $plugin));
+            if (empty($plugin_name) or ($plugin_name == '[[filtername]]')) {
+                $textlib = textlib_get_instance();
+                $plugin_name = $textlib->strtotitle($plugin);
+            } 
+            break;
+        default:
+            $plugin_name = $plugin;
+            break;
+    }
+
+    return $plugin_name;
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
