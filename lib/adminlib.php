@@ -4508,91 +4508,91 @@ function db_replace($search, $replace) {
  * distribution or not.
  */
 function print_plugin_tables() {
-    $compatlist = array();
-    $compatlist['mod'] = array('assignment',
-                                'chat',
-                                'choice',
-                                'data',
-                                'exercise',
-                                'forum',
-                                'glossary',
-                                'hotpot',
-                                'journal',
-                                'label',
-                                'lams',
-                                'lesson',
-                                'quiz',
-                                'resource',
-                                'scorm',
-                                'survey',
-                                'wiki',
-                                'workshop');
+    $plugins_standard = array();
+    $plugins_standard['mod'] = array('assignment',
+                                     'chat',
+                                     'choice',
+                                     'data',
+                                     'exercise',
+                                     'forum',
+                                     'glossary',
+                                     'hotpot',
+                                     'journal',
+                                     'label',
+                                     'lams',
+                                     'lesson',
+                                     'quiz',
+                                     'resource',
+                                     'scorm',
+                                     'survey',
+                                     'wiki',
+                                     'workshop');
     
-    $compatlist['blocks'] = array('activity_modules',
-                                  'admin',
-                                  'admin_bookmarks',
-                                  'admin_tree',
-                                  'blog_menu',
-                                  'blog_tags',
-                                  'calendar_month',
-                                  'calendar_upcoming',
-                                  'course_list',
-                                  'course_summary',
-                                  'glossary_random',
-                                  'html',
-                                  'loancalc',
-                                  'login',
-                                  'mentees',
-                                  'messages',
-                                  'mnet_hosts',
-                                  'news_items',
-                                  'online_users',
-                                  'participants',
-                                  'quiz_results',
-                                  'recent_activity',
-                                  'rss_client',
-                                  'search',
-                                  'search_forums',
-                                  'section_links',
-                                  'site_main_menu',
-                                  'social_activities',
-                                  'tag_flickr',
-                                  'tag_youtube',
-                                  'tags');
+    $plugins_standard['blocks'] = array('activity_modules',
+                                        'admin',
+                                        'admin_bookmarks',
+                                        'admin_tree',
+                                        'blog_menu',
+                                        'blog_tags',
+                                        'calendar_month',
+                                        'calendar_upcoming',
+                                        'course_list',
+                                        'course_summary',
+                                        'glossary_random',
+                                        'html',
+                                        'loancalc',
+                                        'login',
+                                        'mentees',
+                                        'messages',
+                                        'mnet_hosts',
+                                        'news_items',
+                                        'online_users',
+                                        'participants',
+                                        'quiz_results',
+                                        'recent_activity',
+                                        'rss_client',
+                                        'search',
+                                        'search_forums',
+                                        'section_links',
+                                        'site_main_menu',
+                                        'social_activities',
+                                        'tag_flickr',
+                                        'tag_youtube',
+                                        'tags');
     
-    $compatlist['filter'] = array('activitynames',
-                                   'algebra',
-                                   'censor',
-                                   'emailprotect',
-                                   'filter',
-                                   'mediaplugin',
-                                   'multilang',
-                                   'tex',
-                                   'tidy');
+    $plugins_standard['filter'] = array('activitynames',
+                                        'algebra',
+                                        'censor',
+                                        'emailprotect',
+                                        'filter',
+                                        'mediaplugin',
+                                        'multilang',
+                                        'tex',
+                                        'tidy');
 
-    $installed_list = array();
+    $plugins_installed = array();
     $installed_mods = get_records_list('modules', '', '', '', 'name');
     $installed_blocks = get_records_list('block', '', '', '', 'name');
 
     foreach($installed_mods as $mod) {
-        $installed_list['mod'][] = $mod->name;
+        $plugins_installed['mod'][] = $mod->name;
     }
 
     foreach($installed_blocks as $block) {
-        $installed_list['blocks'][] = $block->name;
+        $plugins_installed['blocks'][] = $block->name;
     }
 
-    $plugins = array();
-    $plugins['mod'] = get_list_of_plugins('mod', 'db');
-    $plugins['blocks'] = get_list_of_plugins('blocks', 'db');
-    $plugins['filter'] = get_list_of_plugins('filter', 'db');
+    $plugins_ondisk = array();
+    $plugins_ondisk['mod'] = get_list_of_plugins('mod', 'db');
+    $plugins_ondisk['blocks'] = get_list_of_plugins('blocks', 'db');
+    $plugins_ondisk['filter'] = get_list_of_plugins('filter', 'db');
     
     $strstandard    = get_string('standard');
     $strnonstandard = get_string('nonstandard');
 
     $html = '';
 
-    foreach ($plugins as $cat => $list) {
+    foreach ($plugins_ondisk as $cat => $list) {
         $strcaption = get_string($cat);
         if ($cat == 'mod') {
             $strcaption = get_string('activitymodule');
@@ -4611,7 +4611,7 @@ function print_plugin_tables() {
         foreach ($list as $k => $plugin) {
             $standard = 'standard';
 
-            if (!in_array($plugin, $compatlist[$cat])) {
+            if (!in_array($plugin, $plugins_standard[$cat])) {
                 $standard = 'nonstandard';
             }    
             
@@ -4620,30 +4620,14 @@ function print_plugin_tables() {
             
             global $CFG;
             $plugin_path = $CFG->dirroot . "/$cat/$plugin";
-
-            if ($cat == 'mod') {
-                $plugin_name = get_string('modulename', $plugin);
-            } elseif ($cat == 'blocks') {
-                $plugin_name = get_string('blockname', "block_$plugin");
-                if (empty($plugin_name) || $plugin_name == '[[blockname]]') {
-                    if (($block = block_instance($plugin)) !== false) {
-                        $plugin_name = $block->get_title();
-                    } else {
-                        $plugin_name = "[[$plugin]]";
-                    }
-                }
-            } elseif ($cat == 'filter') {
-                $plugin_name = trim(get_string('filtername', $plugin));
-                if (empty($plugin_name) or ($plugin_name == '[[filtername]]')) {
-                    $textlib = textlib_get_instance();
-                    $plugin_name = $textlib->strtotitle($plugin);
-                } 
-            }
+            
+            $plugin_name = get_plugin_name($plugin, $cat);
             
             // Determine if the plugin is about to be installed
             $strabouttobeinstalled = '';
-            if ($cat != 'filter' && !in_array($plugin, $installed_list[$cat])) {
+            if ($cat != 'filter' && !in_array($plugin, $plugins_installed[$cat])) {
                 $strabouttobeinstalled = ' (' . get_string('abouttobeinstalled') . ')';
+                $plugin_name = $plugin;
             }
 
             $html .= "<tr class=\"r$row\">\n"
@@ -4651,7 +4635,27 @@ function print_plugin_tables() {
                   .  "<td class=\"cell c1\">$plugin_name</td>\n"
                   .  "<td class=\"$standard cell c2\">" . ${'str' . $standard} . $strabouttobeinstalled . "</td>\n</tr>\n";
             $row++;
+
+            // If the plugin was both on disk and in the db, unset the value from the installed plugins list
+            if ($key = array_search($plugin, $plugins_standard[$cat])) {
+                unset($plugins_standard[$cat][$key]);
+            } 
         } 
+
+        // If there are plugins left in the plugins_installed list, it means they are missing from disk
+        $strmissingfromdisk = get_string('missingfromdisk');
+        foreach ($plugins_standard[$cat] as $k => $missing_plugin) { 
+            // Make sure the plugin really is missing from disk
+            if (!in_array($missing_plugin, $plugins_ondisk[$cat])) {
+                $plugin_name = get_plugin_name($missing_plugin, $cat);
+                $html .= "<tr class=\"r$row\">\n"
+                      .  "<td class=\"cell c0\">?</td>\n"
+                      .  "<td class=\"cell c1\">$plugin_name</td>\n"
+                      .  "<td class=\"missingplugin cell c2\">$strstandard ($strmissingfromdisk)</td>\n</tr>\n";
+                $row++; 
+            }
+        }
+
         $html .= '</table><br />';
     }
     
