@@ -4589,10 +4589,12 @@ function print_plugin_tables() {
     
     $strstandard    = get_string('standard');
     $strnonstandard = get_string('nonstandard');
+    $strmissingfromdisk = '(' . get_string('missingfromdisk') . ')';
+    $strabouttobeinstalled = '(' . get_string('abouttobeinstalled') . ')';
 
     $html = '';
 
-    foreach ($plugins_ondisk as $cat => $list) {
+    foreach ($plugins_ondisk as $cat => $list_ondisk) {
         $strcaption = get_string($cat);
         if ($cat == 'mod') {
             $strcaption = get_string('activitymodule');
@@ -4608,11 +4610,14 @@ function print_plugin_tables() {
         
         $row = 1;      
 
-        foreach ($list as $k => $plugin) {
+        foreach ($list_ondisk as $k => $plugin) {
+            $status = 'ok';
             $standard = 'standard';
+            $note = '';
 
             if (!in_array($plugin, $plugins_standard[$cat])) {
                 $standard = 'nonstandard';
+                $status = 'warning';
             }    
             
             // Get real name and full path of plugin
@@ -4624,34 +4629,39 @@ function print_plugin_tables() {
             $plugin_name = get_plugin_name($plugin, $cat);
             
             // Determine if the plugin is about to be installed
-            $strabouttobeinstalled = '';
             if ($cat != 'filter' && !in_array($plugin, $plugins_installed[$cat])) {
-                $strabouttobeinstalled = ' (' . get_string('abouttobeinstalled') . ')';
+                $note = $strabouttobeinstalled;
                 $plugin_name = $plugin;
             }
 
             $html .= "<tr class=\"r$row\">\n"
                   .  "<td class=\"cell c0\">$plugin_path</td>\n"
                   .  "<td class=\"cell c1\">$plugin_name</td>\n"
-                  .  "<td class=\"$standard cell c2\">" . ${'str' . $standard} . $strabouttobeinstalled . "</td>\n</tr>\n";
+                  .  "<td class=\"$standard $status cell c2\">" . ${'str' . $standard} . " $note</td>\n</tr>\n";
             $row++;
 
             // If the plugin was both on disk and in the db, unset the value from the installed plugins list
-            if ($key = array_search($plugin, $plugins_standard[$cat])) {
-                unset($plugins_standard[$cat][$key]);
+            if ($key = array_search($plugin, $plugins_installed[$cat])) {
+                unset($plugins_installed[$cat][$key]);
             } 
         } 
 
         // If there are plugins left in the plugins_installed list, it means they are missing from disk
-        $strmissingfromdisk = get_string('missingfromdisk');
-        foreach ($plugins_standard[$cat] as $k => $missing_plugin) { 
+        foreach ($plugins_installed[$cat] as $k => $missing_plugin) { 
             // Make sure the plugin really is missing from disk
             if (!in_array($missing_plugin, $plugins_ondisk[$cat])) {
-                $plugin_name = get_plugin_name($missing_plugin, $cat);
+                $standard = 'standard';
+                $status = 'warning';
+
+                if (!in_array($plugin, $plugins_standard[$cat])) {
+                    $standard = 'nonstandard';
+                }
+
+                $plugin_name = $missing_plugin;
                 $html .= "<tr class=\"r$row\">\n"
                       .  "<td class=\"cell c0\">?</td>\n"
                       .  "<td class=\"cell c1\">$plugin_name</td>\n"
-                      .  "<td class=\"missingplugin cell c2\">$strstandard ($strmissingfromdisk)</td>\n</tr>\n";
+                      .  "<td class=\"$standard $status cell c2\">" . ${'str' . $standard} . " $strmissingfromdisk</td>\n</tr>\n";
                 $row++; 
             }
         }

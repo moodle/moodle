@@ -276,6 +276,21 @@ body#admin-index .copyright {
   font-size: 0.8em;
 }
 
+.plugincompattable td.standard {
+    font-weight: normal;
+}
+
+.plugincompattable td.nonstandard {
+    font-weight: bold;
+}
+
+.plugincompattable td.missingplugin {
+    font-weight: bold;
+}
+
+.plugincompattable td.warning {
+    font-style: normal;
+}
 /***
  *** Blocks
  ***/

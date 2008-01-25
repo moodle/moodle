@@ -318,18 +318,17 @@ table.flexible .r1 {
   background-color: green;
 }
 
-.plugincompattable td.standard {
+
+.plugincompattable td.ok {
     color: #008000;
 }
 
-.plugincompattable td.nonstandard {
-    color: #FF7500;
-    font-weight: bold;
+.plugincompattable td.warning {
+    color: #DF7800;
 }
 
-.plugincompattable td.missingplugin {
-    color: #FF7500;
-    font-weight: bold;
+.plugincompattable td.error {
+    color: #DF0000;
 }
 
 /* Admin settings */
