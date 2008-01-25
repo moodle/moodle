@@ -203,7 +203,7 @@
         }
     }
     
-    $users = get_users_listing($sort, $dir, $page*$perpage, $perpage, $search, $firstinitial, $lastinitial, $remotewhere);
+    $users = get_users_listing($sort, $dir, $page*$perpage, $perpage, $search, $firstinitial, $lastinitial, $remotewhere, false);
     $usercount = get_users(false);
     $usersearchcount = get_users(false, $search, true, "", "", $firstinitial, $lastinitial);
 
