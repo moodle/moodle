@@ -2,82 +2,78 @@
     //This file contains all the function needed in the backup utility
     //except the mod-related funtions that are into every backuplib.php inside
     //every mod directory
- 
-    //Calculate the number of users to backup and put their ids in backup_ids
-    //Return an array of info (name,value)
-    function user_check_backup($course,$backup_unique_code,$backup_users,$backup_messages) {
-        //$backup_users=0-->all
-        //              1-->course (needed + enrolled)
-        //              2-->none
 
-        global $CFG;
-        global $db;
+    /**
+     * This function calculates the users to be added to backup based in the
+     * settings defined at backup. All the resulting user ids are sent to
+     * backup_ids for later usage.
+     * @param int $courseid id of the course to backup
+     * @param int $backup_unique_code unique code of the backup being executed
+     * @param int $backup_unique_code setting specifying what users to export (0=all, 1=needed, 2=none)
+     * @param int $backup_messages flag (true/false) defining if messages must be
+     *                             considered to extract needed users
+     * @return array one array (key, value) sumarizing the result of the function (number of users)
+     */
+    function user_check_backup($courseid,$backup_unique_code,$backup_users,$backup_messages) {
 
-        $context = get_context_instance(CONTEXT_COURSE, $course);
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
         $count_users = 0;
+        $backupable_users = array();
 
-        //If we've selected none, simply return 0
-        if ($backup_users == 0 or $backup_users == 1) {
-        
-            //Calculate needed users (calling every xxxx_get_participants function + scales users)
-            $needed_users = backup_get_needed_users($course, $backup_messages);
+        if ($backup_users == 0) { /// All users
+            $backupable_users = backup_get_all_users();
 
-            //Calculate enrolled users (students + teachers)
-            $enrolled_users = backup_get_enrolled_users($course);
+        } else if ($backup_users == 1) { /// Needed users
 
-            //Calculate all users (every record in users table)
-            $all_users = backup_get_all_users();
+        /// Calculate needed users (calling every xxxx_get_participants function + scales users)
+            $needed_users = backup_get_needed_users($courseid, $backup_messages);
 
-            //Calculate course users (needed + enrolled)
-            //First, needed
-            $course_users = $needed_users;
-        
-            //Now, enrolled
+        /// Calculate enrolled users (having course:view cap)
+            $enrolled_users = backup_get_enrolled_users($courseid);
+
+        /// Calculate backupable users (needed + enrolled)
+        /// First, needed
+            $backupable_users = $needed_users;
+
+        /// Now, enrolled
             if ($enrolled_users) {
                 foreach ($enrolled_users as $enrolled_user) {
-                    $course_users[$enrolled_user->id]->id = $enrolled_user->id; 
+                    $backupable_users[$enrolled_user->id]->id = $enrolled_user->id;
                 }
-            }
-       
-            //Now, depending of parameters, create $backupable_users
-            if ($backup_users == 0) {
-                $backupable_users = $all_users;
-            } else {
-                $backupable_users = $course_users;
-            }
-
-            //If we have backupable users
-            if ($backupable_users) {
-                //Iterate over users putting their roles
-                foreach ($backupable_users as $backupable_user) {
-                    $backupable_user->info = "";
-                                     
-                    //Is needed user (exists in needed_users) 
-                    if (isset($needed_users[$backupable_user->id])) {
-                        $backupable_user->info .= "needed";
-                    } else if (isset($course_users[$backupable_user->id])) {
-                        $backupable_user->info .= "needed"; 
-                    }   // Yu: also needed because they can view course
-                        // might need another variable
-                                        
-                    //Now create the backup_id record
-                    $backupids_rec->backup_code = $backup_unique_code;
-                    $backupids_rec->table_name = "user";
-                    $backupids_rec->old_id = $backupable_user->id;
-                    $backupids_rec->info = $backupable_user->info;
-        
-                    //Insert the record id. backup_users decide it.
-                    //When all users
-                    $status = insert_record('backup_ids', $backupids_rec, false);
-                    $count_users++;
-                }
-                //Do some output     
-                backup_flush(30);
             }
         }
 
-        //Prepare Info
-        //Gets the user data
+    /// If we have backupable users
+        if ($backupable_users) {
+        /// Iterate over users putting their roles
+            foreach ($backupable_users as $backupable_user) {
+                $backupable_user->info = "";
+
+            /// Is needed user or enrolled user, mark it as needed
+                if (isset($needed_users[$backupable_user->id]) || isset($enrolled_users[$backupable_user->id])) {
+                    $backupable_user->info .= "needed";
+                }   ///  Yu: also needed because they can view course
+                    /// might need another variable
+
+            /// Now create the backup_id record
+                $backupids_rec->backup_code = $backup_unique_code;
+                $backupids_rec->table_name = "user";
+                $backupids_rec->old_id = $backupable_user->id;
+                $backupids_rec->info = $backupable_user->info;
+
+            /// TODO: Change this call inserting to a standard backup_putid() call
+            /// And read data acordingly with backup_getid() when needed.
+            /// TODO: Also analyse it the "needed" info is really needed for anything. Drop if not.
+            /// Insert the user to the backup_ids table. backup_user_info() will use that info
+                $status = insert_record('backup_ids', $backupids_rec, false);
+                $count_users++;
+            }
+        /// Do some output
+            backup_flush(30);
+        }
+
+      /// Prepare Info
+      /// Gets the user data
         $info[0][0] = get_string("users");
         $info[0][1] = $count_users;
 
@@ -1151,26 +1147,10 @@
                 /// write assign/override code for context_userid
 
                 $user->isneeded = strpos($user->info,"needed");
-                //Output every user role (with its associated info) 
-                /*
-                $user->isadmin = strpos($user->info,"admin");
-                $user->iscoursecreator = strpos($user->info,"coursecreator");
-                $user->isteacher = strpos($user->info,"teacher");
-                $user->isstudent = strpos($user->info,"student");
-                
-                
-                if ($user->isadmin!==false or 
-                    $user->iscoursecreator!==false or 
-                    $user->isteacher!==false or 
-                    $user->isstudent!==false or
-                    $user->isneeded!==false) {
-                */
+
                 fwrite ($bf,start_tag("ROLES",4,true));
                 if ($user->info != "needed" && $user->info!="") {
-                    //Begin ROLES tag
-                    
                     //PRINT ROLE INFO
-                    //Admins
                     $roles = explode(",", $user->info);
                     foreach ($roles as $role) {
                         if ($role!="" && $role!="needed") {
@@ -1178,66 +1158,10 @@
                             //Print Role info
                             fwrite ($bf,full_tag("TYPE",6,false,$role));
                             //Print ROLE end
-                            fwrite ($bf,end_tag("ROLE",5,true)); 
-                        }  
+                            fwrite ($bf,end_tag("ROLE",5,true));
+                        }
                     }
                 }
-                    /*
-                    if ($user->isadmin!==false) {
-                        //Print ROLE start
-                        fwrite ($bf,start_tag("ROLE",5,true));
-                        //Print Role info
-                        fwrite ($bf,full_tag("TYPE",6,false,"admin"));
-                        //Print ROLE end
-                        fwrite ($bf,end_tag("ROLE",5,true));
-                    }
-                    //CourseCreator
-                    if ($user->iscoursecreator!==false) {
-                        //Print ROLE start 
-                        fwrite ($bf,start_tag("ROLE",5,true)); 
-                        //Print Role info 
-                        fwrite ($bf,full_tag("TYPE",6,false,"coursecreator"));
-                        //Print ROLE end
-                        fwrite ($bf,end_tag("ROLE",5,true));   
-                    }
-                    //Teacher
-                    if ($user->isteacher!==false) {
-                        //Print ROLE start 
-                        fwrite ($bf,start_tag("ROLE",5,true)); 
-                        //Print Role info 
-                        fwrite ($bf,full_tag("TYPE",6,false,"teacher"));
-                        //Get specific info for teachers
-                        $tea = get_record("user_teachers","userid",$user->old_id,"course",$preferences->backup_course);
-                        fwrite ($bf,full_tag("AUTHORITY",6,false,$tea->authority));
-                        fwrite ($bf,full_tag("TEA_ROLE",6,false,$tea->role));
-                        fwrite ($bf,full_tag("EDITALL",6,false,$tea->editall));
-                        fwrite ($bf,full_tag("TIMESTART",6,false,$tea->timestart));
-                        fwrite ($bf,full_tag("TIMEEND",6,false,$tea->timeend));
-                        fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$tea->timemodified));
-                        fwrite ($bf,full_tag("TIMEACCESS",6,false,$tea->timeaccess));
-                        fwrite ($bf,full_tag("ENROL",6,false,$tea->enrol));
-                        //Print ROLE end
-                        fwrite ($bf,end_tag("ROLE",5,true));   
-                    }
-                    //Student
-                    if ($user->isstudent!==false) {
-                        //Print ROLE start 
-                        fwrite ($bf,start_tag("ROLE",5,true)); 
-                        //Print Role info 
-                        fwrite ($bf,full_tag("TYPE",6,false,"student"));
-                        //Get specific info for students
-                        $stu = get_record("user_students","userid",$user->old_id,"course",$preferences->backup_course);
-                        fwrite ($bf,full_tag("TIMESTART",6,false,$stu->timestart));
-                        fwrite ($bf,full_tag("TIMEEND",6,false,$stu->timeend));
-                        fwrite ($bf,full_tag("TIME",6,false,$stu->time));
-                        fwrite ($bf,full_tag("TIMEACCESS",6,false,$stu->timeaccess));
-                        fwrite ($bf,full_tag("ENROL",6,false,$stu->enrol));
-                        //Print ROLE end
-                        fwrite ($bf,end_tag("ROLE",5,true));   
-                    }*/
-                    
-                    
-                    
                     //Needed
                 if ($user->isneeded!==false) {
                     //Print ROLE start
