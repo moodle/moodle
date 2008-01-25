@@ -70,7 +70,7 @@ if ($action == 'delchoice') {
     groups_print_activity_menu($cm, 'view.php?id='.$id);
                                    
     if (has_capability('mod/choice:readresponses', $context)) {
-        choice_show_reportlink($choice, $course->id, $cm->id, $groupmode);
+        choice_show_reportlink($choice, $course->id, $cm, $groupmode);
     }
 
     echo '<div class="clearer"></div>';
@@ -79,6 +79,7 @@ if ($action == 'delchoice') {
         print_box(format_text($choice->text, $choice->format), 'generalbox', 'intro');
     }
 
+    $current = false;  // Initialise for later
     //if user has already made a selection, and they are not allowed to update it, show their selected answer.
     if (!empty($USER->id) && ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $USER->id)) &&
         empty($choice->allowupdate) ) {
