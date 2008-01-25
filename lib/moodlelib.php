@@ -3439,7 +3439,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
                         }
                     }
                 } else {
-                    notify('Function '. $moddelete() .'doesn\'t exist!');
+                    notify('Function '.$moddelete.'() doesn\'t exist!');
                     $result = false;
                 }
 
