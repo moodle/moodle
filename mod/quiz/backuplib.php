@@ -38,12 +38,12 @@
      *     all categories and questions in contexts of quiz module instances which have been selected for backup
      *     all categories and questions in contexts above course level that are used by quizzes that have been selected for backup
      */
-    function insert_category_and_question_ids($course, $backup_unique_code, $instances = null) {
+    function quiz_insert_category_and_question_ids($course, $backup_unique_code, $instances = null) {
         global $CFG;
         $status = true;
         
         // Create missing categories and reasign orphaned questions.
-        fix_orphaned_questions($course);
+        quiz_fix_orphaned_questions($course);
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course);
         $status = $status && question_insert_c_and_q_ids_for_course($coursecontext, $backup_unique_code);
@@ -193,7 +193,7 @@
     //non existing category) and to recreate such category. This function
     //is used by the backup process, to ensure consistency and should be
     //executed in the upgrade process and, perhaps in the health center.
-    function fix_orphaned_questions ($course) {
+    function quiz_fix_orphaned_questions ($course) {
 
         global $CFG;
 
@@ -499,7 +499,7 @@
 /// $instances is an array with key = instanceid, value = object (name,id,userdata)
    function quiz_check_backup_mods($course,$user_data= false,$backup_unique_code,$instances=null) {
         //this function selects all the questions / categories to be backed up.
-        insert_category_and_question_ids($course, $backup_unique_code, $instances);
+        quiz_insert_category_and_question_ids($course, $backup_unique_code, $instances);
         if ($course != SITEID){
             question_insert_site_file_names($course, $backup_unique_code);
         }
