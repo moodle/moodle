@@ -34,11 +34,11 @@
     /*
      * Insert necessary category ids to backup_ids table. Called during backup_check.html
      */
-    function insert_category_and_question_ids($course, $backup_unique_code, $instances = null) {
+    function quiz_insert_category_and_question_ids($course, $backup_unique_code, $instances = null) {
         global $CFG;
 
         // Create missing categories and reasign orphaned questions.
-        fix_orphaned_questions($course);
+        quiz_fix_orphaned_questions($course);
         // First, all categories from this course's context.
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course);
         $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
@@ -212,7 +212,7 @@
     //non existing category) and to recreate such category. This function
     //is used by the backup process, to ensure consistency and should be
     //executed in the upgrade process and, perhaps in the health center.
-    function fix_orphaned_questions ($course) {
+    function quiz_fix_orphaned_questions ($course) {
 
         global $CFG;
 
@@ -521,7 +521,7 @@
         delete_ids ($backup_unique_code, 'question_categories');
         delete_ids ($backup_unique_code, 'question');
         //this function selects all the questions / categories to be backed up.
-        insert_category_and_question_ids($course, $backup_unique_code, $instances);
+        quiz_insert_category_and_question_ids($course, $backup_unique_code, $instances);
         if ($course != SITEID){
             question_insert_site_file_names($course, $backup_unique_code);
         }
