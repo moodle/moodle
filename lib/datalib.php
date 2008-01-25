@@ -266,12 +266,13 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
  * @param string $search ?
  * @param string $firstinitial ?
  * @param string $lastinitial ?
+ * @param bool $includeguest By default, returns the guest user account as well. If set to false, it will not be returned.
  * @returnobject {@link $USER} records
  * @todo Finish documenting this function
  */
 
 function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=0,
-                           $search='', $firstinitial='', $lastinitial='', $remotewhere='') {
+                           $search='', $firstinitial='', $lastinitial='', $remotewhere='', $includeguest=true) {
 
     global $CFG;
 
@@ -279,6 +280,10 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
     $fullname  = sql_fullname();
 
     $select = "deleted <> '1'";
+
+    if (!$includeguest) {
+        $select .= ' AND username <> \'guest\'';
+    }
 
     if (!empty($search)) {
         $search = trim($search);
