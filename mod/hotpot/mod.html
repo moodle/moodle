@@ -75,7 +75,7 @@ $text_source_options = array(
                 print '<input type="hidden" name="namesource" value="'.HOTPOT_TEXTSOURCE_SPECIFIC.'">';
             }
 			print '<span id="nameSPAN">';
-            print '<input type="text" name="name" size=40 value="'.$form->name.'">';
+            print '<input type="text" name="name" size="40" value="'.htmlspecialchars($form->name).'" />';
 			print '</span>';
         ?></td>
     </tr>
