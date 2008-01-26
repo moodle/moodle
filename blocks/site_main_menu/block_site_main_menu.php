@@ -159,7 +159,7 @@ class block_site_main_menu extends block_list {
             $this->content->icons[] = '';
         }
 
-        if ($modnames) {
+        if (!empty($modnames)) {
             $this->content->footer = print_section_add_menus($course, 0, $modnames, true, true);
         } else {
             $this->content->footer = '';
