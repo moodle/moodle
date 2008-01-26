@@ -315,8 +315,39 @@ class embedded_cloze_qtype extends default_questiontype {
             switch ($wrapped->qtype) {
                 case 'shortanswer':
                 case 'numerical':
+                    $size = 1 ;
+                    foreach ($answers as $answer) {
+                        if (strlen(trim($answer->answer)) > $size ){
+                            $size = strlen(trim($answer->answer));
+                        }
+                    } 
+                    if (strlen(trim($response))> $size ){
+                            $size = strlen(trim($response))+1;
+                    }
+                    $size = $size + rand(0,$size*0.15);
+                    $size > 60 ? $size = 60 : $size = $size; 
+                    $styleinfo = "size=\".$size\"";
+                    /**
+                    * Uncomment the following lines if you want to limit for small sizes.
+                    * Results may vary with browsers see MDL-3274 
+                    */
+                    /*  
+                    if ($size < 2) {
+                        $styleinfo = 'style="width: 1.1em;"';
+                    }
+                    if ($size == 2) {
+                        $styleinfo = 'style="width: 1.9em;"';
+                    }
+                    if ($size == 3) {
+                        $styleinfo = 'style="width: 2.3em;"';
+                    }
+                    if ($size == 4) {
+                        $styleinfo = 'style="width: 2.8em;"';
+                    }
+                    */
+                    
                     echo " <input $style $readonly $popup name=\"$inputname\"
-                            type=\"text\" value=\"".s($response, true)."\" size=\"12\" /> ";
+                            type=\"text\" value=\"".s($response, true)."\" ".$styleinfo." /> ";
                     if (!empty($feedback) && !empty($USER->screenreader)) {
                         echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
                     }
