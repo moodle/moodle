@@ -326,7 +326,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     }
                     $size = $size + rand(0,$size*0.15);
                     $size > 60 ? $size = 60 : $size = $size; 
-                    $styleinfo = "size=\".$size\"";
+                    $styleinfo = "size=\"$size\"";
                     /**
                     * Uncomment the following lines if you want to limit for small sizes.
                     * Results may vary with browsers see MDL-3274 
@@ -346,8 +346,8 @@ class embedded_cloze_qtype extends default_questiontype {
                     }
                     */
                     
-                    echo " <input $style $readonly $popup name=\"$inputname\"
-                            type=\"text\" value=\"".s($response, true)."\" ".$styleinfo." /> ";
+                    echo " <input $style $readonly $popup name=\"$inputname\"";
+                    echo "  type=\"text\" value=\"".s($response, true)."\" ".$styleinfo." /> ";
                     if (!empty($feedback) && !empty($USER->screenreader)) {
                         echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
                     }
