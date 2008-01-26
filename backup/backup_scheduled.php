@@ -387,7 +387,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
                        }
                        //Now stores all the mods preferences into an array into preferences
                        $preferences->mods[$modname]->backup = $$var;
-                       
+
                        //Check include user info
                        $var = "backup_user_info_".$modname;
                        if (!isset($$var)) {
@@ -401,6 +401,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
                 }
             }
         }
+
         // now set instances
         if ($coursemods = get_course_mods($course->id)) {
             foreach ($coursemods as $mod) {
@@ -415,8 +416,15 @@ function schedule_backup_course_configure($course,$starttime = 0) {
                 }
             }
         }
+
+        // finally, clean all the $preferences->mods[] not having instances. Nothing to backup about them
+        foreach ($preferences->mods as $modname => $mod) {
+            if (!isset($mod->instances)) {
+                unset($preferences->mods[$modname]);
+            }
+        }
     }
-    
+
     //Convert other parameters
     if ($status) {
         $preferences->backup_metacourse = $backup_config->backup_sche_metacourse;
@@ -429,7 +437,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         $preferences->backup_destination = $backup_config->backup_sche_destination;
         $preferences->backup_keep = $backup_config->backup_sche_keep;
     }
-    
+
     //Calculate the backup string
     if ($status) {
         schedule_backup_log($starttime,$course->id,"    calculating backup name");
@@ -474,7 +482,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         $keep_name .= moodle_strtolower($backup_shortname)."-";
         //And finally, clean everything
         $keep_name = clean_filename($keep_name);
- 
+
         $preferences->backup_name = $backup_name;
         $preferences->keep_name = $keep_name;
     }
@@ -643,10 +651,10 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
             schedule_backup_log($starttime,$preferences->backup_course,"      categories & questions");
             $status = backup_question_categories($backup_file,$preferences);
         }
-        
+
         //Print logs if selected
         if ($status) {
-            if ($preferences->backup_logs) {  
+            if ($preferences->backup_logs) {
                 schedule_backup_log($starttime,$preferences->backup_course,"      logs");
                 $status = backup_log_info($backup_file,$preferences);
             }
@@ -657,7 +665,13 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
             schedule_backup_log($starttime,$preferences->backup_course,"      scales");
             $status = backup_scales_info($backup_file,$preferences);
         }
- 
+
+        //Print groupings info
+        if ($status) {
+            schedule_backup_log($starttime,$preferences->backup_course,"      groupings");
+            $status = backup_groupings_info($backup_file,$preferences);
+        }
+
         //Print groups info
         if ($status) {
             schedule_backup_log($starttime,$preferences->backup_course,"      groups");
@@ -682,9 +696,9 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
             $mods_to_backup = false;
             //Check if we have any mod to backup
             foreach ($preferences->mods as $module) {
-                if ($module->backup) { 
+                if ($module->backup) {
                     $mods_to_backup = true;
-                }    
+                }
             }
             //If we have to backup some module
             if ($mods_to_backup) {
@@ -703,7 +717,13 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
             }
         }
 
-        //Prints course end 
+        //Backup course format data, if any.
+        if ($status) {
+            schedule_backup_log($starttime,$preferences->backup_course,"      course format data");
+            $status = backup_format_data($backup_file,$preferences);
+        }
+
+        //Prints course end
         if ($status) {
             $status = backup_course_end($backup_file,$preferences);
         }
@@ -713,7 +733,7 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
             backup_close_xml($backup_file);
         }
     }
-    
+
     //Now, if selected, copy user files
     if ($status) {
         if ($preferences->backup_user_files) {
