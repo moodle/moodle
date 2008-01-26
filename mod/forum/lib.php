@@ -4459,7 +4459,8 @@ function forum_remove_user_subscriptions($userid, $context) {
                                               FROM {$CFG->prefix}course c,
                                                    {$CFG->prefix}forum_subscriptions fs,
                                                    {$CFG->prefix}forum f
-                                             WHERE c.id = f.course AND f.id = fs.forum AND fs.userid = $userid")) {
+                                                   WHERE c.id = f.course AND f.id = fs.forum AND fs.userid = $userid
+                                                   GROUP BY c.id")) {
 
                 foreach ($courses as $course) {
                     $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
