@@ -4653,7 +4653,7 @@ function print_plugin_tables() {
                 $standard = 'standard';
                 $status = 'warning';
 
-                if (!in_array($plugin, $plugins_standard[$cat])) {
+                if (!in_array($missing_plugin, $plugins_standard[$cat])) {
                     $standard = 'nonstandard';
                 }
 
