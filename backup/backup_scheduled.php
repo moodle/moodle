@@ -404,6 +404,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
                 }
             }
         }
+
         // now set instances
         if ($coursemods = get_course_mods($course->id)) {
             foreach ($coursemods as $mod) {
@@ -416,6 +417,13 @@ function schedule_backup_course_configure($course,$starttime = 0) {
                     // there isn't really a nice way to do this...
                     $preferences->mods[$mod->modname]->instances[$mod->instance]->name = get_field($mod->modname,'name','id',$mod->instance);
                 }
+            }
+        }
+
+        // finally, clean all the $preferences->mods[] not having instances. Nothing to backup about them
+        foreach ($preferences->mods as $modname => $mod) {
+            if (!isset($mod->instances)) {
+                unset($preferences->mods[$modname]);
             }
         }
     }
@@ -434,53 +442,28 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         $preferences->backup_keep = $backup_config->backup_sche_keep;
     }
 
-    //Calculate the backup string
+    //Calculate various backup preferences
     if ($status) {
         schedule_backup_log($starttime,$course->id,"    calculating backup name");
 
-        //Calculate the backup word
-        //Take off some characters in the filename !!
-        $takeoff = array(" ", ":", "/", "\\", "|");
-        $backup_word = str_replace($takeoff,"_",moodle_strtolower(get_string("backupfilename")));
-        //If non-translated, use "backup"
-        if (substr($backup_word,0,1) == "[") {
-            $backup_word= "backup";
-        }
-
-        //Calculate the date format string
-        $backup_date_format = str_replace(" ","_",get_string("backupnameformat"));
-        //If non-translated, use "%Y%m%d-%H%M"
-        if (substr($backup_date_format,0,1) == "[") {
-            $backup_date_format = "%%Y%%m%%d-%%H%%M";
-        }
-
-        //Calculate the shortname
-        $backup_shortname = clean_filename($course->shortname);
-        if (empty($backup_shortname) or $backup_shortname == '_' ) {
-            $backup_shortname = $course->id;
-        }
-
-        //Calculate the final backup filename
-        //The backup word
-        $backup_name = $backup_word."-";
-        //The shortname
-        $backup_name .= moodle_strtolower($backup_shortname)."-";
-        //The date format
-        $backup_name .= userdate(time(),$backup_date_format,99,false);
-        //The extension
-        $backup_name .= ".zip";
-        //And finally, clean everything
-        $backup_name = clean_filename($backup_name);
+        //Calculate the backup file name
+        $backup_name = backup_get_zipfile_name($course);
 
         //Calculate the string to match the keep preference
-        $keep_name = $backup_word."-";
-        //The shortname
-        $keep_name .= moodle_strtolower($backup_shortname)."-";
-        //And finally, clean everything
-        $keep_name = clean_filename($keep_name);
+        $keep_name = backup_get_keep_name($course);
 
+        //Set them
         $preferences->backup_name = $backup_name;
         $preferences->keep_name = $keep_name;
+
+        //Roleasignments
+        $roles = get_records('role', '', '', 'sortorder');
+        foreach ($roles as $role) {
+            $preferences->backuproleassignments[$role->id] = $role;
+        }
+
+        //Another Info
+        backup_add_static_preferences($preferences);
     }
 
     //Calculate the backup unique code to allow simultaneus backups (to define
@@ -567,6 +550,8 @@ function schedule_backup_course_configure($course,$starttime = 0) {
     return $status;
 }
 
+//TODO: Unify this function with backup_execute() to have both backups 100% equivalent. Moodle 2.0
+
 //This function implements all the needed code to backup a course
 //copying it to the desired destination (default if not specified)
 function schedule_backup_course_execute($preferences,$starttime = 0) {
@@ -574,12 +559,6 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
     global $CFG;
 
     $status = true;
-
-    //Another Info to add
-    $preferences->moodle_version = $CFG->version;
-    $preferences->moodle_release = $CFG->release;
-    $preferences->backup_version = $CFG->backup_version;
-    $preferences->backup_release = $CFG->backup_release;
 
     //Some parts of the backup doesn't know about $preferences, so we
     //put a copy of it inside that CFG (always global) to be able to
@@ -676,6 +655,18 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
             $status = backup_groups_info($backup_file,$preferences);
         }
 
+        //Print groupings info
+        if ($status) {
+            schedule_backup_log($starttime,$preferences->backup_course,"      groupings");
+            $status = backup_groupings_info($backup_file,$preferences);
+        }
+
+        //Print groupings_groups info
+        if ($status) {
+            schedule_backup_log($starttime,$preferences->backup_course,"      groupings_groups");
+            $status = backup_groupings_groups_info($backup_file,$preferences);
+        }
+
         //Print events info
         if ($status) {
             schedule_backup_log($starttime,$preferences->backup_course,"      events");
@@ -713,6 +704,12 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
                 //Close modules tag
                 $status = backup_modules_end ($backup_file,$preferences);
             }
+        }
+
+        //Backup course format data, if any.
+        if ($status) {
+            schedule_backup_log($starttime,$preferences->backup_course,"      course format data");
+            $status = backup_format_data($backup_file,$preferences);
         }
 
         //Prints course end
