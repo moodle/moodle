@@ -4543,7 +4543,8 @@ function forum_remove_user_tracking($userid, $context) {
                                               FROM {$CFG->prefix}course c,
                                                    {$CFG->prefix}forum_read fr,
                                                    {$CFG->prefix}forum f
-                                             WHERE c.id = f.course AND f.id = fr.forumid AND fr.userid = $userid")) {
+                                                   WHERE c.id = f.course AND f.id = fr.forumid AND fr.userid = $userid
+                                                   GROUP BY c.id")) {
 
                 $allcourses = $allcourses + $courses;
             }
