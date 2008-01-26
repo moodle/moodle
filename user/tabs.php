@@ -95,9 +95,8 @@
         $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
         $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 
-    /// Can only edit profile if it belongs to user or current user is admin and not editing primary admin
 
-        $mainadmin = get_admin();
+    /// Can only edit profile if it belongs to user or current user is admin and not editing primary admin
 
         if(empty($CFG->loginhttps)) {
             $wwwroot = $CFG->wwwroot;
@@ -122,11 +121,10 @@
                 $edittype = 'normal';
             }
 
-        } else if ($user->id != $mainadmin->id) {
-            //no editing of primary admin!
-            if (has_capability('moodle/user:update', $systemcontext)) {
+        } else {
+            if (has_capability('moodle/user:update', $systemcontext) and !is_primary_admin($user->id)){
                 $edittype = 'advanced';
-            } else if (has_capability('moodle/user:editprofile', $personalcontext)) {
+            } else if (has_capability('moodle/user:editprofile', $personalcontext) and !is_primary_admin($user->id)){
                 //teachers, parents, etc.
                 $edittype = 'normal';
             }

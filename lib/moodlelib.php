@@ -7865,5 +7865,21 @@ function get_plugin_name($plugin, $type='mod') {
     return $plugin_name;
 }
 
+/**
+ * Is a userid the primary administrator?
+ *
+ * @param $userid int id of user to check
+ * @return boolean 
+ */
+function is_primary_admin($userid){
+    $primaryadmin =  get_admin();
+
+    if($userid == $primaryadmin->id){
+        return true;
+    }else{
+        return false;
+    }
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
