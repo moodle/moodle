@@ -44,8 +44,7 @@
         redirect($CFG->wwwroot . "/user/view.php?id=$id&course={$course->id}");
     }
 
-    $mainadmin = get_admin();
-    if ($user->id != $USER->id and $user->id == $mainadmin->id) {  // Can't edit primary admin
+    if ($user->id != $USER->id and is_primary_admin($user->id)) {  // Can't edit primary admin
         print_error('adminprimarynoedit');
     }
 

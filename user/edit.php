@@ -73,8 +73,7 @@
             print_error('guestnoeditprofileother');
         }
         // no editing of primary admin!
-        $mainadmin = get_admin();
-        if ($user->id == $mainadmin->id) {
+        if (is_primary_admin($user->id)) {
             print_error('adminprimarynoedit');
         }
     }

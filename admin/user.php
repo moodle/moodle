@@ -63,8 +63,7 @@
             error("No such user!", '', true);
         }
 
-        $primaryadmin = get_admin();
-        if ($user->id == $primaryadmin->id) {
+        if (is_primary_admin($user->id)) {
             error("You are not allowed to delete the primary admin user!", '', true);
         }
 
