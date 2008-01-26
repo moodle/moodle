@@ -3195,29 +3195,37 @@
     }
 
     /**
-    * This function generates the default zipfile name for a backup
-    * based on the course id and the unique code.
-    *
-    * @param object $course course object
-    * @param string $backup_unique_code (optional, if left out current timestamp used)
-    *
+     * This function calculates the "backup" part of the file name
+     * from lang files. Used both in manual and scheduled backups
+     *
+     * @param object $course course object
+     * @return string "backup" part of the filename
+     */
+    function backup_get_backup_string($course) {
 
-    * @return string filename (excluding path information)
-    */
-    function backup_get_zipfile_name($course, $backup_unique_code='') {
-
-        if (empty($backup_unique_code)) {
-            $backup_unique_code = time();
-        }
-
-        //Calculate the backup word
-        //Take off some characters in the filename !!
+    /// Calculate the backup word
+    /// Take off some characters in the filename !!
         $takeoff = array(" ", ":", "/", "\\", "|");
         $backup_word = str_replace($takeoff,"_",moodle_strtolower(get_string("backupfilename")));
-        //If non-translated, use "backup"
+    /// If non-translated, use "backup"
         if (substr($backup_word,0,1) == "[") {
             $backup_word= "backup";
         }
+
+        return $backup_word;
+    }
+
+    /**
+    * This function generates the default zipfile name for a backup
+    * based on the course shortname
+    *
+    * @param object $course course object
+    * @return string filename (excluding path information)
+    */
+    function backup_get_zipfile_name($course) {
+
+        //Calculate the backup word
+        $backup_word = backup_get_backup_string($course);
 
         //Calculate the date format string
         $backup_date_format = str_replace(" ","_",get_string("backupnameformat"));
@@ -3245,9 +3253,31 @@
         $backup_name = clean_filename($backup_name);
 
         return $backup_name;
-
     }
 
+    /**
+    * This function generates the common file substring for a course
+    * used to keep n copies by the scheduled backup
+    *
+    * @param object $course course object
+    * @return string common part of filename in backups of this course
+    */
+    function backup_get_keep_name($course) {
+
+        //Calculate the backup word
+        $backup_word = backup_get_backup_string($course);
+
+        //Calculate the shortname
+        $backup_shortname = clean_filename($course->shortname);
+        if (empty($backup_shortname) or $backup_shortname == '_' ) {
+            $backup_shortname = $course->id;
+        }
+
+        $keep_name = $backup_word . "-" . moodle_strtolower($backup_shortname)."-";
+        $keep_name = clean_filename($keep_name);
+
+        return $keep_name;
+    }
     /**
     * This function adds on the standard items to the preferences
     * Like moodle version and backup version
