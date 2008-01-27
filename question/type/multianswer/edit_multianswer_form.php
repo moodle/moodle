@@ -39,7 +39,7 @@ class question_edit_multianswer_form extends question_edit_form {
             $countsubquestions =0;
         }
 
-        $mform->addElement('submit', 'analyzequestion', get_string('DECODE AND VERIFY THE QUESTION TEXT ','qtype_multianswer'));
+        $mform->addElement('submit', 'analyzequestion', get_string('decodeverifyquestiontext','qtype_multianswer'));
         $mform->registerNoSubmitButton('analyzequestion');
 
         for ($sub =1;$sub <=$countsubquestions ;$sub++) {
