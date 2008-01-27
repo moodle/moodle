@@ -334,10 +334,12 @@ class auth_plugin_db extends auth_plugin_base {
 
         // simplify down to usernames
         $usernames = array();
-        foreach ($users as $user) {
-            array_push($usernames, $user->username);
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                array_push($usernames, $user->username);
+            }
+            unset($users);
         }
-        unset($users);
 
         $add_users = array_diff($userlist, $usernames);
         unset($usernames);
