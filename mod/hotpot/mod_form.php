@@ -302,10 +302,8 @@ class mod_hotpot_mod_form extends moodleform_mod {
         }
 
 // studentfeedbackurl
-        if ($data['studentfeedbackurl']=='http://') {
+        if (empty($data['studentfeedbackurl']) || $data['studentfeedbackurl']=='http://') {
             $data['studentfeedbackurl'] = '';
-        }
-        if (empty($data['studentfeedbackurl'])) {
             $error = false;
             if ($data['studentfeedback']==HOTPOT_FEEDBACK_WEBPAGE) {
                 $error = true;
