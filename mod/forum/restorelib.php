@@ -749,6 +749,17 @@
                 }
             }
             break;
+        case "stop tracking":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the url and info fields)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?f=".$mod->new_id;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
         case "update":
             if ($log->cmid) {
                 //Get the new_id of the module (to recode the info field)
@@ -775,6 +786,14 @@
             $log->url = "index.php?id=".$log->course;
             $status = true;
             break;
+        case "subscribeall":
+            $log->url = "index.php?id=".$log->course;
+            $status = true;
+            break;
+        case "unsubscribeall":
+            $log->url = "index.php?id=".$log->course;
+            $status = true;
+            break;
         case "subscribe":
             if ($log->cmid) {
                 //Get the new_id of the module (to recode the info and url field)
@@ -787,6 +806,7 @@
             }
             break;
         case "view subscriber":
+        case "view subscribers":
             if ($log->cmid) {
                 //Get the new_id of the module (to recode the info and field)
                 $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
@@ -842,6 +862,7 @@
             }
             break;
         case "delete discussi":
+        case "delete discussion":
             if ($log->cmid) {
                 //Get the new_id of the module (to recode the info field)
                 $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
@@ -907,6 +928,16 @@
                     $log->url = "discuss.php?d=".$dis->new_id;
                     $status = true;
                 }
+            }
+            break;
+        case "user report":
+            //Extract mode from url
+            $mode = substr(strrchr($log->url,"="),1);
+            //Get new user id
+            if ($use = backup_getid($restore->backup_unique_code, 'user', $log->info)) {
+                $log->url = 'user.php?id=' . $log->course . '&user=' . $use->new_id . '&mode=' . $mode;
+                $log->info = $use->new_id;
+                $status = true;
             }
             break;
         case "search":
