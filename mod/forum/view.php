@@ -124,7 +124,7 @@
             echo '<span class="helplink">' . get_string("forcessubscribe", 'forum') . '</span><br />';
             helpbutton("subscription", $strallowchoice, "forum");
             echo '&nbsp;<span class="helplink">';
-            if (has_capability('moodle/course:manageactivities', $context)) {
+            if (has_capability('mod/forum:managesubscriptions', $context)) {
                 echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&amp;force=no\">$strallowchoice</a>";
             } else {
                 echo $streveryoneisnowsubscribed;
@@ -142,12 +142,16 @@
             echo '<span class="helplink">' . get_string("allowsallsubscribe", 'forum') . '</span><br />';
             helpbutton("subscription", $strforcesubscribe, "forum");
             echo '&nbsp;';
-            if (has_capability('moodle/course:manageactivities', $context)) {
+
+            if (has_capability('mod/forum:managesubscriptions', $context)) {
                 echo "<span class=\"helplink\"><a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&amp;force=yes\">$strforcesubscribe</a></span>";
-                echo "<br />";
-                echo "<span class=\"helplink\"><a href=\"subscribers.php?id=$forum->id\">$strshowsubscribers</a></span>";
             } else {
                 echo '<span class="helplink">'.$streveryonecannowchoose.'</span>';
+            }
+
+            if(has_capability('mod/forum:viewsubscribers', $context)){
+                echo "<br />";
+                echo "<span class=\"helplink\"><a href=\"subscribers.php?id=$forum->id\">$strshowsubscribers</a></span>";
             }
 
             echo '<div class="helplink" id="subscriptionlink">', forum_get_subscribe_link($forum, $context, 
