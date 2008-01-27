@@ -1909,23 +1909,6 @@ function sql_isnotempty($tablename, $fieldname, $nullablefield, $textfield) {
 }
 
 /**
- * Returns the proper SQL to do IS NULL
- * @uses $CFG
- * @param string $fieldname The field to add IS NULL to
- * @return string
- */
-function sql_isnull($fieldname) {
-    global $CFG;
-
-    switch ($CFG->dbfamily) {
-        case 'mysql':
-             return $fieldname.' IS NULL';
-        default:
-             return $fieldname.' IS NULL';
-    }
-}
-
-/**
  * Returns the proper AS keyword to be used to aliase columns
  * SQL defines the keyword as optional and nobody but PG
  * seems to require it. This function should be used inside all
