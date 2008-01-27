@@ -323,7 +323,7 @@ function hotpot_set_form_values(&$hotpot) {
     }
 
     if (isset($hotpot->displaynext)) {
-        switch ($hotpot->displaynext) {
+        switch (HOTPOT_DISPLAYNEXT_QUIZ) {
             // N.B. redirection only works for Moodle 1.5+
             case HOTPOT_DISPLAYNEXT_COURSE:
                 $hotpot->redirect = true;
@@ -336,6 +336,8 @@ function hotpot_set_form_values(&$hotpot) {
             default:
                 // use Moodle default action (i.e. go on to display the hotpot quiz)
         }
+    } else {
+        $hotpot->displaynext = HOTPOT_DISPLAYNEXT_QUIZ;
     }
 
     // if ($ok && $hotpot->setdefaults) {
