@@ -64,6 +64,21 @@ function xmldb_lesson_upgrade($oldversion=0) {
         $db->debug = true;
     }
 
+    if ($result && $oldversion < 2007072201) {
+
+        $table = new XMLDBTable('lesson');
+        $field = new XMLDBField('usegrademax');
+        $field2 = new XMLDBField('usemaxgrade');
+
+    /// Rename lesson->usegrademax to lesson->usemaxgrade. Some old sites can have it incorrect. MDL-13177
+        if (field_exists($table, $field) && !field_exists($table, $field2)) {
+        /// Set field specs
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, null, null, '0', 'ongoing');
+        /// Launch rename field usegrademax to usemaxgrade
+            $result = $result && rename_field($table, $field, 'usemaxgrade');
+        }
+    }
+
     return $result;
 }
 
