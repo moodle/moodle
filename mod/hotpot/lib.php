@@ -336,6 +336,8 @@ function hotpot_set_form_values(&$hotpot) {
             default:
                 // use Moodle default action (i.e. go on to display the hotpot quiz)
         }
+    } else {
+        $hotpot->displaynext = HOTPOT_DISPLAYNEXT_QUIZ;
     }
 
     // if ($ok && $hotpot->setdefaults) {
