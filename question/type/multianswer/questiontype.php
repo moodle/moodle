@@ -74,6 +74,24 @@ class embedded_cloze_qtype extends default_questiontype {
             // if we still have some old wrapped question ids, reuse the next of them
             if ($oldwrappedid = array_shift($oldwrappedids)) {
                 $wrapped->id = $oldwrappedid;
+                //
+                $oldqtype = get_field('question', 'qtype', 'id',$oldwrappedid) ;
+                if($oldqtype != $wrapped->qtype ) {
+                    echo "<p>oldqtype $oldqtype newqtype".$wrapped->qtype."</p>";
+                    switch ($oldqtype) {
+                        case 'multichoice':
+                             delete_records('question_multichoice', 'question', $oldwrappedid);
+                            break;
+                        case 'shortanswer':
+                             delete_records('question_shortanswer', 'question', $oldwrappedid);
+                            break;
+                        case 'numerical':
+                             delete_records('question_numerical', 'question', $oldwrappedid);
+                            break;
+                        default:
+                            error("questiontype $wrapped->qtype not recognized");
+                    }
+                }
             }
             $wrapped->name = $question->name;
             $wrapped->parent = $question->id;
@@ -85,8 +103,9 @@ class embedded_cloze_qtype extends default_questiontype {
 
         // Delete redundant wrapped questions
         if(is_array($oldwrappedids) && count($oldwrappedids)){ 
-            $oldwrappedids = implode(',', $oldwrappedids);
-            delete_records_select('question', "id IN ($oldwrappedids)");
+            foreach ($oldwrappedids as $id) {
+                delete_question($id) ;
+            }
         }
 
         if (!empty($sequence)) {
@@ -296,8 +315,39 @@ class embedded_cloze_qtype extends default_questiontype {
             switch ($wrapped->qtype) {
                 case 'shortanswer':
                 case 'numerical':
-                    echo " <input $style $readonly $popup name=\"$inputname\"
-                            type=\"text\" value=\"".s($response, true)."\" size=\"12\" /> ";
+                    $size = 1 ;
+                    foreach ($answers as $answer) {
+                        if (strlen(trim($answer->answer)) > $size ){
+                            $size = strlen(trim($answer->answer));
+                        }
+                    } 
+                    if (strlen(trim($response))> $size ){
+                            $size = strlen(trim($response))+1;
+                    }
+                    $size = $size + rand(0,$size*0.15);
+                    $size > 60 ? $size = 60 : $size = $size; 
+                    $styleinfo = "size=\"$size\"";
+                    /**
+                    * Uncomment the following lines if you want to limit for small sizes.
+                    * Results may vary with browsers see MDL-3274 
+                    */
+                    /*  
+                    if ($size < 2) {
+                        $styleinfo = 'style="width: 1.1em;"';
+                    }
+                    if ($size == 2) {
+                        $styleinfo = 'style="width: 1.9em;"';
+                    }
+                    if ($size == 3) {
+                        $styleinfo = 'style="width: 2.3em;"';
+                    }
+                    if ($size == 4) {
+                        $styleinfo = 'style="width: 2.8em;"';
+                    }
+                    */
+                    
+                    echo " <input $style $readonly $popup name=\"$inputname\"";
+                    echo "  type=\"text\" value=\"".s($response, true)."\" ".$styleinfo." /> ";
                     if (!empty($feedback) && !empty($USER->screenreader)) {
                         echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
                     }
