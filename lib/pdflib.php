@@ -96,7 +96,7 @@ class pdf extends TCPDF {
      * Fake constructor to keep PHP5 happy.
      */
     function __construct($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8') {
-        $this->pdf($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8');
+        $this->pdf($orientation, $unit, $format, $unicode, $encoding);
     }
     
     
