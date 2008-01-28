@@ -42,7 +42,7 @@ $string['checkingphpsettings'] = '/n/n PHP설정 점검 /n/n';
 $string['chooselanguage'] = '언어를 선택하시오';
 $string['chooselanguagehead'] = '언어를 선택하시오';
 $string['chooselanguagesub'] = '설치를 위한 언어를 선택하시오. 설치를 마치고 난 후에도 사이트와 사용자들을 위한 언어팩을 가져와서 다시 바꿀 수 있습니다.';
-$string['closewindow'] = '이 창을 닫기';
+$string['closewindow'] = '창 닫기';
 $string['compatibilitysettings'] = 'PHP 설정을 검사하는 중 ..';
 $string['compatibilitysettingshead'] = 'PHP 설정을 검사하는 중 ..';
 $string['compatibilitysettingssub'] = '당신의 서버는 무들이 잘 작동되기 위한 필요한 모든 테스트를 통과해야 합니다.';
@@ -372,7 +372,7 @@ $php cliupgrade.php OPTIONS /n
 --help 본 도움말 출력 /n
 사용예시:
 $php cliupgrade.php --lang=en --webaddr=http://www.example.com --moodledir=/var/www/html/moodle --datadir=/var/moodledata --dbtype=mysql --dbhost=localhost --dbname=moodle --dbuser=root --prefix=mdl --agreelicense=yes --confirmrelease=yes --sitefullname=\"Example Moodle Site\" --siteshortname=moodle --sitesummary=siteforme --adminfirstname=Admin --adminlastname=User --adminusername=admin --adminpassword=admin --adminemail=admin@example.com --verbose=1 --interactivelevel=2 /n';
-$string['user'] = '사용자';
+$string['user'] = '이용자';
 $string['versionerror'] = '판오류로 인한 사용자 취소';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = '당신의 컴퓨터에 <strong>$a->packname $a->packversion</strong> 패키지를 성공적으로 설치한 것을 축하합니다!';
