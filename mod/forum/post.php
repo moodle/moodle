@@ -682,7 +682,7 @@
                 $user_read_array = array();
             }
             if ($forum->type != 'qanda' || forum_user_can_see_discussion($forum, $discussion, $modcontext)) {
-                forum_print_posts_threaded($parent->id, $course->id, 0, false, false, $user_read_array, $discussion->forum);
+                forum_print_posts_threaded($parent->id, $course->id, 0, false, false, $user_read_array, $discussion->forum, $modcontext);
             }
         }
         $heading = get_string("yourreply", "forum");
