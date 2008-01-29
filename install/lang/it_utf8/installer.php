@@ -76,6 +76,7 @@ $string['gdversionhelp'] = '<p>Sul vostro server sembra non essere installato il
 <p>Su Windows normalmente è possibile modificare il file php.ini e togliere il commento dalla linea che contiene php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Gestione insicura dei Globals';
 $string['globalsquoteserror'] = 'Correggere le impostazioni PHP: disabilitare register_globals e/o abilitare magic_quotes_gpc';
+$string['globalswarning'] = '<p><strong>Avvertimento per la sicurezza</strong>: per funzionare correttamente, Moodle richiede <br />alcune modifiche alle attuali impostazioni del PHP.<p/><p><em>Bisogna</em> impostare <code>register_globals=off</code>.<p>Questa impostazione può essere modificata editando il vostro <code>php.ini</code>, la configurazione Apache/IIS <br />o il file <code>.htaccess</code>.</p>';
 $string['help'] = 'Aiuto';
 $string['iconvrecommended'] = 'Installare la libreria opzionale ICONV è caldamente consigliato per migliorare le prestazioni del sito, in particolare se il vostro sito supporta lingue non latine.';
 $string['info'] = 'Informazioni';
