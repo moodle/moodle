@@ -1989,7 +1989,20 @@ function main_upgrade($oldversion=0) {
             set_field('modules', 'version', 2005031422, 'name', 'hotpot');
         }
     }
-    
+
+    if ($result && $oldversion < 2006050561) {
+        $db->debug = false;
+        notify('Updating country list according to recent official ISO listing...', 'notifysuccess');
+        // re-assign users to valid countries
+        set_field('user', 'country', 'CD', 'country', 'ZR'); // Zaire is now Congo Democratique
+        set_field('user', 'country', 'TL', 'country', 'TP'); // Timor has changed
+        set_field('user', 'country', 'FR', 'country', 'FX'); // France metropolitaine doesn't exist
+        set_field('user', 'country', 'RS', 'country', 'KO'); // Kosovo is part of Serbia, "under the auspices of the United Nations, pursuant to UN Security Council Resolution 1244 of 10 June 1999."
+        set_field('user', 'country', 'GB', 'country', 'WA'); // Wales is part of UK (ie Great Britain)
+        set_field('user', 'country', 'RS', 'country', 'CS'); // Re-assign Serbia-Montenegro to Serbia.  This is arbitrary, but there is no way to make an automatic decision on this.
+        notify('...update complete. Remember to update your language packs to get the most recent country names definitions and codes.  This is especially important for sites with users from Congo (now CD), Timor (now TL), Kosovo (now RS), Wales (now GB), Serbia (RS) and Montenegro (ME).  Users based in Montenegro (ME) will need to manually update their profile.', 'notifysuccess');
+        $db->debug = true;
+    }
     return $result;
 }
 
