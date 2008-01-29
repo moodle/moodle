@@ -3,7 +3,7 @@
       // http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm
 
 $string['AF'] = 'Afghanistan';
-$string['AX'] = 'Åland Islands';
+$string['AX'] = 'Ã…land Islands';
 $string['AL'] = 'Albania';
 $string['DZ'] = 'Algeria';
 $string['AS'] = 'American Samoa';
@@ -55,7 +55,7 @@ $string['CG'] = 'Congo';
 $string['CD'] = 'Congo, The Democratic Republic Of The';
 $string['CK'] = 'Cook Islands';
 $string['CR'] = 'Costa Rica';
-$string['CI'] = 'Côte D\'Ivoire';
+$string['CI'] = 'CÃ´te D\'Ivoire';
 $string['HR'] = 'Croatia';
 $string['CU'] = 'Cuba';
 $string['CY'] = 'Cyprus';
@@ -181,11 +181,11 @@ $string['PL'] = 'Poland';
 $string['PT'] = 'Portugal';
 $string['PR'] = 'Puerto Rico';
 $string['QA'] = 'Qatar';
-$string['RE'] = 'Réunion';
+$string['RE'] = 'RÃ©union';
 $string['RO'] = 'Romania';
 $string['RU'] = 'Russian Federation';
 $string['RW'] = 'Rwanda';
-$string['BL'] = 'Saint Barthélemy';
+$string['BL'] = 'Saint BarthÃ©lemy';
 $string['SH'] = 'Saint Helena';
 $string['KN'] = 'Saint Kitts And Nevis';
 $string['LC'] = 'Saint Lucia';
