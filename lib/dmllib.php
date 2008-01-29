@@ -2566,6 +2566,12 @@ function rcache_set($table, $id, $rec) {
     global $CFG, $MCACHE, $rcache;
 
     if ($CFG->cachetype === 'internal') {
+        if (!isset($rcache->data[$table])) {
+            $rcache->data[$table] = array();
+        }
+        if (!isset($rcache->data[$table][$id]) and count($rcache->data[$table]) > $CFG->intcachemax) {
+            array_shift($rcache->data[$table]);
+        }
         $rcache->data[$table][$id] = clone($rec);
     } else {
         $key   = $table . '|' . $id;
