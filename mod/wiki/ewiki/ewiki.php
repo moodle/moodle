@@ -226,7 +226,7 @@
         \w[-_.+\w]+@(\w[-_\w]+[.])+\w{2,}   ) \007x",
 
     #-- rendering ruleset
-           "wm_indent" => '<div style="margin-left:15px;" class="indent">',
+           "wm_indent" => '',
            "wm_table_defaults" => 'cellpadding="2" border="1" cellspacing="0"',
            "wm_whole_line" => array(),
            "htmlentities" => array(
@@ -1938,7 +1938,7 @@ function ewiki_format (
                }
             }
             while ($n_indent < $s["indent"]) { 
-               $out .= "</div>\n";
+               $out .= "";
                $s["indent"]--;
             }
 
@@ -2149,7 +2149,7 @@ function ewiki_format_close_para(&$ooo, &$s) {
    }
    #-- indentation
    while ($s["indent"]) {
-      $out .= "</div>";
+      $out .= "";
       $s["indent"]--;
    }
 }
