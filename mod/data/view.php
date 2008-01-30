@@ -85,14 +85,6 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/data:viewentry', $context);
 
-/// If it's hidden then it's don't show anything.  :)
-    if (empty($cm->visible) and !has_capability('mod/data:managetemplates', $context)) {
-        $navigation = build_navigation('', $cm);
-        print_header_simple(format_string($data->name), "",
-                 $navigation, "", "", true, '', navmenu($course, $cm));
-        notice(get_string("activityiscurrentlyhidden"));
-    }
-
 /// If we have an empty Database then redirect because this page is useless without data
     if (has_capability('mod/data:managetemplates', $context)) {
         if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
