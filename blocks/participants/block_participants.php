@@ -8,7 +8,7 @@ class block_participants extends block_list {
 
     function get_content() {
 
-        global $CFG;
+        global $CFG, $COURSE;
 
         if (empty($this->instance)) {
             $this->content = '';
@@ -20,7 +20,8 @@ class block_participants extends block_list {
             return '';
         }
 
-        if (!$currentcontext = get_context_instance(CONTEXT_COURSE, $this->instance->pageid)) {
+        /// MDL-13252 Always get the course context or else the context may be incorrect in the user/index.php
+        if (!$currentcontext = get_context_instance(CONTEXT_COURSE, $COURSE->id)) {
             $this->content = '';
             return $this->content;
         }
