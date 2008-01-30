@@ -211,7 +211,7 @@ class grade_report_grader extends grade_report {
                     $gradestr = new object();
                     $gradestr->username = fullname($user);
                     $gradestr->itemname = $grade_item->get_name();
-                    $warnings[] = get_string($errorstr, 'grades', $gradestr); 
+                    $warnings[] = get_string($errorstr, 'grades', $gradestr);
                 }
 
             } else if ($data_type == 'feedback') {
@@ -299,7 +299,7 @@ class grade_report_grader extends grade_report {
         global $CFG;
 
         if (is_numeric($this->sortitemid)) {
-            $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture
+            $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
                     FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
                          {$CFG->prefix}user u ON (u.id = g.userid AND g.itemid = $this->sortitemid)
                          LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
@@ -323,7 +323,7 @@ class grade_report_grader extends grade_report {
             }
             $roles = explode(',', $this->gradebookroles);
             $this->users = get_role_users($roles, $this->context, false,
-                            'u.id, u.firstname, u.lastname', 'u.'.$this->sortitemid .' '. $this->sortorder . $sort2,
+                            'u.id, u.firstname, u.lastname, u.idnumber', 'u.'.$this->sortitemid .' '. $this->sortorder . $sort2,
                             false, $this->currentgroup, $this->page * $this->get_pref('studentsperpage'), $this->get_pref('studentsperpage'));
 
         }
@@ -505,6 +505,7 @@ class grade_report_grader extends grade_report {
         $strsortdesc  = $this->get_lang_string('sortdesc', 'grades');
         $strfirstname = $this->get_lang_string('firstname');
         $strlastname  = $this->get_lang_string('lastname');
+        $showuseridnumber = $this->get_pref('showuseridnumber');
 
         if ($this->sortitemid === 'lastname') {
             if ($this->sortorder == 'ASC') {
@@ -546,8 +547,30 @@ class grade_report_grader extends grade_report {
                 $headerhtml .= '<th class="header c'.$columncount++.'" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
                             . $strfirstname . '</a> '
                             . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
-            } else {
-                $headerhtml .= '<td class="cell c'.$columncount++.' topleft">&nbsp;</td>';
+                if ($showuseridnumber) {
+                    if ('idnumber' == $this->sortitemid) {
+                        if ($this->sortorder == 'ASC') {
+                            $idnumberarrow = print_arrow('up', $strsortasc, true);
+                        } else {
+                            $idnumberarrow = print_arrow('down', $strsortdesc, true);
+                        }
+                    } else {
+                        $idnumberarrow = '';
+                    }
+                    $headerhtml .= '<th class="header c'.$columncount++.' useridnumber" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=idnumber">'
+                            . get_string('idnumber') . '</a> ' . $idnumberarrow . '</th>';
+                }
+             } else {
+                $colspan='';
+                if ($showuseridnumber) {
+                    $colspan = 'colspan="2" ';
+                }
+
+                $headerhtml .= '<td '.$colspan.'class="cell c'.$columncount++.' topleft">&nbsp;</td>';
+
+                if ($showuseridnumber) {
+                    $columncount++;
+                }
             }
 
             foreach ($row as $columnkey => $element) {
@@ -639,6 +662,7 @@ class grade_report_grader extends grade_report {
         $strgrade     = $this->get_lang_string('grade');
         $gradetabindex = 1;
         $showuserimage = $this->get_pref('showuserimage');
+        $showuseridnumber = $this->get_pref('showuseridnumber');
         $numusers      = count($this->users);
 
         // Preload scale objects for items with a scaleid
@@ -688,6 +712,11 @@ class grade_report_grader extends grade_report {
                           .'<th class="header c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
                           .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
                           .fullname($user).'</a></th>';
+
+            if ($showuseridnumber) {
+                $studentshtml .= '<th class="header c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'.
+                        $user->idnumber.'</a></th>';
+            }
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
@@ -765,7 +794,7 @@ class grade_report_grader extends grade_report {
 
                         $scales = explode(",", $scale->scale);
                         // reindex because scale is off 1
-                        
+
                         // MDL-12104 some previous scales might have taken up part of the array
                         // so this needs to be reset
                         $scaleopt = array();
@@ -880,6 +909,7 @@ class grade_report_grader extends grade_report {
         $averagesdecimalpoints = $this->get_pref('averagesdecimalpoints');
         $meanselection         = $this->get_pref('meanselection');
         $shownumberofgrades    = $this->get_pref('shownumberofgrades');
+        $showuseridnumber      = $this->get_pref('showuseridnumber');
 
         $avghtml = '';
         $avgcssclass = 'avg';
@@ -926,9 +956,17 @@ class grade_report_grader extends grade_report {
                 }
             }
 
-            $avghtml = '<tr class="' . $avgcssclass . ' r'.$this->rowcount++.'"><th class="header c0" scope="row">'.$straverage.'</th>';
+            $columncount=0;
+            $colspan='';
+            if ($showuseridnumber) {
+                $colspan = 'colspan="2" ';
+            }
 
-            $columncount=1;
+            $avghtml = '<tr class="' . $avgcssclass . ' r'.$this->rowcount++.'"><th class="header c0" '.$colspan.'scope="row">'.$straverage.'</th>';
+
+            if ($showuseridnumber) {
+                $columncount++;
+            }
 
             $gsql = str_replace('u.id', 'ra.userid', $groupsql); // hack
 
@@ -1014,16 +1052,26 @@ class grade_report_grader extends grade_report {
      */
     function get_rangehtml() {
         global $USER;
+        $showuseridnumber      = $this->get_pref('showuseridnumber');
 
         $scalehtml = '';
         if ($this->get_pref('showranges')) {
             $rangesdisplaytype   = $this->get_pref('rangesdisplaytype');
             $rangesdecimalpoints = $this->get_pref('rangesdecimalpoints');
 
-            $scalehtml = '<tr class="r'.$this->rowcount++.'">'
-                       . '<th class="header c0 range" scope="row">'.$this->get_lang_string('range','grades').'</th>';
+            $columncount=0;
+            $colspan='';
+            if ($showuseridnumber) {
+                $colspan = 'colspan="2" ';
+            }
 
-            $columncount = 1;
+            $scalehtml = '<tr class="r'.$this->rowcount++.'">'
+                       . '<th class="header c0 range" '.$colspan.'scope="row">'.$this->get_lang_string('range','grades').'</th>';
+
+            if ($showuseridnumber) {
+                $columncount++;
+            }
+
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
 
