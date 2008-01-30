@@ -80,6 +80,9 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showranges', get_s
 $settings->add(new admin_setting_configcheckbox('grade_report_showuserimage', get_string('showuserimage', 'grades'),
                                             get_string('configshowuserimage', 'grades'), 1));
 
+$settings->add(new admin_setting_configcheckbox('grade_report_showuseridnumber', get_string('showuseridnumber', 'grades'),
+                                            get_string('configshowuseridnumber', 'grades'), 0));
+
 $settings->add(new admin_setting_configcheckbox('grade_report_showactivityicons', get_string('showactivityicons', 'grades'),
                                             get_string('configshowactivityicons', 'grades'), 1));
 

@@ -132,6 +132,11 @@
   border-style:solid;
 }
 
+.grade-report-grader table#user-grades th.useridnumber {
+  border-width:0px 0px 1px 1px;
+  border-style:solid;
+}
+
 .grade-report-grader table#user-grades th.categoryitem,
 .grade-report-grader table#user-grades th.courseitem,
 .grade-report-grader table#user-grades td.topleft {
@@ -171,6 +176,10 @@
 }
 
 .grade-report-grader table#user-grades  th.user {
+  text-align:left;
+}
+
+.grade-report-grader table#user-grades  td.useridnumber {
   text-align:left;
 }
 
