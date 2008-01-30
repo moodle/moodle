@@ -70,10 +70,6 @@
                  "$navigation <a $CFG->frametarget href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
 
-    if (empty($cm->visible) and !has_capability('moodle/course:manageactivities', $context)) {
-            notice(get_string("activityiscurrentlyhidden"));
-    }
-
     if (has_capability('moodle/course:manageactivities', $context)) {
         $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
         if ($trackedusers->c > 0) {
