@@ -1137,6 +1137,7 @@
     function backup_user_info ($bf,$preferences) {
 
         global $CFG;
+        require_once ($CFG->dirroot.'/tag/lib.php');
 
         $status = true;
 
@@ -1238,6 +1239,43 @@
 
                     //End ROLES tag
                 fwrite ($bf,end_tag("ROLES",4,true));
+
+                //Check if we have custom profile fields to backup
+                if ($cpfields = get_records_sql("SELECT uif.shortname, uif.datatype, uid.data
+                                                 FROM {$CFG->prefix}user_info_field uif,
+                                                      {$CFG->prefix}user_info_data uid
+                                                 WHERE uif.id = uid.fieldid
+                                                   AND uid.userid = $user->id")) {
+                    //Start USER_CUSTOM_PROFILE_FIELDS tag
+                    fwrite ($bf,start_tag("USER_CUSTOM_PROFILE_FIELDS",4,true));
+                    //Write custom profile fields
+                    foreach ($cpfields as $cpfield) {
+                        fwrite ($bf,start_tag("USER_CUSTOM_PROFILE_FIELD",5,true));
+                        fwrite ($bf,full_tag("FIELD_NAME",6,false,$cpfield->shortname));
+                        fwrite ($bf,full_tag("FIELD_TYPE",6,false,$cpfield->datatype));
+                        fwrite ($bf,full_tag("FIELD_DATA",6,false,$cpfield->data));
+                        fwrite ($bf,end_tag("USER_CUSTOM_PROFILE_FIELD",5,true));
+                    }
+                    //End USER_CUSTOM_PROFILE_FIELDS tag
+                    fwrite ($bf,end_tag("USER_CUSTOM_PROFILE_FIELDS",4,true));
+                }
+
+                //Check if we have user tags to backup
+                if (!empty($CFG->usetags)) {
+                    if ($tags = get_item_tags('user', $user->id)) { //This return them ordered by default
+                        //Start USER_TAGS tag
+                        fwrite ($bf,start_tag("USER_TAGS",4,true));
+                        //Write user tags fields
+                        foreach ($tags as $tag) {
+                            fwrite ($bf,start_tag("USER_TAG",5,true));
+                            fwrite ($bf,full_tag("NAME",6,false,$tag->name));
+                            fwrite ($bf,full_tag("RAWNAME",6,false,$tag->rawname));
+                            fwrite ($bf,end_tag("USER_TAG",5,true));
+                        }
+                        //End USER_TAGS tag
+                        fwrite ($bf,end_tag("USER_TAGS",4,true));
+                    }
+                }
 
                 //Check if we have user_preferences to backup
                 if ($preferences_data = get_records("user_preferences","userid",$user->old_id)) {
