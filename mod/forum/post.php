@@ -158,7 +158,7 @@
                 print_error('nopostdiscussion', 'forum');
             }
         }
-        if (!$cm->visible and !has_capability('moodle/course:manageactivities', $coursecontext)) {
+        if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
             error(get_string("activityiscurrentlyhidden"));
         }
 
