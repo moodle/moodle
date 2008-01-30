@@ -478,7 +478,8 @@ class default_questiontype {
         $commentlink = '';
         if (isset($options->questioncommentlink)) {
             $strcomment = get_string('commentorgrade', 'quiz');
-            $commentlink = '<div class="commentlink">'.link_to_popup_window ($options->questioncommentlink.'?attempt='.$state->attempt.'&amp;question='.$question->id,
+            $question_to_comment = isset($question->randomquestionid) ? $question->randomquestionid : $question->id;
+            $commentlink = '<div class="commentlink">'.link_to_popup_window ($options->questioncommentlink.'?attempt='.$state->attempt.'&amp;question='.$question_to_comment,
                              'commentquestion', $strcomment, 450, 650, $strcomment, 'none', true).'</div>';
         }
 

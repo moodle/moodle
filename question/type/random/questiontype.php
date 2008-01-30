@@ -212,6 +212,7 @@ class random_qtype extends default_questiontype {
     function print_question(&$question, &$state, &$number, $cmoptions, $options) {
         global $QTYPES;
         $wrappedquestion = &$state->options->question;
+        $wrappedquestion->randomquestionid = $question->id;
         $QTYPES[$wrappedquestion->qtype]
          ->print_question($wrappedquestion, $state, $number, $cmoptions, $options);
     }
