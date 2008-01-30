@@ -1441,6 +1441,19 @@
                     $user->lang = 'mi_nt';
                 }
 
+                //Country list updates - MDL-13060 
+                //Any user whose country code has been deleted or modified needs to be assigned a valid one.
+                $country_update_map = array(
+                    'ZR' => 'CD', 
+                    'TP' => 'TL',
+                    'FX' => 'FR', 
+                    'KO' => 'RS', 
+                    'CS' => 'RS',
+                    'WA' => 'GB');
+                if (array_key_exists($user->country, $country_update_map)) {
+                    $user->country = $country_update_map[$user->country];
+                }
+
                 //Check if it's admin and coursecreator
                 $is_admin =         !empty($user->roles['admin']);
                 $is_coursecreator = !empty($user->roles['coursecreator']);
