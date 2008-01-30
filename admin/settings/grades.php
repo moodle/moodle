@@ -116,7 +116,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $temp->add(new admin_setting_configmultiselect('grade_item_advanced', get_string('gradeitemadvanced', 'grades'), get_string('configgradeitemadvanced', 'grades'),
                                                        array('iteminfo', 'idnumber', 'gradepass', 'plusfactor', 'multfactor', 'display', 'decimals', 'hiddenuntil', 'locktime'),
                                                        array('iteminfo' => get_string('iteminfo', 'grades'),
-                                                             'idnumber' => get_string('idnumber'),
+                                                             'idnumber' => get_string('idnumbermod'),
                                                              'gradetype' => get_string('gradetype', 'grades'),
                                                              'scaleid' => get_string('scale'),
                                                              'grademin' => get_string('grademin', 'grades'),

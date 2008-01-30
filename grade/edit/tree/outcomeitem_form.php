@@ -41,8 +41,8 @@ class edit_outcomeitem_form extends moodleform {
         $mform->setHelpButton('iteminfo', array(false, get_string('iteminfo', 'grades'),
                 false, true, false, get_string('iteminfohelp', 'grades')));
 
-        $mform->addElement('text', 'idnumber', get_string('idnumber'));
-        $mform->setHelpButton('idnumber', array(false, get_string('idnumber'),
+        $mform->addElement('text', 'idnumber', get_string('idnumbermod'));
+        $mform->setHelpButton('idnumber', array(false, get_string('idnumbermod'),
                 false, true, false, get_string('idnumberhelp', 'grades')));
 
         // allow setting of outcomes on module items too

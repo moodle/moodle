@@ -774,6 +774,7 @@ $string['htmlfilesonly'] = 'HTML files only';
 $string['htmlformat'] = 'Pretty HTML format';
 $string['icqnumber'] = 'ICQ number';
 $string['idnumber'] = 'ID number';
+$string['idnumbermod'] = 'ID number';
 $string['idnumbercourse'] = 'Course ID number';
 $string['idnumbertaken'] = 'This ID number is already taken';
 $string['imagealt'] = 'Picture description';
