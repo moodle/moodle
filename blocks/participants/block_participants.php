@@ -49,8 +49,7 @@ class block_participants extends block_list {
             $this->instance->pageid = SITEID;
         }
 
-        if ($this->instance->pageid != SITEID
-                || $canviewparticipants) {
+        if ($COURSE->id != SITEID || $canviewparticipants) {
 
             $this->content->items[] = '<a title="'.get_string('listofallpeople').'" href="'.
                                       $CFG->wwwroot.'/user/index.php?contextid='.$currentcontext->id.'">'.get_string('participants').'</a>';
