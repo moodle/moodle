@@ -1,6 +1,12 @@
 <?PHP // $Id$
       // countries.php - created with Moodle 1.7 beta + (2006101003)
       // http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm
+      //
+      // UPDATE NOTE - When country codes are deleted or re-assigned, 
+      // you must re-assign users to a valid country, doing both:
+      // 1 - add an upgrade path in /lib/db/upgrade.php
+      // 2 - add a line in the $country_update_map array, in 
+      //     /backup/restorelib.php 
 
 $string['AF'] = 'Afghanistan';
 $string['AX'] = 'Åland Islands';
