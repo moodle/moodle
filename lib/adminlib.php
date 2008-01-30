@@ -4606,7 +4606,7 @@ function print_plugin_tables() {
               . 'id="' . $cat . 'compattable" summary="compatibility table"><caption>' . $strcaption . '</caption>' . "\n";
         $html .= '<tr class="r0"><th class="header c0">' . get_string('directory') . "</th>\n"
                . '<th class="header c1">' . get_string('name') . "</th>\n"
-               . '<th class="header c2">' . get_string('status') . "</th>\n";
+               . '<th class="header c2">' . get_string('status') . "</th>\n</tr>\n";
         
         $row = 1;      
 
