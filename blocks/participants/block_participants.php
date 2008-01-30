@@ -8,7 +8,7 @@ class block_participants extends block_list {
 
     function get_content() {
           
-        global $USER, $CFG;
+        global $USER, $CFG, $COURSE;
     
         // the following 3 lines is need to pass _self_test();
         if (empty($this->instance->pageid)) {
@@ -21,7 +21,8 @@ class block_participants extends block_list {
               $currentcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
               $canviewparticipants = has_capability('moodle/site:viewparticipants', $currentcontext);
         } else { // course context
-            $currentcontext = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
+            /// MDL-13252 Always get the course context or else the context may be incorrect in the user/index.php
+            $currentcontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
             $canviewparticipants = has_capability('moodle/course:viewparticipants', $currentcontext);
         }
         
