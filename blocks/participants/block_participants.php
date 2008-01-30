@@ -7,7 +7,7 @@ class block_participants extends block_list {
     }
 
     function get_content() {
-        global $USER, $CFG;
+        global $USER, $CFG, $COURSE;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -27,13 +27,14 @@ class block_participants extends block_list {
             $this->instance->pageid = SITEID;
         }
 
-        if ($this->instance->pageid != SITEID || 
+        /// MDL-13252 Always get the course page id or else the id may be incorrect in the user/index.php
+        if ($COURSE->id != SITEID || 
             $CFG->showsiteparticipantslist > 1 || 
             ($CFG->showsiteparticipantslist == 1 && isteacherinanycourse()) || 
             isteacher(SITEID)) {
 
             $this->content->items[] = '<a title="'.get_string('listofallpeople').'" href="'.
-                                      $CFG->wwwroot.'/user/index.php?id='.$this->instance->pageid.'">'.get_string('participants').'</a>';
+                                      $CFG->wwwroot.'/user/index.php?id='.$COURSE->id.'">'.get_string('participants').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
         }
 
