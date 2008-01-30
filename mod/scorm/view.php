@@ -70,10 +70,6 @@
     print_header($pagetitle, $course->fullname, $navigation,
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
 
-    if (empty($cm->visible) and !has_capability('moodle/course:manageactivities', $context)) {
-            notice(get_string("activityiscurrentlyhidden"));
-    }
-
     if (has_capability('moodle/course:manageactivities', $context)) {
         
         $trackedusers = scorm_get_count_users($scorm->id, $cm->groupingid);
