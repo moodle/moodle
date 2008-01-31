@@ -320,6 +320,28 @@ class auth_plugin_base {
 
         //override if needed
     }
+
+    /**
+     * Return the properly translated human-friendly title of this auth plugin
+     */
+    function get_title() {
+        $authtitle = get_string("auth_{$this->authtype}title", "auth");
+        if ($authtitle == "[[auth_{$this->authtype}title]]") {
+            $authtitle = get_string("auth_{$this->authtype}title", "auth_{$this->authtype}");
+        }
+        return $authtitle;
+    }
+
+    /**
+     *  Get the auth description (from core or own auth lang files)
+     */
+    function get_description() {
+        $authdescription = get_string("auth_{$this->authtype}description", "auth");
+        if ($authdescription == "[[auth_{$this->authtype}description]]") {
+            $authdescription = get_string("auth_{$this->authtype}description", "auth_{$this->authtype}");
+        }
+        return $authdescription;
+    }
 }
 
 ?>

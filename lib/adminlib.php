@@ -3431,10 +3431,7 @@ class admin_setting_special_registerauth extends admin_setting_configselect {
                 continue;
             }
             // Get the auth title (from core or own auth lang files)
-            $authtitle = get_string("auth_{$auth}title", "auth");
-            if ($authtitle == "[[auth_{$auth}title]]") {
-                $authtitle = get_string("auth_{$auth}title", "auth_{$auth}");
-            }
+            $authtitle = $authplugin->get_title();
             $this->choices[$auth] = $authtitle;
         }
         return true;
@@ -3554,10 +3551,8 @@ class admin_setting_manageauths extends admin_setting {
             if (strpos($auth, $query) !== false) {
                 return true;
             }
-            $authtitle = get_string("auth_{$auth}title", "auth");
-            if ($authtitle == "[[auth_{$auth}title]]") {
-                $authtitle = get_string("auth_{$auth}title", "auth_{$auth}");
-            }
+            $authplugin = get_auth_plugin($auth);
+            $authtitle = $authplugin->get_title();
             if (strpos($textlib->strtolower($authtitle), $query) !== false) {
                 return true;
             }
@@ -3590,10 +3585,7 @@ class admin_setting_manageauths extends admin_setting {
         foreach ($authsenabled as $auth) {
             $authplugin = get_auth_plugin($auth);
         /// Get the auth title (from core or own auth lang files)
-            $authtitle = get_string("auth_{$auth}title", "auth");
-            if ($authtitle == "[[auth_{$auth}title]]") {
-                $authtitle = get_string("auth_{$auth}title", "auth_{$auth}");
-            }
+            $authtitle = $authplugin->get_title();
         /// Apply titles
             $displayauths[$auth] = $authtitle;
             if ($authplugin->can_signup()) {
@@ -3607,10 +3599,7 @@ class admin_setting_manageauths extends admin_setting {
             }
             $authplugin = get_auth_plugin($auth);
         /// Get the auth title (from core or own auth lang files)
-            $authtitle = get_string("auth_{$auth}title", "auth");
-            if ($authtitle == "[[auth_{$auth}title]]") {
-                $authtitle = get_string("auth_{$auth}title", "auth_{$auth}");
-            }
+            $authtitle = $authplugin->get_title();
         /// Apply titles
             $displayauths[$auth] = $authtitle;
             if ($authplugin->can_signup()) {

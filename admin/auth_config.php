@@ -51,15 +51,9 @@ if ($frm = data_submitted() and confirm_sesskey()) {
 $user_fields = array("firstname", "lastname", "email", "phone1", "phone2", "department", "address", "city", "country", "description", "idnumber", "lang");
 
 /// Get the auth title (from core or own auth lang files)
-    $authtitle = get_string("auth_{$auth}title", "auth");
-    if ($authtitle == "[[auth_{$auth}title]]") {
-        $authtitle = get_string("auth_{$auth}title", "auth_{$auth}");
-    }
+    $authtitle = $authplugin->get_title();
 /// Get the auth descriptions (from core or own auth lang files)
-    $authdescription = get_string("auth_{$auth}description", "auth");
-    if ($authdescription == "[[auth_{$auth}description]]") {
-        $authdescription = get_string("auth_{$auth}description", "auth_{$auth}");
-    }
+    $authdescription = $authplugin->get_description();
 
 // output configuration form
 admin_externalpage_print_header();
