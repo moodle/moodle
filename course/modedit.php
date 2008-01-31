@@ -365,8 +365,8 @@
                     // we have a request for new outcome grade item
                     // Outcome grade_item.itemnumber start at 1000
                     $max_itemnumber = 999;
+                    $exists = false;
                     if ($items) {
-                        $exists = false;
                         foreach($items as $item) {
                             if ($item->outcomeid == $outcome->id) {
                                 $exists = true;
