@@ -128,7 +128,6 @@ $CFG->running_installer = true;
 require_once('./lib/adminlib.php');
 require_once('./lib/setuplib.php');
 require_once('./lib/moodlelib.php');
-require_once('./lib/deprecatedlib.php');
 require_once('./lib/weblib.php');
 require_once('./lib/adodb/adodb.inc.php');
 require_once('./lib/environmentlib.php');
