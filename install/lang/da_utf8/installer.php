@@ -172,7 +172,7 @@ indstillingen så der er minimum 16Mb til rådighed. Hvis du ikke har direkte ad
 <p>Det kan dog på nogle servere forårsage en fejl på <b>alle</b> PHP-siderne. I så fald kan du blive nødt til at fjerne \'.htaccess\' filen igen.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Der mangler nogle obligatoriske felter';
-$string['moodledocslink'] = 'Moodle Doks for denne side';
+$string['moodledocslink'] = 'Moodle Docs for denne side';
 $string['mssql'] = 'SQL*Server (mssql)';
 $string['mssql_n'] = 'SQL*Server med UTF-8 support (mssql_n)';
 $string['mssqlextensionisnotpresentinphp'] = 'PHP er ikke konfigureret ordentligt med MSSQL-extensionen så den kan kommunikere med SQL*Serveren. Vær venlig at tjekke din php.ini-fil eller genkompiler PHP.';
