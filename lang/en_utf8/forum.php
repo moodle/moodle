@@ -144,6 +144,7 @@ $string['noguestsubscribe'] = 'Sorry, guests are not allowed to subscribe to rec
 $string['noguesttracking'] = 'Sorry, guests are not allowed to set tracking options.';
 $string['nomorepostscontaining'] = 'No more posts containing \'$a\' were found';
 $string['nonews'] = 'No news has been posted yet';
+$string['nopostforum'] = 'Sorry, you are not allowed to post to this forum';
 $string['noposts'] = 'No posts';
 $string['nopostscontaining'] = 'No posts containing \'$a\' were found';
 $string['noquestions'] = 'There are no questions yet in this forum';
