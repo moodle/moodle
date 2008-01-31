@@ -35,7 +35,7 @@
 
 /// Get all the appropriate data
 
-    if (!$cms = get_coursemodules_in_course('data', $course->id, 'm.rsstype, m.rssarticles')) {
+    if (!$cms = get_coursemodules_in_course('glossary', $course->id, 'm.rsstype, m.rssarticles')) {
         notice(get_string('thereareno', 'moodle', $strglossarys), "../../course/view.php?id=$course->id");
         die;
     }
