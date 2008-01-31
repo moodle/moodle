@@ -4650,6 +4650,7 @@ function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
  *     <li>$table->class - class attribute to put on the table
  *     <li>$table->id - id attribute to put on the table.
  *     <li>$table->rowclass[] - classes to add to particular rows.
+ *     <li>$table->summary - Description of the contents for screen readers.
  * </ul>
  * @param bool $return whether to return an output string or echo now
  * @return boolean or $string
@@ -4709,6 +4710,9 @@ function print_table($table, $return=false) {
     $tableid = empty($table->id) ? '' : 'id="'.$table->id.'"';
 
     $output .= '<table width="'.$table->width.'" ';
+    if (!empty($table->summary)) {
+        $output .= " summary=\"$table->summary\"";
+    }
     $output .= " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"$table->class boxalign$table->tablealign\" $tableid>\n";
 
     $countcols = 0;
