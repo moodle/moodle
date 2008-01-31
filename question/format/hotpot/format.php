@@ -502,7 +502,8 @@ class qformat_hotpot extends qformat_default {
     }
     function hotpot_prepare_str($str) {
 		// convert html entities to unicode and add slashes
-        $str = preg_replace('/&#[x0-9A-F]+;/ie', "html_entity_decode('\\0',ENT_NOQUOTES,'UTF-8')", $str);
+        $str = preg_replace('/&#x([0-9a-f]+);/ie', "hotpot_charcode_to_utf8(hexdec('\\1'))", $str);
+        $str = preg_replace('/&#([0-9]+);/e', "hotpot_charcode_to_utf8(\\1)", $str);
         return addslashes($str);
     }
 } // end class
@@ -607,6 +608,27 @@ class hotpot_xml_tree {
             $str = $matches[1].$matches[2].$matches[3];
         }
     }
+}
+
+function hotpot_charcode_to_utf8($charcode) {
+    if ($charcode <= 0x7F) {
+        // ascii char (roman alphabet + punctuation)
+        return chr($charcode);
+    }
+    if ($charcode <= 0x7FF) {
+        // 2-byte char
+        return chr(($charcode >> 0x06) + 0xC0).chr(($charcode & 0x3F) + 128);
+    }
+    if ($charcode <= 0xFFFF) {
+        // 3-byte char
+        return chr(($charcode >> 0x0C) + 0xE0).chr((($charcode >> 0x06) & 0x3F) + 0x80).chr(($charcode & 0x3F) + 0x80);
+    }
+    if ($charcode <= 0x1FFFFF) {
+        // 4-byte char
+        return chr(($charcode >> 0x12) + 0xF0).chr((($charcode >> 0x0C) & 0x3F) + 0x80).chr((($charcode >> 0x06) & 0x3F) + 0x80).chr(($charcode & 0x3F) + 0x80);
+    }
+    // unidentified char code !!
+    return ' '; 
 }
 
 function hotpot_utf8_to_html_entity($char) {
