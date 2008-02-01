@@ -27,7 +27,7 @@ class block_activity_modules extends block_list {
         require_once($CFG->dirroot.'/course/lib.php');
 
         $modinfo = get_fast_modinfo($course);
-        $modfullanmes = array();
+        $modfullnames = array();
 
         foreach($modinfo->cms as $cm) {
             if (!$cm->uservisible) {
