@@ -71,9 +71,10 @@ function label_get_participants($labelid) {
  * See get_array_of_activities() in course/lib.php
  */
 function label_get_coursemodule_info($coursemodule) {
-    if ($content = get_field('label', 'content', 'id', $coursemodule->instance)) {
+    if ($label = get_record('label', 'id', $coursemodule->instance, '', '', '', '', 'id, content, name')) {
         $info = new object();
-        $info->extra = urlencode($content);
+        $info->extra = urlencode($label->content);
+        $info->name = urlencode($label->name);
         return $info;
     } else {
         return null;

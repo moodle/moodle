@@ -2744,20 +2744,26 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
 function assignment_get_coursemodule_info($coursemodule) {
     global $CFG;
 
-    if (! $type = get_field('assignment', 'assignmenttype', 'id', $coursemodule->instance)) {
+    if (! $assignment = get_record('assignment', 'id', $coursemodule->instance, '', '', '', '', 'id, assignmenttype, name')) {
         return false;
     }
 
-    $libfile = "$CFG->dirroot/mod/assignment/type/$type/assignment.class.php";
+    $libfile = "$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php";
 
     if (file_exists($libfile)) {
         require_once($libfile);
-        $assignmentclass = "assignment_$type";
+        $assignmentclass = "assignment_$assignment->assignmenttype";
         $ass = new $assignmentclass('staticonly');
-        return $ass->get_coursemodule_info($coursemodule);
+        if ($result = $ass->get_coursemodule_info($coursemodule)) { 
+            return $result;
+        } else {
+            $info = new object();
+            $info->name = $assignment->name;
+            return $info;
+        } 
 
     } else {
-        debugging('Incorrect assignment type: '.$type);
+        debugging('Incorrect assignment type: '.$assignment->assignmenttype);
         return false;
     }
 }
