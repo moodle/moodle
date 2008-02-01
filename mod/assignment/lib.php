@@ -21,7 +21,6 @@ class assignment_base {
     var $strsubmissions;
     var $strlastmodified;
     var $pagetitle;
-    var $currentgroup;
     var $usehtmleditor;
     var $defaultformat;
     var $context;
@@ -81,17 +80,8 @@ class assignment_base {
         $this->strlastmodified = get_string('lastmodified');
         $this->pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment.': '.format_string($this->assignment->name,true));
 
-        // visibility
-        $context = get_context_instance(CONTEXT_MODULE, $cmid);
-        if (!$this->cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
-            $pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment);
-            $navigation = build_navigation('', $this->cm);
-
-            print_header($pagetitle, $this->course->fullname, $navigation,
-                         "", "", true, '', navmenu($this->course, $this->cm));
-            notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
-        }
-        $this->currentgroup = groups_get_activity_group($this->cm);
+        // visibility handled by require_login() with $cm parameter
+        // get current group only when really needed
 
     /// Set up things for a HTML editor if it's needed
         if ($this->usehtmleditor = can_use_html_editor()) {
@@ -150,9 +140,7 @@ class assignment_base {
                      true, update_module_button($this->cm->id, $this->course->id, $this->strassignment),
                      navmenu($this->course, $this->cm));
 
-        $groupmode = groups_get_activity_groupmode($this->cm);
         groups_print_activity_menu($this->cm, 'view.php?id=' . $this->cm->id);
-        $this->currentgroup = groups_get_activity_group($this->cm); // must be done after the printing!
 
         echo '<div class="reportlink">'.$this->submittedlink().'</div>';
         echo '<div class="clearer"></div>';
@@ -305,7 +293,7 @@ class assignment_base {
             if ($allgroups and has_capability('moodle/site:accessallgroups', $context)) {
                 $group = 0;
             } else {
-                $group = $this->currentgroup;
+                $group = groups_get_activity_group($this->cm);
             }
             if ($count = $this->count_real_submissions($group)) {
                 $submitted = '<a href="submissions.php?id='.$this->cm->id.'">'.
@@ -2756,15 +2744,22 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
 function assignment_get_coursemodule_info($coursemodule) {
     global $CFG;
 
-    if (! $assignment = get_record('assignment', 'id', $coursemodule->instance)) {
+    if (! $type = get_field('assignment', 'assignmenttype', 'id', $coursemodule->instance)) {
         return false;
     }
 
-    require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
-    $assignmentclass = "assignment_$assignment->assignmenttype";
-    $ass = new $assignmentclass($coursemodule->id, $assignment);
+    $libfile = "$CFG->dirroot/mod/assignment/type/$type/assignment.class.php";
 
-    return $ass->get_coursemodule_info($coursemodule);
+    if (file_exists($libfile)) {
+        require_once($libfile);
+        $assignmentclass = "assignment_$type";
+        $ass = new $assignmentclass('staticonly');
+        return $ass->get_coursemodule_info($coursemodule);
+
+    } else {
+        debugging('Incorrect assignment type: '.$type);
+        return false;
+    }
 }
 
 

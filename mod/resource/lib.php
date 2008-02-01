@@ -349,7 +349,7 @@ function resource_get_coursemodule_info($coursemodule) {
 
    $info = NULL;
 
-   if ($resource = get_record("resource", "id", $coursemodule->instance)) {
+   if ($resource = get_record("resource", "id", $coursemodule->instance, '', '', '', '', 'id, popup, reference, type')) {
        $info = new object();
        if (!empty($resource->popup)) {
            $info->extra =  urlencode("onclick=\"this.target='resource$resource->id'; return ".

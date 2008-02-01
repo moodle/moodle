@@ -406,8 +406,10 @@ function get_mimetypes_array() {
  * @return string Requested piece of information from array
  */
 function mimeinfo($element, $filename) {
-    static $mimeinfo;
-    $mimeinfo=get_mimetypes_array();
+    static $mimeinfo = null;
+    if (is_null($mimeinfo)) {
+        $mimeinfo = get_mimetypes_array();
+    }
 
     if (eregi('\.([a-z0-9]+)$', $filename, $match)) {
         if (isset($mimeinfo[strtolower($match[1])][$element])) {
