@@ -58,22 +58,21 @@ Moodle Configuration with Dual login
    #############################################################################
    Shibboleth Attributes needed by Moodle:
    For Moodle to work properly Shibboleth should at least provide the attribute
-   that is used as usernam in Moodle. It has to be unique for all Shibboleth 
-   users.
+   that is used as username in Moodle. It has to be unique for all Shibboleth 
+   Be aware that Moodle converts the username to lowercase. So, the overall
+   behaviour of the username will be case-insensitive.
    All attributes used for moodle must obey a certain length, otherwise Moodle 
    cuts off the ends. Consult the Moodle documentation for further information 
    on the maximum lengths for each field in the user profile.
    #############################################################################
 
-4. Save the changes for the 'Shibboleth settings'.
-
-5.a  If you want Shibboleth as your only authentication method with an external
+4.a  If you want Shibboleth as your only authentication method with an external
      Where Are You From (WAYF) Service , set the 'Alternate Login URL' in the 
      'Common settings' in 'Administrations >> Users >> Authentication Options' 
      to the the URL of the file 'moodle/auth/shibboleth/index.php'. 
      This will enforce Shibboleth login.
 
-5.b If you want to use the Moodle internal WAYF service, you have to activate it
+4.b If you want to use the Moodle internal WAYF service, you have to activate it
     in the Moodle Shibboleth authentication settings by checking the 
     'Moodle WAYF Service' checkbox and providing a list of entity IDs in the 
     'Identity Providers' textarea together with a name and an optional 
@@ -88,23 +87,34 @@ Moodle Configuration with Dual login
                     moodle/auth/shibboleth/ is protected but *not* the other 
                     scripts and especially not the login.php script.
 
-6.b If you want to use another authentication method together with Shibboleth, 
-    in parallel, change the 'Instructions' in the 'Common settings' of the
-    'Administrations >> Users >> Authentication Options' to contain a link to the
+5.  Save the changes for the 'Shibboleth settings'. T
+
+    Important Note: If you went for 4.b (integrated WAYF service), saving the 
+                    settings will overwrite the Moodle Alternate Login URL
+                    using the Moodle web root URL.
+
+6.  If you want to use Shibboleth in addition to another authentication method
+    not using the integrated WAYF service from 4.b, change the 'Instructions' in 
+    'Administrations >> Users >> Manage authentication' to contain a link to the
      moodle/auth/shibboleth/index.php file which is protected by
-     Shibboleth (see step 1) and causes the Shibboleth login procedure to start.
+     Shibboleth (see step 1.) and causes the Shibboleth login procedure to start.
      You can also use HTML code in that field, e.g. to include an image as a
      Shibboleth login button.
 
-7. Save the changes for the 'Common settings'.
+     Note: As of now you cannot use dual login together with the integrated
+           WAYF service provided by Moodle (4.b).
+
+7. Save the authentication changes.
 
 How the Shibboleth authentication works
 --------------------------------------------------------------------------------
 To get Shibboleth authenticated in Moodle a user basically must access the
 Shibboleth-protected page /auth/shibboleth/index.php. If Shibboleth is the only
-authentication method (see 5.a), this happens automatically when a user wants to
-login in Moodle. Otherwise, the user has to click on the link on the login page
-you provided in step 5.b.
+authentication method (see 4.a), this happens automatically when a user selects
+his home organization in the Moodle WAYF service or if the alternate login URL
+is configured to be the protected /auth/shibboleth/index.php
+Otherwise, the user has to click on the link on the dual login page you 
+provided in step 5.b.
 
 Moodle basically checks whether the Shibboleth attribute that you mapped
 as the username is present. This attribute should only be present if a user is
@@ -132,7 +142,8 @@ to work, you have to set up the two authentication methods (e.g. 'Manual
 Accounts' and 'Shibboleth') and specify an alternate login link to your own dual
 login page. On that page you basically need a link to the Shibboleth-protected
 page ('/auth/shibboleth/index.php') for the Shibboleth login and a
-form that sends 'username' and 'password' to moodle/login/index.php.
+form that sends 'username' and 'password' to moodle/login/index.php. Set this 
+web page then als alternate login page.
 Consult the Moodle documentation for further instructions and requirements.
 
 How to customize the way the Shibboleth user data is used in Moodle
@@ -190,4 +201,4 @@ Example file:
 
 --------------------------------------------------------------------------------
 In case of problems and questions with Shibboleth authentication, contact
-Lukas Haemmerle <haemmerle@switch.ch> or Markus Hagman <hagman@hytti.uku.fi>
+Lukas Haemmerle <lukas.haemmerle@switch.ch> or Markus Hagman <hagman@hytti.uku.fi>
