@@ -58,10 +58,15 @@
         $table->align = array ('LEFT', 'LEFT', 'LEFT', 'LEFT');
     }
 
-    foreach ($cms as $cm) {
-        if (!coursemodule_visible_for_user($cm)) {
+    $modinfo = get_fast_modinfo($course);
+    foreach ($modinfo->instances['wiki'] as $cm) {
+        if (!$cm->uservisible) {
             continue;
         }
+
+        $cm->summary      = $cms[$cm->id]->summary;
+        $cm->wtype        = $cms[$cm->id]->wtype;
+        $cm->timemodified = $cms[$cm->id]->timemodified;
 
         $class = $cm->visible ? '' : 'class="dimmed"';
         $link = '<a '.$class.' href="view.php?id='.$cm->id.'">'.format_string($cm->name).'</a>';

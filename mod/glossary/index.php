@@ -6,6 +6,7 @@
     require_once("../../config.php");
     require_once("lib.php");
     require_once("$CFG->libdir/rsslib.php");
+    require_once("$CFG->dirroot/course/lib.php");
 
     $id = required_param('id', PARAM_INT);   // course
 
@@ -67,13 +68,17 @@
 
     $currentsection = "";
 
-    foreach ($cms as $cm) {
-        if (!coursemodule_visible_for_user($cm)) {
+    $modinfo = get_fast_modinfo($course);
+    foreach ($modinfo->instances['glossary'] as $cm) {
+        if (!$cm->uservisible) {
             continue;
         }
 
+        $cm->rsstype      = $cms[$cm->id]->rsstype;
+        $cm->rssarticles  = $cms[$cm->id]->rssarticles;
+
         $class = $cm->visible ? '' : 'class="dimmed"';
-        $link = "<a class=\"dimmed\" href=\"view.php?id=$cm->id\">".format_string($cm->name)."</a>";
+        $link = "<a $class href=\"view.php?id=$cm->id\">".format_string($cm->name)."</a>";
 
         $printsection = "";
         if ($cm->section !== $currentsection) {

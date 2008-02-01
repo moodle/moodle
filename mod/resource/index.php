@@ -48,10 +48,15 @@
 
     $currentsection = "";
     $options->para = false;
-    foreach ($cms as $cm) {
-        if (!coursemodule_visible_for_user($cm)) {
+
+    $modinfo = get_fast_modinfo($course);
+    foreach ($modinfo->instances['resource'] as $cm) {
+        if (!$cm->uservisible) {
             continue;
         }
+
+        $cm->summary      = $cms[$cm->id]->summary;
+        $cm->timemodified = $cms[$cm->id]->timemodified;
 
         if ($course->format == "weeks" or $course->format == "topics") {
             $printsection = "";
