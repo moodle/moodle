@@ -100,6 +100,7 @@
 /// Run all cron jobs for each module
 
     mtrace("Starting activity modules");
+    get_mailer('buffer');
     if ($mods = get_records_select("modules", "cron > 0 AND (($timenow - lastcron) > cron)")) {
         foreach ($mods as $mod) {
             $libfile = "$CFG->dirroot/mod/$mod->name/lib.php";
@@ -128,6 +129,7 @@
             }
         }
     }
+    get_mailer('close');
     mtrace("Finished activity modules");
 
     mtrace("Starting blocks");
