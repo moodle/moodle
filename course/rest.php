@@ -83,6 +83,7 @@ switch($_SERVER['REQUEST_METHOD']) {
                         move_section($course, $id, $value);
                         break;
                 }
+                rebuild_course_cache($course->id);
                 break;
 
             case 'resource':
@@ -130,6 +131,7 @@ switch($_SERVER['REQUEST_METHOD']) {
                         moveto_module($mod, $section, $beforemod);
                         break;
                 }
+                rebuild_course_cache($course->id);
                 break;
         
             case 'course': 
