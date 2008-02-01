@@ -82,10 +82,15 @@
 
     $currentsection = "";
 
-    foreach ($cms as $cm) {
-        if (!coursemodule_visible_for_user($cm)) {
+    $modinfo = get_fast_modinfo($course);
+    foreach ($modinfo->instances['data'] as $cm) {
+        if (!$cm->uservisible) {
             continue;
         }
+
+        $cm->intro       = $cms[$cm->id]->intro;
+        $cm->approval    = $cms[$cm->id]->approval;
+        $cm->rssarticles = $cms[$cm->id]->rssarticles;
 
         $printsection = "";
 

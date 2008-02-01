@@ -54,8 +54,10 @@
     }
 
     $currentsection = '';
-    foreach ($cms as $cm) {
-        if (!coursemodule_visible_for_user($cm)) {
+
+    $modinfo = get_fast_modinfo($course);
+    foreach ($modinfo->instances['chat'] as $cm) {
+        if (!$cm->uservisible) {
             continue;
         }
 

@@ -51,21 +51,12 @@
 
     $currentsection = "";
 
-    foreach ($cms as $cm) {
-        if (!coursemodule_visible_for_user($cm)) {
+    $modinfo = get_fast_modinfo($course);
+    foreach ($modinfo->instances['choice'] as $cm) {
+        if (!$cm->uservisible) {
             continue;
         }
 
-        if (!empty($answers[$cm->instance])) {
-            $answer = $answers[$cm->instance];
-        } else {
-            $answer = "";
-        }
-        if (!empty($answer->optionid)) {
-            $aa = format_string(choice_get_option_text(null, $answer->optionid));
-        } else {
-            $aa = "";
-        }
         $printsection = "";
         if ($cm->section !== $currentsection) {
             if ($cm->section) {
@@ -79,6 +70,17 @@
 
         $class = $cm->visible ? '' : 'class="dimmed"';
         $tt_href = "<a $class href=\"view.php?id=$cm->id\">".format_string($cm->name)."</a>";
+
+        if (!empty($answers[$cm->instance])) {
+            $answer = $answers[$cm->instance];
+        } else {
+            $answer = "";
+        }
+        if (!empty($answer->optionid)) {
+            $aa = format_string(choice_get_option_text(null, $answer->optionid));
+        } else {
+            $aa = "";
+        }
 
         if ($course->format == "weeks" || $course->format == "topics") {
             $table->data[] = array ($printsection, $tt_href, $aa);

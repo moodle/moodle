@@ -51,9 +51,29 @@
 
     $types = assignment_types();
 
-    foreach ($cms as $cm) {
-        if (!coursemodule_visible_for_user($cm)) {
+    $modinfo = get_fast_modinfo($course);
+    foreach ($modinfo->instances['assignment'] as $cm) {
+        if (!$cm->uservisible) {
             continue;
+        }
+
+        $cm->timedue        = $cms[$cm->id]->timedue;
+        $cm->assignmenttype = $cms[$cm->id]->assignmenttype;
+
+        //Show dimmed if the mod is hidden
+        $class = $cm->visible ? '' : 'class="dimmed"';
+
+        $link = "<a $class href=\"view.php?id=$cm->id\">".format_string($cm->name)."</a>";
+
+        $printsection = "";
+        if ($cm->section !== $currentsection) {
+            if ($cm->section) {
+                $printsection = $cm->section;
+            }
+            if ($currentsection !== "") {
+                $table->data[] = 'hr';
+            }
+            $currentsection = $cm->section;
         }
 
         if (!file_exists($CFG->dirroot.'/mod/assignment/type/'.$cm->assignmenttype.'/assignment.class.php')) {
@@ -72,22 +92,6 @@
         $type = $types[$cm->assignmenttype];
 
         $due = $cm->timedue ? userdate($cm->timedue) : '-';
-
-        //Show dimmed if the mod is hidden
-        $class = $cm->visible ? '' : 'class="dimmed"';
-
-        $link = "<a $class href=\"view.php?id=$cm->id\">".format_string($cm->name)."</a>";
-
-        $printsection = "";
-        if ($cm->section !== $currentsection) {
-            if ($cm->section) {
-                $printsection = $cm->section;
-            }
-            if ($currentsection !== "") {
-                $table->data[] = 'hr';
-            }
-            $currentsection = $cm->section;
-        }
 
         if ($course->format == "weeks" or $course->format == "topics") {
             $table->data[] = array ($printsection, $link, $type, $due, $submitted, $grade);
