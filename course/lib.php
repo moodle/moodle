@@ -1480,10 +1480,26 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     }
 }
 
-function rebuild_course_cache($courseid=0) {
+/**
+ * Rebuilds the cached list of course activities stored in the database
+ * @param int $courseid - id of course to rebuil, empty means all
+ * @param boolean $clearonly - only clear the modinfo fields, gets rebuild automatically on the fly
+ */
+function rebuild_course_cache($courseid=0, $clearonly=false) {
     global $COURSE;
-// Rebuilds the cached list of course activities stored in the database
-// If a courseid is not specified, then all are rebuilt
+
+    if ($clearonly) {
+        $courseselect = empty($courseid) ? "" : "id = $courseid";
+        set_field_select('course', 'modinfo', null, $courseselect);
+        // update cached global COURSE too ;-)
+        if ($courseid == $COURSE->id) {
+            $COURSE->modinfo = null; 
+        }
+        // reset the fast modinfo cache
+        $reset = 'reset';
+        get_fast_modinfo($reset);
+        return;
+    }
 
     if ($courseid) {
         $select = "id = '$courseid'";
@@ -1492,8 +1508,8 @@ function rebuild_course_cache($courseid=0) {
         @set_time_limit(0);  // this could take a while!   MDL-10954
     }
 
-    if ($courses = get_records_select("course", $select,'','id,fullname')) {
-        foreach ($courses as $course) {
+    if ($rs = get_recordset_select("course", $select,'','id,fullname')) {
+        while($course = rs_fetch_next_record($rs)) {
             $modinfo = serialize(get_array_of_activities($course->id));
             if (!set_field("course", "modinfo", $modinfo, "id", $course->id)) {
                 notify("Could not cache module information for course '" . format_string($course->fullname) . "'!");
@@ -1503,6 +1519,7 @@ function rebuild_course_cache($courseid=0) {
                 $COURSE->modinfo = $modinfo; 
             }
         }
+        rs_close($rs);
     }
     // reset the fast modinfo cache
     $reset = 'reset';
