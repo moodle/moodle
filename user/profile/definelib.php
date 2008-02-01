@@ -89,21 +89,26 @@ class profile_define_base {
      * @return  array    associative array of error messages
      */
     function define_validate_common($data, $files) {
+
         global $USER;
-        
+
         $err = array();
 
         /// Check the shortname was not truncated by cleaning
         if (empty($data->shortname)) {
             $err['shortname'] = get_string('required');
 
+        } else {
+        /// Fetch field-record from DB
+            $field = get_record('user_info_field', 'shortname', $data->shortname);
         /// Check the shortname is unique
-        } else if (($field = get_record('user_info_field', 'shortname', $data->shortname)) and ($field->id <> $data->id)) {
-            $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
+            if ($field and $field->id <> $data->id) {
+                $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
 
         /// Shortname must also be unique compared to the standard user fields
-        } else if (isset($USER->{$data->shortname})) {
-            $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
+            } else if (!$field and isset($USER->{$data->shortname})) {
+                $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
+            }
         }
 
         /// No further checks necessary as the form class will take care of it
