@@ -3788,6 +3788,131 @@ function moodle_process_email($modargs,$body) {
 /// CORRESPONDENCE  ////////////////////////////////////////////////
 
 /**
+ * Get mailer instance, enable buffering, flush buffer or disable buffering.
+ * @param $action string 'get', 'buffer', 'close' or 'flush'
+ * @return reference to mailer instance if 'get' used or nothing
+ */
+function &get_mailer($action='get') {
+    global $CFG;
+
+    static $mailer  = null;
+    static $counter = 0;
+
+    if (!isset($CFG->smtpmaxbulk)) {
+        $CFG->smtpmaxbulk = 0;
+    }
+
+    if ($action == 'get') {
+        $prevkeepalive = false;
+
+        if (isset($mailer) and $mailer->Mailer == 'smtp') {
+            if ($counter < $CFG->smtpmaxbulk and empty($mailer->error_count)) {
+                $counter++;
+                // reset the mailer
+                $mailer->Priority         = 3;
+                $mailer->CharSet          = 'UTF-8'; // our default
+                $mailer->ContentType      = "text/plain";
+                $mailer->Encoding         = "8bit";
+                $mailer->From             = "root@localhost";
+                $mailer->FromName         = "Root User";
+                $mailer->Sender           = "";
+                $mailer->Subject          = "";
+                $mailer->Body             = "";
+                $mailer->AltBody          = "";
+                $mailer->ConfirmReadingTo = "";
+
+                $mailer->ClearAllRecipients();
+                $mailer->ClearReplyTos();
+                $mailer->ClearAttachments();
+                $mailer->ClearCustomHeaders();
+                return $mailer;
+            }
+
+            $prevkeepalive = $mailer->SMTPKeepAlive;
+            get_mailer('flush');
+        }
+
+        include_once($CFG->libdir.'/phpmailer/class.phpmailer.php');
+        $mailer = new phpmailer();
+
+        $counter = 0;
+
+        $mailer->Version   = 'Moodle '.$CFG->version;         // mailer version
+        $mailer->PluginDir = $CFG->libdir.'/phpmailer/';      // plugin directory (eg smtp plugin)
+        $mailer->CharSet   = 'UTF-8';
+
+        // some MTAs may do double conversion of LF if CRLF used, CRLF is required line ending in RFC 822bis
+        // hmm, this is a bit hacky because LE should be private
+        if (isset($CFG->mailnewline) and $CFG->mailnewline == 'CRLF') {
+            $mailer->LE = "\r\n";
+        } else {
+            $mailer->LE = "\n";
+        }
+
+        if ($CFG->smtphosts == 'qmail') {
+            $mailer->IsQmail();                              // use Qmail system
+
+        } else if (empty($CFG->smtphosts)) {
+            $mailer->IsMail();                               // use PHP mail() = sendmail
+
+        } else {
+            $mailer->IsSMTP();                               // use SMTP directly
+            if (!empty($CFG->debugsmtp)) {
+                $mailer->SMTPDebug = true;
+            }
+            $mailer->Host          = $CFG->smtphosts;        // specify main and backup servers
+            $mailer->SMTPKeepAlive = $prevkeepalive;         // use previous keepalive
+
+            if ($CFG->smtpuser) {                            // Use SMTP authentication
+                $mailer->SMTPAuth = true;
+                $mailer->Username = $CFG->smtpuser;
+                $mailer->Password = $CFG->smtppass;
+            }
+        }
+
+        return $mailer;
+    }
+
+    $nothing = null;
+
+    // keep smtp session open after sending
+    if ($action == 'buffer') {
+        if (!empty($CFG->smtpmaxbulk)) {
+            get_mailer('flush');
+            $m =& get_mailer();
+            if ($m->Mailer == 'smtp') {
+                $m->SMTPKeepAlive = true;
+            }
+        }
+        return $nothing;
+    }
+
+    // close smtp session, but continue buffering
+    if ($action == 'flush') {
+        if (isset($mailer) and $mailer->Mailer == 'smtp') {
+            if (!empty($mailer->SMTPDebug)) {
+                echo '<pre>'."\n";
+            }
+            $mailer->SmtpClose();
+            if (!empty($mailer->SMTPDebug)) {
+                echo '</pre>';
+            }
+        }
+        return $nothing;
+    }
+
+    // close smtp session, do not buffer anymore
+    if ($action == 'close') {
+        if (isset($mailer) and $mailer->Mailer == 'smtp') {
+            get_mailer('flush');
+            $mailer->SMTPKeepAlive = false;
+        }
+        $mailer = null; // better force new instance
+        return $nothing;
+    }
+}
+
+/**
  * Send an email to a specified user
  *
  * @uses $CFG
@@ -3809,10 +3934,6 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     global $CFG, $FULLME;
 
-    include_once($CFG->libdir .'/phpmailer/class.phpmailer.php');
-
-/// We are going to use textlib services here
-    $textlib = textlib_get_instance();
 
     if (empty($user)) {
         return false;
@@ -3832,51 +3953,23 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         return false;
     }
 
-    $mail = new phpmailer;
+    $mail =& get_mailer();
 
-    $mail->Version = 'Moodle '. $CFG->version;           // mailer version
-    $mail->PluginDir = $CFG->libdir .'/phpmailer/';      // plugin directory (eg smtp plugin)
-
-    $mail->CharSet = 'UTF-8';
-
-    // some MTAs may do double conversion of LF if CRLF used, CRLF is required line ending in RFC 822bis
-    // hmm, this is a bit hacky because LE should be private
-    if (isset($CFG->mailnewline) and $CFG->mailnewline == 'CRLF') {
-        $mail->LE = "\r\n";
-    } else {
-        $mail->LE = "\n";
+    if (!empty($mail->SMTPDebug)) {
+        echo '<pre>' . "\n";
     }
 
-    if ($CFG->smtphosts == 'qmail') {
-        $mail->IsQmail();                              // use Qmail system
-
-    } else if (empty($CFG->smtphosts)) {
-        $mail->IsMail();                               // use PHP mail() = sendmail
-
-    } else {
-        $mail->IsSMTP();                               // use SMTP directly
-        if (!empty($CFG->debugsmtp)) {
-            echo '<pre>' . "\n";
-            $mail->SMTPDebug = true;
-        }
-        $mail->Host = $CFG->smtphosts;               // specify main and backup servers
-
-        if ($CFG->smtpuser) {                          // Use SMTP authentication
-            $mail->SMTPAuth = true;
-            $mail->Username = $CFG->smtpuser;
-            $mail->Password = $CFG->smtppass;
-        }
-    }
+/// We are going to use textlib services here
+    $textlib = textlib_get_instance();
 
     $supportuser = generate_email_supportuser();
-
 
     // make up an email address for handling bounces
     if (!empty($CFG->handlebounces)) {
         $modargs = 'B'.base64_encode(pack('V',$user->id)).substr(md5($user->email),0,16);
         $mail->Sender = generate_email_processing_address(0,$modargs);
     } else {
-        $mail->Sender   = $supportuser->email;
+        $mail->Sender = $supportuser->email;
     }
 
     if (is_string($from)) { // So we can pass whatever we want if there is need
@@ -3974,14 +4067,14 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     if ($mail->Send()) {
         set_send_count($user);
         $mail->IsSMTP();                               // use SMTP directly
-        if (!empty($CFG->debugsmtp)) {
+        if (!empty($mail->SMTPDebug)) {
             echo '</pre>';
         }
         return true;
     } else {
         mtrace('ERROR: '. $mail->ErrorInfo);
         add_to_log(SITEID, 'library', 'mailer', $FULLME, 'ERROR: '. $mail->ErrorInfo);
-        if (!empty($CFG->debugsmtp)) {
+        if (!empty($mail->SMTPDebug)) {
             echo '</pre>';
         }
         return false;
