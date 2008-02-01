@@ -2544,7 +2544,7 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $timestart, $
         $tmpactivity->type         = 'assignment';
         $tmpactivity->cmid         = $cm->id;
         $tmpactivity->name         = $aname;
-        $tmpactivity->section      = $cm->section;
+        $tmpactivity->sectionnum   = $cm->sectionnum;
         $tmpactivity->timestamp    = $submission->timemodified;
 
         if ($grader) {

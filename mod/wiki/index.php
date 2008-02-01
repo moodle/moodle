@@ -94,7 +94,7 @@
         $wtype = '<span class="smallinfo">'.$wtype.'</span>';
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($cm->section, $link, $summary, $wtype, $timmod);
+            $table->data[] = array ($cm->sectionnum, $link, $summary, $wtype, $timmod);
         } else {
             $table->data[] = array ($link, $summary, $wtype, $timmod);
         }

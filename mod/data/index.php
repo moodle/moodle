@@ -116,14 +116,14 @@
         }
 
         if ($course->format == 'weeks' or $course->format == 'topics') {
-            if ($cm->section !== $currentsection) {
-                if ($cm->section) {
-                    $printsection = $cm->section;
+            if ($cm->sectionnum !== $currentsection) {
+                if ($cm->sectionnum) {
+                    $printsection = $cm->sectionnum;
                 }
                 if ($currentsection !== '') {
                     $table->data[] = 'hr';
                 }
-                $currentsection = $cm->section;
+                $currentsection = $cm->sectionnum;
             }
             $row = array ($printsection, $link, $cm->intro, $numrecords, $numunapprovedrecords);
 

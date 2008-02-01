@@ -4173,7 +4173,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
 
     if (!$posts = get_records_sql("SELECT p.*, f.type AS forumtype, d.forum, d.groupid,
                                           d.timestart, d.timeend, d.userid AS duserid,
-                                          u.firstname, u.lastname, u.email, u.picture
+                                          u.firstname, u.lastname, u.email, u.picture, u.imagealt
                                      FROM {$CFG->prefix}forum_posts p
                                           JOIN {$CFG->prefix}forum_discussions d ON d.id = p.discussion
                                           JOIN {$CFG->prefix}forum f             ON f.id = d.forum
@@ -4189,7 +4189,6 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
     $cm_context      = get_context_instance(CONTEXT_MODULE, $cm->id);
     $viewhiddentimed = has_capability('mod/forum:viewhiddentimedposts', $cm_context);
     $accessallgroups = has_capability('moodle/site:accessallgroups', $cm_context);
-    $viewfullnames   = has_capability('moodle/site:viewfullnames', $cm_context);
 
     if (is_null($modinfo->groups)) {
         $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
@@ -4236,17 +4235,22 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
         $tmpactivity->type         = 'forum';
         $tmpactivity->cmid         = $cm->id;
         $tmpactivity->name         = $aname;
-        $tmpactivity->section      = $cm->section;
+        $tmpactivity->sectionnum   = $cm->sectionnum;
         $tmpactivity->timestamp    = $post->modified;
 
+        $tmpactivity->content = new object();
         $tmpactivity->content->id         = $post->id;
         $tmpactivity->content->discussion = $post->discussion;
         $tmpactivity->content->subject    = format_string($post->subject);
         $tmpactivity->content->parent     = $post->parent;
 
-        $tmpactivity->user->userid   = $post->userid;
-        $tmpactivity->user->fullname = fullname($post, $viewfullnames);
-        $tmpactivity->user->picture  = $post->picture;
+        $tmpactivity->user = new object();
+        $tmpactivity->user->id        = $post->userid;
+        $tmpactivity->user->firstname = $post->firstname;
+        $tmpactivity->user->lastname  = $post->lastname;
+        $tmpactivity->user->picture   = $post->picture;
+        $tmpactivity->user->imagealt  = $post->imagealt;
+        $tmpactivity->user->email     = $post->email;
 
         $activities[$index++] = $tmpactivity;
     }
@@ -4257,7 +4261,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
 /**
  * 
  */
-function forum_print_recent_mod_activity($activity, $courseid, $detail, $modnames) {
+function forum_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
     global $CFG;
 
     if ($activity->content->parent) {
@@ -4269,7 +4273,7 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
     echo '<table border="0" cellpadding="3" cellspacing="0" class="forum-recent">';
 
     echo "<tr><td class=\"userpicture\" valign=\"top\">";
-    print_user_picture($activity->user->userid, $courseid, $activity->user->picture);
+    print_user_picture($activity->user, $courseid);
     echo "</td><td class=\"$class\">";
 
     echo '<div class="title">';
@@ -4283,8 +4287,9 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
     echo '</div>';
 
     echo '<div class="user">';
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id={$activity->user->userid}&amp;course=$courseid\">"
-         ."{$activity->user->fullname}</a> - ".userdate($activity->timestamp);
+    $fullname = fullname($activity->user, $viewfullnames);
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id={$activity->user->id}&amp;course=$courseid\">"
+         ."{$fullname}</a> - ".userdate($activity->timestamp);
     echo '</div>';
       echo "</td></tr></table>";
 

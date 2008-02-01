@@ -58,14 +58,14 @@
         }
 
         $printsection = "";
-        if ($cm->section !== $currentsection) {
-            if ($cm->section) {
-                $printsection = $cm->section;
+        if ($cm->sectionnum !== $currentsection) {
+            if ($cm->sectionnum) {
+                $printsection = $cm->sectionnum;
             }
             if ($currentsection !== "") {
                 $table->data[] = 'hr';
             }
-            $currentsection = $cm->section;
+            $currentsection = $cm->sectionnum;
         }
 
         $class = $cm->visible ? '' : 'class="dimmed"';

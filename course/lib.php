@@ -1083,7 +1083,7 @@ function &get_fast_modinfo(&$course, $userid=0) {
         $cm->modname          = $mod->mod;
         $cm->name             = urldecode($mod->name);
         $cm->visible          = $mod->visible;
-        $cm->section          = $mod->section;
+        $cm->sectionnum       = $mod->section;
         $cm->groupmode        = $mod->groupmode;
         $cm->groupingid       = $mod->groupingid;
         $cm->groupmembersonly = $mod->groupmembersonly;
@@ -1117,14 +1117,15 @@ function &get_fast_modinfo(&$course, $userid=0) {
         $modinfo->cms[$cm->id] =& $cm;
 
         // reconstruct sections
-        if (!isset($modinfo->sections[$cm->section])) {
-            $modinfo->sections[$cm->section] = array();
+        if (!isset($modinfo->sections[$cm->sectionnum])) {
+            $modinfo->sections[$cm->sectionnum] = array();
         }
-        $modinfo->sections[$cm->section][] = $cm->id;
+        $modinfo->sections[$cm->sectionnum][] = $cm->id;
 
         unset($cm);
     }
 
+    unset($cache[$course->id]); // prevent potential reference problems when switching users
     $cache[$course->id] = $modinfo;
 
     return $cache[$course->id];

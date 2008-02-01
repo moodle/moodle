@@ -5276,7 +5276,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
             continue;
         }
 
-        if ($mod->section > $course->numsections) {   /// Don't show excess hidden sections
+        if ($mod->sectionnum > $course->numsections) {   /// Don't show excess hidden sections
             break;
         }
 
@@ -5284,14 +5284,14 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
             continue;
         }
 
-        if ($mod->section > 0 and $section != $mod->section) {
-            $thissection = $sections[$mod->section];
+        if ($mod->sectionnum > 0 and $section != $mod->sectionnum) {
+            $thissection = $sections[$mod->sectionnum];
 
             if ($thissection->visible or !$course->hiddensections or
                 has_capability('moodle/course:viewhiddensections', $context)) {
                 $thissection->summary = strip_tags(format_string($thissection->summary,true));
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
-                    $menu[] = '--'.$strsection ." ". $mod->section;
+                    $menu[] = '--'.$strsection ." ". $mod->sectionnum;
                 } else {
                     if (strlen($thissection->summary) < ($width-3)) {
                         $menu[] = '--'.$thissection->summary;
@@ -5299,7 +5299,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
                         $menu[] = '--'.substr($thissection->summary, 0, $width).'...';
                     }
                 }
-                $section = $mod->section;
+                $section = $mod->sectionnum;
             } else {
                 // no activities from this hidden section shown
                 continue;
@@ -5396,7 +5396,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
             continue;
         }
 
-        if ($mod->section > $course->numsections) {   /// Don't show excess hidden sections
+        if ($mod->sectionnum > $course->numsections) {   /// Don't show excess hidden sections
             break;
         }
 
@@ -5404,8 +5404,8 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
             continue;
         }
 
-        if ($mod->section >= 0 and $section != $mod->section) {
-            $thissection = $sections[$mod->section];
+        if ($mod->sectionnum >= 0 and $section != $mod->sectionnum) {
+            $thissection = $sections[$mod->sectionnum];
 
             if ($thissection->visible or !$course->hiddensections or
                       has_capability('moodle/course:viewhiddensections', $coursecontext)) {
@@ -5414,7 +5414,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
                     $menu[] = '</ul></li>';
                 }
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
-                    $item = $strsection ." ". $mod->section;
+                    $item = $strsection ." ". $mod->sectionnum;
                 } else {
                     if (strlen($thissection->summary) < ($width-3)) {
                         $item = $thissection->summary;
@@ -5426,7 +5426,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
                 $menu[] = '<ul>';
                 $doneheading = true;
 
-                $section = $mod->section;
+                $section = $mod->sectionnum;
             } else {
                 // no activities from this hidden section shown
                 continue;
