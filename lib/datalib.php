@@ -1587,7 +1587,7 @@ function get_course_mods($courseid) {
                             FROM {$CFG->prefix}modules m,
                                  {$CFG->prefix}course_modules cm
                             WHERE cm.course = ".intval($courseid)."
-                            AND cm.module = m.id ");
+                            AND cm.module = m.id AND m.visible = 1"); // no disabled mods
 }
 
 
