@@ -205,7 +205,11 @@
             }
 
             if (empty($rss_record->preferredtitle)) {
-                $feedtitle = $this->format_title($rss->channel['title']);
+                if (isset($rss->channel['title'])) {  // Just in case feed is dead
+                    $feedtitle = $this->format_title($rss->channel['title']);
+                } else {
+                    $feedtitle = '';
+                }
             } else {
                 $feedtitle = $this->format_title($rss_record->preferredtitle);
             }
