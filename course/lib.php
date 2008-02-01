@@ -974,7 +974,6 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->cm               = $rawmods[$seq]->id;
                    $mod[$seq]->mod              = $rawmods[$seq]->modname;
                    $mod[$seq]->section          = $section->section;
-                   $mod[$seq]->name             = urlencode(get_field($rawmods[$seq]->modname, "name", "id", $rawmods[$seq]->instance));
                    $mod[$seq]->visible          = $rawmods[$seq]->visible;
                    $mod[$seq]->groupmode        = $rawmods[$seq]->groupmode;
                    $mod[$seq]->groupingid       = $rawmods[$seq]->groupingid;
@@ -994,7 +993,13 @@ function get_array_of_activities($courseid) {
                            if (!empty($info->icon)) {
                                $mod[$seq]->icon = $info->icon;
                            }
+                           if (!empty($info->name)) {
+                               $mod[$seq]->name = urlencode($info->name);
+                           }
                        }
+                   }
+                   if (!isset($mod[$seq]->name)) {
+                       $mod[$seq]->name = urlencode(get_field($rawmods[$seq]->modname, "name", "id", $rawmods[$seq]->instance));
                    }
                }
             }
