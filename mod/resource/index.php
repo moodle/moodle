@@ -60,14 +60,14 @@
 
         if ($course->format == "weeks" or $course->format == "topics") {
             $printsection = "";
-            if ($cm->section !== $currentsection) {
-                if ($cm->section) {
-                    $printsection = $cm->section;
+            if ($cm->sectionnum !== $currentsection) {
+                if ($cm->sectionnum) {
+                    $printsection = $cm->sectionnum;
                 }
                 if ($currentsection !== "") {
                     $table->data[] = 'hr';
                 }
-                $currentsection = $cm->section;
+                $currentsection = $cm->sectionnum;
             }
         } else {
             $printsection = '<span class="smallinfo">'.userdate($cm->timemodified)."</span>";

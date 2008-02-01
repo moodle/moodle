@@ -66,14 +66,14 @@
         $link = "<a $class href=\"view.php?id=$cm->id\">".format_string($cm->name)."</a>";
 
         $printsection = "";
-        if ($cm->section !== $currentsection) {
-            if ($cm->section) {
-                $printsection = $cm->section;
+        if ($cm->sectionnum !== $currentsection) {
+            if ($cm->sectionnum) {
+                $printsection = $cm->sectionnum;
             }
             if ($currentsection !== "") {
                 $table->data[] = 'hr';
             }
-            $currentsection = $cm->section;
+            $currentsection = $cm->sectionnum;
         }
 
         if (!file_exists($CFG->dirroot.'/mod/assignment/type/'.$cm->assignmenttype.'/assignment.class.php')) {

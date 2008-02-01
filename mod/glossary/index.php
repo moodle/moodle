@@ -81,14 +81,14 @@
         $link = "<a $class href=\"view.php?id=$cm->id\">".format_string($cm->name)."</a>";
 
         $printsection = "";
-        if ($cm->section !== $currentsection) {
-            if ($cm->section) {
-                $printsection = $cm->section;
+        if ($cm->sectionnum !== $currentsection) {
+            if ($cm->sectionnum) {
+                $printsection = $cm->sectionnum;
             }
             if ($currentsection !== "") {
                 $table->data[] = 'hr';
             }
-            $currentsection = $cm->section;
+            $currentsection = $cm->sectionnum;
         }
 
         // TODO: count only approved if not allowed to see them

@@ -96,7 +96,7 @@
         }
 
     } else if (is_numeric($param->modid)) {
-        $section = $sections[$modinfo->cms[$param->modid]->section];
+        $section = $sections[$modinfo->cms[$param->modid]->sectionnum];
         $section->sequence = $param->modid;
         $sections = array($section->sequence=>$section);
     }
@@ -186,6 +186,7 @@
         $section = 0;
 
         $activity_count = count($activities);
+        $viewfullnames  = array();
 
         foreach ($activities as $key => $activity) {
 
@@ -228,6 +229,11 @@
 
             } else {
 
+                if (!isset($viewfullnames[$activity->cmid])) {
+                    $cm_context = get_context_instance(CONTEXT_MODULE, $activity->cmid);
+                    $viewfullnames[$activity->cmid] = has_capability('moodle/site:viewfullnames', $cm_context);
+                }
+
                 if (!$inbox) {
                     print_simple_box_start('center', '90%');
                     $inbox = true;
@@ -236,7 +242,7 @@
                 $print_recent_mod_activity = $activity->type.'_print_recent_mod_activity';
 
                 if (function_exists($print_recent_mod_activity)) {
-                    $print_recent_mod_activity($activity, $course->id, $detail, $modnames);
+                    $print_recent_mod_activity($activity, $course->id, $detail, $modnames, $viewfullnames[$activity->cmid]);
                 }
             }
         }

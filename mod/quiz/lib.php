@@ -589,7 +589,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart, $course
         $tmpactivity->type      = 'quiz';
         $tmpactivity->cmid      = $cm->id;
         $tmpactivity->name      = $aname;
-        $tmpactivity->section   = $cm->section;
+        $tmpactivity->sectionnum= $cm->sectionnum;
         $tmpactivity->timestamp = $attempt->timefinish;
         
         $tmpactivity->content->attemptid = $attempt->id;
