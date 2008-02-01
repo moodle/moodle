@@ -19,6 +19,8 @@
  * 2006-10-27  Upstream 1.7 changes merged in, added above credits from lib.php :-)
  * 2007-03-09  Fixed authentication but may need some other changes
  * 2007-10-03  Removed requirement for email address, surname and given name on request of Markus Hagman
+  * 2008-01-21 Added WAYF functionality
+
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -113,8 +115,10 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         return $result;
     }
 
-    /*
+    /**
      * Returns array containg attribute mappings between Moodle and Shibboleth.
+     *
+     * @return array
      */
     function get_attributes() {
         $configarray = (array) $this->config;
@@ -153,6 +157,10 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         return false;
     }
 
+     /**
+     * Hook for login page
+     *
+     */
     function loginpage_hook() {
         global $SESSION, $CFG;
 
@@ -193,19 +201,56 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         if (!isset ($config->convert_data)) {
             $config->convert_data = '';
         }
+        
         if (!isset($config->changepasswordurl)) {
             $config->changepasswordurl = '';
         }
+        
+        if (!isset($config->login_name)) {
+            $config->login_name = 'Shibboleth Login';
+        }
+        
+        // Clean idp list
+        if (isset($config->organization_selection) && !empty($config->organization_selection) && isset($config->alt_login) && $config->alt_login == 'on') {
+            $idp_list = get_idp_list($config->organization_selection);
+            if (count($idp_list) < 1){
+                return false;
+            }
+            $config->organization_selection = '';
+            foreach ($idp_list as $idp => $value){
+                $config->organization_selection .= $idp.', '.$value[0].', '.$value[1]."\n";
+            }
+        }
+        
 
         // save settings
         set_config('user_attribute',    $config->user_attribute,    'auth/shibboleth');
+        
+        if (isset($config->organization_selection) && !empty($config->organization_selection)) {
+            set_config('organization_selection',    $config->organization_selection,    'auth/shibboleth');
+        }
+        set_config('login_name',    $config->login_name,    'auth/shibboleth');
         set_config('convert_data',      $config->convert_data,      'auth/shibboleth');
         set_config('auth_instructions', $config->auth_instructions, 'auth/shibboleth');
         set_config('changepasswordurl', $config->changepasswordurl, 'auth/shibboleth');
-
+        
+        if (isset($config->alt_login) && $config->alt_login == 'on'){
+            set_config('alt_login',    $config->alt_login,    'auth/shibboleth');
+            set_config('alternateloginurl', $CFG->wwwroot.'/auth/shibboleth/login.php');
+        } else {
+            set_config('alt_login',    'off',    'auth/shibboleth');
+            set_config('alternateloginurl', '');
+            $config->alt_login = 'off';
+        }
+        
         // Check values and return false if something is wrong
         // Patch Anyware Technologies (14/05/07)
         if (($config->convert_data != '')&&(!file_exists($config->convert_data) || !is_readable($config->convert_data))){
+            return false;
+        }
+        
+        // Check if there is at least one entry in the IdP list
+        if (isset($config->organization_selection) && empty($config->organization_selection) && isset($config->alt_login) && $config->alt_login == 'on'){
             return false;
         }
 
@@ -224,5 +269,127 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         return $clean_string;
     }
 }
+
+    
+    /**
+     * Sets the standard SAML domain cookie that is also used to preselect
+     * the right entry on the local wayf
+     *
+     * @param IdP identifiere
+     */
+    function set_saml_cookie($selectedIDP) {
+        if (isset($_COOKIE['_saml_idp']))
+        {
+            $IDPArray = generate_cookie_array($_COOKIE['_saml_idp']);
+        }
+        else
+        {
+            $IDPArray = array();
+        }
+        $IDPArray = appendCookieValue($selectedIDP, $IDPArray);
+        setcookie ('_saml_idp', generate_cookie_value($IDPArray), time() + (100*24*3600));
+    }
+    
+     /**
+     * Prints the option elements for the select element of the drop down list 
+     *
+     */
+    function print_idp_list(){
+        $config = get_config('auth/shibboleth');
+        
+        $IdPs = get_idp_list($config->organization_selection);
+        if (isset($_COOKIE['_saml_idp'])){
+            $idp_cookie = generate_cookie_array($_COOKIE['_saml_idp']);
+            do {
+                $selectedIdP = array_pop($idp_cookie);
+            } while (!isset($IdPs[$selectedIdP]) && count($idp_cookie) > 0);
+            
+        } else {
+            $selectedIdP = '-';
+        }
+        
+        foreach($IdPs as $IdP => $data){
+            if ($IdP == $selectedIdP){
+                echo '<option value="'.$IdP.'" selected="selected">'.$data[0].'</option>';
+            } else {
+                echo '<option value="'.$IdP.'">'.$data[0].'</option>';
+            }
+        }
+    }
+    
+    
+     /**
+     * Generate array of IdPs from Moodle Shibboleth settings
+     *
+     * @param string Text containing tuble/triple of IdP entityId, name and (optionally) session initiator
+     * @return array Identifier of IdPs and their name/session initiator 
+     */
+
+    function get_idp_list($organization_selection) {
+        $idp_list = array();
+        
+        $idp_raw_list = split("\n",  $organization_selection);
+        
+        foreach ($idp_raw_list as $idp_line){
+            $idp_data = split(',', $idp_line);
+            if (isset($idp_data[2]))
+            {
+                $idp_list[trim($idp_data[0])] = array(trim($idp_data[1]),trim($idp_data[2])); 
+            }
+            elseif(isset($idp_data[1]))
+            {
+                $idp_list[trim($idp_data[0])] = array(trim($idp_data[1]));
+            }
+        }
+        
+        return $idp_list;
+    }
+    
+    /**
+     * Generates an array of IDPs using the cookie value
+     *
+     * @param string Value of SAML domain cookie 
+     * @return array Identifiers of IdPs 
+     */
+    function generate_cookie_array($value) {
+        
+        // Decodes and splits cookie value
+        $CookieArray = split(' ', $value);
+        $CookieArray = array_map('base64_decode', $CookieArray);
+        
+        return $CookieArray;
+    }
+    
+    /**
+     * Generate the value that is stored in the cookie using the list of IDPs
+     *
+     * @param array IdP identifiers 
+     * @return string SAML domain cookie value
+     */
+    function generate_cookie_value($CookieArray) {
+    
+        // Merges cookie content and encodes it
+        $CookieArray = array_map('base64_encode', $CookieArray);
+        $value = implode(' ', $CookieArray);
+        return $value;
+    }
+    
+    /**
+     * Append a value to the array of IDPs
+     *
+     * @param string IdP identifier
+     * @param array IdP identifiers
+     * @return array IdP identifiers with appended IdP 
+     */
+    function appendCookieValue($value, $CookieArray) {
+        
+        array_push($CookieArray, $value);
+        $CookieArray = array_reverse($CookieArray);
+        $CookieArray = array_unique($CookieArray);
+        $CookieArray = array_reverse($CookieArray);
+        
+        return $CookieArray;
+    }
+
 
 ?>

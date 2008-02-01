@@ -27,28 +27,6 @@
     <td><?php print_string("auth_shib_username_description", "auth") ?></td>
 </tr>
 
-<!-- 
-This is kind of obsolete because the login instructions are now centralized 
-On the other hand it would be great for Shibboleth to have seperate login 
-instructions
--->
-<!--
-<tr valign="top">
-    <td align="right"><?php print_string("instructions", "auth") ?>:</td>
-    <td>
-        <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php p($config->auth_instructions) ?></textarea>
-    </td>
-    <td>
-        <?php
-  
-        print_string("auth_shib_instructions_help", "auth", htmlspecialchars($CFG->wwwroot.'/auth/shibboleth/index.php'));
-        helpbutton("text", get_string("helptext"));
-
-        ?>
-    </td>
-</tr>
--->
-
 <tr valign="top">
     <td align="right"><?php print_string("auth_shib_convert_data", "auth") ?>:</td>
     <td>
@@ -63,9 +41,61 @@ instructions
 
         ?>
     </td>
-    <td><?php print_string("auth_shib_convert_data_description", "auth") ?></td>
+    <td><?php print_string("auth_shib_convert_data_description", "auth"); echo $config->alt_login ?></td>
 </tr>
 
+<tr valign="top">
+    <td align="right">Moodle WAYF Service:</td>
+    <td>
+        <input name="alt_login" type="checkbox" <?php 
+        if ( isset($config->alt_login) and $config->alt_login == 'on' ){
+                echo 'checked="checked"';
+            }
+        ?> />
+    </td>
+    <td>If you check this, Moodle will use its own WAYF service instead of the one configured for Shibboleth. Moodle will display a drop-down list on this alternative login page where the user has to select his Identity Provider.</td>
+</tr>
+
+<tr valign="top">
+    <td align="right">Identity Providers:</td>
+    <td>
+        <textarea name="organization_selection" rows="10" cols="30" style="overflow: auto;" wrap="off"
+><?php 
+        if (!isset($config->organization_selection)){
+            echo  'urn:mace:organization1:providerID, Example Organization 1
+https://another.idp-id.com/shibboleth, Other Example Organization
+urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/SWITCHaai';
+        } else {
+            echo $config->organization_selection;
+        }
+        ?>
+</textarea>
+    <?
+       if (isset($config->organization_selection) && empty($config->organization_selection) && isset($config->alt_login) && $config->alt_login == 'on') {
+              echo '<br/><font color="red">';
+              print_string("auth_shib_no_organizations_warning", "auth");
+              echo '</font>';
+        }
+    ?>
+    </td>
+    <td>Provide a list of Identity Provider entityIDs to let the user choose from on the login page.
+On each line there must be a comma-separated tuple for entityID of the IdP (see the Shibboleth metadata file) and Name of IdP as it shall be displayed in the drow-down list.
+As an optional third parameter you can add the location of a Shibboleth session initiator that shall be used in case your Moodle installation is part of a multi federation setup.</td>
+</tr>
+
+<tr valign="top">
+    <td align="right">Authentication Method Name:</td>
+    <td>
+        <input name="login_name" type="text" size="30" value="<?php 
+        if ( isset($config->login_name) and !empty($config->login_name)){
+            echo $config->login_name;
+        } else {
+            echo 'Shibboleth Login';
+        }
+        ?>" />
+    </td>
+    <td>Provide a name for the Shibboleth authentication method that is familiar to your users. This could be the name of your Shibboleth federation, e.g. "SWITCHaai Login" or "InCommon Login" and so on.</td>
+</tr>
 
 <tr valign="top">
     <td align="right"><?php print_string('auth_shib_changepasswordurl', 'auth') ?>: </td>
@@ -81,6 +111,8 @@ instructions
     </td>
     <td><?php print_string('changepasswordhelp', 'auth') ?></td>
 </tr>
+
+
 
 <?php
 
