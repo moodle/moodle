@@ -313,6 +313,12 @@ $string['auth_shib_convert_data_description'] = 'You can use this API to further
 $string['auth_shib_instructions_help'] = 'Here you should provide custom instructions for your users to explain Shibboleth.  It will be shown on the login page in the instructions section. The instructions must include a link to \"<b>$a</b>\" that users click when they want to log in.';
 $string['auth_shib_convert_data_warning'] = 'The file does not exist or is not readable by the webserver process!';
 $string['auth_shib_changepasswordurl'] = 'Password-change URL';
+$string['auth_shibboleth_login_long'] = 'Login to Moodle via Shibboleth';
+$string['auth_shibboleth_select_organization'] = 'For authentication via Shibboleth, please select your organization from the drop down list:';
+$string['auth_shibboleth_contact_administrator'] = 'In case you are not associated with the given organizations and you need access to a course on this server, please contact the';
+$string['auth_shibboleth_select_member'] = 'I\'m a member of ...'; 
+$string['auth_shibboleth_errormsg'] ='Please select the organization you are member of!';
+$string['auth_shib_no_organizations_warning'] ='If you want to use the integrated WAYF service, you must provide a coma-separated list of Identity Provider entityIDs, their names and optionally a session initiator.';
 
 $string['shib_not_set_up_error'] = 'Shibboleth authentication doesn\'t seem to be set up correctly because no Shibboleth environment variables are present for this page. Please consult the <a href=\"README.txt\">README</a> for further instructions on how to set up Shibboleth authentication or contact the webmaster of this Moodle installation.';
 $string['shib_no_attributes_error'] = 'You seem to be Shibboleth authenticated but Moodle didn\'t receive any user attributes. Please check that your Identity Provider releases the necessary attributes ($a) to the Service Provider Moodle is running on or inform the webmaster of this server.';
