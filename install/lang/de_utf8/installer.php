@@ -26,7 +26,7 @@ $string['cannotsavezipfile'] = 'Die ZIP-Datei konnte nicht gespeichert werden';
 $string['cannotunzipfile'] = 'Die Datei konnte nicht entpackt werden.';
 $string['caution'] = 'Warnung';
 $string['check'] = 'Prüfen';
-$string['chooselanguagehead'] = 'Eine Sprache wählen';
+$string['chooselanguagehead'] = 'Sprache wählen';
 $string['chooselanguagesub'] = 'Wählen Sie eine Sprache, die Sie während der Installation verwenden wollen. Nach der Installation können Sie die Sprache für die Oberfläche und die Nutzer/innen festlegen.';
 $string['closewindow'] = 'Dieses Fenster schließen';
 $string['compatibilitysettingshead'] = 'Prüfung Ihrer PHP-Einstellungen ...';
@@ -34,7 +34,7 @@ $string['compatibilitysettingssub'] = 'Alle Tests sollten vom Server bestätigt 
 $string['componentisuptodate'] = 'Die Komponente ist nicht aktuell.';
 $string['configfilenotwritten'] = 'Das Installationsscript kann die Datei config.php, welche die gewählten Einstellungen enthält, nicht automatisch erstellen. Der web-user hat keine Schreibrechte für das Moodle-Verzeichnis. Sie können den folgenden Code manuell in der Datei config.php speichern und diese dann ins Hauptverzeichnis Ihrer Moodle-Installation kopieren.';
 $string['configfilewritten'] = 'Die Datei config.php wurde erfolgreich erstellt';
-$string['configurationcompletehead'] = 'Die Konfiguration ist abgeschlossen.';
+$string['configurationcompletehead'] = 'Konfiguration ist abgeschlossen';
 $string['configurationcompletesub'] = 'Moodle speichert Ihre Konfigurationseinstellungen nun im Hauptverzeichnis Ihrer Moodle-Installation.';
 $string['continue'] = 'Weiter';
 $string['curlrecommended'] = 'Die Installation der optionalen Bibliothek Curl wird empfohlen, um die Moodle-Netzwerk-Funktionalität einzuschalten.';
@@ -97,16 +97,16 @@ $string['databasesettingssub_postgres7'] = '<b>Typ:</b> PostgreSQL<br />
 <b>Password:</b> Ihr Passwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (notwendig)';
 $string['databasesettingswillbecreated'] = '<b>Hinweis: </b> Das Installationsprogramm wird versuchen, automatisch eine Datenbank anzulegen, sofern diese noch nicht besteht.';
-$string['dataroot'] = 'Datenverzeichnis';
+$string['dataroot'] = 'Daten-Verzeichnis';
 $string['datarooterror'] = 'Das angegebene Datenverzeichnis ist nicht vorhanden und kann nicht angelegt werden. Korrigieren Sie die Pfad-Eingabe oder legen Sie das Verzeichnis manuell an.';
 $string['dbconnectionerror'] = 'Eine Verbindung zur angegebenen Datenbank konnte nicht hergestellt werden. Bitte überprüfen Sie Ihre Eingaben.';
 $string['dbcreationerror'] = 'Fehler beim Anlegen der Datenbank. Die Datenbank konnte mit diesen Einstellungen nicht erstellt werden.';
-$string['dbhost'] = 'Name des Datenbankservers';
-$string['dbprefix'] = 'Prefix für alle Tabellen';
-$string['dbtype'] = 'Datenbankart';
+$string['dbhost'] = 'Server';
+$string['dbprefix'] = 'Tabellen-Prefix';
+$string['dbtype'] = 'Typ';
 $string['dbwrongencoding'] = 'Die ausgewählte Datenbank läuft unter einem nicht empfohlenen Zeichensatz. Es wäre besser, wenn Sie eine Unicode (UTF-8) basierte Datenbank verwenden würden. Sie haben die Möglichkeit diesen Schritt zu überspringen. Vermutlch wird dies später bei der Nutzung aber zu Problemen führen.
 Die ausgewählte Datenbank läuft unter einem nicht empfohlenen Zeichensatz. Es wäre besser, wenn Sie eine Unicode (UTF-8) basierte Datenbank verwenden würden. Sie haben die Möglichkeit diesen Schritt zu überspringen. Vermutlich wird dies später bei der Nutzung aber zu Problemen führen.';
-$string['dbwronghostserver'] = 'Sie müssen den oben genannten \"Host\"-Regeln folgen.';
+$string['dbwronghostserver'] = 'Sie müssen den oben genannten \"Server\"-Regeln folgen.';
 $string['dbwrongnlslang'] = 'Die Umgebungsvariable NLS_LANG Ihres Webservers muss den Zeichensatz AL32UTF8 benutzen. Lesen Sie in der PHP-Dokumentation nach, wie Sie OCI8 richtig einstellen.';
 $string['dbwrongprefix'] = 'Sie müssen den oben genannten \"Tabellen-Prefix\"- Regeln folgen.';
 $string['directorysettingshead'] = 'Bestätigen Sie bitte die Verzeichniseinträge für Ihre Moodle-Installation';
@@ -140,7 +140,7 @@ $string['environmentxmlerror'] = 'Beim Auslesen der Server-Konfiguration ist ein
 $string['error'] = 'Fehler';
 $string['fail'] = 'Fehlgeschlagen';
 $string['fileuploads'] = 'Dateien hochladen';
-$string['fileuploadserror'] = 'Dies sollte auf \'on\' stehen';
+$string['fileuploadserror'] = 'Dies sollte eingeschaltet sein';
 $string['gdversion'] = 'GD-Version';
 $string['gdversionerror'] = 'Die GD-Bibliothek sollte verfügbar sein, um Bilder zu erzeugen und anzuzeigen.';
 $string['gdversionhelp'] = '<p>Auf Ihrem Server ist vermutlich GD nicht installiert. </p>
@@ -149,6 +149,7 @@ $string['gdversionhelp'] = '<p>Auf Ihrem Server ist vermutlich GD nicht installi
 <p>Unter Windows können Sie die Datei php.ini bearbeiten und die Zeile libgd.dll auskommentieren.</p>';
 $string['globalsquotes'] = 'Unsichere Einstellung von Globalparametern';
 $string['globalsquoteserror'] = 'Prüfen Sie die PHP-Einstellungen: deaktivieren Sie register_globals und/oder aktivieren Sie magic_quotes_gpc';
+$string['globalswarning'] = '<p><strong>Sicherheitshinweis</strong>: Um ordnungsgemäß funktionieren zu können, benötigt <br />Moodle mehrere Änderungen in Ihren aktuellen PHP-Einstellungen.<p/> <p>Sie <em>müssen</em> den Parameter <code>register_globals=off</code> setzen.<p>Diese Einstellung können Sie vornehmen, in dem Sie die Datei <code>php.ini</code>, die Apache/IIS <br />Konfiguration oder die Datei <code>.htaccess</code> bearbeiten.</p>';
 $string['help'] = 'Hilfe';
 $string['iconvrecommended'] = 'Die Installation der ICONV Bibliothek wird zur Leistungsverbesserung dringend empfohlen. Dies ist besonders wichtig, wenn Sie Sprachen mit anderen als lateinischen Zeichensätzen verwenden.';
 $string['info'] = 'Informationen';
