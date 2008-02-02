@@ -43,7 +43,7 @@
 
         echo '</td></tr></table>';
 
-        if ($course->id == SITEID) {
+        if ($course->id == SITEID and !$choose) {
                 admin_externalpage_print_footer($adminroot);
         } else {
             print_footer($course);
