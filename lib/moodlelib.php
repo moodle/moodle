@@ -3799,7 +3799,7 @@ function &get_mailer($action='get') {
     static $counter = 0;
 
     if (!isset($CFG->smtpmaxbulk)) {
-        $CFG->smtpmaxbulk = 0;
+        $CFG->smtpmaxbulk = 1;
     }
 
     if ($action == 'get') {
@@ -3835,7 +3835,7 @@ function &get_mailer($action='get') {
         include_once($CFG->libdir.'/phpmailer/class.phpmailer.php');
         $mailer = new phpmailer();
 
-        $counter = 0;
+        $counter = 1;
 
         $mailer->Version   = 'Moodle '.$CFG->version;         // mailer version
         $mailer->PluginDir = $CFG->libdir.'/phpmailer/';      // plugin directory (eg smtp plugin)

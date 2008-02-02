@@ -23,7 +23,7 @@ $temp = new admin_settingpage('mail', get_string('mail','admin'));
 $temp->add(new admin_setting_configtext('smtphosts', get_string('smtphosts', 'admin'), get_string('configsmtphosts', 'admin'), '', PARAM_HOST));
 $temp->add(new admin_setting_configtext('smtpuser', get_string('smtpuser', 'admin'), get_string('configsmtpuser', 'admin'), '', PARAM_NOTAGS));
 $temp->add(new admin_setting_configpasswordunmask('smtppass', get_string('smtppass', 'admin'), get_string('configsmtpuser', 'admin'), ''));
-$temp->add(new admin_setting_configtext('smtpmaxbulk', get_string('smtpmaxbulk', 'admin'), get_string('configsmtpmaxbulk', 'admin'), 0, PARAM_INT));
+$temp->add(new admin_setting_configtext('smtpmaxbulk', get_string('smtpmaxbulk', 'admin'), get_string('configsmtpmaxbulk', 'admin'), 1, PARAM_INT));
 $temp->add(new admin_setting_configtext('noreplyaddress', get_string('noreplyaddress', 'admin'), get_string('confignoreplyaddress', 'admin'), 'noreply@' . $_SERVER['HTTP_HOST'], PARAM_NOTAGS));
 $temp->add(new admin_setting_configselect('digestmailtime', get_string('digestmailtime', 'admin'), get_string('configdigestmailtime', 'admin'), 17, array('00' => '00',
                                                                                                                                                           '01' => '01',
