@@ -785,6 +785,11 @@ class grade_item extends grade_object {
             //do not load scale if already present
             if (empty($this->scale->id) or $this->scale->id != $this->scaleid) {
                 $this->scale = grade_scale::fetch(array('id'=>$this->scaleid));
+                if (!$this->scale) {
+                    debugging('Incorrect scale id: '.$this->scaleid);
+                    $this->scale = null;
+                    return null;
+                }
                 $this->scale->load_items();
             }
 
