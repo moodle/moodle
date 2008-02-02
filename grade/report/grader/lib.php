@@ -994,7 +994,11 @@ class grade_report_grader extends grade_report {
                     $sum_array[$item->id] = 0;
                 }
 
-                $ungraded_count = $ungraded_counts[$itemid]->count;
+                if (isset($ungraded_counts[$itemid])) {
+                    $ungraded_count = $ungraded_counts[$itemid]->count;
+                } else {
+                    $ungraded_count = 0;
+                }
 
                 if ($meanselection == GRADE_REPORT_MEAN_GRADED) {
                     $mean_count = $totalcount - $ungraded_count;
