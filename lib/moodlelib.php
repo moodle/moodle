@@ -3498,8 +3498,8 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 /// Delete any groups, removing members and grouping/course links first.
     require_once($CFG->dirroot.'/group/lib.php');
-    groups_delete_groupings($courseid, true);
-    groups_delete_groups($courseid, true);
+    groups_delete_groupings($courseid, $showfeedback);
+    groups_delete_groups($courseid, $showfeedback);
 
 /// Delete all related records in other tables that may have a courseid
 /// This array stores the tables that need to be cleared, as
