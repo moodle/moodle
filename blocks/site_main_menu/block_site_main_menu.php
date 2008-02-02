@@ -70,15 +70,9 @@ class block_site_main_menu extends block_list {
 
 /// slow & hacky editing mode
         $ismoving = ismoving($this->instance->pageid);
-        $sections = get_all_sections($this->instance->pageid);
+        $section  = get_course_section(0, $this->instance->pageid);
 
-        if(!empty($sections) && isset($sections[0])) {
-            $section = $sections[0];
-        }
-
-        if (!empty($section)) {
-            get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
-        }
+        get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
 
         $groupbuttons = $course->groupmode;
         $groupbuttonslink = (!$course->groupmodeforce);
@@ -97,7 +91,7 @@ class block_site_main_menu extends block_list {
             $this->content->items[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true&amp;sesskey='.$USER->sesskey.'">'.$strcancel.'</a>)';
         }
 
-        if (!empty($section) && !empty($section->sequence)) {
+        if (!empty($section->sequence)) {
             $sectionmods = explode(',', $section->sequence);
             foreach ($sectionmods as $modnumber) {
                 if (empty($mods[$modnumber])) {
