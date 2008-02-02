@@ -5508,6 +5508,7 @@
                             break;
                     }
                 }
+
                 if ($this->level == 5) {
                     switch ($tagName) {
                         case "ID":
@@ -5650,6 +5651,7 @@
                             break;
                     }
                 }
+
                 if ($this->level == 6 && $this->tree[5]!="ROLES_ASSIGNMENTS" && $this->tree[5]!="ROLES_OVERRIDES") {
                     switch ($tagName) {
                         case "ROLE":
@@ -5662,56 +5664,103 @@
                             $this->info->tempuser->user_preferences[$this->info->tempuserpreference->name] = $this->info->tempuserpreference;
                             unset($this->info->tempuserpreference);
                             break;
-                    }
-                }
-
-                if ($this->level == 7) {
-                    switch ($tagName) {
-                        case "TYPE":
-                            $this->info->temprole->type = $this->getContents();
+                        case "USER_CUSTOM_PROFILE_FIELD":
+                            //We've finalized a user_custom_profile_field, get it
+                            $this->info->tempuser->user_custom_profile_fields[] = $this->info->tempusercustomprofilefield;
+                            unset($this->info->tempusercustomprofilefield);
                             break;
-                        case "AUTHORITY":
-                            $this->info->temprole->authority = $this->getContents();
-                            break;
-                        case "TEA_ROLE":
-                            $this->info->temprole->tea_role = $this->getContents();
-                            break;
-                        case "EDITALL":
-                            $this->info->temprole->editall = $this->getContents();
-                            break;
-                        case "TIMESTART":
-                            $this->info->temprole->timestart = $this->getContents();
-                            break;
-                        case "TIMEEND":
-                            $this->info->temprole->timeend = $this->getContents();
-                            break;
-                        case "TIMEMODIFIED":
-                            $this->info->temprole->timemodified = $this->getContents();
-                            break;
-                        case "TIMESTART":
-                            $this->info->temprole->timestart = $this->getContents();
-                            break;
-                        case "TIMEEND":
-                            $this->info->temprole->timeend = $this->getContents();
-                            break;
-                        case "TIME":
-                            $this->info->temprole->time = $this->getContents();
-                            break;
-                        case "TIMEACCESS":
-                            $this->info->temprole->timeaccess = $this->getContents();
-                            break;
-                        case "ENROL":
-                            $this->info->temprole->enrol = $this->getContents();
-                            break;
-                        case "NAME":
-                            $this->info->tempuserpreference->name = $this->getContents();
-                            break;
-                        case "VALUE":
-                            $this->info->tempuserpreference->value = $this->getContents();
+                        case "USER_TAG":
+                            //We've finalized a user_tag, get it
+                            $this->info->tempuser->user_tags[] = $this->info->tempusertag;
+                            unset($this->info->tempusertag);
                             break;
                         default:
                             break;
+                    }
+                }
 
+                if ($this->level == 7 && $this->tree[5]!="ROLES_ASSIGNMENTS" && $this->tree[5]!="ROLES_OVERRIDES") {
+                /// If we are reading roles
+                    if($this->tree[6] == 'ROLE') {
+                        switch ($tagName) {
+                            case "TYPE":
+                                $this->info->temprole->type = $this->getContents();
+                                break;
+                            case "AUTHORITY":
+                                $this->info->temprole->authority = $this->getContents();
+                                break;
+                            case "TEA_ROLE":
+                                $this->info->temprole->tea_role = $this->getContents();
+                                break;
+                            case "EDITALL":
+                                $this->info->temprole->editall = $this->getContents();
+                                break;
+                            case "TIMESTART":
+                                $this->info->temprole->timestart = $this->getContents();
+                                break;
+                            case "TIMEEND":
+                                $this->info->temprole->timeend = $this->getContents();
+                                break;
+                            case "TIMEMODIFIED":
+                                $this->info->temprole->timemodified = $this->getContents();
+                                break;
+                            case "TIMESTART":
+                                $this->info->temprole->timestart = $this->getContents();
+                                break;
+                            case "TIMEEND":
+                                $this->info->temprole->timeend = $this->getContents();
+                                break;
+                            case "TIME":
+                                $this->info->temprole->time = $this->getContents();
+                                break;
+                            case "TIMEACCESS":
+                                $this->info->temprole->timeaccess = $this->getContents();
+                                break;
+                            case "ENROL":
+                                $this->info->temprole->enrol = $this->getContents();
+                                break;
+                            default:
+                                break;
+                        }
+                /// If we are reading user_preferences
+                    } else if ($this->tree[6] == 'USER_PREFERENCE') {
+                        switch ($tagName) {
+                            case "NAME":
+                                $this->info->tempuserpreference->name = $this->getContents();
+                                break;
+                            case "VALUE":
+                                $this->info->tempuserpreference->value = $this->getContents();
+                                break;
+                            default:
+                                break;
+                        }
+                /// If we are reading user_custom_profile_fields
+                    } else if ($this->tree[6] == 'USER_CUSTOM_PROFILE_FIELD') {
+                        switch ($tagName) {
+                            case "FIELD_NAME":
+                                $this->info->tempusercustomprofilefield->field_name = $this->getContents();
+                                break;
+                            case "FIELD_TYPE":
+                                $this->info->tempusercustomprofilefield->field_type = $this->getContents();
+                                break;
+                            case "FIELD_DATA":
+                                $this->info->tempusercustomprofilefield->field_data = $this->getContents();
+                                break;
+                            default:
+                                break;
+                        }
+                /// If we are reading user_tags
+                    } else if ($this->tree[6] == 'USER_TAG') {
+                        switch ($tagName) {
+                            case "NAME":
+                                $this->info->tempusertag->name = $this->getContents();
+                                break;
+                            case "RAWNAME":
+                                $this->info->tempusertag->rawname = $this->getContents();
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
 
