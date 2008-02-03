@@ -1117,6 +1117,8 @@ body#mod-glossary-view div.glossarycontrol {
   white-space: nowrap;
   margin: 5px 0;
 }
+table.glossarypost div.concept h3 {  display: inline;}
+table.glossarypost.continuous div.concept {  display: inline;} 
 div.mwiki div.tabtree {
   margin-top: 10px;
 }
