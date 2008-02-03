@@ -1432,9 +1432,9 @@
                         if ($data) {
                             //Now get completed xmlized object
                             $info = $data->info;
-                            traverse_xmlize($info);                            //Debug
-                            print_object ($GLOBALS['traverse_array']);         //Debug
-                            $GLOBALS['traverse_array']="";                     //Debug
+                            //traverse_xmlize($info);                            //Debug
+                            //print_object ($GLOBALS['traverse_array']);         //Debug
+                            //$GLOBALS['traverse_array']="";                     //Debug
 
                             //Get the courseid and, if belonging to course, remap it
                             $dbrec->courseid = backup_todb($info['GRADE_OUTCOME']['#']['COURSEID']['0']['#']);
