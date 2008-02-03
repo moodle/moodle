@@ -1639,8 +1639,9 @@
                 fwrite ($bf,full_tag("SHORTNAME",5,false,$grade_outcome->shortname));
                 fwrite ($bf,full_tag("FULLNAME",5,false,$grade_outcome->fullname));
                 fwrite ($bf,full_tag("SCALEID",5,false,$grade_outcome->scaleid));
+                fwrite ($bf,full_tag("DESCRIPTION",5,false,$grade_outcome->description));
                 fwrite ($bf,full_tag("TIMECREATED",5,false,$grade_outcome->timecreated));
-                fwrite ($bf,full_tag("TIMEMODIFIED",5,false,$grade_outcome->timemodified));               
+                fwrite ($bf,full_tag("TIMEMODIFIED",5,false,$grade_outcome->timemodified));
                 fwrite ($bf,full_tag("USERMODIFIED",5,false,$grade_outcome->usermodified));
 
                 //End grade_outcome
