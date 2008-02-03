@@ -1463,7 +1463,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         $time = time() - $CFG->cachetext;
         $md5key = md5($text.'-'.(int)$courseid.'-'.current_language().'-'.(int)$format.(int)$options->trusttext.(int)$options->noclean.(int)$options->smiley.(int)$options->filter.(int)$options->para.(int)$options->newlines);
 
-        if (FULLME == 'cron') {
+        if (defined('FULLME') and FULLME == 'cron') {
             if (isset($croncache[$md5key])) {
                 return $croncache[$md5key];
             }
@@ -1471,7 +1471,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
         if ($oldcacheitem = get_record_sql('SELECT * FROM '.$CFG->prefix.'cache_text WHERE md5key = \''.$md5key.'\'', true)) {
             if ($oldcacheitem->timemodified >= $time) {
-                if (FULLME == 'cron') {
+                if (defined('FULLME') and FULLME == 'cron') {
                     if (count($croncache) > 150) {
                         array_shift($croncache);
                     }
@@ -1557,7 +1557,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     }
 
     if (empty($options->nocache) and !empty($CFG->cachetext) and $CFG->currenttextiscacheable) {
-        if (FULLME == 'cron') {
+        if (defined('FULLME') and FULLME == 'cron') {
             // special static cron cache - no need to store it in db if its not already there
             if (count($croncache) > 150) {
                 array_shift($croncache);
