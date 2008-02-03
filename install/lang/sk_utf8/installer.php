@@ -188,6 +188,7 @@ $string['globalsquoteshelp'] = '<p>Kombinácia vypnutých Magic Quotes GPC a zap
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
 </p>';
+$string['globalswarning'] = '<p><strong>Bezpečnostné upozornenie</strong>: pre správne fungovanie Moodle je nutné upraviť nastavenie PHP <br />na vašom serveri.<p/><p><em>Musíte</em> nastaviť <code>register_globals=off</code>. <p>Nastavenie skontrolujte v súbore <code>php.ini</code>, v konfiguračnom súbore Apache/IIS, alebo v súbore <code>.htaccess</code>.</p>';
 $string['help'] = 'Pomoc';
 $string['iconvrecommended'] = 'Inštalácia voliteľnej knižnice ICONV je vysoko doporučovaná, pretože zvyšuje výkon stránok, najmä ak používate mäkčeňové jazyky - napr. slovenčinu.';
 $string['info'] = 'Informácie';
