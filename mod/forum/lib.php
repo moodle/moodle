@@ -288,7 +288,7 @@ function forum_cron() {
 
             // caching subscribed users of each forum
             if (!isset($subscribedusers[$forumid])) {
-                if ($subusers = forum_subscribed_users($courses[$courseid], $forums[$forumid], 0, true)) {
+                if ($subusers = forum_subscribed_users($courses[$courseid], $forums[$forumid], 0, false)) {
                     foreach ($subusers as $postuser) {
                         // do not try to mail users with stopped email
                         if ($postuser->emailstop) {
@@ -296,10 +296,11 @@ function forum_cron() {
                             continue;
                         }
                         // this user is subscribed to this forum
-                        $subscribedusers[$forumid][] = $postuser->id;
+                        $subscribedusers[$forumid][$postuser->id] = $postuser->id;
                         // this user is a user we have to process later
                         $users[$postuser->id] = $postuser;
                     }
+                    unset($subusers); // release memory
                 }
             }
 
@@ -327,14 +328,6 @@ function forum_cron() {
 
             foreach ($posts as $pid => $post) {
 
-                // Get info about the sending user
-                if (array_key_exists($post->userid, $users)) { // we might know him/her already
-                    $userfrom = $users[$post->userid];
-                } else if (!$userfrom = get_record('user', 'id', $post->userid)) {
-                    mtrace('Could not find user '.$post->userid);
-                    continue;
-                }
-
                 // Set up the environment for the post, discussion, forum, course
                 $discussion = $discussions[$post->discussion];
                 $forum      = $forums[$discussion->forum];
@@ -342,8 +335,18 @@ function forum_cron() {
                 $cm         = $coursemodules[$forum->id];
 
                 // Do some checks  to see if we can bail out now
-                if (empty($subscribedusers[$forum->id]) || !in_array($userto->id, $subscribedusers[$forum->id])) {
+                if (!isset($subscribedusers[$forum->id][$userto->id])) {
                     continue; // user does not subscribe to this forum
+                }
+
+                // Get info about the sending user
+                if (array_key_exists($post->userid, $users)) { // we might know him/her already
+                    $userfrom = $users[$post->userid];
+                } else if ($userfrom = get_record('user', 'id', $post->userid)) {
+                    $users[$userfrom->id] = $userfrom; // fetch only once, we can add it to user list, it will be skipped anyway
+                } else {
+                    mtrace('Could not find user '.$post->userid);
+                    continue;
                 }
 
                 // setup global $COURSE properly - needed for roles and languages
@@ -2062,7 +2065,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output = '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
 
     $output .= '<tr class="header"><td width="35" valign="top" class="picture left">';
-    $output .= print_user_picture($user->id, $course->id, $user->picture, false, true);
+    $output .= print_user_picture($user, $course->id, $user->picture, false, true);
     $output .= '</td>';
 
     if ($post->parent) {
