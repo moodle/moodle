@@ -361,6 +361,7 @@ body#admin-roles-manage td.generalboxcontent table td {
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
+body#admin-roles-override td.capcurrent {  background-color:#FFFFFF;  border: 1px solid #cecece;}
 div.breadcrumb span.sep {
   font-family: verdana, arial, helvetica, sans-serif;
   color: #449900;
