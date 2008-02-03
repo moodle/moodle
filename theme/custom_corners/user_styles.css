@@ -429,6 +429,31 @@ body#admin-roles-manage td.generalboxcontent table td {
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
+body#admin-roles-override td.cell.c1 {  padding-top: 0.5em;}
+body#admin-roles-assign td.cell.c3 {  padding-top: 0.5em;}
+body#admin-roles-assign td.cell.c1 {  padding-top: 0.5em;}
+body#admin-roles-override td.capcurrent {
+  background-color: #eeeeee;
+  border: 1px solid #cccccc;
+}
+body#admin-roles-manage td.capdefault {
+  background-color: #dddddd;
+  border: 1px solid #cecece;
+}
+body#admin-roles-manage tr.rolecap {
+  border-style: none;
+  border-bottom: 1px solid #cecece;
+}
+body#admin-roles-override tr.rolecap {
+  border-style: none;
+  border-bottom: 1px solid #cecece;
+}
+body#admin-roles-manage td.rolecap span.cap-desc span.cap-name {
+  color: #888;
+}
+body#admin-roles-override td.rolecap span.cap-desc span.cap-name {
+  color: #888;
+}
 div.breadcrumb span.sep {
   font-family: arial, sans-serif;
   color: #0066FF;
@@ -1296,35 +1321,4 @@ body.grade-report-grader table#user-grades td.cat {
 }
 body.grade-report-grader table#user-grades td.course {
   font-weight: bold;
-}
-body#admin-roles-override td.cell.c1 {
-  padding-top: 0.5em;
-}
-body#admin-roles-assign td.cell.c3 {
-  padding-top: 0.5em;
-}
-body#admin-roles-assign td.cell.c1 {
-  padding-top: 0.5em;
-}
-
-#admin-roles-override .capcurrent {
-  background-color:#eeeeee;
-  border: 1px solid #cccccc;
-}
-
-#admin-roles-manage .capdefault {
-  background-color:#dddddd;
-  border: 1px solid #cecece;
-}
-
-#admin-roles-manage .rolecap,
-#admin-roles-override .rolecap {
-  border:none;
-  border-bottom:1px solid;
-  border-bottom-color: #cecece;
-}
-
-#admin-roles-manage .rolecap .cap-desc .cap-name,
-#admin-roles-override .rolecap .cap-desc .cap-name {
-  color: #888;
 }
