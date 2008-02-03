@@ -426,6 +426,12 @@ table.glossarypost {
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
   background-color: #f8f8f8;
 }
+table.glossarypost div.concept h3 {
+  display: inline;
+}
+table.glossarypost.continuous div.concept {
+  display: inline;
+}
 div.entrybox {
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
   background-color: #eee;
