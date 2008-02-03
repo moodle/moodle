@@ -1519,6 +1519,9 @@
                                             $recordset_size);
                 if ($recs) {
                     foreach ($recs as $rec) {
+                        // Initialize the DB object
+                        $dbrec = new object();
+
                         //Get the full record from backup_ids
                         $data = backup_getid($restore->backup_unique_code,'grade_outcomes_courses',$rec->old_id);
                         if ($data) {
@@ -1530,13 +1533,19 @@
 
                             $oldoutcomesid = backup_todb($info['GRADE_OUTCOMES_COURSE']['#']['OUTCOMEID']['0']['#']);
                             $newoutcome = backup_getid($restore->backup_unique_code,"grade_outcomes",$oldoutcomesid);
-                            unset($dbrec);
+
                             $dbrec->courseid = $restore->course_id;
                             $dbrec->outcomeid = $newoutcome->new_id;
-                            insert_record('grade_outcomes_courses', $dbrec);
+
+                            //Only insert the record if it doesn't exist (can exist if restoring to existing course)
+                            if (!record_exists('grade_outcomes_courses', 'courseid', $dbrec->courseid, 'outcomeid', $dbrec->outcomeid)) {
+                                insert_record('grade_outcomes_courses', $dbrec);
+                            }
                         }
+
                         //Increment counters
                         $counter++;
+
                         //Do some output
                         if ($counter % 1 == 0) {
                             if (!defined('RESTORE_SILENTLY')) {
