@@ -1232,8 +1232,8 @@ function get_user_access_sitewide($userid) {
     $accessdata['rdef']   = array();
     $accessdata['loaded'] = array();
 
-    $sitectx = get_field('context', 'id','contextlevel', CONTEXT_SYSTEM);
-    $base = "/$sitectx";
+    $sitectx = get_system_context();
+    $base = '/'.$sitectx->id;
 
     //
     // Role assignments - and any rolecaps directly linked
@@ -5176,15 +5176,9 @@ function build_context_path($force=false, $feedback=false) {
     global $CFG;
     require_once($CFG->libdir.'/ddllib.php');
 
-    // Site
-    $sitectx = get_record('context', 'contextlevel', CONTEXT_SYSTEM);
-    $base = '/' . $sitectx->id;
-
-    if ($force || $sitectx->path !== $base) {
-        set_field('context', 'path',  $base, 'id', $sitectx->id);
-        set_field('context', 'depth', 1,     'id', $sitectx->id);
-        $sitectx = get_record('context', 'contextlevel', CONTEXT_SYSTEM);
-    }
+    // System context
+    $sitectx = get_system_context(!$force);
+    $base    = '/'.$sitectx->id;
 
     // Sitecourse
     $sitecoursectx = get_record('context',
