@@ -144,6 +144,7 @@ $string['gdversionhelp'] = '<p>Na Vašom serveri zrejme nie je nainštalovaná G
 <p>Pod Windows môžete upraviť php.ini a odkomentovať riadok obsahujúci php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Nie bezpečné používanie globálnych premenných';
 $string['globalsquoteserror'] = 'Opravte svoje nastavenia PHP: vypnite register_globals a/alebo zapnite magic_quotes_gpc';
+$string['globalswarning'] = '<p><strong>Bezpečnostné upozornenie</strong>: pre správne fungovanie Moodle je nutné upraviť nastavenie PHP <br />na vašom serveri.<p/><p><em>Musíte</em> nastaviť <code>register_globals=off</code>. <p>Nastavenie skontrolujte v súbore <code>php.ini</code>, v konfiguračnom súbore Apache/IIS, alebo v súbore <code>.htaccess</code>.</p>';
 $string['help'] = 'Pomoc';
 $string['iconvrecommended'] = 'Inštalácia voliteľnej knižnice ICONV je vysoko doporučovaná, pretože zvyšuje výkon stránok, najmä ak používate mäkčeňové jazyky - napr. slovenčinu.';
 $string['info'] = 'Informácie';
