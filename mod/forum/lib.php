@@ -292,7 +292,9 @@ function forum_cron() {
                     foreach ($subusers as $postuser) {
                         // do not try to mail users with stopped email
                         if ($postuser->emailstop) {
-                            add_to_log(SITEID, 'forum', 'mail blocked', '', '', 0, $postuser->id);
+                            if (!empty($CFG->forum_logblocked)) {
+                                add_to_log(SITEID, 'forum', 'mail blocked', '', '', 0, $postuser->id);
+                            }
                             continue;
                         }
                         // this user is subscribed to this forum
@@ -500,7 +502,9 @@ function forum_cron() {
                 }
                 $postuser = $users[$digestpost->userid];
                 if ($postuser->emailstop) {
-                    add_to_log(SITEID, 'forum', 'mail blocked', '', '', 0, $postuser->id);
+                    if (!empty($CFG->forum_logblocked)) {
+                        add_to_log(SITEID, 'forum', 'mail blocked', '', '', 0, $postuser->id);
+                    }
                     continue;
                 }
 
