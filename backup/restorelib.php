@@ -2183,6 +2183,7 @@
     function restore_create_users($restore,$xml_file) {
 
         global $CFG, $db;
+        require_once ($CFG->dirroot.'/tag/lib.php');
 
         $status = true;
         //Check it exists
@@ -2195,15 +2196,17 @@
             //in backup_ids->info will be the real info (serialized)
             $info = restore_read_xml_users($restore,$xml_file);
         }
-        
+
         //Now, get evey user_id from $info and user data from $backup_ids
-        //and create the necessary records (users, user_students, user_teachers
-        //user_course_creators and user_admins
+        //and create the necessary db structures
+
         if (!empty($info->users)) {
-            // Grab mnethosts keyed by wwwroot, to map to id
+
+        /// Grab mnethosts keyed by wwwroot, to map to id
             $mnethosts = get_records('mnet_host', '', '',
                                      'wwwroot', 'wwwroot, id');
 
+        /// Get languages for quick search later
             $languages = get_list_of_languages();
 
         /// Iterate over all users loaded from xml
@@ -2225,13 +2228,13 @@
                     $user->lang = 'mi_nt';
                 }
 
-                //Country list updates - MDL-13060 
+                //Country list updates - MDL-13060
                 //Any user whose country code has been deleted or modified needs to be assigned a valid one.
                 $country_update_map = array(
-                    'ZR' => 'CD', 
+                    'ZR' => 'CD',
                     'TP' => 'TL',
-                    'FX' => 'FR', 
-                    'KO' => 'RS', 
+                    'FX' => 'FR',
+                    'KO' => 'RS',
                     'CS' => 'RS',
                     'WA' => 'GB');
                 if (array_key_exists($user->country, $country_update_map)) {
@@ -2273,7 +2276,7 @@
                 }
                 unset($user->mnethosturl);
 
-                //To store new ids created
+                //To store user->id along all the iteration
                 $newid=null;
                 //check if it exists (by username) and get its id
                 $user_exists = true;
@@ -2284,9 +2287,12 @@
                 } else {
                     $newid = $user_data->id;
                 }
-                //Flags to see if we have to create the user, roles and preferences
+
+                //Flags to see what parts are we going to restore
                 $create_user = true;
                 $create_roles = true;
+                $create_custom_profile_fields = true;
+                $create_tags = true;
                 $create_preferences = true;
 
                 //If we are restoring course users and it isn't a course user
@@ -2295,6 +2301,8 @@
                     $status = backup_putid($restore->backup_unique_code,"user",$userid,null,'notincourse');
                     $create_user = false;
                     $create_roles = false;
+                    $create_custom_profile_fields = false;
+                    $create_tags = false;
                     $create_preferences = false;
                 }
 
@@ -2302,6 +2310,8 @@
                     //If user exists mark its newid in backup_ids (the same than old)
                     $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,'exists');
                     $create_user = false;
+                    $create_custom_profile_fields = false;
+                    $create_tags = false;
                 }
 
                 //Here, if create_user, do it
@@ -2351,6 +2361,9 @@
                     $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"new");
                 }
 
+                ///TODO: This seccion is to support pre 1.7 course backups, using old roles
+                ///      teacher, coursecreator, student.... providing a basic mapping to new ones.
+                ///      Someday we'll drop support for them and this section will be safely deleted (2.0?)
                 //Here, if create_roles, do it as necessary
                 if ($create_roles) {
                     //Get the newid and current info from backup_ids
@@ -2464,6 +2477,37 @@
                             $currinfo = $currinfo."user,";
                             $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
                         }
+                    }
+                }
+
+            /// Here, if create_custom_profile_fields, do it as necessary
+                if ($create_custom_profile_fields) {
+                    if (isset($user->user_custom_profile_fields)) {
+                        foreach($user->user_custom_profile_fields as $udata) {
+                        /// If the profile field has data and the profile shortname-datatype is defined in server
+                            if ($udata->field_data) {
+                                if ($field = get_record('user_info_field', 'shortname', $udata->field_name, 'datatype', $udata->field_type)) {
+                                /// Insert the user_custom_profile_field
+                                    $rec = new object();
+                                    $rec->userid = $newid;
+                                    $rec->fieldid = $field->id;
+                                    $rec->data    = $udata->field_data;
+                                    insert_record('user_info_data', $rec);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            /// Here, if create_tags, do it as necessary
+                if ($create_tags) {
+                /// if tags are enabled and there are user tags
+                    if (!empty($CFG->usetags) && isset($user->user_tags)) {
+                        $tags = array();
+                        foreach($user->user_tags as $user_tag) {
+                            $tags[] = $user_tag->rawname;
+                        }
+                        update_item_tags('user', $newid, implode(',', $tags));
                     }
                 }
 
