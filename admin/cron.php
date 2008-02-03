@@ -101,7 +101,7 @@
 
     mtrace("Starting activity modules");
     get_mailer('buffer');
-    if ($mods = get_records_select("modules", "cron > 0 AND (($timenow - lastcron) > cron)")) {
+    if ($mods = get_records_select("modules", "cron > 0 AND (($timenow - lastcron) > cron) AND visible = 1 ")) {
         foreach ($mods as $mod) {
             $libfile = "$CFG->dirroot/mod/$mod->name/lib.php";
             if (file_exists($libfile)) {
@@ -133,7 +133,7 @@
     mtrace("Finished activity modules");
 
     mtrace("Starting blocks");
-    if ($blocks = get_records_select("block", "cron > 0 AND (($timenow - lastcron) > cron)")) {
+    if ($blocks = get_records_select("block", "cron > 0 AND (($timenow - lastcron) > cron) AND visible = 1")) {
         // we will need the base class.
         require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
         foreach ($blocks as $block) {
