@@ -4,4 +4,29 @@
 
 <p>The Moodle implementation does not use JavaScript as describd in Roger Johansson's documentation. Moodle adds all neccessary divs to the pages when the option "$THEME->customcorners = true;" is set in config.php.</p>
 
+<h4>
+    Some basic information:
+</h4>
+
+<p>
+    Custom_corners uses the Chameleon engine. 
+    You must <strong>not</strong> write hooks as comma separated lists of elements like 
+<pre>
+td#middle-column div.bt, 
+div#middle-column div.bt {
+    ...
+}
+</pre>
+    in Chameleon enhanced themes because the Chameleon engine can't handle these comma lists. 
+    Please write two seperate statements instead.
+<pre>
+td#middle-column div.bt {
+    ...
+}
+div#middle-column div.bt {
+    ...
+}
+</pre>
+</p>
+
 <p>A Moodle Theme from <strong>Urs Hunkler, <a href="http://www.unodo.de" target="_blank">unodo</a></strong>.</p>
