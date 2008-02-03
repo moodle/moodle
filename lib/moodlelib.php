@@ -1473,8 +1473,12 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
     // Also, the array is sorted in descending timestamp order!
 
     // Get DB data
-    $presetrecords = get_records('timezone', 'name', $usertz, 'year DESC', 'year, gmtoff, dstoff, dst_month, dst_startday, dst_weekday, dst_skipweeks, dst_time, std_month, std_startday, std_weekday, std_skipweeks, std_time');
-    if(empty($presetrecords)) {
+
+    static $presets_cache = array();
+    if (!isset($presets_cache[$usertz])) {
+        $presets_cache[$usertz] = get_records('timezone', 'name', $usertz, 'year DESC', 'year, gmtoff, dstoff, dst_month, dst_startday, dst_weekday, dst_skipweeks, dst_time, std_month, std_startday, std_weekday, std_skipweeks, std_time');
+    }
+    if(empty($presets_cache[$usertz])) {
         return false;
     }
 
@@ -1485,7 +1489,7 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
     // Add all required change timestamps
     foreach($yearstoprocess as $y) {
         // Find the record which is in effect for the year $y
-        foreach($presetrecords as $year => $preset) {
+        foreach($presets_cache[$usertz] as $year => $preset) {
             if($year <= $y) {
                 break;
             }
