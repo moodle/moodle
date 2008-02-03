@@ -1424,47 +1424,58 @@
                                             $recordset_size);
                 if ($recs) {
                     foreach ($recs as $rec) {
+                        // Initialize the DB object
+                        $dbrec = new object();
+
                         //Get the full record from backup_ids
                         $data = backup_getid($restore->backup_unique_code,'grade_outcomes',$rec->old_id);
                         if ($data) {
                             //Now get completed xmlized object
                             $info = $data->info;
-                            //traverse_xmlize($info);                            //Debug
-                            //print_object ($GLOBALS['traverse_array']);         //Debug
-                            //$GLOBALS['traverse_array']="";                     //Debug
-                            //Now build the GRADE_PREFERENCES record structure
-                            if ($info['GRADE_OUTCOME']['#']['COURSEID']['0']['#']) {
-                                $dbrec->courseid   = $restore->course_id;
-                            } else {
-                                $dbrec->courseid   = NULL;
-                            }
-                            $dbrec->shortname =  backup_todb($info['GRADE_OUTCOME']['#']['SHORTNAME']['0']['#']);
-                            $dbrec->fullname =  backup_todb($info['GRADE_OUTCOME']['#']['FULLNAME']['0']['#']);
+                            traverse_xmlize($info);                            //Debug
+                            print_object ($GLOBALS['traverse_array']);         //Debug
+                            $GLOBALS['traverse_array']="";                     //Debug
 
-                            if ($info['GRADE_OUTCOME']['#']['SCALEID']['0']['#']) {
-                                $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($info['GRADE_OUTCOME']['#']['SCALEID']['0']['#']));
+                            //Get the courseid and, if belonging to course, remap it
+                            $dbrec->courseid = backup_todb($info['GRADE_OUTCOME']['#']['COURSEID']['0']['#']);
+                            if ($dbrec->courseid) {
+                                $dbrec->courseid   = $restore->course_id;
+                            }
+
+                            //Get the fields
+                            $dbrec->shortname    = backup_todb($info['GRADE_OUTCOME']['#']['SHORTNAME']['0']['#']);
+                            $dbrec->fullname     = backup_todb($info['GRADE_OUTCOME']['#']['FULLNAME']['0']['#']);
+                            $dbrec->scaleid      = backup_todb($info['GRADE_OUTCOME']['#']['SCALEID']['0']['#']);
+                            $dbrec->description  = backup_todb($info['GRADE_OUTCOME']['#']['DESCRIPTION']['0']['#']);
+                            $dbrec->timecreated  = backup_todb($info['GRADE_OUTCOME']['#']['TIMECREATED']['0']['#']);
+                            $dbrec->timemodified = backup_todb($info['GRADE_OUTCOME']['#']['TIMEMODIFIED']['0']['#']);
+                            $dbrec->usermodified = backup_todb($info['GRADE_OUTCOME']['#']['USERMODIFIED']['0']['#']);
+
+                            //Need to recode the scaleid
+                            if ($scale = backup_getid($restore->backup_unique_code, 'scale', $dbrec->scaleid)) {
                                 $dbrec->scaleid = $scale->new_id;
                             }
-                            
-                            $dbrec->description = backup_todb($info['GRADE_OUTCOME']['#']['DESCRIPTION']['0']['#']);
-                            $dbrec->timecreated = backup_todb($info['GRADE_OUTCOME']['#']['TIMECREATED']['0']['#']);
-                            $dbrec->timemodified = backup_todb($info['GRADE_OUTCOME']['#']['TIMEMODIFIED']['0']['#']);
-                            
-                            $modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_OUTCOME']['#']['USERMODIFIED']['0']['#']));
-                            $dbrec->usermodified = $modifier->new_id;
 
-                            // Structure is equal to db, insert record
-                            // If the shortname doesn't exist
+                            //Need to recode the usermodified
+                            if ($modifier = backup_getid($restore->backup_unique_code, 'user', $dbrec->usermodified)) {
+                                $dbrec->usermodified = $modifier->new_id;
+                            }
 
-                            if (empty($info['GRADE_OUTCOME']['#']['COURSEID']['0']['#'])) {
-                                $prerec = get_record_sql("SELECT * FROM {$CFG->prefix}grade_outcomes
-                                                                   WHERE courseid IS NULL
-                                                                   AND shortname = '$dbrec->shortname'");
+                            // Structure is equal to db, insert outcome record if it doesn't exis (by course & shortname)
+                            if (!$dbrec->courseid) {
+                                $prerec = get_record_sql("SELECT *
+                                                            FROM {$CFG->prefix}grade_outcomes
+                                                           WHERE courseid IS NULL
+                                                             AND shortname = '$dbrec->shortname'");
                             } else {
-                                $prerec = get_record('grade_outcomes','courseid',$restore->course_id,'shortname',$dbrec->shortname);
+                                $prerec = get_record('grade_outcomes', 'courseid', $restore->course_id, 'shortname', $dbrec->shortname);
                             }
 
                             if (!$prerec) {
+                                //Never create standard (global) outcomes from restore, always enforce them to be custom (course)
+                                if (!$dbrec->courseid) {
+                                    $dbrec->courseid = $restore->course_id;
+                                }
                                 $newid = insert_record('grade_outcomes',$dbrec);
                             } else {
                                 $newid = $prerec->id;
@@ -1474,8 +1485,10 @@
                                 backup_putid($restore->backup_unique_code,"grade_outcomes", $rec->old_id, $newid);
                             }
                         }
+
                         //Increment counters
                         $counter++;
+
                         //Do some output
                         if ($counter % 1 == 0) {
                             if (!defined('RESTORE_SILENTLY')) {
