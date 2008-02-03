@@ -2244,6 +2244,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
             $languages = get_list_of_languages();
 
+        /// Iterate over all users loaded from xml
+            $counter = 0;
             foreach ($info->users as $userid) {
                 $rec = backup_getid($restore->backup_unique_code,"user",$userid);
                 $user = $rec->info;
@@ -2523,7 +2525,18 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         }
                     }
                 }
-            }
+                //Do some output
+                $counter++;
+                if ($counter % 10 == 0) {
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if ($counter % 200 == 0) {
+                            echo "<br />";
+                        }
+                    }
+                    backup_flush(300);
+                }
+            } /// End of loop over all the users loaded from xml
         }
 
         return $status;
