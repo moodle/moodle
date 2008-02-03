@@ -6813,6 +6813,14 @@ function course_scale_used($courseid, $scaleid) {
 
         // check if any course grade item makes use of the scale
         $return += count_records('grade_items', 'courseid', $courseid, 'scaleid', $scaleid);
+
+        // check if any outcome in the course makes use of the scale
+        $return += count_records_sql("SELECT COUNT(*)
+                                      FROM {$CFG->prefix}grade_outcomes_courses goc,
+                                           {$CFG->prefix}grade_outcomes go
+                                      WHERE go.id = goc.outcomeid
+                                        AND go.scaleid = $scaleid
+                                        AND goc.courseid = $courseid");
     }
     return $return;
 }
