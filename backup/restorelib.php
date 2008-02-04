@@ -2513,17 +2513,10 @@
 
                 //Here, if create_preferences, do it as necessary
                 if ($create_preferences) {
-                    //echo "Checking for preferences of user ".$user->username."<br />";         //Debug
-                    //Get user new id from backup_ids
-                    $data = backup_getid($restore->backup_unique_code,"user",$userid);
-                    $newid = $data->new_id;
                     if (isset($user->user_preferences)) {
-                        //echo "Preferences exist in backup file<br />";                         //Debug
                         foreach($user->user_preferences as $user_preference) {
-                            //echo $user_preference->name." = ".$user_preference->value."<br />";    //Debug
                             //We check if that user_preference exists in DB
                             if (!record_exists("user_preferences","userid",$newid,"name",$user_preference->name)) {
-                                //echo "Creating it<br />";                                              //Debug
                                 //Prepare the record and insert it
                                 $user_preference->userid = $newid;
                                 $status = insert_record("user_preferences",$user_preference);
@@ -2531,6 +2524,7 @@
                         }
                     }
                 }
+
                 //Do some output
                 $counter++;
                 if ($counter % 10 == 0) {
