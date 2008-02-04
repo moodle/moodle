@@ -178,6 +178,15 @@ ul.section li {
 div.sideblock div.content * {
   text-align: left;
 }
+div.sideblock div.content input[type="submit"] {
+  width: auto;
+}
+button#searchform_button {
+  width: auto;
+}
+div.sideblock div.content div.btn input {
+  width: auto;
+}
 div.sideblock div.calendar-controls a.next {
   text-align: right;
 }
