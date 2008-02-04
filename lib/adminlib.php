@@ -4582,6 +4582,8 @@ function print_plugin_tables() {
     $strabouttobeinstalled = '(' . get_string('abouttobeinstalled') . ')';
 
     $html = '';
+    
+    $html .= '<table class="generaltable plugincheckwrapper" cellspacing="4" cellpadding="1"><tr valign="top">';
 
     foreach ($plugins_ondisk as $cat => $list_ondisk) {
         $strcaption = get_string($cat);
@@ -4591,7 +4593,7 @@ function print_plugin_tables() {
             $strcaption = get_string('managefilters');
         }
 
-        $html .= '<table class="plugincompattable generaltable boxaligncenter" cellspacing="1" cellpadding="5" '
+        $html .= '<td><table class="plugincompattable generaltable boxaligncenter" cellspacing="1" cellpadding="5" '
               . 'id="' . $cat . 'compattable" summary="compatibility table"><caption>' . $strcaption . '</caption>' . "\n";
         $html .= '<tr class="r0"><th class="header c0">' . get_string('directory') . "</th>\n"
                . '<th class="header c1">' . get_string('name') . "</th>\n"
@@ -4655,8 +4657,10 @@ function print_plugin_tables() {
             }
         }
 
-        $html .= '</table><br />';
+        $html .= '</table></td>';
     }
+    
+    $html .= '</tr></table><br />';
     
     echo $html;
 }

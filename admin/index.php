@@ -318,6 +318,9 @@
                 print_box_end();
                 print_plugin_tables();
                 echo "<br />";
+                echo '<div class="continuebutton">';
+                print_single_button('index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1), get_string('reload'), 'get');
+                echo '</div><br />';
                 echo '<form action="index.php"><div>';
                 echo '<input type="hidden" name="confirmupgrade" value="1" />';
                 echo '<input type="hidden" name="confirmrelease" value="1" />';

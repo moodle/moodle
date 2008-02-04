@@ -1007,6 +1007,13 @@ body#admin-modules table.generaltable td.c0
   font-size: 130%;
 }
 
+.plugincheckwrapper td{
+  border: 1px #bbbbbb solid;
+}
+
+.plugincheckwrapper{
+    width: 100%;
+}
 /* Admin settings */
 #adminsettings div.form-item {
   clear: both;

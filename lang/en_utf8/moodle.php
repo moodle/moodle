@@ -1220,6 +1220,7 @@ $string['registrationno'] = 'No, I do not want to receive email';
 $string['registrationsend'] = 'Send registration information to moodle.org';
 $string['registrationyes'] = 'Yes, please notify me about important issues';
 $string['reject'] = 'Reject';
+$string['reload'] = 'Reload';
 $string['remotemaharauser'] = 'Remote Mahara User';
 $string['remove'] = 'Remove';
 $string['removeadmin'] = 'Remove admin';

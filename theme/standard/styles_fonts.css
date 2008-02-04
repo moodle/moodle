@@ -276,6 +276,10 @@ body#admin-index .copyright {
   font-size: 0.8em;
 }
 
+.plugincompattable {
+    font-size: 70%;
+}
+
 .plugincompattable td.standard {
     font-weight: normal;
 }
@@ -290,6 +294,14 @@ body#admin-index .copyright {
 
 .plugincompattable td.warning {
     font-style: normal;
+}
+
+.plugincompattable { 
+    text-align: left;
+}
+
+.plugincheckwrapper { 
+    text-align: center;
 }
 /***
  *** Blocks
