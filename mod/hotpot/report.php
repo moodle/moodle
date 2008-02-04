@@ -429,7 +429,11 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
 
     $button = update_module_button($cm->id, $course->id, $strmodulename);
     print_header($title, $heading, $navigation, "", "", true, $button, navmenu($course, $cm));
-
+    $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
+    if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
+        echo '<a class="allcoursegrades" href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">' 
+            . get_string('seeallcoursegrades', 'grades') . '</a>';
+    }
     print_heading($hotpot->name);
 }
 function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {

@@ -402,6 +402,7 @@ $string['savepreferences'] = 'Save preferences';
 $string['scaledpct'] = 'Scaled %%';
 $string['scaleidhelp'] = 'The scale to which this $a is linked.';
 $string['scalestandardhelp'] = 'A standard scale is one that is available site-wide, for all courses.';
+$string['seeallcoursegrades'] = 'See all course grades';
 $string['selectdestination'] = 'Select destination of $a';
 $string['selectalloroneuser'] = 'Select all or one user';
 $string['septab'] = 'Tab';
