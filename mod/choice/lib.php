@@ -732,4 +732,36 @@ function choice_reset_userdata($data) {
     return $status;
 }
 
+function choice_print_overview($courses, &$htmlarray) {
+    global $USER, $CFG;
+
+    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
+        return array();
+    }
+    if (!$choices = get_all_instances_in_courses('choice',$courses)) {
+        return;
+    }
+
+    foreach ($choices as $choice) {
+        if ($choice->timeclose != 0) {  // if this choice is scheduled
+            $str = '<div class="choice overview"><div class="name">'. 
+                   get_string('modulename', 'choice').': <a '.($choice->visible?'':' class="dimmed"') .
+                   ' href="'.$CFG->wwwroot.'/mod/choice/view.php?id='.$choice->coursemodule.'">'.
+                   $choice->name.'</a></div><div class="info">'.get_string('choiceclose', 'choice').
+                   ': '.userdate($choice->timeclose).'</div>';
+
+            if (isset($USER->id) && ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $USER->id))) {
+                $str .= '<div class="info">'.get_string('taken', 'choice').'</div></div>';
+            } else {
+                $str .= '<div class="info">'.get_string('notanswered', 'choice').'</div></div>';
+            }
+
+            if (empty($htmlarray[$choice->course]['choice'])) {
+                $htmlarray[$choice->course]['choice'] = $str;
+            } else {
+                $htmlarray[$choice->course]['choice'] .= $str;
+            }
+        }
+    }
+}
 ?>
