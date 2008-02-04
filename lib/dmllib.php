@@ -1661,38 +1661,34 @@ function update_record($table, $dataobject) {
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     // Pull out data matching these fields
-    $ddd = array();
+    $update = array();
     foreach ($columns as $column) {
-        if ($column->name <> 'id' and array_key_exists($column->name, $data)) {
-            $ddd[$column->name] = $data[$column->name];
+        if ($column->name == 'id') {
+            continue;
+        }
+        if (array_key_exists($column->name, $data)) {
+            $key   = $column->name;
+            $value = $data[$key];
+            if (is_null($value)) {
+                $update[] = "$key = NULL"; // previously NULLs were not updated
+            } else if (is_bool($value)) {
+                $value = (int)$value;
+                $update[] = "$key = $value";   // lets keep pg happy, '' is not correct smallint MDL-13038
+            } else {
+                $update[] = "$key = '$value'"; // All incoming data is already quoted
+            }
         }
     }
 
-    // Construct SQL queries
-    $numddd = count($ddd);
-    $count = 0;
-    $update = '';
-
 /// Only if we have fields to be updated (this will prevent both wrong updates +
 /// updates of only LOBs in Oracle
-    if ($numddd) {
-        foreach ($ddd as $key => $value) {
-            $count++;
-            if ($value === NULL) {
-                $update .= $key .' = NULL'; // previously NULLs were not updated
-            } else {
-                $update .= $key .' = \''. $value .'\'';   // All incoming data is already quoted
-            }
-            if ($count < $numddd) {
-                $update .= ', ';
-            }
-        }
-
-        if (!$rs = $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $update .' WHERE id = \''. $dataobject->id .'\'')) {
-            debugging($db->ErrorMsg() .'<br /><br />UPDATE '. $CFG->prefix . $table .' SET '. s($update) .' WHERE id = \''. $dataobject->id .'\'');
+    if ($update) {
+        $query = "UPDATE {$CFG->prefix}{$table} SET ".implode(',', $update)." WHERE id = {$dataobject->id}";
+        if (!$rs = $db->Execute($query)) {
+            debugging($db->ErrorMsg() .'<br /><br />'.s($query));
             if (!empty($CFG->dblogerror)) {
                 $debug=array_shift(debug_backtrace());
-                error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  UPDATE $CFG->prefix$table SET $update WHERE id = '$dataobject->id'");
+                error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $query");
             }
             return false;
         }
