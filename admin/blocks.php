@@ -54,7 +54,7 @@
         if (!$block = blocks_get_record($multiple)) {
             error("Block doesn't exist!");
         }
-        $block->multiple = !$block->multiple;
+        $block->multiple = intval(!$block->multiple);
         update_record('block', $block);
     }
 
