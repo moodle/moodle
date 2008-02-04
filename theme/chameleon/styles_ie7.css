@@ -1,6 +1,14 @@
 /*
  * These styles are ONLY included for IE 7 (via meta.php)
  */
+ 
+input[type="submit"] {
+  padding: 0 2px;
+}
+div.sideblock div.content input[type="submit"] {
+  text-align: center;
+  width: auto;
+}
 .tabrow0 {
   padding-top: 5px;
 }

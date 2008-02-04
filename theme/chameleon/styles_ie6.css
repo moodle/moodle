@@ -4,6 +4,15 @@
 div.breadcrumb span.sep {
   font-family: arial, sans-serif;
 }
+input {
+  padding: expression((this.type=="submit")?'0 4px':this.currentStyle.paddingTop+" "+this.currentStyle.paddingRight+" "+this.currentStyle.paddingBottom+" "+this.currentStyle.paddingLeft);
+}
+div.sideblock div.content input {
+  text-align: expression((this.type=="submit")?'center':this.currentStyle.textAlign);
+}
+div.sideblock div.content div.btn input {
+  width: expression((this.type=="submit")?'auto':this.currentStyle.width);
+}
 .tabtree {
   height: 100%;
 }
