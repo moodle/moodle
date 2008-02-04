@@ -95,7 +95,8 @@ if ($access) {
         echo '<div id="graded_users_selector">';
         print_graded_users_selector($course, 'report/user/index.php?id=' . $course->id, $userid);
         echo '</div>';
-        
+        echo "<p style = 'page-break-after: always;'></p>";
+
         if ($userid === 0) {
             $gui = new graded_users_iterator($course);
             $gui->init();
