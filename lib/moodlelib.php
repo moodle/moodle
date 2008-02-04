@@ -346,14 +346,18 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
  * </code>
  *
  * @uses $CFG
+ * @uses PARAM_RAW
  * @uses PARAM_CLEAN
+ * @uses PARAM_CLEANHTML
  * @uses PARAM_INT
- * @uses PARAM_INTEGER
+ * @uses PARAM_NUMBER
  * @uses PARAM_ALPHA
  * @uses PARAM_ALPHANUM
- * @uses PARAM_NOTAGS
  * @uses PARAM_ALPHAEXT
+ * @uses PARAM_SEQUENCE
  * @uses PARAM_BOOL
+ * @uses PARAM_NOTAGS
+ * @uses PARAM_TEXT
  * @uses PARAM_SAFEDIR
  * @uses PARAM_CLEANFILE
  * @uses PARAM_FILE
@@ -361,7 +365,10 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
  * @uses PARAM_HOST
  * @uses PARAM_URL
  * @uses PARAM_LOCALURL
- * @uses PARAM_CLEANHTML
+ * @uses PARAM_PEM
+ * @uses PARAM_BASE64
+ * @uses PARAM_TAG
+ * @uses PARAM_TAGLIST
  * @uses PARAM_SEQUENCE
  * @param mixed $param the variable we are cleaning
  * @param int $type expected format of param after cleaning.
@@ -556,7 +563,7 @@ function clean_param($param, $type) {
         case PARAM_TAG:
             //first fix whitespace
             $param = preg_replace('/\s+/', ' ', $param);
-            //remove blacklisted ASCII ranges of chars - security FIRST - keep only ascii letters, numnbers and spaces
+            //remove blacklisted ASCII ranges of chars - security FIRST - keep only ascii letters, numbers and spaces
             //the result should be safe to be used directly in html and SQL
             $param = preg_replace("/[\\000-\\x1f\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7f]/", '', $param);
             //now remove some unicode ranges we do not want
