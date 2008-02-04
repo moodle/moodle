@@ -245,7 +245,6 @@ $string['UM'] = 'United States Minor Outlying Islands';
 $string['UY'] = 'Uruguay';
 $string['UZ'] = 'Uzbekistan';
 $string['VU'] = 'Vanuatu';
-$string['VA'] = 'Vatican City State (Holy See)';
 $string['VE'] = 'Venezuela';
 $string['VN'] = 'Viet Nam';
 $string['VG'] = 'Virgin Islands, British';
@@ -253,7 +252,6 @@ $string['VI'] = 'Virgin Islands, U.S.';
 $string['WF'] = 'Wallis And Futuna';
 $string['EH'] = 'Western Sahara';
 $string['YE'] = 'Yemen';
-$string['CD'] = 'Zaire';
 $string['ZM'] = 'Zambia';
 $string['ZW'] = 'Zimbabwe';
 
