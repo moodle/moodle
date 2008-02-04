@@ -1027,6 +1027,12 @@ class assignment_base {
         $navigation = build_navigation($this->strsubmissions, $this->cm);
         print_header_simple(format_string($this->assignment->name,true), "", $navigation,
                 '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
+        
+        $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
+        if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
+            echo '<a class="allcoursegrades" href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">' 
+                . get_string('seeallcoursegrades', 'grades') . '</a>';
+        }
 
         if (!empty($message)) {
             echo $message;   // display messages here if any

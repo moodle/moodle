@@ -108,6 +108,12 @@
     }
 
     lesson_print_header($cm, $course, $lesson, $action);
+    
+    $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
+    if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
+        echo '<a class="allcoursegrades" href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">' 
+            . get_string('seeallcoursegrades', 'grades') . '</a>';
+    }
 
     if ($nothingtodisplay) {
         notify(get_string('nolessonattempts', 'lesson'));

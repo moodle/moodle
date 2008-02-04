@@ -2167,6 +2167,9 @@ body#doc-contents ul {
   padding: 5px;
 }
 
+.allcoursegrades {
+    float: right;
+}
 /* gradebook edit tree */
 
 .grade-edit-tree .gradetreebox {
