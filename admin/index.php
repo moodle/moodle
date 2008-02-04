@@ -301,7 +301,7 @@
                     echo '<input type="hidden" name="confirmupgrade" value="1" />';
                     echo '<input type="hidden" name="confirmrelease" value="1" />';
                     echo '</div>';
-                    echo '<div class="continuebutton"><input name="autopilot" id="autopilot" type="checkbox" value="1" /><label for="autopilot">'.get_string('unattendedoperation', 'admin').'</label>';
+                    echo '<div class="continuebutton">';
                     echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
                     echo '</form>';
                 }
@@ -318,7 +318,14 @@
                 print_box_end();
                 print_plugin_tables();
                 echo "<br />";
-                print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1&amp;confirmplugincheck=1');
+                echo '<form action="index.php"><div>';
+                echo '<input type="hidden" name="confirmupgrade" value="1" />';
+                echo '<input type="hidden" name="confirmrelease" value="1" />';
+                echo '<input type="hidden" name="confirmplugincheck" value="1" />';
+                echo '</div>';
+                echo '<div class="continuebutton"><input name="autopilot" id="autopilot" type="checkbox" value="1" /><label for="autopilot">'.get_string('unattendedoperation', 'admin').'</label>';
+                echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
+                echo '</form>';
                 print_footer('none');
                 die();
     
