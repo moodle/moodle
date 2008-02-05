@@ -2381,7 +2381,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     // relink the descriptions
                     $user->description = stripslashes($user->description);
 
-                    if (!empty($CFG->disableuserimages)) {
+                /// Disable pictures based on global setting or existing empty value (old backups can contain wrong empties)
+                    if (!empty($CFG->disableuserimages) || empty($user->picture)) {
                         $user->picture = 0;
                     }
 
