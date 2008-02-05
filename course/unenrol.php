@@ -37,6 +37,16 @@
 
     if ($userid) {   // Unenrolling someone else
         require_capability('moodle/role:assign', $context, NULL, false);
+
+        $roles = get_user_roles($context, $userid, false);
+
+        // verify user may unassign all roles at course context
+        foreach($roles as $role) {
+            if (!user_can_assign($context, $role->roleid)) {
+                error('Can not unassign this user from role id:'.$role->roleid);
+            }
+        }
+
     } else {         // Unenrol yourself
         require_capability('moodle/role:unassignself', $context, NULL, false);
     }
