@@ -168,9 +168,11 @@ function send_welcome_messages($orderdata)
 }
 
 
-function check_openssl_loaded()
+function check_curl_available()
 {
-    return extension_loaded('openssl');
+    return function_exists('curl_init') &&
+           function_exists('stream_get_wrappers') &&
+           in_array('https', stream_get_wrappers());
 }
 
 

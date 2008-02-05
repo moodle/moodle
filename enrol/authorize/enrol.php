@@ -245,7 +245,7 @@ class enrolment_plugin_authorize
             $a->orderid = $order->id;
             $emailsubject = get_string('adminnewordersubject', 'enrol_authorize', $a);
             $context = get_context_instance(CONTEXT_COURSE, $course->id);
-            if ($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments')) {
+            if (($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments'))) {
                 foreach ($paymentmanagers as $paymentmanager) {
                     email_to_user($paymentmanager, $USER, $emailsubject, $emailmessage);
                 }
@@ -417,8 +417,8 @@ class enrolment_plugin_authorize
         global $CFG;
         $mconfig = get_config('enrol/authorize');
 
-        if (!check_openssl_loaded()) {
-            notify('PHP must be compiled with SSL support (--with-openssl)');
+        if (!check_curl_available()) {
+            notify('PHP must be compiled with cURL+SSL support (--with-curl --with-openssl)');
         }
 
         if (empty($CFG->loginhttps) and substr($CFG->wwwroot, 0, 5) !== 'https') {
@@ -450,7 +450,7 @@ class enrolment_plugin_authorize
             }
         }
 
-        if ($count = count_records('enrol_authorize', 'status', AN_STATUS_AUTH)) {
+        if (($count = count_records('enrol_authorize', 'status', AN_STATUS_AUTH))) {
             $a = new stdClass;
             $a->count = $count;
             $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=".AN_STATUS_AUTH;
@@ -531,7 +531,7 @@ class enrolment_plugin_authorize
         set_config('an_sorttype', $sorttype);
 
         // https and openssl library is required
-        if ((substr($CFG->wwwroot, 0, 5) !== 'https' and empty($CFG->loginhttps)) or !check_openssl_loaded()) {
+        if ((substr($CFG->wwwroot, 0, 5) !== 'https' and empty($CFG->loginhttps)) or !check_curl_available()) {
             return false;
         }
 
@@ -593,13 +593,13 @@ class enrolment_plugin_authorize
 
         if (intval($mconfig->an_dailysettlement) < $settlementtime) {
             set_config('an_dailysettlement', $settlementtime, 'enrol/authorize');
-            mtrace("    daily cron; some cleanups and sending email to admins the count of pending orders expiring", ": ");
+            mtrace("    Daily cron:");
             $this->cron_daily();
-            mtrace("done");
+            mtrace("    Done");
         }
 
-        mtrace("    scheduled capture", ": ");
-        if (empty($CFG->an_review) or (!empty($CFG->an_test)) or (intval($CFG->an_capture_day) < 1) or (!check_openssl_loaded())) {
+        mtrace("    Scheduled capture", ": ");
+        if (empty($CFG->an_review) or (!empty($CFG->an_test)) or (intval($CFG->an_capture_day) < 1) or (!check_curl_available())) {
             mtrace("disabled");
             return; // order review disabled or test mode or manual capture or openssl wasn't loaded.
         }
@@ -710,26 +710,26 @@ class enrolment_plugin_authorize
         $settlementtime = authorize_getsettletime($timenow);
         $timediff30 = $settlementtime - (30 * $oneday);
 
-        // Delete orders that no transaction was made.
         $select = "(status='".AN_STATUS_NONE."') AND (timecreated<'$timediff30')";
-        delete_records_select('enrol_authorize', $select);
+        if (delete_records_select('enrol_authorize', $select)) {
+            mtrace("        orders no transaction made have deleted");
+        }
 
-        // Pending orders are expired with in 30 days.
         $select = "(status='".AN_STATUS_AUTH."') AND (timecreated<'$timediff30')";
-        execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET status='".AN_STATUS_EXPIRE."' WHERE $select", false);
+        if (execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET status='".AN_STATUS_EXPIRE."' WHERE $select", false)) {
+            mtrace("        pending orders to expire have updated");
+        }
 
-        // Delete expired orders 60 days later.
         $timediff60 = $settlementtime - (60 * $oneday);
         $select = "(status='".AN_STATUS_EXPIRE."') AND (timecreated<'$timediff60')";
-        delete_records_select('enrol_authorize', $select);
+        if (delete_records_select('enrol_authorize', $select)) {
+            mtrace("        orders expired older than 60 days have deleted");
+        }
 
-        // XXX TODO SEND EMAIL to 'enrol/authorize:uploadcsv'
-        // get_users_by_capability() does not handling user level resolving
-        // After user resolving, get_admin() to get_users_by_capability()
         $adminuser = get_admin();
         $select = "status IN(".AN_STATUS_UNDERREVIEW.",".AN_STATUS_APPROVEDREVIEW.") AND (timecreated<'$onepass') AND (timecreated>'$timediff60')";
-        $count = count_records_select('enrol_authorize', $select);
-        if ($count) {
+        if (($count = count_records_select('enrol_authorize', $select)) &&
+            ($csvusers = get_users_by_capability(get_context_instance(CONTEXT_SYSTEM), 'enrol/authorize:uploadcsv'))) {
             $a = new stdClass;
             $a->count = $count;
             $a->course = $SITE->shortname;
@@ -738,23 +738,28 @@ class enrolment_plugin_authorize
             $a->count = $count;
             $a->url = $CFG->wwwroot.'/enrol/authorize/uploadcsv.php';
             $message = get_string('pendingecheckemail', 'enrol_authorize', $a);
-            @email_to_user($adminuser, $adminuser, $subject, $message);
+            foreach($csvusers as $csvuser) {
+                @email_to_user($csvuser, $adminuser, $subject, $message);
+            }
+            mtrace("        users who have 'enrol/authorize:uploadcsv' were mailed");
         }
 
-        // Daily warning email for pending orders expiring.
+        mtrace("        early pending order warning email for manual capture", ": ");
         if (empty($CFG->an_emailexpired)) {
-            return; // not enabled
+            mtrace("not enabled");
+            return;
         }
 
-        // Pending orders count will be expired.
+
         $timediffem = $settlementtime - ((30 - intval($CFG->an_emailexpired)) * $oneday);
         $select = "(status='". AN_STATUS_AUTH ."') AND (timecreated<'$timediffem') AND (timecreated>'$timediff30')";
         $count = count_records_select('enrol_authorize', $select);
         if (!$count) {
+            mtrace("no orders prior to $CFG->an_emailexpired days");
             return;
         }
 
-        // Email to admin
+        mtrace("$count orders prior to $CFG->an_emailexpired days");
         $a = new stdClass;
         $a->pending = $count;
         $a->days = $CFG->an_emailexpired;
@@ -769,7 +774,7 @@ class enrolment_plugin_authorize
         $message = get_string('pendingordersemail', 'enrol_authorize', $a);
         email_to_user($adminuser, $adminuser, $subject, $message);
 
-        // Email to teachers
+        // Email to payment managers
         if (empty($CFG->an_emailexpiredteacher)) {
             return; // email feature disabled for teachers.
         }
@@ -789,7 +794,7 @@ class enrolment_plugin_authorize
         foreach($courseinfos as $courseinfo) {
             $lastcourse = $courseinfo->courseid;
             $context = get_context_instance(CONTEXT_COURSE, $lastcourse);
-            if ($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments')) {
+            if (($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments'))) {
                 $a = new stdClass;
                 $a->course = $courseinfo->shortname;
                 $a->pending = $courseinfo->cnt;

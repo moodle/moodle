@@ -59,6 +59,14 @@ function xmldb_enrol_authorize_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2008020500 && is_enabled_enrol('authorize')) {
+        require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
+        if (!check_curl_available()) {
+            notify("You are using the authorize.net enrolment plugin for payment handling but cUrl is not available.
+                    PHP must be compiled with cURL+SSL support (--with-curl --with-openssl)");
+        }
+    }
+
     return $result;
 }
 
