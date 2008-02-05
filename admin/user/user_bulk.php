@@ -42,8 +42,8 @@ if ($data = $user_bulk_form->get_data(false)) {
                     if ($userid == -1) {
                         continue;
                     }
-                    if (!in_array($userid, $SESSION->bulk_users)) {
-                        $SESSION->bulk_users[] = $userid;
+                    if (!isset($SESSION->bulk_users[$userid])) {
+                        $SESSION->bulk_users[$userid] = $userid;
                     }
                 }
             }

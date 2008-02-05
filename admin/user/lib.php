@@ -14,8 +14,8 @@ function add_selection_all($ufiltering) {
 
     if ($rs = get_recordset_select('user', $sqlwhere, 'fullname', 'id,'.sql_fullname().' AS fullname')) {
         while ($user = rs_fetch_next_record($rs)) {
-            if (!in_array($user->id, $SESSION->bulk_users)) {
-                $SESSION->bulk_users[] = $user->id;
+            if (! isset($SESSION->bulk_users[$user->id])) {
+                $SESSION->bulk_users[$user->id] = $user->id;
             }
         }
         rs_close($rs);
@@ -40,7 +40,7 @@ function get_selection_data($ufiltering) {
         if ($scount < MAX_BULK_USERS) {
             $in = implode(',', $SESSION->bulk_users);
         } else {
-            $bulkusers = array_slice($SESSION->bulk_users, 0, MAX_BULK_USERS);
+            $bulkusers = array_slice($SESSION->bulk_users, 0, MAX_BULK_USERS, true);
             $in = implode(',', $bulkusers);
         }
         $userlist['susers'] = get_records_select_menu('user', "id IN ($in)", 'fullname', 'id,'.sql_fullname().' AS fullname');
