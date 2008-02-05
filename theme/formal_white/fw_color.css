@@ -96,7 +96,17 @@ background-color:#E3DFD4;
   color:#C6BDA8; /* highlight missing terms in forum search */
 }
 
+/***
+ *** Roles
+ ***/
 
+.rolecap .inherit.capdefault, .rolecap .allow.capdefault {
+  background-color:#E3DFD4;
+}
+
+#admin-roles-override .capcurrent {
+  background-color:#E3DFD4;
+}
 
 /***
  *** Header
