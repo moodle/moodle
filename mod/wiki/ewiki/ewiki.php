@@ -1779,7 +1779,7 @@ function ewiki_format (
 
    #-- pre-processing plugins (working on wiki source)
    if ($pf_source = $ewiki_plugins["format_source"]) {
-      foreach ($pf_source as $pf) $pf(&$iii[0][0]);
+      foreach ($pf_source as $pf) $pf($iii[0][0]);
    }
 
    #-- simple markup
