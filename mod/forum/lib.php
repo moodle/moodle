@@ -1228,15 +1228,17 @@ function forum_get_user_grades($forum, $userid=0) {
             break;
     }
 
-    $results = get_records_sql($sql);
-    // it could throw off the grading if count and sum returned a rawgrade higher than scale
-    // so to prevent it we review the results and ensure that rawgrade does not exceed the scale, if it does we set rawgrade = scale (i.e. full credit)
-    foreach ($results as $result) {
-        if ($result->rawgrade >$forum->scale) {
-            $result->rawgrade = $forum->scale;
+    if ($results = get_records_sql($sql)) {
+        // it could throw off the grading if count and sum returned a rawgrade higher than scale
+        // so to prevent it we review the results and ensure that rawgrade does not exceed the scale, if it does we set rawgrade = scale (i.e. full credit)
+        foreach ($results as $result) {
+            if ($result->rawgrade > $forum->scale) {
+                $result->rawgrade = $forum->scale;
+            }
         }
     }
-   return $results;
+
+    return $results;
 }
 
 /**
