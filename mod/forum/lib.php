@@ -19,6 +19,13 @@ define('FORUM_TRACKING_ON', 2);
 
 define('FORUM_UNSET_POST_RATING', -999);
 
+define ('FORUM_AGGREGATE_NONE', 0); //no ratings
+define ('FORUM_AGGREGATE_AVG', 1);
+define ('FORUM_AGGREGATE_COUNT', 2);
+define ('FORUM_AGGREGATE_MAX', 3);
+define ('FORUM_AGGREGATE_MIN', 4);
+define ('FORUM_AGGREGATE_SUM', 5);
+
 // this file may be included from some functions, we must define these as global explicitly
 global $FORUM_LAYOUT_MODES, $FORUM_TYPES, $FORUM_TYPES_ALL, $FORUM_OPEN_MODES;
 
@@ -101,7 +108,7 @@ function forum_add_instance($forum) {
 }
 
 
-/** 
+/**
  * Given an object containing all the necessary data,
  * (defined by the form in mod.html) this function
  * will update an existing instance with new data.
@@ -117,6 +124,15 @@ function forum_update_instance($forum) {
     if (empty($forum->ratingtime) or empty($forum->assessed)) {
         $forum->assesstimestart  = 0;
         $forum->assesstimefinish = 0;
+    }
+
+    $oldforum = get_record('forum', 'id', $forum->id);
+
+    // MDL-3942 - if the aggregation type or scale (i.e. max grade) changes then recalculate the grades for the entire forum
+    // if  scale changes - do we need to recheck the ratings, if ratings higher than scale how do we want to respond?
+    // for count and sum aggregation types the grade we check to make sure they do not exceed the scale (i.e. max score) when calculating the grade
+    if (($oldforum->assessed<>$forum->assessed) or ($oldforum->scale<>$forum->scale)) {
+        forum_update_grades($forum); // recalculate grades for the forum
     }
 
     if ($forum->type == 'single') {  // Update related discussion and post.
@@ -447,7 +463,7 @@ function forum_cron() {
                     if (!isset($userto->tracking[$forum->id])) {
                         $userto->tracking[$forum->id] = !$CFG->forum_usermarksread
                                                         && forum_tp_can_track_forums($forum, $userto)
-                                                        && forum_tp_is_tracked($forum, $userto->id); 
+                                                        && forum_tp_is_tracked($forum, $userto->id);
                     }
                 // Mark post as read if forum_usermarksread is set off
                     if ($userto->tracking[$forum->id]) {
@@ -701,7 +717,7 @@ function forum_cron() {
                             if (!isset($userto->tracking[$forum->id])) {
                                 $userto->tracking[$forum->id] = !$CFG->forum_usermarksread
                                                               && forum_tp_can_track_forums($forum, $userto)
-                                                              && forum_tp_is_tracked($forum, $userto->id); 
+                                                              && forum_tp_is_tracked($forum, $userto->id);
                             }
 
                         // Create an array of postid's for this user to mark as read.
@@ -908,7 +924,7 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
 
 
 /**
- * 
+ *
  * @param object $course
  * @param object $user
  * @param object $mod TODO this is not used in this function, refactor
@@ -930,7 +946,7 @@ function forum_user_outline($course, $user, $mod, $forum) {
 
 
 /**
- * 
+ *
  */
 function forum_user_complete($course, $user, $mod, $forum) {
     global $CFG;
@@ -1163,15 +1179,64 @@ function forum_get_user_grades($forum, $userid=0) {
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, u.id AS userid, avg(fr.rating) AS rawgrade
-              FROM {$CFG->prefix}user u, {$CFG->prefix}forum_posts fp,
-                   {$CFG->prefix}forum_ratings fr, {$CFG->prefix}forum_discussions fd
-             WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
-                   AND fr.userid != u.id AND fd.forum = $forum->id
-                   $user
-          GROUP BY u.id";
+    $aggtype = $forum->assessed;
+    switch ($aggtype) {
+        case FORUM_AGGREGATE_COUNT :
+            $sql = "SELECT u.id, u.id AS userid, COUNT(fr.rating) AS rawgrade
+                      FROM {$CFG->prefix}user u, {$CFG->prefix}forum_posts fp,
+                           {$CFG->prefix}forum_ratings fr, {$CFG->prefix}forum_discussions fd
+                     WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
+                           AND fr.userid != u.id AND fd.forum = $forum->id
+                           $user
+                  GROUP BY u.id";
+            break;
+        case FORUM_AGGREGATE_MAX :
+            $sql = "SELECT u.id, u.id AS userid, MAX(fr.rating) AS rawgrade
+                      FROM {$CFG->prefix}user u, {$CFG->prefix}forum_posts fp,
+                           {$CFG->prefix}forum_ratings fr, {$CFG->prefix}forum_discussions fd
+                     WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
+                           AND fr.userid != u.id AND fd.forum = $forum->id
+                           $user
+                  GROUP BY u.id";
+            break;
+        case FORUM_AGGREGATE_MIN :
+            $sql = "SELECT u.id, u.id AS userid, MIN(fr.rating) AS rawgrade
+                      FROM {$CFG->prefix}user u, {$CFG->prefix}forum_posts fp,
+                           {$CFG->prefix}forum_ratings fr, {$CFG->prefix}forum_discussions fd
+                     WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
+                           AND fr.userid != u.id AND fd.forum = $forum->id
+                           $user
+                  GROUP BY u.id";
+            break;
+        case FORUM_AGGREGATE_SUM :
+            $sql = "SELECT u.id, u.id AS userid, SUM(fr.rating) AS rawgrade
+                     FROM {$CFG->prefix}user u, {$CFG->prefix}forum_posts fp,
+                          {$CFG->prefix}forum_ratings fr, {$CFG->prefix}forum_discussions fd
+                    WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
+                          AND fr.userid != u.id AND fd.forum = $forum->id
+                          $user
+                 GROUP BY u.id";
+            break;
+        default : //avg
+            $sql = "SELECT u.id, u.id AS userid, AVG(fr.rating) AS rawgrade
+                      FROM {$CFG->prefix}user u, {$CFG->prefix}forum_posts fp,
+                           {$CFG->prefix}forum_ratings fr, {$CFG->prefix}forum_discussions fd
+                     WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
+                           AND fr.userid != u.id AND fd.forum = $forum->id
+                           $user
+                  GROUP BY u.id";
+            break;
+    }
 
-    return get_records_sql($sql);
+    $results = get_records_sql($sql);
+    // it could throw off the grading if count and sum returned a rawgrade higher than scale
+    // so to prevent it we review the results and ensure that rawgrade does not exceed the scale, if it does we set rawgrade = scale (i.e. full credit)
+    foreach ($results as $result) {
+        if ($result->rawgrade >$forum->scale) {
+            $result->rawgrade = $forum->scale;
+        }
+    }
+   return $results;
 }
 
 /**
@@ -1453,9 +1518,9 @@ function forum_get_readable_forums($userid, $courseid=0) {
                                 ORDER BY f.name ASC";
 
         if ($forums = get_records_sql($selectforums)) {
- 
+
             $groups = array();
-            if ($group = groups_get_all_groups($course->id, $userid)) {          
+            if ($group = groups_get_all_groups($course->id, $userid)) {
                 foreach($group as $grp) {
                     if (isset($grp->id)) {
                         $groups[] = $grp->id;
@@ -1569,7 +1634,7 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
         if (!$forums[$i]->accessallgroups) {
             if (!empty($forums[$i]->accessgroup)) {
                 $groups = rtrim(implode(",", $forums[$i]->accessgroup),",");
-                $selectdiscussion .= " AND (d.groupid in ($groups)"; 
+                $selectdiscussion .= " AND (d.groupid in ($groups)";
                 $selectdiscussion .= ' OR d.groupid = -1)';  // -1 means open for all groups.
             } else {
                 // User isn't in any group. Only search discussions that are
@@ -2225,6 +2290,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
             $discussion = get_record('forum_discussions', 'id', $post->discussion);
             $post->forum = $discussion->forum;
         }
+
         if (!$cm = get_coursemodule_from_instance('forum', $post->forum)) {
             error('Course Module ID was incorrect');
         }
@@ -2414,6 +2480,10 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $post->forumtype = get_field('forum', 'type', 'id', $post->forum);
     }
 
+if (!isset($post->aggtype)) {
+        $post->aggtype = get_field('forum', 'assessed', 'id', $post->forum);
+    }
+
     $age = time() - $post->created;
     // Hack for allow to edit news posts those are not displayed yet until they are displayed
     if (!$post->parent
@@ -2468,7 +2538,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
             $canviewallratings = has_capability('mod/forum:viewanyrating', $post->modcontext);
 
             if ($canviewallratings and !$mypost) {
-                forum_print_ratings_mean($post->id, $ratings->scale, $canviewallratings);
+                forum_print_ratings_mean($post->id, $ratings->scale, $post->aggtype, $canviewallratings);
                 if (!empty($ratings->allow)) {
                     echo '&nbsp;';
                     forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
@@ -2476,7 +2546,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
                 }
 
             } else if ($mypost) {
-                forum_print_ratings_mean($post->id, $ratings->scale, true);
+                forum_print_ratings_mean($post->id, $ratings->scale, $post->aggtype, true);
 
             } else if (!empty($ratings->allow) ) {
                 forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
@@ -2697,15 +2767,37 @@ function forum_shorten_post($message) {
 
 /**
  * Print the multiple ratings on a post given to the current user by others.
+ * Forumid prevents the double lookup of the forumid in discussion to determine the aggregate type
  * Scale is an array of ratings
  */
-function forum_print_ratings_mean($postid, $scale, $link=true) {
+function forum_print_ratings_mean($postid, $scale, $aggregatetype, $link=true) {
 
-    static $strrate;
+    $strratings = '';
 
-    $mean = forum_get_ratings_mean($postid, $scale);
+    switch ($aggregatetype) {
+        case FORUM_AGGREGATE_AVG :
+            $agg        = forum_get_ratings_mean($postid, $scale);
+            $strratings = get_string("aggregateavg", "forum");
+            break;
+        case FORUM_AGGREGATE_COUNT :
+            $agg        = forum_get_ratings_count($postid, $scale);
+            $strratings = get_string("aggregatecount", "forum");
+            break;
+        case FORUM_AGGREGATE_MAX :
+            $agg        = forum_get_ratings_max($postid, $scale);
+            $strratings = get_string("aggregatemax", "forum");
+            break;
+        case FORUM_AGGREGATE_MIN :
+            $agg        = forum_get_ratings_min($postid, $scale);
+            $strratings = get_string("aggregatemin", "forum");
+            break;
+        case FORUM_AGGREGATE_SUM :
+            $agg        = forum_get_ratings_sum($postid, $scale);
+            $strratings = get_string("aggregatesum", "forum");
+            break;
+    }
 
-    if ($mean !== "") {
+    if ($agg !== "") {
 
         if (empty($strratings)) {
             $strratings = get_string("ratings", "forum");
@@ -2713,9 +2805,9 @@ function forum_print_ratings_mean($postid, $scale, $link=true) {
 
         echo "$strratings: ";
         if ($link) {
-            link_to_popup_window ("/mod/forum/report.php?id=$postid", "ratings", $mean, 400, 600);
+            link_to_popup_window ("/mod/forum/report.php?id=$postid", "ratings", $agg, 400, 600);
         } else {
-            echo "$mean ";
+            echo "$agg ";
         }
     }
 }
@@ -2725,6 +2817,7 @@ function forum_print_ratings_mean($postid, $scale, $link=true) {
  * Return the mean rating of a post given to the current user by others.
  * Scale is an array of possible ratings in the scale
  * Ratings is an optional simple array of actual ratings (just integers)
+ * Forumid is the forum id field needed - passing it avoids a double query of lookup up the discusion and then the forum id to get the aggregate type
  */
 function forum_get_ratings_mean($postid, $scale, $ratings=NULL) {
 
@@ -2739,7 +2832,7 @@ function forum_get_ratings_mean($postid, $scale, $ratings=NULL) {
 
     $count = count($ratings);
 
-    if ($count == 0) {
+    if ($count == 0 ) {
         return "";
 
     } else if ($count == 1) {
@@ -2756,6 +2849,143 @@ function forum_get_ratings_mean($postid, $scale, $ratings=NULL) {
             return $scale[$mean]." ($count)";
         } else {
             return "$mean ($count)";    // Should never happen, hopefully
+        }
+    }
+}
+
+/**
+ * Return the count of the ratings of a post given to the current user by others.
+ * Scale is an array of possible ratings in the scale - the end of the scale is the highest or max grade
+ * Ratings is an optional simple array of actual ratings (just integers)
+ */
+function forum_get_ratings_count($postid, $scale, $ratings=NULL) {
+
+    if (!$ratings) {
+        $ratings = array();
+        if ($rates = get_records("forum_ratings", "post", $postid)) {
+            foreach ($rates as $rate) {
+                $ratings[] = $rate->rating;
+            }
+        }
+    }
+
+    $count = count($ratings);
+    $scalecount = count($scale)-1; //this should give us the last element of the scale aka the max grade with  $scale[$scalecount]
+
+    if ($count > $scale[$scalecount]) { //if the count exceeds the forum scale (i.e. max grade then set the score to the max grade
+        $count = $scale[$scalecount];
+    }
+    return $scale[$count];
+}
+
+/**
+ * Return the max rating of a post given to the current user by others.
+ * Scale is an array of possible ratings in the scale
+ * Ratings is an optional simple array of actual ratings (just integers)
+ */
+function forum_get_ratings_max($postid, $scale, $ratings=NULL) {
+
+    if (!$ratings) {
+        $ratings = array();
+        if ($rates = get_records("forum_ratings", "post", $postid)) {
+            foreach ($rates as $rate) {
+                $ratings[] = $rate->rating;
+            }
+        }
+    }
+
+    $count = count($ratings);
+    $max = max($ratings);
+
+    if ($count == 0 ) {
+        return "";
+
+    } else if ($count == 1) { //this works for max
+        return $scale[$ratings[0]];
+
+    } else {
+
+     if (isset($scale[$max])) {
+            return $scale[$max]." ($count)";
+        } else {
+            return "$max ($count)";    // Should never happen, hopefully
+        }
+    }
+}
+
+/**
+ * Return the min rating of a post given to the current user by others.
+ * Scale is an array of possible ratings in the scale
+ * Ratings is an optional simple array of actual ratings (just integers)
+ */
+function forum_get_ratings_min($postid, $scale,  $ratings=NULL) {
+
+    if (!$ratings) {
+        $ratings = array();
+        if ($rates = get_records("forum_ratings", "post", $postid)) {
+            foreach ($rates as $rate) {
+                $ratings[] = $rate->rating;
+            }
+        }
+    }
+
+    $count = count($ratings);
+    $min = min($ratings);
+
+    if ($count == 0 ) {
+        return "";
+
+    } else if ($count == 1) {
+        return $scale[$ratings[0]]; //this works for min
+
+    } else {
+
+        if (isset($scale[$min])) {
+            return $scale[$min]." ($count)";
+        } else {
+            return "$min ($count)";    // Should never happen, hopefully
+        }
+    }
+}
+
+
+/**
+ * Return the sum or total of ratings of a post given to the current user by others.
+ * Scale is an array of possible ratings in the scale
+ * Ratings is an optional simple array of actual ratings (just integers)
+ */
+function forum_get_ratings_sum($postid, $scale, $ratings=NULL) {
+
+    if (!$ratings) {
+        $ratings = array();
+        if ($rates = get_records("forum_ratings", "post", $postid)) {
+            foreach ($rates as $rate) {
+                $ratings[] = $rate->rating;
+            }
+        }
+    }
+
+    $count = count($ratings);
+    $scalecount = count($scale)-1; //this should give us the last element of the scale aka the max grade with  $scale[$scalecount]
+
+    if ($count == 0 ) {
+        return "";
+
+    } else if ($count == 1) { //this works for max.
+        return $scale[$ratings[0]];
+
+    } else {
+        $total = 0;
+        foreach ($ratings as $rating) {
+            $total += $rating;
+        }
+        if ($total > $scale[$scalecount]) { //if the total exceeds the max grade then set it to the max grade
+            $total = $scale[$scalecount];
+        }
+        if (isset($scale[$total])) {
+            return $scale[$total]." ($count)";
+        } else {
+            return "$total ($count)";    // Should never happen, hopefully
         }
     }
 }
@@ -5656,6 +5886,21 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
     return true;
 }
 
+/**
+ * Returns array of forum aggregate types 
+ */
+function forum_get_aggregate_types() { 
 
+    $forum_aggregate_types   = array (
+        FORUM_AGGREGATE_NONE => get_string('aggregatenone', 'forum'),
+        FORUM_AGGREGATE_AVG    => get_string('aggregateavg', 'forum'),
+        FORUM_AGGREGATE_COUNT   => get_string('aggregatecount', 'forum'),
+        FORUM_AGGREGATE_MAX     => get_string('aggregatemax', 'forum'),
+        FORUM_AGGREGATE_MIN      => get_string('aggregatemin', 'forum'),
+        FORUM_AGGREGATE_SUM      => get_string('aggregatesum', 'forum'));
+
+return $forum_aggregate_types;
+
+}
 
 ?>
