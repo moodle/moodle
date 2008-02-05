@@ -637,8 +637,10 @@ function question_edit_setup($edittab, $requirecmid = false, $requirecourseid = 
     //a new cat.
     $pagevars['cat'] = optional_param('cat', 0, PARAM_SEQUENCE);// if empty will be set up later
     if  ($category = optional_param('category', 0, PARAM_SEQUENCE)){
-        $pagevars['cat'] = $category;
-        $pagevars['qpage'] = 0;
+        if ($pagevars['cat'] != $category){ // is this a move to a new category?
+            $pagevars['cat'] = $category;
+            $pagevars['qpage'] = 0;
+        }
     }
     if ($pagevars['cat']){
         $thispageurl->param('cat', $pagevars['cat']);
