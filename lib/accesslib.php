@@ -216,8 +216,6 @@ function get_role_access($roleid, $accessdata=NULL) {
         $accessdata['loaded'] = array();
     }
 
-    $base = '/' . SYSCONTEXTID;
-
     //
     // Overrides for the role IN ANY CONTEXTS
     // down to COURSE - not below -
@@ -230,13 +228,35 @@ function get_role_access($roleid, $accessdata=NULL) {
             WHERE rc.roleid = {$roleid}
                   AND ctx.contextlevel <= ".CONTEXT_COURSE."
             ORDER BY ctx.depth, ctx.path";
-    if ($rs = get_recordset_sql($sql)) {
-        while ($rd = rs_fetch_next_record($rs)) {
+
+    // we need extra caching in cron only
+    if (defined('FULLME') and FULLME === 'cron') {
+        static $cron_cache = array();
+
+        if (!isset($cron_cache[$roleid])) {
+            $cron_cache[$roleid] = array();
+            if ($rs = get_recordset_sql($sql)) {
+                while ($rd = rs_fetch_next_record($rs)) {
+                    $cron_cache[$roleid][] = $rd;
+                }
+                rs_close($rs);
+            }
+        }
+
+        foreach ($cron_cache[$roleid] as $rd) {
             $k = "{$rd->path}:{$roleid}";
             $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
         }
-        unset($rd);
-        rs_close($rs);
+        
+    } else {
+        if ($rs = get_recordset_sql($sql)) {
+            while ($rd = rs_fetch_next_record($rs)) {
+                $k = "{$rd->path}:{$roleid}";
+                $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
+            }
+            unset($rd);
+            rs_close($rs);
+        }
     }
 
     return $accessdata;
