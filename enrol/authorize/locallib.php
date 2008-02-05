@@ -279,7 +279,7 @@ function authorize_print_order_details($orderno)
             else {
                 if (empty($CFG->an_test)) {
                     $user = get_record('user', 'id', $order->userid);
-                    if (enrol_into_course($course, $user, 'manual')) {
+                    if (enrol_into_course($course, $user, 'authorize')) {
                         if (!empty($CFG->enrol_mailstudents)) {
                             send_welcome_messages($order->id);
                         }

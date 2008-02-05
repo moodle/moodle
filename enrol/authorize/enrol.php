@@ -222,7 +222,7 @@ class enrolment_plugin_authorize
                 redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
             }
             else {
-                enrol_into_course($course, $USER, 'manual');
+                enrol_into_course($course, $USER, 'authorize');
                 redirect("$CFG->wwwroot/course/view.php?id=$course->id");
             }
             return;
@@ -255,7 +255,7 @@ class enrolment_plugin_authorize
         }
 
         // Credit card captured, ENROL student now...
-        if (enrol_into_course($course, $USER, 'manual')) {
+        if (enrol_into_course($course, $USER, 'authorize')) {
             if (!empty($CFG->enrol_mailstudents)) {
                 send_welcome_messages($order->id);
             }
@@ -651,7 +651,7 @@ class enrolment_plugin_authorize
                     $timeend = $order->settletime + $course->enrolperiod;
                 }
                 $user = get_record('user', 'id', $order->userid);
-                if (role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, 'manual')) {
+                if (role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, 'authorize')) {
                     $this->log .= "User($user->id) has been enrolled to course($course->id).\n";
                     if (!empty($CFG->enrol_mailstudents)) {
                         $sendem[] = $order->id;
