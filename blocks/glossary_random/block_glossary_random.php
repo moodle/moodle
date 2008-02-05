@@ -153,7 +153,7 @@ class block_glossary_random extends block_base {
     }
 
     function get_content() {
-        global $USER, $CFG;
+        global $USER, $CFG, $COURSE;
 
         if (empty($this->config->glossary)) {
             $this->content->text   = get_string('notyetconfigured','block_glossary_random');
@@ -163,7 +163,16 @@ class block_glossary_random extends block_base {
 
         $glossaryid = $this->config->glossary;
 
-        if(! $glossary = get_record('glossary', 'id', $glossaryid, 'course', $this->course->id) ){
+        if ($this->course->id == $COURSE->id) {
+            $course = $COURSE;
+        } else {
+            $course = get_record('course', 'id', $this->course->id); 
+        }
+
+        require_once($CFG->dirroot.'/course/lib.php');
+        $modinfo = get_fast_modinfo($course);
+
+        if (!isset($modinfo->instances['glossary'][$glossaryid])) {
             // we can get here if the glossary has been deleted, so
             // unconfigure the glossary from the block..
             $this->config->glossary = 0;
@@ -175,6 +184,7 @@ class block_glossary_random extends block_base {
             return $this->content;
         }
 
+        $cm = $modinfo->instances['glossary'][$glossaryid];
 
         if (empty($this->config->cache)) {
             $this->config->cache = '';
@@ -189,10 +199,8 @@ class block_glossary_random extends block_base {
 
         // place link to glossary in the footer if the glossary is visible
 
-        $cm = get_coursemodule_from_instance('glossary',$glossaryid, $this->course->id) ;
-
         //Obtain the visible property from the instance
-        if (coursemodule_visible_for_user($cm)) {
+        if ($cm->uservisible) {
             if (has_capability('mod/glossary:write', get_context_instance(CONTEXT_MODULE, $cm->id))) {
                 $this->content->footer = '<a href="'.$CFG->wwwroot.'/mod/glossary/edit.php?id='.$cm->id
                 .'" title="'.$this->config->addentry.'">'.$this->config->addentry.'</a><br />';
