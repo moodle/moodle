@@ -96,7 +96,10 @@
     function restore_question_get_best_category_context($restore, $contextinfo) {
         switch ($contextinfo['LEVEL'][0]['#']) {
             case 'module':
-                $instanceinfo = backup_getid($restore->backup_unique_code, 'course_modules', $contextinfo['INSTANCE'][0]['#']);
+                if (!$instanceinfo = backup_getid($restore->backup_unique_code, 'course_modules', $contextinfo['INSTANCE'][0]['#'])){
+                    //module has not been restored, probably not selected for restore
+                    return false;
+                }
                 $tocontext = get_context_instance(CONTEXT_MODULE, $instanceinfo->new_id);
                 break;
             case 'course':
@@ -168,7 +171,9 @@
                         $tocontext = get_context_instance(CONTEXT_COURSE, $course);
                     }
                 } else {
-                    $tocontext = restore_question_get_best_category_context($restore, $info['QUESTION_CATEGORY']['#']['CONTEXT']['0']['#']);
+                    if (!$tocontext = restore_question_get_best_category_context($restore, $info['QUESTION_CATEGORY']['#']['CONTEXT']['0']['#'])){
+                        return $status; // context doesn't exist - a module has not been restored
+                    }
                 }
                 $question_cat->contextid = $tocontext->id;
 
