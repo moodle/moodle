@@ -65,15 +65,15 @@
     }
 
     foreach ($lessons as $lesson) {
-        $cm = get_coursemodule_from_instance('lesson', $lesson->id, $course->id);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-        if (!coursemodule_visible_for_user($cm)) {
-            continue;
+        if (!$lesson->visible) {
+            //Show dimmed if the mod is hidden
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$lesson->coursemodule\">".format_string($lesson->name,true)."</a>";
+        } else {
+            //Show normal if the mod is visible
+            $link = "<a href=\"view.php?id=$lesson->coursemodule\">".format_string($lesson->name,true)."</a>";
         }
-
-        $class = $cm->visible ? '' : 'class="dimmed"';
-        $link = "<a $class href=\"view.php?id=$lesson->coursemodule\">".format_string($lesson->name)."</a>";
+        $cm = get_coursemodule_from_instance('lesson', $lesson->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         if ($lesson->deadline > $timenow) {
             $due = userdate($lesson->deadline);

@@ -41,12 +41,6 @@
     }
 
     foreach ($journals as $journal) {
-        $cm = get_coursemodule_from_instance('journal', $journal->id, $course->id);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-        if (!coursemodule_visible_for_user($cm)) {
-            continue;
-        }
 
         $journal->timestart  = $course->startdate + (($journal->section - 1) * 608400);
         if (!empty($journal->daysopen)) {

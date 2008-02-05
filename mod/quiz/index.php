@@ -71,11 +71,6 @@
     foreach ($quizzes as $quiz) {
         $cm      = get_coursemodule_from_instance('quiz', $quiz->id);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-        if (!coursemodule_visible_for_user($cm)) {
-            continue;
-        }
-
         $data = array();
 
         // Section number if necessary.

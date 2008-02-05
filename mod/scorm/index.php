@@ -56,13 +56,8 @@
     }
 
     foreach ($scorms as $scorm) {
-        $cm      = get_coursemodule_from_instance('scorm', $forum->id, $course->id);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-        if (!coursemodule_visible_for_user($cm)) {
-            continue;
-        }
-
+        $context = get_context_instance(CONTEXT_MODULE,$scorm->coursemodule);
         $tt = "";
         if ($course->format == "weeks" or $course->format == "topics") {
             if ($scorm->section) {
@@ -84,10 +79,15 @@
             $report = scorm_grade_user($scorm, $USER->id);
             $reportshow = get_string('score','scorm').": ".$report;
         }
-
-        $class = $cm->visible ? '' : 'class="dimmed"';
-        $table->data[] = array ($tt, "<a $class href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name)."</a>",
-                                format_text($scorm->summary), $reportshow);
+        if (!$scorm->visible) {
+           //Show dimmed if the mod is hidden
+           $table->data[] = array ($tt, "<a class=\"dimmed\" href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name)."</a>",
+                                   format_text($scorm->summary), $reportshow);
+        } else {
+           //Show normal if the mod is visible
+           $table->data[] = array ($tt, "<a href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name)."</a>",
+                                   format_text($scorm->summary), $reportshow);
+        }
     }
 
     echo "<br />";

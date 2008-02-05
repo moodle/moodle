@@ -22,11 +22,11 @@
     $strinfo = get_string("grade")."/".$strinfo = get_string("phase", "workshop");
     $strdeadline = get_string("deadline", "workshop");
     $strsubmitted = get_string("submitted", "assignment");
-    
+
     $navlinks = array();
     $navlinks[] = array('name' => $strworkshops, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
-    
+
     print_header_simple("$strworkshops", "", $navigation, "", "", true, "", navmenu($course));
 
     if (! $workshops = get_all_instances_in_course("workshop", $course)) {
@@ -48,13 +48,6 @@
     }
 
     foreach ($workshops as $workshop) {
-        $cm      = get_coursemodule_from_instance('workshop', $workshop->id);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-        if (!coursemodule_visible_for_user($cm)) {
-            continue;
-        }
-
         if (workshop_is_teacher($workshop, $USER->id)) { // teacher see info (students see grade)
             $info = workshop_phase($workshop, 'short');
             if (time() > $workshop->submissionstart) {

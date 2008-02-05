@@ -28,7 +28,7 @@
     print_header_simple("$strsurveys", "", $navigation,
                  "", "", true, "", navmenu($course));
 
-    if (!$cms = get_coursemodules_in_course('survey', $course->id)) {
+    if (! $surveys = get_all_instances_in_course("survey", $course)) {
         notice(get_string('thereareno', 'moodle', $strsurveys), "../../course/view.php?id=$course->id");
     }
 
@@ -45,35 +45,35 @@
 
     $currentsection = '';
 
-    $modinfo = get_fast_modinfo($course);
-    foreach ($modinfo->instances['survey'] as $cm) {
-        if (!$cm->uservisible) {
-            continue;
-        }
-
-        if (!empty($USER->id) and survey_already_done($cm->instance, $USER->id)) {
+    foreach ($surveys as $survey) {
+        if (!empty($USER->id) and survey_already_done($survey->id, $USER->id)) {
             $ss = $strdone;
         } else {
             $ss = $strnotdone;
         }
         $printsection = "";
-        if ($cm->sectionnum !== $currentsection) {
-            if ($cm->sectionnum) {
-                $printsection = $cm->sectionnum;
+        if ($survey->section !== $currentsection) {
+            if ($survey->section) {
+                $printsection = $survey->section;
             }
             if ($currentsection !== "") {
                 $table->data[] = 'hr';
             }
-            $currentsection = $cm->sectionnum;
+            $currentsection = $survey->section;
         }
         //Calculate the href
-        $class = $cm->visible ? '' : 'class="dimmed"';
-        $tt_href = "<a $class href=\"view.php?id=$cm->id\">".format_string($cm->name,true)."</a>";
+        if (!$survey->visible) {
+            //Show dimmed if the mod is hidden
+            $tt_href = "<a class=\"dimmed\" href=\"view.php?id=$survey->coursemodule\">".format_string($survey->name,true)."</a>";
+        } else {
+            //Show normal if the mod is visible
+            $tt_href = "<a href=\"view.php?id=$survey->coursemodule\">".format_string($survey->name,true)."</a>";
+        }
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($printsection, $tt_href, "<a href=\"view.php?id=$cm->id\">$ss</a>");
+            $table->data[] = array ($printsection, $tt_href, "<a href=\"view.php?id=$survey->coursemodule\">$ss</a>");
         } else {
-            $table->data[] = array ($tt_href, "<a href=\"view.php?id=$cm->id\">$ss</a>");
+            $table->data[] = array ($tt_href, "<a href=\"view.php?id=$survey->coursemodule\">$ss</a>");
         }
     }
 
