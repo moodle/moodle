@@ -28,7 +28,7 @@
     //Checks for the required files/functions to backup every mod
     //And check if there is data about it
     $count = 0;
-    if ($allmods = get_records("modules") ) {
+    if ($allmods = get_records('modules', 'visible', 1) ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
@@ -120,7 +120,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 /// Acummulator for hidden options and proper XHTML output
     $hidden_options = '';
     //Now, check modules and info and show posibilities
-    if ($allmods = get_records("modules") ) {
+    if ($allmods = get_records('modules', 'visible', 1) ) {
         //Print option to select/deselect everything with 1 click.
         echo "<tr>";
         echo "<td align=\"right\">";
