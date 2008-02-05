@@ -30,7 +30,7 @@
 
 /// Get all the appropriate data
 
-    if (!$cms = get_coursemodules_in_course('chat', $course->id)) {
+    if (! $chats = get_all_instances_in_course('chat', $course)) {
         notice(get_string('thereareno', 'moodle', $strchats), "../../course/view.php?id=$course->id");
         die();
     }
@@ -54,25 +54,23 @@
     }
 
     $currentsection = '';
-
-    $modinfo = get_fast_modinfo($course);
-    foreach ($modinfo->instances['chat'] as $cm) {
-        if (!$cm->uservisible) {
-            continue;
+    foreach ($chats as $chat) {
+        if (!$chat->visible) {
+            //Show dimmed if the mod is hidden
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$chat->coursemodule\">".format_string($chat->name,true)."</a>";
+        } else {
+            //Show normal if the mod is visible
+            $link = "<a href=\"view.php?id=$chat->coursemodule\">".format_string($chat->name,true)."</a>";
         }
-
-        $class = $cm->visible ? '' : 'class="dimmed"';
-        $link = "<a $class href=\"view.php?id=$cm->id\">".format_string($cm->name)."</a>";
-
         $printsection = '';
-        if ($cm->sectionnum !== $currentsection) {
-            if ($cm->sectionnum) {
-                $printsection = $cm->sectionnum;
+        if ($chat->section !== $currentsection) {
+            if ($chat->section) {
+                $printsection = $chat->section;
             }
             if ($currentsection !== '') {
                 $table->data[] = 'hr';
             }
-            $currentsection = $cm->sectionnum;
+            $currentsection = $chat->section;
         }
         if ($course->format == 'weeks' or $course->format == 'topics') {
             $table->data[] = array ($printsection, $link);

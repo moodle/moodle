@@ -30,7 +30,7 @@
     print_header("$course->shortname: $strresources", $course->fullname, $navigation,
                  "", "", true, "", navmenu($course));
 
-    if (!$cms = get_coursemodules_in_course('resource', $course->id, 'm.timemodified, m.summary')) {
+    if (! $resources = get_all_instances_in_course("resource", $course)) {
         notice(get_string('thereareno', 'moodle', $strresources), "../../course/view.php?id=$course->id");
         exit;
     }
@@ -48,35 +48,36 @@
 
     $currentsection = "";
     $options->para = false;
-
-    $modinfo = get_fast_modinfo($course);
-    foreach ($modinfo->instances['resource'] as $cm) {
-        if (!$cm->uservisible) {
-            continue;
-        }
-
-        $cm->summary      = $cms[$cm->id]->summary;
-        $cm->timemodified = $cms[$cm->id]->timemodified;
-
+    foreach ($resources as $resource) {
         if ($course->format == "weeks" or $course->format == "topics") {
             $printsection = "";
-            if ($cm->sectionnum !== $currentsection) {
-                if ($cm->sectionnum) {
-                    $printsection = $cm->sectionnum;
+            if ($resource->section !== $currentsection) {
+                if ($resource->section) {
+                    $printsection = $resource->section;
                 }
                 if ($currentsection !== "") {
                     $table->data[] = 'hr';
                 }
-                $currentsection = $cm->sectionnum;
+                $currentsection = $resource->section;
             }
         } else {
-            $printsection = '<span class="smallinfo">'.userdate($cm->timemodified)."</span>";
+            $printsection = '<span class="smallinfo">'.userdate($resource->timemodified)."</span>";
         }
+        if (!empty($resource->extra)) {
+            $extra = urldecode($resource->extra);
+        } else {
+            $extra = "";
+        }
+        if (!$resource->visible) {      // Show dimmed if the mod is hidden
+            $table->data[] = array ($printsection, 
+                    "<a class=\"dimmed\" $extra href=\"view.php?id=$resource->coursemodule\">".format_string($resource->name,true)."</a>",
+                    format_text($resource->summary, FORMAT_MOODLE, $options) );
 
-        $class = $cm->visible ? '' : 'class="dimmed"';
-        $table->data[] = array ($printsection,
-                "<a $class href=\"view.php?id=$cm->id\">".format_string($cm->name)."</a>",
-                format_text($cm->summary, FORMAT_MOODLE, $options) );
+        } else {                        //Show normal if the mod is visible
+            $table->data[] = array ($printsection, 
+                    "<a $extra href=\"view.php?id=$resource->coursemodule\">".format_string($resource->name,true)."</a>",
+                    format_text($resource->summary, FORMAT_MOODLE, $options) );
+        }
     }
 
     echo "<br />";
