@@ -444,19 +444,32 @@
 
     if ($course->id != SITEID && empty($course->metacourse)) {   // Mostly only useful at course level
 
-        if (($user->id == $USER->id &&                                               // Myself
-             has_capability('moodle/course:view', $coursecontext, NULL) &&           // Course participant
-             has_capability('moodle/role:unassignself', $coursecontext, NULL, false)) // Can unassign myself
-             ||
-            (has_capability('moodle/role:assign', $coursecontext, NULL) &&           // I can assign roles
-             get_user_roles($coursecontext, $user->id)) ) {                          // This user has roles
+        $canunenrol = false;
 
-            echo '<form action="../course/unenrol.php" method="get">';
-            echo "<div>";
+        if ($user->id == $USER->id) { // Myself
+            $canunenrol = has_capability('moodle/course:view', $coursecontext, NULL) &&              // Course participant
+                          has_capability('moodle/role:unassignself', $coursecontext, NULL, false) && // Can unassign myself
+                          get_user_roles($coursecontext, $user->id, false);                          // Must have role in course
+
+        } else if (has_capability('moodle/role:assign', $coursecontext, NULL)) { // I can assign roles
+            if ($roles = get_user_roles($coursecontext, $user->id, false)) {
+                $canunenrol = true;
+                foreach($roles as $role) {
+                    if (!user_can_assign($coursecontext, $role->roleid)) {
+                        $canunenrol = false; // I can not unassign all roles in this course :-(
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ($canunenrol) {
+            echo '<form action="'.$CFG->wwwroot.'/course/unenrol.php" method="get">';
+            echo '<div>';
             echo '<input type="hidden" name="id" value="'.$course->id.'" />';
             echo '<input type="hidden" name="user" value="'.$user->id.'" />';
-            echo '<input type="submit" value="'.get_string('unenrolme', '', $course->shortname).'" />';
-            echo "</div>";
+            echo '<input type="submit" value="'.s(get_string('unenrolme', '', $course->shortname)).'" />';
+            echo '</div>';
             echo '</form>';
         }
     }
@@ -464,12 +477,12 @@
     if ($USER->id != $user->id  && empty($USER->realuser) && has_capability('moodle/user:loginas', $coursecontext) &&
                                  ! has_capability('moodle/site:doanything', $coursecontext, $user->id, false)) {
         echo '<form action="'.$CFG->wwwroot.'/course/loginas.php" method="get">';
-        echo "<div>";
+        echo '<div>';
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         echo '<input type="hidden" name="user" value="'.$user->id.'" />';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="submit" value="'.get_string('loginas').'" />';
-        echo "</div>";
+        echo '</div>';
         echo '</form>';
     }
 

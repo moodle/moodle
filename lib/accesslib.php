@@ -4078,15 +4078,19 @@ function get_user_roles($context, $userid=0, $checkparentcontexts=true, $order='
         $contexts = ' ra.contextid = \''.$context->id.'\'';
     }
 
-    return get_records_sql('SELECT ra.*, r.name, r.shortname
-                             FROM '.$CFG->prefix.'role_assignments ra,
-                                  '.$CFG->prefix.'role r,
-                                  '.$CFG->prefix.'context c
-                             WHERE ra.userid = '.$userid.
-                           '   AND ra.roleid = r.id
-                               AND ra.contextid = c.id
-                               AND '.$contexts . $hiddensql .
-                           ' ORDER BY '.$order);
+    if (!$return = get_records_sql('SELECT ra.*, r.name, r.shortname
+                                      FROM '.$CFG->prefix.'role_assignments ra,
+                                           '.$CFG->prefix.'role r,
+                                           '.$CFG->prefix.'context c
+                                     WHERE ra.userid = '.$userid.'
+                                           AND ra.roleid = r.id
+                                           AND ra.contextid = c.id
+                                           AND '.$contexts . $hiddensql .'
+                                  ORDER BY '.$order)) {
+        $return = array();
+    }
+
+    return $return;
 }
 
 /**
