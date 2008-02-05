@@ -220,7 +220,6 @@ function forum_cron() {
     $forums          = array();
     $courses         = array();
     $coursemodules   = array();
-    $postinfos       = array();
     $subscribedusers = array();
 
 
@@ -325,8 +324,10 @@ function forum_cron() {
 
             mtrace('Processing user '.$userto->id);
 
-            // we might want to add another layer - forums here (by checking array_keys($subscribedusers))
-            // so that we can skip many posts
+            // init caches
+            $userto->viewfullnames = array();
+            $userto->canpost       = array();
+            $userto->tracking      = array();
 
             foreach ($posts as $pid => $post) {
 
@@ -354,13 +355,26 @@ function forum_cron() {
                 // setup global $COURSE properly - needed for roles and languages
                 course_setup($course);   // More environment
 
-                // Get the context (from cache)
-                $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);   // Cached already
-                $post->modcontext = $modcontext;
-                $post->viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext);
+                // Fill caches
+                if (!isset($userto->viewfullnames[$forum->id])) {
+                    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                    $userto->viewfullnames[$forum->id] = has_capability('moodle/site:viewfullnames', $modcontext);
+                }
+                if (!isset($userto->canpost[$forum->id])) {
+                    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                    $userto->canpost[$forum->id] = forum_user_can_post($forum, $userto, null, $modcontext);
+                }
+                if (!isset($userfrom->groups[$forum->id])) {
+                    if (!isset($userfrom->groups)) {
+                        $userfrom->groups = array();
+                        $users[$userfrom->id]->groups = array();
+                    }
+                    $userfrom->groups[$forum->id] = groups_get_all_groups($course->id, $userfrom->id, $cm->groupingid);
+                    $users[$userfrom->id]->groups[$forum->id] = $userfrom->groups[$forum->id];
+                }
 
                 // Make sure groups allow this user to see this email
-                if ($discussion->groupid > 0 and $groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
+                if ($discussion->groupid > 0 and $groupmode = groups_get_activity_groupmode($cm, $course)) {   // Groups are being used
                     if (!groups_group_exists($discussion->groupid)) { // Can't find group
                         continue;                           // Be safe and don't send it to anyone
                     }
@@ -430,9 +444,13 @@ function forum_cron() {
                 } else {
                     $mailcount[$post->id]++;
 
+                    if (!isset($userto->tracking[$forum->id])) {
+                        $userto->tracking[$forum->id] = !$CFG->forum_usermarksread
+                                                        && forum_tp_can_track_forums($forum, $userto)
+                                                        && forum_tp_is_tracked($forum, $userto->id); 
+                    }
                 // Mark post as read if forum_usermarksread is set off
-                    if (!$CFG->forum_usermarksread && forum_tp_can_track_forums($forum, $userto) &&
-                        forum_tp_is_tracked($forum, $userto->id)) {
+                    if ($userto->tracking[$forum->id]) {
                         if (!forum_tp_mark_post_read($userto->id, $post, $forum->id)) {
                             mtrace("Error: mod/forum/cron.php: Could not mark post $post->id read for user $userto->id".
                                  " while sending email.");
@@ -569,6 +587,11 @@ function forum_cron() {
                 $USER = $userto;
                 course_setup(SITEID);
 
+                // init caches
+                $userto->viewfullnames = array();
+                $userto->canpost       = array();
+                $userto->tracking      = array();
+
                 $postsubject = get_string('digestmailsubject', 'forum', format_string($site->shortname, true));
 
                 $headerdata = new object();
@@ -584,6 +607,8 @@ function forum_cron() {
                 }
                 $posthtml .= "</head>\n<body>\n";
                 $posthtml .= '<p>'.get_string('digestmailheader', 'forum', $headerdata).'</p><br /><hr size="1" noshade="noshade" />';
+
+                $markread = array();
 
                 foreach ($thesediscussions as $discussionid) {
 
@@ -601,6 +626,15 @@ function forum_cron() {
                     $canunsubscribe = ! forum_is_forcesubscribed($forum);
                     $canreply = forum_user_can_post($forum, $userto);
 
+                    // Fill caches
+                    if (!isset($userto->viewfullnames[$forum->id])) {
+                        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                        $userto->viewfullnames[$forum->id] = has_capability('moodle/site:viewfullnames', $modcontext);
+                    }
+                    if (!isset($userto->canpost[$forum->id])) {
+                        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                        $userto->canpost[$forum->id] = forum_user_can_post($forum, $userto, null, $modcontext);
+                    }
 
                     $posttext .= "\n \n";
                     $posttext .= '=====================================================================';
@@ -625,18 +659,25 @@ function forum_cron() {
                     $postsarray = $discussionposts[$discussionid];
                     sort($postsarray);
 
-                // Create an empty array to use for marking read posts.
-                // (I'm sure there's already a structure I can use here, but I can't be sure.)
-                    $markread = array();
-
                     foreach ($postsarray as $postid) {
                         $post = $posts[$postid];
 
                         if (array_key_exists($post->userid, $users)) { // we might know him/her already
                             $userfrom = $users[$post->userid];
-                        } else if (!$userfrom = get_record('user', 'id', $post->userid)) {
+                        } else if ($userfrom = get_record('user', 'id', $post->userid)) {
+                            $users[$userfrom->id] = $userfrom; // fetch only once, we can add it to user list, it will be skipped anyway
+                        } else {
                             mtrace('Could not find user '.$post->userid);
                             continue;
+                        }
+
+                        if (!isset($userfrom->groups[$forum->id])) {
+                            if (!isset($userfrom->groups)) {
+                                $userfrom->groups = array();
+                                $users[$userfrom->id]->groups = array();
+                            }
+                            $userfrom->groups[$forum->id] = groups_get_all_groups($course->id, $userfrom->id, $cm->groupingid);
+                            $users[$userfrom->id]->groups[$forum->id] = $userfrom->groups[$forum->id];
                         }
 
                         $userfrom->customheaders = array ("Precedence: Bulk");
@@ -655,13 +696,17 @@ function forum_cron() {
                         } else {
                             // The full treatment
                             $posttext .= forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, true);
-                            $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, true, false);
+                            $posthtml .= forum_make_mail_post($course, $forum, $discussion, $post, $userfrom, $userto, false, $canreply, true, false);
+
+                            if (!isset($userto->tracking[$forum->id])) {
+                                $userto->tracking[$forum->id] = !$CFG->forum_usermarksread
+                                                              && forum_tp_can_track_forums($forum, $userto)
+                                                              && forum_tp_is_tracked($forum, $userto->id); 
+                            }
 
                         // Create an array of postid's for this user to mark as read.
-                            if (!$CFG->forum_usermarksread &&
-                                forum_tp_can_track_forums($forum, $userto) &&
-                                forum_tp_is_tracked($forum, $userto->id)) {
-                                $markread[$post->id]->post = $post;
+                            if ($userto->tracking[$forum->id]) {
+                                $markread[$post->id]->post    = $post;
                                 $markread[$post->id]->forumid = $forum->id;
                             }
                         }
@@ -692,14 +737,10 @@ function forum_cron() {
                     $usermailcount++;
 
                 // Mark post as read if forum_usermarksread is set off
-                    if (!$CFG->forum_usermarksread &&
-                        forum_tp_can_track_forums($forum->id, $userto) &&
-                        forum_tp_is_tracked($forum->id, $userto->id)) {
-                        foreach ($markread as $postinfo) {
-                            if (!forum_tp_mark_post_read($userto->id, $postinfo->post, $postinfo->forumid)) {
-                                mtrace("Error: mod/forum/cron.php: Could not mark post $postid read for user $userto->id".
-                                     " while sending digest email.");
-                            }
+                    foreach ($markread as $postinfo) {
+                        if (!forum_tp_mark_post_read($userto->id, $postinfo->post, $postinfo->forumid)) {
+                            mtrace("Error: mod/forum/cron.php: Could not mark post $postid read for user $userto->id".
+                                 " while sending digest email.");
                         }
                     }
                 }
@@ -745,18 +786,24 @@ function forum_cron() {
 function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, $bare = false) {
     global $CFG, $USER;
 
-    if (empty($post->viewfullnames)) {
-        if (empty($post->modcontext)) {
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-                error('Course Module ID was incorrect');
-            }
-            $post->modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (!isset($userto->viewfullnames[$forum->id])) {
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+            error('Course Module ID was incorrect');
         }
-        $post->viewfullnames = has_capability('moodle/site:viewfullnames', $post->modcontext, $userto->id);
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
+    } else {
+        $viewfullnames = $userto->viewfullnames[$forum->id];
+    }
+
+    if (!isset($userto->canpost[$forum->id])) {
+        $canreply = forum_user_can_post($forum, $userto);
+    } else {
+        $canreply = $userto->canpost[$forum->id];
     }
 
     $by = New stdClass;
-    $by->name = fullname($userfrom, $post->viewfullnames);
+    $by->name = fullname($userfrom, $viewfullnames);
     $by->date = userdate($post->modified, "", $userto->timezone);
 
     $strbynameondate = get_string('bynameondate', 'forum', $by);
@@ -764,7 +811,6 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
     $strforums = get_string('forums', 'forum');
 
     $canunsubscribe = ! forum_is_forcesubscribed($forum);
-    $canreply = forum_user_can_post($forum, $userto);
 
     $posttext = '';
 
@@ -822,15 +868,13 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
         return '';
     }
 
-    if (empty($post->modcontext)) {
-        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-            error('Course Module ID was incorrect');
-        }
-        $post->modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (!isset($userto->canpost[$forum->id])) {
+        $canreply = forum_user_can_post($forum, $userto);
+    } else {
+        $canreply = $userto->canpost[$forum->id];
     }
 
     $strforums = get_string('forums', 'forum');
-    $canreply = forum_user_can_post($forum, $userto, NULL, $post->modcontext);
     $canunsubscribe = ! forum_is_forcesubscribed($forum);
 
     $posthtml = '<head>';
@@ -850,7 +894,7 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
         $posthtml .= ' &raquo; <a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id.'">'.
                      format_string($discussion->name,true).'</a></div>';
     }
-    $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, true, false);
+    $posthtml .= forum_make_mail_post($course, $forum, $discussion, $post, $userfrom, $userto, false, $canreply, true, false);
 
     if ($canunsubscribe) {
         $posthtml .= '<hr /><div align="center" class="unsubscribelink"><a href="'.$CFG->wwwroot.'/mod/forum/subscribe.php?id='.$forum->id.'">'.
@@ -1921,19 +1965,13 @@ function forum_get_user_discussions($courseid, $userid, $groupid=0) {
 /**
  * Returns list of user objects that are subscribed to this forum
  */
-function forum_subscribed_users($course, $forum, $groupid=0, $cache=false) {
+function forum_subscribed_users($course, $forum, $groupid=0) {
 
     global $CFG;
 
-    static $resultscache = array();
-
-    if ($cache && isset($resultscache[$forum->id][$groupid])) {
-        return $resultscache[$forum->id][$groupid];
-    }
-
     if ($groupid) {
         $grouptables = ", {$CFG->prefix}groups_members gm ";
-        $groupselect = "AND gm.groupid = '$groupid' AND u.id = gm.userid";
+        $groupselect = "AND gm.groupid = $groupid AND u.id = gm.userid";
 
     } else  {
         $grouptables = '';
@@ -1953,17 +1991,22 @@ function forum_subscribed_users($course, $forum, $groupid=0, $cache=false) {
                                    {$CFG->prefix}forum_subscriptions s $grouptables
                              WHERE s.forum = '$forum->id'
                                AND s.userid = u.id
-                               AND u.deleted <> 1  $groupselect
+                               AND u.deleted = 0  $groupselect
                           ORDER BY u.email ASC");
     }
-    // Guest user should never be subscribed to a forum.
-    if ($guest = guest_user()) {
-        unset($results[$guest->id]);
+
+    static $guestid = null;
+
+    if (is_null($guestid)) {
+        if ($guest = guest_user()) {
+            $guestid = $guest->id;
+        } else {
+            $guestid = 0;
+        }
     }
 
-    if ($cache) {
-        $resultscache[$forum->id][$groupid] = $results;
-    }
+    // Guest user should never be subscribed to a forum.
+    unset($results[$guestid]);
 
     return $results;
 }
@@ -2046,20 +2089,20 @@ function forum_get_course_forum($courseid, $type) {
 * Given the data about a posting, builds up the HTML to display it and
 * returns the HTML in a string.  This is designed for sending via HTML email.
 */
-function forum_make_mail_post(&$post, $user, $touser, $course,
+function forum_make_mail_post($course, $forum, $discussion, $post, $userfrom, $userto,
                               $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
 
+    global $CFG;
 
-    global $CFG, $USER;
-
-    // the old caching was removed for now, because it did not work due to recent changes in cron
-
-    $post->forum = get_field('forum_discussions', 'forum', 'id', $post->discussion);
-
-    if (!$cm = get_coursemodule_from_instance('forum', $post->forum)) {
-        mtrace('Course Module ID was incorrect');
+    if (!isset($userto->viewfullnames[$forum->id])) {
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+            error('Course Module ID was incorrect');
+        }
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
+    } else {
+        $viewfullnames = $userto->viewfullnames[$forum->id];
     }
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     // format the post body
     $options = new object();
@@ -2069,7 +2112,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output = '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
 
     $output .= '<tr class="header"><td width="35" valign="top" class="picture left">';
-    $output .= print_user_picture($user, $course->id, $user->picture, false, true);
+    $output .= print_user_picture($userfrom, $course->id, $userfrom->picture, false, true);
     $output .= '</td>';
 
     if ($post->parent) {
@@ -2079,17 +2122,27 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     }
     $output .= '<div class="subject">'.format_string($post->subject).'</div>';
 
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $modcontext));
+    $fullname = fullname($userfrom, $viewfullnames);
     $by = new object();
-    $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
-    $by->date = userdate($post->modified, '', $touser->timezone);
+    $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$userfrom->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
+    $by->date = userdate($post->modified, '', $userto->timezone);
     $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
 
     $output .= '</td></tr>';
 
     $output .= '<tr><td class="left side" valign="top">';
-    if ($group = groups_get_all_groups($course->id, $user->id)) {
-        $output .= print_group_picture($group, $course->id, false, true, true);
+
+    if (isset($userfrom->groups)) {
+        $groups = $userfrom->groups[$forum->id];
+    } else {
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+            error('Course Module ID was incorrect');
+        }
+        $group = groups_get_all_groups($course->id, $userfrom->id, $cm->groupingid);
+    }
+
+    if ($groups) {
+        $output .= print_group_picture($groups, $course->id, false, true, true);
     } else {
         $output .= '&nbsp;';
     }
@@ -3643,15 +3696,14 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
             error('Course Module ID was incorrect');
         }
     }
-    if (!isset($post->modcontext)) {
-        $post->modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    }
 
     if (empty($user) || empty($user->id)) {
         $user = $USER;
     }
 
-    if (!has_capability('mod/forum:viewdiscussion', $post->modcontext, $user->id)) {
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if (!has_capability('mod/forum:viewdiscussion', $modcontext, $user->id)) {
         return false;
     }
     
@@ -3664,7 +3716,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
 
         return (forum_user_has_posted($forum->id,$discussion->id,$user->id) ||
                 $firstpost->id == $post->id ||
-                has_capability('mod/forum:viewqandawithoutposting', $post->modcontext, false, $user->id));
+                has_capability('mod/forum:viewqandawithoutposting', $modcontext, false, $user->id));
     }
     return true;
 }
@@ -4981,7 +5033,7 @@ function forum_tp_can_track_forums($forum=false, $user=false) {
 
     if ($user === false) {
         // Must be logged in and not a guest.
-        $isauser = isloggedin() && !isguest();
+        $isauser = isloggedin() && !isguestuser();
         $user = $USER;
     } else {
         $isauser = true;
