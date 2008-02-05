@@ -67,7 +67,7 @@ class enrolment_plugin_authorize
             print_heading(get_string('choosemethod', 'enrol_authorize'), 'center');
         }
 
-        print_simple_box_start('center', '80%');
+        print_box_start();
         if ($USER->username == 'guest') { // only real guest user, not for users with guest role
             $curcost = get_course_cost($course);
             echo '<div align="center">';
@@ -96,7 +96,7 @@ class enrolment_plugin_authorize
             }
             $frmenrol->display();
         }
-        print_simple_box_end();
+        print_box_end();
 
         if ($course->password) {
             $password = '';
