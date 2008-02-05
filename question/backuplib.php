@@ -464,7 +464,7 @@
         $cmcontexts = get_records_sql_menu("SELECT c.id, c.id AS dummykeyname FROM {$CFG->prefix}modules m,
                                                         {$CFG->prefix}course_modules cm,
                                                         {$CFG->prefix}context c
-                               WHERE m.name = 'quiz' AND m.id = cm.module AND cm.id = c.instanceid
+                               WHERE m.name = '$modulename' AND m.id = cm.module AND cm.id = c.instanceid
                                     AND c.contextlevel = ".CONTEXT_MODULE." AND cm.course = $course
                                     AND cm.instance IN (".implode(',',array_keys($instances)).")");
                                     
