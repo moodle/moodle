@@ -33,10 +33,13 @@ class edit_letter_form extends moodleform {
         $admin = $this->_customdata['admin'];
 
         $mform->addElement('header', 'gradeletters', get_string('gradeletters', 'grades'));
-
-        $mform->addElement('checkbox', 'override', get_string('overridesitedefaultgradedisplaytype', 'grades'));
-        $mform->setHelpButton('override', array(false, get_string('overridesitedefaultgradedisplaytype', 'grades'),
-                false, true, false, get_string('overridesitedefaultgradedisplaytypehelp', 'grades')));
+        
+        // Only show "override site defaults" checkbox if editing the course grade letters
+        if (!$admin) {
+            $mform->addElement('checkbox', 'override', get_string('overridesitedefaultgradedisplaytype', 'grades'));
+            $mform->setHelpButton('override', array(false, get_string('overridesitedefaultgradedisplaytype', 'grades'),
+                    false, true, false, get_string('overridesitedefaultgradedisplaytypehelp', 'grades')));
+        }
 
         $gradeletterhelp   = get_string('configgradeletter', 'grades');
         $gradeboundaryhelp = get_string('configgradeboundary', 'grades');
@@ -53,16 +56,26 @@ class edit_letter_form extends moodleform {
             $gradeboundaryname = 'gradeboundary'.$i;
 
             $mform->addElement('text', $gradelettername, $gradeletter." $i");
-            $mform->setHelpButton($gradelettername, array(false, $gradeletter." $i", false, true, false, $gradeletterhelp));
+            if ($i == 1) {
+                $mform->setHelpButton($gradelettername, array(false, $gradeletter." $i", false, true, false, $gradeletterhelp));
+            }
             $mform->setType($gradelettername, PARAM_TEXT);
-            $mform->disabledIf($gradelettername, 'override', 'notchecked');
-            $mform->disabledIf($gradelettername, $gradeboundaryname, 'eq', -1);
+            
+            if (!$admin) {
+                $mform->disabledIf($gradelettername, 'override', 'notchecked');
+                $mform->disabledIf($gradelettername, $gradeboundaryname, 'eq', -1);
+            }
 
             $mform->addElement('select', $gradeboundaryname, $gradeboundary." $i", $percentages);
-            $mform->setHelpButton($gradeboundaryname, array(false, $gradeboundary." $i", false, true, false, $gradeboundaryhelp));
+            if ($i == 1) {
+                $mform->setHelpButton($gradeboundaryname, array(false, $gradeboundary." $i", false, true, false, $gradeboundaryhelp));
+            }
             $mform->setDefault($gradeboundaryname, -1);
             $mform->setType($gradeboundaryname, PARAM_INT);
-            $mform->disabledIf($gradeboundaryname, 'override', 'notchecked');
+            
+            if (!$admin) {
+                $mform->disabledIf($gradeboundaryname, 'override', 'notchecked');
+            }
         }
 
         // hidden params
