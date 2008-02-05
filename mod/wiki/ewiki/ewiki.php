@@ -1,4 +1,5 @@
-<script language="PHP"> @define("EWIKI_VERSION", "R1.01d");
+<?php
+@define("EWIKI_VERSION", "R1.01d");
 
 /*
 
@@ -591,6 +592,9 @@ function ewiki_page($id=false) {
    if ($pf_a = $ewiki_plugins["page_final"]) {
       ksort($pf_a);
       foreach ($pf_a as $pf) {
+         if ($action == 'edit' and $pf == 'ewiki_html_tag_balancer') {
+            continue; // balancer breaks htmlarea buttons
+         }
          $pf($o, $id, $data, $action);
       }
    }
@@ -2564,7 +2568,6 @@ function ewiki_binary($break=0) {
          $do = "nop";
       }
    }
-
    
    #-- auth only happens when enforced with _PROTECTED_MODE_XXL setting
    #   (authentication for inline images in violation of the WWW spirit)
@@ -2574,7 +2577,6 @@ function ewiki_binary($break=0) {
 
    #-- upload an image
    if ($do == "upload"){
-
       $id = ewiki_binary_save_image($upload_file["tmp_name"], "", $return=0, $add_meta);
       @unlink($upload_file["tmp_name"]);
       ($title = trim($orig_name, "/")) && ($title = preg_replace("/[^-._\w\d]+/", "_", substr(substr($orig_name, strrpos($title, "/")), 0, 20)))
@@ -3586,6 +3588,4 @@ function ewiki_database_mysql($action, &$args, $sw1, $sw2) {
    return($r);
 }
 
-
-
-</script>
+?>
