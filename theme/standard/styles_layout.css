@@ -1079,23 +1079,6 @@ body#admin-modules table.generaltable td.c0
   margin:0;
 }
 
-#adminsettings .form-text input {
-  width: 20em;
-}
-
-#adminsettings .form-password input[type="text"],
-#adminsettings .form-password input[type="password"] {
-    width: 20em;
-}
-
-#adminsettings .form-text input.number {
-  width: 5em;
-}
-
-#adminsettings .form-file input {
-    width: 30em;
-}
-
 #adminsettings .form-item .pathok,
 #adminsettings .form-item .patherror {
   margin-left: 0.5em;
