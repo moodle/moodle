@@ -20,12 +20,29 @@ class qformat_hotpot extends qformat_default {
         /// where each item is a question object as defined by
         /// readquestion().
 
-        // set baseurl
-        global $CFG;
+        // set courseid and baseurl
+        global $CFG, $COURSE, $course;
+        switch (true) {
+            case isset($this->course->id):
+                // import to quiz module
+                $courseid = $this->course->id;
+                break;
+            case isset($course->id):
+                // import to lesson module
+                $courseid = $course->id;
+                break;
+            case isset($COURSE->id):
+                // last resort
+                $courseid = $COURSE->id;
+                break;
+            default:
+                // shouldn't happen !!
+                $courseid = 0; 
+        }
         if ($CFG->slasharguments) {
-            $baseurl = "$CFG->wwwroot/file.php/{$this->course->id}/";
+            $baseurl = "$CFG->wwwroot/file.php/$courseid/";
         } else {
-            $baseurl = "$CFG->wwwroot/file.php?file=/{$this->course->id}/";
+            $baseurl = "$CFG->wwwroot/file.php?file=/$courseid/";
         }
 
         // get import file name
