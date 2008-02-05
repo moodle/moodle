@@ -13,7 +13,7 @@ $THEME->sheets = array('gradients', 'styles_color');
 ////////////////////////////////////////////////////////////////////////////////
 
 
-$THEME->standardsheets = true;
+$THEME->standardsheets = array('styles_layout','styles_fonts','styles_color');  
 
 /// This variable can be set to an array containing
 /// filenames from the *STANDARD* theme.  If the 
@@ -78,37 +78,6 @@ $THEME->langsheets = false;
 /// a file named "styles.php" inside the current language
 /// directory.  This allows different languages to provide 
 /// different styles.
-
-
-$THEME->courseformatsheets = true;
-
-/// When this is enabled, this theme will search for files 
-/// named "styles.php" inside all course formats and 
-/// include them.  This allows course formats to provide 
-/// their own default styles.
-
-
-$THEME->metainclude = false;
-
-/// When this is enabled (or not set!) then Moodle will try 
-/// to include a file meta.php from this theme into the 
-/// <head></head> part of the page.
-
-
-$THEME->standardmetainclude = true;
-
-
-/// When this is enabled (or not set!) then Moodle will try 
-/// to include a file meta.php from the standard theme into the 
-/// <head></head> part of the page.
-
-
-$THEME->parentmetainclude = false;
-
-/// When this is enabled (or not set!) then Moodle will try 
-/// to include a file meta.php from the parent theme into the 
-/// <head></head> part of the page.
-
 
 $THEME->navmenuwidth = 50;
 
