@@ -131,8 +131,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 
     } else {
         if ($grade_item->is_locked()) {
-            $message = get_string('gradeitemislocked', 'grades', $grade_item->itemname);
-            notice($message);
+            // no notice() here, test returned value instead!
             return GRADE_UPDATE_ITEM_LOCKED;
         }
 
