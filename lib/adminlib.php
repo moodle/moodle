@@ -1708,6 +1708,7 @@ class admin_setting_heading extends admin_setting {
 class admin_setting_configtext extends admin_setting {
 
     var $paramtype;
+    var $size;
 
     /**
      * config text contructor
@@ -1716,9 +1717,15 @@ class admin_setting_configtext extends admin_setting {
      * @param string $description long localised info
      * @param string $defaultsetting
      * @param mixed $paramtype int means PARAM_XXX type, string is a allowed format in regex
+     * @param int $size default field size
      */
-    function admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW) {
+    function admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW, $size=null) {
         $this->paramtype = $paramtype;
+        if (!is_null($size)) {
+            $this->size  = $size;
+        } else {
+            $this->size  = ($paramtype == PARAM_INT) ? 5 : 30;
+        }
         parent::admin_setting($name, $visiblename, $description, $defaultsetting);
     }
 
@@ -1768,14 +1775,8 @@ class admin_setting_configtext extends admin_setting {
     function output_html($data, $query='') {
         $default = $this->get_defaultsetting();
 
-        if ($this->paramtype === PARAM_INT) {
-            $paramclass = 'class="number"';
-        } else {
-            $paramclass = '';
-        }
-
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-text defaultsnext"><input type="text" '.$paramclass.' id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" /></div>',
+                '<div class="form-text defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" /></div>',
                 $this->description, true, '', $default, $query);
     }
 }
@@ -1819,7 +1820,7 @@ class admin_setting_configpasswordunmask extends admin_setting_configtext {
      * @param string $defaultsetting default password
      */
     function admin_setting_configpasswordunmask($name, $visiblename, $description, $defaultsetting) {
-        parent::admin_setting_configtext($name, $visiblename, $description, $defaultsetting, PARAM_RAW);
+        parent::admin_setting_configtext($name, $visiblename, $description, $defaultsetting, PARAM_RAW, 30);
     }
 
     function output_html($data, $query='') {
@@ -1831,7 +1832,7 @@ document.write(\'<span class="unmask"><input id="'.$id.'unmask" value="1" type="
 //]]>
 </script>';
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-password"><input type="password" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$unmaskjs.'</div>',
+                '<div class="form-password"><input type="password" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$unmaskjs.'</div>',
                 $this->description, true, '', NULL, $query);
     }
 }
@@ -1848,7 +1849,7 @@ class admin_setting_configfile extends admin_setting_configtext {
      * @param string $defaultdirectory default directory location
      */
     function admin_setting_configfile($name, $visiblename, $description, $defaultdirectory) {
-        parent::admin_setting_configtext($name, $visiblename, $description, $defaultdirectory, PARAM_RAW);
+        parent::admin_setting_configtext($name, $visiblename, $description, $defaultdirectory, PARAM_RAW, 50);
     }
 
     function output_html($data, $query='') {
@@ -1865,7 +1866,7 @@ class admin_setting_configfile extends admin_setting_configtext {
         }
 
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-file defaultsnext"><input type="text" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
+                '<div class="form-file defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
                 $this->description, true, '', $default, $query);
     }
 }
@@ -1889,7 +1890,7 @@ class admin_setting_configexecutable extends admin_setting_configfile {
         }
 
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-file defaultsnext"><input type="text" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
+                '<div class="form-file defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
                 $this->description, true, '', $default, $query);
     }
 }
@@ -1912,7 +1913,7 @@ class admin_setting_configdirectory extends admin_setting_configfile {
         }
 
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-file defaultsnext"><input type="text" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
+                '<div class="form-file defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
                 $this->description, true, '', $default, $query);
     }
 }
