@@ -964,7 +964,7 @@ class grade_item extends grade_object {
          */
 
         // first detect if we need to change calculation formula from [[idnumber]] to ##giXXX## (after backup, etc.)
-        if (!$this->calculation_normalized and preg_match('/##gi\d+##/', $this->calculation)) {
+        if (!$this->calculation_normalized and strpos('[[', $this->calculation) !== 0) {
             $this->set_calculation($this->calculation);
         }
 
