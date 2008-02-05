@@ -4927,10 +4927,13 @@ function count_role_users($roleid, $context, $parent=false) {
         $parentcontexts = '';
     }
 
-    $SQL = "SELECT count(*)
-            FROM {$CFG->prefix}role_assignments r
-            WHERE (r.contextid = $context->id $parentcontexts)
-            AND r.roleid = $roleid";
+    $SQL = "SELECT count(u.id)
+        FROM {$CFG->prefix}role_assignments r
+        JOIN {$CFG->prefix}user u 
+          ON u.id = r.userid
+        WHERE (r.contextid = $context->id $parentcontexts)
+        AND r.roleid = $roleid
+        AND u.deleted = 0";
 
     return count_records_sql($SQL);
 }
