@@ -1664,65 +1664,70 @@ function get_coursemodules_in_course($modulename, $courseid, $extrafields='') {
                                    md.name = '$modulename' AND
                                    md.id = cm.module");
 }
+
 /**
  * Returns an array of all the active instances of a particular module in given courses, sorted in the order they are defined
  *
  * Returns an array of all the active instances of a particular
  * module in given courses, sorted in the order they are defined
- * in the course.   Returns false on any errors.
+ * in the course. Returns an empty array on any errors.
  *
- * @uses $CFG
- * @param string  $modulename The name of the module to get instances for
- * @param array  $courses This depends on an accurate $course->modinfo
- * @return array of instances
+ * The returned objects includle the columns cw.section, cm.visible,
+ * cm.groupmode and cm.groupingid, cm.groupmembersonly, and are indexed by cm.id.
+ *
+ * @param string $modulename The name of the module to get instances for
+ * @param array $courses an array of course objects.
+ * @return array of module instance objects, including some extra fields from the course_modules
+ *          and course_sections tables, or an empty array if an error occurred.
  */
 function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $includeinvisible=false) {
     global $CFG;
-    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
-        return array();
-    }
-    if (!$rawmods = get_records_sql("SELECT cm.id as coursemodule, m.*,cw.section,cm.visible as visible,cm.groupmode, cm.course
-                            FROM {$CFG->prefix}course_modules cm,
-                                 {$CFG->prefix}course_sections cw,
-                                 {$CFG->prefix}modules md,
-                                 {$CFG->prefix}$modulename m
-                            WHERE cm.course IN (".implode(',',array_keys($courses)).") AND
-                                  cm.instance = m.id AND
-                                  cm.section = cw.id AND
-                                  md.name = '$modulename' AND
-                                  md.id = cm.module")) {
-        return array();
-    }
 
     $outputarray = array();
 
-    foreach ($courses as $course) {
-        if ($includeinvisible) {
-            $invisible = -1;
-        } else if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id), $userid)) {
-            // Usually hide non-visible instances from students
-            $invisible = -1;
-        } else {
-            $invisible = 0;
-        }
+    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
+        return $outputarray;
+    }
 
-   /// Casting $course->modinfo to string prevents one notice when the field is null
-        if (!$modinfo = unserialize((string)$course->modinfo)) {
+    if (!$rawmods = get_records_sql("SELECT cm.id AS coursemodule, m.*, cw.section, cm.visible AS visible,
+                                            cm.groupmode, cm.groupingid, cm.groupmembersonly
+                                       FROM {$CFG->prefix}course_modules cm,
+                                            {$CFG->prefix}course_sections cw,
+                                            {$CFG->prefix}modules md,
+                                            {$CFG->prefix}$modulename m
+                                      WHERE cm.course IN (".implode(',',array_keys($courses)).") AND
+                                            cm.instance = m.id AND
+                                            cm.section = cw.id AND
+                                            md.name = '$modulename' AND
+                                            md.id = cm.module")) {
+        return $outputarray;
+    }
+
+    require_once($CFG->dirroot.'/course/lib.php');
+
+    foreach ($courses as $course) {
+        $modinfo = get_fast_modinfo($course, $userid);
+
+        if (empty($modinfo->instances[$modulename])) {
             continue;
         }
-        foreach ($modinfo as $mod) {
-            if ($mod->mod == $modulename and $mod->visible > $invisible) {
-                $instance = $rawmods[$mod->cm];
-                if (!empty($mod->extra)) {
-                    $instance->extra = $mod->extra;
-                }
-                $outputarray[] = $instance;
+
+        foreach ($modinfo->instances[$modulename] as $cm) {
+            if (!$includeinvisible and !$cm->uservisible) {
+                continue;
             }
+            if (!isset($rawmods[$cm->id])) {
+                continue;
+            }
+            $instance = $rawmods[$cm->id];
+            if (!empty($cm->extra)) {
+                $instance->extra = urlencode($cm->extra); // bc compatibility
+            }
+            $outputarray[] = $instance;
         }
     }
 
     return $outputarray;
-
 }
 
 /**
@@ -1734,67 +1739,15 @@ function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $incl
  * in the course. Returns an empty array on any errors.
  *
  * The returned objects includle the columns cw.section, cm.visible,
- * cm.groupmode and cm.groupingid, and are indexed by cm.id.
+ * cm.groupmode and cm.groupingid, cm.groupmembersonly, and are indexed by cm.id.
  *
- * @uses $CFG
  * @param string $modulename The name of the module to get instances for
- * @param object $course This depends on an accurate $course->modinfo
+ * @param object $course The course obect.
  * @return array of module instance objects, including some extra fields from the course_modules
  *          and course_sections tables, or an empty array if an error occurred.
  */
 function get_all_instances_in_course($modulename, $course, $userid=NULL, $includeinvisible=false) {
-
-    global $CFG;
-
-    if (empty($course->modinfo)) {
-        return array();
-    }
-
-    if (!$modinfo = unserialize((string)$course->modinfo)) {
-        return array();
-    }
-
-    if (!$rawmods = get_records_sql("SELECT cm.id as coursemodule, m.*,cw.section,cm.visible as visible,cm.groupmode,cm.groupingid
-                            FROM {$CFG->prefix}course_modules cm,
-                                 {$CFG->prefix}course_sections cw,
-                                 {$CFG->prefix}modules md,
-                                 {$CFG->prefix}$modulename m
-                            WHERE cm.course = '$course->id' AND
-                                  cm.instance = m.id AND
-                                  cm.section = cw.id AND
-                                  md.name = '$modulename' AND
-                                  md.id = cm.module")) {
-        return array();
-    }
-
-    if ($includeinvisible) {
-        $invisible = -1;
-    } else if (has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $course->id), $userid)) {
-        // Usually hide non-visible instances from students
-        $invisible = -1;
-    } else {
-        $invisible = 0;
-    }
-
-    $outputarray = array();
-
-    foreach ($modinfo as $mod) {
-        $mod->id = $mod->cm;
-        $mod->course = $course->id;
-        if (!groups_course_module_visible($mod)) {
-            continue;
-        }
-        if ($mod->mod == $modulename and $mod->visible > $invisible) {
-            $instance = $rawmods[$mod->cm];
-            if (!empty($mod->extra)) {
-                $instance->extra = $mod->extra;
-            }
-            $outputarray[] = $instance;
-        }
-    }
-
-    return $outputarray;
-
+    return get_all_instances_in_courses($modulename, array($course->id => $course), $userid, $includeinvisible);
 }
 
 
