@@ -423,14 +423,62 @@
                                  WHERE backup_code = '$backup_unique_code' AND
                                        table_name = 'question'");
     }
+    
+    //Function for inserting question and category ids into db that are all called from
+    // quiz_check_backup_mods during execution of backup_check.html 
 
-    //Delete category ids from backup_ids table
-    function delete_ids ($backup_unique_code, $tablename) {
+
+    function question_insert_c_and_q_ids_for_course($coursecontext, $backup_unique_code){
         global $CFG;
-        $status = execute_sql("DELETE FROM {$CFG->prefix}backup_ids
-                               WHERE backup_code = '$backup_unique_code' AND table_name = '$tablename'",false);
+            // First, all categories from this course's context.
+        $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
+                                   (backup_code, table_name, old_id, info)
+                               SELECT '$backup_unique_code', 'question_categories', qc.id, 'course'
+                               FROM {$CFG->prefix}question_categories qc
+                               WHERE qc.contextid = {$coursecontext->id}", false);
+        $status = $status && question_insert_q_ids($backup_unique_code, 'course');
         return $status;
     }
+    /*
+     * Insert all question ids for categories whose ids have already been inserted in the backup_ids table
+     * Insert code to identify categories to later insert all question ids later eg. course, quiz or other module name.
+     */
+    function question_insert_q_ids($backup_unique_code, $info){
+        global $CFG;
+            //put the ids of the questions from all these categories into the db.
+        $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
+                                       (backup_code, table_name, old_id, info)
+                                       SELECT '$backup_unique_code', 'question', q.id, ''
+                                       FROM {$CFG->prefix}question q, {$CFG->prefix}backup_ids bk
+                                       WHERE q.category = bk.old_id AND bk.table_name = 'question_categories' 
+                                       AND bk.info = '$info'
+                                       AND bk.backup_code = '$backup_unique_code'", false);
+        return $status;
+    }
+    
+    function question_insert_c_and_q_ids_for_module($backup_unique_code, $course, $modulename, $instances){
+        global $CFG;
+        $status = true;
+            // using 'dummykeyname' in sql because otherwise get_records_sql_menu returns an error
+        // if two key names are the same.
+        $cmcontexts = get_records_sql_menu("SELECT c.id, c.id AS dummykeyname FROM {$CFG->prefix}modules m,
+                                                        {$CFG->prefix}course_modules cm,
+                                                        {$CFG->prefix}context c
+                               WHERE m.name = 'quiz' AND m.id = cm.module AND cm.id = c.instanceid
+                                    AND c.contextlevel = ".CONTEXT_MODULE." AND cm.course = $course
+                                    AND cm.instance IN (".implode(',',array_keys($instances)).")");
+                                    
+        if ($cmcontexts){
+            $status = $status && execute_sql("INSERT INTO {$CFG->prefix}backup_ids
+                                       (backup_code, table_name, old_id, info)
+                                   SELECT '$backup_unique_code', 'question_categories', qc.id, '$modulename'
+                                   FROM {$CFG->prefix}question_categories qc
+                                   WHERE qc.contextid IN (".join(array_keys($cmcontexts), ', ').")", false);
+        }
+        $status = $status && question_insert_q_ids($backup_unique_code, $modulename);
+        return $status;
+    }
+
     function question_insert_site_file_names($course, $backup_unique_code){
         global $QTYPES, $CFG;
         $status = true;

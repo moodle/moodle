@@ -33,43 +33,23 @@
 
     /*
      * Insert necessary category ids to backup_ids table. Called during backup_check.html
+     * This backs up ids for quiz module. It backs up :
+     *     all categories and questions in course
+     *     all categories and questions in contexts of quiz module instances which have been selected for backup
+     *     all categories and questions in contexts above course level that are used by quizzes that have been selected for backup
      */
     function quiz_insert_category_and_question_ids($course, $backup_unique_code, $instances = null) {
         global $CFG;
-
+        $status = true;
+        
         // Create missing categories and reasign orphaned questions.
         quiz_fix_orphaned_questions($course);
-        // First, all categories from this course's context.
+
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course);
-        $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
-                                   (backup_code, table_name, old_id, info)
-                               SELECT '$backup_unique_code', 'question_categories', qc.id, ''
-                               FROM {$CFG->prefix}question_categories qc
-                               WHERE qc.contextid = {$coursecontext->id}", false);
-
-
-        // then, all categories from this course's modules' contexts.
-        // using 'dummykeyname' in sql because otherwise get_records_sql_menu returns an error
-        // if two key names are the same.
-        $cmcontexts = get_records_sql_menu("SELECT c.id, c.id AS dummykeyname FROM {$CFG->prefix}modules m,
-                                                        {$CFG->prefix}course_modules cm,
-                                                        {$CFG->prefix}context c
-                               WHERE m.name = 'quiz' AND m.id = cm.module AND cm.id = c.instanceid
-                                    AND c.contextlevel = ".CONTEXT_MODULE." AND cm.course = $course");
-        if ($cmcontexts){
-            $status = $status && execute_sql("INSERT INTO {$CFG->prefix}backup_ids
-                                       (backup_code, table_name, old_id, info)
-                                   SELECT '$backup_unique_code', 'question_categories', qc.id, ''
-                                   FROM {$CFG->prefix}question_categories qc
-                                   WHERE qc.contextid IN (".join(array_keys($cmcontexts), ', ').")", false);
-        }
-        //put the ids of the questions from all these categories into the db.
-        $status = $status && execute_sql("INSERT INTO {$CFG->prefix}backup_ids
-                                       (backup_code, table_name, old_id, info)
-                                       SELECT '$backup_unique_code', 'question', q.id, ''
-                                       FROM {$CFG->prefix}question q, {$CFG->prefix}backup_ids bk
-                                       WHERE q.category = bk.old_id AND bk.table_name = 'question_categories' AND
-                                        bk.backup_code = '$backup_unique_code'", false);
+        $status = $status && question_insert_c_and_q_ids_for_course($coursecontext, $backup_unique_code);
+        
+        // then, all categories and questions from this course's modules' contexts.
+        $status = $status && question_insert_c_and_q_ids_for_module($backup_unique_code, $course, 'quiz', $instances);
 
         // Then categories from parent contexts used by the quizzes we are backing up.
         //TODO this will need generalising when we have modules other than quiz using shared questions above course level.
@@ -176,7 +156,7 @@
         }
         return $status;
     }
-
+    
     /**
      * Helper function adding the id of all the subcategories of a category to an array.
      */
@@ -517,9 +497,6 @@
    ////Return an array of info (name,value)
 /// $instances is an array with key = instanceid, value = object (name,id,userdata)
    function quiz_check_backup_mods($course,$user_data= false,$backup_unique_code,$instances=null) {
-        //Deletes data from mdl_backup_ids (categories section)
-        delete_ids ($backup_unique_code, 'question_categories');
-        delete_ids ($backup_unique_code, 'question');
         //this function selects all the questions / categories to be backed up.
         quiz_insert_category_and_question_ids($course, $backup_unique_code, $instances);
         if ($course != SITEID){
