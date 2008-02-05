@@ -274,10 +274,8 @@
         
         if (!empty($fromform->submitbutton)) { 
             redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$fromform->coursemodule");
-        } elseif (!empty($fromform->submitbutton2)) {
-            redirect("$CFG->wwwroot/course/view.php?id=$course->id");
         } else {
-            redirect("$CFG->wwwroot/course/view.php?id=$course->id"); // (ADD) 
+            redirect("$CFG->wwwroot/course/view.php?id=$course->id");
         }
         exit;
 
