@@ -511,7 +511,7 @@ function count_records_select($table, $select='', $countitem='COUNT(*)') {
 function count_records_sql($sql) {
     $rs = get_recordset_sql($sql);
     
-    if ($rs) {
+    if (is_object($rs) and is_array($rs->fields)) {
         return $rs->fields[0];
     } else {
         return 0;   
