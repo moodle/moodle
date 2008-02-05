@@ -18,7 +18,9 @@
 
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
         error("Course Module ID was incorrect");
-    }
+    } else {
+        $forum->cmidnumber = $cm->id; //MDL-12961
+        }
 
     require_login($course, false, $cm);
 
