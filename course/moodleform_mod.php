@@ -179,6 +179,7 @@ class moodleform_mod extends moodleform {
         }
 
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->setType('buttonar', PARAM_RAW);
         $mform->closeHeaderBefore('buttonar');
     }
 
