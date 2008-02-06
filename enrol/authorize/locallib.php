@@ -53,7 +53,7 @@ function authorize_print_orders($courseid, $userid)
         $sql .= "WHERE (e.userid='$userid') ";
     }
     $sql .= "ORDER BY c.sortorder, c.fullname";
-    if ($popupcrs = get_records_sql_menu($sql)) {
+    if (($popupcrs = get_records_sql_menu($sql))) {
         $popupcrs = array($SITE->id => $SITE->fullname) + $popupcrs;
         echo "<table border='0' width='100%' cellspacing='0' cellpadding='3' class='generaltable generalbox'>";
         echo "<tr>";
@@ -155,7 +155,7 @@ function authorize_print_orders($courseid, $userid)
         $where .= "AND (e.userid = '" . $userid . "') ";
     }
 
-    if ($sort = $table->get_sql_sort()) {
+    if (($sort = $table->get_sql_sort())) {
         $sort = ' ORDER BY ' . $sort;
     }
 
@@ -163,7 +163,7 @@ function authorize_print_orders($courseid, $userid)
     $table->initialbars($totalcount > $perpage);
     $table->pagesize($perpage, $totalcount);
 
-    if ($records = get_records_sql($select . $from . $where . $sort, $table->get_page_start(), $table->get_page_size())) {
+    if (($records = get_records_sql($select . $from . $where . $sort, $table->get_page_start(), $table->get_page_size()))) {
         foreach ($records as $record) {
             $actionstatus = authorize_get_status_action($record);
             $color = authorize_get_status_color($actionstatus->status);
@@ -312,7 +312,7 @@ function authorize_print_order_details($orderno)
         $sql = "SELECT SUM(amount) AS refunded FROM {$CFG->prefix}enrol_authorize_refunds " .
                "WHERE (orderid = '" . $orderno . "') AND (status = '" . AN_STATUS_CREDIT . "')";
 
-        if ($refund = get_record_sql($sql)) {
+        if (($refund = get_record_sql($sql))) {
             $extra->sum = floatval($refund->refunded);
         }
         $upto = round($order->amount - $extra->sum, 2);
