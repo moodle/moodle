@@ -5473,7 +5473,7 @@ function get_list_of_countries() {
     }
 
     if (!empty($string)) {
-        asort($string);
+        uasort($string, 'strcoll');
     }
 
     return $string;
