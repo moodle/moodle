@@ -907,7 +907,7 @@ function tag_instance_table_cleanup() {
                 FROM
                     (SELECT sq2.*
                      FROM {$CFG->prefix}tag_instance sq2
-                     LEFT JOIN {$CFG->prefix}tag item
+                     LEFT JOIN {$CFG->prefix}{$type->itemtype} item
                      ON sq2.itemid = item.id
                      WHERE item.id IS NULL
                      AND sq2.itemtype = '{$type->itemtype}')
