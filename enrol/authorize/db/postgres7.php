@@ -2,7 +2,7 @@
 
 // THIS FILE IS DEPRECATED!  PLEASE DO NOT MAKE CHANGES TO IT!
 //
-// IT IS USED ONLY FOR UPGRADES FROM BEFORE MOODLE 1.7, ALL 
+// IT IS USED ONLY FOR UPGRADES FROM BEFORE MOODLE 1.7, ALL
 // LATER CHANGES SHOULD USE upgrade.php IN THIS DIRECTORY.
 
 // PostgreSQL commands for upgrading this enrolment module
@@ -67,7 +67,7 @@ function enrol_authorize_upgrade($oldversion=0) {
          );");
         modify_database("","CREATE INDEX prefix_enrol_authorize_refunds_orderid_idx ON prefix_enrol_authorize_refunds (orderid);");
         // defaults.
-        if ($courses = get_records_select('course', '', '', 'id, cost, currency')) {
+        if (($courses = get_records_select('course', '', '', 'id, cost, currency'))) {
             foreach ($courses as $course) {
                 execute_sql("UPDATE {$CFG->prefix}enrol_authorize
                              SET amount = '$course->cost', currency = '$course->currency'
@@ -81,7 +81,7 @@ function enrol_authorize_upgrade($oldversion=0) {
         table_column('enrol_authorize_refunds', '', 'settletime', 'integer', '10', 'unsigned', '0', 'not null', 'transid');
         table_column('enrol_authorize', 'timeupdated', 'settletime', 'integer', '10', 'unsigned', '0', 'not null');
         $status = AN_STATUS_AUTH | AN_STATUS_CAPTURE;
-        if ($settlements = get_records_select('enrol_authorize', "status='$status'", '', 'id, settletime')) {
+        if (($settlements = get_records_select('enrol_authorize', "status='$status'", '', 'id, settletime'))) {
             include_once("$CFG->dirroot/enrol/authorize/authorizenetlib.php");
             foreach ($settlements as $settlement) {
                 execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET settletime = '" .
