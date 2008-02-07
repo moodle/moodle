@@ -20,7 +20,7 @@
     print_heading_with_help($struploadcsv, 'uploadcsv', 'enrol/authorize');
 
 /// Handle CSV file
-    if ($form = data_submitted() && confirm_sesskey()) {
+    if (($form = data_submitted()) && confirm_sesskey()) {
         $um = new upload_manager('csvfile', false, false, null, false, 0);
         if ($um->preprocess_files()) {
             $filename = $um->files['csvfile']['tmp_name'];
@@ -119,7 +119,7 @@ function authorize_process_csv($filename)
         $settlementdate = strtotime($data[$csvfields['Settlement Date/Time']]);
 
         if ($transstatus == 'Approved Review' || $transstatus == 'Review Failed') {
-            if ($order = get_record('enrol_authorize', 'transid', $transid)) {
+            if (($order = get_record('enrol_authorize', 'transid', $transid))) {
                 $order->status = ($transstatus == 'Approved Review') ? AN_STATUS_APPROVEDREVIEW : AN_STATUS_REVIEWFAILED;
                 update_record('enrol_authorize', $order);
                 $updated++; // Updated order status
@@ -128,7 +128,7 @@ function authorize_process_csv($filename)
         }
 
         if (!empty($reftransid) && is_numeric($reftransid) && 'Settled Successfully' == $transstatus && 'Credit' == $transtype) {
-            if ($order = get_record('enrol_authorize', 'transid', $reftransid)) {
+            if (($order = get_record('enrol_authorize', 'transid', $reftransid))) {
                 if (AN_METHOD_ECHECK == $order->paymentmethod) {
                     $refund = get_record('enrol_authorize_refunds', 'transid', $transid);
                     if ($refund) {
@@ -199,7 +199,7 @@ function authorize_process_csv($filename)
         }
 
         // If user wasn't enrolled, enrol now. Ignore otherwise. Because admin user might submit this file again.
-        if ($role = get_default_course_role($course)) {
+        if (($role = get_default_course_role($course))) {
             if (! user_has_role_assignment($user->id, $role->id, $coursecontext->id)) {
                 $timestart = $timeend = 0;
                 if ($course->enrolperiod) {
