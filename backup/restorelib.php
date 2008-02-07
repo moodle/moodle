@@ -6682,6 +6682,11 @@
             $info = restore_read_xml_info ($xml_file);
             //Reading course_header from file
             $course_header = restore_read_xml_course_header ($xml_file);
+
+            if(!is_object($course_header)){
+                // ensure we fail if there is no course header
+                $course_header = false;
+            }
         }
 
         if (!defined('RESTORE_SILENTLY')) {
