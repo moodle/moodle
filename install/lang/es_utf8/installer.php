@@ -155,6 +155,7 @@ $string['gdversionhelp'] = '<p>Su servidor parece no tener el GD instalado.</p>
 <p>En un entorno Windows, puede editar php.ini y quitar los comentarios de la línea referida a php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Manejo Inseguro de Ajustes Globales';
 $string['globalsquoteserror'] = 'Fije sus ajustes PHP: deshabilite register_globals y/o habilite magic_quotes_gpc';
+$string['globalswarning'] = '<p><strong>Advertencia de seguridad</strong>: para funcionar adecuadamente, Moodle requiere <br />that que realice ciertos cambios en los ajustes PHP actuales.<p/><p>Usted <em>debe</em> ajustar <code>register_globals=off</code>.<p>Esta opción se ajusta editando el archivo de <code>php.ini</code>, Apache/IIS <br />o <code>.htaccess</code>.</p>';
 $string['help'] = 'Ayuda';
 $string['iconvrecommended'] = 'La instalación de la librería opcional ICONV es muy recomendable para mejorar el rendimiento del sitio, especialmente si su sitio está soportando idiomas no latinos.';
 $string['info'] = 'Información';
@@ -217,6 +218,7 @@ $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Anterior';
 $string['qtyperqpwillberemoved'] = 'Durante la actualización, el tipo de pregunta RQP será eliminada. En el caso de que no estuviera utilizando este tipo de pregunta, no debería tener ningún problema.';
 $string['qtyperqpwillberemovedanyway'] = 'Durante la actualización, el tipo de pregunta RQP será eliminada. Usted tiene algunas preguntas RQP en su base de datos, y tales preguntas no pararán de funcionar a menos que reinstale el código desde http://moodle.org/mod/data/view.php?d=13&amp;rid=797  antes de continuar la actualización.';
+$string['remotedownloaderror'] = 'Falló la descarga del componente a su servidor. Se recomienda verificar los ajustes del proxy, extensión PHP cURL.<br /><br />Debe descargar el<a href=\"$a->url\">$a->url</a> archivo manualmente, copiarlo en \"$a->dest\" en su servidor y descomprimirlo allí.';
 $string['remotedownloadnotallowed'] = 'No está permitido descargar los componentes a su servidor (allow_url_fopen está deshabilitado).<br /><br />Debe descargar el archivo <a href=\"$a->url\">$a->url</a> manualmente, y copiarlo a \"$a->dest\"';
 $string['report'] = 'Informe';
 $string['restricted'] = 'Restringido';
