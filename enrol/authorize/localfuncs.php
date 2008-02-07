@@ -40,7 +40,7 @@ function prevent_double_paid($course)
         $sql .= 'AND status='.AN_STATUS_NONE;
     }
 
-    if ($recid = get_field_sql($sql)) {
+    if (($recid = get_field_sql($sql))) {
         $a = new stdClass;
         $a->orderid = $recid;
         $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$a->orderid";
