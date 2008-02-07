@@ -218,7 +218,7 @@ class enrolment_plugin_authorize
                 redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
             }
             else {
-                enrol_into_course($course, $USER, 'manual');
+                enrol_into_course($course, $USER, 'authorize');
                 redirect("$CFG->wwwroot/course/view.php?id=$course->id");
             }
             return;
@@ -241,7 +241,7 @@ class enrolment_plugin_authorize
             $a->orderid = $order->id;
             $emailsubject = get_string('adminnewordersubject', 'enrol_authorize', $a);
             $context = get_context_instance(CONTEXT_COURSE, $course->id);
-            if ($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments')) {
+            if (($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments'))) {
                 foreach ($paymentmanagers as $paymentmanager) {
                     email_to_user($paymentmanager, $USER, $emailsubject, $emailmessage);
                 }
@@ -251,7 +251,7 @@ class enrolment_plugin_authorize
         }
 
         // Credit card captured, ENROL student now...
-        if (enrol_into_course($course, $USER, 'manual')) {
+        if (enrol_into_course($course, $USER, 'authorize')) {
             if (!empty($CFG->enrol_mailstudents)) {
                 send_welcome_messages($order->id);
             }
@@ -442,7 +442,7 @@ class enrolment_plugin_authorize
             }
         }
 
-        if ($count = count_records('enrol_authorize', 'status', AN_STATUS_AUTH)) {
+        if (($count = count_records('enrol_authorize', 'status', AN_STATUS_AUTH))) {
             $a = new stdClass;
             $a->count = $count;
             $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=".AN_STATUS_AUTH;
@@ -643,7 +643,7 @@ class enrolment_plugin_authorize
                     $timeend = $order->settletime + $course->enrolperiod;
                 }
                 $user = get_record('user', 'id', $order->userid);
-                if (role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, 'manual')) {
+                if (role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, 'authorize')) {
                     $this->log .= "User($user->id) has been enrolled to course($course->id).\n";
                     if (!empty($CFG->enrol_mailstudents)) {
                         $sendem[] = $order->id;
@@ -781,7 +781,7 @@ class enrolment_plugin_authorize
         foreach($courseinfos as $courseinfo) {
             $lastcourse = $courseinfo->courseid;
             $context = get_context_instance(CONTEXT_COURSE, $lastcourse);
-            if ($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments')) {
+            if (($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments'))) {
                 $a = new stdClass;
                 $a->course = $courseinfo->shortname;
                 $a->pending = $courseinfo->cnt;
