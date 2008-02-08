@@ -70,7 +70,7 @@
                  "$navigation <a $CFG->frametarget href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
 
-    if (has_capability('moodle/course:manageactivities', $context)) {
+    if (has_capability('mod/scorm:viewreport', $context)) {
         $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
         if ($trackedusers->c > 0) {
             echo "<div class=\"reportlink\"><a $CFG->frametarget href=\"report.php?id=$cm->id\"> ".get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
