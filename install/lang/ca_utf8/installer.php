@@ -148,6 +148,7 @@ $string['gdversionhelp'] = '<p>Sembla que el vostre servidor no té instal·lat 
 <p>En Windows generalment es pot editar el fitxer php.ini i treure el comentari de la línia que porti la referència a php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Gestió insegura dels globals';
 $string['globalsquoteserror'] = 'Arregleu els paràmetres del vostre PHP: inhabiliteu register_globals i/o habiliteu magic_quotes_gpc';
+$string['globalswarning'] = '<p><strong>Avís de seguretat</strong>: per a operar adequadament, Moodle necessita <br />que feu certs canvis en els paràmetres actuals del PHP.<p/><p><em>Cal</em> que definiu <code>register_globals=off</code>.<p>Aquest paràmetre es defineix en el fitxer <code>php.ini</code>, en la configuració d\'Apache/IIS <br />o en el fitxer <code>.htaccess</code>.</p>';
 $string['help'] = 'Ajuda';
 $string['iconvrecommended'] = 'És sumament recomanable instal·lar la biblioteca opcional ICONV a fi de millorar el rendiment del lloc, especialment si el vostre lloc utilitza llengües no romàniques.';
 $string['info'] = 'Informació';

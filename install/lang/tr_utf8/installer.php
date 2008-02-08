@@ -224,6 +224,7 @@ $string['phpversionhelp'] = '<p>Moodle, PHP sürümünün en az 4.3.0 veya 5.1.0
 <p>PHP\'yi güncellemeli veya PHP\'nin yeni sürümünü kullananan bir hostinge taşınmalısınız!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Önceki';
+$string['remotedownloaderror'] = 'Bileşeni sunucunuza indirirken hata oluştu, lütfen proxy(vekil) ayarlarını kontrol edin. PHP cURL eklentisi şiddetle tavsiye edilir.<br /><br /><a href=\"$a->url\">$a->url</a><br />dosyasını kendiniz indirmeli ve indirdiğiniz dosyayı sunucunuzundaki \"$a->dest\" klasörüne kaydetmeli ve zip arşivini açmalısınız.';
 $string['remotedownloadnotallowed'] = 'Sunucunuza bileşen indirmeye izin verilmiyor. (allow_url_fopen pasif).<br /><br />Arşivlenmiş dosyayı <a href=\"$a->url\">$a->url</a> elle indirip buraya \"$a->dest\" açmalısınız.';
 $string['report'] = 'Rapor';
 $string['restricted'] = 'Sınırlandırıldı';
