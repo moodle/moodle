@@ -22,7 +22,7 @@ class user_filter_courserole extends user_filter_type {
      */
     function get_roles() {
         $context = get_context_instance(CONTEXT_SYSTEM);
-        $roles = array_merge(array(0=> get_string('anyrole','filters')), get_assignable_roles($context));
+        $roles = array(0=> get_string('anyrole','filters')) + get_assignable_roles($context);
         return $roles;
     }
 
@@ -34,7 +34,7 @@ class user_filter_courserole extends user_filter_type {
         $displaylist = array();
         $parentlist = array();
         make_categories_list($displaylist, $parentlist);
-        return array_merge(array(0=> get_string('anycategory', 'filters')), $displaylist);
+        return array(0=> get_string('anycategory', 'filters')) + $displaylist;
     }
 
     /**
