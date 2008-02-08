@@ -70,7 +70,7 @@
     print_header($pagetitle, $course->fullname, $navigation,
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
 
-    if (has_capability('moodle/course:manageactivities', $context)) {
+    if (has_capability('mod/scorm:viewreport', $context)) {
         
         $trackedusers = scorm_get_count_users($scorm->id, $cm->groupingid);
         if ($trackedusers > 0) {
