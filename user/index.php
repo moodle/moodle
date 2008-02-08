@@ -595,7 +595,7 @@
                     $usercontext = $user->context;
                 }
 
-                if ($piclink = ($USER->id == $user->id || has_capability('moodle/user:viewdetails', $context) ||has_capability('moodle/user:viewdetails', $context))) {
+                if ($piclink = ($USER->id == $user->id || has_capability('moodle/user:viewdetails', $context) || has_capability('moodle/user:viewdetails', $usercontext))) {
                     $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>';
                 } else {
                     $profilelink = '<strong>'.fullname($user).'</strong>';
