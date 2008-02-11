@@ -1,5 +1,5 @@
-<?PHP // $Id$
-      // enrol_authorize.php - created with Moodle 2.0 dev (2007101506)
+<?PHP // $Id$ 
+      // enrol_authorize.php - created with Moodle 2.0 dev (2007101508)
 
 
 $string['adminacceptccs'] = 'Which credit card types will be accepted?';
@@ -7,9 +7,9 @@ $string['adminaccepts'] = 'Select payment methods allowed and their types';
 $string['adminauthcode'] = 'If an user\'s credit card cannot be captured on the internet directly, obtain authorization code over the phone from customer\'s bank.';
 $string['adminauthorizeccapture'] = 'Order Review &amp; Scheduled-Capture Settings';
 $string['adminauthorizeemail'] = 'Email Sending Settings';
-$string['adminauthorizesettings'] = 'Authorize.net Settings';
-$string['adminauthorizewide'] = 'Site-Wide Settings';
-$string['adminavs'] = 'Check this if you have activated Address Verification System (AVS) in your authorize.net account. This demands address fields like street, state, country and zip when user fills out payment form.';
+$string['adminauthorizesettings'] = 'Authorize.net Merchant Account Settings';
+$string['adminauthorizewide'] = 'General Settings';
+$string['adminavs'] = 'Check this if you have activated Address Verification System (AVS) in your authorize.net merchant account. This demands address fields like street, state, country and zip when user fills out payment form.';
 $string['adminconfighttps'] = 'Please ensure that you have \"<a href=\"$a->url\">turned loginhttps ON</a>\" to use this plugin<br />in Admin >> Variables >> Security >> HTTP security.';
 $string['adminconfighttpsgo'] = 'Go to the <a href=\"$a->url\">secure page</a> to configure this plugin.';
 $string['admincronsetup'] = 'The cron.php maintenance script has not been run for at least 24 hours.<br />Cron must be enabled if you want to use scheduled-capture feature.<br /><b>Enable</b> \'Authorize.net plugin\' and <b>setup cron</b> properly; or <b>uncheck an_review</b> again.<br />If you disable scheduled-capture, transactions will be cancelled unless you review them within 30 days.<br />Check <b>an_review</b> and enter <b>\'0\' to an_capture_day</b> field<br />if you want to <b>manually</b> accept/deny payments within 30 days.';
@@ -47,7 +47,7 @@ $string['allpendingorders'] = 'All Pending Orders';
 $string['amount'] = 'Amount';
 $string['anlogin'] = 'Authorize.net: Login name';
 $string['anpassword'] = 'Authorize.net: Password';
-$string['anreferer'] = 'Define the URL referer if you have set up this in your authorize.net account. This will send a line \"Referer: URL\" embedded in the web request.';
+$string['anreferer'] = 'Define the URL referer if you have set up this in your authorize.net merchant account. This will send a line \"Referer: URL\" embedded in the web request.';
 $string['antestmode'] = 'Run transactions in test mode only (no money will be drawn)';
 $string['antrankey'] = 'Authorize.net: Transaction Key';
 $string['approvedreview'] = 'Approved Review';
@@ -79,6 +79,7 @@ $string['captureyes'] = 'The credit card will be captured and the student will b
 $string['ccexpire'] = 'Expiry Date';
 $string['ccexpired'] = 'The credit card has expired';
 $string['ccinvalid'] = 'Invalid card number';
+$string['cclastfour'] = 'CC last four';
 $string['ccno'] = 'Credit Card Number';
 $string['cctype'] = 'Credit Card Type';
 $string['ccvv'] = 'Card Verification';
@@ -105,6 +106,7 @@ $string['httpsrequired'] = 'We are sorry to inform you that your request cannot 
 $string['invalidaba'] = 'Invalid ABA number';
 $string['invalidaccnum'] = 'Invalid account number';
 $string['invalidacctype'] = 'Invalid account type';
+$string['isbusinesschecking'] = 'Is business checking?';
 $string['logindesc'] = 'This option must be ON. <br /><br />Please ensure that you have turned <a href=\"$a->url\">loginhttps ON</a> in Admin >> Variables >> Security.<br /><br />Turning this on will make Moodle use a secure https connection just for the login and payment pages.';
 $string['logininfo'] = 'Login name, password and transaction key are not shown due to security precautions. There is no need to enter again if you have configured these fields before. You see a green text left of the box if some fields were already configured. If you enter these fields for the first time, the login name (*) is required and you must enter <strong>either</strong> the transaction key (#1) <strong>or</strong> the password (#2) in the appropriate box. We recommend you enter the transaction key due to security precautions. If you want to delete the current password, tick the checkbox.';
 $string['methodcc'] = 'Credit Card';
@@ -123,6 +125,7 @@ $string['nameoncard'] = 'Name on Card';
 $string['new'] = 'New';
 $string['noreturns'] = 'No returns!';
 $string['notsettled'] = 'Not settled';
+$string['orderdetails'] = 'Order Details';
 $string['orderid'] = 'OrderID';
 $string['paymentmanagement'] = 'Payment Management';
 $string['paymentmethod'] = 'Payment Method';
@@ -185,6 +188,7 @@ $string['reviewnotify'] = 'Your payment will be reviewed. Expect an email within
 $string['sendpaymentbutton'] = 'Send Payment';
 $string['settled'] = 'Settled';
 $string['settlementdate'] = 'Settlement Date';
+$string['shopper'] = 'Shopper';
 $string['subvoidyes'] = 'The transaction refunded ($a->transid) is going to be cancelled and this will cause crediting $a->amount to your account. Are you sure?';
 $string['tested'] = 'Tested';
 $string['testmode'] = '[TEST MODE]';
@@ -195,7 +199,7 @@ $string['unenrolstudent'] = 'Unenrol student?';
 $string['uploadcsv'] = 'Upload a CSV file';
 $string['usingccmethod'] = 'Enrol using <a href=\"$a->url\"><strong>Credit Card</strong></a>';
 $string['usingecheckmethod'] = 'Enrol using <a href=\"$a->url\"><strong>eCheck</strong></a>';
-$string['verifyaccount'] = 'Verify your authorize.net account';
+$string['verifyaccount'] = 'Verify your authorize.net merchant account';
 $string['verifyaccountresult'] = 'Verification result: $a';
 $string['void'] = 'Void';
 $string['voidyes'] = 'The transaction will be cancelled. Are you sure?';
@@ -204,7 +208,6 @@ $string['welcometocoursesemail'] = 'Dear $a->name,
 Thanks for your payments. You have enrolled these courses:
 
 $a->courses
-
 
 You may view your payment details or edit your profile:
  $a->paymenturl

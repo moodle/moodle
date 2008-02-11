@@ -93,7 +93,7 @@ function authorize_print_orders($courseid, $userid)
     $perpagemenus = array(5 => 5, 10 => 10, 20 => 20, 50 => 50, 100 => 100);
     $perpagemenu = popup_form($baseurl.'&amp;status='.$status.'&amp;course='.$courseid.'&amp;perpage=',$perpagemenus,'perpagemenu',$perpage,'','','',true);
     $table->define_columns(array('id', 'timecreated', 'userid', 'status', ''));
-    $table->define_headers(array($authstrs->orderid, $authstrs->shipper, $strs->time, $strs->status, $perpagemenu));
+    $table->define_headers(array($authstrs->orderid, $authstrs->shopper, $strs->time, $strs->status, $perpagemenu));
     $table->define_baseurl($baseurl."&amp;status=$status&amp;course=$courseid&amp;perpage=$perpage");
 
     $table->sortable(true, 'id', SORT_DESC);

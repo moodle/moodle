@@ -28,7 +28,7 @@
     $authstrs = get_strings(array('orderid','nameoncard','echeckfirslasttname','void','capture','refund','delete',
         'allpendingorders','authcaptured','authorizedpendingcapture','capturedpendingsettle','settled',
         'refunded','cancelled','expired','underreview','approvedreview','reviewfailed','tested','new',
-        'paymentmethod','methodcc','methodecheck', 'paymentmanagement', 'orderdetails', 'cclastfour', 'isbusinesschecking','shipper',
+        'paymentmethod','methodcc','methodecheck', 'paymentmanagement', 'orderdetails', 'cclastfour', 'isbusinesschecking','shopper',
         'transid','settlementdate','notsettled','amount','unenrolstudent'), 'enrol_authorize');
 
     /// User wants to see all orders
