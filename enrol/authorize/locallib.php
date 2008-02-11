@@ -23,7 +23,7 @@ function authorize_print_orders($courseid, $userid)
     $perpage = optional_param('perpage', 10, PARAM_INT);
     $showonlymy = optional_param('showonlymy', 0, PARAM_BOOL);
     $searchquery = optional_param('searchquery', '0', PARAM_INT);
-    $searchtype = optional_param('searchtype', 'id', PARAM_ALPHA);
+    $searchtype = optional_param('searchtype', 'orderid', PARAM_ALPHA);
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
 
     $searchmenu = array('orderid' => $authstrs->orderid, 'transid' => $authstrs->transid, 'cclastfour' => $authstrs->cclastfour);
@@ -92,7 +92,7 @@ function authorize_print_orders($courseid, $userid)
     if ($perpage > 100) { $perpage = 100; }
     $perpagemenus = array(5 => 5, 10 => 10, 20 => 20, 50 => 50, 100 => 100);
     $perpagemenu = popup_form($baseurl.'&amp;status='.$status.'&amp;course='.$courseid.'&amp;perpage=',$perpagemenus,'perpagemenu',$perpage,'','','',true);
-    $table->define_columns(array('id', 'timecreated', 'userid', 'status', ''));
+    $table->define_columns(array('id', 'userid', 'timecreated', 'status', ''));
     $table->define_headers(array($authstrs->orderid, $authstrs->shopper, $strs->time, $strs->status, $perpagemenu));
     $table->define_baseurl($baseurl."&amp;status=$status&amp;course=$courseid&amp;perpage=$perpage");
 
