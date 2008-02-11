@@ -25,6 +25,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require_once '../../../config.php';
+require_once($CFG->dirroot.'/lib/formslib.php');
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->libdir.'/gradelib.php';
 
@@ -51,6 +52,14 @@ if ($courseid) {
 
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'outcome', 'courseid'=>$courseid));
+
+require_once('import_outcomes_form.php');
+$upload_form = new import_outcomes_form();
+
+if ($upload_form_data = $upload_form->get_data()) {
+    require_once('import.php');
+    exit();
+}
 
 
 $strgrades = get_string('grades');
@@ -118,7 +127,10 @@ if ($courseid) {
 
 print('<form action="export.php" method="post">' ."\n");
 
+$outcomes_to_export = false;
+
 if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
+    $outcomes_to_export = true;
 
     print_heading($strcustomoutcomes);
     $data = array();
@@ -175,7 +187,8 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
 
 
 if ($outcomes = grade_outcome::fetch_all_global()) {
-    
+    $outcomes_to_export = true;
+
     print_heading($strstandardoutcome); 
     $data = array();
     foreach($outcomes as $outcome) {
@@ -235,7 +248,9 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
 
 echo '<div class="buttons">';
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
-print('<input type="submit" value="'. get_string('exportselectedoutcomes', 'grades') .'" name="export_outcomes"></form>');
+if ( $outcomes_to_export ) {
+    print('<input type="submit" value="'. get_string('exportselectedoutcomes', 'grades') .'" name="export_outcomes"></form>');
+}
 print_single_button('edit.php', array('courseid'=>$courseid), $srtcreatenewoutcome);
 echo '</div>';
 
@@ -243,34 +258,13 @@ echo '<div>';
 $upload_max_filesize = get_max_upload_file_size($CFG->maxbytes);
 $filesize = display_size($upload_max_filesize);
 
-$strimportoutcomes = get_string('importoutcomes', 'grades');
-$struploadthisfile = get_string('uploadthisfile');
-$strimportcustom = get_string('importcustom', 'grades');
-$strimportstandard = get_string('importstandard', 'grades');
-$strmaxsize = get_string("maxsize", "", $filesize);
+//$strimportoutcomes = get_string('importoutcomes', 'grades');
+//$struploadthisfile = get_string('uploadthisfile');
+//$strimportcustom = get_string('importcustom', 'grades');
+//$strimportstandard = get_string('importstandard', 'grades');
+//$strmaxsize = get_string("maxsize", "", $filesize);
 
-require_once($CFG->dirroot.'/lib/uploadlib.php');
-
-echo '<div>';
-echo '<form enctype="multipart/form-data" method="post" action="import.php">';
-echo '<input type="hidden" name="action" value="upload" />';
-echo '<input type="hidden" name="id" value="'. $courseid .'" />';
-echo '<input type="hidden" name="sesskey" value="'. $USER->sesskey .'" />';
-echo '<table class="generalbox boxaligncenter" width="50%" cellspacing="1" cellpadding="5">';
-if ($courseid && has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM))) {
-    echo '<tr><td><ul style="list-style-type:none;">';
-    echo '<li><label><input type="radio" name="scope" value="local" checked="checked">'. $strimportcustom .'</label>';
-    echo '<li><label><input type="radio" name="scope" value="global">'. $strimportstandard .'</label>';
-    echo '</ul></td></tr>';
-}
-echo '<tr><td><p>'. $strimportoutcomes .'('. $strmaxsize .')</p></td></tr>';
-echo '<tr><td>'. 
-    upload_print_form_fragment(1,array('userfile'),null,false,null,$upload_max_filesize,0,true) .
-    '<input type="submit" name="save" value="'. $struploadthisfile .'" /></td></tr>';
-echo '</table>';
-echo '</div>';
-echo '</form>';
-echo '</div>';
+$upload_form->display();
 
 if ($courseid) {
     print_footer($course);
