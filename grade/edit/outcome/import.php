@@ -24,9 +24,10 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-require_once '../../../config.php';
-require_once $CFG->dirroot.'/grade/lib.php';
-require_once $CFG->libdir.'/gradelib.php';
+/// THIS SCRIPT IS CALLED WITH "require_once()" FROM index.php
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');
+}
 
 $courseid = optional_param('id', 0, PARAM_INT);
 $action   = optional_param('action', '', PARAM_ALPHA);
@@ -93,7 +94,9 @@ if ($courseid) {
     $caneditcoursescales = $caneditsystemscales;
 }
 
-if ($_FILES['userfile']['size'] == 0) {
+$imported_file = $upload_form->_upload_manager->files;
+
+if ($imported_file['userfile']['size'] == 0) {
     redirect('index.php'. ($courseid ? "?id=$courseid" : ''), get_string('importfilemissing', 'grades'));
 }
 
@@ -110,7 +113,7 @@ if (isset($courseid) && ($scope  == 'local')) {
 }
 
 // open the file, start importing data
-if ($handle = fopen($_FILES['userfile']['tmp_name'], 'r')) {
+if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
     $line = 0; // will keep track of current line, to give better error messages. 
     $file_headers = '';
 
