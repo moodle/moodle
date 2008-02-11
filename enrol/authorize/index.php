@@ -2,7 +2,10 @@
 
 /// Load libraries
     require_once('../../config.php');
+    require_once('const.php');
     require_once('locallib.php');
+    require_once('localfuncs.php');
+    require_once('authorizenetlib.php');
 
 /// Parameters
     $orderid  = optional_param('order', 0, PARAM_INT);

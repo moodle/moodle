@@ -204,13 +204,8 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 $message = "Order must be credited within 120 days!";
                 return AN_RETURNZERO;
             }
-            if (empty($extra)) {
-                $message = "Need extra fields to REFUND!";
-                return AN_RETURNZERO;
-            }
-            $total = floatval($extra->sum) + floatval($extra->amount);
-            if (($extra->amount == 0) || ($total > $order->amount)) {
-                $message = "Can be credited up to original amount.";
+            if (empty($extra->amount)) {
+                $message = "No valid amount!";
                 return AN_RETURNZERO;
             }
             $poststring .= '&x_type=CREDIT&x_trans_id=' . urlencode($order->transid);
@@ -336,7 +331,6 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 $extra->status = AN_STATUS_CREDIT;
                 $extra->transid = $transid;
                 $extra->settletime = authorize_getsettletime(time());
-                unset($extra->sum); // this is not used in refunds table.
                 if (! $extra->id = insert_record('enrol_authorize_refunds', $extra)) {
                     unset($extra->id);
                     email_to_admin("Error while trying to insert data " .
