@@ -4,9 +4,6 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-require_once('const.php');
-require_once('authorizenetlib.php');
-
 define('ORDER_CAPTURE', 'capture');
 define('ORDER_DELETE',  'delete');
 define('ORDER_REFUND',  'refund');
@@ -305,17 +302,14 @@ function authorize_print_order_details($orderno)
             error(get_string('youcantdo', 'enrol_authorize', $a));
         }
 
-        $extra = new stdClass;
-        $extra->sum = 0.0;
-        $extra->orderid = $orderno;
-
+        $refunded = 0.0;
         $sql = "SELECT SUM(amount) AS refunded FROM {$CFG->prefix}enrol_authorize_refunds " .
                "WHERE (orderid = '" . $orderno . "') AND (status = '" . AN_STATUS_CREDIT . "')";
 
-        if (($refund = get_record_sql($sql))) {
-            $extra->sum = floatval($refund->refunded);
+        if (($refundval = get_field_sql($sql))) {
+            $refunded = floatval($refundval);
         }
-        $upto = format_float($order->amount - $extra->sum, 2);
+        $upto = format_float($order->amount - $refunded, 2);
         if ($upto <= 0) {
             error("Refunded to original amount.");
         }
@@ -334,6 +328,8 @@ function authorize_print_order_details($orderno)
                      $strcanbecredit<br /><input type='submit' name='".ORDER_REFUND."' value='$authstrs->refund' />");
             }
             else {
+                $extra = new stdClass;
+                $extra->orderid = $orderno;
                 $extra->amount = $amount;
                 $message = '';
                 $success = authorize_action($order, $message, $extra, AN_ACTION_CREDIT);
