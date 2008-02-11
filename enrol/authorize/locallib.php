@@ -27,7 +27,7 @@ function authorize_print_orders($courseid, $userid)
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
 
     $searchmenu = array('orderid' => $authstrs->orderid, 'transid' => $authstrs->transid, 'cclastfour' => $authstrs->cclastfour);
-    $buttons = "<form method='get' action='index.php' autocomplete='off'><div>";
+    $buttons = "<form method='post' action='index.php' autocomplete='off'><div>";
     $buttons .= choose_from_menu($searchmenu, 'searchtype', $searchtype, '', '', '0', true);
     $buttons .= "<input type='text' size='16' name='searchquery' value='' />";
     $buttons .= "<input type='submit' value='$strs->search' />";
