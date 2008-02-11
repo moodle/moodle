@@ -198,16 +198,17 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 $message = "Order must be settled. Try VOID, check Cut-Off time if it fails!";
                 return AN_RETURNZERO;
             }
+            if (empty($extra->amount)) {
+                $message = "No valid amount!";
+                return AN_RETURNZERO;
+            }
             $timenowsettle = authorize_getsettletime(time());
             $timediff = $timenowsettle - (120 * 3600 * 24);
             if ($order->settletime < $timediff) {
                 $message = "Order must be credited within 120 days!";
                 return AN_RETURNZERO;
             }
-            if (empty($extra->amount)) {
-                $message = "No valid amount!";
-                return AN_RETURNZERO;
-            }
+
             $poststring .= '&x_type=CREDIT&x_trans_id=' . urlencode($order->transid);
             $poststring .= '&x_currency_code=' . urlencode($order->currency);
             $poststring .= '&x_invoice_num=' . urlencode($extra->orderid);
