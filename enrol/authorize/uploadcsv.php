@@ -13,10 +13,13 @@
 /// Print header
     $struploadcsv = get_string('uploadcsv', 'enrol_authorize');
     $navlinks = array();
+    $navlinks[] = array('name' => get_string('paymentmanagement', 'enrol_authorize'), 'link' => 'index.php', 'type' => 'misc');
     $navlinks[] = array('name' => $struploadcsv, 'link' => "uploadcsv.php", 'type' => 'misc');
     $navigation = build_navigation($navlinks);
 
-    print_header_simple($struploadcsv, "", $navigation);
+    $managebutton = "<form method='get' action='index.php'><div><input type='submit' value='".get_string('paymentmanagement', 'enrol_authorize')."' /></div></form>";
+
+    print_header_simple($struploadcsv, '', $navigation, '', '', false, $managebutton);
     print_heading_with_help($struploadcsv, 'uploadcsv', 'enrol/authorize');
 
 /// Handle CSV file
@@ -36,12 +39,12 @@
 
 /// Print submit form
     $maxuploadsize = get_max_upload_file_size();
-    echo '<center><form method="post" enctype="multipart/form-data" action="uploadcsv.php">
+    echo '<center><form method="post" enctype="multipart/form-data" action="uploadcsv.php"><div>
           <input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'" />
-          <input type="hidden" name="sesskey" value="'.$USER->sesskey.'">';
+          <input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
           upload_print_form_fragment(1, array('csvfile'), array(get_string('file')));
     echo '<input type="submit" value="'.get_string('upload').'" />';
-    echo '</form></center><br />';
+    echo '</div></form></center><br />';
 
 /// Print footer
     print_footer();
