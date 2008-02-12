@@ -100,8 +100,22 @@ switch ($action) {
             break;
         }
 
-        //TODO: add confirmation
-        $outcome->delete();
+        $deleteconfirmed = optional_param('deleteconfirmed', 0, PARAM_BOOL);
+
+        if(!$deleteconfirmed){
+            print_header(get_string('outcomedelete', 'grades'));
+            notice_yesno(get_string('outcomeconfirmdelete', 'grades', $outcome->fullname), 
+                    "index.php?id={$courseid}", "index.php?id={$courseid}",
+                    array('outcomeid' => $outcome->id, 
+                        'action'=> 'delete', 
+                        'sesskey' =>  $USER->sesskey, 
+                        'deleteconfirmed'=> 1)
+                    );
+            print_footer();
+            die;
+        }else{
+            $outcome->delete();
+        }
         break;
 }
 
