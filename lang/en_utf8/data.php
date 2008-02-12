@@ -71,6 +71,7 @@ $string['editordisable'] = 'Disable editor';
 $string['emptyadd'] = 'The Add template is empty, generating a default form...';
 $string['emptyaddform'] = 'You did not fill out any fields!';
 $string['entries'] = 'Entries';
+$string['entrieslefttoadd'] = 'You must add $a more entry/entries before you can view other participants\' entries.';
 $string['entry'] = 'Entry';
 $string['entrysaved'] = 'Your entry has been saved';
 $string['errormustbeteacher'] = 'You need to be a teacher to use this page!';
