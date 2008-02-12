@@ -323,7 +323,7 @@ class grade_report_grader extends grade_report {
             }
             $roles = explode(',', $this->gradebookroles);
             $this->users = get_role_users($roles, $this->context, false,
-                            'u.id, u.firstname, u.lastname, u.idnumber', 'u.'.$this->sortitemid .' '. $this->sortorder . $sort2,
+                            'u.id, u.firstname, u.lastname, u.idnumber, u.imagealt, u.picture', 'u.'.$this->sortitemid .' '. $this->sortorder . $sort2,
                             false, $this->currentgroup, $this->page * $this->get_pref('studentsperpage'), $this->get_pref('studentsperpage'));
 
         }
