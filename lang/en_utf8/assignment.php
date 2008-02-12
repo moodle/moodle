@@ -53,6 +53,7 @@ $string['failedupdatefeedback'] = 'Failed to update submission feedback for user
 $string['feedback'] = 'Feedback';
 $string['feedbackfromteacher'] = 'Feedback from the $a';
 $string['feedbackupdated'] = 'Submissions feedback updated for $a people';
+$string['finalize'] = 'No more submissions';
 $string['graded'] = 'Graded';
 $string['guestnosubmit'] = 'Sorry, guests are not allowed to submit an assignment. You have to log in/ register before you can submit your answer';
 $string['guestnoupload'] = 'Sorry, guests are not allowed to upload';
