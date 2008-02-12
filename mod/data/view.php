@@ -327,6 +327,16 @@
                 }
             }
         }
+    
+    // Check the number of entries required against the number of entries already made (doesn't apply to teachers)
+    $requiredentries_allowed = true;
+    $numentries = data_numentries($data);
+    if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', $context)) {
+        $entriesleft = $data->requiredentries - $numentries;
+        $strentrieslefttoadd = get_string('entrieslefttoadd', 'data', $entriesleft);
+        notify($strentrieslefttoadd); 
+        $requiredentries_allowed = false;
+    }
 
     // If not teacher, check whether user has sufficient records to view
         if (!has_capability('mod/data:managetemplates', $context) and data_numentries($data) < $data->requiredentriestoview){
@@ -360,7 +370,7 @@
 
             $sortcontent = $sortfield->get_sort_field();
             $sortcontentfull = $sortfield->get_sort_sql('c.'.$sortcontent);
-
+            
             $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname, c.'.$sortcontent.', '.$sortcontentfull.' AS _order ';
             $count = ' COUNT(DISTINCT c.recordid) ';
             $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content c1, '.$CFG->prefix.'user u ';
@@ -371,6 +381,11 @@
                          AND c1.recordid = r.id ';
             $sortorder = ' ORDER BY _order '.$order.' , r.id ASC ';
             $searchselect = '';
+            
+            // If requiredentries is not reached, only show current user's entries
+            if (!$requiredentries_allowed) {
+                $where .= ' AND u.id = ' . $USER->id;
+            }
             
             if (!empty($advanced)) {                                                                                           //If advanced box is checked.
                 foreach($search_array as $key => $val) {                                                       //what does $search_array hold?
@@ -394,6 +409,11 @@
             $sortorder = ' ORDER BY r.id ASC ';
             $searchselect = '';
             
+            // If requiredentries is not reached, only show current user's entries
+            if (!$requiredentries_allowed) {
+                $where .= ' AND u.id = ' . $USER->id;
+            }
+            
             if (!empty($advanced)) {                                                                                           //Advanced search box again.
                 foreach($search_array as $key => $val) {
                     $tables .= ', '.$CFG->prefix.'data_content c'.$key.' ';
@@ -413,6 +433,11 @@
             $where =  'WHERE r.dataid = '.$data->id. ' AND r.userid = u.id ';
             $sortorder = ' ORDER BY r.timecreated '.$order. ' ';
             $searchselect = ' ';
+            
+            // If requiredentries is not reached, only show current user's entries
+            if (!$requiredentries_allowed) {
+                $where .= ' AND u.id = ' . $USER->id;
+            }
         }
 
 
