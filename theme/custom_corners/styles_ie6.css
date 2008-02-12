@@ -50,6 +50,9 @@ div.sideblock ul.list li {
   padding-left: 18px;
   margin-left: 19px;
 }
+div.block_admin div.content ul.list {
+  padding-left: 4px;
+}
 #notes-index #content-i3,
 #mod-chat-view #content-i3 {
   padding-bottom: 15px;
