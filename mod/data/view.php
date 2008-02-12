@@ -331,7 +331,7 @@
     // Check the number of entries required against the number of entries already made (doesn't apply to teachers)
     $requiredentries_allowed = true;
     $numentries = data_numentries($data);
-    if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:managetemplates', $context)) {
+    if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', $context)) {
         $entriesleft = $data->requiredentries - $numentries;
         $strentrieslefttoadd = get_string('entrieslefttoadd', 'data', $entriesleft);
         notify($strentrieslefttoadd); 
