@@ -121,18 +121,15 @@ if ($courseid) {
 
 } else {
     admin_externalpage_print_header();
-
     $caneditcoursescales = $caneditsystemscales;
 }
 
-print('<form action="export.php" method="post">' ."\n");
 
-$outcomes_to_export = false;
+$outcomes_tables = array();
 
 if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
-    $outcomes_to_export = true;
 
-    print_heading($strcustomoutcomes);
+    $return = print_heading($strcustomoutcomes, '', 2, 'main', true);
     $data = array();
     foreach($outcomes as $outcome) {
         $line = array();
@@ -182,14 +179,14 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
     $table->align = array('left', 'left', 'left', 'center', 'center', 'center');
     $table->width = '90%';
     $table->data  = $data;
-    print_table($table);
+    $return .= print_table($table, true);
+    $outcomes_tables[] = $return;
 }
 
 
 if ($outcomes = grade_outcome::fetch_all_global()) {
-    $outcomes_to_export = true;
 
-    print_heading($strstandardoutcome); 
+    $return = print_heading($strstandardoutcome, '', 2, 'main', true); 
     $data = array();
     foreach($outcomes as $outcome) {
         $line = array();
@@ -242,27 +239,25 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
     $table->align = array('left', 'left', 'left', 'center', 'center', 'center', 'center');
     $table->width = '90%';
     $table->data  = $data;
-    print_table($table);
+    $return .= print_table($table, true);
+    $outcomes_tables[] = $return;
 }
 
+if ( !empty($outcomes_tables) ) {
+    print('<form action="export.php" method="post">' ."\n");
+    foreach($outcomes_tables as $table) {
+        print($table);
+    }
+    echo '<div class="buttons">';
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
+    print('<input type="submit" value="'. get_string('exportselectedoutcomes', 'grades') .'" name="export_outcomes">');
+    echo '</form>';
+    echo '</div>';
+}
 
 echo '<div class="buttons">';
-echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
-if ( $outcomes_to_export ) {
-    print('<input type="submit" value="'. get_string('exportselectedoutcomes', 'grades') .'" name="export_outcomes"></form>');
-}
 print_single_button('edit.php', array('courseid'=>$courseid), $srtcreatenewoutcome);
 echo '</div>';
-
-echo '<div>'; 
-$upload_max_filesize = get_max_upload_file_size($CFG->maxbytes);
-$filesize = display_size($upload_max_filesize);
-
-//$strimportoutcomes = get_string('importoutcomes', 'grades');
-//$struploadthisfile = get_string('uploadthisfile');
-//$strimportcustom = get_string('importcustom', 'grades');
-//$strimportstandard = get_string('importstandard', 'grades');
-//$strmaxsize = get_string("maxsize", "", $filesize);
 
 $upload_form->display();
 
@@ -271,6 +266,5 @@ if ($courseid) {
 } else {
     admin_externalpage_print_footer();
 }
-
 
 ?>
