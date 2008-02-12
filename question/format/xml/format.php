@@ -105,6 +105,9 @@ class qformat_xml extends qformat_default {
             else $xml = $xml[$index];
         }
         if ($istext) {
+            if (!is_string($xml)) {
+                $this->error( 'Invalid xml file - string expected (use CDATA?)' );
+            }
             $xml = addslashes( trim( $xml ) );
         }
 
