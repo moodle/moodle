@@ -4,13 +4,12 @@
     <?php echo $meta ?>
     <meta name="keywords" content="moodle, <?php echo $title ?> " />
     <title><?php echo $title ?></title>
-    <link rel="shortcut icon" href="<?php echo $CFG->themewww .'/'. current_theme() ?>/favicon.ico" />
+    <link rel="shortcut icon" href="<?php echo $CFG->httpsthemewww .'/'. current_theme() ?>/favicon.ico" />
 
-    <?php include($CFG->themedir.'/custom_corners/ui/chameleon.php'); ?>
-    <?php include("$CFG->javascript"); ?>
-    <?php include($CFG->themedir.'/custom_corners/js/jquery.php'); ?>
-
-    <?php
+    <?php 
+        include($CFG->themedir.'/custom_corners/ui/chameleon.php');
+        include("$CFG->javascript");
+        include($CFG->themedir.'/custom_corners/js/js.php');
         
         // check if page is opened within a popup window
         if (function_exists('is_in_popup')) {
@@ -33,10 +32,6 @@
         
         //replace classlist with new one
         $bodytags = str_replace($classes[0], 'class="'.implode(' ', $classlist).'"', $bodytags);
-        
-
-//        $infooutput = '<div id="infocontent">&nbsp;</div>';
-        
     ?>
 </head>
 
