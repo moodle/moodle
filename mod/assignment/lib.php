@@ -244,7 +244,7 @@ class assignment_base {
         echo '<tr>';
         echo '<td class="left picture">';
         if ($teacher) {
-            print_user_picture($teacher->id, $this->course->id, $teacher->picture);
+            print_user_picture($teacher, $this->course->id, $teacher->picture);
         }
         echo '</td>';
         echo '<td class="topic">';
@@ -806,7 +806,7 @@ class assignment_base {
         $nextid = 0;
 
         if ($users) {
-            $select = 'SELECT u.id, u.firstname, u.lastname, u.picture,
+            $select = 'SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt,
                               s.id AS submissionid, s.grade, s.submissioncomment,
                               s.timemodified, s.timemarked,
                               COALESCE(SIGN(SIGN(s.timemarked) + SIGN(s.timemarked - s.timemodified)), 0) AS status ';
@@ -860,7 +860,7 @@ class assignment_base {
             global $USER;
             $teacher = $USER;
         }
-        print_user_picture($teacher->id, $this->course->id, $teacher->picture);
+        print_user_picture($teacher, $this->course->id, $teacher->picture);
         echo '</td>';
         echo '<td class="content">';
         echo '<form id="submitform" action="submissions.php" method="post">';
@@ -943,7 +943,7 @@ class assignment_base {
         ///End of teacher info row, Start of student info row
         echo '<tr>';
         echo '<td class="picture user">';
-        print_user_picture($user->id, $this->course->id, $user->picture);
+        print_user_picture($user, $this->course->id, $user->picture);
         echo '</td>';
         echo '<td class="topic">';
         echo '<div class="from">';

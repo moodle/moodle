@@ -98,7 +98,7 @@ class assignment_upload extends assignment_base {
 
         echo '<tr>';
         echo '<td class="left picture">';
-        print_user_picture($teacher->id, $this->course->id, $teacher->picture);
+        print_user_picture($teacher, $this->course->id, $teacher->picture);
         echo '</td>';
         echo '<td class="topic">';
         echo '<div class="from">';
@@ -353,11 +353,14 @@ class assignment_upload extends assignment_base {
                     }
                 }
             }
-            if (has_capability('mod/assignment:grade', $this->context)
-              and $this->can_unfinalize($submission)
-              and $mode != '') { // we do not want it on view.php page
-                $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'unfinalize', 'mode'=>$mode, 'offset'=>$offset);
-                $output .= print_single_button('upload.php', $options, get_string('unfinalize', 'assignment'), 'post', '_self', true);
+            if (has_capability('mod/assignment:grade', $this->context) and $mode != '') { // we do not want it on view.php page
+                if ($this->can_unfinalize($submission)) {
+                    $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'unfinalize', 'mode'=>$mode, 'offset'=>$offset);
+                    $output .= print_single_button('upload.php', $options, get_string('unfinalize', 'assignment'), 'post', '_self', true);
+                } else if ($this->can_finalize($submission)) {
+                    $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'finalize', 'mode'=>$mode, 'offset'=>$offset);
+                    $output .= print_single_button('upload.php', $options, get_string('finalize', 'assignment'), 'post', '_self', true);
+                }
             }
 
             $output = '<div class="files">'.$output.'</div>';
@@ -587,10 +590,20 @@ class assignment_upload extends assignment_base {
     function finalize() {
         global $USER;
 
-        $confirm = optional_param('confirm', 0, PARAM_BOOL);
+        $userid = optional_param('userid', 0, PARAM_INT);
 
-        $returnurl = 'view.php?id='.$this->cm->id;
-        $submission = $this->get_submission($USER->id);
+        if ($userid) {
+            $mode       = required_param('mode', PARAM_ALPHA);
+            $offset     = required_param('offset', PARAM_INT);
+            $returnurl  = "submissions.php?id={$this->cm->id}&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset&amp;forcerefresh=1";
+            $confirm    = true;
+            $submission = $this->get_submission($userid);
+
+        } else {
+            $confirm    = optional_param('confirm', 0, PARAM_BOOL);
+            $returnurl  = 'view.php?id='.$this->cm->id;
+            $submission = $this->get_submission($USER->id);
+        }
 
         if (!$this->can_finalize($submission)) {
             redirect($returnurl); // probably already graded, erdirect to assignment page, the reason should be obvious
@@ -607,8 +620,8 @@ class assignment_upload extends assignment_base {
 
         } else {
             $updated = new object();
-            $updated->id = $submission->id;
-            $updated->data2 = ASSIGNMENT_STATUS_SUBMITTED;
+            $updated->id           = $submission->id;
+            $updated->data2        = ASSIGNMENT_STATUS_SUBMITTED;
             $updated->timemodified = time();
             if (update_record('assignment_submissions', $updated)) {
                 add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finilize action to log
@@ -798,7 +811,6 @@ class assignment_upload extends assignment_base {
 
         if (has_capability('mod/assignment:submit', $this->context)           // can submit
           and $this->isopen()                                                 // assignment not closed yet
-          and (empty($submission) or $submission->grade == -1)                // not graded
           and (empty($submission) or $submission->userid == $USER->id)        // his/her own submission
           and $this->count_user_files($USER->id) < $this->assignment->var1    // file limit not reached
           and !$this->is_finalized($submission)) {                            // no uploading after final submission
@@ -825,7 +837,6 @@ class assignment_upload extends assignment_base {
 
         if (has_capability('mod/assignment:submit', $this->context)
           and $this->isopen()                                      // assignment not closed yet
-          and (!empty($submission) and $submission->grade == -1)   // not graded
           and $this->assignment->resubmit                          // deleting allowed
           and $USER->id == $submission->userid                     // his/her own submission
           and !$this->is_finalized($submission)) {                 // no deleting after final submission
@@ -836,8 +847,7 @@ class assignment_upload extends assignment_base {
     }
 
     function is_finalized($submission) {
-        if (!empty($submission)
-          and $submission->data2 == ASSIGNMENT_STATUS_SUBMITTED) {
+        if ($submission->data2 == ASSIGNMENT_STATUS_SUBMITTED) {
             return true;
         } else {
             return false;
@@ -846,9 +856,8 @@ class assignment_upload extends assignment_base {
 
     function can_unfinalize($submission) {
         if (has_capability('mod/assignment:grade', $this->context)
-          and !empty($submission)
-          and $this->is_finalized($submission)
-          and $submission->grade == -1) {
+          and $this->isopen()
+          and $this->is_finalized($submission)) {
             return true;
         } else {
             return false;
@@ -858,14 +867,19 @@ class assignment_upload extends assignment_base {
     function can_finalize($submission) {
         global $USER;
 
-        if (has_capability('mod/assignment:submit', $this->context)           // can submit
+		if ($this->is_finalized($submission)) {
+		    return false;
+		}
+
+        if (has_capability('mod/assignment:grade', $this->context)) {
+            return true;
+
+        } else if (has_capability('mod/assignment:submit', $this->context)    // can submit
           and $this->isopen()                                                 // assignment not closed yet
           and !empty($submission)                                             // submission must exist
-          and $submission->data2 != ASSIGNMENT_STATUS_SUBMITTED               // not graded
           and $submission->userid == $USER->id                                // his/her own submission
-          and $submission->grade == -1                                        // no reason to finalize already graded submission
           and ($this->count_user_files($USER->id)
-            or ($this->notes_allowed() and !empty($submission->data1)))) { // something must be submitted
+            or ($this->notes_allowed() and !empty($submission->data1)))) {    // something must be submitted
 
             return true;
         } else {
@@ -877,9 +891,8 @@ class assignment_upload extends assignment_base {
         global $USER;
 
         if (has_capability('mod/assignment:submit', $this->context)
-          and $this->notes_allowed()                                               // notesd must be allowed
+          and $this->notes_allowed()                                          // notesd must be allowed
           and $this->isopen()                                                 // assignment not closed yet
-          and (empty($submission) or $submission->grade == -1)                // not graded
           and (empty($submission) or $USER->id == $submission->userid)        // his/her own submission
           and !$this->is_finalized($submission)) {                            // no updateingafter final submission
             return true;
