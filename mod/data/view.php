@@ -535,7 +535,7 @@
     }
 
     //Advanced search form doesn't make sense for single (redirects list view)
-    if ($records || $search || $page ||  $mode = 'asearch'  && $mode != 'single') {
+    if ($records || $search || $page ||  $mode == 'asearch'  && $mode != 'single') {
         data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
     }
 
