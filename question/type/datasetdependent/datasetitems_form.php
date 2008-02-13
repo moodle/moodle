@@ -74,6 +74,7 @@ class question_dataset_dependent_items_form extends moodleform {
         $j = (($this->noofitems) * count($this->datasetdefs))+1;
         foreach ($this->datasetdefs as $defkey => $datasetdef){
             $mform->addElement('text', "number[$j]", get_string('param', 'qtype_datasetdependent', $datasetdef->name));
+            $mform->setType("number[$j]", PARAM_NUMBER);
             $this->qtypeobj->custom_generator_tools_part(&$mform, $idx, $j);
             $idx++;
             $mform->addElement('hidden', "definition[$j]");
@@ -130,8 +131,10 @@ class question_dataset_dependent_items_form extends moodleform {
                 $mform->addElement('text', "number[$j]", get_string('param', 'qtype_datasetdependent', $datasetdef->name));
 
                 $mform->addElement('hidden', "itemid[$j]");
+                $mform->setType("itemid[$j]", PARAM_INT);
 
                 $mform->addElement('hidden', "definition[$j]");
+                $mform->setType("definition[$j]", PARAM_NOTAGS);
 
                 $j--;
             }
@@ -139,9 +142,6 @@ class question_dataset_dependent_items_form extends moodleform {
                 $repeated[] =& $mform->addElement('static', "answercomment[$i]", $strquestionlabel);
             }
         }
-        $mform->setType('number', PARAM_NUMBER);
-        $mform->setType('itemid', PARAM_INT);
-        $mform->setType('definition', PARAM_NOTAGS);
 
 
 //------------------------------------------------------------------------------------------------------------------------------
@@ -163,6 +163,10 @@ class question_dataset_dependent_items_form extends moodleform {
 
         $mform->addElement('hidden', 'wizard', 'datasetitems');
         $mform->setType('wizard', PARAM_ALPHA);
+        
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_LOCALURL);
+        $mform->setDefault('returnurl', 0);
     }
 
     function set_data($question){
