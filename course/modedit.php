@@ -345,9 +345,9 @@
             }
             foreach ($items as $itemid=>$unused) {
                 $items[$itemid]->set_parent($fromform->gradecat);
-                if ($item->id == $grade_item->id) {
+                if ($itemid == $grade_item->id) {
                     // use updated grade_item
-                    $grade_item = $item;
+                    $grade_item = $items[$itemid];
                 }
             }
         }
