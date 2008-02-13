@@ -3186,7 +3186,7 @@ function forum_file_area_name($post) {
     global $CFG;
 
     if (!isset($post->forum)) {
-        debugging('missing forum');
+        debugging('missing forum', DEBUG_DEVELOPER);
         if (!$discussion = get_record('forum_discussions', 'id', $post->discussion)) {
             return false;
         }
@@ -3815,7 +3815,7 @@ function forum_user_can_post_discussion($forum, $currentgroup=-1, $groupmode=-1,
     global $USER, $SESSION, $COURSE;
 
     if (!$cm) {
-        debugging('missing cm');
+        debugging('missing cm', DEBUG_DEVELOPER);
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
             error('Course Module ID was incorrect');
         }
@@ -3875,7 +3875,7 @@ function forum_user_can_post($forum, $user=NULL, $cm=NULL, $context=NULL) {
 
     if (!$context) {
         if (!$cm) {
-            debugging('missing cm');
+            debugging('missing cm', DEBUG_DEVELOPER);
             if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
                 error('Course Module ID was incorrect');
             }
@@ -3938,13 +3938,13 @@ function forum_user_can_see_discussion($forum, $discussion, $context, $user=NULL
 
     // retrieve objects (yuk)
     if (is_numeric($forum)) {
-        debugging('missing full forum');
+        debugging('missing full forum', DEBUG_DEVELOPER);
         if (!$forum = get_record('forum','id',$forum)) {
             return false;
         }
     }
     if (is_numeric($discussion)) {
-        debugging('missing full discussion');
+        debugging('missing full discussion', DEBUG_DEVELOPER);
         if (!$discussion = get_record('forum_discussions','id',$discussion)) {
             return false;
         }
@@ -3971,20 +3971,20 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
 
     // retrieve objects (yuk)
     if (is_numeric($forum)) {
-        debugging('missinf full forum');
+        debugging('missinf full forum', DEBUG_DEVELOPER);
         if (!$forum = get_record('forum','id',$forum)) {
             return false;
         }
     }
 
     if (is_numeric($discussion)) {
-        debugging('missinf full discussion');
+        debugging('missinf full discussion', DEBUG_DEVELOPER);
         if (!$discussion = get_record('forum_discussions','id',$discussion)) {
             return false;
         }
     }
     if (is_numeric($post)) {
-        debugging('missinf full post');
+        debugging('missinf full post', DEBUG_DEVELOPER);
         if (!$post = get_record('forum_posts','id',$post)) {
             return false;
         }
@@ -3994,7 +3994,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
     }
 
     if (!$cm) {
-        debugging('missing cm');
+        debugging('missing cm', DEBUG_DEVELOPER);
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
             error('Course Module ID was incorrect');
         }
