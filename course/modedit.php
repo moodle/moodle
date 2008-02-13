@@ -356,38 +356,38 @@
         if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
             $grade_items = array();
 
+            // Outcome grade_item.itemnumber start at 1000, there is nothing above outcomes
+            $max_itemnumber = 999;
+            if ($items) {
+                foreach($items as $item) {
+                    if ($item->itemnumber > $max_itemnumber) {
+                        $max_itemnumber = $item->itemnumber;
+                    }
+                }
+            }
+
             foreach($outcomes as $outcome) {
                 $elname = 'outcome_'.$outcome->id;
 
                 if (array_key_exists($elname, $fromform) and $fromform->$elname) {
-                    // we have a request for new outcome grade item
-                    // Outcome grade_item.itemnumber start at 1000
-                    $max_itemnumber = 999;
-                    $exists = false;
+                    // so we have a request for new outcome grade item?
                     if ($items) {
                         foreach($items as $item) {
                             if ($item->outcomeid == $outcome->id) {
-                                $exists = true;
-                                break;
-                            }
-                            if (empty($item->outcomeid)) {
-                                continue;
-                            }
-                            if ($item->itemnumber > $max_itemnumber) {
-                                $max_itemnumber = $item->itemnumber;
+                                //outcome aready exists
+                                continue 2;
                             }
                         }
                     }
-                    if ($exists) {
-                        continue;
-                    }
+
+                    $max_itemnumber++;
 
                     $outcome_item = new grade_item();
                     $outcome_item->courseid     = $COURSE->id;
                     $outcome_item->itemtype     = 'mod';
                     $outcome_item->itemmodule   = $fromform->modulename;
                     $outcome_item->iteminstance = $fromform->instance;
-                    $outcome_item->itemnumber   = $max_itemnumber + 1;
+                    $outcome_item->itemnumber   = $max_itemnumber;
                     $outcome_item->itemname     = $outcome->fullname;
                     $outcome_item->outcomeid    = $outcome->id;
                     $outcome_item->gradetype    = GRADE_TYPE_SCALE;

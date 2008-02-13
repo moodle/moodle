@@ -439,6 +439,18 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
                         $outcome->grades[$userid] = $grade;
                     }
                 }
+
+                if (isset($return->outcomes[$grade_item->itemnumber])) {
+                    // itemnumber duplicates - lets fix them!
+                    $newnumber = $grade_item->itemnumber + 1;
+                    while(grade_item::fetch(array('itemtype'=>$itemtype, 'itemmodule'=>$itemmodule, 'iteminstance'=>$iteminstance, 'courseid'=>$courseid, 'itemnumber'=>$newnumber))) {
+                        $newnumber++;
+                    }
+                    $outcome->itemnumber    = $newnumber;
+                    $grade_item->itemnumber = $newnumber;
+                    $grade_item->update('system');
+                }
+
                 $return->outcomes[$grade_item->itemnumber] = $outcome;
 
             }
