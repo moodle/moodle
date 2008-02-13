@@ -172,7 +172,7 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
     if($detail & NOTES_SHOW_HEAD) {
         echo '<div class="header">';
         echo '<div class="user">';
-        print_user_picture($user->id, $note->courseid, $user->picture);
+        print_user_picture($user, $note->courseid, $user->picture);
         echo fullname($user) . '</div>';
         echo '<div class="info">' .
             get_string('bynameondate', 'notes', $authoring) .

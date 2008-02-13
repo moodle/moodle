@@ -16,7 +16,7 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
 
         //Use this function to show author's image
         //Comments: Configuration not supported
-        print_user_picture($user->id, $course->id, $user->picture);
+        print_user_picture($user, $course->id, $user->picture);
 
         //Line separator to show this template fine. :-)
         echo '<br />';

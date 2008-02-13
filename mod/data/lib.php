@@ -1376,7 +1376,7 @@ function data_print_comment($data, $comment, $page=0) {
     echo '<table cellspacing="0" align="center" width="50%" class="datacomment forumpost">';
 
     echo '<tr class="header"><td class="picture left">';
-    print_user_picture($comment->userid, $data->course, $user->picture);
+    print_user_picture($user, $data->course, $user->picture);
     echo '</td>';
 
     echo '<td class="topic starter" align="left"><div class="author">';

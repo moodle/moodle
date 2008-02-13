@@ -98,12 +98,12 @@
     $strpage = get_string("page");
 
     if (!$search || $showform) {
-    
+
         $navlinks = array();
         $navlinks[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $navlinks[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($navlinks);
-        
+
         print_header_simple("$strsearch", "", $navigation, 'search.words',
                   "", "", "&nbsp;", navmenu($course));
 
@@ -138,8 +138,8 @@
         print_footer($course);
         exit;
     }
-    
-    
+
+
     print_header_simple("$strsearchresults", "", $navigation, '', "", "",  $searchform, navmenu($course));
 
     echo '<div class="reportlink">';
@@ -180,12 +180,16 @@
     foreach ($posts as $post) {
 
         // Replace the simple subject with the three items forum name -> thread name -> subject
-        // (if all three are appropriate) each as a link. 
+        // (if all three are appropriate) each as a link.
         if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
             error('Discussion ID was incorrect');
         }
         if (! $forum = get_record('forum', 'id', "$discussion->forum")) {
             error("Could not find forum $discussion->forum");
+        }
+
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
+            error('Course Module ID was incorrect');
         }
 
         $post->subject = highlight($strippedsearch, $post->subject);
@@ -228,7 +232,7 @@
         $fulllink = "<a href=\"discuss.php?d=$post->discussion#p$post->id\">".get_string("postincontext", "forum")."</a>";
 
         // Now pring the post.
-        forum_print_post($post, $course->id, false, false, false, false,
+        forum_print_post($post, $discussion, $forum, $cm, $cours, false, false, false, false,
                 $fulllink, $strippedsearch, -99, false);
     }
 
@@ -359,12 +363,12 @@ function forum_print_big_search_form($course) {
 }
 
 /**
- * This function takes each word out of the search string, makes sure they are at least 
+ * This function takes each word out of the search string, makes sure they are at least
  * two characters long and returns an array containing every good word.
- * 
+ *
  * @param string $words String containing space-separated strings to search for
  * @param string $prefix String to prepend to the each token taken out of $words
- * @returns array 
+ * @returns array
  * @todo Take the hardcoded limit out of this function and put it into a user-specified parameter
  */
 function forum_clean_search_terms($words, $prefix='') {

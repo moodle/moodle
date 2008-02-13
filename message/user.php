@@ -52,7 +52,7 @@
     print_header('','','','','',false,'','',false,'');
     echo '<table width="100%" cellpadding="0" cellspacing="0"><tr>';
     echo '<td width="100">';
-    echo print_user_picture($user->id, SITEID, $user->picture, true, true, true, 'userwindow').'</td>';
+    echo print_user_picture($user, SITEID, $user->picture, true, true, true, 'userwindow').'</td>';
     echo '<td valign="middle" align="center">';
 
     echo '<div class="name">'.fullname($user).'</div>';

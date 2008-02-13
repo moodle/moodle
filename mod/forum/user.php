@@ -24,7 +24,7 @@
         error("Course id is incorrect.");
     }
 
-    $syscontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $syscontext = get_context_instance(CONTEXT_SYSTEM);
     $usercontext   = get_context_instance(CONTEXT_USER, $id);
     
     // do not force parents to enrol
@@ -89,16 +89,39 @@
         
         print_paging_bar($totalcount, $page, $perpage, 
                          "user.php?id=$user->id&amp;course=$course->id&amp;mode=$mode&amp;perpage=$perpage&amp;");
+
+        $discussions = array();
+        $forums      = array();
+        $cms         = array();
         
         foreach ($posts as $post) {
-    
-            if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
-                error('Discussion ID was incorrect');
+
+            if (!isset($discussions[$post->discussion])) {
+                if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
+                    error('Discussion ID was incorrect');
+                }
+                $discussions[$post->discussion] = $discussion;
+            } else {
+                $discussion = $discussions[$post->discussion];
             }
-            if (! $forum = get_record('forum', 'id', "$discussion->forum")) {
-                error("Could not find forum $discussion->forum");
+
+            if (!isset($forums[$discussion->forum])) {
+                if (! $forum = get_record('forum', 'id', $discussion->forum)) {
+                    error("Could not find forum $discussion->forum");
+                }
+                $forums[$discussion->forum] = $forum;
+            } else {
+                $forum = $forums[$discussion->forum];
             }
-            
+
+            if (!isset($cms[$forum->id])) {
+                if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
+                    error('Course Module ID was incorrect');
+                }
+                $cms[$forum->id] = $cm;
+                unset($cm); // do not use cm directly, it would break caching
+            }
+
             $fullsubject = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
             if ($forum->type != 'single') {
                 $fullsubject .= " -> <a href=\"discuss.php?d=$discussion->id\">".format_string($discussion->name,true)."</a>";
@@ -107,8 +130,7 @@
                 }
             }
             
-            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-            if ($course->id == SITEID && has_capability('moodle/site:config', $context)) {
+            if ($course->id == SITEID && has_capability('moodle/site:config', $syscontext)) {
                 $postcoursename = get_field('course', 'shortname', 'id', $forum->course);
                 $fullsubject = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$forum->course.'">'.$postcoursename.'</a> -> '. $fullsubject;
             }
@@ -118,7 +140,7 @@
             $fulllink = "<a href=\"discuss.php?d=$post->discussion#p$post->id\">".
                          get_string("postincontext", "forum")."</a>";
 
-            forum_print_post($post, $course->id, false, false, false, false, $fulllink);
+            forum_print_post($post, $discussion, $forum, $cms[$forum->id], $course, false, false, false, false, $fulllink);
             echo "<br />";
         }
     

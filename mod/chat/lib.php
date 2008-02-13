@@ -386,7 +386,7 @@ function chat_get_users($chatid, $groupid=0, $groupingid=0) {
         $groupingjoin = '';
     }
 
-    return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping, c.firstping
+    return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping, c.firstping, u.imagealt
                               FROM {$CFG->prefix}chat_users c
                                 INNER JOIN {$CFG->prefix}user u ON u.id = c.userid
                                 $groupingjoin

@@ -13,7 +13,7 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         echo '<tr valign="top">';
         echo '<td class="left picture">';
         
-        print_user_picture($user->id, $course->id, $user->picture);
+        print_user_picture($user, $course->id, $user->picture);
     
         echo '</td>';
         echo '<th class="entryheader">';

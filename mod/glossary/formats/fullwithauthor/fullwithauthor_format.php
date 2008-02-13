@@ -13,7 +13,7 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
         echo '<tr valign="top">';
         
         echo '<td class="picture">';
-        print_user_picture($user->id, $course->id, $user->picture);
+        print_user_picture($user, $course->id, $user->picture);
         echo '</td>';
         
         echo '<th class="entryheader">';

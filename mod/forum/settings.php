@@ -2,10 +2,8 @@
 
 require_once($CFG->dirroot.'/mod/forum/lib.php');
 
-global $FORUM_LAYOUT_MODES; // make sure we have the pesky global
-
 $settings->add(new admin_setting_configselect('forum_displaymode', get_string('displaymode', 'forum'),
-                   get_string('configdisplaymode', 'forum'), FORUM_MODE_NESTED, $FORUM_LAYOUT_MODES));
+                   get_string('configdisplaymode', 'forum'), FORUM_MODE_NESTED, forum_get_layout_modes()));
 
 $settings->add(new admin_setting_configcheckbox('forum_replytouser', get_string('replytouser', 'forum'),
                    get_string('configreplytouser', 'forum'), 1));

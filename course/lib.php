@@ -1074,6 +1074,16 @@ function &get_fast_modinfo(&$course, $userid=0) {
 
     $modlurals = array();
 
+    $cmids    = array();
+    $contexts = null;
+    foreach ($info as $mod) {
+        $cmids[$mod->cm] = $mod->cm;
+    }
+    if ($cmids) {
+        // preload all module contexts with one query
+        $contexts = get_context_instance(CONTEXT_MODULE, $cmids);
+    }
+
     foreach ($info as $mod) {
         // reconstruct minimalistic $cm
         $cm = new object();
@@ -1097,11 +1107,11 @@ function &get_fast_modinfo(&$course, $userid=0) {
         }
         $cm->modplural = $modlurals[$cm->modname];
 
-        if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
+        if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $contexts[$cm->id], $userid)) {
             $cm->uservisible = false;
 
         } else if (!empty($CFG->enablegroupings) and !empty($cm->groupmembersonly)
-                and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
+                and !has_capability('moodle/site:accessallgroups', $contexts[$cm->id], $userid)) {
             if (is_null($modinfo->groups)) {
                 $modinfo->groups = groups_get_user_groups($course->id, $userid);
             }
@@ -1440,6 +1450,10 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
             if (function_exists($gettypesfunc)) {
                 $types = $gettypesfunc();
                 foreach($types as $type) {
+                    if (!isset($type->modclass) or !isset($type->typestr)) {
+                        debugging('Incorrect ativity type in '.$modname);
+                        continue;
+                    }
                     if ($type->modclass == MOD_CLASS_RESOURCE) {
                         $resources[$type->type] = $type->typestr;
                     } else {
