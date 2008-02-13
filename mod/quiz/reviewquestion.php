@@ -119,7 +119,7 @@
     if ($attempt->userid <> $USER->id) {
         // Print user picture and name
         $student = get_record('user', 'id', $attempt->userid);
-        $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
+        $picture = print_user_picture($student, $course->id, $student->picture, false, true);
         $table->data[] = array($picture, fullname($student, true));
     }
     // print quiz name

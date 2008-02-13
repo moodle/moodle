@@ -171,7 +171,7 @@
         echo '<table cellspacing="0" class="forumpost blogpost blog'.$template['publishstate'].'" width="100%">';
 
         echo '<tr class="header"><td class="picture left">';
-        print_user_picture($template['userid'], SITEID, $user->picture);
+        print_user_picture($user, SITEID, $user->picture);
         echo '</td>';
 
         echo '<td class="topic starter"><div class="subject">'.$template['title'].'</div><div class="author">';

@@ -14,9 +14,9 @@
     $search      = optional_param('search', '');             // search string
 
 
+    $buttontext = '';
 
     if ($id) {
-
         if (! $cm = get_coursemodule_from_id('forum', $id)) {
             error("Course Module ID was incorrect");
         }
@@ -42,14 +42,12 @@
         $strforums = get_string("modulenameplural", "forum");
         $strforum = get_string("modulename", "forum");
 
-        if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-            $buttontext = update_module_button($cm->id, $course->id, $strforum);
-        } else {
-            $cm->id = 0;
-            $cm->visible = 1;
-            $cm->course = $course->id;
-            $buttontext = "";
+        if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+            error("Course Module missing");
         }
+
+        $buttontext = update_module_button($cm->id, $course->id, $strforum);
+
     } else {
         error('Must specify a course module or a forum ID');
     }
@@ -72,11 +70,11 @@
     if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
         notice(get_string("activityiscurrentlyhidden"));
     }
-    
+
     if (!has_capability('mod/forum:viewdiscussion', $context)) {
         notice(get_string('noviewdiscussionspermission', 'forum'));
     }
-    
+
 /// find out current groups mode
     groups_print_activity_menu($cm, 'view.php?id=' . $cm->id);
     $currentgroup = groups_get_activity_group($cm);
@@ -154,7 +152,7 @@
                 echo "<span class=\"helplink\"><a href=\"subscribers.php?id=$forum->id\">$strshowsubscribers</a></span>";
             }
 
-            echo '<div class="helplink" id="subscriptionlink">', forum_get_subscribe_link($forum, $context, 
+            echo '<div class="helplink" id="subscriptionlink">', forum_get_subscribe_link($forum, $context,
                     array('forcesubscribed' => '', 'cantsubscribe' => '')), '</div>';
         }
 
@@ -190,7 +188,7 @@
 
 //    print_box_end();  // forumcontrol
 
-//    print_box('&nbsp;', 'clearer'); 
+//    print_box('&nbsp;', 'clearer');
 
 
     if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
@@ -223,7 +221,7 @@
             }
             $displaymode = get_user_preferences("forum_displaymode", $CFG->forum_displaymode);
             $canrate = has_capability('mod/forum:rate', $context);
-            forum_print_discussion($course, $forum, $discussion, $post, $displaymode, NULL, $canrate);
+            forum_print_discussion($course, $cm, $forum, $discussion, $post, $displaymode, NULL, $canrate);
             break;
 
         case 'eachuser':
@@ -262,8 +260,8 @@
             } else {
                 forum_print_latest_discussions($course, $forum, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
             }
-            
-            
+
+
             break;
     }
     print_footer($course);

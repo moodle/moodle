@@ -208,7 +208,7 @@
     echo '<table width="80%" class="userinfobox" summary="">';
     echo '<tr>';
     echo '<td class="side">';
-    print_user_picture($user->id, $course->id, $user->picture, true, false, false);
+    print_user_picture($user, $course->id, $user->picture, true, false, false);
     echo '</td><td class="content">';
 
     // Print the description

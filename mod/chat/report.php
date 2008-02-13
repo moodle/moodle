@@ -172,7 +172,7 @@
                 arsort($sessionusers);
                 foreach ($sessionusers as $sessionuser => $usermessagecount) {
                     if ($user = get_record('user', 'id', $sessionuser)) {
-                        print_user_picture($user->id, $course->id, $user->picture);
+                        print_user_picture($user, $course->id, $user->picture);
                         echo '&nbsp;'.fullname($user, true); // XXX TODO  use capability instead of true
                         echo "&nbsp;($usermessagecount)<br />";
                     }

@@ -184,7 +184,7 @@
     echo '<table class="generaltable generalbox quizreviewsummary"><tbody>';
     if ($attempt->userid <> $USER->id) {
         $student = get_record('user', 'id', $attempt->userid);
-        $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
+        $picture = print_user_picture($student, $course->id, $student->picture, false, true);
         echo '<tr><th scope="row" class="cell">', $picture, '</th><td class="cell"><a href="', $CFG->wwwroot,
             '/user/view.php?id=', $student->id, '&amp;course='.$course->id.'">',
             fullname($student, true), '</a></td></tr>';

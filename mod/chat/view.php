@@ -178,7 +178,7 @@
                         $lastping = $timenow - $chatuser->lastmessageping;
                         echo '<tr><td class="chatuserimage">';
                         echo "<a href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&amp;course=$chat->course\">";
-                        print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
+                        print_user_picture($chatuser, 0, $chatuser->picture, false, false, false);
                         echo '</a></td><td class="chatuserdetails">';
                         echo '<p>';
                         echo fullname($chatuser).'<br />';

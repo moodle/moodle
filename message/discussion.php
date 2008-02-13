@@ -124,7 +124,7 @@
     print_header(get_string('discussion', 'message').': '.fullname($user), '', '', 'edit-message');
     echo '<div class="message-discussion-noframes">';
     echo '<div id="userinfo">';
-    echo print_user_picture($user->id, SITEID, $user->picture, 48, true, true, 'userwindow');
+    echo print_user_picture($user, SITEID, $user->picture, 48, true, true, 'userwindow');
     echo '<div class="name"><h1>'.$userfullname.'</h1></div>';
     echo '<div class="commands"><ul>';
     if ($contact = get_record('message_contacts', 'userid', $USER->id, 'contactid', $user->id)) {

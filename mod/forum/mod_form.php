@@ -5,7 +5,7 @@ class mod_forum_mod_form extends moodleform_mod {
 
     function definition() {
 
-        global $CFG, $FORUM_TYPES, $COURSE;
+        global $CFG, $COURSE;
         $mform    =& $this->_form;
 
 //-------------------------------------------------------------------------------
@@ -15,8 +15,10 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
-        asort($FORUM_TYPES);
-        $mform->addElement('select', 'type', get_string('forumtype', 'forum'), $FORUM_TYPES);
+        $forum_types = forum_get_forum_types();
+
+        asort($forum_types);
+        $mform->addElement('select', 'type', get_string('forumtype', 'forum'), $forum_types);
         $mform->setHelpButton('type', array('forumtype', get_string('forumtype', 'forum'), 'forum'));
         $mform->setDefault('type', 'general');
 
@@ -163,7 +165,7 @@ class mod_forum_mod_form extends moodleform_mod {
     function data_preprocessing(&$default_values){
         if (empty($default_values['scale'])){
             $default_values['assessed'] = 0;
-        }        
+        }
 
         if (empty($default_values['assessed'])){
             $default_values['ratingtime'] = 0;

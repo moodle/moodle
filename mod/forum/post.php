@@ -55,7 +55,7 @@
         if (!get_referer()) {   // No referer - probably coming in via email  See MDL-9052
             require_login();
         }
-        
+
         $navigation = build_navigation('', $cm);
         print_header($course->shortname, $course->fullname, $navigation, '' , '', true, "", navmenu($course, $cm));
 
@@ -74,8 +74,13 @@
         if (! $course = get_record("course", "id", $forum->course)) {
             error("The course number was incorrect ($forum->course)");
         }
+        if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+            error("Incorrect course module");
+        }
+
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-        if (! forum_user_can_post_discussion($forum)) {
+
+        if (! forum_user_can_post_discussion($forum, -1, -1, $cm)) {
             if (has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
                 $SESSION->wantsurl = $FULLME;
                 $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
@@ -85,10 +90,8 @@
             }
         }
 
-        if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-            if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
-                error(get_string("activityiscurrentlyhidden"));
-            }
+        if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
+            error(get_string("activityiscurrentlyhidden"));
         }
 
         if (isset($_SERVER["HTTP_REFERER"])) {
@@ -140,7 +143,7 @@
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $modcontext    = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-        if (! forum_user_can_post($forum)) {
+        if (! forum_user_can_post($forum, null, $cm, $modcontext)) {
             if (has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
                 $SESSION->wantsurl = $FULLME;
                 $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
@@ -313,21 +316,22 @@
                              "post.php?delete=$delete&amp;confirm=$delete",
                              $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
 
-                forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false);
+                forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false);
                 if (empty($post->edit)) {
                     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
                         $user_read_array = forum_tp_get_discussion_read_records($USER->id, $discussion->id);
                     } else {
                         $user_read_array = array();
                     }
-                    forum_print_posts_nested($post->id, $course->id, false, false, $user_read_array, $forum->id);
+                    $posts = forum_get_all_discussion_posts($discussion->id, "created ASC");
+                    forum_print_posts_nested($course, $cm, $forum, $discussion, $post, false, false, $user_read_array, $posts);
                 }
             } else {
                 print_header();
                 notice_yesno(get_string("deletesure", "forum", $replycount),
                              "post.php?delete=$delete&amp;confirm=$delete",
                              $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
-                forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
+                forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false);
             }
 
         }
@@ -402,7 +406,7 @@
         } else { // User just asked to prune something
 
             $course = get_record('course', 'id', $forum->course);
-            
+
             $navlinks = array();
             $navlinks[] = array('name' => format_string($post->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
             $navlinks[] = array('name' => get_string("prune", "forum"), 'link' => '', 'type' => 'title');
@@ -414,7 +418,7 @@
 
             include('prune.html');
 
-            forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
+            forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false);
             echo '</center>';
         }
         print_footer($course);
@@ -478,7 +482,7 @@
             if (!forum_update_post($updatepost, $message)) {
                 error(get_string("couldnotupdate", "forum"), $errordestination);
             }
-            
+
             // MDL-11818
             if (($forum->type == 'single') && ($updatepost->parent == '0')){ // updating first post of single discussion type -> updating forum intro
                 $forum->intro = $updatepost->message;
@@ -523,7 +527,7 @@
                 if (!empty($message)) { // if we're printing stuff about the file upload
                     $timemessage = 4;
                 }
-                
+
                 if ($subscribemessage = forum_post_subscription($fromform)) {
                     $timemessage = 4;
                 }
@@ -576,13 +580,13 @@
                 if (!empty($message)) { // if we're printing stuff about the file upload
                     $timemessage = 4;
                 }
-                
+
                 if ($fromform->mailnow) {
                     $message .= get_string("postmailnow", "forum");
                     $timemessage = 4;
                 } else {
                     $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
-                }    
+                }
 
                 if ($subscribemessage = forum_post_subscription($discussion)) {
                     $timemessage = 4;
@@ -624,7 +628,7 @@
     if (empty($post->edit)) {
         $post->edit = '';
     }
-    
+
     if (empty($discussion->name)) {
         if (empty($discussion)) {
             $discussion = new object;
@@ -646,21 +650,21 @@
     $navlinks = array();
     if ($post->parent) {
         $navlinks[] = array('name' => format_string($toppost->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
-        $navlinks[] = array('name' => get_string('editing', 'forum'), 'link' => '', 'type' => 'title');            
+        $navlinks[] = array('name' => get_string('editing', 'forum'), 'link' => '', 'type' => 'title');
     } else {
         $navlinks[] = array('name' => format_string($toppost->subject), 'link' => '', 'type' => 'title');
     }
     $navigation = build_navigation($navlinks, $cm);
-     
+
     print_header("$course->shortname: $strdiscussionname ".
                   format_string($toppost->subject), $course->fullname,
                   $navigation, $mform_post->focus($forcefocus), "", true, "", navmenu($course, $cm));
-   
+
 // checkup
-    if (!empty($parent) && !forum_user_can_see_post($forum, $discussion, $post)) {
+    if (!empty($parent) && !forum_user_can_see_post($forum, $discussion, $post, null, $cm)) {
         error("You cannot reply to this post");
     }
-    if (empty($parent) && empty($edit) && !forum_user_can_post_discussion($forum)) {
+    if (empty($parent) && empty($edit) && !forum_user_can_post_discussion($forum, -1, -1, $cm, $modcontext)) {
         error("You cannot start a new discussion in this forum");
     }
 
@@ -674,7 +678,11 @@
     forum_check_throttling($forum);
 
     if (!empty($parent)) {
-        forum_print_post($parent, $course->id, $ownpost=false, $reply=false, $link=false);
+        if (! $discussion = get_record('forum_discussions', 'id', $parent->discussion)) {
+            error('This post is not part of a discussion!');
+        }
+
+        forum_print_post($parent, $discussion, $forum, $cm, $course, false, false, false);
         if (empty($post->edit)) {
             if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
                 $user_read_array = forum_tp_get_discussion_read_records($USER->id, $discussion->id);
@@ -682,7 +690,8 @@
                 $user_read_array = array();
             }
             if ($forum->type != 'qanda' || forum_user_can_see_discussion($forum, $discussion, $modcontext)) {
-                forum_print_posts_threaded($parent->id, $course->id, 0, false, false, $user_read_array, $discussion->forum, $modcontext);
+                $posts = forum_get_all_discussion_posts($discussion->id, "created ASC");
+                forum_print_posts_threaded($course, $cm, $forum, $discussion, $parent, 0, false, false, $user_read_array, $posts);
             }
         }
         $heading = get_string("yourreply", "forum");

@@ -93,12 +93,12 @@ function groups_get_grouping($groupingid) {
 /**
  * Gets array of all groups in a specified course.
  * @param int $courseid The id of the course.
- * @param int $userid optional user id, returns only groups of the user.
+ * @param mixed $userid optional user id or array of ids, returns only groups of the user.
  * @param int $groupingid optional returns only groups in the specified grouping.
  * @return array | false Returns an array of the group objects or false if no records
- * or an error occurred.
+ * or an error occurred. (userid field returned if array in $userid)
  */
-function groups_get_all_groups($courseid, $userid=0, $groupingid=0) {
+function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*') {
     global $CFG;
 
     // groupings are ignored when not enabled
@@ -106,12 +106,18 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0) {
         $groupingid = 0;
     }
 
-    if (!empty($userid)) {
-        $userfrom  = ", {$CFG->prefix}groups_members gm";
-        $userwhere = "AND g.id = gm.groupid AND gm.userid = '$userid'";
-    } else {
+    if (empty($userid)) {
         $userfrom  = "";
         $userwhere = "";
+
+    } else if (is_array($userid)) {
+        $userids = implode(',', $userid);
+        $userfrom  = ", {$CFG->prefix}groups_members gm";
+        $userwhere = "AND g.id = gm.groupid AND gm.userid IN ($userids)";
+
+    } else {
+        $userfrom  = ", {$CFG->prefix}groups_members gm";
+        $userwhere = "AND g.id = gm.groupid AND gm.userid = '$userid'";
     }
 
     if (!empty($groupingid)) {
@@ -122,7 +128,7 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0) {
         $groupingwhere = "";
     }
 
-    return get_records_sql("SELECT g.*
+    return get_records_sql("SELECT $fields
                               FROM {$CFG->prefix}groups g $userfrom $groupingfrom
                              WHERE g.courseid = $courseid $userwhere $groupingwhere
                           ORDER BY name ASC");

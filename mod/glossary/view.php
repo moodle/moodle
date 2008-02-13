@@ -442,7 +442,7 @@
                         echo '<th align="left">';
 
                         $user = get_record("user","id",$entry->userid);
-                        print_user_picture($user->id, $course->id, $user->picture);
+                        print_user_picture($user, $course->id, $user->picture);
                         $pivottoshow = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
                     } else {
                         echo '<th >';

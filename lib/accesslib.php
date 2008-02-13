@@ -2538,7 +2538,7 @@ function cleanup_contexts() {
  */
 function get_context_instance($contextlevel, $instance=0) {
 
-    global $context_cache, $context_cache_id;
+    global $context_cache, $context_cache_id, $CFG;
     static $allowed_contexts = array(CONTEXT_SYSTEM, CONTEXT_USER, CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_GROUP, CONTEXT_MODULE, CONTEXT_BLOCK);
 
     if ($contextlevel === 'clearcache') {
@@ -2561,30 +2561,79 @@ function get_context_instance($contextlevel, $instance=0) {
         error('Error: get_context_instance() called with incorrect context level "'.s($contextlevel).'"');
     }
 
-/// Check the cache
-    if (isset($context_cache[$contextlevel][$instance])) {  // Already cached
-        return $context_cache[$contextlevel][$instance];
+    if (!is_array($instance)) {
+    /// Check the cache
+        if (isset($context_cache[$contextlevel][$instance])) {  // Already cached
+            return $context_cache[$contextlevel][$instance];
+        }
+
+    /// Get it from the database, or create it
+        if (!$context = get_record('context', 'contextlevel', $contextlevel, 'instanceid', $instance)) {
+            $context = create_context($contextlevel, $instance);
+        }
+
+    /// Only add to cache if context isn't empty.
+        if (!empty($context)) {
+            $context_cache[$contextlevel][$instance] = $context;    // Cache it for later
+            $context_cache_id[$context->id]          = $context;    // Cache it for later
+        }
+
+        return $context;
     }
 
-/// Get it from the database, or create it
-    if (!$context = get_record('context', 'contextlevel', $contextlevel, 'instanceid', $instance)) {
-        $context = create_context($contextlevel, $instance);
+
+/// ok, somebody wants to load several contexts to save some db queries ;-)
+    $instances = $instance;
+    $result = array();
+
+    foreach ($instances as $key=>$instance) {
+    /// Check the cache first
+        if (isset($context_cache[$contextlevel][$instance])) {  // Already cached
+            $result[$instance] = $context_cache[$contextlevel][$instance];
+            unset($instances[$key]);
+            continue;
+        }
     }
 
-/// Only add to cache if context isn't empty.
-    if (!empty($context)) {
-        $context_cache[$contextlevel][$instance] = $context;    // Cache it for later
-        $context_cache_id[$context->id] = $context;      // Cache it for later
+    if ($instances) {
+        if (count($instances) > 1) {
+            $instanceids = implode(',', $instances);
+            $instanceids = "instanceid IN ($instanceids)";
+        } else {
+            $instance = reset($instances);
+            $instanceids = "instanceid = $instance";
+        }
+        
+        if (!$contexts = get_records_sql("SELECT instanceid, id, contextlevel, path, depth
+                                            FROM {$CFG->prefix}context
+                                           WHERE contextlevel=$contextlevel AND $instanceids")) {
+            $contexts = array();
+        }
+
+        foreach ($instances as $instance) {
+            if (isset($contexts[$instance])) {
+                $context = $contexts[$instance];
+            } else {
+                $context = create_context($contextlevel, $instance);
+            }
+
+            if (!empty($context)) {
+                $context_cache[$contextlevel][$instance] = $context;    // Cache it for later
+                $context_cache_id[$context->id] = $context;             // Cache it for later
+            }
+
+            $result[$instance] = $context;
+        }
     }
 
-    return $context;
+    return $result;
 }
 
 
 /**
  * Get a context instance as an object, from a given context id.
- * @param $id a context id.
- * @return object The context object.
+ * @param mixed $id a context id or array of ids.
+ * @return mixed object or array of the context object.
  */
 function get_context_instance_by_id($id) {
 

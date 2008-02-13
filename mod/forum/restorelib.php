@@ -143,7 +143,7 @@
                     $sd->format   = $defaultformat;
                     $sd->mailnow  = false;
                     //Insert dicussion/post data
-                    $sdid = forum_add_discussion($sd, $sd->intro);
+                    $sdid = forum_add_discussion($sd, $sd->intro, $forum);
                     //Now, mark the initial post of the discussion as mailed!
                     if ($sdid) {
                         set_field ('forum_posts','mailed', '1', 'discussion', $sdid);
