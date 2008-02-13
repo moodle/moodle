@@ -692,21 +692,23 @@ class assignment_base {
         if (!empty($CFG->enableoutcomes) and empty($SESSION->flextable['mod-assignment-submissions']->collapse['outcome'])) {
 
             if (!empty($grading_info->outcomes)) {
-                foreach($grading_info->outcomes as $n=>$outcome) {
-                    if ($outcome->grades[$submission->userid]->locked) {
-                        continue;
-                    }
+                foreach($grading_info->outcomes as $itemnumber=>$grade_items) {
+                    foreach ($grade_items as $grade_item_id => $outcome) {
+                        if ($outcome->grades[$submission->userid]->locked) {
+                            continue;
+                        }
 
-                    if ($quickgrade){
-                        $output.= 'opener.document.getElementById("outcome_'.$n.'_'.$submission->userid.
-                        '").selectedIndex="'.$outcome->grades[$submission->userid]->grade.'";'."\n";
+                        if ($quickgrade){
+                            $output.= 'opener.document.getElementById("outcome_'.$itemnumber.'_'.$grade_item_id .'_'.$submission->userid.
+                            '").selectedIndex="'.$outcome->grades[$submission->userid]->grade.'";'."\n";
 
-                    } else {
-                        $options = make_grades_menu(-$outcome->scaleid);
-                        $options[0] = get_string('nooutcome', 'grades');
-                        $output.= 'opener.document.getElementById("outcome_'.$n.'_'.$submission->userid.'").innerHTML="'.$options[$outcome->grades[$submission->userid]->grade]."\";\n";
-                    }
-
+                        } else {
+                            $options = make_grades_menu(-$outcome->scaleid);
+                            $options[0] = get_string('nooutcome', 'grades');
+                            $output.= 'opener.document.getElementById("outcome_'.$itemnumber.'_'.$grade_item_id .'_'.$submission->userid.'")
+                                        .innerHTML="'.$options[$outcome->grades[$submission->userid]->grade]."\";\n";
+                        }
+                    } 
                 }
             }
         }
@@ -889,17 +891,19 @@ class assignment_base {
         echo '<div class="clearer"></div>';
 
         if (!empty($CFG->enableoutcomes)) {
-            foreach($grading_info->outcomes as $n=>$outcome) {
-                echo '<div class="outcome"><label for="menuoutcome_'.$n.'">'.$outcome->name.'</label> ';
-                $options = make_grades_menu(-$outcome->scaleid);
-                if ($outcome->grades[$submission->userid]->locked) {
-                    $options[0] = get_string('nooutcome', 'grades');
-                    echo $options[$outcome->grades[$submission->userid]->grade];
-                } else {
-                    choose_from_menu($options, 'outcome_'.$n.'['.$userid.']', $outcome->grades[$submission->userid]->grade, get_string('nooutcome', 'grades'), '', 0, false, false, 0, 'menuoutcome_'.$n);
+            foreach($grading_info->outcomes as $itemnumber=>$grade_items) {
+                foreach ($grade_items as $grade_item_id => $outcome) {
+                    echo '<div class="outcome"><label for="menuoutcome_'.$itemnumber.'_'.$grade_item_id .'">'.$outcome->name.'</label> ';
+                    $options = make_grades_menu(-$outcome->scaleid);
+                    if ($outcome->grades[$submission->userid]->locked) {
+                        $options[0] = get_string('nooutcome', 'grades');
+                        echo $options[$outcome->grades[$submission->userid]->grade];
+                    } else {
+                        choose_from_menu($options, 'outcome_'.$itemnumber.'_'.$grade_item_id .'['.$userid.']', $outcome->grades[$submission->userid]->grade, get_string('nooutcome', 'grades'), '', 0, false, false, 0, 'menuoutcome_'.$itemnumber.'_'.$grade_item_id);
+                    }
+                    echo '</div>';
+                    echo '<div class="clearer"></div>';
                 }
-                echo '</div>';
-                echo '<div class="clearer"></div>';
             }
         }
 
@@ -1257,19 +1261,22 @@ class assignment_base {
 
                 if ($uses_outcomes) {
 
-                    foreach($grading_info->outcomes as $n=>$outcome) {
-                        $outcomes .= '<div class="outcome"><label>'.$outcome->name.'</label>';
-                        $options = make_grades_menu(-$outcome->scaleid);
+                    foreach($grading_info->outcomes as $itemnumber=>$grade_items) {
+                        foreach ($grade_items as $grade_item_id => $outcome) {
+                            $outcomes .= '<div class="outcome"><label>'.$outcome->name.'</label>';
+                            $options = make_grades_menu(-$outcome->scaleid);
 
-                        if ($outcome->grades[$auser->id]->locked or !$quickgrade) {
-                            $options[0] = get_string('nooutcome', 'grades');
-                            $outcomes .= ': <span id="outcome_'.$n.'_'.$auser->id.'">'.$options[$outcome->grades[$auser->id]->grade].'</span>';
-                        } else {
-                            $outcomes .= ' ';
-                            $outcomes .= choose_from_menu($options, 'outcome_'.$n.'['.$auser->id.']',
-                                        $outcome->grades[$auser->id]->grade, get_string('nooutcome', 'grades'), '', 0, true, false, 0, 'outcome_'.$n.'_'.$auser->id);
+                            if ($outcome->grades[$auser->id]->locked or !$quickgrade) {
+                                $options[0] = get_string('nooutcome', 'grades');
+                                $outcomes .= ': <span id="outcome_'.$itemnumber.'_'.$grade_item_id . '_'.$auser->id.'">'.$options[$outcome->grades[$auser->id]->grade].'</span>';
+                            } else {
+                                $outcomes .= ' ';
+                                $outcomes .= choose_from_menu($options, 'outcome_'.$itemnumber.'_'.$grade_item_id . '['.$auser->id.']',
+                                            $outcome->grades[$auser->id]->grade, get_string('nooutcome', 'grades'), '', 0, true, false, 0, 
+                                            'outcome_'.$itemnumber.'_'.$grade_item_id .'_'.$auser->id);
+                            }
+                            $outcomes .= '</div>';
                         }
-                        $outcomes .= '</div>';
                     }
                 }
 
@@ -1419,10 +1426,12 @@ class assignment_base {
         $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid);
 
         if (!empty($grading_info->outcomes)) {
-            foreach($grading_info->outcomes as $n=>$old) {
-                $name = 'outcome_'.$n;
-                if (isset($formdata->{$name}[$userid]) and $old->grades[$userid]->grade != $formdata->{$name}[$userid]) {
-                    $data[$n] = $formdata->{$name}[$userid];
+            foreach($grading_info->outcomes as $itemnumber=>$grade_items) {
+                foreach ($grade_items as $grade_item_id => $old) {
+                    $name = 'outcome_' . $itemnumber . '_' . $grade_item_id;
+                    if (isset($formdata->{$name}[$userid]) and $old->grades[$userid]->grade != $formdata->{$name}[$userid]) {
+                        $data[$itemnumber][$grade_item_id] = $formdata->{$name}[$userid];
+                    }
                 }
             }
         }
