@@ -26,7 +26,6 @@
  * Library of functions for gradebook - both public and internal
  *
  * @author Moodle HQ developers
- * @version  $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
@@ -245,15 +244,15 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
  * @param string $itemmodule 'forum, 'quiz', etc.
  * @param int $iteminstance id of the item module
  * @param int $userid ID of the graded user
- * @param array $data array itemnumber=>outcomegrade
+ * @param array $data array itemnumber=>grade_item_id=>outcomegrade
  */
 function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $iteminstance, $userid, $data) {
     if ($items = grade_item::fetch_all(array('itemtype'=>$itemtype, 'itemmodule'=>$itemmodule, 'iteminstance'=>$iteminstance, 'courseid'=>$courseid))) {
         foreach ($items as $item) {
-            if (!array_key_exists($item->itemnumber, $data)) {
+            if (!array_key_exists($item->itemnumber, $data) || !array_key_exists($item->id, $data[$item->itemnumber])) {
                 continue;
             }
-            $grade = $data[$item->itemnumber] < 1 ? null : $data[$item->itemnumber];
+            $grade = $data[$item->itemnumber][$item->id] < 1 ? null : $data[$item->itemnumber][$item->id];
             $item->update_final_grade($userid, $grade, $source);
         }
     }
@@ -439,7 +438,7 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
                         $outcome->grades[$userid] = $grade;
                     }
                 }
-                $return->outcomes[$grade_item->itemnumber] = $outcome;
+                $return->outcomes[$grade_item->itemnumber][$grade_item->id] = $outcome;
 
             }
         }
