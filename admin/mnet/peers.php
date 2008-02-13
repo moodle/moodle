@@ -50,6 +50,11 @@ if (($form = data_submitted()) && confirm_sesskey()) {
     if (!empty($form->wwwroot)) {
         // ensure we remove trailing slashes
         $form->wwwroot = preg_replace(':/$:', '', $form->wwwroot);
+
+        // ensure the wwwroot starts with a http or https prefix
+        if (strtolower(substr($form->wwwroot, 0, 4)) != 'http') {
+            $form->wwwroot = 'http://'.$form->wwwroot;
+        }
     }
 
     if(!function_exists('xmlrpc_encode_request')) {
