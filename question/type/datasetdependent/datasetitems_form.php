@@ -162,6 +162,10 @@ class question_dataset_dependent_items_form extends moodleform {
 
         $mform->addElement('hidden', 'wizard', 'datasetitems');
         $mform->setType('wizard', PARAM_ALPHA);
+        
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_LOCALURL);
+        $mform->setDefault('returnurl', 0);
     }
 
     function set_data($question){
