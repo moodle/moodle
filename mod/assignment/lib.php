@@ -1273,8 +1273,8 @@ class assignment_base {
                     }
                 }
 
-
-                $row = array($picture, fullname($auser), $grade, $comment, $studentmodified, $teachermodified, $status, $finalgrade);
+				$userlink = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $auser->id . '&amp;course=' . $course->id . '">' . fullname($auser) . '</a>';
+                $row = array($picture, $userlink, $grade, $comment, $studentmodified, $teachermodified, $status, $finalgrade);
                 if ($uses_outcomes) {
                     $row[] = $outcomes;
                 }
