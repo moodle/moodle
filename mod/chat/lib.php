@@ -142,14 +142,14 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
     // this is approximate only, but it is really fast ;-)
     $timeout = $CFG->chat_old_ping * 10;
 
-    if (!$cms = get_records_sql("SELECT cm.*, ch.name, 'chat' AS modname, MAX(chm.timestamp) AS lasttime
-                                   FROM {$CFG->prefix}course_modules cm
-                                        JOIN {$CFG->prefix}modules md        ON md.id = cm.module
-                                        JOIN {$CFG->prefix}chat ch           ON ch.id = cm.instance
-                                        JOIN {$CFG->prefix}chat_messages chm ON chm.chatid = ch.id
-                                  WHERE chm.timestamp > $timestart AND ch.course = {$course->id} AND md.name = 'chat'
-                               GROUP BY cm.id
-                               ORDER BY chm.timestamp ASC")) {
+    if (!$mcms = get_records_sql("SELECT cm.id, MAX(chm.timestamp) AS lasttime
+                                    FROM {$CFG->prefix}course_modules cm
+                                         JOIN {$CFG->prefix}modules md        ON md.id = cm.module
+                                         JOIN {$CFG->prefix}chat ch           ON ch.id = cm.instance
+                                         JOIN {$CFG->prefix}chat_messages chm ON chm.chatid = ch.id
+                                   WHERE chm.timestamp > $timestart AND ch.course = {$course->id} AND md.name = 'chat'
+                                GROUP BY cm.id
+                                ORDER BY lasttime ASC")) {
          return false;
     }
 
@@ -157,10 +157,12 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
     $current  = array();
     $modinfo =& get_fast_modinfo($course); // reference needed because we might load the groups
 
-    foreach ($cms as $cm) {
-        if (!array_key_exists($cm->id, $modinfo->cms)) {
+    foreach ($mcms as $cmid=>$mcm) {
+        if (!array_key_exists($cmid, $modinfo->cms)) {
             continue;
         }
+        $cm = $modinfo->cms[$cmid];
+        $cm->lasttime = $mcm->lasttime;
         if (!$modinfo->cms[$cm->id]->uservisible) {
             continue;
         }
@@ -190,15 +192,17 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
         $mygroupids = implode(',', $mygroupids);
         $cm->mygroupids = $mygroupids;
 
-        if (!$cm = get_record_sql("SELECT cm.*, ch.name, 'chat' AS modname, MAX(chm.timestamp) AS lasttime
-                                     FROM {$CFG->prefix}course_modules cm
-                                          JOIN {$CFG->prefix}chat ch           ON ch.id = cm.instance
-                                          JOIN {$CFG->prefix}chat_messages chm ON chm.chatid = ch.id
-                                    WHERE chm.timestamp > $timestart AND cm.id = {$cm->id} AND
-                                          (chm.groupid IN ($mygroupids) OR chm.groupid = 0)
-                                 GROUP BY cm.id")) {
+        if (!$mcm = get_record_sql("SELECT cm.id, MAX(chm.timestamp) AS lasttime
+                                      FROM {$CFG->prefix}course_modules cm
+                                           JOIN {$CFG->prefix}chat ch           ON ch.id = cm.instance
+                                           JOIN {$CFG->prefix}chat_messages chm ON chm.chatid = ch.id
+                                     WHERE chm.timestamp > $timestart AND cm.id = {$cm->id} AND
+                                           (chm.groupid IN ($mygroupids) OR chm.groupid = 0)
+                                  GROUP BY cm.id")) {
              continue;
         }
+
+        $cm->lasttime = $mcm->lasttime;
         if ($timeout > time() - $cm->lasttime) {
             $current[] = $cm;
         } else {
@@ -233,7 +237,7 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
         $timeoldext = time() - ($CFG->chat_old_ping*10); // JSless gui_basic needs much longer timeouts
         $timeoldext = floor($timeoldext/10)*10;  // better db caching
 
-        $timeout = "AND (chu.version<>'basic' AND chu.lastping<$timeold) OR (chu.version='basic' AND chu.lastping<$timeoldext)";
+        $timeout = "AND (chu.version<>'basic' AND chu.lastping>$timeold) OR (chu.version='basic' AND chu.lastping>$timeoldext)";
 
         foreach ($current as $cm) {
             //count users first
@@ -242,13 +246,14 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
             } else {
                 $groupselect = "";
             }
+
             if (!$users = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email, u.picture
                                              FROM {$CFG->prefix}course_modules cm
                                              JOIN {$CFG->prefix}chat ch        ON ch.id = cm.instance
                                              JOIN {$CFG->prefix}chat_users chu ON chu.chatid = ch.id
                                              JOIN {$CFG->prefix}user u         ON u.id = chu.userid
                                             WHERE cm.id = {$cm->id} $timeout $groupselect
-                                         GROUP BY u.id")) {
+                                         GROUP BY u.id, u.firstname, u.lastname, u.email, u.picture")) {
             }
 
             $link = $CFG->wwwroot.'/mod/chat/view.php?id='.$cm->id;
