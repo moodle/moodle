@@ -4313,12 +4313,12 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
     }
 
     // preload all groups of ppl that posted in this discussion
-    if ($postersgroups = groups_get_all_groups($course->id, $posters, $cm->groupingid, 'g.id, gm.userid')) {
+    if ($postersgroups = groups_get_all_groups($course->id, $posters, $cm->groupingid, 'gm.id, gm.groupid, gm.userid')) {
         foreach($postersgroups as $pg) {
             if (!isset($cm->cache->usersgroups[$pg->userid])) {
                 $cm->cache->usersgroups[$pg->userid] = array();
             }
-            $cm->cache->usersgroups[$pg->userid][$pg->id] = $pg->id;
+            $cm->cache->usersgroups[$pg->userid][$pg->groupid] = $pg->groupid;
         }
         unset($postersgroups);
     }
