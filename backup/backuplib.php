@@ -802,19 +802,21 @@
 
         $status = true;
 
-        //Get info from messages
-        $unreads = get_records ('message');
-        $reads   = get_records ('message_read');
-        $contacts= get_records ('message_contacts');
+    /// Check we have something to backup
+        $unreads = count_records ('message');
+        $reads   = count_records ('message_read');
+        $contacts= count_records ('message_contacts');
 
         if ($unreads || $reads || $contacts) {
             $counter = 0;
-            //message open tag
+        /// message open tag
             fwrite ($bf,start_tag("MESSAGES",2,true));
+
             if ($unreads) {
-                //Iterate over every unread
-                foreach ($unreads as $unread) {
-                    //start message
+                $rs_unreads = get_recordset('message');
+            /// Iterate over every unread
+                while ($unread = rs_fetch_next_record($rs_unreads)) {
+                /// start message
                     fwrite($bf, start_tag("MESSAGE",3,true));
                     fwrite ($bf,full_tag("ID",4,false,$unread->id));
                     fwrite ($bf,full_tag("STATUS",4,false,"UNREAD"));
@@ -824,10 +826,10 @@
                     fwrite ($bf,full_tag("FORMAT",4,false,$unread->format));
                     fwrite ($bf,full_tag("TIMECREATED",4,false,$unread->timecreated));
                     fwrite ($bf,full_tag("MESSAGETYPE",4,false,$unread->messagetype));
-                    //end message
+                /// end message
                     fwrite ($bf,end_tag("MESSAGE",3,true));
 
-                    //Do some output
+                /// Do some output
                     $counter++;
                     if ($counter % 20 == 0) {
                         echo ".";
@@ -837,12 +839,14 @@
                         backup_flush(300);
                     }
                 }
+                rs_close($rs_unreads);
             }
 
             if ($reads) {
-                //Iterate over every read
-                foreach ($reads as $read) {
-                    //start message
+                $rs_reads = get_recordset('message_read');
+            /// Iterate over every unread
+                while ($read = rs_fetch_next_record($rs_reads)) {
+                /// start message
                     fwrite($bf, start_tag("MESSAGE",3,true));
                     fwrite ($bf,full_tag("ID",4,false,$read->id));
                     fwrite ($bf,full_tag("STATUS",4,false,"READ"));
@@ -854,10 +858,10 @@
                     fwrite ($bf,full_tag("MESSAGETYPE",4,false,$read->messagetype));
                     fwrite ($bf,full_tag("TIMEREAD",4,false,$read->timeread));
                     fwrite ($bf,full_tag("MAILED",4,false,$read->mailed));
-                    //end message
+                /// end message
                     fwrite ($bf,end_tag("MESSAGE",3,true));
 
-                    //Do some output
+                /// Do some output
                     $counter++;
                     if ($counter % 20 == 0) {
                         echo ".";
@@ -867,22 +871,24 @@
                         backup_flush(300);
                     }
                 }
+                rs_close($rs_reads);
             }
 
             if ($contacts) {
                 fwrite($bf, start_tag("CONTACTS",3,true));
-                //Iterate over every contact
-                foreach ($contacts as $contact) {
-                    //start contact
+                $rs_contacts = get_recordset('message_contacts');
+            /// Iterate over every contact
+                while ($contact = rs_fetch_next_record($rs_contacts)) {
+                /// start contact
                     fwrite($bf, start_tag("CONTACT",4,true));
                     fwrite ($bf,full_tag("ID",5,false,$contact->id));
                     fwrite ($bf,full_tag("USERID",5,false,$contact->userid));
                     fwrite ($bf,full_tag("CONTACTID",5,false,$contact->contactid));
                     fwrite ($bf,full_tag("BLOCKED",5,false,$contact->blocked));
-                    //end contact
+                /// end contact
                     fwrite ($bf,end_tag("CONTACT",4,true));
 
-                    //Do some output
+                /// Do some output
                     $counter++;
                     if ($counter % 20 == 0) {
                         echo ".";
@@ -892,9 +898,11 @@
                         backup_flush(300);
                     }
                 }
+                rs_close($rs_contacts);
                 fwrite($bf, end_tag("CONTACTS",3,true));
             }
-            //messages close tag
+
+        /// messages close tag
             $status = fwrite ($bf,end_tag("MESSAGES",2,true));
         }
 
