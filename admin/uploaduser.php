@@ -656,8 +656,16 @@ if ($formdata = $mform->is_cancelled()) {
                 // group exists?
                 $addgroup = $user->{'group'.$i};
                 if (!array_key_exists($addgroup, $ccache[$shortname]->groups)) {
-                    $upt->track('enrolments', get_string('unknowgroup', 'error', $addgroup), 'error');
-                    continue;
+                    // if group doesn't exist,  create it
+                    $newgroupdata = new object();
+                    $newgroupdata->name = $addgroup;
+                    $newgroupdata->courseid = $ccache[$shortname]->id;
+                    if ($ccache[$shortname]->groups[$addgroup]->id = groups_create_group($newgroupdata)){
+                        $ccache[$shortname]->groups[$addgroup]->name = $newgroupdata->name;
+                    } else {
+                        $upt->track('enrolments', get_string('unknowngroup', 'error', $addgroup), 'error');
+                        continue;
+                    }
                 }
                 $gid   = $ccache[$shortname]->groups[$addgroup]->id;
                 $gname = $ccache[$shortname]->groups[$addgroup]->name;
