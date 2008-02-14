@@ -1165,7 +1165,8 @@ class assignment_base {
 
                 $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
                 
-                $row = array($picture, fullname($auser), $grade, $comment, $studentmodified, $teachermodified, $status);
+                $userlink = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $auser->id . '&amp;course=' . $course->id . '">' . fullname($auser) . '</a>';
+                $row = array($picture, $userlink, $grade, $comment, $studentmodified, $teachermodified, $status);
                 $table->add_data($row);
             }
         }
