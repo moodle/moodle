@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V4.96 24 Sept 2007 (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+ * @version V4.98 13 Feb 2008 (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -92,14 +92,14 @@ function adodb_error_pg($errormsg)
 {
 	if (is_numeric($errormsg)) return (integer) $errormsg;
     static $error_regexps = array(
-            '/(Table does not exist\.|Relation [\"\'].*[\"\'] does not exist|sequence does not exist|class ".+" not found)$/' => DB_ERROR_NOSUCHTABLE,
-            '/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*/'      => DB_ERROR_ALREADY_EXISTS,
-            '/divide by zero$/'                     => DB_ERROR_DIVZERO,
-            '/pg_atoi: error in .*: can\'t parse /' => DB_ERROR_INVALID_NUMBER,
-            '/ttribute [\"\'].*[\"\'] not found|Relation [\"\'].*[\"\'] does not have attribute [\"\'].*[\"\']/' => DB_ERROR_NOSUCHFIELD,
-            '/parser: parse error at or near \"/'   => DB_ERROR_SYNTAX,
-            '/referential integrity violation/'     => DB_ERROR_CONSTRAINT,
-			'/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*|duplicate key violates unique constraint/'     
+            '/(Table does not exist\.|Relation [\"\'].*[\"\'] does not exist|sequence does not exist|class ".+" not found)$/i' => DB_ERROR_NOSUCHTABLE,
+            '/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*/i'      => DB_ERROR_ALREADY_EXISTS,
+            '/divide by zero$/i'                     => DB_ERROR_DIVZERO,
+            '/pg_atoi: error in .*: can\'t parse /i' => DB_ERROR_INVALID_NUMBER,
+            '/ttribute [\"\'].*[\"\'] not found|Relation [\"\'].*[\"\'] does not have attribute [\"\'].*[\"\']/i' => DB_ERROR_NOSUCHFIELD,
+            '/parser: parse error at or near \"/i'   => DB_ERROR_SYNTAX,
+            '/referential integrity violation/i'     => DB_ERROR_CONSTRAINT,
+			'/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*|duplicate key violates unique constraint/i'     
 			 	 => DB_ERROR_ALREADY_EXISTS
         );
 	reset($error_regexps);

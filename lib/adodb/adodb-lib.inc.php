@@ -7,7 +7,7 @@ global $ADODB_INCLUDED_LIB;
 $ADODB_INCLUDED_LIB = 1;
 
 /* 
- @version V4.96 24 Sept 2007 (c) 2000-2007 John Lim (jlim\@natsoft.com.my). All rights reserved.
+ @version V4.98 13 Feb 2008 (c) 2000-2008 John Lim (jlim\@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -414,8 +414,10 @@ function _adodb_getcount(&$zthis, $sql,$inputarr=false,$secs2cache=0)
 			} else
 				$rewritesql = "SELECT COUNT(*) FROM (".$rewritesql.")"; 
 			
-		} else if (strncmp($zthis->databaseType,'postgres',8) == 0)  {
+		} else if (strncmp($zthis->databaseType,'postgres',8) == 0 || strncmp($zthis->databaseType,'mysql',5) == 0)  {
 			$rewritesql = "SELECT COUNT(*) FROM ($rewritesql) _ADODB_ALIAS_";
+		} else {
+			$rewritesql = "SELECT COUNT(*) FROM ($rewritesql) ";
 		}
 	} else {		
 		// now replace SELECT ... FROM with SELECT COUNT(*) FROM
@@ -537,7 +539,7 @@ function &_adodb_pageexecute_all_rows(&$zthis, $sql, $nrows, $page,
 	return $rsreturn;
 }
 
-// Ivï¿½n Oliva version
+// Iván Oliva version
 function &_adodb_pageexecute_no_last_page(&$zthis, $sql, $nrows, $page, $inputarr=false, $secs2cache=0) 
 {
 
@@ -991,24 +993,23 @@ function _adodb_column_sql(&$zthis, $action, $type, $fname, $fnameq, $arrFields,
 		case "D":
 			$val = $zthis->DBDate($arrFields[$fname]);
 			break;
-
 		
 		case "T":
 			$val = $zthis->DBTimeStamp($arrFields[$fname]);
-			break;
-
-// moodle change start - see readme_moodle.txt
-        case "F": //Floating point number
-        case "N": //Numeric or decimal number
-            $val = (float)$arrFields[$fname];
             break;
 
-        case "L": //Integer field suitable for storing booleans (0 or 1)
+        case "F": //Floating point number       // Moodle added
+		case "N":
+		    $val = $arrFields[$fname];
+			if (!is_numeric($val)) $val = str_replace(',', '.', (float)$val);
+			break;
+
+        case "L": //Integer field suitable for storing booleans (0 or 1)     // Moodle added
 		case "I":
 		case "R":
-		    $val = (int) $arrFields[$fname];
+		    $val = $arrFields[$fname];
+			if (!is_numeric($val)) $val = (integer) $val;
 		    break;
-// moodle change end
 
 		default:
 			$val = str_replace(array("'"," ","("),"",$arrFields[$fname]); // basic sql injection defence

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Set tabs to 4 for best viewing.
  * 
@@ -14,7 +14,7 @@
 /**
 	\mainpage 	
 	
-	 @version V4.96 24 Sept 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+	 @version V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. You can choose which license
 	you prefer.
@@ -176,7 +176,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V4.96 24 Sept 2007 (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V4.98 13 Feb 2008 (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -1329,7 +1329,7 @@
 	
 	function GetCol($sql, $inputarr = false, $trim = false)
 	{
-	  	$rv = false;
+	  	
 	  	$rs = &$this->Execute($sql, $inputarr);
 	  	if ($rs) {
 			$rv = array();
@@ -1345,15 +1345,16 @@
 		   		}
 			}
 	   		$rs->Close();
-	  	}
+	  	} else
+			$rv = false;
 	  	return $rv;
 	}
 	
 	function CacheGetCol($secs, $sql = false, $inputarr = false,$trim=false)
 	{
-	  	$rv = false;
 	  	$rs = &$this->CacheExecute($secs, $sql, $inputarr);
 	  	if ($rs) {
+			$rv = array();
 			if ($trim) {
 				while (!$rs->EOF) {
 					$rv[] = trim(reset($rs->fields));
@@ -1366,8 +1367,10 @@
 		   		}
 			}
 	   		$rs->Close();
-	  	}
-	  	return $rv;
+	  	} else		
+		  	$rv = false;
+	  	
+		return $rv;
 	}
 	
 	function &Transpose(&$rs,$addfieldnames=true)
@@ -1485,7 +1488,7 @@
 	{
 		$rs =& $this->CacheExecute($secs2cache,$sql,$inputarr);
 		if ($rs) {
-			$arr = false;
+			$arr = array();
 			if (!$rs->EOF) $arr = $rs->fields;
 			$rs->Close();
 			return $arr;
@@ -1697,8 +1700,8 @@
 			
 		if ($createdir && $notSafeMode && !file_exists($dir)) {
 			$oldu = umask(0);
-			if (!mkdir($dir,0771)) 
-				if ($this->debug) ADOConnection::outp( "Unable to mkdir $dir for $sql");
+			if (!@mkdir($dir,0771)) 
+				 if(!is_dir($dir) && $this->debug) ADOConnection::outp( "Unable to mkdir $dir for $sql");
 			umask($oldu);
 		}
 		return $dir.'/adodb_'.$m.'.cache';
@@ -1771,17 +1774,27 @@
 						$fn($this->databaseType,'CacheExecute',-32000,"Cache write error",$md5file,$sql,$this);
 					if ($this->debug) ADOConnection::outp( " Cache write error");
 				}
-			} else
-			if ($rs) {
+			} else if ($rs) {
 				$eof = $rs->EOF;
 				$rs = &$this->_rs2rs($rs); // read entire recordset into memory immediately
 				$txt = _rs2serialize($rs,false,$sql); // serialize
 		
-				if (!adodb_write_file($md5file,$txt,$this->debug)) {
-					if ($fn = $this->raiseErrorFn) {
-						$fn($this->databaseType,'CacheExecute',-32000,"Cache write error",$md5file,$sql,$this);
+				$ok = adodb_write_file($md5file,$txt,$this->debug);
+				if (!$ok) {
+					if ($ok === false) {
+						$em = 'Cache write error';
+						$en = -32000;
+						
+						if ($fn = $this->raiseErrorFn) {
+							$fn($this->databaseType,'CacheExecute', $en, $em, $md5file,$sql,$this);
+						}
+					} else {
+						$em = 'Cache file locked warning';
+						$en = -32001;
+						// do not call error handling for just a warning
 					}
-					if ($this->debug) ADOConnection::outp( " Cache write error");
+					
+					if ($this->debug) ADOConnection::outp( " ".$em);
 				}
 				if ($rs->EOF && !$eof) {
 					$rs->MoveFirst();
@@ -3853,7 +3866,7 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 			$mode = isset($this->adodbFetchMode) ? $this->adodbFetchMode : $this->fetchMode;
 			
 			if ($mode & ADODB_FETCH_ASSOC) {
-				if (!isset($this->fields[$colname])) $colname = strtolower($colname);
+				if (!isset($this->fields[$colname]) && !is_null($this->fields[$colname])) $colname = strtolower($colname);
 				return $this->fields[$colname];
 			}
 			if (!$this->bind) {
