@@ -232,7 +232,7 @@
         $fulllink = "<a href=\"discuss.php?d=$post->discussion#p$post->id\">".get_string("postincontext", "forum")."</a>";
 
         // Now pring the post.
-        forum_print_post($post, $discussion, $forum, $cm, $cours, false, false, false, false,
+        forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false, false,
                 $fulllink, $strippedsearch, -99, false);
     }
 
