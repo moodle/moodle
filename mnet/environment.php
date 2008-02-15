@@ -151,6 +151,7 @@ class mnet_environment {
         set_config('openssl', implode('@@@@@@@@', $this->keypair), 'mnet');
 
         update_record('mnet_host', $this);
+        error_log('New public key has been generated. It expires ' . date('Y/m/d h:i:s', $this->public_key_expires));
     }
 
     function get_private_key() {
