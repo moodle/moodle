@@ -131,12 +131,23 @@ function mnet_set_public_key($uri, $key = null) {
  * site
  *
  * @param  string   $message              The data you want to sign
+ * @param  resource $privatekey           The private key to sign the response with
  * @return string                         An XML-DSig document
  */
-function mnet_sign_message($message) {
+function mnet_sign_message($message, $privatekey = null) {
     global $CFG, $MNET;
     $digest = sha1($message);
-    $sig = $MNET->sign_message($message);
+
+    // If the user hasn't supplied a private key (for example, one of our older,
+    //  expired private keys, we get the current default private key and use that.
+    if ($privatekey == null) {
+        $privatekey = $MNET->get_private_key();
+    }
+
+    // The '$sig' value below is returned by reference.
+    // We initialize it first to stop my IDE from complaining.
+    $sig  = '';
+    $bool = openssl_sign($message, $sig, $privatekey); // TODO: On failure?
 
     $message = '<?xml version="1.0" encoding="iso-8859-1"?>
     <signedMessage>
