@@ -48,7 +48,14 @@
             $publish        = (isset($_POST['publish'][$key]) && $_POST['publish'][$key] == 'on')? 1 : 0;
             $subscribe      = (isset($_POST['subscribe'][$key]) && $_POST['subscribe'][$key] == 'on')? 1 : 0;
 
-            if (false == $host2service && ($publish == 1 || $subscribe == 1)) {
+            if ($publish != 1 && $subscribe != 1) {
+                if (false == $host2service) {
+                    // We don't have or need a record - do nothing!
+                } else {
+                    // We don't need the record - delete it
+                    delete_records('mnet_host2service', 'hostid', $_POST['hostid'], 'serviceid', $key);
+                }
+            } elseif (false == $host2service && ($publish == 1 || $subscribe == 1)) {
                 $host2service = new stdClass();
                 $host2service->hostid = $_POST['hostid'];
                 $host2service->serviceid = $key;
