@@ -44,7 +44,7 @@
 
 /// move discussion if requested
     if ($move > 0 and confirm_sesskey()) {
-        $return = $CFG->wwwroot.'/mod/forum/discussion.php?d='.$discussion->id;
+        $return = $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id;
 
         require_capability('mod/forum:movediscussions', $modcontext);
 
@@ -52,7 +52,7 @@
             error('Cannot move discussion from a simple single discussion forum', $return);
         }
 
-        if ($forumto = get_record('forum', 'id', $move)) {
+        if (!$forumto = get_record('forum', 'id', $move)) {
             error('You can\'t move to that forum - it doesn\'t exist!', $return);
         }
 
