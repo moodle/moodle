@@ -998,11 +998,13 @@ function _adodb_column_sql(&$zthis, $action, $type, $fname, $fnameq, $arrFields,
 			$val = $zthis->DBTimeStamp($arrFields[$fname]);
             break;
 
+        case "F": //Floating point number       // Moodle added
 		case "N":
 		    $val = $arrFields[$fname];
 			if (!is_numeric($val)) $val = str_replace(',', '.', (float)$val);
 			break;
 
+        case "L": //Integer field suitable for storing booleans (0 or 1)     // Moodle added
 		case "I":
 		case "R":
 		    $val = $arrFields[$fname];
