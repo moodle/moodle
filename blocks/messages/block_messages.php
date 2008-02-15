@@ -33,7 +33,7 @@ class block_messages extends block_base {
                                             {$CFG->prefix}message m 
                                        WHERE m.useridto = '$USER->id' 
                                          AND u.id = m.useridfrom
-                                    GROUP BY m.useridfrom, u.firstname,u.lastname,u.picture,u.lastaccess");
+                                    GROUP BY m.useridfrom, u.firstname,u.lastname,u.picture,u.lastaccess,u.imagealt");
 
 
         //Now, we have in users, the list of users to show
