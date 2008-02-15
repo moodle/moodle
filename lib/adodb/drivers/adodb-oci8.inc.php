@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V4.96 24 Sept 2007 (c) 2000-2007 John Lim. All rights reserved.
+  version V4.98 13 Feb 2008 (c) 2000-2008 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -1295,19 +1295,26 @@ class ADORecordset_oci8 extends ADORecordSet {
 			  fields in a certain query result. If the field offset isn't specified, the next field that wasn't yet retrieved by
 			  fetchField() is retrieved.		*/
 
-	function &_FetchField($fieldOffset = -1)
+	function _FetchField($fieldOffset = -1)
 	{
 		$fld = new ADOFieldObject;
 		$fieldOffset += 1;
 		$fld->name =OCIcolumnname($this->_queryID, $fieldOffset);
 		$fld->type = OCIcolumntype($this->_queryID, $fieldOffset);
 		$fld->max_length = OCIcolumnsize($this->_queryID, $fieldOffset);
-	 	if ($fld->type == 'NUMBER') {
+	 	switch($fld->type) {
+		case 'NUMBER':
 	 		$p = OCIColumnPrecision($this->_queryID, $fieldOffset);
 			$sc = OCIColumnScale($this->_queryID, $fieldOffset);
 			if ($p != 0 && $sc == 0) $fld->type = 'INT';
-			//echo " $this->name ($p.$sc) ";
-	 	}
+			break;
+		
+	 	case 'CLOB':
+		case 'NCLOB':
+		case 'BLOB': 
+			$fld->max_length = -1;
+			break;
+		}
 		return $fld;
 	}
 	

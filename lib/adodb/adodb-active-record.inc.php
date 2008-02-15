@@ -1,7 +1,7 @@
 <?php
 /*
 
-@version V4.96 24 Sept 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+@version V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
   Latest version is available at http://adodb.sourceforge.net
  
   Released under both BSD license and Lesser GPL library license. 
@@ -10,7 +10,7 @@
   
   Active Record implementation. Superset of Zend Framework's.
   
-  Version 0.08
+  Version 0.09
   
   See http://www-128.ibm.com/developerworks/java/library/j-cb03076/?ca=dgr-lnxw01ActiveRecord 
   	for info on Ruby on Rails Active Record implementation
@@ -19,10 +19,12 @@
 global $_ADODB_ACTIVE_DBS;
 global $ADODB_ACTIVE_CACHESECS; // set to true to enable caching of metadata such as field info
 global $ACTIVE_RECORD_SAFETY; // set to false to disable safety checks
+global $ADODB_ACTIVE_DEFVALS; // use default values of table definition when creating new active record.
 
 // array of ADODB_Active_DB's, indexed by ADODB_Active_Record->_dbat
 $_ADODB_ACTIVE_DBS = array();
 $ACTIVE_RECORD_SAFETY = true;
+$ADODB_ACTIVE_DEFVALS = false;
 
 class ADODB_Active_DB {
 	var $db; // ADOConnection
@@ -69,6 +71,14 @@ class ADODB_Active_Record {
 	var $_lasterr = false; // last error message
 	var $_original = false; // the original values loaded or inserted, refreshed on update
 	
+	// should be static
+	function UseDefaultValues($bool=null)
+	{
+	global $ADODB_ACTIVE_DEFVALS;
+		if (isset($bool)) $ADODB_ACTIVE_DEFVALS = $bool;
+		return $ADODB_ACTIVE_DEFVALS;
+	}
+
 	// should be static
 	function SetDatabaseAdapter(&$db) 
 	{
@@ -141,7 +151,8 @@ class ADODB_Active_Record {
 	function UpdateActiveTable($pkeys=false,$forceUpdate=false)
 	{
 	global $ADODB_ASSOC_CASE,$_ADODB_ACTIVE_DBS , $ADODB_CACHE_DIR, $ADODB_ACTIVE_CACHESECS;
-	
+	global $ADODB_ACTIVE_DEFVALS;
+
 		$activedb =& $_ADODB_ACTIVE_DBS[$this->_dbat];
 
 		$table = $this->_table;
@@ -149,8 +160,12 @@ class ADODB_Active_Record {
 		$tableat = $this->_tableat;
 		if (!$forceUpdate && !empty($tables[$tableat])) {
 			$tobj =& $tables[$tableat];
-			foreach($tobj->flds as $name => $fld) 
-				$this->$name = null;
+			foreach($tobj->flds as $name => $fld) {
+				if ($ADODB_ACTIVE_DEFVALS && isset($fld->default_value)) 
+					$this->$name = $fld->default_value;
+				else
+					$this->$name = null;
+			}
 			return;
 		}
 		
@@ -203,7 +218,10 @@ class ADODB_Active_Record {
 		case 0:
 			foreach($cols as $name => $fldobj) {
 				$name = strtolower($name);
-				$this->$name = null;
+                if ($ADODB_ACTIVE_DEFVALS && isset($fldobj->default_value))
+                    $this->$name = $fldobj->default_value;
+                else
+					$this->$name = null;
 				$attr[$name] = $fldobj;
 			}
 			foreach($pkeys as $k => $name) {
@@ -214,7 +232,11 @@ class ADODB_Active_Record {
 		case 1: 
 			foreach($cols as $name => $fldobj) {
 				$name = strtoupper($name);
-				$this->$name = null;
+               
+                if ($ADODB_ACTIVE_DEFVALS && isset($fldobj->default_value))
+                    $this->$name = $fldobj->default_value;
+                else
+					$this->$name = null;
 				$attr[$name] = $fldobj;
 			}
 			
@@ -225,7 +247,11 @@ class ADODB_Active_Record {
 		default:
 			foreach($cols as $name => $fldobj) {
 				$name = ($fldobj->name);
-				$this->$name = null;
+                
+                if ($ADODB_ACTIVE_DEFVALS && isset($fldobj->default_value))
+                    $this->$name = $fldobj->default_value;
+                else
+					$this->$name = null;
 				$attr[$name] = $fldobj;
 			}
 			foreach($pkeys as $k => $name) {
@@ -336,17 +362,30 @@ class ADODB_Active_Record {
 		
 		$table =& $this->TableInfo();
 		if ($ACTIVE_RECORD_SAFETY && sizeof($table->flds) != sizeof($row)) {
-			$this->Error("Table structure of $this->_table has changed","Load");
-			return false;
+            $bad_size = TRUE;
+            if (sizeof($row) == 2 * sizeof($table->flds)) {
+                // Only keep string keys
+                $keys = array_filter(array_keys($row), 'is_string');
+                if (sizeof($keys) == sizeof($table->flds))
+                    $bad_size = FALSE;
+            }
+            if ($bad_size) {
+				$this->Error("Table structure of $this->_table has changed","Load");
+				return false;
+			}
 		}
-		
-		$keys = array_keys($row);
-		$cnt = 0;
+        else
+			$keys = array_keys($row);
+      
+        reset($keys);
+        $this->_original = array();
 		foreach($table->flds as $name=>$fld) {
-			$this->$name = $row[$keys[$cnt]];
-			$cnt += 1;
+            $value = $row[current($keys)];
+			$this->$name = $value;
+            $this->_original[] = $value;
+            next($keys);
 		}
-		$this->_original = $row;
+        # </AP>
 		return true;
 	}
 	
@@ -533,7 +572,7 @@ class ADODB_Active_Record {
 		if ($ADODB_ASSOC_CASE == 0) 
 			foreach($pkey as $k => $v)
 				$pkey[$k] = strtolower($v);
-		elseif ($ADODB_ASSOC_CASE == 0) 
+		elseif ($ADODB_ASSOC_CASE == 1) 
 			foreach($pkey as $k => $v)
 				$pkey[$k] = strtoupper($v);
 				
