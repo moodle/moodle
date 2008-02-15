@@ -7550,6 +7550,12 @@ function get_performance_info() {
         $info['txt']  .= 'memory_total: '.$info['memory_total'].'B (' . display_size($info['memory_total']).') memory_growth: '.$info['memory_growth'].'B ('.display_size($info['memory_growth']).') ';
     }
 
+    if (function_exists('memory_get_peak_usage')) {
+        $info['memory_peak'] = memory_get_peak_usage();
+        $info['html'] .= '<span class="memoryused">RAM peak: '.display_size($info['memory_peak']).'</span> ';
+        $info['txt']  .= 'memory_peak: '.$info['memory_peak'].'B (' . display_size($info['memory_peak']).') ';
+    }
+
     $inc = get_included_files();
     //error_log(print_r($inc,1));
     $info['includecount'] = count($inc);
