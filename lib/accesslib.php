@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.org                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -4202,6 +4202,59 @@ function get_assignable_roles ($context, $field="name") {
                    WHERE raa.roleid IN ($roleids) ) ar
               ON r.id=ar.allowedrole
             ORDER BY sortorder ASC";
+
+    $rs = get_recordset_sql($sql);
+    $roles = array();
+    while ($r = rs_fetch_next_record($rs)) {
+        $roles[$r->id] = $r->{$field};
+    }
+    rs_close($rs);
+    foreach ($roles as $roleid => $rolename) {
+        $roles[$roleid] = strip_tags(format_string($rolename, true));
+    }
+    return $roles;
+}
+
+/**
+ * Gets a list of roles that this user can assign in this context, for the switchrole menu
+ *
+ * This is a quick-fix for MDL-13459 until MDL-8312 is sorted out...
+ * @param object $context
+ * @param string $field
+ * @return array
+ */
+function get_assignable_roles_for_switchrole ($context, $field="name") {
+
+    global $CFG;
+
+    // this users RAs
+    $ras = get_user_roles($context);
+    $roleids = array();
+    foreach ($ras as $ra) {
+        $roleids[] = $ra->roleid;
+    }
+    unset($ra);
+
+    if (count($roleids)===0) {
+        return array();
+    }
+
+    $roleids = implode(',',$roleids);
+
+    // The subselect scopes the DISTINCT down to
+    // the role ids - a DISTINCT over the whole of
+    // the role table is much more expensive on some DBs
+    $sql = "SELECT r.id, r.$field
+            FROM {$CFG->prefix}role r
+            JOIN ( SELECT DISTINCT allowassign as allowedrole 
+                   FROM  {$CFG->prefix}role_allow_assign raa
+                   WHERE raa.roleid IN ($roleids) ) ar
+              ON r.id=ar.allowedrole
+            JOIN mdl_role_capabilities rc ON r.id = rc.roleid 
+             AND rc.capability = 'moodle/course:view' 
+             AND rc.contextid = 1 
+             AND rc.capability != 'moodle/site:doanything' 
+           ORDER BY sortorder ASC";
 
     $rs = get_recordset_sql($sql);
     $roles = array();
