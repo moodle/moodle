@@ -2005,7 +2005,7 @@ function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=
         $umtable  = " LEFT JOIN {$CFG->prefix}user um on (d.usermodified = um.id)";
     }
 
-    return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
+    return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid, d.timestart, d.timeend,
                                    u.firstname, u.lastname, u.email, u.picture, u.imagealt $umfields
                               FROM {$CFG->prefix}forum_discussions d
                                    JOIN {$CFG->prefix}forum_posts p ON p.discussion = d.id
