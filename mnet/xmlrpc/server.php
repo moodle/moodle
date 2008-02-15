@@ -162,6 +162,7 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
                     if ($isOpen) {
                         // It's an older code, sir, but it checks out
                         $push_current_key = true;
+                        break;
                     }
                 }
             }
@@ -189,7 +190,7 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
         if($push_current_key) {
             // NOTE: Here, we use the 'mnet_server_fault_xml' to avoid
             // get_string being called on our public_key
-            exit(mnet_server_fault_xml(7025, $MNET->public_key));
+            exit(mnet_server_fault_xml(7025, $MNET->public_key, $keyresource));
         }
 
         /**
@@ -253,11 +254,12 @@ function mnet_server_fault($code, $text, $param = null) {
 /**
  * Return the proper XML-RPC content to report an error.
  *
- * @param  int    $code   The ID code of the error message
- * @param  string $text   The error message
- * @return string $text   The XML text of the error message
+ * @param  int      $code   The ID code of the error message
+ * @param  string   $text   The error message
+ * @param  resource $privatekey The private key that should be used to sign the response
+ * @return string   $text   The XML text of the error message
  */
-function mnet_server_fault_xml($code, $text) {
+function mnet_server_fault_xml($code, $text, $privatekey = null) {
     global $MNET_REMOTE_CLIENT, $CFG;
     // Replace illegal XML chars - is this already in a lib somewhere?
     $text = str_replace(array('<','>','&','"',"'"), array('&lt;','&gt;','&amp;','&quot;','&apos;'), $text);
@@ -274,11 +276,11 @@ function mnet_server_fault_xml($code, $text) {
             <member>
                <name>faultString</name>
                <value><string>'.$text.'</string></value>
-               </member>
-            </struct>
-         </value>
-      </fault>
-   </methodResponse>');
+            </member>
+         </struct>
+      </value>
+   </fault>
+</methodResponse>', $privatekey);
 
     if (!empty($CFG->mnet_rpcdebug)) {
         trigger_error("XMLRPC Error Response $code: $text");
@@ -319,14 +321,15 @@ function mnet_server_dummy_method($methodname, $argsarray, $functionname) {
 /**
  * Package a response in any required envelope, and return it to the client
  *
- * @param   string  $response      The XMLRPC response string
- * @return  string                 The encoded response string
+ * @param   string   $response      The XMLRPC response string
+ * @param   resource $privatekey    The private key to sign the response with
+ * @return  string                  The encoded response string
  */
-function mnet_server_prepare_response($response) {
+function mnet_server_prepare_response($response, $privatekey = null) {
     global $MNET_REMOTE_CLIENT;
 
     if ($MNET_REMOTE_CLIENT->request_was_signed) {
-        $response = mnet_sign_message($response);
+        $response = mnet_sign_message($response, $privatekey);
     }
 
     if ($MNET_REMOTE_CLIENT->request_was_encrypted) {

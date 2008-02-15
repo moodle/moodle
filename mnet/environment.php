@@ -167,15 +167,6 @@ class mnet_environment {
         $this->keypair['publickey'] = openssl_pkey_get_public($this->keypair['certificate']);
         return $this->keypair['publickey'];
     }
-
-    /**
-     * Note that the openssl_sign function computes the sha1 hash, and then
-     * signs the hash.
-     */
-    function sign_message($message) {
-        $bool = openssl_sign($message, $signature, $this->get_private_key());
-        return $signature;
-    }
 }
 
 ?>
