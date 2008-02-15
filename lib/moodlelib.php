@@ -3950,6 +3950,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         return false;
     }
 
+    if (!empty($CFG->noemailever)) {
+        // hidden setting for development sites, set in config.php if needed
+        return true;
+    }
+
     // skip mail to suspended users
     if (isset($user->auth) && $user->auth=='nologin') {
         return true;
