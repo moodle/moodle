@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -5038,7 +5038,7 @@ function switchroles_form($courseid) {
     }
 
     if (has_capability('moodle/role:switchroles', $context)) {
-        if (!$roles = get_assignable_roles($context)) {
+        if (!$roles = get_assignable_roles_for_switchrole($context)) {
             return '';   // Nothing to show!
         }
         // unset default user role - it would not work

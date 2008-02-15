@@ -4252,7 +4252,6 @@ function get_assignable_roles_for_switchrole ($context, $field="name") {
               ON r.id=ar.allowedrole
             JOIN mdl_role_capabilities rc ON r.id = rc.roleid 
              AND rc.capability = 'moodle/course:view' 
-             AND rc.contextid = 1 
              AND rc.capability != 'moodle/site:doanything' 
            ORDER BY sortorder ASC";
 
