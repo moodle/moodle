@@ -1445,7 +1445,11 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
                 continue;
             }
 
-            include_once("$CFG->dirroot/mod/$modname/lib.php");
+            $libfile = "$CFG->dirroot/mod/$modname/lib.php";
+            if (!file_exists($libfile)) {
+                continue;
+            }
+            include_once($libfile);
             $gettypesfunc =  $modname.'_get_types';
             if (function_exists($gettypesfunc)) {
                 $types = $gettypesfunc();
