@@ -1342,6 +1342,35 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch create table for grade_grades_history
         $result = $result && create_table($table);
 
+
+    /// Define table scale_history to be created
+        $table = new XMLDBTable('scale_history');
+
+    /// Adding fields to table scale_history
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('action', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('oldid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('source', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->addFieldInfo('loggeduser', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('scale', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('description', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table scale_history
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('oldid', XMLDB_KEY_FOREIGN, array('oldid'), 'scale', array('id'));
+        $table->addKeyInfo('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+        $table->addKeyInfo('loggeduser', XMLDB_KEY_FOREIGN, array('loggeduser'), 'user', array('id'));
+
+    /// Adding indexes to table scale_history
+        $table->addIndexInfo('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
+
+    /// Launch create table for scale_history
+        $result = $result && create_table($table);
+
     /// upgrade the old 1.8 gradebook - migrade data into new grade tables
         if ($result) {
             if ($rs = get_recordset('course')) {
@@ -2687,6 +2716,42 @@ function xmldb_main_upgrade($oldversion=0) {
         notify('...update complete. Remember to update the language pack to get the most recent country names defitions and codes.  This is specialy important for sites with users from Congo (now CD), Timor (now TL), Kosovo (now RS), Wales (now GB), Serbia (RS) and Montenegro (ME).  Users based in Montenegro (ME) will need to manually update their profile.', 'notifysuccess');
         $db->debug = true;
         upgrade_main_savepoint($result, 2007101508);
+    }
+
+    if ($result && $oldversion < 2007101508.001) {
+// add forgotten table
+    /// Define table scale_history to be created
+        $table = new XMLDBTable('scale_history');
+
+    /// Adding fields to table scale_history
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('action', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('oldid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('source', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->addFieldInfo('loggeduser', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('scale', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('description', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table scale_history
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('oldid', XMLDB_KEY_FOREIGN, array('oldid'), 'scale', array('id'));
+        $table->addKeyInfo('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+        $table->addKeyInfo('loggeduser', XMLDB_KEY_FOREIGN, array('loggeduser'), 'user', array('id'));
+
+    /// Adding indexes to table scale_history
+        $table->addIndexInfo('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
+
+        if ($result and !table_exists($table)) {
+        /// Launch create table for scale_history
+            $result = $result && create_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101508.001);
     }
 
 
