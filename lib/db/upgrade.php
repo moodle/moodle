@@ -2629,6 +2629,7 @@ function xmldb_main_upgrade($oldversion=0) {
     }    
 
     if ($result && $oldversion < 2007101503) {
+///TODO: move this to the end after we stop using 19 version
         // Update courses that used weekscss to weeks
         $result = $result && set_field('course', 'format', 'weeks', 'format', 'weekscss');
     }
