@@ -2718,7 +2718,7 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101508);
     }
 
-    if ($result && $oldversion < 2007101508.001) {
+    if ($result && $oldversion < 2007101508.01) {
 // add forgotten table
     /// Define table scale_history to be created
         $table = new XMLDBTable('scale_history');
@@ -2751,11 +2751,11 @@ function xmldb_main_upgrade($oldversion=0) {
         }
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2007101508.001);
+        upgrade_main_savepoint($result, 2007101508.01);
     }
 
 
-    if ($result && $oldversion < 2007101508.002) {
+    if ($result && $oldversion < 2007101508.02) {
         // upgade totals, no big deal if it fails
         require_once($CFG->libdir.'/statslib.php');
         stats_upgrade_totals();
@@ -2817,7 +2817,7 @@ function xmldb_main_upgrade($oldversion=0) {
         }
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2007101508.002);
+        upgrade_main_savepoint($result, 2007101508.02);
     }
 
     return $result;
