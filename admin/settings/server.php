@@ -123,7 +123,9 @@ $temp->add(new admin_setting_configselect('statsfirstrun', get_string('statsfirs
                                                                                                                                                            60*60*24*140 => get_string('nummonths','moodle',5),
                                                                                                                                                            60*60*24*168 => get_string('nummonths','moodle',6),
                                                                                                                                                            'all' => get_string('all') )));
-$temp->add(new admin_setting_configselect('statsmaxruntime', get_string('statsmaxruntime', 'admin'), get_string('configstatsmaxruntime', 'admin'), 0, array(0 => get_string('untilcomplete'),
+$temp->add(new admin_setting_configselect('statsmaxruntime', get_string('statsmaxruntime', 'admin'), get_string('configstatsmaxruntime2', 'admin'), 0, array(0 => get_string('untilcomplete'),
+                                                                                                                                                            60*30 => '10 '.get_string('minutes'),
+                                                                                                                                                            60*30 => '30 '.get_string('minutes'),
                                                                                                                                                             60*60 => '1 '.get_string('hour'),
                                                                                                                                                             60*60*2 => '2 '.get_string('hours'),
                                                                                                                                                             60*60*3 => '3 '.get_string('hours'),
@@ -134,6 +136,9 @@ $temp->add(new admin_setting_configselect('statsmaxruntime', get_string('statsma
                                                                                                                                                             60*60*8 => '8 '.get_string('hours') )));
 $temp->add(new admin_setting_configtime('statsruntimestarthour', 'statsruntimestartminute', get_string('statsruntimestart', 'admin'), get_string('configstatsruntimestart', 'admin'), array('h' => 0, 'm' => 0)));
 $temp->add(new admin_setting_configtext('statsuserthreshold', get_string('statsuserthreshold', 'admin'), get_string('configstatsuserthreshold', 'admin'), 0, PARAM_INT));
+
+$options = array(0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5, 6=>6);
+$temp->add(new admin_setting_configselect('statscatdepth', get_string('statscatdepth', 'admin'), get_string('configstatscatdepth', 'admin'), 1, $options));
 $ADMIN->add('server', $temp);
 
 
@@ -189,7 +194,7 @@ $temp->add(new admin_setting_configselect('loglifetime', get_string('loglifetime
                                                                                                                                                 120 => get_string('numdays', '', 120),
                                                                                                                                                 90 => get_string('numdays', '', 90),
                                                                                                                                                 60 => get_string('numdays', '', 60),
-                                                                                                                                                30 => get_string('numdays', '', 30))));
+                                                                                                                                                35 => get_string('numdays', '', 35))));
 
 
 $temp->add(new admin_setting_configcheckbox('disablegradehistory', get_string('disablegradehistory', 'grades'),

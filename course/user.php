@@ -161,7 +161,13 @@
             $table = new object();
             $table->align = array('left','center','center','center');
             $param->table = str_replace('user_','',$param->table);
-            $table->head = array(get_string('periodending','moodle',$param->table),$param->line1,$param->line2,$param->line3);
+            switch ($param->table) {
+                case 'daily'  : $period = get_string('day'); break;
+                case 'weekly' : $period = get_string('week'); break;
+                case 'monthly': $period = get_string('month', 'form'); break;
+                default : $period = '';
+            }
+            $table->head = array(get_string('periodending','moodle',$period),$param->line1,$param->line2,$param->line3);
             foreach ($stats as $stat) {
                 if (!empty($stat->zerofixed)) {  // Don't know why this is necessary, see stats_fix_zeros above - MD
                     continue;

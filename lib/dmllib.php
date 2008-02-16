@@ -55,7 +55,7 @@ $rcache->misses = 0;
  * @uses $db
  * @param string $command The sql string you wish to be executed.
  * @param bool $feedback Set this argument to true if the results generated should be printed. Default is true.
- * @return string
+ * @return bool success
  */
 function execute_sql($command, $feedback=true) {
 /// Completely general function - it just runs some SQL and reports success.

@@ -430,47 +430,20 @@
     }
 
     if (!empty($CFG->enablestats) and empty($CFG->disablestatsprocessing)) {
-
+        require_once($CFG->dirroot.'/lib/statslib.php');
         // check we're not before our runtime
-        $timetocheck = strtotime("today $CFG->statsruntimestarthour:$CFG->statsruntimestartminute");
+        $timetocheck = stats_get_base_daily() + $CFG->statsruntimestarthour*60*60 + $CFG->statsruntimestartminute*60;
 
         if (time() > $timetocheck) {
-            $time = 60*60*20; // set it to 20 here for first run... (overridden by $CFG)
-            $clobber = true;
-            if (!empty($CFG->statsmaxruntime)) {
-                $time = $CFG->statsmaxruntime+(60*30); // add on half an hour just to make sure (it could take that long to break out of the loop)
-            }
-            if (!get_field_sql('SELECT id FROM '.$CFG->prefix.'stats_daily')) {
-                // first run, set another lock. we'll check for this in subsequent runs to set the timeout to later for the normal lock.
-                set_cron_lock('statsfirstrunlock',true,$time,true);
-                $firsttime = true;
-            }
-            $time = 60*60*2; // this time set to 2.. (overridden by $CFG)
-            if (!empty($CFG->statsmaxruntime)) {
-                $time = $CFG->statsmaxruntime+(60*30); // add on half an hour to make sure (it could take that long to break out of the loop)
-            }
-            if ($config = get_record('config','name','statsfirstrunlock')) {
-                if (!empty($config->value)) {
-                    $clobber = false; // if we're on the first run, just don't clobber it.
+            // process max 31 days per cron execution
+            if (stats_cron_daily(31)) {
+                if (stats_cron_weekly()) {
+                    if (stats_cron_monthly()) {
+                        stats_clean_old();
+                    }
                 }
             }
-            if (set_cron_lock('statsrunning',true,$time, $clobber)) {
-                require_once($CFG->dirroot.'/lib/statslib.php');
-                $return = stats_cron_daily();
-                if (stats_check_runtime() && $return == STATS_RUN_COMPLETE) {
-                    stats_cron_weekly();
-                }
-                if (stats_check_runtime() && $return == STATS_RUN_COMPLETE) {
-                    $return = $return && stats_cron_monthly();
-                }
-                if (stats_check_runtime() && $return == STATS_RUN_COMPLETE) {
-                    stats_clean_old();
-                }
-                set_cron_lock('statsrunning',false);
-                if (!empty($firsttime)) {
-                    set_cron_lock('statsfirstrunlock',false);
-                }
-            }
+            @set_time_limit(0);
         }
     }
 

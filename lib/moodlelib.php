@@ -1341,6 +1341,28 @@ function get_user_timezone_offset($tz = 99) {
 }
 
 /**
+ * Returns an int which represents the systems's timezone difference from GMT in seconds
+ * @param mixed $tz timezone
+ * @return int if found, false is timezone 99 or error
+ */
+function get_timezone_offset($tz) {
+    global $CFG;
+
+    if ($tz == 99) {
+        return false;
+    }
+
+    if (is_numeric($tz)) {
+        return intval($tz * 60*60);
+    }
+
+    if (!$tzrecord = get_timezone_record($tz)) {
+        return false;
+    }
+    return intval($tzrecord->gmtoff * 60);
+}
+
+/**
  * Returns a float or a string which denotes the user's timezone
  * A float value means that a simple offset from GMT is used, while a string (it will be the name of a timezone in the database)
  * means that for this timezone there are also DST rules to be taken into account
@@ -3945,6 +3967,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     global $CFG, $FULLME;
 
+return true; // remove before commit!!!!
 
     if (empty($user)) {
         return false;

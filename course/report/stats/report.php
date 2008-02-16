@@ -17,26 +17,25 @@
         error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
-    $table->width = '*';
+    $table->width = 'auto';
 
     if ($mode == STATS_MODE_DETAILED) {
         $param = stats_get_parameters($time,null,$course->id,$mode); // we only care about the table and the time string (if we have time)
 
-        $sql = 'SELECT DISTINCT s.userid,s.roleid,r.name AS rolename,r.sortorder,u.firstname,u.lastname,u.idnumber 
+        $sql = 'SELECT DISTINCT s.userid, u.firstname, u.lastname, u.idnumber 
                      FROM '.$CFG->prefix.'stats_user_'.$param->table.' s 
                      JOIN '.$CFG->prefix.'user u ON u.id = s.userid 
-                     JoIN '.$CFG->prefix.'role r ON s.roleid = r.id
                      WHERE courseid = '.$course->id
             . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '')
             . ((!empty($time)) ? ' AND timeend >= '.$param->timeafter : '')
-            .' ORDER BY r.sortorder';
+            .' ORDER BY u.lastname, u.firstname ASC';
         
         if (!$us = get_records_sql($sql)) {
             error('Cannot enter detailed view: No users found for this course.');
         }
 
         foreach ($us as $u) {
-            $users[$u->userid] = $u->rolename.' - '.fullname($u,true);
+            $users[$u->userid] = fullname($u, true);
         }
         
         $table->align = array('left','left','left','left','left','left','left','left');
@@ -59,24 +58,25 @@
     }
 
     echo '<form action="index.php" method="post">'."\n"
-        .'<fieldset class="invisiblefieldset">'."\n"
+        .'<div>'."\n"
         .'<input type="hidden" name="mode" value="'.$mode.'" />'."\n";
 
     print_table($table);
 
-    echo '</fieldset>';
+    echo '</div>';
     echo '</form>';
 
     if (!empty($report) && !empty($time)) {
         if ($report == STATS_REPORT_LOGINS && $course->id != SITEID) {
             error('This type of report is only available for the site course');
         }
-        $timesql = 
+
         $param = stats_get_parameters($time,$report,$course->id,$mode);
 
         if ($mode == STATS_MODE_DETAILED) {
             $param->table = 'user_'.$param->table;
         }
+
         if (!empty($param->sql)) {
             $sql = $param->sql;
         } else {
@@ -109,16 +109,22 @@
                 echo "(".get_string("gdneed").")";
             } else {
                 if ($mode == STATS_MODE_DETAILED) {
-                    echo '<center><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'&userid='.$userid.'" alt="'.get_string('statisticsgraph').'" /></center>';
+                    echo '<div class="graph"><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.$mode.'&amp;course='.$course->id.'&amp;time='.$time.'&amp;report='.$report.'&amp;userid='.$userid.'" alt="'.get_string('statisticsgraph').'" /></div';
                 } else {
-                    echo '<center><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'&roleid='.$roleid.'" alt="'.get_string('statisticsgraph').'" /></center>';
+                    echo '<div class="graph"><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.$mode.'&amp;course='.$course->id.'&amp;time='.$time.'&amp;report='.$report.'&amp;roleid='.$roleid.'" alt="'.get_string('statisticsgraph').'" /></div>';
                 }
             }
 
             $table = new StdClass;
             $table->align = array('left','center','center','center');
             $param->table = str_replace('user_','',$param->table);
-            $table->head = array(get_string('periodending','moodle',$param->table));
+            switch ($param->table) {
+                case 'daily'  : $period = get_string('day'); break;
+                case 'weekly' : $period = get_string('week'); break;
+                case 'monthly': $period = get_string('month', 'form'); break;
+                default : $period = '';
+            }
+            $table->head = array(get_string('periodending','moodle',$period));
             if (empty($param->crosstab)) {
                 $table->head[] = $param->line1;
                 if (!empty($param->line2)) {
@@ -133,8 +139,8 @@
                     }
                     if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {
                         $a[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='.
-                            $course->id.'&chooselog=1&showusers=1&showcourses=1&user='
-                            .$userid.'&date='.usergetmidnight($stat->timeend-(60*60*24)).'">'
+                            $course->id.'&amp;chooselog=1&amp;showusers=1&amp;showcourses=1&amp;user='
+                            .$userid.'&amp;date='.usergetmidnight($stat->timeend-(60*60*24)).'">'
                             .get_string('course').' ' .get_string('logs').'</a>&nbsp;';
                     }
                     $table->data[] = $a;
@@ -153,18 +159,20 @@
                         if (!array_key_exists($stat->roleid,$roles)) {
                             $roles[$stat->roleid] = get_field('role','name','id',$stat->roleid);
                         }
+                    } else {
+                        if (!array_key_exists($stat->roleid,$roles)) {
+                            $roles[$stat->roleid] = get_string('all');
+                        }
                     }
                     if (!array_key_exists($stat->timeend,$times)) {
                         $times[$stat->timeend] = userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone);
                     }
                 }
+
                 foreach ($data as $time => $rolesdata) {
                     if (in_array($time,$missedlines)) {
                         $rolesdata = array();
                         foreach ($roles as $roleid => $guff) {
-                            if ($roleid == 0 ) {
-                                continue;
-                            }
                             $rolesdata[$roleid] = 0;
                         }
                     }
@@ -179,8 +187,8 @@
                     $row = array_merge(array($times[$time]),$rolesdata);
                     if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {
                         $row[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='
-                            .$course->id.'&chooselog=1&showusers=1&showcourses=1&user='.$userid
-                            .'&date='.usergetmidnight($time-(60*60*24)).'">'
+                            .$course->id.'&amp;chooselog=1&amp;showusers=1&amp;showcourses=1&amp;user='.$userid
+                            .'&amp;date='.usergetmidnight($time-(60*60*24)).'">'
                             .get_string('course').' ' .get_string('logs').'</a>&nbsp;';
                     }
                     $table->data[] = $row;
