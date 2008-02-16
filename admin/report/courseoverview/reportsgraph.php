@@ -20,7 +20,7 @@
         $sql = $param->sql;
     } else {
         $sql = "SELECT courseid,".$param->fields." FROM ".$CFG->prefix.'stats_'.$param->table
-            ." WHERE timeend >= ".$param->timeafter.' AND stattype = \'activity\''
+            ." WHERE timeend >= $param->timeafter AND stattype = 'activity' AND roleid = 0"
             ." GROUP BY courseid "
             .$param->extras
             ." ORDER BY ".$param->orderby;

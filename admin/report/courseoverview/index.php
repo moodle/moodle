@@ -18,7 +18,6 @@
         redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'), 3);
     }
 
-
     $course = get_site();
     stats_check_uptodate($course->id);
 
@@ -48,7 +47,7 @@
     }
 
     echo '<form action="index.php" method="post">'."\n";
-    echo '<fieldset class="invisiblefieldset">';
+    echo '<div>';
 
     $table->width = '*';
     $table->align = array('left','left','left','left','left','left');
@@ -58,17 +57,19 @@
                            '<input type="submit" value="'.get_string('view').'" />') ;
 
     print_table($table);
-    echo '</fieldset>';
+    echo '</div>';
     echo '</form>';
+
+    print_heading($reportoptions[$report]);
+
 
     if (!empty($report) && !empty($time)) {
         $param = stats_get_parameters($time,$report,SITEID,STATS_MODE_RANKED);
-
         if (!empty($param->sql)) {
             $sql = $param->sql;
         } else {
             $sql = "SELECT courseid,".$param->fields." FROM ".$CFG->prefix.'stats_'.$param->table
-                ." WHERE timeend >= ".$param->timeafter.' AND stattype = \'activity\''
+                ." WHERE timeend >= $param->timeafter AND stattype = 'activity' AND roleid = 0"
                 ." GROUP BY courseid "
                 .$param->extras
                 ." ORDER BY ".$param->orderby;
@@ -82,9 +83,9 @@
 
         } else {
             if (empty($CFG->gdversion)) {
-                echo '<div class="boxaligncenter">(' . get_string("gdneed") .')</div>';
+                echo '<div class="graph">(' . get_string("gdneed") .')</div>';
             } else {
-                echo '<div class="boxaligncenter"><img alt="'.get_string('courseoverviewgraph').'" src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></div>';
+                echo '<div class="graph"><img alt="'.get_string('courseoverviewgraph').'" src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></div>';
             }
 
             $table = new StdClass;

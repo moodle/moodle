@@ -499,45 +499,36 @@ function upgrade_activity_modules($return) {
 }
 
 /**
- * This function will return FALSE if the lock fails to be set (ie, if it's already locked)
+ * Try to obtain or release the cron lock.
  *
- * @param string  $name ?
- * @param bool  $value ?
- * @param int  $staleafter ?
- * @param bool  $clobberstale ?
- * @todo Finish documenting this function
+ * @param string  $name  name of lock
+ * @param int  $until timestamp when this lock considered stale, null means remove lock unconditionaly
+ * @param bool $ignorecurrent ignore current lock state, usually entend previous lock
+ * @return bool true if lock obtained
  */
-function set_cron_lock($name,$value=true,$staleafter=7200,$clobberstale=false) {
-
+function set_cron_lock($name, $until, $ignorecurrent=false) {
     if (empty($name)) {
-        mtrace("Tried to get a cron lock for a null fieldname");
+        debugging("Tried to get a cron lock for a null fieldname");
         return false;
     }
 
-    if (empty($value)) {
-        set_config($name,0);
+    // remove lock by force == remove from config table
+    if (is_null($until)) {
+        set_config($name, null);
         return true;
     }
 
-    if ($config = get_record('config','name',$name)) {
-        if (empty($config->value)) {
-            set_config($name,time());
-        } else {
-            // check for stale.
-            if ((time() - $staleafter) > $config->value) {
-                mtrace("STALE LOCKFILE FOR $name - was $config->value");
-                if (!empty($clobberstale)) {
-                    set_config($name,time());
-                    return true;
-                }
-            } else {
-                return false; // was not stale - ie, we're ok to still be running.
-            }
+    if (!$ignorecurrent) {
+        // read value from db - other processes might have changed it
+        $value = get_field('config', 'value', 'name', $name);
+
+        if ($value and $value > time()) {
+            //lock active
+            return false;
         }
     }
-    else {
-        set_config($name,time());
-    }
+
+    set_config($name, $until);
     return true;
 }
 

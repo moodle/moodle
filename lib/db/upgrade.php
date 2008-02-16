@@ -2761,6 +2761,71 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
 
+    if ($result && $oldversion < 2007101508.002) {
+        // upgade totals, no big deal if it fails
+        require_once($CFG->libdir.'/statslib.php');
+        stats_upgrade_totals();
+
+        if (isset($CFG->loglifetime) and $CFG->loglifetime == 30) {
+            set_config('loglifetime', 35); // we need more than 31 days for monthly stats!
+        }
+
+        notify('Upgrading log table indexes, this may take a long time, please be patient.', 'notifysuccess');
+
+    /// Define index time-course-module-action (not unique) to be dropped form log
+        $table = new XMLDBTable('log');
+        $index = new XMLDBIndex('time-course-module-action');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('time', 'course', 'module', 'action'));
+
+    /// Launch drop index time-course-module-action
+        if (index_exists($table, $index)) {
+            $result = drop_index($table, $index) && $result;
+        }
+
+    /// Define index userid (not unique) to be dropped form log
+        $table = new XMLDBTable('log');
+        $index = new XMLDBIndex('userid');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('userid'));
+
+    /// Launch drop index userid
+        if (index_exists($table, $index)) {
+            $result = drop_index($table, $index) && $result;
+        }
+
+    /// Define index info (not unique) to be dropped form log
+        $table = new XMLDBTable('log');
+        $index = new XMLDBIndex('info');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('info'));
+
+    /// Launch drop index info
+        if (index_exists($table, $index)) {
+            $result = drop_index($table, $index) && $result;
+        }
+
+    /// Define index time (not unique) to be added to log
+        $table = new XMLDBTable('log');
+        $index = new XMLDBIndex('time');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('time'));
+
+    /// Launch add index time
+        if (!index_exists($table, $index)) {
+            $result = add_index($table, $index) && $result;
+        }
+
+    /// Define index action (not unique) to be added to log
+        $table = new XMLDBTable('log');
+        $index = new XMLDBIndex('action');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('action'));
+
+    /// Launch add index action
+        if (!index_exists($table, $index)) {
+            $result = add_index($table, $index) && $result;
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101508.002);
+    }
+
     return $result;
 }
 

@@ -1154,12 +1154,11 @@ body#admin-modules table.generaltable td.c0
   margin-right: auto;
 }
 
-#admin-report-stats-index .invisiblefieldset {
-  display: block;
-}
-
-#admin-report-courseoverview-index .invisiblefieldset {
-  display: block;
+#admin-report-courseoverview-index .graph,
+#course-report-stats-index .graph,
+#admin-report-stats-index .graph {
+  text-align: center;
+  margin-bottom: 1em;
 }
 
 #admin-uploaduser table#uuresults {
