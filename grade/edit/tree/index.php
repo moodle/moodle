@@ -77,9 +77,9 @@ $moving = false;
 switch ($action) {
     case 'delete':
         if ($eid) {
-            if ($element['type'] == 'item' and $object->is_external_item() and !$object->is_outcome_item() and $object->gradetype != GRADE_TYPE_NONE) {
+            if (!element_deletable($element)) {
                 // no deleting of external activities - they would be recreated anyway!
-                // exception is activity without grading
+                // exception is activity without grading or misconfigured activities
                 break;
             }
             $confirm = optional_param('confirm', 0, PARAM_BOOL);
@@ -190,7 +190,7 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr, $switch, $switchedl
     $actions .= $gtree->get_calculation_icon($element, $gpr);
 
     if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
-        if (!($element['type'] == 'item' and $object->is_external_item() and !$object->is_outcome_item() and $object->gradetype != GRADE_TYPE_NONE)) {
+        if (element_deletable($element)) {
             $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='
                      . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'
                      . $strdelete.'" title="'.$strdelete.'"/></a>';
@@ -250,5 +250,26 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr, $switch, $switchedl
     }
 }
 
+function element_deletable($element) {
+    global $COURSE;
+
+    if ($element['type'] != 'item') {
+        return true;
+    }
+
+    $grade_item = $element['object'];
+    
+    if ($grade_item->itemtype != 'mod' or $grade_item->is_outcome_item() or $grade_item->gradetype == GRADE_TYPE_NONE) {
+        return true;
+    }
+
+    $modinfo = get_fast_modinfo($COURSE);
+    if (!isset($modinfo->instances[$grade_item->itemmodule][$grade_item->iteminstance])) {
+        // module does not exist
+        return true;
+    }
+
+    return false;
+}
 
 ?>
