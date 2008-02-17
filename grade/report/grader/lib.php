@@ -1128,10 +1128,15 @@ class grade_report_grader extends grade_report {
         global $USER;
 
         $iconshtml = '';
-            if ($USER->gradeediting[$this->courseid]) {
+        if ($USER->gradeediting[$this->courseid]) {
+
+            $colspan='';
+            if ($this->get_pref('showuseridnumber')) {
+                $colspan = 'colspan="2" ';
+            }
 
             $iconshtml = '<tr class="r'.$this->rowcount++.'">'
-                       . '<th class="header c0 range" scope="row">'.$this->get_lang_string('controls','grades').'</th>';
+                       . '<th class="header c0 range" scope="row" '.$colspan.'>'.$this->get_lang_string('controls','grades').'</th>';
 
             $columncount = 1;
             foreach ($this->gtree->items as $itemid=>$unused) {
