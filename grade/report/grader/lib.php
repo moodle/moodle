@@ -317,10 +317,11 @@ class grade_report_grader extends grade_report {
             // If lastname or firstname is given as sortitemid, add the other name (firstname or lastname respectively) as second sort param
             $sort2 = '';
             if ($this->sortitemid == 'lastname') {
-                $sort2 = ', u.firstname ' . $this->sortorder;
+                $sort2 = ', u.firstname '.$this->sortorder;
             } elseif ($this->sortitemid == 'firstname') {
-                $sort2 = ', u.lastname ' . $this->sortorder;
+                $sort2 = ', u.lastname '.$this->sortorder;
             }
+            $sort2 .= ', u.id ASC'; // make sure the order is the same in case the sort item values are the same 
             $roles = explode(',', $this->gradebookroles);
             $this->users = get_role_users($roles, $this->context, false,
                             'u.id, u.firstname, u.lastname, u.idnumber, u.imagealt, u.picture', 'u.'.$this->sortitemid .' '. $this->sortorder . $sort2,
@@ -1127,10 +1128,15 @@ class grade_report_grader extends grade_report {
         global $USER;
 
         $iconshtml = '';
-            if ($USER->gradeediting[$this->courseid]) {
+        if ($USER->gradeediting[$this->courseid]) {
+
+            $colspan='';
+            if ($this->get_pref('showuseridnumber')) {
+                $colspan = 'colspan="2" ';
+            }
 
             $iconshtml = '<tr class="r'.$this->rowcount++.'">'
-                       . '<th class="header c0 range" scope="row">'.$this->get_lang_string('controls','grades').'</th>';
+                       . '<th class="header c0 range" scope="row" '.$colspan.'>'.$this->get_lang_string('controls','grades').'</th>';
 
             $columncount = 1;
             foreach ($this->gtree->items as $itemid=>$unused) {
