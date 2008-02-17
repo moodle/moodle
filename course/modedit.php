@@ -407,7 +407,8 @@
         }
 
         rebuild_course_cache($course->id);
-        
+        grade_regrade_final_grades($course->id);
+
         if (isset($fromform->submitbutton)) { 
             redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$fromform->coursemodule");
         } else {

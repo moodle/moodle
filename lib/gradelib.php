@@ -768,7 +768,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
         }
         if ($course_item->needsupdate) {
             $updated_item->force_regrading();
-            return 'Can not do fast regrading after updating of raw grades';
+            return array($course_item->id =>'Can not do fast regrading after updating of raw grades');
         }
 
     } else {
@@ -1243,4 +1243,15 @@ function grade_course_reset($courseid) {
     return true;
 }
 
+/**
+ * Convert number to float or null
+ * @param mixed number
+ * @return mixed float or null
+ */
+function grade_floatval($number) {
+    if (is_null($number)) {
+        return null;
+    }
+    return (float)$number;
+}
 ?>
