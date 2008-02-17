@@ -698,7 +698,9 @@ class grade_item extends grade_object {
     /**
      * Given a float grade value or integer grade scale, applies a number of adjustment based on
      * grade_item variables and returns the result.
-     * @param object $rawgrade The raw grade value.
+     * @param float $rawgrade The raw grade value.
+     * @param float $rawmin original rawmin
+     * @param float $rawmax original rawmax
      * @return mixed
      */
     function adjust_raw_grade($rawgrade, $rawmin, $rawmax) {
@@ -718,7 +720,7 @@ class grade_item extends grade_object {
 
             // Standardise score to the new grade range
             // NOTE: this is not compatible with current assignment grading
-            if ($rawmin != $this->grademin or $rawmax != $this->grademax) {
+            if ($this->itemmodule != 'assignment' and ($rawmin != $this->grademin or $rawmax != $this->grademax)) {
                 $rawgrade = grade_grade::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
@@ -743,7 +745,7 @@ class grade_item extends grade_object {
 
             // Convert scale if needed
             // NOTE: this is not compatible with current assignment grading
-            if ($rawmin != $this->grademin or $rawmax != $this->grademax) {
+            if ($this->itemmodule != 'assignment' and ($rawmin != $this->grademin or $rawmax != $this->grademax)) {
                 $rawgrade = grade_grade::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
@@ -1406,14 +1408,14 @@ class grade_item extends grade_object {
             $this->force_regrading();
 
         } else if ($this->is_course_item() and !$this->needsupdate) {
-            if (!grade_regrade_final_grades($this->courseid, $userid, $this)) {
+            if (grade_regrade_final_grades($this->courseid, $userid, $this) !== true) {
                 $this->force_regrading();
             }
 
         } else if (!$this->needsupdate) {
             $course_item = grade_item::fetch_course_item($this->courseid);
             if (!$course_item->needsupdate) {
-                if (!grade_regrade_final_grades($this->courseid, $userid, $this)) {
+                if (grade_regrade_final_grades($this->courseid, $userid, $this) !== true) {
                     $this->force_regrading();
                 }
             } else {
@@ -1483,33 +1485,35 @@ class grade_item extends grade_object {
         }
 
         // we need proper floats here for !== comparison later
-        if (!is_null($grade->rawgrade)) {
-            $grade->rawgrade = (float)$grade->rawgrade;
-        }
-
         $oldgrade = new object();
-        $oldgrade->finalgrade     = $grade->finalgrade;
-        $oldgrade->rawgrade       = $grade->rawgrade;
-        $oldgrade->rawgrademin    = $grade->rawgrademin;
-        $oldgrade->rawgrademax    = $grade->rawgrademax;
-        $oldgrade->rawscaleid     = $grade->rawscaleid;
+        $oldgrade->finalgrade     = grade_floatval($grade->finalgrade);
+        $oldgrade->rawgrade       = grade_floatval($grade->rawgrade);
+        $oldgrade->rawgrademin    = grade_floatval($grade->rawgrademin);
+        $oldgrade->rawgrademax    = grade_floatval($grade->rawgrademax);
+        $oldgrade->rawscaleid     = grade_floatval($grade->rawscaleid);
         $oldgrade->feedback       = $grade->feedback;
         $oldgrade->feedbackformat = $grade->feedbackformat;
 
-        // fist copy current grademin/max and scale
-        $grade->rawgrademin = $this->grademin;
-        $grade->rawgrademax = $this->grademax;
-        $grade->rawscaleid  = $this->scaleid;
+        // use new min and max
+        $grade->rawgrade    = grade_floatval($grade->rawgrade);
+        $grade->rawgrademin = grade_floatval($this->grademin);
+        $grade->rawgrademax = grade_floatval($this->grademax);
+        $grade->rawscaleid  = grade_floatval($this->scaleid);
 
         // change raw grade?
         if ($rawgrade !== false) {
-            $grade->rawgrade = $rawgrade;
+            $grade->rawgrade = grade_floatval($rawgrade);
         }
 
         // do we have comment from teacher?
         if ($feedback !== false) {
             $grade->feedback       = $feedback;
             $grade->feedbackformat = $feedbackformat;
+        }
+
+        // update final grade if possible
+        if (!$grade->is_locked() and !$grade->is_overridden()) {
+            $grade->finalgrade = grade_floatval($this->adjust_raw_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax));
         }
 
         if (is_null($grade->rawgrade)) {
@@ -1536,11 +1540,9 @@ class grade_item extends grade_object {
         } else if (!$this->needsupdate) {
             $course_item = grade_item::fetch_course_item($this->courseid);
             if (!$course_item->needsupdate) {
-                if (!grade_regrade_final_grades($this->courseid, $userid, $this)) {
+                if (grade_regrade_final_grades($this->courseid, $userid, $this) !== true) {
                     $this->force_regrading();
                 }
-            } else {
-                $this->force_regrading();
             }
         }
 
