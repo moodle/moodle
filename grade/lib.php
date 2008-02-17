@@ -852,7 +852,9 @@ class grade_structure {
         $iteminstance = $element['object']->iteminstance;
 
         if ($withlink and $itemtype=='mod' and $iteminstance and $itemmodule) {
-            $cm = get_coursemodule_from_instance($itemmodule, $iteminstance, $this->courseid);
+            if (!$cm = get_coursemodule_from_instance($itemmodule, $iteminstance, $this->courseid)) {
+                continue;
+            }
 
             $dir = $CFG->dirroot.'/mod/'.$itemmodule;
 
