@@ -852,19 +852,18 @@ class grade_structure {
         $iteminstance = $element['object']->iteminstance;
 
         if ($withlink and $itemtype=='mod' and $iteminstance and $itemmodule) {
-            if (!$cm = get_coursemodule_from_instance($itemmodule, $iteminstance, $this->courseid)) {
-                continue;
+            if ($cm = get_coursemodule_from_instance($itemmodule, $iteminstance, $this->courseid)) {
+
+                $dir = $CFG->dirroot.'/mod/'.$itemmodule;
+
+                if (file_exists($dir.'/grade.php')) {
+                    $url = $CFG->wwwroot.'/mod/'.$itemmodule.'/grade.php?id='.$cm->id;
+                } else {
+                    $url = $CFG->wwwroot.'/mod/'.$itemmodule.'/view.php?id='.$cm->id;
+                }
+
+                $header = '<a href="'.$url.'">'.$header.'</a>';
             }
-
-            $dir = $CFG->dirroot.'/mod/'.$itemmodule;
-
-            if (file_exists($dir.'/grade.php')) {
-                $url = $CFG->wwwroot.'/mod/'.$itemmodule.'/grade.php?id='.$cm->id;
-            } else {
-                $url = $CFG->wwwroot.'/mod/'.$itemmodule.'/view.php?id='.$cm->id;
-            }
-
-            $header = '<a href="'.$url.'">'.$header.'</a>';
         }
 
         return $header;
