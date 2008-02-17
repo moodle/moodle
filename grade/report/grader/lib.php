@@ -936,19 +936,18 @@ class grade_report_grader extends grade_report {
 
         if ($showaverages) {
 
-            $gsql = str_replace('u.id', 'g.userid', $groupsql); // hack
-            
-            // the first join on user is needed for groupsql
-            $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum
+            // find sums of all grade items in course
+            $SQL = "SELECT g.itemid, SUM(g.finalgrade) AS sum
                       FROM {$CFG->prefix}grade_items gi
-                           LEFT JOIN {$CFG->prefix}grade_grades g ON g.itemid = gi.id 
-                           $gsql
+                           JOIN {$CFG->prefix}grade_grades g      ON g.itemid = gi.id 
+                           JOIN {$CFG->prefix}user u              ON u.id = g.userid 
+                           JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
+                           $groupsql
                      WHERE gi.courseid = $this->courseid
+                           AND ra.roleid in ($this->gradebookroles)
+                           AND ra.contextid ".get_related_contexts_string($this->context)."
+                           AND g.finalgrade IS NOT NULL
                            $groupwheresql
-                           AND g.userid IN (SELECT ra.userid
-                                              FROM {$CFG->prefix}role_assignments ra
-                                             WHERE ra.roleid in ($this->gradebookroles)
-                                                   AND ra.contextid ".get_related_contexts_string($this->context).")
                   GROUP BY g.itemid";
             $sum_array = array();
             if ($sums = get_records_sql($SQL)) {
@@ -969,44 +968,40 @@ class grade_report_grader extends grade_report {
                 $columncount++;
             }
 
-            $gsql = str_replace('u.id', 'ra.userid', $groupsql); // hack
-
             // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
             // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
             $SQL = "SELECT gi.id, COUNT(u.id) AS count
-                      FROM {$CFG->prefix}grade_items gi, {$CFG->prefix}user u
+                      FROM {$CFG->prefix}grade_items gi
+                           JOIN {$CFG->prefix}user u                     ON TRUE
+                           JOIN {$CFG->prefix}role_assignments ra        ON ra.userid = u.id
+                           LEFT OUTER JOIN  {$CFG->prefix}grade_grades g ON (g.itemid = gi.id AND g.userid = u.id AND g.finalgrade IS NOT NULL) 
+                           $groupsql
                      WHERE gi.courseid = $this->courseid
-                           AND u.id IN (SELECT ra.userid
-                                          FROM {$CFG->prefix}role_assignments ra
-                                               $gsql
-                                         WHERE ra.roleid in ($this->gradebookroles)
-                                               AND ra.contextid ".get_related_contexts_string($this->context)."
-                                               $groupwheresql)
-                           AND u.id NOT IN (SELECT g.userid
-                                              FROM {$CFG->prefix}grade_grades g
-                                             WHERE g.itemid = gi.id AND g.finalgrade IS NOT NULL)
+                           AND ra.roleid in ($this->gradebookroles)
+                           AND ra.contextid ".get_related_contexts_string($this->context)."
+                           AND g.id IS NULL
+                           $groupwheresql
                   GROUP BY gi.id";
+
             $ungraded_counts = get_records_sql($SQL);
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
 
-                if (empty($sum_array[$item->id])) {
+                if (!isset($sum_array[$item->id])) {
                     $sum_array[$item->id] = 0;
                 }
 
-                if (isset($ungraded_counts[$itemid])) {
-                    $ungraded_count = $ungraded_counts[$itemid]->count;
-                } else {
+                if (empty($ungraded_counts[$itemid])) {
                     $ungraded_count = 0;
+                } else {
+                    $ungraded_count = $ungraded_counts[$itemid]->count;
                 }
 
                 if ($meanselection == GRADE_REPORT_MEAN_GRADED) {
                     $mean_count = $totalcount - $ungraded_count;
                 } else { // Bump up the sum by the number of ungraded items * grademin
-                    if (isset($sum_array[$item->id])) {
-                        $sum_array[$item->id] += $ungraded_count * $item->grademin;
-                    }
+                    $sum_array[$item->id] += $ungraded_count * $item->grademin;
                     $mean_count = $totalcount;
                 }
 
