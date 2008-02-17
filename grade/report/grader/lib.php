@@ -317,10 +317,11 @@ class grade_report_grader extends grade_report {
             // If lastname or firstname is given as sortitemid, add the other name (firstname or lastname respectively) as second sort param
             $sort2 = '';
             if ($this->sortitemid == 'lastname') {
-                $sort2 = ', u.firstname ' . $this->sortorder;
+                $sort2 = ', u.firstname '.$this->sortorder;
             } elseif ($this->sortitemid == 'firstname') {
-                $sort2 = ', u.lastname ' . $this->sortorder;
+                $sort2 = ', u.lastname '.$this->sortorder;
             }
+            $sort2 .= ', u.id ASC'; // make sure the order is the same in case the sort item values are the same 
             $roles = explode(',', $this->gradebookroles);
             $this->users = get_role_users($roles, $this->context, false,
                             'u.id, u.firstname, u.lastname, u.idnumber, u.imagealt, u.picture', 'u.'.$this->sortitemid .' '. $this->sortorder . $sort2,

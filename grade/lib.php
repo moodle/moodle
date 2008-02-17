@@ -95,29 +95,41 @@ class graded_users_iterator {
             $groupwheresql = "";
         }
 
-        $users_sql = "SELECT u.*
+        if (empty($this->sortfield1)) {
+            // we must do some sorting even if not specified
+            $ofields = ", u.id AS usrt";
+            $order   = "usrt ASC";
+
+        } else {
+            $ofields = ", u.$this->sortfield1 AS usrt1";
+            $order   = "usrt1 $this->sortorder1";
+            if (!empty($this->sortfield2)) {
+                $ofields .= ", u.$this->sortfield1 AS usrt2";
+                $order   .= ", usrt2 $this->sortorder2";
+            }
+            if ($this->sortfield1 != 'id' and $this->sortfield2 != 'id') {
+                // user order MUST be the same in both queries, must include the only unique user->id if not already present
+                $ofields .= ", u.id AS usrt";
+                $order   .= ", usrt ASC";
+            }
+        }
+
+        $users_sql = "SELECT u.* $ofields
                         FROM {$CFG->prefix}user u
                              INNER JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
                              $groupsql
                        WHERE ra.roleid $gradebookroles
                              AND ra.contextid $relatedcontexts
-                             $groupwheresql";
-        
-        // If only sortfield2 is given, it will be ignored
-        if (!empty($this->sortfield1)) {
-            $users_sql .= "ORDER BY u.$this->sortfield1 $this->sortorder1";
-            if (!empty($this->sortfield2)) {
-                $users_sql .= ", $this->sortfield2 $this->sortorder2";
-            }
-        } 
+                             $groupwheresql
+                    ORDER BY $order";
 
-        $this->users_rs  = get_recordset_sql($users_sql);
+        $this->users_rs = get_recordset_sql($users_sql);
 
         if (!empty($this->grade_items)) {
             $itemids = array_keys($this->grade_items);
             $itemids = implode(',', $itemids);
 
-            $grades_sql = "SELECT g.*
+            $grades_sql = "SELECT g.* $ofields
                              FROM {$CFG->prefix}grade_grades g
                                   INNER JOIN {$CFG->prefix}user u ON g.userid = u.id
                                   INNER JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
@@ -126,9 +138,12 @@ class graded_users_iterator {
                                   AND ra.contextid $relatedcontexts
                                   AND g.itemid IN ($itemids)
                                   $groupwheresql
-                         ORDER BY g.userid ASC, g.itemid ASC";
+                         ORDER BY $order, g.itemid ASC";
             $this->grades_rs = get_recordset_sql($grades_sql);
+        } else {
+            $this->grades_rs = false;
         }
+
         return true;
     }
 
@@ -142,22 +157,22 @@ class graded_users_iterator {
         }
 
         if (!$user = rs_fetch_next_record($this->users_rs)) {
+            if ($current = $this->_pop()) {
+                // this is not good - user or grades updated between the two reads above :-(
+            }
+
             return false; // no more users
         }
 
-        //find the first grade of this user
+        // find grades of this user
         $grade_records = array();
         while (true) {
             if (!$current = $this->_pop()) {
                 break; // no more grades
             }
 
-            if ($current->userid < $user->id) {
-                // this should not happen, could be caused by concurrent updates - skip this record
-                continue;
-
-            } else if ($current->userid > $user->id) {
-                // this user does not have any more grades
+            if ($current->userid != $user->id) {
+                // grade of the next user, we have all for this user
                 $this->_push($current);
                 break;
             }
@@ -169,19 +184,19 @@ class graded_users_iterator {
         $feedbacks = array();
 
         if (!empty($this->grade_items)) {
-        foreach ($this->grade_items as $grade_item) {
-            if (array_key_exists($grade_item->id, $grade_records)) {
-                $feedbacks[$grade_item->id]->feedback       = $grade_records[$grade_item->id]->feedback;
-                $feedbacks[$grade_item->id]->feedbackformat = $grade_records[$grade_item->id]->feedbackformat;
-                unset($grade_records[$grade_item->id]->feedback);
-                unset($grade_records[$grade_item->id]->feedbackformat);
-                $grades[$grade_item->id] = new grade_grade($grade_records[$grade_item->id], false);
-            } else {
-                $feedbacks[$grade_item->id]->feedback       = '';
-                $feedbacks[$grade_item->id]->feedbackformat = FORMAT_MOODLE;
-                $grades[$grade_item->id] = new grade_grade(array('userid'=>$user->id, 'itemid'=>$grade_item->id), false);
+            foreach ($this->grade_items as $grade_item) {
+                if (array_key_exists($grade_item->id, $grade_records)) {
+                    $feedbacks[$grade_item->id]->feedback       = $grade_records[$grade_item->id]->feedback;
+                    $feedbacks[$grade_item->id]->feedbackformat = $grade_records[$grade_item->id]->feedbackformat;
+                    unset($grade_records[$grade_item->id]->feedback);
+                    unset($grade_records[$grade_item->id]->feedbackformat);
+                    $grades[$grade_item->id] = new grade_grade($grade_records[$grade_item->id], false);
+                } else {
+                    $feedbacks[$grade_item->id]->feedback       = '';
+                    $feedbacks[$grade_item->id]->feedbackformat = FORMAT_MOODLE;
+                    $grades[$grade_item->id] = new grade_grade(array('userid'=>$user->id, 'itemid'=>$grade_item->id), false);
+                }
             }
-        }
         }
 
         $result = new object();
@@ -246,7 +261,7 @@ class graded_users_iterator {
  */
 function print_graded_users_selector($course, $actionpage, $userid=null, $return=false) {
     global $CFG, $USER;
-    
+
     if (is_null($userid)) {
         $userid = $USER->id;
     }
@@ -257,11 +272,11 @@ function print_graded_users_selector($course, $actionpage, $userid=null, $return
 
     $gui = new graded_users_iterator($course);
     $gui->init();
-    
+
     if ($userid !== 0) {
         $menu[0] = get_string('allusers', 'grades');
     }
-    
+
     while ($userdata = $gui->next_user()) {
         $user = $userdata->user;
         $menu[$user->id] = fullname($user);
@@ -273,8 +288,8 @@ function print_graded_users_selector($course, $actionpage, $userid=null, $return
         $menu[0] .= " (" . (count($menu) - 1) . ")";
     }
 
-    return popup_form($CFG->wwwroot.'/grade/' . $actionpage . '&amp;userid=', $menu, 'choosegradeduser', $userid, 'choose', '', '', 
-                        $return, 'self', get_string('selectalloroneuser', 'grades')); 
+    return popup_form($CFG->wwwroot.'/grade/' . $actionpage . '&amp;userid=', $menu, 'choosegradeduser', $userid, 'choose', '', '',
+                        $return, 'self', get_string('selectalloroneuser', 'grades'));
 }
 
 /**
@@ -883,7 +898,7 @@ class grade_structure {
         if (!method_exists($element['object'], 'get_name')) {
             return $strparams;
         }
-        
+
         $strparams->itemname = $element['object']->get_name();
 
         // If element name is categorytotal, get the name of the parent category
@@ -897,7 +912,7 @@ class grade_structure {
         $strparams->itemmodule = null;
         if (isset($element['object']->itemmodule)) {
             $strparams->itemmodule = $element['object']->itemmodule;
-        } 
+        }
         return $strparams;
     }
 
@@ -925,9 +940,9 @@ class grade_structure {
         }
 
         $strparams = $this->get_params_for_iconstr($element);
-        if ($element['type'] == 'item' or $element['type'] == 'category') { 
+        if ($element['type'] == 'item' or $element['type'] == 'category') {
         }
-        
+
         $object = $element['object'];
         $overlib = '';
 
@@ -989,9 +1004,9 @@ class grade_structure {
             return '';
         }
 
-        $strparams = $this->get_params_for_iconstr($element); 
+        $strparams = $this->get_params_for_iconstr($element);
         $strshow = get_string('showverbose', 'grades', $strparams);
-        $strhide = get_string('hideverbose', 'grades', $strparams); 
+        $strhide = get_string('hideverbose', 'grades', $strparams);
 
         if ($element['object']->is_hidden()) {
             $icon = 'show';
@@ -1024,7 +1039,7 @@ class grade_structure {
     function get_locking_icon($element, $gpr) {
         global $CFG;
 
-        $strparams = $this->get_params_for_iconstr($element); 
+        $strparams = $this->get_params_for_iconstr($element);
         $strunlock = get_string('unlockverbose', 'grades', $strparams);
         $strlock = get_string('lockverbose', 'grades', $strparams);
 
@@ -1076,7 +1091,7 @@ class grade_structure {
 
 
         if ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') {
-            $strparams = $this->get_params_for_iconstr($element); 
+            $strparams = $this->get_params_for_iconstr($element);
             $streditcalculation = get_string('editcalculationverbose', 'grades', $strparams);
 
             // show calculation icon only when calculation possible
