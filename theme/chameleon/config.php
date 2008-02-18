@@ -125,7 +125,7 @@ $THEME->makenavmenulist = false;
 /// creating popup navigation menus and so on.
 
 
-$THEME->chameleonenabled = true;
+$THEME->chameleonenabled = false;
 
 /// By setting this to false it disables editing of the stylsheets
 /// this saves the overhead of loading chameleon on each page 
