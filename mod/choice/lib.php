@@ -338,10 +338,18 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
         $currentgroup = 0;
     }
 
-    $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', true, true);
-
-    $allusersnothidden = get_users_by_capability($context, 'mod/choice:choose', 'u.id', 'u.firstname ASC', '', '', $currentgroup, '', true, false); ///MDL-12331 ugly hack to prevent hidden users from being displayed in the unanswered column. needs fixing!
-
+    $allresponses = get_records("choice_answers", "choiceid", $choice->id); //get all responses for this choice.
+    
+    if ($choice->showunanswered) {
+        $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', true, true);
+        $allusersnothidden = get_users_by_capability($context, 'mod/choice:choose', 'u.id', 'u.firstname ASC', '', '', $currentgroup, '', false, false); ///MDL-12331 ugly hack to prevent hidden users and admins from being displayed in the unanswered column. needs fixing!
+    } else { //as we are not showing unanswered column, we only need details on users who have submitted a choice - this should perform much better than the 2 get_users_by_capability calls.
+        foreach ($allresponses as $usr) {
+            if (has_capability('mod/choice:choose', $context, $usr->userid, false)) { //if this user is allowed to select a choice.
+                $users[$usr->userid] = get_record_sql('SELECT id, picture, firstname, lastname, idnumber FROM '. $CFG->prefix .'user WHERE id= '.$usr->userid);
+            }
+        }
+    }
     if (!empty($CFG->enablegroupings) && !empty($cm->groupingid) && !empty($users)) {
         $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
         foreach($users as $key => $user) {
@@ -356,7 +364,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
     }
 
     $answers = array () ;
-    if ($allresponses = get_records("choice_answers", "choiceid", $choice->id)) {
+    if (!empty($allresponses)) {
         foreach ($allresponses as $aa) {
             //TODO: rewrite with SQL
             if ($groupmode and $currentgroup) {
@@ -436,10 +444,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 // MDL-7861
                 echo "<table class=\"choiceresponse\"><tr><td></td></tr>";
                 foreach ($userlist as $user) {
-                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false) AND //only get enrolled users that have access
-                     !($optionid==0 AND has_capability('moodle/site:doanything', $context, $user->id, false)) AND //remove doanything users
-                     !($optionid==0 AND isset($allusersnothidden[$user->id]))) { //MDL-12331 ugly hack part 2
-
+                    if (!($optionid==0 AND empty($allusersnothidden[$user->id]))) { //don't show admins or hidden users
                         $columncount[$optionid] += 1;
                         echo "<tr>";
                         if (has_capability('mod/choice:readresponses', $context) && $optionid!=0) {
@@ -531,11 +536,8 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 }
                 $column[$optionid] = 0;
                 foreach ($userlist as $user) {
-                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false) AND //only get enrolled users that have access
-                     !($optionid==0 AND has_capability('moodle/site:doanything', $context, $user->id, false)) AND //remove doanything users
-                     !($optionid==0 AND isset($allusersnothidden[$user->id]))) { //MDL-12331 ugly hack part 2
-
-                         $column[$optionid]++;
+                    if (!($optionid==0 AND empty($allusersnothidden[$user->id]))) { //don't show admins or hidden users
+                        $column[$optionid]++;
                     }
                 }
                 if ($column[$optionid] > $maxcolumn) {
