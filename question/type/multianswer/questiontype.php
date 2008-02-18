@@ -77,7 +77,6 @@ class embedded_cloze_qtype extends default_questiontype {
                 //
                 $oldqtype = get_field('question', 'qtype', 'id',$oldwrappedid) ;
                 if($oldqtype != $wrapped->qtype ) {
-                    echo "<p>oldqtype $oldqtype newqtype".$wrapped->qtype."</p>";
                     switch ($oldqtype) {
                         case 'multichoice':
                              delete_records('question_multichoice', 'question', $oldwrappedid);
@@ -346,7 +345,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     }
                     */
                     
-                    echo " <input $style $readonly $popup name=\"$inputname\"";
+                    echo "<input $style $readonly $popup name=\"$inputname\"";
                     echo "  type=\"text\" value=\"".s($response, true)."\" ".$styleinfo." /> ";
                     if (!empty($feedback) && !empty($USER->screenreader)) {
                         echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
