@@ -832,6 +832,16 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     $orderby = '';
     $sort    = trim($sort);
     if (!empty($sort)) {
+        $rawsorts = explode(',', $sort);
+        $sorts = array();
+        foreach ($rawsorts as $rawsort) {
+            $rawsort = trim($rawsort);
+            if (strpos('c.', $rawsort)) {
+                $rawsort = substr($rawsort, 2);
+            }
+            $sorts[] = trim($rawsort);
+        }
+        $sort = 'c.'.implode(',c.', $sorts);
         $orderby = "ORDER BY $sort";
     }
 
