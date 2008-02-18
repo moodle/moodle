@@ -689,7 +689,13 @@ class grade_category extends grade_object {
         //find max grade
         foreach ($items as $item) {
             if ($item->gradetype != GRADE_TYPE_VALUE) {
-                continue; // sum only items with value grades, no scales and outcomes!
+                // sum only items with value grades, no scales and outcomes!
+                unset($grade_values[$item->id]);
+                continue;
+            }
+            if ($item->aggregationcoef > 0) {
+                // extra credit from this activity - does not affect total
+                continue;
             }
             $max += $item->grademax;
         }
@@ -740,7 +746,8 @@ class grade_category extends grade_object {
      */
     function is_aggregationcoef_used() {
         return ($this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN
-             or $this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN);
+             or $this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN
+             or $this->aggregation == GRADE_AGGREGATE_SUM);
 
     }
 

@@ -89,11 +89,20 @@ $item->grademin        = format_float($item->grademin, $decimalpoints);
 $item->gradepass       = format_float($item->gradepass, $decimalpoints);
 $item->multfactor      = format_float($item->multfactor, 4);
 $item->plusfactor      = format_float($item->plusfactor, 4);
-$item->aggregationcoef = format_float($item->aggregationcoef, 4);
+
+if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+    $item->aggregationcoef = $item->aggregationcoef > 0 ? 1 : 0;
+} else {
+    $item->aggregationcoef = format_float($item->aggregationcoef, 4);
+}
 
 $mform->set_data($item);
 
 if ($data = $mform->get_data(false)) {
+
+    if (!isset($data->aggregationcoef)) {
+        $data->aggregationcoef = 0;
+    }
 
     $hidden      = empty($data->hidden) ? 0: $data->hidden;
     $hiddenuntil = empty($data->hiddenuntil) ? 0: $data->hiddenuntil;

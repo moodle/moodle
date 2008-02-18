@@ -129,7 +129,7 @@ class edit_item_form extends moodleform {
         }
 
         /// hiding
-        /// advcheckbox is not compatible with disabledIf !!
+        // advcheckbox is not compatible with disabledIf!
         $mform->addElement('checkbox', 'hidden', get_string('hidden', 'grades'));
         $mform->setHelpButton('hidden', array('hidden', get_string('hidden', 'grades'), 'grade'));
         $mform->addElement('date_time_selector', 'hiddenuntil', get_string('hiddenuntil', 'grades'), array('optional'=>true));
@@ -164,6 +164,9 @@ class edit_item_form extends moodleform {
                 } else if ($cat->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
                     $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefextra') ? 'aggregationcoefextra' : 'aggregationcoef';
 
+                } else if ($cat->aggregation == GRADE_AGGREGATE_SUM) {
+                    $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefextrasump') ? 'aggregationcoefextrasum' : 'aggregationcoef';
+
                 } else {
                     $coefstring = 'aggregationcoef';
                 }
@@ -177,7 +180,12 @@ class edit_item_form extends moodleform {
         }
 
         if ($coefstring !== '') {
-            $mform->addElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
+            if ($coefstring == 'aggregationcoefextrasum') {
+                // advcheckbox is not compatible with disabledIf!
+                $mform->addElement('checkbox', 'aggregationcoef', get_string($coefstring, 'grades'));
+            } else {
+                $mform->addElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
+            }
             $mform->setHelpButton('aggregationcoef', array(false, get_string($coefstring, 'grades'),
                                     false, true, false, get_string($coefstring.'help', 'grades')));
         }
@@ -278,7 +286,11 @@ class edit_item_form extends moodleform {
                         $aggcoef = 'aggregationcoefweight';
                     } else if ($parent_category->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
                         $aggcoef = 'aggregationcoefextra';
+
+                    } else if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+                        $aggcoef = 'aggregationcoefextrasum';
                     }
+
                     if ($aggcoef !== '') {
                         $agg_el->setLabel(get_string($aggcoef, 'grades'));
                         $mform->setHelpButton('aggregationcoef', array(false, get_string($aggcoef, 'grades'),
