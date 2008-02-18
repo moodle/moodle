@@ -346,7 +346,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     }
                     */
                     
-                    echo " <input $style $readonly $popup name=\"$inputname\"";
+                    echo "<input $style $readonly $popup name=\"$inputname\"";
                     echo "  type=\"text\" value=\"".s($response, true)."\" ".$styleinfo." /> ";
                     if (!empty($feedback) && !empty($USER->screenreader)) {
                         echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
