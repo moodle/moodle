@@ -3370,7 +3370,6 @@ function set_login_session_preferences() {
  */
 function delete_course($courseid, $showfeedback = true) {
     global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
     $result = true;
 
     // frontpage course can not be deleted!!
@@ -3424,7 +3423,8 @@ function delete_course($courseid, $showfeedback = true) {
 function remove_course_contents($courseid, $showfeedback=true) {
 
     global $CFG;
-    include_once($CFG->libdir.'/questionlib.php');
+    require_once($CFG->libdir.'/questionlib.php');
+    require_once($CFG->libdir.'/gradelib.php');
 
     $result = true;
 
