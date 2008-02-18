@@ -444,6 +444,8 @@
                 }
             }
             @set_time_limit(0);
+        } else {
+            mtrace('Next stats run after:'. date($timetocheck));
         }
     }
 
