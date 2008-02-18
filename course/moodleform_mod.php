@@ -316,8 +316,8 @@ class moodleform_mod extends moodleform {
         
         //when two elements we need a group
         $buttonarray=array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton2', $submit2label);
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
         
         if ($cancel) {
             $buttonarray[] = &$mform->createElement('cancel');
