@@ -302,6 +302,16 @@ class MoodleExcelFormat {
         }
     }
 
+    /**
+     * Set the size of the text in the format (in pixels).
+     * By default all texts in generated sheets are 10px.
+     * @param integer $size Size of the text (in pixels)
+     */
+    function set_size($size) {
+    /// Set the size safely to the PEAR Format
+        $this->pear_excel_format->setSize($size);
+    }
+
     /* Set weight of the format
      * @param integer $weight Weight for the text, 0 maps to 400 (normal text),
      *                        1 maps to 700 (bold text). Valid range is: 100-1000.
