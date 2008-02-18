@@ -3378,17 +3378,12 @@ function delete_course($courseid, $showfeedback = true) {
         return false;
     }
 
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-
     if (!remove_course_contents($courseid, $showfeedback)) {
         if ($showfeedback) {
             notify("An error occurred while deleting some of the course contents.");
         }
         $result = false;
     }
-
-    remove_course_grades($courseid, $showfeedback);
-    remove_grade_letters($context, $showfeedback);
 
     if (!delete_records("course", "id", $courseid)) {
         if ($showfeedback) {
@@ -3579,6 +3574,11 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 /// Delete questions and question categories
     question_delete_course($course, $showfeedback);
+
+/// Remove all data from gradebook
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    remove_course_grades($courseid, $showfeedback);
+    remove_grade_letters($context, $showfeedback);
 
     return $result;
 }
