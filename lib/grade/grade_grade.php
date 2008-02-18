@@ -535,6 +535,11 @@ class grade_grade extends grade_object {
           return null;
         }
 
+        if ($source_max == $source_min or $target_min == $target_max) {
+            // prevent division by 0
+            return $target_max;
+        }
+
         $factor = ($rawgrade - $source_min) / ($source_max - $source_min);
         $diff = $target_max - $target_min;
         $standardised_value = $factor * $diff + $target_min;
