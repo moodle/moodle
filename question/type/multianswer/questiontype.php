@@ -77,7 +77,6 @@ class embedded_cloze_qtype extends default_questiontype {
                 //
                 $oldqtype = get_field('question', 'qtype', 'id',$oldwrappedid) ;
                 if($oldqtype != $wrapped->qtype ) {
-                    echo "<p>oldqtype $oldqtype newqtype".$wrapped->qtype."</p>";
                     switch ($oldqtype) {
                         case 'multichoice':
                              delete_records('question_multichoice', 'question', $oldwrappedid);
