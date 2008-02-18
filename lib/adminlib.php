@@ -4606,8 +4606,7 @@ function print_plugin_tables() {
             // Get real name and full path of plugin
             $plugin_name = "[[$plugin]]";
             
-            global $CFG;
-            $plugin_path = $CFG->dirroot . "/$cat/$plugin";
+            $plugin_path = "$cat/$plugin";
             
             $plugin_name = get_plugin_name($plugin, $cat);
             
