@@ -1750,6 +1750,11 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
     /// If the user is a guest then treat them according to the course policy about guests
 
         if (has_capability('moodle/legacy:guest', $context, NULL, false)) {
+            if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
+                // administrators must be able to access any course - even if somebody gives them guest access
+                return true;
+            }
+
             switch ($COURSE->guest) {    /// Check course policy about guest access
 
                 case 1:    /// Guests always allowed
