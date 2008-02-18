@@ -74,7 +74,6 @@ class embedded_cloze_qtype extends default_questiontype {
             // if we still have some old wrapped question ids, reuse the next of them
             if ($oldwrappedid = array_shift($oldwrappedids)) {
                 $wrapped->id = $oldwrappedid;
-                //
                 $oldqtype = get_field('question', 'qtype', 'id',$oldwrappedid) ;
                 if($oldqtype != $wrapped->qtype ) {
                     switch ($oldqtype) {
