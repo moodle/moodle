@@ -3967,8 +3967,6 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     global $CFG, $FULLME;
 
-return true; // remove before commit!!!!
-
     if (empty($user)) {
         return false;
     }
