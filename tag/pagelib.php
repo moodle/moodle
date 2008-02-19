@@ -1,7 +1,7 @@
 <?php
 
 require_once($CFG->libdir.'/pagelib.php');
-require_once('tag/lib.php');
+require_once('lib.php');
 
 define('PAGE_TAG_INDEX', 'tag-index');
 define('TAG_FORMAT', 'tag');
