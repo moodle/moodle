@@ -584,6 +584,6 @@ $string['userscreated'] = 'Users created';
 $string['usersrenamed'] = 'Users renamed';
 $string['usersupdated'] = 'Users updated';
 $string['validateerror'] = 'This value was not valid:';
-
+$string['xmlrpcrecommended'] = 'Installing the optional xmlrpc extension is useful for Moodle Networking functionality.';
 
 ?>
