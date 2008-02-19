@@ -125,12 +125,11 @@ $THEME->makenavmenulist = false;
 /// creating popup navigation menus and so on.
 
 
-$THEME->chameleonenabled = true;
+$THEME->chameleonenabled = false;
 
-/// By setting this to false it disables editing of the stylsheets
-/// this saves the overhead of loading chameleon on each page 
-/// viewed by a user who can edit pages. it is recommended to 
-/// set this to false once you're satisfied with your theme.
+/// By setting this to true it enables editing of the stylsheets.
+/// It is recommended to set this to false again once you're 
+/// satisfied with your theme.
 
 $THEME->chameleonteachereditenabled = false;
 
