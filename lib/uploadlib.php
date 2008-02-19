@@ -298,28 +298,37 @@ class upload_manager {
      * Handles filename collisions - if the desired filename exists it will rename it according to the pattern in $format
      * @param string $destination Destination directory (to check existing files against)
      * @param object $file Passed in by reference. The current file from $files we're processing.
-     * @param string $format The printf style format to rename the file to (defaults to filename_number.extn)
-     * @return string The new filename.
-     * @todo verify return type - this function does not appear to return anything since $file is passed in by reference
+     * @return void - modifies &$file parameter.
      */
-    function handle_filename_collision($destination, &$file, $format='%s_%d.%s') {
-        $part1 = explode('.', $file['name']); 
-        $bits = array(); 
-        $bits[1] = array_pop($part1); 
-        $bits[0] = implode('.', $part1);
-        // check for collisions and append a nice numberydoo.
-        if (file_exists($destination .'/'. $file['name'])) {
-            $a->oldname = $file['name'];
-            for ($i = 1; true; $i++) {
-                $try = sprintf($format, $bits[0], $i, $bits[1]);
-                if ($this->check_before_renaming($destination, $try, $file)) {
-                    $file['name'] = $try;
-                    break;
-                }
-            }
-            $a->newname = $file['name'];
-            $file['uploadlog'] .= "\n". get_string('uploadrenamedcollision','moodle', $a);
+    function handle_filename_collision($destination, &$file) {
+        if (!file_exists($destination .'/'. $file['name'])) {
+            return;
         }
+
+        $parts     = explode('.', $file['name']);
+        if (count($parts) > 1) {
+            $extension = '.'.array_pop($parts);
+            $name      = implode('.', $parts);
+        } else {
+            $extension = '';
+            $name      = $file['name'];
+        }
+
+        $current = 0;
+        if (preg_match('/^(.*)_(\d*)$/s', $name, $matches)) {
+            $name    = $matches[1];
+            $current = (int)$matches[2];
+        }
+        $i = $current + 1;
+
+        while (!$this->check_before_renaming($destination, $name.'_'.$i.$extension, $file)) {
+            $i++;
+        }
+        $a = new object();
+        $a->oldname = $file['name'];
+        $file['name'] = $name.'_'.$i.$extension;
+        $a->newname = $file['name'];
+        $file['uploadlog'] .= "\n". get_string('uploadrenamedcollision','moodle', $a);
     }
     
     /**
