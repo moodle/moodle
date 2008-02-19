@@ -19,7 +19,7 @@
 
 function xmldb_quiz_upgrade($oldversion=0) {
 
-    global $CFG, $THEME;
+    global $CFG, $THEME, $db;
 
     $result = true;
 
