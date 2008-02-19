@@ -2609,7 +2609,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     // Skip to main content, see skip_main_destination().
     if ($pageid=='course-view' or $pageid=='site-index' or $pageid=='course-index') {
         $skiplink = '<a class="skip" href="#maincontent">'.get_string('tocontent', 'access').'</a>';
-        if (! preg_match('/(.*<div.*?page.>)(.*)/s', $output, $matches)) {
+        if (! preg_match('/(.*<div[^>]+id="page"[^>]*>)(.*)/s', $output, $matches)) {
             preg_match('/(.*<body.*?>)(.*)/s', $output, $matches);
         }
         $output = $matches[1]."\n". $skiplink .$matches[2];
