@@ -58,7 +58,9 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
                                 $_REQUEST["withvirtualpages"], 
                                 $_REQUEST["exportdestinations"]);
   }  
-  if($cont===false) return;
+  if($cont===false) {
+     die;
+  }
     
   $url = ewiki_script("", "WikiExport");
   $ret  = ewiki_make_title($id, $id, 2);
