@@ -557,14 +557,16 @@ function calendar_print_event($event) {
             $deletelink = CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id.$calendarcourseid;
         } else {
             $editlink   = $CFG->wwwroot.'/course/mod.php?update='.$event->cmid.'&amp;return=true&amp;sesskey='.$USER->sesskey;
-            $deletelink = $CFG->wwwroot.'/course/mod.php?delete='.$event->cmid.'&amp;sesskey='.$USER->sesskey;;
+            $deletelink = ''; // deleting activities directly from calendar is dangerous/confusing - see MDL-11843
         }
         echo ' <a href="'.$editlink.'"><img
                   src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('tt_editevent', 'calendar').'"
                   title="'.get_string('tt_editevent', 'calendar').'" /></a>';
-        echo ' <a href="'.$deletelink.'"><img
-                  src="'.$CFG->pixpath.'/t/delete.gif" alt="'.get_string('tt_deleteevent', 'calendar').'"
-                  title="'.get_string('tt_deleteevent', 'calendar').'" /></a>';
+        if ($deletelink) {
+            echo ' <a href="'.$deletelink.'"><img
+                      src="'.$CFG->pixpath.'/t/delete.gif" alt="'.get_string('tt_deleteevent', 'calendar').'"
+                      title="'.get_string('tt_deleteevent', 'calendar').'" /></a>';
+        }
         echo '</div>';
     }
     echo '</td></tr></table>';
