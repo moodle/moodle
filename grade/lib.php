@@ -331,7 +331,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
         asort($reportnames);
     }
     if (!empty($reportnames)) {
-        $menu['reportgroup']='--'.get_string('reportplugins', 'grades');
+        $menu['reportgroup']='--'.get_string('view');
         $menu = $menu+$reportnames;
     }
 
@@ -356,7 +356,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
         asort($importnames);
     }
     if (!empty($importnames)) {
-        $menu['importgroup']='--'.get_string('importplugins', 'grades');
+        $menu['importgroup']='--'.get_string('importfrom', 'grades');
         $menu = $menu+$importnames;
     }
 
@@ -381,7 +381,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
         asort($exportnames);
     }
     if (!empty($exportnames)) {
-        $menu['exportgroup']='--'.get_string('exportplugins', 'grades');
+        $menu['exportgroup']='--'.get_string('exportto', 'grades');
         $menu = $menu+$exportnames;
     }
 
@@ -446,7 +446,8 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
 
 /// finally print/return the popup form
     if ($count > 1) {
-        return popup_form($CFG->wwwroot.'/grade/', $menu, 'choosepluginreport', $active, 'choose', '', '', $return, 'self', get_string('view'));
+        return popup_form($CFG->wwwroot.'/grade/', $menu, 'choosepluginreport', '',
+                get_string('chooseaction', 'grades'), '', '', $return, 'self');
     } else {
         // only one option - no plugin selector needed
         return '';
