@@ -727,6 +727,7 @@ $string['validateerror'] = 'This value was not valid:';
 $string['warningcurrentsetting'] = 'Invalid current value: $a';
 $string['webproxy'] = 'Web proxy';
 $string['webproxyinfo'] = 'Fill in following options if your Moodle server can not access internet directly. Internet access is required for download of environment data, language packs, RSS feeds, timezones, etc.<br /><em>PHP cURL extension is highly recommended.</em>';
+$string['xmlrpcrecommended'] = 'Installing the optional xmlrpc extension is required for Moodle Networking functionality.';
 $string['xmlstrictheaders'] = 'XML strict headers';
 
 ?>
