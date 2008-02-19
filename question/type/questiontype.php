@@ -594,8 +594,11 @@ class default_questiontype {
     * Question types with only a single form field for the student's response
     * which is contained in ->responses[''] will not have to save this response,
     * it will already have been saved to the answer field of the question_states table.
-    * Question types with more response fields should override this method and save
-    * the responses in their own database tables.
+    * Question types with more response fields should override this method to convert
+    * the data the ->responses array into a single string field, and save it in the 
+    * database. The implementation in the multichoice question type is a good model to follow.
+    * http://cvs.moodle.org/contrib/plugins/question/type/opaque/questiontype.php?view=markup
+    * has a solution that is probably quite generally applicable.
     * @return bool            Indicates success or failure.
     * @param object $question The question object for the question including
     *                         the question type specific information.
