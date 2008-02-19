@@ -155,3 +155,4 @@ wrongsourcebase
 wrongzipfilename
 wwwroot
 wwwrooterror
+xmlrpcrecommended
