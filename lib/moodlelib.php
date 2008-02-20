@@ -7345,8 +7345,10 @@ function cleanremoteaddr($addr) {
     if (count($goodmatches) == 1) {
         return $goodmatches[0];
     }
-    error_log("NOTICE: cleanremoteaddr gives us something funny: $originaladdr had ".count($goodmatches)." matches");
-    // we need to return something, so
+    //Commented out following because there are so many, and it clogs the logs   MDL-13544
+    //error_log("NOTICE: cleanremoteaddr gives us something funny: $originaladdr had ".count($goodmatches)." matches");
+
+    // We need to return something, so return the first
     return array_pop($goodmatches);
 }
 
