@@ -67,6 +67,7 @@
             $tt = userdate($scorm->timemodified);
         }
         $report = '&nbsp;';
+        $reportshow = '&nbsp;';
         if (has_capability('mod/scorm:viewreport', $context)) {
             $trackedusers = scorm_get_count_users($scorm->id, $scorm->groupingid);
             if ($trackedusers > 0) {
