@@ -929,7 +929,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
             error('Course Module ID was incorrect');
         }
-        $discussions = get_records('discussions', 'forum', $forum->id); // TODO: improve
+        $discussions = get_records('forum_discussions', 'forum', $forum->id); // TODO: improve
 
         foreach ($posts as $post) {
             $discussion = $discussions[$forum->discussion];
