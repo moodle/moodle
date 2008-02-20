@@ -53,6 +53,8 @@
     }
     array_unshift($align, 'center');
 
+    $showing = 'scores';  // default
+
     if (has_capability('mod/quiz:viewreports', $coursecontext)) {
         array_push($headings, get_string('attempts', 'quiz'));
         array_push($align, 'left');
@@ -60,13 +62,13 @@
     } else if (has_capability('mod/quiz:attempt', $coursecontext)) {
         array_push($headings, get_string('bestgrade', 'quiz'), get_string('feedback', 'quiz'));
         array_push($align, 'left', 'left');
-        $showing = 'scores';
     }
 
     $table->head = $headings;
     $table->align = $align;
 
-// Poplate the table with the list of instances.
+/// Populate the table with the list of instances.
+
     $currentsection = '';
     foreach ($quizzes as $quiz) {
         $cm      = get_coursemodule_from_instance('quiz', $quiz->id);
@@ -109,7 +111,7 @@
             } else {
                 $data[] = '';
             }
-        } else if ($showing = 'scores') {
+        } else if ($showing == 'scores') {
 
             // Grade and feedback.
             $bestgrade = quiz_get_best_grade($quiz, $USER->id);
