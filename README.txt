@@ -1,6 +1,15 @@
 README     $Id$
 ------
 
+NOTE!
+=====
+
+Moodle 1.5 is no longer officially supported by Moodle developers.
+
+You would be much better off moving to a more recent version of Moodle.
+
+
+
 QUICK INSTALL
 =============
 
