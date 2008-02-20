@@ -149,7 +149,7 @@ $string['dirroot'] = 'ספריית ה-Moodle';
 $string['dirrooterror'] = 'הגדרת ספריית ה-Moodle כנראה איננה נכונה - איננו מוצאים את התקנת Moodle כאן. הערך כאן אותחל.';
 $string['download'] = 'הורדה';
 $string['downloadedfilecheckfailed'] = 'נכשלה בדיקת הקובץ המורד.';
-$string['downloadlanguagebutton'] = 'הורד את ה-&quot;$a&quot; חבילת שפה';
+$string['downloadlanguagebutton'] = 'הורד את חבילת השפה ה-&quot;$a&quot;';
 $string['downloadlanguagehead'] = 'הורד חבילת שפה';
 $string['downloadlanguagenotneeded'] = 'אתה יכול להמשיך את תהליך ההתקנה ע\"י שימוש ב-\"$a\" שפת ברירת המחדל';
 $string['downloadlanguagesub'] = 'כעת יש באפשרותך להוריד חבילת שפה ולהמשיך את תהליך ההתקנה עם שפה זו.
@@ -179,7 +179,7 @@ $string['gdversionhelp'] = '<p> כנראה שלשרת שלך אין GD מותק�
 GD היא ספרייה אשר נדרשת ע\"י PHP לאפשר ל-Moodle להפעיל תמונות או צורות (כמו צלמיות פרופיל המשתמש) וליצור תמונות חדשות (כמו גרפים של יומני המעקב). Moodle עדיין יעבוד ללא GD - כך שמאפיינים אלו לא יהיו זמינות לך.</p>
 <p> בכדי להוסיף את GD ל-PHP תחת unix, בצע קומפילציה ל-PHP ע\"י שימוש בפרמטר ה --with.
 </p>
-<p> תחת Windows תוכל בפשטות לערוך את קובץ ה-php.ini ולהסיר את הערה תחץ הפרמטר של php_gd2.dll. </p>';
+<p> תחת Windows תוכל בפשטות לערוך את קובץ ה-php.ini ולהסיר את הערה תחת הפרמטר של php_gd2.dll. </p>';
 $string['globalsquotes'] = 'טיפול לא בטוח של משתנים גלובלים';
 $string['globalsquoteserror'] = 'תקן את הגדרות ה-PHP שלך: נטרל את register_globals  ו/או אפשר את magic_quotes_gpc';
 $string['globalsquoteshelp'] = '<p>צירוף נטרול של Magic Quotes GPC ואיפשור Register Globals בו זמנית לא מומלץ.</p>
@@ -197,6 +197,7 @@ register_globals = Off
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
 </p>';
+$string['globalswarning'] = 'p><strong>התראת אבטחה</strong>: בכדי להפעיל בצורה תקינה Moodle מצריך <br />שינויים בהגדרות ה-PHP שלך<p/><p>עליך<em> להגדיר</em>  <code>register_globals=off</code>.<p> הגדרה זו מצריכה עריכת קובץ קונפיגורציה <code>php.ini</code>, Apache/IIS <br /> או <code>.htaccess</code> file.</p>';
 $string['help'] = 'עזרה';
 $string['iconvrecommended'] = 'התקנת ספריית ICONV האופציונלית מומלצת ביותר על-מנת לשפר את ביצועי האתר, במיוחד אם האתר נתמך בשפות לא-לטיניות.';
 $string['info'] = 'מידע';
