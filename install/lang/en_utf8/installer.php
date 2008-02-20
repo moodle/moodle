@@ -271,4 +271,5 @@ $string['wrongsourcebase'] = 'Wrong source URL base.';
 $string['wrongzipfilename'] = 'Wrong ZIP filename.';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'The \'Web Address\' does not appear to be valid - this Moodle installation doesn\'t appear to be there. The value below has been reset.';
+$string['xmlrpcrecommended'] = 'Installing the optional xmlrpc extension is useful for Moodle Networking functionality.';
 ?>
