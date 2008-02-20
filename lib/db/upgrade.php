@@ -2820,6 +2820,33 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101508.02);
     }
 
+    if ($result && $oldversion < 2007101508.03) {
+
+    /// Define index course-userid (not unique) to be dropped form log
+        $table = new XMLDBTable('log');
+        $index = new XMLDBIndex('course-userid');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('course', 'userid'));
+
+    /// Launch drop index course-userid
+        if (index_exists($table, $index)) {
+            $result = $result && drop_index($table, $index);
+        }
+
+    /// Define index userid-course (not unique) to be added to log
+        $table = new XMLDBTable('log');
+        $index = new XMLDBIndex('userid-course');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('userid', 'course'));
+
+    /// Launch add index userid-course
+        if (!index_exists($table, $index)) {
+            $result = $result && add_index($table, $index);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101508.03);
+    }
+
+
     return $result;
 }
 
