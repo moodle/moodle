@@ -92,8 +92,13 @@
 
         foreach ($forums as $forum) {
 
-            $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
-            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+                continue;   // Shouldn't happen
+            }
+
+            if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+                continue;   // Shouldn't happen
+            }
             
             if (!has_capability('mod/forum:viewdiscussion', $context)) {
                 if (isset($forum->keyreference)) {
@@ -158,8 +163,12 @@
     if ($generalforums) {
         foreach ($generalforums as $forum) {
 
-            $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
-            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+                continue;  // Shouldn't happen
+            }
+            if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+                continue;  // Shouldn't happen
+            }
 
             if (!groups_course_module_visible($cm)) {
                 continue;
@@ -294,7 +303,11 @@
         if ($learningforums) {
             $currentsection = "";
             foreach ($learningforums as $key => $forum) {
-                $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
+
+                if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+                    continue;   // Shouldn't happen
+                }
+
                 if (!coursemodule_visible_for_user($cm)) {
                     continue;
                 }
