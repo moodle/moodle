@@ -150,7 +150,7 @@ Necessiteu un lloc on Moodle pugui desar els fitxers que es pengin. L\'usuari de
 $string['dirroot'] = 'Directori de Moodle';
 $string['dirrooterror'] = 'El paràmetre \'Directori de Moodle\' sembla incorrecte: no s\'hi ha pogut trobat cap instal·lació de Moodle. S\'ha reiniciat el valor del paràmetre.';
 $string['download'] = 'Baixa';
-$string['downloadedfilecheckfailed'] = 'Ha fallat la comprovació del fitxer baixat';
+$string['downloadedfilecheckfailed'] = 'Ha fallat la comprovació del fitxer baixat.';
 $string['downloadlanguagebutton'] = 'Baixa el paquet d\'idioma \"$a\"';
 $string['downloadlanguagehead'] = 'Baixa paquet d\'idioma';
 $string['downloadlanguagenotneeded'] = 'Podeu continuar el procés d\'instal·lació amb el paquet d\'idioma per defecte \"$a\".';
@@ -262,6 +262,7 @@ $string['previous'] = 'Anterior';
 $string['qtyperqpwillberemoved'] = 'Durant l\'actualització, el tipus de pregunta RPQ se suprimirà. No estàveu utilitzant aquest tipus de pregunta, de manera que no hauríeu d\'experimentar cap problema.';
 $string['qtyperqpwillberemovedanyway'] = 'Durant l\'actualització, el tipus de pregunta RPQ se suprimirà. Teniu algunes preguntes RQP en la base de dades que deixaran de funcionar si no reinstal·leu el codi de http://moodle.org/mod/data/view.php?d=13&amp;rid=797 abans de prosseguir l\'actualització.';
 $string['releasenoteslink'] = 'Consulteu la informació sobre aquesta versió de Moodle en les <a target=\"_new\" href=\"$a\">Notes de llançament</a>';
+$string['remotedownloaderror'] = 'No s\'ha pogut baixar el component al vostre servidor. Verifiqueu els paràmetres de servidor intermediari. Es recomana l\'extensió cURL.<br /><br />Haureu de baixar manualment el fitxer <a href=\"$a->url\">$a->url</a>, copiar-lo a la ubicació \"$a->dest\" del vostre servidor i descomprimir-lo allí.';
 $string['remotedownloadnotallowed'] = 'El vostre servidor no permet baixar components ((allow_url_fopen inhabilitat).<br /><br />Baixeu manualment el fitxer <a href=\"$a->url\">$a->url</a>, copieu en la ubicació \"$a->dest\" del vostre servidor i descomprimiu-lo allí.';
 $string['report'] = 'Informe';
 $string['restricted'] = 'Restringit';
