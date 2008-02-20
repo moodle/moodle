@@ -491,6 +491,13 @@ class assignment_base {
         //make user global so we can use the id
         global $USER;
 
+        $mailinfo = optional_param('mailinfo', null, PARAM_BOOL);
+        if (is_null($mailinfo)) {
+            $mailinfo = get_user_preferences('assignment_mailinfo', 0);
+        } else {
+            set_user_preference('assignment_mailinfo', $mailinfo);
+        }
+
         switch ($mode) {
             case 'grade':                         // We are in a popup window grading
                 if ($submission = $this->process_feedback()) {
@@ -512,6 +519,8 @@ class assignment_base {
 
             case 'fastgrade':
                 ///do the fast grading stuff  - this process should work for all 3 subclasses
+
+                $mailinfo   = get_user_preferences('assignment_mailinfoqg', 1);
                 $grading    = false;
                 $commenting = false;
                 $col        = false;
@@ -528,6 +537,7 @@ class assignment_base {
                     $this->display_submissions();
                     break;
                 }
+
                 foreach ($_POST[$col] as $id => $unusedvalue){
 
                     $id = (int)$id; //clean parameter name
@@ -564,7 +574,10 @@ class assignment_base {
                     }
 
                     $submission->teacher    = $USER->id;
-                    $submission->mailed     = $updatedb?0:$submission->mailed;//only change if it's an update
+                    if ($updatedb) {
+                        $submission->mailed = (int)(!$mailinfo);
+                    }
+
                     $submission->timemarked = time();
 
                     //if it is not an update, we don't change the last modified time etc.
@@ -921,7 +934,11 @@ class assignment_base {
             }
         }
 
+        $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? 'checked="checked"' : '';
+
         ///Print Buttons in Single View
+        echo '<input type="hidden" name="mailinfo" value="0" />';
+        echo '<input type="checkbox" id="mailinfo" name="mailinfo" value="1" '.$lastmailinfo.' /><label for="mailinfo">'.get_string('emailnotification','assignment').'</label>';
         echo '<div class="buttons">';
         echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" onclick = "document.getElementById(\'submitform\').menuindex.value = document.getElementById(\'submitform\').grade.selectedIndex" />';
         echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />';
@@ -993,7 +1010,8 @@ class assignment_base {
             $perpage = optional_param('perpage', 10, PARAM_INT);
             $perpage = ($perpage <= 0) ? 10 : $perpage ;
             set_user_preference('assignment_perpage', $perpage);
-            set_user_preference('assignment_quickgrade', optional_param('quickgrade',0, PARAM_BOOL));
+            set_user_preference('assignment_quickgrade', optional_param('quickgrade', 0, PARAM_BOOL));
+            set_user_preference('assignment_mailinfoqg', optional_param('mailinfoqg', 0, PARAM_BOOL));
         }
 
         /* next we get perpage and quickgrade (allow quick grade) params
@@ -1291,7 +1309,6 @@ class assignment_base {
             echo '<input type="hidden" name="mode" value="fastgrade" />';
             echo '<input type="hidden" name="page" value="'.$page.'" />';
             echo '</div>';
-            //echo '<div style="text-align:center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
         }
 
         $table->print_html();  /// Print the whole table
@@ -1303,22 +1320,20 @@ class assignment_base {
         /// End of fast grading form
 
         /// Mini form for setting user preference
-        echo '<br />';
-        echo '<form id="options" action="submissions.php?id='.$this->cm->id.'" method="post">';
-        echo '<div>';
-        echo '<input type="hidden" id="updatepref" name="updatepref" value="1" />';
-        echo '<table id="optiontable" align="right">';
-        echo '<tr align="right"><td>';
+        echo '<div class="qgprefs">';
+        echo '<form id="options" action="submissions.php?id='.$this->cm->id.'" method="post"><div>';
+        echo '<input type="hidden" name="updatepref" value="1" />';
+        echo '<table id="optiontable">';
+        echo '<tr><td>';
         echo '<label for="perpage">'.get_string('pagesize','assignment').'</label>';
-        echo ':</td>';
+        echo '</td>';
         echo '<td>';
         echo '<input type="text" id="perpage" name="perpage" size="1" value="'.$perpage.'" />';
         helpbutton('pagesize', get_string('pagesize','assignment'), 'assignment');
         echo '</td></tr>';
-        echo '<tr align="right">';
-        echo '<td>';
+        echo '<tr><td>';
         print_string('quickgrade','assignment');
-        echo ':</td>';
+        echo '</td>';
         echo '<td>';
         if ($quickgrade){
             echo '<input type="checkbox" name="quickgrade" value="1" checked="checked" />';
@@ -1327,12 +1342,16 @@ class assignment_base {
         }
         helpbutton('quickgrade', get_string('quickgrade', 'assignment'), 'assignment').'</p></div>';
         echo '</td></tr>';
-        echo '<tr>';
-        echo '<td colspan="2" align="right">';
+        echo '<tr><td>';
+        $lastmailinfoqg = get_user_preferences('assignment_mailinfoqg', 1) ? 'checked="checked"' : '';
+        echo '<label for="mailinfoqg">'.get_string('emailnotification','assignment').'</label></td><td>';
+        echo '<input type="checkbox" id="mailinfoqg" name="mailinfoqg" value="1" '.$lastmailinfoqg.' />';
+        helpbutton('emailnotification', get_string('emailnotification', 'assignment'), 'assignment').'</p></div>';
+        echo '</td></tr>';
+        echo '<tr><td colspan="2">';
         echo '<input type="submit" value="'.get_string('savepreferences').'" />';
         echo '</td></tr></table>';
-        echo '</div>';
-        echo '</form>';
+        echo '</div></form></div>';
         ///End of mini form
         print_footer($this->course);
     }
@@ -1377,7 +1396,12 @@ class assignment_base {
             $submission->submissioncomment    = $feedback->submissioncomment;
             $submission->format     = $feedback->format;
             $submission->teacher    = $USER->id;
-            $submission->mailed     = 0;       // Make sure mail goes out (again, even)
+            $mailinfo = get_user_preferences('assignment_mailinfo', 0);
+            if (!$mailinfo) {
+                $submission->mailed = 1;       // treat as already mailed
+            } else {
+                $submission->mailed = 0;       // Make sure mail goes out (again, even)
+            }
             $submission->timemarked = time();
 
             unset($submission->data1);  // Don't need to update this.

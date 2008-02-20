@@ -70,7 +70,12 @@ class assignment_offline extends assignment_base {
             $submission->submissioncomment    = $feedback->submissioncomment;
             $submission->format     = $feedback->format;
             $submission->teacher    = $USER->id;
-            $submission->mailed     = 0;       // Make sure mail goes out (again, even)
+            $mailinfo = get_user_preferences('assignment_mailinfo', 0);
+            if (!$mailinfo) {
+                $submission->mailed = 1;       // treat as already mailed
+            } else {
+                $submission->mailed = 0;       // Make sure mail goes out (again, even)
+            }
             $submission->timemarked = time();
 
             unset($submission->data1);  // Don't need to update this.
