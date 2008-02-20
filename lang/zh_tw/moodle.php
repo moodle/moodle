@@ -355,6 +355,7 @@ $string['previeworchoose'] = "預覽或選擇網頁呈現方式";
 $string['question'] = "問題";
 $string['readme'] = "README";
 $string['recentactivity'] = "最近活動紀錄";
+$string['remove'] = '移除';
 $string['removeadmin'] = "可能的管理者";
 $string['removeteacher'] = "移除教師";
 $string['rename'] = "改名";
@@ -494,3 +495,4 @@ $string['width']="寬度";
 $string['height']="高度";
 $string['backonepage']="回前頁";
 ?>
+
