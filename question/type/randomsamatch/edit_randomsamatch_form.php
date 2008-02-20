@@ -50,16 +50,22 @@ class question_edit_randomsamatch_form extends question_edit_form {
     function validation($data, $files) {
         global $QTYPES;
         $errors = parent::validation($data, $files);
-        $saquestions = $QTYPES['randomsamatch']->get_sa_candidates($data['category']);
+        if (isset($data['usecurrentcat'])){
+            $category = $data['category'];
+        }else{
+            $category = $data['categorymoveto'];
+        }
+            
+        $saquestions = $QTYPES['randomsamatch']->get_sa_candidates($category);
         $numberavailable = count($saquestions);
         if ($saquestions === false){
             $a = new object();
-            $a->catname = get_field('question_categories', 'name', 'id', $data['category']);
+            $a->catname = get_field('question_categories', 'name', 'id', $category);
             $errors['choose'] = get_string('nosaincategory', 'qtype_randomsamatch', $a);
 
         } elseif ($numberavailable < $data['choose']){
             $a = new object();
-            $a->catname = get_field('question_categories', 'name', 'id', $data['category']);
+            $a->catname = get_field('question_categories', 'name', 'id', $category);
             $a->nosaquestions = $numberavailable;
             $errors['choose'] = get_string('notenoughsaincategory', 'qtype_randomsamatch', $a);
         }
