@@ -19,14 +19,20 @@
     $resort       = optional_param('resort', 0, PARAM_BOOL);
     $categorytheme= optional_param('categorytheme', false, PARAM_CLEAN);
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     if (!$site = get_site()) {
         error("Site isn't defined!");
     }
 
-    $context = get_context_instance(CONTEXT_COURSECAT, $id);
+    if (empty($id)) {
+        error("Category not known!");
+    }
 
-    if ($CFG->forcelogin) {
-        require_login();
+    if (!$context = get_context_instance(CONTEXT_COURSECAT, $id)) {
+        error("Category not known!");
     }
 
     if (!$category = get_record("course_categories", "id", $id)) {
