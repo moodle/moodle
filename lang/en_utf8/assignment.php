@@ -31,13 +31,13 @@ $string['confirmdeletefile'] = 'Are you absolutely sure you want to delete this 
 $string['deleteallsubmissions'] = 'Delete all submissions';
 $string['deletefilefailed'] = 'Deleting of file failed.';
 $string['description'] = 'Description';
+$string['disableemailnotification'] = 'Disable notification emails';
 $string['draft'] = 'Draft';
 $string['duedate'] = 'Due date';
 $string['duedateno'] = 'No due date';
 $string['early'] = '$a early';
 $string['editmysubmission'] = 'Edit my submission';
 $string['emailstudents'] = 'Email alerts to students';
-$string['emailnotification'] = 'Send notification email';
 $string['emailteachermail'] = '$a->username has updated their assignment submission
 for \'$a->assignment\'
 

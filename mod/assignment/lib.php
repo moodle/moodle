@@ -934,11 +934,11 @@ class assignment_base {
             }
         }
 
-        $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? 'checked="checked"' : '';
+        $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? '' : 'checked="checked"';
 
         ///Print Buttons in Single View
-        echo '<input type="hidden" name="mailinfo" value="0" />';
-        echo '<input type="checkbox" id="mailinfo" name="mailinfo" value="1" '.$lastmailinfo.' /><label for="mailinfo">'.get_string('emailnotification','assignment').'</label>';
+        echo '<input type="hidden" name="mailinfo" value="1" />';
+        echo '<input type="checkbox" id="mailinfo" name="mailinfo" value="0" '.$lastmailinfo.' /><label for="mailinfo">'.get_string('disableemailnotification','assignment').'</label>';
         echo '<div class="buttons">';
         echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" onclick = "document.getElementById(\'submitform\').menuindex.value = document.getElementById(\'submitform\').grade.selectedIndex" />';
         echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />';
@@ -1343,10 +1343,11 @@ class assignment_base {
         helpbutton('quickgrade', get_string('quickgrade', 'assignment'), 'assignment').'</p></div>';
         echo '</td></tr>';
         echo '<tr><td>';
-        $lastmailinfoqg = get_user_preferences('assignment_mailinfoqg', 1) ? 'checked="checked"' : '';
-        echo '<label for="mailinfoqg">'.get_string('emailnotification','assignment').'</label></td><td>';
-        echo '<input type="checkbox" id="mailinfoqg" name="mailinfoqg" value="1" '.$lastmailinfoqg.' />';
-        helpbutton('emailnotification', get_string('emailnotification', 'assignment'), 'assignment').'</p></div>';
+        $lastmailinfoqg = get_user_preferences('assignment_mailinfoqg', 1) ? '' : 'checked="checked"';
+        echo '<label for="mailinfoqg">'.get_string('disableemailnotification','assignment').'</label></td><td>';
+        echo '<input type="hidden" name="mailinfoqg" value="1" />';
+        echo '<input type="checkbox" id="mailinfoqg" name="mailinfoqg" value="0" '.$lastmailinfoqg.' />';
+        helpbutton('disableemailnotification', get_string('disableemailnotification', 'assignment'), 'assignment').'</p></div>';
         echo '</td></tr>';
         echo '<tr><td colspan="2">';
         echo '<input type="submit" value="'.get_string('savepreferences').'" />';
