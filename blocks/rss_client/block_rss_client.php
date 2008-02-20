@@ -200,6 +200,12 @@
                 }
             }
 
+            // first we must verify that the rss feed is loaded
+            // by checking $rss and $rss->items exist before using them
+            if (empty($rss) || empty($rss->items)) {
+                return '';
+            }
+
             if ($shownumentries > 0 && $shownumentries < count($rss->items) ) {
                 $rss->items = array_slice($rss->items, 0, $shownumentries);
             }
@@ -230,11 +236,6 @@
 
             $formatoptions->para = false;
 
-            // first we must verify that the rss feed is loaded
-            // by checking $rss and $rss->items exist before using them
-            if (empty($rss) || empty($rss->items)) {
-                return '';
-            }
 
             /// Accessibility: markup as a list.
             $returnstring .= '<ul class="list">'."\n";
