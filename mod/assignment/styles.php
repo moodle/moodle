@@ -159,3 +159,8 @@
   text-align: center;
   vertical-align: top;
 }
+
+#mod-assignment-submissions .qgprefs #optiontable {
+    text-align:right;
+    margin-left:auto;
+}
