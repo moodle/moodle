@@ -5,6 +5,7 @@
 $string['addnewentry'] = 'Add a new entry';
 $string['addotags'] = 'Add official tags';
 $string['addptags'] = 'Add user-defined tags';
+$string['backupblogshelp'] = 'If enabled then blogs will be included in SITE automated backups';
 $string['blockmenutitle'] = 'Blog Menu';
 $string['blocktagstitle'] = 'Blog Tags';
 $string['blocktitle'] = 'Blog tags block title';
