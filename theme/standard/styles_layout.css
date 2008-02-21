@@ -2112,6 +2112,15 @@ body#course-info .generalbox.info {
   margin:10px;
 }
 
+.course-report-outline td.numviews {
+  text-align:right;
+}
+
+.course-report-outline div.loginfo {
+  text-align:center;
+  margin: 1em;
+}
+
 #content .coursebox .summary .category {
   text-align:right;
 }

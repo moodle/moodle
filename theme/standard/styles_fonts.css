@@ -303,6 +303,16 @@ body#admin-index .copyright {
 .plugincheckwrapper { 
     text-align: center;
 }
+
+.course-report-outline td.lastaccess {
+  font-size:0.8em;
+}
+
+.course-report-outline tr.section {
+  text-align: center;
+}
+
+
 /***
  *** Blocks
  ***/
