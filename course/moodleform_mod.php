@@ -171,7 +171,7 @@ class moodleform_mod extends moodleform {
     /**
      * Adds all the standard elements to a form to edit the settings for an activity module.
      *
-     * @param mixed array or object describing supported features - groups, groupings, groupmembersonly
+     * @param mixed array or object describing supported features - groups, groupings, groupmembersonly, etc.
      */
     function standard_coursemodule_elements($features=null){
         global $COURSE, $CFG;
@@ -213,10 +213,14 @@ class moodleform_mod extends moodleform {
             $this->_features->gradecat = true;
         }
 
-        $outcomesused = false; 
+        if (!isset($this->_features->idnumber)) {
+            $this->_features->idnumber = true;
+        }
+
+        $outcomesused = false;
         if (!empty($CFG->enableoutcomes) and $this->_features->outcomes) {
             if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
-                $outcomesused = true; 
+                $outcomesused = true;
                 $mform->addElement('header', 'modoutcomes', get_string('outcomes', 'grades'));
                 foreach($outcomes as $outcome) {
                     $mform->addElement('advcheckbox', 'outcome_'.$outcome->id, $outcome->get_name());
@@ -254,8 +258,11 @@ class moodleform_mod extends moodleform {
         }
 
         $mform->addElement('modvisible', 'visible', get_string('visible'));
-        $mform->addElement('text', 'cmidnumber', get_string('idnumbermod'));
-        $mform->setHelpButton('cmidnumber', array('cmidnumber', get_string('idnumbermod')), true);
+
+        if ($this->_features->idnumber) {
+            $mform->addElement('text', 'cmidnumber', get_string('idnumbermod'));
+            $mform->setHelpButton('cmidnumber', array('cmidnumber', get_string('idnumbermod')), true);
+        }
 
         if ($this->_features->gradecat) {
             $categories = grade_get_categories_menu($COURSE->id, $outcomesused);
@@ -297,28 +304,34 @@ class moodleform_mod extends moodleform {
 
     /**
      * Overriding formslib's add_action_buttons() method, to add an extra submit "save changes and return" button.
-     * 
-     * @param bool $cancel
-     * @param string $submitlabel
-     * @param string $submit2label
+     *
+     * @param bool $cancel show cancel button
+     * @param string $submitlabel null means default, false means none, string is label text
+     * @param string $submit2label  null means default, false means none, string is label text
      * @return void
-     */ 
+     */
     function add_action_buttons($cancel=true, $submitlabel=null, $submit2label=null) {
         if (is_null($submitlabel)) {
             $submitlabel = get_string('savechangesanddisplay');
         }
-        
+
         if (is_null($submit2label)) {
             $submit2label = get_string('savechangesandreturntocourse');
         }
-        
+
         $mform =& $this->_form;
-        
-        //when two elements we need a group
-        $buttonarray=array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton2', $submit2label);
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
-        
+
+        // elements in a row need a group
+        $buttonarray = array();
+
+        if ($submit2label !== false) {
+            $buttonarray[] = &$mform->createElement('submit', 'submitbutton2', $submit2label);
+        }
+
+        if ($submitlabel !== false) {
+            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
+        }
+
         if ($cancel) {
             $buttonarray[] = &$mform->createElement('cancel');
         }
