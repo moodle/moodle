@@ -119,7 +119,7 @@ switch ($action) {
         $post->action       = $action;
         $strformheading = get_string('updateentrywithid', 'blog');
 
-        if ($itemptags = get_item_tags('blog', $post->id, 'ti.ordering ASC', 'id,rawname', '', '', 'default')) {
+        if ($itemptags = get_item_tags('post', $post->id, 'ti.ordering ASC', 'id,rawname', '', '', 'default')) {
             if ($ptags = records_to_menu($itemptags, 'id','rawname')) {           
                 $post->ptags = implode(', ', $ptags);
             } else {
@@ -127,7 +127,7 @@ switch ($action) {
             }
         }
         
-        if ($itemotags = get_item_tags('blog', $post->id, 'ti.ordering ASC', 'id,rawname', '', '', 'official')) {
+        if ($itemotags = get_item_tags('post', $post->id, 'ti.ordering ASC', 'id,rawname', '', '', 'official')) {
             if ($otags = records_to_menu($itemotags, 'id','rawname')) {
                 $post->otags = array_keys($otags);
             }
@@ -231,7 +231,7 @@ function do_delete($post) {
 
     $status = delete_records('post', 'id', $post->id);
     //$status = delete_records('blog_tag_instance', 'entryid', $post->id) and $status;
-    untag_an_item('blog', $post->id);
+    untag_an_item('post', $post->id);
     
     blog_delete_old_attachments($post);
 
@@ -293,7 +293,7 @@ function do_edit($post, $blogeditform) {
         
         //delete_records('blog_tag_instance', 'entryid', $post->id);
         //delete_records('tag_instance', 'itemid', $post->id, 'itemtype', 'blog');
-        untag_an_item('blog', $post->id);
+        untag_an_item('post', $post->id);
         // add them back
         add_tags_info($post->id);
 
@@ -319,7 +319,7 @@ function add_tags_info($postid) {
         foreach ($otags as $otag) {
             $tag->tagid = $otag;
             //insert_record('blog_tag_instance', $tag);
-            tag_an_item('blog', $postid, $otag, 'official'); 
+            tag_an_item('post', $postid, $otag, 'official'); 
         }
     }
 
@@ -328,15 +328,15 @@ function add_tags_info($postid) {
         $ptags = explode(',', $ptags);
         foreach ($ptags as $ptag) {
             $ptag = trim($ptag);
-            // check for existance
+            // check for existence
             // it does not matter whether it is an offical tag or personal tag
             // we do not want to have 1 copy of offical tag and 1 copy of personal tag (for the same tag)
             if ($ctag = tag_by_name($ptag)) {
-                tag_an_item('blog', $postid, $ctag->id);
+                tag_an_item('post', $postid, $ctag->id);
             } else { // create a personal tag
                 if ($tagid = tag_create($ptag)) {
                     if ($tagid = array_shift($tagid)) {
-                        tag_an_item('blog', $postid, $tagid);
+                        tag_an_item('post', $postid, $tagid);
                     }
                 }
             }
