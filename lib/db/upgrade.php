@@ -2846,6 +2846,10 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101508.03);
     }
 
+    if ($result && $oldversion < 2007101508.04) {
+        set_field('tag_instance', 'itemtype', 'post', 'itemtype', 'blog'); 
+        upgrade_main_savepoint($result, 2007101508.04);
+    }
 
     return $result;
 }
