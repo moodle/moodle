@@ -1367,6 +1367,11 @@ function calendar_edit_event_allowed($event) {
 
     global $USER;
 
+    // Must be logged in
+    if (!isloggedin()) {
+        return false;
+    }
+
     // can not be using guest account
     if ($USER->username == "guest") {
         return false;
