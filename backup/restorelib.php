@@ -848,6 +848,11 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         continue;
                     }
                     $getid = backup_getid($restore->backup_unique_code, $parts[1], $instance->pageid);
+
+                    if (empty($getid->new_id)) {
+                        // Failed, perhaps the module was not included in the restore  MDL-13554
+                        continue;
+                    }
                     $instance->pageid = $getid->new_id;
                 }
                 else {
