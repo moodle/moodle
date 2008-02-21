@@ -4,7 +4,7 @@
  * gdlib.php - Collection of routines in Moodle related to
  * processing images using GD
  *
- * @author ?
+ * @author Martin Dougiamas etc
  * @version  $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
@@ -95,20 +95,11 @@ function delete_profile_image($id, $dir='users') {
  * it and saves it in the right place to be a "user" or "group" image.
  *
  * @param int $id user or group id
- * @param object $uploadmanager object referencing the image
  * @param string $dir type of entity - groups, user, ...
- * @return boolean success
+ * @return string $destination (profile image destination path) or false on error
  */
-function save_profile_image($id, $uploadmanager, $dir='user') {
+function create_profile_image_destination($id, $dir='user') {
     global $CFG;
-
-    if (empty($CFG->gdversion)) {
-        return false;
-    }
-
-    if (!$uploadmanager) {
-        return false;
-    }
 
     umask(0000);
 
@@ -129,12 +120,55 @@ function save_profile_image($id, $uploadmanager, $dir='user') {
             return false;
         }
     }
+    return $destination;
+}
+
+/**
+ * Given an upload manager with the right settings, this function performs a virus scan, and then scales and crops
+ * it and saves it in the right place to be a "user" or "group" image.
+ *
+ * @param int $id user or group id
+ * @param object $uploadmanager object referencing the image
+ * @param string $dir type of entity - groups, user, ...
+ * @return boolean success
+ */
+function save_profile_image($id, $uploadmanager, $dir='user') {
+
+    if (!$uploadmanager) {
+        return false;
+    }
+
+    $destination = create_profile_image_destination($id, $dir);
+    if ($destination === false) {
+        return false;
+    }
 
     if (!$uploadmanager->save_files($destination)) {
         return false;
     }
 
-    $originalfile = $uploadmanager->get_new_filepath();
+    return process_profile_image($uploadmanager->get_new_filepath(), $destination);
+}
+
+/**
+ * Given a path to an image file this function scales and crops it and saves it in
+ * the right place to be a "user" or "group" image.
+ *
+ * @uses $CFG
+ * @param string $originalfile the path of the original image file
+ * @param string $destination the final destination directory of the profile image
+ * @return boolean
+ */
+function process_profile_image($originalfile, $destination) {
+    global $CFG;
+
+    if(!(is_file($originalfile) && is_dir($destination))) {
+        return false;
+    }
+
+    if (empty($CFG->gdversion)) {
+        return false;
+    }
 
     $imageinfo = GetImageSize($originalfile);
 
@@ -150,7 +184,7 @@ function save_profile_image($id, $uploadmanager, $dir='user') {
     $image->type   = $imageinfo[2];
 
     switch ($image->type) {
-        case 1:
+        case IMAGETYPE_GIF:
             if (function_exists('ImageCreateFromGIF')) {
                 $im = ImageCreateFromGIF($originalfile);
             } else {
@@ -159,7 +193,7 @@ function save_profile_image($id, $uploadmanager, $dir='user') {
                 return false;
             }
             break;
-        case 2:
+        case IMAGETYPE_JPEG:
             if (function_exists('ImageCreateFromJPEG')) {
                 $im = ImageCreateFromJPEG($originalfile);
             } else {
@@ -168,7 +202,7 @@ function save_profile_image($id, $uploadmanager, $dir='user') {
                 return false;
             }
             break;
-        case 3:
+        case IMAGETYPE_PNG:
             if (function_exists('ImageCreateFromPNG')) {
                 $im = ImageCreateFromPNG($originalfile);
             } else {
