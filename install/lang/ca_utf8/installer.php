@@ -32,7 +32,7 @@ $string['compatibilitysettingshead'] = 'S\'estan comprovant els paràmetres del 
 $string['compatibilitysettingssub'] = 'El vostre servidor hauria de passar totes aquestes proves per tal que Moodle funcioni correctament.';
 $string['componentisuptodate'] = 'El component està al dia';
 $string['configfilenotwritten'] = 'La seqüència d\'instal·lació no ha estat capaç de crear automàticament un fitxer config.php que contingui els paràmetres que heu triat, probablement perquè no pugui escriure al directori de Moodle. Podeu copiar a mà el codi següent en un fitxer anomenat config.php dins del directori arrel de Moodle.';
-$string['configfilewritten'] = 'S\'ha creat amb èxit el fitxer config.php';
+$string['configfilewritten'] = 'S\'ha creat correctament el fitxer config.php';
 $string['configurationcompletehead'] = 'S\'ha completat la configuració';
 $string['configurationcompletesub'] = 'Moodle ha intentat desar la configuració en un fitxer en l\'arrel de la vostra instal·lació de Moodle.';
 $string['continue'] = 'Continua';
@@ -95,6 +95,7 @@ $string['databasesettingssub_postgres7'] = '<b>Tipus:</b> PostgreSQL<br />
 <b>Usuari:</b> el vostre nom d\'usuari de la base de dades<br />
 <b>Contrasenya:</b> la vostra contrasenya de la base de dades<br />
 <b>Prefix de les taules:</b> prefix que cal anteposar als noms de totes les taules (obligatori)';
+$string['databasesettingswillbecreated'] = '<strong>Nota</strong >: l\'instal·lador intentarà crear automàticament la base de dades si no existeix.';
 $string['dataroot'] = 'Directori de dades';
 $string['datarooterror'] = 'No s\'ha pogut trobar o crear el directori de dades que heu especificat. Corregiu el camí o creeu el directori a mà.';
 $string['dbconnectionerror'] = 'No es pot obrir la connexió amb la base de dades que heu especificat. Comproveu els paràmetres de la base de dades.';
@@ -237,4 +238,5 @@ $string['wrongsourcebase'] = 'L\'adreça (URL) base de la font és errònia';
 $string['wrongzipfilename'] = 'El nom del fitxer ZIP és erroni';
 $string['wwwroot'] = 'Adreça web';
 $string['wwwrooterror'] = 'L\'adreça web no sembla vàlida. La instal·lació de Moodle no sembla que sigui en aquesta ubicació,';
+$string['xmlrpcrecommended'] = 'Instal·lar l\'extensió opcional xmlrpc és útil per a la funcionalitat de Moodle en Xarxa.';
 ?>
