@@ -3185,20 +3185,22 @@ function forum_go_back_to($default) {
 function forum_file_area_name($post) {
     global $CFG;
 
-    if (!isset($post->forum)) {
-        debugging('missing forum', DEBUG_DEVELOPER);
+    if (!isset($post->forum) or !isset($post->course)) {
+        debugging('missing forum or course', DEBUG_DEVELOPER);
         if (!$discussion = get_record('forum_discussions', 'id', $post->discussion)) {
             return false;
         }
         if (!$forum = get_record('forum', 'id', $discussion->forum)) {
             return false;
         }
-        $forumid = $forum->id;
+        $forumid  = $forum->id;
+        $courseid = $forum->course; 
     } else {
-    	$forumid = $post->forum;
+    	$forumid  = $post->forum;
+        $courseid = $post->course; 
     }
 
-    return "$post->course/$CFG->moddata/forum/$forumid/$post->id";
+    return "$courseid/$CFG->moddata/forum/$forumid/$post->id";
 }
 
 /**
@@ -3364,10 +3366,15 @@ function forum_add_new_post($post,&$message) {
 
     global $USER, $CFG;
 
-    $post->created = $post->modified = time();
-    $post->mailed = "0";
-    $post->userid = $USER->id;
+    $discussion = get_record('forum_discussions', 'id', $post->discussion);
+    $forum      = get_record('forum', 'id', $discussion->forum);
+
+    $post->created    = $post->modified = time();
+    $post->mailed     = "0";
+    $post->userid     = $USER->id;
     $post->attachment = "";
+    $post->forum      = $forum->id;     // speedup
+    $post->course     = $forum->course; // speedup
 
     if (! $post->id = insert_record("forum_posts", $post)) {
         return false;
@@ -3431,12 +3438,14 @@ function forum_update_post($post,&$message) {
  */
 function forum_add_discussion($discussion,&$message) {
 
-    GLOBAL $USER, $CFG;
+    global $USER, $CFG;
 
     $timenow = time();
 
     // The first post is stored as a real post, and linked
     // to from the discuss entry.
+
+    $forum = get_record('forum', 'id', $discussion->forum);
 
     $post = new object();
     $post->discussion  = 0;
@@ -3448,8 +3457,8 @@ function forum_add_discussion($discussion,&$message) {
     $post->subject     = $discussion->name;
     $post->message     = $discussion->intro;
     $post->attachment  = "";
-    $post->forum       = $discussion->forum;
-    $post->course      = $discussion->course;
+    $post->forum       = $forum->id;     // speedup
+    $post->course      = $forum->course; // speedup
     $post->format      = $discussion->format;
     $post->mailnow     = $discussion->mailnow;
 
