@@ -2857,6 +2857,23 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101508.04);
     }
 
+    if ($result && $oldversion < 2007101508.05) {
+
+    /// Define index cmid (not unique) to be added to log
+        $table = new XMLDBTable('log');
+        $index = new XMLDBIndex('cmid');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('cmid'));
+
+    /// Launch add index cmid
+        if (!index_exists($table, $index)) {
+            $result = $result && add_index($table, $index);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101508.05);
+    }
+
+
     return $result;
 }
 

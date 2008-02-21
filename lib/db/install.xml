@@ -288,7 +288,8 @@
         <INDEX NAME="course-module-action" UNIQUE="false" FIELDS="course, module, action" NEXT="time"/>
         <INDEX NAME="time" UNIQUE="false" FIELDS="time" PREVIOUS="course-module-action" NEXT="action"/>
         <INDEX NAME="action" UNIQUE="false" FIELDS="action" PREVIOUS="time" NEXT="userid-course"/>
-        <INDEX NAME="userid-course" UNIQUE="false" FIELDS="userid, course" PREVIOUS="action"/>
+        <INDEX NAME="userid-course" UNIQUE="false" FIELDS="userid, course" PREVIOUS="action" NEXT="cmid"/>
+        <INDEX NAME="cmid" UNIQUE="false" FIELDS="cmid" PREVIOUS="userid-course"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="log_display" COMMENT="For a particular module/action, specifies a moodle table/field" PREVIOUS="log" NEXT="message">
