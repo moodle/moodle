@@ -64,7 +64,7 @@
             error('Forum not visible', $return);
         }
 
-        if (!forum_move_attachments($discussion, $forumto)) {
+        if (!forum_move_attachments($discussion, $forumto->id)) {
             notify("Errors occurred while moving attachment directories - check your file permissions");
         }
         set_field('forum_discussions', 'forum', $forumto->id, 'id', $discussion->id);
@@ -76,7 +76,7 @@
         // Delete the RSS files for the 2 forums because we want to force
         // the regeneration of the feeds since the discussions have been
         // moved.
-        if (!forum_rss_delete_file($forum) || !forum_rss_delete_file($sourceforum)) {
+        if (!forum_rss_delete_file($forum) || !forum_rss_delete_file($forumto)) {
             error('Could not purge the cached RSS feeds for the source and/or'.
                    'destination forum(s) - check your file permissionsforums', $return);
         }
