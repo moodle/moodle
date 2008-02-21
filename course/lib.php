@@ -1455,7 +1455,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
                 $types = $gettypesfunc();
                 foreach($types as $type) {
                     if (!isset($type->modclass) or !isset($type->typestr)) {
-                        debugging('Incorrect ativity type in '.$modname);
+                        debugging('Incorrect activity type in '.$modname);
                         continue;
                     }
                     if ($type->modclass == MOD_CLASS_RESOURCE) {
@@ -2610,20 +2610,23 @@ function print_visible_setting($form, $course=NULL) {
 }
 
 function update_restricted_mods($course,$mods) {
-    delete_records("course_allowed_modules","course",$course->id);
+
+/// Delete all the current restricted list
+    delete_records('course_allowed_modules','course',$course->id);
+
     if (empty($course->restrictmodules)) {
-        return;
+        return;   // We're done
     }
-    else {
-        foreach ($mods as $mod) {
-            if ($mod == 0) {
-                continue; // this is the 'allow none' option
-            }
-            $am = new object();
-            $am->course = $course->id;
-            $am->module = $mod;
-            insert_record("course_allowed_modules",$am);
+
+/// Insert the new list of restricted mods
+    foreach ($mods as $mod) {
+        if ($mod == 0) {
+            continue; // this is the 'allow none' option
         }
+        $am = new object();
+        $am->course = $course->id;
+        $am->module = $mod;
+        insert_record('course_allowed_modules',$am);
     }
 }
 
@@ -2635,24 +2638,27 @@ function update_restricted_mods($course,$mods) {
  */
 
 function course_allowed_module($course,$mod) {
+    
     if (empty($course->restrictmodules)) {
         return true;
     }
 
-    // i am not sure this capability is correct
+    // Admins and admin-like people who can edit everything can also add anything.
+    // This is a bit wierd, really.  I debated taking it out but it's enshrined in help for the setting.
     if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         return true;
     }
+
     if (is_numeric($mod)) {
         $modid = $mod;
     } else if (is_string($mod)) {
-        if ($mod = get_field("modules","id","name",$mod))
-            $modid = $mod;
+        $modid = get_field('modules','id','name',$mod);
     }
     if (empty($modid)) {
         return false;
     }
-    return (record_exists("course_allowed_modules","course",$course->id,"module",$modid));
+    
+    return (record_exists('course_allowed_modules','course',$course->id,'module',$modid));
 }
 
 /***
@@ -2799,12 +2805,10 @@ function create_course($data) {
     // preprocess allowed mods
     $allowedmods = empty($data->allowedmods) ? array() : $data->allowedmods;
     unset($data->allowedmods);
-    if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-        if ($CFG->restrictmodulesfor == 'all') {
-            $data->restrictmodules = 1;
-        } else {
-            $data->restrictmodules = 0;
-        }
+    if ($CFG->restrictmodulesfor == 'all') {
+        $data->restrictmodules = 1;
+    } else {
+        $data->restrictmodules = 0;
     }
 
     $data->timecreated = time();
@@ -2824,9 +2828,7 @@ function create_course($data) {
         $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
         blocks_repopulate_page($page); // Return value not checked because you can always edit later
 
-        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-            update_restricted_mods($course, $allowedmods);
-        }
+        update_restricted_mods($course, $allowedmods);
 
         $section = new object();
         $section->course = $course->id;   // Create a default section.
@@ -2852,9 +2854,11 @@ function create_course($data) {
 function update_course($data) {
     global $USER, $CFG;
 
-    // preprocess allowed mods
+    // Preprocess allowed mods
     $allowedmods = empty($data->allowedmods) ? array() : $data->allowedmods;
     unset($data->allowedmods);
+
+    // Normal teachers can't change setting
     if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         unset($data->restrictmodules);
     }
@@ -2876,6 +2880,7 @@ function update_course($data) {
 
         add_to_log($course->id, "course", "update", "edit.php?id=$course->id", $course->id);
 
+        // "Admins" can change allowed mods for a course
         if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             update_restricted_mods($course, $allowedmods);
         }
