@@ -520,7 +520,6 @@ class assignment_base {
             case 'fastgrade':
                 ///do the fast grading stuff  - this process should work for all 3 subclasses
 
-                $mailinfo   = get_user_preferences('assignment_mailinfoqg', 1);
                 $grading    = false;
                 $commenting = false;
                 $col        = false;
@@ -1011,7 +1010,6 @@ class assignment_base {
             $perpage = ($perpage <= 0) ? 10 : $perpage ;
             set_user_preference('assignment_perpage', $perpage);
             set_user_preference('assignment_quickgrade', optional_param('quickgrade', 0, PARAM_BOOL));
-            set_user_preference('assignment_mailinfoqg', optional_param('mailinfoqg', 0, PARAM_BOOL));
         }
 
         /* next we get perpage and quickgrade (allow quick grade) params
@@ -1314,7 +1312,16 @@ class assignment_base {
         $table->print_html();  /// Print the whole table
 
         if ($quickgrade){
-            echo '<div style="text-align:center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
+            $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? '' : 'checked="checked"';
+            echo '<div class="fgcontrols">';
+            echo '<div class="emailnotification">';
+            echo '<label for="mailinfo">'.get_string('disableemailnotification','assignment').'</label>';
+            echo '<input type="hidden" name="mailinfo" value="1" />';
+            echo '<input type="checkbox" id="mailinfo" name="mailinfo" value="0" '.$lastmailinfo.' />';
+            helpbutton('disableemailnotification', get_string('disableemailnotification', 'assignment'), 'assignment').'</p></div>';
+            echo '</div>';
+            echo '<div class="fastgbutton"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
+            echo '</div>';
             echo '</form>';
         }
         /// End of fast grading form
@@ -1332,22 +1339,12 @@ class assignment_base {
         helpbutton('pagesize', get_string('pagesize','assignment'), 'assignment');
         echo '</td></tr>';
         echo '<tr><td>';
-        print_string('quickgrade','assignment');
+        echo '<label for="quickgrade">'.get_string('quickgrade','assignment').'</label>';
         echo '</td>';
         echo '<td>';
-        if ($quickgrade){
-            echo '<input type="checkbox" name="quickgrade" value="1" checked="checked" />';
-        } else {
-            echo '<input type="checkbox" name="quickgrade" value="1" />';
-        }
+        $checked = $quickgrade ? 'checked="checked"' : '';
+        echo '<input type="checkbox" id="quickgrade" name="quickgrade" value="1" '.$checked.' />';
         helpbutton('quickgrade', get_string('quickgrade', 'assignment'), 'assignment').'</p></div>';
-        echo '</td></tr>';
-        echo '<tr><td>';
-        $lastmailinfoqg = get_user_preferences('assignment_mailinfoqg', 1) ? '' : 'checked="checked"';
-        echo '<label for="mailinfoqg">'.get_string('disableemailnotification','assignment').'</label></td><td>';
-        echo '<input type="hidden" name="mailinfoqg" value="1" />';
-        echo '<input type="checkbox" id="mailinfoqg" name="mailinfoqg" value="0" '.$lastmailinfoqg.' />';
-        helpbutton('disableemailnotification', get_string('disableemailnotification', 'assignment'), 'assignment').'</p></div>';
         echo '</td></tr>';
         echo '<tr><td colspan="2">';
         echo '<input type="submit" value="'.get_string('savepreferences').'" />';
@@ -1679,7 +1676,7 @@ class assignment_base {
                         $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
                     }
 
-                    $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.
+                    $output .= '<img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.
                             '<a href="'.$ffurl.'" >'.$file.'</a><br />';
                 }
             }
