@@ -527,7 +527,7 @@
 
         if ($tag) {
             $tagtablesql = $CFG->prefix.'tag_instance ti, ';
-            $tagquerysql = ' AND ti.itemid = p.id AND ti.tagid = '.$tag.' AND ti.itemtype = \'blog\' ';
+            $tagquerysql = ' AND ti.itemid = p.id AND ti.tagid = '.$tag.' AND ti.itemtype = \'post\' ';
         } else {
             $tagtablesql = '';
             $tagquerysql = '';
