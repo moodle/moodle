@@ -6242,7 +6242,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
             $startpage = 0;
         }
         $currpage = $startpage;
-        $displaycount = 0;
+        $displaycount = $displaypage = 0;
         while ($displaycount < $maxdisplay and $currpage < $lastpage) {
             $displaypage = $currpage+1;
             if ($page == $currpage && empty($nocurr)) {
