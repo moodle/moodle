@@ -7190,7 +7190,9 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
         if (!$list = $archive->extract(PCLZIP_OPT_PATH, $destpath,
                                        PCLZIP_CB_PRE_EXTRACT, 'unzip_cleanfilename',
                                        PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $destpath)) {
-            notice($archive->errorInfo(true));
+            if (!empty($showstatus)) {
+                notice($archive->errorInfo(true));
+            }
             return false;
         }
 
