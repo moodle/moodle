@@ -2,32 +2,25 @@
 
 // Display user activity reports for a course (totals)
 
-    require_once("../../../config.php");
-    require_once("../../lib.php");
+    require_once('../../../config.php');
+    require_once($CFG->dirroot.'/course/lib.php');
 
-    $modes = array("outline", "complete", "todaylogs", "alllogs");
+    $id = required_param('id',PARAM_INT);       // course id
 
-    $id      = required_param('id',PARAM_INT);       // course id
-    $page    = optional_param('page', 0, PARAM_INT);
-    $perpage = optional_param('perpage', 100, PARAM_INT);
-
-    if (! $course = get_record("course", "id", $id)) {
-        error("Course id is incorrect.");
+    if (!$course = get_record('course', 'id', $id)) {
+        error('Course id is incorrect.');
     }
 
-    require_login($course->id);
-
+    require_login($course);
     require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id));
 
-    add_to_log($course->id, "course", "report outline", "report/outline/index.php?id=$course->id", $course->id);
+    add_to_log($course->id, 'course', 'report outline', "report/outline/index.php?id=$course->id", $course->id);
 
-    $stractivityreport = get_string("activityreport");
-    $strparticipants   = get_string("participants");
-    $stroutline        = get_string("outline");
-    $strcomplete       = get_string("complete");
-    $stralllogs        = get_string("alllogs");
-    $strtodaylogs      = get_string("todaylogs");
-    $strreports        = get_string("reports");
+    $stractivityreport = get_string('activityreport');
+    $stractivity       = get_string('activity');
+    $strlast           = get_string('lastaccess');
+    $strreports        = get_string('reports');
+    $strviews          = get_string('views');
 
     $navlinks = array();
     $navlinks[] = array('name' => $strreports, 'link' => "../../report.php?id=$course->id", 'type' => 'misc');
@@ -38,87 +31,75 @@
 
     print_heading(format_string($course->fullname));
 
-    echo "<table cellpadding=\"10\" align=\"center\"><tr>";
-    echo "<td>$stractivityreport: </td>";
-    echo "</tr></table>";
+    if (!$logstart = get_field_sql("SELECT MIN(time) FROM {$CFG->prefix}log")) {
+        error('Logs not available');
+    }
 
-    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
+    echo '<div class="loginfo">'.get_string('computedfromlogs', 'admin', userdate($logstart)).'</div>';
 
-    $sections = get_all_sections($course->id);
+    echo '<table id="outlinetable" class="generaltable boxaligncenter" cellpadding="5"><tr>';
+    echo '<th class="header c0" scope="col">'.$stractivity.'</th>';
+    echo '<th class="header c1" scope="col">'.$strviews.'</th>';
+    echo '<th class="header c2" scope="col">'.$strlast.'</th>';
+    echo '</tr>';
 
-    for ($i=0; $i<=$course->numsections; $i++) {
+    $modinfo = get_fast_modinfo($course);
 
-        if (isset($sections[$i])) {   // should always be true
+    $sql = "SELECT cm.id, COUNT('x') AS numviews, MAX(time) AS lasttime
+              FROM {$CFG->prefix}course_modules cm
+                   JOIN {$CFG->prefix}modules m ON m.id = cm.module
+                   JOIN {$CFG->prefix}log l     ON l.cmid = cm.id
+             WHERE cm.course = $course->id AND l.action LIKE 'view%' AND m.visible = 1
+          GROUP BY cm.id";
+    $views = get_records_sql($sql);
 
-            $section = $sections[$i];
-
-            if ($section->sequence) {
-                echo "<hr />";
-                echo "<h2>";
-                switch ($course->format) {
-                    case "weeks": print_string("week"); break;
-                    case "topics": print_string("topic"); break;
-                    default: print_string("section"); break;
-                }
-                echo " $i</h2>";
-                echo "<table cellpadding=\"4\" cellspacing=\"0\">";
-
-                $sectionmods = explode(",", $section->sequence);
-                foreach ($sectionmods as $sectionmod) {
-                    if (empty($mods[$sectionmod])) {
-                        continue;
-                    }
-                    $mod = $mods[$sectionmod];
-                    $instance = get_record("$mod->modname", "id", "$mod->instance");
-                    $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
-
-
-                    $result = null;
-                    if ($logs = get_records_select("log", "module='$mod->modname'
-                                           AND action LIKE 'view%' AND info='$mod->instance'", "time ASC")) {
-
-                        $numviews = count($logs);
-                        $lastlog = array_pop($logs);
-
-                        $result->info = get_string("numviews", "", $numviews);
-                        $result->time = $lastlog->time;
-                    }
-                    print_outline_row($mod, $instance, $result);
-                }
-
-                echo "</table>";
+    $ri = 0;
+    $prevsecctionnum = 0;
+    foreach ($modinfo->sections as $sectionnum=>$section) {
+        foreach ($section as $cmid) {
+            $cm = $modinfo->cms[$cmid];
+            if ($cm->modname == 'label') {
+                continue;
             }
+            if (!$cm->uservisible) {
+                continue;
+            }
+            if ($prevsecctionnum != $sectionnum) {
+                echo '<tr class="r'.$ri++.' section"><td colspan="3"><h3>';
+                switch ($course->format) {
+                    case 'weeks': print_string('week'); break;
+                    case 'topics': print_string('topic'); break;
+                    default: print_string('section'); break;
+                }
+                echo ' '.$sectionnum.'</h3></td></tr>';
+
+                $prevsecctionnum = $sectionnum;
+            }
+
+            $dimmed = $cm->visible ? '' : 'class="dimmed"';
+            $modulename = get_string('modulename', $cm->modname);
+            echo '<tr class="r'.$ri++.'">';
+            echo "<td class=\"cell c0 actvity\"><img src=\"$CFG->modpixpath/$cm->modname/icon.gif\" class=\"icon\" alt=\"$modulename\" />";
+            echo "<a $dimmed title=\"$modulename\" href=\"$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id\">".format_string($cm->name)."</a></td>";
+            echo "<td class=\"cell c1 numviews\">";
+            if (!empty($views[$cm->id]->numviews)) {
+                echo $views[$cm->id]->numviews;
+            } else {
+                echo '-';
+            }
+            echo "</td>";
+            echo "<td class=\"cell c2 lastaccess\">";
+            if (isset($views[$cm->id]->lasttime)) {
+                $timeago = format_time(time() - $views[$cm->id]->lasttime);
+                echo userdate($views[$cm->id]->lasttime)." ($timeago)";
+            }
+            echo "</td>";
+            echo '</tr>';
         }
     }
+    echo '</table>';
 
     print_footer($course);
 
-
-function print_outline_row($mod, $instance, $result) {
-
-    global $CFG;
-
-    $image = "<img src=\"$CFG->modpixpath/$mod->modname/icon.gif\" class=\"icon\" alt=\"$mod->modfullname\" />";
-
-    echo "<tr>";
-    echo "<td valign=\"top\">$image</td>";
-    echo "<td valign=\"top\" width=\"300\">";
-    echo "   <a title=\"$mod->modfullname\"";
-    echo "   href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instance->name</a></td>";
-    echo "<td>&nbsp;&nbsp;&nbsp;</td>";
-    echo "<td valign=\"top\" bgcolor=\"white\">";
-    if (isset($result->info)) {
-        echo "$result->info";
-    } else {
-        echo "<p align=\"center\">-</p>";
-    }
-    echo "</td>";
-    echo "<td>&nbsp;&nbsp;&nbsp;</td>";
-    if (isset($result->time)) {
-        $timeago = format_time(time() - $result->time);
-        echo "<td valign=\"top\" style=\"white-space: nowrap\">".userdate($result->time)." ($timeago)</td>";
-    }
-    echo "</tr>";
-}
 
 ?>
