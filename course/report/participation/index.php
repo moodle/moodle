@@ -1,45 +1,34 @@
 <?php  // $Id$
 
     require_once('../../../config.php');
-    require_once($CFG->libdir.'/statslib.php');
+    require_once($CFG->dirroot.'/lib/tablelib.php');
 
     define('DEFAULT_PAGE_SIZE', 20);
     define('SHOW_ALL_PAGE_SIZE', 5000);
 
     $id         = required_param('id', PARAM_INT); // course id.
-    $moduleid   = optional_param('moduleid', 0, PARAM_INT); // module id.
-    $oldmod     = optional_param('oldmod', 0, PARAM_INT);
-    $roleid     = optional_param('roleid',0,PARAM_INT); // which role to show
+    $roleid     = optional_param('roleid', 0, PARAM_INT); // which role to show
     $instanceid = optional_param('instanceid', 0, PARAM_INT); // instance we're looking at.
     $timefrom   = optional_param('timefrom', 0, PARAM_INT); // how far back to look...
     $action     = optional_param('action', '', PARAM_ALPHA);
     $page       = optional_param('page', 0, PARAM_INT);                     // which page to show
     $perpage    = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
 
-    if ($action != 'view' && $action != 'post') {
+    if ($action != 'view' and $action != 'post') {
         $action = ''; // default to all (don't restrict)
     }
 
-    // reset instance if changing module.
-    if (!empty($moduleid) && !empty($oldmod) && $moduleid != $oldmod) {
-        $instanceid = 0;
-    }
-
-    if (!$course = get_record('course','id',$id)) {
+    if (!$course = get_record('course', 'id', $id)) {
         print_error('invalidcourse');
     }
 
-    if ($roleid != 0 && !$role = get_record('role','id',$roleid)) {
+    if ($roleid != 0 and !$role = get_record('role', 'id', $roleid)) {
         print_error('invalidrole');
     }
 
-    require_login($course->id);
+    require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-
-    if (!has_capability('moodle/site:viewreports', $context)) {
-        print_error('mustbeteacher', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
-    }
-
+    require_capability('moodle/site:viewreports', $context);
 
     add_to_log($course->id, "course", "report participation", "report/participation/index.php?id=$course->id", $course->id);
 
@@ -51,26 +40,32 @@
     $strallactions    = get_string('allactions');
     $strreports       = get_string('reports');
 
+    $actionoptions = array('' => $strallactions,
+                           'view' => $strview,
+                           'post' => $strpost,);
+    if (!in_array($action, $actionoptions)) {
+        $action = '';
+    }
+
     $navlinks = array();
     $navlinks[] = array('name' => $strreports, 'link' => "../../report.php?id=$course->id", 'type' => 'misc');
     $navlinks[] = array('name' => $strparticipation, 'link' => null, 'type' => 'misc');
     $navigation = build_navigation($navlinks);
     print_header("$course->shortname: $strparticipation", $course->fullname, $navigation);
 
-    $allowedmodules = array('assignment','book','chat','choice','exercise','forum','glossary','hotpot',
-                            'journal','lesson','questionnaire','quiz','resource','scorm',
-                            'survey','wiki','workshop'); // some don't make sense here - eg 'label'
+    $modinfo = get_fast_modinfo($course);
 
-    if (!$modules = get_records_sql('SELECT DISTINCT module,name FROM '.$CFG->prefix.'course_modules cm JOIN '.
-                                    $CFG->prefix.'modules m ON cm.module = m.id WHERE course = '.$course->id)) {
-        print_error('noparticipatorycms', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
-    }
+    $modules = get_records_select('modules', "visible = 1 AND name <> 'label'", 'name ASC'); 
 
-
-    $modoptions = array();
-    foreach ($modules as $m) {
-        if (in_array($m->name,$allowedmodules)) {
-            $modoptions[$m->module] = get_string('modulename',$m->name);
+    $instanceoptions = array();
+    foreach ($modules as $module) {
+        if (empty($modinfo->instances[$module->name])) {
+            continue;
+        }
+        $agroup = get_string('modulenameplural', $module->name);
+        $instanceoptions[$agroup] = array();
+        foreach ($modinfo->instances[$module->name] as $cm) {
+            $instanceoptions[$agroup][$cm->id] = format_string($cm->name); 
         }
     }
 
@@ -103,103 +98,58 @@
         $timeoptions[strtotime('-1 year',$now)] = get_string('lastyear');
     }
 
-    $useroptions = array();
-    if ($roles = get_roles_on_exact_context(get_context_instance(CONTEXT_COURSE,$course->id))) {
+    $roleoptions = array();
+    if ($roles = get_roles_used_in_context($context)) {
         foreach ($roles as $r) {
-            $useroptions[$r->id] = $r->name;
+            $roleoptions[$r->id] = $r->name;
         }
     }
     $guestrole = get_guest_role();
-    if (empty($useroptions[$guestrole->id])) {
-            $useroptions[$guestrole->id] = $guestrole->name;
+    if (empty($roleoptions[$guestrole->id])) {
+            $roleoptions[$guestrole->id] = $guestrole->name;
     }
-    $actionoptions = array('' => $strallactions,
-                           'view' => $strview,
-                           'post' => $strpost,
-                           );
 
+    $roleoptions = role_fix_names($roleoptions, $context);
 
     // print first controls.
     echo '<form class="participationselectform" action="index.php" method="get"><div>'."\n".
-         '<input type="hidden" name="id" value="'.$course->id.'" />'."\n".
-         '<input type="hidden" name="oldmod" value="'.$moduleid.'" />'."\n".
-         '<input type="hidden" name="instanceid" value="'.$instanceid.'" />'."\n";
-    echo '<label for="menumoduleid">'.get_string('activitymodule').'</label>'."\n";
-    choose_from_menu($modoptions,'moduleid',$moduleid);
+         '<input type="hidden" name="id" value="'.$course->id.'" />'."\n";
+    echo '<label for="menuinstanceid">'.get_string('activitymodule').'</label>'."\n";
+    choose_from_menu_nested($instanceoptions,'instanceid',$instanceid);
     echo '<label for="menutimefrom">'.get_string('lookback').'</label>'."\n";
     choose_from_menu($timeoptions,'timefrom',$timefrom);
     echo '<label for="menuroleid">'.get_string('showonly').'</label>'."\n";
-    choose_from_menu($useroptions,'roleid',$roleid,'');
+    choose_from_menu($roleoptions,'roleid',$roleid,'');
     echo '<label for="menuaction">'.get_string('showactions').'</label>'."\n";
     choose_from_menu($actionoptions,'action',$action,'');
     helpbutton('participationreport',get_string('participationreport'));
     echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
 
-    if (empty($moduleid)) {
-        notify(get_string('selectamodule'));
-        print_footer();
-        exit;
-    }
-
     $baseurl =  $CFG->wwwroot.'/course/report/participation/index.php?id='.$course->id.'&amp;roleid='
-        .$roleid.'&amp;instanceid='.$instanceid.'&amp;timefrom='.$timefrom.'&amp;moduleid='
-        .$moduleid.'&amp;action='.$action.'&amp;perpage='.$perpage;
+        .$roleid.'&amp;instanceid='.$instanceid.'&amp;timefrom='.$timefrom.'&amp;action='.$action.'&amp;perpage='.$perpage;
 
 
     // from here assume we have at least the module we're using.
-    $module = get_record('modules','id',$moduleid);
-    $modulename = get_string('modulename',$module->name);
+    $cm = $modinfo->cms[$instanceid];
+    $modulename = get_string('modulename', $cm->modname);
 
-    include_once($CFG->dirroot.'/mod/'.$module->name.'/lib.php');
+    include_once($CFG->dirroot.'/mod/'.$cm->modname.'/lib.php');
 
-    $viewfun = $module->name.'_get_view_actions';
-    $postfun = $module->name.'_get_post_actions';
+    $viewfun = $cm->modname.'_get_view_actions';
+    $postfun = $cm->modname.'_get_post_actions';
 
     if (!function_exists($viewfun) || !function_exists($postfun)) {
-        error(get_string('modulemissingcode','error',$module->name),$baseurl);
+        error(get_string('modulemissingcode','error',$cm->modname), $baseurl);
     }
 
     $viewnames = $viewfun();
     $postnames = $postfun();
 
-    // get all instances of this module in the course.
-    if (!$instances = get_all_instances_in_course($module->name,$course)) {
-        error(get_string('noinstances','error',$modulename));
-    }
-
-    $instanceoptions = array();
-
-    foreach ($instances as $instance) {
-        $instanceoptions[$instance->id] = $instance->name;
-    }
-
-    if (count($instanceoptions) == 1) { // just display it if there's only one.
-        $instanceid = array_pop(array_keys($instanceoptions));
-    }
-
-    echo '<form action="'.$CFG->wwwroot.'/course/report/participation/index.php" method="post">'. "\n".
-        '<div id="participationreportselector">'."\n".
-        '<input type="hidden" name="id" value="'.$course->id.'" />'."\n".
-        '<input type="hidden" name="oldmod" value="'.$moduleid.'" />'."\n".
-        '<input type="hidden" name="timefrom" value="'.$timefrom.'" />'."\n".
-        '<input type="hidden" name="action" value="'.$action.'" />'."\n".
-        '<input type="hidden" name="roleid" value="'.$roleid.'" />'."\n".
-        '<input type="hidden" name="moduleid" value="'.$moduleid.'" />'."\n";
-    choose_from_menu($instanceoptions,'instanceid',$instanceid);
-    echo '<input type="submit" value="'.get_string('go').'" />'."\n".
-        '</div>'."\n".
-        "</form>\n";
-
     if (!empty($instanceid) && !empty($roleid)) {
-        if (!$cm = get_coursemodule_from_instance($module->name,$instanceid,$course->id)) {
-            print_error('cmunknown');
-        }
-
-        require_once($CFG->dirroot.'/lib/tablelib.php');
         $table = new flexible_table('course-participation-'.$course->id.'-'.$cm->id.'-'.$roleid);
         $table->course = $course;
 
-        $table->define_columns(array('fullname','count',''));
+        $table->define_columns(array('fullname','count','select'));
         $table->define_headers(array(get_string('user'),((!empty($action)) ? get_string($action) : get_string('allactions')),get_string('select')));
         $table->define_baseurl($baseurl);
 
@@ -207,6 +157,7 @@
         $table->set_attribute('class', 'generaltable generalbox reporttable');
 
         $table->sortable(true,'lastname','ASC');
+        $table->no_sorting('select');
 
         $table->set_control_variables(array(
                                             TABLE_VAR_SORT    => 'ssort',
@@ -218,40 +169,47 @@
                                             ));
         $table->setup();
 
-
-        $primary_roles = sql_primary_role_subselect();   // In dmllib.php
-        $sql = 'SELECT DISTINCT prs.userid, u.firstname,u.lastname,u.idnumber,count(l.action) as count FROM ('.$primary_roles.') prs'
-            .' JOIN '.$CFG->prefix.'user u ON u.id = prs.userid LEFT JOIN '.$CFG->prefix.'log l ON prs.userid = l.userid '
-            .' AND prs.courseid = l.course AND l.time > '.$timefrom.' AND l.course = '.$course->id.' AND l.module = \''.$module->name.'\' '
-            .' AND l.cmid = '.$cm->id;
         switch ($action) {
             case 'view':
-                $sql .= ' AND action IN (\''.implode('\',\'',$viewnames).'\' )';
+                $actionsql = 'l.action IN (\''.implode('\',\'', $viewnames).'\' )';
                 break;
             case 'post':
-                $sql .= ' AND action IN (\''.implode('\',\'',$postnames).'\' )';
+                $actionsql = 'l.action IN (\''.implode('\',\'', $postnames).'\' )';
                 break;
             default:
                 // some modules have stuff we want to hide, ie mail blocked etc so do actually need to limit here.
-                $sql .= ' AND action IN (\''.implode('\',\'',array_merge($viewnames,$postnames)).'\' )';
-
+                $actionsql = 'l.action IN (\''.implode('\',\'', array_merge($viewnames, $postnames)).'\' )';
         }
 
-        $sql .= ' WHERE prs.courseid = '.$course->id.' AND prs.primary_roleid = '.$roleid.' AND prs.contextlevel = '.CONTEXT_COURSE.' AND prs.courseid = '.$course->id;
+        $relatedcontexts = get_related_contexts_string($context);
+
+        $sql = "SELECT ra.userid, u.firstname, u.lastname, u.idnumber, COUNT(l.action) AS count
+                  FROM {$CFG->prefix}role_assignments ra
+                       JOIN {$CFG->prefix}user u           ON u.id = ra.userid
+                       LEFT OUTER JOIN {$CFG->prefix}log l ON l.userid = ra.userid
+                 WHERE ra.contextid $relatedcontexts AND ra.roleid = $roleid AND
+                       (l.id IS NULL OR
+                          (l.cmid = $instanceid AND l.time > $timefrom AND $actionsql)
+                       )";
 
         if ($table->get_sql_where()) {
             $sql .= ' AND '.$table->get_sql_where(); //initial bar
         }
 
-        $sql .= ' GROUP BY prs.userid,u.firstname,u.lastname,u.idnumber,l.userid';
+        $sql .= " GROUP BY ra.userid, u.firstname, u.lastname, u.idnumber";
 
         if ($table->get_sql_sort()) {
             $sql .= ' ORDER BY '.$table->get_sql_sort();
         }
 
-        $countsql = 'SELECT COUNT(DISTINCT(prs.userid)) FROM ('.$primary_roles.') prs '
-            .' JOIN '.$CFG->prefix.'user u ON u.id = prs.userid WHERE prs.courseid = '.$course->id
-            .' AND prs.primary_roleid = '.$roleid.' AND prs.contextlevel = '.CONTEXT_COURSE;
+        $countsql = "SELECT COUNT(DISTINCT(ra.userid))
+                       FROM {$CFG->prefix}role_assignments ra
+                            JOIN {$CFG->prefix}user u           ON u.id = ra.userid
+                            LEFT OUTER JOIN {$CFG->prefix}log l ON l.userid = ra.userid
+                      WHERE ra.contextid $relatedcontexts AND ra.roleid = $roleid AND
+                            (l.id IS NULL OR
+                               (l.cmid = $instanceid AND l.time > $timefrom AND $actionsql)
+                            )";
 
         $totalcount = count_records_sql($countsql);
 
@@ -278,7 +236,7 @@
         $a->items = $role->name;
 
         if ($matchcount != $totalcount) {
-            $a->items .= ' ('.get_string('matched').' '.$matchcount.')';
+            $a->count = $matchcount.'/'.$a->count;
         }
 
         echo '<h2>'.get_string('counteditems', '', $a).'</h2>'."\n";

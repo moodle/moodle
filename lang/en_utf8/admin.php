@@ -50,6 +50,7 @@ $string['clamfailureonupload'] = 'On clam AV failure';
 $string['cleanup'] = 'Cleanup';
 $string['commonsettings'] = 'Common settings';
 $string['componentinstalled'] = 'Component Installed';
+$string['computedfromlogs'] = 'Computed from logs since $a.';
 $string['confeditorhidebuttons'] = 'Select the buttons that should be hidden in the HTML editor.';
 $string['configallowassign'] = 'You can allow people who have the roles on the left side to assign some of the column roles to other people';
 $string['configallowcategorythemes'] = 'If you enable this, then themes can be set at the category level. This will affect all child categories and courses unless they have specifically set their own theme. WARNING: Enabling category themes may affect performance.';
