@@ -221,7 +221,7 @@
                 $forumlink = $forumname;
                 $discussionlink = $count;
             } else {
-                if ($forum->visible) {
+                if (!empty($forum->visible)) {
                     $style = '';
                 } else {
                     $style = 'class="dimmed"';
