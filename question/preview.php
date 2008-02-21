@@ -20,6 +20,8 @@
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->dirroot.'/mod/quiz/locallib.php'); // We really want to get rid of this
 
+    require_login();
+
     $id = required_param('id', PARAM_INT);        // question id
     // if no quiz id is specified then a dummy quiz with default options is used
     $quizid = optional_param('quizid', 0, PARAM_INT);
@@ -37,13 +39,6 @@
         $continue = true;
     } else if ($startagain) {
         $continue = false;
-    }
-
-    require_login();
-
-    // this might break things in the future
-    if (!isteacherinanycourse()) {
-        error('This page is for teachers only');
     }
 
     if (!$continue) {
@@ -81,11 +76,12 @@
     if (!$category = get_record("question_categories", "id", $questions[$id]->category)) {
         error("This question doesn't belong to a valid category!");
     }
+    $quiz->course = $category->course;
 
-    if (!has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $category->course)) and !$category->publish) {
+    if (!(has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $category->course)) ||
+            ($category->publish && isteacherinanycourse()))) {
         error("You can't preview these questions!");
     }
-    $quiz->course = $category->course;
 
     // Load the question type specific information
     if (!get_question_options($questions)) {
