@@ -3158,6 +3158,10 @@ body#mod-forum-search .introcontent {
   margin-right: auto;
 }
 
+#mod-lesson-view .invisiblefieldset {
+  display: block;
+  text-align: left;
+}
 
 /***
  *** HTML help files.
