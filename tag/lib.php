@@ -44,6 +44,8 @@ define('TAG_RETURN_HTML', 3);
 define('TAG_CASE_LOWER', 0);
 define('TAG_CASE_ORIGINAL', 1);
 
+require_once($CFG->dirroot .'/tag/locallib.php');
+
 ///////////////////////////////////////////////////////
 /////////////////// PUBLIC TAG API ////////////////////
 

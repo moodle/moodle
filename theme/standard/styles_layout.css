@@ -2971,7 +2971,7 @@ table#tag-management-list tr td{
  padding-right :4px;
 }
 
-.tag-management-form {
+form#tag-management-form {
  text-align:center;
 }
 /* tag management end*/

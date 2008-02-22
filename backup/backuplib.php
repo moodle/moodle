@@ -1280,7 +1280,7 @@
 
                 //Check if we have user tags to backup
                 if (!empty($CFG->usetags)) {
-                    if ($tags = tag_get_tags(array('type'=>'user', 'id'=>$user->id))) { //This return them ordered by default
+                    if ($tags = get_item_tags('user', $user->id)) { //This return them ordered by default
                         //Start USER_TAGS tag
                         fwrite ($bf,start_tag("USER_TAGS",4,true));
                         //Write user tags fields
