@@ -4,7 +4,9 @@ require_once('../config.php');
 require_once('../tag/lib.php');
 
 $action = optional_param('action', '', PARAM_ALPHA);
-
+$id = optional_param('id', 0, PARAM_INT);
+$tag = optional_param('tag', '', PARAM_TAG);
+        
 require_login();
 
 if (empty($CFG->usetags)) {
@@ -22,29 +24,20 @@ if (!confirm_sesskey()) {
 
 switch ($action) {
     case 'addinterest':
-        $id  = optional_param('id', 0, PARAM_INT);
-        $name = optional_param('name', '', PARAM_TEXT);
+        if (empty($tag) && $id) { // for backward-compatibility (people saving bookmarks, mostly..)
+            $tag = tag_get_name($id);
+        } 
         
-        if (empty($name) && $id) {
-            $name = tag_name($id);
-        }
+        tag_set_add('user', $USER->id, $tag);
 
-        tag_an_item('user',$USER->id, $name);
-
-        if (!empty($name) && !$id) {
-            $id = tag_id(tag_normalize($name));
-        }
-                
-        redirect($CFG->wwwroot.'/tag/index.php?id='.$id);
+        redirect($CFG->wwwroot.'/tag/index.php?tag='. rawurlencode($tag));
         break;
 
     case 'flaginappropriate':
         
-        $id  = required_param('id', PARAM_INT);
+        tag_set_flag(tag_get_id($tag));
         
-        tag_flag_inappropriate($id);
-        
-        redirect($CFG->wwwroot.'/tag/index.php?id='.$id, get_string('responsiblewillbenotified','tag'));
+        redirect($CFG->wwwroot.'/tag/index.php?tag='. rawurlencode($tag), get_string('responsiblewillbenotified', 'tag'));
         break;
 }
 

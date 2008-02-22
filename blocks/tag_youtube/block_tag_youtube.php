@@ -78,18 +78,29 @@ class block_tag_youtube extends block_base {
 
     function get_videos_by_tag(){
 
-        $tagid       = optional_param('id',     0,      PARAM_INT);   // tag id
+        $tagid = optional_param('id', 0, PARAM_INT);   // tag id - for backware compatibility
+        $tag = optional_param('tag', '', PARAM_TAG); // tag 
 
-        $query_tag = tag_display_name(tag_by_id($tagid));
+        if ($tag) {
+            $tag_object = tag_get_id($tag, TAG_RETURN_OBJECT);
+        } elseif (!$tag && $tagid) {
+            $tag_object = tag_get_tag_by_id($tagid);
+        } else {
+            // can't display the block if no tag was submitted! 
+            // todo: something useful here.
+            error('Missing tag parameter');
+        }
+
+        $query_tag = html_entity_decode(tag_display_name($tag_object));
         $query_tag = urlencode($query_tag);
 
         $numberofvideos = DEFAULT_NUMBER_OF_VIDEOS;
-        if( !empty($this->config->numberofvideos)) {
+        if ( !empty($this->config->numberofvideos) ) {
             $numberofvideos = $this->config->numberofvideos;
         }
 
         $request = 'http://www.youtube.com/api2_rest?method=youtube.videos.list_by_tag';
-        $request .= '&dev_id=' . YOUTUBE_DEV_KEY;
+        $request .= '&dev_id='. YOUTUBE_DEV_KEY;
         $request .= "&tag={$query_tag}";
         $request .= "&page=1";
         $request .= "&per_page={$numberofvideos}";
@@ -99,9 +110,20 @@ class block_tag_youtube extends block_base {
 
     function get_videos_by_tag_and_category(){
 
-        $tagid       = optional_param('id',     0,      PARAM_INT);   // tag id
+        $tagid = optional_param('id', 0, PARAM_INT);   // tag id - for backware compatibility
+        $tag = optional_param('tag', '', PARAM_TAG); // tag 
 
-        $query_tag = tag_display_name(tag_by_id($tagid));
+        if ($tag) {
+            $tag_object = tag_get_id($tag, TAG_RETURN_OBJECT);
+        } elseif (!$tag && $tagid) {
+            $tag_object = tag_get_tag_by_id($tagid);
+        } else {
+            // can't display the block if no tag was submitted! 
+            // todo: something useful here.
+            error('Missing tag parameter');
+        }
+
+        $query_tag = html_entity_decode(tag_display_name($tag_object));
         $query_tag = urlencode($query_tag);
 
         $numberofvideos = DEFAULT_NUMBER_OF_VIDEOS;
@@ -158,18 +180,23 @@ class block_tag_youtube extends block_base {
         $text .= '<ul class="yt-video-entry unlist img-text">';
         $videos = $xmlobj['ut_response']['video_list']['video'];
 
-        foreach($videos as $video){
-            $text .= '<li>';
-            $text .= '<div class="clearfix">';
-            $text .= '<a href="'. s($video['url']) . '">';
-            $text .= '<img alt="" class="youtube-thumb" src="'. $video['thumbnail_url'] .'" /></a>';
-            $text .= '</div><span><a href="'. s($video['url']) . '">'.s($video['title']).'</a></span>';
-            $text .= '<div>';
-            $text .= format_time($video['length_seconds']);
-            $text .= "</div></li>\n";
+        if (is_array($videos) ) {
+            foreach($videos as $video){
+                $text .= '<li>';
+                $text .= '<div class="clearfix">';
+                $text .= '<a href="'. s($video['url']) . '">';
+                $text .= '<img alt="" class="youtube-thumb" src="'. $video['thumbnail_url'] .'" /></a>';
+                $text .= '</div><span><a href="'. s($video['url']) . '">'.s($video['title']).'</a></span>';
+                $text .= '<div>';
+                $text .= format_time($video['length_seconds']);
+                $text .= "</div></li>\n";
+            }
+        } else { 
+            // if youtube is offline, or for whatever reason the previous
+            // call doesn't work... 
+            //add_to_log(SITEID, 'blocks/tag_youtube', 'problem in getting videos off youtube');
         }
         $text .= "</ul><div class=\"clearer\"></div>\n";
-
         return $text;
     }
 }

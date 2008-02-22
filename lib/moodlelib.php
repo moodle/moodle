@@ -154,11 +154,6 @@ define('PARAM_FILE',     0x0010);
 define('PARAM_TAG',   0x0011);
 
 /**
- * PARAM_TAGLIST - list of tags separated by commas (interests, blogs, etc.)
- */
-define('PARAM_TAGLIST',   0x0012);
-
-/**
  * PARAM_PATH - safe relative path name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
  * note: the leading slash is not removed, window drive letter is not allowed
  */
@@ -259,7 +254,9 @@ define ('BLOG_GLOBAL_LEVEL', 5);
 /**
  * Tag constanst
  */
-define('TAG_MAX_LENGTH', 50);
+//To prevent problems with multibytes strings, this should not exceed the 
+//length of "varchar(255) / 3 (bytes / utf-8 character) = 85".
+define('TAG_MAX_LENGTH', 50); 
 
 if (!defined('SORT_LOCALE_STRING')) { // PHP < 4.4.0 - TODO: remove in 2.0
     define('SORT_LOCALE_STRING', SORT_STRING);
@@ -368,7 +365,6 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
  * @uses PARAM_PEM
  * @uses PARAM_BASE64
  * @uses PARAM_TAG
- * @uses PARAM_TAGLIST
  * @uses PARAM_SEQUENCE
  * @param mixed $param the variable we are cleaning
  * @param int $type expected format of param after cleaning.
@@ -561,35 +557,14 @@ function clean_param($param, $type) {
             }
 
         case PARAM_TAG:
-            //first fix whitespace
+            //as long as magic_quotes_gpc is used, a backslash will be a 
+            //problem, so remove *all* backslash.
+            $param = str_replace('\\', '', $param);
+            //convert many whitespace chars into one
             $param = preg_replace('/\s+/', ' ', $param);
-            //remove blacklisted ASCII ranges of chars - security FIRST - keep only ascii letters, numbers and spaces
-            //the result should be safe to be used directly in html and SQL
-            $param = preg_replace("/[\\000-\\x1f\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7f]/", '', $param);
-            //now remove some unicode ranges we do not want
-            $param = preg_replace("/[\\x{80}-\\x{bf}\\x{d7}\\x{f7}]/u", '', $param);
-            //cleanup the spaces
-            $param = preg_replace('/ +/', ' ', $param);
-            $param = trim($param);
             $textlib = textlib_get_instance();
-            $param = $textlib->substr($param, 0, TAG_MAX_LENGTH);
-            //numeric tags not allowed
-            return is_numeric($param) ? '' : $param;
-
-        case PARAM_TAGLIST:
-            $tags = explode(',', $param);
-            $result = array();
-            foreach ($tags as $tag) {
-                $res = clean_param($tag, PARAM_TAG);
-                if ($res != '') {
-                    $result[] = $res;
-                }
-            }
-            if ($result) {
-                return implode(',', $result);
-            } else {
-                return '';
-            }
+            $param = $textlib->substr(trim($param), 0, TAG_MAX_LENGTH);
+            return $param;
 
         default:                 // throw error, switched parameters in optional_param or another serious problem
             error("Unknown parameter type: $type");
