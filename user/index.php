@@ -451,10 +451,16 @@
         }
         print_heading($heading, 'center', 3);
     } else {
-        if ($matchcount < $totalcount) {
-            print_heading(get_string('allparticipants').': '.$matchcount.'/'.$totalcount, '', 3);
+        if ($course->id !== SITEID && has_capability('moodle/role:assign', $context)) {
+            $editlink  = ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">';
+            $editlink .= '<img src="'.$CFG->pixpath.'/i/edit.gif" class="icon" alt="" /></a>';
         } else {
-            print_heading(get_string('allparticipants').': '.$matchcount, '', 3);
+            $editlink = '';
+        }
+        if ($matchcount < $totalcount) {
+            print_heading(get_string('allparticipants').': '.$matchcount.'/'.$totalcount . $editlink, '', 3);
+        } else {
+            print_heading(get_string('allparticipants').': '.$matchcount . $editlink, '', 3);
         }
     }
 
