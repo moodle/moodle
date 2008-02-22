@@ -12,9 +12,15 @@ if (empty($CFG->usetags)) {
     error(get_string('tagsaredisabled', 'tag'));
 }
 
-$tagid   = required_param('id', PARAM_INT);   // user id
-
-$tag     = tag_by_id($tagid);
+$tag_id = optional_param('id', 0, PARAM_INT);
+$tag_name = optional_param('tag', '', PARAM_TAG);
+if ($tag_name) {
+    $tag = array_shift(tag_get_id($tag_name, TAG_RETURN_OBJECT));
+} elseif ( $tag_id ) {
+    $tag = tag_get_tag_by_id($tag_id);
+} else {
+    error('A required parameter was missing');
+}
 $tagname = tag_display_name($tag);
 
 //Editing a tag requires moodle/tag:edit capability
@@ -22,7 +28,8 @@ $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/tag:edit', $systemcontext);
 
 // set the relatedtags field of the $tag object that will be passed to the form
-$tag->relatedtags = tag_names_csv(get_item_tags('tag',$tagid));
+//$tag->relatedtags = tag_names_csv(get_item_tags('tag',$tagid));
+$tag->relatedtags = tag_get_related_tags_csv(tag_get_related_tags($tag->id), TAG_RETURN_TEXT);
 
 if (can_use_html_editor()) {
     $options = new object();
@@ -47,9 +54,10 @@ if ($tagnew = $tagform->get_data()) {
     }
 
     //updated related tags
-    update_item_tags('tag', $tagnew->id, $tagnew->relatedtags);
+    tag_set('tag', $tagnew->id, explode(',', trim($tagnew->relatedtags)));
+    //var_dump($tagnew); die();
 
-    redirect($CFG->wwwroot.'/tag/index.php?id='.$tagnew->id);
+    redirect($CFG->wwwroot.'/tag/index.php?tag='.rawurlencode($tag->name)); // must use $tag here, as the name isn't in the edit form
 }
 
 

@@ -18,7 +18,7 @@ function definition () {
 
         $mform->addElement('html', '<br/><div id="relatedtags-autocomplete-container">');
         $mform->addElement('textarea', 'relatedtags', get_string('relatedtags','tag'), 'cols="50" rows="3"');
-        $mform->setType('relatedtags', PARAM_TAGLIST);
+        $mform->setType('relatedtags', PARAM_TAG);
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '<div id="relatedtags-autocomplete"></div>');
 

@@ -1,751 +1,311 @@
-<?php
-
-define('DEFAULT_TAG_TABLE_FIELDS', 'id, tagtype, name, rawname, flag');
+<?php // $Id$
 
 /**
- * Creates tags
-
- * Ex: tag_create('A VeRY   cOoL    Tag, Another NICE tag')
- * will create the following normalized {@link tag_normalize()} entries in tags table:
- *  'a very cool tag'
- *  'another nice tag'
+ * lib.php - moodle tag library
  *
- * @param string $tag_names_csv CSV tag names (can be unnormalized) to be created.
- * @param string $tag_type type of tag to be created ("default" is the default value).
- * @return an array of tags ids, indexed by their normalized names
+ * @version: $Id$
+ * @licence http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package moodlecore
+ *
+ * A "tag string" is always a rawurlencode'd string. This is the same behavior 
+ * as http://del.icio.us
+ * @see http://www.php.net/manual/en/function.urlencode.php
+ *
+ * Tag strings : you can use any character in tags, except the comma (which is 
+ * the separator) and the '\' (backslash).  Note that many spaces (or other 
+ * blank characters) will get "compressed" into one.
+ *
+ * A "record" is a php array (note that an object will work too) that contains 
+ * the following variables : 
+ *  - type: the table containing the record that we are tagging (eg: for a
+ *    blog, this is table 'post', and for a user it is 'user')
+ *  - id: the id of the record 
+ *
+ * TODO: turn this into a full-fledged categorization system. This could start 
+ * by modifying (removing, probably) the 'tag type' to use another table 
+ * describing the relationship between tags (parents, sibling, etc.), which 
+ * could then be merged with the 'course categorization' system...
+ *
+ * BASIC INSTRUCTIONS : 
+ *  - to "tag a blog post" (for example): 
+ *      tag_set('post', $blog_post->id, $array_of_tags);
+ *
+ *  - to "remove all the tags on a blog post":
+ *      tag_set('post', $blog_post->id, array());
+ *
+ * Tag set will create tags that need to be created.  
  */
-function tag_create($tag_names_csv, $tag_type="default") {
-    global $USER;
-    $textlib = textlib_get_instance();
 
-    $tags = explode(",", $tag_names_csv );
+define('TAG_RETURN_ARRAY', 0);
+define('TAG_RETURN_OBJECT', 1);
+define('TAG_RETURN_TEXT', 2);
+define('TAG_RETURN_HTML', 3);
 
-    $tag_object = new StdClass;
-    $tag_object->tagtype = $tag_type;
-    $tag_object->userid = $USER->id;
+define('TAG_CASE_LOWER', 0);
+define('TAG_CASE_ORIGINAL', 1);
 
-    $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-    $can_create_tags = has_capability('moodle/tag:create',$systemcontext);
+require_once($CFG->dirroot .'/tag/locallib.php');
 
-    $norm_tag_names_csv = '';
-    foreach ($tags as $tag) {
+///////////////////////////////////////////////////////
+/////////////////// PUBLIC TAG API ////////////////////
 
-        // rawname keeps the original casing of the string
-        $tag_object->rawname        = tag_normalize($tag, false);
+/**
+ * Delete one or more tag, and all their instances if there are any left.
+ * 
+ * @param mixed $tagids one tagid (int), or one array of tagids to delete
+ * @return bool true on success, false otherwise 
+ */
+function tag_delete($tagids) {
 
-        // name lowercases the string
-        $tag_object->name           = tag_normalize($tag);
-        $norm_tag_names_csv         .= $tag_object->name . ',';
+    if (!is_array($tagids)) {
+        $tagids = array($tagids);
+    }
 
-        $tag_object->timemodified   = time();
-
-        $exists = record_exists('tag', 'name', $tag_object->name);
-
-        if ( !$exists && is_tag_name_valid($tag_object->name) ) {
-            if ($can_create_tags) {
-                insert_record('tag', $tag_object);
-            }
-            else {
-                require_capability('moodle/tag:create',$systemcontext);
-            }
+    $success = true;
+    foreach( $tagids as $tagid ) {
+        if (is_null($tagid)) { // can happen if tag doesn't exists
+            continue;
+        }
+        // only delete the main entry if there were no problems deleting all the 
+        // instances - that (and the fact we won't often delete lots of tags) 
+        // is the reason for not using delete_records_select()
+        if ( delete_records('tag_instance', 'tagid', $tagid) ) {
+            $success &= (bool) delete_records('tag', 'id', $tagid);
         }
     }
 
-    $norm_tag_names_csv = $textlib->substr($norm_tag_names_csv,0,-1);
-
-    return tags_id( $norm_tag_names_csv );
-
+    return $success;
 }
 
 /**
- * Deletes tags
+ * Delete one instance of a tag.  If the last instance was deleted, it will
+ * also delete the tag, unless it's type is 'official'.
  *
- * Ex 1: tag_delete('a very cool tag, another nice tag')
- * Will delete the tags with names 'a very cool tag' and 'another nice tag' from the 'tags' table, if they exist!
- *
- * Ex 2: tag_delete('computers, 123, 143, algorithms')
- *  Will delete tags with names 'computers' and 'algorithms' and tags with ids 123 and 143.
- *
- *
- * @param string $tag_names_or_ids_csv **normalized** tag names or ids of the tags to be deleted.
+ * @param array $record the record for which to remove the instance
+ * @param int $tagid the tagid that needs to be removed
+ * @return bool true on success, false otherwise
  */
+function tag_delete_instance($record, $tagid) {
+    global $CFG;
 
-function tag_delete($tag_names_or_ids_csv) {
-
-    //covert all names to ids
-    $tag_ids_csv = tag_id_from_string($tag_names_or_ids_csv);
-
-    //put apostrophes
-    $tag_ids_csv_with_apos = "'" . str_replace(',', "','", $tag_ids_csv) . "'";
-
-    // tag instances needs to be deleted as well
-    // delete_records_select('tag_instance',"tagid IN ($tag_ids_csv_with_apos)");
-    // Luiz: (in near future) tag instances should be cascade deleted by RDMS referential integrity constraints, when moodle implements it
-    // For now, tag_instance orphans should be removed using tag_instance_table_cleanup()
-
-    $return1 = delete_records_select('tag',"name IN ($tag_ids_csv_with_apos)");
-    $return2 = delete_records_select('tag',"id IN ($tag_ids_csv_with_apos)");
-
-    return $return1 && $return2;
-
-}
-
-/**
- * Get all tags from the records
- *
- * @param string $tag_types_csv (optional, default value is "default". If '*' is passed, tags of any type will be returned).
- * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return
- *   (optional, by default 'id, tagtype, name, rawname, flag'). The first field will be used as key for the
- *   array so must be a unique field such as 'id'.
- */
-function get_all_tags($tag_types_csv="default", $sort='name ASC', $fields=DEFAULT_TAG_TABLE_FIELDS) {
-
-    if ($tag_types_csv == '*'){
-        return get_records('tag', '', '', $sort, $fields);
-    }
-
-    $tag_types_csv_with_apos = "'" . str_replace(',', "','", $tag_types_csv ) . "'";
-
-    return get_records_list('tag', 'tagtype', $tag_types_csv_with_apos, $sort, $fields);
-}
-
-/**
- * Determines if a tag exists
- *
- * @param string $tag_name_or_id **normalized** tag name, or an id.
- * @return true if exists or false otherwise
- *
- */
-function tag_exists($tag_name_or_id) {
-
-    if (is_numeric($tag_name_or_id)) {
-        return record_exists('tag', 'id', $tag_name_or_id);
-
+    if ( delete_records('tag_instance', 'tagid', $tagid, 'itemtype', $record['type'], 'itemid', $record['id']) ) {
+        if ( !record_exists_sql('SELECT * FROM '. $CFG->prefix .'tag tg, '. $CFG->prefix .'tag_instance ti '.
+                'WHERE (tg.id = ti.tagid AND ti.tagid = '. $tagid .') OR '.
+                '(tg.id = '. $tagid .' AND tg.tagtype = "official")') ) {
+            return tag_delete($tagid);
+        }
     } else {
-        // normalised tag names are always lowercase only
-        return record_exists('tag', 'name', moodle_strtolower($tag_name_or_id));
-    }
-}
-
-/**
- * Function that returns the id of a tag
- *
- * @param String $tag_name **normalized** name of the tag
- * @return int id of the matching tag
- */
-function tag_id($tag_name) {
-    $tag = get_record('tag', 'name', trim($tag_name), '', '', '', '', 'id');
-
-    if ($tag){
-        return $tag->id;
-    }
-    else{
         return false;
     }
 }
 
 /**
- * Function that returns the ids of tags
+ * Function that returns the name that should be displayed for a specific tag
  *
- * Ex: tags_id('computers, algorithms')
- *
- * @param String $tag_names_csv comma separated **normalized** tag names.
- * @return Array array with the tags ids, indexed by their **normalized** names
- */
-function tags_id($tag_names_csv) {
-
-    $normalized_tag_names_csv = tag_normalize($tag_names_csv);
-    $tag_names_csv_with_apos = "'" . str_replace(',', "','", $normalized_tag_names_csv ) . "'";
-
-    $tags_ids = array();
-
-    if ($tag_objects = get_records_list('tag','name', $tag_names_csv_with_apos, "" , "name, id" )) {
-        foreach ($tag_objects as $tag) {
-            $tags_ids[$tag->name] = $tag->id;
-        }
-    }
-
-    return $tags_ids;
-}
-
-/**
- * Function that returns the name of a tag
- *
- * @param int $tag_id id of the tag
- * @return String name of the tag with the id passed
- */
-function tag_name($tag_id) {
-    $tag = get_record('tag', 'id', $tag_id, '', '', '', '', 'name');
-
-    if ($tag){
-        return $tag->name;
-    }
-    else{
-        return '';
-    }
-}
-
-/**
- * Function that retrieves the names of tags given their ids
- *
- * @param String $tag_ids_csv comma separated tag ids
- * @return Array an array with the tags names, indexed by their ids
- */
-
-function tags_name($tag_ids_csv) {
-
-    //remove any white spaces
-    $tag_ids_csv = str_replace(' ', '', $tag_ids_csv);
-
-    $tag_ids_csv_with_apos = "'" . str_replace(',', "','", $tag_ids_csv ) . "'";
-
-    $tag_objects = get_records_list('tag','id', $tag_ids_csv_with_apos, "" , "name, id" );
-
-    $tags_names = array();
-    foreach ($tag_objects as $tag) {
-        $tags_names[$tag->id] = $tag->name;
-    }
-
-    return $tags_names;
-}
-
-/**
- * Function that returns the name of a tag for display.
- *
- * @param mixed $tag_object
+ * @param object $tag_object a line out of tag table, as returned by the adobd functions
  * @return string
  */
-function tag_display_name($tag_object){
+function tag_display_name($tag_object) {
 
-    global $CFG;
+    if(!isset($tag_object->name)) {
+        return '';
+    }
 
     if( empty($CFG->keeptagnamecase) ) {
         //this is the normalized tag name
         $textlib = textlib_get_instance();
-        return $textlib->strtotitle($tag_object->name);
+        return htmlspecialchars($textlib->strtotitle($tag_object->name));
     }
     else {
         //original casing of the tag name
-        return $tag_object->rawname;
+        return htmlspecialchars($tag_object->rawname);
+    }
+}
+
+/**
+ * Find all records tagged with a tag of a given type ('post', 'user', etc.)
+ *
+ * @param string $tag tag to look for
+ * @param string $type type to restrict search to.  If null, every matching
+ *     record will be returned
+ * @return array of matching objects, indexed by record id, from the table containing the type requested
+ */
+function tag_find_records($tag, $type) {
+    
+    global $CFG;
+
+    if (!$tag || !$type) {
+        return array();
     }
 
+    $tagid = tag_get_id($tag);
+
+    $query = "SELECT it.* ".
+        "FROM {$CFG->prefix}{$type} it INNER JOIN {$CFG->prefix}tag_instance tt ON it.id = tt.itemid ".
+        "WHERE tt.itemtype = '{$type}' AND tt.tagid = '{$tagid}'";
+    
+    return get_records_sql($query); 
 }
 
 /**
- * Function that retrieves a tag object by its id
+ * Get the array of db record of tags associated to a record (instances).  Use 
+ * tag_get_tags_csv to get the same information in a comma-separated string.
  *
- * @param String $tag_id
- * @return mixed a fieldset object containing the first matching record, or false if none found
+ * @param array $record the record for which we want to get the tags 
+ * @param string $type the tag type (either 'default' or 'official'). By default,
+ *     all tags are returned.
+ * @return array the array of tags
  */
-function tag_by_id($tag_id) {
+function tag_get_tags($record, $type=null) {
+    
+    global $CFG;
 
-    return get_record('tag','id',$tag_id);
+    if ($type) {
+        $type = "AND tg.tagtype = '$type'";
+    }
+    
+    $tags = get_records_sql('SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering '.
+        'FROM '. $CFG->prefix .'tag_instance ti INNER JOIN '. $CFG->prefix .'tag tg ON tg.id = ti.tagid '.
+        'WHERE ti.itemtype = "'. $record['type'] .'" AND ti.itemid = "'. $record['id'] .'" '. $type .' '.
+        'ORDER BY ti.ordering ASC');
+    // This version of the query, reversing the ON clause, "correctly" returns 
+    // a row with NULL values for instances that are still in the DB even though 
+    // the tag has been deleted.  This shouldn't happen, but if it did, using 
+    // this query could help "clean it up".  This causes bugs at this time.
+    //$tags = get_records_sql('SELECT ti.tagid, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering '.
+    //    'FROM '. $CFG->prefix .'tag_instance ti LEFT JOIN '. $CFG->prefix .'tag tg ON ti.tagid = tg.id '.
+    //    'WHERE ti.itemtype = "'. $record['type'] .'" AND ti.itemid = "'. $record['id'] .'" '. $type .' '.
+    //    'ORDER BY ti.ordering ASC');
+
+    if (!$tags) { 
+        return array();
+    } else {
+        return $tags;
+    }
 }
 
 /**
- * Function that retrieves a tag object by its name
- *
- * @param String $tag_name
- * @return mixed a fieldset object containing the first matching record, or false if none found
+ * Get the array of tags display names, indexed by id.
+ * 
+ * @param array $record the record for which we want to get the tags
+ * @param string $type the tag type (either 'default' or 'official'). By default,
+ *     all tags are returned.
+ * @return array the array of tags (with the value returned by tag_display_name), indexed by id
  */
-function tag_by_name($tag_name) {
-    $tag = get_record('tag','name',$tag_name);
-    return $tag;
+function tag_get_tags_array($record, $type=null) {
+    $tags = array();
+    foreach(tag_get_tags($record, $type) as $tag) {
+        $tags[$tag->id] = tag_display_name($tag);
+    }
+    return $tags;
 }
 
 /**
- * In a comma separated string of ids or names of tags, replaces all tag names with their correspoding ids
+ * Get a comma-separated string of tags associated to a record.  Use tag_get_tags
+ * to get the same information in an array.
  *
- * Ex:
- *  Suppose the DB contains only the following entries in the tags table:
- *      id    name
- *      10    moodle
- *      12    science
- *      22    education
- *
- * tag_id_from_string('moodle, 12, education, programming, 33, 11')
- *    will return '10,12,22,,33,11'
- *
- * This is a helper function used by functions of this API to process function arguments ($tag_name_or_id)
- *
- * @param string $tag_names_or_ids_csv comma separated **normalized** names or ids of tags
- * @return int comma separated ids of the tags
+ * @param array $record the record for which we want to get the tags
+ * @param int $html either TAG_RETURN_HTML or TAG_RETURN_TEXT, depending
+ *     on the type of output desired
+ * @param string $type either 'official' or 'default', if null, all tags are
+ *     returned
+ * @return string the comma-separated list of tags.
  */
-function tag_id_from_string($tag_names_or_ids_csv) {
+function tag_get_tags_csv($record, $html=TAG_RETURN_HTML, $type=null) {
+    global $CFG;
 
-    $tag_names_or_ids = explode(',', $tag_names_or_ids_csv);
+    $tags_names = array();
+    foreach( tag_get_tags($record, $type) as $tag ) {
+        if ($html == TAG_RETURN_TEXT) {
+            $tags_names[] = tag_display_name($tag);
+        } else { // TAG_RETURN_HTML
+            $tags_names[] = '<a href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'">'. tag_display_name($tag) .'</a>';
+        }
+    }
+    return implode(', ', $tags_names);
+}
 
+/**
+ * Get an array of tag ids associated to a record.
+ *
+ * @param array $record the record for which we want to get the tags
+ * @return array of tag ids, indexed and sorted by 'ordering'
+ */
+function tag_get_tags_ids($record) {
+    
     $tag_ids = array();
-    foreach ($tag_names_or_ids as $name_or_id) {
-
-        if (is_numeric($name_or_id)){
-            $tag_ids[] = trim($name_or_id);
-        }
-        elseif (is_string($name_or_id)) {
-            $tag_ids[] = tag_id( $name_or_id );
-        }
-
+    foreach( tag_get_tags($record) as $tag ) {
+        $tag_ids[$tag->ordering] = $tag->id;
     }
-
-    $tag_ids_csv = implode(',',$tag_ids);
-    $tag_ids_csv = str_replace(' ', '', $tag_ids_csv);
-
-    return $tag_ids_csv;
+    ksort($tag_ids);
+    return $tag_ids;
 }
 
-/**
- * In a comma separated string of ids or names of tags, replaces all tag ids with their correspoding names
- *
- * Ex:
- *  Suppose the DB contains only the following entries in the tags table:
- *      id    name
- *      10    moodle
- *      12    science
- *      22    education
- *
- *  tag_name_from_string('mOOdle, 10, HiStOrY, 17, 22')
- *     will return the string 'mOOdle,moodle,HiStOrY,,education'
- *
- * This is a helper function used by functions of this API to process function arguments ($tag_name_or_id)
- *
- * @param string $tag_names_or_ids_csv comma separated names or ids of tags
- * @return int comma separated names of the tags
+/** 
+ * Returns the database ID of a set of tags.
+ * 
+ * @param mixed $tags one tag, or array of tags, to look for.
+ * @param bool $return_object get the object returned by get_recordset_sql instead 
+ *     of the id only (default: false)
+ * @return mixed tag-indexed array of ids (or objects, if second parameter is TAG_RETURN_OBJECT), or only an int, if only one tag is given *and* the second parameter is null. No value for a key means the tag wasn't found.
  */
-function tag_name_from_string($tag_names_or_ids_csv) {
-
-    $tag_names_or_ids = explode(',', $tag_names_or_ids_csv);
-
-    $tag_names = array();
-    foreach ($tag_names_or_ids as $name_or_id) {
-
-        if (is_numeric($name_or_id)){
-            $tag_names[] =  tag_name($name_or_id);
-        }
-        elseif (is_string($name_or_id)) {
-            $tag_names[] = trim($name_or_id);
-        }
-
-    }
-
-    $tag_names_csv = implode(',',$tag_names);
-
-    return $tag_names_csv;
-
-}
-
-
-/**
- * Determines if a tag name is valid
- *
- * @param string $name
- * @return boolean
- */
-function is_tag_name_valid($name){
-
-    $normalized = tag_normalize($name);
-
-    return !strcmp($normalized, $name) && !empty($name) && !is_numeric($name);
-
-}
-
-
-/**
- * Associates a tag with an item
- *
- * Ex 1: tag_an_item('user', '1', 'hisTOrY, RELIGIONS, roman' )
- *  This will tag an user whose id is 1 with "history", "religions", "roman"
- *   If the tag names passed do not exist, they will get created.
- *
- * Ex 2: tag_an_item('user', '1', 'hisTory, 12, 11, roman')
- *   This will tag an user whose id is 1 with 'history', 'roman' and with tags of ids 12 and 11
- *
- * @param string $item_type name of the table where the item is stored. Ex: 'user'
- * @param string $item_id id of the item to be tagged
- * @param string $tag_names_or_ids_csv comma separated tag names (can be unormalized) or ids of existing tags
- * @param string $tag_type type of the tags that are beeing added (optional, default value is "default")
- */
-
-function tag_an_item($item_type, $item_id, $tag_names_or_ids_csv, $tag_type="default") {
-
+function tag_get_id($tags, $return_value=null) {
     global $CFG;
-    //convert any tag ids passed to their corresponding tag names
-    $tag_names_csv = tag_name_from_string($tag_names_or_ids_csv);
+    static $tag_id_cache = array();
 
-    //create the tags
-    $tags_created_ids = tag_create($tag_names_csv,$tag_type);
-
-    //tag instances of an item are ordered, get the last one
-    $query = "
-        SELECT
-            MAX(ordering) AS max_order
-        FROM
-            {$CFG->prefix}tag_instance ti
-        WHERE
-            ti.itemtype = '{$item_type}'
-        AND
-            ti.itemid = '{$item_id}'
-        ";
-
-    $max_order = get_field_sql($query);
-
-    $tag_names = explode(',', tag_normalize($tag_names_csv));
-
-    $ordering = array();
-    foreach($tag_names as $tag_name){
-        $ordering[$tag_name] = ++$max_order;
-    }
-
-    //setup tag_instance object
-    $tag_instance = new StdClass;
-    $tag_instance->itemtype = $item_type;
-    $tag_instance->itemid = $item_id;
-
-
-    //create tag instances
-    foreach ($tags_created_ids as $tag_normalized_name => $tag_id) {
-
-        $tag_instance->tagid = $tag_id;
-        $tag_instance->ordering = $ordering[$tag_normalized_name];
-        $tag_instance->timemodified = time();
-        $tag_instance_exists = get_record('tag_instance', 'tagid', $tag_id, 'itemtype', $item_type, 'itemid', $item_id);
-
-        if (!$tag_instance_exists) {
-            insert_record('tag_instance',$tag_instance);
+    $return_an_int = false;
+    if (!is_array($tags)) {
+        if(is_null($return_value) || $return_value == TAG_RETURN_OBJECT) {
+            $return_an_int = true; 
         }
-        else {
-            $tag_instance_exists->timemodified = time();
-            $tag_instance_exists->ordering = $ordering[$tag_normalized_name];
-            update_record('tag_instance',$tag_instance_exists);
+        $tags = array($tags);
+    }
+   
+    $result = array();
+    
+    //TODO: test this and see if it helps performance without breaking anything
+    //foreach($tags as $key => $tag) {
+    //    $clean_tag = moodle_strtolower($tag);
+    //    if ( array_key_exists($clean_tag), $tag_id_cache) ) {
+    //        $result[$clean_tag] = $tag_id_cache[$clean_tag];
+    //        $tags[$key] = ''; // prevent further processing for this one.
+    //    }
+    //}
+
+    $tags = array_values(tag_normalize($tags));
+    foreach($tags as $key => $tag) {
+        $tags[$key] = addslashes(moodle_strtolower($tag)); 
+        $result[moodle_strtolower($tag)] = null; // key must exists : no value for a key means the tag wasn't found.
+    }
+    $tag_string = "'". implode("', '", $tags) ."'";
+
+    if ($rs = get_recordset_sql('SELECT * FROM '. $CFG->prefix .'tag WHERE name in ('. $tag_string .') order by name')) {
+        while ($record = rs_fetch_next_record($rs)) {
+            if ($return_value == TAG_RETURN_OBJECT) {
+                $result[$record->name] = $record;
+            } else { // TAG_RETURN_ARRAY
+                $result[$record->name] = $record->id;
+            }
         }
     }
 
-
-    // update_tag_correlations($item_type, $item_id);
-
-}
-
-
-/**
- * Updates the tags associated with an item
- *
- * Ex 1:
- *  Suppose user 1 is tagged only with "algorithms", "computers" and "software"
- *  By calling update_item_tags('user', 1, 'algorithms, software, mathematics')
- *  User 1 will now be tagged only with "algorithms", "software" and "mathematics"
- *
- * Ex 2:
- *   update_item_tags('user', '1', 'algorithms, 12, 13')
- *   User 1 will now be tagged only with "algorithms", and with tags of ids 12 and 13
- *
- *
- * @param string $item_type name of the table where the item is stored. Ex: 'user'
- * @param string $item_id id of the item to be tagged
- * @param string $tag_names_or_ids_csv comma separated tag names (can be unormalized) or ids of existing tags
- * @param string $tag_type type of the tags that are beeing added (optional, default value is "default")
- */
-
-function update_item_tags($item_type, $item_id, $tag_names_or_ids_csv, $tag_type="default") {
-
-    //if $tag_names_csv is an empty string, remove all tag associations of the item
-    if( empty($tag_names_or_ids_csv) ){
-        untag_an_item($item_type, $item_id);
-        return;
+    if ($return_an_int) {
+        return array_pop($result);
     }
 
-    //convert any tag ids passed to their corresponding tag names
-    $tag_names_csv = tag_name_from_string($tag_names_or_ids_csv);
-
-    //associate the tags passed with the item
-    tag_an_item($item_type, $item_id, $tag_names_csv, $tag_type );
-
-    //get the ids of the tags passed
-    $existing_and_new_tags_ids = tags_id( tag_normalize($tag_names_csv) );
-
-    // delete any tag instance with $item_type and $item_id
-    // that are not in $tag_names_csv
-    $tags_id_csv = "'" . implode("','", $existing_and_new_tags_ids) . "'" ;
-
-    $select = "
-        itemid = '{$item_id}'
-    AND
-        itemtype = '{$item_type}'
-    AND
-        tagid NOT IN ({$tags_id_csv})
-    ";
-
-    delete_records_select('tag_instance', $select);
-
+    return $result;
 }
 
 /**
- * Removes the association of an item with a tag
+ * Get a tag as an object (line) returned by get_recordset_sql 
  *
- * Ex: untag_an_item('user', '1', 'history, 11, roman' )
- *  The user with id 1 will no longer be tagged with 'history', 'roman' and the tag of id 11
- *   Calling  untag_an_item('user','1')  will remove all tags associated with user 1.
- *
- * @param string $item_type name of the table where the item is stored. Ex: 'user'
- * @param string $item_id id of the item to be untagged
- * @param string $tag_names_or_ids_csv comma separated tag **normalized** names or ids of existing tags (optional, if none is given, all tags of the item will be removed)
+ * @param int $tagid a tag id
+ * @return object a line returned from get_recordset_sql, or false
  */
-
-function untag_an_item($item_type, $item_id, $tag_names_or_ids_csv='') {
-
-    if ($tag_names_or_ids_csv == ""){
-
-        delete_records('tag_instance','itemtype', $item_type, 'itemid', $item_id);
-
-    }
-    else {
-
-        $tag_ids_csv = tag_id_from_string($tag_names_or_ids_csv);
-
-        $tag_ids_csv_with_apos = "'" . str_replace(',', "','", $tag_ids_csv ) . "'";
-
-        delete_records_select('tag_instance',
-        "tagid IN ({$tag_ids_csv_with_apos}) AND itemtype='$item_type' AND itemid='$item_id'");
-    }
-
-    //update_tag_correlations($item_type, $item_id);
-
-}
-
-/**
- * Function that gets the tags that are associated with an item
- *
- * Ex: get_item_tags('user', '1')
- *
- * @param string $item_type name of the table where the item is stored. Ex: 'user'
- * @param string $item_id id of the item beeing queried
- * @param string $sort an order to sort the results in, a valid SQL ORDER BY parameter (default is 'ti.ordering ASC')
- * @param string $fields tag fields to be selected (optional, default is 'id, name, rawname, tagtype, flag')
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an array of objects, or false if no records were found or an error occured.
- */
-
-function get_item_tags($item_type, $item_id, $sort='ti.ordering ASC', $fields=DEFAULT_TAG_TABLE_FIELDS, $limitfrom='', $limitnum='', $tagtype='') {
-
+function tag_get_tag_by_id($tagid) {
     global $CFG;
-
-    $fields = 'tg.' . $fields;
-    $fields = str_replace(',', ',tg.', $fields);
-
-    if ($sort) {
-        $sort = ' ORDER BY '. $sort;
-    }
-
-    if ($tagtype) {
-        $tagwhere = " AND tg.tagtype = '$tagtype' ";
-    } else {
-        $tagwhere = '';
-    }
-
-    $query = "
-        SELECT
-            {$fields}
-        FROM
-            {$CFG->prefix}tag_instance ti
-        INNER JOIN
-            {$CFG->prefix}tag tg
-        ON
-            tg.id = ti.tagid
-        WHERE
-            ti.itemtype = '{$item_type}' AND
-            ti.itemid = '{$item_id}'
-            $tagwhere
-        {$sort}
-            ";
-
-    return get_records_sql($query, $limitfrom, $limitnum);
-
-}
-
-
-
-/**
- * Function that returns the items of a certain type associated with a certain tag
- *
- * Ex 1: get_items_tagged_with('user', 'banana')
- * Ex 2: get_items_tagged_with('user', '11')
- *
- * @param string $item_type name of the table where the item is stored. Ex: 'user'
- * @param string $tag_name_or_id is a single **normalized** tag name or the id of a tag
- * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- *      (to avoid field name ambiguity in the query, use the identifier "it" Ex: 'it.name ASC' )
- * @param string $fields a comma separated list of fields to return
- *   (optional, by default all fields are returned). The first field will be used as key for the
- *   array so must be a unique field such as 'id'. )
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an array of objects indexed by their ids, or false if no records were found or an error occured.
- */
-
-function get_items_tagged_with($item_type, $tag_name_or_id, $sort='', $fields='*', $limitfrom='', $limitnum='') {
-
-    global $CFG;
-
-    $tag_id = tag_id_from_string($tag_name_or_id);
-
-    $fields = 'it.' . $fields;
-    $fields = str_replace(',', ',it.', $fields);
-
-    if ($sort) {
-        $sort = ' ORDER BY '. $sort;
-    }
-
-    $query = "
-        SELECT
-            {$fields}
-        FROM
-            {$CFG->prefix}{$item_type} it
-        INNER JOIN
-            {$CFG->prefix}tag_instance tt
-        ON
-            it.id = tt.itemid
-        WHERE
-            tt.itemtype = '{$item_type}' AND
-            tt.tagid = '{$tag_id}'
-        {$sort}
-        ";
-
-
-    return get_records_sql($query, $limitfrom, $limitnum);
-
-}
-
-/**
- * Returns the number of items tagged with a tag
- *
- * @param string $tag_name_or_id is a single **normalized** tag name or the id of a tag
- * @param string $item_type name of the table where the item is stored. Ex: 'user' (optional, if none is set any
- *                                                                                             type will be counted)
- * @return int the count. If an error occurrs, 0 is returned.
- */
-function count_items_tagged_with($tag_name_or_id, $item_type='') {
-
-    global $CFG;
-
-    $tag_id = tag_id_from_string($tag_name_or_id);
-
-    if (empty($item_type)){
-        $query = "
-            SELECT
-            COUNT(*) AS count
-            FROM
-                {$CFG->prefix}tag_instance tt
-            WHERE
-                tagid = {$tag_id}";
-    }
-    else
-    {
-        $query = "
-            SELECT
-            COUNT(*) AS count
-            FROM
-                {$CFG->prefix}{$item_type} it
-            INNER JOIN
-                {$CFG->prefix}tag_instance tt
-            ON
-                it.id = tt.itemid
-            WHERE
-                tt.itemtype = '{$item_type}' AND
-                tt.tagid = '{$tag_id}' ";
-    }
-
-
-    return count_records_sql($query);
-
-}
-
-
-/**
- * Determines if an item is tagged with a certain tag
- *
- * @param string $item_type name of the table where the item is stored. Ex: 'user'
- * @param string $item_id id of the item beeing queried
- * @param string $tag_name_or_id is a single **normalized** tag name or the id of a tag
- * @return bool true if a matching record exists, else false.
- */
-function is_item_tagged_with($item_type,$item_id, $tag_name_or_id) {
-
-    $tag_id = tag_id_from_string($tag_name_or_id);
-
-    return record_exists('tag_instance','itemtype',$item_type,'itemid',$item_id, 'tagid', $tag_id);
-}
-
-/**
- * Search for tags with names that match some text
- *
- * @param string $text string that the tag names will be matched against
- * @param boolean $ordered If true, tags are ordered by their popularity. If false, no ordering.
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an array of objects, or false if no records were found or an error occured.
- */
-
-function search_tags($text, $ordered=true, $limitfrom='' , $limitnum='' ) {
-
-    global $CFG;
-
-    $text = tag_normalize($text);
-
-    if ($ordered) {
-        $query = "
-            SELECT
-                tg.id, tg.name, tg.rawname, COUNT(ti.id) AS count
-            FROM
-                {$CFG->prefix}tag tg
-            LEFT JOIN
-                {$CFG->prefix}tag_instance ti
-            ON
-                tg.id = ti.tagid
-            WHERE
-                tg.name
-            LIKE
-                '%{$text}%'
-            GROUP BY
-                tg.id, tg.name, tg.rawname
-            ORDER BY
-                count
-            DESC";
-    } else {
-        $query = "
-            SELECT
-                tg.id, tg.name, tg.rawname
-            FROM
-                {$CFG->prefix}tag tg
-            WHERE
-                tg.name
-            LIKE
-                '%{$text}%'
-            ";
-    }
-
-
-    return get_records_sql($query, $limitfrom , $limitnum);
-
-}
-
-/**
- * Function that returns tags that start with some text
- *
- * @param string $text string that the tag names will be matched against
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an array of objects, or false if no records were found or an error occured.
- */
-function similar_tags($text, $limitfrom='' , $limitnum='' ) {
-    global $CFG;
-
-    $text = moodle_strtolower($text);
-
-    $query = "SELECT tg.id, tg.name, tg.rawname
-                FROM {$CFG->prefix}tag tg
-               WHERE tg.name LIKE '{$text}%'";
-
-    return get_records_sql($query, $limitfrom , $limitnum);
+    $rs = get_recordset_sql('SELECT * FROM '. $CFG->prefix .'tag WHERE id = '. $tagid);
+    return rs_fetch_next_record($rs);
 }
 
 /**
@@ -759,69 +319,266 @@ function similar_tags($text, $limitfrom='' , $limitnum='' ) {
  * @param int $limitnum return a subset comprising this many records (optional, default is 10)
  * @return array an array of tag objects
  */
-
-function related_tags($tag_name_or_id, $limitnum=10) {
-
-    $tag_id = tag_id_from_string($tag_name_or_id);
+function tag_get_related_tags($tagid, $limitnum=10) {
 
     //gets the manually added related tags
-    if (!$manual_related_tags = get_item_tags('tag', $tag_id, 'ti.ordering ASC', DEFAULT_TAG_TABLE_FIELDS)) {
-        $manual_related_tags = array();
+    if (!$related_tags = tag_get_tags(array('type'=>'tag', 'id'=>$tagid))) {
+        $related_tags = array();
     }
 
     //gets the correlated tags
-    $automatic_related_tags = correlated_tags($tag_id, $limitnum);
-
-    $related_tags = array_merge($manual_related_tags, $automatic_related_tags);
+    $automatic_related_tags = tag_get_correlated($tagid, $limitnum);
+    if (is_array($automatic_related_tags)) {
+        $related_tags = array_merge($related_tags, $automatic_related_tags);
+    }
 
     return array_slice(object_array_unique($related_tags), 0 , $limitnum);
 }
 
-/**
- * Returns the correlated tags of a tag
- * The correlated tags are retrieved from the tag_correlation table, which is a caching table.
+/** 
+ * Get a comma-separated list of tags related to another tag.
  *
- * @param string $tag_name_or_id is a single **normalized** tag name or the id of a tag
- * @return array an array of tag objects, or empty array if none
+ * @param array $related_tags the array returned by tag_get_related_tags
+ * @param int $html either TAG_RETURN_HTML (default) or TAG_RETURN_TEXT : return html links, or just text.
+ * @return string comma-separated list
  */
-function correlated_tags($tag_name_or_id, $limitnum=null) {
+function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
+    global $CFG;
 
-    $tag_id = tag_id_from_string($tag_name_or_id);
-
-    if (!$tag_correlation = get_record('tag_correlation', 'tagid', $tag_id)) {
-        return array();
+    $tags_names = array();
+    foreach($related_tags as $tag) {
+        if ( $html == TAG_RETURN_TEXT) {
+            $tags_names[] = rawurlencode(tag_display_name($tag));
+        } else {
+            // TAG_RETURN_HTML
+            $tags_names[] = '<a href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'">'. rawurlencode(tag_display_name($tag)) .'</a>';
+        }
     }
-
-    if (empty($tag_correlation->correlatedtags)) {
-        return array();
-    }
-
-    if (!$result = get_records_select('tag', "id IN ({$tag_correlation->correlatedtags})", '', DEFAULT_TAG_TABLE_FIELDS, 0, $limitnum)) {
-        return array();
-    }
-
-    return $result;
+    return implode(', ', $tags_names);
 }
 
 /**
- * Recalculates tag correlations of all the tags associated with an item
- * This function could be called whenever the tags associations with an item changes
- *  ( for example when tag_an_item() or untag_an_item() is called )
+ * Change the "value" of a tag, and update the associated 'name'.
  *
- * @param string $item_type name of the table where the item is stored. Ex: 'user'
- * @param string $item_id id of the item
+ * @param int $tagid the id of the tag to modify
+ * @param string $newtag the new name
+ * @return bool true on success, false otherwise
  */
-function update_tag_correlations($item_type, $item_id) {
+function tag_rename($tagid, $newtag) {
 
-    $item_tags = get_item_tags($item_type, $item_id);
+    if (! $newtag_clean = array_shift(tag_normalize($newtag, TAG_CASE_ORIGINAL)) ) {
+        return false;
+    }
 
-    foreach ($item_tags as $tag) {
-        cache_correlated_tags($tag->id);
+    if ( tag_get_id($newtag_clean) ) {
+        // 'newtag' already exists and merging tags is not yet supported.
+        return false; 
+    }
+
+    if ($tag = get_record('tag', 'id', $tagid)) {
+        $tag->rawname = addslashes($newtag_clean); 
+        $tag->name = addslashes(moodle_strtolower($newtag_clean)); 
+        $tag->timemodified = time();
+        return update_record('tag', $tag);
+    }
+    return false;
+}
+
+/**
+ * Set the tags assigned to a record.  This overwrites the current tags.
+ * 
+ * This function is meant to be fed the string coming up from the user 
+ * interface, which contains all tags assigned to a record.
+ *
+ * @param string $record_type the type of record to tag ('post' for blogs, 
+ *     'user' for users, 'tag' for tags, etc.
+ * @param int $record_id the id of the record to tag
+ * @param array $tags the array of tags to set on the record. If 
+ *     given an empty array, all tags will be removed.
+ * @return void 
+ */
+function tag_set($record_type, $record_id, $tags) {
+    global $db;
+
+    $record = array('type' => $record_type, 'id' => $record_id);
+
+    $tags_ids = tag_get_id($tags, TAG_RETURN_ARRAY); // force an array, even if we only have one tag.
+    $cleaned_tags = tag_normalize($tags);
+    //echo 'tags-in-tag_set'; var_dump($tags); var_dump($tags_ids); var_dump($cleaned_tags);
+
+    $current_ids = tag_get_tags_ids($record);
+    //var_dump($current_ids);
+    $tags_to_assign = array();
+
+    // for data coherence reasons, it's better to remove deleted tags
+    // before adding new data: ordering could be duplicated.
+    foreach($current_ids as $current_id) {
+        if (!in_array($current_id, $tags_ids)) {
+            tag_delete_instance($record, $current_id);
+        }
+    }
+
+    foreach($tags as $ordering => $tag) {
+        $tag = trim($tag);
+        if (!$tag) {
+            continue;
+        }
+
+        $clean_tag = $cleaned_tags[$tag];
+        $tag_current_id = $tags_ids[$clean_tag];
+        
+        if ( is_null($tag_current_id) ) {
+            // create new tags
+            //echo "call to add tag $tag\n";
+            $new_tag = tag_add($tag);
+            tag_assign($record, $new_tag[$clean_tag], $ordering);
+        } 
+        elseif ( empty($current_ids) || !in_array($tag_current_id, $current_ids) ) {
+            // assign existing tags
+            tag_assign($record, $tag_current_id, $ordering);
+        } 
+        elseif ( isset($current_ids[$ordering]) && $current_ids[$ordering] != $tag_current_id ) { 
+            // this actually checks if the ordering number points to the same tag
+            //recompute ordering, if necessary
+            //echo 'ordering changed for ', $tag, ':', $ordering, "\n";
+            tag_assign($record, $tag_current_id, $ordering);
+        }
     }
 }
 
 /**
- * Calculates and stores the correlated tags of a tag.
+ * Adds a tag to a record, without overwriting the current tags.
+ * 
+ * @param string $record_type the type of record to tag ('post' for blogs, 
+ *     'user' for users, etc.
+ * @param int $record_id the id of the record to tag
+ * @param string $tag the tag to add
+ * @return void
+ */
+function tag_set_add($record_type, $record_id, $tag) {
+
+    $record = array('type' => $record_type, 'id' => $record_id);
+    
+    $new_tags = array();
+    foreach( tag_get_tags($record) as $current_tag ) {
+        $new_tags[] = $current_tag->rawname;
+    }
+    $new_tags[] = $tag;
+    
+    return tag_set($record_type, $record_id, $new_tags);
+}
+
+/**
+ * Set the type of a tag.  At this time (version 1.9) the possible values
+ * are 'default' or 'official'.  Official tags will be displayed separately "at
+ * tagging time" (while selecting the tags to apply to a record).
+ *
+ * @param string $tagid tagid to modify
+ * @param string $type either 'default' or 'official'
+ * @return true on success, false otherwise
+ */
+function tag_type_set($tagid, $type) {
+    if ($tag = get_record('tag', 'id', $tagid)) {
+        $tag->tagtype = $type;
+        $tag->timemodified = time();
+        return update_record('tag', $tag);
+    }
+    return false;
+}
+
+///////////////////////////////////////////////////////
+/////////////////// PRIVATE TAG API ///////////////////
+
+/**
+ * A * @param array $record the record that will be tagged
+ * @param string $tags the comma-separated tags to set on the record. If 
+ *     given an empty array, all tags will be removed.
+dds one or more tag in the database.  This function should not be called 
+ * directly : you should use tag_set.
+ *
+ * @param mixed $tags one tag, or an array of tags, to be created
+ * @param string $tag_type type of tag to be created ("default" is the default 
+ *     value and "official" is the only other supported value at this time). An
+ *     official tag is kept even if there are no records tagged with it.
+ * @return an array of tags ids, indexed by their lowercase normalized names. 
+ *     Any boolean false in the array indicates an error while adding the tag.
+ */
+function tag_add($tags, $type="default") {
+    global $USER;
+
+    require_capability('moodle/tag:create', get_context_instance(CONTEXT_SYSTEM)); 
+
+    if (!is_array($tags)) {
+        $tags = array($tags);
+    }
+
+    $tag_object = new StdClass;
+    $tag_object->tagtype = $type;
+    $tag_object->userid = $USER->id;
+    $tag_object->timemodified   = time();
+
+    $clean_tags = tag_normalize($tags, TAG_CASE_ORIGINAL);
+
+    $tags_ids = array();
+    foreach($clean_tags as $tag) {
+        $tag = trim($tag);
+        if (!$tag) {
+            $tags_ids[$tag] = false;
+        } else {
+            // note that the difference between rawname and name is only 
+            // capitalization : the rawname is NOT the same at the rawtag. 
+            $tag_object->rawname = addslashes($tag); 
+            $tag_name_lc = moodle_strtolower($tag);
+            $tag_object->name = addslashes($tag_name_lc); 
+            //var_dump($tag_object);
+            $tags_ids[$tag_name_lc] = insert_record('tag', $tag_object);
+        }
+    }
+
+    return $tags_ids;
+}
+
+/**
+ * Assigns a tag to a record: if the record already exists, the time and
+ * ordering will be updated.
+ * 
+ * @param array $record the record that will be tagged
+ * @param string $tagid the tag id to set on the record. 
+ * @param int $ordering the order of the instance for this record
+ * @return bool true on success, false otherwise
+ */
+function tag_assign($record, $tagid, $ordering) {
+
+    require_capability('moodle/tag:create', get_context_instance(CONTEXT_SYSTEM));
+
+    if ( $tag_instance_object = get_record('tag_instance', 'tagid', $tagid, 'itemtype', $record['type'], 'itemid', $record['id']) ) {
+        $tag_instance_object->ordering = $ordering;
+        $tag_instance_object->timemodified = time();
+        return update_record('tag_instance', $tag_instance_object);
+    } else { 
+        $tag_instance_object = new StdClass;
+        $tag_instance_object->tagid = $tagid;
+        $tag_instance_object->itemid = $record['id'];
+        $tag_instance_object->itemtype = $record['type'];
+        $tag_instance_object->ordering = $ordering;
+        $tag_instance_object->timemodified = time();
+        return insert_record('tag_instance', $tag_instance_object);
+    }
+}
+
+/**
+ * Function that returns tags that start with some text, for use by the autocomplete feature
+ *
+ * @param string $text string that the tag names will be matched against
+ * @return mixed an array of objects, or false if no records were found or an error occured.
+ */
+function tag_autocomplete($text) {
+    global $CFG;
+    return get_records_sql('SELECT tg.id, tg.name, tg.rawname FROM '. $CFG->prefix .'tag tg WHERE tg.name LIKE "'. moodle_strtolower($text) .'%"');
+}
+
+/**
+ * Calculates and stores the correlated tags of all tags.
  * The correlations are stored in the 'tag_correlation' table.
  *
  * Two tags are correlated if they appear together a lot.
@@ -831,707 +588,240 @@ function update_tag_correlations($item_type, $item_id) {
  * It works as a cache for a potentially heavy load query done at the 'tag_instance' table.
  * So, the 'tag_correlation' table stores redundant information derived from the 'tag_instance' table.
  *
- * @param string $tag_name_or_id is a single **normalized** tag name or the id of a tag
- * @param number $min_correlation cutoff percentage (optional, default is 0.25)
- * @param int $limitnum return a subset comprising this many records (optional, default is 10)
+ * @param number $min_correlation cutoff percentage (optional, default is 2)
  */
-function cache_correlated_tags($tag_name_or_id, $min_correlation=2) {
+function tag_compute_correlations($min_correlation=2) {
+
     global $CFG;
 
-    $tag_id = tag_id_from_string($tag_name_or_id);
+    $all_tags = get_records_list('tag');
+    
 
-    // query that counts how many times any tag appears together in items
-    // with the tag passed as argument ($tag_id)
-    $query = "SELECT tb.tagid , COUNT(*) AS nr
-                FROM {$CFG->prefix}tag_instance ta
-                     INNER JOIN {$CFG->prefix}tag_instance tb ON ta.itemid = tb.itemid
-               WHERE ta.tagid = {$tag_id} AND tb.tagid != {$tag_id}
-            GROUP BY tb.tagid
-            ORDER BY nr DESC";
+    $tag_correlation_obj = new object();
+    foreach($all_tags as $tag) {
 
-    $correlated = array();
+        // query that counts how many times any tag appears together in items
+        // with the tag passed as argument ($tag_id)
+        $query = "SELECT tb.tagid , COUNT(*) AS nr ".
+            "FROM {$CFG->prefix}tag_instance ta INNER JOIN {$CFG->prefix}tag_instance tb ON ta.itemid = tb.itemid ".
+            "WHERE ta.tagid = {$tag->id} AND tb.tagid != {$tag->id} ".
+            "GROUP BY tb.tagid ".
+            "HAVING nr > $min_correlation ".
+            "ORDER BY nr DESC";  // todo: find out if it's necessary to order.
 
-    // Correlated tags happen when they appear together in more occasions 
-    // than $min_correlation.
-    if ($tag_correlations = get_records_sql($query)) {
-        foreach($tag_correlations as $correlation) {
-            if($correlation->nr >= $min_correlation){
-                $correlated[] = $correlation->tagid;
+        $correlated = array();
+
+        // Correlated tags happen when they appear together in more occasions 
+        // than $min_correlation.
+        if ($tag_correlations = get_records_sql($query)) {
+            foreach($tag_correlations as $correlation) {
+        //        if($correlation->nr >= $min_correlation){
+                    $correlated[] = $correlation->tagid;
+        //        }
             }
         }
-    }
 
-    $correlated = implode(',', $correlated);
+        $correlated = implode(',', $correlated);
+        //var_dump($correlated);
 
-    //saves correlation info in the caching table
-    if ($tag_correlation_obj = get_record('tag_correlation', 'tagid', $tag_id)) {
-        $tag_correlation_obj->correlatedtags = $correlated;
-        update_record('tag_correlation', $tag_correlation_obj);
-
-    } else {
-        $tag_correlation_obj = new object();
-        $tag_correlation_obj->tagid          = $tag_id;
-        $tag_correlation_obj->correlatedtags = $correlated;
-        insert_record('tag_correlation', $tag_correlation_obj);
+        //saves correlation info in the caching table
+        if ($tag_correlation_obj = get_record('tag_correlation', 'tagid', $tag->id)) {
+            $tag_correlation_obj->correlatedtags = $correlated;
+            update_record('tag_correlation', $tag_correlation_obj);
+        } else {
+            $tag_correlation_obj->tagid          = $tag->id;
+            $tag_correlation_obj->correlatedtags = $correlated;
+            insert_record('tag_correlation', $tag_correlation_obj);
+        }
     }
 }
 
 /**
- * This function cleans up the 'tag_instance' table
- * It removes orphans in 'tag_instances' table
- *
+ * Tasks that should be performed at cron time
  */
-function tag_instance_table_cleanup() {
+function tag_cron() {
+    tag_compute_correlations();
+}
+
+/** 
+ * Get the name of a tag
+ * 
+ * @param mixed $tagids the id of the tag, or an array of ids
+ * @return mixed string name of one tag, or id-indexed array of strings
+ */
+function tag_get_name($tagids) {
+
+    $return_a_string = false;
+    if ( !is_array($tagids) ) {
+        $return_a_string = true;
+        $tagids = array($tagids);
+    }
+
+    $tag_names = array();
+    foreach(get_records_list('tag', 'id', implode(',', $tagids)) as $tag) { 
+        $tag_names[$tag->id] = $tag->name;
+    }
+
+    if ($return_a_string) {
+        return array_pop($tag_names);
+    }
+
+    return $tag_names;
+}
+
+/**
+ * Returns the correlated tags of a tag, retrieved from the tag_correlation
+ * table.  Make sure cron runs, otherwise the table will be empty and this 
+ * function won't return anything.
+ *
+ * @param int $tag_id is a single tag id
+ * @return array an array of tag objects, empty if no correlated tags are found
+ */
+function tag_get_correlated($tag_id, $limitnum=null) {
+
+    $tag_correlation = get_record('tag_correlation', 'tagid', $tag_id);
+
+    if (!$tag_correlation || empty($tag_correlation->correlatedtags)) {
+        return array();
+    }
+    
+    if (!$result = get_records_select('tag', "id IN ({$tag_correlation->correlatedtags})", '', '*', 0, $limitnum)) {
+        return array();
+    }
+
+    return $result;
+}
+
+/**
+ * Function that normalizes a list of tag names.
+ *
+ * @param mixed $tags array of tags, or a single tag.
+ * @param int $case case to use for returned value (default: lower case). Either CASE_LOWER or CASE_UPPER
+ * @return array of lowercased normalized tags, indexed by the normalized tag. (Eg: 'Banana' => 'banana')
+ */
+function tag_normalize($rawtags, $case = TAG_CASE_LOWER) {
+
+    // cache normalized tags, to prevent (in some cases) costly (repeated) calls to clean_param
+    static $cleaned_tags_lc = array(); // lower case - use for comparison
+    static $cleaned_tags_mc = array(); // mixed case - use for saving to database
+
+    if ( !is_array($rawtags) ) {
+        $rawtags = array($rawtags);
+    }
+
+    $result = array();
+    foreach($rawtags as $rawtag) {
+        $rawtag = trim($rawtag);
+        if (!$rawtag) {
+            continue;
+        }
+        if ( !array_key_exists($rawtag, $cleaned_tags_lc) ) {
+            $cleaned_tags_lc[$rawtag] = moodle_strtolower( clean_param($rawtag, PARAM_TAG) );
+            $cleaned_tags_mc[$rawtag] = clean_param($rawtag, PARAM_TAG);
+        }
+        if ( $case == TAG_CASE_LOWER ) { 
+            $result[$rawtag] = $cleaned_tags_lc[$rawtag];
+        } else { // TAG_CASE_ORIGINAL
+            $result[$rawtag] = $cleaned_tags_mc[$rawtag];
+        }
+    }
+    
+    return $result;
+}
+
+
+/**
+ * Search for tags with names that match some text
+ *
+ * @param string $text escaped string that the tag names will be matched against
+ * @param boolean $ordered If true, tags are ordered by their popularity. If false, no ordering.
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+ * @return mixed an array of objects, or false if no records were found or an error occured.
+ */
+function tag_find_tags($text, $ordered=true, $limitfrom='', $limitnum='') {
 
     global $CFG;
 
-    //get the itemtypes present in the 'tag_instance' table
-    $query = "
-        SELECT
-        DISTINCT(itemtype)
-        FROM
-        {$CFG->prefix}tag_instance
-    ";
+    $text = array_shift(tag_normalize($text, TAG_CASE_LOWER));
 
-    if ($items_types = get_records_sql($query)) {
-
-        // for each itemtype, remove tag_instances that are orphans
-        // That is: For a given tag_instance, if in the itemtype table there's no entry with id equal to itemid,
-        //          then this tag_instance is an orphan and it will be removed.
-        foreach ($items_types as $type) {
-
-            $query = "
-                {$CFG->prefix}tag_instance.id
-            IN
-                ( SELECT sq1.id
-                FROM
-                    (SELECT sq2.*
-                     FROM {$CFG->prefix}tag_instance sq2
-                     LEFT JOIN {$CFG->prefix}{$type->itemtype} item
-                     ON sq2.itemid = item.id
-                     WHERE item.id IS NULL
-                     AND sq2.itemtype = '{$type->itemtype}')
-                sq1
-                ) ";
-
-            delete_records_select('tag_instance', $query);
-        }
+    if ($ordered) {
+        $query = "SELECT tg.id, tg.name, tg.rawname, COUNT(ti.id) AS count ".
+            "FROM {$CFG->prefix}tag tg LEFT JOIN {$CFG->prefix}tag_instance ti ON tg.id = ti.tagid ".
+            "WHERE tg.name LIKE '%{$text}%' ".
+            "GROUP BY tg.id, tg.name, tg.rawname ".
+            "ORDER BY count DESC";
+    } else {
+        $query = "SELECT tg.id, tg.name, tg.rawname ".
+            "FROM {$CFG->prefix}tag tg ".
+            "WHERE tg.name LIKE '%{$text}%'";
     }
-
-    // remove tag_instances that are orphans because tagid does not correspond to an
-    // existing tag
-    $query = "
-           {$CFG->prefix}tag_instance.id
-        IN
-           (SELECT sq1.id
-            FROM
-                (SELECT sq2.*
-                 FROM {$CFG->prefix}tag_instance sq2
-                 LEFT JOIN {$CFG->prefix}tag tg
-                 ON sq2.tagid = tg.id
-                 WHERE tg.id IS NULL )
-             sq1
-        )
-        ";
-
-    delete_records_select('tag_instance', $query);
+    return get_records_sql($query, $limitfrom , $limitnum);
 }
 
+///////////////////////////////////////////////////////////
+////// functions copied over from the first version //////
 
 /**
- * Function that normalizes a list of tag names
- *
- * Ex: tag_normalize('bANAana')   -> returns 'banana'
- *        tag_normalize('lots    of    spaces') -> returns 'lots of spaces'
- *        tag_normalize('%!%!% non alpha numeric %!%!%') -> returns 'non alpha numeric'
- *        tag_normalize('tag one,   TAG TWO, TAG three, and anotheR tag')
- *                         -> returns 'tag one,tag two,tag three,and another tag'
- *
- * @param string $tag_names_csv unnormalized CSV tag names
- * @return string **normalized** CSV tag names
+ * Flag a tag as inapropriate
+ * 
+ * @param mixed $tagids one (int) tagid, or an array of tagids
+ * @return void
  */
-
-function tag_normalize($tag_names_csv, $lowercase=true) {
-    $tag_names_csv = clean_param($tag_names_csv, PARAM_TAGLIST);
-
-    if ($lowercase){
-        $tag_names_csv = moodle_strtolower($tag_names_csv);
+function tag_set_flag($tagids) {
+    if ( !is_array($tagids) ) {
+        $tagids = array($tagids);
     }
-
-    return $tag_names_csv;
-}
-
-function tag_flag_inappropriate($tag_names_or_ids_csv){
-
-    $tag_ids_csv = tag_id_from_string($tag_names_or_ids_csv);
-
-    $tag_ids = explode(',', $tag_ids_csv);
-
-    foreach ($tag_ids as $id){
-        $tag = get_record('tag','id',$id, '', '', '', '', 'id,flag');
-
+    foreach ($tagids as $tagid) {
+        $tag = get_record('tag', 'id', $tagid);
         $tag->flag++;
         $tag->timemodified = time();
-
         update_record('tag', $tag);
     }
 }
 
-function tag_flag_reset($tag_names_or_ids_csv){
-
+/** 
+ * Remove the inapropriate flag on a tag
+ * 
+ * @param mixed $tagids one (int) tagid, or an array of tagids
+ * @return bool true if function succeeds, false otherwise
+ */
+function tag_unset_flag($tagids) {
     global $CFG;
 
-    $tag_ids_csv = tag_id_from_string($tag_names_or_ids_csv);
+    require_capability('moodle/tag:manage', get_context_instance(CONTEXT_SYSTEM));
 
-    $tag_ids_csv_with_apos = "'" . str_replace(',', "','", $tag_ids_csv) . "'";
-
+    if ( is_array($tagids) ) {
+        $tagids = implode(',', $tagids);
+    }
     $timemodified = time();
-
-    $query = "
-        UPDATE
-            {$CFG->prefix}tag tg
-        SET
-            tg.flag = 0,
-            tg.timemodified = {$timemodified}
-        WHERE
-            tg.id
-        IN
-            ({$tag_ids_csv_with_apos})
-        ";
-
-    execute_sql($query, false);
+    return execute_sql('UPDATE '. $CFG->prefix .'tag tg SET tg.flag = 0, tg.timemodified = '. $timemodified .' WHERE tg.id IN ('. $tagids .')', false);
 }
 
 /**
- * Function that updates tags names.
- * Updates only if the new name suggested for a tag doesn´t exist already.
+ * Count how many records are tagged with a specific tag,
  *
- * @param Array $tags_names_changed array of new tag names indexed by tag ids.
- * @return Array array of tags names that were effectively updated, indexed by tag ids.
+ * @param string $record record to look for ('post', 'user', etc.)
+ * @param int $tag is a single tag id
+ * @return int number of mathing tags.
  */
-function tag_update_name($tags_names_changed){
-
-    $tags_names_updated = array();
-
-    foreach ($tags_names_changed as $id => $newname){
-
-        $norm_newname = tag_normalize($newname);
-
-        if( !tag_exists($norm_newname) && is_tag_name_valid($norm_newname) ) {
-
-            $tag = tag_by_id($id);
-
-            $tags_names_updated[$id] = $tag->name;
-
-            // rawname keeps the original casing of the string
-            $tag->rawname        = tag_normalize($newname, false);
-
-            // name lowercases the string
-            $tag->name           = $norm_newname;
-
-            $tag->timemodified   = time();
-
-            update_record('tag',$tag);
-
-        }
-    }
-
-    return $tags_names_updated;
-
+function tag_record_count($record_type, $tagid) {
+    return count_records('tag_instance', 'itemtype', $record_type, 'tagid', $tagid);
 }
 
 /**
- * Function that returns comma separated HTML links to the tag pages of the tags passed
+ * Determine if a record is tagged with a specific tag  
  *
- * @param array $tag_objects an array of tag objects
- * @return string CSV, HTML links to tag pages
+ * @param array $record the record to look for
+ * @param string $tag a tag name
+ * @return bool true if it is tagged, false otherwise
  */
-
-function tag_links_csv($tag_objects) {
-
-    global $CFG;
-    $tag_links = '';
-
-    if (empty($tag_objects)) {
-        return '';
-    }
-
-    $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-    $can_manage_tags = has_capability('moodle/tag:manage', $systemcontext);
-
-    foreach ($tag_objects as $tag){
-        //highlight tags that have been flagged as inappropriate for those who can manage them
-        $tagname = tag_display_name($tag);
-        if ($tag->flag > 0 && $can_manage_tags) {
-            $tagname =  '<span class="flagged-tag">' . $tagname . '</span>';
-        }
-        $tag_links .= ' <a href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'">'.$tagname.'</a>,';
-    }
-
-    return rtrim($tag_links, ',');
-}
-
-/**
- * Function that returns comma separated names of the tags passed
- * Example of string that might be returned: 'history, wars, greek history'
- *
- * @param array $tag_objects
- * @return string CSV tag names
- */
-
-function tag_names_csv($tag_objects) {
-
-    if (empty($tag_objects)) {
-        return '';
-    }
-
-    $tags = array();
-
-    foreach ($tag_objects as $tag){
-        $tags[] = tag_display_name($tag);
-    }
-
-    return implode(', ', $tags);
-}
-
-
-/**
- * Returns most popular tags, ordered by their popularity
- *
- * @param int $nr_of_tags number of random tags to be returned
- * @param unknown_type $tag_type
- * @return mixed an array of tag objects with the following fields: id, name and count
- */
-function popular_tags_count($nr_of_tags=20, $tag_type = 'default') {
-
-    global $CFG;
-
-    $query = "
-        SELECT
-            tg.rawname, tg.id, tg.name, COUNT(ti.id) AS count, tg.flag
-        FROM
-            {$CFG->prefix}tag_instance ti
-        INNER JOIN
-            {$CFG->prefix}tag tg
-        ON
-            tg.id = ti.tagid
-        GROUP BY
-            tg.id, tg.rawname, tg.name, tg.flag
-        ORDER BY
-            count
-        DESC
-        ";
-
-    return get_records_sql($query,0,$nr_of_tags);
-
-
-}
-
-function tag_cron(){
-
-    tag_instance_table_cleanup();
-
-    if ($tags = get_all_tags('*')) {
-
-        foreach ($tags as $tag){
-            cache_correlated_tags($tag->id);
-        }
-    }
-
-}
-/*-------------------- Printing functions -------------------- */
-
-/**
- * Prints a box that contains the management links of a tag
- *
- * @param $tag_object
- * @param $return if true return html string
- */
-
-function print_tag_management_box($tag_object, $return=false) {
-
-    global $USER, $CFG;
-
-    $tagname  = tag_display_name($tag_object);
-
-    $output = '';
-
-    if (!isguestuser()) {
-
-        $output .= print_box_start('box','tag-management-box', true);
-
-        $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-
-        $links = array();
-
-        // if the user is not tagged with the $tag_object tag, a link "add blahblah to my interests" will appear
-        if( !is_item_tagged_with('user', $USER->id, $tag_object->id )) {
-            $links[] = '<a href="' . $CFG->wwwroot . '/user/tag.php?action=addinterest&amp;sesskey='.sesskey().'&amp;id='. $tag_object->id .'">'.get_string('addtagtomyinterests','tag',$tagname). '</a>';
-        }
-
-        // only people with moodle/tag:edit capability may edit the tag description
-        if ( has_capability('moodle/tag:edit',$systemcontext) && is_item_tagged_with('user', $USER->id, $tag_object->id ) ) {
-            $links[] = '<a href="'. $CFG->wwwroot . '/tag/edit.php?id='.$tag_object->id .'">'.get_string('edittag', 'tag').'</a>';
-        }
-
-        // flag as inappropriate link
-        $links[] = '<a href="' . $CFG->wwwroot . '/user/tag.php?action=flaginappropriate&amp;sesskey='.sesskey().'&amp;id='. $tag_object->id .'">' . get_string('flagasinappropriate','tag',$tagname). '</a>';
-
-        // Manage all tags links
-        if ( has_capability('moodle/tag:manage',$systemcontext) ) {
-            $links[] =  '<a href="'.$CFG->wwwroot.'/tag/manage.php">' . get_string('managetags', 'tag') . '</a>' ;
-        }
-
-        $output .= implode(' | ', $links);
-
-        $output .= print_box_end(true);
-
-    }
-
-    if ($return) {
-        return $output;
+function tag_record_tagged_with($record, $tag) {
+    if ($tagid = tag_get_id($tag)) {
+        return count_records('tag_instance', 'itemtype', $record['type'], 'itemid', $record['id'], 'tagid', $tagid);
     } else {
-        echo $output;
+        return 0; // tag doesn't exist
     }
-
-}
-
-/**
- * Prints a box with the description of a tag and its related tags
- *
- * @param unknown_type $tag_object
- * @param $return if true return html string
- */
-
-function print_tag_description_box($tag_object, $return=false) {
-
-    global $USER, $CFG;
-
-    $tagname  = tag_display_name($tag_object);
-    $related_tags =  related_tags($tag_object->id);
-
-    $content = !empty($tag_object->description) || $related_tags;
-
-    $output = '';
-
-    if ($content) {
-        $output .= print_box_start('generalbox', 'tag-description',true);
-    }
-
-    if (!empty($tag_object->description)) {
-        $options = new object();
-        $options->para = false;
-        $output .= format_text($tag_object->description, $tag_object->descriptionformat, $options);
-    }
-
-    if ($related_tags) {
-        $output .= '<br /><br /><strong>'.get_string('relatedtags','tag').': </strong>' . tag_links_csv($related_tags);
-    }
-
-    if ($content) {
-        $output .= print_box_end(true);
-    }
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/**
- * Prints a table of the users tagged with the tag passed as argument
- *
- * @param $tag_object
- * @param int $users_per_row number of users per row to display
- * @param int $limitfrom prints users starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum prints this many users (optional, required if $limitfrom is set).
- * @param $return if true return html string
- */
-
-function print_tagged_users_table($tag_object, $limitfrom='' , $limitnum='', $return=false) {
-
-    //List of users with this tag
-    $userlist = array_values( get_items_tagged_with(
-    'user',
-    $tag_object->id,
-    'lastaccess DESC' ,
-    'id, firstname, lastname, picture',
-    $limitfrom,
-    $limitnum) );
-
-    $output = print_user_list($userlist, true);
-
-    if ($return) {
-        return $output;
-    }
-    else {
-        echo $output;
-    }
-
-}
-
-/**
- *  Prints a list of users
- * @param array $userlist an array of user objects
- * @param $return if true return html string
- */
-function print_user_list($userlist, $return=false) {
-
-    $output = '';
-
-    $output .= '<ul class="inline-list">';
-    foreach ($userlist as $user){
-        $output .= '<li>'. print_user_box( $user , true) ."</li>\n";
-    }
-    $output .= "</ul>\n";
-
-    if ($return) {
-        return $output;
-    }
-    else {
-        echo $output;
-    }
-
-}
-
-/**
- * Prints an individual user box
- *
- * @param $user user object (contains the following fields: id, firstname, lastname and picture)
- * @param $return if true return html string
- */
-function print_user_box($user, $return=false) {
-
-    global $CFG;
-    $textlib = textlib_get_instance();
-
-    $usercontext = get_context_instance(CONTEXT_USER, $user->id);
-
-    $profilelink = '';
-    if ( has_capability('moodle/user:viewdetails', $usercontext) ) {
-        $profilelink = $CFG->wwwroot.'/user/view.php?id='.$user->id;
-    }
-
-    $output = '';
-
-    $output .= print_box_start('user-box', 'user'.$user->id, true);
-
-    $fullname = fullname($user);
-    $alt = '';
-    if (!empty($profilelink)) {
-        $output .= '<a href="'.$profilelink.'">';
-        $alt = $fullname;
-    }
-
-    //print user image - if image is only content of link it needs ALT text!
-    if ($user->picture) {
-        $output .= '<img alt="'.$alt.'" class="user-image" src="'. $CFG->wwwroot .'/user/pix.php/'. $user->id .'/f1.jpg"'.'/>';
-    } else {
-        $output .= '<img alt="'.$alt.'" class="user-image" src="'. $CFG->wwwroot .'/pix/u/f1.png"'.'/>';
-    }
-
-    $output .= '<br />';
-
-    if (!empty($profilelink)) {
-        $output .= '</a>';
-    }
-
-    //truncate name if it's too big
-    if ($textlib->strlen($fullname) > 26) $fullname = $textlib->substr($fullname,0,26) . '...';
-
-    $output .= '<strong>' . $fullname . '</strong>';
-
-    $output .= print_box_end(true);
-
-    if ($return) {
-        return $output;
-    }
-    else {
-        echo $output;
-    }
-
-}
-
-/**
- * Prints the tag search box
- * @param $return if true return html string
- *
- */
-function print_tag_search_box($return=false) {
-
-    global $CFG;
-
-    $output = '';
-    $output .= print_box_start('','tag-search-box', true);
-
-    $output .= '<form action="'.$CFG->wwwroot.'/tag/search.php" style="display:inline">';
-    $output .= '<div>';
-    $output .= '<input id="searchform_search" name="query" type="text" size="40" />';
-    $output .= '<button id="searchform_button" type="submit">'. get_string('search', 'tag') .'</button><br />';
-    $output .= '</div>';
-    $output .= '</form>';
-
-    $output .= print_box_end(true);
-
-    if ($return) {
-        return $output;
-    }
-    else {
-        echo $output;
-    }
-}
-
-/**
- * Prints the tag search results
- *
- * @param string $query text that tag names will be matched against
- * @param int $page current page
- * @param int $perpage nr of users displayed per page
- * @param $return if true return html string
- */
-function print_tag_search_results($query,  $page, $perpage, $return=false) {
-
-    global $CFG, $USER;
-
-    $count = sizeof( search_tags($query,false) );
-    $tags = array_values(search_tags($query, true,  $page * $perpage , $perpage));
-
-    $baseurl = $CFG->wwwroot.'/tag/search.php?query=' . $query;
-
-    $output = '';
-
-    // link "Add $query to my interests"
-    $addtaglink = '';
-    if( !is_item_tagged_with('user', $USER->id, $query )) {
-        $addtaglink = '<a href="' . $CFG->wwwroot . '/user/tag.php?action=addinterest&amp;sesskey='.sesskey().'&amp;name='. $query .'">';
-        $addtaglink .= get_string('addtagtomyinterests','tag',$query). '</a>';
-    }
-
-
-    if($tags) { // there are results to display!!
-
-        $output .= print_heading(get_string('searchresultsfor', 'tag', $query) . " : {$count}", '', 3, 'main' ,true);
-
-        //print a link "Add $query to my interests"
-        if (!empty($addtaglink)) {
-            $output .= print_box($addtaglink,'box','tag-management-box',true);
-        }
-
-        $nr_of_lis_per_ul = 6;
-        $nr_of_uls = ceil( sizeof($tags) / $nr_of_lis_per_ul);
-
-        $output .= '<ul id="tag-search-results">';
-        for($i = 0; $i < $nr_of_uls; $i++) {
-            $output .= '<li>';
-            foreach (array_slice($tags, $i * $nr_of_lis_per_ul, $nr_of_lis_per_ul ) as $tag) {
-                $tag_link = ' <a href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'">'.tag_display_name($tag).'</a>';
-                $output .= '&#8226;' . $tag_link . '<br/>';
-            }
-            $output .= '</li>';
-        }
-        $output .= '</ul>';
-        $output .= '<div>&nbsp;</div>'; // <-- small layout hack in order to look good in Firefox
-
-        $output .= print_paging_bar($count, $page, $perpage, $baseurl.'&amp;', 'page', false, true);
-    }
-    else { //no results were found!!
-
-        $output .= print_heading(get_string('noresultsfor', 'tag', $query), '', 3, 'main' , true);
-
-        //print a link "Add $query to my interests"
-        if (!empty($addtaglink)) {
-            $output .= print_box($addtaglink,'box','tag-management-box', true);
-        }
-
-    }
-
-    if ($return) {
-        return $output;
-    }
-    else {
-        echo $output;
-    }
-
-
-}
-
-/**
- * Prints a tag cloud
- *
- * @param array $tagcloud array of tag objects (fields: id, name, rawname, count and flag)
- * @param boolean $shuffle wether or not to shuffle the array passed
- * @param int $max_size maximum text size, in percentage
- * @param int $min_size minimum text size, in percentage
- * @param $return if true return html string
- */
-function print_tag_cloud($tagcloud, $shuffle=true, $max_size=180, $min_size=80, $return=false) {
-
-    global $CFG;
-
-    if (empty($tagcloud)) {
-        return;
-    }
-
-    if ($shuffle) {
-        shuffle($tagcloud);
-    } else {
-        ksort($tagcloud);
-    }
-
-    $count = array();
-    foreach ($tagcloud as $key => $value){
-        if(!empty($value->count)) {
-            $count[$key] = log10($value->count);
-        }
-        else{
-            $count[$key] = 0;
-        }
-    }
-
-    $max = max($count);
-    $min = min($count);
-
-    $spread = $max - $min;
-    if (0 == $spread) { // we don't want to divide by zero
-        $spread = 1;
-    }
-
-    $step = ($max_size - $min_size)/($spread);
-
-    $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-    $can_manage_tags = has_capability('moodle/tag:manage', $systemcontext);
-
-    //prints the tag cloud
-    $output = '<ul id="tag-cloud-list">';
-    foreach ($tagcloud as $key => $tag) {
-
-        $size = $min_size + ((log10($tag->count) - $min) * $step);
-        $size = ceil($size);
-
-        $style = 'style="font-size: '.$size.'%"';
-        $title = 'title="'.s(get_string('thingstaggedwith','tag', $tag)).'"';
-        $href = 'href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'"';
-
-        //highlight tags that have been flagged as inappropriate for those who can manage them
-        $tagname = tag_display_name($tag);
-        if ($tag->flag > 0 && $can_manage_tags) {
-            $tagname =  '<span class="flagged-tag">' . tag_display_name($tag) . '</span>';
-        }
-
-        $tag_link = '<li><a '.$href.' '.$title.' '. $style .'>'.$tagname.'</a></li> ';
-
-        $output .= $tag_link;
-
-    }
-    $output .= '</ul>';
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-
 }
 
 ?>

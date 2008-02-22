@@ -39,12 +39,23 @@ class block_tag_flickr extends block_base {
             return $this->content;
         }
 
-        $tagid       = optional_param('id',     0,      PARAM_INT);   // tag id
+        $tagid = optional_param('id', 0, PARAM_INT);   // tag id - for backware compatibility
+        $tag = optional_param('tag', '', PARAM_TAG); // tag 
+
+        if ($tag) {
+            $tag_object = tag_get_id($tag, TAG_RETURN_OBJECT);
+        } elseif (!$tag && $tagid) {
+            $tag_object = tag_get_tag_by_id($tagid);
+        } else {
+            // can't display the block if no tag was submitted! 
+            // todo: something useful here.
+            error('Missing tag parameter');
+        }
 
         //include related tags in the photo query ?
-        $tags_csv = tag_display_name(tag_by_id($tagid));
+        $tags_csv = html_entity_decode(tag_display_name($tag_object));
         if (!empty($this->config->includerelatedtags)) {
-            $tags_csv .= ',' . tag_names_csv( get_item_tags('tag',$tagid));
+            $tags_csv .= ',' . tag_get_related_tags_csv(tag_get_related_tags(array('type'=>'tag','id'=>$tag_object->id)), TAG_RETURN_TEXT);
         }
         $tags_csv = urlencode($tags_csv);
 

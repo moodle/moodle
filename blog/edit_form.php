@@ -34,8 +34,8 @@ class blog_edit_form extends moodleform {
 
 
         if (!empty($CFG->usetags)) {
-            $mform->addElement('header', 'tagshdr', get_string('tags', 'blog'));
-            $mform->createElement('select', 'otags', get_string('otags','blog'));
+            $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
+            $mform->createElement('select', 'otags', get_string('otags','tag'));
 
             $js_escape = array(
                 "\r"    => '\r',
@@ -46,28 +46,11 @@ class blog_edit_form extends moodleform {
                 '\\'    => '\\\\'
             );
 
-            $otagsselEl =& $mform->addElement('select', 'otags', get_string('otags', 'blog'), array(), 'size="5"');
+            $otagsselEl =& $mform->addElement('select', 'otags', get_string('otags', 'tag'), array(), 'size="5"');
             $otagsselEl->setMultiple(true);
             $this->otags_select_setup();
 
-            if (has_capability('moodle/blog:manageofficialtags', $sitecontext)){
-                $deleteotagsmsg = strtr(get_string('deleteotagswarn', 'blog'), $js_escape);
-                $mform->registerNoSubmitButton('deleteotags');
-                $mform->addElement('submit', 'deleteotags', get_string('delete'),
-                                array('onclick'=>"return confirm('$deleteotagsmsg');"));
-                $mform->disabledIf('deleteotags', 'otags[]', 'noitemselected');
-                $mform->setAdvanced('deleteotags');
-
-                $mform->registerNoSubmitButton('addotags');
-                $otagsgrp = array();
-                $otagsgrp[] =& $mform->createElement('text', 'otagsadd', get_string('addotags', 'blog'));
-                $otagsgrp[] =& $mform->createElement('submit', 'addotags', get_string('add'));
-                $mform->addGroup($otagsgrp, 'otagsgrp', get_string('addotags','blog'), array(' '), false);
-                $mform->setType('otagsadd', PARAM_NOTAGS);
-                $mform->setAdvanced('otagsgrp');
-            }
-
-            $mform->addElement('textarea', 'ptags', get_string('ptags', 'blog'), array('cols'=>'40', 'rows'=>'5'));
+            $mform->addElement('textarea', 'ptags', get_string('ptags', 'tag'), array('cols'=>'40', 'rows'=>'5'));
             $mform->setType('ptagsadd', PARAM_NOTAGS);
         }
         
@@ -99,9 +82,6 @@ class blog_edit_form extends moodleform {
         }
         if ($otags = get_records_sql_menu('SELECT id, name from '.$CFG->prefix.'tag WHERE tagtype=\'official\' ORDER by name ASC')){
             $otagsselect->loadArray($otags);
-        } else {
-            // removing this causes errors
-            //$mform->removeElement('otags');
         }
     }
 

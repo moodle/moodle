@@ -222,22 +222,11 @@
         echo $attachedimages;
     /// Links to tags
 
-        /*
-        if ($blogtags = get_records_sql('SELECT t.* FROM '.$CFG->prefix.'tags t, '.$CFG->prefix.'blog_tag_instance ti
-                                     WHERE t.id = ti.tagid
-                                     AND ti.entryid = '.$blogEntry->id)) {
-        */
-        if (!empty($CFG->usetags) && ($blogtags = get_item_tags('post', $blogEntry->id))) {
+        if ( !empty($CFG->usetags) && ($blogtags = tag_get_tags_csv(array('type'=>'post', 'id'=>$blogEntry->id))) ) {
             echo '<div class="tags">';
             if ($blogtags) {
-                print_string('tags');
-                echo ': ';
-                foreach ($blogtags as $key => $blogtag) {
-                    //$taglist[] = '<a href="index.php?filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;tagid='.$blogtag->id.'">'.tag_display_name($blogtag).'</a>';  // Blog tag only
-                    $taglist[] = '<a href="'.$CFG->wwwroot.'/tag/index.php?id='.$blogtag->id.'">'.tag_display_name($blogtag).'</a>';  // General tag link
-                }
-                echo implode(', ', $taglist);
-            }
+                print(get_string('tags', 'tag') .': '. $blogtags);
+           }
             echo '</div>';
         }
 
