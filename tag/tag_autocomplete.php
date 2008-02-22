@@ -11,7 +11,7 @@ if (empty($CFG->usetags)) {
 
 $query = optional_param('query', '', PARAM_TAG);  
 
-if ($similar_tags = tag_autocomplete($query)) {
+if ($similar_tags = similar_tags($query)) {
     foreach ($similar_tags as $tag){
         echo tag_display_name($tag) . "\t" . $tag->id . "\n";
     }

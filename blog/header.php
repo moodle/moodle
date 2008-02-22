@@ -84,8 +84,11 @@ if ($editing) {
 
 if (!empty($tagid)) {
     $taginstance = get_record('tag', 'id', $tagid);
-} elseif (!empty($tag)) {
-    $taginstance = tag_id($tag);
+} else {
+    $tagid = '';
+    if (!empty($tag)) {
+        $taginstance = tag_id($tag);
+    }
 }
 
 /// navigations

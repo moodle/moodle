@@ -20,24 +20,24 @@ $navlinks[] = array('name' => get_string('tags', 'tag'), 'link' => "{$CFG->wwwro
 $navigation = build_navigation($navlinks);
 
 $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-$manage_link = '&nbsp;';
 if ( has_capability('moodle/tag:manage',$systemcontext) ) {
     $manage_link =  "<a href=\"{$CFG->wwwroot}/tag/manage.php\">" . get_string('managetags', 'tag') . "</a>" ;
 }
 
 print_header_simple(get_string('tags', 'tag'), '', $navigation, '', '', '', $manage_link);
+
 print_heading(get_string('searchtags', 'tag'), '', 2);
 
-tag_print_search_box();
+print_tag_search_box();
 
 if(!empty($query)) {
-     tag_print_search_results($query, $page, $perpage);
+     print_tag_search_results($query, $page, $perpage);
 }
 
 echo '<br/><br/>';
 
 print_box_start('generalbox', 'big-tag-cloud-box');
-tag_print_cloud(150, false, 170,70);
+print_tag_cloud(popular_tags_count(150), false, 170,70);
 print_box_end();
 
 print_footer();

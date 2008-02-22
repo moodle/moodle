@@ -12,10 +12,10 @@ require_once($CFG->libdir .'/blocklib.php');
 
 $id           = optional_param('id', 0, PARAM_INT);
 $start        = optional_param('formstart', 0, PARAM_INT);
-$userid       = optional_param('userid', 0, PARAM_INT);
+$userid       = optional_param('userid',0,PARAM_INT);
 $tag          = optional_param('tag', '', PARAM_NOTAGS);
 $tagid        = optional_param('tagid', 0, PARAM_INT);
-$postid       = optional_param('postid', 0, PARAM_INT);
+$postid       = optional_param('postid',0,PARAM_INT);
 $filtertype   = optional_param('filtertype', '', PARAM_ALPHA);
 $filterselect = optional_param('filterselect', 0, PARAM_INT);
 

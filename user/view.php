@@ -381,8 +381,12 @@
 
 /// Printing Interests
 	if( !empty($CFG->usetags)) {
-	    if ( $interests = tag_get_tags_csv(array('type'=>'user', 'id'=>$user->id)) ) { 
-            print_row(get_string('interests') .": ", $interests);
+	    $interests = get_item_tags('user', $user->id);
+
+        $instereststr = tag_links_csv($interests);
+
+        if ($interests) {
+            print_row(get_string('interests').": ",rtrim($instereststr));
         }
     }
 /// End of Printing Interests

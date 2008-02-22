@@ -12,18 +12,14 @@ if (empty($CFG->usetags)) {
     error(get_string('tagsaredisabled', 'tag'));
 }
 
-$tagid       = optional_param('id', 0, PARAM_INT); // tag id
-$tag_name    = optional_param('tag', '', PARAM_TAG); // tag 
-if ($tag_name) {
-    $tag = tag_get_id($tag_name, TAG_RETURN_OBJECT);
-} elseif ($tagid) {
-    $tag = tag_get_tag_by_id($tagid); // for backward compatibility
-}
+$tagid       = optional_param('id',     0,      PARAM_INT);   // tag id
 $edit        = optional_param('edit', -1, PARAM_BOOL);
-$userpage    = optional_param('userpage', 0, PARAM_INT); // which page to show
+$userpage    = optional_param('userpage', 0, PARAM_INT);      // which page to show
 $perpage     = optional_param('perpage', 24, PARAM_INT);
 
-if (!isset($tag) || !$tag->id) {
+$tag      = tag_by_id($tagid);
+
+if (!$tag) {
     redirect($CFG->wwwroot.'/tag/search.php');
 }
 
@@ -36,7 +32,9 @@ if (($edit != -1) and $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
 }
 
+
 $PAGE->print_header();
+
 
 echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
 echo '<tr valign="top">';
@@ -51,6 +49,8 @@ if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing()
     echo '</td>';
 }
 
+
+
 //----------------- middle column -----------------
 
 echo '<td valign="top" id="middle-column">';
@@ -59,14 +59,17 @@ $tagname  = tag_display_name($tag);
 
 $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 if ($tag->flag > 0 && has_capability('moodle/tag:manage', $systemcontext)) {
-    $tagname =  '<span class="flagged-tag">' . rawurlencode($tagname) . '</span>';
+    $tagname =  '<span class="flagged-tag">' . $tagname . '</span>';
 }
 
 print_heading($tagname, '', 2, 'headingblock header tag-heading');
-tag_print_management_box($tag);
-tag_print_description_box($tag);
 
-$usercount = tag_record_count('user', $tag->id);
+print_tag_management_box($tag);
+
+print_tag_description_box($tag);
+
+
+$usercount = count_items_tagged_with($tag->id,'user');
 
 if ($usercount > 0) {
 
@@ -79,9 +82,15 @@ if ($usercount > 0) {
     $baseurl = $CFG->wwwroot.'/tag/index.php?id=' . $tag->id;
 
     print_paging_bar($usercount, $userpage, $perpage, $baseurl.'&amp;', 'userpage');
-    tag_print_tagged_users_table($tag, $userpage * $perpage, $perpage);
+
+    print_tagged_users_table($tag, $userpage * $perpage, $perpage);
+
     print_box_end();
+
 }
+
+
+
 
 // Print last 10 blogs
 
