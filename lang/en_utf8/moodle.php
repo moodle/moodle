@@ -917,6 +917,7 @@ $string['metanoalreadycourses'] = 'No courses already assigned';
 $string['metanopotentialcourses'] = 'No courses available';
 $string['metapotentialcourses'] = 'Courses available';
 $string['metaremovecourse'] = 'Remove this course';
+$string['migratinggrades'] = 'Migrating grades';
 $string['min'] = 'min';
 $string['mins'] = 'mins';
 $string['minutes'] = 'minutes';
