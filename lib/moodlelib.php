@@ -1763,7 +1763,7 @@ function course_setup($courseorid=0) {
         $COURSE = clone($courseorid);
     } else {
         global $course; // used here only to prevent repeated fetching from DB - may be removed later
-        if (!empty($course->id) and $course->id == SITEID) {
+        if ($courseorid == SITEID) {
             $COURSE = clone($SITE);
         } else if (!empty($course->id) and $course->id == $courseorid) {
             $COURSE = clone($course);
