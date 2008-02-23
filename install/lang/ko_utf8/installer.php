@@ -238,4 +238,5 @@ $string['wrongsourcebase'] = '잘못된 소스 URL  베이스';
 $string['wrongzipfilename'] = '잘못된 ZIP 파일명';
 $string['wwwroot'] = '웹 주소';
 $string['wwwrooterror'] = '이 웹 주소는 유효한 것 같지 않습니다 - 무들 설치 프로그램이 거기에 없습니다.';
+$string['xmlrpcrecommended'] = '추가적인 xmlrpc 확장 설치는 무들 네트웍이 제대로 작동하는 데 쓸모가 있습니다.';
 ?>
