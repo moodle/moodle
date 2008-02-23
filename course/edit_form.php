@@ -30,11 +30,22 @@ class course_edit_form extends moodleform {
                 }
 
             } else {
-                $managers = count(get_users_by_capability($coursecontext, 'moodle/course:managemetacourse'));
-                $participants = count(get_users_by_capability($coursecontext, 'moodle/course:view'));
-                if ($participants > $managers) {
-                    $disable_meta = get_string('metaalreadyhasenrolments');
+                // if users already enrolled directly into coures, do not allow switching to meta,
+                // users with metacourse manage permission are exception
+                // please note that we do not need exact results - anything unexpected here prevents metacourse
+                $managers = get_users_by_capability($coursecontext, 'moodle/course:managemetacourse', 'u.id');
+                $enrolroles = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $coursecontext);
+                if ($users = get_role_users(array_keys($enrolroles), $coursecontext, false, 'u.id', 'u.id ASC')) {
+                    foreach($users as $user) {
+                        if (!isset($managers[$user->id])) {
+                            $disable_meta = get_string('metaalreadyhasenrolments');
+                            break;
+                        }
+                    }
                 }
+                unset($managers);
+                unset($users);
+                unset($enrolroles);
             }
         } else {
             $coursecontext = null;
