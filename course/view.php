@@ -48,7 +48,7 @@
         role_switch($switchrole, $context);
     }
 
-    require_login($course->id);
+    require_login($course);
 
     // Switchrole - sanity check in cost-order...
     if ($switchrole > 0 && confirm_sesskey() &&
@@ -186,8 +186,16 @@
     // Course wrapper start.
     echo '<div class="course-content">';
 
-    $modinfo =& get_fast_modinfo($course);
+    $modinfo =& get_fast_modinfo($COURSE);
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
+    foreach($mods as $modid=>$unused) {
+        if (!isset($modinfo->cms[$modid])) {
+            rebuild_course_cache($course->id);
+            $modinfo =& get_fast_modinfo($COURSE);
+            debugging('Rebuilding course cache', DEBUG_DEVELOPER);
+            break;
+        }
+    }
 
     if (! $sections = get_all_sections($course->id)) {   // No sections found
         // Double-check to be extra sure
