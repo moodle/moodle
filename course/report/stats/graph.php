@@ -23,7 +23,7 @@
 
     require_login();
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    
+
     if (!has_capability('moodle/site:viewreports', $context)) {
         error('You need do not have the required permission to view reports for this course');
     }
@@ -75,11 +75,11 @@
         $graph->y_format['line1'] = array('colour' => 'blue','line' => 'line','legend' => $param->line1);
         if (!empty($param->line2)) {
             $graph->y_order[] = 'line2';
-            $graph->y_format['line2'] = array('colour' => 'green','line' => 'line','legend' => $param->line2); 
+            $graph->y_format['line2'] = array('colour' => 'green','line' => 'line','legend' => $param->line2);
         }
         if (!empty($param->line3)) {
             $graph->y_order[] = 'line3';
-            $graph->y_format['line3'] = array('colour' => 'red','line' => 'line','legend' => $param->line3); 
+            $graph->y_format['line3'] = array('colour' => 'red','line' => 'line','legend' => $param->line3);
         }
         $graph->y_tick_labels = false;
 
@@ -88,6 +88,11 @@
         $times = array();
         $roles = array();
         $missedlines = array();
+        $rolenames = get_all_roles();
+        foreach ($rolenames as $r) {
+            $rolenames[$r->id] = $r->name;
+        }
+        $rolenames = role_fix_names($rolenames, get_context_instance(CONTEXT_COURSE, $course->id));
         foreach ($stats as $stat) {
             $data[$stat->roleid][$stat->timeend] = $stat->line1;
             if (!empty($stat->zerofixed)) {
@@ -95,7 +100,7 @@
             }
             if ($stat->roleid != 0) {
                 if (!array_key_exists($stat->roleid,$roles)) {
-                    $roles[$stat->roleid] = get_field('role','name','id',$stat->roleid);
+                    $roles[$stat->roleid] = $rolenames[$stat->roleid];
                 }
             } else {
                 if (!array_key_exists($stat->roleid,$roles)) {
