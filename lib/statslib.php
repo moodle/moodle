@@ -161,9 +161,9 @@ function stats_cron_daily($maxdays=1) {
                        COALESCE((SELECT SUM(statsreads)
                                        FROM {$CFG->prefix}stats_user_daily s1
                                       WHERE s1.stattype = 'logins' AND timeend = $nextmidnight), 0) AS stat1,
-                       COALESCE((SELECT COUNT('x')
-                                   FROM {$CFG->prefix}stats_user_daily s2
-                                  WHERE s2.stattype = 'logins' AND timeend = $nextmidnight), 0) AS stat2";
+                       (SELECT COUNT('x')
+                          FROM {$CFG->prefix}stats_user_daily s2
+                         WHERE s2.stattype = 'logins' AND timeend = $nextmidnight) AS stat2";
 
         if (!execute_sql($sql, false)) {
             $failed = true;
@@ -271,13 +271,13 @@ function stats_cron_daily($maxdays=1) {
         $sql = "INSERT INTO {$CFG->prefix}stats_daily (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'enrolments', $nextmidnight, ".SITEID.", 0,
-                       COALESCE((SELECT COUNT('x')
-                                   FROM {$CFG->prefix}user u
-                                  WHERE u.deleted = 0), 0) AS stat1,
-                       COALESCE((SELECT COUNT(DISTINCT u.id)
-                                   FROM {$CFG->prefix}user u
-                                        JOIN {$CFG->prefix}log l ON l.userid = u.id
-                                  WHERE u.deleted = 0 AND $timesql), 0) AS stat2";
+                       (SELECT COUNT('x')
+                          FROM {$CFG->prefix}user u
+                         WHERE u.deleted = 0) AS stat1,
+                       (SELECT COUNT(DISTINCT u.id)
+                          FROM {$CFG->prefix}user u
+                               JOIN {$CFG->prefix}log l ON l.userid = u.id
+                         WHERE u.deleted = 0 AND $timesql) AS stat2";
 
         if (!execute_sql($sql, false)) {
             $failed = true;
@@ -307,13 +307,13 @@ function stats_cron_daily($maxdays=1) {
             $sql = "INSERT INTO {$CFG->prefix}stats_daily (stattype, timeend, courseid, roleid, stat1, stat2)
 
                     SELECT 'enrolments', $nextmidnight, ".SITEID.", $defaultfproleid,
-                           COALESCE((SELECT COUNT('x')
-                                       FROM {$CFG->prefix}user u
-                                      WHERE u.deleted = 0), 0) AS stat1,
-                           COALESCE((SELECT COUNT(DISTINCT u.id)
-                                       FROM {$CFG->prefix}user u
-                                            JOIN {$CFG->prefix}log l ON l.userid = u.id
-                                      WHERE u.deleted = 0 AND $timesql), 0) AS stat2";
+                           (SELECT COUNT('x')
+                              FROM {$CFG->prefix}user u
+                             WHERE u.deleted = 0) AS stat1,
+                           (SELECT COUNT(DISTINCT u.id)
+                              FROM {$CFG->prefix}user u
+                                   JOIN {$CFG->prefix}log l ON l.userid = u.id
+                             WHERE u.deleted = 0 AND $timesql) AS stat2";
 
             if (!execute_sql($sql, false)) {
                 $failed = true;
@@ -332,16 +332,16 @@ function stats_cron_daily($maxdays=1) {
         $sql = "INSERT INTO {$CFG->prefix}stats_user_daily (stattype, timeend, courseid, userid, statsreads, statswrites)
 
                 SELECT 'activity' AS stattype, $nextmidnight AS timeend, d.courseid, d.userid,
-                       COALESCE((SELECT COUNT('x')
-                                   FROM {$CFG->prefix}log l
-                                  WHERE l.userid = d.userid AND
-                                        l.course = d.courseid AND $timesql AND
-                                        l.action IN ($viewactions)), 0) AS statsreads,
-                       COALESCE((SELECT COUNT('x')
-                                   FROM {$CFG->prefix}log l
-                                  WHERE l.userid = d.userid AND
-                                        l.course = d.courseid AND $timesql AND
-                                        l.action IN ($postactions)), 0) AS statswrites
+                       (SELECT COUNT('x')
+                          FROM {$CFG->prefix}log l
+                         WHERE l.userid = d.userid AND
+                               l.course = d.courseid AND $timesql AND
+                               l.action IN ($viewactions)) AS statsreads,
+                       (SELECT COUNT('x')
+                          FROM {$CFG->prefix}log l
+                         WHERE l.userid = d.userid AND
+                               l.course = d.courseid AND $timesql AND
+                               l.action IN ($postactions)) AS statswrites
                   FROM (SELECT DISTINCT u.id AS userid, l.course AS courseid
                           FROM {$CFG->prefix}user u, {$CFG->prefix}log l
                          WHERE u.id = l.userid AND $timesql
@@ -360,14 +360,14 @@ function stats_cron_daily($maxdays=1) {
         $sql = "INSERT INTO {$CFG->prefix}stats_daily (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'activity' AS stattype, $nextmidnight AS timeend, c.id AS courseid, 0,
-                       COALESCE((SELECT COUNT('x')
-                                   FROM {$CFG->prefix}log l1
-                                  WHERE l1.course = c.id AND l1.action IN ($viewactions) AND
-                                        $timesql1), 0) AS stat1,
-                       COALESCE((SELECT COUNT('x')
-                                   FROM {$CFG->prefix}log l2
-                                  WHERE l2.course = c.id AND l2.action IN ($postactions) AND
-                                        $timesql2), 0) AS stat2
+                       (SELECT COUNT('x')
+                          FROM {$CFG->prefix}log l1
+                         WHERE l1.course = c.id AND l1.action IN ($viewactions) AND
+                               $timesql1) AS stat1,
+                       (SELECT COUNT('x')
+                          FROM {$CFG->prefix}log l2
+                         WHERE l2.course = c.id AND l2.action IN ($postactions) AND
+                               $timesql2) AS stat2
                   FROM {$CFG->prefix}course c
                  WHERE EXISTS (SELECT 'x'
                                  FROM {$CFG->prefix}log l
@@ -580,9 +580,9 @@ function stats_cron_weekly() {
                        COALESCE((SELECT SUM(statsreads)
                                    FROM {$CFG->prefix}stats_user_weekly s1
                                   WHERE s1.stattype = 'logins' AND timeend = $nextstartweek), 0) AS nstat1,
-                       COALESCE((SELECT COUNT('x')
-                                   FROM {$CFG->prefix}stats_user_weekly s2
-                                  WHERE s2.stattype = 'logins' AND timeend = $nextstartweek), 0) AS nstat2";
+                       (SELECT COUNT('x')
+                          FROM {$CFG->prefix}stats_user_weekly s2
+                         WHERE s2.stattype = 'logins' AND timeend = $nextstartweek) AS nstat2";
 
         execute_sql($sql, false);
 
@@ -701,9 +701,9 @@ function stats_cron_monthly() {
                        COALESCE((SELECT SUM(statsreads)
                                    FROM {$CFG->prefix}stats_user_monthly s1
                                   WHERE s1.stattype = 'logins' AND timeend = $nextstartmonth), 0) AS nstat1,
-                       COALESCE((SELECT COUNT('x')
-                                   FROM {$CFG->prefix}stats_user_monthly s2
-                                  WHERE s2.stattype = 'logins' AND timeend = $nextstartmonth), 0) AS nstat2";
+                       (SELECT COUNT('x')
+                          FROM {$CFG->prefix}stats_user_monthly s2
+                         WHERE s2.stattype = 'logins' AND timeend = $nextstartmonth) AS nstat2";
 
         execute_sql($sql, false);
 
