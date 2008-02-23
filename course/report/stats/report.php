@@ -10,7 +10,7 @@
             $courseoptions[$c->id] = $c->shortname;
         }
     }
-    
+
     $reportoptions = stats_get_report_options($course->id, $mode);
     $timeoptions = report_stats_timeoptions($mode);
     if (empty($timeoptions)) {
@@ -22,14 +22,14 @@
     if ($mode == STATS_MODE_DETAILED) {
         $param = stats_get_parameters($time,null,$course->id,$mode); // we only care about the table and the time string (if we have time)
 
-        $sql = 'SELECT DISTINCT s.userid, u.firstname, u.lastname, u.idnumber 
-                     FROM '.$CFG->prefix.'stats_user_'.$param->table.' s 
-                     JOIN '.$CFG->prefix.'user u ON u.id = s.userid 
+        $sql = 'SELECT DISTINCT s.userid, u.firstname, u.lastname, u.idnumber
+                     FROM '.$CFG->prefix.'stats_user_'.$param->table.' s
+                     JOIN '.$CFG->prefix.'user u ON u.id = s.userid
                      WHERE courseid = '.$course->id
             . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '')
             . ((!empty($time)) ? ' AND timeend >= '.$param->timeafter : '')
             .' ORDER BY u.lastname, u.firstname ASC';
-        
+
         if (!$us = get_records_sql($sql)) {
             error('Cannot enter detailed view: No users found for this course.');
         }
@@ -37,7 +37,7 @@
         foreach ($us as $u) {
             $users[$u->userid] = fullname($u, true);
         }
-        
+
         $table->align = array('left','left','left','left','left','left','left','left');
         $table->data[] = array(get_string('course'),choose_from_menu($courseoptions,'course',$course->id,'','','',true),
                                get_string('users'),choose_from_menu($users,'userid',$userid,'','','',true),
@@ -128,7 +128,7 @@
             if (empty($param->crosstab)) {
                 $table->head[] = $param->line1;
                 if (!empty($param->line2)) {
-                    $table->head[] = $param->line2; 
+                    $table->head[] = $param->line2;
                 }
             }
             if (empty($param->crosstab)) {
@@ -150,6 +150,11 @@
                 $roles = array();
                 $times = array();
                 $missedlines = array();
+                $rolenames = get_all_roles();
+                foreach ($rolenames as $r) {
+                    $rolenames[$r->id] = $r->name;
+                }
+                $rolenames = role_fix_names($rolenames, get_context_instance(CONTEXT_COURSE, $course->id));
                 foreach ($stats as $stat) {
                     if (!empty($stat->zerofixed)) {
                         $missedlines[] = $stat->timeend;
@@ -157,7 +162,7 @@
                     $data[$stat->timeend][$stat->roleid] = $stat->line1;
                     if ($stat->roleid != 0) {
                         if (!array_key_exists($stat->roleid,$roles)) {
-                            $roles[$stat->roleid] = get_field('role','name','id',$stat->roleid);
+                            $roles[$stat->roleid] = $rolenames[$stat->roleid];
                         }
                     } else {
                         if (!array_key_exists($stat->roleid,$roles)) {
@@ -183,7 +188,7 @@
                             }
                         }
                     }
-                    krsort($rolesdata); 
+                    krsort($rolesdata);
                     $row = array_merge(array($times[$time]),$rolesdata);
                     if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {
                         $row[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='
@@ -193,7 +198,7 @@
                     }
                     $table->data[] = $row;
                 }
-                krsort($roles); 
+                krsort($roles);
                 $table->head = array_merge($table->head,$roles);
             }
             $table->head[] = get_string('logs');
@@ -203,6 +208,6 @@
             }
             print_table($table);
         }
-    }    
+    }
 
 ?>
