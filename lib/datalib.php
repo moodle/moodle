@@ -836,7 +836,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
         $sorts = array();
         foreach ($rawsorts as $rawsort) {
             $rawsort = trim($rawsort);
-            if (strpos('c.', $rawsort)) {
+            if (strpos($rawsort, 'c.') === 0) {
                 $rawsort = substr($rawsort, 2);
             }
             $sorts[] = trim($rawsort);
