@@ -1328,6 +1328,12 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 if (!$mod->visible) {
                     echo "</span>";
                 }
+                if (!empty($CFG->enablegroupings) && !empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                    if (!isset($groupings)) {
+                        $groupings = groups_get_all_groupings($course->id);
+                    }
+                    echo " <span class=\"groupinglabel\"> - ".format_string($groupings[$mod->groupingid]->name).'</span>';
+                }
 
             } else { // Normal activity
                 $instancename = format_string($modinfo->cms[$modnumber]->name, true,  $course->id);
