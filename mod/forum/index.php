@@ -189,7 +189,10 @@
             }
 
             if ($usetracking) {
-                if (($forum->trackingtype == FORUM_TRACKING_ON) || !isset($untracked[$forum->id])) {
+                if ($forum->trackingtype == FORUM_TRACKING_OFF) {
+                    $unreadlink  = '-';
+                    $trackedlink = '-';
+                } else if (($forum->trackingtype == FORUM_TRACKING_ON) || !isset($untracked[$forum->id])) {
                     $groupid = ($groupmode==SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) ? $currentgroup : false;
                     $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                     if ($unread > 0) {
@@ -203,8 +206,7 @@
 
                     if ($forum->trackingtype == FORUM_TRACKING_OPTIONAL) {
                         $trackedlink = print_single_button($CFG->wwwroot . '/mod/forum/settracking.php?id=' . $forum->id, '', $stryes, 'post', '_self', true, $strnotrackforum);
-                    }
-                    else {
+                    } else {
                         $trackedlink = $stryes;
                     }
                 } else {
@@ -326,7 +328,11 @@
                 }
 
                 if ($usetracking) {
-                    if (($forum->trackingtype == FORUM_TRACKING_ON) || 
+                    if ($forum->trackingtype == FORUM_TRACKING_OFF) {
+                        $unreadlink = '-';
+                        $trackedlink = '-';
+ 
+                    } else if (($forum->trackingtype == FORUM_TRACKING_ON) || 
                         !isset($untracked[$forum->id])) {
                         $groupid = ($groupmode==SEPARATEGROUPS
                                     && !has_capability('moodle/site:accessallgroups', $context))
@@ -341,6 +347,8 @@
                         }
                         if ($forum->trackingtype == FORUM_TRACKING_OPTIONAL) {
                             $trackedlink = print_single_button($CFG->wwwroot . '/mod/forum/settracking.php?id=' . $forum->id, '', $stryes, 'post', '_self', true, $strnotrackforum);
+                        } else {
+                            $trackedlink = $stryes;
                         }
                     } else {
                         $unreadlink = '-';
