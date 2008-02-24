@@ -1092,7 +1092,7 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
         $groupmode = groups_get_activity_groupmode($cm, $course);
 
         if ($groupmode) {
-            if ($post->groupid == -1 or $groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cms[$post->forum]->id))) {
+            if ($post->groupid == -1 or $groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
                 // oki (Open discussions have groupid -1)
             } else {
                 // separate mode
