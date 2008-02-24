@@ -8,7 +8,7 @@
     $subscribe = optional_param('subscribe', null, PARAM_INT);  // Subscribe/Unsubscribe all forums
 
     if ($id) {
-        if (! $course = get_record("course", "id", $id)) {
+        if (! $course = get_record('course', 'id', $id)) {
             error("Course ID is incorrect");
         }
     } else {
@@ -23,25 +23,25 @@
 
     unset($SESSION->fromdiscussion);
 
-    add_to_log($course->id, "forum", "view forums", "index.php?id=$course->id");
+    add_to_log($course->id, 'forum', 'view forums', "index.php?id=$course->id");
 
-    $strforums = get_string("forums", "forum");
-    $strforum = get_string("forum", "forum");
-    $strdescription = get_string("description");
-    $strdiscussions = get_string("discussions", "forum");
-    $strsubscribed = get_string("subscribed", "forum");
-    $strunreadposts = get_string("unreadposts", "forum");
-    $strtracking = get_string('tracking', 'forum');
-    $strmarkallread = get_string('markallread', 'forum');
-    $strtrackforum = get_string('trackforum', 'forum');
+    $strforums       = get_string('forums', 'forum');
+    $strforum        = get_string('forum', 'forum');
+    $strdescription  = get_string('description');
+    $strdiscussions  = get_string('discussions', 'forum');
+    $strsubscribed   = get_string('subscribed', 'forum');
+    $strunreadposts  = get_string('unreadposts', 'forum');
+    $strtracking     = get_string('tracking', 'forum');
+    $strmarkallread  = get_string('markallread', 'forum');
+    $strtrackforum   = get_string('trackforum', 'forum');
     $strnotrackforum = get_string('notrackforum', 'forum');
-    $strsubscribe = get_string('subscribe', 'forum');
-    $strunsubscribe = get_string('unsubscribe', 'forum');
-    $stryes = get_string('yes');
-    $strno = get_string('no');
-    $strrss = get_string("rss");
-    $strweek = get_string('week');
-    $strsection = get_string('section');
+    $strsubscribe    = get_string('subscribe', 'forum');
+    $strunsubscribe  = get_string('unsubscribe', 'forum');
+    $stryes          = get_string('yes');
+    $strno           = get_string('no');
+    $strrss          = get_string('rss');
+    $strweek         = get_string('week');
+    $strsection      = get_string('section');
 
     $searchform = forum_search_form($course);
 
@@ -51,7 +51,7 @@
     $generaltable->head  = array ($strforum, $strdescription, $strdiscussions);
     $generaltable->align = array ('left', 'left', 'center');
 
-    if ($usetracking = forum_tp_can_track_forums()) {
+    if ($usetracking = (!isguestuser() && forum_tp_can_track_forums())) {
         $untracked = forum_tp_get_untracked_forums($USER->id, $course->id);
 
         $generaltable->head[] = $strunreadposts;
@@ -61,7 +61,7 @@
         $generaltable->align[] = 'center';
     }
 
-    if ($can_subscribe = has_capability('moodle/course:view', $coursecontext)) {
+    if ($can_subscribe = (!isguestuser() && has_capability('moodle/course:view', $coursecontext))) {
         $generaltable->head[] = $strsubscribed;
         $generaltable->align[] = 'center';
     }
@@ -78,114 +78,95 @@
     // some special ones are not.  These get placed in the general forums
     // category with the forums in section 0.
 
-    $generalforums = array();            // For now
-    $learningforums = get_all_instances_in_course("forum", $course);
+    $forums = get_records('forum', 'course', $course->id);
 
-    if ($forums = get_records("forum", "course", $id, "name ASC")) {  // All known forums
+    $generalforums  = array();
+    $learningforums = array();
+    $modinfo =& get_fast_modinfo($course);
 
-        if ($learningforums) {           // Copy "full" data into this complete array
-            foreach ($learningforums as $key => $learningforum) {
-                $learningforum->keyreference = $key;
-                $forums[$learningforum->id] = $learningforum;
-            }
+    if (!isset($modinfo->instances['forum'])) {
+        $modinfo->instances['forum'] = array();
+    }
+
+    foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
+        if (!$cm->uservisible or !isset($forums[$forumid])) {
+            continue;
         }
 
-        foreach ($forums as $forum) {
+        $forum = $forums[$forumid];
 
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-                continue;   // Shouldn't happen
-            }
+        if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+            continue;   // Shouldn't happen
+        }
 
-            if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
-                continue;   // Shouldn't happen
-            }
-            
-            if (!has_capability('mod/forum:viewdiscussion', $context)) {
-                if (isset($forum->keyreference)) {
-                    unset($learningforums[$forum->keyreference]);
-                }
-                continue;
-            }
-            if (!coursemodule_visible_for_user($cm)) {
-                if (isset($forum->keyreference)) {
-                    unset($learningforums[$forum->keyreference]);
-                }
-                continue;
-            }
+        if (!has_capability('mod/forum:viewdiscussion', $context)) {
+            continue;
+        }
 
-            switch ($forum->type) {
-                case "news":
-                case "social":
-                    $generalforums[] = $forum;
-                    if (isset($forum->keyreference)) {   // Should always be
-                        unset($learningforums[$forum->keyreference]);
-                    }
-                    break;
-                default:
-                    if (($course->id == SITEID) or empty($forum->section)) {   // Site level or section 0
-                        $generalforums[] = $forum;
-                        if (isset($forum->keyreference)) {
-                            unset($learningforums[$forum->keyreference]);
-                        }
-                    }
-                    break;
-            }
+        // fill two type array - order in modinfo is the same as in course
+        if ($forum->type == 'news' or $forum->type == 'social') {
+            $generalforums[$forum->id] = $forum;
+
+        } else if ($course->id == SITEID or empty($cm->sectionnum)) {
+            $generalforums[$forum->id] = $forum;
+
+        } else {
+            $learningforums[$forum->id] = $forum;
         }
     }
 
     /// Do course wide subscribe/unsubscribe
-    if (!is_null($subscribe) && !isguest()) {
-        $allforums = array_merge($generalforums, $learningforums);
-        if ($allforums) {
-            foreach ($allforums as $forum) {
-                if (!forum_is_forcesubscribed($forum->id)) {
-                    $subscribed = forum_is_subscribed($USER->id, $forum->id);
-                    if ($subscribe && !$subscribed) {
-                        forum_subscribe($USER->id, $forum->id);
-                    } elseif (!$subscribe && $subscribed) {
-                        forum_unsubscribe($USER->id, $forum->id);
-                    }
+    if (!is_null($subscribe) and !isguestuser() and !isguest()) {
+        foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
+            if (!forum_is_forcesubscribed($forumid)) {
+                $subscribed = forum_is_subscribed($USER->id, $forumid);
+                if ($subscribe && !$subscribed) {
+                    forum_subscribe($USER->id, $forumid);
+                } elseif (!$subscribe && $subscribed) {
+                    forum_unsubscribe($USER->id, $forumid);
                 }
             }
         }
         $returnto = forum_go_back_to("index.php?id=$course->id");
         if ($subscribe) {
-            add_to_log($course->id, "forum", "subscribeall", "index.php?id=$course->id", $course->id);
-            redirect($returnto, get_string("nowallsubscribed", "forum", format_string($course->shortname)), 1);
+            add_to_log($course->id, 'forum', 'subscribeall', "index.php?id=$course->id", $course->id);
+            redirect($returnto, get_string('nowallsubscribed', 'forum', format_string($course->shortname)), 1);
         } else {
-            add_to_log($course->id, "forum", "unsubscribeall", "index.php?id=$course->id", $course->id);
-            redirect($returnto, get_string("nowallunsubscribed", "forum", format_string($course->shortname)), 1);
+            add_to_log($course->id, 'forum', 'unsubscribeall', "index.php?id=$course->id", $course->id);
+            redirect($returnto, get_string('nowallunsubscribed', 'forum', format_string($course->shortname)), 1);
         }
     }
 
     /// First, let's process the general forums and build up a display
 
+    $introoptions = new object();
+    $introoptions->para = false;
+
     if ($generalforums) {
         foreach ($generalforums as $forum) {
+            $cm      = $modinfo->instances['forum'][$forum->id];
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-            if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-                continue;  // Shouldn't happen
-            }
-            if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
-                continue;  // Shouldn't happen
-            }
-
-            if (!groups_course_module_visible($cm)) {
-                continue;
-            }
-            if (isset($forum->groupmode)) {
-                $groupmode = groups_get_activity_groupmode($cm);
-            } else {
-                $groupmode = NOGROUPS;
-            }
+            $groupmode    = groups_get_activity_groupmode($cm, $course);
             $currentgroup = groups_get_activity_group($cm);
-            $cantaccessagroup = $groupmode && !has_capability('moodle/site:accessallgroups', $context) && !mygroupid($course->id);
+
+            if ($groupmode == SEPARATEGROUPS) {
+                $accessallgroups = has_capability('moodle/site:accessallgroups', $context);
+            } else {
+                $accessallgroups = true;
+            }
+
+            $cantaccessagroup = !$accessallgroups and empty($currentgroup);
 
             // this is potentially wrong logic. could possibly check for if user has the right to hmmm
-            if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
-                $count = count_records_select("forum_discussions", "forum = '$forum->id' AND (groupid = '$currentgroup' OR groupid = '-1')");
+            if ($cantaccessagroup) {
+                $count = '';
+
+            } if ($currentgroup) {
+                $count = count_records_select('forum_discussions', "forum = $forum->id AND (groupid = $currentgroup OR groupid = -1)");
+
             } else {
-                $count = count_records("forum_discussions", "forum", "$forum->id");
+                $count = count_records('forum_discussions', 'forum', $forum->id);
             }
 
             if ($usetracking) {
@@ -193,7 +174,7 @@
                     $unreadlink  = '-';
                     $trackedlink = '-';
                 } else if (($forum->trackingtype == FORUM_TRACKING_ON) || !isset($untracked[$forum->id])) {
-                    $groupid = ($groupmode==SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) ? $currentgroup : false;
+                    $groupid = !$accessallgroups ? $currentgroup : false;
                     $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                     if ($unread > 0) {
                         $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
@@ -215,15 +196,14 @@
                 }
             }
 
-            $introoptions->para=false;
             $forum->intro = shorten_text(trim(format_text($forum->intro, FORMAT_HTML, $introoptions)), $CFG->forum_shortpost);
+            $forumname = format_string($forum->name, true);;
 
-            $forumname = format_string($forum->name,true);;
             if ($cantaccessagroup) {
                 $forumlink = $forumname;
                 $discussionlink = $count;
             } else {
-                if (!empty($forum->visible)) {
+                if ($cm->visible) {
                     $style = '';
                 } else {
                     $style = 'class="dimmed"';
@@ -248,17 +228,12 @@
             if ($show_rss and $forum->rsstype and $forum->rssarticles) {
                 //Calculate the tolltip text
                 if ($forum->rsstype == 1) {
-                    $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
+                    $tooltiptext = get_string('rsssubscriberssdiscussions', 'forum', format_string($forum->name));
                 } else {
-                    $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
-                }
-                if (empty($USER->id)) {
-                    $userid = 0;
-                } else {
-                    $userid = $USER->id;
+                    $tooltiptext = get_string('rsssubscriberssposts', 'forum', format_string($forum->name));
                 }
                 //Get html code for RSS link
-                $row[] = rss_get_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
+                $row[] = rss_get_link($course->id, $USER->id, 'forum', $forum->id, $tooltiptext);
             }
 
             $generaltable->data[] = $row;
@@ -268,7 +243,7 @@
 
     // Start of the table for Learning Forums
     $learningtable->head  = array ($strforum, $strdescription, $strdiscussions);
-    $learningtable->align = array ("left", "left", "center");
+    $learningtable->align = array ('left', 'left', 'center');
 
     if ($usetracking) {
         $learningtable->head[] = $strunreadposts;
@@ -299,44 +274,44 @@
         } else {
             array_unshift($learningtable->head, $strsection);
         }
-        array_unshift($learningtable->align, "center");
+        array_unshift($learningtable->align, 'center');
 
 
         if ($learningforums) {
-            $currentsection = "";
-            foreach ($learningforums as $key => $forum) {
-
-                if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-                    continue;   // Shouldn't happen
-                }
-
-                if (!coursemodule_visible_for_user($cm)) {
-                    continue;
-                }
-
+            $currentsection = '';
+                foreach ($learningforums as $forum) {
+                $cm      = $modinfo->instances['forum'][$forum->id];
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
+                $groupmode    = groups_get_activity_groupmode($cm, $course);
                 $currentgroup = groups_get_activity_group($cm);
-                $groupmode = groups_get_activity_groupmode($cm);
 
-                $cantaccessagroup = $groupmode && !has_capability('moodle/site:accessallgroups', $context) && !mygroupid($course->id);
-
-                if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
-                    $count = count_records("forum_discussions", "forum", "$forum->id", "groupid", $currentgroup);
+                if ($groupmode == SEPARATEGROUPS) {
+                    $accessallgroups = has_capability('moodle/site:accessallgroups', $context);
                 } else {
-                    $count = count_records("forum_discussions", "forum", "$forum->id");
+                    $accessallgroups = true;
+                }
+
+                $cantaccessagroup = !$accessallgroups and empty($currentgroup);
+
+                if ($cantaccessagroup) {
+                    $count = '';
+
+                } if ($currentgroup) {
+                    $count = count_records_select('forum_discussions', "forum = $forum->id AND (groupid = $currentgroup OR groupid = -1)");
+
+                } else {
+                    $count = count_records('forum_discussions', 'forum', $forum->id);
                 }
 
                 if ($usetracking) {
                     if ($forum->trackingtype == FORUM_TRACKING_OFF) {
                         $unreadlink = '-';
                         $trackedlink = '-';
- 
-                    } else if (($forum->trackingtype == FORUM_TRACKING_ON) || 
+
+                    } else if (($forum->trackingtype == FORUM_TRACKING_ON) ||
                         !isset($untracked[$forum->id])) {
-                        $groupid = ($groupmode==SEPARATEGROUPS
-                                    && !has_capability('moodle/site:accessallgroups', $context))
-                                    ? $currentgroup : false;
+                        $groupid = !$accessallgroups ? $currentgroup : false;
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                         if ($unread > 0) {
                             $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
@@ -359,22 +334,22 @@
                 $introoptions->para=false;
                 $forum->intro = shorten_text(trim(format_text($forum->intro, FORMAT_HTML, $introoptions)), $CFG->forum_shortpost);
 
-                if ($forum->section != $currentsection) {
-                    $printsection = $forum->section;
+                if ($cm->sectionnum != $currentsection) {
+                    $printsection = $cm->sectionnum;
                     if ($currentsection) {
                         $learningtable->data[] = 'hr';
                     }
-                    $currentsection = $forum->section;
+                    $currentsection = $cm->sectionnum;
                 } else {
-                    $printsection = "";
+                    $printsection = '';
                 }
 
                 $forumname = format_string($forum->name,true);;
-                if ($cantaccessagroup && $groupmode == SEPARATEGROUPS) {
+                if ($cantaccessagroup) {
                     $forumlink = $forumname;
                     $discussionlink = $count;
                 } else {
-                    if ($forum->visible) {
+                    if ($cm->visible) {
                         $style = '';
                     } else {
                         $style = 'class="dimmed"';
@@ -394,24 +369,19 @@
                         'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
                         'cantsubscribe' => '-'), $cantaccessagroup, false, true);
                 }
-                
+
                 //If this forum has RSS activated, calculate it
                 if ($show_rss and $forum->rsstype and $forum->rssarticles) {
                     //Calculate the tolltip text
                     if ($forum->rsstype == 1) {
-                        $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
+                        $tooltiptext = get_string('rsssubscriberssdiscussions', 'forum', format_string($forum->name));
                     } else {
-                        $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
-                    }
-                    if (empty($USER->id)) {
-                        $userid = 0;
-                    } else {
-                        $userid = $USER->id;
+                        $tooltiptext = get_string('rsssubscriberssposts', 'forum', format_string($forum->name));
                     }
                     //Get html code for RSS link
-                    $row[] = rss_get_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
+                    $row[] = rss_get_link($course->id, $USER->id, 'forum', $forum->id, $tooltiptext);
                 }
-                
+
                 $learningtable->data[] = $row;
             }
         }
@@ -421,7 +391,7 @@
     /// Output the page
     $navlinks = array();
     $navlinks[] = array('name' => $strforums, 'link' => '', 'type' => 'activity');
-    
+
     print_header("$course->shortname: $strforums", $course->fullname,
                     build_navigation($navlinks),
                     "", "", true, $searchform, navmenu($course));
@@ -438,12 +408,12 @@
     }
 
     if ($generalforums) {
-        print_heading(get_string("generalforums", "forum"));
+        print_heading(get_string('generalforums', 'forum'));
         print_table($generaltable);
     }
 
     if ($learningforums) {
-        print_heading(get_string("learningforums", "forum"));
+        print_heading(get_string('learningforums', 'forum'));
         print_table($learningtable);
     }
 
