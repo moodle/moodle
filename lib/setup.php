@@ -488,6 +488,14 @@ global $HTTPSPAGEREQUIRED;
 
 /// Load up global environment variables
 
+    if (!isset($CFG->cookiesecure) or strpos($CFG->wwwroot, 'https://') !== 0) {
+        $CFG->cookiesecure = false;
+    }
+
+    if (!isset($CFG->cookiehttponly)) {
+        $CFG->cookiehttponly = false;
+    }
+
     //discard session ID from POST, GET and globals to tighten security,
     //this session fixation prevention can not be used in cookieless mode
     if (empty($CFG->usesid)) {
@@ -509,7 +517,7 @@ global $HTTPSPAGEREQUIRED;
 
     if (empty($nomoodlecookie)) {
         session_name('MoodleSession'.$CFG->sessioncookie);
-        session_set_cookie_params(0, $CFG->sessioncookiepath);
+        session_set_cookie_params(0, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
         @session_start();
         if (! isset($_SESSION['SESSION'])) {
             $_SESSION['SESSION'] = new object;
@@ -517,7 +525,7 @@ global $HTTPSPAGEREQUIRED;
             if (!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
                 $_SESSION['SESSION']->has_timed_out = true;
             }
-            setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, $CFG->sessioncookiepath);
+            setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
             $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] = $_SESSION['SESSION']->session_test;
         }
         if (! isset($_SESSION['USER']))    {

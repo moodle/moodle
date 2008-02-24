@@ -58,6 +58,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // "httpsecurity" settingpage
     $temp = new admin_settingpage('httpsecurity', get_string('httpsecurity', 'admin'));
     $temp->add(new admin_setting_configcheckbox('loginhttps', get_string('loginhttps', 'admin'), get_string('configloginhttps', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('cookiesecure', get_string('cookiesecure', 'admin'), get_string('configcookiesecure', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('cookiehttponly', get_string('cookiehttponly', 'admin'), get_string('configcookiehttponly', 'admin'), 0));
     $ADMIN->add('security', $temp);
 
 

@@ -2061,7 +2061,7 @@ function require_logout() {
         error_log('MoodleSessionTest cookie could not be set in moodlelib.php:'.__LINE__);
         error_log('Headers were already sent in file: '.$file.' on line '.$line);
     } else {
-        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath);
+        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
     }
 
     unset($_SESSION['USER']);
@@ -2611,6 +2611,7 @@ function set_moodle_cookie($thing) {
     $days = 60;
     $seconds = DAYSECS*$days;
 
+    // no need to set secure or http cookie only here - it is not secret
     setCookie($cookiename, '', time() - HOURSECS, $CFG->sessioncookiepath);
     setCookie($cookiename, rc4encrypt($thing), time()+$seconds, $CFG->sessioncookiepath);
 }
@@ -7752,8 +7753,8 @@ function report_session_error() {
     moodle_setlocale();
 
     //clear session cookies
-    setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath);
-    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath);
+    setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
+    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
     //increment database error counters
     if (isset($CFG->session_error_counter)) {
         set_config('session_error_counter', 1 + $CFG->session_error_counter);
