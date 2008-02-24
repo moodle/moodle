@@ -1,3 +1,4 @@
+/* @override http://ubuntu.userver.lan/moodle_19/theme/custom_corners/user_styles.css */
 body {
   font-size: 100%;
   color: #333333;
@@ -124,10 +125,15 @@ div.informationbox {
 }
 table.userinfobox {
   border: 1px solid #DDDDDD;
+  margin: 0 auto 5px;
 }
 div.errorbox {
   background-color: #E88;
   border-color: #660000;
+}
+table.environmenttable span.error {
+  background-color: #E88;
+  color: inherit;
 }
 p.copyright {
   text-align: center;
@@ -135,6 +141,12 @@ p.copyright {
 body#admin-index div.adminwarning {
   border-style: none;
   margin: 20px 30px;
+}
+body#admin-index .c1 {
+  vertical-align: top;
+}
+td.cell {
+  vertical-align: top;
 }
 div.headermenu {
   margin: 0;
@@ -399,6 +411,9 @@ div.sideblock ul.list li {
   clear: left;
   padding-left: 18px;
 }
+div.block_rss_client ul.list li {
+  padding-left: 0;
+}
 div.sideblock div.column.c0 {
   margin-left: -19px;
 }
@@ -503,7 +518,7 @@ body#admin-langimport div.generalbox {
   border-style: none;
 }
 div.htmlarea iframe{
-  width: 600px !important;
+  /*width: 600px !important;*/
 }
 div#header-home {
   position: relative;
