@@ -50,6 +50,10 @@ div.sideblock ul.list li {
   padding-left: 18px;
   margin-left: 19px;
 }
+div.block_rss_client ul.list li {
+  padding-left: 0;
+  margin-left: 0;
+}
 div.block_admin div.column.c0 {
   margin-left: -18px;
 }
