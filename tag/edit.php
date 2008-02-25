@@ -41,23 +41,46 @@ if (can_use_html_editor()) {
     $tag->descriptionformat = FORMAT_HTML;
 }
 
+$errorstring = '';
+
 $tagform = new tag_edit_form();
 $tagform->set_data($tag);
 
-// if new data has been sent, update the tag record
+// If new data has been sent, update the tag record
 if ($tagnew = $tagform->get_data()) {
 
-    $tagnew->timemodified = time();
 
-    if (!update_record('tag', $tagnew)) {
-        error('Error updating tag record');
+    if (!has_capability('moodle/tag:manage', $systemcontext)) {
+        unset($tagnew->name);
+        unset($tagnew->rawname);
+
+    } else {  // They might be trying to change the rawname, make sure it's a change that doesn't affect name
+        $tagnew->name = array_shift(tag_normalize($tagnew->rawname, TAG_CASE_LOWER));
+
+        if (!$tagold = tag_get_tag_by_id($tag_id)) {  // For doing checks
+            error('Error updating tag record');
+        }
+
+        if ($tagold->name != $tagnew->name) {  // The name has changed, let's make sure it's not another existing tag
+            if (tag_get_id($tagnew->name)) {   // Something exists already, so flag an error
+                $errorstring = s($tagnew->rawname).': '.get_string('namesalreadybeeingused', 'tag');
+            }
+        }
     }
 
-    //updated related tags
-    tag_set('tag', $tagnew->id, explode(',', trim($tagnew->relatedtags)));
-    //var_dump($tagnew); die();
+    if (empty($errorstring)) {    // All is OK, let's save it
+        $tagnew->timemodified = time();
 
-    redirect($CFG->wwwroot.'/tag/index.php?tag='.rawurlencode($tag->name)); // must use $tag here, as the name isn't in the edit form
+        if (!update_record('tag', $tagnew)) {
+            error('Error updating tag record');
+        }
+    
+        //updated related tags
+        tag_set('tag', $tagnew->id, explode(',', trim($tagnew->relatedtags)));
+        //var_dump($tagnew); die();
+    
+        redirect($CFG->wwwroot.'/tag/index.php?tag='.rawurlencode($tag->name)); // must use $tag here, as the name isn't in the edit form
+    }
 }
 
 
@@ -69,6 +92,10 @@ $navigation = build_navigation($navlinks);
 print_header_simple(get_string('tag', 'tag') . ' - '. $tagname, '', $navigation);
 
 print_heading($tagname, '', 2);
+
+if (!empty($errorstring)) {
+    notify($errorstring);
+}
 
 $tagform->display();
 
