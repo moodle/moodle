@@ -148,7 +148,7 @@ function tag_print_management_box($tag_object, $return=false) {
         $links = array();
         
         // Add a link for users to add/remove this from their interests
-        if (tag_record_tagged_with(array('type'=>'user', 'id'=>$USER->id), $tag_object->name)) {
+        if (tag_record_tagged_with('user', $USER->id, $tag_object->name)) {
             $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=removeinterest&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($tag_object->name) .'">'. get_string('removetagfrommyinterests', 'tag', $tagname) .'</a>';
         } else {
             $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=addinterest&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($tag_object->name) .'">'. get_string('addtagtomyinterests', 'tag', $tagname) .'</a>';
@@ -159,7 +159,7 @@ function tag_print_management_box($tag_object, $return=false) {
 
         // Edit tag: Only people with moodle/tag:edit capability who either have it as an interest or can manage tags
         if (has_capability('moodle/tag:edit', $systemcontext) && 
-                (tag_record_tagged_with(array('type'=>'user', 'id'=>$USER->id), $tag_object->name) || 
+                (tag_record_tagged_with('user', $USER->id, $tag_object->name) || 
                  has_capability('moodle/tag:manage', $systemcontext))) {
             $links[] = '<a href="'. $CFG->wwwroot .'/tag/edit.php?tag='. rawurlencode($tag_object->name) .'">'. get_string('edittag', 'tag') .'</a>';
         }
@@ -213,10 +213,12 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
 
     global $CFG, $USER;
 
-    $count = sizeof(tag_search($query, false));
+    $query = array_shift(tag_normalize($query, TAG_CASE_ORIGINAL));
+
+    $count = sizeof(tag_find_tags($query, false));
     $tags = array();
 
-    if ( $found_tags = tag_search($query, true,  $page * $perpage, $perpage) ) {
+    if ( $found_tags = tag_find_tags($query, true,  $page * $perpage, $perpage) ) {
         $tags = array_values($found_tags);
     }
 
@@ -225,13 +227,13 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
 
     // link "Add $query to my interests"
     $addtaglink = '';
-    if( !is_item_tagged_with('user', $USER->id, $query) ) {
+    if( !tag_record_tagged_with('user', $USER->id, $query) ) {
         $addtaglink = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=addinterest&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($query) .'">';
-        $addtaglink .= get_string('addtagtomyinterests', 'tag', rawurlencode($query)) .'</a>';
+        $addtaglink .= get_string('addtagtomyinterests', 'tag', htmlspecialchars($query)) .'</a>';
     }
 
     if ( !empty($tags) ) { // there are results to display!!
-        $output .= print_heading(get_string('searchresultsfor', 'tag', rawurlencode($query)) ." : {$count}", '', 3, 'main', true);
+        $output .= print_heading(get_string('searchresultsfor', 'tag', htmlspecialchars($query)) ." : {$count}", '', 3, 'main', true);
 
         //print a link "Add $query to my interests"
         if (!empty($addtaglink)) {
@@ -256,7 +258,7 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
         $output .= print_paging_bar($count, $page, $perpage, $baseurl .'&amp;', 'page', false, true);
     }
     else { //no results were found!!
-        $output .= print_heading(get_string('noresultsfor', 'tag', rawurlencode($query)), '', 3, 'main' , true);
+        $output .= print_heading(get_string('noresultsfor', 'tag', htmlspecialchars($query)), '', 3, 'main' , true);
 
         //print a link "Add $query to my interests"
         if (!empty($addtaglink)) {

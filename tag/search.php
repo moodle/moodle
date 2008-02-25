@@ -11,7 +11,7 @@ if( empty($CFG->usetags)) {
     error(get_string('tagsaredisabled', 'tag'));
 }
 
-$query      = optional_param('query', '', PARAM_TEXT);
+$query      = optional_param('query', '', PARAM_RAW);
 $page        = optional_param('page', 0, PARAM_INT);      // which page to show
 $perpage     = optional_param('perpage', 18, PARAM_INT);
 

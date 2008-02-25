@@ -354,7 +354,7 @@ function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
     $tags_names = array();
     foreach($related_tags as $tag) {
         if ( $html == TAG_RETURN_TEXT) {
-            $tags_names[] = rawurlencode(tag_display_name($tag));
+            $tags_names[] = tag_display_name($tag);
         } else {
             // TAG_RETURN_HTML
             $tags_names[] = '<a href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'">'. tag_display_name($tag) .'</a>';
@@ -672,6 +672,35 @@ function tag_cron() {
     tag_compute_correlations();
 }
 
+/**
+ * Search for tags with names that match some text
+ *
+ * @param string $text escaped string that the tag names will be matched against
+ * @param boolean $ordered If true, tags are ordered by their popularity. If false, no ordering.
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+ * @return mixed an array of objects, or false if no records were found or an error occured.
+ */
+function tag_find_tags($text, $ordered=true, $limitfrom='', $limitnum='') {
+
+    global $CFG;
+
+    $text = array_shift(tag_normalize($text, TAG_CASE_LOWER));
+
+    if ($ordered) {
+        $query = "SELECT tg.id, tg.name, tg.rawname, COUNT(ti.id) AS count ".
+            "FROM {$CFG->prefix}tag tg LEFT JOIN {$CFG->prefix}tag_instance ti ON tg.id = ti.tagid ".
+            "WHERE tg.name LIKE '%{$text}%' ".
+            "GROUP BY tg.id, tg.name, tg.rawname ".
+            "ORDER BY count DESC";
+    } else {
+        $query = "SELECT tg.id, tg.name, tg.rawname ".
+            "FROM {$CFG->prefix}tag tg ".
+            "WHERE tg.name LIKE '%{$text}%'";
+    }
+    return get_records_sql($query, $limitfrom , $limitnum);
+}
+
 /** 
  * Get the name of a tag
  * 
@@ -725,12 +754,14 @@ function tag_get_correlated($tag_id, $limitnum=null) {
  * Function that normalizes a list of tag names.
  *
  * @param mixed $tags array of tags, or a single tag.
- * @param int $case case to use for returned value (default: lower case). Either CASE_LOWER or CASE_UPPER
- * @return array of lowercased normalized tags, indexed by the normalized tag. (Eg: 'Banana' => 'banana')
+ * @param int $case case to use for returned value (default: lower case). 
+ *     Either TAG_CASE_LOWER (default) or TAG_CASE_ORIGINAL
+ * @return array of lowercased normalized tags, indexed by the normalized tag, 
+ *     in the same order as the original array. (Eg: 'Banana' => 'banana').
  */
 function tag_normalize($rawtags, $case = TAG_CASE_LOWER) {
 
-    // cache normalized tags, to prevent (in some cases) costly (repeated) calls to clean_param
+    // cache normalized tags, to prevent costly repeated calls to clean_param
     static $cleaned_tags_lc = array(); // lower case - use for comparison
     static $cleaned_tags_mc = array(); // mixed case - use for saving to database
 
@@ -758,38 +789,32 @@ function tag_normalize($rawtags, $case = TAG_CASE_LOWER) {
     return $result;
 }
 
-
 /**
- * Search for tags with names that match some text
+ * Count how many records are tagged with a specific tag,
  *
- * @param string $text escaped string that the tag names will be matched against
- * @param boolean $ordered If true, tags are ordered by their popularity. If false, no ordering.
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an array of objects, or false if no records were found or an error occured.
+ * @param string $record record to look for ('post', 'user', etc.)
+ * @param int $tag is a single tag id
+ * @return int number of mathing tags.
  */
-function tag_find_tags($text, $ordered=true, $limitfrom='', $limitnum='') {
-
-    global $CFG;
-
-    $text = array_shift(tag_normalize($text, TAG_CASE_LOWER));
-
-    if ($ordered) {
-        $query = "SELECT tg.id, tg.name, tg.rawname, COUNT(ti.id) AS count ".
-            "FROM {$CFG->prefix}tag tg LEFT JOIN {$CFG->prefix}tag_instance ti ON tg.id = ti.tagid ".
-            "WHERE tg.name LIKE '%{$text}%' ".
-            "GROUP BY tg.id, tg.name, tg.rawname ".
-            "ORDER BY count DESC";
-    } else {
-        $query = "SELECT tg.id, tg.name, tg.rawname ".
-            "FROM {$CFG->prefix}tag tg ".
-            "WHERE tg.name LIKE '%{$text}%'";
-    }
-    return get_records_sql($query, $limitfrom , $limitnum);
+function tag_record_count($record_type, $tagid) {
+    return count_records('tag_instance', 'itemtype', $record_type, 'tagid', $tagid);
 }
 
-///////////////////////////////////////////////////////////
-////// functions copied over from the first version //////
+/**
+ * Determine if a record is tagged with a specific tag  
+ *
+ * @param string $record_type the record type to look for
+ * @param int $record_id the record id to look for
+ * @param string $tag a tag name
+ * @return bool true if it is tagged, false otherwise
+ */
+function tag_record_tagged_with($record_type, $record_id, $tag) {
+    if ($tagid = tag_get_id($tag)) {
+        return count_records('tag_instance', 'itemtype', $record_type, 'itemid', $record_id, 'tagid', $tagid);
+    } else {
+        return 0; // tag doesn't exist
+    }
+}
 
 /**
  * Flag a tag as inapropriate
@@ -825,32 +850,6 @@ function tag_unset_flag($tagids) {
     }
     $timemodified = time();
     return execute_sql('UPDATE '. $CFG->prefix .'tag tg SET tg.flag = 0, tg.timemodified = '. $timemodified .' WHERE tg.id IN ('. $tagids .')', false);
-}
-
-/**
- * Count how many records are tagged with a specific tag,
- *
- * @param string $record record to look for ('post', 'user', etc.)
- * @param int $tag is a single tag id
- * @return int number of mathing tags.
- */
-function tag_record_count($record_type, $tagid) {
-    return count_records('tag_instance', 'itemtype', $record_type, 'tagid', $tagid);
-}
-
-/**
- * Determine if a record is tagged with a specific tag  
- *
- * @param array $record the record to look for
- * @param string $tag a tag name
- * @return bool true if it is tagged, false otherwise
- */
-function tag_record_tagged_with($record, $tag) {
-    if ($tagid = tag_get_id($tag)) {
-        return count_records('tag_instance', 'itemtype', $record['type'], 'itemid', $record['id'], 'tagid', $tagid);
-    } else {
-        return 0; // tag doesn't exist
-    }
 }
 
 ?>
