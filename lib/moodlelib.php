@@ -845,7 +845,7 @@ function reload_user_preferences() {
     $USER->preference = array();
 
     if (!isloggedin() or isguestuser()) {
-        // no pernament storage for not-logged-in user and guest
+        // no permanent storage for not-logged-in user and guest
 
     } else if ($preferences = get_records('user_preferences', 'userid', $USER->id)) {
         foreach ($preferences as $preference) {
@@ -895,7 +895,7 @@ function set_user_preference($name, $value, $otheruserid=NULL) {
 
     $return = true;
     if ($nostore) {
-        // no pernament storage for not-logged-in user and guest
+        // no permanent storage for not-logged-in user and guest
 
     } else if ($preference = get_record('user_preferences', 'userid', $userid, 'name', addslashes($name))) {
         if ($preference->value === $value) {
