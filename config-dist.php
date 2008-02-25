@@ -306,6 +306,10 @@ $CFG->admin = 'admin';
 // NOTE: course, category, session, user themes still require the
 // respective settings to be enabled
 //
+// When working with production data on test servers, no emails should ever be send to real users
+// $CFG->noemailever = true;
+//
+//
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
