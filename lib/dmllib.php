@@ -2536,7 +2536,10 @@ function rcache_set($table, $id, $rec) {
             $rcache->data[$table] = array();
         }
         if (!isset($rcache->data[$table][$id]) and count($rcache->data[$table]) > $CFG->intcachemax) {
-            array_shift($rcache->data[$table]);
+            // release oldes record 
+            reset($rcache->data[$table]);
+            $key = key($rcache->data[$table]);
+            unset($rcache->data[$table][$key]);
         }
         $rcache->data[$table][$id] = clone($rec);
     } else {
