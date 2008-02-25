@@ -153,7 +153,8 @@ function tag_print_management_box($tag_object, $return=false) {
         }
 
         // only people with moodle/tag:edit capability may edit the tag description
-        if ( has_capability('moodle/tag:edit', $systemcontext) && tag_record_tagged_with(array('type'=>'user', 'id'=>$USER->id), $tag_object->name ) ) {
+        if ( has_capability('moodle/tag:edit', $systemcontext) && 
+                (tag_record_tagged_with(array('type'=>'user', 'id'=>$USER->id), $tag_object->name) || is_siteadmin($USER->id)) ) {
             $links[] = '<a href="'. $CFG->wwwroot .'/tag/edit.php?tag='. rawurlencode($tag_object->name) .'">'. get_string('edittag', 'tag') .'</a>';
         }
 
