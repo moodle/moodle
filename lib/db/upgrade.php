@@ -1431,8 +1431,8 @@ function xmldb_main_upgrade($oldversion=0) {
         $table = new XMLDBTable('tag');
 
     /// Adding fields to table tag
-        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '11', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('tagtype', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
         $table->addFieldInfo('description', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
@@ -1455,8 +1455,8 @@ function xmldb_main_upgrade($oldversion=0) {
         $table = new XMLDBTable('tag_correlation');
 
     /// Adding fields to table tag_correlation
-        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '11', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->addFieldInfo('tagid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('tagid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('correlatedtags', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
 
     /// Adding keys to table tag_correlation
@@ -1474,10 +1474,10 @@ function xmldb_main_upgrade($oldversion=0) {
         $table = new XMLDBTable('tag_instance');
 
     /// Adding fields to table tag_instance
-        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '11', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->addFieldInfo('tagid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('tagid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('itemtype', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
 
     /// Adding keys to table tag_instance
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
