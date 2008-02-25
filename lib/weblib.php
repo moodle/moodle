@@ -1473,7 +1473,9 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             if ($oldcacheitem->timemodified >= $time) {
                 if (defined('FULLME') and FULLME == 'cron') {
                     if (count($croncache) > 150) {
-                        array_shift($croncache);
+                        reset($croncache);
+                        $key = key($croncache);
+                        unset($croncache[$key]);
                     }
                     $croncache[$md5key] = $oldcacheitem->formattedtext;
                 }
@@ -1560,7 +1562,9 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         if (defined('FULLME') and FULLME == 'cron') {
             // special static cron cache - no need to store it in db if its not already there
             if (count($croncache) > 150) {
-                array_shift($croncache);
+                reset($croncache);
+                $key = key($croncache);
+                unset($croncache[$key]);
             }
             $croncache[$md5key] = $text;
             return $text;
