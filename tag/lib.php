@@ -357,7 +357,7 @@ function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
             $tags_names[] = rawurlencode(tag_display_name($tag));
         } else {
             // TAG_RETURN_HTML
-            $tags_names[] = '<a href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'">'. rawurlencode(tag_display_name($tag)) .'</a>';
+            $tags_names[] = '<a href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'">'. tag_display_name($tag) .'</a>';
         }
     }
     return implode(', ', $tags_names);
