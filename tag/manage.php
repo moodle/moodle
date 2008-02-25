@@ -35,7 +35,7 @@ $notice = '';
 
 // get all the possible tag types from db
 $existing_tagtypes = array();
-if ($ptypes = get_records_sql("SELECT DISTINCT(tagtype), id FROM {$CFG->prefix}tag")) {
+if ($ptypes = get_records_sql("SELECT DISTINCT(tagtype) FROM {$CFG->prefix}tag")) {
     foreach ($ptypes as $ptype) {
         $existing_tagtypes[$ptype->tagtype] = $ptype->tagtype;
     }
@@ -49,11 +49,9 @@ switch($action) {
         if (!data_submitted() or !confirm_sesskey()) {
             break;
         }
-        $str_tagschecked = tag_name_from_string(implode($tagschecked, ','));
-        $str_tagschecked = str_replace(',', ', ', $str_tagschecked);
-
-        tag_delete(implode($tagschecked, ','));
-
+        
+        $str_tagschecked = implode(', ', tag_get_name($tagschecked));
+        tag_delete($tagschecked);
         $notice = $str_tagschecked.' --  '.get_string('deleted','tag');
         break;
 
@@ -61,12 +59,9 @@ switch($action) {
         if (!data_submitted() or !confirm_sesskey()) {
             break;
         }
-        $str_tagschecked = tag_name_from_string(implode($tagschecked, ','));
-        $str_tagschecked = str_replace(',', ', ', $str_tagschecked);
-
-        tag_flag_reset(implode($tagschecked, ','));
-
-        $notice = $str_tagschecked.' -- '.get_string('reset','tag');
+        $str_tagschecked = implode(', ', tag_get_name($tagschecked));
+        tag_unset_flag($tagschecked);
+        $notice = $str_tagschecked .' -- '. get_string('reset', 'tag');
         break;
 
     case 'changetype':
@@ -75,7 +70,6 @@ switch($action) {
         }
 
         $changed = array();
-
         foreach ($tagschecked as $tag_id) {
             if (!array_key_exists($tagtypes[$tag_id], $existing_tagtypes)) {
                 //can not add new types here!!
@@ -83,19 +77,14 @@ switch($action) {
             }
 
             // update tag type;
-            $tag = tag_by_id($tag_id);
-            $tag->timemodified = time();
-            $tag->tagtype = $tagtypes[$tag_id];
-
-            if (update_record('tag', $tag)) {
+            if (tag_type_set($tag_id, $tagtypes[$tag_id])) {
                 $changed[] = $tag_id;
             }
         }
 
-        if ($changed) {
-            $str_changed = tag_name_from_string(implode($changed, ','));
-            $str_changed = str_replace(',', ', ', $str_changed);
-            $notice = $str_changed.' --  '.get_string('typechanged','tag');
+        if (!empty($changed)) {
+            $str_changed = implode(', ', tag_get_name($changed));
+            $notice = $str_changed .' --  '. get_string('typechanged','tag');
         }
         break;
 
@@ -103,12 +92,12 @@ switch($action) {
         if (!data_submitted() or !confirm_sesskey()) {
             break;
         }
-
+        
         $tags_names_changed = array();
-
         foreach ($tagschecked as $tag_id) {
             if ($newnames[$tag_id] != '') {
-                if (tag_exists($newnames[$tag_id])) {
+                if (! $tags_names_updated[] = tag_rename($tag_id, $newnames[$tag_id]) ) {
+                    // if tag already exists, or is not a valid tag name, etc.
                     $err_notice .= $newnames[$tag_id]. '-- ' . get_string('namesalreadybeeingused','tag').'<br />';
                 } else {
                     $tags_names_changed[$tag_id] = $newnames[$tag_id];
@@ -116,12 +105,23 @@ switch($action) {
             }
         }
 
-        $tags_names_updated = tag_update_name($tags_names_changed);
-
         //notice to inform what tags had their names effectively updated
-        if ($tags_names_updated){
-            $notice = implode($tags_names_updated, ', ');
+        if ($tags_names_changed){
+            $notice = implode($tags_names_changed, ', ');
             $notice .= ' -- ' . get_string('updated','tag');
+        }
+        break;
+    case 'addofficialtag':
+        $new_otags = explode(',', optional_param('otagsadd', '', PARAM_TAG));
+        $notice = '';
+        foreach ( $new_otags as $new_otag ) {
+            if ( $new_otag_id = tag_get_id($new_otag) ) {
+                // tag exists, change the type
+                tag_set_type($new_otag_id, 'official');
+            } else {
+                tag_add($new_otag, 'official');
+            }
+            $notice .= get_string('addedotag', 'tag', $new_otag) .' ';
         }
         break;
 }
@@ -132,18 +132,27 @@ if ($err_notice) {
     notify($err_notice, 'red');
 }
 if ($notice) {
-    notify($notice , 'green');
+    notify($notice, 'green');
 }
+
+// small form to add an official tag
+print('<form class="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">');
+print('<input type="hidden" name="action" value="addofficialtag">');
+print('<div class="tag-management-form generalbox"><label class="accesshide" for="id_otagsadd">'. get_string('addotags', 'tag') .'</label>'.
+    '<input name="otagsadd" id="id_otagsadd" type="text">'.
+    '<input name="addotags" value="'. get_string('addotags', 'tag') .'" onclick="skipClientValidation = true;" id="id_addotags" type="submit">'.
+    '</div>');
+print('</form>');
 
 //setup table
 
-$tablecolumns = array('id','name', 'fullname', 'count', 'flag', 'timemodified', 'rawname', 'tagtype', '');
-$tableheaders = array(get_string('id' , 'tag'),
-                      get_string('name' , 'tag'),
-                      get_string('owner','tag'),
-                      get_string('count','tag'),
-                      get_string('flag','tag'),
-                      get_string('timemodified','tag'),
+$tablecolumns = array('id', 'name', 'fullname', 'count', 'flag', 'timemodified', 'rawname', 'tagtype', '');
+$tableheaders = array(get_string('id', 'tag'),
+                      get_string('name', 'tag'),
+                      get_string('owner', 'tag'),
+                      get_string('count', 'tag'),
+                      get_string('flag', 'tag'),
+                      get_string('timemodified', 'tag'),
                       get_string('newname', 'tag'),
                       get_string('tagtype', 'tag'),
                       get_string('select', 'tag'));
@@ -174,36 +183,29 @@ TABLE_VAR_PAGE    => 'spage'
 $table->setup();
 
 if ($table->get_sql_sort()) {
-    $sort = ' ORDER BY '.$table->get_sql_sort();
+    $sort = 'ORDER BY '. $table->get_sql_sort();
 } else {
     $sort = '';
 }
 
 if ($table->get_sql_where()) {
-    $where = 'WHERE '.$table->get_sql_where();
+    $where = 'WHERE '. $table->get_sql_where();
 } else {
     $where = '';
 }
 
-$query = "
-    SELECT tg.id, tg.name, tg.rawname, tg.tagtype, COUNT(ti.id) AS count, u.id AS owner, tg.flag, tg.timemodified, u.firstname, u.lastname
-      FROM {$CFG->prefix}tag_instance ti
-           RIGHT JOIN {$CFG->prefix}tag tg ON tg.id = ti.tagid
-           LEFT JOIN {$CFG->prefix}user u ON tg.userid = u.id
-  {$where}
-  GROUP BY tg.id, tg.name, tg.rawname, tg.tagtype, u.id, tg.flag, tg.timemodified, u.firstname, u.lastname
-   {$sort}";
+$query = 'SELECT tg.id, tg.name, tg.rawname, tg.tagtype, COUNT(ti.id) AS count, u.id AS owner, tg.flag, tg.timemodified, u.firstname, u.lastname '.
+    'FROM '. $CFG->prefix .'tag_instance ti RIGHT JOIN '. $CFG->prefix .'tag tg ON tg.id = ti.tagid LEFT JOIN '. $CFG->prefix .'user u ON tg.userid = u.id '.
+    $where .' '.
+    'GROUP BY tg.id, tg.name, tg.rawname, tg.tagtype, u.id, tg.flag, tg.timemodified, u.firstname, u.lastname '.
+    $sort;
 
-
-$totalcount = count_records_sql("SELECT COUNT(DISTINCT(tg.id))
-                                   FROM {$CFG->prefix}tag tg
-                                        LEFT JOIN {$CFG->prefix}user u ON u.id = tg.userid
-                                 $where");
+$totalcount = count_records_sql('SELECT COUNT(DISTINCT(tg.id)) FROM '. $CFG->prefix .'tag tg LEFT JOIN '. $CFG->prefix .'user u ON u.id = tg.userid '. $where);
 
 $table->initialbars(true); // always initial bars
 $table->pagesize($perpage, $totalcount);
 
-echo '<form id="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php"><div>';
+echo '<form class="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php"><div>';
 
 //retrieve tags from DB
 if ($tagrecords = get_records_sql($query, $table->get_page_start(),  $table->get_page_size())) {
@@ -211,10 +213,8 @@ if ($tagrecords = get_records_sql($query, $table->get_page_start(),  $table->get
     $taglist = array_values($tagrecords);
 
     //print_tag_cloud(array_values(get_records_sql($query)), false);
-
     //populate table with data
     foreach ($taglist as $tag ){
-
         $id             =   $tag->id;
         $name           =   '<a href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'">'. tag_display_name($tag) .'</a>';
         $owner          =   '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$tag->owner.'">' . fullname($tag) . '</a>';
@@ -223,7 +223,6 @@ if ($tagrecords = get_records_sql($query, $table->get_page_start(),  $table->get
         $timemodified   =   format_time(time() - $tag->timemodified);
         $checkbox       =   '<input type="checkbox" name="tagschecked[]" value="'.$tag->id.'" />';
         $text           =   '<input type="text" name="newname['.$tag->id.']" />';
-
         $tagtype        =   choose_from_menu($existing_tagtypes, 'tagtypes['.$tag->id.']', $tag->tagtype, '', '', '0', true);
 
         //if the tag if flagged, highlight it
@@ -242,7 +241,6 @@ if ($tagrecords = get_records_sql($query, $table->get_page_start(),  $table->get
         $table->add_data($data);
     }
 
-
     echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> ';
     echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" /> ';
@@ -256,18 +254,16 @@ if ($tagrecords = get_records_sql($query, $table->get_page_start(),  $table->get
             </select>';
 
     echo '<button id="tag-management-submit" type="submit">'. get_string('ok') .'</button>';
-
 }
 
 $table->print_html();
-
 echo '</div></form>';
 
 if ($perpage == SHOW_ALL_PAGE_SIZE) {
-    echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.DEFAULT_PAGE_SIZE.'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>';
+    echo '<div id="showall"><a href="'. $baseurl .'&amp;perpage='. DEFAULT_PAGE_SIZE .'">'. get_string('showperpage', '', DEFAULT_PAGE_SIZE) .'</a></div>';
 
 } else if ($totalcount > 0 and $perpage < $totalcount) {
-    echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $totalcount).'</a></div>';
+    echo '<div id="showall"><a href="'. $baseurl .'&amp;perpage='. SHOW_ALL_PAGE_SIZE .'">'. get_string('showall', '', $totalcount) .'</a></div>';
 }
 
 echo '<br/>';

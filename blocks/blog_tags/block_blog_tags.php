@@ -161,7 +161,7 @@ class block_blog_tags extends block_base {
                 $this->content->text .= '<li><a href="'.$link.'" '.
                                         'class="'.$tag->class.'" '.
                                         'title="'.get_string('numberofentries','blog',$tag->ct).'">'.
-                                        $tag->name.'</a></li> ';
+                                        tag_display_name($tag) .'</a></li> ';
             }
             $this->content->text .= "\n</ul>\n";
 

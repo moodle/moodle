@@ -119,18 +119,12 @@ switch ($action) {
         $post->action       = $action;
         $strformheading = get_string('updateentrywithid', 'blog');
 
-        if ($itemptags = get_item_tags('post', $post->id, 'ti.ordering ASC', 'id,rawname', '', '', 'default')) {
-            if ($ptags = records_to_menu($itemptags, 'id','rawname')) {           
-                $post->ptags = implode(', ', $ptags);
-            } else {
-                $post->ptags = '';
-            }
+        if ($itemptags = html_entity_decode(tag_get_tags_csv(array('type'=>'post', 'id'=>$post->id), TAG_RETURN_TEXT, 'default'))) {
+            $post->ptags = $itemptags;
         }
         
-        if ($itemotags = get_item_tags('post', $post->id, 'ti.ordering ASC', 'id,rawname', '', '', 'official')) {
-            if ($otags = records_to_menu($itemotags, 'id','rawname')) {
-                $post->otags = array_keys($otags);
-            }
+        if ($itemotags = tag_get_tags_array(array('type'=>'post', 'id'=>$post->id), 'official')) {
+            $post->otags = array_keys($itemotags);
         }
     break;
     default :
@@ -231,7 +225,7 @@ function do_delete($post) {
 
     $status = delete_records('post', 'id', $post->id);
     //$status = delete_records('blog_tag_instance', 'entryid', $post->id) and $status;
-    untag_an_item('post', $post->id);
+    tag_set('post', $post->id, array());
     
     blog_delete_old_attachments($post);
 
@@ -293,7 +287,7 @@ function do_edit($post, $blogeditform) {
         
         //delete_records('blog_tag_instance', 'entryid', $post->id);
         //delete_records('tag_instance', 'itemid', $post->id, 'itemtype', 'blog');
-        untag_an_item('post', $post->id);
+        //untag_an_item('post', $post->id);
         // add them back
         add_tags_info($post->id);
 
@@ -309,38 +303,19 @@ function do_edit($post, $blogeditform) {
  * @param int postid - id of the blog
  */
 function add_tags_info($postid) {
-
-    global $USER;
-
-    $post = get_record('post', 'id', $postid);
-
-    /// Attach official tags
+    
+    $tags = array();
     if ($otags = optional_param('otags', '', PARAM_INT)) {
-        foreach ($otags as $otag) {
-            $tag->tagid = $otag;
-            //insert_record('blog_tag_instance', $tag);
-            tag_an_item('post', $postid, $otag, 'official'); 
+        foreach ($otags as $tagid) {
+            // TODO : make this use the tag name in the form
+            $tag = tag_get_tag_by_id($tagid);
+            $tags[] = $tag->name;
         }
     }
 
-    /// Attach Personal Tags
-    if ($ptags = optional_param('ptags', '', PARAM_NOTAGS)) {
-        $ptags = explode(',', $ptags);
-        foreach ($ptags as $ptag) {
-            $ptag = trim($ptag);
-            // check for existence
-            // it does not matter whether it is an offical tag or personal tag
-            // we do not want to have 1 copy of offical tag and 1 copy of personal tag (for the same tag)
-            if ($ctag = tag_by_name($ptag)) {
-                tag_an_item('post', $postid, $ctag->id);
-            } else { // create a personal tag
-                if ($tagid = tag_create($ptag)) {
-                    if ($tagid = array_shift($tagid)) {
-                        tag_an_item('post', $postid, $tagid);
-                    }
-                }
-            }
-        }
-    }
+    $manual_tags = optional_param('ptags', '', PARAM_NOTAGS);
+    $tags = array_merge($tags, explode(',', $manual_tags));
+    
+    tag_set('post', $postid, $tags);
 }
 ?>
