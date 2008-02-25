@@ -80,7 +80,8 @@ class blog_edit_form extends moodleform {
         if ($otagsselect =& $mform->getElement('otags')) {
             $otagsselect->removeOptions();
         }
-        if ($otags = get_records_sql_menu('SELECT id, name from '.$CFG->prefix.'tag WHERE tagtype=\'official\' ORDER by name ASC')){
+        $namefield = empty($CFG->keeptagnamecase) ? 'name' : 'rawname';
+        if ($otags = get_records_sql_menu('SELECT id, '.$namefield.' from '.$CFG->prefix.'tag WHERE tagtype=\'official\' ORDER by name ASC')){
             $otagsselect->loadArray($otags);
         }
     }
