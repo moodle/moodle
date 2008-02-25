@@ -1,7 +1,8 @@
 <?php // $Id$
 require_once($CFG->libdir.'/formslib.php');
 
-define('ASSIGNMENT_STATUS_SUBMITTED', 'submitted');
+define('ASSIGNMENT_STATUS_SUBMITTED', 'submitted'); // student thinks it is finished
+define('ASSIGNMENT_STATUS_CLOSED', 'closed');       // teacher prevents more submissions
 
 /**
  * Extend the base assignment class for assignments where you upload a single file
@@ -41,7 +42,7 @@ class assignment_upload extends assignment_base {
 
             $this->view_feedback();
 
-            if ($this->is_finalized($submission)) {
+            if (!$this->isopen() or $this->is_finalized($submission)) {
                 print_heading(get_string('submission', 'assignment'), '', 3);
             } else {
                 print_heading(get_string('submissiondraft', 'assignment'), '', 3);
@@ -50,7 +51,7 @@ class assignment_upload extends assignment_base {
             if ($filecount and $submission) {
                 print_simple_box($this->print_user_files($USER->id, true), 'center');
             } else {
-                if ($this->is_finalized($submission)) {
+                if (!$this->isopen() or $this->is_finalized($submission)) {
                     print_simple_box(get_string('nofiles', 'assignment'), 'center');
                 } else {
                     print_simple_box(get_string('nofilesyet', 'assignment'), 'center');
@@ -186,7 +187,7 @@ class assignment_upload extends assignment_base {
 
         $submission = $this->get_submission($USER->id);
 
-        if ($this->can_finalize($submission)) {
+        if ($this->isopen() and $this->can_finalize($submission)) {
             //print final submit button
             print_heading(get_string('submitformarking','assignment'), '', 3);
             echo '<div style="text-align:center">';
@@ -198,19 +199,26 @@ class assignment_upload extends assignment_base {
             echo '</fieldset>';
             echo '</form>';
             echo '</div>';
-        } else if ($this->is_finalized($submission)) {
-            print_heading(get_string('submitedformarking','assignment'), '', 3);
+        } else if (!$this->isopen()) {
+            print_heading(get_string('nomoresubmissions','assignment'), '', 3);
+
+        } else if ($state = $this->is_finalized($submission)) {
+            if ($state == ASSIGNMENT_STATUS_SUBMITTED) {
+                print_heading(get_string('submitedformarking','assignment'), '', 3);
+            } else {
+                print_heading(get_string('nomoresubmissions','assignment'), '', 3);
+            }
         } else {
             //no submission yet
         }
     }
-    
-    
-    /*
+
+
+    /**
      * Return true if var3 == hide description till available day
-     * 
+     *
      *@return boolean
-     */                  
+     */
     function description_is_hidden() {
         return ($this->assignment->var3 && (time() <= $this->assignment->timeavailable));
     }
@@ -264,7 +272,7 @@ class assignment_upload extends assignment_base {
         $output = '';
 
         if ($basedir = $this->file_area($userid)) {
-            if (!$this->is_finalized($submission)) {
+            if ($this->isopen() and !$this->is_finalized($submission)) {
                 $output .= '<strong>'.get_string('draft', 'assignment').':</strong> ';
             }
 
@@ -314,58 +322,56 @@ class assignment_upload extends assignment_base {
 
         $output = '';
 
-        if ($submission = $this->get_submission($userid)) {
+        $submission = $this->get_submission($userid);
 
-            $candelete = $this->can_delete_files($submission);
-            $strdelete   = get_string('delete');
+        $candelete = $this->can_delete_files($submission);
+        $strdelete   = get_string('delete');
 
-            if (!$this->is_finalized($submission) and !empty($mode)) {                 // only during grading
-                $output .= '<strong>'.get_string('draft', 'assignment').':</strong><br />';
-            }
+        if ($this->isopen() and !$this->is_finalized($submission) and !empty($mode)) {                 // only during grading
+            $output .= '<strong>'.get_string('draft', 'assignment').':</strong><br />';
+        }
 
-            if ($this->notes_allowed() and !empty($submission->data1) and !empty($mode)) { // only during grading
+        if ($this->notes_allowed() and !empty($submission->data1) and !empty($mode)) { // only during grading
 
-                $npurl = $CFG->wwwroot."/mod/assignment/type/upload/notes.php?id={$this->cm->id}&amp;userid=$userid&amp;offset=$offset&amp;mode=single";
-                $output .= '<a href="'.$npurl.'">'.get_string('notes', 'assignment').'</a><br />';
-
-            }
-
-            if ($basedir = $this->file_area($userid)) {
-                if ($files = get_directory_list($basedir, 'responses')) {
-                    require_once($CFG->libdir.'/filelib.php');
-                    foreach ($files as $key => $file) {
-
-                        $icon = mimeinfo('icon', $file);
-
-                        $ffurl   = "$CFG->wwwroot/file.php?file=/$filearea/$file";
-
-
-                        $output .= '<a href="'.$ffurl.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.$file.'</a>';
-
-                        if ($candelete) {
-                            $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=$file&amp;userid={$submission->userid}&amp;mode=$mode&amp;offset=$offset";
-
-                            $output .= '<a href="'.$delurl.'">&nbsp;'
-                                      .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="" /></a> ';
-                        }
-
-                        $output .= '<br />';
-                    }
-                }
-            }
-            if (has_capability('mod/assignment:grade', $this->context) and $mode != '') { // we do not want it on view.php page
-                if ($this->can_unfinalize($submission)) {
-                    $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'unfinalize', 'mode'=>$mode, 'offset'=>$offset);
-                    $output .= print_single_button('upload.php', $options, get_string('unfinalize', 'assignment'), 'post', '_self', true);
-                } else if ($this->can_finalize($submission)) {
-                    $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'finalize', 'mode'=>$mode, 'offset'=>$offset);
-                    $output .= print_single_button('upload.php', $options, get_string('finalize', 'assignment'), 'post', '_self', true);
-                }
-            }
-
-            $output = '<div class="files">'.$output.'</div>';
+            $npurl = $CFG->wwwroot."/mod/assignment/type/upload/notes.php?id={$this->cm->id}&amp;userid=$userid&amp;offset=$offset&amp;mode=single";
+            $output .= '<a href="'.$npurl.'">'.get_string('notes', 'assignment').'</a><br />';
 
         }
+
+        if ($basedir = $this->file_area($userid)) {
+            if ($files = get_directory_list($basedir, 'responses')) {
+                require_once($CFG->libdir.'/filelib.php');
+                foreach ($files as $key => $file) {
+
+                    $icon = mimeinfo('icon', $file);
+
+                    $ffurl   = "$CFG->wwwroot/file.php?file=/$filearea/$file";
+
+
+                    $output .= '<a href="'.$ffurl.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.$file.'</a>';
+
+                    if ($candelete) {
+                        $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=$file&amp;userid={$submission->userid}&amp;mode=$mode&amp;offset=$offset";
+
+                        $output .= '<a href="'.$delurl.'">&nbsp;'
+                                  .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="" /></a> ';
+                    }
+
+                    $output .= '<br />';
+                }
+            }
+        }
+        if (has_capability('mod/assignment:grade', $this->context) and $mode != '') { // we do not want it on view.php page
+            if ($this->can_unfinalize($submission)) {
+                $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'unfinalize', 'mode'=>$mode, 'offset'=>$offset);
+                $output .= print_single_button('upload.php', $options, get_string('unfinalize', 'assignment'), 'post', '_self', true);
+            } else if ($this->can_finalize($submission)) {
+                $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'finalizeclose', 'mode'=>$mode, 'offset'=>$offset);
+                $output .= print_single_button('upload.php', $options, get_string('finalize', 'assignment'), 'post', '_self', true);
+            }
+        }
+
+        $output = '<div class="files">'.$output.'</div>';
 
         if ($return) {
             return $output;
@@ -428,6 +434,9 @@ class assignment_upload extends assignment_base {
         switch ($action) {
             case 'finalize':
                 $this->finalize();
+                break;
+            case 'finalizeclose':
+                $this->finalize(true);
                 break;
             case 'unfinalize':
                 $this->unfinalize();
@@ -587,7 +596,7 @@ class assignment_upload extends assignment_base {
         die;
     }
 
-    function finalize() {
+    function finalize($forceclosing=false) {
         global $USER;
 
         $userid = optional_param('userid', 0, PARAM_INT);
@@ -597,16 +606,16 @@ class assignment_upload extends assignment_base {
             $offset     = required_param('offset', PARAM_INT);
             $returnurl  = "submissions.php?id={$this->cm->id}&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset&amp;forcerefresh=1";
             $confirm    = true;
-            $submission = $this->get_submission($userid);
+            $submission = $this->get_submission($userid, true);
 
         } else {
             $confirm    = optional_param('confirm', 0, PARAM_BOOL);
             $returnurl  = 'view.php?id='.$this->cm->id;
-            $submission = $this->get_submission($USER->id);
+            $submission = $this->get_submission($USER->id, true);
         }
 
         if (!$this->can_finalize($submission)) {
-            redirect($returnurl); // probably already graded, erdirect to assignment page, the reason should be obvious
+            redirect($returnurl); // probably already graded, redirect to assignment page, the reason should be obvious
         }
 
         if (!data_submitted('nomatch') or !$confirm) {
@@ -621,7 +630,12 @@ class assignment_upload extends assignment_base {
         } else {
             $updated = new object();
             $updated->id           = $submission->id;
-            $updated->data2        = ASSIGNMENT_STATUS_SUBMITTED;
+            if ($forceclosing) {
+                $updated->data2    = ASSIGNMENT_STATUS_CLOSED;
+            } else {
+                $updated->data2    = ASSIGNMENT_STATUS_SUBMITTED;
+            }
+
             $updated->timemodified = time();
             if (update_record('assignment_submissions', $updated)) {
                 add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finilize action to log
@@ -654,7 +668,7 @@ class assignment_upload extends assignment_base {
             $updated->id = $submission->id;
             $updated->data2 = '';
             if (update_record('assignment_submissions', $updated)) {
-                //TODO: add unfinilize action to log
+                //TODO: add unfinalize action to log
                 add_to_log($this->course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
             } else {
                 $this->view_header(get_string('submitformarking'));
@@ -846,11 +860,20 @@ class assignment_upload extends assignment_base {
         }
     }
 
+    /**
+     * Returns submission status
+     * @param object $submission - may be empty
+     * @return string submission state - empty, ASSIGNMENT_STATUS_SUBMITTED or ASSIGNMENT_STATUS_CLOSED
+     */
     function is_finalized($submission) {
-        if ($submission->data2 == ASSIGNMENT_STATUS_SUBMITTED) {
-            return true;
+        if (empty($submission)) {
+            return '';
+
+        } else if ($submission->data2 == ASSIGNMENT_STATUS_SUBMITTED or $submission->data2 == ASSIGNMENT_STATUS_CLOSED) {
+            return $submission->data2;
+
         } else {
-            return false;
+            return '';
         }
     }
 
