@@ -36,7 +36,14 @@ if (($edit != -1) and $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
 }
 
+$systemcontext   = get_context_instance(CONTEXT_SYSTEM);
+
 $PAGE->print_header();
+
+// Manage all tags links
+if (has_capability('moodle/tag:manage', $systemcontext)) {
+    echo '<div class="managelink"><a href="'. $CFG->wwwroot .'/tag/manage.php">'. get_string('managetags', 'tag') .'</a></div>' ;
+}
 
 echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
 echo '<tr valign="top">';
@@ -57,7 +64,6 @@ echo '<td valign="top" id="middle-column">';
 
 $tagname  = tag_display_name($tag);
 
-$systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 if ($tag->flag > 0 && has_capability('moodle/tag:manage', $systemcontext)) {
     $tagname =  '<span class="flagged-tag">' . rawurlencode($tagname) . '</span>';
 }
