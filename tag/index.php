@@ -36,11 +36,12 @@ if (($edit != -1) and $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
 }
 
-$systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 
 $PAGE->print_header();
 
 // Manage all tags links
+$systemcontext   = get_context_instance(CONTEXT_SYSTEM);
+
 if (has_capability('moodle/tag:manage', $systemcontext)) {
     echo '<div class="managelink"><a href="'. $CFG->wwwroot .'/tag/manage.php">'. get_string('managetags', 'tag') .'</a></div>' ;
 }
