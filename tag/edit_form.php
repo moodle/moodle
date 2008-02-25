@@ -4,13 +4,20 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 
 class tag_edit_form extends moodleform {
 
-function definition () {
+    function definition () {
 
-    $mform =& $this->_form;
+        $mform =& $this->_form;
 
         $mform->addElement('header', 'tag', get_string('description','tag'));
 
         $mform->addElement('hidden', 'id');
+
+        $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
+
+        if (has_capability('moodle/tag:manage', $systemcontext)) {
+            $mform->addElement('text', 'rawname', get_string('name', 'tag'), 
+                    'maxlength="'.TAG_MAX_LENGTH.'" size="'.TAG_MAX_LENGTH.'"');
+        }
 
         $mform->addElement('htmleditor', 'description', get_string('description', 'tag'), array('rows'=>20));
 
