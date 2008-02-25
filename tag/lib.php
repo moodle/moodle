@@ -107,6 +107,8 @@ function tag_delete_instance($record, $tagid) {
  */
 function tag_display_name($tag_object) {
 
+    global $CFG;
+
     if(!isset($tag_object->name)) {
         return '';
     }
