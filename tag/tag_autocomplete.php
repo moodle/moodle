@@ -12,8 +12,8 @@ if (empty($CFG->usetags)) {
 $query = addslashes(optional_param('query', '', PARAM_RAW));  
 
 if ($similar_tags = tag_autocomplete($query)) {
-    foreach ($similar_tags as $tag){
-        echo tag_display_name($tag) . "\t" . $tag->id . "\n";
+    foreach ($similar_tags as $tag) {
+        echo html_entity_decode(tag_display_name($tag)) . "\t" . tag_display_name($tag) . "\n";
     }
 }
 

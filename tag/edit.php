@@ -116,6 +116,9 @@ myAutoComp.delimChar = ",";
 myAutoComp.maxResultsDisplayed = 20;
 myAutoComp.minQueryLength = 2;
 myAutoComp.allowBrowserAutocomplete = false;
+myAutoComp.formatResult = function(aResultItem, sQuery) {
+    return aResultItem[1];
+}
 </script>
 
 <?php
