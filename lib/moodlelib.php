@@ -154,6 +154,11 @@ define('PARAM_FILE',     0x0010);
 define('PARAM_TAG',   0x0011);
 
 /**
+ * PARAM_TAGLIST - list of tags separated by commas (interests, blogs, etc.) 	 
+ */ 	 
+define('PARAM_TAGLIST',   0x0012);
+
+/**
  * PARAM_PATH - safe relative path name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
  * note: the leading slash is not removed, window drive letter is not allowed
  */
