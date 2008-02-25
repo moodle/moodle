@@ -1,5 +1,7 @@
 <?php
 
+$string['addedotag'] = '\"$a\" was added as an official tag.';
+$string['addotags'] = 'Add official tags';
 $string['addtagtomyinterests'] =  'Add \"$a\" to my interests';
 $string['blocktagstitle'] =  'Tags';
 $string['count'] = 'Count';
@@ -20,6 +22,8 @@ $string['namesalreadybeeingused'] = 'Tag names already being used';
 $string['newname'] = 'New tag name';
 $string['noresultsfor'] = 'No results for \"$a\"';
 $string['owner'] = 'Owner';
+$string['otags'] = 'Official tags';
+$string['ptags'] = 'User defined tags (Comma separated)';
 $string['relatedtags'] = 'Related tags';
 $string['responsiblewillbenotified'] = 'The person responsible will be notified';
 $string['resetflag'] = 'Reset flag';

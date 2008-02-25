@@ -54,8 +54,8 @@ function useredit_update_trackforums($user, $usernew) {
     }
 }
 
-function useredit_update_interests($user, $cvs_tag_names) {
-    update_item_tags('user', $user->id, $cvs_tag_names);
+function useredit_update_interests($user, $csv_tag_names) {
+    tag_set('user', $user->id, explode(',', $csv_tag_names));
 }
 
 function useredit_shared_definition(&$mform) {
