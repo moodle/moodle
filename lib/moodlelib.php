@@ -566,6 +566,22 @@ function clean_param($param, $type) {
             $param = $textlib->substr(trim($param), 0, TAG_MAX_LENGTH);
             return $param;
 
+
+        case PARAM_TAGLIST:      
+            $tags = explode(',', $param);   
+            $result = array();      
+            foreach ($tags as $tag) {   
+                $res = clean_param($tag, PARAM_TAG);    
+                if ($res != '') {   
+                    $result[] = $res;   
+                }   
+            }   
+            if ($result) {      
+                return implode(',', $result);   
+            } else {    
+                return '';      
+            }
+
         default:                 // throw error, switched parameters in optional_param or another serious problem
             error("Unknown parameter type: $type");
     }
@@ -3040,7 +3056,9 @@ function authenticate_user_login($username, $password) {
 
     // failed if all the plugins have failed
     add_to_log(0, 'login', 'error', 'index.php', $username);
-    error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+    if (debugging('', DEBUG_ALL)) {
+        error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+    }
     return false;
 }
 
