@@ -147,25 +147,23 @@ function tag_print_management_box($tag_object, $return=false) {
         $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
         $links = array();
         
-        // if the user is not tagged with the $tag_object tag, a link "add blahblah to my interests" will appear
-        if( !tag_record_tagged_with(array('type'=>'user', 'id'=>$USER->id), $tag_object->name )) {
-            $links[] = '<a href="'. $CFG->wwwroot .'/user/tag.php?action=addinterest&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($tag_object->name) .'">'. get_string('addtagtomyinterests', 'tag', $tagname) .'</a>';
-        }
-
-        // only people with moodle/tag:edit capability may edit the tag description
-        if ( has_capability('moodle/tag:edit', $systemcontext) && 
-                (tag_record_tagged_with(array('type'=>'user', 'id'=>$USER->id), $tag_object->name) || 
-                 has_capability('moodle/tag:manage', $systemcontext)) ) {
-            $links[] = '<a href="'. $CFG->wwwroot .'/tag/edit.php?tag='. rawurlencode($tag_object->name) .'">'. get_string('edittag', 'tag') .'</a>';
+        // Add a link for users to add/remove this from their interests
+        if (tag_record_tagged_with(array('type'=>'user', 'id'=>$USER->id), $tag_object->name)) {
+            $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=removeinterest&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($tag_object->name) .'">'. get_string('removetagfrommyinterests', 'tag', $tagname) .'</a>';
+        } else {
+            $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=addinterest&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($tag_object->name) .'">'. get_string('addtagtomyinterests', 'tag', $tagname) .'</a>';
         }
 
         // flag as inappropriate link
-        $links[] = '<a href="'. $CFG->wwwroot .'/user/tag.php?action=flaginappropriate&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($tag_object->name) .'">'. get_string('flagasinappropriate', 'tag', rawurlencode($tagname)) .'</a>';
+        $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=flaginappropriate&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($tag_object->name) .'">'. get_string('flagasinappropriate', 'tag', rawurlencode($tagname)) .'</a>';
 
-        // Manage all tags links
-        if ( has_capability('moodle/tag:manage', $systemcontext) ) {
-            $links[] =  '<a href="'. $CFG->wwwroot .'/tag/manage.php">'. get_string('managetags', 'tag') .'</a>' ;
+        // Edit tag: Only people with moodle/tag:edit capability who either have it as an interest or can manage tags
+        if (has_capability('moodle/tag:edit', $systemcontext) && 
+                (tag_record_tagged_with(array('type'=>'user', 'id'=>$USER->id), $tag_object->name) || 
+                 has_capability('moodle/tag:manage', $systemcontext))) {
+            $links[] = '<a href="'. $CFG->wwwroot .'/tag/edit.php?tag='. rawurlencode($tag_object->name) .'">'. get_string('edittag', 'tag') .'</a>';
         }
+
 
         $output .= implode(' | ', $links);
         $output .= print_box_end(true);
@@ -228,7 +226,7 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
     // link "Add $query to my interests"
     $addtaglink = '';
     if( !is_item_tagged_with('user', $USER->id, $query) ) {
-        $addtaglink = '<a href="'. $CFG->wwwroot .'/user/tag.php?action=addinterest&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($query) .'">';
+        $addtaglink = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=addinterest&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($query) .'">';
         $addtaglink .= get_string('addtagtomyinterests', 'tag', rawurlencode($query)) .'</a>';
     }
 

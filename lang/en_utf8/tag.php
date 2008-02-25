@@ -25,6 +25,7 @@ $string['owner'] = 'Owner';
 $string['otags'] = 'Official tags';
 $string['ptags'] = 'User defined tags (Comma separated)';
 $string['relatedtags'] = 'Related tags';
+$string['removetagfrommyinterests'] = 'Remove \"$a\" from my interests';
 $string['responsiblewillbenotified'] = 'The person responsible will be notified';
 $string['resetflag'] = 'Reset flag';
 $string['reset'] = 'Reset';

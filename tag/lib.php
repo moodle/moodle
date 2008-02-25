@@ -475,6 +475,29 @@ function tag_set_add($record_type, $record_id, $tag) {
 }
 
 /**
+ * Removes a tag from a record, without overwriting other current tags.
+ * 
+ * @param string $record_type the type of record to tag ('post' for blogs, 
+ *     'user' for users, etc.
+ * @param int $record_id the id of the record to tag
+ * @param string $tag the tag to delete
+ * @return void
+ */
+function tag_set_delete($record_type, $record_id, $tag) {
+
+    $record = array('type' => $record_type, 'id' => $record_id);
+    
+    $new_tags = array();
+    foreach( tag_get_tags($record) as $current_tag ) {
+        if ($current_tag->name != $tag) {  // Keep all tags but the one specified
+            $new_tags[] = $current_tag->name;
+        }
+    }
+    
+    return tag_set($record_type, $record_id, $new_tags);
+}
+
+/**
  * Set the type of a tag.  At this time (version 1.9) the possible values
  * are 'default' or 'official'.  Official tags will be displayed separately "at
  * tagging time" (while selecting the tags to apply to a record).
