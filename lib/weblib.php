@@ -6702,7 +6702,7 @@ function convert_tree_to_html($tree, $row=0) {
             $liclass .= (empty($liclass)) ? 'onerow' : ' onerow';
         }
 
-        if ($tab->inactive || $tab->active || ($tab->selected && !$tab->linkedwhenselected)) {
+        if ($tab->inactive || $tab->active || $tab->selected) {
             if ($tab->selected) {
                 $liclass .= (empty($liclass)) ? 'here selected' : ' here selected';
             } else if ($tab->active) {
