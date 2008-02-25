@@ -1890,7 +1890,9 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         
         // email_to_user is not usable because email_to_user tries to write to the logs table, and this will get caught
         // in an infinite loop, if disk is full
-        mail($CFG->supportemail, $subject, $message);
+        if (empty($CFG->noemailever)) {
+            mail($CFG->supportemail, $subject, $message);
+        }
     }
 
     if (!$result and debugging()) {
