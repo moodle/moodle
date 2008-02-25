@@ -49,6 +49,7 @@ $tagform->set_data($tag);
 // If new data has been sent, update the tag record
 if ($tagnew = $tagform->get_data()) {
 
+    $do_update_name = false;
 
     if (!has_capability('moodle/tag:manage', $systemcontext)) {
         unset($tagnew->name);
@@ -64,6 +65,9 @@ if ($tagnew = $tagform->get_data()) {
         if ($tagold->name != $tagnew->name) {  // The name has changed, let's make sure it's not another existing tag
             if (tag_get_id($tagnew->name)) {   // Something exists already, so flag an error
                 $errorstring = s($tagnew->rawname).': '.get_string('namesalreadybeeingused', 'tag');
+            
+            } else {
+                $do_update_name = true;
             }
         }
     }
@@ -71,7 +75,8 @@ if ($tagnew = $tagform->get_data()) {
     if (empty($errorstring)) {    // All is OK, let's save it
         $tagnew->timemodified = time();
 
-        if (!update_record('tag', $tagnew)) {
+        // rename tag if needed
+        if ($do_update_name && !tag_rename($tag_id, $tagnew->rawname)) {
             error('Error updating tag record');
         }
     
