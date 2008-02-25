@@ -684,6 +684,15 @@ class grade_category extends grade_object {
             }
         }
 
+        // use 0 if grade missing, droplow used and aggregating all items
+        if (!$this->aggregateonlygraded and !empty($this->droplow)) {
+            foreach($items as $itemid=>$value) {
+                if (!isset($grade_values[$itemid]) and !in_array($itemid, $excluded)) {
+                    $grade_values[$itemid] = 0;
+                }
+            }
+        }
+
         $max = 0;
 
         //find max grade
