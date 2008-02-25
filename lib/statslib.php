@@ -1444,11 +1444,11 @@ function stats_upgrade_totals() {
 
         $sql = "INSERT INTO {$CFG->prefix}stats_$type2 (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT stattype, (timeend - $y30) AS ntimeend, courseid, 0, SUM(stat1), SUM(stat2)
+                SELECT stattype, (timeend - $y30), courseid, 0, SUM(stat1), SUM(stat2)
                   FROM {$CFG->prefix}stats_$type
                  WHERE (stattype = 'enrolments' OR stattype = 'activity') AND
                        roleid <> 0
-              GROUP BY stattype, ntimeend, courseid";
+              GROUP BY stattype, timeend, courseid";
         execute_sql($sql);
 
         $sql = "INSERT INTO {$CFG->prefix}stats_$type (stattype, timeend, courseid, roleid, stat1, stat2)
