@@ -117,6 +117,7 @@ $string['submitedformarking'] = 'Assignment was already submitted for marking an
 $string['submitformarking'] = 'Final submission for assignment marking';
 $string['submitted'] = 'Submitted';
 $string['submittedfiles'] = 'Submitted files';
+$string['trackdrafts'] = 'Enable Send for marking';
 $string['typeoffline'] = 'Offline activity';
 $string['typeonline'] = 'Online text';
 $string['typeupload'] = 'Advanced uploading of files';

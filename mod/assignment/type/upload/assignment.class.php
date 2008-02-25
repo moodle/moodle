@@ -42,7 +42,7 @@ class assignment_upload extends assignment_base {
 
             $this->view_feedback();
 
-            if (!$this->isopen() or $this->is_finalized($submission)) {
+            if (!$this->drafts_tracked() or !$this->isopen() or $this->is_finalized($submission)) {
                 print_heading(get_string('submission', 'assignment'), '', 3);
             } else {
                 print_heading(get_string('submissiondraft', 'assignment'), '', 3);
@@ -202,7 +202,7 @@ class assignment_upload extends assignment_base {
         } else if (!$this->isopen()) {
             print_heading(get_string('nomoresubmissions','assignment'), '', 3);
 
-        } else if ($state = $this->is_finalized($submission)) {
+        } else if ($this->drafts_tracked() and $state = $this->is_finalized($submission)) {
             if ($state == ASSIGNMENT_STATUS_SUBMITTED) {
                 print_heading(get_string('submitedformarking','assignment'), '', 3);
             } else {
@@ -272,7 +272,7 @@ class assignment_upload extends assignment_base {
         $output = '';
 
         if ($basedir = $this->file_area($userid)) {
-            if ($this->isopen() and !$this->is_finalized($submission)) {
+            if ($this->drafts_tracked() and $this->isopen() and !$this->is_finalized($submission)) {
                 $output .= '<strong>'.get_string('draft', 'assignment').':</strong> ';
             }
 
@@ -327,7 +327,7 @@ class assignment_upload extends assignment_base {
         $candelete = $this->can_delete_files($submission);
         $strdelete   = get_string('delete');
 
-        if ($this->isopen() and !$this->is_finalized($submission) and !empty($mode)) {                 // only during grading
+        if ($this->drafts_tracked() and $this->isopen() and !$this->is_finalized($submission) and !empty($mode)) {                 // only during grading
             $output .= '<strong>'.get_string('draft', 'assignment').':</strong><br />';
         }
 
@@ -860,13 +860,20 @@ class assignment_upload extends assignment_base {
         }
     }
 
+    function drafts_tracked() {
+        return !empty($this->assignment->var4);
+    }
+
     /**
      * Returns submission status
      * @param object $submission - may be empty
      * @return string submission state - empty, ASSIGNMENT_STATUS_SUBMITTED or ASSIGNMENT_STATUS_CLOSED
      */
     function is_finalized($submission) {
-        if (empty($submission)) {
+        if (!$this->drafts_tracked()) {
+            return '';
+
+        } else if (empty($submission)) {
             return '';
 
         } else if ($submission->data2 == ASSIGNMENT_STATUS_SUBMITTED or $submission->data2 == ASSIGNMENT_STATUS_CLOSED) {
@@ -878,6 +885,9 @@ class assignment_upload extends assignment_base {
     }
 
     function can_unfinalize($submission) {
+        if (!$this->drafts_tracked()) {
+            return false;
+        }
         if (has_capability('mod/assignment:grade', $this->context)
           and $this->isopen()
           and $this->is_finalized($submission)) {
@@ -889,6 +899,9 @@ class assignment_upload extends assignment_base {
 
     function can_finalize($submission) {
         global $USER;
+        if (!$this->drafts_tracked()) {
+            return false;
+        }
 
 		if ($this->is_finalized($submission)) {
 		    return false;
@@ -995,6 +1008,9 @@ class assignment_upload extends assignment_base {
         $mform->setHelpButton('emailteachers', array('emailteachers', get_string('emailteachers', 'assignment'), 'assignment'));
         $mform->setDefault('emailteachers', 0);
 
+        $mform->addElement('select', 'var4', get_string("trackdrafts", "assignment"), $ynoptions);
+        $mform->setHelpButton('var4', array('trackdrafts', get_string('trackdrafts', 'assignment'), 'assignment'));
+        $mform->setDefault('trackdrafts', 1);
 
     }
 
