@@ -66,7 +66,8 @@ class XML{
 		xml_set_character_data_handler($this->parser, 'data');
 	}
 	function destruct(){ xml_parser_free($this->parser); }
-	function & parse(&$data){
+	//function & parse(&$data){  // Changed for Moodle MDL-13631
+	function parse(&$data){
 		$this->document = array();
 		$this->stack    = array();
 		$this->parent   = &$this->document;
