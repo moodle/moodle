@@ -77,7 +77,7 @@ if ($tagnew = $tagform->get_data()) {
     
         //updated related tags
         tag_set('tag', $tagnew->id, explode(',', trim($tagnew->relatedtags)));
-        //var_dump($tagnew); die();
+        //print_object($tagnew); die();
     
         redirect($CFG->wwwroot.'/tag/index.php?tag='.rawurlencode($tag->name)); // must use $tag here, as the name isn't in the edit form
     }
