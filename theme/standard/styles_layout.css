@@ -2847,6 +2847,11 @@ div#tag-user-table {
  display:block;
 }
 
+body.tag .managelink {
+  text-align:right;
+  padding:10px;
+}
+
 /* small css hack for firefox*/
 div#tag-user-table:after{
  content:".";
