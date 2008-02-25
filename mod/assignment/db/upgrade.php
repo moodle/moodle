@@ -49,6 +49,12 @@ function xmldb_assignment_upgrade($oldversion=0) {
         $result = $result && change_field_notnull($table, $field);
     }
 
+    if ($result && $oldversion < 2007091902) {
+        // add draft tracking default to existing upload assignments
+        $sql = "UPDATE {$CFG->prefix}assignment SET var4=1 WHERE assignmenttype='upload'";
+        $result = execute_sql($sql);
+    }
+
     return $result;
 }
 
