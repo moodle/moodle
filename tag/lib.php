@@ -245,9 +245,13 @@ function tag_get_tags_ids($record) {
  * Returns the database ID of a set of tags.
  * 
  * @param mixed $tags one tag, or array of tags, to look for.
- * @param bool $return_object get the object returned by get_recordset_sql instead 
- *     of the id only (default: false)
- * @return mixed tag-indexed array of ids (or objects, if second parameter is TAG_RETURN_OBJECT), or only an int, if only one tag is given *and* the second parameter is null. No value for a key means the tag wasn't found.
+ * @param bool $return_value specify the type of the returned value. Either 
+ *     TAG_RETURN_OBJECT, or TAG_RETURN_ARRAY (default). If TAG_RETURN_ARRAY 
+ *     is specified, an array will be returned even if only one tag was 
+ *     passed in $tags.
+ * @return mixed tag-indexed array of ids (or objects, if second parameter is 
+ *     TAG_RETURN_OBJECT), or only an int, if only one tag is given *and* the 
+ *     second parameter is null. No value for a key means the tag wasn't found.
  */
 function tag_get_id($tags, $return_value=null) {
     global $CFG;

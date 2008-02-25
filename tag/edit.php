@@ -15,7 +15,7 @@ if (empty($CFG->usetags)) {
 $tag_id = optional_param('id', 0, PARAM_INT);
 $tag_name = optional_param('tag', '', PARAM_TAG);
 if ($tag_name) {
-    $tag = array_shift(tag_get_id($tag_name, TAG_RETURN_OBJECT));
+    $tag = tag_get_id($tag_name, TAG_RETURN_OBJECT);
 } elseif ( $tag_id ) {
     $tag = tag_get_tag_by_id($tag_id);
 } else {
