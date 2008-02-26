@@ -53,7 +53,7 @@ class grade_export_txt extends grade_export {
 
         $export_tracking = $this->track_exports();
 
-        $strgrades = get_string('grades', 'grade');
+        $strgrades = get_string('grades');
 
         switch ($this->separator) {
             case 'comma':
