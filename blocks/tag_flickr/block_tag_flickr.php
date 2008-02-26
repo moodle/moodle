@@ -55,7 +55,7 @@ class block_tag_flickr extends block_base {
         //include related tags in the photo query ?
         $tags_csv = html_entity_decode(tag_display_name($tag_object));
         if (!empty($this->config->includerelatedtags)) {
-            $tags_csv .= ',' . tag_get_related_tags_csv(tag_get_related_tags(array('type'=>'tag','id'=>$tag_object->id)), TAG_RETURN_TEXT);
+            $tags_csv .= ',' . tag_get_related_tags_csv(tag_get_related_tags($tag_object->id), TAG_RETURN_TEXT);
         }
         $tags_csv = urlencode($tags_csv);
 
