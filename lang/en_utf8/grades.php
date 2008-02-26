@@ -1,5 +1,4 @@
 <?PHP // $Id$
-      // grades.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['activities'] = 'Activities';
@@ -70,8 +69,8 @@ $string['compact'] = 'Compact';
 $string['configdisablegradehistory'] = 'Disable history tracking of changes in grades related tables. This may speed up the server a little and conserve space in database.';
 $string['configaggregationposition'] = 'Defines the position of the aggregation total column in the report related to the grades being aggregated.';
 $string['configaggregationview'] = 'Each category can be displayed in three ways: Full mode (aggregated column and grade item columns), the aggregated column only, or the grade items alone.';
-$string['configaveragesdecimalpoints'] = 'The number of decimal points to display for each average (group or whole), below a column of grades.';
-$string['configaveragesdisplaytype'] = 'Specifies how to display the averages for each column in the grader report. Default means to use the display type of each column.';
+$string['configaveragesdecimalpoints'] = 'Specifies the number of decimal points to display for each column mean. If Inherit is selected, the display type for each column is used.';
+$string['configaveragesdisplaytype'] = 'Specifies how to display the mean for each column. If Inherit is selected, the display type for each column is used.';
 $string['configbulkcheckboxes'] = 'Checkboxes near each grade for Bulk grade operations.';
 $string['configcoursegradedisplaytype'] = 'Select the default display type of grades for this course. You can also select the site default value. Grades can be shown as real grades, as percentages (in reference to the minimum and maximum grades) or as letters (A, B, C etc..). Selecting Letters will allow you to define your own grade letters and boundaries.';
 $string['configdecimalpoints'] = 'The number of decimal points to display for each grade. This can be overridden per grading item.';
@@ -87,25 +86,29 @@ $string['configgradeletter'] = 'A letter or other symbol used to represent a ran
 $string['configgradeletterdefault'] = 'A letter or other symbol used to represent a range of grades. Leave this field empty to use the site default (currently $a).';
 $string['configgradepublishing'] = 'Enable publishing in exports and imports: Exported grades can be accessed by accessing a URL, without having to log on to a Moodle site. Grades can be imported by accessing such a URL (which means that a Moodle site can import grades published by another site). By default only administrators may use this feature, please educate users before adding required capabilities to other roles (dangers of bookmark sharing and download accelerators, IP restrictions, etc.).';
 $string['confighiddenasdate'] = 'If user can not see hidden grades show date of submission instead of \'-\'.';
-$string['configmeanselection'] = 'Select which types of grades will be included in the column averages. Cells with no grade can be ignored, or counted as 0 (default setting).';
+$string['configmeanselection'] = 'Whether cells with no grade should be included when calculating the mean for each column.';
 $string['configprofilereport'] = 'Grade report used on user profile page.';
 $string['configquickfeedback'] = 'Quick Feedback adds a text input element in each grade cell on the grader report, allowing you to edit the feedback for many grades at once. You can then click the Update button to perform all these changes at once, instead of one at a time.';
 $string['configquickgrading'] = 'Quick Grading adds a text input element in each grade cell on the grader report, allowing you to edit many grades at once. You can then click the Update button to perform all these changes at once, instead of one at a time.';
-$string['configrangesdecimalpoints'] = 'The number of decimal points to display for each range, above a column of grades. This can be overridden per grading item.';
-$string['configrangesdisplaytype'] = 'Specifies how to display the range for each column in the grader report. Default means to use the display type of each column.';
+$string['configrangesdecimalpoints'] = 'Specifies the number of decimal points to display for each range. This setting may be overridden per grading item.';
+$string['configrangesdisplaytype'] = 'Specifies how to display ranges. If Inherit is selected, the display type for each column is used.';
 $string['confighideforcedsettings'] = 'Do not show forced settings in grading UI.';
 $string['configshowcalculations'] = 'Whether to show calculator icons near each grade item and category, tooltips over calculated items and a visual indicator that a column is calculated.';
 $string['configshoweyecons'] = 'Whether to show a show/hide icon near each grade (controlling its visibility to the user).';
-$string['configshowactivityicons'] = 'Show an activity icon next to each grade item linked to an activity, in the grader report.';
-$string['configshowaverages'] = 'Show column averages in the grader report.';
-$string['configshowgroups'] = 'Show group averages and means in the grader report.';
+$string['configshowactivityicons'] = 'Whether to show activity icons next to activity names.';
+$string['configshowaverages'] = 'Whether to show the mean for each column.';
+$string['configshowgroups'] = 'Whether to show the mean for each group.';
 $string['configshowhiddenitems'] = 'Show hidden items in report even when user does not have moodle/grade:viewhidden capability. Visibility of hidden grades is not affected by this setting.';
 $string['configshowlocks'] = 'Whether to show a lock/unlock icon near each grade.';
 $string['configshowfeedback'] = 'Whether to show a feedback icon (for adding/editing) near each grade.';
-$string['configshownumberofgrades'] = 'Shows the number of grades being aggregated next to each average, between brackets. Example: 45 (34).';
-$string['configshowranges'] = 'Display a row showing the range of possible for each grading item in the grader report.';
+$string['configshownumberofgrades'] = 'Whether to show the number of grades used when calculating the mean in brackets after each average, for example 45 (34).';
+$string['configshowranges'] = 'Whether to show the range of grades for each column in an additional row.';
 $string['configshowrank'] = 'Show rank for each item.';
+<<<<<<< grades.php
 $string['configshowuseridnumber'] = 'Whether to show the user\'s idnumber as an extra column in the grader report.';
+=======
+$string['configshowuseridnumber'] = 'Whether to show user id numbers in an additional column.';
+>>>>>>> 1.111.2.37
 $string['configshowuserimage'] = 'Whether to show the user\'s profile image next to the name in the grader report.';
 $string['configstudentsperpage'] = 'The number of students to display per page in the grader report.';
 $string['configstudentsperpagedefault'] = 'The number of students to display per page in the grader report. Leave this field empty to use the site default (currently $a).';

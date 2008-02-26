@@ -174,7 +174,9 @@ class grader_report_preferences_form extends moodleform {
                 $label = get_string($lang_string, 'grades') . $number;
 
                 $mform->addElement($type, $full_pref, $label, $options);
-                $mform->setHelpButton($full_pref, array(false, get_string($lang_string, 'grades'), false, true, false, $help_string));
+                if ($lang_string != 'showuserimage') {
+                    $mform->setHelpButton($full_pref, array(false, get_string($lang_string, 'grades'), false, true, false, $help_string));
+                }
                 $mform->setDefault($full_pref, $pref_value);
                 $mform->setType($full_pref, PARAM_ALPHANUM);
             }
