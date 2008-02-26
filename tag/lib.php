@@ -130,9 +130,11 @@ function tag_display_name($tag_object) {
  * @param string $tag tag to look for
  * @param string $type type to restrict search to.  If null, every matching
  *     record will be returned
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return array of matching objects, indexed by record id, from the table containing the type requested
  */
-function tag_find_records($tag, $type) {
+function tag_find_records($tag, $type, $limitfrom='', $limitnum='') {
     
     global $CFG;
 
@@ -146,7 +148,7 @@ function tag_find_records($tag, $type) {
         "FROM {$CFG->prefix}{$type} it INNER JOIN {$CFG->prefix}tag_instance tt ON it.id = tt.itemid ".
         "WHERE tt.itemtype = '{$type}' AND tt.tagid = '{$tagid}'";
     
-    return get_records_sql($query); 
+    return get_records_sql($query, $limitfrom, $limitnum); 
 }
 
 /**

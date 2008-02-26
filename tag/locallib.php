@@ -286,7 +286,7 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
 function tag_print_tagged_users_table($tag_object, $limitfrom='' , $limitnum='', $return=false) {
 
     //List of users with this tag
-    $userlist = tag_find_records($tag_object->name, 'user');
+    $userlist = tag_find_records($tag_object->name, 'user', $limitfrom, $limitnum);
 
     $output = tag_print_user_list($userlist, true);
 
