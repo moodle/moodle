@@ -361,7 +361,8 @@ class assignment_upload extends assignment_base {
                 }
             }
         }
-        if (has_capability('mod/assignment:grade', $this->context) and $mode != '') { // we do not want it on view.php page
+
+        if ($this->drafts_tracked() and $this->isopen() and has_capability('mod/assignment:grade', $this->context) and $mode != '') { // we do not want it on view.php page
             if ($this->can_unfinalize($submission)) {
                 $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'unfinalize', 'mode'=>$mode, 'offset'=>$offset);
                 $output .= print_single_button('upload.php', $options, get_string('unfinalize', 'assignment'), 'post', '_self', true);
@@ -436,7 +437,7 @@ class assignment_upload extends assignment_base {
                 $this->finalize();
                 break;
             case 'finalizeclose':
-                $this->finalize(true);
+                $this->finalizeclose();
                 break;
             case 'unfinalize':
                 $this->unfinalize();
@@ -596,29 +597,19 @@ class assignment_upload extends assignment_base {
         die;
     }
 
-    function finalize($forceclosing=false) {
+    function finalize() {
         global $USER;
 
-        $userid = optional_param('userid', 0, PARAM_INT);
-
-        if ($userid) {
-            $mode       = required_param('mode', PARAM_ALPHA);
-            $offset     = required_param('offset', PARAM_INT);
-            $returnurl  = "submissions.php?id={$this->cm->id}&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset&amp;forcerefresh=1";
-            $confirm    = true;
-            $submission = $this->get_submission($userid, true);
-
-        } else {
-            $confirm    = optional_param('confirm', 0, PARAM_BOOL);
-            $returnurl  = 'view.php?id='.$this->cm->id;
-            $submission = $this->get_submission($USER->id, true);
-        }
+        $userid     = optional_param('userid', 0, PARAM_INT);
+        $confirm    = optional_param('confirm', 0, PARAM_BOOL);
+        $returnurl  = 'view.php?id='.$this->cm->id;
+        $submission = $this->get_submission($USER->id);
 
         if (!$this->can_finalize($submission)) {
             redirect($returnurl); // probably already graded, redirect to assignment page, the reason should be obvious
         }
 
-        if (!data_submitted('nomatch') or !$confirm) {
+        if (!data_submitted() or !$confirm) {
             $optionsno = array('id'=>$this->cm->id);
             $optionsyes = array ('id'=>$this->cm->id, 'confirm'=>1, 'action'=>'finalize');
             $this->view_header(get_string('submitformarking', 'assignment'));
@@ -627,27 +618,46 @@ class assignment_upload extends assignment_base {
             $this->view_footer();
             die;
 
-        } else {
-            $updated = new object();
-            $updated->id           = $submission->id;
-            if ($forceclosing) {
-                $updated->data2    = ASSIGNMENT_STATUS_CLOSED;
-            } else {
-                $updated->data2    = ASSIGNMENT_STATUS_SUBMITTED;
-            }
+        }
+        $updated = new object();
+        $updated->id           = $submission->id;
+        $updated->data2        = ASSIGNMENT_STATUS_SUBMITTED;
+        $updated->timemodified = time();
 
-            $updated->timemodified = time();
-            if (update_record('assignment_submissions', $updated)) {
-                add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finilize action to log
-                        'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-                $this->email_teachers($submission);
-            } else {
-                $this->view_header(get_string('submitformarking', 'assignment'));
-                notify(get_string('finalizeerror', 'assignment'));
-                print_continue($returnurl);
-                $this->view_footer();
-                die;
-            }
+        if (update_record('assignment_submissions', $updated)) {
+            add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finalize action to log
+                    'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+            $this->email_teachers($submission);
+        } else {
+            $this->view_header(get_string('submitformarking', 'assignment'));
+            notify(get_string('finalizeerror', 'assignment'));
+            print_continue($returnurl);
+            $this->view_footer();
+            die;
+        }
+        redirect($returnurl);
+    }
+
+    function finalizeclose() {
+        $userid    = optional_param('userid', 0, PARAM_INT);
+        $mode      = required_param('mode', PARAM_ALPHA);
+        $offset    = required_param('offset', PARAM_INT);
+        $returnurl = "submissions.php?id={$this->cm->id}&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset&amp;forcerefresh=1";
+
+        // create but do not add student submission date 
+        $submission = $this->get_submission($userid, true, true);
+
+        if (!data_submitted() or !$this->can_finalize($submission)) {
+            redirect($returnurl); // probably closed already
+        }
+
+        $updated = new object();
+        $updated->id    = $submission->id;
+        $updated->data2 = ASSIGNMENT_STATUS_CLOSED;
+
+        if (update_record('assignment_submissions', $updated)) {
+            add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finalize action to log
+                    'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
         }
         redirect($returnurl);
     }

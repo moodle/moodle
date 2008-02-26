@@ -933,11 +933,11 @@ class assignment_base {
             }
         }
 
-        $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? '' : 'checked="checked"';
+        $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? 'checked="checked"' : '';
 
         ///Print Buttons in Single View
-        echo '<input type="hidden" name="mailinfo" value="1" />';
-        echo '<input type="checkbox" id="mailinfo" name="mailinfo" value="0" '.$lastmailinfo.' /><label for="mailinfo">'.get_string('disableemailnotification','assignment').'</label>';
+        echo '<input type="hidden" name="mailinfo" value="0" />';
+        echo '<input type="checkbox" id="mailinfo" name="mailinfo" value="1" '.$lastmailinfo.' /><label for="mailinfo">'.get_string('enableemailnotification','assignment').'</label>';
         echo '<div class="buttons">';
         echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" onclick = "document.getElementById(\'submitform\').menuindex.value = document.getElementById(\'submitform\').grade.selectedIndex" />';
         echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />';
@@ -1312,13 +1312,13 @@ class assignment_base {
         $table->print_html();  /// Print the whole table
 
         if ($quickgrade){
-            $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? '' : 'checked="checked"';
+            $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? 'checked="checked"' : '';
             echo '<div class="fgcontrols">';
             echo '<div class="emailnotification">';
-            echo '<label for="mailinfo">'.get_string('disableemailnotification','assignment').'</label>';
-            echo '<input type="hidden" name="mailinfo" value="1" />';
-            echo '<input type="checkbox" id="mailinfo" name="mailinfo" value="0" '.$lastmailinfo.' />';
-            helpbutton('disableemailnotification', get_string('disableemailnotification', 'assignment'), 'assignment').'</p></div>';
+            echo '<label for="mailinfo">'.get_string('enableemailnotification','assignment').'</label>';
+            echo '<input type="hidden" name="mailinfo" value="0" />';
+            echo '<input type="checkbox" id="mailinfo" name="mailinfo" value="1" '.$lastmailinfo.' />';
+            helpbutton('enableemailnotification', get_string('enableemailnotification', 'assignment'), 'assignment').'</p></div>';
             echo '</div>';
             echo '<div class="fastgbutton"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
             echo '</div>';
@@ -1459,9 +1459,10 @@ class assignment_base {
      *
      * @param $userid int The id of the user whose submission we want or 0 in which case USER->id is used
      * @param $createnew boolean optional Defaults to false. If set to true a new submission object will be created in the database
+     * @param bool $teachermodified student submission set if false
      * @return object The submission
      */
-    function get_submission($userid=0, $createnew=false) {
+    function get_submission($userid=0, $createnew=false, $teachermodified=false) {
         global $USER;
 
         if (empty($userid)) {
@@ -1473,7 +1474,7 @@ class assignment_base {
         if ($submission || !$createnew) {
             return $submission;
         }
-        $newsubmission = $this->prepare_new_submission($userid);
+        $newsubmission = $this->prepare_new_submission($userid, $teachermodified);
         if (!insert_record("assignment_submissions", $newsubmission)) {
             error("Could not insert a new empty submission");
         }
@@ -1486,16 +1487,21 @@ class assignment_base {
      *
      * Sets the assignment, userid and times, everything else is set to default values.
      * @param $userid int The userid for which we want a submission object
+     * @param bool $teachermodified student submission set if false
      * @return object The submission
      */
-    function prepare_new_submission($userid) {
+    function prepare_new_submission($userid, $teachermodified=false) {
         $submission = new Object;
         $submission->assignment   = $this->assignment->id;
         $submission->userid       = $userid;
         //$submission->timecreated  = time();
         $submission->timecreated = '';
         // teachers should not be modifying modified date, except offline assignments
-        $submission->timemodified = $submission->timecreated;
+        if ($teachermodified) {
+            $submission->timemodified = 0;
+        } else {
+            $submission->timemodified = $submission->timecreated;
+        }
         $submission->numfiles     = 0;
         $submission->data1        = '';
         $submission->data2        = '';

@@ -33,7 +33,6 @@ $string['confirmdeletefile'] = 'Are you absolutely sure you want to delete this 
 $string['deleteallsubmissions'] = 'Delete all submissions';
 $string['deletefilefailed'] = 'Deleting of file failed.';
 $string['description'] = 'Description';
-$string['disableemailnotification'] = 'Disable notification emails';
 $string['draft'] = 'Draft';
 $string['duedate'] = 'Due date';
 $string['duedateno'] = 'No due date';
@@ -51,6 +50,7 @@ for <i>\'$a->assignment\'</i><br /><br />
 It is <a href=\"$a->url\">available on the web site</a>.';
 $string['emailteachers'] = 'Email alerts to teachers';
 $string['emptysubmission'] = 'You have not submitted anything yet';
+$string['enableemailnotification'] = 'Send feedback/grade notification emails';
 $string['existingfiledeleted'] = 'Existing file has been deleted: $a';
 $string['failedupdatefeedback'] = 'Failed to update submission feedback for user $a';
 $string['feedback'] = 'Feedback';
