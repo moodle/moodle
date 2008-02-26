@@ -9,6 +9,7 @@ require_once $CFG->libdir.'/adminlib.php';
 $adminroot = admin_get_root();
 admin_externalpage_setup('userauthentication', $adminroot);
 $auth = required_param('auth', PARAM_SAFEDIR);
+$CFG->pagepath = 'auth/' . $auth;
 $authplugin = get_auth_plugin($auth);
 $err = array();
 
