@@ -51,7 +51,7 @@ $returnurl = $CFG->wwwroot.'/group/groupings.php?id='.$course->id;
 
 if ($id and $delete) {
     if (!$confirm) {
-        print_header(get_string('deleteselectedgrouping', 'group'), get_string('deleteselectedgroup', 'group'));
+        print_header(get_string('deletegrouping', 'group'), get_string('deletegrouping', 'group'));
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
         notice_yesno(get_string('deletegroupingconfirm', 'group', $grouping->name), 'grouping.php', 'groupings.php', $optionsyes, $optionsno, 'get', 'get');
