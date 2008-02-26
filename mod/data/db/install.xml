@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/data/db" VERSION="20070814" COMMENT="XMLDB file for Moodle mod/data"
+<XMLDB PATH="mod/data/db" VERSION="20080226" COMMENT="XMLDB file for Moodle mod/data"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -38,8 +38,11 @@
         <FIELD NAME="notification" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="Notify people when things change" PREVIOUS="editany"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="data_fields" COMMENT="every field available" PREVIOUS="data" NEXT="data_records">
       <FIELDS>
@@ -63,6 +66,9 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="dataid"/>
         <KEY NAME="dataid" TYPE="foreign" FIELDS="dataid" REFTABLE="data" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="type-dataid" UNIQUE="false" FIELDS="type, dataid" COMMENT="used by data linking filter"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="data_records" COMMENT="every record introduced" PREVIOUS="data_fields" NEXT="data_content">
       <FIELDS>
