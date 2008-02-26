@@ -93,8 +93,15 @@ if (isset($_POST['stage'])) {
 
     /// Get the stage for which the form was set and the next stage we are going to
 
+    $gpc = ini_get('magic_quotes_gpc');
+    $gpc = ($gpc == '1' or strtolower($gpc) == 'on');
+
     /// Store any posted data
     foreach ($_POST as $setting=>$value) {
+        if ($gpc) {
+            $value = stripslashes($value);
+        }
+
         $INSTALL[$setting] = $value;
     }
 
