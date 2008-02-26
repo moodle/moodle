@@ -44,6 +44,11 @@ define('TAG_RETURN_HTML', 3);
 define('TAG_CASE_LOWER', 0);
 define('TAG_CASE_ORIGINAL', 1);
 
+define('TAG_RELATED_ALL', 0);
+define('TAG_RELATED_MANUAL', 1);
+define('TAG_RELATED_CORRELATED', 2);
+
+
 require_once($CFG->dirroot .'/tag/locallib.php');
 
 ///////////////////////////////////////////////////////
@@ -155,22 +160,24 @@ function tag_find_records($tag, $type, $limitfrom='', $limitnum='') {
  * Get the array of db record of tags associated to a record (instances).  Use 
  * tag_get_tags_csv to get the same information in a comma-separated string.
  *
- * @param array $record the record for which we want to get the tags 
+ * @param string $record_type the record type for which we want to get the tags 
+ * @param int $record_id the record id for which we want to get the tags 
  * @param string $type the tag type (either 'default' or 'official'). By default,
  *     all tags are returned.
  * @return array the array of tags
  */
-function tag_get_tags($record, $type=null) {
+function tag_get_tags($record_type, $record_id, $type=null) {
     
     global $CFG;
 
     if ($type) {
         $type = "AND tg.tagtype = '$type'";
     }
-    
+
+    // if this query is changed, you need to change it also in tag_get_correlated_tags
     $tags = get_records_sql("SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
         "FROM {$CFG->prefix}tag_instance ti INNER JOIN {$CFG->prefix}tag tg ON tg.id = ti.tagid ".
-        "WHERE ti.itemtype = '{$record['type']}' AND ti.itemid = '{$record['id']}' {$type} ".
+        "WHERE ti.itemtype = '{$record_type}' AND ti.itemid = '{$record_id}' {$type} ".
         "ORDER BY ti.ordering ASC");
     // This version of the query, reversing the ON clause, "correctly" returns 
     // a row with NULL values for instances that are still in the DB even though 
@@ -178,7 +185,7 @@ function tag_get_tags($record, $type=null) {
     // this query could help "clean it up".  This causes bugs at this time.
     //$tags = get_records_sql("SELECT ti.tagid, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
     //    "FROM {$CFG->prefix}tag_instance ti LEFT JOIN {$CFG->prefix}tag tg ON ti.tagid = tg.id ".
-    //    "WHERE ti.itemtype = '{$record['type']}' AND ti.itemid = '{$record['id']}' {$type} ".
+    //    "WHERE ti.itemtype = '{$record_type}' AND ti.itemid = '{$record_id}' {$type} ".
     //    "ORDER BY ti.ordering ASC");
 
     if (!$tags) { 
@@ -191,14 +198,15 @@ function tag_get_tags($record, $type=null) {
 /**
  * Get the array of tags display names, indexed by id.
  * 
- * @param array $record the record for which we want to get the tags
+ * @param string $record_type the record type for which we want to get the tags
+ * @param int $record_id the record id for which we want to get the tags
  * @param string $type the tag type (either 'default' or 'official'). By default,
  *     all tags are returned.
  * @return array the array of tags (with the value returned by tag_display_name), indexed by id
  */
-function tag_get_tags_array($record, $type=null) {
+function tag_get_tags_array($record_type, $record_id, $type=null) {
     $tags = array();
-    foreach(tag_get_tags($record, $type) as $tag) {
+    foreach(tag_get_tags($record_type, $record_id, $type) as $tag) {
         $tags[$tag->id] = tag_display_name($tag);
     }
     return $tags;
@@ -208,18 +216,19 @@ function tag_get_tags_array($record, $type=null) {
  * Get a comma-separated string of tags associated to a record.  Use tag_get_tags
  * to get the same information in an array.
  *
- * @param array $record the record for which we want to get the tags
+ * @param string $record_type the record type for which we want to get the tags
+ * @param int $record_id the record id for which we want to get the tags
  * @param int $html either TAG_RETURN_HTML or TAG_RETURN_TEXT, depending
  *     on the type of output desired
  * @param string $type either 'official' or 'default', if null, all tags are
  *     returned
  * @return string the comma-separated list of tags.
  */
-function tag_get_tags_csv($record, $html=TAG_RETURN_HTML, $type=null) {
+function tag_get_tags_csv($record_type, $record_id, $html=TAG_RETURN_HTML, $type=null) {
     global $CFG;
 
     $tags_names = array();
-    foreach( tag_get_tags($record, $type) as $tag ) {
+    foreach( tag_get_tags($record_type, $record_id, $type) as $tag ) {
         if ($html == TAG_RETURN_TEXT) {
             $tags_names[] = tag_display_name($tag);
         } else { // TAG_RETURN_HTML
@@ -232,13 +241,14 @@ function tag_get_tags_csv($record, $html=TAG_RETURN_HTML, $type=null) {
 /**
  * Get an array of tag ids associated to a record.
  *
- * @param array $record the record for which we want to get the tags
+ * @param string $record the record type for which we want to get the tags
+ * @param int $record_id the record id for which we want to get the tags
  * @return array of tag ids, indexed and sorted by 'ordering'
  */
-function tag_get_tags_ids($record) {
+function tag_get_tags_ids($record_type, $record_id) {
     
     $tag_ids = array();
-    foreach( tag_get_tags($record) as $tag ) {
+    foreach( tag_get_tags($record_type, $record_id) as $tag ) {
         $tag_ids[$tag->ordering] = $tag->id;
     }
     ksort($tag_ids);
@@ -323,21 +333,30 @@ function tag_get_tag_by_id($tagid) {
  *   - manually added related tags, which are tag_instance entries for that tag
  *   - correlated tags, which are a calculated
  *
- * @param string $tag_name_or_id is a single **normalized** tag name or the id of a tag
- * @param int $limitnum return a subset comprising this many records (optional, default is 10)
+ * @param string $tag_name_or_id is a single **normalized** tag name or the id 
+ *     of a tag
+ * @param int $type the function will return either manually 
+ *     (TAG_RELATED_MANUAL) related tags or correlated (TAG_RELATED_CORRELATED) 
+ *     tags. Default is TAG_RELATED_ALL, which returns everything.
+ * @param int $limitnum return a subset comprising this many records (optional, 
+ *     default is 10)
  * @return array an array of tag objects
  */
-function tag_get_related_tags($tagid, $limitnum=10) {
+function tag_get_related_tags($tagid, $type=TAG_RELATED_ALL, $limitnum=10) {
 
-    //gets the manually added related tags
-    if (!$related_tags = tag_get_tags(array('type'=>'tag', 'id'=>$tagid))) {
-        $related_tags = array();
+    $related_tags = array();
+
+    if ( $type == TAG_RELATED_ALL || $type == TAG_RELATED_MANUAL) {
+        //gets the manually added related tags
+        $related_tags = tag_get_tags('tag', $tagid);
     }
 
-    //gets the correlated tags
-    $automatic_related_tags = tag_get_correlated($tagid, $limitnum);
-    if (is_array($automatic_related_tags)) {
-        $related_tags = array_merge($related_tags, $automatic_related_tags);
+    if ( $type == TAG_RELATED_ALL || $type == TAG_RELATED_CORRELATED ) {
+        //gets the correlated tags
+        $automatic_related_tags = tag_get_correlated($tagid, $limitnum);
+        if (is_array($automatic_related_tags)) {
+            $related_tags = array_merge($related_tags, $automatic_related_tags);
+        }
     }
 
     return array_slice(object_array_unique($related_tags), 0 , $limitnum);
@@ -414,7 +433,7 @@ function tag_set($record_type, $record_id, $tags) {
     $cleaned_tags = tag_normalize($tags);
     //echo 'tags-in-tag_set'; var_dump($tags); var_dump($tags_ids); var_dump($cleaned_tags);
 
-    $current_ids = tag_get_tags_ids($record);
+    $current_ids = tag_get_tags_ids($record['type'], $record['id']);
     //var_dump($current_ids);
     $tags_to_assign = array();
 
@@ -465,10 +484,8 @@ function tag_set($record_type, $record_id, $tags) {
  */
 function tag_set_add($record_type, $record_id, $tag) {
 
-    $record = array('type' => $record_type, 'id' => $record_id);
-    
     $new_tags = array();
-    foreach( tag_get_tags($record) as $current_tag ) {
+    foreach( tag_get_tags($record_type, $record_id) as $current_tag ) {
         $new_tags[] = $current_tag->rawname;
     }
     $new_tags[] = $tag;
@@ -487,10 +504,8 @@ function tag_set_add($record_type, $record_id, $tag) {
  */
 function tag_set_delete($record_type, $record_id, $tag) {
 
-    $record = array('type' => $record_type, 'id' => $record_id);
-    
     $new_tags = array();
-    foreach( tag_get_tags($record) as $current_tag ) {
+    foreach( tag_get_tags($record_type, $record_id) as $current_tag ) {
         if ($current_tag->name != $tag) {  // Keep all tags but the one specified
             $new_tags[] = $current_tag->name;
         }
@@ -739,16 +754,25 @@ function tag_get_name($tagids) {
  * @return array an array of tag objects, empty if no correlated tags are found
  */
 function tag_get_correlated($tag_id, $limitnum=null) {
+    global $CFG;
 
     $tag_correlation = get_record('tag_correlation', 'tagid', $tag_id);
 
     if (!$tag_correlation || empty($tag_correlation->correlatedtags)) {
         return array();
     }
-    
-    if (!$result = get_records_select('tag', "id IN ({$tag_correlation->correlatedtags})", '', '*', 0, $limitnum)) {
+
+    // this is (and has to be) the same query as used in tag_get_tags
+    if (!$result = get_records_sql("SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
+        "FROM {$CFG->prefix}tag_instance ti INNER JOIN {$CFG->prefix}tag tg ON tg.id = ti.tagid ".
+        "WHERE ti.itemtype = 'tag' AND ti.itemid IN ({$tag_correlation->correlatedtags}) ".
+        "ORDER BY ti.ordering ASC")) {
         return array();
     }
+  
+    //if (!$result = get_records_select('tag', "id IN ({$tag_correlation->correlatedtags})", '', '*', 0, $limitnum)) {
+    //    return array();
+    //}
 
     return $result;
 }

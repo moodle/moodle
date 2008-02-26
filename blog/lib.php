@@ -222,7 +222,7 @@
         echo $attachedimages;
     /// Links to tags
 
-        if ( !empty($CFG->usetags) && ($blogtags = tag_get_tags_csv(array('type'=>'post', 'id'=>$blogEntry->id))) ) {
+        if ( !empty($CFG->usetags) && ($blogtags = tag_get_tags_csv('post', $blogEntry->id)) ) {
             echo '<div class="tags">';
             if ($blogtags) {
                 print(get_string('tags', 'tag') .': '. $blogtags);

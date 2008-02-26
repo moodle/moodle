@@ -381,7 +381,7 @@
 
 /// Printing Interests
 	if( !empty($CFG->usetags)) {
-	    if ( $interests = tag_get_tags_csv(array('type'=>'user', 'id'=>$user->id)) ) { 
+	    if ( $interests = tag_get_tags_csv('user', $user->id) ) { 
             print_row(get_string('interests') .": ", $interests);
         }
     }
