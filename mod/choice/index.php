@@ -26,13 +26,17 @@
         notice(get_string('thereareno', 'moodle', $strchoices), "../../course/view.php?id=$course->id");
     }
 
-    if ( !empty($USER->id) and $allanswers = get_records("choice_answers", "userid", $USER->id)) { // TODO: limit to choices from this course only
+    $sql = "SELECT cha.*
+              FROM {$CFG->prefix}choice ch, {$CFG->prefix}choice_answers cha
+             WHERE cha.choiceid = ch.id AND
+                   ch.course = $course->id AND cha.userid = $USER->id";
+
+    $answers = array () ;
+    if (isloggedin() and !isguestuser() and $allanswers = get_records_sql($sql)) {
         foreach ($allanswers as $aa) {
             $answers[$aa->choiceid] = $aa;
         }
-
-    } else {
-        $answers = array () ;
+        unset($allanswers);
     }
 
 
