@@ -74,6 +74,28 @@ function xmldb_data_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
+    if ($result && $oldversion < 2007081402) {
+
+    /// Define index type-dataid (not unique) to be added to data_fields
+        $table = new XMLDBTable('data_fields');
+        $index = new XMLDBIndex('type-dataid');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('type', 'dataid'));
+
+    /// Launch add index type-dataid
+        if (!index_exists($table, $index)) {
+            $result = $result && add_index($table, $index);
+        }
+
+    /// Define index course (not unique) to be added to data
+        $table = new XMLDBTable('data');
+        $index = new XMLDBIndex('course');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('course'));
+
+    /// Launch add index course
+        if (!index_exists($table, $index)) {
+            $result = $result && add_index($table, $index);
+        }
+    }
 
     return $result;
 }
