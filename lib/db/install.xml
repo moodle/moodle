@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20080220" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20080226" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -234,7 +234,8 @@
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="userid"/>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="courseid" NEXT="timestart"/>
         <INDEX NAME="timestart" UNIQUE="false" FIELDS="timestart" PREVIOUS="userid" NEXT="timeduration"/>
-        <INDEX NAME="timeduration" UNIQUE="false" FIELDS="timeduration" PREVIOUS="timestart"/>
+        <INDEX NAME="timeduration" UNIQUE="false" FIELDS="timeduration" PREVIOUS="timestart" NEXT="groupid-courseid-visible-userid"/>
+        <INDEX NAME="groupid-courseid-visible-userid" UNIQUE="false" FIELDS="groupid, courseid, visible, userid" COMMENT="used for calendar view" PREVIOUS="timeduration"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="cache_filters" COMMENT="For keeping information about cached data" PREVIOUS="event" NEXT="cache_text">
