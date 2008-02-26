@@ -161,7 +161,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
     }
 
     // Imports
-    $ADMIN->add('grades', new admin_category('gradeimports', get_string('imports')));
+    $ADMIN->add('grades', new admin_category('gradeimports', get_string('importsettings', 'grades')));
     foreach (get_list_of_plugins('grade/import') as $plugin) {
 
      // Include all the settings commands for this plugin if there are any
@@ -176,7 +176,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
 
 
     // Exports
-    $ADMIN->add('grades', new admin_category('gradeexports', get_string('exports')));
+    $ADMIN->add('grades', new admin_category('gradeexports', get_string('exportsettings', 'grades')));
     foreach (get_list_of_plugins('grade/export') as $plugin) {
      // Include all the settings commands for this plugin if there are any
         if (file_exists($CFG->dirroot.'/grade/export/'.$plugin.'/settings.php')) {
