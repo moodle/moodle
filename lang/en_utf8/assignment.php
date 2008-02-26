@@ -6,6 +6,7 @@ $string['allowdeleting'] = 'Allow deleting';
 $string['allowmaxfiles'] = 'Maximum number of uploaded files';
 $string['allownotes'] = 'Allow notes';
 $string['allowresubmit'] = 'Allow resubmitting';
+$string['alreadygraded'] = 'Your assignment has already been graded and resubmission is not allowed.';
 $string['assignment:grade'] = 'Grade assignment';
 $string['assignment:submit'] = 'Submit assignment';
 $string['assignment:view'] = 'View assignment';
@@ -22,6 +23,7 @@ You can see it appended to your <a href=\"$a->url\">assignment submission</a>.';
 $string['assignmentname'] = 'Assignment name';
 $string['assignmenttype'] = 'Assignment type';
 $string['availabledate'] = 'Available from';
+$string['cannotdeletefiles'] = 'An error occurred and files could not be deleted';
 $string['comment'] = 'Comment';
 $string['commentinline'] = 'Comment inline';
 $string['configitemstocount'] = 'Nature of items to be counted for student submissions in online assignments.';
@@ -55,6 +57,7 @@ $string['feedback'] = 'Feedback';
 $string['feedbackfromteacher'] = 'Feedback from the $a';
 $string['feedbackupdated'] = 'Submissions feedback updated for $a people';
 $string['finalize'] = 'No more submissions';
+$string['finalizeerror'] = 'An error occurred and that submission could not be finalised';
 $string['graded'] = 'Graded';
 $string['guestnosubmit'] = 'Sorry, guests are not allowed to submit an assignment. You have to log in/ register before you can submit your answer';
 $string['guestnoupload'] = 'Sorry, guests are not allowed to upload';
@@ -71,7 +74,7 @@ $string['helpupload'] = '<p>This type of assignment allows each participant to u
    <p>This type also allows you to upload multiple response files. Response files can be also uploaded before submission which
    can be used to give each participant different file to work with.</p>
    <p>Participants may also enter notes describing the submitted files, progress status or any other text information.</p>
-   <p>Submission of this type of assignment must be manually finalized by the participant. You can review the current status
+   <p>Submission of this type of assignment must be manually finalised by the participant. You can review the current status
    at any time, unfinished assignments are marked as Draft. You can revert any ungraded assignment back to draft status.</p>';
 $string['helpuploadsingle'] = '<p>This type of assignment allows each participant to upload a 
    single file, of any type.</p> <p>This might be a Word processor document, an image, 
@@ -123,6 +126,7 @@ $string['typeonline'] = 'Online text';
 $string['typeupload'] = 'Advanced uploading of files';
 $string['typeuploadsingle'] = 'Upload a single file';
 $string['unfinalize'] = 'Revert to draft';
+$string['unfinalizeerror'] = 'An error occurred and that submission could not be reverted to draft';
 $string['uploadbadname'] = 'This filename contained strange characters and couldn\'t be uploaded';
 $string['uploadedfiles'] = 'uploaded files';
 $string['uploaderror'] = 'An error happened while saving the file on the server';

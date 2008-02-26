@@ -671,8 +671,8 @@ class assignment_upload extends assignment_base {
                 //TODO: add unfinalize action to log
                 add_to_log($this->course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
             } else {
-                $this->view_header(get_string('submitformarking'));
-                notify(get_string('finalizeerror', 'assignment'));
+                $this->view_header(get_string('submitformarking', 'assignment'));
+                notify(get_string('unfinalizeerror', 'assignment'));
                 print_continue($returnurl);
                 $this->view_footer();
                 die;
