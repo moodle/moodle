@@ -814,6 +814,13 @@ function get_db_directories() {
         }
     }
 
+/// Now admin report plugins (admin/report/xxx/db)
+    if ($plugins = get_list_of_plugins($CFG->admin.'/report', 'db')) {
+        foreach ($plugins as $plugin) {
+            $dbdirs[] = $CFG->dirroot.'/'.$CFG->admin.'/report/'.$plugin.'/db';
+        }
+    }
+
 /// Local database changes, if the local folder exists.
     if (file_exists($CFG->dirroot . '/local')) {
         $dbdirs[] = $CFG->dirroot.'/local/db';
