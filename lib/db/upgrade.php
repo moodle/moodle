@@ -2873,6 +2873,22 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101508.05);
     }
 
+    if ($result && $oldversion < 2007101508.06) {
+
+    /// Define index groupid-courseid-visible-userid (not unique) to be added to event
+        $table = new XMLDBTable('event');
+        $index = new XMLDBIndex('groupid-courseid-visible-userid');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('groupid', 'courseid', 'visible', 'userid'));
+
+    /// Launch add index groupid-courseid-visible-userid
+        if (!index_exists($table, $index)) {
+            $result = $result && add_index($table, $index);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101508.06);
+    }
+
 
     return $result;
 }
