@@ -89,9 +89,9 @@ function tag_delete_instance($record, $tagid) {
     global $CFG;
 
     if ( delete_records('tag_instance', 'tagid', $tagid, 'itemtype', $record['type'], 'itemid', $record['id']) ) {
-        if ( !record_exists_sql('SELECT * FROM '. $CFG->prefix .'tag tg, '. $CFG->prefix .'tag_instance ti '.
-                'WHERE (tg.id = ti.tagid AND ti.tagid = '. $tagid .') OR '.
-                '(tg.id = '. $tagid .' AND tg.tagtype = "official")') ) {
+        if ( !record_exists_sql("SELECT * FROM {$CFG->prefix}tag tg, {$CFG->prefix}tag_instance ti ".
+                "WHERE (tg.id = ti.tagid AND ti.tagid = {$tagid} ) OR ".
+                "(tg.id = {$tagid} AND tg.tagtype = 'official')") ) {
             return tag_delete($tagid);
         }
     } else {
@@ -166,18 +166,18 @@ function tag_get_tags($record, $type=null) {
         $type = "AND tg.tagtype = '$type'";
     }
     
-    $tags = get_records_sql('SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering '.
-        'FROM '. $CFG->prefix .'tag_instance ti INNER JOIN '. $CFG->prefix .'tag tg ON tg.id = ti.tagid '.
-        'WHERE ti.itemtype = "'. $record['type'] .'" AND ti.itemid = "'. $record['id'] .'" '. $type .' '.
-        'ORDER BY ti.ordering ASC');
+    $tags = get_records_sql("SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
+        "FROM {$CFG->prefix}tag_instance ti INNER JOIN {$CFG->prefix}tag tg ON tg.id = ti.tagid ".
+        "WHERE ti.itemtype = '{$record['type']}' AND ti.itemid = '{$record['id']}' {$type} ".
+        "ORDER BY ti.ordering ASC");
     // This version of the query, reversing the ON clause, "correctly" returns 
     // a row with NULL values for instances that are still in the DB even though 
     // the tag has been deleted.  This shouldn't happen, but if it did, using 
     // this query could help "clean it up".  This causes bugs at this time.
-    //$tags = get_records_sql('SELECT ti.tagid, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering '.
-    //    'FROM '. $CFG->prefix .'tag_instance ti LEFT JOIN '. $CFG->prefix .'tag tg ON ti.tagid = tg.id '.
-    //    'WHERE ti.itemtype = "'. $record['type'] .'" AND ti.itemid = "'. $record['id'] .'" '. $type .' '.
-    //    'ORDER BY ti.ordering ASC');
+    //$tags = get_records_sql("SELECT ti.tagid, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
+    //    "FROM {$CFG->prefix}tag_instance ti LEFT JOIN {$CFG->prefix}tag tg ON ti.tagid = tg.id ".
+    //    "WHERE ti.itemtype = '{$record['type']}' AND ti.itemid = '{$record['id']}' {$type} ".
+    //    "ORDER BY ti.ordering ASC");
 
     if (!$tags) { 
         return array();
@@ -285,7 +285,7 @@ function tag_get_id($tags, $return_value=null) {
     }
     $tag_string = "'". implode("', '", $tags) ."'";
 
-    if ($rs = get_recordset_sql('SELECT * FROM '. $CFG->prefix .'tag WHERE name in ('. $tag_string .') order by name')) {
+    if ($rs = get_recordset_sql("SELECT * FROM {$CFG->prefix}tag WHERE name in ({$tag_string}) order by name")) {
         while ($record = rs_fetch_next_record($rs)) {
             if ($return_value == TAG_RETURN_OBJECT) {
                 $result[$record->name] = $record;
@@ -310,7 +310,7 @@ function tag_get_id($tags, $return_value=null) {
  */
 function tag_get_tag_by_id($tagid) {
     global $CFG;
-    $rs = get_recordset_sql('SELECT * FROM '. $CFG->prefix .'tag WHERE id = '. $tagid);
+    $rs = get_recordset_sql("SELECT * FROM {$CFG->prefix}tag WHERE id = $tagid");
     return rs_fetch_next_record($rs);
 }
 
@@ -603,7 +603,7 @@ function tag_assign($record, $tagid, $ordering) {
  */
 function tag_autocomplete($text) {
     global $CFG;
-    return get_records_sql('SELECT tg.id, tg.name, tg.rawname FROM '. $CFG->prefix .'tag tg WHERE tg.name LIKE "'. moodle_strtolower($text) .'%"');
+    return get_records_sql("SELECT tg.id, tg.name, tg.rawname FROM {$CFG->prefix}tag tg WHERE tg.name LIKE '". moodle_strtolower($text) ."%'");
 }
 
 /**
@@ -644,6 +644,7 @@ function tag_compute_correlations($min_correlation=2) {
         // than $min_correlation.
         if ($tag_correlations = get_records_sql($query)) {
             foreach($tag_correlations as $correlation) {
+        //      commented out - now done in query. kept here in case it breaks on some db
         //        if($correlation->nr >= $min_correlation){
                     $correlated[] = $correlation->tagid;
         //        }
@@ -849,7 +850,7 @@ function tag_unset_flag($tagids) {
         $tagids = implode(',', $tagids);
     }
     $timemodified = time();
-    return execute_sql('UPDATE '. $CFG->prefix .'tag tg SET tg.flag = 0, tg.timemodified = '. $timemodified .' WHERE tg.id IN ('. $tagids .')', false);
+    return execute_sql("UPDATE {$CFG->prefix}tag tg SET tg.flag = 0, tg.timemodified = $timemodified WHERE tg.id IN ($tagids)", false);
 }
 
 ?>
