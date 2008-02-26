@@ -119,11 +119,11 @@ switch ($action) {
         $post->action       = $action;
         $strformheading = get_string('updateentrywithid', 'blog');
 
-        if ($itemptags = html_entity_decode(tag_get_tags_csv(array('type'=>'post', 'id'=>$post->id), TAG_RETURN_TEXT, 'default'))) {
+        if ($itemptags = html_entity_decode(tag_get_tags_csv('post', $post->id, TAG_RETURN_TEXT, 'default'))) {
             $post->ptags = $itemptags;
         }
         
-        if ($itemotags = tag_get_tags_array(array('type'=>'post', 'id'=>$post->id), 'official')) {
+        if ($itemotags = tag_get_tags_array('post', $post->id, 'official')) {
             $post->otags = array_keys($itemotags);
         }
     break;
