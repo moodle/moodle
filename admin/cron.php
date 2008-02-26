@@ -109,6 +109,7 @@
                 $cron_function = $mod->name."_cron";
                 if (function_exists($cron_function)) {
                     mtrace("Processing module function $cron_function ...", '');
+                    $pre_dbqueries = null;
                     if (!empty($PERF->dbqueries)) {
                         $pre_dbqueries = $PERF->dbqueries;
                         $pre_time      = microtime(1);
@@ -159,6 +160,33 @@
     }
     mtrace('Finished blocks');
 
+    mtrace('Starting admin reports');
+    // Admin reports do not have a database table that lists them. Instead a
+    // report includes cron.php with function report_reportname_cron() if it wishes
+    // to be cronned. It is up to cron.php to handle e.g. if it only needs to
+    // actually do anything occasionally.
+    $reports = get_list_of_plugins($CFG->admin.'/report');
+    foreach($reports as $report) {
+        $cronfile = $CFG->dirroot.'/'.$CFG->admin.'/report/'.$report.'/cron.php';
+        if (file_exists($cronfile)) {
+            require_once($cronfile);
+            $cronfunction = 'report_'.$report.'_cron';
+            mtrace('Processing cron function for '.$report.'...', '');
+            $pre_dbqueries = null;
+            if (!empty($PERF->dbqueries)) {
+                $pre_dbqueries = $PERF->dbqueries;
+                $pre_time      = microtime(true);
+            }
+            $cronfunction();
+            if (isset($pre_dbqueries)) {
+                mtrace("... used " . ($PERF->dbqueries - $pre_dbqueries) . " dbqueries");
+                mtrace("... used " . round(microtime(true) - $pre_time, 2) . " seconds");
+            }
+            mtrace('done.');
+        }
+    }
+    mtrace('Finished admin reports');
+
     if (!empty($CFG->langcache)) {
         mtrace('Updating languages cache');
         get_list_of_languages(true);
@@ -189,6 +217,7 @@
     } else {
         mtrace('none found');
     }
+
 
 
     mtrace('Starting main gradebook job ...');
