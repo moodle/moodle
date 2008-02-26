@@ -66,7 +66,7 @@ class edit_item_form extends moodleform {
             }
         }
         $mform->addElement('select', 'scaleid', get_string('scale'), $options);
-        $mform->setHelpButton('scaleid', array(false, get_string('scale', 'grades'),
+        $mform->setHelpButton('scaleid', array(false, get_string('scale'),
                 false, true, false, get_string('scaleidhelp', 'grades', get_string('gradeitem', 'grades'))));
         $mform->disabledIf('scaleid', 'gradetype', 'noteq', GRADE_TYPE_SCALE);
 

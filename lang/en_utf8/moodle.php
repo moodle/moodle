@@ -378,6 +378,7 @@ $string['deletedcourse'] = '$a has been completely deleted';
 $string['deletednot'] = 'Could not delete $a !';
 $string['deletelogs'] = 'Delete logs';
 $string['deleteselected'] = 'Delete selected';
+$string['deleteselectedkey'] = 'Delete selected key';
 $string['deletingcourse'] = 'Deleting $a';
 $string['deletingexistingcoursedata'] = 'Deleting existing course data';
 $string['deletingolddata'] = 'Deleting old data';

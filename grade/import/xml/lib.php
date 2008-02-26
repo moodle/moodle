@@ -78,7 +78,7 @@ function import_xml_grades($text, $course, &$error) {
                 if ($grade_grade->is_locked()) {
                     // individual grade locked, abort
                     $status = false;
-                    $error  = get_string('gradegradeslocked', 'grades');
+                    $error  = get_string('gradelocked', 'grades');
                     break;
                 }
             }

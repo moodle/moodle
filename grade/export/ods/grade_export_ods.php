@@ -37,7 +37,7 @@ class grade_export_ods extends grade_export {
 
         $export_tracking = $this->track_exports();
 
-        $strgrades = get_string('grades', 'grades');
+        $strgrades = get_string('grades');
 
     /// Calculate file name
         $downloadfilename = clean_filename("{$this->course->shortname} $strgrades.ods");

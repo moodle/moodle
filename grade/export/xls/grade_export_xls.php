@@ -38,7 +38,7 @@ class grade_export_xls extends grade_export {
 
         $export_tracking = $this->track_exports();
 
-        $strgrades = get_string('grades', 'grade');
+        $strgrades = get_string('grades');
 
     /// Calculate file name
         $downloadfilename = clean_filename("{$this->course->shortname} $strgrades.xls");

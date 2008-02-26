@@ -405,7 +405,7 @@ if ($formdata = $mform->get_data()) {
                             // individual grade locked
                             $status = false;
                             import_cleanup($importcode);
-                            notify(get_string('gradegradeslocked', 'grades'));
+                            notify(get_string('gradelocked', 'grades'));
                             break 2;
                         }
                     }
