@@ -7,7 +7,7 @@
     admin_externalpage_setup('reportquestion');
 
     admin_externalpage_print_header();
-    print_heading(page_doc_link(get_string('adminreport', 'question')));
+    print_heading(get_string('adminreport', 'question'));
 
     $probstr = '';
     $contextupgradeversion = 2007081000;
