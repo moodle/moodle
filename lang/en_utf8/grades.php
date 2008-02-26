@@ -73,11 +73,11 @@ $string['configaveragesdecimalpoints'] = 'Specifies the number of decimal points
 $string['configaveragesdisplaytype'] = 'Specifies how to display the mean for each column. If Inherit is selected, the display type for each column is used.';
 $string['configbulkcheckboxes'] = 'Checkboxes near each grade for Bulk grade operations.';
 $string['configcoursegradedisplaytype'] = 'Select the default display type of grades for this course. You can also select the site default value. Grades can be shown as real grades, as percentages (in reference to the minimum and maximum grades) or as letters (A, B, C etc..). Selecting Letters will allow you to define your own grade letters and boundaries.';
-$string['configdecimalpoints'] = 'The number of decimal points to display for each grade. This can be overridden per grading item.';
+$string['configdecimalpoints'] = 'Specifies the number of decimal points to display for each grade. This setting may be overridden per grading item.';
 $string['configenableajax'] = 'Adds a layer of AJAX functionality to the grader report, simplifying and speeding up common operations. Depends on Javascript being switched on at the user\'s browser level.';
 $string['configenableoutcomes'] = 'Support for Outcomes (also known as Competencies, Goals, Standards or Criteria) means that we can grade things using one or more scales that are tied to outcome statements. Enabling outcomes makes such special grading possible throughout the site.';
 $string['configgradeboundary'] = 'A percentage boundary over which grades will be assigned a grade letter (if the Letter grade display type is used). ';
-$string['configgradedisplaytype'] = 'Grades can be shown as real grades, as percentages (in reference to the minimum and maximum grades) or as letters (A, B, C etc..)';
+$string['configgradedisplaytype'] = 'Specifies how to display grades in the grader and user reports. Grades may be shown as actual grades, as percentages (in reference to the minimum and maximum grades) or as letters.';
 $string['configgradeexportdisplaytype'] = 'Grades can be shown as real grades, as percentages (in reference to the minimum and maximum grades) or as letters (A, B, C etc..) during export. This can be overridden during export.';
 $string['configexportdecimalpoints'] = 'The number of decimal points to display for export. This can be overridden during export.';
 $string['configgradehistorylifetime'] = 'This specifies the length of time you want to keep history of changes in grade related tables. It is recommended to keep it as long as possible. If you experience performance problems or have limited database space, try to set lower value.';
@@ -98,17 +98,13 @@ $string['configshoweyecons'] = 'Whether to show a show/hide icon near each grade
 $string['configshowactivityicons'] = 'Whether to show activity icons next to activity names.';
 $string['configshowaverages'] = 'Whether to show the mean for each column.';
 $string['configshowgroups'] = 'Whether to show the mean for each group.';
-$string['configshowhiddenitems'] = 'Show hidden items in report even when user does not have moodle/grade:viewhidden capability. Visibility of hidden grades is not affected by this setting.';
+$string['configshowhiddenitems'] = 'Specifies how hidden grade items are shown. If Hide is selected, they are hidden completely. If Show is selected, the hidden grade item row is shown in grey with the grade hidden completely. If "Only hidden until" is selected, grade items with a "hide until" date set are shown in grey with the grades hidden completely until the set date, after which the whole item is shown.';
 $string['configshowlocks'] = 'Whether to show a lock/unlock icon near each grade.';
 $string['configshowfeedback'] = 'Whether to show a feedback icon (for adding/editing) near each grade.';
 $string['configshownumberofgrades'] = 'Whether to show the number of grades used when calculating the mean in brackets after each average, for example 45 (34).';
 $string['configshowranges'] = 'Whether to show the range of grades for each column in an additional row.';
-$string['configshowrank'] = 'Show rank for each item.';
-<<<<<<< grades.php
-$string['configshowuseridnumber'] = 'Whether to show the user\'s idnumber as an extra column in the grader report.';
-=======
+$string['configshowrank'] = 'Whether to show the position of the user in relation to the rest of the class, for each grade item.';
 $string['configshowuseridnumber'] = 'Whether to show user id numbers in an additional column.';
->>>>>>> 1.111.2.37
 $string['configshowuserimage'] = 'Whether to show the user\'s profile image next to the name in the grader report.';
 $string['configstudentsperpage'] = 'The number of students to display per page in the grader report.';
 $string['configstudentsperpagedefault'] = 'The number of students to display per page in the grader report. Leave this field empty to use the site default (currently $a).';
