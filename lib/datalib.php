@@ -405,18 +405,22 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
     $visiblecourses = array();
 
     // pull out all course matching the cat
-    if ($courses = get_records_sql("SELECT $fields
-                                FROM {$CFG->prefix}course c
-                                $categoryselect
-                                $sortstatement")) {
+    if ($courses = get_records_sql("SELECT $fields,
+                                    ctx.id AS ctxid, ctx.path AS ctxpath,
+                                    ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
+                                    FROM {$CFG->prefix}course c
+                                    JOIN {$CFG->prefix}context ctx
+                                      ON (c.id = ctx.instanceid 
+                                          AND ctx.contextlevel=".CONTEXT_COURSE.")
+                                    $categoryselect
+                                    $sortstatement")) {
 
         // loop throught them
         foreach ($courses as $course) {
-
+            $course = make_context_subobj($course);
             if (isset($course->visible) && $course->visible <= 0) {
                 // for hidden courses, require visibility check
-                if (has_capability('moodle/course:viewhiddencourses',
-                        get_context_instance(CONTEXT_COURSE, $course->id))) {
+                if (has_capability('moodle/course:viewhiddencourses', $course->context)) {
                     $visiblecourses [] = $course;
                 }
             } else {
