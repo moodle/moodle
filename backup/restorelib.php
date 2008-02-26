@@ -7921,7 +7921,7 @@
         foreach ($overrides as $override) {
             $override->capability = $override->name;
             $oldmodifier = backup_getid($restore->backup_unique_code,"user",$override->modifierid);
-            $override->modifierid = $oldmodifier->new_id?$oldmodifier->new_id:0; // new modifier id here
+            $override->modifierid = !empty($oldmodifier->new_id)?$oldmodifier->new_id:0; // new modifier id here
             $override->roleid = $role->new_id; // restored new role id
 
             // hack to make the correct contextid for course level imports
