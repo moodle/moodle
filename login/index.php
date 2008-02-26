@@ -25,7 +25,7 @@
     }
 
 /// Check if the guest user exists.  If not, create one.
-    if (! record_exists('user', 'username', 'guest')) {
+    if (! record_exists('user', 'username', 'guest', 'mnethostid', $CFG->mnet_localhost_id)) {
         if (! $guest = create_guest_record()) {
             notify('Could not create guest user record !!!');
         }
