@@ -74,11 +74,10 @@ $strstandardoutcome  = get_string('outcomesstandard', 'grades');
 $strcustomoutcomes   = get_string('outcomescustom', 'grades');
 $strdelete           = get_string('delete');
 $stredit             = get_string('edit');
-$srtcreatenewoutcome = get_string('outcomecreate', 'grades');
+$strcreatenewoutcome = get_string('outcomecreate', 'grades');
 $stritems            = get_string('items', 'grades');
 $strcourses          = get_string('courses');
 $stredit             = get_string('edit');
-$strexport           = get_string('export', 'grades');
 
 switch ($action) {
     case 'delete':
@@ -182,15 +181,12 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
         }
         $line[] = $buttons;
         
-        $buttons = '<input type="checkbox" name="export[]" value="'. $outcome->id .'">';
-        $line[] = $buttons;
-
         $data[] = $line;
     }
     $table = new object();
-    $table->head  = array($strfullname, $strshortname, $strscale, $stritems, $stredit, $strexport);
-    $table->size  = array('30%', '18%', '18%', '18%', '8%', '8%' );
-    $table->align = array('left', 'left', 'left', 'center', 'center', 'center');
+    $table->head  = array($strfullname, $strshortname, $strscale, $stritems, $stredit);
+    $table->size  = array('30%', '20%', '20%', '20%', '10%' );
+    $table->align = array('left', 'left', 'left', 'center', 'center');
     $table->width = '90%';
     $table->data  = $data;
     $return .= print_table($table, true);
@@ -242,35 +238,27 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
         }
         $line[] = $buttons;
 
-        $buttons = '<input type="checkbox" name="export[]" value="'. $outcome->id .'">';
-        $line[] = $buttons;
-
         $data[] = $line;
     }
     $table = new object();
-    $table->head  = array($strfullname, $strshortname, $strscale, $strcourses, $stritems, $stredit, $strexport);
-    $table->size  = array('30%', '19%', '19%', '8%', '8%', '8%', '8%');
-    $table->align = array('left', 'left', 'left', 'center', 'center', 'center', 'center');
+    $table->head  = array($strfullname, $strshortname, $strscale, $strcourses, $stritems, $stredit);
+    $table->size  = array('30%', '20%', '20%', '10%', '10%', '10%');
+    $table->align = array('left', 'left', 'left', 'center', 'center', 'center');
     $table->width = '90%';
     $table->data  = $data;
     $return .= print_table($table, true);
     $outcomes_tables[] = $return;
 }
 
-if ( !empty($outcomes_tables) ) {
-    print('<form action="export.php" method="post">' ."\n");
-    foreach($outcomes_tables as $table) {
-        print($table);
-    }
-    echo '<div class="buttons">';
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
-    print('<input type="submit" value="'. get_string('exportselectedoutcomes', 'grades') .'" name="export_outcomes">');
-    echo '</form>';
-    echo '</div>';
+foreach($outcomes_tables as $table) {
+    print($table);
 }
 
 echo '<div class="buttons">';
-print_single_button('edit.php', array('courseid'=>$courseid), $srtcreatenewoutcome);
+print_single_button('edit.php', array('courseid'=>$courseid), $strcreatenewoutcome);
+if ( !empty($outcomes_tables) ) {
+    print_single_button('export.php', array('id'=>$courseid, 'sesskey'=>sesskey()),  get_string('exportalloutcomes', 'grades'));
+}
 echo '</div>';
 
 $upload_form->display();

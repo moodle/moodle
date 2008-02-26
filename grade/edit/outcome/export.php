@@ -7,7 +7,6 @@ require_once $CFG->libdir.'/gradelib.php';
 
 $courseid = optional_param('id', 0, PARAM_INT);
 $action   = optional_param('action', '', PARAM_ALPHA);
-$export   = required_param('export', PARAM_INT);
 
 /// Make sure they can even access this course
 if ($courseid) {
@@ -42,9 +41,14 @@ header('Content-Disposition: attachment; filename=outcomes.csv');
 $header = array('outcome_name', 'outcome_shortname', 'outcome_description', 'scale_name', 'scale_items', 'scale_description');
 echo format_csv($header, ';', '"');
 
-foreach($export as $outcome_id) {
+$outcomes = array();
+if ( $courseid ) {
+    $outcomes = array_merge(grade_outcome::fetch_all_global(), grade_outcome::fetch_all_local($courseid));
+} else { 
+    $outcomes = grade_outcome::fetch_all_global();
+}
 
-    $outcome = grade_outcome::fetch(array('id' => $outcome_id));
+foreach($outcomes as $outcome) {
 
     $line = array();
 
