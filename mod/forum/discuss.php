@@ -153,7 +153,11 @@
     }
 
     $canreply = false;
-    if (has_capability($capname, $modcontext)) {
+    if (isguestuser() or !isloggedin()) {
+        // allow guests and not-logged-in to see the link - they are prompted to log in after clicking the link
+        $canreply = ($forum->type != 'news'); // no reply in news forums
+
+    } else if (has_capability($capname, $modcontext)) {
         $groupmode = groups_get_activity_groupmode($cm);
         if ($groupmode) {
             if (has_capability('moodle/site:accessallgroups', $modcontext)) {
@@ -179,12 +183,6 @@
                 }
             }
         } else {
-            $canreply = true;
-        }
-    } else { // allow guests to see the link
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-        if (has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {
-            // User is a guest here ! guests are prompted to login later if try to reply
             $canreply = true;
         }
     }

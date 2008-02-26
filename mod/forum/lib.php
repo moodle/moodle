@@ -3823,14 +3823,24 @@ function forum_user_can_post_discussion($forum, $currentgroup=-1, $groupmode=-1,
 // $forum is an object
     global $USER, $SESSION, $COURSE;
 
-    if (!$cm) {
-        debugging('missing cm', DEBUG_DEVELOPER);
-        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-            error('Course Module ID was incorrect');
-        }
+    // shortcut - guest and not-logged-in users can not post  
+    if (isguestuser() or !isloggedin()) {
+        return false;
     }
+
     if (!$context) {
+        if (!$cm) {
+            debugging('missing cm', DEBUG_DEVELOPER);
+            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+                error('Course Module ID was incorrect');
+            }
+        }
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    }
+
+    // normal users with temporary guest access can not add discussions
+    if (has_capability('moodle/legacy:guest', $context, $USER->id, false)) {
+        return false;
     }
 
     if ($currentgroup == -1) {
@@ -3881,6 +3891,15 @@ function forum_user_can_post_discussion($forum, $currentgroup=-1, $groupmode=-1,
  * @param $user - user object
  */
 function forum_user_can_post($forum, $user=NULL, $cm=NULL, $context=NULL) {
+    global $USER;
+    if (empty($user)) {
+        $user = $USER;
+    }
+
+    // shortcut - guest and not-logged-in users can not post  
+    if (isguestuser($user) or empty($user->id)) {
+        return false;
+    }
 
     if (!$context) {
         if (!$cm) {
@@ -3892,21 +3911,18 @@ function forum_user_can_post($forum, $user=NULL, $cm=NULL, $context=NULL) {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
 
+    // normal users with temporary guest access can not post
+    if (has_capability('moodle/legacy:guest', $context, $user->id, false)) {
+        return false;
+    }
+
     if ($forum->type == 'news') {
         $capname = 'mod/forum:replynews';
     } else {
         $capname = 'mod/forum:replypost';
     }
 
-    if (!empty($user)) {
-        $canreply = has_capability($capname, $context, $user->id, false)
-                && !has_capability('moodle/legacy:guest', $context, $user->id, false);
-    } else {
-        $canreply = has_capability($capname, $context, NULL, false)
-                && !has_capability('moodle/legacy:guest', $context, NULL, false);
-    }
-
-    return $canreply;
+    return has_capability($capname, $context, $user->id, false);
 }
 
 
@@ -4093,7 +4109,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 // and the current user is a guest.
 
     if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode, $cm, $context) ||
-        ($forum->type != 'news' && has_capability('moodle/legacy:guest', $context, NULL, false)) ) {
+        ($forum->type != 'news' and (isguestuser() or !isloggedin())) ) {
 
         echo '<div class="singlebutton forumaddnew">';
         echo "<form id=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
