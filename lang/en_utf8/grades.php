@@ -412,6 +412,7 @@ $string['rangesdisplaytype'] = 'Range display type';
 $string['rank'] = 'Rank';
 $string['rawpct'] = 'Raw %%';
 $string['real'] = 'Real';
+$string['regradeanyway'] = 'Regrade anyway';
 $string['removeallcoursegrades'] = 'Delete all grades';
 $string['removeallcourseitems'] = 'Delete all items and categories';
 $string['hideforcedsettings'] = 'Hide forced settings';
