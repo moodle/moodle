@@ -2057,7 +2057,12 @@ function require_logout() {
         error_log('MoodleSessionTest cookie could not be set in moodlelib.php:'.__LINE__);
         error_log('Headers were already sent in file: '.$file.' on line '.$line);
     } else {
-        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
+        if (function_exists('array_fill_keys')) {
+            //PHP 5.2.0
+            setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
+        } else {
+            setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure);
+        }
     }
 
     unset($_SESSION['USER']);
@@ -7751,8 +7756,14 @@ function report_session_error() {
     moodle_setlocale();
 
     //clear session cookies
-    setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
-    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
+    if (function_exists('array_fill_keys')) {
+        //PHP 5.2.0
+        setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
+        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
+    } else {
+        setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure);
+        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure);
+    }
     //increment database error counters
     if (isset($CFG->session_error_counter)) {
         set_config('session_error_counter', 1 + $CFG->session_error_counter);
