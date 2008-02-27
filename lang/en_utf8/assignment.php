@@ -50,7 +50,7 @@ for <i>\'$a->assignment\'</i><br /><br />
 It is <a href=\"$a->url\">available on the web site</a>.';
 $string['emailteachers'] = 'Email alerts to teachers';
 $string['emptysubmission'] = 'You have not submitted anything yet';
-$string['enableemailnotification'] = 'Send feedback/grade notification emails';
+$string['enableemailnotification'] = 'Send notification emails';
 $string['existingfiledeleted'] = 'Existing file has been deleted: $a';
 $string['failedupdatefeedback'] = 'Failed to update submission feedback for user $a';
 $string['feedback'] = 'Feedback';
