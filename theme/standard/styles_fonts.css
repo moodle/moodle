@@ -711,6 +711,79 @@ body#grade-index .grades .header {
   text-decoration: none;
 }
 
+/***
+ *** Tags
+ ***/
+
+.tag_cloud .s20 {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.tag_cloud .s19 {
+  font-size: 1.5em;
+}
+
+.tag_cloud .s18 {
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+.tag_cloud .s17 {
+  font-size: 1.4em;
+}
+
+.tag_cloud .s16 {
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+.tag_cloud .s15 {
+  font-size: 1.3em;
+}
+
+.tag_cloud .s14 {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.tag_cloud .s13 {
+  font-size: 1.2em;
+}
+
+.tag_cloud .s12,
+.tag_cloud .s11 {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.tag_cloud .s10,
+.tag_cloud .s9 {
+  font-size: 1.1em;
+}
+
+.tag_cloud .s8,
+.tag_cloud .s7 {
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.tag_cloud .s6,
+.tag_cloud .s5 {
+  font-size: 1em;
+}
+
+.tag_cloud .s4,
+.tag_cloud .s3 {
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.tag_cloud .s2,
+.tag_cloud .s1 {
+  font-size: 0.9em;
+}
+
 
 /***
  *** User

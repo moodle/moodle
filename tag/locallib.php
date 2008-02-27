@@ -18,73 +18,83 @@
  * @param int $min_size minimum text size, in percentage
  * @param $return if true return html string
  */
-function tag_print_cloud($nr_of_tags=150, $shuffle=true, $max_size=180, $min_size=80, $return=false) {
+function tag_print_cloud($nr_of_tags=150, $max_size=170, $min_size=70, $return=false) {
 
     global $CFG;
+    
+    $can_manage_tags = has_capability('moodle/tag:manage', get_context_instance(CONTEXT_SYSTEM));
 
-    $query = 'SELECT tg.rawname, tg.id, tg.name, COUNT(ti.id) AS count, tg.flag '.
+    $tagcloud = get_records_sql('SELECT tg.rawname, tg.id, tg.name, tg.tagtype, COUNT(ti.id) AS count, tg.flag '.
         'FROM '. $CFG->prefix .'tag_instance ti INNER JOIN '. $CFG->prefix .'tag tg ON tg.id = ti.tagid '.
         'GROUP BY tg.id, tg.rawname, tg.name, tg.flag '.
-        'ORDER BY count DESC';
+        'ORDER BY count DESC, tg.name ASC', 0, $nr_of_tags);
 
-    $tagcloud = get_records_sql($query, 0, $nr_of_tags);
+    $totaltags  = count($tagcloud);
+    $currenttag = 0;
+    $size = 20;
+    $lasttagct = -1;
 
-    if ($shuffle) {
-        shuffle($tagcloud);
-    } else {
-        ksort($tagcloud);
-    }
+    $etags = array();
+    foreach ($tagcloud as $tag) {
 
-    $count = array();
-    foreach ($tagcloud as $key => $tag){
-        if(!empty($tag->count)) {
-            $count[$key] = log10($tag->count);
+        $currenttag++;
+
+        if ($currenttag == 1) {
+            $lasttagct = $tag->count;
+            $size = 20;
+        } else if ($tag->count != $lasttagct) {
+            $lasttagct = $tag->count;
+            $size = 20 - ( (int)((($currenttag - 1) / $totaltags) * 20) );
         }
-        else{
-            $count[$key] = 0;
-        }
+
+        $tag->class = "$tag->tagtype s$size";
+        $etags[] = $tag;
     }
 
-    $max = max($count);
-    $min = min($count);
-
-    $spread = $max - $min;
-    if (0 == $spread) { // we don't want to divide by zero
-        $spread = 1;
-    }
-
-    $step = ($max_size - $min_size)/($spread);
-
-    $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-    $can_manage_tags = has_capability('moodle/tag:manage', $systemcontext);
-
-    //prints the tag cloud
-    $output = '<ul id="tag-cloud-list">';
-    foreach ($tagcloud as $key => $tag) {
-
-        $size = $min_size + ((log10($tag->count) - $min) * $step);
-        $size = ceil($size);
-
-        $style = 'style="font-size: '. $size .'%"';
-        $title = 'title="'. s(get_string('thingstaggedwith', 'tag', $tag)) .'"';
-        $href = 'href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'"';
-
-        //highlight tags that have been flagged as inappropriate for those who can manage them
-        $tagname = tag_display_name($tag);
+    usort($etags, "tag_cloud_sort"); 
+    $output = '';
+    $output .= "\n<ul class='tag_cloud inline-list'>\n";
+    foreach ($etags as $tag) {
         if ($tag->flag > 0 && $can_manage_tags) {
             $tagname =  '<span class="flagged-tag">'. tag_display_name($tag) .'</span>';
+        } else { 
+            $tagname = tag_display_name($tag);
         }
 
-        $tag_link = '<li><a '. $href .' '. $title .' '. $style .'>'. $tagname .'</a></li> ';
-
-        $output .= $tag_link;
+        $link = $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'"';
+        $output .= '<li><a href="'. $link .'" class="'. $tag->class .'" '.
+            'title="'. get_string('numberofentries', 'blog', $tag->count) .'">'.
+            $tagname .'</a></li> ';
     }
-    $output .= '</ul>';
+    $output .= "\n</ul>\n";
 
     if ($return) {
         return $output;
     } else {
         echo $output;
+    }
+}
+
+/**
+ * This function is used by print_tag_cloud, to usort() the tags in the cloud.  
+ * See php.net/usort for the parameters documentation. This was originally in
+ * blocks/blog_tags/block_blog_tags.php, named blog_tags_sort().
+ */
+function tag_cloud_sort($a, $b) {
+    global $CFG;
+
+    if (empty($CFG->tagsort)) {
+        return 0;
+    } else {
+        $tagsort = $CFG->tagsort;
+    }
+
+    if (is_numeric($a->$tagsort)) {
+        return ($a->$tagsort == $b->$tagsort) ? 0 : ($a->$tagsort > $b->$tagsort) ? 1 : -1;
+    } elseif (is_string($a->$tagsort)) {
+        return strcmp($a->$tagsort, $b->$tagsort);
+    } else {
+        return 0;
     }
 }
 
