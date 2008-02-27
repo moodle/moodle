@@ -21,10 +21,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-//point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else.
-if (FALSE===strstr(ini_get('include_path'), $CFG->libdir.'/pear' )){
-    ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
-}
+//setup.php icludes our hacked pear libs first
 require_once 'HTML/QuickForm.php';
 require_once 'HTML/QuickForm/DHTMLRulesTableless.php';
 require_once 'HTML/QuickForm/Renderer/Tableless.php';
