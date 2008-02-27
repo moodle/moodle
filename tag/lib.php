@@ -104,6 +104,24 @@ function tag_delete_instance($record, $tagid) {
     }
 }
 
+/** 
+ * Set the description of a tag
+ * 
+ * @param int $tagid the id of the tag
+ * @param string $description the description
+ * @param int $descriptionformat the moodle text format of the description
+ * @return true on success, false otherwise 
+ */
+function tag_description_set($tagid, $description, $descriptionformat) {
+    if ($tag = get_record('tag', 'id', $tagid, '', '', '', '', 'id')) {
+        $tag->description = addslashes($description);
+        $tag->descriptionformat = addslashes($descriptionformat);
+        $tag->timemodified = time();
+        return update_record('tag', $tag);
+    }
+    return false;
+}
+
 /**
  * Function that returns the name that should be displayed for a specific tag
  *
@@ -595,7 +613,7 @@ function tag_add($tags, $type="default") {
             // capitalization : the rawname is NOT the same at the rawtag. 
             $tag_object->rawname = addslashes($tag); 
             $tag_name_lc = moodle_strtolower($tag);
-            $tag_object->name = addslashes($tag_name_lc); 
+            $tag_object->name = addslashes($tag_name_lc);
             //var_dump($tag_object);
             $tags_ids[$tag_name_lc] = insert_record('tag', $tag_object);
         }
