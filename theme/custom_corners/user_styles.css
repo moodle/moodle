@@ -1,4 +1,3 @@
-/* @override http://ubuntu.userver.lan/moodle_19/theme/custom_corners/user_styles.css */
 body {
   font-size: 100%;
   color: #333333;
@@ -11,7 +10,6 @@ div#page {
   margin: 0 4%;
   padding-top: 2px;
   width: auto;
-  /* min-width: 800px; */
 }
 div.clearer {
   clear: both;
@@ -31,11 +29,13 @@ hr {
   border-style: none;
 }
 span.arrow {
-  font-family:Arial,Helvetica,Courier,sans-serif;
-  font-size: 80%;}
+  font-family: Arial,Helvetica,Courier,sans-serif;
+  font-size: 80%;
+}
 p.arrow_button input {
-  font-family:Arial,Helvetica,Courier,sans-serif;
-  font-size: 80%;}
+  font-family: Arial,Helvetica,Courier,sans-serif;
+  font-size: 80%;
+}
 table.generaltable {
   background-color: #EEEEEE;
 }
@@ -118,9 +118,8 @@ table.generaltable td.cell {
   border-color: #DDDDDD;
 }
 div.informationbox {
-  background-color: #EEEEEE;
-  border-width: 1px;
-  border-style: solid;
+  background-color: #f1ece6;
+  border: 1px solid;
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
 }
 table.userinfobox {
@@ -227,6 +226,7 @@ div.sideblock div.header {
 div.sideblock div.content {
   padding: 0.3em 0.3em 0.5em;
   border-style: none;
+  background-color: #f1ece6;
 }
 div.sideblock table.minicalendar td.day {
   text-align: center;
@@ -338,6 +338,15 @@ div.block_calendar_month td.event_user {
   background-color: #DCE7EC;
   border-color: #DCE7EC;
 }
+div.block_calendar_month div.filters table {
+  background-color: inherit;
+}
+table#calendar td.maincalendar div.filters table {
+  background-color: inherit;
+}
+table#calendar td.sidecalendar div.filters table {
+  background-color: inherit;
+}
 h3.eventskey {
   font-size: 100%;
 }
@@ -386,8 +395,23 @@ table#calendar td.event_global {
 body.admin table.generaltable {
   width: 100%;
 }
+body.admin div.generalboxcontent {
+  background-color: inherit;
+  border-style: none;
+}
+body.admin table.generalbox {
+  background-color: inherit;
+  border-style: none;
+}
+body.admin td.generalboxcontent {
+  background-color: inherit;
+  border-style: none;
+}
 body#course-view tr.section td.side {
   border-style: none;
+}
+body#course-view tr.current td.side {
+  background: #f1ece6;
 }
 body#course-view tr.section td.content {
   padding-bottom: 1.5em;
@@ -414,6 +438,12 @@ div.sideblock ul.list li {
 div.block_rss_client ul.list li {
   padding-left: 0;
 }
+div.block_messages div.content {
+  font-size: inherit;
+}
+div.block_messages div.content div.info {
+  text-align: left;
+}
 div.sideblock div.column.c0 {
   margin-left: -19px;
 }
@@ -427,9 +457,15 @@ body#admin-roles-manage td.generalboxcontent table td {
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
-body#admin-roles-override td.cell.c1 {  padding-top: 0.5em;}
-body#admin-roles-assign td.cell.c3 {  padding-top: 0.5em;}
-body#admin-roles-assign td.cell.c1 {  padding-top: 0.5em;}
+body#admin-roles-override td.cell.c1 {
+  padding-top: 0.5em;
+}
+body#admin-roles-assign td.cell.c3 {
+  padding-top: 0.5em;
+}
+body#admin-roles-assign td.cell.c1 {
+  padding-top: 0.5em;
+}
 body#admin-roles-override td.capcurrent {
   background-color: #eeeeee;
   border: 1px solid #cccccc;
@@ -470,6 +506,7 @@ div.sideblock div.header div.commands {
 form#adminsettings fieldset {
   margin-top: 1em;
   padding: 0;
+  background-color: inherit;
 }
 fieldset.adminsettings span.form-shortname {
   color: #AAAAAA;
@@ -498,7 +535,8 @@ form.mform div.textarea textarea {
   width: 35em;
 }
 form#adminsettings div.form-item {
-  /*background: url(pix/small_bg_gradient.png) repeat-x 0 bottom;*/
+  
+/*background: url(pix/small_bg_gradient.png) repeat-x 0 bottom;*/
   border-top: 1px solid #F1ECE6;
 }
 form#adminsettings .form-label {
@@ -517,8 +555,8 @@ body#admin-lang table.translator {
 body#admin-langimport div.generalbox {
   border-style: none;
 }
-div.htmlarea iframe{
-  /*width: 600px !important;*/
+div.htmlarea iframe {
+ 
 }
 div#header-home {
   position: relative;
@@ -1084,13 +1122,22 @@ div.coursebox div.summary {
 }
 body#mod-forum-view div.subscription {
   float: none;
-  text-align:right;
+  text-align: right;
   white-space: nowrap;
 }
 table.forumpost tr.header {
   background-image: url(pix/header.png);
   background-repeat: repeat-x;
   background-position: left bottom;
+}
+table.forumpost td.starter {
+  background: inherit;
+}
+table.forumpost td.left {
+  background: inherit;
+}
+table.forumpost td.picture {
+  background: #fff;
 }
 table.forumpost {
   margin-top: 20px;
@@ -1125,6 +1172,9 @@ td.content {
 div.glossarydisplay table.glossarypost {
   border-color: #F1ECE6;
 }
+div.glossarydisplay table.glossarycategoryheader {
+  background-color: inherit;
+}
 div.glossarydisplay div.entrybox {
   border-color: #F1ECE6;
 }
@@ -1142,8 +1192,12 @@ body#mod-glossary-view div.glossarycontrol {
   white-space: nowrap;
   margin: 5px 0;
 }
-table.glossarypost div.concept h3 {  display: inline;}
-table.glossarypost.continuous div.concept {  display: inline;}
+table.glossarypost div.concept h3 {
+  display: inline;
+}
+table.glossarypost.continuous div.concept {
+  display: inline;
+}
 div.mwiki div.tabtree {
   margin-top: 10px;
 }
@@ -1240,23 +1294,21 @@ body.grade-report-grader table#user-grades td.course {
   font-weight: bold;
 }
 #admin-roles-override .capcurrent {
-  background-color:#FFFFFF;
+  background-color: #FFFFFF;
   border: 1px solid #cecece;
 }
-
 #admin-roles-manage .capdefault {
-  background-color:#dddddd;
+  background-color: #dddddd;
   border: 1px solid #cecece;
 }
-
 #admin-roles-manage .rolecap {
-  border:none;
-  border-bottom:1px solid;
+  border: none;
+  border-bottom: 1px solid;
   border-bottom-color: #cecece;
 }
 #admin-roles-override .rolecap {
-  border:none;
-  border-bottom:1px solid;
+  border: none;
+  border-bottom: 1px solid;
   border-bottom-color: #cecece;
 }
 #admin-roles-manage .rolecap .cap-desc .cap-name {
@@ -1265,43 +1317,31 @@ body.grade-report-grader table#user-grades td.course {
 #admin-roles-override .rolecap .cap-desc .cap-name {
   color: #888;
 }
-
 .plugincompattable {
-    font-size: 70%;
+  font-size: 90%;
+  text-align: left;
 }
-
 .plugincompattable td.standard {
-    font-weight: normal;
+  font-weight: normal;
 }
-
 .plugincompattable td.nonstandard {
-    font-weight: bold;
+  font-weight: bold;
 }
-
 .plugincompattable td.missingplugin {
-    font-weight: bold;
+  font-weight: bold;
 }
-
 .plugincompattable td.warning {
-    font-style: normal;
+  font-style: normal;
 }
-
-.plugincompattable { 
-    text-align: left;
+.plugincheckwrapper {
+  text-align: center;
 }
-
-.plugincheckwrapper { 
-    text-align: center;
-}
-
 .plugincompattable td.ok {
-    color: #008000;
+  color: #008000;
 }
-
 .plugincompattable td.warning {
-    color: #DF7800;
+  color: #DF7800;
 }
-
 .plugincompattable td.error {
-    color: #DF0000;
+  color: #DF0000;
 }

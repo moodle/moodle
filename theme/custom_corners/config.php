@@ -11,7 +11,7 @@ $THEME->sheets = array('user_styles');
 ////////////////////////////////////////////////////////////////////////////////
 
 
-$THEME->standardsheets = array('styles_layout');
+$THEME->standardsheets = array('styles_layout', 'styles_color');
 
 /// This variable can be set to an array containing
 /// filenames from the *STANDARD* theme.  If the 
