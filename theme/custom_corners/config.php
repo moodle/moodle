@@ -151,20 +151,6 @@ $THEME->customcorners = true;
 /// Please have a look at the README with more details.
 
 
-//$THEME->chameleonenabled = true;
-$THEME->chameleonenabled = false;
-
-/// By setting this to false it disables editing of the stylsheets
-/// this saves the overhead of loading chameleon on each page 
-/// viewed by a user who can edit pages. it is recommended to 
-/// set this to false once you're satisfied with your theme.
-
-$THEME->chameleonteachereditenabled = false;
-
-/// If you use chameleon as a course theme setting this to true 
-/// will allow teachers on that course to edit the theme. 
-
-
 // $CFG->CSSEdit = true;
 
 /// When this is enabled then Moodle will include all CSS files
