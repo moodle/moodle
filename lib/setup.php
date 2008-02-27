@@ -278,6 +278,14 @@ global $HTTPSPAGEREQUIRED;
     } else {
         @ini_set('display_errors', '1');
     }
+// Even when users want to see errors in the output,
+// some parts of Moodle cannot display them at all.
+// (Once we are XHTML strict compliant, debugdisplay
+//  _must_ go away).
+    if (defined('MOODLE_SANE_OUTPUT')) {
+        @ini_set('display_errors', '0');
+        @ini_set('log_errors', '1');
+    }
 
 /// Shared-Memory cache init -- will set $MCACHE
 /// $MCACHE is a global object that offers at least add(), set() and delete()
@@ -417,11 +425,15 @@ global $HTTPSPAGEREQUIRED;
     $CFG->javascript  = $CFG->libdir .'/javascript.php';
     $CFG->moddata     = 'moddata';
 
-
+// Alas, in some cases we cannot deal with magic_quotes.
+    if (defined('MOODLE_SANE_INPUT') && ini_get_bool('magic_quotes_gpc')) {
+        mdie("Facilities that require MOODLE_SANE_INPUT "
+             . "cannot work with magic_quotes_gpc. Please disable "
+             . "magic_quotes_gpc.");
+    }
 /// A hack to get around magic_quotes_gpc being turned off
 /// It is strongly recommended to enable "magic_quotes_gpc"!
-
-    if (!ini_get_bool('magic_quotes_gpc') ) {
+    if (!ini_get_bool('magic_quotes_gpc') && !defined('MOODLE_SANE_INPUT') ) {
         function addslashes_deep($value) {
             $value = is_array($value) ?
                     array_map('addslashes_deep', $value) :
@@ -457,13 +469,12 @@ global $HTTPSPAGEREQUIRED;
 /// This hack is no longer being applied as of Moodle 1.6 unless you really 
 /// really want to use it (by defining  $CFG->enableglobalshack = true)
 
-    if (!empty($CFG->enableglobalshack)) {
+    if (!empty($CFG->enableglobalshack) && !defined('MOODLE_SANE_INPUT')) {
         if (!empty($CFG->detect_unchecked_vars)) {
             global $UNCHECKED_VARS;
             $UNCHECKED_VARS->url = $_SERVER['PHP_SELF'];
             $UNCHECKED_VARS->vars = array();
         }
-    
         if (isset($_GET)) {
             extract($_GET, EXTR_SKIP);    // Skip existing variables, ie CFG
             if (!empty($CFG->detect_unchecked_vars)) {
@@ -498,7 +509,7 @@ global $HTTPSPAGEREQUIRED;
 
     //discard session ID from POST, GET and globals to tighten security,
     //this session fixation prevention can not be used in cookieless mode
-    if (empty($CFG->usesid)) {
+    if (empty($CFG->usesid) && !defined('MOODLE_SANE_INPUT')) {
         unset(${'MoodleSession'.$CFG->sessioncookie});
         unset($_GET['MoodleSession'.$CFG->sessioncookie]);
         unset($_POST['MoodleSession'.$CFG->sessioncookie]);
