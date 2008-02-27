@@ -113,7 +113,6 @@ class grader_report_preferences_form extends moodleform {
         if (has_capability('gradereport/grader:view', $context)) {
             $preferences['prefgeneral']['studentsperpage'] = 'text';
             $preferences['prefgeneral']['aggregationposition'] = array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
-                                                                       GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
                                                                        GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
                                                                        GRADE_REPORT_AGGREGATION_POSITION_LAST => get_string('positionlast', 'grades'));
             // $preferences['prefgeneral']['enableajax'] = $checkbox_default;
@@ -153,7 +152,10 @@ class grader_report_preferences_form extends moodleform {
                     $options = $type;
                     $type = 'select';
                     // MDL-11478
-                    if (isset($options[$CFG->{$full_pref}])) {
+                    // get default aggregationposition from grade_settings
+                    if ($pref == 'aggregationposition') {
+                        $default = $options[grade_get_setting($course->id, $pref, $CFG->{$full_pref})];
+                    } elseif (isset($options[$CFG->{$full_pref}])) {
                         $default = $options[$CFG->{$full_pref}];
                     } else {
                         $default = '';
