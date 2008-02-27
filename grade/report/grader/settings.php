@@ -39,12 +39,6 @@ $settings->add(new admin_setting_configcheckbox('grade_report_quickgrading', get
 $settings->add(new admin_setting_configcheckbox('grade_report_quickfeedback', get_string('quickfeedback', 'grades'),
                                             get_string('configquickfeedback', 'grades'), 1));
 
-$settings->add(new admin_setting_configselect('grade_report_aggregationposition', get_string('aggregationposition', 'grades'),
-                                          get_string('configaggregationposition', 'grades'), GRADE_REPORT_PREFERENCE_INHERIT,
-                                          array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
-                                                GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
-                                                GRADE_REPORT_AGGREGATION_POSITION_LAST => get_string('positionlast', 'grades'))));
-
 $settings->add(new admin_setting_configselect('grade_report_aggregationview', get_string('aggregationview', 'grades'),
                                           get_string('configaggregationview', 'grades'), GRADE_REPORT_AGGREGATION_VIEW_FULL,
                                           array(GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('full', 'grades'),
