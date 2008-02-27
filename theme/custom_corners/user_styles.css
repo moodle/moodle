@@ -1265,3 +1265,43 @@ body.grade-report-grader table#user-grades td.course {
 #admin-roles-override .rolecap .cap-desc .cap-name {
   color: #888;
 }
+
+.plugincompattable {
+    font-size: 70%;
+}
+
+.plugincompattable td.standard {
+    font-weight: normal;
+}
+
+.plugincompattable td.nonstandard {
+    font-weight: bold;
+}
+
+.plugincompattable td.missingplugin {
+    font-weight: bold;
+}
+
+.plugincompattable td.warning {
+    font-style: normal;
+}
+
+.plugincompattable { 
+    text-align: left;
+}
+
+.plugincheckwrapper { 
+    text-align: center;
+}
+
+.plugincompattable td.ok {
+    color: #008000;
+}
+
+.plugincompattable td.warning {
+    color: #DF7800;
+}
+
+.plugincompattable td.error {
+    color: #DF0000;
+}
