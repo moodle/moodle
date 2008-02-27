@@ -24,11 +24,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/// We need to add this to allow "our" PEAR package to work smoothly
-/// without modifying one bit, putting it in the 1st place of the
-/// include_path to be localised by Moodle without problems
-ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
-
+//setup.php icludes our hacked pear libs first
 require_once 'Spreadsheet/Excel/Writer.php';
 
 /**

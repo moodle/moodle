@@ -198,8 +198,9 @@ global $HTTPSPAGEREQUIRED;
     require_once($CFG->libdir .'/eventslib.php');       // Events functions
     require_once($CFG->libdir .'/grouplib.php');        // Groups functions
 
-/// We use include some PEAR libs
-    ini_set("include_path", ini_get("include_path"). PATH_SEPARATOR . $CFG->libdir.'/pear');
+    //point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
+    //the problem is that we need specific version of quickforms and hacked excel files :-(
+    ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
 
 /// Disable errors for now - needed for installation when debug enabled in config.php
     if (isset($CFG->debug)) {
