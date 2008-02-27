@@ -55,7 +55,11 @@ In detail, the libraries added here are:
     - by Andrei Zmievski, Greg Beaver, Stig Bakken
     - License: PHP (Permission given to Moodle to redistribute under GPL)
     - http://pear.php.net/package/Console_Getopt
-
+- PEAR HTTP_WebDAV_Server
+    - Current version: HEAD @ 28-01-2008
+    - by Hartmut Holzgraefe and Christian Stocker
+    - License: BSD
+    - http://pear.php.net/package/HTTP_WebDAV_Server
 
 
 ----------------------------------------------------------------
