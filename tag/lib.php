@@ -174,7 +174,7 @@ function tag_get_tags($record_type, $record_id, $type=null) {
         $type = "AND tg.tagtype = '$type'";
     }
 
-    // if this query is changed, you need to change it also in tag_get_correlated_tags
+    // if the fields in this query are changed, you need to do the same changes in tag_get_correlated_tags
     $tags = get_records_sql("SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
         "FROM {$CFG->prefix}tag_instance ti INNER JOIN {$CFG->prefix}tag tg ON tg.id = ti.tagid ".
         "WHERE ti.itemtype = '{$record_type}' AND ti.itemid = '{$record_id}' {$type} ".
@@ -388,23 +388,25 @@ function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
  * Change the "value" of a tag, and update the associated 'name'.
  *
  * @param int $tagid the id of the tag to modify
- * @param string $newtag the new name
+ * @param string $newtag the new rawname
  * @return bool true on success, false otherwise
  */
-function tag_rename($tagid, $newtag) {
+function tag_rename($tagid, $newrawname) {
 
-    if (! $newtag_clean = array_shift(tag_normalize($newtag, TAG_CASE_ORIGINAL)) ) {
+    // prevent renaming to an invalid name
+    if (! $newrawname_clean = array_shift(tag_normalize($newrawname, TAG_CASE_ORIGINAL)) ) {
         return false;
     }
 
-    if ( tag_get_id($newtag_clean) ) {
-        // 'newtag' already exists and merging tags is not yet supported.
+    $current_tag = tag_get_id($newtag_clean, TAG_RETURN_OBJECT);
+    if ($current_tag && ($current_tag->rawname == $newrawname_clean)) {
+        // 'newrawname' is already in use and merging tags is not supported.
         return false; 
     }
 
-    if ($tag = get_record('tag', 'id', $tagid)) {
-        $tag->rawname = addslashes($newtag_clean); 
-        $tag->name = addslashes(moodle_strtolower($newtag_clean)); 
+    if ($tag = get_record('tag', 'id', $tagid, '', '', '', '', 'id')) {
+        $tag->rawname = addslashes($newrawname_clean); 
+        $tag->name = addslashes(moodle_strtolower($newrawname_clean)); 
         $tag->timemodified = time();
         return update_record('tag', $tag);
     }
@@ -524,8 +526,8 @@ function tag_set_delete($record_type, $record_id, $tag) {
  * @return true on success, false otherwise
  */
 function tag_type_set($tagid, $type) {
-    if ($tag = get_record('tag', 'id', $tagid)) {
-        $tag->tagtype = $type;
+    if ($tag = get_record('tag', 'id', $tagid, '', '', '', '', 'id')) {
+        $tag->tagtype = addslashes($type);
         $tag->timemodified = time();
         return update_record('tag', $tag);
     }
@@ -597,7 +599,7 @@ function tag_assign($record, $tagid, $ordering) {
 
     require_capability('moodle/tag:create', get_context_instance(CONTEXT_SYSTEM));
 
-    if ( $tag_instance_object = get_record('tag_instance', 'tagid', $tagid, 'itemtype', $record['type'], 'itemid', $record['id']) ) {
+    if ( $tag_instance_object = get_record('tag_instance', 'tagid', $tagid, 'itemtype', $record['type'], 'itemid', $record['id'], 'tagid') ) {
         $tag_instance_object->ordering = $ordering;
         $tag_instance_object->timemodified = time();
         return update_record('tag_instance', $tag_instance_object);
@@ -675,7 +677,7 @@ function tag_compute_correlations($min_correlation=2) {
         //var_dump($correlated);
 
         //saves correlation info in the caching table
-        if ($tag_correlation_obj = get_record('tag_correlation', 'tagid', $tag->id)) {
+        if ($tag_correlation_obj = get_record('tag_correlation', 'tagid', $tag->id, '', '', '', '', 'tagid')) {
             $tag_correlation_obj->correlatedtags = $correlated;
             update_record('tag_correlation', $tag_correlation_obj);
         } else {
@@ -765,7 +767,7 @@ function tag_get_correlated($tag_id, $limitnum=null) {
         return array();
     }
 
-    // this is (and has to be) the same query as used in tag_get_tags
+    // this is (and has to) return the same fields as the query in tag_get_tags
     if (!$result = get_records_sql("SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
         "FROM {$CFG->prefix}tag_instance ti INNER JOIN {$CFG->prefix}tag tg ON tg.id = ti.tagid ".
         "WHERE ti.itemtype = 'tag' AND ti.itemid IN ({$tag_correlation->correlatedtags}) ".
@@ -857,7 +859,7 @@ function tag_set_flag($tagids) {
         $tagids = array($tagids);
     }
     foreach ($tagids as $tagid) {
-        $tag = get_record('tag', 'id', $tagid);
+        $tag = get_record('tag', 'id', $tagid, '', '', '', '', 'id, flag');
         $tag->flag++;
         $tag->timemodified = time();
         update_record('tag', $tag);
