@@ -33,11 +33,22 @@ h3 {
 
 }
 
+#layout-table #left-column, #layout-table #right-column {
+    border: 1px solid;
+    padding: 0px;
+}
+
+#left-column .hidden .header, #right-column .hidden .header {
+border-bottom-style:dashed;
+border-bottom-width:1px;
+}
+
+
 #content {
 clear:both;
 }
   
-h1, h2, h3 {
+h1, h2, h3, th.header {
   border-width: 1px;
   border-style: solid; 
 }
@@ -125,8 +136,8 @@ input, select {
 .navbar {
   width:100%;
   padding:3px 0.5em;
-  border-width:1px;
-  border-style:solid;
+  border-width:0px;
+/*  border-style:solid; */
 }
 
 div.navbar {
@@ -208,10 +219,19 @@ TABLE.loginbox {
 /***
  *** Blocks
  ***/
- 
- .sideblock .header h2 {
+.sideblock, .sideblock .header, .sideblock .content  {
   border-width: 0px;
  }
+
+
+.sideblock .header h2 {
+  border-width: 0px;
+  padding-top: 4px;
+ }
+
+.sideblock .header .hide-show-image {
+ padding-top: 4px;
+}
  
 .sideblock .footer {
   border-top-width:1px;
@@ -292,6 +312,13 @@ table.calendarmonth tr td  {
   border-style: dashed;
 }
 
+#course-view .section td.content ul.section.img-text {
+	line-height: 22px;
+}
+
+.coursebox .info .name {
+  padding-bottom: 5px;
+  }
 
 .tabrow0 { 
    padding-top: 4px; 

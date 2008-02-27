@@ -79,6 +79,52 @@ $THEME->langsheets = false;
 /// different styles.
 
 
+$THEME->courseformatsheets = true;
+
+/// When this is enabled, this theme will search for files 
+/// named "styles.php" inside all course formats and 
+/// include them.  This allows course formats to provide 
+/// their own default styles.
+
+
+$THEME->metainclude = false;
+
+/// When this is enabled (or not set!) then Moodle will try 
+/// to include a file meta.php from this theme into the 
+/// <head></head> part of the page.
+
+
+$THEME->standardmetainclude = true;
+
+
+/// When this is enabled (or not set!) then Moodle will try 
+/// to include a file meta.php from the standard theme into the 
+/// <head></head> part of the page.
+
+
+$THEME->parentmetainclude = false;
+
+/// When this is enabled (or not set!) then Moodle will try 
+/// to include a file meta.php from the parent theme into the 
+/// <head></head> part of the page.
+
+
+$THEME->navmenuwidth = 50;
+
+/// You can use this to control the cutoff point for strings 
+/// in the navmenus (list of activities in popup menu etc)
+/// Default is 50 characters wide.
+
+
+$THEME->makenavmenulist = false;
+
+/// By setting this to true, then you will have access to a
+/// new variable in your header.html and footer.html called
+/// $navmenulist ... this contains a simple XHTML menu of 
+/// all activities in the current course, mostly useful for 
+/// creating popup navigation menus and so on.
+
+
 $THEME->resource_mp3player_colors = 
  'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
  'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
@@ -106,19 +152,18 @@ $THEME->custompix = false;
 ////////////////////////////////////////////////////////////////////////////////
 
 
-
-// These colours are not used anymore, so I've set them to 
-// bright green to help identify where they should be removed
-// These lines will be deleted soon
-
-$THEME->body         = "#22FF22";  // Main page color
-$THEME->cellheading  = "#22FF22";  // Standard headings of big tables
-$THEME->cellheading2 = "#22FF22";  // Highlight headings of tables
-$THEME->cellcontent  = "#22FF22";  // For areas with text
-$THEME->cellcontent2 = "#22FF22";  // Alternate colour
-$THEME->borders      = "#22FF22";  // Table borders
-$THEME->highlight    = "#22FF22";  // Highlighted text (eg after a search)
-$THEME->hidden       = "#22FF22";  // To color things that are hidden
-$THEME->autolink     = "#22FF22";  // To color auto-generated links (eg glossary)
+///$THEME->rarrow = '&#x25BA;' //OR '&rarr;';
+///$THEME->larrow = '&#x25C4;' //OR '&larr;';
+///$CFG->block_search_button = link_arrow_right(get_string('search'), $url='', $accesshide=true);
+///
+/// Accessibility: Right and left arrow-like characters are
+/// used in the breadcrumb trail, course navigation menu 
+/// (previous/next activity), calendar, and search forum block.
+///
+/// If the theme does not set characters, appropriate defaults
+/// are set by (lib/weblib.php:check_theme_arrows). The suggestions
+/// above are 'silent' in a screen-reader like JAWS. Please DO NOT
+/// use &lt; &gt; &raquo; - these are confusing for blind users.
+////////////////////////////////////////////////////////////////////////////////
 
 ?>

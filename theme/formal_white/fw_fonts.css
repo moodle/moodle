@@ -4,7 +4,7 @@
   font-size:1px;
 }
 
-body, td, li {
+body, td, li, input, select {
     font-family: Arial, Helvetica, sans-serif;
     font-size : 13px;
 }
@@ -124,6 +124,11 @@ table.minicalendar tr td {
  ***/
   
 #course-view .section .left {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.coursebox .info .name {
   font-weight: bold;
   font-size: 1.2em;
 }
