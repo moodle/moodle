@@ -40,7 +40,7 @@ if ($context->contextlevel == CONTEXT_SYSTEM or $context->contextlevel == CONTEX
     require_login();
     admin_externalpage_setup('letters');
     $admin = true;
-    $returnurl = "$CFG->wwwroot/$CFG->admin";
+    $returnurl = "$CFG->wwwroot/grade/edit/letter/edit.php"; // stay in the same page
 
 
 } else if ($context->contextlevel == CONTEXT_COURSE) {
@@ -81,7 +81,7 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data()) {
-    if (empty($data->override)) {
+    if (!$admin and empty($data->override)) {
         delete_records('grade_letters', 'contextid', $context->id);
         redirect($returnurl);
     }
