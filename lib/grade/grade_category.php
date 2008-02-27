@@ -315,7 +315,7 @@ class grade_category extends grade_object {
      */
     function insert_course_category($courseid) {
         $this->courseid    = $courseid;
-        $this->fullname    = get_string('coursegradecategory', 'grades');
+        $this->fullname    = '?';
         $this->path        = null;
         $this->parent      = null;
         $this->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN2;
@@ -995,7 +995,8 @@ class grade_category extends grade_object {
      * @return string name
      */
     function get_name() {
-        if (empty($this->parent)) {
+        // For a course category, we return the course name if the fullname is set to '?' in the DB (empty in the category edit form)
+        if (empty($this->parent) && $this->fullname == '?') {
             $course = get_record('course', 'id', $this->courseid);
             return format_string($course->fullname);
         } else {

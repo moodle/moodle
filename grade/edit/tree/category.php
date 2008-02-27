@@ -75,6 +75,11 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data(false)) {
+    // If no fullname is entered for a course category, put ? in the DB
+    if (!isset($data->fullname) || $data->fullname == '') {
+        $data->fullname = '?';
+    }
+
     if (!isset($data->aggregateonlygraded)) {
         $data->aggregateonlygraded = 0;
     }
