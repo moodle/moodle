@@ -714,6 +714,9 @@ class HTTP_WebDAV_Server
              collections end in a slash, this should be done in here
              by checking the resource attribute */
             $href = $this->_mergePathes($this->_SERVER['SCRIPT_NAME'], $path);
+
+            /* minimal urlencoding is needed for the resource path */
+            $href = $this->_urlencode($href);
         
             echo "  <D:href>$href</D:href>\n";
         
@@ -2008,7 +2011,7 @@ class HTTP_WebDAV_Server
     /**
      * private minimalistic version of PHP urlencode()
      *
-     * only blanks and XML special chars must be encoded here
+     * only blanks, percent and XML special chars must be encoded here
      * full urlencode() encoding confuses some clients ...
      *
      * @param  string  URL to encode
@@ -2017,6 +2020,7 @@ class HTTP_WebDAV_Server
     function _urlencode($url) 
     {
         return strtr($url, array(" "=>"%20",
+                                 "%"=>"%25",
                                  "&"=>"%26",
                                  "<"=>"%3C",
                                  ">"=>"%3E",
