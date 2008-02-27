@@ -1318,7 +1318,7 @@ class assignment_base {
             echo '<label for="mailinfo">'.get_string('enableemailnotification','assignment').'</label>';
             echo '<input type="hidden" name="mailinfo" value="0" />';
             echo '<input type="checkbox" id="mailinfo" name="mailinfo" value="1" '.$lastmailinfo.' />';
-            helpbutton('enableemailnotification', get_string('enableemailnotification', 'assignment'), 'assignment').'</p></div>';
+            helpbutton('emailnotification', get_string('enableemailnotification', 'assignment'), 'assignment').'</p></div>';
             echo '</div>';
             echo '<div class="fastgbutton"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
             echo '</div>';
