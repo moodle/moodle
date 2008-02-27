@@ -133,6 +133,15 @@ table.minicalendar tr td {
   font-size: 1.2em;
 }
 
+span.arrow {
+  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+
+p.arrow_button input {
+  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+
+
 /*Accessibility: resizable icons. */
 img.resize {
   width: 1em;
