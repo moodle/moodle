@@ -63,6 +63,7 @@ $string['categoryedit'] = 'Edit category';
 $string['categoryname'] = 'Category name';
 $string['categorytotal'] = 'Category total';
 $string['changereportdefaults'] = 'Change report defaults';
+$string['changedefaults'] = 'Change defaults';
 $string['choosecategory'] = 'Select category';
 $string['chooseaction'] = 'Choose an action ...';
 $string['compact'] = 'Compact';

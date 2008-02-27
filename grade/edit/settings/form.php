@@ -35,8 +35,40 @@ class course_settings_form extends moodleform {
         global $USER, $CFG;
 
         $mform =& $this->_form;
+        
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $can_view_admin_links = false;
+        if (has_capability('moodle/grade:manage', $systemcontext)) {
+            $can_view_admin_links = true;
+        }
 
-        $mform->addElement('header', 'general', get_string('settings', 'grades'));
+        // General settings
+        $strchangedefaults = get_string('changedefaults', 'grades');
+        $mform->addElement('header', 'general', get_string('generalsettings', 'grades'));
+        if ($can_view_admin_links) {
+            $link = '<a href="' . $CFG->wwwroot . '/admin/settings.php?section=gradessettings">' . $strchangedefaults . '</a>';
+            $mform->addElement('static', 'generalsettingslink', $link);
+        }
+        $options = array(-1                                      => get_string('default', 'grades'),
+                         GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
+                         GRADE_REPORT_AGGREGATION_POSITION_LAST  => get_string('positionlast', 'grades'));
+        $default_gradedisplaytype = $CFG->grade_aggregationposition;
+        foreach ($options as $key=>$option) {
+            if ($key == $default_gradedisplaytype) {
+                $options[-1] = get_string('defaultprev', 'grades', $option);
+                break;
+            }
+        }
+        $mform->addElement('select', 'aggregationposition', get_string('aggregationposition', 'grades'), $options);
+        $mform->setHelpButton('aggregationposition', array(false, get_string('aggregationposition', 'grades'),
+                              false, true, false, get_string('configaggregationposition', 'grades')));
+
+        // Grade item settings
+        $mform->addElement('header', 'grade_item_settings', get_string('gradeitemsettings', 'grades'));
+        if ($can_view_admin_links) {
+            $link = '<a href="' . $CFG->wwwroot . '/admin/settings.php?section=gradesitemsettings">' . $strchangedefaults . '</a>';
+            $mform->addElement('static', 'gradeitemsettingslink', $link);
+        }
 
         $options = array(-1                            => get_string('default', 'grades'),
                          GRADE_DISPLAY_TYPE_REAL       => get_string('real', 'grades'),
@@ -59,20 +91,6 @@ class course_settings_form extends moodleform {
         $mform->setHelpButton('decimalpoints', array(false, get_string('decimalpoints', 'grades'),
                               false, true, false, get_string('configdecimalpoints', 'grades')));
 
-        $options = array(-1                                      => get_string('default', 'grades'),
-                         GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
-                         GRADE_REPORT_AGGREGATION_POSITION_LAST  => get_string('positionlast', 'grades'));
-        $default_gradedisplaytype = $CFG->grade_aggregationposition;
-        foreach ($options as $key=>$option) {
-            if ($key == $default_gradedisplaytype) {
-                $options[-1] = get_string('defaultprev', 'grades', $option);
-                break;
-            }
-        }
-        $mform->addElement('select', 'aggregationposition', get_string('aggregationposition', 'grades'), $options);
-        $mform->setHelpButton('aggregationposition', array(false, get_string('aggregationposition', 'grades'),
-                              false, true, false, get_string('configaggregationposition', 'grades')));
-
 // add setting options for plugins
         $types = array('report', 'export', 'import');
 
@@ -84,6 +102,10 @@ class course_settings_form extends moodleform {
                     $functionname = 'grade_'.$type.'_'.$plugin.'_settings_definition';
                     if (function_exists($functionname)) {
                         $mform->addElement('header', 'grade_'.$type.$plugin, get_string('modulename', 'grade'.$type.'_'.$plugin, NULL, $CFG->dirroot.'/grade/'.$type.'/'.$plugin.'/lang/'));
+                        if ($can_view_admin_links) {
+                            $link = '<a href="' . $CFG->wwwroot . '/admin/settings.php?section=gradereport' . $plugin . '">' . $strchangedefaults . '</a>';
+                            $mform->addElement('static', 'gradeitemsettingslink', $link);
+                        }    
                         $functionname($mform);
                     }
                 }
