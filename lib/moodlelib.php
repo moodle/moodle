@@ -770,6 +770,27 @@ function get_cache_flags($type, $changedsince=NULL) {
     return $cf;
 }
 
+/**
+ * Get volatile flags
+ *
+ * @param string $type
+ * @param string $name
+ * @param int    $changedsince
+ * @return records array
+ *
+ */
+function get_cache_flag($type, $name, $changedsince=NULL) {
+
+    $type = addslashes($type);
+    $name = addslashes($name);
+
+    $sqlwhere = 'flagtype=\'' . $type . '\' AND name=\'' . $name . '\' AND expiry >= ' . time();
+    if ($changedsince !== NULL) {
+        $changedsince = (int)$changedsince;
+        $sqlwhere .= ' AND timemodified > ' . $changedsince;
+    }
+    return get_field_select('cache_flags', 'value', $sqlwhere);
+}
 
 /**
  * Set a volatile flag
