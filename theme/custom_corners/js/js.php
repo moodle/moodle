@@ -1,15 +1,14 @@
-<script src="<?php echo $CFG->httpsthemewww ?>/custom_corners/js/CSSClass_min.js" type="text/javascript"></script>
-
 <script type="text/javascript" charset="utf-8">
 /* <![CDATA[ */
+    var CSSClass={};CSSClass.is=function(e,c){if(typeof e=="string")e=document.getElementById(e);var classes=e.className;if(!classes)return false;if(classes==c)return true;return e.className.search("\\b"+c+"\\b")!=-1;};CSSClass.add=function(e,c){if(typeof e=="string")e=document.getElementById(e);if(CSSClass.is(e,c))return;if(e.className)c=" "+c;e.className+=c;};CSSClass.remove=function(e,c){if(typeof e=="string")e=document.getElementById(e);e.className=e.className.replace(new RegExp("\\b"+c+"\\b\\s*","g"),"");};
+    
     var script = {
-        
         corrections: function () {
             if (top.user) {
                 top.document.getElementsByTagName('frameset')[0].rows = "117,30%,0,200";
             }
             
-            // check for layouttabel and add haslayouttable class to body
+            // check for layouttabel and add layouttable classes to body
             var tagname = 'nolayouttable';
             if (document.getElementById('middle-column')) {
                 var lc = document.getElementById('left-column');

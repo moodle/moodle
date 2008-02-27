@@ -1,32 +1,17 @@
 <h3>"Custom corners", the Moodle theme with graphics for transparent custom corners and borders.</h3>
 
-<p>Custom corners use the technique from Roger Johansson. He describes how to build the graphices on his page "<a href="http://www.456bereastreet.com/archive/200506/customising_custom_corners_and_borders/">customising_custom_corners_and_borders</a>"</p>
-
-<p>The Moodle implementation does not use JavaScript as described in Roger Johansson's documentation. Moodle adds all neccessary divs to the pages when the option "$THEME->customcorners = true;" is set in config.php.</p>
-
-<h4>
-    Some basic information:
-</h4>
-
 <p>
-    Custom_corners uses the Chameleon engine. 
-    You must <strong>not</strong> write hooks as comma separated lists of elements like 
-<pre>
-td#middle-column div.bt, 
-div#middle-column div.bt {
-    ...
-}
-</pre>
-    in Chameleon enhanced themes because the Chameleon engine can't handle these comma lists. 
-    Please write two seperate statements instead.
-<pre>
-td#middle-column div.bt {
-    ...
-}
-div#middle-column div.bt {
-    ...
-}
-</pre>
+    This theme contains graphics for customising corners and borders. It makes use of a technique described by 
+    Roger Johansson - see
+    "<a href="http://www.456bereastreet.com/archive/200506/customising_custom_corners_and_borders/">customising_custom_corners_and_borders</a>"
+    However, the custom corners theme doesn't use all the JavaScript mentioned by Roger Johansson. 
+    Instead, divs are added when "$THEME->customcorners = true;" is set in config.php.
 </p>
 
-<p>A Moodle Theme from <strong>Urs Hunkler, <a href="http://www.unodo.de">unodo</a></strong>.</p>
+<p>
+    Note: Custom corners is included in Moodle 1.9 as an experimental feature. 
+</p>
+
+<p>
+    Custom corners was created by <strong>Urs Hunkler, <a href="http://www.unodo.de">unodo</a></strong>.
+</p>
