@@ -808,8 +808,7 @@ class grade_structure {
                     if ($element['object']->is_outcome_item()) {
                         return '<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon itemicon" alt="'.get_string('outcome', 'grades').'"/>';
                     } else {
-                        //TODO: add better icon
-                        return '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon itemicon" alt="'.get_string('manualitem', 'grades').'"/>';
+                        return '<img src="'.$CFG->pixpath.'/t/manual_item.gif" class="icon itemicon" alt="'.get_string('manualitem', 'grades').'"/>';
                     }
                 }
                 break;
