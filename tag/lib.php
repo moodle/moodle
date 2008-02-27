@@ -641,7 +641,6 @@ function tag_compute_correlations($min_correlation=2) {
     global $CFG;
 
     $all_tags = get_records_list('tag');
-    
 
     $tag_correlation_obj = new object();
     foreach($all_tags as $tag) {
@@ -653,7 +652,7 @@ function tag_compute_correlations($min_correlation=2) {
             "WHERE ta.tagid = {$tag->id} AND tb.tagid != {$tag->id} ".
             "GROUP BY tb.tagid ".
             "HAVING nr > $min_correlation ".
-            "ORDER BY nr DESC";  // todo: find out if it's necessary to order.
+            "ORDER BY nr DESC";  
 
         $correlated = array();
 
@@ -661,11 +660,15 @@ function tag_compute_correlations($min_correlation=2) {
         // than $min_correlation.
         if ($tag_correlations = get_records_sql($query)) {
             foreach($tag_correlations as $correlation) {
-        //      commented out - now done in query. kept here in case it breaks on some db
-        //        if($correlation->nr >= $min_correlation){
+            // commented out - now done in query. kept here in case it breaks on some db
+            // if($correlation->nr >= $min_correlation){
                     $correlated[] = $correlation->tagid;
-        //        }
+            // }
             }
+        }
+
+        if (empty($correlated)) {
+            continue;
         }
 
         $correlated = implode(',', $correlated);
