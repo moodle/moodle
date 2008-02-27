@@ -197,7 +197,10 @@ global $HTTPSPAGEREQUIRED;
     require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions
     require_once($CFG->libdir .'/eventslib.php');       // Events functions
     require_once($CFG->libdir .'/grouplib.php');        // Groups functions
-    
+
+/// We use include some PEAR libs
+    ini_set("include_path", ini_get("include_path"). PATH_SEPARATOR . $CFG->libdir.'/pear');
+
 /// Disable errors for now - needed for installation when debug enabled in config.php
     if (isset($CFG->debug)) {
         $originalconfigdebug = $CFG->debug;
