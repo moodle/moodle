@@ -129,7 +129,7 @@ function upgrade_18_gradebook($courseid) {
     // create course category
     $course_category = new object();
     $course_category->courseid     = $courseid;
-    $course_category->fullname     = get_string('coursegradecategory', 'grades');
+    $course_category->fullname     = '?';
     $course_category->parent       = null;
     $course_category->aggregation  = GRADE_AGGREGATE_WEIGHTED_MEAN2;
     $course_category->timemodified = $course_category->timecreated = time();
