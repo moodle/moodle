@@ -81,7 +81,7 @@ function tag_cloud_sort($a, $b) {
     global $CFG;
 
     if (empty($CFG->tagsort)) {
-        return 0;
+        $tagsort = 'name'; // by default, sort by name
     } else {
         $tagsort = $CFG->tagsort;
     }
