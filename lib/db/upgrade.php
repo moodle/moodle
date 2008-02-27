@@ -2889,6 +2889,39 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101508.06);
     }
 
+    if ($result && $oldversion < 2007101508.07) {
+
+    /// Define table webdav_locks to be created
+        $table = new XMLDBTable('webdav_locks');
+
+    /// Adding fields to table webdav_locks
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('token', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('path', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('expiry', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('recursive', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('exclusivelock', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('created', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('modified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('owner', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+
+    /// Adding keys to table webdav_locks
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('token', XMLDB_KEY_UNIQUE, array('token'));
+
+    /// Adding indexes to table webdav_locks
+        $table->addIndexInfo('path', XMLDB_INDEX_NOTUNIQUE, array('path'));
+        $table->addIndexInfo('expiry', XMLDB_INDEX_NOTUNIQUE, array('expiry'));
+
+    /// Launch create table for webdav_locks
+        $result = $result && create_table($table);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101508.07);
+    }
+
+
 
     return $result;
 }
