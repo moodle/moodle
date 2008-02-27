@@ -394,6 +394,7 @@ function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
             $tags_names[] = '<a href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'">'. tag_display_name($tag) .'</a>';
         }
     }
+
     return implode(', ', $tags_names);
 }
 
@@ -783,19 +784,14 @@ function tag_get_correlated($tag_id, $limitnum=null) {
     if (!$tag_correlation || empty($tag_correlation->correlatedtags)) {
         return array();
     }
-
+     
     // this is (and has to) return the same fields as the query in tag_get_tags
-    if (!$result = get_records_sql("SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
-        "FROM {$CFG->prefix}tag_instance ti INNER JOIN {$CFG->prefix}tag tg ON tg.id = ti.tagid ".
-        "WHERE ti.itemtype = 'tag' AND ti.itemid IN ({$tag_correlation->correlatedtags}) ".
-        "ORDER BY ti.ordering ASC")) {
+    if ( !$result = get_records_sql("SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
+        "FROM {$CFG->prefix}tag tg INNER JOIN {$CFG->prefix}tag_instance ti ON tg.id = ti.tagid ".
+        "WHERE tg.id IN ({$tag_correlation->correlatedtags})") ) {
         return array();
     }
   
-    //if (!$result = get_records_select('tag', "id IN ({$tag_correlation->correlatedtags})", '', '*', 0, $limitnum)) {
-    //    return array();
-    //}
-
     return $result;
 }
 
