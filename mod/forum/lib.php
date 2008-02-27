@@ -4052,10 +4052,11 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
 
     if ($forum->type == 'qanda') {
         $firstpost = forum_get_firstpost_from_discussion($discussion->id);
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         return (forum_user_has_posted($forum->id,$discussion->id,$user->id) ||
                 $firstpost->id == $post->id ||
-                has_capability('mod/forum:viewqandawithoutposting', $modcontext, false, $user->id));
+                has_capability('mod/forum:viewqandawithoutposting', $modcontext, $user->id, false));
     }
     return true;
 }
