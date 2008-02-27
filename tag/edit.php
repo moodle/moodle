@@ -56,11 +56,7 @@ if ($tagnew = $tagform->get_data()) {
     } else {  // They might be trying to change the rawname, make sure it's a change that doesn't affect name
         $tagnew->name = array_shift(tag_normalize($tagnew->rawname, TAG_CASE_LOWER));
 
-        if (!$tagold = tag_get_tag_by_id($tag_id)) {  // For doing checks
-            error('Error finding tag record');
-        }
-
-        if ($tagold->name != $tagnew->name) {  // The name has changed, let's make sure it's not another existing tag
+        if ($tag->name != $tagnew->name) {  // The name has changed, let's make sure it's not another existing tag
             if (tag_get_id($tagnew->name)) {   // Something exists already, so flag an error
                 $errorstring = s($tagnew->rawname).': '.get_string('namesalreadybeeingused', 'tag');
             }
@@ -68,10 +64,11 @@ if ($tagnew = $tagform->get_data()) {
     }
 
     if (empty($errorstring)) {    // All is OK, let's save it
+
         $tagnew->timemodified = time();
 
         // rename tag if needed
-        if (tag_rename($tag_id, $tagnew->rawname)) {
+        if (!tag_rename($tag->id, $tagnew->rawname)) {
             error('Error updating tag record');
         }
     

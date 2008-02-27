@@ -156,6 +156,21 @@ function tag_find_records($tag, $type, $limitfrom='', $limitnum='') {
     return get_records_sql($query, $limitfrom, $limitnum); 
 }
 
+
+/**
+ * Simple function to just return a single tag object
+ *
+ * @param string $field which field do we use to identify the tag: id, name or rawname
+ * @param string $value the required value of the aforementioned field
+ * @param string $returnfields which fields do we want returned?
+ * @return tag object
+ *
+ **/
+function tag_get($field, $value, $returnfields='id, name, rawname') {
+    return get_record('tag', $field, $value, '', '', '', '', $returnfields);
+}
+
+
 /**
  * Get the array of db record of tags associated to a record (instances).  Use 
  * tag_get_tags_csv to get the same information in a comma-separated string.
@@ -321,9 +336,7 @@ function tag_get_id($tags, $return_value=null) {
  * @return object a line returned from get_recordset_sql, or false
  */
 function tag_get_tag_by_id($tagid) {
-    global $CFG;
-    $rs = get_recordset_sql("SELECT * FROM {$CFG->prefix}tag WHERE id = $tagid");
-    return rs_fetch_next_record($rs);
+    return get_record('tag', 'id', $tagid);
 }
 
 /**
@@ -393,20 +406,24 @@ function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
  */
 function tag_rename($tagid, $newrawname) {
 
-    // prevent renaming to an invalid name
     if (! $newrawname_clean = array_shift(tag_normalize($newrawname, TAG_CASE_ORIGINAL)) ) {
         return false;
     }
 
-    $current_tag = tag_get_id($newtag_clean, TAG_RETURN_OBJECT);
-    if ($current_tag && ($current_tag->rawname == $newrawname_clean)) {
-        // 'newrawname' is already in use and merging tags is not supported.
-        return false; 
+    if (! $newname_clean = moodle_strtolower($newrawname_clean)) {
+        return false;
     }
 
-    if ($tag = get_record('tag', 'id', $tagid, '', '', '', '', 'id')) {
+    // Prevent the rename if a tag with that name already exists
+    if ($existing = tag_get('name', $newname_clean, 'id, name, rawname')) {
+        if ($existing->id != $tagid) {  // Another tag already exists with this name
+            return false; 
+        }
+    }
+
+    if ($tag = tag_get('id', $tagid, 'id, name, rawname')) {
         $tag->rawname = addslashes($newrawname_clean); 
-        $tag->name = addslashes(moodle_strtolower($newrawname_clean)); 
+        $tag->name = addslashes($newname_clean); 
         $tag->timemodified = time();
         return update_record('tag', $tag);
     }
