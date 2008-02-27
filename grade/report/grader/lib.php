@@ -418,6 +418,10 @@ class grade_report_grader extends grade_report {
                 $html .= $this->print_toggle('locks', true);
             }
             if (has_capability('moodle/grade:manage', $this->context)) {
+                $html .= $this->print_toggle('quickfeedback', true);
+            }
+
+            if (has_capability('moodle/grade:manage', $this->context)) {
                 $html .= $this->print_toggle('calculations', true);
             }
         }
@@ -453,6 +457,7 @@ class grade_report_grader extends grade_report {
                        'calculations' => 't/calc.gif',
                        'locks' => 't/lock.gif',
                        'averages' => 't/mean.gif',
+                       'quickfeedback' => 't/feedback.gif',
                        'nooutcomes' => 't/outcomes.gif');
 
         $pref_name = 'grade_report_show' . $type;
@@ -845,7 +850,7 @@ class grade_report_grader extends grade_report {
 
 
                     // If quickfeedback is on, print an input element
-                    if ($this->get_pref('quickfeedback') and $grade->is_editable()) {
+                    if ($this->get_pref('showquickfeedback') and $grade->is_editable()) {
                         if ($this->get_pref('quickgrading')) {
                             $studentshtml .= '<br />';
                         }
