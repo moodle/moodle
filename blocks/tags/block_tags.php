@@ -61,7 +61,7 @@ class block_tags extends block_base {
 
         require_once($CFG->dirroot.'/tag/lib.php');
 
-        $this->content->text = tag_print_cloud($this->config->numberoftags, false, 170, 70, true);
+        $this->content->text = tag_print_cloud($this->config->numberoftags, true);
 
         return $this->content;
     }
