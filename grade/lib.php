@@ -1096,8 +1096,7 @@ class grade_structure {
             $streditcalculation = get_string('editcalculationverbose', 'grades', $strparams);
 
             // show calculation icon only when calculation possible
-            if ((!$object->is_external_item() or $object->is_outcome_item())
-              and ($object->gradetype == GRADE_TYPE_SCALE or $object->gradetype == GRADE_TYPE_VALUE)) {
+            if (!$object->is_external_item() and ($object->gradetype == GRADE_TYPE_SCALE or $object->gradetype == GRADE_TYPE_VALUE)) {
                 if ($object->is_calculated()) {
                     $icon = 'calc.gif';
                 } else {

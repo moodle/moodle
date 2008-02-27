@@ -49,9 +49,8 @@ if (!$grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$course->id)))
     error('Incorect item id');
 }
 
-// module items and items without grade can not have calculation
-if (($grade_item->is_external_item() and !$grade_item->is_outcome_item())
-  or ($grade_item->gradetype != GRADE_TYPE_VALUE and $grade_item->gradetype != GRADE_TYPE_SCALE)) {
+// activity items and items without grade can not have calculation
+if ($grade_item->is_external_item() or ($grade_item->gradetype != GRADE_TYPE_VALUE and $grade_item->gradetype != GRADE_TYPE_SCALE)) {
     redirect($returnurl, get_string('errornocalculationallowed', 'grades')); 
 }
 
