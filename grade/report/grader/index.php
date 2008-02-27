@@ -189,7 +189,7 @@ if ($USER->gradeediting[$course->id]) {
 echo $reporthtml;
 
 // print submit button
-if ($USER->gradeediting[$course->id] && ($report->get_pref('quickfeedback') || $report->get_pref('quickgrading'))) {
+if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') || $report->get_pref('quickgrading'))) {
     echo '<div class="submit"><input type="submit" value="'.get_string('update').'" /></div>';
     echo '</div></form>';
 }
