@@ -1567,6 +1567,22 @@ class grade_item extends grade_object {
             return true; // no need to recalculate locked items
         }
 
+        // precreate grades - we need them to exist
+        $sql = "SELECT DISTINCT go.userid
+                  FROM {$CFG->prefix}grade_grades go
+                       JOIN {$CFG->prefix}grade_items gi
+                       ON gi.id = go.itemid
+                       LEFT OUTER JOIN {$CFG->prefix}grade_grades g
+                       ON (g.userid = go.userid AND g.itemid = $this->id)
+                 WHERE gi.id <> $this->id AND g.id IS NULL";
+        if ($missing = get_records_sql($sql)) {
+            foreach ($missing as $m) {
+                $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$m->userid), false);
+                $grade->grade_item =& $this;
+                $grade->insert('system');
+            }
+        }
+
         // get used items
         $useditems = $this->depends_on();
 
