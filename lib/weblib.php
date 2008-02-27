@@ -5734,6 +5734,23 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
                  get_string('moreinformation').'</a></p>';
     error($message, $link);
 }
+
+/**
+ * Print an error to STDOUT and exit with a non-zero code. For commandline scripts.
+ * Default errorcode is 1.
+ *
+ * Very useful for perl-like error-handling:
+ * 
+ * do_somethting() or mdie("Something went wrong");
+ *
+ * @param string  $msg       Error message
+ * @param integer $errorcode Error code to emit 
+ */
+function mdie($msg='', $errorcode=1) {
+    trigger_error($msg);
+    exit($errorcode);
+}
+
 /**
  * Returns a string of html with an image of a help icon linked to a help page on a number of help topics.
  * Should be used only with htmleditor or textarea.
