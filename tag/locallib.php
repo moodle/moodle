@@ -105,8 +105,10 @@ function tag_print_description_box($tag_object, $return=false) {
 
     global $USER, $CFG;
 
+    $max_tags_displayed = 10; // todo: turn this into a system setting
+
     $tagname  = tag_display_name($tag_object);
-    $related_tags = tag_get_related_tags($tag_object->id);
+    $related_tags = tag_get_related_tags($tag_object->id, TAG_RELATED_ALL, $max_tags_displayed+1); // this gets one more than we want
 
     $content = !empty($tag_object->description) || $related_tags;
     $output = '';
@@ -122,7 +124,15 @@ function tag_print_description_box($tag_object, $return=false) {
     }
 
     if ($related_tags) {
+        $more_links = false;
+        if (count($related_tags) > $max_tags_displayed) {
+            array_pop($related_tags);
+            $more_links = true;
+        }
         $output .= '<br /><br /><strong>'. get_string('relatedtags', 'tag') .': </strong>'. tag_get_related_tags_csv($related_tags);
+        if ($more_links) {
+            $output .= ' ...';
+        }
     }
 
     if ($content) {

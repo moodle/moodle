@@ -104,6 +104,24 @@ function tag_delete_instance($record, $tagid) {
     }
 }
 
+/** 
+ * Set the description of a tag
+ * 
+ * @param int $tagid the id of the tag
+ * @param string $description the description
+ * @param int $descriptionformat the moodle text format of the description
+ * @return true on success, false otherwise 
+ */
+function tag_description_set($tagid, $description, $descriptionformat) {
+    if ($tag = get_record('tag', 'id', $tagid, '', '', '', '', 'id')) {
+        $tag->description = addslashes($description);
+        $tag->descriptionformat = addslashes($descriptionformat);
+        $tag->timemodified = time();
+        return update_record('tag', $tag);
+    }
+    return false;
+}
+
 /**
  * Function that returns the name that should be displayed for a specific tag
  *
@@ -394,6 +412,7 @@ function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
             $tags_names[] = '<a href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'">'. tag_display_name($tag) .'</a>';
         }
     }
+
     return implode(', ', $tags_names);
 }
 
@@ -594,7 +613,7 @@ function tag_add($tags, $type="default") {
             // capitalization : the rawname is NOT the same at the rawtag. 
             $tag_object->rawname = addslashes($tag); 
             $tag_name_lc = moodle_strtolower($tag);
-            $tag_object->name = addslashes($tag_name_lc); 
+            $tag_object->name = addslashes($tag_name_lc);
             //var_dump($tag_object);
             $tags_ids[$tag_name_lc] = insert_record('tag', $tag_object);
         }
@@ -783,19 +802,14 @@ function tag_get_correlated($tag_id, $limitnum=null) {
     if (!$tag_correlation || empty($tag_correlation->correlatedtags)) {
         return array();
     }
-
+     
     // this is (and has to) return the same fields as the query in tag_get_tags
-    if (!$result = get_records_sql("SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
-        "FROM {$CFG->prefix}tag_instance ti INNER JOIN {$CFG->prefix}tag tg ON tg.id = ti.tagid ".
-        "WHERE ti.itemtype = 'tag' AND ti.itemid IN ({$tag_correlation->correlatedtags}) ".
-        "ORDER BY ti.ordering ASC")) {
+    if ( !$result = get_records_sql("SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
+        "FROM {$CFG->prefix}tag tg INNER JOIN {$CFG->prefix}tag_instance ti ON tg.id = ti.tagid ".
+        "WHERE tg.id IN ({$tag_correlation->correlatedtags})") ) {
         return array();
     }
   
-    //if (!$result = get_records_select('tag', "id IN ({$tag_correlation->correlatedtags})", '', '*', 0, $limitnum)) {
-    //    return array();
-    //}
-
     return $result;
 }
 
