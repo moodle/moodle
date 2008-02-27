@@ -114,7 +114,7 @@ class grade_report_grader extends grade_report {
 
         // if user report preference set or site report setting set use it, otherwise use course or site setting
         $switch = $this->get_pref('aggregationposition');
-        if (empty($switch)) {
+        if ($switch == '') {
             $switch = grade_get_setting($this->courseid, 'aggregationposition', $CFG->grade_aggregationposition);
         }
 

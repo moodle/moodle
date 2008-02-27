@@ -153,8 +153,14 @@ class grader_report_preferences_form extends moodleform {
                     $type = 'select';
                     // MDL-11478
                     // get default aggregationposition from grade_settings
+                    $course_value = grade_get_setting($course->id, $pref, $CFG->{$full_pref});
+                    
                     if ($pref == 'aggregationposition') {
-                        $default = $options[grade_get_setting($course->id, $pref, $CFG->{$full_pref})];
+                        if (!empty($options[$course_value])) {
+                            $default = $options[$course_value];
+                        } else {
+                            $default = $options[$CFG->grade_aggregationposition];
+                        }
                     } elseif (isset($options[$CFG->{$full_pref}])) {
                         $default = $options[$CFG->{$full_pref}];
                     } else {
