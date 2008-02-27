@@ -3059,8 +3059,10 @@ function authenticate_user_login($username, $password) {
             }
         }
 
+        if ($user->id===0) {
+            return false;
+        }
         return $user;
-
     }
 
     // failed if all the plugins have failed
