@@ -13,12 +13,9 @@
  * Prints a tag cloud
  *
  * @param array $tagcloud array of tag objects (fields: id, name, rawname, count and flag)
- * @param boolean $shuffle wether or not to shuffle the array passed
- * @param int $max_size maximum text size, in percentage
- * @param int $min_size minimum text size, in percentage
  * @param $return if true return html string
  */
-function tag_print_cloud($nr_of_tags=150, $max_size=170, $min_size=70, $return=false) {
+function tag_print_cloud($nr_of_tags=150, $return=false) {
 
     global $CFG;
     
