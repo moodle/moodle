@@ -1332,7 +1332,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     if (!isset($groupings)) {
                         $groupings = groups_get_all_groupings($course->id);
                     }
-                    echo " <span class=\"groupinglabel\"> - ".format_string($groupings[$mod->groupingid]->name).'</span>';
+                    echo " <span class=\"groupinglabel\">(".format_string($groupings[$mod->groupingid]->name).')</span>';
                 }
 
             } else { // Normal activity
@@ -1377,7 +1377,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     if (!isset($groupings)) {
                         $groupings = groups_get_all_groupings($course->id);
                     }
-                    echo " <span class=\"groupinglabel\"> - ".format_string($groupings[$mod->groupingid]->name).'</span>';
+                    echo " <span class=\"groupinglabel\">(".format_string($groupings[$mod->groupingid]->name).')</span>';
                 }
             }
             if ($usetracking && $mod->modname == 'forum') {
