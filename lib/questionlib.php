@@ -102,19 +102,11 @@ define('QUESTION_FILEMOVELINKSONLY', 4);
 /// QTYPES INITIATION //////////////////
 // These variables get initialised via calls to question_register_questiontype
 // as the question type classes are included.
-global $QTYPES, $QTYPE_MENU, $QTYPE_MANUAL, $QTYPE_EXCLUDE_FROM_RANDOM;
+global $QTYPES, $QTYPE_MANUAL, $QTYPE_EXCLUDE_FROM_RANDOM;
 /**
  * Array holding question type objects
  */
 $QTYPES = array();
-/**
- * Array of question types names translated to the user's language
- *
- * The $QTYPE_MENU array holds the names of all the question types that the user should
- * be able to create directly. Some internal question types like random questions are excluded.
- * The complete list of question types can be found in {@link $QTYPES}.
- */
-$QTYPE_MENU = array();
 /**
  * String in the format "'type1','type2'" that can be used in SQL clauses like
  * "WHERE q.type IN ($QTYPE_MANUAL)".
@@ -132,14 +124,10 @@ $QTYPE_EXCLUDE_FROM_RANDOM = '';
  * @param object $qtype An instance of the new question type class.
  */
 function question_register_questiontype($qtype) {
-    global $QTYPES, $QTYPE_MENU, $QTYPE_MANUAL, $QTYPE_EXCLUDE_FROM_RANDOM;
+    global $QTYPES, $QTYPE_MANUAL, $QTYPE_EXCLUDE_FROM_RANDOM;
 
     $name = $qtype->name();
     $QTYPES[$name] = $qtype;
-    $menuname = $qtype->menu_name();
-    if ($menuname) {
-        $QTYPE_MENU[$name] = $menuname;
-    }
     if ($qtype->is_manual_graded()) {
         if ($QTYPE_MANUAL) {
             $QTYPE_MANUAL .= ',';
@@ -168,6 +156,31 @@ foreach($qtypenames as $qtypename) {
     if (is_readable($qtypefilepath)) {
         require_once($qtypefilepath);
     }
+}
+
+/**
+ * An array of question type names translated to the user's language, suitable for use when
+ * creating a drop-down menu of options.
+ *
+ * Long-time Moodle programmers will realise that this replaces the old $QTYPE_MENU array.
+ * The array returned will only hold the names of all the question types that the user should
+ * be able to create directly. Some internal question types like random questions are excluded.
+ * 
+ * @return array an array of question type names translated to the user's language.
+ */
+function question_type_menu() {
+    global $QTYPES;
+    static $menu_options = null;
+    if (is_null($menu_options)) {
+        $menu_options = array();
+        foreach ($QTYPES as $name => $qtype) {
+            $menuname = $qtype->menu_name();
+            if ($menuname) {
+                $menu_options[$name] = $menuname;
+            }
+        }
+    }
+    return $menu_options;
 }
 
 /// OTHER CLASSES /////////////////////////////////////////////////////////

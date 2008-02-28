@@ -146,12 +146,11 @@ function question_category_form_checkbox($name, $checked) {
 function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
         $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='typename', $sortorderdecoded='qtype, name ASC',
         $showquestiontext = false, $addcontexts = array()) {
-    global $QTYPE_MENU, $USER, $CFG, $THEME, $COURSE;
+    global $USER, $CFG, $THEME, $COURSE;
 
     list($categoryid, $contextid)=  explode(',', $categoryandcontext);
 
-    $qtypemenu = $QTYPE_MENU;
-
+    $qtypemenu = question_type_menu();
 
     $strcategory = get_string("category", "quiz");
     $strquestion = get_string("question", "quiz");
