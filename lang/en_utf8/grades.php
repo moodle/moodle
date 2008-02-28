@@ -340,6 +340,7 @@ $string['noidnumber'] = 'No id number';
 $string['nolettergrade'] = 'No letter grade for';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = 'Received non-numeric value for';
+$string['nonunlockableverbose'] = 'This grade cannot be unlocked until $a->itemname is unlocked.';
 $string['nonweightedpct'] = 'non-weighted %%';
 $string['nooutcome'] = 'No outcome';
 $string['nopublish'] = 'Do not publish';

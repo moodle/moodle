@@ -1033,7 +1033,7 @@ class grade_structure {
     }
 
     /**
-     * Return locking icon for give element
+     * Return locking icon for given element
      * @param object $element
      * @return string
      */
@@ -1043,8 +1043,14 @@ class grade_structure {
         $strparams = $this->get_params_for_iconstr($element);
         $strunlock = get_string('unlockverbose', 'grades', $strparams);
         $strlock = get_string('lockverbose', 'grades', $strparams);
-
-        if ($element['object']->is_locked()) {
+        
+        // Don't allow an unlocking action for a grade whose grade item is locked: just print a state icon
+        if ($element['type'] == 'grade' && $element['object']->grade_item->is_locked()) {
+            $strparamobj = new stdClass();
+            $strparamobj->itemname = $element['object']->grade_item->itemname;
+            $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
+            $action  = '<img src="'.$CFG->pixpath.'/t/unlock_gray.gif" alt="'.$strnonunlockable.'" class="iconsmall" title="'.$strnonunlockable.'"/>'; 
+        } elseif ($element['object']->is_locked()) {
             $icon = 'unlock';
             $tooltip = $strunlock;
 
