@@ -356,52 +356,48 @@
                 }
             }
 
-            // Actually print the start button.
-            if ($buttontext) {
-                $buttontext = htmlspecialchars($buttontext, ENT_QUOTES);
+        // Actually print the start button.
+        if ($buttontext) {
+            $buttontext = htmlspecialchars($buttontext, ENT_QUOTES);
 
-                // Do we need a confirm javascript alert?
-                if ($unfinished) {
-                    $strconfirmstartattempt =  '';
-                } else if ($quiz->timelimit && $quiz->attempts) {
-                    $strconfirmstartattempt = addslashes(get_string('confirmstartattempttimelimit','quiz', $quiz->attempts));
-                } else if ($quiz->timelimit) {
-                    $strconfirmstartattempt = addslashes(get_string('confirmstarttimelimit','quiz'));
-                } else if ($quiz->attempts) {
-                    $strconfirmstartattempt = addslashes(get_string('confirmstartattemptlimit','quiz', $quiz->attempts));
-                } else {
-                    $strconfirmstartattempt =  '';
-                }
+            // Do we need a confirm javascript alert?
+            if ($unfinished) {
+                $strconfirmstartattempt = '';
+            } else if ($quiz->timelimit && $quiz->attempts) {
+                $strconfirmstartattempt = get_string('confirmstartattempttimelimit','quiz', $quiz->attempts);
+            } else if ($quiz->timelimit) {
+                $strconfirmstartattempt = get_string('confirmstarttimelimit','quiz');
+            } else if ($quiz->attempts) {
+                $strconfirmstartattempt = get_string('confirmstartattemptlimit','quiz', $quiz->attempts);
+            } else {
+                $strconfirmstartattempt =  '';
+            }
+            // Determine the URL to use.
+            $attempturl = "attempt.php?id=$cm->id";
 
-                // Prepare options depending on whether the quiz should be a popup.
-                if (!empty($quiz->popup)) {
-                    $window = 'quizpopup';
-                    $windowoptions = "left=0, top=0, height='+window.screen.height+', " .
-                            "width='+window.screen.width+', channelmode=yes, fullscreen=yes, " .
-                            "scrollbars=yes, resizeable=no, directories=no, toolbar=no, " .
-                            "titlebar=no, location=no, status=no, menubar=no";
-                } else {
-                    $window = '_self';
-                    $windowoptions = '';
-                }
-
-                // Determine the URL to use.
-                $attempturl = "attempt.php?id=$cm->id";
+            // Prepare options depending on whether the quiz should be a popup.
+            if (!empty($quiz->popup)) {
+                $window = 'quizpopup';
+                $windowoptions = "left=0, top=0, height='+window.screen.height+', " .
+                        "width='+window.screen.width+', channelmode=yes, fullscreen=yes, " .
+                        "scrollbars=yes, resizeable=no, directories=no, toolbar=no, " .
+                        "titlebar=no, location=no, status=no, menubar=no";
                 if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
                     $attempturl = sid_process_url($attempturl);
                 }
 
-                // TODO eliminate this nasty JavaScript that prints the button.
-?>
-<script type="text/javascript">
-//<![CDATA[
-document.write('<input type="button" value="<?php echo $buttontext ?>" onclick="javascript: <?php
+                echo '<input type="button" value="'.$buttontext.'" onclick="javascript:';
                 if ($strconfirmstartattempt) {
-                    echo "if (confirm(\\'".addslashes_js($strconfirmstartattempt)."\\'))";
+                    $strconfirmstartattempt = addslashes($strconfirmstartattempt);
+                    echo "if (confirm('".addslashes_js($strconfirmstartattempt)."')) ";
                 }
-?> window.open(\'<?php echo $attempturl ?>\', \'<?php echo $window ?>\', \'<?php echo $windowoptions ?>\'); " />');
-//]]>
-</script>
+                echo "window.open('$attempturl','$window','$windowoptions');", '" />';
+            } else {
+                print_single_button("attempt.php", array('id'=>$cm->id), $buttontext, 'get', '', false, '', false, $strconfirmstartattempt);
+            }
+
+
+?>
 <noscript>
 <div>
     <?php print_heading(get_string('noscript', 'quiz')); ?>
