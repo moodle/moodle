@@ -859,6 +859,11 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
     $groups = groups_get_all_groups($course->id, $USER->id);
     if (is_array($groups) && count($groups) > 0) {
         $groups = array_keys($groups);
+    } else if (groups_get_activity_groupmode($cm, $course) != NOGROUPS) {
+        // If the user is not in a group, and the quiz is set to group mode,
+        // then set $gropus to a non-existant id so that only users with
+        // 'moodle/site:accessallgroups' get notified.
+        $groups = -1;
     } else {
         $groups = '';
     }
