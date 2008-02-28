@@ -4464,7 +4464,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
             $viewallgroupsusers = get_users_by_capability($context,
                     'moodle/site:accessallgroups', 'u.id, u.id', '', '', '', '', $exceptions);
             $wherecond['groups'] =  '('. $grouptest . ' OR ra.userid IN (' .
-                                    implode(',', array_keys($viewallgroupsusers)) . ')))';
+                                    implode(',', array_keys($viewallgroupsusers)) . '))';
         } else {
             $wherecond['groups'] =  '(' . $grouptest .')';
         }
