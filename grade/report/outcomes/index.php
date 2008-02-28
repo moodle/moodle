@@ -95,6 +95,11 @@ $html .= '<th class="header c5" scope="col">' . get_string('numberofgrades', 'gr
 $row = 0;
 foreach ($report_info as $outcomeid => $outcomedata) {
     $rowspan = count($outcomedata['items']);
+    // If there are no items for this outcome, rowspan will equal 0, which is not good
+    if ($rowspan == 0) {
+        $rowspan = 1;
+    }
+
     $shortname_html = '<tr class="r' . $row . '"><td class="cell c0" rowspan="' . $rowspan . '">' . $outcomedata['outcome']->shortname . "</td>\n";
 
     $sitewide = get_string('no');
@@ -110,7 +115,7 @@ foreach ($report_info as $outcomeid => $outcomedata) {
     $print_tr = false;
     $items_html = '';
 
-    if (is_array($outcomedata['items'])) {
+    if (!empty($outcomedata['items'])) {
         foreach ($outcomedata['items'] as $itemid => $item) {
             if ($print_tr) {
                 $row++;
