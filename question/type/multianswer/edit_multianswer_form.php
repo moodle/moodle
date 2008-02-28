@@ -17,7 +17,7 @@ class question_edit_multianswer_form extends question_edit_form {
     var $questiondisplay ; 
 
     function definition_inner(&$mform) {
-        global $QTYPE_MENU;
+        $question_type_names = question_type_menu();
         $mform->addRule('questiontext', null, 'required', null, 'client');
         
         // Remove meaningless defaultgrade field.
@@ -49,7 +49,7 @@ class question_edit_multianswer_form extends question_edit_form {
                 $this->editas[$sub] = optional_param('sub_'.$sub."_".'qtype', '', PARAM_RAW);
             }
             $mform->addElement('header', 'subhdr', get_string('questionno', 'quiz',
-                 '{#'.$sub.'}').'&nbsp;'.$QTYPE_MENU[$this->questiondisplay->options->questions[$sub]->qtype]);
+                 '{#'.$sub.'}').'&nbsp;'.$question_type_names[$this->questiondisplay->options->questions[$sub]->qtype]);
 
             $mform->addElement('static', 'sub_'.$sub."_".'questiontext', "subquestiontext",array('cols'=>60, 'rows'=>3));
 

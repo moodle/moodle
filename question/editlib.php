@@ -161,9 +161,9 @@ function question_category_form_checkbox($name, $checked) {
 function question_list($course, $categoryid, $quizid=0,
         $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='qtype, name ASC',
         $showquestiontext = false) {
-    global $QTYPE_MENU, $USER, $CFG, $THEME;
+    global $USER, $CFG, $THEME;
     
-    $qtypemenu = $QTYPE_MENU;
+    $qtypemenu = question_type_menu();
     if ($rqp_types = get_records('question_rqp_types')) {
         foreach($rqp_types as $type) {
             $qtypemenu['rqp_'.$type->id] = $type->name;

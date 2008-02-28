@@ -99,14 +99,6 @@ global $QTYPES, $QTYPE_MENU, $QTYPE_MANUAL, $QTYPE_EXCLUDE_FROM_RANDOM;
  */
 $QTYPES = array();
 /**
- * Array of question types names translated to the user's language
- *
- * The $QTYPE_MENU array holds the names of all the question types that the user should
- * be able to create directly. Some internal question types like random questions are excluded.
- * The complete list of question types can be found in {@link $QTYPES}.
- */
-$QTYPE_MENU = array();
-/**
  * String in the format "'type1','type2'" that can be used in SQL clauses like
  * "WHERE q.type IN ($QTYPE_MANUAL)".
  */
@@ -127,6 +119,7 @@ function question_register_questiontype($qtype) {
 
     $name = $qtype->name();
     $QTYPES[$name] = $qtype;
+    // The $QTYPE_MENU global is not deprecated, but still build it to avoid breaking 3rd-party code that needs it.
     $menuname = $qtype->menu_name();
     if ($menuname) {
         $QTYPE_MENU[$name] = $menuname;
@@ -159,6 +152,34 @@ foreach($qtypenames as $qtypename) {
     if (is_readable($qtypefilepath)) {
         require_once($qtypefilepath);
     }
+}
+
+/**
+ * An array of question type names translated to the user's language, suitable for use when
+ * creating a drop-down menu of options.
+ *
+ * Long-time Moodle programmers will realise that this replaces the old $QTYPE_MENU array.
+ * The array returned will only hold the names of all the question types that the user should
+ * be able to create directly. Some internal question types like random questions are excluded.
+ * 
+ * @return array an array of question type names translated to the user's language.
+ */
+function question_type_menu() {
+    global $QTYPES, $QTYPE_MENU;
+    static $menu_options = null;
+    if (is_null($menu_options)) {
+        $menu_options = array();
+        foreach ($QTYPES as $name => $qtype) {
+            $menuname = $qtype->menu_name();
+            if ($menuname) {
+                $menu_options[$name] = $menuname;
+            }
+        }
+        // For now, keep a copy in the old global,
+        // to try to avoid breaking third party code that relies on it.
+        $QTYPE_MENU = $menu_options;
+    }
+    return $menu_options;
 }
 
 /// OTHER CLASSES /////////////////////////////////////////////////////////
