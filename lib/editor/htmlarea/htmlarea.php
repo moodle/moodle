@@ -805,7 +805,8 @@ HTMLArea.prototype.generate = function () {
     var height = (this.config.height == "auto" ? (this._ta_size.h) : this.config.height);
     height = parseInt(height);
     var width = (this.config.width == "auto" ? (this._toolbar.offsetWidth) : this.config.width);
-    width = Math.max(parseInt(width), 598);
+    width = (width == 0 ? 598 : width);
+    //width = Math.max(parseInt(width), 598);
 
     width = String(width);
     if (width.match(/^\d+$/)) { // is this a pure int? if so, let it be in px, and remove 2px
