@@ -228,7 +228,7 @@ function quiz_repaginate($layout, $perpage, $shuffle=false) {
  */
 function quiz_print_navigation_panel($page, $pages) {
     //$page++;
-    echo '<div class="pagingbar">';
+    echo '<div class="paging pagingbar">';
     echo '<span class="title">' . get_string('page') . ':</span>';
     if ($page > 0) {
         // Print previous link
