@@ -187,4 +187,5 @@ $string['wrongsourcebase'] = 'Indirizzo (URL) base errato.';
 $string['wrongzipfilename'] = 'Il nome del file ZIP è sbagliato.';
 $string['wwwroot'] = 'Indirizzo web';
 $string['wwwrooterror'] = 'L\'indirizzo web sembra non essere valido - questa installazione di Moodle non sembra essere li. Il valore è stato reimpostato';
+$string['xmlrpcrecommended'] = 'L\'installazione della estensione opzionale xmlrpc è utile per le funzionalità del Moodle Networking.';
 ?>
