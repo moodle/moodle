@@ -4030,7 +4030,6 @@ function get_user_roles_in_context($userid, $context, $view=true){
                 continue;
             }
             $rolenames[$userrole->roleid] = $userrole->name;
-            $rolestring .= '<a href="'.$CFG->wwwroot.'/user/index.php?contextid='.$userrole->contextid.'&amp;roleid='.$userrole->roleid.'">'.$userrole->name.'</a>, ';
         }
 
         $rolenames = role_fix_names($rolenames, $context);   // Substitute aliases
