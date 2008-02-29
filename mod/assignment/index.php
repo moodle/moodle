@@ -87,7 +87,9 @@
         $submitted = $assignmentinstance->submittedlink(true);
 
         $grading_info = grade_get_grades($course->id, 'mod', 'assignment', $cm->instance, $USER->id);
-        $grade = $grading_info->items[0]->grades[$USER->id]->str_grade;
+        if (isset($grading_info->items[0])) {
+            $grade = $grading_info->items[0]->grades[$USER->id]->str_grade;
+        }
 
         $type = $types[$cm->assignmenttype];
 
