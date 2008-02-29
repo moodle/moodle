@@ -2158,8 +2158,10 @@ body#doc-contents ul {
   padding: 5px;
 }
 
-.allcoursegrades {
-    float: right;
+div.allcoursegrades {
+    width: 100%;
+    text-align: right;
+    padding: 4px 0px 5px 0px;
 }
 /* gradebook edit tree */
 

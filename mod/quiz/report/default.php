@@ -37,8 +37,8 @@ class quiz_default_report {
         require($CFG->dirroot . '/mod/quiz/tabs.php');
         $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
         if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
-            echo '<a class="allcoursegrades" href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">' 
-                . get_string('seeallcoursegrades', 'grades') . '</a>';
+            echo '<div class="allcoursegrades"><a href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">' 
+                . get_string('seeallcoursegrades', 'grades') . '</a></div>';
         }
 
     }
