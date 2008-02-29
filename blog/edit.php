@@ -74,10 +74,6 @@ $blogeditform = new blog_edit_form(null, compact('existing', 'sitecontext'));
 
 if ($blogeditform->is_cancelled()){
     redirect($returnurl);
-} else if ($blogeditform->no_submit_button_pressed()) {
-    no_submit_button_actions($blogeditform, $sitecontext);
-
-
 } else if ($fromform = $blogeditform->get_data()){
     //save stuff in db
     switch ($action) {
@@ -152,70 +148,6 @@ print_footer();
 die;
 
 /*****************************   edit.php functions  ***************************/
-function no_submit_button_actions(&$blogeditform, $sitecontext){
-    $mform =& $blogeditform->_form;
-    $data = $mform->exportValues();
-    //sesskey has been checked already no need to check that
-    //check for official tags to add
-    if (!empty($data['addotags']) && !empty($data['otagsadd'])){ // adding official tag
-        $error = add_otag($data['otagsadd']);
-    }
-    if (!empty($error)){
-        $mform->setElementError('otagsgrp', $error);
-    }
-    if (!empty($data['deleteotags']) && !empty($data['otags'])){ // adding official tag
-        delete_otags($data['otags'], $sitecontext);
-    }
-    $blogeditform->otags_select_setup();
-}
-
-function delete_otags($tagids, $sitecontext){
-    foreach ($tagids as $tagid) {
-
-        if (!$tag = tag_by_id($tagid)) {
-            error('Can not delete tag, tag doesn\'t exist');
-        }
-        if ($tag->tagtype != 'official') {
-            continue; 
-        }
-        if ($tag->tagtype == 'official' and !has_capability('moodle/blog:manageofficialtags', $sitecontext)) {
-            //can not delete
-            error('Can not delete tag, you don\'t have permission to delete an official tag');
-        }
-
-        // Delete the tag itself
-        if (!tag_delete($tagid)) {
-            error('Can not delete tag');
-        }
-    }
-}
-
-function add_otag($otag){
-    global $USER;
-    $error = '';
-
-    // When adding ofical tag, we see if there's already a personal tag
-    // With the same Name, if there is, we just change the type
-    if ($tag = tag_by_name ($otag)) {
-        if ($tag->tagtype == 'official') {
-            // official tag already exist
-            $error = get_string('tagalready');
-            break;
-        } else {
-            // might not want to do this anymore?
-            $tag->tagtype = 'official';
-            update_record('tag', $tag);
-            $tagid = $tag->id;
-        }
-                
-    } else { // Brand new offical tag
-        $tagid = tag_create($otag, 'official');
-        if (empty($tagid)) {
-            error('Can not create tag!');
-        }  
-    }
-    return $error;
-}
 
 /*
 * Delete blog post from database
