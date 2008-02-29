@@ -99,35 +99,38 @@ if ($usercount > 0) {
 // I was not able to use get_items_tagged_with() because it automatically 
 // tries to join on 'blog' table, since the itemtype is 'blog'. However blogs
 // uses the post table so this would not really work.    - Yu 29/8/07
-if ($blogs = blog_fetch_entries('', 10, 0, 'site', '', $tag->id)) {
+if (has_capability('moodle/blog:view', $systemcontext)) {  // You have to see blogs obviously
 
-    print_box_start('generalbox', 'tag-blogs');
+    if ($blogs = blog_fetch_entries('', 10, 0, 'site', '', $tag->id)) {
 
-    print_heading(get_string('relatedblogs', 'tag'), '', 3);
+        print_box_start('generalbox', 'tag-blogs');
 
-    echo '<ul id="tagblogentries">';
-    foreach ($blogs as $blog) {
-        if ($blog->publishstate == 'draft') {
-            $class = 'class="dimmed"';
-        } else {
-            $class = '';
+        print_heading(get_string('relatedblogs', 'tag'), '', 3);
+
+        echo '<ul id="tagblogentries">';
+        foreach ($blogs as $blog) {
+            if ($blog->publishstate == 'draft') {
+                $class = 'class="dimmed"';
+            } else {
+                $class = '';
+            }
+            echo '<li '.$class.'>';
+            echo '<a '.$class.' href="'.$CFG->wwwroot.'/blog/index.php?postid='.$blog->id.'">';
+            echo format_string($blog->subject);
+            echo '</a>';
+            echo ' - '; 
+            echo '<a '.$class.' href="'.$CFG->wwwroot.'/user/view.php?id='.$blog->userid.'">';
+            echo fullname($blog);
+            echo '</a>';
+            echo ', '. userdate($blog->lastmodified);
+            echo '</li>';
         }
-        echo '<li '.$class.'>';
-        echo '<a '.$class.' href="'.$CFG->wwwroot.'/blog/index.php?postid='.$blog->id.'">';
-        echo format_string($blog->subject);
-        echo '</a>';
-        echo ' - '; 
-        echo '<a '.$class.' href="'.$CFG->wwwroot.'/user/view.php?id='.$blog->userid.'">';
-        echo fullname($blog);
-        echo '</a>';
-        echo ', '. userdate($blog->lastmodified);
-        echo '</li>';
+        echo '</ul>';
+
+        echo '<p class="moreblogs"><a href="'.$CFG->wwwroot.'/blog/index.php?filtertype=site&filterselect=0&tagid='.$tag->id.'">'.get_string('seeallblogs', 'tag').'</a>...</p>';
+
+        print_box_end();
     }
-    echo '</ul>';
-
-    echo '<p class="moreblogs"><a href="'.$CFG->wwwroot.'/blog/index.php?filtertype=site&filterselect=0&tagid='.$tag->id.'">'.get_string('seeallblogs', 'tag').'</a>...</p>';
-
-    print_box_end();
 }
 
 
