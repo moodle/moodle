@@ -54,400 +54,7 @@ require_once($CFG->dirroot .'/tag/locallib.php');
 ///////////////////////////////////////////////////////
 /////////////////// PUBLIC TAG API ////////////////////
 
-/**
- * Delete one or more tag, and all their instances if there are any left.
- * 
- * @param mixed $tagids one tagid (int), or one array of tagids to delete
- * @return bool true on success, false otherwise 
- */
-function tag_delete($tagids) {
-
-    if (!is_array($tagids)) {
-        $tagids = array($tagids);
-    }
-
-    $success = true;
-    foreach( $tagids as $tagid ) {
-        if (is_null($tagid)) { // can happen if tag doesn't exists
-            continue;
-        }
-        // only delete the main entry if there were no problems deleting all the 
-        // instances - that (and the fact we won't often delete lots of tags) 
-        // is the reason for not using delete_records_select()
-        if ( delete_records('tag_instance', 'tagid', $tagid) ) {
-            $success &= (bool) delete_records('tag', 'id', $tagid);
-        }
-    }
-
-    return $success;
-}
-
-/**
- * Delete one instance of a tag.  If the last instance was deleted, it will
- * also delete the tag, unless it's type is 'official'.
- *
- * @param array $record the record for which to remove the instance
- * @param int $tagid the tagid that needs to be removed
- * @return bool true on success, false otherwise
- */
-function tag_delete_instance($record, $tagid) {
-    global $CFG;
-
-    if ( delete_records('tag_instance', 'tagid', $tagid, 'itemtype', $record['type'], 'itemid', $record['id']) ) {
-        if ( !record_exists_sql("SELECT * FROM {$CFG->prefix}tag tg, {$CFG->prefix}tag_instance ti ".
-                "WHERE (tg.id = ti.tagid AND ti.tagid = {$tagid} ) OR ".
-                "(tg.id = {$tagid} AND tg.tagtype = 'official')") ) {
-            return tag_delete($tagid);
-        }
-    } else {
-        return false;
-    }
-}
-
-/** 
- * Set the description of a tag
- * 
- * @param int $tagid the id of the tag
- * @param string $description the description
- * @param int $descriptionformat the moodle text format of the description
- * @return true on success, false otherwise 
- */
-function tag_description_set($tagid, $description, $descriptionformat) {
-    if ($tag = get_record('tag', 'id', $tagid, '', '', '', '', 'id')) {
-        $tag->description = addslashes($description);
-        $tag->descriptionformat = addslashes($descriptionformat);
-        $tag->timemodified = time();
-        return update_record('tag', $tag);
-    }
-    return false;
-}
-
-/**
- * Function that returns the name that should be displayed for a specific tag
- *
- * @param object $tag_object a line out of tag table, as returned by the adobd functions
- * @return string
- */
-function tag_display_name($tag_object) {
-
-    global $CFG;
-
-    if(!isset($tag_object->name)) {
-        return '';
-    }
-
-    if( empty($CFG->keeptagnamecase) ) {
-        //this is the normalized tag name
-        $textlib = textlib_get_instance();
-        return htmlspecialchars($textlib->strtotitle($tag_object->name));
-    }
-    else {
-        //original casing of the tag name
-        return htmlspecialchars($tag_object->rawname);
-    }
-}
-
-/**
- * Find all records tagged with a tag of a given type ('post', 'user', etc.)
- *
- * @param string $tag tag to look for
- * @param string $type type to restrict search to.  If null, every matching
- *     record will be returned
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return array of matching objects, indexed by record id, from the table containing the type requested
- */
-function tag_find_records($tag, $type, $limitfrom='', $limitnum='') {
-    
-    global $CFG;
-
-    if (!$tag || !$type) {
-        return array();
-    }
-
-    $tagid = tag_get_id($tag);
-
-    $query = "SELECT it.* ".
-        "FROM {$CFG->prefix}{$type} it INNER JOIN {$CFG->prefix}tag_instance tt ON it.id = tt.itemid ".
-        "WHERE tt.itemtype = '{$type}' AND tt.tagid = '{$tagid}'";
-    
-    return get_records_sql($query, $limitfrom, $limitnum); 
-}
-
-
-/**
- * Simple function to just return a single tag object
- *
- * @param string $field which field do we use to identify the tag: id, name or rawname
- * @param string $value the required value of the aforementioned field
- * @param string $returnfields which fields do we want returned?
- * @return tag object
- *
- **/
-function tag_get($field, $value, $returnfields='id, name, rawname') {
-    return get_record('tag', $field, $value, '', '', '', '', $returnfields);
-}
-
-
-/**
- * Get the array of db record of tags associated to a record (instances).  Use 
- * tag_get_tags_csv to get the same information in a comma-separated string.
- *
- * @param string $record_type the record type for which we want to get the tags 
- * @param int $record_id the record id for which we want to get the tags 
- * @param string $type the tag type (either 'default' or 'official'). By default,
- *     all tags are returned.
- * @return array the array of tags
- */
-function tag_get_tags($record_type, $record_id, $type=null) {
-    
-    global $CFG;
-
-    if ($type) {
-        $type = "AND tg.tagtype = '$type'";
-    }
-
-    // if the fields in this query are changed, you need to do the same changes in tag_get_correlated_tags
-    $tags = get_records_sql("SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
-        "FROM {$CFG->prefix}tag_instance ti INNER JOIN {$CFG->prefix}tag tg ON tg.id = ti.tagid ".
-        "WHERE ti.itemtype = '{$record_type}' AND ti.itemid = '{$record_id}' {$type} ".
-        "ORDER BY ti.ordering ASC");
-    // This version of the query, reversing the ON clause, "correctly" returns 
-    // a row with NULL values for instances that are still in the DB even though 
-    // the tag has been deleted.  This shouldn't happen, but if it did, using 
-    // this query could help "clean it up".  This causes bugs at this time.
-    //$tags = get_records_sql("SELECT ti.tagid, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
-    //    "FROM {$CFG->prefix}tag_instance ti LEFT JOIN {$CFG->prefix}tag tg ON ti.tagid = tg.id ".
-    //    "WHERE ti.itemtype = '{$record_type}' AND ti.itemid = '{$record_id}' {$type} ".
-    //    "ORDER BY ti.ordering ASC");
-
-    if (!$tags) { 
-        return array();
-    } else {
-        return $tags;
-    }
-}
-
-/**
- * Get the array of tags display names, indexed by id.
- * 
- * @param string $record_type the record type for which we want to get the tags
- * @param int $record_id the record id for which we want to get the tags
- * @param string $type the tag type (either 'default' or 'official'). By default,
- *     all tags are returned.
- * @return array the array of tags (with the value returned by tag_display_name), indexed by id
- */
-function tag_get_tags_array($record_type, $record_id, $type=null) {
-    $tags = array();
-    foreach(tag_get_tags($record_type, $record_id, $type) as $tag) {
-        $tags[$tag->id] = tag_display_name($tag);
-    }
-    return $tags;
-}
-
-/**
- * Get a comma-separated string of tags associated to a record.  Use tag_get_tags
- * to get the same information in an array.
- *
- * @param string $record_type the record type for which we want to get the tags
- * @param int $record_id the record id for which we want to get the tags
- * @param int $html either TAG_RETURN_HTML or TAG_RETURN_TEXT, depending
- *     on the type of output desired
- * @param string $type either 'official' or 'default', if null, all tags are
- *     returned
- * @return string the comma-separated list of tags.
- */
-function tag_get_tags_csv($record_type, $record_id, $html=TAG_RETURN_HTML, $type=null) {
-    global $CFG;
-
-    $tags_names = array();
-    foreach( tag_get_tags($record_type, $record_id, $type) as $tag ) {
-        if ($html == TAG_RETURN_TEXT) {
-            $tags_names[] = tag_display_name($tag);
-        } else { // TAG_RETURN_HTML
-            $tags_names[] = '<a href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'">'. tag_display_name($tag) .'</a>';
-        }
-    }
-    return implode(', ', $tags_names);
-}
-
-/**
- * Get an array of tag ids associated to a record.
- *
- * @param string $record the record type for which we want to get the tags
- * @param int $record_id the record id for which we want to get the tags
- * @return array of tag ids, indexed and sorted by 'ordering'
- */
-function tag_get_tags_ids($record_type, $record_id) {
-    
-    $tag_ids = array();
-    foreach( tag_get_tags($record_type, $record_id) as $tag ) {
-        $tag_ids[$tag->ordering] = $tag->id;
-    }
-    ksort($tag_ids);
-    return $tag_ids;
-}
-
-/** 
- * Returns the database ID of a set of tags.
- * 
- * @param mixed $tags one tag, or array of tags, to look for.
- * @param bool $return_value specify the type of the returned value. Either 
- *     TAG_RETURN_OBJECT, or TAG_RETURN_ARRAY (default). If TAG_RETURN_ARRAY 
- *     is specified, an array will be returned even if only one tag was 
- *     passed in $tags.
- * @return mixed tag-indexed array of ids (or objects, if second parameter is 
- *     TAG_RETURN_OBJECT), or only an int, if only one tag is given *and* the 
- *     second parameter is null. No value for a key means the tag wasn't found.
- */
-function tag_get_id($tags, $return_value=null) {
-    global $CFG;
-    static $tag_id_cache = array();
-
-    $return_an_int = false;
-    if (!is_array($tags)) {
-        if(is_null($return_value) || $return_value == TAG_RETURN_OBJECT) {
-            $return_an_int = true; 
-        }
-        $tags = array($tags);
-    }
-   
-    $result = array();
-    
-    //TODO: test this and see if it helps performance without breaking anything
-    //foreach($tags as $key => $tag) {
-    //    $clean_tag = moodle_strtolower($tag);
-    //    if ( array_key_exists($clean_tag), $tag_id_cache) ) {
-    //        $result[$clean_tag] = $tag_id_cache[$clean_tag];
-    //        $tags[$key] = ''; // prevent further processing for this one.
-    //    }
-    //}
-
-    $tags = array_values(tag_normalize($tags));
-    foreach($tags as $key => $tag) {
-        $tags[$key] = addslashes(moodle_strtolower($tag)); 
-        $result[moodle_strtolower($tag)] = null; // key must exists : no value for a key means the tag wasn't found.
-    }
-    $tag_string = "'". implode("', '", $tags) ."'";
-
-    if ($rs = get_recordset_sql("SELECT * FROM {$CFG->prefix}tag WHERE name in ({$tag_string}) order by name")) {
-        while ($record = rs_fetch_next_record($rs)) {
-            if ($return_value == TAG_RETURN_OBJECT) {
-                $result[$record->name] = $record;
-            } else { // TAG_RETURN_ARRAY
-                $result[$record->name] = $record->id;
-            }
-        }
-    }
-
-    if ($return_an_int) {
-        return array_pop($result);
-    }
-
-    return $result;
-}
-
-/**
- * Get a tag as an object (line) returned by get_recordset_sql 
- *
- * @param int $tagid a tag id
- * @return object a line returned from get_recordset_sql, or false
- */
-function tag_get_tag_by_id($tagid) {
-    return get_record('tag', 'id', $tagid);
-}
-
-/**
- * Returns tags related to a tag
- *
- * Related tags of a tag come from two sources:
- *   - manually added related tags, which are tag_instance entries for that tag
- *   - correlated tags, which are a calculated
- *
- * @param string $tag_name_or_id is a single **normalized** tag name or the id 
- *     of a tag
- * @param int $type the function will return either manually 
- *     (TAG_RELATED_MANUAL) related tags or correlated (TAG_RELATED_CORRELATED) 
- *     tags. Default is TAG_RELATED_ALL, which returns everything.
- * @param int $limitnum return a subset comprising this many records (optional, 
- *     default is 10)
- * @return array an array of tag objects
- */
-function tag_get_related_tags($tagid, $type=TAG_RELATED_ALL, $limitnum=10) {
-
-    $related_tags = array();
-
-    if ( $type == TAG_RELATED_ALL || $type == TAG_RELATED_MANUAL) {
-        //gets the manually added related tags
-        $related_tags = tag_get_tags('tag', $tagid);
-    }
-
-    if ( $type == TAG_RELATED_ALL || $type == TAG_RELATED_CORRELATED ) {
-        //gets the correlated tags
-        $automatic_related_tags = tag_get_correlated($tagid, $limitnum);
-        if (is_array($automatic_related_tags)) {
-            $related_tags = array_merge($related_tags, $automatic_related_tags);
-        }
-    }
-
-    return array_slice(object_array_unique($related_tags), 0 , $limitnum);
-}
-
-/** 
- * Get a comma-separated list of tags related to another tag.
- *
- * @param array $related_tags the array returned by tag_get_related_tags
- * @param int $html either TAG_RETURN_HTML (default) or TAG_RETURN_TEXT : return html links, or just text.
- * @return string comma-separated list
- */
-function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
-    global $CFG;
-
-    $tags_names = array();
-    foreach($related_tags as $tag) {
-        if ( $html == TAG_RETURN_TEXT) {
-            $tags_names[] = tag_display_name($tag);
-        } else {
-            // TAG_RETURN_HTML
-            $tags_names[] = '<a href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'">'. tag_display_name($tag) .'</a>';
-        }
-    }
-
-    return implode(', ', $tags_names);
-}
-
-/**
- * Change the "value" of a tag, and update the associated 'name'.
- *
- * @param int $tagid the id of the tag to modify
- * @param string $newtag the new rawname
- * @return bool true on success, false otherwise
- */
-function tag_rename($tagid, $newrawname) {
-
-    if (! $newrawname_clean = array_shift(tag_normalize($newrawname, TAG_CASE_ORIGINAL)) ) {
-        return false;
-    }
-
-    if (! $newname_clean = moodle_strtolower($newrawname_clean)) {
-        return false;
-    }
-
-    // Prevent the rename if a tag with that name already exists
-    if ($existing = tag_get('name', $newname_clean, 'id, name, rawname')) {
-        if ($existing->id != $tagid) {  // Another tag already exists with this name
-            return false; 
-        }
-    }
-
-    if ($tag = tag_get('id', $tagid, 'id, name, rawname')) {
-        $tag->rawname = addslashes($newrawname_clean); 
-        $tag->name = addslashes($newname_clean); 
-        $tag->timemodified = time();
-        return update_record('tag', $tag);
-    }
-    return false;
-}
+/// Functions for settings tags  //////////////////////
 
 /**
  * Set the tags assigned to a record.  This overwrites the current tags.
@@ -569,6 +176,406 @@ function tag_type_set($tagid, $type) {
     }
     return false;
 }
+
+
+/** 
+ * Set the description of a tag
+ * 
+ * @param int $tagid the id of the tag
+ * @param string $description the description
+ * @param int $descriptionformat the moodle text format of the description
+ * @return true on success, false otherwise 
+ */
+function tag_description_set($tagid, $description, $descriptionformat) {
+    if ($tag = get_record('tag', 'id', $tagid, '', '', '', '', 'id')) {
+        $tag->description = addslashes($description);
+        $tag->descriptionformat = addslashes($descriptionformat);
+        $tag->timemodified = time();
+        return update_record('tag', $tag);
+    }
+    return false;
+}
+
+
+
+
+
+
+/// Functions for getting information about tags //////
+
+/**
+ * Simple function to just return a single tag object when you know the name or something
+ *
+ * @param string $field which field do we use to identify the tag: id, name or rawname
+ * @param string $value the required value of the aforementioned field
+ * @param string $returnfields which fields do we want returned?
+ * @return tag object
+ *
+ **/
+function tag_get($field, $value, $returnfields='id, name, rawname') {
+    if ($field == 'name') {
+        $value = moodle_strtolower($value);   // To cope with input that might just be wrong case
+    }
+    return get_record('tag', $field, $value, '', '', '', '', $returnfields);
+}
+
+
+/**
+ * Get the array of db record of tags associated to a record (instances).  Use 
+ * tag_get_tags_csv to get the same information in a comma-separated string.
+ *
+ * @param string $record_type the record type for which we want to get the tags 
+ * @param int $record_id the record id for which we want to get the tags 
+ * @param string $type the tag type (either 'default' or 'official'). By default,
+ *     all tags are returned.
+ * @return array the array of tags
+ */
+function tag_get_tags($record_type, $record_id, $type=null) {
+    
+    global $CFG;
+
+    if ($type) {
+        $type = "AND tg.tagtype = '$type'";
+    }
+
+    // if the fields in this query are changed, you need to do the same changes in tag_get_correlated_tags
+    $tags = get_records_sql("SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
+        "FROM {$CFG->prefix}tag_instance ti INNER JOIN {$CFG->prefix}tag tg ON tg.id = ti.tagid ".
+        "WHERE ti.itemtype = '{$record_type}' AND ti.itemid = '{$record_id}' {$type} ".
+        "ORDER BY ti.ordering ASC");
+    // This version of the query, reversing the ON clause, "correctly" returns 
+    // a row with NULL values for instances that are still in the DB even though 
+    // the tag has been deleted.  This shouldn't happen, but if it did, using 
+    // this query could help "clean it up".  This causes bugs at this time.
+    //$tags = get_records_sql("SELECT ti.tagid, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
+    //    "FROM {$CFG->prefix}tag_instance ti LEFT JOIN {$CFG->prefix}tag tg ON ti.tagid = tg.id ".
+    //    "WHERE ti.itemtype = '{$record_type}' AND ti.itemid = '{$record_id}' {$type} ".
+    //    "ORDER BY ti.ordering ASC");
+
+    if (!$tags) { 
+        return array();
+    } else {
+        return $tags;
+    }
+}
+
+/**
+ * Get the array of tags display names, indexed by id.
+ * 
+ * @param string $record_type the record type for which we want to get the tags
+ * @param int $record_id the record id for which we want to get the tags
+ * @param string $type the tag type (either 'default' or 'official'). By default,
+ *     all tags are returned.
+ * @return array the array of tags (with the value returned by tag_display_name), indexed by id
+ */
+function tag_get_tags_array($record_type, $record_id, $type=null) {
+    $tags = array();
+    foreach(tag_get_tags($record_type, $record_id, $type) as $tag) {
+        $tags[$tag->id] = tag_display_name($tag);
+    }
+    return $tags;
+}
+
+/**
+ * Get a comma-separated string of tags associated to a record.  Use tag_get_tags
+ * to get the same information in an array.
+ *
+ * @param string $record_type the record type for which we want to get the tags
+ * @param int $record_id the record id for which we want to get the tags
+ * @param int $html either TAG_RETURN_HTML or TAG_RETURN_TEXT, depending
+ *     on the type of output desired
+ * @param string $type either 'official' or 'default', if null, all tags are
+ *     returned
+ * @return string the comma-separated list of tags.
+ */
+function tag_get_tags_csv($record_type, $record_id, $html=TAG_RETURN_HTML, $type=null) {
+    global $CFG;
+
+    $tags_names = array();
+    foreach(tag_get_tags($record_type, $record_id, $type) as $tag) {
+        if ($html == TAG_RETURN_TEXT) {
+            $tags_names[] = tag_display_name($tag);
+        } else { // TAG_RETURN_HTML
+            $tags_names[] = '<a href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'">'. tag_display_name($tag) .'</a>';
+        }
+    }
+    return implode(', ', $tags_names);
+}
+
+/**
+ * Get an array of tag ids associated to a record.
+ *
+ * @param string $record the record type for which we want to get the tags
+ * @param int $record_id the record id for which we want to get the tags
+ * @return array of tag ids, indexed and sorted by 'ordering'
+ */
+function tag_get_tags_ids($record_type, $record_id) {
+    
+    $tag_ids = array();
+    foreach (tag_get_tags($record_type, $record_id) as $tag) {
+        $tag_ids[$tag->ordering] = $tag->id;
+    }
+    ksort($tag_ids);
+    return $tag_ids;
+}
+
+/** 
+ * Returns the database ID of a set of tags.
+ * 
+ * @param mixed $tags one tag, or array of tags, to look for.
+ * @param bool $return_value specify the type of the returned value. Either 
+ *     TAG_RETURN_OBJECT, or TAG_RETURN_ARRAY (default). If TAG_RETURN_ARRAY 
+ *     is specified, an array will be returned even if only one tag was 
+ *     passed in $tags.
+ * @return mixed tag-indexed array of ids (or objects, if second parameter is 
+ *     TAG_RETURN_OBJECT), or only an int, if only one tag is given *and* the 
+ *     second parameter is null. No value for a key means the tag wasn't found.
+ */
+function tag_get_id($tags, $return_value=null) {
+    global $CFG;
+    static $tag_id_cache = array();
+
+    $return_an_int = false;
+    if (!is_array($tags)) {
+        if(is_null($return_value) || $return_value == TAG_RETURN_OBJECT) {
+            $return_an_int = true; 
+        }
+        $tags = array($tags);
+    }
+   
+    $result = array();
+    
+    //TODO: test this and see if it helps performance without breaking anything
+    //foreach($tags as $key => $tag) {
+    //    $clean_tag = moodle_strtolower($tag);
+    //    if ( array_key_exists($clean_tag), $tag_id_cache) ) {
+    //        $result[$clean_tag] = $tag_id_cache[$clean_tag];
+    //        $tags[$key] = ''; // prevent further processing for this one.
+    //    }
+    //}
+
+    $tags = array_values(tag_normalize($tags));
+    foreach($tags as $key => $tag) {
+        $tags[$key] = addslashes(moodle_strtolower($tag)); 
+        $result[moodle_strtolower($tag)] = null; // key must exists : no value for a key means the tag wasn't found.
+    }
+    $tag_string = "'". implode("', '", $tags) ."'";
+
+    if ($rs = get_recordset_sql("SELECT * FROM {$CFG->prefix}tag WHERE name in ({$tag_string}) order by name")) {
+        while ($record = rs_fetch_next_record($rs)) {
+            if ($return_value == TAG_RETURN_OBJECT) {
+                $result[$record->name] = $record;
+            } else { // TAG_RETURN_ARRAY
+                $result[$record->name] = $record->id;
+            }
+        }
+    }
+
+    if ($return_an_int) {
+        return array_pop($result);
+    }
+
+    return $result;
+}
+
+
+/**
+ * Returns tags related to a tag
+ *
+ * Related tags of a tag come from two sources:
+ *   - manually added related tags, which are tag_instance entries for that tag
+ *   - correlated tags, which are a calculated
+ *
+ * @param string $tag_name_or_id is a single **normalized** tag name or the id 
+ *     of a tag
+ * @param int $type the function will return either manually 
+ *     (TAG_RELATED_MANUAL) related tags or correlated (TAG_RELATED_CORRELATED) 
+ *     tags. Default is TAG_RELATED_ALL, which returns everything.
+ * @param int $limitnum return a subset comprising this many records (optional, 
+ *     default is 10)
+ * @return array an array of tag objects
+ */
+function tag_get_related_tags($tagid, $type=TAG_RELATED_ALL, $limitnum=10) {
+
+    $related_tags = array();
+
+    if ( $type == TAG_RELATED_ALL || $type == TAG_RELATED_MANUAL) {
+        //gets the manually added related tags
+        $related_tags = tag_get_tags('tag', $tagid);
+    }
+
+    if ( $type == TAG_RELATED_ALL || $type == TAG_RELATED_CORRELATED ) {
+        //gets the correlated tags
+        $automatic_related_tags = tag_get_correlated($tagid, $limitnum);
+        if (is_array($automatic_related_tags)) {
+            $related_tags = array_merge($related_tags, $automatic_related_tags);
+        }
+    }
+
+    return array_slice(object_array_unique($related_tags), 0 , $limitnum);
+}
+
+/** 
+ * Get a comma-separated list of tags related to another tag.
+ *
+ * @param array $related_tags the array returned by tag_get_related_tags
+ * @param int $html either TAG_RETURN_HTML (default) or TAG_RETURN_TEXT : return html links, or just text.
+ * @return string comma-separated list
+ */
+function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
+    global $CFG;
+
+    $tags_names = array();
+    foreach($related_tags as $tag) {
+        if ( $html == TAG_RETURN_TEXT) {
+            $tags_names[] = tag_display_name($tag);
+        } else {
+            // TAG_RETURN_HTML
+            $tags_names[] = '<a href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'">'. tag_display_name($tag) .'</a>';
+        }
+    }
+
+    return implode(', ', $tags_names);
+}
+
+/**
+ * Change the "value" of a tag, and update the associated 'name'.
+ *
+ * @param int $tagid the id of the tag to modify
+ * @param string $newtag the new rawname
+ * @return bool true on success, false otherwise
+ */
+function tag_rename($tagid, $newrawname) {
+
+    if (! $newrawname_clean = array_shift(tag_normalize($newrawname, TAG_CASE_ORIGINAL)) ) {
+        return false;
+    }
+
+    if (! $newname_clean = moodle_strtolower($newrawname_clean)) {
+        return false;
+    }
+
+    // Prevent the rename if a tag with that name already exists
+    if ($existing = tag_get('name', $newname_clean, 'id, name, rawname')) {
+        if ($existing->id != $tagid) {  // Another tag already exists with this name
+            return false; 
+        }
+    }
+
+    if ($tag = tag_get('id', $tagid, 'id, name, rawname')) {
+        $tag->rawname = addslashes($newrawname_clean); 
+        $tag->name = addslashes($newname_clean); 
+        $tag->timemodified = time();
+        return update_record('tag', $tag);
+    }
+    return false;
+}
+
+
+/**
+ * Delete one or more tag, and all their instances if there are any left.
+ * 
+ * @param mixed $tagids one tagid (int), or one array of tagids to delete
+ * @return bool true on success, false otherwise 
+ */
+function tag_delete($tagids) {
+
+    if (!is_array($tagids)) {
+        $tagids = array($tagids);
+    }
+
+    $success = true;
+    foreach( $tagids as $tagid ) {
+        if (is_null($tagid)) { // can happen if tag doesn't exists
+            continue;
+        }
+        // only delete the main entry if there were no problems deleting all the 
+        // instances - that (and the fact we won't often delete lots of tags) 
+        // is the reason for not using delete_records_select()
+        if ( delete_records('tag_instance', 'tagid', $tagid) ) {
+            $success &= (bool) delete_records('tag', 'id', $tagid);
+        }
+    }
+
+    return $success;
+}
+
+/**
+ * Delete one instance of a tag.  If the last instance was deleted, it will
+ * also delete the tag, unless it's type is 'official'.
+ *
+ * @param array $record the record for which to remove the instance
+ * @param int $tagid the tagid that needs to be removed
+ * @return bool true on success, false otherwise
+ */
+function tag_delete_instance($record, $tagid) {
+    global $CFG;
+
+    if ( delete_records('tag_instance', 'tagid', $tagid, 'itemtype', $record['type'], 'itemid', $record['id']) ) {
+        if ( !record_exists_sql("SELECT * FROM {$CFG->prefix}tag tg, {$CFG->prefix}tag_instance ti ".
+                "WHERE (tg.id = ti.tagid AND ti.tagid = {$tagid} ) OR ".
+                "(tg.id = {$tagid} AND tg.tagtype = 'official')") ) {
+            return tag_delete($tagid);
+        }
+    } else {
+        return false;
+    }
+}
+
+
+/**
+ * Function that returns the name that should be displayed for a specific tag
+ *
+ * @param object $tag_object a line out of tag table, as returned by the adobd functions
+ * @return string
+ */
+function tag_display_name($tag_object) {
+
+    global $CFG;
+
+    if(!isset($tag_object->name)) {
+        return '';
+    }
+
+    if (empty($CFG->keeptagnamecase)) {
+        //this is the normalized tag name
+        $textlib = textlib_get_instance();
+        return htmlspecialchars($textlib->strtotitle($tag_object->name));
+    } else {
+        //original casing of the tag name
+        return htmlspecialchars($tag_object->rawname);
+    }
+}
+
+/**
+ * Find all records tagged with a tag of a given type ('post', 'user', etc.)
+ *
+ * @param string $tag tag to look for
+ * @param string $type type to restrict search to.  If null, every matching
+ *     record will be returned
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+ * @return array of matching objects, indexed by record id, from the table containing the type requested
+ */
+function tag_find_records($tag, $type, $limitfrom='', $limitnum='') {
+    
+    global $CFG;
+
+    if (!$tag || !$type) {
+        return array();
+    }
+
+    $tagid = tag_get_id($tag);
+
+    $query = "SELECT it.* ".
+        "FROM {$CFG->prefix}{$type} it INNER JOIN {$CFG->prefix}tag_instance tt ON it.id = tt.itemid ".
+        "WHERE tt.itemtype = '{$type}' AND tt.tagid = '{$tagid}'";
+    
+    return get_records_sql($query, $limitfrom, $limitnum); 
+}
+
+
+
 
 ///////////////////////////////////////////////////////
 /////////////////// PRIVATE TAG API ///////////////////

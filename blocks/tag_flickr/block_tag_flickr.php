@@ -43,13 +43,13 @@ class block_tag_flickr extends block_base {
         $tag = optional_param('tag', '', PARAM_TAG); // tag 
 
         if ($tag) {
-            $tag_object = tag_get_id($tag, TAG_RETURN_OBJECT);
-        } elseif (!$tag && $tagid) {
-            $tag_object = tag_get_tag_by_id($tagid);
-        } else {
-            // can't display the block if no tag was submitted! 
-            // todo: something useful here.
-            error('Missing tag parameter');
+            $tag_object = tag_get('name', $tag);
+        } else if ($tagid) {
+            $tag_object = tag_get('id', $tagid);
+        }
+
+        if (empty($tag_object)) {
+            errorcode('tagnotfound');
         }
 
         //include related tags in the photo query ?
