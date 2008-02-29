@@ -188,7 +188,7 @@ $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Précédent';
 $string['qtyperqpwillberemoved'] = 'Au cours de cette mise à jour, le type de question RQP sera supprimé. Vous n\'utilisiez pas ce type de question, et ne souffrirez donc d\'aucun problème.';
 $string['qtyperqpwillberemovedanyway'] = 'Au cours de cette mise à jour, le type de question RQP sera supprimé. Votre base de données comporte des questions RQP, qui ne fonctionneront plus, à moins que vous ne réinstalliez le code disponible sur http://moodle.org/mod/data/view.php?d=13&amp;rid=797 avant de continuer la mise à jour.';
-$string['remotedownloaderror'] = 'Le téléchargement de composants sur votre serveur a échoué. Veuillez vérifier less réglages de proxy. L\'extension cURL de PHP est vivement recommandée.<br /><br />Vous devez télécharger manuellement le fichier <a href=\"$a->url\">$a->url</a>, le copier sur votre serveur à l\'emplacement «&nbsp;$a->dest&nbsp;» et le décompresser à cet endroit.';
+$string['remotedownloaderror'] = 'Le téléchargement de composants sur votre serveur a échoué. Veuillez vérifier les réglages de proxy. L\'extension cURL de PHP est vivement recommandée.<br /><br />Vous devez télécharger manuellement le fichier <a href=\"$a->url\">$a->url</a>, le copier sur votre serveur à l\'emplacement «&nbsp;$a->dest&nbsp;» et le décompresser à cet endroit.';
 $string['remotedownloadnotallowed'] = 'Le téléchargement de composants sur votre serveur n\'est pas autorisé (l\'option allow_url_fopen est désactivée).<br /><br />Vous devez télécharger manuellement le fichier <a href=\"$a->url\">$a->url</a>, le copier vers «&nbsp;$a->dest&nbsp;» dans votre serveur et le décompresser.';
 $string['report'] = 'Rapport';
 $string['restricted'] = 'Interdit';
