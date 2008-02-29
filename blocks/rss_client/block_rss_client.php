@@ -28,7 +28,7 @@
     }
 
     function applicable_formats() {
-        return array('all' => true);
+        return array('all' => true, 'tag' => false);   // Needs work to make it work on tags MDL-11960
     }
 
     function specialization() {
