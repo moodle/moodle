@@ -89,11 +89,13 @@
         }
         print_heading(fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id))));
 
-        $toprow[] = new tabobject('profile', $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id, get_string('profile'));
-
         $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
         $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
         $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
+
+        if ($user->id == $USER->id || has_capability('moodle/user:viewdetails', $coursecontext) || has_capability('moodle/user:viewdetails', $personalcontext) ) { 
+            $toprow[] = new tabobject('profile', $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id, get_string('profile'));
+        }
 
 
     /// Can only edit profile if it belongs to user or current user is admin and not editing primary admin
