@@ -1167,6 +1167,13 @@ class assignment_base {
             $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, array_keys($ausers));
             foreach ($ausers as $auser) {
                 $final_grade = $grading_info->items[0]->grades[$auser->id];
+                $grademax = $grading_info->items[0]->grademax;
+                $final_grade->formatted_grade = round($final_grade->grade,2) .' / ' . round($grademax,2);
+                $locked_overridden = 'locked';
+                if ($final_grade->overridden) {
+                    $locked_overridden = 'overriden';
+                }
+
             /// Calculate user status
                 $auser->status = ($auser->timemarked > 0) && ($auser->timemarked >= $auser->timemodified);
                 $picture = print_user_picture($auser, $course->id, $auser->picture, false, true);
@@ -1190,20 +1197,20 @@ class assignment_base {
                         $teachermodified = '<div id="tt'.$auser->id.'">'.userdate($auser->timemarked).'</div>';
 
                         if ($final_grade->locked or $final_grade->overridden) {
-                            $grade = '<div id="g'.$auser->id.'">'.$final_grade->str_grade.'</div>';
+                            $grade = '<div id="g'.$auser->id.'">'.$final_grade->formatted_grade.'</div>';
                         } else if ($quickgrade) {
                             $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
                                                      'menu['.$auser->id.']', $auser->grade,
                                                      get_string('nograde'),'',-1,true,false,$tabindex++);
                             $grade = '<div id="g'.$auser->id.'">'. $menu .'</div>';
                         } else {
-                            $grade = '<div id="g'.$auser->id.'">'.$this->display_grade($auser->grade).'</div>';
+                            $grade = '<div id="g'.$auser->id.'" class="'. $locked_overridden .'">'.$this->display_grade($auser->grade).'</div>';
                         }
 
                     } else {
                         $teachermodified = '<div id="tt'.$auser->id.'">&nbsp;</div>';
                         if ($final_grade->locked or $final_grade->overridden) {
-                            $grade = '<div id="g'.$auser->id.'">'.$final_grade->str_grade.'</div>';
+                            $grade = '<div id="g'.$auser->id.'">'.$final_grade->formatted_grade.'</div>';
                         } else if ($quickgrade) {
                             $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
                                                      'menu['.$auser->id.']', $auser->grade,
@@ -1229,8 +1236,8 @@ class assignment_base {
                     $teachermodified = '<div id="tt'.$auser->id.'">&nbsp;</div>';
                     $status          = '<div id="st'.$auser->id.'">&nbsp;</div>';
 
-                    if ($final_grade->locked or $final_grade->overridden) {
-                        $grade = '<div id="g'.$auser->id.'">'.$final_grade->str_grade.'</div>';
+                    if ($final_grade->locked or $final_grade->overridden) { 
+                        $grade = '<div id="g'.$auser->id.'">'.$final_grade->formatted_grade . '</div>';
                     } else if ($quickgrade) {   // allow editing
                         $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
                                                  'menu['.$auser->id.']', $auser->grade,
