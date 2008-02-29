@@ -694,7 +694,7 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
     $options->questionreviewlink = '/mod/quiz/reviewquestion.php';
 
     // Show a link to the comment box only for closed attempts
-    if ($attempt->timefinish && has_capability('mod/quiz:grade', $context)) {
+    if ($attempt->timefinish && !is_null($context) && has_capability('mod/quiz:grade', $context)) {
         $options->questioncommentlink = '/mod/quiz/comment.php';
     }
 
