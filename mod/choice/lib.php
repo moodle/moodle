@@ -304,14 +304,14 @@ function choice_show_reportlink($choice, $courseid, $cm, $groupmode) {
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $availableusers = get_users_by_capability($context, 'mod/choice:choose', 'u.id', '','','',$currentgroup, '', true, true);
-
     $responsecount = 0;
 
-    if(!empty($availableusers)){
-        // flatten the users to get a list of userids
-        $userids = implode( ', ', array_keys($availableusers));
-        $responsecount = count_records_select('choice_answers', "choiceid = {$choice->id} AND userid IN ( $userids );");
+    $allresponses = get_records("choice_answers", "choiceid", $choice->id); //get all responses for this choice. 
+    $responsecount = 0; 
+    foreach ($allresponses as $usr) { 
+        if (has_capability('mod/choice:choose', $context, $usr->userid, false)) { //if this user is allowed to select a choice. 
+            $responsecount++; 
+        } 
     }
 
     echo '<div class="reportlink">';
