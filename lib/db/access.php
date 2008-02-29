@@ -1139,17 +1139,6 @@ $moodle_capabilities = array(
         )
     ),
 
-    'moodle/tag:changetype' => array(
-
-        'riskbitmask' => RISK_SPAM,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'legacy' => array(
-            'admin' => CAP_ALLOW
-        )
-    ),
-
     'moodle/tag:create' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
