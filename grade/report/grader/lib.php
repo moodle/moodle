@@ -340,29 +340,6 @@ class grade_report_grader extends grade_report {
     }
 
     /**
-     * Fetches and returns a count of all the users that will be shown on this page.
-     * @param bool $groups Whether to apply groupsql
-     * @return int Count of users
-     */
-    function get_numusers($groups=true) {
-        global $CFG;
-
-        $countsql = "SELECT COUNT(DISTINCT u.id)
-                    FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
-                         {$CFG->prefix}user u ON (u.id = g.userid AND g.itemid = $this->sortitemid)
-                         LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid ";
-        if ($groups) {
-            $countsql .= $this->groupsql;
-        }
-        $countsql .= " WHERE ra.roleid in ($this->gradebookroles) ";
-        if ($groups) {
-            $countsql .= $this->groupwheresql;
-        }
-        $countsql .= " AND ra.contextid ".get_related_contexts_string($this->context);
-        return count_records_sql($countsql);
-    }
-
-    /**
      * we supply the userids in this query, and get all the grades
      * pulls out all the grades, this does not need to worry about paging
      */
