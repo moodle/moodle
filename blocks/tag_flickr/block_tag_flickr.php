@@ -49,7 +49,7 @@ class block_tag_flickr extends block_base {
         }
 
         if (empty($tag_object)) {
-            errorcode('tagnotfound');
+            print_error('tagnotfound');
         }
 
         //include related tags in the photo query ?

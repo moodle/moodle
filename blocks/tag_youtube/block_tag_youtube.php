@@ -88,7 +88,7 @@ class block_tag_youtube extends block_base {
         }
 
         if (empty($tag_object)) {
-            errorcode('tagnotfound');
+            print_error('tagnotfound');
         }
 
         $query_tag = html_entity_decode(tag_display_name($tag_object));
@@ -120,7 +120,7 @@ class block_tag_youtube extends block_base {
         }
 
         if (empty($tag_object)) {
-            errorcode('tagnotfound');
+            print_error('tagnotfound');
         }
 
         $query_tag = html_entity_decode(tag_display_name($tag_object));
