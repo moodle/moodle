@@ -2915,6 +2915,29 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101508.07);
     }
 
+    if ($result && $oldversion < 2007101508.08) {    // MDL-13676
+
+    /// Define field name to be added to role_names
+        $table = new XMLDBTable('role_names');
+        $field = new XMLDBField('name');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'text');
+
+    /// Launch add field name
+        $result = $result && add_field($table, $field);
+ 
+    /// Copy data from old field to new field
+        $result = $result && execute_sql('UPDATE '.$CFG->prefix.'role_names SET name = text');
+
+    /// Define field text to be dropped from role_names
+        $table = new XMLDBTable('role_names');
+        $field = new XMLDBField('text');
+
+    /// Launch drop field text
+        $result = $result && drop_field($table, $field);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101508.08);
+    }
 
 
     return $result;

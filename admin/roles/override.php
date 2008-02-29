@@ -160,7 +160,7 @@
         if ($aliasnames = get_records('role_names', 'contextid', $coursecontext->id)) {
             foreach ($aliasnames as $alias) {
                 if (isset($overridableroles[$alias->roleid])) {
-                    $overridableroles[$alias->roleid] = $alias->text.' ('.$overridableroles[$alias->roleid].')';
+                    $overridableroles[$alias->roleid] = $alias->name.' ('.$overridableroles[$alias->roleid].')';
                 }
             }
         }

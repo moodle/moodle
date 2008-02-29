@@ -1861,7 +1861,7 @@ function print_course($course) {
                 
                  /// Rename some of the role names if needed
                 if (isset($context)) {
-                    $aliasnames = get_records('role_names', 'contextid', $context->id,'','roleid,contextid,text');
+                    $aliasnames = get_records('role_names', 'contextid', $context->id,'','roleid,contextid,name');
                 }
 
                 foreach ($rusers as $ra) {
@@ -1869,7 +1869,7 @@ function print_course($course) {
                         $fullname = fullname($ra->user, $canviewfullnames); 
 
                         if (isset($aliasnames[$ra->roleid])) {
-                            $ra->rolename = $aliasnames[$ra->roleid]->text;
+                            $ra->rolename = $aliasnames[$ra->roleid]->name;
                         }
 
                         $namesarray[] = format_string($ra->rolename) 
@@ -2925,14 +2925,14 @@ function update_course($data) {
             
             } else if ($t = get_record('role_names', 'contextid', $context->id, 'roleid', $roleid)) {
                 
-                $t->text = $dvalue;
+                $t->name = $dvalue;
                 update_record('role_names', $t);    
                        
             } else {
                 
                 $t->contextid = $context->id;
                 $t->roleid = $roleid;
-                $t->text = $dvalue;
+                $t->name = $dvalue;
                 insert_record('role_names', $t);  
             }
             

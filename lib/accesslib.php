@@ -4022,16 +4022,25 @@ function get_user_roles_in_context($userid, $context, $view=true){
 
     $rolestring = '';
     $SQL = 'select * from '.$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'role r where ra.userid='.$userid.' and ra.contextid='.$context->id.' and ra.roleid = r.id';
+    $rolenames = array();
     if ($roles = get_records_sql($SQL)) {
         foreach ($roles as $userrole) {
             // MDL-12544, if we are in view mode and current user has no capability to view hidden assignment, skip it
             if ($userrole->hidden && $view && !has_capability('moodle/role:viewhiddenassigns', $context)) {
                 continue;
             }
+            $rolenames[$userrole->roleid] = $userrole->name;
             $rolestring .= '<a href="'.$CFG->wwwroot.'/user/index.php?contextid='.$userrole->contextid.'&amp;roleid='.$userrole->roleid.'">'.$userrole->name.'</a>, ';
         }
+
+        $rolenames = role_fix_names($rolenames, $context);   // Substitute aliases
+
+        foreach ($rolenames as $roleid => $rolename) {
+            $rolenames[$roleid] = '<a href="'.$CFG->wwwroot.'/user/index.php?contextid='.$context->id.'&amp;roleid='.$roleid.'">'.$rolename.'</a>';
+        }
+        $rolestring = implode(',', $rolenames);
     }
-    return rtrim($rolestring, ', ');
+    return $rolestring;
 }
 
 
@@ -4194,7 +4203,7 @@ function get_assignable_roles ($context, $field="name") {
 
     // apply context role aliases if name requested
     if ($field == 'name') {
-        $f = "COALESCE(rn.text, r.name) AS name";
+        $f = "COALESCE(rn.name, r.name) AS name";
     } else {
         $f = "r.$field";
     }
@@ -4252,7 +4261,7 @@ function get_assignable_roles_for_switchrole ($context, $field="name") {
 
     // apply context role aliases if name requested
     if ($field == 'name') {
-        $f = "COALESCE(rn.text, r.name) AS name";
+        $f = "COALESCE(rn.name, r.name) AS name";
     } else {
         $f = "r.$field";
     }
@@ -5279,7 +5288,7 @@ function user_has_role_assignment($userid, $roleid, $contextid=0) {
  */
 function role_get_name($role, $coursecontext) {
     if ($r = get_record('role_names','roleid', $role->id,'contextid', $coursecontext->id)) {
-        return strip_tags(format_string($r->text));
+        return strip_tags(format_string($r->name));
     } else {
         return strip_tags(format_string($role->name));
     }
@@ -5295,7 +5304,7 @@ function role_fix_names($roleoptions, $coursecontext) {
     if ($aliasnames = get_records('role_names', 'contextid', $coursecontext->id)) {
         foreach ($aliasnames as $alias) {
             if (isset($roleoptions[$alias->roleid])) {
-                $roleoptions[$alias->roleid] = $alias->text;
+                $roleoptions[$alias->roleid] = $alias->name;
             }
         }
     }

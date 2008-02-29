@@ -377,7 +377,7 @@ class course_edit_form extends moodleform {
                 $mform->addElement('text', 'role_'.$role->id, $role->name);
                 if ($coursecontext) {
                     if ($rolename = get_record('role_names', 'roleid', $role->id, 'contextid', $coursecontext->id)) {
-                        $mform->setDefault('role_'.$role->id, $rolename->text); 
+                        $mform->setDefault('role_'.$role->id, $rolename->name); 
                     }  
                 }
             }
