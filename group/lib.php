@@ -559,7 +559,7 @@ function groups_calculate_role_people($rs,$contextid) {
     }
     
     // Get role aliases for course in array of roleid => obj->text
-    if(!($aliasnames=get_records('role_names','contextid',$contextid,'','roleid,text'))) {
+    if(!($aliasnames=get_records('role_names','contextid',$contextid,'','roleid,name'))) {
         $aliasnames=array();
     }
 
@@ -592,7 +592,7 @@ function groups_calculate_role_people($rs,$contextid) {
                 $roledata->id=$rec->roleid;
                 $roledata->shortname=$rec->roleshortname;
                 if(array_key_exists($rec->roleid,$aliasnames)) {
-                    $roledata->name=$aliasnames[$rec->roleid]->text;
+                    $roledata->name=$aliasnames[$rec->roleid]->name;
                 } else {
                     $roledata->name=$rec->rolename;
                 }
