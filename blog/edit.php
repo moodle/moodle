@@ -308,8 +308,9 @@ function add_tags_info($postid) {
     if ($otags = optional_param('otags', '', PARAM_INT)) {
         foreach ($otags as $tagid) {
             // TODO : make this use the tag name in the form
-            $tag = tag_get_tag_by_id($tagid);
-            $tags[] = $tag->name;
+            if ($tag = tag_get('id', $tagid)) {
+                $tags[] = $tag->name;
+            }
         }
     }
 

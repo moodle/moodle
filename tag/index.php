@@ -13,19 +13,23 @@ if (empty($CFG->usetags)) {
 }
 
 $tagid       = optional_param('id', 0, PARAM_INT); // tag id
-$tag_name    = optional_param('tag', '', PARAM_TAG); // tag 
-if ($tag_name) {
-    $tag = tag_get_id($tag_name, TAG_RETURN_OBJECT);
-} elseif ($tagid) {
-    $tag = tag_get_tag_by_id($tagid); // for backward compatibility
-}
+$tagname     = optional_param('tag', '', PARAM_TAG); // tag 
+
 $edit        = optional_param('edit', -1, PARAM_BOOL);
 $userpage    = optional_param('userpage', 0, PARAM_INT); // which page to show
 $perpage     = optional_param('perpage', 24, PARAM_INT);
 
-if (!isset($tag) || !$tag->id) {
+
+if ($tagname) {
+    $tag = tag_get('name', $tagname, '*');
+} else if ($tagid) {
+    $tag = tag_get('id', $tagid, '*');
+}
+
+if (empty($tag)) {
     redirect($CFG->wwwroot.'/tag/search.php');
 }
+
 
 //create a new page_tag object, defined in pagelib.php
 $PAGE = page_create_object(PAGE_TAG_INDEX, $tag->id);

@@ -14,13 +14,17 @@ if (empty($CFG->usetags)) {
 
 $tag_id = optional_param('id', 0, PARAM_INT);
 $tag_name = optional_param('tag', '', PARAM_TAG);
+
 if ($tag_name) {
-    $tag = tag_get_id($tag_name, TAG_RETURN_OBJECT);
-} elseif ( $tag_id ) {
-    $tag = tag_get_tag_by_id($tag_id);
-} else {
-    error('A required parameter was missing');
+    $tag = tag_get('name', $tag_name, '*');
+} else if ($tag_id) {
+    $tag = tag_get('id', $tag_id, '*');
 }
+
+if (empty($tag)) {
+    redirect($CFG->wwwroot.'/tag/search.php');
+}
+
 $tagname = tag_display_name($tag);
 
 //Editing a tag requires moodle/tag:edit capability
