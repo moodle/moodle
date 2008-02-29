@@ -48,12 +48,26 @@ if (can_use_html_editor()) {
 $errorstring = '';
 
 $tagform = new tag_edit_form();
+if ( $tag->tagtype == 'official' ) {
+    $tag->tagtype = '1';
+} else {
+    $tag->tagtype = '0';
+}
 $tagform->set_data($tag);
 
 // If new data has been sent, update the tag record
 if ($tagnew = $tagform->get_data()) {
 
     tag_description_set($tag_id, stripslashes($tagnew->description), $tagnew->descriptionformat);
+
+    if (has_capability('moodle/tag:manage', $systemcontext)) {
+        if (($tag->tagtype != 'default') && ($tagnew->tagtype != '1')) {
+            tag_type_set($tag->id, 'default');
+
+        } elseif (($tag->tagtype != 'official') && ($tagnew->tagtype == '1')) {
+            tag_type_set($tag->id, 'official');
+        }
+    }
 
     if (!has_capability('moodle/tag:manage', $systemcontext)) {
         unset($tagnew->name);

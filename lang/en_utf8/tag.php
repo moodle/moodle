@@ -21,6 +21,7 @@ $string['name'] = 'Tag name';
 $string['namesalreadybeeingused'] = 'Tag names already being used';
 $string['newname'] = 'New tag name';
 $string['noresultsfor'] = 'No results for \"$a\"';
+$string['officialtag'] = 'Official tag';
 $string['owner'] = 'Owner';
 $string['otags'] = 'Official tags';
 $string['ptags'] = 'User defined tags (Comma separated)';
