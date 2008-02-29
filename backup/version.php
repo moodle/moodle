@@ -7,6 +7,6 @@
 /// be performed (see db/backup_*.php)
 
     $backup_version = 2007122700;   // The current version is a date (YYYYMMDDXX)
-    $backup_release = '1.9 beta 4';     // User-friendly version number
+    $backup_release = '1.9';     // User-friendly version number
 
 ?>
