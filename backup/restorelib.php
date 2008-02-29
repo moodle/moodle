@@ -4139,6 +4139,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     $status = false;
                }
             }
+        /// Finally, calculate modinfo cache.
+            rebuild_course_cache($restore->course_id);
         }
 
 
@@ -7517,6 +7519,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         }
 
         //Now, if all is OK, adjust the instance field in course_modules !!
+        //this also calculates the final modinfo information so, after this,
+        //code needing it can be used (like role_assignments. MDL-13740)
         if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("checkinginstances");
@@ -7641,8 +7645,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("checkingcourse");
             }
-            //modinfo field
-            rebuild_course_cache($restore->course_id);
             //categories table
             $course = get_record("course","id",$restore->course_id);
             fix_course_sortorder();
