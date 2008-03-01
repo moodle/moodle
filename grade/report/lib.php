@@ -265,7 +265,7 @@ class grade_report {
         $groupwheresql = "";
         if ($groups) {
             $groupsql      = $this->groupsql;
-            $groupwheresql = $this->groupsqlwhere;
+            $groupwheresql = $this->groupwheresql;
         }
 
         $countsql = "SELECT COUNT(DISTINCT u.id)
