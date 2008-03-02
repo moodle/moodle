@@ -224,9 +224,9 @@ class grade_export {
                 break;
             }
             $user = $userdata->user;
-            if (empty($user->idnumber)) {
-                continue;
-            }
+            // if (empty($user->idnumber)) {   // Not sure why this was here, ccommented out for MDL-13722
+            //     continue;
+            // }
             
             $gradeupdated = false; // if no grade is update at all for this user, do not display this row
             $rowstr = '';
