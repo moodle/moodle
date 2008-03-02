@@ -58,7 +58,7 @@
     <tr valign="top">
         <td align="right"><label for="shortname"><?php print_string('shortname') ?></label></td>
         <td><?php
-            echo '<input type="text" id="shortname" name="shortname" maxlength="20" size="15" value="'.s($role->shortname).'" />';
+            echo '<input type="text" id="shortname" name="shortname" maxlength="100" size="15" value="'.s($role->shortname).'" />';
             if (isset($errors["shortname"])) formerr($errors["shortname"]);
             ?>
         </td>
