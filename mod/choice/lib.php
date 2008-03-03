@@ -295,7 +295,7 @@ function choice_show_reportlink($user, $cm) {
     echo '</div>';
 }
 
-function choice_show_results($choice, $course, $cm, $users, $forcepublish='') {
+function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish='') {
     global $CFG, $COLUMN_HEIGHT;
     
     print_heading(get_string("responses", "choice"));
@@ -303,12 +303,12 @@ function choice_show_results($choice, $course, $cm, $users, $forcepublish='') {
         $forcepublish = $choice->publish;
     }
 
-    if (!$users) {
+    if (!$allresponses) {
         print_heading(get_string("nousersyet"));
     }
 
     $totalresponsecount = 0;
-    foreach ($users as $optionid => $userlist) {
+    foreach ($allresponses as $optionid => $userlist) {
         if ($choice->showunanswered || $optionid) {
             $totalresponsecount += count($userlist);
         }
@@ -353,7 +353,7 @@ function choice_show_results($choice, $course, $cm, $users, $forcepublish='') {
                 // we do not get <table></table> erro from w3c validator
                 // MDL-7861
                 echo "<table class=\"choiceresponse\"><tr><td></td></tr>";
-                foreach ($users[0] as $user) {
+                foreach ($allresponses[0] as $user) {
                     echo "<tr>";
                     echo "<td class=\"picture\">";
                     print_user_picture($user->id, $course->id, $user->picture);
@@ -373,8 +373,8 @@ function choice_show_results($choice, $course, $cm, $users, $forcepublish='') {
                     // we do not get <table></table> erro from w3c validator
                     // MDL-7861
                     echo '<table class="choiceresponse"><tr><td></td></tr>';
-                    if (isset($users[$optionid])) {
-                        foreach ($users[$optionid] as $user) {
+                    if (isset($allresponses[$optionid])) {
+                        foreach ($allresponses[$optionid] as $user) {
                             $columncount[$optionid] += 1;
                             echo '<tr><td class="attemptcell">';
                             if ($viewresponses) {
@@ -450,7 +450,7 @@ function choice_show_results($choice, $course, $cm, $users, $forcepublish='') {
                 print_string('notanswered', 'choice');
                 echo "</th>";
                 $column[0] = 0;
-                foreach ($users[0] as $user) {
+                foreach ($allresponses[0] as $user) {
                     $column[0]++;
                 }
                 $maxcolumn = $column[0];
@@ -463,10 +463,8 @@ function choice_show_results($choice, $course, $cm, $users, $forcepublish='') {
                 echo "</th>";
                 
                 $column[$optionid] = 0;
-                if (isset($users[$optionid])) {
-                    foreach ($users[$optionid] as $user) {
-                        $column[$optionid]++;
-                    }
+                if (isset($allresponses[$optionid])) {
+                    $column[$optionid] = count($allresponses[$optionid]);
                     if ($column[$optionid] > $maxcolumn) {
                         $maxcolumn = $column[$optionid];
                     }
@@ -687,29 +685,29 @@ function choice_get_response_data($choice, $cm, $groupmode) {
         $currentgroup = 0;
     }
 
-/// Initialise the returned array, which is a matrix:  $users[responseid][userid] = responseobject
-    $users = array();
+/// Initialise the returned array, which is a matrix:  $allresponses[responseid][userid] = responseobject
+    $allresponses = array();
 
 /// First get all the users who have access here
 /// To start with we assume they are all "unanswered" then move them later
-    $users[0] = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', false, true);
+    $allresponses[0] = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', false, true);
 
 /// Get all the recorded responses for this choice
-    $allresponses = get_records('choice_answers', 'choiceid', $choice->id);
+    $rawresponses = get_records('choice_answers', 'choiceid', $choice->id);
 
 /// Use the responses to move users into the correct column
 
-    if ($allresponses) {
-        foreach ($allresponses as $response) {
-            if (isset($users[0][$response->userid])) {   // This person is enrolled and in correct group
-                $users[0][$response->userid]->timemodified = $response->timemodified;
-                $users[$response->optionid][$response->userid] = clone($users[0][$response->userid]);
-                unset($users[0][$response->userid]);   // Remove from unanswered column
+    if ($rawresponses) {
+        foreach ($rawresponses as $response) {
+            if (isset($allresponses[0][$response->userid])) {   // This person is enrolled and in correct group
+                $allresponses[0][$response->userid]->timemodified = $response->timemodified;
+                $allresponses[$response->optionid][$response->userid] = clone($allresponses[0][$response->userid]);
+                unset($allresponses[0][$response->userid]);   // Remove from unanswered column
             }
         }
     }
 
-    return $users;
+    return $allresponses;
 
 }
 ?>
