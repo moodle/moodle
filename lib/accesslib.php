@@ -4418,6 +4418,13 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
                              ON rc.roleid=dar.roleid";
         $doanything_cond="AND dar.roleid IS NULL";
     }
+
+    // fetch all capability records - we'll walk several
+    // times over them, and should be a small set
+
+    $negperm = false; // has any negative (<0) permission?
+    $roleids = array();
+
     $sql = "SELECT rc.id, rc.roleid, rc.permission, rc.capability,
                    ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
             FROM {$CFG->prefix}role_capabilities rc
@@ -4426,17 +4433,12 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
             WHERE rc.capability IN ($caps) AND ctx.id IN ($ctxids)
                   $doanything_cond
             ORDER BY rc.roleid ASC, ctx.depth ASC";
-    // fetch all records - we'll walk several
-    // times over them, and should be a small set
-    $capdefs = get_records_sql($sql);
-
-    $negperm = false; // has any negative (<0) permission?
-    $roleids = array();
-    foreach ($capdefs AS $rcid=>$rc) {
-
-        $roleids[] = (int)$rc->roleid;
-        if ($rc->permission < 0) {
-            $negperm = true;
+    if ($capdefs = get_records_sql($sql)) {
+        foreach ($capdefs AS $rcid=>$rc) {
+            $roleids[] = (int)$rc->roleid;
+            if ($rc->permission < 0) {
+                $negperm = true;
+            }
         }
     }
         
@@ -4518,7 +4520,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     $sortby = $sort ? " ORDER BY $sort " : '';
 
     // User lastaccess JOIN
-    if ($iscoursepage) {
+    if ($sort == 'ul.timeaccess') {
         $uljoin = "LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul 
                          ON (ul.userid = u.id AND ul.courseid = {$context->instanceid})";
     } else {
@@ -4541,6 +4543,10 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         }
 
         // all site users have it, anyway
+        // TODO: NOT ALWAYS!  Check this case because this gets run for cases like this:
+        // 1) Default role has the permission for a module thing like mod/choice:choose
+        // 2) We are checking for an activity module context in a course
+        // 3) Thus all users are returned even though course:view is also required 
         if ($defaultroleinteresting) {
             $sql = "SELECT $fields
                     FROM {$CFG->prefix}user u
