@@ -13,7 +13,7 @@ class block_tag_youtube extends block_base {
 
     function init() {
         $this->title = get_string('blockname','block_tag_youtube');
-        $this->version = 2007080800;
+        $this->version = 2007101509;
     }
 
     function applicable_formats() {

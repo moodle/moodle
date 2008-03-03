@@ -8,7 +8,7 @@ class block_glossary_random extends block_base {
     function init() {
 
         $this->title = get_string('blockname','block_glossary_random');
-        $this->version = 2005040500;
+        $this->version = 2007101509;
 
     }
 

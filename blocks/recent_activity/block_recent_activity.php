@@ -3,7 +3,7 @@
 class block_recent_activity extends block_base {
     function init() {
         $this->title = get_string('recentactivity');
-        $this->version = 2004042900;
+        $this->version = 2007101509;
     }
 
     function get_content() {

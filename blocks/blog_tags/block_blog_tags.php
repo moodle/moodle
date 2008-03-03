@@ -8,7 +8,7 @@ require_once($CFG->dirroot .'/blog/lib.php');
 
 class block_blog_tags extends block_base {
     function init() {
-        $this->version = 2006032000;
+        $this->version = 2007101509;
         $this->title = get_string('blocktagstitle', 'blog');
     }
 

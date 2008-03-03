@@ -3,7 +3,7 @@
 class block_admin extends block_list {
     function init() {
         $this->title = get_string('administration');
-        $this->version = 2004081200;
+        $this->version = 2007101509;
     }
 
     function get_content() {

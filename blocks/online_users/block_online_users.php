@@ -8,7 +8,7 @@
 class block_online_users extends block_base {
     function init() {
         $this->title = get_string('blockname','block_online_users');
-        $this->version = 2006030100;
+        $this->version = 2007101509;
     }
 
     function has_config() {return true;}

@@ -12,7 +12,7 @@ class block_admin_tree extends block_base {
     function init() {
         global $PAGE;
         $this->title = get_string('administrationsite');
-        $this->version = 2006090300;
+        $this->version = 2007101509;
         $this->currentdepth = 0;
         $this->divcounter = 1;
         $this->tempcontent = '';
