@@ -3,6 +3,7 @@
 require_once($CFG->dirroot.'/enrol/enrol.class.php');
 require_once($CFG->dirroot.'/enrol/authorize/const.php');
 require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
+require_once($CFG->dirroot.'/enrol/authorize/authorizenet.class.php');
 
 /**
  * Authorize.net Payment Gateway plugin
@@ -141,12 +142,12 @@ class enrolment_plugin_authorize
      *
      * @param object $form Form parameters
      * @param object $course Course info
+     * @return string NULL if ok, error message otherwise.
      * @access private
      */
     private function cc_submit($form, $course)
     {
         global $CFG, $USER, $SESSION;
-        require_once('authorizenetlib.php');
 
         prevent_double_paid($course);
 
@@ -198,102 +199,118 @@ class enrolment_plugin_authorize
         $extra->x_phone = '';
         $extra->x_fax = '';
 
-        $revieworder = false;
-        $action = AN_ACTION_AUTH_CAPTURE;
-
         if (!empty($CFG->an_authcode) && !empty($form->ccauthcode)) {
             $action = AN_ACTION_CAPTURE_ONLY;
             $extra->x_auth_code = $form->ccauthcode;
         }
         elseif (!empty($CFG->an_review)) {
-            $revieworder = true;
             $action = AN_ACTION_AUTH_ONLY;
+        }
+        else {
+            $action = AN_ACTION_AUTH_CAPTURE;
         }
 
         $message = '';
-        if (AN_APPROVED != authorize_action($order, $message, $extra, $action, $form->cctype)) {
+        if (AN_APPROVED == AuthorizeNet::process($order, $message, $extra, $action, $form->cctype))
+        {
+            $SESSION->ccpaid = 1; // security check: don't duplicate payment
+
+            switch ($action)
+            {
+                // review enabled (authorize but capture: draw money but wait for settlement during 30 days)
+                // the first step is to inform payment managers and to redirect the user to main page.
+                // the next step is to accept/deny payment (AN_ACTION_PRIOR_AUTH_CAPTURE/VOID) within 30 days (payment management or scheduled-capture CRON)
+                // unless you accept payment or enable auto-capture cron, the transaction is expired after 30 days and the user cannot enrol to the course during 30 days.
+                // see also: admin/cron.php, $this->cron(), $CFG->an_capture_day...
+                case AN_ACTION_AUTH_ONLY:
+                    {
+                        $a = new stdClass;
+                        $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$order->id";
+                        $a->orderid = $order->id;
+                        $a->transid = $order->transid;
+                        $a->amount = "$order->currency $order->amount";
+                        $a->expireon = userdate(AuthorizeNet::getsettletime($timenow + (30 * 3600 * 24)));
+                        $a->captureon = userdate(AuthorizeNet::getsettletime($timenow + (intval($CFG->an_capture_day) * 3600 * 24)));
+                        $a->course = $course->fullname;
+                        $a->user = fullname($USER);
+                        $a->acstatus = ($CFG->an_capture_day > 0) ? get_string('yes') : get_string('no');
+                        $emailmessage = get_string('adminneworder', 'enrol_authorize', $a);
+                        $a = new stdClass;
+                        $a->course = $course->shortname;
+                        $a->orderid = $order->id;
+                        $emailsubject = get_string('adminnewordersubject', 'enrol_authorize', $a);
+                        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+                        if (($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments'))) {
+                            foreach ($paymentmanagers as $paymentmanager) {
+                                email_to_user($paymentmanager, $USER, $emailsubject, $emailmessage);
+                            }
+                        }
+                        redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
+                        break;
+                    }
+
+                case AN_ACTION_CAPTURE_ONLY: // auth code received via phone and the code accepted.
+                case AN_ACTION_AUTH_CAPTURE: // real time transaction, authorize and capture.
+                {
+                    // Credit card captured, ENROL student now...
+                    if (enrol_into_course($course, $USER, 'authorize'))
+                    {
+                        if (!empty($CFG->enrol_mailstudents)) {
+                            send_welcome_messages($order->id);
+                        }
+                        if (!empty($CFG->enrol_mailteachers)) {
+                            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+                            $paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments', '', '', '0', '1');
+                            $paymentmanager = array_shift($paymentmanagers);
+                            $a = new stdClass;
+                            $a->course = "$course->fullname";
+                            $a->user = fullname($USER);
+                            email_to_user(
+                                $paymentmanager,
+                                $USER,
+                                get_string("enrolmentnew", '', format_string($course->shortname)),
+                                get_string('enrolmentnewuser', '', $a)
+                            );
+                        }
+                        if (!empty($CFG->enrol_mailadmins)) {
+                            $a = new stdClass;
+                            $a->course = "$course->fullname";
+                            $a->user = fullname($USER);
+                            $admins = get_admins();
+                            foreach ($admins as $admin) {
+                                email_to_user(
+                                    $admin,
+                                    $USER,
+                                    get_string("enrolmentnew", '', format_string($course->shortname)),
+                                    get_string('enrolmentnewuser', '', $a)
+                                );
+                            }
+                        }
+                    }
+                    else
+                    {
+                        email_to_admin("Error while trying to enrol " . fullname($USER) . " in '$course->fullname'", $order);
+                    }
+
+                    if ($SESSION->wantsurl) {
+                        $destination = $SESSION->wantsurl;
+                        unset($SESSION->wantsurl);
+                    } else {
+                        $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
+                    }
+
+                    load_all_capabilities();
+                    redirect($destination, get_string('paymentthanks', 'moodle', $course->fullname), 10);
+                    break;
+                }
+            }
+            return NULL;
+        }
+        else
+        {
             email_to_admin($message, $order);
             return $message;
         }
-
-        $SESSION->ccpaid = 1; // security check: don't duplicate payment
-        if ($order->transid == 0) { // TEST MODE
-            if ($revieworder) {
-                redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
-            }
-            else {
-                enrol_into_course($course, $USER, 'authorize');
-                redirect("$CFG->wwwroot/course/view.php?id=$course->id");
-            }
-            return;
-        }
-
-        if ($revieworder) { // review enabled, inform payment managers and redirect the user who have paid to main page.
-            $a = new stdClass;
-            $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$order->id";
-            $a->orderid = $order->id;
-            $a->transid = $order->transid;
-            $a->amount = "$order->currency $order->amount";
-            $a->expireon = userdate(authorize_getsettletime($timenow + (30 * 3600 * 24)));
-            $a->captureon = userdate(authorize_getsettletime($timenow + (intval($CFG->an_capture_day) * 3600 * 24)));
-            $a->course = $course->fullname;
-            $a->user = fullname($USER);
-            $a->acstatus = ($CFG->an_capture_day > 0) ? get_string('yes') : get_string('no');
-            $emailmessage = get_string('adminneworder', 'enrol_authorize', $a);
-            $a = new stdClass;
-            $a->course = $course->shortname;
-            $a->orderid = $order->id;
-            $emailsubject = get_string('adminnewordersubject', 'enrol_authorize', $a);
-            $context = get_context_instance(CONTEXT_COURSE, $course->id);
-            if (($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments'))) {
-                foreach ($paymentmanagers as $paymentmanager) {
-                    email_to_user($paymentmanager, $USER, $emailsubject, $emailmessage);
-                }
-            }
-            redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
-            return;
-        }
-
-        // Credit card captured, ENROL student now...
-        if (enrol_into_course($course, $USER, 'authorize')) {
-            if (!empty($CFG->enrol_mailstudents)) {
-                send_welcome_messages($order->id);
-            }
-            if (!empty($CFG->enrol_mailteachers)) {
-                $context = get_context_instance(CONTEXT_COURSE, $course->id);
-                $paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments', '', '', '0', '1');
-                $paymentmanager = array_shift($paymentmanagers);
-                $a = new stdClass;
-                $a->course = "$course->fullname";
-                $a->user = fullname($USER);
-                email_to_user($paymentmanager,
-                              $USER,
-                              get_string("enrolmentnew", '', format_string($course->shortname)),
-                              get_string('enrolmentnewuser', '', $a));
-            }
-            if (!empty($CFG->enrol_mailadmins)) {
-                $a = new stdClass;
-                $a->course = "$course->fullname";
-                $a->user = fullname($USER);
-                $admins = get_admins();
-                foreach ($admins as $admin) {
-                    email_to_user($admin,
-                                  $USER,
-                                  get_string("enrolmentnew", '', format_string($course->shortname)),
-                                  get_string('enrolmentnewuser', '', $a));
-                }
-            }
-        } else {
-            email_to_admin("Error while trying to enrol " . fullname($USER) . " in '$course->fullname'", $order);
-        }
-
-        if ($SESSION->wantsurl) {
-            $destination = $SESSION->wantsurl; unset($SESSION->wantsurl);
-        } else {
-            $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
-        }
-        load_all_capabilities();
-        redirect($destination, get_string('paymentthanks', 'moodle', $course->fullname), 10);
     }
 
 
@@ -302,12 +319,12 @@ class enrolment_plugin_authorize
      *
      * @param object $form Form parameters
      * @param object $course Course info
+     * @return string NULL if ok, error message otherwise.
      * @access private
      */
     private function echeck_submit($form, $course)
     {
         global $CFG, $USER, $SESSION;
-        require_once('authorizenetlib.php');
 
         prevent_double_paid($course);
 
@@ -362,13 +379,15 @@ class enrolment_plugin_authorize
         $extra->x_fax = '';
 
         $message = '';
-        if (AN_REVIEW != authorize_action($order, $message, $extra, AN_ACTION_AUTH_CAPTURE)) {
+        if (AN_REVIEW == AuthorizeNet::process($order, $message, $extra, AN_ACTION_AUTH_CAPTURE)) {
+            $SESSION->ccpaid = 1; // security check: don't duplicate payment
+            redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
+            return NULL;
+        }
+        else {
             email_to_admin($message, $order);
             return $message;
         }
-
-        $SESSION->ccpaid = 1; // security check: don't duplicate payment
-        redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
     }
 
 
@@ -580,11 +599,10 @@ class enrolment_plugin_authorize
     public function cron()
     {
         global $CFG;
-        require_once($CFG->dirroot.'/enrol/authorize/authorizenetlib.php');
 
         $oneday = 86400;
         $timenow = time();
-        $settlementtime = authorize_getsettletime($timenow);
+        $settlementtime = AuthorizeNet::getsettletime($timenow);
         $timediff30 = $settlementtime - (30 * $oneday);
         $mconfig = get_config('enrol/authorize');
         set_config('an_lastcron', $timenow, 'enrol/authorize');
@@ -638,7 +656,7 @@ class enrolment_plugin_authorize
         foreach ($orders as $order) {
             $message = '';
             $extra = NULL;
-            if (AN_APPROVED == authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE)) {
+            if (AN_APPROVED == AuthorizeNet::process($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE)) {
                 if ($lastcourseid != $order->courseid) {
                     $lastcourseid = $order->courseid;
                     $course = get_record('course', 'id', $lastcourseid);
@@ -702,12 +720,11 @@ class enrolment_plugin_authorize
     private function cron_daily()
     {
         global $CFG, $SITE;
-        require_once($CFG->dirroot.'/enrol/authorize/authorizenetlib.php');
 
         $oneday = 86400;
         $timenow = time();
         $onepass = $timenow - $oneday;
-        $settlementtime = authorize_getsettletime($timenow);
+        $settlementtime = AuthorizeNet::getsettletime($timenow);
         $timediff30 = $settlementtime - (30 * $oneday);
 
         $select = "(status='".AN_STATUS_NONE."') AND (timecreated<'$timediff30')";
