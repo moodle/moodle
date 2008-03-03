@@ -3,7 +3,7 @@
 class block_calendar_upcoming extends block_base {
     function init() {
         $this->title = get_string('upcomingevents', 'calendar');
-        $this->version = 2004052600;
+        $this->version = 2007101509;
     }
 
     function get_content() {

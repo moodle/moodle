@@ -12,7 +12,7 @@ class block_tag_flickr extends block_base {
 
     function init() {
         $this->title = get_string('defaulttile','block_tag_flickr');
-        $this->version = 2007080800;
+        $this->version = 2007101509;
     }
 
     function applicable_formats() {

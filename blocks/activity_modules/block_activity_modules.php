@@ -3,7 +3,7 @@
 class block_activity_modules extends block_list {
     function init() {
         $this->title = get_string('activities');
-        $this->version = 2006011300;
+        $this->version = 2007101509;
     }
 
     function get_content() {

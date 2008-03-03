@@ -7,7 +7,7 @@ class block_blog_menu extends block_base {
     function init() {
         $this->title = get_string('blockmenutitle', 'blog');
         $this->content_type = BLOCK_TYPE_TEXT;
-        $this->version = 2004112000;
+        $this->version = 2007101509;
     }
 
     function get_content() {

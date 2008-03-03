@@ -5,7 +5,7 @@ class block_loancalc extends block_base {
     function init() {
         $this->title = get_string('loancalc','block_loancalc');
         $this->content_type = BLOCK_TYPE_TEXT;
-        $this->version = 2005022100;
+        $this->version = 2007101509;
     }
 
     function get_content() {

@@ -3,7 +3,7 @@
 class block_participants extends block_list {
     function init() {
         $this->title = get_string('people');
-        $this->version = 2004052600;
+        $this->version = 2007101509;
     }
 
     function get_content() {

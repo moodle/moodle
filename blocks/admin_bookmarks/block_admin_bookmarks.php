@@ -8,7 +8,7 @@ class block_admin_bookmarks extends block_base {
 
     function init() {
         $this->title = get_string('adminbookmarks');
-        $this->version = 2006090300;
+        $this->version = 2007101509;
     }
 
     function applicable_formats() {

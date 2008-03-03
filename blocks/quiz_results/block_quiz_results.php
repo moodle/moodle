@@ -10,7 +10,7 @@ define('B_QUIZRESULTS_GRADE_FORMAT_ABS', 3);
 class block_quiz_results extends block_base {
     function init() {
         $this->title = get_string('formaltitle', 'block_quiz_results');
-        $this->version = 2005082300;
+        $this->version = 2007101509;
     }
 
     function applicable_formats() {

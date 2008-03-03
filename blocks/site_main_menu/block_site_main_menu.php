@@ -3,7 +3,7 @@
 class block_site_main_menu extends block_list {
     function init() {
         $this->title = get_string('mainmenu');
-        $this->version = 2005061300;
+        $this->version = 2007101509;
     }
 
     function applicable_formats() {

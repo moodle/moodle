@@ -3,7 +3,7 @@
 class block_social_activities extends block_list {
     function init(){
         $this->title = get_string('blockname', 'block_social_activities');
-        $this->version = 2004041800;
+        $this->version = 2007101509;
     }
 
     function applicable_formats() {

@@ -4,7 +4,7 @@ class block_html extends block_base {
 
     function init() {
         $this->title = get_string('html', 'block_html');
-        $this->version = 2004123000;
+        $this->version = 2007101509;
     }
 
     function applicable_formats() {
