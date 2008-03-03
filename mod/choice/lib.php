@@ -304,16 +304,15 @@ function choice_show_reportlink($choice, $courseid, $cm, $groupmode) {
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $availableusers = get_users_by_capability($context, 'mod/choice:choose', 'u.id', '','','',$currentgroup, '', true, true);
+
     $responsecount = 0;
 
-    $allresponses = get_records("choice_answers", "choiceid", $choice->id); //get all responses for this choice. 
-    $responsecount = 0; 
-    foreach ($allresponses as $usr) { 
-        if (has_capability('mod/choice:choose', $context, $usr->userid, false)) { //if this user is allowed to select a choice. 
-            $responsecount++; 
-        } 
-    } 
-
+    if(!empty($availableusers)){
+        // flatten the users to get a list of userids
+        $userids = implode( ', ', array_keys($availableusers));
+        $responsecount = count_records_select('choice_answers', "choiceid = {$choice->id} AND userid IN ( $userids );");
+    }
 
     echo '<div class="reportlink">';
     echo "<a href=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</a>";
@@ -735,36 +734,4 @@ function choice_reset_userdata($data) {
     return $status;
 }
 
-function choice_print_overview($courses, &$htmlarray) {
-    global $USER, $CFG;
-
-    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
-        return array();
-    }
-    if (!$choices = get_all_instances_in_courses('choice',$courses)) {
-        return;
-    }
-
-    foreach ($choices as $choice) {
-        if ($choice->timeclose != 0) {  // if this choice is scheduled
-            $str = '<div class="choice overview"><div class="name">'. 
-                   get_string('modulename', 'choice').': <a '.($choice->visible?'':' class="dimmed"') .
-                   ' href="'.$CFG->wwwroot.'/mod/choice/view.php?id='.$choice->coursemodule.'">'.
-                   $choice->name.'</a></div><div class="info">'.get_string('choiceclose', 'choice').
-                   ': '.userdate($choice->timeclose).'</div>';
-
-            if (isset($USER->id) && ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $USER->id))) {
-                $str .= '<div class="info">'.get_string('taken', 'choice').'</div></div>';
-            } else {
-                $str .= '<div class="info">'.get_string('notanswered', 'choice').'</div></div>';
-            }
-
-            if (empty($htmlarray[$choice->course]['choice'])) {
-                $htmlarray[$choice->course]['choice'] = $str;
-            } else {
-                $htmlarray[$choice->course]['choice'] .= $str;
-            }
-        }
-    }
-}
 ?>
