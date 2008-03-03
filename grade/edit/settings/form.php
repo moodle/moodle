@@ -60,8 +60,7 @@ class course_settings_form extends moodleform {
             }
         }
         $mform->addElement('select', 'aggregationposition', get_string('aggregationposition', 'grades'), $options);
-        $mform->setHelpButton('aggregationposition', array(false, get_string('aggregationposition', 'grades'),
-                              false, true, false, get_string('configaggregationposition', 'grades')));
+        $mform->setHelpButton('aggregationposition', array('aggregationposition', get_string('aggregationposition', 'grades'), 'grade'));
 
         // Grade item settings
         $mform->addElement('header', 'grade_item_settings', get_string('gradeitemsettings', 'grades'));
@@ -82,14 +81,12 @@ class course_settings_form extends moodleform {
             }
         }
         $mform->addElement('select', 'displaytype', get_string('gradedisplaytype', 'grades'), $options);
-        $mform->setHelpButton('displaytype', array(false, get_string('gradedisplaytype', 'grades'),
-                              false, true, false, get_string('configgradedisplaytype', 'grades')));
+        $mform->setHelpButton('displaytype', array('gradedisplaytype', get_string('gradedisplaytype', 'grades'), 'grade'));
 
 
         $options = array(-1=> get_string('defaultprev', 'grades', $CFG->grade_decimalpoints), 0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);
         $mform->addElement('select', 'decimalpoints', get_string('decimalpoints', 'grades'), $options);
-        $mform->setHelpButton('decimalpoints', array(false, get_string('decimalpoints', 'grades'),
-                              false, true, false, get_string('configdecimalpoints', 'grades')));
+        $mform->setHelpButton('decimalpoints', array('decimalpoints', get_string('decimalpoints', 'grades'), 'grade'));
 
 // add setting options for plugins
         $types = array('report', 'export', 'import');

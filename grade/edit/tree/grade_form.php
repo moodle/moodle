@@ -40,15 +40,13 @@ class edit_grade_form extends moodleform {
         $mform->addElement('static', 'itemname', get_string('itemname', 'grades'));
 
         $mform->addElement('checkbox', 'overridden', get_string('overridden', 'grades'));
-        $mform->setHelpButton('overridden', array(false, get_string('overridden', 'grades'),
-                false, true, false, get_string('overriddenhelp', 'grades')));
+        $mform->setHelpButton('overridden', array('overridden', get_string('overridden', 'grades'), 'grade'));
 
         /// actual grade - numeric or scale
         if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
             // numeric grade
             $mform->addElement('text', 'finalgrade', get_string('finalgrade', 'grades'));
-            $mform->setHelpButton('finalgrade', array(false, get_string('finalgrade', 'grades'),
-                    false, true, false, get_string('finalgradehelp', 'grades')));
+            $mform->setHelpButton('finalgrade', array('finalgrade', get_string('finalgrade', 'grades'), 'grade'));
             $mform->disabledIf('finalgrade', 'overridden', 'notchecked');
 
         } else if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
@@ -70,14 +68,12 @@ class edit_grade_form extends moodleform {
             }
 
             $mform->addElement('select', 'finalgrade', get_string('finalgrade', 'grades'), $scaleopt);
-            $mform->setHelpButton('finalgrade', array(false, get_string('finalgrade', 'grades'),
-                    false, true, false, get_string('finalgradehelp', 'grades')));
+            $mform->setHelpButton('finalgrade', array('finalgrade', get_string('finalgrade', 'grades'), 'grade'));
             $mform->disabledIf('finalgrade', 'overridden', 'notchecked');
         }
 
         $mform->addElement('advcheckbox', 'excluded', get_string('excluded', 'grades'));
-        $mform->setHelpButton('excluded', array(false, get_string('excluded', 'grades'),
-                false, true, false, get_string('excludedhelp', 'grades')));
+        $mform->setHelpButton('excluded', array('excluded', get_string('excluded', 'grades'), 'grade'));
 
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!
@@ -97,8 +93,7 @@ class edit_grade_form extends moodleform {
         // Feedback format is automatically converted to html if user has enabled editor
         $mform->addElement('htmleditor', 'feedback', get_string('feedback', 'grades'),
             array('rows'=>'15', 'course'=>$COURSE->id, 'cols'=>'45'));
-        $mform->setHelpButton('feedback', array(false, get_string('feedback', 'grades'),
-                false, true, false, get_string('feedbackhelp', 'grades')));
+        $mform->setHelpButton('feedback', array('feedback', get_string('feedback', 'grades'), 'grade'));
         $mform->setType('text', PARAM_RAW); // to be cleaned before display, no XSS risk
         $mform->addElement('format', 'feedbackformat', get_string('format'));
         $mform->setHelpButton('feedbackformat', array('textformat', get_string('helpformatting')));
