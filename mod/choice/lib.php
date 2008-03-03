@@ -306,6 +306,13 @@ function choice_show_results($choice, $course, $cm, $users, $forcepublish='') {
     if (!$users) {
         print_heading(get_string("nousersyet"));
     }
+
+    $totalresponsecount = 0;
+    foreach ($users as $optionid => $userlist) {
+        if ($choice->showunanswered || $optionid) {
+            $totalresponsecount += count($userlist);
+        }
+    }
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -493,20 +500,25 @@ function choice_show_results($choice, $course, $cm, $users, $forcepublish='') {
 
 
             if ($choice->showunanswered) {
-                echo "<td></td>";
+                echo '<td align="center" class="col0 count">';
+                if (!$choice->limitanswers) {
+                    echo $column[0];
+                    echo '<br />('.format_float(((float)$column[0]/(float)$totalresponsecount)*100.0,1).'%)';
+                }
+                echo '</td>';
             }
             $count = 1;
             foreach ($choice->option as $optionid => $optiontext) {
                 echo "<td align=\"center\" class=\"col$count count\">";
                 if ($choice->limitanswers) {
                     echo get_string("taken", "choice").":";
-                    echo $column[$optionid];
-                    echo "<br/>";
+                    echo $column[$optionid].'<br />';
                     echo get_string("limit", "choice").":";
                     $choice_option = get_record("choice_options", "id", $optionid);
                     echo $choice_option->maxanswers;
                 } else {
                     echo $column[$optionid];
+                    echo '<br />('.format_float(((float)$column[$optionid]/(float)$totalresponsecount)*100.0,1).'%)';
                 }
                 echo "</td>";
                 $count++;
