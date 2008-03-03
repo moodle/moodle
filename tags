@@ -4344,12 +4344,13 @@ choice_check_backup_mods_instances	mod/choice/backuplib.php	/^   function choice
 choice_decode_content_links	mod/choice/restorelib.php	/^    function choice_decode_content_links ($content,$restore) {$/;"	f
 choice_decode_content_links_caller	mod/choice/restorelib.php	/^    function choice_decode_content_links_caller($restore) {$/;"	f
 choice_delete_instance	mod/choice/lib.php	/^function choice_delete_instance($id) {$/;"	f
-choice_delete_responses	mod/choice/lib.php	/^function choice_delete_responses($attemptids) {$/;"	f
+choice_delete_responses	mod/choice/lib.php	/^function choice_delete_responses($attemptids, $choiceid) {$/;"	f
 choice_encode_content_links	mod/choice/backuplib.php	/^    function choice_encode_content_links ($content,$preferences) {$/;"	f
 choice_get_choice	mod/choice/lib.php	/^function choice_get_choice($choiceid) {$/;"	f
 choice_get_option_text	mod/choice/lib.php	/^function choice_get_option_text($choice, $id) {$/;"	f
 choice_get_participants	mod/choice/lib.php	/^function choice_get_participants($choiceid) {$/;"	f
 choice_get_post_actions	mod/choice/lib.php	/^function choice_get_post_actions() {$/;"	f
+choice_get_response_data	mod/choice/lib.php	/^function choice_get_response_data($choice, $cm, $groupmode) {$/;"	f
 choice_get_view_actions	mod/choice/lib.php	/^function choice_get_view_actions() {$/;"	f
 choice_ids	mod/choice/backuplib.php	/^    function choice_ids ($course) {$/;"	f
 choice_options_restore_mods	mod/choice/restorelib.php	/^function choice_options_restore_mods($choiceid,$info,$restore) {$/;"	f
@@ -4359,9 +4360,9 @@ choice_reset_userdata	mod/choice/lib.php	/^function choice_reset_userdata($data)
 choice_restore_logs	mod/choice/restorelib.php	/^    function choice_restore_logs($restore,$log) {$/;"	f
 choice_restore_mods	mod/choice/restorelib.php	/^    function choice_restore_mods($mod,$restore) {$/;"	f
 choice_restore_wiki2markdown	mod/choice/restorelib.php	/^    function choice_restore_wiki2markdown ($restore) {$/;"	f
-choice_show_form	mod/choice/lib.php	/^function choice_show_form($choice, $user, $cm) {$/;"	f
-choice_show_reportlink	mod/choice/lib.php	/^function choice_show_reportlink($choice, $courseid, $cm, $groupmode) {$/;"	f
-choice_show_results	mod/choice/lib.php	/^function choice_show_results($choice, $course, $cm, $forcepublish='') {$/;"	f
+choice_show_form	mod/choice/lib.php	/^function choice_show_form($choice, $user, $cm, $allresponses) {$/;"	f
+choice_show_reportlink	mod/choice/lib.php	/^function choice_show_reportlink($user, $cm) {$/;"	f
+choice_show_results	mod/choice/lib.php	/^function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish='') {$/;"	f
 choice_update_instance	mod/choice/lib.php	/^function choice_update_instance($choice) {$/;"	f
 choice_upgrade	mod/choice/db/mysql.php	/^function choice_upgrade($oldversion) {$/;"	f
 choice_upgrade	mod/choice/db/postgres7.php	/^function choice_upgrade($oldversion) {$/;"	f
@@ -7251,7 +7252,6 @@ get_new_importcode	grade/import/lib.php	/^function get_new_importcode() {$/;"	f
 get_null_size	lib/graphlib.php	/^function get_null_size() {$/;"	f
 get_numbering_styles	question/type/multichoice/questiontype.php	/^    function get_numbering_styles() {$/;"	f
 get_numerical_units	question/type/numerical/questiontype.php	/^    function get_numerical_units(&$question) {$/;"	f
-get_numusers	grade/report/grader/lib.php	/^    function get_numusers($groups=true) {$/;"	f
 get_numusers	grade/report/lib.php	/^    function get_numusers($groups=true) {$/;"	f
 get_numusers	grade/report/ouuser/lib.php	/^    function get_numusers($groups=true) {$/;"	f
 get_ods_content	lib/odslib.class.php	/^function get_ods_content(&$worksheets) {$/;"	f
