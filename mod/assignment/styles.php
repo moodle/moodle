@@ -161,16 +161,16 @@
 }
 
 #mod-assignment-submissions .qgprefs #optiontable {
-    text-align:right;
-    margin-left:auto;
+  text-align:right;
+  margin-left:auto;
 }
 
 #mod-assignment-submissions .fgcontrols {
-    margin-top: 1em;
-    text-align:center;
+  margin-top: 1em;
+  text-align:center;
 }
 
 #mod-assignment-submissions .fgcontrols .fastgbutton{
-    margin-top: 0.5em;
+  margin-top: 0.5em;
 }
 
