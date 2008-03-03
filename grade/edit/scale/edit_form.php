@@ -38,8 +38,7 @@ class edit_scale_form extends moodleform {
         $mform->setType('name', PARAM_TEXT);
 
         $mform->addElement('advcheckbox', 'standard', get_string('scalestandard'));
-        $mform->setHelpButton('standard', array(false, get_string('scalestandard'),
-                false, true, false, get_string('scalestandardhelp', 'grades')));
+        $mform->setHelpButton('standard', array('scalestandard', get_string('scalestandard'), 'grade'));
 
         $mform->addElement('static', 'used', get_string('used'));
 
