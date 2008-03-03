@@ -32,11 +32,14 @@ class block_calendar_month extends block_base {
         // It definitely needs SOME comment here!
         $courseshown = $COURSE->id;
 
-        if($courseshown == SITEID) {
+        if ($courseshown == SITEID) {
             // Being displayed at site level. This will cause the filter to fall back to auto-detecting
             // the list of courses it will be grabbing events from.
             $filtercourse    = NULL;
             $groupeventsfrom = NULL;
+            $SESSION->cal_courses_shown = calendar_get_default_courses(true);
+            calendar_set_referring_course(0);
+
         } else {
             // Forcibly filter events to include only those from the particular course we are in.
             $filtercourse    = array($courseshown => $COURSE);
