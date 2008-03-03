@@ -66,11 +66,16 @@
 
     /// Check to see if groups are being used in this choice
     $groupmode = groups_get_activity_groupmode($cm);
-    groups_get_activity_group($cm, true);
-    groups_print_activity_menu($cm, 'view.php?id='.$id);
-                                   
+    
+    if ($groupmode) {
+        groups_get_activity_group($cm, true);
+        groups_print_activity_menu($cm, 'view.php?id='.$id);
+    }
+    $allresponses = choice_get_response_data($choice, $cm, $groupmode);   // Big function, approx 6 SQL calls per user
+
+    
     if (has_capability('mod/choice:readresponses', $context)) {
-        choice_show_reportlink($choice, $course->id, $cm, $groupmode);
+        choice_show_reportlink($allresponses, $cm);
     }
 
     echo '<div class="clearer"></div>';
@@ -108,8 +113,8 @@
 
         echo '<form id="form" method="post" action="view.php">';        
 
-        choice_show_form($choice, $USER, $cm);
-        
+        choice_show_form($choice, $USER, $cm, $allresponses);
+
         echo '</form>';
 
         $choiceformshown = true;
@@ -152,7 +157,7 @@
         ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and $current ) or
         ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and $choice->timeclose <= time() ) )  {
 
-        choice_show_results($choice, $course, $cm);
+        choice_show_results($choice, $course, $cm, $allresponses); //show table with students responses.
 
     } else if (!$choiceformshown) {
         print_simple_box(get_string('noresultsviewable', 'choice'), 'center');

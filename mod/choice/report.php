@@ -34,13 +34,13 @@
       
     if ($action == 'delete' && has_capability('mod/choice:deleteresponses',$context)) {
         $attemptids = isset($_POST['attemptid']) ? $_POST['attemptid'] : array(); //get array of repsonses to delete.
-        choice_delete_responses($attemptids); //delete responses.
-        redirect("report.php?id=$cm->id");                      
+        choice_delete_responses($attemptids, $choice->id); //delete responses.
+        redirect("report.php?id=$cm->id");
     }
         
     if (!$download) {
 
-        $navigation = build_navigation($strresponses, $cm);    
+        $navigation = build_navigation($strresponses, $cm);
         print_header_simple(format_string($choice->name).": $strresponses", "", $navigation, "", '', true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
         /// Check to see if groups are being used in this choice
@@ -49,52 +49,8 @@
         groups_print_activity_menu($cm, 'report.php?id='.$id);
     } else {
         $groupmode = groups_get_activity_groupmode($cm);
-        groups_get_activity_group($cm, true);
     }
-
-    $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC');
-    
-    if (!empty($CFG->enablegroupings) && !empty($cm->groupingid) && !empty($users)) {
-        $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
-        foreach($users as $key => $user) {
-            if (!isset($groupingusers[$user->id])) {
-                unset($users[$key]);
-            }
-        }
-    }
-    
-    if (!$users) {
-        print_heading(get_string("nousersyet"));        
-    }
-
-    if ($allresponses = get_records("choice_answers", "choiceid", $choice->id)) {
-        foreach ($allresponses as $aa) {
-            $answers[$aa->userid] = $aa;
-        }
-    } else {
-        $answers = array () ;
-    }
-
-    $timenow = time();
-
-    foreach ($choice->option as $optionid => $text) {
-        $useranswer[$optionid] = array();
-    }
-    foreach ($users as $user) {
-        if (!empty($user->id) and !empty($answers[$user->id])) {
-            $answer = $answers[$user->id];
-            $useranswer[(int)$answer->optionid][] = $user;
-        } else {
-            $useranswer[0][] = $user;
-        }
-    }
-    foreach ($choice->option as $optionid => $text) {
-        if (!$choice->option[$optionid]) {
-            unset($useranswer[$optionid]);     // Throw away any data that doesn't apply
-        }
-    }
-    ksort($useranswer);
-
+    $users = choice_get_response_data($choice, $cm, $groupmode);
 
     if ($download == "ods" && has_capability('mod/choice:downloadresponses', $context)) {
         require_once("$CFG->libdir/odslib.class.php");
@@ -114,48 +70,39 @@
         $myxls->write_string(0,2,get_string("idnumber"));
         $myxls->write_string(0,3,get_string("group"));
         $myxls->write_string(0,4,get_string("choice","choice"));
-        
-              
+
     /// generate the data for the body of the spreadsheet
         $i=0;  
         $row=1;
         if ($users) {
-            foreach ($users as $user) {        
-                // this needs fixing
-                
-                if (!($optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id))) {
-                
-                    if (!empty($answers[$user->id]) && !($answers[$user->id]->optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id) && $choice->showunanswered==0)) { // make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
-
-                        $myxls->write_string($row,0,$user->lastname);
-                        $myxls->write_string($row,1,$user->firstname);
-                        $studentid=(!empty($user->idnumber) ? $user->idnumber : " ");
-                        $myxls->write_string($row,2,$studentid);
-                        $ug2 = '';
-                        if ($usergrps = groups_get_all_groups($course->id, $user->id)) {
-                            foreach ($usergrps as $ug) {
-                                $ug2 = $ug2. $ug->name;
-                            }
+            foreach ($users as $option => $userid) {
+                $option_text = choice_get_option_text($choice, $option);
+                foreach($userid as $user) {
+                    $myxls->write_string($row,0,$user->lastname);
+                    $myxls->write_string($row,1,$user->firstname);
+                    $studentid=(!empty($user->idnumber) ? $user->idnumber : " ");
+                    $myxls->write_string($row,2,$studentid);
+                    $ug2 = '';
+                    if ($usergrps = groups_get_all_groups($course->id, $user->id)) {
+                        foreach ($usergrps as $ug) {
+                            $ug2 = $ug2. $ug->name;
                         }
-                        $myxls->write_string($row,3,$ug2);
-                    
-                        $useroption = choice_get_option_text($choice, $answers[$user->id]->optionid);
-                        if (isset($useroption)) {
-                            $myxls->write_string($row,4,format_string($useroption,true));
-                        }                 
-                        $row++;
                     }
+                    $myxls->write_string($row,3,$ug2);
+
+                    if (isset($option_text)) {
+                        $myxls->write_string($row,4,format_string($useroption,true));
+                    }
+                    $row++;
                     $pos=4;
                 }
             }
+        }
+        /// Close the workbook
+        $workbook->close();
 
-    /// Close the workbook
-            $workbook->close();
-
-            exit;
-        } 
+        exit;
     }
-
 
     //print spreadsheet if one is asked for:
     if ($download == "xls" && has_capability('mod/choice:downloadresponses', $context)) {
@@ -182,41 +129,33 @@
         $i=0;  
         $row=1;
         if ($users) {
-            foreach ($users as $user) {        
-                // this needs fixing
-                
-                if (!($optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id))) {
-                
-                    if (!empty($answers[$user->id]) && !($answers[$user->id]->optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id) && $choice->showunanswered==0)) { // make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
-
-                        $myxls->write_string($row,0,$user->lastname);
-                        $myxls->write_string($row,1,$user->firstname);
-                        $studentid=(!empty($user->idnumber) ? $user->idnumber : " ");
-                        $myxls->write_string($row,2,$studentid);
-                        $ug2 = '';
-                        if ($usergrps = groups_get_all_groups($course->id, $user->id)) {
-                            foreach ($usergrps as $ug) {
-                                $ug2 = $ug2. $ug->name;
-                            }
+            foreach ($users as $option => $userid) {
+                $option_text = choice_get_option_text($choice, $option);
+                foreach($userid as $user) {
+                    $myxls->write_string($row,0,$user->lastname);
+                    $myxls->write_string($row,1,$user->firstname);
+                    $studentid=(!empty($user->idnumber) ? $user->idnumber : " ");
+                    $myxls->write_string($row,2,$studentid);
+                    $ug2 = '';
+                    if ($usergrps = groups_get_all_groups($course->id, $user->id)) {
+                        foreach ($usergrps as $ug) {
+                            $ug2 = $ug2. $ug->name;
                         }
-                        $myxls->write_string($row,3,$ug2);
-                    
-                        $useroption = choice_get_option_text($choice, $answers[$user->id]->optionid);
-                        if (isset($useroption)) {
-                            $myxls->write_string($row,4,format_string($useroption,true));
-                        }                 
-                        $row++;
                     }
-                    $pos=4;
+                    $myxls->write_string($row,3,$ug2);
+                    if (isset($option_text)) {
+                        $myxls->write_string($row,4,format_string($option_text,true));
+                    }
+                    $row++;
                 }
             }
-
-    /// Close the workbook
-            $workbook->close();
-
-            exit;
-        } 
+            $pos=4;
+        }
+        /// Close the workbook
+        $workbook->close();
+        exit;
     }
+
     // print text file  
     if ($download == "txt" && has_capability('mod/choice:downloadresponses', $context)) {
         $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.txt';
@@ -235,33 +174,35 @@
 
         /// generate the data for the body of the spreadsheet
         $i=0;  
-        $row=1;
-        if ($users) foreach ($users as $user) {
-            if (!empty($answers[$user->id]) && !($answers[$user->id]->optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id) && $choice->showunanswered==0)) { // make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
-
-                echo $user->lastname;
-                echo "\t".$user->firstname;
-                $studentid = " ";
-                if (!empty($user->idnumber)) {
-                    $studentid = $user->idnumber;
-                }              
-                echo "\t". $studentid."\t";
-                $ug2 = '';
-                if ($usergrps = groups_get_all_groups($course->id, $user->id)) {
-                    foreach ($usergrps as $ug) {
-                        $ug2 = $ug2. $ug->name;
+        if ($users) {
+            foreach ($users as $option => $userid) {
+                $option_text = choice_get_option_text($choice, $option);
+                foreach($userid as $user) {
+                    echo $user->lastname;
+                    echo "\t".$user->firstname;
+                    $studentid = " ";
+                    if (!empty($user->idnumber)) {
+                        $studentid = $user->idnumber;
                     }
+                    echo "\t". $studentid."\t";
+                    $ug2 = '';
+                    if ($usergrps = groups_get_all_groups($course->id, $user->id)) {
+                        foreach ($usergrps as $ug) {
+                            $ug2 = $ug2. $ug->name;
+                        }
+                    }
+                    echo $ug2. "\t";
+                    if (isset($option_text)) {
+                        echo format_string($option_text,true);
+                    }
+                    echo "\n";
                 }
-                echo $ug2. "\t";
-                echo format_string(choice_get_option_text($choice, $answers[$user->id]->optionid),true). "\n";
             }
-            $row++;
-        }      
+        }
         exit;
     }
+    choice_show_results($choice, $course, $cm, $users, $format); //show table with students responses.
 
-    choice_show_results($choice, $course, $cm, $format); //show table with students responses.
-   
    //now give links for downloading spreadsheets. 
     echo "<br />\n";
     echo "<table class=\"downloadreport\"><tr>\n";
