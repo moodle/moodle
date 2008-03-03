@@ -285,10 +285,8 @@ function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $
 function choice_show_reportlink($user, $cm) {
     $responsecount =0;
     foreach($user as $optionid => $userlist) {
-        if ($optionid <> 0) {
-            foreach($userlist as $user) {
-                $responsecount++; 
-            }
+        if ($optionid) {
+            $responsecount += count($userlist);
         }
     }
 
