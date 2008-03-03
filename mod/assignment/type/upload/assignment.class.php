@@ -140,7 +140,8 @@ class assignment_upload extends assignment_base {
         $submission = $this->get_submission($USER->id);
 
         $struploadafile = get_string('uploadafile');
-        $strmaxsize = get_string('maxsize', '', display_size($this->assignment->maxbytes));
+        $maxbytes = $this->assignment->maxbytes == 0 ? $this->course->maxbytes : $this->assignment->maxbytes; 
+        $strmaxsize = get_string('maxsize', '', display_size($maxbytes));
 
         if ($this->is_finalized($submission)) {
             // no uploading

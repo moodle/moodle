@@ -81,7 +81,9 @@ class assignment_uploadsingle extends assignment_base {
     function view_upload_form() {
         global $CFG;
         $struploadafile = get_string("uploadafile");
-        $strmaxsize = get_string("maxsize", "", display_size($this->assignment->maxbytes));
+
+        $maxbytes = $this->assignment->maxbytes == 0 ? $this->course->maxbytes : $this->assignment->maxbytes; 
+        $strmaxsize = get_string('maxsize', '', display_size($maxbytes));
 
         echo '<div style="text-align:center">';
         echo '<form enctype="multipart/form-data" method="post" '.
