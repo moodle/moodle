@@ -37,7 +37,7 @@ $settings->add(new admin_setting_configcheckbox('grade_report_quickgrading', get
                                             get_string('configquickgrading', 'grades'), 1));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showquickfeedback', get_string('quickfeedback', 'grades'),
-                                            get_string('configquickfeedback', 'grades'), 0));
+                                            get_string('configshowquickfeedback', 'grades'), 0));
 
 $settings->add(new admin_setting_configselect('grade_report_aggregationview', get_string('aggregationview', 'grades'),
                                           get_string('configaggregationview', 'grades'), GRADE_REPORT_AGGREGATION_VIEW_FULL,
