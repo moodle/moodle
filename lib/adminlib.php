@@ -3194,6 +3194,23 @@ class admin_setting_special_gradebookroles extends admin_setting_configmultichec
     }
 }
 
+class admin_setting_regradingcheckbox extends admin_setting_configcheckbox {
+    function write_setting($data) {
+        global $CFG;
+
+        $oldvalue  = $this->config_read($this->name);
+        $return    = parent::write_setting($data);
+        $newvalue  = $this->config_read($this->name);
+
+        if ($oldvalue !== $newvalue) {
+            // force full regrading
+            set_field('grade_items', 'needsupdate', 1, 'needsupdate', 0);
+        }
+
+        return $return;
+    }    
+}
+
 /**
  * Which roles to show on course decription page
  */

@@ -2939,6 +2939,10 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101508.08);
     }
 
+    if ($result && $oldversion < 2007101509) {
+        // force full regrading
+        set_field('grade_items', 'needsupdate', 1, 'needsupdate', 0);
+    }
 
     return $result;
 }

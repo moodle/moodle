@@ -1236,11 +1236,17 @@ class grade_item extends grade_object {
                 $outcomes_sql = "AND gi.outcomeid IS NULL";
             }
 
+            if (empty($CFG->grade_includescalesinaggregation)) {
+                $gtypes = "gi.gradetype = ".GRADE_TYPE_VALUE;
+            } else {
+                $gtypes = "(gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")";
+            }
+
             if ($grade_category->aggregatesubcats) {
                 // return all children excluding category items
                 $sql = "SELECT gi.id
                           FROM {$CFG->prefix}grade_items gi
-                         WHERE (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")
+                         WHERE $gtypes 
                                $outcomes_sql
                                AND gi.categoryid IN (
                                   SELECT gc.id
@@ -1251,7 +1257,7 @@ class grade_item extends grade_object {
                 $sql = "SELECT gi.id
                           FROM {$CFG->prefix}grade_items gi
                          WHERE gi.categoryid = {$grade_category->id}
-                               AND (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")
+                               AND $gtypes
                                $outcomes_sql
 
                         UNION
@@ -1260,7 +1266,7 @@ class grade_item extends grade_object {
                           FROM {$CFG->prefix}grade_items gi, {$CFG->prefix}grade_categories gc
                          WHERE (gi.itemtype = 'category' OR gi.itemtype = 'course') AND gi.iteminstance=gc.id
                                AND gc.parent = {$grade_category->id}
-                               AND (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")
+                               AND $gtypes
                                $outcomes_sql";
             }
 
