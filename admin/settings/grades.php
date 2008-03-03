@@ -24,10 +24,12 @@ if (has_capability('moodle/grade:manage', $systemcontext)
                                                   array(GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
                                                         GRADE_REPORT_AGGREGATION_POSITION_LAST => get_string('positionlast', 'grades'))));
 
-        $temp->add(new admin_setting_configcheckbox('grade_hiddenasdate', get_string('hiddenasdate', 'grades'), get_string('confighiddenasdate', 'grades'), 0, PARAM_INT));
+        $temp->add(new admin_setting_regradingcheckbox('grade_includescalesinaggregation', get_string('includescalesinaggregation', 'grades'), get_string('configincludescalesinaggregation', 'grades'), 1));
+
+        $temp->add(new admin_setting_configcheckbox('grade_hiddenasdate', get_string('hiddenasdate', 'grades'), get_string('confighiddenasdate', 'grades'), 0));
 
         // enable publishing in exports/imports
-        $temp->add(new admin_setting_configcheckbox('gradepublishing', get_string('gradepublishing', 'grades'), get_string('configgradepublishing', 'grades'), 0, PARAM_INT));
+        $temp->add(new admin_setting_configcheckbox('gradepublishing', get_string('gradepublishing', 'grades'), get_string('configgradepublishing', 'grades'), 0));
 
         $temp->add(new admin_setting_configselect('grade_export_displaytype', get_string('gradeexportdisplaytype', 'grades'),
                                                   get_string('configgradeexportdisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,

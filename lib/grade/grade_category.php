@@ -697,16 +697,15 @@ class grade_category extends grade_object {
 
         //find max grade
         foreach ($items as $item) {
-            if ($item->gradetype != GRADE_TYPE_VALUE) {
-                // sum only items with value grades, no scales and outcomes!
-                unset($grade_values[$item->id]);
-                continue;
-            }
             if ($item->aggregationcoef > 0) {
                 // extra credit from this activity - does not affect total
                 continue;
             }
-            $max += $item->grademax;
+            if ($item->gradetype == GRADE_TYPE_VALUE) {
+                $max += $item->grademax;
+            } else if ($item->gradetype == GRADE_TYPE_SCALE) {
+                $max += $item->grademax - 1; // scales min is 1
+            }
         }
 
         if ($this->grade_item->grademax != $max or $this->grade_item->grademin != 0 or $this->grade_item->gradetype != GRADE_TYPE_VALUE){
