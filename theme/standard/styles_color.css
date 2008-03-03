@@ -731,6 +731,10 @@ body#grade-index .grades .r1 {
   background-color: #f0f0f0;
 }
 
+td.grade div.overridden {
+  background-color: #DDDDDD;
+}
+
 /* grade edit */
 
 .grade-edit-tree .moving {
