@@ -43,7 +43,7 @@
 /// changed during this session or something
 
     if (has_capability('moodle/course:view', $context) and !has_capability('moodle/legacy:guest', $context, NULL, false)) {
-        if ($SESSION->wantsurl) {
+        if (!empty($SESSION->wantsurl)) {
             $destination = $SESSION->wantsurl;
             unset($SESSION->wantsurl);
         } else {
