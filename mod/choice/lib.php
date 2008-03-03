@@ -122,7 +122,7 @@ function choice_update_instance($choice) {
 
 }
 
-function choice_show_form($choice, $user, $cm) {
+function choice_show_form($choice, $user, $cm, $allresponses) {
 
 //$cdisplay is an array of the display info for a choice $cdisplay[$optionid]->text  - text name of option.
 //                                                                            ->maxanswers -maxanswers for this option
@@ -131,45 +131,33 @@ function choice_show_form($choice, $user, $cm) {
 
     $aid = 0;
     $choicefull = false;
+    $cdisplay = array();
 
     if ($choice->limitanswers) { //set choicefull to true by default if limitanswers.
         $choicefull = true;
     }
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     foreach ($choice->option as $optionid => $text) {
-        if (isset($text)) { //make sure there are no dud entries in the db with blank text values.
-            $countanswers = (get_records("choice_answers", "optionid", $optionid));
-            $countans = 0;
-            if (!empty($countanswers)) {
-                foreach ($countanswers as $ca) { //only return enrolled users.
-                    if (has_capability('mod/choice:choose', $context, $ca->userid, false)) {
-                        $countans = $countans+1;
-                    }
-                }
-            }
-            if ($countanswers) {
-                $countanswers = count($countanswers);
-            } else {
-                $countanswers = 0;
-            }
-            $maxans = $choice->maxanswers[$optionid];
-
+        if (isset($text) && isset($allresponses[$optionid])) { //make sure there are no dud entries in the db with blank text values.
             $cdisplay[$aid]->optionid = $optionid;
             $cdisplay[$aid]->text = $text;
-            $cdisplay[$aid]->maxanswers = $maxans;
-            $cdisplay[$aid]->countanswers = $countans;
+            $cdisplay[$aid]->maxanswers = $choice->maxanswers[$optionid];
+            $cdisplay[$aid]->countanswers = count($allresponses[$optionid]);
 
             if ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id, 'optionid', $optionid)) {
                 $cdisplay[$aid]->checked = ' checked="checked" ';
             } else {
                 $cdisplay[$aid]->checked = '';
             }
-            if ($choice->limitanswers && ($countans >= $maxans) && (empty($cdisplay[$aid]->checked)) ) {
+            if ( $choice->limitanswers && 
+                ($cdisplay[$aid]->countanswers >= $cdisplay[$aid]->maxanswers) && 
+                (empty($cdisplay[$aid]->checked)) ) {
                 $cdisplay[$aid]->disabled = ' disabled="disabled" ';
             } else {
                 $cdisplay[$aid]->disabled = '';
-                if ($choice->limitanswers && ($countans < $maxans)) {
+                if ($choice->limitanswers && ($cdisplay[$aid]->countanswers < $cdisplay[$aid]->maxanswers)) {
                     $choicefull = false; //set $choicefull to false - as the above condition hasn't been set.
                 }
             }
@@ -294,24 +282,14 @@ function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $
     }
 }
 
-
-function choice_show_reportlink($choice, $courseid, $cm, $groupmode) {
-
-    if ($groupmode > 0) {
-        $currentgroup = groups_get_activity_group($cm);
-    } else {
-        $currentgroup = 0;
-    }
-
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $responsecount = 0;
-
-    $allresponses = get_records("choice_answers", "choiceid", $choice->id); //get all responses for this choice. 
-    $responsecount = 0; 
-    foreach ($allresponses as $usr) { 
-        if (has_capability('mod/choice:choose', $context, $usr->userid, false)) { //if this user is allowed to select a choice. 
-            $responsecount++; 
-        } 
+function choice_show_reportlink($user, $cm) {
+    $responsecount =0;
+    foreach($user as $optionid => $userlist) {
+        if ($optionid <> 0) {
+            foreach($userlist as $user) {
+                $responsecount++; 
+            }
+        }
     }
 
     echo '<div class="reportlink">';
@@ -319,159 +297,106 @@ function choice_show_reportlink($choice, $courseid, $cm, $groupmode) {
     echo '</div>';
 }
 
-function choice_show_results($choice, $course, $cm, $forcepublish='') {
-
-    global $CFG, $COLUMN_HEIGHT, $USER;
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
+function choice_show_results($choice, $course, $cm, $users, $forcepublish='') {
+    global $CFG, $COLUMN_HEIGHT;
+    
     print_heading(get_string("responses", "choice"));
-
     if (empty($forcepublish)) { //alow the publish setting to be overridden
         $forcepublish = $choice->publish;
-    }
-
-    $groupmode = groups_get_activity_groupmode($cm);
-
-    if ($groupmode > 0) {
-        $currentgroup = groups_get_activity_group($cm);
-    } else {
-        $currentgroup = 0;
-    }
-
-    $allresponses = get_records("choice_answers", "choiceid", $choice->id); //get all responses for this choice.
-    
-    if ($choice->showunanswered) {
-        $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', true, true);
-        $allusersnothidden = get_users_by_capability($context, 'mod/choice:choose', 'u.id', 'u.firstname ASC', '', '', $currentgroup, '', false, false); ///MDL-12331 ugly hack to prevent hidden users and admins from being displayed in the unanswered column. needs fixing!
-    } else { //as we are not showing unanswered column, we only need details on users who have submitted a choice - this should perform much better than the 2 get_users_by_capability calls.
-        foreach ($allresponses as $usr) {
-            if (has_capability('mod/choice:choose', $context, $usr->userid, false)) { //if this user is allowed to select a choice.
-                $users[$usr->userid] = get_record_sql('SELECT id, picture, firstname, lastname, idnumber FROM '. $CFG->prefix .'user WHERE id= '.$usr->userid);
-            }
-        }
-    }
-    if (!empty($CFG->enablegroupings) && !empty($cm->groupingid) && !empty($users)) {
-        $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
-        foreach($users as $key => $user) {
-            if (!isset($groupingusers[$user->id])) {
-                unset($users[$key]);
-            }
-        }
     }
 
     if (!$users) {
         print_heading(get_string("nousersyet"));
     }
+    
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    $answers = array () ;
-    if (!empty($allresponses)) {
-        foreach ($allresponses as $aa) {
-            //TODO: rewrite with SQL
-            if ($groupmode and $currentgroup) {
-                if (groups_is_member($currentgroup, $aa->userid)) {
-                    $answers[$aa->userid] = $aa;
-                }
-            } else {
-                $answers[$aa->userid] = $aa;
-            }
-        }
-    }
-
-    $timenow = time();
-
-    foreach ($choice->option as $optionid => $text) {
-        $useranswer[$optionid] = array();
-    }
-    if (!empty($users)) {
-        foreach ($users as $user) {
-            if (!empty($user->id) and !empty($answers[$user->id])) {
-                $answer = $answers[$user->id];
-                $useranswer[(int)$answer->optionid][] = $user;
-            } else {
-                $useranswer[0][] = $user;
-            }
-        }
-    }
-    foreach ($choice->option as $optionid => $text) {
-        if (!$choice->option[$optionid]) {
-            unset($useranswer[$optionid]);     // Throw away any data that doesn't apply
-        }
-    }
-    ksort($useranswer);
+    $hascapfullnames = has_capability('moodle/site:viewfullnames', $context);
+    
+    $viewresponses = has_capability('mod/choice:readresponses', $context); 
     switch ($forcepublish) {
         case CHOICE_PUBLISH_NAMES:
-
-            $tablewidth = (int) (100.0 / count($useranswer));
-            if (has_capability('mod/choice:readresponses', $context)) {
                 echo '<div id="tablecontainer">';
                 echo '<form id="attemptsform" method="post" action="'.$_SERVER['PHP_SELF'].'" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.addslashes(get_string('deleteattemptcheck','quiz')).'\' : true);">';
                 echo '<div>';
                 echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
                 echo '<input type="hidden" name="mode" value="overview" />';
-            }
 
             echo "<table cellpadding=\"5\" cellspacing=\"10\" class=\"results names\">";
             echo "<tr>";
-            $count = 0;
+  
             $columncount = array(); // number of votes in each column
-            foreach ($useranswer as $optionid => $userlist) {
+            if ($choice->showunanswered) {
+                $columncount[0] = 0;
+                echo "<th class=\"col0 header\" scope=\"col\">";
+                print_string('notanswered', 'choice');
+                echo "</th>";
+            }
+            $count = 1;
+            foreach ($choice->option as $optionid => $optiontext) {
                 $columncount[$optionid] = 0; // init counters
-                if ($optionid) {
-                    echo "<th class=\"col$count header\" style=\"width:$tablewidth%\" scope=\"col\">";
-                } else if ($choice->showunanswered) {
-                    echo "<th class=\"col$count header\" style=\"width:$tablewidth%\" scope=\"col\">";
-                } else {
-                    continue;
-                }
-                echo format_string(choice_get_option_text($choice, $optionid));
+                echo "<th class=\"col$count header\" scope=\"col\">";
+                echo format_string($optiontext);
                 echo "</th>";
                 $count++;
             }
             echo "</tr><tr>";
 
-            $count = 0;
-            foreach ($useranswer as $optionid => $userlist) {
-                if ($optionid) {
-                    echo "<td class=\"col$count data\" style=\"width:$tablewidth%;\">";
-                } else if ($choice->showunanswered) {
-                    echo "<td class=\"col$count data\" style=\"width:$tablewidth%;\">";
-                } else {
-                    continue;
-                }
-
+            if ($choice->showunanswered) {
+                echo "<td class=\"col$count data\" >";
                 // added empty row so that when the next iteration is empty,
                 // we do not get <table></table> erro from w3c validator
                 // MDL-7861
                 echo "<table class=\"choiceresponse\"><tr><td></td></tr>";
-                foreach ($userlist as $user) {
-                    if (!($optionid==0 AND empty($allusersnothidden[$user->id]))) { //don't show admins or hidden users
-                        $columncount[$optionid] += 1;
-                        echo "<tr>";
-                        if (has_capability('mod/choice:readresponses', $context) && $optionid!=0) {
-                            echo '<td class="attemptcell"><input type="checkbox" name="attemptid[]" value="'. $answers[$user->id]->id. '" /></td>';
-                        }
-                        echo "<td class=\"picture\">";
-                        print_user_picture($user->id, $course->id, $user->picture);
-                        echo "</td><td class=\"fullname\">";
-                        echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">";
-                        echo fullname($user, has_capability('moodle/site:viewfullnames', $context));
-                        echo "</a>";
-                        echo "</td></tr>";
-                    }
+                foreach ($users[0] as $user) {
+                    echo "<tr>";
+                    echo "<td class=\"picture\">";
+                    print_user_picture($user->id, $course->id, $user->picture);
+                    echo "</td><td class=\"fullname\">";
+                    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">";
+                    echo fullname($user, $hascapfullnames);
+                    echo "</a>";
+                    echo "</td></tr>";
                 }
-                $count++;
-                echo "</table>";
+                echo "</table></td>";
+            }
+            $count = 0;
+            foreach ($choice->option as $optionid => $optiontext) {
+                    echo '<td class="col'.$count.' data" >';
 
-                echo "</td>";
+                    // added empty row so that when the next iteration is empty,
+                    // we do not get <table></table> erro from w3c validator
+                    // MDL-7861
+                    echo '<table class="choiceresponse"><tr><td></td></tr>';
+                    if (isset($users[$optionid])) {
+                        foreach ($users[$optionid] as $user) {
+                            $columncount[$optionid] += 1;
+                            echo '<tr><td class="attemptcell">';
+                            if ($viewresponses) {
+                                echo '<input type="checkbox" name="attemptid[]" value="'. $user->id. '" />';
+                            }
+                            echo '</td><td class="picture">';
+                            print_user_picture($user->id, $course->id, $user->picture);
+                            echo '</td><td class="fullname">';
+                            echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">";
+                            echo fullname($user, $hascapfullnames);
+                            echo '</a>';
+                            echo '</td></tr>';
+                       }
+                    }
+                    $count++;
+                    echo '</table></td>';
             }
             echo "</tr><tr>";
             $count = 0;
-            foreach ($useranswer as $optionid => $userlist) {
-                if (!$optionid and !$choice->showunanswered) {
-                    continue;
-                }
+            
+            if ($choice->showunanswered) {
+                echo "<td></td>";
+            }
+            
+            foreach ($choice->option as $optionid => $optiontext) {
                 echo "<td align=\"center\" class=\"count\">";
-                if ($choice->limitanswers && !$optionid==0) {
+                if ($choice->limitanswers) {
                     echo get_string("taken", "choice").":";
                     echo $columncount[$optionid];
                     echo "<br/>";
@@ -479,15 +404,17 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                     $choice_option = get_record("choice_options", "id", $optionid);
                     echo $choice_option->maxanswers;
                 } else {
-                    echo $columncount[$optionid];
+                    if (isset($columncount[$optionid])) {
+                        echo $columncount[$optionid];
+                    }
                 }
                 echo "</td>";
                 $count++;
             }
             echo "</tr>";
-
+            
             /// Print "Select all" etc.
-            if (has_capability('mod/choice:readresponses', $context)) {
+            if ($viewresponses) {
                 echo '<tr><td></td><td>';
                 echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
                 echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
@@ -500,58 +427,62 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
                 echo '</td><td></td></tr>';
             }
-
+            
             echo "</table>";
-            if (has_capability('mod/choice:readresponses', $context)) {
+            if ($viewresponses) {
                 echo "</div></form></div>";
             }
             break;
-
-
+        
+        
         case CHOICE_PUBLISH_ANONYMOUS:
-
-            $tablewidth = (int) (100.0 / count($useranswer));
 
             echo "<table cellpadding=\"5\" cellspacing=\"0\" class=\"results anonymous\">";
             echo "<tr>";
-            $count = 0;
-            foreach ($useranswer as $optionid => $userlist) {
-                if ($optionid) {
-                    echo "<th style=\"width:$tablewidth%\" class=\"col$count header\" scope=\"col\">";
-                } else if ($choice->showunanswered) {
-                    echo "<th style=\"width:$tablewidth%\" class=\"col$count header\" scope=\"col\">";
-                } else {
-                    continue;
-                }
-                echo format_string(choice_get_option_text($choice, $optionid));
-                echo "</th>";
-                $count++;
-            }
-            echo "</tr>";
-
             $maxcolumn = 0;
-            foreach ($useranswer as $optionid => $userlist) {
-                if (!$optionid and !$choice->showunanswered) {
-                    continue;
+            if ($choice->showunanswered) {
+                echo "<th  class=\"col0 header\" scope=\"col\">";
+                print_string('notanswered', 'choice');
+                echo "</th>";
+                $column[0] = 0;
+                foreach ($users[0] as $user) {
+                    $column[0]++;
                 }
+                $maxcolumn = $column[0];
+            }
+            $count = 1;
+
+            foreach ($choice->option as $optionid => $optiontext) {
+                echo "<th class=\"col$count header\" scope=\"col\">";
+                echo format_string($optiontext);
+                echo "</th>";
+                
                 $column[$optionid] = 0;
-                foreach ($userlist as $user) {
-                    if (!($optionid==0 AND empty($allusersnothidden[$user->id]))) { //don't show admins or hidden users
+                if (isset($users[$optionid])) {
+                    foreach ($users[$optionid] as $user) {
                         $column[$optionid]++;
                     }
-                }
-                if ($column[$optionid] > $maxcolumn) {
-                    $maxcolumn = $column[$optionid];
+                    if ($column[$optionid] > $maxcolumn) {
+                        $maxcolumn = $column[$optionid];
+                    }
+                } else {
+                    $column[$optionid] = 0;
                 }
             }
+            echo "</tr><tr>";
 
-            echo "<tr>";
-            $count = 0;
-            foreach ($useranswer as $optionid => $userlist) {
-                if (!$optionid and !$choice->showunanswered) {
-                    continue;
+            $height = 0;
+
+            if ($choice->showunanswered) {
+                if ($maxcolumn) {
+                    $height = $COLUMN_HEIGHT * ((float)$column[0] / (float)$maxcolumn);
                 }
-                $height = 0;
+                echo "<td style=\"vertical-align:bottom\" align=\"center\" class=\"col0 data\">";
+                echo "<img src=\"column.png\" height=\"$height\" width=\"49\" alt=\"\" />";
+                echo "</td>";
+            }
+            $count = 1;
+            foreach ($choice->option as $optionid => $optiontext) {
                 if ($maxcolumn) {
                     $height = $COLUMN_HEIGHT * ((float)$column[$optionid] / (float)$maxcolumn);
                 }
@@ -560,16 +491,16 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 echo "</td>";
                 $count++;
             }
-            echo "</tr>";
+            echo "</tr><tr>";
 
-            echo "<tr>";
-            $count = 0;
-            foreach ($useranswer as $optionid => $userlist) {
-                if (!$optionid and !$choice->showunanswered) {
-                    continue;
-                }
+
+            if ($choice->showunanswered) {
+                echo "<td></td>";
+            }
+            $count = 1;
+            foreach ($choice->option as $optionid => $optiontext) {
                 echo "<td align=\"center\" class=\"col$count count\">";
-                if ($choice->limitanswers && !$optionid==0) {
+                if ($choice->limitanswers) {
                     echo get_string("taken", "choice").":";
                     echo $column[$optionid];
                     echo "<br/>";
@@ -583,13 +514,13 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 $count++;
             }
             echo "</tr></table>";
-
-        break;
+            
+            break;
     }
 }
 
 
-function choice_delete_responses($attemptids) {
+function choice_delete_responses($attemptids, $choiceid) {
 
     if(!is_array($attemptids) || empty($attemptids)) {
         return false;
@@ -602,8 +533,8 @@ function choice_delete_responses($attemptids) {
     }
 
     foreach($attemptids as $attemptid) {
-        if ($todelete = get_record('choice_answers', 'id', $attemptid)) {
-             delete_records('choice_answers', 'id', $attemptid);
+        if ($todelete = get_record('choice_answers', 'choiceid', $choiceid, 'userid', $attemptid)) {
+            delete_records('choice_answers', 'choiceid', $choiceid, 'userid', $attemptid);
         }
     }
     return true;
@@ -734,4 +665,41 @@ function choice_reset_userdata($data) {
     return $status;
 }
 
+function choice_get_response_data($choice, $cm, $groupmode) {
+    global $CFG, $USER;
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+/// Get the current group
+    if ($groupmode > 0) {
+        $currentgroup = groups_get_activity_group($cm);
+    } else {
+        $currentgroup = 0;
+    }
+
+/// Initialise the returned array, which is a matrix:  $users[responseid][userid] = responseobject
+    $users = array();
+
+/// First get all the users who have access here
+/// To start with we assume they are all "unanswered" then move them later
+    $users[0] = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', false, true);
+
+/// Get all the recorded responses for this choice
+    $allresponses = get_records('choice_answers', 'choiceid', $choice->id);
+
+/// Use the responses to move users into the correct column
+
+    if ($allresponses) {
+        foreach ($allresponses as $response) {
+            if (isset($users[0][$response->userid])) {   // This person is enrolled and in correct group
+                $users[0][$response->userid]->timemodified = $response->timemodified;
+                $users[$response->optionid][$response->userid] = clone($users[0][$response->userid]);
+                unset($users[0][$response->userid]);   // Remove from unanswered column
+            }
+        }
+    }
+
+    return $users;
+
+}
 ?>
