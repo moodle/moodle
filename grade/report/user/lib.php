@@ -327,9 +327,7 @@ function grade_report_user_settings_definition(&$mform) {
     }
 
     $mform->addElement('select', 'report_user_showrank', get_string('showrank', 'grades'), $options);
-    $mform->setHelpButton('report_user_showrank', array(false, get_string('showrank', 'grades'),
-                          false, true, false, get_string('configshowrank', 'grades')));
-
+    $mform->setHelpButton('report_user_showrank', array('showrank', get_string('showrank', 'grades'), 'grade')); 
 
     $options = array(-1 => get_string('default', 'grades'),
                       0 => get_string('hide'),
@@ -343,8 +341,7 @@ function grade_report_user_settings_definition(&$mform) {
     }
 
     $mform->addElement('select', 'report_user_showhiddenitems', get_string('showhiddenitems', 'grades'), $options);
-    $mform->setHelpButton('report_user_showhiddenitems', array(false, get_string('showhiddenitems', 'grades'),
-                          false, true, false, get_string('configshowhiddenitems', 'grades')));
+    $mform->setHelpButton('report_user_showhiddenitems', array('showhiddenitems', get_string('showhiddenitems', 'grades'), 'grade')); 
 }
 
 function grade_report_user_profilereport($course, $user) {
