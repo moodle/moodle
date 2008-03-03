@@ -202,8 +202,7 @@ function grade_report_overview_settings_definition(&$mform) {
     }
 
     $mform->addElement('select', 'report_overview_showrank', get_string('showrank', 'grades'), $options);
-    $mform->setHelpButton('report_overview_showrank', array(false, get_string('showrank', 'grades'),
-                          false, true, false, get_string('configshowrank', 'grades')));
+    $mform->setHelpButton('report_overview_showrank', array('showrank', get_string('showrank', 'grades'), 'grade')); 
 }
 
 ?>
