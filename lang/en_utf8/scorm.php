@@ -148,6 +148,7 @@ $string['validationtype'] = 'This preference set the DOMXML library used for val
 $string['value'] = 'Value';
 $string['versionwarning'] = 'The manifest version is older than 1.3, warning at $a->tag tag';
 $string['viewallreports'] = 'View reports for $a attempts';
+$string['viewalluserreports'] = 'View reports for $a users';
 $string['whatgrade'] = 'Attempts grading';
 $string['width'] = 'Width';
 $string['window'] = 'Window';
