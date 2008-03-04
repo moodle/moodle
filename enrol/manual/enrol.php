@@ -240,60 +240,63 @@ function process_config($config) {
 
 
 /**
-* This function is run by admin/cron.php every time
-*
-* The cron function can perform regular checks for the current
-* enrollment plugin.  For example it can check a foreign database,
-* all look for a file to pull data in from
-*
+* Notify users about enrolments that are going to expire soon!
+* This function is run by admin/cron.php
+* @return void
 */
 function cron() {
-    global $CFG;
+    global $CFG, $USER, $SITE;
 
-    // Notify users about enrolments that are going to expire soon!
-
-    if (empty($CFG->lastexpirynotify)) {
-        $CFG->lastexpirynotify = 0;
+    if (!isset($CFG->lastexpirynotify)) {
+        set_config('lastexpirynotify', 0);
     }
 
-    if ($CFG->lastexpirynotify < date('Ymd') &&
-        ($courses = get_records_select('course', 'enrolperiod > 0 AND expirynotify > 0 AND expirythreshold > 0'))) {
+    // notify once a day only - TODO: add some tz handling here, maybe use timestamps
+    if ($CFG->lastexpirynotify == date('Ymd')) {
+// return;
+    }
+
+    if ($rs = get_recordset_select('course', 'enrolperiod > 0 AND expirynotify > 0 AND expirythreshold > 0')) {
+
+        $cronuser = clone($USER);
 
         $admin = get_admin();
 
-        $strexpirynotify = get_string('expirynotify');
-        foreach ($courses as $course) {
+        while($course = rs_fetch_next_record($rs)) {
             $a = new object();
-            $a->coursename = $course->shortname .'/'. $course->fullname;
-            $a->threshold = $course->expirythreshold / 86400;
-            $a->extendurl = $CFG->wwwroot . '/user/index.php?id=' . $course->id;
-            $a->current = array();
-            $a->past = array();
-            $a->current = $a->past = array();
-            $expiry = time() + $course->expirythreshold;
+            $a->coursename = $course->shortname .'/'. $course->fullname; // must be processed by format_string later
+            $a->threshold  = $course->expirythreshold / 86400;
+            $a->extendurl  = $CFG->wwwroot . '/user/index.php?id=' . $course->id;
+            $a->current    = array();
+            $a->past       = array();
 
-            /// Get all the role assignments for this course that have expired.
+            $expiry = time() + $course->expirythreshold;
+            $cname  = $course->fullname;
+
+            /// Get all the manual role assignments for this course that have expired.
 
             if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
                 continue;
             }
 
-            if ($oldenrolments = get_records_sql('
-                      SELECT u.*
-                        FROM '.$CFG->prefix.'role_assignments ra,
-                             '.$CFG->prefix.'user u
-                        WHERE ra.contextid = '.$context->id.'
-                          AND ra.timeend > 0 AND ra.timeend <= '.$expiry.'
-                          AND ra.userid = u.id ')) {
+            if ($oldenrolments = get_records_sql("
+                      SELECT u.*, ra.timeend
+                        FROM {$CFG->prefix}user u
+                             JOIN {$CFG->prefix}role_assignments ra ON (ra.userid = u.id)
+                        WHERE ra.contextid = $context->id
+                              AND ra.timeend > 0 AND ra.timeend <= $expiry
+                              AND ra.enrol = 'manual'")) {
 
-
-                if (!$teacher = get_teacher($course->id)) {
-                    $teacher = get_admin();
+                // inform user who can assign roles or admin
+                if ($teachers = get_users_by_capability($context, 'moodle/role:assign', '', '', '', '', '', '', false)) {
+                    $teachers = sort_by_roleassignment_authority($teachers, $context);
+                    $teacher  = reset($teachers);
+                } else {
+                    $teachers = array($admin);
+                    $teacher  = $admin;
                 }
 
                 $a->teacherstr = fullname($teacher, true);
-
-                $strexpirynotifystudentsemail = get_string('expirynotifystudentsemail', '', $a);
 
                 foreach ($oldenrolments as $user) {       /// Email all users about to expire
                     $a->studentstr = fullname($user, true);
@@ -302,30 +305,42 @@ function cron() {
                     } else {
                         $a->current[] = fullname($user) . " <$user->email>";
                         if ($course->notifystudents) {     // Send this guy notice
-                            email_to_user($user, $teacher, $SITE->fullname .' '. $strexpirynotify,
+                            // setup global $COURSE properly - needed for languages
+                            $USER = $user;
+                            course_setup($course);
+                            $a->coursename = format_string($cname);
+                            $a->course     = $a->coursename;
+                            $strexpirynotifystudentsemail = get_string('expirynotifystudentsemail', '', $a);
+                            $strexpirynotify              = get_string('expirynotify');
+
+                            email_to_user($user, $teacher, format_string($SITE->fullname) .' '. $strexpirynotify,
                                           $strexpirynotifystudentsemail);
                         }
                     }
                 }
 
                 $a->current = implode("\n", $a->current);
-                $a->past = implode("\n", $a->past);
-
-                $strexpirynotifyemail = get_string('expirynotifyemail', '', $a);
+                $a->past    = implode("\n", $a->past);
 
                 if ($a->current || $a->past) {
-                    if ($teachers = get_users_by_capability($context, 'moodle/course:update',
-                                                            'u.*', 'u.username ASC',
-                                                            '', '', '', '', false)) {
-                        foreach ($teachers as $teacher) {
-                            email_to_user($teacher, $admin, $a->coursename .' '. $strexpirynotify, $strexpirynotifyemail);
-                        }
+                    foreach ($teachers as $teacher) {
+                        // setup global $COURSE properly - needed for languages
+                        $USER = $teacher;
+                        course_setup($course);
+                        $a->coursename = format_string($cname);
+                        $strexpirynotifyemail = get_string('expirynotifyemail', '', $a);
+                        $strexpirynotify      = get_string('expirynotify');
+
+                        email_to_user($teacher, $admin, $a->coursename .' '. $strexpirynotify, $strexpirynotifyemail);
                     }
                 }
             }
-            set_config('lastexpirynotify', date('Ymd'));
         }
+        $USER = $cronuser;
+        course_setup($course);   // More environment
     }
+
+    set_config('lastexpirynotify', date('Ymd'));
 }
 
 
