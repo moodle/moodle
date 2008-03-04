@@ -810,6 +810,11 @@ function rs_fetch_next_record(&$rs) {
 
     global $CFG;
 
+    if (empty($rs)) {
+        debugging('Incorrect rs used!');
+        return false;
+    }
+
     $rec = false;
     $recarr = $rs->FetchRow(); //Retrieve record as object without advance the pointer. It's quicker that FetchNextObj()
 
