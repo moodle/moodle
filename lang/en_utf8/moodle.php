@@ -603,7 +603,7 @@ $string['expirynotifystudentsemail'] = 'Dear $a->studentstr:
 
 This is a notification that your enrolment in the course $a->course will expire in $a->threshold days.
 
-Please contact your $a->teacherstr for any further enquiries.';
+Please contact $a->teacherstr for any further enquiries.';
 $string['expirythreshold'] = 'Threshold';
 $string['explanation'] = 'Explanation';
 $string['extendenrol'] = 'Extend enrolment';
