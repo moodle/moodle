@@ -386,5 +386,6 @@ $string['wrongsourcebase'] = 'Foute URL voor de bron';
 $string['wrongzipfilename'] = 'Foute ZIP-bestandsnaam';
 $string['wwwroot'] = 'Web adres';
 $string['wwwrooterror'] = 'Het webadres lijkt niet geldig te zijn - deze Moodle-installatie is blijkbaar niet op die plaats.';
+$string['xmlrpcrecommended'] = 'Het installeren van de optionele XMLRPC-extentie is nuttig voor de werking van Moodle Netwerk';
 $string['yourchoice'] = 'Jouw keuze:';
 ?>
