@@ -262,7 +262,7 @@ $string['globalsquoteshelp'] = '<p>Combination of disabled Magic Quotes GPC and 
 </p>';
 $string['globalswarning'] = '<p><strong>Security Warning</strong>: to operate properly, Moodle requires <br />that you make certain changes to your current PHP settings.<p/><p>You <em>must</em> set <code>register_globals=off</code>.<p>This setting is controlled by editing your <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file.</p>';
 $string['help'] = 'Help';
-$string['iconvrecommended'] = 'Installing the optional ICONV library is highly recommended in order to improve site performance, particularly if your site is supporting non-latin languages.';
+$string['iconvrecommended'] = 'Installing the optional ICONV library is highly recommended in order to improve site performance, particularly if your site is supporting non-Latin languages.';
 $string['info'] = 'Information';
 $string['inputdatadirectory']='Data Directory :';
 $string['inputwebadress']='Web address :';
@@ -298,7 +298,7 @@ $string['magicquotesruntimehelp'] = '<p>Magic quotes runtime should be turned of
    called .htaccess within your Moodle directory:
    <blockquote>php_value magic_quotes_runtime Off</blockquote>
 </p>';
-$string['mbstringrecommended'] = 'Installing the optional MBSTRING library is highly recommended in order to improve site performance, particularly if your site is supporting non-latin languages.';
+$string['mbstringrecommended'] = 'Installing the optional MBSTRING library is highly recommended in order to improve site performance, particularly if your site is supporting non-Latin languages.';
 $string['memorylimit'] = 'Memory Limit';
 $string['memorylimiterror'] = 'The PHP memory limit is set quite low ... you may run into problems later.';
 $string['memorylimithelp'] = '<p>The PHP memory limit for your server is currently set to $a.</p>
