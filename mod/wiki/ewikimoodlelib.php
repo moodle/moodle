@@ -301,18 +301,6 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
 }
 
 function anydb_escape_string($s) {
-   global $CFG ;
-   switch ($CFG->dbfamily) {
-        case 'mysql':
-            $s = mysql_escape_string($s);
-            break;
-        case 'postgres':
-            $s = pg_escape_string($s);
-            break;
-        default:
-            $s = addslashes($s);
-   }
-
-   return($s);
+   return(addslashes($s));
 }
 
