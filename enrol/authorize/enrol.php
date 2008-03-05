@@ -223,31 +223,31 @@ class enrolment_plugin_authorize
                 // unless you accept payment or enable auto-capture cron, the transaction is expired after 30 days and the user cannot enrol to the course during 30 days.
                 // see also: admin/cron.php, $this->cron(), $CFG->an_capture_day...
                 case AN_ACTION_AUTH_ONLY:
-                    {
-                        $a = new stdClass;
-                        $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$order->id";
-                        $a->orderid = $order->id;
-                        $a->transid = $order->transid;
-                        $a->amount = "$order->currency $order->amount";
-                        $a->expireon = userdate(AuthorizeNet::getsettletime($timenow + (30 * 3600 * 24)));
-                        $a->captureon = userdate(AuthorizeNet::getsettletime($timenow + (intval($CFG->an_capture_day) * 3600 * 24)));
-                        $a->course = $course->fullname;
-                        $a->user = fullname($USER);
-                        $a->acstatus = ($CFG->an_capture_day > 0) ? get_string('yes') : get_string('no');
-                        $emailmessage = get_string('adminneworder', 'enrol_authorize', $a);
-                        $a = new stdClass;
-                        $a->course = $course->shortname;
-                        $a->orderid = $order->id;
-                        $emailsubject = get_string('adminnewordersubject', 'enrol_authorize', $a);
-                        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-                        if (($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments'))) {
-                            foreach ($paymentmanagers as $paymentmanager) {
-                                email_to_user($paymentmanager, $USER, $emailsubject, $emailmessage);
-                            }
+                {
+                    $a = new stdClass;
+                    $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$order->id";
+                    $a->orderid = $order->id;
+                    $a->transid = $order->transid;
+                    $a->amount = "$order->currency $order->amount";
+                    $a->expireon = userdate(AuthorizeNet::getsettletime($timenow + (30 * 3600 * 24)));
+                    $a->captureon = userdate(AuthorizeNet::getsettletime($timenow + (intval($CFG->an_capture_day) * 3600 * 24)));
+                    $a->course = $course->fullname;
+                    $a->user = fullname($USER);
+                    $a->acstatus = ($CFG->an_capture_day > 0) ? get_string('yes') : get_string('no');
+                    $emailmessage = get_string('adminneworder', 'enrol_authorize', $a);
+                    $a = new stdClass;
+                    $a->course = $course->shortname;
+                    $a->orderid = $order->id;
+                    $emailsubject = get_string('adminnewordersubject', 'enrol_authorize', $a);
+                    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+                    if (($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments'))) {
+                        foreach ($paymentmanagers as $paymentmanager) {
+                            email_to_user($paymentmanager, $USER, $emailsubject, $emailmessage);
                         }
-                        redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
-                        break;
                     }
+                    redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
+                    break;
+                }
 
                 case AN_ACTION_CAPTURE_ONLY: // auth code received via phone and the code accepted.
                 case AN_ACTION_AUTH_CAPTURE: // real time transaction, authorize and capture.
@@ -623,22 +623,14 @@ class enrolment_plugin_authorize
         }
 
         $timediffcnf = $settlementtime - (intval($CFG->an_capture_day) * $oneday);
-        $sql = "SELECT * FROM {$CFG->prefix}enrol_authorize
-                WHERE (status = '" .AN_STATUS_AUTH. "')
-                  AND (timecreated < '$timediffcnf')
-                  AND (timecreated > '$timediff30')
-                ORDER BY courseid";
-
-        if (!$orders = get_records_sql($sql)) {
+        $select = "(status = '" .AN_STATUS_AUTH. "') AND (timecreated < '$timediffcnf') AND (timecreated > '$timediff30')";
+        if (!($ordercount = count_records_select('enrol_authorize', $select))) {
             mtrace("no pending orders");
             return;
         }
 
         $eachconn = intval($mconfig->an_eachconnsecs);
-        if (empty($eachconn)) $eachconn = 3;
-        elseif ($eachconn > 60) $eachconn = 60;
-
-        $ordercount = count((array)$orders);
+        $eachconn = (($eachconn > 60) ? 60 : (($eachconn <= 0) ? 3 : $eachconn));
         if (($ordercount * $eachconn) + intval($mconfig->an_lastcron) > $timenow) {
             mtrace("blocked");
             return;
@@ -653,7 +645,8 @@ class enrolment_plugin_authorize
         $this->log = "AUTHORIZE.NET AUTOCAPTURE CRON: " . userdate($timenow) . "\n";
 
         $lastcourseid = 0;
-        foreach ($orders as $order) {
+        for ($rs = get_recordset_select('enrol_authorize', $select, 'courseid'); ($order = rs_fetch_next_record($rs)); )
+        {
             $message = '';
             $extra = NULL;
             if (AN_APPROVED == AuthorizeNet::process($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE)) {
@@ -686,7 +679,7 @@ class enrolment_plugin_authorize
                 $this->log .= "Error, Order# $order->id: " . $message . "\n";
             }
         }
-
+        rs_close($rs);
         mtrace("processed");
 
         $timenow = time();
@@ -807,8 +800,8 @@ class enrolment_plugin_authorize
                 GROUP BY e.courseid
                 ORDER BY $sorttype DESC";
 
-        $courseinfos = get_records_sql($sql);
-        foreach($courseinfos as $courseinfo) {
+        for ($rs = get_recordset_sql($sql); ($courseinfo = rs_fetch_next_record($rs)); )
+        {
             $lastcourse = $courseinfo->courseid;
             $context = get_context_instance(CONTEXT_COURSE, $lastcourse);
             if (($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments'))) {
@@ -830,6 +823,7 @@ class enrolment_plugin_authorize
                 }
             }
         }
+        rs_close($rs);
     }
 }
 ?>
