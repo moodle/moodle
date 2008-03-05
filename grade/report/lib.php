@@ -170,14 +170,19 @@ class grade_report {
     function get_pref($pref, $objectid=null) {
         global $CFG;
         $fullprefname = 'grade_report_' . $pref;
+        $shortprefname = 'grade_' . $pref;
 
         $retval = null;
 
         if (!isset($this) OR get_class($this) != 'grade_report') {
             if (!empty($objectid)) {
                 $retval = get_user_preferences($fullprefname . $objectid, grade_report::get_pref($pref));
-            } else {
+            } elseif (isset($CFG->$fullprefname)) {
                 $retval = get_user_preferences($fullprefname, $CFG->$fullprefname);
+            } elseif (isset($CFG->$shortprefname)) {
+                $retval = get_user_preferences($fullprefname, $CFG->$shortprefname); 
+            } else {
+                $retval = null;
             }
         } else {
             if (empty($this->prefs[$pref.$objectid])) {
