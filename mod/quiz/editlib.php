@@ -331,7 +331,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
     if ($showbreaks) {
         echo ' checked="checked"';
     }
-    echo ' onchange="getElementById(\'showbreaks\').submit(); return true;" />';
+    echo ' onclick="form.submit(); return true;" />';
     print_string('showbreaks', 'quiz');
 
     if ($showbreaks) {
@@ -350,7 +350,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
     if ($reordertool) {
         echo ' checked="checked"';
     }
-    echo ' onchange="getElementById(\'showbreaks\').submit(); return true;" />';
+    echo ' onclick="form.submit(); return true;" />';
     print_string('reordertool', 'quiz');
     echo ' ';
     helpbutton('reorderingtool', get_string('reordertool', 'quiz'), 'quiz');

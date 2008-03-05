@@ -238,13 +238,21 @@
         $questions = array(); // for questions in the new order
         $rawgrades = $_POST;
         unset($quiz->grades);
-        foreach ($rawgrades as $key => $value) {    // Parse input for question -> grades
+        foreach ($rawgrades as $key => $value) {
+        /// Parse input for question -> grades
             if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
                 $key = $matches[1];
                 $quiz->grades[$key] = $value;
                 quiz_update_question_instance($quiz->grades[$key], $key, $quiz->instance);
-            } elseif (preg_match('!^o([0-9]+)$!', $key, $matches)) {   // Parse input for ordering info
+
+            /// Parse input for ordering info
+            } elseif (preg_match('!^o([0-9]+)$!', $key, $matches)) {
                 $key = $matches[1];
+                // Make sure two questions don't overwrite each other. If we get a second
+                // question with the same position, shift the second one along to the next gap.
+                while (array_key_exists($value, $questions)) {
+                    $value++;
+                }
                 $questions[$value] = $oldquestions[$key];
             }
         }
