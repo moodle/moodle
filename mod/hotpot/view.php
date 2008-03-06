@@ -34,7 +34,7 @@
             }
 
         }
-        require_login($course, true, $cm);
+        require_login($course);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
     // set nextpage (for error messages)

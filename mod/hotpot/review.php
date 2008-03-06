@@ -32,8 +32,13 @@
         error("Attempt ID was incorrect");
     }
 
-    require_login($course, true, $cm);
-    
+    require_login($course);
+
+    // check user can access this hotpot activity
+    if (!hotpot_is_visible($cm)) {
+        error(get_string("activityiscurrentlyhidden"));
+    }
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (!has_capability('mod/hotpot:viewreport',$context)) {
         if (!$hotpot->review) {

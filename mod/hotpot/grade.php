@@ -16,7 +16,12 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course->id, false);
+
+    // check user can access this hotpot activity
+    if (!hotpot_is_visible($cm)) {
+        error(get_string("activityiscurrentlyhidden"));
+    }
 
     if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         redirect('report.php?id='.$cm->id);

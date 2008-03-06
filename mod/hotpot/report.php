@@ -38,7 +38,12 @@
     // set homeurl of couse (for error messages)
     $course_homeurl = "$CFG->wwwroot/course/view.php?id=$course->id";
 
-    require_login($course, true, $cm);
+    require_login($course);
+
+    // check user can access this hotpot activity
+    if (!hotpot_is_visible($cm)) {
+        error(get_string("activityiscurrentlyhidden"));
+    }
 
     // get report mode
     if (has_capability('mod/hotpot:viewreport',$modulecontext)) {
