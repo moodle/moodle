@@ -162,7 +162,7 @@
             }
         }
 
-        // redirect to the next quiz or the course page 
+        // redirect to the next quiz or the course page
         redirect($next_url, get_string('resultssaved', 'hotpot'));
     }
 
@@ -467,7 +467,7 @@ function hotpot_set_attempt_details(&$attempt) {
         }
 
         // remove "correct" and "wrong" values from "ignored" values
-        $response->ignored = array_diff($response->ignored, 
+        $response->ignored = array_diff($response->ignored,
             $response->correct, $response->wrong, $oldresponse->correct, $oldresponse->wrong
         );
 

@@ -338,7 +338,7 @@ class hotpot_report extends hotpot_default_report {
 				if (!function_exists('clean_getstring_data')) { // Moodle 1.4 (and less)
 					$reportpercentscore = str_replace('%', '%%', $reportpercentscore);
 				}
-				array_push($table->head, 
+				array_push($table->head,
 					get_string('reportthisclick', 'hotpot', get_string('reportquestionstried', 'hotpot')),
 					get_string('reportsofar', 'hotpot', get_string('reportquestionstried', 'hotpot')),
 					get_string('reportthisclick', 'hotpot', get_string('reportright', 'hotpot')),
@@ -424,7 +424,7 @@ class hotpot_report extends hotpot_default_report {
 		$records = get_records_sql_menu("
 			SELECT userid, MIN(time) AS logouttime
 			FROM {$CFG->prefix}log
-			WHERE userid=$attempt->userid AND action='logout' AND time>$attempt->cr_timefinish 
+			WHERE userid=$attempt->userid AND action='logout' AND time>$attempt->cr_timefinish
 			GROUP BY userid
 		");
 		if (empty($records)) {

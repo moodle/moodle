@@ -6,20 +6,20 @@ function SetScormScore(){
 //Reports the current score and any other information back to the LMS
 	if (API != null){
 		API.LMSSetValue('cmi.core.score.raw', Score);
-		
-		
+
+
 //Now send a detailed reports on the item
 		var ItemLabel = 'Matching';
 		API.LMSSetValue('cmi.objectives.0.id', 'obj'+ItemLabel);
-		API.LMSSetValue('cmi.interactions.0.id', 'int'+ItemLabel);	
-		API.LMSSetValue('cmi.objectives.0.status', API.LMSGetValue('cmi.core.lesson_status'));	
+		API.LMSSetValue('cmi.interactions.0.id', 'int'+ItemLabel);
+		API.LMSSetValue('cmi.objectives.0.status', API.LMSGetValue('cmi.core.lesson_status'));
 		API.LMSSetValue('cmi.objectives.0.score.min', '0');
 		API.LMSSetValue('cmi.objectives.0.score.max', '100');
 		API.LMSSetValue('cmi.objectives.0.score.raw', Score);
 //We can only use the performance type, because we're storing multiple responses of various types.
 		API.LMSSetValue('cmi.interactions.0.type', 'performance');
 		API.LMSSetValue('cmi.interactions.0.student_response', AnswersTried);
-		
+
 		API.LMSCommit('');
 	}
 }
@@ -54,7 +54,7 @@ var AnswersTried = '';
 FC = new Array();
 DC = new Array();
 
-function onEndDrag(){ 
+function onEndDrag(){
 //Is it dropped on any of the fixed cards?
 	var Docked = false;
 	var DropTarget = DroppedOnFixed(CurrDrag);
@@ -79,7 +79,7 @@ function onEndDrag(){
 		DC[CurrDrag].tag = 0;
 		D[CurrDrag][2] = 0;
 	}
-} 
+}
 
 function DroppedOnFixed(DNum){
 	var Result = -1;
@@ -121,12 +121,12 @@ function StartUp(){
 	if (C.ie){
 		DragTop += 15;
 	}
-	
+
 //Reduce array if required
 	if (QsToShow < F.length){
 		ReduceItems2();
 	}
-	
+
 //Shuffle the left items if required
 	if (ShuffleQs == true){
 		F = Shuffle(F);
@@ -143,7 +143,7 @@ function StartUp(){
 	for (var i=0; i<F.length; i++){
 		CardContent = F[i][0];
 		FC[i] = new Card('F' + i, 10);
-		FC[i].elm.innerHTML = CardContent; 
+		FC[i].elm.innerHTML = CardContent;
 		if (FC[i].GetW() > Widest){
 			Widest = FC[i].GetW();
 		}
@@ -162,7 +162,7 @@ function StartUp(){
 		DC[i] = new Card('D' + i, 10);
 		CardContent = D[i][0];
 //		if (CardContent.indexOf('<img ') > -1){CardContent += '<br clear="all" />';} //used to be required for Navigator rendering bug with images
-		DC[i].elm.innerHTML = CardContent; 
+		DC[i].elm.innerHTML = CardContent;
 		if (DC[i].GetW() > DragWidth){DC[i].SetW(DragWidth);}
 		DC[i].css.cursor = 'move';
 		DC[i].css.backgroundColor = '[strExBGColor]';
@@ -276,7 +276,7 @@ function ReduceItems2(){
 		}
 		for (j=ItemToDump; j<(D.length-1); j++){
 			D[j] = D[j+1];
-		}		
+		}
 		F.length = F.length-1;
 		D.length = D.length-1;
 	}
@@ -303,7 +303,7 @@ function CheckAnswers(){
 			TotalCorrect++;
 		}
 		else{
-//Change made for version 6.0.3.41: don't send wrong items home, 
+//Change made for version 6.0.3.41: don't send wrong items home,
 //show them in a more conspicuous way.
 //			DC[i].GoHome();
 				DC[i].SetL(DC[i].GetL() + 10);

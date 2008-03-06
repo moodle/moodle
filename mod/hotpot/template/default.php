@@ -92,7 +92,7 @@ class hotpot_xml_template_default {
         $rrggbb = '/^\#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i';
         if ((
             preg_match($rgb, $x, $x_matches) ||
-            preg_match($rrggbb, $x, $x_matches) 
+            preg_match($rrggbb, $x, $x_matches)
         ) && (
             preg_match($rgb, $y, $y_matches) ||
             preg_match($rrggbb, $y, $y_matches)

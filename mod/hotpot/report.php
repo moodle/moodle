@@ -14,7 +14,7 @@
         }
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
-        }    
+        }
         if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
@@ -220,8 +220,8 @@
     $fields = 'a.*, u.firstname, u.lastname, u.picture';
     if ($mode=='click') {
         $fields .= ', u.idnumber';
-    } else { 
-        // overview, simple and detailed reports 
+    } else {
+        // overview, simple and detailed reports
         // get last attempt record in clickreport series
         $ids = array();
         foreach ($cr_attempts as $cr_attempt) {
@@ -406,7 +406,7 @@ function hotpot_delete_selected_attempts(&$hotpot, $del) {
 }
 
 //////////////////////////////////////////////
-/// functions to print the report headings and 
+/// functions to print the report headings and
 /// report selector menus
 
 function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
@@ -479,9 +479,9 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
 
     // get users who have ever atetmpted this HotPot
     $users = get_records_sql("
-        SELECT 
+        SELECT
             u.id, u.firstname, u.lastname
-        FROM 
+        FROM
             {$CFG->prefix}user u,
             {$CFG->prefix}hotpot_attempts ha
         WHERE

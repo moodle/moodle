@@ -1,7 +1,7 @@
 <!-- This page defines the form to create or edit an instance of this module -->
 <!-- It is used from /course/mod.php.The whole instance is available as $form. -->
 
-<?php 
+<?php
 
 require_once("$CFG->dirroot/mod/hotpot/lib.php");
 
@@ -10,11 +10,11 @@ set_form_fields($form);
 
 // commonly used array of <select> options
 $yes_no_options = array(
-    HOTPOT_NO => get_string("no"), 
+    HOTPOT_NO => get_string("no"),
     HOTPOT_YES => get_string("yes")
 );
 $text_source_options = array(
-    HOTPOT_TEXTSOURCE_QUIZ => get_string("textsourcequiz", "hotpot"), 
+    HOTPOT_TEXTSOURCE_QUIZ => get_string("textsourcequiz", "hotpot"),
     HOTPOT_TEXTSOURCE_FILENAME => get_string("textsourcefilename", "hotpot"),
     HOTPOT_TEXTSOURCE_FILEPATH => get_string("textsourcefilepath", "hotpot"),
     HOTPOT_TEXTSOURCE_SPECIFIC => get_string("textsourcespecific", "hotpot")
@@ -71,7 +71,7 @@ $text_source_options = array(
         <td align="left"><?php
             if ($form->mode=='add') {
                 choose_from_menu(
-                    $text_source_options, "namesource", "$form->namesource", "", 
+                    $text_source_options, "namesource", "$form->namesource", "",
                     "return hotpot_lockoptions('form', 'namesource', namelockitems, nameoffvalues)"
                 );
             } else {
@@ -82,8 +82,8 @@ $text_source_options = array(
     </tr>
     <tr valign="top">
         <td align="right">
-            <b><?php 
-                print_string("summary") 
+            <b><?php
+                print_string("summary")
             ?>:</b><br />
             <font size="1"><?php
                 helpbutton("summary", get_string("summary"), "resource", true, true);
@@ -94,13 +94,13 @@ $text_source_options = array(
                     helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
                     print '<br />';
                 } else {
-                    helpbutton("text", get_string("helptext"), "moodle", true, true); 
+                    helpbutton("text", get_string("helptext"), "moodle", true, true);
                     print '<br />';
                     emoticonhelpbutton("form", "description");
                 }
             ?></font>
         </td>
-        <td align="left"><?php 
+        <td align="left"><?php
             if ($form->mode=='add') {
                 choose_from_menu($text_source_options, "summarysource", "$form->summarysource", "");
                 print '<br />';
@@ -217,9 +217,9 @@ $text_source_options = array(
         ?></td>
     </tr>
     <tr valign="top">
-        <td align="right"><b><?php 
+        <td align="right"><b><?php
             $quizchain = "{$form->mode}quizchain";
-            print_string($quizchain, "hotpot"); 
+            print_string($quizchain, "hotpot");
         ?>:</b></td>
         <td align="left"><?php
             choose_from_menu($yes_no_options, "quizchain", $form->quizchain, "");
@@ -329,8 +329,8 @@ $text_source_options = array(
             helpbutton("clickreporting", get_string("clickreporting","hotpot"), "hotpot");
         ?></td>
     </tr>
-<?php 
-    print_standard_coursemodule_settings($form); 
+<?php
+    print_standard_coursemodule_settings($form);
 ?>
     <tr valign="top">
         <td align="right">&nbsp;</td>
@@ -375,7 +375,7 @@ $text_source_options = array(
     hotpot_lockoptions('form', 'enabletimeclose', timecloselockitems, timeoffvalues);
     hotpot_lockoptions('form', 'studentfeedback', feedbacklockitems, feedbackoffvalues);
 
-    // override the standard Moodle "setfocus" function, 
+    // override the standard Moodle "setfocus" function,
     // which gives a js error if the "name" field is hidden
     function setfocus() {
     	var Frm = document.getElementById('form');

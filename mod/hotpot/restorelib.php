@@ -5,13 +5,13 @@
     //-----------------------------------------------------------
     //
     //                         hotpot
-    //                      (CL, pk->id, 
+    //                      (CL, pk->id,
     //                   fk->course, files)
     //                           |
     //            +--------------+---------------+
     //            |                              |
     //      hotpot_attempts             hotpot_questions
-    //       (UL, pk->id,                 (UL, pk->id, 
+    //       (UL, pk->id,                 (UL, pk->id,
     //        fk->hotpot)               fk->hotpot, text)
     //            |                              |    |
     //            +-------------------+----------+    |
@@ -40,7 +40,7 @@ require_once ("$CFG->dirroot/mod/hotpot/lib.php");
 function hotpot_restore_mods($mod, $restore) {
     //This function restores a single hotpot activity
 
-    // This function is called by "restore_create_modules" (in "backup/restorelib.php") 
+    // This function is called by "restore_create_modules" (in "backup/restorelib.php")
     // which is called by "backup/restore_execute.html" (included by "backup/restore.php")
     // $mod is an object
     //     id           : id field in 'modtype' table
@@ -129,7 +129,7 @@ function hotpot_restore_questions(&$restore, $status, &$xml, &$record) {
     // $xml is an XML tree for a hotpot record
     // $record is the newly added hotpot record
     $foreignkeys = array(
-        'hotpot'=>$record->id, 
+        'hotpot'=>$record->id,
         'text'=>'hotpot_strings'
     );
     return hotpot_restore_records(
@@ -240,7 +240,7 @@ function hotpot_restore_records(&$restore, $status, &$xml, $table, $foreign_keys
     // $record_TAG  : (optional) the name of an XML tag which starts a single record
     //    If no $record_TAG is specified, the block of records is assumed to be a single record
     // other parameters are explained in "hotpot_restore_record" below
-    
+
     $i = 0; // index for $records_TAG
     do {
         unset($xml_records);
@@ -287,10 +287,10 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
     // $foreign_keys : array of foreign keys, if any, specifed as $key=>$value
     //    $key   : the name of a field in the current $record
     //    $value : if $value is numeric, then $record->$key is set to $value.
-    //        Otherwise $value is assumed to be a table name and $record->$key 
+    //        Otherwise $value is assumed to be a table name and $record->$key
     //        is treated as a comma separated list of ids in that table
     // $more_restore : optional PHP code to be eval(uated) for each record
-    // $secondary_key : 
+    // $secondary_key :
     //    the name of the secondary key field, if any, in the current $record.
     //    If this field is specified, then the current record will only be added
     //    if the $record->$secondarykey value does not already exist in $table
@@ -298,7 +298,7 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
     // maintain a cache of info on table columns
     static $table_columns = array();
     if (empty($table_columns[$table])) {
-        global $CFG, $db; 
+        global $CFG, $db;
         $table_columns[$table] = $db->MetaColumns("$CFG->prefix$table");
     }
 
@@ -341,7 +341,7 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
                                 }
                                 print "was not restored</li></ul>";
                             }
-                            $ok = false; 
+                            $ok = false;
                         }
                     }
                 }
@@ -403,7 +403,7 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
             if (isset($record->old_id)) {
                 backup_putid($restore->backup_unique_code, $table, $record->old_id, $record->id);
             }
-        } else { 
+        } else {
             // failed to add (or find) $record
             if (!defined('RESTORE_SILENTLY')) {
                 print "<ul><li>Record could not be added: table=$table</li></ul>";
@@ -453,7 +453,7 @@ function hotpot_restore_logs($restore, $log) {
         break;
         case "attempt":
         case "submit":
-        case "review": 
+        case "review":
             if ($log->cmid) {
                 //Get the new_id of the module (to recode the info field)
                 $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
@@ -462,7 +462,7 @@ function hotpot_restore_logs($restore, $log) {
                     $attemptid = substr(strrchr($log->url,"="),1);
                     //Get the new_id of the attempt (to recode the url field)
                     $attempt = backup_getid($restore->backup_unique_code,"hotpot_attempts",$attemptid);
-                    if ($attempt) { 
+                    if ($attempt) {
                         $log->url = "review.php?id=".$log->cmid."&attempt=".$attempt->new_id;
                         $log->info = $mod->new_id;
                         $status = true;

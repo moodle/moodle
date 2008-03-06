@@ -32,7 +32,7 @@
             if (! $cm = get_coursemodule_from_instance("hotpot", $hotpot->id, $course->id)) {
                 error("Course Module ID was incorrect");
             }
-        
+
         }
         require_login($course->id);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -62,7 +62,7 @@
         } else if ($hotpot->subnet && !address_in_subnet($_SERVER['REMOTE_ADDR'], $hotpot->subnet)) {
             $error = get_string("subneterror", "quiz");
         // check number of attempts
-        } else if ($hotpot->attempts && $hotpot->attempts <= count_records_select('hotpot_attempts', 'hotpot='.$hotpot->id.' AND userid='.$USER->id, 'COUNT(DISTINCT clickreportid)')) { 
+        } else if ($hotpot->attempts && $hotpot->attempts <= count_records_select('hotpot_attempts', 'hotpot='.$hotpot->id.' AND userid='.$USER->id, 'COUNT(DISTINCT clickreportid)')) {
             $error = get_string("nomoreattempts", "quiz");
         // get password
         } else if ($hotpot->password && empty($hppassword)) {
@@ -129,19 +129,19 @@
     }
     // if HTML is being requested ...
     if (empty($get_js) && empty($get_css)) {
-        if (empty($frameset)) { 
+        if (empty($frameset)) {
             // HP v6
             if ($hotpot->navigation==HOTPOT_NAVIGATION_FRAME || $hotpot->navigation==HOTPOT_NAVIGATION_IFRAME) {
                 $get_html = ($framename=='main') ? true : false;
             } else {
                 $get_html = true;
             }
-        } else { 
+        } else {
             // HP5 v5
             $get_html = empty($framename) ? true : false;
         }
         if ($get_html) {
-        
+
             if (HOTPOT_FIRST_ATTEMPT) {
                 add_to_log($course->id, "hotpot", "view", "view.php?id=$cm->id", "$hotpot->id", "$cm->id");
 
@@ -306,7 +306,7 @@
     $body = '';
     $body_tags = '';
     $footer = '</html>';
-    // HP6 and some HP5 (v6 and v4) 
+    // HP6 and some HP5 (v6 and v4)
     if (preg_match('|<body'.'([^>]*'.'onLoad=(["\'])(.*?)(\\2)'.'[^>]*)'.'>(.*)</body>|is', $hp->html, $matches)) {
         $body = $matches[5]; // contents of first <body onload="StartUp()">...</body> block
         if ($pageid) {
@@ -376,7 +376,7 @@
             //update_module_button($cm->id, $course->id, $strmodulename.'" style="font-size:0.8em')
             print_header(
                 $title, $heading, $navigation,
-                "", $head.$styles.$scripts, true, $button, 
+                "", $head.$styles.$scripts, true, $button,
                 $loggedinas, false, $body_tags
             );
             if (!empty($available_msg)) {
@@ -431,8 +431,8 @@
                     $body_tags = " onload=\"set_iframe_height('$iframe_id')\"";
                     $iframe_js = '<script src="iframe.js" type="text/javascript"></script>'."\n";
                     print_header(
-                        $title, $heading, $navigation, 
-                        "", $head.$styles.$scripts.$iframe_js, true, $button, 
+                        $title, $heading, $navigation,
+                        "", $head.$styles.$scripts.$iframe_js, true, $button,
                         $loggedinas, false, $body_tags
                     );
                     if (!empty($available_msg)) {
@@ -454,8 +454,8 @@
                 // do nothing
             } else {
                 $hp->html = preg_replace(
-                    '|<meta[^>]*charset=iso-8859-1[^>]*>|is', 
-                    '<meta http-equiv="Content-Type" content="text/html; charset='.$charset.'" />', 
+                    '|<meta[^>]*charset=iso-8859-1[^>]*>|is',
+                    '<meta http-equiv="Content-Type" content="text/html; charset='.$charset.'" />',
                     $hp->html
                 );
             }

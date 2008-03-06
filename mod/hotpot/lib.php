@@ -242,11 +242,11 @@ function hotpot_update_events($hotpot) {
         $event->timeduration = ($hotpot->timeclose - $hotpot->timeopen);
 
         if ($event->timeduration > HOTPOT_MAX_EVENT_LENGTH) {  /// Long durations create two events
-    
+
             $event->name          = addslashes($hotpot->name).' ('.get_string('hotpotopens', 'hotpot').')';
             $event->timeduration  = 0;
             add_event($event);
-    
+
             $event->timestart    = $hotpot->timeclose;
             $event->eventtype    = 'close';
             $event->name         = addslashes($hotpot->name).' ('.get_string('hotpotcloses', 'hotpot').')';
@@ -451,7 +451,7 @@ function hotpot_is_visible(&$cm) {
         }
         $cm->sectionvisible = $section->visible;
     }
- 
+
     if (empty($cm->sectionvisible)) {
         $visible = HOTPOT_NO;
     } else {
@@ -783,7 +783,7 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
     if ($rawmods = get_records_sql($query)) {
 
         // cache $isteacher setting
-        
+
         $isteacher = has_capability('mod/hotpot:viewreport', get_context_instance(CONTEXT_COURSE, $course->id));
 
         $explodesection = array();
@@ -990,7 +990,7 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
         foreach ($records as $id => $record){
             if ($cm = get_coursemodule_from_instance('hotpot', $record->id, $course->id)) {
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-                
+
                 if (has_capability('mod/hotpot:viewreport', $context)) {
                     $href = "$CFG->wwwroot/mod/hotpot/view.php?hp=$id";
                     $name = '&nbsp;<a href="'.$href.'">'.$record->name.'</a>';
@@ -1274,7 +1274,7 @@ function hotpot_add_attempt($hotpotid) {
             $attempt->status = HOTPOT_STATUS_ABANDONED;
             update_record('hotpot_attempts', $attempt);
         }
-    }    
+    }
 
     // create and add new attempt record
     $attempt = new stdClass();
@@ -1778,7 +1778,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
             $i_max = count($objects[0]);
             for ($i=0; $i<$i_max; $i++) {
 
-                // extract URL from <PARAM> or <A> 
+                // extract URL from <PARAM> or <A>
                 $url = '';
                 if (preg_match($param_url, $objects[3][$i], $matches) || preg_match($link_url, $objects[3][$i], $matches)) {
                     $url = $matches[3];
@@ -2318,13 +2318,13 @@ if (!function_exists('get_coursemodule_from_id')) {
     function get_coursemodule_from_id($modulename, $cmid, $courseid=0) {
         global $CFG;
         return get_record_sql("
-            SELECT 
+            SELECT
                 cm.*, m.name, md.name as modname
-            FROM 
+            FROM
                 {$CFG->prefix}course_modules cm,
                 {$CFG->prefix}modules md,
                 {$CFG->prefix}$modulename m
-            WHERE 
+            WHERE
                 ".($courseid ? "cm.course = '$courseid' AND " : '')."
                 cm.id = '$cmid' AND
                 cm.instance = m.id AND
@@ -2338,13 +2338,13 @@ if (!function_exists('get_coursemodule_from_instance')) {
     function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
         global $CFG;
         return get_record_sql("
-            SELECT 
+            SELECT
                 cm.*, m.name, md.name as modname
-            FROM 
+            FROM
                 {$CFG->prefix}course_modules cm,
                 {$CFG->prefix}modules md,
                 {$CFG->prefix}$modulename m
-            WHERE 
+            WHERE
                 ".($courseid ? "cm.course = '$courseid' AND" : '')."
                 cm.instance = m.id AND
                 md.name = '$modulename' AND

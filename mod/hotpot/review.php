@@ -31,7 +31,7 @@
     if (! $attempt = get_record("hotpot_attempts", "id", $attempt)) {
         error("Attempt ID was incorrect");
     }
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_login($course->id);
 
@@ -109,10 +109,10 @@ function hotpot_print_attempt_summary(&$hotpot, &$attempt) {
                 $value = hotpot_format_status($attempt);
                 break;
             case 'timerecorded':
-                $value = empty($attempt->timefinish) ? '-' : userdate($attempt->timefinish); 
+                $value = empty($attempt->timefinish) ? '-' : userdate($attempt->timefinish);
                 break;
             case 'timetaken':
-                $value = empty($attempt->timefinish) ? '-' : format_time($attempt->timefinish - $attempt->timestart); 
+                $value = empty($attempt->timefinish) ? '-' : format_time($attempt->timefinish - $attempt->timestart);
                 break;
             default:
                 $value = isset($attempt->$field) ? $attempt->$field : NULL;
