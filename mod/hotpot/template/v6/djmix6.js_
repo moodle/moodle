@@ -5,7 +5,7 @@ function SetScormScore(){
 //Reports the current score and any other information back to the LMS
 	if (API != null){
 		API.LMSSetValue('cmi.core.score.raw', Score);
-		
+
 //Now send a detailed reports on the item
 		var ItemLabel = 'Item_1';
 		API.LMSSetValue('cmi.objectives.0.id', 'obj'+ItemLabel);
@@ -16,15 +16,15 @@ function SetScormScore(){
 		else{
 			API.LMSSetValue('cmi.objectives.0.status', 'incomplete');
 		}
-				
+
 		API.LMSSetValue('cmi.objectives.0.score.min', '0');
 		API.LMSSetValue('cmi.objectives.0.score.max', '100');
 		API.LMSSetValue('cmi.objectives.0.score.raw', Score);
 //We can only use the performance type, because we're storing multiple responses of various types.
 		API.LMSSetValue('cmi.interactions.0.type', 'performance');
 		API.LMSSetValue('cmi.interactions.0.student_response', AnswersTried);
-		
-		
+
+
 		API.LMSCommit('');
 	}
 }
@@ -106,7 +106,7 @@ function GetGuessSequence(){
 	}
 
 	var CardPos = 0;
-	
+
 	for (i=0; i<Cds.length; i++){
 		for (var j=0; j<L.length; j++){
 //Slight modification for 6.0.4: allow some leeway for 1px inaccuracy in card placing by browser.
@@ -142,7 +142,7 @@ function GetGuessSequence(){
 }
 
 function CompDrags(a,b){
-	return a.GetL() - b.GetL(); 
+	return a.GetL() - b.GetL();
 }
 
 function FindSegment(SegID){
@@ -178,7 +178,7 @@ function CompileString(InArray){
 		if ((Openers.indexOf(OutString.charAt(OutString.length-1)) > -1)||(Punctuation.indexOf(OutArray[i].charAt(0)) > -1)){
 			Spacer = '';
 		}
-		OutString = OutString + Spacer + OutArray[i];		
+		OutString = OutString + Spacer + OutArray[i];
 	}
 
 //Capitalize the first letter if necessary
@@ -233,8 +233,8 @@ function CheckAnswer(CheckType){
 					LongestCorrect[k] = TempCorrect[k];
 				}
 				HintToReturn = TempHint;
-			} 
-		}	
+			}
+		}
 	}
 	if (WhichCorrect > -1){
 		AllDone = true;
@@ -244,7 +244,7 @@ function CheckAnswer(CheckType){
 			}
 		}
 		WellDone = '<span class="CorrectAnswer">' + CompiledOutput + '</span><br /><br />' + CorrectResponse + '<br />';
-		
+
 		if (AnswersTried.length > 0){AnswersTried += ' | ';}
 		AnswersTried += CompiledOutput;
 
@@ -280,7 +280,7 @@ function CheckAnswer(CheckType){
 		if (CheckType == 1){
 			TryAgain += '<br />' + NextCorrect + '<br />' + FindSegment(HintToReturn);
 		}
-		
+
 [inclTimer]
 		if (TimeOver == true){
 			Score = Math.floor(((LongestCorrect.length-Penalties) * 100)/Segments.length);
@@ -291,7 +291,7 @@ function CheckAnswer(CheckType){
 		Penalties++; //Penalty for inaccurate check
 		ShowMessage(TryAgain);
 	}
-	
+
 //If the exercise is over, deal with that
 	if ((AllDone == true)||(TimeOver == true)){
 [inclSendResults]
@@ -304,9 +304,9 @@ function CheckAnswer(CheckType){
 		Locked = true;
 		Finished = true;
 		setTimeout('Finish()', SubmissionTimeout);
-		WriteToInstructions(YourScoreIs + ' ' + Score + '%.'); 
+		WriteToInstructions(YourScoreIs + ' ' + Score + '%.');
 	}
-	
+
 [inclScorm1.2]
 	if (AllDone == true){
 		SetScormComplete();
@@ -329,18 +329,18 @@ var Answers = new Array();
 function doDrag(e) {
 	if (CurrDrag == -1) {return};
 	if (C.ie){var Ev = window.event}else{var Ev = e}
-	var difX = Ev.clientX-window.lastX; 
-	var difY = Ev.clientY-window.lastY; 
-	var newX = Cds[CurrDrag].GetL()+difX; 
-	var newY = Cds[CurrDrag].GetT()+difY; 
-	Cds[CurrDrag].SetL(newX); 
+	var difX = Ev.clientX-window.lastX;
+	var difY = Ev.clientY-window.lastY;
+	var newX = Cds[CurrDrag].GetL()+difX;
+	var newY = Cds[CurrDrag].GetT()+difY;
+	Cds[CurrDrag].SetL(newX);
 	Cds[CurrDrag].SetT(newY);
-	window.lastX = Ev.clientX; 
-	window.lastY = Ev.clientY; 
+	window.lastX = Ev.clientX;
+	window.lastY = Ev.clientY;
 	return false;
-} 
+}
 
-function beginDrag(e, DragNum) { 
+function beginDrag(e, DragNum) {
 	CurrDrag = DragNum;
 	if (C.ie){
 		var Ev = window.event;
@@ -349,25 +349,25 @@ function beginDrag(e, DragNum) {
 	}
 	else{
 		var Ev = e;
-		window.onmousemove=doDrag; 
+		window.onmousemove=doDrag;
 		window.onmouseup=endDrag;
-	} 
+	}
 	Cds[CurrDrag].SwapColours();
 	topZ++;
 	Cds[CurrDrag].css.zIndex = topZ;
-	window.lastX=Ev.clientX; 
+	window.lastX=Ev.clientX;
 	window.lastY=Ev.clientY;
-	return true;  
-} 
+	return true;
+}
 
-function endDrag(e) { 
+function endDrag(e) {
 	if (CurrDrag == -1) {return};
 	Cds[CurrDrag].SwapColours();
 	if (C.ie){document.onmousemove=null}else{window.onmousemove=null;}
-	onEndDrag();	
+	onEndDrag();
 	CurrDrag = -1;
 	return true;
-} 
+}
 
 function onEndDrag(){
 //Snap to lines
@@ -430,10 +430,10 @@ function CheckOver(NoMove){
 							Cds[i].SetL(LeftColPos);
 							Cds[i].SetT(Cds[i].GetT() + DropHeight);
 						}
-						CheckOver(i);	
+						CheckOver(i);
 					}
 				}
-			}	
+			}
 		}
 	}
 }

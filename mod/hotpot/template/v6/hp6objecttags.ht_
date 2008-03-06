@@ -12,7 +12,7 @@
 <param name="type" value="audio/x-pn-realaudio-plugin" />
 <param name="src" value="[strFilePath]" />
 <param name="autostart" value="false" />
-<param name="controls" value="[inclVideo]ImageWindow,[/inclVideo]ControlPanel" /> 
+<param name="controls" value="[inclVideo]ImageWindow,[/inclVideo]ControlPanel" />
 [strContent]</object>[/Real Player]
 
 [Flash Player]<object codebase="[strFilePath]" type="application/x-shockwave-flash" width="[strWidth]" height="[strHeight]" data="[strFilePath]"> <param name="movie" value="[strFilePath]" />[strContent]</object>[/Flash Player]

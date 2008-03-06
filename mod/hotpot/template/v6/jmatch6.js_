@@ -6,18 +6,18 @@ function SetScormScore(){
 //Reports the current score and any other information back to the LMS
 	if (API != null){
 		API.LMSSetValue('cmi.core.score.raw', Score);
-		
+
 //Now send a detailed reports on the item
 		var ItemLabel = 'Matching';
 		API.LMSSetValue('cmi.objectives.0.id', 'obj'+ItemLabel);
-		API.LMSSetValue('cmi.interactions.0.id', 'int'+ItemLabel);	
-		API.LMSSetValue('cmi.objectives.0.status', API.LMSGetValue('cmi.core.lesson_status'));	
+		API.LMSSetValue('cmi.interactions.0.id', 'int'+ItemLabel);
+		API.LMSSetValue('cmi.objectives.0.status', API.LMSGetValue('cmi.core.lesson_status'));
 		API.LMSSetValue('cmi.objectives.0.score.min', '0');
 		API.LMSSetValue('cmi.objectives.0.score.max', '100');
 		API.LMSSetValue('cmi.objectives.0.score.raw', Score);
 //We can only use the performance type, because we're storing multiple responses of various types.
 		API.LMSSetValue('cmi.interactions.0.type', 'performance');
-		
+
 		var AnswersTried = '';
 		for (var i=0; i<Status[0][3].length; i++){
 			if (i>0){AnswersTried += ' | ';}
@@ -57,7 +57,7 @@ function StartUp(){
 [inclScorm1.2]
 	ScormStartUp();
 [/inclScorm1.2]
-	
+
 [inclSendResults]
 	GetUserName();
 [/inclSendResults]
@@ -134,7 +134,7 @@ function SetUpItems(ShuffleQs, ReduceTo){
 
 //Remove all the table rows and put them in an array for processing
 	var Qs = document.getElementById('Questions');
-	
+
 //First, get a list of keys
 	GetUniqueKeys(Qs, OriginalKeys);
 
@@ -144,12 +144,12 @@ function SetUpItems(ShuffleQs, ReduceTo){
 	}
 
 	var Reducing = (QList.length > ReduceTo);
-	
+
 //If required, select random rows to delete
 	if (Reducing == true){
 		var DumpItem = 0;
 		while (ReduceTo < QList.length){
-	
+
 //Get a number to delete from the array
 			DumpItem = Math.floor(QList.length*Math.random());
 			for (i=DumpItem; i<(QList.length-1); i++){
@@ -164,16 +164,16 @@ function SetUpItems(ShuffleQs, ReduceTo){
 	}
 
 	TotalUnfixedLeftItems = QList.length;
-	
+
 //Write the rows back to the table body
 	for (i=0; i<QList.length; i++){
 		Qs.appendChild(QList[i]);
 	}
-	
+
 //Now we need to remove any drop-down options that no longer have associated select items
 	if (Reducing == true){
 		GetUniqueKeys(Qs, ReducedKeys);
-		
+
 		Selects = Qs.getElementsByTagName('select');
 		for (i=0; i<Selects.length; i++){
 			Options = Selects[i].getElementsByTagName('option');
@@ -209,22 +209,22 @@ function CheckAnswers(){
 	var AnsText = '';
 	var AllDone = true;
 	TotCorrectChoices = 0;
-	
+
 //for each item not fixed or a distractor
 	for (var i=0; i<Status.length; i++){
-	
+
 //if it hasn't been answered correctly yet
 		if (Status[i][0] < 1){
-		
+
 //Add one to the number of tries for this item
 			Status[i][1]++;
-			
+
 //Get a pointer to the drop-down
 			Select = document.getElementById(Status[i][2]);
 			Key = GetKeyFromSelect(Select);
 //Save the answer given
 			Status[i][3].push(Select.options[Select.selectedIndex].value);
-			
+
 //Check the answer
 			if (Select.options[Select.selectedIndex].value == Key){
 					Status[i][0] = 1;
@@ -233,7 +233,7 @@ function CheckAnswers(){
 					Parent.removeChild(Select);
 					Parent.innerHTML = AnsText;
 					Parent.nextSibling.innerHTML = CorrectIndicator;
-			} 
+			}
 			else{
 				AllDone = false;
 				Parent = Select.parentNode;
@@ -281,7 +281,7 @@ function CheckAnswers(){
 
 //Show the feedback
 	ShowMessage(Feedback);
-	
+
 [inclScorm1.2]
 	if (AllDone == true){
 		SetScormComplete();

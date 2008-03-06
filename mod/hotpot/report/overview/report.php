@@ -29,13 +29,13 @@ class hotpot_report extends hotpot_default_report {
 			$table->size[] = 10;
 			$table->wrap[] = "nowrap";
 		}
-		array_push($table->head, 
-			get_string("name"), 
+		array_push($table->head,
+			get_string("name"),
 			hotpot_grade_heading($hotpot, $options),
-			get_string("attempt", "quiz"), 
-			get_string("time", "quiz"), 
-			get_string("reportstatus", "hotpot"), 
-			get_string("timetaken", "quiz"), 
+			get_string("attempt", "quiz"),
+			get_string("time", "quiz"),
+			get_string("reportstatus", "hotpot"),
+			get_string("timetaken", "quiz"),
 			get_string("score", "quiz")
 		);
 		array_push($table->align, "left", "center", "center", "left", "center", "center", "center");
@@ -96,7 +96,7 @@ class hotpot_report extends hotpot_default_report {
 				if ($is_html && is_numeric($score) && $score==$user->grade) { // best grade
 					$score = '<span class="highlight">'.$score.'</span>';
 				}
-				array_push($data, 
+				array_push($data,
 					$attemptnumber,
 					$checkbox.$starttime,
 					hotpot_format_status($attempt),

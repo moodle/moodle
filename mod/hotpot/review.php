@@ -58,7 +58,7 @@
     // print header
     $title = format_string($course->shortname) . ": $hotpot->name";
     $heading = $course->fullname;
-    
+
     $navigation = build_navigation('', $cm);
     $button = update_module_button($cm->id, $course->id, $strmodulename);
     print_header($title, $heading, $navigation, "", "", true, $button, navmenu($course, $cm));
@@ -107,10 +107,10 @@ function hotpot_print_attempt_summary(&$hotpot, &$attempt) {
                 $value = hotpot_format_status($attempt);
                 break;
             case 'timerecorded':
-                $value = empty($attempt->timefinish) ? '-' : userdate($attempt->timefinish); 
+                $value = empty($attempt->timefinish) ? '-' : userdate($attempt->timefinish);
                 break;
             case 'timetaken':
-                $value = empty($attempt->timefinish) ? '-' : format_time($attempt->timefinish - $attempt->timestart); 
+                $value = empty($attempt->timefinish) ? '-' : format_time($attempt->timefinish - $attempt->timestart);
                 break;
             default:
                 $value = isset($attempt->$field) ? $attempt->$field : NULL;

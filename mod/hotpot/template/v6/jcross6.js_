@@ -5,7 +5,7 @@ function SetScormScore(){
 //Reports the current score and any other information back to the LMS
 	if (API != null){
 		API.LMSSetValue('cmi.core.score.raw', Score);
-		
+
 //Now send a detailed reports on the item
 		var ItemLabel = 'Crossword';
 		API.LMSSetValue('cmi.objectives.0.id', 'obj'+ItemLabel);
@@ -15,13 +15,13 @@ function SetScormScore(){
 		}
 		else{
 			API.LMSSetValue('cmi.objectives.0.status', 'incomplete');
-		}		
+		}
 		API.LMSSetValue('cmi.objectives.0.score.min', '0');
 		API.LMSSetValue('cmi.objectives.0.score.max', '100');
 		API.LMSSetValue('cmi.objectives.0.score.raw', Score);
 //We're not sending any student response data, so we can set this to a non-standard value
 		API.LMSSetValue('cmi.interactions.0.type', 'crossword');
-		
+
 		API.LMSCommit('');
 	}
 }
@@ -35,7 +35,7 @@ var Feedback = '';
 var AcrossCaption = '';
 var DownCaption = '';
 var Correct = '[strCorrect]';
-var Incorrect = '[strIncorrect]'; 
+var Incorrect = '[strIncorrect]';
 var GiveHint = '[strGiveHint]';
 var YourScoreIs = '[strYourScoreIs]';
 var BuiltGrid = '';
@@ -45,7 +45,7 @@ var Score = 0;
 var InTextBox = false;
 var Locked = false;
 var TimeOver = false;
-var CaseSensitive = [boolCaseSensitive]; 
+var CaseSensitive = [boolCaseSensitive];
 
 var InputStuff = '<form method="post" action="" onsubmit="return false;"><span class="ClueNum">[strClueNum]: </span>';
 InputStuff += '[strClue] <input onfocus="CurrentBox=this;InTextBox=true;" onblur="InTextBox=false;" id="[strBoxId]" type="edit" size="[strEditSize]" maxlength="[strMaxLength]"></input>';
@@ -65,7 +65,7 @@ function StartUp(){
 [inclScorm1.2]
 	ScormStartUp();
 [/inclScorm1.2]
-	
+
 	AcrossCaption = document.getElementById('CluesAcrossLabel').innerHTML;
 	DownCaption = document.getElementById('CluesDownLabel').innerHTML;
 [inclSendResults]
@@ -88,14 +88,14 @@ function GetAnswerLength(Across,x,y){
 		while ((x<L.length)&&(L[x][y].length > 0)){
 			Result += L[x][y].length;
 			x++;
-		} 
+		}
 		return Result;
 	}
 	else{
 		while ((y<L[x].length)&&(L[x][y].length > 0)){
 			Result += L[x][y].length;
 			y++;
-		} 	
+		}
 		return Result;
 	}
 }
@@ -165,7 +165,7 @@ function SplitStringToPerceivedChars(InString, PC){
 function EnterAnswer(Guess,Across,AnsLength,x,y){
 	var PC = new Array();
 	SplitStringToPerceivedChars(Guess, PC);
-	
+
 	var i=x;
 	var j=y;
 	var Letter = 0;
@@ -269,9 +269,9 @@ function CheckAnswers(){
 	var AllCorrect = true;
 	var TotLetters = 0;
 	var CorrectLetters = 0;
-	var LetterFromKey = ''; 
+	var LetterFromKey = '';
 	var LetterFromGuess = '';
-	
+
 //Check each letter
 	for (var i=0; i<L.length; i++){
 		for (var j=0; j<L[i].length; j++){
@@ -285,7 +285,7 @@ function CheckAnswers(){
 					LetterFromKey = L[i][j].toUpperCase();
 					LetterFromGuess = G[i][j].toUpperCase();
 				}
-				if (LetterFromGuess != LetterFromKey){ 
+				if (LetterFromGuess != LetterFromKey){
 					G[i][j] = '';
 //Blank that square in the grid
 					SetGridSquareValue(i,j,'');
@@ -316,7 +316,7 @@ function CheckAnswers(){
 
 	ShowMessage(Output);
 	WriteToInstructions(Output);
-	
+
 	if ((AllCorrect == true)||(TimeOver == true)){
 [inclSendResults]
 		setTimeout('SendResults(' + Score + ')', 50);

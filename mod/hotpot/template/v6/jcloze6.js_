@@ -9,7 +9,7 @@ function SetScormScore(){
 //Now send detailed reports about each item
 		for (var i=0; i<State.length; i++){
 			var ThisItemGuesses = '';
-			var GapLabel = 'Gap_' + (i+1).toString();	
+			var GapLabel = 'Gap_' + (i+1).toString();
 			var ThisItemScore = Math.floor(State[i].ItemScore * 100) + '';
 			API.LMSSetValue('cmi.objectives.' + i + '.id', 'obj'+GapLabel);
 			API.LMSSetValue('cmi.interactions.' + i + '.id', 'int'+GapLabel);
@@ -24,11 +24,11 @@ function SetScormScore(){
 			}
 			for (var j=0; j<State[i].Guesses.length; j++){
 				if (j>0){ThisItemGuesses += ' | ';}
-				ThisItemGuesses += State[i].Guesses[j];	
-			}	
+				ThisItemGuesses += State[i].Guesses[j];
+			}
 			API.LMSSetValue('cmi.interactions.' + i + '.type', 'fill-in');
 			API.LMSSetValue('cmi.interactions.' + i + '.student_response', ThisItemGuesses);
-		}		
+		}
 		API.LMSCommit('');
 	}
 }
@@ -48,7 +48,7 @@ function ItemState(){
 
 var Feedback = '';
 var Correct = '[strCorrect]';
-var Incorrect = '[strIncorrect]'; 
+var Incorrect = '[strIncorrect]';
 var GiveHint = '[strGiveHint]';
 var CaseSensitive = [boolCaseSensitive];
 var YourScoreIs = '[strYourScoreIs]';
@@ -70,7 +70,7 @@ function StartUp(){
 	if (document.getElementById('CharacterKeypad') != null){
 		document.getElementById('CharacterKeypad').style.display = 'block';
 	}
-	
+
 [inclScorm1.2]
 	ScormStartUp();
 [/inclScorm1.2]
@@ -89,9 +89,9 @@ function StartUp(){
 	for (i=0; i<I.length; i++){
 		State[i] = new ItemState();
 	}
-	
+
 	ClearTextBoxes();
-	
+
 [inclTimer]
 	StartTimer();
 [/inclTimer]
@@ -126,8 +126,8 @@ function CompileGuesses(){
 			Temp += '<fieldlabelid>JClozeStudentResponses</fieldlabelid><fielddata>';
 			for (var j=0; j<State[i].Guesses.length; j++){
 				if (j>0){Temp += '| ';}
-				Temp += State[i].Guesses[j] + ' ';	
-			}	
+				Temp += State[i].Guesses[j] + ' ';
+			}
   		Temp += '</fielddata></field>';
 		}
 		Temp += '</fields></hpnetresult>';
@@ -184,12 +184,12 @@ function CheckAnswers(){
 	}
 	ShowMessage(Output);
 	setTimeout('WriteToInstructions(Output)', 50);
-	
+
 	Score = TotalScore;
 	CompileGuesses();
-	
+
 	if ((AllCorrect == true)||(Finished == true)){
-	
+
 [inclSendResults]
 		setTimeout('SendResults(' + TotalScore + ')', 50);
 [/inclSendResults]
@@ -282,7 +282,7 @@ function FindCurrent() {
 			return CurrentWord;
 		}
 	}
-	
+
 	x=CurrentWord + 1;
 	while (x<I.length){
 		if (State[x].AnsweredCorrectly == false){
@@ -290,7 +290,7 @@ function FindCurrent() {
 				return x;
 			}
 		}
-	x++;	
+	x++;
 	}
 
 	x = 0;
@@ -300,7 +300,7 @@ function FindCurrent() {
 				return x;
 			}
 		}
-	x++;	
+	x++;
 	}
 	return FoundCurrent;
 }

@@ -1,27 +1,27 @@
 <!--
-// PLEASE NOTE that this version is more recent than the incorrectly 
-// numbered v6.1, dated 2003.11.17. From now on, version numbers will 
+// PLEASE NOTE that this version is more recent than the incorrectly
+// numbered v6.1, dated 2003.11.17. From now on, version numbers will
 // follow those of Hot Potatoes.
 /* hot-potatoes.js (v6.0.4.0 - 2005.02.18)
  * =======================================
  * by Gordon Bateson, February 2003
  * Copyright (c) 2003 Gordon Bateson. All Rights Reserved.
  *
- * You are hereby granted a royalty free license to use or modify this 
- * software provided that this copyright notice appears on all copies. 
+ * You are hereby granted a royalty free license to use or modify this
+ * software provided that this copyright notice appears on all copies.
  *
  * This software is provided "AS IS" without a warranty of any kind.
- * 
- * Documentation and downloads may be available from: 
+ *
+ * Documentation and downloads may be available from:
  * http://www.kanazawa-gu.ac.jp/~gordon/research/hot-potatoes/
  */
-// This JavaScript library modifies the SendResults and StartUp functions 
+// This JavaScript library modifies the SendResults and StartUp functions
 // used by hotpot v5 and v6, so that more (or less!) details about the
-// student can be input, and more details of a quiz's questions and answers 
+// student can be input, and more details of a quiz's questions and answers
 // can be submitted to the server when the quiz is finished
-// If the arrays below (Login, DB, JBC, ...) are set BEFORE calling this 
-// script, they will NOT be overwritten. Any array that is not set, will 
-// use the defaults below. This is useful if you want to use different 
+// If the arrays below (Login, DB, JBC, ...) are set BEFORE calling this
+// script, they will NOT be overwritten. Any array that is not set, will
+// use the defaults below. This is useful if you want to use different
 // settings for different quizzes.
 // ************
 //  Login Screen
@@ -29,7 +29,7 @@
 if (window.Login==null) {
 	Login = new Array();
 	Login[0] = true;	// Show prompt for user name
-				// This can also be a string of user names ... 
+				// This can also be a string of user names ...
 				// Login[0] = "Guest,Peter,Paul,Mary,Webmaster";
 				// or an array of user names (and on-screen texts) (and passwords) ...
 				// Login[0] = new Array("Guest", "001,Peter,xxxx", "002,Paul,yyyy", "003,Mary,zzzz", "Webmaster");
@@ -42,21 +42,21 @@ if (window.Login==null) {
 				//	new Array("Webmaster")
 				// );
 	Login[1] = true;	// Show prompt for student's UserID
-				// If there is no password prompt (i.e. Logon[3] is false), this value 
+				// If there is no password prompt (i.e. Logon[3] is false), this value
 				// will be checked against the password information, if any, in Login[0]
 	Login[2] = false;	// Show prompt for student's email
-	Login[3] = false;	// Show prompt for quiz password, and check this value against 
+	Login[3] = false;	// Show prompt for quiz password, and check this value against
 				// the password information, if any, in Login[0]
 				// This can also be a string required to start the quiz ...
 				// Login[3] = "password";
 	Login[4] = true;	// Show prompt for the cookie expiry date
 				// If false, cookies expire at the end of the current session
 	Login[5] = "guest,webmaster"
-				// guest user names (case insensitive) ...  
-				// Login[5] = "guest,webmaster"; 
+				// guest user names (case insensitive) ...
+				// Login[5] = "guest,webmaster";
 				// These users do NOT need to fill in other login fields
 				// and their quiz results are NOT added to the database
-	// the Login prompts and error messages 
+	// the Login prompts and error messages
 	// are defined in the MSG array (see below)
 }
 // *********
@@ -65,25 +65,25 @@ if (window.Login==null) {
 if (window.DB==null) {
 	DB = new Array();
 	DB[0] = true; // append form fields to database on server
-			// If you are NOT using BFormMail's database feature, 
+			// If you are NOT using BFormMail's database feature,
 			// set DB[0]=false, and you can then safely ignore DB[1 to 5]
-	DB[1] = "/home/gordon/public_html/cgi/hot-potatoes-data"; 
+	DB[1] = "/home/gordon/public_html/cgi/hot-potatoes-data";
 			// append_db folder path (no trailing slash)
 			// Can be either an absolute path  e.g. "/home/gordon/public_html/cgi/hot-potatoes-data"
 			// or a relative (to CGI bin) path  e.g. "hot-potatoes-data"
-	DB[2] = "hot-potatoes"; 
+	DB[2] = "hot-potatoes";
 			// append_db file name (no extension)
 			// If left blank, the quiz file name, without extension, will be used
 			// i.e. each quiz will have its results stored in a different file.
 			// If filled in, this file will store the results for ALL quizzes.
-			// Database files and folders must be set up BEFORE running the quiz 
+			// Database files and folders must be set up BEFORE running the quiz
 			// must have appropriate access privileges (on Unix, use "chmod 666").
 	DB[3] = ""; // append_db extension (if left blank, ".txt" will be used)
 	DB[4] = ""; // db_fields (if left blank, ALL quiz fields will be sent)
 	DB[5] = ""; // db_delimiter (if left blank, tab will be used)
-	DB[6] = "REMOTE_ADDR,HTTP_USER_AGENT"; 
+	DB[6] = "REMOTE_ADDR,HTTP_USER_AGENT";
 			// env_report ('REMOTE_ADDR','HTTP_USER_AGENT' and a few others)
-	// for a complete description of these fields are, see ... 
+	// for a complete description of these fields are, see ...
 	// http://www.infosheet.com/stuff/BFormMail.readme
 	// Switches DB[7] and DB[8] force the settings in the ResultForm
 	// In v5 and v6 quizzes, these settings wil be override those in the original quiz
@@ -94,7 +94,7 @@ if (window.DB==null) {
 	DB[8] = '';	// email address to which results should be sent
 			// e.g. gordon@kanazawa-gu.ac.jp
 }
-// By default the quiz's question's scores will be returned. 
+// By default the quiz's question's scores will be returned.
 // If you want more detailed information, set the flags below:
 // ********
 //  JBC
@@ -162,16 +162,16 @@ if (window.JCloze==null) {
 //	[0] : (unused)
 //	[1] : array of JCLOZE_ANSWER_TEXTs
 //	[2] : clue for this answer
-// JCLOZE_ANSWER_TEXT : 
+// JCLOZE_ANSWER_TEXT :
 //	[0] : array (seems unnecessary, just the text would be enough?)
 //		[0] : text of possible answer
 // State : array of JCLOZE_ANSWER_STATEs
-// JCLOZE_ANSWER_STATE (v5) : 
+// JCLOZE_ANSWER_STATE (v5) :
 //	[0] : clue asked for or not
 //	[1] : number of hints (show next letter) and penalties ('check' an incorrect answer)
 //	[2] : length of answer matched
 //	[3] : score for this item
-//	[4] : already answered correctly 
+//	[4] : already answered correctly
 //	[5] : answer entered in text box (right or not)
 // JCLOZE_ANSWER_STATE (v6)
 //	this.ClueGiven = false;
@@ -196,16 +196,16 @@ if (window.JCross==null) {
 	JCross[8] = true;	// show number of checks
 	// there are no "ignored" answers for JCross quizzes
 }
-// JCross quizzes use the following global variables: 
+// JCross quizzes use the following global variables:
 // 	L : letters (of correct answers)
 // 	C : clue numbers (CL in v6)
 // 	G : guesses
 // 'L', 'C' ('CL') and 'G' are all 2-dimensional arrays (rows x cols)
 //
 // v5 quizzes additionally use the following single-dimension arrays
-// 	A : clues for across (horizontal) words 
-// 	D : clues for down (vertical) words 
-// N.B. form is only sent when all answers are correct so 
+// 	A : clues for across (horizontal) words
+// 	D : clues for down (vertical) words
+// N.B. form is only sent when all answers are correct so
 // you can't find out what 'wrong' answers were entered
 // ********
 //  JMatch
@@ -251,7 +251,7 @@ if (window.JMatch==null) {
 //	[0] : text
 //	[1] : tag of the F item to which it SHOULD be dragged
 //	[2] : tag of the F item to which it was dragged (initally 0)
-// N.B. form is only sent when all answers are correct so 
+// N.B. form is only sent when all answers are correct so
 // you can't find out what 'wrong' answers were entered
 // ********
 //  JMix
@@ -266,8 +266,8 @@ if (window.JMix==null) {
 	JMix[5] = true;		// show number of checks
 	JMix[6] = true;		// show number of hints (=show next word)
 }
-// JMix quizzes use the global variables 
-// 'Segments', 'GuessSequence' and 'Penalties' 
+// JMix quizzes use the global variables
+// 'Segments', 'GuessSequence' and 'Penalties'
 // Segments : array of JMix_QUESTIONs
 // JMix_QUESTION:
 //	[0] : text
@@ -305,7 +305,7 @@ if (window.JQuiz==null) {
 //	[0] : array (seems unnecessary, just the text would be enough?)
 //		[0] : text of possible answer
 // Status : array of JQUIZ_ANSWER_STATEs
-// JQUIZ_ANSWER_STATE : 
+// JQUIZ_ANSWER_STATE :
 //	[0] : question done or not
 //	[1] : number of wrong checks
 //	[2] : number of hints asked for
@@ -324,23 +324,23 @@ if (window.JQuiz==null) {
 //	[1] : feedback text
 //	[2] : correct answer flag (1=a correct answer, 0=a wrong answer)
 //	[3] : weighted score (as percentage) if correct
-//	[4] : flag (usually set to 1, but for hybrid answers that are not 
+//	[4] : flag (usually set to 1, but for hybrid answers that are not
 //		to be included in multiple choice options, it is set to 0)
 // State : array of JQUIZ_QUESTION_STATEs
-// JQUIZ_QUESTION_STATE : 
+// JQUIZ_QUESTION_STATE :
 //	[0] : score (-1 shows not done yet)
 //	[1] : array showing on which number try each JQUIZ_ANSWER was selected
 //	[2] : number of attempts at this question
 //	[3] : total of weighted scores of correct answers that were selected
-//		i.e. each time a correct answer is selected, 
+//		i.e. each time a correct answer is selected,
 //		its JQUIZ_ANSWER[3] weighting is added to this total
 //		so when all the correct answers have been selected, this will be 100
 //	[4] : penalties incurred for hints (score is set to zero if >= 1)
 //	[5] : 	- for multiple choice, short-answer and hybrid questions, this is a
 //		comma-delimited list showing order in which answers were chosen
-//		- for multi-select fields, this is bar-delimted ('|') list of settings 
-//		showing whether each checkbox was selected ('Y') on not ('N') when the 
-//		'Check' button was clicked. The final item in the list will be the 
+//		- for multi-select fields, this is bar-delimted ('|') list of settings
+//		showing whether each checkbox was selected ('Y') on not ('N') when the
+//		'Check' button was clicked. The final item in the list will be the
 //		settings for the correct answer.
 // N.B. JBC, JMatch(v5) and JQuiz(v5) all use global variables 'I' and 'Status'
 //	JBC : I[0].length==3 && !window.RItems
@@ -624,7 +624,7 @@ function checkOK(w, n){
 function getValue(w, n, flag) {
 	var obj = w.document.forms[0].elements[n];
 	var TYPE = obj.type.toUpperCase(); // required for ns4 (win)
-	if (obj.options && TYPE.indexOf('SELECT')>=0){ 
+	if (obj.options && TYPE.indexOf('SELECT')>=0){
 		var v = obj.options[obj.selectedIndex].value;
 	} else {
 		var v = obj.value;
@@ -634,7 +634,7 @@ function getValue(w, n, flag) {
 		if (n=='Password' || (n=='UserID' && !Login[3])) {
 			var pwd = getPassword(w);
 			if (pwd && v!=pwd) msg = MSG[n=='Password' ? 13 : 14];
-		} 
+		}
 		if (n=='UserEmail' && window.RegExp) {
 			var r = '(\\w|-)+';
 			r = r + '(\\.' + r + ')';
@@ -784,7 +784,7 @@ function SendAllResults(Score) {
 			// if this is a Netscape browser, check if the referer will be set OK
 			if (navigator.appName=='Netscape' && (location.protocol=='file:' || navigator.userAgent.indexOf('Netscape6')>=0)) {
 				// ns4 and ns7 set referer to 'file:// ...' when running a quiz offline
-				// ns6.2 (at least) always sets referer to 'about:blank' 
+				// ns6.2 (at least) always sets referer to 'about:blank'
 				// Netscape's setting of referer can cause BFormMail
 				// to reject the form, so encode the form data as a URL
 				var url = form.action;
@@ -931,11 +931,11 @@ function GetQuestionDetails() {
 	var hp = hpVersion();
 	var t = hpQuizType();
 	var v = hpQuizVersion();
-	return	(t==1) ? GetJbcQuestionDetails(hp, v) : 
-		(t==2) ? GetJClozeQuestionDetails(hp, v) : 
-		(t==3) ? GetJCrossQuestionDetails(hp, v) : 
-		(t==4) ? GetJMatchQuestionDetails(hp, v) : 
-		(t==5) ? GetJMixQuestionDetails(hp, v) : 
+	return	(t==1) ? GetJbcQuestionDetails(hp, v) :
+		(t==2) ? GetJClozeQuestionDetails(hp, v) :
+		(t==3) ? GetJCrossQuestionDetails(hp, v) :
+		(t==4) ? GetJMatchQuestionDetails(hp, v) :
+		(t==5) ? GetJMixQuestionDetails(hp, v) :
 		(t==6) ? GetJQuizQuestionDetails(hp, v) :
 		(t==7) ? GetRhubarbDetails(hp, v) :
 		(t==8) ? GetSequiturDetails(hp, v) : '';
@@ -944,7 +944,7 @@ function GetJbcQuestionDetails(hp, v) {
 	qDetails = '';
 	// check the quiz version
 	if (hp==5 || hp==6) {
-		// get question details 
+		// get question details
 		for(var q=0; q<I.length; q++) {
 			// initialize strings to hold answer details
 			var aDetails = new Array();
@@ -953,7 +953,7 @@ function GetJbcQuestionDetails(hp, v) {
 			aDetails[2] = new Array(); // ignored
 			// get answer details
 			for(var a=0; a<I[q][1].length; a++) {
-				var i = (Status[q][1][a]=='R') ? 0 : (Status[q][1][a]=='0') ? 2 : 1; 
+				var i = (Status[q][1][a]=='R') ? 0 : (Status[q][1][a]=='0') ? 2 : 1;
 				aDetails[i][aDetails[i].length] = (JBC[6] ? a : I[q][1][a][0]);
 			}
 			// format 'Q' (a padded, two-digit version of 'q')
@@ -1076,19 +1076,19 @@ function GetJCrossQuestionDetails(hp, v) {
 		for (var row=0; row<L.length; row++) {
 			for (var col=0; col<L[row].length; col++) {
 				// increment letter count, if required
-				if (L[row][col]) letters++; 
+				if (L[row][col]) letters++;
 				// show answers and clues, if required
 				var q = (hp==5) ? C[row][col] : CL[row][col];
 				if (q) {
 					for (var i=0; i<2; i++) { // 0==across, 1==down
 						var AD = (i==0) ? 'A' : 'D';
 						var acrossdown = (i==0) ? 'across' : 'down';
-						
+
 						var clue = (hp==5) ? eval(AD+'['+q+']') : GetJCrossClue('Clue_'+AD+'_'+q);
 						if (clue) {
 							// format 'Q' (a padded, two-digit version of 'q')
 							var Q = getQ('JCross', q) + acrossdown + '_'; // e.g. JCross_01_across_
-		
+
 							if (JCross[0]) {
 								qDetails += makeSeparator(Q);
 							}
@@ -1384,7 +1384,7 @@ function GetJQuizAnswerDetails(q, flag) {
 			}
 			x[i] = a.join('+');
 		}
-	} else if (x) { // multiple-choice, short-answer and hybrid 
+	} else if (x) { // multiple-choice, short-answer and hybrid
         if (x.charAt(x.length-1)==',') {
             // HP 6.0 and 6.1 (always has trailing comma)
             x = x.substring(0, x.length-1).split(',');
@@ -1577,7 +1577,7 @@ function hpClickCheck(hp, t, v, args) {
                 			if (window.MakeIndividualDropdowns) {
                                 var is_wrong = (ii!=0);
                                 g = I[i][1][ii][0];
-                            } else { 
+                            } else {
                                 var is_wrong = (ii!=i);
                                 g = I[ii][1][0][0];
                             }
@@ -1592,13 +1592,13 @@ function hpClickCheck(hp, t, v, args) {
 					if (!HP[_guesses][i]) HP[_guesses][i] = new Array();
 					var ii = HP[_guesses][i].length;
 					// is this a new guess at this gap?
-					if (ii==0 || g!=HP[_guesses][i][ii-1]) { 
+					if (ii==0 || g!=HP[_guesses][i][ii-1]) {
 						HP[_guesses][i][ii] = g;
                         if (r==1) {
                             // Rottmeier DropDown 2.4
-                            // do nothing 
+                            // do nothing
                         } else {
-    						var G = g.toUpperCase();	
+    						var G = g.toUpperCase();
     						var ii_max = I[i][1].length;
     						for (var ii=0; ii<ii_max; ii++) {
     							if (window.CaseSensitive) {
@@ -1826,7 +1826,7 @@ function hpClickCheck(hp, t, v, args) {
 			} else {
 				if (!HP[_wrong][q]) HP[_wrong][q] = 0;
 				HP[_wrong][q]++;
-			}			
+			}
 		}
 	}
 	//return true;
@@ -1944,7 +1944,7 @@ function hpHiddenField(name, value, comma, forceHTML) {
 		var values = value;
 		var i_max = values.length;
 		value = '';
-		if (comma==null) comma = ','; 
+		if (comma==null) comma = ',';
 		for (var i=0; i<i_max; i++) {
 			values[i] = trim(values[i]);
 			if (values[i]!=null && values[i]!='') {
@@ -1999,8 +1999,8 @@ function getTime(obj) {
 	// get year, month and day
 	//	for an LMS : yyyy-mm-dd
 	//	for email  : DayName MonthName dd yyyy
-	var s = is_LMS() ? 
-		obj.getFullYear() + '-' + pad(obj.getMonth()+1, 2) + '-' + pad(obj.getDate(), 2) : 
+	var s = is_LMS() ?
+		obj.getFullYear() + '-' + pad(obj.getMonth()+1, 2) + '-' + pad(obj.getDate(), 2) :
 		MSG[16][obj.getDay()] + ' ' + MSG[17][obj.getMonth()] + ' ' + pad(obj.getDate(), 2) + ' ' + obj.getFullYear()
 	;
 	// get hours, minutes and seconds (hh:mm:ss)
@@ -2093,7 +2093,7 @@ function getPrompt(fn) {
 	// Note: netscape uses double-quote as delimiter, others use single quote
 	var s = getFuncCode(fn);
 	var i1 = s.indexOf('prompt') + 8;
-	var i2 = s.indexOf(s.charAt(i1-1), i1); 
+	var i2 = s.indexOf(s.charAt(i1-1), i1);
 	var p = (i1>=8 && i2>i1) ? s.substring(i1, i2) : '';
 	// make sure browser has decoded the unicode prompt properly
 	// this check is mainly for ns4, but there may be others
@@ -2109,13 +2109,13 @@ function getPrompt(fn) {
 }
 function getStartUpCode(fn) {
 	// the main initialization code comes from the StartUp function
-	//	v5 : the code before "UserName", if any, 
+	//	v5 : the code before "UserName", if any,
 	//	     and the code after the 2nd subsequent '}'
-	//	v6 : the code before and after 'GetUserName();' 
+	//	v6 : the code before and after 'GetUserName();'
 	//	     i.e. all the code except the call to 'GetUserName();'
 	var s = getFuncCode(fn);
 	var i1 = s.indexOf('GetUserName();');
-	if (i1>=0) { // v6 
+	if (i1>=0) { // v6
 		var i2 = i1 + 14;
 	} else { // v5
 		var i1 = s.indexOf('UserName');
@@ -2310,14 +2310,14 @@ function hpInterceptHints() {
 		var f = 'Hint';
 		var a = getFuncArgs(f, true);
 		x = 'hpClick(1,0);'; // question number is always zero
-	
+
 	} else if (window.CheckAnswer) {
 		var f = 'CheckAnswer';
 		var a = getFuncArgs(f, true);
 		if (a[0]=='ShowHint') {
 			if (a[1]=='QNum') {
 				// JQuiz v3, v5-v6[HP5]
-				x = 'if(ShowHint)hpClick(1,QNum);'; 
+				x = 'if(ShowHint)hpClick(1,QNum);';
 			} else {
 				// JQuiz v4
 				x = 'if(ShowHint)hpClick(1,QNum-1);'; // QNum is a global variable
@@ -2397,7 +2397,7 @@ function hpInterceptChecks() {
 	//	JCross  none
 	//	JMatch  HP5 v3, v5, v6: CheckAnswer(), HP5 v4: CheckResults(), HP6: CheckAnswers()
 	//	JMix    CheckAnswer(CheckType)
-	//	JQuiz 
+	//	JQuiz
 	//		HP5: CheckAnswer(ShowHint, QNum)
 	//		HP6: CheckMCAnswer, CheckMultiSelAnswer, CheckShortAnswer
 	//	Rhubarb  CheckWord(InputWord)
@@ -2440,7 +2440,7 @@ function hpInterceptChecks() {
 		if (a[0]=='ShowHint') {
 			if (a[1]=='QNum') {
 				// JQuiz v3, v5-v6[HP5]
-				x = 'if(!ShowHint&&Status[QNum][0]<1)hpClick(3,QNum);'; 
+				x = 'if(!ShowHint&&Status[QNum][0]<1)hpClick(3,QNum);';
 			} else {
 				// JQuiz v4
 				x = 'if(!ShowHint&&State[QNum-1][0]<1)hpClick(3,QNum-1);'; // QNum is a global variable
@@ -2452,7 +2452,7 @@ function hpInterceptChecks() {
 			// Sequitur
 			x = 'if (!(CurrentNumber==TotalSegments||AllDone||Btn.innerHTML==IncorrectIndicator))hpClick(3,Chosen);';
 		}
-	} else if (window.CheckWord) { 
+	} else if (window.CheckWord) {
 		f = 'CheckWord';
 		var a = getFuncArgs(f, true);
 		if (a[0]=='InputWord') {
@@ -2492,7 +2492,7 @@ if (Array.prototype && Array.prototype.push==null) {
 	Array.prototype.push = new Function("x", "this[this.length]=x");
 }
 // add attachEvent function, if required (allows HP5 v6 quizzes to run on ie5mac)
-// 	NOTE: to allow v6 quizzes on ie5mac, the following code 
+// 	NOTE: to allow v6 quizzes on ie5mac, the following code
 // 	needs to be inserted BEFORE the Hot Potatoes javascript
 if (window.attachEvent==null) {
 	window.attachEvent = new Function('evt', 'fn', 'eval("window."+evt+"="+fn)');
@@ -2534,7 +2534,7 @@ if (navigator.userAgent.indexOf("Netscape6")>=0 && window.ShowMessage) {
 // JBC uses "QForm" form, which contains elements called "FB_*_**" (* and ** start at 0)
 // JCloze uses "Cloze" form
 // JCross writes out "AnswerForm" from a variable called "GetAnswerOpener"
-//	HP5.3: uses "AnswerForm" in "BottomFrame" 
+//	HP5.3: uses "AnswerForm" in "BottomFrame"
 //	HP5.5: uses "AnswerForm" in "TopFrame", but it is only there when an answer is being input
 // JMatch uses "QForm" form, which contains elements called "sel*" (which disappear by the time the quiz is finished)
 // JMix uses "ButtonForm"
@@ -2542,14 +2542,14 @@ if (navigator.userAgent.indexOf("Netscape6")>=0 && window.ShowMessage) {
 // === v6 ===
 // JBC uses "QForm" form (elements have no name or id)
 // JCloze uses "Cloze" form (elements have no name or id)
-// JCross does not use any forms, 
+// JCross does not use any forms,
 //	HP5: has "GridDiv" in "MainDiv"
 //	HP6: has "Clues" table in "MainDiv"
 // JMatch has "MatchDiv" in "MainDiv"
 //	HP5: uses "QForm" form, which contains elements called "sel*"
 // 	HP6: uses "QForm" form, which contains elements called "s*_**"
 // JMix does not use any forms, but has "SegmentDiv" in "MainDiv"
-// JQuiz 
+// JQuiz
 //	HP5: uses "QForm" form, which contains an element called "Guess"
 //	HP6: has "Questions" ordered list in "MainDiv"
 // === v6+ ===
@@ -2833,7 +2833,7 @@ function hpTimedOut() {
 }
 function hpFinished() {
 	// assume false result
-	var x = false; 
+	var x = false;
 	var hp = hpVersion();
 	var t = hpQuizType();
 	var v = hpQuizVersion();
@@ -2962,7 +2962,7 @@ function Finish(quizstatus) {
 	}
 }
 // create form to send results
-if (DB[7] && DB[8] && !is_LMS()) { 
+if (DB[7] && DB[8] && !is_LMS()) {
 	ResultForm = ''
 		+ '<html><body>'
 		+ '<form name="Results" action="" method="post" enctype="x-www-form-encoded">'

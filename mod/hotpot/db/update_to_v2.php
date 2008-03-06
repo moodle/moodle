@@ -17,7 +17,7 @@ function hotpot_update_to_v2_2() {
         $index = "{$table}_{$field}_idx";
 	}
     hotpot_db_delete_index("{$CFG->prefix}$table", $index);
-    
+
     // add new hotpot_questions.md5key field (and index)
     $table = 'hotpot_questions';
     $field = 'md5key';
@@ -31,7 +31,7 @@ function hotpot_update_to_v2_2() {
             $ok = $ok && set_field($table, 'md5key', md5($record->name), 'id', $record->id);
         }
     }
-    
+
     // remove the index on hotpot_strings.string
     $table = 'hotpot_strings';
     $field = 'string';
@@ -55,7 +55,7 @@ function hotpot_update_to_v2_2() {
             $ok = $ok && set_field($table, 'md5key', md5($record->string), 'id', $record->id);
         }
     }
-    
+
     return $ok;
 }
 function hotpot_update_to_v2_1_21() {
@@ -124,12 +124,12 @@ function hotpot_remove_orphans($secondarytable, $secondarykeyfield, $primarytabl
     $db->debug = false;
 
     $records = get_records_sql("
-        SELECT 
+        SELECT
             t2.$secondarykeyfield, t2.$secondarykeyfield
-        FROM 
-            {$CFG->prefix}$secondarytable t2 LEFT JOIN {$CFG->prefix}$primarytable t1 
+        FROM
+            {$CFG->prefix}$secondarytable t2 LEFT JOIN {$CFG->prefix}$primarytable t1
             ON (t2.$secondarykeyfield = t1.id)
-        WHERE 
+        WHERE
             t1.$primarykeyfield IS NULL
     ");
 
@@ -270,7 +270,7 @@ function hotpot_update_to_v2_1_2() {
     $debug = $db->debug;
     $db->debug = false;
 
-    // extract info about attempts by each user on each hotpot (cases where 
+    // extract info about attempts by each user on each hotpot (cases where
     // the user has only one attempt, or no "in progess" attempt are ignored)
     $rs = $db->Execute("
         SELECT userid, hotpot, COUNT(*), MIN(status)
@@ -289,8 +289,8 @@ function hotpot_update_to_v2_1_2() {
 
             // get all attempts by this user at this hotpot
             $attempts = get_records_sql("
-                SELECT id, userid, hotpot, score, timestart, timefinish, status 
-                FROM {$CFG->prefix}hotpot_attempts 
+                SELECT id, userid, hotpot, score, timestart, timefinish, status
+                FROM {$CFG->prefix}hotpot_attempts
                 WHERE userid = ".$record['userid']." AND hotpot=".$record['hotpot']."
                 ORDER BY timestart DESC, id DESC
             ");
@@ -298,7 +298,7 @@ function hotpot_update_to_v2_1_2() {
             unset($previous_timestart);
 
             foreach ($attempts as $attempt) {
-                // if this attempt has a status of "in progress" and is not 
+                // if this attempt has a status of "in progress" and is not
                 // the most recent one in the group, set the status to "abandoned"
                 if ($attempt->status==1 && isset($previous_timestart)) {
                     $values = 'status=3';
@@ -335,7 +335,7 @@ function hotpot_update_to_v2_1() {
     $ok = $ok && hotpot_db_update_field_type('hotpot_questions', 'name', 'name', 'TEXT',   '',  '', 'NOT NULL', '');
     // hotpot_questions: nullify empty and non-numeric (shouldn't be any) values in "text" field
     switch (strtolower($CFG->dbfamily)) {
-        case 'mysql' : 
+        case 'mysql' :
             $NOT_REGEXP = 'NOT REGEXP';
         break;
         case 'postgres' :
@@ -358,13 +358,13 @@ function hotpot_update_to_v2_1() {
     } else {
         $ok = $ok && hotpot_create_table($table);
         switch (strtolower($CFG->dbfamily)) {
-            case 'mysql' : 
+            case 'mysql' :
             case 'postgres' :
                 $sql = "
-                    INSERT INTO {$CFG->prefix}$table (attempt, details) 
+                    INSERT INTO {$CFG->prefix}$table (attempt, details)
                     SELECT a.id AS attempt, a.details AS details
                         FROM {$CFG->prefix}hotpot_attempts a
-                        WHERE 
+                        WHERE
                             a.details IS NOT NULL AND a.details <> ''
                             AND a.details LIKE '<?xml%' AND a.details LIKE '%</hpjsresult>'
                 ";
@@ -400,9 +400,9 @@ function hotpot_update_to_v2_1() {
     $ok = $ok && hotpot_db_add_index('hotpot_responses', 'question');
     // hotpot_string: correct double-encoded HTML entities
     $ok = $ok && execute_sql("
-        UPDATE {$CFG->prefix}hotpot_strings 
-        SET string = REPLACE(string, '&amp;','&') 
-        WHERE string LIKE '%&amp;#%' 
+        UPDATE {$CFG->prefix}hotpot_strings
+        SET string = REPLACE(string, '&amp;','&')
+        WHERE string LIKE '%&amp;#%'
         AND (string LIKE '<' OR string LIKE '>')
     ");
     // hotpot_question: remove questions which refer to deleted hotpots
@@ -468,7 +468,7 @@ function hotpot_update_to_v2_from_hotpotatoes() {
     global $CFG;
     $ok = true; // hope for the best!
     // check we have the minimum required hotpot module
-    $minimum = 2005031400; 
+    $minimum = 2005031400;
     $module = get_record("modules", "name", "hotpot");
     if (empty($module) || $module->version<$minimum) {
         if ($module) {
@@ -558,7 +558,7 @@ function hotpot_create_table($table) {
             }
         }
         return $ok;
-    } 
+    }
 
     // Moodle 1.7 (and earlier)
 
@@ -731,9 +731,9 @@ function hotpot_update_logs($oldmodulename, $modulename, $moduleid, &$new) {
                         break;
                     case "attempt":
                     case "submit":
-                    case "review": 
+                    case "review":
                         $id = substr(strrchr($record->url,"="),1);
-                        if (isset($new->attempt[$id])) { 
+                        if (isset($new->attempt[$id])) {
                             $id = $new->attempt[$id];
                         }
                         $record->url = "review.php?id=".$record->cmid."&attempt=$id";
@@ -961,7 +961,7 @@ function hotpot_db_index_exists($table, $index, $feedback=false) {
     $debug = $db->debug;
     $db->debug = $feedback;
     switch (strtolower($CFG->dbfamily)) {
-        case 'mysql' : 
+        case 'mysql' :
             $rs = $db->Execute("SHOW INDEX FROM `$table`");
             if ($rs && $rs->RecordCount()>0) {
                 $records = $rs->GetArray();
@@ -990,7 +990,7 @@ function hotpot_db_delete_index($table, $index, $feedback=false) {
     // check index exists
     if (hotpot_db_index_exists($table, $index)) {
         switch (strtolower($CFG->dbfamily)) {
-            case 'mysql' : 
+            case 'mysql' :
                 $sql = "ALTER TABLE `$table` DROP INDEX `$index`";
             break;
             case 'postgres' :
@@ -1044,7 +1044,7 @@ function hotpot_db_table_exists($table, $feedback=false) {
     return hotpot_db_object_exists($table, '', $feedback);
 }
 function hotpot_db_field_exists($table, $field, $feedback=false) {
-    return 
+    return
         hotpot_db_object_exists($table, '', $feedback) &&
         hotpot_db_object_exists($table, $field, $feedback)
     ;
@@ -1055,7 +1055,7 @@ function hotpot_db_object_exists($table, $field='', $feedback=false) {
     $table = "{$CFG->prefix}$table";
     // set $sql
     switch (strtolower($CFG->dbfamily)) {
-        case 'mysql' : 
+        case 'mysql' :
             if (empty($field)) {
                 $sql = "SHOW TABLES LIKE '$table'";
             } else {
@@ -1067,7 +1067,7 @@ function hotpot_db_object_exists($table, $field='', $feedback=false) {
                 $sql = "SELECT relname FROM pg_class WHERE relname = '$table' AND relkind='r'";
             } else {
                 $sql = "
-                    SELECT attname FROM pg_attribute WHERE attname = '$field' 
+                    SELECT attname FROM pg_attribute WHERE attname = '$field'
                     AND attrelid = (SELECT oid FROM pg_class WHERE relname = '$table')
                 ";
             }
@@ -1177,7 +1177,7 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
     }
     if (empty($oldfield) && hotpot_db_field_exists($table, $field)) {
         $oldfield = $field;
-    } 
+    }
     if (is_string($unsigned)) {
         $unsigned = (strtoupper($unsigned)=='UNSIGNED');
     }
@@ -1245,8 +1245,8 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
             $ok = $ok && execute_sql("ALTER TABLE `$table` $action `$field` $fieldtype");
         break;
         case 'postgres':
-            // get db version 
-            //    N.B. $db->ServerInfo() usually returns blank 
+            // get db version
+            //    N.B. $db->ServerInfo() usually returns blank
             //    (except lib/adodb/drivers/adodb-postgre64-inc.php)
             $dbversion = '';
             $rs = $db->Execute("SELECT version()");
@@ -1292,7 +1292,7 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
                 execute_sql('ALTER TABLE '.$table.' ALTER COLUMN "'.$tmpfield.'" '.$notnull);
             } else {
                 execute_sql("
-                    UPDATE pg_attribute SET attnotnull=".($notnull ? 'TRUE' : 'FALSE')." 
+                    UPDATE pg_attribute SET attnotnull=".($notnull ? 'TRUE' : 'FALSE')."
                     WHERE attname = '$tmpfield'
                     AND attrelid = (SELECT oid FROM pg_class WHERE relname = '$table')
                 ");

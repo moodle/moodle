@@ -32,7 +32,7 @@ function SetScormScore(){
 				API.LMSSetValue('cmi.interactions.' + i + '.student_response', State[i][5]);
 			}
 		}
-		
+
 		API.LMSCommit('');
 	}
 }
@@ -89,7 +89,7 @@ function CompleteEmptyFeedback(){
 }
 
 function SetUpQuestions(){
-	var AList = new Array(); 
+	var AList = new Array();
 	var QList = new Array();
 	var i, j;
 	Qs = document.getElementById('Questions');
@@ -126,7 +126,7 @@ function SetUpQuestions(){
 			}
 		}
 	}
-	
+
 	for (i=0; i<QList.length; i++){
 		Qs.appendChild(QList[i]);
 		QArray[QArray.length] = QList[i];
@@ -134,13 +134,13 @@ function SetUpQuestions(){
 
 //Show the first item
 	QArray[0].style.display = '';
-	
+
 //Now hide all except the first item
 	for (i=1; i<QArray.length; i++){
 		QArray[i].style.display = 'none';
-	}		
+	}
 	SetQNumReadout();
-	
+
 	SetFocusToTextbox();
 }
 
@@ -155,7 +155,7 @@ function SetFocusToTextbox(){
 	}
 	else{
   	if (QArray[CurrQNum].getElementsByTagName('textarea')[0] != null){
-  		QArray[CurrQNum].getElementsByTagName('textarea')[0].focus();	
+  		QArray[CurrQNum].getElementsByTagName('textarea')[0].focus();
 //and show a keypad if there is one
 			if (document.getElementById('CharacterKeypad') != null){
 				document.getElementById('CharacterKeypad').style.display = 'block';
@@ -172,7 +172,7 @@ function SetFocusToTextbox(){
 
 function ChangeQ(ChangeBy){
 //The following line prevents moving to another question until the current
-//question is answered correctly. Uncomment it to enable this behaviour. 
+//question is answered correctly. Uncomment it to enable this behaviour.
 //	if (State[CurrQNum][0] == -1){return;}
 	if (((CurrQNum + ChangeBy) < 0)||((CurrQNum + ChangeBy) >= QArray.length)){return;}
 	QArray[CurrQNum].style.display = 'none';
@@ -204,7 +204,7 @@ function ShowSpecialReadingForQuestion(){
 						document.getElementById('ShowMethodButton').style.display = 'none';
 					}
 				}
-			}	
+			}
 		}
 	}
 }
@@ -242,32 +242,32 @@ function StartUp(){
 	if (QsToShow < 2){
 		document.getElementById('QNav').style.display = 'none';
 	}
-	
+
 //Stash the instructions so they can be redisplayed
 	strInstructions = document.getElementById('InstructionsDiv').innerHTML;
-	
+
 [inclScorm1.2]
 	ScormStartUp();
 [/inclScorm1.2]
-	
+
 [inclSendResults]
 	GetUserName();
 [/inclSendResults]
-	
+
 [inclPreloadImages]
 	PreloadImages([PreloadImageList]);
 [/inclPreloadImages]
-	
+
 	CompleteEmptyFeedback();
 
 	SetUpQuestions();
 	ClearTextBoxes();
 	CreateStatusArray();
-	
+
 [inclTimer]
 	setTimeout('StartTimer()', 50);
 [/inclTimer]
-	
+
 //Check search string for q parameter
 	if (document.location.search.length > 0){
 		if (ShuffleQs == false){
@@ -302,7 +302,7 @@ function ShowHideQuestions(){
 		document.getElementById('Questions').style.listStyleType = 'none';
 		document.getElementById('OneByOneReadout').style.display = '';
 		document.getElementById('ShowMethodButton').innerHTML = ShowAllQuestionsCaption;
-		ShowingAllQuestions = false;	
+		ShowingAllQuestions = false;
 	}
 	document.getElementById('ShowMethodButton').style.display = 'inline';
 }
@@ -335,10 +335,10 @@ function CreateStatusArray(){
 function CheckMCAnswer(QNum, ANum, Btn){
 //if question doesn't exist, bail
 	if (State[QNum].length < 1){return;}
-	
+
 //Get the feedback
 	Feedback = I[QNum][3][ANum][1];
-	
+
 //Now show feedback and bail if question already complete
 	if (State[QNum][0] > -1){
 //Add an extra message explaining that the question
@@ -348,40 +348,40 @@ function CheckMCAnswer(QNum, ANum, Btn){
 		ShowMessage(Feedback);
 		return;
 	}
-	
+
 //Hide the button while processing
 	Btn.style.display = 'none';
 
 //Increment the number of tries
 	State[QNum][2]++;
-	
+
 //Add the percent-correct value of this answer
 	State[QNum][3] += I[QNum][3][ANum][3];
-	
+
 //Store the try number in the answer part of the State array, for tracking purposes
 	State[QNum][1][ANum] = State[QNum][2];
 	if (State[QNum][5].length > 0){State[QNum][5] += ' | ';}
 	State[QNum][5] += String.fromCharCode(65+ANum);
-	
+
 //Should this answer be accepted as correct?
 	if (I[QNum][3][ANum][2] < 1){
 //It's wrong
 
 //Mark the answer
 		Btn.innerHTML = IncorrectIndicator;
-		
+
 //Remove any previous score unless exercise is finished (6.0.3.8+)
 		if (Finished == false){
 			WriteToInstructions(strInstructions);
-		}	
-		
+		}
+
 //Check whether this leaves just one MC answer unselected, in which case the Q is terminated
 		var RemainingAnswer = FinalAnswer(QNum);
 		if (RemainingAnswer > -1){
 //Behave as if the last answer had been selected, but give no credit for it
 //Increment the number of tries
-			State[QNum][2]++;		
-		
+			State[QNum][2]++;
+
 //Calculate the score for this question
 			CalculateMCQuestionScore(QNum);
 
@@ -397,7 +397,7 @@ function CheckMCAnswer(QNum, ANum, Btn){
 //It's right
 //Mark the answer
 		Btn.innerHTML = CorrectIndicator;
-				
+
 //Calculate the score for this question
 		CalculateMCQuestionScore(QNum);
 
@@ -410,13 +410,13 @@ function CheckMCAnswer(QNum, ANum, Btn){
 			}
 		}
 	}
-	
+
 //Show the button again
 	Btn.style.display = 'inline';
-	
-//Finally, show the feedback	
+
+//Finally, show the feedback
 	ShowMessage(Feedback);
-	
+
 //Check whether all questions are now done
 	CheckFinished();
 }
@@ -426,7 +426,7 @@ function CalculateMCQuestionScore(QNum){
 	var PercentCorrect = State[QNum][3];
 	var TotAns = GetTotalMCAnswers(QNum);
 	var HintPenalties = State[QNum][4];
-	
+
 //Make sure it's not already complete
 
 	if (State[QNum][0] < 0){
@@ -489,11 +489,11 @@ function CheckMultiSelAnswer(QNum){
 
 //Increment the tries for this question
 	State[QNum][2]++;
-	
+
 	var ShouldBeChecked;
 	var Matches = 0;
 	if (State[QNum][5].length > 0){State[QNum][5] += ' | ';}
-	
+
 //Check if there are any mismatches
 	Feedback = '';
 	var CheckBox = null;
@@ -530,12 +530,12 @@ function CheckMultiSelAnswer(QNum){
 //It's wrong -- Remove any previous score unless exercise is finished (6.0.3.8+)
 		if (Finished == false){
 			WriteToInstructions(strInstructions);
-		}	
+		}
 	}
-		
+
 //Show the feedback
 	ShowMessage(Feedback);
-	
+
 //Check whether all questions are now done
 	CheckFinished();
 }
@@ -543,7 +543,7 @@ function CheckMultiSelAnswer(QNum){
 function CalculateMultiSelQuestionScore(QNum){
 	var Tries = State[QNum][2];
 	var TotAns = State[QNum][1].length;
-	
+
 //Make sure it's not already complete
 	if (State[QNum][0] < 0){
 		State[QNum][0] = (TotAns - (Tries-1)) / TotAns;
@@ -558,7 +558,7 @@ function CalculateMultiSelQuestionScore(QNum){
 function CalculateOverallScore(){
 	var TotalWeighting = 0;
 	var TotalScore = 0;
-	
+
 	for (var QNum=0; QNum<State.length; QNum++){
 		if (State[QNum] != null){
 			if (State[QNum][0] > -1){
@@ -571,9 +571,9 @@ function CalculateOverallScore(){
 		Score = Math.floor((TotalScore/TotalWeighting)*100);
 	}
 	else{
-//if TotalWeighting is 0, no questions so far have any value, so 
+//if TotalWeighting is 0, no questions so far have any value, so
 //no penalty should be shown.
-		Score = 100; 
+		Score = 100;
 	}
 }
 
@@ -588,7 +588,7 @@ function CheckFinished(){
 		}
 	}
 	if (AllDone == true){
-	
+
 //Report final score and submit if necessary
 		CalculateOverallScore();
 		FB = YourScoreIs + ' ' + Score + '%.';
@@ -604,7 +604,7 @@ function CheckFinished(){
 			FB += '<br />' + CorrectFirstTime + ' ' + CFT + '/' + QsToShow;
 		}
 		WriteToInstructions(FB);
-		
+
 		Finished == true;
 [inclTimer]
 		window.clearInterval(Interval);
@@ -621,7 +621,7 @@ function CheckFinished(){
 
 		TimeOver = true;
 		Locked = true;
-		
+
 [inclSendResults]
 		setTimeout('SendResults(' + Score + ')', 50);
 [/inclSendResults]
@@ -654,7 +654,7 @@ function TimesUp(){
 	TimeOver = true;
 	Finished = true;
 	ShowMessage('[strTimesUp]');
-	
+
 //Set all remaining scores to 0
 	for (var QNum=0; QNum<State.length; QNum++){
 		if (State[QNum] != null){
