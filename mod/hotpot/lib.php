@@ -431,15 +431,27 @@ function hotpot_get_chain(&$cm) {
 
     return $found ? $chain : false;
 }
+
 function hotpot_is_visible(&$cm) {
-    if (!isset($cm->sectionvisible)) {
-        if ($section = get_record('course_sections', 'id', $cm->section)) {
-            $cm->sectionvisible = $section->visible;
-        } else {
-            error('Course module record contains invalid section');
-        }
+    global $CFG, $COURSE;
+
+    // check if user can view hidden activities
+    if (isset($COURSE->context)) {
+        $coursecontext = &$COURSE->context;
+    } else {
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $cm->course);
+    }
+    if (has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
+        return true; // user can view hidden activities
     }
 
+    if (!isset($cm->sectionvisible)) {
+        if (! $section = get_record('course_sections', 'id', $cm->section)) {
+            error('Course module record contains invalid section');
+        }
+        $cm->sectionvisible = $section->visible;
+    }
+ 
     if (empty($cm->sectionvisible)) {
         $visible = HOTPOT_NO;
     } else {

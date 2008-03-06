@@ -40,6 +40,11 @@
 
     require_login($course->id);
 
+    // check user can access this hotpot activity
+    if (!hotpot_is_visible($cm)) {
+        error(get_string("activityiscurrentlyhidden"));
+    }
+
     // get report mode
     if (has_capability('mod/hotpot:viewreport',$modulecontext)) {
         $mode = optional_param('mode', 'overview', PARAM_ALPHA);

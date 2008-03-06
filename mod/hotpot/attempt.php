@@ -27,6 +27,11 @@
     $next_url = "$CFG->wwwroot/course/view.php?id=$course->id";
     $time = time();
 
+    // check user can access this hotpot activity
+    if (!hotpot_is_visible($cm)) {
+        error(get_string("activityiscurrentlyhidden"), $next_url);
+    }
+
     // update attempt record fields using incoming data
     $attempt->score = optional_param('mark', NULL, PARAM_INT);
     $attempt->status = optional_param('status', NULL, PARAM_INT);
