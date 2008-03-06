@@ -39,15 +39,6 @@ require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
 
 class grade_scale_test extends grade_test {
 
-    function setUp() {
-        parent::setUp();
-        $this->load_scale();
-    }
-
-    function tearDown() {
-        parent::tearDown();
-    }
-
     function test_scale_construct() {
         $params = new stdClass();
 
@@ -67,7 +58,6 @@ class grade_scale_test extends grade_test {
     }
 
     function test_grade_scale_insert() {
-        global $db;
         $grade_scale = new grade_scale();
         $this->assertTrue(method_exists($grade_scale, 'insert'));
 
@@ -77,83 +67,54 @@ class grade_scale_test extends grade_test {
         $grade_scale->scale       = 'Distinction, Very Good, Good, Pass, Fail';
         $grade_scale->description = 'This scale is used to mark standard assignments.';
 
-        // Mock insert of data in history table
-        $this->rs->setReturnValue('RecordCount', 1);
-        $this->rs->fields = array(1); 
-        
-        // Mock insert of outcome object
-        $db->setReturnValue('GetInsertSQL', true);
-        $db->setReturnValue('Insert_ID', 1);
-
         $grade_scale->insert();
 
-        $this->assertEqual($grade_scale->id, 1);
-        $this->assertFalse(empty($grade_scale->timecreated));
-        $this->assertFalse(empty($grade_scale->timemodified));
+        $last_grade_scale = end($this->scale);
+
+        $this->assertEqual($grade_scale->id, $last_grade_scale->id + 1);
+        $this->assertTrue(!empty($grade_scale->timecreated));
+        $this->assertTrue(!empty($grade_scale->timemodified));
     }
 
     function test_grade_scale_update() {
-        global $db;
-        $grade_scale = new grade_scale($this->scale[0], false);
+        $grade_scale = new grade_scale($this->scale[0]);
         $this->assertTrue(method_exists($grade_scale, 'update'));
-        
-        $grade_scale->timecreated = time() - 200000;
-        $grade_scale->timemodified = $grade_scale->timecreated;
-        $timemodified = $grade_scale->timemodified;
-        $timecreated = $grade_scale->timecreated;
-
-        // Mock update: MetaColumns is first returned to compare existing data with new
-        $column = new stdClass();
-        $column->name = 'name';
-        $db->setReturnValue('MetaColumns', array($column));
         
         $grade_scale->name = 'Updated info for this unittest grade_scale';
         $this->assertTrue($grade_scale->update());
-        
-        // We expect timecreated to be unchanged, and timemodified to be updated
-        $this->assertTrue($grade_scale->timemodified > $timemodified);
-        $this->assertTrue($grade_scale->timemodified > $grade_scale->timecreated);
-        $this->assertTrue($grade_scale->timecreated == $timecreated);
+        $name = get_field('scale', 'name', 'id', $this->scale[0]->id);
+        $this->assertEqual($grade_scale->name, $name);
     }
 
     function test_grade_scale_delete() {
-        $grade_scale = new grade_scale($this->scale[0], false);
+        $grade_scale = new grade_scale($this->scale[0]);
         $this->assertTrue(method_exists($grade_scale, 'delete'));
 
         $this->assertTrue($grade_scale->delete());
+        $this->assertFalse(get_record('scale', 'id', $grade_scale->id));
     }
 
     function test_grade_scale_fetch() {
-        global $db;
-
         $grade_scale = new grade_scale();
         $this->assertTrue(method_exists($grade_scale, 'fetch'));
 
-        // Mock fetch
-        $column = new stdClass();
-        $column->name = 'id';
-        $this->rs->setReturnValue('FetchField', $column); // Fetching the name of the first column
-        $this->rs->setReturnValue('GetAssoc', array($this->scale[0]->id => (array) $this->scale[0])); 
-        
         $grade_scale = grade_scale::fetch(array('id'=>$this->scale[0]->id));
         $this->assertEqual($this->scale[0]->id, $grade_scale->id);
         $this->assertEqual($this->scale[0]->name, $grade_scale->name);
     }
 
     function test_scale_load_items() {
-        $scale = new grade_scale($this->scale[0], false);
+        $scale = new grade_scale($this->scale[0]);
         $this->assertTrue(method_exists($scale, 'load_items'));
 
         $scale->load_items();
         $this->assertEqual(7, count($scale->scale_items));
         $this->assertEqual('Fairly neutral', $scale->scale_items[2]);
 
-        $newscale = 'Item1, Item2, Item3, Item4';
-        $this->assertEqual(4, count($scale->load_items($newscale)));
     }
 
     function test_scale_compact_items() {
-        $scale = new grade_scale($this->scale[0], false);
+        $scale = new grade_scale($this->scale[0]);
         $this->assertTrue(method_exists($scale, 'compact_items'));
 
         $scale->load_items();
@@ -161,7 +122,7 @@ class grade_scale_test extends grade_test {
         $scale->compact_items();
 
         // The original string and the new string may have differences in whitespace around the delimiter, and that's OK
-        $this->assertEqual(preg_replace('/\s*,\s*' . '/', ',', $this->scale[0]->scale), $scale->scale);
+        $this->assertEqual(preg_replace('/\s*,\s*/', ',', $this->scale[0]->scale), $scale->scale);
     }
 }
 ?>
