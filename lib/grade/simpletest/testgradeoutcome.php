@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.org                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -87,8 +87,9 @@ class grade_outcome_test extends grade_test {
     function test_grade_outcome_fetch() {
         $grade_outcome = new grade_outcome();
         $this->assertTrue(method_exists($grade_outcome, 'fetch'));
-
+        
         $grade_outcome = grade_outcome::fetch(array('id'=>$this->grade_outcomes[0]->id));
+        $grade_outcome->load_scale();
         $this->assertEqual($this->grade_outcomes[0]->id, $grade_outcome->id);
         $this->assertEqual($this->grade_outcomes[0]->shortname, $grade_outcome->shortname);
 

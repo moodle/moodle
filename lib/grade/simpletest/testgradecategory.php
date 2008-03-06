@@ -171,8 +171,8 @@ class grade_category_test extends grade_test {
 
         $id = $grade_category->insert_course_category($this->courseid);
         $this->assertNotNull($id);
-        $this->assertEqual('Course grade category', $grade_category->fullname);
-        $this->assertEqual(GRADE_AGGREGATE_MEAN, $grade_category->aggregate);
+        $this->assertEqual('?', $grade_category->fullname);
+        $this->assertEqual(GRADE_AGGREGATE_WEIGHTED_MEAN2, $grade_category->aggregation);
         $this->assertEqual("/$id/", $grade_category->path);
         $this->assertEqual(1, $grade_category->depth);
         $this->assertNull($grade_category->parent);
@@ -211,6 +211,10 @@ class grade_category_test extends grade_test {
         $this->assertEqual(1, $grade_category->grade_item->needsupdate);
     }
 
+    /*
+     * I am disabling this test until we implement proper mock objects. This is meant
+     * to be a private method called from within a grade_item method.
+
     function test_grade_category_generate_grades() {
         $category = new grade_category($this->grade_categories[3]);
         $this->assertTrue(method_exists($category, 'generate_grades'));
@@ -232,6 +236,8 @@ class grade_category_test extends grade_test {
         // calculated mean results
         $this->assertEqual($rawvalues, array(20,50,100));
     }
+
+    */
 
     function test_grade_category_aggregate_grades() {
         $category = new grade_category($this->grade_categories[0]);
