@@ -355,13 +355,13 @@ class grade_item_test extends grade_test {
         $this->assertTrue(empty($grade_item->locked));
         $this->assertTrue(empty($grade->locked));
 
-        $this->assertTrue($grade_item->set_locked(true));
+        $this->assertTrue($grade_item->set_locked(true, true, false));
         $grade = new grade_grade($grade_item->get_final(1));
 
         $this->assertFalse(empty($grade_item->locked));
         $this->assertFalse(empty($grade->locked)); // individual grades should be locked too
 
-        $this->assertTrue($grade_item->set_locked(false));
+        $this->assertTrue($grade_item->set_locked(false, true, false));
         $grade = new grade_grade($grade_item->get_final(1));
 
         $this->assertTrue(empty($grade_item->locked));
@@ -374,7 +374,7 @@ class grade_item_test extends grade_test {
 
         $this->assertFalse($grade_item->is_locked());
         $this->assertFalse($grade_item->is_locked(1));
-        $this->assertTrue($grade_item->set_locked(true));
+        $this->assertTrue($grade_item->set_locked(true, true, false));
         $this->assertTrue($grade_item->is_locked());
         $this->assertTrue($grade_item->is_locked(1));
     }
@@ -390,7 +390,7 @@ class grade_item_test extends grade_test {
         $this->assertEqual(0, $grade_item->hidden);
         $this->assertEqual(0, $grade->hidden);
 
-        $grade_item->set_hidden(666);
+        $grade_item->set_hidden(666, true);
         $grade = new grade_grade($grade_item->get_final(1));
 
         $this->assertEqual(666, $grade_item->hidden);

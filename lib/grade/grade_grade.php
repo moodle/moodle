@@ -703,5 +703,10 @@ class grade_grade extends grade_object {
         }
         return $this->finalgrade >= $this->grade_item->gradepass;
     }
+
+    function insert($source=null) { 
+        $this->timecreated = $this->timemodified = time(); 
+        return parent::insert($source);
+    }
 }
 ?>
