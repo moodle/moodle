@@ -2053,7 +2053,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     <form id="assessmentform" method="post" action="assessments.php">
     <div>
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-    <input type="hidden" name="aid" value="<?php echo $assessment->id ?>" />
+    <input type="hidden" name="aid" value="<?php echo @$assessment->id ?>" />
     <input type="hidden" name="action" value="updateassessment" />
     <input type="hidden" name="returnto" value="<?php echo $returnto ?>" />
     <input type="hidden" name="elementno" value="" />
@@ -2069,11 +2069,11 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     } else {
         print_string('assessment', 'workshop');
     }
-    echo '</b><br />'.userdate($assessment->timecreated)."</div></td>\n";
+    echo '</b><br />'.userdate(@$assessment->timecreated)."</div></td>\n";
     echo "</tr>\n";
     
     // only show the grade if grading strategy > 0 and the grade is positive
-    if ($showgrades and $workshop->gradingstrategy and $assessment->grade >= 0) { 
+    if ($assessment and $showgrades and $workshop->gradingstrategy and $assessment->grade >= 0) { 
         echo "<tr valign=\"top\">\n
             <td colspan=\"2\" align=\"center\">
             <b>".get_string("thegradeis", "workshop").": ".
@@ -2594,7 +2594,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     
     $timenow = time();
     // now show the grading grade if available...
-    if ($assessment->timegraded) {
+    if ($assessment and $assessment->timegraded) {
         echo "<tr valign=\"top\">\n";
         echo "<td colspan=\"2\" class=\"workshopassessmentheading\" align=\"center\"><b>".
             get_string('gradeforstudentsassessment', 'workshop')."</b></td>\n";

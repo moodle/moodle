@@ -1569,7 +1569,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
         ?>
     <form id="assessmentform" method="post" action="assessments.php">
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-    <input type="hidden" name="aid" value="<?php echo $assessment->id ?>" />
+    <input type="hidden" name="aid" value="<?php echo @$assessment->id ?>" />
     <input type="hidden" name="action" value="updateassessment" />
     <input type="hidden" name="resubmit" value="0" />
     <input type="hidden" name="returnto" value="<?php echo $returnto ?>" />
@@ -2004,7 +2004,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
     $timenow = time();
     
     // always show the teacher the grading grade if it's not their assessment!
-    if (isteacher($course->id) and ($assessment->userid != $USER->id) and $exercise->gradinggrade) {  
+    if ($assessment and isteacher($course->id) and ($assessment->userid != $USER->id) and $exercise->gradinggrade) {  
         echo "<tr><td align=\"right\"><b>".get_string("gradeforstudentsassessment", "exercise", $course->student).
             "</td><td>\n";
         echo number_format($exercise->gradinggrade * $assessment->gradinggrade / 100.0, 0);
