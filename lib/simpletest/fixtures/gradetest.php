@@ -1387,6 +1387,7 @@ class grade_test extends UnitTestCase {
         // Calculation for grade_item 1
         $grade_outcome = new stdClass();
         $grade_outcome->shortname = 'Team work';
+        $grade_outcome->fullname = 'Team work outcome';
         $grade_outcome->timecreated = mktime();
         $grade_outcome->timemodified = mktime();
         $grade_outcome->scaleid = $this->scale[2]->id;
@@ -1398,6 +1399,7 @@ class grade_test extends UnitTestCase {
         // Calculation for grade_item 2
         $grade_outcome = new stdClass();
         $grade_outcome->shortname = 'Complete circuit board';
+        $grade_outcome->fullname = 'Complete circuit board';
         $grade_outcome->timecreated = mktime();
         $grade_outcome->timemodified = mktime();
         $grade_outcome->scaleid = $this->scale[3]->id;
@@ -1409,6 +1411,7 @@ class grade_test extends UnitTestCase {
         // Calculation for grade_item 3
         $grade_outcome = new stdClass();
         $grade_outcome->shortname = 'Debug Java program';
+        $grade_outcome->fullname = 'Debug Java program';
         $grade_outcome->timecreated = mktime();
         $grade_outcome->timemodified = mktime();
         $grade_outcome->scaleid = $this->scale[4]->id;

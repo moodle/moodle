@@ -350,4 +350,4 @@ class grade_outcome extends grade_object {
         return $retval;
     }
 }
-?>
+>
