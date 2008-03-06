@@ -140,7 +140,7 @@ function choice_show_form($choice, $user, $cm, $allresponses) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     foreach ($choice->option as $optionid => $text) {
-        if (isset($text) && isset($allresponses[$optionid])) { //make sure there are no dud entries in the db with blank text values.
+        if (isset($text)) { //make sure there are no dud entries in the db with blank text values.
             $cdisplay[$aid]->optionid = $optionid;
             $cdisplay[$aid]->text = $text;
             $cdisplay[$aid]->maxanswers = $choice->maxanswers[$optionid];
