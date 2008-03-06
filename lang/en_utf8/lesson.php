@@ -177,6 +177,7 @@ $string['nobranchtablefound'] = 'No Branch Table found';
 $string['nocommentyet'] = 'No comment yet.';
 $string['nocoursemods'] = 'No activities found';
 $string['nocredit'] = 'No credit';
+$string['nodeadline'] = 'No deadline';
 $string['noessayquestionsfound'] = 'No essay questions found in this lesson.';
 $string['nohighscores'] = 'No high scores';
 $string['nolessonattempts'] = 'No attempts have been made on this lesson.';
