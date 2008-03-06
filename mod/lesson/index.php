@@ -51,6 +51,7 @@
     $strdeadline  = get_string("deadline", "lesson");
     $strweek  = get_string("week");
     $strtopic  = get_string("topic");
+    $strnodeadline = get_string("nodeadline", "lesson");
     $table = new stdClass;
 
     if ($course->format == "weeks") {
@@ -75,7 +76,9 @@
         $cm = get_coursemodule_from_instance('lesson', $lesson->id);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-        if ($lesson->deadline > $timenow) {
+        if ($lesson->deadline == 0) {
+            $due = $strnodeadline;
+        } else if ($lesson->deadline > $timenow) {
             $due = userdate($lesson->deadline);
         } else {
             $due = "<font color=\"red\">".userdate($lesson->deadline)."</font>";
