@@ -96,7 +96,7 @@
 
     $question->maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $question->id);
     // Some of the questions code is optimised to work with several questions
-    // at once so it wants the question to be in an array. 
+    // at once so it wants the question to be in an array.
     $key = $question->id;
     $questions[$key] = &$question;
     // Add additional questiontype specific information to the question objects.

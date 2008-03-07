@@ -30,7 +30,7 @@
     // the data about student interaction with the questions. The functions to do
     // that are included with the following library
     require_once("$CFG->dirroot/question/backuplib.php");
-    
+
     /*
      * Insert necessary category ids to backup_ids table. Called during backup_check.html.
      * This backs up ids for quiz module. It backs up :
@@ -41,13 +41,13 @@
     function quiz_insert_category_and_question_ids($course, $backup_unique_code, $instances = null) {
         global $CFG;
         $status = true;
-        
+
         // Create missing categories and reasign orphaned questions.
         quiz_fix_orphaned_questions($course);
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course);
         $status = $status && question_insert_c_and_q_ids_for_course($coursecontext, $backup_unique_code);
-        
+
         // then, all categories and questions from this course's modules' contexts.
         $status = $status && question_insert_c_and_q_ids_for_module($backup_unique_code, $course, 'quiz', $instances);
 
@@ -157,7 +157,7 @@
         }
         return $status;
     }
-    
+
     /**
      * Helper function adding the id of all the subcategories of a category to an array.
      */

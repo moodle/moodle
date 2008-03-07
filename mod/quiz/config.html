@@ -126,7 +126,7 @@
     <td>
         <input name="timelimitenable" type="checkbox" value="1" alt="<?php print_string('timelimit', 'quiz') ?>" onclick="return lockoptions('form', 'timelimitenable', timelimititems)" <?php if ($form->timelimit) echo 'checked="checked"' ?> />
         <input type="text" name="timelimit" size="3" value="<?php p($form->timelimit ? $form->timelimit : '') ?>" />
-        <?php 
+        <?php
             print_string('minutes');
             helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
         ?>
@@ -328,7 +328,7 @@
     </td>
     <td align="center">
          <input type="hidden" name="fix_delay2" value="0" />
-         <input type="checkbox" name="fix_delay2" value="1" <?php echo $CFG->quiz_fix_delay2 ? 'checked="checked"' : ''; ?> />        
+         <input type="checkbox" name="fix_delay2" value="1" <?php echo $CFG->quiz_fix_delay2 ? 'checked="checked"' : ''; ?> />
     </td>
 </tr>
 
@@ -384,7 +384,7 @@
 </form>
 
 <script type="text/javascript">
-<?php 
+<?php
     if (!$form->timelimit) echo "lockoptions('form','timelimitenable', timelimititems);";
 ?>
 </script>

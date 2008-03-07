@@ -88,7 +88,7 @@ $mod_quiz_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/quiz:ignoretimelimits' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,

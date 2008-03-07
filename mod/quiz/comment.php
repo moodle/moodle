@@ -31,7 +31,7 @@
     require_login($course, true, $cm);
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+
     require_capability('mod/quiz:grade', $context);
 
     // Load question
@@ -40,7 +40,7 @@
     }
     $question->maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $question->id);
     // Some of the questions code is optimised to work with several questions
-    // at once so it wants the question to be in an array. 
+    // at once so it wants the question to be in an array.
     $key = $question->id;
     $questions[$key] = &$question;
     // Add additional questiontype specific information to the question objects.
@@ -56,7 +56,7 @@
 
     print_header();
     print_heading(format_string($question->name));
-    
+
     //add_to_log($course->id, 'quiz', 'review', "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", "$cm->id");
 
     if ($data = data_submitted() and confirm_sesskey()) {
@@ -70,8 +70,8 @@
 
         notify(get_string('changessaved'));
         echo '<div class="boxaligncenter"><input type="button" onclick="window.opener.location.reload(1); self.close();return false;" value="' .
-         get_string('closewindow') . "\" /></div>";
-         
+                get_string('closewindow') . "\" /></div>";
+
         print_footer();
         exit;
     }
