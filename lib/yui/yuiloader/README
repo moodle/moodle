@@ -1,4 +1,32 @@
-YUILoader Utility - Release Notes
+yuiloader - Release Notes
+
+2.5.0
+   * Updated metadata for 2.5.0
+   * (from the get utility) fixed autopurge.
+
+2.4.1
+   * Updated metadata for 2.4.1
+
+2.4.0
+   * NOTE: the API in this release has changed significantly.  Existing implementations
+     will need to be modified in order to use the new version.
+   * yuiloader now includes the yahoo and get components.  This removes the timing
+     problems in the previous versions that forced one to use YAHOO_config or include
+     yahoo.js on the page before yuiloader.
+   * No longer uses YAHOO_config for loading, you must use YAHOO.util.YUILoader
+   * Interacting with YAHOO.register or supplying a verifier function is no longer
+     required to load non-YUI resources.
+   * Supports script sandboxing.  Does not support x-domain sandboxing at this time
+   * removed verifier property, added varName property which is only needed when
+     using external scripts and the application needs to support Safari 2.x.
+   * YUI metadata updates:
+       * Added 'base', 'reset-fonts', 'get', 'json', 'simpleeditor', 'charts, and 'selector'
+       * button and history are no longer beta components.
+       * imageloader promoted from experimental to beta.
+
+2.3.1
+   * The "skin.overrides" property is now applied correctly.  Previously
+     it was looking for "skin.override".
 
 2.3.0
    * Initial release

@@ -1,0 +1,11 @@
+JSON Utility - Release Notes
+
+2.5.0
+    * Restructured for customization and readability
+    * Extracted isValid method to test a JSON string
+    * Extracted dateToString method to allow overriding with custom serialization format
+    * Added stringToDate method to reconstitute Date instances from default JSON UTC date strings.  Use this in a filter method passed to lang.JSON.parse
+    * fixed walk method so filters are properly applied
+
+2.4.0
+    * Initial release

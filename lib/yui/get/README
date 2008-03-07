@@ -1,0 +1,11 @@
+get - Release Notes
+
+2.5.0
+    * autopurge no longer attempts to remove nodes that have been
+      removed previously.
+
+2.4.1
+   * No change
+
+2.4.0
+   * Inital release

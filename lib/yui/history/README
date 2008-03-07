@@ -1,5 +1,18 @@
 YUI Library - History - Release Notes
 
+2.4.0
+
+  * Added onReady method (similar to the Event utility's DOMReady method)
+  * Fixed SourceForge bugs 1794347, 1490803, 1490818 and 1420015.
+  * Starting with YUI 2.4.0, the necessary markup (see documentation) must be
+    statically created in the HTML document, and passed to the Browser History
+    Manager initialize method. This has two major benefits over older versions:
+      - The Browser History Manager may be initialized much later than before,
+        allowing for the corresponding <script> tag to be embedded at the
+        bottom of the page (which is good for performance)
+      - IE had a tendency to "forget" part or all of the history when returning
+        to a page.
+
 2.3.0
 
   * The Browser History Manager now works on IE if used inside an IFrame

@@ -1,8 +1,48 @@
 AutoComplete Release Notes
 
+*** version 2.5.0 ***
+
+* Fixed bug where Mac users were not able to input "&" or "(" characters.
+
+
+
+*** version 2.4.0 ***
+
+* Support for YUI JSON Utility.
+
+* The allowBrowserAutocomplete property now supports cases when the user navigates
+away from page via mean other than a form submission.
+
+* Added support for integration with the Get Utility, for proxyless data
+retrieval from dynamically loaded script nodes.
+
+* Typing 'Enter' to select item no longer causes automatic form submission on
+Mac browsers.
+
+
+
+*** version 2.3.1 ***
+
+* AutoComplete no longer throw a JavaScript error due to an invalid or
+non-existent parent container. While a wrapper DIV element is still expected in
+order to enable skinning (see 2.3.0 release note), a lack of such will not
+cause an error.
+
+* When suggestion container is collapsed, Mac users no longer need to type
+Enter twice to submit input.
+
+
+
 *** version 2.3.0 ***
 
-* Applied new skinning model.
+* Applied new skinning model. Please note that in order to enable skinning,
+AutoComplete now expects a wrapper DIV element around the INPUT element and the
+container DIV element, in this fashion:
+
+<div id="myAutoComplete">
+    <input type="text" id="myInput">
+    <div id="myContainer"></div>
+</div>
 
 * The default queryDelay value has been changed to 0.2. In low-latency
 implementations (e.g., when queryDelay is set to 0 against a local

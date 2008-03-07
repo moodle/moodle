@@ -1,0 +1,14 @@
+YUI Library - Charts - Release Notes
+
+2.5.0
+  * Added lineSize style to series styles
+  * Added showLabels substyle to xAxis and yAxis styles
+  * Added more descriptive local content warning for ExternalInterface failure
+  * Improved minor unit calculation
+  * Fixed animation and marker positioning bugs
+  * Fixed bug that caused series definition update to fail
+  * Fixed bug that caused setting hex color values with # symbol to fail
+  * Added initialization flag to ensure DataSource doesn't receive multiple requests during initialization.
+
+2.4.0
+  * Experimental release
