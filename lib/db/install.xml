@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20080229" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20080307" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1617,7 +1617,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="contextid-lowerboundary" UNIQUE="false" FIELDS="contextid, lowerboundary" COMMENT="index used when fetching context letters"/>
+        <INDEX NAME="contextid-lowerboundary-letter" UNIQUE="true" FIELDS="contextid, lowerboundary, letter" COMMENT="index used when fetching context letters"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="cache_flags" COMMENT="Cache of time-sensitive flags" PREVIOUS="grade_letters" NEXT="grade_settings">
