@@ -243,8 +243,8 @@ class quiz_access_manager {
             print_header();
             print_box_start();
             if ($message) {
-            	echo '<p>' . $message . '</p><p>' . get_string('windowclosing', 'quiz') . '</p>';
-            	$delay = 5;
+                echo '<p>' . $message . '</p><p>' . get_string('windowclosing', 'quiz') . '</p>';
+                $delay = 5;
             } else {
                 echo '<p>' . get_string('pleaseclose', 'quiz') . '</p>';
                 $delay = 0;
@@ -696,7 +696,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
     public function make_review_link($linktext, $attemptid) {
         global $CFG;
         return link_to_popup_window($CFG->wwwroot . '/mod/quiz/review.php?q=' . $this->_quiz->id .
-             	'&amp;attempt=' . $attemptid, 'quizpopup', $linktext, '', '', '', $windowoptions, true);
+                 '&amp;attempt=' . $attemptid, 'quizpopup', $linktext, '', '', '', $windowoptions, true);
     }
 
     /**

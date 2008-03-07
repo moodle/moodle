@@ -142,7 +142,7 @@ function quiz_get_user_attempt_unfinished($quizid, $userid) {
 function quiz_get_latest_attempt_by_user($quizid, $userid) {
     global $CFG;
     return get_record_sql('SELECT qa.* FROM ' . $CFG->prefix . 'quiz_attempts qa
-    		WHERE qa.quiz=' . $quizid . ' AND qa.userid=' . $userid . ' AND qa.timestart = (
+            WHERE qa.quiz=' . $quizid . ' AND qa.userid=' . $userid . ' AND qa.timestart = (
                 SELECT MAX(timestart) FROM ' . $CFG->prefix . 'quiz_attempts ssqa
                 WHERE ssqa.quiz=' . $quizid . ' AND ssqa.userid=' . $userid . ')');
 }
