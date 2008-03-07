@@ -137,12 +137,55 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
 
     if ($verbose) {
         notify(get_string('importsuccess', 'grades'), 'notifysuccess');
+        $unenrolledusers = get_unenrolled_users_in_import($importcode, $courseid);
+        if ($unenrolledusers) {
+            $list = "<ul>\n";
+            foreach ($unenrolledusers as $u) {
+                $u->fullname = fullname($u);
+                $list .= '<li>' . get_string('usergrade', 'grades', $u) . '</li>';
+            }
+            $list .= "</ul>\n";
+            notify(get_string('unenrolledusersinimport', 'grades', $list), 'notifysuccess');
+        }
         print_continue($CFG->wwwroot.'/grade/index.php?id='.$courseid);
     }
     // clean up
     import_cleanup($importcode);
 
     return true;
+}
+
+/**
+ * This function returns an array of grades that were included in the import,
+ * but wherer the user does not currenly have a graded role on the course. These gradse 
+ * are still stored in the database, but will not be visible in the gradebook unless
+ * this user subsequently enrols on the course in a graded roles.
+ *
+ * The returned objects have fields user firstname, lastname and useridnumber, and gradeidnumber.
+ *
+ * @param integer $importcode import batch identifier
+ * @param integer $courseid the course we are importing to.
+ * @return mixed and array of user objects, or false if none.
+ */
+function get_unenrolled_users_in_import($importcode, $courseid) {
+    global $CFG;
+    $relatedctxcondition = get_related_contexts_string(get_context_instance(CONTEXT_COURSE, $courseid));
+    
+    $sql = "SELECT giv.id, u.firstname, u.lastname, u.idnumber AS useridnumber, 
+                COALESCE(gi.idnumber, gin.itemname) AS gradeidnumber
+            FROM
+                {$CFG->prefix}grade_import_values giv
+                JOIN {$CFG->prefix}user u ON giv.userid = u.id
+                LEFT JOIN {$CFG->prefix}grade_items gi ON gi.id = giv.itemid
+                LEFT JOIN {$CFG->prefix}grade_import_newitem gin ON gin.id = giv.newgradeitem
+                LEFT JOIN {$CFG->prefix}role_assignments ra ON (giv.userid = ra.userid AND
+                    ra.roleid IN ($CFG->gradebookroles) AND
+                    ra.contextid $relatedctxcondition)
+                WHERE giv.importcode = $importcode
+                    AND ra.id IS NULL
+                ORDER BY gradeidnumber, u.lastname, u.firstname";
+
+    return get_records_sql($sql);
 }
 
 /**
