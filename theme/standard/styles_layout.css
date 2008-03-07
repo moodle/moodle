@@ -3769,7 +3769,7 @@ body#mod-forum-search .introcontent {
 #mod-quiz-view .generalbox#feedback h2 {
   margin: 0 0;
 }
-body#mod-quiz-view .generalbox#feedback .overriddennotice {
+#mod-quiz-view .generalbox#feedback .overriddennotice {
   text-align: center;
   font-size: 0.7em;
 }
@@ -3795,14 +3795,18 @@ body#mod-quiz-view .generalbox#feedback .overriddennotice {
     text-align: center;
 }
 
-#mod-quiz-attempt #timer .generalbox {
-  width:150px
+#mod-quiz-attempt #quiz-timer-outer {
+    position: absolute;
+    width: 150px;
+    top: 100px;
+    left: 10px;
+    padding: 0.25em 0;
+    border-width: 1px;
+    border-style: solid;
 }
-
-#mod-quiz-attempt #timer {
-  position:absolute;
-  /*top:100px; is set by js*/
-  left:10px
+#mod-quiz-attempt #quiz-timer-outer h3,
+#mod-quiz-attempt #quiz-timer-outer p {
+    margin: 0;
 }
 
 body#question-preview .quemodname,
@@ -3815,7 +3819,8 @@ body#question-preview .quemodname, body#question-preview .controls {
 }
 
 #mod-quiz-attempt #page .controls,
-#mod-quiz-review #page .controls {
+#mod-quiz-review #page .controls,
+#mod-quiz-review #page .finishreview {
   text-align: center;
   margin: 8px auto;
 }

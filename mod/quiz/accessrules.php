@@ -14,7 +14,7 @@ class quiz_access_manager {
      * Create an instance for a particular quiz.
      * @param object $quiz the quiz we will be controlling access to.
      * @param integer $timenow the
-     * @param boolean $canpreview whether the current user has the 
+     * @param boolean $canpreview whether the current user has the
      * @param boolean $ignoretimelimits
      */
     public function __construct($quiz, $timenow, $canignoretimelimits) {
@@ -60,7 +60,7 @@ class quiz_access_manager {
      *
      * @param array $messages the array of message strings.
      * @param boolean $return if true, return a string, instead of outputting.
-     * 
+     *
      * @return mixed, if $return is true, return the string that would have been output, otherwise
      * return null.
      */
@@ -79,7 +79,7 @@ class quiz_access_manager {
     /**
      * Provide a description of the rules that apply to this quiz, such
      * as is shown at the top of the quiz view page. Note that not all
-     * rules consider themselves important enough to output a description. 
+     * rules consider themselves important enough to output a description.
      *
      * @return array an array of description messages which may be empty. It
      *         would be sensible to output each one surrounded by &lt;p> tags.
@@ -145,16 +145,14 @@ class quiz_access_manager {
         return false;
     }
 
-    public function setup_secure_page() {
-    /// This prevents the message window coming up.
-        define('MESSAGE_WINDOW', true);
-        echo "\n\n", '<script type="text/javascript">';
-    /// This used to be in protect_js.php. I really don't understand this bit.
-    /// I have just moved it here for cleanliness reasons.
-        echo "quiz_init_securewindow_protection('", get_string('functiondisabled','quiz'), "');\n";
-        echo 'document.write(unescape("%3C%53%43%52%49%50%54%20%4C%41%4E%47%55%41%47%45%3D%22%4A%61%76%61%53%63%72%69%70%74%22%3E%3C%21%2D%2D%0D%0A%68%70%5F%6F%6B%3D%74%72%75%65%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%64%30%30%28%73%29%7B%69%66%28%21%68%70%5F%6F%6B%29%72%65%74%75%72%6E%3B%64%6F%63%75%6D%65%6E%74%2E%77%72%69%74%65%28%73%29%7D%2F%2F%2D%2D%3E%3C%2F%53%43%52%49%50%54%3E"));';
-        echo 'hp_d00(unescape("%3C%53%43%52%49%50%54%20%4C%41%4E%47%55%41%47%45%3D%22%4A%61%76%61%53%63%72%69%70%74%22%3E%3C%21%2D%2D%0D%0A%66%75%6E%63%74%69%6F%6E%20%68%70%5F%6E%65%28%29%7B%72%65%74%75%72%6E%20%74%72%75%65%7D%6F%6E%65%72%72%6F%72%3D%68%70%5F%6E%65%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%64%6E%28%61%29%7B%72%65%74%75%72%6E%20%66%61%6C%73%65%7D%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%64%65%28%65%29%7B%72%65%74%75%72%6E%28%65%2E%74%61%72%67%65%74%2E%74%61%67%4E%61%6D%65%21%3D%6E%75%6C%6C%26%26%65%2E%74%61%72%67%65%74%2E%74%61%67%4E%61%6D%65%2E%73%65%61%72%63%68%28%27%5E%28%49%4E%50%55%54%7C%54%45%58%54%41%52%45%41%7C%42%55%54%54%4F%4E%7C%53%45%4C%45%43%54%29%24%27%29%21%3D%2D%31%29%7D%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%6D%64%28%65%29%7B%69%66%28%65%2E%77%68%69%63%68%3D%3D%31%29%7B%77%69%6E%64%6F%77%2E%63%61%70%74%75%72%65%45%76%65%6E%74%73%28%45%76%65%6E%74%2E%4D%4F%55%53%45%4D%4F%56%45%29%3B%77%69%6E%64%6F%77%2E%6F%6E%6D%6F%75%73%65%6D%6F%76%65%3D%68%70%5F%64%6E%7D%7D%66%75%6E%63%74%69%6F%6E%20%68%70%5F%6D%75%28%65%29%7B%69%66%28%65%2E%77%68%69%63%68%3D%3D%31%29%7B%77%69%6E%64%6F%77%2E%72%65%6C%65%61%73%65%45%76%65%6E%74%73%28%45%76%65%6E%74%2E%4D%4F%55%53%45%4D%4F%56%45%29%3B%77%69%6E%64%6F%77%2E%6F%6E%6D%6F%75%73%65%6D%6F%76%65%3D%6E%75%6C%6C%7D%7D%69%66%28%6E%61%76%69%67%61%74%6F%72%2E%61%70%70%4E%61%6D%65%2E%69%6E%64%65%78%4F%66%28%27%49%6E%74%65%72%6E%65%74%20%45%78%70%6C%6F%72%65%72%27%29%3D%3D%2D%31%7C%7C%28%6E%61%76%69%67%61%74%6F%72%2E%75%73%65%72%41%67%65%6E%74%2E%69%6E%64%65%78%4F%66%28%27%4D%53%49%45%27%29%21%3D%2D%31%26%26%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%2E%6C%65%6E%67%74%68%21%3D%30%29%29%7B%69%66%28%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%29%7B%64%6F%63%75%6D%65%6E%74%2E%6F%6E%73%65%6C%65%63%74%73%74%61%72%74%3D%68%70%5F%64%6E%7D%65%6C%73%65%20%69%66%28%64%6F%63%75%6D%65%6E%74%2E%6C%61%79%65%72%73%29%7B%77%69%6E%64%6F%77%2E%63%61%70%74%75%72%65%45%76%65%6E%74%73%28%45%76%65%6E%74%2E%4D%4F%55%53%45%55%50%7C%45%76%65%6E%74%2E%4D%4F%55%53%45%44%4F%57%4E%29%3B%77%69%6E%64%6F%77%2E%6F%6E%6D%6F%75%73%65%64%6F%77%6E%3D%68%70%5F%6D%64%3B%77%69%6E%64%6F%77%2E%6F%6E%6D%6F%75%73%65%75%70%3D%68%70%5F%6D%75%7D%65%6C%73%65%20%69%66%28%64%6F%63%75%6D%65%6E%74%2E%67%65%74%45%6C%65%6D%65%6E%74%42%79%49%64%26%26%21%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%29%7B%64%6F%63%75%6D%65%6E%74%2E%6F%6E%6D%6F%75%73%65%64%6F%77%6E%3D%68%70%5F%64%65%7D%7D%69%66%28%77%69%6E%64%6F%77%2E%6C%6F%63%61%74%69%6F%6E%2E%68%72%65%66%2E%73%75%62%73%74%72%69%6E%67%28%30%2C%34%29%3D%3D%22%66%69%6C%65%22%29%77%69%6E%64%6F%77%2E%6C%6F%63%61%74%69%6F%6E%3D%22%61%62%6F%75%74%3A%62%6C%61%6E%6B%22%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%6E%6C%73%28%29%7B%77%69%6E%64%6F%77%2E%73%74%61%74%75%73%3D%22%22%3B%73%65%74%54%69%6D%65%6F%75%74%28%22%68%70%5F%6E%6C%73%28%29%22%2C%31%30%29%7D%68%70%5F%6E%6C%73%28%29%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%64%70%31%28%29%7B%66%6F%72%28%69%3D%30%3B%69%3C%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%2E%6C%65%6E%67%74%68%3B%69%2B%2B%29%7B%69%66%28%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%5B%69%5D%2E%73%74%79%6C%65%2E%76%69%73%69%62%69%6C%69%74%79%21%3D%22%68%69%64%64%65%6E%22%29%7B%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%5B%69%5D%2E%73%74%79%6C%65%2E%76%69%73%69%62%69%6C%69%74%79%3D%22%68%69%64%64%65%6E%22%3B%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%5B%69%5D%2E%69%64%3D%22%68%70%5F%69%64%22%7D%7D%7D%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%64%70%32%28%29%7B%66%6F%72%28%69%3D%30%3B%69%3C%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%2E%6C%65%6E%67%74%68%3B%69%2B%2B%29%7B%69%66%28%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%5B%69%5D%2E%69%64%3D%3D%22%68%70%5F%69%64%22%29%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%5B%69%5D%2E%73%74%79%6C%65%2E%76%69%73%69%62%69%6C%69%74%79%3D%22%22%7D%7D%3B%77%69%6E%64%6F%77%2E%6F%6E%62%65%66%6F%72%65%70%72%69%6E%74%3D%68%70%5F%64%70%31%3B%77%69%6E%64%6F%77%2E%6F%6E%61%66%74%65%72%70%72%69%6E%74%3D%68%70%5F%64%70%32%3B%64%6F%63%75%6D%65%6E%74%2E%77%72%69%74%65%28%27%3C%73%74%79%6C%65%20%74%79%70%65%3D%22%74%65%78%74%2F%63%73%73%22%20%6D%65%64%69%61%3D%22%70%72%69%6E%74%22%3E%3C%21%2D%2D%62%6F%64%79%7B%64%69%73%70%6C%61%79%3A%6E%6F%6E%65%7D%2D%2D%3E%3C%2F%73%74%79%6C%65%3E%27%29%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%64%63%28%29%7B%68%70%5F%74%61%2E%63%72%65%61%74%65%54%65%78%74%52%61%6E%67%65%28%29%2E%65%78%65%63%43%6F%6D%6D%61%6E%64%28%22%43%6F%70%79%22%29%3B%73%65%74%54%69%6D%65%6F%75%74%28%22%68%70%5F%64%63%28%29%22%2C%33%30%30%29%7D%69%66%28%6E%61%76%69%67%61%74%6F%72%2E%61%70%70%4E%61%6D%65%2E%69%6E%64%65%78%4F%66%28%27%49%6E%74%65%72%6E%65%74%20%45%78%70%6C%6F%72%65%72%27%29%3D%3D%2D%31%7C%7C%28%6E%61%76%69%67%61%74%6F%72%2E%75%73%65%72%41%67%65%6E%74%2E%69%6E%64%65%78%4F%66%28%27%4D%53%49%45%27%29%21%3D%2D%31%26%26%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%2E%6C%65%6E%67%74%68%21%3D%30%29%29%7B%69%66%28%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%26%26%6E%61%76%69%67%61%74%6F%72%2E%75%73%65%72%41%67%65%6E%74%2E%69%6E%64%65%78%4F%66%28%27%4F%70%65%72%61%27%29%3D%3D%2D%31%29%7B%64%6F%63%75%6D%65%6E%74%2E%77%72%69%74%65%28%27%3C%64%69%76%20%73%74%79%6C%65%3D%22%70%6F%73%69%74%69%6F%6E%3A%61%62%73%6F%6C%75%74%65%3B%6C%65%66%74%3A%2D%31%30%30%30%70%78%3B%74%6F%70%3A%2D%31%30%30%30%70%78%22%3E%3C%69%6E%70%75%74%20%74%79%70%65%3D%22%74%65%78%74%61%72%65%61%22%20%6E%61%6D%65%3D%22%68%70%5F%74%61%22%20%76%61%6C%75%65%3D%22%20%22%20%73%74%79%6C%65%3D%22%76%69%73%69%62%69%6C%69%74%79%3A%68%69%64%64%65%6E%22%3E%3C%2F%64%69%76%3E%27%29%3B%68%70%5F%64%63%28%29%7D%7D%66%75%6E%63%74%69%6F%6E%20%68%70%5F%6E%64%64%28%29%7B%72%65%74%75%72%6E%20%66%61%6C%73%65%7D%64%6F%63%75%6D%65%6E%74%2E%6F%6E%64%72%61%67%73%74%61%72%74%3D%68%70%5F%6E%64%64%3B%2F%2F%2D%2D%3E%3C%2F%53%43%52%49%50%54%3E"));';
-        echo "</script>\n";
+    /**
+     * Do the printheader call, etc. required for a secure page, including the necessary JS.
+     *
+     * @param string $title HTML title tag content, passed to printheader.
+     * @param string $headtags extra stuff to go in the HTML head tag, passed to printheader.
+     */
+    public function setup_secure_page($title, $headtags) {
+        $this->_securewindowrule->setup_secure_page($title, $headtags);
     }
 
     public function show_attempt_timer_if_needed($attempt, $timenow) {
@@ -166,7 +164,7 @@ class quiz_access_manager {
             }
         }
         if ($timeleft !== false) {
-        /// Make sure the timer starts just above zero. If $timeleft was <= 0, then 
+        /// Make sure the timer starts just above zero. If $timeleft was <= 0, then
         /// this will just have the effect of causing the quiz to be submitted immediately.
             $timerstartvalue = max($timeleft, 1);
             print_box_start('', 'quiz-timer-outer');
@@ -187,11 +185,99 @@ class quiz_access_manager {
     }
 
     /**
-     * @return object the securewindow_access_rule instance for this quiz,
-     * or null if securewindow_required returns false.
+     * Print a button to start a quiz attempt, with an appropriate javascript warning,
+     * depending on the access restrictions. The link will pop up a 'secure' window, if
+     * necessary. The button will initially be hidden, with JavaScript to reveal it, and
+     * a noscript tag saying that the quiz requires JavaScript.
+     *
+     * @param boolean $canpreview whether this user can preview. This affects whether they must
+     * use a secure window.
+     * @param string $buttontext the label to put on the button.
+     * @param boolean $unfinished whether the button is to continue an existing attempt,
+     * or start a new one. This affects whether a javascript alert is shown.
      */
-    public function get_securewindow_object() {
-        return $this->_securewindowrule;
+    public function print_start_attempt_button($canpreview, $buttontext, $unfinished) {
+    /// Do we need a confirm javascript alert?
+        if ($unfinished) {
+            $strconfirmstartattempt = '';
+        } else {
+            $strconfirmstartattempt = $this->confirm_start_attempt_message();
+        }
+
+    /// Show the start button, in a div that is initially hidden.
+        require_js('yui_yahoo');
+        require_js('yui_event');
+        echo '<div id="quizstartbuttondiv" style="display: none;">';
+        if ($this->securewindow_required($canpreview)) {
+            $this->_securewindowrule->print_start_attempt_button($buttontext, $strconfirmstartattempt);
+        } else {
+            print_single_button("attempt.php", array('q' => $this->_quiz->id), $buttontext,
+                    'get', '', false, '', false, $strconfirmstartattempt);
+        }
+        echo "</div>\n";
+
+    /// JavaScript to reveal the button.
+        echo '<script type="text/javascript">' . "\n";
+        echo "YAHOO.util.Event.onContentReady(\n";
+        echo "'quizstartbuttondiv', function() {\n";
+        echo "document.getElementById('quizstartbuttondiv').style.cssText = '';\n";
+        echo "});\n";
+        echo "</script>\n";
+
+    /// A noscript tag to explains that the quiz only works with JavaScript enabled.
+        echo '<noscript>';
+        print_heading(get_string('noscript', 'quiz'));
+        echo "</noscript>\n";
+    }
+
+    /**
+     * Send the user back to the quiz view page. Normally this is just a redirect, but
+     * If we were in a secure window, we close this window, and reload the view window we came from.
+     *
+     * @param boolean $canpreview This affects whether we have to worry about secure window stuff.
+     */
+    public function back_to_view_page($canpreview, $message = '') {
+        global $CFG;
+        $url = $CFG->wwwroot . '/mod/quiz/view.php?q=' . $this->_quiz->id;
+        if (securewindow_required($canpreview)) {
+            print_header();
+            print_box_start();
+            if ($message) {
+            	echo '<p>' . $message . '</p><p>' . get_string('windowclosing', 'quiz') . '</p>';
+            	$delay = 5;
+            } else {
+                echo '<p>' . get_string('pleaseclose', 'quiz') . '</p>';
+                $delay = 0;
+            }
+            print_box_end();
+            echo '<script type="text/javascript">';
+            echo 'quiz_secure_window.close(', addslashes_js(htmlspecialchars($url)), ', ', $delay, ')';
+            echo '</script>';
+            print_footer('empty');
+            die();
+        } else {
+            redirect($url, $message);
+        }
+    }
+
+    /**
+     * Print a control to finish the review. Normally this is just a link, but if we are
+     * in a secure window, it needs to be a button that does quiz_secure_window.close.
+     *
+     * @param boolean $canpreview This affects whether we have to worry about secure window stuff.
+     */
+    public function print_finish_review_link($canpreview) {
+        global $CFG;
+        $url = $CFG->wwwroot . '/mod/quiz/view.php?q=' . $this->_quiz->id;
+        echo '<div class="finishreview">';
+        if ($this->securewindow_required($canpreview)) {
+            $url = addslashes_js(htmlspecialchars($url));
+            echo '<input type="button" value="' . get_string('finishreview', 'quiz') . '" ' .
+                    "onclick=\"quiz_secure_window.close('$url', 0)\" />\n";
+        } else {
+            echo '<a href="' . $url . '">' . get_string('finishreview', 'quiz') . "</a>\n";
+        }
+        echo "</div>\n";
     }
 
     /**
@@ -213,10 +299,12 @@ class quiz_access_manager {
     /**
      * Actually ask the user for the password, if they have not already given it this session.
      * This function only returns is access is OK.
+     *
+     * @param boolean $canpreview used to enfore securewindow stuff.
      */
-    public function do_password_check() {
+    public function do_password_check($canpreview) {
         if (!is_null($this->_passwordrule)) {
-            $this->_passwordrule->do_password_check();
+            $this->_passwordrule->do_password_check($canpreview, $this);
         }
     }
 
@@ -240,42 +328,39 @@ class quiz_access_manager {
      *
      * @param string $linktext some text.
      * @param object $attempt the attempt object
-     * @return string some HTML, the $linktext either unmodified or wrapped in  
+     * @return string some HTML, the $linktext either unmodified or wrapped in a link to the review page.
      */
-    public function make_review_link($linktext, $attempt) {
+    public function make_review_link($linktext, $attempt, $canpreview, $reviewoptions) {
         global $CFG;
 
-    /// If not even responses are to be shown in review then we don't allow any review
-        if (!($this->_quiz->review & QUIZ_REVIEW_RESPONSES)) {
+    /// If review of responses is not allowed, or the attempt is still open, don't link.
+        if (!$reviewoptions->responses || !$attempt->timefinish) {
             return $linktext;
         }
 
-    /// If the quiz is still open, are reviews allowed?
-        if ((!$this->_quiz->timeclose || time() < $this->_quiz->timeclose) &&
-                !($this->_quiz->review & QUIZ_REVIEW_OPEN)) {
-        /// If not, don't link.
-            return $linktext;
-        }
-
-    /// If the quiz is closed, are reviews allowed?
-        if (($this->_quiz->timeclose && time() > $this->_quiz->timeclose) &&
-                !($this->_quiz->review & QUIZ_REVIEW_CLOSED)) {
-        /// If not, don't link.
-            return $linktext;
-        }
-
-    /// If the attempt is still open, don't link.
-        if (!$attempt->timefinish) {
-            return $linktext;
-        }
-
-    /// It is OK to link.
-        // TODO replace this with logic that matches review.php.
-        if ($this->securewindow_required(false)) {
-            return $this->get_securewindow_object()->make_review_link($linktext, $attempt->id);
+    /// It is OK to link, does it need to be in a secure window?
+        if ($this->securewindow_required($canpreview)) {
+            return $this->_securewindowrule->make_review_link($linktext, $attempt->id);
         } else {
             return '<a href="' . $CFG->wwwroot . '/mod/quiz/review.php?q=' . $this->_quiz->id .
                     '&amp;attempt=' . $attempt->id . '">' . $linktext . '</a>';
+        }
+    }
+    /**
+     * If $reviewoptions->responses is false, meaning that students can't review this
+     * attempt at the moment, return an appropriate string explaining why.
+     *
+     * @param object $reviewoptions as obtained from quiz_get_reviewoptions.
+     * @return string an appropraite message.
+     */
+    public function cannot_review_message($reviewoptions) {
+        if ($reviewoptions->quizstate == QUIZ_STATE_IMMEDIATELY) {
+            return '';
+        } else if ($reviewoptions->quizstate == QUIZ_STATE_OPEN && $this->_quiz->timeclose &&
+                    ($this->_quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES)) {
+            return get_string('noreviewuntil', 'quiz', userdate($this->_quiz->timeclose));
+        } else {
+            return get_string('noreview', 'quiz');
         }
     }
 }
@@ -328,7 +413,7 @@ abstract class quiz_access_rule_base {
     }
     /**
      * If this rule can determine that this user will never be allowed another attempt at
-     * this quiz, then return true. This is used so we can know whether to display a 
+     * this quiz, then return true. This is used so we can know whether to display a
      * final score on the view page. This will only be called if there is not a currently
      * active attempt for this user.
      * @param integer $numattempts the number of previous attempts this user has made.
@@ -486,21 +571,23 @@ class password_access_rule extends quiz_access_rule_base {
      * Actually ask the user for the password, if they have not already given it this session.
      * This function only returns is access is OK.
      *
-     * @param $return if true, return the HTML for the form (if required), instead of outputting
-     * it at stopping
+     * @param boolean $canpreview used to enfore securewindow stuff.
+     * @param object $accessmanager the accessmanager calling us.
+     * @param boolean $return if true, return the HTML for the form (if required), instead of
+     * outputting it at stopping
      * @return mixed return null, unless $return is true, and a form needs to be displayed.
      */
-    public function do_password_check($return = false) {
+    public function do_password_check($canpreview, $accessmanager, $return = false) {
         global $CFG, $SESSION;
 
-    /// We have already checked the password for this quiz this session, so don't ask again. 
+    /// We have already checked the password for this quiz this session, so don't ask again.
         if (!empty($SESSION->passwordcheckedquizzes[$this->_quiz->id])) {
             return;
         }
 
-    /// If the user cancelled the password form, send them back to the view page. 
+    /// If the user cancelled the password form, send them back to the view page.
         if (optional_param('cancelpassword', false, PARAM_BOOL)) {
-            redirect($CFG->wwwroot . '/mod/quiz/view.php?q=' . $this->_quiz->id);
+            $accessmanager->back_to_view_page($canpreview);
         }
 
     /// If they entered the right password, let them in.
@@ -580,15 +667,14 @@ class securewindow_access_rule extends quiz_access_rule_base {
      * Output the start attempt button.
      *
      * @param string $buttontext the desired button caption.
-     * @param string $cmid the quiz cmid.
      * @param string $strconfirmstartattempt optional message to diplay in a JavaScript altert
      * before the button submits.
      */
-    public function print_start_attempt_button($buttontext, $cmid, $strconfirmstartattempt) {
+    public function print_start_attempt_button($buttontext, $strconfirmstartattempt) {
         global $CFG;
-        $attempturl = $CFG->wwwroot . '/mod/quiz/attempt.php?id=' . $cmid;
+        $attempturl = $CFG->wwwroot . '/mod/quiz/attempt.php?q=' . $this->_quiz->id;
         $window = 'quizpopup';
-        
+
         if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
             $attempturl = sid_process_url($attempturl);
         }
@@ -611,6 +697,25 @@ class securewindow_access_rule extends quiz_access_rule_base {
         global $CFG;
         return link_to_popup_window($CFG->wwwroot . '/mod/quiz/review.php?q=' . $this->_quiz->id .
              	'&amp;attempt=' . $attemptid, 'quizpopup', $linktext, '', '', '', $windowoptions, true);
+    }
+
+    /**
+     * Do the printheader call, etc. required for a secure page, including the necessary JS.
+     *
+     * @param string $title HTML title tag content, passed to printheader.
+     * @param string $headtags extra stuff to go in the HTML head tag, passed to printheader.
+     */
+    public function setup_secure_page($title, $headtags) {
+    /// This prevents the message window coming up.
+        define('MESSAGE_WINDOW', true);
+        print_header($title, '', '', '', $headtags, false, '', '', false, '');
+        echo "\n\n", '<script type="text/javascript">';
+    /// This used to be in protect_js.php. I really don't understand this bit.
+    /// I have just moved it here for cleanliness reasons.
+        echo "quiz_init_securewindow_protection('", get_string('functiondisabled','quiz'), "');\n";
+        echo 'document.write(unescape("%3C%53%43%52%49%50%54%20%4C%41%4E%47%55%41%47%45%3D%22%4A%61%76%61%53%63%72%69%70%74%22%3E%3C%21%2D%2D%0D%0A%68%70%5F%6F%6B%3D%74%72%75%65%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%64%30%30%28%73%29%7B%69%66%28%21%68%70%5F%6F%6B%29%72%65%74%75%72%6E%3B%64%6F%63%75%6D%65%6E%74%2E%77%72%69%74%65%28%73%29%7D%2F%2F%2D%2D%3E%3C%2F%53%43%52%49%50%54%3E"));';
+        echo 'hp_d00(unescape("%3C%53%43%52%49%50%54%20%4C%41%4E%47%55%41%47%45%3D%22%4A%61%76%61%53%63%72%69%70%74%22%3E%3C%21%2D%2D%0D%0A%66%75%6E%63%74%69%6F%6E%20%68%70%5F%6E%65%28%29%7B%72%65%74%75%72%6E%20%74%72%75%65%7D%6F%6E%65%72%72%6F%72%3D%68%70%5F%6E%65%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%64%6E%28%61%29%7B%72%65%74%75%72%6E%20%66%61%6C%73%65%7D%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%64%65%28%65%29%7B%72%65%74%75%72%6E%28%65%2E%74%61%72%67%65%74%2E%74%61%67%4E%61%6D%65%21%3D%6E%75%6C%6C%26%26%65%2E%74%61%72%67%65%74%2E%74%61%67%4E%61%6D%65%2E%73%65%61%72%63%68%28%27%5E%28%49%4E%50%55%54%7C%54%45%58%54%41%52%45%41%7C%42%55%54%54%4F%4E%7C%53%45%4C%45%43%54%29%24%27%29%21%3D%2D%31%29%7D%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%6D%64%28%65%29%7B%69%66%28%65%2E%77%68%69%63%68%3D%3D%31%29%7B%77%69%6E%64%6F%77%2E%63%61%70%74%75%72%65%45%76%65%6E%74%73%28%45%76%65%6E%74%2E%4D%4F%55%53%45%4D%4F%56%45%29%3B%77%69%6E%64%6F%77%2E%6F%6E%6D%6F%75%73%65%6D%6F%76%65%3D%68%70%5F%64%6E%7D%7D%66%75%6E%63%74%69%6F%6E%20%68%70%5F%6D%75%28%65%29%7B%69%66%28%65%2E%77%68%69%63%68%3D%3D%31%29%7B%77%69%6E%64%6F%77%2E%72%65%6C%65%61%73%65%45%76%65%6E%74%73%28%45%76%65%6E%74%2E%4D%4F%55%53%45%4D%4F%56%45%29%3B%77%69%6E%64%6F%77%2E%6F%6E%6D%6F%75%73%65%6D%6F%76%65%3D%6E%75%6C%6C%7D%7D%69%66%28%6E%61%76%69%67%61%74%6F%72%2E%61%70%70%4E%61%6D%65%2E%69%6E%64%65%78%4F%66%28%27%49%6E%74%65%72%6E%65%74%20%45%78%70%6C%6F%72%65%72%27%29%3D%3D%2D%31%7C%7C%28%6E%61%76%69%67%61%74%6F%72%2E%75%73%65%72%41%67%65%6E%74%2E%69%6E%64%65%78%4F%66%28%27%4D%53%49%45%27%29%21%3D%2D%31%26%26%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%2E%6C%65%6E%67%74%68%21%3D%30%29%29%7B%69%66%28%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%29%7B%64%6F%63%75%6D%65%6E%74%2E%6F%6E%73%65%6C%65%63%74%73%74%61%72%74%3D%68%70%5F%64%6E%7D%65%6C%73%65%20%69%66%28%64%6F%63%75%6D%65%6E%74%2E%6C%61%79%65%72%73%29%7B%77%69%6E%64%6F%77%2E%63%61%70%74%75%72%65%45%76%65%6E%74%73%28%45%76%65%6E%74%2E%4D%4F%55%53%45%55%50%7C%45%76%65%6E%74%2E%4D%4F%55%53%45%44%4F%57%4E%29%3B%77%69%6E%64%6F%77%2E%6F%6E%6D%6F%75%73%65%64%6F%77%6E%3D%68%70%5F%6D%64%3B%77%69%6E%64%6F%77%2E%6F%6E%6D%6F%75%73%65%75%70%3D%68%70%5F%6D%75%7D%65%6C%73%65%20%69%66%28%64%6F%63%75%6D%65%6E%74%2E%67%65%74%45%6C%65%6D%65%6E%74%42%79%49%64%26%26%21%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%29%7B%64%6F%63%75%6D%65%6E%74%2E%6F%6E%6D%6F%75%73%65%64%6F%77%6E%3D%68%70%5F%64%65%7D%7D%69%66%28%77%69%6E%64%6F%77%2E%6C%6F%63%61%74%69%6F%6E%2E%68%72%65%66%2E%73%75%62%73%74%72%69%6E%67%28%30%2C%34%29%3D%3D%22%66%69%6C%65%22%29%77%69%6E%64%6F%77%2E%6C%6F%63%61%74%69%6F%6E%3D%22%61%62%6F%75%74%3A%62%6C%61%6E%6B%22%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%6E%6C%73%28%29%7B%77%69%6E%64%6F%77%2E%73%74%61%74%75%73%3D%22%22%3B%73%65%74%54%69%6D%65%6F%75%74%28%22%68%70%5F%6E%6C%73%28%29%22%2C%31%30%29%7D%68%70%5F%6E%6C%73%28%29%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%64%70%31%28%29%7B%66%6F%72%28%69%3D%30%3B%69%3C%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%2E%6C%65%6E%67%74%68%3B%69%2B%2B%29%7B%69%66%28%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%5B%69%5D%2E%73%74%79%6C%65%2E%76%69%73%69%62%69%6C%69%74%79%21%3D%22%68%69%64%64%65%6E%22%29%7B%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%5B%69%5D%2E%73%74%79%6C%65%2E%76%69%73%69%62%69%6C%69%74%79%3D%22%68%69%64%64%65%6E%22%3B%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%5B%69%5D%2E%69%64%3D%22%68%70%5F%69%64%22%7D%7D%7D%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%64%70%32%28%29%7B%66%6F%72%28%69%3D%30%3B%69%3C%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%2E%6C%65%6E%67%74%68%3B%69%2B%2B%29%7B%69%66%28%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%5B%69%5D%2E%69%64%3D%3D%22%68%70%5F%69%64%22%29%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%5B%69%5D%2E%73%74%79%6C%65%2E%76%69%73%69%62%69%6C%69%74%79%3D%22%22%7D%7D%3B%77%69%6E%64%6F%77%2E%6F%6E%62%65%66%6F%72%65%70%72%69%6E%74%3D%68%70%5F%64%70%31%3B%77%69%6E%64%6F%77%2E%6F%6E%61%66%74%65%72%70%72%69%6E%74%3D%68%70%5F%64%70%32%3B%64%6F%63%75%6D%65%6E%74%2E%77%72%69%74%65%28%27%3C%73%74%79%6C%65%20%74%79%70%65%3D%22%74%65%78%74%2F%63%73%73%22%20%6D%65%64%69%61%3D%22%70%72%69%6E%74%22%3E%3C%21%2D%2D%62%6F%64%79%7B%64%69%73%70%6C%61%79%3A%6E%6F%6E%65%7D%2D%2D%3E%3C%2F%73%74%79%6C%65%3E%27%29%3B%66%75%6E%63%74%69%6F%6E%20%68%70%5F%64%63%28%29%7B%68%70%5F%74%61%2E%63%72%65%61%74%65%54%65%78%74%52%61%6E%67%65%28%29%2E%65%78%65%63%43%6F%6D%6D%61%6E%64%28%22%43%6F%70%79%22%29%3B%73%65%74%54%69%6D%65%6F%75%74%28%22%68%70%5F%64%63%28%29%22%2C%33%30%30%29%7D%69%66%28%6E%61%76%69%67%61%74%6F%72%2E%61%70%70%4E%61%6D%65%2E%69%6E%64%65%78%4F%66%28%27%49%6E%74%65%72%6E%65%74%20%45%78%70%6C%6F%72%65%72%27%29%3D%3D%2D%31%7C%7C%28%6E%61%76%69%67%61%74%6F%72%2E%75%73%65%72%41%67%65%6E%74%2E%69%6E%64%65%78%4F%66%28%27%4D%53%49%45%27%29%21%3D%2D%31%26%26%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%2E%6C%65%6E%67%74%68%21%3D%30%29%29%7B%69%66%28%64%6F%63%75%6D%65%6E%74%2E%61%6C%6C%26%26%6E%61%76%69%67%61%74%6F%72%2E%75%73%65%72%41%67%65%6E%74%2E%69%6E%64%65%78%4F%66%28%27%4F%70%65%72%61%27%29%3D%3D%2D%31%29%7B%64%6F%63%75%6D%65%6E%74%2E%77%72%69%74%65%28%27%3C%64%69%76%20%73%74%79%6C%65%3D%22%70%6F%73%69%74%69%6F%6E%3A%61%62%73%6F%6C%75%74%65%3B%6C%65%66%74%3A%2D%31%30%30%30%70%78%3B%74%6F%70%3A%2D%31%30%30%30%70%78%22%3E%3C%69%6E%70%75%74%20%74%79%70%65%3D%22%74%65%78%74%61%72%65%61%22%20%6E%61%6D%65%3D%22%68%70%5F%74%61%22%20%76%61%6C%75%65%3D%22%20%22%20%73%74%79%6C%65%3D%22%76%69%73%69%62%69%6C%69%74%79%3A%68%69%64%64%65%6E%22%3E%3C%2F%64%69%76%3E%27%29%3B%68%70%5F%64%63%28%29%7D%7D%66%75%6E%63%74%69%6F%6E%20%68%70%5F%6E%64%64%28%29%7B%72%65%74%75%72%6E%20%66%61%6C%73%65%7D%64%6F%63%75%6D%65%6E%74%2E%6F%6E%64%72%61%67%73%74%61%72%74%3D%68%70%5F%6E%64%64%3B%2F%2F%2D%2D%3E%3C%2F%53%43%52%49%50%54%3E"));';
+        echo "</script>\n";
     }
 }
 ?>

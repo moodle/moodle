@@ -356,25 +356,25 @@ class password_access_rule_test extends UnitTestCase {
         $rule->clear_access_allowed(-1);
         $_POST['cancelpassword'] = false;
         $_POST['quizpassword'] = '';
-        $html = $rule->do_password_check(true);
+        $html = $rule->do_password_check(false, null, true);
         $this->assertPattern($reqpwregex, $html);
         $this->assertPattern('/SOME INTRO TEXT/', $html);
         $this->assertNoPattern($pwerrregex, $html);
 
         $_POST['quizpassword'] = 'toad';
-        $html = $rule->do_password_check(true);
+        $html = $rule->do_password_check(false, null, true);
         $this->assertPattern($reqpwregex, $html);
         $this->assertPattern($pwerrregex, $html);
 
         $_POST['quizpassword'] = 'frog';
-        $this->assertNull($rule->do_password_check(true));
+        $this->assertNull($rule->do_password_check(false, null, true));
 
         // Check that once you are in, the password isn't checked again.
         $_POST['quizpassword'] = 'newt';
-        $this->assertNull($rule->do_password_check(true));
+        $this->assertNull($rule->do_password_check(false, null, true));
 
         $rule->clear_access_allowed(-1);
-        $html = $rule->do_password_check(true);
+        $html = $rule->do_password_check(false, null, true);
         $this->assertPattern($reqpwregex, $html);
     }
 }

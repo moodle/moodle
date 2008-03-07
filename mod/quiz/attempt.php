@@ -10,14 +10,14 @@
  * @package quiz
  */
 
-    require_once("../../config.php");
-    require_once("locallib.php");
+    require_once('../../config.php');
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-    // remember the current time as the time any responses were submitted
-    // (so as to make sure students don't get penalized for slow processing on this page)
-    $timestamp = time();
+/// remember the current time as the time any responses were submitted
+/// (so as to make sure students don't get penalized for slow processing on this page)
+    $timenow = time();
 
-    // Get submitted parameters.
+/// Get submitted parameters.
     $id = optional_param('id', 0, PARAM_INT);               // Course Module ID
     $q = optional_param('q', 0, PARAM_INT);                 // or quiz ID
     $page = optional_param('page', 0, PARAM_INT);
@@ -48,228 +48,149 @@
         }
     }
 
-    // We treat automatically closed attempts just like normally closed attempts
+/// We treat automatically closed attempts just like normally closed attempts
     if ($timeup) {
         $finishattempt = 1;
     }
 
+/// Check login and get contexts.
     require_login($course->id, false, $cm);
-
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $cm->course); // course context
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $cm->course);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $ispreviewing = has_capability('mod/quiz:preview', $context);
+    $canpreview = has_capability('mod/quiz:preview', $context);
 
-    // if no questions have been set up yet redirect to edit.php
-    if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
+/// Create an object to manage all the other (non-roles) access rules.
+    $accessmanager = new quiz_access_manager($quiz, $timenow,
+            has_capability('mod/quiz:ignoretimelimits', $context, NULL, false));
+    if ($canpreview && $forcenew) {
+        $accessmanager->clear_password_access();
+    }
+
+/// if no questions have been set up yet redirect to edit.php
+    if (!$quiz->questions && has_capability('mod/quiz:manage', $context)) {
         redirect($CFG->wwwroot . '/mod/quiz/edit.php?quizid=' . $quiz->id);
     }
 
-    if (!$ispreviewing) {
+/// Check capabilites.
+    if (!$canpreview) {
         require_capability('mod/quiz:attempt', $context);
     }
-
-/// Get number for the next or unfinished attempt
-    if(!$attemptnumber = (int)get_field_sql('SELECT MAX(attempt)+1 FROM ' .
-            "{$CFG->prefix}quiz_attempts WHERE quiz = '{$quiz->id}' AND " .
-            "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1")) {
-        $attemptnumber = 1;
-    }
-
-    $strattemptnum = get_string('attempt', 'quiz', $attemptnumber);
-    $strquizzes = get_string("modulenameplural", "quiz");
-    $popup = $quiz->popup && !$ispreviewing; // Controls whether this is shown in a javascript-protected window.
-
-/// We intentionally do not check open and close times here. Instead we do it lower down.
-/// This is to deal with what happens when someone submits close to the exact moment when the quiz closes.
-
-/// Check number of attempts
-    $numberofpreviousattempts = count_records_select('quiz_attempts', "quiz = '{$quiz->id}' AND " .
-        "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1");
-    if ($quiz->attempts and $numberofpreviousattempts >= $quiz->attempts) {
-        error(get_string('nomoreattempts', 'quiz'), "view.php?id={$cm->id}");
-    }
-
-/// Check subnet access
-    if (!$ispreviewing && $quiz->subnet && !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
-        error(get_string("subneterror", "quiz"), "view.php?id=$cm->id");
-    }
-
-/// Check password access
-    if ($ispreviewing && $forcenew) {
-        unset($SESSION->passwordcheckedquizzes[$quiz->id]);
-    }
-
-    if ($quiz->password and empty($SESSION->passwordcheckedquizzes[$quiz->id])) {
-        $enteredpassword = optional_param('quizpassword', '', PARAM_RAW);
-        if (optional_param('cancelpassword', false)) {
-            // User clicked cancel in the password form.
-            redirect($CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz->id);
-        } else if (strcmp($quiz->password, $enteredpassword) === 0) {
-            // User entered the correct password.
-            $SESSION->passwordcheckedquizzes[$quiz->id] = true;
-        } else {
-            // User entered the wrong password, or has not entered one yet.
-            $url = $CFG->wwwroot . '/mod/quiz/attempt.php?q=' . $quiz->id;
-
-            if (empty($popup)) {
-                print_header('', '', '', 'quizpassword');
-            }
-
-            if (trim(strip_tags($quiz->intro))) {
-                $formatoptions->noclean = true;
-                print_box(format_text($quiz->intro, FORMAT_MOODLE, $formatoptions), 'generalbox', 'intro');
-            }
-            print_box_start('generalbox', 'passwordbox');
-            if (!empty($enteredpassword)) {
-                echo '<p class="notifyproblem">', get_string('passworderror', 'quiz'), '</p>';
-            }
-?>
-<p><?php print_string('requirepasswordmessage', 'quiz'); ?></p>
-<form id="passwordform" method="post" action="<?php echo $url; ?>" onclick="this.autocomplete='off'">
-    <div>
-         <label for="quizpassword"><?php print_string('password'); ?></label>
-         <input name="quizpassword" id="quizpassword" type="password" value=""/>
-         <input type="submit" value="<?php print_string('ok'); ?>" />
-         <input type="submit" name="cancelpassword" value="<?php print_string('cancel'); ?>" />
-    </div>
-</form>
-<?php
-            print_box_end();
-            if (empty($popup)) {
-                print_footer();
-            }
-            exit;
-        }
-    }
-
-    if ($quiz->delay1 or $quiz->delay2) {
-        //quiz enforced time delay
-        if ($attempts = quiz_get_user_attempts($quiz->id, $USER->id)) {
-            $numattempts = count($attempts);
-        } else {
-            $numattempts = 0;
-        }
-        $timenow = time();
-        $lastattempt_obj = get_record_select('quiz_attempts', "quiz = $quiz->id AND attempt = $numattempts AND userid = $USER->id", 'timefinish');
-        if ($lastattempt_obj) {
-            $lastattempt = $lastattempt_obj->timefinish;
-        }
-        if ($numattempts == 1 && $quiz->delay1) {
-            if ($timenow - $quiz->delay1 < $lastattempt) {
-                error(get_string('timedelay', 'quiz'), 'view.php?q='.$quiz->id);
-            }
-        } else if($numattempts > 1 && $quiz->delay2) {
-            if ($timenow - $quiz->delay2 < $lastattempt) {
-                error(get_string('timedelay', 'quiz'), 'view.php?q='.$quiz->id);
-            }
-        }
-    }
+/// We intentionally do not check otehr access rules until after we have processed
+/// any submitted responses (which would be sesskey protected). This is so that when
+/// someone submits close to the exact moment when the quiz closes, there responses are not lost.
 
 /// Load attempt or create a new attempt if there is no unfinished one
 
-    if ($ispreviewing and $forcenew) { // teacher wants a new preview
-        // so we set a finish time on the current attempt (if any).
-        // It will then automatically be deleted below
-        set_field('quiz_attempts', 'timefinish', $timestamp, 'quiz', $quiz->id, 'userid', $USER->id);
+/// Check to see if a new preview was requested.
+    if ($canpreview && $forcenew) {
+    /// Teacher wants a new preview, so we set a finish time on the
+    /// current attempt (if any). It will then automatically be deleted below
+        set_field('quiz_attempts', 'timefinish', $timenow, 'quiz', $quiz->id, 'userid', $USER->id);
     }
 
-    $attempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id);
-
+/// Look for an existing attempt.
     $newattempt = false;
-    if (!$attempt) {
-        // Delete any previous preview attempts belonging to this user.
+    $lastattempt = quiz_get_latest_attempt_by_user($quiz->id, $USER->id);
+
+    if ($lastattempt && !$lastattempt->timefinish) {
+    /// Continuation of an attempt.
+        $attempt = $lastattempt;
+        $lastattemptid = false;
+
+    /// Log it, but only if some time has elapsed.
+        if (($timenow - $attempt->timemodified) > QUIZ_CONTINUE_ATTEMPT_LOG_INTERVAL) {
+        /// This action used to be 'continue attempt' but the database field has only 15 characters.
+            add_to_log($course->id, 'quiz', 'continue attemp', "review.php?attempt=$attempt->id",
+                    "$quiz->id", $cm->id);
+        }
+
+    } else {
+    /// Start a new attempt.
+        $newattempt = true;
+
+    /// Get number for the next or unfinished attempt
+        if ($lastattempt && !$lastattempt->preview && !$canpreview) {
+            $attemptnumber = $lastattempt->attempt + 1;
+            $lastattemptid = $lastattempt->id;
+        } else {
+            $lastattempt = false;
+            $lastattemptid = false;
+            $attemptnumber = 1;
+        }
+
+    /// Check access.
+        $messages = $accessmanager->prevent_access() +
+                $accessmanager->prevent_new_attempt($attemptnumber - 1, $lastattempt);
+        if (!$canpreview && $messages) {
+            error($accessmanager->print_messages($messages, true),
+                    $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz->id);
+        }
+        $accessmanager->do_password_check($canpreview);
+
+    /// Delete any previous preview attempts belonging to this user.
         if ($oldattempts = get_records_select('quiz_attempts', "quiz = '$quiz->id'
                 AND userid = '$USER->id' AND preview = 1")) {
             foreach ($oldattempts as $oldattempt) {
                 quiz_delete_attempt($oldattempt, $quiz);
             }
         }
-        $newattempt = true;
-        // Start a new attempt and initialize the question sessions
-        $attempt = quiz_create_attempt($quiz, $attemptnumber);
-        // If this is an attempt by a teacher mark it as a preview
-        if ($ispreviewing) {
-            $attempt->preview = 1;
-        }
-        // Save the attempt
+
+    /// Create the new attempt and initialize the question sessions
+        $attempt = quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $canpreview);
+
+    /// Save the attempt in the database.
         if (!$attempt->id = insert_record('quiz_attempts', $attempt)) {
-            error('Could not create new attempt');
+            quiz_error($quiz, 'newattemptfail');
         }
-        // make log entries
-        if ($ispreviewing) {
-            add_to_log($course->id, 'quiz', 'preview',
-                           "attempt.php?id=$cm->id",
-                           "$quiz->id", $cm->id);
+
+    /// Log the new attempt.
+        if ($attempt->preview) {
+            add_to_log($course->id, 'quiz', 'preview', "attempt.php?id=$cm->id",
+                    "$quiz->id", $cm->id);
         } else {
-            add_to_log($course->id, 'quiz', 'attempt',
-                           "review.php?attempt=$attempt->id",
-                           "$quiz->id", $cm->id);
-        }
-    } else {
-        // log continuation of attempt only if some time has lapsed
-        if (($timestamp - $attempt->timemodified) > 600) { // 10 minutes have elapsed
-             add_to_log($course->id, 'quiz', 'continue attemp', // this action used to be called 'continue attempt' but the database field has only 15 characters
-                           "review.php?attempt=$attempt->id",
-                           "$quiz->id", $cm->id);
+            add_to_log($course->id, 'quiz', 'attempt', "review.php?attempt=$attempt->id",
+                    "$quiz->id", $cm->id);
         }
     }
-    if (!$attempt->timestart) { // shouldn't really happen, just for robustness
+
+/// This shouldn't really happen, just for robustness
+    if (!$attempt->timestart) {
         debugging('timestart was not set for this attempt. That should be impossible.', DEBUG_DEVELOPER);
-        $attempt->timestart = $timestamp - 1;
+        $attempt->timestart = $timenow - 1;
     }
 
 /// Load all the questions and states needed by this script
 
-    // list of questions needed by page
+/// Get the list of questions needed by this page.
     $pagelist = quiz_questions_on_page($attempt->layout, $page);
 
-    if ($newattempt) {
+    if ($newattempt || $finishattempt) {
         $questionlist = quiz_questions_in_quiz($attempt->layout);
     } else {
         $questionlist = $pagelist;
     }
 
-    // add all questions that are on the submitted form
+/// Add all questions that are on the submitted form
     if ($questionids) {
         $questionlist .= ','.$questionids;
     }
 
     if (!$questionlist) {
-        error(get_string('noquestionsfound', 'quiz'), 'view.php?q='.$quiz->id);
+        quiz_error($quiz, 'noquestionsfound');
     }
 
-    $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-           "  FROM {$CFG->prefix}question q,".
-           "       {$CFG->prefix}quiz_question_instances i".
-           " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
-           "   AND q.id IN ($questionlist)";
-
-    // Load the questions
-    if (!$questions = get_records_sql($sql)) {
-        error(get_string('noquestionsfound', 'quiz'), 'view.php?q='.$quiz->id);
+    $questions = question_load_questions($questionlist, 'qqi.grade AS maxgrade, qqi.id AS instance',
+            'quiz_question_instances qqi ON qqi.quiz = ' . $quiz->id . ' AND q.id = qqi.question');
+    if (is_string($questions)) {
+        quiz_error($quiz, 'loadingquestionsfailed', $questions);
     }
 
-    // Load the question type specific information
-    if (!get_question_options($questions)) {
-        error('Could not load question options');
-    }
-
-    // If the new attempt is to be based on a previous attempt find its id
-    $lastattemptid = false;
-    if ($newattempt and $attempt->attempt > 1 and $quiz->attemptonlast and !$attempt->preview) {
-        // Find the previous attempt
-        if (!$lastattemptid = get_field('quiz_attempts', 'uniqueid', 'quiz', $attempt->quiz, 'userid', $attempt->userid, 'attempt', $attempt->attempt-1)) {
-            error('Could not find previous attempt to build on');
-        }
-    }
-
-    // Restore the question sessions to their most recent states
-    // creating new sessions where required
+/// Restore the question sessions to their most recent states creating new sessions where required.
     if (!$states = get_question_states($questions, $quiz, $attempt, $lastattemptid)) {
         error('Could not restore question sessions');
     }
 
-    // Save all the newly created states
+/// If we are starting a new attempt, save all the newly created states.
     if ($newattempt) {
         foreach ($questions as $i => $question) {
             save_question_session($questions[$i], $states[$i]);
@@ -277,14 +198,18 @@
     }
 
 /// Process form data /////////////////////////////////////////////////
-
     if ($responses = data_submitted() and empty($_POST['quizpassword'])) {
 
-        // set the default event. This can be overruled by individual buttons.
-        $event = (array_key_exists('markall', $responses)) ? QUESTION_EVENTSUBMIT :
-         ($finishattempt ? QUESTION_EVENTCLOSE : QUESTION_EVENTSAVE);
+    /// Set the default event. This can be overruled by individual buttons.
+        if (array_key_exists('markall', $responses)) {
+            $event = QUESTION_EVENTSUBMIT;
+        } else if ($finishattempt) {
+            $event = QUESTION_EVENTCLOSE;
+        } else {
+            $event = QUESTION_EVENTSAVE;
+        }
 
-        // Unset any variables we know are not responses
+    /// Unset any variables we know are not responses
         unset($responses->id);
         unset($responses->q);
         unset($responses->oldpage);
@@ -296,93 +221,74 @@
         unset($responses->markall);
         unset($responses->forcenewattempt);
 
-        // extract responses
-        // $actions is an array indexed by the questions ids
+    /// Extract the responses. $actions will be an array indexed by the questions ids.
         $actions = question_extract_responses($questions, $responses, $event);
 
-        // Process each question in turn
-
+    /// Process each question in turn
         $questionidarray = explode(',', $questionids);
         foreach($questionidarray as $i) {
             if (!isset($actions[$i])) {
                 $actions[$i]->responses = array('' => '');
                 $actions[$i]->event = QUESTION_EVENTOPEN;
             }
-            $actions[$i]->timestamp = $timestamp;
+            $actions[$i]->timestamp = $timenow;
             question_process_responses($questions[$i], $states[$i], $actions[$i], $quiz, $attempt);
             save_question_session($questions[$i], $states[$i]);
         }
 
-        $attempt->timemodified = $timestamp;
-
-    // We have now finished processing form data
+        $attempt->timemodified = $timenow;
+        if (!update_record('quiz_attempts', $attempt)) {
+            quiz_error($quiz, 'saveattemptfailed');
+        }
     }
 
 /// Finish attempt if requested
     if ($finishattempt) {
 
-        // Set the attempt to be finished
-        $attempt->timefinish = $timestamp;
+    /// Set the attempt to be finished
+        $attempt->timefinish = $timenow;
 
-        // load all the questions
-        $closequestionlist = quiz_questions_in_quiz($attempt->layout);
-        $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-               "  FROM {$CFG->prefix}question q,".
-               "       {$CFG->prefix}quiz_question_instances i".
-               " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
-               "   AND q.id IN ($closequestionlist)";
-        if (!$closequestions = get_records_sql($sql)) {
-            error('Questions missing');
-        }
-
-        // Load the question type specific information
-        if (!get_question_options($closequestions)) {
-            error('Could not load question options');
-        }
-
-        // Restore the question sessions
-        if (!$closestates = get_question_states($closequestions, $quiz, $attempt)) {
-            error('Could not restore question sessions');
-        }
-
-        foreach($closequestions as $key => $question) {
+    /// Move each question to the closed state.
+        foreach ($questions as $key => $question) {
             $action->event = QUESTION_EVENTCLOSE;
-            $action->responses = $closestates[$key]->responses;
-            $action->timestamp = $closestates[$key]->timestamp;
-            question_process_responses($question, $closestates[$key], $action, $quiz, $attempt);
-            save_question_session($question, $closestates[$key]);
+            $action->responses = $states[$key]->responses;
+            $action->timestamp = $states[$key]->timestamp;
+            question_process_responses($question, $states[$key], $action, $quiz, $attempt);
+            save_question_session($question, $states[$key]);
         }
 
-        add_to_log($course->id, 'quiz', 'close attempt',
-                           "review.php?attempt=$attempt->id",
-                           "$quiz->id", $cm->id);
-    }
+    /// Log the end of this attempt.
+        add_to_log($course->id, 'quiz', 'close attempt', "review.php?attempt=$attempt->id",
+                "$quiz->id", $cm->id);
 
-/// Update the quiz attempt and the overall grade for the quiz
-    if ($responses || $finishattempt) {
+    /// Update the quiz attempt record.
         if (!update_record('quiz_attempts', $attempt)) {
-            error('Failed to save the current quiz attempt!');
+            quiz_error($quiz, 'saveattemptfailed');
         }
-        if (($attempt->attempt > 1 || $attempt->timefinish > 0) and !$attempt->preview) {
+
+        if (!$attempt->preview) {
+        /// Record this user's best grade (if this is not a preview).
             quiz_save_best_grade($quiz);
-        }
-    }
 
-/// Send emails to those who have the capability set
-    if ($finishattempt && !$attempt->preview) {
-        quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm);
-    }
-
-    if ($finishattempt) {
-        if (!empty($SESSION->passwordcheckedquizzes[$quiz->id])) {
-            unset($SESSION->passwordcheckedquizzes[$quiz->id]);
+        /// Send any notification emails (if this is not a preview).
+            quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm);
         }
+
+    /// Clear the password check flag in the session.
+        $accessmanager->clear_password_access();
+
+    /// Send the user to the review page.
         redirect($CFG->wwwroot . '/mod/quiz/review.php?attempt='.$attempt->id, 0);
     }
 
-// Now is the right time to check the open and close times.
-    if (!$ispreviewing && ($timestamp < $quiz->timeopen || ($quiz->timeclose && $timestamp > $quiz->timeclose))) {
-        error(get_string('notavailable', 'quiz'), "view.php?id={$cm->id}");
+/// Now is the right time to check access (unless we are starting a new attempt, and did it above).
+    if (!$newattempt) {
+        $messages = $accessmanager->prevent_access();
+        if (!$canpreview && $messages) {
+            error($accessmanager->print_messages($messages, true),
+                    $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz->id);
+        }
+        $accessmanager->do_password_check($canpreview);
     }
 
 /// Print the quiz page ////////////////////////////////////////////////////////
@@ -390,11 +296,10 @@
     // Print the page header
     require_js($CFG->wwwroot . '/mod/quiz/quiz.js');
     $pagequestions = explode(',', $pagelist);
+    $strattemptnum = get_string('attempt', 'quiz', $attempt->attempt);
     $headtags = get_html_head_contributions($pagequestions, $questions, $states);
-    if (!empty($popup)) {
-        define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
-        print_header($course->shortname.': '.format_string($quiz->name), '', '', '', $headtags, false, '', '', false, '');
-        include('protect_js.php');
+    if ($accessmanager->securewindow_required($canpreview)) {
+        $accessmanager->setup_secure_page($course->shortname.': '.format_string($quiz->name), $headtags);
     } else {
         $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
                     ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
@@ -402,32 +307,26 @@
         $navigation = build_navigation($strattemptnum, $cm);
         print_header_simple(format_string($quiz->name), "", $navigation, "", $headtags, true, $strupdatemodule);
     }
-
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
-    // Print the quiz name heading and tabs for teacher, etc.
-    if ($ispreviewing) {
+    if ($canpreview) {
+    /// Show the tab bar.
         $currenttab = 'preview';
         include('tabs.php');
 
+    /// Heading and tab bar.
         print_heading(get_string('previewquiz', 'quiz', format_string($quiz->name)));
-        unset($buttonoptions);
-        $buttonoptions['q'] = $quiz->id;
-        $buttonoptions['forcenew'] = true;
-        echo '<div class="controls">';
-        print_single_button($CFG->wwwroot.'/mod/quiz/attempt.php', $buttonoptions, get_string('startagain', 'quiz'));
-        echo '</div>';
-    /// Notices about restrictions that would affect students.
-        if ($quiz->popup) {
-            notify(get_string('popupnotice', 'quiz'));
-        }
-        if ($timestamp < $quiz->timeopen || ($quiz->timeclose && $timestamp > $quiz->timeclose)) {
-            notify(get_string('notavailabletostudents', 'quiz'));
-        }
-        if ($quiz->subnet && !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
-            notify(get_string('subnetnotice', 'quiz'));
+        print_restart_preview_button($quiz);
+
+    /// Inform teachers of any restrictions that would apply to students at this point.
+        if ($messages) {
+            print_box_start('quizaccessnotices');
+            print_heading(get_string('accessnoticesheader', 'quiz'), '', 3);
+            $accessmanager->print_messages($messages);
+            print_box_end();
         }
     } else {
+    /// Just a heading.
         if ($quiz->attempts != 1) {
             print_heading(format_string($quiz->name).' - '.$strattemptnum);
         } else {
@@ -492,31 +391,18 @@
     echo '</div>';
     echo '<input type="hidden" name="timeup" id="timeup" value="0" />';
 
-    // Add a hidden field with questionids. Do this at the end of the form, so 
+    // Add a hidden field with questionids. Do this at the end of the form, so
     // if you navigate before the form has finished loading, it does not wipe all
     // the student's answers.
     echo '<input type="hidden" name="questionids" value="'.$pagelist."\" />\n";
 
     echo "</form>\n";
 
-    // If the quiz has a time limit, or if we are close to the close time, include a floating timer.
-    $showtimer = false;
-    $timerstartvalue = 999999999999;
-    if ($quiz->timeclose) {
-        $timerstartvalue = min($timerstartvalue, $quiz->timeclose - time());
-        $showtimer = $timerstartvalue < 60*60; // Show the timer if we are less than 60 mins from the deadline.
-    }
-    if ($quiz->timelimit > 0 && !has_capability('mod/quiz:ignoretimelimits', $context, NULL, false)) {
-        $timerstartvalue = min($timerstartvalue, $attempt->timestart + $quiz->timelimit*60- time());
-        $showtimer = true;
-    }
-    if ($showtimer && (!$ispreviewing || $timerstartvalue > 0)) {
-        $timerstartvalue = max($timerstartvalue, 1); // Make sure it starts just above zero.
-        require('jstimer.php');
-    }
-
     // Finish the page
-    if (empty($popup)) {
+    $accessmanager->show_attempt_timer_if_needed($attempt, time());
+    if ($accessmanager->securewindow_required($canpreview)) {
+        print_footer('empty');
+    } else {
         print_footer($course);
     }
 ?>

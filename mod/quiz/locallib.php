@@ -20,6 +20,7 @@
  * Include those library functions that are also used by core Moodle or other modules
  */
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
+require_once($CFG->dirroot . '/mod/quiz/accessrules.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
 /// Constants ///////////////////////////////////////////////////////////////////
@@ -37,12 +38,24 @@ define("QUIZ_ATTEMPTLAST",  "4");
 /**#@+
  * Constants to describe the various states a quiz attempt can be in.
  */
-define('QUIZ_STATE_DURING', 'during'); 
-define('QUIZ_STATE_IMMEDIATELY', 'immedately'); 
-define('QUIZ_STATE_OPEN', 'open'); 
-define('QUIZ_STATE_CLOSED', 'closed'); 
+define('QUIZ_STATE_DURING', 'during');
+define('QUIZ_STATE_IMMEDIATELY', 'immedately');
+define('QUIZ_STATE_OPEN', 'open');
+define('QUIZ_STATE_CLOSED', 'closed');
 define('QUIZ_STATE_TEACHERACCESS', 'teacheraccess'); // State only relevant if you are in a studenty role.
 /**#@-*/
+
+/**
+ * We don't log every single hit on attempt.php, only significant ones like starting and
+ * ending an attempt, and periodically during the attempt, as defined by this constant. (10 mins)
+ */
+define('QUIZ_CONTINUE_ATTEMPT_LOG_INTERVAL', '600');
+
+/**
+ * We show the countdown timer if there is less than this amount of time left before the
+ * the quiz close date. (1 hour)
+ */
+define('QUIZ_SHOW_TIME_BEFORE_DEADLINE', '3600');
 
 /// Functions related to attempts /////////////////////////////////////////
 
@@ -52,15 +65,22 @@ define('QUIZ_STATE_TEACHERACCESS', 'teacheraccess'); // State only relevant if y
  * Creates an attempt object to represent an attempt at the quiz by the current
  * user starting at the current time. The ->id field is not set. The object is
  * NOT written to the database.
- * @return object                The newly created attempt object.
- * @param object $quiz           The quiz to create an attempt for.
- * @param integer $attemptnumber The sequence number for the attempt.
+ *
+ * @param object $quiz the quiz to create an attempt for.
+ * @param integer $attemptnumber the sequence number for the attempt.
+ * @param object $lastattempt the previous attempt by this user, if any. Only needed
+ *         if $attemptnumber > 1 and $quiz->attemptonlast is true.
+ * @param integer $timenow the time the attempt was started at.
+ * @param boolean $ispreview whether this new attempt is a preview.
+ *
+ * @return object the newly created attempt object.
  */
-function quiz_create_attempt($quiz, $attemptnumber) {
-    global $USER, $CFG;
+function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $ispreview = false) {
+    global $USER;
 
-    if (!$attemptnumber > 1 or !$quiz->attemptonlast or !$attempt = get_record('quiz_attempts', 'quiz', $quiz->id, 'userid', $USER->id, 'attempt', $attemptnumber-1)) {
-        // we are not building on last attempt so create a new attempt
+    if ($attemptnumber = 1 || !$quiz->attemptonlast) {
+    /// We are not building on last attempt so create a new attempt.
+        $attempt = new stdClass;
         $attempt->quiz = $quiz->id;
         $attempt->userid = $USER->id;
         $attempt->preview = 0;
@@ -69,9 +89,14 @@ function quiz_create_attempt($quiz, $attemptnumber) {
         } else {
             $attempt->layout = $quiz->questions;
         }
+    } else {
+    /// Build on last attempt.
+        if (empty($lastattempt)) {
+            error(get_string('cannotfindprevattempt', 'quiz'));
+        }
+        $attempt = $lastattempt;
     }
 
-    $timenow = time();
     $attempt->attempt = $attemptnumber;
     $attempt->sumgrades = 0.0;
     $attempt->timestart = $timenow;
@@ -79,12 +104,17 @@ function quiz_create_attempt($quiz, $attemptnumber) {
     $attempt->timemodified = $timenow;
     $attempt->uniqueid = question_new_attempt_uniqueid();
 
+/// If this is a preview, mark it as such.
+    if ($ispreview) {
+        $attempt->preview = 1;
+    }
+
     return $attempt;
 }
 
 /**
- * Returns an unfinished attempt (if there is one) for the given
- * user on the given quiz. This function does not return preview attempts.
+ * Returns the unfinished attempt for the given
+ * user on the given quiz, if there is one.
  *
  * @param integer $quizid the id of the quiz.
  * @param integer $userid the id of the user.
@@ -98,6 +128,41 @@ function quiz_get_user_attempt_unfinished($quizid, $userid) {
     } else {
         return false;
     }
+}
+
+/**
+ * Returns the most recent attempt by a given user on a given quiz.
+ * May be finished, or may not.
+ *
+ * @param integer $quizid the id of the quiz.
+ * @param integer $userid the id of the user.
+ *
+ * @return mixed the unfinished attempt if there is one, false if not.
+ */
+function quiz_get_latest_attempt_by_user($quizid, $userid) {
+    global $CFG;
+    return get_record_sql('SELECT qa.* FROM ' . $CFG->prefix . 'quiz_attempts qa
+    		WHERE qa.quiz=' . $quizid . ' AND qa.userid=' . $userid . ' AND qa.timestart = (
+                SELECT MAX(timestart) FROM ' . $CFG->prefix . 'quiz_attempts ssqa
+                WHERE ssqa.quiz=' . $quizid . ' AND ssqa.userid=' . $userid . ')');
+}
+
+/**
+ * Load an attempt by id. You need to use this method instead of get_record, because
+ * of some ancient history to do with the upgrade from Moodle 1.4 to 1.5, See the comment
+ * after CREATE TABLE `prefix_quiz_newest_states` in mod/quiz/db/mysql.php.
+ *
+ * @param integer $attemptid the id of the attempt to load.
+ */
+function quiz_load_attempt($attemptid) {
+    $attempt = get_record('quiz_attempts', 'id', $attemptid);
+
+    if (!record_exists('question_sessions', 'attemptid', $attempt->uniqueid)) {
+    /// this attempt has not yet been upgraded to the new model
+        quiz_upgrade_states($attempt);
+    }
+
+    return $attempt;
 }
 
 /**
@@ -698,12 +763,12 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
         $options->questioncommentlink = '/mod/quiz/comment.php';
     }
 
-    if (!is_null($context) && has_capability('mod/quiz:viewreports', $context) && 
+    if (!is_null($context) && has_capability('mod/quiz:viewreports', $context) &&
             has_capability('moodle/grade:viewhidden', $context) && !$attempt->preview) {
         // People who can see reports and hidden grades should be shown everything,
         // except during preview when teachers want to see what students see.
         $options->responses = true;
-        $options->scores = true; 
+        $options->scores = true;
         $options->feedback = true;
         $options->correct_responses = true;
         $options->solutions = false;
@@ -723,7 +788,7 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
             $options->quizstate = QUIZ_STATE_CLOSED;
         }
 
-        // ... and hence extract the appropriate review options. 
+        // ... and hence extract the appropriate review options.
         $options->responses = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
         $options->scores = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SCORES) ? 1 : 0;
         $options->feedback = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
@@ -767,6 +832,14 @@ function quiz_get_combined_reviewoptions($quiz, $attempts, $context=null) {
         }
     }
     return array($someoptions, $alloptions);
+}
+
+function print_restart_preview_button($quiz) {
+    global $CFG;
+    echo '<div class="controls">';
+    print_single_button($CFG->wwwroot . '/mod/quiz/attempt.php',
+            array('q' => $quiz->id, 'forcenew' => true), get_string('startagain', 'quiz'));
+    echo '</div>';
 }
 
 /// FUNCTIONS FOR SENDING NOTIFICATION EMAILS ///////////////////////////////
@@ -937,5 +1010,20 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
 
     // return the number of successfully sent emails
     return $emailresult['good'];
+}
+
+/**
+ * Print a quiz error message. This is a thin wrapper around print_error, for convinience.
+ *
+ * @param mixed $quiz either the quiz object, or the interger quiz id.
+ * @param string $errorcode the name of the string from quiz.php to print.
+ * @param object $a any extra data required by the error string.
+ */
+function quiz_error($quiz, $errorcode, $a = null) {
+    global $CFG;
+    if (is_object($quiz)) {
+        $quiz = $quiz->id;
+    }
+    print_error($errorcode, 'quiz', $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz, $a);
 }
 ?>

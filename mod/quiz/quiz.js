@@ -16,7 +16,7 @@ function navigate(page) {
     ourForm.submit();
 }
 
-/* Use this in an onkeypress handler, to stop enter submitting the forum unless you 
+/* Use this in an onkeypress handler, to stop enter submitting the forum unless you
 are actually on the submit button. Don't stop the user typing things in text areas. */
 function check_enter(e) {
     var target = e.target ? e.target : e.srcElement;
@@ -28,65 +28,218 @@ function check_enter(e) {
         return true;
 }
 
-/* Used to update the on-screen countdown clock for quizzes with a time limit */
-function countdown_clock(theTimer) {
-    var timeout_id = null;
+quiz_timer = {
+    // The outer div, so we can get at it to move it when the page scrolls.
+    timerouter: null,
 
-    quizTimerValue = Math.floor((ec_quiz_finish - new Date().getTime())/1000);
+    // The element that the time should be displayed in.
+    timerdisplay: null,
 
-    if(quizTimerValue <= 0) {
-        clearTimeout(timeout_id);
-        document.getElementById('timeup').value = 1;
-        var ourForm = document.getElementById('responseform');
-        if (ourForm.onsubmit) { 
-            ourForm.onsubmit();
+    // The main quiz for, which we will need to submit when the time expires.
+    quizform: null,
+
+    // String that is displayed after the time has run out.
+    strtimeup: '',
+
+    // How long is left, in seconds.
+    endtime: 0,
+
+    // How often we update the clock display. Delay in milliseconds.
+    updatedelay: 500,
+
+    // This records the id of the timeout that updates the clock periodically, so we can cancel it
+    // Once time has run out.
+    timeoutid: null,
+
+    // Desired position of the top of timer_outer: 100px from the top of the window.
+    targettop: 100,
+
+    // How often we check to positing and adjust it. Delay in milliseconds.
+    movedelay: 100,
+
+    // Last known postion of timer_outer.
+    oldtop: this.target_top,
+
+    // Colours used to change the timer bacground colour when time had nearly run out.
+    // This array is indexed by number of seconds left.
+    finalcolours: [
+        '#ff0000',
+        '#ff1111',
+        '#ff2222',
+        '#ff3333',
+        '#ff4444',
+        '#ff5555',
+        '#ff6666',
+        '#ff7777',
+        '#ff8888',
+        '#ff9999',
+        '#ffaaaa',
+        '#ffbbbb',
+        '#ffcccc',
+        '#ffdddd',
+        '#ffeeee',
+        '#ffffff',
+    ],
+
+    // Initialise method.
+    initialise: function(strtimeup, timeleft) {
+        // Set some fields.
+        quiz_timer.strtimeup = strtimeup;
+        quiz_timer.endtime = new Date().getTime() + timeleft*1000;
+
+        // Get references to some bits of the DOM we need.
+        quiz_timer.timerouter = document.getElementById('quiz-timer-outer'),
+        quiz_timer.timerdisplay = document.getElementById('quiz-timer-display'),
+        quiz_timer.quizform = document.getElementById('responseform'),
+
+        // Get things starte.
+        quiz_timer.move();
+        quiz_timer.update_time();
+    },
+
+    // Stop method. Stops the timer if it is running.
+    stop: function() {
+        if (quiz_timer.timeoutid) {
+            clearTimeout(quiz_timer.timeoutid);
         }
-        ourForm.submit();
-        return;
+    },
+
+    // Function that updates the text displayed in element timer_display.
+    set_displayed_time: function(str) {
+        var display = quiz_timer.timerdisplay
+        if (!display.firstChild) {
+            display.appendChild(document.createTextNode(str))
+        } else if (display.firstChild.nodeType == 3) {
+            display.firstChild.replaceData(0, display.firstChild.length, str);
+        } else {
+            display.replaceChild(document.createTextNode(str), display.firstChild);
+        }
+    },
+
+    // Function to convert a number between 0 and 99 to a two-digit string.
+    two_digit: function(num) {
+        if (num < 10) {
+            return '0' + num;
+        } else {
+            return num;
+        }
+    },
+
+    // Function to update the clock with the current time left, and submit the quiz if necessary.
+    update_time: function() {
+        var secondsleft = Math.floor((quiz_timer.endtime - new Date().getTime())/1000);
+
+        // If time has expired, Set the hidden form field that says time has expired.
+        if (secondsleft < 0) {
+            quiz_timer.stop();
+            quiz_timer.set_displayed_time(quiz_timer.strtimeup);
+            document.getElementById('timeup').value = 1;
+            if (quiz_timer.quizform.onsubmit) {
+                quiz_timer.quizform.onsubmit();
+            }
+            quiz_timer.quizform.submit();
+            return;
+        }
+
+        // If time has nearly expired, change the colour.
+        if (secondsleft < quiz_timer.finalcolours.length) {
+            quiz_timer.timerouter.style.backgroundColor = quiz_timer.finalcolours[secondsleft];
+        }
+
+        // Update the time display.
+        var hours = Math.floor(secondsleft/3600);
+        secondsleft -= hours*3600;
+        var minutes = Math.floor(secondsleft/60);
+        secondsleft -= minutes*60;
+        var seconds = secondsleft;
+        quiz_timer.set_displayed_time('' + hours + ':' + quiz_timer.two_digit(minutes) + ':' +
+                quiz_timer.two_digit(seconds));
+
+        // Arrange for this method to be called again soon.
+        quiz_timer.timeoutid = setTimeout(quiz_timer.update_time, quiz_timer.updatedelay);
+    },
+
+    // Function to keep the clock in the same place on the screen.
+    move: function() {
+        // Work out where the top of the window is.
+        var pos;
+        if (window.innerHeight) {
+            pos = window.pageYOffset
+        } else if (document.documentElement && document.documentElement.scrollTop) {
+            pos = document.documentElement.scrollTop
+        } else if (document.body) {
+            pos = document.body.scrollTop
+        }
+
+        // We want the timer target_top pixels from the top of the window,
+        // or the top of the document, whichever is lower.
+        pos += quiz_timer.targettop;
+        if (pos < quiz_timer.targettop) {
+            pos = quiz_timer.targettop;
+        }
+
+        // Only move the timer if the window has stopped moving, and the position has stabilised.
+        if (pos == quiz_timer.oldtop) {
+            quiz_timer.timerouter.style.top = pos + 'px';
+        }
+        quiz_timer.oldtop = pos;
+
+        // Arrange for this method to be called again soon.
+        setTimeout(quiz_timer.move, quiz_timer.movedelay);
     }
+};
 
-    now = quizTimerValue;
-    var hours = Math.floor(now/3600);
-    now = now - (hours*3600);
-    var minutes = Math.floor(now/60);
-    now = now - (minutes*60);
-    var seconds = now;
+quiz_secure_window = {
+    // The message displayed when the secure window interferes with the user.
+    protection_message: null,
 
-    var t = "" + hours;
-    t += ((minutes < 10) ? ":0" : ":") + minutes;
-    t += ((seconds < 10) ? ":0" : ":") + seconds;
-    window.status = t.toString();
+    // Used by close. The URL to redirect to, if we find we are not acutally in a pop-up window.
+    close_next_url: '',
 
-    if(hours == 0 && minutes == 0 && seconds <= 15) {
-        //go from fff0f0 to ffe0e0 to ffd0d0...ff2020, ff1010, ff0000 in 15 steps
-        var hexascii = "0123456789ABCDEF";
-        var col = '#' + 'ff' + hexascii.charAt(seconds) + '0' + hexascii.charAt(seconds) + 0;
-        theTimer.style.backgroundColor = col;
+    // Code for secure window. This used to be in protect_js.php. I don't understand it,
+    // I have just moved it for clenliness reasons.
+    initialise: function(strmessage) {
+        quiz_secure_window.protection_message = strmessage;
+        if (document.layers) {
+            document.captureEvents(Event.MOUSEDOWN);
+        }
+        document.onmousedown = quiz_secure_window.intercept_click;
+        document.oncontextmenu = new Function("alert(quiz_secure_window.protection_message); return false")
+    },
+
+    // Code for secure window. This used to be in protect_js.php. I don't understand it,
+    // I have just moved it for clenliness reasons.
+    intercept_click: function(e) {
+        if (document.all) {
+            if (event.button==1) {
+               return false;
+            }
+            if (event.button==2) {
+               alert(quiz_securewindow_message);
+               return false;
+            }
+        }
+        if (document.layers) {
+            if (e.which > 1) {
+               alert(quiz_securewindow_message);
+               return false;
+            }
+        }
+    },
+
+    close: function(url, delay) {
+        if (url != '') {
+            quiz_secure_window.close_next_url = url;
+        }
+        if (delay > 0) {
+            setTimeout('quiz_close_securewindow("", 0)', delay*1000);
+        } else {
+            if (window.opener) {
+                window.opener.document.location.reload();
+                window.close();
+            } else if (quiz_secure_window.close_next_url != '') {
+                window.location.href = quiz_secure_window.close_next_url;
+            }
+        }
     }
-    document.getElementById('time').value = t.toString();
-    timeout_id = setTimeout("countdown_clock(theTimer)", 1000);
-}
-
-/* Use to keep the quiz timer on-screen as the user scrolls. */
-function movecounter(timerbox) {
-    var pos;
-
-    if (window.innerHeight) {
-        pos = window.pageYOffset
-    } else if (document.documentElement && document.documentElement.scrollTop) {
-        pos = document.documentElement.scrollTop
-    } else if (document.body) {
-        pos = document.body.scrollTop
-    }
-
-    if (pos < theTop) {
-        pos = theTop;
-    } else {
-        pos += 100;
-    }
-    if (pos == old) {
-        timerbox.style.top = pos + 'px';
-    }
-    old = pos;
-    temp = setTimeout('movecounter(timerbox)',100);
-}
+};
