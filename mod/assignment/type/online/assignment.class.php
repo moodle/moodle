@@ -262,6 +262,7 @@ class mod_assignment_online_edit_form extends moodleform {
         $mform->addElement('htmleditor', 'text', get_string('submission', 'assignment'), array('cols'=>85, 'rows'=>30));
         $mform->setType('text', PARAM_RAW); // to be cleaned before display
         $mform->setHelpButton('text', array('reading', 'writing', 'richtext'), false, 'editorhelpbutton');
+        $mform->addRule('text', get_string('required'), 'required', null, 'client');
 
         $mform->addElement('format', 'format', get_string('format'));
         $mform->setHelpButton('format', array('textformat', get_string('helpformatting')));
