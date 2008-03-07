@@ -4203,14 +4203,15 @@ function _print_custom_corners_end($idbase) {
  * @param array $options these become hidden form fields, so these options get passed to the script at $link.
  * @param string $label the caption that appears on the button.
  * @param string $method HTTP method used on the request of the button is clicked. 'get' or 'post'.
- * @param string $target no longer used.
+ * @param string $notusedanymore no longer used.
  * @param boolean $return if false, output the form directly, otherwise return the HTML as a string.
  * @param string $tooltip a tooltip to add to the button as a title attribute.
  * @param boolean $disabled if true, the button will be disabled.
  * @param string $jsconfirmmessage if not empty then display a confirm dialogue with this string as the question.
  * @return string / nothing depending on the $return paramter.
  */
-function print_single_button($link, $options, $label='OK', $method='get', $target='_self', $return=false, $tooltip='', $disabled = false, $jsconfirmmessage='') {
+function print_single_button($link, $options, $label='OK', $method='get', $notusedanymore='',
+        $return=false, $tooltip='', $disabled = false, $jsconfirmmessage='') {
     $output = '';
     $link = str_replace('"', '&quot;', $link); //basic XSS protection
     $output .= '<div class="singlebutton">';
