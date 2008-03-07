@@ -762,6 +762,8 @@ class grade_report_grader extends grade_report {
                 $gradepass = ' gradefail '; 
                 if ($grade->is_passed($item)) {
                     $gradepass = ' gradepass ';
+                } elseif (is_null($grade->is_passed($item))) {
+                    $gradepass = '';
                 }
 
                 // if in editting mode, we need to print either a text box

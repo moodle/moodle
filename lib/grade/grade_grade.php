@@ -701,6 +701,17 @@ class grade_grade extends grade_object {
             $this->grade_item = $grade_item;
             $this->itemid = $grade_item->id;
         }
+
+        // Return null if finalgrade is null
+        if (is_null($this->finalgrade)) {
+            return null;
+        }
+
+        // Return null if gradepass == grademin or gradepass is null
+        if (is_null($this->grade_item->gradepass) || $this->grade_item->gradepass == $this->grade_item->grademin) {
+            return null;
+        }
+
         return $this->finalgrade >= $this->grade_item->gradepass;
     }
 
