@@ -29,13 +29,11 @@ the gradebook administrator. Caution in interpreting these "empty grades" is thu
                          <code>(0.7*100 + 0.25*80 + 1.0*10)/190 = 0.526 --> 52.6/100</code></dd>
     
     <dt>Mean of grades (with extra credits)</dt>
-        <dd>Arithmetic mean with a twist. An old, now unsupported aggregation sdtategy provided here only
+        <dd>Arithmetic mean with a twist. An old, now unsupported aggregation strategy provided here only
                          for backward compatibility with old activities.</dd>
     
     <dt>Median of grades</dt>
-        <dd>The median is calculated by sorting all the grades and selecting the grade that falls in the middle of that 
-                         (or the mean between the two middle grades if there is an even number of grades). The advantage over the mean is
-                         that it is not affected by outliers (grades which are uncommonly far from the mean).</dd>
+        <dd>The middle grade (or the mean of the two middle grades) when grades are arranged in order of size. The advantage over the mean is that it is not affected by outliers (grades which are uncommonly far from the mean).</dd>
         <dd class="example">A1 70/100, A2 20/80, A3 10/10, category max 100:<br />
                          <code>0.7 + 0.25 + 1.0 --> 0.25 --> 25/100</code></dd>
     
@@ -52,7 +50,7 @@ the gradebook administrator. Caution in interpreting these "empty grades" is thu
     <dt>Mode of grades</dt>
         <dd>The mode is the grade that occurs the most frequently. It is more often used for non-numerical grades.
                          The advantage over the mean is that it is not affected by outliers (grades which are uncommonly far from the mean). 
-                         However it loses its meaning once there is more than one most frequently occuring grade (only one is kept), or when all
+                         However it loses its meaning once there is more than one most frequently occurring grade (only one is kept), or when all
                          the grades are different from each other.</dd>
         <dd class="example">A1 70/100, A2 35/50, A3 20/80, A4 10/10, A5 7/10 category max 100:<br />
                          <code>mode(0.7; 0.7; 0.25; 1.0; 0.7) = 0.7 --> 70/100</code></dd>
