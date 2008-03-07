@@ -184,7 +184,7 @@
                     break; // quit answer analysis immediately after a match has been found
                 }
             }
-            $studentanswer = s($useranswer);
+            $studentanswer = $useranswer;
             break;
         
         case LESSON_TRUEFALSE :
