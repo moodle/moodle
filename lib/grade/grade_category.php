@@ -224,7 +224,6 @@ class grade_category extends grade_object {
         if ($result and $updatechildren) {
             if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
                 foreach ($children as $child) {
-                    echo "updating $child->id ";
                     $child->path  = null;
                     $child->depth = 0;
                     $child->update($source);
@@ -869,7 +868,28 @@ class grade_category extends grade_object {
         // now find the requested category and connect categories as children
         $category = false;
         foreach ($cats as $catid=>$cat) {
-            if (!empty($cat->parent)) {
+            if (empty($cat->parent)) {
+                if ($cat->path !== '/'.$cat->id.'/') {
+                    $grade_category = new grade_category($cat, false);
+                    $grade_category->path  = '/'.$cat->id.'/';
+                    $grade_category->depth = 1;
+                    $grade_category->update('system');
+                    return $this->get_children($include_category_items);
+                }
+            } else {
+                if (empty($cat->path) or !preg_match('|/'.$cat->parent.'/'.$cat->id.'/$|', $cat->path)) {
+                    //fix paths and depts
+                    static $recursioncounter = 0; // prevents infinite recursion
+                    $recursioncounter++;
+                    if ($recursioncounter < 5) { 
+                        // fix paths and depths!
+                        $grade_category = new grade_category($cat, false);
+                        $grade_category->depth = 0;
+                        $grade_category->path  = null;
+                        $grade_category->update('system');
+                        return $this->get_children($include_category_items);
+                    }
+                } 
                 // prevent problems with duplicate sortorders in db
                 $sortorder = $cat->sortorder;
                 while(array_key_exists($sortorder, $cats[$cat->parent]->children)) {
@@ -1044,7 +1064,7 @@ class grade_category extends grade_object {
         $this->parent          = $parent_category->id;
         $this->parent_category =& $parent_category;
         $this->path            = null;       // remove old path and depth - will be recalculated in update()
-        $this->depth           = null;       // remove old path and depth - will be recalculated in update()
+        $this->depth           = 0;          // remove old path and depth - will be recalculated in update()
         $this->update($source);
 
         return $this->update($source);
