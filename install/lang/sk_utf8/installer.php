@@ -283,4 +283,5 @@ $string['wrongsourcebase'] = 'Chybné URL zdrojového serveru';
 $string['wrongzipfilename'] = 'Chybné meno súboru ZIP';
 $string['wwwroot'] = 'Web adresa';
 $string['wwwrooterror'] = 'Táto web adresa pravdepodobne nie je platná - táto inštalácia Moodle tu pravdepodobne nie je.';
+$string['xmlrpcrecommended'] = 'Inštalácia nepovinného rozšírenia xmlrpc je potrebná v prípade požadovania funkcionality siete Moodle serverov.';
 ?>
