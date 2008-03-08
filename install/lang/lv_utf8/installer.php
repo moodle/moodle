@@ -346,4 +346,5 @@ $string['wrongsourcebase'] = 'Nepareiza avota URL bāze.';
 $string['wrongzipfilename'] = 'Nepareizs ZIP faila nosaukums.';
 $string['wwwroot'] = 'Tīmekļa adrese';
 $string['wwwrooterror'] = 'Iestatījums “Tīmekļa adrese”, šķiet, ir nederīgs, jo šī sistēmas Moodle instalācija tajā nav atrodama. Tālāk norādītā vērtība ir atiestatīta.';
+$string['xmlrpcrecommended'] = 'Neobligātās xmlrpc pakotnes uzstādīšana ir noderīga Moodle tīklošanas funkcionalitātei.';
 ?>
