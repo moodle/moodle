@@ -1244,14 +1244,16 @@ function grade_course_reset($courseid) {
 }
 
 /**
- * Convert number to float or null
+ * Convert number to 5 decimalfloat, empty tring or null db compatible format
+ * (we need this to decide if db value changed)
  * @param mixed number
  * @return mixed float or null
  */
 function grade_floatval($number) {
-    if (is_null($number)) {
+    if (is_null($number) or $number === '') {
         return null;
     }
-    return (float)$number;
+    // we must round to 5 digits to get the same precision as in 10,5 db fields
+    return round($number, 5);
 }
 ?>
