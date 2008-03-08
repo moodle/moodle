@@ -72,7 +72,10 @@ foreach($co_custom as $oid=>$outcome) {
 }
 
 // now check all used standard outcomes are in outcomes_course too
-if ($realused = get_records_select('grade_items', "courseid=$courseid and outcomeid IS NOT NULL", '', 'outcomeid')) {
+$sql = "SELECT DISTINCT outcomeid
+          FROM {$CFG->prefix}grade_items
+         WHERE courseid=$courseid and outcomeid IS NOT NULL";
+if ($realused = get_records_sql($sql)) {
     $realused = array_keys($realused);
     foreach ($realused as $oid) {
         if (array_key_exists($oid, $standardoutcomes)) {
