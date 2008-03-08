@@ -469,12 +469,7 @@ class grade_category extends grade_object {
         }
 
         if ($oldgrade) {
-            if (is_null($oldgrade->finalgrade)) {
-                $oldfinalgrade = null;
-            } else {
-                // we need proper floats here for !== comparison later
-                $oldfinalgrade = (float)$oldgrade->finalgrade;
-            }
+            $oldfinalgrade = $oldgrade->finalgrade;
             $grade = new grade_grade($oldgrade, false);
             $grade->grade_item =& $this->grade_item;
 
@@ -504,7 +499,7 @@ class grade_category extends grade_object {
         // if no grades calculation possible or grading not allowed clear final grade
         if (empty($grade_values) or empty($items) or ($this->grade_item->gradetype != GRADE_TYPE_VALUE and $this->grade_item->gradetype != GRADE_TYPE_SCALE)) {
             $grade->finalgrade = null;
-            if ($grade->finalgrade !== $oldfinalgrade) {
+            if (!is_null($oldfinalgrade)) {
                 $grade->update('aggregation');
             }
             return;
@@ -541,7 +536,7 @@ class grade_category extends grade_object {
         if (count($grade_values) == 0) {
             // not enough attempts yet
             $grade->finalgrade = null;
-            if ($grade->finalgrade !== $oldfinalgrade) {
+            if (!is_null($oldfinalgrade)) {
                 $grade->update('aggregation');
             }
             return;
@@ -560,7 +555,7 @@ class grade_category extends grade_object {
         }
 
         // update in db if changed
-        if ($grade->finalgrade !== $oldfinalgrade) {
+        if (grade_floatval($grade->finalgrade) !== grade_floatval($oldfinalgrade)) {
             $grade->update('aggregation');
         }
 
@@ -718,10 +713,10 @@ class grade_category extends grade_object {
         $this->apply_limit_rules($grade_values);
 
         $sum = array_sum($grade_values);
-        $grade->finalgrade = (float)bounded_number($this->grade_item->grademin, $sum, $this->grade_item->grademax);
+        $grade->finalgrade = bounded_number($this->grade_item->grademin, $sum, $this->grade_item->grademax);
 
         // update in db if changed
-        if ($grade->finalgrade !== $oldfinalgrade) {
+        if (grade_floatval($grade->finalgrade) !== grade_floatval($oldfinalgrade)) {
             $grade->update('aggregation');
         }
 
