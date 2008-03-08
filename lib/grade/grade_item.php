@@ -938,8 +938,7 @@ class grade_item extends grade_object {
 
         // first get category - it creates the associated grade item
         $course_category = grade_category::fetch_course_category($courseid);
-
-        return grade_item::fetch(array('courseid'=>$courseid, 'itemtype'=>'course'));
+        return $course_category->get_grade_item();
     }
 
     /**
