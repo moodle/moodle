@@ -15,7 +15,7 @@
             }
         }
     } else {
-        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     }
@@ -142,8 +142,9 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             $modname = $mod->name;
             $modbackup = $modname."_backup_mods";
             //If exists the lib & function
-            $var = "exists_".$modname;
-            if (isset($$var) && $$var) {
+            $var   = 'exists_'.$modname;
+            $exvar = 'exists_one_'.$modname;
+            if (!empty($$var) and !empty($$exvar)) {
                 //Print the full tr
                 echo "<tr class=\"r".$currentrow."\">";
                 echo "  <td align=\"right\">&nbsp;";
@@ -166,29 +167,25 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                     echo '<input type="hidden" name="'.$var.'" value="0" />';
                 }
                 echo "</td></tr>\n";
-                // if we have the backup_one_mod function, loop here.
-                $var = 'exists_one_'.$modname;
-                if (!empty($$var)) {
-                    echo '<tr><td></td><td colspan="3"><table class="backup-form-instances">';
-                    $instances = get_all_instances_in_course($modname, $course, NULL, true);
-                    foreach ($instances as $instance) {
-                        echo '<tr><td>';
-                        $var = 'backup_'.$modname.'_instance_'.$instance->id;
-                        $$var = optional_param($var,1);
-                        print_checkbox($var,$$var,$$var,$instance->name,$instance->name,'this.form.elements[\'backup_'.$modname.'\'].checked=1;');
-                        echo '</td><td align="right">&nbsp;';
-                        $var = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
-                        $$var = optional_param($var,1);
-                        if (empty($to)) {
-                            print_checkbox($var,$$var,$$var,get_string('userdata'),'','this.form.elements[\'backup_user_info_'.$modname.'\'].checked=1;');
-                        } else {
-                            echo '<input type="hidden" name="'.$var.'" value="0" />';
-                        }
-                        echo '</td></tr>';
+                echo '<tr><td></td><td colspan="3"><table class="backup-form-instances">';
+                $instances = get_all_instances_in_course($modname, $course, NULL, true);
+                $var = $exvar;
+                foreach ($instances as $instance) {
+                    echo '<tr><td>';
+                    $var = 'backup_'.$modname.'_instance_'.$instance->id;
+                    $$var = optional_param($var,1);
+                    print_checkbox($var,$$var,$$var,$instance->name,$instance->name,'this.form.elements[\'backup_'.$modname.'\'].checked=1;');
+                    echo '</td><td align="right">&nbsp;';
+                    $var = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
+                    $$var = optional_param($var,1);
+                    if (empty($to)) {
+                        print_checkbox($var,$$var,$$var,get_string('userdata'),'','this.form.elements[\'backup_user_info_'.$modname.'\'].checked=1;');
+                    } else {
+                        echo '<input type="hidden" name="'.$var.'" value="0" />';
                     }
-                    echo '</table></td></tr>';
+                    echo '</td></tr>';
                 }
-
+                echo '</table></td></tr>';
             }
         }
         //Line
