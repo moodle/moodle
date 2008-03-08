@@ -197,6 +197,9 @@ class grade_category extends grade_object {
         if (empty($this->path)) {
             $this->path  = grade_category::build_path($this);
             $this->depth = substr_count($this->path, '/') - 1;
+            $updatechildren = true;
+        } else {
+            $updatechildren = false;
         }
 
         $this->apply_forced_settings();
@@ -215,7 +218,21 @@ class grade_category extends grade_object {
 
         $this->timemodified = time();
 
-        return parent::update($source);
+        $result = parent::update($source);
+
+        // now update paths in all child categories
+        if ($result and $updatechildren) {
+            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
+                foreach ($children as $child) {
+                    echo "updating $child->id ";
+                    $child->path  = null;
+                    $child->depth = 0;
+                    $child->update($source);
+                } 
+            }
+        }
+
+        return $result;
     }
 
     /**
