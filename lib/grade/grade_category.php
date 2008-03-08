@@ -860,7 +860,7 @@ class grade_category extends grade_object {
                     $sortorder++;
                 }
 
-                $cats[$cat->parent]->children[$sortorder] = $cat;
+                $cats[$cat->parent]->children[$sortorder] = &$cats[$catid];
             }
 
             if ($catid == $this->id) {
