@@ -22,7 +22,7 @@
         }
     } else {
         require_login();
-        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     }
@@ -100,7 +100,7 @@
     }
 
     //Print header
-    if (has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
         $navlinks[] = array('name' => $stradministration, 'link' => "$CFG->wwwroot/$CFG->admin/index.php", 'type' => 'misc');
         $navlinks[] = array('name' => $strcoursebackup, 'link' => 'backup.php', 'type' => 'misc');
         $navlinks[] = array('name' => "$course->fullname ($course->shortname)", 'link' => null, 'type' => 'misc');
