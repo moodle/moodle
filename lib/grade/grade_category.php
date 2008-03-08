@@ -1098,6 +1098,10 @@ class grade_category extends grade_object {
      * @return object grade_category instance for course grade
      */
     function fetch_course_category($courseid) {
+        if (empty($courseid)) {
+            debugging('Missing course id!');
+            return false;
+        }
 
         // course category has no parent
         if ($course_category = grade_category::fetch(array('courseid'=>$courseid, 'parent'=>null))) {
