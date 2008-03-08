@@ -129,15 +129,29 @@ class grade_outcome extends grade_object {
 
         if ($result = parent::update($source)) {
             if (!empty($this->courseid)) {
-                if (!get_records('grade_outcomes_courses', 'courseid', $this->courseid, 'outcomeid', $this->id)) {
-                    $goc = new object();
-                    $goc->courseid = $this->courseid;
-                    $goc->outcomeid = $this->id;
-                    insert_record('grade_outcomes_courses', $goc);
-                }
+                $this->use_in($this->courseid);
             }
         }
         return $result;
+    }
+
+    /**
+     * Mark outcome as used in course
+     * @param int $courseid
+     * @return succes - false if incorrect courseid requested
+     */
+    function use_in($courseid) {
+        if (!empty($this->courseid) and $courseid != $this->courseid) {
+            return false;
+        }
+
+        if (!record_exists('grade_outcomes_courses', 'courseid', $courseid, 'outcomeid', $this->id)) {
+            $goc = new object();
+            $goc->courseid  = $courseid;
+            $goc->outcomeid = $this->id;
+            return (bool)insert_record('grade_outcomes_courses', $goc);
+        }
+        return true;
     }
 
     /**
