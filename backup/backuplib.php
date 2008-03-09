@@ -2036,8 +2036,13 @@
 
         $status = true;
 
-        //Get groups_members
-        $groups_members = get_records("groups_members","groupid",$groupid);
+        //Get groups_members that are being included in backup
+        $groups_members = get_records_sql("SELECT gm.*
+                                           FROM {$CFG->prefix}groups_members gm,
+                                                {$CFG->prefix}backup_ids bi
+                                           WHERE gm.groupid = $groupid
+                                             AND bi.backup_code = $preferences->backup_unique_code
+                                             AND bi.table_name = 'user'");
 
         //Pring groups_members header
         if ($groups_members) {
