@@ -131,7 +131,7 @@ $THEME->chameleonenabled = false;
 /// It is recommended to set this to false again once you're 
 /// satisfied with your theme.
 
-$THEME->chameleonteachereditenabled = true;
+$THEME->chameleonteachereditenabled = false;
 
 /// If you use chameleon as a course theme setting this to true 
 /// will allow teachers on that course to edit the theme. 
