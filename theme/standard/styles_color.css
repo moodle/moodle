@@ -735,6 +735,14 @@ td.grade div.overridden {
   background-color: #DDDDDD;
 }
 
+.grade-report-grader table#user-grades td.cell span.gradepass {
+  background-color: #C2EBBD; 
+}
+
+.grade-report-grader table#user-grades td.cell span.gradefail {
+  background-color: #EBC4BD; 
+}
+
 /* grade edit */
 
 .grade-edit-tree .moving {
