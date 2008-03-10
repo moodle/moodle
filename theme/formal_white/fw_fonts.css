@@ -133,9 +133,15 @@ table.minicalendar tr td {
   font-size: 1.2em;
 }
 
+/* Accessibility: only certain fonts support Unicode chars like &#x25BA; in IE6 */
+.arrow, .arrow_button input {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+/*
 span.arrow {
   font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-}
+} */
 
 p.arrow_button input {
   font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
@@ -146,4 +152,12 @@ p.arrow_button input {
 img.resize {
   width: 1em;
   height: 1em;
+}
+
+/***
+ *** Glossary
+ ***/
+.glossarypost div.concept h3,
+.glossarypost.continuous .concept {
+  display: inline;
 }
