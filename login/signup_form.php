@@ -62,6 +62,10 @@ class login_signup_form extends moodleform {
         }else{
             $mform->setDefault('country', '');
         }
+        
+        if (signup_captcha_enabled()) {
+            $mform->addElement('recaptcha', 'recaptcha_element', get_string('visualconfirmation'));
+        }
 
         profile_signup_fields($mform);
 
@@ -130,6 +134,18 @@ class login_signup_form extends moodleform {
         $errmsg = '';
         if (!check_password_policy($data['password'], $errmsg)) {
             $errors['password'] = $errmsg;
+        }
+        
+        if (signup_captcha_enabled()) {
+            require_once $CFG->libdir . '/recaptchalib.php';
+            $response = recaptcha_check_answer($CFG->recaptchaprivatekey,
+                                               $_SERVER['REMOTE_ADDR'],
+                                               $this->_form->_submitValues['recaptcha_challenge_field'],
+                                               $this->_form->_submitValues['recaptcha_response_field']);
+            if (!$response->is_valid) {
+                $_SESSION['recaptcha_error'] = $response->error;
+                $errors['recaptcha'] = $response->error;
+            }
         }
 
         return $errors;

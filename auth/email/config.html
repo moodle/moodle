@@ -1,7 +1,25 @@
 <!-- No config needed -->
-<div style="text-align: center"><?php print_string('none'); ?></div>
+<?php
+    // set to defaults if undefined
+    if (!isset($config->recaptcha)) {
+        $config->recaptcha = false;
+    }
+
+    $yesno = array( get_string('no'), get_string('yes') );
+
+?>
 
 <table cellspacing="0" cellpadding="5" border="0">
+<tr>
+   <td colspan="3">
+        <h2 class="main"><?php print_string('auth_emailsettings', 'auth') ?> </h2>
+   </td>
+</tr>
+<tr>
+    <td align="right"><label for="recaptcha"><?php print_string('auth_emailrecaptcha_key', 'auth') ?></label></td>
+    <td><?php choose_from_menu($yesno, 'recaptcha', $config->recaptcha, ''); ?></td> 
+    <td><?php print_string('auth_emailrecaptcha', 'auth') ?></td>
+</tr>    
 <?php
 
 print_auth_lock_options('email', $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false);

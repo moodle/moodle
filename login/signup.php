@@ -1,7 +1,18 @@
 <?php  // $Id$
 
     require_once('../config.php');
+    
+    /**
+     * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
+     * @return bool
+     */
+    function signup_captcha_enabled() {
+        global $CFG;
+        return isset($CFG->recaptchapublickey) && isset($CFG->recaptchaprivatekey) && get_config('auth/email', 'recaptcha');
+    }
+    
     require_once('signup_form.php');
+    
 
     if (empty($CFG->registerauth)) {
         error("Sorry, you may not use this page.");
@@ -48,7 +59,7 @@
     $navlinks[] = array('name' => $newaccount, 'link' => null, 'type' => 'misc');
     $navigation = build_navigation($navlinks);
     print_header($newaccount, $newaccount, $navigation, $mform_signup->focus(), "", true, "<div class=\"langmenu\">$langmenu</div>");
-
+    
     $mform_signup->display();
     print_footer();
 
