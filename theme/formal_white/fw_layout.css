@@ -298,6 +298,15 @@ table.calendarmonth tr td  {
   border-style: dashed;
 }
 
+#course-view .section td.content ul.section.img-text {
+	line-height: 22px;
+}
+
+#course-view .section td.content ul.section.img-text li.activity.label {
+	line-height: 16px;
+	margin-bottom: 5px;
+}
+
 
 .tabrow0 { 
    padding-top: 4px; 
