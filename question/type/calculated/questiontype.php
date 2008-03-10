@@ -579,8 +579,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         global $CFG ;
         // max datasets = 100 items
         $max100 = 100 ;
-        $regenerate = optional_param('forceregeneration', 0, PARAM_BOOL);
-        // echo "<pre>"; print_r($fromform);
+        if(isset($fromform->nextpageparam["forceregeneration"])) { 
+            $regenerate = $fromform->nextpageparam["forceregeneration"];
+        }else{
+            $regenerate = 0 ;
+        }
         if (empty($question->options)) {
             $this->get_question_options($question);
         }
