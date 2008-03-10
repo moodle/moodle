@@ -37,7 +37,7 @@ class edit_letter_form extends moodleform {
         // Only show "override site defaults" checkbox if editing the course grade letters
         if (!$admin) {
             $mform->addElement('checkbox', 'override', get_string('overridesitedefaultgradedisplaytype', 'grades'));
-            $mform->setHelpButton('override', array('overridesitedefaultgradedisplaytype', get_string('overridesitedefaultgradedisplaytype'), 'grade'));
+            $mform->setHelpButton('override', array('overridesitedefaultgradedisplaytype', get_string('overridesitedefaultgradedisplaytype', 'grades'), 'grade'));
         }
 
         $gradeletterhelp   = get_string('configgradeletter', 'grades');
@@ -56,7 +56,7 @@ class edit_letter_form extends moodleform {
 
             $mform->addElement('text', $gradelettername, $gradeletter." $i");
             if ($i == 1) {
-                $mform->setHelpButton($gradelettername, array('gradeletter', get_string('gradeletter'), 'grade'));
+                $mform->setHelpButton($gradelettername, array('gradeletter', get_string('gradeletter', 'grades'), 'grade'));
             }
             $mform->setType($gradelettername, PARAM_TEXT);
             
@@ -67,7 +67,7 @@ class edit_letter_form extends moodleform {
 
             $mform->addElement('select', $gradeboundaryname, $gradeboundary." $i", $percentages);
             if ($i == 1) {
-                $mform->setHelpButton($gradeboundaryname, array('gradeboundary', get_string('gradeboundary'), 'grade'));
+                $mform->setHelpButton($gradeboundaryname, array('gradeboundary', get_string('gradeboundary', 'grades'), 'grade'));
             }
             $mform->setDefault($gradeboundaryname, -1);
             $mform->setType($gradeboundaryname, PARAM_INT);
