@@ -175,7 +175,7 @@ class grade_report_grader extends grade_report {
             $oldvalue = $data->{'old'.$varname};
 
             // was change requested?
-            if ($oldvalue == $postedvalue) {
+            if ($oldvalue == $postedvalue) { // string comparison
                 continue;
             }
 
@@ -776,7 +776,7 @@ class grade_report_grader extends grade_report {
 
                     if ($item->scaleid && !empty($scales_array[$item->scaleid])) {
                         $scale = $scales_array[$item->scaleid];
-
+                        $gradeval = (int)$gradeval; // scales use only integers
                         $scales = explode(",", $scale->scale);
                         // reindex because scale is off 1
 
@@ -805,7 +805,7 @@ class grade_report_grader extends grade_report {
                             $scales = explode(",", $scale->scale);
 
                             // invalid grade if gradeval < 1
-                            if ((int) $gradeval < 1) {
+                            if ($gradeval < 1) {
                                 $studentshtml .= '<span class="gradevalue'.$hidden.$gradepass.'">-</span>';
                             } else {
                                 $gradeval = (int)bounded_number($grade->grade_item->grademin, $gradeval, $grade->grade_item->grademax); //just in case somebody changes scale
