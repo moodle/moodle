@@ -27,7 +27,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                                 "WHERE a.question = $question->id " .
                                 "AND   a.id = c.answer ".
                                 "ORDER BY a.id ASC")) {
-            notify('Error: Missing question answer!');
+            notify('Error: Missing question answer for calculated question ' . $question->id . '!');
             return false;
         }
 
@@ -476,11 +476,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
     function custom_generator_tools_part(&$mform, $idx, $j){
 
         $minmaxgrp = array();
-        $minmaxgrp[] =& $mform->createElement('text', "calcmin[$idx]", get_string('calcmin', 'qtype_datasetdependent'), 'size="3"');
-        $minmaxgrp[] =& $mform->createElement('text', "calcmax[$idx]", get_string('calcmax', 'qtype_datasetdependent'), 'size="3"');
+        $minmaxgrp[] =& $mform->createElement('text', "calcmin[$idx]", get_string('calcmin', 'qtype_datasetdependent'), 'size="8"');
+        $minmaxgrp[] =& $mform->createElement('text', "calcmax[$idx]", get_string('calcmax', 'qtype_datasetdependent'), 'size="8"');
         $mform->addGroup($minmaxgrp, 'minmaxgrp', get_string('minmax', 'qtype_datasetdependent'), ' - ', false);
-        $mform->setType('calcmin', PARAM_NUMBER);
-        $mform->setType('calcmax', PARAM_NUMBER);
+        $mform->setType("calcmin[$idx]", PARAM_NUMBER);
+        $mform->setType("calcmax[$idx]", PARAM_NUMBER);
 
         $precisionoptions = range(0, 10);
         $mform->addElement('select', "calclength[$idx]", get_string('calclength', 'qtype_datasetdependent'), $precisionoptions);
@@ -578,8 +578,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         global $CFG ;
         // max datasets = 100 items
 		$max100 = 100 ;
-		$regenerate = optional_param('forceregeneration', 0, PARAM_BOOL);
-	//	echo "<pre>"; print_r($fromform);
+        if(isset($fromform->nextpageparam["forceregeneration"])) { 
+            $regenerate = $fromform->nextpageparam["forceregeneration"];
+        }else{
+            $regenerate = 0 ;
+        }
         if (empty($question->options)) {
             $this->get_question_options($question);
         }
@@ -708,62 +711,12 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
         if ($regs[1] == 'uniform') {
             $nbr = $regs[2] + ($regs[3]-$regs[2])*mt_rand()/mt_getrandmax();
-            return round($nbr, $regs[4]);
+            return sprintf("%.".$regs[4]."f",$nbr);
 
         } else if ($regs[1] == 'loguniform') {
             $log0 = log(abs($regs[2])); // It would have worked the other way to
             $nbr = exp($log0 + (log(abs($regs[3])) - $log0)*mt_rand()/mt_getrandmax());
-
-            // Reformat according to the precision $regs[4]:
-
-            // Determine the format 0.[1-9][0-9]* for the nbr...
-            $p10 = 0;
-            while ($nbr < 1) {
-                --$p10;
-                $nbr *= 10;
-            }
-            while ($nbr >= 1) {
-                ++$p10;
-                $nbr /= 10;
-            }
-            // ... and have the nbr rounded off to the correct length
-            $nbr = round($nbr, $regs[4]);
-
-            // Have the nbr written on a suitable format,
-            // Either scientific or plain numeric
-            if (-2 > $p10 || 4 < $p10) {
-                // Use scientific format:
-                $eX = 'e'.--$p10;
-                $nbr *= 10;
-                if (1 == $regs[4]) {
-                    $nbr = $nbr.$eX;
-                } else {
-                    // Attach additional zeros at the end of $nbr,
-                    $nbr .= (1==strlen($nbr) ? '.' : '')
-                            . '00000000000000000000000000000000000000000x';
-                    $nbr = substr($nbr, 0, $regs[4] +1).$eX;
-                }
-            } else {
-                // Stick to plain numeric format
-                $nbr *= "1e$p10";
-                if (0.1 <= $nbr / "1e$regs[4]") {
-                    $nbr = $nbr;
-                } else {
-                    // Could be an idea to add some zeros here
-                    $nbr .= (ereg('^[0-9]*$', $nbr) ? '.' : '')
-                            . '00000000000000000000000000000000000000000x';
-                    $oklen = $regs[4] + ($p10 < 1 ? 2-$p10 : 1);
-                    $nbr = substr($nbr, 0, $oklen);
-                }
-            }
-
-            // The larger of the values decide the sign in case the
-            // have equal different signs (which they really must not have)
-            if ($regs[2] + $regs[3] > 0) {
-                return $nbr;
-            } else {
-                return -$nbr;
-            }
+            return sprintf("%.".$regs[4]."f",$nbr);
 
         } else {
             error("The distribution $regs[1] caused problems");
@@ -965,7 +918,6 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $maxstr=get_string('max', 'quiz');
         $rangeofvaluestr=get_string('minmax','qtype_datasetdependent');
         $questionusingstr = get_string('usedinquestion','qtype_calculated');
-        $wildcardstr =  get_string('wildcard', 'qtype_calculated');
         $itemscountstr = get_string('itemscount','qtype_datasetdependent');
        $text ='';
         if (!empty($form->category)) {           
