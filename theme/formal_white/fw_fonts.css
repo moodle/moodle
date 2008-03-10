@@ -153,3 +153,11 @@ img.resize {
   width: 1em;
   height: 1em;
 }
+
+/***
+ *** Glossary
+ ***/
+.glossarypost div.concept h3,
+.glossarypost.continuous .concept {
+  display: inline;
+}
