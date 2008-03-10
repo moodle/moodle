@@ -972,6 +972,11 @@ class grade_report_grader extends grade_report {
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
 
+                if ($item->needsupdate) {
+                    $avghtml .= '<td class="cell c' . $columncount++.'"><span class="gradingerror">'.get_string('error').'</span></td>';
+                    continue;
+                }
+
                 if (!isset($sum_array[$item->id])) {
                     $sum_array[$item->id] = 0;
                 }
