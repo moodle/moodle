@@ -1211,15 +1211,18 @@ function forum_get_user_grades($forum, $userid=0) {
         // so to prevent it we review the results and ensure that rawgrade does not exceed the scale, if it does we set rawgrade = scale (i.e. full credit)
         foreach ($results as $rid=>$result) {
             if ($forum->scale >= 0) {
-                //numberic
+                //numeric
                 if ($result->rawgrade > $forum->scale) {
                     $results[$rid]->rawgrade = $forum->scale;
                 }
             } else {
                 //scales
-                $max = count_records('scale', 'id', - $forum->scale);
-                if ($result->rawgrade > $max) {
-                    $results[$rid]->rawgrade = $max;
+                if ($scale = get_record('scale', 'id', -$forum->scale)) {
+                    $scale = explode(',', $scale->scale);
+                    $max = count($scale);
+                    if ($result->rawgrade > $max) {
+                        $results[$rid]->rawgrade = $max;
+                    }
                 }
             }
         }
