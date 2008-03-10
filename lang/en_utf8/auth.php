@@ -117,6 +117,9 @@ $string['auth_emaildescription'] = 'Email confirmation is the default authentica
 $string['auth_emailtitle'] = 'Email-based self-registration';
 $string['auth_emailnoinsert'] = 'Could not add your record to the database!';
 $string['auth_emailnoemail'] = 'Tried to send you an email but failed!';
+$string['auth_emailrecaptcha'] = 'Adds a visual/audio confirmation form element to the signup page for email self-registering users. This protects your site against spammers and contributes to a worthwhile cause. See http://recaptcha.net/learnmore.html for more details.';
+$string['auth_emailrecaptcha_key'] = 'Enable reCAPTCHA element';
+$string['auth_emailsettings'] = 'Settings';
 
 // FirstClass plugin
 $string['auth_fccreators'] = 'List of groups whose members are allowed to create new courses. Separate multiple groups with \';\'. Names must be spelled exactly as on FirstClass server. System is case-sensitive.';
@@ -374,5 +377,10 @@ $string['update_never']    = 'Never';
 $string['unlocked'] = 'Unlocked';
 $string['unlockedifempty'] = 'Unlocked if empty';
 $string['locked'] = 'Locked';
-
+$string['incorrectpleasetryagain'] = 'Incorrect. Please try again.';
+$string['enterthewordsabove'] = 'Enter the words above:';
+$string['enterthenumbersyouhear'] = 'Enter the numbers you hear:';
+$string['getanothercaptcha'] = 'Get another CAPTCHA';
+$string['getanaudiocaptcha'] = 'Get an audio CAPTCHA';
+$string['getanimagecaptcha'] = 'Get an image CAPTCHA';
 ?>
