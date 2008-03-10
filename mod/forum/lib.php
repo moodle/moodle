@@ -1209,9 +1209,18 @@ function forum_get_user_grades($forum, $userid=0) {
     if ($results = get_records_sql($sql)) {
         // it could throw off the grading if count and sum returned a rawgrade higher than scale
         // so to prevent it we review the results and ensure that rawgrade does not exceed the scale, if it does we set rawgrade = scale (i.e. full credit)
-        foreach ($results as $result) {
-            if ($result->rawgrade > $forum->scale) {
-                $result->rawgrade = $forum->scale;
+        foreach ($results as $rid=>$result) {
+            if ($forum->scale >= 0) {
+                //numberic
+                if ($result->rawgrade > $forum->scale) {
+                    $results[$rid]->rawgrade = $forum->scale;
+                }
+            } else {
+                //scales
+                $max = count_records('scale', 'id', - $forum->scale);
+                if ($result->rawgrade > $max) {
+                    $results[$rid]->rawgrade = $max;
+                }
             }
         }
     }
