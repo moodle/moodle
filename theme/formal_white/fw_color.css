@@ -31,6 +31,12 @@ h2 {
   background-color: #E3DFD4;
   border-color:#C6BDA8;
 }
+
+h2.headingblock.header  {
+ background: url(pix/grad/gradient_h.jpg);
+}
+
+
 h3 {
   border-color:#C6BDA8;
 }
@@ -51,8 +57,18 @@ div.header {
 
 }
 
-#layout-table #left-column {
-    /* background-color: yellow; */
+th.header {
+  border-color: #C6BDA8;
+}
+
+#left-column .hidden .header, #right-column .hidden .header {
+  border-color:#C6BDA8;
+}
+
+
+#layout-table #left-column, #layout-table #right-column {
+    background-color: #FEF9F6;
+    border-color:#C6BDA8;
 }
 
 .generalbox {
@@ -66,20 +82,27 @@ div.header {
   /* background-color:#FFFFFF; */
 }
 
-.generaltable .r0 td.cell.c0 {
+/* .generaltable .r0 td.cell.c0 {
  background-color:#C6BDA8; 
+} */
+
+.generaltable .r0 {
+ background-color:#FEF9F6; 
+}
+
+.generaltable .r1 {
+ background-color:#F1EFEB; 
 }
 
 .generaltable .r1 td.cell.c0 {
 border-color:#C6BDA8; 
-background-color:#E3DFD4; 
+/* background-color:#E3DFD4; */
 }
-
 
 .navbar {
   background-color:#C6BDA8;
-  border-color:#666666;
-  /* height: 20px; */
+/*  border-color:#666666;
+  height: 20px; */
   background: url(pix/grad/bg_bread.jpg) repeat-x;
 }
 
@@ -96,7 +119,17 @@ background-color:#E3DFD4;
   color:#C6BDA8; /* highlight missing terms in forum search */
 }
 
+/***
+ *** Roles
+ ***/
 
+.rolecap .inherit.capdefault, .rolecap .allow.capdefault {
+  background-color:#E3DFD4;
+}
+
+#admin-roles-override .capcurrent {
+  background-color:#E3DFD4;
+}
 
 /***
  *** Header
@@ -107,12 +140,18 @@ background-color:#E3DFD4;
   border-color:#C6BDA8;
 }
 
+h1.headermain {
+  background-color: transparent;
+}
+
 /***
  *** Login
  ***/
 
 
-.loginbox .header {
+.loginbox,
+.loginbox.twocolumns .loginpanel,
+.loginbox .subcontent {
   border-color:#C6BDA8;
 }
 
@@ -120,22 +159,17 @@ background-color:#E3DFD4;
   border-color:#C6BDA8;
 }
 
-
 /***
  *** Blocks
  ***/
- 
-.sideblock .header {
-  border-color: #C6BDA8;
-}
-
-.sideblock {
-  border-color:#C6BDA8;
-}
 
 .sideblock .content {
-  border-color:#C6BDA8;
-  background-color:#FEF9F6;
+   background-color:#FEF9F6;
+}
+
+.sideblock .header, .sideblock .header h2 {
+ background: url(pix/grad/gradient_h.jpg) repeat-x;
+ background-color:#E3DFD4; 
 }
 
 .sideblock hr {
@@ -145,14 +179,6 @@ background-color:#E3DFD4;
 
 .sideblock .footer {
   border-top-color:#C6BDA8;
-}
-
-.sideblock .header .hide-show img.hide-show-image {
-  background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
-}
-
-.sideblock.hidden .header .hide-show img.hide-show-image {
-  background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
 .sideblock .content .post .head .date,
@@ -247,6 +273,15 @@ table.minicalendar tr td.weekend {
 
 .headingblock {
   border-color:#C6BDA8;
+}
+
+.coursebox {
+  border-color:#C6BDA8;
+  background: #FEF9F6;
+}
+
+.coursebox .info {
+ background: #EDEAE4;
 }
 
 .categoryboxcontent,
@@ -371,3 +406,47 @@ table.minicalendar tr td.weekend {
 
 #mod-forum-index .unread {
 }
+
+/***
+ *** Error message
+ ***/
+
+.errorbox {
+/*   color:#ffffff; */
+   border-color:#990000;
+   background-color:#FEF9F6;
+ }
+
+.errorboxcontent {
+   background-color:#FEF9F6;
+}
+ 
+
+/***
+ *** Grade
+ ***/
+
+.grade-report-grader table#user-grades td.cell span.gradepass {
+  background-color: #C2EBBD; 
+}
+
+.grade-report-grader table#user-grades td.cell span.gradefail {
+  background-color: #EBC4BD;
+}
+
+/***
+ *** User
+ ***/
+
+.userinfobox {
+ border-color: #C6BDA8;
+}
+
+.userinfobox .side {
+ background-color: #EDEAE4;
+}
+
+.userinfobox .content {
+ background-color: #FEF9F6;
+}
+
