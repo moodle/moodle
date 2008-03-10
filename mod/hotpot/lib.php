@@ -1851,7 +1851,7 @@ function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $clos
 	}
 
 	if ($query) {
-		$search = '#'.'(file|src|thesound)='."([^&]+)".'#ise';
+		$search = '#'.'(file|src|thesound|mp3)='."([^&]+)".'#ise';
 		$replace = "'\\1='.hotpot_convert_url('".$baseurl."','".$reference."','\\2')";
 		$query = preg_replace($search, $replace, $query);
 	}
