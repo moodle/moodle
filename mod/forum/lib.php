@@ -1217,9 +1217,12 @@ function forum_get_user_grades($forum, $userid=0) {
                 }
             } else {
                 //scales
-                $max = count_records('scale', 'id', - $forum->scale);
-                if ($result->rawgrade > $max) {
-                    $results[$rid]->rawgrade = $max;
+                if ($scale = get_record('scale', 'id', -$forum->scale)) {
+                    $scale = explode(',', $scale->scale);
+                    $max = count($scale);
+                    if ($result->rawgrade > $max) {
+                        $results[$rid]->rawgrade = $max;
+                    }
                 }
             }
         }
