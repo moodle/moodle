@@ -408,6 +408,21 @@ table.minicalendar tr td.weekend {
 }
 
 /***
+ *** Error message
+ ***/
+
+.errorbox {
+/*   color:#ffffff; */
+   border-color:#990000;
+   background-color:#FEF9F6;
+ }
+
+.errorboxcontent {
+   background-color:#FEF9F6;
+}
+ 
+
+/***
  *** Grade
  ***/
 
