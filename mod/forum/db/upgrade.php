@@ -32,14 +32,6 @@ function xmldb_forum_upgrade($oldversion=0) {
 ///     $result = result of "/lib/ddllib.php" function calls
 /// }
 
-    if ($result && $oldversion < 2007072200) {
-        require_once($CFG->dirroot.'/mod/forum/lib.php');
-        // too much debug output
-        $db->debug = false;
-        forum_update_grades();
-        $db->debug = true;
-    }  
-
     if ($result && $oldversion < 2007101000) {
 
     /// Define field timemodified to be added to forum_queue
@@ -51,6 +43,14 @@ function xmldb_forum_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
+    if ($result and $oldversion < 2007101510) {
+        //MDL-13866 - send forum ratins to gradebook again
+        require_once($CFG->dirroot.'/mod/forum/lib.php');
+        // too much debug output
+        $db->debug = false;
+        forum_update_grades();
+        $db->debug = true;
+    }
 
     return $result;
 }
