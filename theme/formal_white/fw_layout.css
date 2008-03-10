@@ -329,4 +329,11 @@ table.calendarmonth tr td  {
    padding-top: 4px; 
 } 
 
+/***
+ *** Error message
+ ***/
 
+.errorbox {
+/*   color:#ffffff; */
+   border-width: 2px;
+}
