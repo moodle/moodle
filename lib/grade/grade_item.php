@@ -1589,6 +1589,10 @@ class grade_item extends grade_object {
 
         // prepare formula and init maths library
         $formula = preg_replace('/##(gi\d+)##/', '\1', $this->calculation);
+        if (strpos($formula, '[[') !== false) {
+            // missing item
+            return false;
+        }
         $this->formula = new calc_formula($formula);
 
         // where to look for final grades?
