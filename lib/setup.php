@@ -311,15 +311,15 @@ global $HTTPSPAGEREQUIRED;
         if ($CFG->cachetype === 'memcached' && !empty($CFG->memcachedhosts)) {
             if (!init_memcached()) {
                 debugging("Error initialising memcached");
+                $CFG->cachetype = '';
+                $CFG->rcache = false;
             }
-            $CFG->cachetype = '';
-            $CFG->rcache = false;
         } else if ($CFG->cachetype === 'eaccelerator') {
             if (!init_eaccelerator()) {
                 debugging("Error initialising eaccelerator cache");
+                $CFG->cachetype = '';
+                $CFG->rcache = false;                
             }
-            $CFG->cachetype = '';
-            $CFG->rcache = false;
         }
 
     } else { // just make sure it is defined
