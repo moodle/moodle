@@ -299,35 +299,42 @@ class grade_report_grader extends grade_report {
         global $CFG;
 
         if (is_numeric($this->sortitemid)) {
+            $sort = "g.finalgrade $this->sortorder";
+
             $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
-                    FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
-                         {$CFG->prefix}user u ON (u.id = g.userid AND g.itemid = $this->sortitemid)
-                         LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
-                         $this->groupsql
-                    WHERE ra.roleid in ($this->gradebookroles)
-                         $this->groupwheresql
-                    AND ra.contextid ".get_related_contexts_string($this->context)."
-                    ORDER BY g.finalgrade $this->sortorder";
-            $this->users = get_records_sql($sql, $this->get_pref('studentsperpage') * $this->page,
-                                $this->get_pref('studentsperpage'));
+                      FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
+                           {$CFG->prefix}user u ON (u.id = g.userid AND g.itemid = $this->sortitemid)
+                           LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                           $this->groupsql
+                     WHERE ra.roleid in ($this->gradebookroles)
+                           $this->groupwheresql
+                           AND ra.contextid ".get_related_contexts_string($this->context)."
+                  ORDER BY $sort";
+
         } else {
-            // default sort
-            // get users sorted by lastname
-
-            // If lastname or firstname is given as sortitemid, add the other name (firstname or lastname respectively) as second sort param
-            $sort2 = '';
-            if ($this->sortitemid == 'lastname') {
-                $sort2 = ', u.firstname '.$this->sortorder;
-            } elseif ($this->sortitemid == 'firstname') {
-                $sort2 = ', u.lastname '.$this->sortorder;
+            switch($this->sortitemid) {
+                case 'lastname':
+                    $sort = "u.lastname $this->sortorder, u.firstname $this->sortorder"; break;
+                case 'firstname':
+                    $sort = "u.firstname $this->sortorder, u.lastname $this->sortorder"; break;
+                case 'idnumber':
+                default:
+                    $sort = "u.idnumber $this->sortorder"; break;
             }
-            $sort2 .= ', u.id ASC'; // make sure the order is the same in case the sort item values are the same 
-            $roles = explode(',', $this->gradebookroles);
-            $this->users = get_role_users($roles, $this->context, false,
-                            'u.id, u.firstname, u.lastname, u.idnumber, u.imagealt, u.picture', 'u.'.$this->sortitemid .' '. $this->sortorder . $sort2,
-                            false, $this->currentgroup, $this->page * $this->get_pref('studentsperpage'), $this->get_pref('studentsperpage'));
 
+            $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
+                      FROM {$CFG->prefix}user u
+                           LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                           $this->groupsql
+                     WHERE ra.roleid in ($this->gradebookroles)
+                           $this->groupwheresql
+                           AND ra.contextid ".get_related_contexts_string($this->context)."
+                  ORDER BY $sort";
         }
+
+
+        $this->users = get_records_sql($sql, $this->get_pref('studentsperpage') * $this->page,
+                            $this->get_pref('studentsperpage'));
 
         if (empty($this->users)) {
             $this->userselect = '';
