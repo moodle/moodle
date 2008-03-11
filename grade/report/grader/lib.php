@@ -324,7 +324,7 @@ class grade_report_grader extends grade_report {
 
             $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
                       FROM {$CFG->prefix}user u
-                           LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                           JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
                            $this->groupsql
                      WHERE ra.roleid in ($this->gradebookroles)
                            $this->groupwheresql
