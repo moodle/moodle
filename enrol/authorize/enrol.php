@@ -417,7 +417,8 @@ class enrolment_plugin_authorize
             $captureday = intval($frm->an_capture_day);
             $emailexpired = intval($frm->an_emailexpired);
             if ($captureday > 0 || $emailexpired > 0) {
-                if ((time() - intval($mconfig->an_lastcron) > 3600 * 24)) {
+                $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
+                if ((time() - intval($lastcron) > 3600 * 24)) {
                     notify(get_string('admincronsetup', 'enrol_authorize'));
                 }
             }
@@ -491,7 +492,8 @@ class enrolment_plugin_authorize
         $emailexpired = ($emailexpired > 5) ? 5 : (($emailexpired < 0) ? 0 : $emailexpired);
 
         if (!empty($reviewval) && ($captureday > 0 || $emailexpired > 0)) {
-            if (time() - intval($mconfig->an_lastcron) > 3600 * 24) {
+            $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
+            if (time() - intval($lastcron) > 3600 * 24) {
                 return false;
             }
         }
@@ -560,7 +562,6 @@ class enrolment_plugin_authorize
         $settlementtime = authorize_getsettletime($timenow);
         $timediff30 = $settlementtime - (30 * $oneday);
         $mconfig = get_config('enrol/authorize');
-        set_config('an_lastcron', $timenow, 'enrol/authorize');
 
         mtrace("Processing authorize cron...");
 
@@ -601,6 +602,7 @@ class enrolment_plugin_authorize
             mtrace("blocked");
             return;
         }
+        set_config('an_lastcron', $timenow, 'enrol/authorize');
 
         mtrace("    $ordercount orders are being processed now", ": ");
 
