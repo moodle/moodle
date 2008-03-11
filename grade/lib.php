@@ -933,11 +933,11 @@ class grade_structure {
             }
         }
 
-        static $stredit = null;
-        static $strfeedback = null;
-        if (is_null($stredit)) {
-            $stredit = get_string('edit');
-            $strfeedback = get_string('feedback');
+        static $strfeedback   = null;
+        static $streditgrade = null;
+        if (is_null($streditgrade)) {
+            $streditgrade = get_string('editgrade', 'grades');
+            $strfeedback  = get_string('feedback');
         }
 
         $strparams = $this->get_params_for_iconstr($element);
@@ -967,6 +967,7 @@ class grade_structure {
                 break;
 
             case 'grade':
+                $stredit = $streditgrade;
                 if (empty($object->id)) {
                     $url = $CFG->wwwroot.'/grade/edit/tree/grade.php?courseid='.$this->courseid.'&amp;itemid='.$object->itemid.'&amp;userid='.$object->userid;
                 } else {
