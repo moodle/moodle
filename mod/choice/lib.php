@@ -440,6 +440,10 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                     echo get_string("limit", "choice").":";
                     $choice_option = get_record("choice_options", "id", $optionid);
                     echo $choice_option->maxanswers;
+                } else {
+                    if (isset($columncount[$optionid])) {
+                        echo $columncount[$optionid];
+                    }
                 }
                 echo "</td>";
                 $count++;
