@@ -144,8 +144,11 @@ function choice_show_form($choice, $user, $cm, $allresponses) {
             $cdisplay[$aid]->optionid = $optionid;
             $cdisplay[$aid]->text = $text;
             $cdisplay[$aid]->maxanswers = $choice->maxanswers[$optionid];
-            $cdisplay[$aid]->countanswers = count($allresponses[$optionid]);
-
+            if (isset($allresponses[$optionid])) {
+                $cdisplay[$aid]->countanswers = count($allresponses[$optionid]);
+            } else {
+                $cdisplay[$aid]->countanswers = 0;
+            }
             if ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id, 'optionid', $optionid)) {
                 $cdisplay[$aid]->checked = ' checked="checked" ';
             } else {
