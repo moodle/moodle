@@ -55,7 +55,7 @@
 
     $modinfo = get_fast_modinfo($course);
 
-    $modules = get_records_select('modules', "visible = 1 AND name <> 'label'", 'name ASC'); 
+    $modules = get_records_select('modules', "visible = 1 AND name <> 'label'", 'name ASC');
 
     $instanceoptions = array();
     foreach ($modules as $module) {
@@ -65,7 +65,7 @@
         $agroup = get_string('modulenameplural', $module->name);
         $instanceoptions[$agroup] = array();
         foreach ($modinfo->instances[$module->name] as $cm) {
-            $instanceoptions[$agroup][$cm->id] = format_string($cm->name); 
+            $instanceoptions[$agroup][$cm->id] = format_string($cm->name);
         }
     }
 
@@ -128,24 +128,23 @@
     $baseurl =  $CFG->wwwroot.'/course/report/participation/index.php?id='.$course->id.'&amp;roleid='
         .$roleid.'&amp;instanceid='.$instanceid.'&amp;timefrom='.$timefrom.'&amp;action='.$action.'&amp;perpage='.$perpage;
 
-
-    // from here assume we have at least the module we're using.
-    $cm = $modinfo->cms[$instanceid];
-    $modulename = get_string('modulename', $cm->modname);
-
-    include_once($CFG->dirroot.'/mod/'.$cm->modname.'/lib.php');
-
-    $viewfun = $cm->modname.'_get_view_actions';
-    $postfun = $cm->modname.'_get_post_actions';
-
-    if (!function_exists($viewfun) || !function_exists($postfun)) {
-        error(get_string('modulemissingcode','error',$cm->modname), $baseurl);
-    }
-
-    $viewnames = $viewfun();
-    $postnames = $postfun();
-
     if (!empty($instanceid) && !empty($roleid)) {
+        // from here assume we have at least the module we're using.
+        $cm = $modinfo->cms[$instanceid];
+        $modulename = get_string('modulename', $cm->modname);
+
+        include_once($CFG->dirroot.'/mod/'.$cm->modname.'/lib.php');
+
+        $viewfun = $cm->modname.'_get_view_actions';
+        $postfun = $cm->modname.'_get_post_actions';
+
+        if (!function_exists($viewfun) || !function_exists($postfun)) {
+            error(get_string('modulemissingcode','error',$cm->modname), $baseurl);
+        }
+
+        $viewnames = $viewfun();
+        $postnames = $postfun();
+
         $table = new flexible_table('course-participation-'.$course->id.'-'.$cm->id.'-'.$roleid);
         $table->course = $course;
 
