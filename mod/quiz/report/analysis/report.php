@@ -237,7 +237,7 @@ class quiz_report extends quiz_default_report {
                 $this->Export_CSV($questions, $filename);
                 break;            
             case "HTML":
-              //  $this->Export_HTML($questions, $filename);
+                $this->Export_HTML($questions, $filename);
                 break;
             }
         }
@@ -363,9 +363,6 @@ class quiz_report extends quiz_default_report {
             foreach($responses as $response) {
                 $table->add_data(array('', '', $response->text, $response->credit, $response->rcount, $response->rpercent, '', '', '', ''));
             }
-        }
-        if( $download == "HTML") {
-           $this->Export_HTML($questions, $filename,$table);
         }
         print_heading_with_help(get_string("analysistitle", "quiz_analysis"),"itemanalysis", "quiz");
 
@@ -678,7 +675,7 @@ class quiz_report extends quiz_default_report {
         }
         exit;
     }
-    function Export_HTML(&$questions, $filename,$table) {
+    function Export_HTML(&$questions, $filename) {
         $headers = array();
         $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('qidtitle','quiz_analysis').'</span>';
         $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('qtypetitle','quiz_analysis').'</span>';
