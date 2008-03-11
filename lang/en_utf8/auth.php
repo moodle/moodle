@@ -383,4 +383,5 @@ $string['enterthenumbersyouhear'] = 'Enter the numbers you hear:';
 $string['getanothercaptcha'] = 'Get another CAPTCHA';
 $string['getanaudiocaptcha'] = 'Get an audio CAPTCHA';
 $string['getanimagecaptcha'] = 'Get an image CAPTCHA';
+$string['recaptcha'] = 'reCAPTCHA';
 ?>

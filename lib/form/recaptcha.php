@@ -18,6 +18,13 @@
 class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
 
     /**
+     * html for help button, if empty then no help
+     *
+     * @var string
+     */
+    var $_helpbutton='';
+
+    /**
      * <code>
      * $form->addElement('textarea_counter', 'message', 'Message',
      *   array('cols'=>60, 'rows'=>10), 160);
@@ -47,12 +54,13 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
             };
               </script>' . "\n";
 
-              
-        if (empty($_SESSION['recaptcha_error'])) {
-            $_SESSION['recaptcha_error'] = null;
+        $attributes = $this->getAttributes();
+        if (empty($attributes['error_message'])) {
+            $attributes['error_message'] = null;
+            $this->setAttributes($attributes);
         }
-        $error = $_SESSION['recaptcha_error'];
-        unset($_SESSION['recaptcha_error']);
+        $error = $attributes['error_message'];
+        unset($attributes['error_message']);
         
         $strincorrectpleasetryagain = get_string('incorrectpleasetryagain', 'auth');
         $strenterthewordsabove = get_string('enterthewordsabove', 'auth');
@@ -78,6 +86,53 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
 </div>'; 
 
         return $html . recaptcha_get_html($CFG->recaptchapublickey, $error);
+    }
+    
+    /**
+     * set html for help button
+     *
+     * @access   public
+     * @param array $help array of arguments to make a help button
+     * @param string $function function name to call to get html
+     */
+    function setHelpButton($helpbuttonargs, $function='helpbutton'){
+        if (!is_array($helpbuttonargs)){
+            $helpbuttonargs=array($helpbuttonargs);
+        }else{
+            $helpbuttonargs=$helpbuttonargs;
+        }
+        //we do this to to return html instead of printing it
+        //without having to specify it in every call to make a button.
+        if ('helpbutton' == $function){
+            $defaultargs=array('', '', 'moodle', true, false, '', true);
+            $helpbuttonargs=$helpbuttonargs + $defaultargs ;
+        }
+        $this->_helpbutton=call_user_func_array($function, $helpbuttonargs);
+    }
+    /**
+     * get html for help button
+     *
+     * @access   public
+     * @return  string html for help button
+     */
+    function getHelpButton(){
+        return $this->_helpbutton;
+    }
+
+    function verify($challenge_field, $response_field) {
+        global $CFG;
+        require_once $CFG->libdir . '/recaptchalib.php';
+        $response = recaptcha_check_answer($CFG->recaptchaprivatekey,
+                                           $_SERVER['REMOTE_ADDR'],
+                                           $challenge_field,
+                                           $response_field);
+        if (!$response->is_valid) {
+            $attributes = $this->getAttributes();
+            $attributes['error_message'] = $response->error;
+            $this->setAttributes($attributes);
+            return $response->error;
+        }
+        return true;
     }
 }
 

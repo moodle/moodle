@@ -65,30 +65,26 @@ function _recaptcha_qsencode ($data) {
  * @return array response
  */
 function _recaptcha_http_post($host, $path, $data, $port = 80) {
+        global $CFG;
+        require_once $CFG->libdir . '/snoopy/Snoopy.class.inc';
 
-        $req = _recaptcha_qsencode ($data);
-
-        $http_request  = "POST $path HTTP/1.0\r\n";
-        $http_request .= "Host: $host\r\n";
-        $http_request .= "Content-Type: application/x-www-form-urlencoded;\r\n";
-        $http_request .= "Content-Length: " . strlen($req) . "\r\n";
-        $http_request .= "User-Agent: reCAPTCHA/PHP\r\n";
-        $http_request .= "\r\n";
-        $http_request .= $req;
-
-        $response = '';
-        if( false == ( $fs = @fsockopen($host, $port, $errno, $errstr, 10) ) ) {
-                die ('Could not open socket');
+        $snoopy = new Snoopy();
+        $snoopy->proxy_host = $CFG->proxyhost;
+        $snoopy->proxy_port = $CFG->proxyport;
+        
+        if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
+            // this will probably fail, but let's try it anyway
+            $snoopy->proxy_user     = $CFG->proxyuser;
+            $snoopy->proxy_password = $CFG->proxypassword;
         }
-
-        fwrite($fs, $http_request);
-
-        while ( !feof($fs) )
-                $response .= fgets($fs, 1160); // One TCP-IP packet
-        fclose($fs);
-        $response = explode("\r\n\r\n", $response, 2);
-
-        return $response;
+        
+        $submit = $snoopy->submit('http://' . $host . $path, $data);
+        
+        if ($submit) {
+            return array(1 => $snoopy->results);
+        } else {
+            return false;
+        }
 }
 
 

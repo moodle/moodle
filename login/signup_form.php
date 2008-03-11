@@ -64,7 +64,8 @@ class login_signup_form extends moodleform {
         }
         
         if (signup_captcha_enabled()) {
-            $mform->addElement('recaptcha', 'recaptcha_element', get_string('visualconfirmation'));
+            $mform->addElement('recaptcha', 'recaptcha_element', get_string('recaptcha', 'auth'));
+            $mform->setHelpButton('recaptcha_element', array('recaptcha', get_string('recaptcha', 'auth'))); 
         }
 
         profile_signup_fields($mform);
@@ -137,20 +138,15 @@ class login_signup_form extends moodleform {
         }
         
         if (signup_captcha_enabled()) {
-            require_once $CFG->libdir . '/recaptchalib.php';
-            $response = recaptcha_check_answer($CFG->recaptchaprivatekey,
-                                               $_SERVER['REMOTE_ADDR'],
-                                               $this->_form->_submitValues['recaptcha_challenge_field'],
-                                               $this->_form->_submitValues['recaptcha_response_field']);
-            if (!$response->is_valid) {
-                $_SESSION['recaptcha_error'] = $response->error;
-                $errors['recaptcha'] = $response->error;
+            $recaptcha_element = $this->_form->getElement('recaptcha_element'); 
+            $challenge_field = $this->_form->_submitValues['recaptcha_challenge_field'];
+            $response_field = $this->_form->_submitValues['recaptcha_response_field'];
+            if (true !== ($result = $recaptcha_element->verify($challenge_field, $response_field))) {
+                $errors['recaptcha'] = $result;
             }
         }
 
-        return $errors;
-
-
+        return $errors; 
     }
 }
 
