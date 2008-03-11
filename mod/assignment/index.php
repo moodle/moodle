@@ -90,6 +90,9 @@
         if (isset($grading_info->items[0])) {
             $grade = $grading_info->items[0]->grades[$USER->id]->str_grade;
         }
+        else {
+            $grade = '-';
+        }
 
         $type = $types[$cm->assignmenttype];
 
