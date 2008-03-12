@@ -67,6 +67,8 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 
     // only following grade_item properties can be changed in this function
     $allowed = array('itemname', 'idnumber', 'gradetype', 'grademax', 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted', 'hidden');
+    // list of 10,5 numeric fields
+    $floats  = array('grademin', 'grademax', 'multfactor', 'plusfactor');
 
     // grade item identification
     $params = compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber');
@@ -143,9 +145,17 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
                     // ignore it
                     continue;
                 }
-                if ($grade_item->{$k} != $v) {
-                    $grade_item->{$k} = $v;
-                    $update = true;
+                if (in_array($k, $floats)) {
+                    if (grade_floats_different($grade_item->{$k}, $v)) {
+                        $grade_item->{$k} = $v;
+                        $update = true;
+                    }
+                    
+                } else {
+                    if ($grade_item->{$k} != $v) {
+                        $grade_item->{$k} = $v;
+                        $update = true;
+                    }
                 }
             }
             if ($update) {
@@ -1254,6 +1264,20 @@ function grade_floatval($number) {
         return null;
     }
     // we must round to 5 digits to get the same precision as in 10,5 db fields
+    // note: db rounding for 10,5 is different from php round() function
     return round($number, 5);
 }
+
+/**
+ * Compare two float numbers safely. Uses 5 decimals php precision. Nulls accepted too.
+ * Used for skipping of db updates
+ * @param float $f1
+ * @param float $f2
+ * @return true if different
+ */
+function grade_floats_different($f1, $f2) {
+    // note: db rounding for 10,5 is different from php round() function
+    return (grade_floatval($f1) !== grade_floatval($f2));
+}
+
 ?>

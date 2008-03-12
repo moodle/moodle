@@ -217,6 +217,9 @@ if ($mform->is_cancelled()) {
         } else {
             $grade_grade->set_locktime($data->locktime); //set_lock may reset locktime
             $grade_grade->set_locked($data->locked, false, true);
+            // reload grade in case it was regraded from activity
+            $grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true);
+            $grade_grade->grade_item =& $grade_item; // no db fetching
         }
     }
 
