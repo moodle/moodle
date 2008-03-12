@@ -366,8 +366,8 @@ class grade_grade extends grade_object {
             $this->locked = 0;
             $this->update();
 
-            if ($refresh) {
-                //refresh when unlocking
+            if ($refresh and !$this->is_overridden()) {
+                //refresh when unlocking and not overridden
                 $this->grade_item->refresh_grades($this->userid);
             }
 
@@ -718,6 +718,20 @@ class grade_grade extends grade_object {
     function insert($source=null) { 
         $this->timecreated = $this->timemodified = time(); 
         return parent::insert($source);
+    }
+
+    /**
+     * In addition to update() as defined in grade_object rounds the float numbers using php function,
+     * the reason is we need to compare the db value with computed number to skip updates if possible.
+     * @param string $source from where was the object inserted (mod/forum, manual, etc.)
+     * @return boolean success
+     */
+    function update($source=null) {
+        $this->rawgrade    = grade_floatval($this->rawgrade);
+        $this->finalgrade  = grade_floatval($this->finalgrade);
+        $this->rawgrademin = grade_floatval($this->rawgrademin);
+        $this->rawgrademax = grade_floatval($this->rawgrademax);
+        return parent::update($source);
     }
 }
 ?>

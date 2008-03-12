@@ -245,7 +245,8 @@ class grade_item extends grade_object {
 
     /**
      * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.
-     * Force regrading if necessary
+     * Force regrading if necessary, rounds the float numbers using php function,
+     * the reason is we need to compare the db value with computed number to skip regrading if possible.
      * @param string $source from where was the object inserted (mod/forum, manual, etc.)
      * @return boolean success
      */
@@ -267,6 +268,12 @@ class grade_item extends grade_object {
 
         $this->timemodified = time();
 
+        $this->grademin        = grade_floatval($this->grademin);
+        $this->grademax        = grade_floatval($this->grademax);
+        $this->multfactor      = grade_floatval($this->multfactor);
+        $this->plusfactor      = grade_floatval($this->plusfactor);
+        $this->aggregationcoef = grade_floatval($this->aggregationcoef);
+
         return parent::update($source);
     }
 
@@ -286,14 +293,14 @@ class grade_item extends grade_object {
         $calculationdiff = $db_item->calculation != $this->calculation;
         $categorydiff    = $db_item->categoryid  != $this->categoryid;
         $gradetypediff   = $db_item->gradetype   != $this->gradetype;
-        $grademindiff    = $db_item->grademin    != $this->grademin;
         $scaleiddiff     = $db_item->scaleid     != $this->scaleid;
         $outcomeiddiff   = $db_item->outcomeid   != $this->outcomeid;
         $locktimediff    = $db_item->locktime    != $this->locktime;
-        $grademaxdiff    = grade_floatval($db_item->grademax)        !== grade_floatval($this->grademax);
-        $multfactordiff  = grade_floatval($db_item->multfactor)      !== grade_floatval($this->multfactor);
-        $plusfactordiff  = grade_floatval($db_item->plusfactor)      !== grade_floatval($this->plusfactor);
-        $acoefdiff       = grade_floatval($db_item->aggregationcoef) !== grade_floatval($this->aggregationcoef);
+        $grademindiff    = grade_floats_different($db_item->grademin,        $this->grademin);
+        $grademaxdiff    = grade_floats_different($db_item->grademax,        $this->grademax);
+        $multfactordiff  = grade_floats_different($db_item->multfactor,      $this->multfactor);
+        $plusfactordiff  = grade_floats_different($db_item->plusfactor,      $this->plusfactor);
+        $acoefdiff       = grade_floats_different($db_item->aggregationcoef, $this->aggregationcoef);
 
         $needsupdatediff = !$db_item->needsupdate &&  $this->needsupdate;    // force regrading only if setting the flag first time
         $lockeddiff      = !empty($db_item->locked) && empty($this->locked); // force regrading only when unlocking
@@ -683,7 +690,7 @@ class grade_item extends grade_object {
 
                 $grade->finalgrade = $this->adjust_raw_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
 
-                if (grade_floatval($grade_record->finalgrade) !== grade_floatval($grade->finalgrade)) {
+                if (grade_floats_different($grade_record->finalgrade, $grade->finalgrade)) {
                     if (!$grade->update('system')) {
                         $result = "Internal error updating final grade";
                     }
@@ -965,7 +972,7 @@ class grade_item extends grade_object {
          */
 
         // first detect if we need to change calculation formula from [[idnumber]] to ##giXXX## (after backup, etc.)
-        if (!$this->calculation_normalized and strpos('[[', $this->calculation) !== 0) {
+        if (!$this->calculation_normalized and strpos('[[', $this->calculation) !== false) {
             $this->set_calculation($this->calculation);
         }
 
@@ -1126,6 +1133,9 @@ class grade_item extends grade_object {
      * @return void
      */
     function set_sortorder($sortorder) {
+        if ($this->sortorder == $sortorder) {
+            return;
+        } 
         $this->sortorder = $sortorder;
         $this->update();
     }
@@ -1393,9 +1403,9 @@ class grade_item extends grade_object {
             $grade->timemodified = time(); // overridden flag might take over, but anyway
             $result = (boolean)$grade->insert($source);
 
-        } else if (grade_floatval($grade->finalgrade)     !== grade_floatval($oldgrade->finalgrade)
-                or grade_floatval($grade->feedback)       !== grade_floatval($oldgrade->feedback)
-                or grade_floatval($grade->feedbackformat) !== grade_floatval($oldgrade->feedbackformat)) {
+        } else if (grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)
+                or $grade->feedback       !== $oldgrade->feedback
+                or $grade->feedbackformat != $oldgrade->feedbackformat) {
             $grade->timemodified = time(); // overridden flag might take over, but anyway
             $result = $grade->update($source);
         } else {
@@ -1505,7 +1515,7 @@ class grade_item extends grade_object {
         }
 
         // do we have comment from teacher?
-        if ($feedback !== false) {
+        if ($feedback !== false and !$grade->is_overridden()) {
             $grade->feedback       = $feedback;
             $grade->feedbackformat = $feedbackformat;
         }
@@ -1522,13 +1532,13 @@ class grade_item extends grade_object {
         if (empty($grade->id)) {
             $result = (boolean)$grade->insert($source);
 
-        } else if (grade_floatval($grade->finalgrade)     !== grade_floatval($oldgrade->finalgrade)
-                or grade_floatval($grade->rawgrade)       !== grade_floatval($oldgrade->rawgrade)
-                or grade_floatval($grade->rawgrademin)    !== grade_floatval($oldgrade->rawgrademin)
-                or grade_floatval($grade->rawgrademax)    !== grade_floatval($oldgrade->rawgrademax)
-                or grade_floatval($grade->rawscaleid)     !== grade_floatval($oldgrade->rawscaleid)
-                or grade_floatval($grade->feedback)       !== grade_floatval($oldgrade->feedback)
-                or grade_floatval($grade->feedbackformat) !== grade_floatval($oldgrade->feedbackformat)) {
+        } else if (grade_floats_different($grade->finalgrade,  $oldgrade->finalgrade)
+                or grade_floats_different($grade->rawgrade,    $oldgrade->rawgrade)
+                or grade_floats_different($grade->rawgrademin, $oldgrade->rawgrademin)
+                or grade_floats_different($grade->rawgrademax, $oldgrade->rawgrademax)
+                or $grade->rawscaleid     != $oldgrade->rawscaleid
+                or $grade->feedback       !== $oldgrade->feedback
+                or $grade->feedbackformat != $oldgrade->feedbackformat) {
             $result = $grade->update($source);
         } else {
             return $result;
@@ -1699,7 +1709,7 @@ class grade_item extends grade_object {
         }
 
         // update in db if changed
-        if (grade_floatval($grade->finalgrade) !== grade_floatval($oldfinalgrade)) {
+        if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
             $grade->update('compute');
         }
 

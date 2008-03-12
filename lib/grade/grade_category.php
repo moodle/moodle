@@ -571,7 +571,7 @@ class grade_category extends grade_object {
         }
 
         // update in db if changed
-        if (grade_floatval($grade->finalgrade) !== grade_floatval($oldfinalgrade)) {
+        if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
             $grade->update('aggregation');
         }
 
@@ -732,7 +732,7 @@ class grade_category extends grade_object {
         $grade->finalgrade = bounded_number($this->grade_item->grademin, $sum, $this->grade_item->grademax);
 
         // update in db if changed
-        if (grade_floatval($grade->finalgrade) !== grade_floatval($oldfinalgrade)) {
+        if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
             $grade->update('aggregation');
         }
 
