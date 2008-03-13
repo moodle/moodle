@@ -296,6 +296,11 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         //Filter log->info
         $log->info = format_string($log->info);
 
+        // If $log->url has been trimmed short by the db size restriction
+        // code in add_to_log, keep a note so we don't add a link to a broken url
+        $tl=textlib_get_instance();
+        $brokenurl=($tl->strlen($log->url)==100 && $tl->substr($log->url,97)=='...');
+
         $log->url  = strip_tags(urldecode($log->url));   // Some XSS protection
         $log->info = strip_tags(urldecode($log->info));  // Some XSS protection
         $log->url  = s($log->url); /// XSS protection and XHTML compatibility - should be in link_to_popup_window() instead!!
@@ -320,7 +325,12 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         echo "    <a href=\"$CFG->wwwroot/user/view.php?id={$log->userid}&amp;course={$log->course}\">$fullname</a>\n";
         echo "</td>\n";
         echo "<td class=\"cell c4\">\n";
-        link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',"$log->module $log->action", 440, 700);
+        $displayaction="$log->module $log->action";
+        if($brokenurl) {
+            echo $displayaction;
+        } else {
+            link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',$displayaction, 440, 700);
+        }
         echo "</td>\n";;
         echo "<td class=\"cell c5\">{$log->info}</td>\n";
         echo "</tr>\n";
