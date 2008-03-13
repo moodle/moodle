@@ -1878,6 +1878,26 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
     }
 
+    // Restrict length of log lines to the space actually available in the
+    // database so that it doesn't cause a DB error. Log a warning so that
+    // developers can avoid doing things which are likely to cause this on a
+    // routine basis.
+    $tl=textlib_get_instance();
+    if(!empty($info) && $tl->strlen($info)>255) {
+        $info=$tl->substr($info,0,252).'...';
+        debugging('Warning: logged very long info',DEBUG_DEVELOPER);
+    }
+    // Note: Unlike $info, URL appears to be already slashed before this function
+    // is called. Since database limits are for the data before slashes, we need
+    // to remove them...
+    $url=stripslashes($url);
+    // If the 100 field size is changed, also need to alter print_log in course/lib.php
+    if(!empty($url) && $tl->strlen($url)>100) {
+        $url=$tl->substr($url,0,97).'...';
+        debugging('Warning: logged very long URL',DEBUG_DEVELOPER);
+    }
+    $url=addslashes($url);
+
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; $PERF->logwrites++;};
 
     if ($CFG->type = 'oci8po') {
