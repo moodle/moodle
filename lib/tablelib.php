@@ -397,7 +397,7 @@ class flexible_table {
                 $querystring .= '&amp;';
             }
             else {
-                $this->reseturl =  $strippedurl.$querystring;
+                $this->reseturl =  $strippedurl;
                 $querystring = '?';
             }
 
