@@ -569,7 +569,7 @@ function clean_param($param, $type) {
             $param = preg_replace('/\s+/', ' ', $param);
             $textlib = textlib_get_instance();
             $param = $textlib->substr(trim($param), 0, TAG_MAX_LENGTH);
-            return $param;
+            return addslashes($param);
 
 
         case PARAM_TAGLIST:      
