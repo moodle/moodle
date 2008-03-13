@@ -206,6 +206,15 @@ class auth_plugin_email extends auth_plugin_base {
         set_config('recaptcha', $config->recaptcha, 'auth/email');
         return true;
     }
+    
+    /**
+     * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
+     * @abstract Implement in child classes
+     * @return bool
+     */
+    function is_captcha_enabled() {
+        return false;
+    }
 
 }
 

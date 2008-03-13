@@ -342,6 +342,17 @@ class auth_plugin_base {
         }
         return $authdescription;
     }
+    
+    /**
+     * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
+     * @abstract Implement in child classes
+     * @return bool
+     */
+    function is_captcha_enabled() {
+        return false;
+    }
+
+
 }
 
 ?>
