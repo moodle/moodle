@@ -66,22 +66,20 @@ function _recaptcha_qsencode ($data) {
  */
 function _recaptcha_http_post($host, $path, $data, $port = 80) {
         global $CFG;
-        require_once $CFG->libdir . '/snoopy/Snoopy.class.inc';
+        require_once $CFG->libdir . '/filelib.php';
 
-        $snoopy = new Snoopy();
-        $snoopy->proxy_host = $CFG->proxyhost;
-        $snoopy->proxy_port = $CFG->proxyport;
+        $req = _recaptcha_qsencode ($data);
         
-        if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
-            // this will probably fail, but let's try it anyway
-            $snoopy->proxy_user     = $CFG->proxyuser;
-            $snoopy->proxy_password = $CFG->proxypassword;
-        }
+        $headers = array();
+        $headers['Host'] = $host;
+        $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        $headers['Content-Length'] = strlen($req);
+        $headers['User-Agent'] = 'reCAPTCHA/PHP';
         
-        $submit = $snoopy->submit('http://' . $host . $path, $data);
+        $results = download_file_content('http://' . $host . $path, $headers, $data);
         
-        if ($submit) {
-            return array(1 => $snoopy->results);
+        if ($results) {
+            return array(1 => $results);
         } else {
             return false;
         }
@@ -99,8 +97,11 @@ function _recaptcha_http_post($host, $path, $data, $port = 80) {
 
  * @return string - The HTML to be embedded in the user's form.
  */
-function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false)
-{
+function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
+    global $CFG;
+
+    $recaptchatype = optional_param('recaptcha', 'image', PARAM_TEXT);
+
 	if ($pubkey == null || $pubkey == '') {
 		die ("To use reCAPTCHA you must get an API key from <a href='http://recaptcha.net/api/getkey'>http://recaptcha.net/api/getkey</a>");
 	}
@@ -115,13 +116,53 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false)
         if ($error) {
            $errorpart = "&amp;error=" . $error;
         }
-        return '<script type="text/javascript" src="'. $server . '/challenge?k=' . $pubkey . $errorpart . '"></script>
 
+    require_once $CFG->libdir . '/filelib.php';
+    $html = download_file_content($server . '/noscript?k=' . $pubkey . $errorpart);
+    preg_match('/image\?c\=([A-Za-z0-9\-\_]*)\"/', $html, $matches);
+    $challenge_hash = $matches[1];
+    $image_url = $server . '/image?c=' . $challenge_hash;
+    
+    $strincorrectpleasetryagain = get_string('incorrectpleasetryagain', 'auth');
+    $strenterthewordsabove = get_string('enterthewordsabove', 'auth');
+    $strenterthenumbersyouhear = get_string('enterthenumbersyouhear', 'auth');
+    $strgetanothercaptcha = get_string('getanothercaptcha', 'auth');
+    $strgetanaudiocaptcha = get_string('getanaudiocaptcha', 'auth');
+    $strgetanimagecaptcha = get_string('getanimagecaptcha', 'auth');
+    
+    $return = '<script type="text/javascript" src="'. $server . '/challenge?k=' . $pubkey . $errorpart . '"></script> 
 	<noscript>
-  		<iframe src="'. $server . '/noscript?k=' . $pubkey . $errorpart . '" height="300" width="500" frameborder="0"></iframe><br>
-  		<textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
-  		<input type="hidden" name="recaptcha_response_field" value="manual_challenge">
+        <div id="recaptcha_widget_noscript">
+        <div id="recaptcha_image_noscript"><img src="' . $image_url . '" alt="reCAPTCHA"/></div>';
+    
+    if ($error == 'incorrect-captcha-sol') {
+        $return .= '<div class="recaptcha_only_if_incorrect_sol" style="color:red">' . $strincorrectpleasetryagain . '</div>';
+    }
+
+    if ($recaptchatype == 'image') {
+        $return .= '<span class="recaptcha_only_if_image">' . $strenterthewordsabove . '</span>';
+    } elseif ($recaptchatype == 'audio') {
+        $return .= '<span class="recaptcha_only_if_audio">' . $strenterthenumbersyouhear . '</span>'; 
+    }
+    
+    $return .= '<input type="text" id="recaptcha_response_field_noscript" name="recaptcha_response_field" />';
+    $return .= '<input type="hidden" id="recaptcha_challenge_field_noscript" name="recaptcha_challenge_field" value="' . $challenge_hash . '" />';
+    $return .= '<div><a href="signup.php">' . $strgetanothercaptcha . '</a></div>';
+    
+    // Disabling audio recaptchas for now: not language-independent
+    /*
+    if ($recaptchatype == 'image') {
+        $return .= '<div class="recaptcha_only_if_image"><a href="signup.php?recaptcha=audio">' . $strgetanaudiocaptcha . '</a></div>';
+    } elseif ($recaptchatype == 'audio') {
+        $return .= '<div class="recaptcha_only_if_audio"><a href="signup.php?recaptcha=image">' . $strgetanimagecaptcha . '</a></div>';
+    }
+    */
+
+    $return .= '
+        </div>
 	</noscript>';
+
+    return $return;
 }
 
 

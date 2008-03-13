@@ -75,11 +75,11 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
 <div id="recaptcha_image"></div>
 <div class="recaptcha_only_if_incorrect_sol" style="color:red">' . $strincorrectpleasetryagain . '</div>
 
-<span class="recaptcha_only_if_image">' . $strenterthewordsabove . '</span>
-<span class="recaptcha_only_if_audio">' . $strenterthenumbersyouhear . '</span>
+<span class="recaptcha_only_if_image"><label for="recaptcha_response_field">' . $strenterthewordsabove . '</label></span>
+<span class="recaptcha_only_if_audio"><label for="recaptcha_response_field">' . $strenterthenumbersyouhear . '</label></span>
 
 <input type="text" id="recaptcha_response_field" name="recaptcha_response_field" />
-
+<input type="hidden" name="recaptcha_element" value="dummyvalue" /> <!-- Dummy value to fool formslib -->
 <div><a href="javascript:Recaptcha.reload()">' . $strgetanothercaptcha . '</a></div>
 <div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type(\'audio\')">' . $strgetanaudiocaptcha . '</a></div>
 <div class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type(\'image\')">' . $strgetanimagecaptcha . '</a></div>
