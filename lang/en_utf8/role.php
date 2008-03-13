@@ -167,7 +167,9 @@ $string['user:viewdetails'] = 'View user profiles';
 $string['user:viewhiddendetails'] = 'View hidden details of users';
 $string['user:viewuseractivitiesreport'] = 'See user activity reports';
 $string['viewrole'] = 'View role details';
-$string['xuserswiththerole'] = 'Users with the role \"$a->role\": $a->number';
+$string['xuserswiththerole'] = 'Users with the role \"$a->role\"';
+$string['ingroup'] = 'in the group \"$a->group\"';
+$string['inactiveformorethan'] = 'inactive for more than $a->timeperiod';
 
 // MNET
 $string['site:mnetlogintoremote'] = 'Roam to a remote Moodle';

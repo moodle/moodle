@@ -445,6 +445,18 @@
             $a->role = $currentrole->name;//safety net
         }
         $heading = format_string(get_string('xuserswiththerole', 'role', $a));
+
+        if ($currentgroup and $group) {
+            $a->group = $group->name;
+            $heading .= ' ' . format_string(get_string('ingroup', 'role', $a)); 
+        } 
+
+        if ($accesssince) {
+            $a->timeperiod = $timeoptions[$accesssince];
+            $heading .= ' ' . format_string(get_string('inactiveformorethan', 'role', $a)); 
+        }
+
+        $heading .= ": $a->number";
         if (user_can_assign($context, $roleid)) {
             $heading .= ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
             $heading .= '<img src="'.$CFG->pixpath.'/i/edit.gif" class="icon" alt="" /></a>';
