@@ -3799,7 +3799,7 @@ function forum_user_has_posted_discussion($forumid, $userid) {
 
     $sql = "SELECT 'x'
               FROM {$CFG->prefix}forum_discussions d, {$CFG->prefix}forum_posts p
-             WHERE d.forum = $forumid AND p.discussion = d.id AND p.parent = 0";
+             WHERE d.forum = $forumid AND p.discussion = d.id AND p.parent = 0 and p.userid = $userid";
 
     return record_exists_sql($sql);
 }
