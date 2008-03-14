@@ -145,6 +145,7 @@ $string['gdversionhelp'] = '<p>Det ser ikke ut som serveren din har GD installer
 <p>I Windows kan du vanligvis redigere php.ini og ta bort kommentarmarkeringen på linjen for php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Usikker behandling av Globale verdier';
 $string['globalsquoteserror'] = 'Ordne PHP innstillingene: slå av register_globals og/eller slå på magic_quotes_gpc';
+$string['globalswarning'] = '<p><strong>Sikkerhetsadvarsel</strong>: for å virke ordentlig trenger Moodle <br />at du gjør enkelte endringer i din nåværende PHP-innstillinger.<p/><p>Du <em>må</em> sette <code>register_globals=off</code>.<p>Denne innstillingen redigeres ved å endre din <code>php.ini</code>fil, Apache/IIS <br />konfigurasjon eller  <code>.htaccess</code> file.</p>';
 $string['help'] = 'Hjelp';
 $string['iconvrecommended'] = 'Installering av ICONV-biblioteket er sterkt anbefalt for å forbedre ytelsen, spesielt hvis siten din støtter ikke-latinske språk.';
 $string['info'] = 'Informasjon';
@@ -232,4 +233,5 @@ $string['wrongsourcebase'] = 'Galt ZIP-filnavn.';
 $string['wrongzipfilename'] = 'Galt ZIP-filnavn.';
 $string['wwwroot'] = 'Web addresse';
 $string['wwwrooterror'] = 'Webadressen synes ikke å være gyldig - denne Moodleinstallasjonen synes ikke å være der. Innstilling har blitt resatt.';
+$string['xmlrpcrecommended'] = 'Å installere det valgfrie xmlrpc-tillegget er nyttig for Moodle Networking funksjonaliteten.';
 ?>
