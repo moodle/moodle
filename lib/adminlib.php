@@ -3012,7 +3012,7 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
         if ($result === '') {
             return array();
         }
-        return explode(',', $result);
+        return explode(' ', $result);
     }
 
     function write_setting($data) {
@@ -3023,7 +3023,7 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
         $result = array();
 
         foreach ($data as $key => $value) {
-            if (!in_array($key, array_keys($this->items))) {
+            if (!isset($this->items[$key])) {
                 return get_string('errorsetting', 'admin');
             }
             if ($value == '1') {
@@ -3051,8 +3051,10 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
                 $return .= '</td><td valign="top" align="right">';
             }
 
+            $return .= '<label for="'.$this->get_id().$key.'">';
             $return .= ($value == '' ? get_string($key,'editor') : '<img width="18" height="18" src="'.$CFG->wwwroot.'/lib/editor/htmlarea/images/'.$value.'" alt="'.get_string($key,'editor').'" title="'.get_string($key,'editor').'" />').'&nbsp;';
             $return .= '<input type="checkbox" class="form-checkbox" value="1" id="'.$this->get_id().$key.'" name="'.$this->get_full_name().'['.$key.']"'.(in_array($key,$data) ? ' checked="checked"' : '').' />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            $return .= '</label>';
             $count++;
             if ($count % 15 != 0) {
                 $return .= '<br /><br />';
