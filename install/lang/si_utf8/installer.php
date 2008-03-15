@@ -26,13 +26,39 @@ $string['check'] = 'පිරික්සන්න.';
 $string['chooselanguagehead'] = 'භාෂාවක් තෝරාගන්න';
 $string['closewindow'] = 'මෙම කවුළුව වසන්න';
 $string['compatibilitysettingshead'] = 'ඔබගේ PHP සැකසීම් පරීක්ෂා කිරීම...';
+$string['compatibilitysettingssub'] = 'මූඩ්ල් මනාව ධාවනය වීම සඳහා ඔබගේ සේවාදායකය මෙම සියලු පරීක්ෂණ සමත් විය යුතුයි';
 $string['componentisuptodate'] = 'සංරචකය යාවත්කාලීන වී ඇත';
 $string['configfilewritten'] = 'config.php සාර්ථකව සාදන ලදි';
 $string['configurationcompletehead'] = 'වින්‍යසගත කිරීම අවසන්';
+$string['configurationcompletesub'] = 'ඔබගේ මූඩ්ල් මූලිකයෙහි ඇති ගොනුවක ඔබගේ සැකසුම් සුරක්ෂිත කිරීමට මූඩ්ල් උත්සාහ දරණ ලදි';
 $string['continue'] = 'පවත්වා ගෙන යන්න';
 $string['curlrecommended'] = 'මූඩ්ල් ජාලකරණ ක්‍රියාකාරීත්වය සක්‍රිය කිරීම සදහා විකල්ප curl අගාරය ස්ථාපනය කිරීමට දැඩිව උපදෙස් දෙනු ලැබේ';
 $string['customcheck'] = 'වෙනත් පරික්ෂා';
 $string['database'] = 'දත්තගබඩාව';
+$string['databasesettingssub'] = '<b>වර්ගය:</b> mysql හෝ postgres7<br />
+<b>ධාරකය:</b> උදා. localhost හෝ db.isp.com<br />
+<b>නම:</b> දත්ත ගබඩා නම, උදා. moodle<br />
+<b>පරිශීලක:</b> ඔබගේ දත්ත ගබඩා පරිශීලක නාමය<br />
+<b>මුරපදය:</b> ඔබගේ දත්ත ගබඩා මුරපදය<br />
+<b>වගු උපසර්ගය:</b> සියලු වගු නාම සඳහා භාවිතා කල යුතු විකල්ප උපසර්ගය';
+$string['databasesettingssub_mssql_n'] = '<b>වර්ගය:</b> SQL*Server (UTF-8 සක්‍රිය කරන ලද)<br />
+<b>ධාරකය:</b> උදා. localhost හෝ db.isp.com<br />
+<b>නම:</b> දත්ත ගබඩා නාමය, උදා.  moodle<br />
+<b>පරිශීලක:</b> ඔබගේ දත්ත ගබඩා පරිශීලක නාමය<br />
+<b>මුරපදය:</b> ඔබගේ දත්ත ගබඩා මුරපදය<br />
+<b>වගු උපසර්ගය:</b> සියලු වගු නාම සඳහා භාවිතා කල යුතු විකල්ප උපසර්ගය (අනිවාර්ය)';
+$string['databasesettingssub_mysql'] = '<b>වර්ගය:</b> MySQL<br />
+<b>ධාරකය:</b> උදා. localhost හෝ db.isp.com<br />
+<b>නම:</b> දත්ත ගබඩා නාමය, උදා.  moodle<br />
+<b>පරිශීලක:</b> ඔබගේ දත්ත ගබඩා පරිශීලක නාමය<br />
+<b>මුරපදය:</b> ඔබගේ දත්ත ගබඩා මුරපදය<br />
+<b>වගු උපසර්ගය:</b> සියලු වගු නාම සඳහා භාවිතා කල යුතු විකල්ප උපසර්ගය (අනිවාර්ය)';
+$string['databasesettingssub_mysqli'] = '<b>වර්ගය:</b> වැඩි දියුණුකරන ලද MySQL<br />
+<b>ධාරකය:</b> උදා. localhost හෝ db.isp.com<br />
+<b>නම:</b> දත්ත ගබඩා නාමය, උදා.  moodle<br />
+<b>පරිශීලක:</b> ඔබගේ දත්ත ගබඩා පරිශීලක නාමය<br />
+<b>මුරපදය:</b> ඔබගේ දත්ත ගබඩා මුරපදය<br />
+<b>වගු උපසර්ගය:</b> සියලු වගු නාම සඳහා භාවිතා කල යුතු විකල්ප උපසර්ගය (අනිවාර්ය)';
 $string['dataroot'] = 'දත්ත ඩිරෙක්ටරිය';
 $string['dbhost'] = 'ධාරක සර්වරය';
 $string['dbprefix'] = 'වගු උපසර්ගය';
