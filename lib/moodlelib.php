@@ -3991,10 +3991,11 @@ function &get_mailer($action='get') {
  * @param string $attachname the name of the file (extension indicates MIME)
  * @param bool $usetrueaddress determines whether $from email address should
  *          be sent out. Will be overruled by user profile setting for maildisplay
+ * @param int $wordwrapwidth custom word wrap width
  * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  */
-function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $replyto='', $replytoname='') {
+function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $replyto='', $replytoname='', $wordwrapwidth=79) {
 
     global $CFG, $FULLME;
 
@@ -4062,7 +4063,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     $mail->AddAddress($user->email, fullname($user) );
 
-    $mail->WordWrap = 79;                               // set word wrap
+    $mail->WordWrap = $wordwrapwidth;                   // set word wrap
 
     if (!empty($from->customheaders)) {                 // Add custom headers
         if (is_array($from->customheaders)) {
