@@ -48,6 +48,7 @@ function xmldb_assignment_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2007101510) {
+        notify('Processing assignment grades, this may take a while if there are many assignments...', 'notifysuccess');
         // change grade typo to text if no grades MDL-13920
         require_once $CFG->dirroot.'/mod/assignment/lib.php';
         // too much debug output
