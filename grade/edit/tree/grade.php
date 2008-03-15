@@ -156,19 +156,21 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data(false)) {
     $old_grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true); //might not exist yet
 
-    if (!isset($data->overridden)) {
-        $data->overridden = 0; // checkbox
-    }
-
     // fix no grade for scales
-    if (($grade_item->is_overridable_item() and !$data->overridden) or !isset($data->finalgrade) or $data->finalgrade == $data->oldgrade) {
+    if (!isset($data->finalgrade) or $data->finalgrade == $data->oldgrade) {
         $data->finalgrade = $old_grade_grade->finalgrade;
 
-    } else if ($grade_item->gradetype == GRADE_TYPE_SCALE and $data->finalgrade < 1) {
-        $data->finalgrade = NULL;
+    } else if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
+        if ($data->finalgrade < 1) {
+            $data->finalgrade = NULL;
+        }
 
     } else if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
         $data->finalgrade = unformat_float($data->finalgrade);
+
+    } else {
+        //this shoul not happen
+        $data->finalgrade = $old_grade_grade->finalgrade;
     }
 
     // the overriding of feedback is tricky - we have to care about external items only
@@ -183,7 +185,14 @@ if ($mform->is_cancelled()) {
     $grade_grade->grade_item =& $grade_item; // no db fetching
 
     if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:edit', $context)) {
-        $grade_grade->set_overridden($data->overridden);
+        if (!grade_floats_different($data->finalgrade, $old_grade_grade->finalgrade)
+          and $data->feedback === $old_grade_grade->feedback) {
+            // change overridden flag only if grade or feedback not changed
+            if (!isset($data->overridden)) {
+                $data->overridden = 0; // checkbox
+            }
+            $grade_grade->set_overridden($data->overridden);
+        }
     }
 
     if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:hide', $context)) {

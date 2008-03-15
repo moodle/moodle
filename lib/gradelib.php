@@ -356,7 +356,12 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
                         $grade->dategraded     = $grade_grades[$userid]->get_dategraded();
 
                         // create text representation of grade
-                        if (in_array($grade_item->id, $needsupdate)) {
+                        if ($grade_item->gradetype == GRADE_TYPE_TEXT or $grade_item->gradetype == GRADE_TYPE_NONE) {
+                            $grade->grade          = null;
+                            $grade->str_grade      = '-';
+                            $grade->str_long_grade = $grade->str_grade;
+                             
+                        } else if (in_array($grade_item->id, $needsupdate)) {
                             $grade->grade          = false;
                             $grade->str_grade      = get_string('error');
                             $grade->str_long_grade = $grade->str_grade;

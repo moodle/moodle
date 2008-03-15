@@ -2232,7 +2232,7 @@ function assignment_grade_item_update($assignment, $grades=NULL) {
         $params['scaleid']   = -$assignment->grade;
 
     } else {
-        $params['gradetype'] = GRADE_TYPE_NONE;
+        $params['gradetype'] = GRADE_TYPE_TEXT; // allow text comments only
     }
 
     if ($grades  === 'reset') {

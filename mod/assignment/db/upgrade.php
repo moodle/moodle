@@ -23,14 +23,6 @@ function xmldb_assignment_upgrade($oldversion=0) {
 
     $result = true;
 
-    if ($result && $oldversion < 2007072200) {
-        require_once $CFG->dirroot.'/mod/assignment/lib.php';
-        // too much debug output
-        $db->debug = false;
-        assignment_update_grades();
-        $db->debug = true;
-    }
-
     if ($result && $oldversion < 2007091900) { /// MDL-11268
 
     /// Changing nullability of field data1 on table assignment_submissions to null
@@ -53,6 +45,15 @@ function xmldb_assignment_upgrade($oldversion=0) {
         // add draft tracking default to existing upload assignments
         $sql = "UPDATE {$CFG->prefix}assignment SET var4=1 WHERE assignmenttype='upload'";
         $result = execute_sql($sql);
+    }
+
+    if ($result && $oldversion < 2007101510) {
+        // change grade typo to text if no grades MDL-13920
+        require_once $CFG->dirroot.'/mod/assignment/lib.php';
+        // too much debug output
+        $db->debug = false;
+        assignment_update_grades();
+        $db->debug = true;
     }
 
     return $result;

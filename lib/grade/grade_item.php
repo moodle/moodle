@@ -926,6 +926,14 @@ class grade_item extends grade_object {
     }
 
     /**
+     * Is the grade item feedback overridable
+     * @return boolean
+     */
+    function is_overridable_item_feedback() {
+        return !$this->is_outcome_item() and $this->is_external_item();
+    }
+
+    /**
      * Returns true if grade items uses raw grades
      * @return boolean
      */
@@ -1389,7 +1397,7 @@ class grade_item extends grade_object {
 
         // do we have comment from teacher?
         if ($feedback !== false) {
-            if ($this->is_external_item()) {
+            if ($this->is_overridable_item_feedback()) {
                 // external items (modules, plugins) may have own feedback
                 $grade->overridden = time();
             }
@@ -1405,7 +1413,8 @@ class grade_item extends grade_object {
 
         } else if (grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)
                 or $grade->feedback       !== $oldgrade->feedback
-                or $grade->feedbackformat != $oldgrade->feedbackformat) {
+                or $grade->feedbackformat != $oldgrade->feedbackformat
+                or $grade->overridden     != $oldgrade->overridden) {
             $grade->timemodified = time(); // overridden flag might take over, but anyway
             $result = $grade->update($source);
         } else {
