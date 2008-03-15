@@ -44,6 +44,7 @@ function xmldb_forum_upgrade($oldversion=0) {
     }
 
     if ($result and $oldversion < 2007101511) {
+        notify('Processing forum grades, this may take a while if there are many forums...', 'notifysuccess');
         //MDL-13866 - send forum ratins to gradebook again
         require_once($CFG->dirroot.'/mod/forum/lib.php');
         // too much debug output
