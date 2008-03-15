@@ -12,7 +12,7 @@
     admin_externalpage_setup('langimport');
 
     $mode          = optional_param('mode', 0, PARAM_INT);     //phase
-    $pack          = optional_param('pack', '', PARAM_FILE);   //pack to install
+    $pack          = optional_param('pack', array(), PARAM_FILE);   //pack to install
     $displaylang   = $pack;
     $uninstalllang = optional_param('uninstalllang', '', PARAM_FILE);
     $confirm       = optional_param('confirm', 0, PARAM_BOOL);
@@ -41,36 +41,45 @@
 
         case INSTALLATION_OF_SELECTED_LANG:    ///installation of selected language pack
 
-            if (confirm_sesskey()) {
+            if (confirm_sesskey() and !empty($pack)) {
+                set_time_limit(0);
                 @mkdir ($CFG->dataroot.'/temp/');    //make it in case it's a fresh install, it might not be there
                 @mkdir ($CFG->dataroot.'/lang/');
 
-                if ($cd = new component_installer('http://download.moodle.org', 'lang16',
-                                                    $pack.'.zip', 'languages.md5', 'lang')) {
-                    $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
-                    switch ($status) {
-
-                        case COMPONENT_ERROR:
-                            if ($cd->get_error() == 'remotedownloaderror') {
-                                $a = new object();
-                                $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
-                                $a->dest= $CFG->dataroot.'/lang';
-                                error(get_string($cd->get_error(), 'error', $a), 'langimport.php');
-                            } else {
-                                error(get_string($cd->get_error(), 'error'), 'langimport.php');
-                            }
-                        break;
-
-                        case COMPONENT_INSTALLED:
-                            $notice_ok[] = get_string('langpackinstalled','admin',$pack);
-                        break;
-
-                        case COMPONENT_UPTODATE:
-                        break;
-
-                    }
+                if (is_array($pack)) {
+                    $packs = $pack;
                 } else {
-                    notify('Had an unspecified error with the component installer, sorry.');
+                    $packs = array($pack);
+                }
+
+                foreach ($packs as $pack) {
+                    if ($cd = new component_installer('http://download.moodle.org', 'lang16',
+                                                        $pack.'.zip', 'languages.md5', 'lang')) {
+                        $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
+                        switch ($status) {
+
+                            case COMPONENT_ERROR:
+                                if ($cd->get_error() == 'remotedownloaderror') {
+                                    $a = new object();
+                                    $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
+                                    $a->dest= $CFG->dataroot.'/lang';
+                                    error(get_string($cd->get_error(), 'error', $a), 'langimport.php');
+                                } else {
+                                    error(get_string($cd->get_error(), 'error'), 'langimport.php');
+                                }
+                            break;
+
+                            case COMPONENT_INSTALLED:
+                                $notice_ok[] = get_string('langpackinstalled','admin',$pack);
+                            break;
+
+                            case COMPONENT_UPTODATE:
+                            break;
+
+                        }
+                    } else {
+                        notify('Had an unspecified error with the component installer, sorry.');
+                    }
                 }
             }
         break;
@@ -110,6 +119,7 @@
         break;
 
         case UPDATE_ALL_LANG:    //1 click update for all updatable language packs
+            set_time_limit(0);
 
             //0th pull a list from download.moodle.org,
             //key = langname, value = md5
@@ -222,6 +232,28 @@
 
     $installedlangs = get_list_of_languages(true, true);
 
+    $missingparents = array();
+    $oldlang = isset($SESSION->lang) ? $SESSION->lang : null; // override current lang
+
+    foreach($installedlangs as $l=>$unused) {
+        $SESSION->lang = $l;
+        $parent = get_string('parentlanguage');
+        if ($parent == 'en_utf8') {
+            continue;
+        }
+        if (strpos($parent, '[[') !== false) {
+            continue; // no parent
+        }
+        if (!isset($installedlangs[$parent])) {
+            $missingparents[$l] = $parent;
+        }
+    }
+    if (isset($oldlang)) {
+        $SESSION->lang = $oldlang;
+    } else {
+        unset($SESSION->lang);
+    }
+
     if ($availablelangs = get_remote_list_of_languages()) {
         $remote = 1;
     } else {
@@ -243,6 +275,26 @@
     if ($notice_error) {
         $info = implode('<br />', $notice_error);
         notify($info, 'notifyproblem');
+    }
+
+    if ($missingparents) {
+        foreach ($missingparents as $l=>$parent) {
+            $a = new object();
+            $a->lang   = $installedlangs[$l];
+            $a->parent = $parent;
+            foreach ($availablelangs as $alang) {
+                if ($alang[0] == $parent) {
+                    if (substr($alang[0], -5) == '_utf8') {   //Remove the _utf8 suffix from the lang to show
+                        $shortlang = substr($alang[0], 0, -5);
+                    } else {
+                        $shortlang = $alang[0];
+                    }
+                    $a->parent = $alang[2].' ('.$shortlang.')';
+                }
+            }
+            $info = get_string('missinglangparent', 'admin', $a);
+            notify($info, 'notifyproblem');
+        }
     }
 
     print_box_start();
@@ -287,7 +339,7 @@
     echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
     echo '<label for="pack">'.get_string('availablelangs','admin')."</label><br />\n";
     if ($remote) {
-        echo '<select name="pack" id="pack" size="15">';
+        echo '<select name="pack[]" id="pack" size="15" multiple="multiple">';
     }
 
     foreach ($availablelangs as $alang) {
