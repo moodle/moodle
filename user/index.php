@@ -408,10 +408,12 @@
         $where .= ' AND '.$table->get_sql_where();
     }
 
+    /// Always add r.hidden to sort in order to guarantee hiddens to "win"
+    /// in the resolution of duplicates later - MDL-13935
     if ($table->get_sql_sort()) {
-        $sort = ' ORDER BY '.$table->get_sql_sort();
+        $sort = ' ORDER BY '.$table->get_sql_sort() . ', r.hidden DESC';
     } else {
-        $sort = '';
+        $sort = ' r.hidden DESC';
     }
 
     $matchcount = count_records_sql('SELECT COUNT(distinct u.id) '.$from.$where.$wheresearch);
@@ -564,7 +566,13 @@
             }
 
             if ($matchcount > 0) {
+                $usersprinted = array();
                 while ($user = rs_fetch_next_record($userlist)) {
+                    if (in_array($user->id, $usersprinted)) { /// Prevent duplicates by r.hidden - MDL-13935
+                        continue;
+                    }
+                    $usersprinted[] = $user->id; /// Add new user to the array of users printed
+
                     $user = make_context_subobj($user);
                     print_user($user, $course, $bulkoperations);
                 }
@@ -580,7 +588,13 @@
 
 
         if ($userlist)  {
+            $usersprinted = array();
             while ($user = rs_fetch_next_record($userlist)) {
+                if (in_array($user->id, $usersprinted)) { /// Prevent duplicates by r.hidden - MDL-13935
+                    continue;
+                }
+                $usersprinted[] = $user->id; /// Add new user to the array of users printed
+
                 $user = make_context_subobj($user);
                 if ( !empty($user->hidden) ) {
                 // if the assignment is hidden, display icon
