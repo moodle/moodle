@@ -257,10 +257,12 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
             }
             $report .= "<ul id='0' class='$liststyle'>";
             if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
+                // drop keys so that we can access array sequentially
+                $scoes = array_values($scoes); 
                 $level=0;
                 $sublist=1;
                 $parents[$level]='/';
-                foreach ($scoes as $sco) {
+                foreach ($scoes as $pos=>$sco) {
                     if ($parents[$level]!=$sco->parent) {
                         if ($level>0 && $parents[$level-1]==$sco->parent) {
                             $report .= "\t\t</ul></li>\n";
@@ -283,7 +285,11 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                         }
                     }
                     $report .= "\t\t<li>";
-                    $nextsco = next($scoes);
+                    if (isset($scoes[$pos+1])) {
+                        $nextsco = $scoes[$pos+1];
+                    } else {
+                        $nextsco = false;
+                    }
                     if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                         $sublist++;
                     } else {

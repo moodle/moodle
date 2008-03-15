@@ -35,6 +35,8 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     }
     $result->attemptleft = $scorm->maxattempt - $attempt;
     if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
+        // drop keys so that we can access array sequentially
+        $scoes = array_values($scoes); 
         //
         // Retrieve user tracking data for each learning object
         // 
@@ -61,7 +63,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $nextid = 0;
         $findnext = false;
         $parents[$level]='/';
-        foreach ($scoes as $sco) {
+        foreach ($scoes as $pos=>$sco) {
             $isvisible = false;
             $sco->title = stripslashes($sco->title);
             if (isset($optionaldatas[$sco->identifier])) {
@@ -97,7 +99,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                     $parents[$level]=$sco->parent;
                 }
             }
-            $nextsco = next($scoes);
+            if (isset($scoes[$pos+1])) {
+                $nextsco = $scoes[$pos+1];
+            } else {
+                $nextsco = false;
+            }
             $nextisvisible = false;
             if (($nextsco !== false) && (isset($optionaldatas[$nextsco->identifier]))) {
                 if (!isset($optionaldatas[$nextsco->identifier]->isvisible) || 
