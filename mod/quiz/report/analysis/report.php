@@ -14,7 +14,7 @@ class quiz_report extends quiz_default_report {
             $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="analysis");
         }
     /// Construct the table for this particular report
-  //  echo "course <pre>";print_r($SESSION);echo "</pre>";
+//    echo "course <pre>";print_r($course);echo "</pre>";
  //   echo "course <pre>";print_r($CFG);echo "</pre>";
         if (!$quiz->questions) {
             print_heading($strnoattempts);
@@ -31,42 +31,20 @@ class quiz_report extends quiz_default_report {
         }
 
         // set Table and Analysis stats options
-        $getquestiondata = false ;
-        if(!isset($SESSION->quiz_analysis_table)||  !isset($SESSION->quiz_analysis_table['q']) ||$SESSION->quiz_analysis_table['q'] != $quiz->id ) {
-            $SESSION->quiz_analysis_table = array('attemptselection' => 0, 'lowmarklimit' => 0, 'pagesize' => 10, 'q' => $quiz->id );
-            $getquestiondata = true ;
+        if(!isset($SESSION->quiz_analysis_table)) {
+            $SESSION->quiz_analysis_table = array('attemptselection' => 0, 'lowmarklimit' => 0, 'pagesize' => 10);
         }
-        if (optional_param('refesh', NULL) == 'refesh') {
-            $getquestiondata = true ;
-        }  
-        if (optional_param('download', NULL) == '') {
-            $getquestiondata = false ;
-        }             
-        // here we could choose which calculation to do
-        // if the parameters have not changed then we can go through
+
         foreach($SESSION->quiz_analysis_table as $option => $value) {
-            
             $urlparam = optional_param($option, NULL);
             if($urlparam === NULL) {
                 $$option = $value;
             }
             else {
-                if ( $value === $urlparam ) {
-                   // echo "<p> $option = $value not changed </p>";
-                }else {
-                   // echo "<p> $option = $value  changed to $urlparam </p>";
-                    if ($option == 'attemptselection' || $option == 'lowmarklimit' ){
-                        $getquestiondata = true ;
-                    }
-                }
                 $$option = $SESSION->quiz_analysis_table[$option] = $urlparam;
             }
         }
-        if (! $getquestiondata && isset($SESSION->quiz_analysis_table['question']) && !empty($SESSION->quiz_analysis_table['question'])){
-            $questions = $SESSION->quiz_analysis_table['question'];
-          //  echo "<p> use session question </p>";
-        }else {
-            
+
         $scorelimit = $quiz->sumgrades * $lowmarklimit/ 100;
 
         // ULPGC ecastro DEBUG this is here to allow for different SQL to select attempts
@@ -95,8 +73,6 @@ class quiz_report extends quiz_default_report {
                     'WHERE qa.quiz = '.$quiz->id.' AND qa.preview = 0 '.
                     $group;
             $usermax = get_records_sql_menu($sql);
-        }else {
-            $usermax = '';
         }
 
         $groupmembers = '';
@@ -119,12 +95,133 @@ class quiz_report extends quiz_default_report {
 
         if(empty($attempts)) {
             print_heading(get_string('nothingtodisplay'));
-            $this->print_options_form($quiz, $cm, $attemptselection, $lowmarklimit, $pagesize,$getquestiondata);
+            $this->print_options_form($quiz, $cm, $attemptselection, $lowmarklimit, $pagesize);
             return true;
         }
+
+    /// Here we rewiew all attempts and record data to construct the table
         $questions = array();
-        $this->get_questions_atttempts_data ($quiz,&$questions,&$attempts,$attemptselection,$usermax);
-    }
+        $statstable = array();
+        $questionarray = array();
+        foreach ($attempts as $attempt) {
+            $questionarray[] = quiz_questions_in_quiz($attempt->layout);
+        }
+        $questionlist = quiz_questions_in_quiz(implode(",", $questionarray));
+        $questionarray = array_unique(explode(",",$questionlist));
+        $questionlist = implode(",", $questionarray);
+        unset($questionarray);
+
+        foreach ($attempts as $attempt) {
+            switch ($attemptselection) {
+            case QUIZ_ALLATTEMPTS :
+                $userscore = 0;      // can be anything, not used
+                break;
+            case QUIZ_HIGHESTATTEMPT :
+                $userscore = $attempt->sumgrades;
+                break;
+            case QUIZ_FIRSTATTEMPT :
+                $userscore = $attempt->timemodified;
+                break;
+            case QUIZ_LASTATTEMPT :
+                $userscore = $attempt->timemodified;
+                break;
+            }
+
+            if ($attemptselection == QUIZ_ALLATTEMPTS || $userscore == $usermax[$attempt->userid]) {
+
+            $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
+                   "  FROM {$CFG->prefix}question q,".
+                   "       {$CFG->prefix}quiz_question_instances i".
+                   " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
+                   "   AND q.id IN ($questionlist)";
+
+            if (!$quizquestions = get_records_sql($sql)) {
+                error('No questions found');
+            }
+
+            // Load the question type specific information
+            if (!get_question_options($quizquestions)) {
+                error('Could not load question options');
+            }
+            // Restore the question sessions to their most recent states
+            // creating new sessions where required
+            if (!$states = get_question_states($quizquestions, $quiz, $attempt)) {
+                error('Could not restore question sessions');
+            }
+            $numbers = explode(',', $questionlist);
+            $statsrow = array();
+            foreach ($numbers as $i) {
+                if (!isset($quizquestions[$i]) or !isset($states[$i])) {
+                    continue;
+                }
+                $qtype = ($quizquestions[$i]->qtype=='random') ? $states[$i]->options->question->qtype : $quizquestions[$i]->qtype;
+                if($quizquestions[$i]->qtype =='randomsamatch'){
+                    $quizquestions[$i]->options =$states[$i]->options ;
+                }   
+                $q = get_question_responses($quizquestions[$i], $states[$i]);
+                if (empty($q)){
+                    continue;
+                }
+                $qid = $q->id;
+                if (!isset($questions[$qid])) {
+                    $questions[$qid]['id'] = $qid;
+                    $questions[$qid]['qname'] = $quizquestions[$i]->name;
+                    foreach ($q->responses as $answer => $r) {
+                        $r->count = 0;
+                        $questions[$qid]['responses'][$answer] = $r->answer;
+                        $questions[$qid]['rcounts'][$answer] = 0;
+                        $questions[$qid]['credits'][$answer] = $r->credit;
+                        $statsrow[$qid] = 0;
+                    }
+                }
+                $responses = get_question_actual_response($quizquestions[$i], $states[$i]);
+                foreach ($responses as $resp){
+                    if ($resp) {
+                        if ($key = array_search($resp, $questions[$qid]['responses'])) {
+                            $questions[$qid]['rcounts'][$key]++;
+                        } else {
+                            $test = new stdClass;
+                            $test->responses = $QTYPES[$quizquestions[$i]->qtype]->get_correct_responses($quizquestions[$i], $states[$i]);
+                            if ($key = $QTYPES[$quizquestions[$i]->qtype]->check_response($quizquestions[$i], $states[$i], $test)) {
+                                $questions[$qid]['rcounts'][$key]++;
+                            } else {
+                                $questions[$qid]['responses'][] = $resp;
+                                $questions[$qid]['rcounts'][] = 1;
+                                $questions[$qid]['credits'][] = 0;
+                            }
+                        }
+                    }
+                }
+                $statsrow[$qid] = get_question_fraction_grade($quizquestions[$i], $states[$i]);
+            }
+            $attemptscores[$attempt->id] = $attempt->sumgrades;
+            $statstable[$attempt->id] = $statsrow;
+            }
+        } // Statistics Data table built
+
+        unset($attempts);
+        unset($quizquestions);
+        unset($states);
+
+        // now calculate statistics and set the values in the $questions array
+        $top = max($attemptscores);
+        $bottom = min($attemptscores);
+        $gap = ($top - $bottom)/3;
+        $top -=$gap;
+        $bottom +=$gap;
+        foreach ($questions as $qid=>$q) {
+            $questions[$qid] = $this->report_question_stats($q, $attemptscores, $statstable, $top, $bottom);
+            // calculate rpercent
+            foreach($q['responses']as $aid => $resp){
+                $rpercent =  '('.format_float($q['rcounts'][$aid]/$q['count']*100,0).'%)';
+                $questions[$qid]['rpercent'][$aid] = $rpercent ;
+            }
+  
+        }
+                
+            
+        unset($attemptscores);
+        unset($statstable);
 
     /// Now check if asked download of data
         if ($download = optional_param('download', NULL)) {
@@ -273,138 +370,12 @@ class quiz_report extends quiz_default_report {
         $table->print_html();
         echo '</div>';
 
-        $this->print_options_form($quiz, $cm, $attemptselection, $lowmarklimit, $pagesize, $getquestiondata );
+        $this->print_options_form($quiz, $cm, $attemptselection, $lowmarklimit, $pagesize);
         return true;
     }
 
-function get_questions_atttempts_data ($quiz,&$questions,&$attempts,$attemptselection,$usermax){
-        global $CFG, $SESSION, $QTYPES;
-    
-    /// Here we rewiew all attempts and record data to construct the table
-        $statstable = array();
-        $questionarray = array();
-        foreach ($attempts as $attempt) {
-            $questionarray[] = quiz_questions_in_quiz($attempt->layout);
-        }
-        $questionlist = quiz_questions_in_quiz(implode(",", $questionarray));
-        $questionarray = array_unique(explode(",",$questionlist));
-        $questionlist = implode(",", $questionarray);
-        unset($questionarray);
 
-        foreach ($attempts as $attempt) {
-            switch ($attemptselection) {
-            case QUIZ_ALLATTEMPTS :
-                $userscore = 0;      // can be anything, not used
-                break;
-            case QUIZ_HIGHESTATTEMPT :
-                $userscore = $attempt->sumgrades;
-                break;
-            case QUIZ_FIRSTATTEMPT :
-                $userscore = $attempt->timemodified;
-                break;
-            case QUIZ_LASTATTEMPT :
-                $userscore = $attempt->timemodified;
-                break;
-            }
-
-            if ($attemptselection == QUIZ_ALLATTEMPTS || $userscore == $usermax[$attempt->userid]) {
-
-            $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-                   "  FROM {$CFG->prefix}question q,".
-                   "       {$CFG->prefix}quiz_question_instances i".
-                   " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
-                   "   AND q.id IN ($questionlist)";
-
-            if (!$quizquestions = get_records_sql($sql)) {
-                error('No questions found');
-            }
-
-            // Load the question type specific information
-            if (!get_question_options($quizquestions)) {
-                error('Could not load question options');
-            }
-            // Restore the question sessions to their most recent states
-            // creating new sessions where required
-            if (!$states = get_question_states($quizquestions, $quiz, $attempt)) {
-                error('Could not restore question sessions');
-            }
-            $numbers = explode(',', $questionlist);
-            $statsrow = array();
-            foreach ($numbers as $i) {
-                if (!isset($quizquestions[$i]) or !isset($states[$i])) {
-                    continue;
-                }
-                $qtype = ($quizquestions[$i]->qtype=='random') ? $states[$i]->options->question->qtype : $quizquestions[$i]->qtype;
-                if($quizquestions[$i]->qtype =='randomsamatch'){
-                    $quizquestions[$i]->options =$states[$i]->options ;
-                }   
-                $q = get_question_responses($quizquestions[$i], $states[$i]);
-                if (empty($q)){
-                    continue;
-                }
-                $qid = $q->id;
-                if (!isset($questions[$qid])) {
-                    $questions[$qid]['id'] = $qid;
-                    $questions[$qid]['qname'] = $quizquestions[$i]->name;
-                    foreach ($q->responses as $answer => $r) {
-                        $r->count = 0;
-                        $questions[$qid]['responses'][$answer] = $r->answer;
-                        $questions[$qid]['rcounts'][$answer] = 0;
-                        $questions[$qid]['credits'][$answer] = $r->credit;
-                        $statsrow[$qid] = 0;
-                    }
-                }
-                $responses = get_question_actual_response($quizquestions[$i], $states[$i]);
-                foreach ($responses as $resp){
-                    if ($resp) {
-                        if ($key = array_search($resp, $questions[$qid]['responses'])) {
-                            $questions[$qid]['rcounts'][$key]++;
-                        } else {
-                            $test = new stdClass;
-                            $test->responses = $QTYPES[$quizquestions[$i]->qtype]->get_correct_responses($quizquestions[$i], $states[$i]);
-                            if ($key = $QTYPES[$quizquestions[$i]->qtype]->check_response($quizquestions[$i], $states[$i], $test)) {
-                                $questions[$qid]['rcounts'][$key]++;
-                            } else {
-                                $questions[$qid]['responses'][] = $resp;
-                                $questions[$qid]['rcounts'][] = 1;
-                                $questions[$qid]['credits'][] = 0;
-                            }
-                        }
-                    }
-                }
-                $statsrow[$qid] = get_question_fraction_grade($quizquestions[$i], $states[$i]);
-            }
-            $attemptscores[$attempt->id] = $attempt->sumgrades;
-            $statstable[$attempt->id] = $statsrow;
-            }
-        } // Statistics Data table built
-
-        unset($attempts);
-        unset($quizquestions);
-        unset($states);
-
-        // now calculate statistics and set the values in the $questions array
-        $top = max($attemptscores);
-        $bottom = min($attemptscores);
-        $gap = ($top - $bottom)/3;
-        $top -=$gap;
-        $bottom +=$gap;
-        foreach ($questions as $qid=>$q) {
-            $questions[$qid] = $this->report_question_stats($q, $attemptscores, $statstable, $top, $bottom);
-            // calculate rpercent
-            foreach($q['responses']as $aid => $resp){
-                $rpercent =  '('.format_float($q['rcounts'][$aid]/$q['count']*100,0).'%)';
-                $questions[$qid]['rpercent'][$aid] = $rpercent ;
-            }
-            $SESSION->quiz_analysis_table['question'][$qid]=$questions[$qid] ;
-  
-        }
-                
-            
-        unset($attemptscores);
-        unset($statstable);
-    }
-    function print_options_form($quiz, $cm, $attempts, $lowlimit=0, $pagesize=10,$getquestiondata) {
+    function print_options_form($quiz, $cm, $attempts, $lowlimit=0, $pagesize=10) {
         global $CFG, $USER;
         echo '<div class="controls">';
         echo '<form id="options" action="report.php" method="post">';
@@ -427,11 +398,6 @@ function get_questions_atttempts_data ($quiz,&$questions,&$attempts,$attemptsele
         echo '<p><input type="submit" value="'.get_string('go').'" />';
         helpbutton("analysisoptions", get_string("analysisoptions",'quiz_analysis'), 'quiz');
         echo '</p>';
-        if (!$getquestiondata){
-            echo '<p>This table was built from a previous attempts search in the database at '.userdate(time(), get_string("strftimedaydatetime")).'</p>';
-            echo '<p><input type="submit" value="'.get_string('refresh').'" />';
-        }
-     //   echo '<p>Download all the data from the actual attempts search in the database </p>';
         echo '</fieldset>';
         echo '</form>';
         echo '</div>';
@@ -567,13 +533,13 @@ function get_questions_atttempts_data ($quiz,&$questions,&$attempts,$attemptsele
     /// Here starts workshhet headers
         $myxls->write_string(0,0,$sheettitle,$formatb);
 
-        $headers = array(strip_tags(get_string('qidtitle','quiz_analysis')), strip_tags(get_string('qtypetitle','quiz_analysis')),
-                        strip_tags(get_string('qnametitle','quiz_analysis')), strip_tags(get_string('qtexttitle','quiz_analysis')),
-                        strip_tags(get_string('responsestitle','quiz_analysis')), strip_tags(get_string('rfractiontitle','quiz_analysis')),
-                        strip_tags(get_string('rcounttitle','quiz_analysis')), strip_tags(get_string('rpercenttitle','quiz_analysis')),
-                        strip_tags(get_string('qcounttitle','quiz_analysis')),
-                        strip_tags(get_string('facilitytitle','quiz_analysis')), strip_tags(get_string('stddevtitle','quiz_analysis')),
-                        strip_tags(get_string('dicsindextitle','quiz_analysis')), strip_tags(get_string('disccoefftitle','quiz_analysis')));
+        $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'),
+                        get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'),
+                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'),
+                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'),
+                        get_string('qcounttitle','quiz_analysis'),
+                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'),
+                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis'));
 
         $col = 0;
         foreach ($headers as $item) {
@@ -646,13 +612,13 @@ function get_questions_atttempts_data ($quiz,&$questions,&$attempts,$attemptsele
     /// Here starts workshhet headers
         $myxls->write_string(0,0,$sheettitle,$formatb);
 
-        $headers = array(strip_tags(get_string('qidtitle','quiz_analysis')), strip_tags(get_string('qtypetitle','quiz_analysis')),
-                        strip_tags(get_string('qnametitle','quiz_analysis')), strip_tags(get_string('qtexttitle','quiz_analysis')),
-                        strip_tags(get_string('responsestitle','quiz_analysis')), strip_tags(get_string('rfractiontitle','quiz_analysis')),
-                        strip_tags(get_string('rcounttitle','quiz_analysis')), strip_tags(get_string('rpercenttitle','quiz_analysis')),
-                        strip_tags(get_string('qcounttitle','quiz_analysis')),
-                        strip_tags(get_string('facilitytitle','quiz_analysis')), strip_tags(get_string('stddevtitle','quiz_analysis')),
-                        strip_tags(get_string('dicsindextitle','quiz_analysis')), strip_tags(get_string('disccoefftitle','quiz_analysis')));
+        $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'),
+                        get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'),
+                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'),
+                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'),
+                        get_string('qcounttitle','quiz_analysis'),
+                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'),
+                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis'));
 
         $col = 0;
         foreach ($headers as $item) {
@@ -680,13 +646,13 @@ function get_questions_atttempts_data ($quiz,&$questions,&$attempts,$attemptsele
 
     function Export_CSV(&$questions, $filename) {
 
-        $headers = array(strip_tags(get_string('qidtitle','quiz_analysis')), strip_tags(get_string('qtypetitle','quiz_analysis')),
-                        strip_tags(get_string('qnametitle','quiz_analysis')), strip_tags(get_string('qtexttitle','quiz_analysis')),
-                        strip_tags(get_string('responsestitle','quiz_analysis')), strip_tags(get_string('rfractiontitle','quiz_analysis')),
-                        strip_tags(get_string('rcounttitle','quiz_analysis')), strip_tags(get_string('rpercenttitle','quiz_analysis')),
-                        strip_tags(get_string('qcounttitle','quiz_analysis')),
-                        strip_tags(get_string('facilitytitle','quiz_analysis')), strip_tags(get_string('stddevtitle','quiz_analysis')),
-                        strip_tags(get_string('dicsindextitle','quiz_analysis')), strip_tags(get_string('disccoefftitle','quiz_analysis')));
+        $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'),
+                        get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'),
+                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'),
+                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'),
+                        get_string('qcounttitle','quiz_analysis'),
+                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'),
+                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis'));
 
         $text = implode("\t", $headers)." \n";
 
@@ -701,7 +667,7 @@ function get_questions_atttempts_data ($quiz,&$questions,&$attempts,$attemptsele
         echo $text;
 
         foreach($questions as $q) {
-            $rows = $this->print_row_stats_data_CSV($q);
+            $rows = $this->print_row_stats_data($q);
             foreach($rows as $row){
                 $text = implode("\t", $row);
                 echo $text." \n";
@@ -709,73 +675,19 @@ function get_questions_atttempts_data ($quiz,&$questions,&$attempts,$attemptsele
         }
         exit;
     }
-        function print_row_stats_data_CSV(&$q) {
-        $qid = $q['id'];
-        $question = get_record('question', 'id', $qid);
-        
-        $options = new stdClass;
-        $options->para = false;
-        $options->noclean = true;
-        $options->newlines = false;
-
-        $qtype = $question->qtype;
-
-        $qname = format_text($question->name, FORMAT_MOODLE, $options);
-        $trans = str_replace('\t',' ',$question->questiontext);
-        $trans = substr($trans,0,390);
-        $order = array("\r\n", "\n", "\r");
-        $trans = str_replace($order,' ',$trans);
-       // $trans = explode(',',$trans);
-        
-       // $qtext = format_text(implode('__',$trans), FORMAT_MOODLE, $options);
-        
-        $qtext = format_text($trans, FORMAT_MOODLE, $options);
-
-        $responses = array();
-        foreach ($q['responses'] as $aid=>$resp){
-            $response = new stdClass;
-            if ($q['credits'][$aid] <= 0) {
-                $qclass = 'uncorrect';
-            } elseif ($q['credits'][$aid] == 1) {
-                $qclass = 'correct';
-            } else {
-                $qclass = 'partialcorrect';
-            }
-            $response->credit = " (".format_float($q['credits'][$aid],2).") ";
-            $response->text = format_text("$resp", FORMAT_MOODLE, $options);
-            $count = $q['rcounts'][$aid].'/'.$q['count'];
-            $response->rcount = $count;
-            $response->rpercent =  '('.format_float($q['rcounts'][$aid]/$q['count']*100,0).'%)';
-            $responses[] = $response;
-        }
-        $count = format_float($q['count'],0);
-        $facility = format_float($q['facility']*100,0);
-        $qsd = format_float($q['qsd'],4);
-        $di = format_float($q['disc_index'],3);
-        $dc = format_float($q['disc_coeff'],3);
-
-        $result = array();
-        $response = array_shift($responses);
-        $result[] = array($qid, $qtype, $qname, $qtext, $response->text, $response->credit, $response->rcount, $response->rpercent, $count, $facility, $qsd, $di, $dc);
-        foreach($responses as $response){
-            $result[] = array('', '', '', '', $response->text, $response->credit, $response->rcount, $response->rpercent, '', '', '', '', '');
-        }
-        return $result;
-    }
-
     function Export_HTML(&$questions, $filename) {
         $headers = array();
-        $headers[] = '<font color="blue"><strong>'.get_string('qidtitle','quiz_analysis').'</strong></font>';
-        $headers[] = '<font color="blue"><strong>'.get_string('qtypetitle','quiz_analysis').'</strong></font>';
-        $headers[] = '<font color="green"><strong>'.get_string('qnametitle','quiz_analysis').':</strong></font>'.'<br />'.'<font color="blue"><strong>'.get_string('qtexttitle','quiz_analysis').'</strong></font>';
-        $headers[] = '<font color="blue"><strong>'.get_string('responsestitle','quiz_analysis').'</strong></font>'; 
-        $headers[] = '<font color="blue"><strong>'.get_string('rfractiontitle','quiz_analysis').'</strong></font>';
-        $headers[] = '<font color="blue"><strong>'.get_string('rcounttitle','quiz_analysis').' / '.get_string('qcounttitle','quiz_analysis').'</strong></font>';
-        $headers[] = '<font color="blue"><strong>'.get_string('rpercenttitle','quiz_analysis').'</strong></font>';
-        $headers[] = '<font color="blue"><strong>'.get_string('facilitytitle','quiz_analysis').'</strong></font>'; 
-        $headers[] = '<font color="blue"><strong>'.get_string('stddevtitle','quiz_analysis').'</strong></font>';
-        $headers[] = '<font color="blue"><strong>'.get_string('dicsindextitle','quiz_analysis').'</strong></font>'; 
-        $headers[] = '<font color="blue"><strong>'.get_string('disccoefftitle','quiz_analysis').'</strong></font>';
+        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('qidtitle','quiz_analysis').'</span>';
+        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('qtypetitle','quiz_analysis').'</span>';
+        $headers[] = '<span style ="color:green ;  font-weight : bold;">'.get_string('qnametitle','quiz_analysis').'</span>'.'<br />'.'<span style ="color:blue ;  font-weight : bold;">'.get_string('qtexttitle','quiz_analysis').'</span>';
+        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('responsestitle','quiz_analysis').'</span>'; 
+        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('rfractiontitle','quiz_analysis').'</span>';
+        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('rcounttitle','quiz_analysis').' / '.get_string('qcounttitle','quiz_analysis').'</span>';
+        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('rpercenttitle','quiz_analysis').'</span>';
+        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('facilitytitle','quiz_analysis').'</span>'; 
+        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('stddevtitle','quiz_analysis').'</span>';
+        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('dicsindextitle','quiz_analysis').'</span>'; 
+        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('disccoefftitle','quiz_analysis').'</span>';
         $text = implode("</td><td>", $headers)." \n";
 
         $filename .= ".html";
@@ -785,7 +697,7 @@ function get_questions_atttempts_data ($quiz,&$questions,&$attempts,$attemptsele
         header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
         header("Pragma: public");
         print_header();        
-        echo '<table border = "1" bordercolor="#808080" cellspacing = "0" >';
+        echo '<table border = "1" bcolor="grey">';
         echo '<tr><td>'.$text.'</td></tr>';
          foreach($questions as $q) {
             $rows = $this->print_row_stats_data_html($q);
@@ -809,28 +721,25 @@ function get_questions_atttempts_data ($quiz,&$questions,&$attempts,$attemptsele
             $qid = $q['id'];
             $question = get_record('question', 'id', $qid);
             $qnumber = "".$qid."";
-            $qname = '<font color="green">'.format_text($question->name, $question->questiontextformat, $format_options).':</font><br />';
+            $qname = '<div style ="color:green">'.format_text($question->name, $question->questiontextformat, $format_options).'</div>';
             $qicon = '';//print_question_icon($question, true);
             $qreview = ''; //quiz_question_preview_button($quiz, $question);
             $qtext = format_text($question->questiontext, $question->questiontextformat, $format_options);
-            $qquestion = '<table><tr><td>'.$qname."\n".$qtext."\n".'</td></tr></table>';
+            $qquestion = $qname."\n".$qtext."\n";
             $qtype = $QTYPE_MENU[$question->qtype];
 
             $responses = array();
             foreach ($q['responses'] as $aid=>$resp){
                 $response = new stdClass;
                 if ($q['credits'][$aid] <= 0) {
-                    $qclass = 'red';//'uncorrect';
+                    $qclass = 'color:red';//'uncorrect';
                 } elseif ($q['credits'][$aid] == 1) {
-                    $qclass = 'blue';//'correct';
+                    $qclass = 'color:blue ;  font-weight : bold;';//'correct';
                 } else {
                     $qclass = 'green';//'partialcorrect';
                 }
-                $response->credit = '<font color="'.$qclass.'">('.format_float($q['credits'][$aid],2).')</font>';
-                if ($response->text ='') {
-                    $response->text ='&nbsp;';
-                }
-                $response->text = '<font color="'.$qclass.'">'.format_text($resp, FORMAT_MOODLE, $format_options).'</font>';
+                $response->credit = '<span style= "'.$qclass.'">('.format_float($q['credits'][$aid],2).') </span>';
+                $response->text = '<span style= "'.$qclass.'">'.format_text($resp, FORMAT_MOODLE, $format_options).' </span>';
                 $count = '&nbsp;'.$q['rcounts'][$aid].'&nbsp;/&nbsp; '.$q['count'];
                 $response->rcount = $count;
                 $response->rpercent =  $q['rpercent'][$aid];
@@ -845,11 +754,10 @@ function get_questions_atttempts_data ($quiz,&$questions,&$attempts,$attemptsele
             $response = array_shift($responses);
             $result[] =(array($qnumber,$qtype, $qquestion, $response->text, $response->credit, $response->rcount, $response->rpercent, $facility, $qsd, $di, $dc));
             foreach($responses as $response) {
-                $result[]=(array('&nbsp;','&nbsp;','&nbsp;',$response->text, $response->credit, $response->rcount, $response->rpercent, '&nbsp; ', '&nbsp; ', '&nbsp; ', '&nbsp; '));
+                $result[]=(array('', '', '',$response->text, $response->credit, $response->rcount, $response->rpercent, '', '', '', ''));
             }
             return $result;
           }
-
     function print_row_stats_data(&$q) {
         $qid = $q['id'];
         $question = get_record('question', 'id', $qid);
