@@ -765,8 +765,12 @@ function recordset_to_array($rs) {
  * @return ADOFetchObj the object containing the fetched information
  */
 function rs_fetch_record(&$rs) {
-
     global $CFG;
+
+    if (!$rs) {
+        debugging('Incorrect $rs used!', DEBUG_DEVELOPER);
+        return false;
+    }
 
     $rec = $rs->FetchObj(); //Retrieve record as object without advance the pointer
 
@@ -794,6 +798,10 @@ function rs_fetch_record(&$rs) {
  * @return boolean true if the movement was successful and false if not (end of recordset)
  */
 function rs_next_record(&$rs) {
+    if (!$rs) {
+        debugging('Incorrect $rs used!', DEBUG_DEVELOPER);
+        return false;
+    }
 
     return $rs->MoveNext(); //Move the pointer to the next record
 }
@@ -816,8 +824,8 @@ function rs_fetch_next_record(&$rs) {
 
     global $CFG;
 
-    if (empty($rs)) {
-        debugging('Incorrect rs used!');
+    if (!$rs) {
+        debugging('Incorrect $rs used!', DEBUG_DEVELOPER);
         return false;
     }
 
@@ -845,6 +853,10 @@ function rs_fetch_next_record(&$rs) {
  * @return bool
  */
 function rs_EOF($rs) {
+    if (!$rs) {
+        debugging('Incorrect $rs used!', DEBUG_DEVELOPER);
+        return true;
+    }
     return $rs->EOF;
 }
 
@@ -857,7 +869,7 @@ function rs_EOF($rs) {
  */
 function rs_close(&$rs) {
     if (!$rs) {
-        // recordset not open, hmmm
+        debugging('Incorrect $rs used!', DEBUG_DEVELOPER);
         return;
     }
 
