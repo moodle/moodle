@@ -533,13 +533,13 @@ class quiz_report extends quiz_default_report {
     /// Here starts workshhet headers
         $myxls->write_string(0,0,$sheettitle,$formatb);
 
-        $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'),
-                        get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'),
-                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'),
-                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'),
-                        get_string('qcounttitle','quiz_analysis'),
-                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'),
-                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis'));
+        $headers = array(strip_tags(get_string('qidtitle','quiz_analysis')), strip_tags(get_string('qtypetitle','quiz_analysis')),
+                        strip_tags(get_string('qnametitle','quiz_analysis')), strip_tags(get_string('qtexttitle','quiz_analysis')),
+                        strip_tags(get_string('responsestitle','quiz_analysis')), strip_tags(get_string('rfractiontitle','quiz_analysis')),
+                        strip_tags(get_string('rcounttitle','quiz_analysis')), strip_tags(get_string('rpercenttitle','quiz_analysis')),
+                        strip_tags(get_string('qcounttitle','quiz_analysis')),
+                        strip_tags(get_string('facilitytitle','quiz_analysis')), strip_tags(get_string('stddevtitle','quiz_analysis')),
+                        strip_tags(get_string('dicsindextitle','quiz_analysis')), strip_tags(get_string('disccoefftitle','quiz_analysis')));
 
         $col = 0;
         foreach ($headers as $item) {
@@ -612,13 +612,13 @@ class quiz_report extends quiz_default_report {
     /// Here starts workshhet headers
         $myxls->write_string(0,0,$sheettitle,$formatb);
 
-        $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'),
-                        get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'),
-                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'),
-                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'),
-                        get_string('qcounttitle','quiz_analysis'),
-                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'),
-                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis'));
+        $headers = array(strip_tags(get_string('qidtitle','quiz_analysis')), strip_tags(get_string('qtypetitle','quiz_analysis')),
+                        strip_tags(get_string('qnametitle','quiz_analysis')), strip_tags(get_string('qtexttitle','quiz_analysis')),
+                        strip_tags(get_string('responsestitle','quiz_analysis')), strip_tags(get_string('rfractiontitle','quiz_analysis')),
+                        strip_tags(get_string('rcounttitle','quiz_analysis')), strip_tags(get_string('rpercenttitle','quiz_analysis')),
+                        strip_tags(get_string('qcounttitle','quiz_analysis')),
+                        strip_tags(get_string('facilitytitle','quiz_analysis')), strip_tags(get_string('stddevtitle','quiz_analysis')),
+                        strip_tags(get_string('dicsindextitle','quiz_analysis')), strip_tags(get_string('disccoefftitle','quiz_analysis')));
 
         $col = 0;
         foreach ($headers as $item) {
@@ -646,13 +646,13 @@ class quiz_report extends quiz_default_report {
 
     function Export_CSV(&$questions, $filename) {
 
-        $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'),
-                        get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'),
-                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'),
-                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'),
-                        get_string('qcounttitle','quiz_analysis'),
-                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'),
-                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis'));
+        $headers = array(strip_tags(get_string('qidtitle','quiz_analysis')), strip_tags(get_string('qtypetitle','quiz_analysis')),
+                        strip_tags(get_string('qnametitle','quiz_analysis')), strip_tags(get_string('qtexttitle','quiz_analysis')),
+                        strip_tags(get_string('responsestitle','quiz_analysis')), strip_tags(get_string('rfractiontitle','quiz_analysis')),
+                        strip_tags(get_string('rcounttitle','quiz_analysis')), strip_tags(get_string('rpercenttitle','quiz_analysis')),
+                        strip_tags(get_string('qcounttitle','quiz_analysis')),
+                        strip_tags(get_string('facilitytitle','quiz_analysis')), strip_tags(get_string('stddevtitle','quiz_analysis')),
+                        strip_tags(get_string('dicsindextitle','quiz_analysis')), strip_tags(get_string('disccoefftitle','quiz_analysis')));
 
         $text = implode("\t", $headers)." \n";
 
@@ -667,7 +667,7 @@ class quiz_report extends quiz_default_report {
         echo $text;
 
         foreach($questions as $q) {
-            $rows = $this->print_row_stats_data($q);
+            $rows = $this->print_row_stats_data_CSV($q);
             foreach($rows as $row){
                 $text = implode("\t", $row);
                 echo $text." \n";
@@ -675,19 +675,68 @@ class quiz_report extends quiz_default_report {
         }
         exit;
     }
+        function print_row_stats_data_CSV(&$q) {
+        $qid = $q['id'];
+        $question = get_record('question', 'id', $qid);
+        
+        $options = new stdClass;
+        $options->para = false;
+        $options->noclean = true;
+        $options->newlines = false;
+        $qtype = $question->qtype;
+        $qname = format_text($question->name, FORMAT_MOODLE, $options);
+        $trans = str_replace('\t',' ',$question->questiontext);
+        $trans = substr($trans,0,390);
+        $order = array("\r\n", "\n", "\r");
+        $trans = str_replace($order,' ',$trans);
+       // $trans = explode(',',$trans);
+        
+       // $qtext = format_text(implode('__',$trans), FORMAT_MOODLE, $options);
+        
+        $qtext = format_text($trans, FORMAT_MOODLE, $options);
+        $responses = array();
+        foreach ($q['responses'] as $aid=>$resp){
+            $response = new stdClass;
+            if ($q['credits'][$aid] <= 0) {
+                $qclass = 'uncorrect';
+            } elseif ($q['credits'][$aid] == 1) {
+                $qclass = 'correct';
+            } else {
+                $qclass = 'partialcorrect';
+            }
+            $response->credit = " (".format_float($q['credits'][$aid],2).") ";
+            $response->text = format_text("$resp", FORMAT_MOODLE, $options);
+            $count = $q['rcounts'][$aid].'/'.$q['count'];
+            $response->rcount = $count;
+            $response->rpercent =  '('.format_float($q['rcounts'][$aid]/$q['count']*100,0).'%)';
+            $responses[] = $response;
+        }
+        $count = format_float($q['count'],0);
+        $facility = format_float($q['facility']*100,0);
+        $qsd = format_float($q['qsd'],4);
+        $di = format_float($q['disc_index'],3);
+        $dc = format_float($q['disc_coeff'],3);
+        $result = array();
+        $response = array_shift($responses);
+        $result[] = array($qid, $qtype, $qname, $qtext, $response->text, $response->credit, $response->rcount, $response->rpercent, $count, $facility, $qsd, $di, $dc);
+        foreach($responses as $response){
+            $result[] = array('', '', '', '', $response->text, $response->credit, $response->rcount, $response->rpercent, '', '', '', '', '');
+        }
+        return $result;
+    }
     function Export_HTML(&$questions, $filename) {
         $headers = array();
-        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('qidtitle','quiz_analysis').'</span>';
-        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('qtypetitle','quiz_analysis').'</span>';
-        $headers[] = '<span style ="color:green ;  font-weight : bold;">'.get_string('qnametitle','quiz_analysis').'</span>'.'<br />'.'<span style ="color:blue ;  font-weight : bold;">'.get_string('qtexttitle','quiz_analysis').'</span>';
-        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('responsestitle','quiz_analysis').'</span>'; 
-        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('rfractiontitle','quiz_analysis').'</span>';
-        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('rcounttitle','quiz_analysis').' / '.get_string('qcounttitle','quiz_analysis').'</span>';
-        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('rpercenttitle','quiz_analysis').'</span>';
-        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('facilitytitle','quiz_analysis').'</span>'; 
-        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('stddevtitle','quiz_analysis').'</span>';
-        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('dicsindextitle','quiz_analysis').'</span>'; 
-        $headers[] = '<span style ="color:blue ;  font-weight : bold;">'.get_string('disccoefftitle','quiz_analysis').'</span>';
+        $headers[] = '<font color="blue"><strong>'.get_string('qidtitle','quiz_analysis').'</strong></font>';
+        $headers[] = '<font color="blue"><strong>'.get_string('qtypetitle','quiz_analysis').'</strong></font>';
+        $headers[] = '<font color="green"><strong>'.get_string('qnametitle','quiz_analysis').':</strong></font>'.'<br />'.'<font color="blue"><strong>'.get_string('qtexttitle','quiz_analysis').'</strong></font>';
+        $headers[] = '<font color="blue"><strong>'.get_string('responsestitle','quiz_analysis').'</strong></font>'; 
+        $headers[] = '<font color="blue"><strong>'.get_string('rfractiontitle','quiz_analysis').'</strong></font>';
+        $headers[] = '<font color="blue"><strong>'.get_string('rcounttitle','quiz_analysis').' / '.get_string('qcounttitle','quiz_analysis').'</strong></font>';
+        $headers[] = '<font color="blue"><strong>'.get_string('rpercenttitle','quiz_analysis').'</strong></font>';
+        $headers[] = '<font color="blue"><strong>'.get_string('facilitytitle','quiz_analysis').'</strong></font>'; 
+        $headers[] = '<font color="blue"><strong>'.get_string('stddevtitle','quiz_analysis').'</strong></font>';
+        $headers[] = '<font color="blue"><strong>'.get_string('dicsindextitle','quiz_analysis').'</strong></font>'; 
+        $headers[] = '<font color="blue"><strong>'.get_string('disccoefftitle','quiz_analysis').'</strong></font>';
         $text = implode("</td><td>", $headers)." \n";
 
         $filename .= ".html";
@@ -697,7 +746,7 @@ class quiz_report extends quiz_default_report {
         header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
         header("Pragma: public");
         print_header();        
-        echo '<table border = "1" bcolor="grey">';
+        echo '<table border = "1" bordercolor="#808080" cellspacing = "0" >';
         echo '<tr><td>'.$text.'</td></tr>';
          foreach($questions as $q) {
             $rows = $this->print_row_stats_data_html($q);
@@ -721,25 +770,28 @@ class quiz_report extends quiz_default_report {
             $qid = $q['id'];
             $question = get_record('question', 'id', $qid);
             $qnumber = "".$qid."";
-            $qname = '<div style ="color:green">'.format_text($question->name, $question->questiontextformat, $format_options).'</div>';
+            $qname = '<font color="green">'.format_text($question->name, $question->questiontextformat, $format_options).':</font><br />';
             $qicon = '';//print_question_icon($question, true);
             $qreview = ''; //quiz_question_preview_button($quiz, $question);
             $qtext = format_text($question->questiontext, $question->questiontextformat, $format_options);
-            $qquestion = $qname."\n".$qtext."\n";
+            $qquestion = '<table><tr><td>'.$qname."\n".$qtext."\n".'</td></tr></table>';
             $qtype = $QTYPE_MENU[$question->qtype];
 
             $responses = array();
             foreach ($q['responses'] as $aid=>$resp){
                 $response = new stdClass;
                 if ($q['credits'][$aid] <= 0) {
-                    $qclass = 'color:red';//'uncorrect';
+                    $qclass = 'red';//'uncorrect';
                 } elseif ($q['credits'][$aid] == 1) {
-                    $qclass = 'color:blue ;  font-weight : bold;';//'correct';
+                    $qclass = 'blue';//'correct';
                 } else {
                     $qclass = 'green';//'partialcorrect';
                 }
-                $response->credit = '<span style= "'.$qclass.'">('.format_float($q['credits'][$aid],2).') </span>';
-                $response->text = '<span style= "'.$qclass.'">'.format_text($resp, FORMAT_MOODLE, $format_options).' </span>';
+                $response->credit = '<font color="'.$qclass.'">('.format_float($q['credits'][$aid],2).')</font>';
+                if ($response->text ='') {
+                    $response->text ='&nbsp;';
+                }
+                $response->text = '<font color="'.$qclass.'">'.format_text($resp, FORMAT_MOODLE, $format_options).'</font>';
                 $count = '&nbsp;'.$q['rcounts'][$aid].'&nbsp;/&nbsp; '.$q['count'];
                 $response->rcount = $count;
                 $response->rpercent =  $q['rpercent'][$aid];
@@ -754,7 +806,7 @@ class quiz_report extends quiz_default_report {
             $response = array_shift($responses);
             $result[] =(array($qnumber,$qtype, $qquestion, $response->text, $response->credit, $response->rcount, $response->rpercent, $facility, $qsd, $di, $dc));
             foreach($responses as $response) {
-                $result[]=(array('', '', '',$response->text, $response->credit, $response->rcount, $response->rpercent, '', '', '', ''));
+                $result[]=(array('&nbsp;','&nbsp;','&nbsp;',$response->text, $response->credit, $response->rcount, $response->rpercent, '&nbsp; ', '&nbsp; ', '&nbsp; ', '&nbsp; '));
             }
             return $result;
           }
