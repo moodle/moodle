@@ -198,10 +198,12 @@ function stats_cron_daily($maxdays=1) {
         $sql = "INSERT INTO {$CFG->prefix}stats_daily (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'enrolments' AS stattype, $nextmidnight AS timeend,
-                        c.id AS courseid, ra.roleid, COUNT(DISTINCT ra.userid) AS stat1, 0 AS stat2
-                  FROM {$CFG->prefix}role_assignments ra $enroljoin_na
-                 WHERE $enrolwhere_na
-              GROUP BY stattype, timeend, c.id, ra.roleid, stat2";
+                        pl.courseid, pl.roleid, COUNT(DISTINCT pl.userid) AS stat1, 0 AS stat2
+                  FROM (SELECT DISTINCT ra.roleid, ra.userid, c.id as courseid
+                          FROM {$CFG->prefix}role_assignments ra $enroljoin_na
+                         WHERE $enrolwhere_na
+                       ) pl
+              GROUP BY stattype, timeend, pl.courseid, pl.roleid, stat2";
 
         if (!execute_sql($sql, false)) {
             $failed = true;
@@ -390,17 +392,18 @@ function stats_cron_daily($maxdays=1) {
         $sql = "INSERT INTO {$CFG->prefix}stats_daily (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'activity' AS stattype, $nextmidnight AS timeend, pl.courseid, pl.roleid,
-                       SUM(pl.statsreads) AS stat1, SUM(pl.statswrites) AS stat2
-                  FROM (SELECT DISTINCT ra.roleid, c.id AS courseid, sud.statsreads, sud.statswrites
+                       SUM(sud.statsreads) AS stat1, SUM(sud.statswrites) AS stat2
+                  FROM {$CFG->prefix}stats_user_daily sud,
+                       (SELECT DISTINCT ra.userid, ra.roleid, c.id AS courseid
                           FROM {$CFG->prefix}role_assignments ra $enroljoin
-                               JOIN {$CFG->prefix}stats_user_daily sud
-                                    ON (sud.userid = ra.userid AND sud.courseid = c.id) 
                          WHERE c.id <> ".SITEID." AND
                                ra.roleid <> $guestrole->id AND ra.userid <> $guest->id AND
-                               sud.timeend = $nextmidnight AND $enrolwhere
+                               $enrolwhere
                         ) pl
+                 WHERE sud.userid = pl.userid AND sud.courseid = pl.courseid AND
+                       sud.timeend = $nextmidnight AND sud.stattype='activity'  
               GROUP BY stattype, timeend, pl.courseid, pl.roleid
-                HAVING SUM(pl.statsreads) > 0 OR SUM(pl.statswrites) > 0";
+                HAVING SUM(sud.statsreads) > 0 OR SUM(sud.statswrites) > 0";
 
         if ($logspresent and !execute_sql($sql, false)) {
             $failed = true;
@@ -418,6 +421,7 @@ function stats_cron_daily($maxdays=1) {
                        SUM(sud.statsreads) AS stat1, SUM(sud.statswrites) AS stat2
                   FROM {$CFG->prefix}stats_user_daily sud
                  WHERE sud.timeend = $nextmidnight AND sud.courseid <> ".SITEID." AND
+                       sud.stattype='activity' AND
                        (sud.userid = $guest->id OR sud.userid
                          NOT IN (SELECT ra.userid
                                    FROM {$CFG->prefix}role_assignments ra $enroljoin
@@ -437,17 +441,19 @@ function stats_cron_daily($maxdays=1) {
         $sql = "INSERT INTO {$CFG->prefix}stats_daily (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'activity' AS stattype, $nextmidnight AS timeend, pl.courseid, pl.roleid,
-                       SUM(pl.statsreads) AS stat1, SUM(pl.statswrites) AS stat2
-                  FROM (SELECT DISTINCT ra.roleid, c.id AS courseid, sud.statsreads, sud.statswrites
-                          FROM {$CFG->prefix}role_assignments ra $fpjoin
-                               JOIN {$CFG->prefix}stats_user_daily sud
-                                    ON (sud.userid = ra.userid AND sud.courseid = c.id)
-                         WHERE c.id = ".SITEID." AND ra.roleid <> $defaultfproleid AND
+                       SUM(sud.statsreads) AS stat1, SUM(sud.statswrites) AS stat2
+                  FROM {$CFG->prefix}stats_user_daily sud,
+                       (SELECT DISTINCT ra.userid, ra.roleid, c.id AS courseid
+                          FROM {$CFG->prefix}role_assignments ra $enroljoin
+                         WHERE c.id = ".SITEID." AND
+                               ra.roleid <> $defaultfproleid AND
                                ra.roleid <> $guestrole->id AND ra.userid <> $guest->id AND
-                               sud.timeend = $nextmidnight AND $fpwhere
+                               $enrolwhere
                         ) pl
+                 WHERE sud.userid = pl.userid AND sud.courseid = pl.courseid AND
+                       sud.timeend = $nextmidnight AND sud.stattype='activity'  
               GROUP BY stattype, timeend, pl.courseid, pl.roleid
-                HAVING SUM(pl.statsreads) > 0 OR SUM(pl.statswrites) > 0";
+                HAVING SUM(sud.statsreads) > 0 OR SUM(sud.statswrites) > 0";
 
         if ($logspresent and !execute_sql($sql, false)) {
             $failed = true;
@@ -463,6 +469,7 @@ function stats_cron_daily($maxdays=1) {
                        SUM(sud.statsreads) AS stat1, SUM(sud.statswrites) AS stat2
                   FROM {$CFG->prefix}stats_user_daily sud
                  WHERE sud.timeend = $nextmidnight AND sud.courseid = ".SITEID." AND
+                       sud.stattype='activity' AND
                        sud.userid <> $guest->id AND sud.userid <> 0 AND sud.userid
                          NOT IN (SELECT ra.userid
                                    FROM {$CFG->prefix}role_assignments ra $fpjoin
@@ -485,7 +492,8 @@ function stats_cron_daily($maxdays=1) {
                   FROM (SELECT sud.statsreads, sud.statswrites
                           FROM {$CFG->prefix}stats_user_daily sud
                          WHERE (sud.userid = $guest->id OR sud.userid = 0) AND
-                               sud.timeend = $nextmidnight AND sud.courseid = ".SITEID."
+                               sud.timeend = $nextmidnight AND sud.courseid = ".SITEID." AND
+                               sud.stattype='activity'
                         ) pl
               GROUP BY stattype, timeend, courseid, nroleid
                 HAVING SUM(pl.statsreads) > 0 OR SUM(pl.statswrites) > 0";
