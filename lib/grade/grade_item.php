@@ -1460,9 +1460,10 @@ class grade_item extends grade_object {
      * @param int $usermodified - user which did the grading
      * @param int $dategraded
      * @param int $datesubmitted
+     * @param object $grade object - usefull for bulk upgrades
      * @return boolean success
      */
-    function update_raw_grade($userid, $rawgrade=false, $source=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null, $dategraded=null, $datesubmitted=null) {
+    function update_raw_grade($userid, $rawgrade=false, $source=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null, $dategraded=null, $datesubmitted=null, $grade=null) {
         global $USER;
 
         $result = true;
@@ -1472,7 +1473,10 @@ class grade_item extends grade_object {
             return false;
         }
 
-        $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid));
+        if (is_null($grade)) {
+            //fetch from db
+            $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid));
+        }
         $grade->grade_item =& $this; // prevent db fetching of this grade_item
 
         if (empty($usermodified)) {

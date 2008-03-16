@@ -63,7 +63,7 @@ require_once($CFG->libdir . '/grade/grade_outcome.php');
  * @param mixed $itemdetails object or array describing the grading item, NULL if no change
  */
 function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grades=NULL, $itemdetails=NULL) {
-    global $USER;
+    global $USER, $CFG;
 
     // only following grade_item properties can be changed in this function
     $allowed = array('itemname', 'idnumber', 'gradetype', 'grademax', 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted', 'hidden');
@@ -150,7 +150,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
                         $grade_item->{$k} = $v;
                         $update = true;
                     }
-                    
+
                 } else {
                     if ($grade_item->{$k} != $v) {
                         $grade_item->{$k} = $v;
@@ -183,22 +183,79 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 
 /// Finally start processing of grades
     if (is_object($grades)) {
-        $grades = array($grades);
+        $grades = array($grades->userid=>$grades);
     } else {
         if (array_key_exists('userid', $grades)) {
-            $grades = array($grades);
+            $grades = array($grades['userid']=>$grades);
         }
     }
 
+/// normalize and verify grade array
+    foreach($grades as $k=>$g) {
+        if (!is_array($g)) {
+            $g = (array)$g;
+            $grades[$k] = $g;
+        }
+
+        if (empty($g['userid']) or $k != $g['userid']) {
+            debugging('Incorrect grade array index, must be user id! Grade ignored.');
+            unset($grades[$k]);
+        }
+    }
+
+    if (empty($grades)) {
+        return GRADE_UPDATE_FAILED;
+    }
+
+    $count = count($grades);
+    if ($count == 1) {
+        reset($grades);
+        $uid = key($grades);
+        $sql = "SELECT * FROM {$CFG->prefix}grade_grades WHERE itemid = $grade_item->id AND userid = $uid";
+
+    } else if ($count < 200) {
+        $uids = implode(',', array_keys($grades));
+        $sql = "SELECT * FROM {$CFG->prefix}grade_grades WHERE itemid = $grade_item->id AND userid IN ($uids)";
+
+    } else {
+        $sql = "SELECT * FROM {$CFG->prefix}grade_grades WHERE itemid = $grade_item->id";
+    }
+
+    $rs = get_recordset_sql($sql);
+
     $failed = false;
-    foreach ($grades as $grade) {
-        $grade = (array)$grade;
-        if (empty($grade['userid'])) {
-            $failed = true;
-            debugging('Invalid userid in grade submitted');
-            continue;
-        } else {
-            $userid = $grade['userid'];
+
+    while (count($grades) > 0) {
+        $grade_grade = null;
+        $grade       = null;
+
+        while ($rs and !rs_EOF($rs)) {
+            if (!$gd = rs_fetch_next_record($rs)) {
+                break;
+            }
+            $userid = $gd->userid;
+            if (!isset($grades[$userid])) {
+                // this grade not requested, continue
+                continue;
+            }
+            // existing grade requested
+            $grade       = $grades[$userid];
+            $grade_grade = new grade_grade($gd, false);
+            unset($grades[$userid]);
+            break;
+        }
+
+        if (is_null($grade_grade)) {
+            if (count($grades) == 0) {
+                // no more grades to process
+                break;
+            }
+
+            $grade       = reset($grades);
+            $userid      = $grade['userid'];
+            $grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$userid), false);
+            $grade_grade->load_optional_fields(); // add feedback and info too
+            unset($grades[$userid]);
         }
 
         $rawgrade       = false;
@@ -233,9 +290,13 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         }
 
         // update or insert the grade
-        if (!$grade_item->update_raw_grade($userid, $rawgrade, $source, $feedback, $feedbackformat, $usermodified, $dategraded, $datesubmitted)) {
+        if (!$grade_item->update_raw_grade($userid, $rawgrade, $source, $feedback, $feedbackformat, $usermodified, $dategraded, $datesubmitted, $grade_grade)) {
             $failed = true;
         }
+    }
+
+    if ($rs) {
+        rs_close($rs);
     }
 
     if (!$failed) {
@@ -360,7 +421,7 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
                             $grade->grade          = null;
                             $grade->str_grade      = '-';
                             $grade->str_long_grade = $grade->str_grade;
-                             
+
                         } else if (in_array($grade_item->id, $needsupdate)) {
                             $grade->grade          = false;
                             $grade->str_grade      = get_string('error');
