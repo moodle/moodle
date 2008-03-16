@@ -853,8 +853,13 @@ function rs_EOF($rs) {
  * Note that, once closed, the recordset must not be used anymore along the request.
  * Saves memory (optional but recommended).
  * @param ADORecordSet the recordset to be closed
+ * @return void
  */
 function rs_close(&$rs) {
+    if (!$rs) {
+        // recordset not open, hmmm
+        return;
+    }
 
     $rs->Close();
 }
