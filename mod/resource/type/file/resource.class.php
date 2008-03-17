@@ -251,6 +251,9 @@ class resource_file extends resource_base {
             } else if ($mimetype == 'application/pdf' || $mimetype == 'application/x-pdf') {
                 $resourcetype = "pdf";
                 $embedded = true;
+            } else if ($mimetype == "audio/x-pn-realaudio") {   // It's a realmedia file
+                $resourcetype = "rm";
+                $embedded = true;
             }
         }
 
@@ -545,6 +548,20 @@ class resource_file extends resource_base {
                 echo '<!--<![endif]-->';
                 echo '</object>';
                 echo '</div>';
+            } else if ($resourcetype == "rm") {
+
+                echo '<div class="resourcecontent resourcerm">'; 
+                echo '<object classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="320" height="240">';
+                echo '<param name="src" value="' . $fullurl . '" />';
+                echo '<param name="controls" value="All" />';
+                echo '<!--[if !IE]>-->';
+                echo '<object type="audio/x-pn-realaudio-plugin" data="' . $fullurl . '" width="320" height="240">';
+                echo '<param name="controls" value="All" />';
+                echo '<a href="' . $fullurl . '">' . $fullurl .'</a>';
+                echo '</object>';
+                echo '<!--<![endif]-->';
+                echo '</object>';
+                echo '</div>'; 
 
             } else if ($resourcetype == "quicktime") {
                 echo '<div class="resourcecontent resourceqt">';
