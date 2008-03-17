@@ -512,6 +512,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
     $lastmodified = $pathisstring ? time() : filemtime($path);
     $filesize     = $pathisstring ? strlen($path) : filesize($path);
 
+/* - MDL-13949
     //Adobe Acrobat Reader XSS prevention
     if ($mimetype=='application/pdf' or mimeinfo('type', $filename)=='application/pdf') {
         //please note that it prevents opening of pdfs in browser when http referer disabled
@@ -527,6 +528,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
             $lifetime = 1; // >0 needed for byteserving
         }
     }
+*/
 
     //IE compatibiltiy HACK!
     if (ini_get('zlib.output_compression')) {
