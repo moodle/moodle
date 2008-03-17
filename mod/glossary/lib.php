@@ -1066,13 +1066,11 @@ function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL)
         }
     }
 
-    if ( !$extended ) {
-        $definitionsearch = "0";
-    }
+    $definitionsearch = !empty($extended) ? "OR $definitionsearch" : '';
 
     $selectsql = "{$CFG->prefix}glossary_entries e,
                   {$CFG->prefix}glossary g $onlyvisibletable
-             WHERE ($conceptsearch OR $definitionsearch)
+             WHERE ($conceptsearch $definitionsearch)
                AND (e.glossaryid = g.id or e.sourceglossaryid = g.id) $onlyvisible
                AND g.id IN ($glos) AND e.approved != 0";
 
