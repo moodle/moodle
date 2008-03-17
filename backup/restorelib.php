@@ -3248,14 +3248,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $gro = new Object();
                 ///$gro->id = backup_todb($info['GROUPING']['#']['ID']['0']['#']);
                 $gro->courseid    = $restore->course_id;
-                $oldname          = backup_todb($info['GROUPING']['#']['NAME']['0']['#']);
-                $oldshortname     = $restore->course_shortname;
-                if (false===strpos($oldname, $oldshortname)) {
-                    $gro->name = $oldname;
-                }
-                elseif ($shortname = get_field('course', 'shortname', 'id', $restore->course_id)) {
-                    $gro->name = preg_replace("/$oldshortname/", $shortname, $oldname);
-                }
+                $gro->name        = backup_todb($info['GROUPING']['#']['NAME']['0']['#']);
                 $gro->description = backup_todb($info['GROUPING']['#']['DESCRIPTION']['0']['#']);
                 $gro->configdata  = backup_todb($info['GROUPING']['#']['CONFIGDATA']['0']['#']);
                 $gro->timecreated = backup_todb($info['GROUPING']['#']['TIMECREATED']['0']['#']);
