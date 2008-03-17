@@ -72,30 +72,30 @@
                 }
                 foreach ($instances as $instance) {
                     $var = 'restore_'.$modname.'_instance_'.$instance->id;
-                    $$var = optional_param($var,0);
+                    $$var = optional_param($var,0,PARAM_INT);
                     $var = 'restore_user_info_'.$modname.'_instance_'.$instance->id;
-                    $$var = optional_param($var,0);
+                    $$var = optional_param($var,0,PARAM_INT);
                 }
             }
         }
         //restoreto
-        $restore_restoreto = required_param('restore_restoreto');
+        $restore_restoreto = required_param('restore_restoreto', PARAM_INT);
         //restore_metacourse
-        $restore_metacourse = required_param('restore_metacourse');
+        $restore_metacourse = required_param('restore_metacourse', PARAM_INT);
         //restore_users
-        $restore_users = required_param('restore_users');
+        $restore_users = required_param('restore_users', PARAM_INT);
         //restore_logs
-        $restore_logs = required_param('restore_logs');
+        $restore_logs = required_param('restore_logs', PARAM_INT);
         //restore_user_files
-        $restore_user_files = required_param('restore_user_files');
+        $restore_user_files = required_param('restore_user_files', PARAM_INT);
         //restore_course_files
-        $restore_course_files = required_param('restore_course_files');
+        $restore_course_files = required_param('restore_course_files', PARAM_INT);
         //restore_site_files
-        $restore_site_files = required_param('restore_site_files');
+        $restore_site_files = required_param('restore_site_files', PARAM_INT);
         //restore_gradebook_history
-        $restore_gradebook_history = required_param('restore_gradebook_history');
+        $restore_gradebook_history = required_param('restore_gradebook_history', PARAM_INT);
         //restore_messages
-        $restore_messages = required_param('restore_messages');
+        $restore_messages = required_param('restore_messages', PARAM_INT);
         
         //Check we've selected a course to restore to
         $course_id = optional_param('course_id', 0, PARAM_INT);

@@ -527,11 +527,16 @@
             }
         } else {
             //Only if status (record exists)
-            if ($status) {
-                ////First strip slashes
-                $temp = stripslashes($status->info);
-                //Now unserialize
-                $status->info = unserialize($temp);
+            if (!empty($status->info)) {
+                if ($status->info === 'needed') { 
+                    // TODO: ugly hack - fix before 1.9.1 
+                    debugging('Incorrect string "needed" in $status->info, please fix the code (table:'.$table.'; old_id:'.$old_id.').', DEBUG_DEVELOPER);
+                } else {
+                    ////First strip slashes
+                    $temp = stripslashes($status->info);
+                    //Now unserialize
+                    $status->info = unserialize($temp);
+                }
             }
         }
 
@@ -540,12 +545,15 @@
 
     //This function is used to add slashes (and decode from UTF-8 if needed)
     //It's used intensivelly when restoring modules and saving them in db
-    function backup_todb ($data) {
+    function backup_todb ($data, $addslashes=true) {
         // MDL-10770
         if ($data === '$@NULL@$') {
             return null;
         } else {
-            return restore_decode_absolute_links(addslashes($data));
+            if ($addslashes) {
+                $data = addslashes($data);
+            }
+            return restore_decode_absolute_links($data);
         }
     }
 
