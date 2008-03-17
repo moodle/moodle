@@ -108,6 +108,7 @@
             $oldid = backup_todb($ent_info['#']['ID']['0']['#']);
 
             //Now, build the wiki_ENTRIES record structure
+            $entry = new object();
             $entry->wikiid = $new_wiki_id;
             $entry->course = $restore->course_id;
             $entry->userid = backup_todb($ent_info['#']['USERID']['0']['#']);
@@ -121,7 +122,7 @@
                 $entry->userid = $user->new_id;
             }
             //We have to recode the groupid field
-            $group = backup_getid($restore->backup_unique_code, 'groups', $entry->groupid);
+            $group = restore_group_getid($restore, $entry->groupid);
             if ($group) {
                 $entry->groupid = $group->new_id;
             }
