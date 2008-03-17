@@ -585,11 +585,17 @@
         } else {
             fwrite ($bf,full_tag("COURSEFILES",3,false,"false"));
         }
-        //The course files
+        //The site files
         if ($preferences->backup_site_files == 1) {
             fwrite ($bf,full_tag("SITEFILES",3,false,"true"));
         } else {
             fwrite ($bf,full_tag("SITEFILES",3,false,"false"));
+        }
+        //The gradebook histories
+        if ($preferences->backup_gradebook_history == 1) {
+            fwrite ($bf,full_tag("GRADEBOOKHISTORIES",3,false,"true"));
+        } else {
+            fwrite ($bf,full_tag("GRADEBOOKHISTORIES",3,false,"false"));
         }
         //The messages in backup
         if ($preferences->backup_messages == 1 && $preferences->backup_course == SITEID) {
@@ -1129,6 +1135,7 @@
                fwrite ($bf,full_tag("GROUPMODE",6,false,$course_module[$tok]->groupmode));
                fwrite ($bf,full_tag("GROUPINGID",6,false,$course_module[$tok]->groupingid));
                fwrite ($bf,full_tag("GROUPMEMBERSONLY",6,false,$course_module[$tok]->groupmembersonly));
+               fwrite ($bf,full_tag("IDNUMBER",6,false,$course_module[$tok]->idnumber));
                // get all the role_capabilities overrides in this mod
                write_role_overrides_xml($bf, $context, 6);
                /// write role_assign code here
@@ -1411,37 +1418,40 @@
     }
 
     //Backup gradebook info
-    function backup_gradebook_info($bf,$preferences) {
-
+    function backup_gradebook_info($bf, $preferences) {
         global $CFG;
+        require_once($CFG->libdir.'/gradelib.php');
+
+        //first make sure items are properly sorted and everything is ok
+        grade_category::fetch_course_tree($preferences->backup_course, true);
+        grade_regrade_final_grades($preferences->backup_course);
+
         $status = true;
 
         // see if ALL grade items of type mod of this course are being backed up
         // if not, we do not need to backup grade category and associated grade items/grades
         $backupall = true;
 
-        if ($grade_items = get_records_sql("SELECT * FROM {$CFG->prefix}grade_items
-                                            WHERE courseid = $preferences->backup_course
-                                            AND itemtype != 'course'
-                                            ORDER BY sortorder ASC")) {
+        if ($grade_items = get_records_sql("SELECT *
+                                              FROM {$CFG->prefix}grade_items
+                                             WHERE courseid = $preferences->backup_course
+                                                   AND itemtype = 'mod'")) {
             foreach ($grade_items as $grade_item) {
-
-                // do not restore if this grade_item is a mod, and
-                if ($grade_item->itemtype == 'mod') {
-
-                    // get module information
-                    // if no user data selected, we skip this grade_item
-                    if (!backup_userdata_selected($preferences,$grade_item->itemmodule,$grade_item->iteminstance)) {
-                        //print_object($grade_item);
-                        $backupall = false;
-                        break;
-                    }
+                // get module information
+                // if no user data selected, we do not backup categories
+                if (!backup_userdata_selected($preferences,$grade_item->itemmodule,$grade_item->iteminstance)) {
+                    $backupall = false;
+                    break;
                 }
             }
+            unset($grade_items); //free memory
         }
 
         //Gradebook header
         fwrite ($bf,start_tag("GRADEBOOK",2,true));
+
+        $status = backup_gradebook_outcomes_info($bf, $preferences);
+        $status = backup_gradebook_grade_letters_info($bf,$preferences);
 
         // Now backup grade_item (inside grade_category)
         if ($backupall) {
@@ -1449,16 +1459,13 @@
         }
 
         $status = backup_gradebook_item_info($bf,$preferences, $backupall);
-        $status = backup_gradebook_grade_letters_info($bf,$preferences);
-        $status = backup_gradebook_outcomes_info($bf, $preferences);
-        $status = backup_gradebook_outcomes_courses_info($bf, $preferences);
 
         // backup gradebook histories
         if ($preferences->backup_gradebook_history) {
-            $status = backup_gradebook_categories_history_info($bf, $preferences);
-            $status = backup_gradebook_grades_history_info($bf, $preferences);
-            $status = backup_gradebook_items_history_info($bf, $preferences);
             $status = backup_gradebook_outcomes_history($bf, $preferences);
+            $status = backup_gradebook_categories_history_info($bf, $preferences);
+            $status = backup_gradebook_items_history_info($bf, $preferences);
+            $status = backup_gradebook_grades_history_info($bf, $preferences);
         }
 
         //Gradebook footer
@@ -1466,17 +1473,20 @@
         return $status;
     }
 
-    function backup_gradebook_category_info($bf,$preferences) {
+    function backup_gradebook_category_info($bf, $preferences) {
         global $CFG;
         $status = true;
 
-       // getting grade categories, but make sure parents come before children
-        // because when we do restore, we need to recover the parents first
-        // we do this by getting the lowest depth first
-        $grade_categories = get_records_sql("SELECT * FROM {$CFG->prefix}grade_categories
-                                                      WHERE courseid = $preferences->backup_course
-                                                            AND depth > 1
-                                                      ORDER BY depth ASC");
+        // get grade categories in proper order - specified in category grade items
+        $course_item = grade_item::fetch_course_item($preferences->backup_course);
+        $grade_categories = get_records_sql("SELECT gc.*, gi.sortorder
+                                               FROM {$CFG->prefix}grade_categories gc
+                                                    JOIN {$CFG->prefix}grade_items gi
+                                                      ON (gi.iteminstance = gc.id)
+                                              WHERE gc.courseid = $preferences->backup_course
+                                                    AND (gi.itemtype='course' OR gi.itemtype='category') 
+                                           ORDER BY gi.sortorder ASC");
+
         if ($grade_categories) {
             //Begin grade_categories tag
             fwrite ($bf,start_tag("GRADE_CATEGORIES",3,true));
@@ -1510,33 +1520,32 @@
     }
 
     //Backup gradebook_item (called from backup_gradebook_info
-    function backup_gradebook_item_info($bf,$preferences, $backupall) {
-
+    function backup_gradebook_item_info($bf, $preferences, $backupall) {
         global $CFG;
-        require_once($CFG->libdir . '/gradelib.php');
+
         $status = true;
         // get all the grade_items, ordered by sort order since upon restoring, it is not always
         // possible to use the same sort order. We could at least preserve the sortorder by restoring
         // grade_items in the original sortorder
-        if ($grade_items = get_records_sql("SELECT * FROM {$CFG->prefix}grade_items
-                                            WHERE courseid = $preferences->backup_course
-                                            ORDER BY sortorder ASC")) {
+        if ($grade_items = get_records_sql("SELECT *
+                                              FROM {$CFG->prefix}grade_items
+                                             WHERE courseid = $preferences->backup_course
+                                          ORDER BY sortorder ASC")) {
 
             //Begin grade_items tag
             fwrite ($bf,start_tag("GRADE_ITEMS",3,true));
-            //Iterate for each item
-            foreach ($grade_items as $grade_item) {
+            //Iterate over each item
+            foreach ($grade_items as $item) {
                 // Instantiate a grade_item object, to access its methods
-                $grade_item = grade_object::fetch_helper('grade_items', 'grade_item', $grade_item);
+                $grade_item = new grade_item($item, false);
 
                 // do not restore if this grade_item is a mod, and
                 if ($grade_item->itemtype == 'mod') {
-                    // this still needs to be included, though grades can be ignored
-                    
                     //MDL-12463 - exclude grade_items of instances not chosen for backup
                     if (empty($preferences->mods[$grade_item->itemmodule]->instances[$grade_item->iteminstance]->backup)) {
                         continue;
                     }
+
                 } else if ($grade_item->itemtype == 'category') {
                     // if not all grade items are being backed up
                     // we ignore this type of grade_item and grades associated
@@ -1601,28 +1610,23 @@
         global $CFG;
         $status = true;
 
-        // getting grade categories, but make sure parents come before children
-        // because when we do restore, we need to recover the parents first
-        // we do this by getting the lowest depth first
         $context = get_context_instance(CONTEXT_COURSE, $preferences->backup_course);
         $grade_letters = get_records_sql("SELECT *
-                                          FROM {$CFG->prefix}grade_letters
-                                          WHERE contextid = $context->id");
+                                            FROM {$CFG->prefix}grade_letters
+                                           WHERE contextid = $context->id");
         if ($grade_letters) {
-            //Begin grade_categories tag
+            //Begin grade_l tag
             fwrite ($bf,start_tag("GRADE_LETTERS",3,true));
-            //Iterate for each category
+            //Iterate for each letter
             foreach ($grade_letters as $grade_letter) {
-                //Begin grade_category
+                //Begin grade_letter
                 fwrite ($bf,start_tag("GRADE_LETTER",4,true));
                 //Output individual fields
                 fwrite ($bf,full_tag("ID",5,false,$grade_letter->id));
-
-                // not keeping path and depth because they can be derived
                 fwrite ($bf,full_tag("LOWERBOUNDARY",5,false,$grade_letter->lowerboundary));
                 fwrite ($bf,full_tag("LETTER",5,false,$grade_letter->letter));
 
-                //End grade_category
+                //End grade_letter
                 fwrite ($bf,end_tag("GRADE_LETTER",4,true));
             }
             //End grade_categories tag
@@ -1632,16 +1636,16 @@
         return $status;
     }
 
-    function backup_gradebook_outcomes_info($bf,$preferences) {
+    function backup_gradebook_outcomes_info($bf, $preferences) {
 
         global $CFG;
         $status = true;
         // only back up courses already in the grade_outcomes_courses table
-        $grade_outcomes = get_records_sql('SELECT go.*
-                                       FROM '.$CFG->prefix.'grade_outcomes_courses goc,
-                                            '.$CFG->prefix.'grade_outcomes go
-                                        WHERE goc.courseid = '.$preferences->backup_course.'
-                                       AND goc.outcomeid = go.id');
+        $grade_outcomes = get_records_sql("SELECT go.*
+                                             FROM {$CFG->prefix}grade_outcomes go
+                                                  JOIN {$CFG->prefix}grade_outcomes_courses goc
+                                                    ON (goc.outcomeid = go.id)
+                                            WHERE goc.courseid = $preferences->backup_course");
 
         if (!empty($grade_outcomes)) {
             //Begin grade_outcomes tag
@@ -1667,35 +1671,6 @@
             }
             //End grade_outcomes tag
             $status = fwrite ($bf,end_tag("GRADE_OUTCOMES",3,true));
-        }
-        return $status;
-    }
-
-    // outcomes assigned to this course
-    function backup_gradebook_outcomes_courses_info($bf,$preferences) {
-
-        global $CFG;
-
-        $status = true;
-        // get all global outcomes (used in this course)
-        // and course specific outcomes
-        // we don't need to backup all the outcomes in this case
-        if ($outcomes_courses = get_records('grade_outcomes_courses', 'courseid', $preferences->backup_course)) {
-            //Begin grade_outcomes tag
-            fwrite ($bf,start_tag("GRADE_OUTCOMES_COURSES",3,true));
-            //Iterate for each outcome
-            foreach ($outcomes_courses as $outcomes_course) {
-                //Begin grade_outcome
-                fwrite ($bf,start_tag("GRADE_OUTCOMES_COURSE",4,true));
-                //Output individual fields
-                fwrite ($bf,full_tag("ID",5,false,$outcomes_course->id));
-                fwrite ($bf,full_tag("OUTCOMEID",5,false,$outcomes_course->outcomeid));
-
-                //End grade_outcome
-                fwrite ($bf,end_tag("GRADE_OUTCOMES_COURSE",4,true));
-            }
-            //End grade_outcomes tag
-            $status = fwrite ($bf,end_tag("GRADE_OUTCOMES_COURSES",3,true));
         }
         return $status;
     }
@@ -1780,10 +1755,11 @@
         $status = true;
 
         // find all grade categories history
-        if ($chs = get_records_sql("SELECT ggh.* FROM {$CFG->prefix}grade_grades_history ggh,
-                                                  {$CFG->prefix}grade_items gi
-                                             WHERE gi.courseid = $preferences->backup_course
-                                             AND ggh.itemid = gi.id")) {
+        if ($chs = get_records_sql("SELECT ggh.*
+                                      FROM {$CFG->prefix}grade_grades_history ggh
+                                           JOIN {$CFG->prefix}grade_items gi
+                                             ON gi.id = ggh.itemid
+                                     WHERE gi.courseid = $preferences->backup_course")) {
             fwrite ($bf,start_tag("GRADE_GRADES_HISTORIES",5,true));
             foreach ($chs as $ch) {
             /// Grades are only sent to backup if the user is one target user
@@ -1856,8 +1832,8 @@
                 fwrite ($bf,full_tag("PLUSFACTOR",7,false,$ch->plusfactor));
                 fwrite ($bf,full_tag("AGGREGATIONCOEF",7,false,$ch->aggregationcoef));
                 fwrite ($bf,full_tag("SORTORDER",7,false,$ch->sortorder));
-                fwrite ($bf,full_tag("DISPLAY",7,false,$ch->display));
-                fwrite ($bf,full_tag("DECIMALS",7,false,$ch->decimals));
+                //fwrite ($bf,full_tag("DISPLAY",7,false,$ch->display));
+                //fwrite ($bf,full_tag("DECIMALS",7,false,$ch->decimals));
                 fwrite ($bf,full_tag("HIDDEN",7,false,$ch->hidden));
                 fwrite ($bf,full_tag("LOCKED",7,false,$ch->locked));
                 fwrite ($bf,full_tag("LOCKTIME",7,false,$ch->locktime));
@@ -1908,8 +1884,8 @@
 
         //Get scales (common and course scales)
         $scales = get_records_sql("SELECT id, courseid, userid, name, scale, description, timemodified
-                                   FROM {$CFG->prefix}scale
-                                   WHERE courseid = '0' or courseid = $preferences->backup_course");
+                                     FROM {$CFG->prefix}scale
+                                    WHERE courseid = 0 OR courseid = $preferences->backup_course");
 
         //Copy only used scales to $backupscales. They will be in backup (unused no). See Bug 1223.
         $backupscales = array();
@@ -2278,6 +2254,7 @@
         foreach ($userlist as $userid => $userinfo) {
             //Look for dir like username in backup_ids
             $data = count_records("backup_ids","backup_code",$preferences->backup_unique_code, "table_name","user", "old_id",$userid);
+            
             //If exists, copy it
             if ($data) {
                 $parts = explode('/', $userinfo['userfolder']);
@@ -2290,7 +2267,7 @@
                     // Create group dir first
                     $status = check_dir_exists("$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/". $group, true);
                 }
-                
+
                 $status = $status && backup_copy_file($userinfo['basedir'] . '/' . $userinfo['userfolder'], 
                     "$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/{$userinfo['userfolder']}");
             }
@@ -2399,7 +2376,8 @@
                 //check for dir structure and create recursively
                 $file = $fileobj->path;
                 $status = $status && check_dir_exists(dirname($CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/site_files/".$file), true, true);
-                $status = $status && backup_copy_file($rootdir."/".$file, $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/site_files/".$file);
+                $status = $status && backup_copy_file($rootdir."/".$file,
+                                   $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/site_files/".$file);
             }
         }
         return $status;

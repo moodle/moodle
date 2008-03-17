@@ -124,7 +124,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //Print option to select/deselect everything with 1 click.
         echo "<tr>";
         echo "<td align=\"right\">";
-        echo '<b>'.get_string("include").":</b>";
+        echo '<b>'.get_string("include")."</b>";
         echo "</td><td>";
         echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInCheckboxByName('form1', 'backup_', true);\">". get_string("all")."</a>/";
         echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInCheckboxByName('form1', 'backup_', false);\">".  get_string("none")."</a>";
@@ -195,7 +195,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             //Now print the Metacourse tr
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
-            echo get_string ("metacourse").":";
+            echo '<label for="menubackup_metacourse">'.get_string ("metacourse").'</label>';
             echo "</b></td><td colspan=\"2\">";
             $meta_options[0] = get_string("no");
             $meta_options[1] = get_string("yes");
@@ -210,7 +210,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             //Now print the Users tr
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
-            echo get_string("users").":";
+            echo '<label for="menubackup_users">'.get_string ("users").'</label>';
             echo "</b></td><td colspan=\"2\">";
             $user_options[0] = get_string("all");
             $user_options[1] = get_string("course");
@@ -226,7 +226,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             //Now print the Logs tr
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
-            echo get_string("logs").":";
+            echo '<label for="menubackup_logs">'.get_string ("logs").'</label>';
             echo "</b></td><td colspan=\"2\">";
             $log_options[0] = get_string("no");
             $log_options[1] = get_string("yes");
@@ -241,7 +241,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             //Now print the User Files tr
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
-            echo get_string ("userfiles").":";
+            echo '<label for="menubackup_user_files">'.get_string ("userfiles").'</label>';
             echo "</b></td><td colspan=\"2\">";
             $user_file_options[0] = get_string("no");
             $user_file_options[1] = get_string("yes");
@@ -251,10 +251,11 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         else {
             $hidden_options .= '<input type="hidden" name="backup_user_files" value="0" />';
         }
+
         //Now print the Course Files tr
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
-        echo get_string ("coursefiles").":";
+        echo '<label for="menubackup_course_files">'.get_string ("coursefiles").'</label>';
         echo "</b></td><td colspan=\"2\">";
         $course_file_options[0] = get_string("no");
         $course_file_options[1] = get_string("yes");
@@ -266,7 +267,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             //Now print the site Files tr
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
-            echo get_string ("sitefilesused").":";
+            echo '<label for="menubackup_site_files">'.get_string ("sitefilesused").'</label>';
             helpbutton('sitefilesused', get_string('sitefilesused'));
             echo "</b></td><td colspan=\"2\">";
             $course_file_options[0] = get_string("no");
@@ -276,20 +277,24 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         }
 
         // do you want grade histories to be backed up?
-        echo "<tr>";
-        echo "<td align=\"right\" colspan=\"2\"><b>";
-        echo get_string ('gradebookhistories', 'grades').":";
-        echo "</b></td><td colspan=\"2\">";
-        $gradebook_history_options[0] = get_string("no");
-        $gradebook_history_options[1] = get_string("yes");
-        choose_from_menu($gradebook_history_options, "backup_gradebook_history", $backup_gradebook_history, "");
-        echo "</td></tr>";
+        if (empty($CFG->disablegradehistory)) {
+            echo "<tr>";
+            echo "<td align=\"right\" colspan=\"2\"><b>";
+            echo '<label for="menubackup_gradebook_history">'.get_string ('gradebookhistories', 'grades').'</label>';
+            echo "</b></td><td colspan=\"2\">";
+            $gradebook_history_options[0] = get_string("no");
+            $gradebook_history_options[1] = get_string("yes");
+            choose_from_menu($gradebook_history_options, "backup_gradebook_history", $backup_gradebook_history, "");
+            echo "</td></tr>";
+        } else {
+            $hidden_options .= '<input type="hidden" name="backup_gradebook_history" value="0" />';
+        }
 
         if (empty($to) && $course->id == SITEID) {
             //If we are in a SITEID backup print the Messages tr
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
-            echo get_string ('messages','message').":";
+            echo '<label for="menubackup_messages">'.get_string ('messages', 'message').'</label>';
             echo "</b></td><td colspan=\"2\">";
             $mess_options[0] = get_string("no");
             $mess_options[1] = get_string("yes");
@@ -308,7 +313,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 
         echo "<tr>";
         echo "<td align=\"right\" valign=\"top\" colspan=\"2\"><b>";
-        echo get_string("backuproleassignments").":";
+        echo get_string("backuproleassignments");
         echo "</b></td><td colspan=\"2\">";
         $roles = get_records('role', '', '', 'sortorder');
         foreach ($roles as $role) {
@@ -330,12 +335,11 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 
 ?>
 </table>
+<div style="text-align:center;margin-left:auto;margin-right:auto">
 <?php
 /// Print captured hidden options, now that we have closed the table
     echo $hidden_options;
 ?>
-
-<div style="text-align:center;margin-left:auto;margin-right:auto">
 <input type="hidden" name="id"     value="<?php  p($id) ?>" />
 <input type="hidden" name="to"     value="<?php p($to) ?>" />
 <input type="hidden" name="backup_unique_code" value="<?php p($backup_unique_code); ?>" />

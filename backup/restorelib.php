@@ -521,6 +521,14 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $tab[$elem][1] = get_string("no");
             }
             $elem++;
+            //gradebook history info
+            $tab[$elem][0] = "<b>".get_string('gradebookhistories', 'grades').":</b>";
+            if (isset($info->gradebook_histories) && $info->gradebook_histories == "true") {
+                $tab[$elem][1] = get_string("yes");
+            } else {
+                $tab[$elem][1] = get_string("no");
+            }
+            $elem++;
             //Messages info (only showed if present)
             if ($info->backup_messages == 'true') {
                 $tab[$elem][0] = "<b>".get_string('messages','message').":</b>";
@@ -1073,8 +1081,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                         $course_module->indent = $mod->indent;
                                         $course_module->visible = $mod->visible;
                                         $course_module->groupmode = $mod->groupmode;
-                                        if( ($restore->groups == RESTORE_GROUPINGS_ONLY or $restore->groups == RESTORE_GROUPS_GROUPINGS)
-                                            and $mod->groupingid and $grouping = backup_getid($restore->backup_unique_code,"groupings",$mod->groupingid) ) {
+                                        if ($mod->groupingid and $grouping = backup_getid($restore->backup_unique_code,"groupings",$mod->groupingid)) {
                                             $course_module->groupingid = $grouping->new_id;
                                         } else {
                                             $course_module->groupingid = 0;
@@ -1085,8 +1092,13 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                         //      final step of the restore. We don't know it yet.
                                         //print_object($course_module);                    //Debug
                                         //Save it to db
+                                        if ($mod->idnumber) {
+                                            if (grade_verify_idnumber($mod->idnumber, $restore->course_id)) {
+                                                $course_module->idnumber = $mod->idnumber;
+                                            }
+                                        }
 
-                                        $newidmod = insert_record("course_modules",$course_module);
+                                        $newidmod = insert_record("course_modules", addslashes_recursive($course_module));
                                         if ($newidmod) {
                                             //save old and new module id
                                             //In the info field, we save the original instance of the module
@@ -1261,11 +1273,11 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         return $status;
     }
 
-    //This function creates all the gradebook data from xml, notifying
-    //about each incidence
-    function restore_create_gradebook($restore,$xml_file) {
-
-        global $CFG, $db, $SESSION;
+    /**
+     * This function migrades all the pre 1.9 gradebook data from xml
+     */
+    function restore_migrate_old_gradebook($restore,$xml_file) {
+        global $CFG;
 
         $status = true;
         //Check it exists
@@ -1278,958 +1290,1027 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         $info = restore_read_xml_gradebook($restore, $xml_file);
 
         // If we have info, then process
-        if ($info <= 0) {
+        if (empty($info)) {
             return $status;
         }
 
-        // Count how many we have
-        $categoriescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_categories');
-        $itemscount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_items');
-        $letterscount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_letters');
-        $outcomecount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_outcomes');
-        $outcomescoursescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_outcomes_courses');
-        $gchcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_categories_history');
-        $gghcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_grades_history');
-        $gihcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_items_history');
-        $gohcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_outcomes_history');
+        // make sure top course category exists
+        $course_category = grade_category::fetch_course_category($restore->course_id);
+        $course_category->load_grade_item();
 
         // we need to know if all grade items that were backed up are being restored
         // if that is not the case, we do not restore grade categories nor gradeitems of category type or course type
         // i.e. the aggregated grades of that category
 
-        $restoreall = true; // set to false if any grade_item is not selected/restored
+        $restoreall = true;  // set to false if any grade_item is not selected/restored
+        $importing  = !empty($SESSION->restore->importing); // there should not be a way to import old backups, but anyway ;-)
 
-        if ($recs = get_records_select("backup_ids","table_name = 'grade_items' AND backup_code = '$restore->backup_unique_code'", "old_id", "old_id")) {
+        if ($importing) {
+            $restoreall = false;
+
+        } else {
+            $prev_grade_items = grade_item::fetch_all(array('courseid'=>$restore->course_id));
+            $prev_grade_cats  = grade_category::fetch_all(array('courseid'=>$restore->course_id));
+
+             // if any categories already present, skip restore of categories from backup
+            if (count($prev_grade_items) > 1 or count($prev_grade_cats) > 1) {
+                $restoreall = false;
+            }
+            unset($prev_grade_items);
+            unset($prev_grade_cats);
+        }
+
+        // force creation of all grade_items - the course_modules already exist
+        grade_force_full_regrading($restore->course_id);
+        grade_grab_course_grades($restore->course_id);
+
+        // Start ul
+        if (!defined('RESTORE_SILENTLY')) {
+            echo '<ul>';
+        }
+
+        $cached_categories = array();
+
+    /// Process letters
+        $context = get_context_instance(CONTEXT_COURSE, $restore->course_id);
+        // respect current grade letters if defined
+        if ($status and $restoreall and !record_exists('grade_letters', 'contextid', $context->id)) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '<li>'.get_string('gradeletters','grades').'</li>';
+            }
+            // Fetch recordset_size records in each iteration
+            $recs = get_records_select("backup_ids","table_name = 'grade_letter' AND backup_code = $restore->backup_unique_code",
+                                        "",
+                                        "old_id");
+            if ($recs) {
+                foreach ($recs as $rec) {
+                    // Get the full record from backup_ids
+                    $data = backup_getid($restore->backup_unique_code,'grade_letter',$rec->old_id);
+                    if ($data) {
+                        $info = $data->info;
+                        $dbrec = new object();
+                        $dbrec->contextid     = $context->id;
+                        $dbrec->lowerboundary = backup_todb($info['GRADE_LETTER']['#']['GRADE_LOW']['0']['#']);
+                        $dbrec->letter        = backup_todb($info['GRADE_LETTER']['#']['LETTER']['0']['#']);
+                        insert_record('grade_letters', $dbrec);
+                    }
+                }
+            }
+        }
+
+        if (!defined('RESTORE_SILENTLY')) {
+            echo '<li>'.get_string('categories','grades').'</li>';
+        }
+        //Fetch recordset_size records in each iteration
+        $recs = get_records_select("backup_ids","table_name = 'grade_category' AND backup_code = '$restore->backup_unique_code'",
+                                   "old_id",
+                                   "old_id");
+        $cat_count = count($recs);
+        if ($recs) {
             foreach ($recs as $rec) {
-
-                if ($data = backup_getid($restore->backup_unique_code,'grade_items',$rec->old_id)) {
-
+                //Get the full record from backup_ids
+                $data = backup_getid($restore->backup_unique_code,'grade_category',$rec->old_id);
+                if ($data) {
+                    //Now get completed xmlized object
                     $info = $data->info;
-                    // do not restore if this grade_item is a mod, and
-                    $itemtype = backup_todb($info['GRADE_ITEM']['#']['ITEMTYPE']['0']['#']);
 
+                    if ($restoreall and $cat_count > 1) {
+                        $grade_category = new grade_category();
+                        $grade_category->courseid            = $restore->course_id;
+                        $grade_category->fullname            = backup_todb($info['GRADE_CATEGORY']['#']['NAME']['0']['#'], false);
+                        $grade_category->droplow             = backup_todb($info['GRADE_CATEGORY']['#']['DROP_X_LOWEST']['0']['#'], false);
+                        $grade_category->aggregation         = GRADE_AGGREGATE_WEIGHTED_MEAN2;
+                        $grade_category->aggregateonlygraded = 0;
+                        $grade_category->insert('restore');
+                        $grade_category->load_grade_item(); // force cretion of grade_item
+                        $cached_categories[$rec->old_id] = $grade_category;
+                    } else {
+                        $grade_category = null;
+                    }
 
-                    if ($itemtype == 'mod') {
+                    /// now, restore grade_items
+                    $items = array();
+                    if (!empty($info['GRADE_CATEGORY']['#']['GRADE_ITEMS']['0']['#']['GRADE_ITEM'])) {
+                        //Iterate over items
+                        foreach ($info['GRADE_CATEGORY']['#']['GRADE_ITEMS']['0']['#']['GRADE_ITEM'] as $ite_info) {
+                            $modname         = backup_todb($ite_info['#']['MODULE_NAME']['0']['#'], false);
+                            $olditeminstance = backup_todb($ite_info['#']['CMINSTANCE']['0']['#'], false);
+                            if (!$mod = backup_getid($restore->backup_unique_code,$modname, $olditeminstance)) {
+                                continue; // not restored
+                            }
+                            $iteminstance = $mod->new_id;
+                            if (!$cm = get_coursemodule_from_instance($modname, $iteminstance, $restore->course_id)) {
+                                continue; // does not exist
+                            }
 
-                        $iteminstance = backup_todb($info['GRADE_ITEM']['#']['ITEMINSTANCE']['0']['#']);
-                        $itemmodule = backup_todb($info['GRADE_ITEM']['#']['ITEMMODULE']['0']['#']);
-                        if (!restore_userdata_selected($restore, $itemmodule, $iteminstance)) {
-                            // module instance not selected when restored using granular
-                            // we are not restoring all grade items, set flag to false
-                            // so that we do not process grade categories and related grade items/grades
-                            $restoreall = false;
-                            break;
+                            if (!$grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$cm->modname, 'iteminstance'=>$cm->instance, 'courseid'=>$cm->course, 'itemnumber'=>0))) {
+                                continue; // no item yet??
+                            }
+
+                            if ($grade_category) {
+                                $grade_item->sortorder = backup_todb($ite_info['#']['SORT_ORDER']['0']['#'], false);
+                                $grade_item->set_parent($grade_category->id);
+                            }
+
+                            if ($importing
+                              or ($grade_item->itemtype == 'mod' and !restore_userdata_selected($restore,  $grade_item->itemmodule, $olditeminstance))) {
+                                // module instance not selected when restored using granular
+                                // skip this item
+                                continue;
+                            }
+
+                            //Now process grade excludes
+                            if (empty($ite_info['#']['GRADE_EXCEPTIONS'])) {
+                                continue;
+                            }
+
+                            foreach($ite_info['#']['GRADE_EXCEPTIONS']['0']['#']['GRADE_EXCEPTION'] as $exc_info) {
+                                if ($u = backup_getid($restore->backup_unique_code,"user",backup_todb($exc_info['#']['USERID']['0']['#']))) {
+                                    $userid = $u->new_id;
+                                    $grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$userid));
+                                    $grade_grade->excluded = 1;
+                                    if ($grade_grade->id) {
+                                        $grade_grade->update('restore');
+                                    } else {
+                                        $grade_grade->insert('restore');
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
 
-        // return if nothing to restore
-        if (!$itemscount && !$categoriescount && !$outcomecount) {
+        if (!defined('RESTORE_SILENTLY')) {
+        //End ul
+            echo '</ul>';
+        }
+
+        return $status;
+    }
+
+    /**
+     * This function creates all the gradebook data from xml
+     */
+    function restore_create_gradebook($restore,$xml_file) {
+        global $CFG;
+
+        $status = true;
+        //Check it exists
+        if (!file_exists($xml_file)) {
+            return false;
+        }
+
+        // Get info from xml
+        // info will contain the number of record to process
+        $info = restore_read_xml_gradebook($restore, $xml_file);
+
+        // If we have info, then process
+        if (empty($info)) {
             return $status;
+        }
+
+        if (empty($CFG->disablegradehistory) and isset($info->gradebook_histories) and $info->gradebook_histories == "true") {
+            $restore_histories = true;
+        } else {
+            $restore_histories = false;
+        }
+
+        // make sure top course category exists
+        $course_category = grade_category::fetch_course_category($restore->course_id);
+        $course_category->load_grade_item();
+
+        // we need to know if all grade items that were backed up are being restored
+        // if that is not the case, we do not restore grade categories nor gradeitems of category type or course type
+        // i.e. the aggregated grades of that category
+
+        $restoreall = true;  // set to false if any grade_item is not selected/restored or already exist
+        $importing  = !empty($SESSION->restore->importing);
+
+        if ($importing) {
+            $restoreall = false;
+
+        } else {
+            $prev_grade_items = grade_item::fetch_all(array('courseid'=>$restore->course_id));
+            $prev_grade_cats  = grade_category::fetch_all(array('courseid'=>$restore->course_id));
+
+             // if any categories already present, skip restore of categories from backup - course item or category already exist
+            if (count($prev_grade_items) > 1 or count($prev_grade_cats) > 1) {
+                $restoreall = false;
+            }
+            unset($prev_grade_items);
+            unset($prev_grade_cats);
+
+            if ($restoreall) {
+                if ($recs = get_records_select("backup_ids","table_name = 'grade_items' AND backup_code = $restore->backup_unique_code", "", "old_id")) {
+                    foreach ($recs as $rec) {
+                        if ($data = backup_getid($restore->backup_unique_code,'grade_items',$rec->old_id)) {
+
+                            $info = $data->info;
+                            // do not restore if this grade_item is a mod, and
+                            $itemtype = backup_todb($info['GRADE_ITEM']['#']['ITEMTYPE']['0']['#']);
+
+                            if ($itemtype == 'mod') {
+                                $olditeminstance = backup_todb($info['GRADE_ITEM']['#']['ITEMINSTANCE']['0']['#']);
+                                $itemmodule      = backup_todb($info['GRADE_ITEM']['#']['ITEMMODULE']['0']['#']);
+
+                                if (empty($restore->mods[$itemmodule]->granular)) {
+                                    continue;
+                                } else if (!empty($restore->mods[$itemmodule]->instances[$olditeminstance]->restore)) {
+                                    continue;
+                                }
+                                // at least one activity should not be restored - do not restore categories and manual items at all
+                                $restoreall = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // Start ul
         if (!defined('RESTORE_SILENTLY')) {
             echo '<ul>';
         }
-        
-        // fetch the course grade item
-        
-        require_once($CFG->libdir.'/grade/grade_item.php');
-        require_once($CFG->libdir.'/grade/grade_category.php');
-        require_once($CFG->libdir.'/gradelib.php');
-        $courseitem = grade_item::fetch_course_item($restore->course_id);
-        $coursecategory = grade_category::fetch_course_category($restore->course_id);
-        
-        // Number of records to get in every chunk
-        $recordset_size = 2;
-        // Flag to mark if we must continue
-        $continue = true;
 
-        // Process categories
-        if ($categoriescount && $continue && $restoreall) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '<li>'.get_string('gradecategories','grades').'</li>';
-            }
-            $counter = 0;
-            while ($counter < $categoriescount) {
-                // Fetch recordset_size records in each iteration
-                $recs = get_records_select("backup_ids","table_name = 'grade_categories' AND backup_code = '$restore->backup_unique_code'",
-                                            "old_id",
-                                            "old_id",
-                                            $counter,
-                                            $recordset_size);
-                if ($recs) {
-                    foreach ($recs as $rec) {
-                        // Get the full record from backup_ids
-                        $data = backup_getid($restore->backup_unique_code,'grade_categories',$rec->old_id);
-                        if ($data) {
-                            // Now get completed xmlized object
-                            $info = $data->info;
-                            //traverse_xmlize($info);                            //Debug
-                            //print_object ($GLOBALS['traverse_array']);         //Debug
-                            //$GLOBALS['traverse_array']="";                     //Debug
-                            //Now build the GRADE_PREFERENCES record structure
+        // array of restored categories - speedup ;-)
+        $cached_categories = array();
+        $outcomes          = array();
 
-                            $dbrec->courseid   = $restore->course_id;
-                            // categories are not backed up during import. 
-                            // however, depth 1 categories needs to be skipped during restore into exisiting course
-
-                            // get the new grade category parent
-                            
-                            //if (!empty($info['GRADE_CATEGORY']['#']['PARENT']['0']['#']) && $info['GRADE_CATEGORY']['#']['PARENT']['0']['#'] != '$@NULL@$') {
-                            $parent = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_CATEGORY']['#']['PARENT']['0']['#']));
-                            if (isset($parent->new_id)) {
-                                $dbrec->parent = $parent->new_id;
-                            } else {
-                                // orphans should get adopted by course category
-                                $dbrec->parent = $coursecategory->id; 
-                            }
-                            //}
-
-                            $dbrec->fullname = backup_todb($info['GRADE_CATEGORY']['#']['FULLNAME']['0']['#']);
-                            $dbrec->aggregation = backup_todb($info['GRADE_CATEGORY']['#']['AGGREGATION']['0']['#']);
-                            $dbrec->keephigh = backup_todb($info['GRADE_CATEGORY']['#']['KEEPHIGH']['0']['#']);
-                            $dbrec->droplow = backup_todb($info['GRADE_CATEGORY']['#']['DROPLOW']['0']['#']);
-                            $dbrec->aggregateonlygraded = backup_todb($info['GRADE_CATEGORY']['#']['AGGREGATEONLYGRADED']['0']['#']);
-                            $dbrec->aggregateoutcomes = backup_todb($info['GRADE_CATEGORY']['#']['AGGREGATEOUTCOMES']['0']['#']);
-                            $dbrec->aggregatesubcats = backup_todb($info['GRADE_CATEGORY']['#']['AGGREGATESUBCATS']['0']['#']);
-                            $dbrec->timecreated = backup_todb($info['GRADE_CATEGORY']['#']['TIMECREATED']['0']['#']);
-                            $dbrec->timemodified = backup_todb($info['GRADE_CATEGORY']['#']['TIMEMODIFIED']['0']['#']);                           
-                                               
-                            //Structure is equal to db, insert record
-                            //if the fullname doesn't exist
-                            if (!$prerec = get_record('grade_categories','courseid',$dbrec->courseid,'fullname',$dbrec->fullname)) {
-                                $newid = insert_record('grade_categories',$dbrec);
-                                $status = backup_putid($restore->backup_unique_code,'grade_categories',$rec->old_id,$newid);
-                                // update this record so we can put in the right paths
-                                // this can only be done after we got the new id
-                                $dbrec->id = $newid;
-                                include_once($CFG->dirroot.'/lib/grade/grade_category.php');
-                                // rebuild the path, we need only parents info
-                                // the order of restoring should ensure that the parent and grandparent(s)
-                                // are already restored
-                                $dbrec->path = grade_category::build_path($dbrec);
-                                // this is not needed in the xml because
-                                // given this parent and grandparent(s) we can recalculate the depth
-                                $dbrec->depth = substr_count($dbrec->path, '/');
-                                update_record('grade_categories', $dbrec);
-                            } else {
-                                // if fullname already exists, we should keep the current grade category
-                                $status = backup_putid($restore->backup_unique_code,'grade_categories',$rec->old_id,$rec->oldid);
-                            }
-                        }
-                        //Increment counters
-                        $counter++;
-                        //Do some output
-                        if ($counter % 1 == 0) {
-                            if (!defined('RESTORE_SILENTLY')) {
-                                echo ".";
-                                if ($counter % 20 == 0) {
-                                    echo "<br />";
-                                }
-                            }
-                            backup_flush(300);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Process letters
-        
+    /// Process letters
         $context = get_context_instance(CONTEXT_COURSE, $restore->course_id);
         // respect current grade letters if defined
-        if ($letterscount && $continue && !record_exists('grade_letters', 'contextid', $context->id)) {
+        if ($status and $restoreall and !record_exists('grade_letters', 'contextid', $context->id)) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradeletters','grades').'</li>';
             }
-            $counter = 0;
-            while ($counter < $letterscount) {
-                // Fetch recordset_size records in each iteration
-                $recs = get_records_select("backup_ids","table_name = 'grade_letters' AND backup_code = '$restore->backup_unique_code'",
-                                            "old_id",
-                                            "old_id",
-                                            $counter,
-                                            $recordset_size);
-                if ($recs) {
-                    foreach ($recs as $rec) {
-                        // Get the full record from backup_ids
-                        $data = backup_getid($restore->backup_unique_code,'grade_letters',$rec->old_id);
-                        if ($data) {
-                            // Now get completed xmlized object
-                            $info = $data->info;
-                            $dbrec->contextid = $context->id;
-                            $dbrec->lowerboundary = backup_todb($info['GRADE_LETTER']['#']['LOWERBOUNDARY']['0']['#']);
-                            $dbrec->letter = backup_todb($info['GRADE_LETTER']['#']['LETTER']['0']['#']);
-                            // course might already have grade letters defined, if so, skip
-                            insert_record('grade_letters', $dbrec);
-        
-                        }
-                        $counter++;
+            // Fetch recordset_size records in each iteration
+            $recs = get_records_select("backup_ids","table_name = 'grade_letters' AND backup_code = $restore->backup_unique_code",
+                                        "",
+                                        "old_id");
+            if ($recs) {
+                foreach ($recs as $rec) {
+                    // Get the full record from backup_ids
+                    $data = backup_getid($restore->backup_unique_code,'grade_letters',$rec->old_id);
+                    if ($data) {
+                        $info = $data->info;
+                        $dbrec = new object();
+                        $dbrec->contextid     = $context->id;
+                        $dbrec->lowerboundary = backup_todb($info['GRADE_LETTER']['#']['LOWERBOUNDARY']['0']['#']);
+                        $dbrec->letter        = backup_todb($info['GRADE_LETTER']['#']['LETTER']['0']['#']);
+                        insert_record('grade_letters', $dbrec);
                     }
                 }
             }
         }
 
-        // process outcomes
-        if ($outcomecount && $continue) {
+    /// Preprocess outcomes - do not store them yet!
+        if ($status and !$importing and $restoreall) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradeoutcomes','grades').'</li>';
             }
-            $counter = 0;
-            while ($counter < $outcomecount) {
-                //Fetch recordset_size records in each iteration
-                $recs = get_records_select("backup_ids","table_name = 'grade_outcomes' AND backup_code = '$restore->backup_unique_code'",
-                                            "old_id",
-                                            "old_id",
-                                            $counter,
-                                            $recordset_size);
-                if ($recs) {
-                    foreach ($recs as $rec) {
-                        // Initialize the DB object
-                        $dbrec = new object();
+            $recs = get_records_select("backup_ids","table_name = 'grade_outcomes' AND backup_code = '$restore->backup_unique_code'",
+                                        "",
+                                        "old_id");
+            if ($recs) {
+                foreach ($recs as $rec) {
+                    //Get the full record from backup_ids
+                    $data = backup_getid($restore->backup_unique_code,'grade_outcomes',$rec->old_id);
+                    if ($data) {
+                        $info = $data->info;
 
-                        //Get the full record from backup_ids
-                        $data = backup_getid($restore->backup_unique_code,'grade_outcomes',$rec->old_id);
-                        if ($data) {
-                            //Now get completed xmlized object
-                            $info = $data->info;
-                            //traverse_xmlize($info);                            //Debug
-                            //print_object ($GLOBALS['traverse_array']);         //Debug
-                            //$GLOBALS['traverse_array']="";                     //Debug
+                        //first find out if outcome already exists
+                        $shortname = backup_todb($info['GRADE_OUTCOME']['#']['SHORTNAME']['0']['#']);
 
-                            //Get the courseid and, if belonging to course, remap it
-                            $dbrec->courseid = backup_todb($info['GRADE_OUTCOME']['#']['COURSEID']['0']['#']);
-                            if ($dbrec->courseid) {
-                                $dbrec->courseid   = $restore->course_id;
-                            }
-
-                            //Get the fields
-                            $dbrec->shortname    = backup_todb($info['GRADE_OUTCOME']['#']['SHORTNAME']['0']['#']);
-                            $dbrec->fullname     = backup_todb($info['GRADE_OUTCOME']['#']['FULLNAME']['0']['#']);
-                            $dbrec->scaleid      = backup_todb($info['GRADE_OUTCOME']['#']['SCALEID']['0']['#']);
-                            $dbrec->description  = backup_todb($info['GRADE_OUTCOME']['#']['DESCRIPTION']['0']['#']);
-                            $dbrec->timecreated  = backup_todb($info['GRADE_OUTCOME']['#']['TIMECREATED']['0']['#']);
-                            $dbrec->timemodified = backup_todb($info['GRADE_OUTCOME']['#']['TIMEMODIFIED']['0']['#']);
-                            $dbrec->usermodified = backup_todb($info['GRADE_OUTCOME']['#']['USERMODIFIED']['0']['#']);
-
-                            //Need to recode the scaleid
-                            if ($scale = backup_getid($restore->backup_unique_code, 'scale', $dbrec->scaleid)) {
-                                $dbrec->scaleid = $scale->new_id;
-                            }
-
-                            //Need to recode the usermodified
-                            if ($modifier = backup_getid($restore->backup_unique_code, 'user', $dbrec->usermodified)) {
-                                $dbrec->usermodified = $modifier->new_id;
-                            }
-
-                            // Structure is equal to db, insert outcome record if it doesn't exis (by course & shortname)
-                            if (!$dbrec->courseid) {
-                                $prerec = get_record_sql("SELECT *
-                                                            FROM {$CFG->prefix}grade_outcomes
-                                                           WHERE courseid IS NULL
-                                                             AND shortname = '$dbrec->shortname'");
-                            } else {
-                                $prerec = get_record('grade_outcomes', 'courseid', $restore->course_id, 'shortname', $dbrec->shortname);
-                            }
-
-                            if (!$prerec) {
-                                //Never create standard (global) outcomes from restore, always enforce them to be custom (course)
-                                if (!$dbrec->courseid) {
-                                    $dbrec->courseid = $restore->course_id;
-                                }
-                                $newid = insert_record('grade_outcomes',$dbrec);
-                            } else {
-                                $newid = $prerec->id;
-                            }
-
-                            if ($newid) {
-                                backup_putid($restore->backup_unique_code,"grade_outcomes", $rec->old_id, $newid);
-                            }
+                        if ($candidates = get_records_sql("SELECT *
+                                                             FROM {$CFG->prefix}grade_outcomes
+                                                            WHERE (courseid IS NULL OR courseid = $restore->course_id)
+                                                                  AND shortname = '$shortname'
+                                                         ORDER BY courseid ASC, id ASC")) {
+                            $grade_outcome = reset($candidates);
+                            $outcomes[$rec->old_id] = $grade_outcome;
+                            continue;
                         }
 
-                        //Increment counters
-                        $counter++;
-
-                        //Do some output
-                        if ($counter % 1 == 0) {
-                            if (!defined('RESTORE_SILENTLY')) {
-                                echo ".";
-                                if ($counter % 20 == 0) {
-                                    echo "<br />";
-                                }
-                            }
-                            backup_flush(300);
-                        }
-                    }
-                }
-            }
-        }
-
-        // process outcomescourses
-        if ($outcomescoursescount && $continue) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '<li>'.get_string('gradeoutcomescourses','grades').'</li>';
-            }
-            $counter = 0;
-            while ($counter < $outcomescoursescount) {
-                //Fetch recordset_size records in each iteration
-                $recs = get_records_select("backup_ids","table_name = 'grade_outcomes_courses' AND backup_code = '$restore->backup_unique_code'",
-                                            "old_id",
-                                            "old_id",
-                                            $counter,
-                                            $recordset_size);
-                if ($recs) {
-                    foreach ($recs as $rec) {
-                        // Initialize the DB object
                         $dbrec = new object();
 
-                        //Get the full record from backup_ids
-                        $data = backup_getid($restore->backup_unique_code,'grade_outcomes_courses',$rec->old_id);
-                        if ($data) {
-                            //Now get completed xmlized object
-                            $info = $data->info;
-                            //traverse_xmlize($info);                            //Debug
-                            //print_object ($GLOBALS['traverse_array']);         //Debug
-                            //$GLOBALS['traverse_array']="";                     //Debug
-
-                            $oldoutcomesid = backup_todb($info['GRADE_OUTCOMES_COURSE']['#']['OUTCOMEID']['0']['#']);
-                            $newoutcome = backup_getid($restore->backup_unique_code,"grade_outcomes",$oldoutcomesid);
-
+                        if (has_capability('moodle/grade:manageoutcomes', get_context_instance(CONTEXT_SYSTEM))) {
+                            $oldoutcome = backup_todb($info['GRADE_OUTCOME']['#']['COURSEID']['0']['#']);
+                            if (empty($oldoutcome)) {
+                                //site wide
+                                $dbrec->courseid = null;
+                            } else {
+                                //course only
+                                $dbrec->courseid = $restore->course_id;
+                            }
+                        } else {
+                            // no permission to add site outcomes
                             $dbrec->courseid = $restore->course_id;
-                            $dbrec->outcomeid = $newoutcome->new_id;
-
-                            //Only insert the record if it doesn't exist (can exist if restoring to existing course)
-                            if (!record_exists('grade_outcomes_courses', 'courseid', $dbrec->courseid, 'outcomeid', $dbrec->outcomeid)) {
-                                insert_record('grade_outcomes_courses', $dbrec);
-                            }
                         }
 
-                        //Increment counters
-                        $counter++;
+                        //Get the fields
+                        $dbrec->shortname    = backup_todb($info['GRADE_OUTCOME']['#']['SHORTNAME']['0']['#'], false);
+                        $dbrec->fullname     = backup_todb($info['GRADE_OUTCOME']['#']['FULLNAME']['0']['#'], false);
+                        $dbrec->scaleid      = backup_todb($info['GRADE_OUTCOME']['#']['SCALEID']['0']['#'], false);
+                        $dbrec->description  = backup_todb($info['GRADE_OUTCOME']['#']['DESCRIPTION']['0']['#'], false);
+                        $dbrec->timecreated  = backup_todb($info['GRADE_OUTCOME']['#']['TIMECREATED']['0']['#'], false);
+                        $dbrec->timemodified = backup_todb($info['GRADE_OUTCOME']['#']['TIMEMODIFIED']['0']['#'], false);
+                        $dbrec->usermodified = backup_todb($info['GRADE_OUTCOME']['#']['USERMODIFIED']['0']['#'], false);
 
-                        //Do some output
-                        if ($counter % 1 == 0) {
-                            if (!defined('RESTORE_SILENTLY')) {
-                                echo ".";
-                                if ($counter % 20 == 0) {
-                                    echo "<br />";
-                                }
-                            }
-                            backup_flush(300);
+                        //Need to recode the scaleid
+                        if ($scale = backup_getid($restore->backup_unique_code, 'scale', $dbrec->scaleid)) {
+                            $dbrec->scaleid = $scale->new_id;
                         }
+
+                        //Need to recode the usermodified
+                        if ($modifier = backup_getid($restore->backup_unique_code, 'user', $dbrec->usermodified)) {
+                            $dbrec->usermodified = $modifier->new_id;
+                        }
+
+                        $grade_outcome = new grade_outcome($dbrec, false);
+                        $outcomes[$rec->old_id] = $grade_outcome;
                     }
                 }
             }
         }
 
-        // Process grade items (grade_grade)
-        if ($itemscount && $continue) {
+    /// Process grade items and grades
+        if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradeitems','grades').'</li>';
             }
             $counter = 0;
-            $counteritems = 0;
-            while ($counteritems < $itemscount) {
 
-                //Fetch recordset_size records in each iteration
-                $recs = get_records_select("backup_ids","table_name = 'grade_items' AND backup_code = '$restore->backup_unique_code'",
-                                            "old_id",
-                                            "old_id",
-                                            $counteritems,
-                                            $recordset_size);
-                                            
-                if ($recs) {
-                    foreach ($recs as $rec) {
-                        //Get the full record from backup_ids
-                        $data = backup_getid($restore->backup_unique_code,'grade_items',$rec->old_id);
-                        if ($data) {
-                            //Now get completed xmlized object
-                            $info = $data->info;
-                            //traverse_xmlize($info);                            //Debug
-                            //print_object ($GLOBALS['traverse_array']);         //Debug
-                            //$GLOBALS['traverse_array']="";                     //Debug
+            //Fetch recordset_size records in each iteration
+            $recs = get_records_select("backup_ids","table_name = 'grade_items' AND backup_code = '$restore->backup_unique_code'",
+                                        "id", // restore in the backup order
+                                        "old_id");
 
-                            $dbrec->courseid = $restore->course_id;
-                            
-                            if (isset($SESSION->restore->importing)) {
-                                // if we are importing, points all grade_items to the course category
-                                $coursecat = get_record('grade_categories', 'courseid', $restore->course_id, 'depth', 1);
-                                $dbrec->categoryid = $coursecat->id;
-                            } else if (!empty($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']) && $info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']!='$@NULL@$') {
-                                $category = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']));
-                                if (!empty($category->new_id)) {
-                                    $dbrec->categoryid = $category->new_id;
-                                } else { 
-                                    // this could be restoring into existing course, and grade item points to the old course grade item (category)
-                                    // which was never imported. In this case we just point them to the new course item
-                                    $dbrec->categoryid = $coursecategory->id;                                 
-                                }
+            if ($recs) {
+                foreach ($recs as $rec) {
+                    //Get the full record from backup_ids
+                    $data = backup_getid($restore->backup_unique_code,'grade_items',$rec->old_id);
+                    if ($data) {
+                        $info = $data->info;
+
+                        // first find out if category or normal item
+                        $itemtype =  backup_todb($info['GRADE_ITEM']['#']['ITEMTYPE']['0']['#'], false);
+                        if ($itemtype == 'course' or $itemtype == 'category') {
+                            if (!$restoreall or $importing) {
+                                continue;
                             }
 
-                            $dbrec->itemname = backup_todb($info['GRADE_ITEM']['#']['ITEMNAME']['0']['#']);
-                            $dbrec->itemtype = backup_todb($info['GRADE_ITEM']['#']['ITEMTYPE']['0']['#']);
-                            $dbrec->itemmodule = backup_todb($info['GRADE_ITEM']['#']['ITEMMODULE']['0']['#']);
-                            /// this needs to point to either the new mod id
-                            /// or the category id
-                            $iteminstance = backup_todb($info['GRADE_ITEM']['#']['ITEMINSTANCE']['0']['#']);
-                            // do not restore if this grade_item is a mod, and
-                            if ($dbrec->itemtype == 'mod') {
+                            $oldcat = backup_todb($info['GRADE_ITEM']['#']['ITEMINSTANCE']['0']['#'], false);
+                            if (!$cdata = backup_getid($restore->backup_unique_code,'grade_categories',$oldcat)) {
+                                continue;
+                            }
+                            $cinfo = $cdata->info;
+                            unset($cdata);
+                            if ($itemtype == 'course') {
 
+                                $course_category->fullname            = backup_todb($cinfo['GRADE_CATEGORY']['#']['FULLNAME']['0']['#'], false);
+                                $course_category->aggregation         = backup_todb($cinfo['GRADE_CATEGORY']['#']['AGGREGATION']['0']['#'], false);
+                                $course_category->keephigh            = backup_todb($cinfo['GRADE_CATEGORY']['#']['KEEPHIGH']['0']['#'], false);
+                                $course_category->droplow             = backup_todb($cinfo['GRADE_CATEGORY']['#']['DROPLOW']['0']['#'], false);
+                                $course_category->aggregateonlygraded = backup_todb($cinfo['GRADE_CATEGORY']['#']['AGGREGATEONLYGRADED']['0']['#'], false);
+                                $course_category->aggregateoutcomes   = backup_todb($cinfo['GRADE_CATEGORY']['#']['AGGREGATEOUTCOMES']['0']['#'], false);
+                                $course_category->aggregatesubcats    = backup_todb($cinfo['GRADE_CATEGORY']['#']['AGGREGATESUBCATS']['0']['#'], false);
+                                $course_category->timecreated         = backup_todb($cinfo['GRADE_CATEGORY']['#']['TIMECREATED']['0']['#'], false);
+                                $course_category->update('restore');
+
+                                $status = backup_putid($restore->backup_unique_code,'grade_categories',$oldcat,$course_category->id) && $status;
+                                $cached_categories[$oldcat] = $course_category;
+                                $grade_item = $course_category->get_grade_item();
+
+                            } else {
+                                $oldparent = backup_todb($cinfo['GRADE_CATEGORY']['#']['PARENT']['0']['#'], false);
+                                if (empty($cached_categories[$oldparent])) {
+                                    debugging('parent not found '.$oldparent);
+                                    continue; // parent not found, sorry
+                                }
+                                $grade_category = new grade_category();
+                                $grade_category->courseid            = $restore->course_id;
+                                $grade_category->parent              = $cached_categories[$oldparent]->id;
+                                $grade_category->fullname            = backup_todb($cinfo['GRADE_CATEGORY']['#']['FULLNAME']['0']['#'], false);
+                                $grade_category->aggregation         = backup_todb($cinfo['GRADE_CATEGORY']['#']['AGGREGATION']['0']['#'], false);
+                                $grade_category->keephigh            = backup_todb($cinfo['GRADE_CATEGORY']['#']['KEEPHIGH']['0']['#'], false);
+                                $grade_category->droplow             = backup_todb($cinfo['GRADE_CATEGORY']['#']['DROPLOW']['0']['#'], false);
+                                $grade_category->aggregateonlygraded = backup_todb($cinfo['GRADE_CATEGORY']['#']['AGGREGATEONLYGRADED']['0']['#'], false);
+                                $grade_category->aggregateoutcomes   = backup_todb($cinfo['GRADE_CATEGORY']['#']['AGGREGATEOUTCOMES']['0']['#'], false);
+                                $grade_category->aggregatesubcats    = backup_todb($cinfo['GRADE_CATEGORY']['#']['AGGREGATESUBCATS']['0']['#'], false);
+                                $grade_category->timecreated         = backup_todb($cinfo['GRADE_CATEGORY']['#']['TIMECREATED']['0']['#'], false);
+                                $grade_category->insert('restore');
+
+                                $status = backup_putid($restore->backup_unique_code,'grade_categories',$oldcat,$grade_category->id) && $status;
+                                $cached_categories[$oldcat] = $grade_category;
+                                $grade_item = $grade_category->get_grade_item(); // creates grade_item too
+                            }
+                            unset($cinfo);
+
+                            $idnumber = backup_todb($info['GRADE_ITEM']['#']['IDNUMBER']['0']['#'], false);
+                            if (grade_verify_idnumber($idnumber, $restore->course_id)) {
+                                $grade_item->idnumber    = $idnumber;
+                            }
+
+                            $grade_item->itemname        = backup_todb($info['GRADE_ITEM']['#']['ITEMNAME']['0']['#'], false);
+                            $grade_item->iteminfo        = backup_todb($info['GRADE_ITEM']['#']['ITEMINFO']['0']['#'], false);
+                            $grade_item->gradetype       = backup_todb($info['GRADE_ITEM']['#']['GRADETYPE']['0']['#'], false);
+                            $grade_item->calculation     = backup_todb($info['GRADE_ITEM']['#']['CALCULATION']['0']['#'], false);
+                            $grade_item->grademax        = backup_todb($info['GRADE_ITEM']['#']['GRADEMAX']['0']['#'], false);
+                            $grade_item->grademin        = backup_todb($info['GRADE_ITEM']['#']['GRADEMIN']['0']['#'], false);
+                            $grade_item->gradepass       = backup_todb($info['GRADE_ITEM']['#']['GRADEPASS']['0']['#'], false);
+                            $grade_item->multfactor      = backup_todb($info['GRADE_ITEM']['#']['MULTFACTOR']['0']['#'], false);
+                            $grade_item->plusfactor      = backup_todb($info['GRADE_ITEM']['#']['PLUSFACTOR']['0']['#'], false);
+                            $grade_item->aggregationcoef = backup_todb($info['GRADE_ITEM']['#']['AGGREGATIONCOEF']['0']['#'], false);
+                            $grade_item->display         = backup_todb($info['GRADE_ITEM']['#']['DISPLAY']['0']['#'], false);
+                            $grade_item->decimals        = backup_todb($info['GRADE_ITEM']['#']['DECIMALS']['0']['#'], false);
+                            $grade_item->hidden          = backup_todb($info['GRADE_ITEM']['#']['HIDDEN']['0']['#'], false);
+                            $grade_item->locked          = backup_todb($info['GRADE_ITEM']['#']['LOCKED']['0']['#'], false);
+                            $grade_item->locktime        = backup_todb($info['GRADE_ITEM']['#']['LOCKTIME']['0']['#'], false);
+                            $grade_item->timecreated     = backup_todb($info['GRADE_ITEM']['#']['TIMECREATED']['0']['#'], false);
+
+                            if (backup_todb($info['GRADE_ITEM']['#']['SCALEID']['0']['#'], false)) {
+                                $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($info['GRADE_ITEM']['#']['SCALEID']['0']['#'], false));
+                                $grade_item->scaleid     = $scale->new_id;
+                            }
+
+                            if  (backup_todb($info['GRADE_ITEM']['#']['OUTCOMEID']['0']['#'], false)) {
+                                $outcome = backup_getid($restore->backup_unique_code,"grade_outcomes",backup_todb($info['GRADE_ITEM']['#']['OUTCOMEID']['0']['#'], false));
+                                $grade_item->outcomeid   = $outcome->new_id;
+                            }
+
+                            $grade_item->update('restore');
+                            $status = backup_putid($restore->backup_unique_code,"grade_items", $rec->old_id, $grade_item->id) && $status;
+
+                        } else {
+                            if ($itemtype != 'mod' and (!$restoreall or $importing)) {
+                                // not extra gradebook stuff if restoring individual activities or something already there
+                                continue;
+                            }
+
+                            $dbrec = new object();
+
+                            $dbrec->courseid      = $restore->course_id;
+                            $dbrec->itemtype      = backup_todb($info['GRADE_ITEM']['#']['ITEMTYPE']['0']['#'], false);
+                            $dbrec->itemmodule    = backup_todb($info['GRADE_ITEM']['#']['ITEMMODULE']['0']['#'], false);
+
+                            if ($itemtype == 'mod') {
                                 // iteminstance should point to new mod
-
-                                $mod = backup_getid($restore->backup_unique_code,$dbrec->itemmodule, $iteminstance);
+                                $olditeminstance = backup_todb($info['GRADE_ITEM']['#']['ITEMINSTANCE']['0']['#'], false);
+                                $mod = backup_getid($restore->backup_unique_code,$dbrec->itemmodule, $olditeminstance);
                                 $dbrec->iteminstance = $mod->new_id;
-
-                            } else if ($dbrec->itemtype == 'category') {
-                                // the item instance should point to the new grade category
-
-                                // only proceed if we are restoring all grade items
-                                // need to skip for imports
-                                if ($restoreall && !isset($SESSION->restore->importing)) {
-                                    $category = backup_getid($restore->backup_unique_code,'grade_categories', $iteminstance);
-                                    $dbrec->iteminstance = $category->new_id;
-                                } else {
-                                    // otherwise we can safely ignore this grade item and subsequent
-                                    // grade_raws, grade_finals etc
-                                    $counteritems++;
+                                if (!$cm = get_coursemodule_from_instance($dbrec->itemmodule, $mod->new_id)) {
+                                    // item not restored - no item
                                     continue;
                                 }
-                            } elseif ($dbrec->itemtype == 'course') { // We don't restore course type to avoid duplicate course items
+                                // keep in sync with activity idnumber
+                                $dbrec->idnumber = $cm->idnumber;
 
-                                if ($restoreall && !isset($SESSION->restore->importing) && $restore->restoreto == 2) {
-                                    // TODO any special code needed here to restore course item without duplicating it?
-                                    // find the course category with depth 1, and course id = current course id
-                                    // this would have been already restored                                    
-                                    $counteritems++;
-                                    continue;
-                                } else {
-                                    $counteritems++;
-                                    continue;
+                            } else {
+                                $idnumber = backup_todb($info['GRADE_ITEM']['#']['IDNUMBER']['0']['#'], false);
+
+                                if (grade_verify_idnumber($idnumber, $restore->course_id)) {
+                                    //make sure the new idnumber is unique
+                                    $dbrec->idnumber  = $idnumber;
                                 }
                             }
 
-                            $dbrec->itemnumber = backup_todb($info['GRADE_ITEM']['#']['ITEMNUMBER']['0']['#']);
-                            $dbrec->iteminfo = backup_todb($info['GRADE_ITEM']['#']['ITEMINFO']['0']['#']);
-                            $dbrec->idnumber = backup_todb($info['GRADE_ITEM']['#']['IDNUMBER']['0']['#']);
-                            $dbrec->gradetype = backup_todb($info['GRADE_ITEM']['#']['GRADETYPE']['0']['#']);
-                            $dbrec->calculation = backup_todb($info['GRADE_ITEM']['#']['CALCULATION']['0']['#']);
-                            $dbrec->grademax = backup_todb($info['GRADE_ITEM']['#']['GRADEMAX']['0']['#']);
-                            $dbrec->grademin = backup_todb($info['GRADE_ITEM']['#']['GRADEMIN']['0']['#']);
-                            /// needs to be restored first
+                            $dbrec->itemname        = backup_todb($info['GRADE_ITEM']['#']['ITEMNAME']['0']['#'], false);
+                            $dbrec->itemtype        = backup_todb($info['GRADE_ITEM']['#']['ITEMTYPE']['0']['#'], false);
+                            $dbrec->itemmodule      = backup_todb($info['GRADE_ITEM']['#']['ITEMMODULE']['0']['#'], false);
+                            $dbrec->itemnumber      = backup_todb($info['GRADE_ITEM']['#']['ITEMNUMBER']['0']['#'], false);
+                            $dbrec->iteminfo        = backup_todb($info['GRADE_ITEM']['#']['ITEMINFO']['0']['#'], false);
+                            $dbrec->gradetype       = backup_todb($info['GRADE_ITEM']['#']['GRADETYPE']['0']['#'], false);
+                            $dbrec->calculation     = backup_todb($info['GRADE_ITEM']['#']['CALCULATION']['0']['#'], false);
+                            $dbrec->grademax        = backup_todb($info['GRADE_ITEM']['#']['GRADEMAX']['0']['#'], false);
+                            $dbrec->grademin        = backup_todb($info['GRADE_ITEM']['#']['GRADEMIN']['0']['#'], false);
+                            $dbrec->gradepass       = backup_todb($info['GRADE_ITEM']['#']['GRADEPASS']['0']['#'], false);
+                            $dbrec->multfactor      = backup_todb($info['GRADE_ITEM']['#']['MULTFACTOR']['0']['#'], false);
+                            $dbrec->plusfactor      = backup_todb($info['GRADE_ITEM']['#']['PLUSFACTOR']['0']['#'], false);
+                            $dbrec->aggregationcoef = backup_todb($info['GRADE_ITEM']['#']['AGGREGATIONCOEF']['0']['#'], false);
+                            $dbrec->display         = backup_todb($info['GRADE_ITEM']['#']['DISPLAY']['0']['#'], false);
+                            $dbrec->decimals        = backup_todb($info['GRADE_ITEM']['#']['DECIMALS']['0']['#'], false);
+                            $dbrec->hidden          = backup_todb($info['GRADE_ITEM']['#']['HIDDEN']['0']['#'], false);
+                            $dbrec->locked          = backup_todb($info['GRADE_ITEM']['#']['LOCKED']['0']['#'], false);
+                            $dbrec->locktime        = backup_todb($info['GRADE_ITEM']['#']['LOCKTIME']['0']['#'], false);
+                            $dbrec->timecreated     = backup_todb($info['GRADE_ITEM']['#']['TIMECREATED']['0']['#'], false);
 
-                            if (backup_todb($info['GRADE_ITEM']['#']['SCALEID']['0']['#'])) {
-                                $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($info['GRADE_ITEM']['#']['SCALEID']['0']['#']));
+                            if (backup_todb($info['GRADE_ITEM']['#']['SCALEID']['0']['#'], false)) {
+                                $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($info['GRADE_ITEM']['#']['SCALEID']['0']['#'], false));
                                 $dbrec->scaleid = $scale->new_id;
                             }
 
-                            /// needs to be restored first
-                            /// TODO
                             if  (backup_todb($info['GRADE_ITEM']['#']['OUTCOMEID']['0']['#'])) {
-                                $outcome = backup_getid($restore->backup_unique_code,"grade_outcomes",backup_todb($info['GRADE_ITEM']['#']['OUTCOMEID']['0']['#']));
-                                $dbrec->outcomeid = $outcome->new_id;
+                                $oldoutcome = backup_todb($info['GRADE_ITEM']['#']['OUTCOMEID']['0']['#']);
+                                if (empty($outcomes[$oldoutcome])) {
+                                    continue; // error!
+                                } 
+                                if (empty($outcomes[$oldoutcome]->id)) {
+                                    $outcomes[$oldoutcome]->insert('restore');
+                                    $outcomes[$oldoutcome]->use_in($restore->course_id);
+                                    backup_putid($restore->backup_unique_code, "grade_outcomes", $oldoutcome, $outcomes[$oldoutcome]->id);
+                                }
+                                $dbrec->outcomeid = $outcomes[$oldoutcome]->id;
                             }
 
-                            $dbrec->gradepass = backup_todb($info['GRADE_ITEM']['#']['GRADEPASS']['0']['#']);
-                            $dbrec->multfactor = backup_todb($info['GRADE_ITEM']['#']['MULTFACTOR']['0']['#']);
-                            $dbrec->plusfactor = backup_todb($info['GRADE_ITEM']['#']['PLUSFACTOR']['0']['#']);
-                            $dbrec->aggregationcoef = backup_todb($info['GRADE_ITEM']['#']['AGGREGATIONCOEF']['0']['#']);
-                            $dbrec->display = backup_todb($info['GRADE_ITEM']['#']['DISPLAY']['0']['#']);
-                            $dbrec->decimals = backup_todb($info['GRADE_ITEM']['#']['DECIMALS']['0']['#']);                            
-                            $dbrec->hidden = backup_todb($info['GRADE_ITEM']['#']['HIDDEN']['0']['#']);
-                            $dbrec->locked = backup_todb($info['GRADE_ITEM']['#']['LOCKED']['0']['#']);
-                            $dbrec->locktime = backup_todb($info['GRADE_ITEM']['#']['LOCKTIME']['0']['#']);
-                            $dbrec->needsupdate = backup_todb($info['GRADE_ITEM']['#']['NEEDSUPDATE']['0']['#']);
-                            $dbrec->timecreated = backup_todb($info['GRADE_ITEM']['#']['TIMECREATED']['0']['#']);
-                            $dbrec->timemodified = backup_todb($info['GRADE_ITEM']['#']['TIMEMODIFIED']['0']['#']);
+                            $grade_item = new grade_item($dbrec, false);
+                            $grade_item->insert('restore');
+                            if ($restoreall) {
+                                // set original parent if restored
+                                $oldcat = $info['GRADE_ITEM']['#']['CATEGORYID']['0']['#'];
+                                if (!empty($cached_categories[$oldcat])) {
+                                    $grade_item->set_parent($cached_categories[$oldcat]->id);
+                                }
+                            }
+                            $status = backup_putid($restore->backup_unique_code,"grade_items", $rec->old_id, $grade_item->id) && $status;
+                        }
 
-                            // get the current sortorder, add 1 to it and use that
-                            if ($lastitem = get_record_sql("SELECT sortorder, id FROM {$CFG->prefix}grade_items
-                                                        WHERE courseid = $restore->course_id
-                                                        ORDER BY sortorder DESC ", true)) {
+                        // no need to restore grades if user data is not selected or importing activities
+                        if ($importing
+                          or ($grade_item->itemtype == 'mod' and !restore_userdata_selected($restore,  $grade_item->itemmodule, $olditeminstance))) {
+                            // module instance not selected when restored using granular
+                            // skip this item
+                            continue;
+                        }
 
-                                // we just need the first one
-                                $dbrec->sortorder = $lastitem->sortorder + 1;
-                            } else {
-                                // this is the first grade_item
-                                $dbrec->sortorder = 1;
-                            }
-                            // always insert, since modules restored to existing courses are always inserted
-                            $itemid = insert_record('grade_items',$dbrec);
-                            if ($itemid) {
-                                backup_putid($restore->backup_unique_code,'grade_items', backup_todb($info['GRADE_ITEM']['#']['ID']['0']['#']), $itemid);
-                            }
-                            
-                            // no need to restore grades if user data is not selected
-                            if ($dbrec->itemtype == 'mod' && !restore_userdata_selected($restore,  $dbrec->itemmodule, $iteminstance)) {
-                                // module instance not selected when restored using granular
-                                // skip this item
-                                $counteritems++;
-                                continue;
-                            }
-                            
-                            /// now, restore grade_grades
-                            if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']) && ($grades = $info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']['GRADE'])) {
-                                //Iterate over items
-                                for($i = 0; $i < sizeof($grades); $i++) {
-                                    $ite_info = $grades[$i];
-                                    //traverse_xmlize($ite_info);
-//Debug
-                                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-                                    //$GLOBALS['traverse_array']="";                                                              //Debug
-                                    //Now build the GRADE_ITEM record structure
-                                    $grade = new object();
-                                    $grade->itemid       = $itemid;
-                                    $user = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERID']['0']['#']));
-                                    $grade->userid = $user->new_id;
-                                    $grade->rawgrade = backup_todb($ite_info['#']['RAWGRADE']['0']['#']);
-                                    $grade->rawgrademax = backup_todb($ite_info['#']['RAWGRADEMAX']['0']['#']);
-                                    $grade->rawgrademin = backup_todb($ite_info['#']['RAWGRADEMIN']['0']['#']);
-                                    // need to find scaleid
-                                    if (backup_todb($ite_info['#']['RAWSCALEID']['0']['#'])) {
-                                        $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($ite_info['#']['RAWSCALEID']['0']['#']));
-                                        $grade->rawscaleid = $scale->new_id;
+                        /// now, restore grade_grades
+                        if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']['GRADE'])) {
+                            //Iterate over items
+                            foreach ($info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']['GRADE'] as $g_info) {
+
+                                $grade = new grade_grade();
+                                $grade->itemid         = $grade_item->id;
+
+                                $olduser = backup_todb($g_info['#']['USERID']['0']['#'], false);
+                                $user = backup_getid($restore->backup_unique_code,"user",$olduser);
+                                $grade->userid         = $user->new_id;
+
+                                $grade->rawgrade       = backup_todb($g_info['#']['RAWGRADE']['0']['#'], false);
+                                $grade->rawgrademax    = backup_todb($g_info['#']['RAWGRADEMAX']['0']['#'], false);
+                                $grade->rawgrademin    = backup_todb($g_info['#']['RAWGRADEMIN']['0']['#'], false);
+                                // need to find scaleid
+                                if (backup_todb($g_info['#']['RAWSCALEID']['0']['#'])) {
+                                    $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($g_info['#']['RAWSCALEID']['0']['#'], false));
+                                    $grade->rawscaleid = $scale->new_id;
+                                }
+
+                                if (backup_todb($g_info['#']['USERMODIFIED']['0']['#'])) {
+                                    if ($modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($g_info['#']['USERMODIFIED']['0']['#'], false))) {
+                                        $grade->usermodified = $modifier->new_id;
                                     }
-                                    
-                                    if (backup_todb($ite_info['#']['USERMODIFIED']['0']['#'])) {
-                                        if ($modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERMODIFIED']['0']['#']))) {
-                                            $grade->usermodified = $modifier->new_id; 
+                                }
+
+                                $grade->finalgrade        = backup_todb($g_info['#']['FINALGRADE']['0']['#'], false);
+                                $grade->hidden            = backup_todb($g_info['#']['HIDDEN']['0']['#'], false);
+                                $grade->locked            = backup_todb($g_info['#']['LOCKED']['0']['#'], false);
+                                $grade->locktime          = backup_todb($g_info['#']['LOCKTIME']['0']['#'], false);
+                                $grade->exported          = backup_todb($g_info['#']['EXPORTED']['0']['#'], false);
+                                $grade->overridden        = backup_todb($g_info['#']['OVERRIDDEN']['0']['#'], false);
+                                $grade->excluded          = backup_todb($g_info['#']['EXCLUDED']['0']['#'], false);
+                                $grade->feedback          = backup_todb($g_info['#']['FEEDBACK']['0']['#'], false);
+                                $grade->feedbackformat    = backup_todb($g_info['#']['FEEDBACKFORMAT']['0']['#'], false);
+                                $grade->information       = backup_todb($g_info['#']['INFORMATION']['0']['#'], false);
+                                $grade->informationformat = backup_todb($g_info['#']['INFORMATIONFORMAT']['0']['#'], false);
+                                $grade->timecreated       = backup_todb($g_info['#']['TIMECREATED']['0']['#'], false);
+                                $grade->timemodified      = backup_todb($g_info['#']['TIMEMODIFIED']['0']['#'], false);
+
+                                $grade->insert('restore');
+                                backup_putid($restore->backup_unique_code,"grade_grades", backup_todb($g_info['#']['ID']['0']['#']), $grade->id);
+
+                                $counter++;
+                                if ($counter % 20 == 0) {
+                                    if (!defined('RESTORE_SILENTLY')) {
+                                        echo ".";
+                                        if ($counter % 400 == 0) {
+                                            echo "<br />";
                                         }
                                     }
-                                    
-                                    $grade->finalgrade = backup_todb($ite_info['#']['FINALGRADE']['0']['#']);
-                                    $grade->hidden = backup_todb($ite_info['#']['HIDDEN']['0']['#']);
-                                    $grade->locked = backup_todb($ite_info['#']['LOCKED']['0']['#']);
-                                    $grade->locktime = backup_todb($ite_info['#']['LOCKTIME']['0']['#']);
-                                    $grade->exported = backup_todb($ite_info['#']['EXPORTED']['0']['#']);
-                                    $grade->overridden = backup_todb($ite_info['#']['OVERRIDDEN']['0']['#']);
-                                    $grade->excluded = backup_todb($ite_info['#']['EXCLUDED']['0']['#']);
-                                    $grade->feedback = backup_todb($ite_info['#']['FEEDBACK']['0']['#']);
-                                    $grade->feedbackformat = backup_todb($ite_info['#']['FEEDBACKFORMAT']['0']['#']);
-                                    $grade->information = backup_todb($ite_info['#']['INFORMATION']['0']['#']);
-                                    $grade->informationformat = backup_todb($ite_info['#']['INFORMATIONFORMAT']['0']['#']);
-                                    $grade->timecreated = backup_todb($ite_info['#']['TIMECREATED']['0']['#']);
-                                    $grade->timemodified = backup_todb($ite_info['#']['TIMEMODIFIED']['0']['#']);
-                                    
-                                    $newid = insert_record('grade_grades', $grade);
+                                    backup_flush(300);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-                                    if ($newid) {
-                                        backup_putid($restore->backup_unique_code,"grade_grades", backup_todb($ite_info['#']['ID']['0']['#']), $newid);
-                                    }
+    /// add outcomes that are not used when doing full restore
+        if ($status and $restoreall) {
+            foreach ($outcomes as $oldoutcome=>$grade_outcome) {
+                if (empty($grade_outcome->id)) {
+                    $grade_outcome->insert('restore');
+                    $grade_outcome->use_in($restore->course_id);
+                    backup_putid($restore->backup_unique_code, "grade_outcomes", $oldoutcome, $grade_outcome->id);
+                }
+            }
+        }
+
+
+        if ($status and !$importing and $restore_histories) {
+            /// following code is very inefficient 
+
+            $gchcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_categories_history');
+            $gghcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_grades_history');
+            $gihcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_items_history');
+            $gohcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_outcomes_history');
+
+            // Number of records to get in every chunk
+            $recordset_size = 2;
+
+            // process histories
+            if ($gchcount && $status) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '<li>'.get_string('gradecategoryhistory','grades').'</li>';
+                }
+                $counter = 0;
+                while ($counter < $gchcount) {
+                    //Fetch recordset_size records in each iteration
+                    $recs = get_records_select("backup_ids","table_name = 'grade_categories_history' AND backup_code = '$restore->backup_unique_code'",
+                                                "old_id",
+                                                "old_id",
+                                                $counter,
+                                                $recordset_size);
+                    if ($recs) {
+                        foreach ($recs as $rec) {
+                            //Get the full record from backup_ids
+                            $data = backup_getid($restore->backup_unique_code,'grade_categories_history',$rec->old_id);
+                            if ($data) {
+                                //Now get completed xmlized object
+                                $info = $data->info;
+                                //traverse_xmlize($info);                            //Debug
+                                //print_object ($GLOBALS['traverse_array']);         //Debug
+                                //$GLOBALS['traverse_array']="";                     //Debug
+    
+                                $oldobj = backup_getid($restore->backup_unique_code,"grade_categories", backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['OLDID']['0']['#']));
+                                if (empty($oldobj->new_id)) {
+                                    // if the old object is not being restored, can't restoring its history
                                     $counter++;
-                                    if ($counter % 20 == 0) {
-                                        if (!defined('RESTORE_SILENTLY')) {
-                                            echo ".";
-                                            if ($counter % 400 == 0) {
-                                                echo "<br />";
+                                    continue;
+                                }
+                                $dbrec->oldid = $oldobj->new_id;
+                                $dbrec->action = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['ACTION']['0']['#']);
+                                $dbrec->source = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['SOURCE']['0']['#']);
+                                $dbrec->timemodified = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['TIMEMODIFIED']['0']['#']);
+    
+                                // loggeduser might not be restored, e.g. admin
+                                if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['LOGGEDUSER']['0']['#']))) {
+                                    $dbrec->loggeduser = $oldobj->new_id;
+                                }
+    
+                                // this item might not have a parent at all, do not skip it if no parent is specified
+                                if (backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['PARENT']['0']['#'])) {
+                                    $oldobj = backup_getid($restore->backup_unique_code,"grade_categories", backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['PARENT']['0']['#']));
+                                    if (empty($oldobj->new_id)) {
+                                        // if the parent category not restored
+                                        $counter++;
+                                        continue;
+                                    }
+                                }
+                                $dbrec->parent = $oldobj->new_id;
+                                $dbrec->depth = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['DEPTH']['0']['#']);
+                                // path needs to be rebuilt
+                                if ($path = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['PATH']['0']['#'])) {
+                                // to preserve the path and make it work, we need to replace the categories one by one
+                                // we first get the list of categories in current path
+                                    if ($paths = explode("/", $path)) {
+                                        $newpath = '';
+                                        foreach ($paths as $catid) {
+                                            if ($catid) {
+                                                // find the new corresponding path
+                                                $oldpath = backup_getid($restore->backup_unique_code,"grade_categories", $catid);
+                                                $newpath .= "/$oldpath->new_id";
                                             }
                                         }
-                                        backup_flush(300);
+                                        $dbrec->path = $newpath;
                                     }
                                 }
+                                $dbrec->fullname = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['FULLNAME']['0']['#']);
+                                $dbrec->aggregation = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['AGGRETGATION']['0']['#']);
+                                $dbrec->keephigh = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['KEEPHIGH']['0']['#']);
+                                $dbrec->droplow = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['DROPLOW']['0']['#']);
+                                
+                                $dbrec->aggregateonlygraded = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['AGGREGATEONLYGRADED']['0']['#']);
+                                $dbrec->aggregateoutcomes = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['AGGREGATEOUTCOMES']['0']['#']);
+                                $dbrec->aggregatesubcats = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['AGGREGATESUBCATS']['0']['#']);
+    
+                                $dbrec->courseid = $restore->course_id;
+                                insert_record('grade_categories_history', $dbrec);
+                                unset($dbrec);
+    
+                            }
+                            //Increment counters
+                            $counter++;
+                            //Do some output
+                            if ($counter % 1 == 0) {
+                                if (!defined('RESTORE_SILENTLY')) {
+                                    echo ".";
+                                    if ($counter % 20 == 0) {
+                                        echo "<br />";
+                                    }
+                                }
+                                backup_flush(300);
                             }
                         }
-                    $counteritems++; // increment item count
                     }
                 }
-
             }
-        }
-
-        // process histories
-        if ($gchcount && $continue && !isset($SESSION->restore->importing) && $restore->restore_gradebook_history) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '<li>'.get_string('gradecategoryhistory','grades').'</li>';
-            }
-            $counter = 0;
-            while ($counter < $gchcount) {
-                //Fetch recordset_size records in each iteration
-                $recs = get_records_select("backup_ids","table_name = 'grade_categories_history' AND backup_code = '$restore->backup_unique_code'",
-                                            "old_id",
-                                            "old_id",
-                                            $counter,
-                                            $recordset_size);
-                if ($recs) {
-                    foreach ($recs as $rec) {
-                        //Get the full record from backup_ids
-                        $data = backup_getid($restore->backup_unique_code,'grade_categories_history',$rec->old_id);
-                        if ($data) {
-                            //Now get completed xmlized object
-                            $info = $data->info;
-                            //traverse_xmlize($info);                            //Debug
-                            //print_object ($GLOBALS['traverse_array']);         //Debug
-                            //$GLOBALS['traverse_array']="";                     //Debug
-
-                            $oldobj = backup_getid($restore->backup_unique_code,"grade_categories", backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['OLDID']['0']['#']));
-                            if (empty($oldobj->new_id)) {
-                                // if the old object is not being restored, can't restoring its history
-                                $counter++;
-                                continue;
-                            }
-                            $dbrec->oldid = $oldobj->new_id;
-                            $dbrec->action = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['ACTION']['0']['#']);
-                            $dbrec->source = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['SOURCE']['0']['#']);
-                            $dbrec->timemodified = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['TIMEMODIFIED']['0']['#']);
-
-                            // loggeduser might not be restored, e.g. admin
-                            if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['LOGGEDUSER']['0']['#']))) {
-                                $dbrec->loggeduser = $oldobj->new_id;
-                            }
-
-                            // this item might not have a parent at all, do not skip it if no parent is specified
-                            if (backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['PARENT']['0']['#'])) {
-                                $oldobj = backup_getid($restore->backup_unique_code,"grade_categories", backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['PARENT']['0']['#']));
+    
+            // process histories
+            if ($gghcount && $status) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '<li>'.get_string('gradegradeshistory','grades').'</li>';
+                }
+                $counter = 0;
+                while ($counter < $gghcount) {
+                    //Fetch recordset_size records in each iteration
+                    $recs = get_records_select("backup_ids","table_name = 'grade_grades_history' AND backup_code = '$restore->backup_unique_code'",
+                                                "old_id",
+                                                "old_id",
+                                                $counter,
+                                                $recordset_size);
+                    if ($recs) {
+                        foreach ($recs as $rec) {
+                            //Get the full record from backup_ids
+                            $data = backup_getid($restore->backup_unique_code,'grade_grades_history',$rec->old_id);
+                            if ($data) {
+                                //Now get completed xmlized object
+                                $info = $data->info;
+                                //traverse_xmlize($info);                            //Debug
+                                //print_object ($GLOBALS['traverse_array']);         //Debug
+                                //$GLOBALS['traverse_array']="";                     //Debug
+    
+                                $oldobj = backup_getid($restore->backup_unique_code,"grade_grades", backup_todb($info['GRADE_GRADES_HISTORY']['#']['OLDID']['0']['#']));
                                 if (empty($oldobj->new_id)) {
-                                    // if the parent category not restored
+                                    // if the old object is not being restored, can't restoring its history
                                     $counter++;
                                     continue;
                                 }
+                                $dbrec->oldid = $oldobj->new_id;
+                                $dbrec->action = backup_todb($info['GRADE_GRADES_HISTORY']['#']['ACTION']['0']['#']);
+                                $dbrec->source = backup_todb($info['GRADE_GRADES_HISTORY']['#']['SOURCE']['0']['#']);
+                                $dbrec->timemodified = backup_todb($info['GRADE_GRADES_HISTORY']['#']['TIMEMODIFIED']['0']['#']);
+                                if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_GRADES_HISTORY']['#']['LOGGEDUSER']['0']['#']))) {
+                                    $dbrec->loggeduser = $oldobj->new_id;
+                                }
+                                
+                                $oldobj = backup_getid($restore->backup_unique_code,"grade_items", backup_todb($info['GRADE_GRADES_HISTORY']['#']['ITEMID']['0']['#']));
+                                $dbrec->itemid = $oldobj->new_id;
+                                if (empty($dbrec->itemid)) {
+                                    $counter++;
+                                    continue; // grade item not being restored
+                                }
+                                $oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_GRADES_HISTORY']['#']['USERID']['0']['#']));
+                                $dbrec->userid = $oldobj->new_id;
+                                $dbrec->rawgrade = backup_todb($info['GRADE_GRADES_HISTORY']['#']['RAWGRADE']['0']['#']);
+                                $dbrec->rawgrademax = backup_todb($info['GRADE_GRADES_HISTORY']['#']['RAWGRADEMAX']['0']['#']);
+                                $dbrec->rawgrademin = backup_todb($info['GRADE_GRADES_HISTORY']['#']['RAWGRADEMIN']['0']['#']);
+                                if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_GRADES_HISTORY']['#']['USERMODIFIED']['0']['#']))) {
+                                    $dbrec->usermodified = $oldobj->new_id;
+                                }
+                                
+                                if (backup_todb($info['GRADE_GRADES_HISTORY']['#']['RAWSCALEID']['0']['#'])) {
+                                    $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($info['GRADE_GRADES_HISTORY']['#']['RAWSCALEID']['0']['#']));
+                                    $dbrec->rawscaleid = $scale->new_id;
+                                }
+                                
+                                $dbrec->finalgrade = backup_todb($info['GRADE_GRADES_HISTORY']['#']['FINALGRADE']['0']['#']);
+                                $dbrec->hidden = backup_todb($info['GRADE_GRADES_HISTORY']['#']['HIDDEN']['0']['#']);
+                                $dbrec->locked = backup_todb($info['GRADE_GRADES_HISTORY']['#']['LOCKED']['0']['#']);
+                                $dbrec->locktime = backup_todb($info['GRADE_GRADES_HISTORY']['#']['LOCKTIME']['0']['#']);
+                                $dbrec->exported = backup_todb($info['GRADE_GRADES_HISTORY']['#']['EXPORTED']['0']['#']);
+                                $dbrec->overridden = backup_todb($info['GRADE_GRADES_HISTORY']['#']['OVERRIDDEN']['0']['#']);
+                                $dbrec->excluded = backup_todb($info['GRADE_GRADES_HISTORY']['#']['EXCLUDED']['0']['#']);
+                                $dbrec->feedback = backup_todb($info['GRADE_TEXT_HISTORY']['#']['FEEDBACK']['0']['#']);
+                                $dbrec->feedbackformat = backup_todb($info['GRADE_TEXT_HISTORY']['#']['FEEDBACKFORMAT']['0']['#']);
+                                $dbrec->information = backup_todb($info['GRADE_TEXT_HISTORY']['#']['INFORMATION']['0']['#']);
+                                $dbrec->informationformat = backup_todb($info['GRADE_TEXT_HISTORY']['#']['INFORMATIONFORMAT']['0']['#']);
+    
+                                insert_record('grade_grades_history', $dbrec);
+                                unset($dbrec);
+    
                             }
-                            $dbrec->parent = $oldobj->new_id;
-                            $dbrec->depth = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['DEPTH']['0']['#']);
-                            // path needs to be rebuilt
-                            if ($path = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['PATH']['0']['#'])) {
-                            // to preserve the path and make it work, we need to replace the categories one by one
-                            // we first get the list of categories in current path
-                                if ($paths = explode("/", $path)) {
-                                    $newpath = '';
-                                    foreach ($paths as $catid) {
-                                        if ($catid) {
-                                            // find the new corresponding path
-                                            $oldpath = backup_getid($restore->backup_unique_code,"grade_categories", $catid);
-                                            $newpath .= "/$oldpath->new_id";
-                                        }
+                            //Increment counters
+                            $counter++;
+                            //Do some output
+                            if ($counter % 1 == 0) {
+                                if (!defined('RESTORE_SILENTLY')) {
+                                    echo ".";
+                                    if ($counter % 20 == 0) {
+                                        echo "<br />";
                                     }
-                                    $dbrec->path = $newpath;
                                 }
+                                backup_flush(300);
                             }
-                            $dbrec->fullname = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['FULLNAME']['0']['#']);
-                            $dbrec->aggregation = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['AGGRETGATION']['0']['#']);
-                            $dbrec->keephigh = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['KEEPHIGH']['0']['#']);
-                            $dbrec->droplow = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['DROPLOW']['0']['#']);
-                            
-                            $dbrec->aggregateonlygraded = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['AGGREGATEONLYGRADED']['0']['#']);
-                            $dbrec->aggregateoutcomes = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['AGGREGATEOUTCOMES']['0']['#']);
-                            $dbrec->aggregatesubcats = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['AGGREGATESUBCATS']['0']['#']);
-
-                            $dbrec->courseid = $restore->course_id;
-                            insert_record('grade_categories_history', $dbrec);
-                            unset($dbrec);
-
-                        }
-                        //Increment counters
-                        $counter++;
-                        //Do some output
-                        if ($counter % 1 == 0) {
-                            if (!defined('RESTORE_SILENTLY')) {
-                                echo ".";
-                                if ($counter % 20 == 0) {
-                                    echo "<br />";
-                                }
-                            }
-                            backup_flush(300);
                         }
                     }
                 }
             }
-        }
-
-        // process histories
-        if ($gghcount && $continue && !isset($SESSION->restore->importing) && $restore->restore_gradebook_history) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '<li>'.get_string('gradegradeshistory','grades').'</li>';
-            }
-            $counter = 0;
-            while ($counter < $gghcount) {
-                //Fetch recordset_size records in each iteration
-                $recs = get_records_select("backup_ids","table_name = 'grade_grades_history' AND backup_code = '$restore->backup_unique_code'",
-                                            "old_id",
-                                            "old_id",
-                                            $counter,
-                                            $recordset_size);
-                if ($recs) {
-                    foreach ($recs as $rec) {
-                        //Get the full record from backup_ids
-                        $data = backup_getid($restore->backup_unique_code,'grade_grades_history',$rec->old_id);
-                        if ($data) {
-                            //Now get completed xmlized object
-                            $info = $data->info;
-                            //traverse_xmlize($info);                            //Debug
-                            //print_object ($GLOBALS['traverse_array']);         //Debug
-                            //$GLOBALS['traverse_array']="";                     //Debug
-
-                            $oldobj = backup_getid($restore->backup_unique_code,"grade_grades", backup_todb($info['GRADE_GRADES_HISTORY']['#']['OLDID']['0']['#']));
-                            if (empty($oldobj->new_id)) {
-                                // if the old object is not being restored, can't restoring its history
-                                $counter++;
-                                continue;
-                            }
-                            $dbrec->oldid = $oldobj->new_id;
-                            $dbrec->action = backup_todb($info['GRADE_GRADES_HISTORY']['#']['ACTION']['0']['#']);
-                            $dbrec->source = backup_todb($info['GRADE_GRADES_HISTORY']['#']['SOURCE']['0']['#']);
-                            $dbrec->timemodified = backup_todb($info['GRADE_GRADES_HISTORY']['#']['TIMEMODIFIED']['0']['#']);
-                            if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_GRADES_HISTORY']['#']['LOGGEDUSER']['0']['#']))) {
-                                $dbrec->loggeduser = $oldobj->new_id;
-                            }
-                            
-                            $oldobj = backup_getid($restore->backup_unique_code,"grade_items", backup_todb($info['GRADE_GRADES_HISTORY']['#']['ITEMID']['0']['#']));
-                            $dbrec->itemid = $oldobj->new_id;
-                            if (empty($dbrec->itemid)) {
-                                $counter++;
-                                continue; // grade item not being restored
-                            }
-                            $oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_GRADES_HISTORY']['#']['USERID']['0']['#']));
-                            $dbrec->userid = $oldobj->new_id;
-                            $dbrec->rawgrade = backup_todb($info['GRADE_GRADES_HISTORY']['#']['RAWGRADE']['0']['#']);
-                            $dbrec->rawgrademax = backup_todb($info['GRADE_GRADES_HISTORY']['#']['RAWGRADEMAX']['0']['#']);
-                            $dbrec->rawgrademin = backup_todb($info['GRADE_GRADES_HISTORY']['#']['RAWGRADEMIN']['0']['#']);
-                            if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_GRADES_HISTORY']['#']['USERMODIFIED']['0']['#']))) {
-                                $dbrec->usermodified = $oldobj->new_id;
-                            }
-                            
-                            if (backup_todb($info['GRADE_GRADES_HISTORY']['#']['RAWSCALEID']['0']['#'])) {
-                                $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($info['GRADE_GRADES_HISTORY']['#']['RAWSCALEID']['0']['#']));
-                                $dbrec->rawscaleid = $scale->new_id;
-                            }
-                            
-                            $dbrec->finalgrade = backup_todb($info['GRADE_GRADES_HISTORY']['#']['FINALGRADE']['0']['#']);
-                            $dbrec->hidden = backup_todb($info['GRADE_GRADES_HISTORY']['#']['HIDDEN']['0']['#']);
-                            $dbrec->locked = backup_todb($info['GRADE_GRADES_HISTORY']['#']['LOCKED']['0']['#']);
-                            $dbrec->locktime = backup_todb($info['GRADE_GRADES_HISTORY']['#']['LOCKTIME']['0']['#']);
-                            $dbrec->exported = backup_todb($info['GRADE_GRADES_HISTORY']['#']['EXPORTED']['0']['#']);
-                            $dbrec->overridden = backup_todb($info['GRADE_GRADES_HISTORY']['#']['OVERRIDDEN']['0']['#']);
-                            $dbrec->excluded = backup_todb($info['GRADE_GRADES_HISTORY']['#']['EXCLUDED']['0']['#']);
-                            $dbrec->feedback = backup_todb($info['GRADE_TEXT_HISTORY']['#']['FEEDBACK']['0']['#']);
-                            $dbrec->feedbackformat = backup_todb($info['GRADE_TEXT_HISTORY']['#']['FEEDBACKFORMAT']['0']['#']);
-                            $dbrec->information = backup_todb($info['GRADE_TEXT_HISTORY']['#']['INFORMATION']['0']['#']);
-                            $dbrec->informationformat = backup_todb($info['GRADE_TEXT_HISTORY']['#']['INFORMATIONFORMAT']['0']['#']);
-
-                            insert_record('grade_grades_history', $dbrec);
-                            unset($dbrec);
-
-                        }
-                        //Increment counters
-                        $counter++;
-                        //Do some output
-                        if ($counter % 1 == 0) {
-                            if (!defined('RESTORE_SILENTLY')) {
-                                echo ".";
-                                if ($counter % 20 == 0) {
-                                    echo "<br />";
+    
+            // process histories
+    
+            if ($gihcount && $status) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '<li>'.get_string('gradeitemshistory','grades').'</li>';
+                }
+                $counter = 0;
+                while ($counter < $gihcount) {
+                    //Fetch recordset_size records in each iteration
+                    $recs = get_records_select("backup_ids","table_name = 'grade_items_history' AND backup_code = '$restore->backup_unique_code'",
+                                                "old_id",
+                                                "old_id",
+                                                $counter,
+                                                $recordset_size);
+                    if ($recs) {
+                        foreach ($recs as $rec) {
+                            //Get the full record from backup_ids
+                            $data = backup_getid($restore->backup_unique_code,'grade_items_history',$rec->old_id);
+                            if ($data) {
+                                //Now get completed xmlized object
+                                $info = $data->info;
+                                //traverse_xmlize($info);                            //Debug
+                                //print_object ($GLOBALS['traverse_array']);         //Debug
+                                //$GLOBALS['traverse_array']="";                     //Debug
+    
+    
+                                $oldobj = backup_getid($restore->backup_unique_code,"grade_items", backup_todb($info['GRADE_ITEM_HISTORY']['#']['OLDID']['0']['#']));
+                                if (empty($oldobj->new_id)) {
+                                    // if the old object is not being restored, can't restoring its history
+                                    $counter++;
+                                    continue;
                                 }
+                                $dbrec->oldid = $oldobj->new_id;
+                                $dbrec->action = backup_todb($info['GRADE_ITEM_HISTORY']['#']['ACTION']['0']['#']);
+                                $dbrec->source = backup_todb($info['GRADE_ITEM_HISTORY']['#']['SOURCE']['0']['#']);
+                                $dbrec->timemodified = backup_todb($info['GRADE_ITEM_HISTORY']['#']['TIMEMODIFIED']['0']['#']);
+                                if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_ITEM_HISTORY']['#']['LOGGEDUSER']['0']['#']))) {
+                                    $dbrec->loggeduser = $oldobj->new_id;
+                                }
+                                $dbrec->courseid = $restore->course_id;
+                                $oldobj = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_ITEM_HISTORY']['#']['CATEGORYID']['0']['#']));
+                                $oldobj->categoryid = $category->new_id;
+                                if (empty($oldobj->categoryid)) {
+                                    $counter++;
+                                    continue; // category not restored
+                                }
+    
+                                $dbrec->itemname= backup_todb($info['GRADE_ITEM_HISTORY']['#']['ITEMNAME']['0']['#']);
+                                $dbrec->itemtype = backup_todb($info['GRADE_ITEM_HISTORY']['#']['ITEMTYPE']['0']['#']);
+                                $dbrec->itemmodule = backup_todb($info['GRADE_ITEM_HISTORY']['#']['ITEMMODULE']['0']['#']);
+    
+                                // code from grade_items restore
+                                $iteminstance = backup_todb($info['GRADE_ITEM_HISTORY']['#']['ITEMINSTANCE']['0']['#']);
+                                // do not restore if this grade_item is a mod, and
+                                if ($dbrec->itemtype == 'mod') {
+    
+                                    if (!restore_userdata_selected($restore,  $dbrec->itemmodule, $iteminstance)) {
+                                        // module instance not selected when restored using granular
+                                        // skip this item
+                                        $counter++;
+                                        continue;
+                                    }
+    
+                                    // iteminstance should point to new mod
+    
+                                    $mod = backup_getid($restore->backup_unique_code,$dbrec->itemmodule, $iteminstance);
+                                    $dbrec->iteminstance = $mod->new_id;
+    
+                                } else if ($dbrec->itemtype == 'category') {
+                                    // the item instance should point to the new grade category
+    
+                                    // only proceed if we are restoring all grade items
+                                    if ($restoreall) {
+                                        $category = backup_getid($restore->backup_unique_code,'grade_categories', $iteminstance);
+                                        $dbrec->iteminstance = $category->new_id;
+                                    } else {
+                                        // otherwise we can safely ignore this grade item and subsequent
+                                        // grade_raws, grade_finals etc
+                                        continue;
+                                    }
+                                } elseif ($dbrec->itemtype == 'course') { // We don't restore course type to avoid duplicate course items
+                                    if ($restoreall) {
+                                        // TODO any special code needed here to restore course item without duplicating it?
+                                        // find the course category with depth 1, and course id = current course id
+                                        // this would have been already restored
+    
+                                        $cat = get_record('grade_categories', 'depth', 1, 'courseid', $restore->course_id);
+                                        $dbrec->iteminstance = $cat->id;
+    
+                                    } else {
+                                        $counter++;
+                                        continue;
+                                    }
+                                }
+    
+                                $dbrec->itemnumber = backup_todb($info['GRADE_ITEM_HISTORY']['#']['ITEMNUMBER']['0']['#']);
+                                $dbrec->iteminfo = backup_todb($info['GRADE_ITEM_HISTORY']['#']['ITEMINFO']['0']['#']);
+                                $dbrec->idnumber = backup_todb($info['GRADE_ITEM_HISTORY']['#']['IDNUMBER']['0']['#']);
+                                $dbrec->calculation = backup_todb($info['GRADE_ITEM_HISTORY']['#']['CALCULATION']['0']['#']);
+                                $dbrec->gradetype = backup_todb($info['GRADE_ITEM_HISTORY']['#']['GRADETYPE']['0']['#']);
+                                $dbrec->grademax = backup_todb($info['GRADE_ITEM_HISTORY']['#']['GRADEMAX']['0']['#']);
+                                $dbrec->grademin = backup_todb($info['GRADE_ITEM_HISTORY']['#']['GRADEMIN']['0']['#']);
+                                if ($oldobj = backup_getid($restore->backup_unique_code,"scale", backup_todb($info['GRADE_ITEM_HISTORY']['#']['SCALEID']['0']['#']))) {
+                                    // scaleid is optional
+                                    $dbrec->scaleid = $oldobj->new_id;
+                                }
+                                if ($oldobj = backup_getid($restore->backup_unique_code,"grade_outcomes", backup_todb($info['GRADE_ITEM_HISTORY']['#']['OUTCOMEID']['0']['#']))) {
+                                    // outcome is optional
+                                    $dbrec->outcomeid = $oldobj->new_id;
+                                }
+                                $dbrec->gradepass = backup_todb($info['GRADE_ITEM_HISTORY']['#']['GRADEPASS']['0']['#']);
+                                $dbrec->multfactor = backup_todb($info['GRADE_ITEM_HISTORY']['#']['MULTFACTOR']['0']['#']);
+                                $dbrec->plusfactor = backup_todb($info['GRADE_ITEM_HISTORY']['#']['PLUSFACTOR']['0']['#']);
+                                $dbrec->aggregationcoef = backup_todb($info['GRADE_ITEM_HISTORY']['#']['AGGREGATIONCOEF']['0']['#']);
+                                $dbrec->sortorder = backup_todb($info['GRADE_ITEM_HISTORY']['#']['SORTORDER']['0']['#']);
+                                $dbrec->display = backup_todb($info['GRADE_ITEM_HISTORY']['#']['DISPLAY']['0']['#']);
+                                $dbrec->decimals = backup_todb($info['GRADE_ITEM_HISTORY']['#']['DECIMALS']['0']['#']);
+                                $dbrec->hidden = backup_todb($info['GRADE_ITEM_HISTORY']['#']['HIDDEN']['0']['#']);
+                                $dbrec->locked = backup_todb($info['GRADE_ITEM_HISTORY']['#']['LOCKED']['0']['#']);
+                                $dbrec->locktime = backup_todb($info['GRADE_ITEM_HISTORY']['#']['LOCKTIME']['0']['#']);
+                                $dbrec->needsupdate = backup_todb($info['GRADE_ITEM_HISTORY']['#']['NEEDSUPDATE']['0']['#']);
+    
+                                insert_record('grade_items_history', $dbrec);
+                                unset($dbrec);
+    
                             }
-                            backup_flush(300);
+                            //Increment counters
+                            $counter++;
+                            //Do some output
+                            if ($counter % 1 == 0) {
+                                if (!defined('RESTORE_SILENTLY')) {
+                                    echo ".";
+                                    if ($counter % 20 == 0) {
+                                        echo "<br />";
+                                    }
+                                }
+                                backup_flush(300);
+                            }
                         }
                     }
                 }
             }
-        }
-
-        // process histories
-
-        if ($gihcount && $continue && !isset($SESSION->restore->importing) && $restore->restore_gradebook_history) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '<li>'.get_string('gradeitemshistory','grades').'</li>';
-            }
-            $counter = 0;
-            while ($counter < $gihcount) {
-                //Fetch recordset_size records in each iteration
-                $recs = get_records_select("backup_ids","table_name = 'grade_items_history' AND backup_code = '$restore->backup_unique_code'",
-                                            "old_id",
-                                            "old_id",
-                                            $counter,
-                                            $recordset_size);
-                if ($recs) {
-                    foreach ($recs as $rec) {
-                        //Get the full record from backup_ids
-                        $data = backup_getid($restore->backup_unique_code,'grade_items_history',$rec->old_id);
-                        if ($data) {
-                            //Now get completed xmlized object
-                            $info = $data->info;
-                            //traverse_xmlize($info);                            //Debug
-                            //print_object ($GLOBALS['traverse_array']);         //Debug
-                            //$GLOBALS['traverse_array']="";                     //Debug
-
-
-                            $oldobj = backup_getid($restore->backup_unique_code,"grade_items", backup_todb($info['GRADE_ITEM_HISTORY']['#']['OLDID']['0']['#']));
-                            if (empty($oldobj->new_id)) {
-                                // if the old object is not being restored, can't restoring its history
-                                $counter++;
-                                continue;
-                            }
-                            $dbrec->oldid = $oldobj->new_id;
-                            $dbrec->action = backup_todb($info['GRADE_ITEM_HISTORY']['#']['ACTION']['0']['#']);
-                            $dbrec->source = backup_todb($info['GRADE_ITEM_HISTORY']['#']['SOURCE']['0']['#']);
-                            $dbrec->timemodified = backup_todb($info['GRADE_ITEM_HISTORY']['#']['TIMEMODIFIED']['0']['#']);
-                            if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_ITEM_HISTORY']['#']['LOGGEDUSER']['0']['#']))) {
-                                $dbrec->loggeduser = $oldobj->new_id;
-                            }
-                            $dbrec->courseid = $restore->course_id;
-                            $oldobj = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_ITEM_HISTORY']['#']['CATEGORYID']['0']['#']));
-                            $oldobj->categoryid = $category->new_id;
-                            if (empty($oldobj->categoryid)) {
-                                $counter++;
-                                continue; // category not restored
-                            }
-
-                            $dbrec->itemname= backup_todb($info['GRADE_ITEM_HISTORY']['#']['ITEMNAME']['0']['#']);
-                            $dbrec->itemtype = backup_todb($info['GRADE_ITEM_HISTORY']['#']['ITEMTYPE']['0']['#']);
-                            $dbrec->itemmodule = backup_todb($info['GRADE_ITEM_HISTORY']['#']['ITEMMODULE']['0']['#']);
-
-                            // code from grade_items restore
-                            $iteminstance = backup_todb($info['GRADE_ITEM_HISTORY']['#']['ITEMINSTANCE']['0']['#']);
-                            // do not restore if this grade_item is a mod, and
-                            if ($dbrec->itemtype == 'mod') {
-
-                                if (!restore_userdata_selected($restore,  $dbrec->itemmodule, $iteminstance)) {
-                                    // module instance not selected when restored using granular
-                                    // skip this item
+    
+            // process histories
+            if ($gohcount && $status) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '<li>'.get_string('gradeoutcomeshistory','grades').'</li>';
+                }
+                $counter = 0;
+                while ($counter < $gohcount) {
+                    //Fetch recordset_size records in each iteration
+                    $recs = get_records_select("backup_ids","table_name = 'grade_outcomes_history' AND backup_code = '$restore->backup_unique_code'",
+                                                "old_id",
+                                                "old_id",
+                                                $counter,
+                                                $recordset_size);
+                    if ($recs) {
+                        foreach ($recs as $rec) {
+                            //Get the full record from backup_ids
+                            $data = backup_getid($restore->backup_unique_code,'grade_outcomes_history',$rec->old_id);
+                            if ($data) {
+                                //Now get completed xmlized object
+                                $info = $data->info;
+                                //traverse_xmlize($info);                            //Debug
+                                //print_object ($GLOBALS['traverse_array']);         //Debug
+                                //$GLOBALS['traverse_array']="";                     //Debug
+    
+                                $oldobj = backup_getid($restore->backup_unique_code,"grade_outcomes", backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['OLDID']['0']['#']));
+                                if (empty($oldobj->new_id)) {
+                                    // if the old object is not being restored, can't restoring its history
                                     $counter++;
                                     continue;
                                 }
-
-                                // iteminstance should point to new mod
-
-                                $mod = backup_getid($restore->backup_unique_code,$dbrec->itemmodule, $iteminstance);
-                                $dbrec->iteminstance = $mod->new_id;
-
-                            } else if ($dbrec->itemtype == 'category') {
-                                // the item instance should point to the new grade category
-
-                                // only proceed if we are restoring all grade items
-                                if ($restoreall) {
-                                    $category = backup_getid($restore->backup_unique_code,'grade_categories', $iteminstance);
-                                    $dbrec->iteminstance = $category->new_id;
-                                } else {
-                                    // otherwise we can safely ignore this grade item and subsequent
-                                    // grade_raws, grade_finals etc
-                                    continue;
+                                $dbrec->oldid = $oldobj->new_id;
+                                $dbrec->action = backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['ACTION']['0']['#']);
+                                $dbrec->source = backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['SOURCE']['0']['#']);
+                                $dbrec->timemodified = backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['TIMEMODIFIED']['0']['#']);
+                                if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['LOGGEDUSER']['0']['#']))) {
+                                    $dbrec->loggeduser = $oldobj->new_id;
                                 }
-                            } elseif ($dbrec->itemtype == 'course') { // We don't restore course type to avoid duplicate course items
-                                if ($restoreall) {
-                                    // TODO any special code needed here to restore course item without duplicating it?
-                                    // find the course category with depth 1, and course id = current course id
-                                    // this would have been already restored
-
-                                    $cat = get_record('grade_categories', 'depth', 1, 'courseid', $restore->course_id);
-                                    $dbrec->iteminstance = $cat->id;
-
-                                } else {
-                                    $counter++;
-                                    continue;
-                                }
-                            }
-
-                            $dbrec->itemnumber = backup_todb($info['GRADE_ITEM_HISTORY']['#']['ITEMNUMBER']['0']['#']);
-                            $dbrec->iteminfo = backup_todb($info['GRADE_ITEM_HISTORY']['#']['ITEMINFO']['0']['#']);
-                            $dbrec->idnumber = backup_todb($info['GRADE_ITEM_HISTORY']['#']['IDNUMBER']['0']['#']);
-                            $dbrec->calculation = backup_todb($info['GRADE_ITEM_HISTORY']['#']['CALCULATION']['0']['#']);
-                            $dbrec->gradetype = backup_todb($info['GRADE_ITEM_HISTORY']['#']['GRADETYPE']['0']['#']);
-                            $dbrec->grademax = backup_todb($info['GRADE_ITEM_HISTORY']['#']['GRADEMAX']['0']['#']);
-                            $dbrec->grademin = backup_todb($info['GRADE_ITEM_HISTORY']['#']['GRADEMIN']['0']['#']);
-                            if ($oldobj = backup_getid($restore->backup_unique_code,"scale", backup_todb($info['GRADE_ITEM_HISTORY']['#']['SCALEID']['0']['#']))) {
-                                // scaleid is optional
+                                $dbrec->courseid = $restore->course_id;
+                                $dbrec->shortname = backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['SHORTNAME']['0']['#']);
+                                $dbrec->fullname= backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['FULLNAME']['0']['#']);
+                                $oldobj = backup_getid($restore->backup_unique_code,"scale", backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['SCALEID']['0']['#']));
                                 $dbrec->scaleid = $oldobj->new_id;
+                                $dbrec->description = backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['DESCRIPTION']['0']['#']);
+    
+                                insert_record('grade_outcomes_history', $dbrec);
+                                unset($dbrec);
+    
                             }
-                            if ($oldobj = backup_getid($restore->backup_unique_code,"grade_outcomes", backup_todb($info['GRADE_ITEM_HISTORY']['#']['OUTCOMEID']['0']['#']))) {
-                                // outcome is optional
-                                $dbrec->outcomeid = $oldobj->new_id;
-                            }
-                            $dbrec->gradepass = backup_todb($info['GRADE_ITEM_HISTORY']['#']['GRADEPASS']['0']['#']);
-                            $dbrec->multfactor = backup_todb($info['GRADE_ITEM_HISTORY']['#']['MULTFACTOR']['0']['#']);
-                            $dbrec->plusfactor = backup_todb($info['GRADE_ITEM_HISTORY']['#']['PLUSFACTOR']['0']['#']);
-                            $dbrec->aggregationcoef = backup_todb($info['GRADE_ITEM_HISTORY']['#']['AGGREGATIONCOEF']['0']['#']);
-                            $dbrec->sortorder = backup_todb($info['GRADE_ITEM_HISTORY']['#']['SORTORDER']['0']['#']);
-                            $dbrec->display = backup_todb($info['GRADE_ITEM_HISTORY']['#']['DISPLAY']['0']['#']);
-                            $dbrec->decimals = backup_todb($info['GRADE_ITEM_HISTORY']['#']['DECIMALS']['0']['#']);
-                            $dbrec->hidden = backup_todb($info['GRADE_ITEM_HISTORY']['#']['HIDDEN']['0']['#']);
-                            $dbrec->locked = backup_todb($info['GRADE_ITEM_HISTORY']['#']['LOCKED']['0']['#']);
-                            $dbrec->locktime = backup_todb($info['GRADE_ITEM_HISTORY']['#']['LOCKTIME']['0']['#']);
-                            $dbrec->needsupdate = backup_todb($info['GRADE_ITEM_HISTORY']['#']['NEEDSUPDATE']['0']['#']);
-
-                            insert_record('grade_items_history', $dbrec);
-                            unset($dbrec);
-
-                        }
-                        //Increment counters
-                        $counter++;
-                        //Do some output
-                        if ($counter % 1 == 0) {
-                            if (!defined('RESTORE_SILENTLY')) {
-                                echo ".";
-                                if ($counter % 20 == 0) {
-                                    echo "<br />";
+                            //Increment counters
+                            $counter++;
+                            //Do some output
+                            if ($counter % 1 == 0) {
+                                if (!defined('RESTORE_SILENTLY')) {
+                                    echo ".";
+                                    if ($counter % 20 == 0) {
+                                        echo "<br />";
+                                    }
                                 }
+                                backup_flush(300);
                             }
-                            backup_flush(300);
-                        }
-                    }
-                }
-            }
-        }
-
-        // process histories
-        if ($gohcount && $continue && !isset($SESSION->restore->importing) && $restore->restore_gradebook_history) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '<li>'.get_string('gradeoutcomeshistory','grades').'</li>';
-            }
-            $counter = 0;
-            while ($counter < $gohcount) {
-                //Fetch recordset_size records in each iteration
-                $recs = get_records_select("backup_ids","table_name = 'grade_outcomes_history' AND backup_code = '$restore->backup_unique_code'",
-                                            "old_id",
-                                            "old_id",
-                                            $counter,
-                                            $recordset_size);
-                if ($recs) {
-                    foreach ($recs as $rec) {
-                        //Get the full record from backup_ids
-                        $data = backup_getid($restore->backup_unique_code,'grade_outcomes_history',$rec->old_id);
-                        if ($data) {
-                            //Now get completed xmlized object
-                            $info = $data->info;
-                            //traverse_xmlize($info);                            //Debug
-                            //print_object ($GLOBALS['traverse_array']);         //Debug
-                            //$GLOBALS['traverse_array']="";                     //Debug
-
-                            $oldobj = backup_getid($restore->backup_unique_code,"grade_outcomes", backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['OLDID']['0']['#']));
-                            if (empty($oldobj->new_id)) {
-                                // if the old object is not being restored, can't restoring its history
-                                $counter++;
-                                continue;
-                            }
-                            $dbrec->oldid = $oldobj->new_id;
-                            $dbrec->action = backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['ACTION']['0']['#']);
-                            $dbrec->source = backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['SOURCE']['0']['#']);
-                            $dbrec->timemodified = backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['TIMEMODIFIED']['0']['#']);
-                            if ($oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['LOGGEDUSER']['0']['#']))) {
-                                $dbrec->loggeduser = $oldobj->new_id;
-                            }
-                            $dbrec->courseid = $restore->course_id;
-                            $dbrec->shortname = backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['SHORTNAME']['0']['#']);
-                            $dbrec->fullname= backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['FULLNAME']['0']['#']);
-                            $oldobj = backup_getid($restore->backup_unique_code,"scale", backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['SCALEID']['0']['#']));
-                            $dbrec->scaleid = $oldobj->new_id;
-                            $dbrec->description = backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['DESCRIPTION']['0']['#']);
-
-                            insert_record('grade_outcomes_history', $dbrec);
-                            unset($dbrec);
-
-                        }
-                        //Increment counters
-                        $counter++;
-                        //Do some output
-                        if ($counter % 1 == 0) {
-                            if (!defined('RESTORE_SILENTLY')) {
-                                echo ".";
-                                if ($counter % 20 == 0) {
-                                    echo "<br />";
-                                }
-                            }
-                            backup_flush(300);
                         }
                     }
                 }
@@ -4317,6 +4398,31 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
+        //This is the startTag handler we use where we are reading the gradebook zone (todo="GRADEBOOK")
+        function startElementOldGradebook($parser, $tagName, $attrs) {
+
+            //Refresh properties
+            $this->level++;
+            $this->tree[$this->level] = $tagName;
+
+            //Output something to avoid browser timeouts...
+            //backup_flush();
+
+            //Check if we are into GRADEBOOK zone
+            //if ($this->tree[3] == "GRADEBOOK")                                                         //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";  //Debug
+
+            //If we are under a GRADE_PREFERENCE, GRADE_LETTER or GRADE_CATEGORY tag under a GRADEBOOK zone, accumule it
+            if (isset($this->tree[5]) and isset($this->tree[3])) {
+                if (($this->tree[5] == "GRADE_PREFERENCE" || $this->tree[5] == "GRADE_LETTER" || $this->tree[5] == "GRADE_CATEGORY" ) && ($this->tree[3] == "GRADEBOOK")) {
+                    if (!isset($this->temp)) {
+                        $this->temp = "";
+                    }
+                    $this->temp .= "<".$tagName.">";
+                }
+            }
+        }
+
 
         //This is the startTag handler we use where we are reading the user zone (todo="USERS")
         function startElementUsers($parser, $tagName, $attrs) {
@@ -4640,6 +4746,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 break;
                             case "SITEFILES":
                                 $this->info->backup_site_files = $this->getContents();
+                                break;
+                            case "GRADEBOOKHISTORIES":
+                                $this->info->gradebook_histories = $this->getContents();
                                 break;
                             case "MESSAGES":
                                 $this->info->backup_messages = $this->getContents();
@@ -5230,6 +5339,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             if (!isset($this->info->tempmod->groupmembersonly)) {
                                 $this->info->tempmod->groupmembersonly = 0;
                             }
+                            if (!isset($this->info->tempmod->idnumber)) {
+                                $this->info->tempmod->idnumber = null;
+                            }
 
                             //We've finalized a mod, get it
                             $this->info->tempsection->mods[$this->info->tempmod->id]->type =
@@ -5250,6 +5362,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 $this->info->tempmod->groupingid;
                             $this->info->tempsection->mods[$this->info->tempmod->id]->groupmembersonly =
                                 $this->info->tempmod->groupmembersonly;
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->idnumber =
+                                $this->info->tempmod->idnumber;
 
                             unset($this->info->tempmod);
                     }
@@ -5285,6 +5399,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             break;
                         case "GROUPMEMBERSONLY":
                             $this->info->tempmod->groupmembersonly = $this->getContents();
+                        case "IDNUMBER":
+                            $this->info->tempmod->idnumber = $this->getContents();
                             break;
                         default:
                             break;
@@ -5659,6 +5775,110 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     $this->info = $this->counter;
                     //Reset temp
 
+                    unset($this->temp);
+                }
+            }
+
+            //Stop parsing if todo = GRADEBOOK and tagName = GRADEBOOK (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "GRADEBOOK" and $this->level == 3) {
+                $this->finished = true;
+                $this->counter = 0;
+            }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+
+        }
+
+        //This is the endTag handler we use where we are reading the gradebook zone (todo="GRADEBOOK")
+        function endElementOldGradebook($parser, $tagName) {
+            //Check if we are into GRADEBOOK zone
+            if ($this->tree[3] == "GRADEBOOK") {
+                //if (trim($this->content))                                                             //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n"; //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";//Debug
+                //Acumulate data to info (content + close tag)
+                //Reconvert: strip htmlchars again and trim to generate xml data
+                if (!isset($this->temp)) {
+                    $this->temp = "";
+                }
+                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
+                //We have finished preferences, letters or categories, reset accumulated
+                //data because they are close tags
+                if ($this->level == 4) {
+                    $this->temp = "";
+                }
+                //If we've finished a message, xmlize it an save to db
+                if (($this->level == 5) and ($tagName == "GRADE_PREFERENCE")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one PREFERENCE)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                              //Debug
+                    //traverse_xmlize($data);                                                         //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
+                    //$GLOBALS['traverse_array']="";                                                  //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and status from data
+                    $preference_id = $data["GRADE_PREFERENCE"]["#"]["ID"]["0"]["#"];
+                    $this->counter++;
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_preferences', $preference_id, 
+                                           null,$data);
+                    //Create returning info
+                    $this->info = $this->counter;
+                    //Reset temp
+                    unset($this->temp);
+                }
+                //If we've finished a grade_letter, xmlize it an save to db
+                if (($this->level == 5) and ($tagName == "GRADE_LETTER")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one LETTER)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                              //Debug
+                    //traverse_xmlize($data);                                                         //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
+                    //$GLOBALS['traverse_array']="";                                                  //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and status from data
+                    $letter_id = $data["GRADE_LETTER"]["#"]["ID"]["0"]["#"];
+                    $this->counter++;
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_letter' ,$letter_id, 
+                                           null,$data);
+                    //Create returning info
+                    $this->info = $this->counter;
+                    //Reset temp
+                    unset($this->temp);
+                }
+
+                //If we've finished a grade_category, xmlize it an save to db
+                if (($this->level == 5) and ($tagName == "GRADE_CATEGORY")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one CATECORY)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                              //Debug
+                    //traverse_xmlize($data);                                                         //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
+                    //$GLOBALS['traverse_array']="";                                                  //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and status from data
+                    $category_id = $data["GRADE_CATEGORY"]["#"]["ID"]["0"]["#"];
+                    $this->counter++;
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_category' ,$category_id,
+                                           null,$data);
+                    //Create returning info
+                    $this->info = $this->counter;
+                    //Reset temp
                     unset($this->temp);
                 }
             }
@@ -6625,9 +6845,12 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             xml_set_element_handler($xml_parser, "startElementFormatData", "endElementFormatData");
         } else if ($todo == "METACOURSE") {
             xml_set_element_handler($xml_parser, "startElementMetacourse", "endElementMetacourse");
-        } else if ($todo == "GRADEBOOK" && $preferences->backup_version >= 2007101000) {
-            // atm we can not handle old gradebook backups
-            xml_set_element_handler($xml_parser, "startElementGradebook", "endElementGradebook");
+        } else if ($todo == "GRADEBOOK") {
+            if ($preferences->backup_version > 2007090500) {
+                xml_set_element_handler($xml_parser, "startElementGradebook", "endElementGradebook");
+            } else {
+                xml_set_element_handler($xml_parser, "startElementOldGradebook", "endElementOldGradebook");
+            }
         } else if ($todo == "USERS") {
             xml_set_element_handler($xml_parser, "startElementUsers", "endElementUsers");
         } else if ($todo == "MESSAGES") {
@@ -7439,24 +7662,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
-        //Now create gradebook as needed -- AFTER modules!!!
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatinggradebook");
-            }
-            if (!$status = restore_create_gradebook($restore,$xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore gradebook!");
-                } else {
-                    $errorstr = "Could not restore gradebook!";
-                    return false;
-                }
-            }
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '</li>';
-            }
-        }
-        
         //Bring back the course blocks -- do it AFTER the modules!!!
         if($status) {
             //If we are deleting and bringing into a course or making a new course, same situation
@@ -7592,42 +7797,50 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 echo '</li>';
             }
         }
-        
-        // for moodle versions before 1.9, those grades need to be converted to use the new gradebook
-        // this code needs to execute *after* the course_modules are sorted out
-        if ($status && $restore->backup_version < 2007090500) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("migratinggrades");
-            }
 
-            // we need need to worry about mods that are restored
-            // the others in the course are not relevent
-            if (!empty($restore->mods)) {
-                require_once($CFG->dirroot.'/lib/gradelib.php');
-                foreach ($restore->mods as $mod=>$modtype) {    
-                    if (!empty($modtype->instances)) {
-                        foreach ($modtype->instances as $modinstance) {
-                            $sql = "SELECT a.*, cm.idnumber as cmidnumber, m.name as modname
-                                    FROM {$CFG->prefix}$mod a,  
-                                         {$CFG->prefix}course_modules cm, 
-                                         {$CFG->prefix}modules m
-                                    WHERE m.name='$mod' 
-                                        AND m.id=cm.module 
-                                        AND cm.instance=a.id 
-                                        AND cm.id= {$modinstance->restored_as_course_module}";                            
-                            
-                            if ($module = get_record_sql($sql)) {
-                                grade_update_mod_grades($module);
-                            }
-                        }
+        //Now create gradebook as needed -- AFTER modules and blocks!!!
+        if ($status) {
+            if ($restore->backup_version > 2007090500) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo "<li>".get_string("creatinggradebook");
+                }
+                if (!$status = restore_create_gradebook($restore,$xml_file)) {
+                    if (!defined('RESTORE_SILENTLY')) {
+                        notify("Could not restore gradebook!");
+                    } else {
+                        $errorstr = "Could not restore gradebook!";
+                        return false;
                     }
                 }
+
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '</li>';
+                }
+
+            } else {
+                // for moodle versions before 1.9, those grades need to be converted to use the new gradebook
+                // this code needs to execute *after* the course_modules are sorted out
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo "<li>".get_string("migratinggrades");
+                }
+
+            /// force full refresh of grading data before migration == crete all items first
+                if (!$status = restore_migrate_old_gradebook($restore,$xml_file)) {
+                    if (!defined('RESTORE_SILENTLY')) {
+                        notify("Could not migrate gradebook!");
+                    } else {
+                        $errorstr = "Could not migrade gradebook!";
+                        return false;
+                    }
+                }
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '</li>';
+                }
             }
-            
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '</li>';
-            }
-        }        
+            /// force full refresh of grading data after all items are created
+                grade_force_full_regrading($restore->course_id);
+                grade_grab_course_grades($restore->course_id);
+        }
 
         /*******************************************************************************
          ************* Restore of Roles and Capabilities happens here ******************

@@ -29,7 +29,7 @@
             error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     } else {
-        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     }
@@ -185,7 +185,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     //Print the full tr
     echo "<tr>";
     echo "<td align=\"right\"><b>";
-    echo get_string("restoreto").":</b>";
+    echo '<label for="menurestore_restoreto">'.get_string ('restoreto').'</label>';
+    echo "</b>";
     echo "</td><td colspan=\"3\">";
 
 
@@ -229,6 +230,9 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         $restore_restoreto_options[2] = get_string("newcourse");
     }
 
+/// Acummulator for hidden options and proper XHTML output
+    $hidden_options = '';
+
     choose_from_menu($restore_restoreto_options, "restore_restoreto", $restore_restoreto, "");
     echo "</td></tr>";
     if (user_can_create_courses()) {  //display these fields conditionally
@@ -236,8 +240,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         // find the list of cates user can edit
         echo "<tr valign=\"top\" >";
         echo "<td align=\"right\">";
-        print_string('category');
-        echo " :</td>";
+        echo '<label for="menurestore_restorecatto">'.get_string ('category').'</label>';
+        echo "</td>";
         echo "<td>";
         choose_from_menu(get_creatable_categories(), "restore_restorecatto", $course_header->category->id, "");
         echo "</td>";
@@ -245,25 +249,25 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 
         echo "<tr valign=\"top\" >";
         echo "<td align=\"right\">";
-        print_string("shortname");
-        echo " :</td>";
-        echo "<td><input type=\"text\" name=\"shortname\" maxlength=\"100\"  size=\"20\" value=\"$form1->shortname\" alt=\"".get_string("shortname")."\"  />" ;
+        echo '<label for="shortnamefield">'.get_string ('shortname').'</label>';
+        echo "</td>";
+        echo "<td><input type=\"text\" id=\"shortnamefield\" name=\"shortname\" maxlength=\"100\"  size=\"20\" value=\"$form1->shortname\" alt=\"".get_string("shortname")."\"  />" ;
         helpbutton("courseshortname", get_string("shortname")) ;
         if (isset($err["shortname"])) formerr($err["shortname"]);
         echo "</td>";
         echo "</tr>";
         echo "<tr valign=\"top\" >";
         echo "<td align=\"right\">";
-        print_string("fullname");
-        echo " :</td>";
-        echo "<td><input type=\"text\" name=\"fullname\" maxlength=\"254\" size=\"50\" value=\"$form1->fullname\" alt=\" ".get_string("fullname")."\"  />" ;
+        echo '<label for="fullnamefield">'.get_string ('fullname').'</label>';
+        echo "</td>";
+        echo "<td><input type=\"text\" id=\"fullnamefield\" name=\"fullname\" maxlength=\"254\" size=\"50\" value=\"$form1->fullname\" alt=\" ".get_string("fullname")."\"  />" ;
         helpbutton("coursefullname", get_string("fullname")) ;
         if (isset($err["fullname"])) formerr($err["fullname"]);
         echo"</td></tr>";
         echo "<tr valign=\"top\"> ";
         echo "<td align=\"right\"> ";
         print_string("startdate");
-        echo ":</td><td>";
+        echo "</td><td>";
     /// Show the roll dates option only if the backup course has a start date
     /// (some formats like main page, social..., haven't it and rolling dates
     /// from 0 produces crazy dates. MDL-10125
@@ -285,7 +289,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //Print option to select/deselect everything with 1 click.
         echo "<tr>";
         echo "<td align=\"right\">";
-        echo '<b>'.get_string("include").":</b>";
+        echo '<b>'.get_string("include")."</b>";
         echo "</td><td>";
         echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInCheckboxByName('form1', 'restore_', true);\">".
              get_string("all")."</a>/";
@@ -386,25 +390,27 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //Now print the Metacourse tr
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
-        echo get_string("metacourse").":";
+        echo '<label for="menurestore_metacourse">'.get_string ("metacourse").'</label>';
         echo "</b></td><td colspan=\"2\">";
         //If metacourse are in the backup file, show menu, else fixed to no
         if ($info->backup_metacourse == "true") {
+            $metacourse_options = array();
             $metacourse_options[0] = get_string("no");
             $metacourse_options[1] = get_string("yes");
             choose_from_menu($metacourse_options, "restore_metacourse", $restore_metacourse, "");
         } else {
             echo get_string("no");
-            echo "<input type=\"hidden\" name=\"restore_metacourse\" value=\"0\" />";
+            echo "<input type=\"hidden\" id=\"menurestore_metacourse\" name=\"restore_metacourse\" value=\"0\" />";
         }
         echo "</td></tr>";
         //Now print the Users tr
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
-        echo get_string("users").":";
+        echo '<label for="menurestore_users">'.get_string ("users").'</label>';
         echo "</b></td><td colspan=\"2\">";
         //If some user is present in the backup file
         if ($info->backup_users == "all" or $info->backup_users == "course") {
+            $user_options = array();
             //If all users are in the backup file
             if ($info->backup_users == "all") {
                 $user_options[0] = get_string("all");
@@ -414,7 +420,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             choose_from_menu($user_options, "restore_users", $restore_users, "");
         } else {
             echo get_string("none");
-            echo "<input type=\"hidden\" name=\"restore_users\" value=\"2\" />";
+            echo "<input type=\"hidden\" id=\"menurestore_users\" name=\"restore_users\" value=\"2\" />";
 
         }
         echo "</td></tr>";
@@ -445,50 +451,53 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //Now print the Logs tr
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
-        echo get_string("logs").":";
+        echo '<label for="menurestore_logs">'.get_string ("logs").'</label>';
         echo "</b></td><td colspan=\"2\">";
         //If logs are in the backup file, show menu, else fixed to no
         if ($info->backup_logs == "true") {
+            $log_options = array();
             $log_options[0] = get_string("no");
             $log_options[1] = get_string("yes");
             choose_from_menu($log_options, "restore_logs", $restore_logs, "");
         } else {
             echo get_string("no");
-            echo "<input type=\"hidden\" name=\"restore_logs\" value=\"0\" />";
+            echo "<input type=\"hidden\" id=\"menurestore_logs\" name=\"restore_logs\" value=\"0\" />";
         }
         echo "</td></tr>";
 
         //Now print the User Files tr
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
-        echo get_string ("userfiles").":";
+        echo '<label for="menurestore_user_files">'.get_string ("userfiles").'</label>';
         echo "</b></td><td colspan=\"2\">";
         //If user files are in the backup file, show menu, else fixed to no
         if ($info->backup_user_files == "true") {
+            $user_file_options = array();
             $user_file_options[0] = get_string("no");
             $user_file_options[1] = get_string("yes");
             choose_from_menu($user_file_options, "restore_user_files", $restore_user_files, "");
         } else {
             echo get_string("no");
-            echo "<input type=\"hidden\" name=\"restore_user_files\" value=\"0\" />";
+            echo "<input type=\"hidden\" id=\"menurestore_user_files\" name=\"restore_user_files\" value=\"0\" />";
         }
         echo "</td></tr>";
 
         //Now print the Course Files tr
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
-        echo get_string ("coursefiles").":";
+        echo '<label for="menurestore_course_files">'.get_string ("coursefiles").'</label>';
         echo "</b></td><td colspan=\"2\">";
         echo "<input type=\"hidden\" name=\"backup_unique_code\" value=\"$backup_unique_code\" />";
         echo "<input type=\"hidden\" name=\"file\" value=\"$file\" />";
         //If course files are in the backup file, show menu, else fixed to no
         if ($info->backup_course_files == "true") {
+            $course_file_options = array();
             $course_file_options[0] = get_string("no");
             $course_file_options[1] = get_string("yes");
             choose_from_menu($course_file_options, "restore_course_files", $restore_course_files, "");
         } else {
             echo get_string("no");
-            echo "<input type=\"hidden\" name=\"restore_course_files\" value=\"0\" />";
+            echo "<input type=\"hidden\" id=\"menurestore_course_files\" name=\"restore_course_files\" value=\"0\" />";
         }
         echo "</td></tr>";
 
@@ -496,54 +505,63 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //Now print the Site Files tr
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
-        echo get_string ("sitefiles").":";
+        echo '<label for="menurestore_site_files">'.get_string ("sitefiles").'</label>';
         echo "</b></td><td colspan=\"2\">";
         //If site files are in the backup file, show menu, else fixed to no
         if (isset($info->backup_site_files) && $info->backup_site_files == "true") {
+            $site_file_options = array();
             $site_file_options[0] = get_string("no");
             $site_file_options[1] = get_string("yes");
             choose_from_menu($site_file_options, "restore_site_files", $restore_site_files, "");
         } else {
             echo get_string("no");
-            echo "<input type=\"hidden\" name=\"restore_site_files\" value=\"0\" />";
+            echo "<input type=\"hidden\" id=\"menurestore_site_files\" name=\"restore_site_files\" value=\"0\" />";
         }
         echo "</td></tr>";
         
         // do you want grade histories to be restored?
-        echo "<tr>";
-        echo "<td align=\"right\" colspan=\"2\"><b>";
-        echo get_string ('gradebookhistories', 'grades').":";
-        echo "</b></td><td colspan=\"2\">";
-        $gradebook_history_options[0] = get_string("no");
-        $gradebook_history_options[1] = get_string("yes");
-        choose_from_menu($gradebook_history_options, "restore_gradebook_history", $restore_gradebook_history, "");
-        echo "</td></tr>";  
+        if (empty($CFG->disablegradehistory)) {
+            echo "<tr>";
+            echo "<td align=\"right\" colspan=\"2\"><b>";
+            echo '<label for="menurestore_gradebook_history">'.get_string ('gradebookhistories', 'grades').'</label>';
+            echo "</b></td><td colspan=\"2\">";
+            if (isset($info->gradebook_histories) && $info->gradebook_histories == "true") {
+                $gradebook_history_options = array();
+                $gradebook_history_options[0] = get_string("no");
+                $gradebook_history_options[1] = get_string("yes");
+                choose_from_menu($gradebook_history_options, "restore_gradebook_history", $restore_gradebook_history, "");
+            } else {
+                echo get_string("no");
+                echo "<input type=\"hidden\" id=\"menurestore_gradebook_history\" name=\"restore_gradebook_history\" value=\"0\" />";
+            }
+            echo "</td></tr>";
+        } else {
+            $hidden_options .= '<input type="hidden" name="restore_gradebook_history" value="0" />';
+        }
         
-        //Now print the Messages tr
-        echo "<tr>";
-        echo "<td align=\"right\" colspan=\"2\"><b>";
 
         //This tr is slighty different. Everything becomes hidden if
         //we haven't messages is the backup, to avoid confusions to users.
         //If messages are in the backup file, show menu, else fixed to no and show nothing
-        if ($info->backup_messages == "true") {
-            echo get_string ('messages','message').":";
+        if (isset($info->backup_messages) && $info->backup_messages == "true") {
+            echo "<tr>";
+            echo "<td align=\"right\" colspan=\"2\"><b>";
+            echo '<label for="menurestore_messages">'.get_string ('messages', 'messages').'</label>';
             echo "</b></td><td colspan=\"2\">";
+            $message_options = array();
             $message_options[0] = get_string("no");
             $message_options[1] = get_string("yes");
             choose_from_menu($message_options, "restore_messages", $restore_messages, "");
+            echo "</td></tr>";
         } else {
-            echo "&nbsp;</b></td><td colspan=\"2\">";
-            echo "<input type=\"hidden\" name=\"restore_messages\" value=\"0\" />";
+            $hidden_options .= '<input type="hidden" name="restore_messages" value="0" />';
         }
-        echo "</td></tr>";
-        
       
     }
 ?>
 </table>
 
-<hr/>
+<hr />
 <?php
 
 print_heading(get_string('rolemappings'));
@@ -564,24 +582,25 @@ if ($info->backup_moodle_version < 2006092801) {
 
     /// Editting teacher
     echo ('<tr><td align="right">');
-    print_string('defaultcourseteacher');
+    echo '<label for="menudefaultteacheredit">'.get_string ('defaultcourseteacher').'</label>';
     echo ('</td><td algin="left">');
 
     // get the first teacheredit legacy
-    $roles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID));
+    $roles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
 
-    $editteacher = array_shift($roles);
+    $editteacher = reset($roles);
     choose_from_menu ($siterolesarray, "defaultteacheredit", $editteacher->id, 'new role', '', '0');
     echo ('</td></tr>');
 
     /// Non-editting teacher
     echo ('<tr><td align="right">');
+    echo '<label for="menudefaultteacher">'.get_string ('noneditingteacher').'</label>';
     print_string('noneditingteacher');
     echo ('</td><td algin="left">');
 
     // get the first teacheredit legacy
-    $roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID));
-    $teacher = array_shift($roles);
+    $roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
+    $teacher = reset($roles);
 
     choose_from_menu ($siterolesarray, "defaultteacher", $teacher->id, 'new role', '', '0');
     echo ('</td></tr>');
@@ -589,11 +608,11 @@ if ($info->backup_moodle_version < 2006092801) {
 
     /// Student
     echo ('<tr><td align="right">');
-    print_string('defaultcoursestudent');
+    echo '<label for="menudefaultstudent">'.get_string ('defaultcoursestudent').'</label>';
     echo ('</td><td algin="left">');
 
     // get the first teacheredit legacy
-    $roles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID));
+    $roles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
     $studentrole = array_shift($roles);
 
     choose_from_menu ($siterolesarray, "defaultstudent", $studentrole->id, 'new role', '', '0');
@@ -613,7 +632,7 @@ if ($info->backup_moodle_version < 2006092801) {
             $mappableroles = $siteroleschoicearray;
 
             echo ('<tr><td align="right">');
-            echo $role->name." (".($role->shortname).")";
+            echo '<label for="menuroles_'.$roleid.'">'.$role->name." (".($role->shortname).")".'</label>';
             echo ('</td><td align="left">');
 
             /// first, we see if any exact role definition is found
@@ -647,6 +666,10 @@ echo ('</table>'); // end of role mappings table
 ?>
 <br />
 <div style="text-align:center">
+<?php
+/// Print captured hidden options, now that we have closed the table
+    echo $hidden_options;
+?>
 <input type="hidden" name="id"     value="<?php  p($id) ?>" />
 <input type="hidden" name="launch" value="check" />
 <input type="hidden" name="fromform" value="1" />
