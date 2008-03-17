@@ -2,9 +2,6 @@
 
 /**
 * Extend the base resource class for file resources
-*
-* Extend the base resource class for file resources
-*
 */
 class resource_file extends resource_base {
 
@@ -18,8 +15,6 @@ class resource_file extends resource_base {
 
     /**
     * Sets the parameters property of the extended class
-    *
-    * Sets the parameters property of the extended file resource class
     *
     * @param    USER  global object
     * @param    CFG   global object
@@ -127,7 +122,6 @@ class resource_file extends resource_base {
         return parent::add_instance($resource);
     }
 
-
     function update_instance($resource) {
         $this->_postprocess($resource);
         return parent::update_instance($resource);
@@ -168,9 +162,12 @@ class resource_file extends resource_base {
             unset($resource->$parametername);
         }
 
+        if ($resource->forcedownload) {
+            $resource->options = 'forcedownload';
+        }
+
         $resource->alltext = implode(',', $optionlist);
     }
-
 
     /**
     * Display the file resource
@@ -197,10 +194,10 @@ class resource_file extends resource_base {
     ///////////////////////////////////////////////
 
         /// Possible display modes are:
-        /// File displayed in a frame in a normal window
         /// File displayed embedded in a normal page
         /// File displayed in a popup window
-        /// File displayed emebedded in a popup window
+        /// File displayed embedded in a popup window
+        /// File not displayed at all, but downloaded
 
 
         /// First, find out what sort of file we are dealing with.
@@ -215,7 +212,7 @@ class resource_file extends resource_base {
         $formatoptions = new object();
         $formatoptions->noclean = true;
 
-        if ($resource->options != "bogusoption_usedtobe_frame") { // TODO nicolasconnault 14-03-07: This option should be renamed "embed"
+        if ($resource->options != "forcedownload") { // TODO nicolasconnault 14-03-07: This option should be renamed "embed"
             if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
                 $resourcetype = "image";
                 $embedded = true;
@@ -304,10 +301,12 @@ class resource_file extends resource_base {
             $localpath = true;
 
         } else {   // Normal uploaded file
+            $forcedownloadsep = '?';
             if ($CFG->slasharguments) {
                 $relativeurl = "/file.php/{$course->id}/{$resource->reference}";
                 if ($querystring) {
                     $relativeurl .= '?'.$querystring;
+                    $forcedownloadsep = '&amp';
                 }
             } else {
                 $relativeurl = "/file.php?file=/{$course->id}/{$resource->reference}";
@@ -316,6 +315,9 @@ class resource_file extends resource_base {
                 }
             }
             $fullurl = "$CFG->wwwroot$relativeurl";
+            if ($resource->options == 'forcedownload') {
+                $fullurl .=  $forcedownloadsep . 'forcedownload=1';
+            }
         }
 
         /// Print a notice and redirect if we are trying to access a file on a local file system
@@ -675,7 +677,10 @@ class resource_file extends resource_base {
             }
         }
     }
-
+    
+    /**
+     * TODO document
+     */
     function setup_elements(&$mform) {
         global $CFG, $RESOURCE_WINDOW_OPTIONS;
 
@@ -703,16 +708,22 @@ class resource_file extends resource_base {
         }
 
         $mform->addElement('header', 'displaysettings', get_string('display', 'resource'));
+        
+        $mform->addElement('checkbox', 'forcedownload', get_string('forcedownload', 'resource'));
+        $mform->setHelpButton('forcedownload', array('forcedownload', get_string('forcedownload', 'resource'), 'resource'));
+        $mform->disabledIf('forcedownload', 'windowpopup', 'eq', 1);
 
         $woptions = array(0 => get_string('pagewindow', 'resource'), 1 => get_string('newwindow', 'resource'));
         $mform->addElement('select', 'windowpopup', get_string('display', 'resource'), $woptions);
         $mform->setDefault('windowpopup', !empty($CFG->resource_popup));
+        $mform->disabledIf('windowpopup', 'forcedownload', 'checked');
 
         $mform->addElement('checkbox', 'framepage', get_string('keepnavigationvisible', 'resource'));
 
         $mform->setHelpButton('framepage', array('frameifpossible', get_string('keepnavigationvisible', 'resource'), 'resource'));
         $mform->setDefault('framepage', 0);
         $mform->disabledIf('framepage', 'windowpopup', 'eq', 1);
+        $mform->disabledIf('framepage', 'forcedownload', 'checked');
         $mform->setAdvanced('framepage');
 
         foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
