@@ -13,6 +13,7 @@ $string['attemptshighest'] = 'highest grade';
 $string['attemptslast'] = 'last attempt';
 $string['dicsindextitle'] = 'Disc.<br />Index';
 $string['disccoefftitle'] = 'Disc.<br />Coeff.';
+$string['downloadhtml'] = 'Download the complete table in HTML format';
 $string['downloadooo'] = 'Download in OpenOffice format';
 $string['facilitytitle'] = '%% Correct<br />Facility';
 $string['lowmarkslimit'] = 'Don\'t analyse if score is less than:';
