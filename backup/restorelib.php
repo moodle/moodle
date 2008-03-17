@@ -480,17 +480,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $tab[$elem][0] = "<b>".get_string("users").":</b>";
             $tab[$elem][1] = get_string($info->backup_users);
             $elem++;
-            //Groups info
-            if (empty($CFG->enablegroupings)) {
-                $tab[$elem][0] = "<b>".get_string('groups').":</b>";
-            } else {
-                $tab[$elem][0] = "<b>".get_string('groupsgroupings','group').":</b>";
-            }
-            if (!isset($info->backup_groups)) {  //Backwards compatibility.
-                $info->backup_groups = 'course';
-            }
-            $tab[$elem][1] = get_string($info->backup_groups);
-            $elem++;
             //Logs info
             $tab[$elem][0] = "<b>".get_string("logs").":</b>";
             if ($info->backup_logs == "true") {
@@ -1083,7 +1072,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                         $course_module->indent = $mod->indent;
                                         $course_module->visible = $mod->visible;
                                         $course_module->groupmode = $mod->groupmode;
-                                        if ($mod->groupingid and $grouping = backup_getid($restore->backup_unique_code,"groupings",$mod->groupingid)) {
+                                        if ($mod->groupingid and $grouping = restore_grouping_getid($restore, $mod->groupingid)) {
                                             $course_module->groupingid = $grouping->new_id;
                                         } else {
                                             $course_module->groupingid = 0;
@@ -3067,6 +3056,20 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         return $group;
     }
 
+    /**
+     * Recode grouping ID field, and set grouping ID based on restore options.
+     * @return object Group object with new_id field.
+     */
+    function restore_grouping_getid($restore, $groupingid) {
+        //We have to recode the groupid field
+        $grouping = backup_getid($restore->backup_unique_code, 'groupings', $groupingid);
+        
+        if ($restore->groups == RESTORE_GROUPS_GROUPINGS or $restore->groups == RESTORE_GROUPINGS_ONLY) {
+            $grouping->new_id = 0;
+        }
+        return $grouping;
+    }
+
     //This function creates all the groups
     function restore_create_groups($restore,$xml_file) {
 
@@ -3280,7 +3283,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         // now fix the defaultgroupingid in course
         $course = get_record('course', 'id', $restore->course_id);
         if ($course->defaultgroupingid) {
-            if ($grouping = backup_getid($restore->backup_unique_code,"groupings",$course->defaultgroupingid)) {
+            if ($grouping = restore_grouping_getid($restore, $course->defaultgroupingid)) { 
                 set_field('course', 'defaultgroupingid', $grouping->new_id, 'id', $course->id);
             } else {
                 set_field('course', 'defaultgroupingid', 0, 'id', $course->id);

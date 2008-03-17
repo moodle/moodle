@@ -435,7 +435,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             $group_options[RESTORE_GROUPS_NONE] = get_string('no');
             $group_options[RESTORE_GROUPS_ONLY] = get_string('yes');
         } else {
-            echo '<label for="menurestore_groups">'.get_string ("groupsgroupings").'</label>'.$helplink;
+            echo '<label for="menurestore_groups">'.get_string ('groupsgroupings', 'group').'</label>'.$helplink;
             echo "</b></td><td colspan=\"2\">";
             $group_options[RESTORE_GROUPS_NONE] = get_string('none');
             $group_options[RESTORE_GROUPS_ONLY] = get_string('groups');
