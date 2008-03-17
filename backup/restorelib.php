@@ -1,6 +1,8 @@
 <?php //$Id$
     //Functions used in restore
 
+    require_once($CFG->libdir.'/gradelib.php');
+
 /**
  * Group backup/restore constants, 0.
  */
