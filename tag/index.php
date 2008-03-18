@@ -70,7 +70,7 @@ echo '<td valign="top" id="middle-column">';
 $tagname  = tag_display_name($tag);
 
 if ($tag->flag > 0 && has_capability('moodle/tag:manage', $systemcontext)) {
-    $tagname =  '<span class="flagged-tag">' . rawurlencode($tagname) . '</span>';
+    $tagname =  '<span class="flagged-tag">' . $tagname . '</span>';
 }
 
 print_heading($tagname, '', 2, 'headingblock header tag-heading');

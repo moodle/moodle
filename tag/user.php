@@ -37,7 +37,7 @@ switch ($action) {
         if (empty($tag) && $id) { // for backward-compatibility (people saving bookmarks, mostly..)
             $tag = tag_get_name($id);
         } 
-        
+
         tag_set_delete('user', $USER->id, $tag);
 
         redirect($CFG->wwwroot.'/tag/index.php?tag='. rawurlencode($tag));

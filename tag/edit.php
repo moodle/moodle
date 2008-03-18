@@ -61,7 +61,7 @@ if ($tagnew = $tagform->get_data()) {
     tag_description_set($tag_id, stripslashes($tagnew->description), $tagnew->descriptionformat);
 
     if (has_capability('moodle/tag:manage', $systemcontext)) {
-        if (($tag->tagtype != 'default') && ($tagnew->tagtype != '1')) {
+        if (($tag->tagtype != 'default') && (!isset($tagnew->tagtype) || ($tagnew->tagtype != '1'))) {
             tag_type_set($tag->id, 'default');
 
         } elseif (($tag->tagtype != 'official') && ($tagnew->tagtype == '1')) {
