@@ -692,8 +692,8 @@ body#grade-index .grades .header {
  *** Question
  ***/
 
-.que .no {
-  font-size: 1.2em;
+.que .info h2 {
+  font-size: 1.25em;
   font-weight: bold;
 }
 .que .grade {

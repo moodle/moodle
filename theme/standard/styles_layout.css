@@ -2547,13 +2547,19 @@ body.notes .notesgroup {
 }
 .que .info {
   float: left;
-  margin: 0.5em 0 0.5em 1.2em;
-  width: 8%;
+  margin: 0.5em 0;
+  width: 11.9%;
+}
+.que .info h2 {
+  margin: 0 0 0 0.64em;
+}
+.que .info div {
+  margin-left: 1em;
 }
 .que .content {
   float: left;
-  margin: 0.5em 1.2em 0.5em 0;
-  width: 85%;
+  margin: 0.5em 0;
+  width: 88%;
 }
 .que.description .info {
   display: none;
