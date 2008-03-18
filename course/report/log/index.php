@@ -20,7 +20,7 @@
         list($hostid, $id) = explode('/', $host_course);
     }
 
-    $group       = optional_param('group', -1, PARAM_INT); // Group to display
+    $group       = optional_param('group', 0, PARAM_INT); // Group to display
     $user        = optional_param('user', 0, PARAM_INT); // User to display
     $date        = optional_param('date', 0, PARAM_FILE); // Date to display - number or some string
     $modname     = optional_param('modname', '', PARAM_CLEAN); // course_module->id
