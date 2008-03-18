@@ -153,7 +153,7 @@
     }
 
     $canreply = false;
-    if (isguestuser() or !isloggedin()) {
+    if (isguestuser() or !isloggedin() or has_capability('moodle/legacy:guest', $modcontext, NULL, false)) {
         // allow guests and not-logged-in to see the link - they are prompted to log in after clicking the link
         $canreply = ($forum->type != 'news'); // no reply in news forums
 
