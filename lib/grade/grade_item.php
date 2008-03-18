@@ -1538,8 +1538,8 @@ class grade_item extends grade_object {
             $grade->finalgrade = $this->adjust_raw_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
         }
 
-        if (is_null($grade->rawgrade)) {
-            $grade->timemodified = null; // dategraded hack - not graded if no grade present, comments do not count here as grading
+        if (is_null($grade->rawgrade) and is_null($grade->feedback)) {
+            $grade->timemodified = null; //TODO: dategraded hack - feedback counts as grading too ;-)
         }
 
         if (empty($grade->id)) {
