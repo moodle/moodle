@@ -272,7 +272,7 @@ class grade_grade extends grade_object {
      */
     function get_dategraded() {
         //TODO: HACK - create new fields in 2.0
-        if (is_null($this->finalgrade)) {
+        if (is_null($this->finalgrade) and is_null($this->feedback)) {
             return null; // no grade == no date
         } else if ($this->overridden) {
             return $this->overridden;
