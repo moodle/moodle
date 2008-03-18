@@ -147,17 +147,18 @@ function groups_get_user_groups($courseid, $userid=0) {
         $userid = $USER->id;
     }
 
-    if (!$groups = get_records_sql("SELECT g.id, gg.groupingid
-                                      FROM {$CFG->prefix}groups g
-                                           JOIN {$CFG->prefix}groups_members gm        ON gm.groupid = g.id
-                                           LEFT JOIN {$CFG->prefix}groupings_groups gg ON gg.groupid = g.id
-                                     WHERE gm.userid = $userid AND g.courseid = $courseid")) {
+    if (!$rs = get_recordset_sql("SELECT g.id, gg.groupingid
+                                    FROM {$CFG->prefix}groups g
+                                         JOIN {$CFG->prefix}groups_members gm        ON gm.groupid = g.id
+                                         LEFT JOIN {$CFG->prefix}groupings_groups gg ON gg.groupid = g.id
+                                   WHERE gm.userid = $userid AND g.courseid = $courseid")) {
         return array('0' => array());
     }
 
-    $result = array('0' => array_keys($groups)); // all groups
-
-    foreach ($groups as $group) {
+    $result    = array();
+    $allgroups = array();
+    
+    while ($group = rs_fetch_next_record($rs)) {
         if (is_null($group->groupingid)) {
             continue;
         }
@@ -165,7 +166,11 @@ function groups_get_user_groups($courseid, $userid=0) {
             $result[$group->groupingid] = array();
         }
         $result[$group->groupingid][$group->id] = $group->id;
+        $allgroups[$group->id] = $group->id;
     }
+    rs_close($rs);
+
+    $result['0'] = array_keys($allgroups); // all groups
 
     return $result;
 }
