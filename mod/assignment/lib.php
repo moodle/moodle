@@ -1236,7 +1236,7 @@ class assignment_base {
                     $teachermodified = '<div id="tt'.$auser->id.'">&nbsp;</div>';
                     $status          = '<div id="st'.$auser->id.'">&nbsp;</div>';
 
-                    if ($final_grade->locked or $final_grade->overridden) {
+                    if ($final_grade->locked or $final_grade->overridden) { 
                         $grade = '<div id="g'.$auser->id.'">'.$final_grade->formatted_grade . '</div>';
                     } else if ($quickgrade) {   // allow editing
                         $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
@@ -2536,7 +2536,7 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $timestart, $
         }
 
         // the act of sumitting of assignemnt may be considered private - only graders will see it if specified
-        if (!empty($CFG->assignment_limitrecentsubmissions)) {
+        if (!empty($CFG->assignment_showrecentsubmissions)) {
             if (!$grader) {
                 continue;
             }
