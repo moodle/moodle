@@ -2536,7 +2536,7 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $timestart, $
         }
 
         // the act of sumitting of assignemnt may be considered private - only graders will see it if specified
-        if (!empty($CFG->assignment_limitrecentsubmissions)) {
+        if (!empty($CFG->assignment_showrecentsubmissions)) {
             if (!$grader) {
                 continue;
             }
