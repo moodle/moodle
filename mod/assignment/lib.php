@@ -1121,7 +1121,7 @@ class assignment_base {
         $table->set_attribute('cellspacing', '0');
         $table->set_attribute('id', 'attempts');
         $table->set_attribute('class', 'submissions');
-        $table->set_attribute('width', '90%');
+        $table->set_attribute('width', '100%');
         //$table->set_attribute('align', 'center');
 
         $table->no_sorting('finalgrade');
