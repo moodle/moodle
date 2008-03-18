@@ -488,7 +488,7 @@ function forum_cron() {
 
         mtrace('Sending forum digests: '.userdate($timenow, '', $sitetimezone));
 
-        $digestposts_rs = get_recordset('forum_queue');
+        $digestposts_rs = get_recordset_select('forum_queue', "timemodified < $digesttime");
 
         if (!rs_EOF($digestposts_rs)) {
 
@@ -568,7 +568,7 @@ function forum_cron() {
                 mtrace(get_string('processingdigest', 'forum', $userid), '... ');
 
                 // First of all delete all the queue entries for this user
-                delete_records('forum_queue', 'userid', $userid);
+                delete_records_select('forum_queue', "userid = $userid AND timemodified < $digesttime");
                 $userto = $users[$userid];
 
                 // Override the language and timezone of the "current" user, so that
