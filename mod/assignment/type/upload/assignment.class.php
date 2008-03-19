@@ -72,7 +72,8 @@ class assignment_upload extends assignment_base {
 
 
     function view_feedback($submission=NULL) {
-        global $USER;
+        global $USER, $CFG;
+        require_once($CFG->libdir.'/gradelib.php');
 
         if (!$submission) { /// Get submission for this assignment
             $submission = $this->get_submission($USER->id);
@@ -87,8 +88,23 @@ class assignment_upload extends assignment_base {
             return;
         }
 
+        $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $USER->id);
+        $item = $grading_info->items[0];
+        $grade = $item->grades[$USER->id];
+
+        if ($grade->hidden or $grade->grade === false) { // hidden or error
+            return;
+        }
+
+        if ($grade->grade === null and empty($grade->str_feedback)) {   /// Nothing to show yet
+            return;
+        }
+
+        $graded_date = $grade->dategraded;
+        $graded_by   = $grade->usermodified;
+
     /// We need the teacher info
-        if (! $teacher = get_record('user', 'id', $submission->teacher)) {
+        if (!$teacher = get_record('user', 'id', $graded_by)) {
             error('Could not find the teacher');
         }
 
@@ -104,7 +120,7 @@ class assignment_upload extends assignment_base {
         echo '<td class="topic">';
         echo '<div class="from">';
         echo '<div class="fullname">'.fullname($teacher).'</div>';
-        echo '<div class="time">'.userdate($submission->timemarked).'</div>';
+        echo '<div class="time">'.userdate($graded_date).'</div>';
         echo '</div>';
         echo '</td>';
         echo '</tr>';
@@ -114,13 +130,13 @@ class assignment_upload extends assignment_base {
         echo '<td class="content">';
         if ($this->assignment->grade) {
             echo '<div class="grade">';
-            echo get_string("grade").': '.$this->display_grade($submission->grade);
+            echo get_string("grade").': '.$grade->str_long_grade;
             echo '</div>';
             echo '<div class="clearer"></div>';
         }
 
         echo '<div class="comment">';
-        echo format_text($submission->submissioncomment, $submission->format);
+        echo $grade->str_feedback;
         echo '</div>';
         echo '</tr>';
 
@@ -140,7 +156,7 @@ class assignment_upload extends assignment_base {
         $submission = $this->get_submission($USER->id);
 
         $struploadafile = get_string('uploadafile');
-        $maxbytes = $this->assignment->maxbytes == 0 ? $this->course->maxbytes : $this->assignment->maxbytes; 
+        $maxbytes = $this->assignment->maxbytes == 0 ? $this->course->maxbytes : $this->assignment->maxbytes;
         $strmaxsize = get_string('maxsize', '', display_size($maxbytes));
 
         if ($this->is_finalized($submission)) {
@@ -498,6 +514,9 @@ class assignment_upload extends assignment_base {
             if (update_record('assignment_submissions', $updated)) {
                 add_to_log($this->course->id, 'assignment', 'upload', 'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                 redirect($returnurl);
+                $submission = $this->get_submission($USER->id);
+                $this->update_grade($submission);
+
             } else {
                 $this->view_header(get_string('notes', 'assignment'));
                 notify(get_string('notesupdateerror', 'assignment'));
@@ -580,6 +599,9 @@ class assignment_upload extends assignment_base {
             if (update_record('assignment_submissions', $updated)) {
                 add_to_log($this->course->id, 'assignment', 'upload',
                         'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+                $submission = $this->get_submission($USER->id);
+                $this->update_grade($submission);
+
             } else {
                 $new_filename = $um->get_new_filename();
                 $this->view_header(get_string('upload'));
@@ -601,7 +623,6 @@ class assignment_upload extends assignment_base {
     function finalize() {
         global $USER;
 
-        $userid     = optional_param('userid', 0, PARAM_INT);
         $confirm    = optional_param('confirm', 0, PARAM_BOOL);
         $returnurl  = 'view.php?id='.$this->cm->id;
         $submission = $this->get_submission($USER->id);
@@ -628,6 +649,8 @@ class assignment_upload extends assignment_base {
         if (update_record('assignment_submissions', $updated)) {
             add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finalize action to log
                     'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+            $submission = $this->get_submission($USER->id);
+            $this->update_grade($submission);
             $this->email_teachers($submission);
         } else {
             $this->view_header(get_string('submitformarking', 'assignment'));
@@ -645,7 +668,7 @@ class assignment_upload extends assignment_base {
         $offset    = required_param('offset', PARAM_INT);
         $returnurl = "submissions.php?id={$this->cm->id}&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset&amp;forcerefresh=1";
 
-        // create but do not add student submission date 
+        // create but do not add student submission date
         $submission = $this->get_submission($userid, true, true);
 
         if (!data_submitted() or !$this->can_finalize($submission)) {
@@ -659,6 +682,8 @@ class assignment_upload extends assignment_base {
         if (update_record('assignment_submissions', $updated)) {
             add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finalize action to log
                     'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+            $submission = $this->get_submission($userid, false, true);
+            $this->update_grade($submission);
         }
         redirect($returnurl);
     }
@@ -681,6 +706,8 @@ class assignment_upload extends assignment_base {
             if (update_record('assignment_submissions', $updated)) {
                 //TODO: add unfinalize action to log
                 add_to_log($this->course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+                $submission = $this->get_submission($userid);
+                $this->update_grade($submission);
             } else {
                 $this->view_header(get_string('submitformarking', 'assignment'));
                 notify(get_string('unfinalizeerror', 'assignment'));
@@ -809,6 +836,8 @@ class assignment_upload extends assignment_base {
                 if (update_record('assignment_submissions', $updated)) {
                     add_to_log($this->course->id, 'assignment', 'upload', //TODO: add delete action to log
                             'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+                    $submission = $this->get_submission($userid);
+                    $this->update_grade($submission);
                 }
                 redirect($returnurl);
             }
