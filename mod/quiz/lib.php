@@ -378,22 +378,24 @@ function quiz_grade_item_update($quiz, $grades=NULL) {
     }
     
     $gradebook_grades = grade_get_grades($quiz->course, 'mod', 'quiz', $quiz->id);
-    $grade_item = $gradebook_grades->items[0];
-    if ($grade_item->locked) {
-        $confirm_regrade = optional_param('confirm_regrade', 0, PARAM_INT);
-        if (!$confirm_regrade) {
-            $message = get_string('gradeitemislocked', 'grades');
-            $back_link = $CFG->wwwroot . '/mod/quiz/report.php?q=' . $quiz->id . '&amp;mode=overview';
-            $regrade_link = qualified_me() . '&amp;confirm_regrade=1';
-            print_box_start('generalbox', 'notice');
-            echo '<p>'. $message .'</p>';
-            echo '<div class="buttons">';
-            print_single_button($regrade_link, null, get_string('regradeanyway', 'grades'), 'post', $CFG->framename);
-            print_single_button($back_link,  null,  get_string('cancel'),  'post',  $CFG->framename);
-            echo '</div>';
-            print_box_end();
-
-            return GRADE_UPDATE_ITEM_LOCKED;
+    if (!empty($gradebook_grades->items)) {
+        $grade_item = $gradebook_grades->items[0];
+        if ($grade_item->locked) {
+            $confirm_regrade = optional_param('confirm_regrade', 0, PARAM_INT);
+            if (!$confirm_regrade) {
+                $message = get_string('gradeitemislocked', 'grades');
+                $back_link = $CFG->wwwroot . '/mod/quiz/report.php?q=' . $quiz->id . '&amp;mode=overview';
+                $regrade_link = qualified_me() . '&amp;confirm_regrade=1';
+                print_box_start('generalbox', 'notice');
+                echo '<p>'. $message .'</p>';
+                echo '<div class="buttons">';
+                print_single_button($regrade_link, null, get_string('regradeanyway', 'grades'), 'post', $CFG->framename);
+                print_single_button($back_link,  null,  get_string('cancel'),  'post',  $CFG->framename);
+                echo '</div>';
+                print_box_end();
+    
+                return GRADE_UPDATE_ITEM_LOCKED;
+            }
         }
     }
 
