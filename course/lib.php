@@ -24,7 +24,6 @@ define('MOD_CLASS_RESOURCE', 1);
 
 function make_log_url($module, $url) {
     switch ($module) {
-        case 'user':
         case 'course':
         case 'file':
         case 'login':
@@ -34,6 +33,7 @@ function make_log_url($module, $url) {
         case 'mnet course':
             return "/course/$url";
             break;
+        case 'user':
         case 'blog':
             return "/$module/$url";
             break;
