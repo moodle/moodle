@@ -6104,6 +6104,7 @@ function redirect($url, $message='', $delay=-1) {
 <?php
     }
 
+    $CFG->docroot = false; // to prevent the link to moodle docs from being displayed on redirect page.
     print_footer('none');
     die;
 }
