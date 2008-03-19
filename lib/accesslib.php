@@ -4525,7 +4525,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     $sortby = $sort ? " ORDER BY $sort " : '';
 
     // User lastaccess JOIN
-    if (strpos($sort, 'ul.timeaccess') === FALSE) {  // user_lastaccess is not required MDL-13810
+    if ((strpos($sort, 'ul.timeaccess') === FALSE) and (strpos($fields, 'ul.timeaccess') === FALSE)) {  // user_lastaccess is not required MDL-13810
         $uljoin = '';
     } else {
         $uljoin = "LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul 
