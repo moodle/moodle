@@ -21,7 +21,7 @@
 }
 
 .grade-report-grader table#user-grades td.overridden {
-  background-color: #dddddd;
+  background-color: #EFD9B3;
 }
 
 .grade-report-grader table#user-grades tr.avg td.cell {
@@ -30,6 +30,22 @@
 
 .grade-report-grader table#user-grades tr.odd td.cell {
     background-color: #efefef;
+}
+
+.grade-report-grader table#user-grades tr.even td.overridden {
+  background-color: #F3E4C0; 
+}
+
+.grade-report-grader table#user-grades tr.odd td.overridden {
+  background-color: #EFD9A4;
+}
+
+.grade-report-grader table#user-grades tr.even td.excluded {
+  background-color: #EABFFF; 
+}
+
+.grade-report-grader table#user-grades tr.odd td.excluded {
+  background-color: #E5AFFF;
 }
 
 .grade-report-grader table#user-grades tr.odd th.header { 

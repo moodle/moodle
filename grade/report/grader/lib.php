@@ -750,10 +750,14 @@ class grade_report_grader extends grade_report {
                     $cellclasses .= ' overridden';
                 }
 
+                if ($grade->is_excluded()) {
+                    $cellclasses .= ' excluded';
+                }
+
                 $studentshtml .= '<td class="'.$cellclasses.'">';
 
                 if ($grade->is_excluded()) {
-                    $studentshtml .= get_string('excluded', 'grades'); // TODO: improve visual representation of excluded grades
+                    $studentshtml .= get_string('excluded', 'grades') . ' ';
                 }
 
                 // Do not show any icons if no grade (no record in DB to match)
