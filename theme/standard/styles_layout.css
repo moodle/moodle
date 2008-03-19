@@ -2558,7 +2558,7 @@ body.notes .notesgroup {
 }
 .que .content {
   float: left;
-  margin: 0.5em 0;
+  margin: 0;
   width: 88%;
 }
 .que.description .info {
@@ -2600,11 +2600,6 @@ body.notes .notesgroup {
 }
 .multianswer .submit {
   margin-top: 1em;
-}
-.que .c0,
-.que .c1 {
-  padding: 0.3em 0 0.3em 0.3em;
-  vertical-align: top;
 }
 .que .feedback {
   clear: both;
