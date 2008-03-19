@@ -74,14 +74,14 @@ class course_edit_form extends moodleform {
         $mform->setDefault('category', $category->id);
         $mform->setType('category', PARAM_INT);
 
-        $mform->addElement('text','fullname', get_string('fullname'),'maxlength="254" size="50"');
-        $mform->setHelpButton('fullname', array('coursefullname', get_string('fullname')), true);
+        $mform->addElement('text','fullname', get_string('fullnamecourse'),'maxlength="254" size="50"');
+        $mform->setHelpButton('fullname', array('coursefullname', get_string('fullnamecourse')), true);
         $mform->setDefault('fullname', get_string('defaultcoursefullname'));
         $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
         $mform->setType('fullname', PARAM_MULTILANG);
 
-        $mform->addElement('text','shortname', get_string('shortname'),'maxlength="100" size="20"');
-        $mform->setHelpButton('shortname', array('courseshortname', get_string('shortname')), true);
+        $mform->addElement('text','shortname', get_string('shortnamecourse'),'maxlength="100" size="20"');
+        $mform->setHelpButton('shortname', array('courseshortname', get_string('shortnamecourse')), true);
         $mform->setDefault('shortname', get_string('defaultcourseshortname'));
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_MULTILANG);

@@ -113,7 +113,7 @@ print_heading($title . helpbutton('groupextendenrol', $title, 'moodle', true, fa
 echo '<form method="post" action="groupextendenrol.php">';
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-$table->head  = array (get_string('fullname'), get_string('enrolmentstart'), get_string('enrolmentend'));
+$table->head  = array (get_string('fullnameuser'), get_string('enrolmentstart'), get_string('enrolmentend'));
 $table->align = array ('left', 'center', 'center', 'center');
 $table->width = "600";
 $nochange = get_string('nochange');

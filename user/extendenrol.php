@@ -116,7 +116,7 @@ print_heading($title . helpbutton('extendenrol', $title, 'moodle', true, false, 
 echo "<form method=\"post\" action=\"extendenrol.php\">\n";
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-$table->head  = array (get_string('fullname'), get_string('enrolmentstart'), get_string('enrolmentend'), get_string('extendperiod'), get_string('startingfrom'));
+$table->head  = array (get_string('fullnameuser'), get_string('enrolmentstart'), get_string('enrolmentend'), get_string('extendperiod'), get_string('startingfrom'));
 $table->align = array ('left', 'center', 'center', 'center');
 $table->width = "600";
 $nochange = get_string('nochange');

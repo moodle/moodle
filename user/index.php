@@ -290,7 +290,7 @@
     /// Define a table showing a list of users in the current role selection
 
     $tablecolumns = array('userpic', 'fullname');
-    $tableheaders = array(get_string('userpic'), get_string('fullname'));
+    $tableheaders = array(get_string('userpic'), get_string('fullnameuser'));
     if ($mode === MODE_BRIEF && !isset($hiddenfields['city'])) {
         $tablecolumns[] = 'city';
         $tableheaders[] = get_string('city');
