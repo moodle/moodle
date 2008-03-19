@@ -1143,7 +1143,7 @@ class grade_item extends grade_object {
     function set_sortorder($sortorder) {
         if ($this->sortorder == $sortorder) {
             return;
-        } 
+        }
         $this->sortorder = $sortorder;
         $this->update();
     }
@@ -1263,7 +1263,7 @@ class grade_item extends grade_object {
                 // return all children excluding category items
                 $sql = "SELECT gi.id
                           FROM {$CFG->prefix}grade_items gi
-                         WHERE $gtypes 
+                         WHERE $gtypes
                                $outcomes_sql
                                AND gi.categoryid IN (
                                   SELECT gc.id
@@ -1407,15 +1407,15 @@ class grade_item extends grade_object {
         }
 
         if (empty($grade->id)) {
-            $grade->timecreated  = null;   // no submission yet
-            $grade->timemodified = time(); // overridden flag might take over, but anyway
+            $grade->timecreated  = null;   // hack alert - date submitted - no submission yet
+            $grade->timemodified = time(); // hack alert - date graded
             $result = (boolean)$grade->insert($source);
 
         } else if (grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)
                 or $grade->feedback       !== $oldgrade->feedback
                 or $grade->feedbackformat != $oldgrade->feedbackformat
                 or $grade->overridden     != $oldgrade->overridden) {
-            $grade->timemodified = time(); // overridden flag might take over, but anyway
+            $grade->timemodified = time(); // hack alert - date graded
             $result = $grade->update($source);
         } else {
             // no grade change
@@ -1485,16 +1485,6 @@ class grade_item extends grade_object {
             $grade->usermodified = $usermodified;
         }
 
-        // TODO: hack alert - create new fields for these
-
-        $grade->timecreated  = $datesubmitted;
-
-        if (empty($dategraded)) {
-            $grade->timemodified = time();
-        } else {
-            $grade->timemodified = $dategraded;
-        }
-
         if ($grade->is_locked()) {
             // do not update locked grades at all
             return false;
@@ -1527,6 +1517,11 @@ class grade_item extends grade_object {
             $grade->rawgrade = $rawgrade;
         }
 
+        // empty feedback means no feedback at all
+        if ($feedback === '') {
+            $feedback = null;
+        }
+
         // do we have comment from teacher?
         if ($feedback !== false and !$grade->is_overridden()) {
             $grade->feedback       = $feedback;
@@ -1538,9 +1533,32 @@ class grade_item extends grade_object {
             $grade->finalgrade = $this->adjust_raw_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
         }
 
-        if (is_null($grade->rawgrade) and is_null($grade->feedback)) {
-            $grade->timemodified = null; //TODO: dategraded hack - feedback counts as grading too ;-)
+        // TODO: hack alert - create new fields for these in 2.0
+        $oldgrade->timecreated  = $grade->timecreated;
+        $oldgrade->timemodified = $grade->timemodified;
+
+        $grade->timecreated = $datesubmitted;
+
+        if ($grade->is_overridden()) {
+            // keep original graded date - update_final_grade() sets this for overridden grades
+
+        } else if (is_null($grade->rawgrade) and is_null($grade->feedback)) {
+            // no grade and feedback means no grading yet
+            $grade->timemodified = null;
+
+        } else if (!empty($dategraded)) {
+            // fine - module sends info when graded (yay!)
+            $grade->timemodified = $dategraded;
+
+        } else if (grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)
+                   or $grade->feedback !== $oldgrade->feedback) {
+            // guess - if either grade or feedback changed set new graded date
+            $grade->timemodified = time();
+
+        } else {
+            //keep original graded date
         }
+        // end of hack alert
 
         if (empty($grade->id)) {
             $result = (boolean)$grade->insert($source);
@@ -1551,7 +1569,10 @@ class grade_item extends grade_object {
                 or grade_floats_different($grade->rawgrademax, $oldgrade->rawgrademax)
                 or $grade->rawscaleid     != $oldgrade->rawscaleid
                 or $grade->feedback       !== $oldgrade->feedback
-                or $grade->feedbackformat != $oldgrade->feedbackformat) {
+                or $grade->feedbackformat != $oldgrade->feedbackformat
+                or $grade->timecreated    != $oldgrade->timecreated  // part of hack above
+                or $grade->timemodified   != $oldgrade->timemodified // part of hack above
+                ) {
             $result = $grade->update($source);
         } else {
             return $result;
