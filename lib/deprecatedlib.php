@@ -1577,4 +1577,43 @@ function sql_primary_role_subselect() {
                               ) ';
 }
 
+/**
+ * Can include a given document file (depends on second
+ * parameter) or just return info about it.
+ *
+ * @uses $CFG
+ * @param string $file ?
+ * @param bool $include ?
+ * @return ?
+ * @todo Finish documenting this function
+ */
+function document_file($file, $include=true) {
+    global $CFG;
+
+    debugging('The document_file() function is deprecated.', DEBUG_DEVELOPER);
+
+    $file = clean_filename($file);
+
+    if (empty($file)) {
+        return false;
+    }
+
+    $langs = array(current_language(), get_string('parentlanguage'), 'en');
+
+    foreach ($langs as $lang) {
+        $info = new object();
+        $info->filepath = $CFG->dirroot .'/lang/'. $lang .'/docs/'. $file;
+        $info->urlpath  = $CFG->wwwroot .'/lang/'. $lang .'/docs/'. $file;
+
+        if (file_exists($info->filepath)) {
+            if ($include) {
+                include($info->filepath);
+            }
+            return $info;
+        }
+    }
+
+    return false;
+}
+
 ?>
