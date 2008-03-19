@@ -2584,8 +2584,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
             // Create new user directory
             if (!$newdir = make_user_directory($userid)) {
-                $result = false;
-                break;
+                // some weird directory - do not stop the upgrade, just ignore it
+                continue;
             }
 
             // Move contents of old directory to new one
