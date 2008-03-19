@@ -109,6 +109,7 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
         }
         $this->_helpbutton=call_user_func_array($function, $helpbuttonargs);
     }
+    
     /**
      * get html for help button
      *
