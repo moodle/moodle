@@ -231,10 +231,12 @@ class assignment_base {
         }
 
         $graded_date = $grade->dategraded;
-            $graded_by   = $grade->usermodified;
+        $graded_by   = $grade->usermodified;
 
     /// We need the teacher info
-        $teacher = get_record('user', 'id', $graded_by);
+        if (!$teacher = get_record('user', 'id', $graded_by)) {
+            error('Could not find the teacher');
+        }
 
     /// Print the feedback
         print_heading(get_string('feedbackfromteacher', 'assignment', $this->course->teacher)); // TODO: fix teacher string
@@ -1043,10 +1045,10 @@ class assignment_base {
         $navigation = build_navigation($this->strsubmissions, $this->cm);
         print_header_simple(format_string($this->assignment->name,true), "", $navigation,
                 '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
-        
+
         $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
         if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
-            echo '<div class="allcoursegrades"><a href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">' 
+            echo '<div class="allcoursegrades"><a href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">'
                 . get_string('seeallcoursegrades', 'grades') . '</a></div>';
         }
 
@@ -1081,7 +1083,7 @@ class assignment_base {
         }
 
         $tableheaders = array('',
-                              get_string('fullnameuser'),
+                              get_string('fullname'),
                               get_string('grade'),
                               get_string('comment', 'assignment'),
                               get_string('lastmodified').' ('.$course->student.')',
@@ -1236,7 +1238,7 @@ class assignment_base {
                     $teachermodified = '<div id="tt'.$auser->id.'">&nbsp;</div>';
                     $status          = '<div id="st'.$auser->id.'">&nbsp;</div>';
 
-                    if ($final_grade->locked or $final_grade->overridden) { 
+                    if ($final_grade->locked or $final_grade->overridden) {
                         $grade = '<div id="g'.$auser->id.'">'.$final_grade->formatted_grade . '</div>';
                     } else if ($quickgrade) {   // allow editing
                         $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
@@ -2795,13 +2797,13 @@ function assignment_get_coursemodule_info($coursemodule) {
         require_once($libfile);
         $assignmentclass = "assignment_$assignment->assignmenttype";
         $ass = new $assignmentclass('staticonly');
-        if ($result = $ass->get_coursemodule_info($coursemodule)) { 
+        if ($result = $ass->get_coursemodule_info($coursemodule)) {
             return $result;
         } else {
             $info = new object();
             $info->name = $assignment->name;
             return $info;
-        } 
+        }
 
     } else {
         debugging('Incorrect assignment type: '.$assignment->assignmenttype);

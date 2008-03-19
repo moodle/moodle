@@ -107,12 +107,12 @@ class assignment_online extends assignment_base {
                 }
             }
             print_simple_box_end();
-            if (!$editmode && $editable) { 
-                echo "<div style='text-align:center'>"; 
-                print_single_button('view.php', array('id'=>$this->cm->id,'edit'=>'1'), 
-                        get_string('editmysubmission', 'assignment')); 
-                echo "</div>"; 
-            } 
+            if (!$editmode && $editable) {
+                echo "<div style='text-align:center'>";
+                print_single_button('view.php', array('id'=>$this->cm->id,'edit'=>'1'),
+                        get_string('editmysubmission', 'assignment'));
+                echo "</div>";
+            }
 
         }
 
@@ -167,7 +167,13 @@ class assignment_online extends assignment_base {
         $update->data2        = $data->format;
         $update->timemodified = time();
 
-        return update_record('assignment_submissions', $update);
+        if (!update_record('assignment_submissions', $update)) {
+            return false;
+        }
+
+        $submission = $this->get_submission($USER->id);
+        $this->update_grade($submission);
+        return true;
     }
 
 
