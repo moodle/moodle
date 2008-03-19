@@ -278,7 +278,7 @@ function updateUserSummary() {
          ?>
        </td>
        <td valign="top">
-        <p><?php p($strusergroupmembership) ?></p>
+        <p><?php echo($strusergroupmembership) ?></p>
         <div id="group-usersummary"></div>
        </td>
     </tr>
