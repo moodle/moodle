@@ -5340,6 +5340,9 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
 //]]>
 </script>
 <?php
+
+    $CFG->docroot = false; // to prevent the link to moodle docs from being displayed on redirect page.
+
     // fix for MDL-8517, admin pages redirections causes bad xhtml
     if ($adminroot) {
         admin_externalpage_print_footer($adminroot);
