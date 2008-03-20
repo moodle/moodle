@@ -685,7 +685,8 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
             }
             $ctxids = array_unique($ctxids);
             $catctxids = implode( ',' , $ctxids);
-            unset($catpaths);unset($cpath);
+            unset($catpaths);
+            unset($cpath);
         } else {
             // take the ctx path from the first course
             // as all categories will be the same...
@@ -718,12 +719,17 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
                   ON ra.roleid = r.id
                 LEFT OUTER JOIN {$CFG->prefix}course c
                   ON (ctx.instanceid=c.id AND ctx.contextlevel=".CONTEXT_COURSE.")
-                WHERE (  c.id IS NOT NULL
-                         OR ra.contextid  IN ($catctxids) )
-                      AND ra.roleid IN ({$CFG->coursemanager})
+                WHERE ( c.id IS NOT NULL";
+        // under certain conditions, $catctxids is NULL
+        if($catctxids == NULL){
+            $sql .= ") ";
+        }else{
+            $sql .= " OR ra.contextid  IN ($catctxids) )";
+        }
+
+        $sql .= "AND ra.roleid IN ({$CFG->coursemanager})
                       $categoryclause
                 ORDER BY r.sortorder ASC, ctx.contextlevel ASC, ra.sortorder ASC";
-
         $rs = get_recordset_sql($sql);
 
         // This loop is fairly stupid as it stands - might get better
