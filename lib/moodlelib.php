@@ -1231,6 +1231,11 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
  */
 function usergetdate($time, $timezone=99) {
 
+    $strtimezone = NULL;
+    if (!is_numeric($timezone)) {
+        $strtimezone = $timezone;
+    }
+
     $timezone = get_user_timezone_offset($timezone);
 
     if (abs($timezone) > 13) {    // Server time
@@ -1238,7 +1243,7 @@ function usergetdate($time, $timezone=99) {
     }
 
     // There is no gmgetdate so we use gmdate instead
-    $time += dst_offset_on($time);
+    $time += dst_offset_on($time, $strtimezone);
     $time += intval((float)$timezone * HOURSECS);
 
     $datestring = gmstrftime('%S_%M_%H_%d_%m_%Y_%w_%j_%A_%B', $time);
@@ -1442,10 +1447,14 @@ function get_timezone_record($timezonename) {
  * @param ? $to_year ?
  * @return bool
  */
-function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
+function calculate_user_dst_table($from_year = NULL, $to_year = NULL, $strtimezone = NULL) {
     global $CFG, $SESSION;
 
-    $usertz = get_user_timezone();
+    if ($strtimezone == NULL) {
+        $usertz = get_user_timezone();
+    } else {
+        $usertz = $strtimezone;
+    }
 
     if (is_float($usertz)) {
         // Trivial timezone, no DST
@@ -1590,10 +1599,10 @@ function dst_changes_for_year($year, $timezone) {
 }
 
 // $time must NOT be compensated at all, it has to be a pure timestamp
-function dst_offset_on($time) {
+function dst_offset_on($time, $strtimezone = NULL) {
     global $SESSION;
 
-    if(!calculate_user_dst_table() || empty($SESSION->dst_offsets)) {
+    if(!calculate_user_dst_table(NULL, NULL, $strtimezone) || empty($SESSION->dst_offsets)) {
         return 0;
     }
 
@@ -1618,16 +1627,16 @@ function dst_offset_on($time) {
         if($SESSION->dst_range[0] == 1971) {
             return 0;
         }
-        calculate_user_dst_table($SESSION->dst_range[0] - 5, NULL);
-        return dst_offset_on($time);
+        calculate_user_dst_table($SESSION->dst_range[0] - 5, NULL, $strtimezone);
+        return dst_offset_on($time, $strtimezone);
     }
     else {
         // We need a year larger than $SESSION->dst_range[1]
         if($SESSION->dst_range[1] == 2035) {
             return 0;
         }
-        calculate_user_dst_table(NULL, $SESSION->dst_range[1] + 5);
-        return dst_offset_on($time);
+        calculate_user_dst_table(NULL, $SESSION->dst_range[1] + 5, $strtimezone);
+        return dst_offset_on($time, $strtimezone);
     }
 }
 
