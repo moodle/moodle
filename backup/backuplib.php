@@ -1103,8 +1103,18 @@
 
            if ($selected) {
                $context = get_context_instance(CONTEXT_MODULE, $tok);
-               //Gets course_module data from db
-               $course_module = get_records ("course_modules","id",$tok);
+               //Gets course_module data from db - verify activity exists and is enabled!
+               $sql = "SELECT cm.*
+                         FROM {$CFG->prefix}course_modules cm
+                              JOIN {$CFG->prefix}modules m     ON m.id = cm.module
+                              JOIN {$CFG->prefix}$moduletype a ON a.id = cm.instance
+                        WHERE m.visible = 1 AND cm.id = $tok";
+               if (!$course_module = get_record_sql($sql)) {
+                   // cm exists but activity instance missing - probably caused by double clicking
+                   $tok = strtok(",");
+                   continue;
+               }
+
                //If it's the first, pring MODS tag
                if ($first_record) {
                    fwrite ($bf,start_tag("MODS",4,true));
@@ -1113,8 +1123,8 @@
                // if we're doing selected instances, check that too.
                if (is_array($preferences->mods[$moduletype]->instances)
                    && count($preferences->mods[$moduletype]->instances)
-                   && (!array_key_exists($course_module[$tok]->instance,$preferences->mods[$moduletype]->instances)
-                       || empty($preferences->mods[$moduletype]->instances[$course_module[$tok]->instance]->backup))) {
+                   && (!array_key_exists($course_module->instance,$preferences->mods[$moduletype]->instances)
+                       || empty($preferences->mods[$moduletype]->instances[$course_module->instance]->backup))) {
                    $tok = strtok(",");
                    continue;
                }
@@ -1127,15 +1137,15 @@
                //Save neccesary info to backup_ids
                fwrite ($bf,full_tag("ID",6,false,$tok));
                fwrite ($bf,full_tag("TYPE",6,false,$moduletype));
-               fwrite ($bf,full_tag("INSTANCE",6,false,$course_module[$tok]->instance));
-               fwrite ($bf,full_tag("ADDED",6,false,$course_module[$tok]->added));
-               fwrite ($bf,full_tag("SCORE",6,false,$course_module[$tok]->score));
-               fwrite ($bf,full_tag("INDENT",6,false,$course_module[$tok]->indent));
-               fwrite ($bf,full_tag("VISIBLE",6,false,$course_module[$tok]->visible));
-               fwrite ($bf,full_tag("GROUPMODE",6,false,$course_module[$tok]->groupmode));
-               fwrite ($bf,full_tag("GROUPINGID",6,false,$course_module[$tok]->groupingid));
-               fwrite ($bf,full_tag("GROUPMEMBERSONLY",6,false,$course_module[$tok]->groupmembersonly));
-               fwrite ($bf,full_tag("IDNUMBER",6,false,$course_module[$tok]->idnumber));
+               fwrite ($bf,full_tag("INSTANCE",6,false,$course_module->instance));
+               fwrite ($bf,full_tag("ADDED",6,false,$course_module->added));
+               fwrite ($bf,full_tag("SCORE",6,false,$course_module->score));
+               fwrite ($bf,full_tag("INDENT",6,false,$course_module->indent));
+               fwrite ($bf,full_tag("VISIBLE",6,false,$course_module->visible));
+               fwrite ($bf,full_tag("GROUPMODE",6,false,$course_module->groupmode));
+               fwrite ($bf,full_tag("GROUPINGID",6,false,$course_module->groupingid));
+               fwrite ($bf,full_tag("GROUPMEMBERSONLY",6,false,$course_module->groupmembersonly));
+               fwrite ($bf,full_tag("IDNUMBER",6,false,$course_module->idnumber));
                // get all the role_capabilities overrides in this mod
                write_role_overrides_xml($bf, $context, 6);
                /// write role_assign code here
