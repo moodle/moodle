@@ -454,7 +454,11 @@ class upload_manager {
      * @return string
      */
     function get_errors() {
-        return '<p class="notifyproblem">'. $this->notify .'</p>';
+        if (!empty($this->notify)) {
+            return '<p class="notifyproblem">'. $this->notify .'</p>';
+        } else {
+            return null;
+        }
     }
 }
 

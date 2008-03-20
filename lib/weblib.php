@@ -6123,9 +6123,9 @@ function redirect($url, $message='', $delay=-1) {
     } else {
         print_container_end_all(false, $THEME->open_header_containers);
     }
-    echo '<div style="text-align:center">';
-    echo '<div>'. $message .'</div>';
-    echo '<div>( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</div>';
+    echo '<div id="redirect">';
+    echo '<div id="message">' . $message . '</div>';
+    echo '<div id="continue">( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</div>';
     echo '</div>';
 
     if (!$errorprinted) {

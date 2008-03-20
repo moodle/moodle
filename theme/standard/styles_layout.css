@@ -86,6 +86,18 @@ h6.main {
   visibility: hidden;
 }
 
+#redirect {
+  text-align: center;
+}
+
+#redirect #message {
+  
+}
+
+#redirect #continue {
+  
+}
+
 /* .clearfix {display: inline-table;} */
 
 /* Hides from IE-mac \*/

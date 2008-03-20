@@ -536,7 +536,8 @@
                     $message .= get_string("postmailnow", "forum");
                     $timemessage = 4;
                 } else {
-                    $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
+                    $message .= '<p>'.get_string("postaddedsuccess", "forum") . '</p>';
+                    $message .= '<p>'.get_string("postaddedtimeleft", "forum", format_time($CFG->maxeditingtime)) . '</p>';
                 }
 
                 if ($forum->type == 'single') {
@@ -585,7 +586,8 @@
                     $message .= get_string("postmailnow", "forum");
                     $timemessage = 4;
                 } else {
-                    $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
+                    $message .= '<p>'.get_string("postaddedsuccess", "forum") . '</p>';
+                    $message .= '<p>'.get_string("postaddedtimeleft", "forum", format_time($CFG->maxeditingtime)) . '</p>';
                 }
 
                 if ($subscribemessage = forum_post_subscription($discussion)) {
