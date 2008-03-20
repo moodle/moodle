@@ -185,12 +185,12 @@ class profile_define_base {
  */
 function profile_reorder_fields() {
     if ($categories = get_records_select('user_info_category')) {
-        $i = 1;
         foreach ($categories as $category) {
+            $i = 1;
             if ($fields = get_records_select('user_info_field', 'categoryid='.$category->id, 'sortorder ASC')) {
                 foreach ($fields as $field) {
                     $f = new object();
-                    $f->if = $field->id;
+                    $f->id = $field->id;
                     $f->sortorder = $i++;
                     update_record('user_info_field', $f);
                 }
