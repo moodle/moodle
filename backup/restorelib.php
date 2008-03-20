@@ -1292,8 +1292,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             echo '<ul>';
         }
 
-        $cached_categories = array();
-
     /// Process letters
         $context = get_context_instance(CONTEXT_COURSE, $restore->course_id);
         // respect current grade letters if defined
@@ -1325,7 +1323,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             echo '<li>'.get_string('categories','grades').'</li>';
         }
         //Fetch recordset_size records in each iteration
-        $recs = get_records_select("backup_ids","table_name = 'grade_category' AND backup_code = '$restore->backup_unique_code'",
+        $recs = get_records_select("backup_ids","table_name = 'grade_category' AND backup_code = $restore->backup_unique_code",
                                    "old_id",
                                    "old_id");
         $cat_count = count($recs);
@@ -1337,16 +1335,25 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     //Now get completed xmlized object
                     $info = $data->info;
 
-                    if ($restoreall and $cat_count > 1) {
-                        $grade_category = new grade_category();
-                        $grade_category->courseid            = $restore->course_id;
-                        $grade_category->fullname            = backup_todb($info['GRADE_CATEGORY']['#']['NAME']['0']['#'], false);
-                        $grade_category->droplow             = backup_todb($info['GRADE_CATEGORY']['#']['DROP_X_LOWEST']['0']['#'], false);
-                        $grade_category->aggregation         = GRADE_AGGREGATE_WEIGHTED_MEAN2;
-                        $grade_category->aggregateonlygraded = 0;
-                        $grade_category->insert('restore');
-                        $grade_category->load_grade_item(); // force cretion of grade_item
-                        $cached_categories[$rec->old_id] = $grade_category;
+                    if ($restoreall) {
+                        if ($cat_count == 1) {
+                            $course_category->fullname            = backup_todb($info['GRADE_CATEGORY']['#']['NAME']['0']['#'], false);
+                            $course_category->droplow             = backup_todb($info['GRADE_CATEGORY']['#']['DROP_X_LOWEST']['0']['#'], false);
+                            $course_category->aggregation         = GRADE_AGGREGATE_WEIGHTED_MEAN2;
+                            $course_category->aggregateonlygraded = 0;
+                            $course_category->update('restore');
+
+                        } else {
+                            $grade_category = new grade_category();
+                            $grade_category->courseid            = $restore->course_id;
+                            $grade_category->fullname            = backup_todb($info['GRADE_CATEGORY']['#']['NAME']['0']['#'], false);
+                            $grade_category->droplow             = backup_todb($info['GRADE_CATEGORY']['#']['DROP_X_LOWEST']['0']['#'], false);
+                            $grade_category->aggregation         = GRADE_AGGREGATE_WEIGHTED_MEAN2;
+                            $grade_category->aggregateonlygraded = 0;
+                            $grade_category->insert('restore');
+                            $grade_category->load_grade_item(); // force cretion of grade_item
+                        }
+
                     } else {
                         $grade_category = null;
                     }
