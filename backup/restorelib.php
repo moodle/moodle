@@ -1370,6 +1370,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             $course_category->aggregation         = GRADE_AGGREGATE_WEIGHTED_MEAN2;
                             $course_category->aggregateonlygraded = 0;
                             $course_category->update('restore');
+                            $grade_category = $course_category;
 
                         } else {
                             $grade_category = new grade_category();
