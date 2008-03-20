@@ -479,6 +479,9 @@ function forum_cron() {
     $timenow = time();
     $digesttime = usergetmidnight($timenow, $sitetimezone) + ($CFG->digestmailtime * 3600);
 
+    // some debug code for 2digests per day problem
+    mtrace('  (Expected digest time today: '.$digesttime.' admin user zone:'.userdate($digesttime).' site zone:'.userdate($digesttime, '', $sitetimezone).')'); 
+
     // Delete any really old ones (normally there shouldn't be any)
     $weekago = $timenow - (7 * 24 * 3600);
     delete_records_select('forum_queue', "timemodified < $weekago");
