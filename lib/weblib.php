@@ -685,7 +685,8 @@ if (!function_exists('stripos')) {    /// Only exists in PHP 5
  *
  * $url must be relative to home page  eg /mod/survey/stuff.php
  * @param string $url Web link relative to home page
- * @param string $name Name to be assigned to the popup window
+ * @param string $name Name to be assigned to the popup window (this is used by 
+ *   client-side scripts to "talk" to the popup window)
  * @param string $linkname Text to be displayed as web link
  * @param int $height Height to assign to popup window
  * @param int $width Height to assign to popup window
@@ -727,11 +728,11 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
     if ($class) {
         $class = ' class="'.$class.'" ';
     }
-
-    // get some default string, using the localized version of legacy defaults
     if (!$name) {
-        $name = get_string('popupwindow');
+        $name = 'popup';
     }
+    
+    // get some default string, using the localized version of legacy defaults
     if (!$linkname) {
         $linkname = get_string('clickhere');
     }
