@@ -66,9 +66,10 @@ function get_text_for_indexing_ppt(&$resource){
     $indextext = preg_replace('/\x0A/', "\n", $indextext); // some quotes
     $indextextprint = implode('<hr/>', $fragments);
 
-    $logppt = fopen("C:/php5/logs/pptlog", "w");
-    fwrite($logppt, $indextext);
-    fclose($logppt);
+    // debug code
+    // $logppt = fopen("C:/php5/logs/pptlog", "w");
+    // fwrite($logppt, $indextext);
+    // fclose($logppt);
     
     if (!empty($CFG->block_search_limit_index_body)){
         $indextext = shorten($text, $CFG->block_search_limit_index_body);
