@@ -153,7 +153,7 @@ class edit_item_form extends moodleform {
                     $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefextra') ? 'aggregationcoefextra' : 'aggregationcoef';
 
                 } else if ($cat->aggregation == GRADE_AGGREGATE_SUM) {
-                    $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefextrasump') ? 'aggregationcoefextrasum' : 'aggregationcoef';
+                    $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefextrasum') ? 'aggregationcoefextrasum' : 'aggregationcoef';
 
                 } else {
                     $coefstring = 'aggregationcoef';
@@ -280,7 +280,7 @@ class edit_item_form extends moodleform {
 
                     if ($aggcoef !== '') {
                         $agg_el->setLabel(get_string($aggcoef, 'grades'));
-                        $mform->setHelpButton('aggregationcoef', array('aggregationcoef', get_string('aggregationcoef', 'grades'), 'grade'), true);
+                        $mform->setHelpButton('aggregationcoef', array($aggcoef, get_string($aggcoef, 'grades'), 'grade'), true);
                     }
                 }
             }

@@ -146,6 +146,10 @@ function include_help_for_each_module($file, $langs, $helpdir) {
     if (!$modules = get_records('modules', 'visible', 1)) {
         error('No modules found!!');        // Should never happen
     }
+    
+    $grade = new stdClass();
+    $grade->name = 'grade';
+    $modules[] = $grade;
 
     foreach ($modules as $mod) {
         $strmodulename = get_string('modulename', $mod->name);
