@@ -1,4 +1,4 @@
-"<?php // $Id$
+<?php // $Id$
 
 function get_course_cost($course)
 {
