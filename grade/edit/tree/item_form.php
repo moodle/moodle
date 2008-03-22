@@ -271,6 +271,7 @@ class edit_item_form extends moodleform {
                     $aggcoef = '';
                     if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
                         $aggcoef = 'aggregationcoefweight';
+
                     } else if ($parent_category->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
                         $aggcoef = 'aggregationcoefextra';
 

@@ -58,16 +58,8 @@ if ($grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
     }
     $item = $grade_item->get_record_data();
 
-    if ($grade_item->is_course_item()) {
-        $item->parentcategory = 0;
-    } else if ($grade_item->is_category_item()) {
-        $parent_category = $grade_item->get_parent_category();
-        $parent_category = $parent_category->get_parent_category();
-        $item->parentcategory = $parent_category->id;
-    } else {
-        $parent_category = $grade_item->get_parent_category();
-        $item->parentcategory = $parent_category->id;
-    }
+    $parent_category = $grade_item->get_parent_category();
+    $item->parentcategory = $parent_category->id;
 
     if ($item->itemtype == 'mod') {
         $cm = get_coursemodule_from_instance($item->itemmodule, $item->iteminstance, $item->courseid);
@@ -96,12 +88,24 @@ if ($item->hidden > 1) {
 $item->locked = !empty($item->locked);
 
 $item->gradepass       = format_float($item->gradepass, $decimalpoints);
-$item->aggregationcoef = format_float($item->aggregationcoef, 4);
+
+if (empty($parent_category)) {
+    $item->aggregationcoef = 0;
+} else if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+    $item->aggregationcoef = $item->aggregationcoef > 0 ? 1 : 0;
+} else {
+    $item->aggregationcoef = format_float($item->aggregationcoef, 4);
+}
 
 $mform->set_data($item);
 
 
 if ($data = $mform->get_data(false)) {
+
+    if (!isset($data->aggregationcoef)) {
+        $data->aggregationcoef = 0;
+    }
+
     if (array_key_exists('calculation', $data)) {
         $data->calculation = grade_item::normalize_formula($data->calculation, $course->id);
     }
