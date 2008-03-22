@@ -967,7 +967,7 @@ class grade_report_grader extends grade_report {
             // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
             $SQL = "SELECT gi.id, COUNT(u.id) AS count
                       FROM {$CFG->prefix}grade_items gi
-                           JOIN {$CFG->prefix}user u                     ON TRUE
+                           CROSS JOIN {$CFG->prefix}user u
                            JOIN {$CFG->prefix}role_assignments ra        ON ra.userid = u.id
                            LEFT OUTER JOIN  {$CFG->prefix}grade_grades g ON (g.itemid = gi.id AND g.userid = u.id AND g.finalgrade IS NOT NULL) 
                            $groupsql

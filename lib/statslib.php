@@ -779,8 +779,7 @@ function stats_get_enrolled_sql($limit, $includedoanything) {
 
     $join = "JOIN {$CFG->prefix}context ctx
                   ON ctx.id = ra.contextid
-             JOIN {$CFG->prefix}course c    
-                  ON TRUE
+             CROSS JOIN {$CFG->prefix}course c
              JOIN {$CFG->prefix}role_capabilities rc
                   ON rc.roleid = ra.roleid";
     $where = "((rc.capability = 'moodle/course:view' $adm)
