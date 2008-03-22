@@ -58,6 +58,7 @@ if ($grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
     $item = $grade_item->get_record_data();
 
     if ($grade_item->is_course_item()) {
+        $parent_category = null;
         $item->parentcategory = 0;
     } else if ($grade_item->is_category_item()) {
         $parent_category = $grade_item->get_parent_category();
@@ -90,7 +91,9 @@ $item->gradepass       = format_float($item->gradepass, $decimalpoints);
 $item->multfactor      = format_float($item->multfactor, 4);
 $item->plusfactor      = format_float($item->plusfactor, 4);
 
-if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+if (empty($parent_category)) {
+    $item->aggregationcoef = 0;
+} else if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
     $item->aggregationcoef = $item->aggregationcoef > 0 ? 1 : 0;
 } else {
     $item->aggregationcoef = format_float($item->aggregationcoef, 4);
