@@ -330,6 +330,9 @@
             mtrace('    ' . $rec->url . ' ', '');
         /// Fetch the rss feed, using standard magpie caching
         /// so feeds will be renewed only if cache has expired
+            // sometimes the cron times out on moodle.org during fetching,
+            // there is a 5s limit in magpie which should work, but does not sometimes :-(
+            @set_time_limit(60);
             if ($rss = fetch_rss($rec->url)) {
                 mtrace ('ok');
             } else {
