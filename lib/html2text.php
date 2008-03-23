@@ -45,12 +45,10 @@ function html2text( $badStr ) {
             switch ( $chr ) {
                 case '<':
                     if ( !$is_open_tb && strtolower( substr( $badStr, $x + 1, 5 ) ) == 'style' ) {
-                        $badStr = substr( $badStr, 0, $x ) . 
-                                  substr( $badStr, strpos( strtolower( $badStr ), '</style>', $x ) + 7 ); 
+                        $x = strpos( strtolower( $badStr ), '</style>', $x ) + 7; // Moodle
                         $chr = '';
                     } else if ( !$is_open_tb && strtolower( substr( $badStr, $x + 1, 6 ) ) == 'script' ) {
-                        $badStr = substr( $badStr, 0, $x ) . 
-                                  substr( $badStr, strpos( strtolower( $badStr ), '</script>', $x ) + 8 ); 
+                        $x = strpos( strtolower( $badStr ), '</script>', $x ) + 8;  // Moodle
                         $chr = '';
                     } else if (!$is_open_tb) { 
                         $is_open_tb = true; 
@@ -125,7 +123,7 @@ function html2text( $badStr ) {
 
     $goodStr = preg_replace( "/<(ul|ol|br|dl|dt|table|caption|\/textarea|tr[^>]*>\s*<(td|th))[^>]*>/i", "\n", $goodStr );
 
-    $goodStr = preg_replace( "/<li[^>]*>/i", "\n· ", $goodStr );
+    $goodStr = preg_replace( "/<li[^>]*>/i", "\nï¿½ ", $goodStr );
 
     $goodStr = preg_replace( "/<dd[^>]*>/i", "\n\t", $goodStr );
 
