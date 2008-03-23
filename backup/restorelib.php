@@ -765,7 +765,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //It calls selectively to  restore_create_block_instances() for 1.5
     //and above backups. Upwards compatible with old blocks.
     function restore_create_blocks($restore, $backup_block_format, $blockinfo, $xml_file) {
-
+        global $CFG;
         $status = true;
 
         delete_records('block_instance', 'pageid', $restore->course_id, 'pagetype', PAGE_COURSE_VIEW);

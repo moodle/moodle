@@ -929,27 +929,31 @@
         $pages = array();
         $pages[] = page_create_object(PAGE_COURSE_VIEW, $preferences->backup_course);
 
-        // Let's see if we have to backup blocks from modules
-        $modulerecords = get_records_sql('SELECT name, id FROM '.$CFG->prefix.'modules');
+        if (!empty($CFG->showblocksonmodpages)) {
+            // get course structure
+            $course  = get_record('course', 'id', $preferences->backup_course);
+            $modinfo =& get_fast_modinfo($course);
 
-        foreach($preferences->mods as $module) {
-            if(!$module->backup) {
-                continue;
-            }
+            foreach($preferences->mods as $module) {
+                if (!$module->backup) {
+                    continue;
+                }
 
-            $cmods = get_records_select('course_modules', 'course = '.$preferences->backup_course.' AND module = '.$modulerecords[$module->name]->id);
-            if(empty($cmods)) {
-                continue;
-            }
+                if (empty($modinfo->instances[$module->name])) {
+                    continue;
+                }
 
-            $pagetypes = page_import_types('mod/'.$module->name.'/');
-            if(empty($pagetypes)) {
-                continue;
-            }
+                $pagetypes = page_import_types('mod/'.$module->name.'/');
+                if (empty($pagetypes)) {
+                    continue;
+                }
 
-            foreach($pagetypes as $pagetype) {
-                foreach($cmods as $cmod) {
-                    $pages[] = page_create_object($pagetype, $cmod->instance);
+                foreach($pagetypes as $pagetype) {
+                    foreach($modinfo->instances[$module->name] as $cm) {
+                        if (!empty($module->instances[$cm->instance]->backup)) {
+                            $pages[] = page_create_object($pagetype, $cm->instance);
+                        }
+                    }
                 }
             }
         }
@@ -957,7 +961,7 @@
         //Blocks open tag
         fwrite ($bf,start_tag('BLOCKS',2,true));
 
-        while($page = array_pop($pages)) {
+        foreach($pages as $page) {
             if ($instances = blocks_get_by_page($page)) {
                 //Iterate over every block
                 foreach ($instances as $position) {
@@ -967,32 +971,28 @@
                         if(empty($blocks[$instance->blockid]->name)) {
                             continue;
                         }
-                        
-                        if (!$blockobj = block_instance($blocks[$instance->blockid]->name, $instance)) {
+                        $blockname = $blocks[$instance->blockid]->name;
+
+                        if (!$blockobj = block_instance($blockname, $instance)) {
                             // Invalid block
                             continue;
-                        }                        
-
-                        //Give the block a chance to process any links in configdata.
-                        if (!isset($blocks[$instance->blockid]->blockobject)) {
-                            $blocks[$instance->blockid]->blockobject = block_instance($blocks[$instance->blockid]->name);
                         }
-                        $config = unserialize(base64_decode($instance->configdata));
-                        $blocks[$instance->blockid]->blockobject->backup_encode_absolute_links_in_config($config);
-                        $instance->configdata = base64_encode(serialize($config));
+
+                        // encode absolute links in block config
+                        $instance->configdata = $blockobj->get_backup_encoded_config();
 
                         //Begin Block
                         fwrite ($bf,start_tag('BLOCK',3,true));
                         fwrite ($bf,full_tag('ID', 4, false,$instance->id));
-                        fwrite ($bf,full_tag('NAME',4,false,$blocks[$instance->blockid]->name));
+                        fwrite ($bf,full_tag('NAME',4,false,$blockname));
                         fwrite ($bf,full_tag('PAGEID',4,false,$instance->pageid));
                         fwrite ($bf,full_tag('PAGETYPE',4,false,$instance->pagetype));
                         fwrite ($bf,full_tag('POSITION',4,false,$instance->position));
                         fwrite ($bf,full_tag('WEIGHT',4,false,$instance->weight));
                         fwrite ($bf,full_tag('VISIBLE',4,false,$instance->visible));
-                        fwrite ($bf,full_tag('CONFIGDATA',4,false,$instance->configdata));                        
-                        // Write instance data if needed+                        
-                        if ($blockobj->backuprestore_enabled()) {
+                        fwrite ($bf,full_tag('CONFIGDATA',4,false,$instance->configdata));
+                        // Write instance data if needed
+                        if ($blockobj->backuprestore_instancedata_used()) {
                             fwrite ($bf,start_tag('INSTANCEDATA',4,true));
                             $status = $blockobj->instance_backup($bf, $preferences);
                             fwrite ($bf,end_tag('INSTANCEDATA',4,true));
@@ -1494,7 +1494,7 @@
                                                     JOIN {$CFG->prefix}grade_items gi
                                                       ON (gi.iteminstance = gc.id)
                                               WHERE gc.courseid = $preferences->backup_course
-                                                    AND (gi.itemtype='course' OR gi.itemtype='category') 
+                                                    AND (gi.itemtype='course' OR gi.itemtype='category')
                                            ORDER BY gi.sortorder ASC");
 
         if ($grade_categories) {
@@ -2235,6 +2235,25 @@
             if (function_exists($function_name)) {
                 $result = $function_name($result,$mypreferences);
             }
+        }
+
+        // For each block, call its encode_content_links method.
+        // This encodes forexample links to blocks/something/viewphp?id=666
+        // that are stored in other activities.
+        static $blockobjects = null;
+        if (!isset($blockobjects)) {
+            $blockobjects = array();
+            if ($blocks = get_records('block', 'visible', 1)) {
+                foreach ($blocks as $block) {
+                    if ($blockobject = block_instance($block->name)) {
+                        $blockobjects[] = $blockobject;
+                    }
+                }
+            }
+        }
+
+        foreach ($blockobjects as $blockobject) {
+            $result = $blockobject->encode_content_links($result,$mypreferences);
         }
 
         if ($result != $content) {

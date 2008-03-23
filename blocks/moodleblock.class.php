@@ -130,7 +130,7 @@ class block_base {
     }
 
     /**
-     * Enable the block for backup and restore.
+     * Enable custom instance data section in backup and restore.
      * 
      * If return true, then {@link instance_backup()} and
      * {@link instance_restore()} will be called during
@@ -138,7 +138,7 @@ class block_base {
      *
      * @return boolean
      **/
-    function backuprestore_enabled() {
+    function backuprestore_instancedata_used() {
         return false;
     }
 
@@ -174,24 +174,58 @@ class block_base {
 
     /**
      * Will be called before an instance of this block is backed up, so that any links in
-     * any links in any HTML fields on config can be encoded. For example, for the HTML block
-     * we need to do $config->text = backup_encode_absolute_links($config->text);. 
-     *
-     * @param object $config the config field for an insance of this class.
+     * in config can be encoded. For example config->text, for the HTML block
+     * @return string
      */
-    function backup_encode_absolute_links_in_config(&$config) {
+    function get_backup_encoded_config() {
+        return base64_encode(serialize($this->config));
     }
 
     /**
-     * Undo the effect of backup_encode_absolute_links_in_config. For exmaple, in the
-     * HTML block we need to do $config->text = restore_decode_absolute_links($config->text);
+     * Return the content encoded to support interactivities linking. This function is
+     * called automatically from the backup procedure by {@link backup_encode_absolute_links()}.
      *
-     * @param object $config the config field for an insance of this class.
-     * @return boolean return true if something has changed, so the database can be updated,
-     *       false if not, for efficiency reasons.
-     */
-    function restore_decode_absolute_links_in_config(&$config) {
-        return false;
+     * NOTE: There is no block instance when this method is called.
+     *
+     * @param string $content Content to be encoded
+     * @param object $restore Restore preferences object
+     * @return string The encoded content
+     **/
+    function encode_content_links($content, $restore) {
+        return $content;
+    }
+
+    /**
+     * This function makes all the necessary calls to {@link restore_decode_content_links_worker()}
+     * function in order to decode contents of this block from the backup 
+     * format to destination site/course in order to mantain inter-activities 
+     * working in the backup/restore process. 
+     * 
+     * This is called from {@link restore_decode_content_links()} function in the restore process.
+     *
+     * NOTE: There is no block instance when this method is called.
+     *
+     * @param object $restore Standard restore object
+     * @return boolean
+     **/
+    function decode_content_links_caller($restore) {
+        return true;
+    }
+
+    /**
+     * Return content decoded to support interactivities linking.
+     * This is called automatically from
+     * {@link restore_decode_content_links_worker()} function
+     * in the restore process.
+     *
+     * NOTE: There is no block instance when this method is called.
+     *
+     * @param string $content Content to be dencoded
+     * @param object $restore Restore preferences object
+     * @return string The dencoded content
+     **/
+    function decode_content_links($content, $restore) {
+        return $content;
     }
 
     /**
