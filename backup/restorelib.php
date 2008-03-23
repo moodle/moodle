@@ -104,7 +104,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     if (!defined('RESTORE_SILENTLY')) {
                         echo "<li>".get_string ("from")." ".get_string("modulenameplural",$name);
                     }
-                    $status = $function_name($restore);
+                    $status = $function_name($restore) && $status;
                     if (!defined('RESTORE_SILENTLY')) {
                         echo '</li>';
                     }
@@ -114,22 +114,16 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         // Process all html text also in blocks too
         if (!defined('RESTORE_SILENTLY')) {
-            echo '<li>' . get_string ('from') . ' ' . get_string('blocks');
+            echo '<li>'.get_string ('from').' '.get_string('blocks');
         }
-        if (!empty($restore->blockinstanceids)) {
-            $blocks = blocks_get_record();
-            $instances = get_records_list('block_instance', 'id', implode(',', $restore->blockinstanceids), '', 'id,blockid,configdata');
-            foreach ($instances as $instance) {
-                if (!isset($blocks[$instance->blockid]->blockobject)) {
-                    $blocks[$instance->blockid]->blockobject = block_instance($blocks[$instance->blockid]->name);
-                }
-                $config = unserialize(base64_decode($instance->configdata));
-                if ($blocks[$instance->blockid]->blockobject->restore_decode_absolute_links_in_config($config)) {
-                    $instance->configdata = base64_encode(serialize($config));
-                    $status = $status && update_record('block_instance', $instance);
-                }
+
+        if ($blocks = get_records('block', 'visible', 1)) {
+            foreach ($blocks as $block) {
+                $blockobject = block_instance($block->name);
+                $blockobject->decode_content_links_caller($restore);
             }
         }
+
         if (!defined('RESTORE_SILENTLY')) {
             echo '</li>';
         }
@@ -139,7 +133,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         if (!defined('RESTORE_SILENTLY')) {
             echo '<li>' . get_string('from') . ' ' . get_string('questions', 'quiz');
         }
-        $status = question_decode_content_links_caller($restore);
+        $status = question_decode_content_links_caller($restore) && $status;
         if (!defined('RESTORE_SILENTLY')) {
             echo '</li>';
         }
@@ -161,6 +155,24 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $content = $function_name($content,$restore);
             }
         }
+
+        // For each block, call its encode_content_links method
+        static $blockobjects = null; 
+        if (!isset($blockobjects)) { 
+            $blockobjects = array(); 
+            if ($blocks = get_records('block', 'visible', 1)) { 
+                foreach ($blocks as $block) { 
+                    if ($blockobject = block_instance($block->name)) {
+                        $blockobjects[] = $blockobject; 
+                    }
+                }
+            }
+        }
+        
+        foreach ($blockobjects as $blockobject) { 
+            $content = $blockobject->decode_content_links($content,$restore); 
+        }
+
         return $content;
     }
 
@@ -248,10 +260,10 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     }
 
     //This function read the xml file and store its data from the blocks in a object
-    function restore_read_xml_blocks ($xml_file) {
+    function restore_read_xml_blocks ($restore, $xml_file) {
 
         //We call the main read_xml function, with todo = BLOCKS
-        $info = restore_read_xml ($xml_file,'BLOCKS',false);
+        $info = restore_read_xml ($xml_file,'BLOCKS',$restore);
 
         return $info;
     }
@@ -762,7 +774,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 // Looks like it's from Moodle < 1.3. Let's give the course default blocks...
                 $newpage = page_create_object(PAGE_COURSE_VIEW, $restore->course_id);
                 blocks_repopulate_page($newpage);
-            } else {
+            } else if (!empty($CFG->showblocksonmodpages)) {
                 // We just have a blockinfo field, this is a legacy 1.4 or 1.3 backup
                 $blockrecords = get_records_select('block', '', '', 'name, id');
                 $temp_blocks_l = array();
@@ -810,17 +822,13 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         $status = true;
 
-        // Tracks which blocks we create during the restore.
-        // This is used in restore_decode_content_links.
-        $restore->blockinstanceids = array();
-
         //Check it exists
         if (!file_exists($xml_file)) {
             $status = false;
         }
         //Get info from xml
         if ($status) {
-            $info = restore_read_xml_blocks($xml_file);
+            $info = restore_read_xml_blocks($restore,$xml_file);
         }
 
         if(empty($info->instances)) {
@@ -838,8 +846,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             if($instance->pagetype == PAGE_COURSE_VIEW) {
                 // This one's easy...
                 $instance->pageid  = $restore->course_id;
-            }
-            else {
+
+            } else if (!empty($CFG->showblocksonmodpages)) {
                 $parts = explode('-', $instance->pagetype);
                 if($parts[0] == 'mod') {
                     if(!$restore->mods[$parts[1]]->restore) {
@@ -857,6 +865,10 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     // Not invented here ;-)
                     continue;
                 }
+
+            } else {
+                // do not restore activity blocks if disabled
+                continue;
             }
 
             if(!isset($pageinstances[$instance->pagetype])) {
@@ -869,7 +881,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $pageinstances[$instance->pagetype][$instance->pageid][] = $instance;
         }
 
-        $blocks = get_records_select('block', '', '', 'name, id, multiple');
+        $blocks = get_records_select('block', 'visible = 1', '', 'name, id, multiple');
 
         // For each type of page we have restored
         foreach($pageinstances as $thistypeinstances) {
@@ -907,11 +919,35 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     //Add this instance
                     $instance->blockid = $blocks[$instance->name]->id;
 
-                    if ($newid = insert_record('block_instance', $instance)) {
-                        if (!empty($instance->id)) { // this will only be set if we come from 1.7 and above backups
-                            backup_putid ($restore->backup_unique_code,"block_instance",$instance->id,$newid);
+                    // This will only be set if we come from 1.7 and above backups
+                    //  Also, must do this before insert (insert_record unsets id)
+                    if (!empty($instance->id)) { 
+                        $oldid = $instance->id;
+                    } else {
+                        $oldid = 0;
+                    }
+
+                    if ($instance->id = insert_record('block_instance', $instance)) {
+                        // Create block instance
+                        if (!$blockobj = block_instance($instance->name, $instance)) {
+                            $status = false;
+                            break;
                         }
-                        $restore->blockinstanceids[] = $newid;
+                        // Run the block restore if needed
+                        if ($blockobj->backuprestore_instancedata_used()) {
+                            // Get restore information
+                            $data = backup_getid($restore->backup_unique_code,'block_instance',$oldid);
+                            $data->new_id = $instance->id;  // For completeness
+                            if (!$blockobj->instance_restore($restore, $data)) {
+                                $status = false;
+                                break;
+                            }
+                        }
+                        // Save oldid after block restore process because info will be over-written with blank string
+                        if ($oldid) {
+                            backup_putid ($restore->backup_unique_code,"block_instance",$oldid,$instance->id);
+                        }
+
                     } else {
                         $status = false;
                         break;
@@ -919,8 +955,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
                     //Get an object for the block and tell it it's been restored so it can update dates
                     //etc. if necessary
-                    $blockobj=block_instance($instance->name,$instance);
-                    $blockobj->after_restore($restore);
+                    if ($blockobj = block_instance($instance->name,$instance)) {
+                        $blockobj->after_restore($restore);
+                    }
 
                     //Now we can increment the weight counter
                     ++$maxweights[$instance->position];
@@ -4286,6 +4323,16 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //Check if we are into BLOCKS zone
             //if ($this->tree[3] == "BLOCKS")                                                         //Debug
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+
+            //If we are under a BLOCK tag under a BLOCKS zone, accumule it
+            if (isset($this->tree[4]) and isset($this->tree[3])) {  //
+                if ($this->tree[4] == "BLOCK" and $this->tree[3] == "BLOCKS") {
+                    if (!isset($this->temp)) {
+                        $this->temp = "";
+                    }
+                    $this->temp .= "<".$tagName.">";
+                }
+            }
         }
 
         //This is the startTag handler we use where we are reading the sections zone (todo="SECTIONS")
@@ -5077,6 +5124,13 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 //if (trim($this->content))                                                                     //Debug
                 //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
                 //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+
+                // Collect everything into $this->temp
+                if (!isset($this->temp)) {
+                    $this->temp = "";
+                }
+                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";    
+
                 //Dependig of different combinations, do different things
                 if ($this->level == 4) {
                     switch ($tagName) {
@@ -5084,6 +5138,37 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             //We've finalized a block, get it
                             $this->info->instances[] = $this->info->tempinstance;
                             unset($this->info->tempinstance);
+
+                            //Also, xmlize INSTANCEDATA and save to db
+                            //Prepend XML standard header to info gathered
+                            $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                            //Call to xmlize for this portion of xml data (one BLOCK)
+                            //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                //Debug
+                            $data = xmlize($xml_data,0);         
+                            //echo strftime ("%X",time())."<p>";                                                          //Debug
+                            //traverse_xmlize($data);                                                                     //Debug
+                            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                            //$GLOBALS['traverse_array']="";                                                              //Debug
+                            //Check for instancedata, is exists, then save to DB
+                            if (isset($data['BLOCK']['#']['INSTANCEDATA']['0']['#'])) {
+                                //Get old id
+                                $oldid = $data['BLOCK']['#']['ID']['0']['#'];
+                                //Get instancedata
+                                
+                                if ($data = $data['BLOCK']['#']['INSTANCEDATA']['0']['#']) {
+                                    //Restore code calls this multiple times - so might already have the newid
+                                    if ($newid = backup_getid($this->preferences->backup_unique_code,'block_instance',$oldid)) {
+                                        $newid = $newid->new_id;
+                                    } else {
+                                        $newid = null;
+                                    }
+                                    //Save to DB, we will use it later
+                                    $status = backup_putid($this->preferences->backup_unique_code,'block_instance',$oldid,$newid,$data);
+                                }
+                            }
+                            //Reset temp
+                            unset($this->temp);
+
                             break;
                         default:
                             die($tagName);
@@ -8105,7 +8190,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("creatingblocksroles").'</li>';
             }
-            $blocks = restore_read_xml_blocks($xmlfile);
+            $blocks = restore_read_xml_blocks($restore, $xmlfile);
             if (isset($blocks->instances)) {
                 foreach ($blocks->instances as $instance) {
                     if (isset($instance->roleassignments) && !$isimport) {
