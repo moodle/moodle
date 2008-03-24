@@ -450,10 +450,18 @@
 
     /// Always add r.hidden to sort in order to guarantee hiddens to "win"
     /// in the resolution of duplicates later - MDL-13935
+    /// Only exception is frontpage that doesn't have such r.hidden info
+    /// because it retrieves ALL users (without role checking) - MDL-14034
     if ($table->get_sql_sort()) {
-        $sort = ' ORDER BY '.$table->get_sql_sort() . ', r.hidden DESC';
+        $sort = ' ORDER BY '.$table->get_sql_sort();
+        if ($context->id != $frontpagectx->id) {
+            $sort .= ', r.hidden DESC';
+        }
     } else {
-        $sort = ' r.hidden DESC';
+        $sort = '';
+        if ($context->id != $frontpagectx->id) {
+            $sort .= ' ORDER BY r.hidden DESC';
+        }
     }
 
     $matchcount = count_records_sql('SELECT COUNT(distinct u.id) '.$from.$where.$wheresearch);
