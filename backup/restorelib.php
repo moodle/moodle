@@ -2662,7 +2662,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         foreach($user->user_tags as $user_tag) {
                             $tags[] = $user_tag->rawname;
                         }
-                        update_item_tags('user', $newid, implode(',', $tags));
+                        tag_set('user', $newid, $tags);
                     }
                 }
 
