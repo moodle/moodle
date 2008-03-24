@@ -166,6 +166,7 @@ $string['user:update'] = 'Update user profiles';
 $string['user:viewdetails'] = 'View user profiles';
 $string['user:viewhiddendetails'] = 'View hidden details of users';
 $string['user:viewuseractivitiesreport'] = 'See user activity reports';
+$string['userhashiddenassignments'] = 'This user has one or more hidden roles in this course';
 $string['viewrole'] = 'View role details';
 $string['xuserswiththerole'] = 'Users with the role \"$a->role\"';
 $string['ingroup'] = 'in the group \"$a->group\"';
