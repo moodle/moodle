@@ -56,6 +56,7 @@ echo '<form method="post" action="addnote.php">';
 echo '<fieldset class="invisiblefieldset">';
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+echo '</fieldset>';
 $table->head  = array (get_string('fullname'),
     get_string('content', 'notes') . helpbutton('writing', get_string('helpwriting'), 'moodle', true, false, '', true),
     get_string('publishstate', 'notes') . helpbutton('status', get_string('publishstate', 'notes'), 'notes', true, false, '', true),
@@ -84,6 +85,6 @@ foreach ($users as $k => $v) {
     );
 }
 print_table($table);
-echo '<div style="width:100%;text-align:center;"><input type="submit" value="' . get_string('savechanges'). '" /></div></fieldset></form>';
+echo '<div style="width:100%;text-align:center;"><input type="submit" value="' . get_string('savechanges'). '" /></div></form>';
 print_footer($course);
 ?>
