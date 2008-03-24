@@ -461,6 +461,11 @@ function forum_cron() {
         }
     }
 
+    // release some memory
+    unset($subscribedusers);
+    unset($mailcount);
+    unset($errorcount);
+
     $USER = clone($cronuser);
     course_setup(SITEID);
 
@@ -753,6 +758,7 @@ function forum_cron() {
         $timenow = time();
         if ($CFG->forum_lastreadclean + (24*3600) < $timenow) {
             set_config('forum_lastreadclean', $timenow);
+            mtrace('Removing old forum read tracking info...');
             forum_tp_clean_read_records();
         }
     } else {
@@ -5512,16 +5518,28 @@ function forum_tp_stop_tracking($forumid, $userid=false) {
 function forum_tp_clean_read_records() {
     global $CFG;
 
-// Look for records older than the cutoffdate that are still in the forum_read table.
-    $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
-    $sql = 'SELECT fr.id, fr.userid, fr.postid '.
-           'FROM '.$CFG->prefix.'forum_posts fp, '.$CFG->prefix.'forum_read fr '.
-           'WHERE fp.modified < '.$cutoffdate.' AND fp.id = fr.postid';
-    if (($oldreadposts = get_records_sql($sql))) {
-        foreach($oldreadposts as $oldreadpost) {
-            delete_records('forum_read', 'id', $oldreadpost->id);
-        }
+    if (!isset($CFG->forum_oldpostdays)) {
+        return;
     }
+// Look for records older than the cutoffdate that are still in the forum_read table.
+    $cutoffdate = time() - ($CFG->forum_oldpostdays*24*60*60);
+
+    //first get the oldest tracking present - we need tis to speedup the next delete query
+    $sql = "SELECT MIN(fp.modified) AS first
+              FROM {$CFG->prefix}forum_posts fp
+                   JOIN {$CFG->prefix}forum_read fr ON fr.postid=fp.id";
+    if (!$first = get_field_sql($sql)) {
+        // nothing to delete;
+        return;
+    }
+
+    // now delete old tracking info
+    $sql = "DELETE
+              FROM {$CFG->prefix}forum_read
+             WHERE postid IN (SELECT fp.id
+                                FROM {$CFG->prefix}forum_posts fp
+                               WHERE fp.modified >= $first AND fp.modified < $cutoffdate)";
+    execute_sql($sql, false);
 }
 
 /**
