@@ -48,6 +48,7 @@ $string['fetcherror'] = 'An error was found while trying to retrieve the web pag
 $string['fetchservererror'] = 'An error was found with the remote server while trying to retrieve the web page (possibly a program error).';
 $string['filename'] = 'File name';
 $string['filtername'] = 'Resource Names Auto-linking';
+$string['forcedownload'] = 'Force download';
 $string['frameifpossible'] = 'Put resource in a frame to keep site navigation visible';
 $string['framesize'] = 'Frame size';
 $string['fulltext'] = 'Full text';
