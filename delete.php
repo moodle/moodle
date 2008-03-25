@@ -1,4 +1,4 @@
-<?PHP // $Id: delete.php,v 1.2 2006/11/21 19:26:36 skodak Exp $
+<?PHP // $Id: delete.php,v 1.3 2008/03/25 20:19:49 poltawski Exp $
 
 require('teacheraccess.php'); //page only for teachers
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
@@ -8,21 +8,9 @@ $confirm = optional_param('confirm', 0, PARAM_BOOL);
 $strbooks = get_string('modulenameplural', 'book');
 $strbook  = get_string('modulename', 'book');
 
-if ($course->category) {
-    $navigation = '<a href="../../course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->';
-} else {
-    $navigation = '';
-}
+$navigation = build_navigation('', $cm);
 
-print_header( "$course->shortname: $book->name",
-              $course->fullname,
-              "$navigation <a href=index.php?id=$course->id>$strbooks</a> -> $book->name",
-              '',
-              '',
-              true,
-              '',
-              ''
-            );
+print_header("$course->shortname: $book->name", $course->fullname, $navigation);
 
 ///form processing
 if ($confirm) {  // the operation was confirmed.

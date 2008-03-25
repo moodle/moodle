@@ -1,4 +1,4 @@
-<?PHP // $Id: view.php,v 1.4 2007/06/17 10:41:25 stronk7 Exp $
+<?PHP // $Id: view.php,v 1.5 2008/03/25 20:19:49 poltawski Exp $
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -98,11 +98,7 @@ $strbook  = get_string('modulename', 'book');
 $strTOC = get_string('TOC', 'book');
 
 /// prepare header
-if ($course->category) {
-    $navigation = '<a href="../../course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->';
-} else {
-    $navigation = '';
-}
+$navigation = build_navigation('', $cm);
 
 $buttons = $allowedit ? '<table cellspacing="0" cellpadding="0"><tr><td>'.update_module_button($cm->id, $course->id, $strbook).'</td>'.
            '<td>&nbsp;</td><td>'.book_edit_button($cm->id, $course->id, $chapter->id).'</td></tr></table>'
@@ -110,7 +106,7 @@ $buttons = $allowedit ? '<table cellspacing="0" cellpadding="0"><tr><td>'.update
 
 print_header( "$course->shortname: $book->name ($chapter->title)",
               $course->fullname,
-              "$navigation <a href=\"index.php?id=$course->id\">$strbooks</a> -> $book->name",
+              $navigation,
               '',
               '<style type="text/css">@import url('.$CFG->wwwroot.'/mod/book/book_theme.css);</style>',
               true,

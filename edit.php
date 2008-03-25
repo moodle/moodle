@@ -1,4 +1,4 @@
-<?PHP // $Id: edit.php,v 1.2 2007/05/20 06:00:26 skodak Exp $
+<?PHP // $Id: edit.php,v 1.3 2008/03/25 20:19:49 poltawski Exp $
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -123,22 +123,9 @@ if (!$chapter) {
 }
 
 ///prepare the page header
-if ($course->category) {
-    $navigation = '<a href="../../course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->';
-} else {
-    $navigation = '';
-}
+$navigation = build_navigation('', $cm);
 
-print_header( "$course->shortname: $book->name",
-              $course->fullname,
-              "$navigation <a href=\"index.php?id=$course->id\">$strbooks</A> -> <a href=\"view.php?id=$cm->id\">$book->name</A> -> $stredit",
-              '',
-              '',
-              true,
-              '',
-              ''
-            );
-
+print_header("$course->shortname: $book->name", $course->fullname, $navigation);
 
 $icon = '<img align="absmiddle" height="16" width="16" src="icon_chapter.gif" />&nbsp;';
 print_heading_with_help($pageheading, 'edit', 'book', $icon);

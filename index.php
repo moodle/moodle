@@ -1,4 +1,4 @@
-<?PHP // $Id: index.php,v 1.2 2007/05/20 06:00:29 skodak Exp $
+<?PHP // $Id: index.php,v 1.3 2008/03/25 20:19:49 poltawski Exp $
 
 /// This page lists all the instances of book in a particular course
 
@@ -28,22 +28,12 @@ unset($id);
 $strbooks = get_string('modulenameplural', 'book');
 $strbook  = get_string('modulename', 'book');
 
-/// Print the header
-if ($course->category) {
-    $navigation = '<a href="../../course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->';
-} else {
-    $navigation = '';
-}
 
-print_header( "$course->shortname: $strbooks",
-               $course->fullname,
-               "$navigation $strbooks",
-               '',
-               '',
-               true,
-               '',
-               navmenu($course)
-             );
+$navlinks = array();
+$navlinks[] = array('name' => $strbooks, 'link' => '', 'type' => 'activity');
+$navigation = build_navigation($navlinks);
+
+print_header_simple($strbooks, '', $navigation, '', '', true, '', navmenu($course));
 
 add_to_log($course->id, 'book', 'view all', 'index.php?id='.$course->id, '');
 

@@ -1,4 +1,4 @@
-<?PHP // $Id: import.php,v 1.3 2007/05/20 06:00:29 skodak Exp $
+<?PHP // $Id: import.php,v 1.4 2008/03/25 20:19:49 poltawski Exp $
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -45,21 +45,12 @@ $strbook = get_string('modulename', 'book');
 $strbooks = get_string('modulenameplural', 'book');
 $strimport = get_string('import', 'book');
 
-if ($course->category) {
-    $navigation = '<a href="../../course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->';
-} else {
-    $navigation = '';
-}
+$navlinks = array();
+$navlinks[] = array('name' => $strimport, 'link' => '', 'type' => 'title');
 
-print_header( "$course->shortname: $book->name",
-              $course->fullname,
-              "$navigation <a href=\"index.php?id=$course->id\">$strbooks</a> -> <a href=\"view.php?id=$cm->id\">$book->name</a> -> $strimport",
-              '',
-              '',
-              true,
-              '',
-              ''
-            );
+$navigation = build_navigation($navlinks, $cm);
+
+print_header("$course->shortname: $book->name", $course->fullname, $navigation);
 
 /// If data submitted, then process, store and relink.
 if (($form = data_submitted()) && (confirm_sesskey())) {

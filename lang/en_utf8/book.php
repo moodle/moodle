@@ -1,10 +1,11 @@
-<?PHP // $Id: book.php,v 1.2 2007/05/20 06:00:30 skodak Exp $
+<?PHP // $Id: book.php,v 1.3 2008/03/25 20:19:49 poltawski Exp $
 
 $string['modulename'] = 'Book';
 $string['modulenameplural'] = 'Books';
 
 $string['toc'] = 'Table of Contents';
 $string['tocwidth'] = 'Select width of the Table of Contents for all books.';
+$string['book_tocwidth'] = 'Table of Contents width';
 $string['faq'] = 'Book FAQ';
 
 $string['disableprinting'] = 'Disable Printing';
