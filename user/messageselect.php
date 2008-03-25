@@ -60,7 +60,7 @@
         $formstart = "";
     }
 
-    print_header($strtitle,$strtitle,"<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> <a href=\"index.php?id=$course->id\">".get_string("participants")."</a> -> ".$strtitle,$formstart);
+    print_header($strtitle,$strtitle,"<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> <a href=\"index.php?id=$course->id\">".get_string("participants")."</a> -> ".$strtitle,$formstart);
 
     // if messaging is disabled on site, we can still allow users with capabilities to send emails instead
     if (empty($CFG->messaging)) {
