@@ -253,7 +253,7 @@ function cron() {
 
     // notify once a day only - TODO: add some tz handling here, maybe use timestamps
     if ($CFG->lastexpirynotify == date('Ymd')) {
-// return;
+        return;
     }
 
     if ($rs = get_recordset_select('course', 'enrolperiod > 0 AND expirynotify > 0 AND expirythreshold > 0')) {
