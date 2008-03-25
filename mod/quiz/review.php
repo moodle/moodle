@@ -52,9 +52,6 @@
         if (!$attempt->timefinish) {
             redirect($CFG->wwwroot . '/mod/quiz/attempt.php?q=' . $quiz->id);
         }
-        if ($messages = $accessmanager->prevent_review($options)) {
-
-        }
     /// Can't review other users' attempts.
         if (!$reviewofownattempt) {
             quiz_error($quiz, 'reviewnotallowed');

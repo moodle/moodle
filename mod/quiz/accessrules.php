@@ -605,6 +605,7 @@ class password_access_rule extends quiz_access_rule_base {
             print_header('', '', '', 'quizpassword');
         }
         if (trim(strip_tags($this->_quiz->intro))) {
+            $formatoptions = new stdClass;
             $formatoptions->noclean = true;
             $output .= print_box(format_text($this->_quiz->intro, FORMAT_MOODLE, $formatoptions),
                     'generalbox', 'intro', true);
@@ -696,7 +697,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
     public function make_review_link($linktext, $attemptid) {
         global $CFG;
         return link_to_popup_window($CFG->wwwroot . '/mod/quiz/review.php?q=' . $this->_quiz->id .
-                 '&amp;attempt=' . $attemptid, 'quizpopup', $linktext, '', '', '', $windowoptions, true);
+                 '&amp;attempt=' . $attemptid, 'quizpopup', $linktext, '', '', '', $this->windowoptions, true);
     }
 
     /**
