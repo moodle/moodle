@@ -244,7 +244,7 @@
             print_row(get_string("phone").":", "$user->phone1");
         }
         if ($user->phone2) {
-            print_row(get_string("phone").":", "$user->phone2");
+            print_row(get_string("phone2").":", "$user->phone2");
         }
     }
 

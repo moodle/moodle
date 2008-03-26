@@ -262,7 +262,7 @@ function useredit_shared_definition(&$mform) {
     $mform->addElement('text', 'phone1', get_string('phone'), 'maxlength="20" size="25"');
     $mform->setType('phone1', PARAM_CLEAN);
 
-    $mform->addElement('text', 'phone2', get_string('phone'), 'maxlength="20" size="25"');
+    $mform->addElement('text', 'phone2', get_string('phone2'), 'maxlength="20" size="25"');
     $mform->setType('phone2', PARAM_CLEAN);
 
     $mform->addElement('text', 'address', get_string('address'), 'maxlength="70" size="25"');
