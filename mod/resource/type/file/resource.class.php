@@ -97,7 +97,7 @@ class resource_file extends resource_base {
                                            'value'   => $USER->icq),
                 'userphone1'      => array('langstr' => get_string('phone').' 1',
                                            'value'   => $USER->phone1),
-                'userphone2'      => array('langstr' => get_string('phone').' 2',
+                'userphone2'      => array('langstr' => get_string('phone2').' 2',
                                            'value'   => $USER->phone2),
                 'userinstitution' => array('langstr' => get_string('institution'),
                                            'value'   => $USER->institution),

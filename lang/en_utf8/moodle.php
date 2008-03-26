@@ -1160,6 +1160,7 @@ $string['personal'] = 'Personal';
 $string['personalprofile'] = 'Personal profile';
 $string['pictureof'] = 'Picture of $a';
 $string['phone'] = 'Phone';
+$string['phone2'] = 'Mobile Phone';
 $string['phpinfo'] = 'PHP info';
 $string['pleaseclose'] = 'Please close this window now.';
 $string['plugincheck'] = 'Plugins check';

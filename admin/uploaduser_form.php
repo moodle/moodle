@@ -233,7 +233,7 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->setType('phone1', PARAM_CLEAN);
         $mform->setAdvanced('phone1');
 
-        $mform->addElement('text', 'phone2', get_string('phone'), 'maxlength="20" size="25"');
+        $mform->addElement('text', 'phone2', get_string('phone2'), 'maxlength="20" size="25"');
         $mform->setType('phone2', PARAM_CLEAN);
         $mform->setAdvanced('phone2');
 
