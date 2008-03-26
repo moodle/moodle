@@ -1124,7 +1124,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_request->add_param($username);
             $mnet_request->add_param($useragent);
             if ($mnet_request->send($mnet_peer) === false) {
-                debugging("Server side error has occured on host $mnethostid: " .
+                debugging("Server side error has occured on host $mnetsession->mnethostid: " .
                           join("\n", $mnet_request->error));
             }
         }
