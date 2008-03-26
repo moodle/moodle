@@ -10,10 +10,14 @@ define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
  * @param array $headers http headers, null if none
  * @param array $postdata array means use POST request with given parameters
  * @param bool $fullresponse return headers, responses, etc in a similar way snoopy does
- * @param int $timeout connection timeout
+ * @param int $timeout timeout for complete download process including all file transfer 
+ *   (default 5 minutes)
+ * @param int $connecttimeout timeout for connection to server; this is the timeout that
+ *   usually happens if the remote server is completely down (default 20 seconds);
+ *   may not work when using proxy
  * @return mixed false if request failed or content of the file as string if ok.
  */
-function download_file_content($url, $headers=null, $postdata=null, $fullresponse=false, $timeout=20) {
+function download_file_content($url, $headers=null, $postdata=null, $fullresponse=false, $timeout=300, $connecttimeout=20) {
     global $CFG;
 
     // some extra security
@@ -43,6 +47,7 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
         require_once($CFG->libdir.'/snoopy/Snoopy.class.inc');
         $snoopy = new Snoopy();
         $snoopy->read_timeout = $timeout;
+        $snoopy->_fp_timeout  = $connecttimeout;
         $snoopy->proxy_host   = $CFG->proxyhost;
         $snoopy->proxy_port   = $CFG->proxyport;
         if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
@@ -118,7 +123,8 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HEADER, true);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connecttimeout);
+    curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
     if (!ini_get('open_basedir') and !ini_get('safe_mode')) {
         // TODO: add version test for '7.10.5'
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
