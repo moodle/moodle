@@ -655,13 +655,13 @@ class auth_plugin_ldap extends auth_plugin_base {
                 print "User entries to remove: ". count($remove_users) . "\n";
 
                 foreach ($remove_users as $user) {
-                    if ($this->config->removeuser == 2) {
+                    if ($this->config->removeuser == AUTH_REMOVEUSER_FULLDELETE) {
                         if (delete_user($user)) {
                             echo "\t"; print_string('auth_dbdeleteuser', 'auth', array($user->username, $user->id)); echo "\n";
                         } else {
                             echo "\t"; print_string('auth_dbdeleteusererror', 'auth', $user->username); echo "\n";
                         }
-                    } else if ($this->config->removeuser == 1) {
+                    } else if ($this->config->removeuser == AUTH_REMOVEUSER_SUSPEND) {
                         $updateuser = new object();
                         $updateuser->id = $user->id;
                         $updateuser->auth = 'nologin';
@@ -679,7 +679,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         }
 
 /// Revive suspended users
-        if (!empty($this->config->removeuser) and $this->config->removeuser == 1) {
+        if (!empty($this->config->removeuser) and $this->config->removeuser == AUTH_REMOVEUSER_SUSPEND) {
             $sql = "SELECT u.id, u.username
                     FROM $temptable e, {$CFG->prefix}user u
                     WHERE e.username=u.username
@@ -1971,7 +1971,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         if (!isset($config->changepasswordurl))
             {$config->changepasswordurl = ''; }
         if (!isset($config->removeuser))
-            {$config->removeuser = 0; }
+            {$config->removeuser = AUTH_REMOVEUSER_KEEP; }
         if (!isset($config->ntlmsso_enabled))
             {$config->ntlmsso_enabled = 0; }
         if (!isset($config->ntlmsso_subnet))

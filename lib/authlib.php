@@ -38,7 +38,10 @@ define('AUTH_CONFIRM_OK', 1);
 define('AUTH_CONFIRM_ALREADY', 2);
 define('AUTH_CONFIRM_ERROR', 3);
 
-
+# MDL-14055
+define('AUTH_REMOVEUSER_KEEP', 0);
+define('AUTH_REMOVEUSER_SUSPEND', 1);
+define('AUTH_REMOVEUSER_FULLDELETE', 2);
 
 /**
  * Abstract authentication plugin.

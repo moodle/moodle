@@ -269,7 +269,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
         if (!isset($config->groupecreators))
             {$config->groupecreators = ''; }
         if (!isset($config->removeuser))
-            {$config->removeuser = 0; }
+            {$config->removeuser = AUTH_REMOVEUSER_KEEP; }
         // save CAS settings
         set_config('hostname',    $config->hostname,    'auth/cas');
         set_config('port',        $config->port,        'auth/cas');
@@ -708,13 +708,13 @@ if ( !is_object($PHPCAS_CLIENT) ) {
             if (!empty($remove_users)) {
                 print "User entries to remove: ". count($remove_users) . "\n";
                 foreach ($remove_users as $user) {
-                    if ($this->config->removeuser == 2) {
+                    if ($this->config->removeuser == AUTH_REMOVEUSER_FULLDELETE) {
                         if (delete_user($user)) {
                             echo "\t"; print_string('auth_dbdeleteuser', 'auth', array($user->username, $user->id)); echo "\n";
                         } else {
                             echo "\t"; print_string('auth_dbdeleteusererror', 'auth', $user->username); echo "\n";
                         }
-                    } else if ($this->config->removeuser == 1) {
+                    } else if ($this->config->removeuser == AUTH_REMOVEUSER_SUSPEND) {
                         $updateuser = new object();
                         $updateuser->id = $user->id;
                         $updateuser->auth = 'nologin';
@@ -731,7 +731,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
             unset($remove_users); // free mem!
         }
 /// Revive suspended users
-        if (!empty($this->config->removeuser) and $this->config->removeuser == 1) {
+        if (!empty($this->config->removeuser) and $this->config->removeuser == AUTH_REMOVEUSER_SUSPEND) {
             $sql = "SELECT u.id, u.username
                     FROM $temptable e, {$CFG->prefix}user u
                     WHERE e.username=u.username

@@ -255,13 +255,13 @@ class auth_plugin_db extends auth_plugin_base {
                 print_string('auth_dbuserstoremove','auth', count($remove_users)); echo "\n";
 
                 foreach ($remove_users as $user) {
-                    if ($this->config->removeuser == 2) {
+                    if ($this->config->removeuser == AUTH_REMOVEUSER_FULLDELETE) {
                         if (delete_user($user)) {
                             echo "\t"; print_string('auth_dbdeleteuser', 'auth', array($user->username, $user->id)); echo "\n";
                         } else {
                             echo "\t"; print_string('auth_dbdeleteusererror', 'auth', $user->username); echo "\n";
                         }
-                    } else if ($this->config->removeuser == 1) {
+                    } else if ($this->config->removeuser == AUTH_REMOVEUSER_SUSPEND) {
                         $updateuser = new object();
                         $updateuser->id   = $user->id;
                         $updateuser->auth = 'nologin';
@@ -666,7 +666,7 @@ class auth_plugin_db extends auth_plugin_base {
             $config->debugauthdb = 0;
         }
         if (!isset($config->removeuser)) {
-            $config->removeuser = 0;
+            $config->removeuser = AUTH_REMOVEUSER_KEEP;
         }
         if (!isset($config->changepasswordurl)) {
             $config->changepasswordurl = '';

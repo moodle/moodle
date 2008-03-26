@@ -44,7 +44,7 @@
         $config->setupsql = '';
     }
     if (!isset($config->removeuser)) {
-        $config->removeuser = 0;
+        $config->removeuser = AUTH_REMOVEUSER_KEEP;
     }
 
     $yesno = array( get_string('no'), get_string('yes') );
@@ -256,9 +256,9 @@
     <td>
     <?php
        $deleteopt = array();
-       $deleteopt['0'] = get_string('auth_remove_keep','auth');
-       $deleteopt['1'] = get_string('auth_remove_suspend','auth');
-       $deleteopt['2'] = get_string('auth_remove_delete','auth');
+       $deleteopt[AUTH_REMOVEUSER_KEEP] = get_string('auth_remove_keep','auth');
+       $deleteopt[AUTH_REMOVEUSER_SUSPEND] = get_string('auth_remove_suspend','auth');
+       $deleteopt[AUTH_REMOVEUSER_FULLDELETE] = get_string('auth_remove_delete','auth');
        choose_from_menu($deleteopt, 'removeuser', $config->removeuser, '');
     ?>
     </td>
