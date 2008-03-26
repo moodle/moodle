@@ -70,6 +70,13 @@ $string['databasesettingssub_mysql'] = '<b>Type (typ):</b>MySQL <br />
 <b>User (användare):</b> Ditt användarnamn för tillgång till databasen<br />
 <b>Password (lösenord):</b> Ditt lösenord för tillgång till databasen<br />
 <b>Tables Prefix (prefix för tabeller):</b> ett valfritt prefix som kopplas till alla namn på tabeller';
+$string['databasesettingssub_mysqli'] = '<b>Type (typ):</b> Förbättrad MySQL<br />
+<b>Host (värd):</b> t.ex. localhost eller db.isp.com<br />
+<b>Namn:</b> databasnamn, t.ex. moodle<br />
+<b>Användare:</b> Ditt användarnamn till databasen<br />
+<b>Lösenord:</b> Ditt lösenord till databasen<br />
+<b>Tabellprefix:</b> prefix som ska användas i alla tabellnamn (valfritt)
+databasesettingssub_mysqli';
 $string['databasesettingssub_oci8po'] = '<b>Type (typ):</b>Oracle <br />
 <b>Host (värd):</b>används inte, måste vara tomt<br />
 <b>Name (namn):</b> det givna namnet på tnsnames.ora anslutningen<br />
@@ -170,6 +177,8 @@ $string['mysql'] = 'MySQL';
 $string['mysql416bypassed'] = 'Om Du emellertid på Din webbplats använder BARA språk som är kodade enligt ISO-8859-1 så kan Du fortsätta att använda Din aktuella installation av MySQL 4.1.12 (eller högre).';
 $string['mysql416required'] = 'MySQL 4.1.16 är den äldsta version som Du kan använda tillsammans med Moodle 1.6 om Du vill säkerställa att alla data kan konverteras till UTF-8 i framtiden.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP har inte konfigurerats på det sätt som måste i förhållande till MySQL-extensionen för att kunna kommunicera med MySQL. Var snäll och kontrollera Din php.ini-fil eller kompilera om PHP.';
+$string['mysqli'] = 'Förbättrad MySQL (mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP har inte konfigurerats på ettt korrekt sätt i förhållande till MySQLi extensionen så att den kan kommunicera med PHP. Det finns ingen MySQLi extension för PHP4.';
 $string['name'] = 'Namn';
 $string['next'] = 'Nästa';
 $string['oci8po'] = 'Oracle (oci8po)';
