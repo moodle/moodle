@@ -221,12 +221,26 @@ $ADMIN->add('server', new admin_externalpage('phpinfo', get_string('phpinfo'), "
 
 // "performance" settingpage
 $temp = new admin_settingpage('performance', get_string('performance', 'admin'));
-$temp->add(new admin_setting_special_selectsetup('cachetype', get_string('cachetype', 'admin'),
+if (function_exists('memcache_connect')) {
+    $temp->add(new admin_setting_special_selectsetup('cachetype', get_string('cachetype', 'admin'),
                                           get_string('configcachetype', 'admin'), '',
                                           array( '' => get_string('none'),
                                                  'internal' => 'internal',
                                                  'memcached' => 'memcached',
                                                  'eaccelerator' => 'eaccelerator')));
+    $temp->add(new admin_setting_configtext('memcachedhosts', get_string('memcachedhosts', 'admin'),
+                                            get_string('configmemcachedhosts', 'admin'), ''));
+    $temp->add(new admin_setting_configselect('memcachedpconn', get_string('memcachedpconn', 'admin'),
+                                              get_string('configmemcachedpconn', 'admin'), 0,
+                                              array( '0' => get_string('no'),
+                                                     '1' => get_string('yes'))));
+}else{
+    $temp->add(new admin_setting_special_selectsetup('cachetype', get_string('cachetype', 'admin'),
+                                          get_string('configcachetype', 'admin'), '',
+                                          array( '' => get_string('none'),
+                                                 'internal' => 'internal',
+                                                 'eaccelerator' => 'eaccelerator')));
+}
 // NOTE: $CFG->rcache is forced to bool in lib/setup.php
 $temp->add(new admin_setting_special_selectsetup('rcache', get_string('rcache', 'admin'),
                                           get_string('configrcache', 'admin'), 0,
@@ -236,12 +250,6 @@ $temp->add(new admin_setting_configtext('rcachettl', get_string('rcachettl', 'ad
                                         get_string('configrcachettl', 'admin'), 10));
 $temp->add(new admin_setting_configtext('intcachemax', get_string('intcachemax', 'admin'),
                                         get_string('configintcachemax', 'admin'), 10));
-$temp->add(new admin_setting_configtext('memcachedhosts', get_string('memcachedhosts', 'admin'),
-                                        get_string('configmemcachedhosts', 'admin'), ''));
-$temp->add(new admin_setting_configselect('memcachedpconn', get_string('memcachedpconn', 'admin'),
-                                          get_string('configmemcachedpconn', 'admin'), 0,
-                                          array( '0' => get_string('no'),
-                                                 '1' => get_string('yes'))));
 $ADMIN->add('server', $temp);
 
 if (file_exists("$CFG->dirroot/$CFG->admin/mysql/frame.php")) {
