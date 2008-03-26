@@ -50,7 +50,7 @@ if ($frm = data_submitted() and confirm_sesskey()) {
     $frm = get_config("auth/$auth");
 }
 
-$user_fields = array("firstname", "lastname", "email", "phone1", "phone2", "department", "address", "city", "country", "description", "idnumber", "lang");
+$user_fields = array("firstname", "lastname", "email", "phone1", "phone2", "institution", "department", "address", "city", "country", "description", "idnumber", "lang");
 
 /// Get the auth title (from core or own auth lang files)
     $authtitle = $authplugin->get_title();
