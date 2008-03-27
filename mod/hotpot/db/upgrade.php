@@ -9,7 +9,7 @@ function xmldb_hotpot_upgrade($oldversion=0) {
     $result = true;
 
     // update hotpot grades from sites earlier than Moodle 1.9, 27th March 2008
-    if ($result && $oldversion < 2007101509) {
+    if ($result && $oldversion < 2007101511) {
 
         // ensure "hotpot_update_grades" function is available
         require_once $CFG->dirroot.'/mod/hotpot/lib.php';
