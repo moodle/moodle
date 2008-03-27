@@ -171,8 +171,6 @@ function workshop_cron () {
         }
     }
     $timenow = time();
-
-    $CFG->enablerecordcache = true;      // We want all the caching we can get
     
     // Find all workshop notifications that have yet to be mailed out, and mails them
     $cutofftime = $timenow - $CFG->maxeditingtime;
