@@ -37,6 +37,8 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
 
+Mock::generatePartial('grade_item', 'mock_grade_item_for_test_is_calculated', array('set_calculation'));
+
 @set_time_limit(0);
 
 class grade_item_test extends grade_test {
@@ -164,9 +166,7 @@ class grade_item_test extends grade_test {
         $this->assertEqual(count($this->grade_items), count($grade_items)-1);
     }
 
-    /**
-     * Retrieve all final scores for a given grade_item.
-     */
+    // Retrieve all final scores for a given grade_item.
     function test_grade_item_get_all_finals() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'get_final'));
@@ -176,9 +176,7 @@ class grade_item_test extends grade_test {
     }
 
 
-    /**
-     * Retrieve all final scores for a specific userid.
-     */
+    // Retrieve all final scores for a specific userid.
     function test_grade_item_get_final() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'get_final'));
@@ -271,9 +269,7 @@ class grade_item_test extends grade_test {
         $this->assertEqual($this->grade_categories[0]->fullname, $grade_item->item_category->fullname);
     }
 
-    /**
-     * Test update of all final grades
-     */
+    // Test update of all final grades
     function test_grade_item_regrade_final_grades() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'regrade_final_grades'));
@@ -281,9 +277,7 @@ class grade_item_test extends grade_test {
         //TODO: add more tests
     }
 
-    /**
-     * Test the adjust_raw_grade method
-     */
+    // Test the adjust_raw_grade method
     function test_grade_item_adjust_raw_grade() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'adjust_raw_grade'));
@@ -344,9 +338,7 @@ class grade_item_test extends grade_test {
         $this->assertEqual(round(1.6), round($grade_item->adjust_raw_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax)));
     }
 
-    /**
-     * Test locking of grade items
-     */
+    // Test locking of grade items
     function test_grade_item_set_locked() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'set_locked'));
@@ -379,9 +371,7 @@ class grade_item_test extends grade_test {
         $this->assertTrue($grade_item->is_locked(1));
     }
 
-    /**
-     * Test hiding of grade items
-     */
+    // Test hiding of grade items
     function test_grade_item_set_hidden() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'set_hidden'));
@@ -459,13 +449,15 @@ class grade_item_test extends grade_test {
     }
 
     function test_grade_item_is_calculated() {
-        $grade_item = new grade_item($this->grade_items[1]);
+        $grade_item = new mock_grade_item_for_test_is_calculated($this);
+        $grade_item->set_properties($grade_item, $this->grade_items[1]);
         $this->assertTrue(method_exists($grade_item, 'is_calculated'));
         $grade_itemsource = new grade_item($this->grade_items[0]);
-        $normalizedformula = str_replace('[['.$grade_itemsource->idnumber.']]', '##gi'.$grade_itemsource->id.'##', $this->grade_items[1]->calculation);
+        $normalizedformula = str_replace("[[$grade_itemsource->idnumber]]", "##gi$grade_itemsource->id##", $this->grade_items[1]->calculation);
 
+        $grade_item->expectOnce('set_calculation', array($grade_item->calculation));
+        $grade_item->setReturnValue('set_calculation', $normalizedformula);
         $this->assertTrue($grade_item->is_calculated());
-        $this->assertEqual($normalizedformula, $grade_item->calculation);
     }
 
     function test_grade_item_set_calculation() {

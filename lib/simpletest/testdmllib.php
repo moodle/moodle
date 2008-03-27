@@ -90,7 +90,7 @@ class datalib_test extends prefix_changing_test_case {
         ob_end_clean();
         $this->assertEqual('', $result, '%s (No error ouside debug mode).');
 
-        $CFG->debug = E_ALL;
+        $CFG->debug = DEBUG_DEVELOPER;
         ob_start();
         $record = get_record($this->table, 'textfield', 'tadpole');
         $result = ob_get_contents();
@@ -132,7 +132,7 @@ class datalib_test extends prefix_changing_test_case {
         ob_end_clean();
         $this->assertEqual('', $result, '%s (No error ouside debug mode).');
 
-        $CFG->debug = E_ALL;
+        $CFG->debug = DEBUG_DEVELOPER;
         ob_start();
         $record = get_record_sql("SELECT * FROM {$CFG->prefix}" . $this->table . " WHERE textfield = 'tadpole'");
         $result = ob_get_contents();
@@ -166,7 +166,7 @@ class datalib_test extends prefix_changing_test_case {
         ob_end_clean();
         $this->assertEqual('', $result, '%s (No error ouside debug mode).');
 
-        $CFG->debug = E_ALL;
+        $CFG->debug = DEBUG_DEVELOPER;
         ob_start();
         $record = get_record_select($this->table, "textfield = 'tadpole'");
         $result = ob_get_contents();

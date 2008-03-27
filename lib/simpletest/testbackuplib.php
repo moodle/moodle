@@ -48,6 +48,9 @@ class backuplib_test extends UnitTestCase {
     var $testfiles = array();
     var $userbasedir;
 
+    /* The mocking of the $rs and $db objects is problematic. Somehow it's affecting other unit test suites. 
+       I'm commenting this off until this is resolved -- nicolasconnault@gmail.com --
+
     function setUp() {
         global $db, $CFG;
         $this->real_db = fullclone($db);
@@ -115,9 +118,7 @@ class backuplib_test extends UnitTestCase {
         }
     }
 
-    /**
-     * This is a moodlelib method but it is used in backuplib, so it is tested here in that context, with typical backup data.
-     */
+    // This is a moodlelib method but it is used in backuplib, so it is tested here in that context, with typical backup data.
     function test_get_user_directories() {
         global $CFG;
         $dirlist = get_user_directories(); 
@@ -132,6 +133,7 @@ class backuplib_test extends UnitTestCase {
             $this->assertEqual($this->userbasedir, $dirlist[$userid]['basedir']);
         }
     } 
+    */
 }
 
 ?>
