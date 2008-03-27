@@ -2053,8 +2053,6 @@ function assignment_cron () {
 
     if ($submissions = assignment_get_unmailed_submissions($starttime, $endtime)) {
 
-        $CFG->enablerecordcache = true;      // We want all the caching we can get
-
         $realuser = clone($USER);
 
         foreach ($submissions as $key => $submission) {
