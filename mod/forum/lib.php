@@ -192,8 +192,6 @@ function forum_delete_instance($id) {
 function forum_cron() {
     global $CFG, $USER;
 
-    $CFG->enablerecordcache = true;      // We want all the caching we can get
-
     $cronuser = clone($USER);
     $site = get_site();
 
