@@ -1243,42 +1243,53 @@ function hotpot_get_user_grades($hotpot, $userid=0) {
         return false;
     }
 }
+
 /**
  * Update grades in central gradebook
+ * this function is called from db/upgrade.php
+ *     it is initially called with no arguments, which forces it to get a list of all hotpots
+ *     it then iterates through the hotpots, calling itself to create a grade record for each hotpot
  *
  * @param object $hotpot null means all hotpots
- * @param int $userid specific user only, 0 mean all
+ * @param int $userid specific user only, 0 means all users
  */
 function hotpot_update_grades($hotpot=null, $userid=0, $nullifnone=true) {
     global $CFG;
-    if (! function_exists('grade_update')) { //workaround for buggy PHP versions
+    if (! function_exists('grade_update')) {
         require_once($CFG->libdir.'/gradelib.php');
     }
-    if ($hotpot) {
-        if ($grades = hotpot_get_user_grades($hotpot, $userid)) {
-            hotpot_grade_item_update($hotpot, $grades);
-
-        } else if ($userid && $nullifnone) {
-            $grade = new object();
-            $grade->userid   = $userid;
-            $grade->rawgrade = null;
-            hotpot_grade_item_update($hotpot, $grade);
-
-        } else {
-            hotpot_grade_item_update($hotpot);
-        }
-    } else {
-        $sql = "SELECT h.*, cm.idnumber as cmidnumber
-                  FROM {$CFG->prefix}hotpot h, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-                 WHERE m.name='hotpot' AND m.id=cm.module AND cm.instance=s.id";
+    if (is_null($hotpot)) {
+        // update (=create) grades for all hotpots
+        $sql = "
+            SELECT h.*, cm.idnumber as cmidnumber
+            FROM {$CFG->prefix}hotpot h, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+            WHERE m.name='hotpot' AND m.id=cm.module AND cm.instance=h.id"
+        ;
         if ($rs = get_recordset_sql($sql)) {
             while ($hotpot = rs_fetch_next_record($rs)) {
                 hotpot_update_grades($hotpot, 0, false);
             }
             rs_close($rs);
         }
+    } else {
+        // update (=create) grade for a single hotpot
+        if ($grades = hotpot_get_user_grades($hotpot, $userid)) {
+            hotpot_grade_item_update($hotpot, $grades);
+
+        } else if ($userid && $nullifnone) {
+            // no grades for this user, but we must force the creation of a "null" grade record
+            $grade = new object();
+            $grade->userid   = $userid;
+            $grade->rawgrade = null;
+            hotpot_grade_item_update($hotpot, $grade);
+
+        } else {
+            // no grades and no userid
+            hotpot_grade_item_update($hotpot);
+        }
     }
 }
+
 /**
  * Update/create grade item for given hotpot
  *
@@ -1286,18 +1297,16 @@ function hotpot_update_grades($hotpot=null, $userid=0, $nullifnone=true) {
  * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return object grade_item
  */
-function hotpot_grade_item_update($hotpot, $grades=NULL) {
+function hotpot_grade_item_update($hotpot, $grades=null) {
     global $CFG;
-    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+    if (! function_exists('grade_update')) {
         require_once($CFG->libdir.'/gradelib.php');
     }
-
     $params = array('itemname' => $hotpot->name);
     if (array_key_exists('cmidnumber', $hotpot)) {
         //cmidnumber may not be always present
         $params['idnumber'] = $hotpot->cmidnumber;
     }
-
     if ($hotpot->grade > 0) {
         $params['gradetype'] = GRADE_TYPE_VALUE;
         $params['grademax']  = $hotpot->grade;
@@ -1306,9 +1315,9 @@ function hotpot_grade_item_update($hotpot, $grades=NULL) {
     } else {
         $params['gradetype'] = GRADE_TYPE_NONE;
     }
-
     return grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, $grades, $params);
 }
+
 /**
  * Delete grade item for given hotpot
  *
@@ -1317,9 +1326,10 @@ function hotpot_grade_item_update($hotpot, $grades=NULL) {
  */
 function hotpot_grade_item_delete($hotpot) {
     global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
-
-    return grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, NULL, array('deleted'=>1));
+    if (! function_exists('grade_update')) {
+        require_once($CFG->libdir.'/gradelib.php');
+    }
+    return grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, null, array('deleted'=>1));
 }
 
 function hotpot_get_participants($hotpotid) {
