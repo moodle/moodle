@@ -72,8 +72,11 @@ class grade_grade_test extends grade_test {
         $last_grade_grade = end($this->grade_grades);
 
         $this->assertEqual($grade_grade->id, $last_grade_grade->id + 1);
-        $this->assertFalse(empty($grade_grade->timecreated));
-        $this->assertFalse(empty($grade_grade->timemodified));
+
+        // timecreated will only be set if the grade was submitted by an activity module
+        $this->assertTrue(empty($grade_grade->timecreated));
+        // timemodified will only be set if the grade was submitted by an activity module
+        $this->assertTrue(empty($grade_grade->timemodified));
     }
 
     function test_grade_grade_update() {
