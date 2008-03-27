@@ -316,6 +316,13 @@ function forum_cron() {
             $userto->canpost       = array();
             $userto->tracking      = array();
 
+            // reset the caches
+            foreach ($coursemodules as $forumid=>$unused) {
+                $coursemodules[$forumid]->cache       = new object();
+                $coursemodules[$forumid]->cache->caps = array();
+                unset($coursemodules[$forumid]->uservisible);
+            }
+
             foreach ($posts as $pid => $post) {
 
                 // Set up the environment for the post, discussion, forum, course
