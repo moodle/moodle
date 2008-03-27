@@ -966,8 +966,8 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
             $message = stripslashes_safe($message);
             $tagline = get_string('emailtagline', 'message', $SITE->shortname);
 
-            $messagesubject = message_shorten_message(strip_tags($message), 30).'...';
-            $messagesubject = str_replace("\n", ' ', $messagesubject);  // make sure it's all on one line
+            $messagesubject = preg_replace('/\s+/', ' ', strip_tags($message)); // make sure it's all on one line
+            $messagesubject = message_shorten_message($messagesubject, 30).'...';
 
             $messagetext = format_text_email($message, $format).
                            "\n\n--\n".$tagline."\n"."$CFG->wwwroot/message/index.php?popup=1";
