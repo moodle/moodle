@@ -430,12 +430,34 @@ function hotpot_get_chain(&$cm) {
     return $found ? $chain : false;
 }
 function hotpot_is_visible(&$cm) {
+    global $CFG, $COURSE;
+
+    // check grouping
+    $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (empty($CFG->enablegroupings) || empty($cm->groupmembersonly) || has_capability('moodle/site:accessallgroups', $modulecontext)) {
+        // groupings not applicable
+    } else if (!isguestuser() && groups_has_membership($cm)) {
+        // user is in one of the groups in the allowed grouping
+    } else {
+        // user is not in the required grouping and does not have sufficiently privileges to view this hotpot activity
+        return false;
+    }
+
+    // check if user can view hidden activities
+    if (isset($COURSE->context)) {
+        $coursecontext = &$COURSE->context;
+    } else {
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $cm->course);
+    }
+    if (has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
+        return true; // user can view hidden activities
+    }
+
     if (!isset($cm->sectionvisible)) {
-        if ($section = get_record('course_sections', 'id', $cm->section)) {
-            $cm->sectionvisible = $section->visible;
-        } else {
+        if (! $section = get_record('course_sections', 'id', $cm->section)) {
             error('Course module record contains invalid section');
         }
+        $cm->sectionvisible = $section->visible;
     }
 
     if (empty($cm->sectionvisible)) {
@@ -1222,42 +1244,53 @@ function hotpot_get_user_grades($hotpot, $userid=0) {
         return false;
     }
 }
+
 /**
  * Update grades in central gradebook
+ * this function is called from db/upgrade.php
+ *     it is initially called with no arguments, which forces it to get a list of all hotpots
+ *     it then iterates through the hotpots, calling itself to create a grade record for each hotpot
  *
  * @param object $hotpot null means all hotpots
- * @param int $userid specific user only, 0 mean all
+ * @param int $userid specific user only, 0 means all users
  */
 function hotpot_update_grades($hotpot=null, $userid=0, $nullifnone=true) {
     global $CFG;
-    if (! function_exists('grade_update')) { //workaround for buggy PHP versions
+    if (! function_exists('grade_update')) {
         require_once($CFG->libdir.'/gradelib.php');
     }
-    if ($hotpot) {
-        if ($grades = hotpot_get_user_grades($hotpot, $userid)) {
-            hotpot_grade_item_update($hotpot, $grades);
-
-        } else if ($userid && $nullifnone) {
-            $grade = new object();
-            $grade->userid   = $userid;
-            $grade->rawgrade = null;
-            hotpot_grade_item_update($hotpot, $grade);
-
-        } else {
-            hotpot_grade_item_update($hotpot);            
-        }
-    } else {
-        $sql = "SELECT h.*, cm.idnumber as cmidnumber
-                  FROM {$CFG->prefix}hotpot h, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-                 WHERE m.name='hotpot' AND m.id=cm.module AND cm.instance=s.id";
+    if (is_null($hotpot)) {
+        // update (=create) grades for all hotpots
+        $sql = "
+            SELECT h.*, cm.idnumber as cmidnumber
+            FROM {$CFG->prefix}hotpot h, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+            WHERE m.name='hotpot' AND m.id=cm.module AND cm.instance=h.id"
+        ;
         if ($rs = get_recordset_sql($sql)) {
             while ($hotpot = rs_fetch_next_record($rs)) {
                 hotpot_update_grades($hotpot, 0, false);
             }
             rs_close($rs);
         }
+    } else {
+        // update (=create) grade for a single hotpot
+        if ($grades = hotpot_get_user_grades($hotpot, $userid)) {
+            hotpot_grade_item_update($hotpot, $grades);
+
+        } else if ($userid && $nullifnone) {
+            // no grades for this user, but we must force the creation of a "null" grade record
+            $grade = new object();
+            $grade->userid   = $userid;
+            $grade->rawgrade = null;
+            hotpot_grade_item_update($hotpot, $grade);
+
+        } else {
+            // no grades and no userid
+            hotpot_grade_item_update($hotpot);
+        }
     }
 }
+
 /**
  * Update/create grade item for given hotpot
  *
@@ -1265,18 +1298,16 @@ function hotpot_update_grades($hotpot=null, $userid=0, $nullifnone=true) {
  * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return object grade_item
  */
-function hotpot_grade_item_update($hotpot, $grades=NULL) {
+function hotpot_grade_item_update($hotpot, $grades=null) {
     global $CFG;
-    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+    if (! function_exists('grade_update')) {
         require_once($CFG->libdir.'/gradelib.php');
     }
-
     $params = array('itemname' => $hotpot->name);
     if (array_key_exists('cmidnumber', $hotpot)) {
         //cmidnumber may not be always present
         $params['idnumber'] = $hotpot->cmidnumber;
     }
-
     if ($hotpot->grade > 0) {
         $params['gradetype'] = GRADE_TYPE_VALUE;
         $params['grademax']  = $hotpot->grade;
@@ -1285,9 +1316,9 @@ function hotpot_grade_item_update($hotpot, $grades=NULL) {
     } else {
         $params['gradetype'] = GRADE_TYPE_NONE;
     }
-
     return grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, $grades, $params);
 }
+
 /**
  * Delete grade item for given hotpot
  *
@@ -1296,9 +1327,10 @@ function hotpot_grade_item_update($hotpot, $grades=NULL) {
  */
 function hotpot_grade_item_delete($hotpot) {
     global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
-
-    return grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, NULL, array('deleted'=>1));
+    if (! function_exists('grade_update')) {
+        require_once($CFG->libdir.'/gradelib.php');
+    }
+    return grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, null, array('deleted'=>1));
 }
 
 function hotpot_get_participants($hotpotid) {
@@ -1977,7 +2009,7 @@ function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $clos
     }
 
     if ($query) {
-        $search = '#'.'(file|src|thesound)='."([^&]+)".'#ise';
+        $search = '#'.'(file|src|thesound|mp3)='."([^&]+)".'#ise';
         $replace = "'\\1='.hotpot_convert_url('".$baseurl."','".$reference."','\\2')";
         $query = preg_replace($search, $replace, $query);
     }
