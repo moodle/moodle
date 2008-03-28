@@ -246,8 +246,12 @@
         $tabs = array($toprow);
     }
 
-/// Print out the tabs and continue!
-
-    print_tabs($tabs, $currenttab, $inactive, $activetwo);
+    if ($currenttab == 'editprofile' && ($user->id == $USER->id) && user_not_fully_set_up($USER)) {  
+        /// We're being forced here to fix profile
+      notify(get_string('moreprofileinfoneeded'));
+    } else {
+      /// Print out the tabs and continue!
+      print_tabs($tabs, $currenttab, $inactive, $activetwo);
+    }
 
 ?>
