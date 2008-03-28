@@ -958,6 +958,7 @@ $string['moodledocslink'] = 'Moodle Docs for this page';
 $string['moodleversion'] = 'Moodle Version';
 $string['more'] = 'more';
 $string['moreinformation'] = 'More information about this error';
+$string['moreprofileinfoneeded'] = 'Please tell us more about yourself';
 $string['mostrecently'] = 'most recently';
 $string['move'] = 'Move';
 $string['movecategoryto'] = 'Move category to:';
