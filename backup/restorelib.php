@@ -119,8 +119,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         if ($blocks = get_records('block', 'visible', 1)) {
             foreach ($blocks as $block) {
-                $blockobject = block_instance($block->name);
-                $blockobject->decode_content_links_caller($restore);
+                if ($blockobject = block_instance($block->name)) {
+                    $blockobject->decode_content_links_caller($restore);
+                }
             }
         }
 
