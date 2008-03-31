@@ -4200,7 +4200,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
     }
     if ($jsconfirmmessage){
         $jsconfirmmessage = addslashes_js($jsconfirmmessage);
-        $jsconfirmmessage = 'onclick="'.s('return confirm("'.$jsconfirmmessage.'");').'"';
+        $jsconfirmmessage = 'onclick="return confirm(\''. $jsconfirmmessage .'\');" ';
     }
     $output .= '<input type="submit" value="'. s($label) ."\" $tooltip $disabled $jsconfirmmessage/></div></form></div>";
 
