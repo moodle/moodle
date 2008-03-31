@@ -270,20 +270,11 @@
     $requiredentries_allowed = true;
     $numentries = data_numentries($data);
     if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', $context)) {
-        $entriesleft = $data->requiredentries - $numentries;
-        $strentrieslefttoadd = get_string('entrieslefttoadd', 'data', $entriesleft);
+        $data->entriesleft = $data->requiredentries - $numentries;
+        $strentrieslefttoadd = get_string('entrieslefttoadd', 'data', $data);
         notify($strentrieslefttoadd); 
         $requiredentries_allowed = false;
     }
-
-// If not teacher, check whether user has sufficient records to view
-    if (!has_capability('mod/data:managetemplates', $context) and data_numentries($data) < $data->requiredentriestoview){
-        notify (($data->requiredentriestoview - data_numentries($data)).'&nbsp;'.get_string('insufficiententries','data'));
-        echo '</td></tr></table>';
-        print_footer($course);
-        exit;
-    }
-
 
 /// We need to examine the whole dataset to produce the correct paging
 
