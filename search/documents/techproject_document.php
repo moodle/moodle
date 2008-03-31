@@ -1,13 +1,20 @@
 <?php
 /**
 * Global Search Engine for Moodle
-* add-on 1.8+ : Valery Fremaux [valery.fremaux@club-internet.fr] 
-* 2007/08/02
+*
+* @package search
+* @category core
+* @subpackage document_wrappers
+* @author Michael Campanis, Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 * document handling for techproject activity module
 */
-/* see wiki_document.php for descriptions */
 
+/**
+* requires and includes
+*/
 require_once("$CFG->dirroot/search/documents/document.php");
 require_once("$CFG->dirroot/mod/techproject/lib.php");
 
@@ -136,7 +143,7 @@ function techproject_single_document($id, $itemtype) {
             break;
         }
     }
-    $techprojet_course = get_field('techproject', 'course', 'id', $entry->projectid);
+    $techproject_course = get_field('techproject', 'course', 'id', $entry->projectid);
     $coursemodule = get_field('modules', 'id', 'name', 'techproject');
     $cm = get_record('course_modules', 'course', $techproject_course, 'module', $coursemodule, 'instance', $entry->projectid);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
