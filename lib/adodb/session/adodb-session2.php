@@ -2,7 +2,7 @@
 
 
 /*
-V4.93 10 Oct 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
          Contributed by Ross Smith (adodb@netebb.com). 
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
@@ -443,8 +443,14 @@ class ADODB_Session {
 
 	/*!
 	*/
-	function &_conn($conn=null) {
-		return $GLOBALS['ADODB_SESS_CONN'];
+	function &_conn($conn=null) 
+	{
+		if (isset($GLOBALS['ADODB_SESS_CONN'])) {
+			$conn =& $GLOBALS['ADODB_SESS_CONN'];
+			return $conn;
+		}
+		$false = false;
+		return $false;
 	}
 
 	/*!
@@ -768,8 +774,8 @@ class ADODB_Session {
 			$rs =& $conn->Execute($sql,array($expireref,$key));
 			
 			$qkey = $conn->qstr($key);
-			$rs2 =& $conn->UpdateBlob($table, 'sessdata', $val, " sesskey=$qkey", strtoupper($clob));
-			$rs = $conn->CompleteTrans();
+			$rs2 = $conn->UpdateBlob($table, 'sessdata', $val, " sesskey=$qkey", strtoupper($clob));
+			$rs = @$conn->CompleteTrans();
 			
 			
 		}

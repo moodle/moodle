@@ -1,5 +1,5 @@
 <?php
-
+	
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
 
@@ -7,7 +7,7 @@ global $ADODB_INCLUDED_LIB;
 $ADODB_INCLUDED_LIB = 1;
 
 /* 
- @version V4.93 10 Oct 2006 (c) 2000-2006 John Lim (jlim\@natsoft.com.my). All rights reserved.
+ @version V4.98 13 Feb 2008 (c) 2000-2008 John Lim (jlim\@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -15,6 +15,36 @@ $ADODB_INCLUDED_LIB = 1;
   
   Less commonly used functions are placed here to reduce size of adodb.inc.php. 
 */ 
+
+function adodb_strip_order_by($sql)
+{
+	$rez = preg_match('/(\sORDER\s+BY\s[^)]*)/is',$sql,$arr);
+	if ($arr)
+		if (strpos($arr[0],'(') !== false) {
+			$at = strpos($sql,$arr[0]);
+			$cntin = 0;
+			for ($i=$at, $max=strlen($sql); $i < $max; $i++) {
+				$ch = $sql[$i];
+				if ($ch == '(') {
+					$cntin += 1;
+				} elseif($ch == ')') {
+					$cntin -= 1;
+					if ($cntin < 0) {
+						break;
+					}
+				}
+			}
+			$sql = substr($sql,0,$at).substr($sql,$i);
+		} else
+			$sql = str_replace($arr[0], '', $sql); 
+	return $sql;
+ }
+
+if (false) {
+	$sql = 'select * from (select a from b order by a(b),b(c) desc)';
+	$sql = '(select * from abc order by 1)';
+	die(adodb_strip_order_by($sql));
+}
 
 function adodb_probetypes(&$array,&$types,$probe=8)
 {
@@ -56,16 +86,17 @@ function adodb_probetypes(&$array,&$types,$probe=8)
 			
 		}
 	}
+	
 }
 
-function  &adodb_transpose(&$arr, &$newarr, &$hdr)
+function  adodb_transpose(&$arr, &$newarr, &$hdr, &$fobjs)
 {
 	$oldX = sizeof(reset($arr));
 	$oldY = sizeof($arr);	
 	
 	if ($hdr) {
 		$startx = 1;
-		$hdr = array();
+		$hdr = array('Fields');
 		for ($y = 0; $y < $oldY; $y++) {
 			$hdr[] = $arr[$y][0];
 		}
@@ -73,7 +104,12 @@ function  &adodb_transpose(&$arr, &$newarr, &$hdr)
 		$startx = 0;
 
 	for ($x = $startx; $x < $oldX; $x++) {
-		$newarr[] = array();
+		if ($fobjs) {
+			$o = $fobjs[$x];
+			$newarr[] = array($o->name);
+		} else
+			$newarr[] = array();
+			
 		for ($y = 0; $y < $oldY; $y++) {
 			$newarr[$x-$startx][] = $arr[$y][$x];
 		}
@@ -105,7 +141,10 @@ function _adodb_replace(&$zthis, $table, $fieldArray, $keyCol, $autoQuote, $has_
 			$keyCol = array($keyCol);
 		}
 		foreach($fieldArray as $k => $v) {
-			if ($autoQuote && !is_numeric($v) and strncmp($v,"'",1) !== 0 and strcasecmp($v,$zthis->null2null)!=0) {
+			if ($v === null) {
+				$v = 'NULL';
+				$fieldArray[$k] = $v;
+			} else if ($autoQuote && !is_numeric($v) /*and strncmp($v,"'",1) !== 0 -- sql injection risk*/ and strcasecmp($v,$zthis->null2null)!=0) {
 				$v = $zthis->qstr($v);
 				$fieldArray[$k] = $v;
 			}
@@ -363,43 +402,36 @@ function _adodb_getcount(&$zthis, $sql,$inputarr=false,$secs2cache=0)
 	 if (!empty($zthis->_nestedSQL) || preg_match("/^\s*SELECT\s+DISTINCT/is", $sql) || 
 	 	preg_match('/\s+GROUP\s+BY\s+/is',$sql) || 
 		preg_match('/\s+UNION\s+/is',$sql)) {
+		
+		$rewritesql = adodb_strip_order_by($sql);
+		
 		// ok, has SELECT DISTINCT or GROUP BY so see if we can use a table alias
 		// but this is only supported by oracle and postgresql...
 		if ($zthis->dataProvider == 'oci8') {
-			
-			$rewritesql = preg_replace('/(\sORDER\s+BY\s[^)]*)/is','',$sql);
-			
 			// Allow Oracle hints to be used for query optimization, Chris Wrye
 			if (preg_match('#/\\*+.*?\\*\\/#', $sql, $hint)) {
 				$rewritesql = "SELECT ".$hint[0]." COUNT(*) FROM (".$rewritesql.")"; 
 			} else
 				$rewritesql = "SELECT COUNT(*) FROM (".$rewritesql.")"; 
 			
-		} else if (strncmp($zthis->databaseType,'postgres',8) == 0)  {
-			$rewritesql = preg_replace('/(\sORDER\s+BY\s[^)]*)/is','',$sql);
+		} else if (strncmp($zthis->databaseType,'postgres',8) == 0 || strncmp($zthis->databaseType,'mysql',5) == 0)  {
 			$rewritesql = "SELECT COUNT(*) FROM ($rewritesql) _ADODB_ALIAS_";
+		} else {
+			$rewritesql = "SELECT COUNT(*) FROM ($rewritesql) ";
 		}
-	} else {
+	} else {		
 		// now replace SELECT ... FROM with SELECT COUNT(*) FROM
 		$rewritesql = preg_replace(
 					'/^\s*SELECT\s.*\s+FROM\s/Uis','SELECT COUNT(*) FROM ',$sql);
-
-		
-		
 		// fix by alexander zhukov, alex#unipack.ru, because count(*) and 'order by' fails 
 		// with mssql, access and postgresql. Also a good speedup optimization - skips sorting!
 		// also see http://phplens.com/lens/lensforum/msgs.php?id=12752
-		if (preg_match('/\sORDER\s+BY\s*\(/i',$rewritesql))
-			$rewritesql = preg_replace('/(\sORDER\s+BY\s.*)/is','',$rewritesql);
-		else
-			$rewritesql = preg_replace('/(\sORDER\s+BY\s[^)]*)/is','',$rewritesql);
+		$rewritesql = adodb_strip_order_by($rewritesql);
 	}
 	
-	
-	
 	if (isset($rewritesql) && $rewritesql != $sql) {
-		if (preg_match('/\sLIMIT\s+[0-9]+/i',$sql,$limitarr)) $rewritesql .= $limitarr[1];
-		 
+		if (preg_match('/\sLIMIT\s+[0-9]+/i',$sql,$limitarr)) $rewritesql .= $limitarr[0];
+
 		if ($secs2cache) {
 			// we only use half the time of secs2cache because the count can quickly
 			// become inaccurate if new records are added
@@ -416,7 +448,7 @@ function _adodb_getcount(&$zthis, $sql,$inputarr=false,$secs2cache=0)
 	
 	// strip off unneeded ORDER BY if no UNION
 	if (preg_match('/\s*UNION\s*/is', $sql)) $rewritesql = $sql;
-	else $rewritesql = preg_replace('/(\sORDER\s+BY\s.*)/is','',$sql); 
+	else $rewritesql = $rewritesql = adodb_strip_order_by($sql); 
 	
 	if (preg_match('/\sLIMIT\s+[0-9]+/i',$sql,$limitarr)) $rewritesql .= $limitarr[0];
 		
@@ -507,7 +539,7 @@ function &_adodb_pageexecute_all_rows(&$zthis, $sql, $nrows, $page,
 	return $rsreturn;
 }
 
-// Ivï¿½n Oliva version
+// Iván Oliva version
 function &_adodb_pageexecute_no_last_page(&$zthis, $sql, $nrows, $page, $inputarr=false, $secs2cache=0) 
 {
 
@@ -560,6 +592,8 @@ function &_adodb_pageexecute_no_last_page(&$zthis, $sql, $nrows, $page, $inputar
 
 function _adodb_getupdatesql(&$zthis,&$rs, $arrFields,$forceUpdate=false,$magicq=false,$force=2)
 {
+	global $ADODB_QUOTE_FIELDNAMES;
+
 		if (!$rs) {
 			printf(ADODB_BAD_RS,'GetUpdateSQL');
 			return false;
@@ -606,7 +640,7 @@ function _adodb_getupdatesql(&$zthis,&$rs, $arrFields,$forceUpdate=false,$magicq
 						$type = 'C';
 					}
 					
-					if (strpos($upperfname,' ') !== false)
+					if ((strpos($upperfname,' ') !== false) || ($ADODB_QUOTE_FIELDNAMES))
 						$fnameq = $zthis->nameQuote.$upperfname.$zthis->nameQuote;
 					else
 						$fnameq = $upperfname;
@@ -720,6 +754,7 @@ function _adodb_getinsertsql(&$zthis,&$rs,$arrFields,$magicq=false,$force=2)
 static $cacheRS = false;
 static $cacheSig = 0;
 static $cacheCols;
+	global $ADODB_QUOTE_FIELDNAMES;
 
 	$tableName = '';
 	$values = '';
@@ -769,7 +804,7 @@ static $cacheCols;
 		$upperfname = strtoupper($field->name);
 		if (adodb_key_exists($upperfname,$arrFields,$force)) {
 			$bad = false;
-			if (strpos($upperfname,' ') !== false)
+			if ((strpos($upperfname,' ') !== false) || ($ADODB_QUOTE_FIELDNAMES))
 				$fnameq = $zthis->nameQuote.$upperfname.$zthis->nameQuote;
 			else
 				$fnameq = $upperfname;
@@ -958,25 +993,26 @@ function _adodb_column_sql(&$zthis, $action, $type, $fname, $fnameq, $arrFields,
 		case "D":
 			$val = $zthis->DBDate($arrFields[$fname]);
 			break;
-
+		
 		case "T":
 			$val = $zthis->DBTimeStamp($arrFields[$fname]);
+            break;
+
+        case "F": //Floating point number       // Moodle added
+		case "N":
+		    $val = $arrFields[$fname];
+			if (!is_numeric($val)) $val = str_replace(',', '.', (float)$val);
 			break;
 
-// moodle change start - see readme_moodle.txt
-        case "L": //Integer field suitable for storing booleans (0 or 1)
-        case "I": //Integer
-            $val = (int)$arrFields[$fname];
-            break;
+        case "L": //Integer field suitable for storing booleans (0 or 1)     // Moodle added
+		case "I":
+		case "R":
+		    $val = $arrFields[$fname];
+			if (!is_numeric($val)) $val = (integer) $val;
+		    break;
 
-        case "F": //Floating point number
-        case "N": //Numeric or decimal number
-            $val = (float)$arrFields[$fname];
-            break;
-// moodle change end
-
-        default:
-			$val = $arrFields[$fname];
+		default:
+			$val = str_replace(array("'"," ","("),"",$arrFields[$fname]); // basic sql injection defence
 			if (empty($val)) $val = '0';
 			break;
 	}
@@ -996,7 +1032,8 @@ function _adodb_debug_execute(&$zthis, $sql, $inputarr)
 	if ($inputarr) {
 		foreach($inputarr as $kk=>$vv) {
 			if (is_string($vv) && strlen($vv)>64) $vv = substr($vv,0,64).'...';
-			$ss .= "($kk=>'$vv') ";
+			if (is_null($vv)) $ss .= "($kk=>null) ";
+			else $ss .= "($kk=>'$vv') ";
 		}
 		$ss = "[ $ss ]";
 	}
@@ -1047,11 +1084,15 @@ function _adodb_backtrace($printOrArr=true,$levels=9999,$skippy=0)
 	if (!function_exists('debug_backtrace')) return '';
 	 
 	$html =  (isset($_SERVER['HTTP_USER_AGENT']));
-	$fmt =  ($html) ? "</font><font color=#808080 size=-1> %% line %4d, file: <a href=\"file:/%s\">%s</a></font>" : "%% line %4d, file: %s";
+// moodle change start - see readme_moodle.txt
+	$fmt =  ($html) ? "</font><font color=\"#808080\" size=\"-1\"> %% line %4d, file: <a href=\"file:/%s\">%s</a></font>" : "%% line %4d, file: %s";
+// moodle change end
 
 	$MAXSTRLEN = 128;
 
-	$s = ($html) ? '<pre align=left>' : '';
+// moodle change start - see readme_moodle.txt
+	$s = ($html) ? '<pre align="left">' : '';
+// moodle change end
 	
 	if (is_array($printOrArr)) $traceArr = $printOrArr;
 	else $traceArr = debug_backtrace();

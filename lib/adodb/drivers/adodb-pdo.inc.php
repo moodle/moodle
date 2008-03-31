@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.93 10 Oct 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -64,41 +64,6 @@ function adodb_pdo_type($t)
 
 
 
-class ADODB_pdo_base extends ADODB_pdo {
-
-	var $sysDate = "'?'";
-	var $sysTimeStamp = "'?'";
-	
-
-	function _init($parentDriver)
-	{
-		$parentDriver->_bindInputArray = true;
-		#$parentDriver->_connectionID->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,true);
-	}
-	
-	function ServerInfo()
-	{
-		return ADOConnection::ServerInfo();
-	}
-	
-	function SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0)
-	{
-		$ret = ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
-		return $ret;
-	}
-	
-	function MetaTables()
-	{
-		return false;
-	}
-	
-	function MetaColumns()
-	{
-		return false;
-	}
-}
-
-
 class ADODB_pdo extends ADOConnection {
 	var $databaseType = "pdo";	
 	var $dataProvider = "pdo";
@@ -133,7 +98,12 @@ class ADODB_pdo extends ADOConnection {
 		$this->random = $d->random;
 		$this->concat_operator = $d->concat_operator;
 		$this->nameQuote = $d->nameQuote;
-		
+				
+		$this->hasGenID = $d->hasGenID;
+		$this->_genIDSQL = $d->_genIDSQL;
+		$this->_genSeqSQL = $d->_genSeqSQL;
+		$this->_dropSeqSQL = $d->_dropSeqSQL;
+
 		$d->_init($this);
 	}
 	
@@ -384,6 +354,43 @@ class ADODB_pdo extends ADOConnection {
 		return ($this->_connectionID) ? $this->_connectionID->lastInsertId() : 0;
 	}
 }
+
+
+
+class ADODB_pdo_base extends ADODB_pdo {
+
+	var $sysDate = "'?'";
+	var $sysTimeStamp = "'?'";
+	
+
+	function _init($parentDriver)
+	{
+		$parentDriver->_bindInputArray = true;
+		#$parentDriver->_connectionID->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,true);
+	}
+	
+	function ServerInfo()
+	{
+		return ADOConnection::ServerInfo();
+	}
+	
+	function SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0)
+	{
+		$ret = ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+		return $ret;
+	}
+	
+	function MetaTables()
+	{
+		return false;
+	}
+	
+	function MetaColumns()
+	{
+		return false;
+	}
+}
+
 
 class ADOPDOStatement {
 

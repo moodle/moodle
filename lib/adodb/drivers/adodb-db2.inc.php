@@ -1,6 +1,6 @@
 <?php
 /* 
-  V4.93 10 Oct 2006  (c) 2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V4.98 13 Feb 2008  (c) 2006 John Lim (jlim#natsoft.com.my). All rights reserved.
 
   This is a version of the ADODB driver for DB2.  It uses the 'ibm_db2' PECL extension
   for PHP (http://pecl.php.net/package/ibm_db2), which in turn requires DB2 V8.2.2 or
@@ -33,7 +33,7 @@ class ADODB_db2 extends ADOConnection {
 	var $sysDate = 'CURRENT DATE';
 	var $sysTimeStamp = 'CURRENT TIMESTAMP';
 	
-	var $fmtTimeStamp = "'Y-m-d-H.i.s'";
+	var $fmtTimeStamp = "'Y-m-d-H:i:s'";
 	var $replaceQuote = "''"; // string to use to replace quotes
 	var $dataProvider = "db2";
 	var $hasAffectedRows = true;

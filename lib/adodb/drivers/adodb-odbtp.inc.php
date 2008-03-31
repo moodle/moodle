@@ -1,6 +1,6 @@
 <?php
 /*
-  V4.93 10 Oct 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence. See License.txt.
@@ -149,13 +149,14 @@ class ADODB_odbtp extends ADOConnection{
 	//if uid & pwd can be separate
     function _connect($HostOrInterface, $UserOrDSN='', $argPassword='', $argDatabase='')
 	{
-		$this->_connectionID = @odbtp_connect($HostOrInterface,$UserOrDSN,$argPassword,$argDatabase);
-		odbtp_convert_datetime($this->_connectionID,true);
-		
+		$this->_connectionID = odbtp_connect($HostOrInterface,$UserOrDSN,$argPassword,$argDatabase);
 		if ($this->_connectionID === false) {
 			$this->_errorMsg = $this->ErrorMsg() ;
 			return false;
 		}
+		
+		odbtp_convert_datetime($this->_connectionID,true);
+		
 		if ($this->_dontPoolDBC) {
 			if (function_exists('odbtp_dont_pool_dbc'))
 				@odbtp_dont_pool_dbc($this->_connectionID);
@@ -191,7 +192,7 @@ class ADODB_odbtp extends ADOConnection{
 				$this->_canSelectDb = true;
 				$this->substr = "substring";
 				$this->length = 'len';
-				$this->identitySQL = 'select @@IDENTITY';
+				$this->identitySQL = 'select SCOPE_IDENTITY()';
 				$this->metaDatabasesSQL = "select name from master..sysdatabases where name <> 'master'";
 				$this->_canPrepareSP = true;
 				break;
@@ -217,6 +218,7 @@ class ADODB_odbtp extends ADOConnection{
 				$this->replaceQuote = "'+chr(39)+'";
 				$this->true = '.T.';
 				$this->false = '.F.';
+
 				break;
 			case 'oracle':
 				$this->databaseType = 'odbtp_oci8';
@@ -238,7 +240,7 @@ class ADODB_odbtp extends ADOConnection{
 				$this->rightOuter = '=*';
 				$this->hasInsertID = true;
 				$this->hasTransactions = true;
-				$this->identitySQL = 'select @@IDENTITY';
+				$this->identitySQL = 'select SCOPE_IDENTITY()';
 				break;
 			default:
 				$this->databaseType = 'odbtp';
@@ -288,7 +290,7 @@ class ADODB_odbtp extends ADOConnection{
 		for ($i=0; $i < sizeof($arr); $i++) {
 			if ($arr[$i][3] == 'SYSTEM TABLE' )	continue;
 			if ($arr[$i][2])
-				$arr2[] = $showSchema ? $arr[$i][1].'.'.$arr[$i][2] : $arr[$i][2];
+				$arr2[] = $showSchema && $arr[$i][1]? $arr[$i][1].'.'.$arr[$i][2] : $arr[$i][2];
 		}
 		return $arr2;
 	}
@@ -324,10 +326,11 @@ class ADODB_odbtp extends ADOConnection{
 				$fld->max_length = $rs->fields[6];
     			$fld->not_null = !empty($rs->fields[9]);
  				$fld->scale = $rs->fields[7];
- 				if (!is_null($rs->fields[12])) {
- 					$fld->has_default = true;
- 					$fld->default_value = $rs->fields[12];
-				}
+				if (isset($rs->fields[12])) // vfp does not have field 12
+	 				if (!is_null($rs->fields[12])) {
+	 					$fld->has_default = true;
+	 					$fld->default_value = $rs->fields[12];
+					}
 				$retarr[strtoupper($fld->name)] = $fld;
 			} else if (!empty($retarr))
 				break;
@@ -547,7 +550,7 @@ class ADODB_odbtp extends ADOConnection{
 				return false;
 			}
 		} else {
-			$stmtid = @odbtp_query($sql,$this->_connectionID);
+			$stmtid = odbtp_query($sql,$this->_connectionID);
    		}
 		$this->_lastAffectedRows = 0;
 		if ($stmtid) {
@@ -641,6 +644,12 @@ class ADORecordSet_odbtp extends ADORecordSet {
 				break;
             default:
 				$this->fields = @odbtp_fetch_array($this->_queryID, $type);
+		}
+		if ($this->databaseType = 'odbtp_vfp') {
+			if ($this->fields)
+			foreach($this->fields as $k => $v) {
+				if (strncmp($v,'1899-12-30',10) == 0) $this->fields[$k] = '';
+			}
 		}
 		return is_array($this->fields);
 	}

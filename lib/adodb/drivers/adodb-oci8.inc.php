@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V4.93 10 Oct 2006 (c) 2000-2006 John Lim. All rights reserved.
+  version V4.98 13 Feb 2008 (c) 2000-2008 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -83,6 +83,7 @@ class ADODB_oci8 extends ADOConnection {
 	var $firstrows = true; // enable first rows optimization on SelectLimit()
 	var $selectOffsetAlg1 = 100; // when to use 1st algorithm of selectlimit.
 	var $NLS_DATE_FORMAT = 'YYYY-MM-DD';  // To include time, use 'RRRR-MM-DD HH24:MI:SS'
+	var $dateformat = 'YYYY-MM-DD'; // for DBDate()
  	var $useDBDateFormatForTextInput=false;
 	var $datetime = false; // MetaType('DATE') returns 'D' (datetime==false) or 'T' (datetime == true)
 	var $_refLOBs = array();
@@ -211,22 +212,22 @@ NATSOFT.DOMAIN =
  		//if ($argHostname) print "<p>Connect: 1st argument should be left blank for $this->databaseType</p>";
 		if ($mode==1) {
 			$this->_connectionID = ($this->charSet) ? 
-				OCIPLogon($argUsername,$argPassword, $argDatabasename)
+				OCIPLogon($argUsername,$argPassword, $argDatabasename,$this->charSet)
 				:
-				OCIPLogon($argUsername,$argPassword, $argDatabasename, $this->charSet)
+				OCIPLogon($argUsername,$argPassword, $argDatabasename)
 				;
 			if ($this->_connectionID && $this->autoRollback)  OCIrollback($this->_connectionID);
 		} else if ($mode==2) {
 			$this->_connectionID = ($this->charSet) ? 
-				OCINLogon($argUsername,$argPassword, $argDatabasename)
+				OCINLogon($argUsername,$argPassword, $argDatabasename,$this->charSet)
 				:
-				OCINLogon($argUsername,$argPassword, $argDatabasename, $this->charSet);
+				OCINLogon($argUsername,$argPassword, $argDatabasename);
 				
 		} else {
 			$this->_connectionID = ($this->charSet) ? 
-				OCILogon($argUsername,$argPassword, $argDatabasename)
+				OCILogon($argUsername,$argPassword, $argDatabasename,$this->charSet)
 				:
-				OCILogon($argUsername,$argPassword, $argDatabasename,$this->charSet);
+				OCILogon($argUsername,$argPassword, $argDatabasename);
 		}
 		if (!$this->_connectionID) return false;
 		if ($this->_initdate) {
@@ -276,7 +277,7 @@ NATSOFT.DOMAIN =
 		if (empty($d) && $d !== 0) return 'null';
 		
 		if (is_string($d)) $d = ADORecordSet::UnixDate($d);
-		return "TO_DATE(".adodb_date($this->fmtDate,$d).",'".$this->NLS_DATE_FORMAT."')";
+		return "TO_DATE(".adodb_date($this->fmtDate,$d).",'".$this->dateformat."')";
 	}
 
 	function BindDate($d)
@@ -300,7 +301,7 @@ NATSOFT.DOMAIN =
 	{
 		if (empty($ts) && $ts !== 0) return 'null';
 		if (is_string($ts)) $ts = ADORecordSet::UnixTimeStamp($ts);
-		return 'TO_DATE('.adodb_date($this->fmtTimeStamp,$ts).",'RRRR-MM-DD, HH:MI:SS AM')";
+		return 'TO_DATE('.adodb_date("'Y-m-d H:i:s'",$ts).",'RRRR-MM-DD, HH24:MI:SS')";
 	}
 	
 	function RowLock($tables,$where,$flds='1 as ignore') 
@@ -434,10 +435,10 @@ NATSOFT.DOMAIN =
 	{
 		if ($this->_errorMsg !== false) return $this->_errorMsg;
 
-		if (is_resource($this->_stmt)) $arr = @OCIerror($this->_stmt);
+		if (is_resource($this->_stmt)) $arr = @OCIError($this->_stmt);
 		if (empty($arr)) {
-			$arr = @OCIerror($this->_connectionID);
-			if ($arr === false) $arr = @OCIError();
+			if (is_resource($this->_connectionID)) $arr = @OCIError($this->_connectionID);
+			else $arr = @OCIError();
 			if ($arr === false) return '';
 		}
 		$this->_errorMsg = $arr['message'];
@@ -540,6 +541,12 @@ NATSOFT.DOMAIN =
 		return $s. "')";
 	}
 	
+	function GetRandRow($sql, $arr = false)
+	{
+		$sql = "SELECT * FROM ($sql ORDER BY dbms_random.value) WHERE rownum = 1";
+		
+		return $this->GetRow($sql,$arr);
+	}
 	
 	/*
 	This algorithm makes use of
@@ -566,7 +573,7 @@ NATSOFT.DOMAIN =
 				$sql = preg_replace('/^[ \t\n]*select/i','SELECT /*+FIRST_ROWS*/',$sql);
 		}
 		
-		if ($offset < $this->selectOffsetAlg1) {
+		if ($offset < $this->selectOffsetAlg1 && 0 < $nrows  && $nrows < 1000) {
 			if ($nrows > 0) {	
 				if ($offset > 0) $nrows += $offset;
 				//$inputarr['adodb_rownum'] = $nrows;
@@ -747,7 +754,6 @@ NATSOFT.DOMAIN =
 		}
 		if ($inputarr) {
 			#if (!is_array($inputarr)) $inputarr = array($inputarr);
-			
 			$element0 = reset($inputarr);
 			
 			# is_object check because oci8 descriptors can be passed in
@@ -783,8 +789,17 @@ NATSOFT.DOMAIN =
 	
 		$stmt = OCIParse($this->_connectionID,$sql);
 
-		if (!$stmt) return false;
-
+		if (!$stmt) {
+			$this->_errorMsg = false;
+			$this->_errorCode = false;
+			$arr = @OCIError($this->_connectionID);
+			if ($arr === false) return false;
+		
+			$this->_errorMsg = $arr['message'];
+			$this->_errorCode = $arr['code'];
+			return false;
+		}
+		
 		$BINDNUM += 1;
 		
 		$sttype = @OCIStatementType($stmt);
@@ -1280,19 +1295,26 @@ class ADORecordset_oci8 extends ADORecordSet {
 			  fields in a certain query result. If the field offset isn't specified, the next field that wasn't yet retrieved by
 			  fetchField() is retrieved.		*/
 
-	function &_FetchField($fieldOffset = -1)
+	function _FetchField($fieldOffset = -1)
 	{
 		$fld = new ADOFieldObject;
 		$fieldOffset += 1;
 		$fld->name =OCIcolumnname($this->_queryID, $fieldOffset);
 		$fld->type = OCIcolumntype($this->_queryID, $fieldOffset);
 		$fld->max_length = OCIcolumnsize($this->_queryID, $fieldOffset);
-	 	if ($fld->type == 'NUMBER') {
+	 	switch($fld->type) {
+		case 'NUMBER':
 	 		$p = OCIColumnPrecision($this->_queryID, $fieldOffset);
 			$sc = OCIColumnScale($this->_queryID, $fieldOffset);
 			if ($p != 0 && $sc == 0) $fld->type = 'INT';
-			//echo " $this->name ($p.$sc) ";
-	 	}
+			break;
+		
+	 	case 'CLOB':
+		case 'NCLOB':
+		case 'BLOB': 
+			$fld->max_length = -1;
+			break;
+		}
 		return $fld;
 	}
 	
@@ -1374,10 +1396,11 @@ class ADORecordset_oci8 extends ADORecordSet {
 			$arr =& $this->GetArray($nrows);
 			return $arr;
 		}
+		$arr = array();
 		for ($i=1; $i < $offset; $i++) 
-			if (!@OCIFetch($this->_queryID)) return array();
+			if (!@OCIFetch($this->_queryID)) return $arr;
 			
-		if (!@OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode)) return array();
+		if (!@OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode)) return $arr;;
 		$results = array();
 		$cnt = 0;
 		while (!$this->EOF && $nrows != $cnt) {

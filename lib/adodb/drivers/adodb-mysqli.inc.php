@@ -1,6 +1,6 @@
 <?php
 /*
-V4.93 10 Oct 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -50,6 +50,7 @@ class ADODB_mysqli extends ADOConnection {
 	var $_bindInputArray = false;
 	var $nameQuote = '`';		/// string to use to quote identifiers and names
 	var $optionFlags = array(array(MYSQLI_READ_DEFAULT_GROUP,0));
+  var $arrayClass = 'ADORecordSet_array_mysqli';
 	
 	function ADODB_mysqli() 
 	{			
@@ -113,6 +114,7 @@ class ADODB_mysqli extends ADOConnection {
  	   } else {
 			if ($this->debug) 
 		  		ADOConnection::outp("Could't connect : "  . $this->ErrorMsg());
+			$this->_connectionID = null;
 			return false;
 	   }
 	}
@@ -138,6 +140,18 @@ class ADODB_mysqli extends ADOConnection {
 		return " IFNULL($field, $ifNull) "; // if MySQL
 	}
 	
+	// do not use $ADODB_COUNTRECS
+	function GetOne($sql,$inputarr=false)
+	{
+		$ret = false;
+		$rs = &$this->Execute($sql,$inputarr);
+		if ($rs) {	
+			if (!$rs->EOF) $ret = reset($rs->fields);
+			$rs->Close();
+		}
+		return $ret;
+	}
+	
 	function ServerInfo()
 	{
 		$arr['description'] = $this->GetOne("select version()");
@@ -150,7 +164,9 @@ class ADODB_mysqli extends ADOConnection {
 	{	  
 		if ($this->transOff) return true;
 		$this->transCnt += 1;
-		$this->Execute('SET AUTOCOMMIT=0');
+		
+		//$this->Execute('SET AUTOCOMMIT=0');
+		mysqli_autocommit($this->_connectionID, false);
 		$this->Execute('BEGIN');
 		return true;
 	}
@@ -162,7 +178,9 @@ class ADODB_mysqli extends ADOConnection {
 		
 		if ($this->transCnt) $this->transCnt -= 1;
 		$this->Execute('COMMIT');
-		$this->Execute('SET AUTOCOMMIT=1');
+		
+		//$this->Execute('SET AUTOCOMMIT=1');
+		mysqli_autocommit($this->_connectionID, true);
 		return true;
 	}
 	
@@ -171,7 +189,8 @@ class ADODB_mysqli extends ADOConnection {
 		if ($this->transOff) return true;
 		if ($this->transCnt) $this->transCnt -= 1;
 		$this->Execute('ROLLBACK');
-		$this->Execute('SET AUTOCOMMIT=1');
+		//$this->Execute('SET AUTOCOMMIT=1');
+		mysqli_autocommit($this->_connectionID, true);
 		return true;
 	}
 	
@@ -195,6 +214,7 @@ class ADODB_mysqli extends ADOConnection {
 	//Eg. $s = $db->qstr(_GET['name'],get_magic_quotes_gpc());
 	function qstr($s, $magic_quotes = false)
 	{
+		if (is_null($s)) return 'NULL';
 		if (!$magic_quotes) {
 	    	if (PHP_VERSION >= 5)
 	      		return "'" . mysqli_real_escape_string($this->_connectionID, $s) . "'";   
@@ -256,13 +276,17 @@ class ADODB_mysqli extends ADOConnection {
 			if ($holdtransOK) $this->_transOK = true; //if the status was ok before reset
 			$u = strtoupper($seqname);
 			$this->Execute(sprintf($this->_genSeqSQL,$seqname));
-			$this->Execute(sprintf($this->_genSeq2SQL,$seqname,$startID-1));
+			$cnt = $this->GetOne(sprintf($this->_genSeqCountSQL,$seqname));
+			if (!$cnt) $this->Execute(sprintf($this->_genSeq2SQL,$seqname,$startID-1));
 			$rs = $this->Execute($getnext);
 		}
-		$this->genID = mysqli_insert_id($this->_connectionID);
 		
-		if ($rs) $rs->Close();
-		
+		if ($rs) {
+			$this->genID = mysqli_insert_id($this->_connectionID);
+			$rs->Close();
+		} else
+			$this->genID = 0;
+			
 		return $this->genID;
 	}
 	
@@ -542,6 +566,7 @@ class ADODB_mysqli extends ADOConnection {
 			$fld->auto_increment = (strpos($rs->fields[5], 'auto_increment') !== false);
 			$fld->binary = (strpos($type,'blob') !== false);
 			$fld->unsigned = (strpos($type,'unsigned') !== false);
+			$fld->zerofill = (strpos($type,'zerofill') !== false);
 
 			if (!$fld->binary) {
 				$d = $rs->fields[4];
@@ -587,16 +612,15 @@ class ADODB_mysqli extends ADOConnection {
 			      $nrows = -1,
 			      $offset = -1,
 			      $inputarr = false, 
-			      $arg3 = false,
 			      $secs = 0)
 	{
 		$offsetStr = ($offset >= 0) ? "$offset," : '';
 		if ($nrows < 0) $nrows = '18446744073709551615';
 		
 		if ($secs)
-			$rs =& $this->CacheExecute($secs, $sql . " LIMIT $offsetStr$nrows" , $inputarr , $arg3);
+			$rs =& $this->CacheExecute($secs, $sql . " LIMIT $offsetStr$nrows" , $inputarr);
 		else
-			$rs =& $this->Execute($sql . " LIMIT $offsetStr$nrows" , $inputarr , $arg3);
+			$rs =& $this->Execute($sql . " LIMIT $offsetStr$nrows" , $inputarr);
 			
 		return $rs;
 	}
@@ -920,7 +944,7 @@ class ADORecordSet_mysqli extends ADORecordSet{
 		 case 'SET': 
 		
 		case MYSQLI_TYPE_TINY_BLOB :
-		case MYSQLI_TYPE_CHAR :
+		#case MYSQLI_TYPE_CHAR :
 		case MYSQLI_TYPE_STRING :
 		case MYSQLI_TYPE_ENUM :
 		case MYSQLI_TYPE_SET :
@@ -998,6 +1022,110 @@ class ADORecordSet_mysqli extends ADORecordSet{
 
 } // rs class
  
+}
+
+class ADORecordSet_array_mysqli extends ADORecordSet_array {
+  function ADORecordSet_array_mysqli($id=-1,$mode=false) 
+  {
+    $this->ADORecordSet_array($id,$mode);
+  }
+  
+
+	function MetaType($t, $len = -1, $fieldobj = false)
+	{
+		if (is_object($t)) {
+		    $fieldobj = $t;
+		    $t = $fieldobj->type;
+		    $len = $fieldobj->max_length;
+		}
+		
+		
+		 $len = -1; // mysql max_length is not accurate
+		 switch (strtoupper($t)) {
+		 case 'STRING': 
+		 case 'CHAR':
+		 case 'VARCHAR': 
+		 case 'TINYBLOB': 
+		 case 'TINYTEXT': 
+		 case 'ENUM': 
+		 case 'SET': 
+		
+		case MYSQLI_TYPE_TINY_BLOB :
+		#case MYSQLI_TYPE_CHAR :
+		case MYSQLI_TYPE_STRING :
+		case MYSQLI_TYPE_ENUM :
+		case MYSQLI_TYPE_SET :
+		case 253 :
+		   if ($len <= $this->blobSize) return 'C';
+		   
+		case 'TEXT':
+		case 'LONGTEXT': 
+		case 'MEDIUMTEXT':
+		   return 'X';
+		
+		
+		   // php_mysql extension always returns 'blob' even if 'text'
+		   // so we have to check whether binary...
+		case 'IMAGE':
+		case 'LONGBLOB': 
+		case 'BLOB':
+		case 'MEDIUMBLOB':
+		
+		case MYSQLI_TYPE_BLOB :
+		case MYSQLI_TYPE_LONG_BLOB :
+		case MYSQLI_TYPE_MEDIUM_BLOB :
+		
+		   return !empty($fieldobj->binary) ? 'B' : 'X';
+		case 'YEAR':
+		case 'DATE': 
+		case MYSQLI_TYPE_DATE :
+		case MYSQLI_TYPE_YEAR :
+		
+		   return 'D';
+		
+		case 'TIME':
+		case 'DATETIME':
+		case 'TIMESTAMP':
+		
+		case MYSQLI_TYPE_DATETIME :
+		case MYSQLI_TYPE_NEWDATE :
+		case MYSQLI_TYPE_TIME :
+		case MYSQLI_TYPE_TIMESTAMP :
+		
+			return 'T';
+		
+		case 'INT': 
+		case 'INTEGER':
+		case 'BIGINT':
+		case 'TINYINT':
+		case 'MEDIUMINT':
+		case 'SMALLINT': 
+		
+		case MYSQLI_TYPE_INT24 :
+		case MYSQLI_TYPE_LONG :
+		case MYSQLI_TYPE_LONGLONG :
+		case MYSQLI_TYPE_SHORT :
+		case MYSQLI_TYPE_TINY :
+		
+		   if (!empty($fieldobj->primary_key)) return 'R';
+		   
+		   return 'I';
+		
+		
+		   // Added floating-point types
+		   // Maybe not necessery.
+		 case 'FLOAT':
+		 case 'DOUBLE':
+		   //		case 'DOUBLE PRECISION':
+		 case 'DECIMAL':
+		 case 'DEC':
+		 case 'FIXED':
+		 default:
+		 	//if (!is_numeric($t)) echo "<p>--- Error in type matching $t -----</p>"; 
+		 	return 'N';
+		}
+	} // function
+  
 }
 
 ?>
