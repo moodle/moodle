@@ -42,6 +42,10 @@ class block_html extends block_base {
      * @return string
      */
     function get_backup_encoded_config() {
+        /// Prevent clone for non configured block instance. Delegate to parent as fallback.
+        if (empty($this->config)) {
+            return parent::get_backup_encoded_config();
+        }
         $data = clone($this->config);
         $data->text = backup_encode_absolute_links($data->text);
         return base64_encode(serialize($data));
