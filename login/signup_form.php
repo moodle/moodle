@@ -64,7 +64,7 @@ class login_signup_form extends moodleform {
         }
         
         if (signup_captcha_enabled()) {
-            $mform->addElement('recaptcha', 'recaptcha_element', get_string('recaptcha', 'auth'));
+            $mform->addElement('recaptcha', 'recaptcha_element', get_string('recaptcha', 'auth'), array('https' => $CFG->loginhttps));
             $mform->setHelpButton('recaptcha_element', array('recaptcha', get_string('recaptcha', 'auth'))); 
         }
 

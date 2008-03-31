@@ -15,9 +15,10 @@ define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
  * @param int $connecttimeout timeout for connection to server; this is the timeout that
  *   usually happens if the remote server is completely down (default 20 seconds);
  *   may not work when using proxy
+ * @param bool $skipcertverify If true, the peer's SSL certificate will not be checked. Only use this when already in a trusted location.
  * @return mixed false if request failed or content of the file as string if ok.
  */
-function download_file_content($url, $headers=null, $postdata=null, $fullresponse=false, $timeout=300, $connecttimeout=20) {
+function download_file_content($url, $headers=null, $postdata=null, $fullresponse=false, $timeout=300, $connecttimeout=20, $skipcertverify=false) {
     global $CFG;
 
     // some extra security
@@ -111,6 +112,11 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers2);
     }
 
+        
+    if ($skipcertverify) {
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    }
+    
     // use POST if requested
     if (is_array($postdata)) {
         foreach ($postdata as $k=>$v) {

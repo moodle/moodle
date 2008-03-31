@@ -24,15 +24,20 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
      */
     var $_helpbutton='';
 
+    var $_https=false;
+
     /**
      * <code>
      * $form->addElement('textarea_counter', 'message', 'Message',
      *   array('cols'=>60, 'rows'=>10), 160);
      * </code>
      */
-    function HTML_QuickForm_recaptcha($elementName = null, $elementLabel = null, $attributes = null) {
+    function MoodleQuickForm_recaptcha($elementName = null, $elementLabel = null, $attributes = null) {
         parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
         $this->_type = 'recaptcha';
+        if (!empty($attributes['https'])) {
+            $this->_https = $attributes['https'];
+        }
     }
 
     /**
@@ -85,7 +90,7 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
 <div class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type(\'image\')">' . $strgetanimagecaptcha . '</a></div>
 </div>'; 
 
-        return $html . recaptcha_get_html($CFG->recaptchapublickey, $error);
+        return $html . recaptcha_get_html($CFG->recaptchapublickey, $error, $this->_https);
     }
     
     /**
@@ -109,6 +114,7 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
         }
         $this->_helpbutton=call_user_func_array($function, $helpbuttonargs);
     }
+    
     /**
      * get html for help button
      *
@@ -125,7 +131,8 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
         $response = recaptcha_check_answer($CFG->recaptchaprivatekey,
                                            $_SERVER['REMOTE_ADDR'],
                                            $challenge_field,
-                                           $response_field);
+                                           $response_field,
+                                           $this->_https);
         if (!$response->is_valid) {
             $attributes = $this->getAttributes();
             $attributes['error_message'] = $response->error;

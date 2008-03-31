@@ -64,8 +64,13 @@ function _recaptcha_qsencode ($data) {
  * @param int port
  * @return array response
  */
-function _recaptcha_http_post($host, $path, $data, $port = 80) {
+function _recaptcha_http_post($host, $path, $data, $port = 80, $https=false) {
         global $CFG;
+        $protocol = 'http';
+        if ($https) {
+            $protocol = 'https';
+        }
+
         require_once $CFG->libdir . '/filelib.php';
 
         $req = _recaptcha_qsencode ($data);
@@ -76,7 +81,7 @@ function _recaptcha_http_post($host, $path, $data, $port = 80) {
         $headers['Content-Length'] = strlen($req);
         $headers['User-Agent'] = 'reCAPTCHA/PHP';
         
-        $results = download_file_content('http://' . $host . $path, $headers, $data);
+        $results = download_file_content("$protocol://" . $host . $path, $headers, $data, false, 300, 20, true);
 
         if ($results) {
             return array(1 => $results);
@@ -118,7 +123,7 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
         }
 
     require_once $CFG->libdir . '/filelib.php';
-    $html = download_file_content($server . '/noscript?k=' . $pubkey . $errorpart);
+    $html = download_file_content($server . '/noscript?k=' . $pubkey . $errorpart, null, null, false, 300, 20, true);
     preg_match('/image\?c\=([A-Za-z0-9\-\_]*)\"/', $html, $matches);
     $challenge_hash = $matches[1];
     $image_url = $server . '/image?c=' . $challenge_hash;
@@ -185,7 +190,7 @@ class ReCaptchaResponse {
   * @param string $response
   * @return ReCaptchaResponse
   */
-function recaptcha_check_answer ($privkey, $remoteip, $challenge, $response)
+function recaptcha_check_answer ($privkey, $remoteip, $challenge, $response, $https=false)
 {
 	if ($privkey == null || $privkey == '') {
 		die ("To use reCAPTCHA you must get an API key from <a href='http://recaptcha.net/api/getkey'>http://recaptcha.net/api/getkey</a>");
@@ -211,7 +216,8 @@ function recaptcha_check_answer ($privkey, $remoteip, $challenge, $response)
                                                  'remoteip' => $remoteip,
                                                  'challenge' => $challenge,
                                                  'response' => $response
-                                                 )
+                                                ),
+                                         $https        
                                           );
 
         $answers = explode ("\n", $response [1]);
