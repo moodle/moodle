@@ -1,24 +1,31 @@
 <?php
 /**
 * Global Search Engine for Moodle
-* Michael Champanis (mchampan) [cynnical@gmail.com]
-* review 1.8+ : Valery Fremaux [valery.fremaux@club-internet.fr] 
-* 2007/08/02
+*
+* @package search
+* @category core
+* @subpackage document_wrappers
+* @author Michael Campanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 * document handling for all resources
 * This file contains the mapping between a resource and it's indexable counterpart,
 *
 * Functions for iterating and retrieving the necessary records are now also included
 * in this file, rather than mod/resource/lib.php
-**/
+*/
 
+/**
+* requires and includes
+*/
 require_once("$CFG->dirroot/search/documents/document.php");
 require_once("$CFG->dirroot/mod/resource/lib.php");
 
-/* 
+/* *
 * a class for representing searchable information
 * 
-**/
+*/
 class ResourceSearchDocument extends SearchDocument {
     public function __construct(&$resource, $context_id) {
         // generic information; required

@@ -1,8 +1,13 @@
 <?php
 /**
 * Global Search Engine for Moodle
-* add-on 1.8+ : Valery Fremaux [valery.fremaux@club-internet.fr] 
-* 2007/08/02
+*
+* @package search
+* @category core
+* @subpackage document_wrappers
+* @author Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 * document handling for data activity module
 * This file contains the mapping between a database object and it's indexable counterpart,
@@ -10,23 +15,22 @@
 * Functions for iterating and retrieving the necessary records are now also included
 * in this file, rather than mod/data/lib.php
 *
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package search
-* @version 2007110400
-**/
+*/
 
+/**
+* includes and requires
+*/
 require_once("$CFG->dirroot/search/documents/document.php");
 require_once("$CFG->dirroot/mod/data/lib.php");
 
-/* 
+/**
 * a class for representing searchable information (data records)
 * 
-**/
+*/
 class DataSearchDocument extends SearchDocument {
 
     /**
     * constructor
-    *
     */
     public function __construct(&$record, $course_id, $context_id) {
         // generic information; required
@@ -51,18 +55,17 @@ class DataSearchDocument extends SearchDocument {
         
         // construct the parent class
         parent::__construct($doc, $data, $course_id, $record['groupid'], $record['userid'], PATH_FOR_SEARCH_TYPE_DATA);
-    } //constructor
-} //ChatSearchDocument
+    } 
+}
 
-/* 
+/**
 * a class for representing searchable information (comments on data records)
 * 
-**/
+*/
 class DataCommentSearchDocument extends SearchDocument {
 
     /**
     * constructor
-    *
     */
     public function __construct(&$comment, $course_id, $context_id) {
         // generic information; required
@@ -83,25 +86,27 @@ class DataCommentSearchDocument extends SearchDocument {
         
         // construct the parent class
         parent::__construct($doc, $data, $course_id, $comment['groupid'], $comment['userid'], PATH_FOR_SEARCH_TYPE_DATA);
-    } //constructor
-} //ChatCommentSearchDocument
+    } 
+}
 
 /**
 * constructs a valid link to a data record content
 * @param database_id the database reference
 * @param record_id the record reference
+* @uses CFG
 * @return a valid url top access the information as a string
 */
 function data_make_link($database_id, $record_id) {
     global $CFG;
 
     return $CFG->wwwroot.'/mod/data/view.php?d='.$database_id.'&amp;rid='.$record_id;
-} //data_make_link
+}
 
 /**
 * fetches all the records for a given database
 * @param database_id the database
 * @param typematch a comma separated list of types that should be considered for searching or *
+* @uses CFG
 * @return an array of objects representing the data records.
 */
 function data_get_records($database_id, $typematch = '*') {
@@ -127,19 +132,19 @@ function data_get_records($database_id, $typematch = '*') {
             if($typematch == '*' || preg_match("/\\b{$fieldset[$aDatum->fieldid]->type}\\b/", $typematch)){
                 if (!isset($records[$aDatum->recordid])){
                     $records[$aDatum->recordid]['_first'] = $aDatum->content.' '.$aDatum->content1.' '.$aDatum->content2.' '.$aDatum->content3.' '.$aDatum->content4.' ';
-                }
-                else{
+                } else {
                     $records[$aDatum->recordid][$fieldset[$aDatum->fieldid]->name] = $aDatum->content.' '.$aDatum->content1.' '.$aDatum->content2.' '.$aDatum->content3.' '.$aDatum->content4.' ';
                 }
             }
         }
     }
     return $records;
-} //data_get_records
+}
 
 /**
 * fetches all the comments for a given database
 * @param database_id the database
+* @uses CFG
 * @return an array of objects representing the data record comments.
 */
 function data_get_comments($database_id) {
@@ -163,7 +168,7 @@ function data_get_comments($database_id) {
     ";
     $comments = get_records_sql($query);
     return $comments;
-} //data_get_comments
+}
 
 
 /**
@@ -173,7 +178,7 @@ function data_get_comments($database_id) {
 function data_iterator() {
     $databases = get_records('data');
     return $databases;
-} //data_iterator
+}
 
 /**
 * part of search engine API
@@ -221,7 +226,7 @@ function data_get_content_for_index(&$database) {
         }
     }
     return $documents;
-} //data_get_content_for_index
+}
 
 /**
 * returns a single data search document based on a data entry id
@@ -256,8 +261,7 @@ function data_single_document($id, $itemtype) {
         $recordMetaData->content = $accumulator;
         // make document
         $documents[] = new DataSearchDocument(get_object_vars($recordMetaData), $record_course, $context->id);
-    }
-    elseif($itemtype == 'comment'){
+    } elseif($itemtype == 'comment') {
         // get main records
         $comment = get_record('data_comments', 'id', $id);
         $record = get_record('data_records', 'id', $comment->recordid);
@@ -272,11 +276,10 @@ function data_single_document($id, $itemtype) {
         $comment->groupid = $record->groupid;
         // make document
         $documents[] = new DataCommentSearchDocument(get_object_vars($comment), $record_course, $context->id);
-    } 
-    else{
+    } else {
        mtrace('Error : bad or missing item type');
     }
-} //data_single_document
+}
 
 /**
 * dummy delete function that packs id with itemtype.
@@ -287,7 +290,7 @@ function data_delete($info, $itemtype) {
     $object->id = $info;
     $object->itemtype = $itemtype;
     return $object;
-} //data_delete
+}
 
 /**
 * returns the var names needed to build a sql query for addition/deletions
@@ -299,7 +302,7 @@ function data_db_names() {
         array('id', 'data_records', 'timecreated', 'timemodified', 'record'),
         array('id', 'data_comments', 'created', 'modified', 'comment')
     );
-} //data_db_names
+}
 
 /**
 * this function handles the access policy to contents indexed as searchable documents. If this 
@@ -314,6 +317,7 @@ function data_db_names() {
 * points out an indexed data record page.
 * @param user the user record denoting the user who searches
 * @param group_id the current group used by the user when searching
+* @uses CFG
 * @return true if access is allowed, false elsewhere
 */
 function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
@@ -394,5 +398,5 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
         }
         
     return true;
-} // data_check_text_access
+}
 ?>

@@ -1,14 +1,21 @@
 <?php
 /**
 * Global Search Engine for Moodle
-* Michael Champanis (mchampan) [cynnical@gmail.com]
-* review 1.8+ : Valery Fremaux [valery.fremaux@club-internet.fr] 
-* 2007/08/02
+*
+* @package search
+* @category core
+* @subpackage document_wrappers
+* @author Michael Campanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 * Base search document from which other module/block types can
 * extend.
-**/
+*/
 
+/**
+*
+*/
 abstract class SearchDocument extends Zend_Search_Lucene_Document {
     public function __construct(&$doc, &$data, $course_id, $group_id, $user_id, $path) {
          //document identification and indexing
@@ -52,7 +59,7 @@ abstract class SearchDocument extends Zend_Search_Lucene_Document {
          // of multiple capabilities in their code. This possibility should be left open here.
          $this->addField(Zend_Search_Lucene_Field::UnIndexed('capabilities', $caps));
          */
-    } //constructor
-} //SearchDocument
+    }
+}
 
 ?>

@@ -1,8 +1,13 @@
 <?php
 /**
 * Global Search Engine for Moodle
-* add-on 1.8+ : Valery Fremaux [valery.fremaux@club-internet.fr] 
-* 2007/08/02
+*
+* @package search
+* @category core
+* @subpackage document_wrappers
+* @author Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 * document handling for chat activity module
 * This file contains the mapping between a chat history and it's indexable counterpart,
@@ -10,23 +15,22 @@
 * Functions for iterating and retrieving the necessary records are now also included
 * in this file, rather than mod/chat/lib.php
 *
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package search
-* @version 2007110400
-**/
+*/
 
+/**
+* includes and requires
+*/
 require_once("$CFG->dirroot/search/documents/document.php");
 require_once("$CFG->dirroot/mod/chat/lib.php");
 
-/* 
+/**
 * a class for representing searchable information
 * 
-**/
+*/
 class ChatTrackSearchDocument extends SearchDocument {
 
     /**
     * constructor
-    *
     */
     public function __construct(&$chatsession, $chat_module_id, $course_id, $group_id, $context_id) {
         // generic information; required
@@ -50,8 +54,8 @@ class ChatTrackSearchDocument extends SearchDocument {
         
         // construct the parent class
         parent::__construct($doc, $data, $course_id, $group_id, 0, PATH_FOR_SEARCH_TYPE_CHAT);
-    } //constructor
-} //ChatTrackSearchDocument
+    } 
+}
 
 
 /**
@@ -59,19 +63,21 @@ class ChatTrackSearchDocument extends SearchDocument {
 * @param cm_id the chat course module
 * @param start the start time of the session
 * @param end th end time of the session
+* @uses CFG
 * @return a well formed link to session display
 */
 function chat_make_link($cm_id, $start, $end) {
     global $CFG;
 
     return $CFG->wwwroot.'/mod/chat/report.php?id='.$cm_id.'&amp;start='.$start.'&amp;end='.$end;
-} //chat_make_link
+}
 
 /**
 * fetches all the records for a given session and assemble them as a unique track
 * we revamped here the code of report.php for making sessions, but without any output.
 * note that we should collect sessions "by groups" if groupmode() is SEPARATEGROUPS.
 * @param chat_id the database
+* @uses CFG
 * @return an array of objects representing the chat sessions.
 */
 function chat_get_session_tracks($chat_id, $fromtime = 0, $totime = 0) {
@@ -140,7 +146,7 @@ function chat_get_session_tracks($chat_id, $fromtime = 0, $totime = 0) {
         } 
     } 
     return $tracks;
-} //chat_get_session_tracks
+}
 
 /**
 * part of search engine API
@@ -149,7 +155,7 @@ function chat_get_session_tracks($chat_id, $fromtime = 0, $totime = 0) {
 function chat_iterator() {
     $chatrooms = get_records('chat');
     return $chatrooms;
-} //chat_iterator
+}
 
 /**
 * part of search engine API
@@ -177,7 +183,7 @@ function chat_get_content_for_index(&$chat) {
         return $documents;
     }
     return array();
-} //chat_get_content_for_index
+}
 
 /**
 * returns a single data search document based on a chat_session id
@@ -206,7 +212,7 @@ function chat_single_document($id, $itemtype) {
         return $document;
     }
     return null;
-} //chat_single_document
+}
 
 /**
 * dummy delete function that packs id with itemtype.
@@ -217,7 +223,7 @@ function chat_delete($info, $itemtype) {
     $object->id = $info;
     $object->itemtype = $itemtype;
     return $object;
-} //chat_delete
+}
 
 /**
 * returns the var names needed to build a sql query for addition/deletions
@@ -226,7 +232,7 @@ function chat_delete($info, $itemtype) {
 function chat_db_names() {
     //[primary id], [table name], [time created field name], [time modified field name]
     return null;
-} //chat_db_names
+}
 
 /**
 * this function handles the access policy to contents indexed as searchable documents. If this 
@@ -241,6 +247,7 @@ function chat_db_names() {
 * points out a session history which is a close sequence of messages.
 * @param user the user record denoting the user who searches
 * @param group_id the current group used by the user when searching
+* @uses CFG
 * @return true if access is allowed, false elsewhere
 */
 function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
@@ -280,7 +287,7 @@ function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     }
         
     return true;
-} //chat_check_text_access
+}
 
 /**
 * this call back is called when displaying the link for some last post processing
@@ -290,5 +297,5 @@ function chat_link_post_processing($title){
      setLocale(LC_TIME, substr(current_language(), 0, 2));
      $title = preg_replace('/TT_(.*)_TT/e', "userdate(\\1)", $title);
      return $title;
-} //chat_link_post_processing
+}
 ?>

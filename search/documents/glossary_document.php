@@ -1,9 +1,13 @@
 <?php
 /**
 * Global Search Engine for Moodle
-* Michael Champanis (mchampan) [cynnical@gmail.com]
-* review 1.8+ : Valery Fremaux [valery.fremaux@club-internet.fr] 
-* 2007/08/02
+*
+* @package search
+* @category core
+* @subpackage document_wrappers
+* @author Michael Campanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 * document handling for glossary activity module
 * This file contains a mapping between a glossary entry and it's indexable counterpart,
@@ -11,17 +15,17 @@
 * Functions for iterating and retrieving the necessary records are now also included
 * in this file, rather than mod/glossary/lib.php
 *
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package search
-* @version 2007110400
-**/
+*/
 
+/**
+* includes and requires
+*/
 require_once("$CFG->dirroot/search/documents/document.php");
 
-/* 
+/**
 * a class for representing searchable information
 * 
-**/
+*/
 class GlossarySearchDocument extends SearchDocument {
     
     /**
@@ -49,18 +53,17 @@ class GlossarySearchDocument extends SearchDocument {
         
         // construct the parent class
         parent::__construct($doc, $data, $course_id, -1, $entry['userid'], PATH_FOR_SEARCH_TYPE_GLOSSARY);
-    } //constructor
-} //GlossarySearchDocument
+    }
+}
 
-/* 
+/** 
 * a class for representing searchable information
 * 
-**/
+*/
 class GlossaryCommentSearchDocument extends SearchDocument {
     
     /**
     * document constructor
-    *
     */
     public function __construct(&$entry, $glossary_id, $course_id, $context_id) {
         // generic information; required
@@ -83,8 +86,8 @@ class GlossaryCommentSearchDocument extends SearchDocument {
         
         // construct the parent class
         parent::__construct($doc, $data, $course_id, -1, $entry['userid'], PATH_FOR_SEARCH_TYPE_GLOSSARY);
-    } //constructor
-} //GlossaryCommentSearchDocument
+    } 
+}
   
 /**
 * constructs valid access links to information
@@ -102,7 +105,7 @@ function glossary_make_link($entry_id) {
     // preserve glossary pop-up, be careful where you place your ' and "s
     //this function is meant to return a url that is placed between href='[url here]'
     return "$CFG->wwwroot/mod/glossary/showentry.php?eid=$entry_id' onclick='return openpopup(\"/mod/glossary/showentry.php?eid=$entry_id\", \"entry\", DEFAULT_POPUP_SETTINGS, 0);";
-} //glossary_make_link
+} 
 
 /**
 * part of search engine API
@@ -111,7 +114,7 @@ function glossary_make_link($entry_id) {
 function glossary_iterator() {
      $glossaries = get_records('glossary');
      return $glossaries;
-} //glossary_iterator
+}
 
 /**
 * part of search engine API
@@ -153,7 +156,7 @@ function glossary_get_content_for_index(&$glossary) {
         }
     }
     return $documents;
-} //glossary_get_content_for_index
+}
 
 /**
 * part of search engine API
@@ -179,7 +182,7 @@ function glossary_single_document($id, $itemtype) {
     elseif ($itemtype == 'comment'){
         return new GlossaryCommentSearchDocument(get_object_vars($comment), $entry->glossaryid, $glossary_course, $context->id);
     }
-} //glossary_single_document
+}
 
 /**
 * dummy delete function that packs id with itemtype.
@@ -190,7 +193,7 @@ function glossary_delete($info, $itemtype) {
     $object->id = $info;
     $object->itemtype = $itemtype;
     return $object;
-} //glossary_delete
+}
 
 /**
 * returns the var names needed to build a sql query for addition/deletions
@@ -202,7 +205,7 @@ function glossary_db_names() {
         array('id', 'glossary_entries', 'timecreated', 'timemodified', 'standard'),
         array('id', 'glossary_comments', 'timemodified', 'timemodified', 'comment')
     );
-} //glossary_db_names
+}
 
 /**
 * this function handles the access policy to contents indexed as searchable documents. If this 
@@ -241,6 +244,5 @@ function glossary_check_text_access($path, $itemtype, $this_id, $user, $group_id
     }
     
     return true;
-} //glossary_check_text_access
-
+}
 ?>
