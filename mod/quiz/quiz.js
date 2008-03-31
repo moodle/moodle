@@ -21,11 +21,12 @@ are actually on the submit button. Don't stop the user typing things in text are
 function check_enter(e) {
     var target = e.target ? e.target : e.srcElement;
     var keyCode = e.keyCode ? e.keyCode : e.which;
-
-    if(keyCode==13 && !target.nodeName=='a' && (!target.type || (target.type!='submit' && target.type!='textarea')))
+    if (keyCode==13 && target.nodeName!='a' &&
+            (!target.type || !(target.type=='submit' || target.type=='textarea'))) {
         return false;
-    else
+    } else {
         return true;
+    }
 }
 
 /* Used to update the on-screen countdown clock for quizzes with a time limit */
