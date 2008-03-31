@@ -4,6 +4,7 @@
 * This is a special externalized code for cron handling in PHP5.
 * Should never be called by a php 4.3.0 implementation. 
 */
+
 try{
     // overrides php limits
     $maxtimelimit = ini_get('max_execution_time');
