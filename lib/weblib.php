@@ -5668,13 +5668,22 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  */
 function print_error ($errorcode, $module='', $link='', $a=NULL) {
 
-    global $CFG;
+    global $CFG, $SESSION, $THEME;
 
     if (empty($module) || $module == 'moodle' || $module == 'core') {
         $module = 'error';
         $modulelink = 'moodle';
     } else {
         $modulelink = $module;
+    }
+
+    if (empty($link) and !defined('ADMIN_EXT_HEADER_PRINTED')) {
+        if ( !empty($SESSION->fromurl) ) {
+            $link = $SESSION->fromurl;
+            unset($SESSION->fromurl);
+        } else {
+            $link = $CFG->wwwroot .'/';
+        }
     }
 
     if (!empty($CFG->errordocroot)) {
@@ -5685,11 +5694,46 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
         $errordocroot = 'http://docs.moodle.org';
     }
 
-    $message = '<p class="errormessage">'.get_string($errorcode, $module, $a).'</p>'.
+    $message = clean_text('<p class="errormessage">'.get_string($errorcode, $module, $a).'</p>'.
                '<p class="errorcode">'.
                '<a href="'.$errordocroot.'/en/error/'.$modulelink.'/'.$errorcode.'">'.
-                 get_string('moreinformation').'</a></p>';
-    error($message, $link);
+                 get_string('moreinformation').'</a></p>');
+
+    if (defined('FULLME') && FULLME == 'cron') {
+        // Errors in cron should be mtrace'd.
+        mtrace($message);
+        die;
+    }
+
+    if (! defined('HEADER_PRINTED')) {
+        //header not yet printed
+        @header('HTTP/1.0 404 Not Found');
+        print_header(get_string('error'));
+    } else {
+        print_container_end_all(false, $THEME->open_header_containers);
+    }
+
+    echo '<br />';
+
+    print_simple_box($message, '', '', '', '', 'errorbox');
+
+    debugging('Stack trace:', DEBUG_DEVELOPER);
+
+    // in case we are logging upgrade in admin/index.php stop it
+    if (function_exists('upgrade_log_finish')) {
+        upgrade_log_finish();
+    }
+
+    if (!empty($link)) {
+        print_continue($link);
+    }
+
+    print_footer();
+
+    for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
+        echo ' ';
+    }
+    die;
 }
 
 /**
