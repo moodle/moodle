@@ -132,7 +132,10 @@ class resource_file extends resource_base {
         global $RESOURCE_WINDOW_OPTIONS;
         $alloptions = $RESOURCE_WINDOW_OPTIONS;
 
-        if ($resource->windowpopup) {
+        if ($resource->forcedownload) {
+            $resource->options = 'forcedownload';
+
+        } else if ($resource->windowpopup) {
             $optionlist = array();
             foreach ($alloptions as $option) {
                 $optionlist[] = $option."=".$resource->$option;
@@ -161,10 +164,6 @@ class resource_file extends resource_base {
             }
             unset($resource->$parsename);
             unset($resource->$parametername);
-        }
-
-        if ($resource->forcedownload) {
-            $resource->options = 'forcedownload';
         }
 
         $resource->alltext = implode(',', $optionlist);
@@ -665,7 +664,10 @@ class resource_file extends resource_base {
 
     function setup_preprocessing(&$defaults){
 
-        if (!isset($defaults['popup'])) {
+        if (isset($defaults['options']) and $defaults['options'] === 'forcedownload') {
+            $defaults['forcedownload'] = 1;
+
+        } else if (!isset($defaults['popup'])) {
             // use form defaults
 
         } else if (!empty($defaults['popup'])) {
