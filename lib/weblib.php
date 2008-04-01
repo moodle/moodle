@@ -5668,13 +5668,15 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
         $errordocroot = 'http://docs.moodle.org';
     }
 
+    $message = get_string($errorcode, $module, $a);
+
     if (defined('FULLME') && FULLME == 'cron') {
         // Errors in cron should be mtrace'd.
         mtrace($message);
         die;
     }
 
-    $message = clean_text('<p class="errormessage">'.get_string($errorcode, $module, $a).'</p>'.
+    $message = clean_text('<p class="errormessage">'.$message.'</p>'.
                '<p class="errorcode">'.
                '<a href="'.$errordocroot.'/en/error/'.$modulelink.'/'.$errorcode.'">'.
                  get_string('moreinformation').'</a></p>');
