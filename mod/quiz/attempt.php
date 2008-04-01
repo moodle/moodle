@@ -432,8 +432,6 @@
 /// Start the form
     echo "<form id=\"responseform\" method=\"post\" action=\"attempt.php\" " .
             "onclick=\"this.autocomplete='off'\" onkeypress=\"return check_enter(event);\">\n";
-    if($quiz->timelimit > 0) {
-        // Make sure javascript is enabled for time limited quizzes
         ?>
         <script type="text/javascript">
 //<![CDATA[
@@ -450,6 +448,13 @@ function check_enter(e) {
     }
 }
 //]]>
+        </script>
+    <?php 
+    if($quiz->timelimit > 0) {
+        // Make sure javascript is enabled for time limited quizzes
+        ?>
+        <script type="text/javascript">
+            // Do nothing.
         </script>
         <noscript>
         <div>
