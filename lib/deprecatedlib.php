@@ -1629,6 +1629,7 @@ function document_file($file, $include=true) {
 function error ($message, $link='') {
 
     global $CFG, $SESSION, $THEME;
+    debugging('error() is a deprecated function, please call print_error() instead of error()', DEBUG_DEVELOPER);
     $message = clean_text($message);   // In case nasties are in here
 
     if (defined('FULLME') && FULLME == 'cron') {
