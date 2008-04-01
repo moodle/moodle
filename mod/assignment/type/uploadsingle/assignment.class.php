@@ -23,9 +23,9 @@ class assignment_uploadsingle extends assignment_base {
                     $icon = mimeinfo('icon', $file);
                     
                     if ($CFG->slasharguments) {
-                        $ffurl = "$CFG->wwwroot/file.php". urlencode("/$filearea/$file");
+                        $ffurl = "$CFG->wwwroot/file.php/". urlencode($filearea) .'/'. urlencode($file);
                     } else {
-                        $ffurl = "$CFG->wwwroot/file.php?file=". urlencode("/$filearea/$file");
+                        $ffurl = "$CFG->wwwroot/file.php?file=/". urlencode($filearea) .'/'. urlencode($file);
                     }
                     //died right here
                     //require_once($ffurl);                
