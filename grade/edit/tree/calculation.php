@@ -112,7 +112,7 @@ $mform->display();
 // Now show the gradetree with the idnumbers add/edit form
 echo '
 <form class="mform" id="mform2" method="post" action="' . $CFG->wwwroot . '/grade/edit/tree/calculation.php?courseid='.$courseid.'&amp;id='.$id.'">
-	<div style="display: none;">
+    <div style="display: none;">
         <input type="hidden" value="'.$id.'" name="id"/>
         <input type="hidden" value="'.$courseid.'" name="courseid"/>
         <input type="hidden" value="'.$gpr->type.'" name="gpr_type"/>
@@ -122,8 +122,8 @@ echo '
         <input type="hidden" value="idnumbers" name="section"/>
     </div>
 
-	<fieldset id="idnumbers" class="clearfix">
-		<legend class="ftoggler">'.get_string('idnumbers', 'grades').'</legend>
+    <fieldset id="idnumbers" class="clearfix">
+        <legend class="ftoggler">'.get_string('idnumbers', 'grades').'</legend>
         <div class="fcontainer clearfix">
             <ul>
             ' . get_grade_tree($gtree, $gtree->top_element, $id, $errors) . '
