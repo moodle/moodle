@@ -17,6 +17,12 @@
     define('BLOCK_L_MAX_WIDTH', $lmax);
     define('BLOCK_R_MIN_WIDTH', $rmin);
     define('BLOCK_R_MAX_WIDTH', $rmax);
+
+    // some defines for time periods (all are seconds)
+    define( 'SECONDS_ONEWEEK', 604800 );
+    define( 'SECONDS_SIXDAYS', 518400 );
+    define( 'SECONDS_TWOHOURS', 7200 );
+
   
     $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),  
                                             BLOCK_L_MAX_WIDTH);
@@ -133,10 +139,10 @@
 
     $timenow = time();
     $weekdate = $course->startdate;    // this should be 0:00 Monday of that week
-    $weekdate += 7200;                 // Add two hours to avoid possible DST problems
+    $weekdate += SECONDS_TWOHOURS;     // Add two hours to avoid possible DST problems
     $section = 1;
     $sectionmenu = array();
-    $weekofseconds = 604800;
+    $weekofseconds = SECONDS_ONEWEEK;
     $course->enddate = $course->startdate + ($weekofseconds * $course->numsections);
 
     $strftimedateshort = ' '.get_string('strftimedateshort');
@@ -145,7 +151,7 @@
 
         $nextweekdate = $weekdate + ($weekofseconds);
         $weekday = userdate($weekdate, $strftimedateshort);
-        $endweekday = userdate($weekdate+518400, $strftimedateshort);
+        $endweekday = userdate($weekdate+SECONDS_SIXDAYS, $strftimedateshort);
 
         if (!empty($sections[$section])) {
             $thissection = $sections[$section];
