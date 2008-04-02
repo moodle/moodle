@@ -117,7 +117,7 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
 
     } else {
         if (!$category->visible) {
-            error(get_string('notavailable', 'error'));
+            print_error('notavailable', 'error');
         }
         $navbaritem = print_course_search("", true, "navbar");
         $adminediting = false;

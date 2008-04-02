@@ -19,7 +19,7 @@ admin_externalpage_setup('ssoaccesscontrol');
 admin_externalpage_print_header();
 
 if (!extension_loaded('openssl')) {
-    print_error('requiresopenssl', 'mnet', '', NULL, true);
+    print_error('requiresopenssl', 'mnet');
 }
 
 $sitecontext = get_context_instance(CONTEXT_SYSTEM);
@@ -39,13 +39,13 @@ if (!empty($action) and confirm_sesskey()) {
     
     // boot if insufficient permission
     if (!has_capability('moodle/user:delete', $sitecontext)) {
-        error(get_string('nomodifyacl','mnet'));
+        print_error('nomodifyacl','mnet');
     }
 
     // fetch the record in question
     $id = required_param('id', PARAM_INT);
     if (!$idrec = get_record('mnet_sso_access_control', 'id', $id)) {
-        error(get_string('recordnoexists','mnet'), "$CFG->wwwroot/$CFG->admin/mnet/access_control.php");
+        print_error('recordnoexists','mnet', "$CFG->wwwroot/$CFG->admin/mnet/access_control.php");
     }
 
     switch ($action) {
@@ -60,7 +60,7 @@ if (!empty($action) and confirm_sesskey()) {
             // require the access parameter, and it must be 'allow' or 'deny'
             $accessctrl = trim(strtolower(required_param('accessctrl', PARAM_ALPHA)));
             if ($accessctrl != 'allow' and $accessctrl != 'deny') {
-                error(get_string('invalidaccessparam', 'mnet') , "$CFG->wwwroot/$CFG->admin/mnet/access_control.php");
+                print_error('invalidaccessparam', 'mnet', "$CFG->wwwroot/$CFG->admin/mnet/access_control.php");
             }
 
             if (mnet_update_sso_access_control($idrec->username, $idrec->mnet_host_id, $accessctrl)) {
@@ -84,7 +84,7 @@ if ($form = data_submitted() and confirm_sesskey()) {
 
     // check permissions and verify form input
     if (!has_capability('moodle/user:delete', $sitecontext)) {
-        error(get_string('nomodifyacl','mnet'), "$CFG->wwwroot/$CFG->admin/mnet/access_control.php");
+        print_error('nomodifyacl','mnet', "$CFG->wwwroot/$CFG->admin/mnet/access_control.php");
     }
     if (empty($form->username)) {
         $formerror['username'] = get_string('enterausername','mnet');

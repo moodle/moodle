@@ -73,9 +73,9 @@
 
 /// Security Constraints (sesskey and isteacheredit)
     if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
+        print_error('confirmsesskeybad', 'error');
     } else if (!has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $courseid))) {
-        error(get_string('onlyeditingteachers', 'error'));
+        print_error('onlyeditingteachers', 'error');
     }
 
 ///

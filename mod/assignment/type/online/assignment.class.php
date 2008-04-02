@@ -35,7 +35,7 @@ class assignment_online extends assignment_base {
         if ($editmode) {
             //guest can not edit or submit assignment
             if (!has_capability('mod/assignment:submit', $context)) {
-                error(get_string('guestnosubmit', 'assignment'));
+                print_error('guestnosubmit', 'assignment');
             }
         }
 

@@ -58,7 +58,7 @@
 
     /// Is an Action given ?
     if(!$action) {
-      error(get_string("noadministrationaction","wiki"));
+      print_error("noadministrationaction","wiki");
     }
 
     /// Correct Action ?
@@ -69,7 +69,7 @@
 
     /// May the User administrate it ?
     if (($wiki_entry = wiki_get_entry($wiki, $course, $userid, $groupid)) === false || wiki_can_edit_entry($wiki_entry, $wiki, $USER, $course) === false) {
-      error(get_string("notadministratewiki","wiki"));
+      print_error("notadministratewiki","wiki");
     }
 
     $canedit = wiki_can_edit_entry($wiki_entry, $wiki, $USER, $course);

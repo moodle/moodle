@@ -94,7 +94,7 @@ if (empty($iid)) {
         if ($readcount === false) {
             error($cir->get_error(), $returnurl);
         } else if ($readcount == 0) {
-            error(get_string('csvemptyfile', 'error'), $returnurl);
+            print_error('csvemptyfile', 'error', $returnurl);
         }
         // continue to form2
 

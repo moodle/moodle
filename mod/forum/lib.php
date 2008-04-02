@@ -5657,7 +5657,7 @@ function forum_check_throttling($forum) {
     $a->blockperiod = get_string('secondstotime'.$forum->blockperiod);
 
     if ($forum->blockafter <= $numposts) {
-        error(get_string('forumblockingtoomanyposts','error',$a),$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id);
+        print_error('forumblockingtoomanyposts', 'error', $CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id, $a);
     }
     if ($forum->warnafter <= $numposts) {
         notify(get_string('forumblockingalmosttoomanyposts','forum',$a));

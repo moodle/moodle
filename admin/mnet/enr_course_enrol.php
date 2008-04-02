@@ -7,7 +7,7 @@
     include_once($CFG->dirroot.'/mnet/xmlrpc/client.php');
 
     if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
+        print_error('confirmsesskeybad', 'error');
     }
 
     admin_externalpage_setup('mnetenrol');

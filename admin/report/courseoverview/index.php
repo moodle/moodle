@@ -43,7 +43,7 @@
     $timeoptions = stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$earliestweek,$earliestmonth);
 
     if (empty($timeoptions)) {
-        error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
+        print_error('nostatstodisplay', "", $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
     echo '<form action="index.php" method="post">'."\n";

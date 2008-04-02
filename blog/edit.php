@@ -16,7 +16,7 @@ if (empty($CFG->bloglevel)) {
 }
 
 if (isguest()) {
-    error(get_string('noguestpost', 'blog'));
+    print_error('noguestpost', 'blog');
 }
 
 $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
@@ -31,13 +31,13 @@ if ($id) {
     }
 
     if (!blog_user_can_edit_post($existing)) {
-        error(get_string('notallowedtoedit', 'blog'));
+        print_error('notallowedtoedit', 'blog');
     }
     $userid    = $existing->userid;
     $returnurl = $CFG->wwwroot.'/blog/index.php?userid='.$existing->userid;
 } else {
     if (!has_capability('moodle/blog:create', $sitecontext)) {
-        error(get_string('nopost', 'blog')); // manageentries is not enough for adding
+        print_error('nopost', 'blog'); // manageentries is not enough for adding
     }
     $existing  = false;
     $userid    = $USER->id;

@@ -6,7 +6,7 @@ require_once('lib.php');
 require_login();
 
 if (empty($CFG->usetags)) {
-    error(get_string('tagsaredisabled', 'tag'));
+    print_error('tagsaredisabled', 'tag');
 }
 
 $query = addslashes(optional_param('query', '', PARAM_RAW));  

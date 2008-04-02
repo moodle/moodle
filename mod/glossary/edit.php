@@ -41,7 +41,7 @@ if ($e) { // if entry is specified
     $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
     if (!has_capability('mod/glossary:manageentries', $context) and !($entry->userid == $USER->id and ($ineditperiod and has_capability('mod/glossary:write', $context)))) {
         //expired edit time is the most probable cause here
-        error(get_string('erredittimeexpired', 'glossary'), "view.php?id=$cm->id&amp;mode=entry&amp;hook=$e");
+        print_error('erredittimeexpired', 'glossary', "view.php?id=$cm->id&amp;mode=entry&amp;hook=$e");
     }
 } else { // new entry
     require_capability('mod/glossary:write', $context);
@@ -174,9 +174,9 @@ if ($mform->is_cancelled()){
         $ineditperiod = ((time() - $fromdb->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
         if ((!$ineditperiod  || $USER->id != $fromdb->userid) and !has_capability('mod/glossary:manageentries', $context)) {
             if ( $USER->id != $fromdb->userid ) {
-                error(get_string('errcannoteditothers', 'glossary'));
+                print_error('errcannoteditothers', 'glossary');
             } elseif (!$ineditperiod) {
-                error(get_string('erredittimeexpired', 'glossary'));
+                print_error('erredittimeexpired', 'glossary');
             }
             die;
         }

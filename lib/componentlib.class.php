@@ -84,9 +84,9 @@
 //                     $a = new stdClass();
 //                     $a->url = 'http://download.moodle.org/lang16/es_utf8.zip';
 //                     $a->dest= $CFG->dataroot.'/lang';
-//                     error(get_string($cd->get_error(), 'error', $a));
+//                     print_error($cd->get_error(), 'error', '', $a);
 //                 } else {
-//                     error(get_string($cd->get_error(), 'error'));
+//                     print_error($cd->get_error(), 'error');
 //                 }
 //                 break;
 //             case COMPONENT_UPTODATE:

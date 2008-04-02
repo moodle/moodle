@@ -92,7 +92,7 @@
     } else {  // subscribe
         if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE &&
                     !has_capability('mod/forum:managesubscriptions', $context)) {
-            error(get_string('disallowsubscribe', 'forum'),$_SERVER["HTTP_REFERER"]);
+            print_error('disallowsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
         }
         if (!has_capability('mod/forum:viewdiscussion', $context)) {
             error("Could not subscribe you to that forum", $_SERVER["HTTP_REFERER"]);

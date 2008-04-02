@@ -1888,7 +1888,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
                 }
             }
         } else {
-            error(get_string('nopasswordchangeforced', 'auth'));
+            print_error('nopasswordchangeforced', 'auth');
         }
     }
 
@@ -1901,7 +1901,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 /// Make sure current IP matches the one for this session (if required)
     if (!empty($CFG->tracksessionip)) {
         if ($USER->sessionIP != md5(getremoteaddr())) {
-            error(get_string('sessionipnomatch', 'error'));
+            print_error('sessionipnomatch', 'error');
         }
     }
 
@@ -1930,7 +1930,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 /// groupmembersonly access control
     if (!empty($CFG->enablegroupings) and $cm and $cm->groupmembersonly and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         if (isguestuser() or !groups_has_membership($cm)) {
-            error(get_string('groupmembersonlyerror', 'group'), $CFG->wwwroot.'/course/view.php?id='.$cm->course);
+            print_error('groupmembersonlyerror', 'group', $CFG->wwwroot.'/course/view.php?id='.$cm->course);
         }
     }
 
@@ -2324,7 +2324,7 @@ function update_login_count() {
 
     if ($SESSION->logincount > $max_logins) {
         unset($SESSION->wantsurl);
-        error(get_string('errortoomanylogins'));
+        print_error('errortoomanylogins');
     }
 }
 
@@ -3153,7 +3153,7 @@ function complete_user_login($user) {
                 redirect($CFG->httpswwwroot.'/login/change_password.php');
             }
         } else {
-            error(get_string('nopasswordchangeforced', 'auth'));
+            print_error('nopasswordchangeforced', 'auth');
         }
     }
     return $USER;

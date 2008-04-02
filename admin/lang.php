@@ -435,7 +435,7 @@
 
         if (isset($_POST['currentfile'])){   // Save a file
             if (!confirm_sesskey()) {
-                error(get_string('confirmsesskeybad', 'error'));
+                print_error('confirmsesskeybad', 'error');
             }
 
             $newstrings = array();
@@ -707,7 +707,7 @@
 
         if (isset($_POST['currentfile'])) {  // Save a file
             if (!confirm_sesskey()) {
-                error(get_string('confirmsesskeybad', 'error'));
+                print_error('confirmsesskeybad', 'error');
             }
             if (lang_help_save_file($saveto, $currentfile, $_POST['filedata'])) {
                 notify(get_string("changessaved")." ($saveto/$currentfile)", "notifysuccess");

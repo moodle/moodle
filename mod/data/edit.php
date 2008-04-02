@@ -82,7 +82,7 @@
 
     if ($rid) {    // So do you have access?
         if (!(has_capability('mod/data:manageentries', $context) or data_isowner($rid)) or !confirm_sesskey() ) {
-            error(get_string('noaccess','data'));
+            print_error('noaccess','data');
         }
     }
 
@@ -341,7 +341,7 @@
 
     // Print the stuff that need to come after the form fields.
     if (!$fields = get_records('data_fields', 'dataid', $data->id)) {
-        error(get_string('nofieldindatabase', 'data'));
+        print_error('nofieldindatabase', 'data');
     }
     foreach ($fields as $eachfield) {
         $field = data_get_field($eachfield, $data);

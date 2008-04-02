@@ -28,6 +28,6 @@
         send_file($pathname, $image);
     } else {
         header('HTTP/1.0 404 not found');
-        error(get_string('filenotfound', 'error')); //this is not displayed on IIS??
+        print_error('filenotfound', 'error'); //this is not displayed on IIS??
     }
 ?>

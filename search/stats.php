@@ -18,7 +18,7 @@ if ($CFG->forcelogin) {
 }
 
 if (empty($CFG->enableglobalsearch)) {
-    error(get_string('globalsearchdisabled', 'search'));
+    print_error('globalsearchdisabled', 'search');
 }
 
 //check for php5, but don't die yet

@@ -24,7 +24,7 @@
 
     // check user can access this hotpot activity
     if (!hotpot_is_visible($cm)) {
-        error(get_string("activityiscurrentlyhidden"));
+        print_error("activityiscurrentlyhidden");
     }
 
     if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {

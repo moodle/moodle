@@ -16,12 +16,12 @@ $adminroot =& admin_get_root(); // need all settings
 $page      =& $adminroot->locate($section);
 
 if (empty($page) or !is_a($page, 'admin_settingpage')) {
-    error(get_string('sectionerror', 'admin'), "$CFG->wwwroot/$CFG->admin/");
+    print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
     die;
 }
 
 if (!($page->check_access())) {
-    error(get_string('accessdenied', 'admin'));
+    print_error('accessdenied', 'admin');
     die;
 }
 

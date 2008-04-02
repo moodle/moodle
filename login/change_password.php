@@ -46,7 +46,7 @@
     $userauth = get_auth_plugin($USER->auth);
 
     if (!$userauth->can_change_password()) {
-        error(get_string('nopasswordchange', 'auth'));
+        print_error('nopasswordchange', 'auth');
     }
 
     if ($changeurl = $userauth->change_password_url()) {
@@ -65,7 +65,7 @@
     } else if ($data = $mform->get_data()) {
 
         if (!$userauth->user_update_password(addslashes_recursive($USER), $data->newpassword1)) {
-            error(get_string('errorpasswordupdate', 'auth'));
+            print_error('errorpasswordupdate', 'auth');
         }
 
         // register success changing password

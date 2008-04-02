@@ -680,7 +680,7 @@ function question_edit_setup($edittab, $requirecmid = false, $requirecourseid = 
     if (!empty($pagevars['cat'])){
         $catparts = explode(',', $pagevars['cat']);
         if (!$catparts[0] || (FALSE !== array_search($catparts[1], $contextlistarr)) || !count_records_select("question_categories", "id = '".$catparts[0]."' AND contextid = $catparts[1]")) {
-            error(get_string('invalidcategory', 'quiz'));
+            print_error('invalidcategory', 'quiz');
         }
     } else {
         $category = $defaultcategory;

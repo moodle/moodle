@@ -8,7 +8,7 @@ global $CFG;
 require_login();
 
 if( empty($CFG->usetags)) {
-    error(get_string('tagsaredisabled', 'tag'));
+    print_error('tagsaredisabled', 'tag');
 }
 
 $query      = optional_param('query', '', PARAM_RAW);

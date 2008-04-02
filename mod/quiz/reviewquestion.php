@@ -66,14 +66,14 @@
         // If not even responses are to be shown in review then we
         // don't allow any review
         if (!($quiz->review & QUIZ_REVIEW_RESPONSES)) {
-            error(get_string("noreview", "quiz"));
+            print_error("noreview", "quiz");
         }
         if ((time() - $attempt->timefinish) > 120) { // always allow review right after attempt
             if ((!$quiz->timeclose or time() < $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_OPEN)) {
-                error(get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
+                print_error("noreviewuntil", "quiz", '', userdate($quiz->timeclose));
             }
             if ($quiz->timeclose and time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
-                error(get_string("noreview", "quiz"));
+                print_error("noreview", "quiz");
             }
         }
         if ($attempt->userid != $USER->id) {

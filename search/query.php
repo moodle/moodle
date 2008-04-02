@@ -35,7 +35,7 @@ if ($CFG->forcelogin) {
 }
 
 if (empty($CFG->enableglobalsearch)) {
-    error(get_string('globalsearchdisabled', 'search'));
+    print_error('globalsearchdisabled', 'search');
 }
 
 $adv = new Object();

@@ -139,7 +139,7 @@
         $postfun = $cm->modname.'_get_post_actions';
 
         if (!function_exists($viewfun) || !function_exists($postfun)) {
-            error(get_string('modulemissingcode','error',$cm->modname), $baseurl);
+            print_error('modulemissingcode', 'error', $baseurl, $cm->modname);
         }
 
         $viewnames = $viewfun();

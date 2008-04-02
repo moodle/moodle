@@ -86,12 +86,12 @@
     $numberofpreviousattempts = count_records_select('quiz_attempts', "quiz = '{$quiz->id}' AND " .
         "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1");
     if ($quiz->attempts and $numberofpreviousattempts >= $quiz->attempts) {
-        error(get_string('nomoreattempts', 'quiz'), "view.php?id={$cm->id}");
+        print_error('nomoreattempts', 'quiz', "view.php?id={$cm->id}");
     }
 
 /// Check subnet access
     if (!$ispreviewing && $quiz->subnet && !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
-        error(get_string("subneterror", "quiz"), "view.php?id=$cm->id");
+        print_error("subneterror", "quiz", "view.php?id=$cm->id");
     }
 
 /// Check password access
@@ -156,11 +156,11 @@
         }
         if ($numattempts == 1 && $quiz->delay1) {
             if ($timenow - $quiz->delay1 < $lastattempt) {
-                error(get_string('timedelay', 'quiz'), 'view.php?q='.$quiz->id);
+                print_error('timedelay', 'quiz', 'view.php?q='.$quiz->id);
             }
         } else if($numattempts > 1 && $quiz->delay2) {
             if ($timenow - $quiz->delay2 < $lastattempt) {
-                error(get_string('timedelay', 'quiz'), 'view.php?q='.$quiz->id);
+                print_error('timedelay', 'quiz', 'view.php?q='.$quiz->id);
             }
         }
     }
@@ -235,7 +235,7 @@
     }
 
     if (!$questionlist) {
-        error(get_string('noquestionsfound', 'quiz'), 'view.php?q='.$quiz->id);
+        print_error('noquestionsfound', 'quiz', 'view.php?q='.$quiz->id);
     }
 
     $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
@@ -246,7 +246,7 @@
 
     // Load the questions
     if (!$questions = get_records_sql($sql)) {
-        error(get_string('noquestionsfound', 'quiz'), 'view.php?q='.$quiz->id);
+        print_error('noquestionsfound', 'quiz', 'view.php?q='.$quiz->id);
     }
 
     // Load the question type specific information
@@ -382,7 +382,7 @@
 
 // Now is the right time to check the open and close times.
     if (!$ispreviewing && ($timestamp < $quiz->timeopen || ($quiz->timeclose && $timestamp > $quiz->timeclose))) {
-        error(get_string('notavailable', 'quiz'), "view.php?id={$cm->id}");
+        print_error('notavailable', 'quiz', "view.php?id={$cm->id}");
     }
 
 /// Print the quiz page ////////////////////////////////////////////////////////

@@ -14,7 +14,7 @@
     $reportoptions = stats_get_report_options($course->id, $mode);
     $timeoptions = report_stats_timeoptions($mode);
     if (empty($timeoptions)) {
-        error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
+        print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
     $table->width = 'auto';

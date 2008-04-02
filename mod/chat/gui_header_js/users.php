@@ -55,7 +55,7 @@
     /// Get list of users
 
     if (!$chatusers = chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid)) {
-        error(get_string('errornousers', 'chat'));
+        print_error('errornousers', 'chat');
     }
 
     ob_start();

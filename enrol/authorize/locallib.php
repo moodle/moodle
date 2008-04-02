@@ -257,7 +257,7 @@ function authorize_print_order_details($orderno)
         if (!in_array(ORDER_CAPTURE, $status->actions)) {
             $a = new stdClass;
             $a->action = $authstrs->capture;
-            error(get_string('youcantdo', 'enrol_authorize', $a));
+            print_error('youcantdo', 'enrol_authorize', '', $a);
         }
 
         if (empty($confirm)) {
@@ -299,7 +299,7 @@ function authorize_print_order_details($orderno)
         if (!in_array(ORDER_REFUND, $status->actions)) {
             $a = new stdClass;
             $a->action = $authstrs->refund;
-            error(get_string('youcantdo', 'enrol_authorize', $a));
+            print_error('youcantdo', 'enrol_authorize', '', $a);
         }
 
         $refunded = 0.0;
@@ -363,7 +363,7 @@ function authorize_print_order_details($orderno)
             if (!in_array(ORDER_VOID, $status->actions)) {
                 $a = new stdClass;
                 $a->action = $authstrs->void;
-                error(get_string('youcantdo', 'enrol_authorize', $a));
+                print_error('youcantdo', 'enrol_authorize', '', $a);
             }
             if (empty($confirm)) {
                 $strvoidyes = get_string('voidyes', 'enrol_authorize');
@@ -404,7 +404,7 @@ function authorize_print_order_details($orderno)
                 if (!in_array(ORDER_VOID, $refundedstatus->actions)) {
                     $a = new stdClass;
                     $a->action = $authstrs->void;
-                    error(get_string('youcantdo', 'enrol_authorize', $a));
+                    print_error('youcantdo', 'enrol_authorize', '', $a);
                 }
                 unset($suborder->courseid);
                 if (empty($confirm)) {
@@ -448,7 +448,7 @@ function authorize_print_order_details($orderno)
         if (!in_array(ORDER_DELETE, $status->actions)) {
             $a = new stdClass;
             $a->action = $authstrs->delete;
-            error(get_string('youcantdo', 'enrol_authorize', $a));
+            print_error('youcantdo', 'enrol_authorize', '', $a);
         }
         if (empty($confirm)) {
             $cbunenrol = print_checkbox('unenrol', '1', !empty($unenrol), '', '', '', true);

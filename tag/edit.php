@@ -9,7 +9,7 @@ require_js(array('yui_dom-event', 'yui_connection', 'yui_animation', 'yui_autoco
 require_login();
 
 if (empty($CFG->usetags)) {
-    error(get_string('tagsaredisabled', 'tag'));
+    print_error('tagsaredisabled', 'tag');
 }
 
 $tag_id = optional_param('id', 0, PARAM_INT);

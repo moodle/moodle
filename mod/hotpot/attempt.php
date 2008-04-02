@@ -29,7 +29,7 @@
 
     // check user can access this hotpot activity
     if (!hotpot_is_visible($cm)) {
-        error(get_string("activityiscurrentlyhidden"), $next_url);
+        print_error("activityiscurrentlyhidden", 'hotpot', $next_url);
     }
 
     // update attempt record fields using incoming data
@@ -220,7 +220,7 @@ function hotpot_set_attempt_details(&$attempt) {
     if (!$ok) {
         return;
         // error('Quiz type is missing or invalid');
-        // error(get_string('error_invalidquiztype', 'hotpot'));
+        // print_error('error_invalidquiztype', 'hotpot');
         //
         // script finishes here if quiztype is invalid
         //

@@ -21,7 +21,7 @@
     }
 
     //if (!confirm_sesskey()) {
-    //    error(get_string('confirmsesskeybad', 'error'));
+    //    print_error('confirmsesskeybad', 'error');
     //}
 
       $strimportgroups = get_string("importgroups");
@@ -87,7 +87,7 @@
             if ( !(isset($required[$h]) or
                 isset($optionalDefaults[$h]) or
                 isset($optional[$h])) ) {
-                error(get_string('invalidfieldname', 'error', $h), 'index.php?id='.$id.'&amp;sesskey='.$USER->sesskey);
+                print_error('invalidfieldname', 'error', 'index.php?id='.$id.'&amp;sesskey='.$USER->sesskey, $h);
             }
             if ( isset($required[$h]) ) {
                 $required[$h] = 2;
@@ -96,7 +96,7 @@
         // check for required fields
         foreach ($required as $key => $value) {
             if ($value < 2) {
-                error(get_string('fieldrequired', 'error', $key), 'uploaduser.php?id='.$id.'&amp;sesskey='.$USER->sesskey);
+                print_error('fieldrequired', 'error', 'uploaduser.php?id='.$id.'&amp;sesskey='.$USER->sesskey, $key);
             }
         }
         $linenum = 2; // since header is line 1
@@ -121,10 +121,11 @@
                 foreach ($record as $name => $value) {
                     // check for required values
                     if (isset($required[$name]) and !$value) {
-                        error(get_string('missingfield', 'error', $name). " ".
-                              get_string('erroronline', 'error', $linenum) .". ".
-                              get_string('processingstops', 'error'),
-                              'uploaduser.php?sesskey='.$USER->sesskey);
+                        //error(get_string('missingfield', 'error', $name). " ".
+                        //      get_string('erroronline', 'error', $linenum) .". ".
+                        //      get_string('processingstops', 'error'),
+                        //      'uploaduser.php?sesskey='.$USER->sesskey);
+                        print_error('missingfield', 'error', 'uploaduser.php?sesskey='.$USER->sesskey, $name);
                     }
                     else if ($name == "groupname") {
                         $newgroup->name = addslashes($value);

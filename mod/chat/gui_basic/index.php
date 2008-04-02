@@ -49,7 +49,7 @@
     }
 
     if (!$chatusers = chat_get_users($chat->id, $groupid, $cm->groupingid)) {
-        error(get_string('errornousers', 'chat'));
+        print_error('errornousers', 'chat');
     }
 
     set_field('chat_users', 'lastping', time(), 'sid', $chat_sid);

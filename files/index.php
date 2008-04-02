@@ -474,7 +474,7 @@
                 }
 
                 if (!zip_files($files,"$basedir$wdir/$name")) {
-                    error(get_string("zipfileserror","error"));
+                    print_error("zipfileserror","error");
                 }
 
                 clearfilelist();
@@ -532,7 +532,7 @@
                 $file = basename($file);
 
                 if (!unzip_file("$basedir$wdir/$file")) {
-                    error(get_string("unzipfileserror","error"));
+                    print_error("unzipfileserror","error");
                 }
 
                 echo "<div style=\"text-align:center\"><form action=\"index.php\" method=\"get\">";

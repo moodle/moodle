@@ -61,7 +61,7 @@ function scorm_add_instance($scorm) {
 
         return $id;
     } else {
-        error(get_string('badpackage','scorm'));
+        print_error('badpackage','scorm');
     }
 }
 

@@ -41,7 +41,7 @@ if ($p_secret !== false) {
     $user = get_complete_user_data('username', $p_username);
     if (!empty($user) and $user->secret === '') {
         print_header($strforgotten, $strforgotten, $navigation);
-        error(get_string('secretalreadyused'));
+        print_error('secretalreadyused');
 
     } else if (!empty($user) and $user->secret == stripslashes($p_secret)) {
         // make sure that url relates to a valid user
@@ -78,7 +78,7 @@ if ($p_secret !== false) {
 
     } else {
         print_header($strforgotten, $strforgotten, $navigation);
-        error(get_string('forgotteninvalidurl'));
+        print_error('forgotteninvalidurl');
     }
 
     die; //never reached

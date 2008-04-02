@@ -36,16 +36,16 @@
 
     // check user can access this hotpot activity
     if (!hotpot_is_visible($cm)) {
-        error(get_string("activityiscurrentlyhidden"));
+        print_error("activityiscurrentlyhidden");
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (!has_capability('mod/hotpot:viewreport',$context)) {
         if (!$hotpot->review) {
-            error(get_string("noreview", "quiz"));
+            print_error("noreview", "quiz");
         }
         //if (time() < $hotpot->timeclose) {
-        //  error(get_string("noreviewuntil", "quiz", userdate($hotpot->timeclose)));
+        //  print_error("noreviewuntil", "quiz", '', userdate($hotpot->timeclose));
         //}
         if ($attempt->userid != $USER->id) {
             error("This is not your attempt!");

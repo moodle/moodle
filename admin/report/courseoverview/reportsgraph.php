@@ -29,7 +29,7 @@
     $courses = get_records_sql($sql, 0, $numcourses);
 
     if (empty($courses)) {
-        error(get_string('statsnodata'),$CFG->wwwroot.'/'.$CFG->admin.'/report/course/index.php');
+        print_error('statsnodata', "", $CFG->wwwroot.'/'.$CFG->admin.'/report/course/index.php');
     }
 
 

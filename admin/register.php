@@ -12,7 +12,7 @@
     }
 
     if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
+        print_error('confirmsesskeybad', 'error');
     }
 
     if (!$admin = get_admin()) {

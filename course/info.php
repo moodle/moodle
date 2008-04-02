@@ -30,7 +30,7 @@
     
     $context = get_context_instance(CONTEXT_COURSE, $course->id); 
     if ((!course_parent_visible($course) || (! $course->visible)) && !has_capability('moodle/course:viewhiddencourses', $context)) {
-        error(get_string('coursehidden'), $CFG->wwwroot .'/'); 
+        print_error('coursehidden', '', $CFG->wwwroot .'/'); 
     }  
     
     print_header(get_string("summaryof", "", $course->fullname));

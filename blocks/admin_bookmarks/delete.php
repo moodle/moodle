@@ -16,7 +16,7 @@ if ($section = optional_param('section', '', PARAM_SAFEDIR) and confirm_sesskey(
         $key = array_search($section, $bookmarks);
 
         if ($key === false) {
-            error(get_string('nonexistentbookmark','admin'));
+            print_error('nonexistentbookmark','admin');
             die;
         }
 
@@ -38,11 +38,11 @@ if ($section = optional_param('section', '', PARAM_SAFEDIR) and confirm_sesskey(
 
     }
 
-    error(get_string('nobookmarksforuser','admin'));
+    print_error('nobookmarksforuser','admin');
     die;
 
 } else {
-    error(get_string('invalidsection', 'admin'));
+    print_error('invalidsection', 'admin');
     die;
 }
 

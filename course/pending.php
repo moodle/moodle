@@ -67,7 +67,7 @@
                 exit;
             }
             else {
-                error(get_string('courseapprovedfailed'));
+                print_error('courseapprovedfailed');
                 exit;
             }
         }

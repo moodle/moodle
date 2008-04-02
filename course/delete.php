@@ -53,7 +53,7 @@
     }
 
     if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
+        print_error('confirmsesskeybad', 'error');
     }
 
     // OK checks done, delete the course now.

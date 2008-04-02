@@ -31,7 +31,7 @@
     if ($config = data_submitted()) {
 
         if (!confirm_sesskey()) {
-             error(get_string('confirmsesskeybad', 'error'));
+             print_error('confirmsesskeybad', 'error');
         }
         if(!$block->has_config()) {
             error('This block does not support global configuration');

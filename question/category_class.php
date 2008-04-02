@@ -363,7 +363,7 @@ class question_category_object {
      */
     function add_category($newparent, $newcategory, $newinfo) {
         if (empty($newcategory)) {
-            error(get_string('categorynamecantbeblank', 'quiz'));
+            print_error('categorynamecantbeblank', 'quiz');
         }
         list($parentid, $contextid) = explode(',', $newparent);
         //moodle_form makes sure select element output is legal no need for further cleaning
@@ -396,7 +396,7 @@ class question_category_object {
     function update_category($updateid, $newparent, $newname, $newinfo) {
         global $CFG, $QTYPES;
         if (empty($newname)) {
-            error(get_string('categorynamecantbeblank', 'quiz'));
+            print_error('categorynamecantbeblank', 'quiz');
         }
 
         list($parentid, $tocontextid) = explode(',', $newparent);

@@ -17,11 +17,11 @@ require_once("$CFG->dirroot/search/lib.php");
 require_login();
 
 if (empty($CFG->enableglobalsearch)) {
-    error(get_string('globalsearchdisabled', 'search'));
+    print_error('globalsearchdisabled', 'search');
 }
 
 if (!isadmin()) {
-    error(get_string('beadmin', 'search'), "$CFG->wwwroot/login/index.php");
+    print_error('beadmin', 'search', "$CFG->wwwroot/login/index.php");
 } 
 
 //check for php5 (lib.php)

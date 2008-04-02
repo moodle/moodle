@@ -16,7 +16,7 @@ $perpage     = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
 require_login();
 
 if (empty($CFG->usetags)) {
-    error(get_string('tagsaredisabled', 'tag'));
+    print_error('tagsaredisabled', 'tag');
 }
 
 //managing tags requires moodle/tag:manage capability

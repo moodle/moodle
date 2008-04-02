@@ -42,7 +42,7 @@
 
     // check user can access this hotpot activity
     if (!hotpot_is_visible($cm)) {
-        error(get_string("activityiscurrentlyhidden"));
+        print_error("activityiscurrentlyhidden");
     }
 
     // get report mode

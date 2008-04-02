@@ -68,7 +68,7 @@
             error("Invalid confirmation data");
         }
     } else {
-        error(get_string("errorwhenconfirming"));
+        print_error("errorwhenconfirming");
     }
 
     redirect("$CFG->wwwroot/");

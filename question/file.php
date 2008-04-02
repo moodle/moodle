@@ -81,6 +81,6 @@
     function question_attempt_not_found() {
         global $CFG;
         header('HTTP/1.0 404 not found');
-        error(get_string('filenotfound', 'error'), $CFG->wwwroot); //this is not displayed on IIS??
+        print_error('filenotfound', 'error', $CFG->wwwroot); //this is not displayed on IIS??
     }
 ?>

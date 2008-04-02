@@ -98,7 +98,7 @@
 
     // Load the question type specific information
     if (!get_question_options($questions)) {
-        error(get_string('newattemptfail', 'quiz'));
+        print_error('newattemptfail', 'quiz');
     }
 
     // Create a dummy quiz attempt
@@ -133,7 +133,7 @@
         // Create an empty session for the question
         if (!$newstates =
          get_question_states($questions, $quiz, $attempt)) {
-            error(get_string('newattemptfail', 'quiz'));
+            print_error('newattemptfail', 'quiz');
         }
         $SESSION->quizpreview->states = array($newstates);
         $states =& $SESSION->quizpreview->states;

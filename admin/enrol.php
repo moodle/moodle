@@ -18,7 +18,7 @@
 
     if ($frm = data_submitted()) {
         if (!confirm_sesskey()) {
-            error(get_string('confirmsesskeybad', 'error'));
+            print_error('confirmsesskeybad', 'error');
         }
         if (empty($frm->enable)) {
             $frm->enable = array();

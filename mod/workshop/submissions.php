@@ -238,7 +238,7 @@
             error("Edit submission: Userids do not match");
         }
         if (($submission->timecreated < ($timenow - $CFG->maxeditingtime)) and ($workshop->assessmentstart < $timenow)) {
-            error(get_string('notallowed', 'workshop'));
+            print_error('notallowed', 'workshop');
         }
         ?>
         <form id="editform" enctype="multipart/form-data" action="submissions.php" method="post">

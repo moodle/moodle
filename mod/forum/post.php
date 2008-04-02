@@ -91,7 +91,7 @@
         }
 
         if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
-            error(get_string("activityiscurrentlyhidden"));
+            print_error("activityiscurrentlyhidden");
         }
 
         if (isset($_SERVER["HTTP_REFERER"])) {
@@ -162,7 +162,7 @@
             }
         }
         if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
-            error(get_string("activityiscurrentlyhidden"));
+            print_error("activityiscurrentlyhidden");
         }
 
         // Load up the $post variable.
@@ -266,7 +266,7 @@
                         forum_go_back_to("discuss.php?d=$post->discussion"));
 
             } else if ($replycount && !has_capability('mod/forum:deleteanypost', $modcontext)) {
-                error(get_string("couldnotdeletereplies", "forum"),
+                print_error("couldnotdeletereplies", "forum",
                         forum_go_back_to("discuss.php?d=$post->discussion"));
 
             } else {
@@ -308,7 +308,7 @@
 
             if ($replycount) {
                 if (!has_capability('mod/forum:deleteanypost', $modcontext)) {
-                    error(get_string("couldnotdeletereplies", "forum"),
+                    print_error("couldnotdeletereplies", "forum",
                           forum_go_back_to("discuss.php?d=$post->discussion"));
                 }
                 print_header();
@@ -480,7 +480,7 @@
             $updatepost = $fromform; //realpost
             $updatepost->forum = $forum->id;
             if (!forum_update_post($updatepost, $message)) {
-                error(get_string("couldnotupdate", "forum"), $errordestination);
+                print_error("couldnotupdate", "forum", $errordestination);
             }
 
             // MDL-11818
@@ -488,7 +488,7 @@
                 $forum->intro = $updatepost->message;
                 $forum->timemodified = time();
                 if (!update_record("forum", $forum)) {
-                    error(get_string("couldnotupdate", "forum"), $errordestination);
+                    print_error("couldnotupdate", "forum", $errordestination);
                 }
             }
 
@@ -554,7 +554,7 @@
                 redirect(forum_go_back_to("$discussionurl#p$fromform->id"), $message.$subscribemessage, $timemessage);
 
             } else {
-                error(get_string("couldnotadd", "forum"), $errordestination);
+                print_error("couldnotadd", "forum", $errordestination);
             }
             exit;
 
@@ -597,7 +597,7 @@
                 redirect(forum_go_back_to("view.php?f=$fromform->forum"), $message.$subscribemessage, $timemessage);
 
             } else {
-                error(get_string("couldnotadd", "forum"), $errordestination);
+                print_error("couldnotadd", "forum", $errordestination);
             }
 
             exit;

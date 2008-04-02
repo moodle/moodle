@@ -30,7 +30,7 @@ if (empty($CFG->auth)) {
 }
 
 if (!empty($auth) and !exists_auth_plugin($auth)) {
-    error(get_string('pluginnotinstalled', 'auth', $auth), $url);
+    print_error('pluginnotinstalled', 'auth', $url, $auth);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ switch ($action) {
         $key = array_search($auth, $authsenabled);
         // check auth plugin is valid
         if ($key === false) {
-            error(get_string('pluginnotenabled', 'auth', $auth), $url);
+            print_error('pluginnotenabled', 'auth', $url, $auth);
         }
         // move down the list
         if ($key < (count($authsenabled) - 1)) {
@@ -82,7 +82,7 @@ switch ($action) {
         $key = array_search($auth, $authsenabled);
         // check auth is valid
         if ($key === false) {
-            error(get_string('pluginnotenabled', 'auth', $auth), $url);
+            print_error('pluginnotenabled', 'auth', $url, $auth);
         }
         // move up the list
         if ($key >= 1) {

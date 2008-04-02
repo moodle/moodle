@@ -3902,13 +3902,13 @@ function admin_externalpage_setup($section) {
     $extpage =& $adminroot->locate($section);
 
     if (empty($extpage) or !is_a($extpage, 'admin_externalpage')) {
-        error(get_string('sectionerror','admin'), "$CFG->wwwroot/$CFG->admin/");
+        print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
         die;
     }
 
     // this eliminates our need to authenticate on the actual pages
     if (!($extpage->check_access())) {
-        error(get_string('accessdenied', 'admin'));
+        print_error('accessdenied', 'admin');
         die;
     }
 

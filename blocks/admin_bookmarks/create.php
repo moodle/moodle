@@ -12,7 +12,7 @@ if ($section = optional_param('section', '', PARAM_SAFEDIR) and confirm_sesskey(
         $bookmarks = explode(',', get_user_preferences('admin_bookmarks'));
 
         if (in_array($section, $bookmarks)) {
-            error(get_string('bookmarkalreadyexists','admin'));
+            print_error('bookmarkalreadyexists','admin');
             die;
         }
 
@@ -28,7 +28,7 @@ if ($section = optional_param('section', '', PARAM_SAFEDIR) and confirm_sesskey(
         set_user_preference('admin_bookmarks', $bookmarks);
 
     } else {
-        error(get_string('invalidsection','admin'));
+        print_error('invalidsection','admin');
         die;
     }
 
@@ -40,7 +40,7 @@ if ($section = optional_param('section', '', PARAM_SAFEDIR) and confirm_sesskey(
     }
 
 } else {
-    error(get_string('invalidsection','admin'));
+    print_error('invalidsection','admin');
     die;
 }
 
