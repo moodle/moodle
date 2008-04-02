@@ -63,9 +63,9 @@
                                     $a = new object();
                                     $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
                                     $a->dest= $CFG->dataroot.'/lang';
-                                    error(get_string($cd->get_error(), 'error', $a), 'langimport.php');
+                                    print_error($cd->get_error(), 'error', 'langimport.php', $a);
                                 } else {
-                                    error(get_string($cd->get_error(), 'error'), 'langimport.php');
+                                    print_error($cd->get_error(), 'error', 'langimport.php');
                                 }
                             break;
 
@@ -198,9 +198,9 @@
                             $a = new stdClass();
                             $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
                             $a->dest= $CFG->dataroot.'/lang';
-                            error(get_string($cd->get_error(), 'error', $a)); // not probable
+                            print_error($cd->get_error(), 'error', "", $a); // not probable
                         } else {
-                            error(get_string($cd->get_error(), 'error')); // not probable
+                            print_error($cd->get_error(), 'error'); // not probable
                         }
                     break;
                     case COMPONENT_UPTODATE:
