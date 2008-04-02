@@ -199,9 +199,20 @@
     echo '</td>';
 
     // get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
-    // this might not work anymore because you always going to get yourself as the most recent entry? added $USER!=$user ch
-    $minlastaccess = get_field_sql('SELECT min(timeaccess) FROM '.$CFG->prefix.'user_lastaccess WHERE courseid = '.$course->id.' AND timeaccess != 0 AND userid!='.$USER->id);
-    $lastaccess0exists = record_exists('user_lastaccess','courseid',$course->id,'timeaccess',0);
+    // we need to make it diferently for normal courses and site course
+    if ($context->id != $frontpagectx->id) {
+        $minlastaccess = get_field_sql('SELECT min(timeaccess)
+                                          FROM '.$CFG->prefix.'user_lastaccess
+                                         WHERE courseid = '.$course->id.'
+                                           AND timeaccess != 0');
+        $lastaccess0exists = record_exists('user_lastaccess', 'courseid', $course->id, 'timeaccess', 0);
+    } else {
+        $minlastaccess = get_field_sql('SELECT min(lastaccess)
+                                          FROM '.$CFG->prefix.'user
+                                         WHERE lastaccess != 0');
+        $lastaccess0exists = record_exists('user','lastaccess',0);
+    }
+
     $now = usergetmidnight(time());
     $timeaccess = array();
 
@@ -421,11 +432,11 @@
             AND u.username != 'guest'
             $adminroles
             $hiddensql ";
-            $where .= get_lastaccess_sql($accesssince);
+            $where .= get_course_lastaccess_sql($accesssince);
     } else {
         $where = "WHERE u.deleted = 0
             AND u.username != 'guest'";
-            $where .= get_lastaccess_sql($accesssince); 
+            $where .= get_user_lastaccess_sql($accesssince);
     }
     $wheresearch = '';
 
@@ -823,14 +834,25 @@
     }
 
 
-function get_lastaccess_sql($accesssince='') {
+function get_course_lastaccess_sql($accesssince='') {
     if (empty($accesssince)) {
         return '';
     }
     if ($accesssince == -1) { // never
         return ' AND ul.timeaccess = 0';
     } else {
-        return ' AND ul.timeaccess != 0 AND timeaccess < '.$accesssince;
+        return ' AND ul.timeaccess != 0 AND ul.timeaccess < '.$accesssince;
+    }
+}
+
+function get_user_lastaccess_sql($accesssince='') {
+    if (empty($accesssince)) {
+        return '';
+    }
+    if ($accesssince == -1) { // never
+        return ' AND u.lastaccess = 0';
+    } else {
+        return ' AND u.lastaccess != 0 AND u.lastaccess < '.$accesssince;
     }
 }
 
