@@ -1386,6 +1386,7 @@ class grade_test extends UnitTestCase {
     function load_grade_outcomes() {
         // Calculation for grade_item 1
         $grade_outcome = new stdClass();
+        $grade_outcome->fullname = 'Team work';
         $grade_outcome->shortname = 'Team work';
         $grade_outcome->timecreated = mktime();
         $grade_outcome->timemodified = mktime();
@@ -1397,6 +1398,7 @@ class grade_test extends UnitTestCase {
 
         // Calculation for grade_item 2
         $grade_outcome = new stdClass();
+        $grade_outcome->fullname = 'Complete circuit board';
         $grade_outcome->shortname = 'Complete circuit board';
         $grade_outcome->timecreated = mktime();
         $grade_outcome->timemodified = mktime();
@@ -1408,6 +1410,7 @@ class grade_test extends UnitTestCase {
 
         // Calculation for grade_item 3
         $grade_outcome = new stdClass();
+        $grade_outcome->fullname = 'Debug Java program';
         $grade_outcome->shortname = 'Debug Java program';
         $grade_outcome->timecreated = mktime();
         $grade_outcome->timemodified = mktime();
