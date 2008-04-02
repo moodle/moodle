@@ -198,7 +198,7 @@
                             $a = new stdClass();
                             $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
                             $a->dest= $CFG->dataroot.'/lang';
-                            print_error($cd->get_error(), 'error', "", $a)); // not probable
+                            print_error($cd->get_error(), 'error', "", $a); // not probable
                         } else {
                             print_error($cd->get_error(), 'error'); // not probable
                         }
