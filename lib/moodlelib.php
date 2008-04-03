@@ -893,6 +893,11 @@ function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {
  */
 function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99, $applydst=true) {
 
+    $strtimezone = NULL;
+    if (!is_numeric($timezone)) {
+        $strtimezone = $timezone;
+    }
+
     $timezone = get_user_timezone_offset($timezone);
 
     if (abs($timezone) > 13) {
@@ -901,7 +906,7 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
         $time = gmmktime((int)$hour, (int)$minute, (int)$second, (int)$month, (int)$day, (int)$year);
         $time = usertime($time, $timezone);
         if($applydst) {
-            $time -= dst_offset_on($time);
+            $time -= dst_offset_on($time, $strtimezone);
         }
     }
 
@@ -997,6 +1002,11 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
 
     global $CFG;
 
+    $strtimezone = NULL;
+    if (!is_numeric($timezone)) {
+        $strtimezone = $timezone;
+    }
+
     if (empty($format)) {
         $format = get_string('strftimedaydatetime');
     }
@@ -1008,7 +1018,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
         $fixday = ($formatnoday != $format);
     }
 
-    $date += dst_offset_on($date);
+    $date += dst_offset_on($date, $strtimezone);
 
     $timezone = get_user_timezone_offset($timezone);
 
@@ -1118,7 +1128,6 @@ function usertime($date, $timezone=99) {
  */
 function usergetmidnight($date, $timezone=99) {
 
-    $timezone = get_user_timezone_offset($timezone);
     $userdate = usergetdate($date, $timezone);
 
     // Time of midnight of this user's day, in GMT
@@ -1210,7 +1219,7 @@ function get_user_timezone($tz = 99) {
 
     $tz = 99;
 
-    while(($tz == '' || $tz == 99) && $next = each($timezones)) {
+    while(($tz == '' || $tz == 99 || $tz == NULL) && $next = each($timezones)) {
         $tz = $next['value'];
     }
 
@@ -1253,11 +1262,7 @@ function get_timezone_record($timezonename) {
 function calculate_user_dst_table($from_year = NULL, $to_year = NULL, $strtimezone = NULL) {
     global $CFG, $SESSION;
 
-    if ($strtimezone == NULL) {
-        $usertz = get_user_timezone();
-    } else {
-        $usertz = $strtimezone;
-    }
+    $usertz = get_user_timezone($strtimezone);
 
     if (is_float($usertz)) {
         // Trivial timezone, no DST
