@@ -1888,7 +1888,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
                 }
             }
         } else {
-            error(get_string('nopasswordchangeforced', 'auth'));
+            print_error('nopasswordchangeforced', 'auth');
         }
     }
 
@@ -1901,7 +1901,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 /// Make sure current IP matches the one for this session (if required)
     if (!empty($CFG->tracksessionip)) {
         if ($USER->sessionIP != md5(getremoteaddr())) {
-            error(get_string('sessionipnomatch', 'error'));
+            print_error('sessionipnomatch', 'error');
         }
     }
 
@@ -1930,7 +1930,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 /// groupmembersonly access control
     if (!empty($CFG->enablegroupings) and $cm and $cm->groupmembersonly and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         if (isguestuser() or !groups_has_membership($cm)) {
-            error(get_string('groupmembersonlyerror', 'group'), $CFG->wwwroot.'/course/view.php?id='.$cm->course);
+            print_error('groupmembersonlyerror', 'group', $CFG->wwwroot.'/course/view.php?id='.$cm->course);
         }
     }
 
@@ -1953,24 +1953,16 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         /// Check if the user can be in a particular course
         if (empty($USER->access['rsw'][$COURSE->context->path])) {
             //
-            // Spaghetti logic construct
-            // 
-            // - able to view course?
-            // - able to view category?
-            // => if either is missing, course is hidden from this user
+            // MDL-13900 - If the course or the parent category are hidden
+            // and the user hasn't the 'course:viewhiddencourses' capability, prevent access
             //
-            // It's carefully ordered so we run the cheap checks first, and the
-            // more costly checks last...
-            //
-            if (! (($COURSE->visible || has_capability('moodle/course:viewhiddencourses', $COURSE->context))
-                   && (course_parent_visible($COURSE)) || has_capability('moodle/course:viewhiddencourses', 
-                                                                        get_context_instance(CONTEXT_COURSECAT,
-                                                                                             $COURSE->category)))) {
+            if ( !($COURSE->visible && course_parent_visible($COURSE)) &&
+                   !has_capability('moodle/course:viewhiddencourses', $COURSE->context)) {
                 print_header_simple();
                 notice(get_string('coursehidden'), $CFG->wwwroot .'/');
             }
-        }    
-        
+        }
+
     /// Non-guests who don't currently have access, check if they can be allowed in as a guest
 
         if ($USER->username != 'guest' and !has_capability('moodle/course:view', $COURSE->context)) {
@@ -2324,7 +2316,7 @@ function update_login_count() {
 
     if ($SESSION->logincount > $max_logins) {
         unset($SESSION->wantsurl);
-        error(get_string('errortoomanylogins'));
+        print_error('errortoomanylogins');
     }
 }
 
@@ -3153,7 +3145,7 @@ function complete_user_login($user) {
                 redirect($CFG->httpswwwroot.'/login/change_password.php');
             }
         } else {
-            error(get_string('nopasswordchangeforced', 'auth'));
+            print_error('nopasswordchangeforced', 'auth');
         }
     }
     return $USER;
