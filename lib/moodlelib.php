@@ -1953,24 +1953,16 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         /// Check if the user can be in a particular course
         if (empty($USER->access['rsw'][$COURSE->context->path])) {
             //
-            // Spaghetti logic construct
-            // 
-            // - able to view course?
-            // - able to view category?
-            // => if either is missing, course is hidden from this user
+            // MDL-13900 - If the course or the parent category are hidden
+            // and the user hasn't the 'course:viewhiddencourses' capability, prevent access
             //
-            // It's carefully ordered so we run the cheap checks first, and the
-            // more costly checks last...
-            //
-            if (! (($COURSE->visible || has_capability('moodle/course:viewhiddencourses', $COURSE->context))
-                   && (course_parent_visible($COURSE)) || has_capability('moodle/course:viewhiddencourses', 
-                                                                        get_context_instance(CONTEXT_COURSECAT,
-                                                                                             $COURSE->category)))) {
+            if ( !($COURSE->visible && course_parent_visible($COURSE)) &&
+                   !has_capability('moodle/course:viewhiddencourses', $COURSE->context)) {
                 print_header_simple();
                 notice(get_string('coursehidden'), $CFG->wwwroot .'/');
             }
-        }    
-        
+        }
+
     /// Non-guests who don't currently have access, check if they can be allowed in as a guest
 
         if ($USER->username != 'guest' and !has_capability('moodle/course:view', $COURSE->context)) {
