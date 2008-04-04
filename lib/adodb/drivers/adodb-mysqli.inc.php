@@ -555,6 +555,8 @@ class ADODB_mysqli extends ADOConnection {
 				$fld->max_length = is_numeric($query_array[2]) ? $query_array[2] : -1;
 			} elseif (preg_match("/^(enum)\((.*)\)$/i", $type, $query_array)) {
 				$fld->type = $query_array[1];
+				$arr = explode(",",$query_array[2]);
+				$fld->enums = $arr;
 				$fld->max_length = max(array_map("strlen",explode(",",$query_array[2]))) - 2; // PHP >= 4.0.6
 				$fld->max_length = ($fld->max_length == 0 ? 1 : $fld->max_length);
 			} else {
