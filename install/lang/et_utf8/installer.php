@@ -165,7 +165,7 @@ $string['phpversionhelp']='<p>Moodle vajab vähemalt PHP versiooni 4.1.0</p>
 <p>Sa pead oma PHP-d uuendama või kolima hosti, kus on uuem PHP versioon!</p>';
 $string['postgres7']='PostgreSQL (postgres7)';
 $string['previous']='Eelmine';
-$string['remotedownloadnotallowed']='Komponentide alla tõmbamine ei ole Sinu serverisse lubatud (sest allow_url_fopen keelatud).<br /><br />Sa pead tõmbama alla faili <a href=\"$a->url\">$a->URL</a> käsitsti, kopeerima \"$a->dest\" oma serveris ja sinna lahti pakkima.';
+$string['remotedownloadnotallowed']='Komponentide alla tõmbamine ei ole Sinu serverisse lubatud (sest allow_url_fopen keelatud).<br /><br />Sa pead tõmbama alla faili <a href=\"$a->url\">$a->url</a> käsitsti, kopeerima \"$a->dest\" oma serveris ja sinna lahti pakkima.';
 $string['report']='Ülevaade';
 $string['restricted']='Piiratud';
 $string['safemode']='Ohutu režiim';
