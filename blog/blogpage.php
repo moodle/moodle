@@ -57,7 +57,7 @@ class page_blog extends page_base {
             $courserecord = NULL;
         } else {
             if (! ($courserecord = get_record('course', 'id', $this->courseid)) ) {
-                error( 'You are tring to view an invalid course. Id: ('. $this->courseid .')' );
+                print_error( 'You are tring to view an invalid course. Id: ('. $this->courseid .')' );
             }
         }
         $this->full_init_done = true;

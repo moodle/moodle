@@ -24,30 +24,30 @@
     if (!empty($id)) {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
             if (empty($to)) {
-                error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+                print_error("You need to be a teacher or admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
             } else {
                 if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $to)) 
                     && !has_capability('moodle/site:import',  get_context_instance(CONTEXT_COURSE, $to))) {
-                    error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+                    print_error("You need to be a teacher or admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
                 }
             }
         }
     } else {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-            error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+            print_error("You need to be an admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
         }
     }
 
     //Check site
     if (!$site = get_site()) {
-        error("Site not found!");
+        print_error("Site not found!");
     }
     $errorstr = '';
 
     $status = restore_execute($restore,$info,$course_header,$errorstr);
 
     if (!$status) {
-        error ("An error has occurred and the restore could not be completed!");
+        print_error ("An error has occurred and the restore could not be completed!");
     }
 
     if (empty($restore->importing)) {

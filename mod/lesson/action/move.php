@@ -12,7 +12,7 @@
     print_heading(get_string("moving", "lesson", format_string($title)));
    
     if (!$page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
-        error("Move: first page not found");
+        print_error("Move: first page not found");
     }
 
     echo "<center><table cellpadding=\"5\" border=\"1\">\n";
@@ -29,7 +29,7 @@
         }
         if ($page->nextpageid) {
             if (!$page = get_record("lesson_pages", "id", $page->nextpageid)) {
-                error("Teacher view: Next page not found!");
+                print_error("Teacher view: Next page not found!");
             }
         } else {
             // last page reached

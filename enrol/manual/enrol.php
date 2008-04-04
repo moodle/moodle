@@ -141,7 +141,7 @@ function check_entry($form, $course) {
     if (empty($course->password)) {
         // do not allow entry when no course password set
         // automatic login when manual primary, no login when secondary at all!!
-        error('illegal enrolment attempted');
+        print_error('illegal enrolment attempted');
     }
 
     $groupid = $this->check_group_entry($course->id, $form->password);

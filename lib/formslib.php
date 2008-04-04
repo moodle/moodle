@@ -182,7 +182,7 @@ class moodleform {
         // the _qf__.$this->_formname serves as a marker that form was actually submitted
         if (array_key_exists('_qf__'.$this->_formname, $submission) and $submission['_qf__'.$this->_formname] == 1) {
             if (!confirm_sesskey()) {
-                error('Incorrect sesskey submitted, form not accepted!');
+                print_error('Incorrect sesskey submitted, form not accepted!');
             }
             $files = $_FILES;
         } else {
@@ -225,7 +225,7 @@ class moodleform {
                     $files[$elname] = $this->_upload_manager->files[$elname]['tmp_name'];
                 }
             } else {
-                error('Incorrect upload attempt!');
+                print_error('Incorrect upload attempt!');
             }
         }
 
@@ -489,7 +489,7 @@ class moodleform {
      * If you need special handling of uploaded files, create instance of $this->_upload_manager here.
      */
     function definition() {
-        error('Abstract form_definition() method in class '.get_class($this).' must be overriden, please fix the code.');
+        print_error('Abstract form_definition() method in class '.get_class($this).' must be overriden, please fix the code.');
     }
 
     /**

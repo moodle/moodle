@@ -5,7 +5,7 @@
     require_once('const.php');
     require_once('locallib.php');
     require_once('localfuncs.php');
-    require_once('authorizenetlib.php');
+    require_once('authorizenet.class.php');
 
 /// Parameters
     $orderid  = optional_param('order', 0, PARAM_INT);
@@ -14,13 +14,13 @@
 
 /// Get course
     if (! $course = get_record('course', 'id', $courseid)) {
-        error('Could not find that course');
+        print_error('Could not find that course');
     }
 
 /// Only SITE users can access to this page
     require_login(); // Don't use $courseid! User may want to see old orders.
     if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), $USER->id, false)) {
-        error("Guests cannot use this page.");
+        print_error("Guests cannot use this page.");
     }
 
     /// Load strings. All strings should be defined here. locallib.php uses these strings.

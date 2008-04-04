@@ -15,17 +15,17 @@ require_capability('moodle/site:config', $context, $USER->id, true, "nopermissio
 
 if (!extension_loaded('openssl')) {
     admin_externalpage_print_header();
-    print_error('requiresopenssl', 'mnet', '', NULL, true);
+    print_error('requiresopenssl', 'mnet');
 }
 
 if (!$site = get_site()) {
     admin_externalpage_print_header();
-    print_error('nosite', '', '', NULL, true);
+    print_error('nosite', '');
 }
 
 if (!function_exists('curl_init') ) {
     admin_externalpage_print_header();
-    print_error('nocurl', 'mnet', '', NULL, true);
+    print_error('nocurl', 'mnet');
 }
 
 /// Initialize variables.
@@ -59,7 +59,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
 
     if(!function_exists('xmlrpc_encode_request')) {
         trigger_error("You must have xml-rpc enabled in your PHP build to use this feature.");
-        error(get_string('xmlrpc-missing', 'mnet'),'peers.php');
+        print_error('xmlrpc-missing', 'mnet','peers.php');
         exit;
     }
 
@@ -82,7 +82,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
             $temp_wwwroot = clean_param($form->wwwroot, PARAM_URL);
             if ($temp_wwwroot !== $form->wwwroot) {
                 trigger_error("We now parse the wwwroot with PARAM_URL. Your URL will need to have a valid TLD, etc.");
-                error(get_string("invalidurl", 'mnet'),'peers.php');
+                print_error("invalidurl", 'mnet','peers.php');
                 exit;
             }
             unset($temp_wwwroot);
@@ -103,7 +103,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         if (isset($form->public_key)) {
             $form->public_key = clean_param($form->public_key, PARAM_PEM);
             if (empty($form->public_key)) {
-                error(get_string("invalidpubkey", 'mnet'),'peers.php?step=update&amp;hostid='.$mnet_peer->id);
+                print_error("invalidpubkey", 'mnet', 'peers.php?step=update&amp;hostid='.$mnet_peer->id);
                 exit;
             } else {
                 $oldkey = $mnet_peer->public_key;
@@ -116,7 +116,8 @@ if (($form = data_submitted()) && confirm_sesskey()) {
                     foreach ($mnet_peer->error as $err) {
                         $errmsg .= $err['code'] . ': ' . $err['text'].'<br />';
                     }
-                    error(get_string("invalidpubkey", 'mnet') . $errmsg ,'peers.php?step=update&amp;hostid='.$mnet_peer->id);
+                    //error(get_string("invalidpubkey", 'mnet') . $errmsg ,'peers.php?step=update&amp;hostid='.$mnet_peer->id);
+                    print_error("invalidpubkey", 'mnet', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, $errmsg);
                     exit;
                 }
             }
@@ -127,7 +128,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         // PREVENT DUPLICATE RECORDS ///////////////////////////////////////////
         if ('input' == $form->step) {
             if ( isset($mnet_peer->id) && $mnet_peer->id > 0 ) {
-                error(get_string("hostexists", 'mnet', $mnet_peer->id),'peers.php?step=update&amp;hostid='.$mnet_peer->id);
+                print_error("hostexists", 'mnet', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, $mnet_peer->id);
             }
         }
 
@@ -138,7 +139,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
             if ($bool) {
                 redirect('peers.php?step=update&amp;hostid='.$mnet_peer->id, get_string('changessaved'));
             } else {
-                error('Invalid action parameter.', 'index.php');
+                print_error('Invalid action parameter.', '', 'index.php');
             }
         }
     }

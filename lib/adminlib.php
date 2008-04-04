@@ -15,7 +15,7 @@ function upgrade_main_savepoint($result, $version) {
     if ($result) {
         if ($CFG->version >= $version) {
             // something really wrong is going on in main upgrade script
-            error("Upgrade savepoint: Can not upgrade main version from $CFG->version to $version.");
+            print_error("Upgrade savepoint: Can not upgrade main version from $CFG->version to $version.");
         }
         set_config('version', $version);
     } else {
@@ -149,7 +149,7 @@ function upgrade_plugins($type, $dir, $return) {
 
                 /// Install capabilities
                     if (!update_capabilities($type.'/'.$plug)) {
-                        error('Could not set up the capabilities for '.$plugin->name.'!');
+                        print_error('Could not set up the capabilities for '.$plugin->name.'!');
                     }
                 /// Install events
                     events_update_definition($type.'/'.$plug);
@@ -205,7 +205,7 @@ function upgrade_plugins($type, $dir, $return) {
                     // OK so far, now update the plugins record
                     set_config($pluginversion, $plugin->version);
                     if (!update_capabilities($type.'/'.$plug)) {
-                        error('Could not update '.$plugin->name.' capabilities!');
+                        print_error('Could not update '.$plugin->name.' capabilities!');
                     }
                     events_update_definition($type.'/'.$plug);
                     notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
@@ -218,7 +218,7 @@ function upgrade_plugins($type, $dir, $return) {
             }
         } else {
             upgrade_log_start();
-            error('Version mismatch: '. $plugin->name .' can\'t downgrade '. $CFG->$pluginversion .' -> '. $plugin->version .' !');
+            print_error('Version mismatch: '. $plugin->name .' can\'t downgrade '. $CFG->$pluginversion .' -> '. $plugin->version .' !');
         }
     }
 
@@ -253,7 +253,7 @@ function upgrade_activity_modules($return) {
     global $CFG, $db, $interactive;
 
     if (!$mods = get_list_of_plugins('mod') ) {
-        error('No modules installed!');
+        print_error('No modules installed!');
     }
 
     $updated_modules = false;
@@ -372,7 +372,7 @@ function upgrade_activity_modules($return) {
                     // OK so far, now update the modules record
                     $module->id = $currmodule->id;
                     if (! update_record('modules', $module)) {
-                        error('Could not update '. $module->name .' record in modules table!');
+                        print_error('Could not update '. $module->name .' record in modules table!');
                     }
                     remove_dir($CFG->dataroot . '/cache', true); // flush cache
                     notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
@@ -385,7 +385,7 @@ function upgrade_activity_modules($return) {
 
             /// Update the capabilities table?
                 if (!update_capabilities('mod/'.$module->name)) {
-                    error('Could not update '.$module->name.' capabilities!');
+                    print_error('Could not update '.$module->name.' capabilities!');
                 }
                 events_update_definition('mod/'.$module->name);
 
@@ -393,7 +393,7 @@ function upgrade_activity_modules($return) {
 
             } else {
                 upgrade_log_start();
-                error('Version mismatch: '. $module->name .' can\'t downgrade '. $currmodule->version .' -> '. $module->version .' !');
+                print_error('Version mismatch: '. $module->name .' can\'t downgrade '. $currmodule->version .' -> '. $module->version .' !');
             }
 
         } else {    // module not installed yet, so install it
@@ -431,7 +431,7 @@ function upgrade_activity_modules($return) {
 
                 /// Capabilities
                     if (!update_capabilities('mod/'.$module->name)) {
-                        error('Could not set up the capabilities for '.$module->name.'!');
+                        print_error('Could not set up the capabilities for '.$module->name.'!');
                     }
 
                 /// Events
@@ -450,10 +450,10 @@ function upgrade_activity_modules($return) {
                     echo '<hr />';
                     }
                 } else {
-                    error($module->name .' module could not be added to the module list!');
+                    print_error($module->name .' module could not be added to the module list!');
                 }
             } else {
-                error($module->name .' tables could NOT be set up successfully!');
+                print_error($module->name .' tables could NOT be set up successfully!');
             }
         }
 
@@ -611,16 +611,16 @@ function create_admin_user($user_input=NULL) {
             $user = $user_input;
         }
         if (!$user->id = insert_record('user', $user)) {
-            error('SERIOUS ERROR: Could not create admin user record !!!');
+            print_error('SERIOUS ERROR: Could not create admin user record !!!');
         }
 
         if (!$user = get_record('user', 'id', $user->id)) {   // Double check.
-            error('User ID was incorrect (can\'t find it)');
+            print_error('User ID was incorrect (can\'t find it)');
         }
 
         // Assign the default admin roles to the new user.
         if (!$adminroles = get_roles_with_capability('moodle/legacy:admin', CAP_ALLOW)) {
-            error('No admin role could be found');
+            print_error('No admin role could be found');
         }
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         foreach ($adminroles as $adminrole) {
@@ -638,7 +638,7 @@ function create_admin_user($user_input=NULL) {
         redirect("$CFG->wwwroot/user/editadvanced.php?id=$user->id");  // Edit thyself
         }
     } else {
-        error('Can not create admin!');
+        print_error('Can not create admin!');
     }
 }
 
@@ -695,10 +695,10 @@ function upgrade_log_start() {
 
 /**
  * Terminate logging of output, flush all data, allow script aborting
- * and reopen session for writing. Function error() does terminate the logging too.
+ * and reopen session for writing. Function print_error() does terminate the logging too.
  *
  * Please make sure that each upgrade_log_start() is properly terminated by
- * this function or error().
+ * this function or print_error().
  *
  * This function may be called repeatedly.
  */
@@ -3951,13 +3951,13 @@ function admin_externalpage_setup($section) {
     $extpage =& $adminroot->locate($section);
 
     if (empty($extpage) or !is_a($extpage, 'admin_externalpage')) {
-        error(get_string('sectionerror','admin'), "$CFG->wwwroot/$CFG->admin/");
+        print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
         die;
     }
 
     // this eliminates our need to authenticate on the actual pages
     if (!($extpage->check_access())) {
-        error(get_string('accessdenied', 'admin'));
+        print_error('accessdenied', 'admin');
         die;
     }
 
@@ -4025,7 +4025,7 @@ function admin_externalpage_print_header($focus='') {
                 case 'middle':
                     echo '<td id="middle-column">';
                     print_container_start(true);
-                    $THEME->open_header_containers++; // this is hacky workaround for the error()/notice() autoclosing problems on admin pages
+                    $THEME->open_header_containers++; // this is hacky workaround for the print_error()/notice() autoclosing problems on admin pages
                 break;
 
                 case 'right':
@@ -4082,7 +4082,7 @@ function admin_externalpage_print_footer() {
 
                 case 'middle':
                     print_container_end();
-                    $THEME->open_header_containers--; // this is hacky workaround for the error()/notice() autoclosing problems on admin pages
+                    $THEME->open_header_containers--; // this is hacky workaround for the print_error()/notice() autoclosing problems on admin pages
                     echo '</td>';
                 break;
 

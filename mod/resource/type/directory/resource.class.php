@@ -55,7 +55,7 @@ function display() {
     if ($subdir) {
         $relativepath = "$relativepath$subdir";
         if (stripos($relativepath, 'backupdata') !== FALSE or stripos($relativepath, $CFG->moddata) !== FALSE) {
-            error("Access not allowed!");
+            print_error("Access not allowed!");
         }
 
         $subs = explode('/', $subdir);

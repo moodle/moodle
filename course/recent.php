@@ -9,7 +9,7 @@
     $id = required_param('id', PARAM_INT);
 
     if (!$course = get_record('course', 'id', $id) ) {
-        error("That's an invalid course id");
+        print_error("That's an invalid course id");
     }
 
     require_login($course);
@@ -46,7 +46,7 @@
 
     if (!empty($param->user)) {
         if (!$u = get_record('user', 'id', $param->user) ) {
-            error("That's an invalid user!");
+            print_error("That's an invalid user!");
         }
         $userinfo = fullname($u);
     }

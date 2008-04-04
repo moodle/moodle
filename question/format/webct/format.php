@@ -106,21 +106,21 @@ function qformat_webct_convert_formula($formula) {
             for ($i = 1 ; $deep ; ++$i) {
                 if (!ereg('^(.*[^[:alnum:]_])?([[:alnum:]_]*([)(])([^)(]*[)(]){'.$i.'})$',
                         $splits[0], $regs)) {
-                    error("Parenthesis before ** is not properly started in $splits[0]**");
+                    print_error("Parenthesis before ** is not properly started in $splits[0]**");
                 }
                 if ('(' == $regs[3]) {
                     --$deep;
                 } else if (')' == $regs[3]) {
                     ++$deep;
                 } else {
-                    error("Impossible character $regs[3] detected as parenthesis character");
+                    print_error("Impossible character $regs[3] detected as parenthesis character");
                 }
             }
             $base = $regs[2];
             $splits[0] = $regs[1];
 
         } else {
-            error("Bad base before **: $splits[0]**");
+            print_error("Bad base before **: $splits[0]**");
         }
 
         // Find $exp (similar to above but a little easier)
@@ -136,14 +136,14 @@ function qformat_webct_convert_formula($formula) {
             for ($i = 1 ; $deep ; ++$i) {
                 if (!ereg('^([+-]?[[:alnum:]_]*([)(][^)(]*){'.$i.'}([)(]))(.*)',
                         $splits[1], $regs)) {
-                    error("Parenthesis after ** is not properly closed in **$splits[1]");
+                    print_error("Parenthesis after ** is not properly closed in **$splits[1]");
                 }
                 if (')' == $regs[3]) {
                     --$deep;
                 } else if ('(' == $regs[3]) {
                     ++$deep;
                 } else {
-                    error("Impossible character $regs[3] detected as parenthesis character");
+                    print_error("Impossible character $regs[3] detected as parenthesis character");
                 }
             }
             $exp = $regs[1];

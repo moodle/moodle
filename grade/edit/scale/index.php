@@ -76,7 +76,7 @@ switch ($action) {
         if (empty($scale->courseid)) {
             require_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM));
         } else if ($scale->courseid != $courseid) {
-            error('Incorrect courseid!');
+            print_error('Incorrect courseid!');
         }
 
         if (!$scale->can_delete()) {

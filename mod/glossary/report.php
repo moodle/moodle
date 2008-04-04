@@ -9,30 +9,30 @@
     $sort = optional_param('sort', '', PARAM_ALPHA);
 
     if (! $entry = get_record('glossary_entries', 'id', $id)) {
-        error("Entry ID was incorrect");
+        print_error("Entry ID was incorrect");
     }
 
     if (! $glossary = get_record('glossary', 'id', $entry->glossaryid)) {
-        error("Glossary ID was incorrect");
+        print_error("Glossary ID was incorrect");
     }
 
     if (! $course = get_record('course', 'id', $glossary->course)) {
-        error("Course ID was incorrect");
+        print_error("Course ID was incorrect");
     }
 
     if (! $cm = get_coursemodule_from_instance('glossary', $glossary->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     require_login($course, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (!$glossary->assessed) {
-        error("This activity does not use ratings");
+        print_error("This activity does not use ratings");
     }
 
     if (!has_capability('mod/glossary:manageentries', $context) and $USER->id != $entry->userid) {
-        error("You can only look at results for your own entries");
+        print_error("You can only look at results for your own entries");
     }
 
     switch ($sort) {
@@ -51,7 +51,7 @@
     print_header("$strratings: $entry->concept");
 
     if (!$ratings = glossary_get_ratings($entry->id, $sqlsort)) {
-        error("No ratings for this entry: \"$entry->concept\"");
+        print_error("No ratings for this entry: \"$entry->concept\"");
 
     } else {
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" style=\"width:100%\">";

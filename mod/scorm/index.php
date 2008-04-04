@@ -7,10 +7,10 @@
 
     if (!empty($id)) {
         if (! $course = get_record("course", "id", $id)) {
-            error("Course ID is incorrect");
+            print_error("Course ID is incorrect");
         }
     } else {
-        error('A required parameter is missing');
+        print_error('A required parameter is missing');
     }
 
     require_course_login($course);

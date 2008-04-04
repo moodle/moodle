@@ -33,7 +33,7 @@
 
     if (!empty($hide) && confirm_sesskey()) {
         if (!$block = get_record('block', 'id', $hide)) {
-            error("Block doesn't exist!");
+            print_error("Block doesn't exist!");
         }
         set_field('block', 'visible', '0', 'id', $block->id);      // Hide block
         admin_get_root(true, false);  // settings not required - only pages
@@ -41,7 +41,7 @@
 
     if (!empty($show) && confirm_sesskey() ) {
         if (!$block = get_record('block', 'id', $show)) {
-            error("Block doesn't exist!");
+            print_error("Block doesn't exist!");
         }
         set_field('block', 'visible', '1', 'id', $block->id);      // Show block
         admin_get_root(true, false);  // settings not required - only pages
@@ -49,7 +49,7 @@
 
     if (!empty($multiple) && confirm_sesskey()) {
         if (!$block = blocks_get_record($multiple)) {
-            error("Block doesn't exist!");
+            print_error("Block doesn't exist!");
         }
         $block->multiple = !$block->multiple;
         update_record('block', $block);
@@ -61,7 +61,7 @@
         print_heading($strmanageblocks);
 
         if (!$block = blocks_get_record($delete)) {
-            error("Block doesn't exist!");
+            print_error("Block doesn't exist!");
         }
 
         if (!block_is_compatible($block->name)) {
@@ -123,7 +123,7 @@
 /// Get and sort the existing blocks
 
     if (false === ($blocks = get_records('block'))) {
-        error('No blocks found!');  // Should never happen
+        print_error('No blocks found!');  // Should never happen
     }
 
     $incompatible = array();
@@ -143,7 +143,7 @@
     }
 
     if(empty($blockbyname)) {
-        error('One or more blocks are registered in the database, but they all failed to load!');
+        print_error('One or more blocks are registered in the database, but they all failed to load!');
     }
 
     ksort($blockbyname);

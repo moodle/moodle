@@ -12,7 +12,7 @@
 /// This file to be included so we can assume config.php has already been included.
 
     if (empty($lesson)) {
-        error('You cannot call this script in that way');
+        print_error('You cannot call this script in that way');
     }
     if (!isset($currenttab)) {
         $currenttab = '';

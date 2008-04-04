@@ -37,12 +37,12 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 if ($id) {
     /// editing existing scale
     if (!$scale_rec = get_record('scale', 'id', $id)) {
-        error('Incorrect scale id');
+        print_error('Incorrect scale id');
     }
     if ($scale_rec->courseid) {
         $scale_rec->standard = 0;
         if (!$course = get_record('course', 'id', $scale_rec->courseid)) {
-            error('Incorrect course id');
+            print_error('Incorrect course id');
         }
         require_login($course);
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -51,7 +51,7 @@ if ($id) {
     } else {
         if ($courseid) {
             if (!$course = get_record('course', 'id', $courseid)) {
-                error('Incorrect course id');
+                print_error('Incorrect course id');
             }
         }
         $scale_rec->standard = 1;

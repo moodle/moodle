@@ -10,7 +10,7 @@
 
     $pageid = required_param('pageid', PARAM_INT);
     if (!$thispage = get_record("lesson_pages", "id", $pageid)) {
-        error("Confirm delete: the page record not found");
+        print_error("Confirm delete: the page record not found");
     }
     print_heading(get_string("deletingpage", "lesson", format_string($thispage->title)));
     // print the jumps to this page
@@ -19,7 +19,7 @@
         echo "<p align=\"center\">\n";
         foreach ($answers as $answer) {
             if (!$title = get_field("lesson_pages", "title", "id", $answer->pageid)) {
-                error("Confirm delete: page title not found");
+                print_error("Confirm delete: page title not found");
             }
             echo $title."<br />\n";
         }

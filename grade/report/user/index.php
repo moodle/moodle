@@ -44,7 +44,7 @@ if (empty($userid)) {
 
 } else {
     if (!get_complete_user_data('id', $userid)) {
-    error("Incorrect userid");
+    print_error("Incorrect userid");
 }
 
 }

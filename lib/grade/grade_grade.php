@@ -560,7 +560,7 @@ class grade_grade extends grade_object {
         global $CFG;
 
         if (count($grade_grades) !== count($grade_items)) {
-            error('Incorrect size of arrays in params of grade_grade::get_hiding_affected()!');
+            print_error('Incorrect size of arrays in params of grade_grade::get_hiding_affected()!');
         }
 
         $dependson = array();

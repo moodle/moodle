@@ -11,15 +11,15 @@
 
     // get some esential stuff...
     if (! $cm = get_coursemodule_from_id('exercise', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     if (! $exercise = get_record("exercise", "id", $cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     require_login($course->id, false, $cm);
@@ -71,7 +71,7 @@
                 $newsubmission->late = 1;
             }
             if (!$newsubmission->id = insert_record("exercise_submissions", $newsubmission)) {
-                error("exercise upload: Failure to create new submission record!");
+                print_error("exercise upload: Failure to create new submission record!");
             }
             $dir = exercise_file_area_name($exercise, $newsubmission);
             if ($um->save_files($dir)) {
@@ -81,7 +81,7 @@
             // upload manager will print errors.
             // clear resubmit flags
             if (!set_field("exercise_submissions", "resubmit", 0, "exerciseid", $exercise->id, "userid", $USER->id)) {
-                error("Exercise Upload: unable to reset resubmit flag");
+                print_error("Exercise Upload: unable to reset resubmit flag");
             }
         }
         // upload manager will print errors.

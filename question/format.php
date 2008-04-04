@@ -294,7 +294,7 @@ class qformat_default {
             $question->timecreated = time();
 
             if (!$question->id = insert_record("question", $question)) {
-                error( get_string('cannotinsert','quiz') );
+                print_error('cannotinsert','quiz');
             }
 
             $this->questionids[] = $question->id;
@@ -384,7 +384,7 @@ class qformat_default {
                 $category->sortorder = 999;
                 $category->stamp = make_unique_id_code();
                 if (!($id = insert_record('question_categories', $category))) {
-                    error( "cannot create new category - $catname" );
+                    print_error( "cannot create new category - $catname" );
                 }
                 $category->id = $id;
                 $parent = $id;
@@ -618,7 +618,7 @@ class qformat_default {
 
         // create a directory for the exports (if not already existing)
         if (! $export_dir = make_upload_directory($this->question_get_export_dir())) {
-              error( get_string('cannotcreatepath','quiz',$export_dir) );
+              print_error('cannotcreatepath', 'quiz', $export_dir);
         }
         $path = $CFG->dataroot.'/'.$this->question_get_export_dir();
 

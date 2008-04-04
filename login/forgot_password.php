@@ -41,14 +41,14 @@ if ($p_secret !== false) {
     $user = get_complete_user_data('username', $p_username);
     if (!empty($user) and $user->secret === '') {
         print_header($strforgotten, $strforgotten, $navigation);
-        error(get_string('secretalreadyused'));
+        print_error('secretalreadyused');
 
     } else if (!empty($user) and $user->secret == stripslashes($p_secret)) {
         // make sure that url relates to a valid user
 
         // check this isn't guest user
         if (isguestuser($user)) {
-            error('You cannot reset the guest password');
+            print_error('You cannot reset the guest password');
         }
 
         // make sure user is allowed to change password
@@ -57,13 +57,13 @@ if ($p_secret !== false) {
         // override email stop and mail new password
         $user->emailstop = 0;
         if (!reset_password_and_mail($user)) {
-            error('Error resetting password and mailing you');
+            print_error('Error resetting password and mailing you');
         }
 
         // Clear secret so that it can not be used again
         $user->secret = '';
         if (!set_field('user', 'secret', $user->secret, 'id', $user->id)) {
-            error('Error resetting user secret string');
+            print_error('Error resetting user secret string');
         }
 
         reset_login_count();
@@ -78,7 +78,7 @@ if ($p_secret !== false) {
 
     } else {
         print_header($strforgotten, $strforgotten, $navigation);
-        error(get_string('forgotteninvalidurl'));
+        print_error('forgotteninvalidurl');
     }
 
     die; //never reached
@@ -115,16 +115,16 @@ if ($mform->is_cancelled()) {
             // set 'secret' string
             $user->secret = random_string(15);
             if (!set_field('user', 'secret', $user->secret, 'id', $user->id)) {
-                error('error setting user secret string');
+                print_error('error setting user secret string');
             }
 
             if (!send_password_change_confirmation_email($user)) {
-                error('error sending password change confirmation email');
+                print_error('error sending password change confirmation email');
             }
 
         } else {
             if (!send_password_change_info($user)) {
-                error('error sending password change confirmation email');
+                print_error('error sending password change confirmation email');
             }
         }
     }

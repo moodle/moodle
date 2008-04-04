@@ -12,7 +12,7 @@ class mod_assignment_mod_form extends moodleform_mod {
             if($ass = get_record('assignment', 'id', (int)$this->_instance)) {
                 $type = $ass->assignmenttype;
             } else {
-                error('incorrect assignment');
+                print_error('incorrect assignment');
             }
         } else {
             $type = required_param('type', PARAM_ALPHA);

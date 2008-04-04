@@ -9,24 +9,24 @@
     $cancel    = optional_param('cancel', 0, PARAM_BOOL);
 
     if (!$context = get_record('context', 'id', $contextid)) {
-        error('Bad context ID');
+        print_error('Bad context ID');
     }
 
     if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
-        error('No site ID');
+        print_error('No site ID');
     }
 
     if ($context->id == $sitecontext->id) {
-        error('Can not override base role capabilities');
+        print_error('Can not override base role capabilities');
     }
 
     if (!has_capability('moodle/role:override', $context)) {
-        error('You do not have permission to change overrides in this context!');
+        print_error('You do not have permission to change overrides in this context!');
     }
 
     if ($courseid) {
         if (!$course = get_record('course', 'id', $courseid)) {
-            error('Bad course ID');
+            print_error('Bad course ID');
         }
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);

@@ -16,11 +16,11 @@
     
     if ($pageid == 0) {
         if (!$page = get_record("lesson_pages", "prevpageid", 0, "lessonid", $lesson->id)) {
-            error("Error: Add cluster: page record not found");
+            print_error("Error: Add cluster: page record not found");
         }
     } else {
         if (!$page = get_record("lesson_pages", "id", $pageid)) {
-            error("Error: Add cluster: page record not found");
+            print_error("Error: Add cluster: page record not found");
         }
     }
     $newpage = new stdClass;
@@ -36,12 +36,12 @@
     $newpage->title = get_string("clustertitle", "lesson");
     $newpage->contents = get_string("clustertitle", "lesson");
     if (!$newpageid = insert_record("lesson_pages", $newpage)) {
-        error("Insert page: new page not inserted");
+        print_error("Insert page: new page not inserted");
     }
     // update the linked list...
     if ($pageid != 0) {
         if (!set_field("lesson_pages", "nextpageid", $newpageid, "id", $pageid)) {
-            error("Add cluster: unable to update link");
+            print_error("Add cluster: unable to update link");
         }
     }
     
@@ -51,7 +51,7 @@
     if ($page->nextpageid) {
         // the new page is not the last page
         if (!set_field("lesson_pages", "prevpageid", $newpageid, "id", $page->nextpageid)) {
-            error("Insert page: unable to update previous link");
+            print_error("Insert page: unable to update previous link");
         }
     }
     // ..and the single "answer"
@@ -61,7 +61,7 @@
     $newanswer->timecreated = $timenow;
     $newanswer->jumpto = LESSON_CLUSTERJUMP;
     if(!$newanswerid = insert_record("lesson_answers", $newanswer)) {
-        error("Add cluster: answer record not inserted");
+        print_error("Add cluster: answer record not inserted");
     }
     lesson_set_message(get_string('addedcluster', 'lesson'), 'notifysuccess');
     redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");

@@ -36,24 +36,24 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('data', $id)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
         if (! $course = get_record('course', 'id', $cm->course)) {
-            error('Course is misconfigured');
+            print_error('Course is misconfigured');
         }
         if (! $data = get_record('data', 'id', $cm->instance)) {
-            error('Course module is incorrect');
+            print_error('Course module is incorrect');
         }
 
     } else {
         if (! $data = get_record('data', 'id', $d)) {
-            error('Data ID is incorrect');
+            print_error('Data ID is incorrect');
         }
         if (! $course = get_record('course', 'id', $data->course)) {
-            error('Course is misconfigured');
+            print_error('Course is misconfigured');
         }
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
     }
 
@@ -102,7 +102,7 @@
         $recordsadded = 0;
 
         if (!$records = data_get_records_csv($filename, $fielddelimiter, $fieldenclosure)) {
-            error('get_records_csv failed to read data from the uploaded file. Please check file for field name typos and formatting errors.');
+            print_error('get_records_csv failed to read data from the uploaded file. Please check file for field name typos and formatting errors.');
         } else {
             //$db->debug = true;
             $fieldnames = array_shift($records);
@@ -176,7 +176,7 @@ function data_get_records_csv($filename, $fielddelimiter=',', $fieldenclosure="\
     }
 
     if (!$fp = fopen($filename, "r")) {
-        error('get_records_csv failed to open '.$filename);
+        print_error('get_records_csv failed to open '.$filename);
     }
     $fieldnames = array();
     $rows = array();

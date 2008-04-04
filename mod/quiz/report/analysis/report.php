@@ -142,17 +142,17 @@ class quiz_report extends quiz_default_report {
                    "   AND q.id IN ($questionlist)";
 
             if (!$quizquestions = get_records_sql($sql)) {
-                error('No questions found');
+                print_error('No questions found');
             }
 
             // Load the question type specific information
             if (!get_question_options($quizquestions)) {
-                error('Could not load question options');
+                print_error('Could not load question options');
             }
             // Restore the question sessions to their most recent states
             // creating new sessions where required
             if (!$states = get_question_states($quizquestions, $quiz, $attempt)) {
-                error('Could not restore question sessions');
+                print_error('Could not restore question sessions');
             }
             $numbers = explode(',', $questionlist);
             $statsrow = array();
@@ -488,17 +488,17 @@ class quiz_report extends quiz_default_report {
                    "   AND q.id IN ($questionlist)";
 
             if (!$quizquestions = get_records_sql($sql)) {
-                error('No questions found');
+                print_error('No questions found');
             }
 
             // Load the question type specific information
             if (!get_question_options($quizquestions)) {
-                error('Could not load question options');
+                print_error('Could not load question options');
             }
             // Restore the question sessions to their most recent states
             // creating new sessions where required
             if (!$states = get_question_states($quizquestions, $quiz, $attempt)) {
-                error('Could not restore question sessions');
+                print_error('Could not restore question sessions');
             }
             $numbers = explode(',', $questionlist);
             $statsrow = array();

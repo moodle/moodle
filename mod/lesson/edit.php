@@ -24,13 +24,13 @@
     
     if ($firstpage = get_record('lesson_pages', 'lessonid', $lesson->id, 'prevpageid', 0)) {
         if (!$pages = get_records('lesson_pages', 'lessonid', $lesson->id)) {
-            error('Could not find lesson pages');
+            print_error('Could not find lesson pages');
         }
     }
     
     if ($pageid) {
         if (!$singlepage = get_record('lesson_pages', 'id', $pageid)) {
-            error('Could not find page ID: '.$pageid);
+            print_error('Could not find page ID: '.$pageid);
         }
     }
 

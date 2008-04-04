@@ -45,7 +45,7 @@ class enrolment_plugin_authorize
 
         if (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 443) { // MDL-9836
             if (empty($CFG->loginhttps)) {
-                error(get_string('httpsrequired', 'enrol_authorize'));
+                print_error('httpsrequired', 'enrol_authorize');
             } else {
                 $wwwsroot = str_replace('http:','https:', $CFG->wwwroot);
                 redirect("$wwwsroot/course/enrol.php?id=$course->id");
@@ -92,7 +92,7 @@ class enrolment_plugin_authorize
                         break;
                 }
                 if (!empty($authorizeerror)) {
-                    error($authorizeerror);
+                    print_error($authorizeerror);
                 }
             }
             $frmenrol->display();

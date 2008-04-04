@@ -65,16 +65,16 @@
             $attemptid = required_param('attemptid', PARAM_INT);
 
             if (!$attempt = get_record('lesson_attempts', 'id', $attemptid)) {
-                error('Error: could not find attempt');
+                print_error('Error: could not find attempt');
             }
             if (!$page = get_record('lesson_pages', 'id', $attempt->pageid)) {
-                error('Error: could not find lesson page');
+                print_error('Error: could not find lesson page');
             }
             if (!$user = get_record('user', 'id', $attempt->userid)) {
-                error('Error: could not find users');
+                print_error('Error: could not find users');
             }
             if (!$answer = get_record('lesson_answers', 'lessonid', $lesson->id, 'pageid', $page->id)) {
-                error('Error: could not find answer');
+                print_error('Error: could not find answer');
             }
             break;
         case 'update':
@@ -86,10 +86,10 @@
                 $attemptid = required_param('attemptid', PARAM_INT);
                 
                 if (!$attempt = get_record('lesson_attempts', 'id', $attemptid)) {
-                    error('Error: could not find essay');
+                    print_error('Error: could not find essay');
                 }
                 if (!$grades = get_records_select('lesson_grades', "lessonid = $lesson->id and userid = $attempt->userid", 'completed', '*', $attempt->retry, 1)) {
-                    error('Error: could not find grades');
+                    print_error('Error: could not find grades');
                 }
 
                 $essayinfo = new stdClass;
@@ -108,7 +108,7 @@
                 $attempt->useranswer = addslashes(serialize($essayinfo));
 
                 if (!update_record('lesson_attempts', $attempt)) {
-                    error('Could not update essay score');
+                    print_error('Could not update essay score');
                 }
                 
                 // Get grade information
@@ -132,7 +132,7 @@
 
                 redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id");
             } else {
-                error('Something is wrong with the form data');
+                print_error('Something is wrong with the form data');
             }
             break;
         case 'email': // Sending an email(s) to a single user or all
@@ -142,7 +142,7 @@
             if ($userid = optional_param('userid', 0, PARAM_INT)) {
                 $queryadd = " AND userid = $userid";
                 if (! $users = get_records('user', 'id', $userid)) {
-                    error('Error: could not find users');
+                    print_error('Error: could not find users');
                 }
             } else {
                 $queryadd = '';
@@ -152,13 +152,13 @@
                                          WHERE a.lessonid = '$lesson->id' and
                                                u.id = a.userid
                                          ORDER BY u.lastname")) {
-                    error('Error: could not find users');
+                    print_error('Error: could not find users');
                 }
             }
 
             // Get lesson pages that are essay
             if (!$pages = get_records_select('lesson_pages', "lessonid = $lesson->id AND qtype = ".LESSON_ESSAY)) {
-                error('Error: could not find lesson pages');
+                print_error('Error: could not find lesson pages');
             }
 
             // Get only the attempts that are in response to essay questions
@@ -214,7 +214,7 @@
                         // Log it
                         add_to_log($course->id, 'lesson', 'update email essay grade', "essay.php?id=$cm->id", format_string($pages[$attempt->pageid]->title,true).': '.fullname($users[$attempt->userid]), $cm->id);
                     } else {
-                        error('Emailing Failed');
+                        print_error('Emailing Failed');
                     }
                 }
             }

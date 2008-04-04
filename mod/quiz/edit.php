@@ -101,7 +101,7 @@
 
     // Get the course object and related bits.
     if (! $course = get_record("course", "id", $quiz->course)) {
-        error("This course doesn't exist");
+        print_error("This course doesn't exist");
     }
 
     // Log this visit.
@@ -133,7 +133,7 @@
             // Avoid duplicate page breaks
             $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
             if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->instance)) {
-                error('Could not save question list');
+                print_error('Could not save question list');
             }
         }
     }
@@ -150,7 +150,7 @@
             // Avoid duplicate page breaks
             $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
             if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->instance)) {
-                error('Could not save question list');
+                print_error('Could not save question list');
             }
         }
     }
@@ -174,7 +174,7 @@
         $randomcount = required_param('randomcount', PARAM_INT);
         // load category
         if (! $category = get_record('question_categories', 'id', $categoryid)) {
-            error('Category ID is incorrect');
+            print_error('Category ID is incorrect');
         }
         $catcontext = get_context_instance_by_id($category->contextid);
         require_capability('moodle/question:useall', $catcontext);
@@ -209,7 +209,7 @@
                 $question->qtype = RANDOM;
                 $question = $QTYPES[RANDOM]->save_question($question, $form, $course);
                 if(!isset($question->id)) {
-                    error('Could not insert new random question!');
+                    print_error('Could not insert new random question!');
                 }
                 quiz_add_quiz_question($question->id, $quiz);
             }
@@ -220,12 +220,12 @@
         if (isset($_REQUEST['questionsperpage'])) {
             $quiz->questionsperpage = required_param('questionsperpage', PARAM_INT);
             if (!set_field('quiz', 'questionsperpage', $quiz->questionsperpage, 'id', $quiz->id)) {
-                error('Could not save number of questions per page');
+                print_error('Could not save number of questions per page');
             }
         }
         $quiz->questions = quiz_repaginate($quiz->questions, $quiz->questionsperpage);
         if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->id)) {
-            error('Could not save layout');
+            print_error('Could not save layout');
         }
     }
     if (isset($_REQUEST['delete']) and confirm_sesskey()) { /// Remove a question from the quiz
@@ -272,14 +272,14 @@
                 $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
             }
             if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->instance)) {
-                error('Could not save question list');
+                print_error('Could not save question list');
             }
         }
 
         // If rescaling is required save the new maximum
         if (isset($_REQUEST['maxgrade'])) {
             if (!quiz_set_grade(optional_param('maxgrade', 0), $quiz)) {
-                error('Could not set a new maximum grade for the quiz');
+                print_error('Could not set a new maximum grade for the quiz');
             }
         }
     }
@@ -319,7 +319,7 @@
 
         $sumgrades = quiz_print_question_list($quiz,  $thispageurl, false, $quiz_showbreaks, $quiz_reordertool);
         if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $quiz->instance)) {
-            error('Failed to set sumgrades');
+            print_error('Failed to set sumgrades');
         }
 
         print_box_end();
@@ -346,7 +346,7 @@
 
     $sumgrades = quiz_print_question_list($quiz, $thispageurl, true, $quiz_showbreaks, $quiz_reordertool);
     if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $quiz->instance)) {
-        error('Failed to set sumgrades');
+        print_error('Failed to set sumgrades');
     }
 
     print_box_end();

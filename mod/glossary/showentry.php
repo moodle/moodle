@@ -16,7 +16,7 @@
         $glossary = get_record('glossary','id',$entry->glossaryid);
         $entry->glossaryname = format_string($glossary->name,true);
         if (!$cm = get_coursemodule_from_instance("glossary", $glossary->id)) {
-            error("Could not determine which course module this belonged to!");
+            print_error("Could not determine which course module this belonged to!");
         }
         if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $cm->id))) {
             redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
@@ -27,7 +27,7 @@
     } else if ($concept) {
         $entries = glossary_get_entries_search($concept, $courseid);
     } else {
-        error('No valid entry specified');
+        print_error('No valid entry specified');
     }
 
     if ($entries) {

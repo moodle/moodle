@@ -298,7 +298,7 @@ class grade_category extends grade_object {
     function insert($source=null) {
 
         if (empty($this->courseid)) {
-            error('Can not insert grade category without course id!');
+            print_error('Can not insert grade category without course id!');
         }
 
         if (empty($this->parent)) {
@@ -1046,11 +1046,11 @@ class grade_category extends grade_object {
         }
 
         if ($parentid == $this->id) {
-            error('Can not assign self as parent!');
+            print_error('Can not assign self as parent!');
         }
 
         if (empty($this->parent) and $this->is_course_category()) {
-            error('Course category can not have parent!');
+            print_error('Course category can not have parent!');
         }
 
         // find parent and check course id

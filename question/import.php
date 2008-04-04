@@ -95,12 +95,12 @@
             if (file_exists($importfile)) {
                 $fileisgood = true;
             } else {
-                error(get_string('uploadproblem', 'moodle', $form->choosefile));
+                print_error('uploadproblem', 'moodle', $form->choosefile);
             }
         } else {
             // must be upload file
             if (!$importfile = $import_form->get_importfile_name()) {
-                error(get_string('uploadproblem', 'moodle'));
+                print_error('uploadproblem', 'moodle');
             }else {
                 $fileisgood = true;
             }
@@ -110,7 +110,7 @@
         if ($fileisgood) {
 
             if (! is_readable("format/$form->format/format.php")) {
-                error(get_string('formatnotfound','quiz', $form->format));
+                print_error('formatnotfound','quiz', $form->format);
             }
 
             require_once("format.php");  // Parent class
@@ -131,17 +131,17 @@
 
             // Do anything before that we need to
             if (! $qformat->importpreprocess()) {
-                error($txt->importerror, $thispageurl->out());
+                print_error($txt->importerror, '', $thispageurl->out());
             }
 
             // Process the uploaded file
             if (! $qformat->importprocess()) {
-                error($txt->importerror, $thispageurl->out());
+                print_error($txt->importerror, '', $thispageurl->out());
             }
 
             // In case anything needs to be done after
             if (! $qformat->importpostprocess()) {
-                error($txt->importerror, $thispageurl->out());
+                print_error($txt->importerror, '', $thispageurl->out());
             }
 
             echo "<hr />";

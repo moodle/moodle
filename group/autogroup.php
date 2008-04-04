@@ -19,7 +19,7 @@ if (!defined('AUTOGROUP_MIN_RATIO')) {
 $courseid = required_param('courseid', PARAM_INT);
 
 if (!$course = get_record('course', 'id', $courseid)) {
-    error('invalidcourse');
+    print_error('invalidcourse');
 }
 
 // Make sure that the user has permissions to manage groups.
@@ -82,7 +82,7 @@ if ($editform->is_cancelled()) {
         case 'idnumber':
             $orderby = 'idnumber'; break;
         default:
-            error('Unknown ordering');
+            print_error('Unknown ordering');
     }
     $users = groups_get_potential_members($data->courseid, $data->roleid, $orderby);
     $usercnt = count($users);

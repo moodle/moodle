@@ -11,7 +11,7 @@
 
     /// Work out who to send the message to
         if (!$admin = get_admin() ) {
-            error('Could not find an admin user!');
+            print_error('Could not find an admin user!');
         }
 
         $supportuser = new object;

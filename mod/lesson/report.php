@@ -344,10 +344,10 @@
         $try    = optional_param('try', NULL, PARAM_INT);
 
         if (! $lessonpages = get_records("lesson_pages", "lessonid", $lesson->id)) {
-            error("Could not find Lesson Pages");
+            print_error("Could not find Lesson Pages");
         }
         if (! $pageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
-            error("Could not find first page");
+            print_error("Could not find first page");
         }
 
         // now gather the stats into an object
@@ -912,7 +912,7 @@
     }
 
     else {
-        error("Fatal Error: Unknown Action: ".$action."\n");
+        print_error("Fatal Error: Unknown Action: ".$action."\n");
     }
 
 /// Finish the page

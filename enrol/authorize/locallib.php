@@ -92,10 +92,11 @@ function authorize_print_orders($courseid, $userid)
     if ($perpage > 100) { $perpage = 100; }
     $perpagemenus = array(5 => 5, 10 => 10, 20 => 20, 50 => 50, 100 => 100);
     $perpagemenu = popup_form($baseurl.'&amp;status='.$status.'&amp;course='.$courseid.'&amp;perpage=',$perpagemenus,'perpagemenu',$perpage,'','','',true);
-    $table->define_columns(array('id', 'userid', 'timecreated', 'status', ''));
+    $table->define_columns(array('id', 'userid', 'timecreated', 'status', 'action'));
     $table->define_headers(array($authstrs->orderid, $authstrs->shopper, $strs->time, $strs->status, $perpagemenu));
     $table->define_baseurl($baseurl."&amp;status=$status&amp;course=$courseid&amp;perpage=$perpage");
 
+    $table->no_sorting('action');
     $table->sortable(true, 'id', SORT_DESC);
     $table->pageable(true);
     $table->setup();
@@ -210,15 +211,15 @@ function authorize_print_order($orderid)
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
     if (!$order = get_record('enrol_authorize', 'id', $orderid)) {
-        error("Order $orderid not found.", "$CFG->wwwroot/enrol/authorize/index.php");
+        print_error("Order $orderid not found.", '', "$CFG->wwwroot/enrol/authorize/index.php");
     }
 
     if (!$course = get_record('course', 'id', $order->courseid)) {
-        error("Could not find that course id $order->courseid", "$CFG->wwwroot/enrol/authorize/index.php");
+        print_error("Could not find that course id $order->courseid", '', "$CFG->wwwroot/enrol/authorize/index.php");
     }
 
     if (!$user = get_record('user', 'id', $order->userid)) {
-        error("Could not find that user id $order->userid", "$CFG->wwwroot/enrol/authorize/index.php");
+        print_error("Could not find that user id $order->userid", '', "$CFG->wwwroot/enrol/authorize/index.php");
     }
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -226,7 +227,7 @@ function authorize_print_order($orderid)
         require_capability('enrol/authorize:managepayments', $coursecontext);
     }
 
-    $settled = authorize_settled($order);
+    $settled = AuthorizeNet::settled($order);
     $statusandactions = authorize_get_status_action($order);
     $color = authorize_get_status_color($statusandactions->status);
 
@@ -280,7 +281,7 @@ function authorize_print_order($orderid)
         if ($confirm && confirm_sesskey()) {
             $message = '';
             $extra = NULL;
-            if (AN_APPROVED == authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE)) {
+            if (AN_APPROVED == AuthorizeNet::process($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE)) {
                 if (empty($CFG->an_test)) {
                     if (enrol_into_course($course, $user, 'authorize')) {
                         if (!empty($CFG->enrol_mailstudents)) {
@@ -316,18 +317,18 @@ function authorize_print_order($orderid)
         }
         $upto = round($order->amount - $refunded, 2);
         if ($upto <= 0) {
-            error("Refunded to original amount: $order->amount", "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
+            print_error("Refunded to original amount: $order->amount", '', "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
         }
         $amount = round(optional_param('amount', $upto), 2);
         if ($amount > $upto) {
-            error("Can be refunded to $upto", "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
+            print_error("Can be refunded to $upto", '', "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
         }
         if ($confirm && confirm_sesskey()) {
             $extra = new stdClass;
             $extra->orderid = $orderid;
             $extra->amount = $amount;
             $message = '';
-            $success = authorize_action($order, $message, $extra, AN_ACTION_CREDIT);
+            $success = AuthorizeNet::process($order, $message, $extra, AN_ACTION_CREDIT);
             if (AN_APPROVED == $success || AN_REVIEW == $success) {
                 if (empty($CFG->an_test)) {
                     if (empty($extra->id)) {
@@ -375,7 +376,7 @@ function authorize_print_order($orderid)
             if ($confirm && confirm_sesskey()) {
                 $extra = NULL;
                 $message = '';
-                if (AN_APPROVED == authorize_action($order, $message, $extra, AN_ACTION_VOID)) {
+                if (AN_APPROVED == AuthorizeNet::process($order, $message, $extra, AN_ACTION_VOID)) {
                     if (empty($CFG->an_test)) {
                         redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
                     }
@@ -402,7 +403,7 @@ function authorize_print_order($orderid)
 
             $suborder = get_record_sql($sql);
             if (!$suborder) { // not found
-                error("Transaction can not be voided because of already been voided.", "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
+                print_error("Transaction can not be voided because of already been voided.", '', "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
             }
             $refundedstatus = authorize_get_status_action($suborder);
             unset($suborder->courseid);
@@ -410,7 +411,7 @@ function authorize_print_order($orderid)
                 if ($confirm && confirm_sesskey()) {
                     $message = '';
                     $extra = NULL;
-                    if (AN_APPROVED == authorize_action($suborder, $message, $extra, AN_ACTION_VOID)) {
+                    if (AN_APPROVED == AuthorizeNet::process($suborder, $message, $extra, AN_ACTION_VOID)) {
                         if (empty($CFG->an_test)) {
                             if (!empty($unenrol)) {
                                 role_unassign(0, $order->userid, 0, $coursecontext->id);
@@ -524,7 +525,7 @@ function authorize_get_status_action($order)
 
     switch ($order->status) {
         case AN_STATUS_AUTH:
-            if (authorize_expired($order)) {
+            if (AuthorizeNet::expired($order)) {
                 if ($canmanage) {
                     $ret->actions = array(ORDER_DELETE);
                 }
@@ -539,7 +540,7 @@ function authorize_get_status_action($order)
             return $ret;
 
         case AN_STATUS_AUTHCAPTURE:
-            if (authorize_settled($order)) {
+            if (AuthorizeNet::settled($order)) {
                 if ($canmanage) {
                     if (($order->paymentmethod == AN_METHOD_CC) || ($order->paymentmethod == AN_METHOD_ECHECK && !empty($order->refundinfo))) {
                         $ret->actions = array(ORDER_REFUND);
@@ -556,7 +557,7 @@ function authorize_get_status_action($order)
             return $ret;
 
         case AN_STATUS_CREDIT:
-            if (authorize_settled($order)) {
+            if (AuthorizeNet::settled($order)) {
                 $ret->status = 'settled';
             }
             else {

@@ -34,7 +34,7 @@
 
     if (!empty($hide) and confirm_sesskey()) {
         if (!$module = get_record("modules", "name", $hide)) {
-            error("Module doesn't exist!");
+            print_error("Module doesn't exist!");
         }
         set_field("modules", "visible", "0", "id", $module->id); // Hide main module
         // Remember the visibility status in visibleold
@@ -57,7 +57,7 @@
 
     if (!empty($show) and confirm_sesskey()) {
         if (!$module = get_record("modules", "name", $show)) {
-            error("Module doesn't exist!");
+            print_error("Module doesn't exist!");
         }
         set_field("modules", "visible", "1", "id", $module->id); // Show main module
         set_field('course_modules', 'visible', '1', 'visibleold',
@@ -89,11 +89,11 @@
         } else {  // Delete everything!!
 
             if ($delete == "forum") {
-                error("You can not delete the forum module!!");
+                print_error("You can not delete the forum module!!");
             }
 
             if (!$module = get_record("modules", "name", $delete)) {
-                error("Module doesn't exist!");
+                print_error("Module doesn't exist!");
             }
 
             // OK, first delete all the relevant instances from all course sections
@@ -180,7 +180,7 @@
 /// Get and sort the existing modules
 
     if (!$modules = get_records("modules")) {
-        error("No modules found!!");        // Should never happen
+        print_error("No modules found!!");        // Should never happen
     }
 
     foreach ($modules as $module) {

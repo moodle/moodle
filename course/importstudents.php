@@ -20,7 +20,7 @@
     }
 
     if (! $course = get_record("course", "id", $id)) {
-        error("Course ID was incorrect (can't find it)");
+        print_error("Course ID was incorrect (can't find it)");
     }
 
     require_login($course->id);
@@ -65,7 +65,7 @@
                 $addcourse = clean_param($addcourse, PARAM_INT);
                 set_time_limit(180);
                 if (!add_to_metacourse($course->id,$addcourse)) {
-                    error("Could not add the selected course to this meta course!");
+                    print_error("Could not add the selected course to this meta course!");
                 }
             }
         } else if ($remove and !empty($frm->removeselect) and confirm_sesskey()) {
@@ -73,7 +73,7 @@
                 set_time_limit(180);
                 $removecourse = clean_param($removecourse, PARAM_INT);
                 if (! remove_from_metacourse($course->id,$removecourse)) {
-                    error("Could not remove the selected course from this meta course!");
+                    print_error("Could not remove the selected course from this meta course!");
                 }
             }
         } else if ($showall and confirm_sesskey()) {

@@ -41,7 +41,7 @@ if ($cmid){
     $module = null;
     $cm = null;
 } else {
-    error('Need to pass courseid or cmid to this script.');
+    print_error('Need to pass courseid or cmid to this script.');
 }
 $contexts = new question_edit_contexts($thiscontext);
 

@@ -35,7 +35,7 @@
 
     if ($hostid == $CFG->mnet_localhost_id) {
         if (!$course = get_record('course', 'id', $id) ) {
-            error('That\'s an invalid course id'.$id);
+            print_error('That\'s an invalid course id'.$id);
         }
     } else {
         $course_stub       = array_pop(get_records_select('mnet_log', " hostid='$hostid' AND course='$id' ", '', '*', '', '1'));
@@ -66,7 +66,7 @@
 
         if ($user) {
             if (!$u = get_record('user', 'id', $user) ) {
-                error('That\'s an invalid user!');
+                print_error('That\'s an invalid user!');
             }
             $userinfo = fullname($u, has_capability('moodle/site:viewfullnames', $context));
         }

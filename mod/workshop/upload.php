@@ -8,13 +8,13 @@
 
 
     if (! $cm = get_record("course_modules", "id", $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $workshop = get_record("workshop", "id", $cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     require_login($course->id, false, $cm);
@@ -63,7 +63,7 @@
         $newsubmission->late = 1;
     }
     if (!$newsubmission->id = insert_record("workshop_submissions", $newsubmission)) {
-        error("Workshop submission: Failure to create new submission record!");
+        print_error("Workshop submission: Failure to create new submission record!");
     }
     // see if this is a resubmission by looking at the previous submissions...
     if ($submissions and ($workshop->submissionstart > time())) { // ...but not teacher submissions

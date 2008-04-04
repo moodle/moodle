@@ -12,13 +12,13 @@
     $confirmdelete = optional_param('confirmdelete', 0, PARAM_BOOL);
 
     if (! $cm = get_coursemodule_from_id('chat', $id)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
     if (! $chat = get_record('chat', 'id', $cm->instance)) {
-        error('Course module is incorrect');
+        print_error('Course module is incorrect');
     }
     if (! $course = get_record('course', 'id', $chat->course)) {
-        error('Course is misconfigured');
+        print_error('Course is misconfigured');
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);

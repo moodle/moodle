@@ -674,7 +674,7 @@ class question_match_qtype extends default_questiontype {
                 $subquestion->questiontext = question_replace_file_links_in_html($subquestion->questiontext, $fromcourseid, $tocourseid, $url, $destination, $subquestionchanged);
                 if ($subquestionchanged){//need to update rec in db
                     if (!update_record('question_match_sub', addslashes_recursive($subquestion))) {
-                        error('Couldn\'t update \'question_match_sub\' record '.$subquestion->id);
+                        print_error('Couldn\'t update \'question_match_sub\' record '.$subquestion->id);
                     }
 
                 }

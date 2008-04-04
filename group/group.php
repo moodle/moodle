@@ -21,23 +21,23 @@ $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
 if ($id) {
     if (!$group = get_record('groups', 'id', $id)) {
-        error('Group ID was incorrect');
+        print_error('Group ID was incorrect');
     }
     $group->description = clean_text($group->description);
     if (empty($courseid)) {
         $courseid = $group->courseid;
 
     } else if ($courseid != $group->courseid) {
-        error('Course ID was incorrect');
+        print_error('Course ID was incorrect');
     }
 
     if (!$course = get_record('course', 'id', $courseid)) {
-        error('Course ID was incorrect');
+        print_error('Course ID was incorrect');
     }
 
 } else {
     if (!$course = get_record('course', 'id', $courseid)) {
-        error('Course ID was incorrect');
+        print_error('Course ID was incorrect');
     }
     $group = new object();
     $group->courseid = $course->id;
@@ -83,11 +83,11 @@ if ($editform->is_cancelled()) {
 
     if ($data->id) {
         if (!groups_update_group($data, $editform->_upload_manager)) {
-            error('Error updating group');
+            print_error('Error updating group');
         }
     } else {
         if (!$id = groups_create_group($data, $editform->_upload_manager)) {
-            error('Error creating group');
+            print_error('Error creating group');
         }
         $returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&amp;group='.$id;
     }

@@ -27,11 +27,11 @@
     require_capability('mod/glossary:export', $context);
 
     if (! $course = get_record('course', 'id', $cm->course)) {
-        error('Course is misconfigured');
+        print_error('Course is misconfigured');
     }
 
     if (! $glossary = get_record('glossary', 'id', $cm->instance)) {
-        error('Course module is incorrect');
+        print_error('Course module is incorrect');
     }
 
     $strglossaries   = get_string('modulenameplural', 'glossary');
@@ -66,7 +66,7 @@
                 $dbentry->sourceglossaryid = $glossary->id;
                 
                 if (! update_record('glossary_entries', $dbentry)) {
-                    error('Could not export the entry to the main glossary');
+                    print_error('Could not export the entry to the main glossary');
                 } else {
                     print_simple_box_start('center', '60%');
                     echo '<p align="center"><font size="3">'.$entryexported.'</font></p></font>';

@@ -7,17 +7,17 @@
 // Make sure this is a legitimate posting
 
     if (!$formdata = data_submitted("$CFG->wwwroot/mod/survey/view.php")) {
-        error("You are not supposed to use this script like that.");
+        print_error("You are not supposed to use this script like that.");
     }
 
     $id = required_param('id', PARAM_INT);    // Course Module ID
 
     if (! $cm = get_coursemodule_from_id('survey', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     require_login($course->id, false, $cm);
@@ -26,7 +26,7 @@
     require_capability('mod/survey:participate', $context);
     
     if (! $survey = get_record("survey", "id", $cm->instance)) {
-        error("Survey ID was incorrect");
+        print_error("Survey ID was incorrect");
     }
 
     add_to_log($course->id, "survey", "submit", "view.php?id=$cm->id", "$survey->id", "$cm->id");
@@ -83,7 +83,7 @@
         }
 
         if (! insert_record("survey_answers", $newdata)) {
-            error("Encountered a problem trying to store your results. Sorry.");
+            print_error("Encountered a problem trying to store your results. Sorry.");
         }
     }
 

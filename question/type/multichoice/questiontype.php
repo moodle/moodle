@@ -656,7 +656,7 @@ class question_multichoice_qtype extends default_questiontype {
         $newoptions->incorrectfeedback = question_replace_file_links_in_html($question->options->incorrectfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
         if ($optionschanged){
             if (!update_record('question_multichoice', addslashes_recursive($newoptions))) {
-                error('Couldn\'t update \'question_multichoice\' record '.$newoptions->id);
+                print_error('Couldn\'t update \'question_multichoice\' record '.$newoptions->id);
             }
         }
         $answerchanged = false;
@@ -664,7 +664,7 @@ class question_multichoice_qtype extends default_questiontype {
             $answer->answer = question_replace_file_links_in_html($answer->answer, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
             if ($answerchanged){
                 if (!update_record('question_answers', addslashes_recursive($answer))){
-                    error('Couldn\'t update \'question_answers\' record '.$answer->id);
+                    print_error('Couldn\'t update \'question_answers\' record '.$answer->id);
                 }
             }
         }

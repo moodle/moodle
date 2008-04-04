@@ -9,11 +9,11 @@
 
     if ($id) {
         if (! $course = get_record('course', 'id', $id)) {
-            error("Course ID is incorrect");
+            print_error("Course ID is incorrect");
         }
     } else {
         if (! $course = get_site()) {
-            error("Could not find a top-level course!");
+            print_error("Could not find a top-level course!");
         }
     }
 

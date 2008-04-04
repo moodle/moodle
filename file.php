@@ -28,9 +28,9 @@
     
     // relative path must start with '/', because of backup/restore!!!
     if (!$relativepath) {
-        error('No valid arguments supplied or incorrect server configuration');
+        print_error('No valid arguments supplied or incorrect server configuration');
     } else if ($relativepath{0} != '/') {
-        error('No valid arguments supplied, path does not start with slash!');
+        print_error('No valid arguments supplied, path does not start with slash!');
     }
 
     $pathname = $CFG->dataroot.$relativepath;
@@ -38,24 +38,24 @@
     // extract relative path components
     $args = explode('/', trim($relativepath, '/'));
     if (count($args) == 0) { // always at least courseid, may search for index.html in course root
-        error('No valid arguments supplied');
+        print_error('No valid arguments supplied');
     }
   
     // security: limit access to existing course subdirectories
     if (($args[0]!='blog') and (!$course = get_record_sql("SELECT * FROM {$CFG->prefix}course WHERE id='".(int)$args[0]."'"))) {
-        error('Invalid course ID');
+        print_error('Invalid course ID');
     }
 
     // security: prevent access to "000" or "1 something" directories
     // hack for blogs, needs proper security check too
     if (($args[0] != 'blog') and ($args[0] != $course->id)) {
-        error('Invalid course ID');
+        print_error('Invalid course ID');
     }
 
     // security: login to course if necessary
     if ($args[0] == 'blog') {
         if (empty($CFG->bloglevel)) {
-            error('Blogging is disabled!');
+            print_error('Blogging is disabled!');
         } else if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL) {
             require_login();
         } else if ($CFG->forcelogin) {
@@ -76,7 +76,7 @@
     // security: only editing teachers can access backups
     if ((count($args) >= 2) and (strtolower($args[1]) == 'backupdata')) {
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $course->id))) {
-            error('Access not allowed');
+            print_error('Access not allowed');
         } else {
             $lifetime = 0; //disable browser caching for backups 
         }
@@ -106,7 +106,7 @@
         $lifetime = 0;  // do not cache assignments, students may reupload them
         if (!has_capability('mod/assignment:grade', get_context_instance(CONTEXT_COURSE, $course->id))
           and $args[4] != $USER->id) {
-           error('Access not allowed');
+           print_error('Access not allowed');
         }
     }
 
@@ -150,7 +150,7 @@
                    "AND r.type      = 'file' " .
                    "AND r.reference = '{$reference}'";
         if (count_records_sql($sql)) {
-           error('Access not allowed');
+           print_error('Access not allowed');
         }
     }
 
@@ -169,6 +169,6 @@
     function not_found($courseid) {
         global $CFG;
         header('HTTP/1.0 404 not found');
-        error(get_string('filenotfound', 'error'), $CFG->wwwroot.'/course/view.php?id='.$courseid); //this is not displayed on IIS??
+        print_error('filenotfound', 'error', $CFG->wwwroot.'/course/view.php?id='.$courseid); //this is not displayed on IIS??
     }
 ?>

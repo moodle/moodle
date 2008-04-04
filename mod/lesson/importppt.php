@@ -21,20 +21,20 @@
     global $matches;
     
     if (! $cm = get_coursemodule_from_id('lesson', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     
     // allows for adaption for multiple modules
     if(! $modname = get_field('modules', 'name', 'id', $cm->module)) {
-        error("Could not find module name");
+        print_error("Could not find module name");
     }
 
     if (! $mod = get_record($modname, "id", $cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     require_login($course->id, false, $cm);
@@ -68,10 +68,10 @@
                 $objects = $mod_create_objects($pageobjects, $mod->id);  // function to preps the data to be sent to DB
                 
                 if(! $mod_save_objects($objects, $mod->id, $pageid)) {  // sends it to DB
-                    error("could not save");
+                    print_error("could not save");
                 }
             } else {
-                error('could not get data');
+                print_error('could not get data');
             }
 
             echo "<hr>";
@@ -324,7 +324,7 @@ function build_list($list, &$i, $depth) {
                 // set the depth number.  So B1 is depth 1 and B2 is depth 2 and so on
                 $this_depth = substr($class, 1);
                 if (!is_numeric($this_depth)) {
-                    error("Depth not parsed!");
+                    print_error("Depth not parsed!");
                 }
             }
             if ($this_depth < $depth) {
@@ -544,13 +544,13 @@ function lesson_save_objects($branchtables, $lessonid, $after) {
         
         // insert the page
         if(!$id = insert_record('lesson_pages', $branchtable->page)) {
-            error("insert page");
+            print_error("insert page");
         }
     
         // update the link of the page previous to the one we just updated
         if ($prevpageid != 0) {  // if not the first page
             if (!set_field("lesson_pages", "nextpageid", $id, "id", $prevpageid)) {
-                error("Insert page: unable to update next link $prevpageid");
+                print_error("Insert page: unable to update next link $prevpageid");
             }
         }
 
@@ -558,7 +558,7 @@ function lesson_save_objects($branchtables, $lessonid, $after) {
         foreach ($branchtable->answers as $answer) {
             $answer->pageid = $id;
             if(!insert_record('lesson_answers', $answer)) {
-                error("insert answer $id");
+                print_error("insert answer $id");
             }
         }
         
@@ -568,7 +568,7 @@ function lesson_save_objects($branchtables, $lessonid, $after) {
     // all done with inserts.  Now check to update our last page (this is when we import between two lesson pages)
     if ($nextpageid != 0) {  // if the next page is not the end of lesson
         if (!set_field("lesson_pages", "prevpageid", $id, "id", $nextpageid)) {
-            error("Insert page: unable to update next link $prevpageid");
+            print_error("Insert page: unable to update next link $prevpageid");
         }
     }
     
@@ -582,7 +582,7 @@ function book_save_objects($chapters, $bookid, $pageid='0') {
     // nothing fancy, just save them all in order
     foreach ($chapters as $chapter) {
         if (!$chapter->id = insert_record('book_chapters', $chapter)) {
-            error('Could not update your book');
+            print_error('Could not update your book');
         }
     }
     return true;

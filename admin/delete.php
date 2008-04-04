@@ -37,7 +37,7 @@
     }
 
     if (!confirm_sesskey()) {
-        error('This script was called wrongly');
+        print_error('This script was called wrongly');
     }
 
     /// OK, here goes ...

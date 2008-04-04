@@ -239,7 +239,7 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
         $exportdir=$CFG->dataroot."/".$course->id."/".$exportdestinations;
       } else {
         add_to_log($course->id, "wiki", "hack", "", format_string($wiki->name,true).": Tried to export a wiki as non-teacher into $exportdestinations.");
-        error("You are not a teacher !");
+        print_error("You are not a teacher !");
       }
     } else {
         $exportbasedir=tempnam("/tmp","WIKIEXPORT");
@@ -249,7 +249,7 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
         $exportdir=$exportbasedir."/".$wname;
         @mkdir($exportdir);
         if(!is_dir($exportdir)) {
-            error("Cannot create temporary directory $exportdir !");
+            print_error("Cannot create temporary directory $exportdir !");
         }
     }
     
@@ -346,12 +346,12 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
       #-- add file
       // Let's make sure the file exists and is writable first.
       if (!$handle = fopen($exportdir."/".$fn, 'w')) {
-        error("Cannot open file ($exportdir/$fn)");
+        print_error("Cannot open file ($exportdir/$fn)");
       }
       
       // Write $content to our opened file.
       if (fwrite($handle, $content) === FALSE) {
-        error("Cannot write to file ($exportdir/$fn)");
+        print_error("Cannot write to file ($exportdir/$fn)");
       }
 
       fclose($handle);
@@ -387,12 +387,12 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
         // Let's make sure the file exists and is writable first.
         $indexname="index".$html_ext;
         if (!$handle = fopen($exportdir."/".$indexname, 'w')) {
-          error("Cannot open file ($exportdir/$indexname)");
+          print_error("Cannot open file ($exportdir/$indexname)");
         }
         
         // Write $somecontent to our opened file.
         if (fwrite($handle, $str_formatted) === FALSE) {
-          error("Cannot write to file ($exportdir/$indexname)");
+          print_error("Cannot write to file ($exportdir/$indexname)");
         }
   
         fclose($handle);
@@ -418,10 +418,10 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
       Header("X-Content-Type: application/zip");
       Header("Content-Location: $archivename");      
       if(!@readfile("$exportbasedir/$archivename")) {
-        error("Cannot read $exportbasedir/$archivename");
+        print_error("Cannot read $exportbasedir/$archivename");
       }
       if(!deldir($exportbasedir)) {
-        error("Cannot delete $exportbasedir");
+        print_error("Cannot delete $exportbasedir");
       }
       #exit();
       return false;

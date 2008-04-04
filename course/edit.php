@@ -16,11 +16,11 @@
 
         if($id == SITEID){
             // don't allow editing of  'site course' using this from
-            error('You cannot edit the site course using this form');
+            print_error('You cannot edit the site course using this form');
         }
 
         if (!$course = get_record('course', 'id', $id)) {
-            error('Course ID was incorrect');
+            print_error('Course ID was incorrect');
         }
         require_login($course->id);
         $category = get_record('course_categories', 'id', $course->category);
@@ -30,12 +30,12 @@
         $course = null;
         require_login();
         if (!$category = get_record('course_categories', 'id', $categoryid)) {
-            error('Category ID was incorrect');
+            print_error('Category ID was incorrect');
         }
         require_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $category->id));
     } else {
         require_login();
-        error('Either course id or category must be specified');
+        print_error('Either course id or category must be specified');
     }
 
 /// prepare course

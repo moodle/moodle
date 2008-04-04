@@ -247,7 +247,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             if (  $todo=='create'){
                 if (!$datasetdef->id = insert_record(
                     'question_dataset_definitions', $datasetdef)) {
-                    error("Unable to create dataset $defid");
+                    print_error("Unable to create dataset $defid");
                 } 
            }  
            // Create relation to the dataset:
@@ -256,7 +256,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
            $questiondataset->datasetdefinition = $datasetdef->id;
             if (!insert_record('question_datasets',
                                $questiondataset)) {
-                error("Unable to create relation to dataset $dataset->name $todo");
+                print_error("Unable to create relation to dataset $dataset->name $todo");
             }
             if ($todo=='create'){ // add the items
                 foreach ($dataset->datasetitem as $dataitem ){
@@ -265,7 +265,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     $datasetitem->itemnumber = $dataitem->itemnumber ;
                     $datasetitem->value = $dataitem->value ;
                     if (!insert_record('question_dataset_items', $datasetitem)) {
-                        error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
+                        print_error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
                     }
                 }     
             }                                
@@ -322,7 +322,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     foreach ($calculatedmessages as $msg) {
                         $errorstring .= $msg . '<br />';
                     }
-                    error($errorstring);
+                    print_error($errorstring);
                 }
 
                 break;
@@ -623,11 +623,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                 // Reuse any previously used record
                 $addeditem->id = $fromform->itemid[$i];
                 if (!update_record('question_dataset_items', $addeditem)) {
-                    error("Error: Unable to update dataset item");
+                    print_error("Error: Unable to update dataset item");
                 }
             } else {
                 if (!insert_record('question_dataset_items', $addeditem)) {
-                    error("Error: Unable to insert dataset item");
+                    print_error("Error: Unable to insert dataset item");
                 }
             }
 
@@ -674,7 +674,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                         }
                         //pp  echo "<pre>"; print_r( $datasetitem );
                         if (!insert_record('question_dataset_items', $datasetitem)) {
-                            error("Error: Unable to insert new dataset item");
+                            print_error("Error: Unable to insert new dataset item");
                         }                        
                     }
                 }//for number added
@@ -698,7 +698,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     $datasetdef->itemcount= $newmaxnumber ;        
                     if (!update_record('question_dataset_definitions',
                                        $datasetdef)) {
-                         error("Error: Unable to update itemcount");
+                         print_error("Error: Unable to update itemcount");
                     }
                 }
             }
@@ -720,7 +720,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             return sprintf("%.".$regs[4]."f",$nbr);
  
         } else {
-            error("The distribution $regs[1] caused problems");
+            print_error("The distribution $regs[1] caused problems");
         }
         return '';
     }

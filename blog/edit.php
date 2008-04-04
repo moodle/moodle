@@ -12,32 +12,32 @@ $courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tab - d
 require_login($courseid);
 
 if (empty($CFG->bloglevel)) {
-    error('Blogging is disabled!');
+    print_error('Blogging is disabled!');
 }
 
 if (isguest()) {
-    error(get_string('noguestpost', 'blog'));
+    print_error('noguestpost', 'blog');
 }
 
 $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 if (!has_capability('moodle/blog:create', $sitecontext) and !has_capability('moodle/blog:manageentries', $sitecontext)) {
-    error('You can not post or edit blogs.');
+    print_error('You can not post or edit blogs.');
 }
 
 // Make sure that the person trying to edit have access right
 if ($id) {
     if (!$existing = get_record('post', 'id', $id)) {
-        error('Wrong blog post id');
+        print_error('Wrong blog post id');
     }
 
     if (!blog_user_can_edit_post($existing)) {
-        error(get_string('notallowedtoedit', 'blog'));
+        print_error('notallowedtoedit', 'blog');
     }
     $userid    = $existing->userid;
     $returnurl = $CFG->wwwroot.'/blog/index.php?userid='.$existing->userid;
 } else {
     if (!has_capability('moodle/blog:create', $sitecontext)) {
-        error(get_string('nopost', 'blog')); // manageentries is not enough for adding
+        print_error('nopost', 'blog'); // manageentries is not enough for adding
     }
     $existing  = false;
     $userid    = $USER->id;
@@ -52,7 +52,7 @@ $strblogs = get_string('blogs','blog');
 
 if ($action=='delete'){
     if (!$existing) {
-        error('Incorrect blog post id');
+        print_error('Incorrect blog post id');
     }
     if (data_submitted() and $confirm and confirm_sesskey()) {
         do_delete($existing);
@@ -83,12 +83,12 @@ if ($blogeditform->is_cancelled()){
 
         case 'edit':
             if (!$existing) {
-                error('Incorrect blog post id');
+                print_error('Incorrect blog post id');
             }
             do_edit($fromform, $blogeditform);
         break;
         default :
-            error('Unknown action!');
+            print_error('Unknown action!');
     }
     redirect($returnurl);
 }
@@ -105,7 +105,7 @@ switch ($action) {
 
     case 'edit':
         if (!$existing) {
-            error('Incorrect blog post id');
+            print_error('Incorrect blog post id');
         }
         $post->id           = $existing->id;
         $post->subject      = $existing->subject;
@@ -124,12 +124,12 @@ switch ($action) {
         }
     break;
     default :
-        error('Unknown action!');
+        print_error('Unknown action!');
 }
 
 // done here in order to allow deleting of posts with wrong user id above
 if (!$user = get_record('user', 'id', $userid)) {
-    error('Incorrect user id');
+    print_error('Incorrect user id');
 }
 $navlinks = array();
 $navlinks[] = array('name' => fullname($user), 'link' => "$CFG->wwwroot/user/view.php?id=$userid", 'type' => 'misc');
@@ -164,7 +164,7 @@ function do_delete($post) {
     add_to_log(SITEID, 'blog', 'delete', 'index.php?userid='. $post->userid, 'deleted blog entry with entry id# '. $post->id);
 
     if (!$status) {
-        error('Error occured while deleting post', $returnurl);
+        print_error('Error occured while deleting post', '', $returnurl);
     }
 }
 
@@ -191,7 +191,7 @@ function do_add($post, $blogeditform) {
         add_to_log(SITEID, 'blog', 'add', 'index.php?userid='.$post->userid.'&postid='.$post->id, $post->subject);
 
     } else {
-        error('There was an error adding this post in the database', $returnurl);
+        print_error('There was an error adding this post in the database', '', $returnurl);
     }
 
 }
@@ -226,7 +226,7 @@ function do_edit($post, $blogeditform) {
         add_to_log(SITEID, 'blog', 'update', 'index.php?userid='.$USER->id.'&postid='.$post->id, $post->subject);
 
     } else {
-        error('There was an error updating this post in the database', $returnurl);
+        print_error('There was an error updating this post in the database', '', $returnurl);
     }
 }
 

@@ -270,26 +270,26 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
 function lesson_get_basics($cmid = 0, $lessonid = 0) {
     if ($cmid) {
         if (!$cm = get_coursemodule_from_id('lesson', $cmid)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
         if (!$course = get_record('course', 'id', $cm->course)) {
-            error('Course is misconfigured');
+            print_error('Course is misconfigured');
         }
         if (!$lesson = get_record('lesson', 'id', $cm->instance)) {
-            error('Course module is incorrect');
+            print_error('Course module is incorrect');
         }
     } else if ($lessonid) {
         if (!$lesson = get_record('lesson', 'id', $lessonid)) {
-            error('Course module is incorrect');
+            print_error('Course module is incorrect');
         }
         if (!$course = get_record('course', 'id', $lesson->course)) {
-            error('Course is misconfigured');
+            print_error('Course is misconfigured');
         }
         if (!$cm = get_coursemodule_from_instance('lesson', $lesson->id, $course->id)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
     } else {
-        error('No course module ID or lesson ID were passed');
+        print_error('No course module ID or lesson ID were passed');
     }
     
     return array($cm, $course, $lesson);
@@ -1064,7 +1064,7 @@ function lesson_cluster_jump($lessonid, $userid, $pageid) {
 
     // get the lesson pages
     if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
-        error("Error: could not find records in lesson_pages table");
+        print_error("Error: could not find records in lesson_pages table");
     }
     // find the start of the cluster
     while ($pageid != 0) { // this condition should not be satisfied... should be a cluster page
@@ -1192,7 +1192,7 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
 
     // get the lesson pages
     if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lesson")) {
-        error("Error: could not find records in lesson_pages table");
+        print_error("Error: could not find records in lesson_pages table");
     }
     
     if ($pageid == LESSON_UNSEENBRANCHPAGE) {  // this only happens when a student leaves in the middle of an unseen question within a branch series
@@ -1249,12 +1249,12 @@ function lesson_unseen_branch_jump($lessonid, $userid) {
 
     if (!$seenbranches = get_records_select("lesson_branch", "lessonid = $lessonid AND userid = $userid AND retry = $retakes",
                 "timeseen DESC")) {
-        error("Error: could not find records in lesson_branch table");
+        print_error("Error: could not find records in lesson_branch table");
     }
 
     // get the lesson pages
     if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
-        error("Error: could not find records in lesson_pages table");
+        print_error("Error: could not find records in lesson_pages table");
     }
     
     // this loads all the viewed branch tables into $seen untill it finds the branch table with the flag
@@ -1301,7 +1301,7 @@ function lesson_unseen_branch_jump($lessonid, $userid) {
 function lesson_random_question_jump($lessonid, $pageid) {
     // get the lesson pages
     if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
-        error("Error: could not find records in lesson_pages table");
+        print_error("Error: could not find records in lesson_pages table");
     }
 
     // go up the pages till branch table

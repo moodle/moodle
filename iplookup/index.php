@@ -85,7 +85,7 @@ if (!empty($CFG->geoipfile) and file_exists($CFG->geoipfile)) {
 } else {
     $ipdata = download_file_content('http://netgeo.caida.org/perl/netgeo.cgi?target='.$ip);
     if ($ipdata === false) {
-        error('Can not connect to NetGeo server at http://netgeo.caida.org, please check proxy settings or better install MaxMind GeoLite City data file.');
+        print_error('Can not connect to NetGeo server at http://netgeo.caida.org, please check proxy settings or better install MaxMind GeoLite City data file.');
     }
     $matches = null;
     if (!preg_match('/LAT:\s*(-?\d+\.\d+)/s', $ipdata, $matches)) {

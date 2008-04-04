@@ -48,7 +48,7 @@ $mform = new edit_category_form(null, array('gpr'=>$gpr));
 
 if ($id) {
     if (!$grade_category = grade_category::fetch(array('id'=>$id, 'courseid'=>$course->id))) {
-        error('Incorrect category id!');
+        print_error('Incorrect category id!');
     }
     $grade_category->apply_forced_settings();
     $category = $grade_category->get_record_data();
@@ -98,7 +98,7 @@ if ($mform->is_cancelled()) {
     // Handle user preferences
     if (isset($data->pref_aggregationview)) {
         if (!grade_report::set_pref('aggregationview', $data->pref_aggregationview, $grade_category->id)) {
-            error("Could not set preference aggregationview to $value for this grade category");
+            print_error("Could not set preference aggregationview to $value for this grade category");
         }
     }
 

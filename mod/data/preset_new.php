@@ -26,30 +26,30 @@ unset($fullname);
 
 if ($id) {
     if (! $cm = get_coursemodule_from_id('data', $id)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
     if (! $course = get_record('course', 'id', $cm->course)) {
-        error('Course is misconfigured');
+        print_error('Course is misconfigured');
     }
     if (! $data = get_record('data', 'id', $cm->instance)) {
-        error('Module Incorrect');
+        print_error('Module Incorrect');
     }
 } else if ($d) {
     if (! $data = get_record('data', 'id', $d)) {
-        error('Database ID Incorrect');
+        print_error('Database ID Incorrect');
     }
     if (! $course = get_record('course', 'id', $data->course)) {
-        error('Course is misconfigured');
+        print_error('Course is misconfigured');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
 } else {
-    error('Parameter missing');
+    print_error('Parameter missing');
 }
 
 if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
-    error('Could not find context');
+    print_error('Could not find context');
 }
 
 require_login($course->id, false, $cm);
@@ -57,7 +57,7 @@ require_login($course->id, false, $cm);
 require_capability('mod/data:managetemplates', $context);
 
 if ($userid && ($userid != $USER->id) && !has_capability('mod/data:viewalluserpresets', $context)) {
-    error('You are not allowed to access presets from other users');
+    print_error('You are not allowed to access presets from other users');
 }
 
 /* Need sesskey security check here for import instruction */

@@ -8,7 +8,7 @@
 
     $id = required_param('id', PARAM_INT);   // course    
     if (! $course = get_record("course", "id", $id)) {
-        error("Course ID is incorrect");
+        print_error("Course ID is incorrect");
     }
 
     require_login($course->id);
@@ -163,7 +163,7 @@
                             if ($attempt->details) {
                                 hotpot_add_attempt_details($attempt);
                                 if (! update_record('hotpot_attempts', $attempt)) {
-                                    error("Could not update attempt record: ".$db->ErrorMsg(), $next_url);
+                                    print_error("Could not update attempt record: ".$db->ErrorMsg(), '', $next_url);
                                 }
                             }
                             $attemptcount++;

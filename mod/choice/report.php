@@ -9,11 +9,11 @@
     $action   = optional_param('action', '', PARAM_ALPHA);
 
     if (! $cm = get_coursemodule_from_id('choice', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course module is misconfigured");
+        print_error("Course module is misconfigured");
     }
 
     require_login($course->id, false, $cm);
@@ -23,7 +23,7 @@
     require_capability('mod/choice:readresponses', $context);
     
     if (!$choice = choice_get_choice($cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     $strchoice = get_string("modulename", "choice");

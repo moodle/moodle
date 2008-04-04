@@ -506,7 +506,7 @@ function journal_print_feedback($course, $entry, $grades) {
     global $CFG;
 
     if (! $teacher = get_record('user', 'id', $entry->teacher)) {
-        error('Weird journal error');
+        print_error('Weird journal error');
     }
 
     echo '<table cellspacing="0" align="center" class="feedbackbox">';

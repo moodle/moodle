@@ -43,23 +43,23 @@
     // get some useful stuff...
     if ($id) {
         if (! $cm = get_coursemodule_from_id('workshop', $id)) {
-            error("Course Module ID was incorrect");
+            print_error("Course Module ID was incorrect");
         }
         if (! $workshop = get_record("workshop", "id", $cm->instance)) {
-            error("Course module is incorrect");
+            print_error("Course module is incorrect");
         }
     } else if ($wid) {
         if (! $workshop = get_record("workshop", "id", $wid)) {
-            error("Workshop id is incorrect");
+            print_error("Workshop id is incorrect");
         }
         if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-            error("No coursemodule found");
+            print_error("No coursemodule found");
         }
     } else {
-        error("No id given");
+        print_error("No id given");
     }
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     require_login($course->id, false, $cm);
@@ -80,11 +80,11 @@
         print_heading_with_help(get_string("addacomment", "workshop"), "addingacomment", "workshop");
         // get assessment record
         if (!$assessmentid = $aid) { // comes from link or hidden form variable
-            error("Assessment id not given");
+            print_error("Assessment id not given");
         }
         $assessment = get_record("workshop_assessments", "id", $assessmentid);
         if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
-            error("Submission not found");
+            print_error("Submission not found");
         }
         ?>
         <form id="commentform" action="assessments.php" method="post">
@@ -117,13 +117,13 @@
     elseif ($action == 'addstockcomment') {
 
         if (empty($aid) or ($elementno<0)) {
-            error("Workshop Assessment ID and/or Element Number missing");
+            print_error("Workshop Assessment ID and/or Element Number missing");
         }
 
         require_capability('mod/workshop:manage', $context);
 
         if (!$assessment = get_record("workshop_assessments", "id", $aid)) {
-            error("workshop assessment is misconfigured");
+            print_error("workshop assessment is misconfigured");
         }
         $form = data_submitted('nomatch'); //Nomatch because we can come from assess.php
 
@@ -142,7 +142,7 @@
         }
 
         if (!$element->id = insert_record("workshop_stockcomments", $comment)) {
-            error("Could not insert comment into comment bank");
+            print_error("Could not insert comment into comment bank");
         }
 
         // now upate the assessment (just the elements, the assessment itself is not updated)
@@ -176,7 +176,7 @@
                     $element->elementno = $i;
                     $element->feedback   = clean_param($form->{"feedback_$i"}, PARAM_CLEAN);
                     if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
+                        print_error("Could not insert workshop grade!");
                     }
                 }
                 $grade = 0; // set to satisfy save to db
@@ -192,7 +192,7 @@
                     $element->feedback   = clean_param($form->{"feedback_$key"}, PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
+                        print_error("Could not insert workshop grade!");
                         }
                     }
                 // now work out the grade...
@@ -221,7 +221,7 @@
                     $element->feedback   = clean_param($form->{"feedback_$i"}, PARAM_CLEAN);
                     $element->grade = $form->grade[$i];
                     if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
+                        print_error("Could not insert workshop grade!");
                     }
                     if (empty($form->grade[$i])){
                         $error += $WORKSHOP_EWEIGHTS[$elements[$i]->weight];
@@ -235,7 +235,7 @@
                 $element->elementno = $i;
                 $element->grade = $form->grade[$i];
                 if (!$element->id = insert_record("workshop_grades", $element)) {
-                    error("Could not insert workshop grade!");
+                    print_error("Could not insert workshop grade!");
                 }
                 $grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]) * 100 / $workshop->grade;
                 // do sanity check
@@ -255,7 +255,7 @@
                 $element->elementno = 0;
                 $element->grade = $form->grade[0];
                 if (!$element->id = insert_record("workshop_grades", $element)) {
-                    error("Could not insert workshop grade!");
+                    print_error("Could not insert workshop grade!");
                 }
                 // now save the adjustment in element one
                 unset($element);
@@ -264,7 +264,7 @@
                 $element->elementno = 1;
                 $element->grade = $form->grade[1];
                 if (!$element->id = insert_record("workshop_grades", $element)) {
-                    error("Could not insert workshop grade!");
+                    print_error("Could not insert workshop grade!");
                 }
                 $grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]);
                 break;
@@ -279,7 +279,7 @@
                     $element->feedback   = clean_param($form->{"feedback_$key"}, PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
+                        print_error("Could not insert workshop grade!");
                     }
                 }
                 // now work out the grade...
@@ -316,7 +316,7 @@
     elseif ($action == 'confirmdelete' ) {
 
         if (empty($aid)) {
-            error("Confirm delete: assessment id missing");
+            print_error("Confirm delete: assessment id missing");
             }
 
         notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("assessment", "workshop")),
@@ -328,7 +328,7 @@
     elseif ($action == 'delete' ) {
 
         if (empty($aid)) {
-            error("Delete: submission id missing");
+            print_error("Delete: submission id missing");
             }
 
         print_string("deleting", "workshop");
@@ -375,7 +375,7 @@
         $timenow = time();
         // assessment id comes from link or hidden form variable
         if (!$assessment = get_record("workshop_assessments", "id", $aid)) {
-            error("Assessment : agree assessment failed");
+            print_error("Assessment : agree assessment failed");
             }
         //save time of agreement
         set_field("workshop_assessments", "timeagreed", $timenow, "id", $assessment->id);
@@ -403,13 +403,13 @@
         print_heading_with_help(get_string("editacomment", "workshop"), "editingacomment", "workshop");
         // get the comment record...
         if (!$comment = get_record("workshop_comments", "id", $cid)) {
-            error("Edit Comment: Comment not found");
+            print_error("Edit Comment: Comment not found");
             }
         if (!$assessment = get_record("workshop_assessments", "id", $comment->assessmentid)) {
-            error("Edit Comment: Assessment not found");
+            print_error("Edit Comment: Assessment not found");
             }
         if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
-            error("Edit Comment: Submission not found");
+            print_error("Edit Comment: Submission not found");
             }
         ?>
         <form id="gradingform" action="assessments.php" method="post">
@@ -638,11 +638,11 @@
         print_heading_with_help(get_string("gradeassessment", "workshop"), "gradingassessments", "workshop");
         // get assessment record
         if (!$assessmentid = $aid) {
-            error("Assessment id not given");
+            print_error("Assessment id not given");
         }
         $assessment = get_record("workshop_assessments", "id", $assessmentid);
         if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
-            error("Submission not found");
+            print_error("Submission not found");
         }
         // get the teacher's assessment first
         if ($teachersassessment = workshop_get_submission_assessment($submission, $USER)) {
@@ -666,7 +666,7 @@
         $form = (object)$_POST;
 
         if (!$assessment = get_record("workshop_assessments", "id", $aid)) {
-            error("Unable to insert comment");
+            print_error("Unable to insert comment");
             }
         // save the comment...
         $comment->workshopid = $workshop->id;
@@ -675,7 +675,7 @@
         $comment->timecreated   = $timenow;
         $comment->comments   = clean_param($form->comments, PARAM_CLEAN);
         if (!$comment->id = insert_record("workshop_comments", $comment)) {
-            error("Could not insert workshop comment!");
+            print_error("Could not insert workshop comment!");
             }
 
         add_to_log($course->id, "workshop", "comment", "view.php?id=$cm->id", "$comment->id");
@@ -705,7 +705,7 @@
                         $element->workshopid = $workshop->id;
                         $element->elementno = $key;
                         if (!$element->id = insert_record("workshop_elements", $element)) {
-                            error("Could not insert workshop element!");
+                            print_error("Could not insert workshop element!");
                         }
                     }
                 }
@@ -732,7 +732,7 @@
                             $element->weight = $form->weight[$key];
                         }
                         if (!$element->id = insert_record("workshop_elements", $element)) {
-                            error("Could not insert workshop element!");
+                            print_error("Could not insert workshop element!");
                         }
                     }
                 }
@@ -753,7 +753,7 @@
                         $element->weight = $form->weight[$key];
                     }
                     if (!$element->id = insert_record("workshop_elements", $element)) {
-                        error("Could not insert workshop element!");
+                        print_error("Could not insert workshop element!");
                     }
                 }
                 break;
@@ -772,7 +772,7 @@
                     }
                     $element->maxscore = $j - 1;
                     if (!$element->id = insert_record("workshop_elements", $element)) {
-                        error("Could not insert workshop element!");
+                        print_error("Could not insert workshop element!");
                     }
                 }
                 // let's not fool around here, dump the junk!
@@ -788,7 +788,7 @@
                         $element->rubricno = $j;
                         $element->description   = $form->rubric[$i][$j];
                         if (!$element->id = insert_record("workshop_rubrics", $element)) {
-                            error("Could not insert workshop element!");
+                            print_error("Could not insert workshop element!");
                         }
                     }
                 }
@@ -853,19 +853,19 @@
     elseif ($action == 'removestockcomment') {
 
         if (empty($aid) or empty($stockcommentid)) {
-            error("Workshop Assessment id and/or Stock Comment id missing");
+            print_error("Workshop Assessment id and/or Stock Comment id missing");
         }
 
         require_capability('mod/workshop:manage', $context);
 
         if (!$assessment = get_record("workshop_assessments", "id", $aid)) {
-            error("workshop assessment is misconfigured");
+            print_error("workshop assessment is misconfigured");
         }
         $form = data_submitted('nomatch'); //Nomatch because we can come from assess.php
 
         // delete the comment from the stock comments table
         if (!delete_records("workshop_stockcomments", "id", $stockcommentid)) {
-            error("Could not remove comment from the comment bank");
+            print_error("Could not remove comment from the comment bank");
         }
 
         // now upate the assessment (just the elements, the assessment itself is not updated)
@@ -899,7 +899,7 @@
                     $element->elementno = $i;
                     $element->feedback   = clean_param($form->{"feedback_$i"}, PARAM_CLEAN);
                     if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
+                        print_error("Could not insert workshop grade!");
                     }
                 }
                 $grade = 0; // set to satisfy save to db
@@ -915,7 +915,7 @@
                     $element->feedback   = clean_param($form->{"feedback_$key"}, PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
+                        print_error("Could not insert workshop grade!");
                         }
                     }
                 // now work out the grade...
@@ -944,7 +944,7 @@
                     $element->feedback   = clean_param($form->{"feedback_$i"}, PARAM_CLEAN);
                     $element->grade = $form->grade[$i];
                     if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
+                        print_error("Could not insert workshop grade!");
                     }
                     if (empty($form->grade[$i])){
                         $error += $WORKSHOP_EWEIGHTS[$elements[$i]->weight];
@@ -958,7 +958,7 @@
                 $element->elementno = $i;
                 $element->grade = $form->grade[$i];
                 if (!$element->id = insert_record("workshop_grades", $element)) {
-                    error("Could not insert workshop grade!");
+                    print_error("Could not insert workshop grade!");
                 }
                 $grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]) * 100 / $workshop->grade;
                 // do sanity check
@@ -978,7 +978,7 @@
                 $element->elementno = 0;
                 $element->grade = $form->grade[0];
                 if (!$element->id = insert_record("workshop_grades", $element)) {
-                    error("Could not insert workshop grade!");
+                    print_error("Could not insert workshop grade!");
                 }
                 // now save the adjustment in element one
                 unset($element);
@@ -987,7 +987,7 @@
                 $element->elementno = 1;
                 $element->grade = $form->grade[1];
                 if (!$element->id = insert_record("workshop_grades", $element)) {
-                    error("Could not insert workshop grade!");
+                    print_error("Could not insert workshop grade!");
                 }
                 $grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]);
                 break;
@@ -1002,7 +1002,7 @@
                     $element->feedback   = clean_param($form->{"feedback_$key"}, PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
+                        print_error("Could not insert workshop grade!");
                     }
                 }
                 // now work out the grade...
@@ -1039,11 +1039,11 @@
     elseif ($action == 'updateassessment') {
 
         if (empty($aid)) {
-            error("Workshop Assessment id missing");
+            print_error("Workshop Assessment id missing");
         }
 
         if (! $assessment = get_record("workshop_assessments", "id", $aid)) {
-            error("workshop assessment is misconfigured");
+            print_error("workshop assessment is misconfigured");
         }
 
         // first get the assignment elements for maxscores and weights...
@@ -1076,7 +1076,7 @@
                     $element->elementno = $i;
                     $element->feedback = clean_param($form->{"feedback_$i"}, PARAM_CLEAN);
                     if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
+                        print_error("Could not insert workshop grade!");
                     }
                 }
                 $grade = 0; // set to satisfy save to db
@@ -1092,7 +1092,7 @@
                     $element->feedback   = clean_param($form->{"feedback_$key"}, PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
+                        print_error("Could not insert workshop grade!");
                         }
                     }
                 // now work out the grade...
@@ -1121,7 +1121,7 @@
                     $element->feedback   = $form->{"feedback_$i"};
                     $element->grade = clean_param($form->grade[$i], PARAM_CLEAN);
                     if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
+                        print_error("Could not insert workshop grade!");
                     }
                     if (empty($form->grade[$i])){
                         $error += $WORKSHOP_EWEIGHTS[$elements[$i]->weight];
@@ -1135,7 +1135,7 @@
                 $element->elementno = $i;
                 $element->grade = $form->grade[$i];
                 if (!$element->id = insert_record("workshop_grades", $element)) {
-                    error("Could not insert workshop grade!");
+                    print_error("Could not insert workshop grade!");
                 }
                 $grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]) * 100 / $workshop->grade;
                 // do sanity check
@@ -1155,7 +1155,7 @@
                 $element->elementno = 0;
                 $element->grade = $form->grade[0];
                 if (!$element->id = insert_record("workshop_grades", $element)) {
-                    error("Could not insert workshop grade!");
+                    print_error("Could not insert workshop grade!");
                 }
                 // now save the adjustment in element one
                 unset($element);
@@ -1164,7 +1164,7 @@
                 $element->elementno = 1;
                 $element->grade = $form->grade[1];
                 if (!$element->id = insert_record("workshop_grades", $element)) {
-                    error("Could not insert workshop grade!");
+                    print_error("Could not insert workshop grade!");
                 }
                 $grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]);
                 break;
@@ -1179,7 +1179,7 @@
                     $element->feedback = clean_param($form->{"feedback_$key"}, PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
+                        print_error("Could not insert workshop grade!");
                     }
                 }
                 // now work out the grade...
@@ -1287,10 +1287,10 @@
 
         // get the comment record...
         if (!$comment = get_record("workshop_comments", "id", $_POST['cid'])) {
-            error("Update to Comment failed");
+            print_error("Update to Comment failed");
         }
         if (!$assessment = get_record("workshop_assessments", "id", $comment->assessmentid)) {
-            error("Update Comment: Assessment not found");
+            print_error("Update Comment: Assessment not found");
         }
         //save the comment for the assessment...
         if (isset($form->comments)) {
@@ -1317,7 +1317,7 @@
         $form = (object)$_POST;
 
         if (!$assessment = get_record("workshop_assessments", "id", $_POST['aid'])) {
-            error("Update Grading failed");
+            print_error("Update Grading failed");
         }
         //save the comment and grade for the assessment
         if (isset($form->teachercomment)) {
@@ -1339,7 +1339,7 @@
     elseif ($action == 'viewallassessments') {
 
         if (!$submission = get_record("workshop_submissions", "id", $sid)) {
-            error("View All Assessments: submission record not found");
+            print_error("View All Assessments: submission record not found");
         }
 
         if ($assessments = workshop_get_assessments($submission)) {
@@ -1353,7 +1353,7 @@
 
     /*************** no man's land **************************************/
     else {
-        error("Fatal Error: Unknown Action: ".$action."\n");
+        print_error("Fatal Error: Unknown Action: ".$action."\n");
     }
     print_footer($course);
 

@@ -13,11 +13,11 @@
     $strimportactivities = get_string('importactivities');
 
     if (! ($course = get_record("course", "id", $id)) ) {
-        error("That's an invalid course id");
+        print_error("That's an invalid course id");
     }
 
     if (!$site = get_site()){
-        error("Couldn't get site course");
+        print_error("Couldn't get site course");
     }
 
     require_login($course->id);
@@ -28,7 +28,7 @@
     $syscontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
     if (!has_capability('moodle/course:manageactivities', $tocontext)) {
-        error("You need do not have the required permissions to import activities to this course");
+        print_error("You need do not have the required permissions to import activities to this course");
     }
 
     // if we're not a course creator , we can only import from our own courses.
@@ -38,7 +38,7 @@
 
     if ($from = get_record('course', 'id', $fromcourse)) {
         if (!has_capability('moodle/course:manageactivities', $fromcontext)) {
-            error("You need to have the required permissions in the course you are importing data from, as well");
+            print_error("You need to have the required permissions in the course you are importing data from, as well");
         }
         if (!empty($filename) && file_exists($CFG->dataroot.'/'.$filename) && !empty($SESSION->import_preferences)) {
             $restore = backup_to_restore_array($SESSION->import_preferences);

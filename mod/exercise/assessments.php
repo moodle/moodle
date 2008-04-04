@@ -40,15 +40,15 @@
 
     // get some esential stuff...
     if (! $cm = get_coursemodule_from_id('exercise', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     if (! $exercise = get_record("exercise", "id", $cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     exercise_add_custom_scales($exercise);
@@ -73,14 +73,14 @@
     if ($action == 'adminamendgradinggrade' ) {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
         if (empty($aid)) {
-            error("Admin Amend Grading grade: assessment id missing");
+            print_error("Admin Amend Grading grade: assessment id missing");
         }
 
         if (!$assessment = get_record("exercise_assessments", "id", $aid)) {
-            error("Amin Amend Grading grade: assessment not found");
+            print_error("Amin Amend Grading grade: assessment not found");
         }
         print_heading(get_string("amend", "exercise")." ".get_string("gradeforstudentsassessment",
                     "exercise", $course->student));
@@ -111,10 +111,10 @@
     elseif ($action == 'adminconfirmdelete' ) {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
         if (empty($aid)) {
-            error("Admin confirm delete: assessment id missing");
+            print_error("Admin confirm delete: assessment id missing");
         }
 
         notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("assessment", "exercise")),
@@ -127,10 +127,10 @@
     elseif ($action == 'admindelete' ) {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
         if (empty($aid)) {
-            error("Admin delete: submission id missing");
+            print_error("Admin delete: submission id missing");
         }
 
         print_string("deleting", "exercise");
@@ -147,7 +147,7 @@
     elseif ($action == 'adminlist') {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
 
         if (empty($sid)) {
@@ -163,7 +163,7 @@
     elseif ($action == 'adminlistbystudent') {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
 
         if (empty($userid)) {
@@ -183,16 +183,16 @@
         }
 
         if (! $submission = get_record("exercise_submissions", "id", $sid)) {
-            error("Assess submission is misconfigured - no submission record!");
+            print_error("Assess submission is misconfigured - no submission record!");
         }
         if (!$submissionowner = get_record("user", "id", $submission->userid)) {
-            error("Assess resubmission: user record not found");
+            print_error("Assess resubmission: user record not found");
         }
 
         // there can be an assessment record, if there isn't...
         if (!$assessment = exercise_get_submission_assessment($submission, $USER)) {
             if (!$submissions = exercise_get_user_submissions($exercise, $submissionowner)) {
-                error("Assess resubmission: submission records not found");
+                print_error("Assess resubmission: submission records not found");
             }
             $lastone= '';
             // just the last but one submission
@@ -202,7 +202,7 @@
             }
             // get the teacher's assessment of the student's previous submission
             if (!$prevassessment = exercise_get_submission_assessment($prevsubmission, $USER)) {
-                error("Assess resubmission: Previous assessment record not found");
+                print_error("Assess resubmission: Previous assessment record not found");
             }
             // copy this assessment with comments...
             $assessment = exercise_copy_assessment($prevassessment, $submission, true);
@@ -223,7 +223,7 @@
         }
 
         if (! $submission = get_record("exercise_submissions", "id", $sid)) {
-            error("Assess submission is misconfigured - no submission record!");
+            print_error("Assess submission is misconfigured - no submission record!");
         }
 
         // there can be an assessment record (for teacher submissions), if there isn't...
@@ -237,7 +237,7 @@
             $assessment->timecreated = $yearfromnow;
             $assessment->timegraded = 0;
             if (!$assessment->id = insert_record("exercise_assessments", $assessment)) {
-                error("Could not insert exercise assessment!");
+                print_error("Could not insert exercise assessment!");
             }
         }
 
@@ -260,7 +260,7 @@
     elseif ($action == 'editelements') {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
 
         $count = count_records("exercise_grades", "exerciseid", $exercise->id);
@@ -457,7 +457,7 @@
     elseif ($action == 'insertelements') {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
 
         $form = data_submitted();
@@ -476,7 +476,7 @@
                         $element->exerciseid = $exercise->id;
                         $element->elementno = clean_param($key, PARAM_INT);
                         if (!$element->id = insert_record("exercise_elements", $element)) {
-                            error("Could not insert exercise element!");
+                            print_error("Could not insert exercise element!");
                         }
                     }
                 }
@@ -503,7 +503,7 @@
                             $element->weight = $form->weight[$key];
                         }
                         if (!$element->id = insert_record("exercise_elements", $element)) {
-                            error("Could not insert exercise element!");
+                            print_error("Could not insert exercise element!");
                         }
                     }
                 }
@@ -525,7 +525,7 @@
                         $element->weight = $form->weight[$key];
                     }
                     if (!$element->id = insert_record("exercise_elements", $element)) {
-                        error("Could not insert exercise element!");
+                        print_error("Could not insert exercise element!");
                     }
                 }
                 break;
@@ -544,7 +544,7 @@
                     }
                     $element->maxscore = $j - 1;
                     if (!$element->id = insert_record("exercise_elements", $element)) {
-                        error("Could not insert exercise element!");
+                        print_error("Could not insert exercise element!");
                     }
                 }
                 // let's not fool around here, dump the junk!
@@ -560,7 +560,7 @@
                         $element->rubricno = $j;
                         $element->description   = $form->rubric[$i][$j];
                         if (!$element->id = insert_record("exercise_rubrics", $element)) {
-                            error("Could not insert exercise element!");
+                            print_error("Could not insert exercise element!");
                         }
                     }
                 }
@@ -574,7 +574,7 @@
     elseif ($action == 'listungradedstudentsubmissions') {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
         exercise_list_ungraded_assessments($exercise, "student");
         print_continue("view.php?id=$cm->id");
@@ -586,7 +586,7 @@
     elseif ($action == 'listungradedstudentassessments') {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
         exercise_list_ungraded_assessments($exercise, "teacher");
         print_continue("view.php?id=$cm->id");
@@ -605,7 +605,7 @@
     elseif ($action == 'regradestudentassessments' ) {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
         // get all the student assessments
         if ($assessments = exercise_get_teacher_submission_assessments($exercise)) {
@@ -613,12 +613,12 @@
                 if ($studentassessment->timegraded > 0) {
                     if (!$submissions = get_records_select("exercise_submissions",
                            "userid = $studentassessment->userid AND exerciseid = $exercise->id", "timecreated ASC")) {
-                        error("Regrade student assessments: student submission not found");
+                        print_error("Regrade student assessments: student submission not found");
                     }
                     foreach ($submissions as $submission) { // only the first one is relavant
                         if (!$teacherassessments = get_records("exercise_assessments", "submissionid",
                                     $submission->id, "timecreated ASC")) {
-                            error("Regrade student assessments: teacher assessment(s) not found");
+                            print_error("Regrade student assessments: teacher assessment(s) not found");
                         }
                         foreach ($teacherassessments as $teacherassessment) { // only the first one is relavent
                             $newgrade = exercise_compare_assessments($exercise, $studentassessment, $teacherassessment);
@@ -638,20 +638,20 @@
     elseif ($action == 'teacherassessment') {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
 
         if (empty($aid)) {
-            error("assessment id missing");
+            print_error("assessment id missing");
         }
         if (empty($sid)) {
             error ("no sid");
         }
         if (!$assessment = get_record("exercise_assessments", "id", $aid)) {
-            error("Teacher assessment: User's assessment record not found");
+            print_error("Teacher assessment: User's assessment record not found");
         }
         if (!$submission = get_record("exercise_submissions", "id", $sid)) {
-            error("Teacher assessment: User's submission record not found");
+            print_error("Teacher assessment: User's submission record not found");
         }
         exercise_print_teacher_assessment_form($exercise, $assessment, $submission, $_SERVER["HTTP_REFERER"]);
     }
@@ -661,7 +661,7 @@
     elseif ($action == 'teachertable') {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
 
         exercise_print_teacher_table($course);
@@ -676,10 +676,10 @@
         $form = data_submitted();
 
         if (empty($aid)) {
-            error("assessment id missing");
+            print_error("assessment id missing");
         }
         if (! $assessment = get_record("exercise_assessments", "id", $aid)) {
-            error("exercise assessment is misconfigured");
+            print_error("exercise assessment is misconfigured");
         }
 
         // first get the assignment elements for maxscores and weights...
@@ -706,7 +706,7 @@
                     $element->elementno = clean_param($key, PARAM_INT);
                     $element->feedback   = clean_param($thefeedback, PARAM_CLEAN);
                     if (!$element->id = insert_record("exercise_grades", $element)) {
-                        error("Could not insert exercise element!");
+                        print_error("Could not insert exercise element!");
                         }
                     }
                 $grade = 0; // set to satisfy save to db
@@ -722,7 +722,7 @@
                     $element->feedback   = clean_param($form->feedback[$key], PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("exercise_grades", $element)) {
-                        error("Could not insert exercise element!");
+                        print_error("Could not insert exercise element!");
                     }
                 }
                 // now work out the grade...
@@ -751,7 +751,7 @@
                     $element->feedback   = clean_param($form->feedback[$i], PARAM_CLEAN);
                     $element->grade = $form->grade[$i];
                     if (!$element->id = insert_record("exercise_grades", $element)) {
-                        error("Could not insert exercise element!");
+                        print_error("Could not insert exercise element!");
                     }
                     if (empty($form->grade[$i])){
                         $error += $EXERCISE_EWEIGHTS[$elements[$i]->weight];
@@ -765,7 +765,7 @@
                 $element->elementno = $i;
                 $element->grade = $form->grade[$i];
                 if (!$element->id = insert_record("exercise_grades", $element)) {
-                    error("Could not insert exercise element!");
+                    print_error("Could not insert exercise element!");
                 }
                 $grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i])
                     * 100.0 / $exercise->grade;
@@ -788,7 +788,7 @@
                 $element->elementno = 0;
                 $element->grade = $form->grade[0];
                 if (!$element->id = insert_record("exercise_grades", $element)) {
-                    error("Could not insert exercise element!");
+                    print_error("Could not insert exercise element!");
                 }
                 // now save the adjustment in element one
                 unset($element);
@@ -797,7 +797,7 @@
                 $element->elementno = 1;
                 $element->grade = $form->grade[1];
                 if (!$element->id = insert_record("exercise_grades", $element)) {
-                    error("Could not insert exercise element!");
+                    print_error("Could not insert exercise element!");
                 }
                 $grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]) * 100 / $exercise->grade;
                 // check the grade for sanity!
@@ -819,7 +819,7 @@
                     $element->feedback   = clean_param($form->feedback[$key], PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("exercise_grades", $element)) {
-                        error("Could not insert exercise element!");
+                        print_error("Could not insert exercise element!");
                     }
                 }
                 // now work out the grade...
@@ -887,7 +887,7 @@
     elseif ($action == 'updateteacherassessment') {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
 
         $timenow = time();
@@ -895,10 +895,10 @@
 
         // first do the (teacher's) assessment of the student's submission
         if (! $submission = get_record("exercise_submissions", "id", $form->sid)) {
-            error("Update teacher assessment: student's submission record not found");
+            print_error("Update teacher assessment: student's submission record not found");
         }
         if (!$assessment = exercise_get_submission_assessment($submission, $USER)) {
-            error("Update teacher assessment: teacher's assessment record not found");
+            print_error("Update teacher assessment: teacher's assessment record not found");
         }
 
         // first get the assignment elements for maxscores and weights...
@@ -925,7 +925,7 @@
                     $element->elementno = clean_param($key, PARAM_INT);
                     $element->feedback   = clean_param($thefeedback, PARAM_CLEAN);
                     if (!$element->id = insert_record("exercise_grades", $element)) {
-                        error("Could not insert exercise element!");
+                        print_error("Could not insert exercise element!");
                     }
                 }
                 $grade = 0; // set to satisfy save to db
@@ -941,7 +941,7 @@
                     $element->feedback   = clean_param($form->feedback[$key], PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("exercise_grades", $element)) {
-                        error("Could not insert exercise element!");
+                        print_error("Could not insert exercise element!");
                     }
                 }
                 // now work out the grade...
@@ -970,7 +970,7 @@
                     $element->feedback   = clean_param($form->feedback[$i], PARAM_CLEAN);
                     $element->grade = $form->grade[$i];
                     if (!$element->id = insert_record("exercise_grades", $element)) {
-                        error("Could not insert exercise element!");
+                        print_error("Could not insert exercise element!");
                     }
                     if (empty($form->grade[$i])){
                         $error += $EXERCISE_EWEIGHTS[$elements[$i]->weight];
@@ -984,7 +984,7 @@
                 $element->elementno = $i;
                 $element->grade = $form->grade[$i];
                 if (!$element->id = insert_record("exercise_grades", $element)) {
-                    error("Could not insert exercise element!");
+                    print_error("Could not insert exercise element!");
                 }
                 $grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]) * 100 / $exercise->grade;
                 echo "<p><b>".get_string("weightederrorcount", "exercise", intval($error + 0.5))."</b></p>\n";
@@ -998,7 +998,7 @@
                 $element->elementno = 0;
                 $element->grade = $form->grade[0];
                 if (!$element->id = insert_record("exercise_grades", $element)) {
-                    error("Could not insert exercise element!");
+                    print_error("Could not insert exercise element!");
                 }
                 // now save the adjustment in element one
                 unset($element);
@@ -1007,7 +1007,7 @@
                 $element->elementno = 1;
                 $element->grade = $form->grade[1];
                 if (!$element->id = insert_record("exercise_grades", $element)) {
-                    error("Could not insert exercise element!");
+                    print_error("Could not insert exercise element!");
                 }
                 $grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]) * 100 / $exercise->grade;
                 break;
@@ -1022,7 +1022,7 @@
                     $element->feedback   = clean_param($form->feedback[$key], PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("exercise_grades", $element)) {
-                        error("Could not insert exercise element!");
+                        print_error("Could not insert exercise element!");
                     }
                 }
                 // now work out the grade...
@@ -1055,7 +1055,7 @@
 
         // now calculate the (grading) grade of the student's assessment...
         if (!$stassessment = get_record("exercise_assessments", "id", $form->said)) {
-            error("Update teacher assessment: student's assessment record not found");
+            print_error("Update teacher assessment: student's assessment record not found");
         }
         $gradinggrade = exercise_compare_assessments($exercise, $assessment, $stassessment);
         // ...and save the grade for the assessment
@@ -1100,17 +1100,17 @@
     elseif ($action == 'updategradinggrade') {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
             }
 
         if (empty($aid)) {
-            error("submission id missing");
+            print_error("submission id missing");
         }
         // normalise gradinggrade
         $gradinggrade = $_POST['gradinggrade'] * 100 / $exercise->gradinggrade;
         if (!set_field("exercise_assessments", "gradinggrade", $gradinggrade, "id",
                     $aid)) {
-            error("Update grading grade: asseesment not updated");
+            print_error("Update grading grade: asseesment not updated");
         }
         redirect("submissions.php?id=$cm->id&amp;action=adminlist", get_string("savedok", "exercise"), 1);
     }
@@ -1120,7 +1120,7 @@
     elseif ($action == 'userconfirmdelete' ) {
 
         if (empty($aid)) {
-            error("User confirm delete: assessment id missing");
+            print_error("User confirm delete: assessment id missing");
         }
 
         notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("assessment", "exercise")),
@@ -1132,7 +1132,7 @@
     elseif ($action == 'userdelete' ) {
 
         if (empty($aid)) {
-            error("User delete: assessment id missing");
+            print_error("User delete: assessment id missing");
         }
 
         print_string("deleting", "exercise");
@@ -1149,12 +1149,12 @@
     elseif ($action == 'viewassessment') {
 
         if (empty($aid)) {
-            error("assessment id missing");
+            print_error("assessment id missing");
         }
 
         // get the assessment record
         if (!$assessment = get_record("exercise_assessments", "id", $aid)) {
-            error("Assessment record not found");
+            print_error("Assessment record not found");
         }
 
         // show assessment but don't allow changes
@@ -1166,7 +1166,7 @@
 
     /*************** no man's land **************************************/
     else {
-        error("Fatal Error: Unknown Action: ".$action."\n");
+        print_error("Fatal Error: Unknown Action: ".$action."\n");
     }
 
     print_footer($course);

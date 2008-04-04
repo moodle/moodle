@@ -21,39 +21,39 @@
 
     if ($stateid) {
         if (! $state = get_record('question_states', 'id', $stateid)) {
-            error('Invalid state id');
+            print_error('Invalid state id');
         }
         if (! $attempt = get_record('quiz_attempts', 'uniqueid', $state->attempt)) {
-            error('No such attempt ID exists');
+            print_error('No such attempt ID exists');
         }
     } elseif ($attemptid) {
         if (! $attempt = get_record('quiz_attempts', 'id', $attemptid)) {
-            error('No such attempt ID exists');
+            print_error('No such attempt ID exists');
         }
         if (! $neweststateid = get_field('question_sessions', 'newest', 'attemptid', $attempt->uniqueid, 'questionid', $questionid)) {
             // newest_state not set, probably because this is an old attempt from the old quiz module code
             if (! $state = get_record('question_states', 'question', $questionid, 'attempt', $attempt->uniqueid)) {
-                error('Invalid question id');
+                print_error('Invalid question id');
             }
         } else {
             if (! $state = get_record('question_states', 'id', $neweststateid)) {
-                error('Invalid state id');
+                print_error('Invalid state id');
             }
         }
     } else {
-        error('Parameter missing');
+        print_error('Parameter missing');
     }
     if (! $question = get_record('question', 'id', $state->question)) {
-        error('Question for this state is missing');
+        print_error('Question for this state is missing');
     }
     if (! $quiz = get_record('quiz', 'id', $attempt->quiz)) {
-        error('Course module is incorrect');
+        print_error('Course module is incorrect');
     }
     if (! $course = get_record('course', 'id', $quiz->course)) {
-        error('Course is misconfigured');
+        print_error('Course is misconfigured');
     }
     if (! $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
 
     require_login($course->id, false, $cm);
@@ -66,18 +66,18 @@
         // If not even responses are to be shown in review then we
         // don't allow any review
         if (!($quiz->review & QUIZ_REVIEW_RESPONSES)) {
-            error(get_string("noreview", "quiz"));
+            print_error("noreview", "quiz");
         }
         if ((time() - $attempt->timefinish) > 120) { // always allow review right after attempt
             if ((!$quiz->timeclose or time() < $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_OPEN)) {
-                error(get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
+                print_error("noreviewuntil", "quiz", '', userdate($quiz->timeclose));
             }
             if ($quiz->timeclose and time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
-                error(get_string("noreview", "quiz"));
+                print_error("noreview", "quiz");
             }
         }
         if ($attempt->userid != $USER->id) {
-            error('This is not your attempt!');
+            print_error('This is not your attempt!');
         }
     }
 
@@ -101,7 +101,7 @@
     $questions[$key] = &$question;
     // Add additional questiontype specific information to the question objects.
     if (!get_question_options($questions)) {
-        error("Unable to load questiontype specific question information");
+        print_error("Unable to load questiontype specific question information");
     }
 
     $session = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id);

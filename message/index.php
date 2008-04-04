@@ -11,7 +11,7 @@
     }
 
     if (empty($CFG->messaging)) {
-        error("Messaging is disabled on this site");
+        print_error("Messaging is disabled on this site");
     }
 
 /// Optional variables that may be passed in

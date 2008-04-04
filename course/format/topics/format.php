@@ -44,7 +44,7 @@
     if (($marker >=0) && has_capability('moodle/course:setcurrentsection', $context) && confirm_sesskey()) {
 	$course->marker = $marker;
 	if (! set_field("course", "marker", $marker, "id", $course->id)) {
-	    error("Could not mark that topic for this course");
+	    print_error("Could not mark that topic for this course");
 	}
     }
 

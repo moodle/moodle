@@ -7,7 +7,7 @@
     $id   = required_param('id', PARAM_INT);               // course id
 
     if (! $course = get_record("course", "id", $id)) {
-        error("Course ID was incorrect");
+        print_error("Course ID was incorrect");
     }
 
     require_login($course);

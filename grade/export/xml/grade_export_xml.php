@@ -50,7 +50,7 @@ class grade_export_xml extends grade_export {
         make_upload_directory('temp/gradeexport', false);
         $tempfilename = $CFG->dataroot .'/temp/gradeexport/'. md5(sesskey().microtime().$downloadfilename);
         if (!$handle = fopen($tempfilename, 'w+b')) {
-            error("Could not create a temporary file into which to dump the XML data.");
+            print_error("Could not create a temporary file into which to dump the XML data.");
             return false;
         }
 

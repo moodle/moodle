@@ -18,13 +18,13 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('forum', $id)) {
-            error("Course Module ID was incorrect");
+            print_error("Course Module ID was incorrect");
         }
         if (! $course = get_record("course", "id", $cm->course)) {
-            error("Course is misconfigured");
+            print_error("Course is misconfigured");
         }
         if (! $forum = get_record("forum", "id", $cm->instance)) {
-            error("Forum ID was incorrect");
+            print_error("Forum ID was incorrect");
         }
         $strforums = get_string("modulenameplural", "forum");
         $strforum = get_string("modulename", "forum");
@@ -33,23 +33,23 @@
     } else if ($f) {
 
         if (! $forum = get_record("forum", "id", $f)) {
-            error("Forum ID was incorrect or no longer exists");
+            print_error("Forum ID was incorrect or no longer exists");
         }
         if (! $course = get_record("course", "id", $forum->course)) {
-            error("Forum is misconfigured - don't know what course it's from");
+            print_error("Forum is misconfigured - don't know what course it's from");
         }
 
         $strforums = get_string("modulenameplural", "forum");
         $strforum = get_string("modulename", "forum");
 
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-            error("Course Module missing");
+            print_error("Course Module missing");
         }
 
         $buttontext = update_module_button($cm->id, $course->id, $strforum);
 
     } else {
-        error('Must specify a course module or a forum ID');
+        print_error('Must specify a course module or a forum ID');
     }
 
     if (!$buttontext) {
@@ -210,11 +210,11 @@
                     notify("Warning! There is more than one discussion in this forum - using the most recent");
                     $discussion = array_pop($discussions);
                 } else {
-                    error("Could not find the discussion in this forum");
+                    print_error("Could not find the discussion in this forum");
                 }
             }
             if (! $post = forum_get_post_full($discussion->firstpost)) {
-                error("Could not find the first post in this forum");
+                print_error("Could not find the first post in this forum");
             }
             if ($mode) {
                 set_user_preference("forum_displaymode", $mode);

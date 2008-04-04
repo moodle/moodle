@@ -5,15 +5,15 @@
     $id   = required_param('id', PARAM_INT);          // Course module ID
 
     if (! $cm = get_coursemodule_from_id('assignment', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $assignment = get_record("assignment", "id", $cm->instance)) {
-        error("assignment ID was incorrect");
+        print_error("assignment ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $assignment->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     require_login($course->id, false, $cm);

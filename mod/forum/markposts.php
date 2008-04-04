@@ -11,11 +11,11 @@
     $returnpage = optional_param('returnpage', 'index.php', PARAM_FILE);    // Page to return to.
 
     if (! $forum = get_record("forum", "id", $f)) {
-        error("Forum ID was incorrect");
+        print_error("Forum ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $forum->course)) {
-        error("Forum doesn't belong to a course!");
+        print_error("Forum doesn't belong to a course!");
     }
 
     if (!($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id))) {
@@ -66,7 +66,7 @@
 //            add_to_log($course->id, "forum", "mark unread", "view.php?f=$forum->id", $forum->id, $cm->id);
 //            redirect($returnto, get_string("nowtracking", "forum", $info), 1);
 //        } else {
-//            error("Could not start tracking that forum", $_SERVER["HTTP_REFERER"]);
+//            print_error("Could not start tracking that forum", '', $_SERVER["HTTP_REFERER"]);
 //        }
     }
 

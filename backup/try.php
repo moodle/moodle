@@ -11,7 +11,7 @@
 
     //Check site
     if (!$site = get_site()) {
-        error("Site not found!");
+        print_error("Site not found!");
     }
 
     //Check necessary functions exists. Thanks to gregb@crowncollege.edu

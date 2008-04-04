@@ -14,41 +14,41 @@ $rid     = optional_param('rid', 0, PARAM_INT);    //record id
 
 if ($rid) {
     if (! $record = get_record('data_records', 'id', $rid)) {
-        error('Record ID is incorrect');
+        print_error('Record ID is incorrect');
     }
     if (! $data = get_record('data', 'id', $record->dataid)) {
-        error('Data ID is incorrect');
+        print_error('Data ID is incorrect');
     }
     if (! $course = get_record('course', 'id', $data->course)) {
-        error('Course is misconfigured');
+        print_error('Course is misconfigured');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
     if (! $field = get_record('data_fields', 'id', $fieldid)) {
-        error('Field ID is incorrect');
+        print_error('Field ID is incorrect');
     }
     if (! $field->type == 'latlong') { // Make sure we're looking at a latlong data type!
-        error('Field ID is incorrect');
+        print_error('Field ID is incorrect');
     }
     if (! $content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $rid)) {
-        error('Field content not found');
+        print_error('Field content not found');
     }
 } else {   // We must have $d
     if (! $data = get_record('data', 'id', $d)) {
-        error('Data ID is incorrect');
+        print_error('Data ID is incorrect');
     }
     if (! $course = get_record('course', 'id', $data->course)) {
-        error('Course is misconfigured');
+        print_error('Course is misconfigured');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
     if (! $field = get_record('data_fields', 'id', $fieldid)) {
-        error('Field ID is incorrect');
+        print_error('Field ID is incorrect');
     }
     if (! $field->type == 'latlong') { // Make sure we're looking at a latlong data type!
-        error('Field ID is incorrect');
+        print_error('Field ID is incorrect');
     }
     $record = NULL;
 }

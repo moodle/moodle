@@ -164,7 +164,7 @@
             $stringfiles += lang_extra_locations();
         }
         if (count($stringfiles) == 0) {
-            error("Could not find English language pack!");
+            print_error("Could not find English language pack!");
         }
     } elseif ($mode == 'helpfiles') {
         $helpfiles = lang_help_standard_locations();
@@ -172,7 +172,7 @@
             $helpfiles += lang_help_extra_locations();
         }
         if (count($helpfiles) == 0) {
-            error("Could not find help files in the English language pack!");
+            print_error("Could not find help files in the English language pack!");
         }
     }
 
@@ -331,7 +331,7 @@
         echo $o;
 
         if (! $files = get_directory_list("$CFG->dirroot/lang/en_utf8/help", "CVS")) {
-            error("Could not find English language help files!");
+            print_error("Could not find English language help files!");
         }
 
         foreach ($files as $filekey => $file) {    // check all the help files.
@@ -343,7 +343,7 @@
         }
 
         if (! $files = get_directory_list("$CFG->dirroot/lang/en_utf8/docs", "CVS")) {
-            error("Could not find English language docs files!");
+            print_error("Could not find English language docs files!");
         }
         foreach ($files as $filekey => $file) {    // check all the docs files.
             if (!file_exists("$langdir/docs/$file")) {
@@ -363,7 +363,7 @@
 
         if (!file_exists($langbase) ){
             if (!lang_make_directory($langbase) ){
-                error('ERROR: Could not create base lang directory ' . $langbase);
+                print_error('ERROR: Could not create base lang directory ' . $langbase);
             } else {
                 echo '<div class="notifysuccess">Created directory '.
                                                      $langbase .'</div>'."<br />\n";
@@ -371,7 +371,7 @@
         }
         if (!$uselocal && !file_exists($langdir)) {
             if (!lang_make_directory($langdir)) {
-                error('ERROR: Could not create directory '.$langdir);
+                print_error('ERROR: Could not create directory '.$langdir);
             } else {
                 echo '<div class="notifysuccess">Created directory '.
                                                      $langdir .'</div>'."<br />\n";
@@ -390,7 +390,7 @@
 
         if ($currentfile <> '') {
             if (!$fileinfo = lang_get_file_info($currentfile, $stringfiles)) {
-                error('Unable to find info for: '.$currentfile);
+                print_error('Unable to find info for: '.$currentfile);
             }
             // check the filename is set up correctly, prevents bugs similar to MDL-10920
             $location = $fileinfo['location'];
@@ -400,7 +400,7 @@
             if ($location || $plugin) {
                 // file in an extra location
                 if ($currentfile != "{$prefix}{$plugin}.php") {
-                    error("Non-core filename mismatch. The file $currentfile should be {$prefix}{$plugin}.php");
+                    print_error("Non-core filename mismatch. The file $currentfile should be {$prefix}{$plugin}.php");
                 }
                 if (!$uselocal) {
                     notify($streditingnoncorelangfile);
@@ -409,7 +409,7 @@
             } else {
                 // file in standard location
                 if ($currentfile != $filename) {
-                    error("Core filename mismatch. The file $currentfile should be $filename");
+                    print_error("Core filename mismatch. The file $currentfile should be $filename");
                 }
             }
 
@@ -435,7 +435,7 @@
 
         if (isset($_POST['currentfile'])){   // Save a file
             if (!confirm_sesskey()) {
-                error(get_string('confirmsesskeybad', 'error'));
+                print_error('confirmsesskeybad', 'error');
             }
 
             $newstrings = array();
@@ -463,7 +463,7 @@
             if (lang_save_file($saveinto, $currentfile, $newstrings, $uselocal, $packstring)) {
                 notify(get_string("changessaved")." ($saveinto/$currentfile)", "notifysuccess");
             } else {
-                error("Could not save the file '$saveinto/$currentfile'!", "lang.php?mode=compare&amp;currentfile=$currentfile");
+                print_error("Could not save the file '$saveinto/$currentfile'!", '', "lang.php?mode=compare&amp;currentfile=$currentfile");
             }
             unset($packstring);
         }
@@ -707,12 +707,12 @@
 
         if (isset($_POST['currentfile'])) {  // Save a file
             if (!confirm_sesskey()) {
-                error(get_string('confirmsesskeybad', 'error'));
+                print_error('confirmsesskeybad', 'error');
             }
             if (lang_help_save_file($saveto, $currentfile, $_POST['filedata'])) {
                 notify(get_string("changessaved")." ($saveto/$currentfile)", "notifysuccess");
             } else {
-                error("Could not save the file '$currentfile'!", "lang.php?mode=helpfiles&amp;currentfile=$currentfile&amp;sesskey=$USER->sesskey");
+                print_error("Could not save the file '$currentfile'!", '', "lang.php?mode=helpfiles&amp;currentfile=$currentfile&amp;sesskey=$USER->sesskey");
             }
         }
 

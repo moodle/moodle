@@ -9,37 +9,37 @@
     $sort = optional_param('sort', '', PARAM_ALPHA);
 
     if (! $post = get_record('forum_posts', 'id', $id)) {
-        error("Post ID was incorrect");
+        print_error("Post ID was incorrect");
     }
 
     if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
-        error("Discussion ID was incorrect");
+        print_error("Discussion ID was incorrect");
     }
 
     if (! $forum = get_record('forum', 'id', $discussion->forum)) {
-        error("Forum ID was incorrect");
+        print_error("Forum ID was incorrect");
     }
 
     if (! $course = get_record('course', 'id', $forum->course)) {
-        error("Course ID was incorrect");
+        print_error("Course ID was incorrect");
     }
 
     if (! $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     require_login($course, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (!$forum->assessed) {
-        error("This activity does not use ratings");
+        print_error("This activity does not use ratings");
     }
 
     if (!has_capability('mod/forum:viewrating', $context)) {
-        error("You do not have the capability to view post ratings");
+        print_error("You do not have the capability to view post ratings");
     }
     if (!has_capability('mod/forum:viewanyrating', $context) and $USER->id != $post->userid) {
-        error("You can only look at results for posts that you made");
+        print_error("You can only look at results for posts that you made");
     }
 
     switch ($sort) {
@@ -58,7 +58,7 @@
     print_header("$strratings: ".format_string($post->subject));
 
     if (!$ratings = forum_get_ratings($post->id, $sqlsort)) {
-        error("No ratings for this post: \"".format_string($post->subject)."\"");
+        print_error("No ratings for this post: \"".format_string($post->subject)."\"");
 
     } else {
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" style=\"width:100%\">";

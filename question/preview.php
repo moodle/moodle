@@ -60,7 +60,7 @@
     }
     // Load the question information
     if (!$questions = get_records('question', 'id', $id)) {
-        error('Could not load question');
+        print_error('Could not load question');
     }
     if (empty($quizid)) {
         $quiz = new cmoptions;
@@ -69,7 +69,7 @@
         require_login($courseid, false);
         $quiz->course = $courseid;
     } else if (!$quiz = get_record('quiz', 'id', $quizid)) {
-        error("Quiz id $quizid does not exist");
+        print_error("Quiz id $quizid does not exist");
     } else {
         require_login($quiz->course, false, get_coursemodule_from_instance('quiz', $quizid, $quiz->course));
     }
@@ -86,11 +86,11 @@
     $quiz->questions = $id;
 
     if (!$category = get_record("question_categories", "id", $questions[$id]->category)) {
-        error("This question doesn't belong to a valid category!");
+        print_error("This question doesn't belong to a valid category!");
     }
 
     if (!question_has_capability_on($questions[$id], 'use', $questions[$id]->category)){
-        error("You can't preview these questions!");
+        print_error("You can't preview these questions!");
     }
     if (isset($COURSE)){
         $quiz->course = $COURSE->id;
@@ -98,7 +98,7 @@
 
     // Load the question type specific information
     if (!get_question_options($questions)) {
-        error(get_string('newattemptfail', 'quiz'));
+        print_error('newattemptfail', 'quiz');
     }
 
     // Create a dummy quiz attempt
@@ -133,7 +133,7 @@
         // Create an empty session for the question
         if (!$newstates =
          get_question_states($questions, $quiz, $attempt)) {
-            error(get_string('newattemptfail', 'quiz'));
+            print_error('newattemptfail', 'quiz');
         }
         $SESSION->quizpreview->states = array($newstates);
         $states =& $SESSION->quizpreview->states;

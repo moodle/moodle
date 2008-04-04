@@ -18,7 +18,7 @@ $returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid;
 $rooturl   = $CFG->wwwroot.'/group/overview.php?id='.$courseid;
 
 if (!$course = get_record('course', 'id',$courseid)) {
-    error('invalidcourse');
+    print_error('invalidcourse');
 }
 
 // Make sure that the user has permissions to manage groups.

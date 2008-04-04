@@ -99,7 +99,7 @@ class question_edit_multianswer_form extends question_edit_form {
                             $parsableanswerdef .= 'NUMERICAL:';
                             break;
                         default:
-                            error("questiontype $wrapped->qtype not recognized");
+                            print_error("questiontype $wrapped->qtype not recognized");
                     }
                     $separator= '';
                     foreach ($wrapped->options->answers as $subanswer) {

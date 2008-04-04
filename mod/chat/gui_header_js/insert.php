@@ -7,25 +7,25 @@
     $chat_message = required_param('chat_message', PARAM_RAW);
 
     if (!$chatuser = get_record('chat_users', 'sid', $chat_sid)) {
-        error('Not logged in!');
+        print_error('Not logged in!');
     }
 
     if (!$chat = get_record('chat', 'id', $chatuser->chatid)) {
-        error('No chat found');
+        print_error('No chat found');
     }
 
     if (!$course = get_record('course', 'id', $chat->course)) {
-        error('Could not find the course this belongs to!');
+        print_error('Could not find the course this belongs to!');
     }
 
     if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
     
     require_login($course->id, false, $cm);
 
     if (isguest()) {
-        error('Guest does not have access to chat rooms');
+        print_error('Guest does not have access to chat rooms');
     }
 
     session_write_close();
@@ -50,7 +50,7 @@
         $message->timestamp = time();
 
         if (!insert_record('chat_messages', $message)) {
-            error('Could not insert a chat message!');
+            print_error('Could not insert a chat message!');
         }
 
         $chatuser->lastmessageping = time() - 2;

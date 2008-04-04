@@ -15,12 +15,12 @@
     
 
     if (empty($CFG->registerauth)) {
-        error("Sorry, you may not use this page.");
+        print_error("Sorry, you may not use this page.");
     }
     $authplugin = get_auth_plugin($CFG->registerauth);
 
     if (!$authplugin->can_signup()) {
-        error("Sorry, you may not use this page.");
+        print_error("Sorry, you may not use this page.");
     }
 
     //HTTPS is potentially required in this page

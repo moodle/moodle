@@ -26,11 +26,11 @@ $site = get_site();
 print_header("$strsearch", "$site->fullname" , $navigation, "", "", true, "&nbsp;", navmenu($site));
   
 if (empty($CFG->enableglobalsearch)) {
-    error('Global searching is not enabled.');
+    print_error('Global searching is not enabled.');
 }
 
 if (!isadmin()) {
-    error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+    print_error("You need to be an admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
 } //if
 
 mtrace('<pre>Server Time: '.date('r',time()));

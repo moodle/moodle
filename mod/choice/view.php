@@ -8,17 +8,17 @@
     $attemptids = optional_param('attemptid', array(), PARAM_INT); // array of attempt ids for delete action
     
     if (! $cm = get_coursemodule_from_id('choice', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     require_course_login($course, false, $cm);
 
     if (!$choice = choice_get_choice($cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
     
     $strchoice = get_string('modulename', 'choice');

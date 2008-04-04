@@ -326,7 +326,7 @@ class moodle_url {
             }
             $parts = parse_url($url);
             if ($parts === FALSE){
-                error('invalidurl');
+                print_error('invalidurl');
             }
             if (isset($parts['query'])){
                 parse_str(str_replace('&amp;', '&', $parts['query']), $this->params);
@@ -703,7 +703,7 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
                                   $options=null, $return=false, $id=null, $class=null) {
 
     if (is_null($url)) {
-        error('There must be an url to the popup. Can\'t create popup window.');
+        print_error('There must be an url to the popup. Can\'t create popup window.');
     }
 
     global $CFG;
@@ -757,7 +757,7 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
                        "onclick=\"this.target='$name'; return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>";
             break;
         default :
-            error('Undefined element - can\'t create popup window.');
+            print_error('Undefined element - can\'t create popup window.');
             break;
     }
 
@@ -2402,7 +2402,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
 /// This makes sure that the header is never repeated twice on a page
     if (defined('HEADER_PRINTED')) {
-        debugging('print_header() was called more than once - this should not happen.  Please check the code for this page closely. Note: error() and redirect() are now safe to call after print_header().');
+        debugging('print_header() was called more than once - this should not happen.  Please check the code for this page closely. Note: print_error() and redirect() are now safe to call after print_header().');
         return;
     }
     define('HEADER_PRINTED', 'true');
@@ -3721,7 +3721,7 @@ function build_navigation($extranavlinks, $cm = null) {
                     'a $cm parameter. If you get $cm using get_coursemodule_from_instance or '.
                     'get_coursemodule_from_id, this will be done automatically.', DEBUG_DEVELOPER);
             if (!$cm->modname = get_field('modules', 'name', 'id', $cm->module)) {
-                error('Cannot get the module type in build navigation.');
+                print_error('Cannot get the module type in build navigation.');
             }
         }
         if (!isset($cm->name)) {
@@ -3729,7 +3729,7 @@ function build_navigation($extranavlinks, $cm = null) {
                     'a $cm parameter. If you get $cm using get_coursemodule_from_instance or '.
                     'get_coursemodule_from_id, this will be done automatically.', DEBUG_DEVELOPER);
             if (!$cm->name = get_field($cm->modname, 'name', 'id', $cm->instance)) {
-                error('Cannot get the module name in build navigation.');
+                print_error('Cannot get the module name in build navigation.');
             }
         }
         $navlinks[] = array(
@@ -5797,7 +5797,7 @@ function editorhelpbutton(){
                     $titles[] = get_string('helptext');
                     break;
                 default :
-                    error('Unknown help topic '.$item);
+                    print_error('Unknown help topic '.$item);
             }
         }
         $i++;

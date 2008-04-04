@@ -38,26 +38,26 @@
     
     if ($id) {
         if (! $cm = get_coursemodule_from_id('wiki', $id)) {
-            error("Course Module ID was incorrect");
+            print_error("Course Module ID was incorrect");
         }
 
         if (! $course = get_record("course", "id", $cm->course)) {
-            error("Course is misconfigured");
+            print_error("Course is misconfigured");
         }
 
         if (! $wiki = get_record("wiki", "id", $cm->instance)) {
-            error("Course module is incorrect");
+            print_error("Course module is incorrect");
         }
 
     } else {
         if (! $wiki = get_record("wiki", "id", $wid)) {
-            error("Course module is incorrect");
+            print_error("Course module is incorrect");
         }
         if (! $course = get_record("course", "id", $wiki->course)) {
-            error("Course is misconfigured");
+            print_error("Course is misconfigured");
         }
         if (! $cm = get_coursemodule_from_instance("wiki", $wiki->id, $course->id)) {
-            error("Course Module ID was incorrect");
+            print_error("Course Module ID was incorrect");
         }
         $id = $cm->id;
         $_REQUEST["id"] = $id;
@@ -102,7 +102,7 @@
             list($ok,$lock)=wiki_obtain_lock($wiki_entry->id,$pagename);
             if(!$ok) {
                 $strsavenolock=get_string('savenolock','wiki');
-                error($strsavenolock,$CFG->wwwroot.'/mod/wiki/view.php?id='.$cm->id.'&page=view/'.urlencode($pagename));
+                print_error($strsavenolock, '', $CFG->wwwroot.'/mod/wiki/view.php?id='.$cm->id.'&page=view/'.urlencode($pagename));
             }
         }
         

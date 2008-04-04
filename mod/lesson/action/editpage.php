@@ -12,7 +12,7 @@
     $redirect = optional_param('redirect', '', PARAM_ALPHA);
     
     if (!$page = get_record("lesson_pages", "id", $pageid)) {
-        error("Edit page: page record not found");
+        print_error("Edit page: page record not found");
     }
 
     $page->qtype = optional_param('qtype', $page->qtype, PARAM_INT);
@@ -34,12 +34,12 @@
     }
     $jump[LESSON_EOL] = get_string("endoflesson", "lesson");
     if (!$apageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
-        error("Edit page: first page not found");
+        print_error("Edit page: first page not found");
     }
     while (true) {
         if ($apageid) {
             if (!$apage = get_record("lesson_pages", "id", $apageid)) {
-                error("Edit page: apage record not found");
+                print_error("Edit page: apage record not found");
             }
             // removed != LESSON_ENDOFBRANCH...
             if (trim($page->title)) { // ...nor nuffin pages

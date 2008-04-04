@@ -11,11 +11,11 @@
     $qid   = optional_param('qid', 0, PARAM_INT);  // Group ID
 
     if (! $cm = get_coursemodule_from_id('survey', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     require_login($course->id, false, $cm);
@@ -25,14 +25,14 @@
 
     if (!has_capability('mod/survey:readresponses', $context)) {
         if ($type != "student.png" or $sid != $USER->id ) {
-            error("Sorry, you aren't allowed to see this.");
+            print_error("Sorry, you aren't allowed to see this.");
         } else if ($groupmode and !groups_is_member($group)) {
-            error("Sorry, you aren't allowed to see this.");
+            print_error("Sorry, you aren't allowed to see this.");
         }
     }
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {
-        error("Survey ID was incorrect");
+        print_error("Survey ID was incorrect");
     }
 
 /// Check to see if groups are being used in this survey

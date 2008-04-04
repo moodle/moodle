@@ -43,7 +43,7 @@ class quiz_report extends quiz_default_report {
 
         if (!empty($questionid)) {
             if (! $question = get_record('question', 'id', $questionid)) {
-                error("Question with id $questionid not found");
+                print_error("Question with id $questionid not found");
             }
             $question->maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $question->id);
 
@@ -56,7 +56,7 @@ class quiz_report extends quiz_default_report {
             // We need to add additional questiontype specific information to
             // the question objects.
             if (!get_question_options($questions)) {
-                error("Unable to load questiontype specific question information");
+                print_error("Unable to load questiontype specific question information");
             }
             // This will have extended the question object so that it now holds
             // all the information about the questions that may be needed later.
@@ -73,7 +73,7 @@ class quiz_report extends quiz_default_report {
             foreach($data->manualgrades as $uniqueid => $response) {
                 // get our attempt
                 if (! $attempt = get_record('quiz_attempts', 'uniqueid', $uniqueid)) {
-                    error('No such attempt ID exists');
+                    print_error('No such attempt ID exists');
                 }
 
                 // Load the state for this attempt (The questions array was created earlier)
@@ -311,7 +311,7 @@ class quiz_report extends quiz_default_report {
                                         WHERE sess.newest = state.id AND
                                         sess.attemptid = $attempt->uniqueid AND
                                         sess.questionid = $question->id")) {
-            error('Could not find question state');
+            print_error('Could not find question state');
         }
 
         return question_state_is_graded($state);

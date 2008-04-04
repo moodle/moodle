@@ -7,7 +7,7 @@ $users = optional_param('userid', array(), PARAM_INT); // array of user id
 $contents = optional_param('contents', array(), PARAM_RAW); // array of user notes
 $states = optional_param('states', array(), PARAM_ALPHA); // array of notes states
 if (! $course = get_record('course', 'id', $id)) {
-    error("Course ID is incorrect");
+    print_error("Course ID is incorrect");
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $id);
@@ -18,7 +18,7 @@ require_capability('moodle/notes:manage', $context);
 
 if (!empty($users) && confirm_sesskey()) {
     if (count($users) != count($contents) || count($users) != count($states)) {
-        error('Parameters malformation', $CFG->wwwroot.'/user/index.php?id='.$id);
+        print_error('Parameters malformation', '', $CFG->wwwroot.'/user/index.php?id='.$id);
     }
 
     $note = new object();

@@ -250,7 +250,7 @@
             // get the first page
             if (!$firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id,
                         'prevpageid', 0)) {
-                error('Navigation: first page not found');
+                print_error('Navigation: first page not found');
             }
             lesson_print_header($cm, $course, $lesson);
             if ($lesson->timed) {
@@ -309,7 +309,7 @@
         }
         // start at the first page
         if (!$pageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
-                error('Navigation: first page not found');
+                print_error('Navigation: first page not found');
         }
         /// This is the code for starting a timed test
         if(!isset($USER->startlesson[$lesson->id]) && !has_capability('mod/lesson:manage', $context)) {
@@ -321,7 +321,7 @@
             $startlesson->lessontime = time();
             
             if (!insert_record('lesson_timer', $startlesson)) {
-                error('Error: could not insert row into lesson_timer table');
+                print_error('Error: could not insert row into lesson_timer table');
             }
             if ($lesson->timed) {
                 lesson_set_message(get_string('maxtimewarning', 'lesson', $lesson->maxtime), 'center');
@@ -339,10 +339,10 @@
                     $retries = 0;
                 }
                 if (!delete_records('lesson_attempts', 'userid', $USER->id, 'lessonid', $lesson->id, 'retry', $retries)) {
-                    error('Error: could not delete old attempts');
+                    print_error('Error: could not delete old attempts');
                 }
                 if (!delete_records('lesson_branch', 'userid', $USER->id, 'lessonid', $lesson->id, 'retry', $retries)) {
-                    error('Error: could not delete old seen branches');
+                    print_error('Error: could not delete old seen branches');
                 }
             }
         }
@@ -350,7 +350,7 @@
         add_to_log($course->id, 'lesson', 'view', 'view.php?id='. $cm->id, $pageid, $cm->id);
         
         if (!$page = get_record('lesson_pages', 'id', $pageid)) {
-            error('Navigation: the page record not found');
+            print_error('Navigation: the page record not found');
         }
 
         if ($page->qtype == LESSON_CLUSTER) {  //this only gets called when a user starts up a new lesson and the first page is a cluster page
@@ -359,14 +359,14 @@
                 $pageid = lesson_cluster_jump($lesson->id, $USER->id, $pageid);
                 // get new page info
                 if (!$page = get_record('lesson_pages', 'id', $pageid)) {
-                    error('Navigation: the page record not found');
+                    print_error('Navigation: the page record not found');
                 }
                 add_to_log($course->id, 'lesson', 'view', 'view.php?id='. $cm->id, $pageid, $cm->id);
             } else {
                 // get the next page
                 $pageid = $page->nextpageid;
                 if (!$page = get_record('lesson_pages', 'id', $pageid)) {
-                    error('Navigation: the page record not found');
+                    print_error('Navigation: the page record not found');
                 }
             }
         } elseif ($page->qtype == LESSON_ENDOFCLUSTER) { // Check for endofclusters
@@ -408,7 +408,7 @@
                     break;
                 } 
             } else {
-                error('Navigation: No answers on EOB');
+                print_error('Navigation: No answers on EOB');
             }
         }
         
@@ -425,7 +425,7 @@
         $timer = new stdClass;
         if(!has_capability('mod/lesson:manage', $context)) {
             if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
-                error('Error: could not find records');
+                print_error('Error: could not find records');
             } else {
                 $timer = array_pop($timer); // this will get the latest start time record
             }
@@ -464,7 +464,7 @@
         if (!has_capability('mod/lesson:manage', $context)) {
             $timer->lessontime = time();
             if (!update_record('lesson_timer', $timer)) {
-                error('Error: could not update lesson_timer table');
+                print_error('Error: could not update lesson_timer table');
             }
         }
 
@@ -546,7 +546,7 @@
             $retries = count_records('lesson_grades', "lessonid", $lesson->id, "userid", $USER->id);
             $retries--;
             if (! $attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $USER->id AND pageid = $page->id AND retry = $retries", "timeseen")) {
-                error("Previous attempt record could not be found!");
+                print_error("Previous attempt record could not be found!");
             }
             $attempt = end($attempts);
         }
@@ -829,14 +829,14 @@
         if (!has_capability('mod/lesson:manage', $context)) {
             unset($USER->startlesson[$lesson->id]);
             if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
-                error('Error: could not find records');
+                print_error('Error: could not find records');
             } else {
                 $timer = array_pop($timer); // this will get the latest start time record
             }
             $timer->lessontime = time();
             
             if (!update_record("lesson_timer", $timer)) {
-                error("Error: could not update lesson_timer table");
+                print_error("Error: could not update lesson_timer table");
             }
         }
         
@@ -889,21 +889,21 @@
                 if (!$lesson->practice) {
                     if (isset($USER->modattempts[$lesson->id])) { // if reviewing, make sure update old grade record
                         if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $USER->id", "completed")) {
-                            error("Could not find Grade Records");
+                            print_error("Could not find Grade Records");
                         }
                         $oldgrade = end($grades);
                         $grade->id = $oldgrade->id;
                         if (!$update = update_record("lesson_grades", $grade)) {
-                            error("Navigation: grade not updated");
+                            print_error("Navigation: grade not updated");
                         }
                     } else {
                         if (!$newgradeid = insert_record("lesson_grades", $grade)) {
-                            error("Navigation: grade not inserted");
+                            print_error("Navigation: grade not inserted");
                         }
                     }
                 } else {
                     if (!delete_records("lesson_attempts", "lessonid", $lesson->id, "userid", $USER->id, "retry", $ntries)) {
-                        error("Could not delete lesson attempts");
+                        print_error("Could not delete lesson attempts");
                     }
                 }
             } else {
@@ -916,7 +916,7 @@
                         $grade->completed = time();
                         if (!$lesson->practice) {
                             if (!$newgradeid = insert_record("lesson_grades", $grade)) {
-                                error("Navigation: grade not inserted");
+                                print_error("Navigation: grade not inserted");
                             }
                         }
                         echo get_string("eolstudentoutoftimenoanswers", "lesson");

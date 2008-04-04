@@ -73,7 +73,7 @@ class auth_plugin_base {
      * @return bool Authentication success or failure.
      */
     function user_login($username, $password) {
-        error('Abstract user_login() method must be overriden.');
+        print_error('Abstract user_login() method must be overriden.');
     }
 
     /**
@@ -180,7 +180,7 @@ class auth_plugin_base {
      */
     function user_signup($user, $notify=true) {
         //override when can signup
-        error('user_signup method must be overriden if signup enabled');
+        print_error('user_signup method must be overriden if signup enabled');
     }
 
     /**
@@ -201,7 +201,7 @@ class auth_plugin_base {
      */
     function user_confirm($username, $confirmsecret) {
         //override when can confirm
-        error('user_confirm method must be overriden if confirm enabled');
+        print_error('user_confirm method must be overriden if confirm enabled');
     }
 
     /**

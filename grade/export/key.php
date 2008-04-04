@@ -34,22 +34,22 @@ $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
 if ($id) {
     if (!$key = get_record('user_private_key', 'id', $id)) {
-        error('Group ID was incorrect');
+        print_error('Group ID was incorrect');
     }
     if (empty($courseid)) {
         $courseid = $key->instance;
 
     } else if ($courseid != $key->instance) {
-        error('Course ID was incorrect');
+        print_error('Course ID was incorrect');
     }
 
     if (!$course = get_record('course', 'id', $courseid)) {
-        error('Course ID was incorrect');
+        print_error('Course ID was incorrect');
     }
 
 } else {
     if (!$course = get_record('course', 'id', $courseid)) {
-        error('Course ID was incorrect');
+        print_error('Course ID was incorrect');
     }
     $key = new object();
 }
@@ -62,7 +62,7 @@ require_capability('moodle/grade:export', $context);
 
 // extra security check
 if (!empty($key->userid) and $USER->id != $key->userid) {
-    error('You are not owner of this key');
+    print_error('You are not owner of this key');
 }
 
 $returnurl = $CFG->wwwroot.'/grade/export/keymanager.php?id='.$course->id;

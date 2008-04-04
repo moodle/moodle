@@ -673,7 +673,7 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
             strpos($sql, ' '.$CFG->prefix.'user_coursecreators ') ||
             strpos($sql, ' '.$CFG->prefix.'user_admins ')) {
             if (debugging()) { var_dump(debug_backtrace()); }
-            error('This SQL relies on obsolete tables!  Your code must be fixed by a developer.');
+            print_error('This SQL relies on obsolete tables!  Your code must be fixed by a developer.');
         }
     }
 
@@ -1459,7 +1459,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     if (!empty($CFG->rolesactive)) {
         if (in_array($table, array('user_students', 'user_teachers', 'user_coursecreators', 'user_admins'))) {
             if (debugging()) { var_dump(debug_backtrace()); }
-            error('This SQL relies on obsolete tables ('.$table.')!  Your code must be fixed by a developer.');
+            print_error('This SQL relies on obsolete tables ('.$table.')!  Your code must be fixed by a developer.');
         }
     }
 
@@ -1652,7 +1652,7 @@ function update_record($table, $dataobject) {
     if (!empty($CFG->rolesactive)) {
         if (in_array($table, array('user_students', 'user_teachers', 'user_coursecreators', 'user_admins'))) {
             if (debugging()) { var_dump(debug_backtrace()); }
-            error('This SQL relies on obsolete tables ('.$table.')!  Your code must be fixed by a developer.');
+            print_error('This SQL relies on obsolete tables ('.$table.')!  Your code must be fixed by a developer.');
         }
     }
 

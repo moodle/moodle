@@ -12,7 +12,7 @@
     $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
     if (!$course = get_record('course', 'id', $course)) {
-        error('Course ID was incorrect');
+        print_error('Course ID was incorrect');
     }
 
     if ($course->id != SITEID) {
@@ -31,7 +31,7 @@
 
     // The user profile we are editing
     if (!$user = get_record('user', 'id', $userid)) {
-        error('User ID was incorrect');
+        print_error('User ID was incorrect');
     }
 
     // Guest can not be edited
@@ -62,7 +62,7 @@
     if ($user->id == $USER->id) {
         //editing own profile - require_login() MUST NOT be used here, it would result in infinite loop!
         if (!has_capability('moodle/user:editownprofile', $systemcontext)) {
-            error('Can not edit own profile, sorry.');
+            print_error('Can not edit own profile, sorry.');
         }
 
     } else {
@@ -98,14 +98,14 @@
         $usernew->timemodified = time();
 
         if (!update_record('user', $usernew)) {
-            error('Error updating user record');
+            print_error('Error updating user record');
         }
 
         // pass a true $userold here
         if (! $authplugin->user_update($user, $userform->get_data(false))) {
             // auth update failed, rollback for moodle
             update_record('user', addslashes_object($user));
-            error('Failed to update user data on external auth: '.$user->auth.
+            print_error('Failed to update user data on external auth: '.$user->auth.
                     '. See the server logs for more details.');
         }
 

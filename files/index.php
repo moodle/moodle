@@ -25,13 +25,13 @@
 
     if ($choose) {
         if (count(explode('.', $choose)) > 2) {
-            error('Incorrect format for choose parameter');
+            print_error('Incorrect format for choose parameter');
         }
     }
 
 
     if (! $course = get_record("course", "id", $id) ) {
-        error("That's an invalid course id");
+        print_error("That's an invalid course id");
     }
 
     require_login($course);
@@ -158,7 +158,7 @@
 
 
     if (! $basedir = make_upload_directory("$course->id")) {
-        error("The site administrator needs to fix the file permissions");
+        print_error("The site administrator needs to fix the file permissions");
     }
 
     $baseweb = $CFG->wwwroot;
@@ -176,13 +176,13 @@
 
     if ($wdir == "/backupdata") {
         if (! make_upload_directory("$course->id/backupdata")) {   // Backup folder
-            error("Could not create backupdata folder.  The site administrator needs to fix the file permissions");
+            print_error("Could not create backupdata folder.  The site administrator needs to fix the file permissions");
         }
     }
 
     if (!is_dir($basedir.$wdir)) {
         html_header($course, $wdir);
-        error("Requested directory does not exist.", "$CFG->wwwroot/files/index.php?id=$id");
+        print_error("Requested directory does not exist.", '', "$CFG->wwwroot/files/index.php?id=$id");
     }
 
     switch ($action) {
@@ -474,7 +474,7 @@
                 }
 
                 if (!zip_files($files,"$basedir$wdir/$name")) {
-                    error(get_string("zipfileserror","error"));
+                    print_error("zipfileserror","error");
                 }
 
                 clearfilelist();
@@ -532,7 +532,7 @@
                 $file = basename($file);
 
                 if (!unzip_file("$basedir$wdir/$file")) {
-                    error(get_string("unzipfileserror","error"));
+                    print_error("unzipfileserror","error");
                 }
 
                 echo "<div style=\"text-align:center\"><form action=\"index.php\" method=\"get\">";

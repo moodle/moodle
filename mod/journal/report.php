@@ -6,21 +6,21 @@
     $id = required_param('id', PARAM_INT);   // course module
 
     if (! $cm = get_coursemodule_from_id('journal', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course module is misconfigured");
+        print_error("Course module is misconfigured");
     }
 
     require_login($course->id, false, $cm);
 
     if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
+        print_error("Only teachers can look at this page");
     }
 
     if (! $journal = get_record("journal", "id", $cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     // make some easy ways to access the entries.

@@ -154,11 +154,11 @@ class profile_define_base {
         if (empty($data->id)) {
             unset($data->id);
             if (!$data->id = insert_record('user_info_field', $data)) {
-                error('Error creating new field');
+                print_error('Error creating new field');
             }
         } else {
             if (!update_record('user_info_field', $data)) {
-                error('Error updating field');
+                print_error('Error updating field');
             }
         }
     }
@@ -223,11 +223,11 @@ function profile_reorder_categories() {
 function profile_delete_category($id) {
     /// Retrieve the category
     if (!$category = get_record('user_info_category', 'id', $id)) {
-        error('Incorrect category id');
+        print_error('Incorrect category id');
     }
 
     if (!$categories = get_records_select('user_info_category', '', 'sortorder ASC')) {
-        error('Error no categories!?!?');
+        print_error('Error no categories!?!?');
     }
 
     unset($categories[$category->id]);
@@ -262,7 +262,7 @@ function profile_delete_category($id) {
 
     /// Finally we get to delete the category
     if (!delete_records('user_info_category', 'id', $category->id)) {
-        error('Error while deliting category');
+        print_error('Error while deliting category');
     }
     profile_reorder_categories();
     return true;
@@ -273,7 +273,7 @@ function profile_delete_field($id) {
 
     /// Remove any user data associated with this field
     if (!delete_records('user_info_data', 'fieldid', $id)) {
-        error('Error deleting custom field data');
+        print_error('Error deleting custom field data');
     }
 
     /// Try to remove the record from the database
@@ -414,11 +414,11 @@ function profile_edit_category($id, $redirect) {
                 unset($data->id);
                 $data->sortorder = count_records('user_info_category') + 1;
                 if (!insert_record('user_info_category', $data, false)) {
-                    error('There was a problem adding the record to the database');
+                    print_error('There was a problem adding the record to the database');
                 }
             } else {
                 if (!update_record('user_info_category', $data)) {
-                    error('There was a problem updating the record in the database');
+                    print_error('There was a problem updating the record in the database');
                 }
             }
             profile_reorder_categories();

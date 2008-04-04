@@ -13,7 +13,7 @@
     $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
     if (!$course = get_record('course', 'id', $course)) {
-        error('Course ID was incorrect');
+        print_error('Course ID was incorrect');
     }
     require_login($course->id);
 
@@ -35,7 +35,7 @@
         // editing existing user
         require_capability('moodle/user:update', $systemcontext);
         if (!$user = get_record('user', 'id', $id)) {
-            error('User ID was incorrect');
+            print_error('User ID was incorrect');
         }
     }
 
@@ -89,17 +89,17 @@
             $usernew->confirmed  = 1;
             $usernew->password = hash_internal_user_password($usernew->newpassword);
             if (!$usernew->id = insert_record('user', $usernew)) {
-                error('Error creating user record');
+                print_error('Error creating user record');
             }
         } else {
             if (!update_record('user', $usernew)) {
-                error('Error updating user record');
+                print_error('Error updating user record');
             }
             // pass a true $userold here
             if (! $authplugin->user_update($user, $userform->get_data(false))) {
                 // auth update failed, rollback for moodle
                 update_record('user', addslashes_object($user));
-                error('Failed to update user data on external auth: '.$user->auth.
+                print_error('Failed to update user data on external auth: '.$user->auth.
                         '. See the server logs for more details.');
             }
 
@@ -107,7 +107,7 @@
             if (!empty($usernew->newpassword)) {
                 if ($authplugin->can_change_password()) {
                     if (!$authplugin->user_update_password($usernew, $usernew->newpassword)){
-                        error('Failed to update password on external auth: ' . $usernew->auth .
+                        print_error('Failed to update password on external auth: ' . $usernew->auth .
                                 '. See the server logs for more details.');
                     }
                 }

@@ -58,7 +58,7 @@
                                 {$CFG->prefix}modules md
                            WHERE cm.id = '$update' AND
                                  md.id = cm.module")){
-            error('Invalid course module id!');
+            print_error('Invalid course module id!');
         }
         $returntomod = optional_param('return', 0, PARAM_BOOL);
         if (file_exists("../mod/$modname/mod_form.php")) {
@@ -72,17 +72,17 @@
 
         if (empty($mod->coursemodule)) { //add
             if (! $course = get_record("course", "id", $mod->course)) {
-                error("This course doesn't exist");
+                print_error("This course doesn't exist");
             }
             $mod->instance = '';
             $mod->coursemodule = '';
         } else { //delete and update
             if (! $cm = get_record("course_modules", "id", $mod->coursemodule)) {
-                error("This course module doesn't exist");
+                print_error("This course module doesn't exist");
             }
 
             if (! $course = get_record("course", "id", $cm->course)) {
-                error("This course doesn't exist");
+                print_error("This course doesn't exist");
             }
             $mod->instance = $cm->instance;
             $mod->coursemodule = $cm->id;
@@ -99,7 +99,7 @@
         if (file_exists($modlib)) {
             include_once($modlib);
         } else {
-            error("This module is missing important code! ($modlib)");
+            print_error("This module is missing important code! ($modlib)");
         }
         $addinstancefunction    = $mod->modulename."_add_instance";
         $updateinstancefunction = $mod->modulename."_update_instance";
@@ -122,10 +122,10 @@
                         include_once($moderr);
                         die;
                     }
-                    error("Could not update the $mod->modulename", "view.php?id=$course->id");
+                    print_error("Could not update the $mod->modulename", '', "view.php?id=$course->id");
                 }
                 if (is_string($return)) {
-                    error($return, "view.php?id=$course->id");
+                    print_error($return, '', "view.php?id=$course->id");
                 }
 
                 if (isset($mod->visible)) {
@@ -161,7 +161,7 @@
             case "add":
 
                 if (!course_allowed_module($course,$mod->modulename)) {
-                    error("This module ($mod->modulename) has been disabled for this particular course");
+                    print_error("This module ($mod->modulename) has been disabled for this particular course");
                 }
 
                 if (!isset($mod->name) || trim($mod->name) == '') {
@@ -175,10 +175,10 @@
                         include_once($moderr);
                         die;
                     }
-                    error("Could not add a new instance of $mod->modulename", "view.php?id=$course->id");
+                    print_error("Could not add a new instance of $mod->modulename", '', "view.php?id=$course->id");
                 }
                 if (is_string($return)) {
-                    error($return, "view.php?id=$course->id");
+                    print_error($return, '', "view.php?id=$course->id");
                 }
 
                 if (!isset($mod->groupmode)) { // to deal with pre-1.5 modules
@@ -198,14 +198,14 @@
                 // to each other, so we have to update one of them twice.
 
                 if (! $mod->coursemodule = add_course_module($mod) ) {
-                    error("Could not add a new course module");
+                    print_error("Could not add a new course module");
                 }
                 if (! $sectionid = add_mod_to_section($mod) ) {
-                    error("Could not add the new course module to that section");
+                    print_error("Could not add the new course module to that section");
                 }
 
                 if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
-                    error("Could not update the course module with the correct section");
+                    print_error("Could not update the course module with the correct section");
                 }
 
                 if (!isset($mod->visible)) {   // We get the section's visible field status
@@ -250,7 +250,7 @@
                            "$mod->modulename $mod->instance", $mod->coursemodule);
                 break;
             default:
-                error("No mode defined");
+                print_error("No mode defined");
 
         }
 
@@ -269,21 +269,21 @@
     if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
         if (! $cm = get_record("course_modules", "id", $USER->activitycopy)) {
-            error("The copied course module doesn't exist!");
+            print_error("The copied course module doesn't exist!");
         }
 
         if (!empty($movetosection)) {
             if (! $section = get_record("course_sections", "id", $movetosection)) {
-                error("This section doesn't exist");
+                print_error("This section doesn't exist");
             }
             $beforecm = NULL;
 
         } else {                      // normal moveto
             if (! $beforecm = get_record("course_modules", "id", $moveto)) {
-                error("The destination course module doesn't exist");
+                print_error("The destination course module doesn't exist");
             }
             if (! $section = get_record("course_sections", "id", $beforecm->section)) {
-                error("This section doesn't exist");
+                print_error("This section doesn't exist");
             }
         }
 
@@ -292,7 +292,7 @@
         require_capability('moodle/course:manageactivities', $context);
 
         if (!ismoving($section->course)) {
-            error("You need to copy something first!");
+            print_error("You need to copy something first!");
         }
 
         moveto_module($cm, $section, $beforecm);
@@ -314,7 +314,7 @@
         $id = required_param('id',PARAM_INT);
 
         if (! $cm = get_record("course_modules", "id", $id)) {
-            error("This course module doesn't exist");
+            print_error("This course module doesn't exist");
         }
 
         require_login($cm->course); // needed to setup proper $COURSE
@@ -328,7 +328,7 @@
         }
 
         if (!set_field("course_modules", "indent", $cm->indent, "id", $cm->id)) {
-            error("Could not update the indent level on that course module");
+            print_error("Could not update the indent level on that course module");
         }
 
         if (SITEID == $cm->course) {
@@ -341,7 +341,7 @@
     } else if (!empty($hide) and confirm_sesskey()) {
 
         if (! $cm = get_record("course_modules", "id", $hide)) {
-            error("This course module doesn't exist");
+            print_error("This course module doesn't exist");
         }
 
         require_login($cm->course); // needed to setup proper $COURSE
@@ -362,7 +362,7 @@
     } else if (!empty($show) and confirm_sesskey()) {
 
         if (! $cm = get_record("course_modules", "id", $show)) {
-            error("This course module doesn't exist");
+            print_error("This course module doesn't exist");
         }
 
         require_login($cm->course); // needed to setup proper $COURSE
@@ -370,11 +370,11 @@
         require_capability('moodle/course:activityvisibility', $context);
 
         if (! $section = get_record("course_sections", "id", $cm->section)) {
-            error("This module doesn't exist");
+            print_error("This module doesn't exist");
         }
 
         if (! $module = get_record("modules", "id", $cm->module)) {
-            error("This module doesn't exist");
+            print_error("This module doesn't exist");
         }
 
         if ($module->visible and ($section->visible or (SITEID == $cm->course))) {
@@ -394,7 +394,7 @@
         $id = required_param( 'id', PARAM_INT );
 
         if (! $cm = get_record("course_modules", "id", $id)) {
-            error("This course module doesn't exist");
+            print_error("This course module doesn't exist");
         }
 
         require_login($cm->course); // needed to setup proper $COURSE
@@ -415,7 +415,7 @@
     } else if (!empty($copy) and confirm_sesskey()) { // value = course module
 
         if (! $cm = get_record("course_modules", "id", $copy)) {
-            error("This course module doesn't exist");
+            print_error("This course module doesn't exist");
         }
 
         require_login($cm->course); // needed to setup proper $COURSE
@@ -423,15 +423,15 @@
         require_capability('moodle/course:manageactivities', $context);
 
         if (! $section = get_record("course_sections", "id", $cm->section)) {
-            error("This module doesn't exist");
+            print_error("This module doesn't exist");
         }
 
         if (! $module = get_record("modules", "id", $cm->module)) {
-            error("This module doesn't exist");
+            print_error("This module doesn't exist");
         }
 
         if (! $instance = get_record($module->name, "id", $cm->instance)) {
-            error("Could not find the instance of this module");
+            print_error("Could not find the instance of this module");
         }
 
         $USER->activitycopy = $copy;
@@ -453,11 +453,11 @@
     } else if (!empty($delete) and confirm_sesskey()) {   // value = course module
 
         if (! $cm = get_record("course_modules", "id", $delete)) {
-            error("This course module doesn't exist");
+            print_error("This course module doesn't exist");
         }
 
         if (! $course = get_record("course", "id", $cm->course)) {
-            error("This course doesn't exist");
+            print_error("This course doesn't exist");
         }
 
         require_login($cm->course); // needed to setup proper $COURSE
@@ -465,7 +465,7 @@
         require_capability('moodle/course:manageactivities', $context);
 
         if (! $module = get_record("modules", "id", $cm->module)) {
-            error("This module doesn't exist");
+            print_error("This module doesn't exist");
         }
 
         if (! $instance = get_record($module->name, "id", $cm->instance)) {
@@ -476,7 +476,7 @@
             if (! delete_course_module($cm->id)) {
                 notify("Could not delete the $module->name (coursemodule)");
             }
-            error("The required instance of this module didn't exist.  Module deleted.",
+            print_error("The required instance of this module didn't exist.  Module deleted.",
                   "$CFG->wwwroot/course/view.php?id=$course->id");
         }
 
@@ -510,11 +510,11 @@
     } else if (!empty($update) and confirm_sesskey()) {   // value = course module
 
         if (! $cm = get_record("course_modules", "id", $update)) {
-            error("This course module doesn't exist");
+            print_error("This course module doesn't exist");
         }
 
         if (! $course = get_record("course", "id", $cm->course)) {
-            error("This course doesn't exist");
+            print_error("This course doesn't exist");
         }
 
         require_login($course->id); // needed to setup proper $COURSE
@@ -522,15 +522,15 @@
         require_capability('moodle/course:manageactivities', $context);
 
         if (! $module = get_record("modules", "id", $cm->module)) {
-            error("This module doesn't exist");
+            print_error("This module doesn't exist");
         }
 
         if (! $form = get_record($module->name, "id", $cm->instance)) {
-            error("The required instance of this module doesn't exist");
+            print_error("The required instance of this module doesn't exist");
         }
 
         if (! $cw = get_record("course_sections", "id", $cm->section)) {
-            error("This course section doesn't exist");
+            print_error("This course section doesn't exist");
         }
 
         if (isset($return)) {
@@ -568,11 +568,11 @@
 
 
         if (! $cm = get_record("course_modules", "id", $duplicate)) {
-            error("This course module doesn't exist");
+            print_error("This course module doesn't exist");
         }
 
         if (! $course = get_record("course", "id", $cm->course)) {
-            error("This course doesn't exist");
+            print_error("This course doesn't exist");
         }
 
         require_login($course->id); // needed to setup proper $COURSE
@@ -580,15 +580,15 @@
         require_capability('moodle/course:manageactivities', $context);
 
         if (! $module = get_record("modules", "id", $cm->module)) {
-            error("This module doesn't exist");
+            print_error("This module doesn't exist");
         }
 
         if (! $form = get_record($module->name, "id", $cm->instance)) {
-            error("The required instance of this module doesn't exist");
+            print_error("The required instance of this module doesn't exist");
         }
 
         if (! $cw = get_record("course_sections", "id", $cm->section)) {
-            error("This course section doesn't exist");
+            print_error("This course section doesn't exist");
         }
 
         if (isset($return)) {
@@ -627,18 +627,18 @@
         $section = required_param('section',PARAM_INT);
 
         if (! $course = get_record("course", "id", $id)) {
-            error("This course doesn't exist");
+            print_error("This course doesn't exist");
         }
 
         if (! $module = get_record("modules", "name", $add)) {
-            error("This module type doesn't exist");
+            print_error("This module type doesn't exist");
         }
 
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         require_capability('moodle/course:manageactivities', $context);
 
         if (!course_allowed_module($course,$module->id)) {
-            error("This module has been disabled for this particular course");
+            print_error("This module has been disabled for this particular course");
         }
 
         require_login($course->id); // needed to setup proper $COURSE
@@ -675,7 +675,7 @@
         }
 
     } else {
-        error("No action was specified");
+        print_error("No action was specified");
     }
 
     require_login($course->id); // needed to setup proper $COURSE

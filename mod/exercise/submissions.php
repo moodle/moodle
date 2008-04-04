@@ -32,15 +32,15 @@
 
     // get some essential stuff...
     if (! $cm = get_coursemodule_from_id('exercise', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     if (! $exercise = get_record("exercise", "id", $cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     require_login($course->id, false, $cm);
@@ -59,10 +59,10 @@
     if ($action == 'adminamendtitle' ) {
 
         if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
         if (empty($sid)) {
-            error("Admin Amend Title: submission id missing");
+            print_error("Admin Amend Title: submission id missing");
         }
 
         $submission = get_record("exercise_submissions", "id", $sid);
@@ -92,14 +92,14 @@
     elseif ($action == 'adminclearlate' ) {
 
         if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
         if (empty($sid)) {
-            error("Admin clear late flag: submission id missing");
+            print_error("Admin clear late flag: submission id missing");
         }
 
         if (!$submission = get_record("exercise_submissions", "id", $sid)) {
-            error("Admin clear late flag: can not get submission record");
+            print_error("Admin clear late flag: can not get submission record");
         }
         if (set_field("exercise_submissions", "late", 0, "id", $sid)) {
             print_heading(get_string("clearlateflag", "exercise")." ".get_string("ok"));
@@ -115,18 +115,18 @@
     elseif ($action == 'adminconfirmdelete' ) {
 
         if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
         if (empty($sid)) {
-            error("Admin confirm delete: submission id missing");
+            print_error("Admin confirm delete: submission id missing");
         }
         if (!$submission = get_record("exercise_submissions", "id", $sid)) {
-            error("Admin delete: can not get submission record");
+            print_error("Admin delete: can not get submission record");
         }
 
         if (isteacher($course->id, $submission->userid)) {
             if (!isteacheredit($course->id)) {
-                error("Only teacher with editing permissions can delete teacher submissions.");
+                print_error("Only teacher with editing permissions can delete teacher submissions.");
             }
             if ($assessments = exercise_get_assessments($submission)) {
                 echo "<p align=\"center\">".get_string("deletesubmissionwarning", "exercise", count($assessments)).
@@ -142,14 +142,14 @@
     elseif ($action == 'admindelete' ) {
 
         if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
             }
         if (empty($sid)) {
-            error("Admin delete: submission id missing");
+            print_error("Admin delete: submission id missing");
             }
 
         if (!$submission = get_record("exercise_submissions", "id", $sid)) {
-            error("Admin delete: can not get submission record");
+            print_error("Admin delete: can not get submission record");
             }
         print_string("deleting", "exercise");
         // first get any assessments...
@@ -176,13 +176,13 @@
     elseif ($action == 'adminlateflag' ) {
 
         if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
             }
         if (empty($sid)) {
-            error("Admin confirm late flag: submission id missing");
+            print_error("Admin confirm late flag: submission id missing");
             }
         if (!$submission = get_record("exercise_submissions", "id", $sid)) {
-            error("Admin confirm late flag: can not get submission record");
+            print_error("Admin confirm late flag: can not get submission record");
             }
 
         notice_yesno(get_string("clearlateflag","exercise")."?",
@@ -195,7 +195,7 @@
     elseif ($action == 'adminlist' ) {
 
         if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
 
         echo "<p><small>Exercise Version-> $module->version</small></p>";
@@ -209,10 +209,10 @@
     elseif ($action == 'adminupdatetitle' ) {
 
         if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
             }
         if (empty($sid)) {
-            error("Admin Update Title: submission id missing");
+            print_error("Admin Update Title: submission id missing");
             }
 
         if (set_field("exercise_submissions", "title", $title, "id", $sid)) {
@@ -304,7 +304,7 @@
             exit;
             }
         if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
             }
         exercise_list_unassessed_student_submissions($exercise, $USER);
         print_continue("view.php?id=$cm->id");
@@ -331,7 +331,7 @@
         $form = (object)$_POST;
 
         if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
             }
 
         // save the number of league table entries from the form...
@@ -355,7 +355,7 @@
         $form = (object)$_POST;
 
         if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
             }
 
         // save the weights from the form...
@@ -379,7 +379,7 @@
     elseif ($action == 'userconfirmdelete' ) {
 
         if (empty($sid)) {
-            error("User Confirm Delete: submission id missing");
+            print_error("User Confirm Delete: submission id missing");
             }
 
         notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("submission", "exercise")),
@@ -391,11 +391,11 @@
     elseif ($action == 'userdelete' ) {
 
         if (empty($sid)) {
-            error("User Delete: submission id missing");
+            print_error("User Delete: submission id missing");
             }
 
         if (!$submission = get_record("exercise_submissions", "id", $sid)) {
-            error("User Delete: can not get submission record");
+            print_error("User Delete: can not get submission record");
             }
         print_string("deleting", "exercise");
         // first get any assessments...
@@ -422,7 +422,7 @@
 
     else {
 
-        error("Fatal Error: Unknown Action: ".$action."\n");
+        print_error("Fatal Error: Unknown Action: ".$action."\n");
 
         }
 

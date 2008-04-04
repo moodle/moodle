@@ -25,7 +25,7 @@ if (!$go or !data_submitted() or !confirm_sesskey()) {   /// Print a form
 
 
 if (!$tables = $db->Metatables() ) {    // No tables yet at all.
-    error("no tables");
+    print_error("no tables");
 }
 
 print_simple_box_start('center');

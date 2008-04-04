@@ -19,15 +19,15 @@
     $printclose = optional_param('printclose', 0, PARAM_INT);
     
     if (! $cm = get_coursemodule_from_id('lesson', $id)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
 
     if (! $course = get_record('course', 'id', $cm->course)) {
-        error('Course is misconfigured');
+        print_error('Course is misconfigured');
     }
 
     if (! $lesson = get_record('lesson', 'id', $cm->instance)) {
-        error('Course module is incorrect');
+        print_error('Course module is incorrect');
     }
 
     require_login($course->id, false, $cm);
@@ -142,7 +142,7 @@
     
     //} else if ($mimetype == "application/x-shockwave-flash") {   // It's a flash file
     
-    //    error('Flash is not supported yet');
+    //    print_error('Flash is not supported yet');
     
     } else if ($mimetype == "audio/x-pn-realaudio") {   // It's a realmedia file
         

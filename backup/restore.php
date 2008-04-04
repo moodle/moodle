@@ -53,23 +53,23 @@
         require_login($id);
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
             if (empty($to)) {
-                error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+                print_error("You need to be a teacher or admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
             } else {
                 if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $to))
                     && !has_capability('moodle/site:import',  get_context_instance(CONTEXT_COURSE, $to))) {
-                    error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+                    print_error("You need to be a teacher or admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
                 }
             }
         }
     } else {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-            error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+            print_error("You need to be an admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
         }
     }
 
     //Check site
     if (!$site = get_site()) {
-        error("Site not found!");
+        print_error("Site not found!");
     }
 
     //Check necessary functions exists. Thanks to gregb@crowncollege.edu
@@ -118,7 +118,7 @@
 
     //Get and check course
     if (! $course = get_record("course", "id", $id)) {
-        error("Course ID was incorrect (can't find it)");
+        print_error("Course ID was incorrect (can't find it)");
     }
 
     //Print header
@@ -161,7 +161,7 @@
     } else if ($launch == "execute") {
         //Prevent multiple restore executions...
         if (empty($SESSION->cancontinue)) {
-            error("Multiple restore execution not allowed!");
+            print_error("Multiple restore execution not allowed!");
         }
         //Unset this for the future
         unset($SESSION->cancontinue);

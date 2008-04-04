@@ -7,15 +7,15 @@
     $groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
 
     if (!$chat = get_record('chat', 'id', $id)) {
-        error('Could not find that chat room!');
+        print_error('Could not find that chat room!');
     }
 
     if (!$course = get_record('course', 'id', $chat->course)) {
-        error('Could not find the course this belongs to!');
+        print_error('Could not find the course this belongs to!');
     }
 
     if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -33,7 +33,7 @@
      if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
         if ($groupid = groups_get_activity_group($cm)) {
             if (!$group = groups_get_group($groupid, false)) {
-                error("That group (id $groupid) doesn't exist!");
+                print_error("That group (id $groupid) doesn't exist!");
             }
             $groupname = ': '.$group->name;
         } else {
@@ -47,7 +47,7 @@
     $strchat = get_string('modulename', 'chat'); // must be before current_language() in chat_login_user() to force course language!!!
 
     if (!$chat_sid = chat_login_user($chat->id, 'header_js', $groupid, $course)) {
-        error('Could not log in to chat room!!');
+        print_error('Could not log in to chat room!!');
     }
 
     $params = "chat_sid=$chat_sid";

@@ -6,10 +6,10 @@
 
     //Get objects from session
     if (!($info = $SESSION->info)) {
-      error( 'info object missing from session' );
+      print_error( 'info object missing from session' );
     }
     if (!($course_header = $SESSION->course_header)) {
-      error( 'course_header object missing from session' );
+      print_error( 'course_header object missing from session' );
     }
 
     $restore_gradebook_history =  optional_param('restore_gradebook_history', 0, PARAM_INT);
@@ -26,17 +26,17 @@
     //Check admin
     if (!empty($id)) {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
-            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+            print_error("You need to be a teacher or admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
         }
     } else {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
-            error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+            print_error("You need to be an admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
         }
     }
 
     //Check site
     if (!$site = get_site()) {
-        error("Site not found!");
+        print_error("Site not found!");
     }
 
     //Checks for the required files/functions to restore every mod

@@ -87,7 +87,7 @@ class embedded_cloze_qtype extends default_questiontype {
                              delete_records('question_numerical', 'question', $oldwrappedid);
                             break;
                         default:
-                            error("questiontype $wrapped->qtype not recognized");
+                            print_error("questiontype $wrapped->qtype not recognized");
                     }
                 }
             }
@@ -378,7 +378,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     echo $feedbackimg;
                     break;
                 default:
-                    error("Unable to recognize questiontype ($wrapped->qtype) of
+                    print_error("Unable to recognize questiontype ($wrapped->qtype) of
                            question part $positionkey.");
                     break;
            }
@@ -602,7 +602,7 @@ class embedded_cloze_qtype extends default_questiontype {
             $answer = $exploded[1];
             // $sequence is an ordered array of the question ids.
             if (!$sequence = get_field('question_multianswer', 'sequence', 'question', $state->question)) {
-                error("The cloze question $state->question is missing its options");
+                print_error("The cloze question $state->question is missing its options");
             }
             $sequence = explode(',', $sequence);
             // The id of the current question.
@@ -729,7 +729,7 @@ function qtype_multianswer_extract_question($text) {
             $wrapped->partiallycorrectfeedback = '';
             $wrapped->incorrectfeedback = '';
         } else {
-            error("Cannot identify qtype $answerregs[2]");
+            print_error("Cannot identify qtype $answerregs[2]");
             return false;
         }
 

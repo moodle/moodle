@@ -167,7 +167,7 @@ function exercise_cron() {
                 continue;
             }
             if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-                error("Course Module ID was incorrect");
+                print_error("Course Module ID was incorrect");
                 continue;
             }
             if (! $submissionowner = get_record("user", "id", "$submission->userid")) {
@@ -280,11 +280,11 @@ function exercise_delete_instance($id) {
 function exercise_grades($exerciseid) {
 /// Must return an array of grades, indexed by user, and a max grade.
     if (!$exercise = get_record("exercise", "id", $exerciseid)) {
-        error("Exercise record not found");
+        print_error("Exercise record not found");
     }
 
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     if (!$return->maxgrade = ($exercise->grade + $exercise->gradinggrade)) {
@@ -707,7 +707,7 @@ function exercise_get_user_submissions($exercise, $user) {
     // return submission of user oldest first, newest last
     // teachers submit "exercises"
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
         }
     if (isteacher($course->id, $user->id)) {
         return get_records_select("exercise_submissions",

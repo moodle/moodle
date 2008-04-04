@@ -21,9 +21,9 @@ function get_module_from_cmid($cmid){
                                     {$CFG->prefix}modules md
                                WHERE cm.id = '$cmid' AND
                                      md.id = cm.module")){
-        error('cmunknown');
+        print_error('cmunknown');
     } elseif (!$modrec =get_record($cmrec->modname, 'id', $cmrec->instance)) {
-        error('cmunknown');
+        print_error('cmunknown');
     }
     $modrec->instance = $modrec->id;
     $modrec->cmid = $cmrec->id;
@@ -85,7 +85,7 @@ function question_can_delete_cat($todelete){
     $contextid = $record->contextid;
     $count = $record->count;
     if ($count < 2) {
-        error('You can\'t delete that category it is the default category for this context.');
+        print_error('You can\'t delete that category it is the default category for this context.');
     } else {
         require_capability('moodle/question:managecategory', get_context_instance_by_id($contextid));
     }
@@ -418,7 +418,7 @@ function question_showbank_actions($pageurl, $cm){
         $category = required_param('category', PARAM_SEQUENCE);
         list($tocategoryid, $contextid) = explode(',', $category);
         if (! $tocategory = get_record('question_categories', 'id', $tocategoryid, 'contextid', $contextid)) {
-            error('Could not find category record');
+            print_error('Could not find category record');
         }
         $tocontext = get_context_instance_by_id($contextid);
         require_capability('moodle/question:add', $tocontext);
@@ -449,7 +449,7 @@ function question_showbank_actions($pageurl, $cm){
                 foreach ($questionids as $questionid){
                     //move question
                     if (!set_field('question', 'category', $tocategory->id, 'id', $questionid)) {
-                        error('Could not update category field');
+                        print_error('Could not update category field');
                     }
                 }
                 redirect($returnurl);
@@ -481,7 +481,7 @@ function question_showbank_actions($pageurl, $cm){
                             record_exists('question_states', 'originalquestion', $questionid)) {
                             if (!set_field('question', 'hidden', 1, 'id', $questionid)) {
                                 question_require_capability_on($questionid, 'edit');
-                                error('Was not able to hide question');
+                                print_error('Was not able to hide question');
                             }
                         } else {
                             delete_question($questionid);
@@ -490,7 +490,7 @@ function question_showbank_actions($pageurl, $cm){
                 }
                 redirect($pageurl->out());
             } else {
-                error("Confirmation string was incorrect");
+                print_error("Confirmation string was incorrect");
             }
 
 
@@ -502,7 +502,7 @@ function question_showbank_actions($pageurl, $cm){
         $unhide = required_param('unhide', PARAM_INT);
         question_require_capability_on($unhide, 'edit');
         if(!set_field('question', 'hidden', 0, 'id', $unhide)) {
-            error("Failed to unhide the question.");
+            print_error("Failed to unhide the question.");
         }
         redirect($pageurl->out());
     }
@@ -680,7 +680,7 @@ function question_edit_setup($edittab, $requirecmid = false, $requirecourseid = 
     if (!empty($pagevars['cat'])){
         $catparts = explode(',', $pagevars['cat']);
         if (!$catparts[0] || (FALSE !== array_search($catparts[1], $contextlistarr)) || !count_records_select("question_categories", "id = '".$catparts[0]."' AND contextid = $catparts[1]")) {
-            error(get_string('invalidcategory', 'quiz'));
+            print_error('invalidcategory', 'quiz');
         }
     } else {
         $category = $defaultcategory;
@@ -886,12 +886,12 @@ function require_login_in_context($contextorid = null){
     } else if ($context && ($context->contextlevel == CONTEXT_MODULE)) {
         if ($cm = get_record('course_modules','id',$context->instanceid)) {
             if (!$course = get_record('course', 'id', $cm->course)) {
-                error('Incorrect course.');
+                print_error('Incorrect course.');
             }
             require_course_login($course, true, $cm);
 
         } else {
-            error('Incorrect course module id.');
+            print_error('Incorrect course module id.');
         }
     } else if ($context && ($context->contextlevel == CONTEXT_SYSTEM)) {
         if (!empty($CFG->forcelogin)) {

@@ -1234,10 +1234,10 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
                 mark_context_dirty('/'.SYSCONTEXTID);
                 // do nothing
             } else {
-                error("Serious Error! Could not set up a default course category!");
+                print_error("Serious Error! Could not set up a default course category!");
             }
         } else {
-            error("Serious Error! Could not set up the site!");
+            print_error("Serious Error! Could not set up the site!");
         }
     }
 

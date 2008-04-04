@@ -18,7 +18,7 @@
 
 /// Keep out casual intruders
     if (empty($_POST) or !empty($_GET)) {
-        error("Sorry, you can not use the script that way.");
+        print_error("Sorry, you can not use the script that way.");
     }
 
 /// Read all the data from PayPal and get it ready for later;

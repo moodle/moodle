@@ -37,7 +37,7 @@ if (!$course = get_record('course', 'id', $courseid)) {
 require_login($course);
 
 if (!$user = get_complete_user_data('id', $userid)) {
-    error("Incorrect userid");
+    print_error("Incorrect userid");
 }
 
 $context     = get_context_instance(CONTEXT_COURSE, $course->id);

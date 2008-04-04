@@ -81,7 +81,7 @@
 
 
         if (! is_readable("format/$from_form->format/format.php")) {
-            error("Format not known ($from_form->format)");
+            print_error("Format not known ($from_form->format)");
         }
 
         // load parent class for import/export
@@ -104,15 +104,15 @@
         $qformat->setContexttofile(!empty($from_form->contexttofile));
 
         if (! $qformat->exportpreprocess()) {   // Do anything before that we need to
-            error($txt->exporterror, $thispageurl->out());
+            print_error($txt->exporterror, '', $thispageurl->out());
         }
 
         if (! $qformat->exportprocess()) {         // Process the export data
-            error($txt->exporterror, $thispageurl->out());
+            print_error($txt->exporterror, '', $thispageurl->out());
         }
 
         if (! $qformat->exportpostprocess()) {                    // In case anything needs to be done after
-            error($txt->exporterror, $thispageurl->out());
+            print_error($txt->exporterror, '', $thispageurl->out());
         }
         echo "<hr />";
 

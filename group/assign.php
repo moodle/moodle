@@ -9,7 +9,7 @@ require_once('lib.php');
 $groupingid = required_param('id', PARAM_INT);
 
 if (!$grouping = get_record('groupings', 'id', $groupingid)) {
-    error('Incorrect group id');
+    print_error('Incorrect group id');
 }
 
 if (! $course = get_record('course', 'id', $grouping->courseid)) {

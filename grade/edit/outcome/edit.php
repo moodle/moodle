@@ -37,12 +37,12 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 if ($id) {
     /// editing existing outcome
     if (!$outcome_rec = get_record('grade_outcomes', 'id', $id)) {
-        error('Incorrect outcome id');
+        print_error('Incorrect outcome id');
     }
     if ($outcome_rec->courseid) {
         $outcome_rec->standard = 0;
         if (!$course = get_record('course', 'id', $outcome_rec->courseid)) {
-            error('Incorrect course id');
+            print_error('Incorrect course id');
         }
         require_login($course);
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -51,7 +51,7 @@ if ($id) {
     } else {
         if ($courseid) {
             if (!$course = get_record('course', 'id', $courseid)) {
-                error('Incorrect course id');
+                print_error('Incorrect course id');
             }
         }
         $outcome_rec->standard = 1;

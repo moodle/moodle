@@ -14,7 +14,7 @@
         if (isset($SESSION->scorm_scoid)) {
             $scoid = $SESSION->scorm_scoid;
         } else {
-            error('Invalid script call');
+            print_error('Invalid script call');
         }
         $mode = 'normal';
         if (isset($SESSION->scorm_mode)) {
@@ -32,10 +32,10 @@
 
         if ($sco = scorm_get_sco($scoid, SCO_ONLY)) {
             if (!$scorm = get_record('scorm','id',$sco->scorm)) {
-                error('Invalid script call');
+                print_error('Invalid script call');
             }
         } else {
-            error('Invalid script call');
+            print_error('Invalid script call');
         }
 
         if ($scorm = get_record('scorm','id',$sco->scorm)) {
@@ -129,7 +129,7 @@
                             echo 'Max_Time_Allowed = '.$userdata->maxtimeallowed."\n";
                             echo 'Time_Limit_Action = '.$userdata->timelimitaction."\n";
                         } else {
-                            error('Sco not found');
+                            print_error('Sco not found');
                         }
                     }
                 break;

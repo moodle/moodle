@@ -27,7 +27,7 @@ if (isset($_SERVER['HTTP_REFERER'])) {
 
 // Ensure that the logged in user is not using the guest account
 if (isguest()) {
-    error(get_string('noguestpost', 'forum'), $referrer);
+    print_error('noguestpost', 'forum', $referrer);
 }
 
 
@@ -99,14 +99,15 @@ if (isset($rss_record)) {
 if ($act == 'updfeed') {
 
     if (!$managefeeds) {
-        error(get_string('noguestpost', 'forum').
-                ' You are not allowed to make modifications to this RSS feed at this time.',
-                $referrer);
+        //print_error(get_string('noguestpost', 'forum').
+        //        ' You are not allowed to make modifications to this RSS feed at this time.',
+        //        $referrer);
+        print_error('noguestpost', 'forum', $referrer, 'You are not allowed to make modifications to this RSS feed at this time.');
     }
 
 
     if (empty($url)) {
-        error( 'URL not defined for rss feed' );
+        print_error( 'URL not defined for rss feed' );
     }
 
     // By capturing the output from fetch_rss this way
@@ -141,7 +142,7 @@ if ($act == 'updfeed') {
     $dataobject->url = addslashes($url);
 
     if (!update_record('block_rss_client', $dataobject)) {
-        error('There was an error trying to update rss feed with id:'. $rssid);
+        print_error('There was an error trying to update rss feed with id:'. $rssid);
     }
 
     $message .= '<br />'. get_string('feedupdated', 'block_rss_client');
@@ -153,11 +154,11 @@ if ($act == 'updfeed') {
     $canaddsharedfeeds = has_capability('block/rss_client:createsharedfeeds', $context);
 
     if (!$canaddprivfeeds && !$canaddsharedfeeds) {
-        error('You do not have the permission to add RSS feeds');
+        print_error('You do not have the permission to add RSS feeds');
     }
 
     if (empty($url)) {
-        error('URL not defined for rss feed');
+        print_error('URL not defined for rss feed');
     }
     $dataobject->userid = $USER->id;
     $dataobject->description = '';
@@ -173,7 +174,7 @@ if ($act == 'updfeed') {
 
     $rssid = insert_record('block_rss_client', $dataobject);
     if (!$rssid) {
-        error('There was an error trying to add a new rss feed:'. $url);
+        print_error('There was an error trying to add a new rss feed:'. $url);
     }
 
     // By capturing the output from fetch_rss this way
@@ -199,7 +200,7 @@ if ($act == 'updfeed') {
             $dataobject->title = addslashes($rss->channel['title']);
         }
         if (!update_record('block_rss_client', $dataobject)) {
-            error('There was an error trying to update rss feed with id:'. $rssid);
+            print_error('There was an error trying to update rss feed with id:'. $rssid);
         }
         $message .= '<br />'. get_string('feedadded', 'block_rss_client');
     }
@@ -222,9 +223,10 @@ if ($act == 'updfeed') {
 } else if ($act == 'delfeed') {
 
     if (!$managefeeds) {
-        error(get_string('noguestpost', 'forum').
-                ' You are not allowed to make modifications to this RSS feed at this time.',
-                $referrer);
+        //print_error(get_string('noguestpost', 'forum').
+        //        ' You are not allowed to make modifications to this RSS feed at this time.',
+        //        $referrer);
+        print_error('noguestpost', 'forum', $referrer, 'You are not allowed to make modifications to this RSS feed at this time.');
     }
 
     $file = $CFG->dataroot .'/cache/rsscache/'. $rssid .'.xml';

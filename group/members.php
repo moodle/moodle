@@ -22,7 +22,7 @@ if ($showall) {
 }
 
 if (!$group = get_record('groups', 'id', $groupid)) {
-    error('Incorrect group id');
+    print_error('Incorrect group id');
 }
 
 if (!$course = get_record('course', 'id', $group->courseid)) {

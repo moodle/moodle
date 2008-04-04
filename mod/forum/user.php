@@ -17,11 +17,11 @@
     }
 
     if (! $user = get_record("user", "id", $id)) {
-        error("User ID is incorrect");
+        print_error("User ID is incorrect");
     }
 
     if (! $course = get_record("course", "id", $course)) {
-        error("Course id is incorrect.");
+        print_error("Course id is incorrect.");
     }
 
     $syscontext = get_context_instance(CONTEXT_SYSTEM);
@@ -98,7 +98,7 @@
 
             if (!isset($discussions[$post->discussion])) {
                 if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
-                    error('Discussion ID was incorrect');
+                    print_error('Discussion ID was incorrect');
                 }
                 $discussions[$post->discussion] = $discussion;
             } else {
@@ -107,7 +107,7 @@
 
             if (!isset($forums[$discussion->forum])) {
                 if (! $forum = get_record('forum', 'id', $discussion->forum)) {
-                    error("Could not find forum $discussion->forum");
+                    print_error("Could not find forum $discussion->forum");
                 }
                 $forums[$discussion->forum] = $forum;
             } else {
@@ -116,7 +116,7 @@
 
             if (!isset($cms[$forum->id])) {
                 if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
-                    error('Course Module ID was incorrect');
+                    print_error('Course Module ID was incorrect');
                 }
                 $cms[$forum->id] = $cm;
                 unset($cm); // do not use cm directly, it would break caching

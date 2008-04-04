@@ -108,7 +108,7 @@
     if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
 
         if (! $destcategory = get_record("course_categories", "id", $data->moveto)) {
-            error("Error finding the category");
+            print_error("Error finding the category");
         }
 
         $courses = array();
@@ -124,7 +124,7 @@
     if (!empty($blocklist) and confirm_sesskey()) {
         $blockid = $blocklist;
         if (!$blocks = get_records('block_instance', 'blockid', $blockid)) {
-            error( "Could not read data for blockid=$blockid" );
+            print_error( "Could not read data for blockid=$blockid" );
         }
 
         // run through blocks and get (unique) courses
@@ -137,7 +137,7 @@
                 continue;
             }
             if (!$course = get_record('course', 'id', $courseid)) {
-                error( "Could not read data for courseid=$courseid" );
+                print_error( "Could not read data for courseid=$courseid" );
             }
             $courses[$courseid] = $course;
         }
@@ -147,7 +147,7 @@
     elseif (!empty($modulelist) and confirm_sesskey()) {
         $modulename = $modulelist;
         if (!$modules = get_records($modulename)) {
-            error( "Could not read data for module=$modulename" );
+            print_error( "Could not read data for module=$modulename" );
         }
 
         // run through modules and get (unique) courses
@@ -158,7 +158,7 @@
                 continue;
             }
             if (!$course = get_record('course', 'id', $courseid)) {
-                error( "Could not read data for courseid=$courseid" );
+                print_error( "Could not read data for courseid=$courseid" );
             }
             $courses[$courseid] = $course;
         }

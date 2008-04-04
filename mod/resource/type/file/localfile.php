@@ -8,7 +8,7 @@
     require_login();
 
     if (!$CFG->resource_allowlocalfiles) {
-        error('You cannot access this script');
+        print_error('You cannot access this script');
     }
 
     print_header(get_string('localfilechoose', 'resource'));

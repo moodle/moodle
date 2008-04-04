@@ -11,19 +11,19 @@
     }
 
     if (empty($CFG->messaging)) {
-        error("Messaging is disabled on this site");
+        print_error("Messaging is disabled on this site");
     }
 
 /// Script parameters
     $userid1 = required_param('user1', PARAM_INT);
     if (! $user1 = get_record("user", "id", $userid1)) {  // Check it's correct
-        error("User ID 1 was incorrect");
+        print_error("User ID 1 was incorrect");
     }
 
     if (has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM, SITEID))) {             // Able to see any discussion
         $userid2 = optional_param('user2', $USER->id, PARAM_INT);
         if (! $user2 = get_record("user", "id", $userid2)) {  // Check
-            error("User ID 2 was incorrect");
+            print_error("User ID 2 was incorrect");
         }
     } else {
         $userid2 = $USER->id;    // Can only see messages involving yourself

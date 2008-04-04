@@ -14,7 +14,7 @@
     $reportoptions = stats_get_report_options($course->id, $mode);
     $timeoptions = report_stats_timeoptions($mode);
     if (empty($timeoptions)) {
-        error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
+        print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
     $table->width = 'auto';
@@ -31,7 +31,7 @@
             .' ORDER BY u.lastname, u.firstname ASC';
 
         if (!$us = get_records_sql($sql)) {
-            error('Cannot enter detailed view: No users found for this course.');
+            print_error('Cannot enter detailed view: No users found for this course.');
         }
 
         foreach ($us as $u) {
@@ -68,7 +68,7 @@
 
     if (!empty($report) && !empty($time)) {
         if ($report == STATS_REPORT_LOGINS && $course->id != SITEID) {
-            error('This type of report is only available for the site course');
+            print_error('This type of report is only available for the site course');
         }
 
         $param = stats_get_parameters($time,$report,$course->id,$mode);

@@ -21,7 +21,7 @@ httpsrequired();
 
 /// Define variables used in page
     if (!$site = get_site()) {
-        error("No site found!");
+        print_error("No site found!");
     }
 
     if (empty($CFG->langmenu)) {

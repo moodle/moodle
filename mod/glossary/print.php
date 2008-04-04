@@ -15,15 +15,15 @@
     $sortkey = optional_param('sortkey','UPDATE', PARAM_ALPHA); // Sorting key
 
     if (! $cm = get_coursemodule_from_id('glossary', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     if ( !$entriesbypage = $glossary->entbypage ) {

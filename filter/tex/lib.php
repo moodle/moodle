@@ -21,7 +21,7 @@ function tex_filter_get_executable($debug=false) {
         if (is_executable($custom_commandpath)) {
             return $custom_commandpath;
         } else {
-            error($error_message2.$error_message1);
+            print_error($error_message2.$error_message1);
         }
     }
 
@@ -31,7 +31,7 @@ function tex_filter_get_executable($debug=false) {
         case "FreeBSD": return "$CFG->dirroot/filter/tex/mimetex.freebsd";
     }
 
-    error($error_message1);
+    print_error($error_message1);
 }
 
 

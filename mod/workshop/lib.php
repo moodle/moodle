@@ -35,7 +35,7 @@ function workshop_context($workshop) {
         $workshop = $workshop->id;
     }
     if (! $cm = get_coursemodule_from_instance('workshop', $workshop)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
 
     return get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -195,11 +195,11 @@ function workshop_cron () {
                 continue;
             }
             if (! $course = get_record("course", "id", $workshop->course)) {
-                error("Could not find course id $workshop->course");
+                print_error("Could not find course id $workshop->course");
                 continue;
             }
             if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
-                error("Course Module ID was incorrect");
+                print_error("Course Module ID was incorrect");
                 continue;
             }
             if (! $submissionowner = get_record("user", "id", "$submission->userid")) {
@@ -294,11 +294,11 @@ function workshop_cron () {
                 continue;
             }
             if (! $course = get_record("course", "id", $workshop->course)) {
-                error("Could not find course id $workshop->course");
+                print_error("Could not find course id $workshop->course");
                 continue;
             }
             if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
-                error("Course Module ID was incorrect");
+                print_error("Course Module ID was incorrect");
                 continue;
             }
             if (! $submissionowner = get_record("user", "id", "$submission->userid")) {
@@ -388,11 +388,11 @@ function workshop_cron () {
                 continue;
             }
             if (! $course = get_record("course", "id", $workshop->course)) {
-                error("Could not find course id $workshop->course");
+                print_error("Could not find course id $workshop->course");
                 continue;
             }
             if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
-                error("Course Module ID was incorrect");
+                print_error("Course Module ID was incorrect");
                 continue;
             }
             if (! $submissionowner = get_record("user", "id", "$submission->userid")) {

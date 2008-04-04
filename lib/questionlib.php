@@ -579,6 +579,41 @@ function questionbank_navigation_tabs(&$row, $contexts, $querystring) {
 }
 
 /**
+ * Load a set of questions, given a list of ids. The $join and $extrafields arguments can be used
+ * together to pull in extra data. See, for example, the usage in mod/quiz/attempt.php, and 
+ * read the code below to see how the SQL is assembled. 
+ *
+ * @param string $questionlist list of comma-separated question ids.
+ * @param string $extrafields
+ * @param string $join
+ *
+ * @return mixed array of question objects on success, a string error message on failure.
+ */
+function question_load_questions($questionlist, $extrafields = '', $join = '') {
+    global $CFG;
+    if ($join) {
+        $join = ' JOIN ' . $CFG->prefix . $join;
+    }
+    if ($extrafields) {
+        $extrafields = ', ' . $extrafields;
+    }
+    $sql = 'SELECT q.*' . $extrafields . ' FROM ' . $CFG->prefix . 'question q' . $join .
+            ' WHERE q.id IN (' . $questionlist . ')';
+
+    // Load the questions
+    if (!$questions = get_records_sql($sql)) {
+        return 'Could not load questions.';
+    }
+
+    // Load the question type specific information
+    if (!get_question_options($questions)) {
+        return 'Could not load the question options';
+    }
+
+    return $questions;
+}
+
+/**
  * Private function to factor common code out of get_question_options().
  *
  * @param object $question the question to tidy.
@@ -829,7 +864,7 @@ function save_question_session(&$question, &$state) {
         $session->sumpenalty = $state->sumpenalty;
         $session->manualcomment = $state->manualcomment;
         if (!insert_record('question_sessions', $session)) {
-            error('Could not insert entry in question_sessions');
+            print_error('Could not insert entry in question_sessions');
         }
     } else {
         $session->newest = $state->id;
@@ -906,7 +941,7 @@ function question_extract_responses($questions, $formdata, $defaultevent=QUESTIO
         if (false !== ($quid = question_get_id_from_name_prefix($key))) {
             // check if this is a valid id
             if (!isset($questions[$quid])) {
-                error('Form contained question that is not in questionids');
+                print_error('Form contained question that is not in questionids');
             }
 
             // Remove the name prefix from the name
@@ -1315,7 +1350,7 @@ function get_question_image($question) {
     $img = '';
 
     if (!$category = get_record('question_categories', 'id', $question->category)){
-        error('invalid category id '.$question->category);
+        print_error('invalid category id '.$question->category);
     }
     $coursefilesdir = get_filesdir_from_context(get_context_instance_by_id($category->contextid));
 
@@ -1359,7 +1394,7 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
     $comment = trim($comment);
     $state->manualcomment = $comment;
     if (!set_field('question_sessions', 'manualcomment', $comment, 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
-        error("Cannot save comment");
+        print_error("Cannot save comment");
     }
 
     // Update the attempt if the score has changed.
@@ -1367,7 +1402,7 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
         $attempt->sumgrades = $attempt->sumgrades - $state->last_graded->grade + $grade;
         $attempt->timemodified = time();
         if (!update_record('quiz_attempts', $attempt)) {
-            error('Failed to save the current quiz attempt!');
+            print_error('Failed to save the current quiz attempt!');
         }
     }
 
@@ -1443,7 +1478,7 @@ function question_new_attempt_uniqueid($modulename='quiz') {
     $attempt = new stdClass;
     $attempt->modulename = $modulename;
     if (!$id = insert_record('question_attempts', $attempt)) {
-        error('Could not create new entry in question_attempts table');
+        print_error('Could not create new entry in question_attempts table');
     }
     return $id;
 }
@@ -1687,7 +1722,7 @@ function question_make_default_categories($contexts) {
     // If it already exists, just return it.
     foreach ($contexts as $key => $context) {
         if (!$categoryrs = get_recordset_select("question_categories", "contextid = '{$context->id}'", 'sortorder, name', '*', '', 1)) {
-            error('error getting category record');
+            print_error('error getting category record');
         } else {
             if (!$category = rs_fetch_record($categoryrs)){
                 // Otherwise, we need to make one
@@ -1700,7 +1735,7 @@ function question_make_default_categories($contexts) {
                 $category->sortorder = 999; // By default, all categories get this number, and are sorted alphabetically.
                 $category->stamp = make_unique_id_code();
                 if (!$category->id = insert_record('question_categories', $category)) {
-                    error('Error creating a default category for context '.print_context_name($context));
+                    print_error('Error creating a default category for context '.print_context_name($context));
                 }
             }
         }
@@ -2113,7 +2148,7 @@ function get_filesdir_from_context($context){
             $courseid = SITEID;
             break;
         default :
-            error('Unsupported contextlevel in category record!');
+            print_error('Unsupported contextlevel in category record!');
     }
     return $courseid;
 }

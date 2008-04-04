@@ -9,17 +9,17 @@
     $beep       = optional_param('beep', 0, PARAM_INT);  // beep target
 
     if (!$chatuser = get_record('chat_users', 'sid', $chat_sid)) {
-        error('Not logged in!');
+        print_error('Not logged in!');
     }
 
     //Get the minimal course
     if (!$course = get_record('course','id',$chatuser->course,'','','','','id,theme,lang')) {
-        error('incorrect course id');
+        print_error('incorrect course id');
     }
 
     //Get the user theme and enough info to be used in chat_format_message() which passes it along to
     if (!$USER = get_record('user','id',$chatuser->userid)) { // no optimisation here, it would break again in future!
-        error('User does not exist!');
+        print_error('User does not exist!');
     }
     $USER->description = '';
 
@@ -29,7 +29,7 @@
     $courseid = $chatuser->course;
 
     if (!$cm = get_coursemodule_from_instance('chat', $chatuser->chatid, $courseid)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
 
     if ($beep) {
@@ -41,7 +41,7 @@
         $message->timestamp = time();
 
         if (!insert_record('chat_messages', $message)) {
-            error('Could not insert a chat message!');
+            print_error('Could not insert a chat message!');
         }
 
         $chatuser->lastmessageping = time();          // A beep is a ping  ;-)
@@ -55,7 +55,7 @@
     /// Get list of users
 
     if (!$chatusers = chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid)) {
-        error(get_string('errornousers', 'chat'));
+        print_error('errornousers', 'chat');
     }
 
     ob_start();

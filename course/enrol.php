@@ -20,11 +20,11 @@
     }
 
     if (! $course = get_record('course', 'id', $id) ) {
-        error("That's an invalid course id");
+        print_error("That's an invalid course id");
     }
 
     if (! $context = get_context_instance(CONTEXT_COURSE, $course->id) ) {
-        error("That's an invalid course id");
+        print_error("That's an invalid course id");
     }
 
 /// do not use when in course login as

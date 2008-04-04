@@ -14,7 +14,7 @@ require_once('reset_form.php');
 $id = required_param('id', PARAM_INT);
 
 if (!$course = get_record('course', 'id', $id)) {
-    error("Course is misconfigured");
+    print_error("Course is misconfigured");
 }
 
 require_login($course);

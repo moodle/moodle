@@ -184,7 +184,7 @@
             //Fix the forwards link of the previous page
             if ($prevpageid) {
                 if (!set_field("lesson_pages", "nextpageid", $newid, "id", $prevpageid)) {
-                    error("Lesson restorelib: unable to update link");
+                    print_error("Lesson restorelib: unable to update link");
                 }
             }
             $prevpageid = $newid;
@@ -254,7 +254,7 @@
                     $page = backup_getid($restore->backup_unique_code,"lesson_pages",$answer->jumpto);
                     if ($page) {
                         if (!set_field("lesson_answers", "jumpto", $page->new_id, "id", $answer->id)) {
-                            error("Lesson restorelib: unable to reset jump");
+                            print_error("Lesson restorelib: unable to reset jump");
                         }
                     }
                 }

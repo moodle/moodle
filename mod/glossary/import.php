@@ -16,15 +16,15 @@
     $hook     = optional_param('hook', 'ALL', PARAM_ALPHANUM);
 
     if (! $cm = get_coursemodule_from_id('glossary', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     require_login($course->id, false, $cm);  
@@ -147,7 +147,7 @@
                     // to each other, so we have to update one of them twice.
 
                     if (! $currmodule = get_record("modules", "name", 'glossary')) {
-                        error("Glossary module doesn't exist");
+                        print_error("Glossary module doesn't exist");
                     }
                     $mod->module = $currmodule->id;
                     $mod->course = $course->id;
@@ -155,21 +155,21 @@
                     $mod->section = 0;
 
                     if (! $mod->coursemodule = add_course_module($mod) ) {
-                        error("Could not add a new course module");
+                        print_error("Could not add a new course module");
                     }
 
                     if (! $sectionid = add_mod_to_section($mod) ) {
-                        error("Could not add the new course module to that section");
+                        print_error("Could not add the new course module to that section");
                     }
                     //We get the section's visible field status
                     $visible = get_field("course_sections","visible","id",$sectionid);
 
                     if (! set_field("course_modules", "visible", $visible, "id", $mod->coursemodule)) {
-                        error("Could not update the course module with the correct visibility");
+                        print_error("Could not update the course module with the correct visibility");
                     }
 
                     if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
-                        error("Could not update the course module with the correct section");
+                        print_error("Could not update the course module with the correct section");
                     }
                     add_to_log($course->id, "course", "add mod",
                                "../mod/$mod->modulename/view.php?id=$mod->coursemodule",

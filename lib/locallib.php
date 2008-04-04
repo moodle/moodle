@@ -163,13 +163,13 @@ function upgrade_local_db($continueto) {
                     }
                 }
             } else {
-                error('Upgrade of local database customisations failed! (Could not update version in config table)');
+                print_error('Upgrade of local database customisations failed! (Could not update version in config table)');
             }
         } else {
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             $db->debug=false;
             }
-            error('Upgrade failed!  See local/version.php');
+            print_error('Upgrade failed!  See local/version.php');
         }
 
     } else if ($local_version < $CFG->local_version) {

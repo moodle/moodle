@@ -193,7 +193,7 @@ function workshop_copy_assessment($assessment, $submission, $withfeedback = fals
         $newassessment->teachercomment = addslashes($assessment->teachercomment);
     }
     if (!$newassessment->id = insert_record("workshop_assessments", $newassessment)) {
-        error("Copy Assessment: Could not insert workshop assessment!");
+        print_error("Copy Assessment: Could not insert workshop assessment!");
     }
     
     if ($grades = get_records("workshop_grades", "assessmentid", $assessment->id)) {
@@ -207,7 +207,7 @@ function workshop_copy_assessment($assessment, $submission, $withfeedback = fals
             }
             $grade->assessmentid = $newassessment->id;
             if (!$grade->id = insert_record("workshop_grades", $grade)) {
-                error("Copy Assessment: Could not insert workshop grade!");
+                print_error("Copy Assessment: Could not insert workshop grade!");
             }
         }
     }
@@ -313,10 +313,10 @@ function workshop_count_student_submissions_for_assessment($workshop, $user) {
     global $CFG;
 
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
         }
     
     $timenow = time();
@@ -822,10 +822,10 @@ function workshop_list_all_submissions($workshop, $user) {
     global $CFG;
     
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
         }
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), 
                         get_string("comment", "workshop"));
@@ -931,7 +931,7 @@ function workshop_list_all_ungraded_assessments($workshop) {
     global $CFG;
 
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     
     $table->head = array (get_string("title", "workshop"), get_string("timeassessed", "workshop"), get_string("action", "workshop"));
@@ -971,10 +971,10 @@ function workshop_list_assessed_submissions($workshop, $user) {
     
     $timenow = time();
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
         }
     $table->head = array (get_string("title","workshop"), get_string("action","workshop"), 
                     get_string("comment","workshop"));
@@ -1061,10 +1061,10 @@ function workshop_list_peer_assessments($workshop, $user) {
     global $CFG;
     
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
         }
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), 
                     get_string("comment", "workshop"));
@@ -1137,10 +1137,10 @@ function workshop_list_self_assessments($workshop, $user) {
     
     $timenow = time();
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
         }
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), 
                        get_string("comment", "workshop"));
@@ -1184,10 +1184,10 @@ function workshop_list_student_submissions($workshop, $user) {
     global $CFG;
     
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
         }
 
     $timenow = time();
@@ -1254,7 +1254,7 @@ function workshop_list_student_submissions($workshop, $user) {
                                 $assessment->grade = -1; // set impossible grade
                                 $assessment->timecreated = $yearfromnow;
                                 if (!$assessment->id = insert_record("workshop_assessments", $assessment)) {
-                                    error("List Student submissions: Could not insert workshop assessment!");
+                                    print_error("List Student submissions: Could not insert workshop assessment!");
                                 }
                                 $nassessed++;
                                 // is user up to quota?
@@ -1313,13 +1313,13 @@ function workshop_list_submissions_for_admin($workshop, $order) {
     global $CFG, $USER;
     
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
         }
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (groupmode($course, $cm) == SEPARATEGROUPS) {
         $groupid = get_current_group($course->id);
@@ -1402,7 +1402,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
                 $title ='';
                 foreach ($assessments as $assessment) {
                     if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
-                        error("Workshop_list_submissions_for_admin: Submission $assessment->submissionid not found!");
+                        print_error("Workshop_list_submissions_for_admin: Submission $assessment->submissionid not found!");
                     }
                     $title .= $submission->title;
                     if ($workshop->agreeassessments and !$assessment->timeagreed and 
@@ -1497,7 +1497,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
     if ($submissions = workshop_get_student_submissions($workshop, $order)) {
         foreach ($submissions as $submission) {
             if (!$user = get_record("user", "id", $submission->userid)) {
-                error("workshop_list_submissions_for_admin: failure to get user record");
+                print_error("workshop_list_submissions_for_admin: failure to get user record");
             }
             // check group membership, if necessary
             if ($groupid) {
@@ -1559,10 +1559,10 @@ function workshop_list_teacher_assessments_by_user($workshop, $user) {
     
     $timenow = time();
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), get_string("comment", "workshop"));
@@ -1611,10 +1611,10 @@ function workshop_list_teacher_submissions($workshop, $user) {
     $reassessthreshold = 80;
     
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), get_string("comment", "workshop"));
     $table->align = array ("left", "left", "left");
@@ -1652,7 +1652,7 @@ function workshop_list_teacher_submissions($workshop, $user) {
                     $assessment->grade = -1; // set impossible grade
                     $assessment->timecreated = $yearfromnow;
                     if (!$assessment->id = insert_record("workshop_assessments", $assessment)) {
-                        error("Could not insert workshop assessment!");
+                        print_error("Could not insert workshop assessment!");
                     }
                     $nassessed++;
                     if ($nassessed >= $workshop->ntassessments) {
@@ -1713,10 +1713,10 @@ function workshop_list_unassessed_student_submissions($workshop, $user) {
     
     $timenow = time();
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
         }
 
     if (groupmode($course, $cm) == SEPARATEGROUPS) {
@@ -1783,7 +1783,7 @@ function workshop_list_unassessed_teacher_submissions($workshop, $user) {
     global $CFG;
     
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), 
@@ -1826,7 +1826,7 @@ function workshop_list_ungraded_assessments($workshop, $stype) {
     global $CFG;
     
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     $table->head = array (get_string("title", "workshop"), get_string("submittedby", "workshop"),
@@ -1875,7 +1875,7 @@ function workshop_list_user_submissions($workshop, $user) {
     global $CFG;
 
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     $timenow = time();
@@ -1935,7 +1935,7 @@ function workshop_phase($workshop, $style='') {
     else {
         return  get_string('phase5'.$style, 'workshop');
     }    
-    error('Something is wrong with the workshop dates');
+    print_error('Something is wrong with the workshop dates');
 }
 
 
@@ -1947,10 +1947,10 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     global $CFG, $USER, $WORKSHOP_SCALES, $WORKSHOP_EWEIGHTS;
     
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if ($assessment) {
         if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
@@ -2647,7 +2647,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 function workshop_print_assessments_by_user_for_admin($workshop, $user) {
 
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if ($assessments = workshop_get_user_assessments_done($workshop, $user)) {
@@ -2667,7 +2667,7 @@ function workshop_print_assessments_by_user_for_admin($workshop, $user) {
 function workshop_print_assessments_for_admin($workshop, $submission) {
 
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if ($assessments =workshop_get_assessments($submission)) {
@@ -2689,10 +2689,10 @@ function workshop_print_assignment_info($workshop) {
     global $CFG;
 
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     // print standard assignment heading
     print_heading(format_string($workshop->name), "center");
@@ -2750,7 +2750,7 @@ function workshop_print_key($workshop) {
     // print an explaination of the grades
     
     if (!$course = get_record("course", "id", $workshop->course)) {
-        error("Print key: course not found");
+        print_error("Print key: course not found");
     }
     echo "<div class=\"workshopkey\">\n";
     echo "<p><small>{} ".get_string("assessmentby", "workshop", $course->student).";&nbsp;&nbsp;\n";
@@ -2771,10 +2771,10 @@ function workshop_print_league_table($workshop) {
     // print an order table of (student) submissions showing teacher's and student's assessments
     
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Print league table: Course is misconfigured");
+        print_error("Print league table: Course is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-            error("Course Module ID was incorrect");
+            print_error("Course Module ID was incorrect");
     }
     // set $groupid if workshop is in SEPARATEGROUPS mode
     if (groupmode($course, $cm) == SEPARATEGROUPS) {
@@ -2816,10 +2816,10 @@ function workshop_print_league_table($workshop) {
         $n = 1;
         while (list($submissionid, $grade) = each($grades)) {
             if (!$submission = get_record("workshop_submissions", "id", $submissionid)) {
-                error("Print league table: submission not found");
+                print_error("Print league table: submission not found");
             }
             if (!$user = get_record("user", "id", $submission->userid)) {
-                error("Print league table: user not found");
+                print_error("Print league table: user not found");
             }
             if ($workshop->anonymous and workshop_is_student($workshop)) {
                 $table->data[] = array(workshop_print_submission_title($workshop, $submission),
@@ -2849,7 +2849,7 @@ function workshop_print_submission($workshop, $submission) {
     global $CFG;
 
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-            error("Course Module ID was incorrect");
+            print_error("Course Module ID was incorrect");
     }
     print_simple_box(format_text($submission->description), 'center');
     if ($workshop->nattachments) {
@@ -2885,7 +2885,7 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
     global $USER, $CFG;
     // Returns the teacher or peer grade and a hyperlinked list of grades for this submission
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     $str = '';
     // get the assessments in grade order, highest first
@@ -2959,7 +2959,7 @@ function workshop_print_submission_title($workshop, $submission) {
 // Arguments are objects
 
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-            error("Course Module ID was incorrect");
+            print_error("Course Module ID was incorrect");
     }
     
     if (!$submission->timecreated) { // a "no submission"
@@ -2986,10 +2986,10 @@ function workshop_print_upload_form($workshop) {
     global $CFG;
 
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     $usehtmleditor = can_use_html_editor();
 
@@ -3026,7 +3026,7 @@ function workshop_print_user_assessments($workshop, $user, &$gradinggrade) {
     // Returns the number of assessments and a hyperlinked list of grading grades for the assessments made by this user
 
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
-            error("Course Module ID was incorrect");
+            print_error("Course Module ID was incorrect");
     }
     $gradinggrade = 0;
     $n = 0;

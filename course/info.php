@@ -9,16 +9,16 @@
     $name = optional_param('name', false, PARAM_RAW); // Course short name
 
     if (!$id and !$name) {
-        error("Must specify course id or short name");
+        print_error("Must specify course id or short name");
     }
 
     if ($name) {
         if (! $course = get_record("course", "shortname", $name) ) {
-            error("That's an invalid short course name");
+            print_error("That's an invalid short course name");
         }
     } else {
         if (! $course = get_record("course", "id", $id) ) {
-            error("That's an invalid course id");
+            print_error("That's an invalid course id");
         }
     }
 
@@ -30,7 +30,7 @@
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     if ((!course_parent_visible($course) || (! $course->visible)) && !has_capability('moodle/course:viewhiddencourses', $context)) {
-        error(get_string('coursehidden'), $CFG->wwwroot .'/'); 
+        print_error('coursehidden', '', $CFG->wwwroot .'/'); 
     }  
     
     print_header(get_string("summaryof", "", $course->fullname));

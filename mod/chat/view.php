@@ -13,30 +13,30 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('chat', $id)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
 
         if (! $course = get_record('course', 'id', $cm->course)) {
-            error('Course is misconfigured');
+            print_error('Course is misconfigured');
         }
 
         chat_update_chat_times($cm->instance);
 
         if (! $chat = get_record('chat', 'id', $cm->instance)) {
-            error('Course module is incorrect');
+            print_error('Course module is incorrect');
         }
 
     } else {
         chat_update_chat_times($c);
 
         if (! $chat = get_record('chat', 'id', $c)) {
-            error('Course module is incorrect');
+            print_error('Course module is incorrect');
         }
         if (! $course = get_record('course', 'id', $chat->course)) {
-            error('Course is misconfigured');
+            print_error('Course is misconfigured');
         }
         if (! $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
     }
 

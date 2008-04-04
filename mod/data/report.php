@@ -9,30 +9,30 @@
     $sort = optional_param('sort', '', PARAM_ALPHA);
 
     if (!$record = get_record('data_records', 'id', $id)) {
-        error("Record ID is incorrect");
+        print_error("Record ID is incorrect");
     }
 
     if (!$data = get_record('data', 'id', $record->dataid)) {
-        error("Data ID is incorrect");
+        print_error("Data ID is incorrect");
     }
 
     if (!$course = get_record('course', 'id', $data->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     if (!$cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     require_login($course->id, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (!$data->assessed) {
-        error("This activity does not use ratings");
+        print_error("This activity does not use ratings");
     }
 
     if (!data_isowner($record->id) and !has_capability('mod/data:viewrating', $context) and !has_capability('mod/data:rate', $context)) {
-        error("You can not view ratings");
+        print_error("You can not view ratings");
     }
 
     switch ($sort) {
@@ -50,7 +50,7 @@
     print_header($strratings);
 
     if (!$ratings = data_get_ratings($record->id, $sqlsort)) {
-        error("No ratings for this record!");
+        print_error("No ratings for this record!");
 
     } else {
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" style=\"width:100%\">";

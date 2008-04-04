@@ -62,7 +62,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return bool Authentication success or failure.
      */
     function user_login($username, $password) {
-        return false; // error("Remote MNET users cannot login locally.");
+        return false; // print_error("Remote MNET users cannot login locally.");
     }
 
     /**
@@ -175,12 +175,12 @@ class auth_plugin_mnet extends auth_plugin_base {
                 or is_mnet_remote_user($USER)
                 or $USER->username == 'guest'
                 or empty($USER->id)) {
-            error(get_string('notpermittedtojump', 'mnet'));
+            print_error('notpermittedtojump', 'mnet');
         }
 
         // check for SSO publish permission first
         if ($this->has_service($mnethostid, 'sso_sp') == false) {
-            error(get_string('hostnotconfiguredforsso', 'mnet'));
+            print_error('hostnotconfiguredforsso', 'mnet');
         }
 
         // set RPC timeout to 30 seconds if not configured
@@ -209,7 +209,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_session->expires = time() + (integer)ini_get('session.gc_maxlifetime');
             $mnet_session->session_id = session_id();
             if (! $mnet_session->id = insert_record('mnet_session', addslashes_object($mnet_session))) {
-                error(get_string('databaseerror', 'mnet'));
+                print_error('databaseerror', 'mnet');
             }
         } else {
             $mnet_session->useragent = sha1($_SERVER['HTTP_USER_AGENT']);
@@ -218,7 +218,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_session->expires = time() + (integer)ini_get('session.gc_maxlifetime');
             $mnet_session->session_id = session_id();
             if (false == update_record('mnet_session', addslashes_object($mnet_session))) {
-                error(get_string('databaseerror', 'mnet'));
+                print_error('databaseerror', 'mnet');
             }
         }
 
@@ -245,7 +245,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         // verify the remote host is configured locally before attempting RPC call
         if (! $remotehost = get_record('mnet_host', 'wwwroot', $remotewwwroot)) {
-            error(get_string('notpermittedtoland', 'mnet'));
+            print_error('notpermittedtoland', 'mnet');
         }
 
         // get the originating (ID provider) host info
@@ -268,12 +268,12 @@ class auth_plugin_mnet extends auth_plugin_base {
                 list($code, $message) = array_map('trim',explode(':', $errormessage, 2));
                 if($code == 702) {
                     $site = get_site();
-                    print_error('mnet_session_prohibited','mnet', $remotewwwroot, format_string($site->fullname));
+                    print_error('mnet_session_prohibited', 'mnet', $remotewwwroot, format_string($site->fullname));
                     exit;
                 }
                 $message .= "ERROR $code:<br/>$errormessage<br/>";
             }
-            error("RPC auth/mnet/user_authorise:<br/>$message");
+            print_error("RPC auth/mnet/user_authorise:<br/>$message");
         }
         unset($mnetrequest);
 
@@ -291,15 +291,15 @@ class auth_plugin_mnet extends auth_plugin_base {
         // TODO: refactor into a separate function
         if (empty($localuser) || ! $localuser->id) {
             if (empty($this->config->auto_add_remote_users)) {
-                error(get_string('nolocaluser', 'mnet'));
+                print_error('nolocaluser', 'mnet');
             }
             $remoteuser->mnethostid = $remotehost->id;
             if (! insert_record('user', addslashes_object($remoteuser))) {
-                error(get_string('databaseerror', 'mnet'));
+                print_error('databaseerror', 'mnet');
             }
             $firsttime = true;
             if (! $localuser = get_record('user', 'username', addslashes($remoteuser->username), 'mnethostid', $remotehost->id)) {
-                error(get_string('nolocaluser', 'mnet'));
+                print_error('nolocaluser', 'mnet');
             }
         }
 
@@ -372,7 +372,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         if (!$bool) {
             // TODO: Jonathan to clean up mess
             // Actually, this should never happen (modulo race conditions) - ML
-            error("updating user failed in mnet/auth/confirm_mnet_session ");
+            print_error("updating user failed in mnet/auth/confirm_mnet_session ");
         }
 
         // set up the session
@@ -392,7 +392,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
             $mnet_session->session_id = session_id();
             if (! $mnet_session->id = insert_record('mnet_session', addslashes_object($mnet_session))) {
-                error(get_string('databaseerror', 'mnet'));
+                print_error('databaseerror', 'mnet');
             }
         } else {
             $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;

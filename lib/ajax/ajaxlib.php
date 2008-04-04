@@ -43,7 +43,7 @@ function ajax_get_lib($libname) {
 
     $testpath = str_replace($CFG->wwwroot, $CFG->dirroot, $libpath);
     if (!file_exists($testpath)) {        
-        error('require_js: '.$libpath.' - file not found.');
+        print_error('require_js: '.$libpath.' - file not found.');
     }
 
     return $libpath;

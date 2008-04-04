@@ -19,7 +19,7 @@
     $context = $sysctx;
 
     if (!$site = get_site()) {
-        error('Site isn\'t defined!');
+        print_error('Site isn\'t defined!');
     }
 
     if ($CFG->forcelogin) {
@@ -120,7 +120,7 @@
                 if ($childcats = get_records('course_categories', 'parent', $deletecat->id)) {
                     foreach ($childcats as $childcat) {
                         if (! set_field('course_categories', 'parent', $deletecat->parent, 'id', $childcat->id)) {
-                            error('Could not update a child category!', 'index.php');
+                            print_error('Could not update a child category!', 'index.php');
                         }
                     }
                 }
@@ -131,7 +131,7 @@
                     if ($childcourses = get_records('course', 'category', $deletecat->id)) {
                         foreach ($childcourses as $childcourse) {
                             if (! set_field('course', 'category', $deletecat->parent, 'id', $childcourse->id)) {
-                                error('Could not update a child course!', 'index.php');
+                                print_error('Could not update a child course!', 'index.php');
                             }
                         }
                     }
@@ -163,7 +163,7 @@
         unset($tempcat);
         $tempcat->name = get_string('miscellaneous');
         if (!$tempcat->id = insert_record('course_categories', $tempcat)) {
-            error('Serious error: Could not create a default category!');
+            print_error('Serious error: Could not create a default category!');
         }
         $tempcat->context = get_context_instance(CONTEXT_COURSECAT, $tempcat->id);
         mark_context_dirty('/'.SYSCONTEXTID);

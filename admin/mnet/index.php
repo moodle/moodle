@@ -17,19 +17,19 @@
     if (!extension_loaded('openssl')) {
         admin_externalpage_print_header();
         set_config('mnet_dispatcher_mode', 'off');
-        print_error('requiresopenssl', 'mnet', '', NULL, true);
+        print_error('requiresopenssl', 'mnet');
     }
 
     if (!$site = get_site()) {
         admin_externalpage_print_header();
         set_config('mnet_dispatcher_mode', 'off');
-        print_error('nosite', '', '', NULL, true);
+        print_error('nosite');
     }
 
     if (!function_exists('curl_init') ) {
         admin_externalpage_print_header();
         set_config('mnet_dispatcher_mode', 'off');
-        print_error('nocurl', 'mnet', '', NULL, true);
+        print_error('nocurl', 'mnet');
     }
 
     if (!isset($CFG->mnet_dispatcher_mode)) {
@@ -43,7 +43,7 @@
                 if (set_config('mnet_dispatcher_mode', $form->mode)) {
                     redirect('index.php', get_string('changessaved'));
                 } else {
-                    error('Invalid action parameter.', 'index.php');
+                    print_error('Invalid action parameter.', '', 'index.php');
                 }
             }
         } elseif (!empty($form->submit) && $form->submit == get_string('delete')) {

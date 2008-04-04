@@ -20,7 +20,7 @@ class page_quiz extends page_generic_activity {
 
     function init_quick($data) {
         if(empty($data->pageid)) {
-            error('Cannot quickly initialize page: empty course id');
+            print_error('Cannot quickly initialize page: empty course id');
         }
         $this->activityname = 'quiz';
         parent::init_quick($data);

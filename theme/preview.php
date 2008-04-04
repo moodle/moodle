@@ -9,7 +9,7 @@
     }
 
     if (! $site = get_site()) {
-        error("Site doesn't exist!");
+        print_error("Site doesn't exist!");
     }
 
     require_login();

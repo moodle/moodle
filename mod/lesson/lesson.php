@@ -55,7 +55,7 @@
             include($CFG->dirroot.'/mod/lesson/action/'.$action.'.php');
             break;
         default:
-            error("Fatal Error: Unknown action\n");
+            print_error("Fatal Error: Unknown action\n");
     }
 
     print_footer($course);

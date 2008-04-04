@@ -3,7 +3,7 @@
     require_login();
 
 if (empty($CFG->aspellpath)) {
-    error('Spellchecker not configured');
+    print_error('Spellchecker not configured');
 }
 
 header('Content-type: text/html; charset=utf-8');

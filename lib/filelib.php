@@ -699,7 +699,7 @@ function get_records_csv($file, $table) {
     }
 
     if(!($handle = @fopen($file, 'r'))) {
-        error('get_records_csv failed to open '.$file);
+        print_error('get_records_csv failed to open '.$file);
     }
 
     $fieldnames = fgetcsv($handle, 4096);
@@ -746,7 +746,7 @@ function put_records_csv($file, $records, $table = NULL) {
     echo "x";
 
     if(!($fp = @fopen($CFG->dataroot.'/temp/'.$file, 'w'))) {
-        error('put_records_csv failed to open '.$file);
+        print_error('put_records_csv failed to open '.$file);
     }
 
     $proto = reset($records);

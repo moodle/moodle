@@ -375,10 +375,10 @@
                     }
                 }
                 } else {
-                    error("Upgrade of backup system failed! (Could not update version in config table)");
+                    print_error("Upgrade of backup system failed! (Could not update version in config table)");
                 }
             } else {
-                error("Backup tables could NOT be set up successfully!");
+                print_error("Backup tables could NOT be set up successfully!");
             }
         }
 
@@ -448,10 +448,10 @@
                     }
                 }
                 } else {
-                    error("Upgrade of backup system failed! (Could not update version in config table)");
+                    print_error("Upgrade of backup system failed! (Could not update version in config table)");
                 }
             } else {
-                error("Upgrade failed!  See backup/version.php");
+                print_error("Upgrade failed!  See backup/version.php");
             }
 
         } else if ($backup_version < $CFG->backup_version) {
@@ -590,7 +590,7 @@
 
         if(!function_exists('utf8_encode')) {
             if (empty($justcheck)) {
-                error('You need to add XML support to your PHP installation');
+                print_error('You need to add XML support to your PHP installation');
             } else {
                 return false;
             }

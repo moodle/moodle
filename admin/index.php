@@ -50,29 +50,29 @@
     $documentationlink = '<a href="http://docs.moodle.org/en/Installation">Installation docs</a>';
 
     if (ini_get_bool('session.auto_start')) {
-        error("The PHP server variable 'session.auto_start' should be Off - $documentationlink");
+        print_error("The PHP server variable 'session.auto_start' should be Off - $documentationlink");
     }
 
     if (ini_get_bool('magic_quotes_runtime')) {
-        error("The PHP server variable 'magic_quotes_runtime' should be Off - $documentationlink");
+        print_error("The PHP server variable 'magic_quotes_runtime' should be Off - $documentationlink");
     }
 
     if (!ini_get_bool('file_uploads')) {
-        error("The PHP server variable 'file_uploads' is not turned On - $documentationlink");
+        print_error("The PHP server variable 'file_uploads' is not turned On - $documentationlink");
     }
 
     if (empty($CFG->prefix) && $CFG->dbfamily != 'mysql') {  //Enforce prefixes for everybody but mysql
-        error('$CFG->prefix can\'t be empty for your target DB (' . $CFG->dbtype . ')');
+        print_error('$CFG->prefix can\'t be empty for your target DB (' . $CFG->dbtype . ')');
     }
 
     if ($CFG->dbfamily == 'oracle' && strlen($CFG->prefix) > 2) { //Max prefix length for Oracle is 2cc
-        error('$CFG->prefix maximum allowed length for Oracle DBs is 2cc.');
+        print_error('$CFG->prefix maximum allowed length for Oracle DBs is 2cc.');
     }
 
 /// Check that config.php has been edited
 
     if ($CFG->wwwroot == "http://example.com/moodle") {
-        error("Moodle has not been configured yet.  You need to edit config.php first.");
+        print_error("Moodle has not been configured yet.  You need to edit config.php first.");
     }
 
 
@@ -80,7 +80,7 @@
 
     $dirroot = dirname(realpath("../index.php"));
     if (!empty($dirroot) and $dirroot != $CFG->dirroot) {
-        error("Please fix your settings in config.php:
+        print_error("Please fix your settings in config.php:
               <p>You have:
               <p>\$CFG->dirroot = \"".addslashes($CFG->dirroot)."\";
               <p>but it should be:
@@ -100,11 +100,11 @@
     }
 
     if (is_readable("$CFG->dirroot/version.php")) {
-        include_once("$CFG->dirroot/version.php");              # defines $version
+        include_once("$CFG->dirroot/version.php");              // defines $version
     }
 
     if (!$version or !$release) {
-        error('Main version.php was not readable or specified');# without version, stop
+        print_error('Main version.php was not readable or specified'); // without version, stop
     }
 
 /// Check if the main tables have been installed yet or not.
@@ -186,7 +186,7 @@
         } else if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
             $status = modify_database("$CFG->libdir/db/$CFG->dbtype.sql"); //Old method
         } else {
-            error("Error: Your database ($CFG->dbtype) is not yet fully supported by Moodle or install.xml is not present.  See the lib/db directory.");
+            print_error("Error: Your database ($CFG->dbtype) is not yet fully supported by Moodle or install.xml is not present.  See the lib/db directory.");
         }
 
         // all new installs are in unicode - keep for backwards compatibility and 1.8 upgrade checks
@@ -223,7 +223,7 @@
             notify($strdatabasesuccess, "green");
             require_once $CFG->dirroot.'/mnet/lib.php';
         } else {
-            error("Error: Main databases NOT set up successfully");
+            print_error("Error: Main databases NOT set up successfully");
         }
         print_continue('index.php');
         print_footer('none');
@@ -367,7 +367,7 @@
                         moodle_install_roles();
                         set_config('rolesactive', 1);
                     } else if (!update_capabilities()) {
-                        error('Had trouble upgrading the core capabilities for the Roles System');
+                        print_error('Had trouble upgrading the core capabilities for the Roles System');
                     }
                     // update core events
                     events_update_definition();
@@ -383,7 +383,7 @@
                         print_footer('none');
                         exit;
                     } else {
-                        error('Upgrade failed!  (Could not update version in config table)');
+                        print_error('Upgrade failed!  (Could not update version in config table)');
                     }
             /// Main upgrade not success
                 } else {
@@ -401,7 +401,7 @@
         }
     } else {
         if (!set_config("version", $version)) {
-            error("A problem occurred inserting current version into databases");
+            print_error("A problem occurred inserting current version into databases");
         }
     }
 
@@ -409,7 +409,7 @@
 
     if ($release <> $CFG->release) {  // Update the release version
         if (!set_config("release", $release)) {
-            error("ERROR: Could not update release version in database!!");
+            print_error("ERROR: Could not update release version in database!!");
         }
     }
 
@@ -495,7 +495,7 @@
         $newsite->timemodified = time();
 
         if (!$newid = insert_record('course', $newsite)) {
-            error("Serious Error! Could not set up the site!");
+            print_error("Serious Error! Could not set up the site!");
         }
         // make sure course context exists
         get_context_instance(CONTEXT_COURSE, $newid);
@@ -508,7 +508,7 @@
         $cat->name = get_string('miscellaneous');
         $cat->depth = 1;
         if (!$catid = insert_record('course_categories', $cat)) {
-            error("Serious Error! Could not set up a default course category!");
+            print_error("Serious Error! Could not set up a default course category!");
         }
         // make sure category context exists
         get_context_instance(CONTEXT_COURSECAT, $catid);

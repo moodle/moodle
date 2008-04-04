@@ -49,10 +49,10 @@
 function require_variable($var) {
     global $CFG;
     if (!empty($CFG->disableglobalshack)) {
-        error( 'The require_variable() function is deprecated.' );
+        print_error( 'The require_variable() function is deprecated.' );
     }
     if (! isset($var)) {
-        error('A required parameter was missing');
+        print_error('A required parameter was missing');
     }
 }
 
@@ -67,7 +67,7 @@ function require_variable($var) {
 function optional_variable(&$var, $default=0) {
     global $CFG;
     if (!empty($CFG->disableglobalshack)) {
-        error( "The optional_variable() function is deprecated ($var, $default)." );
+        print_error( "The optional_variable() function is deprecated ($var, $default)." );
     }
     if (! isset($var)) {
         $var = $default;
@@ -88,7 +88,7 @@ function nvl(&$var, $default='') {
     global $CFG;
 
     if (!empty($CFG->disableglobalshack)) {
-      error( "The nvl() function is deprecated ($var, $default)." );
+      print_error( "The nvl() function is deprecated ($var, $default)." );
     }
     return isset($var) ? $var : $default;
 }

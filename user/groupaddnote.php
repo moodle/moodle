@@ -8,7 +8,7 @@ $content = optional_param('content', '', PARAM_RAW); // note content
 $state = optional_param('state', '', PARAM_ALPHA); // note publish state
 
 if (! $course = get_record('course', 'id', $id)) {
-    error("Course ID is incorrect");
+    print_error("Course ID is incorrect");
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $id);

@@ -222,7 +222,7 @@
                     $role->description = $description;
 
                     if (!update_record('role', $role)) {
-                        error('Could not update role!');
+                        print_error('Could not update role!');
                     }
 
                     // set proper legacy type
@@ -249,7 +249,7 @@
 
         case 'delete':
             if (in_array($roleid, $defaultroles)) {
-                error('This role is used as one of the default system roles, it can not be deleted');
+                print_error('This role is used as one of the default system roles, it can not be deleted');
             }
             if ($confirm and data_submitted() and confirm_sesskey()) {
                 if (!delete_role($roleid)) {
@@ -257,7 +257,7 @@
                     // partially deleted a role sitewide...?
                     mark_context_dirty($sitecontext->path);
 
-                    error('Could not delete role with ID '.$roleid);
+                    print_error('Could not delete role with ID '.$roleid);
                 }
                 // deleted a role sitewide...
                 mark_context_dirty($sitecontext->path);
@@ -286,7 +286,7 @@
                     $above = $roles[$rolesort[$role->sortorder - 1]];
 
                     if (!switch_roles($role, $above)) {
-                        error("Cannot move role with ID $roleid");
+                        print_error("Cannot move role with ID $roleid");
                     }
                 }
             }
@@ -301,7 +301,7 @@
                     $below = $roles[$rolesort[$role->sortorder + 1]];
 
                     if (!switch_roles($role, $below)) {
-                        error("Cannot move role with ID $roleid");
+                        print_error("Cannot move role with ID $roleid");
                     }
                 }
             }
@@ -436,7 +436,7 @@
                 $role = stripslashes_safe($newrole);
         } else {
             if(!$role = get_record('role', 'id', $roleid)) {
-                error('Incorrect role ID!');
+                print_error('Incorrect role ID!');
             }
             $role->legacytype = get_legacy_type($role->id);
         }

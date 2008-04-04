@@ -7,11 +7,11 @@
     $id = required_param('id',PARAM_INT);    // Week ID
 
     if (! $section = get_record("course_sections", "id", $id)) {
-        error("Course section is incorrect");
+        print_error("Course section is incorrect");
     }
 
     if (! $course = get_record("course", "id", $section->course)) {
-        error("Could not find the course!");
+        print_error("Could not find the course!");
     }
 
     require_login($course->id);
@@ -25,7 +25,7 @@
         $timenow = time();
 
         if (! set_field("course_sections", "summary", $form->summary, "id", $section->id)) {
-            error("Could not update the summary!");
+            print_error("Could not update the summary!");
         }
 
         add_to_log($course->id, "course", "editsection", "editsection.php?id=$section->id", "$section->section");

@@ -8,12 +8,12 @@
     $s = optional_param('s', '', PARAM_CLEAN);        // Old parameter:  username
 
     if (empty($CFG->registerauth)) {
-        error("Sorry, you may not use this page.");
+        print_error("Sorry, you may not use this page.");
     }
     $authplugin = get_auth_plugin($CFG->registerauth);
 
     if (!$authplugin->can_confirm()) {
-        error("Sorry, you may not use this page.");
+        print_error("Sorry, you may not use this page.");
     }
 
     if (!empty($data) || (!empty($p) && !empty($s))) {
@@ -45,7 +45,7 @@
             // The user has confirmed successfully, let's log them in
 
             if (!$USER = get_complete_user_data('username', $username)) {
-                error("Something serious is wrong with the database");
+                print_error("Something serious is wrong with the database");
             }
 
             set_moodle_cookie($USER->username);
@@ -65,10 +65,10 @@
             print_footer();
             exit;
         } else {
-            error("Invalid confirmation data");
+            print_error("Invalid confirmation data");
         }
     } else {
-        error(get_string("errorwhenconfirming"));
+        print_error("errorwhenconfirming");
     }
 
     redirect("$CFG->wwwroot/");

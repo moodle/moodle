@@ -16,11 +16,11 @@
     $qid = implode (',', $qids);
 
     if (! $cm = get_coursemodule_from_id('survey', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     require_login($course->id, false, $cm);
@@ -30,11 +30,11 @@
     require_capability('mod/survey:readresponses', $context);
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {
-        error("Survey ID was incorrect");
+        print_error("Survey ID was incorrect");
     }
 
     if (! $template = get_record("survey", "id", $survey->template)) {
-        error("Template ID was incorrect");
+        print_error("Template ID was incorrect");
     }
 
     $showscales = ($template->name != 'ciqname');
@@ -257,7 +257,7 @@
 
       case "question":
         if (!$question = get_record("survey_questions", "id", $qid)) {
-            error("Question doesn't exist");
+            print_error("Question doesn't exist");
         }
         $question->text = get_string($question->text, "survey");
 
@@ -317,7 +317,7 @@
 
       case "student":
          if (!$user = get_record("user", "id", $student)) {
-             error("Student doesn't exist");
+             print_error("Student doesn't exist");
          }
 
          print_heading(get_string("analysisof", "survey", fullname($user)));

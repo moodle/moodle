@@ -43,7 +43,7 @@ class profile_field_base {
      * @param  form  instance of the moodleform class
      */
     function edit_field_add(&$mform) {
-        error('This abstract method must be overriden');
+        print_error('This abstract method must be overriden');
     }
 
     
@@ -96,7 +96,7 @@ class profile_field_base {
         if ($dataid = get_field('user_info_data', 'id', 'userid', $data->userid, 'fieldid', $data->fieldid)) {
             $data->id = $dataid;
             if (!update_record('user_info_data', $data)) {
-                error('Error updating custom profile field!');
+                print_error('Error updating custom profile field!');
             }
         } else {
             insert_record('user_info_data', $data);

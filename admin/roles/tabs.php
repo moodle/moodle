@@ -61,16 +61,16 @@ if ($currenttab != 'update') {
         case CONTEXT_MODULE:
             // get module type?
             if (!$cm = get_record('course_modules','id',$context->instanceid)) {
-                error('Bad course module ID');
+                print_error('Bad course module ID');
             }
             if (!$module = get_record('modules','id',$cm->module)) {  //$module->name;
-                error('Bad module ID');
+                print_error('Bad module ID');
             }
             if (!$course = get_record('course','id',$cm->course)) {
-                error('Bad course ID');
+                print_error('Bad course ID');
             }
             if (!$instance = get_record($module->name, 'id', $cm->instance)) {
-                error("The required instance of this module doesn't exist");
+                print_error("The required instance of this module doesn't exist");
             }
 
             require_login($course);

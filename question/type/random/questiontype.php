@@ -54,11 +54,11 @@ class random_qtype extends default_questiontype {
         $form->name = '';
         $question = parent::save_question($question, $form, $course);
         if (!$category = get_record('question_categories', 'id', $question->category)) {
-            error('Could retrieve question category');
+            print_error('Could retrieve question category');
         }
         $question->name = $this->question_name($category);
         if (!set_field('question', 'name', $question->name, 'id', $question->id)) {
-            error('Could not update random question name');
+            print_error('Could not update random question name');
         }
         return $question;
     }

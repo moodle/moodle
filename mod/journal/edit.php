@@ -5,21 +5,21 @@
     $id = required_param('id', PARAM_INT);    // Course Module ID
 
     if (! $cm = get_coursemodule_from_id('journal', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     require_login($course->id, false, $cm);
 
     if (isguest()) {
-        error("Guests are not allowed to edit journals", $_SERVER["HTTP_REFERER"]);
+        print_error("Guests are not allowed to edit journals", '', $_SERVER["HTTP_REFERER"]);
     }
 
     if (! $journal = get_record("journal", "id", $cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     $entry = get_record("journal_entries", "userid", $USER->id, "journal", $journal->id);
@@ -39,7 +39,7 @@
             $newentry->format = $form->format;
             $newentry->modified = $timenow;
             if (! update_record("journal_entries", $newentry)) {
-                error("Could not update your journal");
+                print_error("Could not update your journal");
             }
             add_to_log($course->id, "journal", "update entry", "view.php?id=$cm->id", "$newentry->id", $cm->id);
         } else {
@@ -49,7 +49,7 @@
             $newentry->format = $form->format;
             $newentry->modified = $timenow;
             if (! $newentry->id = insert_record("journal_entries", $newentry)) {
-                error("Could not insert a new journal entry");
+                print_error("Could not insert a new journal entry");
             }
             add_to_log($course->id, "journal", "add entry", "view.php?id=$cm->id", "$newentry->id", $cm->id);
         }

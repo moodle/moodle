@@ -15,7 +15,7 @@
 require_once dirname(dirname(dirname(__FILE__))) . '/config.php';
 
 if (!is_enabled_auth('mnet')) {
-    error('mnet is disabled');
+    print_error('mnet is disabled');
 }
 
 // grab the GET params - wantsurl could be anything - take it
@@ -28,7 +28,7 @@ $mnetauth = get_auth_plugin('mnet');
 $url      = $mnetauth->start_jump_session($hostid, $wantsurl);
 
 if (empty($url)) {
-    error('DEBUG: Jump session was not started correctly or blank URL returned.'); // TODO: errors
+    print_error('DEBUG: Jump session was not started correctly or blank URL returned.'); // TODO: errors
 }
 redirect($url);
 

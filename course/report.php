@@ -6,7 +6,7 @@
     $id = required_param('id', PARAM_INT);   // course id to import TO
 
     if (!$course = get_record('course', 'id', $id)) {
-        error("That's an invalid course id");
+        print_error("That's an invalid course id");
     }
 
     require_login($course->id);

@@ -10,15 +10,15 @@ require_once("constants.php");
 $id = optional_param('id', 0, PARAM_INT);    // Course Module ID, or
 
 if (! $cm = get_coursemodule_from_id('lams', $id)) {
-    error("Course Module ID was incorrect");
+    print_error("Course Module ID was incorrect");
 }
 
 if (! $course = get_record("course", "id", $cm->course)) {
-    error("Course is misconfigured");
+    print_error("Course is misconfigured");
 }
 
 if (! $lams = get_record("lams", "id", $cm->instance)) {
-    error("Course module is incorrect");
+    print_error("Course module is incorrect");
 }
 
 require_login($course, true, $cm);

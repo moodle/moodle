@@ -15,16 +15,16 @@
 
 
     if (! $record = get_record('data_records', 'id', $rid)) {
-        error('Record ID is incorrect');
+        print_error('Record ID is incorrect');
     }
     if (! $data = get_record('data', 'id', $record->dataid)) {
-        error('Data ID is incorrect');
+        print_error('Data ID is incorrect');
     }
     if (! $course = get_record('course', 'id', $data->course)) {
-        error('Course is misconfigured');
+        print_error('Course is misconfigured');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
 
     require_login($course->id, false, $cm);
@@ -33,13 +33,13 @@
 
     if ($commentid) {
         if (! $comment = get_record('data_comments', 'id', $commentid)) {
-            error('Comment ID is misconfigured');
+            print_error('Comment ID is misconfigured');
         }
         if ($comment->recordid != $record->id) {
-            error('Comment ID is misconfigured');
+            print_error('Comment ID is misconfigured');
         }
         if (!has_capability('mod/data:managecomments', $context) && $comment->userid != $USER->id) {
-            error('Comment is not yours to edit!');
+            print_error('Comment is not yours to edit!');
         }
     } else {
         $comment = false;
@@ -81,7 +81,7 @@
             if (insert_record('data_comments',$newcomment)) {
                 redirect('view.php?rid='.$record->id.'&amp;page='.$page);
             } else {
-                error('Error while saving comment.');
+                print_error('Error while saving comment.');
             }
 
         break;
@@ -100,7 +100,7 @@
             if (update_record('data_comments',$updatedcomment)) {
                 redirect('view.php?rid='.$record->id.'&amp;page='.$page);
             } else {
-                error('Error while saving comment.');
+                print_error('Error while saving comment.');
             }
         break;
 

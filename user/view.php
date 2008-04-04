@@ -17,11 +17,11 @@
     }
 
     if (! $user = get_record("user", "id", $id) ) {
-        error("No such user in this course");
+        print_error("No such user in this course");
     }
 
     if (! $course = get_record("course", "id", $course) ) {
-        error("No such course id");
+        print_error("No such course id");
     }
 
 /// Make sure the current user is allowed to see this user
@@ -116,7 +116,7 @@
             if (!$gtrue) {
                 $navigation = build_navigation($navlinks);
                 print_header("$strpersonalprofile: ", "$strpersonalprofile: ", $navigation, "", "", true, "&nbsp;", navmenu($course));
-                error(get_string("groupnotamember"), "../course/view.php?id=$course->id");
+                print_error("groupnotamember", '', "../course/view.php?id=$course->id");
             }
         }
     }

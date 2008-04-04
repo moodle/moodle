@@ -24,19 +24,19 @@
     }
 
     if (!$site = get_site()) {
-        error("Site isn't defined!");
+        print_error("Site isn't defined!");
     }
 
     if (empty($id)) {
-        error("Category not known!");
+        print_error("Category not known!");
     }
 
     if (!$context = get_context_instance(CONTEXT_COURSECAT, $id)) {
-        error("Category not known!");
+        print_error("Category not known!");
     }
 
     if (!$category = get_record("course_categories", "id", $id)) {
-        error("Category not known!");
+        print_error("Category not known!");
     }
 
     if (has_capability('moodle/course:create', $context)) {
@@ -49,7 +49,7 @@
 
     } else {
         if (!$category->visible) {
-            error(get_string('notavailable', 'error'));
+            print_error('notavailable', 'error');
         }
         $navbaritem = print_course_search("", true, "navbar");
         $adminediting = false;
@@ -170,7 +170,7 @@
             require_capability('moodle/category:update', get_context_instance(CONTEXT_COURSECAT, $moveto));
 
             if (! $destcategory = get_record("course_categories", "id", $data->moveto)) {
-                error("Error finding the category");
+                print_error("Error finding the category");
             }
 
 

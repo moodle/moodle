@@ -76,7 +76,7 @@ class edit_field_save extends XMLDBAction {
     /// Do the job, setting result as needed
 
         if (!data_submitted('nomatch')) { ///Basic prevention
-            error('Wrong action call');
+            print_error('Wrong action call');
         }
 
     /// Get parameters

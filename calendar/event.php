@@ -107,10 +107,10 @@
             $title = get_string('deleteevent', 'calendar');
             $event = get_record('event', 'id', $eventid);
             if($event === false) {
-                error('Invalid event');
+                print_error('Invalid event');
             }
             if(!calendar_edit_event_allowed($event)) {
-                error('You are not authorized to do this');
+                print_error('You are not authorized to do this');
             }
         break;
 
@@ -120,10 +120,10 @@
             $repeats = optional_param('repeats', 0, PARAM_INT);
 
             if($event === false) {
-                error('Invalid event');
+                print_error('Invalid event');
             }
             if(!calendar_edit_event_allowed($event)) {
-                error('You are not authorized to do this');
+                print_error('You are not authorized to do this');
             }
 
             if($form = data_submitted()) {
@@ -211,7 +211,7 @@
                     $form->timeduration = 0;
                 }
                 if(!calendar_add_event_allowed($form)) {
-                    error('You are not authorized to do this');
+                    print_error('You are not authorized to do this');
                 }
                 validate_form($form, $err);
                 if (count($err) == 0) {
@@ -488,7 +488,7 @@
                 case 'select':
                 break;
                 default:
-                    error('Unsupported event type');
+                    print_error('Unsupported event type');
             }
 
             $form->format = $defaultformat;
@@ -504,7 +504,7 @@
                     $courseid = SITEID;
                 }
                 if (!$course = get_record('course', 'id', $courseid)) {
-                    error('Incorrect course ID');
+                    print_error('Incorrect course ID');
                 }
                 
                 $groupid = groups_get_course_group($course);
@@ -593,7 +593,7 @@ function validate_form(&$form, &$err) {
         // Timestamps must be >= course startdate
         $course = get_record('course', 'id', $form->courseid);
         if($course === false) {
-            error('Event belongs to invalid course');
+            print_error('Event belongs to invalid course');
         }
         else if($form->timestart < $course->startdate) {
             $err['timestart'] = get_string('errorbeforecoursestart', 'calendar');

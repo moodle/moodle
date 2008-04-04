@@ -30,7 +30,7 @@
     //reset and diagnose lang cache permissions
     @unlink($CFG->dataroot.'/cache/languages');
     if (file_exists($CFG->dataroot.'/cache/languages')) {
-        error('Language cache can not be deleted, please fix permissions in dataroot/cache/languages!');
+        print_error('Language cache can not be deleted, please fix permissions in dataroot/cache/languages!');
     }
     get_list_of_languages(true); //refresh lang cache
 

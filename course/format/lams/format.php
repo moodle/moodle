@@ -39,7 +39,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 if (($marker >=0) and has_capability('moodle/course:setcurrentsection', $context) and confirm_sesskey()) {
     $course->marker = $marker;
     if (! set_field("course", "marker", $marker, "id", $course->id)) {
-        error("Could not mark that topic for this course");
+        print_error("Could not mark that topic for this course");
     }
 }
 

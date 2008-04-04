@@ -11,16 +11,16 @@
     $sid           = optional_param('sid', 0, PARAM_INT);
 
     if (! $submission = get_record('workshop_submissions', 'id', $sid)) {
-        error("Incorrect submission id");
+        print_error("Incorrect submission id");
     }
     if (! $workshop = get_record("workshop", "id", $submission->workshopid)) {
-        error("Submission is incorrect");
+        print_error("Submission is incorrect");
     }
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Workshop is misconfigured");
+        print_error("Workshop is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
-        error("No coursemodule found");
+        print_error("No coursemodule found");
     }
 
     require_login($course->id, false, $cm);
@@ -89,7 +89,7 @@
                 $assessment->generalcomment = '';
                 $assessment->teachercomment = '';
                 if (!$assessment->id = insert_record("workshop_assessments", $assessment)) {
-                    error("Could not insert workshop assessment!");
+                    print_error("Could not insert workshop assessment!");
                 }
                 // if it's the teacher and the workshop is error banded set all the elements to Yes
                 if (workshop_is_teacher($workshop) and ($workshop->gradingstrategy == 2)) {
@@ -101,7 +101,7 @@
                         $element->feedback = '';
                         $element->grade = 1;
                         if (!$element->id = insert_record("workshop_grades", $element)) {
-                            error("Could not insert workshop grade!");
+                            print_error("Could not insert workshop grade!");
                         }
                     }
                     // now set the adjustment
@@ -112,7 +112,7 @@
                     $element->elementno = $i;
                     $element->grade = 0;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
+                        print_error("Could not insert workshop grade!");
                     }
                 }
             }

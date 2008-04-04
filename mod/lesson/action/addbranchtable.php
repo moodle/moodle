@@ -20,7 +20,7 @@
     $jump[LESSON_EOL] = get_string("endoflesson", "lesson");
     if (!optional_param('firstpage', 0, PARAM_INT)) {
         if (!$apageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
-            error("Add page: first page not found");
+            print_error("Add page: first page not found");
         }
         while (true) {
             if ($apageid) {

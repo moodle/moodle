@@ -11,15 +11,15 @@
     $newonly = optional_param('newonly', 0, PARAM_BOOL); // show only new messages
 
     if (!$chat = get_record('chat', 'id', $id)) {
-        error('Could not find that chat room!');
+        print_error('Could not find that chat room!');
     }
 
     if (!$course = get_record('course', 'id', $chat->course)) {
-        error('Could not find the course this belongs to!');
+        print_error('Could not find the course this belongs to!');
     }
 
     if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -30,7 +30,7 @@
      if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
         if ($groupid = groups_get_activity_group($cm)) {
             if (!$group = groups_get_group($groupid, false)) {
-                error("That group (id $groupid) doesn't exist!");
+                print_error("That group (id $groupid) doesn't exist!");
             }
             $groupname = ': '.$group->name;
         } else {
@@ -45,11 +45,11 @@
     $strchats = get_string('modulenameplural', 'chat');
     $stridle  = get_String('idle', 'chat');
     if (!$chat_sid = chat_login_user($chat->id, 'basic', $groupid, $course)) {
-        error('Could not log in to chat room!!');
+        print_error('Could not log in to chat room!!');
     }
 
     if (!$chatusers = chat_get_users($chat->id, $groupid, $cm->groupingid)) {
-        error(get_string('errornousers', 'chat'));
+        print_error('errornousers', 'chat');
     }
 
     set_field('chat_users', 'lastping', time(), 'sid', $chat_sid);
@@ -81,7 +81,7 @@
             $newmessage->message = $message;
             $newmessage->timestamp = time();
             if (!insert_record('chat_messages', $newmessage)) {
-                error('Could not insert a chat message!');
+                print_error('Could not insert a chat message!');
             }
 
             set_field('chat_users', 'lastmessageping', time(), 'sid', $chat_sid);

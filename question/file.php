@@ -20,9 +20,9 @@
 
     // relative path must start with '/', because of backup/restore!!!
     if (!$relativepath) {
-        error('No valid arguments supplied or incorrect server configuration');
+        print_error('No valid arguments supplied or incorrect server configuration');
     } else if ($relativepath{0} != '/') {
-        error('No valid arguments supplied, path does not start with slash!');
+        print_error('No valid arguments supplied, path does not start with slash!');
     }
 
     $pathname = $CFG->dataroot.'/questionattempt'.$relativepath;
@@ -32,7 +32,7 @@
 
     // check for the right number of directories in the path
     if (count($args) != 3) {
-        error('Invalid arguments supplied');
+        print_error('Invalid arguments supplied');
     }
 
     // security: require login
@@ -81,6 +81,6 @@
     function question_attempt_not_found() {
         global $CFG;
         header('HTTP/1.0 404 not found');
-        error(get_string('filenotfound', 'error'), $CFG->wwwroot); //this is not displayed on IIS??
+        print_error('filenotfound', 'error', $CFG->wwwroot); //this is not displayed on IIS??
     }
 ?>

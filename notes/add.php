@@ -9,7 +9,7 @@
 
 /// locate course information
     if (!($course = get_record('course', 'id', $courseid))) {
-        error('Incorrect course id found');
+        print_error('Incorrect course id found');
     }
 
 /// require login to access notes
@@ -24,7 +24,7 @@
 
 /// locate user information
     if (!($user = get_record('user', 'id', $userid))) {
-        error('Incorrect user id found');
+        print_error('Incorrect user id found');
     }
 
 /// build-up form

@@ -35,7 +35,7 @@ if (!data_submitted() or !$search or !$replace or !confirm_sesskey()) {   /// Pr
 print_simple_box_start('center');
 
 if (!db_replace($search, $replace)) {
-    error('An error has occured during this process'); 
+    print_error('An error has occured during this process'); 
 }
 
 print_simple_box_end();

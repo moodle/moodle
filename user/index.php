@@ -25,17 +25,17 @@
 
     if ($contextid) {
         if (! $context = get_context_instance_by_id($contextid)) {
-            error("Context ID is incorrect");
+            print_error("Context ID is incorrect");
         }
         if (! $course = get_record('course', 'id', $context->instanceid)) {
-            error("Course ID is incorrect");
+            print_error("Course ID is incorrect");
         }
     } else {
         if (! $course = get_record('course', 'id', $courseid)) {
-            error("Course ID is incorrect");
+            print_error("Course ID is incorrect");
         }
         if (! $context = get_context_instance(CONTEXT_COURSE, $course->id)) {
-            error("Context ID is incorrect");
+            print_error("Context ID is incorrect");
         }
     }
     // not needed anymore
@@ -520,7 +520,7 @@
 
     if ($roleid) {
         if (!$currentrole = get_record('role','id',$roleid)) {
-            error('That role does not exist');
+            print_error('That role does not exist');
         }
         $a->number = $totalcount;
         // MDL-12217, use course specific rolename

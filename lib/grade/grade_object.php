@@ -110,7 +110,7 @@ class grade_object {
      * @return object grade_object instance or false if none found.
      */
     function fetch($params) {
-        error('Abstract method fetch() not overridden in '.get_class($this));
+        print_error('Abstract method fetch() not overridden in '.get_class($this));
     }
 
     /**
@@ -121,7 +121,7 @@ class grade_object {
      * @return array array of grade_object insatnces or false if none found.
      */
     function fetch_all($params) {
-        error('Abstract method fetch_all() not overridden in '.get_class($this));
+        print_error('Abstract method fetch_all() not overridden in '.get_class($this));
     }
 
     /**
@@ -133,7 +133,7 @@ class grade_object {
         if ($instances = grade_object::fetch_all_helper($table, $classname, $params)) {
             if (count($instances) > 1) {
                 // we should not tolerate any errors here - problems might appear later
-                error('Found more than one record in fetch() !');
+                print_error('Found more than one record in fetch() !');
             }
             return reset($instances);
         } else {

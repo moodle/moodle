@@ -455,7 +455,7 @@ function hotpot_is_visible(&$cm) {
 
     if (!isset($cm->sectionvisible)) {
         if (! $section = get_record('course_sections', 'id', $cm->section)) {
-            error('Course module record contains invalid section');
+            print_error('Course module record contains invalid section');
         }
         $cm->sectionvisible = $section->visible;
     }
@@ -569,7 +569,7 @@ function hotpot_add_chain(&$hotpot) {
             $hotpot->reference = addslashes($hotpot->reference);
 
             if (!$hotpot->instance = insert_record("hotpot", $hotpot)) {
-                error("Could not add a new instance of $hotpot->modulename", "view.php?id=$hotpot->course");
+                print_error("Could not add a new instance of $hotpot->modulename", '', "view.php?id=$hotpot->course");
             }
 
             // store (hotpot table) id of start of chain
@@ -582,14 +582,14 @@ function hotpot_add_chain(&$hotpot) {
             }
 
             if (! $hotpot->coursemodule = add_course_module($hotpot)) {
-                error("Could not add a new course module");
+                print_error("Could not add a new course module");
             }
             if (! $sectionid = add_mod_to_section($hotpot) ) {
-                error("Could not add the new course module to that section");
+                print_error("Could not add the new course module to that section");
             }
 
             if (! set_field("course_modules", "section", $sectionid, "id", $hotpot->coursemodule)) {
-                error("Could not update the course module with the correct section");
+                print_error("Could not update the course module with the correct section");
             }
 
             add_to_log($hotpot->course, "course", "add mod",
@@ -868,7 +868,7 @@ function hotpot_update_chain(&$hotpot) {
 
                 // update $thishotpot, if required
                 if ($require_update && !update_record("hotpot", $thishotpot)) {
-                    error("Could not update the $hotpot->modulename", "view.php?id=$hotpot->course");
+                    print_error("Could not update the $hotpot->modulename", '', "view.php?id=$hotpot->course");
                 }
             }
         } // end foreach $ids
@@ -1586,7 +1586,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
         // check xmlize functions are available
         if (! function_exists("xmlize")) {
-            error('xmlize functions are not available');
+            print_error('xmlize functions are not available');
         }
 
         $this->read_file = $read_file;
@@ -1611,7 +1611,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         if (empty($this->course) || empty($this->reference)) {
             $this->error = get_string('error_nocourseorfilename', 'hotpot');
             if ($this->report_errors) {
-                error($this->error);
+                print_error($this->error);
             }
             return;
         }
@@ -1647,7 +1647,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
             if (!file_exists($this->filepath) || !is_readable($this->filepath)) {
                 $this->error = get_string('error_couldnotopensourcefile', 'hotpot', $this->filepath);
                 if ($this->report_errors) {
-                    error($this->error, $this->course_homeurl);
+                    print_error($this->error, '', $this->course_homeurl);
                 }
                 return;
             }
@@ -1754,7 +1754,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
                     if (!file_exists($this->template_filepath) || !is_readable($this->template_filepath)) {
                         $this->error = get_string('error_couldnotopentemplate', 'hotpot', $this->template_dir);
                         if ($this->report_errors) {
-                            error($this->error, $this->course_homeurl);
+                            print_error($this->error, '', $this->course_homeurl);
                         }
                         return;
                     }
@@ -2206,7 +2206,7 @@ function hotpot_add_response(&$attempt, &$question, &$response) {
         if (!$question->id = get_field('hotpot_questions', 'id', 'hotpot', $attempt->hotpot, 'md5key', $question->md5key, 'name', $question->name)) {
             // add question record
             if (!$question->id = insert_record('hotpot_questions', $question)) {
-                error("Could not add question record (attempt_id=$attempt->id): ".$db->ErrorMsg(), $next_url);
+                print_error("Could not add question record (attempt_id=$attempt->id): ".$db->ErrorMsg(), '', $next_url);
             }
         }
 
@@ -2231,7 +2231,7 @@ function hotpot_add_response(&$attempt, &$question, &$response) {
 
             // add response record
             if(!$response->id = insert_record('hotpot_responses', $response)) {
-                error("Could not add response record (attempt_id=$attempt->id, question_id=$question->id): ".$db->ErrorMsg(), $next_url);
+                print_error("Could not add response record (attempt_id=$attempt->id, question_id=$question->id): ".$db->ErrorMsg(), '', $next_url);
             }
 
             // we can stop looping now
@@ -2385,7 +2385,7 @@ function hotpot_string_id($str) {
             // try and add the new string record
             if (!$id = insert_record('hotpot_strings', $record)) {
                 global $db;
-                error("Could not add string record for '".htmlspecialchars($str)."': ".$db->ErrorMsg());
+                print_error("Could not add string record for '".htmlspecialchars($str)."': ".$db->ErrorMsg());
             }
         }
     }

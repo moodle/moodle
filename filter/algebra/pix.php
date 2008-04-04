@@ -35,7 +35,7 @@
         $image    = $args[0];
         $pathname = $CFG->dataroot.'/filter/algebra/'.$image;
     } else {
-        error('No valid arguments supplied');
+        print_error('No valid arguments supplied');
     }
 
     if (!file_exists($pathname)) {

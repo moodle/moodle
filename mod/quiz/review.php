@@ -18,16 +18,16 @@
     $showall = optional_param('showall', 0, PARAM_BOOL);
 
     if (!$attempt = quiz_load_attempt($attemptid)) {
-        error("No such attempt ID exists");
+        print_error("No such attempt ID exists");
     }
     if (! $quiz = get_record("quiz", "id", $attempt->quiz)) {
-        error("The quiz with id $attempt->quiz belonging to attempt $attempt is missing");
+        print_error("The quiz with id $attempt->quiz belonging to attempt $attempt is missing");
     }
     if (! $course = get_record("course", "id", $quiz->course)) {
-        error("The course with id $quiz->course that the quiz with id $quiz->id belongs to is missing");
+        print_error("The course with id $quiz->course that the quiz with id $quiz->id belongs to is missing");
     }
     if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-        error("The course module for the quiz with id $quiz->id is missing");
+        print_error("The course module for the quiz with id $quiz->id is missing");
     }
 
 /// Check login and get contexts.
@@ -81,7 +81,7 @@
 
 /// Restore the question sessions to their most recent states creating new sessions where required.
     if (!$states = get_question_states($questions, $quiz, $attempt)) {
-        error('Could not restore question sessions');
+        print_error('Could not restore question sessions');
     }
 
 /// Work out appropriate title.

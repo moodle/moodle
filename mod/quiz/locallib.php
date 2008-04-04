@@ -92,7 +92,7 @@ function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $isp
     } else {
     /// Build on last attempt.
         if (empty($lastattempt)) {
-            error(get_string('cannotfindprevattempt', 'quiz'));
+            print_error('cannotfindprevattempt', 'quiz');
         }
         $attempt = $lastattempt;
     }

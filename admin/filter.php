@@ -31,7 +31,7 @@
 
         // check session key
         if (!confirm_sesskey()) {
-             error( get_string('confirmsesskeybad', 'error' ) );
+             print_error('confirmsesskeybad', 'error');
         }
 
         $configpath = $CFG->dirroot.'/filter/'.$filtername.'/filterconfig.php';

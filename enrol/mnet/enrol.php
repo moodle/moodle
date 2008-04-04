@@ -363,7 +363,7 @@ class enrolment_plugin_mnet {
         // require_capability('moodle/role:assign', $context, NULL, false);
 
         if (!role_unassign(0, $userrecord->id, 0, $context->id)) {
-            error("An error occurred while trying to unenrol that person.");
+            print_error("An error occurred while trying to unenrol that person.");
         }
 
         return true;
@@ -500,7 +500,7 @@ class enrolment_plugin_mnet {
                 list($code, $errormessage) = array_map('trim',explode(':', $errormessage, 2));
                 $message .= "ERROR $code:<br/>$errormessage<br/>";
             }
-            error("RPC enrol/mnet/available_courses:<br/>$message");
+            print_error("RPC enrol/mnet/available_courses:<br/>$message");
         }
         return false;
     }

@@ -14,11 +14,11 @@
     $perpage = optional_param('perpage', 100, PARAM_INT);
 
     if (! $course = get_record("course", "id", $id)) {
-        error("Course id is incorrect.");
+        print_error("Course id is incorrect.");
     }
 
     if (! $user = get_record("user", "id", $user)) {
-        error("User ID is incorrect");
+        print_error("User ID is incorrect");
     }
 
     //require_login($course);
@@ -29,7 +29,7 @@
 
     // if in either context, we can read report, then we can proceed
     if (!(has_capability('moodle/site:viewreports', $coursecontext) or ($course->showreports and $USER->id == $user->id) or has_capability('moodle/user:viewuseractivitiesreport', $personalcontext))) {
-        error("You are not allowed to look at this page");
+        print_error("You are not allowed to look at this page");
     }
 
     add_to_log($course->id, "course", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id");
@@ -102,7 +102,7 @@
         case 'stats':
 
             if (empty($CFG->enablestats)) {
-                error("Stats is not enabled.");
+                print_error("Stats is not enabled.");
             }
 
             require_once($CFG->dirroot.'/lib/statslib.php');
@@ -127,7 +127,7 @@
             $timeoptions = stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$earliestweek,$earliestmonth);
 
             if (empty($timeoptions)) {
-                error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
+                print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
             }
 
             // use the earliest.
@@ -146,7 +146,7 @@
             $stats = get_records_sql($sql);
 
             if (empty($stats)) {
-                error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
+                print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
             }
 
             // MDL-10818, do not display broken graph when user has no permission to view graph

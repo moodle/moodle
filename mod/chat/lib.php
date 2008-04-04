@@ -496,7 +496,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
             $message->timestamp = time();
 
             if (!insert_record('chat_messages', $message)) {
-                error('Could not insert a chat message!');
+                print_error('Could not insert a chat message!');
             }
         }
     }
@@ -526,7 +526,7 @@ function chat_delete_old_users() {
             $message->timestamp = time();
 
             if (!insert_record('chat_messages', $message)) {
-                error('Could not insert a chat message!');
+                print_error('Could not insert a chat message!');
             }
         }
     }

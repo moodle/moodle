@@ -840,7 +840,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
     if ($userid) {
         // one raw grade updated for one user
         if (empty($updated_item)) {
-            error("updated_item_id can not be null!");
+            print_error("updated_item_id can not be null!");
         }
         if ($course_item->needsupdate) {
             $updated_item->force_regrading();
@@ -951,7 +951,7 @@ function grade_grab_legacy_grades($courseid) {
     global $CFG;
 
     if (!$mods = get_list_of_plugins('mod') ) {
-        error('No modules installed!');
+        print_error('No modules installed!');
     }
 
     foreach ($mods as $mod) {
@@ -997,7 +997,7 @@ function grade_grab_course_grades($courseid, $modname=null) {
     }
 
     if (!$mods = get_list_of_plugins('mod') ) {
-        error('No modules installed!');
+        print_error('No modules installed!');
     }
 
     foreach ($mods as $mod) {

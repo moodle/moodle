@@ -25,15 +25,15 @@
 
     // get some esential stuff...
     if (! $cm = get_coursemodule_from_id('exercise', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     if (! $exercise = get_record("exercise", "id", $cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     require_login($course->id, false, $cm);
@@ -136,7 +136,7 @@
     elseif ($action == 'makeleaguetableavailable') {
 
         if (!isteacheredit($course->id)) {
-            error("Only teachers with editing permissions can do this.");
+            print_error("Only teachers with editing permissions can do this.");
         }
 
         set_field("exercise", "phase", 3, "id", "$exercise->id");
@@ -155,7 +155,7 @@
     elseif ($action == 'openexercise') {
 
         if (!isteacheredit($course->id)) {
-            error("Only teachers with editing permissions can do this.");
+            print_error("Only teachers with editing permissions can do this.");
         }
 
         // move to phase 2, check that teacher has made enough submissions
@@ -177,7 +177,7 @@
     elseif ($action == 'setupassignment') {
 
         if (!isteacher($course->id)) {
-            error("Only teachers with editing permissions can do this.");
+            print_error("Only teachers with editing permissions can do this.");
         }
 
         set_field("exercise", "phase", 1, "id", "$exercise->id");
@@ -312,7 +312,7 @@
     elseif ($action == 'submitassignment') {
 
         if (!has_capability('mod/exercise:assess', $context)) {
-            error("Only teachers with editing permissions can do this.");
+            print_error("Only teachers with editing permissions can do this.");
         }
 
         exercise_print_assignment_info($exercise);
@@ -332,7 +332,7 @@
     elseif ($action == 'teachersview') {
 
         if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
+            print_error("Only teachers can look at this page");
         }
 
         /// Check to see if groups are being used in this exercise
@@ -404,7 +404,7 @@
 
     /*************** no man's land **************************************/
     else {
-        error("Fatal Error: Unknown Action: ".$action."\n");
+        print_error("Fatal Error: Unknown Action: ".$action."\n");
     }
 
     print_footer($course);

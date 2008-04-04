@@ -8,7 +8,7 @@
  */
 
 if (empty($quiz)) {
-    error('You cannot call this script in that way');
+    print_error('You cannot call this script in that way');
 }
 if (!isset($currenttab)) {
     $currenttab = '';

@@ -26,13 +26,13 @@
 
     // get some useful stuff...
     if (! $cm = get_coursemodule_from_id('workshop', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $workshop = get_record("workshop", "id", $cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     require_login($course->id, false, $cm);
@@ -569,7 +569,7 @@
 
     /*************** no man's land **************************************/
     else {
-        error("Fatal Error: Unknown Action: ".$action."\n");
+        print_error("Fatal Error: Unknown Action: ".$action."\n");
     }
 
 

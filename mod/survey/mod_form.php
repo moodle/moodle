@@ -18,7 +18,7 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
 
         if (!$options = get_records_menu("survey", "template", 0, "name", "id, name")) {
-            error('No survey templates found!');
+            print_error('No survey templates found!');
         }
 
         foreach ($options as $id => $name) {

@@ -224,7 +224,7 @@ class user_filter_type {
      * @return string the filtering condition or null if the filter is disabled
      */
     function get_sql_filter($data) {
-        error('Abstract method get_sql_filter() called - must be implemented');
+        print_error('Abstract method get_sql_filter() called - must be implemented');
     }
 
     /**
@@ -233,7 +233,7 @@ class user_filter_type {
      * @return mixed array filter data or false when filter not set
      */
     function check_data($formdata) {
-        error('Abstract method check_data() called - must be implemented');
+        print_error('Abstract method check_data() called - must be implemented');
     }
 
     /**
@@ -241,7 +241,7 @@ class user_filter_type {
      * @param object $mform a MoodleForm object to setup
      */
     function setupForm(&$mform) {
-        error('Abstract method setupForm() called - must be implemented');
+        print_error('Abstract method setupForm() called - must be implemented');
     }
 
     /**
@@ -250,6 +250,6 @@ class user_filter_type {
      * @return string active filter label
      */
     function get_label($data) {
-        error('Abstract method get_label() called - must be implemented');
+        print_error('Abstract method get_label() called - must be implemented');
     }
 }

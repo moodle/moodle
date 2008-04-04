@@ -9,27 +9,27 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
-            error("Course Module ID was incorrect");
+            print_error("Course Module ID was incorrect");
         }
         if (! $course = get_record("course", "id", $cm->course)) {
-            error("Course is misconfigured");
+            print_error("Course is misconfigured");
         }
         if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
-            error("Course module is incorrect");
+            print_error("Course module is incorrect");
         }
     } else {
         if (! $hotpot = get_record("hotpot", "id", $hp)) {
-            error("Course module is incorrect");
+            print_error("Course module is incorrect");
         }
         if (! $course = get_record("course", "id", $hotpot->course)) {
-            error("Course is misconfigured");
+            print_error("Course is misconfigured");
         }
         if (! $cm = get_coursemodule_from_instance("hotpot", $hotpot->id, $course->id)) {
-            error("Course Module ID was incorrect");
+            print_error("Course Module ID was incorrect");
         }
     }
     if (! $attempt = get_record("hotpot_attempts", "id", $attempt)) {
-        error("Attempt ID was incorrect");
+        print_error("Attempt ID was incorrect");
     }
 
     require_login($course, true, $cm);
@@ -37,13 +37,13 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (!has_capability('mod/hotpot:viewreport',$context)) {
         if (!$hotpot->review) {
-            error(get_string("noreview", "quiz"));
+            print_error("noreview", "quiz");
         }
         //if (time() < $hotpot->timeclose) {
-        //  error(get_string("noreviewuntil", "quiz", userdate($hotpot->timeclose)));
+        //  print_error("noreviewuntil", "quiz", '', userdate($hotpot->timeclose));
         //}
         if ($attempt->userid != $USER->id) {
-            error("This is not your attempt!");
+            print_error("This is not your attempt!");
         }
     }
     add_to_log($course->id, "hotpot", "review", "review.php?id=$cm->id&attempt=$attempt->id", "$hotpot->id", "$cm->id");

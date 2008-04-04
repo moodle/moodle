@@ -144,7 +144,7 @@ function include_help_for_each_module($file, $langs, $helpdir) {
     global $CFG;
 
     if (!$modules = get_records('modules', 'visible', 1)) {
-        error('No modules found!!');        // Should never happen
+        print_error('No modules found!!');        // Should never happen
     }
     
     $grade = new stdClass();

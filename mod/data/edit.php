@@ -35,24 +35,24 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('data', $id)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
         if (! $course = get_record('course', 'id', $cm->course)) {
-            error('Course is misconfigured');
+            print_error('Course is misconfigured');
         }
         if (! $data = get_record('data', 'id', $cm->instance)) {
-            error('Course module is incorrect');
+            print_error('Course module is incorrect');
         }
 
     } else {
         if (! $data = get_record('data', 'id', $d)) {
-            error('Data ID is incorrect');
+            print_error('Data ID is incorrect');
         }
         if (! $course = get_record('course', 'id', $data->course)) {
-            error('Course is misconfigured');
+            print_error('Course is misconfigured');
         }
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
     }
 
@@ -82,7 +82,7 @@
 
     if ($rid) {    // So do you have access?
         if (!(has_capability('mod/data:manageentries', $context) or data_isowner($rid)) or !confirm_sesskey() ) {
-            error(get_string('noaccess','data'));
+            print_error('noaccess','data');
         }
     }
 
@@ -180,7 +180,7 @@
         } else { /// Add some new records
 
             if (!data_user_can_add_entry($data, $currentgroup, $groupmode)) {
-                error('Can not add entries!');
+                print_error('Can not add entries!');
             }
 
         /// Check if maximum number of entry as specified by this database is reached
@@ -341,7 +341,7 @@
 
     // Print the stuff that need to come after the form fields.
     if (!$fields = get_records('data_fields', 'dataid', $data->id)) {
-        error(get_string('nofieldindatabase', 'data'));
+        print_error('nofieldindatabase', 'data');
     }
     foreach ($fields as $eachfield) {
         $field = data_get_field($eachfield, $data);

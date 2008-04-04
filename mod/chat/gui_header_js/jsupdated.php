@@ -32,18 +32,18 @@
     $chat_lastid   = optional_param('chat_lastid',    0, PARAM_INT);
 
     if (!$chatuser = get_record('chat_users', 'sid', $chat_sid)) {
-        error('Not logged in!');
+        print_error('Not logged in!');
     }
 
     //Get the minimal course
     if (!$course = get_record('course','id',$chatuser->course,'','','','','id,theme,lang')) {
-        error('incorrect course id');
+        print_error('incorrect course id');
     }
 
     //Get the user theme and enough info to be used in chat_format_message() which passes it along to
     // chat_format_message_manually() -- and only id and timezone are used.
     if (!$USER = get_record('user','id',$chatuser->userid)) { // no optimisation here, it would break again in future!
-        error('User does not exist!');
+        print_error('User does not exist!');
     }
     $USER->description = '';
 

@@ -34,13 +34,13 @@
 
     // get some useful stuff...
     if (! $cm = get_coursemodule_from_id('workshop', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $workshop = get_record("workshop", "id", $cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     require_login($course->id, false, $cm);
@@ -66,7 +66,7 @@
 
         require_capability('mod/workshop:manage', $context);
         if (empty($sid)) {
-            error("Admin Amend Title: submission id missing");
+            print_error("Admin Amend Title: submission id missing");
         }
 
         $submission = get_record("workshop_submissions", "id", $sid);
@@ -99,11 +99,11 @@
 
         require_capability('mod/workshop:manage', $context);
         if (empty($sid)) {
-            error("Admin clear late flag: submission id missing");
+            print_error("Admin clear late flag: submission id missing");
         }
 
         if (!$submission = get_record("workshop_submissions", "id", $sid)) {
-            error("Admin clear late flag: can not get submission record");
+            print_error("Admin clear late flag: can not get submission record");
         }
         if (set_field("workshop_submissions", "late", 0, "id", $sid)) {
             print_heading(get_string("clearlateflag", "workshop")." ".get_string("ok"));
@@ -119,7 +119,7 @@
     elseif ($action == 'confirmdelete' ) {
 
         if (empty($sid)) {
-            error("Confirm delete: submission id missing");
+            print_error("Confirm delete: submission id missing");
             }
         notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("submission", "workshop")),
              "submissions.php?action=delete&amp;id=$cm->id&amp;sid=$sid", "view.php?id=$cm->id#sid=$sid");
@@ -130,18 +130,18 @@
     elseif ($action == 'delete' ) {
 
         if (empty($sid)) {
-            error("Delete: submission id missing");
+            print_error("Delete: submission id missing");
         }
 
         if (!$submission = get_record("workshop_submissions", "id", $sid)) {
-            error("Admin delete: can not get submission record");
+            print_error("Admin delete: can not get submission record");
         }
 
         // students are only allowed to delete their own submission and only up to the deadline
         if (!(workshop_is_teacher($workshop) or
                (($USER->id = $submission->userid) and ($timenow < $workshop->submissionend)
                    and (($timenow < $workshop->assessmentstart) or ($timenow < $submission->timecreated + $CFG->maxeditingtime))))) {
-            error("You are not authorized to delete this submission");
+            print_error("You are not authorized to delete this submission");
         }
 
         print_string("deleting", "workshop");
@@ -170,10 +170,10 @@
 
         require_capability('mod/workshop:manage', $context);
         if (empty($sid)) {
-            error("Admin confirm late flag: submission id missing");
+            print_error("Admin confirm late flag: submission id missing");
         }
         if (!$submission = get_record("workshop_submissions", "id", $sid)) {
-            error("Admin confirm late flag: can not get submission record");
+            print_error("Admin confirm late flag: can not get submission record");
         }
 
         notice_yesno(get_string("clearlateflag","workshop")."?",
@@ -198,7 +198,7 @@
 
         require_capability('mod/workshop:manage', $context);
         if (empty($sid)) {
-            error("Admin Update Title: submission id missing");
+            print_error("Admin Update Title: submission id missing");
         }
 
         if (set_field("workshop_submissions", "title", $title, "id", $sid)) {
@@ -212,10 +212,10 @@
     elseif ($action == 'confirmremoveattachments' ) {
 
         if (empty($sid)) {
-            error("Admin confirm delete: submission id missing");
+            print_error("Admin confirm delete: submission id missing");
         }
         if (!$submission = get_record("workshop_submissions", "id", $sid)) {
-            error("Admin delete: can not get submission record");
+            print_error("Admin delete: can not get submission record");
         }
 
         notice_yesno(get_string("confirmremoveattachments","workshop"),
@@ -228,17 +228,17 @@
     elseif ($action == 'editsubmission' ) {
 
         if (empty($sid)) {
-            error("Edit submission: submission id missing");
+            print_error("Edit submission: submission id missing");
         }
         $usehtmleditor = can_use_html_editor();
 
         $submission = get_record("workshop_submissions", "id", $sid);
         print_heading(get_string("editsubmission", "workshop"));
         if ($submission->userid <> $USER->id) {
-            error("Edit submission: Userids do not match");
+            print_error("Edit submission: Userids do not match");
         }
         if (($submission->timecreated < ($timenow - $CFG->maxeditingtime)) and ($workshop->assessmentstart < $timenow)) {
-            error(get_string('notallowed', 'workshop'));
+            print_error('notallowed', 'workshop');
         }
         ?>
         <form id="editform" enctype="multipart/form-data" action="submissions.php" method="post">
@@ -342,7 +342,7 @@
         $form = data_submitted();
 
         if (empty($form->sid)) {
-            error("Update submission: submission id missing");
+            print_error("Update submission: submission id missing");
         }
 
         $submission = get_record("workshop_submissions", "id", $form->sid);
@@ -351,7 +351,7 @@
         if (!(workshop_is_teacher($workshop) or
                (($USER->id = $submission->userid) and ($timenow < $workshop->submissionend)
                    and (($timenow < $workshop->assessmentstart) or ($timenow < $submission->timecreated + $CFG->maxeditingtime))))) {
-            error("You are not authorized to delete these attachments");
+            print_error("You are not authorized to delete these attachments");
         }
 
         // amend title... just in case they were modified
@@ -374,7 +374,7 @@
     elseif ($action == 'showsubmission' ) {
 
         if (empty($sid)) {
-            error("Show submission: submission id missing");
+            print_error("Show submission: submission id missing");
         }
 
         $submission = get_record("workshop_submissions", "id", $sid);
@@ -412,7 +412,7 @@
     elseif ($action == 'updatesubmission') {
 
         if (empty($sid)) {
-            error("Update submission: submission id missing");
+            print_error("Update submission: submission id missing");
         }
         $submission = get_record("workshop_submissions", "id", $sid);
 
@@ -420,7 +420,7 @@
         if (!(workshop_is_teacher($workshop) or
                (($USER->id = $submission->userid) and ($timenow < $workshop->submissionend)
                    and (($timenow < $workshop->assessmentstart) or ($timenow < $submission->timecreated + $CFG->maxeditingtime))))) {
-            error("You are not authorized to update your submission");
+            print_error("You are not authorized to update your submission");
         }
 
         // check existence of title
@@ -453,7 +453,7 @@
 
     else {
 
-        error("Fatal Error: Unknown Action: ".$action."\n");
+        print_error("Fatal Error: Unknown Action: ".$action."\n");
 
     }
 

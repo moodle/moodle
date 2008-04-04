@@ -10,7 +10,7 @@
 
     $pageid = required_param('pageid', PARAM_INT);
     if (!$thispage = get_record("lesson_pages", "id", $pageid)) {
-        error("Delete: page record not found");
+        print_error("Delete: page record not found");
     }
 
     // first delete all the associated records...
@@ -24,32 +24,32 @@
     if (!$thispage->prevpageid) {
         // this is the first page...
         if (!$page = get_record("lesson_pages", "id", $thispage->nextpageid)) {
-            error("Delete: next page not found");
+            print_error("Delete: next page not found");
         }
         if (!set_field("lesson_pages", "prevpageid", 0, "id", $page->id)) {
-            error("Delete: unable to set prevpage link");
+            print_error("Delete: unable to set prevpage link");
         }
     } elseif (!$thispage->nextpageid) {
         // this is the last page...
         if (!$page = get_record("lesson_pages", "id", $thispage->prevpageid)) {
-            error("Delete: prev page not found");
+            print_error("Delete: prev page not found");
         }
         if (!set_field("lesson_pages", "nextpageid", 0, "id", $page->id)) {
-            error("Delete: unable to set nextpage link");
+            print_error("Delete: unable to set nextpage link");
         }
     } else {
         // page is in the middle...
         if (!$prevpage = get_record("lesson_pages", "id", $thispage->prevpageid)) {
-            error("Delete: prev page not found");
+            print_error("Delete: prev page not found");
         }
         if (!$nextpage = get_record("lesson_pages", "id", $thispage->nextpageid)) {
-            error("Delete: next page not found");
+            print_error("Delete: next page not found");
         }
         if (!set_field("lesson_pages", "nextpageid", $nextpage->id, "id", $prevpage->id)) {
-            error("Delete: unable to set next link");
+            print_error("Delete: unable to set next link");
         }
         if (!set_field("lesson_pages", "prevpageid", $prevpage->id, "id", $nextpage->id)) {
-            error("Delete: unable to set prev link");
+            print_error("Delete: unable to set prev link");
         }
     }
     lesson_set_message(get_string('deletedpage', 'lesson').': '.format_string($thispage->title, true), 'notifysuccess');

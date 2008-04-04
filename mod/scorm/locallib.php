@@ -467,7 +467,7 @@ function scorm_course_format_display($user,$course) {
         // The module SCORM activity with the least id is the course  
         $scorm = current($scorms);
         if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
         $colspan = '';
         $headertext = '<table width="100%"><tr><td class="title">'.get_string('name').': <b>'.format_string($scorm->name).'</b>';

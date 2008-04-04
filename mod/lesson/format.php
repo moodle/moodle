@@ -92,11 +92,11 @@ class qformat_default {
                         $newpage->nextpageid = $page->nextpageid;
                         // insert the page and reset $pageid
                         if (!$newpageid = insert_record("lesson_pages", $newpage)) {
-                            error("Format: Could not insert new page!");
+                            print_error("Format: Could not insert new page!");
                         }
                         // update the linked list
                         if (!set_field("lesson_pages", "nextpageid", $newpageid, "id", $pageid)) {
-                            error("Format: unable to update link");
+                            print_error("Format: unable to update link");
                         }
 
                     } else {
@@ -108,7 +108,7 @@ class qformat_default {
                             $newpage->nextpageid = 0; // this is the only page
                             $newpageid = insert_record("lesson_pages", $newpage);
                             if (!$newpageid) {
-                                error("Insert page: new first page not inserted");
+                                print_error("Insert page: new first page not inserted");
                             }
                         } else {
                             // there are existing pages put this at the start
@@ -116,11 +116,11 @@ class qformat_default {
                             $newpage->nextpageid = $page->id;
                             $newpageid = insert_record("lesson_pages", $newpage);
                             if (!$newpageid) {
-                                error("Insert page: first page not inserted");
+                                print_error("Insert page: first page not inserted");
                             }
                             // update the linked list
                             if (!set_field("lesson_pages", "prevpageid", $newpageid, "id", $page->id)) {
-                                error("Insert page: unable to update link");
+                                print_error("Insert page: unable to update link");
                             }
                         }
                     }

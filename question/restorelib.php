@@ -821,7 +821,7 @@
             //It depends of the question type !!
             //We get the question first
             if (!$question = get_record("question","id",$state->question)) {
-                error("Can't find the record for question $state->question for which I am trying to restore a state");
+                print_error("Can't find the record for question $state->question for which I am trying to restore a state");
             }
             //Depending on the qtype, we make different recodes
             if ($state->answer) {

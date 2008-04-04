@@ -6,11 +6,11 @@
     $id = required_param('id', PARAM_INT);    // Course Module ID
 
     if (! $cm = get_coursemodule_from_id('survey', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     require_login($course->id, false, $cm);
@@ -20,7 +20,7 @@
     require_capability('mod/survey:participate', $context);
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {
-        error("Survey ID was incorrect");
+        print_error("Survey ID was incorrect");
     }
     $trimmedintro = trim($survey->intro);
     if (empty($trimmedintro)) {
@@ -29,7 +29,7 @@
     }
 
     if (! $template = get_record("survey", "id", $survey->template)) {
-        error("Template ID was incorrect");
+        print_error("Template ID was incorrect");
     }
 
     $showscales = ($template->name != 'ciqname');
@@ -115,7 +115,7 @@
 
 // Get all the major questions and their proper order
     if (! $questions = get_records_list("survey_questions", "id", $survey->questions)) {
-        error("Couldn't find any questions in this survey!!");
+        print_error("Couldn't find any questions in this survey!!");
     }
     $questionorder = explode( ",", $survey->questions);
 

@@ -9,14 +9,14 @@
     $blockid = required_param('block', PARAM_INT);
 
     if(!$blockrecord = blocks_get_record($blockid)) {
-        error('This block does not exist');
+        print_error('This block does not exist');
     }
 
     admin_externalpage_setup('blocksetting'.$blockrecord->name);
 
     $block = block_instance($blockrecord->name);
     if($block === false) {
-        error('Problem in instantiating block object');
+        print_error('Problem in instantiating block object');
     }
 
     // Define the data we're going to silently include in the instance config form here,
@@ -31,10 +31,10 @@
     if ($config = data_submitted()) {
 
         if (!confirm_sesskey()) {
-             error(get_string('confirmsesskeybad', 'error'));
+             print_error('confirmsesskeybad', 'error');
         }
         if(!$block->has_config()) {
-            error('This block does not support global configuration');
+            print_error('This block does not support global configuration');
         }
         $remove = array_keys($hiddendata);
         foreach($remove as $item) {

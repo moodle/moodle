@@ -13,18 +13,18 @@
     $questionid =required_param('question', PARAM_INT); // question id
 
     if (! $attempt = get_record('quiz_attempts', 'uniqueid', $attemptid)) {
-        error('No such attempt ID exists');
+        print_error('No such attempt ID exists');
     }
     if (! $quiz = get_record('quiz', 'id', $attempt->quiz)) {
-        error('Course module is incorrect');
+        print_error('Course module is incorrect');
     }
     if (! $course = get_record('course', 'id', $quiz->course)) {
-        error('Course is misconfigured');
+        print_error('Course is misconfigured');
     }
 
     // Teachers are only allowed to comment and grade on closed attempts
     if (!($attempt->timefinish > 0)) {
-        error('Attempt has not closed yet');
+        print_error('Attempt has not closed yet');
     }
 
     $cm = get_coursemodule_from_instance('quiz', $quiz->id);
@@ -36,7 +36,7 @@
 
     // Load question
     if (! $question = get_record('question', 'id', $questionid)) {
-        error('Question for this session is missing');
+        print_error('Question for this session is missing');
     }
     $question->maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $question->id);
     // Some of the questions code is optimised to work with several questions
@@ -45,7 +45,7 @@
     $questions[$key] = &$question;
     // Add additional questiontype specific information to the question objects.
     if (!get_question_options($questions)) {
-        error("Unable to load questiontype specific question information");
+        print_error("Unable to load questiontype specific question information");
     }
 
     // Load state

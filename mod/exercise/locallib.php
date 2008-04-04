@@ -81,7 +81,7 @@ function exercise_add_custom_scales($exercise) {
     global $EXERCISE_SCALES;
 
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     if ($scales = get_records("scale", "courseid", $course->id, "name ASC")) {
@@ -168,7 +168,7 @@ function exercise_copy_assessment($assessment, $submission, $withfeedback = fals
         $newassessment->teachercomment = addslashes($assessment->teachercomment);
     }
     if (!$newassessment->id = insert_record("exercise_assessments", $newassessment)) {
-        error("Copy Assessment: Could not insert exercise assessment!");
+        print_error("Copy Assessment: Could not insert exercise assessment!");
     }
 
     if ($grades = get_records("exercise_grades", "assessmentid", $assessment->id)) {
@@ -183,7 +183,7 @@ function exercise_copy_assessment($assessment, $submission, $withfeedback = fals
             }
             $grade->assessmentid = $newassessment->id;
             if (!$grade->id = insert_record("exercise_grades", $grade)) {
-                error("Copy Assessment: Could not insert exercise grade!");
+                print_error("Copy Assessment: Could not insert exercise grade!");
             }
         }
     }
@@ -298,7 +298,7 @@ function exercise_count_unassessed_student_submissions($exercise) {
     global $CFG;
     
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     $timenow = time();
     $n = 0;
@@ -740,10 +740,10 @@ function exercise_list_submissions_for_admin($exercise) {
     global $CFG, $USER;
     
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
         }
     if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     $groupid = get_current_group($course->id);
     
@@ -802,7 +802,7 @@ function exercise_list_submissions_for_admin($exercise) {
                 $title ='';
                 foreach ($assessments as $assessment) {
                     if (!$submission = get_record("exercise_submissions", "id", $assessment->submissionid)) {
-                        error("exercise_list_submissions_for_admin: Submission record not found!");
+                        print_error("exercise_list_submissions_for_admin: Submission record not found!");
                         }
                     $title .= $submission->title;
                     // test for allocated assesments which have not been done
@@ -830,7 +830,7 @@ function exercise_list_submissions_for_admin($exercise) {
         if (isset($table->data)) {
             if ($groupid) {
                 if (! groups_group_exists($groupid)) { //TODO:
-                    error("List unassessed student submissions: group not found");
+                    print_error("List unassessed student submissions: group not found");
                 }
                 print_heading("$group->name ".get_string("studentassessments", "exercise", $course->student).
                         " [$nassessments]");
@@ -943,7 +943,7 @@ function exercise_list_submissions_for_admin($exercise) {
         if (isset($table->data)) {
             if ($groupid) {
                 if (! groups_group_exists($groupid)) {
-                    error("List unassessed student submissions: group not found");
+                    print_error("List unassessed student submissions: group not found");
                 }
                 print_heading("$group->name ".get_string("studentsubmissions", "exercise", $course->student).
                         " [$nsubmissions]");
@@ -997,7 +997,7 @@ function exercise_list_teacher_assessments($exercise, $user) {
     $timenow = time();
     
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     $table->head = array (get_string("title", "exercise"), get_string("action", "exercise"), get_string("comment", "exercise"));
     $table->align = array ("left", "left", "left");
@@ -1043,10 +1043,10 @@ function exercise_list_teacher_submissions($exercise, $user, $reassess = false) 
     global $CFG;
     
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     $strexercises = get_string("modulenameplural", "exercise");
@@ -1080,7 +1080,7 @@ function exercise_list_teacher_submissions($exercise, $user, $reassess = false) 
                     $assessment->timecreated = $yearfromnow;
                     $assessment->mailed = 1; // no need to email to the teacher!
                     if (!$assessment->id = insert_record("exercise_assessments", $assessment)) {
-                        error("Could not insert exercise assessment!");
+                        print_error("Could not insert exercise assessment!");
                     }
                     break;
                 }
@@ -1089,7 +1089,7 @@ function exercise_list_teacher_submissions($exercise, $user, $reassess = false) 
     } else {
         // get hold of the teacher submission
         if (!$submission = get_record("exercise_submissions", "id", $assessment->submissionid)) {
-            error("List teacher submissions: submission record not found");
+            print_error("List teacher submissions: submission record not found");
         }
     }
     print_simple_box_start("center");
@@ -1178,10 +1178,10 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
     $timenow = time();
     
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     $table->head = array (get_string("title", "exercise"), get_string("submittedby", "exercise"),
@@ -1197,7 +1197,7 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
     $groupid = get_current_group($course->id);
     if ($groupid) {
         if (! groups_group_exists($groupid)) {
-            error("List unassessed student submissions: group not found");
+            print_error("List unassessed student submissions: group not found");
         }
         print_heading(get_string("studentsubmissionsforassessment", "exercise", $group->name));
     }
@@ -1263,7 +1263,7 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
                             if (isteacher($course->id, $assessment->userid)) {
                                 $teacherassessed = true;
                                 if (!$teacher = get_record("user", "id", $assessment->userid)) {
-                                    error("List unassessed student submissions: teacher record not found");
+                                    print_error("List unassessed student submissions: teacher record not found");
                                 }
                                 $comment = get_string("resubmissionfor", "exercise",
                                                 fullname($teacher));
@@ -1291,7 +1291,7 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
                         // no teacher's assessment
                         // find who did the previous assessment
                         if (!$submissions = exercise_get_user_submissions($exercise, $submissionowner)) {
-                            error("List unassessed student submissions: submission records not found");
+                            print_error("List unassessed student submissions: submission records not found");
                         }
                         // get the oldest submission, exercise_get_user_submissions returns that first
                         foreach ($submissions as $tempsubmission) {
@@ -1304,7 +1304,7 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
                             foreach ($assessments as $assessment) {
                                 if (isteacher($course->id, $assessment->userid)) {
                                     if (!$teacher = get_record("user", "id", $assessment->userid)) {
-                                        error("List unassessed student submissions: teacher record not found");
+                                        print_error("List unassessed student submissions: teacher record not found");
                                     }
                                     $comment = get_string("resubmissionfor", "exercise",
                                                     fullname($teacher));
@@ -1377,10 +1377,10 @@ function exercise_list_ungraded_assessments($exercise, $stype) {
     global $CFG;
     
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
         }
     if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     // lists all the assessments of student submissions for grading by teacher
@@ -1431,10 +1431,10 @@ function exercise_list_user_submissions($exercise, $user) {
     global $CFG;
 
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     
     $timenow = time();
@@ -1498,10 +1498,10 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
     global $CFG, $USER, $EXERCISE_SCALES, $EXERCISE_EWEIGHTS;
     
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     
     $timenow = time();
@@ -1576,7 +1576,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
     <?php
     if ($assessment) {
         if (!$assessmentowner = get_record("user", "id", $assessment->userid)) {
-            error("Exercise_print_assessment_form: could not find user record");
+            print_error("Exercise_print_assessment_form: could not find user record");
             }
         if ($assessmentowner->id == $USER->id) {
             $formtitle = get_string("yourassessment", "exercise");
@@ -2035,10 +2035,10 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
 function exercise_print_assessments_by_user_for_admin($exercise, $user) {
 
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
         }
     if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
         }
 
     if ($assessments =exercise_get_user_assessments($exercise, $user)) {
@@ -2059,10 +2059,10 @@ function exercise_print_assessments_by_user_for_admin($exercise, $user) {
 function exercise_print_assessments_for_admin($exercise, $submission) {
 
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
         }
     if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
         }
 
     if ($assessments = exercise_get_assessments($submission)) {
@@ -2083,10 +2083,10 @@ function exercise_print_assessments_for_admin($exercise, $submission) {
 function exercise_print_assignment_info($exercise) {
 
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     // print standard assignment heading
     $strdifference = format_time($exercise->deadline - time());
@@ -2133,7 +2133,7 @@ function exercise_print_feedback($course, $submission) {
     global $CFG, $RATING;
 
     if (! $teacher = get_record("user", "id", $submission->teacher)) {
-        error("Weird exercise error");
+        print_error("Weird exercise error");
     }
 
     echo "\n<table border=\"0\" cellpadding=\"1\" cellspacing=\"1\" align=\"center\"><tr><td bgcolor=#888888>";
@@ -2168,7 +2168,7 @@ function exercise_print_league_table($exercise) {
     // print an order table of (student) submissions in grade order, only print the student's best submission when
     // there are multiple submissions
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Print league table: Course is misconfigured");
+        print_error("Print league table: Course is misconfigured");
     }
     $groupid = get_current_group($course->id);
     $nentries = $exercise->showleaguetable;
@@ -2196,7 +2196,7 @@ function exercise_print_league_table($exercise) {
                     continue;
                 }
                 if (!$user = get_record("user", "id", $submission->userid)) {
-                    error("Print league table: user not found");
+                    print_error("Print league table: user not found");
                     }
                 if ($exercise->anonymous and isstudent($course->id)) {
                     $table->data[] = array(exercise_print_submission_title($exercise, $submission),
@@ -2224,10 +2224,10 @@ function exercise_print_submission_assessments($exercise, $submission) {
     // Returns a list of grades for this submission
     
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     
     $str = '';
@@ -2342,16 +2342,16 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
     global $CFG, $USER, $EXERCISE_SCALES, $EXERCISE_EWEIGHTS;
     
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
     
     $timenow = time();
 
     if(!$submissionowner = get_record("user", "id", $submission->userid)) {
-        error("Print teacher assessment form: User record not found");
+        print_error("Print teacher assessment form: User record not found");
     }
 
     echo "<center><table border=\"1\" width=\"30%\"><tr>
@@ -2406,7 +2406,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
     
     // get the assignment elements...
     if (!$elementsraw = get_records("exercise_elements", "exerciseid", $exercise->id, "elementno ASC")) {
-        error("Teacher assessment form: Elements not found");
+        print_error("Teacher assessment form: Elements not found");
     }
     foreach ($elementsraw as $element) {
         $elements[] = $element;   // to renumber index 0,1,2...
@@ -2817,7 +2817,7 @@ function exercise_print_teacher_table($course) {
     $table->cellspacing = 0;
 
     if (!$teachers = get_course_teachers($course->id, "u.firstname, u.lastname")) {
-        error("No teachers on this course!");
+        print_error("No teachers on this course!");
     }
     for ($j = 0; $j < count($exercises); $j++) {
         $grand[$j] = 0;
@@ -2861,10 +2861,10 @@ function exercise_print_upload_form($exercise) {
     global $CFG;
 
     if (! $course = get_record("course", "id", $exercise->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     echo "<div align=\"center\">";

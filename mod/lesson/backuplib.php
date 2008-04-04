@@ -175,7 +175,7 @@
                 // move to the next (logical) page
                 if ($page->nextpageid) {
                     if (!$page = get_record("lesson_pages", "id", $page->nextpageid)) {
-                        error("Lesson Backup: Next page not found!");
+                        print_error("Lesson Backup: Next page not found!");
                     }
                 } else {
                     // last page reached

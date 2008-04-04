@@ -282,7 +282,7 @@ class default_questiontype {
             $question->modifiedby = $USER->id;
             $question->timemodified = time();
             if (!update_record('question', $question)) {
-                error('Could not update question!');
+                print_error('Could not update question!');
             }
         } else {         // Question is a new one
             if (isset($form->categorymoveto)){
@@ -302,7 +302,7 @@ class default_questiontype {
             $question->timecreated = time();
             $question->timemodified = time();
             if (!$question->id = insert_record('question', $question)) {
-                error('Could not insert new question!');
+                print_error('Could not insert new question!');
             }
         }
 
@@ -316,7 +316,7 @@ class default_questiontype {
         $result = $this->save_question_options($form);
 
         if (!empty($result->error)) {
-            error($result->error);
+            print_error($result->error);
         }
 
         if (!empty($result->notice)) {
@@ -332,7 +332,7 @@ class default_questiontype {
 
         // Give the question a unique version stamp determined by question_hash()
         if (!set_field('question', 'version', question_hash($question), 'id', $question->id)) {
-            error('Could not update question version field');
+            print_error('Could not update question version field');
         }
 
         return $question;
@@ -824,7 +824,7 @@ class default_questiontype {
             $context = get_context_instance(CONTEXT_COURSE, $cmoptions->course);
             $cmorcourseid = '&amp;courseid='.$cmoptions->course;
         } else {
-            error('Need to provide courseid or cmid to print_question.');
+            print_error('Need to provide courseid or cmid to print_question.');
         }
 
         // For editing teachers print a link to an editing popup window

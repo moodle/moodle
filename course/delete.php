@@ -9,11 +9,11 @@
     require_login();
 
     if (!can_delete_course($id)) {
-        error('You do not have the permission to delete this course.');
+        print_error('You do not have the permission to delete this course.');
     }
 
     if (!$site = get_site()) {
-        error("Site not found!");
+        print_error("Site not found!");
     }
 
     $strdeletecourse = get_string("deletecourse");
@@ -21,7 +21,7 @@
     $strcategories = get_string("categories");
 
     if (! $course = get_record("course", "id", $id)) {
-        error("Course ID was incorrect (can't find it)");
+        print_error("Course ID was incorrect (can't find it)");
     }
 
     $category = get_record("course_categories", "id", $course->category);
@@ -49,11 +49,11 @@
     }
 
     if ($delete != md5($course->timemodified)) {
-        error("The check variable was wrong - try again");
+        print_error("The check variable was wrong - try again");
     }
 
     if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
+        print_error('confirmsesskeybad', 'error');
     }
 
     // OK checks done, delete the course now.

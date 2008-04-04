@@ -10,19 +10,19 @@
     $frameset      = optional_param('frameset', '', PARAM_ALPHA);
 
     if (! $assessment = get_record("workshop_assessments", "id", $aid)) {
-        error("Assessment id is incorrect");
+        print_error("Assessment id is incorrect");
     }
     if (! $submission = get_record('workshop_submissions', 'id', $assessment->submissionid)) {
-        error("Incorrect submission id");
+        print_error("Incorrect submission id");
     }
     if (! $workshop = get_record("workshop", "id", $submission->workshopid)) {
-        error("Submission is incorrect");
+        print_error("Submission is incorrect");
     }
     if (! $course = get_record("course", "id", $workshop->course)) {
-        error("Workshop is misconfigured");
+        print_error("Workshop is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
-        error("No coursemodule found");
+        print_error("No coursemodule found");
     }
 
     if (!$redirect) {

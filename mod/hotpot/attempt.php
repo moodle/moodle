@@ -6,19 +6,19 @@
 
     // get attempt, hotpot, course and course_module records
     if (! $attempt = get_record("hotpot_attempts", "id", $attemptid)) {
-        error("Hot Potatoes attempt record $attemptid could not be accessed: ".$db->ErrorMsg());
+        print_error("Hot Potatoes attempt record $attemptid could not be accessed: ".$db->ErrorMsg());
     }
     if ($attempt->userid != $USER->id) {
-        error("User ID is incorrect");
+        print_error("User ID is incorrect");
     }
     if (! $hotpot = get_record("hotpot", "id", $attempt->hotpot)) {
-        error("Hot Potatoes ID is incorrect (attempt id = $attempt->id)");
+        print_error("Hot Potatoes ID is incorrect (attempt id = $attempt->id)");
     }
     if (! $course = get_record("course", "id", $hotpot->course)) {
-        error("Course ID is incorrect (hotpot id = $hotpot->id)");
+        print_error("Course ID is incorrect (hotpot id = $hotpot->id)");
     }
     if (! $cm = get_coursemodule_from_instance("hotpot", $hotpot->id, $course->id)) {
-        error("Course Module ID is incorrect");
+        print_error("Course Module ID is incorrect");
     }
 
     // make sure this user is enrolled in this course
@@ -82,7 +82,7 @@
             $attempt->id = insert_record("hotpot_attempts", $attempt);
 
             if (empty($attempt->id)) {
-                error("Could not insert attempt record: ".$db->ErrorMsg(), $next_url);
+                print_error("Could not insert attempt record: ".$db->ErrorMsg(), '', $next_url);
             }
 
             // add attempt details record, if necessary
@@ -91,7 +91,7 @@
                 $details->attempt = $attempt->id;
                 $details->details = $attempt->details;
                 if (! insert_record("hotpot_details", $details, false)) {
-                    error("Could not insert attempt details record: ".$db->ErrorMsg(), $next_url);
+                    print_error("Could not insert attempt details record: ".$db->ErrorMsg(), '', $next_url);
                 }
             }
         } else {
@@ -112,7 +112,7 @@
 
     // update the attempt record
     if (! update_record("hotpot_attempts", $attempt)) {
-        error("Could not update attempt record: ".$db->ErrorMsg(), $next_url);
+        print_error("Could not update attempt record: ".$db->ErrorMsg(), '', $next_url);
     }
 
     // update grades for this user
@@ -134,7 +134,7 @@
             $details->attempt = $attempt->id;
             $details->details = $attempt->details;
             if (! insert_record("hotpot_details", $details)) {
-                error("Could not insert attempt details record: ".$db->ErrorMsg(), $next_url);
+                print_error("Could not insert attempt details record: ".$db->ErrorMsg(), '', $next_url);
             }
         }
     }
@@ -214,8 +214,8 @@ function hotpot_set_attempt_details(&$attempt) {
     }
     if (!$ok) {
         return;
-        // error('Quiz type is missing or invalid');
-        // error(get_string('error_invalidquiztype', 'hotpot'));
+        // print_error('Quiz type is missing or invalid');
+        // print_error('error_invalidquiztype', 'hotpot');
         //
         // script finishes here if quiztype is invalid
         //

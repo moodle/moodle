@@ -26,7 +26,7 @@
 
 
     if (empty($currenttab) or empty($data) or empty($course)) {
-        error('You cannot call this script in that way');
+        print_error('You cannot call this script in that way');
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);

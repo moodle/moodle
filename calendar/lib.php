@@ -431,7 +431,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                     // TODO: rewrite this hack somehow
                     if (!calendar_edit_event_allowed($event)){ // cannot manage entries, eg. student  
                         if(!$assignment = get_record('assignment','id',$event->instance)){
-                            // error("assignment ID was incorrect");
+                            // print_error("assignment ID was incorrect");
                             continue;
                         }
                         // assign assignment to assignment object to use hidden_is_hidden method

@@ -10,29 +10,29 @@
     $mode   = optional_param('mode', '', PARAM_ALPHA);
 
     if (! $cm = get_coursemodule_from_id('assignment', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $assignment = get_record('assignment', 'id', $cm->instance)) {
-        error("Assignment ID was incorrect");
+        print_error("Assignment ID was incorrect");
     }
 
     if (! $course = get_record('course', 'id', $assignment->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     if (! $user = get_record('user', 'id', $userid)) {
-        error("User is misconfigured");
+        print_error("User is misconfigured");
     }
 
     require_login($course->id, false, $cm);
 
     if (!has_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {
-        error("You can not view this assignment");
+        print_error("You can not view this assignment");
     }
 
     if ($assignment->assignmenttype != 'upload') {
-        error("Incorrect assignment type");
+        print_error("Incorrect assignment type");
     }
 
     $assignmentinstance = new assignment_upload($cm->id, $assignment, $cm, $course);

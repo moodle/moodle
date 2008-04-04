@@ -36,7 +36,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                                  {$CFG->prefix}question_datasets b
                             WHERE b.question = $question->id
                             AND   a.id = b.datasetdefinition")) {
-            error("Couldn't get the specified dataset for a calculated " .
+            print_error("Couldn't get the specified dataset for a calculated " .
                   "question! (question: {$question->id}");
         }
 
@@ -131,7 +131,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                 require("$CFG->dirroot/question/type/datasetdependent/datasetitems.php");
                 break;
             default:
-                error('Incorrect or no wizard page specified!');
+                print_error('Incorrect or no wizard page specified!');
                 break;
         }
     }
@@ -160,7 +160,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                 $mform =& new question_dataset_dependent_items_form("$submiturl?wizardnow=datasetitems", $question, $regenerate);
                 break;
             default:
-                error('Incorrect or no wizard page specified!');
+                print_error('Incorrect or no wizard page specified!');
                 break;
         }
 
@@ -313,7 +313,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                 $this->save_dataset_items($question, $form);
                 break;
             default:
-                error('Incorrect or no wizard page specified!');
+                print_error('Incorrect or no wizard page specified!');
                 break;
         }
         return $question;
@@ -388,7 +388,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
 
             if (!$datasetdef->id = insert_record(
                     'question_dataset_definitions', $datasetdef)) {
-                error("Unable to create dataset $defid");
+                print_error("Unable to create dataset $defid");
             }
 
             if (0 != $datasetdef->category) {
@@ -419,7 +419,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
             $questiondataset->datasetdefinition = $datasetdef->id;
             if (!insert_record('question_datasets',
                                $questiondataset)) {
-                error("Unable to create relation to dataset $name");
+                print_error("Unable to create relation to dataset $name");
             }
             unset($datasetdefinitions[$defid]);
         }
@@ -468,7 +468,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                    $datasetdef->itemcount =0;
                    if (!$datasetdef->id = insert_record(
                         'question_dataset_definitions', $datasetdef)) {
-                        error("Unable to create dataset $defid");
+                        print_error("Unable to create dataset $defid");
                    }
                    //copy the dataitems
                    $olditems = get_records_sql( // Use number as key!!
@@ -480,7 +480,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                         foreach($olditems as $item ){
                             $item->definition = $datasetdef->id;
                         if (!insert_record('question_dataset_items', $item)) {
-                            error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
+                            print_error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
                         }
                         $itemcount++;
                         }
@@ -496,7 +496,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                 $questiondataset->datasetdefinition = $datasetdef->id;
                 if (!insert_record('question_datasets',
                                    $questiondataset)) {
-                    error("Unable to create relation to dataset $name");
+                    print_error("Unable to create relation to dataset $name");
                 }
                 unset($datasetdefinitions[$defid]);
                 continue;
@@ -504,7 +504,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
             // really new one code similar to save_dataset_definitions()
             if (!$datasetdef->id = insert_record(
                     'question_dataset_definitions', $datasetdef)) {
-                error("Unable to create dataset $defid");
+                print_error("Unable to create dataset $defid");
             }
 
             if (0 != $datasetdef->category) {
@@ -535,7 +535,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
             $questiondataset->datasetdefinition = $datasetdef->id;
             if (!insert_record('question_datasets',
                                $questiondataset)) {
-                error("Unable to create relation to dataset $name");
+                print_error("Unable to create relation to dataset $name");
             }
             unset($datasetdefinitions[$defid]);
         }
@@ -608,7 +608,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
 
                 break;
             default:
-                error('Incorrect or no wizard page specified!');
+                print_error('Incorrect or no wizard page specified!');
                 break;
         }
         return $question;
@@ -633,7 +633,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                         AND q.datasetdefinition = d.id
                         AND d.id = i.definition
                         AND i.itemnumber = $datasetitem")) {
-            error("Couldn't get the specified dataset for a dataset dependent " .
+            print_error("Couldn't get the specified dataset for a dataset dependent " .
                   "question! (question: {$question->id}, " .
                   "datasetitem: {$datasetitem})");
         }
@@ -642,7 +642,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     }
 
     function create_virtual_qtype() {
-        error("No virtual question type for question type ".$this->name());
+        print_error("No virtual question type for question type ".$this->name());
     }
 
     function get_virtual_qtype() {
@@ -757,7 +757,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
 
     function create_virtual_nameprefix($nameprefix, $datasetinput) {
         if (!ereg('([0-9]+)' . $this->name() . '$', $nameprefix, $regs)) {
-            error("Wrongly formatted nameprefix $nameprefix");
+            print_error("Wrongly formatted nameprefix $nameprefix");
         }
         $virtualqtype = $this->get_virtual_qtype();
         return $nameprefix . $regs[1] . $virtualqtype->name();

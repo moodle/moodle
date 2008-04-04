@@ -8,11 +8,11 @@
     $edit  = optional_param('edit',-1,PARAM_BOOL);     // Turn editing on and off
 
     if (! $forum = get_record("forum", "id", $id)) {
-        error("Forum ID is incorrect");
+        print_error("Forum ID is incorrect");
     }
 
     if (! $course = get_record("course", "id", $forum->course)) {
-        error("Could not find this course!");
+        print_error("Could not find this course!");
     }
 
     if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
@@ -24,7 +24,7 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (!has_capability('mod/forum:viewsubscribers', $context)) {
-        error('You do not have the permission to view forum subscribers');
+        print_error('You do not have the permission to view forum subscribers');
     }
 
     unset($SESSION->fromdiscussion);
@@ -101,13 +101,13 @@
 
             foreach ($frm->addselect as $addsubscriber) {
                 if (! forum_subscribe($addsubscriber, $id)) {
-                    error("Could not add subscriber with id $addsubscriber to this forum!");
+                    print_error("Could not add subscriber with id $addsubscriber to this forum!");
                 }
             }
         } else if (!empty($frm->remove) and !empty($frm->removeselect)) {
             foreach ($frm->removeselect as $removesubscriber) {
                 if (! forum_unsubscribe($removesubscriber, $id)) {
-                    error("Could not remove subscriber with id $removesubscriber from this forum!");
+                    print_error("Could not remove subscriber with id $removesubscriber from this forum!");
                 }
             }
         } else if (!empty($frm->showall)) {

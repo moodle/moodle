@@ -6,23 +6,23 @@
     $id = required_param('id', PARAM_INT);    // Course Module ID
 
     if (! $cm = get_coursemodule_from_id('journal', $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     require_login($course->id, true, $cm);
 
     if (! $journal = get_record("journal", "id", $cm->instance)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     add_to_log($course->id, "journal", "view", "view.php?id=$cm->id", $journal->id, $cm->id);
 
     if (! $cw = get_record("course_sections", "id", $cm->section)) {
-        error("Course module is incorrect");
+        print_error("Course module is incorrect");
     }
 
     $strjournal = get_string("modulename", "journal");

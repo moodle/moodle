@@ -9,18 +9,18 @@
     $group = optional_param('group', 0, PARAM_INT);
 
     if (! $cm = get_record("course_modules", "id", $id)) {
-        error("Course Module ID was incorrect");
+        print_error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
+        print_error("Course is misconfigured");
     }
 
     require_login($course->id, false, $cm);
     require_capability('mod/survey:download', get_context_instance(CONTEXT_MODULE, $cm->id)) ;
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {
-        error("Survey ID was incorrect");
+        print_error("Survey ID was incorrect");
     }
 
     add_to_log($course->id, "survey", "download", "download.php?id=$cm->id&amp;type=$type", "$survey->id", $cm->id);
@@ -99,7 +99,7 @@
 // Get and collate all the results in one big array
 
     if (! $aaa = get_records("survey_answers", "survey", "$survey->id", "time ASC")) {
-        error("There are no answers for this survey yet.");
+        print_error("There are no answers for this survey yet.");
     }
 
     foreach ($aaa as $a) {
@@ -153,7 +153,7 @@
             $col = 0;
             $row++;
             if (! $u = get_record("user", "id", $user)) {
-                error("Error finding student # $user");
+                print_error("Error finding student # $user");
             }
             if ($n = get_record("survey_analysis", "survey", $survey->id, "userid", $user)) {
                 $notes = $n->notes;
@@ -223,7 +223,7 @@
             $col = 0;
             $row++;
             if (! $u = get_record("user", "id", $user)) {
-                error("Error finding student # $user");
+                print_error("Error finding student # $user");
             }
             if ($n = get_record("survey_analysis", "survey", $survey->id, "userid", $user)) {
                 $notes = $n->notes;
@@ -283,7 +283,7 @@
 
     foreach ($results as $user => $rest) {
         if (! $u = get_record("user", "id", $user)) {
-            error("Error finding student # $user");
+            print_error("Error finding student # $user");
         }
         echo $survey->id."\t";
         echo strip_tags(format_string($survey->name,true))."\t";

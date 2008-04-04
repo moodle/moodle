@@ -63,7 +63,7 @@ function forum_add_instance($forum) {
         $discussion->mailnow  = false;
 
         if (! forum_add_discussion($discussion, $discussion->intro)) {
-            error('Could not add the discussion for this forum');
+            print_error('Could not add the discussion for this forum');
         }
     }
 
@@ -114,11 +114,11 @@ function forum_update_instance($forum) {
                 notify('Warning! There is more than one discussion in this forum - using the most recent');
                 $discussion = array_pop($discussions);
             } else {
-                error('Could not find the discussion in this forum');
+                print_error('Could not find the discussion in this forum');
             }
         }
         if (! $post = get_record('forum_posts', 'id', $discussion->firstpost)) {
-            error('Could not find the first post in this forum discussion');
+            print_error('Could not find the first post in this forum discussion');
         }
 
         $post->subject  = $forum->name;
@@ -126,18 +126,18 @@ function forum_update_instance($forum) {
         $post->modified = $forum->timemodified;
 
         if (! update_record('forum_posts', ($post))) {
-            error('Could not update the first post');
+            print_error('Could not update the first post');
         }
 
         $discussion->name = $forum->name;
 
         if (! update_record('forum_discussions', ($discussion))) {
-            error('Could not update the discussion');
+            print_error('Could not update the discussion');
         }
     }
 
     if (!update_record('forum', $forum)) {
-        error('Can not update forum');
+        print_error('Can not update forum');
     }
 
     $forum = stripslashes_recursive($forum);
@@ -791,7 +791,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
 
     if (!isset($userto->viewfullnames[$forum->id])) {
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
@@ -941,7 +941,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
     if ($posts = forum_get_user_posts($forum->id, $user->id)) {
 
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
         $discussions = get_records('forum_discussions', 'forum', $forum->id); // TODO: improve
 
@@ -1508,7 +1508,7 @@ function forum_get_readable_forums($userid, $courseid=0) {
     global $CFG, $USER;
 
     if (!$forummod = get_record('modules', 'name', 'forum')) {
-        error('The forum module is not installed');
+        print_error('The forum module is not installed');
     }
 
     if ($courseid) {
@@ -2206,7 +2206,7 @@ function forum_make_mail_post($course, $forum, $discussion, $post, $userfrom, $u
 
     if (!isset($userto->viewfullnames[$forum->id])) {
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
@@ -2246,7 +2246,7 @@ function forum_make_mail_post($course, $forum, $discussion, $post, $userfrom, $u
         $groups = $userfrom->groups[$forum->id];
     } else {
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
         $group = groups_get_all_groups($course->id, $userfrom->id, $cm->groupingid);
     }
@@ -2682,7 +2682,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
 
     if (empty($modcontext)) {
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
@@ -3858,7 +3858,7 @@ function forum_user_can_post_discussion($forum, $currentgroup=-1, $groupmode=-1,
         if (!$cm) {
             debugging('missing cm', DEBUG_DEVELOPER);
             if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-                error('Course Module ID was incorrect');
+                print_error('Course Module ID was incorrect');
             }
         }
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -3931,7 +3931,7 @@ function forum_user_can_post($forum, $user=NULL, $cm=NULL, $context=NULL) {
         if (!$cm) {
             debugging('missing cm', DEBUG_DEVELOPER);
             if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-                error('Course Module ID was incorrect');
+                print_error('Course Module ID was incorrect');
             }
         }
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -4047,7 +4047,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
     if (!$cm) {
         debugging('missing cm', DEBUG_DEVELOPER);
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
     }
 
@@ -4107,7 +4107,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 
     if (!$cm) {
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-            error('Course Module ID was incorrect');
+            print_error('Course Module ID was incorrect');
         }
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -5635,7 +5635,7 @@ function forum_check_throttling($forum) {
     }
 
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-        error('Course Module ID was incorrect');
+        print_error('Course Module ID was incorrect');
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     if(!has_capability('mod/forum:throttlingapplies', $modcontext)) {
@@ -5657,7 +5657,7 @@ function forum_check_throttling($forum) {
     $a->blockperiod = get_string('secondstotime'.$forum->blockperiod);
 
     if ($forum->blockafter <= $numposts) {
-        error(get_string('forumblockingtoomanyposts','error',$a),$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id);
+        print_error('forumblockingtoomanyposts', 'error', $CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id, $a);
     }
     if ($forum->warnafter <= $numposts) {
         notify(get_string('forumblockingalmosttoomanyposts','forum',$a));
@@ -5890,14 +5890,14 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
             $mod->groupmode = 0;
 
             if (!$cmid = add_course_module($mod)) {
-                error('Could not create new course module instance for the teacher forum');
+                print_error('Could not create new course module instance for the teacher forum');
             } else {
                 $mod->coursemodule = $cmid;
                 if (!$sectionid = add_mod_to_section($mod)) {
-                    error('Could not add converted teacher forum instance to section 0 in the course');
+                    print_error('Could not add converted teacher forum instance to section 0 in the course');
                 } else {
                     if (!set_field('course_modules', 'section', $sectionid, 'id', $cmid)) {
-                        error('Could not update course module with section id');
+                        print_error('Could not update course module with section id');
                     }
                 }
             }
@@ -5905,7 +5905,7 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
             // Change the forum type to general.
             $forum->type = 'general';
             if (!update_record('forum', $forum)) {
-                error('Could not change forum from type teacher to type general');
+                print_error('Could not change forum from type teacher to type general');
             }
 
             $context = get_context_instance(CONTEXT_MODULE, $cmid);

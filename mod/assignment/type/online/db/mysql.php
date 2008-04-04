@@ -52,7 +52,7 @@ function assignment_type_online_upgrade($oldversion)  {
                 $newcm->added    = time();
 
                 if (! $newcm->id = add_course_module($newcm) ) {
-                    error("Could not add a new course module");
+                    print_error("Could not add a new course module");
                 }
                 
             /// And locate it above the old one
@@ -65,7 +65,7 @@ function assignment_type_online_upgrade($oldversion)  {
                 $newcm->section      = $section->section;  // need relative reference
 
                 if (! $sectionid = add_mod_to_section($newcm, $oldcm) ) {  // Add it before Journal
-                    error("Could not add the new course module to that section");
+                    print_error("Could not add the new course module to that section");
                 }
                 
             /// Convert any existing entries from users
