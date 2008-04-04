@@ -1877,6 +1877,9 @@ function print_course($course) {
                 foreach ($rusers as $ra) {
                     if ($ra->hidden == 0 || $canseehidden) {
                         $fullname = fullname($ra->user, $canviewfullnames); 
+                        if($ra->hidden == 1){
+                           $fullname .= ' ('.get_string('hiddenassign').')'; 
+                        }
 
                         if (isset($aliasnames[$ra->roleid])) {
                             $ra->rolename = $aliasnames[$ra->roleid]->name;
