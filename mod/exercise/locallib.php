@@ -238,14 +238,14 @@ function exercise_count_student_submissions($exercise) {
     global $CFG;
 
     // make sure it works on the site course
-    $select = "u.course = '$exercise->course' AND";
-    if ($exercise->course == SITEID) {
-        $select = '';
-    }
+    // Where is table u? I remove it, try to make SQL correct.
+    // $select = "u.course = '$exercise->course' AND";
+    // if ($exercise->course == SITEID) {
+    //     $select = '';
+    // }
 
     return count_records_sql("SELECT count(*) FROM {$CFG->prefix}exercise_submissions s
-                            WHERE $select 
-                              AND s.exerciseid = $exercise->id
+                            WHERE s.exerciseid = $exercise->id
                               AND timecreated > 0");
     }
 
@@ -487,16 +487,16 @@ function exercise_get_best_submission_grades($exercise) {
     global $CFG;
 
     // make sure it works on the site course
-    $select = "u.course = '$exercise->course' AND";
-    if ($exercise->course == SITEID) {
-        $select = '';
-    }
+    // Where is table u? I remove it, try to make SQL correct.
+    // $select = "u.course = '$exercise->course' AND";
+    // if ($exercise->course == SITEID) {
+    //     $select = '';
+    // }
 
     return get_records_sql("SELECT DISTINCT s.userid, MAX(a.grade) AS grade FROM 
                         {$CFG->prefix}exercise_submissions s, 
                         {$CFG->prefix}exercise_assessments a
-                            WHERE $select 
-                              AND s.exerciseid = $exercise->id
+                            WHERE s.exerciseid = $exercise->id
                               AND s.late = 0
                               AND a.submissionid = s.id
                               GROUP BY s.userid");
@@ -540,15 +540,16 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
             // allow for multiple assessments of submissions (coming from different teachers)
                     
             // make sure it works on the site course
-            $select = "u.course = '$exercise->course' AND";
-            if ($exercise->course == SITEID) {
-                $select = '';
-            }
+            // Where is table u? I remove it, try to make SQL correct.
+            // $select = "u.course = '$exercise->course' AND";
+            // if ($exercise->course == SITEID) {
+            //     $select = '';
+            // }
 
             return get_records_sql("SELECT s.*, AVG(a.grade) AS grade FROM 
                     {$CFG->prefix}groups_members g, {$CFG->prefix}exercise_submissions s, 
                     {$CFG->prefix}exercise_assessments a
-                    WHERE $select g.groupid = $groupid
+                    WHERE g.groupid = $groupid
                     AND s.exerciseid = $exercise->id
                     AND a.submissionid = s.id
                     GROUP BY s.id
@@ -564,14 +565,15 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
         }
 
     // make sure it works on the site course
-    $select = "u.course = '$exercise->course' AND";
-    if ($exercise->course == SITEID) {
-        $select = '';
-    }
+    // Where is table u? I remove it, try to make SQL correct.
+    // $select = "u.course = '$exercise->course' AND";
+    // if ($exercise->course == SITEID) {
+    //     $select = '';
+    // }
 
         return get_records_sql("SELECT s.* FROM  {$CFG->prefix}user n, 
                 {$CFG->prefix}groups_members g, {$CFG->prefix}exercise_submissions s
-                WHERE $select g.groupid = $groupid
+                WHERE g.groupid = $groupid
                 AND s.exerciseid = $exercise->id
                 ORDER BY $order");
 
@@ -581,15 +583,15 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
             // allow for multiple assessments of submissions (coming from different teachers)
 
             // make sure it works on the site course
-            $select = "u.course = '$exercise->course' AND";
-            if ($exercise->course == SITEID) {
-                $select = '';
-            }
+            // Where is table u? I remove it, try to make SQL correct.
+            // $select = "u.course = '$exercise->course' AND";
+            // if ($exercise->course == SITEID) {
+            //     $select = '';
+            // }
 
             return get_records_sql("SELECT s.*, AVG(a.grade) AS grade FROM {$CFG->prefix}exercise_submissions s, 
                     {$CFG->prefix}exercise_assessments a
-                    WHERE $select 
-                    AND s.exerciseid = $exercise->id
+                    WHERE s.exerciseid = $exercise->id
                     AND a.submissionid = s.id
                     GROUP BY s.id
                     ORDER BY a.grade DESC");
@@ -604,15 +606,15 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
         }
 
         // make sure it works on the site course
-        $select = "u.course = '$exercise->course' AND";
-        if ($exercise->course == SITEID) {
-            $select = '';
-        }
+        // Where is table u? I remove it, try to make SQL correct.
+        // $select = "u.course = '$exercise->course' AND";
+        // if ($exercise->course == SITEID) {
+        //     $select = '';
+        // }
 
         return get_records_sql("SELECT s.* FROM {$CFG->prefix}exercise_submissions s, 
                 {$CFG->prefix}user n  
-                WHERE $select 
-                AND s.exerciseid = $exercise->id
+                WHERE s.exerciseid = $exercise->id
                 ORDER BY $order");
     }
 }
@@ -657,16 +659,16 @@ function exercise_get_ungraded_assessments_student($exercise) {
     // Return all assessments which have not been graded or just graded of student's submissions
 
     // make sure it works on the site course
-    $select = "u.course = '$exercise->course' AND";
-    if ($exercise->course == SITEID) {
-        $select = '';
-    }
+    // Where is table u? I remove it, try to make SQL correct.
+    // $select = "u.course = '$exercise->course' AND";
+    // if ($exercise->course == SITEID) {
+    //     $select = '';
+    // }
 
     $cutofftime =time() - $CFG->maxeditingtime;
     return get_records_sql("SELECT a.* FROM {$CFG->prefix}exercise_submissions s
                             {$CFG->prefix}exercise_assessments a
-                            WHERE $select 
-                              AND s.exerciseid = $exercise->id
+                            WHERE s.exerciseid = $exercise->id
                               AND a.submissionid = s.id
                               AND (a.timegraded = 0 OR a.timegraded > $cutofftime)
                               AND a.timecreated < $cutofftime
