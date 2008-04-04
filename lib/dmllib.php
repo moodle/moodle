@@ -2009,13 +2009,20 @@ function oracle_dirty_hack ($table, &$dataobject, $usecache = true) {
         }
     /// Now, we have one empty value, going to be inserted to one NOT NULL, VARCHAR2 or CLOB field
     /// Try to get the best value to be inserted
+
+    /// The '0' string doesn't need any transformation, skip
+        if ($fieldvalue === '0') {
+            continue;
+        }
+
+    /// Transformations start
         if (gettype($fieldvalue) == 'boolean') {
             $dataobject->$fieldname = '0'; /// Transform false to '0' that evaluates the same for PHP
         } else if (gettype($fieldvalue) == 'integer') {
             $dataobject->$fieldname = '0'; /// Transform 0 to '0' that evaluates the same for PHP
         } else if (gettype($fieldvalue) == 'NULL') {
             $dataobject->$fieldname = '0'; /// Transform NULL to '0' that evaluates the same for PHP
-        } else {
+        } else if ($fieldvalue === '') {
             $dataobject->$fieldname = ' '; /// Transform '' to ' ' that DONT'T EVALUATE THE SAME
                                            /// (we'll transform back again on get_records_XXX functions and others)!!
         }
