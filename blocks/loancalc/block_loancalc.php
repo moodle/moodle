@@ -150,8 +150,6 @@ function comp(v) { // general entry point for all cases
 } // function comp
 //]]>
 </script>
-
-<h1></h1>
 <form method="post" id="vbankform" action="">
             <table>
                 <tr>
