@@ -17,9 +17,11 @@ Our changes:
  * adodb-lib.inc.php - modify some debug output to be correct XHTML. MDL-12378.
        Reported to ADOdb at: http://phplens.com/lens/lensforum/msgs.php?id=17133
        Once fixed by adodb guys, we'll return to their official distro.
+ * drivers/adodb-mysqli.inc.php - fixed problem with driver not detecting enums
+       in the MetaColumns() function. MDL-14215.
+       Reported to ADOdb at: http://phplens.com/lens/lensforum/msgs.php?id=17383
+       Once fixed by adodb guys, we'll return to their official distro.
 
-skodak, iarenaza, moodler
-
-
+skodak, iarenaza, moodler, stronk7
 
 $Id$
