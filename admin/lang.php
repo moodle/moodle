@@ -290,7 +290,10 @@
                         $missingcounter++;
                         $totalcounter->missing++;
                     }
-                    if (LANG_LINK_MISSING_STRINGS && $missingstring) {
+                    if ($translationsdiffer) {
+                        $missingcounter++;
+                    }
+                    if (LANG_LINK_MISSING_STRINGS && ($missingstring || $translationsdiffer)) {
                         $missinglinkstart = "<a href=\"lang.php?mode=compare&amp;currentfile=$filename#missing$missingcounter\">";
                         $missinglinkend = '</a>';
                     } else {
@@ -586,12 +589,13 @@
                     $value2 = lang_fix_value_from_file($localstring[$key]);
                 }
                 error_reporting($CFG->debug);
-
-                // Color highlighting:
-                // red #ef6868 - translation missing in both system and local pack
-                // yellow #feff7f - translation missing in system pack but is translated in local
-                // green #AAFFAA - translation present in both system and local but is different
+                $missingtarget = '';
+                $missingnext = '';
+                $missingprev = '';
+                $cellcolour = '';
+                $usetabindex = false;
                 if (!$value) {
+                    // the string is not present in the pack being processed
                     if (!$value2) {
                         $cellcolour = 'class="bothmissing"';
                         $usetabindex = true;
@@ -606,22 +610,21 @@
                         '<img src="' . $CFG->pixpath . '/t/down.gif" class="iconsmall" alt="'.$strnext.'" /></a>';
                         $missingprev = '<a href="#missing'.($missingcounter-1).'">'.
                         '<img src="' . $CFG->pixpath . '/t/up.gif" class="iconsmall" alt="'.$strprev.'" /></a>';
-                    } else {
-                        $missingtarget = '';
-                        $missingnext = '';
-                        $missingprev = '';
                     }
                 } else {
-                    if ($value <> $value2 && $value2 <> '') {
+                    // the string is translated in the pack being processed
+                    if ($value <> $value2 && ($uselocal || $value2 <> '')) {
                         $cellcolour = 'class="localdifferent"';
                         $usetabindex = true;
-                    } else {
-                        $cellcolour = '';
-                        $usetabindex = false;
+                        $missingcounter++;
+                        if (LANG_DISPLAY_MISSING_LINKS) {
+                            $missingtarget = '<a name="missing'.$missingcounter.'"></a>';
+                            $missingnext = '<a href="#missing'.($missingcounter+1).'">'.
+                            '<img src="' . $CFG->pixpath . '/t/down.gif" class="iconsmall" alt="'.$strnext.'" /></a>';
+                            $missingprev = '<a href="#missing'.($missingcounter-1).'">'.
+                            '<img src="' . $CFG->pixpath . '/t/up.gif" class="iconsmall" alt="'.$strprev.'" /></a>';
+                        }
                     }
-                    $missingtarget = '';
-                    $missingnext = '';
-                    $missingprev = '';
                 }
 
                 if ($editable) {
