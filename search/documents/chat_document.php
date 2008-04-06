@@ -76,7 +76,9 @@ function chat_make_link($cm_id, $start, $end) {
 * fetches all the records for a given session and assemble them as a unique track
 * we revamped here the code of report.php for making sessions, but without any output.
 * note that we should collect sessions "by groups" if groupmode() is SEPARATEGROUPS.
-* @param chat_id the database
+* @param int $chat_id the database
+* @param int $fromtime
+* @param int $totime
 * @uses CFG
 * @return an array of objects representing the chat sessions.
 */
@@ -100,8 +102,7 @@ function chat_get_session_tracks($chat_id, $fromtime = 0, $totime = 0) {
             foreach($messages as $aMessage){
                 $groupedMessages[$aMessage->groupid][] = $aMessage;
             }
-        }
-        else{
+        } else {
             $groupedMessages[-1] = &$messages;
         }
         $sessiongap = 5 * 60;    // 5 minutes silence means a new session
@@ -128,9 +129,8 @@ function chat_get_session_tracks($chat_id, $fromtime = 0, $totime = 0) {
                         $tracks[count($tracks) - 1]->content .= ' '.$message->message;
                         $tracks[count($tracks) - 1]->sessionstart = $message->timestamp;
                     }
-                } 
+                } else {
                 // we initiate a new session track (backwards)
-                else {
                     $track = new Object();
                     $track->sessionend = $message->timestamp;
                     $track->sessionstart = $message->timestamp;
@@ -175,7 +175,7 @@ function chat_get_content_for_index(&$chat) {
             foreach($sessionTracks as $aTrackId => $aTrack) {
                 foreach($aTrack->sessionusers as $aUserId){
                     $user = get_record('user', 'id', $aUserId);
-                    $aTrack->authors = ($user) ? $user->firstname.' '.$user->lastname : '' ;
+                    $aTrack->authors = ($user) ? fullname($user) : '' ;
                     $documents[] = new ChatTrackSearchDocument(get_object_vars($aTrack), $cm->id, $chat->course, $aTrack->groupid, $context->id);
                 }
             }
@@ -208,8 +208,8 @@ function chat_single_document($id, $itemtype) {
         if ($tracks){
             $aTrack = $tracks[0];
             $document = new ChatTrackSearchDocument(get_object_vars($aTrack), $cm->id, $chat->course, $aTrack->groupid, $context->id);
+            return $document;
         }
-        return $document;
     }
     return null;
 }

@@ -39,6 +39,7 @@ function get_text_for_indexing_htm(&$resource){
     // filter all html tags
     // $text = clean_text($text, FORMAT_PLAIN);
     // NOTE : this is done in ResourceSearchDocument __constructor
+    $text = preg_replace("/<!--[^>]*?-->/", '', $text);
     
     if (!empty($CFG->block_search_limit_index_body)){
         $text = shorten($text, $CFG->block_search_limit_index_body);

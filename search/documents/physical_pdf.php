@@ -28,12 +28,13 @@ function get_text_for_indexing_pdf(&$resource){
     // just call pdftotext over stdout and capture the output
     if (!empty($CFG->block_search_pdf_to_text_cmd)){
         preg_match("/^\S+/", $CFG->block_search_pdf_to_text_cmd, $matches);
-        if (!file_exists("{$moodleroot}{$matches[0]}")){
+        if (!file_exists("{$moodleroot}/{$matches[0]}")){
             mtrace('Error with pdf to text converter command : exectuable not found.');
         }
         else{
             $file = escapeshellarg($CFG->dataroot.'/'.$resource->course.'/'.$resource->reference);
-            $text_converter_cmd = "\"{$moodleroot}{$CFG->block_search_pdf_to_text_cmd}\" \"$file\" -";
+            $command = trim($CFG->block_search_pdf_to_text_cmd);
+            $text_converter_cmd = "{$moodleroot}/{$command} \"$file\" -";
             $result = shell_exec($text_converter_cmd);
             if ($result){
                 return $result;

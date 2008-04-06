@@ -39,7 +39,7 @@ class WikiSearchDocument extends SearchDocument {
         $doc->contextid     = $context_id;
 
         $doc->title     = $page['pagename'];
-        $doc->date      = $page['timemodified'];
+        $doc->date      = $page['lastmodified'];
         //remove '(ip.ip.ip.ip)' from wiki author field
         $doc->author    = preg_replace('/\(.*?\)/', '', $page['author']);
         $doc->contents  = $page['content'];
@@ -138,7 +138,7 @@ function wiki_get_latest_pages(&$entry) {
     if ($ids = get_records('wiki_pages', 'wiki', $entry->id, '', 'distinct pagename')) {
         if ($pagesets = get_records('wiki_pages', 'wiki', $entry->id, '', 'distinct pagename')) {
             foreach ($pagesets as $aPageset) {
-                $pages[] = wiki_get_latest_page($entry, $aPageset->id);
+                $pages[] = wiki_get_latest_page($entry, $aPageset->pagename);
             } 
         } else {
             return false;

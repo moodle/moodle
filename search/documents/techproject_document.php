@@ -91,6 +91,7 @@ function techproject_get_content_for_index(&$techproject) {
         foreach($entries as $anEntry) {
             if ($anEntry) {
                 if (strlen($anEntry->description) > 0) {
+                    $anEntry->author = '';
                     $documents[] = new TechprojectEntrySearchDocument(get_object_vars($anEntry), $techproject->course, $context->id);
                 } 
             } 
@@ -120,18 +121,22 @@ function techproject_single_document($id, $itemtype) {
     switch ($itemtype){
         case 'requirement':{
             $entry = get_record('techproject_requirement', 'id', $id);
+            $entry->author = '';
             break;
         }
         case 'specification':{
             $entry = get_record('techproject_specification', 'id', $id);
+            $entry->author = '';
             break;
         }
         case 'milestone':{
             $entry = get_record('techproject_milestone', 'id', $id);
+            $entry->author = '';
             break;
         }
         case 'deliverable':{
             $entry = get_record('techproject_deliverable', 'id', $id);
+            $entry->author = '';
             break;
         }
         case 'task':{
