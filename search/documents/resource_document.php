@@ -1,24 +1,31 @@
 <?php
 /**
 * Global Search Engine for Moodle
-* Michael Champanis (mchampan) [cynnical@gmail.com]
-* review 1.8+ : Valery Fremaux [valery.fremaux@club-internet.fr] 
-* 2007/08/02
+*
+* @package search
+* @category core
+* @subpackage document_wrappers
+* @author Michael Campanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 * document handling for all resources
 * This file contains the mapping between a resource and it's indexable counterpart,
 *
 * Functions for iterating and retrieving the necessary records are now also included
 * in this file, rather than mod/resource/lib.php
-**/
+*/
 
+/**
+* requires and includes
+*/
 require_once("$CFG->dirroot/search/documents/document.php");
 require_once("$CFG->dirroot/mod/resource/lib.php");
 
-/* 
+/* *
 * a class for representing searchable information
 * 
-**/
+*/
 class ResourceSearchDocument extends SearchDocument {
     public function __construct(&$resource, $context_id) {
         // generic information; required
@@ -68,6 +75,7 @@ function resource_iterator() {
 * this function does not need a content iterator, returns all the info
 * itself;
 * @param notneeded to comply API, remember to fake the iterator array though
+* @uses CFG
 * @return an array of searchable documents
 */
 function resource_get_content_for_index(&$notneeded) {
@@ -155,7 +163,10 @@ function resource_get_physical_file(&$resource, $context_id, $getsingle, &$docum
     global $CFG;
     
     // cannot index empty references
-    if (empty($resource->reference)) return false;
+    if (empty($resource->reference)){
+        mtrace("Cannot index, empty reference.");
+        return false;
+    }
 
     // cannot index remote resources
     if (resource_is_url($resource->reference)){
@@ -166,6 +177,7 @@ function resource_get_physical_file(&$resource, $context_id, $getsingle, &$docum
     $fileparts = pathinfo($resource->reference);
     // cannot index unknown or masked types
     if (empty($fileparts['extension'])) {
+        mtrace("Cannot index without explicit extension.");
         return false;
     }
     
@@ -189,15 +201,15 @@ function resource_get_physical_file(&$resource, $context_id, $getsingle, &$docum
         $resource->alltext = $function_name($resource);
         if (!empty($resource->alltext)){
             if ($getsingle){
-                return new ResourceSearchDocument(get_object_vars($resource), $context_id);
-            }
-            else{
+                $single = new ResourceSearchDocument(get_object_vars($resource), $context_id);
+                mtrace("finished file $resource->name as {$resource->reference}");
+                return $single;
+            } else {
                 $documents[] = new ResourceSearchDocument(get_object_vars($resource), $context_id);
             }
             mtrace("finished file $resource->name as {$resource->reference}");
         }
-    }
-    else{
+    } else {
         mtrace("fulltext handler not found for $ext type");
     }
     return false;
@@ -250,8 +262,7 @@ function resource_single_document($id, $itemtype) {
             $document = resource_get_physical_file($resource, true, $context->id);
             if (!$document) mtrace("Warning : this document {$resource->name} will not be indexed");
             return $document;
-        }
-        else{
+        } else {
             return new ResourceSearchDocument(get_object_vars($resource), $context->id);
         }
     }
@@ -305,5 +316,13 @@ function resource_check_text_access($path, $itemtype, $this_id, $user, $group_id
     }
     
     return true;
-} //resource_check_text_access
+}
+
+/**
+* post processes the url for cleaner output.
+* @param string $title
+*/
+function resource_link_post_processing($title){
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
+}
 ?>

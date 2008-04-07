@@ -1,29 +1,31 @@
 <?php
 /**
 * Global Search Engine for Moodle
-* Michael Champanis (mchampan) [cynnical@gmail.com]
-* creation : Valery Fremaux [valery.fremaux@club-internet.fr] 
-* 2007/08/02
+*
+* @package search
+* @category core
+* @subpackage document_wrappers
+* @author Michael Campanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 * document handling for lesson activity module
 * This file contains the mapping between a lesson page and it's indexable counterpart,
 *
 * Functions for iterating and retrieving the necessary records are now also included
 * in this file, rather than mod/lesson/lib.php
-*
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package search
-* @version 2007110400
-**/
-/* see wiki_document.php for descriptions */
+*/
 
+/**
+* includes and requires
+*/
 require_once("$CFG->dirroot/search/documents/document.php");
 require_once("$CFG->dirroot/mod/lesson/lib.php");
 
-/* 
+/** 
 * a class for representing searchable information
 * 
-**/
+*/
 class LessonPageSearchDocument extends SearchDocument {
 
     /**
@@ -48,8 +50,8 @@ class LessonPageSearchDocument extends SearchDocument {
         $data->lesson      = $page['lessonid'];
         
         parent::__construct($doc, $data, $course_id, 0, 0, PATH_FOR_SEARCH_TYPE_LESSON);
-    } //constructor
-} //LessonPageSearchDocument
+    } 
+}
 
 /**
 * constructs a valid link to a chat content
@@ -64,7 +66,7 @@ function lesson_make_link($lessonmoduleid, $itemid, $itemtype) {
         return "{$CFG->wwwroot}/mod/lesson/view.php?id={$lessonmoduleid}&amp;pageid={$itemid}";
     }
     return $CFG->wwwroot.'/mod/lesson/view.php?id='.$lessonmoduleid;
-} //lesson_make_link
+}
 
 /**
 * search standard API
@@ -73,7 +75,7 @@ function lesson_make_link($lessonmoduleid, $itemid, $itemtype) {
 function lesson_iterator() {
     $lessons = get_records('lesson');
     return $lessons;
-} //lesson_iterator
+}
 
 /**
 * search standard API
@@ -96,7 +98,7 @@ function lesson_get_content_for_index(&$lesson) {
     }
 
     return $documents;
-} //lesson_get_content_for_index
+}
 
 /**
 * returns a single lesson search document based on a lesson page id
@@ -116,7 +118,7 @@ function lesson_single_document($id, $itemtype) {
         return new LessonPageSearchDocument(get_object_vars($page), $cm->id, $lesson->course, $itemtype, $context->id);
     }
     return null;
-} //lesson_single_document
+}
 
 /**
 * dummy delete function that aggregates id with itemtype.
@@ -127,7 +129,7 @@ function lesson_delete($info, $itemtype) {
     $object->id = $info;
     $object->itemtype = $itemtype;
     return $object;
-} //lesson_delete
+}
 
 /**
 * returns the var names needed to build a sql query for addition/deletions
@@ -138,7 +140,7 @@ function lesson_db_names() {
     return array(
         array('id', 'lesson_pages', 'timecreated', 'timemodified', 'page')
     );
-} //lesson_db_names
+}
 
 /**
 * this function handles the access policy to contents indexed as searchable documents. If this 
@@ -201,5 +203,5 @@ function lesson_check_text_access($path, $itemtype, $this_id, $user, $group_id, 
     }
     
     return true;
-} //lesson_check_text_access
+}
 ?>

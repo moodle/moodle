@@ -1,13 +1,20 @@
 <?php
 /**
 * Global Search Engine for Moodle
-* add-on 1.8+ : Valery Fremaux [valery.fremaux@club-internet.fr] 
-* 2007/08/02
+*
+* @package search
+* @category core
+* @subpackage document_wrappers
+* @author Michael Campanis, Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 * document handling for techproject activity module
 */
-/* see wiki_document.php for descriptions */
 
+/**
+* requires and includes
+*/
 require_once("$CFG->dirroot/search/documents/document.php");
 require_once("$CFG->dirroot/mod/techproject/lib.php");
 
@@ -84,6 +91,7 @@ function techproject_get_content_for_index(&$techproject) {
         foreach($entries as $anEntry) {
             if ($anEntry) {
                 if (strlen($anEntry->description) > 0) {
+                    $anEntry->author = '';
                     $documents[] = new TechprojectEntrySearchDocument(get_object_vars($anEntry), $techproject->course, $context->id);
                 } 
             } 
@@ -113,18 +121,22 @@ function techproject_single_document($id, $itemtype) {
     switch ($itemtype){
         case 'requirement':{
             $entry = get_record('techproject_requirement', 'id', $id);
+            $entry->author = '';
             break;
         }
         case 'specification':{
             $entry = get_record('techproject_specification', 'id', $id);
+            $entry->author = '';
             break;
         }
         case 'milestone':{
             $entry = get_record('techproject_milestone', 'id', $id);
+            $entry->author = '';
             break;
         }
         case 'deliverable':{
             $entry = get_record('techproject_deliverable', 'id', $id);
+            $entry->author = '';
             break;
         }
         case 'task':{
@@ -136,7 +148,7 @@ function techproject_single_document($id, $itemtype) {
             break;
         }
     }
-    $techprojet_course = get_field('techproject', 'course', 'id', $entry->projectid);
+    $techproject_course = get_field('techproject', 'course', 'id', $entry->projectid);
     $coursemodule = get_field('modules', 'id', 'name', 'techproject');
     $cm = get_record('course_modules', 'course', $techproject_course, 'module', $coursemodule, 'instance', $entry->projectid);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
