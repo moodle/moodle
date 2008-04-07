@@ -11,4 +11,6 @@ $string['configsearchtext'] = 'Zoektekst';
 $string['go'] = 'Zoek!';
 $string['bytes'] = ' bytes (0 staat voor ongelimiteerd)';
 $string['searchmoodle'] = 'Zoek in Moodle';
+$string['usemoodleroot'] = 'Use moodle root for external converters';
+
 ?>
