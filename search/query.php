@@ -43,7 +43,7 @@
     }
     
     if (empty($CFG->enableglobalsearch)) {
-        error(get_string('globalsearchdisabled', 'search'));
+        print_error('globalsearchdisabled', 'search');
     }
     
     $adv = new Object();
@@ -335,14 +335,15 @@
     
                 print "<li value='".($listing->number+1)."'><a href='".str_replace('DEFAULT_POPUP_SETTINGS', DEFAULT_POPUP_SETTINGS ,$listing->url)."'>$listing->title</a><br />\n"
                    ."<em>".search_shorten_url($listing->url, 70)."</em><br />\n"
-                   ."{$typestr}: ".$listing->doctype.", {$scorestr}: ".round($listing->score, 3).", {$authorstr}: ".$listing->author."\n"
-                   ."</li>\n";
-            }
-            
+                   ."{$typestr}: ".$listing->doctype.", {$scorestr}: ".round($listing->score, 3);
+                if (!empty($listing->author)){
+                    print ", {$authorstr}: ".$listing->author."\n"
+                        ."</li>\n";
+                }
+            }            
             print "</ol>";
             print $page_links;
-        } 
-    
+        }     
         print_box_end();
     ?>
     <div align="center">
