@@ -1,14 +1,20 @@
 <?php
-/* 
-* Author: Michael Champanis
+/** 
+* Global Search Engine for Moodle
+*
+* @package search
+* @category core
+* @subpackage search_engine
+* @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+*
+* General function library
 *
 * This file must not contain any PHP 5, because it is used to test for PHP 5
 * itself, and needs to be able to be executed on PHP 4 installations.
 *
-* Reviewed by: Valery Fremaux (2007)
-* - adding techproject search capabilities
-* - adding full internationalization
-**/
+*/
 
 /*
 // function reference

@@ -1,14 +1,19 @@
 <?php
 /**
 * Global Search Engine for Moodle
-* add-on 1.8+ : Valery Fremaux [valery.fremaux@club-internet.fr] 
-* 2007/08/02
+*
+* @package search
+* @category core
+* @subpackage document_wrappers
+* @author Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 * this is a format handler for getting text out of a proprietary binary format 
 * so it can be indexed by Lucene search engine
 */
 
-/**
+/*
 * first implementation is a trivial heuristic based on ppt character stream :
 * text sequence always starts with a 00 9F 0F 04 sequence followed by a 15 bytes
 * sequence
@@ -22,6 +27,10 @@
 * based on these following rules, here is a little empiric texte extractor for PPT
 */
 
+/**
+* @param object $resource
+* @uses CFG, USER
+*/
 function get_text_for_indexing_ppt(&$resource){
     global $CFG, $USER;
 

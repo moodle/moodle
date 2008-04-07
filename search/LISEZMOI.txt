@@ -1,5 +1,5 @@
 Cette distribution partielle contient une refonte du moteur de 
-recherche globalde Moodle.
+recherche globale de Moodle.
 
 Le moteur de recherche est capable d'indexer et de rechercher 
 des informations dans un grand nombre de contenus stockés

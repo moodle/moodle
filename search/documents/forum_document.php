@@ -1,9 +1,13 @@
 <?php
 /**
 * Global Search Engine for Moodle
-* Michael Champanis (mchampan) [cynnical@gmail.com]
-* review 1.8+ : Valery Fremaux [valery.fremaux@club-internet.fr] 
-* 2007/08/02
+*
+* @package search
+* @category core
+* @subpackage document_wrappers
+* @author Michael Campanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 * document handling for forum activity module
 * This file contains the mapping between a forum post and it's indexable counterpart,
@@ -11,24 +15,22 @@
 * Functions for iterating and retrieving the necessary records are now also included
 * in this file, rather than mod/forum/lib.php
 *
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package search
-* @version 2007110400
-**/
-/* see wiki_document.php for descriptions */
+*/
 
+/**
+* includes and requires
+*/
 require_once("$CFG->dirroot/search/documents/document.php");
 require_once("$CFG->dirroot/mod/forum/lib.php");
 
-/* 
+/** 
 * a class for representing searchable information
 * 
-**/
+*/
 class ForumSearchDocument extends SearchDocument {
 
     /**
     * constructor
-    *
     */
     public function __construct(&$post, $forum_id, $course_id, $itemtype, $context_id) {
         // generic information
@@ -50,8 +52,8 @@ class ForumSearchDocument extends SearchDocument {
         $data->discussion = $post['discussion'];
         
         parent::__construct($doc, $data, $course_id, $post['groupid'], $post['userid'], PATH_FOR_SEARCH_TYPE_FORUM);
-    } //constructor
-} //ForumSearchDocument
+    } 
+}
 
 /**
 * constructs a valid link to a chat content
@@ -63,7 +65,7 @@ function forum_make_link($discussion_id, $post_id) {
     global $CFG;
     
     return $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion_id.'#'.$post_id;
-} //forum_make_link
+}
 
 /**
 * search standard API
@@ -72,7 +74,7 @@ function forum_make_link($discussion_id, $post_id) {
 function forum_iterator() {
     $forums = get_records('forum');
     return $forums;
-} //forum_iterator
+}
 
 /**
 * search standard API
@@ -108,7 +110,7 @@ function forum_get_content_for_index(&$forum) {
         } 
     } 
     return $documents;
-} //forum_get_content_for_index
+}
 
 /**
 * returns a single forum search document based on a forum entry id
@@ -128,7 +130,7 @@ function forum_single_document($id, $itemtype) {
         return new ForumSearchDocument(get_object_vars($post), $discussion->forum, $discussion->course, $itemtype, $context->id);
     }
     return null;
-} //forum_single_document
+}
 
 /**
 * dummy delete function that aggregates id with itemtype.
@@ -139,7 +141,7 @@ function forum_delete($info, $itemtype) {
     $object->id = $info;
     $object->itemtype = $itemtype;
     return $object;
-} //forum_delete
+}
 
 /**
 * returns the var names needed to build a sql query for addition/deletions
@@ -151,11 +153,12 @@ function forum_db_names() {
         array('id', 'forum_posts', 'created', 'modified', 'head', 'parent = 0'),
         array('id', 'forum_posts', 'created', 'modified', 'post', 'parent != 0')
     );
-} //forum_db_names
+}
 
 /**
 * reworked faster version from /mod/forum/lib.php
 * @param forum_id a forum identifier
+* @uses CFG, USER
 * @return an array of posts
 */
 function forum_get_discussions_fast($forum_id) {
@@ -202,12 +205,13 @@ function forum_get_discussions_fast($forum_id) {
             d.timemodified DESC
     ";
     return get_records_sql($query);
-} //forum_get_discussions_fast
+}
 
 /**
 * reworked faster version from /mod/forum/lib.php
 * @param parent the id of the first post within the discussion
 * @param forum_id the forum identifier
+* @uses CFG
 * @return an array of posts
 */
 function forum_get_child_posts_fast($parent, $forum_id) {
@@ -241,7 +245,7 @@ function forum_get_child_posts_fast($parent, $forum_id) {
             p.created ASC
     ";
     return get_records_sql($query);
-} //forum_get_child_posts_fast
+}
 
 /**
 * this function handles the access policy to contents indexed as searchable documents. If this 
@@ -256,6 +260,7 @@ function forum_get_child_posts_fast($parent, $forum_id) {
 * points out the individual post.
 * @param user the user record denoting the user who searches
 * @param group_id the current group used by the user when searching
+* @uses CFG, USER
 * @return true if access is allowed, false elsewhere
 */
 function forum_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
@@ -290,6 +295,6 @@ function forum_check_text_access($path, $itemtype, $this_id, $user, $group_id, $
     }
     
     return true;
-} //forum_check_text_access
+}
 
 ?>

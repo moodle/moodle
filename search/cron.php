@@ -12,7 +12,10 @@
 *   adds documents created since the last index run
 */
 
-    require_once('../config.php');
+    if (!defined('MOODLE_INTERNAL')) {
+        die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    }
+
     require_once("$CFG->dirroot/search/lib.php");
 
     if (!search_check_php5()) {

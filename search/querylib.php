@@ -1,4 +1,18 @@
 <?php
+/** 
+* Global Search Engine for Moodle
+*
+* @package search
+* @category core
+* @subpackage search_engine
+* @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+*/
+
+/**
+* includes and requires
+*/
 require_once("{$CFG->dirroot}/search/Zend/Search/Lucene.php");
 
 define('DEFAULT_POPUP_SETTINGS', "\"menubar=0,location=0,scrollbars,resizable,width=600,height=450\"");
@@ -13,10 +27,12 @@ public  $url,
         $author,
         $score,
         $number;
-} //SearchResult
+} 
 
 
-//split this into Cache class and extend to SearchCache?
+/**
+* split this into Cache class and extend to SearchCache?
+*/
 class SearchCache {
 private $mode,
         $valid;
@@ -32,7 +48,7 @@ private $mode,
         } //else
 
         $this->valid = true;
-    } //constructor
+    } 
 
     /**
     * returns the search cache status
@@ -40,7 +56,7 @@ private $mode,
     */
     public function can_cache() {
         return $this->valid;
-    } //can_cache
+    } 
 
     /**
     *
@@ -53,7 +69,7 @@ private $mode,
         //if this query is different from the last, clear out the last one
         if ($id != false and $last_term != $id) {
             $this->clear($last_term);
-        } //if
+        } 
 
         //store the new query if id and object are passed in
         if ($object and $id) {
@@ -61,11 +77,10 @@ private $mode,
             $this->store($id, $object);
             return true;
         //otherwise return the stored results
-        } 
-        else if ($id and $this->exists($id)) {
+        } else if ($id and $this->exists($id)) {
             return $this->fetch($id);
-        } //else
-    } //cache
+        } 
+    } 
 
     /**
     * do key exist in cache ?
@@ -76,8 +91,8 @@ private $mode,
         switch ($this->mode) {
             case 'session' :
             return isset($_SESSION[$id]);
-        } //switch
-    } //exists
+        } 
+    } 
 
     /**
     * clears a cached object in cache
@@ -90,8 +105,8 @@ private $mode,
                 unset($_SESSION[$id]);
                 session_unregister($id);
             return;
-        } //switch
-    } //clear
+        } 
+    } 
 
     /**
     * fetches a cached object
@@ -102,8 +117,8 @@ private $mode,
         switch ($this->mode) {
             case 'session' :
                 return ($this->exists($id)) ? unserialize($_SESSION[$id]) : false;
-        } //switch
-    } //fetch
+        } 
+    } 
 
     /**
     * put an object in cache
@@ -116,9 +131,9 @@ private $mode,
             case 'session' :
                 $_SESSION[$id] = serialize($object);
             return;
-        } //switch
-    } //store
-} //SearchCache
+        }
+    } 
+} 
 
 /**
 * Represents a single query with results
@@ -156,14 +171,14 @@ class SearchQuery {
         } catch(Exception $e) {
             $this->validindex = false;
             return;
-        } //catch
+        } 
 
         if (empty($this->term)) {
             $this->validquery = false;
         } else {
             $this->set_query($this->term);
-        } //else
-    } //constructor
+        } 
+    } 
     
     /**
     * determines state of query object depending on query entry and 
@@ -173,22 +188,20 @@ class SearchQuery {
     public function set_query($term = '') {
         if (!empty($term)) {
             $this->term = $term;
-        } //if
+        }
 
         if (empty($this->term)) {
             $this->validquery = false;
-        } 
-        else {
+        } else {
             $this->validquery = true;
-        } //else
+        }
 
         if ($this->validquery and $this->validindex) {
             $this->results = $this->get_results();
-        } 
-        else {
+        } else {
             $this->results = array();
-        } //else
-    } //set_query
+        }
+    } 
 
     /**
     * accessor to the result table.
@@ -196,11 +209,12 @@ class SearchQuery {
     */
     public function results() {
         return $this->results;
-    } //results
+    }
 
     /**
     * do the effective collection of results
-    *
+    * @param boolean $all
+    * @uses USER
     */
     private function process_results($all=false) {
         global $USER;
@@ -224,22 +238,20 @@ class SearchQuery {
         if (!$all) {
             if ($hitcount < $this->results_per_page) {
                 $this->pagenumber = 1;
-            } 
-            else if ($this->pagenumber > $totalpages) {
+            } else if ($this->pagenumber > $totalpages) {
                 $this->pagenumber = $totalpages;
-            } //if
+            }
 
             $start = ($this->pagenumber - 1) * $this->results_per_page;
             $end = $start + $this->results_per_page;
 
             if ($end > $hitcount) {
                 $end = $hitcount;
-            } //if
-        } 
-        else {
+            } 
+        } else {
             $start = 0;
             $end = $hitcount;
-        } //else
+        }
 
         $resultdoc  = new SearchResult();
         $resultdocs = array();
@@ -258,15 +270,14 @@ class SearchQuery {
 
                 //and store it
                 $resultdocs[] = clone($resultdoc);
-            } //if
-            else{
+            } else {
                // lowers total_results one unit
                $this->total_results--;
             }
-        } //foreach
+        }
 
         return $resultdocs;
-    } //process_results
+    }
 
     /**
     * get results of a search query using a caching strategy if available
@@ -281,20 +292,17 @@ class SearchQuery {
                 //cache the results so we don't have to compute this on every page-load
                 $cache->cache($this->term, $resultdocs);
                 //print "Using new results.";
-            } 
-            else {
+            } else {
             //There was something in the cache, so we're using that to save time
             //print "Using cached results.";
-            } //else
-        } 
-        else {
+            } 
+        } else {
             //no caching :(
             //print "Caching disabled!";
             $resultdocs = $this->process_results();
-        } //else
-
+        } 
         return $resultdocs;
-    } //get_results
+    }
 
     /**
     * constructs the results paging links on results.
@@ -314,7 +322,7 @@ class SearchQuery {
         $ret .= "<a href='query.php?query_string={$query}&page=".($page-1)."'>&lt; {$back}</a>&nbsp;";
       } else {
         $ret .= "&lt; {$back}&nbsp;";
-      } //else
+      } 
 
       //don't <a href> the current page
       for ($i = 1; $i <= $pages; $i++) {
@@ -322,15 +330,15 @@ class SearchQuery {
           $ret .= "($i)&nbsp;";
         } else {
           $ret .= "<a href='query.php?query_string={$query}&page={$i}'>{$i}</a>&nbsp;";
-        } //else
-      } //for
+        } 
+      } 
 
       //Next disabled if we're on the last page
       if ($page < $pages) {
         $ret .= "<a href='query.php?query_string={$query}&page=".($page+1)."'>{$next} &gt;</a>&nbsp;";
       } else {
         $ret .= "{$next} &gt;&nbsp;";
-      } //else
+      } 
 
       $ret .= "</div>";
 
@@ -343,10 +351,10 @@ class SearchQuery {
         $start = $page + 5;
         $end = $pages - 3;
         $ret = preg_replace("/<a\D+\d+\D+>$start<\/a>.*?<a\D+\d+\D+>$end<\/a>/", '...', $ret);
-      } //if
+      }
 
       return $ret;
-    } //page_numbers
+    }
 
     /**
     * can the user see this result ?
@@ -359,6 +367,7 @@ class SearchQuery {
     * @param path the path that routes to the local lib.php of the searched 
     * surrounding object fot that document
     * @param item_type a subclassing information for complex module data models
+    * @uses CFG
     * // TODO reorder parameters more consistently
     */
     private function can_display(&$user, $this_id, $doctype, $course_id, $group_id, $path, $item_type, $context_id) {
@@ -411,35 +420,55 @@ class SearchQuery {
       }
         
       return true;
-    } //can_display
+    }
 
+    /**
+    *
+    */
     public function count() {
       return $this->total_results;
     } //count
 
+    /**
+    *
+    */
     public function is_valid() {
       return ($this->validquery and $this->validindex);
-    } //is_valid
+    }
 
+    /**
+    *
+    */
     public function is_valid_query() {
       return $this->validquery;
-    } //is_valid_query
+    }
 
+    /**
+    *
+    */
     public function is_valid_index() {
       return $this->validindex;
-    } //is_valid_index
+    }
 
+    /**
+    *
+    */
     public function total_pages() {
       return ceil($this->count()/$this->results_per_page);
-    } //pages
+    }
 
+    /**
+    *
+    */
     public function get_pagenumber() {
       return $this->pagenumber;
-    } //get_pagenumber
+    }
 
+    /**
+    *
+    */
     public function get_results_per_page() {
       return $this->results_per_page;
-    } //get_results_per_page
-  } //SearchQuery
-
+    }
+}
 ?>
