@@ -1,20 +1,32 @@
 <?php
-/* 
-* Author: Michael Champanis
+/** 
+* Global Search Engine for Moodle
 *
-* Reviewed by: Valery Fremaux (2007)
+* @package search
+* @category core
+* @subpackage search_engine
+* @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * 
 * Index info class
 *
 * Used to retrieve information about an index.
 * Has methods to check for valid database and data directory,
 * and the index itself.
-**/
+*/
 
+/**
+* includes and requires
+*/
 require_once("$CFG->dirroot/search/lib.php");
 require_once("$CFG->dirroot/search/Zend/Search/Lucene.php");
 
+/**
+* main class for searchable information in the Lucene index 
+*/
 class IndexInfo {
+
     private $path,        //index data directory
             $size,        //size of directory (i.e. the whole index)
             $filecount,   //number of files
@@ -35,7 +47,7 @@ class IndexInfo {
             $validindex = true;
         } catch(Exception $e) {
             $validindex = false;
-        } //catch
+        } 
         
         //retrieve file system info about the index if it is valid
         if ($validindex) {
@@ -73,8 +85,7 @@ class IndexInfo {
                 $c = count_records(SEARCH_DATABASE_TABLE, 'doctype', $type);
                 $this->types[$type] = (int)$c;
             }
-        } 
-        else {
+        } else {
             $this->dbcount = 0;
             $this->types = array();
         }
@@ -82,23 +93,21 @@ class IndexInfo {
         //check if the busy flag is set
         if (isset($CFG->search_indexer_busy) && $CFG->search_indexer_busy == '1') {
             $this->complete = false;
-        } 
-        else {
+        } else {
             $this->complete = true;
         }
         
         //get the last run date for the indexer
         if ($this->valid() && $CFG->search_indexer_run_date) {
             $this->time = $CFG->search_indexer_run_date;
-        } 
-        else {
+        } else {
           $this->time = 0;
         }
-    } //__construct
+    } 
     
     /**
     * returns false on error, and the error message via referenced variable $err
-    *
+    * @param array $err array of errors
     */
     public function valid(&$err = null) {
         $err = array();
@@ -120,7 +129,7 @@ class IndexInfo {
         }
         
         return $ret;
-    } //valid
+    }
     
     /**
     * is the index dir valid
@@ -129,11 +138,10 @@ class IndexInfo {
     public function is_valid_dir() {
         if ($this->filecount > 0) {
             return true;
-        } 
-        else {
+        } else {
             return false;
         }
-    } //is_valid_dir
+    }
     
     /**
     * is the db table valid
@@ -142,34 +150,34 @@ class IndexInfo {
     public function is_valid_db() {
         if ($this->dbcount > 0) {
             return true;
-        } 
-        else {
+        } else {
             return false;
         }
-    } //is_valid_db
+    } 
     
     /**
     * shorthand get method for the class variables
-    *
+    * @param object $var
     */
     public function __get($var) {
         if (in_array($var, array_keys(get_class_vars(get_class($this))))) {
             return $this->$var;
         }
-    } //__get
-} //IndexInfo
+    } 
+} 
 
 
-/* 
+/**
 * DB Index control class
 *
 * Used to control the search index database table
-**/
+*/
 class IndexDBControl {
 
     /**
     * does the table exist?
-    * OBSOLETE
+    * @deprecated
+    * @uses CFG, db
     */
     public function checkTableExists() {
         global $CFG, $db;
@@ -186,7 +194,8 @@ class IndexDBControl {
 
     /**
     * is our database setup valid?
-    * OBSOLETE - Database is installed at install and should not be dropped out
+    * @uses db, CFG
+    * @deprecated Database is installed at install and should not be dropped out
     */
     public function checkDB() {
         global $CFG, $db;
@@ -209,6 +218,7 @@ class IndexDBControl {
     /**
     * add a document record to the table
     * @param document must be a Lucene SearchDocument instance
+    * @uses db, CFG
     */
     public function addDocument($document=null) {
         global $db, $CFG;
@@ -232,17 +242,18 @@ class IndexDBControl {
         $id = insert_record(SEARCH_DATABASE_TABLE, $doc);
         
         return $id;
-    } //addDocument
+    } 
 
     /**
     * remove a document record from the index
     * @param document must be a Lucene document instance, or at least a dbid enveloppe
+    * @uses db
     */
     public function delDocument($document) {
         global $db;
         
         delete_records(SEARCH_DATABASE_TABLE, 'id', $document->dbid);
-    } //delDocument
-} //IndexControl
+    }
+} 
 
 ?>

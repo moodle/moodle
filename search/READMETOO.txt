@@ -67,6 +67,7 @@ In the actual state, the engine indexes the following information:
 - wiki pages
 - techproject descriptions
 - char sessions
+- lesson pages
 
 Extensions
 ##########
