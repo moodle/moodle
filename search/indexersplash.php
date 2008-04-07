@@ -25,11 +25,11 @@ require_once("$CFG->dirroot/search/lib.php");
     require_login();
     
     if (empty($CFG->enableglobalsearch)) {
-        error(get_string('globalsearchdisabled', 'search'));
+        print_error('globalsearchdisabled', 'search');
     }
     
     if (!isadmin()) {
-        error(get_string('beadmin', 'search'), "$CFG->wwwroot/login/index.php");
+        print_error('beadmin', 'search', "$CFG->wwwroot/login/index.php");
     } 
     
 /// check for php5 (lib.php)
@@ -50,7 +50,11 @@ require_once("$CFG->dirroot/search/lib.php");
         $navlinks[] = array('name' => $strsearch, 'link' => "index.php", 'type' => 'misc');
         $navlinks[] = array('name' => $strquery, 'link' => "stats.php", 'type' => 'misc');
         $navlinks[] = array('name' => get_string('runindexer','search'), 'link' => null, 'type' => 'misc');
-        $navigation = build_navigation($navlinks);
+        if ($CFG->version <= 2007021541){ // 1.8 branch stable timestamp
+            $navigation = '';
+        } else {
+            $navigation = build_navigation($navlinks);
+        }
         $site = get_site();
         print_header("$strsearch", "$site->fullname" , $navigation, "", "", true, "&nbsp;", navmenu($site));
      
