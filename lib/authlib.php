@@ -54,6 +54,11 @@ class auth_plugin_base {
      * Authentication plugin type - the same as db field.
      */
     var $authtype;
+    /*
+     * The fields we can lock and update from/to external authentication backends
+     *
+     */
+    var $userfields = array("firstname", "lastname", "email", "phone1", "phone2", "institution", "department", "address", "city", "country", "description", "idnumber", "lang");
 
     /**
 

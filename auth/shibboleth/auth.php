@@ -123,12 +123,8 @@ class auth_plugin_shibboleth extends auth_plugin_base {
     function get_attributes() {
         $configarray = (array) $this->config;
 
-        $fields = array("firstname", "lastname", "email", "phone1", "phone2",
-                        "department", "address", "city", "country", "description",
-                        "idnumber", "lang", "guid");
-
         $moodleattributes = array();
-        foreach ($fields as $field) {
+        foreach ($this->userfields as $field) {
             if (isset($configarray["field_map_$field"])) {
                 $moodleattributes[$field] = $configarray["field_map_$field"];
             }
