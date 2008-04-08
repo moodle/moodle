@@ -1941,6 +1941,11 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         if (!$res) {
             debugging('<p>Error: Could not insert a new entry to the Moodle log</p>');  // Don't throw an error
         }
+    /// Remove this record from record cache since it will change
+        if (!empty($CFG->rcache)) {
+            rcache_unset('user', $userid);
+        }
+
         if ($courseid != SITEID && !empty($courseid)) {
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
 
