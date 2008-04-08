@@ -2,6 +2,40 @@
 
 define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
 
+function get_file_url($path, $options=null, $type='coursefile') {
+    global $CFG;
+
+    $path = trim($path, '/'); // no leading and trailing slashes
+
+    // type of file
+    switch ($type) {
+        case 'coursefile':
+        default:
+            $url = "$CFG->wwwroot/file.php";
+    }
+
+    if ($CFG->slasharguments) {
+        $parts = explode('/', $path);
+        $parts = array_map('urlencode', $parts);
+        $path  = implode('/', $parts);
+        $ffurl = "$CFG->wwwroot/file.php/$path";
+        $separator = '?';
+    } else {
+        $path = urlencode("/$path");
+        $ffurl = "$CFG->wwwroot/file.php?file=$path";
+        $separator = '&amp;';
+    }
+
+    if ($options) {
+        foreach ($options as $name=>$value) {
+            $ffurl = $ffurl.$separator.$name.'='.$value;
+            $separator = '&amp;';
+        }
+    }
+
+    return $ffurl;
+}
+
 /**
  * Fetches content of file from Internet (using proxy if defined). Uses cURL extension if present.
  * Due to security concerns only downloads from http(s) sources are supported.
