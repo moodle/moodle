@@ -123,6 +123,14 @@ h4 {
   font-weight:bold;
 }
 
+.heading-with-help {
+  font-size:1.4em;
+}
+
+.heading-with-help h2.main {
+  font-size:1em;
+}
+
 .helplink {
   font-size:0.8em;
 }

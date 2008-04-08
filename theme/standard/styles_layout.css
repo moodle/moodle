@@ -392,6 +392,16 @@ table.formtable tbody .htmlarea th
   vertical-align: top;
 }
 
+.heading-with-help {
+  text-align:center;
+  margin:0.83em 0;
+}
+
+.heading-with-help h2 {
+  margin:0;
+  display:inline;
+}
+
 .helplink img {
   vertical-align: middle;
   margin: 0 2px;

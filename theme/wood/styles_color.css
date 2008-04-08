@@ -189,6 +189,7 @@ td.header,
 div.header,
 h2.header,
 h2.main,
+.heading-with-help,
 .sideblock .header,
 .navbar,
 table.files th,
@@ -205,6 +206,10 @@ legend,
     background-image:url(gradient1.jpg);     
     background-position:bottom;
     background-repeat:repeat;  
+}
+.heading-with-help h2.main {
+    border:none;
+    background:none;
 }
 
 /** Places using the horizontal medium wood texture without borders **/

@@ -3863,10 +3863,10 @@ function print_heading($text, $align='', $size=2, $class='main', $return=false) 
  * @param string $icon Image to display if needed
  */
 function print_heading_with_help($text, $helppage, $module='moodle', $icon='', $return=false) {
-    $output = '';
-    $output .= '<h2 class="main help">'.$icon.stripslashes_safe($text);
+    $output = '<div class="heading-with-help">';
+    $output .= '<h2 class="main help">'.$icon.stripslashes_safe($text).'</h2>';
     $output .= helpbutton($helppage, $text, $module, true, false, '', true);
-    $output .= '</h2>';
+    $output .= '</div>';
 
     if ($return) {
         return $output;

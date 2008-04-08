@@ -27,6 +27,13 @@ h2 {
   padding: 4px;
 
 }
+.heading-with-help {
+  text-align:left;
+  padding:4px 4px 4px 5px;
+}
+.heading-with-help h2.main {
+  padding:0;
+}
 
 h3 {
   padding: 3px;
@@ -48,7 +55,7 @@ border-bottom-width:1px;
 clear:both;
 }
   
-h1, h2, h3, th.header {
+h1, h2, h3, th.header, .heading-with-help {
   border-width: 1px;
   border-style: solid; 
 }

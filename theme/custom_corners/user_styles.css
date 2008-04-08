@@ -51,6 +51,12 @@ h1.headermain {
   margin: 0 0 10px 0;
   font-size: 180%;
 }
+.heading-with-help {
+  font-size:120%;
+}
+.heading-with-help h2.main {
+  font-size:100%;
+}
 h2.main {
   background-image: url(pix/header.png);
   background-repeat: repeat-x;

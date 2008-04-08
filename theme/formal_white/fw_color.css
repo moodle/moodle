@@ -27,9 +27,13 @@ h1 {
   color: #333333;
 }
 
-h2 {
+h2,.heading-with-help {
   background-color: #E3DFD4;
   border-color:#C6BDA8;
+}
+.heading-with-help h2 {
+  background:none;
+  border:none;
 }
 
 h2.headingblock.header  {

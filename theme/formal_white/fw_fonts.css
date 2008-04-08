@@ -41,8 +41,11 @@ h1 {
     font-weight: bold;
 }
 
-h2 {
+h2, .heading-with-help {
     font-size:1.15em;
+}
+.heading-with-help h2 {
+    font-size:1.0em;
 }
 h3 {
     font-size:1.1em;
