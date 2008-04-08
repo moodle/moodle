@@ -16,17 +16,12 @@ class assignment_uploadsingle extends assignment_base {
 
         if ($basedir = $this->file_area($userid)) {
             if ($files = get_directory_list($basedir)) {
-
+                require_once($CFG->libdir.'/filelib.php');
                 foreach ($files as $key => $file) {
-                    require_once($CFG->libdir.'/filelib.php');
 
                     $icon = mimeinfo('icon', $file);
+                    $ffurl = get_file_url("$filearea/$file");
 
-                    if ($CFG->slasharguments) {
-                        $ffurl = "$CFG->wwwroot/file.php/$filearea/$file";
-                    } else {
-                        $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
-                    }
                     //died right here
                     //require_once($ffurl);
                     $output = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.

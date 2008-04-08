@@ -300,10 +300,10 @@ class assignment_upload extends assignment_base {
             }
 
             if ($files = get_directory_list($basedir, 'responses')) {
+                require_once($CFG->libdir.'/filelib.php');
                 foreach ($files as $key => $file) {
-                    require_once($CFG->libdir.'/filelib.php');
                     $icon = mimeinfo('icon', $file);
-                    $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
+                    $ffurl = get_file_url("$filearea/$file");
                     $output .= '<a href="'.$ffurl.'" ><img class="icon" src="'.$CFG->pixpath.'/f/'.$icon.'" alt="'.$icon.'" />'.$file.'</a>&nbsp;';
                 }
             }
@@ -361,9 +361,7 @@ class assignment_upload extends assignment_base {
                 foreach ($files as $key => $file) {
 
                     $icon = mimeinfo('icon', $file);
-
-                    $ffurl   = "$CFG->wwwroot/file.php?file=/$filearea/$file";
-
+                    $ffurl = get_file_url("$filearea/$file");
 
                     $output .= '<a href="'.$ffurl.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.$file.'</a>';
 
@@ -419,7 +417,7 @@ class assignment_upload extends assignment_base {
 
                     $icon = mimeinfo('icon', $file);
 
-                    $ffurl   = "$CFG->wwwroot/file.php?file=/$filearea/$file";
+                    $ffurl = get_file_url("$filearea/$file");
 
                     $output .= '<a href="'.$ffurl.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" alt="'.$icon.'" />'.$file.'</a>';
 
