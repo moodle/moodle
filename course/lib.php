@@ -1878,7 +1878,7 @@ function print_course($course) {
                     if ($ra->hidden == 0 || $canseehidden) {
                         $fullname = fullname($ra->user, $canviewfullnames); 
                         if($ra->hidden == 1){
-                           $fullname .= ' ('.get_string('hiddenassign').')'; 
+                            $status = " <img src=\"{$CFG->pixpath}/t/show.gif\" title=\"".get_string('userhashiddenassignments', 'role')."\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
                         }
 
                         if (isset($aliasnames[$ra->roleid])) {
@@ -1887,7 +1887,7 @@ function print_course($course) {
 
                         $namesarray[] = format_string($ra->rolename) 
                             . ': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$ra->user->id.'&amp;course='.SITEID.'">'
-                            . $fullname . '</a>'; 
+                            . $fullname . '</a>' . $status; 
                     }
                 }
             }
