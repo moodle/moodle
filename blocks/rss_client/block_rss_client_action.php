@@ -99,10 +99,10 @@ if (isset($rss_record)) {
 if ($act == 'updfeed') {
 
     if (!$managefeeds) {
-        //print_error(get_string('noguestpost', 'forum').
-        //        ' You are not allowed to make modifications to this RSS feed at this time.',
-        //        $referrer);
-        print_error('noguestpost', 'forum', $referrer, 'You are not allowed to make modifications to this RSS feed at this time.');
+        error(get_string('noguestpost', 'forum').
+                ' You are not allowed to make modifications to this RSS feed at this time.',
+                $referrer);
+        //print_error('noguestpost', 'forum', $referrer, 'You are not allowed to make modifications to this RSS feed at this time.');
     }
 
 
@@ -223,10 +223,10 @@ if ($act == 'updfeed') {
 } else if ($act == 'delfeed') {
 
     if (!$managefeeds) {
-        //print_error(get_string('noguestpost', 'forum').
-        //        ' You are not allowed to make modifications to this RSS feed at this time.',
-        //        $referrer);
-        print_error('noguestpost', 'forum', $referrer, 'You are not allowed to make modifications to this RSS feed at this time.');
+        error(get_string('noguestpost', 'forum').
+                ' You are not allowed to make modifications to this RSS feed at this time.',
+                $referrer);
+        //print_error('noguestpost', 'forum', $referrer, 'You are not allowed to make modifications to this RSS feed at this time.');
     }
 
     $file = $CFG->dataroot .'/cache/rsscache/'. $rssid .'.xml';

@@ -115,8 +115,8 @@ if (($form = data_submitted()) && confirm_sesskey()) {
                     foreach ($mnet_peer->error as $err) {
                         $errmsg .= $err['code'] . ': ' . $err['text'].'<br />';
                     }
-                    //error(get_string("invalidpubkey", 'mnet') . $errmsg ,'peers.php?step=update&amp;hostid='.$mnet_peer->id);
-                    print_error("invalidpubkey", 'mnet', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, $errmsg);
+                    error(get_string("invalidpubkey", 'mnet') . $errmsg ,'peers.php?step=update&amp;hostid='.$mnet_peer->id);
+                    //print_error("invalidpubkey", 'mnet', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, $errmsg);
                     exit;
                 }
             }
