@@ -1604,6 +1604,11 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         $db->Execute('UPDATE '. $CFG->prefix .'user
                          SET lastip=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
                        WHERE id = \''. $userid .'\' ');
+    /// Remove this record from record cache since it will change
+        if (!empty($CFG->rcache)) {
+            rcache_unset('user', $userid);
+        }
+
         if ($courseid != SITEID && !empty($courseid)) {
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
 
