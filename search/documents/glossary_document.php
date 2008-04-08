@@ -245,4 +245,13 @@ function glossary_check_text_access($path, $itemtype, $this_id, $user, $group_id
     
     return true;
 }
+
+/**
+* post processes the url for cleaner output.
+* @param string $title
+*/
+function glossary_link_post_processing($title){
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
+}
+
 ?>
