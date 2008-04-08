@@ -92,6 +92,12 @@ $string['databasesettingssub_mysql'] = '<b>类型:</b> MySQL<br />
 <b>用户:</b> 您的数据库用户名<br />
 <b>密码:</b> 您的数据库密码<br />
 <b>表格前缀:</b> 在所有的表格名称前加上前缀（可选的）';
+$string['databasesettingssub_mysqli'] = '<b>类型:</b> 改进的MySQL<br />
+<b>主机:</b> 例如，localhost或者db.isp.com<br />
+<b>名字:</b> 数据库名, 比如moodle<br />
+<b>用户:</b> 您的数据库用户名<br />
+<b>密码:</b> 您的数据库密码<br />
+<b>表格前缀:</b> 在所有的表格名称前加上前缀（可选的）';
 $string['databasesettingssub_oci8po'] = '<b>类型:</b> Oracle<br />
 <b>主机:</b> 不需要，必须留空<br />
 <b>名字:</b> 给出tnsnames.ora连接的名字<br />
@@ -110,6 +116,7 @@ $string['databasesettingssub_postgres7'] = '<b>类型:</b> PostgreSQL<br />
 <b>用户:</b> 您的数据库用户名<br />
 <b>密码:</b> 您的数据库密码<br />
 <b>表格前缀:</b> 在所有的表格名称前加上前缀(强制的)';
+$string['databasesettingswillbecreated'] = '<b>注意：</b>如果数据库不存在，则安装程序会尝试创建它。';
 $string['dataroot'] = '数据目录';
 $string['datarooterror'] = '找不到也无法创建您指定的“数据目录”，请更正路径或手工创建它。';
 $string['dbconnectionerror'] = '无法连接到您指定的数据库，请检查您的数据库设置。';
@@ -152,8 +159,10 @@ $string['downloadlanguagesub'] = '您现在可以下载一个语言包并以该�
 $string['doyouagree'] = '您已经阅读并理解了这些条件吗?';
 $string['environmenterrortodo'] = '在继续安装此版本的 Moodle 前，您必需解决上面所列出的所有环境问题（错误）！';
 $string['environmenthead'] = '检测您的运行环境...';
+$string['environmentrecommendcustomcheck'] = '如果此测试失败，就表示有潜在的错误';
 $string['environmentrecommendinstall'] = '- 推荐安装/激活';
 $string['environmentrecommendversion'] = '推荐 {$a->needed} 版本，而您的是 {$a->current}';
+$string['environmentrequirecustomcheck'] = '此测试必须通过';
 $string['environmentrequireinstall'] = '- 必需安装/激活';
 $string['environmentrequireversion'] = '需要 {$a->needed} 版本，而您的是 {$a->current}';
 $string['environmentsub'] = '我们正在检查您系统中的某些组件是否符合需求';
@@ -186,6 +195,7 @@ $string['globalsquoteshelp'] = '<p>我们不建议你在禁用Magic Quotes GPC�
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
 </p>';
+$string['globalswarning'] = '<p><strong>安全警告</strong>: 为了能够正常工作，Moodle需要您修改您修改您的PHP设置。<p/><p>您<em>必须</em>设定<code>register_globals=off</code>。<p>此选项由您的<code>php.ini</code>文件控制，您也可以修改Apache/IIS的配置或者是<code>.htaccess</code>文件。</p>';
 $string['help'] = '帮助';
 $string['iconvrecommended'] = '我们强烈建议您安装时 ICONV 库，特别是您的站点使用非拉丁语系的语言时，它可以大大提升系统性能。';
 $string['info'] = '信息';
@@ -227,6 +237,8 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = '如果您的站点只使用 iso-8859-1 (latin) 语言，您可以使用您当前安装的 MySQL 4.1.12(或更高)。';
 $string['mysql416required'] = 'MySQL 4.1.16 是 Moodle 1.6 所需要的最低版本，否则将无法保证所有数据都能转换到 UTF-8 编码。';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP的MySQL扩展并未安装正确，因此无法与MySQL通信。请检查您的php.ini文件或重新编译PHP。';
+$string['mysqli'] = '改进的MySQL(mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP的MySQLi扩展并未安装正确，因此无法与MySQL通信。请检查您的php.ini文件或重新编译PHP。';
 $string['name'] = '名称';
 $string['next'] = '向后';
 $string['oci8po'] = 'Oracle (oci8po)';
@@ -246,6 +258,8 @@ $string['phpversionhelp'] = '<p>Moodle需要PHP 4.3.0或5.1.0（5.0.x有若干�
 <p>您必须升级PHP或者转移到一个有新版PHP的服务器上!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = '向前';
+$string['qtyperqpwillberemoved'] = '在升级过程中，RQP问题类型将会被删除。您没有使用此问题类型，因此您不会遇到任何问题。';
+$string['qtyperqpwillberemovedanyway'] = '在升级过程中，RQP问题类型将会被删除。在您的数据库中有一些RQP问题，除非您在继续升级前重新安装 http://moodle.org/mod/data/view.php?d=13&amp;rid=797 的代码，否则它们将会停止工作。';
 $string['releasenoteslink'] = '对于这个版本的 Moodle，请参考在线的 <a target=\"_new\" href=\"{$a}\">发行备忘录</a>。';
 $string['remotedownloadnotallowed'] = '不允许为您的服务器下载组件(allow_url_fopen失败)。<br /><br />您应该<a href=\"{$a->url}\">{$a->url}</a> 先手动的把它复制到“{$a->dest}”您的服务器上然后解压。';
 $string['report'] = '报表';
@@ -283,4 +297,5 @@ $string['wrongsourcebase'] = '错误的源URL基地址。';
 $string['wrongzipfilename'] = '错误的ZIP文件名。';
 $string['wwwroot'] = '网站地址';
 $string['wwwrooterror'] = '这个网站地址似乎是错的——在那里并没有安装好的Moodle。下面的值会被重置。';
+$string['xmlrpcrecommended'] = '安装可选的xmlrpc扩展模块对于Moodle网络功能很有用。';
 ?>
