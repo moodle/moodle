@@ -1494,12 +1494,8 @@ class assignment_base {
                     
                     $icon = mimeinfo('icon', $file);
                     
-                    if ($CFG->slasharguments) {
-                        $ffurl = "$CFG->wwwroot/file.php/$filearea/$file";
-                    } else {
-                        $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
-                    }
-                
+                    $ffurl = get_file_url("$filearea/$file", array('forcedownload'=>1));
+
                     $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.
                             '<a href="'.$ffurl.'" >'.$file.'</a><br />';
                 }
