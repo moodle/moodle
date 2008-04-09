@@ -1843,6 +1843,7 @@ function print_courses($category) {
 function print_course($course) {
 
     global $CFG, $USER;
+    $status = ''; //initiate $status variable to avoid PHP notice see MDL-14295
 
     if (isset($course->context)) {
         $context = $course->context;
