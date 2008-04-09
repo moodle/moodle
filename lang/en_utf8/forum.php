@@ -28,6 +28,7 @@ $string['blockperioddisabled'] = 'Don\'t block';
 $string['bynameondate'] = 'by $a->name - $a->date';
 $string['cannotviewpostyet'] = 'You cannot read other students questions in this discussion yet because you haven\'t posted';
 $string['cannotadddiscussion'] = 'Adding discussions to this forum requires group membership.';
+$stirng['cannotdeleteforummudule'] = 'You can not delete the forum module!!';
 $string['cleanreadtime'] = 'Mark old posts as read hour';
 $string['configcleanreadtime'] = 'The hour of the day to clean old posts from the \'read\' table.';
 $string['configdisplaymode'] = 'The default display mode for discussions if one isn\'t set.';
