@@ -78,7 +78,7 @@ define('QUIZ_SHOW_TIME_BEFORE_DEADLINE', '3600');
 function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $ispreview = false) {
     global $USER;
 
-    if ($attemptnumber = 1 || !$quiz->attemptonlast) {
+    if ($attemptnumber == 1 || !$quiz->attemptonlast) {
     /// We are not building on last attempt so create a new attempt.
         $attempt = new stdClass;
         $attempt->quiz = $quiz->id;
