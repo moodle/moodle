@@ -33,7 +33,7 @@
 
     if (!empty($hide) && confirm_sesskey()) {
         if (!$block = get_record('block', 'id', $hide)) {
-            print_error("Block doesn't exist!");
+            print_error('blockdoesnotexist', 'error');
         }
         set_field('block', 'visible', '0', 'id', $block->id);      // Hide block
         admin_get_root(true, false);  // settings not required - only pages
@@ -41,7 +41,7 @@
 
     if (!empty($show) && confirm_sesskey() ) {
         if (!$block = get_record('block', 'id', $show)) {
-            print_error("Block doesn't exist!");
+            print_error('blockdoesnotexist', 'error');
         }
         set_field('block', 'visible', '1', 'id', $block->id);      // Show block
         admin_get_root(true, false);  // settings not required - only pages
@@ -49,7 +49,7 @@
 
     if (!empty($multiple) && confirm_sesskey()) {
         if (!$block = blocks_get_record($multiple)) {
-            print_error("Block doesn't exist!");
+            print_error('blockdoesnotexist', 'error');
         }
         $block->multiple = !$block->multiple;
         update_record('block', $block);
@@ -61,7 +61,7 @@
         print_heading($strmanageblocks);
 
         if (!$block = blocks_get_record($delete)) {
-            print_error("Block doesn't exist!");
+            print_error('blockdoesnotexist', 'error');
         }
 
         if (!block_is_compatible($block->name)) {

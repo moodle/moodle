@@ -52,8 +52,8 @@
 
     case 'show':
         // check filterpath is valid
-        if (!array_key_exists($filterpath, $installedfilters)) {
-            print_error("Filter $filterpath is not currently installed", '', $url);
+        if (!array_key_exists($filterpath, $installedfilters)) 
+            print_error('filternotinstalled', 'error', $url, $filterpath);
         } elseif (array_search($filterpath,$activefilters)) {
             // filterpath is already active - doubleclick??
         } else {
@@ -67,7 +67,7 @@
         $key=array_search($filterpath, $activefilters);
         // check filterpath is valid
         if ($key===false) {
-            print_error("Filter $filterpath is not currently active", '', $url);
+            print_error("filternotactive", 'error', $url, $filterpath );
         } elseif ($key>=(count($activefilters)-1)) {
             // cannot be moved any further down - doubleclick??
         } else {
@@ -82,7 +82,7 @@
         $key=array_search($filterpath, $activefilters);
         // check filterpath is valid
         if ($key===false) {
-            print_error("Filter $filterpath is not currently active", '', $url);
+            print_error("filternotactive", 'error', $url, $filterpath );
         } elseif ($key<1) {
             //cannot be moved any further up - doubleclick??
         } else {

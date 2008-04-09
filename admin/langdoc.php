@@ -51,7 +51,7 @@
             if (langdoc_save_file($langdir, $currentfile, $_POST['filedata'])) {
                 notify(get_string("changessaved")." ($langdir/$currentfile)", "green");
             } else {
-                print_error("Could not save the file '$currentfile'!", '', "langdoc.php?currentfile=$currentfile&sesskey=$USER->sesskey");
+                print_error("cannotsavefile", 'error', "langdoc.php?currentfile=$currentfile&sesskey=$USER->sesskey", $currentfile);
             }
         }
     }
@@ -63,7 +63,7 @@
     // Get all files from /docs directory
 
     if (! $files = get_directory_list("$CFG->dirroot/lang/en_utf8/docs", "CVS")) {
-        print_error("Could not find English language docs files!");
+        print_error('cannotfinddocs', 'error', '', 'English');
     }
 
     $options = array();
@@ -83,7 +83,7 @@
     // Get all files from /help directory
 
     if (! $files = get_directory_list("$CFG->dirroot/lang/en_utf8/help", "CVS")) {
-        print_error("Could not find English language help files!");
+        print_error("cannotfindhelp", "error", "", "English");
     }
 
     foreach ($files as $filekey => $file) {    // check all the help files.
