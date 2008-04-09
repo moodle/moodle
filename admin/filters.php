@@ -52,7 +52,7 @@
 
     case 'show':
         // check filterpath is valid
-        if (!array_key_exists($filterpath, $installedfilters)) 
+        if (!array_key_exists($filterpath, $installedfilters)) {
             print_error('filternotinstalled', 'error', $url, $filterpath);
         } elseif (array_search($filterpath,$activefilters)) {
             // filterpath is already active - doubleclick??
