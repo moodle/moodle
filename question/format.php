@@ -712,7 +712,7 @@ class qformat_default {
     function get_category_path($id, $delimiter='/', $includecontext = true) {
         $path = '';
         if (!$firstcategory = get_record('question_categories','id',$id)) {
-            print_error( "Error getting category record from db - $id" );
+            print_error('cannotfindcategory', 'error', '', $id);
         }
         $category = $firstcategory;
         $contextstring = $this->translator->context_to_string($category->contextid);

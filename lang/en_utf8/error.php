@@ -3,7 +3,11 @@
 
 
 $string['adminprimarynoedit'] = 'The primary admin cannot be edited by others';
+$string['blockdoesnotexist'] = 'This block does not exist';
+$string['blockcannotinistantiate'] = 'Problem in instantiating block object';
+$string['blockcannotconfig'] = 'This block does not support global configuration';
 $string['cannotassignrole'] = 'Cannot assign role in course';
+$string['cannotsaveconfig'] = 'Problem saving config \"$a[0]\" as \"$a[1]\" for plugin \"$a[2]\"'; 
 $string['cannotcreatelangdir'] = 'Cannot create lang dir.';
 $string['cannotcreatetempdir'] = 'Cannot create temp dir.';
 $string['cannotcustomizelocallang'] = 'You do not have permission to customize the strings translation.  This permission is controlled by the capability "moodle/site:langeditlocal". Set this capability to allow you to edit local language packages in case you want to modify translations for your site.';
@@ -12,6 +16,10 @@ $string['cannotdownloadlanguageupdatelist'] = 'Cannot download list of language 
 $string['cannotdownloadzipfile'] = 'Cannot download ZIP file.';
 $string['cannoteditmasterlang'] = 'You do not have permission to edit master language package. This permission is controlled by the capability "moodle/site:langeditmaster". Set this capability to allow you to edit master language packages in case you are the maintainer of a package.';
 $string['cannotfindcomponent'] = 'Cannot find component.';
+$string['cannotfindcategory'] = 'Cannot find category record from database by ID - $a';
+$string['cannotfinddocs'] = 'Cannot find \"$a\" language docs files';
+$string['cannotfindhelp'] = 'Cannot find \"$a\" language help files';
+$string['cannotsavefile'] = 'Cannot save the file \"$a\".';
 $string['cannotsavemd5file'] = 'Cannot save md5 file.';
 $string['cannotsavezipfile'] = 'Cannot save ZIP file.';
 $string['cannotunzipfile'] = 'Cannot unzip file.';
