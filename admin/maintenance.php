@@ -10,7 +10,7 @@
 
     //Check folder exists
     if (! make_upload_directory(SITEID)) {   // Site folder
-            print_error("Could not create site folder.  The site administrator needs to fix the file permissions");
+            print_error('cannotcreatesitedir', 'error');
         }
 
     $filename = $CFG->dataroot.'/'.SITEID.'/maintenance.html';

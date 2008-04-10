@@ -30,7 +30,7 @@
     //reset and diagnose lang cache permissions
     @unlink($CFG->dataroot.'/cache/languages');
     if (file_exists($CFG->dataroot.'/cache/languages')) {
-        print_error('Language cache can not be deleted, please fix permissions in dataroot/cache/languages!');
+        print_error('cannotdeletelangcache', 'error');
     }
     get_list_of_languages(true); //refresh lang cache
 
@@ -131,7 +131,7 @@
 
 
             if (!$availablelangs = get_remote_list_of_languages()) {
-                print_error('cannotdownloadlanguageupdatelist');
+                print_error('cannotdownloadlanguageupdatelist', 'error');
             }
 
             //and build an associative array
