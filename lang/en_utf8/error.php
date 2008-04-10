@@ -98,6 +98,7 @@ $string['listcantmoveleft'] = 'Failed to move item left, it has no parent.';
 $string['listcantmoveright'] = 'Failed to move item right, their is no peer to make it a child of. Move it below another peer and then you can move it right.';
 $string['loginasonecourse'] = 'You can not enter this course.<br /> You have to terminate the \"Login as\" session before entering any other course.';
 $string['loginasnoenrol'] = 'You can not use enrol or unenrol when in course \"Login as\" session.';
+$string['messagingdisable'] = 'Messaging is disabled on this site';
 $string['missingfield'] = 'Field \"$a\" is missing.';
 $string['missingrequiredfield'] = 'Some required field is missing';
 $string['moduledoesnotexist'] = 'The instance of this module doesn\'t exist';

@@ -1392,6 +1392,7 @@ $string['stats'] = 'Statistics';
 $string['statslogins'] = 'Logins';
 $string['statsmodedetailed'] = 'Detailed (user) view';
 $string['statsmodegeneral'] = 'General view';
+$string['statsnodata'] = 'There is no available data for that combination of course and time period.';
 $string['statsnodatauser'] = 'There is no available data for that combination of course, user and time period.';
 $string['statsoff'] = 'Statistics is not currently enabled';
 $string['statsreads'] = 'Views';
