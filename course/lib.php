@@ -1878,8 +1878,10 @@ function print_course($course) {
                 foreach ($rusers as $ra) {
                     if ($ra->hidden == 0 || $canseehidden) {
                         $fullname = fullname($ra->user, $canviewfullnames); 
-                        if($ra->hidden == 1){
+                        if ($ra->hidden == 1) {
                             $status = " <img src=\"{$CFG->pixpath}/t/show.gif\" title=\"".get_string('userhashiddenassignments', 'role')."\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
+                        } else {
+                            $status = '';
                         }
 
                         if (isset($aliasnames[$ra->roleid])) {
