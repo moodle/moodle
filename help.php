@@ -20,14 +20,13 @@ $module = optional_param('module', 'moodle', PARAM_ALPHAEXT);
 $forcelang = optional_param('forcelang', '', PARAM_SAFEDIR);
 $skiplocal = optional_param('skiplocal', 0, PARAM_INT);     // shall _local help files be skipped?
 
-// Start the output.
-print_header(get_string('help'));
-print_simple_box_start();
-
 // We look for the help to display in lots of different places, and
 // only display an error at the end if we can't find the help file
 // anywhere. This variable tracks that.
 $helpfound = false;
+
+// Buffer output so that we can examine it later to extract metadata (page title)
+ob_start();
 
 if (!empty($file)) {
     // The help to display is from a help file.
@@ -118,6 +117,33 @@ if (!empty($file)) {
     $helpfound = true;
 }
 
+// Finish buffer
+$output=ob_get_contents();
+ob_end_clean();
+
+// Determine title
+$title=get_string('help'); // Default is just 'Help'
+$matches=array();
+// You can include a <title> tag to override the standard behaviour:
+// 'Help - title contents'. Otherwise it looks for the text of the first
+// heading: 'Help - heading text'. If there aren't even any headings
+// you just get 'Help'
+if(preg_match('~^(.*?)<title>(.*?)</title>(.*)$~s',$output,$matches)) {
+    // Extract title
+    $title=$title.' - '.$matches[2]; 
+    // Strip title from output
+    $output=$matches[1].$matches[3];
+} else if(preg_match('~<h[0-9]+(\s[^>]*)?>(.*?)</h[0-9]+>~s',$output,$matches)) {
+    // Use first heading as title (obviously leave it in output too). Strip
+    // any tags from inside
+    $matches[2]=preg_replace('~<[^>]*>~s','',$matches[2]);
+    $title=$title.' - '.$matches[2];
+}
+
+// Do the main output.
+print_header($title);
+print_simple_box_start();
+print $output;
 print_simple_box_end();
 
 // Display an error if necessary.
