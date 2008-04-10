@@ -20,7 +20,7 @@ if (!extension_loaded('openssl')) {
 
 if (!$site = get_site()) {
     admin_externalpage_print_header();
-    print_error('nosite', '');
+    print_error('nosite', 'error');
 }
 
 if (!function_exists('curl_init') ) {
@@ -82,7 +82,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
             $temp_wwwroot = clean_param($form->wwwroot, PARAM_URL);
             if ($temp_wwwroot !== $form->wwwroot) {
                 trigger_error("We now parse the wwwroot with PARAM_URL. Your URL will need to have a valid TLD, etc.");
-                print_error("invalidurl", 'mnet','peers.php');
+                print_error('invalidurl', 'mnet', 'peers.php');
                 exit;
             }
             unset($temp_wwwroot);
@@ -103,7 +103,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         if (isset($form->public_key)) {
             $form->public_key = clean_param($form->public_key, PARAM_PEM);
             if (empty($form->public_key)) {
-                print_error("invalidpubkey", 'mnet', 'peers.php?step=update&amp;hostid='.$mnet_peer->id);
+                print_error("invalidpubkey", 'mnet', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, '');
                 exit;
             } else {
                 $oldkey = $mnet_peer->public_key;
@@ -116,8 +116,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
                     foreach ($mnet_peer->error as $err) {
                         $errmsg .= $err['code'] . ': ' . $err['text'].'<br />';
                     }
-                    error(get_string("invalidpubkey", 'mnet') . $errmsg ,'peers.php?step=update&amp;hostid='.$mnet_peer->id);
-                    //print_error("invalidpubkey", 'mnet', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, $errmsg);
+                    print_error("invalidpubkey", 'mnet', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, $errmsg);
                     exit;
                 }
             }
@@ -139,7 +138,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
             if ($bool) {
                 redirect('peers.php?step=update&amp;hostid='.$mnet_peer->id, get_string('changessaved'));
             } else {
-                print_error('Invalid action parameter.', '', 'index.php');
+                print_error('invalidaction', 'error', 'index.php');
             }
         }
     }
