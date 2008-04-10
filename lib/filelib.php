@@ -41,10 +41,12 @@ function get_file_url($path, $options=null, $type='coursefile') {
  * Due to security concerns only downloads from http(s) sources are supported.
  *
  * @param string $url file url starting with http(s)://
- * @param array $headers http headers, null if none
+ * @param array $headers http headers, null if none. If set, should be an
+ *   associative array of header name => value pairs.
  * @param array $postdata array means use POST request with given parameters
  * @param bool $fullresponse return headers, responses, etc in a similar way snoopy does
- * @param int $timeout timeout for complete download process including all file transfer 
+ *   (if false, just returns content)
+ * @param int $timeout timeout for complete download process including all file transfer
  *   (default 5 minutes)
  * @param int $connecttimeout timeout for connection to server; this is the timeout that
  *   usually happens if the remote server is completely down (default 20 seconds);
