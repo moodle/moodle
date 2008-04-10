@@ -34,7 +34,8 @@
     }
 
     if (! $context = get_context_instance_by_id($contextid)) {
-        print_error("Context ID was incorrect (can't find it)");
+        print_error('wrongcontextid', 'error');
+        
     }
 
     $inmeta = 0;
@@ -43,13 +44,13 @@
         if ($course = get_record('course', 'id', $courseid)) {
             $inmeta = $course->metacourse;
         } else {
-            print_error('Invalid course id');
+            print_error('invalidcourse', 'error');
         }
         $coursecontext = $context;
 
     } else if (!empty($courseid)){ // we need this for user tabs in user context
         if (!$course = get_record('course', 'id', $courseid)) {
-            print_error('Invalid course id');
+            print_error('invalidcourse', 'error');
         }
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
