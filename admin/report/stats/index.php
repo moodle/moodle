@@ -32,12 +32,12 @@
     }
 
     if (!$course = get_record("course","id",$courseid)) {
-        print_error("That's an invalid course id");
+        print_error('invalidcourse', 'error');
     }
 
     if (!empty($userid)) {
         if (!$user = get_record('user','id',$userid)) {
-            print_error("That's an invalid user id");
+            print_error('invaliduser', 'error');
         }
     }
 

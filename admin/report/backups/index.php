@@ -15,7 +15,7 @@
 
 /// Scheduled backups are disabled by the server admin
     if (!empty($CFG->disablescheduledbackups)) {
-        print_error('scheduledbackupsdisabled', '', '', NULL, true);
+        print_error('scheduledbackupsdisabled', 'error');
     }
 
 /// Scheduled backups aren't active by the site admin
