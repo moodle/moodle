@@ -8,7 +8,7 @@
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
     if ($CFG->version < 2004013101) {
-        print_error("This script does not work with this old version of Moodle");
+        print_error('doesnotworkwitholdversion', 'debug');
     }
 
     if (!$site = get_site()) {

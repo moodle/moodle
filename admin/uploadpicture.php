@@ -35,11 +35,11 @@ require_login();
 require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
 if (!$site = get_site()) {
-    print_error("Could not find site-level course");
+    print_error('cannotfindsite', 'error');
 }
 
 if (!$adminuser = get_admin()) {
-    print_error("Could not find site admin");
+    print_error('noadmins', 'error');
 }
 
 $strfile = get_string('file');

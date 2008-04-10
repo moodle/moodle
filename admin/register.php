@@ -16,7 +16,7 @@
     }
 
     if (!$admin = get_admin()) {
-        print_error("No admins");
+        print_error('noadmins', 'error');
     }
 
     if (!$admin->country and $CFG->country) {

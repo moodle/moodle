@@ -110,7 +110,7 @@ if (empty($iid)) {
 }
 
 if (!$columns = $cir->get_columns()) {
-    print_error('Error reading temporary file', '', $returnurl);
+    print_error('cannotreadtmpfile', 'error', $returnurl);
 }
 $mform = new admin_uploaduser_form2(null, $columns);
 // get initial date from form1

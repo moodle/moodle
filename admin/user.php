@@ -22,7 +22,7 @@
     $site = get_site();
 
     if (!has_capability('moodle/user:update', $sitecontext) and !has_capability('moodle/user:delete', $sitecontext)) {
-        print_error('You do not have the required permission to edit/delete users.');
+        print_error('nopermissions', 'error', '', 'edit/delete users');
     }
 
     $stredit   = get_string('edit');
@@ -40,7 +40,7 @@
 
     if ($confirmuser and confirm_sesskey()) {
         if (!$user = get_record('user', 'id', $confirmuser)) {
-            print_error("No such user!");
+            print_error('nousers');
         }
 
         $auth = get_auth_plugin($user->auth);
@@ -56,15 +56,15 @@
     } else if ($delete and confirm_sesskey()) {              // Delete a selected user, after confirmation
 
         if (!has_capability('moodle/user:delete', $sitecontext)) {
-            print_error('You do not have the required permission to delete a user.');
+            print_error('nopermissions', 'error', '', 'delete a user');
         }
 
         if (!$user = get_record('user', 'id', $delete)) {
-            print_error("No such user!");
+            print_error('nousers', 'error');
         }
 
         if (is_primary_admin($user->id)) {
-            print_error("You are not allowed to delete the primary admin user!");
+            print_error('nopermissions', 'error', '', 'delete the primary admin user');
         }
 
         if ($confirm != md5($delete)) {
@@ -84,17 +84,17 @@
     } else if ($acl and confirm_sesskey()) {
         if (!has_capability('moodle/user:delete', $sitecontext)) {
             // TODO: this should be under a separate capability
-            print_error('You are not permitted to modify the MNET access control list.');
+            print_error('nopermissions', 'error', '', 'modify the NMET access control list');
         }
         if (!$user = get_record('user', 'id', $acl)) {
-            print_error("No such user.");
+            print_error('nousers', 'error');
         }
         if (!is_mnet_remote_user($user)) {
-            print_error('Users in the MNET access control list must be remote MNET users.');
+            print_error('usermustbemnet', 'error');
         }
         $accessctrl = strtolower(required_param('accessctrl', PARAM_ALPHA));
         if ($accessctrl != 'allow' and $accessctrl != 'deny') {
-            print_error('Invalid access parameter.');
+            print_error('invalidaccessparameter', 'error');
         }
         $aclrecord = get_record('mnet_sso_access_control', 'username', $user->username, 'mnet_host_id', $user->mnethostid);
         if (empty($aclrecord)) {
@@ -103,12 +103,12 @@
             $aclrecord->username = $user->username;
             $aclrecord->accessctrl = $accessctrl;
             if (!insert_record('mnet_sso_access_control', $aclrecord)) {
-                print_error("Database error - Couldn't modify the MNET access control list.");
+                print_error('dbnotinsert', 'debug', '', 'the MNET access control list');
             }
         } else {
             $aclrecord->accessctrl = $accessctrl;
             if (!update_record('mnet_sso_access_control', $aclrecord)) {
-                print_error("Database error - Couldn't modify the MNET access control list.");
+                print_error('dbnotupdate', 'debug', '', 'the MNET access control list');
             }
         }
         $mnethosts = get_records('mnet_host', '', '', 'id', 'id,wwwroot,name');
