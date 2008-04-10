@@ -1935,36 +1935,44 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 /// Store lastaccess times for the current user, do not use in cron and other commandline scripts
 /// only update the lastaccess/timeaccess fields only once every 60s
     if (!empty($USER->id) && ($userid == $USER->id) && !defined('FULLME')) {
-        $res = $db->Execute('UPDATE '. $CFG->prefix .'user
-                                SET lastip=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
-                             WHERE id = \''. $userid .'\' AND '.$timenow.' - lastaccess > 60');
-        if (!$res) {
-            debugging('<p>Error: Could not insert a new entry to the Moodle log</p>');  // Don't throw an error
-        }
-    /// Remove this record from record cache since it will change
-        if (!empty($CFG->rcache)) {
-            rcache_unset('user', $userid);
-        }
+    /// Only update user and user_lastaccess every 60s, check that in PHP
+        if ($timenow - $USER->lastaccess > 60) {
 
-        if ($courseid != SITEID && !empty($courseid)) {
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
+        /// Update user record
+            $res = $db->Execute('UPDATE '. $CFG->prefix .'user
+                                    SET lastip=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
+                                 WHERE id = '. $userid);
+            if (!$res) {
+                debugging('Error: Could not update global user lastaccess information');  // Don't throw an error
+            }
+        /// Remove this record from record cache since it will change
+            if (!empty($CFG->rcache)) {
+                rcache_unset('user', $userid);
+            }
+        /// Update $USER->lastaccess for next checks
+            $USER->lastaccess = $timenow;
 
-            if ($ulid = get_field('user_lastaccess', 'id', 'userid', $userid, 'courseid', $courseid)) {
-                $res = $db->Execute("UPDATE {$CFG->prefix}user_lastaccess
-                                        SET timeaccess=$timenow
-                                     WHERE id = $ulid AND $timenow - timeaccess > 60");
-                if (!$res) {
-                    debugging('Error: Could not insert a new entry to the Moodle log');  // Don't throw an error
-                }
-            } else {
-                $res = $db->Execute("INSERT INTO {$CFG->prefix}user_lastaccess
-                                            ( userid,  courseid,  timeaccess)
-                                     VALUES ($userid, $courseid, $timenow)");
-                if (!$res) {
-                    debugging('Error: Could not insert a new entry to the Moodle log');  // Don't throw an error
+            if ($courseid != SITEID && !empty($courseid)) {
+                if (record_exists('user_lastaccess', 'userid', $userid, 'courseid', $courseid)) {
+                    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
+                    $res = $db->Execute("UPDATE {$CFG->prefix}user_lastaccess
+                                            SET timeaccess=$timenow
+                                          WHERE userid = $userid
+                                            AND courseid = $courseid");
+                    if (!$res) {
+                        debugging('Error: Could not update course user lastacess information');  // Don't throw an error
+                    }
+                } else {
+                    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
+                    $res = $db->Execute("INSERT INTO {$CFG->prefix}user_lastaccess
+                                                ( userid,  courseid,  timeaccess)
+                                         VALUES ($userid, $courseid, $timenow)");
+                    if (!$res) {
+                        debugging('Error: Could not insert course user lastaccess information');  // Don't throw an error
+                    }
                 }
             }
-            if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
         }
     }
 }
