@@ -572,7 +572,7 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
 
     // Creating worksheets
     for ($wsnumber = 1; $wsnumber <= $nroPages; $wsnumber++) {
-        $sheettitle = get_string('excel_sheettitle', 'logs', $wsnumber).$nroPages;
+        $sheettitle = get_string('logs').' '.$wsnumber.'-'.$nroPages;
         $worksheet[$wsnumber] =& $workbook->add_worksheet($sheettitle);
         $worksheet[$wsnumber]->set_column(1, 1, 30);
         $worksheet[$wsnumber]->write_string(0, 0, get_string('savedat').
@@ -685,7 +685,7 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
 
     // Creating worksheets
     for ($wsnumber = 1; $wsnumber <= $nroPages; $wsnumber++) {
-        $sheettitle = get_string('excel_sheettitle', 'logs', $wsnumber).$nroPages;
+        $sheettitle = get_string('logs').' '.$wsnumber.'-'.$nroPages;
         $worksheet[$wsnumber] =& $workbook->add_worksheet($sheettitle);
         $worksheet[$wsnumber]->set_column(1, 1, 30);
         $worksheet[$wsnumber]->write_string(0, 0, get_string('savedat').
