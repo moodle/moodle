@@ -595,7 +595,7 @@
         echo '<form action="action_redir.php" method="post" id="participantsform" onsubmit="return checksubmit(this);">';
         echo '<div>';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-        echo '<input type="hidden" name="returnto" value="'.s($_SERVER['REQUEST_URI']).'" />';
+        echo '<input type="hidden" name="returnto" value="'.s(me()).'" />';
     }
 
     if ($CFG->longtimenosee > 0 && $CFG->longtimenosee < 1000 && $totalcount > 0) {
