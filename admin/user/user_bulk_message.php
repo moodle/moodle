@@ -17,7 +17,7 @@ if (empty($SESSION->bulk_users)) {
 }
 
 if (empty($CFG->messaging)) {
-    print_error("Messaging is disabled on this site");
+    print_error('messagingdisable', 'error');
 }
 
 //TODO: add support for large number of users

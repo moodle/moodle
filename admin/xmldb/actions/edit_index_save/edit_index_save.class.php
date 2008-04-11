@@ -70,7 +70,7 @@ class edit_index_save extends XMLDBAction {
     /// Do the job, setting result as needed
 
         if (!data_submitted('nomatch')) { ///Basic prevention
-            print_error('Wrong action call');
+            print_error('wrongcall', 'error');
         }
 
     /// Get parameters
