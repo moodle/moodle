@@ -1889,7 +1889,7 @@ class PresetImporter {
 
         /* Grab XML */
         $presetxml = file_get_contents($this->folder.'/preset.xml');
-        $parsedxml = xmlize($presetxml);
+        $parsedxml = xmlize($presetxml, 0);
 
         /* First, do settings. Put in user friendly array. */
         $settingsarray = $parsedxml['preset']['#']['settings'][0]['#'];

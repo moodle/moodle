@@ -39,7 +39,7 @@
  *
  * @author Hans Anderson
  * @param array $data The array to be converted
- * @param int $WHITE  If set to 1 allows the parser to skip "space" characters in xml document. Default is 0
+ * @param int $WHITE  If set to 1 allows the parser to skip "space" characters in xml document. Default is 1
  * @param string $encoding Specify an OUTPUT encoding. If not specified, it defaults to UTF-8.
  * @return array
  */
