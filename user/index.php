@@ -328,7 +328,11 @@
     } else {
         $selectrole = " ";
     }
-    $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, ul.timeaccess AS lastaccess, r.hidden '; // s.lastaccess
+    if($course->id > 2){
+        $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, ul.timeaccess AS lastaccess, r.hidden '; // s.lastaccess
+    }else{
+        $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, u.lastaccess AS lastaccess, r.hidden ';
+    }
     $select .= $course->enrolperiod?', r.timeend ':'';
 
     $from   = "FROM {$CFG->prefix}user u INNER JOIN
@@ -454,7 +458,7 @@
         echo '<form action="action_redir.php" method="post" id="participantsform" onsubmit="return checksubmit(this);">';
         echo '<div>';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-        echo '<input type="hidden" name="returnto" value="'.s($_SERVER['REQUEST_URI']).'" />';
+        echo '<input type="hidden" name="returnto" value="'.s(me()).'" />';
     }
 
     if ($CFG->longtimenosee > 0 && $CFG->longtimenosee < 1000 && $totalcount > 0) {
