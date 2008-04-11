@@ -258,6 +258,57 @@ class MoodleExcelWorksheet {
         $this->pear_excel_worksheet->setColumn($firstcol, $lastcol, $width, $format, $hidden, $level);
     }
 
+    /**
+    * Set the option to hide gridlines on the printed page.
+    *
+    * @access public
+    */
+    function hide_gridlines() {
+        $this->pear_excel_worksheet->hideGridLines();
+    }
+
+    /**
+    * Set the option to hide gridlines on the worksheet (as seen on the screen).
+    *
+    * @access public
+    */
+    function hide_screen_gridlines() {
+        $this->pear_excel_worksheet->hideScreenGridlines();
+    }
+    
+    /**
+    * Insert a 24bit bitmap image in a worksheet.
+    *
+    * @access public
+    * @param integer $row     The row we are going to insert the bitmap into
+    * @param integer $col     The column we are going to insert the bitmap into
+    * @param string  $bitmap  The bitmap filename
+    * @param integer $x       The horizontal position (offset) of the image inside the cell.
+    * @param integer $y       The vertical position (offset) of the image inside the cell.
+    * @param integer $scale_x The horizontal scale
+    * @param integer $scale_y The vertical scale
+    */
+    function insert_bitmap($row, $col, $bitmap, $x = 0, $y = 0, $scale_x = 1, $scale_y = 1) {
+    /// Add the bitmap safely to the PEAR Worksheet
+        $this->pear_excel_worksheet->insertBitmap($row, $col, $bitmap, $x, $y, $scale_x, $scale_y);
+    }
+
+    /**
+    * Merges the area given by its arguments.
+    * This is an Excel97/2000 method. It is required to perform more complicated
+    * merging than the normal setAlign('merge').
+    *
+    * @access public
+    * @param integer $first_row First row of the area to merge
+    * @param integer $first_col First column of the area to merge
+    * @param integer $last_row  Last row of the area to merge
+    * @param integer $last_col  Last column of the area to merge
+    */
+    function merge_cells($first_row, $first_col, $last_row, $last_col) {
+        /// Merge cells safely to the PEAR Worksheet
+        $this->pear_excel_worksheet->mergeCells($first_row, $first_col, $last_row, $last_col);
+    }
+    
     /* Returns the PEAR Excel Format for one Moodle Excel Format
      * @param mixed MoodleExcelFormat object
      * @return mixed PEAR Excel Format object
