@@ -418,7 +418,7 @@
 
             
         } else {
-            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.userid, u.firstname, u.lastname ';
+            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname ';
             $count = ' COUNT(r.id) ';
             $tables = $CFG->prefix.'data_records r, '.$CFG->prefix.'user u ';
             $where =  'WHERE r.dataid = '.$data->id. ' AND r.userid = u.id ';

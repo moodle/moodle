@@ -966,6 +966,12 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         $patterns[]='##user##';
         $replacement[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$record->userid.
                                '&amp;course='.$data->course.'">'.fullname($record).'</a>';
+        
+        $patterns[] = '##timeadded##';
+        $replacement[] = '<span>'.get_string('data:added', 'data').userdate($record->timecreated).'</span>'; 
+
+        $patterns[] = '##timemodified##';
+        $replacement [] = '<span>'.get_string('data:modified', 'data').userdate($record->timemodified).'</span>';
 
         $patterns[]='##approve##';
         if (has_capability('mod/data:approve', $context) && ($data->approval) && (!$record->approved)){
