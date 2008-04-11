@@ -123,7 +123,7 @@
 /// Get and sort the existing blocks
 
     if (false === ($blocks = get_records('block'))) {
-        print_error('No blocks found!');  // Should never happen
+        print_error('noblocks', 'error');  // Should never happen
     }
 
     $incompatible = array();
@@ -143,7 +143,7 @@
     }
 
     if(empty($blockbyname)) {
-        print_error('One or more blocks are registered in the database, but they all failed to load!');
+        print_error('failtoloadblocks', 'error');
     }
 
     ksort($blockbyname);
