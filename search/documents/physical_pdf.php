@@ -34,7 +34,7 @@ function get_text_for_indexing_pdf(&$resource){
         else{
             $file = escapeshellarg($CFG->dataroot.'/'.$resource->course.'/'.$resource->reference);
             $command = trim($CFG->block_search_pdf_to_text_cmd);
-            $text_converter_cmd = "{$moodleroot}{$command} \"$file\" -";
+            $text_converter_cmd = "{$moodleroot}{$command} $file -";
             $result = shell_exec($text_converter_cmd);
             if ($result){
                 return $result;
