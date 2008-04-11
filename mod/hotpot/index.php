@@ -68,7 +68,10 @@
             if ($displaysection>0 && $hotpot_instance->section>0 && $displaysection<>$hotpot_instance->section) {
                 // do nothing (user is not diplaying this section)
             } else {
-                $hotpots[$hotpot_instance->id] = $hotpot_instance;
+                $cm = get_coursemodule_from_instance('hotpot', $hotpot_instance->id);
+                if ($cm && hotpot_is_visible($cm)) {
+                    $hotpots[$hotpot_instance->id] = $hotpot_instance;
+                }
             } 
         }
     }
