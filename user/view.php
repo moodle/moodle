@@ -277,7 +277,11 @@
     }
 
     if ($user->url && !isset($hiddenfields['webpage'])) {
-        print_row(get_string("webpage").":", "<a href=\"$user->url\">$user->url</a>");
+        $url = $user->url;
+        if (strpos($user->url, '://') === false) {
+            $url = 'http://'. $url;
+        }
+        print_row(get_string("webpage") .":", "<a href=\"$url\">$user->url</a>");
     }
 
     if ($user->icq && !isset($hiddenfields['icqnumber'])) {
