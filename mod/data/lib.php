@@ -968,10 +968,10 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
                                '&amp;course='.$data->course.'">'.fullname($record).'</a>';
         
         $patterns[] = '##timeadded##';
-        $replacement[] = '<span>'.get_string('data:added', 'data').userdate($record->timecreated).'</span>'; 
+        $replacement[] = userdate($record->timecreated); 
 
         $patterns[] = '##timemodified##';
-        $replacement [] = '<span>'.get_string('data:modified', 'data').userdate($record->timemodified).'</span>';
+        $replacement [] = userdate($record->timemodified);
 
         $patterns[]='##approve##';
         if (has_capability('mod/data:approve', $context) && ($data->approval) && (!$record->approved)){
