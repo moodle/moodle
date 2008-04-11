@@ -34,7 +34,7 @@ function get_text_for_indexing_doc(&$resource){
         else{
             $file = escapeshellarg($CFG->dataroot.'/'.$resource->course.'/'.$resource->reference);
             $command = trim($CFG->block_search_word_to_text_cmd);
-            $text_converter_cmd = "{$moodleroot}{$command} \"$file\"";
+            $text_converter_cmd = "{$moodleroot}{$command} $file";
             if ($CFG->block_search_word_to_text_env){
                 putenv($CFG->block_search_word_to_text_env);
             }
