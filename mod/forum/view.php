@@ -18,13 +18,13 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('forum', $id)) {
-            print_error("Course Module ID was incorrect");
+            error("Course Module ID was incorrect");
         }
         if (! $course = get_record("course", "id", $cm->course)) {
-            print_error("Course is misconfigured");
+            error("Course is misconfigured");
         }
         if (! $forum = get_record("forum", "id", $cm->instance)) {
-            print_error("Forum ID was incorrect");
+            error("Forum ID was incorrect");
         }
         $strforums = get_string("modulenameplural", "forum");
         $strforum = get_string("modulename", "forum");
@@ -33,23 +33,23 @@
     } else if ($f) {
 
         if (! $forum = get_record("forum", "id", $f)) {
-            print_error("Forum ID was incorrect or no longer exists");
+            error("Forum ID was incorrect or no longer exists");
         }
         if (! $course = get_record("course", "id", $forum->course)) {
-            print_error("Forum is misconfigured - don't know what course it's from");
+            error("Forum is misconfigured - don't know what course it's from");
         }
 
         $strforums = get_string("modulenameplural", "forum");
         $strforum = get_string("modulename", "forum");
 
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-            print_error("Course Module missing");
+            error("Course Module missing");
         }
 
         $buttontext = update_module_button($cm->id, $course->id, $strforum);
 
     } else {
-        print_error('Must specify a course module or a forum ID');
+        error('Must specify a course module or a forum ID');
     }
 
     if (!$buttontext) {
@@ -116,7 +116,7 @@
 
     if (!empty($USER->id) && !has_capability('moodle/legacy:guest', $context, NULL, false)) {
         $SESSION->fromdiscussion = "$FULLME";
-        if (forum_is_forcesubscribed($forum->id)) {
+        if (forum_is_forcesubscribed($forum)) {
             $streveryoneisnowsubscribed = get_string('everyoneisnowsubscribed', 'forum');
             $strallowchoice = get_string('allowchoice', 'forum');
             echo '<span class="helplink">' . get_string("forcessubscribe", 'forum') . '</span><br />';
@@ -156,7 +156,7 @@
                     array('forcesubscribed' => '', 'cantsubscribe' => '')), '</div>';
         }
 
-        if (($forum->trackingtype == FORUM_TRACKING_OPTIONAL) && forum_tp_can_track_forums($forum)) {
+        if (forum_tp_can_track_forums($forum)) {
             echo '<div class="helplink" id="trackinglink">'. forum_get_tracking_link($forum). '</div>';
         }
 
@@ -210,11 +210,11 @@
                     notify("Warning! There is more than one discussion in this forum - using the most recent");
                     $discussion = array_pop($discussions);
                 } else {
-                    print_error("Could not find the discussion in this forum");
+                    error("Could not find the discussion in this forum");
                 }
             }
             if (! $post = forum_get_post_full($discussion->firstpost)) {
-                print_error("Could not find the first post in this forum");
+                error("Could not find the first post in this forum");
             }
             if ($mode) {
                 set_user_preference("forum_displaymode", $mode);
@@ -236,17 +236,17 @@
             }
             echo '</p>';
             if (!empty($showall)) {
-                forum_print_latest_discussions($course, $forum, 0, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($course, $forum, 0, 'header', '', -1, -1, -1, 0, $cm);
             } else {
-                forum_print_latest_discussions($course, $forum, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
+                forum_print_latest_discussions($course, $forum, -1, 'header', '', -1, -1, $page, $CFG->forum_manydiscussions, $cm);
             }
             break;
 
         case 'teacher':
             if (!empty($showall)) {
-                forum_print_latest_discussions($course, $forum, 0, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($course, $forum, 0, 'header', '', -1, -1, -1, 0, $cm);
             } else {
-                forum_print_latest_discussions($course, $forum, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
+                forum_print_latest_discussions($course, $forum, -1, 'header', '', -1, -1, $page, $CFG->forum_manydiscussions, $cm);
             }
             break;
 
@@ -256,9 +256,9 @@
             }
             echo '<br />';
             if (!empty($showall)) {
-                forum_print_latest_discussions($course, $forum, 0, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($course, $forum, 0, 'header', '', -1, -1, -1, 0, $cm);
             } else {
-                forum_print_latest_discussions($course, $forum, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
+                forum_print_latest_discussions($course, $forum, -1, 'header', '', -1, -1, $page, $CFG->forum_manydiscussions, $cm);
             }
 
 

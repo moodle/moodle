@@ -942,7 +942,7 @@ function print_recent_activity($course) {
                 $content = $print_recent_activity($course, $viewfullnames, $timestart) || $content;
             }
         } else {
-            debugging("Missing lib.php in lib/{$mod->name} - please reinstall files or uninstall the module");  
+            debugging("Missing lib.php in lib/{$modname} - please reinstall files or uninstall the module");  
         }
     }
 
@@ -1255,7 +1255,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $strmovehere;
     static $strmovefull;
     static $strunreadpostsone;
-    static $untracked;
     static $usetracking;
     static $groupings;
 
@@ -1272,7 +1271,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
         include_once($CFG->dirroot.'/mod/forum/lib.php');
         if ($usetracking = forum_tp_can_track_forums()) {
             $strunreadpostsone = get_string('unreadpostsone', 'forum');
-            $untracked         = forum_tp_get_untracked_forums($USER->id, $course->id);
         }
         $initialised = true;
     }
@@ -1391,18 +1389,14 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
             }
             if ($usetracking && $mod->modname == 'forum') {
-                if ($usetracking and !isset($untracked[$mod->instance])) {
-                    $groupid = groups_get_activity_group($mod);
-                    $unread  = forum_tp_count_forum_unread_posts($USER->id, $mod->instance, $groupid);
-                    if ($unread) {
-                        echo '<span class="unread"> <a href="'.$CFG->wwwroot.'/mod/forum/view.php?id='.$mod->id.'">';
-                        if ($unread == 1) {
-                            echo $strunreadpostsone;
-                        } else {
-                            print_string('unreadpostsnumber', 'forum', $unread);
-                        }
-                        echo '</a> </span>';
+                if ($unread = forum_tp_count_forum_unread_posts($mod, $course)) {
+                    echo '<span class="unread"> <a href="'.$CFG->wwwroot.'/mod/forum/view.php?id='.$mod->id.'">';
+                    if ($unread == 1) {
+                        echo $strunreadpostsone;
+                    } else {
+                        print_string('unreadpostsnumber', 'forum', $unread);
                     }
+                    echo '</a></span>';
                 }
             }
 

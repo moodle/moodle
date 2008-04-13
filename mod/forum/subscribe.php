@@ -10,11 +10,11 @@
     $user = optional_param('user',0,PARAM_INT);
 
     if (! $forum = get_record("forum", "id", $id)) {
-        print_error("Forum ID was incorrect");
+        error("Forum ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $forum->course)) {
-        print_error("Forum doesn't belong to a course!");
+        error("Forum doesn't belong to a course!");
     }
 
     if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
@@ -26,20 +26,20 @@
 
     if ($user) {
         if (!has_capability('mod/forum:managesubscriptions', $context)) {
-            print_error('You do not have the permission to subscribe/unsubscribe other people!');
+            error('You do not have the permission to subscribe/unsubscribe other people!');
         }
         if (!$user = get_record("user", "id", $user)) {
-            print_error("User ID was incorrect");
+            error("User ID was incorrect");
         }
     } else {
         $user = $USER;
     }
 
     if (groupmode($course, $cm)
-                and !forum_is_subscribed($user->id, $forum->id)
+                and !forum_is_subscribed($user->id, $forum)
                 and !has_capability('moodle/site:accessallgroups', $context)) {
         if (!mygroupid($course->id)) {
-            print_error('Sorry, but you must be a group member to subscribe.');
+            error('Sorry, but you must be a group member to subscribe.');
         }
     }
 
@@ -65,7 +65,7 @@
         : "view.php?f=$id";
 
     if ($force and has_capability('mod/forum:managesubscriptions', $context)) {
-        if (forum_is_forcesubscribed($forum->id)) {
+        if (forum_is_forcesubscribed($forum)) {
             forum_forcesubscribe($forum->id, 0);
             redirect($returnto, get_string("everyonecannowchoose", "forum"), 1);
         } else {
@@ -74,7 +74,7 @@
         }
     }
 
-    if (forum_is_forcesubscribed($forum->id)) {
+    if (forum_is_forcesubscribed($forum)) {
         redirect($returnto, get_string("everyoneisnowsubscribed", "forum"), 1);
     }
 
@@ -86,7 +86,7 @@
             add_to_log($course->id, "forum", "unsubscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
             redirect($returnto, get_string("nownotsubscribed", "forum", $info), 1);
         } else {
-            print_error("Could not unsubscribe you from that forum", '', $_SERVER["HTTP_REFERER"]);
+            error("Could not unsubscribe you from that forum", $_SERVER["HTTP_REFERER"]);
         }
 
     } else {  // subscribe
@@ -95,13 +95,13 @@
             print_error('disallowsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
         }
         if (!has_capability('mod/forum:viewdiscussion', $context)) {
-            print_error("Could not subscribe you to that forum", '', $_SERVER["HTTP_REFERER"]);
+            error("Could not subscribe you to that forum", $_SERVER["HTTP_REFERER"]);
         }
         if (forum_subscribe($user->id, $forum->id) ) {
             add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
             redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
         } else {
-            print_error("Could not subscribe you to that forum", '', $_SERVER["HTTP_REFERER"]);
+            error("Could not subscribe you to that forum", $_SERVER["HTTP_REFERER"]);
         }
     }
 

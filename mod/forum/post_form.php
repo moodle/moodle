@@ -33,7 +33,7 @@ class mod_forum_post_form extends moodleform {
         $mform->addElement('format', 'format', get_string('format'));
 
 
-        if (isset($forum->id) && forum_is_forcesubscribed($forum->id)) {
+        if (isset($forum->id) && forum_is_forcesubscribed($forum)) {
 
             $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('everyoneissubscribed', 'forum'));
             $mform->addElement('hidden', 'subscribe');
