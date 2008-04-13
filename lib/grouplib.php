@@ -159,6 +159,7 @@ function groups_get_user_groups($courseid, $userid=0) {
     $allgroups = array();
     
     while ($group = rs_fetch_next_record($rs)) {
+        $allgroups[$group->id] = $group->id;
         if (is_null($group->groupingid)) {
             continue;
         }
@@ -166,7 +167,6 @@ function groups_get_user_groups($courseid, $userid=0) {
             $result[$group->groupingid] = array();
         }
         $result[$group->groupingid][$group->id] = $group->id;
-        $allgroups[$group->id] = $group->id;
     }
     rs_close($rs);
 
@@ -319,7 +319,7 @@ function groups_get_activity_groupmode($cm, $course=null) {
         $course = $COURSE;
     } else {
         if (!$course = get_record('course', 'id', $cm->course)) {
-            print_error('Incorrect course id in cm');
+            error('Incorrect course id in cm');
         }
     }
 
