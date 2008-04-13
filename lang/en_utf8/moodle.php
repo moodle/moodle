@@ -1619,6 +1619,7 @@ $string['wordforteacher'] = 'Your word for Teacher';
 $string['wordforteachereg'] = 'eg Teacher, Tutor, Facilitator etc';
 $string['wordforteachers'] = 'Your word for Teachers';
 $string['wordforteacherseg'] = 'eg Teachers, Tutors, Facilitators etc';
+$string['writingblogsinfo'] = 'Writing blogs info';
 $string['writingcategoriesandquestions'] = 'Writing categories and questions';
 $string['writingcoursedata'] = 'Writing course data';
 $string['writingeventsinfo'] = 'Writing events info';
