@@ -173,10 +173,7 @@
     }
 
     // pass in the course category param
-    $cat_id = optional_param('restore_restorecatto', 0, PARAM_INT);
-    if ($cat_id) {
-        $restore->restore_restorecatto = $cat_id;
-    }
+    $restore->restore_restorecatto = optional_param('restore_restorecatto', 0, PARAM_INT);
 
     //We have the object with data, put it in the session
     $SESSION->restore = $restore;
@@ -203,7 +200,7 @@
     }
 
     //Depending the selected restoreto:
-    // If user is a teacher (and not creator):
+    // If user is a teacher (and not creator) or we are restoring from within SITEID:
     //    0-Current course, deleting: Put $restore->course_id and $restore->deleting (true), create the restore object
     //    1-Current course, adding: Put $restore->course_id and $restore->deleting (false), create the restore object
     // If the uses is a creator:
@@ -213,12 +210,9 @@
     //        put $restore->course_id and $restore->deleting (false), create the restore object.
     //    2-New course: Create the restore object and launch the execute.
 
-    //If the user is a teacher and not a creator
+    //If the user is a teacher and not a creator or we are restoring from within SITEID
 
-
-    //if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-
-    if (!user_can_create_courses()) {
+    if (!user_can_create_courses() || $id = SITEID) {
         $restore->course_id = $id;
         if ($restore->restoreto == 0) {
             $restore->deleting = true;
@@ -228,7 +222,6 @@
     }
 
     //If the user is a creator (or admin)
-    //if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
     if (user_can_create_courses()) {
         //Set restore->deleting as needed
         if ($restore->restoreto == 0) {
