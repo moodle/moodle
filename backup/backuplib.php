@@ -12,9 +12,11 @@
      * @param int $backup_unique_code setting specifying what users to export (0=all, 1=needed, 2=none)
      * @param int $backup_messages flag (true/false) defining if messages must be
      *                             considered to extract needed users
+     * @param int $backup_blogs flag (true/false) defining if blogs must be
+     *                          considered to extract needed users
      * @return array one array (key, value) sumarizing the result of the function (number of users)
      */
-    function user_check_backup($courseid,$backup_unique_code,$backup_users,$backup_messages) {
+    function user_check_backup($courseid,$backup_unique_code,$backup_users,$backup_messages,$backup_blogs) {
 
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
         $count_users = 0;
@@ -25,8 +27,9 @@
 
         } else if ($backup_users == 1) { /// Needed users
 
-        /// Calculate needed users (calling every xxxx_get_participants function + scales users)
-            $needed_users = backup_get_needed_users($courseid, $backup_messages);
+        /// Calculate needed users (calling every xxxx_get_participants function + scales users
+        /// + messages users + blogs users)
+            $needed_users = backup_get_needed_users($courseid, $backup_messages, $backup_blogs);
 
         /// Calculate enrolled users (having course:view cap)
             $enrolled_users = backup_get_enrolled_users($courseid);
@@ -83,11 +86,13 @@
     //Returns every needed user (participant) in a course
     //It uses the xxxx_get_participants() function
     //plus users needed to backup scales.
+    //Also it search for users having messages and
+    //users having blogs
     //WARNING: It returns only NEEDED users, not every
     //   every student and teacher in the course, so it
     //must be merged with backup_get_enrrolled_users !!
 
-    function backup_get_needed_users ($courseid, $includemessages=false) {
+    function backup_get_needed_users ($courseid, $includemessages=false, $includeblogs=false) {
 
         global $CFG;
 
@@ -145,6 +150,22 @@
                     //If id != 0
                     if ($messageuser->id !=0) {
                         $result[$messageuser->id]->id = $messageuser->id;
+                    }
+                }
+            }
+        }
+
+        //Now, add blog users if necessary
+        if ($includeblogs) {
+            include_once("$CFG->dirroot/blog/lib.php");
+            //Get users
+            $blogusers = blog_get_participants();
+            //Add blog users to results
+            if ($blogusers) {
+                foreach ($blogusers as $bloguser) {
+                    //If id != 0
+                    if ($bloguser->id !=0) {
+                        $result[$bloguser->id]->id = $bloguser->id;
                     }
                 }
             }
@@ -914,6 +935,92 @@
 
         return $status;
 
+    }
+
+    //Print blogs info (post table, module=blog, course=0)
+    function backup_blogs($bf, $preferences) {
+
+        global $CFG;
+
+        $status = true;
+
+    /// Check we have something to backup
+        $siteblogs = count_records('post', 'module', 'blog', 'courseid', 0);
+
+        if ($siteblogs) {
+            $counter = 0;
+        /// blogs open tag
+            fwrite ($bf, start_tag("BLOGS",2,true));
+
+            if ($siteblogs) {
+                $rs_blogs = get_recordset_sql("SELECT * from {$CFG->prefix}post
+                                                WHERE module = 'blog'
+                                                  AND courseid = 0");
+            /// Iterate over every blog
+                while ($blog = rs_fetch_next_record($rs_blogs)) {
+                /// start blog
+                    fwrite($bf, start_tag("BLOG",3,true));
+                /// blog body
+                    fwrite ($bf,full_tag("ID",4,false,$blog->id));
+                    fwrite ($bf,full_tag("MODULE",4,false,$blog->module));
+                    fwrite ($bf,full_tag("USERID",4,false,$blog->userid));
+                    fwrite ($bf,full_tag("COURSEID",4,false,$blog->courseid));
+                    fwrite ($bf,full_tag("GROUPID",4,false,$blog->groupid));
+                    fwrite ($bf,full_tag("MODULEID",4,false,$blog->moduleid));
+                    fwrite ($bf,full_tag("COURSEMODULEID",4,false,$blog->coursemoduleid));
+                    fwrite ($bf,full_tag("SUBJECT",4,false,$blog->subject));
+                    fwrite ($bf,full_tag("SUMMARY",4,false,$blog->summary));
+                    fwrite ($bf,full_tag("CONTENT",4,false,$blog->content));
+                    fwrite ($bf,full_tag("UNIQUEHASH",4,false,$blog->uniquehash));
+                    fwrite ($bf,full_tag("RATING",4,false,$blog->rating));
+                    fwrite ($bf,full_tag("FORMAT",4,false,$blog->format));
+                    fwrite ($bf,full_tag("ATTACHMENT",4,false,$blog->attachment));
+                    fwrite ($bf,full_tag("PUBLISHSTATE",4,false,$blog->publishstate));
+                    fwrite ($bf,full_tag("LASTMODIFIED",4,false,$blog->lastmodified));
+                    fwrite ($bf,full_tag("CREATED",4,false,$blog->created));
+                    fwrite ($bf,full_tag("USERMODIFIED",4,false,$blog->usermodified));
+
+                /// Blog tags
+                /// Check if we have blog tags to backup
+                    if (!empty($CFG->usetags)) {
+                        if ($tags = tag_get_tags('post', $blog->id)) { //This return them ordered by default
+                        /// Start BLOG_TAGS tag
+                            fwrite ($bf,start_tag("BLOG_TAGS",4,true));
+                        /// Write blog tags fields
+                            foreach ($tags as $tag) {
+                                fwrite ($bf,start_tag("BLOG_TAG",5,true));
+                                fwrite ($bf,full_tag("NAME",6,false,$tag->name));
+                                fwrite ($bf,full_tag("RAWNAME",6,false,$tag->rawname));
+                                fwrite ($bf,end_tag("BLOG_TAG",5,true));
+                            }
+                        /// End BLOG_TAGS tag
+                            fwrite ($bf,end_tag("BLOG_TAGS",4,true));
+                        }
+                    }
+
+                /// Blog comments
+                    /// TODO: Blog comments go here (2.0)
+
+                /// end blog
+                    fwrite($bf, end_tag("BLOG",3,true));
+
+                /// Do some output
+                    $counter++;
+                    if ($counter % 20 == 0) {
+                        echo ".";
+                        if ($counter % 400 == 0) {
+                            echo "<br />";
+                        }
+                        backup_flush(300);
+                    }
+                }
+                rs_close($rs_blogs);
+            }
+        /// blogs close tag
+            $status = fwrite($bf, end_tag("BLOGS",2,true));
+        }
+
+        return $status;
     }
 
     //Prints course's blocks info (table block_instance)
@@ -2599,6 +2706,7 @@
         $preferences->backup_gradebook_history = optional_param('backup_gradebook_history', 1, PARAM_INT);
         $preferences->backup_site_files = optional_param('backup_site_files',1,PARAM_INT);
         $preferences->backup_messages = optional_param('backup_messages',1,PARAM_INT);
+        $preferences->backup_blogs = optional_param('backup_blogs',1,PARAM_INT);
         $preferences->backup_course = $course->id;
         $preferences->backup_name = required_param('backup_name',PARAM_FILE);
         $preferences->backup_unique_code =  required_param('backup_unique_code');
@@ -2911,6 +3019,23 @@
                     }
                     else {
                         $errorstr = "An error occurred while backing up messages";
+                        return false;
+                    }
+                }
+            }
+
+            //If we have selected to backup blogs and we are
+            //doing a SITE backup, let's do it
+            if ($status && $preferences->backup_blogs && $preferences->backup_course == SITEID) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("writingblogsinfo").'</li>';
+                }
+                if (!$status = backup_blogs($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up blogs");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up blogs";
                         return false;
                     }
                 }
