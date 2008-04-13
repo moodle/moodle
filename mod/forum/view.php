@@ -116,7 +116,7 @@
 
     if (!empty($USER->id) && !has_capability('moodle/legacy:guest', $context, NULL, false)) {
         $SESSION->fromdiscussion = "$FULLME";
-        if (forum_is_forcesubscribed($forum->id)) {
+        if (forum_is_forcesubscribed($forum)) {
             $streveryoneisnowsubscribed = get_string('everyoneisnowsubscribed', 'forum');
             $strallowchoice = get_string('allowchoice', 'forum');
             echo '<span class="helplink">' . get_string("forcessubscribe", 'forum') . '</span><br />';
@@ -156,7 +156,7 @@
                     array('forcesubscribed' => '', 'cantsubscribe' => '')), '</div>';
         }
 
-        if (($forum->trackingtype == FORUM_TRACKING_OPTIONAL) && forum_tp_can_track_forums($forum)) {
+        if (forum_tp_can_track_forums($forum)) {
             echo '<div class="helplink" id="trackinglink">'. forum_get_tracking_link($forum). '</div>';
         }
 
@@ -236,17 +236,17 @@
             }
             echo '</p>';
             if (!empty($showall)) {
-                forum_print_latest_discussions($course, $forum, 0, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($course, $forum, 0, 'header', '', -1, -1, -1, 0, $cm);
             } else {
-                forum_print_latest_discussions($course, $forum, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
+                forum_print_latest_discussions($course, $forum, -1, 'header', '', -1, -1, $page, $CFG->forum_manydiscussions, $cm);
             }
             break;
 
         case 'teacher':
             if (!empty($showall)) {
-                forum_print_latest_discussions($course, $forum, 0, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($course, $forum, 0, 'header', '', -1, -1, -1, 0, $cm);
             } else {
-                forum_print_latest_discussions($course, $forum, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
+                forum_print_latest_discussions($course, $forum, -1, 'header', '', -1, -1, $page, $CFG->forum_manydiscussions, $cm);
             }
             break;
 
@@ -256,9 +256,9 @@
             }
             echo '<br />';
             if (!empty($showall)) {
-                forum_print_latest_discussions($course, $forum, 0, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($course, $forum, 0, 'header', '', -1, -1, -1, 0, $cm);
             } else {
-                forum_print_latest_discussions($course, $forum, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
+                forum_print_latest_discussions($course, $forum, -1, 'header', '', -1, -1, $page, $CFG->forum_manydiscussions, $cm);
             }
 
 

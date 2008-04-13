@@ -68,6 +68,7 @@
             notify("Errors occurred while moving attachment directories - check your file permissions");
         }
         set_field('forum_discussions', 'forum', $forumto->id, 'id', $discussion->id);
+        set_field('forum_read', 'forumid', $forumto->id, 'discussionid', $discussion->id);
         add_to_log($course->id, 'forum', 'move discussion', "discuss.php?d=$discussion->id", $discussion->id, $cmto->id);
 
         require_once($CFG->libdir.'/rsslib.php');
@@ -118,10 +119,9 @@
     }
 
     if ($mark == 'read' or $mark == 'unread') {
-        if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum) &&
-            $CFG->forum_usermarksread) {
+        if ($CFG->forum_usermarksread && forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
             if ($mark == 'read') {
-                forum_tp_add_read_record($USER->id, $postid, $discussion->id, $forum->id);
+                forum_tp_add_read_record($USER->id, $postid);
             } else {
                 // unread
                 forum_tp_delete_read_records($USER->id, $postid);

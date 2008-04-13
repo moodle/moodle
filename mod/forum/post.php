@@ -317,14 +317,11 @@
                              $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
 
                 forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false);
+
                 if (empty($post->edit)) {
-                    if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
-                        $user_read_array = forum_tp_get_discussion_read_records($USER->id, $discussion->id);
-                    } else {
-                        $user_read_array = array();
-                    }
-                    $posts = forum_get_all_discussion_posts($discussion->id, "created ASC");
-                    forum_print_posts_nested($course, $cm, $forum, $discussion, $post, false, false, $user_read_array, $posts);
+                    $forumtracked = forum_tp_is_tracked($forum);
+                    $posts = forum_get_all_discussion_posts($discussion->id, "created ASC", $forumtracked);
+                    forum_print_posts_nested($course, $cm, $forum, $discussion, $post, false, false, $forumtracked, $posts);
                 }
             } else {
                 print_header();
@@ -677,7 +674,7 @@
         notify(get_string('qandanotify','forum'));
     }
 
-    forum_check_throttling($forum);
+    forum_check_throttling($forum, $cm);
 
     if (!empty($parent)) {
         if (! $discussion = get_record('forum_discussions', 'id', $parent->discussion)) {
@@ -686,14 +683,10 @@
 
         forum_print_post($parent, $discussion, $forum, $cm, $course, false, false, false);
         if (empty($post->edit)) {
-            if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
-                $user_read_array = forum_tp_get_discussion_read_records($USER->id, $discussion->id);
-            } else {
-                $user_read_array = array();
-            }
             if ($forum->type != 'qanda' || forum_user_can_see_discussion($forum, $discussion, $modcontext)) {
-                $posts = forum_get_all_discussion_posts($discussion->id, "created ASC");
-                forum_print_posts_threaded($course, $cm, $forum, $discussion, $parent, 0, false, false, $user_read_array, $posts);
+                $forumtracked = forum_tp_is_tracked($forum);
+                $posts = forum_get_all_discussion_posts($discussion->id, "created ASC", $forumtracked);
+                forum_print_posts_threaded($course, $cm, $forum, $discussion, $parent, 0, false, false, $forumtracked, $posts);
             }
         }
         $heading = get_string("yourreply", "forum");

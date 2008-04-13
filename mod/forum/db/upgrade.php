@@ -53,6 +53,35 @@ function xmldb_forum_upgrade($oldversion=0) {
         $db->debug = true;
     }
 
+    if ($result && $oldversion < 2007101512) {
+
+    /// Cleanup the forum subscriptions
+        notify('Removing stale forum subscriptions', 'notifysuccess');
+
+        $roles = get_roles_with_capability('moodle/course:view', CAP_ALLOW);
+        $roles = array_keys($roles);
+        $roles = implode(',', $roles);
+
+        $sql = "SELECT fs.userid, f.id AS forumid
+                  FROM {$CFG->prefix}forum f
+                       JOIN {$CFG->prefix}course c                 ON c.id = f.course
+                       JOIN {$CFG->prefix}context ctx              ON (ctx.instanceid = c.id AND ctx.contextlevel = ".CONTEXT_COURSE.")
+                       JOIN {$CFG->prefix}forum_subscriptions fs   ON fs.forum = f.id
+                       LEFT JOIN {$CFG->prefix}role_assignments ra ON (ra.contextid = ctx.id AND ra.userid = fs.userid AND ra.roleid IN ($roles))
+                 WHERE ra.id IS NULL";
+
+        if ($rs = get_recordset_sql($sql)) {
+            $db->debug = false;
+            while ($remove = rs_fetch_next_record($rs)) {
+                delete_records('forum_subscriptions', 'userid', $remove->userid, 'forum', $remove->forumid);
+                echo '.';
+            }
+            $db->debug = true;
+            rs_close($rs);
+        }
+    }
+
+
     return $result;
 }
 

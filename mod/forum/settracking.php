@@ -5,7 +5,7 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',PARAM_INT);                          // The forum to subscribe or unsubscribe to
+    $id         = required_param('id',PARAM_INT);                           // The forum to subscribe or unsubscribe to
     $returnpage = optional_param('returnpage', 'index.php', PARAM_FILE);    // Page to return to.
 
     if (! $forum = get_record("forum", "id", $id)) {
@@ -16,35 +16,23 @@
         error("Forum doesn't belong to a course!");
     }
 
-    if (!($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id))) {
-        $cm->id = NULL;
+    if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+        error("Incorrect cm");
     }
-
-    $user = $USER;
 
     require_course_login($course, false, $cm);
 
-    if (isguest()) {   // Guests can't change tracking
-        $wwwroot = $CFG->wwwroot.'/login/index.php';
-        if (!empty($CFG->loginhttps)) {
-            $wwwroot = str_replace('http:','https:', $wwwroot);
-        }
-
-        $navigation = build_navigation('', $cm);
-        print_header($course->shortname, $course->fullname, $navigation, '', '', true, "", navmenu($course, $cm));
-        notice_yesno(get_string('noguesttracking', 'forum').'<br /><br />'.get_string('liketologin'),
-                     $wwwroot, $_SERVER['HTTP_REFERER']);
-        print_footer($course);
-        exit;
-    }
-
     $returnto = forum_go_back_to($returnpage.'?id='.$course->id.'&f='.$forum->id);
 
-    $info->name  = fullname($user);
-    $info->forum = format_string($forum->name);
+    if (!forum_tp_can_track_forums($forum)) {
+        redirect($returnto);
+    }
 
-    if ( forum_tp_is_tracked($forum->id, $user->id) ) {
-        if (forum_tp_stop_tracking($forum->id, $user->id)) {
+    $info = new object();
+    $info->name  = fullname($USER);
+    $info->forum = format_string($forum->name);
+    if (forum_tp_is_tracked($forum) ) {
+        if (forum_tp_stop_tracking($forum->id)) {
             add_to_log($course->id, "forum", "stop tracking", "view.php?f=$forum->id", $forum->id, $cm->id);
             redirect($returnto, get_string("nownottracking", "forum", $info), 1);
         } else {
@@ -52,7 +40,7 @@
         }
 
     } else { // subscribe
-        if (forum_tp_start_tracking($forum->id, $user->id)) {
+        if (forum_tp_start_tracking($forum->id)) {
             add_to_log($course->id, "forum", "start tracking", "view.php?f=$forum->id", $forum->id, $cm->id);
             redirect($returnto, get_string("nowtracking", "forum", $info), 1);
         } else {

@@ -51,7 +51,7 @@
     $generaltable->head  = array ($strforum, $strdescription, $strdiscussions);
     $generaltable->align = array ('left', 'left', 'center');
 
-    if ($usetracking = (!isguestuser() && forum_tp_can_track_forums())) {
+    if ($usetracking = forum_tp_can_track_forums()) {
         $untracked = forum_tp_get_untracked_forums($USER->id, $course->id);
 
         $generaltable->head[] = $strunreadposts;
@@ -60,6 +60,8 @@
         $generaltable->head[] = $strtracking;
         $generaltable->align[] = 'center';
     }
+
+    $subscribed_forums = forum_get_subscribed_forums($course);
 
     if ($can_subscribe = (!isguestuser() && has_capability('moodle/course:view', $coursecontext))) {
         $generaltable->head[] = $strsubscribed;
@@ -118,11 +120,12 @@
     /// Do course wide subscribe/unsubscribe
     if (!is_null($subscribe) and !isguestuser() and !isguest()) {
         foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
-            if (!forum_is_forcesubscribed($forumid)) {
-                $subscribed = forum_is_subscribed($USER->id, $forumid);
+            $forum = $forums[$forumid];
+            if (!forum_is_forcesubscribed($forum)) {
+                $subscribed = forum_is_subscribed($USER->id, $forum);
                 if ($subscribe && !$subscribed) {
                     forum_subscribe($USER->id, $forumid);
-                } elseif (!$subscribe && $subscribed) {
+                } else if (!$subscribe && $subscribed) {
                     forum_unsubscribe($USER->id, $forumid);
                 }
             }
@@ -147,70 +150,48 @@
             $cm      = $modinfo->instances['forum'][$forum->id];
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-            $groupmode    = groups_get_activity_groupmode($cm, $course);
-            $currentgroup = groups_get_activity_group($cm);
-
-            if ($groupmode == SEPARATEGROUPS) {
-                $accessallgroups = has_capability('moodle/site:accessallgroups', $context);
-            } else {
-                $accessallgroups = true;
-            }
-
-            $cantaccessagroup = !$accessallgroups and empty($currentgroup);
-
-            // this is potentially wrong logic. could possibly check for if user has the right to hmmm
-            if ($cantaccessagroup) {
-                $count = '';
-
-            } if ($currentgroup) {
-                $count = count_records_select('forum_discussions', "forum = $forum->id AND (groupid = $currentgroup OR groupid = -1)");
-
-            } else {
-                $count = count_records('forum_discussions', 'forum', $forum->id);
-            }
+            $count = forum_count_discussions($forum, $cm, $course);
 
             if ($usetracking) {
                 if ($forum->trackingtype == FORUM_TRACKING_OFF) {
                     $unreadlink  = '-';
                     $trackedlink = '-';
-                } else if (($forum->trackingtype == FORUM_TRACKING_ON) || !isset($untracked[$forum->id])) {
-                    $groupid = !$accessallgroups ? $currentgroup : false;
-                    $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
-                    if ($unread > 0) {
-                        $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+
+                } else {
+                    if (isset($untracked[$forum->id])) {
+                            $unreadlink  = '-';
+                    } else if ($unread = forum_tp_count_forum_unread_posts($cm, $course)) {
+                            $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                         $unreadlink .= '<a title="'.$strmarkallread.'" href="markposts.php?f='.
                                        $forum->id.'&amp;mark=read"><img src="'.$CFG->pixpath.'/t/clear.gif" alt="'.$strmarkallread.'" /></a></span>';
                     } else {
-                        $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
+                        $unreadlink = '<span class="read">0</span>';
                     }
 
-
-                    if ($forum->trackingtype == FORUM_TRACKING_OPTIONAL) {
-                        $trackedlink = print_single_button($CFG->wwwroot . '/mod/forum/settracking.php?id=' . $forum->id, '', $stryes, 'post', '_self', true, $strnotrackforum);
-                    } else {
+                    if ($forum->trackingtype == FORUM_TRACKING_ON) {
                         $trackedlink = $stryes;
+
+                    } else {
+                        $options = array('id'=>$forum->id);
+                        if (!isset($untracked[$forum->id])) {
+                            $trackedlink = print_single_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $stryes, 'post', '_self', true, $strnotrackforum);
+                        } else {
+                            $trackedlink = print_single_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $strno, 'post', '_self', true, $strtrackforum);
+                        }
                     }
-                } else {
-                    $unreadlink = '-';
-                    $trackedlink = print_single_button($CFG->wwwroot . '/mod/forum/settracking.php?id=' . $forum->id, '', $strno, 'post', '_self', true, $strtrackforum);
                 }
             }
 
             $forum->intro = shorten_text(trim(format_text($forum->intro, FORMAT_HTML, $introoptions)), $CFG->forum_shortpost);
             $forumname = format_string($forum->name, true);;
 
-            if ($cantaccessagroup) {
-                $forumlink = $forumname;
-                $discussionlink = $count;
+            if ($cm->visible) {
+                $style = '';
             } else {
-                if ($cm->visible) {
-                    $style = '';
-                } else {
-                    $style = 'class="dimmed"';
-                }
-                $forumlink = "<a href=\"view.php?f=$forum->id\" $style>".format_string($forum->name,true)."</a>";
-                $discussionlink = "<a href=\"view.php?f=$forum->id\" $style>".$count."</a>";
+                $style = 'class="dimmed"';
             }
+            $forumlink = "<a href=\"view.php?f=$forum->id\" $style>".format_string($forum->name,true)."</a>";
+            $discussionlink = "<a href=\"view.php?f=$forum->id\" $style>".$count."</a>";
 
             $row = array ($forumlink, $forum->intro, $discussionlink);
             if ($usetracking) {
@@ -219,21 +200,29 @@
             }
 
             if ($can_subscribe) {
-                $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
-                        'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
-                        'cantsubscribe' => '-'), $cantaccessagroup, false, true);
+                if ($forum->forcesubscribe != FORUM_DISALLOWSUBSCRIBE) {
+                    $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
+                            'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
+                            'cantsubscribe' => '-'), false, false, true, $subscribed_forums);
+                } else {
+                    $row[] = '-';
+                }
             }
 
             //If this forum has RSS activated, calculate it
-            if ($show_rss and $forum->rsstype and $forum->rssarticles) {
-                //Calculate the tolltip text
-                if ($forum->rsstype == 1) {
-                    $tooltiptext = get_string('rsssubscriberssdiscussions', 'forum', format_string($forum->name));
+            if ($show_rss) {
+                if ($forum->rsstype and $forum->rssarticles) {
+                    //Calculate the tolltip text
+                    if ($forum->rsstype == 1) {
+                        $tooltiptext = get_string('rsssubscriberssdiscussions', 'forum', format_string($forum->name));
+                    } else {
+                        $tooltiptext = get_string('rsssubscriberssposts', 'forum', format_string($forum->name));
+                    }
+                    //Get html code for RSS link
+                    $row[] = rss_get_link($course->id, $USER->id, 'forum', $forum->id, $tooltiptext);
                 } else {
-                    $tooltiptext = get_string('rsssubscriberssposts', 'forum', format_string($forum->name));
+                    $row[] = '&nbsp;';
                 }
-                //Get html code for RSS link
-                $row[] = rss_get_link($course->id, $USER->id, 'forum', $forum->id, $tooltiptext);
             }
 
             $generaltable->data[] = $row;
@@ -283,51 +272,35 @@
                 $cm      = $modinfo->instances['forum'][$forum->id];
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-                $groupmode    = groups_get_activity_groupmode($cm, $course);
-                $currentgroup = groups_get_activity_group($cm);
-
-                if ($groupmode == SEPARATEGROUPS) {
-                    $accessallgroups = has_capability('moodle/site:accessallgroups', $context);
-                } else {
-                    $accessallgroups = true;
-                }
-
-                $cantaccessagroup = !$accessallgroups and empty($currentgroup);
-
-                if ($cantaccessagroup) {
-                    $count = '';
-
-                } if ($currentgroup) {
-                    $count = count_records_select('forum_discussions', "forum = $forum->id AND (groupid = $currentgroup OR groupid = -1)");
-
-                } else {
-                    $count = count_records('forum_discussions', 'forum', $forum->id);
-                }
+                $count = forum_count_discussions($forum, $cm, $course);
 
                 if ($usetracking) {
                     if ($forum->trackingtype == FORUM_TRACKING_OFF) {
-                        $unreadlink = '-';
+                        $unreadlink  = '-';
                         $trackedlink = '-';
 
-                    } else if (($forum->trackingtype == FORUM_TRACKING_ON) ||
-                        !isset($untracked[$forum->id])) {
-                        $groupid = !$accessallgroups ? $currentgroup : false;
-                        $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
-                        if ($unread > 0) {
+                    } else {
+                        if (isset($untracked[$forum->id])) {
+                            $unreadlink  = '-';
+                        } else if ($unread = forum_tp_count_forum_unread_posts($cm, $course)) {
                             $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                             $unreadlink .= '<a title="'.$strmarkallread.'" href="markposts.php?f='.
                                            $forum->id.'&amp;mark=read"><img src="'.$CFG->pixpath.'/t/clear.gif" alt="'.$strmarkallread.'" /></a></span>';
                         } else {
-                            $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
+                            $unreadlink = '<span class="read">0</span>';
                         }
-                        if ($forum->trackingtype == FORUM_TRACKING_OPTIONAL) {
-                            $trackedlink = print_single_button($CFG->wwwroot . '/mod/forum/settracking.php?id=' . $forum->id, '', $stryes, 'post', '_self', true, $strnotrackforum);
-                        } else {
+
+                        if ($forum->trackingtype == FORUM_TRACKING_ON) {
                             $trackedlink = $stryes;
+
+                        } else {
+                            $options = array('id'=>$forum->id);
+                            if (!isset($untracked[$forum->id])) {
+                                $trackedlink = print_single_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $stryes, 'post', '_self', true, $strnotrackforum);
+                            } else {
+                                $trackedlink = print_single_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $strno, 'post', '_self', true, $strtrackforum);
+                            }
                         }
-                    } else {
-                        $unreadlink = '-';
-                        $trackedlink = print_single_button($CFG->wwwroot . '/mod/forum/settracking.php?id=' . $forum->id, '', $strno, 'post', '_self', true, $strtrackforum);
                     }
                 }
 
@@ -345,18 +318,14 @@
                 }
 
                 $forumname = format_string($forum->name,true);;
-                if ($cantaccessagroup) {
-                    $forumlink = $forumname;
-                    $discussionlink = $count;
+
+                if ($cm->visible) {
+                    $style = '';
                 } else {
-                    if ($cm->visible) {
-                        $style = '';
-                    } else {
-                        $style = 'class="dimmed"';
-                    }
-                    $forumlink = "<a href=\"view.php?f=$forum->id\" $style>".format_string($forum->name,true)."</a>";
-                    $discussionlink = "<a href=\"view.php?f=$forum->id\" $style>".$count."</a>";
+                    $style = 'class="dimmed"';
                 }
+                $forumlink = "<a href=\"view.php?f=$forum->id\" $style>".format_string($forum->name,true)."</a>";
+                $discussionlink = "<a href=\"view.php?f=$forum->id\" $style>".$count."</a>";
 
                 $row = array ($printsection, $forumlink, $forum->intro, $discussionlink);
                 if ($usetracking) {
@@ -365,21 +334,29 @@
                 }
 
                 if ($can_subscribe) {
-                    $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
-                        'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
-                        'cantsubscribe' => '-'), $cantaccessagroup, false, true);
+                    if ($forum->forcesubscribe != FORUM_DISALLOWSUBSCRIBE) {
+                        $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
+                            'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
+                            'cantsubscribe' => '-'), false, false, true, $subscribed_forums);
+                    } else {
+                        $row[] = '-';
+                    }
                 }
 
                 //If this forum has RSS activated, calculate it
-                if ($show_rss and $forum->rsstype and $forum->rssarticles) {
-                    //Calculate the tolltip text
-                    if ($forum->rsstype == 1) {
-                        $tooltiptext = get_string('rsssubscriberssdiscussions', 'forum', format_string($forum->name));
+                if ($show_rss) {
+                    if ($forum->rsstype and $forum->rssarticles) {
+                        //Calculate the tolltip text
+                        if ($forum->rsstype == 1) {
+                            $tooltiptext = get_string('rsssubscriberssdiscussions', 'forum', format_string($forum->name));
+                        } else {
+                            $tooltiptext = get_string('rsssubscriberssposts', 'forum', format_string($forum->name));
+                        }
+                        //Get html code for RSS link
+                        $row[] = rss_get_link($course->id, $USER->id, 'forum', $forum->id, $tooltiptext);
                     } else {
-                        $tooltiptext = get_string('rsssubscriberssposts', 'forum', format_string($forum->name));
+                        $row[] = '&nbsp;';
                     }
-                    //Get html code for RSS link
-                    $row[] = rss_get_link($course->id, $USER->id, 'forum', $forum->id, $tooltiptext);
                 }
 
                 $learningtable->data[] = $row;

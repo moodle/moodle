@@ -36,7 +36,7 @@
     }
 
     if (groupmode($course, $cm)
-                and !forum_is_subscribed($user->id, $forum->id)
+                and !forum_is_subscribed($user->id, $forum)
                 and !has_capability('moodle/site:accessallgroups', $context)) {
         if (!mygroupid($course->id)) {
             error('Sorry, but you must be a group member to subscribe.');
@@ -65,7 +65,7 @@
         : "view.php?f=$id";
 
     if ($force and has_capability('mod/forum:managesubscriptions', $context)) {
-        if (forum_is_forcesubscribed($forum->id)) {
+        if (forum_is_forcesubscribed($forum)) {
             forum_forcesubscribe($forum->id, 0);
             redirect($returnto, get_string("everyonecannowchoose", "forum"), 1);
         } else {
@@ -74,7 +74,7 @@
         }
     }
 
-    if (forum_is_forcesubscribed($forum->id)) {
+    if (forum_is_forcesubscribed($forum)) {
         redirect($returnto, get_string("everyoneisnowsubscribed", "forum"), 1);
     }
 
