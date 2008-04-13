@@ -680,4 +680,18 @@
                 $filtertype.'&amp;filterselect='.$filterselect.'&amp;';
 
     }
+
+    /**
+     * Returns a list of all user ids who have used blogs in the site
+     * Used in backup of site courses.
+     */
+    function blog_get_participants() {
+
+        global $CFG;
+
+        return get_records_sql("SELECT userid as id 
+                                  FROM {$CFG->prefix}post
+                                 WHERE module = 'blog'
+                                   AND courseid = 0");
+    }
 ?>
