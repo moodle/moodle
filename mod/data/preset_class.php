@@ -556,6 +556,12 @@ class Data_Preset
         
         $this->user_id = $params['userid'];
 
+        if (!$cm = get_coursemodule_from_instance('data', $this->data->id, $course->id)) {
+            print_error('invalidrequest'); 
+        }
+
+        $context = get_context_instance(COURSE_MODULE, $cm->id);
+
         if ($this->user_id > 0 and ($this->user_id == $USER->id || has_capability('mod/data:manageuserpresets', $context))) {
            //ok can delete
         } else {
@@ -584,11 +590,18 @@ class Data_Preset
     function action_delete($params)
     { 
         global $CFG, $USER;
+        $course = $params['course'];
         $shortname = $params['shortname'];
         
         if (!data_submitted() and !confirm_sesskey()) {
             print_error('invalidrequest');
         }
+
+        if (!$cm = get_coursemodule_from_instance('data', $this->data->id, $course->id)) {
+            print_error('invalidrequest'); 
+        }
+
+        $context = get_context_instance(COURSE_MODULE, $cm->id);
 
         if ($this->user_id > 0 and ($this->user_id == $USER->id || has_capability('mod/data:manageuserpresets', $context))) {
            //ok can delete
@@ -710,7 +723,7 @@ class Data_Preset
     function action_save1($params)
     {
         $html = '';
-        $sesskey = $params['sesskey'];
+        $sesskey = sesskey();
         $course = $params['course'];
         if (!data_submitted() or !confirm_sesskey()) {
             print_error('invalid_request');
@@ -754,6 +767,7 @@ class Data_Preset
 
         $name = $this->best_name(optional_param('name', $this->data->name, PARAM_FILE));
         $this->shortname = $name;
+        $sesskey = sesskey();
 
         if (!is_array($this->has_all_required_files("$CFG->dataroot/data/preset/$USER->id/$name"))) {
             notify("Preset already exists: Pick another name or overwrite ($CFG->dataroot/data/preset/$USER->id/$name)");
