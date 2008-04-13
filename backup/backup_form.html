@@ -67,6 +67,7 @@
     $backup_site_files = optional_param('backup_site_files',1);
     $backup_gradebook_history =  optional_param('backup_gradebook_history', 0, PARAM_INT);
     $backup_messages = optional_param('backup_messages',1);
+    $backup_blogs = optional_param('backup_blogs',1);
 
     if ($count == 0) {
         notice("No backupable modules are installed!");
@@ -303,6 +304,21 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         }
         else {
             $hidden_options .= '<input type="hidden" name="backup_messages" value="0" />';
+        }
+
+        if (empty($to) && $course->id == SITEID && !empty($CFG->bloglevel)) {
+            //If we are in a SITEID backup and blogs are enabled print the Blogs tr
+            echo "<tr>";
+            echo "<td align=\"right\" colspan=\"2\"><b>";
+            echo get_string ('blogs','blog').":";
+            echo "</b></td><td colspan=\"2\">";
+            $blog_options[0] = get_string("no");
+            $blog_options[1] = get_string("yes");
+            choose_from_menu($blog_options, "backup_blogs", $backup_blogs, "");
+            echo "</td></tr>";
+        }
+        else {
+            $hidden_options .= '<input type="hidden" name="backup_blogs" value="0" />';
         }
     }
 
