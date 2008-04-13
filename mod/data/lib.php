@@ -1896,6 +1896,9 @@ class PresetImporter {
         $settings = new StdClass();
 
         foreach ($settingsarray as $setting => $value) {
+            if (!is_array($value)) {
+                continue;
+            }
             $settings->$setting = $value[0]['#'];
         }
 
@@ -1903,8 +1906,14 @@ class PresetImporter {
         $fieldsarray = $parsedxml['preset']['#']['field'];
         $fields = array();
         foreach ($fieldsarray as $field) {
+            if (!is_array($field)) {
+                continue;
+            }
             $f = new StdClass();
             foreach ($field['#'] as $param => $value) {
+                if (!is_array($value)) {
+                    continue;
+                }
                 $f->$param = $value[0]['#'];
             }
             $f->dataid = $this->data->id;
