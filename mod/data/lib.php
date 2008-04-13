@@ -1966,7 +1966,7 @@ class PresetImporter {
                             $selected=true;
                         }
                         else {
-                            echo '<option value="$cid">'.$currentfield->name.'</option>';
+                            echo '<option value="'.$cid.'">'.$currentfield->name.'</option>';
                         }
                     }
                 }
