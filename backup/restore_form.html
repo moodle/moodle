@@ -548,7 +548,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         if (isset($info->backup_messages) && $info->backup_messages == "true") {
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
-            echo '<label for="menurestore_messages">'.get_string ('messages', 'messages').'</label>';
+            echo '<label for="menurestore_messages">'.get_string ('messages', 'message').'</label>';
             echo "</b></td><td colspan=\"2\">";
             $message_options = array();
             $message_options[0] = get_string("no");
