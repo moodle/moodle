@@ -415,7 +415,7 @@ class Data_Preset
                             $selected=true;
                         }
                         else {
-                            $html .= '<option value="$cid">'.$currentfield->name.'</option>';
+                            $html .= '<option value="'.$cid.'">'.$currentfield->name.'</option>';
                         }
                     }
                 }

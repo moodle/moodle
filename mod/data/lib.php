@@ -40,18 +40,18 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
     function data_field_base($field=0, $data=0) {   // Field or data or both, each can be id or object
 
         if (empty($field) && empty($data)) {
-            print_error('Programmer error: You must specify field and/or data when defining field class. ');
+            error('Programmer error: You must specify field and/or data when defining field class. ');
         }
 
         if (!empty($field)) {
             if (is_object($field)) {
                 $this->field = $field;  // Programmer knows what they are doing, we hope
             } else if (!$this->field = get_record('data_fields','id',$field)) {
-                print_error('Bad field ID encountered: '.$field);
+                error('Bad field ID encountered: '.$field);
             }
             if (empty($data)) {
                 if (!$this->data = get_record('data','id',$this->field->dataid)) {
-                    print_error('Bad data ID encountered in field data');
+                    error('Bad data ID encountered in field data');
                 }
             }
         }
@@ -61,10 +61,10 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
                 if (is_object($data)) {
                     $this->data = $data;  // Programmer knows what they are doing, we hope
                 } else if (!$this->data = get_record('data','id',$data)) {
-                    print_error('Bad data ID encountered: '.$data);
+                    error('Bad data ID encountered: '.$data);
                 }
             } else {                      // No way to define it!
-                print_error('Data id or object must be provided to field class');
+                error('Data id or object must be provided to field class');
             }
         }
 
@@ -1711,7 +1711,7 @@ function data_user_can_add_entry($data, $currentgroup, $groupmode) {
     global $USER;
 
     if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
-        print_error('Course Module ID was incorrect');
+        error('Course Module ID was incorrect');
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -1841,7 +1841,7 @@ function data_presets_export($course, $cm, $data) {
 
     /* Check all is well */
     if (!is_directory_a_preset($tempfolder)) {
-        print_error("Not all files generated!");
+        error("Not all files generated!");
     }
 
     $filelist = array(
@@ -1884,7 +1884,7 @@ class PresetImporter {
         global $CFG;
 
         if (!is_directory_a_preset($this->folder)) {
-            print_error("$this->userid/$this->shortname Not a preset");
+            error("$this->userid/$this->shortname Not a preset");
         }
 
         /* Grab XML */
@@ -1935,7 +1935,7 @@ class PresetImporter {
 
     function import_options() {
         if (!confirm_sesskey()) {
-            print_error("Sesskey Invalid");
+            error("Sesskey Invalid");
         }
 
         $strblank = get_string('blank', 'data');
@@ -1972,7 +1972,7 @@ class PresetImporter {
                             $selected=true;
                         }
                         else {
-                            echo '<option value="$cid">'.$currentfield->name.'</option>';
+                            echo '<option value="'.$cid.'">'.$currentfield->name.'</option>';
                         }
                     }
                 }
@@ -1987,7 +1987,7 @@ class PresetImporter {
             echo "<p>$strwarning</p>";
         }
         else if (empty($newfields)) {
-            print_error("New preset has no defined fields!");
+            error("New preset has no defined fields!");
         }
         echo '<input type="submit" value="'.$strcontinue.'" /></fieldset></form></div>';
 
@@ -2006,7 +2006,7 @@ class PresetImporter {
                 $cid = optional_param("field_$nid", -1, PARAM_INT);
                 if ($cid == -1) continue;
 
-                if (array_key_exists($cid, $preservedfields)) print_error("Not an injective map");
+                if (array_key_exists($cid, $preservedfields)) error("Not an injective map");
                 else $preservedfields[$cid] = true;
             }
 
