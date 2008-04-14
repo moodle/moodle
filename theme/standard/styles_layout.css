@@ -3371,6 +3371,10 @@ table.presets {
  *** Modules: Forum
  ***/
 
+#mod-forum-view .forummode {
+  text-align:center;
+}
+
 .forumheaderlist,
 .forumpost {
   border-width:1px;
