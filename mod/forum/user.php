@@ -17,22 +17,22 @@
     }
 
     if (! $user = get_record("user", "id", $id)) {
-        print_error("User ID is incorrect");
+        error("User ID is incorrect");
     }
 
     if (! $course = get_record("course", "id", $course)) {
-        print_error("Course id is incorrect.");
+        error("Course id is incorrect.");
     }
 
     $syscontext = get_context_instance(CONTEXT_SYSTEM);
     $usercontext   = get_context_instance(CONTEXT_USER, $id);
-    
+
     // do not force parents to enrol
     if (!get_record('role_assignments', 'userid', $USER->id, 'contextid', $usercontext->id)) {
         require_course_login($course);
     }
 
-    add_to_log($course->id, "forum", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id"); 
+    add_to_log($course->id, "forum", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id");
 
     $strforumposts   = get_string('forumposts', 'forum');
     $strparticipants = get_string('participants');
@@ -46,11 +46,11 @@
     $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id", 'type' => 'title');
     $navlinks[] = array('name' => $strforumposts, 'link' => '', 'type' => 'title');
     $navlinks[] = array('name' => $strmode, 'link' => '', 'type' => 'title');
-    
+
     $navigation = build_navigation($navlinks);
-    
+
     print_header("$course->shortname: $fullname: $strmode", $course->fullname,$navigation);
-    
+
 
     $currenttab = $mode;
     $showroles = 1;
@@ -68,9 +68,9 @@
             $extrasql = 'AND p.parent = 0';
             break;
     }
-    
+
     echo '<div class="user-content">';
-    
+
     if ($course->id == SITEID) {
         if (empty($CFG->forceloginforprofiles) || isloggedin()) {
             // Search throughout the whole site.
@@ -82,23 +82,23 @@
         // Search only for posts the user made in this course.
         $searchcourse = $course->id;
     }
-    
+
     // Get the posts.
-    if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $perpage, 
+    if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $perpage,
                                     $totalcount, $extrasql)) {
-        
-        print_paging_bar($totalcount, $page, $perpage, 
+
+        print_paging_bar($totalcount, $page, $perpage,
                          "user.php?id=$user->id&amp;course=$course->id&amp;mode=$mode&amp;perpage=$perpage&amp;");
 
         $discussions = array();
         $forums      = array();
         $cms         = array();
-        
+
         foreach ($posts as $post) {
 
             if (!isset($discussions[$post->discussion])) {
                 if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
-                    print_error('Discussion ID was incorrect');
+                    error('Discussion ID was incorrect');
                 }
                 $discussions[$post->discussion] = $discussion;
             } else {
@@ -107,16 +107,27 @@
 
             if (!isset($forums[$discussion->forum])) {
                 if (! $forum = get_record('forum', 'id', $discussion->forum)) {
-                    print_error("Could not find forum $discussion->forum");
+                    error("Could not find forum $discussion->forum");
                 }
                 $forums[$discussion->forum] = $forum;
             } else {
                 $forum = $forums[$discussion->forum];
             }
 
+            $ratings = null;
+            if ($forum->assessed) {
+                if ($scale = make_grades_menu($forum->scale)) {
+                    $ratings =new object();
+                    $ratings->scale = $scale;
+                    $ratings->assesstimestart = $forum->assesstimestart;
+                    $ratings->assesstimefinish = $forum->assesstimefinish;
+                    $ratings->allow = false;
+                }
+            }
+
             if (!isset($cms[$forum->id])) {
                 if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
-                    print_error('Course Module ID was incorrect');
+                    error('Course Module ID was incorrect');
                 }
                 $cms[$forum->id] = $cm;
                 unset($cm); // do not use cm directly, it would break caching
@@ -129,7 +140,7 @@
                     $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">".format_string($post->subject,true)."</a>";
                 }
             }
-            
+
             if ($course->id == SITEID && has_capability('moodle/site:config', $syscontext)) {
                 $postcoursename = get_field('course', 'shortname', 'id', $forum->course);
                 $fullsubject = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$forum->course.'">'.$postcoursename.'</a> -> '. $fullsubject;
@@ -140,11 +151,11 @@
             $fulllink = "<a href=\"discuss.php?d=$post->discussion#p$post->id\">".
                          get_string("postincontext", "forum")."</a>";
 
-            forum_print_post($post, $discussion, $forum, $cms[$forum->id], $course, false, false, false, false, $fulllink);
+            forum_print_post($post, $discussion, $forum, $cms[$forum->id], $course, false, false, false, $ratings, $fulllink);
             echo "<br />";
         }
-    
-        print_paging_bar($totalcount, $page, $perpage, 
+
+        print_paging_bar($totalcount, $page, $perpage,
                          "user.php?id=$user->id&amp;course=$course->id&amp;mode=$mode&amp;perpage=$perpage&amp;");
     } else {
         if ($mode == 'posts') {
