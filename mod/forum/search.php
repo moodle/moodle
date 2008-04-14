@@ -261,30 +261,30 @@ function forum_print_big_search_form($course) {
     echo '<table cellpadding="10" class="searchbox" id="form">';
 
     echo '<tr>';
-    echo '<td class="c0">'.get_string('searchwords', 'forum').':';
+    echo '<td class="c0"><label for="words">'.get_string('searchwords', 'forum').'</label>';
     echo '<input type="hidden" value="'.$course->id.'" name="id" alt="" /></td>';
-    echo '<td class="c1"><input type="text" size="35" name="words" value="'.s($words, true).'" alt="" /></td>';
+    echo '<td class="c1"><input type="text" size="35" name="words" id="words"value="'.s($words, true).'" alt="" /></td>';
     echo '</tr>';
 
     echo '<tr>';
-    echo '<td class="c0">'.get_string('searchphrase', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="phrase" value="'.s($phrase, true).'" alt="" /></td>';
+    echo '<td class="c0"><label for="phrase">'.get_string('searchphrase', 'forum').'</label></td>';
+    echo '<td class="c1"><input type="text" size="35" name="phrase" id="phrase" value="'.s($phrase, true).'" alt="" /></td>';
     echo '</tr>';
 
     echo '<tr>';
-    echo '<td class="c0">'.get_string('searchnotwords', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="notwords" value="'.s($notwords, true).'" alt="" /></td>';
+    echo '<td class="c0"><label for="notwords">'.get_string('searchnotwords', 'forum').'</label></td>';
+    echo '<td class="c1"><input type="text" size="35" name="notwords" id="notwords" value="'.s($notwords, true).'" alt="" /></td>';
     echo '</tr>';
 
     if ($CFG->dbfamily == 'mysql' || $CFG->dbfamily == 'postgres') {
         echo '<tr>';
-        echo '<td class="c0">'.get_string('searchfullwords', 'forum').':</td>';
-        echo '<td class="c1"><input type="text" size="35" name="fullwords" value="'.s($fullwords, true).'" alt="" /></td>';
+        echo '<td class="c0"><label for="fullwords">'.get_string('searchfullwords', 'forum').'</label></td>';
+        echo '<td class="c1"><input type="text" size="35" name="fullwords" id="fullwords" value="'.s($fullwords, true).'" alt="" /></td>';
         echo '</tr>';
     }
 
     echo '<tr>';
-    echo '<td class="c0">'.get_string('searchdatefrom', 'forum').':</td>';
+    echo '<td class="c0">'.get_string('searchdatefrom', 'forum').'</td>';
     echo '<td class="c1">';
     if (empty($datefrom)) {
         $datefromchecked = '';
@@ -307,7 +307,7 @@ function forum_print_big_search_form($course) {
     echo '</tr>';
 
     echo '<tr>';
-    echo '<td class="c0">'.get_string('searchdateto', 'forum').':</td>';
+    echo '<td class="c0">'.get_string('searchdateto', 'forum').'</td>';
     echo '<td class="c1">';
     if (empty($dateto)) {
         $datetochecked = '';
@@ -330,20 +330,20 @@ function forum_print_big_search_form($course) {
     echo '</tr>';
 
     echo '<tr>';
-    echo '<td class="c0">'.get_string('searchwhichforums', 'forum').':</td>';
+    echo '<td class="c0"><label for="menuforumid">'.get_string('searchwhichforums', 'forum').'</label></td>';
     echo '<td class="c1">';
     choose_from_menu(forum_menu_list($course), 'forumid', '', get_string('allforums', 'forum'), '');
     echo '</td>';
     echo '</tr>';
 
     echo '<tr>';
-    echo '<td class="c0">'.get_string('searchsubject', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="subject" value="'.s($subject, true).'" alt="" /></td>';
+    echo '<td class="c0"><label for="subject">'.get_string('searchsubject', 'forum').'</label></td>';
+    echo '<td class="c1"><input type="text" size="35" name="subject" id="subject" value="'.s($subject, true).'" alt="" /></td>';
     echo '</tr>';
 
     echo '<tr>';
-    echo '<td class="c0">'.get_string('searchuser', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="user" value="'.s($user, true).'" alt="" /></td>';
+    echo '<td class="c0"><label for="user">'.get_string('searchuser', 'forum').'</label></td>';
+    echo '<td class="c1"><input type="text" size="35" name="user" id="user" value="'.s($user, true).'" alt="" /></td>';
     echo '</tr>';
 
     echo '<tr>';
@@ -390,19 +390,21 @@ function forum_menu_list($course)  {
 
     $menu = array();
 
-    if ($cms = get_coursemodules_in_course('forum', $course->id)) {
-        if ($course->format == 'weeks') {
-            $strsection = get_string('week');
-        } else {
-            $strsection = get_string('topic');
-        }
+    $modinfo = get_fast_modinfo($course);
 
-        foreach ($cms as $cm) {
-            if (!coursemodule_visible_for_user($cm)) {
-                continue;
-            }
-            $menu[$cm->instance] = format_string($cm->name,true);
+    if (empty($modinfo->instances['forum'])) {
+        return $menu;
+    }
+
+    foreach ($modinfo->instances['forum'] as $cm) {
+        if (!$cm->uservisible) {
+            continue;
         }
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        if (!has_capability('mod/forum:viewdiscussion', $context)) {
+            continue;
+        }
+        $menu[$cm->instance] = format_string($cm->name);
     }
 
     return $menu;
