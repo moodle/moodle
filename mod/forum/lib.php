@@ -3458,7 +3458,9 @@ function forum_print_rating_menu($postid, $userid, $scale, $myrating=NULL) {
  */
 function forum_print_mode_form($id, $mode, $forumtype='') {
     if ($forumtype == 'single') {
+        echo '<div class="forummode">';
         popup_form("view.php?f=$id&amp;mode=", forum_get_layout_modes(), "mode", $mode, "");
+        echo '</div>';
     } else {
         popup_form("discuss.php?d=$id&amp;mode=", forum_get_layout_modes(), "mode", $mode, "");
     }
