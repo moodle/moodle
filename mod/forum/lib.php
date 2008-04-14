@@ -1472,6 +1472,9 @@ function forum_get_discussion_posts($discussion, $sort, $forumid) {
 function forum_get_all_discussion_posts($discussionid, $sort, $tracking=false) {
     global $CFG, $USER;
 
+    $tr_sel  = "";
+    $tr_join = "";
+
     if ($tracking) {
         $now = time();
         $cutoffdate = $now - ($CFG->forum_oldpostdays * 24 * 3600);
