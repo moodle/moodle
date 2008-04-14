@@ -115,10 +115,10 @@
         if ($groupmode = groups_get_activity_groupmode($cm)) {
             $post->groupid = groups_get_activity_group($cm);
             if (empty($post->groupid)) {
-                $post->groupid = -1; //TODO: why -1??
+                $post->groupid = -1;
             }
         } else {
-            $post->groupid = -1; //TODO: why -1??
+            $post->groupid = null;
         }
         forum_set_return();
 
@@ -153,14 +153,18 @@
             }
         }
 
-        if (groupmode($course, $cm)) {   // Make sure user can post here
-            $mygroupid = mygroupid($course->id);
-            if (!((empty($mygroupid) and $discussion->groupid == -1)
-                    || (groups_is_member($discussion->groupid)/*$mygroupid == $discussion->groupid*/)
-                    || has_capability('moodle/site:accessallgroups', $modcontext, NULL, false) )) {
-                print_error('nopostdiscussion', 'forum');
+        if (groupmode($course, $cm) == SEPARATEGROUPS) {   // Make sure user can post here
+            if ($discussion->groupid == -1) {
+                if (!has_capability('moodle/site:accessallgroups', $modcontext)) {
+                    print_error('nopostforum', 'forum');
+                }
+            } else {
+                if (!groups_is_member($discussion->groupid)) {
+                    print_error('nopostforum', 'forum');
+                }
             }
         }
+
         if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
             print_error("activityiscurrentlyhidden");
         }
@@ -175,6 +179,12 @@
         $post->subject     = $parent->subject;
         $post->userid      = $USER->id;
         $post->message     = '';
+
+        if ($groupmode = groups_get_activity_groupmode($cm)) {
+            $post->groupid = $discussion->groupid;
+        } else {
+            $post->groupid = null;
+        }
 
         $strre = get_string('re', 'forum');
         if (!(substr($post->subject, 0, strlen($strre)) == $strre)) {
@@ -224,6 +234,11 @@
         $post->edit   = $edit;
         $post->course = $course->id;
         $post->forum  = $forum->id;
+        if ($groupmode = groups_get_activity_groupmode($cm)) {
+            $post->groupid = $discussion->groupid;
+        } else {
+            $post->groupid = null;
+        }
 
         trusttext_prepare_edit($post->message, $post->format, can_use_html_editor(), $modcontext);
 
@@ -435,7 +450,7 @@
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    $mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
+    $mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'cm'=>$cm, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
 
     if ($fromform = $mform_post->get_data()) {
 
@@ -556,6 +571,9 @@
             exit;
 
         } else {                     // Adding a new discussion
+            if (!forum_user_can_post_discussion($forum, $fromform->groupid, -1, $cm, $modcontext)) {
+                error('Can not add discussion, sorry.');
+            }
             $fromform->mailnow = empty($fromform->mailnow) ? 0 : 1;
             $discussion = $fromform;
             $discussion->name  = $fromform->subject;
@@ -719,6 +737,7 @@
                     (!empty($USER->autosubscribe));
 
 
+    // HACK ALERT: this is very wrong, the defaults should be always initialized before calling $mform->get_data() !!!
     $mform_post->set_data(array(    'general'=>$heading,
                                         'subject'=>$post->subject,
                                         'message'=>$post->message,
