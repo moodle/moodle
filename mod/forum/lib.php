@@ -34,7 +34,7 @@ define ('FORUM_AGGREGATE_SUM', 5);
  * will create a new instance and return the id number
  * of the new instance.
  * @param object $forum add forum instance (with magic quotes)
- * @return int intance id 
+ * @return int intance id
  */
 function forum_add_instance($forum) {
     global $CFG;
@@ -88,7 +88,7 @@ function forum_add_instance($forum) {
  * (defined by the form in mod.html) this function
  * will update an existing instance with new data.
  * @param object $forum forum instance (with magic quotes)
- * @return bool success 
+ * @return bool success
  */
 function forum_update_instance($forum) {
     $forum->timemodified = time();
@@ -1099,10 +1099,15 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
         if (!$cm->uservisible) {
             continue;
         }
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        if (!has_capability('mod/forum:viewdiscussion', $context)) {
+            continue;
+        }
 
         if (!empty($CFG->forum_enabletimedposts) and $USER->id != $post->duserid
           and (($post->timestart > 0 and $post->timestart > time()) or ($post->timeend > 0 and $post->timeend < time()))) {
-            if (!has_capability('mod/forum:viewhiddentimedposts', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+            if (!has_capability('mod/forum:viewhiddentimedposts', $context)) {
                 continue;
             }
         }
@@ -1110,7 +1115,7 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
         $groupmode = groups_get_activity_groupmode($cm, $course);
 
         if ($groupmode) {
-            if ($post->groupid == -1 or $groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+            if ($post->groupid == -1 or $groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
                 // oki (Open discussions have groupid -1)
             } else {
                 // separate mode
@@ -1254,7 +1259,7 @@ function forum_get_user_grades($forum, $userid=0) {
  *
  * @param object $forum null means all forums
  * @param int $userid specific user only, 0 mean all
- * @param boolean $nullifnone return null if grade does not exist 
+ * @param boolean $nullifnone return null if grade does not exist
  * @return void
  */
 function forum_update_grades($forum=null, $userid=0, $nullifnone=true) {
@@ -1494,7 +1499,7 @@ function forum_get_all_discussion_posts($discussionid, $sort, $tracking=false) {
     foreach ($posts as $pid=>$p) {
         if ($tracking) {
             if (forum_tp_is_post_old($p)) {
-                 $posts[$pid]->postread = true; 
+                 $posts[$pid]->postread = true;
             }
         }
         if (!$p->parent) {
@@ -1539,6 +1544,7 @@ function forum_get_child_posts($parent, $forumid) {
 function forum_get_readable_forums($userid, $courseid=0) {
 
     global $CFG, $USER;
+    require_once($CFG->dirroot.'/course/lib.php');
 
     if (!$forummod = get_record('modules', 'name', 'forum')) {
         error('The forum module is not installed');
@@ -1554,95 +1560,79 @@ function forum_get_readable_forums($userid, $courseid=0) {
         $courses = array_merge($courses1, $courses2);
     }
     if (!$courses) {
-        return false;
+        return array();
     }
 
     $readableforums = array();
 
     foreach ($courses as $course) {
 
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-
-        if (!has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
-            $selecthidden = ' AND cm.visible = 1';
-        } else {
-            $selecthidden = '';
+        $modinfo =& get_fast_modinfo($course);
+        if (is_null($modinfo->groups)) {
+            $modinfo->groups = groups_get_user_groups($course->id, $userid);
         }
 
-        $selectforums = "SELECT f.id AS id,
-                                f.name AS name,
-                                f.type AS type,
-                                f.course AS course,
-                                cm.id AS cmid,
-                                cm.visible AS cmvisible,
-                                cm.groupmode AS cmgroupmode,
-                                cm.groupingid AS cmgroupingid,
-                                cm.groupmembersonly AS cmgroupmembersonly
-                           FROM {$CFG->prefix}course_modules cm,
-                                {$CFG->prefix}forum f
-                          WHERE cm.instance = f.id
-                            AND cm.course = {$course->id}
-                            AND cm.module = {$forummod->id}
-                                $selecthidden
-                                ORDER BY f.name ASC";
+        if (empty($modinfo->instances['forum'])) {
+            // hmm, no forums?
+            continue;
+        }
 
-        if ($forums = get_records_sql($selectforums)) {
+        $courseforums = get_records('forum', 'course', $course->id);
 
-            $groups = array();
-            if ($group = groups_get_all_groups($course->id, $userid)) {
-                foreach($group as $grp) {
-                    if (isset($grp->id)) {
-                        $groups[] = $grp->id;
+        foreach ($modinfo->instances['forum'] as $forumid => $cm) {
+            if (!$cm->uservisible or !isset($courseforums[$forumid])) {
+                continue;
+            }
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $forum = $courseforums[$forumid];
+
+            if (!has_capability('mod/forum:viewdiscussion', $context)) {
+                continue;
+            }
+
+         /// group access
+            if (groups_get_activity_groupmode($cm, $course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                if (is_null($modinfo->groups)) {
+                    $modinfo->groups = groups_get_user_groups($course->id, $USER->id);
+                }
+                if (empty($CFG->enablegroupings)) {
+                    $forum->onlygroups = $modinfo->groups[0];
+                    $forum->onlygroups[] = -1;
+                } else if (isset($modinfo->groups[$cm->groupingid])) {
+                    $forum->onlygroups = $modinfo->groups[$cm->groupingid];
+                    $forum->onlygroups[] = -1;
+                } else {
+                    $forum->onlygroups = array(-1);
+                }
+            }
+
+        /// hidden timed discussions
+            $forum->viewhiddentimedposts = true;
+            if (!empty($CFG->forum_enabletimedposts)) {
+                if (!has_capability('mod/forum:viewhiddentimedposts', $context)) {
+                    $forum->viewhiddentimedposts = false;
+                }
+            }
+
+        /// qanda access
+            if ($forum->type == 'qanda'
+                    && !has_capability('mod/forum:viewqandawithoutposting', $context)) {
+
+                // We need to check whether the user has posted in the qanda forum.
+                $forum->onlydiscussions = array();  // Holds discussion ids for the discussions
+                                                    // the user is allowed to see in this forum.
+                if ($discussionspostedin = forum_discussions_user_has_posted_in($forum->id, $USER->id)) {
+                    foreach ($discussionspostedin as $d) {
+                        $forum->onlydiscussions[] = $d->id;
                     }
                 }
             }
 
-            foreach ($forums as $forum) {
-                $forumcontext = get_context_instance(CONTEXT_MODULE, $forum->cmid);
-
-                if (has_capability('mod/forum:viewdiscussion', $forumcontext)) {
-
-                    // Evaluate groupmode.
-                    $cm = new object;
-                    $cm->id = $forum->cmid;
-                    $cm->groupmode = $forum->cmgroupmode;
-                    $cm->groupingid = $forum->cmgroupingid;
-                    $cm->groupmembersonly = $forum->cmgroupmembersonly;
-                    $cm->course = $forum->course;
-                    $forum->cmgroupmode = groups_get_activity_groupmode($cm);
-                    if (!groups_course_module_visible($cm)) {
-                        continue;
-                    }
-                    if ($forum->cmgroupmode == SEPARATEGROUPS
-                            && !has_capability('moodle/site:accessallgroups', $forumcontext)) {
-                        $forum->accessallgroups = false;
-                        $forum->accessgroup = $groups;  // The user can only access
-                                                           // discussions for this group.
-                    } else {
-                        $forum->accessallgroups = true;
-                    }
-
-                    $forum->viewhiddentimedposts
-                        = has_capability('mod/forum:viewhiddentimedposts', $forumcontext);
-
-                    if ($forum->type == 'qanda'
-                            && !has_capability('mod/forum:viewqandawithoutposting', $forumcontext)) {
-
-                        // We need to check whether the user has posted in the qanda forum.
-                        $forum->onlydiscussions = array();  // Holds discussion ids for the discussions
-                                                            // the user is allowed to see in this forum.
-
-                        if ($discussionspostedin =
-                                    forum_discussions_user_has_posted_in($forum->id, $USER->id)) {
-                            foreach ($discussionspostedin as $d) {
-                                array_push($forum->onlydiscussions, $d->id);
-                            }
-                        }
-                    }
-                    array_push($readableforums, $forum);
-                }
-            }
+            $readableforums[$forum->id] = $forum;
         }
+
+        unset($modinfo);
+
     } // End foreach $courses
 
     //print_object($courses);
@@ -1669,52 +1659,50 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
     $forums = forum_get_readable_forums($USER->id, $courseid);
 
     if (count($forums) == 0) {
+        $totalcount = 0;
         return false;
     }
 
-    for ($i=0; $i<count($forums); $i++) {
-        if ($i == 0) {
-            $selectdiscussion = " ((d.forum = {$forums[$i]->id}";
-        } else {
-            $selectdiscussion .= " OR (d.forum = {$forums[$i]->id}";
-        }
-        if (!empty($CFG->forum_enabletimedposts) && !$forums[$i]->viewhiddentimedposts) {
-            $now = time();
-            $selectdiscussion .= " AND ( d.userid = {$USER->id}
-                                   OR ((d.timestart = 0 OR d.timestart <= $now)
-                                   AND (d.timeend = 0 OR d.timeend > $now)) )";
-        }
-        if ($forums[$i]->type == 'qanda' && isset($forums[$i]->onlydiscussions)) {
-            // This is a qanda forum.
-            if (is_array($forums[$i]->onlydiscussions)) {
-                // Show question posts as well as posts from discussions in
-                // which the user has posted a reply.
-                if (!empty($forums[$i]->onlydiscussions)) {
-                    $onlydiscussions = "(d.id = ".implode(' OR d.id = ', $forums[$i]->onlydiscussions).") OR";
-                } else {
-                    $onlydiscussions = "";
-                }
-                $selectdiscussion .= " AND ($onlydiscussions p.parent = 0)";
-            } else {
-                // Show only the question posts.
-                $selectdiscussion .= ' AND (p.parent = 0)';
-            }
-        }
-        if (!$forums[$i]->accessallgroups) {
-            if (!empty($forums[$i]->accessgroup)) {
-                $groups = rtrim(implode(",", $forums[$i]->accessgroup),",");
-                $selectdiscussion .= " AND (d.groupid in ($groups)";
-                $selectdiscussion .= ' OR d.groupid = -1)';  // -1 means open for all groups.
-            } else {
-                // User isn't in any group. Only search discussions that are
-                // open to all groups.
-                $selectdiscussion .= ' AND d.groupid = -1';
-            }
-        }
-        $selectdiscussion .= ")\n";
-    }
-    $selectdiscussion .= ")";
+    $now = round(time(), -2); // db friendly
 
+    $fullaccess = array();
+    $where = array();
+
+    foreach ($forums as $forumid => $forum) {
+        $select = array();
+
+        if (!$forum->viewhiddentimedposts) {
+            $select[] = "(d.userid = {$USER->id} OR (d.timestart < $now AND (d.timeend = 0 OR d.timeend > $now)))";
+        }
+
+        if ($forum->type == 'qanda') {
+            if (!empty($forum->onlydiscussions)) {
+                $discussionsids = implode(',', $forum->onlydiscussions);
+                $select[] = "(d.id IN ($discussionsids) OR p.parent = 0)";
+            } else {
+                $select[] = "p.parent = 0";
+            }
+        }
+
+        if (!empty($forum->onlygroups)) {
+            $groupids = implode(',', $forum->onlygroups);
+            $select[] = "d.groupid IN ($groupids)";
+        }
+
+        if ($select) {
+            $selects = implode(" AND ", $select);
+            $where[] = "(d.forum = $forumid AND $selects)";
+        } else {
+            $fullaccess[] = $forumid;
+        }
+    }
+
+    if ($fullaccess) {
+        $fullids = implode(',', $fullaccess);
+        $where[] = "(d.forum IN ($fullids))";
+    }
+
+    $selectdiscussion = "(".implode(" OR ", $where).")";
 
     // Some differences SQL
     $LIKE = sql_ilike();
@@ -1836,7 +1824,7 @@ function forum_get_unmailed_posts($starttime, $endtime, $now=null) {
         if (empty($now)) {
             $now = time();
         }
-        $timedsql = "AND (d.timestart < $now AND (d.timeend = 0 OR d.timeend > $now))"; 
+        $timedsql = "AND (d.timestart < $now AND (d.timeend = 0 OR d.timeend > $now))";
     } else {
         $timedsql = "";
     }
@@ -1889,12 +1877,12 @@ function forum_get_user_posts($forumid, $userid) {
         if (!has_capability('mod/forum:viewhiddentimedposts' , get_context_instance(CONTEXT_MODULE, $cm->id))) {
             $now = time();
             $timedsql = "AND (d.timestart < $now AND (d.timeend = 0 OR d.timeend > $now))";
-        } 
+        }
     }
 
     return get_records_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture, u.imagealt
                               FROM {$CFG->prefix}forum f
-                                   JOIN {$CFG->prefix}forum_discussions d ON d.forum = f.id 
+                                   JOIN {$CFG->prefix}forum_discussions d ON d.forum = f.id
                                    JOIN {$CFG->prefix}forum_posts p       ON p.discussion = d.id
                                    JOIN {$CFG->prefix}user u              ON u.id = p.userid
                              WHERE f.id = $forumid
@@ -1918,12 +1906,12 @@ function forum_get_user_involved_discussions($forumid, $userid) {
         if (!has_capability('mod/forum:viewhiddentimedposts' , get_context_instance(CONTEXT_MODULE, $cm->id))) {
             $now = time();
             $timedsql = "AND (d.timestart < $now AND (d.timeend = 0 OR d.timeend > $now))";
-        } 
+        }
     }
 
     return get_records_sql("SELECT DISTINCT d.*
                               FROM {$CFG->prefix}forum f
-                                   JOIN {$CFG->prefix}forum_discussions d ON d.forum = f.id 
+                                   JOIN {$CFG->prefix}forum_discussions d ON d.forum = f.id
                                    JOIN {$CFG->prefix}forum_posts p       ON p.discussion = d.id
                              WHERE f.id = $forumid
                                    AND p.userid = $userid
@@ -1945,12 +1933,12 @@ function forum_count_user_posts($forumid, $userid) {
         if (!has_capability('mod/forum:viewhiddentimedposts' , get_context_instance(CONTEXT_MODULE, $cm->id))) {
             $now = time();
             $timedsql = "AND (d.timestart < $now AND (d.timeend = 0 OR d.timeend > $now))";
-        } 
+        }
     }
 
     return get_records_sql("SELECT COUNT(p.id) AS postcount, MAX(p.modified) AS lastpost
                               FROM {$CFG->prefix}forum f
-                                   JOIN {$CFG->prefix}forum_discussions d ON d.forum = f.id 
+                                   JOIN {$CFG->prefix}forum_discussions d ON d.forum = f.id
                                    JOIN {$CFG->prefix}forum_posts p       ON p.discussion = d.id
                                    JOIN {$CFG->prefix}user u              ON u.id = p.userid
                              WHERE f.id = $forumid
