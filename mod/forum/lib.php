@@ -634,10 +634,6 @@ function forum_cron() {
                     //override language
                     course_setup($course);
 
-                    $strforums = get_string('forums', 'forum');
-                    $canunsubscribe = ! forum_is_forcesubscribed($forum);
-                    $canreply = forum_user_can_post($forum, $userto, $cm);
-
                     // Fill caches
                     if (!isset($userto->viewfullnames[$forum->id])) {
                         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -647,6 +643,10 @@ function forum_cron() {
                         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
                         $userto->canpost[$forum->id] = forum_user_can_post($forum, $userto, $cm, $modcontext);
                     }
+
+                    $strforums      = get_string('forums', 'forum');
+                    $canunsubscribe = ! forum_is_forcesubscribed($forum);
+                    $canreply       = $userto->canpost[$forum->id];
 
                     $posttext .= "\n \n";
                     $posttext .= '=====================================================================';
@@ -750,12 +750,12 @@ function forum_cron() {
         set_config('digestmailtimelast', $timenow);
     }
 
+    $USER = $cronuser;
+    course_setup(SITEID); // reset cron user language, theme and timezone settings
+
     if (!empty($usermailcount)) {
         mtrace(get_string('digestsentusers', 'forum', $usermailcount));
     }
-
-    $USER = $cronuser;
-    course_setup(SITEID); // reset cron user language, theme and timezone settings
 
     if (!empty($CFG->forum_lastreadclean)) {
         $timenow = time();
