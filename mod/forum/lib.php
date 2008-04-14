@@ -2025,16 +2025,21 @@ function forum_count_discussion_replies($forumid, $forumsort="", $limit=-1, $pag
         $groupby = str_replace('asc', '', $groupby);
     }
 
-    $sql = "SELECT p.discussion, COUNT(p.id) AS replies, MAX(p.id) AS lastpostid
-              FROM {$CFG->prefix}forum_posts p
-                   JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id
-             WHERE p.parent > 0 AND d.forum = $forumid
-          GROUP BY p.discussion $groupby
-          $orderby";
-
-    if ($limitfrom == 0 and $limitnum == 0) {
+    if (($limitfrom == 0 and $limitnum == 0) or $forumsort == "") {
+        $sql = "SELECT p.discussion, COUNT(p.id) AS replies, MAX(p.id) AS lastpostid
+                  FROM {$CFG->prefix}forum_posts p
+                       JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id
+                 WHERE p.parent > 0 AND d.forum = $forumid
+              GROUP BY p.discussion";
         return get_records_sql($sql);
+
     } else {
+        $sql = "SELECT p.discussion, (COUNT(p.id) - 1) AS replies, MAX(p.id) AS lastpostid
+                  FROM {$CFG->prefix}forum_posts p
+                       JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id
+                 WHERE d.forum = $forumid
+              GROUP BY p.discussion $groupby
+              $orderby";
         return get_records_sql("SELECT * FROM ($sql) sq", $limitfrom, $limitnum);
     }
 }
@@ -2243,7 +2248,7 @@ function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=
     return get_records_sql($sql, $limitfrom, $limitnum);
 }
 
-function forum_get_discussions_unread($cm, $forumsort="d.timemodified DESC") {
+function forum_get_discussions_unread($cm) {
     global $CFG, $USER;
 
     $now = round(time(), -2);
@@ -2273,13 +2278,6 @@ function forum_get_discussions_unread($cm, $forumsort="d.timemodified DESC") {
         $groupselect = "";
     }
 
-    if (empty($forumsort)) {
-        $forumsort = "d.timemodified DESC";
-    }
-    $groupby = strtolower($forumsort);
-    $groupby = str_replace('desc', '', $groupby);
-    $groupby = str_replace('asc', '', $groupby);
-
     $cutoffdate = $now - ($CFG->forum_oldpostdays*24*60*60);
 
     if (!empty($CFG->forum_enabletimedposts)) {
@@ -2296,8 +2294,7 @@ function forum_get_discussions_unread($cm, $forumsort="d.timemodified DESC") {
                    AND p.modified >= $cutoffdate AND r.id is NULL
                    $timedsql
                    $groupselect
-          GROUP BY d.id, $groupby
-          ORDER BY $forumsort";
+          GROUP BY d.id";
     if ($unreads = get_records_sql($sql)) {
         foreach ($unreads as $unread) {
             $unreads[$unread->id] = $unread->unread;
@@ -4464,6 +4461,10 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
+    if (empty($sort)) {
+        $sort = "d.timemodified DESC";
+    }
+
     $olddiscussionlink = false;
 
  // Sort out some defaults
@@ -4549,7 +4550,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
         ///Show the paging bar
         print_paging_bar($numdiscussions, $page, $perpage, "view.php?f=$forum->id&amp;");
         if ($numdiscussions > 1000) {
-            // saves some memory on sites with very forums
+            // saves some memory on sites with very large forums
             $replies = forum_count_discussion_replies($forum->id, $sort, $maxdiscussions, $page, $perpage);
         } else {
             $replies = forum_count_discussion_replies($forum->id);
@@ -4576,7 +4577,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
     }
 
     if ($forumtracked) {
-        $unreads = forum_get_discussions_unread($cm, $sort);
+        $unreads = forum_get_discussions_unread($cm);
     } else {
         $unreads = array();
     }
