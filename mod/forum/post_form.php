@@ -82,8 +82,8 @@ class mod_forum_post_form extends moodleform {
             $mform->setConstants(array('timestart'=> 0, 'timeend'=>0));
         }
 
-        if (groups_get_activity_groupmode($cm, $course) and !empty($post->groupid)) { // hack alert
-            if ($post->groupid == -1) {
+        if (groups_get_activity_groupmode($cm, $course)) { // hack alert
+            if (empty($post->groupid)) {
                 $groupname = get_string('allparticipants');
             } else {
                 $group = groups_get_group($post->groupid);

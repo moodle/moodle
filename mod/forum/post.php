@@ -13,6 +13,7 @@
     $prune   = optional_param('prune', 0, PARAM_INT);
     $name    = optional_param('name', '', PARAM_CLEAN);
     $confirm = optional_param('confirm', 0, PARAM_INT);
+    $groupid = optional_param('groupid', null, PARAM_INT);
 
 
     //these page_params will be passed as hidden variables later in the form.
@@ -80,7 +81,7 @@
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
-        if (! forum_user_can_post_discussion($forum, -1, -1, $cm)) {
+        if (! forum_user_can_post_discussion($forum, $groupid, -1, $cm)) {
             if (has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
                 $SESSION->wantsurl = $FULLME;
                 $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
@@ -112,14 +113,12 @@
         $post->userid     = $USER->id;
         $post->message    = '';
 
-        if ($groupmode = groups_get_activity_groupmode($cm)) {
-            $post->groupid = groups_get_activity_group($cm);
-            if (empty($post->groupid)) {
-                $post->groupid = -1;
-            }
+        if (isset($groupid)) {
+            $post->groupid = $groupid;
         } else {
-            $post->groupid = null;
+            $post->groupid = groups_get_activity_group($cm);
         }
+
         forum_set_return();
 
     } else if (!empty($reply)) {      // User is writing a new reply
@@ -153,11 +152,10 @@
             }
         }
 
-        if (groupmode($course, $cm) == SEPARATEGROUPS) {   // Make sure user can post here
+        // Make sure user can post here
+        if (groupmode($course, $cm) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $modcontext)) {
             if ($discussion->groupid == -1) {
-                if (!has_capability('moodle/site:accessallgroups', $modcontext)) {
-                    print_error('nopostforum', 'forum');
-                }
+                print_error('nopostforum', 'forum');
             } else {
                 if (!groups_is_member($discussion->groupid)) {
                     print_error('nopostforum', 'forum');
@@ -180,11 +178,7 @@
         $post->userid      = $USER->id;
         $post->message     = '';
 
-        if ($groupmode = groups_get_activity_groupmode($cm)) {
-            $post->groupid = $discussion->groupid;
-        } else {
-            $post->groupid = null;
-        }
+        $post->groupid = ($discussion->groupid == -1) ? 0 : $discussion->groupid;
 
         $strre = get_string('re', 'forum');
         if (!(substr($post->subject, 0, strlen($strre)) == $strre)) {
@@ -234,11 +228,7 @@
         $post->edit   = $edit;
         $post->course = $course->id;
         $post->forum  = $forum->id;
-        if ($groupmode = groups_get_activity_groupmode($cm)) {
-            $post->groupid = $discussion->groupid;
-        } else {
-            $post->groupid = null;
-        }
+        $post->groupid = ($discussion->groupid == -1) ? 0 : $discussion->groupid;
 
         trusttext_prepare_edit($post->message, $post->format, can_use_html_editor(), $modcontext);
 
@@ -469,6 +459,7 @@
         trusttext_after_edit($fromform->message, $modcontext);
 
         if ($fromform->edit) {           // Updating a post
+            unset($fromform->groupid);
             $fromform->id = $fromform->edit;
             $message = '';
 
@@ -530,6 +521,7 @@
 
 
         } else if ($fromform->discussion) { // Adding a new post to an existing discussion
+            unset($fromform->groupid);
             $message = '';
             $addpost=$fromform;
             $addpost->forum=$forum->id;
@@ -574,6 +566,10 @@
             if (!forum_user_can_post_discussion($forum, $fromform->groupid, -1, $cm, $modcontext)) {
                 error('Can not add discussion, sorry.');
             }
+            if (empty($fromform->groupid)) {
+                $fromform->groupid = -1;
+            }
+
             $fromform->mailnow = empty($fromform->mailnow) ? 0 : 1;
             $discussion = $fromform;
             $discussion->name  = $fromform->subject;
@@ -681,7 +677,7 @@
     if (!empty($parent) && !forum_user_can_see_post($forum, $discussion, $post, null, $cm)) {
         error("You cannot reply to this post");
     }
-    if (empty($parent) && empty($edit) && !forum_user_can_post_discussion($forum, -1, -1, $cm, $modcontext)) {
+    if (empty($parent) && empty($edit) && !forum_user_can_post_discussion($forum, $groupid, -1, $cm, $modcontext)) {
         error("You cannot start a new discussion in this forum");
     }
 

@@ -239,7 +239,7 @@
                 print_box(format_text($forum->intro), 'generalbox', 'intro');
             }
             echo '<p align="center">';
-            if (forum_user_can_post_discussion($forum, -1, -1, $cm)) {
+            if (forum_user_can_post_discussion($forum, null, -1, $cm)) {
                 print_string("allowsdiscussions", "forum");
             } else {
                 echo '&nbsp;';

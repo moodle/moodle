@@ -63,6 +63,7 @@ function forum_add_instance($forum) {
         $discussion->assessed = $forum->assessed;
         $discussion->format   = $forum->type;
         $discussion->mailnow  = false;
+        $discussion->groupid  = -1;
 
         if (! forum_add_discussion($discussion, $discussion->intro)) {
             error('Could not add the discussion for this forum');
@@ -4194,7 +4195,7 @@ function forum_user_has_posted($forumid, $did, $userid) {
 /**
  *
  */
-function forum_user_can_post_discussion($forum, $currentgroup=-1, $unused=-1, $cm=NULL, $context=NULL) {
+function forum_user_can_post_discussion($forum, $currentgroup=null, $unused=-1, $cm=NULL, $context=NULL) {
 // $forum is an object
     global $USER;
 
@@ -4219,7 +4220,7 @@ function forum_user_can_post_discussion($forum, $currentgroup=-1, $unused=-1, $c
         return false;
     }
 
-    if ($currentgroup == -1) {
+    if ($currentgroup === null) {
         $currentgroup = groups_get_activity_group($cm);
     }
 
