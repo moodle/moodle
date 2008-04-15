@@ -328,7 +328,7 @@
     } else {
         $selectrole = " ";
     }
-    if($course->id > 2){
+    if($course->id != SITEID){
         $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, ul.timeaccess AS lastaccess, r.hidden '; // s.lastaccess
     }else{
         $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, u.lastaccess AS lastaccess, r.hidden ';
