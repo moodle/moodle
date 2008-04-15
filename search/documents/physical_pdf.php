@@ -22,14 +22,19 @@ function get_text_for_indexing_pdf(&$resource){
     
     // SECURITY : do not allow non admin execute anything on system !!
     if (!isadmin($USER->id)) return;
+    
+    // adds moodle root switch if none was defined
+    if (!isset($CFG->block_search_usemoodleroot)){
+        set_config('block_search_usemoodleroot', 1);
+    }
 
-    $moodleroot = (@$CFG->block_search_usemoodleroot) ? "{$CFG->dirroot}/" : '' ;
+    $moodleroot = ($CFG->block_search_usemoodleroot) ? "{$CFG->dirroot}/" : '' ;
 
     // just call pdftotext over stdout and capture the output
     if (!empty($CFG->block_search_pdf_to_text_cmd)){
         preg_match("/^\S+/", $CFG->block_search_pdf_to_text_cmd, $matches);
         if (!file_exists("{$moodleroot}{$matches[0]}")){
-            mtrace('Error with pdf to text converter command : exectuable not found.');
+            mtrace('Error with pdf to text converter command : exectuable not found at '.$moodleroot.$matches[0]);
         }
         else{
             $file = escapeshellarg($CFG->dataroot.'/'.$resource->course.'/'.$resource->reference);
@@ -40,7 +45,7 @@ function get_text_for_indexing_pdf(&$resource){
                 return $result;
             }
             else{
-                mtrace('Error with pdf to text converter command : execution failed.');
+                mtrace('Error with pdf to text converter command : execution failed for '.$text_converter_cmd.'. Check for execution permission on pdf converter executable.');
                 return '';
             }
         }
