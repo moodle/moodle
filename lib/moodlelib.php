@@ -1874,7 +1874,6 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         }
     }
 
-
 /// check whether the user should be changing password (but only if it is REALLY them)
     if (get_user_preferences('auth_forcepasswordchange') && empty($USER->realuser)) {
         $userauth = get_auth_plugin($USER->auth);
@@ -1951,6 +1950,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
             && !has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) {
             redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
         }
+        user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
         return;
 
     } else {
@@ -1982,6 +1982,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         if (has_capability('moodle/legacy:guest', $COURSE->context, NULL, false)) {
             if (has_capability('moodle/site:doanything', $sysctx)) {
                 // administrators must be able to access any course - even if somebody gives them guest access
+                user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
                 return;
             }
 
@@ -1997,12 +1998,14 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
                                  get_string('activityiscurrentlyhidden'));
                     }
 
+                    user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
                     return;   // User is allowed to see this course
 
                     break;
 
                 case 2:    /// Guests allowed with key
                     if (!empty($USER->enrolkey[$COURSE->id])) {   // Set by enrol/manual/enrol.php
+                        user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
                         return true;
                     }
                     //  otherwise drop through to logic below (--> enrol.php)
@@ -2038,6 +2041,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
             if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) { 
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
+            user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
             return;   // User is allowed to see this course
 
         }
@@ -2122,6 +2126,7 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null) {
     } else if ((is_object($courseorid) and $courseorid->id == SITEID)
           or (!is_object($courseorid) and $courseorid == SITEID)) {
         //login for SITE not required
+        user_accesstime_log(SITEID);
         return;
 
     } else {
@@ -3288,6 +3293,8 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
 
     $user->preference = get_user_preferences(null, null, $user->id);
 
+    $user->lastcourseaccess    = array(); // during last session
+    $user->currentcourseaccess = array(); // during current session
     if ($lastaccesses = get_records('user_lastaccess', 'userid', $user->id)) {
         foreach ($lastaccesses as $lastaccess) {
             $user->lastcourseaccess[$lastaccess->courseid] = $lastaccess->timeaccess;

@@ -64,6 +64,8 @@
 
     if ($CFG->forcelogin) {
         require_login();
+    } else {
+        user_accesstime_log();
     }
 
     if ($CFG->rolesactive) { // if already using roles system

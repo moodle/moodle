@@ -1,4 +1,5 @@
 <?php // $Id$
+
 /**
  * Library of functions for database manipulation.
  *
@@ -10,6 +11,9 @@
  * @package moodlecore
  */
 
+ /// Some constants
+ define('LASTACCESS_UPDATE_SECS', 60); /// Number of seconds to wait before
+                                       /// updating lastaccess information in DB.
 
 /**
  * Escape all dangerous characters in a data record
@@ -1938,51 +1942,99 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         debugging('Error: Could not insert a new entry to the Moodle log', DEBUG_ALL);
     }
 
-/// Store lastaccess times for the current user, do not use in cron and other commandline scripts
-/// only update the lastaccess/timeaccess fields only once every 60s
-    if (!empty($USER->id) && ($userid == $USER->id) && !defined('FULLME')) {
-    /// Only update user and user_lastaccess every 60s, check that in PHP
-        if ($timenow - $USER->lastaccess > 60) {
+}
 
-            if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
-        /// Update user record
-            $res = $db->Execute('UPDATE '. $CFG->prefix .'user
-                                    SET lastip=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
-                                 WHERE id = '. $userid);
-            if (!$res) {
-                debugging('Error: Could not update global user lastaccess information');  // Don't throw an error
-            }
-        /// Remove this record from record cache since it will change
-            if (!empty($CFG->rcache)) {
-                rcache_unset('user', $userid);
-            }
-        /// Update $USER->lastaccess for next checks
-            $USER->lastaccess = $timenow;
+/**
+ * Store user last access times - called when use enters a course or site
+ *
+ * Note: we use ADOdb code directly in this function to save some CPU
+ * cycles here and there. They are simple operations not needing any
+ * of the postprocessing performed by dmllib.php
+ *
+ * @param int $courseid, empty means site
+ * @return void
+ */
+function user_accesstime_log($courseid=0) {
 
-            if ($courseid != SITEID && !empty($courseid)) {
-                if (record_exists('user_lastaccess', 'userid', $userid, 'courseid', $courseid)) {
-                    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
-                    $res = $db->Execute("UPDATE {$CFG->prefix}user_lastaccess
-                                            SET timeaccess=$timenow
-                                          WHERE userid = $userid
-                                            AND courseid = $courseid");
-                    if (!$res) {
-                        debugging('Error: Could not update course user lastacess information');  // Don't throw an error
-                    }
-                } else {
-                    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
-                    $res = $db->Execute("INSERT INTO {$CFG->prefix}user_lastaccess
-                                                ( userid,  courseid,  timeaccess)
-                                         VALUES ($userid, $courseid, $timenow)");
-                    if (!$res) {
-                        debugging('Error: Could not insert course user lastaccess information');  // Don't throw an error
-                    }
+    global $USER, $CFG, $PERF, $db;
+
+    if (!isloggedin() or !empty($USER->realuser)) {
+        // no access tracking
+        return;
+    }
+
+    if (empty($courseid)) {
+        $courseid = SITEID;
+    }
+
+    $timenow = time();
+
+/// Store site lastaccess time for the current user
+    if ($timenow - $USER->lastaccess > LASTACCESS_UPDATE_SECS) {
+    /// Update $USER->lastaccess for next checks
+        $USER->lastaccess = $timenow;
+        if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
+
+        $remoteaddr = getremoteaddr();
+        if ($db->Execute("UPDATE {$CFG->prefix}user
+                             SET lastip = '$remoteaddr', lastaccess = $timenow
+                           WHERE id = $USER->id")) {
+        } else {
+            debugging('Error: Could not update global user lastaccess information');  // Don't throw an error
+        }
+    /// Remove this record from record cache since it will change
+        if (!empty($CFG->rcache)) {
+            rcache_unset('user', $USER->id);
+        }
+    }
+
+    if ($courseid == SITEID) {
+    ///  no user_lastaccess for frontpage
+        return;
+    }
+
+/// Store course lastaccess times for the current user
+    if (empty($USER->currentcourseaccess[$courseid]) or ($timenow - $USER->currentcourseaccess[$courseid] > LASTACCESS_UPDATE_SECS)) {
+        if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
+        $exists = false; // To detect if the user_lastaccess record exists or no
+        if ($rs = $db->Execute("SELECT timeaccess
+                                  FROM {$CFG->prefix}user_lastaccess
+                                 WHERE userid = $USER->id AND courseid = $courseid")) {
+            if (!$rs->EOF) {
+                $exists = true;
+                $lastaccess = reset($rs->fields);
+                if ($timenow - $lastaccess <  LASTACCESS_UPDATE_SECS) {
+                /// no need to update now, it was updated recently in concurrent login ;-)
+                    $rs->Close();
+                    return;
                 }
+            }
+            $rs->Close();
+        }
+
+    /// Update course lastaccess for next checks
+        $USER->currentcourseaccess[$courseid] = $timenow;
+        if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
+        if ($exists) { // user_lastaccess record exists, update it
+            if ($db->Execute("UPDATE {$CFG->prefix}user_lastaccess
+                                 SET timeaccess = $timenow
+                               WHERE userid = $USER->id AND courseid = $courseid")) {
+            } else {
+                debugging('Error: Could not update course user lastacess information');  // Don't throw an error
+            }
+
+        } else { // user lastaccess record doesn't exist, insert it
+            if ($db->Execute("INSERT INTO {$CFG->prefix}user_lastaccess
+                                     (userid, courseid, timeaccess)
+                              VALUES ($USER->id, $courseid, $timenow)")) {
+            } else {
+                debugging('Error: Could not insert course user lastaccess information');  // Don't throw an error
             }
         }
     }
 }
-
 
 /**
  * Select all log records based on SQL criteria
