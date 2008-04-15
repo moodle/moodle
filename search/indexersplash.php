@@ -50,7 +50,8 @@ require_once("$CFG->dirroot/search/lib.php");
         $navlinks[] = array('name' => $strsearch, 'link' => "index.php", 'type' => 'misc');
         $navlinks[] = array('name' => $strquery, 'link' => "stats.php", 'type' => 'misc');
         $navlinks[] = array('name' => get_string('runindexer','search'), 'link' => null, 'type' => 'misc');
-        if ($CFG->version <= 2007021541){ // 1.8 branch stable timestamp
+        // if ($CFG->version <= 2007021541){ // 1.8 branch stable timestamp NOT RELIABLE
+        if (!function_exists('build_navigation')){ // 1.8 branch stable timestamp
             $navigation = '';
         } else {
             $navigation = build_navigation($navlinks);

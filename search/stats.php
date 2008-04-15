@@ -45,8 +45,16 @@ require_once("{$CFG->dirroot}/search/lib.php");
     $strsearch = get_string('search', 'search');
     $strquery  = get_string('statistics', 'search'); 
     
-    print_header("$site->shortname: $strsearch: $strquery", "$site->fullname",
-               "<a href=\"index.php\">$strsearch</a> -> $strquery");
+    if (!function_exists('build_navigation')){
+        print_header("$site->shortname: $strsearch: $strquery", "$site->fullname",
+                   "<a href=\"index.php\">$strsearch</a> -> $strquery");
+    } else {
+        $navlinks[] = array('name' => $strsearch, 'link' => "index.php", 'type' => 'misc');
+        $navlinks[] = array('name' => $strquery, 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
+        $site = get_site();
+        print_header("$strsearch", "$site->fullname" , $navigation, "", "", true, "&nbsp;", navmenu($site));
+    }
     
 /// keep things pretty, even if php5 isn't available
 
