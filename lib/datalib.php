@@ -1911,20 +1911,26 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
             $info = ' ';
         }
     }
+    $sql ='INSERT INTO '. $CFG->prefix .'log (time, userid, course, ip, module, cmid, action, url, info)
+        VALUES (' . "'$timenow', '$userid', '$courseid', '$REMOTE_ADDR', '$module', '$cm', '$action', '$url', '$info')";
 
-    $result = $db->Execute('INSERT INTO '. $CFG->prefix .'log (time, userid, course, ip, module, cmid, action, url, info)
-        VALUES (' . "'$timenow', '$userid', '$courseid', '$REMOTE_ADDR', '$module', '$cm', '$action', '$url', '$info')");
+    $result = $db->Execute($sql);
 
     // MDL-11893, alert $CFG->supportemail if insert into log failed
     if (!$result && $CFG->supportemail) {
         $site = get_site();
         $subject = 'Insert into log failed at your moodle site '.$site->fullname;
         $message = 'Insert into log table failed at '.date('l dS \of F Y h:i:s A').'. It is possible that your disk is full.';
+        $mseesage .= 'The failed SQL is: '.$sql;
         
         // email_to_user is not usable because email_to_user tries to write to the logs table, and this will get caught
         // in an infinite loop, if disk is full
         if (empty($CFG->noemailever)) {
-            mail($CFG->supportemail, $subject, $message);
+            $lasttime = get_config('admin', 'inserterrormail');
+            if(!empty($lasttime) && time()-$lasttime > 60*60*24){
+                mail($CFG->supportemail, $subject, $message);
+                set_config('inserterrormail', time(), 'admin');
+            }
         }
     }
 
