@@ -1937,14 +1937,14 @@ function forum_count_user_posts($forumid, $userid) {
         }
     }
 
-    return get_records_sql("SELECT COUNT(p.id) AS postcount, MAX(p.modified) AS lastpost
-                              FROM {$CFG->prefix}forum f
-                                   JOIN {$CFG->prefix}forum_discussions d ON d.forum = f.id
-                                   JOIN {$CFG->prefix}forum_posts p       ON p.discussion = d.id
-                                   JOIN {$CFG->prefix}user u              ON u.id = p.userid
-                             WHERE f.id = $forumid
-                                   AND p.userid = $userid
-                                   $timedsql");
+    return get_record_sql("SELECT COUNT(p.id) AS postcount, MAX(p.modified) AS lastpost
+                             FROM {$CFG->prefix}forum f
+                                  JOIN {$CFG->prefix}forum_discussions d ON d.forum = f.id
+                                  JOIN {$CFG->prefix}forum_posts p       ON p.discussion = d.id
+                                  JOIN {$CFG->prefix}user u              ON u.id = p.userid
+                            WHERE f.id = $forumid
+                                  AND p.userid = $userid
+                                  $timedsql");
 }
 
 /**
