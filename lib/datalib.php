@@ -1934,8 +1934,8 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         }
     }
 
-    if (!$result and debugging()) {
-        echo '<p>Error: Could not insert a new entry to the Moodle log</p>';  // Don't throw an error
+    if (!$result) {
+        debugging('Error: Could not insert a new entry to the Moodle log', DEBUG_ALL);
     }
 
 /// Store lastaccess times for the current user, do not use in cron and other commandline scripts
