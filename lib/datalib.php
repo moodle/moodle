@@ -1920,16 +1920,16 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     if (!$result && $CFG->supportemail) {
         $site = get_site();
         $subject = 'Insert into log failed at your moodle site '.$site->fullname;
-        $message = 'Insert into log table failed at '.date('l dS \of F Y h:i:s A').'. It is possible that your disk is full.';
-        $mseesage .= 'The failed SQL is: '.$sql;
-        
-        // email_to_user is not usable because email_to_user tries to write to the logs table, and this will get caught
-        // in an infinite loop, if disk is full
+        $message = "Insert into log table failed at ". date('l dS \of F Y h:i:s A') .".\n It is possible that your disk is full.\n\n";
+        $message .= "The failed SQL is:\n\n" . $sql;
+
+        // email_to_user is not usable because email_to_user tries to write to the logs table,
+        // and this will get caught in an infinite loop, if disk is full
         if (empty($CFG->noemailever)) {
-            $lasttime = get_config('admin', 'inserterrormail');
-            if(!empty($lasttime) && time()-$lasttime > 60*60*24){
+            $lasttime = get_config('admin', 'lastloginserterrormail');
+            if(empty($lasttime) || time() - $lasttime > 60*60*24) { // limit to 1 email per day
                 mail($CFG->supportemail, $subject, $message);
-                set_config('inserterrormail', time(), 'admin');
+                set_config('lastloginserterrormail', time(), 'admin');
             }
         }
     }
