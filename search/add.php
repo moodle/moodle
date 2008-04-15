@@ -54,6 +54,7 @@ require_once("$CFG->dirroot/search/lib.php");
     mtrace('Index size before: '.$CFG->search_index_size."\n");
     
 /// get all modules
+
     if ($mods = get_records_select('modules')) {
     
 /// append virtual modules onto array

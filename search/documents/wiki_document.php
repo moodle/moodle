@@ -262,4 +262,13 @@ function wiki_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
         
     return true;
 }
+
+/**
+* this call back is called when displaying the link for some last post processing
+*
+*/
+function wiki_link_post_processing($title){
+     return mb_convert_encoding($title, 'UTF-8', 'auto');
+}
+
 ?>

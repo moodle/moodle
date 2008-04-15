@@ -62,7 +62,6 @@ require_once("$CFG->dirroot/search/lib.php");
 /// check for php5 (lib.php)
 
     if (!search_check_php5()) {
-        $phpversion = phpversion();
         mtrace("Sorry, global search requires PHP 5.0.0 or later (currently using version ".phpversion().")");
         exit(0);
     } 
@@ -94,12 +93,10 @@ require_once("$CFG->dirroot/search/lib.php");
         mtrace("Data directory ($index_path) does not exist, attempting to create.");
         if (!mkdir($index_path)) {
             search_pexit("Error creating data directory at: $index_path. Please correct.");
-        } 
-        else {
+        } else {
             mtrace("Directory successfully created.");
         } 
-    } 
-    else {
+    } else {
         mtrace("Using $index_path as data directory.");
     } 
     

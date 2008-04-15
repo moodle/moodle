@@ -43,7 +43,7 @@
     }
     
     if (empty($CFG->enableglobalsearch)) {
-        print_error('globalsearchdisabled', 'search');
+        error(get_string('globalsearchdisabled', 'search'));
     }
     
     $adv = new Object();
@@ -61,8 +61,7 @@
         if ($pages && isset($_SESSION['search_advanced_query'])) {
             // if both are set, then we are busy browsing through the result pages of an advanced query
             $adv = unserialize($_SESSION['search_advanced_query']);
-        } 
-        else if ($advanced) {
+        } else if ($advanced) {
             // otherwise we are dealing with a new advanced query
             unset($_SESSION['search_advanced_query']);
             session_unregister('search_advanced_query');
@@ -144,7 +143,8 @@
     $strsearch = get_string('search', 'search');
     $strquery  = get_string('enteryoursearchquery', 'search');
     
-    if ($CFG->version < 2007032200){
+//    if ($CFG->version < 2007032200){ NOT RELIABLE
+    if (!function_exists('build_navigation')){
         print_header("$site->shortname: $strsearch: $strquery", "$site->fullname",
                "<a href=\"index.php\">$strsearch</a> -> $strquery");
     } else {
@@ -187,8 +187,7 @@
         <a href="query.php?a=1"><?php print_string('advancedsearch', 'search') ?></a> |
         <a href="stats.php"><?php print_string('statistics', 'search') ?></a>
     <?php 
-    } 
-    else {
+    } else {
         print_box_start();
       ?>
         <input type="hidden" name="a" value="<?php print $advanced; ?>"/>
@@ -277,8 +276,7 @@
     if ($sq->is_valid_index()) {
         //use cached variable to show up-to-date index size (takes deletions into account)
         print $CFG->search_index_size;
-    } 
-    else {
+    } else {
         print "0";
     } 
     

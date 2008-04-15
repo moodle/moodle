@@ -134,8 +134,7 @@ require_once("$CFG->dirroot/search/lib.php");
                             mtrace("  Add: $add->title (database id = $add->dbid, moodle instance id = $add->docid)");
                             $index->addDocument($add);
                         } 
-                    }
-                    else{
+                    } else {
                         mtrace("No types to update.\n");
                     }
                     mtrace("Finished $mod->name.\n");

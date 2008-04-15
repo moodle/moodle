@@ -399,4 +399,13 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
         
     return true;
 }
+
+/**
+* post processes the url for cleaner output.
+* @param string $title
+*/
+function data_link_post_processing($title){
+    return mb_convert_encoding($title, 'UTF-8', 'auto');
+}
+
 ?>
