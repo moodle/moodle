@@ -11,4 +11,5 @@ $string['configsearchtext'] = 'Search text';
 $string['go'] = 'Go!';
 $string['bytes'] = ' bytes (0 stands for no limits)';
 $string['searchmoodle'] = 'Search Moodle';
+$string['usemoodleroot'] = 'Prefix Moodle root for text converters';
 ?>
