@@ -35,9 +35,11 @@ class assignment_online extends assignment_base {
         if ($editmode) {
             //guest can not edit or submit assignment
             if (!has_capability('mod/assignment:submit', $context)) {
-                error(get_string('guestnosubmit', 'assignment'));
+                print_error('guestnosubmit', 'assignment');
             }
         }
+
+        add_to_log($this->course->id, "assignment", "view", "view.php?id={$this->cm->id}", $this->assignment->id, $this->cm->id);
 
 /// prepare form and process submitted data
         $mform = new mod_assignment_online_edit_form();
