@@ -115,10 +115,14 @@ class data_field_file extends data_field_base {
             $width = $this->field->param1 ? ' width = "'.s($this->field->param1).'" ':' ';
             $height = $this->field->param2 ? ' height = "'.s($this->field->param2).'" ':' ';
 
-            require_once($CFG->libdir.'/filelib.php');
-            $icon = mimeinfo('icon', $src);
-            $str = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />&nbsp;'.
-                            '<a href="'.$source.'/'.$src.'" >'.$name.'</a>';
+            if (isset($contents[0])) {
+                require_once($CFG->libdir.'/filelib.php');
+                $icon = mimeinfo('icon', $src);
+                $str = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />&nbsp;'.
+                                '<a href="'.$source.'/'.$src.'" >'.$name.'</a>';
+            } else {
+                $str = '';
+            }
             return $str;
         }
         return false;
