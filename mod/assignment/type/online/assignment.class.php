@@ -38,6 +38,8 @@ class assignment_online extends assignment_base {
             }
         }
 
+        add_to_log($this->course->id, "assignment", "view", "view.php?id={$this->cm->id}", $this->assignment->id, $this->cm->id);
+
 /// prepare form and process submitted data
         $mform = new mod_assignment_online_edit_form();
 
