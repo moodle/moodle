@@ -290,4 +290,12 @@ function techproject_check_text_access($path, $entry_type, $this_id, $user, $gro
     return true;
 } //techproject_check_text_access
 
+/**
+* this call back is called when displaying the link for some last post processing
+*
+*/
+function techproject_link_post_processing($title){
+     return mb_convert_encoding($title, 'UTF-8', 'auto');
+}
+
 ?>

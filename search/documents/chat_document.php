@@ -296,6 +296,6 @@ function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
 function chat_link_post_processing($title){
      setLocale(LC_TIME, substr(current_language(), 0, 2));
      $title = preg_replace('/TT_(.*)_TT/e', "userdate(\\1)", $title);
-     return $title;
+     return mb_convert_encoding($title, 'UTF-8', 'auto');
 }
 ?>

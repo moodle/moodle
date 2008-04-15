@@ -251,7 +251,7 @@ function glossary_check_text_access($path, $itemtype, $this_id, $user, $group_id
 * @param string $title
 */
 function glossary_link_post_processing($title){
-    return mb_convert_encoding($title, 'auto', 'UTF-8');
+    return mb_convert_encoding($title, 'UTF-8', 'auto');
 }
 
 ?>
