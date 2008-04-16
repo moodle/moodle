@@ -74,6 +74,7 @@ $string['groupunknown'] = 'Group $a not associated to specified course';
 $string['guestnoeditprofile'] = 'The guest user cannot edit their profile';
 $string['guestnoeditprofileother'] = 'The guest user profile cannot be edited';
 $string['invalidaction'] = 'Invalid action parameter.';
+$string['invalidarguments'] = 'No valid arguments supplied';
 $string['invalidaccessparameter'] = 'Invalid access parameter.';
 $string['invalidcourse'] = 'Invalid course';
 $string['invalidcoursemodule'] = 'Bad course module ID';
