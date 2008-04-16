@@ -388,7 +388,7 @@
                 $ordering = "u.firstname $order, u.lastname $order";
             }
 
-            $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname';
+            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname';
             $count = ' COUNT(DISTINCT c.recordid) ';
             $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content cs, '.$CFG->prefix.'user u ';
             $where =  'WHERE c.recordid = r.id
@@ -425,7 +425,7 @@
             $sortcontent = $sortfield->get_sort_field();
             $sortcontentfull = $sortfield->get_sort_sql('c.'.$sortcontent);
 
-            $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname, c.'.$sortcontent.', '.$sortcontentfull.' AS _order ';
+            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, c.'.$sortcontent.', '.$sortcontentfull.' AS _order ';
             $count = ' COUNT(DISTINCT c.recordid) ';
             $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content cs, '.$CFG->prefix.'user u ';
             $where =  'WHERE c.recordid = r.id
@@ -459,7 +459,7 @@
             }
 
         } else if ($search) {
-            $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname ';
+            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname ';
             $count = ' COUNT(DISTINCT c.recordid) ';
             $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r, '.$CFG->prefix.'user u ';
             $where =  'WHERE c.recordid = r.id
@@ -490,7 +490,7 @@
 
 
         } else {
-            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.userid, u.firstname, u.lastname ';
+            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname ';
             $count = ' COUNT(r.id) ';
             $tables = $CFG->prefix.'data_records r, '.$CFG->prefix.'user u ';
             $where =  'WHERE r.dataid = '.$data->id. ' AND r.userid = u.id ';

@@ -226,6 +226,8 @@
             echo '<option value="##edit##">' .get_string('edit', 'data'). ' - ##edit##</option>';
             echo '<option value="##delete##">' .get_string('delete', 'data'). ' - ##delete##</option>';
             echo '<option value="##approve##">' .get_string('approve', 'data'). ' - ##approve##</option>';
+            echo '<option value="##timeadded##">'.get_string('timeadded', 'data'). ' - ##timeadded##</option>';
+            echo '<option value="##timemodified##">'.get_string('timemodified', 'data'). ' - ##timemodified##</option>';
             echo '<option value="##user##">' .get_string('user'). ' - ##user##</option>';
             if ($mode != 'singletemplate') {
                 // more points to single template - not useable there
