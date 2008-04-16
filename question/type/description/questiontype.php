@@ -54,6 +54,7 @@ class description_qtype extends default_questiontype {
         }
 
         // For editing teachers print a link to an editing popup window
+        $editlink = '';
         if (question_has_capability_on($question, 'edit')) {
             $stredit = get_string('edit');
             $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$stredit.'" />';
