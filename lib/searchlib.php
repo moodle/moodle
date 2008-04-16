@@ -293,7 +293,7 @@ class search_parser {
     // State entered when we've seen an ordinary, non-quoted word. Potentially
     // emits a token.
     function plainstring($content){
-        if (ctype_space($content)) { // State exit
+        if (trim($content) === '') { // State exit
             return true;
         }
         // Add the string to the parsed token array.
