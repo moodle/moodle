@@ -25,7 +25,7 @@ class block_course_list extends block_list {
         $this->content->footer = '';
 
         $icon  = "<img src=\"$CFG->pixpath/i/course.gif\"".
-                 " class=\"icon\" alt=\"".get_string("course")."\" />";
+                 " class=\"icon\" alt=\"".get_string("coursecategory")."\" />";
        
         $adminseesall = true;
         if (isset($CFG->block_course_list_adminview)) {
