@@ -26,6 +26,9 @@
 define ('DATA_MAX_ENTRIES', 50);
 define ('DATA_PERPAGE_SINGLE', 1);
 
+define ('DATA_FIRSTNAME', -1);
+define ('DATA_LASTNAME', -2);
+
 class data_field_base {     /// Base class for Database Field Types (see field/*/field.class.php)
 
     var $type = 'unknown';  /// Subclasses must override the type with their name
@@ -364,6 +367,9 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
             $str .= '<tr><td align="center" colspan="2">##edit##  ##more##  ##delete##  ##approve##</td></tr>';
         } else if ($template == 'singletemplate') {
             $str .= '<tr><td align="center" colspan="2">##edit##  ##delete##  ##approve##</td></tr>';
+        } else if ($template == 'asearchtemplate') {
+            $str .= '<tr><td valign="top" align="right">'.get_string('authorfirstname', 'data').': </td><td>##firstname##</td></tr>';
+            $str .= '<tr><td valign="top" align="right">'.get_string('authorlastname', 'data').': </td><td>##lastname##</td></tr>';
         }
 
         $str .= '</table>';
@@ -1058,12 +1064,18 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '&nbsp;&nbsp;&nbsp;<label for="pref_sortby">'.get_string('sortby').'</label> ';
     //foreach field, print the option
     $fields = get_records('data_fields','dataid',$data->id, 'name');
-    echo '<select name="sort" id="pref_sortby"><option value="0">'.get_string('dateentered','data').'</option>';
+    $options = array();
     foreach ($fields as $field) {
-        if ($field->id == $sort) {
-            echo '<option value="'.$field->id.'" selected="selected">'.$field->name.'</option>';
+        $options[$field->id] = $field->name;
+    }
+    $options[DATA_FIRSTNAME] = get_string('authorfirstname', 'data');
+    $options[DATA_LASTNAME] = get_string('authorlastname', 'data');
+    echo '<select name="sort" id="pref_sortby"><option value="0">'.get_string('dateentered','data').'</option>';
+    foreach ($options as $key => $name) {
+        if ($key == $sort) {
+            echo '<option value="'.$key.'" selected="selected">'.$name.'</option>';
         } else {
-            echo '<option value="'.$field->id.'">'.$field->name.'</option>';
+            echo '<option value="'.$key.'">'.$name.'</option>';
         }
     }
     echo '</select>';
@@ -1118,7 +1130,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         //  End -->
         //]]>
         </script>';
-    echo '&nbsp;<input type="checkbox" name="advanced" value="1" '.$checked.' onchange="showHideAdvSearch(this.checked);" />'.get_string('advancedsearch', 'data');
+    echo '&nbsp;<input type="checkbox" id="advancedcheckbox" name="advanced" value="1" '.$checked.' onchange="showHideAdvSearch(this.checked);" /><label for="advancedcheckbox">'.get_string('advancedsearch', 'data').'</label>';
     echo '&nbsp;<input type="submit" value="'.get_string('savesettings','data').'" />';
     
     echo '<br />';
@@ -1169,16 +1181,23 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     /// Then we generate strings to replace for normal tags
     foreach ($fields as $field) {
         $patterns[]='/\[\['.$field->field->name.'\]\]/i';
-        $searchfield = data_get_field_from_id($field->field->id, $data); 
+        $searchfield = data_get_field_from_id($field->field->id, $data);
         if (!empty($search_array[$field->field->id]->data)) {
             $replacement[] = $searchfield->display_search_field($search_array[$field->field->id]->data);
         } else {
             $replacement[] = $searchfield->display_search_field();
         }
     }
-    
+    $fn = !empty($search_array[DATA_FIRSTNAME]->data) ? $search_array[DATA_FIRSTNAME]->data : '';
+    $ln = !empty($search_array[DATA_LASTNAME]->data) ? $search_array[DATA_LASTNAME]->data : '';
+    $patterns[]    = '/##firstname##/';
+    $replacement[] = '<input type="text" size="16" name="u_fn" value="'.$fn.'">';
+    $patterns[]    = '/##lastname##/';
+    $replacement[] = '<input type="text" size="16" name="u_ln" value="'.$ln.'">';
+
     ///actual replacement of the tags
     $newtext = preg_replace($patterns, $replacement, $data->asearchtemplate);
+
     $options = new object();
     $options->para=false;
     $options->noclean=true;

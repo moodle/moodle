@@ -32,24 +32,24 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('data', $id)) {
-            print_error('Course Module ID was incorrect');
+            error('Course Module ID was incorrect');
         }
         if (! $course = get_record('course', 'id', $cm->course)) {
-            print_error('Course is misconfigured');
+            error('Course is misconfigured');
         }
         if (! $data = get_record('data', 'id', $cm->instance)) {
-            print_error('Course module is incorrect');
+            error('Course module is incorrect');
         }
 
     } else {
         if (! $data = get_record('data', 'id', $d)) {
-            print_error('Data ID is incorrect');
+            error('Data ID is incorrect');
         }
         if (! $course = get_record('course', 'id', $data->course)) {
-            print_error('Course is misconfigured');
+            error('Course is misconfigured');
         }
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-            print_error('Course Module ID was incorrect');
+            error('Course Module ID was incorrect');
         }
     }
 
@@ -237,6 +237,14 @@
             }
             echo '</optgroup>';
         }
+
+        if ($mode == 'asearchtemplate') {
+            echo '<optgroup label="'.get_string('user').'">';
+            echo '<option value="##firstname##">' .get_string('firstname'). ' - ##firstname##</option>';
+            echo '<option value="##lastname##">' .get_string('lastname'). ' - ##lastname##</option>';
+            echo '</optgroup>';
+        }
+
         echo '</select>';
         echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
         if (can_use_html_editor()) {
