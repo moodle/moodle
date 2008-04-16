@@ -817,7 +817,7 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
                 $context = get_context_instance(CONTEXT_COURSE, $course->id);
                 if ( has_capability('moodle/course:view', $context, $userid, $doanything) &&
                     !has_capability('moodle/legacy:guest', $context, $userid, false) &&
-                    ($course->visible || has_capability('moodle/course:viewhiddencourses', $context, $userid))) {
+                    ($course->visible || has_capability('moodle/course:viewhiddencourses', $context, $USER->id))) {
                     $mycourses[$course->id] = $course;
 
                     // Only return a limited number of courses if limit is set
