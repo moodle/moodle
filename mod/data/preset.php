@@ -14,7 +14,7 @@ $id       = optional_param('id', 0, PARAM_INT);    // course module id
 $d        = optional_param('d', 0, PARAM_INT);     // database activity id
 $action   = optional_param('action', 'base', PARAM_ALPHANUM); // current action
 $fullname = optional_param('fullname', '', PARAM_PATH); // directory the preset is in
-$file     = optional_param('file', '', PARAM_FILE); // uploaded file
+$file     = optional_param('file', '', PARAM_PATH); // uploaded file
 
 // find out preset owner userid and shortname
 $parts = explode('/', $fullname);
