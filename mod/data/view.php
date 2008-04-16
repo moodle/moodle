@@ -110,6 +110,7 @@
     
     if (!empty($advanced)) {
         $search = '';
+        $vals = array();
         $fields = get_records('data_fields', 'dataid', $data->id);
         
         //Added to ammend paging error. This error would occur when attempting to go from one page of advanced
@@ -152,7 +153,7 @@
                     $search_array[$field->id] = new object();
                     $search_array[$field->id]->sql  = $searchfield->generate_sql('c'.$field->id, $val);
                     $search_array[$field->id]->data = $val;
-                    $search .= ' '.$val;
+                    $vals[] = $val;
                 } else {
                     // clear it out
                     unset($search_array[$field->id]);
@@ -173,7 +174,7 @@
             $search_array[DATA_FIRSTNAME]->sql   = '';
             $search_array[DATA_FIRSTNAME]->field = 'u.firstname';
             $search_array[DATA_FIRSTNAME]->data  = $fn;
-            $search .= ' '.$fn;
+            $vals[] = $fn;
         } else {
             unset($search_array[DATA_FIRSTNAME]);
         }
@@ -182,12 +183,20 @@
             $search_array[DATA_LASTNAME]->sql   = '';
             $search_array[DATA_LASTNAME]->field = 'u.lastname';
             $search_array[DATA_LASTNAME]->data  = $ln;
-            $search .= ' '.$ln;
+            $vals[] = $ln;
         } else {
             unset($search_array[DATA_LASTNAME]);
         }
 
         $SESSION->dataprefs[$data->id]['search_array'] = $search_array;     // Make it sticky
+
+        // in case we want to switch to simple search later - there might be multiple values there ;-)
+        if ($vals) {
+            $val = reset($vals);
+            if (is_string($val)) {
+                $search = $val;
+            }
+        }
 
     } else {
         $search = optional_param('search', $SESSION->dataprefs[$data->id]['search'], PARAM_NOTAGS);
