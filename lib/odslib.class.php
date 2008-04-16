@@ -193,6 +193,18 @@ class MoodleODSWorksheet {
         $this->data[$row][$col]->format = $format;
     }
 
+    /**
+     * Write one formula somewhere in the worksheet
+     *
+     * @param integer $row    Zero indexed row
+     * @param integer $col    Zero indexed column
+     * @param string  $formula The formula to write
+     * @param mixed   $format The XF format for the cell
+     */
+    function write_formula($row, $col, $formula, $format=null) {
+        // not implement
+    }
+
     /* Write one blanck somewhere in the worksheet
      * @param integer $row    Zero indexed row
      * @param integer $col    Zero indexed column
@@ -273,6 +285,52 @@ class MoodleODSWorksheet {
         }
     }
 
+    /**
+    * Set the option to hide gridlines on the printed page.
+    *
+    * @access public
+    */
+    function hide_gridlines() {
+        // not implement
+    }
+
+    /**
+    * Set the option to hide gridlines on the worksheet (as seen on the screen).
+    *
+    * @access public
+    */
+    function hide_screen_gridlines() {
+        // not implement
+    }
+    
+    /**
+    * Insert a 24bit bitmap image in a worksheet.
+    *
+    * @access public
+    * @param integer $row     The row we are going to insert the bitmap into
+    * @param integer $col     The column we are going to insert the bitmap into
+    * @param string  $bitmap  The bitmap filename
+    * @param integer $x       The horizontal position (offset) of the image inside the cell.
+    * @param integer $y       The vertical position (offset) of the image inside the cell.
+    * @param integer $scale_x The horizontal scale
+    * @param integer $scale_y The vertical scale
+    */
+    function insert_bitmap($row, $col, $bitmap, $x = 0, $y = 0, $scale_x = 1, $scale_y = 1) {
+        // not implement
+    }
+    /**
+    * Merges the area given by its arguments.
+    * merging than the normal setAlign('merge').
+    *
+    * @access public
+    * @param integer $first_row First row of the area to merge
+    * @param integer $first_col First column of the area to merge
+    * @param integer $last_row  Last row of the area to merge
+    * @param integer $last_col  Last column of the area to merge
+    */
+    function merge_cells($first_row, $first_col, $last_row, $last_col) {
+        // not implement
+    }
 }
 
 /**
