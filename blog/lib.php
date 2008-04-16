@@ -236,8 +236,10 @@
 
         if (blog_user_can_edit_post($blogEntry)) {
             echo '<a href="'.$CFG->wwwroot.'/blog/edit.php?action=edit&amp;id='.$blogEntry->id.'">'.$stredit.'</a>';
-            echo '| <a href="'.$CFG->wwwroot.'/blog/edit.php?action=delete&amp;id='.$blogEntry->id.'">'.$strdelete.'</a>';
+            echo '| <a href="'.$CFG->wwwroot.'/blog/edit.php?action=delete&amp;id='.$blogEntry->id.'">'.$strdelete.'</a> | ';
         }
+
+        echo '<a href="'.$CFG->wwwroot.'/blog/index.php?postid='.$blogEntry->id.'">Permlink</a>';
 
         echo '</div>';
 
