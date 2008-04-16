@@ -84,35 +84,29 @@ class data_field_file extends data_field_base {
 
         global $CFG;
 
-        if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)){
-            $contents[0] = $content->content;
-            $contents[1] = $content->content1;
-
-            $src = empty($contents[0])? '':$contents[0];
-            $name = empty($contents[1])? $src:$contents[1];
-
-            $path = $this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid;
-
-            if ($CFG->slasharguments) {
-                $source = $CFG->wwwroot.'/file.php/'.$path;
-            } else {
-                $source = $CFG->wwwroot.'/file.php?file=/'.$path;
-            }
-
-            $width = $this->field->param1 ? ' width = "'.s($this->field->param1).'" ':' ';
-            $height = $this->field->param2 ? ' height = "'.s($this->field->param2).'" ':' ';
-
-            if (isset($contents[0])) {
-                require_once($CFG->libdir.'/filelib.php');
-                $icon = mimeinfo('icon', $src);
-                $str = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />&nbsp;'.
-                                '<a href="'.$source.'/'.$src.'" >'.$name.'</a>';
-            } else {
-                $str = '';
-            }
-            return $str;
+        if (!$content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)) {
+            return false;
         }
-        return false;
+
+        $width = $this->field->param1 ? ' width = "'.s($this->field->param1).'" ':' ';
+        $height = $this->field->param2 ? ' height = "'.s($this->field->param2).'" ':' ';
+
+        if (empty($content->content)) {
+            return '';
+        }
+
+        require_once($CFG->libdir.'/filelib.php');
+
+        $src  = $content->content;
+        $name = empty($content->content1) ? $src : $content->content1;
+
+        $source = get_file_url($this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid);
+
+        $icon = mimeinfo('icon', $src);
+        $str = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />&nbsp;'.
+                        '<a href="'.$source.'/'.$src.'" >'.$name.'</a>';
+
+        return $str;
     }
 
 
