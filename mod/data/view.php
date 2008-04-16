@@ -404,7 +404,7 @@
 
             if ($sort == DATA_LASTNAME) {
                 $ordering = "u.lastname $order, u.firstname $order";
-            } else if ($sort == DATA_LASTNAME) {
+            } else if ($sort == DATA_FIRSTNAME) {
                 $ordering = "u.firstname $order, u.lastname $order";
             } else {
                 $ordering = "r.timecreated $order";
