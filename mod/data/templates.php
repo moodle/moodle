@@ -235,6 +235,14 @@
             }
             echo '</optgroup>';
         }
+
+        if ($mode == 'asearchtemplate') {
+            echo '<optgroup label="'.get_string('user').'">';
+            echo '<option value="##firstname##">' .get_string('firstname'). ' - ##firstname##</option>';
+            echo '<option value="##lastname##">' .get_string('lastname'). ' - ##lastname##</option>';
+            echo '</optgroup>';
+        }
+
         echo '</select>';
         echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
         if (can_use_html_editor()) {
