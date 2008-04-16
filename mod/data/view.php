@@ -400,12 +400,14 @@
         }
 
     /// Find the field we are sorting on
-        if ($sort == DATA_FIRSTNAME or $sort == DATA_LASTNAME) {
+        if ($sort == DATA_FIRSTNAME or $sort == DATA_LASTNAME or empty($sort)) {
 
-            if ($sort ==  DATA_LASTNAME) {
+            if ($sort == DATA_LASTNAME) {
                 $ordering = "u.lastname $order, u.firstname $order";
-            } else {
+            } else if ($sort == DATA_LASTNAME) {
                 $ordering = "u.firstname $order, u.lastname $order";
+            } else {
+                $ordering = "r.timecreated $order";
             }
 
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname';
@@ -440,7 +442,7 @@
                 $searchselect = ' ';
             }
 
-        } else if ($sort and $sortfield = data_get_field_from_id($sort, $data)) {
+        } else if ($sort > 0 and $sortfield = data_get_field_from_id($sort, $data)) {
 
             $sortcontent = $sortfield->get_sort_field();
             $sortcontentfull = $sortfield->get_sort_sql('c.'.$sortcontent);
