@@ -114,6 +114,7 @@
             // explicitly switched to normal mode - discard all advanced search settings
             $SESSION->dataprefs[$data->id]['search_array'] = array();
         }
+        $SESSION->dataprefs[$data->id]['advanced'] = $advanced;
     }
 
     $search_array = $SESSION->dataprefs[$data->id]['search_array'];
