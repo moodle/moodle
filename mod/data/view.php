@@ -399,6 +399,8 @@
             $groupselect = ' ';
         }
 
+        $ilike = sql_ilike(); //Be case-insensitive
+
     /// Find the field we are sorting on
         if ($sort == DATA_FIRSTNAME or $sort == DATA_LASTNAME or empty($sort)) {
 
@@ -428,7 +430,7 @@
             if (!empty($advanced)) {                                                  //If advanced box is checked.
                 foreach($search_array as $key => $val) {                              //what does $search_array hold?
                     if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
-                        $searchselect .= " AND $val->field LIKE '%{$val->data}%'";
+                        $searchselect .= " AND $val->field $ilike '%{$val->data}%'";
                         continue;
                     }
                     $tables .= ', '.$CFG->prefix.'data_content c'.$key.' ';
@@ -436,7 +438,6 @@
                     $searchselect .= ' AND ('.$val->sql.') ';
                 }
             } else if ($search) {
-                $ilike = sql_ilike(); //Be case-insensitive
                 $searchselect = " AND (cs.content $ilike '%$search%' OR u.firstname $ilike '%$search%' OR u.lastname $ilike '%$search%' ) ";
             } else {
                 $searchselect = ' ';
@@ -466,7 +467,7 @@
             if (!empty($advanced)) {                                                  //If advanced box is checked.
                 foreach($search_array as $key => $val) {                              //what does $search_array hold?
                     if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
-                        $searchselect .= " AND $val->field LIKE '%{$val->data}%'";
+                        $searchselect .= " AND $val->field $ilike '%{$val->data}%'";
                         continue;
                     }
                     $tables .= ', '.$CFG->prefix.'data_content c'.$key.' ';
@@ -474,7 +475,6 @@
                     $searchselect .= ' AND ('.$val->sql.') ';
                 }
             } else if ($search) {
-                $ilike = sql_ilike(); //Be case-insensitive
                 $searchselect = " AND (cs.content $ilike '%$search%' OR u.firstname $ilike '%$search%' OR u.lastname $ilike '%$search%' ) ";
             } else {
                 $searchselect = ' ';
@@ -498,7 +498,7 @@
             if (!empty($advanced)) {                                                                                           //Advanced search box again.
                 foreach($search_array as $key => $val) {
                     if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
-                        $searchselect .= " AND $val->field LIKE '%{$val->data}%'";
+                        $searchselect .= " AND $val->field $ilike '%{$val->data}%'";
                         continue;
                     }
                     $tables .= ', '.$CFG->prefix.'data_content c'.$key.' ';
@@ -506,7 +506,6 @@
                     $searchselect .= ' AND ('.$val->sql.') ';
                 }
             } else {
-                $ilike = sql_ilike(); //Be case-insensitive
                 $searchselect = " AND (c.content $ilike '%$search%' OR u.firstname $ilike '%$search%' OR u.lastname $ilike '%$search%' ) ";
             }
 
