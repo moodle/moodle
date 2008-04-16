@@ -105,7 +105,17 @@
         $SESSION->dataprefs[$data->id]['advanced'] = 0;
         $SESSION->dataprefs[$data->id]['order'] = ($data->defaultsortdir == 0) ? 'ASC' : 'DESC';
     }
-    $advanced = optional_param('advanced', $SESSION->dataprefs[$data->id]['advanced'], PARAM_INT);
+
+    $advanced = optional_param('advanced', -1, PARAM_INT);
+    if ($advanced == -1) {
+        $advanced = $SESSION->dataprefs[$data->id]['advanced'];
+    } else {
+        if (!$advanced) {
+            // explicitly switched to normal mode - discard all advanced search settings
+            $SESSION->dataprefs[$data->id]['search_array'] = array();
+        }
+    }
+
     $search_array = $SESSION->dataprefs[$data->id]['search_array'];
     
     if (!empty($advanced)) {
@@ -166,8 +176,8 @@
             $fn = optional_param('u_fn', '', PARAM_NOTAGS);
             $ln = optional_param('u_ln', '', PARAM_NOTAGS);
         } else {
-            $fn = isset($search_array[DATA_FIRSTNAME]) ? $search_array[DATA_FIRSTNAME] : '';
-            $ln = isset($search_array[DATA_LASTNAME]) ? $search_array[DATA_LASTNAME] : '';
+            $fn = isset($search_array[DATA_FIRSTNAME]) ? $search_array[DATA_FIRSTNAME]->data : '';
+            $ln = isset($search_array[DATA_LASTNAME]) ? $search_array[DATA_LASTNAME]->data : '';
         }
         if (!empty($fn)) {
             $search_array[DATA_FIRSTNAME] = new object();
@@ -453,6 +463,7 @@
             if (!empty($advanced)) {                                                  //If advanced box is checked.
                 foreach($search_array as $key => $val) {                              //what does $search_array hold?
                     if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
+var_dump($val->data);
                         $searchselect .= " AND $val->field LIKE '%{$val->data}%'";
                         continue;
                     }
@@ -633,7 +644,7 @@
     }
 
     //Advanced search form doesn't make sense for single (redirects list view)
-    if ($records || $search || $page ||  $mode == 'asearch'  && $mode != 'single') {
+    if (($records || $search || $page ||  $mode == 'asearch') && $mode != 'single') {
         data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
     }
 
