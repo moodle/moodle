@@ -102,6 +102,8 @@ $string['loginasnoenrol'] = 'You can not use enrol or unenrol when in course \"L
 $string['messagingdisable'] = 'Messaging is disabled on this site';
 $string['missingfield'] = 'Field \"$a\" is missing.';
 $string['missingrequiredfield'] = 'Some required field is missing';
+$string['mimetexisnotexist'] = 'Your system is not configured to run mimeTeX. You need to download the appropriate executable for you PHP_OS platform from <a href=\"http://moodle.org/download/mimetex/\">http://moodle.org/download/mimetex/</a>, or obtain the C source from <a href=\"http://www.forkosh.com/mimetex.zip\"> http://www.forkosh.com/mimetex.zip</a>, compile it and put the executable into your moodle/filter/tex/ directory.';
+$string['mimetexnotexecutable'] = 'Custom mimetex is not executable!';
 $string['moduledoesnotexist'] = 'The instance of this module doesn\'t exist';
 $string['modulemissingcode'] = 'Module $a is missing the code needed to perform this function';
 $string['modulerequirementsnotmet'] = 'Module \"$a->modulename\" ($a->moduleversion) could not be installed.  It requires a newer version of Moodle (currently you are using $a->currentmoodle, you need $a->requiremoodle).';

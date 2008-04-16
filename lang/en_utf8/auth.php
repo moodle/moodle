@@ -7,10 +7,8 @@ $string['alternatelogin'] = 'If you enter a URL here, it will be used as the log
 $string['alternateloginurl'] = 'Alternate Login URL';
 $string['forgottenpassword'] = 'If you enter a URL here, it will be used as the lost password recovery page for this site. This is intended for sites where passwords are handled entirely outside of Moodle. Leave this blank to use the default password recovery.';
 $string['forgottenpasswordurl'] = 'Forgotten password URL';
-
 $string['pluginnotenabled'] = 'Authentication plugin \'$a\' is not enabled.';
 $string['pluginnotinstalled'] = 'Authentication plugin \'$a\' is not installed.';
-
 // syncronization
 $string['auth_sync_script'] ='Cron synchronization script';
 $string['auth_dbinsertuser'] ='Inserted user $a[0] id $a[1]';
