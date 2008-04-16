@@ -463,7 +463,6 @@
             if (!empty($advanced)) {                                                  //If advanced box is checked.
                 foreach($search_array as $key => $val) {                              //what does $search_array hold?
                     if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
-var_dump($val->data);
                         $searchselect .= " AND $val->field LIKE '%{$val->data}%'";
                         continue;
                     }
