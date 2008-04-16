@@ -63,23 +63,68 @@ class data_field_multimenu extends data_field_base {
     
     function display_search_field($value = '') {
         global $CFG;
-        $temp = get_records_sql_menu('SELECT id, content from '.$CFG->prefix.'data_content WHERE fieldid='.$this->field->id.' GROUP BY content ORDER BY content');
-        $options = array();
-        if(!empty($temp)) {
-            $options[''] = '';              //Make first index blank.
-            foreach ($temp as $key) {
-                $options[$key] = $key;  //Build following indicies from the sql.
-            }
+
+        if (is_array($value)){
+            $content     = $value['selected'];
+            $allrequired = $value['allrequired'] ? 'checked = "checked"' : '';
+        } else {
+            $content     = array();
+            $allrequired = ''; 
         }
-        return choose_from_menu($options, 'f_'.$this->field->id, $value, 'choose', '',  0, true);
+
+        static $c = 0;
+
+        $str = '<select name="f_'.$this->field->id.'[]" multiple="multiple">';
+
+        foreach (explode("\n",$this->field->param1) as $option) {
+            $option = trim($option);
+            $str .= '<option value="' . s($option) . '"';
+
+            if (array_search($option, $content) !== false) {
+                // Selected by user.
+                $str .= ' selected >';
+            } else {
+                $str .= '>';
+            }
+            $str .= $option . '</option>';
+        }
+        $str .= '</select>';
+
+        $str .= '&nbsp;<input name="f_'.$this->field->id.'_allreq" id="f_'.$this->field->id.'_allreq'.$c.'" type="checkbox" '.$allrequired.'/>';
+        $str .= '<label for="f_'.$this->field->id.'_allreq'.$c.'">'.get_string('selectedrequired', 'data').'</label>';
+        $c++;
+
+        return $str;
+
     }
     
     function parse_search_field() {
-        return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
+        $selected    = optional_param('f_'.$this->field->id, array(), PARAM_NOTAGS);
+        $allrequired = optional_param('f_'.$this->field->id.'_allreq', 0, PARAM_BOOL);
+        if (empty($selected)) {
+            // no searching
+            return '';
+        }
+        return array('selected'=>$selected, 'allrequired'=>$allrequired);
     }
 
     function generate_sql($tablealias, $value) {
-        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') "; 
+        $allrequired = $value['allrequired'];
+        $selected    = $value['selected'];
+
+        if ($selected) {
+            $conditions = array();
+            foreach ($selected as $sel) {
+                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ({$tablealias}.content LIKE '$sel##%' OR {$tablealias}.content LIKE '%##$sel' OR {$tablealias}.content LIKE '%##$sel##%'))";
+            }
+            if ($allrequired) {
+                return " (".implode(" AND ", $conditions).") ";
+            } else {
+                return " (".implode(" OR ", $conditions).") ";
+            }
+        } else {
+            return " ";
+        } 
     }
 
     function update_content($recordid, $value, $name='') {

@@ -217,6 +217,7 @@ $string['savesettings'] = 'Save settings';
 $string['savesuccess'] = 'Saved successfully. Your preset will now be available across the site.';
 $string['savetemplate'] = 'Save template';
 $string['search'] = 'Search';
+$string['selectedrequired'] = 'All selected required';
 $string['sendinratings'] = 'Send in my latest ratings';
 $string['single'] = 'View single';
 $string['singletemplate'] = 'Single template';
