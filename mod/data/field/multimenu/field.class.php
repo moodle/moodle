@@ -41,18 +41,19 @@ class data_field_multimenu extends data_field_base {
         }
 
         $str = '<div title="'.s($this->field->description).'">';
+        $str .= '<input name="field_' . $this->field->id . '[xxx]" type="hidden" value="xxx"/>'; // hidden field - needed for empty selection
         $str .= '<select name="field_' . $this->field->id . '[]" id="field_' . $this->field->id . '" multiple="multiple">';
 
         foreach (explode("\n",$this->field->param1) as $option) {
             $option = trim($option);
             $str .= '<option value="' . s($option) . '"';
 
-            if (array_search($option, $content) !== false) {
+            if (in_array($option, $content)) {
                 // Selected by user.
-                $str .= ' selected >';
-            } else {
-                $str .= '>';
+                $str .= ' selected = "selected"';
             }
+
+            $str .= '>';
             $str .= $option . '</option>';
         }
         $str .= '</select>';
@@ -80,13 +81,11 @@ class data_field_multimenu extends data_field_base {
             $option = trim($option);
             $str .= '<option value="' . s($option) . '"';
 
-            if (array_search($option, $content) !== false) {
+            if (in_array(addslashes($option), $content)) {
                 // Selected by user.
-                $str .= ' selected >';
-            } else {
-                $str .= '>';
+                $str .= ' selected = "selected"';
             }
-            $str .= $option . '</option>';
+            $str .= '>' . $option . '</option>';
         }
         $str .= '</select>';
 
@@ -129,9 +128,9 @@ class data_field_multimenu extends data_field_base {
 
     function update_content($recordid, $value, $name='') {
         $content = new object;
-        $content->fieldid = $this->field->id;
+        $content->fieldid  = $this->field->id;
         $content->recordid = $recordid;
-        $content->content = $this->format_data_field_multimenu_content($value);
+        $content->content  = $this->format_data_field_multimenu_content($value);
 
         if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             $content->id = $oldcontent->id;
@@ -143,16 +142,27 @@ class data_field_multimenu extends data_field_base {
 
     function format_data_field_multimenu_content($content) {
         if (!is_array($content)) {
-            $str = $content;
-        } else {
-            $str = '';
-            foreach ($content as $val) {
-                $str .= $val . '##';
-            }
-            $str = substr($str, 0, -2);
+            return NULL;
         }
-        $str = clean_param($str, PARAM_NOTAGS);
-        return $str;
+        $options = explode("\n", $this->field->param1);
+        $options = array_map('trim', $options);
+
+        $vals = array();
+        foreach ($content as $key=>$val) {
+            if ($key === 'xxx') {
+                continue;
+            }
+            if (!in_array(stripslashes($val), $options)) {
+                continue;
+            }
+            $vals[] = $val;
+        }
+
+        if (empty($vals)) {
+            return NULL;
+        }
+
+        return implode('##', $vals);
     }
 
 
