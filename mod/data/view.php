@@ -305,18 +305,7 @@
 
 /// Delete any requested records
 
-    if ($delete){
-
-        if (!confirm_sesskey()) {
-            print_error('confirmsesskeybad', 'error');
-        }
-
-        if(data_isowner($delete)){
-            require_capability('mod/data:deleteownentries', $context);
-        }else{
-            require_capability('mod/data:manageentries', $context);
-        }
-
+    if ($delete && confirm_sesskey() && (has_capability('mod/data:manageentries', $context) or data_isowner($delete))) {
         if ($confirm = optional_param('confirm',0,PARAM_INT)) {
             if ($deleterecord = get_record('data_records', 'id', $delete)) {   // Need to check this is valid
                 if ($deleterecord->dataid == $data->id) {                       // Must be from this database

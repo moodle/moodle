@@ -81,14 +81,8 @@
     }
 
     if ($rid) {    // So do you have access?
-        if (!confirm_sesskey()) {
-            print_error('confirmsesskeybad', 'error');
-        }
-
-        if (data_isowner($rid)){
-            require_capability('mod/data:editownentries', $context);
-        }else{
-            require_capability('mod/data:manageentries', $context);
+        if (!(has_capability('mod/data:manageentries', $context) or data_isowner($rid)) or !confirm_sesskey() ) {
+            print_error('noaccess','data');
         }
     }
 
