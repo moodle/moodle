@@ -93,6 +93,10 @@ body, td, li, div {
     text-align: right;
 }
 
+.categorylist .category.number {
+    text-align:left;
+}
+
 .calendar-controls .previous {
     text-align: right;
 }
@@ -369,3 +373,4 @@ FORM.mform INPUT {
 form#adminsettings div.htmlarea {
     clear: right;
 }
+
