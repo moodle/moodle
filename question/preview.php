@@ -60,7 +60,7 @@
     }
     // Load the question information
     if (!$questions = get_records('question', 'id', $id)) {
-        print_error('Could not load question');
+        error('Could not load question');
     }
     if (empty($quizid)) {
         $quiz = new cmoptions;
@@ -69,7 +69,7 @@
         require_login($courseid, false);
         $quiz->course = $courseid;
     } else if (!$quiz = get_record('quiz', 'id', $quizid)) {
-        print_error("Quiz id $quizid does not exist");
+        error("Quiz id $quizid does not exist");
     } else {
         require_login($quiz->course, false, get_coursemodule_from_instance('quiz', $quizid, $quiz->course));
     }
@@ -86,11 +86,11 @@
     $quiz->questions = $id;
 
     if (!$category = get_record("question_categories", "id", $questions[$id]->category)) {
-        print_error("This question doesn't belong to a valid category!");
+        error("This question doesn't belong to a valid category!");
     }
 
     if (!question_has_capability_on($questions[$id], 'use', $questions[$id]->category)){
-        print_error("You can't preview these questions!");
+        error("You can't preview these questions!");
     }
     if (isset($COURSE)){
         $quiz->course = $COURSE->id;
@@ -160,7 +160,13 @@
         unset($form['back']);
         unset($form['startagain']);
 
-        $event = $finishattempt ? QUESTION_EVENTCLOSE : QUESTION_EVENTSUBMIT;
+        if ($finishattempt) {
+            $event = QUESTION_EVENTCLOSE;
+        } else if ($markall) {
+            $event = QUESTION_EVENTSUBMIT;
+        } else {
+            $event = QUESTION_EVENTSAVE;
+        }
         if ($actions = question_extract_responses($questions, $form, $event)) {
             $actions[$id]->timestamp = 0; // We do not care about timelimits here
             question_process_responses($questions[$id], $curstate, $actions[$id], $quiz, $attempt);
