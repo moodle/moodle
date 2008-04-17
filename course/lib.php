@@ -2353,6 +2353,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     }
 
     if (!isset($str)) {
+        $str->assign         = get_string("assignroles", 'role');
         $str->delete         = get_string("delete");
         $str->move           = get_string("move");
         $str->moveup         = get_string("moveup");
@@ -2382,7 +2383,6 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     } else {
         $path = '.';
     }
-
     if (has_capability('moodle/course:activityvisibility', $modcontext)) {
         if ($mod->visible) {
             $hideshow = '<a class="editing_hide" title="'.$str->hide.'" href="'.$path.'/mod.php?hide='.$mod->id.
@@ -2470,7 +2470,11 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
                         ' alt="'.$str->moveright.'" /></a>'."\n";
         }
     }
-
+    if (has_capability('moodle/course:managegroups', $modcontext)){
+        $context = get_context_instance(CONTEXT_MODULE, $mod->id);
+        $assign = '<a class="editing_assign" title="" href="'.$CFG->wwwroot.'/admin/roles/assign.php?contextid='.
+            $context->id.'"><img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$str->assign.'" class="iconsmall"/></a>';
+    }
     return '<span class="commands">'."\n".$leftright.$move.
            '<a class="editing_update" title="'.$str->update.'" href="'.$path.'/mod.php?update='.$mod->id.
            '&amp;sesskey='.$sesskey.$section.'"><img'.
@@ -2479,7 +2483,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
            '<a class="editing_delete" title="'.$str->delete.'" href="'.$path.'/mod.php?delete='.$mod->id.
            '&amp;sesskey='.$sesskey.$section.'"><img'.
            ' src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" '.
-           ' alt="'.$str->delete.'" /></a>'."\n".$hideshow.$groupmode."\n".'</span>';
+           ' alt="'.$str->delete.'" /></a>'."\n".$hideshow.$groupmode."\n".$assign.'</span>';
 }
 
 /**
