@@ -954,15 +954,23 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
     /// Replacing special tags (##Edit##, ##Delete##, ##More##)
         $patterns[]='##edit##';
         $patterns[]='##delete##';
-        if (has_capability('mod/data:manageentries', $context) or data_isowner($record->id)) {
+        $isteacher = has_capability('mod/data:manageentries', $context);
+        $isowner = data_isowner($record->id);
+
+        if ($isteacher or ($isowner && has_capability('mod/data:editownentries', $context)) ) {
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
                              .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
-            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
-                             .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
-        } else {
-            $replacement[] = '';
+        }else{
             $replacement[] = '';
         }
+
+        if($isteacher or ($isowner && has_capability('mod/data:deleteownentries', $context)) ) {
+            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
+                             .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
+        }else{
+            $replacement[] = '';
+        }
+
         $patterns[]='##more##';
         $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" class="iconsmall" alt="'.get_string('more', 'data').'" title="'.get_string('more', 'data').'" /></a>';
 
