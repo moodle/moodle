@@ -44,6 +44,8 @@ class block_calendar_upcoming extends block_base {
                 // the list of courses it will be grabbing events from.
                 $filtercourse    = NULL;
                 $groupeventsfrom = NULL;
+                $SESSION->cal_courses_shown = calendar_get_default_courses(true);
+                calendar_set_referring_course(0);
             } else {
                 // Forcibly filter events to include only those from the particular course we are in.
                 $filtercourse    = array($courseshown => $COURSE);
