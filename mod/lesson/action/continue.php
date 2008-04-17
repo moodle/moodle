@@ -91,7 +91,7 @@
                 $noanswer = true;
                 break;
             }            
-            $useranswer = stripslashes(clean_param($useranswer, PARAM_RAW));
+            $useranswer = s(stripslashes(clean_param($useranswer, PARAM_RAW)));
             $userresponse = addslashes($useranswer);
             if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                 print_error("Continue: No answers found");
