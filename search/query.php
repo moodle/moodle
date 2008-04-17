@@ -144,7 +144,8 @@
     $strsearch = get_string('search', 'search');
     $strquery  = get_string('enteryoursearchquery', 'search');
     
-    if ($CFG->version < 2007032200){
+//    if ($CFG->version < 2007032200){ NOT RELIABLE
+    if (!function_exists('build_navigation')){
         print_header("$site->shortname: $strsearch: $strquery", "$site->fullname",
                "<a href=\"index.php\">$strsearch</a> -> $strquery");
     } else {

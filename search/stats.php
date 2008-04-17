@@ -1,26 +1,26 @@
 <?php
-    /** 
-    * Global Search Engine for Moodle
-    *
-    * @package search
-    * @category core
-    * @subpackage search_engine
-    * @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
-    * @date 2008/03/31
-    * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-    *
-    * Prints some basic statistics about the current index.
-    * Does some diagnostics if you are logged in as an administrator.
-    * 
-    */
-    
-    /**
-    * includes and requires
-    */
-    require_once('../config.php');
-    require_once("{$CFG->dirroot}/search/lib.php");
-    
-    /// checks global search is enabled
+/** 
+* Global Search Engine for Moodle
+*
+* @package search
+* @category core
+* @subpackage search_engine
+* @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @date 2008/03/31
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+*
+* Prints some basic statistics about the current index.
+* Does some diagnostics if you are logged in as an administrator.
+* 
+*/
+
+/**
+* includes and requires
+*/
+require_once('../config.php');
+require_once("{$CFG->dirroot}/search/lib.php");
+
+/// checks global search is enabled
 
     if ($CFG->forcelogin) {
         require_login();
@@ -45,8 +45,16 @@
     $strsearch = get_string('search', 'search');
     $strquery  = get_string('statistics', 'search'); 
     
-    print_header("$site->shortname: $strsearch: $strquery", "$site->fullname",
-               "<a href=\"index.php\">$strsearch</a> -> $strquery");
+    if (!function_exists('build_navigation')){
+        print_header("$site->shortname: $strsearch: $strquery", "$site->fullname",
+                   "<a href=\"index.php\">$strsearch</a> -> $strquery");
+    } else {
+        $navlinks[] = array('name' => $strsearch, 'link' => "index.php", 'type' => 'misc');
+        $navlinks[] = array('name' => $strquery, 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
+        $site = get_site();
+        print_header("$strsearch", "$site->fullname" , $navigation, "", "", true, "&nbsp;", navmenu($site));
+    }
     
 /// keep things pretty, even if php5 isn't available
 
