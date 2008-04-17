@@ -57,7 +57,9 @@
             redirect($thispageurl->out());
         }  elseif ($formdata = $qcobject->moveform->get_data()) {
             /// 'confirm' is the category to move existing questions to
-            $qcobject->move_questions_and_delete_category($formdata->delete, $formdata->category);
+            list($tocategoryid, $tocontextid) = explode(',', $formdata->category);
+            $qcobject->move_questions_and_delete_category($formdata->delete, $tocategoryid);
+            $thispageurl->remove_params('cat');
             redirect($thispageurl->out());
         }
     } else {
