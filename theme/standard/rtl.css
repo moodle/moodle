@@ -79,6 +79,10 @@ body, td, li, div {
     text-align: right;
 }
 
+.categorylist .category.number {
+	text-align: left;
+}
+
 .calendar-controls .previous, .calendar-controls .current, .calendar-controls .next {
     float: right;
 }
@@ -136,6 +140,30 @@ form.mform .fdescription.required {
     direction: ltr;
 }
 
+/* on firefox the main layout-table might be pushed to the right by editing buttons **** */
+
+#layout-table {
+	clear: both;
+}
+
+/* admin > appearance > themes > theme settings */
+
+#adminsettings .form-label {
+	float: right;
+	text-align: left;
+}
+
+#adminsettings .form-setting {
+	text-align: right;
+	margin-right: 13em;
+	margin-left: 0px;
+}
+
+#adminsettings .form-description {
+	margin: 0.5em 13em 0em 0pt;
+	text-align: right;
+}
+
 #id_lang {
     direction: ltr;
 }
@@ -151,6 +179,11 @@ select#uninstalllang {
 }
 
 .mod-forum .indent {
+/* in forums, fix top and bottom navigation bars' buttons */
+li form .invisiblefieldset {
+	display: inline;
+}
+
     margin-right: 30px;
     margin-left: 0px;
 }
@@ -204,6 +237,22 @@ h1.main, h2.main, h3.main, h4.main, h5.main, h6.main {
     direction: ltr;
 }
 
+.block_admin_tree .admintree .depth1 {
+	padding-right:16px;
+}
+
+.block_admin_tree .admintree .depth2 {
+	padding-right:32px;
+}
+
+.block_admin_tree .admintree .depth3 {
+	padding-right:48px;
+}
+
+.block_admin_tree .admintree .depth4 {
+	padding-right:64px;
+}
+
 .block_admin_tree .admintree {
     text-align: right;
 }
@@ -232,13 +281,11 @@ body#user-index table#participants td, body#user-index table#participants th {
 /* Admin > Security */
 
 #adminsettings label {
-    float: right;
     text-align: left;
 }
 
 #adminsettings select, #adminsettings input {
-    float: right;
-    margin: 0pt 10pt 0pt 0px;
+    margin: 0pt 5pt 0pt 5pt;
 }
 
 #adminsettings .description {
@@ -277,8 +324,17 @@ form.mform div.felement, form.mform fieldset.felement {
     text-align: right;
 }
 
+.invisiblefieldset {
+	display: block;
+}
+
 body#mod-quiz-report table#attempts .header {
     text-align: right;
+}
+
+#mod-quiz-mod #reviewoptionshdr fieldset.fgroup span {
+	clear: right;
+	float: right;
 }
 
 .logtable th {
@@ -299,13 +355,24 @@ form.mform .fitemtitle {
     border-right-style: none;
 }
 
+.form-setting .form-time {
+    direction: ltr;
+	float:right;
+}
+
 /* ========================
 	for tabs support
    ======================== */
 
 .tabrow0 {
-    overflow: auto;
     PADDING-BOTTOM: 2.75em;
+}
+
+/* IE6 requires overflow: auto. IE7 requires overflow: hidden.
+   exploit IE's "star html selector bug" to apply to IE6 ONLY */
+.tabrow0 {
+	#overflow: hidden; /* for IE7. to eliminate extra scroll bars . the # hides from firefox */
+    * html overflow: auto; /* for IE6 only **** */
 }
 
 .tabrow0  LI {
@@ -313,6 +380,7 @@ form.mform .fitemtitle {
     MARGIN: 0px;
     width: 130px;
     BACKGROUND: url(pix/tab/rtlbg.gif) no-repeat right top;
+	overflow: hidden; /* for IE7. to prevent long titles from 'falling' 3cm down */
 }
 
 .tabrow0 A SPAN {
@@ -333,8 +401,19 @@ form.mform .fitemtitle {
     BACKGROUND-IMAGE: none
 }
 
+.tabrow0 .here A:link,
+.tabrow0 .here A:visited {
+	/* has to override styles.css 'position:relative', otherwise the active tab title disappears on IE6/7 */
+    position: static;
+}
 .tabrow0 ul a {
     PADDING-LEFT: 0px;
+}
+
+div.tabrow1 {
+/* without that, IE will leave a short line floating, when there's ho secondary menu */
+	#right: 0px;   /* IE only */
+	#width: 800px; /* IE only */
 }
 
 UL.tabrow1 {
@@ -349,8 +428,21 @@ UL.tabrow1  li {
     float: right;
 }
 
+.tabtree {
+	/* give some space below the tabs row (when there's a secondary row) on firefox */
+	margin-bottom:15px;
+
+	/* has to override 'height:100%' in styles_ie6.css, otherwise it causes a huge height in quiz report overview, e.g.: moodle/mod/quiz/report.php?q=14&mode=overview */
+    height: auto !important;
+}
+
 .tabtree * {
     width: auto;
+}
+
+/* notify-problem line gets covered by secondary tabs line (tabrow1), add some height to the line **** */
+.notifyproblem {
+	line-height: 40px;
 }
 
 /* ========================
@@ -370,7 +462,7 @@ FORM.mform INPUT {
     direction: rtl;
 }
 
-form#adminsettings div.htmlarea {
-    clear: right;
+.htmlarea * select {
+	max-width: 100px;
 }
 

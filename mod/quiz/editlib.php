@@ -189,6 +189,14 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
     echo "<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strgrade</th>";
     echo "<th align=\"center\" style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
     echo "</tr>\n";
+
+	// for RTL languages: switch right and left arrows /****/
+    if (right_to_left()) { 
+        $movearrow = 'moveleft.gif'; 
+    } else { 
+        $movearrow = 'removeright.gif'; 
+    } 
+
     foreach ($order as $i => $qnum) {
 
         if ($qnum and empty($questions[$qnum])) {
@@ -290,7 +298,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
         }
         if ($allowdelete && question_has_capability_on($question, 'use', $question->category)) { // remove from quiz, not question delete.
             echo "<a title=\"$strremove\" href=\"".$pageurl->out_action(array('delete'=>$count))."\">
-                    <img src=\"$CFG->pixpath/t/removeright.gif\" class=\"iconsmall\" alt=\"$strremove\" /></a>";
+                    <img src=\"$CFG->pixpath/t/$movearrow\" class=\"iconsmall\" alt=\"$strremove\" /></a>";
         }
 
         echo "</td></tr>";

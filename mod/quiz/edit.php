@@ -35,9 +35,15 @@
     function module_specific_actions($pageurl, $questionid, $cmid, $canuse){
         global $CFG;
         if ($canuse){
+			// for RTL languages: switch right and left arrows /****/
+			if (right_to_left()) { 
+				$movearrow = 'removeright.gif'; 
+			} else { 
+				$movearrow = 'moveleft.gif'; 
+			} 
             $straddtoquiz = get_string("addtoquiz", "quiz");
             $out = "<a title=\"$straddtoquiz\" href=\"edit.php?".$pageurl->get_query_string()."&amp;addquestion=$questionid&amp;sesskey=".sesskey()."\"><img
-                  src=\"$CFG->pixpath/t/moveleft.gif\" alt=\"$straddtoquiz\" /></a>&nbsp;";
+                  src=\"$CFG->pixpath/t/$movearrow\" alt=\"$straddtoquiz\" /></a>&nbsp;";
             return $out;
         } else {
             return '';
