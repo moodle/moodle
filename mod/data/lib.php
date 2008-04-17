@@ -1838,7 +1838,7 @@ function data_presets_export($course, $cm, $data) {
 
     $presetxml .= "<settings>\n";
     foreach ($settingssaved as $setting) {
-        $presetxml .= "<$setting>".htmlspecialchars($data->$setting, ENT_QUOTES)."</$setting>\n";
+        $presetxml .= "<$setting>".htmlspecialchars($data->$setting, ENT_NOQUOTES)."</$setting>\n";
     }
     $presetxml .= "</settings>\n\n";
 
@@ -1848,7 +1848,7 @@ function data_presets_export($course, $cm, $data) {
             $presetxml .= "<field>\n";
             foreach ($field as $key => $value) {
                 if ($value != '' && $key != 'id' && $key != 'dataid') {
-                    $presetxml .= "<$key>".htmlspecialchars($value, ENT_QUOTES)."</$key>\n";
+                    $presetxml .= "<$key>".htmlspecialchars($value, ENT_NOQUOTES)."</$key>\n";
                 }
             }
             $presetxml .= "</field>\n\n";
