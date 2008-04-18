@@ -1965,9 +1965,9 @@ function moodle_install_roles() {
                 }
 
                 if ($teacher->editall) { // editting teacher
-                    role_assign($editteacherrole, $teacher->userid, 0, $coursecontext->id, 0, 0, $hiddenteacher);
+                    role_assign($editteacherrole, $teacher->userid, 0, $coursecontext->id, $teacher->timestart, $teacher->timeend, $hiddenteacher, $teacher->enrol, $teacher->timemodified);
                 } else {
-                    role_assign($noneditteacherrole, $teacher->userid, 0, $coursecontext->id, 0, 0, $hiddenteacher);
+                    role_assign($noneditteacherrole, $teacher->userid, 0, $coursecontext->id, $teacher->timestart, $teacher->timeend, $hiddenteacher, $teacher->enrol, $teacher->timemodified);
                 }
                 $progresscount++;
                 print_progress($progresscount, $totalcount, 5, 1, 'Processing role assignments');
@@ -1991,7 +1991,7 @@ function moodle_install_roles() {
 
                 // assign the default student role
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $student->course);
-                role_assign($studentrole, $student->userid, 0, $coursecontext->id);
+                role_assign($studentrole, $student->userid, 0, $coursecontext->id, $student->timestart, $student->timeend, 0, $student->enrol, $student->time);
                 $progresscount++;
                 print_progress($progresscount, $totalcount, 5, 1, 'Processing role assignments');
             }
