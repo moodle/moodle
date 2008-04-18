@@ -84,9 +84,6 @@ $text_source_options = array(
 			choose_from_menu($options, "enabletimeopen", "$form->enabletimeopen", "");
 			print '<span id="timeopenSPAN">';
 			print ' &nbsp; ';
-			if (!$form->timeopen && $course->format == "weeks") {
-				$form->timeopen= $course->startdate + (($form->section - 1) * 608400);
-			}
 			print_date_selector("openday", "openmonth", "openyear", $form->timeopen);
 			print ' - ';
 			print_time_selector("openhour", "openminute", $form->timeopen);
@@ -104,9 +101,6 @@ $text_source_options = array(
 			choose_from_menu($options, "enabletimeclose", "$form->enabletimeclose", "");
 			print '<span id="timecloseSPAN">';
 			print ' &nbsp; ';
-			if (!$form->timeclose && $course->format == "weeks") {
-				$form->timeclose= $course->startdate + (($form->section) * 608400);
-			}
 			print_date_selector("closeday", "closemonth", "closeyear", $form->timeclose);
 			print ' - ';
 			print_time_selector("closehour", "closeminute", $form->timeclose);
