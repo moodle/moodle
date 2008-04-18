@@ -987,7 +987,7 @@ class grade_structure {
         }
 
         if ($url) {
-            return '<a href="'.$url.'"><img '.$overlib.' src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" title="'.$stredit.'"/></a>';
+            return '<a href="'.$url.'" class="edit"><img '.$overlib.' src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" title="'.$stredit.'"/></a>';
 
         } else {
             return '';
@@ -1022,13 +1022,13 @@ class grade_structure {
             $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=show&amp;sesskey='.sesskey()
                      . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'"><img alt="'.$strshow.'" src="'.$CFG->pixpath.'/t/'.$icon.'.gif" class="iconsmall" title="'.$tooltip.'"/></a>';
+            $action  = '<a href="'.$url.'" class="hide"><img alt="'.$strshow.'" src="'.$CFG->pixpath.'/t/'.$icon.'.gif" class="iconsmall" title="'.$tooltip.'"/></a>';
 
         } else {
             $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=hide&amp;sesskey='.sesskey()
                      . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$strhide.'" title="'.$strhide.'"/></a>';
+            $action  = '<a href="'.$url.'" class="hide"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$strhide.'" title="'.$strhide.'"/></a>';
         }
         return $action;
     }
@@ -1066,7 +1066,7 @@ class grade_structure {
             $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=unlock&amp;sesskey='.sesskey()
                      . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/'.$icon.'.gif" alt="'.$strunlock.'" class="iconsmall" title="'.$tooltip.'"/></a>';
+            $action  = '<a href="'.$url.'" class="lock"><img src="'.$CFG->pixpath.'/t/'.$icon.'.gif" alt="'.$strunlock.'" class="iconsmall" title="'.$tooltip.'"/></a>';
 
         } else {
             if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:lock', $this->context)) {
@@ -1075,7 +1075,7 @@ class grade_structure {
             $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=lock&amp;sesskey='.sesskey()
                      . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/lock.gif" class="iconsmall" alt="'.$strlock.'" title="'
+            $action  = '<a href="'.$url.'" class="lock"><img src="'.$CFG->pixpath.'/t/lock.gif" class="iconsmall" alt="'.$strlock.'" title="'
                      . $strlock.'"/></a>';
         }
         return $action;
@@ -1111,7 +1111,7 @@ class grade_structure {
                 }
                 $url = $CFG->wwwroot.'/grade/edit/tree/calculation.php?courseid='.$this->courseid.'&amp;id='.$object->id;
                 $url = $gpr->add_url_params($url);
-                $calculation_icon = '<a href="'. $url.'"><img src="'.$CFG->pixpath.'/t/'.$icon.'" class="iconsmall" alt="'
+                $calculation_icon = '<a href="'. $url.'" class="calculation"><img src="'.$CFG->pixpath.'/t/'.$icon.'" class="iconsmall" alt="'
                                        . $streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
             }
         }
@@ -1547,6 +1547,113 @@ class grade_tree extends grade_structure {
         }
 
         return null;
+    }
+    
+    /**
+     * Returns a well-formed XML representation of the grade-tree using recursion.
+     * @param array $root The current element in the recursion. If null, starts at the top of the tree.
+     * @return string $xml
+     */
+    function exportToXML($root=null, $tabs="\t") {
+        $xml = null;
+        $first = false;
+        if (is_null($root)) {
+            $root = $this->top_element;
+            $xml = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n";
+            $xml .= "<gradetree>\n";
+            $first = true;
+        }
+        
+        $type = 'undefined';
+        if (strpos($root['object']->table, 'grade_categories') !== false) {
+            $type = 'category';
+        } elseif (strpos($root['object']->table, 'grade_items') !== false) {
+            $type = 'item';
+        } elseif (strpos($root['object']->table, 'grade_outcomes') !== false) {
+            $type = 'outcome';
+        }
+        
+        $xml .= "$tabs<element type=\"$type\">\n";
+        foreach ($root['object'] as $var => $value) {
+            if (!is_object($value) && !is_array($value) && !empty($value)) {
+                $xml .= "$tabs\t<$var>$value</$var>\n";
+            }
+        }
+
+        if (!empty($root['children'])) {
+            $xml .= "$tabs\t<children>\n";
+            foreach ($root['children'] as $sortorder => $child) {
+                $xml .= $this->exportToXML($child, $tabs."\t\t");
+            }
+            $xml .= "$tabs\t</children>\n";
+        }
+        
+        $xml .= "$tabs</element>\n";
+
+        if ($first) {
+            $xml .= "</gradetree>";
+        }
+        
+        return $xml;
+    }
+    
+    /**
+     * Returns a JSON representation of the grade-tree using recursion.
+     * @param array $root The current element in the recursion. If null, starts at the top of the tree.
+     * @param string $tabs Tab characters used to indent the string nicely for humans to enjoy
+     * @param int    $switch The position (first or last) of the aggregations
+     * @return string $xml
+     */
+    function exportToJSON($root=null, $tabs="\t") {
+        $json = null;
+        $first = false;
+        if (is_null($root)) {
+            $root = $this->top_element;
+            $first = true;
+        }
+        
+        $name = '';
+
+
+        if (strpos($root['object']->table, 'grade_categories') !== false) {
+            $name = $root['object']->fullname;
+            if ($name == '?') {
+                $name = $root['object']->get_name(); 
+            }
+        } elseif (strpos($root['object']->table, 'grade_items') !== false) {
+            $name = $root['object']->itemname;
+        } elseif (strpos($root['object']->table, 'grade_outcomes') !== false) {
+            $name = $root['object']->itemname;
+        }
+        
+        $json .= "$tabs {\n";
+        $json .= "$tabs\t \"type\": \"{$root['type']}\",\n";
+        $json .= "$tabs\t \"name\": \"$name\",\n";
+
+        foreach ($root['object'] as $var => $value) {
+            if (!is_object($value) && !is_array($value) && !empty($value)) {
+                $json .= "$tabs\t \"$var\": \"$value\",\n";
+            }
+        }
+        
+        $json = substr($json, 0, strrpos($json, ','));
+        
+        if (!empty($root['children'])) {
+            $json .= ",\n$tabs\t\"children\": [\n";
+            foreach ($root['children'] as $sortorder => $child) {
+                $json .= $this->exportToJSON($child, $tabs."\t\t");
+            }
+            $json = substr($json, 0, strrpos($json, ','));
+            $json .= "\n$tabs\t]\n";
+        } 
+
+        if ($first) {
+            $json .= "\n}";
+        } else {
+            $json .= "\n$tabs},\n";
+        }
+        
+        return $json;
     }
 }
 

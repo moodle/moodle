@@ -113,14 +113,40 @@ if (!is_null($toggle) && !empty($toggle_type)) {
 //first make sure we have proper final grades - this must be done before constructing of the grade tree
 grade_regrade_final_grades($courseid);
 
-// Perform actions
+// Perform actions.
 if (!empty($target) && !empty($action) && confirm_sesskey()) {
     grade_report_grader::process_action($target, $action);
 }
 
-// Initialise the grader report object
+$bodytags = '';
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 
+// Initialise the grader report object
+if (ajaxenabled() && $report->get_pref('enableajax')) {
+    require_once $CFG->dirroot.'/grade/report/grader/ajaxlib.php';
+    
+    require_js(array('yui_yahoo', 
+                     'yui_dom', 
+                     'yui_event', 
+                     'yui_json', 
+                     'yui_connection', 
+                     'yui_dragdrop',
+                     'yui_animation'));
+
+    if (debugging('', DEBUG_DEVELOPER)) {
+        require_js(array('yui_logger'));
+
+        $bodytags = 'onload = "javascript:
+        show_logger = function() {
+            var logreader = new YAHOO.widget.LogReader();
+            logreader.newestOnTop = false;
+            logreader.setTitle(\'Moodle Debug: YUI Log Console\');
+        };
+        show_logger();
+        "';
+    }
+    $report = new grade_report_grader_ajax($courseid, $gpr, $context, $page, $sortitemid);
+}
 
 /// processing posted grades & feedback here
 if ($data = data_submitted() and confirm_sesskey() and has_capability('moodle/grade:edit', $context)) {
@@ -141,8 +167,7 @@ $numusers = $report->get_numusers();
 $report->load_final_grades();
 
 /// Print header
-print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation,
-                        '', '', true, $buttons, navmenu($course));
+print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation, '', '', true, $buttons, navmenu($course), false, $bodytags);
 
 /// Print the plugin selector at the top
 print_grade_plugin_selector($courseid, 'report', 'grader');
@@ -168,17 +193,21 @@ if (!empty($studentsperpage)) {
 
 $reporthtml = '<script src="functions.js" type="text/javascript"></script>';
 
+$reporthtml .= '<div id="grader_report_message"></div>' . "\n";
 $reporthtml .= '<table id="user-grades" class="gradestable flexible boxaligncenter generaltable">';
+$reporthtml .= '<thead>';
 $reporthtml .= $report->get_headerhtml();
 $reporthtml .= $report->get_iconshtml();
 $reporthtml .= $report->get_rangehtml();
-$reporthtml .= $report->get_studentshtml();
+$reporthtml .= "</thead>\n<tfoot>";
 $reporthtml .= $report->get_avghtml(true);
 $reporthtml .= $report->get_avghtml();
-$reporthtml .= "</table>";
+$reporthtml .= "</tfoot>\n<tbody>";
+$reporthtml .= $report->get_studentshtml();
+$reporthtml .= "</tbody>\n</table>";
 
 // print submit button
-if ($USER->gradeediting[$course->id]) {
+if ($USER->gradeediting[$course->id] and !$report->get_pref('enableajax')) {
     echo '<form action="index.php" method="post">';
     echo '<div>';
     echo '<input type="hidden" value="'.$courseid.'" name="id" />';
@@ -189,7 +218,9 @@ if ($USER->gradeediting[$course->id]) {
 echo $reporthtml;
 
 // print submit button
-if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') || $report->get_pref('quickgrading'))) {
+if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback')
+    || 
+    $report->get_pref('quickgrading')) && !$report->get_pref('enableajax')) {
     echo '<div class="submit"><input type="submit" value="'.get_string('update').'" /></div>';
     echo '</div></form>';
 }
@@ -197,6 +228,11 @@ if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') 
 // prints paging bar at bottom for large pages
 if (!empty($studentsperpage) && $studentsperpage >= 20) {
     print_paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
+}
+
+// Print AJAX code
+if ($report->get_pref('enableajax')) {
+    require_once 'ajax.php';
 }
 
 print_footer($course);

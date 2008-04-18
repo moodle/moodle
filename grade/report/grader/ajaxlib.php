@@ -1,0 +1,527 @@
+<?php // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.com                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+/**
+ * File in which the grade_report_grader class is defined.
+ * @package gradebook
+ */
+
+require_once($CFG->dirroot . '/grade/report/grader/lib.php');
+
+/**
+ * Class providing an API for the grader report building and displaying.
+ * @uses grade_report
+ * @package gradebook
+ */
+class grade_report_grader_ajax extends grade_report_grader {
+    
+    /**
+     * An array of feedbacks, indexed by userid_itemid, used for JS caching
+     * @var array $feedbacks
+     */
+    var $feedbacks = array();
+    
+    /**
+     * Length at which feedback will be truncated (to the nearest word) and an ellipsis be added.
+     * TODO replace this by a report preference
+     * @var int $feedback_trunc_length
+     */
+    var $feedback_trunc_length = 50;
+    
+    /**
+     * Self-incrementing variable, tracking the tabindex. Depending on the tabindex option ("all values, then feedbacks" is default)
+     * Increments by one between each user for the gradevalues, and by 1 + usercount for the gradefeedback
+     * @var int $tabindex
+     */
+    var $tabindex = 0;
+
+    /**
+     * Constructor. Sets local copies of user preferences and initialises grade_tree.
+     * @param int $courseid
+     * @param object $gpr grade plugin return tracking object
+     * @param string $context
+     * @param int $page The current page being viewed (when report is paged)
+     * @param int $sortitemid The id of the grade_item by which to sort the table
+     */
+    function grade_report_grader_ajax($courseid, $gpr, $context, $page=null, $sortitemid=null) {
+        parent::grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
+    }
+    
+    /**
+     * Loads, stores and returns the array of scales used in this course.
+     * @return array
+     */
+    function get_scales_array() {
+        if (empty($this->gtree->items)) {
+            return false;
+        }
+        
+        if (!empty($this->scales_array)) {
+            return $this->scales_array;
+        }
+
+        $scales_list = '';
+        $scales_array = array();
+        
+        foreach ($this->gtree->items as $item) {
+            if (!empty($item->scaleid)) {
+                $scales_list .= "$item->scaleid,";
+            }
+        }
+        
+        if (!empty($scales_list)) {
+            $scales_list = substr($scales_list, 0, -1);
+            $scales_array = get_records_list('scale', 'id', $scales_list);
+            $this->scales_array = $scales_array;
+            return $scales_array;
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Processes the data sent by the form (grades and feedbacks).
+     * Caller is responsible for all access control checks
+     * @param array $data form submission (with magic quotes)
+     * @return array empty array if success, array of warnings if something fails.
+     */
+    function process_data($data) {
+        return parent::process_data($data);
+    }
+
+    /**
+     * Builds and returns a div with on/off toggles.
+     * @return string HTML code
+     */
+    function get_toggles_html() {
+        return parent::get_toggles_html();
+    }
+
+    /**
+     * Shortcut function for printing the grader report toggles.
+     * @param string $type The type of toggle
+     * @param bool $return Whether to return the HTML string rather than printing it
+     * @return void
+     */
+    function print_toggle($type, $return=false) {
+        return parent::print_toggle($type, $return);
+    }
+
+    /**
+     * Builds and returns the HTML code for the headers.
+     * @return string $headerhtml
+     */
+    function get_headerhtml() {
+        return parent::get_headerhtml();
+    }
+
+    /**
+     * Builds and return the HTML rows of the table (grades headed by student).
+     * @return string HTML
+     */
+    function get_studentshtml() {
+        if (empty($this->users)) {
+            print_error('nousersloaded', 'grades');
+        }
+        
+        $this->numusers = count($this->users);
+
+        $studentshtml = ''; 
+
+        foreach ($this->users as $userid => $user) {
+            $this->tabindex++;
+            $studentshtml .= $this->get_studentrowhtml($user);
+        }
+
+        return $studentshtml;
+    }
+    
+    
+    /**
+     * Given a userid, and provided the gtree is correctly loaded, returns a complete HTML row for this user.
+     *
+     * @param object $user
+     * @return string
+     */
+    function get_studentrowhtml($user) {
+        global $CFG;
+        $showuserimage = $this->get_pref('showuserimage');
+        $showuseridnumber = $this->get_pref('showuseridnumber');
+        $studentrowhtml = '';
+        $row_classes = array(' even ', ' odd ');
+
+        if ($this->canviewhidden) {
+            $altered = array();
+            $unknown = array();
+        } else {
+            $hiding_affected = grade_grade::get_hiding_affected($this->grades[$userid], $this->gtree->items);
+            $altered = $hiding_affected['altered'];
+            $unknown = $hiding_affected['unknown'];
+            unset($hiding_affected);
+        }
+
+        $columncount = 0;
+        // Student name and link
+        $user_pic = null;
+        if ($showuserimage) {
+            $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, true, 0, true) . '</div>';
+        }
+
+        $studentrowhtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
+                      .'<th class="header c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
+                      .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
+                      .fullname($user).'</a></th>';
+
+        if ($showuseridnumber) {
+            $studentrowhtml .= '<th class="header c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'. $user->idnumber.'</th>';
+        }
+        
+        $columntabcount = 0;
+        $feedback_tabindex_modifier = 1; // Used to offset the grade value at the beginning of each new column
+
+        if ($this->get_pref('showquickfeedback')) {
+            $feedback_tabindex_modifier = 2; 
+        }
+
+        foreach ($this->gtree->items as $itemid=>$unused) {
+
+            $nexttabindex = $this->tabindex + $columntabcount * $feedback_tabindex_modifier * $this->numusers;
+            $studentrowhtml .= $this->get_gradecellhtml($user, $itemid, $columncount, $nexttabindex, $altered, $unknown);
+            $columntabcount++;
+        }
+
+        $studentrowhtml .= '</tr>';
+        return $studentrowhtml;
+
+    }
+    
+    /**
+     * Retuns the HTML table cell for a user's grade for a grade_item
+     *
+     * @param object $user
+     * @param int    $itemid
+     * @param int    $columncount
+     * @param int    $nexttabindex
+     * @param array  $altered
+     * @param array  $unknown
+     *
+     * @return string
+     */
+    function get_gradecellhtml($user, $itemid, $columncount, $nexttabindex, $altered=array(), $unknown=array()) {
+        global $CFG, $USER;
+        
+        $strfeedback  = $this->get_lang_string("feedback");
+        $strgrade     = $this->get_lang_string('grade');
+        
+        // Preload scale objects for items with a scaleid
+        $scales_array = $this->get_scales_array();
+
+        $userid = $user->id;
+        $item =& $this->gtree->items[$itemid];
+        $grade = $this->grades[$userid][$item->id];
+
+        // Get the decimal points preference for this item
+        $decimalpoints = $item->get_decimals();
+
+        if (in_array($itemid, $unknown)) {
+            $gradeval = null;
+        } else if (array_key_exists($itemid, $altered)) {
+            $gradeval = $altered[$itemid];
+        } else {
+            $gradeval = $grade->finalgrade;
+        }
+
+        $gradecellhtml = '';
+
+        // MDL-11274
+        // Hide grades in the grader report if the current grader doesn't have 'moodle/grade:viewhidden'
+        if (!$this->canviewhidden and $grade->is_hidden()) {
+            if (!empty($CFG->grade_hiddenasdate) and $grade->get_datesubmitted() and !$item->is_category_item() and !$item->is_course_item()) {
+                // the problem here is that we do not have the time when grade value was modified, 'timemodified' is general modification date for grade_grades records
+                $gradecellhtml .= '<td class="cell c'.$columncount++.'"><span class="datesubmitted">'.userdate($grade->get_datesubmitted(),get_string('strftimedatetimeshort')).'</span></td>';
+            } else {
+                $gradecellhtml .= '<td class="cell c'.$columncount++.'">-</td>';
+            }
+            continue;
+        }
+
+        // emulate grade element
+        $eid = $this->gtree->get_grade_eid($grade);
+        $element = array('eid'=>$eid, 'object'=>$grade, 'type'=>'grade');
+
+        $cellclasses = 'cell c'.$columncount++;
+        if ($item->is_category_item()) {
+            $cellclasses .= ' cat';
+        }
+        if ($item->is_course_item()) {
+            $cellclasses .= ' course';
+        }
+        if ($grade->is_overridden()) {
+            $cellclasses .= ' overridden';
+        }
+
+        if ($grade->is_excluded()) {
+            $cellclasses .= ' excluded';
+        }
+
+        $gradecellhtml .= "<td id=\"gradecell_u$userid-i$itemid\" class=\"$cellclasses\">";
+
+        if ($grade->is_excluded()) {
+            $gradecellhtml .= get_string('excluded', 'grades') . ' ';
+        }
+
+        // Do not show any icons if no grade (no record in DB to match)
+        if (!$item->needsupdate and $USER->gradeediting[$this->courseid]) {
+            $gradecellhtml .= $this->get_icons($element);
+        }
+
+        $hidden = '';
+        if ($grade->is_hidden()) {
+            $hidden = ' hidden ';
+        }
+
+        $gradepass = ' gradefail '; 
+        if ($grade->is_passed($item)) {
+            $gradepass = ' gradepass ';
+        } elseif (is_null($grade->is_passed($item))) {
+            $gradepass = '';
+        }
+
+        // if in editting mode, we need to print either a text box
+        // or a drop down (for scales)
+        // grades in item of type grade category or course are not directly editable
+        if ($item->needsupdate) {
+            $gradecellhtml .= '<span class="gradingerror'.$hidden.'">'.get_string('error').'</span>';
+
+        } else if ($USER->gradeediting[$this->courseid]) {
+            $anchor_id = "gradevalue_$userid-i$itemid";
+
+            if ($item->scaleid && !empty($scales_array[$item->scaleid])) {
+                $scale = $scales_array[$item->scaleid];
+                $gradeval = (int)$gradeval; // scales use only integers
+                $scales = explode(",", $scale->scale);
+                // reindex because scale is off 1
+
+                // MDL-12104 some previous scales might have taken up part of the array
+                // so this needs to be reset
+                $scaleopt = array();
+                $i = 0;
+                foreach ($scales as $scaleoption) {
+                    $i++;
+                    $scaleopt[$i] = $scaleoption;
+                }
+
+                if ($this->get_pref('quickgrading') and $grade->is_editable()) {
+                    $oldval = empty($gradeval) ? -1 : $gradeval;
+                    if (empty($item->outcomeid)) {
+                        $nogradestr = $this->get_lang_string('nograde');
+                    } else {
+                        $nogradestr = $this->get_lang_string('nooutcome', 'grades');
+                    }
+
+                    $gradecellhtml .= '<select name="grade_'.$userid.'_'.$item->id.'" class="gradescale editable" ' 
+                                    . 'id="gradescale_'.$userid.'-i'.$item->id.'" tabindex="'.$nexttabindex.'">' . "\n";
+                    $gradecellhtml .= '<option value="-1">' . $nogradestr . "</option>\n";
+
+                    foreach ($scaleopt as $val => $label) {
+                        $selected = '';
+                        
+                        if ($val == $oldval) {
+                            $selected = 'selected="selected"';
+                        }
+
+                        $gradecellhtml .= "<option value=\"$val\" $selected>$label</option>\n";
+                    }
+
+                    $gradecellhtml .= "</select>\n";
+
+                } elseif(!empty($scale)) {
+                    $scales = explode(",", $scale->scale);
+
+                    // invalid grade if gradeval < 1
+                    if ($gradeval < 1) {
+                        $gradecellhtml .= '<a tabindex="'.$nexttabindex .'" id="' . $anchor_id 
+                                       . '"  class="gradevalue'.$hidden.$gradepass.'">-</a>';
+                    } else {
+                        //just in case somebody changes scale
+                        $gradeval = (int)bounded_number($grade->grade_item->grademin, $gradeval, $grade->grade_item->grademax); 
+                        $gradecellhtml .= '<a tabindex="'.$nexttabindex .'" id="' . $anchor_id
+                                       . '"  class="gradevalue'.$hidden.$gradepass.'">'.$scales[$gradeval-1].'</a>';
+                    }
+                } else {
+                    // no such scale, throw error?
+                }
+
+            } else if ($item->gradetype != GRADE_TYPE_TEXT) { // Value type
+                $value = $gradeval;
+                if ($this->get_pref('quickgrading') and $grade->is_editable()) {
+                    $gradecellhtml .= '<a tabindex="'.$nexttabindex .'" id="' . $anchor_id 
+                                   . '"  class="gradevalue'.$hidden.$gradepass.' editable">' .$value.'</a>';
+                } else {
+                    $gradecellhtml .= '<a tabindex="'.$nexttabindex .'" id="' . $anchor_id . '"  class="gradevalue'
+                                   .$hidden.$gradepass.'">'.$value.'</a>';
+                }
+            }
+
+
+            // If quickfeedback is on, print an input element
+            if ($this->get_pref('showquickfeedback') and $grade->is_editable()) {
+                if ($this->get_pref('quickgrading')) {
+                    $gradecellhtml .= '<br />';
+                }
+                $feedback = s($grade->feedback);
+                $anchor_id = "gradefeedback_$userid-i$itemid";
+                
+                if (empty($feedback)) {
+                    $feedback = get_string('addfeedback', 'grades');
+                    $gradecellhtml .= '<a ';
+                } else {
+                    $overlib = '';
+                    $full_feedback = addslashes_js(trim(format_string($grade->feedback, $grade->feedbackformat)));
+                    $overlib = "return overlib('$full_feedback', BORDER, 0, FGCLASS, 'feedback', "
+                              ."CAPTIONFONTCLASS, 'caption', CAPTION, '$strfeedback');";
+                    $gradecellhtml .= '<a onmouseover="'.s($overlib).'" onmouseout="return nd();" ';
+                }
+                
+                $feedback_tabindex = $nexttabindex + $this->numusers;
+
+                $short_feedback = shorten_text($feedback, $this->feedback_trunc_length);
+                $gradecellhtml .= ' tabindex="'.$feedback_tabindex .'" id="'
+                               . $anchor_id . '"  class="gradefeedback editable">' . $short_feedback . '</a>';
+                $this->feedbacks[$userid][$item->id] = $feedback;
+            }
+
+        } else { // Not editing
+            $gradedisplaytype = $item->get_displaytype();
+
+            // If feedback present, surround grade with feedback tooltip: Open span here
+            if (!empty($grade->feedback)) {
+                $overlib = '';
+                $feedback = addslashes_js(trim(format_string($grade->feedback, $grade->feedbackformat)));
+                $overlib = "return overlib('$feedback', BORDER, 0, FGCLASS, 'feedback', "
+                          ."CAPTIONFONTCLASS, 'caption', CAPTION, '$strfeedback');";
+                $gradecellhtml .= '<span onmouseover="'.s($overlib).'" onmouseout="return nd();">';
+            }
+
+            if ($item->needsupdate) {
+                $gradecellhtml .= '<span class="gradingerror'.$hidden.$gradepass.'">'.get_string('error').'</span>';
+
+            } else {
+                $gradecellhtml .= '<span class="gradevalue'.$hidden.$gradepass.'">'.grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null).'</span>';
+            }
+
+            // Close feedback span
+            if (!empty($grade->feedback)) {
+                $gradecellhtml .= '</span>';
+            }
+        }
+
+        if (!empty($this->gradeserror[$item->id][$userid])) {
+            $gradecellhtml .= $this->gradeserror[$item->id][$userid];
+        }
+
+        $gradecellhtml .=  '</td>' . "\n";
+        return $gradecellhtml;
+    }
+
+    /**
+     * Builds and return the HTML row of column totals.
+     * @param  bool $grouponly Whether to return only group averages or all averages.
+     * @return string HTML
+     */
+    function get_avghtml($grouponly=false) {
+        return parent::get_avghtml();
+    }
+
+    /**
+     * Builds and return the HTML row of ranges for each column (i.e. range).
+     * @return string HTML
+     */
+    function get_rangehtml() {
+        return parent::get_rangehtml();
+    }
+    
+    /**
+     * Builds and return the HTML row of ranges for each column (i.e. range).
+     * @return string HTML
+     */
+    function get_iconshtml() {
+        return parent::get_iconshtml();
+    }
+
+    /**
+     * Given a grade_category, grade_item or grade_grade, this function
+     * figures out the state of the object and builds then returns a div
+     * with the icons needed for the grader report.
+     *
+     * @param object $object
+     * @return string HTML
+     */
+    function get_icons($element) {
+        return parent::get_icons($element);
+    }
+
+    /**
+     * Given a category element returns collapsing +/- icon if available
+     * @param object $object
+     * @return string HTML
+     */
+    function get_collapsing_icon($element) {
+        return parent::get_collapsing_icon($element);
+    }
+
+    /**
+     * Processes a single action against a category, grade_item or grade.
+     * @param string $target eid ({type}{id}, e.g. c4 for category4)
+     * @param string $action Which action to take (edit, delete etc...)
+     * @return
+     */
+    function process_action($target, $action) {
+        return parent::process_action($target, $action);
+    }
+    
+    /**
+     * Returns a valid JSON object with feedbacks indexed by userid and itemid.
+     * Paging is taken into account: this needs to be reloaded at each new page (not page load, just page of data);
+     */
+    function getFeedbackJsArray() {
+        if (!empty($this->feedbacks)) {
+            return json_encode($this->feedbacks);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns a json_encoded hash of itemid => decimalpoints preferences
+     */
+    function getItemsDecimalPoints() { 
+        $decimals = array();
+        foreach ($this->gtree->items as $itemid=>$item) {
+            $decimals[$itemid] = $item->get_decimals();
+        }
+        return json_encode($decimals);
+    }
+}
+?>
