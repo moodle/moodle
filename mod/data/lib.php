@@ -1837,7 +1837,7 @@ function data_presets_export($course, $cm, $data) {
 
     $presetxml .= "<settings>\n";
     foreach ($settingssaved as $setting) {
-        $presetxml .= "<$setting>".htmlspecialchars($data->$setting, ENT_NOQUOTES)."</$setting>\n";
+        $presetxml .= "<$setting>".htmlspecialchars($data->$setting)."</$setting>\n";
     }
     $presetxml .= "</settings>\n\n";
 
@@ -1847,7 +1847,7 @@ function data_presets_export($course, $cm, $data) {
             $presetxml .= "<field>\n";
             foreach ($field as $key => $value) {
                 if ($value != '' && $key != 'id' && $key != 'dataid') {
-                    $presetxml .= "<$key>".htmlspecialchars($value, ENT_NOQUOTES)."</$key>\n";
+                    $presetxml .= "<$key>".htmlspecialchars($value)."</$key>\n";
                 }
             }
             $presetxml .= "</field>\n\n";
@@ -1933,13 +1933,12 @@ class PresetImporter {
                 if (!is_array($value)) {
                     continue;
                 }
-                $f->$param = $value[0]['#'];
+                $f->$param = addslashes($value[0]['#']);
             }
             $f->dataid = $this->data->id;
             $f->type = clean_param($f->type, PARAM_ALPHA);
             $fields[] = $f;
         }
-
         /* Now add the HTML templates to the settings array so we can update d */
         $settings->singletemplate     = file_get_contents($this->folder."/singletemplate.html");
         $settings->listtemplate       = file_get_contents($this->folder."/listtemplate.html");
