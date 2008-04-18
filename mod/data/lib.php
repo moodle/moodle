@@ -961,6 +961,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
                              .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
         } else {
             $replacement[] = '';
+            $replacement[] = '';
         }
         $patterns[]='##more##';
         $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" class="iconsmall" alt="'.get_string('more', 'data').'" title="'.get_string('more', 'data').'" /></a>';
