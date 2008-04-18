@@ -263,6 +263,14 @@ define ('BLOG_GLOBAL_LEVEL', 5);
 //length of "varchar(255) / 3 (bytes / utf-8 character) = 85".
 define('TAG_MAX_LENGTH', 50); 
 
+/**
+ * Password policy constants
+ */
+define ('PASSWORD_LOWER', 'abcdefghijklmnopqrstuvwxyz');
+define ('PASSWORD_UPPER', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+define ('PASSWORD_DIGITS', '0123456789');
+define ('PASSWORD_NONALPHANUM', '.,;:!?_-+/*@#&$');
+
 if (!defined('SORT_LOCALE_STRING')) { // PHP < 4.4.0 - TODO: remove in 2.0
     define('SORT_LOCALE_STRING', SORT_STRING);
 }
@@ -6638,23 +6646,61 @@ function getweek ($startdate, $thedate) {
 
 /**
  * returns a randomly generated password of length $maxlen.  inspired by
- * {@link http://www.phpbuilder.com/columns/jesus19990502.php3}
+ * {@link http://www.phpbuilder.com/columns/jesus19990502.php3} and
+ * {@link http://es2.php.net/manual/en/function.str-shuffle.php#73254}
  *
- * @param int $maxlength  The maximum size of the password being generated.
+ * @param int $maxlen  The maximum size of the password being generated.
  * @return string
  */
 function generate_password($maxlen=10) {
     global $CFG;
 
-    $fillers = '1234567890!$-+';
-    $wordlist = file($CFG->wordlist);
+    if (empty($CFG->passwordpolicy)) {
+        $fillers = PASSWORD_DIGITS;
+        $wordlist = file($CFG->wordlist);
+        $word1 = trim($wordlist[rand(0, count($wordlist) - 1)]);
+        $word2 = trim($wordlist[rand(0, count($wordlist) - 1)]);
+        $filler1 = $fillers[rand(0, strlen($fillers) - 1)];
+        $password = $word1 . $filler1 . $word2;
+    } else {
+        $maxlen = !empty($CFG->minpasswordlength) ? $CFG->minpasswordlength : 0;
+        $digits = $CFG->minpassworddigits;
+        $lower = $CFG->minpasswordlower;
+        $upper = $CFG->minpasswordupper;
+        $nonalphanum = $CFG->minpasswordnonalphanum;
+        $additional = $maxlen - ($lower + $upper + $digits + $nonalphanum);
 
-    srand((double) microtime() * 1000000);
-    $word1 = trim($wordlist[rand(0, count($wordlist) - 1)]);
-    $word2 = trim($wordlist[rand(0, count($wordlist) - 1)]);
-    $filler1 = $fillers[rand(0, strlen($fillers) - 1)];
+        // Make sure we have enough characters to fulfill
+        // complexity requirements
+        $passworddigits = PASSWORD_DIGITS;
+        while ($digits > strlen($passworddigits)) {
+            $passworddigits .= PASSWORD_DIGITS;
+        }
+        $passwordlower = PASSWORD_LOWER;
+        while ($lower > strlen($passwordlower)) {
+            $passwordlower .= PASSWORD_LOWER;
+        }
+        $passwordupper = PASSWORD_UPPER;
+        while ($upper > strlen($passwordupper)) {
+            $passwordupper .= PASSWORD_UPPER;
+        }
+        $passwordnonalphanum = PASSWORD_NONALPHANUM;
+        while ($nonalphanum > strlen($passwordnonalphanum)) {
+            $passwordnonalphanum .= PASSWORD_NONALPHANUM;
+        }
 
-    return substr($word1 . $filler1 . $word2, 0, $maxlen);
+        // Now mix and shuffle it all
+        $password = str_shuffle (substr(str_shuffle ($passwordlower), 0, $lower) .
+                                 substr(str_shuffle ($passwordupper), 0, $upper) .
+                                 substr(str_shuffle ($passworddigits), 0, $digits) .
+                                 substr(str_shuffle ($passwordnonalphanum), 0 , $nonalphanum) .
+                                 substr(str_shuffle ($passwordlower .
+                                                     $passwordupper .
+                                                     $passworddigits .
+                                                     $passwordnonalphanum), 0 , $additional));
+    }
+
+    return substr ($password, 0, $maxlen);
 }
 
 /**
