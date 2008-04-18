@@ -4249,12 +4249,9 @@ function forum_user_can_post_discussion($forum, $currentgroup=null, $unused=-1, 
     if ($currentgroup) {
         return groups_is_member($currentgroup);
     } else {
-        //else it might be group 0 in visible mode
-        if ($groupmode == VISIBLEGROUPS){
-            return true;
-        } else {
-            return false;
-        }
+        // no group membership and no accessallgroups means no new discussions
+        // reverted to 1.7 behaviour in 1.9+,  buggy in 1.8.0-1.9.0
+        return false;
     }
 }
 
