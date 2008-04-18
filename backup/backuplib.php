@@ -1778,6 +1778,16 @@
 
         global $CFG,$preferences;
 
+    /// MDL-14072: Prevent NULLs, empties and numbers to be processed by the
+    /// heavy interlinking. Just a few cpu cycles saved.
+        if ($content === NULL) {
+            return NULL;
+        } else if ($content === '') {
+            return '';
+        } else if (is_numeric($content)) {
+            return $content;
+        }
+
         //Use one static variable to cache all the require_once calls that,
         //under PHP5 seems to increase load too much, and we are requiring
         //them here thousands of times (one per content). MDL-8700. 

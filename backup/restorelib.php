@@ -2607,8 +2607,18 @@
     //step in the restore execution, because we need to have it 
     //finished to know all the oldid, newid equivaleces
     function restore_decode_absolute_links($content) {
-                                     
-        global $CFG,$restore;    
+
+        global $CFG,$restore;
+
+    /// MDL-14072: Prevent NULLs, empties and numbers to be processed by the
+    /// heavy interlinking. Just a few cpu cycles saved.
+        if ($content === NULL) {
+            return NULL;
+        } else if ($content === '') {
+            return '';
+        } else if (is_numeric($content)) {
+            return $content;
+        }
 
         //Now decode wwwroot and file.php calls
         $search = array ("$@FILEPHP@$");
