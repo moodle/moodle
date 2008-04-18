@@ -13,12 +13,12 @@
     $page         = optional_param('page', 0, PARAM_INT);                     // which page to show
     $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
     $mode         = optional_param('mode', NULL);                             // '0' for less details, '1' for more
-    $accesssince  = optional_param('accesssince',0,PARAM_INT);               // filter by last access. -1 = never
+    $accesssince  = optional_param('accesssince',0,PARAM_INT);                // filter by last access. -1 = never
     $search       = optional_param('search','',PARAM_CLEAN);
-    $roleid       = optional_param('roleid', 0, PARAM_INT);                 // optional roleid
+    $roleid       = optional_param('roleid', 0, PARAM_INT);                   // optional roleid, -1 means all site users on frontpage
 
-    $contextid    = optional_param('contextid', 0, PARAM_INT);                 // one of this or
-    $courseid     = optional_param('id', 0, PARAM_INT);                        // this are required
+    $contextid    = optional_param('contextid', 0, PARAM_INT);                // one of this or
+    $courseid     = optional_param('id', 0, PARAM_INT);                       // this are required
 
     if ($contextid) {
         if (! $context = get_context_instance_by_id($contextid)) {
@@ -48,6 +48,8 @@
         require_capability('moodle/course:viewparticipants', $context);
     } else {
         require_capability('moodle/site:viewparticipants', $sitecontext);
+        // override the default on frontpage
+        $roleid = optional_param('roleid', -1, PARAM_INT);
     }
 
     /// front page course is different
@@ -62,6 +64,14 @@
 
         $canviewroles    = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $context);
         $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
+
+        if ($context->id == $frontpagectx->id) {
+            //we want admins listed on frontpage too
+            foreach ($doanythingroles as $dar) {
+                $canviewroles[$dar->id] = $dar;
+            }
+            $doanythingroles = array();
+        }
 
         foreach ($roles as $role) {
             if (!isset($canviewroles[$role->id])) {   // Avoid this role (eg course creator)
@@ -78,7 +88,12 @@
         }
     }
 
-    // no roles to display yet? 
+    if ($context->id == $frontpagectx->id and $CFG->defaultfrontpageroleid) {
+        // default frontpage role is assigned to all site users
+        unset($rolenames[$CFG->defaultfrontpageroleid]);
+    }
+
+    // no roles to display yet?
     // frontpage course is an exception, on the front page course we should display all users
     if (empty($rolenames) && $context->id != $frontpagectx->id) {
         if (has_capability('moodle/role:assign', $context)) {
@@ -184,6 +199,10 @@
         $courselist = array();
         foreach ($mycourses as $mycourse) {
             $courselist[$mycourse->id] = format_string($mycourse->shortname);
+        }
+        if (has_capability('moodle/site:viewparticipants', $sitecontext)) {
+            unset($courselist[SITEID]);
+            $courselist = array(SITEID => format_string($SITE->shortname)) + $courselist;
         }
         popup_form($CFG->wwwroot.'/user/index.php?roleid='.$roleid.'&amp;sifirst=&amp;silast=&amp;id=',
                    $courselist, 'courseform', $course->id, '', '', '', false, 'self', get_string('mycourses'));
@@ -331,12 +350,12 @@
     } else {
         $listofcontexts = '('.$sitecontext->id.')'; // must be site
     }
-    if ($roleid) {
+    if ($roleid > 0) {
         $selectrole = " AND r.roleid = $roleid ";
     } else {
         $selectrole = " ";
     }
-    
+
     if ($context->id != $frontpagectx->id) {
         $select = 'SELECT DISTINCT u.id, u.username, u.firstname, u.lastname,
                       u.email, u.city, u.country, u.picture,
@@ -344,18 +363,27 @@
                       COALESCE(ul.timeaccess, 0) AS lastaccess,
                       r.hidden,
                       ctx.id AS ctxid, ctx.path AS ctxpath,
-                      ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel ';    
+                      ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel ';
         $select .= $course->enrolperiod?', r.timeend ':'';
     } else {
-        $select = 'SELECT u.id, u.username, u.firstname, u.lastname,
-                      u.email, u.city, u.country, u.picture,
-                      u.lang, u.timezone, u.emailstop, u.maildisplay, u.imagealt,
-                      u.lastaccess,
-                      ctx.id AS ctxid, ctx.path AS ctxpath,
-                      ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel ';
+        if ($roleid >= 0) {
+            $select = 'SELECT u.id, u.username, u.firstname, u.lastname,
+                          u.email, u.city, u.country, u.picture,
+                          u.lang, u.timezone, u.emailstop, u.maildisplay, u.imagealt,
+                          u.lastaccess, r.hidden,
+                          ctx.id AS ctxid, ctx.path AS ctxpath,
+                          ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel ';
+        } else {
+            $select = 'SELECT u.id, u.username, u.firstname, u.lastname,
+                          u.email, u.city, u.country, u.picture,
+                          u.lang, u.timezone, u.emailstop, u.maildisplay, u.imagealt,
+                          u.lastaccess,
+                          ctx.id AS ctxid, ctx.path AS ctxpath,
+                          ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel ';
+        }
     }
 
-    if ($context->id != $frontpagectx->id) {
+    if ($context->id != $frontpagectx->id or $roleid >= 0) {
         $from   = "FROM {$CFG->prefix}user u
                 LEFT OUTER JOIN {$CFG->prefix}context ctx
                     ON (u.id=ctx.instanceid AND ctx.contextlevel = ".CONTEXT_USER.")
@@ -364,12 +392,12 @@
                 LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul
                     ON (r.userid=ul.userid and ul.courseid = $course->id) ";
     } else {
+        // on frontpage and we want all registered users
         $from = "FROM {$CFG->prefix}user u
                 LEFT OUTER JOIN {$CFG->prefix}context ctx
-                    ON (u.id=ctx.instanceid AND ctx.contextlevel = ".CONTEXT_USER.") ";               
-     
+                    ON (u.id=ctx.instanceid AND ctx.contextlevel = ".CONTEXT_USER.") ";
     }
-    
+
     $hiddensql = has_capability('moodle/role:viewhiddenassigns', $context)? '':' AND r.hidden = 0 ';
 
     // exclude users with roles we are avoiding
@@ -384,7 +412,7 @@
     // join on 2 conditions
     // otherwise we run into the problem of having records in ul table, but not relevant course
     // and user record is not pulled out
-    
+
     if ($context->id != $frontpagectx->id) {
         $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts)
             AND u.deleted = 0 $selectrole
@@ -394,9 +422,16 @@
             $hiddensql ";
             $where .= get_course_lastaccess_sql($accesssince);
     } else {
-        $where = "WHERE u.deleted = 0
-            AND u.username != 'guest'";
-            $where .= get_user_lastaccess_sql($accesssince);
+        if ($roleid >= 0) {
+            $where = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts)
+                AND u.deleted = 0 $selectrole
+                AND u.username != 'guest'";
+                $where .= get_user_lastaccess_sql($accesssince);
+        } else {
+            $where = "WHERE u.deleted = 0
+                AND u.username != 'guest'";
+                $where .= get_user_lastaccess_sql($accesssince);
+        }
     }
     $wheresearch = '';
 
@@ -425,12 +460,12 @@
     /// because it retrieves ALL users (without role checking) - MDL-14034
     if ($table->get_sql_sort()) {
         $sort = ' ORDER BY '.$table->get_sql_sort();
-        if ($context->id != $frontpagectx->id) {
+        if ($context->id != $frontpagectx->id or $roleid >= 0) {
             $sort .= ', r.hidden DESC';
         }
     } else {
         $sort = '';
-        if ($context->id != $frontpagectx->id) {
+        if ($context->id != $frontpagectx->id or $roleid >= 0) {
             $sort .= ' ORDER BY r.hidden DESC';
         }
     }
@@ -443,18 +478,43 @@
     $userlist = get_recordset_sql($select.$from.$where.$wheresearch.$sort,
             $table->get_page_start(),  $table->get_page_size());
 
-    /// If there are multiple Roles in the course, then show a drop down menu for switching
+    if ($context->id == $frontpagectx->id) {
+        $strallsiteusers = get_string('allsiteusers', 'role');
+        if ($CFG->defaultfrontpageroleid) {
+            if ($fprole = get_record('role', 'id', $CFG->defaultfrontpageroleid)) {
+                $fprole = role_get_name($fprole, $frontpagectx);
+                $strallsiteusers = "$strallsiteusers ($fprole)";
+            }
+        }
+        $rolenames = array(-1 => $strallsiteusers) + $rolenames;
+    }
 
+    /// If there are multiple Roles in the course, then show a drop down menu for switching
     if (count($rolenames) > 1) {
         echo '<div class="rolesform">';
-        echo get_string('currentrole', 'role').': ';
-        $rolenames = array(0 => get_string('all')) + $rolenames;
+        echo '<label for="rolesform_jump">'.get_string('currentrole', 'role').'&nbsp;</label>';
+        if ($context->id != $frontpagectx->id) {
+            $rolenames = array(0 => get_string('all')) + $rolenames;
+        } else {
+            if (!$CFG->defaultfrontpageroleid) {
+                // we do not want "All users with role" - we already have all users in defualt frontpage role option
+                $rolenames = array(0 => get_string('userswithrole', 'role')) + $rolenames;
+            }
+        }
         popup_form("$CFG->wwwroot/user/index.php?contextid=$context->id&amp;sifirst=&amp;silast=&amp;roleid=", $rolenames,
                    'rolesform', $roleid, '');
         echo '</div>';
+
+    } else if (count($rolenames) == 1) {
+        // when all users with the same role - print its name
+        echo '<div class="rolesform">';
+        echo get_string('role').': ';
+        $rolename = reset($rolenames);
+        echo $rolename;
+        echo '</div>';
     }
 
-    if ($roleid) {
+    if ($roleid > 0) {
         if (!$currentrole = get_record('role','id',$roleid)) {
             error('That role does not exist');
         }
@@ -462,19 +522,19 @@
         // MDL-12217, use course specific rolename
         if (isset($rolenames[$currentrole->id])){
             $a->role = $rolenames[$currentrole->id];
-        }else{                
+        }else{
             $a->role = $currentrole->name;//safety net
         }
         $heading = format_string(get_string('xuserswiththerole', 'role', $a));
 
         if ($currentgroup and $group) {
             $a->group = $group->name;
-            $heading .= ' ' . format_string(get_string('ingroup', 'role', $a)); 
-        } 
+            $heading .= ' ' . format_string(get_string('ingroup', 'role', $a));
+        }
 
         if ($accesssince) {
             $a->timeperiod = $timeoptions[$accesssince];
-            $heading .= ' ' . format_string(get_string('inactiveformorethan', 'role', $a)); 
+            $heading .= ' ' . format_string(get_string('inactiveformorethan', 'role', $a));
         }
 
         $heading .= ": $a->number";
@@ -484,16 +544,21 @@
         }
         print_heading($heading, 'center', 3);
     } else {
-        if ($course->id !== SITEID && has_capability('moodle/role:assign', $context)) {
+        if ($course->id != SITEID && has_capability('moodle/role:assign', $context)) {
             $editlink  = ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">';
             $editlink .= '<img src="'.$CFG->pixpath.'/i/edit.gif" class="icon" alt="" /></a>';
         } else {
             $editlink = '';
         }
-        if ($matchcount < $totalcount) {
-            print_heading(get_string('allparticipants').': '.$matchcount.'/'.$totalcount . $editlink, '', 3);
+        if ($course->id == SITEID and $roleid < 0) {
+            $strallparticipants = get_string('allsiteusers', 'role');
         } else {
-            print_heading(get_string('allparticipants').': '.$matchcount . $editlink, '', 3);
+            $strallparticipants = get_string('allparticipants');
+        }
+        if ($matchcount < $totalcount) {
+            print_heading($strallparticipants.': '.$matchcount.'/'.$totalcount . $editlink, '', 3);
+        } else {
+            print_heading($strallparticipants.': '.$matchcount . $editlink, '', 3);
         }
     }
 
