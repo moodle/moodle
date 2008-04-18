@@ -151,6 +151,11 @@ define('RISK_XSS',         0x0004);
 define('RISK_PERSONAL',    0x0008);
 define('RISK_SPAM',        0x0010);
 
+// rolename displays
+define('ROLENAME_ORIGINAL', 0);// the name as defined in the role definition
+define('ROLENAME_ALIAS', 1);   // the name as defined by a role alias 
+define('ROLENAME_BOTH', 2);    // Both, like this:  Role alias (Original)
+
 require_once($CFG->dirroot.'/group/lib.php');
 
 $context_cache    = array();    // Cache of all used context objects for performance (by level and instance)
@@ -4182,7 +4187,7 @@ function allow_assign($sroleid, $troleid) {
  * @param string $field
  * @return array
  */
-function get_assignable_roles ($context, $field="name") {
+function get_assignable_roles ($context, $field='name', $rolenamedisplay=ROLENAME_ALIAS) {
 
     global $CFG;
 
@@ -4200,24 +4205,15 @@ function get_assignable_roles ($context, $field="name") {
 
     $roleids = implode(',',$roleids);
 
-    // apply context role aliases if name requested
-    if ($field == 'name') {
-        $f = "COALESCE(rn.name, r.name) AS name";
-    } else {
-        $f = "r.$field";
-    }
-
     // The subselect scopes the DISTINCT down to
     // the role ids - a DISTINCT over the whole of
     // the role table is much more expensive on some DBs
-    $sql = "SELECT r.id, $f
+    $sql = "SELECT r.id, r.$field
               FROM {$CFG->prefix}role r
                    JOIN ( SELECT DISTINCT allowassign as allowedrole 
                             FROM  {$CFG->prefix}role_allow_assign raa
                            WHERE raa.roleid IN ($roleids) ) ar
                    ON r.id=ar.allowedrole
-                   LEFT OUTER JOIN {$CFG->prefix}role_names rn
-                   ON (rn.roleid = r.id AND rn.contextid = $context->id)
             ORDER BY sortorder ASC";
 
     $rs = get_recordset_sql($sql);
@@ -4226,10 +4222,8 @@ function get_assignable_roles ($context, $field="name") {
         $roles[$r->id] = $r->{$field};
     }
     rs_close($rs);
-    foreach ($roles as $roleid => $rolename) {
-        $roles[$roleid] = strip_tags(format_string($rolename, true));
-    }
-    return $roles;
+
+    return role_fix_names($roles, $context, $rolenamedisplay);
 }
 
 /**
@@ -4240,7 +4234,7 @@ function get_assignable_roles ($context, $field="name") {
  * @param string $field
  * @return array
  */
-function get_assignable_roles_for_switchrole ($context, $field="name") {
+function get_assignable_roles_for_switchrole ($context, $field='name', $rolenamedisplay=ROLENAME_ALIAS) {
 
     global $CFG;
 
@@ -4258,18 +4252,10 @@ function get_assignable_roles_for_switchrole ($context, $field="name") {
 
     $roleids = implode(',',$roleids);
 
-    // apply context role aliases if name requested
-    if ($field == 'name') {
-        $f = "COALESCE(rn.name, r.name) AS name";
-    } else {
-        $f = "r.$field";
-    }
-
-
     // The subselect scopes the DISTINCT down to
     // the role ids - a DISTINCT over the whole of
     // the role table is much more expensive on some DBs
-    $sql = "SELECT r.id, $f
+    $sql = "SELECT r.id, r.$field
              FROM {$CFG->prefix}role r
                   JOIN ( SELECT DISTINCT allowassign as allowedrole 
                            FROM  {$CFG->prefix}role_allow_assign raa
@@ -4278,8 +4264,6 @@ function get_assignable_roles_for_switchrole ($context, $field="name") {
                   JOIN {$CFG->prefix}role_capabilities rc
                   ON (r.id = rc.roleid AND rc.capability = 'moodle/course:view' 
                       AND rc.capability != 'moodle/site:doanything') 
-                  LEFT OUTER JOIN {$CFG->prefix}role_names rn
-                  ON (rn.roleid = r.id AND rn.contextid = $context->id)
          ORDER BY sortorder ASC";
 
     $rs = get_recordset_sql($sql);
@@ -4288,10 +4272,8 @@ function get_assignable_roles_for_switchrole ($context, $field="name") {
         $roles[$r->id] = $r->{$field};
     }
     rs_close($rs);
-    foreach ($roles as $roleid => $rolename) {
-        $roles[$roleid] = strip_tags(format_string($rolename, true));
-    }
-    return $roles;
+
+    return role_fix_names($roles, $context, $rolenamedisplay);
 }
 
 /**
@@ -4299,19 +4281,19 @@ function get_assignable_roles_for_switchrole ($context, $field="name") {
  * @param object $context
  * @return array
  */
-function get_overridable_roles($context) {
+function get_overridable_roles($context, $field='name', $rolenamedisplay=ROLENAME_ALIAS) {
 
     $options = array();
 
     if ($roles = get_all_roles()) {
         foreach ($roles as $role) {
             if (user_can_override($context, $role->id)) {
-                $options[$role->id] = $role->name;
+                $options[$role->id] = $role->$field;
             }
         }
     }
 
-    return role_fix_names($options, $context);
+    return role_fix_names($options, $context, $rolenamedisplay);
 }
 
 /**
@@ -5302,19 +5284,34 @@ function role_get_name($role, $coursecontext) {
 /**
  * Prepare list of roles for display, apply aliases and format text
  * @param array $roleoptions array roleid=>rolename
- * @param object $coursecontext
+ * @param object $context
  * @return array of role names
  */
-function role_fix_names($roleoptions, $coursecontext) {
-    if ($aliasnames = get_records('role_names', 'contextid', $coursecontext->id)) {
-        foreach ($aliasnames as $alias) {
-            if (isset($roleoptions[$alias->roleid])) {
-                $roleoptions[$alias->roleid] = $alias->name;
+function role_fix_names($roleoptions, $context, $rolenamedisplay=ROLENAME_ALIAS) {
+    if ($rolenamedisplay != ROLENAME_ORIGINAL && !empty($context->id)) {
+        if ($context->contextlevel == CONTEXT_MODULE || $context->contextlevel == CONTEXT_BLOCK) {  // find the parent course context
+            if ($parentcontextid = array_shift(get_parent_contexts($context))) {
+                $context = get_context_instance_by_id($parentcontextid);
+            }
+        }
+        if ($aliasnames = get_records('role_names', 'contextid', $context->id)) {
+            if ($rolenamedisplay == ROLENAME_ALIAS) {
+                foreach ($aliasnames as $alias) {
+                    if (isset($roleoptions[$alias->roleid])) {
+                        $roleoptions[$alias->roleid] = format_string($alias->name);
+                    }
+                }
+            } else if ($rolenamedisplay == ROLENAME_BOTH) {
+                foreach ($aliasnames as $alias) {
+                    if (isset($roleoptions[$alias->roleid])) {
+                        $roleoptions[$alias->roleid] = format_string($alias->name).' ('.format_string($roleoptions[$alias->roleid]).')';
+                    }
+                }
             }
         }
     }
     foreach ($roleoptions as $rid => $name) {
-        $roleoptions[$rid] = strip_tags(format_string($name));
+        $roleoptions[$rid] = strip_tags($name);
     }
     return $roleoptions;
 }

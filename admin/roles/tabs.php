@@ -75,8 +75,6 @@ if ($currenttab != 'update') {
 
             require_login($course);
 
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // for role names later
-
             $fullmodulename      = get_string("modulename", $module->name);
             $streditinga         = get_string("editinga", "moodle", $fullmodulename);
             $strmodulenameplural = get_string("modulenameplural", $module->name);
@@ -110,9 +108,6 @@ if ($currenttab != 'update') {
                 if ($block = get_record('block', 'id', $blockinstance->blockid)) {
                     $blockname = print_context_name($context);
 
-                    // Prepare the last part of the breadcrumbs first
-                    $navlinks[98] = array('name' => $blockname, 'link' => null, 'type' => 'misc');
-                    $navlinks[99] = array('name' => $straction, 'link' => null, 'type' => 'misc');
 
                     switch ($blockinstance->pagetype) {
                         case 'course-view':
@@ -120,12 +115,8 @@ if ($currenttab != 'update') {
 
                                 require_login($course);
 
-                                if ($course->id != SITEID) {
-                                    $navlinks[0] = array('name' => $course->shortname,
-                                                        'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
-                                                        'type' => 'misc');
-                                    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // for role names later
-                                }
+                                $navlinks[] = array('name' => $blockname, 'link' => null, 'type' => 'misc');
+                                $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
                                 $navigation = build_navigation($navlinks);
                                 print_header("$straction: $blockname", $course->fullname, $navigation);
                             }
@@ -133,14 +124,30 @@ if ($currenttab != 'update') {
 
                         case 'blog-view':
                             $strblogs = get_string('blogs','blog');
-                            $navlinks[0] = array('name' => $strblogs,
+                            $navlinks[] = array('name' => $strblogs,
                                                  'link' => $CFG->wwwroot.'/blog/index.php',
                                                  'type' => 'misc');
+                            $navlinks[] = array('name' => $blockname, 'link' => null, 'type' => 'misc');
+                            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
                             $navigation = build_navigation($navlinks);
                             print_header("$straction: $strblogs", $SITE->fullname, $navigation);
                             break;
 
+                        case 'tag-index':
+                            $strtags = get_string('tags');
+                            $navlinks[] = array('name' => $strtags,
+                                                 'link' => $CFG->wwwroot.'/tag/index.php',
+                                                 'type' => 'misc');
+                            $navlinks[] = array('name' => $blockname, 'link' => null, 'type' => 'misc');
+                            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
+                            $navigation = build_navigation($navlinks);
+                            print_header("$straction: $strtags", $SITE->fullname, $navigation);
+                            break;
+
                         default:
+                            $navlinks[] = array('name' => $blockname, 'link' => null, 'type' => 'misc');
+                            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
+                            $navigation = build_navigation($navlinks);
                             print_header("$straction: $blockname", $SITE->fullname, $navigation);
                             break;
                     }

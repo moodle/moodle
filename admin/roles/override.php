@@ -28,13 +28,9 @@
         if (!$course = get_record('course', 'id', $courseid)) {
             error('Bad course ID');
         }
-
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-
     } else {
         $course = clone($SITE);
         $courseid = SITEID;
-        $coursecontext = $context;
     }
 
     require_login($course);
@@ -52,8 +48,8 @@
     }
 
 /// needed for tabs.php
-    $overridableroles = get_overridable_roles($context);
-    $assignableroles  = get_assignable_roles($context);
+    $overridableroles = get_overridable_roles($context, 'name', ROLENAME_BOTH);
+    $assignableroles  = get_assignable_roles($context, 'name', ROLENAME_BOTH);
 
 /// Get some language strings
 
@@ -154,18 +150,6 @@
         $currenttab = 'override';
         include_once('tabs.php');
     }
-
-/// Rename some of the role names if needed
-    if (isset($coursecontext)) {
-        if ($aliasnames = get_records('role_names', 'contextid', $coursecontext->id)) {
-            foreach ($aliasnames as $alias) {
-                if (isset($overridableroles[$alias->roleid])) {
-                    $overridableroles[$alias->roleid] = $alias->name.' ('.$overridableroles[$alias->roleid].')';
-                }
-            }
-        }
-    }
-
 
     print_heading_with_help(get_string('overridepermissionsin', 'role', print_context_name($context)), 'overrides');
 

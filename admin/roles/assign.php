@@ -45,13 +45,11 @@
         } else {
             error('Invalid course id');
         }
-        $coursecontext = $context;
 
     } else if (!empty($courseid)){ // we need this for user tabs in user context
         if (!$course = get_record('course', 'id', $courseid)) {
             error('Invalid course id');
         }
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
     } else {
         $courseid = SITEID;
@@ -60,17 +58,12 @@
 
     require_login($course);
 
-    if ($context->contextlevel == CONTEXT_COURSE) {
-        require_login($context->instanceid);
-    } else {
-        require_login();
-    }
-
     require_capability('moodle/role:assign', $context);
 
 /// needed for tabs.php
-    $overridableroles = get_overridable_roles($context);
-    $assignableroles  = get_assignable_roles($context);    // Plain role names, may be altered later
+
+    $overridableroles = get_overridable_roles($context, 'name', ROLENAME_BOTH);
+    $assignableroles  = get_assignable_roles($context, 'name', ROLENAME_BOTH);
 
 
 /// Get some language strings
@@ -164,17 +157,6 @@
         include_once('tabs.php');
     }
 
-
-/// Rename some of the role names if needed
-    if (isset($coursecontext)) {
-        if ($aliasnames = get_records('role_names', 'contextid', $coursecontext->id)) {
-            foreach ($aliasnames as $alias) {
-                if (isset($assignableroles[$alias->roleid])) {
-                    $assignableroles[$alias->roleid] = $alias->name.' ('.$assignableroles[$alias->roleid].')';
-                }
-            }
-        }
-    }
 
 
 /// Process incoming role assignment
