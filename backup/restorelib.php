@@ -3495,13 +3495,14 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         global $CFG,$restore;
 
-        // MDL-10770
-        // This function was replacing null with empty string
-        // Nullity check is added in backup_todb(), this function will no longer not be called from backup_todb() if content is null
-        // I noticed some parts of the restore code is calling this directly instead of calling backup_todb(), so just in case
-        // 3rd party mod etc are doing the same
+    /// MDL-14072: Prevent NULLs, empties and numbers to be processed by the
+    /// heavy interlinking. Just a few cpu cycles saved.
         if ($content === NULL) {
             return NULL;
+        } else if ($content === '') {
+            return '';
+        } else if (is_numeric($content)) {
+            return $content;
         }
 
         //Now decode wwwroot and file.php calls
