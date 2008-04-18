@@ -4519,8 +4519,17 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
         echo '</div>';
         echo '</form>';
         echo "</div>\n";
-    } else if (!isguestuser() and isloggedin() and $forum->type != 'news' and $groupmode == SEPARATEGROUPS and !groups_is_member($currentgroup)) {
-        notify(get_string('cannotadddiscussion', 'forum'));
+
+    } else if (isguestuser() or !isloggedin() or $forum->type == 'news') {
+        // no button and no info
+
+    } else if ($groupmode and has_capability('mod/forum:startdiscussion', $context)) {
+        // inform users why they can not post new discussion
+        if ($currentgroup) {
+            notify(get_string('cannotadddiscussion', 'forum'));
+        } else {
+            notify(get_string('cannotadddiscussionall', 'forum'));
+        }
     }
 
 // Get all the recent discussions we're allowed to see
