@@ -125,9 +125,6 @@ $text_source_options = array(
     <tr valign="top">
         <td align="right"><b><?php print_string("quizopen", "quiz") ?>:</b></td>
         <td align="left"><?php
-            if (!$form->timeopen && $course->format == "weeks") {
-                $form->timeopen = $course->startdate + (($form->section - 1) * 608400);
-            }
             //print '<input name="enabletimeopen" type="checkbox" value="1" alt="'.get_string("quizopen", "quiz").'" onclick="'."return lockoptions('form', 'enabletimeopen', timeopenlockitems)".'" '.(empty($form->timeopen) ? '' : 'checked="checked"').' />';
 			$options = array(
 				HOTPOT_NO => get_string("alwaysopen", "hotpot"), 
@@ -148,9 +145,6 @@ $text_source_options = array(
     <tr valign="top">
         <td align="right"><b><?php print_string("quizclose", "quiz") ?>:</b></td>
         <td align="left"><?php
-            if (!$form->timeclose && $course->format == "weeks") {
-                $form->timeclose= $course->startdate + (($form->section) * 608400);
-            }
             //print '<input name="enabletimeclose" type="checkbox" value="1" alt="'.get_string("quizclose", "quiz").'" onclick="'."return lockoptions('form', 'enabletimeclose', timecloselockitems)".'" '.(empty($form->timeclose) ? '' : 'checked="checked"').' />';
 			$options = array(
 				HOTPOT_NO => get_string("neverclosed", "hotpot"), 
