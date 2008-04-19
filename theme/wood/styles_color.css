@@ -25,7 +25,11 @@ ul.tabrow1 li a:visited,
 .sideblock .r1,
 .generaltable .cell,
 div.sideblock table.minicalendar,
-.sideblock .hide-show-image {
+.sideblock .hide-show-image,
+#course-view .weeks .content,
+#course-view .topics .content,
+#course-view .weeks .section,
+#course-view .topics .section {
     border:none;
     background:none;
 }
@@ -288,6 +292,8 @@ form.mform fieldset,
 
 /** Places using the vertical ultra-white wood texture without borders **/
 
+#course-view .weeks .section.mainn .content,
+#course-view .topics .section.main .content,
 #mod-chat-gui_header_js-users,
 #grade-index .generaltableheader,
 #grade-index .generalboxcontent,
@@ -327,7 +333,8 @@ form.mform fieldset,
 
 /** Places using the vertical medium wood texture with borders **/
 
-#notused,
+#course-view .weeks .section.main,
+#course-view .topics .section.main,
 #course-view .section td.side {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
