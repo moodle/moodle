@@ -57,17 +57,37 @@ class data_field_menu extends data_field_base {
         return $str;
     }
     
-    function display_search_field($value = '') {
+    function display_search_field($content = '') {
         global $CFG;
-        $temp = get_records_sql_menu('SELECT id, content from '.$CFG->prefix.'data_content WHERE fieldid='.$this->field->id.' GROUP BY content ORDER BY content');
-        $options = array();
-        if(!empty($temp)) {
-            $options[''] = '';              //Make first index blank.
-            foreach ($temp as $key) {
-                $options[$key] = $key;  //Build following indicies from the sql.
+
+        $usedoptions = array();
+        $sql = "SELECT DISTINCT content
+                  FROM {$CFG->prefix}data_content
+                 WHERE fieldid={$this->field->id} AND content IS NOT NULL";
+        if ($used = get_records_sql($sql)) {
+            foreach ($used as $data) {
+                $value = $data->content;
+                if ($value === '') {
+                    continue;
+                }
+                $usedoptions[$value] = $value;
             }
         }
-        return choose_from_menu($options, 'f_'.$this->field->id, $value, 'choose', '', 0, true);    
+
+        $options = array();
+        foreach (explode("\n",$this->field->param1) as $option) {
+            $option = trim($option);
+            if (!isset($usedoptions[$option])) {
+                continue;
+            }
+            $options[$option] = $option;
+        }
+        if (!$options) {
+            // oh, nothing to search for
+            return '';
+        }
+
+        return choose_from_menu($options, 'f_'.$this->field->id, stripslashes($content), '&nbsp;', '', 0, true);    
     }
 
      function parse_search_field() {

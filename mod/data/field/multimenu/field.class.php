@@ -81,11 +81,11 @@ class data_field_multimenu extends data_field_base {
         $usedoptions = array();
         $sql = "SELECT DISTINCT content
                   FROM {$CFG->prefix}data_content
-                 WHERE fieldid={$this->field->id}";
+                 WHERE fieldid={$this->field->id} AND content IS NOT NULL";
         if ($used = get_records_sql($sql)) {
             foreach ($used as $data) {
                 $valuestr = $data->content;
-                if (is_null($valuestr) or $valuestr === '') {
+                if ($valuestr === '') {
                     continue;
                 }
                 $values = explode('##', $valuestr);
