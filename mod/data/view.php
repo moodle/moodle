@@ -431,7 +431,6 @@
 
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname';
             $count = ' COUNT(DISTINCT c.recordid) ';
-            $rids  = ' DISTINCT c.recordid ';
             $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content cs, '.$CFG->prefix.'user u ';
             $where =  'WHERE c.recordid = r.id
                          AND r.dataid = '.$data->id.'
@@ -468,7 +467,6 @@
 
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, c.'.$sortcontent.', '.$sortcontentfull.' AS _order ';
             $count = ' COUNT(DISTINCT c.recordid) ';
-            $rids  = ' DISTINCT c.recordid ';
             $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content cs, '.$CFG->prefix.'user u ';
             $where =  'WHERE c.recordid = r.id
                          AND c.fieldid = '.$sort.'
@@ -502,7 +500,6 @@
         } else if ($search) {
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname ';
             $count = ' COUNT(DISTINCT c.recordid) ';
-            $rids  = ' DISTINCT c.recordid ';
             $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r, '.$CFG->prefix.'user u ';
             $where =  'WHERE c.recordid = r.id
                          AND r.userid = u.id
@@ -533,7 +530,6 @@
         } else {
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname ';
             $count = ' COUNT(r.id) ';
-            $rids  = ' COUNT(r.id) ';
             $tables = $CFG->prefix.'data_records r, '.$CFG->prefix.'user u ';
             $where =  'WHERE r.dataid = '.$data->id. ' AND r.userid = u.id ';
             $sortorder = ' ORDER BY r.timecreated '.$order. ' ';
@@ -551,7 +547,7 @@
         $fromsql    = "FROM $tables $where $groupselect $approveselect $searchselect";
         $sqlselect  = "SELECT $what $fromsql $sortorder";
         $sqlcount   = "SELECT $count $fromsql";   // Total number of records when searching
-        $sqlrids    = "SELECT $rids $fromsql";
+        $sqlrids    = "SELECT tmp.id FROM ($sqlselect) tmp";
         $sqlmax     = "SELECT $count FROM $tables $where $groupselect $approveselect"; // number of all recoirds user may see
 
     /// Work out the paging numbers and counts
@@ -568,14 +564,10 @@
             $mode = 'single';
 
             $page = 0;
-            if ($allrecords = get_records_sql($sqlrids)) {      // Kludgey but accurate at least!          
-                foreach ($allrecords as $key => $unused) {
-                    if ($key == $record->id) {
-                        break;
-                    }
-                    $page++;
-                }
-                unset($allrecords);
+            if ($allrecordids = get_records_sql($sqlrids)) {
+                $allrecordids = array_keys($allrecordids);
+                $page = (int)array_search($record->id, $allrecordids);
+                unset($allrecordids);
             }
 
         } else if ($mode == 'single') {  // We rely on ambient $page settings
