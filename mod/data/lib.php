@@ -1192,9 +1192,9 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $fn = !empty($search_array[DATA_FIRSTNAME]->data) ? $search_array[DATA_FIRSTNAME]->data : '';
     $ln = !empty($search_array[DATA_LASTNAME]->data) ? $search_array[DATA_LASTNAME]->data : '';
     $patterns[]    = '/##firstname##/';
-    $replacement[] = '<input type="text" size="16" name="u_fn" value="'.$fn.'">';
+    $replacement[] = '<input type="text" size="16" name="u_fn" value="'.$fn.'" />';
     $patterns[]    = '/##lastname##/';
-    $replacement[] = '<input type="text" size="16" name="u_ln" value="'.$ln.'">';
+    $replacement[] = '<input type="text" size="16" name="u_ln" value="'.$ln.'" />';
 
     ///actual replacement of the tags
     $newtext = preg_replace($patterns, $replacement, $data->asearchtemplate);
