@@ -28,6 +28,7 @@ define ('DATA_PERPAGE_SINGLE', 1);
 
 define ('DATA_FIRSTNAME', -1);
 define ('DATA_LASTNAME', -2);
+define ('DATA_APPROVED', -3);
 
 class data_field_base {     /// Base class for Database Field Types (see field/*/field.class.php)
 
@@ -981,7 +982,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
 
         $patterns[]='##approve##';
         if (has_capability('mod/data:approve', $context) && ($data->approval) && (!$record->approved)){
-            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/approve.gif" class="iconsmall" alt="'.get_string('approve').'" /></a>';
+            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/approve.gif" class="icon" alt="'.get_string('approve').'" /></a>';
         } else {
             $replacement[] = '';
         }
@@ -1070,6 +1071,9 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     }
     $options[DATA_FIRSTNAME] = get_string('authorfirstname', 'data');
     $options[DATA_LASTNAME] = get_string('authorlastname', 'data');
+    if ($data->approval and has_capability('mod/data:approve', $context)) {
+        $options[DATA_APPROVED] = get_string('approved', 'data');
+    }
     echo '<select name="sort" id="pref_sortby"><option value="0">'.get_string('dateentered','data').'</option>';
     foreach ($options as $key => $name) {
         if ($key == $sort) {

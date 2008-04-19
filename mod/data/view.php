@@ -369,7 +369,9 @@
     } else {
     /// Approve any requested records
 
-        if ($approve && confirm_sesskey() && has_capability('mod/data:approve', $context)) {
+        $approvecap = has_capability('mod/data:approve', $context); 
+
+        if ($approve && confirm_sesskey() && $approvecap) {
             if ($approverecord = get_record('data_records', 'id', $approve)) {   // Need to check this is valid
                 if ($approverecord->dataid == $data->id) {                       // Must be from this database
                     $newrecord->id = $approverecord->id;
@@ -391,9 +393,8 @@
             $requiredentries_allowed = false;
         }
 
-    /// We need to examine the whole dataset to produce the correct paging
-
-        if ((!has_capability('mod/data:managetemplates', $context)) && ($data->approval)) {
+    /// setup group and approve restrictions
+        if (!$approvecap && $data->approval) {
             if (isloggedin()) {
                 $approveselect = ' AND (r.approved=1 OR r.userid='.$USER->id.') ';
             } else {
@@ -412,14 +413,20 @@
         $ilike = sql_ilike(); //Be case-insensitive
 
     /// Find the field we are sorting on
-        if ($sort == DATA_FIRSTNAME or $sort == DATA_LASTNAME or empty($sort)) {
+        if ($sort <= 0) {
 
-            if ($sort == DATA_LASTNAME) {
-                $ordering = "u.lastname $order, u.firstname $order";
-            } else if ($sort == DATA_FIRSTNAME) {
-                $ordering = "u.firstname $order, u.lastname $order";
-            } else {
-                $ordering = "r.timecreated $order";
+            switch ($sort) {
+                case DATA_LASTNAME:
+                    $ordering = "u.lastname $order, u.firstname $order";
+                    break;
+                case DATA_FIRSTNAME:
+                    $ordering = "u.firstname $order, u.lastname $order";
+                    break;
+                case DATA_APPROVED:
+                    $ordering = "r.approved $order, r.timecreated $order";
+                    break;
+                default:
+                    $ordering = "r.timecreated $order";
             }
 
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname';

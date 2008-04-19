@@ -13,6 +13,7 @@ $string['allowcomments'] = 'Allow comments?';
 $string['allowratings'] = 'Allow posts to be rated?';
 $string['alttext'] = 'Alternative text';
 $string['approve'] = 'Approve';
+$string['approved'] = 'Approved';
 $string['ascending'] = 'Ascending';
 $string['asearchtemplate'] = 'Advanced search template';
 $string['atmaxentry'] = 'You have entered the maximum number of entries allowed!';
