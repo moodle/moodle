@@ -79,11 +79,9 @@ class data_field_multimenu extends data_field_base {
 
         // display only used options
         $usedoptions = array();
-        $sql = "SELECT id, content
+        $sql = "SELECT DISTINCT content
                   FROM {$CFG->prefix}data_content
-                 WHERE fieldid={$this->field->id}
-              GROUP BY content
-              ORDER BY content";
+                 WHERE fieldid={$this->field->id}";
         if ($used = get_records_sql($sql)) {
             foreach ($used as $data) {
                 $valuestr = $data->content;
