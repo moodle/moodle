@@ -61,7 +61,7 @@ class data_field_multimenu extends data_field_base {
 
         return $str;
     }
-    
+
     function display_search_field($value = '') {
         global $CFG;
 
@@ -70,15 +70,40 @@ class data_field_multimenu extends data_field_base {
             $allrequired = $value['allrequired'] ? 'checked = "checked"' : '';
         } else {
             $content     = array();
-            $allrequired = ''; 
+            $allrequired = '';
         }
 
         static $c = 0;
 
         $str = '<select name="f_'.$this->field->id.'[]" multiple="multiple">';
 
+        // display only used options
+        $usedoptions = array();
+        $sql = "SELECT id, content
+                  FROM {$CFG->prefix}data_content
+                 WHERE fieldid={$this->field->id}
+              GROUP BY content
+              ORDER BY content";
+        if ($used = get_records_sql($sql)) {
+            foreach ($used as $data) {
+                $valuestr = $data->content;
+                if (is_null($valuestr) or $valuestr === '') {
+                    continue;
+                }
+                $values = explode('##', $valuestr);
+                foreach ($values as $value) {
+                    $usedoptions[$value] = $value;
+                }
+            }
+        }
+
+        $found = false;
         foreach (explode("\n",$this->field->param1) as $option) {
             $option = trim($option);
+            if (!isset($usedoptions[$option])) {
+                continue;
+            }
+            $found = true;
             $str .= '<option value="' . s($option) . '"';
 
             if (in_array(addslashes($option), $content)) {
@@ -87,6 +112,11 @@ class data_field_multimenu extends data_field_base {
             }
             $str .= '>' . $option . '</option>';
         }
+        if (!$found) {
+            // oh, nothing to search for
+            return '';
+        }
+
         $str .= '</select>';
 
         $str .= '&nbsp;<input name="f_'.$this->field->id.'_allreq" id="f_'.$this->field->id.'_allreq'.$c.'" type="checkbox" '.$allrequired.'/>';
@@ -96,7 +126,7 @@ class data_field_multimenu extends data_field_base {
         return $str;
 
     }
-    
+
     function parse_search_field() {
         $selected    = optional_param('f_'.$this->field->id, array(), PARAM_NOTAGS);
         $allrequired = optional_param('f_'.$this->field->id.'_allreq', 0, PARAM_BOOL);
@@ -114,7 +144,12 @@ class data_field_multimenu extends data_field_base {
         if ($selected) {
             $conditions = array();
             foreach ($selected as $sel) {
-                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ({$tablealias}.content LIKE '$sel##%' OR {$tablealias}.content LIKE '%##$sel' OR {$tablealias}.content LIKE '%##$sel##%'))";
+                $likesel = str_replace('%', '\%', $sel);
+                $likeselsel = str_replace('_', '\_', $likesel);
+                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ({$tablealias}.content = '$sel'
+                                                                               OR {$tablealias}.content LIKE '$likesel##%'
+                                                                               OR {$tablealias}.content LIKE '%##$likesel'
+                                                                               OR {$tablealias}.content LIKE '%##$likesel##%'))";
             }
             if ($allrequired) {
                 return " (".implode(" AND ", $conditions).") ";
@@ -123,7 +158,7 @@ class data_field_multimenu extends data_field_base {
             }
         } else {
             return " ";
-        } 
+        }
     }
 
     function update_content($recordid, $value, $name='') {
@@ -168,13 +203,21 @@ class data_field_multimenu extends data_field_base {
 
     function display_browse_field($recordid, $template) {
 
-        if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)){
-            $contentArr = array();
-            if (!empty($content->content)) {
-                $contentArr = explode('##', $content->content);
+        if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)) {
+            if (empty($content->content)) {
+                return false;
             }
+
+            $options = explode("\n",$this->field->param1);
+            $options = array_map('trim', $options);
+
+            $contentArr = explode('##', $content->content);
             $str = '';
             foreach ($contentArr as $line) {
+                if (!in_array($line, $options)) {
+                    // hmm, looks like somebody edited the field definition
+                    continue;
+                }
                 $str .= $line . "<br />\n";
             }
             return $str;
