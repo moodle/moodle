@@ -372,9 +372,9 @@ function forum_cron() {
                     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
                     $userto->viewfullnames[$forum->id] = has_capability('moodle/site:viewfullnames', $modcontext);
                 }
-                if (!isset($userto->canpost[$forum->id])) {
+                if (!isset($userto->canpost[$discussion->id])) {
                     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-                    $userto->canpost[$forum->id] = forum_user_can_post($forum, $userto, $cm, $modcontext);
+                    $userto->canpost[$discussion->id] = forum_user_can_post($forum, $discussion, $userto, $cm, $course, $modcontext);
                 }
                 if (!isset($userfrom->groups[$forum->id])) {
                     if (!isset($userfrom->groups)) {
@@ -640,14 +640,14 @@ function forum_cron() {
                         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
                         $userto->viewfullnames[$forum->id] = has_capability('moodle/site:viewfullnames', $modcontext);
                     }
-                    if (!isset($userto->canpost[$forum->id])) {
+                    if (!isset($userto->canpost[$discussion->id])) {
                         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-                        $userto->canpost[$forum->id] = forum_user_can_post($forum, $userto, $cm, $modcontext);
+                        $userto->canpost[$discussion->id] = forum_user_can_post($forum, $discussion, $userto, $cm, $course, $modcontext);
                     }
 
                     $strforums      = get_string('forums', 'forum');
                     $canunsubscribe = ! forum_is_forcesubscribed($forum);
-                    $canreply       = $userto->canpost[$forum->id];
+                    $canreply       = $userto->canpost[$discussion->id];
 
                     $posttext .= "\n \n";
                     $posttext .= '=====================================================================';
@@ -798,10 +798,11 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
         $viewfullnames = $userto->viewfullnames[$forum->id];
     }
 
-    if (!isset($userto->canpost[$forum->id])) {
-        $canreply = forum_user_can_post($forum, $userto);
+    if (!isset($userto->canpost[$discussion->id])) {
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $canreply = forum_user_can_post($forum, $discussion, $userto, $cm, $course, $modcontext);
     } else {
-        $canreply = $userto->canpost[$forum->id];
+        $canreply = $userto->canpost[$discussion->id];
     }
 
     $by = New stdClass;
@@ -870,10 +871,10 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
         return '';
     }
 
-    if (!isset($userto->canpost[$forum->id])) {
-        $canreply = forum_user_can_post($forum, $userto);
+    if (!isset($userto->canpost[$discussion->id])) {
+        $canreply = forum_user_can_post($forum, $discussion, $userto);
     } else {
-        $canreply = $userto->canpost[$forum->id];
+        $canreply = $userto->canpost[$discussion->id];
     }
 
     $strforums = get_string('forums', 'forum');
@@ -4262,7 +4263,7 @@ function forum_user_can_post_discussion($forum, $currentgroup=null, $unused=-1, 
  * @param $forum - forum object
  * @param $user - user object
  */
-function forum_user_can_post($forum, $user=NULL, $cm=NULL, $context=NULL) {
+function forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=NULL, $context=NULL) {
     global $USER;
     if (empty($user)) {
         $user = $USER;
@@ -4273,13 +4274,26 @@ function forum_user_can_post($forum, $user=NULL, $cm=NULL, $context=NULL) {
         return false;
     }
 
-    if (!$context) {
-        if (!$cm) {
-            debugging('missing cm', DEBUG_DEVELOPER);
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-                error('Course Module ID was incorrect');
-            }
+    if (!isset($discussion->groupid)) {
+        debugging('incorrect discussion parameter', DEBUG_DEVELOPER);
+        return false; 
+    }
+
+    if (!$cm) {
+        debugging('missing cm', DEBUG_DEVELOPER);
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+            error('Course Module ID was incorrect');
         }
+    }
+
+    if (!$course) {
+        debugging('missing course', DEBUG_DEVELOPER);
+        if (!$course = get_record('course', 'id', $forum->course)) {
+            error('Incorrect course id');
+        }
+    }
+
+    if (!$context) {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
 
@@ -4294,7 +4308,32 @@ function forum_user_can_post($forum, $user=NULL, $cm=NULL, $context=NULL) {
         $capname = 'mod/forum:replypost';
     }
 
-    return has_capability($capname, $context, $user->id, false);
+    if (!has_capability($capname, $context, $user->id, false)) {
+        return false;
+    }
+
+    if (!$groupmode = groups_get_activity_groupmode($cm, $course)) {
+        return true;
+    }
+
+    if (has_capability('moodle/site:accessallgroups', $context)) {
+        return true;
+    }
+
+    if ($groupmode == VISIBLEGROUPS) {
+        if ($discussion->groupid == -1) {
+            // allow students to reply to all participants discussions - this was not possible in Moodle <1.8
+            return true;
+        }
+        return groups_is_member($discussion->groupid);
+
+    } else {
+        //separate groups
+        if ($discussion->groupid == -1) {
+            return false;
+        }
+        return groups_is_member($discussion->groupid);
+    } 
 }
 
 
@@ -4571,7 +4610,6 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
         }
     }
 
-    $canreply = forum_user_can_post($forum, null, $cm, $context);
     $canviewparticipants = has_capability('moodle/course:viewparticipants',$context);
 
     $strdatestring = get_string('strftimerecentfull');
@@ -4663,10 +4701,13 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
                     $canviewparticipants, $context);
             break;
             default:
-                if ($canreply or $discussion->replies) {
+                $link = false;
+
+                if ($discussion->replies) {
                     $link = true;
                 } else {
-                    $link = false;
+                    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                    $link = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext);
                 }
 
                 $discussion->forum = $forum->id;
@@ -4711,7 +4752,8 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
         $ownpost = false;
     }
     if ($canreply === NULL) {
-        $reply = forum_user_can_post($forum, null, $cm);
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $reply = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext);
     } else {
         $reply = $canreply;
     }
