@@ -220,16 +220,10 @@
                 set_user_preference("forum_displaymode", $mode);
             }
 
-            $groupmode = groups_get_activity_groupmode($cm, $course);
-            $canreply = NULL;
-            if ($groupmode == SEPARATEGROUPS) {
-                if (!has_capability('moodle/site:accessallgroups', $context)) {
-                    $canreply = false;
-                }
-            }
-            
+            $canreply    = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $context);
+            $canrate     = has_capability('mod/forum:rate', $context);
             $displaymode = get_user_preferences("forum_displaymode", $CFG->forum_displaymode);
-            $canrate = has_capability('mod/forum:rate', $context);
+
             echo '&nbsp;'; // this should fix the floating in FF
             forum_print_discussion($course, $cm, $forum, $discussion, $post, $displaymode, $canreply, $canrate);
             break;

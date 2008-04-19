@@ -144,47 +144,14 @@
 
 /// Check to see if groups are being used in this forum
 /// If so, make sure the current person is allowed to see this discussion
-/// Also, if we know they should be able to reply, then explicitly set $canreply
+/// Also, if we know they should be able to reply, then explicitly set $canreply for performance reasons
 
-    if ($forum->type == 'news') {
-        $capname = 'mod/forum:replynews';
-    } else {
-        $capname = 'mod/forum:replypost';
-    }
-
-    $canreply = false;
     if (isguestuser() or !isloggedin() or has_capability('moodle/legacy:guest', $modcontext, NULL, false)) {
         // allow guests and not-logged-in to see the link - they are prompted to log in after clicking the link
         $canreply = ($forum->type != 'news'); // no reply in news forums
 
-    } else if (has_capability($capname, $modcontext)) {
-        $groupmode = groups_get_activity_groupmode($cm);
-        if ($groupmode) {
-            if (has_capability('moodle/site:accessallgroups', $modcontext)) {
-                $canreply = true;
-            } else {
-                if ($groupmode == SEPARATEGROUPS) {
-                    require_login();
-                    if ($discussion->groupid == -1) {
-                        // can not reply to discussions for "All participants" in separate mode without accessallgroups cap
-                    } else if (groups_is_member($discussion->groupid)) {
-                        $canreply = true;
-                    } else {
-                        // this should not happen
-                        print_heading("Sorry, you can't see this discussion because you are not in this group");
-                        print_footer($course);
-                        die;
-                    }
-
-                } else if ($groupmode == VISIBLEGROUPS) {
-                    if ($discussion->groupid == -1 or groups_is_member($discussion->groupid)) {
-                        $canreply = true;
-                    }
-                }
-            }
-        } else {
-            $canreply = true;
-        }
+    } else {
+        $canreply = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext);
     }
 
 /// Print the controls across the top

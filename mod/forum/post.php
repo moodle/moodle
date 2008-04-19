@@ -142,7 +142,7 @@
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $modcontext    = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-        if (! forum_user_can_post($forum, null, $cm, $modcontext)) {
+        if (! forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext)) {
             if (has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
                 $SESSION->wantsurl = $FULLME;
                 $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
