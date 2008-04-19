@@ -624,6 +624,12 @@
         } else {
             fwrite ($bf,full_tag("MESSAGES",3,false,"false"));
         }
+        //The blogs in backup
+        if ($preferences->backup_blogs == 1 && $preferences->backup_course == SITEID) {
+            fwrite ($bf,full_tag("BLOGS",3,false,"true"));
+        } else {
+            fwrite ($bf,full_tag("BLOGS",3,false,"false"));
+        }
         //The mode of writing the block data
         fwrite ($bf,full_tag('BLOCKFORMAT',3,false,'instances'));
         fwrite ($bf,end_tag("DETAILS",2,true));
