@@ -106,6 +106,13 @@
         $SESSION->dataprefs[$data->id]['order'] = ($data->defaultsortdir == 0) ? 'ASC' : 'DESC';
     }
 
+    // reset advanced form
+    if (!is_null(optional_param('resetadv', null, PARAM_RAW))) {
+        $SESSION->dataprefs[$data->id]['search_array'] = array();
+        // we need the redirect to cleanup the form state properly
+        redirect("view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=1");
+    }
+
     $advanced = optional_param('advanced', -1, PARAM_INT);
     if ($advanced == -1) {
         $advanced = $SESSION->dataprefs[$data->id]['advanced'];
@@ -118,7 +125,7 @@
     }
 
     $search_array = $SESSION->dataprefs[$data->id]['search_array'];
-    
+
     if (!empty($advanced)) {
         $search = '';
         $vals = array();
@@ -356,7 +363,10 @@
     }
     include('tabs.php');
 
-    if ($mode != 'asearch') {
+    if ($mode == 'asearch') {
+        $maxcount = 0;
+        
+    } else {
     /// Approve any requested records
 
         if ($approve && confirm_sesskey() && has_capability('mod/data:approve', $context)) {
@@ -371,15 +381,15 @@
             }
         }
     
-    // Check the number of entries required against the number of entries already made (doesn't apply to teachers)
-    $requiredentries_allowed = true;
-    $numentries = data_numentries($data);
-    if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', $context)) {
-        $data->entriesleft = $data->requiredentries - $numentries;
-        $strentrieslefttoadd = get_string('entrieslefttoadd', 'data', $data);
-        notify($strentrieslefttoadd); 
-        $requiredentries_allowed = false;
-    }
+        // Check the number of entries required against the number of entries already made (doesn't apply to teachers)
+        $requiredentries_allowed = true;
+        $numentries = data_numentries($data);
+        if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', $context)) {
+            $data->entriesleft = $data->requiredentries - $numentries;
+            $strentrieslefttoadd = get_string('entrieslefttoadd', 'data', $data);
+            notify($strentrieslefttoadd);
+            $requiredentries_allowed = false;
+        }
 
     /// We need to examine the whole dataset to produce the correct paging
 
@@ -414,6 +424,7 @@
 
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname';
             $count = ' COUNT(DISTINCT c.recordid) ';
+            $rids  = ' DISTINCT c.recordid ';
             $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content cs, '.$CFG->prefix.'user u ';
             $where =  'WHERE c.recordid = r.id
                          AND r.dataid = '.$data->id.'
@@ -450,6 +461,7 @@
 
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, c.'.$sortcontent.', '.$sortcontentfull.' AS _order ';
             $count = ' COUNT(DISTINCT c.recordid) ';
+            $rids  = ' DISTINCT c.recordid ';
             $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content cs, '.$CFG->prefix.'user u ';
             $where =  'WHERE c.recordid = r.id
                          AND c.fieldid = '.$sort.'
@@ -483,6 +495,7 @@
         } else if ($search) {
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname ';
             $count = ' COUNT(DISTINCT c.recordid) ';
+            $rids  = ' DISTINCT c.recordid ';
             $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r, '.$CFG->prefix.'user u ';
             $where =  'WHERE c.recordid = r.id
                          AND r.userid = u.id
@@ -513,6 +526,7 @@
         } else {
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname ';
             $count = ' COUNT(r.id) ';
+            $rids  = ' COUNT(r.id) ';
             $tables = $CFG->prefix.'data_records r, '.$CFG->prefix.'user u ';
             $where =  'WHERE r.dataid = '.$data->id. ' AND r.userid = u.id ';
             $sortorder = ' ORDER BY r.timecreated '.$order. ' ';
@@ -527,49 +541,34 @@
 
     /// To actually fetch the records
 
-        $fromsql = ' FROM '.$tables.$where.$groupselect.$approveselect.$searchselect;
+        $fromsql    = "FROM $tables $where $groupselect $approveselect $searchselect";
+        $sqlselect  = "SELECT $what $fromsql $sortorder";
+        $sqlcount   = "SELECT $count $fromsql";   // Total number of records when searching
+        $sqlrids    = "SELECT $rids $fromsql";
+        $sqlmax     = "SELECT $count FROM $tables $where $groupselect $approveselect"; // number of all recoirds user may see
 
-        $sqlselect = 'SELECT '.$what.$fromsql.$sortorder;
-
-        $sqlcount  = 'SELECT '.$count.$fromsql;   // Total number of records
-
-    /// Work out the paging numbers
+    /// Work out the paging numbers and counts
 
         $totalcount = count_records_sql($sqlcount);
+        if (empty($searchselect)) {
+            $maxcount = $totalcount;
+        } else {
+            $maxcount = count_records_sql($sqlmax);
+        }
 
         if ($record) {     // We need to just show one, so where is it in context?
             $nowperpage = 1;
             $mode = 'single';
 
-    #  Following code needs testing to make it work
-    #        if ($sort) {   // We need to search by that field
-    #            if ($content = get_field('data_content', 'content', 'recordid', $record->id, 'fieldid', $sort)) {
-    #                $content = addslashes($content);
-    #                if ($order == 'ASC') {
-    #                    $lessthan = " AND $sortcontentfull < '$content'
-    #                                   OR ($sortcontentfull = '$content' AND r.id < '$record->id') ";
-    #                } else {
-    #                    $lessthan = " AND $sortcontentfull > '$content'
-    #                                   OR ($sortcontentfull = '$content' AND r.id < '$record->id') ";
-    #                }
-    #            } else {   // Failed to find data (shouldn't happen), so fall back to something easy
-    #                $lessthan = " r.id < '$record->id' ";
-    #            }
-    #        } else {
-    #            $lessthan = " r.id < '$record->id' ";
-    #        }
-    #        $sqlindex = 'SELECT COUNT(DISTINCT c.recordid) '.$fromsql.$lessthan.$sortorder;
-    #        $page = count_records_sql($sqlindex);
-
-
             $page = 0;
-            if ($allrecords = get_records_sql($sqlselect)) {      // Kludgey but accurate at least!          
-                foreach ($allrecords as $key => $allrecord) {
+            if ($allrecords = get_records_sql($sqlrids)) {      // Kludgey but accurate at least!          
+                foreach ($allrecords as $key => $unused) {
                     if ($key == $record->id) {
                         break;
                     }
                     $page++;
                 }
+                unset($allrecords);
             }
 
         } else if ($mode == 'single') {  // We rely on ambient $page settings
@@ -581,26 +580,39 @@
 
     /// Get the actual records
         
-        $records = get_records_sql($sqlselect, $page * $nowperpage, $nowperpage);
-
-        if (empty($records)) {     // Nothing to show!
+        if (!$records = get_records_sql($sqlselect, $page * $nowperpage, $nowperpage)) {
+            // Nothing to show!
             if ($record) {         // Something was requested so try to show that at least (bug 5132)
                 if (has_capability('mod/data:manageentries', $context) || empty($data->approval) ||
                          $record->approved || (isloggedin() && $record->userid == $USER->id)) {
                     if (!$currentgroup || $record->groupid == $currentgroup || $record->groupid == 0) {
-                        $records[] = $record;
+                        // OK, we can show this one
+                        $records = array($record->id => $record);
+                        $totalcount = 1;
                     }
                 }
             }
-            if ($records) {  // OK, we can show this one
-                data_print_template('singletemplate', $records, $data, $search, $page);
-            } else if ($search){
-                notify(get_string('nomatch','data'));
+        }
+
+        if (empty($records)) {
+            if ($maxcount){
+                $a = new object();
+                $a->max = $maxcount;
+                $a->reseturl = "view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=0";
+                notify(get_string('foundnorecords','data', $a));
             } else {
                 notify(get_string('norecords','data'));
             }
 
-        } else {                   //  We have some records to print
+        } else { //  We have some records to print
+
+            if ($maxcount != $totalcount) {
+                $a = new object();
+                $a->num = $totalcount;
+                $a->max = $maxcount;
+                $a->reseturl = "view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=0";
+                notify(get_string('foundrecords', 'data', $a), 'notifysuccess'); 
+            }
 
             if ($mode == 'single') {                  // Single template
                 $baseurl = 'view.php?d='.$data->id.'&amp;mode=single&amp;';
@@ -645,7 +657,7 @@
     }
 
     //Advanced search form doesn't make sense for single (redirects list view)
-    if (($records || $search || $page ||  $mode == 'asearch') && $mode != 'single') {
+    if (($maxcount || $mode == 'asearch') && $mode != 'single') {
         data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
     }
 

@@ -961,6 +961,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
                              .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
         } else {
             $replacement[] = '';
+            $replacement[] = '';
         }
         $patterns[]='##more##';
         $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" class="iconsmall" alt="'.get_string('more', 'data').'" title="'.get_string('more', 'data').'" /></a>';
@@ -1205,7 +1206,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo format_text($newtext, FORMAT_HTML, $options);
     echo '</td></tr>';
 
-    echo '<tr><td colspan="4" style="text-align: center;"><br/><input type="submit" value="'.get_string('savesettings','data').'" /><input type="reset" value="'.get_string('resetsettings','data').'" /></td></tr>';
+    echo '<tr><td colspan="4" style="text-align: center;"><br/><input type="submit" value="'.get_string('savesettings','data').'" /><input type="submit" name="resetadv" value="'.get_string('resetsettings','data').'" /></td></tr>';
     echo '</table>';
     echo '</div>';
     echo '</div>';
