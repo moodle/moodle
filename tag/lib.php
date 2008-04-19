@@ -699,7 +699,9 @@ function tag_compute_correlations($min_correlation=2) {
 
     global $CFG;
 
-    $all_tags = get_records_list('tag');
+    if (!$all_tags = get_records_list('tag')) {
+        return;
+    }
 
     $tag_correlation_obj = new object();
     foreach($all_tags as $tag) {
