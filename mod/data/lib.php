@@ -1840,16 +1840,23 @@ function data_presets_export($course, $cm, $data) {
     $presetfile = fopen($tempfolder.'/preset.xml', 'w');
     $presetxml = "<preset>\n\n";
 
-    /* Database settings first. Name not included? */
-    $settingssaved = array('intro', 'comments',
-            'requiredentries', 'requiredentriestoview', 'maxentries',
-            'rssarticles', 'approval', 'scale', 'assessed',
-            'defaultsort', 'defaultsortdir', 'editany');
+    // raw settings are not preprocessed during saving of presets
+    $raw_settings = array('intro', 'comments', 'requiredentries', 'requiredentriestoview',
+                          'maxentries', 'rssarticles', 'approval', 'defaultsortdir');
 
     $presetxml .= "<settings>\n";
-    foreach ($settingssaved as $setting) {
+    // first settings that do not require any conversion
+    foreach ($raw_settings as $setting) {
         $presetxml .= "<$setting>".htmlspecialchars($data->$setting)."</$setting>\n";
     }
+
+    // now specific settings
+    if ($data->defaultsort > 0 and $sortfield = data_get_field_from_id($data->defaultsort, $data)) {
+        $presetxml .= "<defaultsort>".htmlspecialchars($sortfield->field->name)."</defaultsort>\n";
+    } else {
+        $presetxml .= "<defaultsort>0</defaultsort>\n";
+    }
+    // note: grading settings are not exported intentionally
     $presetxml .= "</settings>\n\n";
 
     /* Now for the fields. Grabs all settings that are non-empty */
@@ -1922,12 +1929,19 @@ class PresetImporter {
         $presetxml = file_get_contents($this->folder.'/preset.xml');
         $parsedxml = xmlize($presetxml, 0);
 
+        $allowed_settings = array('intro', 'comments', 'requiredentries', 'requiredentriestoview',
+                                  'maxentries', 'rssarticles', 'approval', 'defaultsortdir', 'defaultsort');
+
         /* First, do settings. Put in user friendly array. */
         $settingsarray = $parsedxml['preset']['#']['settings'][0]['#'];
         $settings = new StdClass();
 
         foreach ($settingsarray as $setting => $value) {
             if (!is_array($value)) {
+                continue;
+            }
+            if (!in_array($setting, $allowed_settings)) {
+                // unsupported setting
                 continue;
             }
             $settings->$setting = $value[0]['#'];
@@ -1973,8 +1987,9 @@ class PresetImporter {
 
         /* Now we look at the current structure (if any) to work out whether we need to clear db
            or save the data */
-        $currentfields = array();
-        $currentfields = get_records('data_fields', 'dataid', $this->data->id);
+        if (!$currentfields = get_records('data_fields', 'dataid', $this->data->id)) {
+            $currentfields = array();
+        }
 
         return array($settings, $fields, $currentfields);
     }
@@ -2115,18 +2130,30 @@ class PresetImporter {
             }
         }
 
-        // do we want to overwrite current database settings?
-        if ($overwritesettings) {
-            // all settings
-            $overwrite = array_keys((array)$settings);
+    /// handle special settings here
+        if (!empty($settings->defaultsort)) {
+            if (is_numeric($settings->defaultsort)) {
+                //old broken value
+                $settings->defaultsort = 0;
+            } else {
+                $settings->defaultsort = (int)get_field('data_fields', 'id', 'dataid', $this->data->id, 'name', addslashes($settings->defaultsort));
+            }
         } else {
-            // only templates
-            $overwrite = array('singletemplate', 'listtemplate', 'listtemplateheader', 'listtemplatefooter',
-                               'addtemplate', 'rsstemplate', 'rsstitletemplate', 'csstemplate', 'jstemplate',
-                               'asearchtemplate');
+            $settings->defaultsort = 0;
         }
 
-        // existing values MUST be sent too - it can not work without them!
+        // do we want to overwrite all current database settings?
+        if ($overwritesettings) {
+            // all supported settings
+            $overwrite = array_keys((array)$settings);
+        } else {
+            // only templates and sorting
+            $overwrite = array('singletemplate', 'listtemplate', 'listtemplateheader', 'listtemplatefooter',
+                               'addtemplate', 'rsstemplate', 'rsstitletemplate', 'csstemplate', 'jstemplate',
+                               'asearchtemplate', 'defaultsortdir', 'defaultsort');
+        }
+
+        // now overwrite current data settings
         foreach ($this->data as $prop=>$unused) {
             if (in_array($prop, $overwrite)) {
                 $this->data->$prop = $settings->$prop;
@@ -2135,7 +2162,11 @@ class PresetImporter {
 
         data_update_instance(addslashes_object($this->data));
 
-        if (strstr($this->folder, '/temp/')) clean_preset($this->folder); /* Removes the temporary files */
+        if (strstr($this->folder, '/temp/')) {
+        // Removes the temporary files
+            clean_preset($this->folder); 
+        }
+
         return true;
     }
 }
