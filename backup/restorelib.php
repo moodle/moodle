@@ -325,6 +325,16 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         return $info;
     }
 
+    //This function read the xml file and store its data from the blogs in
+    //backup_ids->blog and backup_ids->blog_tag and db (and their counters in info)
+    function restore_read_xml_blogs ($restore,$xml_file) {
+
+        //We call the main read_xml function, with todo = BLOGS
+        $info = restore_read_xml ($xml_file,"BLOGS",$restore);
+
+        return $info;
+    }
+
 
     //This function read the xml file and store its data from the questions in
     //backup_ids->info db (and category's id in $info)
@@ -536,6 +546,15 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //Messages info (only showed if present)
             if ($info->backup_messages == 'true') {
                 $tab[$elem][0] = "<b>".get_string('messages','message').":</b>";
+                $tab[$elem][1] = get_string('yes');
+                $elem++;
+            } else {
+                //Do nothing
+            }
+            $elem++;
+            //Blogs info (only showed if present)
+            if (isset($info->backup_blogs) && $info->backup_blogs == 'true') {
+                $tab[$elem][0] = "<b>".get_string('blogs','blog').":</b>";
                 $tab[$elem][1] = get_string('yes');
                 $elem++;
             } else {
@@ -2933,6 +2952,127 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
        return $status;
     }
 
+    //This function creates all the structures for blogs and blog tags
+    function restore_create_blogs($restore,$xml_file) {
+
+        global $CFG;
+
+        $status = true;
+        //Check it exists
+        if (!file_exists($xml_file)) {
+            $status = false;
+        }
+        //Get info from xml
+        if ($status) {
+            //info will contain the number of blogs in the backup file
+            //in backup_ids->info will be the real info (serialized)
+            $info = restore_read_xml_blogs($restore,$xml_file);
+
+            //If we have info, then process blogs & blog_tags
+            if ($info > 0) {
+                //Count how many we have
+                $blogcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'blog');
+                if ($blogcount) {
+                    //Number of records to get in every chunk
+                    $recordset_size = 4;
+
+                    //Process blog
+                    if ($blogcount) {
+                        $counter = 0;
+                        while ($counter < $blogcount) {
+                            //Fetch recordset_size records in each iteration
+                            $recs = get_records_select("backup_ids","table_name = 'blog' AND backup_code = '$restore->backup_unique_code'","old_id","old_id",$counter,$recordset_size);
+                            if ($recs) {
+                                foreach ($recs as $rec) {
+                                    //Get the full record from backup_ids
+                                    $data = backup_getid($restore->backup_unique_code,"blog",$rec->old_id);
+                                    if ($data) {
+                                        //Now get completed xmlized object
+                                        $info = $data->info;
+                                        //traverse_xmlize($info);                            //Debug
+                                        //print_object ($GLOBALS['traverse_array']);         //Debug
+                                        //$GLOBALS['traverse_array']="";                     //Debug
+                                        //Now build the BLOG record structure
+                                        $dbrec = new object();
+                                        $dbrec->module = backup_todb($info['BLOG']['#']['MODULE']['0']['#']);
+                                        $dbrec->userid = backup_todb($info['BLOG']['#']['USERID']['0']['#']);
+                                        $dbrec->courseid = backup_todb($info['BLOG']['#']['COURSEID']['0']['#']);
+                                        $dbrec->groupid = backup_todb($info['BLOG']['#']['GROUPID']['0']['#']);
+                                        $dbrec->moduleid = backup_todb($info['BLOG']['#']['MODULEID']['0']['#']);
+                                        $dbrec->coursemoduleid = backup_todb($info['BLOG']['#']['COURSEMODULEID']['0']['#']);
+                                        $dbrec->subject = backup_todb($info['BLOG']['#']['SUBJECT']['0']['#']);
+                                        $dbrec->summary = backup_todb($info['BLOG']['#']['SUMMARY']['0']['#']);
+                                        $dbrec->content = backup_todb($info['BLOG']['#']['CONTENT']['0']['#']);
+                                        $dbrec->uniquehash = backup_todb($info['BLOG']['#']['UNIQUEHASH']['0']['#']);
+                                        $dbrec->rating = backup_todb($info['BLOG']['#']['RATING']['0']['#']);
+                                        $dbrec->format = backup_todb($info['BLOG']['#']['FORMAT']['0']['#']);
+                                        $dbrec->attachment = backup_todb($info['BLOG']['#']['ATTACHMENT']['0']['#']);
+                                        $dbrec->publishstate = backup_todb($info['BLOG']['#']['PUBLISHSTATE']['0']['#']);
+                                        $dbrec->lastmodified = backup_todb($info['BLOG']['#']['LASTMODIFIED']['0']['#']);
+                                        $dbrec->created = backup_todb($info['BLOG']['#']['CREATED']['0']['#']);
+                                        $dbrec->usermodified = backup_todb($info['BLOG']['#']['USERMODIFIED']['0']['#']);
+
+                                        //We have to recode the userid field
+                                        $user = backup_getid($restore->backup_unique_code,"user",$dbrec->userid);
+                                        if ($user) {
+                                            //echo "User ".$dbrec->userid." to user ".$user->new_id."<br />";   //Debug
+                                            $dbrec->userid = $user->new_id;
+                                        }
+
+                                        //Check if the record doesn't exist in DB!
+                                        $exist = get_record('post','userid', $dbrec->userid,
+                                                                   'subject', $dbrec->subject,
+                                                                   'created', $dbrec->created);
+                                        $newblogid = 0;
+                                        if (!$exist) {
+                                            //Not exist. Insert
+                                            $newblogid = insert_record('post',$dbrec);
+                                        }
+
+                                        //Going to restore related tags. Check they are enabled and we have inserted a blog
+                                        if ($CFG->usetags && $newblogid) {
+                                            //Look for tags in this blog
+                                            if (isset($info['BLOG']['#']['BLOG_TAGS']['0']['#']['BLOG_TAG'])) {
+                                                $tagsarr = $info['BLOG']['#']['BLOG_TAGS']['0']['#']['BLOG_TAG'];
+                                                //Iterate over tags
+                                                $tags = array();
+                                                for($i = 0; $i < sizeof($tagsarr); $i++) {
+                                                    $tag_info = $tagsarr[$i];
+                                                    ///traverse_xmlize($tag_info);                        //Debug
+                                                    ///print_object ($GLOBALS['traverse_array']);         //Debug
+                                                    ///$GLOBALS['traverse_array']="";                     //Debug
+
+                                                    $name = backup_todb($tag_info['#']['NAME']['0']['#']);
+                                                    $rawname = backup_todb($tag_info['#']['RAWNAME']['0']['#']);
+
+                                                    $tags[] = $rawname;  //Rawname is all we need
+                                                }
+                                                tag_set('post', $newblogid, $tags); //Add all the tags in one API call
+                                            }
+                                        }
+                                    }
+                                    //Do some output
+                                    $counter++;
+                                    if ($counter % 10 == 0) {
+                                        if (!defined('RESTORE_SILENTLY')) {
+                                            echo ".";
+                                            if ($counter % 200 == 0) {
+                                                echo "<br />";
+                                            }
+                                        }
+                                        backup_flush(300);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $status;
+    }
+
     //This function creates all the categories and questions
     //from xml
     function restore_create_questions($restore,$xml_file) {
@@ -4466,7 +4606,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
             //If we are under a MESSAGE tag under a MESSAGES zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
-                if (($this->tree[4] == "MESSAGE" || $this->tree[5] == "CONTACT" ) and ($this->tree[3] == "MESSAGES")) {
+                if (($this->tree[4] == "MESSAGE" || (isset($this->tree[5]) && $this->tree[5] == "CONTACT" )) and ($this->tree[3] == "MESSAGES")) {
                     if (!isset($this->temp)) {
                         $this->temp = "";
                     }
@@ -4474,6 +4614,31 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
         }
+
+        //This is the startTag handler we use where we are reading the blogs zone (todo="BLOGS")
+        function startElementBlogs($parser, $tagName, $attrs) {
+            //Refresh properties
+            $this->level++;
+            $this->tree[$this->level] = $tagName;
+
+            //Output something to avoid browser timeouts...
+            //backup_flush();
+
+            //Check if we are into BLOGS zone
+            //if ($this->tree[3] == "BLOGS")                                                          //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";  //Debug
+
+            //If we are under a BLOG tag under a BLOGS zone, accumule it
+            if (isset($this->tree[4]) and isset($this->tree[3])) {
+                if ($this->tree[4] == "BLOG" and $this->tree[3] == "BLOGS") {
+                    if (!isset($this->temp)) {
+                        $this->temp = "";
+                    }
+                    $this->temp .= "<".$tagName.">";
+                }
+            }
+        }
+
         //This is the startTag handler we use where we are reading the questions zone (todo="QUESTIONS")
         function startElementQuestions($parser, $tagName, $attrs) {
             //Refresh properties
@@ -4768,6 +4933,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 break;
                             case "MESSAGES":
                                 $this->info->backup_messages = $this->getContents();
+                                break;
+                            case "BLOGS":
+                                $this->info->backup_blogs = $this->getContents();
                                 break;
                             case 'BLOCKFORMAT':
                                 $this->info->backup_block_format = $this->getContents();
@@ -6399,6 +6567,58 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
+        //This is the endTag handler we use where we are reading the blogs zone (todo="BLOGS")
+        function endElementBlogs($parser, $tagName) {
+            //Check if we are into BLOGS zone
+            if ($this->tree[3] == "BLOGS") {
+                //if (trim($this->content))                                                             //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n"; //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";//Debug
+                //Acumulate data to info (content + close tag)
+                //Reconvert: strip htmlchars again and trim to generate xml data
+                if (!isset($this->temp)) {
+                    $this->temp = "";
+                }
+                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
+                //If we've finished a blog, xmlize it an save to db
+                if (($this->level == 4) and ($tagName == "BLOG")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one BLOG)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                              //Debug
+                    //traverse_xmlize($data);                                                         //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
+                    //$GLOBALS['traverse_array']="";                                                  //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id from data
+                    $blog_id = $data["BLOG"]["#"]["ID"]["0"]["#"];
+                    $this->counter++;
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code, 'blog', $blog_id,
+                                           null,$data);
+                    //Create returning info
+                    $this->info = $this->counter;
+                    //Reset temp
+                    unset($this->temp);
+                }
+            }
+
+            //Stop parsing if todo = BLOGS and tagName = BLOGS (end of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "BLOGS" and $this->level == 3) {
+                $this->finished = true;
+                $this->counter = 0;
+            }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+
+        }
+
         //This is the endTag handler we use where we are reading the questions zone (todo="QUESTIONS")
         function endElementQuestions($parser, $tagName) {
             //Check if we are into QUESTION_CATEGORIES zone
@@ -6871,6 +7091,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             xml_set_element_handler($xml_parser, "startElementUsers", "endElementUsers");
         } else if ($todo == "MESSAGES") {
             xml_set_element_handler($xml_parser, "startElementMessages", "endElementMessages");
+        } else if ($todo == "BLOGS") {
+            xml_set_element_handler($xml_parser, "startElementBlogs", "endElementBlogs");
         } else if ($todo == "QUESTIONS") {
             xml_set_element_handler($xml_parser, "startElementQuestions", "endElementQuestions");
         } else if ($todo == "SCALES") {
@@ -7616,6 +7838,24 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     notify("Could not restore messages!");
                 } else {
                     $errorstr = "Could not restore messages!";
+                    return false;
+                }
+            }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "</li>";
+            }
+        }
+
+        //Now create blogs as needed
+        if ($status and ($restore->blogs)) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "<li>".get_string("creatingblogsinfo");
+            }
+            if (!$status = restore_create_blogs($restore,$xml_file)) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    notify("Could not restore blogs!");
+                } else {
+                    $errorstr = "Could not restore blogs!";
                     return false;
                 }
             }
