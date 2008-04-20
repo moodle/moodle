@@ -1994,8 +1994,8 @@ class PresetImporter {
 
         list($settings, $newfields,  $currentfields) = $this->get_settings();
 
-        echo '<div style="text-align:center"><form action="preset.php" method="post">';
-        echo '<fieldset class="invisiblefieldset">';
+        echo '<div class="presetmapping"><form action="preset.php" method="post">';
+        echo '<div>';
         echo '<input type="hidden" name="action" value="finishimport" />';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="d" value="'.$this->data->id.'" />';
@@ -2031,11 +2031,15 @@ class PresetImporter {
             }
             echo '</table>';
             echo "<p>$strwarning</p>";
-        }
-        else if (empty($newfields)) {
+
+        } else if (empty($newfields)) {
             error("New preset has no defined fields!");
         }
-        echo '<input type="submit" value="'.$strcontinue.'" /></fieldset></form></div>';
+
+        echo '<div class="overwritesettings"><label for="overwritesettings">'.get_string('overwritesettings', 'data').'</label>';
+        echo '<input id="overwritesettings" name="overwritesettings" type="checkbox" /></label></div>';
+
+        echo '<input class="button" type="submit" value="'.$strcontinue.'" /></div></form></div>';
 
     }
 
@@ -2044,6 +2048,8 @@ class PresetImporter {
 
         list($settings, $newfields, $currentfields) = $this->get_settings();
         $preservedfields = array();
+
+        $overwritesettings = optional_param('overwritesettings', 0, PARAM_BOOL);
 
         /* Maps fields and makes new ones */
         if (!empty($newfields)) {
@@ -2109,9 +2115,20 @@ class PresetImporter {
             }
         }
 
+        // do we want to overwrite current database settings?
+        if ($overwritesettings) {
+            // all settings
+            $overwrite = array_keys((array)$settings);
+        } else {
+            // only templates
+            $overwrite = array('singletemplate', 'listtemplate', 'listtemplateheader', 'listtemplatefooter',
+                               'addtemplate', 'rsstemplate', 'rsstitletemplate', 'csstemplate', 'jstemplate',
+                               'asearchtemplate');
+        }
+
         // existing values MUST be sent too - it can not work without them!
         foreach ($this->data as $prop=>$unused) {
-            if (array_key_exists($prop, (array)$settings)) {
+            if (in_array($prop, $overwrite)) {
                 $this->data->$prop = $settings->$prop;
             }
         }
