@@ -103,7 +103,11 @@
 
     if (!isset($restore_messages)) {
         $restore_messages = 1;
-        }
+    }
+
+    if (!isset($restore_blogs)) {
+        $restore_blogs = 1;
+    }
 
     if (!isset($restore_restoreto)) {
         if (!user_can_create_courses()) {
@@ -545,12 +549,12 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         } else {
             $hidden_options .= '<input type="hidden" name="restore_gradebook_history" value="0" />';
         }
-        
 
         //This tr is slighty different. Everything becomes hidden if
         //we haven't messages is the backup, to avoid confusions to users.
         //If messages are in the backup file, show menu, else fixed to no and show nothing
-        if (isset($info->backup_messages) && $info->backup_messages == "true") {
+        //Also, messaging must be enabled in the destination site
+        if (isset($info->backup_messages) && $info->backup_messages == "true" && !empty($CFG->messaging)) {
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
             echo '<label for="menurestore_messages">'.get_string ('messages', 'message').'</label>';
@@ -563,7 +567,25 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         } else {
             $hidden_options .= '<input type="hidden" name="restore_messages" value="0" />';
         }
-      
+
+        //This tr is slighty different. Everything becomes hidden if
+        //we haven't blogs is the backup, to avoid confusions to users.
+        //If blogs are in the backup file, show menu, else fixed to no and show nothing
+        //Also, blogs must be enabled in the destination site
+        if (isset($info->backup_blogs) && $info->backup_blogs == "true" && !empty($CFG->bloglevel)) {
+            echo "<tr>";
+            echo "<td align=\"right\" colspan=\"2\"><b>";
+            echo '<label for="menurestore_blogs">'.get_string ('blogs', 'blog').'</label>';
+            echo "</b></td><td colspan=\"2\">";
+            $blog_options = array();
+            $blog_options[0] = get_string("no");
+            $blog_options[1] = get_string("yes");
+            choose_from_menu($blog_options, "restore_blogs", $restore_blogs, "");
+            echo "</td></tr>";
+        } else {
+            $hidden_options .= '<input type="hidden" name="restore_blogs" value="0" />';
+        }
+
     }
 ?>
 </table>

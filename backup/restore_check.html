@@ -98,7 +98,9 @@
         $restore_gradebook_history = required_param('restore_gradebook_history', PARAM_INT);
         //restore_messages
         $restore_messages = required_param('restore_messages', PARAM_INT);
-        
+        //restore_blogs
+        $restore_blogs = required_param('restore_blogs', PARAM_INT);
+
         //Check we've selected a course to restore to
         $course_id = optional_param('course_id', 0, PARAM_INT);
 
@@ -134,6 +136,7 @@
         $restore->course_files=$restore_course_files;
         $restore->site_files=$restore_site_files;
         $restore->messages=$restore_messages;
+        $restore->blogs=$restore_blogs;
         $restore->restore_gradebook_history=$restore_gradebook_history;
         $restore->course_id=$course_id;
         //add new vars to restore object
@@ -283,8 +286,8 @@
                     $changed = true;
                 }
             }
-            //If we have selected user files or messages, then users must be restored too
-            if ($restore->user_files || $restore->messages) {
+            //If we have selected user files or messages or blogs, then users must be restored too
+            if ($restore->user_files || $restore->messages || $restore->blogs) {
                 $changed = 1;
             }
             if ($changed) {
