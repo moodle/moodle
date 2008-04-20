@@ -4949,7 +4949,7 @@ function forum_print_posts_threaded($course, &$cm, $forum, $discussion, $parent,
                 $by->date = userdate($post->modified);
 
                 if ($forumtracked) {
-                    if (empty($post->postread)) {
+                    if (!empty($post->postread)) {
                         $style = '<span class="forumthread read">';
                     } else {
                         $style = '<span class="forumthread unread">';
