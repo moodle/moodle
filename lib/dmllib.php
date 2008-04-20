@@ -1807,9 +1807,14 @@ function sql_fullname($firstname='firstname', $lastname='lastname') {
  * @return string
  */
 function sql_concat() {
-    global $db;
+    global $db, $CFG;
 
     $args = func_get_args();
+/// PostgreSQL requires at least one char element in the concat, let's add it
+/// here (at the beginning of the array) until ADOdb fixes it
+    if ($CFG->dbfamily == 'postgres' && is_array($args)) {
+        array_unshift($args , "''");
+    }
     return call_user_func_array(array($db, 'Concat'), $args);
 }
 
