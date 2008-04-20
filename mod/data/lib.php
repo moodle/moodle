@@ -1763,34 +1763,37 @@ function data_user_can_add_entry($data, $currentgroup, $groupmode) {
 
 function is_directory_a_preset($directory) {
     $directory = rtrim($directory, '/\\') . '/';
-    if (file_exists($directory.'singletemplate.html') &&
-            file_exists($directory.'listtemplate.html') &&
-            file_exists($directory.'listtemplateheader.html') &&
-            file_exists($directory.'listtemplatefooter.html') &&
-            file_exists($directory.'addtemplate.html') &&
-            file_exists($directory.'rsstemplate.html') &&
-            file_exists($directory.'rsstitletemplate.html') &&
-            file_exists($directory.'csstemplate.css') &&
-            file_exists($directory.'jstemplate.js') &&
-            file_exists($directory.'preset.xml')) return true;
-    else return false;
+    $status = file_exists($directory.'singletemplate.html') &&
+              file_exists($directory.'listtemplate.html') &&
+              file_exists($directory.'listtemplateheader.html') &&
+              file_exists($directory.'listtemplatefooter.html') &&
+              file_exists($directory.'addtemplate.html') &&
+              file_exists($directory.'rsstemplate.html') &&
+              file_exists($directory.'rsstitletemplate.html') &&
+              file_exists($directory.'csstemplate.css') &&
+              file_exists($directory.'jstemplate.js') &&
+              file_exists($directory.'preset.xml');
+
+    return $status;
 }
 
 
 function clean_preset($folder) {
-    if (@unlink($folder.'/singletemplate.html') &&
-        @unlink($folder.'/listtemplate.html') &&
-        @unlink($folder.'/listtemplateheader.html') &&
-        @unlink($folder.'/listtemplatefooter.html') &&
-        @unlink($folder.'/addtemplate.html') &&
-        @unlink($folder.'/rsstemplate.html') &&
-        @unlink($folder.'/rsstitletemplate.html') &&
-        @unlink($folder.'/csstemplate.css') &&
-        @unlink($folder.'/jstemplate.js') &&
-        @unlink($folder.'/preset.xml')) {
-        return true;
-    }
-    return false;
+    $status = @unlink($folder.'/singletemplate.html') &&
+              @unlink($folder.'/listtemplate.html') &&
+              @unlink($folder.'/listtemplateheader.html') &&
+              @unlink($folder.'/listtemplatefooter.html') &&
+              @unlink($folder.'/addtemplate.html') &&
+              @unlink($folder.'/rsstemplate.html') &&
+              @unlink($folder.'/rsstitletemplate.html') &&
+              @unlink($folder.'/csstemplate.css') &&
+              @unlink($folder.'/jstemplate.js') &&
+              @unlink($folder.'/preset.xml');
+
+    // optional
+    @unlink($folder.'/asearchtemplate.html');
+
+    return $status;
 }
 
 
@@ -1808,6 +1811,7 @@ function data_presets_export($course, $cm, $data) {
     $rsstitletemplate   = fopen($tempfolder.'/rsstitletemplate.html', 'w');
     $csstemplate        = fopen($tempfolder.'/csstemplate.css', 'w');
     $jstemplate         = fopen($tempfolder.'/jstemplate.js', 'w');
+    $asearchtemplate    = fopen($tempfolder.'/asearchtemplate.html', 'w');
 
     fwrite($singletemplate, $data->singletemplate);
     fwrite($listtemplate, $data->listtemplate);
@@ -1818,6 +1822,7 @@ function data_presets_export($course, $cm, $data) {
     fwrite($rsstitletemplate, $data->rsstitletemplate);
     fwrite($csstemplate, $data->csstemplate);
     fwrite($jstemplate, $data->jstemplate);
+    fwrite($asearchtemplate, $data->asearchtemplate);
 
     fclose($singletemplate);
     fclose($listtemplate);
@@ -1828,6 +1833,7 @@ function data_presets_export($course, $cm, $data) {
     fclose($rsstitletemplate);
     fclose($csstemplate);
     fclose($jstemplate);
+    fclose($asearchtemplate);
 
     /* All the display data is now done. Now assemble preset.xml */
     $fields = get_records('data_fields', 'dataid', $data->id);
@@ -1878,7 +1884,8 @@ function data_presets_export($course, $cm, $data) {
             'rsstitletemplate.html',
             'csstemplate.css',
             'jstemplate.js',
-            'preset.xml');
+            'preset.xml',
+            'asearchtemplate.html');
 
     foreach ($filelist as $key => $file) {
         $filelist[$key] = $tempfolder.'/'.$filelist[$key];
@@ -1954,6 +1961,13 @@ class PresetImporter {
         $settings->rsstitletemplate   = file_get_contents($this->folder."/rsstitletemplate.html");
         $settings->csstemplate        = file_get_contents($this->folder."/csstemplate.css");
         $settings->jstemplate         = file_get_contents($this->folder."/jstemplate.js");
+
+        //optional
+        if (file_exists($this->folder."/asearchtemplate.html")) {
+            $settings->asearchtemplate = file_get_contents($this->folder."/asearchtemplate.html");
+        } else {
+            $settings->asearchtemplate =  NULL;
+        }
 
         $settings->instance = $this->data->id;
 
@@ -2095,7 +2109,7 @@ class PresetImporter {
             }
         }
 
-        // existing valuas MUST be sent too - it can not work without them!
+        // existing values MUST be sent too - it can not work without them!
         foreach ($this->data as $prop=>$unused) {
             if (array_key_exists($prop, (array)$settings)) {
                 $this->data->$prop = $settings->$prop;
