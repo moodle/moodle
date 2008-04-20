@@ -1813,9 +1813,14 @@ function sql_fullname($firstname='firstname', $lastname='lastname') {
  * @return string
  */
 function sql_concat() {
-    global $db;
+    global $db, $CFG;
 
     $args = func_get_args();
+/// PostgreSQL requires at least one char element in the concat, let's add it
+/// here (at the beginning of the array) until ADOdb fixes it
+    if ($CFG->dbfamily == 'postgres' && is_array($args)) {
+        array_unshift($args , "''");
+    }
     return call_user_func_array(array($db, 'Concat'), $args);
 }
 
@@ -2272,6 +2277,10 @@ function configure_dbconnection() {
         /// NOTE: Not 100% useful because GPC has been addslashed with the setting off
         ///       so IT'S MANDATORY TO ENABLE THIS UNDER php.ini or .htaccess for this DB
         ///       or to turn off magic_quotes to allow Moodle to do it properly
+        /// Now set the decimal separator to DOT, Moodle & PHP will always send floats to
+        /// DB using DOTS. Manually introduced floats (if using other characters) must be
+        /// converted back to DOTs (like gradebook does)
+            $db->Execute("ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'");
             break;
     }
 }
