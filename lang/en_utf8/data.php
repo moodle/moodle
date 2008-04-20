@@ -180,6 +180,7 @@ $string['optionaldescription'] = 'Short description (optional)';
 $string['optionalfilename'] = 'Filename (optional)';
 $string['other'] = 'Other';
 $string['overwrite'] = 'Overwrite';
+$string['overwritesettings'] = 'Overwrite current settings';
 $string['pagesize'] = 'Entries per page';
 $string['participants'] = 'Participants';
 $string['picture'] = 'Picture';
