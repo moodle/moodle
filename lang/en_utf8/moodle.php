@@ -304,6 +304,7 @@ $string['createfolder'] = 'Create a folder in $a';
 $string['createuserandpass'] = 'Choose your username and password';
 $string['createziparchive'] = 'Create zip archive';
 $string['creatingblocks'] = 'Creating blocks';
+$string['creatingblogsinfo'] = 'Creating blogs info';
 $string['creatingblocksroles'] = 'Creating block level role assignments and overrides';
 $string['creatingcategoriesandquestions'] = 'Creating categories and questions';
 $string['creatingcoursemodules'] = 'Creating course modules';
