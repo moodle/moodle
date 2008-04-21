@@ -28,7 +28,7 @@
     $id = required_param('id', PARAM_INT);   // course
 
     if (! $course = get_record("course", "id", $id)) {
-        print_error("Course ID is incorrect");
+        error("Course ID is incorrect");
     }
 
     require_course_login($course);
@@ -80,6 +80,9 @@
         array_push($table->align, 'center');
     }
 
+    $options = new object();
+    $options->noclean = true;
+
     $currentsection = "";
 
     foreach ($datas as $data) {
@@ -123,10 +126,10 @@
                 }
                 $currentsection = $data->section;
             }
-            $row = array ($printsection, $link, $data->intro, $numrecords, $numunapprovedrecords);
+            $row = array ($printsection, $link, format_text($data->intro, FORMAT_MOODLE, $options), $numrecords, $numunapprovedrecords);
 
         } else {
-            $row = array ($link, $data->intro, $numrecords, $numunapprovedrecords);
+            $row = array ($link, format_text($data->intro, FORMAT_MOODLE, $options), $numrecords, $numunapprovedrecords);
         }
 
         if ($rss) {
