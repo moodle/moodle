@@ -113,7 +113,8 @@ class data_field_date extends data_field_base {
     }
 
     function get_sort_sql($fieldname) {
-        return 'CAST('.$fieldname.' AS unsigned)';
+
+         return sql_cast_char2int($fielname, true);
     }
 
 
