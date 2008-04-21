@@ -1,3 +1,3 @@
 <?php
-$string['decodeverifyquestiontext'] = 'DECODE AND VERIFY THE QUESTION TEXT';
+$string['decodeverifyquestiontext'] = 'Decode and Verify the Question Text';
 ?>
