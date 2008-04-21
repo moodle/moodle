@@ -20,6 +20,17 @@
   text-align: right;
 }
 
+.mod-data-field .fieldadd,
+.mod-data-field .sortdefault {
+  margin-bottom: 1em;
+  margin-top: 1em;
+}
+
+.mod-data-field .fieldadd select,
+.mod-data-field .sortdefault select {
+  margin-left: 1em;
+}
+
 .mod-data-field .fieldname {
   width:300px;
 }

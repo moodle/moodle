@@ -415,7 +415,7 @@
         $ilike = sql_ilike(); //Be case-insensitive
 
     /// Find the field we are sorting on
-        if ($sort <= 0) {
+        if ($sort <= 0 or !$sortfield = data_get_field_from_id($sort, $data)) {
 
             switch ($sort) {
                 case DATA_LASTNAME:
@@ -427,7 +427,12 @@
                 case DATA_APPROVED:
                     $ordering = "r.approved $order, r.timecreated $order";
                     break;
+                case DATA_TIMEMODIFIED:
+                    $ordering = "r.timemodified $order";
+                    break;
+                case DATA_TIMEADDED:
                 default:
+                    $sort     = 0;
                     $ordering = "r.timecreated $order";
             }
 
@@ -462,7 +467,7 @@
                 $searchselect = ' ';
             }
 
-        } else if ($sort > 0 and $sortfield = data_get_field_from_id($sort, $data)) {
+        } else {
 
             $sortcontent = $sortfield->get_sort_field();
             $sortcontentfull = $sortfield->get_sort_sql('c.'.$sortcontent);
@@ -498,51 +503,7 @@
             } else {
                 $searchselect = ' ';
             }
-
-        } else if ($search) {
-            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname ';
-            $count = ' COUNT(DISTINCT c.recordid) ';
-            $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r, '.$CFG->prefix.'user u ';
-            $where =  'WHERE c.recordid = r.id
-                         AND r.userid = u.id
-                         AND r.dataid = '.$data->id;
-            $sortorder = ' ORDER BY r.id ASC ';
-            $searchselect = '';
-
-            // If requiredentries is not reached, only show current user's entries
-            if (!$requiredentries_allowed) {
-                $where .= ' AND u.id = ' . $USER->id;
-            }
-
-            if (!empty($advanced)) {                                                                                           //Advanced search box again.
-                foreach($search_array as $key => $val) {
-                    if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
-                        $searchselect .= " AND $val->field $ilike '%{$val->data}%'";
-                        continue;
-                    }
-                    $tables .= ', '.$CFG->prefix.'data_content c'.$key.' ';
-                    $where .= ' AND c'.$key.'.recordid = r.id ';
-                    $searchselect .= ' AND ('.$val->sql.') ';
-                }
-            } else {
-                $searchselect = " AND (c.content $ilike '%$search%' OR u.firstname $ilike '%$search%' OR u.lastname $ilike '%$search%' ) ";
-            }
-
-
-        } else {
-            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname ';
-            $count = ' COUNT(r.id) ';
-            $tables = $CFG->prefix.'data_records r, '.$CFG->prefix.'user u ';
-            $where =  'WHERE r.dataid = '.$data->id. ' AND r.userid = u.id ';
-            $sortorder = ' ORDER BY r.timecreated '.$order. ' ';
-            $searchselect = ' ';
-
-            // If requiredentries is not reached, only show current user's entries
-            if (!$requiredentries_allowed) {
-                $where .= ' AND u.id = ' . $USER->id;
-            }
         }
-
 
     /// To actually fetch the records
 

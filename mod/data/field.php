@@ -288,40 +288,58 @@
 
 
         echo '<div class="fieldadd">';
-        echo get_string('newfield','data').': ';
+        echo '<label for="fieldform_jump">'.get_string('newfield','data').'</label>';
         popup_form($CFG->wwwroot.'/mod/data/field.php?d='.$data->id.'&amp;mode=new&amp;sesskey='.
                 sesskey().'&amp;newtype=', $menufield, 'fieldform', '', 'choose');
         helpbutton('fields', get_string('addafield','data'), 'data');
         echo '</div>';
 
+        echo '<div class="sortdefault">';
+        echo '<form id="sortdefault" action="'.$CFG->wwwroot.'/mod/data/field.php" method="get">';
+        echo '<div>';
+        echo '<input type="hidden" name="d" value="'.$data->id.'" />';
+        echo '<input type="hidden" name="mode" value="sort" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        echo '<label for="defaultsort">'.get_string('defaultsortfield','data').'</label>';
+        echo '<select id="defaultsort" name="defaultsort">';
         if ($fields = get_records('data_fields','dataid',$data->id)) {
-            echo '<div class="sortdefault">';
-            echo '<form id="sortdefault" action="'.$CFG->wwwroot.'/mod/data/field.php" method="get">';
-            echo '<fieldset class="invisiblefieldset">';
-            echo '<input type="hidden" name="d" value="'.$data->id.'" />';
-            echo '<input type="hidden" name="mode" value="sort" />';
-            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-            echo '&nbsp;'.get_string('defaultsortfield','data').':';
-            echo '<select name="defaultsort"><option value="0">'.get_string('dateentered','data').'</option>';
+            echo '<optgroup label="'.get_string('fields', 'data').'">';
             foreach ($fields as $field) {
-                if ($field->id == $data->defaultsort) {
+                if ($data->defaultsort == $field->id) {
                     echo '<option value="'.$field->id.'" selected="selected">'.$field->name.'</option>';
                 } else {
                     echo '<option value="'.$field->id.'">'.$field->name.'</option>';
                 }
             }
-            echo '</select>';
-            echo '&nbsp;';
-
-            $options = array(0 => get_string('ascending', 'data'),
-                             1 => get_string('descending', 'data'));
-            choose_from_menu($options, 'defaultsortdir', $data->defaultsortdir, '');
-            echo '<input type="submit" value="'.get_string('go').'" />';
-            echo '</fieldset>';
-            echo '</form>';
-            echo '</div>';
+            echo '</optgroup>';
         }
+        $options = array();
+        $options[DATA_TIMEADDED]    = get_string('timeadded', 'data');
+// TODO: we will need to change defaultsort db to unsinged to make these work in 2.0
+/*        $options[DATA_TIMEMODIFIED] = get_string('timemodified', 'data');
+        $options[DATA_FIRSTNAME]    = get_string('authorfirstname', 'data');
+        $options[DATA_LASTNAME]     = get_string('authorlastname', 'data');
+        if ($data->approval and has_capability('mod/data:approve', $context)) {
+            $options[DATA_APPROVED] = get_string('approved', 'data');
+        }*/
+        echo '<optgroup label="'.get_string('other', 'data').'">';
+        foreach ($options as $key => $name) {
+            if ($data->defaultsort == $key) {
+                echo '<option value="'.$key.'" selected="selected">'.$name.'</option>';
+            } else {
+                echo '<option value="'.$key.'">'.$name.'</option>';
+            }
+        }
+        echo '</optgroup>';
+        echo '</select>';
 
+        $options = array(0 => get_string('ascending', 'data'),
+                         1 => get_string('descending', 'data'));
+        choose_from_menu($options, 'defaultsortdir', $data->defaultsortdir, '');
+        echo '<input type="submit" value="'.get_string('save', 'data').'" />';
+        echo '</div>';
+        echo '</form>';
+        echo '</div>';
 
     }
 

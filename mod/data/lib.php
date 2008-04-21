@@ -29,6 +29,8 @@ define ('DATA_PERPAGE_SINGLE', 1);
 define ('DATA_FIRSTNAME', -1);
 define ('DATA_LASTNAME', -2);
 define ('DATA_APPROVED', -3);
+define ('DATA_TIMEADDED', 0);
+define ('DATA_TIMEMODIFIED', -4);
 
 class data_field_base {     /// Base class for Database Field Types (see field/*/field.class.php)
 
@@ -1064,17 +1066,27 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo ';" >&nbsp;&nbsp;&nbsp;<label for="pref_search">'.get_string('search').'</label> <input type="text" size="16" name="search" id= "pref_search" value="'.s($search).'" /></div>';
     echo '&nbsp;&nbsp;&nbsp;<label for="pref_sortby">'.get_string('sortby').'</label> ';
     //foreach field, print the option
-    $fields = get_records('data_fields','dataid',$data->id, 'name');
-    $options = array();
-    foreach ($fields as $field) {
-        $options[$field->id] = $field->name;
+    echo '<select name="sort" id="pref_sortby">';
+    if ($fields = get_records('data_fields','dataid',$data->id, 'name')) {
+        echo '<optgroup label="'.get_string('fields', 'data').'">';
+        foreach ($fields as $field) {
+            if ($field->id == $sort) {
+                echo '<option value="'.$field->id.'" selected="selected">'.$field->name.'</option>';
+            } else {
+                echo '<option value="'.$field->id.'">'.$field->name.'</option>';
+            }
+        }
+        echo '</optgroup>';
     }
-    $options[DATA_FIRSTNAME] = get_string('authorfirstname', 'data');
-    $options[DATA_LASTNAME] = get_string('authorlastname', 'data');
+    $options = array();
+    $options[DATA_TIMEADDED]    = get_string('timeadded', 'data');
+    $options[DATA_TIMEMODIFIED] = get_string('timemodified', 'data');
+    $options[DATA_FIRSTNAME]    = get_string('authorfirstname', 'data');
+    $options[DATA_LASTNAME]     = get_string('authorlastname', 'data');
     if ($data->approval and has_capability('mod/data:approve', $context)) {
         $options[DATA_APPROVED] = get_string('approved', 'data');
     }
-    echo '<select name="sort" id="pref_sortby"><option value="0">'.get_string('dateentered','data').'</option>';
+    echo '<optgroup label="'.get_string('other', 'data').'">';
     foreach ($options as $key => $name) {
         if ($key == $sort) {
             echo '<option value="'.$key.'" selected="selected">'.$name.'</option>';
@@ -1082,6 +1094,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
             echo '<option value="'.$key.'">'.$name.'</option>';
         }
     }
+    echo '</optgroup>';
     echo '</select>';
     echo '<label for="pref_order" class="accesshide">'.get_string('order').'</label>';
     echo '<select id="pref_order" name="order">';
