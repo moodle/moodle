@@ -113,18 +113,8 @@ class data_field_date extends data_field_base {
     }
 
     function get_sort_sql($fieldname) {
-         global $CFG;
- 
-         switch ($CFG->dbfamily) {
-             case 'postgres':
-             case 'mssql':
-                 return 'CAST('.$fieldname.' AS bigint)';
-             case 'oracle':
-                 return 'TO_NUMBER('.$fieldname.')';
-             case 'mysql':
-             default:
-                 return 'CAST('.$fieldname.' AS signed)';
-         }
+
+         return sql_cast_char2int($fieldname, true);
     }
 
 
