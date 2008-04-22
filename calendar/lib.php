@@ -1292,7 +1292,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         }
 
         // XXX TODO: not sure how to replace $CFG->calendar_adminseesall
-        if(has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID)) && !empty($CFG->calendar_adminseesall)) {
+        if(has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM)) && !empty($CFG->calendar_adminseesall)) {
             $group = true;
         }
         else {
@@ -1377,7 +1377,7 @@ function calendar_edit_event_allowed($event) {
         return false;
     }
 
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
     // if user has manageentries at site level, return true
     if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
         return true;
