@@ -978,6 +978,8 @@ function glossary_print_entry_attachment($entry,$format=NULL,$align="right",$ins
 }
 
 function  glossary_print_entry_approval($cm, $entry, $mode,$align="right",$insidetable=true) {
+    global $CFG;
+
     if ( $mode == 'approval' and !$entry->approved ) {
         if ($insidetable) {
             echo '<table class="glossaryapproval" align="'.$align.'"><tr><td align="'.$align.'">';
