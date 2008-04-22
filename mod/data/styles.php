@@ -2,6 +2,11 @@
   text-align: right;
 }
 
+#mod-data-view .approve img.icon {
+  width:34px;
+  height:34px;
+}
+
 #mod-data-preset .presetmapping {
   text-align: center;
 }
