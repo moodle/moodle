@@ -190,27 +190,24 @@
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
     $getvars = 'id='.$courseid.'&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
 
-    echo '<div class="sideblock">';
-    echo '<div class="header"><h2>'.get_string('eventskey', 'calendar').'</h2></div>';
-    echo '<div class="filters">';
-    echo calendar_filter_controls($view, $getvars, NULL, $courses);
-    echo '</div>';
-    echo '</div>';
-
-    echo '<div class="sideblock">';
-    echo '<div class="header"><h2>'.get_string('monthlyview', 'calendar').'</h2></div>';
-
-    echo '<div class="minicalendarblock minicalendartop">';
-    echo calendar_top_controls('display', array('id' => $courseid, 'm' => $prevmon, 'y' => $prevyr));
-    echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
-    echo '</div><div class="minicalendarblock">';
-    echo calendar_top_controls('display', array('id' => $courseid, 'm' => $mon, 'y' => $yr));
-    echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
-    echo '</div><div class="minicalendarblock">';
-    echo calendar_top_controls('display', array('id' => $courseid, 'm' => $nextmon, 'y' => $nextyr));
-    echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
-    echo '</div>';
-    echo '</div>';
+    $content='<div class="filters">';
+    $content.=calendar_filter_controls($view, $getvars, NULL, $courses);
+    $content.='</div>';
+    
+    print_side_block(get_string('eventskey', 'calendar'),$content);
+        
+    $content='<div class="minicalendarblock minicalendartop">';
+    $content.=calendar_top_controls('display', array('id' => $courseid, 'm' => $prevmon, 'y' => $prevyr));
+    $content.=calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
+    $content.='</div><div class="minicalendarblock">';
+    $content.=calendar_top_controls('display', array('id' => $courseid, 'm' => $mon, 'y' => $yr));
+    $content.=calendar_get_mini($courses, $groups, $users, $mon, $yr);
+    $content.='</div><div class="minicalendarblock">';
+    $content.=calendar_top_controls('display', array('id' => $courseid, 'm' => $nextmon, 'y' => $nextyr));
+    $content.=calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
+    $content.='</div>';
+    
+    print_side_block(get_string('monthlyview', 'calendar'),$content);
 
     echo '</td>';
 

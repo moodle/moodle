@@ -1483,3 +1483,6 @@ body.grade-report-grader table#user-grades td.course {
 .tag_cloud .s1 {
   font-size: 0.9em;
 }
+#calendar .maincalendar {
+  background:white;
+}

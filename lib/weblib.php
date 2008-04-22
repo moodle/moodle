@@ -6334,8 +6334,10 @@ function rebuildnolinktag($text) {
  * Prints a nice side block with an optional header.  The content can either
  * be a block of HTML or a list of text with optional icons.
  *
- * @param  string $heading Block $title embedded in HTML tags, for example <h2>.
- * @param  string $content ?
+ * @param string $heading HTML for the heading. Can include full HTML or just
+ *   plain text - plain text will automatically be enclosed in the appropriate
+ *   heading tags.
+ * @param  string $content HTML for the content
  * @param  array $list ?
  * @param  array $icons ?
  * @param  string $footer ?
@@ -6398,7 +6400,9 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
 /**
  * Starts a nice side block with an optional header.
  *
- * @param string $heading ?
+ * @param string $heading HTML for the heading. Can include full HTML or just
+ *   plain text - plain text will automatically be enclosed in the appropriate
+ *   heading tags.
  * @param array $attributes ?
  * @todo Finish documenting this function
  */
@@ -6441,7 +6445,15 @@ function print_side_block_start($heading='', $attributes = array()) {
         echo '<div class="wrap">'."\n";
     }
     if ($heading) {
-        //Accessibility:  H2 more appropriate in moodleblock.class.php: _title_html.
+        // Some callers pass in complete html for the heading, which may include
+        // complicated things such as the 'hide block' button; some just pass in
+        // text. If they only pass in plain text i.e. it doesn't include a
+        // <div>, then we add in standard tags that make it look like a normal
+        // page block including the h2 for accessibility
+        if(strpos($heading,'</div>')===false) {
+            $heading='<div class="title"><h2>'.$heading.'</h2></div>';
+        }        
+        
         echo '<div class="header">';
         if (!empty($THEME->customcorners)) {
             echo '<div class="bt"><div>&nbsp;</div></div>';

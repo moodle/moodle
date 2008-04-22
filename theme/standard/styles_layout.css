@@ -1531,14 +1531,9 @@ table.minicalendar td {
   height: auto;
 }
 
-#calendar div.header
+#calendar .maincalendar div.header
 {
   padding: 5px;
-}
-
-#calendar .sideblock div.header
-{
-  border:none;
 }
 
 #calendar .maincalendar .buttons {
@@ -1736,11 +1731,6 @@ table.minicalendar th {
 
 #calendar td.sidecalendar {
 border-width:0px;
-}
-
-#calendar td.sidecalendar .sideblock {
-  border: 1px solid;
-  margin-bottom:10px;
 }
 
 #calendar td.sidecalendar .minicalendartop {

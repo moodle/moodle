@@ -22,6 +22,8 @@
                 } else {
                     tagname = 'haslayouttable onlymiddlecolumn';
                 }
+            } else if(document.getElementsByTagName('body')[0].id.substring(0,9)=='calendar-') {
+                tagname='haslayouttable onlyrightcolumn';
             }
             
             function setbodytag (tagname) {
