@@ -60,6 +60,7 @@
             list($tocategoryid, $tocontextid) = explode(',', $formdata->category);
             $qcobject->move_questions_and_delete_category($formdata->delete, $tocategoryid);
             $thispageurl->remove_params('cat');
+            $thispageurl->remove_params('category'); // TODO check in fix for bug 5353 
             redirect($thispageurl->out());
         }
     } else {
