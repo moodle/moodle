@@ -40,7 +40,7 @@
 
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
-        redirect('edit.php?cmid='.$cm->id);
+        redirect($CFG->wwwroot . '/mod/quiz/edit.php?cmid=' . $cm->id);
     }
 
     add_to_log($course->id, "quiz", "view", "view.php?id=$cm->id", $quiz->id, $cm->id);

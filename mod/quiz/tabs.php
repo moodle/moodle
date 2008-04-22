@@ -48,7 +48,6 @@ if ($currenttab == 'info' && count($row) == 1) {
 }
 
 if ($currenttab == 'reports' and isset($mode)) {
-    $inactive[] = 'reports';
     $activated[] = 'reports';
 
     // Standard reports we want to show first.
@@ -81,7 +80,6 @@ if ($currenttab == 'reports' and isset($mode)) {
 }
 
 if ($currenttab == 'edit' and isset($mode)) {
-    $inactive[] = 'edit';
     $activated[] = 'edit';
 
     $row  = array();
@@ -96,6 +94,10 @@ if ($currenttab == 'edit' and isset($mode)) {
     questionbank_navigation_tabs($row, $contexts, $thispageurl->get_query_string());
     $tabs[] = $row;
 
+}
+
+if (!$quiz->questions) {
+    $inactive += array('info', 'reports', 'preview');
 }
 
 print_tabs($tabs, $currenttab, $inactive, $activated);

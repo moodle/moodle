@@ -61,7 +61,7 @@
 
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
-        redirect($CFG->wwwroot . '/mod/quiz/edit.php?quizid=' . $quiz->id);
+        redirect($CFG->wwwroot . '/mod/quiz/edit.php?cmid=' . $cm->id);
     }
 
     if (!$ispreviewing) {
