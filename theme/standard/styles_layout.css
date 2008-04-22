@@ -2582,10 +2582,15 @@ body.notes .notesgroup {
 .que.description .info {
   display: none;
 }
-.que.description .content {
+.que.description .content,
+.que.description .generalfeedback {
   margin-left: 1.2em;
+  margin-bottom: 0.5em;
   float: none;
   width: auto;
+}
+.que.description .qtext {
+  margin-bottom: 0;
 }
 .que .qtext {
   margin-bottom: 1.5em;
