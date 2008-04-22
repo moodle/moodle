@@ -14,7 +14,7 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
 
 // Site admins only, thanks.
-$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+$context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/site:config', $context);
 
 error_reporting(E_ALL);
