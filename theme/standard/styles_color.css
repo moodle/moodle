@@ -830,6 +830,25 @@ table.message_search_results td {
  *** Tabs
  ***/
 
+.tabtree a.nolink,
+.tabtree .here ul a.nolink {
+  color: #888;
+}
+
+.tabtree a.nolink:hover,
+.tabtree .here ul a.nolink:hover {
+  color: #888;
+}
+
+.tabtree .here a.nolink,
+.tabtree .here ul .here a.nolink {
+  color: black;
+}
+
+.tabtree .here a.nolink:hover,
+.tabtree .here ul .here a.nolink {
+  color: black;
+}
 
 
 /***

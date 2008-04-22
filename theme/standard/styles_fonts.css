@@ -719,6 +719,14 @@ body#grade-index .grades .header {
   text-decoration: none;
 }
 
+.tabtree .here {
+  font-weight: bold;
+}
+
+.tabtree .here ul {
+  font-weight: normal;
+}
+
 /***
  *** Tags
  ***/

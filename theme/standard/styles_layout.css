@@ -2734,19 +2734,23 @@ body.notes .notesgroup {
   padding: 10px 0 0.35em 13px;
 }
 
-.tabrow0 a:hover {
+.tabrow0 a:link:hover,
+.tabrow0 a:visited:hover {
   background-image: url(pix/tab/left_hover.gif);
 }
 
-.tabrow0 .here a:hover {
+.tabrow0 .here a:link:hover,
+.tabrow0 .here a:visited:hover, {
   background-image: url(pix/tab/left.gif);
 }
 
-.tabrow0 a:hover span {
+.tabrow0 a:link:hover span,
+.tabrow0 a:visited:hover span {
   background-image: url(pix/tab/right_hover.gif);
 }
 
-.tabrow0 .here a:hover span {
+.tabrow0 .here a:link:hover span,
+.tabrow0 .here a:visited:hover span {
   background-image: url(pix/tab/right.gif);
 }
 
