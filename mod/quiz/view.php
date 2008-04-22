@@ -49,7 +49,7 @@
 
 /// If no questions have been set up yet redirect to edit.php
     if (!$quiz->questions && has_capability('mod/quiz:manage', $context)) {
-        redirect('edit.php?cmid='.$cm->id);
+        redirect($CFG->wwwroot . '/mod/quiz/edit.php?cmid=' . $cm->id);
     }
 
 /// Log this request.
