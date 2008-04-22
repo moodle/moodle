@@ -18,24 +18,24 @@
     if (!empty($id)) {
         require_login($id);
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $id))) {
-            print_error("You need to be a teacher or admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
+            print_error('cannotusepage', 'error', "$CFG->wwwroot/login/index.php");
         }
     } else {
         require_login();
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
-            print_error("You need to be an admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
+            print_error('cannotusepage', 'error', "$CFG->wwwroot/login/index.php");
         }
     }
 
     if (!empty($to)) {
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $to))) {
-            print_error("You need to be a teacher or admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
+            print_error('cannotusepage', 'error', "$CFG->wwwroot/login/index.php");
         }
     }
 
     //Check site
     if (!$site = get_site()) {
-        print_error("Site not found!");
+        print_error("cannotfindsite");
     }
 
     //Check necessary functions exists. Thanks to gregb@crowncollege.edu
@@ -96,7 +96,7 @@
 
     //Get and check course
     if (! $course = get_record("course", "id", $id)) {
-        print_error("Course ID was incorrect (can't find it)");
+        print_error('unknowncourseidnumber','error');
     }
 
     //Print header
