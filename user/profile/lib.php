@@ -65,7 +65,7 @@ class profile_field_base {
     function edit_field(&$mform) {
 
         if ($this->field->visible != PROFILE_VISIBLE_NONE
-          or has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+          or has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM))) {
 
             $this->edit_field_add($mform);
             $this->edit_field_set_default($mform);
@@ -127,7 +127,7 @@ class profile_field_base {
      * @param   object   instance of the moodleform class
      */
     function edit_field_set_required(&$mform) {
-        if ($this->is_required() and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if ($this->is_required() and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM))) {
             $mform->addRule($this->inputname, get_string('required'), 'required', null, 'client');
         }
     }
@@ -137,7 +137,7 @@ class profile_field_base {
      * @param   object   instance of the moodleform class
      */
     function edit_field_set_locked(&$mform) {
-        if ($this->is_locked() and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if ($this->is_locked() and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM))) {
             $mform->hardFreeze($this->inputname);
         }
     }
@@ -229,7 +229,7 @@ class profile_field_base {
             case PROFILE_VISIBLE_PRIVATE:
                 return ($this->userid == $USER->id);
             default:
-                return has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID));
+                return has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM));
         }
     }
 
