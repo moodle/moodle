@@ -40,8 +40,16 @@ if (empty($filtertype)) {
         $filtertype = 'user';
         $filterselect = $userid;
     } else if (has_capability('moodle/blog:view', $sitecontext) and $CFG->bloglevel > BLOG_USER_LEVEL) {
-        $filtertype = 'site';
-        $filterselect = '';
+        if ($postid) {
+            $filtertype = 'user';
+            if (!$postobject = get_record('post', 'module', 'blog', 'id', $postid)) {
+                error('No such blog entry');
+            }
+            $filterselect = $postobject->userid;
+        } else {
+            $filtertype = 'site';
+            $filterselect = '';
+        }
     } else {
         // user might have capability to write blogs, but not read blogs at site level
         // users might enter this url manually without parameters

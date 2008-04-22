@@ -188,19 +188,27 @@ $navlinks = array();
                     $navlinks[] = array('name' => "$tagstring: $taginstance->name", 'link' => null, 'type' => 'misc');
                     $navigation = build_navigation($navlinks);
 
-                    print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
-
                 } else {
                     $navlinks[] = array('name' => $blogstring, 'link' => null, 'type' => 'misc');
                     $navigation = build_navigation($navlinks);
-                    print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
                 }
+                print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
 
             } else {
 
             //in top view
 
-                if ($tagid || !empty($tag)) {
+                if ($postid) {
+                    $navlinks[] = array('name' => fullname($user),
+                                        'link' => "$CFG->wwwroot/user/view.php?id=$filterselect",
+                                        'type' => 'misc');
+                    $navlinks[] = array('name' => $blogstring,
+                                        'link' => "index.php?filtertype=user&amp;filterselect=$filterselect",
+                                        'type' => 'misc');
+                    $navlinks[] = array('name' => format_string($postobject->subject), 'link' => null, 'type' => 'misc');
+                    $navigation = build_navigation($navlinks);
+
+                } else if ($tagid || !empty($tag)) {
                     $navlinks[] = array('name' => fullname($user),
                                         'link' => "$CFG->wwwroot/user/view.php?id=$filterselect",
                                         'type' => 'misc');
@@ -210,17 +218,14 @@ $navlinks = array();
                     $navlinks[] = array('name' => "$tagstring: $taginstance->name", 'link' => null, 'type' => 'misc');
                     $navigation = build_navigation($navlinks);
 
-                    print_header("$SITE->shortname: $blogstring", $SITE->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
-
                 } else {
                     $navlinks[] = array('name' => fullname($user),
                                         'link' => "$CFG->wwwroot/user/view.php?id=$filterselect",
                                         'type' => 'misc');
                     $navlinks[] = array('name' => $blogstring, 'link' => null, 'type' => 'misc');
                     $navigation = build_navigation($navlinks);
-                    print_header("$SITE->shortname: $blogstring", $SITE->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
-
                 }
+                print_header("$SITE->shortname: $blogstring", $SITE->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
 
             }
         break;
