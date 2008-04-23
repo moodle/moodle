@@ -68,7 +68,7 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
     }
     $style .= '"';
     if ($imagefile) {
-        if (!file_exists("$CFG->dataroot/filter/tex/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (!file_exists("$CFG->dataroot/filter/tex/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
           $output .= "<a href=\"$CFG->wwwroot/filter/tex/texdebug.php\">";
         } else {
           $output .= "<a target=\"popup\" title=\"TeX\" href=";

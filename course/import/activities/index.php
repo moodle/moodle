@@ -25,7 +25,7 @@
     if ($fromcourse) {
         $fromcontext = get_context_instance(CONTEXT_COURSE, $fromcourse);
     }
-    $syscontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $syscontext = get_context_instance(CONTEXT_SYSTEM);
 
     if (!has_capability('moodle/course:manageactivities', $tocontext)) {
         error("You need do not have the required permissions to import activities to this course");
