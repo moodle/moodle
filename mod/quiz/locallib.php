@@ -137,14 +137,18 @@ function quiz_get_user_attempt_unfinished($quizid, $userid) {
  * @param integer $quizid the id of the quiz.
  * @param integer $userid the id of the user.
  *
- * @return mixed the unfinished attempt if there is one, false if not.
+ * @return mixed the attempt if there is one, false if not.
  */
 function quiz_get_latest_attempt_by_user($quizid, $userid) {
     global $CFG;
-    return get_record_sql('SELECT qa.* FROM ' . $CFG->prefix . 'quiz_attempts qa
-            WHERE qa.quiz=' . $quizid . ' AND qa.userid=' . $userid . ' AND qa.timestart = (
-                SELECT MAX(timestart) FROM ' . $CFG->prefix . 'quiz_attempts ssqa
-                WHERE ssqa.quiz=' . $quizid . ' AND ssqa.userid=' . $userid . ')');
+    $attempt = get_records_sql('SELECT qa.* FROM ' . $CFG->prefix . 'quiz_attempts qa
+            WHERE qa.quiz=' . $quizid . ' AND qa.userid=' . $userid .
+            ' ORDER BY qa.timestart DESC, qa.id DESC', 0, 1);
+    if ($attempt) {
+        return array_shift($attempt);
+    } else {
+        return false;
+    }
 }
 
 /**
