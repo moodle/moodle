@@ -5332,23 +5332,25 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
             $nextmod = $mod;
             $flag = false;
         }
+        $localname = $mod->name;
         if ($cm == $mod->id) {
             $selected = $url;
             $selectmod = $mod;
             $backmod = $previousmod;
             $flag = true; // set flag so we know to use next mod for "next"
-            $mod->name = $strjumpto;
+            $localname = $strjumpto;
             $strjumpto = '';
         } else {
-            $mod->name = strip_tags(format_string(urldecode($mod->name),true));
-            if (strlen($mod->name) > ($width+5)) {
-                $mod->name = substr($mod->name, 0, $width).'...';
+            $localname = strip_tags(format_string($localname,true));
+            $tl=textlib_get_instance();
+            if ($tl->strlen($localname) > ($width+5)) {
+                $localname = $tl->substr($localname, 0, $width).'...';
             }
             if (!$mod->visible) {
-                $mod->name = '('.$mod->name.')';
+                $localname = '('.$localname.')';
             }
         }
-        $menu[$url] = $mod->name;
+        $menu[$url] = $localname;
         if (empty($THEME->navmenuiconshide)) {
             $menustyle[$url] = 'style="background-image: url('.$CFG->modpixpath.'/'.$mod->modname.'/icon.gif);"';  // Unfortunately necessary to do this here
         }
