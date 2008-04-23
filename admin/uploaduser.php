@@ -66,9 +66,13 @@ $returnurl = $CFG->wwwroot.'/'.$CFG->admin.'/uploaduser.php';
 $bulknurl  = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
 
 // array of all valid fields for validation
-$STD_FIELDS = array('firstname', 'lastname', 'username', 'email', 'city', 'country', 'lang', 'auth', 'timezone', 'mailformat', 'maildisplay', 'maildigest', 'htmleditor',
-                    'ajax', 'autosubscribe', 'mnethostid', 'institution', 'department', 'idnumber', 'icq', 'phone1', 'phone2', 'address', 'url', 'description',
-                    'oldusername', 'emailstop', 'deleted',  'password');
+$STD_FIELDS = array('id', 'firstname', 'lastname', 'username', 'email', 
+        'city', 'country', 'lang', 'auth', 'timezone', 'mailformat', 
+        'maildisplay', 'maildigest', 'htmleditor', 'ajax', 'autosubscribe', 
+        'mnethostid', 'institution', 'department', 'idnumber', 'skype', 
+        'msn', 'aim', 'yahoo', 'icq', 'phone1', 'phone2', 'address', 
+        'url', 'description', 'oldusername', 'emailstop', 'deleted',  
+        'password');
 
 $PRF_FIELDS = array();
 
