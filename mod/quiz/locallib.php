@@ -102,6 +102,8 @@ function quiz_get_user_attempt_unfinished($quizid, $userid) {
 
 /**
  * Delete a quiz attempt.
+ * @param mixed $attempt an integer attempt id or an attempt object (row of the quiz_attempts table).
+ * @param object $quiz the quiz object.
  */
 function quiz_delete_attempt($attempt, $quiz) {
     if (is_numeric($attempt)) {
