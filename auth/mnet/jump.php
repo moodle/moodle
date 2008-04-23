@@ -14,6 +14,8 @@
 
 require_once dirname(dirname(dirname(__FILE__))) . '/config.php';
 
+require_login();
+
 if (!is_enabled_auth('mnet')) {
     print_error('mnet is disabled');
 }
