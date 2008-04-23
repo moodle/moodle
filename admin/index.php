@@ -496,6 +496,13 @@
         print_simple_box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'center', '60%');
     }
 
+    if (substr($CFG->wwwroot, -1) == '/') {
+        print_simple_box(get_string('cfgwwwrootslashwarning', 'admin'), 'center', '60%');
+    }
+    if (strpos($ME, $CFG->httpswwwroot.'/') === false) {
+        print_simple_box(get_string('cfgwwwrootwarning', 'admin'), 'center', '60%');
+    }
+
 /// If no recently cron run
     $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
     if (time() - $lastcron > 3600 * 24) {
