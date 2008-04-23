@@ -17,16 +17,31 @@ if (empty($SESSION->bulk_users)) {
     redirect($return);
 }
 
-
 if ($format) {
     $fields = array('id'        => 'id',
-                    'username'  => get_string('username'),
-                    'email'     => get_string('email'),
-                    'firstname' => get_string('firstname'),
-                    'lastname'  => get_string('lastname'),
-                    'idnumber'  => get_string('idnumber'),
-                    'city'      => get_string('city'),
-                    'country'   => get_string('country'));
+                    'username'  => 'username',
+                    'email'     => 'email',
+                    'firstname' => 'firstname',
+                    'lastname'  => 'lastname',
+                    'idnumber'  => 'idnumber',
+                    'institution' => 'institution',
+                    'department' => 'department',
+                    'phone1'    => 'phone1',
+                    'phone2'    => 'phone2',
+                    'city'      => 'city',
+                    'url'       => 'url',
+                    'icq'       => 'icq',
+                    'skype'     => 'skype',
+                    'aim'       => 'aim',
+                    'yahoo'     => 'yahoo',
+                    'msn'       => 'msn',
+                    'country'   => 'country');
+
+    if ($extrafields = get_records_select('user_info_field')) {
+        foreach ($extrafields as $n=>$v){
+            $fields['profile_field_'.$v->shortname] = 'profile_field_'.$v->name;
+        }
+    }
 
     switch ($format) {
         case 'csv' : user_download_csv($fields);
@@ -56,6 +71,7 @@ function user_download_ods($fields) {
     global $CFG, $SESSION;
 
     require_once("$CFG->libdir/odslib.class.php");
+    require_once($CFG->dirroot.'/user/profile/lib.php');
 
     $filename = clean_filename(get_string('users').'.ods');
 
@@ -77,6 +93,7 @@ function user_download_ods($fields) {
             continue;
         }
         $col = 0;
+        profile_load_data($user);
         foreach ($fields as $field=>$unused) {
             $worksheet[0]->write($row, $col, $user->$field);
             $col++;
@@ -92,6 +109,7 @@ function user_download_xls($fields) {
     global $CFG, $SESSION;
 
     require_once("$CFG->libdir/excellib.class.php");
+    require_once($CFG->dirroot.'/user/profile/lib.php');
 
     $filename = clean_filename(get_string('users').'.xls');
 
@@ -113,6 +131,7 @@ function user_download_xls($fields) {
             continue;
         }
         $col = 0;
+        profile_load_data($user);
         foreach ($fields as $field=>$unused) {
             $worksheet[0]->write($row, $col, $user->$field);
             $col++;
@@ -126,6 +145,8 @@ function user_download_xls($fields) {
 
 function user_download_csv($fields) {
     global $CFG, $SESSION;
+    
+    require_once($CFG->dirroot.'/user/profile/lib.php');
 
     $filename = clean_filename(get_string('users').'.csv');
 
@@ -149,6 +170,7 @@ function user_download_csv($fields) {
         if (!$user = get_record('user', 'id', $userid)) {
             continue;
         }
+        profile_load_data($user);
         foreach ($fields as $field=>$unused) {
             $row[] = str_replace($delimiter, $encdelim, $user->$field);
         }
