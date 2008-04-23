@@ -555,7 +555,14 @@
         print_box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'generalbox adminwarning');
     }
 
-/// If no recently cron run
+    if (substr($CFG->wwwroot, -1) == '/') {
+        print_box(get_string('cfgwwwrootslashwarning', 'admin'), 'generalbox adminwarning');
+    }
+    if (strpos($ME, $CFG->httpswwwroot.'/') === false) {
+        print_box(get_string('cfgwwwrootwarning', 'admin'), 'generalbox adminwarning');
+    }
+
+    /// If no recently cron run
     $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
     if (time() - $lastcron > 3600 * 24) {
         $strinstallation = get_string('installation', 'install');
