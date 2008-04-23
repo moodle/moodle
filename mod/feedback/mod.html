@@ -1,0 +1,156 @@
+<!-- This page defines the form to create or edit an instance of this module -->
+<!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
+
+<?php require_once($CFG->dirroot.'/mod/feedback/lib.php'); ?>
+
+<script type="text/javascript" language="javascript">
+    var openitems = ['openday','openmonth','openyear','openhour', 'openminute'];
+    var closeitems = ['closeday','closemonth','closeyear','closehour', 'closeminute'];
+</script>
+
+<form name="form" method="post" action="<?php echo $ME ?>">
+<center>
+<table cellpadding=5>
+<tr>
+    <td align=right valign=top><p><b><?php  print_string("name", "feedback") ?>:</b></p></td>
+    <td align="left">
+        <input type="text" id="name" name="name" size=30 value="<?php p(isset($form->name)?$form->name:'') ?>" />
+    </td>
+</tr>
+<tr>
+    <td align=right valign=top><p><b><?php  print_string("description", "feedback") ?>:</b></p></td>
+    <td align="left">
+    <?php
+	   $form->summary=isset($form->summary)?$form->summary:'';
+       print_textarea($usehtmleditor, 20, 60, 680, 400, "summary", $form->summary);
+    ?>
+    </td>
+</tr>
+<tr valign="top">
+   <td align="right"><b><?php print_string("feedbackopen", "feedback") ?>:</b></td>
+    <td align="left">
+    <?php $form->timeopen=isset($form->timeopen)?$form->timeopen:NULL;?>
+        <input name="openenable" type="checkbox" value="1" alt="<?php print_string("feedbackopen", "feedback") ?>" onclick="return lockoptions('form', 'openenable', openitems)" <?php if ($form->timeopen) echo 'checked="checked"' ?> />
+    <?php
+           print_date_selector("openday", "openmonth", "openyear", $form->timeopen);
+           echo "&nbsp;-&nbsp;";
+           print_time_selector("openhour", "openminute", $form->timeopen);
+           helpbutton('timeopen', get_string('feedbackopens', 'feedback'), 'feedback');
+     ?>
+        <input type="hidden" name="hopenday"    value="0" />
+        <input type="hidden" name="hopenmonth"  value="0" />
+        <input type="hidden" name="hopenyear"   value="0" />
+        <input type="hidden" name="hopenhour"   value="0" />
+        <input type="hidden" name="hopenminute" value="0" />
+    </td>
+</tr>
+<tr valign="top">
+   <td align="right"><b><?php print_string("feedbackclose", "feedback") ?>:</b></td>
+    <td align="left">
+    <?php $form->timeclose=isset($form->timeclose)?$form->timeclose:NULL;?>
+        <input name="closeenable" type="checkbox" value="1" alt="<?php print_string("feedbackclose", "feedback") ?>" onclick="return lockoptions('form', 'closeenable', closeitems)" <?php if ($form->timeclose) echo 'checked="checked"' ?> />
+    <?php
+           print_date_selector("closeday", "closemonth", "closeyear", $form->timeclose);
+           echo "&nbsp;-&nbsp;";
+           print_time_selector("closehour", "closeminute", $form->timeclose);
+           helpbutton('timeclose', get_string('feedbackcloses', 'feedback'), 'feedback');
+     ?>
+        <input type="hidden" name="hcloseday"    value="0" />
+        <input type="hidden" name="hclosemonth"  value="0" />
+        <input type="hidden" name="hcloseyear"   value="0" />
+        <input type="hidden" name="hclosehour"   value="0" />
+        <input type="hidden" name="hcloseminute" value="0" />
+    </td>
+</tr>
+<tr>
+    <td align=right valign=top><p><b><?php  print_string("anonymous_edit", "feedback") ?>:</b></p></td>
+    <td align="left">
+      <?php 
+	  $form->anonymous=isset($form->anonymous)?$form->anonymous:NULL;
+	  if($form->anonymous == '')$form->anonymous = 1;
+	  ?>
+      <input type="radio" name="anonymous" <?php echo ($form->anonymous <= 1)?'checked="checked"':'';?> value="1" />&nbsp;<?php print_string('anonymous', 'feedback');?>
+      <input type="radio" name="anonymous" <?php echo ($form->anonymous == 2)?'checked="checked"':'';?> value="2" />&nbsp;<?php print_string('non_anonymous', 'feedback');?>
+    </td>
+</tr>
+<tr>
+    <?php $form->publish_stats=isset($form->publish_stats)?$form->publish_stats:NULL;?>
+    <td align=right valign=top><p><b><?php  print_string("publish_stats_on_students", "feedback") ?>:</b></p></td>
+    <td align="left">
+      <select name="publish_stats">
+         <option value="0"<?php echo ($form->publish_stats == 0?' selected="selected"':'');?>><?php  print_string("no") ?></option>
+         <option value="1"<?php echo ($form->publish_stats == 1?' selected="selected"':'');?>><?php  print_string("yes") ?></option>
+      </select>
+    </td>
+</tr>
+<tr>
+    <td align=right valign=top><p><b>
+	<?php
+	print_string("email_notification", "feedback");
+    $form->email_notification=isset($form->email_notification)?$form->email_notification:NULL;
+    $form->multiple_submit=isset($form->multiple_submit)?$form->multiple_submit:NULL;
+	?>:</b></p></td>
+    <td align="left">
+      <select name="email_notification">
+         <option value="0"<?php echo ($form->email_notification == 0?' selected="selected"':'');?>><?php  print_string("no") ?></option>
+         <option value="1"<?php echo ($form->email_notification == 1?' selected="selected"':'');?>><?php  print_string("yes") ?></option>
+      </select>
+      <?php helpbutton('emailnotification', '', 'feedback', true, true); ?>
+    </td>
+</tr>
+<?php
+// check if there is existing responses to this feedback
+if ($feedback = get_record("feedback", "id", $form->instance)) {
+    $completedFeedbackCount = feedback_get_completeds_group_count($feedback);
+} else {
+    $completedFeedbackCount = false;
+}
+?>
+
+<tr>
+    <td align=right valign=top><p><b><?php  print_string("multiple_submit", "feedback") ?>:</b></p></td>
+    <td align="left">
+    <?php if (!$completedFeedbackCount) { ?>
+      <select name="multiple_submit">
+         <option value="0"<?php echo ($form->multiple_submit == 0?' selected="selected"':'');?>><?php  print_string("no") ?></option>
+         <option value="1"<?php echo ($form->multiple_submit == 1?' selected="selected"':'');?>><?php  print_string("yes") ?></option>
+      </select>
+    <?php 
+      helpbutton('multiplesubmit', '', 'feedback', true, true);
+    } else {
+        intval($form->multiple_submit) === 0 ? print_string('no') : print_string('yes');
+    }
+    ?>
+    </td>
+</tr>
+<tr>
+    <td align=right valign=top><p><b><?php  print_string("page_after_submit", "feedback") ?>:</b></p></td>
+    <td align="left">
+      <?php
+         $form->page_after_submit=isset($form->page_after_submit)?$form->page_after_submit:'';
+         print_textarea($usehtmleditor, 20, 60, 680, 400, "page_after_submit", $form->page_after_submit);
+      ?>
+    </td>
+</tr>
+<?php print_standard_coursemodule_settings($form); ?>
+<!-- More rows go in here... -->
+
+</table>
+<!-- These hidden variables are always the same -->
+<input type="hidden" name=course        value="<?php  p($form->course) ?>" />
+<input type="hidden" name=coursemodule  value="<?php  p($form->coursemodule) ?>" />
+<input type="hidden" name=section       value="<?php  p($form->section) ?>" />
+<input type="hidden" name=module        value="<?php  p($form->module) ?>" />
+<input type="hidden" name=modulename    value="<?php  p($form->modulename) ?>" />
+<input type="hidden" name=instance      value="<?php  p($form->instance) ?>" />
+<input type="hidden" name=mode          value="<?php  p($form->mode) ?>" />
+<input type="hidden" name="sesskey" value="<?php p($USER->sesskey);?>" />
+<input type="submit" value="<?php  print_string("savechanges") ?>" />
+</center>
+</form>
+<script type="text/javascript">
+<?php 
+    if (!$form->timeclose) echo "lockoptions('form','closeenable', closeitems);";
+    if (!$form->timeopen) echo "lockoptions('form','openenable', openitems);";
+?>
+</script>
