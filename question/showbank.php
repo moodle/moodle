@@ -76,8 +76,7 @@
                 if ($questionlist = explode(',', $deleteselected)) {
                     // for each question either hide it if it is in use or delete it
                     foreach ($questionlist as $questionid) {
-                        if (record_exists('quiz_question_instances', 'question', $questionid) or
-                            record_exists('question_states', 'originalquestion', $questionid)) {
+                        if (record_exists('quiz_question_instances', 'question', $questionid)) {
                             if (!set_field('question', 'hidden', 1, 'id', $questionid)) {
                                error('Was not able to hide question');
                             }
@@ -105,8 +104,7 @@
                 if (substr($key, 0, 1) == "q") {
                     $key = substr($key,1);
                     $questionlist .= $key.',';
-                    if (record_exists('quiz_question_instances', 'question', $key) or
-                        record_exists('question_states', 'originalquestion', $key)) {
+                    if (record_exists('quiz_question_instances', 'question', $key)) {
                         $questionnames .= '* ';
                         $inuse = true;
                     }
