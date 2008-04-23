@@ -982,7 +982,14 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
  */
 function message_post_message($userfrom, $userto, $message, $format, $messagetype) {
 
-    global $CFG, $SITE;
+    global $CFG, $SITE, $USER;
+
+/// Set up current language to suit the receiver of the message
+    $savelang = $USER->lang;
+    
+    if (!empty($userto->lang)) {
+        $USER->lang = $userto->lang;
+    }
 
 /// Save the new message in the database
 
@@ -1046,6 +1053,8 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
             sleep(3);
         }
     }
+
+    $USER->lang = $savelang;  // restore original language
 
     return $savemessage->id;
 }
