@@ -24,7 +24,7 @@ $courseid     = optional_param('courseid', 0, PARAM_INT); // needed for user tab
 
 
 if (empty($CFG->bloglevel)) {
-    print_error('Blogging is disabled!');
+    print_error('blogdisable', 'blog');
 }
 
 $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
@@ -63,53 +63,53 @@ switch ($filtertype) {
 
     case 'site':
         if ($CFG->bloglevel < BLOG_SITE_LEVEL) {
-            print_error('Site blogs is not enabled');
+            print_error('siteblogdisable', 'blog');
         }
         if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL) {
             require_login();
         }
         if (!has_capability('moodle/blog:view', $sitecontext)) {
-            print_error('You do not have the required permissions to view all site blogs');
+            print_error('cannotviewsiteblog', 'blog');
         }
     break;
 
     case 'course':
         if ($CFG->bloglevel < BLOG_COURSE_LEVEL) {
-            print_error('Course blogs is not enabled');
+            print_error('courseblogdisable', 'blog');
         }
         if (!$course = get_record('course', 'id', $filterselect)) {
-            print_error('Incorrect course id specified');
+            print_error('invalidcourseid');
         }
         $courseid = $course->id;
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         require_login($course);
         if (!has_capability('moodle/blog:view', $coursecontext)) {
-            print_error('You do not have the required permissions to view blogs in this course');
+            print_error('cannotviewcourseblog', 'blog');
         }
     break;
 
     case 'group':
         if ($CFG->bloglevel < BLOG_GROUP_LEVEL) {
-            print_error('Group blogs is not enabled');
+            print_error('groupblogdisable', 'blog');
         }
         
         // fix for MDL-9268
         if (! $group = groups_get_group($filterselect)) { //TODO:check.
-            print_error('Incorrect group id specified');
+            print_error('invalidgroupid');
         }
         if (!$course = get_record('course', 'id', $group->courseid)) {
-            print_error('Incorrect course id specified');
+            print_error('invalidcourseid');
         }
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $courseid = $course->id;
         require_login($course);
         if (!has_capability('moodle/blog:view', $coursecontext)) {
-            print_error('You do not have the required permissions to view blogs in this course/group');
+            print_error('cannotviewcourseorgroupblog', 'blog');
         }
         if (groups_get_course_groupmode($course) == SEPARATEGROUPS
           and !has_capability('moodle/site:accessallgroups', $coursecontext)) {
             if (!groups_is_member($filterselect)) {
-                error ('You are not a member of this course group');
+                print_error('notmemberofgroup');
             }
         }
 
@@ -117,24 +117,24 @@ switch ($filtertype) {
 
     case 'user':
         if ($CFG->bloglevel < BLOG_USER_LEVEL) {
-            print_error('Blogs is not enabled');
+            print_error('blogdisable', 'blog');
         }
         if (!$user = get_record('user', 'id', $filterselect)) {
-            print_error('Incorrect user id');
+            print_error('invaliduserid');
         }
         if ($USER->id == $filterselect) {
             if (!has_capability('moodle/blog:create', $sitecontext)
               and !has_capability('moodle/blog:view', $sitecontext)) {
-                print_error('You do not have your own blog, sorry.');
+                print_error('donothaveblog', 'blog');
             }
         } else {
             $personalcontext = get_context_instance(CONTEXT_USER, $filterselect);
             if (!has_capability('moodle/blog:view', $sitecontext) 
               and !has_capability('moodle/user:readuserblogs', $personalcontext)) {
-                print_error('You do not have the required permissions to read user blogs');
+                print_error('cannotviewuserblog', 'blog');
             }
             if (!blog_user_can_view_user_post($filterselect)) {
-                print_error('You can not view blog of this user, sorry.');
+                print_error('cannotviewcourseblog', 'blog');
             }
         }
         $userid = $filterselect;
@@ -146,7 +146,7 @@ switch ($filtertype) {
     break;
 
     default:
-        print_error('Incorrect blog filter type specified');
+        print_error('incorrectblogfilter', 'blog');
     break;
 }
 

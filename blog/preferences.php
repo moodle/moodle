@@ -15,7 +15,7 @@
     }
 
     if (empty($CFG->bloglevel)) {
-        print_error('Blogging is disabled!');
+        print_error('blogdisable', 'blog');
     }
 
     require_capability('moodle/blog:view', $context);
@@ -26,7 +26,7 @@
         $pagesize = required_param('pagesize', PARAM_INT);
 
         if ($pagesize < 1) {
-            print_error('invalid page size');
+            print_error('invalidpagesize');
         }
         set_user_preference('blogpagesize', $pagesize);
 
