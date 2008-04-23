@@ -68,10 +68,9 @@
     $table->align = $align;
 
 /// Populate the table with the list of instances.
-
     $currentsection = '';
     foreach ($quizzes as $quiz) {
-        $cm      = get_coursemodule_from_instance('quiz', $quiz->id);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         $data = array();
 
