@@ -18,18 +18,18 @@
     if (!empty($id)) {
         require_login($id);
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $id))) {
-            print_error('cannotusepage', 'error', "$CFG->wwwroot/login/index.php");
+            print_error('cannotuseadminadminorteacher', 'error', "$CFG->wwwroot/login/index.php");
         }
     } else {
         require_login();
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
-            print_error('cannotusepage', 'error', "$CFG->wwwroot/login/index.php");
+            print_error('cannotuseadmin', 'error', "$CFG->wwwroot/login/index.php");
         }
     }
 
     if (!empty($to)) {
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $to))) {
-            print_error('cannotusepage', 'error', "$CFG->wwwroot/login/index.php");
+            print_error('cannotuseadminadminorteacher', 'error', "$CFG->wwwroot/login/index.php");
         }
     }
 
