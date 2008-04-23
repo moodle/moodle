@@ -85,7 +85,7 @@ function question_can_delete_cat($todelete){
     $contextid = $record->contextid;
     $count = $record->count;
     if ($count < 2) {
-        print_error('You can\'t delete that category it is the default category for this context.');
+        error('You can\'t delete that category it is the default category for this context.');
     } else {
         require_capability('moodle/question:managecategory', get_context_instance_by_id($contextid));
     }
@@ -418,7 +418,7 @@ function question_showbank_actions($pageurl, $cm){
         $category = required_param('category', PARAM_SEQUENCE);
         list($tocategoryid, $contextid) = explode(',', $category);
         if (! $tocategory = get_record('question_categories', 'id', $tocategoryid, 'contextid', $contextid)) {
-            print_error('Could not find category record');
+            error('Could not find category record');
         }
         $tocontext = get_context_instance_by_id($contextid);
         require_capability('moodle/question:add', $tocontext);
@@ -449,7 +449,7 @@ function question_showbank_actions($pageurl, $cm){
                 foreach ($questionids as $questionid){
                     //move question
                     if (!set_field('question', 'category', $tocategory->id, 'id', $questionid)) {
-                        print_error('Could not update category field');
+                        error('Could not update category field');
                     }
                 }
                 redirect($returnurl);
@@ -481,7 +481,7 @@ function question_showbank_actions($pageurl, $cm){
                             record_exists('question_states', 'originalquestion', $questionid)) {
                             if (!set_field('question', 'hidden', 1, 'id', $questionid)) {
                                 question_require_capability_on($questionid, 'edit');
-                                print_error('Was not able to hide question');
+                                error('Was not able to hide question');
                             }
                         } else {
                             delete_question($questionid);
@@ -490,7 +490,7 @@ function question_showbank_actions($pageurl, $cm){
                 }
                 redirect($pageurl->out());
             } else {
-                print_error("Confirmation string was incorrect");
+                error("Confirmation string was incorrect");
             }
 
 
@@ -502,7 +502,7 @@ function question_showbank_actions($pageurl, $cm){
         $unhide = required_param('unhide', PARAM_INT);
         question_require_capability_on($unhide, 'edit');
         if(!set_field('question', 'hidden', 0, 'id', $unhide)) {
-            print_error("Failed to unhide the question.");
+            error("Failed to unhide the question.");
         }
         redirect($pageurl->out());
     }
