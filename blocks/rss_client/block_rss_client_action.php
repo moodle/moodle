@@ -99,15 +99,15 @@ if (isset($rss_record)) {
 if ($act == 'updfeed') {
 
     if (!$managefeeds) {
-        error(get_string('noguestpost', 'forum').
-                ' You are not allowed to make modifications to this RSS feed at this time.',
-                $referrer);
-        //print_error('noguestpost', 'forum', $referrer, 'You are not allowed to make modifications to this RSS feed at this time.');
+        //error(get_string('noguestpost', 'forum').
+        //        ' You are not allowed to make modifications to this RSS feed at this time.',
+        //        $referrer);
+        print_error('noguestpost', 'forum', $referrer, 'You are not allowed to make modifications to this RSS feed at this time.');
     }
 
 
     if (empty($url)) {
-        print_error( 'URL not defined for rss feed' );
+        print_error('urlnotdefinerss');
     }
 
     // By capturing the output from fetch_rss this way
@@ -142,7 +142,7 @@ if ($act == 'updfeed') {
     $dataobject->url = addslashes($url);
 
     if (!update_record('block_rss_client', $dataobject)) {
-        print_error('There was an error trying to update rss feed with id:'. $rssid);
+        print_error('updatersserror', 'error', '', $rssid);
     }
 
     $message .= '<br />'. get_string('feedupdated', 'block_rss_client');
@@ -154,11 +154,12 @@ if ($act == 'updfeed') {
     $canaddsharedfeeds = has_capability('block/rss_client:createsharedfeeds', $context);
 
     if (!$canaddprivfeeds && !$canaddsharedfeeds) {
-        print_error('You do not have the permission to add RSS feeds');
+        print_error('cannotaddrss', 'error');
     }
 
     if (empty($url)) {
-        print_error('URL not defined for rss feed');
+        print_error('urlnotdefinerss', 'error');
+
     }
     $dataobject->userid = $USER->id;
     $dataobject->description = '';
@@ -174,7 +175,7 @@ if ($act == 'updfeed') {
 
     $rssid = insert_record('block_rss_client', $dataobject);
     if (!$rssid) {
-        print_error('There was an error trying to add a new rss feed:'. $url);
+        print_error('updatersserror', 'error', '', $url);
     }
 
     // By capturing the output from fetch_rss this way
@@ -200,7 +201,7 @@ if ($act == 'updfeed') {
             $dataobject->title = addslashes($rss->channel['title']);
         }
         if (!update_record('block_rss_client', $dataobject)) {
-            print_error('There was an error trying to update rss feed with id:'. $rssid);
+            print_error('updatersserror', 'error', '', $rssid);
         }
         $message .= '<br />'. get_string('feedadded', 'block_rss_client');
     }
