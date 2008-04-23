@@ -414,7 +414,7 @@ function question_sort_options($pageurl, $sortorder){
 function question_showbank_actions($pageurl, $cm){
     global $CFG, $COURSE;
     /// Now, check for commands on this page and modify variables as necessary
-    if (isset($_REQUEST['move']) and confirm_sesskey()) { /// Move selected questions to new category
+    if (optional_param('move', false, PARAM_BOOL) and confirm_sesskey()) { /// Move selected questions to new category
         $category = required_param('category', PARAM_SEQUENCE);
         list($tocategoryid, $contextid) = explode(',', $category);
         if (! $tocategory = get_record('question_categories', 'id', $tocategoryid, 'contextid', $contextid)) {
@@ -422,8 +422,9 @@ function question_showbank_actions($pageurl, $cm){
         }
         $tocontext = get_context_instance_by_id($contextid);
         require_capability('moodle/question:add', $tocontext);
+        $rawdata = (array) data_submitted();
         $questionids = array();
-        foreach ($_POST as $key => $value) {    // Parse input for question ids
+        foreach ($rawdata as $key => $value) {    // Parse input for question ids
             if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
                 $key = $matches[1];
                 $questionids[] = $key;
@@ -468,17 +469,15 @@ function question_showbank_actions($pageurl, $cm){
         }
     }
 
-    if (isset($_REQUEST['deleteselected'])) { // delete selected questions from the category
-
-        if (isset($_REQUEST['confirm']) and confirm_sesskey()) { // teacher has already confirmed the action
+    if (optional_param('deleteselected', false, PARAM_BOOL)) { // delete selected questions from the category
+        if (($confirm = optional_param('confirm', '', PARAM_ALPHANUM)) and confirm_sesskey()) { // teacher has already confirmed the action
             $deleteselected = required_param('deleteselected');
-            if ($_REQUEST['confirm'] == md5($deleteselected)) {
+            if ($confirm == md5($deleteselected)) {
                 if ($questionlist = explode(',', $deleteselected)) {
                     // for each question either hide it if it is in use or delete it
                     foreach ($questionlist as $questionid) {
                         question_require_capability_on($questionid, 'edit');
-                        if (record_exists('quiz_question_instances', 'question', $questionid) or
-                            record_exists('question_states', 'originalquestion', $questionid)) {
+                        if (record_exists('quiz_question_instances', 'question', $questionid)) {
                             if (!set_field('question', 'hidden', 1, 'id', $questionid)) {
                                 question_require_capability_on($questionid, 'edit');
                                 error('Was not able to hide question');
@@ -492,14 +491,11 @@ function question_showbank_actions($pageurl, $cm){
             } else {
                 error("Confirmation string was incorrect");
             }
-
-
         }
     }
 
     // Unhide a question
-    if(isset($_REQUEST['unhide']) && confirm_sesskey()) {
-        $unhide = required_param('unhide', PARAM_INT);
+    if(($unhide = optional_param('unhide', '', PARAM_INT)) and confirm_sesskey()) {
         question_require_capability_on($unhide, 'edit');
         if(!set_field('question', 'hidden', 0, 'id', $unhide)) {
             error("Failed to unhide the question.");
@@ -507,6 +503,7 @@ function question_showbank_actions($pageurl, $cm){
         redirect($pageurl->out());
     }
 }
+
 /**
  * Shows the question bank editing interface.
  *
@@ -527,19 +524,19 @@ function question_showbank_actions($pageurl, $cm){
 function question_showbank($tabname, $contexts, $pageurl, $cm, $page, $perpage, $sortorder, $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext){
     global $COURSE;
 
-    if (isset($_REQUEST['deleteselected'])){ // teacher still has to confirm
+    if (optional_param('deleteselected', false, PARAM_BOOL)){ // teacher still has to confirm
         // make a list of all the questions that are selected
-        $rawquestions = $_REQUEST;
+        $rawquestions = (array) data_submitted();
         $questionlist = '';  // comma separated list of ids of questions to be deleted
         $questionnames = ''; // string with names of questions separated by <br /> with
                              // an asterix in front of those that are in use
         $inuse = false;      // set to true if at least one of the questions is in use
         foreach ($rawquestions as $key => $value) {    // Parse input for question ids
             if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
-                $key = $matches[1];                    $questionlist .= $key.',';
+                $key = $matches[1];
+                $questionlist .= $key.',';
                 question_require_capability_on($key, 'edit');
-                if (record_exists('quiz_question_instances', 'question', $key) or
-                    record_exists('question_states', 'originalquestion', $key)) {
+                if (record_exists('quiz_question_instances', 'question', $key)) {
                     $questionnames .= '* ';
                     $inuse = true;
                 }
