@@ -7,7 +7,7 @@
     require_once($CFG->dirroot.'/course/lib.php');
     require_once($CFG->dirroot.'/backup/restorelib.php');
 
-    $syscontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $syscontext = get_context_instance(CONTEXT_SYSTEM);
 
     // if we're not a course creator , we can only import from our own courses.
     if (has_capability('moodle/course:create', $syscontext)) {

@@ -19,7 +19,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         $showcourses = 1;
     }
     
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
     
     // Context for remote data is always SITE
     // Groups for remote data are always OFF
@@ -286,7 +286,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         $showcourses = 1;
     }
     
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
    
     /// Setup for group handling.

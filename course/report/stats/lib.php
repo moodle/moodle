@@ -14,14 +14,14 @@
         $reportoptions = stats_get_report_options($course->id, $mode);
         $timeoptions = report_stats_timeoptions($mode);
         if (empty($timeoptions)) {
-            error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
+            print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
         }
         */
 
         $options = array();
         $options[STATS_MODE_GENERAL] = get_string('statsmodegeneral');
         $options[STATS_MODE_DETAILED] = get_string('statsmodedetailed');
-        if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM))) {
             $options[STATS_MODE_RANKED] = get_string('reports');
         }
         
