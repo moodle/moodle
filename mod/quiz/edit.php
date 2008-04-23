@@ -124,9 +124,11 @@
 
 
 /// Now, check for commands on this page and modify variables as necessary
+    // If any edit action makes a sifnificant change to the structure of the quiz, then we
+    // will need to delete all preview attempts.
+    $significantchangemade = false;
 
-    if (isset($_REQUEST['up']) and confirm_sesskey()) { /// Move the given question up a slot
-        $up = optional_param('up', 0, PARAM_INT);
+    if (($up = optional_param('up', false, PARAM_INT)) !== false and confirm_sesskey()) { /// Move the given question up a slot
         $questions = explode(",", $quiz->questions);
         if ($up > 0 and isset($questions[$up])) {
             $prevkey = ($questions[$up-1] == 0) ? $up-2 : $up-1;
@@ -141,11 +143,11 @@
             if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->instance)) {
                 error('Could not save question list');
             }
+            $significantchangemade = true;
         }
     }
 
-    if (isset($_REQUEST['down']) and confirm_sesskey()) { /// Move the given question down a slot
-        $down = optional_param('down', 0, PARAM_INT);
+    if (($down = optional_param('down', false, PARAM_INT)) !== false and confirm_sesskey()) { /// Move the given question down a slot
         $questions = explode(",", $quiz->questions);
         if ($down < count($questions)) {
             $nextkey = ($questions[$down+1] == 0) ? $down+2 : $down+1;
@@ -158,23 +160,27 @@
             if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->instance)) {
                 error('Could not save question list');
             }
+            $significantchangemade = true;
         }
     }
 
-    if (isset($_REQUEST['addquestion']) and confirm_sesskey()) { /// Add a single question to the current quiz
-        quiz_add_quiz_question($_REQUEST['addquestion'], $quiz);
+    if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) and confirm_sesskey()) { /// Add a single question to the current quiz
+        quiz_add_quiz_question($addquestion, $quiz);
+        $significantchangemade = true;
     }
 
-    if (isset($_REQUEST['add']) and confirm_sesskey()) { /// Add selected questions to the current quiz
-        foreach ($_POST as $key => $value) {    // Parse input for question ids
+    if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) { /// Add selected questions to the current quiz
+        $rawdata = (array) data_submitted();
+        foreach ($rawdata as $key => $value) {    // Parse input for question ids
             if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
                 $key = $matches[1];
                 quiz_add_quiz_question($key, $quiz);
             }
         }
+        $significantchangemade = true;
     }
 
-    if (isset($_REQUEST['addrandom']) and confirm_sesskey()) { /// Add random questions to the quiz
+    if (optional_param('addrandom', false, PARAM_BOOL) and confirm_sesskey()) { /// Add random questions to the quiz
         $recurse = optional_param('recurse', 0, PARAM_BOOL);
         $categoryid = required_param('categoryid', PARAM_INT);
         $randomcount = required_param('randomcount', PARAM_INT);
@@ -220,11 +226,13 @@
                 quiz_add_quiz_question($question->id, $quiz);
             }
         }
+        $significantchangemade = true;
     }
 
-    if (isset($_REQUEST['repaginate']) and confirm_sesskey()) { /// Re-paginate the quiz
-        if (isset($_REQUEST['questionsperpage'])) {
-            $quiz->questionsperpage = required_param('questionsperpage', PARAM_INT);
+    if (optional_param('repaginate', false, PARAM_BOOL) and confirm_sesskey()) { /// Re-paginate the quiz
+        $questionsperpage = optional_param('questionsperpage', $quiz->questionsperpage, PARAM_INT);
+        if ($questionsperpage != $quiz->questionsperpage) {
+            $quiz->questionsperpage = $questionsperpage;
             if (!set_field('quiz', 'questionsperpage', $quiz->questionsperpage, 'id', $quiz->id)) {
                 error('Could not save number of questions per page');
             }
@@ -233,16 +241,18 @@
         if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->id)) {
             error('Could not save layout');
         }
+        $significantchangemade = true;
     }
-    if (isset($_REQUEST['delete']) and confirm_sesskey()) { /// Remove a question from the quiz
-        quiz_delete_quiz_question($_REQUEST['delete'], $quiz);
+    if (($delete = optional_param('delete', false, PARAM_INT)) !== false and confirm_sesskey()) { /// Remove a question from the quiz
+        quiz_delete_quiz_question($delete, $quiz);
+        $significantchangemade = true;
     }
 
-    if (isset($_REQUEST['savechanges']) and confirm_sesskey()) {
+    if (optional_param('savechanges', false, PARAM_BOOL) and confirm_sesskey()) {
     /// We need to save the new ordering (if given) and the new grades
         $oldquestions = explode(",", $quiz->questions); // the questions in the old order
         $questions = array(); // for questions in the new order
-        $rawgrades = $_POST;
+        $rawgrades = (array) data_submitted();
         unset($quiz->grades);
         foreach ($rawgrades as $key => $value) {
         /// Parse input for question -> grades
@@ -283,16 +293,24 @@
         }
 
         // If rescaling is required save the new maximum
-        if (isset($_REQUEST['maxgrade'])) {
-            if (!quiz_set_grade(optional_param('maxgrade', 0), $quiz)) {
+        $maxgrade = optional_param('maxgrade', -1, PARAM_NUMBER);
+        if ($maxgrade >= 0) {
+            if (!quiz_set_grade($maxgrade, $quiz)) {
                 error('Could not set a new maximum grade for the quiz');
             }
         }
+        $significantchangemade = true;
     }
 
 /// Delete any teacher preview attempts if the quiz has been modified
-    if (isset($_REQUEST['savechanges']) or isset($_REQUEST['delete']) or isset($_REQUEST['repaginate']) or isset($_REQUEST['addrandom']) or isset($_REQUEST['addquestion']) or isset($_REQUEST['up']) or isset($_REQUEST['down']) or isset($_REQUEST['add'])) {
-        delete_records('quiz_attempts', 'preview', '1', 'quiz', $quiz->id);
+    if ($significantchangemade) {
+        $previewattempts = get_records_select('quiz_attempts',
+                'quiz = ' . $quiz->id . ' AND preview = 1');
+        if ($previewattempts) {
+            foreach ($previewattempts as $attempt) {
+                quiz_delete_attempt($attempt, $quiz);
+            }
+        }
     }
 
     question_showbank_actions($thispageurl, $cm);
@@ -300,7 +318,6 @@
 /// all commands have been dealt with, now print the page
 
     // Print basic page layout.
-
     if (isset($quiz->instance) and record_exists_select('quiz_attempts', "quiz = '$quiz->instance' AND preview = '0'")){
         // one column layout with table of questions used in this quiz
         $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())

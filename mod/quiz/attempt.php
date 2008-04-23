@@ -198,7 +198,8 @@
     }
 
 /// Process form data /////////////////////////////////////////////////
-    if ($responses = data_submitted() and empty($_POST['quizpassword'])) {
+
+    if ($responses = data_submitted() and empty($responses->quizpassword)) {
 
     /// Set the default event. This can be overruled by individual buttons.
         if (array_key_exists('markall', $responses)) {
