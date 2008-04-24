@@ -652,6 +652,10 @@ function data_update_instance($data) {
         $data->assessed = 0;
     }
 
+    if (empty($data->notification)) {
+        $data->notification = 0;
+    }
+
     if (! update_record('data', $data)) {
         return false;
     }
