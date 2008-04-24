@@ -215,7 +215,7 @@
 
     //If the user is a teacher and not a creator or we are restoring from within SITEID
 
-    if (!user_can_create_courses() || $id = SITEID) {
+    if (!user_can_create_courses() || $id == SITEID) {
         $restore->course_id = $id;
         if ($restore->restoreto == 0) {
             $restore->deleting = true;
