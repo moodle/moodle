@@ -92,6 +92,8 @@
         use_html_editor("text");
     }
 
+    echo '</center>';
+
     print_footer($course);
 
 ?>
