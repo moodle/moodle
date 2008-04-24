@@ -60,7 +60,7 @@ function tag_print_cloud($nr_of_tags=150, $return=false) {
             $tagname = tag_display_name($tag);
         }
 
-        $link = $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'"';
+        $link = $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name);
         $output .= '<li><a href="'. $link .'" class="'. $tag->class .'" '.
             'title="'. get_string('numberofentries', 'blog', $tag->count) .'">'.
             $tagname .'</a></li> ';
