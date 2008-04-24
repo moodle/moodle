@@ -45,6 +45,8 @@ configurationcompletesub
 configurationfileexist
 continue
 creatingconfigfile
+ctyperecommended
+ctyperequired
 curlrecommended
 customcheck
 database
