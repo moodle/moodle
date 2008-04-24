@@ -177,6 +177,11 @@
           <ON_CHECK message="xmlrpcrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="ctype" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="ctyperecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
     </PHP_EXTENSIONS>
     <CUSTOM_CHECKS>
       <CUSTOM_CHECK file="question/upgrade.php" function="question_check_no_rqp_questions" level="optional">
@@ -247,6 +252,11 @@
       <PHP_EXTENSION name="xmlrpc" level="optional">
         <FEEDBACK>
           <ON_CHECK message="xmlrpcrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="ctype" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="ctyperequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
     </PHP_EXTENSIONS>

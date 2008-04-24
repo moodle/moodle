@@ -24,6 +24,8 @@ configfilewritten
 configurationcompletehead
 configurationcompletesub
 continue
+ctyperecommended
+ctyperequired
 curlrecommended
 customcheck
 database

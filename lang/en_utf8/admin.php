@@ -258,6 +258,8 @@ $string['cronerrorclionly'] = 'Sorry, internet access to this page has been disa
 $string['cronerrorpassword'] = 'Sorry, you have not provided a valid password to access this page';
 $string['cronremotepassword'] = 'Cron password for remote access';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours.';
+$string['ctyperecommended'] = 'Installing the optional ctype PHP extension is highly recommended in order to improve site performance, particularly if your site is supporting non-latin languages.';
+$string['ctyperequired'] = 'The ctype PHP extension is now required by Moodle, in order to improve site performance and to offer multilingual compatibility.';
 $string['csvdelimiter'] = 'CSV delimiter';
 $string['curlrecommended'] = 'Installing the optional cURL library is highly recommended in order to enable Moodle Networking functionality.';
 $string['customcheck'] = 'Other Checks';
