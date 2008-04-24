@@ -1639,7 +1639,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
     }
 
     if ($category) {
-        if ($category->visible or has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if ($category->visible or has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM))) {
             print_category_info($category, $depth, $files);
         } else {
             return;  // Don't bother printing children of invisible categories
@@ -1819,7 +1819,7 @@ function print_courses($category) {
         echo "</ul>\n";
     } else {
         print_heading(get_string("nocoursesyet"));
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $context = get_context_instance(CONTEXT_SYSTEM);
         if (has_capability('moodle/course:create', $context)) {
             $options = array();
             $options['category'] = $category->id;
@@ -2660,7 +2660,7 @@ function course_allowed_module($course,$mod) {
 
     // Admins and admin-like people who can edit everything can also add anything.
     // This is a bit wierd, really.  I debated taking it out but it's enshrined in help for the setting.
-    if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM))) {
         return true;
     }
 
