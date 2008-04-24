@@ -22,6 +22,7 @@ $string['courseblogdisable'] = 'Course blogs is not enabled';
 $string['courseblogs'] = 'Users can only see blogs for people who share a course';
 $strign['donothaveblog'] = 'You do not have your own blog, sorry.';
 $string['deleteotagswarn'] = 'Are you sure you want to remove this / these tags <br />from all blog posts and remove it from the system?';
+$string['deleteposterror'] = 'Error occured while deleting post';
 $string['disableblogs'] = 'Disable blog system completely';
 $string['emptybody'] = 'Blog entry body can not be empty';
 $string['emptytitle'] = 'Blog entry title can not be empty';
@@ -63,6 +64,7 @@ $string['userblog'] = 'User blog: $a';
 $string['viewcourseentries'] = 'View course entries';
 $string['viewmyentries'] = 'View my entries';
 $string['viewsiteentries'] = 'View site entries';
+$string['wrongpostid'] = 'Wrong blog post id';
 $string['worldblogs'] = 'The world can read entries set to be world-accessible';
 
 ?>

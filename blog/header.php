@@ -17,7 +17,7 @@ blog_check_and_install_blocks();
 
 
 if (!$course = get_record('course', 'id', $courseid)) {
-    print_error('The course number was incorrect ('. $courseid .')');
+    print_error('invalidcourseid', '', '', $courseid);
 }
 
 // Bounds for block widths
@@ -99,7 +99,7 @@ $tagstring = get_string('tag');
 
 // needed also for user tabs later
 if (!$course = get_record('course', 'id', $courseid)) {
-    print_error('Wrong course id');
+    print_error('invalidcourseid', '', '', $courseid);
 }
 
 $navlinks = array();
@@ -157,7 +157,7 @@ $navlinks = array();
                     print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
                 }
             } else {
-                print_error('Unable to find group');
+                print_error('cannotfindgroup');
             }
 
         break;
@@ -165,7 +165,7 @@ $navlinks = array();
         case 'user':
             $participants = get_string('participants');
             if (!$user = get_record('user', 'id', $filterselect)) {
-               print_error('Wrong user id');
+               print_error('invaliduserid');
             }
 
             if ($course->id != SITEID) {
