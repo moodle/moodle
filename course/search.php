@@ -33,7 +33,7 @@
         require_login();
     }
 
-    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM))) {
         if ($edit !== -1) {
             $USER->categoryediting = $edit;
             // If the edit mode we are leaving has higher per page than the one we are entering,
@@ -45,7 +45,7 @@
 
 /// Editing functions
 
-    if (has_capability('moodle/course:visibility', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/course:visibility', get_context_instance(CONTEXT_SYSTEM))) {
 
     /// Hide or show a course
 
@@ -66,7 +66,7 @@
 
     }
 
-    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID)) && $perpage != 99999) {
+    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM)) && $perpage != 99999) {
         $perpage = 30;
     }
 
@@ -171,7 +171,7 @@
 
     $searchform = print_course_search($search, true, "navbar");
 
-    if (!empty($courses) && has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (!empty($courses) && has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM))) {
         $searchform .= update_categories_search_button($search,$page,$perpage);
     }
 

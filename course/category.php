@@ -45,7 +45,7 @@
         }
         $navbaritem = update_category_button($category->id);
         $creatorediting = !empty($USER->categoryediting);
-        $adminediting = (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) and $creatorediting);
+        $adminediting = (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and $creatorediting);
 
     } else {
         if (!$category->visible) {
@@ -482,7 +482,7 @@
     }
 
     echo '<div class="buttons">'; 
-    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM, SITEID)) and $numcourses > 1) {           /// Print button to re-sort courses by name
+    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM)) and $numcourses > 1) {           /// Print button to re-sort courses by name
         unset($options);
         $options['id'] = $category->id;
         $options['resort'] = 'name';

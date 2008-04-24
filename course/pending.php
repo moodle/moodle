@@ -8,7 +8,7 @@
 
     require_login();
 
-    require_capability('moodle/site:approvecourse', get_context_instance(CONTEXT_SYSTEM, SITEID));
+    require_capability('moodle/site:approvecourse', get_context_instance(CONTEXT_SYSTEM));
 
     $approve      = optional_param('approve', 0, PARAM_INT);
     $reject       = optional_param('reject', 0, PARAM_INT);
@@ -67,7 +67,7 @@
                 exit;
             }
             else {
-                error(get_string('courseapprovedfailed'));
+                print_error('courseapprovedfailed');
                 exit;
             }
         }
