@@ -2445,7 +2445,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     } else {
                         // should not happen, as we check in restore_chech.php
                         // but handle the error if it does
-                        print_error("This backup file contains external Moodle Network Hosts that are not configured locally.");
+                        print_error('backupcontainexternal', 'error');
                     }
                 }
                 unset($user->mnethosturl);
@@ -8192,7 +8192,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         //Open file for writing
         //First, we check the course_id backup data folder exists and create it as necessary in CFG->dataroot
         if (!$dest_dir = make_upload_directory("$restore->course_id/backupdata")) {   // Backup folder
-            print_error("Could not create backupdata folder.  The site administrator needs to fix the file permissions");
+            print_error('cannotcreatebackupdir');
         }
         $status = check_dir_exists($dest_dir,true);
         $restorelog_file = fopen("$dest_dir/restorelog.html","a");
