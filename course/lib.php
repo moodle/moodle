@@ -2395,7 +2395,10 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
                         ' src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" '.
                         ' alt="'.$str->show.'" /></a>'."\n";
         }
+    } else {
+        $hideshow = '';
     }
+
     if ($mod->groupmode !== false) {
         if ($mod->groupmode == SEPARATEGROUPS) {
             $grouptitle = $str->groupsseparate;
