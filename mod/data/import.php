@@ -58,7 +58,7 @@
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/data:uploadentries', $context);
+    require_capability('mod/data:manageentries', $context);
 
     if (has_capability('mod/data:managetemplates', $context)) {
         if (!count_records('data_fields','dataid',$data->id)) {      // Brand new database!
