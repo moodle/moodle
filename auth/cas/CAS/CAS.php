@@ -6,11 +6,11 @@
 //
 // hack by Vangelis Haniotakis to handle the absence of $_SERVER['REQUEST_URI'] in IIS
 //
-if (!$_SERVER['REQUEST_URI']) {
+if (!isset($_SERVER['REQUEST_URI'])) {
      $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING'];
 }
 
-//
+//1
 // another one by Vangelis Haniotakis also to make phpCAS work with PHP5
 //
 if (version_compare(PHP_VERSION,'5','>=')) {
