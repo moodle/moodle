@@ -238,11 +238,11 @@ class auth_plugin_db extends auth_plugin_base {
 
             // find obsolete users
             if (count($userlist)) {
-                $sql = "SELECT u.id, u.username, u.email
+                $sql = "SELECT u.id, u.username, u.email, u.auth
                         FROM {$CFG->prefix}user u
                         WHERE u.auth='db' AND u.deleted=0 AND u.username NOT IN ($quoteduserlist)";
             } else {
-                $sql = "SELECT u.id, u.username, u.email
+                $sql = "SELECT u.id, u.username, u.email, u.auth
                         FROM {$CFG->prefix}user u
                         WHERE u.auth='db' AND u.deleted=0";
             }
