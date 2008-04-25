@@ -1843,8 +1843,11 @@ function course_setup($courseorid=0) {
  * @param mixed $courseorid id of the course or course object
  * @param bool $autologinguest
  * @param object $cm course module object
+ * @param bool $setwantsurltome Define if we want to set $SESSION->wantsurl, defaults to
+ *             true. Used to avoid (=false) some scripts (file.php...) to set that variable,
+ *             in order to keep redirects working properly. MDL-14495
  */
-function require_login($courseorid=0, $autologinguest=true, $cm=null) {
+function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsurltome=true) {
 
     global $CFG, $SESSION, $USER, $COURSE, $FULLME;
 
@@ -1855,7 +1858,9 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
     if (!isloggedin()) {
         //NOTE: $USER->site check was obsoleted by session test cookie,
         //      $USER->confirmed test is in login/index.php
-        $SESSION->wantsurl = $FULLME;
+        if ($setwantsurltome) {
+            $SESSION->wantsurl = $FULLME;
+        }
         if (!empty($_SERVER['HTTP_REFERER'])) {
             $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
         }
@@ -2120,16 +2125,19 @@ function require_logout() {
  * @param mixed $courseorid The course object or id in question
  * @param bool $autologinguest Allow autologin guests if that is wanted
  * @param object $cm Course activity module if known
+ * @param bool $setwantsurltome Define if we want to set $SESSION->wantsurl, defaults to
+ *             true. Used to avoid (=false) some scripts (file.php...) to set that variable,
+ *             in order to keep redirects working properly. MDL-14495
  */
-function require_course_login($courseorid, $autologinguest=true, $cm=null) {
+function require_course_login($courseorid, $autologinguest=true, $cm=null, $setwantsurltome=true) {
     global $CFG;
     if (!empty($CFG->forcelogin)) {
         // login required for both SITE and courses
-        require_login($courseorid, $autologinguest, $cm);
+        require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
 
     } else if (!empty($cm) and !$cm->visible) {
         // always login for hidden activities
-        require_login($courseorid, $autologinguest, $cm);
+        require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
 
     } else if ((is_object($courseorid) and $courseorid->id == SITEID)
           or (!is_object($courseorid) and $courseorid == SITEID)) {
@@ -2139,7 +2147,7 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null) {
 
     } else {
         // course login always required
-        require_login($courseorid, $autologinguest, $cm);
+        require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
     }
 }
 
