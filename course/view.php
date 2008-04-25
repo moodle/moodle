@@ -51,6 +51,7 @@
     require_login($course);
 
     // Switchrole - sanity check in cost-order...
+    $reset_user_allowed_editing = false;
     if ($switchrole > 0 && confirm_sesskey() &&
         has_capability('moodle/role:switchroles', $context)) {
         // is this role assignable in this context?
@@ -61,6 +62,13 @@
             // Double check that this role is allowed here
             require_login($course->id);
         }
+        // reset course page state - this prevents some weird problems ;-)
+        $USER->activitycopy = false;
+        $USER->activitycopycourse = NULL;
+        unset($USER->activitycopyname);
+        unset($SESSION->modform);
+        $USER->editing = 0;
+        $reset_user_allowed_editing = true;
     }
 
     //If course is hosted on an external server, redirect to corresponding
@@ -87,6 +95,10 @@
     $PAGE = page_create_object(PAGE_COURSE_VIEW, $course->id);
     $pageblocks = blocks_setup($PAGE, BLOCKS_PINNED_BOTH);
 
+    if ($reset_user_allowed_editing) {
+        // ugly hack
+        unset($PAGE->_user_allowed_editing);
+    }
 
     if (!isset($USER->editing)) {
         $USER->editing = 0;
