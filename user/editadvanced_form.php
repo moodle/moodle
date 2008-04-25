@@ -56,8 +56,11 @@ class user_editadvanced_form extends moodleform {
         global $USER, $CFG;
 
         $mform =& $this->_form;
-        $userid = $mform->getElementValue('id');
-        $user = get_record('user', 'id', $userid);
+        if ($userid = $mform->getElementValue('id')) {
+            $user = get_record('user', 'id', $userid);
+        } else {
+            $user = false;
+        }
 
         // if language does not exist, use site default lang
         if ($langsel = $mform->getElementValue('lang')) {
