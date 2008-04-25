@@ -2477,7 +2477,10 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         $context = get_context_instance(CONTEXT_MODULE, $mod->id);
         $assign = '<a class="editing_assign" title="" href="'.$CFG->wwwroot.'/admin/roles/assign.php?contextid='.
             $context->id.'"><img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$str->assign.'" class="iconsmall"/></a>';
+    } else {
+        $assign = '';
     }
+
     return '<span class="commands">'."\n".$leftright.$move.
            '<a class="editing_update" title="'.$str->update.'" href="'.$path.'/mod.php?update='.$mod->id.
            '&amp;sesskey='.$sesskey.$section.'"><img'.
