@@ -54,7 +54,7 @@ function print_entry($course) {
 
 /// Automatically enrol into courses without password
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $context = get_context_instance(CONTEXT_SYSTEM);
 
     $navlinks = array();
     $navlinks[] = array('name' => $strcourses, 'link' => ".", 'type' => 'misc');
@@ -383,7 +383,7 @@ function print_enrolmentkeyfrom($course) {
     global $CFG;
     global $USER;
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $context = get_context_instance(CONTEXT_SYSTEM);
     $guest = has_capability('moodle/legacy:guest', $context, $USER->id, false);
 
     // if a keyholder role is defined we list teachers in that role (if any exist)
