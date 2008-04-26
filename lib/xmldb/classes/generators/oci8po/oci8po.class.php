@@ -535,12 +535,14 @@ class XMLDBoci8po extends XMLDBgenerator {
      */
     function getSequenceFromDB($xmldb_table) {
 
-         $tablename = strtoupper($this->getTableName($xmldb_table));
+         $tablename    = strtoupper($this->getTableName($xmldb_table));
+         $prefixupper  = strtoupper($this->prefix);
          $sequencename = false;
 
         if ($trigger = get_record_sql("SELECT trigger_name, trigger_body
                                          FROM user_triggers
-                                        WHERE table_name = '{$tablename}'")) {
+                                        WHERE table_name = '{$tablename}'
+                                          AND trigger_name LIKE '{$prefixupper}%_ID%_TRG'")) {
         /// If trigger found, regexp it looking for the sequence name
             preg_match('/.*SELECT (.*)\.nextval/i', $trigger->trigger_body, $matches);
             if (isset($matches[1])) {
@@ -558,12 +560,14 @@ class XMLDBoci8po extends XMLDBgenerator {
      */
     function getTriggerFromDB($xmldb_table) {
 
-        $tablename = strtoupper($this->getTableName($xmldb_table));
+        $tablename   = strtoupper($this->getTableName($xmldb_table));
+        $prefixupper = strtoupper($this->prefix);
         $triggername = false;
 
         if ($trigger = get_record_sql("SELECT trigger_name, trigger_body
                                          FROM user_triggers
-                                        WHERE table_name = '{$tablename}'")) {
+                                        WHERE table_name = '{$tablename}'
+                                          AND trigger_name LIKE '{$prefixupper}%_ID%_TRG'")) {
             $triggername = $trigger->trigger_name;
         }
 
