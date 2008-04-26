@@ -22,20 +22,20 @@
 
 
     if (empty($id) && empty($name) && empty($idnumber)) {
-        print_error("Must specify course id, short name or idnumber");
+        print_error('unspecifycourseid', 'error');
     }
 
     if (!empty($name)) {
         if (! ($course = get_record('course', 'shortname', $name)) ) {
-            print_error('Invalid short course name');
+            print_error('invalidcoursenameshort', 'error');
         }
     } else if (!empty($idnumber)) {
         if (! ($course = get_record('course', 'idnumber', $idnumber)) ) {
-            print_error('Invalid course idnumber');
+            print_error('invalidcourseid', 'error');
         }
     } else {
         if (! ($course = get_record('course', 'id', $id)) ) {
-            print_error('Invalid course id');
+            print_error('invalidcourseid', 'error');
         }
     }
 
@@ -218,7 +218,7 @@
             $section->id = insert_record('course_sections', $section);
         }
         if (! $sections = get_all_sections($course->id) ) {      // Try again
-            print_error('Error finding or creating section structures for this course');
+            print_error('cannotcreateorfindstructs', 'error');
         }
     }
 

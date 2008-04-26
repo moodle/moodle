@@ -14,11 +14,11 @@
     $perpage = optional_param('perpage', 100, PARAM_INT);
 
     if (! $course = get_record("course", "id", $id)) {
-        print_error("Course id is incorrect.");
+        print_error('invalidcourseid', 'error');
     }
 
     if (! $user = get_record("user", "id", $user)) {
-        print_error("User ID is incorrect");
+        print_error('invaliduserid', 'error');
     }
 
     //require_login($course);
@@ -29,7 +29,7 @@
 
     // if in either context, we can read report, then we can proceed
     if (!(has_capability('moodle/site:viewreports', $coursecontext) or ($course->showreports and $USER->id == $user->id) or has_capability('moodle/user:viewuseractivitiesreport', $personalcontext))) {
-        print_error("You are not allowed to look at this page");
+        print_error('nopermissiontoviewpage', 'error');
     }
 
     add_to_log($course->id, "course", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id");
@@ -102,7 +102,7 @@
         case 'stats':
 
             if (empty($CFG->enablestats)) {
-                print_error("Stats is not enabled.");
+                print_error('statsdisable', 'error');
             }
 
             require_once($CFG->dirroot.'/lib/statslib.php');
