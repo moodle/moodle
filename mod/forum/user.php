@@ -4,9 +4,13 @@
 
     require_once('../../config.php');
     require_once('lib.php');
-
-    $course  = required_param('course', PARAM_INT);          // course id
-    $id      = optional_param('id', 0, PARAM_INT);           // user id
+    $course = optional_param('course', PARAM_INT);
+    $id     = optional_param('id', PARAM_INT);
+    $user   = optional_param('user', PARAM_INT);
+    if(!empty($user)){
+        $course = $id;
+        $id     = $user;
+    }
     $mode    = optional_param('mode', 'posts', PARAM_ALPHA);
     $page    = optional_param('page', 0, PARAM_INT);
     $perpage = optional_param('perpage', 5, PARAM_INT);
@@ -32,7 +36,9 @@
         require_course_login($course);
     }
 
-    add_to_log($course->id, "forum", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id");
+    //add_to_log($course->id, "forum", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id"); 
+    add_to_log($course->id, "forum", "user report",
+            "user.php?course=$course->id&amp;id=$user->id&amp;mode=$mode", "$user->id"); 
 
     $strforumposts   = get_string('forumposts', 'forum');
     $strparticipants = get_string('participants');
