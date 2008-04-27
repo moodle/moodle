@@ -860,10 +860,22 @@
 
                     //Add this instance
                     $instance->blockid = $blocks[$instance->name]->id;
-                    
-                    if ($newid = insert_record('block_instance', $instance)) {
-                        if (!empty($instance->id)) { // this will only be set if we come from 1.7 and above backups
-                            backup_putid ($restore->backup_unique_code,"block_instance",$instance->id,$newid);
+
+                    if (!empty($instance->id)) {
+                        $oldid = $instance->id;
+                    } else {
+                        $oldid = 0;
+                    }
+
+                    if ($instance->id = insert_record('block_instance', $instance)) {
+                        // Create block instance
+                        if (!$blockobj = block_instance($instance->name, $instance)) {
+                            $status = false;
+                            break;
+                        }
+                        // Save oldid after block restore process because info will be over-written with blank string
+                        if ($oldid) {
+                            backup_putid ($restore->backup_unique_code,"block_instance",$oldid,$instance->id);
                         }
                     } else {
                         $status = false;
