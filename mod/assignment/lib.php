@@ -586,6 +586,9 @@ class assignment_base {
 
                     if ($updatedb){
                         if ($newsubmission) {
+                            if (!isset($submission->submissioncomment)) {
+                                $submission->submissioncomment = '';
+                            }
                             if (!$sid = insert_record('assignment_submissions', $submission)) {
                                 return false;
                             }
