@@ -627,9 +627,9 @@ class assignment_base {
                         /// text columns haven't a default, so we must provide it before insert. MDL-11268
                             $submission->data1 = '';
                             $submission->data2 = '';
-                             if (!isset($submission->submissioncomment)) {
-                                 $submission->submissioncomment = '';
-                             }
+                            if (!isset($submission->submissioncomment)) {
+                                $submission->submissioncomment = '';
+                            }
                             if (!insert_record('assignment_submissions', $submission)) {
                                 return false;
                             }
