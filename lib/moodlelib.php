@@ -2975,6 +2975,9 @@ function delete_user($user) {
     // now do a final accesslib cleanup - removes all role assingments in user context and context itself
     delete_context(CONTEXT_USER, $user->id);
 
+    require_once($CFG->dirroot.'/tag/lib.php');
+    tag_set('user', $user->id, array());
+
     // workaround for bulk deletes of users with the same email address
     $delname = addslashes("$user->email.".time());
     while (record_exists('user', 'username', $delname)) { // no need to use mnethostid here
