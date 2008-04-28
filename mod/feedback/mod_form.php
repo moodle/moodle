@@ -81,7 +81,11 @@ class mod_feedback_mod_form extends moodleform_mod {
         $mform->setType('page_after_submit', PARAM_RAW);
         $mform->setHelpButton('page_after_submit', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
         //-------------------------------------------------------------------------------
-        $this->standard_coursemodule_elements();
+        $features = new stdClass;
+        $features->groups = true;
+        $features->groupings = true;
+        $features->groupmembersonly = true;
+        $this->standard_coursemodule_elements($features);
         //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();

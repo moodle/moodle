@@ -43,7 +43,7 @@
     }
     $capabilities = feedback_load_capabilities($cm->id);
 
-    require_login($course->id);
+    require_login($course->id, true, $cm);
     
     if(!$capabilities->deletetemplate){
         error(get_string('error'));

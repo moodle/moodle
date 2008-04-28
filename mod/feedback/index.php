@@ -18,7 +18,7 @@
     }
     $capabilities = feedback_load_course_capabilities($course->id);
 
-    require_login($course->id);
+    require_login($course->id, true, $cm);
 
     add_to_log($course->id, "feedback", "view all", htmlspecialchars('index.php?id='.$course->id), "");
 

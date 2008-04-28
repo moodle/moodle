@@ -42,9 +42,9 @@
     }
     
     if($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
-        require_login($course->id);
+        require_login($course->id, true, $cm);
     } else {
-        require_course_login($course);
+        require_course_login($course, true, $cm);
     }
 
     if($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {

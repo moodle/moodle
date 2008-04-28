@@ -41,7 +41,7 @@
     }
     $capabilities = feedback_load_capabilities($cm->id);
 
-    require_login($course->id);
+    require_login($course->id, true, $cm);
     
     if( !( (intval($feedback->publish_stats) == 1) || $capabilities->viewreports)) {
         error(get_string('error'));

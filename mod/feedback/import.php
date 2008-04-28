@@ -35,7 +35,7 @@
     }
     $capabilities = feedback_load_capabilities($cm->id);
 
-    require_login($course->id);
+    require_login($course->id, true, $cm);
     
     if(!$capabilities->edititems){
         error('this action is not allowed');
