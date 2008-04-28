@@ -219,7 +219,7 @@ class SearchQuery {
     private function process_results($all=false) {
         global $USER;
 
-        $term = strtolower($this->term);
+        $term = mb_convert_case($this->term, MB_CASE_LOWER, 'UTF-8');
 
         //experimental - return more results
         $strip_arr = array('author:', 'title:', '+', '-', 'doctype:');
