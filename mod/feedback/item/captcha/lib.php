@@ -8,36 +8,25 @@ class feedback_item_captcha extends feedback_item_base {
     
     }
     
-    function show_edit($item, $usehtmleditor = false) {
+    function show_edit($item) {
+        global $CFG;
+        
+        require_once('captcha_form.php');
+        
+        $item_form = new feedback_captcha_form();
 
-        $item->presentation=empty($item->presentation)? 3 : $item->presentation;
+        $item->presentation = empty($item->presentation) ? 3 : $item->presentation;
+        $item->name = empty($item->name) ? '' : $item->name;
+        
+        $item->required = isset($item->required) ? $item->required : 1;
+        if($item->required) {
+            $item_form->requiredcheck->setValue(true);
+        }
 
-    ?>
-        <table>
-            <tr>
-                <th colspan="2"><?php print_string('numeric', 'feedback');?>
-                    &nbsp;(<input type="checkbox" name="required" value="1" <?php 
-                $item->required = isset($item->required) ? $item->required : 1;
-                echo ($item->required == 1?'checked="checked"':'');
-                ?> />&nbsp;<?php print_string('required', 'feedback');?>)
-                </th>
-            </tr>
-            <tr>
-                <td><?php print_string('item_name', 'feedback');?></td>
-                <td><input type="text" id="itemname" name="itemname" size="40" maxlength="255" value="<?php echo isset($item->name)?htmlspecialchars(stripslashes_safe($item->name)):'';?>" /></td>
-            </tr>
-            <tr>
-                <td><?php print_string('count_of_nums', 'feedback');?></td>
-                <td>
-                    <select name="count_of_nums">
-                    <?php
-                        feedback_print_numeric_option_list(3, 10, $item->presentation);
-                    ?>
-                    </select>
-                </td>
-            </tr>
-        </table>
-    <?php
+        $item_form->itemname->setValue($item->name);
+        
+        $item_form->select->setValue($item->presentation);
+        return $item_form;
     }
 
     //liefert eine Struktur ->name, ->data = array(mit Antworten)

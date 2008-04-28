@@ -20,10 +20,11 @@
     // set up some general variables
     $usehtmleditor = can_use_html_editor(); 
 
+
     if(($formdata = data_submitted('nomatch')) AND !confirm_sesskey()) {
         error('no sesskey defined');
     }
- 
+
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
             error("Course Module ID was incorrect");
@@ -69,7 +70,7 @@
     if(isset($formdata->cancel)){
         redirect(htmlspecialchars('edit.php?id=' . $id));
     }
-    
+
     // if(isset($formdata->editcancel) AND $formdata->editcancel == 1){
         // redirect(htmlspecialchars('edit.php?id=' . $id));
     // }
@@ -130,11 +131,55 @@
     if(isset($error)){echo $error;}
 
     feedback_print_errors();
-            
+    
+    //new formdefinition
+    require_once('blank_form.php');
+    $itemclass = 'feedback_item_'.$typ;
+    $itemobj = new $itemclass();
+    $item_form = &$itemobj->show_edit($item);
+    
+    // $item_form = new feedback_blank_form();
+
+    $i_form = &$item_form->_form;
+    // $i_form->addElement('header', 'general', 'Titel');
+    $i_form->addElement('hidden', 'id', $id);
+    $i_form->addElement('hidden', 'itemid', isset($item->id)?$item->id:'');
+    $i_form->addElement('hidden', 'typ', $typ);
+    $i_form->addElement('hidden', 'feedbackid', $feedback->id);
+    
+
+    $lastposition = count_records('feedback_item', 'feedback', $feedback->id);    
+    if($position == -1){
+        $i_formselect_last = $lastposition + 1;
+        $i_formselect_value = $lastposition + 1;
+    }else {
+        $i_formselect_last = $lastposition;
+        $i_formselect_value = $item->position;
+    }
+    $i_formselect = $i_form->addElement('select',
+                                        'position', 
+                                        get_string('position', 'feedback').'&nbsp;', 
+                                        array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true));
+    $i_formselect->setValue($i_formselect_value);
+    if(!empty($item->id)){
+        $i_form->addElement('hidden', 'updateitem', '1');
+        $i_form->addElement('submit', 'update_item', get_string('update_item', 'feedback'));
+            // echo '<input type="hidden" id="updateitem" name="updateitem" value="1" />';
+            // echo '<input type="submit" value ="'.get_string('update_item', 'feedback').'" />';
+    }else{
+        $i_form->addElement('hidden', 'saveitem', '1');
+        $i_form->addElement('submit', 'save_item', get_string('save_item', 'feedback'));
+            // echo '<input type="hidden" id="saveitem" name="saveitem" value="1" />';
+            // echo '<input type="submit" value="'.get_string('save_item', 'feedback').'" />';
+    }
+    $i_form->addElement('cancel');
+    $item_form->display();
+
+/*            
     // print_simple_box_start('center');
     print_box_start('generalbox boxwidthwide boxaligncenter');
-    echo '<form action="'.$ME.'" method="post">';
-    echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
+        echo '<form action="'.$ME.'" method="post">';
+        echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
     
     //this div makes the buttons stand side by side
     echo '<div>';
@@ -142,10 +187,10 @@
     $itemobj = new $itemclass();
     $itemobj->show_edit($item, $usehtmleditor);
     echo '</div>';        
-    echo '<input type="hidden" name="id" value="'.$id.'" />';
-    echo '<input type="hidden" name="itemid" value="'.(isset($item->id)?$item->id:'').'" />';
-    echo '<input type="hidden" name="typ" value="'.$typ.'" />';
-    echo '<input type="hidden" name="feedbackid" value="'.$feedback->id.'" />';
+        echo '<input type="hidden" name="id" value="'.$id.'" />';
+        echo '<input type="hidden" name="itemid" value="'.(isset($item->id)?$item->id:'').'" />';
+        echo '<input type="hidden" name="typ" value="'.$typ.'" />';
+        echo '<input type="hidden" name="feedbackid" value="'.$feedback->id.'" />';
     
     //choose the position
     $lastposition = count_records('feedback_item', 'feedback', $feedback->id);
@@ -172,7 +217,7 @@
     echo '</form>';
     //////////////////////////////////////////////////////////////////////////////////////        
     //////////////////////////////////////////////////////////////////////////////////////
-
+*/
     // print_simple_box_end();
     print_box_end();
   

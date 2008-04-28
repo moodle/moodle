@@ -8,50 +8,30 @@ class feedback_item_textfield extends feedback_item_base {
     
     }
     
-    function show_edit($item, $usehtmleditor = false) {
+    function show_edit($item) {
+        global $CFG;
+        
+        require_once('textfield_form.php');
+        
+        $item_form = new feedback_textfield_form();
+        
+        $item->presentation = empty($item->presentation) ? '' : $item->presentation;
+        $item->name = empty($item->name) ? '' : $item->name;
+        
+        $item->required = isset($item->required) ? $item->required : 0;
+        if($item->required) {
+            $item_form->requiredcheck->setValue(true);
+        }
 
-        $item->presentation=empty($item->presentation)?'':$item->presentation;
+        $item_form->itemname->setValue($item->name);
 
-    ?>
-        <table>
-            <tr>
-                <th colspan="2"><?php print_string('textfield', 'feedback');?>
-                    &nbsp;(<input type="checkbox" name="required" value="1" <?php 
-                $item->required=isset($item->required)?$item->required:0;
-                echo ($item->required == 1?'checked="checked"':'');
-                ?> />&nbsp;<?php print_string('required', 'feedback');?>)
-                </th>
-            </tr>
-            <tr>
-                <td><?php print_string('item_name', 'feedback');?></td>
-                <td><input type="text" id="itemname" name="itemname" size="40" maxlength="255" value="<?php echo isset($item->name)?htmlspecialchars(stripslashes_safe($item->name)):'';?>" /></td>
-            </tr>
-            <tr>
-                <td><?php print_string('textfield_size', 'feedback');?></td>
-                <td>
-                    <select name="itemsize">
-    <?php
-                        //Dropdown-Items fuer die Textfeldbreite
-                        $sizeAndLength = explode('|',$item->presentation);
-                        $selected = '';
-                        feedback_print_numeric_option_list(5, 50, ($sizeAndLength[0])?$sizeAndLength[0]:40, 5);
-    ?>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td><?php print_string('textfield_maxlength', 'feedback');?></td>
-                <td>
-                    <select name="itemmaxlength">
-    <?php
-                        //Dropdown-Items fuer die Textlaenge
-                        feedback_print_numeric_option_list(5, 50, ($sizeAndLength[1])?$sizeAndLength[1]:40, 5);
-    ?>
-                    </select>
-                </td>
-            </tr>
-        </table>
-    <?php
+        $sizeAndLength = explode('|',$item->presentation);
+        $itemsize = isset($sizeAndLength[0]) ? $sizeAndLength[0] : 30;
+        $itemlength = isset($sizeAndLength[1]) ? $sizeAndLength[1] : 5;
+        $item_form->selectwith->setValue($itemsize);
+        $item_form->selectheight->setValue($itemlength);
+        
+        return $item_form;
     }
 
     //liefert eine Struktur ->name, ->data = array(mit Antworten)

@@ -8,44 +8,32 @@ class feedback_item_numeric extends feedback_item_base {
     
     }
     
-    function show_edit($item, $usehtmleditor = false) {
+    function show_edit($item) {
+        global $CFG;
+        
+        require_once('numeric_form.php');
+        
+        $item_form = new feedback_numeric_form();
 
-        $item->presentation=empty($item->presentation)?'':$item->presentation;
+        $item->presentation = empty($item->presentation) ? '' : $item->presentation;
+        $item->name = empty($item->name) ? '' : $item->name;
+        
+        $item->required = isset($item->required) ? $item->required : 0;
+        if($item->required) {
+            $item_form->requiredcheck->setValue(true);
+        }
 
-    ?>
-        <table>
-            <tr>
-                <th colspan="2"><?php print_string('numeric', 'feedback');?>
-                    &nbsp;(<input type="checkbox" name="required" value="1" <?php 
-                $item->required=isset($item->required)?$item->required:0;
-                echo ($item->required == 1?'checked="checked"':'');
-                ?> />&nbsp;<?php print_string('required', 'feedback');?>)
-                </th>
-            </tr>
-            <tr>
-                <td><?php print_string('item_name', 'feedback');?></td>
-                <td><input type="text" id="itemname" name="itemname" size="40" maxlength="255" value="<?php echo isset($item->name)?htmlspecialchars(stripslashes_safe($item->name)):'';?>" /></td>
-            </tr>
-            <tr>
-                <?php
-                        //Dropdown-Items fuer die Textfeldbreite
-                        $range_from_to = explode('|',$item->presentation);
-                        $range_from = isset($range_from_to[0]) ? intval($range_from_to[0]) : 0;
-                        $range_to = isset($range_from_to[1]) ? intval($range_from_to[1]) : 0;
-                ?>
-                <td><?php print_string('numeric_range_from', 'feedback');?></td>
-                <td>
-                    <input type="text" name="numericrangefrom" value="<?php echo $range_from;?>" />
-                </td>
-            </tr>
-            <tr>
-                <td><?php print_string('numeric_range_to', 'feedback');?></td>
-                <td>
-                    <input type="text" name="numericrangeto" value="<?php echo $range_to;?>" />
-                </td>
-            </tr>
-        </table>
-    <?php
+        $item_form->itemname->setValue($item->name);
+        
+        $range_from_to = explode('|',$item->presentation);
+        $range_from = isset($range_from_to[0]) ? intval($range_from_to[0]) : 0;
+        $range_to = isset($range_from_to[1]) ? intval($range_from_to[1]) : 0;
+        
+        $item_form->selectfrom->setValue($range_from);
+        
+        $item_form->selectto->setValue($range_to);
+        
+        return $item_form;
     }
 
     //liefert eine Struktur ->name, ->data = array(mit Antworten)

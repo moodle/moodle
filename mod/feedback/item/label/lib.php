@@ -8,16 +8,17 @@ class feedback_item_label extends feedback_item_base {
     
     }
     
-    function show_edit($item, $usehtmleditor = false) {
-        $item->presentation=isset($item->presentation)?$item->presentation:'';
-        print_string('label', 'feedback');
-        echo '<br />';
-        print_textarea($usehtmleditor, 20, 0, 0, 0, "presentation", $item->presentation);
-        echo '<input type="hidden" id="itemname" name="itemname" value="label" />';
-
-        if ($usehtmleditor) {
-            use_html_editor();
-        }
+    function show_edit($item) {
+        global $CFG;
+        
+        require_once('label_form.php');
+        
+        $item_form = new feedback_label_form();
+        
+        $item->presentation = isset($item->presentation) ? $item->presentation : '';
+        
+        $item_form->area->setValue($item->presentation);
+        return $item_form;
     }
     function print_item($item){
     ?>

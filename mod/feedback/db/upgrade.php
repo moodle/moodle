@@ -141,6 +141,32 @@ function xmldb_feedback_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2008042400) { //New version in version.php
+        if($all_nonanonymous_feedbacks = get_records('feedback', 'anonymous', 2)) {
+            $update_sql = 'UPDATE '.$CFG->prefix.'feedback_completed SET anonymous_response = 2 WHERE feedback = ';
+            foreach ($all_nonanonymous_feedbacks as $fb) {
+                $result = $result && execute_sql($update_sql.$fb->id);
+            }
+        }
+    }
+
+    if ($result && $oldversion < 2008042401) { //New version in version.php
+        if($result) {
+            $update_sql1 = "UPDATE ".$CFG->prefix."feedback_item SET presentation = CONCAT('r>>>>>',presentation) WHERE typ IN('radio','radiorated')";
+            $update_sql2 = "UPDATE ".$CFG->prefix."feedback_item SET presentation = CONCAT('d>>>>>',presentation) WHERE typ IN('dropdown','dropdownrated')";
+            $update_sql3 = "UPDATE ".$CFG->prefix."feedback_item SET presentation = CONCAT('c>>>>>',presentation) WHERE typ = 'check'";
+            $result = $result && execute_sql($update_sql1);
+            $result = $result && execute_sql($update_sql2);
+            $result = $result && execute_sql($update_sql3);
+        }
+        if($result) {
+            $update_sql1 = "UPDATE ".$CFG->prefix."feedback_item SET typ = 'multichoice' WHERE typ IN('radio','check','dropdown')";
+            $update_sql2 = "UPDATE ".$CFG->prefix."feedback_item SET typ = 'multichoicerated' WHERE typ IN('radiorated','dropdownrated')";
+            $result = $result && execute_sql($update_sql1);            
+            $result = $result && execute_sql($update_sql2);            
+        }
+    }
+
 
 /// And upgrade begins here. For each one, you'll need one 
 /// block of code similar to the next one. Please, delete 

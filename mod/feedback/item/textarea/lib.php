@@ -8,49 +8,30 @@ class feedback_item_textarea extends feedback_item_base {
     
     }
     
-    function show_edit($item, $usehtmleditor = false) {
+    function show_edit($item) {
+        global $CFG;
 
-        $item->presentation=empty($item->presentation)?'':$item->presentation;
+        require_once('textarea_form.php');
+        
+        $item_form = new feedback_textarea_form();
 
-    ?>
-        <table>
-            <tr>
-                <th colspan="2"><?php print_string('textarea', 'feedback');?>
-                    &nbsp;(<input type="checkbox" name="required" value="1" <?php 
-                $item->required=isset($item->required)?$item->required:0;
-                echo ($item->required == 1?'checked="checked"':'');
-                ?> />&nbsp;<?php print_string('required', 'feedback');?>)
-                </th>
-            </tr>
-            <tr>
-                <td><?php print_string('item_name', 'feedback');?></td>
-                <td><input type="text" id="itemname" name="itemname" size="40" maxlength="255" value="<?php echo isset($item->name)?htmlspecialchars(stripslashes_safe($item->name)):'';?>" /></td>
-            </tr>
-            <tr>
-                <td><?php print_string('textarea_width', 'feedback');?></td>
-                <td>
-                    <select name="itemwidth">
-    <?php
-                        //Dropdown-Items fuer die Textareabreite
-                        $widthAndHeight = explode('|',$item->presentation);
-                        feedback_print_numeric_option_list(5, 80, $widthAndHeight[0]?$widthAndHeight[0]:30, 5);
-    ?>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td><?php print_string('textarea_height', 'feedback');?></td>
-                <td>
-                    <select name="itemheight">
-    <?php
-                        //Dropdown-Items fuer die Textareahoehe
-                        feedback_print_numeric_option_list(5, 40, $widthAndHeight[1], 5);
-    ?>
-                    </select>
-                </td>
-            </tr>
-        </table>
-    <?php
+        $item->presentation = empty($item->presentation) ? '' : $item->presentation;
+        $item->name = empty($item->name) ? '' : $item->name;
+              
+        $item->required = isset($item->required) ? $item->required : 0;
+        if($item->required) {
+            $item_form->requiredcheck->setValue(true);
+        }
+
+        $item_form->itemname->setValue($item->name);
+
+        $widthAndHeight = explode('|',$item->presentation);
+        $itemwidth = isset($widthAndHeight[0]) ? $widthAndHeight[0] : 30;
+        $itemheight = isset($widthAndHeight[1]) ? $widthAndHeight[1] : 5;
+        $item_form->selectwith->setValue($itemwidth);
+        $item_form->selectheight->setValue($itemheight);
+        
+        return $item_form;
     }
 
     //liefert eine Struktur ->name, ->data = array(mit Antworten)

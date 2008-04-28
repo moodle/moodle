@@ -26,12 +26,14 @@
     //
     //-----------------------------------------------------------
      
+    define('FEEDBACK_MULTICHOICERESTORE_TYPE_SEP', '>>>>>');
+
     function feedback_restore_mods($mod,$restore) {
 
         global $CFG;
         
-        $allValues = array();
-        $allTrackings = array();
+        // $allValues = array();
+        // $allTrackings = array();
 
         $status = true;
         $restore_userdata = restore_userdata_selected($restore,'feedback',$mod->id);
@@ -119,6 +121,28 @@
                     if($version >= 1) {
                         $item->typ = backup_todb($item_info['#']['TYP']['0']['#']);
                         $item->hasvalue = backup_todb($item_info['#']['HASVALUE']['0']['#']);
+                        switch($item->typ) {
+                            case 'radio':
+                                $item->typ = 'multichoice';
+                                $item->presentation = 'r'.FEEDBACK_MULTICHOICERESTORE_TYPE_SEP.$item->presentation;
+                                break;
+                            case 'check':
+                                $item->typ = 'multichoice';
+                                $item->presentation = 'c'.FEEDBACK_MULTICHOICERESTORE_TYPE_SEP.$item->presentation;
+                                break;
+                            case 'dropdown':
+                                $item->typ = 'multichoice';
+                                $item->presentation = 'd'.FEEDBACK_MULTICHOICERESTORE_TYPE_SEP.$item->presentation;
+                                break;
+                            case 'radiorated':
+                                $item->typ = 'multichoicerated';
+                                $item->presentation = 'r'.FEEDBACK_MULTICHOICERESTORE_TYPE_SEP.$item->presentation;
+                                break;
+                            case 'dropdownrated':
+                                $item->typ = 'multichoicerated';
+                                $item->presentation = 'd'.FEEDBACK_MULTICHOICERESTORE_TYPE_SEP.$item->presentation;
+                                break;
+                        }
                     } else {
                         $oldtyp = intval(backup_todb($item_info['#']['TYP']['0']['#']));
                         switch($oldtyp) {
@@ -158,6 +182,7 @@
                         $values = $item_info['#']['FBVALUES']['0']['#']['FBVALUE'];
                         for($ii = 0; $ii < sizeof($values); $ii++) {
                             $value_info = $values[$ii];
+                            $value = new object();
                             $value->id = '';
                             $value->item = $newitemid;
                             $value->completed = 0;
@@ -168,7 +193,7 @@
                             //put this new value into the database
                             $newvalueid = insert_record('feedback_value', $value);
                             $value->id = $newvalueid;
-                            $allValues[] = $value;
+                            // $allValues[] = $value;
                         }
                     }
                 }
@@ -178,6 +203,7 @@
                     $trackings = $info['MOD']['#']['TRACKINGS']['0']['#']['TRACKING'];
                     for($i = 0; $i < sizeof($trackings); $i++) {
                         $tracking_info = $trackings[$i];
+                        $tracking = new object();
                         $tracking->id = '';
                         $tracking->userid = backup_todb($tracking_info['#']['USERID']['0']['#']); //have to change later
                         $tracking->feedback = $newid;
@@ -194,13 +220,14 @@
                         //save the tracking
                         $newtrackingid = insert_record('feedback_tracking', $tracking);
                         $tracking->id = $newtrackingid;
-                        $allTrackings[] = $tracking;
+                        // $allTrackings[] = $tracking;
                     }
                     
                     //restore completeds
                     $completeds = $info['MOD']['#']['COMPLETEDS']['0']['#']['COMPLETED'];
                     for($i = 0; $i < sizeof($completeds); $i++) {
                         $completed_info = $completeds[$i];
+                        $completed = new object();
                         $completed->feedback = $newid;
                         $completed->userid = backup_todb($completed_info['#']['USERID']['0']['#']);
                         $completed->timemodified = backup_todb($completed_info['#']['TIMEMODIFIED']['0']['#']);

@@ -23,7 +23,8 @@
 
     $height = 40;
     $charcount = $SESSION->feedback->item->captcha->charcount;
-    $fontfile = $CFG->dirroot.'/mod/feedback/item/captcha/default.ttf';
+    // $fontfile = $CFG->dirroot.'/mod/feedback/item/captcha/default.ttf';
+    $fontfile = $CFG->libdir.'/default.ttf';
 
     $ttfbox = imagettfbbox ( 30, 0, $fontfile, 'H' );//the text to measure
     $charwidth = $ttfbox[2];
