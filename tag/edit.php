@@ -69,7 +69,7 @@ if ($tagnew = $tagform->get_data()) {
         }
     }
 
-    if (!has_capability('moodle/tag:manage', $systemcontext)) {
+    if (!has_capability('moodle/tag:manage', $systemcontext) && !has_capability('moodle/tag:edit', $systemcontext)) {
         unset($tagnew->name);
         unset($tagnew->rawname);
 
@@ -87,9 +87,11 @@ if ($tagnew = $tagform->get_data()) {
 
         $tagnew->timemodified = time();
 
-        // rename tag if needed
-        if (!tag_rename($tag->id, $tagnew->rawname)) {
-            error('Error updating tag record');
+        if (has_capability('moodle/tag:manage', $systemcontext)) {
+            // rename tag
+            if(!tag_rename($tag->id, $tagnew->rawname)) {
+                error('Error updating tag record');
+            }
         }
     
         //updated related tags
