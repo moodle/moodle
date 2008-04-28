@@ -177,12 +177,10 @@ function tag_print_management_box($tag_object, $return=false) {
         $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=flaginappropriate&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($tag_object->name) .'">'. get_string('flagasinappropriate', 'tag', rawurlencode($tagname)) .'</a>';
 
         // Edit tag: Only people with moodle/tag:edit capability who either have it as an interest or can manage tags
-        if (has_capability('moodle/tag:edit', $systemcontext) && 
-                (tag_record_tagged_with('user', $USER->id, $tag_object->name) || 
-                 has_capability('moodle/tag:manage', $systemcontext))) {
+        if (has_capability('moodle/tag:edit', $systemcontext) || 
+            has_capability('moodle/tag:manage', $systemcontext)) {
             $links[] = '<a href="'. $CFG->wwwroot .'/tag/edit.php?tag='. rawurlencode($tag_object->name) .'">'. get_string('edittag', 'tag') .'</a>';
         }
-
 
         $output .= implode(' | ', $links);
         $output .= print_box_end(true);
