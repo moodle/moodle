@@ -96,7 +96,20 @@ function xmldb_data_upgrade($oldversion=0) {
             $result = $result && add_index($table, $index);
         }
     }
-    if ($result && $oldversion <  2007101512) {
+
+    if ($result && $oldversion < 2007101512) {
+    /// Launch add field asearchtemplate again if does not exists yet - reported on several sites
+
+        $table = new XMLDBTable('data');
+        $field = new XMLDBField('asearchtemplate');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'jstemplate');
+
+        if (!field_exists($table, $field)) {
+            $result = $result && add_field($table, $field);
+        }
+    }
+
+    if ($result && $oldversion <  2007101513) {
         // Upgrade all the data->notification currently being
         // NULL to 0
         $sql = "UPDATE {$CFG->prefix}data SET notification=0 WHERE notification IS NULL";
@@ -108,18 +121,6 @@ function xmldb_data_upgrade($oldversion=0) {
         $result = $result && change_field_notnull($table, $field);
         // Second step, Set default to 0
         $result = $result && change_field_default($table, $field);
-    }
-
-    if ($result && $oldversion < 2007101513) {
-    /// Launch add field asearchtemplate again if does not exists yet - reported on several sites
-
-        $table = new XMLDBTable('data');
-        $field = new XMLDBField('asearchtemplate');
-        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'jstemplate');
-
-        if (!field_exists($table, $field)) {
-            $result = $result && add_field($table, $field);
-        }
     }
 
     return $result;
