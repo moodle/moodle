@@ -18,9 +18,9 @@
     }
     $capabilities = feedback_load_course_capabilities($course->id);
 
-    require_login($course->id, true, $cm);
+    require_login($course->id);
 
-    add_to_log($course->id, "feedback", "view all", htmlspecialchars('index.php?id='.$course->id), "");
+    add_to_log($course->id, 'feedback', 'view all', htmlspecialchars('index.php?id='.$course->id), $course->id);
 
 
     /// Print the page header

@@ -145,7 +145,7 @@
                     $userid = $USER->id; //arb
                 if($completedid = feedback_save_values($_POST, $USER->id, true)){
                     if($userid > 0) {
-                        add_to_log($course->id, "feedback", "startcomplete", "view.php?id=$cm->id", "$feedback->name", $cm->id, $userid);
+                        add_to_log($course->id, 'feedback', 'startcomplete', 'view.php?id='.$cm->id, $feedback->id, $cm->id, $userid);
                     }
                     if(!$gonextpage AND !$gopreviouspage) $preservevalues = false;//es kann gespeichert werden
                     
@@ -188,7 +188,7 @@
             }else if($new_completed_id = feedback_save_tmp_values($feedbackcompletedtmp, $feedbackcompleted, $userid)) {
                 $savereturn = 'saved';
                 if($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
-                    add_to_log($course->id, "feedback", "submit", "view.php?id=$cm->id", "$feedback->name", $cm->id, $userid);
+                    add_to_log($course->id, 'feedback', 'submit', 'view.php?id='.$cm->id, $feedback->id, $cm->id, $userid);
                     feedback_email_teachers($cm, $feedback, $course, $userid);
                 }else {
                     feedback_email_teachers_anonym($cm, $feedback, $course, $userid);

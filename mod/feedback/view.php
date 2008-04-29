@@ -48,7 +48,7 @@
     }
 
     if($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
-        add_to_log($course->id, "feedback", "view", "view.php?id=$cm->id", "$feedback->name",$cm->id);
+        add_to_log($course->id, 'feedback', 'view', 'view.php?id='.$cm->id, $feedback->id,$cm->id);
     }
 
     /// Print the page header

@@ -55,7 +55,7 @@
     if(isset($formdata->confirmdelete) AND $formdata->confirmdelete == 1){
         if($completed = get_record('feedback_completed', 'id', $completedid)) {
             feedback_delete_completed($completedid);
-            add_to_log($course->id, "feedback", "delete", "view.php?id=$cm->id", "$feedback->name",$cm->id);
+            add_to_log($course->id, 'feedback', 'delete', 'view.php?id='.$cm->id, $feedback->id,$cm->id);
             redirect('show_entries.php?id='.$id.'&do_show=showentries');
         }
     }

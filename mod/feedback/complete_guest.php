@@ -149,7 +149,7 @@
             if(feedback_check_values($_POST, $startitempos, $lastitempos)) {
                 $userid = $USER->id; //arb
                 if($completedid = feedback_save_guest_values($_POST, $USER->sesskey)){
-                    add_to_log($course->id, "feedback", "startcomplete", "view.php?id=$cm->id", "$feedback->name"); //arb: log even guest submissions or at least the startcomplete since the other add log event is elsewhere
+                    add_to_log($course->id, 'feedback', 'startcomplete', 'view.php?id='.$cm->id, $feedback->id); //arb: log even guest submissions or at least the startcomplete since the other add log event is elsewhere
                     
                     if(!$gonextpage AND !$gopreviouspage) $preservevalues = false;//es kann gespeichert werden
                     
