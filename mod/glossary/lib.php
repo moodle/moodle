@@ -381,8 +381,13 @@ function glossary_grade_item_update($glossary, $grades=NULL) {
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
     }
-
-    $params = array('itemname'=>$glossary->name, 'idnumber'=>$glossary->cmidnumber);
+    if(!empty($glossary->cmidnumber)){
+        $params = array('itemname'=>$glossary->name, 'idnumber'=>$glossary->cmidnumber);
+    }else{
+        // MDL-14303
+        $cm = get_coursemodule_from_instance('glossary', $glossary->id);
+        $params = array('itemname'=>$glossary->name, 'idnumber'=>$cm->id);
+    }
 
     if (!$glossary->assessed or $glossary->scale == 0) {
         $params['gradetype'] = GRADE_TYPE_NONE;
