@@ -92,8 +92,6 @@ class course_edit_form extends moodleform {
 
         $mform->addElement('htmleditor','summary', get_string('summary'), array('rows'=> '10', 'cols'=>'65'));
         $mform->setHelpButton('summary', array('text', get_string('helptext')), true);
-        $mform->setDefault('summary', get_string('defaultcoursesummary'));
-        $mform->addRule('summary', get_string('missingsummary'), 'required', null, 'client');
         $mform->setType('summary', PARAM_RAW);
 
         $courseformats = get_list_of_plugins('course/format');
