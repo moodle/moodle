@@ -459,14 +459,17 @@
     function question_insert_c_and_q_ids_for_module($backup_unique_code, $course, $modulename, $instances){
         global $CFG;
         $status = true;
-            // using 'dummykeyname' in sql because otherwise get_records_sql_menu returns an error
+        // using 'dummykeyname' in sql because otherwise get_records_sql_menu returns an error
         // if two key names are the same.
-        $cmcontexts = get_records_sql_menu("SELECT c.id, c.id AS dummykeyname FROM {$CFG->prefix}modules m,
+        $cmcontexts = array();
+        if(!empty($instances)) {
+            $cmcontexts = get_records_sql_menu("SELECT c.id, c.id AS dummykeyname FROM {$CFG->prefix}modules m,
                                                         {$CFG->prefix}course_modules cm,
                                                         {$CFG->prefix}context c
                                WHERE m.name = '$modulename' AND m.id = cm.module AND cm.id = c.instanceid
                                     AND c.contextlevel = ".CONTEXT_MODULE." AND cm.course = $course
                                     AND cm.instance IN (".implode(',',array_keys($instances)).")");
+        }
                                     
         if ($cmcontexts){
             $status = $status && execute_sql("INSERT INTO {$CFG->prefix}backup_ids
