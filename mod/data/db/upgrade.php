@@ -96,8 +96,21 @@ function xmldb_data_upgrade($oldversion=0) {
             $result = $result && add_index($table, $index);
         }
     }
+    if ($result && $oldversion <  2007101512) {
+        // Upgrade all the data->notification currently being
+        // NULL to 0
+        $sql = "UPDATE {$CFG->prefix}data SET notification=0 WHERE notification IS NULL";
+        $result = execute_sql($sql);
+        $table = new XMLDBTable('data');
+        $field = new XMLDBField('notification');
+        // First step, Set NOT NULL
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'editany');
+        $result = $result && change_field_notnull($table, $field);
+        // Second step, Set default to 0
+        $result = $result && change_field_default($table, $field);
+    }
 
-    if ($result && $oldversion < 2007101512) {
+    if ($result && $oldversion < 2007101513) {
     /// Launch add field asearchtemplate again if does not exists yet - reported on several sites
 
         $table = new XMLDBTable('data');

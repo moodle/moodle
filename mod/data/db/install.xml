@@ -35,7 +35,7 @@
         <FIELD NAME="defaultsort" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="assessed" NEXT="defaultsortdir"/>
         <FIELD NAME="defaultsortdir" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="defaultsort" NEXT="editany"/>
         <FIELD NAME="editany" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="defaultsortdir" NEXT="notification"/>
-        <FIELD NAME="notification" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="Notify people when things change" PREVIOUS="editany"/>
+        <FIELD NAME="notification" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Notify people when things change" PREVIOUS="editany"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
