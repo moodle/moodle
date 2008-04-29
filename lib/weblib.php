@@ -729,8 +729,10 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
         $class = ' class="'.$class.'" ';
     }
     if ($name) {
-        $name = str_replace(' ', '_', $name);
-        debugging('The $name of a popup window shouldn\'t contain spaces - string modified.', DEBUG_DEVELOPER);
+        $_name = $name;
+        if (($name = preg_replace("/\s/", '_', $name)) != $_name) {
+            debugging('The $name of a popup window shouldn\'t contain spaces - string modified. '. $_name .' changed to '. $name, DEBUG_DEVELOPER);
+        }
     } else {
         $name = 'popup';
     }
