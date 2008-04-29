@@ -703,7 +703,7 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
                                   $options=null, $return=false, $id=null, $class=null) {
 
     if (is_null($url)) {
-        print_error('There must be an url to the popup. Can\'t create popup window.');
+        debugging('You must give the url to display in the popup. URL is missing - can\'t create popup window.', DEBUG_DEVELOPER);
     }
 
     global $CFG;
@@ -728,7 +728,10 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
     if ($class) {
         $class = ' class="'.$class.'" ';
     }
-    if (!$name) {
+    if ($name) {
+        $name = str_replace(' ', '_', $name);
+        debugging('The $name of a popup window shouldn\'t contain spaces - string modified.', DEBUG_DEVELOPER);
+    } else {
         $name = 'popup';
     }
     
