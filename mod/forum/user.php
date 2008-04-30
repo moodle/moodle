@@ -7,7 +7,7 @@
     // Course ID
     $course  = required_param('course', PARAM_INT);
     // User ID
-    $id      = optional_param('id', PARAM_INT);
+    $id      = optional_param('id', 0, PARAM_INT);
     $mode    = optional_param('mode', 'posts', PARAM_ALPHA);
     $page    = optional_param('page', 0, PARAM_INT);
     $perpage = optional_param('perpage', 5, PARAM_INT);

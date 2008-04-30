@@ -935,7 +935,7 @@
             $mode = substr(strrchr($log->url,"="),1);
             //Get new user id
             if ($use = backup_getid($restore->backup_unique_code, 'user', $log->info)) {
-                $log->url = 'user.php?id=' . $log->course . '&user=' . $use->new_id . '&mode=' . $mode;
+                $log->url = 'user.php?course=' . $log->course . '&id=' . $use->new_id . '&mode=' . $mode;
                 $log->info = $use->new_id;
                 $status = true;
             }
