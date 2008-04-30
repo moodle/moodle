@@ -140,6 +140,11 @@ if(preg_match('~^(.*?)<title>(.*?)</title>(.*)$~s',$output,$matches)) {
     $title=$title.' - '.$matches[2];
 }
 
+// use ##emoticons_html## to replace the emoticons documentation
+if(preg_match('~(##emoticons_html##)~', $output, $matches)) {
+    $output = preg_replace('~(##emoticons_html##)~', get_emoticons_html(), $output);
+}
+
 // Do the main output.
 print_header($title);
 print_simple_box_start();
@@ -160,6 +165,25 @@ print_footer('none');
 
 // Utility function =================================================================
 
+function get_emoticons_html(){
+    global $CFG;
+    $output = '';
+    $emoticonstring = $CFG->emoticons;
+    $output .= '<ul>';
+    if ($emoticonstring) {
+        $items = explode('{;}', $CFG->emoticons);
+        foreach ($items as $item) {
+            $item = explode('{:}', $item);
+            $emoticons[$item[0]] = $item[1];
+            $output .= '<li><a href="###" onclick="inserttext(\''.$item[0].'\')"><img src="'.$CFG->pixpath.'/s/'.$item[1].'.gif" alt="'.$item[0].'" /></a>'.' <code>'.$item[0].'</code>';
+        }
+
+    }
+    $output .= '</ul>';
+    return $output;
+
+}
+
 function file_exists_and_readable($filepath) {
     return file_exists($filepath) and is_file($filepath) and is_readable($filepath);
 }
@@ -170,7 +194,7 @@ function include_help_for_each_module($file, $langs, $helpdir) {
     global $CFG;
 
     if (!$modules = get_records('modules', 'visible', 1)) {
-        print_error('No modules found!!');        // Should never happen
+        print_error('nomodules', 'debug');        // Should never happen
     }
     
     $grade = new stdClass();
