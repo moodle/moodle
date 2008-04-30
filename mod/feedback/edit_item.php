@@ -133,13 +133,10 @@
     feedback_print_errors();
     
     //new formdefinition
-    require_once('blank_form.php');
     $itemclass = 'feedback_item_'.$typ;
     $itemobj = new $itemclass();
     $item_form = &$itemobj->show_edit($item);
     
-    // $item_form = new feedback_blank_form();
-
     $i_form = &$item_form->_form;
     // $i_form->addElement('header', 'general', 'Titel');
     $i_form->addElement('hidden', 'id', $id);
