@@ -1,19 +1,12 @@
 <?php // $Id$
 
 /**
- * lib.php - moodle tag library
- *
- * @version: $Id$
- * @licence http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
- *
- * A "tag string" is always a rawurlencode'd string. This is the same behavior 
- * as http://del.icio.us
- * @see http://www.php.net/manual/en/function.urlencode.php
+ * Moodle tag library
  *
  * Tag strings : you can use any character in tags, except the comma (which is 
  * the separator) and the '\' (backslash).  Note that many spaces (or other 
- * blank characters) will get "compressed" into one.
+ * blank characters) will get "compressed" into one. A tag string is always a 
+ * rawurlencode'd string. This is the same behavior as http://del.icio.us.
  *
  * A "record" is a php array (note that an object will work too) that contains 
  * the following variables : 
@@ -28,12 +21,18 @@
  *
  * BASIC INSTRUCTIONS : 
  *  - to "tag a blog post" (for example): 
- *      tag_set('post', $blog_post->id, $array_of_tags);
+ *        tag_set('post', $blog_post->id, $array_of_tags);
  *
  *  - to "remove all the tags on a blog post":
- *      tag_set('post', $blog_post->id, array());
+ *        tag_set('post', $blog_post->id, array());
  *
- * Tag set will create tags that need to be created.  
+ * Tag set will create tags that need to be created.
+ *
+ * @version: $Id$
+ * @licence http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package moodlecore
+ * @subpackage tag
+ * @see http://www.php.net/manual/en/function.urlencode.php
  */
 
 define('TAG_RETURN_ARRAY', 0);
@@ -533,6 +532,8 @@ function tag_delete_instance($record_type, $record_id, $tagid) {
     } else {
         return false;
     }
+
+    return true;
 }
 
 
@@ -594,14 +595,11 @@ function tag_find_records($tag, $type, $limitfrom='', $limitnum='') {
 /////////////////// PRIVATE TAG API ///////////////////
 
 /**
- * A * @param array $record the record that will be tagged
- * @param string $tags the comma-separated tags to set on the record. If 
- *     given an empty array, all tags will be removed.
-dds one or more tag in the database.  This function should not be called 
+ * Adds one or more tag in the database.  This function should not be called 
  * directly : you should use tag_set.
  *
  * @param mixed $tags one tag, or an array of tags, to be created
- * @param string $tag_type type of tag to be created ("default" is the default 
+ * @param string $type type of tag to be created ("default" is the default 
  *     value and "official" is the only other supported value at this time). An
  *     official tag is kept even if there are no records tagged with it.
  * @return an array of tags ids, indexed by their lowercase normalized names. 
