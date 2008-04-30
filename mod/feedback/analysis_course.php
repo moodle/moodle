@@ -169,7 +169,13 @@
             $itemclass = 'feedback_item_'.$item->typ;
             //get the instance of the item-class
             $itemobj = new $itemclass();
-            $itemnr = $itemobj->print_analysed($item, $itemnr, $mygroupid, $coursefilter);
+            $itemnr++;
+            if($feedback->autonumbering) {
+                $printnr = $itemnr.'.';
+            } else {
+                $printnr = '';
+            }
+            $itemobj->print_analysed($item, $printnr, $mygroupid, $coursefilter);
             if (eregi('rated$', $item->typ)) {
                  echo '<tr><td colspan="2"><a href="#" onclick="setcourseitemfilter('.$item->id.',\''.$item->typ.'\'); return false;">'.
                     get_string('sort_by_course', 'feedback').'</a></td></tr>'; 

@@ -68,7 +68,7 @@ class feedback_item_numeric extends feedback_item_base {
         return $value->value;
     }
 
-    function print_analysed($item, $itemnr = 0, $groupid = false, $courseid = false) {
+    function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
         $sep_dec = get_string('separator_decimal', 'feedback');
         if(substr($sep_dec, 0, 2) == '[['){
             $sep_dec = FEEDBACK_DECIMAL;
@@ -84,16 +84,20 @@ class feedback_item_numeric extends feedback_item_base {
 
         if(isset($values->data) AND is_array($values->data)) {
             //echo '<table>';2
-            $itemnr++;
-            echo '<tr><th colspan="2" align="left">'. $itemnr . '.)&nbsp;' . stripslashes($item->name) .'</th></tr>';
+            // $itemnr++;
+            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . stripslashes($item->name) .'</th></tr>';
             foreach($values->data as $value) {
                 echo '<tr><td colspan="2" valign="top" align="left">-&nbsp;&nbsp;' . $value . '</td></tr>';
             }
             //echo '</table>';
-            $avg = number_format($values->avg, 2, $sep_dec, $sep_thous);
+            if(isset($values->avg)) {
+                $avg = number_format($values->avg, 2, $sep_dec, $sep_thous);
+            } else {
+                $avg = number_format(0, 2, $sep_dec, $sep_thous);
+            }
             echo '<tr><td align="left" colspan="2"><b>'.get_string('average', 'feedback').': '.$avg.'</b></td></tr>';
         }
-        return $itemnr;
+        // return $itemnr;
     }
 
     function excelprint_item(&$worksheet, $rowOffset, $item, $groupid, $courseid = false) {

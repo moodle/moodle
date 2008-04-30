@@ -146,7 +146,14 @@
             $itemclass = 'feedback_item_'.$item->typ;
             //get the instance of the item-class
             $itemobj = new $itemclass();
-            $itemnr = $itemobj->print_analysed($item, $itemnr, $mygroupid);
+            $itemnr++;
+            if($feedback->autonumbering) {
+                $printnr = $itemnr.'.';
+            } else {
+                $printnr = '';
+            }
+            $itemobj->print_analysed($item, $printnr, $mygroupid);
+            // $itemnr = $itemobj->print_analysed($item, $itemnr, $mygroupid);
             echo '</table>';
         }
     }else {

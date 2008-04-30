@@ -300,9 +300,9 @@
                         }
                     }
                     echo '<tr>';
-                    if($feedbackitem->hasvalue == 1) {
+                    if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
                         $itemnr++;
-                        echo '<td valign="top">' . $itemnr . '.)&nbsp;</td>';
+                        echo '<td valign="top">' . $itemnr . '.&nbsp;</td>';
                     } else {
                         echo '<td>&nbsp;</td>';
                     }

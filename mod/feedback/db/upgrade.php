@@ -199,15 +199,14 @@ function xmldb_feedback_upgrade($oldversion=0) {
         $result = $result && insert_record('log_display', $new_log_display);
     }
 
-/// And upgrade begins here. For each one, you'll need one 
-/// block of code similar to the next one. Please, delete 
-/// this comment lines once this file start handling proper
-/// upgrade code.
-
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///      $result = result of "/lib/ddllib.php" function calls
-/// }
-
+    if ($result && $oldversion < 2008042900) {
+        /// Define field autonumbering to be added to feedback
+        $table = new XMLDBTable('feedback');
+        $field = new XMLDBField('autonumbering');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '1', 'multiple_submit');
+        /// Launch add field2
+        $result = $result && add_field($table, $field);
+    }
     return $result;
 }
 

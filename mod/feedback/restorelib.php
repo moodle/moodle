@@ -54,6 +54,7 @@
             $feedback->anonymous = backup_todb($info['MOD']['#']['ANONYMOUS']['0']['#']);
             $feedback->email_notification = backup_todb($info['MOD']['#']['EMAILNOTIFICATION']['0']['#']);
             $feedback->multiple_submit = backup_todb($info['MOD']['#']['MULTIPLESUBMIT']['0']['#']);
+            $feedback->autonumbering = backup_todb($info['MOD']['#']['AUTONUMBERING']['0']['#']);
             $feedback->page_after_submit = backup_todb($info['MOD']['#']['PAGEAFTERSUB']['0']['#']);
             $feedback->publish_stats = backup_todb($info['MOD']['#']['PUBLISHSTATS']['0']['#']);
             $feedback->timeopen = backup_todb($info['MOD']['#']['TIMEOPEN']['0']['#']);

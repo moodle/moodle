@@ -133,7 +133,7 @@ class feedback_item_multichoice extends feedback_item_base {
         return $printval;
     }
 
-    function print_analysed($item, $itemnr = 0, $groupid = false, $courseid = false) {
+    function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
         $sep_dec = get_string('separator_decimal', 'feedback');
         if(substr($sep_dec, 0, 2) == '[['){
             $sep_dec = FEEDBACK_DECIMAL;
@@ -146,9 +146,9 @@ class feedback_item_multichoice extends feedback_item_base {
             
         $analysedItem = $this->get_analysed($item, $groupid, $courseid);
         if($analysedItem) {
-            $itemnr++;
+            // $itemnr++;
             $itemname = stripslashes($analysedItem[1]);
-            echo '<tr><th colspan="2" align="left">'. $itemnr . '.)&nbsp;' . $itemname .'</th></tr>';
+            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . $itemname .'</th></tr>';
             $analysedVals = $analysedItem[2];
             $pixnr = 0;
             foreach($analysedVals as $val) {
@@ -164,7 +164,7 @@ class feedback_item_multichoice extends feedback_item_base {
                 echo '<tr><td align="left" valign="top">-&nbsp;&nbsp;' . trim($val->answertext) . ':</td><td align="left" style="width: '.FEEDBACK_MAX_PIX_LENGTH.'"><img alt="'.$intvalue.'" src="'.$pix.'" height="5" width="'.$pixwidth.'" />&nbsp;' . $val->answercount . (($val->quotient > 0)?'&nbsp;('. $quotient . '&nbsp;%)':'').'</td></tr>';
             }
         }
-        return $itemnr;
+        // return $itemnr;
     }
 
     function excelprint_item(&$worksheet, $rowOffset, $item, $groupid, $courseid = false) {

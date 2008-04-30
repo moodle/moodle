@@ -109,7 +109,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         return $printval;
     }
 
-    function print_analysed($item, $itemnr = 0, $groupid = false, $courseid = false) {
+    function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
         $sep_dec = get_string('separator_decimal', 'feedback');
         if(substr($sep_dec, 0, 2) == '[['){
             $sep_dec = FEEDBACK_DECIMAL;
@@ -123,8 +123,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $analysedItem = $this->get_analysed($item, $groupid, $courseid);
         if($analysedItem) {
             //echo '<table>';
-            $itemnr++;
-            echo '<tr><th colspan="2" align="left">'. $itemnr . '.)&nbsp;' . stripslashes($analysedItem[1]) .'</th></tr>';
+            // $itemnr++;
+            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . stripslashes($analysedItem[1]) .'</th></tr>';
             $analysedVals = $analysedItem[2];
             $pixnr = 0;
             $avg = 0.0;
@@ -146,7 +146,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
             echo '<tr><td align="left" colspan="2"><b>'.get_string('average', 'feedback').': '.$avg.'</b></td></tr>';
             //echo '</table>';
         }
-        return $itemnr;
+        // return $itemnr;
     }
 
     function excelprint_item(&$worksheet, $rowOffset, $item, $groupid, $courseid = false) {

@@ -51,12 +51,12 @@ class feedback_item_base {
 
     /**
      * @param $item the db-object from feedback_item
-     * @param integer $itemnr
+     * @param string $itemnr
      * @param integer $groupid
      * @param integer $courseid
      * @return integer the new itemnr
     */
-    function print_analysed($item, $itemnr = 0, $groupid = false, $courseid = false) {
+    function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
       return 0;
     }
 

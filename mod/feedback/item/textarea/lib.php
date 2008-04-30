@@ -58,18 +58,18 @@ class feedback_item_textarea extends feedback_item_base {
         return $value->value;
     }
 
-    function print_analysed($item, $itemnr = 0, $groupid = false, $courseid = false) {
+    function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
         $values = feedback_get_group_values($item, $groupid, $courseid);
         if($values) {
             //echo '<table>';2
-            $itemnr++;
-            echo '<tr><th colspan="2" align="left">'. $itemnr . '.)&nbsp;' . stripslashes_safe($item->name) .'</th></tr>';
+            // $itemnr++;
+            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . stripslashes_safe($item->name) .'</th></tr>';
             foreach($values as $value) {
                 echo '<tr><td valign="top" align="left">-&nbsp;&nbsp;</td><td align="left" valign="top">' . str_replace("\n", '<br />', $value->value) . '</td></tr>';
             }
             //echo '</table>';
         }
-        return $itemnr;
+        // return $itemnr;
     }
 
     function excelprint_item(&$worksheet, $rowOffset, $item, $groupid, $courseid = false) {

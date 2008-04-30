@@ -38,7 +38,7 @@ class feedback_item_captcha extends feedback_item_base {
         return '';
     }
 
-    function print_analysed($item, $itemnr = 0, $groupid = false, $courseid = false) {
+    function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
         return $itemnr;
     }
 

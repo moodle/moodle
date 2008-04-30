@@ -69,10 +69,13 @@ class mod_feedback_mod_form extends moodleform_mod {
             $multiple_submit_value = $feedback->multiple_submit ? get_string('yes') : get_string('no');
             $mform->addElement('text', 'multiple_submit_static', get_string('multiple_submit', 'feedback'), array('size'=>'4','disabled'=>'disabled', 'value'=>$multiple_submit_value));
             $mform->addElement('hidden', 'multiple_submit', '');
+            $mform->setHelpButton('multiple_submit_static', array('multiplesubmit', get_string('multiple_submit', 'feedback'), 'feedback'));
         }else {
             $mform->addElement('selectyesno', 'multiple_submit', get_string('multiple_submit', 'feedback'));
+            $mform->setHelpButton('multiple_submit', array('multiplesubmit', get_string('multiple_submit', 'feedback'), 'feedback'));
         }
-        $mform->setHelpButton('multiple_submit', array('multiplesubmit', get_string('multiple_submit', 'feedback'), 'feedback'));
+        $mform->addElement('selectyesno', 'autonumbering', get_string('autonumbering', 'feedback'));
+        $mform->setHelpButton('autonumbering', array('autonumbering', get_string('autonumbering', 'feedback'), 'feedback'));
         
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'aftersubmithdr', get_string('after_submit', 'feedback'));

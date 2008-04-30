@@ -101,9 +101,9 @@
         echo '<div align="center"><table>';
         foreach($templateitems as $templateitem){
             echo '<tr>';
-            if($templateitem->hasvalue == 1) {
+            if($templateitem->hasvalue == 1 AND $feedback->autonumbering) {
                 $itemnr++;
-                echo '<td valign="top">' . $itemnr . '.)&nbsp;</td>';
+                echo '<td valign="top">' . $itemnr . '.&nbsp;</td>';
             } else {
                 echo '<td>&nbsp;</td>';
             }

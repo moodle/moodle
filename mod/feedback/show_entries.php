@@ -266,9 +266,9 @@
                 //get the values
                 $value = get_record_select('feedback_value','completed ='.$feedbackcompleted->id.' AND item='.$feedbackitem->id);
                 echo '<tr>';
-                if($feedbackitem->hasvalue == 1) {
+                if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
                     $itemnr++;
-                    echo '<td valign="top">' . $itemnr . '.)&nbsp;</td>';
+                    echo '<td valign="top">' . $itemnr . '.&nbsp;</td>';
                 } else {
                     echo '<td>&nbsp;</td>';
                 }
