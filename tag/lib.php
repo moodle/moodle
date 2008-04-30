@@ -680,6 +680,59 @@ function tag_autocomplete($text) {
     return get_records_sql("SELECT tg.id, tg.name, tg.rawname FROM {$CFG->prefix}tag tg WHERE tg.name LIKE '". moodle_strtolower($text) ."%'");
 }
 
+/** 
+ * Clean up the tag tables, making sure all tagged object still exists.
+ *
+ * This should normally not be necessary, but in case related tags are not deleted
+ * when the tagged record is removed, this should be done once in a while, perhaps on
+ * an occasional cron run.  On a site with lots of tags, this could become an expensive 
+ * function to call: don't run at peak time.
+ */
+function tag_cleanup() {
+    global $CFG;
+
+    $tags = get_records('tag');
+    $instances = get_records('tag_instance');
+
+    foreach($instances as $instance) {
+        $delete = false;
+        
+        if(!array_key_exists($instance->tagid, $tags)) {
+            // if the tag has been removed, instance should be deleted.
+            $delete = true;
+        } else {
+            switch ($instance->itemtype) {
+                case 'user': // users are marked as deleted, but not actually deleted
+                    if (record_exists('user', 'id', $instance->itemid, 'deleted', 1)) {
+                        $delete = true;
+                    }
+                    break;
+                default: // anything else, if the instance is not there, delete.
+                    if (!record_exists($instance->itemtype, 'id', $instance->itemid)) {
+                        $delete = true;
+                    }
+                    break;
+            }
+        }
+        if ($delete) {
+            tag_delete_instance($instance->itemtype, $instance->itemid, $instance->tagid);
+            //debugging('deleting tag_instance #'. $instance->id .', linked to tag id #'. $instance->tagid, DEBUG_DEVELOPER);
+        }
+    }
+
+    // TODO: this will only clean tags of type 'default'.  This is good as
+    // it won't delete 'official' tags, but the day we get more than two
+    // types, we need to fix this.
+    $tags = get_records('tag', 'tagtype', 'default'); // do it again - might be different now.
+
+    foreach($tags as $tag) {
+       if (!record_exists_sql("SELECT * FROM {$CFG->prefix}tag tg, {$CFG->prefix}tag_instance ti WHERE tg.id = {$tag->id} AND ti.tagid = tg.id")) {
+            tag_delete($tag->id);
+            //debugging('deleting tag #'. $tag->id,  DEBUG_DEVELOPER);
+        }
+    }
+}
+
 /**
  * Calculates and stores the correlated tags of all tags.
  * The correlations are stored in the 'tag_correlation' table.
