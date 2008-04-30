@@ -993,6 +993,10 @@ function get_array_of_activities($courseid) {
                    $modname = $mod[$seq]->mod;
                    $functionname = $modname."_get_coursemodule_info";
 
+                   if (!file_exists("$CFG->dirroot/mod/$modname/lib.php")) {
+                       continue;
+                   }
+
                    include_once("$CFG->dirroot/mod/$modname/lib.php");
 
                    if (function_exists($functionname)) {
