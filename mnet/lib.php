@@ -70,6 +70,35 @@ function mnet_get_public_key($uri, $application=null) {
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
+    // check for proxy
+    if (!empty($CFG->proxyhost)) {
+        // SOCKS supported in PHP5 only
+        if (!empty($CFG->proxytype) and ($CFG->proxytype == 'SOCKS5')) {
+            if (defined('CURLPROXY_SOCKS5')) {
+                curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+            } else {
+                curl_close($ch);
+                print_error( 'socksnotsupported','mnet' );
+            }
+        }
+
+        curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, false);
+
+        if (empty($CFG->proxyport)) {
+            curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost);
+        } else {
+            curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost.':'.$CFG->proxyport);
+        }
+
+        if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $CFG->proxyuser.':'.$CFG->proxypassword);
+            if (defined('CURLOPT_PROXYAUTH')) {
+                // any proxy authentication if PHP 5.1
+                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC | CURLAUTH_NTLM);
+            }
+        }
+    }
+
     $res = xmlrpc_decode(curl_exec($ch));
     curl_close($ch);
 
