@@ -19,7 +19,7 @@ if (isguest()) {
     print_error('noguestpost', 'blog');
 }
 
-$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+$sitecontext = get_context_instance(CONTEXT_SYSTEM);
 if (!has_capability('moodle/blog:create', $sitecontext) and !has_capability('moodle/blog:manageentries', $sitecontext)) {
     print_error('cannoteditpostorblog');
 }

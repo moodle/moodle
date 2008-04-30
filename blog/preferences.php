@@ -8,7 +8,7 @@
 
     if ($courseid == SITEID) {
         require_login();
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $context = get_context_instance(CONTEXT_SYSTEM);
     } else {
         require_login($courseid);
         $context = get_context_instance(CONTEXT_COURSE, $courseid);

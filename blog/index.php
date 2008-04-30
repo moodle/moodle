@@ -27,7 +27,7 @@ if (empty($CFG->bloglevel)) {
     print_error('blogdisable', 'blog');
 }
 
-$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+$sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
 
 // change block edit staus if not guest and logged in
