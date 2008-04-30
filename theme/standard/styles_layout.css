@@ -4271,3 +4271,16 @@ wikiadminactions {
   border: 1px dashed #ddd;
   padding: 3px;
 }
+#help #emoticons{
+    align: center;clear:both;width: 300px;margin-right: auto; margin-left:auto;
+}
+#help #emoticons ul{
+    list-style-type: none;
+}
+#help #emoticons li{
+    margin-bottom: 3px;
+    width: 120px;
+    border-left: 3px solid gray;
+    padding-left: 7px;
+    float: left;
+}
