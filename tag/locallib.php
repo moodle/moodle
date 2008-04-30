@@ -23,6 +23,7 @@ function tag_print_cloud($nr_of_tags=150, $return=false) {
 
     if ( !$tagcloud = get_records_sql('SELECT tg.rawname, tg.id, tg.name, tg.tagtype, COUNT(ti.id) AS count, tg.flag '.
         'FROM '. $CFG->prefix .'tag_instance ti INNER JOIN '. $CFG->prefix .'tag tg ON tg.id = ti.tagid '.
+        'WHERE ti.itemtype != \'tag\' '.
         'GROUP BY tg.id, tg.rawname, tg.name, tg.flag, tg.tagtype '.
         'ORDER BY count DESC, tg.name ASC', 0, $nr_of_tags) ) {
         $tagcloud = array();
