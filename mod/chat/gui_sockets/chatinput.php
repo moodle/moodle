@@ -49,6 +49,10 @@ function reloadusers() {
         window.setTimeout("reloadusers();", <?php echo $CFG->chat_refresh_userlist; ?> * 1000);
     }
 }
+
+function setfocus() {
+    document.getElementsByName("chat_message")[0].focus(); 
+}
 // -->
 </script>
     <?php
