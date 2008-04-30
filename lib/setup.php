@@ -291,6 +291,19 @@ global $HTTPSPAGEREQUIRED;
         @ini_set('log_errors', '1');
     }
 
+/// detect unsupported upgrade jump as soon as possible - do not change anything, do not use system functions
+    if ($CFG->version < 2007101509) {
+        echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>'.get_string('error').'</title>
+</head><body>
+<div style="text-align: center; margin-top:5em;background-color:orange;">'.get_string('upgraderequires19', 'error').'</div>
+</body></html>';
+        die;
+    }
+
 /// Shared-Memory cache init -- will set $MCACHE
 /// $MCACHE is a global object that offers at least add(), set() and delete()
 /// with similar semantics to the memcached PHP API http://php.net/memcache

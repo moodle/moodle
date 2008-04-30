@@ -174,6 +174,7 @@ $string['unknowngroup'] = 'Unknown group \"$a\"';
 $string['unknownrole'] = 'Unknown role \"$a\"';
 $string['unknownuseraction'] = 'Sorry, I do not understand this user action.';
 $string['unsupportedevent'] = 'Unsupported event type';
+$string['upgraderequires19'] = 'ERROR: New Moodle version was installed on server, unfortunately upgrade from the previous version is not supported.<br />Please upgrade first to latest 1.9.x release. You can also return to previous version by reinstalling original files.';
 $string['urlnotdefinerss'] = 'URL not defined for rss feed';
 $string['userautherror'] = 'Unknown auth plugin.';
 $string['userauthunsupported'] = 'Auth plugin not supported here.';
