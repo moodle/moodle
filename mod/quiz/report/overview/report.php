@@ -305,15 +305,18 @@ class quiz_report extends quiz_default_report {
             echo $headers." \n";
         }
 
-        // Get users with quiz attempt capability
-        if (empty($currentgroup)) {
-    
-            // all users who can attempt quizzes
-            $allowed = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)));
-        } else {
-    
-            // all users who can attempt quizzes and who are in the currently selected group
-            $allowed = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','',$currentgroup,'',false)));
+        // Get users with quiz attempt capability 'students'.
+        // don't need to do this expensive call if we are listing all attempts though.
+        if ( $noattempts != 3 ) { 
+            if (empty($currentgroup)) {
+        
+                // all users who can attempt quizzes
+                $allowed = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)));
+            } else {
+        
+                // all users who can attempt quizzes and who are in the currently selected group
+                $allowed = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','',$currentgroup,'',false)));
+            }
         }
 
         // Construct the SQL
@@ -424,17 +427,8 @@ class quiz_report extends quiz_default_report {
 
                     $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
 
-            // If we're showing all attempts, check to see if user still has the quiz attempt capability
-            if ( $noattempts == 3 ) {
-
-                        $userlink = '<a class="dimmed" href="'.$CFG->wwwroot.'/user/view.php?id='.
-                                $attempt->userid.'&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
-                    }
-                    else {
-
-                        $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.
-                                '&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
-                    }
+                    $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.
+                            '&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
 
                     // Username columns.
                     $row = array();
