@@ -120,6 +120,9 @@
     print_header_simple(format_string($feedback->name), "",
                  $navigation, "", "", true, $buttontext, navmenu($course, $cm));
 
+    /// print the tabs
+    include('tabs.php');
+    
     /// Print the main part of the page
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
