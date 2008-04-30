@@ -168,11 +168,30 @@ function xmldb_feedback_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2008042801) {
-        $result = $result && modify_database("","INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('feedback', 'startcomplete', 'feedback', 'name');");
-        $result = $result && modify_database("","INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('feedback', 'submit', 'feedback', 'name');");
-        $result = $result && modify_database("","INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('feedback', 'delete', 'feedback', 'name');");
-        $result = $result && modify_database("","INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('feedback', 'view', 'feedback', 'name');");
-        $result = $result && modify_database("","INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('feedback', 'view all', 'course', 'shortname');");
+        $new_log_display = new object();
+        $new_log_display->module = 'feedback';
+        $new_log_display->action = 'startcomplete';
+        $new_log_display->mtable = 'feedback';
+        $new_log_display->field = 'name';
+        $result = $result && insert_record('log_display', $new_log_display);
+        
+        $new_log_display = clone($new_log_display);
+        $new_log_display->action = 'submit';
+        $result = $result && insert_record('log_display', $new_log_display);
+        
+        $new_log_display = clone($new_log_display);
+        $new_log_display->action = 'delete';
+        $result = $result && insert_record('log_display', $new_log_display);
+        
+        $new_log_display = clone($new_log_display);
+        $new_log_display->action = 'view';
+        $result = $result && insert_record('log_display', $new_log_display);
+        
+        $new_log_display = clone($new_log_display);
+        $new_log_display->action = 'view all';
+        $new_log_display->mtable = 'course';
+        $new_log_display->field = 'shortname';
+        $result = $result && insert_record('log_display', $new_log_display);
     }
 
 /// And upgrade begins here. For each one, you'll need one 
