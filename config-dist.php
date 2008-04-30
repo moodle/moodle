@@ -132,9 +132,6 @@ $CFG->admin = 'admin';
 // These are additional tweaks for which no GUI exists in Moodle yet.
 //
 //
-// Prevent users from updating their profile images
-//      $CFG->disableuserimages = true;
-//
 // Prevent scheduled backups from operating (and hide the GUI for them)
 // Useful for webhost operators who have alternate methods of backups
 //      $CFG->disablescheduledbackups = true;
@@ -279,10 +276,6 @@ $CFG->admin = 'admin';
 // database, then email this address with a notice.
 //
 //     $CFG->emailconnectionerrorsto = 'your@emailaddress.com';
-// 
-// Restore pre-1.6 behaviour where courses could still be available
-// even if the category they were in was hidden
-//     $CFG->allowvisiblecoursesinhiddencategories = true;
 // 
 // NOTE: if you are using custompix in your theme, see /fixpix.php.
 // 
