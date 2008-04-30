@@ -77,7 +77,7 @@
         $bloglimit = optional_param('limit', get_user_preferences('blogpagesize', 10), PARAM_INT);
         $start     = $blogpage * $bloglimit;
 
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
         $morelink = '<br />&nbsp;&nbsp;';
 
@@ -369,7 +369,7 @@
 
         global $CFG, $USER;
 
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
         if (has_capability('moodle/blog:manageentries', $sitecontext)) {
             return true; // can edit any blog post
@@ -400,7 +400,7 @@
             return true; // can view own posts in any case
         }
 
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         if (has_capability('moodle/blog:manageentries', $sitecontext)) {
             return true; // can manage all posts
         }
@@ -524,7 +524,7 @@
             $tagquerysql = '';
         }
 
-        if (isloggedin() && !has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM, SITEID), $USER->id, false)) {
+        if (isloggedin() && !has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), $USER->id, false)) {
             $permissionsql =  'AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
         } else {
             $permissionsql =  'AND p.publishstate = \'public\'';
@@ -532,7 +532,7 @@
 
         // fix for MDL-9165, use with readuserblogs capability in a user context can read that user's private blogs
         // admins can see all blogs regardless of publish states, as described on the help page
-        if (has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_SYSTEM))) {
             $permissionsql = '';
         } else if ($filtertype=='user' && has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_USER, $filterselect))) {
             $permissionsql = '';

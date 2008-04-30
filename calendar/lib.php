@@ -1416,7 +1416,7 @@ function calendar_get_default_courses($ignoreref = false) {
     }
 
     $courses = array();
-    if (has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM))) {
         if (!empty($CFG->calendar_adminseesall)) {
             $courses = get_records_sql('SELECT id, 1 FROM '.$CFG->prefix.'course');
             return $courses;
