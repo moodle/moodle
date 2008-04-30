@@ -161,18 +161,20 @@
                                         get_string('position', 'feedback').'&nbsp;', 
                                         array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true));
     $i_formselect->setValue($i_formselect_value);
+    
+    $buttonarray = array();
     if(!empty($item->id)){
         $i_form->addElement('hidden', 'updateitem', '1');
-        $i_form->addElement('submit', 'update_item', get_string('update_item', 'feedback'));
-            // echo '<input type="hidden" id="updateitem" name="updateitem" value="1" />';
-            // echo '<input type="submit" value ="'.get_string('update_item', 'feedback').'" />';
+        // $i_form->addElement('submit', 'update_item', get_string('update_item', 'feedback'));
+        $buttonarray[] = &$i_form->createElement('submit', 'update_item', get_string('update_item', 'feedback'));
     }else{
         $i_form->addElement('hidden', 'saveitem', '1');
-        $i_form->addElement('submit', 'save_item', get_string('save_item', 'feedback'));
-            // echo '<input type="hidden" id="saveitem" name="saveitem" value="1" />';
-            // echo '<input type="submit" value="'.get_string('save_item', 'feedback').'" />';
+        // $i_form->addElement('submit', 'save_item', get_string('save_item', 'feedback'));
+        $buttonarray[] = &$i_form->createElement('submit', 'save_item', get_string('save_item', 'feedback'));
     }
-    $i_form->addElement('cancel');
+    // $i_form->addElement('cancel');
+    $buttonarray[] = &$i_form->createElement('cancel');
+    $i_form->addGroup($buttonarray, 'buttonar', '', array(' '), false);
     $item_form->display();
 
 /*            
