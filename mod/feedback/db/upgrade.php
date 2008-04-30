@@ -152,9 +152,14 @@ function xmldb_feedback_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2008042401) { //New version in version.php
         if($result) {
-            $update_sql1 = "UPDATE ".$CFG->prefix."feedback_item SET presentation = CONCAT('r>>>>>',presentation) WHERE typ IN('radio','radiorated')";
-            $update_sql2 = "UPDATE ".$CFG->prefix."feedback_item SET presentation = CONCAT('d>>>>>',presentation) WHERE typ IN('dropdown','dropdownrated')";
-            $update_sql3 = "UPDATE ".$CFG->prefix."feedback_item SET presentation = CONCAT('c>>>>>',presentation) WHERE typ = 'check'";
+            $concat_radio = sql_concat("'r>>>>>'",'presentation');
+            $concat_check = sql_concat("'d>>>>>'",'presentation');
+            $concat_dropdown = sql_concat("'c>>>>>'",'presentation');
+            
+            $update_sql1 = "UPDATE ".$CFG->prefix."feedback_item SET presentation = ".$concat_radio." WHERE typ IN('radio','radiorated')";
+            $update_sql2 = "UPDATE ".$CFG->prefix."feedback_item SET presentation = ".$concat_dropdown." WHERE typ IN('dropdown','dropdownrated')";
+            $update_sql3 = "UPDATE ".$CFG->prefix."feedback_item SET presentation = ".$concat_check." WHERE typ = 'check'";
+            
             $result = $result && execute_sql($update_sql1);
             $result = $result && execute_sql($update_sql2);
             $result = $result && execute_sql($update_sql3);
