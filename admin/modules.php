@@ -242,8 +242,13 @@
             $class = "";
         }
 
+        $extra = '';
+        if (!file_exists("$CFG->dirroot/mod/$module->name/lib.php")) {
+            $extra = ' <span class="notifyproblem">('.get_string('missingfromdisk').')</span>';
+        }
+
         $table->add_data(array(
-            '<span'.$class.'>'.$icon.' '.$modulename.'</span>',
+            '<span'.$class.'>'.$icon.' '.$modulename.$extra.'</span>',
             $countlink,
             '<span'.$class.'>'.$module->version.'</span>',
             $visible,
