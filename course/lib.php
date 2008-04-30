@@ -1099,6 +1099,10 @@ function &get_fast_modinfo(&$course, $userid=0) {
     }
 
     foreach ($info as $mod) {
+        if (empty($mod->name)) {
+            // something is wrong here
+            continue;
+        }
         // reconstruct minimalistic $cm
         $cm = new object();
         $cm->id               = $mod->cm;
@@ -1115,8 +1119,11 @@ function &get_fast_modinfo(&$course, $userid=0) {
         $cm->icon             = isset($mod->icon) ? $mod->icon : '';
         $cm->uservisible      = true;
 
-        // preload long names plurals - used very often
+        // preload long names plurals and also check module is installed properly
         if (!isset($modlurals[$cm->modname])) {
+            if (!file_exists("$CFG->dirroot/mod/$cm->modname/lib.php")) {
+                continue;
+            }
             $modlurals[$cm->modname] = get_string('modulenameplural', $cm->modname);
         }
         $cm->modplural = $modlurals[$cm->modname];
