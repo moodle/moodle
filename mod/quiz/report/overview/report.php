@@ -305,59 +305,46 @@ class quiz_report extends quiz_default_report {
             echo $headers." \n";
         }
 
-        $contextlists = get_related_contexts_string(get_context_instance(CONTEXT_COURSE, $course->id));
+        // Get users with quiz attempt capability 'students'.
+        // don't need to do this expensive call if we are listing all attempts though.
+        if ( $noattempts != 3 ) { 
+            if (empty($currentgroup)) {
+                // all users who can attempt quizzes
+                $allowed = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)));
+            } else {
+        
+                // all users who can attempt quizzes and who are in the currently selected group
+                $allowed = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','',$currentgroup,'',false)));
+            }
+        }
 
         // Construct the SQL
         $select = 'SELECT '.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
-            'qa.uniqueid as attemptuniqueid, qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
+            'qa.uniqueid AS attemptuniqueid, qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
             'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
-        if ($course->id != SITEID) { // this is too complicated, so just do it for each of the four cases.
-            if (!empty($currentgroup) && empty($noattempts)) {
-                // we want a particular group and we only want to see students WITH attempts.
-                // So join on groups_members and do an inner join on attempts.
-                $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id '.
-                    'JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid '.
-                    'JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
-                $where = ' WHERE ra.contextid ' . $contextlists . ' AND gm.groupid = '. $currentgroup .' AND qa.preview = 0';
-            } else if (!empty($currentgroup) && !empty($noattempts)) {
-                // We want a particular group and we want to do something funky with attempts
-                // So join on groups_members and left join on attempts...
-                $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id '.
-                    'JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid '.
-                    'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
-                $where = ' WHERE ra.contextid ' .$contextlists . ' AND gm.groupid = '.$currentgroup;
-                if ($noattempts == 1) {
-                    // noattempts = 1 means only no attempts, so make the left join ask for only records where the right is null (no attempts)
-                    $where .= ' AND qa.userid IS NULL'; // show ONLY no attempts;
-                } else {
-                    // We are including attempts, so exclude previews.
-                    $where .= ' AND qa.preview = 0';
-                }
-            } else if (empty($currentgroup)) {
-                // We don't care about group, and we to do something funky with attempts
-                // So do a left join on attempts
-                $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id LEFT JOIN '.
-                        $CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
-                $where = " WHERE ra.contextid $contextlists";
-                if (empty($noattempts)) {
-                    $where .= ' AND qa.userid IS NOT NULL AND qa.preview = 0'; // show ONLY students with attempts;
-                } else if ($noattempts == 1) {
-                    // noattempts = 1 means only no attempts, so make the left join ask for only records where the right is null (no attempts)
-                    $where .= ' AND qa.userid IS NULL'; // show ONLY students without attempts;
-                } else if ($noattempts == 3) {
-                    // we want all attempts
-                    $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
-                    $where = ' WHERE qa.quiz = '.$quiz->id.' AND qa.preview = 0';
-                } // noattempts = 2 means we want all students, with or without attempts
-            }
-            $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
-        } else {
-            if (empty($noattempts)) {
-                $from   = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
-                $where = ' WHERE qa.quiz = '.$quiz->id.' AND qa.preview = 0';
-                $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
+
+        // This part is the same for all cases - join users and quiz_attempts tables
+        $from = 'FROM '.$CFG->prefix.'user u ';
+        $from .= 'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON qa.userid = u.id AND qa.quiz = '.$quiz->id;
+
+        if ( $noattempts == 3 ) { // Show all attempts, including students who are no longer in the course
+
+            $where = ' WHERE qa.id IS NOT NULL';
+            // Comment out the following line to include preview attempts in the 'show all attempts' filter
+            $where .= ' AND qa.preview = 0';
+        } else {  // All non-admin users with quiz attempt capabilites - e.g. students
+
+            $where = ' WHERE u.id IN (' .$allowed. ') AND (qa.preview = 0 OR qa.preview IS NULL)';
+
+            if ( empty( $noattempts )) { // Show only students with attempts
+                $where .= ' AND qa.id IS NOT NULL';
+            } else if ( $noattempts == 1 ) {  // Show only students without attempts
+               $where .= ' AND qa.id IS NULL';
             }
         }
+
+        $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
+
         if (!$download) {
             // Add extra limits due to initials bar
             if($table->get_sql_where()) {
@@ -412,7 +399,7 @@ class quiz_report extends quiz_default_report {
         if ($hasfeedback) {
             $factor = $quiz->grade/$quiz->sumgrades;
             $select .= ', qf.feedbacktext ';
-            $from .= " JOIN {$CFG->prefix}quiz_feedback qf ON " .
+            $from .= " LEFT JOIN {$CFG->prefix}quiz_feedback qf ON " .
                     "qf.quizid = $quiz->id AND qf.mingrade <= qa.sumgrades * $factor AND qa.sumgrades * $factor < qf.maxgrade";
         }
 
@@ -439,16 +426,8 @@ class quiz_report extends quiz_default_report {
 
                     $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
 
-                    // uncomment the commented lines below if you are choosing to show unenrolled users and
-                    // have uncommented the corresponding lines earlier in this script
-                    //if (in_array($attempt->userid, $unenrolledusers)) {
-                    //    $userlink = '<a class="dimmed" href="'.$CFG->wwwroot.'/user/view.php?id='.
-                    //            $attempt->userid.'&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
-                    //}
-                    //else {
-                        $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.
-                                '&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
-                    //}
+                    $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.
+                            '&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
 
                     // Username columns.
                     $row = array();
