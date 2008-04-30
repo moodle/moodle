@@ -107,7 +107,7 @@
             $title = get_string('deleteevent', 'calendar');
             $event = get_record('event', 'id', $eventid);
             if($event === false) {
-                print_error('Invalid event');
+                print_error('invalidevent');
             }
             if(!calendar_edit_event_allowed($event)) {
                 print_error('You are not authorized to do this');

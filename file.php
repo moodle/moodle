@@ -28,9 +28,9 @@
     
     // relative path must start with '/', because of backup/restore!!!
     if (!$relativepath) {
-        print_error('No valid arguments supplied or incorrect server configuration');
+        print_error('invalidargorconf');
     } else if ($relativepath{0} != '/') {
-        print_error('No valid arguments supplied, path does not start with slash!');
+        print_error('pathdoesnotstartslash');
     }
 
     $pathname = $CFG->dataroot.$relativepath;
@@ -38,18 +38,18 @@
     // extract relative path components
     $args = explode('/', trim($relativepath, '/'));
     if (count($args) == 0) { // always at least courseid, may search for index.html in course root
-        print_error('No valid arguments supplied');
+        print_error('invalidarguments');
     }
   
     // security: limit access to existing course subdirectories
     if (($args[0]!='blog') and (!$course = get_record_sql("SELECT * FROM {$CFG->prefix}course WHERE id='".(int)$args[0]."'"))) {
-        print_error('Invalid course ID');
+        print_error('invalidcourseid');
     }
 
     // security: prevent access to "000" or "1 something" directories
     // hack for blogs, needs proper security check too
     if (($args[0] != 'blog') and ($args[0] != $course->id)) {
-        print_error('Invalid course ID');
+        print_error('invalidcourseid');
     }
 
     // security: login to course if necessary
@@ -57,7 +57,7 @@
     //       in order to avoid messing redirects. MDL-14495
     if ($args[0] == 'blog') {
         if (empty($CFG->bloglevel)) {
-            print_error('Blogging is disabled!');
+            print_error('blogdisable', 'blog');
         } else if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL) {
             require_login(0, true, null, false);
         } else if ($CFG->forcelogin) {
@@ -78,7 +78,7 @@
     // security: only editing teachers can access backups
     if ((count($args) >= 2) and (strtolower($args[1]) == 'backupdata')) {
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $course->id))) {
-            print_error('Access not allowed');
+            print_error('nopermissions');
         } else {
             $lifetime = 0; //disable browser caching for backups 
         }
@@ -108,7 +108,7 @@
         $lifetime = 0;  // do not cache assignments, students may reupload them
         if (!has_capability('mod/assignment:grade', get_context_instance(CONTEXT_COURSE, $course->id))
           and $args[4] != $USER->id) {
-           print_error('Access not allowed');
+           print_error('nopermissions');
         }
     }
 
@@ -152,7 +152,7 @@
                    "AND r.type      = 'file' " .
                    "AND r.reference = '{$reference}'";
         if (count_records_sql($sql)) {
-           print_error('Access not allowed');
+           print_error('nopermissions');
         }
     }
 

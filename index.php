@@ -194,7 +194,7 @@
                     require_once($CFG->dirroot .'/mod/forum/lib.php');
 
                     if (! $newsforum = forum_get_course_forum($SITE->id, 'news')) {
-                        print_error('Could not find or create a main news forum for the site');
+                        print_error('cannotfindorcreateforum', 'forum');
                     }
 
                     if (!empty($USER->id)) {

@@ -29,6 +29,7 @@ $string['bynameondate'] = 'by $a->name - $a->date';
 $string['cannotviewpostyet'] = 'You cannot read other students questions in this discussion yet because you haven\'t posted';
 $string['cannotadddiscussion'] = 'Adding discussions to this forum requires group membership.';
 $string['cannotadddiscussionall'] = 'You do not have permission to add a new discussion topic for all participants.';
+$string['cannotfindorcreateforum'] = 'Could not find or create a main news forum for the site';
 $string['cleanreadtime'] = 'Mark old posts as read hour';
 $string['configcleanreadtime'] = 'The hour of the day to clean old posts from the \'read\' table.';
 $string['configdisplaymode'] = 'The default display mode for discussions if one isn\'t set.';
