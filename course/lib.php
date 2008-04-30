@@ -1318,6 +1318,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     continue;
                 }
             } else {
+                if (!file_exists("$CFG->dirroot/mod/$mod->modname/lib.php")) {
+                    // module not installed
+                    continue;
+                }
                 if (!coursemodule_visible_for_user($mod)) {
                     // full visibility check
                     continue;
