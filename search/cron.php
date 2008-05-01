@@ -18,11 +18,7 @@
 
     require_once("$CFG->dirroot/search/lib.php");
 
-    if (!search_check_php5()) {
-        $phpversion = phpversion();
-        mtrace("Sorry, cannot cron global search as it requires PHP 5.0.0 or later (currently using version $phpversion)");
-    } 
-    else if (empty($CFG->enableglobalsearch)) {
+    if (empty($CFG->enableglobalsearch)) {
         mtrace('Global searching is not enabled. Nothing performed by search.');
     }
     else{

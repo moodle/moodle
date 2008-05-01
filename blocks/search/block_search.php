@@ -47,22 +47,18 @@
       $this->content = new stdClass;
       
       //lazy check for the moment
-      if (check_php_version("5.0.0")) {        
-        //fetch values if defined in admin, otherwise use defaults
-        $label  = (!empty($CFG->block_search_text)) ? $CFG->block_search_text : get_string('searchmoodle', 'block_search');
-        $button = (!empty($CFG->block_search_button)) ? $CFG->block_search_button : get_string('go', 'block_search');
-        
-        //basic search form
-        $this->content->text =
+      //fetch values if defined in admin, otherwise use defaults
+      $label  = (!empty($CFG->block_search_text)) ? $CFG->block_search_text : get_string('searchmoodle', 'block_search');
+      $button = (!empty($CFG->block_search_button)) ? $CFG->block_search_button : get_string('go', 'block_search');
+
+      //basic search form
+      $this->content->text =
             '<form id="searchquery" method="get" action="'. $CFG->wwwroot .'/search/query.php"><div>'
           . '<label for="block_search_q">'. $label .'</label>'
           . '<input id="block_search_q" type="text" name="query_string" />'
           . '<input type="submit" value="'.$button.'" />'
           . '</div></form>';
-      } else {
-        $this->content->text = "Sorry folks, PHP 5 is needed for the new search module.";
-      } //else
-        
+
       //no footer, thanks
       $this->content->footer = '';
       

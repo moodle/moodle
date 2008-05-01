@@ -38,13 +38,6 @@ mtrace("Testing global search capabilities:\n");
 
 $phpversion = phpversion();
 
-if (!search_check_php5()) {
-    mtrace("ERROR: PHP 5.0.0 or later required (currently using version ".phpversion().").");
-    exit(0);
-} else {
-    mtrace("Success: PHP 5.0.0 or later is installed (".phpversion().").\n");
-} //else
-
 //fix paths for testing
 set_include_path(get_include_path().":../");
 require_once("$CFG->dirroot/search/Zend/Search/Lucene.php");

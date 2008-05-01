@@ -33,14 +33,6 @@ require_once("$CFG->dirroot/search/lib.php");
         error(get_string('beadmin', 'search'), "$CFG->wwwroot/login/index.php");
     } 
     
-/// check for php5 (lib.php)
-
-    if (!search_check_php5()) {
-        $phpversion = phpversion();
-        mtrace("Sorry, global search requires PHP 5.0.0 or later (currently using version ".phpversion().")");
-        exit(0);
-    } 
-    
     require_once("$CFG->dirroot/search/indexlib.php");
     
     $index = new Zend_Search_Lucene(SEARCH_INDEX_PATH);
