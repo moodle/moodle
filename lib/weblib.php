@@ -614,69 +614,6 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
 }
 
 /**
- * This does a search and replace, ignoring case
- * This function is only used for versions of PHP older than version 5
- * which do not have a native version of this function.
- * Taken from the PHP manual, by bradhuizenga @ softhome.net
- *
- * @param string $find the string to search for
- * @param string $replace the string to replace $find with
- * @param string $string the string to search through
- * return string
- */
-if (!function_exists('str_ireplace')) {    /// Only exists in PHP 5
-    function str_ireplace($find, $replace, $string) {
-
-        if (!is_array($find)) {
-            $find = array($find);
-        }
-
-        if(!is_array($replace)) {
-            if (!is_array($find)) {
-                $replace = array($replace);
-            } else {
-                // this will duplicate the string into an array the size of $find
-                $c = count($find);
-                $rString = $replace;
-                unset($replace);
-                for ($i = 0; $i < $c; $i++) {
-                    $replace[$i] = $rString;
-                }
-            }
-        }
-
-        foreach ($find as $fKey => $fItem) {
-            $between = explode(strtolower($fItem),strtolower($string));
-            $pos = 0;
-            foreach($between as $bKey => $bItem) {
-                $between[$bKey] = substr($string,$pos,strlen($bItem));
-                $pos += strlen($bItem) + strlen($fItem);
-            }
-            $string = implode($replace[$fKey],$between);
-        }
-        return ($string);
-    }
-}
-
-/**
- * Locate the position of a string in another string
- *
- * This function is only used for versions of PHP older than version 5
- * which do not have a native version of this function.
- * Taken from the PHP manual, by dmarsh @ spscc.ctc.edu
- *
- * @param string $haystack The string to be searched
- * @param string $needle The string to search for
- * @param int $offset The position in $haystack where the search should begin.
- */
-if (!function_exists('stripos')) {    /// Only exists in PHP 5
-    function stripos($haystack, $needle, $offset=0) {
-
-        return strpos(strtoupper($haystack), strtoupper($needle), $offset);
-    }
-}
-
-/**
  * This function will print a button/link/etc. form element
  * that will work on both Javascript and non-javascript browsers.
  * Relies on the Javascript function openpopup in javascript.php
