@@ -4516,20 +4516,17 @@ function print_plugin_tables() {
                                      'chat',
                                      'choice',
                                      'data',
-                                     'exercise',
+                                     'feedback',
                                      'forum',
                                      'glossary',
                                      'hotpot',
-                                     'journal',
                                      'label',
-                                     'lams',
                                      'lesson',
                                      'quiz',
                                      'resource',
                                      'scorm',
                                      'survey',
-                                     'wiki',
-                                     'workshop');
+                                     'wiki');
     
     $plugins_standard['blocks'] = array('activity_modules',
                                         'admin',
