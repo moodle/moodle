@@ -240,10 +240,6 @@ function isguest($userid=0) {
     return has_capability('moodle/legacy:guest', $context, $userid, false);
 }
 
-function get_user_info_from_db($field, $value) {  // For backward compatibility
-    return get_complete_user_data($field, $value);
-}
-
 
 /**
  * Get the guest user information from the database
