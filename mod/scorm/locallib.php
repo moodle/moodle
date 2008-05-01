@@ -84,7 +84,7 @@ $repositorybrowser = '/mod/resource/type/ims/finder.php';
 */
 function scorm_delete_files($directory) {
     if (is_dir($directory)) {
-        $files=scorm_scandir($directory);
+        $files=scandir($directory);
         set_time_limit(0);
         foreach($files as $file) {
             if (($file != '.') && ($file != '..')) {
@@ -99,27 +99,6 @@ function scorm_delete_files($directory) {
         return true;
     }
     return false;
-}
-
-/**
-* Given a diretory path returns the file list
-*
-* @param string $directory
-* @return array
-*/
-function scorm_scandir($directory) {
-    if (version_compare(phpversion(),'5.0.0','>=')) {
-        return scandir($directory);
-    } else {
-        $files = array();
-        if ($dh = opendir($directory)) {
-            while (($file = readdir($dh)) !== false) {
-               $files[] = $file;
-            }
-            closedir($dh);
-        }
-        return $files;
-    }
 }
 
 /**
