@@ -3,35 +3,6 @@ ini_set('display_errors', "On");
 
 require_once 'PEAR.php';
 
-if(!function_exists('scandir'))
-{
-    function scandir($dir, $sortorder = 0)
-    {
-        if(is_dir($dir))
-        {
-            $dirlist = opendir($dir);
-
-            while( ($file = readdir($dirlist)) !== false)
-            {
-                if(!is_dir($file))
-                {
-                    $files[] = $file;
-                }
-            }
-
-            ($sortorder == 0) ? asort($files) : arsort($files);
-
-            return $files;
-        }
-        else
-        {
-            return FALSE;
-            break;
-        }
-    }
-}
-
-
 /**
  * Command-line options parsing class.
  *
