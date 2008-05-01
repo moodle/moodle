@@ -170,33 +170,6 @@ function iscreator ($userid=0) {
          or has_capability('moodle/legacy:admin', $context, $userid, false));
 }
 
-/**
- * Determines if a user is a student in the specified course
- *
- * If the course id specifies the site then this determines
- * if the user is a confirmed and valid user of this site.
- *
- * @uses $CFG
- * @uses SITEID
- * @param int $courseid The id of the course being tested
- * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
- * @return bool
- */
-function isstudent($courseid=0, $userid=0) {
-    global $CFG;
-
-    if (empty($CFG->rolesactive)) {
-        return false;
-    }
-
-    if ($courseid == 0) {
-        $context = get_context_instance(CONTEXT_SYSTEM);
-    } else {
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    }
-
-    return has_capability('moodle/legacy:student', $context, $userid, false);
-}
 
 /**
  * Determines if the specified user is logged in as guest.
