@@ -175,7 +175,9 @@ function get_emoticons_html(){
         foreach ($items as $item) {
             $item = explode('{:}', $item);
             $emoticons[$item[0]] = $item[1];
-            $output .= '<li><a href="###" onclick="inserttext(\''.$item[0].'\')"><img src="'.$CFG->pixpath.'/s/'.$item[1].'.gif" alt="'.$item[0].'" /></a>'.' <code>'.$item[0].'</code>';
+            $output .= '<li><a href="javascript:inserttext(\''.$item[0].'\')"><img src="'.
+                $CFG->pixpath.'/s/'.$item[1].'.gif" alt="'.$item[0].'" /></a>'.' <code>'.$item[0].
+                '</code></li>';
         }
 
     }
