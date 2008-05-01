@@ -243,6 +243,7 @@ class ChatDaemon {
             $str->mins  = get_string("mins");
             $str->sec   = get_string("sec");
             $str->secs  = get_string("secs");
+            $str->years = get_string('years');
         }
 
         ob_start();
