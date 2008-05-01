@@ -277,6 +277,8 @@ class qformat_gift extends qformat_default {
 
         switch ($question->qtype) {
             case DESCRIPTION:
+                $question->defaultgrade = 0;
+                $question->length = 0;
                 return $question;
                 break;
             case ESSAY:

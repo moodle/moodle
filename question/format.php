@@ -392,6 +392,7 @@ class qformat_default {
         }
         return $category;
     }
+
     /**
      * Return complete file within an array, one item per line
      * @param string filename name of file
@@ -474,6 +475,7 @@ class qformat_default {
         $question->incorrectfeedback = '';
         $question->answernumbering = 'abc';
         $question->penalty = 0.1;
+        $question->length = 1;
 
         // this option in case the questiontypes class wants
         // to know where the data came from
@@ -549,6 +551,33 @@ class qformat_default {
         $newfile = ereg_replace("{$CFG->dataroot}/{$this->course->id}/", '',$newfullpath);
         return $newfile;
     }
+
+    /**
+     * Utility function to reconstruct part of the
+     * xml data structure (from xmlize) as a string in order
+     * to identify the actual data therein
+     * @param array $xml section of the xml data structure
+     * @return string data with everything else removed
+     */
+    function xmltostring( $xml ) {
+        // if it's not an array then it's probably just data
+        if (!is_array($xml)) {
+            $text = s(addslashes($xml));
+        }
+        else {
+            // otherwise parse the array
+            $text = '';
+            foreach ($xml as $tag=>$data) {
+                // if tag is '@' then it's attributes and we don't care
+                if ($tag!=='@') { 
+                    $text = $text . $this->xmltostring( $data );
+                }
+            }
+        }
+
+        return $text;
+    }
+    
 
 /*******************
  * EXPORT FUNCTIONS
@@ -703,6 +732,7 @@ class qformat_default {
         fclose($fh);
         return true;
     }
+
     /**
      * get the category as a path (e.g., tom/dick/harry)
      * @param int id the id of the most nested catgory

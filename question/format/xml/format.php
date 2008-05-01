@@ -302,6 +302,8 @@ class qformat_xml extends qformat_default {
         $qo = $this->import_headers( $question );
         // header parts particular to shortanswer
         $qo->qtype = DESCRIPTION;
+        $qo->defaultgrade = 0;
+        $qo->length = 0;
         return $qo;
     }
 
