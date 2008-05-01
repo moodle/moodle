@@ -2489,7 +2489,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
                     } else {
                         $menu .= get_string('failedloginattemptsall', '', $count);
                     }
-                    if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+                    if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM))) {
                         $menu .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php'.
                                              '?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
                     }
@@ -4776,7 +4776,7 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
     $output = '';
 
     if (is_null($viewfullnames)) {
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $context = get_context_instance(CONTEXT_SYSTEM);
         $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
     }
 
@@ -5169,7 +5169,7 @@ function update_category_button($categoryid) {
 function update_categories_button() {
     global $CFG, $USER;
 
-    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM))) {
         if (!empty($USER->categoryediting)) {
             $string = get_string('turneditingoff');
             $categoryedit = 'off';
@@ -5195,7 +5195,7 @@ function update_categories_search_button($search,$page,$perpage) {
     global $CFG, $USER;
 
     // not sure if this capability is the best  here
-    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM))) {
         if (!empty($USER->categoryediting)) {
             $string = get_string("turneditingoff");
             $edit = "off";

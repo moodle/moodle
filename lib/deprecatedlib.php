@@ -119,7 +119,7 @@ function isadmin($userid=0) {
         return record_exists('user_admins', 'userid', $userid);
     }
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $context = get_context_instance(CONTEXT_SYSTEM);
 
     return has_capability('moodle/legacy:admin', $context, $userid, false);
 }
@@ -145,7 +145,7 @@ function isteacher($courseid=0, $userid=0, $obsolete_includeadmin=true) {
     if ($courseid) {
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
     } else {
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $context = get_context_instance(CONTEXT_SYSTEM);
     }
 
     return (has_capability('moodle/legacy:teacher', $context, $userid, false)
@@ -199,7 +199,7 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
 
 /// Include admins if required
     if ($includeadmin) {
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $context = get_context_instance(CONTEXT_SYSTEM);
         if (has_capability('moodle/legacy:admin', $context, $userid, false)) {
             return true;
         }
@@ -223,7 +223,7 @@ function isteacheredit($courseid, $userid=0, $obsolete_ignorestudentview=false) 
     }
 
     if (empty($courseid)) {
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $context = get_context_instance(CONTEXT_SYSTEM);
     } else {
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
     }
@@ -245,7 +245,7 @@ function iscreator ($userid=0) {
         return false;
     }
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $context = get_context_instance(CONTEXT_SYSTEM);
 
     return (has_capability('moodle/legacy:coursecreator', $context, $userid, false)
          or has_capability('moodle/legacy:admin', $context, $userid, false));
@@ -271,7 +271,7 @@ function isstudent($courseid=0, $userid=0) {
     }
 
     if ($courseid == 0) {
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $context = get_context_instance(CONTEXT_SYSTEM);
     } else {
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
     }
@@ -355,7 +355,7 @@ function unenrol_student($userid, $courseid=0) {
         }
         /// remove from all legacy student roles
         if ($courseid == SITEID) {
-            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            $context = get_context_instance(CONTEXT_SYSTEM);
         } else if (!$context = get_context_instance(CONTEXT_COURSE, $courseid)) {
             return false;
         }

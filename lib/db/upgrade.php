@@ -881,7 +881,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
         if( $defaultroleid != $userrole->id ) {
             //  Add in the new moodle/my:manageblocks capibility to the default user role
-            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            $context = get_context_instance(CONTEXT_SYSTEM);
             assign_capability('moodle/my:manageblocks',CAP_ALLOW,$defaultroleid,$context->id);
         }
 
