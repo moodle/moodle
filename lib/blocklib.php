@@ -1057,8 +1057,6 @@ function upgrade_blocks_db($continueto) {
         $status = false;
         if (file_exists($CFG->dirroot . '/blocks/db/install.xml')) {
             $status = install_from_xmldb_file($CFG->dirroot . '/blocks/db/install.xml'); //New method
-        } else if (file_exists($CFG->dirroot . '/blocks/db/' . $CFG->dbtype . '.sql')) {
-            $status = modify_database($CFG->dirroot . '/blocks/db/' . $CFG->dbtype . '.sql'); //Old method
         }
         if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
         $db->debug = false;
@@ -1088,12 +1086,7 @@ function upgrade_blocks_db($continueto) {
     }
 
 /// Upgrading code starts here
-    $oldupgrade = false;
     $newupgrade = false;
-    if (is_readable($CFG->dirroot . '/blocks/db/' . $CFG->dbtype . '.php')) {
-        include_once($CFG->dirroot . '/blocks/db/' . $CFG->dbtype . '.php');  // defines old upgrading function
-        $oldupgrade = true;
-    }
     if (is_readable($CFG->dirroot . '/blocks/db/upgrade.php')) {
         include_once($CFG->dirroot . '/blocks/db/upgrade.php');  // defines new upgrading function
         $newupgrade = true;
@@ -1110,24 +1103,11 @@ function upgrade_blocks_db($continueto) {
         print_heading('blocks');
 
     /// Run de old and new upgrade functions for the module
-        $oldupgrade_function = 'blocks_upgrade';
         $newupgrade_function = 'xmldb_blocks_upgrade';
-
-    /// First, the old function if exists
-        $oldupgrade_status = true;
-        if ($oldupgrade && function_exists($oldupgrade_function)) {
-            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-            $db->debug = true;
-            }
-            $oldupgrade_status = $oldupgrade_function($CFG->blocks_version);
-        } else if ($oldupgrade) {
-            notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
-                     '/blocks/db/' . $CFG->dbtype . '.php');
-        }
 
     /// Then, the new function if exists and the old one was ok
         $newupgrade_status = true;
-        if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
+        if ($newupgrade && function_exists($newupgrade_function)) {
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             $db->debug = true;
             }
@@ -1140,7 +1120,7 @@ function upgrade_blocks_db($continueto) {
         $db->debug=false;
         }
     /// Now analyze upgrade results
-        if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
+        if ($newupgrade_status) {    // No upgrading failed
             if (set_config('blocks_version', $blocks_version)) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradeblocks', '', $blocks_version), 'notifysuccess');
@@ -1216,13 +1196,8 @@ function upgrade_blocks_plugins($continueto) {
             continue;
         }
 
-        $oldupgrade = false;
         $newupgrade = false;
         if ( @is_dir($fullblock .'/db/')) {
-            if ( @is_readable($fullblock .'/db/'. $CFG->dbtype .'.php')) {
-                include_once($fullblock .'/db/'. $CFG->dbtype .'.php');  // defines old upgrading function
-                $oldupgrade = true;
-            }
             if ( @is_readable($fullblock .'/db/upgrade.php')) {
                 include_once($fullblock .'/db/upgrade.php');  // defines new upgrading function
                 $newupgrade = true;
@@ -1289,24 +1264,11 @@ function upgrade_blocks_plugins($continueto) {
                 @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
             /// Run de old and new upgrade functions for the module
-                $oldupgrade_function = $block->name .'_upgrade';
                 $newupgrade_function = 'xmldb_block_' . $block->name .'_upgrade';
-
-            /// First, the old function if exists
-                $oldupgrade_status = true;
-                if ($oldupgrade && function_exists($oldupgrade_function)) {
-                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                    $db->debug = true;
-                    }
-                    $oldupgrade_status = $oldupgrade_function($currblock->version, $block);
-                } else if ($oldupgrade) {
-                    notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
-                             $fullblock . '/db/' . $CFG->dbtype . '.php');
-                }
 
             /// Then, the new function if exists and the old one was ok
                 $newupgrade_status = true;
-                if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
+                if ($newupgrade && function_exists($newupgrade_function)) {
                     if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                     $db->debug = true;
                     }
@@ -1319,7 +1281,7 @@ function upgrade_blocks_plugins($continueto) {
                 $db->debug=false;
                 }
             /// Now analyze upgrade results
-                if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
+                if ($newupgrade_status) {    // No upgrading failed
 
                     // Set the block cron on upgrade
                     $block->cron = !empty($blockobj->cron) ? $blockobj->cron : 0;
@@ -1390,8 +1352,6 @@ function upgrade_blocks_plugins($continueto) {
             $status = false;
             if (file_exists($fullblock . '/db/install.xml')) {
                 $status = install_from_xmldb_file($fullblock . '/db/install.xml'); //New method
-            } else if (file_exists($fullblock .'/db/'. $CFG->dbtype .'.sql')) {
-                $status = modify_database($fullblock .'/db/'. $CFG->dbtype .'.sql'); //Old method
             } else {
                 $status = true;
             }
