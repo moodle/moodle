@@ -254,7 +254,7 @@ class quiz_report extends quiz_default_report {
 
         // set up the pagesize
         $total  = count_records_sql('SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where);
-        $table->pagesize(10, $total);
+        $table->pagesize(QUIZ_REPORT_DEFAULT_PAGE_SIZE, $total);
 
         // get the attempts and process them
         if ($attempts = get_records_sql($select.$from.$where.$sort,$table->get_page_start(), $table->get_page_size())) {
