@@ -214,6 +214,8 @@ $string['cronerrorpassword'] = 'Sorry, you have not provided a valid password to
 $string['cronremotepassword'] = 'Cron password for remote access';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours.';
 $string['curlrecommended'] = 'Installing the optional Curl library is highly recommended in order to enable Moodle Networking functionality.';
+$string['ctyperecommended'] = 'Installing the optional ctype PHP extension is highly recommended in order to improve site performance, particularly if your site is supporting non-latin languages.';
+$string['ctyperequired'] = 'The ctype PHP extension is now required by Moodle, in order to improve site performance and to offer multilingual compatibility.';
 $string['customcheck'] = 'Other Checks';
 $string['datarootsecuritywarning'] = 'Your site configuration might not be secure. Please make sure that your dataroot directory ($a) is not directly accessible via web.';
 $string['dbmigrate'] = 'Moodle Database Migration';

@@ -326,7 +326,7 @@ function build_mnet_logs_array($hostid, $course, $user=0, $date=0, $order="l.tim
 
     if ($modaction) {
         $firstletter = substr($modaction, 0, 1);
-        if (ctype_alpha($firstletter)) {
+        if (preg_match('/[[:alpha:]]/', $firstletter)) {
             $where .= " AND\n                lower(l.action) LIKE '%" . strtolower($modaction) . "%'";
         } else if ($firstletter == '-') {
             $where .= " AND\n                lower(l.action) NOT LIKE '%" . strtolower(substr($modaction, 1)) . "%'";
@@ -389,7 +389,7 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
 
     if ($modaction) {
         $firstletter = substr($modaction, 0, 1);
-        if (ctype_alpha($firstletter)) {
+        if (preg_match('/[[:alpha:]]/', $firstletter)) {
             $joins[] = "lower(l.action) LIKE '%" . strtolower($modaction) . "%'";
         } else if ($firstletter == '-') {
             $joins[] = "lower(l.action) NOT LIKE '%" . strtolower(substr($modaction, 1)) . "%'";

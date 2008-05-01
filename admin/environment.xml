@@ -122,6 +122,11 @@
           <ON_CHECK message="xmlrpcrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="ctype" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="ctyperecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
     </PHP_EXTENSIONS>
   </MOODLE>
   <MOODLE version="1.9">
@@ -175,6 +180,11 @@
       <PHP_EXTENSION name="xmlrpc" level="optional">
         <FEEDBACK>
           <ON_CHECK message="xmlrpcrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="ctype" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="ctyperecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
     </PHP_EXTENSIONS>
@@ -242,6 +252,11 @@
       <PHP_EXTENSION name="xmlrpc" level="optional">
         <FEEDBACK>
           <ON_CHECK message="xmlrpcrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="ctype" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="ctyperequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
     </PHP_EXTENSIONS>
