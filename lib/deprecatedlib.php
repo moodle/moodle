@@ -381,25 +381,6 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
     return $students;
 }
 
-/**
- * Counts the students in a given course (or site), or a subset of them
- *
- * @param object $course The course in question as a course object.
- * @param string $search ?
- * @param string $firstinitial ?
- * @param string $lastinitial ?
- * @param ? $group ?
- * @param string $exceptions ?
- * @return int
- * @todo Finish documenting this function
- */
-function count_course_students($course, $search='', $firstinitial='', $lastinitial='', $group=NULL, $exceptions='') {
-
-    if ($students = get_course_students($course->id, '', '', 0, 999999, $firstinitial, $lastinitial, $group, $search, '', $exceptions)) {
-        return count($students);
-    }
-    return 0;
-}
 
 /**
  * Returns list of all teachers in this course
