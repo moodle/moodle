@@ -83,6 +83,8 @@ function xmldb_quiz_upgrade($oldversion=0) {
                 (($CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_CLOSED) << 12));
     }
 
+//===== 1.9.0 upgrade line ======//
+
     return $result;
 }
 

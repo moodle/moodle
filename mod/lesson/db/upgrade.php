@@ -64,6 +64,8 @@ function xmldb_lesson_upgrade($oldversion=0) {
         $db->debug = true;
     }
 
+//===== 1.9.0 upgrade line ======//
+
     if ($result && $oldversion < 2007072201) {
 
         $table = new XMLDBTable('lesson');

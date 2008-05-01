@@ -34,6 +34,8 @@ function xmldb_chat_upgrade($oldversion=0) {
         $result = $result && change_field_precision($table, $field);
     }
 
+//===== 1.9.0 upgrade line ======//
+
     return $result;
 }
 

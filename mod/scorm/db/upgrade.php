@@ -291,6 +291,8 @@ function xmldb_scorm_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
+//===== 1.9.0 upgrade line ======//
+
     return $result;
 }
 

@@ -97,6 +97,8 @@ function xmldb_data_upgrade($oldversion=0) {
         }
     }
 
+//===== 1.9.0 upgrade line ======//
+
     if ($result && $oldversion < 2007101512) {
     /// Launch add field asearchtemplate again if does not exists yet - reported on several sites
 

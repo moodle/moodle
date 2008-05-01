@@ -32,6 +32,8 @@ function xmldb_wiki_upgrade($oldversion=0) {
 ///     $result = result of "/lib/ddllib.php" function calls
 /// }
 
+//===== 1.9.0 upgrade line ======//
+
     return $result;
 }
 

@@ -67,7 +67,9 @@ function xmldb_glossary_upgrade($oldversion=0) {
         glossary_update_grades();
         $db->debug = true;
     }  
-    
+
+//===== 1.9.0 upgrade line ======//
+
     return $result;
 }
 

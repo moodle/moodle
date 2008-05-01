@@ -63,6 +63,8 @@ function xmldb_resource_upgrade($oldversion=0) {
         }
     }
 
+//===== 1.9.0 upgrade line ======//
+
     return $result;
 }
 
