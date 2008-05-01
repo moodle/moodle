@@ -352,8 +352,6 @@
             $status = false;
             if (file_exists($CFG->dirroot . '/backup/db/install.xml')) {
                 $status = install_from_xmldb_file($CFG->dirroot . '/backup/db/install.xml'); //New method
-            } else if (file_exists($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.sql')) {
-                $status = modify_database($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.sql'); //Old method
             }
         if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             $db->debug = false;
@@ -383,12 +381,7 @@
         }
 
     /// Upgrading code starts here
-        $oldupgrade = false;
         $newupgrade = false;
-        if (is_readable($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.php')) {
-            include_once($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.php');  // defines old upgrading function
-            $oldupgrade = true;
-        }
         if (is_readable($CFG->dirroot . '/backup/db/upgrade.php')) {
             include_once($CFG->dirroot . '/backup/db/upgrade.php');  // defines new upgrading function
             $newupgrade = true;
@@ -403,22 +396,11 @@
             print_heading('backup');
 
         /// Run de old and new upgrade functions for the module
-            $oldupgrade_function = 'backup_upgrade';
             $newupgrade_function = 'xmldb_backup_upgrade';
-
-        /// First, the old function if exists
-            $oldupgrade_status = true;
-            if ($oldupgrade && function_exists($oldupgrade_function)) {
-                $db->debug = true;
-                $oldupgrade_status = $oldupgrade_function($CFG->backup_version);
-            } else if ($oldupgrade) {
-                notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
-                        '/backup/db/' . $CFG->dbtype . '.php');
-            }
 
         /// Then, the new function if exists and the old one was ok
             $newupgrade_status = true;
-            if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
+            if ($newupgrade && function_exists($newupgrade_function)) {
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
                 $db->debug = true;
             }
@@ -431,7 +413,7 @@
             $db->debug=false;
         }
         /// Now analyze upgrade results
-            if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
+            if ($newupgrade_status) {    // No upgrading failed
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_version), "green");
