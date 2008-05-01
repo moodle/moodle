@@ -583,13 +583,6 @@ global $HTTPSPAGEREQUIRED;
         $ME = strip_querystring($FULLME);
     }
 
-/// In VERY rare cases old PHP server bugs (it has been found on PHP 4.1.2 running
-/// as a CGI under IIS on Windows) may require that you uncomment the following:
-//  session_register("USER");
-//  session_register("SESSION");
-
-
-
 /// Load up theme variables (colours etc)
 
     if (!isset($CFG->themedir)) {
