@@ -21,7 +21,7 @@ $string['cannotdownloadzipfile'] = 'ZIP파일을 내려받을 수 없습니다.'
 $string['cannotfindcomponent'] = '구성요소를 찾을 수 없습니다.';
 $string['cannotsavemd5file'] = 'md5 파일을 저장할 수 없습니다.';
 $string['cannotsavezipfile'] = 'ZIP 파일을 저장할 수 없습니다.';
-$string['cannotunzipfile'] = '파일 압축풀기를 할 수 없습니다.';
+$string['cannotunzipfile'] = '압축된 파일을 풀 수 없습니다.';
 $string['caution'] = '주의';
 $string['check'] = '점검';
 $string['chooselanguagehead'] = '언어를 선택하시오';
@@ -177,7 +177,7 @@ $string['memorylimithelp'] = '<p>현재 서버의 PHP 메모리 사용량은 $a 
 <li>또 도저히 php.ini 안에 있는 값을 바꿀 수가 없다면 무들 디렉토리에 아래와 같은 내용을 포함하는 .htaccess 를 넣어두면 됩니다.
 <P><blockquote>php_value memory_limit 40M<blockquote></p>
 <p>그러나 어떤 서버에서는 이러한 기능이 모든 PHP페이지에 적용되어 버릴 수도 있게 되는 데 (당신이 페이지를 살펴보았을때 문제를 찾을 것이다) 이 때에는 .htaccess 를 제거해야 하고 다른 방안을 찾아봐야 할 것입니다.</p></li></ol>';
-$string['missingrequiredfield'] = '필요한 항목이 빠져 있습니다.';
+$string['missingrequiredfield'] = '필요한 항목이 빠져 있음';
 $string['moodledocslink'] = '이 페이지를 위한 무들 문서';
 $string['mssql'] = 'SQL* 서버 (mssql)';
 $string['mssql_n'] = 'UTF-8을 지원하는 SQL* 서버 (mssql_n)';
@@ -210,8 +210,8 @@ $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = '이전으로';
 $string['qtyperqpwillberemoved'] = '갱신과정에서 RQP 문제 유형은 제거될 것입니다. 만일 이 유형의 문제를 사용하지 않았다면, 추후에는 어떤 문제도 발생하지 않을 것입니다.';
 $string['qtyperqpwillberemovedanyway'] = '갱신과정에서 RQP 문제 유형은 제거될 것입니다. 데이터베이스에 RQP 문제가 탑재되어 있다면, 비록 갱신하기 전에 http://moodle.org/mod/data/view.php?d=13&amp;rid=797  에서 코드를 다시 불러들였다 하더라도 작업이 중단될 것입니다.';
-$string['remotedownloaderror'] = '서버로 구성요소를 다운로드하는데 실패하였습니다. 프록시 설정을 확인하십시요.PHP cURL 확장라이브러리를 추천합니다. <br /><br /> <a href=\"$a->url\">$a->url</a> 파일을 수동으로 다운로드해야 해서 서버의 \"$a->dest\"로 복사한 다음 거기서 압축을 해제하십시요.';
-$string['remotedownloadnotallowed'] = '서버로 구성요소를 내려받는 것이 허용되지 않습니다. (allow_url_fopen 이 비활성화 됨).<br /><br /> 수동으로 <a href=\"$a->url\">$a->url</a> 파일을 다운로드 하고, 서버의 \"$a->dest\" 에 복사한 후 압축을 푸셔야 합니다.';
+$string['remotedownloaderror'] = '서버로 구성요소를 다운로드하는데 실패하였습니다. 프록시 설정을 확인하십시요. PHP cURL 확장라이브러리를 추천합니다. <br /><br /> <a href=\"$a->url\">$a->url</a> 파일을 수동으로 다운로드해서 서버의 \"$a->dest\"에 복사한 다음 거기서 압축을 해제하십시요.';
+$string['remotedownloadnotallowed'] = '서버로 구성요소를 내려받는 것이 허용되지 않습니다. (allow_url_fopen 이 비활성화 됨).<br /><br /> 수동으로 <a href=\"$a->url\">$a->url</a> 파일을 다운로드 하고, 서버의 \"$a->dest\"에 복사한 다음 거기서 압축을 해제하십시요.';
 $string['report'] = '보고서';
 $string['restricted'] = '제한됨';
 $string['safemode'] = '안전모드';
