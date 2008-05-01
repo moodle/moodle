@@ -481,39 +481,6 @@ global $HTTPSPAGEREQUIRED;
         }
     }
 
-
-/// The following code can emulate "register globals" if required.
-/// This hack is no longer being applied as of Moodle 1.6 unless you really 
-/// really want to use it (by defining  $CFG->enableglobalshack = true)
-
-    if (!empty($CFG->enableglobalshack) && !defined('MOODLE_SANE_INPUT')) {
-        if (!empty($CFG->detect_unchecked_vars)) {
-            global $UNCHECKED_VARS;
-            $UNCHECKED_VARS->url = $_SERVER['PHP_SELF'];
-            $UNCHECKED_VARS->vars = array();
-        }
-        if (isset($_GET)) {
-            extract($_GET, EXTR_SKIP);    // Skip existing variables, ie CFG
-            if (!empty($CFG->detect_unchecked_vars)) {
-                foreach ($_GET as $key => $val) {
-                    $UNCHECKED_VARS->vars[$key]=$val;
-                }
-            }
-        }
-        if (isset($_POST)) {
-            extract($_POST, EXTR_SKIP);   // Skip existing variables, ie CFG
-            if (!empty($CFG->detect_unchecked_vars)) {
-                foreach ($_POST as $key => $val) {
-                    $UNCHECKED_VARS->vars[$key]=$val;
-                }
-            }
-        }
-        if (isset($_SERVER)) {
-            extract($_SERVER);
-        }
-    }
-
-
 /// Load up global environment variables
 
     if (!isset($CFG->cookiesecure) or strpos($CFG->wwwroot, 'https://') !== 0) {
