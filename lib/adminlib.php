@@ -70,12 +70,7 @@ function upgrade_plugins($type, $dir, $return) {
             continue;                              // Nothing to do.
         }
 
-        $oldupgrade = false;
         $newupgrade = false;
-        if (is_readable($fullplug . '/db/'. $CFG->dbtype . '.php')) {
-            include_once($fullplug . '/db/'. $CFG->dbtype . '.php');  // defines old upgrading function
-            $oldupgrade = true;
-        }
         if (is_readable($fullplug . '/db/upgrade.php')) {
             include_once($fullplug . '/db/upgrade.php');  // defines new upgrading function
             $newupgrade = true;
@@ -134,8 +129,6 @@ function upgrade_plugins($type, $dir, $return) {
                 $status = false;
                 if (file_exists($fullplug . '/db/install.xml')) {
                     $status = install_from_xmldb_file($fullplug . '/db/install.xml'); //New method
-                } else if (file_exists($fullplug .'/db/'. $CFG->dbtype .'.sql')) {
-                    $status = modify_database($fullplug .'/db/'. $CFG->dbtype .'.sql'); //Old method
                 } else {
                     $status = true;
                 }
@@ -171,24 +164,11 @@ function upgrade_plugins($type, $dir, $return) {
                 }
             } else {                            // Upgrade existing install
             /// Run de old and new upgrade functions for the module
-                $oldupgrade_function = $type.'_'.$plugin->name .'_upgrade';
                 $newupgrade_function = 'xmldb_' . $type.'_'.$plugin->name .'_upgrade';
-
-            /// First, the old function if exists
-                $oldupgrade_status = true;
-                if ($oldupgrade && function_exists($oldupgrade_function)) {
-                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                        $db->debug = true;
-                    }
-                    $oldupgrade_status = $oldupgrade_function($CFG->$pluginversion);
-                } else if ($oldupgrade) {
-                    notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
-                             $fullplug . '/db/' . $CFG->dbtype . '.php');
-                }
 
             /// Then, the new function if exists and the old one was ok
                 $newupgrade_status = true;
-                if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
+                if ($newupgrade && function_exists($newupgrade_function)) {
                     if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                         $db->debug = true;
                     }
@@ -201,7 +181,7 @@ function upgrade_plugins($type, $dir, $return) {
                     $db->debug=false;
                 }
             /// Now analyze upgrade results
-                if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
+                if ($newupgrade_status) {    // No upgrading failed
                     // OK so far, now update the plugins record
                     set_config($pluginversion, $plugin->version);
                     if (!update_capabilities($type.'/'.$plug)) {
@@ -276,12 +256,7 @@ function upgrade_activity_modules($return) {
             continue;
         }
 
-        $oldupgrade = false;
         $newupgrade = false;
-        if ( is_readable($fullmod .'/db/' . $CFG->dbtype . '.php')) {
-            include_once($fullmod .'/db/' . $CFG->dbtype . '.php');  // defines old upgrading function
-            $oldupgrade = true;
-        }
         if ( is_readable($fullmod . '/db/upgrade.php')) {
             include_once($fullmod . '/db/upgrade.php');  // defines new upgrading function
             $newupgrade = true;
@@ -319,9 +294,8 @@ function upgrade_activity_modules($return) {
                 // do nothing
             } else if ($currmodule->version < $module->version) {
             /// If versions say that we need to upgrade but no upgrade files are available, notify and continue
-                if (!$oldupgrade && !$newupgrade) {
-                    notify('Upgrade files ' . $mod . ': ' . $fullmod . '/db/' . $CFG->dbtype . '.php or ' .
-                                                            $fullmod . '/db/upgrade.php were not readable');
+                if (!$newupgrade) {
+                    notify('Upgrade file ' . $mod . ': ' . $fullmod . '/db/upgrade.php is not readable');
                     continue;
                 }
                 if (!$updated_modules) {
@@ -334,33 +308,16 @@ function upgrade_activity_modules($return) {
                 print_heading($module->name .' module needs upgrading');
 
             /// Run de old and new upgrade functions for the module
-                $oldupgrade_function = $module->name . '_upgrade';
                 $newupgrade_function = 'xmldb_' . $module->name . '_upgrade';
-
-            /// First, the old function if exists
-                $oldupgrade_status = true;
-                if ($oldupgrade && function_exists($oldupgrade_function)) {
-                    if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE) {
-                    $db->debug = true;
-                    }
-                    $oldupgrade_status = $oldupgrade_function($currmodule->version, $module);
-                    if (!$oldupgrade_status) {
-                        notify ('Upgrade function ' . $oldupgrade_function .
-                                ' did not complete successfully.');
-                    }
-                } else if ($oldupgrade) {
-                    notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
-                             $mod . ': ' . $fullmod . '/db/' . $CFG->dbtype . '.php');
-                }
 
             /// Then, the new function if exists and the old one was ok
                 $newupgrade_status = true;
-                if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
+                if ($newupgrade && function_exists($newupgrade_function)) {
                     if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                     $db->debug = true;
                     }
                     $newupgrade_status = $newupgrade_function($currmodule->version, $module);
-                } else if ($newupgrade && $oldupgrade_status) {
+                } else if ($newupgrade) {
                     notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                              $mod . ': ' . $fullmod . '/db/upgrade.php');
                 }
@@ -368,7 +325,7 @@ function upgrade_activity_modules($return) {
                 $db->debug=false;
                 }
             /// Now analyze upgrade results
-                if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
+                if ($newupgrade_status) {    // No upgrading failed
                     // OK so far, now update the modules record
                     $module->id = $currmodule->id;
                     if (! update_record('modules', $module)) {
@@ -409,7 +366,7 @@ function upgrade_activity_modules($return) {
             $updated_modules = true;
             // To avoid unnecessary output from the SQL queries in the CLI version
             if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE ) {
-            $db->debug = true;
+                $db->debug = true;
             }
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
@@ -417,12 +374,9 @@ function upgrade_activity_modules($return) {
         /// but we priorize install.xml (XMLDB) if present
             if (file_exists($fullmod . '/db/install.xml')) {
                 $status = install_from_xmldb_file($fullmod . '/db/install.xml'); //New method
-            } else {
-                $status = modify_database($fullmod .'/db/'. $CFG->dbtype .'.sql'); //Old method
             }
-
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-            $db->debug = false;
+                $db->debug = false;
             }
 
         /// Continue with the installation, roles and other stuff
