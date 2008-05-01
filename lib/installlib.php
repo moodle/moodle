@@ -568,12 +568,7 @@ function check_memory_limit() {
  * @return boolean
  */
 function inst_check_php_version() {
-    if (!check_php_version("4.3.0")) {
-        return false;
-    } else if (check_php_version("5.0.0")) {
-        return check_php_version("5.1.0"); // 5.0.x is too buggy
-    }
-    return true; // 4.3.x or 4.4.x is fine
+    return check_php_version("5.2.0");
 }
 /**
  * Print environment status to standard out

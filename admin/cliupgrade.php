@@ -277,7 +277,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         console_write(STDOUT, "\n", '', false);
     }
     /// Check that PHP is of a sufficient version
-    check_compatibility(inst_check_php_version(), get_string('phpversion', 'install'), get_string('phpversionerror', 'install'),false,$silent);
+    check_compatibility(inst_check_php_version(), get_string('phpversion', 'install'), get_string('php52versionerror', 'install'),false,$silent);
     /// Check session auto start
     check_compatibility(!ini_get_bool('session.auto_start'), get_string('sessionautostart', 'install'), get_string('sessionautostarterror', 'install'),false,$silent);
     /// Check magic quotes

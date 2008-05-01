@@ -177,6 +177,8 @@ password
 pearargerror
 pgsqlextensionisnotpresentinphp
 php50restricted
+php52versionerror
+php52versionhelp
 phpversion
 phpversionerror
 phpversionhelp
