@@ -552,32 +552,6 @@ class qformat_default {
         return $newfile;
     }
 
-    /**
-     * Utility function to reconstruct part of the
-     * xml data structure (from xmlize) as a string in order
-     * to identify the actual data therein
-     * @param array $xml section of the xml data structure
-     * @return string data with everything else removed
-     */
-    function xmltostring( $xml ) {
-        // if it's not an array then it's probably just data
-        if (!is_array($xml)) {
-            $text = s(addslashes($xml));
-        }
-        else {
-            // otherwise parse the array
-            $text = '';
-            foreach ($xml as $tag=>$data) {
-                // if tag is '@' then it's attributes and we don't care
-                if ($tag!=='@') { 
-                    $text = $text . $this->xmltostring( $data );
-                }
-            }
-        }
-
-        return $text;
-    }
-    
 
 /*******************
  * EXPORT FUNCTIONS
