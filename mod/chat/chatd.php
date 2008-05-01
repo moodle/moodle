@@ -44,7 +44,8 @@ if(!empty($safemode)) {
     die("Error: Cannot run with PHP safe_mode = On. Turn off safe_mode in php.ini.\n");
 }
 
-if(ini_get('allow_call_time_pass_reference') == '0') {
+$passref = ini_get('allow_call_time_pass_reference');
+if(empty($passref)) {
     die("Error: Cannot run with PHP allow_call_time_pass_reference = Off. Turn on allow_call_time_pass_reference in php.ini.\n");
 }
 
