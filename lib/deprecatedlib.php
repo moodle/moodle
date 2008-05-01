@@ -240,18 +240,6 @@ function isguest($userid=0) {
     return has_capability('moodle/legacy:guest', $context, $userid, false);
 }
 
-/**
- * Add an admin to a site
- *
- * @uses SITEID
- * @param int $userid The id of the user that is being tested against.
- * @return bool
- * @TODO: remove from cvs
- */
-function add_admin($userid) {
-    return true;
-}
-
 function get_user_info_from_db($field, $value) {  // For backward compatibility
     return get_complete_user_data($field, $value);
 }
