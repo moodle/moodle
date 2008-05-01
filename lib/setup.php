@@ -545,11 +545,7 @@ global $HTTPSPAGEREQUIRED;
 
     if (empty($nomoodlecookie)) {
         session_name('MoodleSession'.$CFG->sessioncookie);
-        if (check_php_version('5.2.0')) {
-            session_set_cookie_params(0, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
-        } else {
-            session_set_cookie_params(0, $CFG->sessioncookiepath, '', $CFG->cookiesecure);
-        }
+        session_set_cookie_params(0, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
         @session_start();
         if (! isset($_SESSION['SESSION'])) {
             $_SESSION['SESSION'] = new object;
@@ -557,11 +553,7 @@ global $HTTPSPAGEREQUIRED;
             if (!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
                 $_SESSION['SESSION']->has_timed_out = true;
             }
-            if (check_php_version('5.2.0')) {
-                setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
-            } else {
-                setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, $CFG->sessioncookiepath, '', $CFG->cookiesecure);
-            }
+            setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
             $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] = $_SESSION['SESSION']->session_test;
         }
         if (! isset($_SESSION['USER']))    {

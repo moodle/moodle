@@ -7727,14 +7727,9 @@ function report_session_error() {
     moodle_setlocale();
 
     //clear session cookies
-    if (check_php_version('5.2.0')) {
-        //PHP 5.2.0
-        setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
-        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
-    } else {
-        setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure);
-        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure);
-    }
+    setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
+    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
+
     //increment database error counters
     if (isset($CFG->session_error_counter)) {
         set_config('session_error_counter', 1 + $CFG->session_error_counter);
