@@ -81,6 +81,7 @@ $string['helpuploadsingle'] = '<p>This type of assignment allows each participan
    a zipped web site, or anything you ask them to submit.</p>';
 $string['hideintro'] = 'Hide description before available date';
 $string['itemstocount'] = 'Count';
+$string['invalidid'] = 'assignment ID was incorrect';
 $string['late'] = '$a late';
 $string['maximumgrade'] = 'Maximum grade';
 $string['maximumsize'] = 'Maximum size';

@@ -22,11 +22,11 @@
     }
 
     if (! $course = get_record('course', 'id', $id) ) {
-        print_error('Invalid course id');
+        print_error('invalidcourseid');
     }
 
     if (! $context = get_context_instance(CONTEXT_COURSE, $course->id)) {
-        print_error('Invalid context');
+        print_error('invalidcontext');
     }
 
     require_login($course->id);
@@ -43,7 +43,8 @@
         // verify user may unassign all roles at course context
         foreach($roles as $role) {
             if (!user_can_assign($context, $role->roleid)) {
-                print_error('Can not unassign this user from role id:'.$role->roleid);
+                print_error('cannotunassignrolefrom', '', '',
+                        $role->roleid);
             }
         }
 
@@ -59,7 +60,7 @@
     if ($confirm and confirm_sesskey()) {
         if ($userid) {
             if (! role_unassign(0, $userid, 0, $context->id)) {
-                print_error("An error occurred while trying to unenrol that person.");
+                print_error("unenrolerror");
             }
 
             add_to_log($course->id, 'course', 'unenrol', "view.php?id=$course->id", $userid);
@@ -67,7 +68,7 @@
 
         } else {
             if (! role_unassign(0, $USER->id, 0, $context->id)) {
-                print_error("An error occurred while trying to unenrol you.");
+                print_error("unenrolerror");
             }
 
             // force a refresh of mycourses
@@ -88,7 +89,7 @@
 
     if ($userid) {
         if (!$user = get_record('user', 'id', $userid)) {
-            print_error('That user does not exist!');
+            print_error('nousers');
         }
         $strunenrolsure  = get_string('unenrolsure', '', fullname($user, true));
         notice_yesno($strunenrolsure, "unenrol.php?id=$id&amp;user=$user->id&amp;confirm=yes&amp;sesskey=".sesskey(),
