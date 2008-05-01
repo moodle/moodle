@@ -8,7 +8,7 @@
 
 /// Check that PHP is of a sufficient version
 /// Moved here because older versions do not allow while(@ob_end_clean());
-    if (version_compare(phpversion(), "5.5.0") < 0) {
+    if (version_compare(phpversion(), "5.2.0") < 0) {
         $phpversion = phpversion();
         echo "Sorry, Moodle requires PHP 5.2.0 or later (currently using version $phpversion)";
         die;
