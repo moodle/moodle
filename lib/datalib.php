@@ -442,7 +442,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
         $sqland = "AND ";
     }
     if (!empty($USER->id)) {  // May need to check they are a teacher
-        if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM))) {
             $visiblecourses = "$sqland ((c.visible > 0) OR t.userid = '$USER->id')";
             $teachertable = "LEFT JOIN {$CFG->prefix}user_teachers t ON t.course = c.id";
         }
@@ -543,7 +543,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
         $sqland = "AND ";
     }
     if (!empty($USER) and !empty($USER->id)) {  // May need to check they are a teacher
-        if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM))) {
             $visiblecourses = "$sqland ((c.visible > 0) OR t.userid = '$USER->id')";
             $teachertable = "LEFT JOIN {$CFG->prefix}user_teachers t ON t.course=c.id";
         }
@@ -815,7 +815,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     global $CFG,$USER;
 
     // Guest's do not have any courses
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
     if (has_capability('moodle/legacy:guest',$sitecontext,$userid,false)) {
         return(array());
     }
@@ -2135,7 +2135,7 @@ function count_login_failures($mode, $username, $lastlogin) {
 
     $select = 'module=\'login\' AND action=\'error\' AND time > '. $lastlogin;
 
-    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {    // Return information about all accounts
+    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {    // Return information about all accounts
         if ($count->attempts = count_records_select('log', $select)) {
             $count->accounts = count_records_select('log', $select, 'COUNT(DISTINCT info)');
             return $count;
@@ -2252,7 +2252,7 @@ function user_can_create_courses() {
     global $USER;
     // if user has course creation capability at any site or course cat, then return true;
 
-    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM))) {
         return true;
     } else {
         return (bool) count(get_creatable_categories());

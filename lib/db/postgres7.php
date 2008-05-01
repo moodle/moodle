@@ -1798,7 +1798,7 @@ function main_upgrade($oldversion=0) {
     if (!empty($CFG->rolesactive) and $oldversion < 2006091212) {   // Reload the guest roles completely with new defaults
         if ($guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
             delete_records('capabilities');
-            $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            $sitecontext = get_context_instance(CONTEXT_SYSTEM);
             foreach ($guestroles as $guestrole) {
                 delete_records('role_capabilities', 'roleid', $guestrole->id);
                 assign_capability('moodle/legacy:guest', CAP_ALLOW, $guestrole->id, $sitecontext->id);
