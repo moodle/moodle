@@ -733,27 +733,6 @@ function detect_munged_arguments($string, $allowdots=1) {
 /// Old functions not used anymore - candidates for removal
 /////////////////////////////////////////////////////////////
 
-/**
- * Load a template from file - this function dates back to Moodle 1 :-) not used anymore
- *
- * Returns a (big) string containing the contents of a template file with all
- * the variables interpolated.  all the variables must be in the $var[] array or
- * object (whatever you decide to use).
- *
- * <b>WARNING: do not use this on big files!!</b>
- *
- * @param string $filename Location on the server's filesystem where template can be found.
- * @param mixed $var Passed in by reference. An array or object which will be loaded with data from the template file.
- *
- */
-function read_template($filename, &$var) {
-
-    $temp = str_replace("\\", "\\\\", implode(file($filename), ''));
-    $temp = str_replace('"', '\"', $temp);
-    eval("\$template = \"$temp\";");
-    return $template;
-}
-
 
 /** various deprecated groups function **/
 
