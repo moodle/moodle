@@ -797,6 +797,22 @@ function groupmode($course, $cm=null) {
     return $course->groupmode;
 }
 
+/**
+ * Sets the current group in the session variable
+ * When $SESSION->currentgroup[$courseid] is set to 0 it means, show all groups.
+ * Sets currentgroup[$courseid] in the session variable appropriately.
+ * Does not do any permission checking.
+ * @uses $SESSION
+ * @param int $courseid The course being examined - relates to id field in
+ * 'course' table.
+ * @param int $groupid The group being examined.
+ * @return int Current group id which was set by this function
+ */
+function set_current_group($courseid, $groupid) {
+    global $SESSION;
+    return $SESSION->currentgroup[$courseid] = $groupid;
+}
+
 
 /**
  * Gets the current group - either from the session variable or from the database.
