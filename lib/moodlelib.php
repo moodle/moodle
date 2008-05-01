@@ -2089,12 +2089,6 @@ function require_logout() {
         }
     }
 
-    if (ini_get_bool("register_globals") and check_php_version("4.3.0")) {
-        // This method is just to try to avoid silly warnings from PHP 4.3.0
-        session_unregister("USER");
-        session_unregister("SESSION");
-    }
-
     // Initialize variable to pass-by-reference to headers_sent(&$file, &$line)
     $file = $line = null;
     if (headers_sent($file, $line)) {
