@@ -755,59 +755,6 @@ function read_template($filename, &$var) {
 }
 
 
-/**
- * deprecated - relies on register globals; use new formslib instead
- *
- * Set a variable's value depending on whether or not it already has a value.
- *
- * If variable is set, set it to the set_value otherwise set it to the
- * unset_value.  used to handle checkboxes when you are expecting them from
- * a form
- *
- * @param mixed $var Passed in by reference. The variable to check.
- * @param mixed $set_value The value to set $var to if $var already has a value.
- * @param mixed $unset_value The value to set $var to if $var does not already have a value.
- */
-function checked(&$var, $set_value = 1, $unset_value = 0) {
-
-    if (empty($var)) {
-        $var = $unset_value;
-    } else {
-        $var = $set_value;
-    }
-}
-
-/**
- * deprecated - use new formslib instead
- *
- * Prints the word "checked" if a variable is true, otherwise prints nothing,
- * used for printing the word "checked" in a checkbox form element.
- *
- * @param boolean $var Variable to be checked for true value
- * @param string $true_value Value to be printed if $var is true
- * @param string $false_value Value to be printed if $var is false
- */
-function frmchecked(&$var, $true_value = 'checked', $false_value = '') {
-
-    if ($var) {
-        echo $true_value;
-    } else {
-        echo $false_value;
-    }
-}
-
-/**
- * Legacy function, provided for backward compatability.
- * This method now simply calls {@link use_html_editor()}
- *
- * @deprecated Use {@link use_html_editor()} instead.
- * @param string $name Form element to replace with HTMl editor by name
- * @todo Finish documenting this function
- */
-function print_richedit_javascript($form, $name, $source='no') {
-    use_html_editor($name);
-}
-
 /** various deprecated groups function **/
 
 
