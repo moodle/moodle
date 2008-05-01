@@ -152,30 +152,6 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
 }
 
 /**
- * Determines if a user is allowed to edit a given course
- *
- * @param int $courseid The id of the course that is being edited
- * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @return bool
- */
-function isteacheredit($courseid, $userid=0, $obsolete_ignorestudentview=false) {
-    global $CFG;
-
-    if (empty($CFG->rolesactive)) {
-        return false;
-    }
-
-    if (empty($courseid)) {
-        $context = get_context_instance(CONTEXT_SYSTEM);
-    } else {
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    }
-
-    return (has_capability('moodle/legacy:editingteacher', $context, $userid, false)
-         or has_capability('moodle/legacy:admin', $context, $userid, false));
-}
-
-/**
  * Determines if a user can create new courses
  *
  * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
