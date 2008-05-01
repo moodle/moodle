@@ -178,8 +178,6 @@
         $status = false;
         if (file_exists("$CFG->libdir/db/install.xml")) {
             $status = install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
-        } else if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
-            $status = modify_database("$CFG->libdir/db/$CFG->dbtype.sql"); //Old method
         } else {
             print_error('dbnotsupport', 'debug', '', $CFG->dbtype);
         }
@@ -229,9 +227,6 @@
 /// Check version of Moodle code on disk compared with database
 /// and upgrade if possible.
 
-    if (file_exists("$CFG->dirroot/lib/db/$CFG->dbtype.php")) {
-        include_once("$CFG->dirroot/lib/db/$CFG->dbtype.php");  # defines old upgrades
-    }
     if (file_exists("$CFG->dirroot/lib/db/upgrade.php")) {
         include_once("$CFG->dirroot/lib/db/upgrade.php");  # defines new upgrades
     }
