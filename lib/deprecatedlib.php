@@ -579,31 +579,6 @@ function get_group_students($groupids, $sort='ul.timeaccess DESC') {
     return get_users_by_capability($context, 'moodle/legacy:student', 'u.*, ul.timeaccess as lastaccess', $sort, '','',$groupids, '', false);
 }
 
-/**
- * Returns list of all the teachers who can access a group
- *
- * @uses $CFG
- * @param int $courseid The course in question.
- * @param int $groupid The group in question.
- * @return object
- */
-function get_group_teachers($courseid, $groupid) {
-/// Returns a list of all the teachers who can access a group
-    if ($teachers = get_course_teachers($courseid)) {
-        foreach ($teachers as $key => $teacher) {
-            if ($teacher->editall) {             // These can access anything
-                continue;
-            }
-            if (($teacher->authority > 0) and groups_is_member($groupid, $teacher->id)) {  // Specific group teachers
-                continue;
-            }
-            unset($teachers[$key]);
-        }
-    }
-    return $teachers;
-}
-
-
 
 ########### FROM weblib.php ##########################################################################
 
