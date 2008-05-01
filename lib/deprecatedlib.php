@@ -734,88 +734,6 @@ function detect_munged_arguments($string, $allowdots=1) {
 
 
 /**
- * Returns the table in which group members are stored, with a prefix 'gm'.
- * @return SQL string.
- */
-function groups_members_from_sql() {
-    global $CFG;
-    return " {$CFG->prefix}groups_members gm ";
-}
-
-/**
- * Returns a join testing user.id against member's user ID.
- * Relies on 'user' table being included as 'user u'.
- * Used in Quiz module reports.
- * @param group ID, optional to include a test for this in the SQL.
- * @return SQL string.
- */
-function groups_members_join_sql($groupid=false) {
-    $sql = ' JOIN '.groups_members_from_sql().' ON u.id = gm.userid ';
-    if ($groupid) {
-        $sql = "AND gm.groupid = '$groupid' ";
-    }
-    return $sql;
-    //return ' INNER JOIN '.$CFG->prefix.'role_assignments ra ON u.id=ra.userid'.
-    //       ' INNER JOIN '.$CFG->prefix.'context c ON ra.contextid=c.id AND c.contextlevel='.CONTEXT_GROUP.' AND c.instanceid='.$groupid;
-}
-
-/**
- * Returns SQL for a WHERE clause testing the group ID.
- * Optionally test the member's ID against another table's user ID column.
- * @param groupid
- * @param userid_sql Optional user ID column selector, example "mdl_user.id", or false.
- * @return SQL string.
- */
-function groups_members_where_sql($groupid, $userid_sql=false) {
-    $sql = " gm.groupid = '$groupid' ";
-    if ($userid_sql) {
-        $sql .= "AND $userid_sql = gm.userid ";
-    }
-    return $sql;
-}
-
-
-/**
- * Returns an array of group objects that the user is a member of
- * in the given course.  If userid isn't specified, then return a
- * list of all groups in the course.
- *
- * @uses $CFG
- * @param int $courseid The id of the course in question.
- * @param int $userid The id of the user in question as found in the 'user' table 'id' field.
- * @return object
- */
-function get_groups($courseid, $userid=0) {
-    return groups_get_all_groups($courseid, $userid);
-}
-
-/**
- * Returns the user's groups in a particular course
- * note: this function originally returned only one group
- *
- * @uses $CFG
- * @param int $courseid The course in question.
- * @param int $userid The id of the user as found in the 'user' table.
- * @param int $groupid The id of the group the user is in.
- * @return aray of groups
- */
-function user_group($courseid, $userid) {
-    return groups_get_all_groups($courseid, $userid);
-}
-
-
-/**
- * Determines if the user is a member of the given group.
- *
- * @param int $groupid The group to check for membership.
- * @param int $userid The user to check against the group.
- * @return boolean True if the user is a member, false otherwise.
- */
-function ismember($groupid, $userid = null) {
-    return groups_is_member($groupid, $userid);
-}
-
-/**
  * Get the IDs for the user's groups in the given course.
  *
  * @uses $USER
@@ -830,21 +748,6 @@ function mygroupid($courseid) {
     } else {
         return false;
     }
-}
-
-/**
- * Add a user to a group, return true upon success or if user already a group
- * member
- *
- * @param int $groupid  The group id to add user to
- * @param int $userid   The user id to add to the group
- * @return bool
- */
-function add_user_to_group($groupid, $userid) {
-    global $CFG;
-    require_once($CFG->dirroot.'/group/lib.php');
-
-    return groups_add_member($groupid, $userid);
 }
 
 
@@ -892,23 +795,6 @@ function groupmode($course, $cm=null) {
         return $cm->groupmode;
     }
     return $course->groupmode;
-}
-
-
-/**
- * Sets the current group in the session variable
- * When $SESSION->currentgroup[$courseid] is set to 0 it means, show all groups.
- * Sets currentgroup[$courseid] in the session variable appropriately.
- * Does not do any permission checking.
- * @uses $SESSION
- * @param int $courseid The course being examined - relates to id field in
- * 'course' table.
- * @param int $groupid The group being examined.
- * @return int Current group id which was set by this function
- */
-function set_current_group($courseid, $groupid) {
-    global $SESSION;
-    return $SESSION->currentgroup[$courseid] = $groupid;
 }
 
 

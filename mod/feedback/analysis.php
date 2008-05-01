@@ -86,7 +86,7 @@
     if( $capabilities->viewreports ) {
 
         //available group modes (NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS)
-        $feedbackgroups = get_groups($course->id);
+        $feedbackgroups = groups_get_all_groups($course->id);
         //get the effective groupmode of this course and module
         $groupmode = groupmode($course, $cm);
         if(is_array($feedbackgroups) && $groupmode > 0){

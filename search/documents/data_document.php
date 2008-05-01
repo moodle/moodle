@@ -350,7 +350,7 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     // trap if user is not same group and groups are separated
     $current_group = get_current_group($course->id);
     $course = get_record('course', 'id', $data->course);
-    if ((groupmode($course, $cm) == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $context)){ 
+    if ((groupmode($course, $cm) == SEPARATEGROUPS) && !groups_is_member($group_id) && !has_capability('moodle/site:accessallgroups', $context)){ 
         if (!empty($CFG->search_access_debug)) echo "search reject : separated group owned resource ";
         return false;
     }

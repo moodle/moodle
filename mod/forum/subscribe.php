@@ -38,7 +38,7 @@
     if (groupmode($course, $cm)
                 and !forum_is_subscribed($user->id, $forum)
                 and !has_capability('moodle/site:accessallgroups', $context)) {
-        if (!mygroupid($course->id)) {
+        if (!groups_get_all_groups($course->id, $USER->id)) {
             error('Sorry, but you must be a group member to subscribe.');
         }
     }

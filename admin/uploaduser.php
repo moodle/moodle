@@ -644,7 +644,7 @@ if ($formdata = $mform->is_cancelled()) {
                 //build group cache
                 if (is_null($ccache[$shortname]->groups)) {
                     $ccache[$shortname]->groups = array();
-                    if ($groups = get_groups($courseid)) {
+                    if ($groups = groups_get_all_groups($courseid)) {
                         foreach ($groups as $gid=>$group) {
                             $ccache[$shortname]->groups[$gid] = new object();
                             $ccache[$shortname]->groups[$gid]->id   = $gid;

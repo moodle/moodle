@@ -156,7 +156,7 @@
             print_box_start('generalbox boxaligncenter boxwidthwide');
 
             //available group modes (NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS)
-            $feedbackgroups = get_groups($course->id);
+            $feedbackgroups = groups_get_all_groups($course->id);
             //if(is_array($feedbackgroups) && $groupmode != SEPARATEGROUPS){
             if(is_array($feedbackgroups) && $groupmode > 0){
                 require_once('choose_group_form.php');
