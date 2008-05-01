@@ -364,7 +364,7 @@
             }
         }
         
-        if(!empty($CFG->usetags)){
+        if (!empty($CFG->usetags)) {
             require_once($CFG->dirroot.'/tag/lib.php');
             tag_cron();
             mtrace ('Executed tag cron');
