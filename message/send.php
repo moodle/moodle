@@ -34,6 +34,7 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
     echo "<html $direction xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n";
     echo '<meta http-equiv="content-type" content="text/html; charset=utf-8" />';
     echo $stylesheetshtml;
+    include($CFG->javascript);
 
 /// Script parameters
     $userid   = required_param('id', PARAM_INT);
