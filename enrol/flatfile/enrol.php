@@ -190,49 +190,6 @@ function get_access_icons($course) {
                         role_unassign($roleid, $user->id, null, $context->id);
                     }
                     
-                    /*
-                    switch ($fields[1]) {
-                        case "student":
-                            if ($fields[0] == "add") {
-                                if (! enrol_student($user->id, $course->id, $fields[4], $fields[5], 'flatfile')) {
-                                    $elog = "Error enrolling in course\n";
-                                }
-                            } else {
-                                if (! unenrol_student($user->id, $course->id)) {
-                                    $elog = "Error unenrolling from course\n";
-                                }
-                            }
-                            break;
-
-                        case "teacher":
-                            if ($fields[0] == "add") {
-                                if (! add_teacher($user->id, $course->id, 0, '', $fields[4], $fields[5], 'flatfile')) {
-                                    $elog = "Error adding teacher to course\n";
-                                }
-                            } else {
-                                if (! remove_teacher($user->id, $course->id)) {
-                                    $elog = "Error removing teacher from course\n";
-                                }
-                            }
-                            break;
-
-                        case "teacheredit":
-                            if ($fields[0] == "add") {
-                                if (! add_teacher($user->id, $course->id, 1, '', $fields[4], $fields[5], 'flatfile')) {
-                                    $elog = "Error adding teacher to course\n";
-                                }
-                            } else {
-                                if (! remove_teacher($user->id, $course->id)) {
-                                    $elog = "Error removing teacher from course\n";
-                                }
-                            }
-                            break;
-
-                        default: // should never get here as checks made above for correct values of $fields[1]
-
-                    } // end of switch*/
-
-
 
                     if ( empty($elog) and ($fields[0] == "add") ) {
    
