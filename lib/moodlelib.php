@@ -2095,11 +2095,7 @@ function require_logout() {
         error_log('MoodleSessionTest cookie could not be set in moodlelib.php:'.__LINE__);
         error_log('Headers were already sent in file: '.$file.' on line '.$line);
     } else {
-        if (check_php_version('5.2.0')) {
-            setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
-        } else {
-            setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure);
-        }
+        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
     }
 
     unset($_SESSION['USER']);
