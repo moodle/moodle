@@ -7418,25 +7418,6 @@ function cleanremoteaddr($addr) {
 }
 
 /**
- * file_put_contents is only supported by php 5.0 and higher
- * so if it is not predefined, define it here
- *
- * @param $file full path of the file to write
- * @param $contents contents to be sent
- * @return number of bytes written (false on error)
- */
-if(!function_exists('file_put_contents')) {
-    function file_put_contents($file, $contents) {
-        $result = false;
-        if ($f = fopen($file, 'w')) {
-            $result = fwrite($f, $contents);
-            fclose($f);
-        }
-        return $result;
-    }
-}
-
-/**
  * The clone keyword is only supported from PHP 5 onwards.
  * The behaviour of $obj2 = $obj1 differs fundamentally
  * between PHP 4 and PHP 5. In PHP 4 a copy of $obj1 was
