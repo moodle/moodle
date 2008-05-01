@@ -292,7 +292,7 @@ global $HTTPSPAGEREQUIRED;
     }
 
 /// detect unsupported upgrade jump as soon as possible - do not change anything, do not use system functions
-    if ($CFG->version < 2007101509) {
+    if (!empty($CFG->version) and $CFG->version < 2007101509) {
         echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
