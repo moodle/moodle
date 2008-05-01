@@ -68,10 +68,10 @@ class quiz_report extends quiz_default_report {
         // Set table options
         $noattempts = optional_param('noattempts', 0, PARAM_INT);
         $detailedmarks = optional_param('detailedmarks', 0, PARAM_INT);
-        $pagesize = optional_param('pagesize', 10, PARAM_INT);
+        $pagesize = optional_param('pagesize', 0, PARAM_INT);
         $reporturl = $CFG->wwwroot.'/mod/quiz/report.php?mode=overview';
         if ($pagesize < 1) {
-            $pagesize = 10;
+            $pagesize = QUIZ_REPORT_DEFAULT_PAGE_SIZE;
         }
         if (!$reviewoptions->scores) {
             $detailedmarks = 0;

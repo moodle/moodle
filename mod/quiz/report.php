@@ -2,8 +2,9 @@
 
 // This script uses installed report plugins to print quiz reports
 
-    require_once("../../config.php");
-    require_once("locallib.php");
+    require_once('../../config.php');
+    require_once($CFG->dirroot.'/mod/quiz/locallib.php');
+    require_once($CFG->dirroot.'/mod/quiz/report/reportlib.php');
 
     $id = optional_param('id',0,PARAM_INT);    // Course Module ID, or
     $q = optional_param('q',0,PARAM_INT);     // quiz ID

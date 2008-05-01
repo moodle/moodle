@@ -31,18 +31,21 @@ class quiz_report extends quiz_default_report {
 
         // set Table and Analysis stats options
         if(!isset($SESSION->quiz_analysis_table)) {
-            $SESSION->quiz_analysis_table = array('attemptselection' => 0, 'lowmarklimit' => 0, 'pagesize' => 10);
+            $SESSION->quiz_analysis_table = array('attemptselection' => 0, 'lowmarklimit' => 0, 'pagesize' => QUIZ_REPORT_DEFAULT_PAGE_SIZE);
         }
 
         foreach($SESSION->quiz_analysis_table as $option => $value) {
-            $urlparam = optional_param($option, NULL);
+            $urlparam = optional_param($option, NULL, PARAM_INT);
             if($urlparam === NULL) {
                 $$option = $value;
-            }
-            else {
+            } else {
                 $$option = $SESSION->quiz_analysis_table[$option] = $urlparam;
             }
         }
+        if (!isset($pagesize) || ((int)$pagesize < 1) ){
+            $pagesize = QUIZ_REPORT_DEFAULT_PAGE_SIZE;
+        }
+
 
         $scorelimit = $quiz->sumgrades * $lowmarklimit/ 100;
 
@@ -302,9 +305,6 @@ class quiz_report extends quiz_default_report {
         $format_options->newlines = false;
 
         // Now it is time to page the data, simply slice the keys in the array
-        if (!isset($pagesize) || ((int)$pagesize < 1) ){
-            $pagesize = 10;
-        }
         $table->pagesize($pagesize, count($questions));
         $start = $table->get_page_start();
         $pagequestions = array_slice(array_keys($questions), $start, $pagesize);
@@ -361,7 +361,7 @@ class quiz_report extends quiz_default_report {
     }
 
 
-    function print_options_form($quiz, $cm, $attempts, $lowlimit=0, $pagesize=10) {
+    function print_options_form($quiz, $cm, $attempts, $lowlimit=0, $pagesize=QUIZ_REPORT_DEFAULT_PAGE_SIZE) {
         global $CFG, $USER;
         echo '<div class="controls">';
         echo '<form id="options" action="report.php" method="post">';
