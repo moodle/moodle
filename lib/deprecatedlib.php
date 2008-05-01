@@ -1031,42 +1031,6 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall
 }
 
 /**
- * Returns SQL to be used as a subselect to find the primary role of users.
- * Geoff Cant <geoff@catalyst.net.nz> (the author) is very keen for this to
- * be implemented as a view in future versions.
- *
- * eg if this function returns a string called $primaryroles, then you could:
- * $sql = 'SELECT COUNT(DISTINCT prs.userid) FROM ('.$primary_roles.') prs
- *          WHERE prs.primary_roleid='.$role->id.' AND prs.courseid='.$course->id.
- *          ' AND prs.contextlevel = '.CONTEXT_COURSE;
- *
- * @return string the piece of SQL code to be used in your FROM( ) statement.
- */
-function sql_primary_role_subselect() {
-    global $CFG;
-    return 'SELECT ra.userid,
-                ra.roleid AS primary_roleid,
-                ra.contextid,
-                r.sortorder,
-                r.name,
-                r.description,
-                r.shortname,
-                c.instanceid AS courseid,
-                c.contextlevel
-            FROM '.$CFG->prefix.'role_assignments ra
-            INNER JOIN '.$CFG->prefix.'role r ON ra.roleid = r.id
-            INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
-            WHERE NOT EXISTS (
-                              SELECT 1
-                              FROM '.$CFG->prefix.'role_assignments i_ra
-                              INNER JOIN '.$CFG->prefix.'role i_r ON i_ra.roleid = i_r.id
-                              WHERE ra.userid = i_ra.userid AND
-                                     ra.contextid = i_ra.contextid AND
-                                     i_r.sortorder < r.sortorder
-                              ) ';
-}
-
-/**
  * Can include a given document file (depends on second
  * parameter) or just return info about it.
  *
