@@ -691,13 +691,13 @@ function tag_autocomplete($text) {
 function tag_cleanup() {
     global $CFG;
 
-    $tags = get_records('tag');
-    $instances = get_records('tag_instance');
+    $instances = get_recordset('tag_instance');
 
-    foreach($instances as $instance) {
+    // cleanup tag instances
+    while ($instance = rs_fetch_next_record($instances)) {
         $delete = false;
         
-        if(!array_key_exists($instance->tagid, $tags)) {
+        if (!record_exists('tag', 'id', $instance->tagid)) {
             // if the tag has been removed, instance should be deleted.
             $delete = true;
         } else {
@@ -719,18 +719,20 @@ function tag_cleanup() {
             //debugging('deleting tag_instance #'. $instance->id .', linked to tag id #'. $instance->tagid, DEBUG_DEVELOPER);
         }
     }
+    rs_close($instances);
 
     // TODO: this will only clean tags of type 'default'.  This is good as
     // it won't delete 'official' tags, but the day we get more than two
     // types, we need to fix this.
-    $tags = get_records('tag', 'tagtype', 'default'); // do it again - might be different now.
+    $unused_tags = get_recordset_sql("SELECT tg.id FROM {$CFG->prefix}tag tg WHERE tg.tagtype = 'default' AND NOT EXISTS (".
+        "SELECT 'x' FROM {$CFG->prefix}tag_instance ti WHERE ti.tagid = tg.id)");
 
-    foreach($tags as $tag) {
-       if (!record_exists_sql("SELECT * FROM {$CFG->prefix}tag tg, {$CFG->prefix}tag_instance ti WHERE tg.id = {$tag->id} AND ti.tagid = tg.id")) {
-            tag_delete($tag->id);
-            //debugging('deleting tag #'. $tag->id,  DEBUG_DEVELOPER);
-        }
+    // cleanup tags
+    while ($unused_tag = rs_fetch_next_record($unused_tags)) {
+        tag_delete($unused_tag->id);
+        //debugging('deleting unused tag #'. $unused_tag->id,  DEBUG_DEVELOPER);
     }
+    rs_close($unused_tags);
 }
 
 /**
@@ -803,6 +805,7 @@ function tag_compute_correlations($min_correlation=2) {
  */
 function tag_cron() {
     tag_compute_correlations();
+    //tag_cleanup();
 }
 
 /**
