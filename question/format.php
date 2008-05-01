@@ -392,6 +392,7 @@ class qformat_default {
         }
         return $category;
     }
+
     /**
      * Return complete file within an array, one item per line
      * @param string filename name of file
@@ -474,6 +475,7 @@ class qformat_default {
         $question->incorrectfeedback = '';
         $question->answernumbering = 'abc';
         $question->penalty = 0.1;
+        $question->length = 1;
 
         // this option in case the questiontypes class wants
         // to know where the data came from
@@ -549,6 +551,7 @@ class qformat_default {
         $newfile = ereg_replace("{$CFG->dataroot}/{$this->course->id}/", '',$newfullpath);
         return $newfile;
     }
+
 
 /*******************
  * EXPORT FUNCTIONS
@@ -703,6 +706,7 @@ class qformat_default {
         fclose($fh);
         return true;
     }
+
     /**
      * get the category as a path (e.g., tom/dick/harry)
      * @param int id the id of the most nested catgory
