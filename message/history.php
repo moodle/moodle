@@ -20,7 +20,7 @@
         error("User ID 1 was incorrect");
     }
 
-    if (has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM, SITEID))) {             // Able to see any discussion
+    if (has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {             // Able to see any discussion
         $userid2 = optional_param('user2', $USER->id, PARAM_INT);
         if (! $user2 = get_record("user", "id", $userid2)) {  // Check
             error("User ID 2 was incorrect");

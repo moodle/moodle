@@ -79,7 +79,7 @@
     }
 
     require_login();
-    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 /// Body of the script, based on action, we delegate the work
     $action = optional_param ('action', 'main_view', PARAM_ALPHAEXT);

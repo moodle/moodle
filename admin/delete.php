@@ -13,7 +13,7 @@
     $sure       = optional_param('sure', 0, PARAM_BOOL);
     $reallysure = optional_param('reallysure', 0, PARAM_BOOL);
 
-    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
     $deletedir = $CFG->dataroot;   // The directory to delete!
 

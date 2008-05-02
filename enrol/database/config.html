@@ -156,7 +156,7 @@
     <td align="right">enrol_db_defaultcourseroleid:</td>
     <td>
     <?php
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         $assignableroles = get_assignable_roles($sitecontext);
         $assignableroles = array('' => get_string('default')) + $assignableroles;
     

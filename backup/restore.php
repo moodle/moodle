@@ -62,7 +62,7 @@
             }
         }
     } else {
-        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     }
@@ -122,7 +122,7 @@
     }
 
     //Print header
-    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         $navlinks[] = array('name' => basename($file), 'link' => null, 'type' => 'misc');
         $navigation = build_navigation($navlinks);
 

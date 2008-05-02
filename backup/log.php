@@ -6,7 +6,7 @@
 
     require_login();
 
-    require_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM, SITEID));
+    require_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM));
 
     redirect("$CFG->wwwroot/$CFG->admin/report/backups/index.php", '', 'admin', 1);
 

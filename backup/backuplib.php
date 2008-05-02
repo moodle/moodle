@@ -641,7 +641,7 @@
         fwrite ($bf, start_tag('ROLES', 1, true));
         $roles = backup_fetch_roles($preferences);
 
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
         foreach ($roles as $role) {
             fwrite ($bf,start_tag('ROLE',2,true));

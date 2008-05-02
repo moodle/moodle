@@ -14,7 +14,7 @@
 
     admin_externalpage_setup('langedit');
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $context = get_context_instance(CONTEXT_SYSTEM);
 
     define('LANG_SUBMIT_REPEAT', 1);            // repeat displaying submit button?
     define('LANG_SUBMIT_REPEAT_EVERY', 20);     // if so, after how many lines?

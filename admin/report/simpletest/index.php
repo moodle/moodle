@@ -17,7 +17,7 @@ require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
 
 require_login();
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
+require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 /* The UNITTEST constant can be checked elsewhere if you need to know
  * when your code is being run as part of a unit test. */

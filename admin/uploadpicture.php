@@ -32,7 +32,7 @@ admin_externalpage_setup('uploadpictures', $adminroot);
 
 require_login();
 
-require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM, SITEID));
+require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM));
 
 if (!$site = get_site()) {
     error("Could not find site-level course");

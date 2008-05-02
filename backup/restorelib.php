@@ -8127,7 +8127,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 if ($CFG->creatornewroleid) {
                     role_assign($CFG->creatornewroleid, $USER->id, 0, $newcontext->id);
                 } else {
-                    if ($legacyteachers = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+                    if ($legacyteachers = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM))) {
                         if ($legacyteacher = array_shift($legacyteachers)) {
                             role_assign($legacyteacher->id, $USER->id, 0, $newcontext->id);
                         }
@@ -8273,7 +8273,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         }
         $info = restore_read_xml_roles($xmlfile);
 
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
         // the following code creates new roles
         // but we could use more intelligent detection, and role mapping

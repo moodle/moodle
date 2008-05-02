@@ -2,7 +2,7 @@
 
    
 if (!empty($THEME->chameleonenabled)) {
-    $chameleon_isadmin = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
+    $chameleon_isadmin = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
     $chameleon_isteacher = false;
     if ($COURSE->id == SITEID) {
         $chameleon_courseparam = '';

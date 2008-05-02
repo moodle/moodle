@@ -32,7 +32,7 @@
     }
 
     // get the roles context for this course
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
     $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     // set homeurl of couse (for error messages)

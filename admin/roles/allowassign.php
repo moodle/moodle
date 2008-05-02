@@ -13,7 +13,7 @@
     admin_externalpage_setup('defineroles');
 
 
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
     require_capability('moodle/role:manage', $sitecontext);
 
 /// form processiong here

@@ -80,7 +80,7 @@ class block_blog_tags extends block_base {
         $sql .= 'AND p.id = ti.itemid ';
 
         // admins should be able to read all tags      
-        if (!has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (!has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_SYSTEM))) {
             $sql .= 'AND (p.publishstate = \'site\' or p.publishstate=\'public\') ';
         }
         $sql .= "AND ti.timemodified > {$timewithin} ";
