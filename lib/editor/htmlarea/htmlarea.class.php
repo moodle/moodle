@@ -344,8 +344,8 @@ class htmlarea extends editorObject {
             echo "\n".'<script language="javascript" type="text/javascript">'."\n";
             echo 'function openSpellChecker() {'."\n";
             echo "\tvar speller = new spellChecker();\n";
-            echo "\tspeller.popUpUrl = \"" . $this->cfg->wwwroot ."/lib/speller/spellchecker.html\";\n";
-            echo "\tspeller.spellCheckScript = \"". $this->cfg->wwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
+            echo "\tspeller.popUpUrl = \"" . $this->cfg->httpswwwroot ."/lib/speller/spellchecker.html\";\n";
+            echo "\tspeller.spellCheckScript = \"". $this->cfg->httpswwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
             echo "\tspeller.spellCheckAll();\n";
             echo '}'."\n";
             echo '</script>'."\n";
@@ -353,8 +353,8 @@ class htmlarea extends editorObject {
             echo "\n\tfunction spellClickHandler(editor, buttonId) {\n";
             echo "\t\teditor._textArea.value = editor.getHTML();\n";
             echo "\t\tvar speller = new spellChecker( editor._textArea );\n";
-            echo "\t\tspeller.popUpUrl = \"" . $this->cfg->wwwroot ."/lib/speller/spellchecker.html\";\n";
-            echo "\t\tspeller.spellCheckScript = \"". $this->cfg->wwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
+            echo "\t\tspeller.popUpUrl = \"" . $this->cfg->httpswwwroot ."/lib/speller/spellchecker.html\";\n";
+            echo "\t\tspeller.spellCheckScript = \"". $this->cfg->httpswwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
             echo "\t\tspeller._moogle_edit=1;\n";
             echo "\t\tspeller._editor=editor;\n";
             echo "\t\tspeller.openChecker();\n\t";
