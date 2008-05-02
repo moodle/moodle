@@ -213,31 +213,9 @@ class block_admin extends block_list {
             }
         }
 
-
-    /// Should the following two be in this block?
-
-
-    /// View own activity report
-//        if ($course->showreports) {
-//            $this->content->items[]='<a href="user.php?id='.$this->instance->pageid.'&amp;user='.$USER->id.'">'.get_string('activityreport').'</a>';
-//            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/report.gif" alt="" />';
-//        }
-
-
-    /// Edit your own profile
-
-//        $fullname = fullname($USER, has_capability('moodle/site:viewfullnames', $context));
-//        $editmyprofile = '<a title="'.$fullname.'" href="'.$CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.$this->instance->pageid.'">'.get_string('editmyprofile').'</a>';
-//        if (empty($USER->description)) {
-//                //Accessibility: replace non-standard <blink> with CSS (<a> makes title visible in IE).
-//            $text = get_string('profile').' '.get_string('missingdescription');
-//            $this->content->items[]= $editmyprofile.' <a title="'.$text.'" class="useredit blink">*<span class="accesshide">'.$text.'</span></a>';
-//        } else {
-//            $this->content->items[]= $editmyprofile;
-//        }
-//        $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
-
-
+    /// Link to the user own profile
+        $this->content->items[]='<a href="'.$CFG->wwwroot.'/user/view.php?id='.$USER->id.'&amp;course='.$course->id.'">'.get_string('profile').'</a>';
+        $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
 
         return $this->content;
     }
