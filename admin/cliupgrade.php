@@ -1022,11 +1022,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
             /// If successful, continue upgrading roles and setting everything properly
             if ($status) {
-                if (empty($CFG->rolesactive)) {
-                    // Upgrade to the roles system.
-                    moodle_install_roles();
-                    set_config('rolesactive', 1);
-                } else if (!update_capabilities()) {
+                if (!update_capabilities()) {
                     console_write(STDERR,'Had trouble upgrading the core capabilities for the Roles System','',false);
                 }
                 if (set_config("version", $version)) {

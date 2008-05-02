@@ -348,13 +348,7 @@
                 $db->debug=false;
             /// If successful, continue upgrading roles and setting everything properly
                 if ($status) {
-                    if (empty($CFG->rolesactive)) {
-                        // Groups upgrade is now in core above.
-
-                        // Upgrade to the roles system.
-                        moodle_install_roles();
-                        set_config('rolesactive', 1);
-                    } else if (!update_capabilities()) {
+                    if (!update_capabilities()) {
                         print_error('cannotupgradecapabilities', 'debug');
                     }
 
