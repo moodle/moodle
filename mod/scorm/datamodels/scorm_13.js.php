@@ -891,7 +891,7 @@ function SCORMapi1_3() {
                 echo 'popupwin(result);';
             }
         ?>
-        results = result.split('\n');
+        results = String(result).split('\n');
         if ((results.length > 2) && (navrequest != '')) {
             eval(results[2]);
         }
