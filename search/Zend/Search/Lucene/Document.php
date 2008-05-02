@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Document
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Field */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Field.php';
+require_once "Zend/Search/Lucene/Field.php";
 
 
 /**
@@ -30,7 +30,7 @@ require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Field.php';
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Document
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Document
@@ -54,10 +54,10 @@ class Zend_Search_Lucene_Document
      * @param  $offset
      * @return string
      */
-	public function __get($offset)
-	{
-		return $this->getFieldValue($offset);
-	}
+    public function __get($offset)
+    {
+        return $this->getFieldValue($offset);
+    }
 
 
     /**
@@ -78,7 +78,7 @@ class Zend_Search_Lucene_Document
      */
     public function getFieldNames()
     {
-    	return array_keys($this->_fields);
+        return array_keys($this->_fields);
     }
 
 
@@ -105,7 +105,7 @@ class Zend_Search_Lucene_Document
      */
     public function getFieldValue($fieldName)
     {
-    	return $this->getField($fieldName)->value;
+        return $this->getField($fieldName)->value;
     }
 
     /**
@@ -116,6 +116,6 @@ class Zend_Search_Lucene_Document
      */
     public function getFieldUtf8Value($fieldName)
     {
-    	return $this->getField($fieldName)->getUtf8Value();
+        return $this->getField($fieldName)->getUtf8Value();
     }
 }
