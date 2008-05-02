@@ -805,7 +805,7 @@ function tag_compute_correlations($min_correlation=2) {
  */
 function tag_cron() {
     tag_compute_correlations();
-    //tag_cleanup();
+    tag_cleanup();
 }
 
 /**
