@@ -4655,8 +4655,8 @@ function print_speller_code ($usehtmleditor=false, $return=false) {
         $str .= "\n".'<script language="javascript" type="text/javascript">'."\n";
         $str .= 'function openSpellChecker() {'."\n";
         $str .= "\tvar speller = new spellChecker();\n";
-        $str .= "\tspeller.popUpUrl = \"" . $CFG->wwwroot ."/lib/speller/spellchecker.html\";\n";
-        $str .= "\tspeller.spellCheckScript = \"". $CFG->wwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
+        $str .= "\tspeller.popUpUrl = \"" . $CFG->httpswwwroot ."/lib/speller/spellchecker.html\";\n";
+        $str .= "\tspeller.spellCheckScript = \"". $CFG->httpswwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
         $str .= "\tspeller.spellCheckAll();\n";
         $str .= '}'."\n";
         $str .= '</script>'."\n";
@@ -4664,8 +4664,8 @@ function print_speller_code ($usehtmleditor=false, $return=false) {
         $str .= "\nfunction spellClickHandler(editor, buttonId) {\n";
         $str .= "\teditor._textArea.value = editor.getHTML();\n";
         $str .= "\tvar speller = new spellChecker( editor._textArea );\n";
-        $str .= "\tspeller.popUpUrl = \"" . $CFG->wwwroot ."/lib/speller/spellchecker.html\";\n";
-        $str .= "\tspeller.spellCheckScript = \"". $CFG->wwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
+        $str .= "\tspeller.popUpUrl = \"" . $CFG->httpswwwroot ."/lib/speller/spellchecker.html\";\n";
+        $str .= "\tspeller.spellCheckScript = \"". $CFG->httpswwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
         $str .= "\tspeller._moogle_edit=1;\n";
         $str .= "\tspeller._editor=editor;\n";
         $str .= "\tspeller.openChecker();\n";
