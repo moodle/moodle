@@ -372,7 +372,7 @@ class quiz_report extends quiz_default_report {
                         if(!$questionsort) {
                             $qid          = intval(substr($sortpart, 1));
                             $select .= ', grade ';
-                            $from        .= ' LEFT JOIN '.$CFG->prefix.'question_sessions qns ON qns.attemptid = qa.id '.
+                            $from        .= ' LEFT JOIN '.$CFG->prefix.'question_sessions qns ON qns.attemptid = qa.uniqueid '.
                                                 'LEFT JOIN '.$CFG->prefix.'question_states qs ON qs.id = qns.newgraded ';
                             $where       .= ' AND (qns.questionid IS NULL OR qns.questionid = '.$qid.')';
                             $newsort[]    = 'grade '.(strpos($sortpart, 'ASC')? 'ASC' : 'DESC');
