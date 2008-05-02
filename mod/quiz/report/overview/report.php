@@ -492,7 +492,7 @@ class quiz_report extends quiz_default_report {
                                 $gradedstateid = get_field('question_sessions', 'newgraded', 'attemptid',
                                         $attempt->attemptuniqueid, 'questionid', $questionid);
                                 if ($gradedstateid) {
-                                    $grade = round(get_field('question_states', 'grade', 'id',
+                                    $grade = number_format(get_field('question_states', 'grade', 'id',
                                             $gradedstateid), $quiz->decimalpoints);
                                 } else {
                                     $grade = '--';
