@@ -1120,7 +1120,7 @@ function SCORMapi1_3() {
                 echo 'popupwin(result);';
             }
         ?>
-        var results = result.split('\n');
+        var results = String(result).split('\n');
         if ((results.length > 2) && (navrequest != '')) {
             eval(results[2]);
         }
