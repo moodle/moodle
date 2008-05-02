@@ -1029,10 +1029,6 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
                 } else if (!update_capabilities()) {
                     console_write(STDERR,'Had trouble upgrading the core capabilities for the Roles System','',false);
                 }
-                require_once($CFG->libdir.'/statslib.php');
-                if (!stats_upgrade_for_roles_wrapper()) {
-                    notify('Couldn\'t upgrade the stats tables to use the new roles system');
-                }
                 if (set_config("version", $version)) {
                     remove_dir($CFG->dataroot . '/cache', true); // flush cache
                     notify($strdatabasesuccess, "green");
