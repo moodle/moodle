@@ -1,6 +1,5 @@
 <?php // $Id$
 
-
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -4315,10 +4314,11 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
     }
 
     if ($link) {
+        $url = '/user/view.php?id='. $user->id .'&amp;course='. $courseid ;
         if ($target) {
-            $target=' target="_blank"';
+            $target='onclick="return openpopup(\''.$url.'\');"';
         }
-        $output = '<a '.$target.' href="'. $CFG->wwwroot .'/user/view.php?id='. $user->id .'&amp;course='. $courseid .'">';
+        $output = '<a '.$target.' href="'. $CFG->wwwroot . $url .'">';
     } else {
         $output = '';
     }
