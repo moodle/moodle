@@ -675,7 +675,7 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
     }
     
     // get some default string, using the localized version of legacy defaults
-    if (!$linkname) {
+    if (is_null($linkname) || $linkname === '') {
         $linkname = get_string('clickhere');
     }
     if (!$title) {
