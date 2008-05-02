@@ -296,7 +296,7 @@ $string['pgsqlextensionisnotpresentinphp'] = 'PHP has not been properly configur
 $string['php52versionerror'] = 'PHP version must be at least 5.2.0.';
 $string['php52versionhelp'] = '<p>Moodle requires a PHP version of at least 5.2.0.</p>
 <p>You are currently running version $a</p>
-<p>You must upgrade PHP or move to a host with a newer version of PHP!';
+<p>You must upgrade PHP or move to a host with a newer version of PHP!</p>';
 $string['phpversion'] = 'PHP version';
 $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 or 5.1.0 (5.0.x has a number of known problems).</p>
 <p>You are currently running version $a</p>
