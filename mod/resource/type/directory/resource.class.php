@@ -126,12 +126,7 @@ function display() {
 
         } else {
             $icon = mimeinfo("icon", $file);
-
-            if ($CFG->slasharguments) {
-                $relativeurl = "/file.php/$relativepath/$file";
-            } else {
-                $relativeurl = "/file.php?file=/$relativepath/$file";
-            }
+            $relativeurl = get_file_url("$relativepath/$file");
             $filesize = display_size(filesize("$CFG->dataroot/$relativepath/$file"));
         }
 
