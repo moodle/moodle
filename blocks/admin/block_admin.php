@@ -213,26 +213,9 @@ class block_admin extends block_list {
             }
         }
 
-
-     /// View own activity report
-        $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
-        $personalcontext = get_context_instance(CONTEXT_USER, $USER->id);
-        if ($course->id !== SITEID 
-            && ($course->showreports 
-                || has_capability('moodle/user:viewuseractivitiesreport', $context) 
-                || has_capability('moodle/user:viewuseractivitiesreport', $coursecontext) 
-                || has_capability('moodle/user:viewuseractivitiesreport', $personalcontext))){ 
-         $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/user.php?id='.$course->id.'&amp;user='.$USER->id.'&amp;mode=todaylogs'.'">'.get_string('activityreports').'</a>';
-         $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/report.gif" alt="" />';
-        }
-
-    /// Edit your own profile
-        if ($course->id !== SITEID && has_capability('moodle/user:editownprofile', $context)){ 
-         $this->content->items[]='<a href="'.$CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.$course->id.'">'.get_string('editmyprofile').'</a>';
-         $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
-        }
-
-
+     /// Link to the user own profile
+        $this->content->items[]='<a href="'.$CFG->wwwroot.'/user/view.php?id='.$USER->id.'&amp;course='.$course->id.'">'.get_string('profile').'</a>';
+        $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
 
         return $this->content;
     }
