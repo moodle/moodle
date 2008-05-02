@@ -55,6 +55,12 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2008050100);
     }
 
+    if ($result && $oldversion < 2008050200) {
+        // remove unused config options
+        unset_config('statsrolesupgraded');
+        upgrade_main_savepoint($result, 2008050200);
+    }
+
     return $result;
 }
 

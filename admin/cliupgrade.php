@@ -882,7 +882,6 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         if ($status) {
             // Install the roles system.
             moodle_install_roles();
-            set_config('statsrolesupgraded',time());
 
             // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
             // (this should only have any effect during initial install).
