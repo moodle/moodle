@@ -102,7 +102,7 @@ function message_print_contacts() {
         echo '</div>';
     }
 
-    echo '<table id="message_contacts" align="center" cellspacing="2" cellpadding="0" border="0">';
+    echo '<table id="message_contacts" class="boxaligncenter" cellspacing="2" cellpadding="0" border="0">';
 
     if($countonlinecontacts) {
         /// print out list of online contacts
@@ -160,7 +160,7 @@ function message_print_contacts() {
 document.write("'.$autorefresh.'")
 //]]>
 </script>';
-    echo '<noscript><div align="center">';
+    echo '<noscript><div class="button aligncenter">';
     echo print_single_button('index.php', false, get_string('refresh'));
     echo '</div></noscript>';
 }

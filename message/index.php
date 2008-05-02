@@ -57,7 +57,7 @@
         print_header(get_string('messages', 'message').' - '.format_string($SITE->fullname));
     }
 
-    echo '<table cellspacing="2" cellpadding="2" border="0" align="center" width="95%">';
+    echo '<table cellspacing="2" cellpadding="2" border="0" width="95%" class="boxaligncenter">';  
     echo '<tr>';
 
 /// Print out the tabs
@@ -70,8 +70,8 @@
     $tabrow[] = new tabobject('settings', $CFG->wwwroot.'/message/index.php?tab=settings', 
                                get_string('settings', 'message'));
     $tabrows = array($tabrow);
-
-    print_tabs($tabrows, $tab);
+         
+    print_tabs($tabrows, $tab); 
     
     echo '</td>';
 
