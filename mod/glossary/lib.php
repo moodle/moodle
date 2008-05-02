@@ -39,7 +39,7 @@ function glossary_add_instance($glossary) {
         $glossary->globalglossary = 0;
     }
 
-    if (!has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (!has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_SYSTEM))) {
         $glossary->globalglossary = 0;
     }
 
@@ -72,7 +72,7 @@ function glossary_update_instance($glossary) {
         $glossary->globalglossary = 0;
     }
 
-    if (!has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (!has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_SYSTEM))) {
         // keep previous
         unset($glossary->globalglossary);
     }
@@ -558,7 +558,7 @@ function glossary_get_entries_search($concept, $courseid) {
 
     //Check if the user is an admin
     $bypassadmin = 1; //This means NO (by default)
-    if (has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_SYSTEM))) {
         $bypassadmin = 0; //This means YES
     }
 

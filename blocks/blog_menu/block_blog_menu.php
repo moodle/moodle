@@ -51,7 +51,7 @@ class block_blog_menu extends block_base {
             $addentrylink = '';
             $coursearg = '';
 
-            $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
             if ($COURSE->id != SITEID) {
 

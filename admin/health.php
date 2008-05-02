@@ -24,7 +24,7 @@
     $solution = optional_param('solution', 0, PARAM_SAFEDIR); //in fact it is class name alhanumeric and _
 
     require_login();
-    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
     $site = get_site();
 

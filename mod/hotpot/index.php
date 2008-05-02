@@ -14,7 +14,7 @@
     require_login($course->id);
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
     add_to_log($course->id, "hotpot", "view all", "index.php?id=$course->id", "");
 
@@ -233,7 +233,7 @@
         $select .= " AND a.userid='$USER->id'";
     }
     $usejoin = 0;
-    if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID)) && $usejoin) {
+    if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM)) && $usejoin) {
         // join attempts table and details table
         $tables .= ",{$CFG->prefix}hotpot_details d";
         $fields .= ',COUNT(DISTINCT d.id) AS detailcount';
@@ -244,7 +244,7 @@
     }
     $totals = get_records_sql("SELECT $fields FROM $tables WHERE $select GROUP BY a.hotpot");
 
-    if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID)) && empty($usejoin)) {
+    if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM)) && empty($usejoin)) {
         foreach ($hotpots as $hotpot) {
             $totals[$hotpot->id]->detailcount = 0;
             if ($ids = get_records('hotpot_attempts', 'hotpot', $hotpot->id)) {

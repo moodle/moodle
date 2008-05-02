@@ -7,7 +7,7 @@
 
     require_login();
 
-    require_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID));
+    require_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM));
 
     //Check site
     if (!$site = get_site()) {

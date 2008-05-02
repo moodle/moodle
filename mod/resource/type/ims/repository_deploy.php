@@ -46,7 +46,7 @@
     require_once('repository_config.php');
     
     /// Security - Admin Only  
-    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
         
     $file       = required_param ('file', PARAM_PATH);
     $all        = optional_param ('all', '', PARAM_ALPHA);

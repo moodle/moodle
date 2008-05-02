@@ -63,7 +63,7 @@ if (!empty($id)) {
         $context = get_context_instance(CONTEXT_COURSE, $id);
     }
 } else {
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $context = get_context_instance(CONTEXT_SYSTEM);
 }
 
 

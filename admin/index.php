@@ -545,7 +545,7 @@
 /// Check for valid admin user - no guest autologin
     require_login(0, false);
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $context = get_context_instance(CONTEXT_SYSTEM);
 
     require_capability('moodle/site:config', $context);
 

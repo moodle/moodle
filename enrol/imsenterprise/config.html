@@ -104,7 +104,7 @@ Photo processing is deactivated until we hear from Moodle dev forum about modifi
 
 <?php
 
-$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+$sitecontext = get_context_instance(CONTEXT_SYSTEM);
 $assignableroles = get_assignable_roles($sitecontext);
 $assignableroles = array('0' => get_string('ignore')) + $assignableroles;
 

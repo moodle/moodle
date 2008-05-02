@@ -64,7 +64,7 @@
     ims_print_crumbtrail($directory, $choose);
     
 /// If admin, add extra buttons - redeploy & help.
-    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         echo " | (<a href=\"repository_deploy.php?file=$directory&amp;all=force\">$strdeployall</a>) ";
         helpbutton("deploy", get_string("deployall", "resource"), "resource", true);
     }
@@ -96,7 +96,7 @@
             }
             else if ($item->type == 'not deployed') {
             /// Only displays non-deployed IMS CP's if admin user.
-                if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+                if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
                     echo "<li><img src=\"images/ims.gif\" alt=\"IMS CP Package\" /> <em>$item->path - $strnotdeployed</em> (<a href=\"repository_deploy.php?file=$item->path\">$strdeploy</a>)</li>\n";
                 }
             }
