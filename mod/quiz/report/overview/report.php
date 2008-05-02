@@ -422,8 +422,24 @@ class quiz_report extends quiz_default_report {
 
         if(!empty($attempts) || !empty($noattempts)) {
             if ($attempts) {
+                if($detailedmarks) {
+                    $attemptids = array();
+                    foreach ($attempts as $attempt){
+                        $attemptids[] = $attempt->attemptuniqueid;
+                    }
+                    $attemptidlist = join($attemptids, ',');
+                    $questionidlist = join($questionids, ',');
+                    $detailledgradedsql = "SELECT qs.id as qsid, qqi.question, qs.grade, qs.event, qs.attempt, qqi.grade as qqigrade, qns.newgraded FROM " .
+                            "{$CFG->prefix}quiz_question_instances qqi, " .
+                            "{$CFG->prefix}question_sessions qns " .
+                            "LEFT JOIN {$CFG->prefix}question_states qs " .
+                            "ON qs.attempt IN ($attemptidlist) AND " .
+                            "qns.newgraded = qs.id " .
+                            "WHERE qqi.question = qs.question AND " .
+                            "qqi.quiz = $quiz->id";
+                    $detailledgrades = get_records_sql($detailledgradedsql);
+                }
                 foreach ($attempts as $attempt) {
-
                     $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
 
                     $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.
@@ -483,23 +499,29 @@ class quiz_report extends quiz_default_report {
                     }
 
                     if($detailedmarks) {
+                        //get the detailled grade data for this attempt
+                        $attemptdetailledgrades = array();
+                        foreach ($detailledgrades as $detailledgrade){
+                            if ($detailledgrade->attempt == $attempt->attemptuniqueid){
+                                $attemptdetailledgrades[$detailledgrade->question] = $detailledgrade;
+                            }
+                        }
+                    
                         if(empty($attempt->attempt)) {
                             foreach($questionids as $questionid) {
                                 $row[] = '-';
                             }
                         } else {
                             foreach($questionids as $questionid) {
-                                $gradedstateid = get_field('question_sessions', 'newgraded', 'attemptid',
-                                        $attempt->attemptuniqueid, 'questionid', $questionid);
-                                if ($gradedstateid) {
-                                    $grade = number_format(get_field('question_states', 'grade', 'id',
-                                            $gradedstateid), $quiz->decimalpoints);
+                                if (question_state_is_graded($attemptdetailledgrades[$questionid])) {
+                                    $grade = number_format($attemptdetailledgrades[$questionid]->grade, $quiz->decimalpoints);
+                                    $grade = $grade.'/'.number_format($attemptdetailledgrades[$questionid]->qqigrade, $quiz->decimalpoints);
                                 } else {
-                                    $grade = '--';
+                                    $grade = '--'.'/'.number_format($attemptdetailledgrades[$questionid]->qqigrade, $quiz->decimalpoints);
                                 }
                                 if (!$download) {
                                     $row[] = link_to_popup_window('/mod/quiz/reviewquestion.php?state='.
-                                            $gradedstateid.'&amp;number='.$questions[$questionid]->number,
+                                            $attemptdetailledgrades[$questionid]->qsid.'&amp;number='.$questions[$questionid]->number,
                                             'reviewquestion', $grade, 450, 650, $strreviewquestion, 'none', true);
                                 } else {
                                     $row[] = $grade;
