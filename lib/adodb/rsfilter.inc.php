@@ -33,12 +33,12 @@
 	}
 	$rs = RSFilter($rs,'do_ucwords');
  */
-function &RSFilter($rs,$fn)
+function RSFilter($rs,$fn)
 {
 	if ($rs->databaseType != 'array') {
 		if (!$rs->connection) return false;
 		
-		$rs = &$rs->connection->_rs2rs($rs);
+		$rs = $rs->connection->_rs2rs($rs);
 	}
 	$rows = $rs->RecordCount();
 	for ($i=0; $i < $rows; $i++) {

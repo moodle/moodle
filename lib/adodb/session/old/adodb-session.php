@@ -112,7 +112,7 @@ if (!defined('ADODB_SESSION')) {
 */
 function adodb_session_regenerate_id() 
 {
-	$conn =& ADODB_Session::_conn();
+	$conn = ADODB_Session::_conn();
 	if (!$conn) return false;
 
 	$old_id = session_id();
@@ -125,7 +125,7 @@ function adodb_session_regenerate_id()
 		//@session_start();
 	}
 	$new_id = session_id();
-	$ok =& $conn->Execute('UPDATE '. ADODB_Session::table(). ' SET sesskey='. $conn->qstr($new_id). ' WHERE sesskey='.$conn->qstr($old_id));
+	$ok = $conn->Execute('UPDATE '. ADODB_Session::table(). ' SET sesskey='. $conn->qstr($new_id). ' WHERE sesskey='.$conn->qstr($old_id));
 	
 	/* it is possible that the update statement fails due to a collision */
 	if (!$ok) {
@@ -350,7 +350,7 @@ function adodb_sess_gc($maxlifetime)
 		$fn = next($ADODB_SESSION_EXPIRE_NOTIFY);
 		$savem = $ADODB_SESS_CONN->SetFetchMode(ADODB_FETCH_NUM);
 		$t = time();
-		$rs =& $ADODB_SESS_CONN->Execute("SELECT expireref,sesskey FROM $ADODB_SESSION_TBL WHERE expiry < $t");
+		$rs = $ADODB_SESS_CONN->Execute("SELECT expireref,sesskey FROM $ADODB_SESSION_TBL WHERE expiry < $t");
 		$ADODB_SESS_CONN->SetFetchMode($savem);
 		if ($rs) {
 			$ADODB_SESS_CONN->BeginTrans();
@@ -394,7 +394,7 @@ function adodb_sess_gc($maxlifetime)
 	if ($ADODB_SESS_CONN->dataProvider === 'oci8') $sql = 'select  TO_CHAR('.($ADODB_SESS_CONN->sysTimeStamp).', \'RRRR-MM-DD HH24:MI:SS\') from '. $ADODB_SESSION_TBL;
 	else $sql = 'select '.$ADODB_SESS_CONN->sysTimeStamp.' from '. $ADODB_SESSION_TBL;
 	
-	$rs =& $ADODB_SESS_CONN->SelectLimit($sql,1);
+	$rs = $ADODB_SESS_CONN->SelectLimit($sql,1);
 	if ($rs && !$rs->EOF) {
 	
 		$dbts = reset($rs->fields);

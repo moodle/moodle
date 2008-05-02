@@ -411,7 +411,7 @@ function adodb_date_test_date($y1,$m,$d=13)
 	$t = adodb_mktime($h,0,0,$m,$d,$y1);
 	$rez = adodb_date('Y-n-j H:i:s',$t);
 	if ($h == 0) $h = '00';
-	else if ($h < 10) $h = '0'.$h;	
+	else if ($h < 10) $h = '0'.$h;
 	if ("$y1-$m-$d $h:00:00" != $rez) {
 		print "<b>$y1 error, expected=$y1-$m-$d $h:00:00, adodb=$rez</b><br>";
 		return false;
@@ -432,7 +432,7 @@ function adodb_date_test_strftime($fmt)
 
 /**
 	 Test Suite
-*/		
+*/	
 function adodb_date_test()
 {
 	
@@ -1422,5 +1422,6 @@ global $ADODB_DATE_LOCALE;
 	$ret = adodb_date($fmtdate, $ts, $is_gmt);
 	return $ret;
 }
+
 
 ?>

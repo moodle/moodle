@@ -176,7 +176,7 @@ function arr2html(&$arr,$ztabhtml='',$zheaderarray='')
 	
 	for ($i=0; $i<sizeof($arr); $i++) {
 		$s .= '<TR>';
-		$a = &$arr[$i];
+		$a = $arr[$i];
 		if (is_array($a)) 
 			for ($j=0; $j<sizeof($a); $j++) {
 				$val = $a[$j];

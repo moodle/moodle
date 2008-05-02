@@ -1,6 +1,6 @@
 <?php
 /*
-V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -50,7 +50,7 @@ class ADODB_csv extends ADOConnection {
 			return $this->_affectedrows;
 	}
   
-  	function &MetaDatabases()
+  	function MetaDatabases()
 	{
 		return false;
 	}
@@ -72,14 +72,14 @@ class ADODB_csv extends ADOConnection {
 		return true;
 	}
 	
- 	function &MetaColumns($table) 
+ 	function MetaColumns($table) 
 	{
 		return false;
 	}
 		
 		
 	// parameters use PostgreSQL convention, not MySQL
-	function &SelectLimit($sql,$nrows=-1,$offset=-1)
+	function SelectLimit($sql,$nrows=-1,$offset=-1)
 	{
 	global $ADODB_FETCH_MODE;
 	
@@ -108,13 +108,13 @@ class ADODB_csv extends ADOConnection {
 		
 			$rs->databaseType='csv';		
 			$rs->fetchMode = ($this->fetchMode !== false) ?  $this->fetchMode : $ADODB_FETCH_MODE;
-			$rs->connection = &$this;
+			$rs->connection = $this;
 		}
 		return $rs;
 	}
 	
 	// returns queryID or false
-	function &_Execute($sql,$inputarr=false)
+	function _Execute($sql,$inputarr=false)
 	{
 	global $ADODB_FETCH_MODE;
 	
@@ -166,7 +166,7 @@ class ADODB_csv extends ADOConnection {
 			$this->_affectedrows = $rs->affectedrows;
 			$this->_insertid = $rs->insertid;
 			$rs->databaseType='csv';
-			$rs->connection = &$this;
+			$rs->connection = $this;
 		}
 		return $rs;
 	}

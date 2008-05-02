@@ -30,23 +30,6 @@ class ADODB_mysqlt extends ADODB_mysql {
 	global $ADODB_EXTENSION; if ($ADODB_EXTENSION) $this->rsPrefix .= 'ext_';
 	}
 	
-	/* set transaction mode
-	
-	SET [GLOBAL | SESSION] TRANSACTION ISOLATION LEVEL
-{ READ UNCOMMITTED | READ COMMITTED | REPEATABLE READ | SERIALIZABLE }
-
-	*/
-	function SetTransactionMode( $transaction_mode ) 
-	{
-		$this->_transmode  = $transaction_mode;
-		if (empty($transaction_mode)) {
-			$this->Execute('SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ');
-			return;
-		}
-		if (!stristr($transaction_mode,'isolation')) $transaction_mode = 'ISOLATION LEVEL '.$transaction_mode;
-		$this->Execute("SET SESSION TRANSACTION ".$transaction_mode);
-	}
-	
 	function BeginTrans()
 	{	  
 		if ($this->transOff) return true;

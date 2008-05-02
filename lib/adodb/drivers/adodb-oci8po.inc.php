@@ -1,6 +1,6 @@
 <?php
 /*
-V4.98 13 Feb 2008  (c) 2000-2008 John Lim. All rights reserved.
+V5.04a 25 Mar 2008   (c) 2000-2008 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -98,7 +98,7 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 	}
 	
 	// lowercase field names...
-	function &_FetchField($fieldOffset = -1)
+	function _FetchField($fieldOffset = -1)
 	{
 		 $fld = new ADOFieldObject;
  		 $fieldOffset += 1;
@@ -149,7 +149,7 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 	}	
 	
 	/* Optimize SelectLimit() by using OCIFetch() instead of OCIFetchInto() */
-	function &GetArrayLimit($nrows,$offset=-1) 
+	function GetArrayLimit($nrows,$offset=-1) 
 	{
 		if ($offset <= 0) {
 			$arr = $this->GetArray($nrows);

@@ -1,6 +1,6 @@
 <?php
 /*
- V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+ V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -34,14 +34,14 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	
 	// the following should be compat with postgresql 7.2, 
 	// which makes obsolete the LIMIT limit,offset syntax
-	 function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0) 
+	 function SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0) 
 	 {
 		 $offsetStr = ($offset >= 0) ? " OFFSET ".((integer)$offset) : '';
 		 $limitStr  = ($nrows >= 0)  ? " LIMIT ".((integer)$nrows) : '';
 		 if ($secs2cache)
-		  	$rs =& $this->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
+		  	$rs = $this->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
 		 else
-		  	$rs =& $this->Execute($sql."$limitStr$offsetStr",$inputarr);
+		  	$rs = $this->Execute($sql."$limitStr$offsetStr",$inputarr);
 		
 		return $rs;
 	 }
@@ -72,11 +72,11 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		ORDER BY
 			t.tgrelid';
 		
-		$rs =& $this->Execute($sql);
+		$rs = $this->Execute($sql);
 		
 		if (!$rs || $rs->EOF) return false;
 		
-		$arr =& $rs->GetArray();
+		$arr = $rs->GetArray();
 		$a = array();
 		foreach($arr as $v) {
 			$data = explode(chr(0), $v['args']);

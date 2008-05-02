@@ -1,4 +1,4 @@
-Description of ADODB v4.98 library import into Moodle
+Description of ADODB V5.04a library import into Moodle
 
 Removed:
  * contrib/

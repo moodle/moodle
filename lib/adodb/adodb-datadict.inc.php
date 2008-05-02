@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -215,7 +215,6 @@ class ADODB_DataDict {
 		return $this->connection->MetaIndexes($this->TableName($table), $primary, $owner);
 	}
 	
-
 	function MetaType($t,$len=-1,$fieldobj=false)
 	{		
 		static $typeMap = array(
@@ -369,7 +368,7 @@ class ADODB_DataDict {
 	function ExecuteSQLArray($sql, $continueOnError = true)
 	{
 		$rez = 2;
-		$conn = &$this->connection;
+		$conn = $this->connection;
 		$saved = $conn->debug;
 		foreach($sql as $line) {
 			

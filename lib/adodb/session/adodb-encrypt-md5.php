@@ -1,7 +1,7 @@
 <?php
 
 /*
-V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
          Contributed by Ross Smith (adodb@netebb.com). 
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
@@ -21,14 +21,14 @@ class ADODB_Encrypt_MD5 {
 	/**
 	 */
 	function write($data, $key) {
-		$md5crypt =& new MD5Crypt();
+		$md5crypt = new MD5Crypt();
 		return $md5crypt->encrypt($data, $key);
 	}
 
 	/**
 	 */
 	function read($data, $key) {
-		$md5crypt =& new MD5Crypt();
+		$md5crypt = new MD5Crypt();
 		return $md5crypt->decrypt($data, $key);
 	}
 

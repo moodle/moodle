@@ -1,6 +1,6 @@
 <?php
 /*
-V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.  
+V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.  
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -159,17 +159,17 @@ class ADODB_ibase extends ADOConnection {
 	
 	// there are some compat problems with ADODB_COUNTRECS=false and $this->_logsql currently.
 	// it appears that ibase extension cannot support multiple concurrent queryid's
-	function &_Execute($sql,$inputarr=false) 
+	function _Execute($sql,$inputarr=false) 
 	{
 	global $ADODB_COUNTRECS;
 	
 		if ($this->_logsql) {
 			$savecrecs = $ADODB_COUNTRECS;
 			$ADODB_COUNTRECS = true; // force countrecs
-			$ret =& ADOConnection::_Execute($sql,$inputarr);
+			$ret = ADOConnection::_Execute($sql,$inputarr);
 			$ADODB_COUNTRECS = $savecrecs;
 		} else {
-			$ret =& ADOConnection::_Execute($sql,$inputarr);
+			$ret = ADOConnection::_Execute($sql,$inputarr);
 		}
 		return $ret;
 	}
@@ -187,7 +187,7 @@ class ADODB_ibase extends ADOConnection {
 		return $ret;
 	}
 	
-	function &MetaIndexes ($table, $primary = FALSE, $owner=false)
+	function MetaIndexes ($table, $primary = FALSE, $owner=false)
 	{
         // save old fetch mode
         global $ADODB_FETCH_MODE;
@@ -326,7 +326,7 @@ class ADODB_ibase extends ADOConnection {
 			if (is_array($iarr)) {
 				if  (ADODB_PHPVER >= 0x4050) { // actually 4.0.4
 					if ( !isset($iarr[0]) ) $iarr[0] = ''; // PHP5 compat hack
-					$fnarr =& array_merge( array($sql) , $iarr);
+					$fnarr = array_merge( array($sql) , $iarr);
 					$ret = call_user_func_array($fn,$fnarr);
 				} else {
 					switch(sizeof($iarr)) {
@@ -348,7 +348,7 @@ class ADODB_ibase extends ADOConnection {
 			if (is_array($iarr)) {	
 				if (ADODB_PHPVER >= 0x4050) { // actually 4.0.4
 					if (sizeof($iarr) == 0) $iarr[0] = ''; // PHP5 compat hack
-					$fnarr =& array_merge( array($conn,$sql) , $iarr);
+					$fnarr = array_merge( array($conn,$sql) , $iarr);
 					$ret = call_user_func_array($fn,$fnarr);
 				} else {
 					switch(sizeof($iarr)) {
@@ -476,7 +476,7 @@ class ADODB_ibase extends ADOConnection {
 	}
 	//OPN STUFF end
 		// returns array of ADOFieldObjects for current table
-	function &MetaColumns($table) 
+	function MetaColumns($table) 
 	{
 	global $ADODB_FETCH_MODE;
 		
@@ -743,7 +743,7 @@ class ADORecordset_ibase extends ADORecordSet
 			fields in a certain query result. If the field offset isn't specified, the next field that wasn't yet retrieved by
 			fetchField() is retrieved.		*/
 
-	function &FetchField($fieldOffset = -1)
+	function FetchField($fieldOffset = -1)
 	{
 			 $fld = new ADOFieldObject;
 			 $ibf = ibase_field_info($this->_queryID,$fieldOffset);
@@ -822,9 +822,9 @@ class ADORecordset_ibase extends ADORecordSet
 		
 		$this->fields = $f;
 		if ($this->fetchMode == ADODB_FETCH_ASSOC) {
-			$this->fields = &$this->GetRowAssoc(ADODB_ASSOC_CASE);
+			$this->fields = $this->GetRowAssoc(ADODB_ASSOC_CASE);
 		} else if ($this->fetchMode == ADODB_FETCH_BOTH) {
-			$this->fields =& array_merge($this->fields,$this->GetRowAssoc(ADODB_ASSOC_CASE));
+			$this->fields = array_merge($this->fields,$this->GetRowAssoc(ADODB_ASSOC_CASE));
 		}
 		return true;
 	}

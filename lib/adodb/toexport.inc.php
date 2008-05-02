@@ -74,8 +74,8 @@ function _adodb_export(&$rs,$sep,$sepreplace,$fp=false,$addtitles=true,$quote = 
 		$fieldTypes = $rs->FieldTypesArray();
 		reset($fieldTypes);
 		while(list(,$o) = each($fieldTypes)) {
-			
-			$v = $o->name;
+			if (!$o) $v = '';
+			else $v = $o->name;
 			if ($escquote) $v = str_replace($quote,$escquotequote,$v);
 			$v = strip_tags(str_replace("\n", $replaceNewLine, str_replace("\r\n",$replaceNewLine,str_replace($sep,$sepreplace,$v))));
 			$elements[] = $v;

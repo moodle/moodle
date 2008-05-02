@@ -1,7 +1,7 @@
 <?php
 
 /* 
-V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -71,7 +71,7 @@ class perf_mssql extends adodb_perf{
 			$this->sql1 = 'sql1';
 			//$this->explain = false;
 		}
-		$this->conn =& $conn;
+		$this->conn = $conn;
 	}
 	
 	function Explain($sql,$partial=false)
@@ -96,7 +96,7 @@ class perf_mssql extends adodb_perf{
 		
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-		$rs =& $this->conn->Execute($sql);
+		$rs = $this->conn->Execute($sql);
 		//adodb_printr($rs);
 		$ADODB_FETCH_MODE = $save;
 		if ($rs) {

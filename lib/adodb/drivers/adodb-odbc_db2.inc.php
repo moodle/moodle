@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -140,7 +140,7 @@ class ADODB_ODBC_DB2 extends ADODB_odbc {
 		return $this->GetOne("select $flds from $tables where $where for update");
 	}
 	
-	function &MetaTables($ttype=false,$showSchema=false, $qtable="%", $qschema="%")
+	function MetaTables($ttype=false,$showSchema=false, $qtable="%", $qschema="%")
 	{
 	global $ADODB_FETCH_MODE;
 	
@@ -157,7 +157,7 @@ class ADODB_ODBC_DB2 extends ADODB_odbc {
 		}
 		$rs->_has_stupid_odbc_fetch_api_change = $this->_has_stupid_odbc_fetch_api_change;
 		
-		$arr =& $rs->GetArray();
+		$arr = $rs->GetArray();
 		//print_r($arr);
 		
 		$rs->Close();
@@ -184,7 +184,7 @@ class ADODB_ODBC_DB2 extends ADODB_odbc {
 		return $arr2;
 	}
 
-	function &MetaIndexes ($table, $primary = FALSE, $owner=false)
+	function MetaIndexes ($table, $primary = FALSE, $owner=false)
 	{
         // save old fetch mode
         global $ADODB_FETCH_MODE;
@@ -278,20 +278,20 @@ class ADODB_ODBC_DB2 extends ADODB_odbc {
 	} 
  
 	
-	function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputArr=false)
+	function SelectLimit($sql,$nrows=-1,$offset=-1,$inputArr=false)
 	{
 		$nrows = (integer) $nrows;
 		if ($offset <= 0) {
 		// could also use " OPTIMIZE FOR $nrows ROWS "
 			if ($nrows >= 0) $sql .=  " FETCH FIRST $nrows ROWS ONLY ";
-			$rs =& $this->Execute($sql,$inputArr);
+			$rs = $this->Execute($sql,$inputArr);
 		} else {
 			if ($offset > 0 && $nrows < 0);
 			else {
 				$nrows += $offset;
 				$sql .=  " FETCH FIRST $nrows ROWS ONLY ";
 			}
-			$rs =& ADOConnection::SelectLimit($sql,-1,$offset,$inputArr);
+			$rs = ADOConnection::SelectLimit($sql,-1,$offset,$inputArr);
 		}
 		
 		return $rs;

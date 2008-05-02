@@ -18,7 +18,7 @@ $ADODB_INCLUDED_MEMCACHE = 1;
   
 */
 
-	function &getmemcache($key,&$err, $timeout=0, $host, $port)
+	function getmemcache($key,&$err, $timeout=0, $host, $port)
 	{
 		$false = false;
 		$err = false;

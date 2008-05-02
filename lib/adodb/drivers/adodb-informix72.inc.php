@@ -1,6 +1,6 @@
 <?php
 /*
-V4.98 13 Feb 2008  (c) 2000-2008 John Lim. All rights reserved.
+V5.04a 25 Mar 2008   (c) 2000-2008 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -147,7 +147,7 @@ class ADODB_informix72 extends ADOConnection {
 	}
 
    
-    function &MetaColumns($table)
+    function MetaColumns($table)
 	{
 	global $ADODB_FETCH_MODE;
 	
@@ -199,7 +199,7 @@ class ADODB_informix72 extends ADOConnection {
 		return $false;
 	}
 	
-   function &xMetaColumns($table)
+   function xMetaColumns($table)
    {
 		return ADOConnection::MetaColumns($table,false);
    }
@@ -219,7 +219,7 @@ class ADODB_informix72 extends ADOConnection {
 
 		$rs = $this->Execute($sql);
 		if (!$rs || $rs->EOF)  return false;
-		$arr =& $rs->GetArray();
+		$arr = $rs->GetArray();
 		$a = array();
 		foreach($arr as $v) {
 			$coldest=$this->metaColumnNames($v["tabname"]);
@@ -362,7 +362,7 @@ class ADORecordset_informix72 extends ADORecordSet {
 		Get column information in the Recordset object. fetchField() can be used in order to obtain information about
 		fields in a certain query result. If the field offset isn't specified, the next field that wasn't yet retrieved by
 		fetchField() is retrieved.	*/
-	function &FetchField($fieldOffset = -1)
+	function FetchField($fieldOffset = -1)
 	{
 		if (empty($this->_fieldprops)) {
 			$fp = ifx_fieldproperties($this->_queryID);

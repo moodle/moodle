@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V4.98 13 Feb 2008 (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+ * @version V5.04a 25 Mar 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -109,11 +109,11 @@ class DB
 	 * error
 	 */
 
-	function &factory($type)
+	function factory($type)
 	{
 		include_once(ADODB_DIR."/drivers/adodb-$type.inc.php");
-		$obj = &NewADOConnection($type);
-		if (!is_object($obj)) $obj =& new PEAR_Error('Unknown Database Driver: '.$dsninfo['phptype'],-1);
+		$obj = NewADOConnection($type);
+		if (!is_object($obj)) $obj = new PEAR_Error('Unknown Database Driver: '.$dsninfo['phptype'],-1);
 		return $obj;
 	}
 
@@ -136,7 +136,7 @@ class DB
 	 * @see DB::parseDSN
 	 * @see DB::isError
 	 */
-	function &connect($dsn, $options = false)
+	function connect($dsn, $options = false)
 	{
 		if (is_array($dsn)) {
 			$dsninfo = $dsn;
@@ -157,9 +157,9 @@ class DB
 			 @include_once("adodb-$type.inc.php");
 		}
 
-		@$obj =& NewADOConnection($type);
+		@$obj = NewADOConnection($type);
 		if (!is_object($obj)) {
-			$obj =& new PEAR_Error('Unknown Database Driver: '.$dsninfo['phptype'],-1);
+			$obj = new PEAR_Error('Unknown Database Driver: '.$dsninfo['phptype'],-1);
 			return $obj;
 		}
 		if (is_array($options)) {

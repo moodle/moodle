@@ -1,6 +1,6 @@
 <?php
 /* 
-  V4.98 13 Feb 2008  (c) 2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V5.04a 25 Mar 2008   (c) 2006 John Lim (jlim#natsoft.com.my). All rights reserved.
 
   This is a version of the ADODB driver for DB2.  It uses the 'ibm_db2' PECL extension
   for PHP (http://pecl.php.net/package/ibm_db2), which in turn requires DB2 V8.2.2 or
@@ -335,7 +335,7 @@ class ADODB_db2 extends ADOConnection {
 		
 		if (!$rs) return false;
 		
-		$arr =& $rs->GetArray();
+		$arr = $rs->GetArray();
 		$rs->Close();
 		$arr2 = array();
 		for ($i=0; $i < sizeof($arr); $i++) {
@@ -390,7 +390,7 @@ class ADODB_db2 extends ADOConnection {
 	}
 	
 	
-	function &MetaTables($ttype=false,$schema=false)
+	function MetaTables($ttype=false,$schema=false)
 	{
 	global $ADODB_FETCH_MODE;
 	
@@ -406,7 +406,7 @@ class ADODB_db2 extends ADOConnection {
 			return $false;
 		}
 		
-		$arr =& $rs->GetArray();
+		$arr = $rs->GetArray();
 		
 		$rs->Close();
 		$arr2 = array();
@@ -495,7 +495,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 		}
 	}
 	
-	function &MetaColumns($table)
+	function MetaColumns($table)
 	{
 	global $ADODB_FETCH_MODE;
 	
@@ -511,7 +511,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 	        $qid = db2_columns($this->_connectionID, "", $schema, $table, $colname);
 		if (empty($qid)) return $false;
 		
-		$rs =& new ADORecordSet_db2($qid);
+		$rs = new ADORecordSet_db2($qid);
 		$ADODB_FETCH_MODE = $savem;
 		
 		if (!$rs) return $false;
@@ -563,7 +563,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 	      $qid = db2_primary_keys($this->_connectionID, "", $schema, $table);
 		if (empty($qid)) return $false;
 		
-		$rs =& new ADORecordSet_db2($qid);
+		$rs = new ADORecordSet_db2($qid);
 		$ADODB_FETCH_MODE = $savem;
 		
 		if (!$rs) return $retarr;
@@ -719,7 +719,7 @@ class ADORecordSet_db2 extends ADORecordSet {
 
 
 	// returns the field object
-	function &FetchField($offset = -1) 
+	function FetchField($offset = -1) 
 	{
 		$o= new ADOFieldObject();
 		$o->name = @db2_field_name($this->_queryID,$offset);
@@ -761,10 +761,10 @@ class ADORecordSet_db2 extends ADORecordSet {
 	}
 	
 	// speed up SelectLimit() by switching to ADODB_FETCH_NUM as ADODB_FETCH_ASSOC is emulated
-	function &GetArrayLimit($nrows,$offset=-1) 
+	function GetArrayLimit($nrows,$offset=-1) 
 	{
 		if ($offset <= 0) {
-			$rs =& $this->GetArray($nrows);
+			$rs = $this->GetArray($nrows);
 			return $rs;
 		}
 		$savem = $this->fetchMode;
@@ -773,7 +773,7 @@ class ADORecordSet_db2 extends ADORecordSet {
 		$this->fetchMode = $savem;
 		
 		if ($this->fetchMode & ADODB_FETCH_ASSOC) {
-			$this->fields =& $this->GetRowAssoc(ADODB_ASSOC_CASE);
+			$this->fields = $this->GetRowAssoc(ADODB_ASSOC_CASE);
 		}
 		
 		$results = array();
@@ -795,7 +795,7 @@ class ADORecordSet_db2 extends ADORecordSet {
 			$this->fields = @db2_fetch_array($this->_queryID);
 			if ($this->fields) {
 				if ($this->fetchMode & ADODB_FETCH_ASSOC) {
-					$this->fields =& $this->GetRowAssoc(ADODB_ASSOC_CASE);
+					$this->fields = $this->GetRowAssoc(ADODB_ASSOC_CASE);
 				}
 				return true;
 			}
@@ -811,7 +811,7 @@ class ADORecordSet_db2 extends ADORecordSet {
 		$this->fields = db2_fetch_array($this->_queryID);
 		if ($this->fields) {
 			if ($this->fetchMode & ADODB_FETCH_ASSOC) {
-				$this->fields =& $this->GetRowAssoc(ADODB_ASSOC_CASE);
+				$this->fields = $this->GetRowAssoc(ADODB_ASSOC_CASE);
 			}
 			return true;
 		}

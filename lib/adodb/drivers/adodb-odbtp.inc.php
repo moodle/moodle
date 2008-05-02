@@ -1,6 +1,6 @@
 <?php
 /*
-  V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence. See License.txt.
@@ -273,7 +273,7 @@ class ADODB_odbtp extends ADOConnection{
 		return true;
 	}
 	
-	function &MetaTables($ttype='',$showSchema=false,$mask=false)
+	function MetaTables($ttype='',$showSchema=false,$mask=false)
 	{
 	global $ADODB_FETCH_MODE;
 
@@ -281,7 +281,7 @@ class ADODB_odbtp extends ADOConnection{
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		if ($this->fetchMode !== false) $savefm = $this->SetFetchMode(false);
 		
-		$arr =& $this->GetArray("||SQLTables||||$ttype");
+		$arr = $this->GetArray("||SQLTables||||$ttype");
 		
 		if (isset($savefm)) $this->SetFetchMode($savefm);
 		$ADODB_FETCH_MODE = $savem;
@@ -295,7 +295,7 @@ class ADODB_odbtp extends ADOConnection{
 		return $arr2;
 	}
 	
-	function &MetaColumns($table,$upper=true)
+	function MetaColumns($table,$upper=true)
 	{
 	global $ADODB_FETCH_MODE;
 
@@ -341,13 +341,13 @@ class ADODB_odbtp extends ADOConnection{
 		return $retarr;
 	}
 
-	function &MetaPrimaryKeys($table, $owner='')
+	function MetaPrimaryKeys($table, $owner='')
 	{
 	global $ADODB_FETCH_MODE;
 
 		$savem = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-		$arr =& $this->GetArray("||SQLPrimaryKeys||$owner|$table");
+		$arr = $this->GetArray("||SQLPrimaryKeys||$owner|$table");
 		$ADODB_FETCH_MODE = $savem;
 
 		//print_r($arr);
@@ -358,13 +358,13 @@ class ADODB_odbtp extends ADOConnection{
 		return $arr2;
 	}
 
-	function &MetaForeignKeys($table, $owner='', $upper=false)
+	function MetaForeignKeys($table, $owner='', $upper=false)
 	{
 	global $ADODB_FETCH_MODE;
 
 		$savem = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-		$constraints =& $this->GetArray("||SQLForeignKeys|||||$owner|$table");
+		$constraints = $this->GetArray("||SQLForeignKeys|||||$owner|$table");
 		$ADODB_FETCH_MODE = $savem;
 
 		$arr = false;
@@ -424,13 +424,13 @@ class ADODB_odbtp extends ADOConnection{
 		return $ret;
 	}
 
-	function &SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$secs2cache=0)
+	function SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$secs2cache=0)
 	{
 		// TOP requires ORDER BY for Visual FoxPro
 		if( $this->odbc_driver == ODB_DRIVER_FOXPRO ) {
 			if (!preg_match('/ORDER[ \t\r\n]+BY/is',$sql)) $sql .= ' ORDER BY 1';
 		}
-		$ret =& ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+		$ret = ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
 		return $ret;
 	}
 
@@ -602,7 +602,7 @@ class ADORecordSet_odbtp extends ADORecordSet {
 		}
 	}
 
-	function &FetchField($fieldOffset = 0)
+	function FetchField($fieldOffset = 0)
 	{
 		$off=$fieldOffset; // offsets begin at 0
 		$o= new ADOFieldObject();
