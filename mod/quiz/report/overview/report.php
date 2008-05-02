@@ -438,7 +438,6 @@ class quiz_report extends quiz_default_report {
                             "WHERE qqi.question = qs.question AND " .
                             "qqi.quiz = $quiz->id";
                     $detailledgrades = get_records_sql($detailledgradedsql);
-                    echo count($detailledgrades);
                 }
                 foreach ($attempts as $attempt) {
                     $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
