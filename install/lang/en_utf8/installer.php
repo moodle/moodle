@@ -345,8 +345,11 @@ $string['pass'] = 'Pass';
 $string['password'] = 'Password';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the PGSQL extension so that it can communicate with PostgreSQL.  Please check your php.ini file or recompile PHP.';
 $string['php50restricted'] = 'PHP 5.0.x has a number of known problems, please upgrade to 5.1.x or downgrade to 4.3.x or 4.4.x';
+$string['php52versionerror'] = 'PHP version must be at least 5.2.0.';
+$string['php52versionhelp'] = '<p>Moodle requires a PHP version of at least 5.2.0.</p>
+<p>You are currently running version $a</p>
+<p>You must upgrade PHP or move to a host with a newer version of PHP!';
 $string['phpversion'] = 'PHP version';
-$string['phpversionerror'] = 'PHP version must be at least 4.3.0 or 5.1.0 (5.0.x has a number of known problems).';
 $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 or 5.1.0 (5.0.x has a number of known problems).</p>
 <p>You are currently running version $a</p>
 <p>You must upgrade PHP or move to a host with a newer version of PHP!<br/>
