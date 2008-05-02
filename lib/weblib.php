@@ -1173,8 +1173,16 @@ $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
         $selectlabel = '<label for="'.$formid.'_jump">'.$selectlabel.'</label>';
     }
 
-    $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";
-
+    //IE and Opera fire the onchange when ever you move into a dropdwown list with the keyboard. 
+    //onfocus will call a function inside dropdown.js. It fixes this IE/Opera behavior.
+    if (check_browser_version('MSIE') || check_browser_version('Opera')) {
+        $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" onfocus="initSelect(\''.$formid.'\','.$targetwindow.')" name="jump">'."\n";
+    }
+    //Other browser
+    else {
+        $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";  
+    }
+    
     if ($nothing != '') {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
     }
