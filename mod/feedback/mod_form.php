@@ -59,7 +59,7 @@ class mod_feedback_mod_form extends moodleform_mod {
         $mform->setHelpButton('email_notification', array('emailnotification', get_string('email_notification', 'feedback'), 'feedback'));
         
         // check if there is existing responses to this feedback
-        if ($this->_instance and $feedback = get_record("feedback", "id", $this->_instance)) {
+        if (is_numeric($this->_instance) AND $this->_instance and $feedback = get_record("feedback", "id", $this->_instance)) {
             $completedFeedbackCount = feedback_get_completeds_group_count($feedback);
         } else {
             $completedFeedbackCount = false;
