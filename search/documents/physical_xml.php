@@ -17,14 +17,18 @@
 * @param object $resource
 * @uses CFG, USER
 */
-function get_text_for_indexing_xml(&$resource){
+function get_text_for_indexing_xml(&$resource, $directfile = ''){
     global $CFG, $USER;
     
     // SECURITY : do not allow non admin execute anything on system !!
     if (!isadmin($USER->id)) return;
 
     // just get text
-    $text = implode('', file("{$CFG->dataroot}/{$resource->course}/($resource->reference)"));
+    if ($directfile == ''){
+        $text = implode('', file("{$CFG->dataroot}/{$resource->course}/{$resource->reference}"));
+    } else {
+        $text = implode('', file("{$CFG->dataroot}/{$directfile}"));
+    }
 
     // filter out all xml tags
     $text = preg_replace("/<[^>]*>/", ' ', $text);
