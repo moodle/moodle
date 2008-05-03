@@ -478,7 +478,6 @@ class quiz_report extends quiz_default_report {
                                 $stateforqinattempt = $gradedstatesbyattempt[$attempt->attemptuniqueid][$questionid];
                                 if (question_state_is_graded($stateforqinattempt)) {
                                     $grade = quiz_rescale_grade($stateforqinattempt->grade, $quiz);
-                                    $grade = $grade;
                                 } else {
                                     $grade = '--';
                                 }
