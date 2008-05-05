@@ -7,24 +7,28 @@ define('QUIZ_REPORT_DEFAULT_PAGE_SIZE', 30);
  */
 function quiz_get_newgraded_states($attemptids, $idxattemptq = true){
     global $CFG;
-    $attemptidlist = join($attemptids, ',');
-    $gradedstatesql = "SELECT qs.* FROM " .
-            "{$CFG->prefix}question_sessions qns, " .
-            "{$CFG->prefix}question_states qs " .
-            "WHERE qns.attemptid IN ($attemptidlist) AND " .
-            "qns.newgraded = qs.id";
-    $gradedstates = get_records_sql($gradedstatesql);
-    if ($idxattemptq){
-        $gradedstatesbyattempt = array();
-        foreach ($gradedstates as $gradedstate){
-            if (!isset($gradedstatesbyattempt[$gradedstate->attempt])){
-                $gradedstatesbyattempt[$gradedstate->attempt] = array();
+    if ($attemptids){
+        $attemptidlist = join($attemptids, ',');
+        $gradedstatesql = "SELECT qs.* FROM " .
+                "{$CFG->prefix}question_sessions qns, " .
+                "{$CFG->prefix}question_states qs " .
+                "WHERE qns.attemptid IN ($attemptidlist) AND " .
+                "qns.newgraded = qs.id";
+        $gradedstates = get_records_sql($gradedstatesql);
+        if ($idxattemptq){
+            $gradedstatesbyattempt = array();
+            foreach ($gradedstates as $gradedstate){
+                if (!isset($gradedstatesbyattempt[$gradedstate->attempt])){
+                    $gradedstatesbyattempt[$gradedstate->attempt] = array();
+                }
+                $gradedstatesbyattempt[$gradedstate->attempt][$gradedstate->question] = $gradedstate;
             }
-            $gradedstatesbyattempt[$gradedstate->attempt][$gradedstate->question] = $gradedstate;
+            return $gradedstatesbyattempt;
+        } else {
+            return $gradedstates;
         }
-        return $gradedstatesbyattempt;
     } else {
-        return $gradedstates;
+        return array();
     }
 }
 /**
