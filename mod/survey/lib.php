@@ -153,13 +153,13 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
 
     $slist = implode(',', $ids); // there should not be hundreds of glossaries in one course, right?
 
-    if (!$rs = get_recordset_sql("SELECT sa.userid, sa.survey, sa.time,
+    if (!$rs = get_recordset_sql("SELECT sa.userid, sa.survey, MAX(sa.time) AS time,
                                          u.firstname, u.lastname, u.email, u.picture
                                     FROM {$CFG->prefix}survey_answers sa
                                          JOIN {$CFG->prefix}user u ON u.id = sa.userid
                                    WHERE sa.survey IN ($slist) AND sa.time > $timestart
-                                GROUP BY sa.userid, sa.survey
-                                ORDER BY sa.id ASC")) {
+                                   GROUP BY sa.userid, sa.survey, u.firstname, u.lastname, u.email, u.picture
+                                   ORDER BY time ASC")) {
         return false;
     }
 
