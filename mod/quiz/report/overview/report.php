@@ -9,6 +9,7 @@
  *//** */
 
 require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->dirroot.'/mod/quiz/report/overview/overviewsettings_form.php');
 
 class quiz_report extends quiz_default_report {
 
@@ -17,7 +18,6 @@ class quiz_report extends quiz_default_report {
      */
     function display($quiz, $cm, $course) {
         global $CFG, $db;
-
         // Define some strings
         $strreallydel  = addslashes(get_string('deleteattemptcheck','quiz'));
         $strtimeformat = get_string('strftimedatetime');
@@ -27,7 +27,7 @@ class quiz_report extends quiz_default_report {
 
         // Only print headers if not asked to download data
         if (!$download = optional_param('download', NULL)) {
-            $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="overview");
+            $this->print_header_and_tabs($cm, $course, $quiz, "overview");
         }
 
         // Deal with actions
@@ -65,26 +65,41 @@ class quiz_report extends quiz_default_report {
         $reviewoptions = quiz_get_reviewoptions($quiz, $fakeattempt, $context);
         $showgrades = $quiz->grade && $quiz->sumgrades && $reviewoptions->scores;
 
-        // Set table options
-        $noattempts = optional_param('noattempts', 0, PARAM_INT);
-        $detailedmarks = optional_param('detailedmarks', 0, PARAM_INT);
-        $pagesize = optional_param('pagesize', 0, PARAM_INT);
-        $reporturl = $CFG->wwwroot.'/mod/quiz/report.php?mode=overview';
-        if ($pagesize < 1) {
-            $pagesize = QUIZ_REPORT_DEFAULT_PAGE_SIZE;
-        }
         if (!$reviewoptions->scores) {
             $detailedmarks = 0;
         }
-        $reporturlwithoptions = $reporturl . '&amp;id=' . $cm->id . '&amp;noattempts=' . $noattempts .
-                '&amp;detailedmarks=' . $detailedmarks . '&amp;pagesize=' . $pagesize;
+        $pageoptions = array();
+        $pageoptions['id'] = $cm->id;
+        $pageoptions['q'] = $quiz->id;
+        $pageoptions['mode'] = 'overview';
+
+        $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
+        $mform = new mod_quiz_report_overview_settings($reporturl);
+        if ($fromform = $mform->get_data()){
+            $attemptsmode = $fromform->attemptsmode;
+            set_user_preference('quiz_report_overview_detailedmarks', $fromform->detailedmarks);
+            set_user_preference('quiz_report_pagesize', $fromform->pagesize);
+            $detailedmarks = $fromform->detailedmarks;
+            $pagesize = $fromform->pagesize;
+        } else {
+            $attemptsmode = optional_param('attemptsmode', 0, PARAM_INT);
+            $detailedmarks = get_user_preferences('quiz_report_overview_detailedmarks', 1);
+            $pagesize = get_user_preferences('quiz_report_pagesize', 0);
+        }
+        if ($pagesize < 1) {
+            $pagesize = QUIZ_REPORT_DEFAULT_PAGE_SIZE;
+        }
+
+        $displayoptions = array();
+        $displayoptions['attemptsmode'] = $attemptsmode;
+        $reporturlwithdisplayoptions = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions + $displayoptions);
 
         /// find out current groups mode
         $currentgroup = groups_get_activity_group($cm, true);
 
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$download) {
-                groups_print_activity_menu($cm, $reporturlwithoptions);
+                groups_print_activity_menu($cm, $reporturlwithdisplayoptions->out());
             }
         }
 
@@ -137,7 +152,7 @@ class quiz_report extends quiz_default_report {
 
             $table->define_columns($tablecolumns);
             $table->define_headers($tableheaders);
-            $table->define_baseurl($reporturlwithoptions);
+            $table->define_baseurl($reporturlwithdisplayoptions->out());
 
             $table->sortable(true);
             $table->collapsible(true);
@@ -287,7 +302,7 @@ class quiz_report extends quiz_default_report {
 
         // Get users with quiz attempt capability 'students'.
         // don't need to do this expensive call if we are listing all attempts though.
-        if ( $noattempts != 3 ) { 
+        if ( $attemptsmode != 3 ) { 
             if (empty($currentgroup)) {
                 // all users who can attempt quizzes
                 $allowed = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)));
@@ -307,7 +322,7 @@ class quiz_report extends quiz_default_report {
         $from = 'FROM '.$CFG->prefix.'user u ';
         $from .= 'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON qa.userid = u.id AND qa.quiz = '.$quiz->id;
 
-        if ( $noattempts == 3 ) { // Show all attempts, including students who are no longer in the course
+        if ( $attemptsmode == 3 ) { // Show all attempts, including students who are no longer in the course
 
             $where = ' WHERE qa.id IS NOT NULL';
             // Comment out the following line to include preview attempts in the 'show all attempts' filter
@@ -316,9 +331,9 @@ class quiz_report extends quiz_default_report {
 
             $where = ' WHERE u.id IN (' .$allowed. ') AND (qa.preview = 0 OR qa.preview IS NULL)';
 
-            if ( empty( $noattempts )) { // Show only students with attempts
+            if ( empty( $attemptsmode )) { // Show only students with attempts
                 $where .= ' AND qa.id IS NOT NULL';
-            } else if ( $noattempts == 1 ) {  // Show only students without attempts
+            } else if ( $attemptsmode == 1 ) {  // Show only students without attempts
                $where .= ' AND qa.id IS NULL';
             }
         }
@@ -399,14 +414,16 @@ class quiz_report extends quiz_default_report {
             $table->initialbars($totalinitials>20);
         }
 
-        if(!empty($attempts) || !empty($noattempts)) {
+        if(!empty($attempts) || !empty($attemptsmode)) {
             if ($attempts) {
                 if($detailedmarks) {
                     //get all the attempt ids we want to display on this page
                     //or to export for download.
                     $attemptids = array();
                     foreach ($attempts as $attempt){
-                        $attemptids[] = $attempt->attemptuniqueid;
+                        if ($attempt->attemptuniqueid > 0){
+                            $attemptids[] = $attempt->attemptuniqueid;
+                        }
                     }
                     $gradedstatesbyattempt = quiz_get_newgraded_states($attemptids);
                 }
@@ -522,10 +539,11 @@ class quiz_report extends quiz_default_report {
             if (!$download) {
                 // Start form
                 echo '<div id="tablecontainer">';
-                echo '<form id="attemptsform" method="post" action="' . $reporturlwithoptions .
+                echo '<form id="attemptsform" method="post" action="' . $reporturlwithdisplayoptions->out(true) .
                         '" onsubmit="var menu = document.getElementById(\'menuaction\'); ' .
                         'return (menu.options[menu.selectedIndex].value == \'delete\' ? confirm(\''.
                         $strreallydel.'\') : true);">';
+                echo $reporturlwithdisplayoptions->hidden_params_out();
                 echo '<div>';
 
                 // Print table
@@ -557,24 +575,17 @@ document.getElementById("noscriptmenuaction").style.display = "none";
 
                 if (!empty($attempts)) {
                     echo '<table class="boxaligncenter"><tr>';
-                    $options = array();
-                    $options["id"] = $cm->id;
-                    $options["q"] = $quiz->id;
-                    $options['sesskey'] = sesskey();
-                    $options["noheader"] = "yes";
-                    $options['noattempts'] = $noattempts;
-                    $options['detailedmarks'] = $detailedmarks;
                     echo '<td>';
-                    $options["download"] = "ODS";
-                    print_single_button($reporturl, $options, get_string("downloadods"));
+                    print_single_button($reporturl->out(true), $pageoptions + $displayoptions + array('download' => 'ODS'),
+                                         get_string('downloadods'));
                     echo "</td>\n";
                     echo '<td>';
-                    $options["download"] = "Excel";
-                    print_single_button($reporturl, $options, get_string("downloadexcel"));
+                    print_single_button($reporturl->out(true), $pageoptions + $displayoptions + array('download' => 'Excel'),
+                                         get_string('downloadexcel'));
                     echo "</td>\n";
                     echo '<td>';
-                    $options["download"] = "CSV";
-                    print_single_button($reporturl, $options, get_string("downloadtext"));
+                    print_single_button($reporturl->out(true), $pageoptions + $displayoptions + array('download' => 'CSV'),
+                                         get_string('downloadtext'));
                     echo "</td>\n";
                     echo "<td>";
                     helpbutton('overviewdownload', get_string('overviewdownload', 'quiz_overview'), 'quiz');
@@ -593,44 +604,11 @@ document.getElementById("noscriptmenuaction").style.display = "none";
                 $table->print_html();
             }
         }
-        // Print display options
-        echo '<div class="controls">';
-        echo '<form id="options" action="' . $reporturl . '" method="get">';
-        echo '<div>';
-        echo '<p>'.get_string('displayoptions', 'quiz').': </p>';
-        echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
-        echo '<input type="hidden" name="q" value="'.$quiz->id.'" />';
-        echo '<input type="hidden" name="noattempts" value="0" />';
-        echo '<input type="hidden" name="detailedmarks" value="0" />';
-        echo '<table id="overview-options" class="boxaligncenter">';
-        echo '<tr align="left">';
-        echo '<td><label for="pagesize">'.get_string('pagesize', 'quiz').'</label></td>';
-        echo '<td><input type="text" id="pagesize" name="pagesize" size="3" value="'.$pagesize.'" /></td>';
-        echo '</tr>';
-        echo '<tr align="left">';
-        echo '<td colspan="2">';
-        $options = array(0 => get_string('attemptsonly','quiz_overview', $course->students));
-        if ($course->id != SITEID) {
-            $options[1] = get_string('noattemptsonly', 'quiz_overview', $course->students);
-            $options[2] = get_string('allstudents','quiz_overview', $course->students);
-            $options[3] = get_string('allattempts','quiz_overview');
+        if (!$download) {
+            // Print display options
+            $mform->set_data($displayoptions +compact('detailedmarks', 'pagesize'));
+            $mform->display();
         }
-        choose_from_menu($options,'noattempts',$noattempts,'');
-        echo '</td></tr>';
-        echo '<tr align="left">';
-        echo '<td colspan="2">';
-        echo '<input type="checkbox" id="checkdetailedmarks" name="detailedmarks" '.
-                ($detailedmarks?'checked="checked" ':'').'value="1" /> ';
-        echo '<label for="checkdetailedmarks">'.get_string('showdetailedmarks', 'quiz').'</label> ';
-        echo '</td></tr>';
-        echo '<tr><td colspan="2" align="center">';
-        echo '<input type="submit" value="'.get_string('go').'" />';
-        echo '</td></tr></table>';
-        echo '</div>';
-        echo '</form>';
-        echo '</div>';
-        echo "\n";
-
         return true;
     }
 }
