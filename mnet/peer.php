@@ -51,7 +51,7 @@ class mnet_peer {
 
             // TODO: In reality, this will be prohibitively slow... need another
             // default - maybe blank string
-            $homepage = download_file_content($wwwroot);
+            $homepage = file_get_contents($wwwroot);
             if (!empty($homepage)) {
                 $count = preg_match("@<title>(.*)</title>@siU", $homepage, $matches);
                 if ($count > 0) {
