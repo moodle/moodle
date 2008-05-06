@@ -847,73 +847,7 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 }
 
 
-/**
- * A big combination function to make it easier for modules
- * to set up groups.
- *
- * Terminates if the current user shouldn't be looking at this group
- * Otherwise returns the current group if there is one
- * Otherwise returns false if groups aren't relevant
- *
- * @uses SEPARATEGROUPS
- * @uses VISIBLEGROUPS
- * @param course $course A {@link $COURSE} object
- * @param int $groupmode Either NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
- * @param string $urlroot ?
- * @return int|false
- */
-function setup_and_print_groups($course, $groupmode, $urlroot) {
 
-    global $USER, $SESSION; //needs his id, need to hack his groups in session
-
-    $changegroup = optional_param('group', -1, PARAM_INT);
-
-    $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-    if ($currentgroup === false) {
-        return false;
-    }
-
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-
-    if ($groupmode == SEPARATEGROUPS and !$currentgroup and !has_capability('moodle/site:accessallgroups', $context)) {
-        //we are in separate groups and the current group is group 0, as last set.
-        //this can mean that either, this guy has no group
-        //or, this guy just came from a visible all forum, and he left when he set his current group to 0 (show all)
-
-        if ($usergroups = groups_get_all_groups($course->id, $USER->id)){
-            //for the second situation, we need to perform the trick and get him a group.
-            $first = reset($usergroups);
-            $currentgroup = get_and_set_current_group($course, $groupmode, $first->id);
-
-        } else {
-            //else he has no group in this course
-            print_heading(get_string('notingroup'));
-            print_footer($course);
-            exit;
-        }
-    }
-
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', $context))) {
-
-        if ($groups = groups_get_all_groups($course->id)) {
-
-            echo '<div class="groupselector">';
-            print_group_menu($groups, $groupmode, $currentgroup, $urlroot, 1);
-            echo '</div>';
-        }
-
-    } else if ($groupmode == SEPARATEGROUPS and has_capability('moodle/course:view', $context)) {
-        //get all the groups this guy is in in this course
-        if ($usergroups = groups_get_all_groups($course->id, $USER->id)){
-            echo '<div class="groupselector">';
-            //print them in the menu
-            print_group_menu($usergroups, $groupmode, $currentgroup, $urlroot, 0);
-            echo '</div>';
-        }
-    }
-
-    return $currentgroup;
-}
 
 /**
  * Prints an appropriate group selection menu
