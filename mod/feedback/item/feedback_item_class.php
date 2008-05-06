@@ -91,4 +91,13 @@ class feedback_item_base {
         return 0;
     }
 }
+
+//a dummy class to realize pagebreaks
+class feedback_item_pagebreak extends feedback_item_base {
+    var $type = "pagebreak";
+    function init() {
+    
+    }
+}
+
 ?>
