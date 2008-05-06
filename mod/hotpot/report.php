@@ -604,34 +604,7 @@ function hotpot_get_report_names($names='') {
 
     return $reports;
 }
-function hotpot_get_report_users($course, $formdata) {
-    $users = array();
 
-    /// Check to see if groups are being used in this module
-    $groupmode = groupmode($course, $cm); //TODO: there is no $cm defined!
-    $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&mode=simple");
-
-    $sort = "u.lastname ASC";
-
-    switch ($formdata['reportusers']) {
-        case 'students':
-            if ($currentgroup) {
-                $users = get_group_students($currentgroup, $sort);
-            } else {
-                $users = get_course_students($course->id, $sort);
-            }
-            break;
-        case 'all':
-            if ($currentgroup) {
-                $users = get_group_users($currentgroup, $sort);
-            } else {
-                $users = get_course_users($course->id, $sort);
-            }
-            break;
-    }
-
-    return $users;
-}
 function hotpot_get_records_groupby($function, $fieldnames, $table, $select, $groupby) {
     // $function is an SQL aggregate function (MAX or MIN)
 
