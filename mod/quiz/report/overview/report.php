@@ -607,16 +607,17 @@ document.getElementById("noscriptmenuaction").style.display = "none";
                     echo "</td>\n";
                     echo '</tr></table>';
                 }
-            } else if ($download == 'Excel' or $download == 'ODS') {
-                $workbook->close();
-                exit;
-            } else if ($download == 'CSV') {
-                exit;
             }
         } else {
             if (!$download) {
                 $table->print_html();
             }
+        }
+        if ($download == 'Excel' or $download == 'ODS') {
+            $workbook->close();
+            exit;
+        } else if ($download == 'CSV') {
+            exit;
         }
         if (!$download) {
             // Print display options
