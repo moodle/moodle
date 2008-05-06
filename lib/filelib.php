@@ -79,19 +79,24 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
         }
     }
 
+    // check if proxy (if used) should be bypassed for this url 
+    $proxybypass = is_proxybypass( $url );
 
     if (!extension_loaded('curl') or ($ch = curl_init($url)) === false) {
         require_once($CFG->libdir.'/snoopy/Snoopy.class.inc');
         $snoopy = new Snoopy();
         $snoopy->read_timeout = $timeout;
         $snoopy->_fp_timeout  = $connecttimeout;
-        $snoopy->proxy_host   = $CFG->proxyhost;
-        $snoopy->proxy_port   = $CFG->proxyport;
-        if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
-            // this will probably fail, but let's try it anyway
-            $snoopy->proxy_user     = $CFG->proxyuser;
-            $snoopy->proxy_password = $CFG->proxypassword;
+        if (!$proxybypass) {
+            $snoopy->proxy_host   = $CFG->proxyhost;
+            $snoopy->proxy_port   = $CFG->proxyport;
+            if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
+                // this will probably fail, but let's try it anyway
+                $snoopy->proxy_user     = $CFG->proxyuser;
+                $snoopy->proxy_password = $CFG->proxypassword;
+            }
         }
+
         if (is_array($headers) ) {
             $client->rawheaders = $headers;
         }
@@ -173,7 +178,7 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
         curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
     }
 
-    if (!empty($CFG->proxyhost)) {
+    if (!empty($CFG->proxyhost) and !$proxybypass) {
         // SOCKS supported in PHP5 only
         if (!empty($CFG->proxytype) and ($CFG->proxytype == 'SOCKS5')) {
             if (defined('CURLPROXY_SOCKS5')) {

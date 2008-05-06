@@ -7893,6 +7893,52 @@ function setup_lang_from_browser() {
     return;
 }
 
+/**
+ * check if $url matches anything in proxybypass list
+ * @note any errors just result in the proxy being used (least bad)
+ * @param string $url - url to check
+ * @return boolean - true if we should bypass the proxy
+ */
+function is_proxybypass( $url ) {
+    global $CFG;
+
+    // sanity check
+    if (empty($CFG->proxyhost) or empty($CFG->proxybypass)) {
+        return false;
+    }
+
+    // get the host part out of the url
+    if (!$host = parse_url( $url, PHP_URL_HOST )) {
+        return false;
+    }
+
+    // get the possible bypass hosts into an array
+    $matches = explode( ',', $CFG->proxybypass );
+
+    // check for a match
+    // (IPs need to match the left hand side and hosts the right of the url,
+    // but we can recklessly check both as there can't be a false +ve)
+    $bypass = false;
+    foreach ($matches as $match) {
+        $match = trim($match);
+
+        // try for IP match (Left side)
+        $lhs = substr($host,0,strlen($match));
+        if (strcasecmp($match,$lhs)==0) {
+            return true;
+        }
+
+        // try for host match (Right side)
+        $rhs = substr($host,-strlen($match)); 
+        if (strcasecmp($match,$rhs)==0) {
+            return true;
+        }     
+    }
+
+    // nothing matched.
+    return false; 
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

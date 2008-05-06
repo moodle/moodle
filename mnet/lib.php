@@ -71,7 +71,7 @@ function mnet_get_public_key($uri, $application=null) {
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
     // check for proxy
-    if (!empty($CFG->proxyhost)) {
+    if (!empty($CFG->proxyhost) and !is_proxybypass($uri)) {
         // SOCKS supported in PHP5 only
         if (!empty($CFG->proxytype) and ($CFG->proxytype == 'SOCKS5')) {
             if (defined('CURLPROXY_SOCKS5')) {
