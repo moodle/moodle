@@ -1,5 +1,10 @@
 <?php
 define('QUIZ_REPORT_DEFAULT_PAGE_SIZE', 30);
+
+define('QUIZ_REPORT_ATTEMPTS_ALL', 0);
+define('QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO', 1);
+define('QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH', 2);
+define('QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS', 3);
 /**
  * Get newest graded state or newest state for a number of attempts. Pass in the 
  * uniqueid field from quiz_attempt table not the id. Use question_state_is_graded
@@ -67,5 +72,34 @@ function quiz_report_load_questions($quiz){
         }
     }
     return $realquestions;
+}
+/**
+ * Given the quiz grading method return sub select sql to find the id of the
+ * one attempt that will be graded for each user. Or return 
+ * empty string if all attempts contribute to final grade.
+ */
+function quiz_report_qm_filter_subselect($quizgrademethod){
+    global $CFG;
+    $qmfilterattempts = true;
+    switch ($quizgrademethod) {
+    case QUIZ_GRADEHIGHEST :
+        $qmorderby = 'sumgrades DESC, timestart ASC';
+        break;
+    case QUIZ_GRADEAVERAGE :
+        $qmfilterattempts = false;
+        break;
+    case QUIZ_ATTEMPTFIRST :
+        $qmorderby = 'timestart ASC';
+        break;
+    case QUIZ_ATTEMPTLAST :
+        $qmorderby = 'timestart DESC';
+        break;
+    }
+    if ($qmfilterattempts){
+        $qmsubselect = "(SELECT id FROM {$CFG->prefix}quiz_attempts WHERE u.id = userid ORDER BY $qmorderby LIMIT 1)=qa.id";
+    } else {
+        $qmsubselect = '';
+    }
+    return $qmsubselect;
 }
 ?>

@@ -74,15 +74,25 @@ class quiz_report extends quiz_default_report {
         $pageoptions['mode'] = 'overview';
 
         $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
-        $mform = new mod_quiz_report_overview_settings($reporturl);
+        $qmsubselect = quiz_report_qm_filter_subselect($quiz->grademethod);
+        $mform = new mod_quiz_report_overview_settings($reporturl, compact('qmsubselect'));
         if ($fromform = $mform->get_data()){
             $attemptsmode = $fromform->attemptsmode;
+            if ($qmsubselect){
+                //control is not on the form if
+                //the grading method is not set 
+                //to grade one attempt per user eg. for average attempt grade.
+                $qmfilter = $fromform->qmfilter;
+            } else {
+                $qmfilter = 0;
+            }
             set_user_preference('quiz_report_overview_detailedmarks', $fromform->detailedmarks);
             set_user_preference('quiz_report_pagesize', $fromform->pagesize);
             $detailedmarks = $fromform->detailedmarks;
             $pagesize = $fromform->pagesize;
         } else {
-            $attemptsmode = optional_param('attemptsmode', 0, PARAM_INT);
+            $qmfilter = optional_param('qmfilter', 0, PARAM_INT);
+            $attemptsmode = optional_param('attemptsmode', QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH, PARAM_INT);
             $detailedmarks = get_user_preferences('quiz_report_overview_detailedmarks', 1);
             $pagesize = get_user_preferences('quiz_report_pagesize', 0);
         }
@@ -92,6 +102,7 @@ class quiz_report extends quiz_default_report {
 
         $displayoptions = array();
         $displayoptions['attemptsmode'] = $attemptsmode;
+        $displayoptions['qmfilter'] = $qmfilter;
         $reporturlwithdisplayoptions = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions + $displayoptions);
 
         /// find out current groups mode
@@ -302,7 +313,7 @@ class quiz_report extends quiz_default_report {
 
         // Get users with quiz attempt capability 'students'.
         // don't need to do this expensive call if we are listing all attempts though.
-        if ( $attemptsmode != 3 ) { 
+        if ( $attemptsmode != QUIZ_REPORT_ATTEMPTS_ALL ) { 
             if (empty($currentgroup)) {
                 // all users who can attempt quizzes
                 $allowed = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)));
@@ -315,27 +326,33 @@ class quiz_report extends quiz_default_report {
 
         // Construct the SQL
         $select = 'SELECT '.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
+            ($qmsubselect?$qmsubselect.' AS gradedattempt, ':'').
             'qa.uniqueid AS attemptuniqueid, qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
             'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
 
         // This part is the same for all cases - join users and quiz_attempts tables
         $from = 'FROM '.$CFG->prefix.'user u ';
         $from .= 'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON qa.userid = u.id AND qa.quiz = '.$quiz->id;
-
-        if ( $attemptsmode == 3 ) { // Show all attempts, including students who are no longer in the course
-
-            $where = ' WHERE qa.id IS NOT NULL';
-            // Comment out the following line to include preview attempts in the 'show all attempts' filter
-            $where .= ' AND qa.preview = 0';
-        } else {  // All non-admin users with quiz attempt capabilites - e.g. students
-
-            $where = ' WHERE u.id IN (' .$allowed. ') AND (qa.preview = 0 OR qa.preview IS NULL)';
-
-            if ( empty( $attemptsmode )) { // Show only students with attempts
-                $where .= ' AND qa.id IS NOT NULL';
-            } else if ( $attemptsmode == 1 ) {  // Show only students without attempts
-               $where .= ' AND qa.id IS NULL';
-            }
+        if ($qmsubselect && $qmfilter){
+            $from .= ' AND '.$qmsubselect;
+        }
+        switch ($attemptsmode){
+            case QUIZ_REPORT_ATTEMPTS_ALL:
+                // Show all attempts, including students who are no longer in the course
+                $where = ' WHERE qa.id IS NOT NULL AND qa.preview = 0';
+                break;
+            case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
+                // Show only students with attempts
+                $where = ' WHERE u.id IN (' .$allowed. ') AND qa.preview = 0 AND qa.id IS NOT NULL';
+                break;
+            case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
+                // Show only students without attempts
+                $where = ' WHERE u.id IN (' .$allowed. ') AND qa.id IS NULL';
+                break;
+            case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
+                // Show all students with or without attempts
+                $where = ' WHERE u.id IN (' .$allowed. ') AND (qa.preview = 0 OR qa.preview IS NULL)';
+                break;
         }
 
         $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
@@ -414,126 +431,123 @@ class quiz_report extends quiz_default_report {
             $table->initialbars($totalinitials>20);
         }
 
-        if(!empty($attempts) || !empty($attemptsmode)) {
-            if ($attempts) {
-                if($detailedmarks) {
-                    //get all the attempt ids we want to display on this page
-                    //or to export for download.
-                    $attemptids = array();
-                    foreach ($attempts as $attempt){
-                        if ($attempt->attemptuniqueid > 0){
-                            $attemptids[] = $attempt->attemptuniqueid;
-                        }
-                    }
-                    $gradedstatesbyattempt = quiz_get_newgraded_states($attemptids);
+        if ($attempts) {
+            if($detailedmarks) {
+                //get all the attempt ids we want to display on this page
+                //or to export for download.
+                $attemptids = array();
+                foreach ($attempts as $attempt){
+                    if ($attempt->attemptuniqueid > 0){
+                        $attemptids[] = $attempt->attemptuniqueid;
+                     }
                 }
-                foreach ($attempts as $attempt) {
-                    $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
+                $gradedstatesbyattempt = quiz_get_newgraded_states($attemptids);
+            }
+            foreach ($attempts as $attempt) {
+                $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
 
-                    $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.
-                            '&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
+                $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.
+                        '&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
+                // Username columns.
+                $row = array();
+                if (!$download) {
+                    if (!empty($attemptactions)) {
+                        $row[] = '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />';
+                    }
+                    $row[] = $picture;
+                    $row[] = $userlink;
+                } else {
+                    $row[] = fullname($attempt);
+                }
 
-                    // Username columns.
-                    $row = array();
+                // Timing columns.
+                if ($attempt->attempt) {
+                    $startdate = userdate($attempt->timestart, $strtimeformat);
                     if (!$download) {
-                        if (!empty($attemptactions)) {
-                            $row[] = '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />';
-                        }
-                        $row[] = $picture;
-                        $row[] = $userlink;
+                        $row[] = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$startdate.'</a>';
                     } else {
-                        $row[] = fullname($attempt);
+                        $row[] = $startdate;
                     }
-
-                    // Timing columns.
-                    if ($attempt->attempt) {
-                        $startdate = userdate($attempt->timestart, $strtimeformat);
+                    if ($attempt->timefinish) {
+                        $timefinish = userdate($attempt->timefinish, $strtimeformat);
+                        $duration = format_time($attempt->duration);
                         if (!$download) {
-                            $row[] = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$startdate.'</a>';
+                            $row[] = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$timefinish.'</a>';
                         } else {
-                            $row[] = $startdate;
+                            $row[] = $timefinish;
                         }
-                        if ($attempt->timefinish) {
-                            $timefinish = userdate($attempt->timefinish, $strtimeformat);
-                            $duration = format_time($attempt->duration);
-                            if (!$download) {
-                                $row[] = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$timefinish.'</a>';
-                            } else {
-                                $row[] = $timefinish;
-                            }
-                            $row[] = $duration;
+                        $row[] = $duration;
+                    } else {
+                        $row[] = '-';
+                        $row[] = get_string('unfinished', 'quiz');
+                    }
+                } else {
+                    $row[] = '-';
+                    $row[] = '-';
+                    $row[] = '-';
+                }
+
+                // Grades columns.
+                if ($showgrades) {
+                    if ($attempt->timefinish) {
+                        $grade = quiz_rescale_grade($attempt->sumgrades, $quiz);
+                        if (!$download) {
+                            $row[] = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$grade.'</a>';
                         } else {
-                            $row[] = '-';
-                            $row[] = get_string('unfinished', 'quiz');
+                            $row[] = $grade;
                         }
                     } else {
                         $row[] = '-';
-                        $row[] = '-';
-                        $row[] = '-';
                     }
+                }
 
-                    // Grades columns.
-                    if ($showgrades) {
-                        if ($attempt->timefinish) {
-                            $grade = quiz_rescale_grade($attempt->sumgrades, $quiz);
+                if($detailedmarks) {
+                    //get the detailled grade data for this attempt
+                    if(empty($attempt->attempt)) {
+                        foreach($questions as $question) {
+                            $row[] = '-';
+                        }
+                    } else {
+                        foreach($questions as $questionid => $question) {
+                            $stateforqinattempt = $gradedstatesbyattempt[$attempt->attemptuniqueid][$questionid];
+                            if (question_state_is_graded($stateforqinattempt)) {
+                                $grade = quiz_rescale_grade($stateforqinattempt->grade, $quiz);
+                                $grade = $grade;
+                            } else {
+                                $grade = '--';
+                            }
                             if (!$download) {
-                                $row[] = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$grade.'</a>';
+                                $grade = $grade.'/'.quiz_rescale_grade($question->grade, $quiz);
+                                $row[] = link_to_popup_window('/mod/quiz/reviewquestion.php?state='.
+                                        $stateforqinattempt->id.'&amp;number='.$question->number,
+                                        'reviewquestion', $grade, 450, 650, $strreviewquestion, 'none', true);
                             } else {
                                 $row[] = $grade;
                             }
-                        } else {
-                            $row[] = '-';
                         }
                     }
+                }
 
-                    if($detailedmarks) {
-                        //get the detailled grade data for this attempt
-                        if(empty($attempt->attempt)) {
-                            foreach($questions as $question) {
-                                $row[] = '-';
-                            }
-                        } else {
-                            foreach($questions as $questionid => $question) {
-                                $stateforqinattempt = $gradedstatesbyattempt[$attempt->attemptuniqueid][$questionid];
-                                if (question_state_is_graded($stateforqinattempt)) {
-                                    $grade = quiz_rescale_grade($stateforqinattempt->grade, $quiz);
-                                    $grade = $grade;
-                                } else {
-                                    $grade = '--';
-                                }
-                                if (!$download) {
-                                    $grade = $grade.'/'.quiz_rescale_grade($question->grade, $quiz);
-                                    $row[] = link_to_popup_window('/mod/quiz/reviewquestion.php?state='.
-                                            $stateforqinattempt->id.'&amp;number='.$question->number,
-                                            'reviewquestion', $grade, 450, 650, $strreviewquestion, 'none', true);
-                                } else {
-                                    $row[] = $grade;
-                                }
-                            }
-                        }
+                // Feedback column.
+                if ($hasfeedback) {
+                    if ($attempt->timefinish) {
+                        $row[] = format_text($attempt->feedbacktext, FORMAT_MOODLE, $nocleanformatoptions);
+                    } else {
+                        $row[] = '-';
                     }
-
-                    // Feedback column.
-                    if ($hasfeedback) {
-                        if ($attempt->timefinish) {
-                            $row[] = format_text($attempt->feedbacktext, FORMAT_MOODLE, $nocleanformatoptions);
-                        } else {
-                            $row[] = '-';
-                        }
+                }
+                if (!$download) {
+                    $table->add_data($row);
+                } else if ($download == 'Excel' or $download == 'ODS') {
+                    $colnum = 0;
+                    foreach($row as $item){
+                        $myxls->write($rownum,$colnum,$item,$format);
+                        $colnum++;
                     }
-                    if (!$download) {
-                        $table->add_data($row);
-                    } else if ($download == 'Excel' or $download == 'ODS') {
-                        $colnum = 0;
-                        foreach($row as $item){
-                            $myxls->write($rownum,$colnum,$item,$format);
-                            $colnum++;
-                        }
-                        $rownum++;
-                    } else if ($download=='CSV') {
-                        $text = implode("\t", $row);
-                        echo $text." \n";
-                    }
+                    $rownum++;
+                } else if ($download=='CSV') {
+                    $text = implode("\t", $row);
+                    echo $text." \n";
                 }
             }
             if (!$download) {
@@ -545,10 +559,10 @@ class quiz_report extends quiz_default_report {
                         $strreallydel.'\') : true);">';
                 echo $reporturlwithdisplayoptions->hidden_params_out();
                 echo '<div>';
-
+    
                 // Print table
                 $table->print_html();
-
+    
                 // Print "Select all" etc.
                 if (!empty($attempts) && !empty($attemptactions)) {
                     echo '<table id="commands">';
@@ -572,7 +586,7 @@ document.getElementById("noscriptmenuaction").style.display = "none";
                 // Close form
                 echo '</div>';
                 echo '</form></div>';
-
+    
                 if (!empty($attempts)) {
                     echo '<table class="boxaligncenter"><tr>';
                     echo '<td>';
@@ -592,17 +606,17 @@ document.getElementById("noscriptmenuaction").style.display = "none";
                     echo "</td>\n";
                     echo '</tr></table>';
                 }
-            } else if ($download == 'Excel' or $download == 'ODS') {
-                $workbook->close();
-                exit;
-            } else if ($download == 'CSV') {
-                exit;
-            }
-
+            } 
         } else {
             if (!$download) {
                 $table->print_html();
             }
+        }
+        if ($download == 'Excel' or $download == 'ODS') {
+                $workbook->close();
+                exit;
+            } else if ($download == 'CSV') {
+                exit;
         }
         if (!$download) {
             // Print display options

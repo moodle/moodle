@@ -8,21 +8,25 @@ class mod_quiz_report_overview_settings extends moodleform {
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('preferencespage', 'quiz_overview'));
 
-        $options = array(0 => get_string('attemptsonly','quiz_overview', $COURSE->students));
+        $options = array();
+        $options[QUIZ_REPORT_ATTEMPTS_ALL] = get_string('optallattempts','quiz_overview');
         if ($COURSE->id != SITEID) {
-            $options[1] = get_string('noattemptsonly', 'quiz_overview', $COURSE->students);
-            $options[2] = get_string('allstudents','quiz_overview', $COURSE->students);
-            $options[3] = get_string('allattempts','quiz_overview');
+            $options[QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS] = get_string('optallstudents','quiz_overview', $COURSE->students);
+            $options[QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH] =
+                     get_string('optattemptsonly','quiz_overview', $COURSE->students);
+            $options[QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO] = get_string('optnoattemptsonly', 'quiz_overview', $COURSE->students);
         }
         $mform->addElement('select', 'attemptsmode', get_string('show', 'quiz_overview'), $options);
-
+        if ($this->_customdata['qmsubselect']){
+            $mform->addElement('advcheckbox', 'qmfilter', get_string('show', 'quiz_overview'), get_string('optonlygradedattempts', 'quiz_overview'), array(0,1));
+        }
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('preferencesuser', 'quiz_overview'));
 
-        $mform->addElement('text', 'pagesize', get_string('pagesize', 'quiz'));
+        $mform->addElement('text', 'pagesize', get_string('pagesize', 'quiz_overview'));
         $mform->setType('pagesize', PARAM_INT);
 
-        $mform->addElement('selectyesno', 'detailedmarks', get_string('showdetailedmarks', 'quiz'));
+        $mform->addElement('selectyesno', 'detailedmarks', get_string('showdetailedmarks', 'quiz_overview'));
 
         $this->add_action_buttons(false, get_string('preferencessave', 'quiz_overview'));
     }
