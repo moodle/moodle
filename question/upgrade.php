@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 /**
  * This file contains dtabase upgrade code that is called from lib/db/upgrade.php,
  * and also check methods that can be used for pre-install checks via
@@ -7,7 +7,7 @@
  * @copyright &copy; 2007 The Open University
  * @author T.J.Hunt@open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package package_name
+ * @package questionbank
  */
 
 /**
