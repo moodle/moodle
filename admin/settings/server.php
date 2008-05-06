@@ -156,6 +156,7 @@ if (defined('CURLPROXY_SOCKS5')) {
 $temp->add(new admin_setting_configselect('proxytype', get_string('proxytype', 'admin'), get_string('configproxytype','admin'), 'HTTP', $options));
 $temp->add(new admin_setting_configtext('proxyuser', get_string('proxyuser', 'admin'), get_string('configproxyuser', 'admin'), ''));
 $temp->add(new admin_setting_configpasswordunmask('proxypassword', get_string('proxypassword', 'admin'), get_string('configproxypassword', 'admin'), ''));
+$temp->add(new admin_setting_configtext('proxybypass', get_string('proxybypass', 'admin'), get_string('configproxybypass', 'admin'), 'localhost, 127.0.0.1'));
 $ADMIN->add('server', $temp);
 
 $ADMIN->add('server', new admin_externalpage('maintenancemode', get_string('sitemaintenancemode', 'admin'), "$CFG->wwwroot/$CFG->admin/maintenance.php"));
