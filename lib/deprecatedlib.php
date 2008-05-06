@@ -784,67 +784,7 @@ function get_current_group($courseid, $full = false) {
 }
 
 
-/**
- * A combination function to make it easier for modules
- * to set up groups.
- *
- * It will use a given "groupid" parameter and try to use
- * that to reset the current group for the user.
- *
- * @uses VISIBLEGROUPS
- * @param course $course A {@link $COURSE} object
- * @param int $groupmode Either NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
- * @param int $groupid Will try to use this optional parameter to
- *            reset the current group for the user
- * @return int|false Returns the current group id or false if error.
- */
-function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 
-    // Sets to the specified group, provided the current user has view permission
-    if (!$groupmode) {   // Groups don't even apply
-        return false;
-    }
-
-    $currentgroupid = get_current_group($course->id);
-
-    if ($groupid < 0) {  // No change was specified
-        return $currentgroupid;
-    }
-
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    if ($groupid and $group = get_record('groups', 'id', $groupid)) {      // Try to change the current group to this groupid
-        if ($group->courseid == $course->id) {
-            if (has_capability('moodle/site:accessallgroups', $context)) {  // Sets current default group
-                $currentgroupid = set_current_group($course->id, $groupid);
-
-            } elseif ($groupmode == VISIBLEGROUPS) {
-                  // All groups are visible
-                //if (groups_is_member($group->id)){
-                    $currentgroupid = set_current_group($course->id, $groupid); //set this since he might post
-                /*)}else {
-                    $currentgroupid = $group->id;*/
-            } elseif ($groupmode == SEPARATEGROUPS) { // student in separate groups switching
-                if (groups_is_member($groupid)) { //check if is a member
-                    $currentgroupid = set_current_group($course->id, $groupid); //might need to set_current_group?
-                }
-                else {
-                    notify('You do not belong to this group! ('.$groupid.')', 'error');
-                }
-            }
-        }
-    } else { // When groupid = 0 it means show ALL groups
-        // this is changed, non editting teacher needs access to group 0 as well,
-        // for viewing work in visible groups (need to set current group for multiple pages)
-        if (has_capability('moodle/site:accessallgroups', $context)) { // Sets current default group
-            $currentgroupid = set_current_group($course->id, 0);
-
-        } else if ($groupmode == VISIBLEGROUPS) {  // All groups are visible
-            $currentgroupid = set_current_group($course->id, 0);
-        }
-    }
-
-    return $currentgroupid;
-}
 
 
 
