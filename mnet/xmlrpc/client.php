@@ -192,7 +192,7 @@ class mnet_xmlrpc_client {
         $this->rawresponse = curl_exec($ch);
         $timestamp_receive = time();
 
-        if ($this->rawresponse == false) {
+        if ($this->rawresponse === false) {
             $this->error[] = curl_errno($ch) .':'. curl_error($ch);
             return false;
         }
