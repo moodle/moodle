@@ -6151,7 +6151,7 @@ function ini_get_bool($ini_get_arg) {
  * used.  The current requirements are based on Tinymce's, which are available
  * on http://wiki.moxiecode.com/index.php/TinyMCE:Compatiblity
  *
- * @return bool true if html editor can be used, false otherwise
+ * @return mixed false if editor cannot be used, or a string representing the compatible browser
  */
 function can_use_html_editor() {
     global $USER, $CFG;
@@ -6161,6 +6161,10 @@ function can_use_html_editor() {
             return 'MSIE';
         } else if (check_browser_version('Gecko', 20030516)) {
             return 'Gecko';
+        } else if (check_browser_version('Safari', 3)) {
+            return 'Safari';
+        } else if (check_browser_version('Opera', 9)) {
+            return 'Opera';
         }
     }
     return false;
