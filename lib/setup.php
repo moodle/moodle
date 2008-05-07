@@ -155,6 +155,8 @@ global $HTTPSPAGEREQUIRED;
         echo '</td></tr></table>';
         echo '</body></html>';
 
+        error_log('ADODB Error: '.$db->ErrorMsg()); // see MDL-14628
+
         if (empty($CFG->noemailever) and !empty($CFG->emailconnectionerrorsto)) {
             mail($CFG->emailconnectionerrorsto, 
                  'WARNING: Database connection error: '.$CFG->wwwroot, 
