@@ -2944,6 +2944,13 @@ function xmldb_main_upgrade($oldversion=0) {
         set_field('grade_items', 'needsupdate', 1, 'needsupdate', 0);
     }
 
+    if ($result && $oldversion < 2007101510) {
+    /// Fix minor problem caused by MDL-5482.
+        require_once($CFG->dirroot . '/question/upgrade.php');
+        $result = $result && question_fix_random_question_parents();
+        upgrade_main_savepoint($result, 2007101510);
+    }
+
     return $result;
 }
 
