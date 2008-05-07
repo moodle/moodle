@@ -18,7 +18,7 @@
         $course = required_param('course', PARAM_INT);
 
         if (! $course = get_record("course", "id", $course)) {
-            print_error("This course doesn't exist");
+            print_error("invalidcourseid");
         }
 
         require_login($course);
@@ -26,13 +26,13 @@
         require_capability('moodle/course:manageactivities', $context);
 
         if (! $module = get_record("modules", "name", $add)) {
-            print_error("This module type doesn't exist");
+            print_error("moduledoesnotexist");
         }
 
         $cw = get_course_section($section, $course->id);
 
         if (!course_allowed_module($course, $module->id)) {
-            print_error("This module has been disabled for this particular course");
+            print_error("moduledisable");
         }
 
         $cm = null;
@@ -75,11 +75,11 @@
         $navlinksinstancename = '';
     } else if (!empty($update)) {
         if (! $cm = get_record("course_modules", "id", $update)) {
-            print_error("This course module doesn't exist");
+            print_error("cmunknown");
         }
 
         if (! $course = get_record("course", "id", $cm->course)) {
-            print_error("This course doesn't exist");
+            print_error("invalidcourseid");
         }
 
         require_login($course); // needed to setup proper $COURSE
@@ -87,15 +87,15 @@
         require_capability('moodle/course:manageactivities', $context);
 
         if (! $module = get_record("modules", "id", $cm->module)) {
-            print_error("This module doesn't exist");
+            print_error("moduledoesnotexist");
         }
 
         if (! $form = get_record($module->name, "id", $cm->instance)) {
-            print_error("The required instance of this module doesn't exist");
+            print_error("moduleinstancedoesnotexist");
         }
 
         if (! $cw = get_record("course_sections", "id", $cm->section)) {
-            print_error("This course section doesn't exist");
+            print_error("sectionnotexist");
         }
 
         $form->coursemodule     = $cm->id;
@@ -160,7 +160,7 @@
             $CFG->pagepath .= '/mod';
         }
     } else {
-        print_error('Invalid operation.');
+        print_error('invalidaction');
     }
 
     $modmoodleform = "$CFG->dirroot/mod/$module->name/mod_form.php";
@@ -168,14 +168,14 @@
         require_once($modmoodleform);
 
     } else {
-        print_error('No formslib form description file found for this activity.');
+        print_error('noformdesc');
     }
 
     $modlib = "$CFG->dirroot/mod/$module->name/lib.php";
     if (file_exists($modlib)) {
         include_once($modlib);
     } else {
-        print_error("This module is missing important code! ($modlib)");
+        print_error("modulemissingcode", '', '', $modlib);
     }
 
     $mformclassname = 'mod_'.$module->name.'_mod_form';
@@ -192,17 +192,17 @@
         if (empty($fromform->coursemodule)) { //add
             $cm = null;
             if (! $course = get_record("course", "id", $fromform->course)) {
-                print_error("This course doesn't exist");
+                print_error("invalidcourseid");
             }
             $fromform->instance = '';
             $fromform->coursemodule = '';
         } else { //update
             if (! $cm = get_record("course_modules", "id", $fromform->coursemodule)) {
-                print_error("This course module doesn't exist");
+                print_error("cmunknown");
             }
 
             if (! $course = get_record("course", "id", $cm->course)) {
-                print_error("This course doesn't exist");
+                print_error("invalidcourseid");
             }
             $fromform->instance = $cm->instance;
             $fromform->coursemodule = $cm->id;
@@ -243,7 +243,7 @@
 
             $returnfromfunc = $updateinstancefunction($fromform);
             if (!$returnfromfunc) {
-                print_error("Could not update the $fromform->modulename", '', "view.php?id=$course->id");
+                print_error('cannotupdatemod', '', 'view.php?id=$course->id', $fromform->modulename);
             }
             if (is_string($returnfromfunc)) {
                 print_error($returnfromfunc, '', "view.php?id=$course->id");
@@ -273,12 +273,12 @@
             }
 
             if (!course_allowed_module($course,$fromform->modulename)) {
-                print_error("This module ($fromform->modulename) has been disabled for this particular course");
+                print_error('moduledisable', '', '', $fromform->modulename);
             }
 
             $returnfromfunc = $addinstancefunction($fromform);
             if (!$returnfromfunc) {
-                print_error("Could not add a new instance of $fromform->modulename", '', "view.php?id=$course->id");
+                print_error("cannotaddnewmodule", '', "view.php?id=$course->id", $fromform->modulename);
             }
             if (is_string($returnfromfunc)) {
                 print_error($returnfromfunc, '', "view.php?id=$course->id");
@@ -290,14 +290,14 @@
             // to each other, so we have to update one of them twice.
 
             if (! $fromform->coursemodule = add_course_module($fromform) ) {
-                print_error("Could not add a new course module");
+                print_error("cannotaddcoursemodule");
             }
             if (! $sectionid = add_mod_to_section($fromform) ) {
-                print_error("Could not add the new course module to that section");
+                print_error("cannotaddcmtosection");
             }
 
             if (! set_field("course_modules", "section", $sectionid, "id", $fromform->coursemodule)) {
-                print_error("Could not update the course module with the correct section");
+                print_error("cannotupdatecm");
             }
 
             // make sure visibility is set correctly (in particular in calendar)
@@ -315,7 +315,7 @@
                        "view.php?id=$fromform->coursemodule",
                        "$fromform->instance", $fromform->coursemodule);
         } else {
-            print_error("Data submitted is invalid.");
+            print_error("invaliddata");
         }
 
         // sync idnumber with grade_item

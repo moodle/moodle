@@ -1184,7 +1184,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
         }
         asort($modnames, SORT_LOCALE_STRING);
     } else {
-        print_error("No modules are installed!");
+        print_error("nomodules", 'debug');
     }
 
     if ($rawmods = get_course_mods($courseid)) {
@@ -1948,7 +1948,7 @@ function print_my_moodle() {
     global $USER, $CFG;
 
     if (empty($USER->id)) {
-        print_error("It shouldn't be possible to see My Moodle without being logged in.");
+        print_error('nopermissions', '', '', 'See My Moodle');
     }
 
     $courses  = get_my_courses($USER->id, 'visible DESC,sortorder ASC', array('summary'));
@@ -2539,7 +2539,7 @@ function course_in_meta ($course) {
  */
 function print_standard_coursemodule_settings($form, $features=null) {
     if (! $course = get_record('course', 'id', $form->course)) {
-        print_error("This course doesn't exist");
+        print_error("invalidcourseid");
     }
     print_groupmode_setting($form, $course);
     if (!empty($features->groupings)) {
@@ -2555,12 +2555,12 @@ function print_groupmode_setting($form, $course=NULL) {
 
     if (empty($course)) {
         if (! $course = get_record('course', 'id', $form->course)) {
-            print_error("This course doesn't exist");
+            print_error("invalidcourseid");
         }
     }
     if ($form->coursemodule) {
         if (! $cm = get_record('course_modules', 'id', $form->coursemodule)) {
-            print_error("This course module doesn't exist");
+            print_error("cmunknown");
         }
         $groupmode = groups_get_activity_groupmode($cm);
     } else {
@@ -2588,12 +2588,12 @@ function print_grouping_settings($form, $course=NULL) {
 
     if (empty($course)) {
         if (! $course = get_record('course', 'id', $form->course)) {
-            print_error("This course doesn't exist");
+            print_error("invalidcourseid");
         }
     }
     if ($form->coursemodule) {
         if (! $cm = get_record('course_modules', 'id', $form->coursemodule)) {
-            print_error("This course module doesn't exist");
+            print_error("cmunknown");
         }
     } else {
         $cm = null;
@@ -2627,7 +2627,7 @@ function print_grouping_settings($form, $course=NULL) {
 function print_visible_setting($form, $course=NULL) {
     if (empty($course)) {
         if (! $course = get_record('course', 'id', $form->course)) {
-            print_error("This course doesn't exist");
+            print_error("invalidcourseid");
         }
     }
     if ($form->coursemodule) {

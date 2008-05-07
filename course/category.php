@@ -24,19 +24,19 @@
     }
 
     if (!$site = get_site()) {
-        print_error("Site isn't defined!");
+        print_error("siteisnotdefined", 'debug');
     }
 
     if (empty($id)) {
-        print_error("Category not known!");
+        print_error("unknowcategory");
     }
 
     if (!$context = get_context_instance(CONTEXT_COURSECAT, $id)) {
-        print_error("Category not known!");
+        print_error("unknowcategory");
     }
 
     if (!$category = get_record("course_categories", "id", $id)) {
-        print_error("Category not known!");
+        print_error("unknowcategory");
     }
 
     if (has_capability('moodle/course:create', $context)) {
@@ -170,7 +170,7 @@
             require_capability('moodle/category:update', get_context_instance(CONTEXT_COURSECAT, $moveto));
 
             if (! $destcategory = get_record("course_categories", "id", $data->moveto)) {
-                print_error("Error finding the category");
+                print_error("cannotfindcategory", '', '', $data->moveto);
             }
 
 

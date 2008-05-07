@@ -8,7 +8,7 @@
     require_login();
 
     if (isguest()) {
-        print_error("No guests here!");
+        print_error("noguest");
     }
 
     if (empty($CFG->enablecourserequests)) {

@@ -46,7 +46,7 @@
     }
 
     if (! $course = get_record('course', 'id', $id)) {
-        print_error("Course ID was incorrect");
+        print_error("invalidcourseid");
     }
 
 /// User must be logged in
@@ -65,7 +65,7 @@
         require_login($course);
         require_capability('moodle/user:loginas', $coursecontext);
         if (!has_capability('moodle/course:view', $coursecontext, $userid, false)) {
-            print_error('This user is not in this course!');
+            print_error('usernotincourse');
         }
         if (has_capability('moodle/site:doanything', $coursecontext, $userid, false)) {
             print_error('nologinas');

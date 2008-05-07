@@ -22,7 +22,7 @@ $categoryupdate = optional_param('categoryupdate', 0, PARAM_BOOL); // Enables th
 $resort         = optional_param('resort', 0, PARAM_BOOL);
 
 if (!$site = get_site()) {
-    print_error("Site isn't defined!");
+    print_error("siteisnotdefined");
 }
 
 if ($categoryadd) { // Show Add category form: if $id is given, it is used as the parent category 
@@ -33,7 +33,7 @@ if ($categoryadd) { // Show Add category form: if $id is given, it is used as th
     $strtitle = get_string("editcategorysettings");
     $context = get_context_instance(CONTEXT_COURSECAT, $id); 
     if (!$category = get_record("course_categories", "id", $id)) {
-        print_error("Category not known!");
+        print_error("unknowcategory");
     }
 }
 
@@ -83,7 +83,7 @@ if ($mform->is_cancelled()){
         }
 
         if (!update_record('course_categories', $newcategory)) {
-            print_error( "Could not update the category '$newcategory->name' ");
+            print_error( "cannotupdatecategory", '', '', $newcategory->name);
         } else {
             if ($newcategory->parent == 0) {
                 $redirect_link = 'index.php?categoryedit=on';
@@ -210,7 +210,7 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
             require_capability('moodle/category:update', get_context_instance(CONTEXT_COURSECAT, $moveto));
 
             if (!$destcategory = get_record("course_categories", "id", $data->moveto)) {
-                print_error("Error finding the destination category");
+                pritn_error("unknowcategory");
             } 
             // TODO function to move the category
         }

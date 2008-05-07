@@ -9,16 +9,16 @@
     $name = optional_param('name', false, PARAM_RAW); // Course short name
 
     if (!$id and !$name) {
-        print_error("Must specify course id or short name");
+        print_error("unspecifycourseid");
     }
 
     if ($name) {
         if (! $course = get_record("course", "shortname", $name) ) {
-            print_error("That's an invalid short course name");
+            print_error("invalidshortname");
         }
     } else {
         if (! $course = get_record("course", "id", $id) ) {
-            print_error("That's an invalid course id");
+            print_error("invalidcourseid");
         }
     }
 
