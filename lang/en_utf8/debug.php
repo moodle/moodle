@@ -6,6 +6,7 @@ $string['cannotupgradecapabilities'] = 'Had trouble upgrading the core capabilit
 $string['cannotupdateversion'] = 'Upgrade failed!  (Could not update version in config table)';
 $string['cannotupdaterelease'] = 'ERROR: Could not update release version in database!!';
 $string['cannotsetupsite'] = 'Serious Error! Could not set up the site!';
+$string['cannotfindadmin'] = 'Could not find an admin user!';
 $string['configmoodle'] = 'Moodle has not been configured yet. You need to edit config.php first.';
 $string['dbnotinsert'] = 'Database error - Cannot insert ($a)';
 $string['dbnotupdate'] = 'Database error - Cannot update ($a)';
