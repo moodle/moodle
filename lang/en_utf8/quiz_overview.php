@@ -15,6 +15,7 @@ $string['optonlygradedattempts'] = 'only the attempt that is graded for each use
 $string['overview'] = 'Overview';
 $string['overviewdownload'] = 'Overview download';
 $string['overviewdownload'] = 'Overview download';
+$string['overviewreportgraph'] = 'Bar Graph of Number of Students Achieving Grade Ranges';
 $string['pagesize'] = 'Page size';
 $string['preferencespage'] = 'Preferences just for this page';
 $string['preferencessave'] = 'Save preferences';

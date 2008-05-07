@@ -622,6 +622,9 @@ document.getElementById("noscriptmenuaction").style.display = "none";
             // Print display options
             $mform->set_data($displayoptions +compact('detailedmarks', 'pagesize'));
             $mform->display();
+            $imageurl = $CFG->wwwroot.'/mod/quiz/report/overview/overviewgraph.php?id='.$quiz->id;
+            print_heading(get_string('overviewreportgraph', 'quiz_overview'));
+            echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.get_string('overviewreportgraph', 'quiz_overview').'" /></div';
         }
         return true;
     }
