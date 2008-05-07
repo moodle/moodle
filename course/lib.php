@@ -232,13 +232,16 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
     if ($course->id == SITEID) {
         $courses[0] = '';
-        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
+        if ($ccc = get_courses('all', 'c.id ASC',
+                    'c.id,c.shortname,c.fullname')) {
             foreach ($ccc as $cc) {
-                $courses[$cc->id] = $cc->shortname;
+                $courses[$cc->id]['shortname'] = $cc->shortname;
+                $courses[$cc->id]['fullname'] = $cc->fullname;
             }
         }
     } else {
-        $courses[$course->id] = $course->shortname;
+        $courses[$course->id]['shortname'] = $course->shortname;
+        $courses[$course->id]['fullname'] = $course->fullname;
     }
 
     $totalcount = $logs['totalcount'];
@@ -311,7 +314,8 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
             if (empty($log->course)) {
                 echo get_string('site') . "\n";
             } else {
-                echo "    <a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">". format_string($courses[$log->course])."</a>\n";
+                echo "    <a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">".
+                    format_string($courses[$log->course]['shortname'])."</a>\n";
             }
             echo "</td>\n";
         }
@@ -320,9 +324,9 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         echo "<td class=\"cell c2\">\n";
         link_to_popup_window("/iplookup/index.php?ip=$log->ip&amp;user=$log->userid", 'iplookup',$log->ip, 440, 700);
         echo "</td>\n";
-        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         echo "<td class=\"cell c3\">\n";
-        echo "    <a href=\"$CFG->wwwroot/user/view.php?id={$log->userid}&amp;course={$log->course}\">$fullname</a>\n";
+        echo "    <a href=\"$CFG->wwwroot/course/view.php?id={$log->userid}&amp;course={$log->course}\">".
+            format_string($courses[$log->course]['fullname'])."</a>\n";
         echo "</td>\n";
         echo "<td class=\"cell c4\">\n";
         $displayaction="$log->module $log->action";
