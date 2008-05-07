@@ -227,6 +227,15 @@
                 $creatingnewquestion = true;
             }
 
+            // Fixing bug #5482: random questions have parent field set to its own id,
+            //                   see: $QTYPES['random']->get_question_options()
+            if ($question->qtype == 'random') {
+                $question->parent = $newid;
+                //we have to update the random question if the question has been inserted
+                if ($creatingnewquestion && $newid)
+                    $status = set_field('question', 'parent', $question->parent, 'id', $newid);
+            }
+
             //Save newid to backup tables
             if ($newid) {
                 //We have the newid, update backup_ids
@@ -700,7 +709,7 @@
             $session->newgraded = backup_todb($res_info['#']['NEWGRADED']['0']['#']);
             $session->sumpenalty = backup_todb($res_info['#']['SUMPENALTY']['0']['#']);
             
-            if ($res_info['#']['MANUALCOMMENT']['0']['#']) {
+            if (isset($res_info['#']['MANUALCOMMENT']['0']['#'])) {
                 $session->manualcomment = backup_todb($res_info['#']['MANUALCOMMENT']['0']['#']);
             } else { // pre 1.7 backups
                 $session->manualcomment = backup_todb($res_info['#']['COMMENT']['0']['#']);  
