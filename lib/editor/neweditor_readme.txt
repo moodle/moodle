@@ -1,3 +1,6 @@
+
+Last update: March 6, 2006
+
 editorObject README
 ===================
 
