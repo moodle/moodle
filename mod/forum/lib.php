@@ -2174,7 +2174,7 @@ function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         if (!has_capability('mod/forum:viewhiddentimedposts', $modcontext)) {
-            $timelimit = " AND ((d.timestart = < $now) AND (d.timeend = 0 OR d.timeend > $now)";
+            $timelimit = " AND ((d.timestart <= $now AND (d.timeend = 0 OR d.timeend > $now))";
             if (isloggedin()) {
                 $timelimit .= " OR d.userid = $USER->id";
             }
@@ -2346,7 +2346,7 @@ function forum_get_discussions_count($cm) {
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         if (!has_capability('mod/forum:viewhiddentimedposts', $modcontext)) {
-            $timelimit = " AND ((d.timestart = < $now) AND (d.timeend = 0 OR d.timeend > $now)";
+            $timelimit = " AND ((d.timestart <= $now AND (d.timeend = 0 OR d.timeend > $now))";
             if (isloggedin()) {
                 $timelimit .= " OR d.userid = $USER->id";
             }
