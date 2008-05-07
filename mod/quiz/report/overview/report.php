@@ -30,32 +30,23 @@ class quiz_report extends quiz_default_report {
             $this->print_header_and_tabs($cm, $course, $quiz, "overview");
         }
 
-        // Deal with actions
-        $action = optional_param('action', '', PARAM_ACTION);
-
-        switch($action) {
-            case 'delete': // Some attempts need to be deleted
-                require_capability('mod/quiz:deleteattempts', $context);
-                $attemptids = optional_param('attemptid', array(), PARAM_INT);
-
-                foreach($attemptids as $attemptid) {
-                    add_to_log($course->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
-                            $attemptid, $cm->id);
-                    quiz_delete_attempt($attemptid, $quiz);
-                }
-            break;
+        if($attemptids = optional_param('attemptid', array(), PARAM_INT)) {
+            //attempts need to be deleted
+            require_capability('mod/quiz:deleteattempts', $context);
+            $attemptids = optional_param('attemptid', array(), PARAM_INT);
+            foreach($attemptids as $attemptid) {
+                add_to_log($course->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
+                        $attemptid, $cm->id);
+                quiz_delete_attempt($attemptid, $quiz);
+            }
+            //No need for a redirect, any attemptids that do not exist are ignored.
+            //So no problem if the user refreshes and tries to delete the same attempts
+            //twice.
         }
 
         // Set of format options for teacher-created content, for example overall feedback.
         $nocleanformatoptions = new stdClass;
         $nocleanformatoptions->noclean = true;
-
-        // Prepare list of available actions to perform on attempts - we only want to show the checkbox.
-        // Column on the table if there are options.
-        $attemptactions = array();
-        if (has_capability('mod/quiz:deleteattempts', $context)) {
-            $attemptactions['delete'] = get_string('delete');
-        }
 
         // Work out some display options - whether there is feedback, and whether scores should be shown.
         $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;
@@ -99,6 +90,11 @@ class quiz_report extends quiz_default_report {
         if ($pagesize < 1) {
             $pagesize = QUIZ_REPORT_DEFAULT_PAGE_SIZE;
         }
+        // We only want to show the checkbox to delete attempts
+        // if the user has permissions and if the report mode is showing attempts.
+        $candelete = has_capability('mod/quiz:deleteattempts', $context) 
+                && ($attemptsmode!= QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO);
+
 
         $displayoptions = array();
         $displayoptions['attemptsmode'] = $attemptsmode;
@@ -132,7 +128,7 @@ class quiz_report extends quiz_default_report {
         $tableheaders = array('', get_string('name'), get_string('startedon', 'quiz'),
                 get_string('timecompleted','quiz'), get_string('attemptduration', 'quiz'));
 
-        if (!empty($attemptactions)) {
+        if ($candelete) {
             array_unshift($tablecolumns, 'checkbox');
             array_unshift($tableheaders, NULL);
         }
@@ -451,8 +447,12 @@ class quiz_report extends quiz_default_report {
                 // Username columns.
                 $row = array();
                 if (!$download) {
-                    if (!empty($attemptactions)) {
-                        $row[] = '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />';
+                    if ($candelete) {
+                        if ($attempt->attempt){
+                            $row[] = '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />';
+                        } else {
+                            $row[] = '';
+                        }
                     }
                     $row[] = $picture;
                     $row[] = $userlink;
@@ -554,9 +554,7 @@ class quiz_report extends quiz_default_report {
                 // Start form
                 echo '<div id="tablecontainer">';
                 echo '<form id="attemptsform" method="post" action="' . $reporturlwithdisplayoptions->out(true) .
-                        '" onsubmit="var menu = document.getElementById(\'menuaction\'); ' .
-                        'return (menu.options[menu.selectedIndex].value == \'delete\' ? confirm(\''.
-                        $strreallydel.'\') : true);">';
+                        '" onsubmit="confirm(\''.$strreallydel.'\');">';
                 echo $reporturlwithdisplayoptions->hidden_params_out();
                 echo '<div>';
     
@@ -564,7 +562,7 @@ class quiz_report extends quiz_default_report {
                 $table->print_html();
     
                 // Print "Select all" etc.
-                if (!empty($attempts) && !empty($attemptactions)) {
+                if (!empty($attempts) && $candelete) {
                     echo '<table id="commands">';
                     echo '<tr><td>';
                     echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.
@@ -572,15 +570,7 @@ class quiz_report extends quiz_default_report {
                     echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.
                             get_string('selectnone', 'quiz').'</a> ';
                     echo '&nbsp;&nbsp;';
-                    choose_from_menu($attemptactions, 'action', '', get_string('withselected', 'quiz'),
-                            'if(this.selectedIndex > 0) submitFormById(\'attemptsform\');');
-                    echo '<noscript id="noscriptmenuaction" style="display: inline;"><div>';
-                    echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
-                    echo '<script type="text/javascript">
-<!--
-document.getElementById("noscriptmenuaction").style.display = "none";
--->
-</script>';
+                    echo '<input type="submit" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
                     echo '</td></tr></table>';
                 }
                 // Close form
