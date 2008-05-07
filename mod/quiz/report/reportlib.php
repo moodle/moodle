@@ -102,4 +102,22 @@ function quiz_report_qm_filter_subselect($quizgrademethod){
     }
     return $qmsubselect;
 }
+
+function quiz_report_grade_bands($bands, $quizid, $useridlist){
+    $sql = "SELECT
+        FLOOR(qg.grade*$bands/q.grade) AS band,
+        COUNT(1) AS num
+    FROM
+        mdl_quiz_grades qg, 
+        mdl_quiz q
+    WHERE qg.quiz = q.id AND quiz = $quizid AND qg.userid IN ($useridlist)
+    GROUP BY band
+    ORDER BY band";
+    $data = get_records_sql_menu($sql);
+    //need to create array elements with values 0 at indexes where there is no element
+    $data =  $data + array_fill(0, $bands, 0);
+    ksort($data);
+    return $data;
+}
+
 ?>
