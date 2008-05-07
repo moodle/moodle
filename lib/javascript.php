@@ -64,9 +64,13 @@ function inserttext(text) {
 <?php
     if (!empty($SESSION->inserttextform)) {
         $insertfield = "opener.document.forms['$SESSION->inserttextform'].$SESSION->inserttextfield";
+        echo "  if(!opener.document.forms['$SESSION->inserttextform']){";
     } else {
         $insertfield = "opener.document.forms['theform'].message";
+        echo "  if(!opener.document.forms['theform']){";
     }
+    echo "    return;";
+    echo "  }";
     echo "  text = ' ' + text + ' ';\n";
     echo "  if ( $insertfield.createTextRange && $insertfield.caretPos) {\n";
     echo "    var caretPos = $insertfield.caretPos;\n";

@@ -5862,7 +5862,7 @@ function emoticonhelpbutton($form, $field, $return = false) {
     $SESSION->inserttextform = $form;
     $SESSION->inserttextfield = $field;
     $imagetext = '<img src="' . $CFG->pixpath . '/s/smiley.gif" alt="" class="emoticon" style="margin-left:3px; padding-right:1px;width:15px;height:15px;" />';
-    $help = helpbutton('emoticons', get_string('helpemoticons'), 'moodle', true, true, '', true, $imagetext);
+    $help = helpbutton('emoticons2', get_string('helpemoticons'), 'moodle', true, true, '', true, $imagetext);
     if (!$return){
         echo $help;
     } else {
