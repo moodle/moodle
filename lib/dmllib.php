@@ -1150,9 +1150,9 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
         if ($field1 == 'id') {
             rcache_unset($table, $value1);
         } else if ($field2 == 'id') {
-            rcache_unset($table, $value1);
+            rcache_unset($table, $value2);
         } else if ($field3 == 'id') {
-            rcache_unset($table, $value1);
+            rcache_unset($table, $value3);
         } else {
             rcache_unset_table($table);
         }
