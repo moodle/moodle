@@ -6,6 +6,7 @@ $string['allattempts'] = 'Show all attempts';
 $string['allstudents'] = 'Show all $a';
 $string['attemptsonly'] = 'Show $a with attempts only';
 $string['attemptsprepage'] = 'Attempts shown per page';
+$string['deleteselected'] = 'Delete selected attempts';
 $string['noattemptsonly'] = 'Show $a with no attempts only';
 $string['optallattempts'] = 'all attempts';
 $string['optallstudents'] = 'all \'$a\'';
