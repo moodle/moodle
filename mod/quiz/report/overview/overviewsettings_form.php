@@ -18,7 +18,7 @@ class mod_quiz_report_overview_settings extends moodleform {
         }
         $mform->addElement('select', 'attemptsmode', get_string('show', 'quiz_overview'), $options);
         if ($this->_customdata['qmsubselect']){
-            $mform->addElement('advcheckbox', 'qmfilter', get_string('show', 'quiz_overview'), get_string('optonlygradedattempts', 'quiz_overview'), array(0,1));
+            $mform->addElement('advcheckbox', 'qmfilter', get_string('show', 'quiz_overview'), get_string('optonlygradedattempts', 'quiz_overview'), null, array(0,1));
         }
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('preferencesuser', 'quiz_overview'));
