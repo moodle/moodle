@@ -46,7 +46,7 @@ class data_field_textarea extends data_field_base {
 
         $str = '<div title="'.$this->field->description.'">';
 
-        if (can_use_richtext_editor()) {
+        if (can_use_html_editor()) {
             // Show a rich text html editor.
             $str .= $this->gen_textarea(true, $text);
             $str .= helpbutton("richtext2", get_string("helprichtext"), 'moodle', true, true, '', true);
@@ -89,7 +89,7 @@ class data_field_textarea extends data_field_base {
 
 
     function print_after_form() {
-        if (can_use_richtext_editor()) {
+        if (can_use_html_editor()) {
             use_html_editor('field_' . $this->field->id, '', 'field_' . $this->field->id);
         }
     }

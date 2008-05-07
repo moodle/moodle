@@ -130,7 +130,7 @@
     }
 
     if (count($SESSION->emailto[$id])) {
-        $usehtmleditor = can_use_richtext_editor();
+        $usehtmleditor = can_use_html_editor();
         require("message.html");
         if ($usehtmleditor) {
             use_html_editor("messagebody");

@@ -6145,16 +6145,6 @@ function ini_get_bool($ini_get_arg) {
 }
 
 /**
- * Compatibility stub to provide backward compatibility
- *
- * Determines if the HTML editor is enabled.
- * @deprecated Use {@link can_use_html_editor()} instead.
- */
-function can_use_richtext_editor() {
-    return can_use_html_editor();
-}
-
-/**
  * Determines if the HTML editor is enabled.
  *
  * This depends on site and user settings, as well as the current browser being 

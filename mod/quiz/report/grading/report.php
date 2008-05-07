@@ -335,7 +335,7 @@ class quiz_report extends quiz_default_report {
         $context = NULL;
 
         $questions[$question->id] = &$question;
-        $usehtmleditor = can_use_richtext_editor();
+        $usehtmleditor = can_use_html_editor();
         $users     = get_course_students($quiz->course);
         $userids   = implode(',', array_keys($users));
 

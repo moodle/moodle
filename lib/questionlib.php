@@ -1373,7 +1373,7 @@ function question_print_comment_box($question, $state, $attempt, $url) {
    global $CFG;
 
    $prefix = 'response';
-   $usehtmleditor = can_use_richtext_editor();
+   $usehtmleditor = can_use_html_editor();
    $grade = round($state->last_graded->grade, 3);
    echo '<form method="post" action="'.$url.'">';
    include($CFG->dirroot.'/question/comment.html');

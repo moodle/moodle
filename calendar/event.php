@@ -80,7 +80,7 @@
     $mon = intval($now['mon']);
     $yr = intval($now['year']);
 
-    if ($usehtmleditor = can_use_richtext_editor()) {
+    if ($usehtmleditor = can_use_html_editor()) {
         $defaultformat = FORMAT_HTML;
     } else {
         $defaultformat = FORMAT_MOODLE;
