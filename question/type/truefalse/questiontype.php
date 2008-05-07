@@ -334,13 +334,15 @@ class question_truefalse_qtype extends default_questiontype {
     }
 
     function restore_recode_answer($state, $restore) {
-        $answer = backup_getid($restore->backup_unique_code,"question_answers",$state->answer);
-        if ($answer) {
-            return $answer->new_id;
-        } else {
-            echo 'Could not recode truefalse answer id '.$state->answer.' for state '.$state->oldid.'<br />';
+        //answer may be empty
+        if ($state->answer) {
+            $answer = backup_getid($restore->backup_unique_code,"question_answers",$state->answer);
+            if ($answer) {
+                return $answer->new_id;
+            } else {
+                echo 'Could not recode truefalse answer id '.$state->answer.' for state '.$state->oldid.'<br />';
+            }
         }
-        return '';
     }
 
 }

@@ -596,16 +596,30 @@ class question_match_qtype extends default_questiontype {
             //Extract the match_sub for the question and the answer
             $exploded = explode("-",$tok);
             $match_question_id = $exploded[0];
-            $match_answer_code = $exploded[1];
+            $match_answer_id = $exploded[1];
             //Get the match_sub from backup_ids (for the question)
             if (!$match_que = backup_getid($restore->backup_unique_code,"question_match_sub",$match_question_id)) {
-                echo 'Could not recode question_match_sub '.$match_question_id.'<br />';
+                echo 'Could not recode question in question_match_sub '.$match_question_id.'<br />';
             }
-            if ($in_first) {
-                $answer_field .= $match_que->new_id."-".$match_answer_code;
-                $in_first = false;
-            } else {
-                $answer_field .= ",".$match_que->new_id."-".$match_answer_code;
+            //Get the match_sub from backup_ids (for the answer)
+            if ($match_answer_id) { // only recode answer if not 0, not answered yet
+              if (!$match_ans = backup_getid($restore->backup_unique_code,"question_match_sub",$match_answer_id)) {
+                  echo 'Could not recode answer in question_match_sub '.$match_answer_id.'<br />';
+              }
+            }
+
+            if ($match_que) {
+                //If the question hasn't response, it must be 0
+                if (!$match_ans and $match_answer_id == 0) {
+                    $match_ans->new_id = 0;
+                }
+
+                if ($in_first) {
+                    $answer_field .= $match_que->new_id."-".$match_ans->new_id;
+                    $in_first = false;
+                } else {
+                    $answer_field .= ",".$match_que->new_id."-".$match_ans->new_id;
+                }
             }
             //check for next
             $tok = strtok(",");

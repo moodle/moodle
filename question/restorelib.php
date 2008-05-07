@@ -390,6 +390,15 @@
                 }
             }
 
+            // Fixing bug #5482: random questions have parent field set to its own id,
+            //                   see: $QTYPES['random']->get_question_options()
+            if ($question->qtype == 'random') {
+                $question->parent = $newid;
+                //we have to update the random question if the question has been inserted
+                if ($creatingnewquestion && $newid)
+                    $status = set_field('question', 'parent', $question->parent, 'id', $newid);
+            }
+
             //Save newid to backup tables
             if ($question->id) {
                 //We have the newid, update backup_ids
