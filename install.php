@@ -140,6 +140,7 @@ $CFG->admin = $INSTALL['admindirname'];
 $CFG->directorypermissions = 00777;
 $CFG->running_installer = true;
 $CFG->docroot = 'http://docs.moodle.org';
+$CFG->httpswwwroot = $INSTALL['wwwrootform']; // Needed by doc_link() in Server Checks page.
 $COURSE->id = 0;
 
 /// Include some moodle libraries
