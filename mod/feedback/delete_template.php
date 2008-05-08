@@ -12,7 +12,8 @@
     require_once("lib.php");
     require_once('delete_template_form.php');
     
-    $SESSION->feedback->current_tab = 'templates';
+    // $SESSION->feedback->current_tab = 'templates';
+    $current_tab = 'templates';
 
     $id = required_param('id', PARAM_INT);
     $canceldelete = optional_param('canceldelete', false, PARAM_INT);
@@ -80,6 +81,9 @@
     print_header_simple(format_string($feedback->name), "",
                  $navigation, "", "", true, $buttontext, navmenu($course, $cm));
 
+    /// print the tabs
+    include('tabs.php');
+    
     /// Print the main part of the page
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
