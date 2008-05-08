@@ -78,10 +78,13 @@ function quiz_report_load_questions($quiz){
  * one attempt that will be graded for each user. Or return 
  * empty string if all attempts contribute to final grade.
  */
-function quiz_report_qm_filter_subselect($quizgrademethod){
+function quiz_report_qm_filter_subselect($quiz){
     global $CFG;
+    if ($quiz->attempts == 1) {//only one attempt allowed on this quiz
+        return '';
+    }
     $qmfilterattempts = true;
-    switch ($quizgrademethod) {
+    switch ($quiz->grademethod) {
     case QUIZ_GRADEHIGHEST :
         $qmorderby = 'sumgrades DESC, timestart ASC';
         break;
@@ -119,5 +122,16 @@ function quiz_report_grade_bands($bands, $quizid, $useridlist){
     ksort($data);
     return $data;
 }
-
+function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter){
+    if ($quiz->attempts == 1) {//only one attempt allowed on this quiz
+        return "<p>".get_string('onlyoneattemptallowed', "quiz_overview")."</p>";
+    } else if (!$qmsubselect){
+        return "<p>".get_string('allattemptscontributetograde', "quiz_overview")."</p>";
+    } else if ($qmfilter){
+        return "<p>".get_string('showinggraded', "quiz_overview")."</p>";
+    }else {
+        return "<p>".get_string('showinggradedandungraded', "quiz_overview",
+                ('<span class="highlight">'.quiz_get_grading_option_name($quiz->grademethod).'</span>'))."</p>";
+    }
+}
 ?>
