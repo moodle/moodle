@@ -7,16 +7,16 @@
     if (!empty($course->id)) {
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $course->id))) {
             if (empty($to)) {
-                print_error("You need to be a teacher or admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
+                print_error("cannotuseadminadminorteacher", '', "$CFG->wwwroot/login/index.php");
             } else {
                 if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $to))) {
-                    print_error("You need to be a teacher or admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
+                    print_error("cannotuseadminadminorteacher", '', "$CFG->wwwroot/login/index.php");
                 }
             }
         }
     } else {
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
-            print_error("You need to be an admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
+            print_error("cannotuseadmin", '', "$CFG->wwwroot/login/index.php");
         }
     }
 
@@ -30,14 +30,14 @@
 
     //Check site
     if (!$site = get_site()) {
-        print_error("Site not found!");
+        print_error("siteisnotdefined", 'debug');
     }
     if ($count == 0) {
         notice("No backupable modules are installed!");
     }
 
     if (!execute_sql("DELETE FROM {$CFG->prefix}backup_ids WHERE backup_code = '{$backupprefs->backup_unique_code}'",false)){
-        print_error('Couldn\'t delete previous backup ids.');
+        print_error('cannotdeletebackupids');
     }
 
 ?>

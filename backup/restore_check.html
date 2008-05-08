@@ -45,7 +45,8 @@
 
     // check for session objects
     if (empty($info) or empty($course_header)) {
-      print_error( 'important information missing from SESSION' );
+      print_error('sessionmissing', 'debug', '', 
+              'info and course_header');
     }
 
 
@@ -189,17 +190,17 @@
     //Check admin
     if (!empty($id)) {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
-            print_error("You need to be a teacher or admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
+            print_error("cannotuseadminadminorteacher", '', "$CFG->wwwroot/login/index.php");
         }
     } else {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
-            print_error("You need to be an admin user to use this page.", '', "$CFG->wwwroot/login/index.php");
+            print_error("cannotuseadmin", '', "$CFG->wwwroot/login/index.php");
         }
     }
 
     //Check site
     if (!$site = get_site()) {
-        print_error("Site not found!");
+        print_error("siteisnotdefined", 'debug');
     }
 
     //Depending the selected restoreto:
@@ -271,9 +272,9 @@
     } else if ((($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id != 0)) or ($restore->restoreto == 2)) {
         //Final access control check
         if ($restore->course_id == 0 and !user_can_create_courses()) {
-            print_error("You need to be a creator or admin to restore into new course!");
+            print_error("cannotrestoreadminorcreator");
         } else if ($restore->course_id != 0 and !has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $restore->course_id))) {
-            print_error("You need to be an edit teacher or admin to restore into selected course!");
+            print_error("cannotrestoreadminoredit");
         }
         $show_continue_button = true;
         //Check if we've selected any mod's user info and restore->users

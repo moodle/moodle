@@ -22,6 +22,7 @@ $string['phpvaron'] = 'The PHP server variable \'$a[0]\' is not turned On - $a[1
 $string['prefixcannotbeempty'] = 'Table prefix \"$a[0]\" cannot be empty for your target DB ($a[1])';
 $string['prefixlimit'] = 'Table prefix \"$a\" maximum allowed length for Oracle DBs is 2cc.';
 $string['withoutversion'] = 'Main version.php was not readable or specified';
+$string['sessionmissing'] = '$a object missing from session';
 $string['siteisnotdefined'] = 'Site is not defined!';
 
 ?>
