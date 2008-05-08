@@ -280,6 +280,7 @@ $string['invalidhost'] = 'Invalid Host ';
 $string['invalidint']='Error: value is not an integer';
 $string['invalidintrange'] = 'Error: Value is outside valid range';
 $string['invalidmd5'] = 'Invalid md5';
+$string['invalidmd5'] = 'The check variable was wrong - try again';
 $string['invalidpath'] = 'Invalid Path ';
 $string['invalidsetelement']= 'Error: Value given is not in the given options';
 $string['invalidtextvalue'] = 'Invalid Text Value';
