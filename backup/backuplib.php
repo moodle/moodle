@@ -2905,7 +2905,7 @@
         $status = backup_delete_old_data();
         if (!$status) {
             if (!defined('BACKUP_SILENTLY')) {
-                error ("An error occurred deleting old backup data");
+                notify ("An error occurred deleting old backup data");
             }
             else {
                 $errorstr = "An error occurred deleting old backup data";
