@@ -221,7 +221,7 @@
     //////////////////////////////////////////////////////////////////////////////////////
 */
     // print_simple_box_end();
-    print_box_end();
+    // print_box_end();
   
     if ($typ!='label') {
         echo '<script language="javascript">';
