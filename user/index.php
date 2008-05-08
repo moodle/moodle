@@ -768,7 +768,12 @@
         helpbutton("participantswithselectedusers", get_string("withselectedusers"));
         choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-        echo '<input type="submit" value="' . get_string('ok') . '" />';
+        echo '<div id="noscriptparticipantsform" style="display: inline;">';
+        echo '<input type="submit" value="'.get_string('ok').'" /></div>';
+        echo '<script type="text/javascript">'.
+               "\n//<![CDATA[\n".
+               'document.getElementById("noscriptparticipantsform").style.display = "none";'.
+               "\n//]]>\n".'</script>';
         echo '</div>';
         echo '</div>';
         echo '</form>';
