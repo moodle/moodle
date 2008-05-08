@@ -68,7 +68,7 @@ $string['databasesettingssub'] = '<b>Type:</b> mysql or postgres7<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> optional prefix to use for all table names';
-$string['databasesettingssub_mssql'] = '<b>Type:</b> SQL*Server (non UTF-8) <b><font color=\"red\">Experimental! (not for use in production)</font></b><br />
+$string['databasesettingssub_mssql'] = '<b>Type:</b> SQL*Server (non UTF-8) <b><strong  class=\"errormsg\">Experimental! (not for use in production)</strong></b><br />
        <b>Host:</b> eg localhost or db.isp.com<br />
        <b>Name:</b> database name, eg moodle<br />
        <b>User:</b> your database username<br />
@@ -98,7 +98,7 @@ $string['databasesettingssub_oci8po'] = '<b>Type:</b> Oracle<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> prefix to use for all table names (mandatory, 2cc. max)';
-$string['databasesettingssub_odbc_mssql'] = '<b>Type:</b> SQL*Server (over ODBC) <b><font color=\"red\">Experimental! (not for use in production)</font></b><br />
+$string['databasesettingssub_odbc_mssql'] = '<b>Type:</b> SQL*Server (over ODBC) <b><strong  class=\"errormsg\">Experimental! (not for use in production)</strong></b><br />
        <b>Host:</b> given name of the DSN in the ODBC control panel<br />
        <b>Name:</b> database name, eg moodle<br />
        <b>User:</b> your database username<br />
@@ -197,10 +197,10 @@ $string['globalsquoteshelp'] = '<p>Combination of disabled Magic Quotes GPC and 
 <p>The recommended setting is <b>magic_quotes_gpc = On</b> and <b>register_globals = Off</b> in your php.ini</p>
 
 <p>If you don\'t have access to your php.ini, you might be able to place the following line in a file 
-   called .htaccess within your Moodle directory:
-   <blockquote>php_value magic_quotes_gpc On</blockquote>
-   <blockquote>php_value register_globals Off</blockquote>
-</p>';
+   called .htaccess within your Moodle directory:</p>
+   <blockquote><div>php_value magic_quotes_gpc On</div></blockquote>
+   <blockquote><div>php_value register_globals Off</div></blockquote>
+';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Unfortunately the language \"$a\" was not installed. The installation process will continue in English.';
 $string['langdownloadok'] = 'The language \"$a\" was installed successfully. The installation process will continue in this language.';
@@ -211,9 +211,9 @@ $string['magicquotesruntimehelp'] = '<p>Magic quotes runtime should be turned of
 <p>Normally it is off by default ... see the setting <b>magic_quotes_runtime</b> in your php.ini file.</p>
 
 <p>If you don\'t have access to your php.ini, you might be able to place the following line in a file 
-   called .htaccess within your Moodle directory:
-   <blockquote>php_value magic_quotes_runtime Off</blockquote>
-</p>';
+   called .htaccess within your Moodle directory:</p>
+   <blockquote><div>php_value magic_quotes_runtime Off</div></blockquote>
+';
 $string['memorylimit'] = 'Memory Limit';
 $string['memorylimiterror'] = 'The PHP memory limit is set quite low ... you may run into problems later.';
 $string['memorylimithelp'] = '<p>The PHP memory limit for your server is currently set to $a.</p>
@@ -231,7 +231,7 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
     be able to ask your administrator to do this for you.</li>
 <li>On some PHP servers you can create a .htaccess file in the Moodle directory 
     containing this line:
-    <p><blockquote>php_value memory_limit 40M</blockquote></p>
+    <blockquote><div>php_value memory_limit 40M</div></blockquote>
     <p>However, on some servers this will prevent <b>all</b> PHP pages from working 
     (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
 </ol>';

@@ -76,11 +76,13 @@ error
 fail
 fileuploads
 fileuploadserror
+fileuploadshelp
 gdversion
 gdversionerror
 gdversionhelp
 globalsquotes
 globalsquoteserror
+globalsquoteshelp
 globalswarning
 help
 iconvrecommended
@@ -92,6 +94,7 @@ langdownloadok
 language
 magicquotesruntime
 magicquotesruntimeerror
+magicquotesruntimehelp
 mbstringrecommended
 memorylimit
 memorylimiterror
@@ -133,9 +136,11 @@ report
 restricted
 safemode
 safemodeerror
+safemodehelp
 serverchecks
 sessionautostart
 sessionautostarterror
+sessionautostarthelp
 skipdbencodingtest
 status
 this_direction

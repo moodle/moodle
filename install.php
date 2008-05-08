@@ -570,6 +570,7 @@ if ($nextstage == SAVE) {
 //==========================================================================//
 
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html dir="<?php echo (right_to_left() ? 'rtl' : 'ltr'); ?>">
 <head>
 <link rel="shortcut icon" href="theme/standard/favicon.ico" />
@@ -591,10 +592,10 @@ if (isset($_GET['help'])) {
 ?>
 
 
-<table class="main" align="center" cellpadding="3" cellspacing="0">
+<table class="main" cellpadding="3" cellspacing="0">
     <tr>
         <td class="td_mainlogo">
-            <p class="p_mainlogo"><img src="pix/moodlelogo-med.gif" width="240" height="60" alt="Moodle logo"></p>
+            <p class="p_mainlogo"><img src="pix/moodlelogo-med.gif" width="240" height="60" alt="Moodle logo"/></p>
         </td>
         <td class="td_mainlogo" valign="bottom">
             <p class="p_mainheader"><?php print_string('installation', 'install') ?></p>
@@ -608,40 +609,48 @@ if (isset($_GET['help'])) {
                   /// from the standard one to show better instructions for each DB
                 if ($nextstage == DATABASE) {
                     echo '<script type="text/javascript" defer="defer">window.onload=toggledbinfo;</script>';
-                    echo '<div id="mysql" name="mysql">' . get_string('databasesettingssub_mysql', 'install');
-                    echo '<p align="center">' . get_string('databasesettingswillbecreated', 'install') . '</p>';
+                    echo '<div id="mysql">' . get_string('databasesettingssub_mysql', 'install');
+                    echo '<p style="text-align: center">' . get_string('databasesettingswillbecreated', 'install') . '</p>';
                     echo '</div>';
 
-                    echo '<div id="mysqli" name="mysqli">' . get_string('databasesettingssub_mysqli', 'install');
-                    echo '<p align="center">' . get_string('databasesettingswillbecreated', 'install') . '</p>';
+                    echo '<div id="mysqli">' . get_string('databasesettingssub_mysqli', 'install');
+                    echo '<p style="text-align: center">' . get_string('databasesettingswillbecreated', 'install') . '</p>';
                     echo '</div>';
 
-                    echo '<div id="postgres7" name="postgres7">' . get_string('databasesettingssub_postgres7', 'install') . '</div>';
+                    echo '<div id="postgres7">' . get_string('databasesettingssub_postgres7', 'install') . '</div>';
 
-                    echo '<div id="mssql" name="mssql">' . get_string('databasesettingssub_mssql', 'install');
+                    echo '<div id="mssql">' . get_string('databasesettingssub_mssql', 'install');
                 /// Link to mssql installation page
-                    echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_MSSQL_for_PHP" target="_blank">';
+                    echo "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
+                    echo "onclick=\"return window.open('http://docs.moodle.org/en/Installing_MSSQL_for_PHP')\"";
+                    echo ">";
                     echo '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
                     echo get_string('moodledocslink', 'install') . '</a></p>';
                     echo '</div>';
 
-                    echo '<div id="mssql_n" name="mssql">' . get_string('databasesettingssub_mssql_n', 'install');
+                    echo '<div id="mssql_n">' . get_string('databasesettingssub_mssql_n', 'install');
                 /// Link to mssql installation page
-                    echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_MSSQL_for_PHP" target="_blank">';
+                    echo "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
+                    echo "onclick=\"return window.open('http://docs.moodle.org/en/Installing_MSSQL_for_PHP')\"";
+                    echo ">";
                     echo '<img src="pix/docs.gif' . '" alt="Docs" />';
                     echo get_string('moodledocslink', 'install') . '</a></p>';
                     echo '</div>';
 
-                    echo '<div id="odbc_mssql" name="odbc_mssql">'. get_string('databasesettingssub_odbc_mssql', 'install');
+                    echo '<div id="odbc_mssql">'. get_string('databasesettingssub_odbc_mssql', 'install');
                 /// Link to mssql installation page
-                    echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_MSSQL_for_PHP" target="_blank">';
+                    echo "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
+                    echo "onclick=\"return window.open('http://docs.moodle.org/en/Installing_MSSQL_for_PHP')\"";
+                    echo ">";
                     echo '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
                     echo get_string('moodledocslink', 'install') . '</a></p>';
                     echo '</div>';
 
-                    echo '<div id="oci8po" name="oci8po">' . get_string('databasesettingssub_oci8po', 'install');
+                    echo '<div id="oci8po">' . get_string('databasesettingssub_oci8po', 'install');
                 /// Link to oracle installation page
-                    echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_Oracle_for_PHP" target="_blank">';
+                    echo "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
+                    echo "onclick=\"return window.open('http://docs.moodle.org/en/Installing_Oracle_for_PHP')\"";
+                    echo ">";
                     echo '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
                     echo get_string('moodledocslink', 'install') . '</a></p>';
                     echo '</div>';
@@ -659,7 +668,7 @@ if (isset($_GET['help'])) {
 
 <?php
 
-if (!empty($errormsg)) echo "<p class=\"errormsg\" align=\"center\">$errormsg</p>\n";
+if (!empty($errormsg)) echo "<p class=\"errormsg\" style=\"text-align:center\">$errormsg</p>\n";
 
 
 if ($nextstage == SAVE) {
@@ -667,13 +676,13 @@ if ($nextstage == SAVE) {
     $options = array();
     $options['lang'] = $INSTALL['language'];
     if ($configsuccess) {
-        echo "<p>".get_string('configfilewritten', 'install')."</p>\n";
+        echo "<p class=\"p_install\">".get_string('configfilewritten', 'install')."</p>\n";
 
         echo "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\">\n";
         echo "<tr>\n";
-        echo "<td width=\"33.3%\">&nbsp;</td>\n";
-        echo "<td width=\"33.3%\">&nbsp;</td>\n";
-        echo "<td width=\"33.3%\" align=\"right\">\n";
+        echo "<td>&nbsp;</td>\n";
+        echo "<td>&nbsp;</td>\n";
+        echo "<td align=\"right\">\n";
         print_single_button("index.php", $options, get_string('continue'));
         echo "</td>\n";
         echo "</tr>\n";
@@ -684,13 +693,13 @@ if ($nextstage == SAVE) {
 
         echo "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\">\n";
         echo "<tr>\n";
-        echo "<td width=\"33.3%\">&nbsp;</td>\n";
-        echo "<td width=\"33.3%\" align=\"center\">\n";
+        echo "<td>&nbsp;</td>\n";
+        echo "<td align=\"center\">\n";
         $installoptions = array();
         $installoptions['download'] = 1;
         print_single_button("install.php", $installoptions, get_string('download', 'install'));
         echo "</td>\n";
-        echo "<td width=\"33.3%\" align=\"right\">\n";
+        echo "<td align=\"right\">\n";
         print_single_button("index.php", $options, get_string('continue'));
         echo "</td>\n";
         echo "</tr>\n";
@@ -744,14 +753,14 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
         $needtoopenform = false;
 ?>
         <form id="installform" method="post" action="<?php echo $formaction ?>">
-        <input type="hidden" name="stage" value="<?php echo $nextstage ?>" />
+        <div><input type="hidden" name="stage" value="<?php echo $nextstage ?>" /></div>
 
 <?php
     } else {
         $needtoopenform = true;
     }
 ?>
-    <table class="install_table" cellspacing="3" cellpadding="3" align="center">
+    <table class="install_table" cellspacing="3" cellpadding="3">
 
 <?php
     /// what we do depends on the stage we're at
@@ -759,7 +768,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
         case WELCOME: /// Welcome and language settings
 ?>
             <tr>
-                <td class="td_left"><p><?php print_string('language') ?></p></td>
+                <td class="td_left"><p class="p_install"><?php print_string('language') ?></p></td>
                 <td class="td_right">
                 <?php choose_from_menu (get_installer_list_of_languages(), 'language', $INSTALL['language'], '') ?>
                 </td>
@@ -793,19 +802,19 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
 ?>
 
             <tr>
-                <td class="td_left"><p><?php print_string('wwwroot', 'install') ?></p></td>
+                <td class="td_left"><p class="p_install"><?php print_string('wwwroot', 'install') ?></p></td>
                 <td class="td_right">
                     <input type="text" size="40"name="wwwrootform" value="<?php p($INSTALL['wwwrootform'],true) ?>" />
                 </td>
             </tr>
             <tr>
-                <td class="td_left"><p><?php print_string('dirroot', 'install') ?></p></td>
+                <td class="td_left"><p class="p_install"><?php print_string('dirroot', 'install') ?></p></td>
                 <td class="td_right">
                     <input type="text" size="40" name="dirrootform" disabled="disabled" value="<?php p($INSTALL['dirrootform'],true) ?>" />
                 </td>
             </tr>
             <tr>
-                <td class="td_left"><p><?php print_string('dataroot', 'install') ?></p></td>
+                <td class="td_left"><p class="p_install"><?php print_string('dataroot', 'install') ?></p></td>
                 <td class="td_right">
                     <input type="text" size="40" name="dataroot" value="<?php p($INSTALL['dataroot'],true) ?>" />
                 </td>
@@ -817,7 +826,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
 ?>
 
             <tr>
-                <td class="td_left"><p><?php print_string('dbtype', 'install') ?></p></td>
+                <td class="td_left"><p class="p_install"><?php print_string('dbtype', 'install') ?></p></td>
                 <td class="td_right">
                 <?php choose_from_menu (array('mysql' => get_string('mysql', 'install'),
                                               'mysqli' => get_string('mysqli', 'install'),
@@ -830,33 +839,33 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
                 </td>
             </tr>
             <tr>
-                <td class="td_left"><p><?php print_string('dbhost', 'install') ?></p></td>
+                <td class="td_left"><p class="p_install"><?php print_string('dbhost', 'install') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="dbhost" value="<?php p($INSTALL['dbhost']) ?>" />
+                    <input type="text" class="input_database" name="dbhost" value="<?php p($INSTALL['dbhost']) ?>" />
                 </td>
             </tr>
             <tr>
-                <td class="td_left"><p><?php print_string('database', 'install') ?></p></td>
+                <td class="td_left"><p class="p_install"><?php print_string('database', 'install') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="dbname" value="<?php p($INSTALL['dbname']) ?>" />
+                    <input type="text" class="input_database" name="dbname" value="<?php p($INSTALL['dbname']) ?>" />
                 </td>
             </tr>
             <tr>
-                <td class="td_left"><p><?php print_string('user') ?></p></td>
+                <td class="td_left"><p class="p_install"><?php print_string('user') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="dbuser" value="<?php p($INSTALL['dbuser']) ?>" />
+                    <input type="text" class="input_database" name="dbuser" value="<?php p($INSTALL['dbuser']) ?>" />
                 </td>
             </tr>
             <tr>
-                <td class="td_left"><p><?php print_string('password') ?></p></td>
+                <td class="td_left"><p class="p_install"><?php print_string('password') ?></p></td>
                 <td class="td_right">
-                    <input type="password" size="40" name="dbpass" value="<?php p($INSTALL['dbpass']) ?>" />
+                    <input type="password" class="input_database" name="dbpass" value="<?php p($INSTALL['dbpass']) ?>" />
                 </td>
             </tr>
             <tr>
-                <td class="td_left"><p><?php print_string('dbprefix', 'install') ?></p></td>
+                <td class="td_left"><p class="p_install"><?php print_string('dbprefix', 'install') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="prefix" value="<?php p($INSTALL['prefix']) ?>" />
+                    <input type="text" class="input_database" name="prefix" value="<?php p($INSTALL['prefix']) ?>" />
                 </td>
             </tr>
 
@@ -866,7 +875,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
 ?>
 
             <tr>
-                <td class="td_left"><p><?php print_string('admindirname', 'install') ?></p></td>
+                <td class="td_left"><p class="p_install"><?php print_string('admindirname', 'install') ?></p></td>
                 <td class="td_right">
                     <input type="text" size="40" name="admindirname" value="<?php p($INSTALL['admindirname']) ?>" />
                 </td>
@@ -891,7 +900,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
                     /// We never should reach this because DB has been tested before arriving here
                         $errormsg = get_string('dbconnectionerror', 'install');
                         $nextstage = DATABASE;
-                        echo '<p class="errormsg" align="center">'.get_string('dbconnectionerror', 'install').'</p>';
+                        echo '<p class="errormsg" style="text-align:center">'.get_string('dbconnectionerror', 'install').'</p>';
                     }
                 ?>
                 </td>
@@ -914,7 +923,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
                         $options['stage'] = DOWNLOADLANG;
                         $options['same'] = true;
                         print_simple_box_start('center');
-                        print_single_button('install.php', $options, get_string('downloadlanguagebutton','install', $languages[$INSTALL['language']]), 'POST');
+                        print_single_button('install.php', $options, get_string('downloadlanguagebutton','install', $languages[$INSTALL['language']]), 'post');
                         print_simple_box_end();
                     } else {
                 /// Show result info
@@ -947,13 +956,13 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
     if ($needtoopenform) {
 ?>
             <form id="installform" method="post" action="<?php echo $formaction ?>">
-            <input type="hidden" name="stage" value="<?php echo $nextstage ?>" />
+            <div><input type="hidden" name="stage" value="<?php echo $nextstage ?>" /></div>
 <?php
     }
 ?>
 
-            <?php echo ($nextstage < SAVE) ? "<input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" style=\"float: ".fix_align_rtl("right")."\"/>\n" : "&nbsp;\n" ?>
-            <?php echo ($nextstage > WELCOME) ? "<input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" style=\"float: ".fix_align_rtl("left")."\"/>\n" : "&nbsp;\n" ?>
+            <?php echo ($nextstage < SAVE) ? "<div><input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" style=\"float: ".fix_align_rtl("right")."\"/></div>\n" : "&nbsp;\n" ?>
+            <?php echo ($nextstage > WELCOME) ? "<div><input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" style=\"float: ".fix_align_rtl("left")."\"/></div>\n" : "&nbsp;\n" ?>
 
 <?php
     if ($needtoopenform) {
@@ -986,16 +995,16 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
 
 function print_compatibility_row($success, $testtext, $errormessage, $helpfield='', $caution=false) {
     echo "<tr>\n";
-    echo "<td class=\"td_left\" valign=\"top\" nowrap width=\"160\"><p>$testtext</p></td>\n";
+    echo "<td class=\"td_left_nowrap\" valign=\"top\"><p class=\"p_install\">$testtext</p></td>\n";
     if ($success) {
         echo "<td valign=\"top\"><p class=\"p_pass\">".get_string('pass', 'install')."</p></td>\n";
         echo "<td valign=\"top\">&nbsp;</td>\n";
     } else {
-        echo "<td valign=\"top\"";
+        echo "<td valign=\"top\">";
         echo ($caution) ? "<p class=\"p_caution\">".get_string('caution', 'install') : "<p class=\"p_fail\">".get_string('fail', 'install');
         echo "</p></td>\n";
         echo "<td valign=\"top\">";
-        echo "<p>$errormessage ";
+        echo "<p class=\"p_install\">$errormessage ";
         install_helpbutton("install.php?help=$helpfield");
         echo "</p></td>\n";
     }
@@ -1010,9 +1019,10 @@ function install_helpbutton($url, $title='') {
     if ($title == '') {
         $title = get_string('help');
     }
-    echo "<a href=\"javascript: void(0)\">";
-    echo "<img src=\"pix/help.gif\" class=\"iconhelp\" alt=\"$title\" title=\"$title\" ";
-    echo "onClick=\"return window.open('$url', 'Help', 'menubar=0,location=0,scrollbars,resizable,width=500,height=400')\">";
+    echo "<a href=\"javascript:void(0)\" ";
+    echo "onclick=\"return window.open('$url','Help','menubar=0,location=0,scrollbars,resizable,width=500,height=400')\"";
+    echo ">";
+    echo "<img src=\"pix/help.gif\" class=\"iconhelp\" alt=\"$title\" title=\"$title\"/>";
     echo "</a>\n";
 }
 
@@ -1130,12 +1140,24 @@ function css_styles() {
         font-family: courier, monospace;
         font-size: 10pt;
     }
+    .input_database {
+        width: 270px;
+    }
     .install_table {
         width: 500px;
+        margin-left:auto;
+        margin-right:auto;
     }
     .td_left {
         text-align: <?php echo fix_align_rtl("right") ?>;
         font-weight: bold;
+    }
+    .td_left_nowrap{
+        text-align: <?php echo fix_align_rtl("right") ?>;
+        font-weight: bold;
+        white-space: nowrap;
+        width: 160px;
+        padding-left: 10px;
     }
     .td_right {
         text-align: <?php echo fix_align_rtl("left") ?>;
@@ -1145,43 +1167,60 @@ function css_styles() {
         border-width: 1px;
         border-style: solid;
         border-color: #ffc85f;
+        margin-left:auto;
+        margin-right:auto;
         -moz-border-radius-bottomleft: 15px;
         -moz-border-radius-bottomright: 15px;
     }
     .td_mainheading {
         background-color: #fee6b9;
-        padding: 10px;
+        padding-left: 10px;
     }
     .td_main {
         text-align: center;
     }
     .td_mainlogo {
+        vertical-align: middle;
     }
     .p_mainlogo {
+        margin-top: 0px;
+        margin-bottom: 0px;
     }
     .p_mainheading {
         font-size: 11pt;
+        margin-top: 16px;
+        margin-bottom: 16px;
     }
     .p_subheading {
         font-size: 10pt;
-        padding: 10px;
+        padding-left: 10px;
+        margin-top: 16px;
+        margin-bottom: 16px;
     }
     .p_mainheader{
-        text-align: right;
+        text-align: right; 
         font-size: 20pt;
         font-weight: bold;
+        margin-top: 0px;
+        margin-bottom: 0px;
     }
     .p_pass {
         color: green;
         font-weight: bold;
+        margin-top: 0px;
+        margin-bottom: 0px;
     }
     .p_fail {
         color: red;
         font-weight: bold;
+        margin-top: 0px;
+        margin-bottom: 0px;
     }
     .p_caution {
         color: #ff6600;
         font-weight: bold;
+        margin-top: 0px;
+        margin-bottom: 0px;
     }
     .p_help {
         text-align: center;
@@ -1189,6 +1228,15 @@ function css_styles() {
         font-size: 14pt;
         font-weight: bold;
         color: #333333;
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+    /* This override the p tag for every p tag in this installation script,
+       but not in lang\xxx\installer.php 
+      */
+    .p_install {
+        margin-top: 0px;
+        margin-bottom: 0px; 
     }
     .environmenttable {
         font-size: 10pt;
@@ -1220,7 +1268,7 @@ function css_styles() {
     .errorboxcontent {
         text-align: center;
         font-weight: bold;
-        padding: 20px;
+        padding-left: 20px;
         color: #ff0000;
     }
     .invisiblefieldset {
