@@ -5,7 +5,7 @@
        print_string("htmleditordisabledadmin");
    } else if (!$USER->htmleditor) {
        print_string("htmleditordisabled");
-   } else if (!can_use_html_editor()) {
+   } else if (!can_use_richtext_editor()) {
        print_string("htmleditordisabledbrowser");
    } else {
        print_string("htmleditoravailable");

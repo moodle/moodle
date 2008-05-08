@@ -505,6 +505,17 @@ function get_group_students($groupids, $sort='ul.timeaccess DESC') {
     return get_users_by_capability($context, 'moodle/legacy:student', 'u.*, ul.timeaccess as lastaccess', $sort, '','',$groupids, '', false);
 }
 
+/**
+ * Determines if the HTML editor is enabled. This function has 
+ * been deprecated, but needs to remain available because it is 
+ * used in language packs for Moodle 1.6 to 1.9.
+ *
+ * @deprecated Use {@link can_use_html_editor()} instead.
+ */
+function can_use_richtext_editor() {
+    return can_use_html_editor();
+}
+
 
 ########### FROM weblib.php ##########################################################################
 
