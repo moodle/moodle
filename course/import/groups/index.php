@@ -9,7 +9,7 @@
     $id = required_param('id', PARAM_INT);    // Course id
 
     if (! $course = get_record('course', 'id', $id) ) {
-        print_error("That's an invalid course id");
+        print_error('invalidcourseid');
     }
 
     require_login($course->id);
@@ -17,7 +17,7 @@
 
 
     if (!has_capability('moodle/course:managegroups', $context)) {
-        print_error("You do not have the required permissions to manage groups.");
+        print_error('nopermissiontomanagegroup');
     }
 
     //if (!confirm_sesskey()) {

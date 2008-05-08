@@ -178,6 +178,7 @@ $string['nonmeaningfulcontent'] = 'Non meaningful content';
 $string['noparticipatorycms'] = 'Sorry, but you have no participatory course modules to report on.';
 $string['nopermissions'] = 'Sorry, but you do not currently have permissions to do that ($a)';
 $string['nopermissiontoviewpage'] = 'You are not allowed to look at this page';
+$string['nopermissiontomanagegroup'] = 'You do not have the required permissions to manage groups.';
 $string['nosite'] = 'No sites';
 $string['nositeid'] = 'No site ID';
 $string['nostatstodisplay'] = 'There is no available data to display, sorry.';
