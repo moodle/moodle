@@ -273,7 +273,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 }
                 $message .= "ERROR $code:<br/>$errormessage<br/>";
             }
-            print_error("rpcerror", '', '', $message");
+            print_error("rpcerror", '', '', $message);
         }
         unset($mnetrequest);
 
