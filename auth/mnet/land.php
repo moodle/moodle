@@ -20,7 +20,7 @@ if (!$site = get_site()) {
 }
 
 if (!is_enabled_auth('mnet')) {
-    print_error('mnet is disabled');
+    print_error('mnetdisable');
 }
 // grab the GET params
 $token         = required_param('token',    PARAM_BASE64);

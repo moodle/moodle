@@ -62,7 +62,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return bool Authentication success or failure.
      */
     function user_login($username, $password) {
-        return false; // print_error("Remote MNET users cannot login locally.");
+        return false; // print_error("mnetlocal");
     }
 
     /**
@@ -273,7 +273,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 }
                 $message .= "ERROR $code:<br/>$errormessage<br/>";
             }
-            print_error("RPC auth/mnet/user_authorise:<br/>$message");
+            print_error("rpcerror", '', '', $message");
         }
         unset($mnetrequest);
 
@@ -372,7 +372,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         if (!$bool) {
             // TODO: Jonathan to clean up mess
             // Actually, this should never happen (modulo race conditions) - ML
-            print_error("updating user failed in mnet/auth/confirm_mnet_session ");
+            print_error("cannotupdateuser");
         }
 
         // set up the session

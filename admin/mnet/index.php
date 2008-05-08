@@ -43,7 +43,7 @@
                 if (set_config('mnet_dispatcher_mode', $form->mode)) {
                     redirect('index.php', get_string('changessaved'));
                 } else {
-                    print_error('Invalid action parameter.', '', 'index.php');
+                    print_error('invalidaction', '', 'index.php');
                 }
             }
         } elseif (!empty($form->submit) && $form->submit == get_string('delete')) {

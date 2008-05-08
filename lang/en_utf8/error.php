@@ -58,6 +58,7 @@ $string['cannotupdatecm'] = 'Could not update the course module with the correct
 $string['cannotupdatelevel'] = 'Could not update the indent level on that course module';
 $string['cannotupdaterole'] = 'Cannot update role!';
 $string['cannotupdatemod'] = 'Could not update the $a';
+$string['cannotupdateuser'] = 'updating user failed';
 $stirng['cannotupdaterss'] = 'Cannot update rss';
 $string['cannotupdatesummary'] = 'Could not update the summary!';
 $string['cannotupdatesubcate'] = 'Could not update a child category!';
@@ -149,6 +150,8 @@ $string['missingfield'] = 'Field \"$a\" is missing.';
 $string['missingrequiredfield'] = 'Some required field is missing';
 $string['mimetexisnotexist'] = 'Your system is not configured to run mimeTeX. You need to download the appropriate executable for you PHP_OS platform from <a href=\"http://moodle.org/download/mimetex/\">http://moodle.org/download/mimetex/</a>, or obtain the C source from <a href=\"http://www.forkosh.com/mimetex.zip\"> http://www.forkosh.com/mimetex.zip</a>, compile it and put the executable into your moodle/filter/tex/ directory.';
 $string['mimetexnotexecutable'] = 'Custom mimetex is not executable!';
+$string['mnetdisable'] = 'mnet is disabled';
+$string['mnetlocal'] = 'Remote MNET users cannot login locally.';
 $string['moduledoesnotexist'] = 'This module does not exist';
 $string['moduleinstancedoesnotexist'] = 'The instance of this module does not exist';
 $string['moduledisable'] = 'This module ($a) has been disabled for this particular course';
@@ -187,7 +190,7 @@ $string['processingstops'] = 'Processing stops here. Remaining records ignored.'
 $string['remotedownloaderror'] = 'Download of component to your server failed, please verify proxy settings, PHP cURL extension is highly recommended.<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['restricteduser'] = 'Sorry, but your current account \"$a\" is restricted from doing that.';
-$string['rpcerror'] = 'RPC enrol/mnet/available_courses:<br/> ($a)';
+$string['rpcerror'] = 'RPC enrol/mnet/available_courses: ($a)';
 $string['scheduledbackupsdisabled'] = 'Scheduled backups have been disabled by the server admin';
 $string['sectionnotexist'] = 'This section does not exist';
 $string['sendmessage'] = 'Send Message';

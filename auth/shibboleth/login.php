@@ -21,7 +21,7 @@ httpsrequired();
 
 /// Define variables used in page
     if (!$site = get_site()) {
-        print_error("No site found!");
+        print_error("siteisnotdefined", 'debug');
     }
 
     if (empty($CFG->langmenu)) {
