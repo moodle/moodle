@@ -749,7 +749,7 @@ function close_window_button($name='closewindow', $return=false) {
     $output = '';
 
     $output .= '<div class="closewindow">' . "\n";
-    $output .= '<form action="'.$CFG->wwwroot.'"><div>';   // We don't use this
+    $output .= '<form action="#"><div>';
     $output .= '<input type="button" onclick="self.close();" value="'.get_string($name).'" />';
     $output .= '</div></form>';
     $output .= '</div>' . "\n";
@@ -6751,7 +6751,7 @@ function page_doc_link($text='', $iconpath='') {
  */
 function doc_link($path='', $text='', $iconpath='') {
     global $CFG;
-
+    
     if (empty($CFG->docroot)) {
         return '';
     }
@@ -6769,7 +6769,7 @@ function doc_link($path='', $text='', $iconpath='') {
 
     $str = "<a href=\"$url\"$target>";
 
-    if (empty($iconpath)) {
+    if (empty($iconpath)) { 
         $iconpath = $CFG->httpswwwroot . '/pix/docs.gif';
     }
 
