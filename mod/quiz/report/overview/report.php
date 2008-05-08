@@ -492,7 +492,11 @@ class quiz_report extends quiz_default_report {
                     if ($attempt->timefinish) {
                         $grade = quiz_rescale_grade($attempt->sumgrades, $quiz);
                         if (!$download) {
-                            $row[] = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$grade.'</a>';
+                            $gradehtml = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$grade.'</a>';
+                            if ($qmsubselect && $attempt->gradedattempt){
+                                $gradehtml = '<div class="highlight">'.$gradehtml.'</div>';
+                            }
+                            $row[] = $gradehtml;
                         } else {
                             $row[] = $grade;
                         }
