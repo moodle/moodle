@@ -408,7 +408,7 @@ function message_print_search_results($frm) {
             echo "</tr>\n";
 
             $blockedcount = 0;
-            $dateformat = get_string('strftimedatetime');
+            $dateformat = get_string('strftimedatetimeshort');
             $strcontext = get_string('context', 'message');
             foreach ($messages as $message) {
 
@@ -910,7 +910,7 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
         if ($format) {
             $dateformat = $format;
         } else {
-            $format = get_string('strftimedaytime');
+            $format = get_string('strftimedatetimeshort');
         }
     }
     $time = userdate($message->timecreated, $dateformat);

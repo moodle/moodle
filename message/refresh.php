@@ -50,7 +50,7 @@
     if ($messages = get_records_select('message', "useridto = '$USER->id' AND useridfrom = '$userid'",
                                        'timecreated')) {
         foreach ($messages as $message) {
-            $time = userdate($message->timecreated, get_string('strftimedaytime'));
+            $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
 
             $options = new object();
             $options->para = false;
