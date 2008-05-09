@@ -42,8 +42,8 @@ $string['configurationcomplete'] = '配置完毕';
 $string['configurationcompletehead'] = '配置完毕';
 $string['configurationcompletesub'] = 'Moodle会尝试将配置存储在您的Moodle根目录中。';
 $string['continue'] = '继续';
-$string['curlrecommended'] = '若激活Moodle网络功能，强烈建议您安装Curl库。';
-$string['customcheck'] = '其它检查';
+$string['curlrecommended'] = '为了使用Moodle网络功能，需要安装Curl库。';
+$string['customcheck'] = '其他检查';
 $string['database'] = '数据库';
 $string['databasecreationsettings'] = '现在您需要配置数据库选项，Moodle的大部分数据都是存储在数据库中的。Moodle4Windows安装程序会根据下面的选项自动为您创建这个数据库。<br />
 <br /> <br />
@@ -92,7 +92,7 @@ $string['databasesettingssub_mysql'] = '<b>类型:</b> MySQL<br />
 <b>用户:</b> 您的数据库用户名<br />
 <b>密码:</b> 您的数据库密码<br />
 <b>表格前缀:</b> 在所有的表格名称前加上前缀（可选的）';
-$string['databasesettingssub_mysqli'] = '<b>类型:</b> 改进的MySQL<br />
+$string['databasesettingssub_mysqli'] = '<b>类型:</b> MySQL<br />
 <b>主机:</b> 例如，localhost或者db.isp.com<br />
 <b>名字:</b> 数据库名, 比如moodle<br />
 <b>用户:</b> 您的数据库用户名<br />
@@ -116,7 +116,7 @@ $string['databasesettingssub_postgres7'] = '<b>类型:</b> PostgreSQL<br />
 <b>用户:</b> 您的数据库用户名<br />
 <b>密码:</b> 您的数据库密码<br />
 <b>表格前缀:</b> 在所有的表格名称前加上前缀(强制的)';
-$string['databasesettingswillbecreated'] = '<b>注意：</b>如果数据库不存在，则安装程序会尝试创建它。';
+$string['databasesettingswillbecreated'] = '<b>注释:</b> 如果数据库不存在将自动创建';
 $string['dataroot'] = '数据目录';
 $string['datarooterror'] = '找不到也无法创建您指定的“数据目录”，请更正路径或手工创建它。';
 $string['dbconnectionerror'] = '无法连接到您指定的数据库，请检查您的数据库设置。';
@@ -126,9 +126,9 @@ $string['dbpass'] = '密码';
 $string['dbprefix'] = '表格名称前缀';
 $string['dbtype'] = '类型';
 $string['dbwrongencoding'] = '您选择的数据库使用了字符集{$a}，我们推荐您使用一个Unicode (UTF-8)字符集的数据库。当然，您可以选择“跳过数据库字符集检查”来跳过这个环节，但您将来可能会遇到问题。';
-$string['dbwronghostserver'] = '你必须遵循上面所阐述的“主机”规则。';
+$string['dbwronghostserver'] = '您必须遵循上面所阐述的“主机”规则。';
 $string['dbwrongnlslang'] = '在您的web服务器中的NLS_LANG环境变量必须用 AL32UTF8 字符集。请查阅有关如何正确配置OCI8的PHP文档。';
-$string['dbwrongprefix'] = '你必须遵循上面所阐述的“表格前缀”规则。';
+$string['dbwrongprefix'] = '您必须遵循上面所阐述的“表格前缀”规则。';
 $string['directorysettings'] = '<p>请确认安装Moodle的位置。</p>
 
 <p><b>Web地址:</b>
@@ -159,10 +159,10 @@ $string['downloadlanguagesub'] = '您现在可以下载一个语言包并以该�
 $string['doyouagree'] = '您已经阅读并理解了这些条件吗?';
 $string['environmenterrortodo'] = '在继续安装此版本的 Moodle 前，您必需解决上面所列出的所有环境问题（错误）！';
 $string['environmenthead'] = '检测您的运行环境...';
-$string['environmentrecommendcustomcheck'] = '如果此测试失败，就表示有潜在的错误';
+$string['environmentrecommendcustomcheck'] = '如果该测试失败，表明存在问题';
 $string['environmentrecommendinstall'] = '- 推荐安装/激活';
 $string['environmentrecommendversion'] = '推荐 {$a->needed} 版本，而您的是 {$a->current}';
-$string['environmentrequirecustomcheck'] = '此测试必须通过';
+$string['environmentrequirecustomcheck'] = '测试必须通过';
 $string['environmentrequireinstall'] = '- 必需安装/激活';
 $string['environmentrequireversion'] = '需要 {$a->needed} 版本，而您的是 {$a->current}';
 $string['environmentsub'] = '我们正在检查您系统中的某些组件是否符合需求';
@@ -187,7 +187,7 @@ $string['gdversionhelp'] = '<p>您的服务器看上去并没有安装GD。</p>
 <p>在Windows上，修改php.ini并去掉php_gd2.dll行前的注释符号就可以了。</p>';
 $string['globalsquotes'] = '处理全局变量的方式不安全';
 $string['globalsquoteserror'] = '修正您的PHP设置：禁用register_globals和/或启动magic_quotes_gpc。';
-$string['globalsquoteshelp'] = '<p>我们不建议你在禁用Magic Quotes GPC的同时开启Register Globals。</p>
+$string['globalsquoteshelp'] = '<p>我们不建议您在禁用Magic Quotes GPC的同时开启Register Globals。</p>
 
 <p>一种比较好的做法是在php.ini中设定<b>magic_quotes_gpc = On</b>和<b>register_globals = Off。</b></p>
 
@@ -195,13 +195,14 @@ $string['globalsquoteshelp'] = '<p>我们不建议你在禁用Magic Quotes GPC�
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
 </p>';
-$string['globalswarning'] = '<p><strong>安全警告</strong>: 为了能够正常工作，Moodle需要您修改您修改您的PHP设置。<p/><p>您<em>必须</em>设定<code>register_globals=off</code>。<p>此选项由您的<code>php.ini</code>文件控制，您也可以修改Apache/IIS的配置或者是<code>.htaccess</code>文件。</p>';
+$string['globalswarning'] = '<p><strong>安全警告</strong>: 为了保证操作合理，Moodle需要 <br />您对当前的PHP做一些设置.<p/><p>您<em>必须</em>设置<code>register_globals=off</code>.<p>该设置在<code>php.ini</code>中修改, Apache/IIS <br />配置 or <code>.htaccess</code> 文件.</p>';
 $string['help'] = '帮助';
 $string['iconvrecommended'] = '我们强烈建议您安装时 ICONV 库，特别是您的站点使用非拉丁语系的语言时，它可以大大提升系统性能。';
 $string['info'] = '信息';
 $string['installation'] = '安装';
 $string['invalidemail'] = 'E-mail地址无效';
 $string['invalidmd5'] = '无效的md5';
+$string['invalidurl'] = '无效的URL地址';
 $string['langdownloaderror'] = '很不幸，语言“{$a}”并未安装。安装过程将以英文继续。';
 $string['langdownloadok'] = '语言“{$a}”已经成功安装了。安装过程将会以此语言继续。';
 $string['language'] = '语言';
@@ -220,12 +221,12 @@ $string['memorylimithelp'] = '<p>您的服务器的PHP内存限制是${a}。</p>
 
 <p>这会使Moodle在将来运行是碰到内存问题，特别是您安装了很多模块并且/或者有很多用户。</p>
 
-<p>我们建议可能的话把限制设定的高一些，譬如40M。有几种方法可以做到这一点:</p>
+<p>我们建议可能的话把限制设定的高一些，譬如16M。有几种方法可以做到这一点:</p>
 <ol>
 <li>如果可以，重新编译PHP并使用<i>--enable-memory-limit</i>选项。这允许Moodle自己设定内存限制。</li>
-<li>如果可以访问php.ini文件，您可以修改<b>memory_limit</b>的设置为其它值如40M。如果您无法访问，可以让您的管理员帮您修改一下。</li>
+<li>如果可以访问php.ini文件，您可以修改<b>memory_limit</b>的设置为其它值如16M。如果您无法访问，可以让您的管理员帮您修改一下。</li>
 <li>在一些PHP服务器上，您可以在Moodle目录中创建一个.htaccess文件并包含如下内容:
-<blockquote>php_value memory_limit 40M</blockquote>
+<blockquote>php_value memory_limit 16M</blockquote>
 <p>然而，在一些服务器上这会让<b>所有</b>PHP页面无法正常工作(在访问页面时会有错误)，因此您可能不得不删除.htaccess文件。</p></li>
 </ol>';
 $string['missingrequiredfield'] = '缺少了必需的字段';
@@ -237,8 +238,8 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = '如果您的站点只使用 iso-8859-1 (latin) 语言，您可以使用您当前安装的 MySQL 4.1.12(或更高)。';
 $string['mysql416required'] = 'MySQL 4.1.16 是 Moodle 1.6 所需要的最低版本，否则将无法保证所有数据都能转换到 UTF-8 编码。';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP的MySQL扩展并未安装正确，因此无法与MySQL通信。请检查您的php.ini文件或重新编译PHP。';
-$string['mysqli'] = '改进的MySQL(mysqli)';
-$string['mysqliextensionisnotpresentinphp'] = 'PHP的MySQLi扩展并未安装正确，因此无法与MySQL通信。请检查您的php.ini文件或重新编译PHP。';
+$string['mysqli'] = '改进的Mysql(mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP的MySQLi扩展并未安装正确，因此无法与MySQL通信。请检查您的php.ini文件或重新编译PHP。对PHP4，MySQLi扩展不可用。';
 $string['name'] = '名称';
 $string['next'] = '向后';
 $string['oci8po'] = 'Oracle (oci8po)';
@@ -246,7 +247,7 @@ $string['ociextensionisnotpresentinphp'] = 'PHP的OCI8扩展并未安装正确�
 $string['odbc_mssql'] = '基于ODBC的SQL*Server (odbc_mssql)';
 $string['odbcextensionisnotpresentinphp'] = 'PHP的ODBC扩展并未安装正确，因此无法与SQL*Server通信。请检查您的php.ini文件或重新编译PHP。';
 $string['ok'] = '好';
-$string['opensslrecommended'] = '强烈建议您安装可选的OpenSSL库──它可以支持开启Moodle网络。';
+$string['opensslrecommended'] = '要使用Moodle网络功能，强烈推荐安装OpenSSL库。';
 $string['pass'] = '通过';
 $string['password'] = '密码';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP的PGSQL扩展并未安装正确，因此无法与PostgreSQL通信。请检查您的php.ini文件或重新编译PHP。';
@@ -258,9 +259,10 @@ $string['phpversionhelp'] = '<p>Moodle需要PHP 4.3.0或5.1.0（5.0.x有若干�
 <p>您必须升级PHP或者转移到一个有新版PHP的服务器上!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = '向前';
-$string['qtyperqpwillberemoved'] = '在升级过程中，RQP问题类型将会被删除。您没有使用此问题类型，因此您不会遇到任何问题。';
-$string['qtyperqpwillberemovedanyway'] = '在升级过程中，RQP问题类型将会被删除。在您的数据库中有一些RQP问题，除非您在继续升级前重新安装 http://moodle.org/mod/data/view.php?d=13&amp;rid=797 的代码，否则它们将会停止工作。';
+$string['qtyperqpwillberemoved'] = '在更新期间，RQP问题类型将被移除。您不能再使用这种问题类型，这样就不会遇到任何问题。';
+$string['qtyperqpwillberemovedanyway'] = '在更新期间，RQP问题类型将被移除。在数据库中有一些RQP问题，这些数据会停止工作，除非在更新前您从http://moodle.org/mod/data/view.php?d=13&amp;rid=797 重新安装代码。';
 $string['releasenoteslink'] = '对于这个版本的 Moodle，请参考在线的 <a target=\"_new\" href=\"{$a}\">发行备忘录</a>。';
+$string['remotedownloaderror'] = '下载组件至服务器失败，请校验代理设置，推荐安装PHP cURL扩展。<br /><br />您必须手动下载下载<a href=\"$a->url\">$a->url</a> ，拷贝至服务器上的\"$a->dest\"并解压至此。';
 $string['remotedownloadnotallowed'] = '不允许为您的服务器下载组件(allow_url_fopen失败)。<br /><br />您应该<a href=\"{$a->url}\">{$a->url}</a> 先手动的把它复制到“{$a->dest}”您的服务器上然后解压。';
 $string['report'] = '报表';
 $string['restricted'] = '受限的';
@@ -271,7 +273,7 @@ $string['safemodehelp'] = '<p>在安全模式下运行Moodle可能会遇到一�
 <p>只有那些有安全妄想证的公共Web站点才会使用安全模式，因此如果遇到这个方面的麻烦，最好的方法就是为您的Moodle站点换一个Web主机提供商。</p>
 
 <p>如果您喜欢可以继续安装过程，但将来会遇到问题的。</p>';
-$string['serverchecks'] = '服务器检测';
+$string['serverchecks'] = '服务器检查';
 $string['sessionautostart'] = '自动开启会话';
 $string['sessionautostarterror'] = '这应当是关闭的';
 $string['sessionautostarthelp'] = '<p>Moodle需要会话支持，否则便无法正常工作。</p>
@@ -281,21 +283,21 @@ $string['skipdbencodingtest'] = '跳过数据库编码检测';
 $string['status'] = '状态';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '简体中文';
+$string['thislanguage'] = 'Chinese';
 $string['unicoderecommended'] = '建议用Unicode（UTF-8）存储全部数据。全新安装必须安装在缺省字符集为Unicode的数据库中。如果正在升级，您应该执行UTF-8移植处理（请参考管理员页面）。';
 $string['unicoderequired'] = '您必须使用Unicode（UTF-8）存储全部数据。全新安装必须安装在缺省字符集为Unicode的数据库中。如果正在升级，您应该执行UTF-8移植处理（请参考管理员页面）。';
 $string['user'] = '用户';
-$string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = '您看到这个页面表明您已经成功地在您的计算机上安装了<strong>{$a->packname} {$a->packversion}</strong>。恭喜您！';
 $string['welcomep30'] = '<strong>{$a->installername}</strong>包含了可以创建<strong>Moodle</strong>运行环境的应用程序：';
 $string['welcomep40'] = '这个软件包还包含了<strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>。';
 $string['welcomep50'] = '使用本软件包中包含的应用程序时应遵循它们各自的授权协议。整个<strong>{$a->installername}</strong>软件包都是<a href=\"http://www.opensource.org/docs/definition_plain.html\">开源</a>的，并且遵循<a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>授权协议发布。';
-$string['welcomep60'] = '接下来的页面会引导你通过一系列步骤在您的计算机上安装配置好<strong>Moodle</strong>。您可以接受缺省的设置后，或者根据需要修改它们。';
+$string['welcomep60'] = '接下来的页面会引导您通过一系列步骤在您的计算机上安装配置好<strong>Moodle</strong>。您可以接受缺省的设置后，或者根据需要修改它们。';
 $string['welcomep70'] = '点击“下一步”按钮以继续<strong>Moodle</strong>的安装过程。';
 $string['wrongdestpath'] = '错误的目标路径。';
 $string['wrongsourcebase'] = '错误的源URL基地址。';
 $string['wrongzipfilename'] = '错误的ZIP文件名。';
 $string['wwwroot'] = '网站地址';
 $string['wwwrooterror'] = '这个网站地址似乎是错的——在那里并没有安装好的Moodle。下面的值会被重置。';
-$string['xmlrpcrecommended'] = '安装可选的xmlrpc扩展模块对于Moodle网络功能很有用。';
+$string['xmlrpcrecommended'] = '安装可选的xmlrpc扩展对于Moodle网络功能有用。';
 ?>

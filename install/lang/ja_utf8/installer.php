@@ -96,13 +96,13 @@ $string['databasesettingssub'] = '<b>タイプ:</b> mysql または postgres7<br
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
 <b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 (任意)';
-$string['databasesettingssub_mssql'] = '<b>タイプ:</b> SQL*Server (　非UTF-8　)<b><font color=\"red\">実験用! (運用環境には使用しないでください。)</font></b><br />
+$string['databasesettingssub_mssql'] = '<b>タイプ:</b> SQL*Server (非UTF-8) <b><strong class=\"errormsg\">実験用! (運用環境には使用しないでください。)</strong></b><br />
 <b>ホスト:</b> 例 localhost または db.isp.com<br />
 <b>データベース名:</b> 例 moodle<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
 <b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 (必須)';
-$string['databasesettingssub_mssql_n'] = '<b>タイプ:</b> SQL*Server (　UTF-8　)<b><font color=\"red\">実験用! (運用環境には使用しないでください。)</font></b><br />
+$string['databasesettingssub_mssql_n'] = '<b>タイプ:</b> SQL*Server (UTF-8)<b><font color=\"red\">実験用! (運用環境には使用しないでください。)</font></b><br />
 <b>ホスト:</b> 例 localhost または db.isp.com<br />
 <b>データベース名:</b> 例 moodle<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
@@ -126,7 +126,7 @@ $string['databasesettingssub_oci8po'] = '<b>タイプ:</b> Oracle<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
 <b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 (必須、最大2cc.)';
-$string['databasesettingssub_odbc_mssql'] = '<b>タイプ:</b> SQL*Server (ODBC経由) <b><font color=\"red\">実験用! (運用環境には使用しないでください。)</font></b><br />
+$string['databasesettingssub_odbc_mssql'] = '<b>タイプ:</b> SQL*Server (ODBC経由) <b><strong class=\"errormsg\">実験用! (運用環境には使用しないでください。)</strong></b><br />
 <b>ホスト:</b>ODBCコントロールパネルのDSN名<br />
 <b>データベース名:</b> 例 moodle<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
@@ -219,10 +219,9 @@ $string['globalsquoteshelp'] = '<p>Magic Quotes GPCの無効化およびRegister
 
 <p>php.iniに関する推奨設定は <b>magic_quotes_gpc = On</b> および <b>register_globals = Off</b> です。</p>
 
-<p>あなたが php.ini にアクセスできない場合、Moodleディレクトリの中に .htaccess という名称のファイルを次のように記述することができます:
-<blockquote>php_value magic_quotes_gpc On</blockquote>
-<blockquote>php_value register_globals Off</blockquote>
-</p>';
+<p>あなたが php.ini にアクセスできない場合、Moodleディレクトリの中に .htaccess という名称のファイルを次のように記述することができます:</p>
+<blockquote><div>php_value magic_quotes_gpc On</div></blockquote>
+<blockquote><div>php_value register_globals Off</div></blockquote>';
 $string['globalswarning'] = '<p><strong>セキュリティ警告</strong>: Moodleを適切に動作させるため、<br />現在のPHP設定を変更する必要があります。<p/><p><code>register_globals=off</code>  の<em>設定を行って</em>ください。<p>この設定は、<code>php.ini</code>、Apache/IIS <br />設定、または <code>.htaccess</code> ファイルの編集により管理することができます。</p>';
 $string['help'] = 'ヘルプ';
 $string['iconvrecommended'] = 'より良いパフォーマンスを得るため、ICONVライブラリのインストールおよび稼動を強くお勧めします。あなたのサイトがラテン文字以外をサポートしている場合、特にお勧めします。';
@@ -256,9 +255,8 @@ $string['magicquotesruntimehelp'] = '<p>Moodleを正常に動作させるため�
 
 <p>通常はデフォルトで無効にされています ... php.iniの <b>magic_quotes_runtime</b> 設定を確認してください。</p>
 
-<p>php.iniファイルにアクセスできない場合は、Moodleディレクトリの.htaccessファイルに次の行を追加してください:
-<blockquote>php_value magic_quotes_runtime Off</blockquote>
-</p>';
+<p>php.iniファイルにアクセスできない場合は、Moodleディレクトリの.htaccessファイルに次の行を追加してください:</p>
+<blockquote><div>php_value magic_quotes_runtime Off</div></blockquote>';
 $string['mbstringrecommended'] = 'より良いパフォーマンスを得るため、mbstringライブラリのインストールおよび稼動を強くお勧めします。あなたのサイトがラテン文字以外をサポートしている場合、特にお勧めします。';
 $string['memorylimit'] = 'Memory Limit';
 $string['memorylimiterror'] = 'PHPのmemory limitが低すぎます ... 後で問題が発生する可能性があります。';
@@ -267,11 +265,11 @@ $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $
 <p>可能でしたら、PHPのメモリー制限上限を40M以上に設定されることをお勧めします。この設定を実現するために、いくつかの方法があります:
 <ol>
 <li>コンパイル可能な場合は、PHPを<i>--enable-memory-limit</i>オプションでコンパイルしてください。
-これにより、Moodle自身がメモリー制限を設定することが可能になります。
-<li>php.iniファイルにアクセスできる場合は、<b>memory_limit</b>設定を40Mのように変更することができます。php.iniファイルにアクセスできない場合は、管理者に変更を依頼してください。
+これにより、Moodle自身がメモリー制限を設定することが可能になります。</li>
+<li>php.iniファイルにアクセスできる場合は、<b>memory_limit</b>設定を40Mのように変更することができます。php.iniファイルにアクセスできない場合は、管理者に変更を依頼してください。</li>
 <li>いくつかのPHPサーバでは、下記の行を含む.htaccessファイルをMoodleディレクトリに作成することができます:
-<p><blockquote>php_value memory_limit 40M</blockquote></p>
-<p>しかし、この設定が<b>すべての</b>PHPページの動作を妨げる場合もあります。ページ閲覧中にエラーが表示される場合は、.htaccessファイルを削除してください。</p>
+<blockquote><div>php_value memory_limit 40M</div></blockquote>
+<p>しかし、この設定が<b>すべての</b>PHPページの動作を妨げる場合もあります。ページ閲覧中にエラーが表示される場合は、.htaccessファイルを削除してください。</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'いくつかの必須入力フィールドに入力されていません。';
 $string['moodledocslink'] = 'このページのMoodle Docs';
