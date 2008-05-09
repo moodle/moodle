@@ -220,7 +220,7 @@ class SearchQuery {
         global $USER;
 
         $term = mb_convert_case($this->term, MB_CASE_LOWER, 'UTF-8');
-
+        
         //experimental - return more results
         $strip_arr = array('author:', 'title:', '+', '-', 'doctype:');
         $stripped_term = str_replace($strip_arr, '', $term);
@@ -395,7 +395,7 @@ class SearchQuery {
       // if user is enrolled or is allowed user and course is hidden, can he see it ?
       $visibility = get_field('course', 'visible', 'id', $course_id);
       if ($visibility <= 0){
-          if (!has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))){
+          if (!has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course_id))){
               return false;
           }
       }
