@@ -559,6 +559,30 @@ function question_delete_activity($cm, $feedback=true) {
     }
     return true;
 }
+
+/**
+ * This function should be considered private to the question bank, it is called from
+ * question/editlib.php question/contextmoveq.php and a few similar places to to the work of
+ * acutally moving questions and associated data. However, callers of this function also have to
+ * do other work, which is why you should not call this method directly from outside the questionbank.
+ *
+ * @param string $questionids a comma-separated list of question ids.
+ * @param integer $newcategory the id of the category to move to.
+ */
+function question_move_questions_to_category($questionids, $newcategory) {
+    $result = true;
+
+    // Move the questions themselves.
+    $result = $result && set_field_select('question', 'category', $newcategory, "id IN ($questionids)");
+
+    // Move any subquestions belonging to them.
+    $result = $result && set_field_select('question', 'category', $newcategory, "parent IN ($questionids)");
+
+    // TODO Deal with datasets.
+
+    return $result;
+}
+
 /**
  * @param array $row tab objects
  * @param question_edit_contexts $contexts object representing contexts available from this context

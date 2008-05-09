@@ -352,8 +352,9 @@ class question_category_object {
     }
 
     function move_questions($oldcat, $newcat){
-        if (!set_field('question', 'category', $newcat, 'category', $oldcat)) {
-            print_error("Error while moving questions from category '$oldcat' to '$newcat'", '', $this->pageurl->out());
+        $questionids = get_records_select_menu('question', "category = $oldcat AND parent = 0", '', 'id,1');
+        if (!question_move_questions_to_category(implode(',', array_keys($questionids)), $newcat)) {
+            print_error('errormovingquestions', 'question', $returnurl, $ids);
         }
     }
 
