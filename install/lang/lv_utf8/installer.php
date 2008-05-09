@@ -148,6 +148,14 @@ $string['error'] = 'Kļūda';
 $string['fail'] = 'Neveiksme';
 $string['fileuploads'] = 'Failu augšupielāde';
 $string['fileuploadserror'] = 'Šai funkcijai jābūt aktivizētai';
+$string['fileuploadshelp'] = '<p>Šķiet, ka failu augšupielāde jūsu serverī ir atspējota.</p>
+
+<p>Sistēmu Moodle joprojām var instalēt, tomēr bez šīs iespējas nevarēsit 
+   augšupielādēt kursu failus vai jauno lietotāju profilu attēlus.</p>
+
+<p>Lai iespējotu failu augšupielādi, jums (vai sistēmas administratoram) 
+   ir jārediģē sistēmas galvenais fails php.ini un 
+   parametra <b>file_uploads</b> iestatījums jānomaina uz “1”.</p>';
 $string['gdversion'] = 'GD versija';
 $string['gdversionerror'] = 'Lai varētu apstrādāt un izveidot attēlus, ir jābūt instalētai GD bibliotēkai.';
 $string['gdversionhelp'] = '<p>Šķiet, ka jūsu serverī nav instalēta GD.</p>
@@ -162,6 +170,15 @@ $string['gdversionhelp'] = '<p>Šķiet, ka jūsu serverī nav instalēta GD.</p>
 <p>Sistēmā Windows parasti var rediģēt failu php.ini, kā arī noņemt komentāra statusu rindai ar atsauci uz failu php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Riskanta vispārīgo iestatījumu apstrādes metode';
 $string['globalsquoteserror'] = 'PHP iestatījumu labošana: atspējojiet register_globals un/vai iespējojiet magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Nav ieteicams atspējot funkciju Magic Quotes GPC un vienlaikus iespējot funkciju Register Globals.</p>
+
+Failā php.ini ieteicams norādīt iestatījumu <b>magic_quotes_gpc = On</b> un <b>register_globals = Off</b>
+
+Ja jums nav piekļuves failam php.ini, Moodle direktorija failā .htaccess, iespējams, varat ierakstīt 
+   šādu rindu:
+   <blockquote>php_value magic_quotes_gpc On</blockquote>
+   <blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['globalswarning'] = '<p><strong>Drošības brīdinājums</strong>: lai Moodle darbotos korekti, nepieciešams, <br />lai jūs veiktu noteiktas izmaiņas jūsu pašreizējos PHP iestatījumos.<p/><p>Jums ir <em>obligāti</em> jāiestata <code>register_globals=off</code>.<p>Šis iestatījums ir maināms, rediģējot vai nu Apache/IIS servera <br />konfigurācijas failu <code>php.ini</code>, vai arī <code>.htaccess</code> failu.</p>';
 $string['help'] = 'Palīdzība';
 $string['iconvrecommended'] = 'Ļoti ieteicama neobligātās ICONV bibliotēkas instalēšana, lai uzlabotu vietnes veiktspēju, īpaši, ja vietne atbalsta valodas, kuru pamatā nav latīņu alfabēta.';
@@ -173,6 +190,14 @@ $string['langdownloadok'] = '“{$a}” valodas pakotne tika sekmīgi instalēta
 $string['language'] = 'Valoda';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Šai funkcijai jābūt deaktivizētai';
+$string['magicquotesruntimehelp'] = '<p>Lai sistēma Moodle darbotos pareizi, funkcijai Magic Quotes Runtime jābūt izslēgtai.</p>
+
+<p>Pēc noklusējuma tā parasti ir izslēgta — skatiet parametra <b>magic_quotes_runtime</b> iestatījumu failā php.ini.</p>
+
+Ja jums nav piekļuves failam php.ini, Moodle direktorija failā .htaccess, iespējams, varat ierakstīt 
+   šādu rindu:
+   <blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'Ļoti ieteicama neobligātās MBSTRING bibliotēkas instalēšana, lai uzlabotu vietnes veiktspēju, īpaši, ja vietne atbalsta valodas, kuru pamatā nav latīņu alfabēta.';
 $string['memorylimit'] = 'Atmiņas apjoma ierobežojums';
 $string['memorylimiterror'] = 'PHP atmiņas apjoms ir diezgan ierobežots — tas vēlāk var izraisīt problēmas.';
@@ -230,9 +255,19 @@ $string['report'] = 'Atskaite';
 $string['restricted'] = 'Ierobežots';
 $string['safemode'] = 'Drošais režīms';
 $string['safemodeerror'] = 'Ja ir ieslēgts drošais režīms, sistēmā Moodle tas var izraisīt darbības problēmas';
+$string['safemodehelp'] = '<p>Ja ir ieslēgts drošais režīms, sistēmā Moodle tas var izraisīt vairākas problēmas, piemēram, 
+   iespējams, nebūs atļauts izveidot jaunus failus.</p>
+   
+<p>Drošais režīms parasti tiek iespējots publiskos tīmekļa resursdatoros, kas tiek pārspīlēti sargāti, tādēļ 
+   savai Moodle vietnei jums, iespējams, tikai jāatrod cits tīmekļa resursu pakalpojumu uzņēmums.</p>
+   
+<p>Ja vēlaties, varat turpināt instalēšanu, tomēr jārēķinās, ka vēlāk var tikt izraisītas dažas problēmas.</p>';
 $string['serverchecks'] = 'Servera pārbaudes';
 $string['sessionautostart'] = 'Automātiska sesijas startēšana';
 $string['sessionautostarterror'] = 'Šai funkcijai jābūt deaktivizētai';
+$string['sessionautostarthelp'] = '<p>Sistēmā Moodle ir nepieciešams sesijas atbalsts, un sistēma bez šī atbalsta nedarbosies.</p>
+
+<p>Sesijas var iespējot failā php.ini — atrodiet parametru session.auto_start.</p>';
 $string['skipdbencodingtest'] = 'Izlaist datubāzes kodējuma pārbaudi';
 $string['status'] = 'Statuss';
 $string['thischarset'] = 'UTF-8';

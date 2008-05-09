@@ -141,6 +141,11 @@ $string['error'] = 'Greška';
 $string['fail'] = 'Nije prošlo';
 $string['fileuploads'] = 'Postavljanje datoteka';
 $string['fileuploadserror'] = 'Ova opcija bi trebala biti uključena';
+$string['fileuploadshelp'] = '<p>Postavljanje datoteka je izgleda nedostupno na Vašem serveru.</p>
+
+<p>Moodle još uvek može biti instaliran, ali bez ove mogućnosti, nećete biti u mogućnosti da učitavate datoteke kursa ili nove slike za korisničke profile.</p>
+
+<p>Da učitavanje datoteke bude dostupno Vi (ili Vaš sistem administrator) treba da promenite php.ini datoteku na Vašem sistemu i postavite podešavanje za <b>file_uploads</b> na \'1\'.</p>';
 $string['gdversion'] = 'GD verzija';
 $string['gdversionerror'] = 'GD datoteka sa izvornim kodom trebala bi prezentirati proces i kreirati slike';
 $string['gdversionhelp'] = '<p>Na Vašem serveru izgleda nije instaliran GD.</p>
@@ -152,6 +157,14 @@ $string['gdversionhelp'] = '<p>Na Vašem serveru izgleda nije instaliran GD.</p>
 <p>Pod Windows-om obično možete izmeniti php.ini i skinuti oznaku komentara u liniji koja se odnosi na php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Nesigurno rukovanje globalnim varijablama';
 $string['globalsquoteserror'] = 'Popravite svoja PHP podešavanja: onemogućite register_globals i/ili omogućite magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Kombinacija istovremeno onemogućenog podešavanja Magic Quotes GPC i omogućenog Register Globals nije preporučljiva.</p>
+
+<p>Preporučeno podešavanje je <b>magic_quotes_gpc = On</b> i <b>register_globals = Off</b> u Vašoj datoteci php.ini</p>
+
+<p>Ako nemate pristup svojoj php.ini datoteci, možda možete da stavite sledeći red u datoteku pod nazivom .htaccess u Vašem Moodle direktorijumu:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = 'Pomoć';
 $string['iconvrecommended'] = 'Instaliranje opcione ICONV biblioteke je vrlo preporučljivo u cilju unapređivanja performansi sajta, pogotovo ako Vaš sajt podržava jezike koji ne koriste latinično pismo.';
 $string['info'] = 'Informacija';
@@ -162,6 +175,12 @@ $string['langdownloadok'] = 'Jezik \"$a\" je uspešno instaliran. Instalacioni p
 $string['language'] = 'Jezik';
 $string['magicquotesruntime'] = 'Magic Quotes vreme izvršavanja';
 $string['magicquotesruntimeerror'] = 'Ova opcija bi trebala biti isključena';
+$string['magicquotesruntimehelp'] = '<p>Magic Quotes vreme izvršavanja bi trebalo isključiti da Moodle propisno funkcioniše.</p>
+
+<p>Normalno ovo je isključeno po podrazumevanoj vrednosti... pogledajte podešavanje <b>magic_quotes_runtime</b> u svojoj php.ini datoteci.</p>
+
+<p>Ako nemate pristup php.ini datoteci, možda možete da stavite sledeći red u datoteku pod nazivom .htaccess koja se nalazi u Vašem Moodle direktorijumu: <blocquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'Instaliranje opcione MBSTRING biblioteke je vrlo preporučljivo u cilju unapređivanja performansi sajta, pogotovo ako Vaš sajt podržava jezike koji ne koriste latinično pismo.';
 $string['memorylimit'] = 'Ograničenje memorije';
 $string['memorylimiterror'] = 'PHP ograničenje memorije je podešeno na prilično nizak nivo... kasnije može doći do problema.';
@@ -215,9 +234,17 @@ $string['report'] = 'Izveštaj';
 $string['restricted'] = 'Ograničeno';
 $string['safemode'] = 'Bezbedan mod';
 $string['safemodeerror'] = 'Moodle može imati problema sa uključenim bezbednim modom rada';
+$string['safemodehelp'] = '<p>Moodle može imati različite probleme sa uključenim bezbednim modom rada, od kojih je jedan od bitnijih taj da najverovatnije neće imati dozvolu da kreira nove datoteke.</p>
+   
+<p>Bezbedni mod rada je obično jedino dozvoljen na paranoičnim javnim Web serverima, tako da možete prosto naći web server kod neke druge kuće za Vaš Moodle sajt.</p>
+   
+<p>Možete pokušati nastaviti sa instalacijom ako želite, ali očekujte nekoliko problema kasnije.</p>';
 $string['serverchecks'] = 'Provere servera';
 $string['sessionautostart'] = 'Automatski početak akcije';
 $string['sessionautostarterror'] = 'Ova opcija bi trebala biti isključena';
+$string['sessionautostarthelp'] = '<p>Moodle zahteva podršku za sesije i neće funcionisati bez nje.</p>
+
+<p>Rad sa sesijama se može omogućiti u php.ini datoteci... potražite session.auto_start parametar.</p>';
 $string['skipdbencodingtest'] = 'Preskočiti test kodnog rasporeda baze podataka';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';

@@ -138,6 +138,11 @@ $string['error'] = 'Error';
 $string['fail'] = 'Error';
 $string['fileuploads'] = 'Càrrega de fitxers';
 $string['fileuploadserror'] = 'Hauria d\'estar habilitada';
+$string['fileuploadshelp'] = '<p>Sembla que la càrrega de fitxers està inhabilitada al vostre servidor.</p>
+
+<p>Moodle es pot instal·lar igualment, però sense aquesta capacitat no podreu penjar fitxers als cursos o imatges dels usuaris.</p>
+
+<p>Per habilitar la càrrega de fitxers cal editar el fitxer php.ini principal del sistema i posar el paràmetre <b>file_uploads</b> a \'1\'.</p>';
 $string['gdversion'] = 'Versió GD';
 $string['gdversionerror'] = 'La biblioteca GD hauria d\'estar present per processar i crear imatges';
 $string['gdversionhelp'] = '<p>Sembla que el vostre servidor no té instal·lat el GD.</p>
@@ -149,6 +154,14 @@ $string['gdversionhelp'] = '<p>Sembla que el vostre servidor no té instal·lat 
 <p>En Windows generalment es pot editar el fitxer php.ini i treure el comentari de la línia que porti la referència a php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Gestió insegura dels globals';
 $string['globalsquoteserror'] = 'Arregleu els paràmetres del vostre PHP: inhabiliteu register_globals i/o habiliteu magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>No s\'aconsella tenir inhabilitat Magic Quotes GPC i tenir alhora habilitat Register Globals.</p>
+
+<p>La configuració recomanada és <b>magic_quotes_gpc = On</b> i <b>register_globals = Off</b> en el fitxer php.ini</p>
+
+<p>Si no teniu accés al php.ini, potser podreu afegir les línies següents en un fitxer anomenat .htaccess dins del directori Moodle:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['globalswarning'] = '<p><strong>Avís de seguretat</strong>: per a operar adequadament, Moodle necessita <br />que feu certs canvis en els paràmetres actuals del PHP.<p/><p><em>Cal</em> que definiu <code>register_globals=off</code>.<p>Aquest paràmetre es defineix en el fitxer <code>php.ini</code>, en la configuració d\'Apache/IIS <br />o en el fitxer <code>.htaccess</code>.</p>';
 $string['help'] = 'Ajuda';
 $string['iconvrecommended'] = 'És sumament recomanable instal·lar la biblioteca opcional ICONV a fi de millorar el rendiment del lloc, especialment si el vostre lloc utilitza llengües no romàniques.';
@@ -160,6 +173,13 @@ $string['langdownloadok'] = 'L\'dioma \"$a\" s\'ha instal·lat amb èxit. La ins
 $string['language'] = 'Idioma';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Hauria d\'estar desactivat';
+$string['magicquotesruntimehelp'] = '<p>Aquest paràmetre hauria d\'estar desactivat per tal que Moodle funcioni correctament.</p>
+
+<p>Normalment està desactivat per defecte. Comproveu el valor de <b>magic_quotes_runtime</b> al vostre fitxer php.ini.</p>
+
+<p>Si no teniu accés al php.ini, hauríeu de col·locar la línia següent en un fitxer anomenat .htaccess dins del directori de Moodle:
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'És sumament recomanable instal·lar la biblioteca opcional MBSTRING a fi de millorar el rendiment del lloc, especialment si el vostre lloc utilitza llengües no romàniques.';
 $string['memorylimit'] = 'Límit de memòria';
 $string['memorylimiterror'] = 'El límit de memòria del PHP està definit una mica baix. Podeu tenir problemes més endavant.';
@@ -213,9 +233,17 @@ $string['report'] = 'Informe';
 $string['restricted'] = 'Restringit';
 $string['safemode'] = 'Mode segur';
 $string['safemodeerror'] = 'Moodle pot tenir problemes amb el mode segur activat';
+$string['safemodehelp'] = '<p>Moodle pot tenir diversos problemes amb el mode segur activat. Probablement no podrà crear fitxers nous.</p>
+
+<p>Normalment el mode segur només està habilitat en servidors webs públics una mica paranoics, de manera que és probable que hàgiu de buscar un altre servei d\'allotjament per al vostre Moodle.</p>
+
+<p>Podeu continuar la instal·lació si voleu, però trobareu problemes de funcionament més endavant.</p>';
 $string['serverchecks'] = 'Proves del servidor';
 $string['sessionautostart'] = 'Autoinici de sessió';
 $string['sessionautostarterror'] = 'Hauria d\'estar desactivat';
+$string['sessionautostarthelp'] = '<p>Moodle necessita suport per a sessions i no funcionarà sense.</p>
+
+<p>Les sessions es poden habilitar en el fitxer php.ini. Comproveu el paràmetre session.auto_start.</p>';
 $string['skipdbencodingtest'] = 'Omet la prova de codificació de la base de dades';
 $string['status'] = 'Estat';
 $string['thischarset'] = 'UTF-8';

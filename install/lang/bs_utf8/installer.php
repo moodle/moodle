@@ -31,6 +31,11 @@ $string['error'] = 'Greška';
 $string['fail'] = 'Izostati';
 $string['fileuploads'] = 'Katalog za učitavanja datoteka';
 $string['fileuploadserror'] = 'Ovo bi trebalo biti uključeno';
+$string['fileuploadshelp'] = '<p>Katalog za učitavanje datoteka izgleda da je nedostupan na Vašem serveru.</p>
+
+<p>Moodle još uvijek može biti instaliran, ali bez ove mogućnosti, nećete biti u mogućnosti da učitavate datoteke kursa ili duplikate novih korisničkih profila.</p>
+
+<p>Da učitavanje datoteke bude dostupno Vi (ili Vaš sistem administratora) trebat ćete promijeniti svoju php.ini datoteku na Vašem sistemu i promijeniti podešavanja za <b>katalog_ucitavanja_datoteka</b> to \'1\'.</p>';
 $string['gdversion'] = 'GD verzija';
 $string['gdversionerror'] = 'GD datoteka sa izvornim kodom trebala bi prezentirati proces i kreirati duplikate';
 $string['gdversionhelp'] = '<p>Vaš server neće izgledati isto imajući GD instalaciju.</p>
@@ -45,6 +50,13 @@ $string['installation'] = 'Instalacija';
 $string['language'] = 'Jezik';
 $string['magicquotesruntime'] = 'Čari naznake vremenskog kretanja';
 $string['magicquotesruntimeerror'] = 'Ovo bi trebalo biti isključeno';
+$string['magicquotesruntimehelp'] = '<p>Čini kvote vremena pokretanja trebalo bi isključiti da Moodle propisno funkcioniše.</p>
+
+<p>Normalno ovo je isključeno po podrazumijevanoj vrijednosti ... pogledaj podešavanje<b>cini_kvote_vremena_pokretanja </b> na Vašoj php.ini datoteci.</p>
+
+<p>Ako nemate pristu na Vaš php.ini, moći ćete biti u mogućnosti da ocjenite prateći liniju u datoteci pozivajući .htapristup unutar Vašeg Moodle direktorija:  <blocquote>php_vrijednost_cina_kvote_vremena_pokretanja isključeno</blockquote>
+</p>   
+   ';
 $string['memorylimit'] = 'Ograničenje memorije';
 $string['memorylimiterror'] = 'PHP ograničenje je podešeno na potpuno malo memorije ... kasnije se možete kretati unutar problema.';
 $string['memorylimithelp'] = '<p>PHP ograničenje memorije za Vaš server je trenutno podešeno na $a.</p>
@@ -70,8 +82,16 @@ $string['phpversionhelp'] = '<p>Moodle zahtijeva najmanju PHP verziju 4.1.0.</p>
 $string['previous'] = 'Prijethodni';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle može imati problema sa uključenim safe mode-om';
+$string['safemodehelp'] = '<p>Moodle može imati različite probleme sa ukljiučenim safe modom, ni najmanji taj problem vjerovatno neće dozvoliti kreiranje novih datoteka.</p>
+   
+<p>Safe mode je obično jedino dozvoljen od paranoične javnosti web gostiju, tako da Vi možete imati jednostavnu potražnju nove web gostujuće kompanije za Vaš Moodle sajt.</p>
+   
+<p>Možete pokušati nastaviti sa instalacijom ako želite, ali očekujte nekoliko problema kasnije.</p>';
 $string['sessionautostart'] = 'Automatski početak akcije';
 $string['sessionautostarterror'] = 'Ovo bi trebalo biti isključeno';
+$string['sessionautostarthelp'] = '<p>Moodle zahtijeva podršku za postupanje i neće funcionisati bez toga.</p>
+
+<p>Etapa u radu može biti dozvoljena u php.ini datoteci ... pogledajte za postupanje.auto_start parameter.</p>';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';

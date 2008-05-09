@@ -133,6 +133,11 @@ $string['error'] = 'Chyba';
 $string['fail'] = 'Neúspešné';
 $string['fileuploads'] = 'prenesené súbory';
 $string['fileuploadserror'] = 'Toto by malo byť zapnuté';
+$string['fileuploadshelp'] = '<p>Zdá sa, že na Vašom serveri nie je aktivovaný prenos súborov.</p>
+
+<p>Moodle môže byť aj napriek tomu nainštalovaný, ale bez tejto možnosti, nebudete schopní preniesť súbory kurzu, alebo obrázky v nových používateľských profiloch.</p>
+
+<p>Na aktivovanie prenosu súborov, Vy (alebo Váš systémový administrátor) budete musieť upraviť main php.ini súbor v systéme a zmeniť nastavenie pre <b>file_uploads</b> na \'1\'.</p>';
 $string['gdversion'] = 'Verzia knižnice GD';
 $string['gdversionerror'] = 'Knižnica GD by mala existovať na spracovávanie a vytváranie obrázkov';
 $string['gdversionhelp'] = '<p>Na Vašom serveri zrejme nie je nainštalovaná GD knižnica.</p>
@@ -144,6 +149,14 @@ $string['gdversionhelp'] = '<p>Na Vašom serveri zrejme nie je nainštalovaná G
 <p>Pod Windows môžete upraviť php.ini a odkomentovať riadok obsahujúci php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Nie bezpečné používanie globálnych premenných';
 $string['globalsquoteserror'] = 'Opravte svoje nastavenia PHP: vypnite register_globals a/alebo zapnite magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Kombinácia vypnutých Magic Quotes GPC a zapnutých Register Globals nie je doporučená.</p>
+
+<p>Odporúčané nastavenie je<b>magic_quotes_gpc = On</b> a <b>register_globals = Off</b> vo vašom php.ini</p>
+
+<p>Ak nemáte prístup k vašemu php.ini, skúste pridať nasledovný riadok do súboru .htaccess vo vašom  Moodle adresári:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['globalswarning'] = '<p><strong>Bezpečnostné upozornenie</strong>: pre správne fungovanie Moodle je nutné upraviť nastavenie PHP <br />na vašom serveri.<p/><p><em>Musíte</em> nastaviť <code>register_globals=off</code>. <p>Nastavenie skontrolujte v súbore <code>php.ini</code>, v konfiguračnom súbore Apache/IIS, alebo v súbore <code>.htaccess</code>.</p>';
 $string['help'] = 'Pomoc';
 $string['iconvrecommended'] = 'Inštalácia voliteľnej knižnice ICONV je vysoko doporučovaná, pretože zvyšuje výkon stránok, najmä ak používate mäkčeňové jazyky - napr. slovenčinu.';
@@ -155,6 +168,13 @@ $string['langdownloadok'] = 'Podarilo so úspešne nainštalovať jazykový bal�
 $string['language'] = 'Jazyk';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Toto by malo byť vypnuté';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime by malo byť vypnuté, aby Moodle fungoval tak, ako má.</p>
+
+<p>Zvyčajne je voľba štandardne vypnutá ... pozri nastavenia <b>magic_quotes_runtime</b> vo Vašom php.ini súbore.</p>
+
+<p>Ak nemáte prístup k súboru php.ini, mali by ste nasledovný riadok do súboru s názvom .htaccess v rámci adresára Moodle: 
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'Inštalácia voliteľnej knižnice MBSTRING je vysoko doporučovaná, pretože zvyšuje výkon stránok, najmä ak používate mäkčeňové jazyky - napr. slovenčinu.';
 $string['memorylimit'] = 'Limit pamäte';
 $string['memorylimiterror'] = 'PHP limit pamäte je nastavený na minimum...S týmto môžete mať neskôr problémy.';
@@ -203,9 +223,13 @@ $string['report'] = 'Záznamy';
 $string['restricted'] = 'Obmedzený';
 $string['safemode'] = 'Bezpečný mód';
 $string['safemodeerror'] = 'Moodle môže mať problémy, ak je zapnutý bezpečný mód';
+$string['safemodehelp'] = '<p>Moodle môže mať viacero problémov, ak je zapnutý bezpečný mód, pravdepodobne nedovolí vytvárať nové súbory.</p>
+
+<p>Bezpečný mód je zvyčajne povolený verejnými poskytovateľmi webového priestoru, takže by ste si mali nájsť nového poskytovateľa webového priestoru pre stránku Moodle.</p>';
 $string['serverchecks'] = 'Kontroly servera';
 $string['sessionautostart'] = 'Autoštart sekcie';
 $string['sessionautostarterror'] = 'Toto by malo byť vypnuté';
+$string['sessionautostarthelp'] = '<p>Moodle vyžaduje podporu sekcií a nebude bez nich fungovať.</p>';
 $string['skipdbencodingtest'] = 'Preskočiť test kódovania DB';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';

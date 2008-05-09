@@ -121,6 +121,11 @@ $string['error'] = 'Virhe';
 $string['fail'] = 'Virhe';
 $string['fileuploads'] = 'Tiedostojen lähettäminen';
 $string['fileuploadserror'] = 'Tämän pitäisi olla päällä';
+$string['fileuploadshelp'] = '<p>Tiedostojen lähettäminen ei näyttäisi olevan käytössä palvelimellasi.</p>
+
+<p>Moodle voidaan silti asentaa, mutta ilman tätä et pysty lataamaan kurssitiedostoja tai vaihtamaan käyttäjän kuvaa.</p>
+
+<p>Mahdollistaaksesi tiedostojen latauksen sinun (tai systeemisi ylläpitäjän) täytyy muokata varusohjelmien php.ini tiedosto systeemiisi ja muuttaa asetus <b>file_uploads</b> to \'1\'.</p>';
 $string['gdversion'] = 'GD versio';
 $string['gdversionerror'] = 'GD kirjaston pitäisi olla päällä, että voidaan käsitellä ja luoda kuvia.';
 $string['gdversionhelp'] = '<p>Palvelimellasi ei näyttäisi olevan GD:tä asennettuna.</p>
@@ -138,6 +143,14 @@ $string['installation'] = 'Asennus';
 $string['invalidmd5'] = 'Virheellinen MD5';
 $string['language'] = 'Kieli';
 $string['magicquotesruntimeerror'] = 'Tämän pitäisi olla poissa päältä';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes ajoajan pitäisi olla pois päältä, jotta Moodle voi toimia kunnolla.</p>
+
+<p>Normaalisti se on pois päältä oletuksena... Katso asetukset
+<b>magic_quotes_runtime</b> in your php.ini file.</p>
+
+<p>Jos sinulla ei ole pääsyä php.ini:isi, saatat pystyä asettamaan seuraavan rivin tiedostoon nimeltä .htaccess Moodlen hakemiston sisällä:
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'Valinnaisen MBSTRING-kirjaston asentamista suositellaan  erityisesti silloin jos sivustolla käytetään useita eri kieliä.';
 $string['memorylimit'] = 'Muistiraja';
 $string['memorylimiterror'] = 'PHP muistiraja on asetettu aika alas... Se saattaa aiheuttaa ongelmia myöhemmin.';
@@ -176,8 +189,15 @@ $string['report'] = 'Raportti';
 $string['restricted'] = 'Rajoitettu';
 $string['safemode'] = 'Safe mode';
 $string['safemodeerror'] = 'Moodlella saattaa olla ongelmia PHP:n  Safe Moden ollessa päällä';
+$string['safemodehelp'] = '<p>Moodlella saattaa olla lukuisia ongelmia Safe Moden ollessa päällä, joista vähäisin ei ole se, ettei se todennäköisesti pysty luomaan uusia tiedostoja.</p> 
+<p>Turvatila on yleensä aktivoinut paranoidinen web-palvelun pitäjä, joten sinun ehkä täytyy vaihtaa web-isännöinti yhtiötä Moodleasi varten.</p>
+
+<p>Voit yrittää jatkaa asennusta, mutta varaudu ongelmiin myöhemmin.</p>';
 $string['sessionautostart'] = 'Istunnon automaattinen aloitus';
 $string['sessionautostarterror'] = 'Tämän pitäisi olla pois päältä';
+$string['sessionautostarthelp'] = '<p>Moodle vaatii istuntotukea, eikä toimi ilman sitä.</p>
+
+<p>istunto voidaan mahdollistaa php.ini tiedostossa... Etsi istuntoa varten.auto_start parameter.</p>';
 $string['skipdbencodingtest'] = 'Ohita tietokannan merkistö testi';
 $string['status'] = 'Tilanne';
 $string['thischarset'] = 'UTF-8';

@@ -140,6 +140,10 @@ $string['error'] = 'Fout';
 $string['fail'] = 'Mislukt';
 $string['fileuploads'] = 'Bestanden uploaden';
 $string['fileuploadserror'] = 'Dit moet ingeschakeld zijn';
+$string['fileuploadshelp'] = '<p>Het lijkt er op dat het uploaden van bestanden uitgeschakeld is op jouw server.</p>
+<p>Moodle kan verder geïnstalleerd worden, maar zonder deze mogelijkheid zul je geen cursusmateriaal of afbeeldingen voor de profielen van je gebruikers kunnen uploaden.</p>
+<p>Om het uploaden van bestanden in te schakelen moet je (of je systeembeheerder) php.ini op je systeem bewerken en volgende instelling wijzigen:
+<b>file_uploads</b> op \'1\' zetten.</p>';
 $string['gdversion'] = 'GD-versie';
 $string['gdversionerror'] = 'De GD-bibliotheek moet geïnstalleerd zijn om afbeeldingen te kunnen maken en verwerken';
 $string['gdversionhelp'] = '<p>Blijkbaar is GD niet geïnstalleerd op je server.</p>
@@ -148,6 +152,14 @@ $string['gdversionhelp'] = '<p>Blijkbaar is GD niet geïnstalleerd op je server.
 <p>Onder Windows kun je gewoonlijk php.ini bewerken en de commentaartekens voor de lijn met php_gd2.dll verwijderen.</p>';
 $string['globalsquotes'] = 'Inveilige behandeling van globals';
 $string['globalsquoteserror'] = 'Zet je PHP instellingen juist: schakel register_globals uit en/of schakel magic_quotes_gpc in';
+$string['globalsquoteshelp'] = '<p>De combinatie van uitgeschakelde Magic Quotes GPC en ingeschakelde Register Globals tegelijk wordt sterk afgeraden.</p>
+
+<p>De aanbevolen instelling is<b>magic_quotes_gpc = On</b> en <b>register_globals = Off</b> in je php.ini</p>
+
+<p>Als je geen toegang hebt tot php.ini, dan kun je misschien volgende lijn toevoegen in het bestand .htaccess in je Moodlemap:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['globalswarning'] = '<p><strong>Veiligheidswaarschuwing</strong>:om Moodle goed te laten werken, is het nodig <br />dat je enkele wijzigingen maakt in je huidige PHP-instellingen.</p><p>Je <em>moet</em> <code>register_globals=off</code> instellen.</p><p>Deze instelling kan aangepast worden door je <code>php.ini</code>, Apache/IIS <br /> configuratie aan te passen of door een <code>.htaccess</code>-bestand te gebruiken.';
 $string['help'] = 'Help';
 $string['iconvrecommended'] = 'Als je site andere talen dan die uit de Latin1 tekenset gebruikt, dan is het installeren van de optionele ICONV library ten zeerste aangeraden om de performantie van de site te verhogen.';
@@ -159,6 +171,9 @@ $string['langdownloadok'] = 'De taal \"$a\" is met succes geïnstalleerd. Het in
 $string['language'] = 'Taal';
 $string['magicquotesruntime'] = 'Magic Quotes runtime';
 $string['magicquotesruntimeerror'] = 'Dit moet uitgeschakeld zijn';
+$string['magicquotesruntimehelp'] = '<p>Magic Quotes runtime moet uitgeschakeld zijn om Moodle goed te laten functioneren.</p>
+<p>Normaal staat het af als standaardinstelling ... zie de instelling <b>magic_quotes_runtime</b> in je php.ini-bestand.</p>
+<p>Als je geen toegang hebt tot php.ini, dan kun je proberen om onderstaande lijn in een bestand te zetten dat je .htaccess noemt en dat dan in je Moodle-map plaatsen: <blockquote>php_value magic_quotes_runtime Off</blockquote></p>';
 $string['mbstringrecommended'] = 'Als je site andere talen dan die uit de Latin1 tekenset gebruikt, dan is het installeren van de optionele MBSTRING library ten zeerste aangeraden om de performantie van de site te verhogen.';
 $string['memorylimit'] = 'Geheugenlimiet';
 $string['memorylimiterror'] = 'De PHP-geheugenlimiet staat eerder laag ingesteld ...  je zou hierdoor later problemen kunnen krijgen.';
@@ -210,9 +225,14 @@ $string['report'] = 'Rapport';
 $string['restricted'] = 'Beperkt';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle kan bestanden niet juist behandelen met safe mode ingeschakeld';
+$string['safemodehelp'] = '<p>Moodle zal heel wat problemen vertonen met safe mode ingeschakeld, waaronder bijvoorbeeld het niet kunnen aanmaken van nieuwe bestanden.</p>
+<p>Safe mode is gewoonlijk alleen maar ingeschakeld bij paranoïde webhosts, je zult dus best op zoek gaan naar een nieuwe webhost voor je Moodlesite.</p>
+<p>Je kunt proberen verder te gaan met de installatie als je dat wil, maar verwacht je wat verder door aan heel wat problemen.</p>';
 $string['serverchecks'] = 'Servercontroles';
 $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'Dit moet uitgeschakeld zijn';
+$string['sessionautostarthelp'] = '<p>Moodle heeft session support nodig en zal zonder niet werken.</p>
+<p>Sessies kunnen ingeschakeld worden in het php.ini-bestand ... zoek naar de session.auto_start parameter.</p>';
 $string['skipdbencodingtest'] = 'Negeer DB-encodingtest';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';

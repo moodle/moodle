@@ -135,6 +135,11 @@ $string['error'] = 'Erro';
 $string['fail'] = 'Fallo';
 $string['fileuploads'] = 'Envío de ficheiros';
 $string['fileuploadserror'] = 'Isto debería estar activo';
+$string['fileuploadshelp'] = '<p>O envío de ficheiros parece estar desactivado no seu servidor.</p>
+
+<p>Moodle pode continuar a ser instalado, mais sen esta capacidade non poderá enviar ficheiros de cursos ou imaxes de perfil de novos usuarios.</p>
+
+<p>Para activar o envío de ficheiros vostede (ou o seu administrador de sistema) necesitará editar o ficheiro main php.ini file no seu sistema e modificar a definición de <b>file_uploads</b> para \'1\'.</p>';
 $string['gdversion'] = 'Versión GD';
 $string['gdversionerror'] = 'A biblioteca GD debe estar presente para procesar e crear imaxes';
 $string['gdversionhelp'] = '<p>Parece que o seu servidor non ten instalada a GD.</p>
@@ -146,6 +151,14 @@ $string['gdversionhelp'] = '<p>Parece que o seu servidor non ten instalada a GD.
 <p>Normalmente en Windows é posible editar php.ini e deixar sen comentar a liña referida a php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Variables Globais manipuladas en forma insegura';
 $string['globalsquoteserror'] = 'Corrixir a súa configuración de PHP: desactivar register_globals e/ou enable magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Non se recomenda combinar de maneira simultánea Magic Quotes GPC desactivada e Register Globals activa ao mesmo tempo.</p>
+
+<p>A configuración recomendada no seu ficheiro php.ini é <b>magic_quotes_gpc = On</b> e <b>register_globals = Off</b></p>
+
+<p>Se non ten acceso ao seu ficheiro php.ini, poderá colocar a liña seguinte nun ficheiro co nome .htaccess, dentro do seu directorio de Moodle:
+   <blockquote>php_value magic_quotes_gpc On</blockquote>
+   <blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = 'Axuda';
 $string['iconvrecommended'] = 'A instalación da biblioteca opcional ICONV está recomendada para mellorar o rendemento do sitio, especialmente se o seu sitio soporta idiomas non latinos';
 $string['info'] = 'Información';
@@ -156,6 +169,13 @@ $string['langdownloadok'] = 'O idioma \"$a\" foi instalado correctamente. O proc
 $string['language'] = 'Idioma';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Isto debería estar desactivado';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime debería ser desactivado para que o Moodle funcione correctamente.</p>
+
+<p>Normalmente, encóntrase desactivado por defecto... vexa a definición de <b>magic_quotes_runtime</b> no seu ficheiro php.ini.</p>
+
+<p>Se non ten acceso ao seu ficheiro php.ini, debería poder colocar a liña seguinte nun ficheiro chamado .htaccess no seu directorio de Moodle:
+   <blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'A instalación da biblioteca opcional MBSTRING é altamente recomendada na medida en que vai perfeccionar a realización do sitio, particularmente se o seu sitio soporta idiomas non latinos.';
 $string['memorylimit'] = 'Límite de memoria';
 $string['memorylimiterror'] = 'O límite de memoria para PHP estableceuse demasiado baixo... Vai ter problemas máis tarde.';
@@ -208,9 +228,18 @@ $string['report'] = 'Informe';
 $string['restricted'] = 'Restrinxido';
 $string['safemode'] = 'Modo seguro';
 $string['safemodeerror'] = 'Moodle poderá ter problemas co modo seguro activado';
+$string['safemodehelp'] = '<p>Moodle poderá ter unha variedade de problemas co modo seguro activo; un dos peores problemas é que probablemente
+ non terá autorización para crear novos ficheiros.</p>
+   
+<p>Xeralmente o modo seguro só é activado por algúns administradores paranoicos de sitios web públicos, así que o máis probable é que teña que buscar outra entidade para aloxar o seu sitio Moodle.</p>
+   
+<p>Se o desexa pode tentar avanzar na instalación mais estea preparado para posibles problemas máis tarde.</p>';
 $string['serverchecks'] = 'Comprobacións do servidor';
 $string['sessionautostart'] = 'Inicio de sesión automático';
 $string['sessionautostarterror'] = 'Isto debería estar desactivado';
+$string['sessionautostarthelp'] = '<p>Moodle precisa do soporte para sesións e non funcionará sen el.</p>
+
+<p>As sesións poden ser activadas no ficheiro php.ini... busque o parámetro session.auto_start parameter.</p>';
 $string['skipdbencodingtest'] = 'Ignorar a proba de codificación da BD';
 $string['status'] = 'Estado';
 $string['thischarset'] = 'UTF-8';

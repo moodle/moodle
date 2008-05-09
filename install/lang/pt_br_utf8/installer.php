@@ -90,6 +90,10 @@ $string['error'] = 'Erro';
 $string['fail'] = 'Erro';
 $string['fileuploads'] = 'Carregamento de arquivos';
 $string['fileuploadserror'] = 'Isto deve estar ativado';
+$string['fileuploadshelp'] = '<p>Parece que o envio de documentos a este servidor não está habilitado.</p>
+<p>Moodle pode ser instalado, mas não será possível carregar arquivos ou imagens nos cursos.</p>
+<p>para habilitar o envio de arquivos é necessário editar o arquivo php.ini do sistema e mudar a configuração de  
+<b>file_uploads</b> para \'1\'.</p>';
 $string['gdversion'] = 'Versão do gd';
 $string['gdversionerror'] = 'A library GD';
 $string['gdversionhelp'] = '<p>Parece que o seu servidor não tem o GD instalado.</p>
@@ -98,6 +102,16 @@ $string['gdversionhelp'] = '<p>Parece que o seu servidor não tem o GD instalado
 <p>Em Windows edite php.ini and cancele o comentário à linha que se refere a php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Tratamento de Globais sem Segurança';
 $string['globalsquoteserror'] = 'Corrija a configuração do seu PHP: desabilitar register_globals e/ou habilitar magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Não é aconselhável habilitar Register Globals e desabilitar Magic Quotes GPC ao mesmo tempo.</p>
+
+<p>A configuração aconselhada é
+<b>magic_quotes_gpc = On</b> e
+<b>register_globals = Off</b> no seu php.ini</p>
+
+<p>Se você não tem acesso ao seu php.ini, adicione a seguinte linha de código no arquivo .htaccess do diretório principal do seu Moodle:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p> ';
 $string['help'] = 'Ajuda';
 $string['iconvrecommended'] = 'Instalar ICONV library é altamente recomendável para aumentar a performance do site, especialmente quando o site suporta o uso de idiomas não-latinos';
 $string['info'] = 'Informação';
@@ -108,6 +122,13 @@ $string['langdownloadok'] = 'Idioma \"$a\" instalado com sucesso. O processo de 
 $string['language'] = 'Idioma';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Isto deveria estar desativado';
+$string['magicquotesruntimehelp'] = '<p> A runtime Magic Quotes  deve ser desativada para que Moodle funcione corretamente.</p>
+
+<p>Normalmente esta runtime já é desativada ... controle o parâmetro <b>magic_quotes_runtime</b> no seu arquivo php.ini .</p>
+
+<p>Se você não tem acesso ao arquivo php.ini , adicione a seguinte linha no código de um arquivo chamado .htaccess no diretório Moodle:
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p> ';
 $string['mbstringrecommended'] = 'A instalação da MBSTRING library é altamente recomendável para melhorar a performanse do site, especialmente se o seu site suporta idiomas não-latinos.';
 $string['memorylimit'] = 'Limite de Memória';
 $string['memorylimiterror'] = 'A configuração do limite da memória do PHP está muito baixa ... isto pode causar problemas no futuro.';
@@ -146,8 +167,14 @@ $string['report'] = 'Relatório';
 $string['restricted'] = 'Restringido';
 $string['safemode'] = 'Modalidade segura';
 $string['safemodeerror'] = 'Moodle pode ter problemas se a modalidade segura estiver ativa';
+$string['safemodehelp'] = '<p>Moodle pode ter alguns problemas quando o safe mode está ativado. Provavelmente não será possível criar novos arquivos.</p>
+<p>O safe mode normalmente é ativado apenas por serviços de web hosting públicos paranóicos por segurança, é possível que você tenha que escolher um outro serviço de webhosting para o seu site.</p>
+<p>Você pode continuar a instalação mas provavelmente outros problemas surgirão.</p>';
 $string['sessionautostart'] = 'Início da sessão automático';
 $string['sessionautostarterror'] = 'Isto deve estar ativado';
+$string['sessionautostarthelp'] = '<p>Moodle requer o suporte a sessões e não funciona sem isto.</p>
+
+<p>As sessões podem se habilitadas no arquivo php.ini ... controle o parâmetro session.auto_start .</p>';
 $string['skipdbencodingtest'] = 'Saltar Teste de Codificação da Base de Dados';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';

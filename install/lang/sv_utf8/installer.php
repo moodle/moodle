@@ -140,6 +140,9 @@ $string['error'] = 'Fel';
 $string['fail'] = 'Misslyckas';
 $string['fileuploads'] = 'Uppladdningar av filer';
 $string['fileuploadserror'] = 'Detta bör vara aktiverat (on)';
+$string['fileuploadshelp'] = '<p>Uppladdning av filer verkar vara avaktiverat på Din server.</p>
+<p>Det kan fortfarande vara så att Moodle är installerat, men utan denna funktionalitet så kommer Du inte att kunna ladda upp kursfiler eller nya bilder till användarprofilerna. </p>
+<p>För att aktivera uppladdning av filer så måste Du (eller Din systemadministratör) redigera den övergripande php.ini-filen på Ert system och ändra inställningen för <b>uppladdning av filer (file uploads)</b> till \'1\'.</p>';
 $string['gdversion'] = 'GD version';
 $string['gdversionerror'] = 'GD biblioteket bör vara tillgängligt för att Du ska kunna bearbeta och skapa bilder.';
 $string['gdversionhelp'] = '<p>Det verkar som om GD inte är installerat på Din server. </p>
@@ -148,6 +151,13 @@ $string['gdversionhelp'] = '<p>Det verkar som om GD inte är installerat på Din
 <p>Under Windows kan Du vanligtvis redigera php.ini och ta bort kommentarmarkeringen för den rad som refererar till php_gd2.dll</p>';
 $string['globalsquotes'] = 'Inte säker hantering av globala variabler';
 $string['globalsquoteserror'] = 'Ordna till Dina inställningar för PHP: avaktivera register_globals och/eller avaktivera magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Kombinationen av avaktiverade Magic Quotes GPC och aktiverade Register Globals samtidigt rekommenderas inte.</p>
+
+<p>Den rekommenderade inställningen är <b>magic_quotes_gpc = On</b> och <b>register_globals = Off</b> i Din php.ini</p>
+
+<p>Om Du inte har tillgång till Din php.ini, så kanske Du kan placera följande rad i en fil som kallas .htaccess inne i Din Moodle-katalog:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>';
 $string['help'] = 'Hjälp';
 $string['iconvrecommended'] = 'Du rekommenderas starkt att installera det valfria ICONV-biblioteket. Detta förbättrar webbplatsens prestanda, speciellt om Din webbplats stödjer icke-latinska språk.';
 $string['info'] = 'Information';
@@ -158,6 +168,10 @@ $string['langdownloadok'] = 'Språket \"$a\" installerades framgångsrikt. Insta
 $string['language'] = 'Språk';
 $string['magicquotesruntime'] = 'körtid för \'Magiska citat\'';
 $string['magicquotesruntimeerror'] = 'Det här bör vara \'off\'';
+$string['magicquotesruntimehelp'] = '<p>Körtid för \'Magiska citat\' (Magic quotes runtime) bör vara inställt till \'off\' för att Moodle ska fungera korrekt</p>
+<p>Som förvald standard är det normalt sett inställt till \'off\'... Kontrollera inställningen för \'Magic quotes runtime\' i Din php.ini-fil.</p>
+<p>Om Du inte har tillgång till Din php.ini-fil så kanske Du kan lägga in följande rad i en fil som heter .htaccess i Din katalog för Moodle:<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'Du rekommenderas starkt att installera det valfria MBSTRING-biblioteket. Detta förbättrar webbplatsens prestanda, speciellt om Din webbplats stödjer icke-latinska språk.';
 $string['memorylimit'] = 'Minnesbegränsning';
 $string['memorylimiterror'] = 'Minnesbegränsningen för PHP på Din server är f n inställt till ett ganska lågt värde... Detta kan leda till problem senare.';
@@ -205,9 +219,15 @@ $string['report'] = 'Rapport';
 $string['restricted'] = 'Begränsad';
 $string['safemode'] = 'Säkert läge';
 $string['safemodeerror'] = 'Moodle kan få problem om \'säkert läge\' (safe mode) är aktiverat';
+$string['safemodehelp'] = '<p>Moodle kan få ett antal problem om \'säkert 
+läge\' är aktiverat. Systemet kommer t ex troligtvis inte att kunna skapa nya filer.</p>
+<p>Säkert läge är normalt sett bara aktiverat hos mycket försiktiga webbvärdar(t ex webbhotell) så Du kanske helt enkelt måste hitta ett annat webbhotell för Din webbplats med Moodle.</p>
+<p>Du kan försöka att fortsätta installationen om Du vill, men bli inte förvånad om det dyker upp ett och annat problem längre fram.</p>';
 $string['serverchecks'] = 'Serverkontroller';
 $string['sessionautostart'] = 'Automatisk start av session';
 $string['sessionautostarterror'] = 'De här bör vara inställt till \'off\'.';
+$string['sessionautostarthelp'] = '<p>Moodle kräver stöd för sessioner och kommer inte att fungera utan det.</p>
+<p>Sessioner kan vara aktiverade i php.ini-filen... kontrollera parametern för session.auto_start. </p>';
 $string['skipdbencodingtest'] = 'Hoppa över Test av DB Encoding';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';

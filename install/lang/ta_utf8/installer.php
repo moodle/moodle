@@ -105,6 +105,14 @@ $string['error'] = 'பிழை';
 $string['fail'] = 'தோல்வி';
 $string['fileuploads'] = 'File Uploads';
 $string['fileuploadserror'] = 'This should be on';
+$string['fileuploadshelp'] = '<p>File uploading seems to be disabled on your server.</p>
+
+<p>Moodle can still be installed, but without this ability, you will not be able 
+   to upload course files or new user profile images.</p>
+
+<p>To enable file uploading you (or your system administrator) will need to 
+   edit the main php.ini file on your system and change the setting for 
+   <b>file_uploads</b> to \'1\'.</p>';
 $string['gdversion'] = 'GD version';
 $string['gdversionerror'] = 'The GD library should be present to process and create images';
 $string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</p>
@@ -119,6 +127,16 @@ $string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</
 <p>Under Windows you can usually edit php.ini and uncomment the line referencing php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Insecure Handling of Globals';
 $string['globalsquoteserror'] = 'Fix your PHP settings: disable register_globals and/or enable magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Combination of disabled Magic Quotes GPC and enabled Register Globals both at the same time is not recommended.</p>
+
+<p>The recommended setting is <b>magic_quotes_gpc = On</b> and <b>register_globals = Off</b> in your php.ini</p>
+
+<p>If you don\'t have access to your php.ini, you might be able to place the following line in a file 
+   called .htaccess within your Moodle directory:
+   <blockquote>php_value magic_quotes_gpc On</blockquote>
+   <blockquote>php_value register_globals Off</blockquote>
+</p>   
+   ';
 $string['help'] = 'உதவி';
 $string['iconvrecommended'] = 'Installing the optional ICONV library is highly recommended in order to improve site performance, particularly if your site is supporting non-latin languages.';
 $string['info'] = 'தகவல்';
@@ -129,6 +147,15 @@ $string['langdownloadok'] = 'The language \"$a\" was installed successfully. The
 $string['language'] = 'மொழி';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'This should be off';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime should be turned off for Moodle to function properly.</p>
+
+<p>Normally it is off by default ... see the setting <b>magic_quotes_runtime</b> in your php.ini file.</p>
+
+<p>If you don\'t have access to your php.ini, you might be able to place the following line in a file 
+   called .htaccess within your Moodle directory:
+   <blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>   
+   ';
 $string['mbstringrecommended'] = 'Installing the optional MBSTRING library is highly recommended in order to improve site performance, particularly if your site is supporting non-latin languages.';
 $string['memorylimit'] = 'Memory Limit';
 $string['memorylimiterror'] = 'The PHP memory limit is set quite low ... you may run into problems later.';
@@ -174,8 +201,18 @@ $string['report'] = 'அறிக்கை';
 $string['restricted'] = 'அனுமதி குறைக்கப்பட்டது';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
+$string['safemodehelp'] = '<p>Moodle may have a variety of problems with safe mode on, not least is that 
+   it probably won\'t be allowed to create new files.</p>
+   
+<p>Safe mode is usually only enabled by paranoid public web hosts, so you may have 
+   to just find a new web hosting company for your Moodle site.</p>
+   
+<p>You can try continuing the install if you like, but expect a few problems later on.</p>';
 $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'This should be off';
+$string['sessionautostarthelp'] = '<p>Moodle requires session support and will not function without it.</p>
+
+<p>Sessions can be enabled in the php.ini file ... look for the session.auto_start parameter.</p>';
 $string['skipdbencodingtest'] = 'Skip DB Encoding Test';
 $string['status'] = 'தற்போதைய நிலைகள்';
 $string['thischarset'] = 'UTF-8';

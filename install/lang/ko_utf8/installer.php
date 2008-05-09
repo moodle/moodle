@@ -142,6 +142,11 @@ $string['error'] = '오류';
 $string['fail'] = '실패';
 $string['fileuploads'] = '파일 올리기';
 $string['fileuploadserror'] = '이것은 켜져야 합니다.';
+$string['fileuploadshelp'] = '<p>서버로 파일올리기가 불가능해 보입니다.</p>
+
+<p>무들은 설치될 수 있지만 파일을 업로딩 할 수 없는 상태에서는 강좌에 파일이나 사진을 올릴 수 없을 것입니다.</p>
+
+<p>파일 업로딩이 가능하게 하기 위해서는 당신(또는 당신의 시스템 관리자)가 php.ini 파일 속의  <b>file_upload</b>을 \'1\'로 설정해야 할 것입니다.</p>';
 $string['gdversion'] = 'GD 의 버전';
 $string['gdversionerror'] = 'GD 라이브러리는 사진이나 그림을 처리하기 위해서는 필수적으로 있어야만 합니다.';
 $string['gdversionhelp'] = '<P>당신의 서버는 GD가 설치된 것으로 보여지지 않습니다.
@@ -149,6 +154,14 @@ $string['gdversionhelp'] = '<P>당신의 서버는 GD가 설치된 것으로 보
 <P>GD는 무들이 (사용자 아이콘과 같은) 그림이나 (함수 그래프와 같은) 새로운 이미지를 생성,처리할 수 있도록 PHP에 의해서 요구되는 라이브러리 입니다. 하지만 무들은 GD없이도 작동되는데, 이 때는 GD가 제공하는 기능은 사용할 수 없을 것입니다.';
 $string['globalsquotes'] = '전역변수 조작 안전성 결여';
 $string['globalsquoteserror'] = 'PHP.ini 속의 설정을 다음과 같이 고치십시오:  register_globals 및 enable magic_quotes_gpc 을 끄십시오(Off).';
+$string['globalsquoteshelp'] = '<p>magic_quotes_gpc = Off 과 register_globals = On 을 조합하는 것은 바람직하지 않습니다.</p>
+
+<p>권장하는 php.ini 설정은 <b>magic_quotes_gpc = On</b> 과 <b>register_globals = Off</b> 입니다.</p>
+
+<p>만일 여러분이 php.ini 에 접근할 수 없다면, 무들 디렉토리안에 아래의 내용이 담긴 .htaccess 파일을 넣어 두십시오.
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['globalswarning'] = '<p><strong>보안 경고</strong>  : 무들이 바르게 작동하기 위해서는, 현재의 일부 PHP설정을 바꿔야 합니다.<p/><p><em>반드시</em>  <code>register_globals=off</code>로 설정해야 합니다.<br /> 이는 <code>php.ini</code>나 Apache/IIS의  <code>.htaccess</code> 파일의 변수를 조정하면 됩니다.</p>';
 $string['help'] = '도움';
 $string['iconvrecommended'] = '당신의 사이트가 라틴언어계열이 아닌 언어를 지원하는 경우, 사이트의 성능을 향상시키기 위해서는 ICONV라이브러리를 설치할 것을 권장합니다.';
@@ -160,6 +173,11 @@ $string['langdownloadok'] = '\"$a\" 언어팩이 성공적으로 설치되었습
 $string['language'] = '언어';
 $string['magicquotesruntime'] = 'Magic Quotes 실행 시간';
 $string['magicquotesruntimeerror'] = '이것은 꺼져야 합니다.';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime은 무들이 제대로 작동하기 위해 꺼져야(Off) 합니다.</p>
+
+<p>일반적으로 기본값은 Off 입니다만 다시한번 php.ini파일에 있는 <b>magic_quotes_runtime</b>을 확인해 보세요.</p>
+
+<p>만약에 당신이 php.ini파일에 접근하지 못한다면 무들 디렉토리안에 다음의 내용을 적은 .htaccess 파일을 넣어두시기 바랍니다.<blockquote>php_value magic_quotes_runtime off<blockquote></p>';
 $string['mbstringrecommended'] = '당신의 사이트가 라틴언어계열이 아닌 언어를 지원하는 경우, 사이트의 성능을 향상시키기 위해서 MBSTRING 라이브러리 설치를 권장합니다.';
 $string['memorylimit'] = '메모리 사용량';
 $string['memorylimiterror'] = 'php의 메모리 사용량이 너무 작게 설정되어 있습니다. 당신은 후에 문제에 봉착할 지도 모릅니다.';
@@ -216,9 +234,14 @@ $string['report'] = '보고서';
 $string['restricted'] = '제한됨';
 $string['safemode'] = '안전모드';
 $string['safemodeerror'] = '아마 안전모드(Safe Mode)가 작동되어서 문제가 생겼을 것입니다.';
+$string['safemodehelp'] = '<p>무들은 safe mode on 상태에서는 작동이 원활하지 않을 텐데, 아마 그 중 하나가 새로운 파일을 못 만들게 하는 문제일 것입니다.</p>
+<p>Safe mode는 일단의 보안 편집증적인 웹호스트에서 이를 켜 놓을 것인데, 무들 사이트를 원활히 운용하기 위해서는 새로운 웹호스트를 찾아보시는 편이 나을 겁니다.</p>
+<p>원한다면 설치는 계속할 수는 있는데, 나중에 문제에 봉착할 것이라는 점을 염두에 두기 바랍니다.</p>';
 $string['serverchecks'] = '서버 점검';
 $string['sessionautostart'] = '세션 자동 시작';
 $string['sessionautostarterror'] = '이것은 꺼져 있어야(Off) 합니다.';
+$string['sessionautostarthelp'] = '<p>무들은 세션의 지원이 필요하고 그것 없이는 작동하지 않을 것 입니다.</p>
+<P>세션은 php.ini 파일 안에서 조정될 수 있습니다. session.auto_start 항목을 살펴보세요.</p>';
 $string['skipdbencodingtest'] = 'DB 엔코딩 테스트 생략';
 $string['status'] = '상태';
 $string['thischarset'] = 'UTF-8';

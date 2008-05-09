@@ -133,6 +133,12 @@ $string['error'] = 'Chyba';
 $string['fail'] = 'Selhalo';
 $string['fileuploads'] = 'Nahrávání souborů (FIle Uploads)';
 $string['fileuploadserror'] = 'Mělo by být zapnuto';
+$string['fileuploadshelp'] = '<p>Na vašem serveru zřejmě není možné nahrávat soubory.</p>
+
+<p>Moodle může být i přesto nainstalován, bez této funkce ale nebudete moci nahrávat žádné soubory (např. studijní materiály, fotografie uživatelů atd.).</p>
+
+<p>Chcete-li povolit nahrávání souborů, budete muset vy (nebo správce serveru) upravit hlavní soubor php.ini na serveru a změnit nastavení
+<b>file_uploads</b> na \'1\'.</p>';
 $string['gdversion'] = 'Verze GD';
 $string['gdversionerror'] = 'Knihovna GD se používá pro zpracovávání a tvorbu obrázků (např. fotografií, grafů apod.).';
 $string['gdversionhelp'] = '<p>Na vašem serveru zřejmě není nainstalována knihovna GD.</p>
@@ -144,6 +150,14 @@ $string['gdversionhelp'] = '<p>Na vašem serveru zřejmě není nainstalována k
 <p>Ve Windows stačí většinou upravit php.ini a odkomentovat řádek odkazující na php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Nezabezpečené zacházení s globálními proměnnými';
 $string['globalsquoteserror'] = 'Upravte nastavení PHP: zakažte register_globals a/nebo povolte magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Vaše nastavení PHP nepovoluje Magic Quotes GPC a zároveň povoluje Register Globals. Tato kombinace není doporučována.</p>
+
+<p>Doporučujeme nastavit ve vašem souboru php.ini <b>magic_quotes_gpc = On</b> a <b>register_globals = Off</b></p>
+
+Nemáte-li přístup k souboru php.ini, nebo pokud nemůžete/nechcete měnit toto nastavení pro celý server, umístěte do kořenového adresáře instalace Moodlu soubor nazvaný .htaccess s následujícím obsahem:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = 'Nápověda';
 $string['iconvrecommended'] = 'Instalace volitelné knihovny ICONV je silně doporučena, neboť zvyšuje výkon stránek, zejména pokud používáte jazyky nezaložené na latince.';
 $string['info'] = 'Informace';
@@ -154,6 +168,13 @@ $string['langdownloadok'] = 'Podařilo se úspěšně nainstalovat jazykový bal
 $string['language'] = 'Jazyk';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Mělo by být vypnuto';
+$string['magicquotesruntimehelp'] = '<p>Pro správné fungování Moodlu by nastavení \'Magic quotes runtime\' mělo být vypnuto.</p>
+
+<p>Obvykle bývá tato funkce ve výchozím nastavení vypnutá ... zkontrolujte nastavení <b>magic_quotes_runtime</b> ve vašem php.ini.</p>
+
+<p>Pokud nemáte přístup k souboru php.ini, zkuste umístit následující řádek do souboru .htaccess v kořenovém adresáři vaší instalace Moodlu:
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'Instalace volitelné knihovny MBSTRING je silně doporučena, neboť zvyšuje výkon stránek, zejména pokud používáte jazyky nezaložené na latince.';
 $string['memorylimit'] = 'Limit paměti';
 $string['memorylimiterror'] = 'Limit paměti pro PHP skripty je nastaven relativně nízko ... v budoucnu byste mohli narazit na problémy.';
@@ -208,9 +229,17 @@ $string['report'] = 'Sestava';
 $string['restricted'] = 'Nedostupné';
 $string['safemode'] = 'Bezpečný režim (Safe Mode)';
 $string['safemodeerror'] = 'Se zapnutým bezpečným režimem (Safe Mode) může mít Moodle problémy.';
+$string['safemodehelp'] = '<p>Při zapnutém bezpečném režimu PHP (tzv. Safe Mode) může Moodle narazit na řadu problémů. Jedním z nich je, že pravděpodobně nebude moci vytvářet nové soubory.</p>
+
+<p>Bezpečný režim používají obvykle pouze paranoidní veřejní poskytovatelé webového prostoru, takže možná bude stačit najít si pro váš Moodle jiného poskytovatele.</p>
+
+<p>Můžete zkusit pokračovat v instalaci, ale připravte se na problémy.</p>';
 $string['serverchecks'] = 'Kontroly serveru';
 $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'Mělo by být vypnuto';
+$string['sessionautostarthelp'] = '<p>Moodle vyžaduje podporu session a nebude bez ní fungovat.</p>
+
+<p>Podporu session můžete povolit v souboru php.ini  ... hledejte parametr session.auto_start.</p>';
 $string['skipdbencodingtest'] = 'Přeskočit test kódování DB';
 $string['status'] = 'Stav';
 $string['thischarset'] = 'UTF-8';

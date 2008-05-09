@@ -145,6 +145,12 @@ $string['error'] = 'Hata';
 $string['fail'] = 'Hata';
 $string['fileuploads'] = 'Dosya Yüklemeleri';
 $string['fileuploadserror'] = 'Bu açık olmalı';
+$string['fileuploadshelp'] = '<p>Bu sunucuda, Dosya yüklemesi etkinleştirilmemiş görünüyor.</p>
+
+<p>Moodle hala kurulabilir, fakat bu özellik olmadan, yeni kullanıcı resimleri ve kurslara dosya gönderilemez.</p>
+
+<p>Dosya yüklemesini etkinleştirmeniz için (veya sistem yöneticiniz) sisteminizin php.ini dosyasınındaki <b>file_uploads</b> ayarı \'1\'
+olarak değiştirilmeli.</p>';
 $string['gdversion'] = 'GD sürümü';
 $string['gdversionerror'] = 'GD kütüphanesi resimleri oluşturma ve işleme özelliği sunmalı';
 $string['gdversionhelp'] = '<p>Sunucunuzda GD kütüphanesi kurulu görülmüyor.</p>
@@ -158,6 +164,14 @@ Moodle GD olmadan da çalışır, ancak yukarıda bahsedilen özelliklerden yara
 <p>Windows altında php.ini dosyasını düzenler ve php_gd2.dll\'yi referans eden satırdaki yorumları kaldırırsınız.</p>';
 $string['globalsquotes'] = 'Güvensiz Global Değişkenler';
 $string['globalsquoteserror'] = 'PHP ayarlarınızı düzeltin. register_globals\'ı kapalı ve/veya magic_quotes_gpc açık tutun.';
+$string['globalsquoteshelp'] = '<p>Pasifleştirilmiş Magic Quotes GPC ve etkinleştirilmiş Register Globals\'ın bir arada kullanımı tavsiye edilmez.</p>
+
+<p>Php.ini\'deki tavsiye edilen ayar <b>magic_quotes_gpc = On</b> ve <b>register_globals = Off</b></p>
+
+<p>Php.ini\'ye erişim hakkınız yoksa Moodle dizinindeki .htaccess dosyasına şu satırları ekleyebilirsiniz:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = 'Yardım';
 $string['iconvrecommended'] = 'Sitenizde latin olmayan dilleri kullanıyorsanız isteğe bağlı ICONV kütüphanesinin kurulması site performansını arttırmak için şiddetle tavsiye edilir.';
 $string['info'] = 'Bilgi';
@@ -168,6 +182,14 @@ $string['langdownloadok'] = 'Dil paketi \"$a\" başarıyla kuruldu. Kurulum bu d
 $string['language'] = 'Dil';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Bu kapalı olmalı';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime ayarı, Moodle\'ın işlevsel çalışması için kapalı olmalı.</p>
+
+<p>Normalde de zaten bu varsayılan olarak kapalıdır... php.ini dosyasındaki <b>magic_quotes_runtime</b> ayarına bakın.</p>
+
+<p>php.ini dosyasına erişim hakkınız yoksa, Moodle klasöründe yer alan .htaccess isimli dosyada şu ayarı yapın:
+
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'Sitenizde latin olmayan dilleri kullanıyorsanız isteğe bağlı MBSTRING kütüphanesinin kurulması site performansını arttırmak için şiddetle tavsiye edilir.';
 $string['memorylimit'] = 'Bellek Limiti';
 $string['memorylimiterror'] = 'PHP bellek limiti ayarı çok düşük... Daha sonra bu ayardan dolayı bazı sorunlar oluşabilir.';
@@ -230,9 +252,15 @@ $string['report'] = 'Rapor';
 $string['restricted'] = 'Sınırlandırıldı';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle, safe mode\'ın açık olması durumunda bazı sorunlar çıkartabilir';
+$string['safemodehelp'] = '<p>Moodle, safe mode\'un açık olması durumunda bazı sorunlar çıkartabilir. Moodle tarafından en azından bazı dosyaların oluşturulması gerekiyor, ama bu mod yeni dosyaların oluşturulmasına izin vermiyor.</p>
+<p>Safe mode sadece paranoyak web hostinglerince kullanılmaktadır. Bu durumda Moodle için başka bir web hosting firması bulmanız gerekiyor.</p>
+<p>İsterseniz devam edebilirsiniz, ama daha sonra çok fazla sorunla karşılaşırsınız.</p>';
 $string['serverchecks'] = 'Sunucu Kontrolleri';
 $string['sessionautostart'] = 'Otomatik Oturum Başlama';
 $string['sessionautostarterror'] = 'Bu kapalı olmalı';
+$string['sessionautostarthelp'] = '<p>Moodle, oturum desteği gerektirir ve bu olmadan işlevsel çalışamaz.</p>
+
+<p>Oturum desteği php.ini dosyasından ayarlanabilir ... session.auto_start parametresine bakın.</p>';
 $string['skipdbencodingtest'] = 'Veritabanı Dil Kodlama Testini Atla';
 $string['status'] = 'Durum';
 $string['thischarset'] = 'UTF-8';

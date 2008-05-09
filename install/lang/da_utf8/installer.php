@@ -133,6 +133,11 @@ $string['error'] = 'Fejl';
 $string['fail'] = 'Mislykkedes';
 $string['fileuploads'] = 'Fil uploads';
 $string['fileuploadserror'] = 'Denne skulle være aktiveret';
+$string['fileuploadshelp'] = '<p>Fil-upload lader til at være slået fra på din server.</p>
+
+<p>Moodle kan stadig installeres, men uden senere mulighed for at uploade kursusfiler og profilbilleder.</p>
+
+<p>For at tillade upload skal du (eller systemadministratoren) rette i php.ini og ændre indstillingen for <b>fil_uploads</b> til \'1\'.</p>';
 $string['gdversion'] = 'GD version';
 $string['gdversionerror'] = 'GD library skal være tilgængelig for PHP for at der billeder kan manipuleres og oprettes.';
 $string['gdversionhelp'] = '<p>Det lader til at din server ikke har GD installeret.</p>
@@ -144,6 +149,17 @@ $string['gdversionhelp'] = '<p>Det lader til at din server ikke har GD installer
 <p>Under windows er det normalt nok at udkommentere den linje i php.ini der refererer til libgd.dll </p>';
 $string['globalsquotes'] = 'Usikker håndtering af Globale variabler';
 $string['globalsquoteserror'] = 'Fix dine PHP-indstillinger: aktiver register_globals and/or slå magic_quotes_gpc til';
+$string['globalsquoteshelp'] = '<p>
+Kombinationen af deaktiveret \"Magic Quotes GPC\" og aktiveret \"Register Globals\" samtidig anbefales ikke.</p>
+
+<p>Den anbefalede indstilling er
+<b>magic_quotes_gpc = On</b> og <b>register_globals = Off</b> i php.ini</p>
+
+<p>Har du ikke adgang til php.ini, kan du sikkert ikke indsætte denne linje i filen .htaccess i dit Moodle-bibliotek:
+
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = 'Hjælp';
 $string['iconvrecommended'] = 'Det anbefales at installere/aktivere ICONV udvidelsen for at forbedre sitets hastighed, især hvis dit site understøtter sprog med ikke-latinske tegn.';
 $string['info'] = 'Information';
@@ -154,6 +170,12 @@ $string['langdownloadok'] = 'Sproget \"$a\" blev installeret. Installationen vil
 $string['language'] = 'Sprog';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Denne skulle være deaktiveret';
+$string['magicquotesruntimehelp'] = '<p>\'Magic quotes runtime\' bør slås fra for at Moodle kan fungere ordentligt.</p>
+
+<p>Normalt er denne indstilling slået fra som standard. Den slås til og fra vha. indstillingen <b>\'magic_quotes_runtime\'</b> i php.ini fil.</p>
+
+<p>Hvis du ikke har adgang til webserverens php.ini fil kan du evt. lave en tekstfil, kalde den .htaccess og gemme den i Moodle-biblioteket. Den skal indholde linjen. <blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'Det anbefales at installere/aktivere MBSTRING udvidelsen for at forbedre sitets ydeevne, især hvis sitet understøtter ikke-latinske sprog og tegn.';
 $string['memorylimit'] = 'Hukommelsesbegrænsning';
 $string['memorylimiterror'] = 'Den tilgængelige hukommelse til PHP er ret lav... Det kan være at der opstår problemer senere.';
@@ -204,8 +226,16 @@ $string['report'] = 'Rapport';
 $string['restricted'] = 'Afvist';
 $string['safemode'] = 'Safe mode';
 $string['safemodeerror'] = 'Moodle kan have problemer med \"Safe mode : on\"';
+$string['safemodehelp'] = '<p>Moodle kan have flere problemer når \'safe mode\' er slået til, ikke mindst kan systemet sandsynligvis ikke oprette nye filer.</p>
+
+<p>\'Safe Mode\' er oftest slået til hos paranoide offentlige webhoteller, så det kan være at du bliver nødt til at finde et andet webhotel til Moodle.</p>
+
+<p>Du kan godt fortsætte installationen, men der vil sandsynligvis opstå problemer senere.</p>';
 $string['sessionautostart'] = 'Session autostart';
 $string['sessionautostarterror'] = 'Denne skulle være deaktiveret';
+$string['sessionautostarthelp'] = '<p>Moodle kræver at PHP understøtter sessions.</p>
+
+<p>Sessions kan aktiveres i php.ini filen ... kik efter parameteren session.auto_start</p>';
 $string['skipdbencodingtest'] = 'Spring DB tegnsæts testen over';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';

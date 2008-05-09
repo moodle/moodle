@@ -88,6 +88,10 @@ $string['error'] = '錯誤';
 $string['fail'] = '失敗';
 $string['fileuploads'] = '檔案上傳';
 $string['fileuploadserror'] = '這應該開啟';
+$string['fileuploadshelp'] = '<p>伺服器似乎取消檔案上傳功能.</p>
+<p>Moodle還是可以安裝，但是沒有這個功能，您就無法上傳課程資料，或者新使用者的個人圖檔。
+<p>若要啟動檔案上傳功能，您或您的系統管理者必須要編輯您系統上的主要php.ini檔案，將
+<b>file_uploads</b> 設定值改為 \'1\'。</p>';
 $string['gdversion'] = 'GD版本';
 $string['gdversionerror'] = 'GD程式庫應該存在,以便處理並建立影像';
 $string['gdversionhelp'] = '<p>您的伺服器上似乎沒有安裝GD.</p>
@@ -100,6 +104,15 @@ $string['gdversionhelp'] = '<p>您的伺服器上似乎沒有安裝GD.</p>
 <p>在Windows系統下，通常您可以編輯php.ini，將libgd.dll 前的註解符號拿掉。</p>';
 $string['globalsquotes'] = '不安全的全域變數處理';
 $string['globalsquoteserror'] = '修正您的 PHP 設定值: 取消 register_globals 和/或 啟用 magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>不建議您同時取消了Magic Quotes GPC 又啟動 Register Globals.</p>
+
+<p>在您的php.ini中，建議的設定值是
+<b>magic_quotes_gpc = On</b> 和 <b>register_globals = Off</b></p>
+
+<p>如果您沒又權限存取php.ini檔，您可以在您的Moodle 目錄中建立名稱為 .htaccess 的檔案，並且放入下列幾行內容：
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = '輔助說明';
 $string['iconvrecommended'] = '為了提昇網站效率，尤其您的網站支援非拉丁語系的情況下，建議您可以安裝額外的 ICONV 函式庫。';
 $string['info'] = '資訊';
@@ -110,6 +123,13 @@ $string['langdownloadok'] = '語言“{$a}”已經成功安裝了。安裝過�
 $string['language'] = '語言';
 $string['magicquotesruntime'] = 'Magic Quotes 執行時間';
 $string['magicquotesruntimeerror'] = '這應該關閉';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes 應該關閉執行時間，讓Moodle的功能能正常。</p>
+
+<p>一般情況下，它預設是關閉的... 請看php.ini檔案中的<b>magic_quotes_runtime</b> 設定</p>
+
+<p>如果您不存取php.ini,您也可以在您Moodle目錄下的.htaccess檔案中的加入下面這一列:
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = '為了提昇網站效率，建議您可以安裝額外的 MBSTRING 函式庫，特別是在您的網站使用非拉丁語系。';
 $string['memorylimit'] = '記憶體限制';
 $string['memorylimiterror'] = 'PHP 執行之記憶體設定過低,您可能稍後會遇到一些問題';
@@ -157,9 +177,16 @@ $string['report'] = '報表';
 $string['restricted'] = '限制';
 $string['safemode'] = '安全模式';
 $string['safemodeerror'] = 'Moodle 在安全模式啟動時可能會發生錯誤';
+$string['safemodehelp'] = '<p>Moodle在安全模式中，可能有許多的問題，不只是無法建新新檔案。
+
+<p>安全模式通常只有偏激的公眾Web主機才會啟動，所以您也許必須尋找新的網站主機公司來放置您的Moodle網站。</p>
+
+<p>如果您喜歡，您可以試著繼續安裝，但稍後就可期待許多問題出現了.</p>';
 $string['serverchecks'] = '伺服器檢查';
 $string['sessionautostart'] = 'Session自動啟動';
 $string['sessionautostarterror'] = '這應該關閉';
+$string['sessionautostarthelp'] = '<p>Moodle 需要有session功能的支援,沒有它無法正確動作 .</p>
+<p>Sessions 可以在 php.ini 檔案中啟動,請尋找其中 session.auto_start 參數.</p>';
 $string['skipdbencodingtest'] = '略過資料庫編碼測試';
 $string['status'] = '狀態';
 $string['thischarset'] = 'UTF-8';

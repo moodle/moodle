@@ -94,6 +94,11 @@ $string['error'] = 'Errorea';
 $string['fail'] = 'Errorea';
 $string['fileuploads'] = 'Fitxategien igoerak';
 $string['fileuploadserror'] = 'Aktibatuta egon behar du';
+$string['fileuploadshelp'] = '<p>Zure zerbitzarian fitxategien igoera ez dagoela aktibatuta dirudi.</p>
+
+<p>Moodle oraindik instala daiteke, baina ezingo dituzu fitxategirik, ezta erabiltzaileen irudirik ere, ikastaroetara igo.</p>
+
+<p>Fitxategien igoera ahalbidetzeko, zeuk (edo sistemaren administratzaileak) jatorrizko php.ini fitxategia editatu eta <b>file_uploads</b> ezarpena \'1\'ra aldatu behar duzu.</p>';
 $string['gdversion'] = 'GD bertsioa';
 $string['gdversionerror'] = 'GD liburutegiak bertan egon behar luke irudiak sortu eta prozesatzeko';
 $string['gdversionhelp'] = '<p>Zure zerbitzariak GDa instalaturik ez daukala dirudi.</p>
@@ -105,6 +110,14 @@ $string['gdversionhelp'] = '<p>Zure zerbitzariak GDa instalaturik ez daukala dir
 <p>Windows ingurunean, php.ini edita dezakezu, php_gd2.dll-ri dagozkion iruzkinen lerroa kenduz.</p>';
 $string['globalsquotes'] = 'Ezarpen orokorren erabilera ez segurua';
 $string['globalsquoteserror'] = 'PHP ezarpenak zehaztu: register_globals indargabetu edo/eta magic_quotes_gpc ezarri';
+$string['globalsquoteshelp'] = '<p>Ez da aholkatzen Magic Quotes GPC indargabetzea eta Register Globals ezartzea batera.</p>
+
+<p>Aholkatzen den ezarpena zera da: <b>magic_quotes_gpc = On</b> eta <b>register_globals = Off</b> zure php.ini fitxategian</p>
+
+<p>php.ini fitxategira sarbiderik ez baduzu, Moodle-ren direktorioaren barruko .htaccess izeneko fitxategian lerro hau idatzi beharko duzu:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = 'Laguntza';
 $string['iconvrecommended'] = 'ICONV aukerako libreria instalatzea gomendagarria da  oso gunearen errendimendua hobetzeko, batez ere zure guneak latindarrak ez diren hizkuntzak erabiltzen baditu.';
 $string['info'] = 'Informazioa';
@@ -115,6 +128,13 @@ $string['langdownloadok'] = '\"$a\" hizkuntza zuzen instalatu da. Instalazio-pro
 $string['language'] = 'Hizkuntza';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Aktibatuta egon behar du';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime desaktibatu behar da Moodle-k ongi funtzionatzeko.</p>
+
+<p>Desaktibazioa lehenetsita egoten da... Zure php.ini fitxategiko <b>magic_quotes_runtime</b> ezarpena ikusi.</p>
+
+<p>php.ini fitxategira sarbiderik ez baduzu, Moodle-ren direktorioaren barruko .htaccess izeneko fitxategian lerro hau idatzi beharko duzu:
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'MBSTRING aukerako libreria instalatzea gomendagarria da  oso gunearen errendimendua hobetzeko, batez ere zure guneak latindarrak ez diren hizkuntzak erabiltzen baditu.';
 $string['memorylimit'] = 'Memoriaren muga';
 $string['memorylimiterror'] = 'PHP memoriaren muga baxuegia da... Beranduago arazoak izan ditzakezu.';
@@ -159,8 +179,16 @@ $string['report'] = 'Txostena';
 $string['restricted'] = 'Baimena behar da';
 $string['safemode'] = 'Modu segurua';
 $string['safemodeerror'] = 'Moodle-k arazoak izan ditzake \'modu segurua\' ezarriz gero';
+$string['safemodehelp'] = '<p>Moodle-k arazo ezberdinak izan ditzake \'modu segurua\' ezarriz gero, eta baliteke fitxategi berriak ezin sortu izana.</p>
+
+<p>Normalean \'modu segurua\' web zerbitzari publiko paranoideek soilik aktibatzen dute. Hori dela eta, zure Moodle webgunerako beste enpresa bilatu beharko duzu.</p>
+
+<p>Nahi izanez gero, zure instalazioarekin jarrai dezakezu, baina aurrerago arazoak izango dituzu.</p>';
 $string['sessionautostart'] = 'Saioaren hasiera automatikoa';
 $string['sessionautostarterror'] = 'Indargabetuta egon behar du';
+$string['sessionautostarthelp'] = '<p>Moodle-k saioko laguntza behar du eta horren ezean ez du funtzionatuko.</p>
+
+<p>Saioak php.ini fitxategian aktibatu behar dira session.auto_start parametroari dagokionez.</p>';
 $string['skipdbencodingtest'] = 'Datu-basearen dekodifikazio-testa ez kontuan hartu';
 $string['status'] = 'Egoera';
 $string['thischarset'] = 'UTF-8';

@@ -85,12 +85,28 @@ $string['downloadlanguagenotneeded'] = 'Du kannst die Installation mit dem Sprac
 $string['downloadlanguagesub'] = 'Du hast nun die Möglichkeit, ein Sprachpaket herunterzuladen und den Installationsprozess mit dieser Sprache fortzusetzen. <br /><br /> Falls du keinen Download durchführen kannst, wird die Installation auf Englisch fortgeführt. (Wenn die Installation abgeschlossen ist, hast du die Option weitere Sprachpakete herunterzuladen.)';
 $string['environmenterrortodo'] = 'Du musst zunächst alle Probleme mit der Server-Konfiguration beheben, bevor du mit der Installation dieser Moodle-Version fortfahren kannst.';
 $string['environmentsub'] = 'Es wird geprüft, ob die verschiedenen Komponenten deines Systems die Installationsanforderungen erfüllen.';
+$string['fileuploadshelp'] = '<p>Dateien hochladen ist auf diesem Server abgestellt.</p>
+
+<p>Moodle kann installiert werden. Es ist aber nicht möglich, Dateien für Kurse oder Bilder in den Profilen hochzuladen.</p>
+
+<p>Um das Hochladen von Dateien zu ermöglichen, musst du oder der Administrator des Servers die Datei php.ini anpassen und die Einstellungen für<b>file_uploads</b> ändern auf \'1\'.</p>';
 $string['gdversionhelp'] = '<p>Auf deinem Server ist vermutlich GD nicht installiert. </p>
 <p>GD ist eine Bibliothek, die von PHP benötigt wird, um damit Bilder von Moodle angezeigt werden können, z.B. Nutzer-Bilder oder grafische Darstellungen der Log-Daten. Moodle arbeitet auch ohne GD. Die o.g. Funktionen stehen dir dann jedoch nicht zur Verfügung.</p>
 <p> Wenn du GD unter UNIX zu PHP hinzufügen möchtest, kompilierst du PHP unter Verwendung des Parameters   with-gd </p>
 <p>Unter Windows kannst du die Datei php.ini bearbeiten und die Zeile libgd.dll auskommentieren.</p>';
 $string['globalsquoteserror'] = 'Prüfe die PHP-Einstellungen: deaktiviere register_globals und/oder aktiviere magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Die Kombination von deaktivierten Magic Quotes GPC und aktivierten Register Globals zur gleichen Zeit sind nicht empfehlenswert.</p>
+
+<p>Die empfohlene Einstellung ist <b>magic_quotes_gpc = On</b> und <b>register_globals = Off</b> in deiner php.ini-Datei</p>
+
+<p>Wenn du keinen Zugriff auf die Datei php.ini hast, kannst du die folgende Zeile in der Datei .htaccess im Moodle Verzeichnis einfügen:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['iconvrecommended'] = 'Die Installation der ICONV Bibliothek wird zur Leistungsverbesserung dringend empfohlen. Dies ist besonders wichtig, wenn du Sprachen mit anderen als lateinischen Zeichensätzen verwendst.';
+$string['magicquotesruntimehelp'] = '<p>Magic Quotes Runtime sollte abgeschaltet \'off\' sein, damit Moodle richtig läuft.  </p>
+<p>Normalerweise ist dies der Fall. Prüfe die Einstellung <b>magic_quotes_runtime</b> in der Datei php.ini. </p>
+<p>Wenn du keinen Zugriff zur Datei php.ini hast, solltest du die folgende Zeile in eine Datei .htacess in deinem Moodle-Verzeichnis einfügen: <blockquote>php_value magic_quotes_runtime Off</blockquote></p>';
 $string['mbstringrecommended'] = 'Die Installation der Bibliothek MBSTRING wird zur Leistungsverbesserung dringend empfohlen. Dies ist besonders wichtig, wenn du Sprachen mit anderen als lateinischen Zeichensätzen verwendest.';
 $string['memorylimithelp'] = '<p>Die PHP-Einstellung memory_limit für deinen Server ist zur Zeit auf $a eingestellt. </p>
 <p>Dies wird vermutlich zu Problemen führen, wenn du Moodle mit vielen Aktivitäten oder vielen Nutzer/innen verwendst. </p>
@@ -114,6 +130,11 @@ $string['phpversionhelp'] = '<p>Moodle erwartet PHP mindestens in der Version 4.
 <p>Du musst deine PHP-Verson aktualisieren oder auf einen Rechner wechseln, der eine neuere Version von PHP nutzt.<br />
 (Im Falle von 5.0.x könntest du auch zu einer Version 4.3.x/4.4.x downgraden)</p>';
 $string['remotedownloadnotallowed'] = 'Der Download von Komponenten auf deinen Server ist nicht erlaubt (allow_url_fopen ist deaktiviert). <br /><br /> Die Datei <a href=\"$a->url\">$a->url</a> muss manuell heruntergeladen werden. Kopiere die Datei nach \"$a->dest\" auf deinen Server und entpacke sie dort.';
+$string['safemodehelp'] = '<p>Moodle kann beim Betrieb im Safe Mode verschiedene Probleme haben, nicht zuletzt kann es unmöglich sein, neue Dateien zu erzeugen. </p>
+<p>Safe Mode ist zumeist nur auf einigen öffentlichen Webservern eingestellt. Suche dir einen Anbieter, der auf diese Einstellung verzichtet oder bitte deinen Dienstleister, dass du auf einen Server \'umziehen\' kannst, der diese Einstellung nicht verwendet.</p>
+<p>Du kannst versuchen, die Installation fortzusetzen. Du musst aber später mit Problemen rechnen. </p>';
+$string['sessionautostarthelp'] = '<p>Moodle benötigt den Session Support und kann ohne diese Einstellung nicht funktionieren.</p>
+<p>Sessions sind durch Einstellungen in der Datei php.ini möglich. Bitte suche nach der Einstellung für session.auto_start </p>';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Deutsch - Du';

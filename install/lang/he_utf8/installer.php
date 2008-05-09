@@ -136,6 +136,9 @@ $string['error'] = 'טעות';
 $string['fail'] = 'כישלון';
 $string['fileuploads'] = 'העלאת קבצים';
 $string['fileuploadserror'] = 'חייב לאפשר זאת';
+$string['fileuploadshelp'] = '<p> העלאת קובץ נראה כמנוטרלת בשרת שלך.</p>
+<p> Moodle יכול עדיין להיות מותקן, אך בלי יכולת זו לא תוכל להעלות קבצי קורסים או תמונות פרופילי משתמש חדשות.</p>
+<p> בכדי לאפשר את תכונה זו של העלאת קבצים (בניהול המערכת שלך), תצטרך  לערוך את קובץ php.ini ולשנות את המשתנה <b> file_uploads</b> ל-1 </p>';
 $string['gdversion'] = 'גרסת GD';
 $string['gdversionerror'] = 'ספריית GD אמורה לפעול וליצור תמונות';
 $string['gdversionhelp'] = '<p> כנראה שלשרת שלך אין GD מותקן.</p>
@@ -145,6 +148,21 @@ GD היא ספרייה אשר נדרשת ע\"י PHP לאפשר ל-Moodle להפ�
 <p> תחת Windows תוכל בפשטות לערוך את קובץ ה-php.ini ולהסיר את הערה תחת הפרמטר של php_gd2.dll. </p>';
 $string['globalsquotes'] = 'טיפול לא בטוח של משתנים גלובלים';
 $string['globalsquoteserror'] = 'תקן את הגדרות ה-PHP שלך: נטרל את register_globals  ו/או אפשר את magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>צירוף נטרול של Magic Quotes GPC ואיפשור Register Globals בו זמנית לא מומלץ.</p>
+<p>
+ההגדרה המומלצת היא
+<b>
+magic_quotes_gpc = On
+</b> ו- 
+<b>
+register_globals = Off
+</b>
+בקובץ ה-php.ini שלך
+</p>
+<p> אם אין לך גישה לקובץ ה-php.ini שלך יתכן ותוכל להחליף את השורה הבאה בקובץ שנקרא .htaccess בתוך ספריית ה-Moodle שלך.
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['globalswarning'] = 'p><strong>התראת אבטחה</strong>: בכדי להפעיל בצורה תקינה Moodle מצריך <br />שינויים בהגדרות ה-PHP שלך<p/><p>עליך<em> להגדיר</em>  <code>register_globals=off</code>.<p> הגדרה זו מצריכה עריכת קובץ קונפיגורציה <code>php.ini</code>, Apache/IIS <br /> או <code>.htaccess</code> file.</p>';
 $string['help'] = 'עזרה';
 $string['iconvrecommended'] = 'התקנת ספריית ICONV האופציונלית מומלצת ביותר על-מנת לשפר את ביצועי האתר, במיוחד אם האתר נתמך בשפות לא-לטיניות.';
@@ -156,6 +174,12 @@ $string['langdownloadok'] = 'השפה \"$a\" הותקנה בהצלחה. תהלי
 $string['language'] = 'חבילת שפה';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'חייב לנטרל זאת';
+$string['magicquotesruntimehelp'] = '<p>רצוי שמשתנה Magic quotes runtime  יהיה כבוי עבור Moodle בכדי שיעבור כהלכה.
+</p>
+<p> בד\"כ משתנה זה כבוי כברירת מחדל... ראה בהגדות קובץ ה-php.ini את משתנה זה <b> magic_quotes_runtime </b>
+<p> אם אין לך גישה לקובץ ה-php.ini, תוכל להחליף את השורה הבאה בקובץ שנקרא .htaccess בתוך ספריית ה-Moodle שלך.
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'מתקין את ספריית MBSTRING האופציונלית מומלצת ביותר על-מנת לשפר את ביצועי האתר, במיוחד אם האתר נתמך בשפות לא-לטיניות.';
 $string['memorylimit'] = 'גבול הזיכרון';
 $string['memorylimiterror'] = 'משתנה גבול הזיכרון (memory limit) של ה-PHP הוגדר לרמה נמוכה... תוכל להגדיר זאת יותר מאוחר';
@@ -219,9 +243,17 @@ $string['report'] = 'דוח';
 $string['restricted'] = 'מוגבל';
 $string['safemode'] = 'מצב בטוח (Safe Mode)';
 $string['safemodeerror'] = 'ל-Moodle קיימת בעיה עם איפשור מצב הבטוח (safe mode)';
+$string['safemodehelp'] = '<p>
+קיימות מספר בעיות ל-Moodle כאשר ה\"מצב הבטוח\" דלוק, כנראה לא תיהיה אפשרות ליצור קבצים חדשים. </p>
+<p> מצב בטוח (safe mode) מאופשר בד\"כ ע\"י מארחי שרתים ציבוריים פרנואידים, כך שתצטרך כנראה להחליף את חברת שרת המחשב המארח של אתר ה-Moodle שלך ולמצוא אחת חדשה.
+<p> תוכל להמשיך בהתקנה אם תרצה, אך צפה לבעיות בהמשך.';
 $string['serverchecks'] = 'בדיקות שרת';
 $string['sessionautostart'] = 'פתיחת מושב אוטומטית';
 $string['sessionautostarterror'] = 'חייב לכבות זאת';
+$string['sessionautostarthelp'] = '<p>
+Moodle דורש תמיכת מושב ולא יכול לעבוד בלעדיו.
+<p>
+מושבים (sessions) ניתנים לאיפשור בקובץ php.ini... חפש את פרמטר session.auto_start';
 $string['skipdbencodingtest'] = 'דלג על DB Encoding Test';
 $string['status'] = 'מצב';
 $string['thischarset'] = 'UTF-8';

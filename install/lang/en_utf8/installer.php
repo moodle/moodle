@@ -63,7 +63,7 @@ $string['databasesettingssub'] = '<b>Type:</b> mysql or postgres7<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> optional prefix to use for all table names';
-$string['databasesettingssub_mssql'] = '<b>Type:</b> SQL*Server (non UTF-8) <b><font color=\"red\">Experimental! (not for use in production)</font></b><br />
+$string['databasesettingssub_mssql'] = '<b>Type:</b> SQL*Server (non UTF-8) <b><strong  class=\"errormsg\">Experimental! (not for use in production)</strong></b><br />
        <b>Host:</b> eg localhost or db.isp.com<br />
        <b>Name:</b> database name, eg moodle<br />
        <b>User:</b> your database username<br />
@@ -93,7 +93,7 @@ $string['databasesettingssub_oci8po'] = '<b>Type:</b> Oracle<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> prefix to use for all table names (mandatory, 2cc. max)';
-$string['databasesettingssub_odbc_mssql'] = '<b>Type:</b> SQL*Server (over ODBC) <b><font color=\"red\">Experimental! (not for use in production)</font></b><br />
+$string['databasesettingssub_odbc_mssql'] = '<b>Type:</b> SQL*Server (over ODBC) <b><strong  class=\"errormsg\">Experimental! (not for use in production)</strong></b><br />
        <b>Host:</b> given name of the DSN in the ODBC control panel<br />
        <b>Name:</b> database name, eg moodle<br />
        <b>User:</b> your database username<br />
@@ -157,6 +157,14 @@ $string['error'] = 'Error';
 $string['fail'] = 'Fail';
 $string['fileuploads'] = 'File Uploads';
 $string['fileuploadserror'] = 'This should be on';
+$string['fileuploadshelp'] = '<p>File uploading seems to be disabled on your server.</p>
+
+<p>Moodle can still be installed, but without this ability, you will not be able 
+   to upload course files or new user profile images.</p>
+
+<p>To enable file uploading you (or your system administrator) will need to 
+   edit the main php.ini file on your system and change the setting for 
+   <b>file_uploads</b> to \'1\'.</p>';
 $string['gdversion'] = 'GD version';
 $string['gdversionerror'] = 'The GD library should be present to process and create images';
 $string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</p>
@@ -171,6 +179,15 @@ $string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</
 <p>Under Windows you can usually edit php.ini and uncomment the line referencing php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Insecure Handling of Globals';
 $string['globalsquoteserror'] = 'Fix your PHP settings: disable register_globals and/or enable magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Combination of disabled Magic Quotes GPC and enabled Register Globals both at the same time is not recommended.</p>
+
+<p>The recommended setting is <b>magic_quotes_gpc = On</b> and <b>register_globals = Off</b> in your php.ini</p>
+
+<p>If you don\'t have access to your php.ini, you might be able to place the following line in a file 
+   called .htaccess within your Moodle directory:</p>
+   <blockquote><div>php_value magic_quotes_gpc On</div></blockquote>
+   <blockquote><div>php_value register_globals Off</div></blockquote>
+';
 $string['globalswarning'] = '<p><strong>Security Warning</strong>: to operate properly, Moodle requires <br />that you make certain changes to your current PHP settings.<p/><p>You <em>must</em> set <code>register_globals=off</code>.<p>This setting is controlled by editing your <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file.</p>';
 $string['help'] = 'Help';
 $string['iconvrecommended'] = 'Installing the optional ICONV library is highly recommended in order to improve site performance, particularly if your site is supporting non-Latin languages.';
@@ -182,6 +199,14 @@ $string['langdownloadok'] = 'The language \"$a\" was installed successfully. The
 $string['language'] = 'Language';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'This should be off';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime should be turned off for Moodle to function properly.</p>
+
+<p>Normally it is off by default ... see the setting <b>magic_quotes_runtime</b> in your php.ini file.</p>
+
+<p>If you don\'t have access to your php.ini, you might be able to place the following line in a file 
+   called .htaccess within your Moodle directory:</p>
+   <blockquote><div>php_value magic_quotes_runtime Off</div></blockquote>
+';
 $string['mbstringrecommended'] = 'Installing the optional MBSTRING library is highly recommended in order to improve site performance, particularly if your site is supporting non-Latin languages.';
 $string['memorylimit'] = 'Memory Limit';
 $string['memorylimiterror'] = 'The PHP memory limit is set quite low ... you may run into problems later.';
@@ -200,7 +225,7 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
     be able to ask your administrator to do this for you.</li>
 <li>On some PHP servers you can create a .htaccess file in the Moodle directory 
     containing this line:
-    <p><blockquote>php_value memory_limit 40M</blockquote></p>
+    <blockquote><div>php_value memory_limit 40M</div></blockquote>
     <p>However, on some servers this will prevent <b>all</b> PHP pages from working 
     (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
 </ol>';
@@ -243,9 +268,19 @@ $string['report'] = 'Report';
 $string['restricted'] = 'Restricted';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
+$string['safemodehelp'] = '<p>Moodle may have a variety of problems with safe mode on, not least is that 
+   it probably won\'t be allowed to create new files.</p>
+   
+<p>Safe mode is usually only enabled by paranoid public web hosts, so you may have 
+   to just find a new web hosting company for your Moodle site.</p>
+   
+<p>You can try continuing the install if you like, but expect a few problems later on.</p>';
 $string['serverchecks'] = 'Server Checks';
 $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'This should be off';
+$string['sessionautostarthelp'] = '<p>Moodle requires session support and will not function without it.</p>
+
+<p>Sessions can be enabled in the php.ini file ... look for the session.auto_start parameter.</p>';
 $string['skipdbencodingtest'] = 'Skip DB Encoding Test';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';

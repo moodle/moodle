@@ -141,6 +141,14 @@ $string['environmentxmlerror'] = 'Nagka-error sa pagbasa ng datos na pangkapalig
 $string['fail'] = 'Bigô';
 $string['fileuploads'] = 'Mga Inahon na Sako';
 $string['fileuploadserror'] = 'Dapat ay buhay ito';
+$string['fileuploadshelp'] = '<p>Mukhang patay ang pag-aahon ng sako sa server mo.</p>
+
+<p>Maaari pa ring iluklok ang Moodle, nguni\'t wala ang abilidad na ito, hindi
+   ka makakapag-ahon ng mga sako ng kurso o ng mga bagong larawan para sa pagkakakilanlan ng tagagamit.</p>
+
+<p>Para mabuhay ang pag-aahon ng sako (ikaw o ang iyong administrador ng sistema) ay kailangang
+   iedit ang pangunahing php.ini na sako sa iyong sistema at gawing \'1\' ang halaga 
+   ng kaayusang <b>file_uploads</b>.</p>';
 $string['gdversion'] = 'Bersiyon ng GD';
 $string['gdversionerror'] = 'Dapat ay may GD library para maproseso at makalikha ng mga larawan';
 $string['gdversionhelp'] = '<p>Mukhang hindi nakaluklok ang GD sa server mo.</p>
@@ -155,6 +163,16 @@ $string['gdversionhelp'] = '<p>Mukhang hindi nakaluklok ang GD sa server mo.</p>
 <p>Sa loob ng Windows kadalasan ay maeedit mo ang php.ini at tanggalin ang comment sa linya na tumutukoy sa  php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Di-ligtas na Pagmanipula ng mga Global';
 $string['globalsquoteserror'] = 'Ayusin ang iyong mga kaayusan ng PHP:  patayin ang register_globals at/o buhayin ang magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Hindi inirerekomenda ang pagsasabay ng patay na  
+ Magic Quotes GPC at buhay na Register Globals.</p>
+
+<p>Ang iminumungkahing kaayusan ay <b>magic_quotes_gpc = On</b> at <b>register_globals = Off</b> sa inyong php.ini</p>
+
+<p>Kung wala kang pahintulot na baguhin ang php.ini mo, marahil ay maaari mong ilagay ang sumusunod na linya sa sako na tinatawag na 
+ .htaccess sa loob ng bugsok mo ng Moodle:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = 'Tulong';
 $string['iconvrecommended'] = 'Mahigpit na iminumungkahi ang pagluklok ng opsiyonal na ICONV library upang mapahusay ang paggana ng site, lalupa\'t kung sinusuportahan ng site mo ang mga di-latin na wika.';
 $string['info'] = 'Impormasyon';
@@ -164,6 +182,14 @@ $string['langdownloaderror'] = 'Ikinalulungkot namin na ang wikang \"$a\" ay hin
 $string['langdownloadok'] = 'Matagumpay na nailuklok ang wikang \"$a\".  Ang kabuuan ng pagluluklok ay itutuloy sa wikang ito.';
 $string['language'] = 'Wikà';
 $string['magicquotesruntimeerror'] = 'Dapat ay patay ito';
+$string['magicquotesruntimehelp'] = '<p>Ang magic quotes runtime ay dapat patayin para gumana ng maayos ang Moodle.</p>
+
+<p>Karaniwan ay off ito bilang umiiral ... tingnan ang kaayusan na <b>magic_quotes_runtime</b> sa inyong sakong php.ini.</p>
+
+<p>Kung wala kang karapatang pasukin ang php.ini, baka maaari mong ilagay lang sumusunod na linya sa isang sako
+   na tinatawag na .htaccess sa loob ng iyong bugsok ng Moodle:
+   <blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'Ang pagluluklok ng opsiyonal na MBSTRING library ay mahigpit na inirerekomenda upang mapahusay ang paggana ng site, lalupa\'t kung sinusuportahan ng site mo ang mga di-latin na wika.';
 $string['memorylimiterror'] = 'Labis na mababa ang memory limit ng PHP ... maaaring magkaproblema ka mamaya.';
 $string['memorylimithelp'] = '<p>Ang memory limit ng PHP para sa server mo ay kasalukuyang nakatakda sa $a.</p>
@@ -216,7 +242,17 @@ $string['remotedownloadnotallowed'] = 'Ang paglusong ng mga piyesa sa server mo 
 $string['report'] = 'Ulat';
 $string['restricted'] = 'Limitado';
 $string['safemodeerror'] = 'Maaaring magkaproblema ang moodle kung naka-ON ang safe mode';
+$string['safemodehelp'] = '<p>Maraming klase ng problema ang Moodle kapag naka-ON ang safe mode, isa rito
+   ay maaaring hindi ito mapahintulutang lumikha ng mga bagong sako.</p>
+   
+<p>Ang safe mode ay kadalasang binubuhay lamang ng mga paranoid na pampublikong web host, kaya kakailanganin
+   mong humanap ng bagong web hosting na kumpanya para sa iyong site ng Moodle.</p>
+   
+<p>Maaari mong ipagpatuloy ang pagluklok kung nais mo, pero asahan mo na na magkakaproblema ka maya-maya.</p>';
 $string['sessionautostarterror'] = 'Dapat ay patay ito';
+$string['sessionautostarthelp'] = '<p>Kailangan ng Moodle ng session support at hindi ito gagana kung wala ito.</p>
+
+<p>Ang session ay mabubuhay sa sakong php.ini ... hanapin ang session.auto_start na parameter.</p>';
 $string['skipdbencodingtest'] = 'Lagpasan ang Pagsubok sa DB Encoding';
 $string['status'] = 'Katayuan';
 $string['thischarset'] = 'UTF-8';

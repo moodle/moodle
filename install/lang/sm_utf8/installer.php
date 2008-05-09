@@ -31,6 +31,14 @@ $string['error'] = 'Mea sese';
 $string['fail'] = 'Le fa\'amanuiaina';
 $string['fileuploads'] = 'Faila ua tu\'uina atu';
 $string['fileuploadserror'] = 'O le mea lea sa tatau ona i luga o le';
+$string['fileuploadshelp'] = '<p>File uploading seems to be disabled on your server.</p>
+
+<p>Moodle can still be installed, but without this ability, you will not be able 
+   to upload course files or new user profile images.
+
+<p>To enable file uploading you (or your system administrator) will need to 
+   edit the main php.ini file on your system and change the setting for 
+   <b>file_uploads</b> to \'1\'.</p>';
 $string['gdversion'] = 'Liliuga GD ';
 $string['gdversionerror'] = 'O le faletusi (library) GD e tatau ona i ai aua le faiga ma le fa\'agasologa o ata.';
 $string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</p>
@@ -48,6 +56,15 @@ $string['installation'] = 'Fa\'atu/Install';
 $string['language'] = 'Gagana';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'O le mea lea e tatau ona le i ai';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime should be turned off for Moodle to function properly.</p>
+
+<p>Normally it is off by default ... see the setting <b>magic_quotes_runtime</b> in your php.ini file.</p>
+
+<p>If you don\'t have access to your php.ini, you might be able to place the following line in a file 
+   called .htaccess within your Moodle directory:
+   <blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>   
+   ';
 $string['memorylimit'] = 'Limiti o le memory';
 $string['memorylimiterror'] = 'The PHP memory limit is set quite low ... you may run into problems later.';
 $string['memorylimithelp'] = '<p>The PHP memory limit for your server is currently set to $a.</p>
@@ -82,8 +99,18 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.1.0.
 $string['previous'] = 'Talu ai, tuana\'i';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
+$string['safemodehelp'] = '<p>Moodle may have a variety of problems with safe mode on, not least is that 
+   it probably won\'t be allowed to create new files.</p>
+   
+<p>Safe mode is usually only enabled by paranoid public web hosts, so you may have 
+   to just find a new web hosting company for your Moodle site.</p>
+   
+<p>You can try continuing the install if you like, but expect a few problems later on.</p>';
 $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'O le mea lea e tatu ona tape';
+$string['sessionautostarthelp'] = '<p>Moodle requires session support and will not function without it.</p>
+
+<p>Sessions can be enabled in the php.ini file ... look for the session.auto_start parameter.</p>';
 $string['status'] = 'Tulaga';
 $string['thischarset'] = 'utf-8';
 $string['thisdirection'] = 'ltr';

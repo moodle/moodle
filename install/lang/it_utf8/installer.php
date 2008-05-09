@@ -68,6 +68,9 @@ $string['error'] = 'Errore';
 $string['fail'] = 'Fallito';
 $string['fileuploads'] = 'Invio file';
 $string['fileuploadserror'] = 'Questo deve essere impostato a on';
+$string['fileuploadshelp'] = '<p>L\'invio dei file sembra essere disabilitato sul vostro server.</p>
+<p>Moodle può essere installato, ma senza questa caratteristica, non si potrà  inviare file per i corsi o nuove immagini degli utenti.</p>
+<p>Per abilitare l\'invio dei file è necessario modificare il file php.ini sul vostro sistema e cambiare l\'impostazione <b>file_uploads</b> a \'on\'.</p>';
 $string['gdversion'] = 'Versione GD';
 $string['gdversionerror'] = 'La libreria GD deve essere presente per elaborare e creare immagini';
 $string['gdversionhelp'] = '<p>Sul vostro server sembra non essere installato il supporto per le librerie GD.</p>
@@ -85,6 +88,10 @@ $string['invalidmd5'] = 'MD5 non valido';
 $string['language'] = 'Lingua';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Questo deve essere impostato a off';
+$string['magicquotesruntimehelp'] = '<p>L\'opzione Magic Quotes Run Time deve essere impostata a off per permettere a Moodle di funzionare correttamente.</p>
+<p>Normalmente questa è impostata a off ... controllate l\'impostazione <b>magic_quotes_runtime</b> nel file php.ini.</p>
+<p>Se non vi è possibile modificare il file php.ini, è possibile inserire la linea seguente in un file chiamato .htaccess nella Directory di Moodle: <blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'Installare la libreria opzionale MBSTRING è caldamente consigliato per migliorare le prestazioni del sito, in particolare se il vostro sito supporta lingue non latine.';
 $string['memorylimit'] = 'Limite memoria';
 $string['memorylimiterror'] = 'Il limite di memoria del PHP è impostato a un valore basso ... potrebbero verificarsi probremi in futuro.';
@@ -125,9 +132,14 @@ $string['report'] = 'Rapporto';
 $string['restricted'] = 'Ridotto';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle può avere problemi con il safemode impostato a on';
+$string['safemodehelp'] = '<p>Moodle può avere diversi problemi con il paramentro safemode impostato a on, non ultima l\'impossibilità  di creare nuovi file.</p>
+<p>Safemode è normalmente abiltato da paranoici web server pubblici, se è cosi l\'unica soluzine è trovare un nuovo web server per il tuo sito di Moodle.</p>
+<p>È possibile a continuare l\'installazione se si vuole, ma aspettatevi alcuni problemi dopo.</p>';
 $string['serverchecks'] = 'Controlli Server';
 $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'Questo deve essere off';
+$string['sessionautostarthelp'] = '<p>Moodle richiede il supporto delle sessioni e non funziona senza.</p>
+<p>Le sessioni possono essere abilitate nel file php.ini ... cerca il parametro session.auto_start.</p>';
 $string['skipdbencodingtest'] = 'Salta il test del sistema di codifica della base dati';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';

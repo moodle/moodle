@@ -32,6 +32,14 @@ $string['error'] = 'Lỗi';
 $string['fail'] = 'Thất bại';
 $string['fileuploads'] = 'File tải lên';
 $string['fileuploadserror'] = 'Điều này sẽ là';
+$string['fileuploadshelp'] = '<p>File tải lên dường như bị vô hiệu hoá trên máy chủ của bạn.</p>
+
+<p>Moodle vẫn có thể được cài đặt, nhưng không có khả năng này, bạn sẽ không có khả 
+   năng tải lên các tài liệu cua học hoặc các ảnh trong hồ sơ người dùng.</p>
+
+<p>Để có thể tải file lên (hoặc nhà quản trị hệ thống của bạn ) sẽ cần 
+   soạn thảo file php.ini trên hệ thống của bạn và thay đổi thiết lập đối với 
+   <b>file tải lên</b> thành \'1\'.</p>';
 $string['gdversion'] = 'Phiên bản GD';
 $string['gdversionerror'] = 'Thư viện GD nên được cho phép để xử lý và tạo các hình ảnh';
 $string['gdversionhelp'] = '<p> Máy chủ của bạn hình như không cài GD.</p>
@@ -49,6 +57,15 @@ $string['installation'] = 'Cài đặt';
 $string['language'] = 'Ngôn ngữ';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Điều này nên là off';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime nên được tắt để Moodle hoạt động đúng.</p>
+
+<p>Bình thường theo mặc định nó là off...nhìn thiết lập <b>magic_quotes_runtime</b> trong file php.ini của bạn.</p>
+
+<p>Nếu bạn không thể truy cập file php.ini của bạn, bạn có thể đặt dòng sau trong một file  
+   gọi là .htaccess trong thư mục Moodle của bạn:
+   <blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>   
+   ';
 $string['memorylimit'] = 'Giới hạn bộ nhớ';
 $string['memorylimiterror'] = 'PHP thiết lập giới hạn bộ nhớ quá thấp... you may run into problems later.';
 $string['memorylimithelp'] = '<p> PHP thiết lập giới hạn bộ nhớ cho máy chủ của bạn hiện tại là $a.</p>
@@ -85,8 +102,18 @@ $string['phpversionhelp'] = '<p>Moodle yêu cầu một phiên bản PHP ít nh�
 $string['previous'] = 'Trước';
 $string['safemode'] = 'Chế độ an toàn ';
 $string['safemodeerror'] = 'Moodle có thể gặp một số sự cố với chế độ an toàn';
+$string['safemodehelp'] = '<p>Moodle có thể có một số vấn đề với chế độ an toàn, 
+	đặc biệt là nếu nó không được phép tạo các file mới.</p>
+   
+<p>Chế độ an toàn thường được các host web bật lên, do đó bạn có thể
+   phải tìm cung cấp một công ty host web mới cho site Moodle của bạn.</p>
+   
+<p>Bạn có thể thử tiếp tục cài đặt nếu bạn thích, nhưng có thể phát sinh một số vấn đề sau này.</p>';
 $string['sessionautostart'] = 'Bắt đầu tự động Session ';
 $string['sessionautostarterror'] = 'Điều này nên là tắt';
+$string['sessionautostarthelp'] = '<p>Moodle yêu cầu hỗ trợ session và sẽ không làm việc nếu không có nó.</p>
+
+<p>Sessions có thể được cho phép trong file php.ini ... tìm kiếm tham số session.auto_start.</p>';
 $string['status'] = 'Trạng thái';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';

@@ -31,6 +31,12 @@ $string['error'] = 'Hala';
 $string['fail'] = 'Too';
 $string['fileuploads'] = '\'Apu-louti e faile';
 $string['fileuploadserror'] = '\'Oku totonu ke \'oni eni';
+$string['fileuploadshelp'] = '<p>Hangehange \'oku \'ikai malava e \'apulouti e faile ki ho\'o seeva.</p>
+
+<p>\'Ekei lava pe \'o fokotu\'u e Muutolo, Ka \'okapau \'oku \'ikai ke \'iai e mafai ko \'eni, he \'ikai taka lava \'o \'apulouti e ngaahi faile koosi pee koe ngaahi \'imisi \'iusa poloofaile fo\'ou. 
+
+<p>Ke fakamafai\'i e \'apulouti e faile \'oku fiema\'u keke (pee koho\'o \'etiminisituleita sisitemi)\'etita\'i e meini  php.ini faile \'i ho\'o sisitemi pea liliu e setingi ki he 
+   <b>faile_\'apulouti</b> to \'1\'.</p>';
 $string['gdversion'] = 'Vesini GD ';
 $string['gdversionerror'] = '\'Oku totonu ke \'i heni e laipeli GD kene polosesi mo fakatupu e ngaahi \'imisi';
 $string['gdversionhelp'] = '<p>Ngalingali \'oku te\'ekiai ke fokotu\'u e GD \'i ho\'o Seeva.</p>
@@ -46,6 +52,14 @@ $string['installation'] = 'Fokotu\'u';
 $string['language'] = 'Lea';
 $string['magicquotesruntime'] = 'Magic kuouti taimi lele';
 $string['magicquotesruntimeerror'] = '\'Oku totonu ke \'ofu eni';
+$string['magicquotesruntimehelp'] = '<p>\'Oku totonu ke tamate\'i e taimilele \'oe kuouti misiteli kae fangisini lelei e Muutolo.</p>
+
+<p>Koe NOMOLO \'oku tamate\'i pe ia he\'e Tifolo ... sio ki he setingi <b>kuouti misiteli_taimilele</b> \'i ho\'o php.ini faile.</p>
+
+<p>Kapau \'oku \'ikai \'iai ho\'a \'ekissesi ki ho\'o php.ini,teke malava pe \'o tuku e ngaahi laine ko \'eni \'iha faile \'oku ui.ht\'ekisesi \'iloto \'i ho\'o fakahinohino Muutolo:
+   <polokakuouti>php_mahu\'inga misiteli_kuouti_taimilele Off</polokakuouti>
+</p>   
+   ';
 $string['memorylimit'] = 'Limiti \'oe memolii';
 $string['memorylimiterror'] = '\'Oku fu\'u ma\'ulalo hono seti e liimiti memolii PHP ...teke malava keke fetaulaki mo ha palopalema \'amui.';
 $string['memorylimithelp'] = '<p> Koe memolii PHP limiti ki ho\'o seeva \'oku lolotonga seti ki he $a.</p>
@@ -79,8 +93,16 @@ $string['phpversionhelp'] = '<p>\'Oku fiema\'u he\'e Muutolo ha vesini PHP \'oku
 $string['previous'] = 'Fakamuimui';
 $string['safemode'] = 'Seifi Mouti';
 $string['safemodeerror'] = 'Mahalo e \'iai ha palopalema \'i he mutolo kapau \'e mo\'ui e seifi mouti';
+$string['safemodehelp'] = '<p>\'E meimei \'iai e palopalema kehekehe \'oe Muutolo \'ihe taimi \'oku mo\'ui ai e seifi mouti, \'ikai koia pe ka\'e mahalo pee he\'ikai ke fakangofua ke fakatupu ha faile fo\'ou.</p>
+   
+<p>\'Oku fa\'a toki malava pe \'ae seifi mouti ia \'eha taha papiliki puputu\'u uepi housi,koia ai \'oku mahalo teke kumi ha kautaha uepi housi fo\'ou ki ho\'o saiti Muutolo.</p>
+   
+<p>Teke lava pe \'o feinga ke hokoatu hono fokotu\'u kapau \'oku ke loto kiai, ka ke \'ilo\'i \'e \'iai e ngaahi palopalema \'a mui ange.</p>';
 $string['sessionautostart'] = 'Sesini  kamata \'otometiki ';
 $string['sessionautostarterror'] = '\'Oku totonu ke \'ofu eni';
+$string['sessionautostarthelp'] = '<p> \'Oku fiema\'e \'ehe mutolo ha sesini tokoni pea he\'ikai ke ngaue kapau \'oku \'ikai.</p>
+
+<p> \'e lava pe \'o fakangofua e sesini \'i he php.ini faile ... vakai kihe sesini.\'oto_kamata ngatangataanga.</p>';
 $string['status'] = 'Tu\'unga';
 $string['thischarset'] = 'utf-8';
 $string['thisdirection'] = 'ltr';

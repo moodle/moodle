@@ -84,6 +84,8 @@ $string['safemode'] = 'وضع الامان';
 $string['safemodeerror'] = 'من الممكن ان مودل يواجه مشاكل عندما يكون وضع الامان نشط';
 $string['sessionautostart'] = 'البدء الآلي للجلسة';
 $string['sessionautostarterror'] = 'يجب أن يكون هذا معطل';
+$string['sessionautostarthelp'] = '<p> يتطلب مودل لدعم الجلسات وبدونها لا يستطع العمل.</p>
+<p>.يمكن تمكين الجلسات من خلال ملف php.in ...ابحث عن session.auto_start  </p>';
 $string['skipdbencodingtest'] = 'تخطى اختبار تشفير قاعدة البيانات';
 $string['status'] = 'الحالة';
 $string['thischarset'] = 'UTF-8';

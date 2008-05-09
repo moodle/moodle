@@ -105,6 +105,14 @@ $string['error'] = 'Napaka';
 $string['fail'] = 'Neuspeh';
 $string['fileuploads'] = 'Nalaganje datotek';
 $string['fileuploadserror'] = 'To bi moralo biti vključeno';
+$string['fileuploadshelp'] = '<p>Nalaganje datotek je kot kaže onemogočeno na vašem strežniku.</p>
+
+<p>Moodle je še vedno možno namestiti, vendar brez te možnosti, ne boste mogli 
+   nalagati datotek predmetov ali novih slik uporabniških profilov.</p>
+
+<š>Za omogočanje nalaganja datotek boste (ali vaš skrbnik sistema) morali 
+   urediti glavno datoteko php.ini na vašem sistemu in spremeniti nastavitev za 
+   <b>file_uploads</b> na \'1\'.</p>';
 $string['gdversion'] = 'Različica GD';
 $string['gdversionerror'] = 'Knjižnica GD mora biti prisotno za obdelavo in ustvarjanje slik';
 $string['gdversionhelp'] = '<p>Na vašem strežniku kot kaže ni nameščen GD.</p>
@@ -119,6 +127,16 @@ $string['gdversionhelp'] = '<p>Na vašem strežniku kot kaže ni nameščen GD.<
 <p>V okolju Windows lahko običajno uredite php.ini in odkomentirate vrstico, ki se sklicuje na php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Nevarna obravnava globalnih spremenljivk';
 $string['globalsquoteserror'] = 'Popravite vaše PHP nastavitve: onemogočite register_globals in / ali omogočite magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Kombinacija hkrati onemogočenega Magic Quotes GPC in omogočenega Register Globals ni priporočena.</p>
+
+<p>Priporočena nastavitev je <b>magic_quotes_gpc = On</b> in <b>register_globals = Off</b> v vaši datoteki php.ini</p>
+
+<p>Če nimate dostopa do datoteke php.ini, boste morda lahko vstavili sledečo vrstico v datoteko 
+   imenovano .htaccess v vašem imeniku Moodle:
+   <blockquote>php_value magic_quotes_gpc On</blockquote>
+   <blockquote>php_value register_globals Off</blockquote>
+</p>   
+   ';
 $string['help'] = 'Pomoč';
 $string['iconvrecommended'] = 'Namestitev dodatne knjižnice ICONV je zelo priporočljiva za izboljšanje zmogljivosti strani, še posebej, če stran uporablja dodatne jezike.';
 $string['info'] = 'Informacije';
@@ -129,6 +147,15 @@ $string['langdownloadok'] = 'Jezik \"$a\" je bil uspešno nameščen. Postopek n
 $string['language'] = 'Jezik';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'To bi moralo biti izključeno';
+$string['magicquotesruntimehelp'] = '<p>Možnost Magic quotes runtime bi morala biti izključena za pravilno delovanje Moodle.</p>
+
+<p>Po navadi je privzeta vrednost izključena ... poglejte nastavitev <b>magic_quotes_runtime</b> v vaši datoteki php.ini.</p>
+
+<p>Če nimate dostopa do datoteke php.ini, boste morda lahko vstavili sledečo vrstico v datoteko 
+   imenovano .htaccess v vašem imeniku Moodle:
+   <blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>   
+   ';
 $string['mbstringrecommended'] = 'Namestitev dodatne knjižnice MBSTRING je zelo priporočljiva za izboljšanje zmogljivosti strani, še posebej, če stran uporablja dodatne jezike.';
 $string['memorylimit'] = 'Omejitev pomnilnika';
 $string['memorylimiterror'] = 'Omejitev pomnilnika PHP je nastavljena precej nizko ... pozneje lahko pride do težav.';
@@ -174,8 +201,18 @@ $string['report'] = 'Poročilo';
 $string['restricted'] = 'Omejeno';
 $string['safemode'] = 'Varni način';
 $string['safemodeerror'] = 'Moodle lahko ima težave z vključenim varnim načinom';
+$string['safemodehelp'] = '<p>Moodle ima lahko razne težave z vključenim varnim načinom. Ne samo, da
+   verjetno ne bo smel ustvarjati novih datotek.</p>
+   
+<p>Varni način je običajno vključen pri paranoidnih javnih spletnih gostiteljih in boste morda morali
+   poiskati novo podjetje za gostovanje vašega Moodle spletnega mesta.</p>
+   
+<p>Če želite lahko poskusite nadaljevati z namestitvijo, a pričakujte nekaj težav pozneje.</p>';
 $string['sessionautostart'] = 'Samodejni začetek seje';
 $string['sessionautostarterror'] = 'To bi moralo biti izključeno';
+$string['sessionautostarthelp'] = '<p>Moodle zahteva podporo za seje in ne bo deloval brez tega.</p>
+
+<p>Seje lahko omogočite v datoteki php.ini ... poiščite parameter session.auto_start.</p>';
 $string['skipdbencodingtest'] = 'Preskoči preizkus kodne tabele podatkovne zbirke';
 $string['status'] = 'Stanje';
 $string['thischarset'] = 'UTF-8';

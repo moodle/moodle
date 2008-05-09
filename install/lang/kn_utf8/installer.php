@@ -34,6 +34,10 @@ $string['ok'] = 'ಸರಿ';
 $string['password'] = 'ಪ್ರವೇಶ ಪದ';
 $string['phpversion'] = 'ಪಿಎಚ್‌ಪಿ ಆವೃತ್ತಿ';
 $string['previous'] = 'ಹಿಂದಿನದು';
+$string['sessionautostarthelp'] = '<p>ಮೂಡಲ್‌ಗೆ  ಸೆಶನ್ ಸಹಾಯ ಬೇಕು, ಅದಿಲ್ಲದೆ ಮೂಡಲ್ ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ</p>
+
+<p>Session ಅನ್ನು php.ini ಕಡತವನ್ನು ಸಂಪಾದಿಸಿ ಶಕ್ತಗೊಳಿಸಬಹುದು...
+session.auto_start ಎಂಬ ಶಬ್ದವನ್ನು ನೋಡಿರಿ </p>';
 $string['status'] = 'ಸ್ಥಿತಿ';
 $string['thischarset'] = 'utf-8';
 $string['thisdirection'] = 'ltr';

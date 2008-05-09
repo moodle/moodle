@@ -144,6 +144,14 @@ $string['error'] = 'Gwall';
 $string['fail'] = 'Methu';
 $string['fileuploads'] = 'Llwytho ffeiliau i fyny';
 $string['fileuploadserror'] = 'Dylai hwn fod ymlaen';
+$string['fileuploadshelp'] = '<p>Yn ôl pob golwg, nid yw eich gweinydd wedi galluogi llwytho ffeiliau i fyny.</p>
+
+<p>Byddwch dal yn gallu gosod Moodle, ond os nad ydych yn gallu gwneud hyn, ni fyddwch yn gallu 
+   llwytho ffeiliau cyrsiau na delweddau proffil defnyddwyr i fyny.</p>
+
+<p>I alluogi llwytho ffeiliau i fyny, bydd angen i chi (neu weinyddwr eich system) 
+   olygu\'r brif ffeil php.ini ar eich system a newid y gosodiad ar gyfer 
+   <b>file_uploads</b> to \'1\'.</p>';
 $string['gdversion'] = 'Fersiwn GD';
 $string['gdversionerror'] = 'Dylai\'r llyfrgell GD fod ar gael i brosesu a chreu delweddau';
 $string['gdversionhelp'] = '<p>Yn ôl pob golwg, nid oes GD wedi\'i osod ar eich gweinydd.</p>
@@ -157,6 +165,14 @@ $string['gdversionhelp'] = '<p>Yn ôl pob golwg, nid oes GD wedi\'i osod ar eich
 <p>fel arfer, gallwch olygu php.ini yn Windows drwy dynnu\'r ddwy slaes o flaen y llinell php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Gafael Anniogel o Ddyfynodau\'r Safle Cyfan';
 $string['globalsquoteserror'] = 'Trwsio eich gosodiadau PHP: analluogi register_globals a/neu galluogi magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Nid ydym yn argymell analluogi Dyfynodau Hud GPC a galluogi Cofrestru Dyfynodau Safle Cyfan ar yr un pryd.</p>
+
+<p>Dyma\'r gosodiad sy\'n cael ei argymell <b>magic_quotes_gpc = Ymlaen</b> a <b>register_globals = Diffodd</b> yn eich ffeil php.ini</p>
+
+<p>Os nad ydych yn gallu mynd i mewn i\'ch php.ini, efallai gallwch roi\'r llinell ganlynol mewn ffeil .htaccess yn eich cyfeiriadur Moodle:
+   <blockquote>php_value magic_quotes_gpc On</blockquote>
+   <blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['help'] = 'Help';
 $string['iconvrecommended'] = 'Argymhellir yn gryf eich bod yn gosod y llyfrgell ICONV ddewisol er mwyn gwella perfformiad y safle, yn enwedig os gall eich safle ddelio ag ieithoedd heblaw rhai Lladin.';
 $string['info'] = 'Gwybodaeth';
@@ -167,6 +183,13 @@ $string['langdownloadok'] = 'Wedi gosod \"$a\" yn llwyddiannus. Bydd y broses os
 $string['language'] = 'Iaith';
 $string['magicquotesruntime'] = 'Amser Rhedeg Dyfynodau Hud';
 $string['magicquotesruntimeerror'] = 'Dylai hwn fod wedi\'i ddiffodd';
+$string['magicquotesruntimehelp'] = '<p>Dylid diffodd Amser Rhedeg Dyfynodau Hud fel bo Moodle yn gweithio\'n iawn.</p>
+
+<p>Fel arfer, mae wedi\'i ddiffodd yn ddiofyn ... tarwch olwg ar y gosodiad <b>magic_quotes_runtime</b> yn eich ffeil php.ini.</p>
+
+<p><p>Os nad ydych yn gallu mynd i mewn i\'ch php.ini, efallai gallwch roi\'r llinell ganlynol mewn ffeil .htaccess yn eich cyfeiriadur Moodle:
+   <blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>';
 $string['mbstringrecommended'] = 'Argymhellir yn gryf eich bod yn gosod y llyfrgell MBSTRING ddewisol er mwyn gwella perfformiad y safle, yn enwedig os gall eich safle ddelio ag ieithoedd heblaw rhai Lladin.';
 $string['memorylimit'] = 'Maint y Cof';
 $string['memorylimiterror'] = 'Mae maint y cof PHP wedi\'i osod yn eitaf isel ...efallai y cewch broblemau yn nes ymlaen.';
@@ -223,9 +246,19 @@ $string['report'] = 'Adroddiad';
 $string['restricted'] = 'Wedi\'i wahardd';
 $string['safemode'] = 'Modd Diogel';
 $string['safemodeerror'] = 'Mae\'n bosibl y bydd Moodle yn profi problemau os yw\'r modd diogel ymlaen';
+$string['safemodehelp'] = '<p>Mae\'n bosibl y bydd Moodle yn profi llawer o broblemau os yw\'r modd diogel ymlaen. Un broblem y gallech ddod ar ei thraws yw 
+   na fyddwch o bosib yn gallu creu ffeiliau newydd.</p>
+   
+<p>Fel arfer, dim ond gwesteiwyr gwe cyhoeddus paranoid sy\'n troi\'r modd diogel ymlaen, felly efallai y  
+   bydd rhaid i chi gael cwmni gwesteiwr gwe newydd ar gyfer eich safle Moodle.</p>
+   
+<p>Gallwch roi cynnig ar fwrw ymlaen i osod, ond mae\'n siŵr y byddwch yn dod ar draws rhai problemau yn nes ymlaen.</p>';
 $string['serverchecks'] = 'Archwiliadau Gweinydd';
 $string['sessionautostart'] = 'Awto Gychwyn y Sesiwn';
 $string['sessionautostarterror'] = 'Dylai hwn fod wedi\'i ddiffodd';
+$string['sessionautostarthelp'] = '<p>Mae angen cefnogaeth sesiwn ar Moodle ac ni fydd yn gweithio hebddo.</p>
+
+<p>Gallwch alluogi sesiynau yn y ffeil php.ini file ... chwiliwch am y paramedr session.auto_start.</p>';
 $string['skipdbencodingtest'] = 'Hepgor Prawf Amgodio DB';
 $string['status'] = 'Statws';
 $string['thischarset'] = 'UTF-8';

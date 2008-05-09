@@ -33,6 +33,11 @@ $string['error'] = 'შეცდომა';
 $string['fail'] = '”ჩაფლავდა”';
 $string['fileuploads'] = 'ფაილის ატვირთვა';
 $string['fileuploadserror'] = 'ეს უნდა იყოს';
+$string['fileuploadshelp'] = '<p>როგორც ჩანს თქვენი სერვერიდან ფაილების ატვირთვა შეუძლებელია.</p>
+
+<p>Moodle შეიძლება აიტვირთოს, მაგრამ ვერ მოხერხდება კურსების ატვირთვა ან ახალ მომხმარებელთაპროფილის ასახვა.</p>
+
+<p>ფაილების ატვირთვის ნებადართვისათვის თქვენ (ან სისტემის ადმინისტრატორს) დაგჭირდებათ თქვენს სისტემაში ძირითადი php.ini ფაილის რედაქტირება და სეთინგის შეცვლა <b>file_uploads</b> to \'1\'.</p>';
 $string['gdversion'] = 'GD ვარიანტი';
 $string['gdversionerror'] = 'უნდა არსებობდეს GD ბიბლიოთეკა გამოსახულებების შესაქმნელად და დასამუშავებლად';
 $string['gdversionhelp'] = '<p>როგორც ჩანს თქვენს სისტემაში GD არ არის ინსტალირებულიe.</p>
@@ -49,6 +54,14 @@ $string['installation'] = 'ინსტალირება';
 $string['language'] = 'ენა';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'ეს უნდა იყოს ამორთული';
+$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime should be turned off for Moodle to function properly.</p>
+
+<p>Normally it is off by default ... see the setting <b>magic_quotes_runtime</b> in your php.ini file.</p>
+
+<p>If you don\'t have access to your php.ini, you might be able to place the following line in a file 
+called .htaccess within your Moodle directory:
+<blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p> ';
 $string['memorylimit'] = 'მახსოვრობის ზღვარი';
 $string['memorylimiterror'] = 'არჩეულია ძალიან დაბალი PHP მახსოვრობის ზღვარი ... შემდგომში პრობლემები გექნებათ';
 $string['memorylimithelp'] = '<p>The PHP memory limit for your server is currently set to $a.</p>
@@ -84,8 +97,18 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.1.0.
 $string['previous'] = 'წინა';
 $string['safemode'] = 'უსაფრთხო ვარიანტი';
 $string['safemodeerror'] = 'Moodle-ს შეიძლება ჰქონდეს პრობლემები ”დაცულ ';
+$string['safemodehelp'] = '<p>Moodle may have a variety of problems with safe mode on, not least is that 
+it probably won\'t be allowed to create new files.</p>
+
+<p>Safe mode is usually only enabled by paranoid public web hosts, so you may have 
+to just find a new web hosting company for your Moodle site.</p>
+
+<p>You can try continuing the install if you like, but expect a few problems later on.</p>';
 $string['sessionautostart'] = 'სესიის ავტომატური დასაწყისი';
 $string['sessionautostarterror'] = 'ეს უნდა იყოს ამორთული';
+$string['sessionautostarthelp'] = '<p>Moodle საჭიროებს სესიის მხარდაჭერას,რის გარეშე ის ვერ იმუშავებს გამართულად.</p>
+
+<p>სესია სეიძლება ნებადართული იქნას php.ini ფაილით... მოძებნეთ პარამეტრი session.auto_start .</p>';
 $string['status'] = 'მდგომარეობა';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
