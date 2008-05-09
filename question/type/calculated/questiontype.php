@@ -921,12 +921,13 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $questionusingstr = get_string('usedinquestion','qtype_calculated');
         $itemscountstr = get_string('itemscount','qtype_datasetdependent');
        $text ='';
-        if (!empty($form->category)) {           
+        if (!empty($form->category)) {  
+            list($category) = explode(',', $form->category);
             $sql = "SELECT i.*,d.*
                     FROM {$CFG->prefix}question_datasets d,
                          {$CFG->prefix}question_dataset_definitions i    
                     WHERE i.id = d.datasetdefinition
-                    AND i.category = '$form->category'; 
+                    AND i.category = $category; 
                     " ;
             if ($records = get_records_sql($sql)) {
                 foreach ($records as $r) {
