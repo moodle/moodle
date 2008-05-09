@@ -20,7 +20,9 @@ if ($hassiteconfig) {
 
         foreach ($modulebyname as $strmodulename=>$module) {
             $modulename = $module->name;
-            if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settings.php')) {
+            if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settingstree.php')) {
+                include($CFG->dirroot.'/mod/'.$modulename.'/settingstree.php');
+            } else if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settings.php')) {
                 // do not show disabled modules in tree, keep only settings link on manage page
                 $settings = new admin_settingpage('modsetting'.$modulename, $strmodulename, 'moodle/site:config', !$module->visible);
                 if ($ADMIN->fulltree) {
@@ -28,6 +30,8 @@ if ($hassiteconfig) {
                 }
                 $ADMIN->add('modsettings', $settings);
             } else if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/config.html')) {
+                //TODO this branch should be deleted as soon as quiz/config.html has been
+                //migrated to settings.php
                 $ADMIN->add('modsettings', new admin_externalpage('modsetting'.$modulename, $strmodulename, "$CFG->wwwroot/$CFG->admin/module.php?module=$modulename", 'moodle/site:config', !$module->visible));
             }
         }
