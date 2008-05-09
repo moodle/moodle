@@ -32,6 +32,7 @@ $string['editingquestion'] = 'Editing a question';
 $string['erroraccessingcontext'] = 'Cannot access context';
 $string['errorfilecannotbecopied'] = 'Error cannot copy file $a.';
 $string['errorfilecannotbemoved'] = 'Error cannot move file $a.';
+$string['errormovingquestions'] = 'Error while moving questions with ids $a.';
 $string['errorfileschanged'] = 'Error files linked to from questions have changed since form was displayed.';
 $string['exportcategory'] = 'Export category';
 $string['filesareasite']= 'the site files area';

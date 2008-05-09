@@ -159,9 +159,10 @@ if ($contextmoveform->is_cancelled()){
 
         }
     }
-    //now move questions
-    if (!execute_sql("UPDATE {$CFG->prefix}question SET category = {$tocat->id} WHERE id IN ({$ids})", false)){
-        error("Could not move the questions {$ids} to category ".$tocat->name, $returnurl);
+
+/// Now move questions.
+    if (!question_move_questions_to_category($ids, $tocat->id)) {
+        print_error('errormovingquestions', 'question', $returnurl, $ids);
     }
     redirect($returnurl);
 }

@@ -447,11 +447,8 @@ function question_showbank_actions($pageurl, $cm){
             }
             $returnurl = $pageurl->out(false, array('category'=>"$tocategoryid,$contextid"));
             if (!$checkforfiles){
-                foreach ($questionids as $questionid){
-                    //move question
-                    if (!set_field('question', 'category', $tocategory->id, 'id', $questionid)) {
-                        error('Could not update category field');
-                    }
+                if (!question_move_questions_to_category(implode(',', $questionids), $tocategory->id)) {
+                    print_error('errormovingquestions', 'question', $returnurl, $questionids);
                 }
                 redirect($returnurl);
             } else {
