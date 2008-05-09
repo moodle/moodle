@@ -20,7 +20,9 @@ if ($hassiteconfig) {
 
         foreach ($modulebyname as $strmodulename=>$module) {
             $modulename = $module->name;
-            if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settings.php')) {
+            if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settingstree.php')) {
+                include($CFG->dirroot.'/mod/'.$modulename.'/settingstree.php');
+            } else if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settings.php')) {
                 // do not show disabled modules in tree, keep only settings link on manage page
                 $settings = new admin_settingpage('modsetting'.$modulename, $strmodulename, 'moodle/site:config', !$module->visible);
                 if ($ADMIN->fulltree) {
