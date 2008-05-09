@@ -259,17 +259,23 @@
             $question->parent = $restored_questions[$i]->parent;
 
 
-            //If it's a new question in the DB, restore it
+        /// If it's a new question in the DB, restore it
             if ($restored_questions[$i]->is_new) {
 
-                ////We have to recode the parent field
-                if ($question->parent) {
+            /// We have to recode the parent field
+                if ($question->parent && $question->qtype != 'random') {
+                /// If the parent field needs to be changed, do it here. Random questions are dealt with above.
                     if ($parent = backup_getid($restore->backup_unique_code,"question",$question->parent)) {
                         $question->parent = $parent->new_id;
-                    } elseif ($question->parent = $oldid) {
-                        $question->parent = $newid;
+                        if ($question->parent != $restored_questions[$i]->parent) {
+                            if (!set_field('question', 'parent', $question->parent, 'id', $newid)) {
+                                echo 'Could not update parent '.$question->parent.' for question '.$oldid.'<br />';
+                                $status = false;
+                            }
+                        }
                     } else {
                         echo 'Could not recode parent '.$question->parent.' for question '.$oldid.'<br />';
+                        $status = false;
                     }
                 }
     
