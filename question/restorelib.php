@@ -392,11 +392,9 @@
 
             // Fixing bug #5482: random questions have parent field set to its own id,
             //                   see: $QTYPES['random']->get_question_options()
-            if ($question->qtype == 'random') {
-                $question->parent = $newid;
-                //we have to update the random question if the question has been inserted
-                if ($creatingnewquestion && $newid)
-                    $status = set_field('question', 'parent', $question->parent, 'id', $newid);
+            if ($question->qtype == 'random' && $creatingnewquestion) {
+                $question->parent = $question->id;
+                $status = set_field('question', 'parent', $question->parent, 'id', $question->id);
             }
 
             //Save newid to backup tables
@@ -427,17 +425,23 @@
             $question->parent = $restored_questions[$i]->parent;
 
 
-            //If it's a new question in the DB, restore it
+        /// If it's a new question in the DB, restore it
             if ($restored_questions[$i]->is_new) {
 
-                ////We have to recode the parent field
-                if ($question->parent) {
+            /// We have to recode the parent field
+                if ($question->parent && $question->qtype != 'random') {
+                /// If the parent field needs to be changed, do it here. Random questions are dealt with above.
                     if ($parent = backup_getid($restore->backup_unique_code,"question",$question->parent)) {
                         $question->parent = $parent->new_id;
-                    } elseif ($question->parent = $oldid) {
-                        $question->parent = $newid;
+                        if ($question->parent != $restored_questions[$i]->parent) {
+                            if (!set_field('question', 'parent', $question->parent, 'id', $newid)) {
+                                echo 'Could not update parent '.$question->parent.' for question '.$oldid.'<br />';
+                                $status = false;
+                            }
+                        }
                     } else {
                         echo 'Could not recode parent '.$question->parent.' for question '.$oldid.'<br />';
+                        $status = false;
                     }
                 }
 
