@@ -395,7 +395,7 @@ class SearchQuery {
       // if user is enrolled or is allowed user and course is hidden, can he see it ?
       $visibility = get_field('course', 'visible', 'id', $course_id);
       if ($visibility <= 0){
-          if (!has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))){
+          if (!has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course_id))){
               return false;
           }
       }
