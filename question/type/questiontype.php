@@ -1421,6 +1421,8 @@ class default_questiontype {
      */
     function find_file_links($question, $courseid){
         $urls = array();
+
+    /// Question image
         if ($question->image != ''){
             if (substr(strtolower($question->image), 0, 7) == 'http://') {
                 $matches = array();
@@ -1441,17 +1443,24 @@ class default_questiontype {
             }
 
         }
+
+    /// Questiontext and general feedback.
         $urls += question_find_file_links_from_html($question->questiontext, $courseid);
         $urls += question_find_file_links_from_html($question->generalfeedback, $courseid);
-        if ($this->has_html_answers() && isset($question->options->answers)){
+
+    /// Answers, if this question uses them.
+        if (isset($question->options->answers)){
             foreach ($question->options->answers as $answerkey => $answer){
-                $thisurls= question_find_file_links_from_html($answer->answer, $courseid);
-                if ($thisurls){
-                    $urls += $thisurls;
+            /// URLs in the answers themselves, if appropriate.
+                if ($this->has_html_answers()) {
+                    $urls += question_find_file_links_from_html($answer->answer, $courseid);
                 }
+            /// URLs in the answer feedback.
+                $urls += question_find_file_links_from_html($answer->feedback, $courseid);
             }
         }
-        //set all the values of the array to the question object
+
+    /// Set all the values of the array to the question object
         if ($urls){
             $urls = array_combine(array_keys($urls), array_fill(0, count($urls), array($question->id)));
         }
@@ -1475,6 +1484,8 @@ class default_questiontype {
     function replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination){
         global $CFG;
         $updateqrec = false;
+
+    /// Question image
         if (!empty($question->image)){
             //support for older questions where we have a complete url in image field
             if (substr(strtolower($question->image), 0, 7) == 'http://') {
@@ -1487,19 +1498,31 @@ class default_questiontype {
                 $updateqrec = true;
             }
         }
+
+    /// Questiontext and general feedback.
         $question->questiontext = question_replace_file_links_in_html($question->questiontext, $fromcourseid, $tocourseid, $url, $destination, $updateqrec);
         $question->generalfeedback = question_replace_file_links_in_html($question->generalfeedback, $fromcourseid, $tocourseid, $url, $destination, $updateqrec);
+
+    /// If anything has changed, update it in the database.
         if ($updateqrec){
             if (!update_record('question', addslashes_recursive($question))){
                 error ('Couldn\'t update question '.$question->name);
             }
         }
 
-        if ($this->has_html_answers() && isset($question->options->answers)){
+
+    /// Answers, if this question uses them.
+        if (isset($question->options->answers)){
             //answers that do not need updating have been unset
             foreach ($question->options->answers as $answer){
                 $answerchanged = false;
-                $answer->answer = question_replace_file_links_in_html($answer->answer, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
+            /// URLs in the answers themselves, if appropriate.
+                if ($this->has_html_answers()) {
+                    $answer->answer = question_replace_file_links_in_html($answer->answer, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
+                }
+            /// URLs in the answer feedback.
+                $answer->feedback = question_replace_file_links_in_html($answer->feedback, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
+            /// If anything has changed, update it in the database.
                 if ($answerchanged){
                     if (!update_record('question_answers', addslashes_recursive($answer))){
                         error ('Couldn\'t update question ('.$question->name.') answer '.$answer->id);
