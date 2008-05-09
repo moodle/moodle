@@ -32,7 +32,34 @@ function xmldb_qtype_multianswer_upgrade($oldversion=0) {
 ///     $result = result of "/lib/ddllib.php" function calls
 /// }
 
+    if ($result && $oldversion < 2008050800) {
+        question_multianswer_fix_subquestion_parents_and_categories();
+    }
+
     return $result;
 }
 
+/**
+ * Due to MDL-14750, subquestions of multianswer questions restored from backup will
+ * have the wrong parent, and due to MDL-10899 subquestions of multianswer questions
+ * that have been moved between categories will be in the wrong category, This code fixes these up.
+ */
+function question_multianswer_fix_subquestion_parents_and_categories() {
+    global $CFG;
+
+    $result = true;
+    $rs = get_recordset_sql('SELECT q.id, q.category, qma.sequence FROM ' . $CFG->prefix .
+            'question q JOIN ' . $CFG->prefix . 'question_multianswer qma ON q.id = qma.question');
+    if ($rs) {
+        while ($q = rs_fetch_next_record($rs)) {
+            $result = $result && execute_sql('UPDATE ' . $CFG->prefix . 'question' .
+            		' SET parent = ' . $q->id . ', category = ' . $q->category .
+            		' WHERE id IN (' . $q->sequence . ') AND parent <> 0');
+        }
+        rs_close($rs);
+    } else {
+        $result = false;
+    }
+    return $result;
+}
 ?>
