@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : nl.xml
+    Created on : 26 december 2007
+    Author     : Patrick Tydtgat
+    Description:
+        Purpose of the document follows.
+-->
+
+<Language>
+    
+    <!--  Error Messages   --> 
+    <ReadingFile>Fout bij lezen bestand: Controleer geldigheid bestandstype</ReadingFile> 
+    <ReadingFile2>Fout bij laden bestand: </ReadingFile2> 
+    <LoadingExp>Fout bij laden uitdrukking</LoadingExp>
+    <SavingExp>Fout bij bewaren uitdrukking</SavingExp>
+    <Cut>Kan selectie niet knippen: </Cut>
+    <Copy>Kan selectie niet kopiëren: </Copy>
+    <Tree>Kan boomstructuur niet weergeven: </Tree>
+    <Action>Kon bewerking niet uitvoeren: </Action>
+    <AddMatrix>Kan matrix hier niet invoegen</AddMatrix>
+    <Operator>Operator ontbreekt </Operator>
+    <Argument>Argument ontbreekt </Argument>
+    <Image>Error: Cannot export to image. Check internet connection and access to http://www.mathtran.org</Image>
+    
+    <!--  Status Bar Messages   --> 
+    <ParseExp>Uitdrukking kon niet behandeld worden</ParseExp>
+    <LoadExpression>DragMath - Kies een te laden bestand</LoadExpression>
+    <SaveExpression>DragMath - Kies een map om de uitdrukking te bewaren</SaveExpression>
+    <EnterRows>Aantal in te voegen</EnterRows>
+    <EnterColumns>Aantal in te voegen kolommen</EnterColumns>
+    <MatrixDim>Matrix Dimensies</MatrixDim>
+    <NoCut>Niets geselecteerd om te knippen</NoCut>
+    <NoPaste>Niets te plakken</NoPaste>
+    <NoBox>Geen box geselecteerd waarin geplakt moet worden</NoBox>
+    <NoCopy>Niets geselecteerd om te kopiëren</NoCopy>
+    <Copied>Gekopieerd</Copied>
+    <ReadingData>Fout bij lezen output gegevens</ReadingData>
+    <Clipboard>Gekopieerd naar klembord</Clipboard>
+    <NoExpression>Niets te converteren</NoExpression>
+    <NoFormat>ER werd geen format-bestand geladen</NoFormat>
+    <ImageSize>Choose the image size 1-10 (Smallest-Largest)</ImageSize>
+    
+    <!--  Tooltips for math buttons   -->
+    <Multiply>Vermenigvuldigen</Multiply>
+    <Divide>Delen</Divide>  
+    <Add>Optellen</Add> 
+    <Subtract>Aftrekken</Subtract>  
+    <Comma>Komma</Comma>
+    <PlusMinus>Plus-Minus</PlusMinus>
+    <SquareRoot>Vierkantswortel</SquareRoot>  
+    <NthRoot>N-de Machtswortel</NthRoot>  
+    <Power>Superscript</Power>  
+    <Subscript>Subscript</Subscript>  
+    <Matrix>Matrix</Matrix>  
+    <Integral>Integreren</Integral>
+    <Differential>Differentiëren</Differential>
+    <LessThan>Kleiner Dan</LessThan>  
+    <GreaterThan>Groter Dan</GreaterThan>  
+    <LTEQ>Kleiner dan of Gelijk Aan</LTEQ>  
+    <GTEQ>Groter Dan of Gelijk Aan</GTEQ>
+    <Equals>Gelijk</Equals>
+    <NotEqual>Niet Gelijk</NotEqual> 
+    <Union>Vereniging</Union>  
+    <Intersection>Doorsnede</Intersection>  
+    <Subset>Deelverzameling</Subset>  
+    <SubsetEq>Deelverzameling of Gelijk Aan</SubsetEq>  
+    <NSubset>Geen Deelverzameling</NSubset>  
+    <NSubsetEq>Geen Deelverzameling of Gelijk Aan</NSubsetEq> 
+    <Sine>Sinus</Sine>  
+    <Cosine>Cosinus</Cosine>  
+    <Tangent>Tangens</Tangent>  
+    <ArcSine>Boog Sinus</ArcSine>  
+    <ArcCosine>Boog Cosinus</ArcCosine>  
+    <ArcTangent>Boog Tangens</ArcTangent> 
+    <SineH>Sinus Hyperbolicus</SineH>  
+    <CosineH>Cosinus Hyperbolicus</CosineH>  
+    <TanH>Tangens Hyperbolicus</TanH>  
+    <ArcSineH>Boog Sinus Hyperbolicus</ArcSineH>  
+    <ArcCosineH>Boog Cosinus Hyperbolicus</ArcCosineH>  
+    <ArcTanH>Boog Tangens Hyperbolicus</ArcTanH>  
+    <Logarithm>Logaritme</Logarithm>
+    <NaturalLogarithm>Natuurlijke Logaritmen</NaturalLogarithm>  
+    <Exp>Exponentiële Functie</Exp>  
+    <UMinus>Min</UMinus>  
+    <BracketsRnd>Rondde Haakjes</BracketsRnd>  
+    <BracketsCurl>Accolades</BracketsCurl>  
+    <BracketsSq>Vierkante Haakjes</BracketsSq>  
+    <Abs>Absolute Waarde</Abs> 
+    <Infinity>Oneindig</Infinity>
+    <GreekLetter>Griekse letter</GreekLetter> 
+    <Factorial>Factor</Factorial> 
+    <Max>Maximum</Max> 
+    <Min>Minimum</Min> 
+    <Assignment>Toekenning</Assignment>
+    <Function>Onbekende functie</Function> 
+    <Determinant>Determinant</Determinant>
+    <Trace>Spoor</Trace>
+    <DefiniteIntegral>Bepaalde Integraal</DefiniteIntegral>
+    <Product>Product</Product>
+    <Sum>Som</Sum>
+    <Limit>Limiet</Limit>
+    <Evaluate>Evalueer een uitdrukking in een punt</Evaluate>
+    <LeftArrow>Links arrow</LeftArrow> 
+    <RightArrow>Recht arrow</RightArrow> 
+    <UpArrow>Up arrow</UpArrow> 
+    <DownArrow>Omlaag arrow</DownArrow> 
+    <LeftDblArrow>Links dubbel arrow</LeftDblArrow> 
+    <RightDblArrow>Right dubbel arrow</RightDblArrow> 
+    <LeftRightArrow>Links-Recht arrow</LeftRightArrow> 
+    <LeftRightDblArrow>Links-Recht dubbel arrow</LeftRightDblArrow>    
+    <NorthEastArrow>Noord-Oost-arrow</NorthEastArrow>		
+    <SouthEastArrow>Zuid-Oost-arrow</SouthEastArrow>		
+    <NorthWestArrow>Noord-West-arrow</NorthWestArrow>		
+    <SouthWestArrow>Zuid-West arrow</SouthWestArrow>  
+    <Multiply2>Vermenigvuldigen</Multiply2>
+    <Divide2>Divisie</Divide2>
+    <Equiv>Gelijkwaardigheid</Equiv>
+    <Exists>Er Bestaat</Exists>
+    <ForAll>Voor alle</ForAll>
+    <IsIn>Element van</IsIn>
+    <NotExists>Er bestaat niet</NotExists>
+    <NotIn>Niet een element van</NotIn>
+    <SimEq>Asymptotically gelijk aan</SimEq>
+    <Or>Of</Or>
+    <And>En</And>
+    <Not>Niet</Not>
+    <PartialDifferential>Partiële differentiaalvergelijking</PartialDifferential>
+    
+    
+    <!--  Tooltips for command buttons   -->
+    <OpenButton>Laad uitdrukking uit bestand</OpenButton>
+    <SaveButton>Bewaar uitdrukking in bestand</SaveButton>
+    <ExportButton>Exporteer uitdrukking naar het klembord</ExportButton>
+    <UndoButton>Ongedaan maken</UndoButton>
+    <RedoButton>Herstellen</RedoButton>
+    <CutButton>Knippen</CutButton>
+    <CopyButton>Kopiëren</CopyButton>
+    <PasteButton>Plakken</PasteButton>
+    <ClearButton>Alles Wissen</ClearButton>
+    <SelectButton>Alles Selecteren</SelectButton>
+    <LoadFormatButton>Laad een export format bestand</LoadFormatButton>
+    <LoadLangButton>Laad een Taalbestand</LoadLangButton>
+    <ShowTreeButton>Toon Boomstructuur</ShowTreeButton>
+    <OutlineButton>Toon outline of objecten</OutlineButton>
+    <OnlineHelpButton>Laad help in webbrowser</OnlineHelpButton>
+    <AboutButton>About DragMath</AboutButton>
+    
+    <!--  Menu   -->
+    <FileMenu>Bestand</FileMenu>
+    <OpenMenu>Openen...</OpenMenu>
+    <SaveAsMenu>Bewaar Als...</SaveAsMenu>
+    <ExportMenu>Kopieer naar klembord</ExportMenu>
+    <ImageMenu>Export to image</ImageMenu>
+    
+    <EditMenu>Bewerk</EditMenu>
+    <UndoMenu>Ongedaan maken</UndoMenu>
+    <RedoMenu>Herstellen</RedoMenu>
+    <CutMenu>Knippen</CutMenu>
+    <CopyMenu>Kopiëren</CopyMenu>
+    <PasteMenu>Plakken</PasteMenu>
+    <ClearMenu>Alles Wissen</ClearMenu>
+    <SelectMenu>Alles Selecteren</SelectMenu>
+    
+    <OptionsMenu>Opties</OptionsMenu>
+    <SetExportMenu>Kies Export Format</SetExportMenu>
+    <SetLanguageMenu>Kies Taal</SetLanguageMenu>
+    
+    <HelpMenu>Help</HelpMenu>
+    <DebugMenu>Debug</DebugMenu>
+    <TreeMenu>Toon boomstructuur</TreeMenu>
+    <OutlineMenu>Toon outline</OutlineMenu>
+    <OnlineHelpMenu>Online Help</OnlineHelpMenu>
+    <AboutMenu>About DragMath</AboutMenu>
+    
+</Language>

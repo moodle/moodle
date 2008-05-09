@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : pl.xml
+    Created on : 30 July 2007, 15:43
+    Author     : Alex Billingsley 
+    Translator : Agnieszka Herczak-Ciara
+    Description:
+        Purpose of the document follows.
+-->
+
+<Language>
+    
+    <!--  Error Messages   --> 
+    <ReadingFile>Błąd wczytania pliku: Sprawdź format pliku</ReadingFile> 
+    <ReadingFile2>Błąd wczytania pliku</ReadingFile2> 
+    <LoadingExp>Błąd wczytania wyrażenia</LoadingExp>
+    <SavingExp>Błąd zapisu wyrażenia</SavingExp>
+    <Cut>Nie można wyciąć</Cut>
+    <Copy>Nie można skopiować</Copy>
+    <Tree>Nie można wyświetlić drzewa</Tree>
+    <Action>Działanie nie może zostać zakończone</Action>
+    <AddMatrix>Nie można dodać macierzy w tym miejscu</AddMatrix>
+    <Operator>Brakujący operator na pozycji</Operator>
+    <Argument>Brakujący argument na pozycji</Argument>
+    <Image>Error: Cannot export to image. Check internet connection and access to http://www.mathtran.org</Image>
+    
+    <!--  Status Bar Messages   --> 
+    <ParseExp>Błąd parsowania wyrażenia</ParseExp>
+    <LoadExpression>DragMath -Wybierz plik do wczytania</LoadExpression>
+    <SaveExpression>DragMath - Wybierz lokalizację zapisu</SaveExpression>
+    <EnterRows>Wprowadź liczbę wierszy macierzy</EnterRows>
+    <EnterColumns>Wprowadź liczbę kolumn macierzy</EnterColumns>
+    <MatrixDim>Wymiar macierzy</MatrixDim>
+    <NoCut>Nie zaznaczono nic do wycięcia</NoCut>
+    <NoPaste>Brak elementów do wklejenia</NoPaste>
+    <NoBox>Nie wybrano nic do wklejenia</NoBox>
+    <NoCopy>Nie wybrano nic do skopiowania</NoCopy>
+    <Copied>Skopiowane</Copied>
+    <ReadingData>Błąd wczytania danych</ReadingData>
+    <Clipboard>Eksport wyrażenia do schowka</Clipboard>
+    <NoExpression>Brak wyrażenia do konwersji</NoExpression>
+    <NoFormat>Nie wybrano żadnego formatu </NoFormat>
+    <ImageSize>Choose the image size 1-10 (Smallest-Largest)</ImageSize>
+    
+    <!--  Tooltips for math buttons   -->
+    <Multiply>Mnożenie</Multiply>
+    <Divide>Ułamek</Divide>  
+    <Add>Dodawanie</Add> 
+    <Subtract>Odejmowanie</Subtract>  
+    <Comma>Przecinek dziesiętny</Comma>
+    <PlusMinus>Plus-Minus</PlusMinus>
+    <SquareRoot>Pierwiastek kwadratowy</SquareRoot>  
+    <NthRoot>Pierwiastek n-tego stopnia</NthRoot>  
+    <Power>Indeks górny</Power>  
+    <Subscript>Indeks dolny</Subscript>  
+    <Matrix>Macierz</Matrix>  
+    <Integral>Całka nieoznaczona</Integral>
+    <Differential>Różniczkowanie</Differential>
+    <LessThan>Mniejsze niż</LessThan>  
+    <GreaterThan>Większe niż</GreaterThan>  
+    <LTEQ>Mniejsze lub równe</LTEQ>  
+    <GTEQ>Większe lub równe</GTEQ>
+    <Equals>Równe</Equals>
+    <NotEqual>Nie równe</NotEqual> 
+    <Union>Suma</Union>  
+    <Intersection>Iloczyn </Intersection>  
+    <Subset>Zawiera się</Subset>  
+    <SubsetEq>Zawiera się lub jest równy</SubsetEq>  
+    <NSubset>Nie zawiera się</NSubset>  
+    <NSubsetEq>Nie zawiera się i nie jest równy</NSubsetEq> 
+    <Sine>sin (sinus)</Sine>  
+    <Cosine>cos (cosinus)</Cosine>  
+    <Tangent>tg (tangens)</Tangent>  
+    <ArcSine>arcsin (arcus sinus)</ArcSine>  
+    <ArcCosine>arccos (arcus cosinus)</ArcCosine>  
+    <ArcTangent>arctg (arcus tangens)</ArcTangent> 
+    <SineH>sinh (sinus hiperboliczny)</SineH>  
+    <CosineH>cosh (cosinus hiperboliczny)</CosineH>  
+    <TanH>tgh (tangens hiperboliczny)</TanH>  
+    <ArcSineH>arcsinh (arcus sinus hiperboliczny)</ArcSineH>  
+    <ArcCosineH>arccosh (arcus cosinus hiperboliczny)</ArcCosineH>  
+    <ArcTanH>arctgh (arcus tangens hiperboliczny)</ArcTanH>  
+    <Logarithm>Logarytm</Logarithm>
+    <NaturalLogarithm>Logarytm naturalny</NaturalLogarithm>  
+    <Exp>Exp (Funkcja eksponencjalna)</Exp>  
+    <UMinus>Minus</UMinus>  
+    <BracketsRnd>Nawiasy okrągłe</BracketsRnd>  
+    <BracketsCurl>Nawiasy klamrowe</BracketsCurl>  
+    <BracketsSq>Nawiasy kwadratowe</BracketsSq>  
+    <Abs>Wartość bezwzględna</Abs> 
+    <Infinity>Nieskończoność</Infinity>
+    <GreekLetter>Greckie litery</GreekLetter> 
+    <Factorial>Silnia</Factorial> 
+    <Max>Maksimum</Max> 
+    <Min>Minimum</Min> 
+    <Assignment>Przypisanie</Assignment>
+    <Function>Funkcja</Function> 
+    <Determinant>Wyznacznik macierzy</Determinant>
+    <Trace>Ślad macierzy</Trace>
+    <DefiniteIntegral>Całka oznaczona</DefiniteIntegral>
+    <Product>Iloczyn </Product>
+    <Sum>Suma</Sum>
+    <Limit>Granica</Limit>
+    <Evaluate>Wartość wyrażenia w punkcie</Evaluate>
+    <LeftArrow>Left arrow</LeftArrow> 
+    <RightArrow>Right arrow</RightArrow> 
+    <UpArrow>Up arrow</UpArrow> 
+    <DownArrow>Down arrow</DownArrow> 
+    <LeftDblArrow>Left double arrow</LeftDblArrow> 
+    <RightDblArrow>Right double arrow</RightDblArrow> 
+    <LeftRightArrow>Left-Right arrow</LeftRightArrow> 
+    <LeftRightDblArrow>Left-Right double arrow</LeftRightDblArrow> 
+    <NorthEastArrow>North-East arrow</NorthEastArrow>		
+    <SouthEastArrow>South-East arrow</SouthEastArrow>		
+    <NorthWestArrow>North-West arrow</NorthWestArrow>		
+    <SouthWestArrow>South-West arrow</SouthWestArrow>
+    <Multiply2>Multiplication</Multiply2>
+    <Divide2>Division</Divide2>
+    <Equiv>Equivalence</Equiv>
+    <Exists>There Exists</Exists>
+    <ForAll>For All</ForAll>
+    <IsIn>Element Of</IsIn>
+    <NotExists>There Does Not Exist</NotExists>
+    <NotIn>Not An Element Of</NotIn>
+    <SimEq>Asymptotically Equivalent To</SimEq>
+    <Or>Or</Or>
+    <And>And</And>
+    <Not>Not</Not>
+    <PartialDifferential>Partial Differential</PartialDifferential>
+    
+    <!--  Tooltips for command buttons   -->
+    <OpenButton>Wczytaj wyrażenie z pliku</OpenButton>
+    <SaveButton>Zapisz wyrażenie do pliku</SaveButton>
+    <ExportButton>Eksportuj wyrażenie do schowka</ExportButton>
+    <UndoButton>Cofnij</UndoButton>
+    <RedoButton>Ponów</RedoButton>
+    <CutButton>Wytnij</CutButton>
+    <CopyButton>Kopiuj</CopyButton>
+    <PasteButton>Wklej</PasteButton>
+    <ClearButton>Wyczyść wszystko</ClearButton>
+    <SelectButton>Zaznacz wszystko</SelectButton>
+    <LoadFormatButton>Wczytaj format pliku do eksportu</LoadFormatButton>
+    <LoadLangButton>Wczytaj plik językowy</LoadLangButton>
+    <ShowTreeButton>Pokaż strukturę drzewiastą wyrażenia</ShowTreeButton>
+    <OutlineButton>Display outline of objects on workspace</OutlineButton>
+    <OnlineHelpButton>Pomoc online</OnlineHelpButton>
+    <AboutButton>O DragMath</AboutButton>
+    
+    <!--  Menu   -->
+    <FileMenu>Plik</FileMenu>
+    <OpenMenu>Otwórz ...</OpenMenu>
+    <SaveAsMenu>Zapisz jako ...</SaveAsMenu>
+    <ExportMenu>Eksportuj do schowka</ExportMenu>
+    <ImageMenu>Export to image</ImageMenu>
+    
+    <EditMenu>Edycja</EditMenu>
+    <UndoMenu>Cofnij</UndoMenu>
+    <RedoMenu>Ponów</RedoMenu>
+    <CutMenu>Wytnij</CutMenu>
+    <CopyMenu>Kopiuj</CopyMenu>
+    <PasteMenu>Wklej</PasteMenu>
+    <ClearMenu>Wyczyść wszystko</ClearMenu>
+    <SelectMenu>Zaznacz wszystko</SelectMenu>
+    
+    <OptionsMenu>Opcje</OptionsMenu>
+    <SetExportMenu>Wybierz format (Latex,MathML,...)</SetExportMenu>
+    <SetLanguageMenu>Wybierz język (pl,eng...)</SetLanguageMenu>
+    
+    <HelpMenu>Pomoc</HelpMenu>
+    <DebugMenu>Debug</DebugMenu>
+    <TreeMenu>Pokaż drzewo wyrażenia</TreeMenu>
+    <OutlineMenu>Outline</OutlineMenu>
+    <OnlineHelpMenu>Pomoc Online</OnlineHelpMenu>
+    <AboutMenu>O programie DragMath</AboutMenu>
+    
+</Language>

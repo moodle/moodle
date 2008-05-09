@@ -1,0 +1,39 @@
+
+<html>
+<head>
+
+<script language="Javascript">
+
+var exp = opener.document.forms['exampleform'].elements[opener.thenumber].value
+document.write('<applet name="DragMath" codebase="classes" code="Display.MainApplet.class" archive="Project.jar,AbsoluteLayout.jar,swing-layout-1.0.jar,jdom.jar,jep.jar" width=540 height=333>',
+                   '<param name=language value="en">',
+                   '<param name=outputFormat value="Maxima">',
+	     '<param name=openWithExpression value="' + exp + '">',
+	     'To use this page you need a Java-enabled browser. Download the latest Java plug-in from <a href="http://www.java.com">Java.com</a>',
+	     '</applet>');
+
+var whichone;
+function writedata()
+{
+    whichone = opener.thenumber
+
+}
+
+function updateit()
+{
+    var applet = document.DragMath;
+    var ans = document.DragMath.getMathExpression();  
+    
+    opener.document.forms['exampleform'].elements[whichone].value = ans       
+    window.close()
+}
+</script>
+<body onload="writedata()">
+
+
+<form name="checkit">
+<input type="hidden" cols="20" id="data" />
+<br />
+<input type="button" value="Save &amp; Close" onclick="updateit()">
+</body>
+</html>

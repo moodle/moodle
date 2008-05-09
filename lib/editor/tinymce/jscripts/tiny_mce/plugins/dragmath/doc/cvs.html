@@ -1,0 +1,73 @@
+<html>
+<head>
+<title>DragMath Documentation - Setting up DragMath CVS in NetBeans</title>
+</head>
+<body>
+
+<font size="2"; style="font-family: Arial;">
+
+<h2><span style=" color: #000099;"><strong>Setting up DragMath CVS in NetBeans</strong></span></h2>
+
+<p>
+Below are the instructions on how to get active as a developer of DragMath and set up NetBeans with the DragMath code versioning system (CVS).</p>
+<p>
+1. Install NetBeans<br>
+2. Get source code from DragMath CVS repository<br>
+3. Update and Commiting your local source code copy
+</p>
+<br>
+
+<font size=3><b>
+1. Install NetBeans
+</b></font>
+<br>
+<p>
+NetBeans is the integrated development environment (IDE) used for DragMath.
+It is open source and can be downloaded from http://www.netbeans.org.
+</p>
+<br>
+
+<font size=3><b>
+2. Get source code from DragMath CVS repository
+</b></font>
+<p>
+Start NetBeans and do the following to get the DragMath source code:<br>
+<p>
+1. File -> New Project
+</p><p>
+2. Choose the 'General' category, and then 'Java Application' under Projects, then click Next.
+</p><p>
+3. Set the Project Name as "ddma". Click Browse to choose the location where you would like the code stored. Then click Next.
+</p><p>
+4. CVS -> Checkout. The click Edit.
+</p><p>
+5.  Fill in the location information identifying the DragMath CVS repository and click OK.<br>
+    <b>Access Method:</b> pserver for anonymous, ext for developer accounts<br>
+    <b>User:</b> "anonymous" or your DragMath developer account at SourceForge<br>
+    <b>Host:</b> dragmath.cvs.sourceforge.net<br>
+    <b>Repository Path:</b> /cvsroot/dragmath
+</p><p>
+6. Enter your password, none for anonymous login, then click Next
+</p><p>
+7. Set the Module as "ddma", and the Local Folder to the same location the Project was created. Then click Finish.
+</p><p>
+8. Once the source code has been downloaded, click Close to the popup message about opening the project.
+</p><p>
+9. The different packages containing the source code can now be seen in the projects window. The package 'ddma' containing the Main.java class can be deleted, as it was created for the new Project and is not part of the DragMath source code.
+</p><p>
+10. The libraries used by DragMath must now be added to the Project. Right click on Libraries in the Project window, and go to 'Add JAR/Folder...'. Navigate to the ddma -> lib folder and add all the .jar files from this folder.
+</p><p>
+11. The code is now ready to work on.
+</p>
+<br>
+<font size=3><b>
+3. Update and Commiting your local source code copy
+</b></font>
+<p>
+The code can be updated and commited using the Update and Commit options under the CVS menu in NetBeans.
+</p>
+
+</font>
+
+</body>
+</html>

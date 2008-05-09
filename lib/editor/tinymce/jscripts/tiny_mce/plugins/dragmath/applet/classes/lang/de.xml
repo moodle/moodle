@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : de.xml
+    Created on : 02 January 2008, 22:00
+    Author     : Andy Tagliani e-instructor.de
+    Description: Purpose of the document follows.
+-->
+
+<Language>
+    
+    <!--  Error Messages   --> 
+    <ReadingFile>Fehler beim Lesen des Dateiformats: Bitte auf Gültigkeit überprüfen</ReadingFile> 
+    <ReadingFile2>Fehler beim Laden der Datei: </ReadingFile2> 
+    <LoadingExp>Fehler beim Laden der Erweiterung</LoadingExp>
+    <SavingExp>Fehler beim Speichern der Erweiterung</SavingExp>
+    <Cut>Ausschneiden der Auswahl nicht möglich: </Cut>
+    <Copy>Kopieren der Auswahl nicht möglich: </Copy>
+    <Tree>Verzeichnisbaum kann nicht angezeigt werden: </Tree>
+    <Action>Aktion konnte nicht fertiggestellt werden: </Action>
+    <AddMatrix>Matrix konnte an der Stelle nicht hinzugefügt werden</AddMatrix>
+    <Operator>Operator fehlt an Position </Operator>
+    <Argument>Argument des Operators fehlt an Position </Argument>
+    <Image>Error: Cannot export to image. Check internet connection and access to http://www.mathtran.org</Image>
+    
+    <!--  Status Bar Messages   --> 
+    <ParseExp>Ausdruck kann mathematisch nicht bestimmt werden</ParseExp>
+    <LoadExpression>DragMath - Wählen Sie eine Datei im DragMath-Format zum Laden</LoadExpression>
+    <SaveExpression>DragMath - Wählen Sie einen Speicherort zum Speichern der Datei im DragMath-Format</SaveExpression>
+    <EnterRows>Geben Sie die Anzahl der Reihen der Matrix ein</EnterRows>
+    <EnterColumns>Geben Sie die Anzahl der Spalten der Matrix ein</EnterColumns>
+    <MatrixDim>Dimension der Matrix</MatrixDim>
+    <NoCut>Nichts zum Ausschneiden gewählt</NoCut>
+    <NoPaste>Nichts zum Kopieren gewählt</NoPaste>
+    <NoBox>Keine Box zum Hineinkopieren gewählt</NoBox>
+    <NoCopy>Nichts zum Kopieren ausgewählt</NoCopy>
+    <Copied>Kopiert</Copied>
+    <ReadingData>Fehler beim Lesen des Ausgabeformats</ReadingData>
+    <Clipboard>Format wurde in die Zwischenablage kopiert</Clipboard>
+    <NoExpression>Kein Format zum Konvertieren</NoExpression>
+    <NoFormat>Es wurde kein Dateiformat geladen</NoFormat>
+    <ImageSize>Choose the image size 1-10 (Smallest-Largest)</ImageSize>
+    
+    <!--  Tooltips for math buttons   -->
+    <Multiply>Multiplikation</Multiply>
+    <Divide>Division</Divide>  
+    <Add>Addition</Add> 
+    <Subtract>Subtraktion</Subtract>  
+    <Comma>Komma</Comma>
+    <PlusMinus>Plus-Minus</PlusMinus>
+    <SquareRoot>Quadratwurzel</SquareRoot>  
+    <NthRoot>n-te Wurzel</NthRoot>  
+    <Power>Hochgestellt</Power>  
+    <Subscript>Tiefgestellt</Subscript>  
+    <Matrix>Matrix</Matrix>  
+    <Integral>Integration</Integral>
+    <Differential>Differentation</Differential>
+    <LessThan>kleiner als</LessThan>  
+    <GreaterThan>größer als</GreaterThan>  
+    <LTEQ>kleiner als oder gleich</LTEQ>  
+    <GTEQ>größer als oder gleich</GTEQ>
+    <Equals>gleich</Equals>
+    <NotEqual>ungleich</NotEqual> 
+    <Union>Vereinigung</Union>  
+    <Intersection>Durchschnitt</Intersection>  
+    <Subset>Teilmenge</Subset>  
+    <SubsetEq>Echte Teilmenge</SubsetEq>  
+    <NSubset>Keine Teilmenge</NSubset>  
+    <NSubsetEq>Keine echte Teilmenge</NSubsetEq> 
+    <Sine>Sinus</Sine>  
+    <Cosine>Kosinus</Cosine>  
+    <Tangent>Tangens</Tangent>  
+    <ArcSine>Arkusinus</ArcSine>  
+    <ArcCosine>Arkuskosinus</ArcCosine>  
+    <ArcTangent>Arkustangens</ArcTangent> 
+    <SineH>Sinus Hyperbolicus</SineH>  
+    <CosineH>Kosinus Hyperbolicus</CosineH>  
+    <TanH>Tangens Hyperbolicus</TanH>  
+    <ArcSineH>Areasinus Hyperbolicus</ArcSineH>  
+    <ArcCosineH>Areakosinus Hyperbolicus</ArcCosineH>  
+    <ArcTanH>Areatangens Hyperbolicus</ArcTanH>  
+    <Logarithm>Logarithmus</Logarithm>
+    <NaturalLogarithm>Natürlicher Logarithmus</NaturalLogarithm>  
+    <Exp>Exponentialfunktion</Exp>  
+    <UMinus>Minus</UMinus>  
+    <BracketsRnd>Runde Klammern</BracketsRnd>  
+    <BracketsCurl>Geschwungene Klammern</BracketsCurl>  
+    <BracketsSq>Eckige Klammern</BracketsSq>  
+    <Abs>Betrag</Abs> 
+    <Infinity>Unendlich</Infinity>
+    <GreekLetter>Griechische Buchstaben</GreekLetter> 
+    <Factorial>Faktorisieren</Factorial> 
+    <Max>Maximum</Max> 
+    <Min>Minimum</Min> 
+    <Assignment>Aufgabe</Assignment>
+    <Function>Unbekannte Funktion</Function> 
+    <Determinant>Determinante</Determinant>
+    <Trace>Spur</Trace>
+    <DefiniteIntegral>Bestimmtes Integral</DefiniteIntegral>
+    <Product>Produkt</Product>
+    <Sum>Summe</Sum>
+    <Limit>Grenzwert</Limit>
+    <Evaluate>Ausdruck auswerten</Evaluate>
+    <LeftArrow>Links arrow</LeftArrow> 
+    <RightArrow>Recht arrow</RightArrow> 
+    <UpArrow>Bis arrow</UpArrow> 
+    <DownArrow>Down arrow</DownArrow> 
+    <LeftDblArrow>Links doppel arrow</LeftDblArrow> 
+    <RightDblArrow>Recht doppel arrow</RightDblArrow> 
+    <LeftRightArrow>Links-Recht arrow</LeftRightArrow> 
+    <LeftRightDblArrow>Links-Recht doppel arrow</LeftRightDblArrow>     
+    <NorthEastArrow>Nord-Ost Pfeil</NorthEastArrow>		
+    <SouthEastArrow>Süd-Ost Pfeil</SouthEastArrow>		
+    <NorthWestArrow>Nord-West Pfeil</NorthWestArrow>		
+    <SouthWestArrow>Süd-West Pfeil</SouthWestArrow>
+    <Multiply2>Multiplikation</Multiply2>
+    <Divide2>Division</Divide2>
+    <Equiv>Gleichwertigkeit</Equiv>
+    <Exists>Vorhanden</Exists>
+    <ForAll>Für alle</ForAll>
+    <IsIn>Ist in</IsIn>
+    <NotExists>Nicht vorhanden</NotExists>
+    <NotIn>Nicht in</NotIn>
+    <SimEq>Asymptotisch äquivalent zu</SimEq>
+    <Or>Oder</Or>
+    <And>Und</And>
+    <Not>Nicht</Not>
+    <PartialDifferential>Partial Differential</PartialDifferential>
+    
+    <!--  Tooltips for command buttons   -->
+    <OpenButton>Lade Format von Datei</OpenButton>
+    <SaveButton>Speichere Format als Datei</SaveButton>
+    <ExportButton>Exportiere Format in die Zwischenablage</ExportButton>
+    <UndoButton>Rückgägig</UndoButton>
+    <RedoButton>Wiederholen</RedoButton>
+    <CutButton>Ausschneiden</CutButton>
+    <CopyButton>Kopieren</CopyButton>
+    <PasteButton>Einfügen</PasteButton>
+    <ClearButton>Leere das gesamte Arbeitsfeld</ClearButton>
+    <SelectButton>Wähle das gesamte Arbeitsfeld</SelectButton>
+    <LoadFormatButton>Lade eine Formatdatei</LoadFormatButton>
+    <LoadLangButton>Lade eine Sprachdatei</LoadLangButton>
+    <ShowTreeButton>Zeige Baumstruktur eines Ausdrucks</ShowTreeButton>
+    <OutlineButton>Zeige außerhalb des Objektes im Arbeitsfeld</OutlineButton>
+    <OnlineHelpButton>Lade Hilfedateien im Browser</OnlineHelpButton>
+    <AboutButton>Über DragMath</AboutButton>
+    
+    <!--  Menu   -->
+    <FileMenu>Datei</FileMenu>
+    <OpenMenu>Öffnen...</OpenMenu>
+    <SaveAsMenu>Speichern als...</SaveAsMenu>
+    <ExportMenu>Exportiere in die Zwischenablage</ExportMenu>
+    <ImageMenu>Export to image</ImageMenu>
+    
+    <EditMenu>Bearbeiten</EditMenu>
+    <UndoMenu>Rückgängig</UndoMenu>
+    <RedoMenu>Wiederholen</RedoMenu>
+    <CutMenu>Ausschneiden</CutMenu>
+    <CopyMenu>Kopieren</CopyMenu>
+    <PasteMenu>Einfügen</PasteMenu>
+    <ClearMenu>Arbeitsfeld leeren</ClearMenu>
+    <SelectMenu>Alle auswählen</SelectMenu>
+    
+    <OptionsMenu>Optionen</OptionsMenu>
+    <SetExportMenu>Export-Format einstellen</SetExportMenu>
+    <SetLanguageMenu>Sprache einstellen</SetLanguageMenu>
+    
+    <HelpMenu>Hilfe</HelpMenu>
+    <DebugMenu>Debug</DebugMenu>
+    <TreeMenu>Zeige Ausdruck in Baumstruktur</TreeMenu>
+    <OutlineMenu>Zeige außerhalb</OutlineMenu>
+    <OnlineHelpMenu>Online-Hilfe</OnlineHelpMenu>
+    <AboutMenu>Über DragMath</AboutMenu>
+    
+</Language>

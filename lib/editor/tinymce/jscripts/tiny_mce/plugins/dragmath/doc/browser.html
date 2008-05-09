@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>DragMath Documentation - Running applet in web browser</title>
+</head>
+<body>
+
+<font size="2"; style="font-family: Arial;">
+
+<h2><span style=" color: #000099;"><strong>Running applet in web browser</strong></span></h2>
+
+<p>
+Details are given on the file structure of the required files, and &lt;APPLET&gt; tag to enable the applet to run in a web browser.
+ </p><p>
+The applet currently requires Java Runtime Environment (JRE) 1.4 or higher to run, which can be obtained from <A href="http://www.java.com">www.java.com</A>
+ </p><p>
+The recommended file structure is:
+ </p>
+
+<dl>
+	<dd>applet.html</dd>
+	<br>
+	<dd>\dragmath</dd>
+<br>
+	<dl>
+		<dd>\Display</dd>
+		<dl>
+			<dd>MainApplet.class</dd>
+		</dl>
+<br>
+		<dd>\lang</dd>
+		<dl>
+			<dd>en.xml</dd>
+		</dl>
+<br>
+		<dd>\formats</dd>
+		<dl>
+			<dd>Maple.xml</dd>
+			<dd>Latex.xml</dd>
+			<dd>MathML.xml</dd>
+			<dd>Maxima.xml</dd>
+		</dl>
+<br>
+		<dd>AbsoluteLayout.jar</dd>
+		<dd>swing-layouts-1.0.jar</dd>
+		<dd>jdom.jar</dd>
+		<dd>jep.jar</dd>
+		<dd>Project.jar</dd>
+	</dl>
+</dl>
+<br>
+Using this structure the following &lt;APPLET&gt; tag should be used:
+</p>
+ <p>
+<STRONG>
+<FONT color=#800080>&lt;applet</FONT>
+name=</STRONG>
+<FONT color=#0000ff>"dragmath"</FONT>
+<STRONG>codebase=</STRONG><FONT 
+color=#0000ff>"classes"</FONT>
+<STRONG>code=</STRONG>
+<FONT color=#0000ff>"Display.MainApplet.class"</FONT>
+ <STRONG>archive=</STRONG>
+<FONT color=#0000ff>"Project.jar,AbsoluteLayout.jar,swing-layout-1.0.jar,,jdom.jar,,jep.jar"</FONT>
+<STRONG> width=</STRONG>
+<FONT color=#0000ff>540</FONT>
+<STRONG> height=</STRONG>
+<FONT color=#0000ff>300</FONT>
+<STRONG>&gt;<BR>
+<FONT color=#800080>&lt;param</FONT> 
+name=</STRONG>
+<FONT color=#0000ff>language </FONT>
+<STRONG>value=</STRONG>
+<FONT color=#0000ff>"en"</FONT>
+<STRONG> &gt;<BR>
+<FONT color=#800080>&lt;/applet &gt;</FONT>
+</STRONG>
+ </p>
+ 
+All of the .jar files in the \dragmath directory require digitally signing. A tutorial on how to do this can be viewed at,<br>
+<A href="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html#example">http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html#example</A>
+
+</font>
+
+</body>
+</html>

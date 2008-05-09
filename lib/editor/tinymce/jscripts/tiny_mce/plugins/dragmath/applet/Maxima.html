@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>DragMath Maxima Example</title>
+
+<script language="JavaScript">
+var thedata;
+var newwin;
+var thenumber;
+function edit(textarea)
+{
+    thenumber = textarea;
+    thedata = document.forms['exampleform'].elements[textarea].value
+
+    newwin = window.open("MaximaPopup.html","","width=565,height=400,resizable")
+}
+</script>
+</head>
+
+
+<body>
+<DIV align=left><FONT face=Arial color=#000080 
+size=6><STRONG>DragMath Maxima Example</STRONG></FONT></DIV>
+<br><br>
+
+<FORM name="exampleform">
+
+<p>Factorise 20*x+5
+<br>
+<input type="text" id="data0" name="data0" cols="15" />
+<input type="button" value="Editor" onclick="edit('data0')">
+</p>
+
+<p>Differentiate 2·x5+2·x4-x3+3·x2-2·x with respect to x
+<br>
+<input type="text" id="data1" name="data1" cols="15">
+<input type="button" value="Editor" onclick="edit('data1')">
+</p>
+
+<p>Integrate cos( 5·x ) with respect to x
+<br>
+<input type="text" id="data3" name="data3" cols="15">
+<input type="button" value="Editor" onclick="edit('data3')">
+</p>
+
+<input type="submit" name="submit" value="Submit" />
+</FORM>
+
+</body>
+</html>
