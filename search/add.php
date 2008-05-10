@@ -24,7 +24,7 @@
     
 /// makes inclusions of the Zend Engine more reliable
     $separator = (array_key_exists('WINDIR', $_SERVER)) ? ';' : ':' ;
-    ini_set('include_path', $CFG->dirroot.'\search'.$separator.ini_get('include_path'));
+    ini_set('include_path', $CFG->dirroot.'/search'.$separator.ini_get('include_path'));
 
 /// checks global search activation
     
