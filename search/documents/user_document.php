@@ -302,9 +302,9 @@ function user_delete($info, $itemtype) {
 function user_db_names() {
     //[primary id], [table name], [time created field name], [time modified field name] [itemtype] [select restriction clause]
     return array(
-        array('id', 'user', 'firstaccess', 'timemodified', 'user', ''),
-        array('id', 'post', 'created', 'lastmodified', 'post', ''),
-        array('id', 'post', 'created', 'lastmodified', 'attachment', '')
+        array('id', 'user', 'firstaccess', 'timemodified', 'user'),
+        array('id', 'post', 'created', 'lastmodified', 'post'),
+        array('id', 'post', 'created', 'lastmodified', 'attachment')
     );
 }
 
