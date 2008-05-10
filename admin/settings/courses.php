@@ -30,6 +30,7 @@ if ($hassiteconfig
         $bi[] = new admin_setting_configcheckbox('backup_sche_coursefiles', get_string('coursefiles'), get_string('backupcoursefileshelp'), 0);
         $bi[] = new admin_setting_configcheckbox('backup_sche_sitefiles', get_string('sitefiles'), get_string('backupsitefileshelp'), 0);
         $bi[] = new admin_setting_configcheckbox('backup_sche_messages', get_string('messages', 'message'), get_string('backupmessageshelp','message'), 0);
+        $bi[] = new admin_setting_configcheckbox('backup_sche_blogs', get_string('blogs', 'blog'), get_string('backupblogshelp','blog'), 0);
         $bi[] = new admin_setting_configselect('backup_sche_keep', get_string('keep'),
                                                get_string('backupkeephelp'), 1, array(0 => get_string('all'), 1 => '1',
                                                                                                               2 => '2',
