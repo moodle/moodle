@@ -2095,8 +2095,13 @@ function cleanAttributes2($htmlArray){
  * @return string
  */
 function replace_smilies(&$text) {
-///
+
     global $CFG;
+
+    if (empty($CFG->emoticons)) { /// No emoticons defined, nothing to process here
+        return;
+    }
+
     $lang = current_language();
     $emoticonstring = $CFG->emoticons;
     static $e = array();
