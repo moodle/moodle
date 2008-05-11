@@ -284,7 +284,7 @@ function sync_enrolments($role = null) {
         rs_close($crs); // release the handle
 
         //
-        // prune enrolments
+        // prune enrolments to users that are no longer in ext auth
         // hopefully they'll fit in the max buffer size for the RDBMS
         //
         // TODO: This doesn't work perfectly.  If we are operating without
@@ -376,13 +376,13 @@ function sync_enrolments($role = null) {
         $sql = "
             SELECT ra.roleid, ra.userid, ra.contextid
             FROM {$CFG->prefix}role_assignments ra
-             LEFT OUTER JOIN ({$CFG->prefix}context cn
-               JOIN {$CFG->prefix}course c ON cn.contextlevel = ".CONTEXT_COURSE." AND cn.instanceid = c.id)
-              ON ra.contextid = cn.id
-            WHERE ra.enrol = 'database'" .
+                JOIN {$CFG->prefix}context cn ON cn.id = ra.contextid
+                JOIN {$CFG->prefix}course c ON c.id = cn.instanceid
+            WHERE ra.enrol = 'database'
+              AND cn.contextlevel = ".CONTEXT_COURSE." " .
                 ($have_role ? ' AND ra.roleid = '.$role->id : '') .
                 ($extcourses
-                    ? " AND (c.id IS NULL OR c.{$CFG->enrol_localcoursefield} NOT IN (" . join(",", array_map(array(&$db, 'quote'), $extcourses)) . "))"
+                    ? " AND c.{$CFG->enrol_localcoursefield} NOT IN (" . join(",", array_map(array(&$db, 'quote'), $extcourses)) . ")"
                     : '');
 
         $ers = $db->Execute($sql);
