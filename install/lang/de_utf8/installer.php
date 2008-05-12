@@ -16,8 +16,8 @@ $string['admindirsettingsub'] = 'Einige wenige Webhosting-Anbieter benutzen /adm
 z.B.: <br /> <br /><b>moodleadmin</b><br /> 
 Dies ändert die Links für das Admin-Verzeichnis in Moodle.';
 $string['bypassed'] = 'Unberücksichtigt';
-$string['cannotcreatelangdir'] = 'Verzeichnis \"lang\" kann nicht angelegt werden.';
-$string['cannotcreatetempdir'] = 'Temporäres Verzeichnis kann nicht angelegt werden.';
+$string['cannotcreatelangdir'] = 'Das Verzeichnis \"lang\" kann nicht angelegt werden.';
+$string['cannotcreatetempdir'] = 'Das Verzeichnis \"temp\" kann nicht angelegt werden.';
 $string['cannotdownloadcomponents'] = 'Komponenten können nicht heruntergeladen werden.';
 $string['cannotdownloadzipfile'] = 'ZIP-Datei kann nicht heruntergeladen werden.';
 $string['cannotfindcomponent'] = 'Komponente wurde nicht gefunden.';
@@ -37,7 +37,9 @@ $string['configfilewritten'] = 'Die Datei config.php wurde erfolgreich erstellt'
 $string['configurationcompletehead'] = 'Konfiguration ist abgeschlossen';
 $string['configurationcompletesub'] = 'Moodle speichert Ihre Konfigurationseinstellungen nun im Hauptverzeichnis Ihrer Moodle-Installation.';
 $string['continue'] = 'Weiter';
-$string['curlrecommended'] = 'Die Installation der optionalen Bibliothek Curl wird empfohlen, um die Moodle-Netzwerk-Funktionalität einzuschalten.';
+$string['ctyperecommended'] = 'Die Installation der optionalen Bibliothek ctype wird empfohlen, um die Geschwindigkeit der Website zu steigern. Dies ist besonders wichtig, wenn Sie Sprachen mit anderen als lateinischen Zeichensätzen verwenden.';
+$string['ctyperequired'] = 'Die PHP-Erweiterung ctype wird von Moodle benötigt, um die Geschwindigkeit der Website zu steigern und die Mehrsprachkompatibilität zu ermöglichen.';
+$string['curlrecommended'] = 'Die Installation der optionalen Bibliothek cURL wird empfohlen, um die Netzwerk-Funktionalität von Moodle einzuschalten.';
 $string['customcheck'] = 'Weitere Überprüfungen';
 $string['database'] = 'Datenbank';
 $string['databasecreationsettingshead'] = 'Sie müssen Einstellungen für die Datenbank konfigurieren, in der die meisten Moodle-Daten abgelegt werden. Der Installationsprozess erstellt die Datenbanktabellen automatisch auf der Grundlage der Einstellungen.';
@@ -209,7 +211,7 @@ $string['password'] = 'Kennwort';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP wurde nicht richtig konfiguriert, um über die PGSQL-Erweiterung mit PostgreSQL zu kommunizieren. Bitte prüfen Sie die Datei php.ini oder kompilieren Sie PHP neu.';
 $string['php50restricted'] = 'PHP 5.0.x hat eine Reihe bekannter Fehler! Sie sollten die Versionen 5.1.x bzw. 4.3.x/4.4.x benutzen.';
 $string['phpversion'] = 'PHP-Version';
-$string['phpversionerror'] = 'PHP muss mindestens in der Version 4.3.0 oder 5.1.0 installiert sein (5.0.x weist eine Reihe bekannter Fehler auf).';
+$string['phpversionerror'] = 'PHP muss mindestens in der Version 4.3.0 oder 5.1.0 installiert sein (5.0.x weist eine Reihe bekannter Fehler auf).'; // ORPHANED
 $string['phpversionhelp'] = '<p>Moodle erwartet PHP mindestens in der Version 4.3.0/4.4.0 oder 5.1.0 (5.0.x weist eine Reihe bekannter Fehler auf).</p>
 <p>Sie nutzen zur Zeit die Version $a.</p>
 <p>Sie müssen Ihre PHP-Verson aktualisieren oder auf einen Rechner wechseln, der eine neuere Version von PHP nutzt.<br />
