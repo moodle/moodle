@@ -642,12 +642,18 @@
         $roles = backup_fetch_roles($preferences);
 
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $preferences->backup_course);
 
         foreach ($roles as $role) {
             fwrite ($bf,start_tag('ROLE',2,true));
             fwrite ($bf,full_tag('ID', 3, false, $role->id));
             fwrite ($bf,full_tag('NAME',3,false,$role->name));
             fwrite ($bf,full_tag('SHORTNAME',3,false,$role->shortname));
+        /// Calculate $role name in course
+            $nameincourse = role_get_name($role, $coursecontext);
+            if ($nameincourse != $role->name) {
+                fwrite ($bf,full_tag('NAMEINCOURSE', 3, false, $nameincourse));
+            }
             // find and write all default capabilities
             fwrite ($bf,start_tag('CAPABILITIES',3,true));
             // pull out all default (site context) capabilities
@@ -657,6 +663,7 @@
                     fwrite ($bf,full_tag('NAME', 5, false, $capability));
                     fwrite ($bf,full_tag('PERMISSION', 5, false, $value));
                     // use this to pull out the other info (timemodified and modifierid)
+
                     $cap = get_record_sql("SELECT *
                                            FROM {$CFG->prefix}role_capabilities
                                            WHERE capability = '$capability'
