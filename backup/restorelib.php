@@ -3223,7 +3223,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         //We have to recode the groupid field
         $grouping = backup_getid($restore->backup_unique_code, 'groupings', $groupingid);
         
-        if ($restore->groups == RESTORE_GROUPS_GROUPINGS or $restore->groups == RESTORE_GROUPINGS_ONLY) {
+        if (!$restore->groups == RESTORE_GROUPS_GROUPINGS and !$restore->groups == RESTORE_GROUPINGS_ONLY) {
             $grouping->new_id = 0;
         }
         return $grouping;
