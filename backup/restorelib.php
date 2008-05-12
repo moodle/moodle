@@ -2486,6 +2486,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     $create_user = false;
                     $create_custom_profile_fields = false;
                     $create_tags = false;
+                    $create_preferences = false;
                 }
 
                 //Here, if create_user, do it
