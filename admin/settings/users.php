@@ -108,13 +108,21 @@ if ($hassiteconfig
                     set_config('creatornewroleid', 0);
                 }
             }
+            if (!$guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+                $guestroles = array();
+            }
             // we must not use assignable roles here:
             //   1/ unsetting roles as assignable for admin might bork the settings!
             //   2/ default user role should not be assignable anyway
             $allroles = array();
+            $nonguestroles = array();
             if ($roles = get_all_roles()) {
                 foreach ($roles as $role) {
-                    $allroles[$role->id] = strip_tags(format_string($role->name, true));
+                    $rolename = strip_tags(format_string($role->name, true));
+                    $allroles[$role->id] = $rolename;
+                    if (!isset($guestroles[$role->id])) {
+                        $nonguestroles[$role->id] = $rolename;
+                    }
                 }
             }
 
@@ -123,7 +131,7 @@ if ($hassiteconfig
             $temp->add(new admin_setting_configselect('guestroleid', get_string('guestroleid', 'admin'),
                           get_string('configguestroleid', 'admin'), $guestrole->id, $allroles));
             $temp->add(new admin_setting_configselect('defaultuserroleid', get_string('defaultuserroleid', 'admin'),
-                          get_string('configdefaultuserroleid', 'admin'), $userrole->id, $allroles));
+                          get_string('configdefaultuserroleid', 'admin'), $userrole->id, $nonguestroles)); // guest role here breaks a lot of stuff
         }
 
         $temp->add(new admin_setting_configcheckbox('nodefaultuserrolelists', get_string('nodefaultuserrolelists', 'admin'), get_string('confignodefaultuserrolelists', 'admin'), 0));
