@@ -249,17 +249,21 @@ class cmoptions {
  * @return array of strings
  */
 function question_list_instances($questionid) {
+    global $CFG;
     $instances = array();
     $modules = get_records('modules');
     foreach ($modules as $module) {
-        $fn = $module->name.'_question_list_instances';
-        if (function_exists($fn)) {
-            $instances = $instances + $fn($questionid);
+        $fullmod = $CFG->dirroot . '/mod/' . $module->name;
+        if (file_exists($fullmod . '/lib.php')) {
+            include_once($fullmod . '/lib.php');
+            $fn = $module->name.'_question_list_instances';
+            if (function_exists($fn)) {
+                $instances = $instances + $fn($questionid);
+            }
         }
     }
     return $instances;
 }
-
 
 /**
  * Returns list of 'allowed' grades for grade selection
