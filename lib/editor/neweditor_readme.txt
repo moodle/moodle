@@ -7,8 +7,8 @@ editorObject README
 Quick specs
 ===========
 
-Quick specs for new editor intergration class.
-This new intergration method lets user to choose which editor to use if
+Quick specs for new editor integration class.
+This new integration method lets user choose which editor to use if
 user chooses to use WYSIWYG editor (HTMLArea or TinyMCE).
 
 There are legacy code for backward compatibilty in case that modules are not
