@@ -2966,7 +2966,37 @@ function xmldb_main_upgrade($oldversion=0) {
             }
         }
     }
-        
+
+    if ($result && $oldversion < 2007101512) {
+        notify('Increasing size of user idnumber field, this may take a while...', 'notifysuccess');
+
+    /// Define index idnumber (not unique) to be dropped form user
+        $table = new XMLDBTable('user');
+        $index = new XMLDBIndex('idnumber');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
+
+    /// Launch drop index idnumber
+        if (index_exists($table, $index)) {
+            $result = $result && drop_index($table, $index);
+        }
+
+    /// Changing precision of field idnumber on table user to (255)
+        $table = new XMLDBTable('user');
+        $field = new XMLDBField('idnumber');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'password');
+
+    /// Launch change of precision for field idnumber
+        $result = $result && change_field_precision($table, $field);
+
+    /// Launch add index idnumber again
+        $index = new XMLDBIndex('idnumber');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
+        $result = $result && add_index($table, $index);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101512);
+    }
+
     return $result;
 }
 
