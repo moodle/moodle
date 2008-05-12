@@ -3555,6 +3555,20 @@ function get_parent_contexts($context) {
     return array_reverse($parentcontexts);
 }
 
+/**
+ * Return the id of the parent of this context, or false if there is no parent (only happens if this
+ * is the site context.)
+ *
+ * @param object $context
+ * @return integer the id of the parent context.
+ */
+function get_parent_contextid($context) {
+    $parentcontexts = get_parent_contexts($context);
+    if (count($parentcontexts) == 0) {
+        return false; 
+    }
+    return array_shift($parentcontexts);
+}
 
 /**
  * Recursive function which, given a context, find all its children context ids.
