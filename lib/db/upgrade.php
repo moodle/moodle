@@ -2951,6 +2951,22 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101510);
     }
 
+    if ($result && $oldversion < 2007101511) {
+        // if guest role used as default user role unset it and force admin to choose new setting
+        if (!empty($CFG->defaultuserroleid)) {
+            if ($role = get_record('role', 'id', $CFG->defaultuserroleid)) {
+                if ($guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+                    if (isset($guestroles[$role->id])) {
+                        set_config('defaultuserroleid', null);
+                        notify('Guest role removed from "Default role for all users" setting, please select another role.', 'notifysuccess');
+                    }
+                }
+            } else {
+                set_config('defaultuserroleid', null);
+            }
+        }
+    }
+        
     return $result;
 }
 
