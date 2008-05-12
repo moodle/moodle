@@ -9,9 +9,9 @@
 <?php 
 if (!empty($USER->id)) {
     if ($CFG->defaulthtmleditor == 'tinymce') {
-        echo = 'skin : "o2k7",';
+        echo 'skin : "o2k7",';
     } else {
-        echo = 'skin : "default",';
+        echo 'skin : "default",';
     } 
 }
 ?>
