@@ -112,15 +112,7 @@ class qformat_hotpot extends qformat_default {
         $gap_count = 0;
 
         // detect old Moodles (1.4 and earlier)
-        global $CFG, $db;
-        $moodle_14 = false;
-        if ($columns = $db->MetaColumns("{$CFG->prefix}question_multianswer")) {
-            foreach ($columns as $column) {
-                if ($column->name=='answers' || $column->name=='positionkey' || $column->name=='answertype' || $column->name=='norm') {
-                    $moodle_14 = true;
-                }
-            }
-        }
+        global $CFG;
 
         // xml tags for the start of the gap-fill exercise
         $tags = 'data,gap-fill';
@@ -141,15 +133,10 @@ class qformat_hotpot extends qformat_default {
             $question->name = $this->hotpot_get_title($xml, $x);
             $question->questiontext = $this->hotpot_get_reading($xml);
 
-            // setup answer arrays
-            if ($moodle_14) {
-                $question->answers = array();
-            } else {
-                global $COURSE; // initialized in questions/import.php
-                $question->course = $COURSE->id;
-                $question->options = new stdClass();
-                $question->options->questions = array(); // one for each gap
-            }
+            global $COURSE; // initialized in questions/import.php
+            $question->course = $COURSE->id;
+            $question->options = new stdClass();
+            $question->options->questions = array(); // one for each gap
 
             $q = 0;
             while ($text = $xml->xml_value($tags, $exercise."[$q]")) {
@@ -166,22 +153,15 @@ class qformat_hotpot extends qformat_default {
                     $question->questiontext .= '{#'.$positionkey.'}';
         
                     // initialize answer settings
-                    if ($moodle_14) {
-                        $question->answers[$q]->positionkey = $positionkey;
-                        $question->answers[$q]->answertype = SHORTANSWER;
-                        $question->answers[$q]->norm = $defaultgrade;
-                        $question->answers[$q]->alternatives = array();
-                    } else {
-                        $wrapped = new stdClass();
-                        $wrapped->qtype = SHORTANSWER;
-                        $wrapped->usecase = 0;
-                        $wrapped->defaultgrade = $defaultgrade;
-                        $wrapped->questiontextformat = 0;
-                        $wrapped->answer = array();
-                        $wrapped->fraction = array();
-                        $wrapped->feedback = array();
-                        $answers = array();
-                    }
+                    $wrapped = new stdClass();
+                    $wrapped->qtype = SHORTANSWER;
+                    $wrapped->usecase = 0;
+                    $wrapped->defaultgrade = $defaultgrade;
+                    $wrapped->questiontextformat = 0;
+                    $wrapped->answer = array();
+                    $wrapped->fraction = array();
+                    $wrapped->feedback = array();
+                    $answers = array();
         
                     // add answers
                     $a = 0;
@@ -193,27 +173,16 @@ class qformat_hotpot extends qformat_default {
                             // set score (0=0%, 1=100%)
                             $fraction = empty($correct) ? 0 : 1;
                             // store answer
-                            if ($moodle_14) {
-                                $question->answers[$q]->alternatives[$a] = new stdClass();
-                                $question->answers[$q]->alternatives[$a]->answer = $text;
-                                $question->answers[$q]->alternatives[$a]->fraction = $fraction;
-                                $question->answers[$q]->alternatives[$a]->feedback = $feedback;
-                            } else {
-                                $wrapped->answer[] = $text;
-                                $wrapped->fraction[] = $fraction;
-                                $wrapped->feedback[] = $feedback;
-                                $answers[] = (empty($fraction) ? '' : '=').$text.(empty($feedback) ? '' : ('#'.$feedback));
-                            }
+                            $wrapped->answer[] = $text;
+                            $wrapped->fraction[] = $fraction;
+                            $wrapped->feedback[] = $feedback;
+                            $answers[] = (empty($fraction) ? '' : '=').$text.(empty($feedback) ? '' : ('#'.$feedback));
                         }
                         $a++;
                     }
                     // compile answers into question text, if necessary
-                    if ($moodle_14) {
-                        // do nothing
-                    } else {
-                        $wrapped->questiontext = '{'.$defaultgrade.':SHORTANSWER:'.implode('~', $answers).'}';
-                        $question->options->questions[] = $wrapped;
-                    }
+                    $wrapped->questiontext = '{'.$defaultgrade.':SHORTANSWER:'.implode('~', $answers).'}';
+                    $question->options->questions[] = $wrapped;
                 } // end if gap
                 $q++;
             } // end while $text
