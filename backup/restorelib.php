@@ -4996,24 +4996,24 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 if ($this->tree[3] == "ROLE") {
                     if ($this->level == 4) {
                         switch ($tagName) {
-                            case "NAME":
-                                $this->info->tempname = $this->getContents();
-
-                                break;
-                            case "SHORTNAME":
-                                $this->info->tempshortname = $this->getContents();
-                                break;
                             case "ID": // this is the old id
                                 $this->info->tempid = $this->getContents();
+                                $this->info->roles[$this->info->tempid]->id = $this->info->tempid;
+                                break;
+                            case "NAME":
+                                $this->info->roles[$this->info->tempid]->name = $this->getContents();;
+                                break;
+                            case "SHORTNAME":
+                                $this->info->roles[$this->info->tempid]->shortname = $this->getContents();;
+                                break;
+                            case "NAMEINCOURSE": // custom name of the role in course
+                                $this->info->roles[$this->info->tempid]->nameincourse = $this->getContents();;
                                 break;
                         }
                     }
                     if ($this->level == 6) {
                         switch ($tagName) {
                             case "NAME":
-                                $this->info->roles[$this->info->tempid]->name = $this->info->tempname;
-                                $this->info->roles[$this->info->tempid]->shortname = $this->info->tempshortname;
-
                                 $this->info->tempcapname = $this->getContents();
                                 $this->info->roles[$this->info->tempid]->capabilities[$this->info->tempcapname]->name = $this->getContents();
                                 break;
@@ -8288,6 +8288,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         if (isset($info->roles) && $info->roles) {
 
             foreach ($info->roles as $oldroleid=>$roledata) {
+
                 if (empty($restore->rolesmapping)) {
                     // if this is empty altogether, we came from import or there's no roles used in course at all
                     // in this case, write the same oldid as this is the same site
@@ -8344,6 +8345,20 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $roleinfo->roleid = $newroleid;
 
                         insert_record('role_capabilities', $roleinfo);
+                    }
+                }
+            /// Now, restore role nameincourse
+                $newrole = backup_getid($restore->backup_unique_code, 'role', $oldroleid); /// Look for target role
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $restore->course_id); /// Look for target context
+                if (!empty($newrole->new_id) && !empty($coursecontext)) {
+                /// Check the role hasn't any custom name in context
+                    if (!record_exists('role_names', 'roleid', $newrole->new_id, 'contextid', $coursecontext->id)) {
+                        $rolename = new object();
+                        $rolename->roleid = $newrole->new_id;
+                        $rolename->contextid = $coursecontext->id;
+                        $rolename->name = addslashes($roledata->nameincourse);
+
+                        insert_record('role_names', $rolename);
                     }
                 }
             }
