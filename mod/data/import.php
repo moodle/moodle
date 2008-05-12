@@ -111,27 +111,40 @@
                 if ($recordid = data_add_record($data, 0)) {  // add instance to data_record
                     $fields = get_records('data_fields', 'dataid', $data->id, '', 'name, id, type');
 
-                    // do a manual round of inserting, to make sure even empty contents get stored
+                    // Insert new data_content fields with NULL contents:
                     foreach ($fields as $field) {
+                        $content = new object();
                         $content->recordid = $recordid;
                         $content->fieldid = $field->id;
                         insert_record('data_content', $content);
                     }
-                    // for each field in the add form, add it to the data_content.
+                    // Fill data_content with the values imported from the CSV file:
                     foreach ($record as $key => $value) {
                         $name = $fieldnames[$key];
                         $field = $fields[$name];
-                        require_once($CFG->dirroot.'/mod/data/field/'.$field->type.'/field.class.php');
-                        $newfield = 'data_field_'.$field->type;
-                        $currentfield = new $newfield($field->id);
-
-                        $currentfield->update_content($recordid, $value, $name);
+                        $content = new object();
+                        $content->fieldid = $field->id;
+                        $content->recordid = $recordid;
+                        // for now, only for "latlong" and "url" fields, but that should better be looked up from
+                        // $CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php'
+                        // once there is stored how many contents the field can have. 
+                        if (preg_match("/^(latlong|url)$/", $field->type)) {
+                            $values = explode(" ", clean_param($value, PARAM_NOTAGS), 2);
+                            $content->content  = $values[0];
+                            $content->content1 = $values[1];
+                        } else {
+                            $content->content = clean_param($value, PARAM_NOTAGS);
+                        }
+                        $oldcontent = get_record('data_content', 'fieldid', $field->id, 'recordid', $recordid);
+                        $content->id = $oldcontent->id;
+                        update_record('data_content', $content);
                     }
                     $recordsadded++;
+                    print get_string('added', 'moodle', $recordsadded) . ". " . get_string('entry', 'data') . " (ID $recordid)<br />\n";
                 }
-            } // End foreach
-        } // End else
-    }//sun without love motivo atillas
+            }
+        }
+    }
 
     if ($recordsadded > 0) {
         notify($recordsadded. ' '. get_string('recordssaved', 'data'));
