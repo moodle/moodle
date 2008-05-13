@@ -2719,7 +2719,7 @@ function category_delete_full($category, $showfeedback=true) {
                 notify("Error deleting course $course->shortname"); 
                 return false;
             }
-            notify("Deleted course $course->shortname", 'notifysuccess'); // TODO: localize 
+            notify(get_string('coursedeleted', '', $course->shortname), 'notifysuccess'); 
         }
     }
 
@@ -2736,7 +2736,7 @@ function category_delete_full($category, $showfeedback=true) {
 
     events_trigger('category_deleted', $category);
 
-    notify("Deleted category $category->name", 'notifysuccess'); // TODO: localize 
+    notify(get_string('coursecategorydeleted', '', format_string($category->name)), 'notifysuccess'); 
 
     return true;
 }
@@ -2770,7 +2770,7 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
             notify("Error moving courses"); 
             return false;
         }
-        notify("Moved courses from $category->name", 'notifysuccess'); // TODO: localize 
+        notify(get_string('coursesmovedout', '', format_string($category->name)), 'notifysuccess'); 
     }
 
     // now delete anything that may depend on course category context
@@ -2786,7 +2786,7 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
 
     events_trigger('category_deleted', $category);
 
-    notify("Deleted category $category->name", 'notifysuccess'); // TODO: localize 
+    notify(get_string('coursecategorydeleted', '', format_string($category->name)), 'notifysuccess'); 
 
     return true;
 }
