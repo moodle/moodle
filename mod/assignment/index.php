@@ -96,6 +96,13 @@
 
         $type = $types[$cm->assignmenttype];
 
+        // if type has an 'all.php' defined, make this a link
+        $pathtoall = "{$CFG->dirroot}/mod/assignment/type/{$cm->assignmenttype}/all.php";
+        if (file_exists($pathtoall)) {
+            $type = "<a href=\"{$CFG->wwwroot}/mod/assignment/type/{$cm->assignmenttype}/".
+                "all.php?id={$course->id}\">$type</a>";
+        }
+
         $due = $cm->timedue ? userdate($cm->timedue) : '-';
 
         if ($course->format == "weeks" or $course->format == "topics") {
