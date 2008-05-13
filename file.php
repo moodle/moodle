@@ -53,23 +53,25 @@
     }
 
     // security: login to course if necessary
+    // Note: file.php always calls require_login() with $setwantsurltome=false
+    //       in order to avoid messing redirects. MDL-14495
     if ($args[0] == 'blog') {
         if (empty($CFG->bloglevel)) {
             error('Blogging is disabled!');
         } else if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL) {
-            require_login();
+            require_login(0, true, null, false);
         } else if ($CFG->forcelogin) {
-            require_login();
+            require_login(0, true, null, false);
         }
     } else if ($course->id != SITEID) {
-        require_login($course->id);
+        require_login($course->id, true, null, false);
     } else if ($CFG->forcelogin) {
         if (!empty($CFG->sitepolicy)
             and ($CFG->sitepolicy == $CFG->wwwroot.'/file.php'.$relativepath
                  or $CFG->sitepolicy == $CFG->wwwroot.'/file.php?file='.$relativepath)) {
             //do not require login for policy file
         } else {
-            require_login();
+            require_login(0, true, null, false);
         }
     }
 
