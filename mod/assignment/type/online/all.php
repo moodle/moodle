@@ -28,6 +28,7 @@
     $str = new stdClass; 
     $str->assignments = get_string("modulenameplural", "assignment");
     $str->duedate = get_string('duedate','assignment');
+    $str->duedateno = get_string('duedateno','assignment');
     $str->editmysubmission = get_string('editmysubmission','assignment');
     $str->emptysubmission = get_string('emptysubmission','assignment');
     $str->noassignments = get_string('noassignments','assignment');
@@ -77,7 +78,12 @@
         // submission (if there is one)
         if (empty($submission)) {
             $submissiontext = $str->emptysubmission;
-            $submissiondate = "{$str->duedate} ".userdate( $assignment->timedue );
+            if (!empty($assignment->timedue)) {
+                $submissiondate = "{$str->duedate} ".userdate( $assignment->timedue );
+            }
+            else {
+                $submissiondate = $str->duedateno;
+            }
         }
         else {
             $submissiontext = format_text( $submission->data1, $submission->data2 );
