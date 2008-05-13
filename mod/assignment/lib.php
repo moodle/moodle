@@ -287,8 +287,10 @@ class assignment_base {
      */
     function submittedlink($allgroups=false) {
         global $USER;
+        global $CFG;
 
         $submitted = '';
+        $urlbase = "{$CFG->wwwroot}/mod/assignment/";
 
         $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
         if (has_capability('mod/assignment:grade', $context)) {
@@ -298,10 +300,10 @@ class assignment_base {
                 $group = groups_get_activity_group($this->cm);
             }
             if ($count = $this->count_real_submissions($group)) {
-                $submitted = '<a href="submissions.php?id='.$this->cm->id.'">'.
+                $submitted = '<a href="'.$urlbase.'submissions.php?id='.$this->cm->id.'">'.
                              get_string('viewsubmissions', 'assignment', $count).'</a>';
             } else {
-                $submitted = '<a href="submissions.php?id='.$this->cm->id.'">'.
+                $submitted = '<a href="'.$urlbase.'submissions.php?id='.$this->cm->id.'">'.
                              get_string('noattempts', 'assignment').'</a>';
             }
         } else {
