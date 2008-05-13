@@ -3438,17 +3438,17 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
     $arrow = '<span class="'.$arrowclass.'">'.$THEME->rarrow.'</span>';
     $htmltext = '';
     if ($text) {
-        $htmltext = $text.'&nbsp;';
+        $htmltext = '<span class="arrow_text">'.$text.'</span>&nbsp;';
         if ($accesshide) {
             $htmltext = get_accesshide($htmltext);
         }
     }
     if ($url) {
-        $class = '';
+        $class = 'arrow_link';
         if ($addclass) {
-            $class =" class=\"$addclass\"";
+            $class .= ' '.$addclass;
         }
-        return '<a'.$class.' href="'.$url.'" title="'.preg_replace('/<.*?>/','',$text).'">'.$htmltext.$arrow.'</a>';
+        return '<a class="'.$class.'" href="'.$url.'" title="'.preg_replace('/<.*?>/','',$text).'">'.$htmltext.$arrow.'</a>';
     }
     return $htmltext.$arrow;
 }
@@ -3472,17 +3472,17 @@ function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
     $arrow = '<span class="'.$arrowclass.'">'.$THEME->larrow.'</span>';
     $htmltext = '';
     if ($text) {
-        $htmltext = '&nbsp;'.$text;
+        $htmltext = '&nbsp;<span class="arrow_text">'.$text.'</span>';
         if ($accesshide) {
             $htmltext = get_accesshide($htmltext);
         }
     }
     if ($url) {
-        $class = '';
+        $class = 'arrow_link';
         if ($addclass) {
-            $class =" class=\"$addclass\"";
+            $class .= ' '.$addclass;
         }
-        return '<a'.$class.' href="'.$url.'" title="'.preg_replace('/<.*?>/','',$text).'">'.$arrow.$htmltext.'</a>';
+        return '<a class="'.$class.'" href="'.$url.'" title="'.preg_replace('/<.*?>/','',$text).'">'.$arrow.$htmltext.'</a>';
     }
     return $arrow.$htmltext;
 }
