@@ -19,7 +19,7 @@
     $id = required_param('id', PARAM_INT);   // course
 
     if (! $course = get_record("course", "id", $id)) {
-        error("Course ID is incorrect");
+        print_error('invalidcourse');
     }
 
     require_course_login($course);
@@ -111,9 +111,6 @@
         $view->submissiondate = $submissiondate;
         $view->cm = $assignment->coursemodule;
 
-        // get grading information for this assignment
-        $grading_info = grade_get_grades( $course->id, 'mod', 'assignment', $assignment->id, $USER->id );
-
         $views[] = $view;
     }
 
@@ -148,5 +145,6 @@
 
         print_container_end();
     }
+
     print_footer($course);
 ?>
