@@ -17,18 +17,26 @@ function ajax_get_lib($libname) {
             'yui_yahoo' => '/lib/yui/yahoo/yahoo-min.js',
             'yui_animation' => '/lib/yui/animation/animation-min.js',
             'yui_autocomplete' => '/lib/yui/autocomplete/autocomplete-min.js',
+            'yui_button' => '/lib/yui/button/button-beta-min.js',
             'yui_calendar' => '/lib/yui/calendar/calendar-min.js',
+            'yui_colorpicker' => '/lib/yui/colorpicker/colorpicker-beta-min.js',
             'yui_connection' => '/lib/yui/connection/connection-min.js',
             'yui_container' => '/lib/yui/container/container-min.js',
+            'yui_datasource' => '/lib/yui/datasource/datasource-beta-min.js',
+            'yui_datatable' => '/lib/yui/datatable/datatable-beta-min.js',
             'yui_dom' => '/lib/yui/dom/dom-min.js',
             'yui_dom-event' => '/lib/yui/yahoo-dom-event/yahoo-dom-event.js',
             'yui_dragdrop' => '/lib/yui/dragdrop/dragdrop-min.js',
+            'yui_editor' => '/lib/yui/editor/editor-beta-min.js',
+            'yui_element' => '/lib/yui/element/element-beta-min.js',
             'yui_event' => '/lib/yui/event/event-min.js',
+            'yui_history' => '/lib/yui/history/history-beta-min.js',
+            'yui_imageloader' => '/lib/yui/imageloader/imageloader-experimental-min.js',
             'yui_logger' => '/lib/yui/logger/logger-min.js',
             'yui_menu' => '/lib/yui/menu/menu-min.js',
+            'yui_slider' => '/lib/yui/slider/slider-min.js',
             'yui_tabview' => '/lib/yui/tabview/tabview-min.js',
             'yui_treeview' => '/lib/yui/treeview/treeview-min.js',
-            'yui_slider' => '/lib/yui/slider/slider-min.js',
             'yui_utilities' => '/lib/yui/utilities/utilities.js',
             'ajaxcourse_blocks' => '/lib/ajax/block_classes.js',
             'ajaxcourse_sections' => '/lib/ajax/section_classes.js',
@@ -42,7 +50,7 @@ function ajax_get_lib($libname) {
     }
 
     $testpath = str_replace($CFG->wwwroot, $CFG->dirroot, $libpath);
-    if (!file_exists($testpath)) {        
+    if (!file_exists($testpath)) {
         error('require_js: '.$libpath.' - file not found.');
     }
 
@@ -56,20 +64,20 @@ function ajax_get_lib($libname) {
 function ajaxenabled($browsers = array()) {
 
     global $CFG, $USER;
-    
+
     if (!empty($browsers)) {
         $valid = false;
         foreach ($browsers as $brand => $version) {
             if (check_browser_version($brand, $version)) {
                 $valid = true;
-            }    
+            }
         }
-        
+
         if (!$valid) {
             return false;
         }
     }
-    
+
     $ie = check_browser_version('MSIE', 6.0);
     $ff = check_browser_version('Gecko', 20051106);
     $op = check_browser_version('Opera', 9.0);
@@ -77,7 +85,7 @@ function ajaxenabled($browsers = array()) {
 
     if (!$ie && !$ff && !$op && !$sa) {
         /** @see http://en.wikipedia.org/wiki/User_agent */
-        // Gecko build 20051107 is what is in Firefox 1.5. 
+        // Gecko build 20051107 is what is in Firefox 1.5.
         // We still have issues with AJAX in other browsers.
         return false;
     }
