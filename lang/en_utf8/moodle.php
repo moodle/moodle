@@ -1265,6 +1265,7 @@ $string['returningtosite'] = 'Returning to this web site?';
 $string['revert'] = 'Revert';
 $string['role'] = 'Role';
 $string['rolemappings'] = 'Role mappings';
+$string['rolerenaming'] = 'Role renaming';
 $string['roles'] = 'Roles';
 $string['rss'] = 'RSS';
 $string['rssarticles'] = 'Number of RSS recent articles';

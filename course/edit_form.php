@@ -369,7 +369,8 @@ class course_edit_form extends moodleform {
 
 /// customizable role names in this course
 //--------------------------------------------------------------------------------
-        $mform->addElement('header','', get_string('roles'));
+        $mform->addElement('header','rolerenaming', get_string('rolerenaming'));
+        $mform->setHelpButton('rolerenaming', array('rolerenaming', get_string('rolerenaming')), true);
 
         if ($roles = get_records('role')) {
             foreach ($roles as $role) {
