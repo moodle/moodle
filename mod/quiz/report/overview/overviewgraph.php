@@ -27,7 +27,7 @@ $line->y_tick_labels = null;
 $line->offset_relation = null;
 
 $line->parameter['bar_size']    = 1.5; // make size > 1 to get overlap effect
-$line->parameter['bar_spacing'] = 20; // don't forget to increase spacing so that graph doesn't become one big block of colour
+$line->parameter['bar_spacing'] = 30; // don't forget to increase spacing so that graph doesn't become one big block of colour
 
 //pick a sensible number of bands depending on quiz maximum grade.
 $bands = $quiz->grade;
