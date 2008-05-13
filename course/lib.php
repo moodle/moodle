@@ -2694,6 +2694,103 @@ function course_allowed_module($course,$mod) {
     return (record_exists('course_allowed_modules','course',$course->id,'module',$modid));
 }
 
+/**
+ * Recursively delete category including all subcategories and courses.
+ * @param object $ccategory
+ * @return bool status
+ */
+function category_delete_full($category, $showfeedback=true) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir.'/questionlib.php');
+
+    if ($children = get_records('course_categories', 'parent', $category->id, 'sortorder ASC')) {
+        foreach ($children as $childcat) {
+            if (!category_delete_full($childcat, $showfeedback)) {
+                notify("Error deleting category $childcat->name"); 
+                return false;
+            }
+        }
+    }
+
+    if ($courses = get_records('course', 'category', $category->id, 'sortorder ASC')) {
+        foreach ($courses as $course) {
+            if (!delete_course($course->id, false)) {
+                notify("Error deleting course $course->shortname"); 
+                return false;
+            }
+            notify("Deleted course $course->shortname", 'notifysuccess'); // TODO: localize 
+        }
+    }
+
+    // now delete anything that may depend on course category context
+    grade_course_category_delete($category->id, 0, $showfeedback);
+    if (!question_delete_course_category($category, 0, $showfeedback)) {
+        notify(get_string('errordeletingquestionsfromcategory', 'question', $category), 'notifysuccess'); 
+        return false;
+    }
+
+    // finally delete the category and it's context
+    delete_records('course_categories', 'id', $category->id);
+    delete_context(CONTEXT_COURSECAT, $category->id);
+
+    events_trigger('category_deleted', $category);
+
+    notify("Deleted category $category->name", 'notifysuccess'); // TODO: localize 
+
+    return true;
+}
+
+/**
+ * Delete category, but move contents to another category.
+ * @param object $ccategory
+ * @param int $newparentid category id
+ * @return bool status
+ */
+function category_delete_move($category, $newparentid, $showfeedback=true) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir.'/questionlib.php');
+
+    if (!$newparentcat = get_record('course_categories', 'id', $newparentid)) {
+        return false;
+    }
+
+    if ($children = get_records('course_categories', 'parent', $category->id, 'sortorder ASC')) {
+        foreach ($children as $childcat) {
+            if (!move_category($childcat, $newparentcat)) {
+                notify("Error moving category $childcat->name"); 
+                return false;
+            }
+        }
+    }
+
+    if ($courses = get_records('course', 'category', $category->id, 'sortorder ASC', 'id')) {
+        if (!move_courses(array_keys($courses), $newparentid)) {
+            notify("Error moving courses"); 
+            return false;
+        }
+        notify("Moved courses from $category->name", 'notifysuccess'); // TODO: localize 
+    }
+
+    // now delete anything that may depend on course category context
+    grade_course_category_delete($category->id, $newparentid, $showfeedback);
+    if (!question_delete_course_category($category, $newparentcat, $showfeedback)) {
+        notify(get_string('errordeletingquestionsfromcategory', 'question', $category), 'notifysuccess'); 
+        return false;
+    }
+
+    // finally delete the category and it's context
+    delete_records('course_categories', 'id', $category->id);
+    delete_context(CONTEXT_COURSECAT, $category->id);
+
+    events_trigger('category_deleted', $category);
+
+    notify("Deleted category $category->name", 'notifysuccess'); // TODO: localize 
+
+    return true;
+}
+
 /***
  *** Efficiently moves many courses around while maintaining
  *** sortorder in order.

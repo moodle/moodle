@@ -9,12 +9,11 @@
     $delete   = optional_param('delete',0,PARAM_INT);
     $hide     = optional_param('hide',0,PARAM_INT);
     $show     = optional_param('show',0,PARAM_INT);
-    $sure     = optional_param('sure','',PARAM_ALPHANUM);
     $move     = optional_param('move',0,PARAM_INT);
     $moveto   = optional_param('moveto',-1,PARAM_INT);
     $moveup   = optional_param('moveup',0,PARAM_INT);
     $movedown = optional_param('movedown',0,PARAM_INT);
-    
+
     $sysctx  = get_context_instance(CONTEXT_SYSTEM);
     $context = $sysctx;
 
@@ -77,7 +76,7 @@
             print_box_end();
         }
 
-        /// I am not sure this context in the next has_capability call is correct. 
+        /// I am not sure this context in the next has_capability call is correct.
         if (isloggedin() and !isguest() and !has_capability('moodle/course:create', $sysctx) and $CFG->enablecourserequests) {  // Print link to request a new course
             print_single_button('request.php', NULL, get_string('courserequest'), 'get');
         }
@@ -95,66 +94,58 @@
 
 /// From now on is all the admin/course creator functions
 
-/// Print headings
-
-    if (has_capability('moodle/site:config', $sysctx)) {
-        require_once($CFG->libdir.'/adminlib.php');
-        admin_externalpage_setup('coursemgmt');
-        admin_externalpage_print_header();
-    } else {
-        print_header("$site->shortname: $strcategories", $strcourses,
-            build_navigation(array(array('name'=>$strcategories,'link'=>'','type'=>'misc'))), '', '', true, update_categories_button());
-    }
-
-    print_heading($strcategories);
-
 /// Delete a category if necessary
 
     if (!empty($delete) and confirm_sesskey()) {
+        require_once('delete_category_form.php');
 
-          // context is coursecat, if not present admins should have it set in site level
-         $context = get_context_instance(CONTEXT_COURSECAT, $delete);
-        if ($deletecat = get_record('course_categories', 'id', $delete) and has_capability('moodle/category:delete', $context)) {
-            if (!empty($sure) && $sure == md5($deletecat->timemodified)) {
-                /// Send the children categories to live with their grandparent
-                if ($childcats = get_records('course_categories', 'parent', $deletecat->id)) {
-                    foreach ($childcats as $childcat) {
-                        if (! set_field('course_categories', 'parent', $deletecat->parent, 'id', $childcat->id)) {
-                            error('Could not update a child category!', 'index.php');
-                        }
-                    }
-                }
-
-                ///  If the grandparent is a valid (non-zero) category, then
-                ///  send the children courses to live with their grandparent as well
-                if ($deletecat->parent) {
-                    if ($childcourses = get_records('course', 'category', $deletecat->id)) {
-                        foreach ($childcourses as $childcourse) {
-                            if (! set_field('course', 'category', $deletecat->parent, 'id', $childcourse->id)) {
-                                error('Could not update a child course!', 'index.php');
-                            }
-                        }
-                    }
-                }
-
-                /// Finally delete the category itself
-                if (delete_records('course_categories', 'id', $deletecat->id)) {
-                    notify(get_string('categorydeleted', '', format_string($deletecat->name)));
-                    // MLD-9983
-                    events_trigger('category_deleted', $deletecat);
-                }
-            }
-            else {
-                $strdeletecategorycheck = get_string('deletecategorycheck','', format_string($deletecat->name));
-                notice_yesno($strdeletecategorycheck,
-                             "index.php?delete=$delete&amp;sure=".md5($deletecat->timemodified)."&amp;sesskey=$USER->sesskey",
-                             "index.php?sesskey=$USER->sesskey");
-
-                print_footer();  
-                exit();
-            }
+        if (!$deletecat = get_record('course_categories', 'id', $delete)) {
+            error('Incorrect category id', 'index.php');
         }
+
+        $heading = get_string('deletecategory', '', format_string($deletecat->name));
+
+        $context = get_context_instance(CONTEXT_COURSECAT, $delete);
+        require_capability('moodle/category:delete', $context);
+
+        $mform = new delete_category_form(null, $deletecat);
+        $mform->set_data(array('delete'=>$delete));
+
+        if ($mform->is_cancelled()) {
+            redirect('index.php');
+
+        } else if (!$data= $mform->get_data(false)) {
+            require_once($CFG->libdir . '/questionlib.php');
+            print_category_edit_header();
+            print_heading($heading);
+            print_box(get_string('deletecategorycheck2'), 'generalbox boxwidthnormal boxaligncenter');
+            if (question_context_has_any_questions($context)) {
+                print_box(get_string('deletecoursecategorywithquestions', 'question'), 
+                        'generalbox boxwidthnormal boxaligncenter');
+            }
+            $mform->display();
+            print_footer();
+            exit();
+        }
+
+        print_category_edit_header();
+        print_heading($heading);
+
+        if ($data->fulldelete) {
+            category_delete_full($deletecat, true);
+        } else {
+            category_delete_move($deletecat, $data->newparent, true);
+        }
+
+        print_continue('index.php');
+
+        print_footer();
+        die;
     }
+
+/// Print headings
+    print_category_edit_header();
+    print_heading($strcategories);
 
 
 /// Create a default category if necessary
@@ -289,7 +280,7 @@
     echo '</table>';
 
     echo '<div class="buttons">';
-    
+
     if (!empty($category->id)) {
         // Print link to create a new course in current category
         if (has_capability('moodle/course:create', $context)) {
@@ -298,7 +289,7 @@
             print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
         }
     }else{
-        if (has_capability('moodle/course:create', $sysctx)) {  
+        if (has_capability('moodle/course:create', $sysctx)) {
             // print create course link to first category
             $options = array();
             $options = array('category' => get_field('course_categories', 'id', 'parent', '0'));
@@ -426,6 +417,19 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
 
             print_category_edit($cat, $displaylist, $parentslist, $depth+1, $up, $down);
         }
+    }
+}
+
+function print_category_edit_header() {
+    global $CFG;
+
+    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+        require_once($CFG->libdir.'/adminlib.php');
+        admin_externalpage_setup('coursemgmt');
+        admin_externalpage_print_header();
+    } else {
+        print_header("$site->shortname: $strcategories", get_string('courses'),
+            build_navigation(array(array('name'=>get_string('categories'),'link'=>'','type'=>'misc'))), '', '', true, update_categories_button());
     }
 }
 ?>

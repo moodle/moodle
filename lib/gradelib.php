@@ -1186,7 +1186,7 @@ function remove_grade_letters($context, $showfeedback) {
 /**
  * Remove all grade related course data - history is kept
  * @param int $courseid
- * @param bool @showfeedback print feedback
+ * @param bool $showfeedback print feedback
  */
 function remove_course_grades($courseid, $showfeedback) {
     $strdeleted = get_string('deleted');
@@ -1220,6 +1220,17 @@ function remove_course_grades($courseid, $showfeedback) {
     if ($showfeedback) {
         notify($strdeleted.' - '.get_string('settings', 'grades'));
     }
+}
+
+/**
+ * Called when course category deleted - cleanup gradebook
+ * @param int $categoryid course category id
+ * @param int $newparentid empty means everything deleted, otherwise id of category where content moved
+ * @param bool $showfeedback print feedback
+ */
+function grade_course_category_delete($categoryid, $newparentid, $showfeedback) {
+    $context = get_context_instance(CONTEXT_COURSECAT, $categoryid);
+    delete_records('grade_letters', 'contextid', $context->id);
 }
 
 /**

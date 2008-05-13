@@ -266,6 +266,29 @@ function question_list_instances($questionid) {
 }
 
 /**
+ * Determine whether there arey any questions belonging to this context, that is whether any of its
+ * question categories contain any questions. This will return true even if all the questions are
+ * hidden.
+ *
+ * @param mixed $context either a context object, or a context id.
+ * @return boolean whether any of the question categories beloning to this context have
+ *         any questions in them.
+ */
+function question_context_has_any_questions($context) {
+    global $CFG;
+    if (is_object($context)) {
+        $contextid = $context->id;
+    } else if (is_numeric($context)) {
+        $contextid = $context;
+    } else {
+        print_error('invalidcontextinhasanyquestions', 'question');
+    }
+    return record_exists_sql('SELECT * FROM ' . $CFG->prefix . 'question q ' .
+            'JOIN ' . $CFG->prefix . 'question_categories qc ON qc.id = q.category ' .
+            "WHERE qc.contextid = $contextid AND q.parent = 0");
+}
+
+/**
  * Returns list of 'allowed' grades for grade selection
  * formatted suitably for dropdown box function
  * @return object ->gradeoptionsfull full array ->gradeoptions +ve only
@@ -516,6 +539,116 @@ function question_delete_course($course, $feedback=true) {
         }
     }
     return true;
+}
+
+/**
+ * Category is about to be deleted,
+ * 1/ All question categories and their questions are deleted for this course category.
+ * 2/ All questions are moved to new category
+ *
+ * @param object $category course category object
+ * @param object $newcategory empty means everything deleted, otherwise id of category where content moved
+ * @param boolean $feedback to specify if the process must output a summary of its work
+ * @return boolean
+ */
+function question_delete_course_category($category, $newcategory, $feedback=true) {
+    $context = get_context_instance(CONTEXT_COURSECAT, $category->id);
+    if (empty($newcategory)) {
+        $feedbackdata   = array(); // To store feedback to be showed at the end of the process
+        $rescueqcategory = null; // See the code around the call to question_save_from_deletion.
+        $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
+
+        // Loop over question categories.
+        if ($categories = get_records('question_categories', 'contextid', $context->id, 'parent', 'id, parent, name')) {
+            foreach ($categories as $category) {
+    
+                // Deal with any questions in the category.
+                if ($questions = get_records('question', 'category', $category->id)) {
+
+                    // Try to delete each question.
+                    foreach ($questions as $question) {
+                        delete_question($question->id);
+                    }
+
+                    // Check to see if there were any questions that were kept because they are
+                    // still in use somehow, even though quizzes in courses in this category will
+                    // already have been deteted. This could happen, for example, if questions are
+                    // added to a course, and then that course is moved to another category (MDL-14802).
+                    $questionids = get_records_select_menu('question', 'category = ' . $category->id, '', 'id,1');
+                    if (!empty($questionids)) {
+                        if (!$rescueqcategory = question_save_from_deletion(implode(',', array_keys($questionids)),
+                                get_parent_contextid($context), print_context_name($context), $rescueqcategory)) {
+                            return false;
+                       }
+                       $feedbackdata[] = array($category->name, get_string('questionsmovedto', 'question', $rescueqcategory->name));
+                    }
+                }
+
+                // Now delete the category.
+                if (!delete_records('question_categories', 'id', $category->id)) {
+                    return false;
+                }
+                $feedbackdata[] = array($category->name, $strcatdeleted);
+
+            } // End loop over categories.
+        }
+
+        // Output feedback if requested.
+        if ($feedback and $feedbackdata) {
+            $table = new stdClass;
+            $table->head = array(get_string('questioncategory','question'), get_string('action'));
+            $table->data = $feedbackdata;
+            print_table($table);
+        }
+
+    } else {
+        // Move question categories ot the new context.
+        if (!$newcontext = get_context_instance(CONTEXT_COURSECAT, $newcategory->id)) {
+            return false;
+        }
+        if (!set_field('question_categories', 'contextid', $newcontext->id, 'contextid', $context->id)) {
+            return false;
+        }
+        if ($feedback) {
+            $a = new stdClass;
+            $a->oldplace = print_context_name($context);
+            $a->newplace = print_context_name($newcontext);
+            notify(get_string('movedquestionsandcategories', 'question', $a), 'notifysuccess');
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Enter description here...
+ *
+ * @param string $questionids list of questionids
+ * @param object $newcontext the context to create the saved category in.
+ * @param string $oldplace a textual description of the think being deleted, e.g. from get_context_name 
+ * @param object $newcategory
+ * @return mixed false on 
+ */
+function question_save_from_deletion($questionids, $newcontextid, $oldplace, $newcategory = null) {
+    // Make a category in the parent context to move the questions to.
+    if (is_null($newcategory)) {
+        $newcategory = new object();
+        $newcategory->parent = 0;
+        $newcategory->contextid = $newcontextid;
+        $newcategory->name = addslashes(get_string('questionsrescuedfrom', 'question', $oldplace));
+        $newcategory->info = addslashes(get_string('questionsrescuedfrominfo', 'question', $oldplace));
+        $newcategory->sortorder = 999;
+        $newcategory->stamp = make_unique_id_code();
+        if (!$newcategory->id = insert_record('question_categories', $newcategory)) {
+            return false;
+        }
+    }
+
+    // Move any remaining questions to the 'saved' category.
+    if (!question_move_questions_to_category($questionids, $newcategory->id)) {
+        return false;
+    }
+    return $newcategory;
 }
 
 /**
