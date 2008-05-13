@@ -2282,7 +2282,13 @@
             if (function_exists($onemodbackup)) {
                 foreach ($preferences->mods[$module]->instances as $instance => $object) {
                     if (!empty($object->backup)) {
-                        $status = $onemodbackup($bf,$preferences,$instance);
+                        $statusm = $onemodbackup($bf,$preferences,$instance);
+                        if (!$statusm) {
+                            if (!defined('BACKUP_SILENTLY')) {
+                                notify('backup of '.$module.'-'.$object->name.' failed.');
+                            }
+                            $status = false;
+                        }
                     }
                 }
             }  else {
