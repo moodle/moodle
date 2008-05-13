@@ -170,6 +170,7 @@ $string['needcopy'] = 'You need to copy something first!';
 $string['needcoursecategroyid'] = 'Either course id or category must be specified';
 $string['noblocks'] = 'No blocks found!';
 $string['noformdesc'] = 'No formslib form description file found for this activity.';
+$string['nocategorydelete'] = 'Category \'$a\' can not be deleted!';
 $string['nocontext'] = 'Sorry, but that course is not a valid context';
 $string['noinstances'] = 'There are no instances of $a in this course!';
 $string['noguest'] = 'No guests here!';
