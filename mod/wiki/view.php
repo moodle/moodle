@@ -58,8 +58,6 @@
         if (! $cm = get_coursemodule_from_instance("wiki", $wiki->id, $course->id)) {
             error("Course Module ID was incorrect");
         }
-        $id = $cm->id;
-        $_REQUEST["id"] = $id;
     }
 
     require_course_login($course, true, $cm);
@@ -69,9 +67,6 @@
 
     /// Default format:
     $moodle_format=FORMAT_MOODLE;
-
-    ### SAVE ID from Moodle
-    $moodleID=@$_REQUEST["id"];
 
 /// Globally disable CamelCase, if the option is selected for this wiki.
     $moodle_disable_camel_case = ($wiki->disablecamelcase == 1);
@@ -137,7 +132,7 @@
 
         /// Build the ewsiki script constant
         /// ewbase will also be needed by EWIKI_SCRIPT_BINARY
-        $ewbase = 'view.php?id='.$moodleID;
+        $ewbase = 'view.php?id='.$cm->id;
         if (isset($userid) && $userid!=0) $ewbase .= '&amp;userid='.$userid;
         if (isset($groupid) && $groupid!=0) $ewbase .= '&amp;groupid='.$groupid;
         $ewscript = $ewbase.'&amp;page=';
@@ -246,9 +241,6 @@
         $content=ewiki_page($page);
         $content2='';
 
-        ### RESTORE ID from Moodle
-        $_REQUEST["id"]=$moodleID;
-        $id=$moodleID;
 ///     ################# EWIKI Part ###########################
     }
     else {
@@ -436,7 +428,7 @@
                 print "
 <form id='overridelock' method='post' action='overridelock.php'>
   <input type='hidden' name='sesskey' value='$sesskey' />
-  <input type='hidden' name='id' value='$id' />
+  <input type='hidden' name='id' value='$cm->id' />
   <input type='hidden' name='page' value='$pageesc' />
   $stroverrideinfo
   <input type='submit' value='$stroverridebutton' />
