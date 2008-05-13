@@ -11,7 +11,7 @@
     $date = optional_param('date', 0, PARAM_INT);  // A time of a day (in GMT)
 
     if (! $course = get_record("course", "id", $id)) {
-        print_error("Course is misconfigured");
+        print_error('invalidcourseid');
     }
 
     require_login($course->id);
@@ -19,12 +19,12 @@
 
     if (! (has_capability('moodle/site:viewreports', $context)
                 or ($course->showreports and $USER->id == $user)) ) {
-        print_error("Sorry, you aren't allowed to see this.");
+        print_error("nopermissions");
     }
 
     if ($user) {
         if (! $user = get_record("user", "id", $user)) {
-            print_error("Can not find that user");
+            print_error("nousers");
         }
     }
 

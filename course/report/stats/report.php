@@ -31,7 +31,7 @@
             .' ORDER BY u.lastname, u.firstname ASC';
 
         if (!$us = get_records_sql($sql)) {
-            print_error('Cannot enter detailed view: No users found for this course.');
+            print_error('nousers');
         }
 
         foreach ($us as $u) {
@@ -68,7 +68,7 @@
 
     if (!empty($report) && !empty($time)) {
         if ($report == STATS_REPORT_LOGINS && $course->id != SITEID) {
-            print_error('This type of report is only available for the site course');
+            print_error('reportnotavailable');
         }
 
         $param = stats_get_parameters($time,$report,$course->id,$mode);

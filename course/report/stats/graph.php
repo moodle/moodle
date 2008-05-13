@@ -12,12 +12,12 @@
     $roleid   = optional_param('roleid',0,PARAM_INT);
 
     if (!$course = get_record("course","id",$courseid)) {
-        print_error("That's an invalid course id");
+        print_error("invalidcourseid");
     }
 
     if (!empty($userid)) {
         if (!$user = get_record('user','id',$userid)) {
-            print_error("That's an invalid user id");
+            print_error("nousers");
         }
     }
 
@@ -25,7 +25,7 @@
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     if (!has_capability('moodle/site:viewreports', $context)) {
-        print_error('You need do not have the required permission to view reports for this course');
+        print_error('nopermissions');
     }
 
     stats_check_uptodate($course->id);

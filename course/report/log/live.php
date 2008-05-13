@@ -8,14 +8,14 @@
     $page = optional_param('page', 0, PARAM_INT);     // which page to show
 
     if (! $course = get_record("course", "id", $id) ) {
-        print_error("That's an invalid course id");
+        print_error('invalidcourseid');
     }
 
     require_login($course);
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     if (!has_capability('moodle/site:viewreports', $context)) {
-        print_error('You need do not have the required permission to view this report');
+        print_error('nopermissions');
     }
 
     add_to_log($course->id, "course", "report live", "report/log/live.php?id=$course->id", $course->id); 

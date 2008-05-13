@@ -8,7 +8,7 @@
     $id = required_param('id',PARAM_INT);       // course id
 
     if (!$course = get_record('course', 'id', $id)) {
-        print_error('Course id is incorrect.');
+        print_error('invalidcourseid');
     }
 
     require_login($course);
@@ -32,7 +32,7 @@
     print_heading(format_string($course->fullname));
 
     if (!$logstart = get_field_sql("SELECT MIN(time) FROM {$CFG->prefix}log")) {
-        print_error('Logs not available');
+        print_error('logfilenotavailable');
     }
 
     echo '<div class="loginfo">'.get_string('computedfromlogs', 'admin', userdate($logstart)).'</div>';

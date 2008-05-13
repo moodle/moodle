@@ -5,7 +5,7 @@
     require_once($CFG->dirroot.'/course/report/stats/lib.php');
 
     if (empty($CFG->enablestats)) {
-        print_error("Stats is not enabled.");
+        print_error("statsdisable");
     }
 
     $courseid = required_param('course', PARAM_INT);
@@ -29,12 +29,12 @@
     }
 
     if (!$course = get_record("course","id",$courseid)) {
-        print_error("That's an invalid course id");
+        print_error("invalidcourseid");
     }
 
     if (!empty($userid)) {
         if (!$user = get_record('user','id',$userid)) {
-            print_error("That's an invalid user id");
+            print_error("nousers");
         }
     }
 
