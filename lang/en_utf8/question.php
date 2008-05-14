@@ -4,6 +4,9 @@
 $string['adminreport'] = 'Report on possible problems in your question database.';
 $string['broken'] = 'This is a \"broken link\", it points to a nonexistent file.';
 $string['byandon'] = 'by <em>$a->user</em> on <em>$a->time</em>';
+$string['cannotinsert'] = 'Could not insert entry in question_sessions';
+$string['cannotcreate'] = 'Could not create new entry in question_attempts table';
+$string['cannotsavequiz'] = 'Failed to save the current quiz attempt!';
 $string['categorydoesnotexist'] = 'This category does not exist';
 $string['categorycurrent'] = 'Current Category';
 $string['categorycurrentuse'] = 'Use This Category';
@@ -40,6 +43,7 @@ $string['exportcategory'] = 'Export category';
 $string['filesareasite']= 'the site files area';
 $string['filesareacourse']= 'the course files area';
 $string['filestomove']= 'Move / copy files to $a?';
+$string['formquestionnotinids'] = 'Form contained question that is not in questionids';
 $string['fractionsnomax'] = 'One of the answers should have a score of 100%% so it is possible to get full marks for this question.';
 $string['getcategoryfromfile'] = 'Get category from file';
 $string['getcontextfromfile'] = 'Get context from file';
