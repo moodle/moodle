@@ -117,7 +117,7 @@
                         $content->recordid = $recordid;
                         $content->fieldid = $field->id;
                         if (! insert_record('data_content', $content)) {
-                            error("Could not insert new record ID $recordid");
+                            print_error('cannotinsertrecord', '', '', $recordid);
                         }
                     }
                     // Fill data_content with the values imported from the CSV file:
@@ -140,7 +140,7 @@
                         $oldcontent = get_record('data_content', 'fieldid', $field->id, 'recordid', $recordid);
                         $content->id = $oldcontent->id;
                         if (! update_record('data_content', $content)) {
-                            error("Could not update record ID $recordid");
+                            print_error('cannotupdaterecord', '', '', $recordid);
                         }
                     }
                     $recordsadded++;
