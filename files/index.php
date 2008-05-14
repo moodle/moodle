@@ -25,13 +25,13 @@
 
     if ($choose) {
         if (count(explode('.', $choose)) > 2) {
-            print_error('Incorrect format for choose parameter');
+            print_error('invalidformatpara');
         }
     }
 
 
     if (! $course = get_record("course", "id", $id) ) {
-        print_error("That's an invalid course id");
+        print_error('invalidcourseid');
     }
 
     require_login($course);
@@ -158,7 +158,7 @@
 
 
     if (! $basedir = make_upload_directory("$course->id")) {
-        print_error("The site administrator needs to fix the file permissions");
+        print_error("nopermissiontomkdir");
     }
 
     $baseweb = $CFG->wwwroot;
@@ -176,13 +176,13 @@
 
     if ($wdir == "/backupdata") {
         if (! make_upload_directory("$course->id/backupdata")) {   // Backup folder
-            print_error("Could not create backupdata folder.  The site administrator needs to fix the file permissions");
+            print_error("nopermissiontomkdir");
         }
     }
 
     if (!is_dir($basedir.$wdir)) {
         html_header($course, $wdir);
-        print_error("Requested directory does not exist.", '', "$CFG->wwwroot/files/index.php?id=$id");
+        print_error('nofolder', '', "$CFG->wwwroot/files/index.php?id=$id");
     }
 
     switch ($action) {
@@ -474,7 +474,7 @@
                 }
 
                 if (!zip_files($files,"$basedir$wdir/$name")) {
-                    print_error("zipfileserror","error");
+                    print_error("zipfileserror", "error");
                 }
 
                 clearfilelist();
@@ -532,7 +532,7 @@
                 $file = basename($file);
 
                 if (!unzip_file("$basedir$wdir/$file")) {
-                    print_error("unzipfileserror","error");
+                    print_error("unzipfileserror", "error");
                 }
 
                 echo "<div style=\"text-align:center\"><form action=\"index.php\" method=\"get\">";
