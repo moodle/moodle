@@ -76,13 +76,13 @@ function authorize_process_csv($filename)
 /// Open the file and get first line
     $handle = fopen($filename, "r");
     if (!$handle) {
-        print_error('CANNOT OPEN CSV FILE');
+        print_error('cannotopencsv');
     }
     $firstline = fgetcsv($handle, 8192, ",");
     $numfields = count($firstline);
     if ($numfields != 49 && $numfields != 70) {
         @fclose($handle);
-        print_error('INVALID CSV FILE; Each line must include 49 or 70 fields');
+        print_error('csvinvalidcolsnum');
     }
 
 /// Re-sort fields
@@ -97,9 +97,7 @@ function authorize_process_csv($filename)
     }
     if (empty($csvfields)) {
         @fclose($handle);
-        print_error("<b>INVALID CSV FILE:</b> First line must include 'Header Fields' and
-               the file must be type of <br />'Expanded Fields/Comma Separated'<br />or<br />
-              'Expanded Fields with CAVV Result Code/Comma Separated'");
+        print_error('csvinvalidcols');
     }
 
 /// Read lines

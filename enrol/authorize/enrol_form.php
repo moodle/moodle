@@ -11,7 +11,7 @@ class enrol_authorize_form extends moodleform
         $paymentmethodsenabled = get_list_of_payment_methods();
         $paymentmethod = optional_param('paymentmethod', $paymentmethodsenabled[0], PARAM_ALPHA);
         if (!in_array($paymentmethod, $paymentmethodsenabled)) {
-            print_error("Invalid payment method: $paymentmethod");
+            print_error('invalidpaymentmethod', '', '', $paymentmethod);
         }
 
         $mform =& $this->_form;

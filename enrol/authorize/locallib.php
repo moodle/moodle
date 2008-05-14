@@ -211,15 +211,16 @@ function authorize_print_order($orderid)
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
     if (!$order = get_record('enrol_authorize', 'id', $orderid)) {
-        print_error("Order $orderid not found.", '', "$CFG->wwwroot/enrol/authorize/index.php");
+        print_error('orderidnotfound', '',
+                "$CFG->wwwroot/enrol/authorize/index.php", $orderid);
     }
 
     if (!$course = get_record('course', 'id', $order->courseid)) {
-        print_error("Could not find that course id $order->courseid", '', "$CFG->wwwroot/enrol/authorize/index.php");
+        print_error('invalidcourseid', '', "$CFG->wwwroot/enrol/authorize/index.php");
     }
 
     if (!$user = get_record('user', 'id', $order->userid)) {
-        print_error("Could not find that user id $order->userid", '', "$CFG->wwwroot/enrol/authorize/index.php");
+        print_error('nousers', '', "$CFG->wwwroot/enrol/authorize/index.php");
     }
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -317,11 +318,13 @@ function authorize_print_order($orderid)
         }
         $upto = round($order->amount - $refunded, 2);
         if ($upto <= 0) {
-            print_error("Refunded to original amount: $order->amount", '', "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
+            print_error('refoundtoorigi', '',
+                    "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", $order->amount);
         }
         $amount = round(optional_param('amount', $upto), 2);
         if ($amount > $upto) {
-            print_error("Can be refunded to $upto", '', "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
+            print_error('refoundto', '',
+                    "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", $upto);
         }
         if ($confirm && confirm_sesskey()) {
             $extra = new stdClass;
@@ -403,7 +406,7 @@ function authorize_print_order($orderid)
 
             $suborder = get_record_sql($sql);
             if (!$suborder) { // not found
-                print_error("Transaction can not be voided because of already been voided.", '', "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
+                print_error('transactionvoid', '', "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
             }
             $refundedstatus = authorize_get_status_action($suborder);
             unset($suborder->courseid);

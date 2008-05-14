@@ -14,13 +14,13 @@
 
 /// Get course
     if (! $course = get_record('course', 'id', $courseid)) {
-        print_error('Could not find that course');
+        print_error('invaliduserid');
     }
 
 /// Only SITE users can access to this page
     require_login(); // Don't use $courseid! User may want to see old orders.
     if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), $USER->id, false)) {
-        print_error("Guests cannot use this page.");
+        print_error('noguest');
     }
 
     /// Load strings. All strings should be defined here. locallib.php uses these strings.
