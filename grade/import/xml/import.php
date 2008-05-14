@@ -53,7 +53,7 @@ if (function_exists('apache_child_terminate')) {
 
 $text = download_file_content($url);
 if ($text === false) {
-    print_error('Can not read file');
+    print_error('cannotreadfile');
 }
 
 $error = '';
@@ -67,7 +67,7 @@ if ($importcode !== false) {
             echo 'ok';
             die;
         } else {
-            print_error('Grade import error'); //TODO: localize
+            print_error('cannotimportgrade'); //TODO: localize
         }
 
     } else {

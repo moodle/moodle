@@ -160,7 +160,7 @@ if ($formdata = $mform->get_data()) {
     $filename = $CFG->dataroot.'/temp/gradeimport/cvs/'.$USER->id.'/'.$importcode;
 
     if (!file_exists($filename)) {
-        print_error('error processing upload file');
+        print_error('cannotuploadfile');
     }
 
     if ($fp = fopen($filename, "r")) {
@@ -195,7 +195,7 @@ if ($formdata = $mform->get_data()) {
             } else {
                 // collision
                 unlink($filename); // needs to be uploaded again, sorry
-                print_error('mapping collision detected, 2 fields maps to the same grade item '.$j);
+                print_error('cannotmapfield', '', '', $j);
             }
         }
     }

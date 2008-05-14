@@ -34,22 +34,22 @@ $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
 if ($id) {
     if (!$key = get_record('user_private_key', 'id', $id)) {
-        print_error('Group ID was incorrect');
+        print_error('invalidgroupid');
     }
     if (empty($courseid)) {
         $courseid = $key->instance;
 
     } else if ($courseid != $key->instance) {
-        print_error('Course ID was incorrect');
+        print_error('invalidcourseid');
     }
 
     if (!$course = get_record('course', 'id', $courseid)) {
-        print_error('Course ID was incorrect');
+        print_error('invalidcourseid');
     }
 
 } else {
     if (!$course = get_record('course', 'id', $courseid)) {
-        print_error('Course ID was incorrect');
+        print_error('invalidcourseid');
     }
     $key = new object();
 }
@@ -62,7 +62,7 @@ require_capability('moodle/grade:import', $context);
 
 // extra security check
 if (!empty($key->userid) and $USER->id != $key->userid) {
-    print_error('You are not owner of this key');
+    print_error('notownerofkey');
 }
 
 $returnurl = $CFG->wwwroot.'/grade/import/keymanager.php?id='.$course->id;

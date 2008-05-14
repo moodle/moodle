@@ -34,7 +34,7 @@ if (!$course = get_record('course', 'id', $id)) {
 require_user_key_login('grade/import', $id); // we want different keys for each course
 
 if (empty($CFG->gradepublishing)) {
-    print_error('Grade publishing disabled');
+    print_error('gradepubdisable');
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $id);
