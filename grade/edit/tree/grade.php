@@ -50,27 +50,27 @@ $returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/report.php?id='.$course-
 // security checks!
 if (!empty($id)) {
     if (!$grade = get_record('grade_grades', 'id', $id)) {
-        print_error('Incorrect grade id');
+        print_error('invalidgroupid');
     }
 
     if (!empty($itemid) and $itemid != $grade->itemid) {
-        print_error('Incorrect itemid');
+        print_error('invaliditemid');
     }
     $itemid = $grade->itemid;
 
     if (!empty($userid) and $userid != $grade->userid) {
-        print_error('Incorrect userid');
+        print_error('invaliduser');
     }
     $userid = $grade->userid;
 
     unset($grade);
 
 } else if (empty($userid) or empty($itemid)) {
-    print_error('Missing userid and itemid');
+    print_error('missinguseranditemid');
 }
 
 if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$courseid))) {
-    print_error('Can not find grade_item');
+    print_error('cannofindgradeitem');
 }
 
 // now verify grading user has access to all groups or is member of the same group when separate groups used in course
@@ -83,10 +83,10 @@ if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and !has_capability('
             }
         }
         if (!$ok) {
-            print_error('Can not grade this user');
+            print_error('cannotgradeuser');
         }
     } else {
-        print_error('Can not grade this user');
+        print_error('cannotgradeuser');
     }
 }
 

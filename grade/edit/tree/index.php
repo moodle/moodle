@@ -59,7 +59,7 @@ if (empty($eid)) {
 
 } else {
     if (!$element = $gtree->locate_element($eid)) {
-        print_error('Incorrect element id!', '', $returnurl);
+        print_error('invalidelementid', '', $returnurl);
     }
     $object = $element['object'];
 }
@@ -112,7 +112,7 @@ switch ($action) {
         if ($eid and confirm_sesskey()) {
             $moveafter = required_param('moveafter', PARAM_ALPHANUM);
             if(!$after_el = $gtree->locate_element($moveafter)) {
-                print_error('Incorect element id in moveafter', '', $returnurl);
+                print_error('invalidelementid', '', $returnurl);
             }
             $after = $after_el['object'];
             $parent = $after->get_parent_category();

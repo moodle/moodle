@@ -46,7 +46,7 @@ $gtree = new grade_tree($courseid, false, false);
 
 // what are we working with?
 if (!$element = $gtree->locate_element($eid)) {
-    print_error('Incorrect element id!', '', $returnurl);
+    print_error('invalidelementid', '', $returnurl);
 }
 $object = $element['object'];
 $type   = $element['type'];
@@ -56,7 +56,7 @@ switch ($action) {
     case 'hide':
         if ($eid and confirm_sesskey()) {
             if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:hide', $context)) {
-                print_error('No permission to hide!', '', $returnurl);
+                print_error('nopermissiontohide', '', $returnurl);
             }
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
@@ -68,7 +68,7 @@ switch ($action) {
     case 'show':
         if ($eid and confirm_sesskey()) {
             if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:hide', $context)) {
-                print_error('No permission to show!', '', $returnurl);
+                print_error('nopermissiontoshow', '', $returnurl);
             }
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
@@ -80,7 +80,7 @@ switch ($action) {
     case 'lock':
         if ($eid and confirm_sesskey()) {
             if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:lock', $context)) {
-                print_error('No permission to lock!', '', $returnurl);
+                print_error('nopermissiontolock', '', $returnurl);
             }
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
@@ -92,7 +92,7 @@ switch ($action) {
     case 'unlock':
         if ($eid and confirm_sesskey()) {
             if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:unlock', $context)) {
-                print_error('No permission to unlock!', '', $returnurl);
+                print_error('nopermissiontounlock', '', $returnurl);
             }
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();

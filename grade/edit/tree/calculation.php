@@ -46,7 +46,7 @@ $gpr = new grade_plugin_return();
 $returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/report.php?id='.$course->id);
 
 if (!$grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$course->id))) {
-    print_error('Incorect item id');
+    print_error('invaliditemid');
 }
 
 // activity items and items without grade can not have calculation
