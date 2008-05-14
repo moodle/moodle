@@ -99,7 +99,9 @@ function quiz_report_qm_filter_subselect($quiz){
         break;
     }
     if ($qmfilterattempts){
-        $qmsubselect = "(SELECT id FROM {$CFG->prefix}quiz_attempts WHERE u.id = userid ORDER BY $qmorderby LIMIT 1)=qa.id";
+        $qmsubselect = "(SELECT id FROM {$CFG->prefix}quiz_attempts " .
+                "WHERE quiz = {$quiz->id} AND u.id = userid " .
+                "ORDER BY $qmorderby LIMIT 1)=qa.id";
     } else {
         $qmsubselect = '';
     }
