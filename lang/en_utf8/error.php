@@ -46,6 +46,7 @@ $string['cannotfindhelp'] = 'Cannot find \"$a\" language help files';
 $string['cannotfindlang'] = 'Cannot find \"$a\" language pack!';
 $string['cannotfindsite'] = 'Cannot find site-level course';
 $string['cannotimportgrade'] = 'Grade import error';
+$string['cannotnetgeo'] = 'Can not connect to NetGeo server at http://netgeo.caida.org, please check proxy settings or better install MaxMind GeoLite City data file.';
 $string['cannotgradeuser'] = 'Can not grade this user';
 $string['cannotmapfield'] = 'mapping collision detected, 2 fields maps to the same grade item $a';
 $string['cannotmarktopic'] = 'Could not mark that topic for this course';
