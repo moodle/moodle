@@ -248,7 +248,7 @@ function feedback_reset_course_form($course) {
  */
 function feedback_set_events($feedback) {
     // adding the feedback to the eventtable (I have seen this at quiz-module)
-    delete_records('event', 'modulename', 'feedback', 'instance', $feedbackid);
+    delete_records('event', 'modulename', 'feedback', 'instance', $feedback->id);
 
     // the open-event
     if($feedback->timeopen > 0) {
