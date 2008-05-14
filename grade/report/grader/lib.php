@@ -180,7 +180,7 @@ class grade_report_grader extends grade_report {
             }
 
             if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$this->courseid))) { // we must verify course id here!
-                print_error('Incorrect grade item id');
+                print_error('invalidgradeitmeid');
             }
 
             // Pre-process grade
