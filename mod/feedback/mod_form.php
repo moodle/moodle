@@ -27,7 +27,6 @@ class mod_feedback_mod_form extends moodleform_mod {
         $mform->addElement('htmleditor', 'summary', get_string("description", "feedback"), array('rows' => 20));
         $mform->setType('summary', PARAM_RAW);
         $mform->addRule('summary', null, 'required', null, 'client');
-        $mform->setHelpButton('summary', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timinghdr', get_string('timing', 'form'));
@@ -80,14 +79,18 @@ class mod_feedback_mod_form extends moodleform_mod {
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'aftersubmithdr', get_string('after_submit', 'feedback'));
         
+        $mform->addElement('text', 'site_after_submit', get_string('site_after_submit', 'feedback'), array('size'=>'64','maxlength'=>'255'));
+        $mform->setType('site_after_submit', PARAM_TEXT);
+
         $mform->addElement('htmleditor', 'page_after_submit', get_string("page_after_submit", "feedback"), array('rows' => 20));
         $mform->setType('page_after_submit', PARAM_RAW);
-        $mform->setHelpButton('page_after_submit', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
         //-------------------------------------------------------------------------------
         $features = new stdClass;
         $features->groups = true;
         $features->groupings = true;
         $features->groupmembersonly = true;
+        $features->gradecat = false;
+        $features->idnumber = false;
         $this->standard_coursemodule_elements($features);
         //-------------------------------------------------------------------------------
         // buttons

@@ -207,6 +207,15 @@ function xmldb_feedback_upgrade($oldversion=0) {
         /// Launch add field2
         $result = $result && add_field($table, $field);
     }
+
+    if ($result && $oldversion < 2008050104) {
+        /// Define field site_after_submit to be added to feedback
+        $table = new XMLDBTable('feedback');
+        $field = new XMLDBField('site_after_submit');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, null, false, null, null, '', 'autonumbering');
+        /// Launch add field2
+        $result = $result && add_field($table, $field);
+    }
     return $result;
 }
 

@@ -139,6 +139,19 @@ $mod_feedback_capabilities = array(
         )
     ),
 
+    'mod/feedback:receivemail' => array(
+    
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_PREVENT
+        )
+    ),
+
 );
 
 ?>

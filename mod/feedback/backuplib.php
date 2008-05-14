@@ -63,6 +63,7 @@
       fwrite ($bf,full_tag("EMAILNOTIFICATION",4,false,$feedback->email_notification));
       fwrite ($bf,full_tag("MULTIPLESUBMIT",4,false,$feedback->multiple_submit));
       fwrite ($bf,full_tag("AUTONUMBERING",4,false,$feedback->autonumbering));
+      fwrite ($bf,full_tag("SITEAFTERSUB",4,false,$feedback->site_after_submit));
       fwrite ($bf,full_tag("PAGEAFTERSUB",4,false,$feedback->page_after_submit));
       fwrite ($bf,full_tag("PUBLISHSTATS",4,false,$feedback->publish_stats));
       fwrite ($bf,full_tag("TIMEOPEN",4,false,$feedback->timeopen));

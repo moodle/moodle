@@ -56,6 +56,7 @@
             $feedback->multiple_submit = backup_todb($info['MOD']['#']['MULTIPLESUBMIT']['0']['#']);
             $feedback->autonumbering = backup_todb($info['MOD']['#']['AUTONUMBERING']['0']['#']);
             $feedback->page_after_submit = backup_todb($info['MOD']['#']['PAGEAFTERSUB']['0']['#']);
+            $feedback->site_after_submit = backup_todb($info['MOD']['#']['SITEAFTERSUB']['0']['#']);
             $feedback->publish_stats = backup_todb($info['MOD']['#']['PUBLISHSTATS']['0']['#']);
             $feedback->timeopen = backup_todb($info['MOD']['#']['TIMEOPEN']['0']['#']);
             $feedback->timeclose = backup_todb($info['MOD']['#']['TIMECLOSE']['0']['#']);

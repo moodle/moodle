@@ -40,6 +40,9 @@ function feedback_add_instance($feedback) {
     if(empty($feedback->closeenable)) {
         $feedback->timeclose = 0;
     }
+    if(empty($feedback->site_after_submit)) {
+        $feedback->site_after_submit = '';
+    }
 
     //saving the feedback in db
     if(!$feedbackid = insert_record("feedback", $feedback)) {
@@ -67,6 +70,9 @@ function feedback_update_instance($feedback) {
     }
     if(empty($feedback->closeenable)) {
         $feedback->timeclose = 0;
+    }
+    if(empty($feedback->site_after_submit)) {
+        $feedback->site_after_submit = '';
     }
 
     //save the feedback into the db
@@ -345,6 +351,7 @@ function feedback_load_capabilities($cmid) {
     $cb->mapcourse = has_capability('mod/feedback:mapcourse', $context, NULL, false);
     $cb->edititems = has_capability('mod/feedback:edititems', $context, NULL, false);
     $cb->viewreports = has_capability('mod/feedback:viewreports', $context, NULL, false);
+    $cb->receivemail = has_capability('mod/feedback:receivemail', $context, NULL, false);
     $cb->createprivatetemplate = has_capability('mod/feedback:createprivatetemplate', $context, NULL, false);
     $cb->createpublictemplate = has_capability('mod/feedback:createpublictemplate', $context, NULL, false);
     $cb->deletetemplate = has_capability('mod/feedback:deletetemplate', $context, NULL, false);
@@ -377,6 +384,7 @@ function feedback_load_course_capabilities($courseid) {
     $ccb->mapcourse = has_capability('mod/feedback:mapcourse', $context, NULL, false);
     $ccb->edititems = has_capability('mod/feedback:edititems', $context, NULL, false);
     $ccb->viewreports = has_capability('mod/feedback:viewreports', $context, NULL, false);
+    $ccb->receivemail = has_capability('mod/feedback:receivemail', $context, NULL, false);
     $ccb->createprivatetemplate = has_capability('mod/feedback:createprivatetemplate', $context, NULL, false);
     $ccb->createpublictemplate = has_capability('mod/feedback:createpublictemplate', $context, NULL, false);
     $ccb->deletetemplate = has_capability('mod/feedback:deletetemplate', $context, NULL, false);
@@ -431,6 +439,22 @@ function feedback_get_viewreports_users($cmid, $groups = false) {
     
     //description of the call below: get_users_by_capability($context, $capability, $fields='', $sort='', $limitfrom='', $limitnum='', $groups='', $exceptions='', $doanything=true)
     return get_users_by_capability($context, 'mod/feedback:viewreports', '', 'lastname', '', '', $groups, '', false);
+}
+
+/** 
+ *  get users which have the receivemail-capability
+ *  @param int $cmid
+ *  @param mixed $groups single groupid or array of groupids - group(s) user is in
+ *  @return object the userrecords
+ */
+function feedback_get_receivemail_users($cmid, $groups = false) {
+
+    if (!$context = get_context_instance(CONTEXT_MODULE, $cmid)) {
+            print_error('badcontext');
+    }
+    
+    //description of the call below: get_users_by_capability($context, $capability, $fields='', $sort='', $limitfrom='', $limitnum='', $groups='', $exceptions='', $doanything=true)
+    return get_users_by_capability($context, 'mod/feedback:receivemail', '', 'lastname', '', '', $groups, '', false);
 }
 
 ////////////////////////////////////////////////
@@ -1605,7 +1629,7 @@ function feedback_print_numeric_option_list($startval, $endval, $selectval = '',
  *  @param $userid
  *  @return void
  */
-function feedback_email_teachers($cm, $feedback, $course, $userid) {
+function feedback_send_email($cm, $feedback, $course, $userid) {
     
     global $CFG;
     
@@ -1625,9 +1649,9 @@ function feedback_email_teachers($cm, $feedback, $course, $userid) {
                                              ORDER BY name ASC");
         $groups = array_values($groups);
         
-        $teachers = feedback_get_viewreports_users($cm->id, $groups);
+        $teachers = feedback_get_receivemail_users($cm->id, $groups);
     } else {
-        $teachers = feedback_get_viewreports_users($cm->id);
+        $teachers = feedback_get_receivemail_users($cm->id);
     }
     
     if ($teachers) {
@@ -1644,8 +1668,8 @@ function feedback_email_teachers($cm, $feedback, $course, $userid) {
             $info->url = $CFG->wwwroot.'/mod/feedback/show_entries.php?id='.$cm->id.'&userid='.$userid.'&do_show=showentries';
 
             $postsubject = $strcompleted.': '.$info->username.' -> '.$feedback->name;
-            $posttext = feedback_email_teachers_text($info, $course);
-            $posthtml = ($teacher->mailformat == 1) ? feedback_email_teachers_html($info, $course, $cm) : '';
+            $posttext = feedback_send_email_text($info, $course);
+            $posthtml = ($teacher->mailformat == 1) ? feedback_send_email_html($info, $course, $cm) : '';
             
             if($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
                 @email_to_user($teacher, $user, $postsubject, $posttext, $posthtml);
@@ -1663,7 +1687,7 @@ function feedback_email_teachers($cm, $feedback, $course, $userid) {
  *  @param $course
  *  @return void
  */
-function feedback_email_teachers_anonym($cm, $feedback, $course) {
+function feedback_send_email_anonym($cm, $feedback, $course) {
     
     global $CFG;
     
@@ -1672,7 +1696,7 @@ function feedback_email_teachers_anonym($cm, $feedback, $course) {
     }
     
     // $teachers = get_course_teachers($course->id);
-    $teachers = feedback_get_viewreports_users($cm->id);
+    $teachers = feedback_get_receivemail_users($cm->id);
 
     if ($teachers) {
 
@@ -1688,8 +1712,8 @@ function feedback_email_teachers_anonym($cm, $feedback, $course) {
             $info->url = $CFG->wwwroot.'/mod/feedback/show_entries_anonym.php?id='.$cm->id;
 
             $postsubject = $strcompleted.': '.$info->username.' -> '.$feedback->name;
-            $posttext = feedback_email_teachers_text($info, $course);
-            $posthtml = ($teacher->mailformat == 1) ? feedback_email_teachers_html($info, $course, $cm) : '';
+            $posttext = feedback_send_email_text($info, $course);
+            $posthtml = ($teacher->mailformat == 1) ? feedback_send_email_html($info, $course, $cm) : '';
             
             @email_to_user($teacher, $teacher, $postsubject, $posttext, $posthtml);
         }
@@ -1702,7 +1726,7 @@ function feedback_email_teachers_anonym($cm, $feedback, $course) {
  *  @param object $course
  *  @return string the text you want to post
  */
-function feedback_email_teachers_text($info, $course) {
+function feedback_send_email_text($info, $course) {
     $posttext  = $course->shortname.' -> '.get_string('modulenameplural', 'feedback').' -> '.
                     $info->feedback."\n";
     $posttext .= '---------------------------------------------------------------------'."\n";
@@ -1718,7 +1742,7 @@ function feedback_email_teachers_text($info, $course) {
  *  @param object $course
  *  @return string the text you want to post
  */
-function feedback_email_teachers_html($info, $course, $cm) {
+function feedback_send_email_html($info, $course, $cm) {
     global $CFG;
     $posthtml  = '<p><font face="sans-serif">'.
                 '<a href="'.$CFG->wwwroot.htmlspecialchars('/course/view.php?id='.$course->id).'">'.$course->shortname.'</a> ->'.
@@ -1756,4 +1780,12 @@ function feedback_print_errors() {
     $SESSION->feedback->errors = array(); //remove errors
 } 
 
+function feedback_encode_target_url($url) {
+    if (strpos($url, '?')) {
+        list($part1, $part2) = explode('?', $url, 2); //maximal 2 parts
+        return $part1 . '?' . htmlentities($part2);
+    } else {
+        return $url;
+    }
+}
 ?>

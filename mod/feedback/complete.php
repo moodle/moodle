@@ -189,9 +189,9 @@
                 $savereturn = 'saved';
                 if($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
                     add_to_log($course->id, 'feedback', 'submit', 'view.php?id='.$cm->id, $feedback->id, $cm->id, $userid);
-                    feedback_email_teachers($cm, $feedback, $course, $userid);
+                    feedback_send_email($cm, $feedback, $course, $userid);
                 }else {
-                    feedback_email_teachers_anonym($cm, $feedback, $course, $userid);
+                    feedback_send_email_anonym($cm, $feedback, $course, $userid);
                 }
                 //tracking the submit
                 $multiple_count = null;
@@ -267,13 +267,17 @@
                     echo '</p>';
                 }
             }
-            if($courseid) {
-                print_continue($CFG->wwwroot.'/course/view.php?id='.$courseid);
+            if($feedback->site_after_submit) {
+                print_continue(feedback_encode_target_url($feedback->site_after_submit));
             }else {
-                if($course->id == SITEID) {
-                    print_continue($CFG->wwwroot);
-                } else {
-                    print_continue($CFG->wwwroot.'/course/view.php?id='.$course->id);
+                if($courseid) {
+                    print_continue($CFG->wwwroot.'/course/view.php?id='.$courseid);
+                }else {
+                    if($course->id == SITEID) {
+                        print_continue($CFG->wwwroot);
+                    } else {
+                        print_continue($CFG->wwwroot.'/course/view.php?id='.$course->id);
+                    }
                 }
             }
         }else {
