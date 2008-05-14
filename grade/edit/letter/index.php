@@ -37,7 +37,7 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:manageletters', $context)) {
-    print_error('Missing permission to view letter grades');
+    print_error('nopermissiontoviewletergrade');
 }
 
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'letter', 'courseid'=>$courseid));

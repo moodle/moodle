@@ -32,7 +32,7 @@ require_once 'edit_form.php';
 $contextid = optional_param('id', SYSCONTEXTID, PARAM_INT);
 
 if (!$context = get_context_instance_by_id($contextid)) {
-    print_error('Incorrect context id');
+    print_error('invalidcourseid');
 }
 
 if ($context->contextlevel == CONTEXT_SYSTEM or $context->contextlevel == CONTEXT_COURSECAT) {
@@ -49,7 +49,7 @@ if ($context->contextlevel == CONTEXT_SYSTEM or $context->contextlevel == CONTEX
     $returnurl = $CFG->wwwroot.'/grade/edit/letter/index.php?id='.$context->instanceid;
 
 } else {
-    print_error('Incorrect context level');
+    print_error('invalidcourselevel');
 }
 
 require_capability('moodle/grade:manageletters', $context);
