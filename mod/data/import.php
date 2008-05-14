@@ -116,7 +116,9 @@
                         $content = new object();
                         $content->recordid = $recordid;
                         $content->fieldid = $field->id;
-                        insert_record('data_content', $content);
+                        if (! insert_record('data_content', $content)) {
+                            print_error('cannotinsertrecord', '', '', $recordid);
+                        }
                     }
                     // Fill data_content with the values imported from the CSV file:
                     foreach ($record as $key => $value) {
@@ -137,7 +139,9 @@
                         }
                         $oldcontent = get_record('data_content', 'fieldid', $field->id, 'recordid', $recordid);
                         $content->id = $oldcontent->id;
-                        update_record('data_content', $content);
+                        if (! update_record('data_content', $content)) {
+                            print_error('cannotupdaterecord', '', '', $recordid);
+                        }
                     }
                     $recordsadded++;
                     print get_string('added', 'moodle', $recordsadded) . ". " . get_string('entry', 'data') . " (ID $recordid)<br />\n";
