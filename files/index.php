@@ -667,7 +667,7 @@ function printfilelist($filelist) {
 
     foreach ($filelist as $file) {
         if (is_dir($basedir.'/'.$file)) {
-            echo "<img src=\"$CFG->pixpath/f/folder.gif\" class=\"icon\" alt=\"$strfolder\" /> $file<br />";
+            echo '<img src="'. $CFG->pixpath .'/f/folder.gif" class="icon" alt="'. $strfolder .'" /> '. htmlspecialchars($file) .'<br />';
             $subfilelist = array();
             $currdir = opendir($basedir.'/'.$file);
             while (false !== ($subfile = readdir($currdir))) {
@@ -679,7 +679,7 @@ function printfilelist($filelist) {
 
         } else {
             $icon = mimeinfo("icon", $file);
-            echo "<img src=\"$CFG->pixpath/f/$icon\"  class=\"icon\" alt=\"$strfile\" /> $file<br />";
+            echo '<img src="'. $CFG->pixpath .'/f/'. $icon .'" class="icon" alt="'. $strfile .'" /> '. htmlspecialchars($file) .'<br />';
         }
     }
 }
