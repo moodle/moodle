@@ -20,23 +20,23 @@ $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
 if ($id) {
     if (!$grouping = get_record('groupings', 'id', $id)) {
-        print_error('Group ID was incorrect');
+        print_error('invalidgroupid');
     }
     $grouping->description = clean_text($grouping->description);
     if (empty($courseid)) {
         $courseid = $grouping->courseid;
 
     } else if ($courseid != $grouping->courseid) {
-        print_error('Course ID was incorrect');
+        print_error('invalidcourseid');
     }
 
     if (!$course = get_record('course', 'id', $courseid)) {
-        print_error('Course ID was incorrect');
+        print_error('invalidcourseid');
     }
 
 } else {
     if (!$course = get_record('course', 'id', $courseid)) {
-        print_error('Course ID was incorrect');
+        print_error('invalidcourseid');
     }
     $grouping = new object();
     $grouping->courseid = $course->id;
@@ -84,12 +84,12 @@ if ($editform->is_cancelled()) {
 
     if ($data->id) {
         if (!groups_update_grouping($data)) {
-            print_error('Error updating grouping');
+            print_error('cannotupdategroup');
         }
 
     } else {
         if (!groups_create_grouping($data)) {
-            print_error('Error creating grouping');
+            print_error('cannotcreategroup');
         }
     }
 

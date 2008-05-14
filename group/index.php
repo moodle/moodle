@@ -96,7 +96,7 @@ switch ($action) {
 
     default: //ERROR.
         if (debugging()) {
-            print_error('Error, unknown button/action. Probably a user-interface bug!', '', $returnurl);
+            print_error('unknowaction', '', $returnurl);
         break;
     }
 }
@@ -269,7 +269,7 @@ function groups_param_action($prefix = 'act_') {
     }
     if ($action && !preg_match('/^\w+$/', $action)) {
         $action = false;
-        print_error('Action had wrong type.');
+        print_error('unknowaction');
     }
     ///if (debugging()) echo 'Debug: '.$action;
     return $action;

@@ -176,7 +176,7 @@
 
     if ($wdir == "/backupdata") {
         if (! make_upload_directory("$course->id/backupdata")) {   // Backup folder
-            print_error("nopermissiontomkdir");
+            print_error('cannotcreatebackupdir');
         }
     }
 
