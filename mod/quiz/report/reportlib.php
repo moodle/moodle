@@ -115,7 +115,7 @@ function quiz_report_grade_bands($bands, $quizid, $useridlist){
     FROM
         mdl_quiz_grades qg, 
         mdl_quiz q
-    WHERE qg.quiz = q.id AND quiz = $quizid AND qg.userid IN ($useridlist)
+    WHERE qg.quiz = q.id AND qg.quiz = $quizid AND qg.userid IN ($useridlist)
     GROUP BY band
     ORDER BY band";
     $data = get_records_sql_menu($sql);
