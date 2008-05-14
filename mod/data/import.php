@@ -130,6 +130,7 @@
                         // for now, only for "latlong" and "url" fields, but that should better be looked up from
                         // $CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php'
                         // once there is stored how many contents the field can have. 
+                        $value = addslashes($value);
                         if (preg_match("/^(latlong|url)$/", $field->type)) {
                             $values = explode(" ", clean_param($value, PARAM_NOTAGS), 2);
                             $content->content  = $values[0];
