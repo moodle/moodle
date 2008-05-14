@@ -867,7 +867,7 @@ function displaydir ($wdir) {
 
         choose_from_menu ($options, "action", "", "$strwithchosenfiles...", "javascript:getElementById('dirform').submit()");
         echo '<div id="noscriptgo" style="display: inline;">';
-        echo '<input type="submit" value="'.get_string('go').'" /></div>';
+        echo '<input type="submit" value="'.get_string('go').'" />';
         echo '<script type="text/javascript">'.
                "\n//<![CDATA[\n".
                'document.getElementById("noscriptgo").style.display = "none";'.
