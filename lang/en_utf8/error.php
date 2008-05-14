@@ -143,7 +143,6 @@ $string['invalidpaymentmethod'] = 'Invalid payment method: $a';
 $string['invalidrequest'] = 'Invalid request';
 $string['invalidrole'] = 'Invalid role';
 $string['invalidshortname'] = 'That\'s an invalid short course name';
-$string['invalidscaleid'] = 'Incorrect scale id';
 $string['invalidurl'] = 'Invalid url';
 $string['invaliduser'] = 'Invalid user';
 $string['invaliduserid'] = 'Invalid user id';
