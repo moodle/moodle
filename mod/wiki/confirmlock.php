@@ -7,7 +7,8 @@
  * @copyright &copy; 2006 The Open University
  * @author s.marshall@open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package wiki
+ * @package mod-wiki
+ * @category mod
  *//** */
 
 require_once("../../config.php");
