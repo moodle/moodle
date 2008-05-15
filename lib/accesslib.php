@@ -1176,7 +1176,7 @@ function get_user_access_sitewide($userid) {
                   ON rc.contextid=ctx.id
                 WHERE $clauses
                 ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
-        $rs = $DB->get_recordset_sql($sql, $params);
+        $rs = $DB->get_recordset_sql($sql, $cparams);
         unset($clauses);
 
         if ($rs) {
