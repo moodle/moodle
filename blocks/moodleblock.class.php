@@ -634,7 +634,11 @@ class block_base {
      * @todo finish documenting this function
      */
     function html_attributes() {
-        return array('id' => 'inst'.$this->instance->id, 'class' => 'block_'. $this->name());
+        return array(
+            'id' => 'inst'.$this->instance->id, 
+            'class' => 'block_'. $this->name().
+                ($this->edit_controls ? ' block_with_controls' :'')
+        );
     }
     
     /**
