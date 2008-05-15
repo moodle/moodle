@@ -52,9 +52,11 @@ function question_multianswer_fix_subquestion_parents_and_categories() {
             'question q JOIN ' . $CFG->prefix . 'question_multianswer qma ON q.id = qma.question');
     if ($rs) {
         while ($q = rs_fetch_next_record($rs)) {
-            $result = $result && execute_sql('UPDATE ' . $CFG->prefix . 'question' .
-            		' SET parent = ' . $q->id . ', category = ' . $q->category .
-            		' WHERE id IN (' . $q->sequence . ') AND parent <> 0');
+            if (!empty($q->sequence)) {
+                $result = $result && execute_sql('UPDATE ' . $CFG->prefix . 'question' .
+                        ' SET parent = ' . $q->id . ', category = ' . $q->category .
+                        ' WHERE id IN (' . $q->sequence . ') AND parent <> 0');
+            }
         }
         rs_close($rs);
     } else {
