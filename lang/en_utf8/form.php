@@ -1,5 +1,6 @@
 <?PHP // $Id$
 
+$string['mustbeoverriden'] = 'Abstract form_definition() method in class $a must be overriden, please fix the code.';
 $string['somefieldsrequired'] = 'There are required fields in this form marked$a.'; 
 $string['err_alphanumeric']='You must enter only letters or numbers here.';
 $string['err_email']='You must enter a valid email address here.';

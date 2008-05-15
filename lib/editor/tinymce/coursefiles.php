@@ -27,7 +27,7 @@
 
 
     if (! $course = get_record("course", "id", $id) ) {
-        print_error("That's an invalid course id");
+        print_error("invalidcourseid");
     }
 
     require_login($course);
@@ -185,7 +185,7 @@
     }
 
     if (! $basedir = make_upload_directory("$course->id")) {
-        print_error("The site administrator needs to fix the file permissions");
+        print_error("cannotcreateuploaddir");
     }
 
     $baseweb = $CFG->wwwroot;
@@ -440,7 +440,7 @@
                 }
 
                 if (!zip_files($files,"$basedir/$wdir/$name")) {
-                    print_error("zipfileserror","error");
+                    print_error("zipfileserror", "error");
                 }
 
                 clearfilelist();
@@ -492,7 +492,7 @@
                 $file = basename($file);
 
                 if (!unzip_file("$basedir/$wdir/$file")) {
-                    print_error("unzipfileserror","error");
+                    print_error("unzipfileserror", "error");
                 }
 
                 echo "<center><form action=\"coursefiles.php\" method=\"get\">\n";

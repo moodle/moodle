@@ -25,7 +25,7 @@ for ($i=1; ; $i++){
                 $topics[$i] = helplink('text', get_string('helptext'));
                 break;
             default :
-                print_error('Unknown help topic '.$item);
+                print_error('unknownhelp', '', '', $item);
         }
     } else {
         $keyword = optional_param("keyword$i", '', PARAM_ALPHAEXT);
