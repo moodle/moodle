@@ -1251,8 +1251,19 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             }
 
             if ($action->event == QUESTION_EVENTMANUALGRADE) {
-                question_process_comment($question, $replaystate, $attempt,
+                // Ensure that the grade is in range - in the past this was not checked, 
+                // but now it is (MDL-14835) - so we need to ensure the data is valid before
+                // proceeding.
+                if ($states[$j]->grade < 0) {
+                    $states[$j]->grade = 0;
+                } else if ($states[$j]->grade > $question->maxgrade) {
+                    $states[$j]->grade = $question->maxgrade;
+                }
+                $error = question_process_comment($question, $replaystate, $attempt,
                         $replaystate->manualcomment, $states[$j]->grade);
+                if (is_string($error)) {
+                     notify($error);
+                }
             } else {
 
                 // Reprocess (regrade) responses
@@ -1549,13 +1560,34 @@ function question_print_comment_box($question, $state, $attempt, $url) {
    }
 }
 
+/**
+ * Process a manual grading action. That is, use $comment and $grade to update
+ * $state and $attempt. The attempt and the comment text are stored in the
+ * database. $state is only updated in memory, it is up to the call to store
+ * that, if appropriate.
+ *
+ * @param object $question the question
+ * @param object $state the state to be updated.
+ * @param object $attempt the attempt the state belongs to, to be updated.
+ * @param string $comment the comment the teacher added
+ * @param float $grade the grade the teacher assigned.
+ * @return mixed true on success, a string error message if a problem is detected
+ *         (for example score out of range).
+ */
 function question_process_comment($question, &$state, &$attempt, $comment, $grade) {
+    if ($grade < 0 || $grade > $question->maxgrade) {
+        $a = new stdClass;
+        $a->grade = $grade;
+        $a->maxgrade = $question->maxgrade;
+        $a->name = $question->name;
+        return get_string('errormanualgradeoutofrange', 'question', $a);
+    }
 
     // Update the comment and save it in the database
     $comment = trim($comment);
     $state->manualcomment = $comment;
     if (!set_field('question_sessions', 'manualcomment', $comment, 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
-        print_error('cannotsavecomment');
+        return get_string('errorsavingcomment', 'question', $question);
     }
 
     // Update the attempt if the score has changed.
@@ -1563,7 +1595,7 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
         $attempt->sumgrades = $attempt->sumgrades - $state->last_graded->grade + $grade;
         $attempt->timemodified = time();
         if (!update_record('quiz_attempts', $attempt)) {
-            print_error('cannotsavequiz');
+            return get_string('errorupdatingattempt', 'question', $attempt);
         }
     }
 
@@ -1594,6 +1626,7 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
         $state->changed = 1;
     }
 
+    return true;
 }
 
 /**
