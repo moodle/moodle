@@ -56,24 +56,28 @@
 
     print_header();
     print_heading(format_string($question->name));
-    
+
     //add_to_log($course->id, 'quiz', 'review', "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", "$cm->id");
 
     if ($data = data_submitted() and confirm_sesskey()) {
         // the following will update the state and attempt
-        question_process_comment($question, $state, $attempt, $data->response['comment'], $data->response['grade']);
-        // If the state has changed save it and update the quiz grade
-        if ($state->changed) {
-            save_question_session($question, $state);
-            quiz_save_best_grade($quiz, $attempt->userid);
-        }
+        $error = question_process_comment($question, $state, $attempt, $data->response['comment'], $data->response['grade']);
+        if (is_string($error)) {
+            notify($error);
+        } else {
+            // If the state has changed save it and update the quiz grade
+            if ($state->changed) {
+                save_question_session($question, $state);
+                quiz_save_best_grade($quiz, $attempt->userid);
+            }
 
-        notify(get_string('changessaved'));
-        echo '<div class="boxaligncenter"><input type="button" onclick="window.opener.location.reload(1); self.close();return false;" value="' .
-         get_string('closewindow') . "\" /></div>";
-         
-        print_footer();
-        exit;
+            notify(get_string('changessaved'));
+            echo '<div class="boxaligncenter"><input type="button" onclick="window.opener.location.reload(1); self.close();return false;" value="' .
+                    get_string('closewindow') . "\" /></div>";
+
+            print_footer();
+            exit;
+        }
     }
 
     question_print_comment_box($question, $state, $attempt, $CFG->wwwroot.'/mod/quiz/comment.php');

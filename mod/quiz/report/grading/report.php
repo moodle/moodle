@@ -70,6 +70,7 @@ class quiz_report extends quiz_default_report {
             confirm_sesskey();
 
             // now go through all of the responses and save them.
+            $allok = true;
             foreach($data->manualgrades as $uniqueid => $response) {
                 // get our attempt
                 if (! $attempt = get_record('quiz_attempts', 'uniqueid', $uniqueid)) {
@@ -83,15 +84,22 @@ class quiz_report extends quiz_default_report {
                 $state = &$states[$question->id];
 
                 // the following will update the state and attempt
-                question_process_comment($question, $state, $attempt, $response['comment'], $response['grade']);
-
-                // If the state has changed save it and update the quiz grade
-                if ($state->changed) {
+                $error = question_process_comment($question, $state, $attempt, $response['comment'], $response['grade']);
+                if (is_string($error)) {
+                    notify($error);
+                    $allok = false;
+                } else if ($state->changed) {
+                    // If the state has changed save it and update the quiz grade
                     save_question_session($question, $state);
                     quiz_save_best_grade($quiz, $attempt->userid);
                 }
             }
-            notify(get_string('changessaved', 'quiz'), 'notifysuccess');
+
+            if ($allok) {
+                notify(get_string('changessaved', 'quiz'), 'notifysuccess');
+            } else {
+                notify(get_string('changessavedwitherrors', 'quiz'), 'notifysuccess');
+            }
         }
 
         // our 3 different views
