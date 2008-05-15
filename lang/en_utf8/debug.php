@@ -2,6 +2,7 @@
 /*
  * debug information for developer only
  */
+$string['cannotdowngrade'] = 'Cannot downgrade from $a[0] to $a[1].';
 $string['cannotupgradecapabilities'] = 'Had trouble upgrading the core capabilities for the Roles System';
 $string['cannotupdateversion'] = 'Upgrade failed!  (Could not update version in config table)';
 $string['cannotupdaterelease'] = 'ERROR: Could not update release version in database!!';
@@ -15,6 +16,9 @@ $string['dbnotsetup'] = 'Error: Main databases NOT set up successfully';
 $string['doesnotworkwitholdversion'] = 'This script does not work with this old version of Moodle';
 $string['erroroccur'] = 'An error has occurred during this process';
 $string['fixsetting'] = 'Please fix your settings in config.php: <p>You have:</p> <p>\$CFG->dirroot = \"$a[0]\";</p> <p>but it should be:</p> <p>\$CFG->dirroot = \"$a[1]\"</p>';
+$string['noblocks'] = 'No blocks installed!';
+$string['noblockbase'] = 'Class block_base is not defined or file not found for /blocks/moodleblock.class.php';
+$string['nocaps'] = 'Error: no capabilitites defined!';
 $string['notables'] = 'No Tables!';
 $string['noreports'] = 'No reports accessible';
 $string['nomodules'] = 'No modules found!!';
