@@ -44,10 +44,6 @@ class quiz_report extends quiz_default_report {
             //twice.
         }
 
-        // Set of format options for teacher-created content, for example overall feedback.
-        $nocleanformatoptions = new stdClass;
-        $nocleanformatoptions->noclean = true;
-
         // Work out some display options - whether there is feedback, and whether scores should be shown.
         $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;
         $fakeattempt = new stdClass();
@@ -197,6 +193,8 @@ class quiz_report extends quiz_default_report {
             $table->column_suppress('fullname');
 
             $table->column_class('picture', 'picture');
+            $table->column_class('fullname', 'bold');
+            $table->column_class('sumgrades', 'bold');
 
             $table->set_attribute('cellspacing', '0');
             $table->set_attribute('id', 'attempts');
@@ -293,17 +291,15 @@ class quiz_report extends quiz_default_report {
             echo implode("\t", $headers)." \n";
         }
 
-        // Get users with quiz attempt capability 'students'.
-        // don't need to do this expensive call if we are listing all attempts though.
-        if ( $attemptsmode != QUIZ_REPORT_ATTEMPTS_ALL ) { 
-            if (empty($currentgroup)) {
-                // all users who can attempt quizzes
-                $allowed = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)));
-            } else {
-        
-                // all users who can attempt quizzes and who are in the currently selected group
-                $allowed = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','',$currentgroup,'',false)));
-            }
+        $students = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)));
+        if (empty($currentgroup)) {
+            // all users who can attempt quizzes
+            $groupstudents = '';
+            $allowed = $students;
+        } else {
+            // all users who can attempt quizzes and who are in the currently selected group
+            $groupstudents = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','',$currentgroup,'',false)));
+            $allowed = $groupstudents;
         }
 
         // Construct the SQL
@@ -336,6 +332,7 @@ class quiz_report extends quiz_default_report {
                 $where = ' WHERE u.id IN (' .$allowed. ') AND (qa.preview = 0 OR qa.preview IS NULL)';
                 break;
         }
+        
 
         $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
 
@@ -388,14 +385,6 @@ class quiz_report extends quiz_default_report {
             }
 
             $table->pagesize($pagesize, $total);
-        }
-
-        // If there is feedback, include it in the query.
-        if ($hasfeedback) {
-            $factor = $quiz->grade/$quiz->sumgrades;
-            $select .= ', qf.feedbacktext ';
-            $from .= " LEFT JOIN {$CFG->prefix}quiz_feedback qf ON " .
-                    "qf.quizid = $quiz->id AND qf.mingrade <= qa.sumgrades * $factor AND qa.sumgrades * $factor < qf.maxgrade";
         }
 
         // Fetch the attempts
@@ -523,7 +512,7 @@ class quiz_report extends quiz_default_report {
                 // Feedback column.
                 if ($hasfeedback) {
                     if ($attempt->timefinish) {
-                        $row[] = format_text($attempt->feedbacktext, FORMAT_MOODLE, $nocleanformatoptions);
+                        $row[] = quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $quiz), $quiz->id);
                     } else {
                         $row[] = '-';
                     }
@@ -542,6 +531,37 @@ class quiz_report extends quiz_default_report {
                     echo $text." \n";
                 }
             }
+            //end of adding data from attempts data to table / download
+            //now add averages :
+            if (!$download && $attempts){
+    
+                $averagesql = "SELECT AVG(qg.grade) AS grade " .
+                        "FROM {$CFG->prefix}quiz_grades qg " .
+                        "WHERE quiz=".$quiz->id;
+                        
+                $table->add_separator();
+                if ($groupstudents){
+                    $groupaveragesql = $averagesql." AND qg.userid IN ($groupstudents)";
+                    $groupaverage = get_record_sql($groupaveragesql);
+                    $groupaveragerow = array('fullname' => get_string('groupavg', 'grades'),
+                            'sumgrades' => round($groupaverage->grade, $quiz->decimalpoints),
+                            'feedbacktext'=> quiz_report_feedback_for_grade($groupaverage->grade, $quiz->id));
+                    if($detailedmarks && $qmfilter) {
+                        $avggradebyq = quiz_get_average_grade_for_questions($quiz, $groupstudents);
+                        $groupaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz, $download);
+                    }
+                    $table->add_data_keyed($groupaveragerow);
+                }
+                $overallaverage = get_record_sql($averagesql." AND qg.userid IN ($students)");
+                $overallaveragerow = array('fullname' => get_string('overallaverage', 'grades'),
+                            'sumgrades' => round($overallaverage->grade, $quiz->decimalpoints),
+                            'feedbacktext'=> quiz_report_feedback_for_grade($overallaverage->grade, $quiz->id));
+                if($detailedmarks && $qmfilter) {
+                    $avggradebyq = quiz_get_average_grade_for_questions($quiz, $students);
+                    $overallaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz, $download);
+                }
+                $table->add_data_keyed($overallaveragerow);
+            }    
             if (!$download) {
                 // Start form
                 echo '<div id="tablecontainer">';
@@ -604,9 +624,11 @@ class quiz_report extends quiz_default_report {
             // Print display options
             $mform->set_data($displayoptions +compact('detailedmarks', 'pagesize'));
             $mform->display();
-            $imageurl = $CFG->wwwroot.'/mod/quiz/report/overview/overviewgraph.php?id='.$quiz->id;
-            print_heading(get_string('overviewreportgraph', 'quiz_overview'));
-            echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.get_string('overviewreportgraph', 'quiz_overview').'" /></div>';
+            if ($attempts){
+                $imageurl = $CFG->wwwroot.'/mod/quiz/report/overview/overviewgraph.php?id='.$quiz->id;
+                print_heading(get_string('overviewreportgraph', 'quiz_overview'));
+                echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.get_string('overviewreportgraph', 'quiz_overview').'" /></div>';
+            }
         }
         return true;
     }
