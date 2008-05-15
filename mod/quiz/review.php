@@ -30,9 +30,6 @@
         error("The course module for the quiz with id $quiz->id is missing");
     }
 
-    $grade = quiz_rescale_grade($attempt->sumgrades, $quiz);
-    $feedback = quiz_feedback_for_grade($grade, $attempt->quiz);
-
     if (!count_records('question_sessions', 'attemptid', $attempt->uniqueid)) {
         // this question has not yet been upgraded to the new model
         quiz_upgrade_states($attempt);
@@ -103,15 +100,6 @@
         error('Could not restore question sessions');
     }
 
-/// Print the page header
-
-    $strscore  = get_string("score", "quiz");
-    $strgrade  = get_string("grade");
-    $strbestgrade  = get_string("bestgrade", "quiz");
-    $strtimetaken     = get_string("timetaken", "quiz");
-    $strtimecompleted = get_string("completedon", "quiz");
-    $stroverdue = get_string("overdue", "quiz");
-
 /// Work out appropriate title.
     if ($isteacher and $attempt->userid == $USER->id) {
         $strreviewtitle = get_string('reviewofpreview', 'quiz');
@@ -119,6 +107,7 @@
         $strreviewtitle = get_string('reviewofattempt', 'quiz', $attempt->attempt);
     }
 
+/// Print the page header
     $pagequestions = explode(',', $pagelist);
     $headtags = get_html_head_contributions($pagequestions, $questions, $states);
     if (!empty($popup)) {
@@ -146,6 +135,8 @@
         }
         include('tabs.php');
     }
+
+/// Print heading.
     print_heading(format_string($quiz->name));
     if ($isteacher and $attempt->userid == $USER->id) {
         // the teacher is at the end of a preview. Print button to start new preview
@@ -163,8 +154,7 @@
         include('attempt_close_js.php');
     }
 
-/// Print infobox
-
+/// Work out some time-related things.
     $timelimit = (int)$quiz->timelimit * 60;
     $overtime = 0;
 
@@ -181,39 +171,54 @@
     } else {
         $timetaken = get_string('unfinished', 'quiz');
     }
-    echo '<table class="generaltable generalbox quizreviewsummary"><tbody>';
+
+/// Print summary table about the whole attempt.
+/// First we assemble all the rows that are appopriate to the current situation in
+/// an array, then later we only output the table if there are any rows to show.
+    $rows = array();
     if ($attempt->userid <> $USER->id) {
         $student = get_record('user', 'id', $attempt->userid);
         $picture = print_user_picture($student, $course->id, $student->picture, false, true);
-        echo '<tr><th scope="row" class="cell">', $picture, '</th><td class="cell"><a href="', $CFG->wwwroot,
-            '/user/view.php?id=', $student->id, '&amp;course='.$course->id.'">',
-            fullname($student, true), '</a></td></tr>';
+        $rows[] = '<tr><th scope="row" class="cell">' . $picture . '</th><td class="cell"><a href="' .
+                $CFG->wwwroot . '/user/view.php?id=' . $student->id . '&amp;course=' . $course->id . '">' .
+                fullname($student, true) . '</a></td></tr>';
     }
-    if (has_capability('mod/quiz:grade', $context) and
+    if (has_capability('mod/quiz:viewreports', $context) &&
             count($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND userid = '$attempt->userid'", 'attempt ASC')) > 1) {
-        // print list of attempts
-        $attemptlist = '';
-        foreach ($attempts as $at) {
-            $attemptlist .= ($at->id == $attempt->id)
-                ? '<strong>'.$at->attempt.'</strong>, '
-                : '<a href="review.php?attempt='.$at->id.($showall?'&amp;showall=true':'').'">'.$at->attempt.'</a>, ';
+    /// List of all this user's attempts for people who can see reports.
+        $urloptions = '';
+        if ($showall) {
+            $urloptions .= '&amp;showall=true';
+        } else if ($page > 0) {
+            $urloptions .= '&amp;page=' . $page;
         }
-        echo '<tr><th scope="row" class="cell">', get_string('attempts', 'quiz'), '</th><td class="cell">',
-                trim($attemptlist, ' ,'), '</td></tr>';
+        $attemptlist = array();
+        foreach ($attempts as $at) {
+            if ($at->id == $attempt->id) {
+                $attemptlist[] = '<strong>' . $at->attempt . '</strong>';
+            } else {
+                $attemptlist[] = '<a href="review.php?attempt=' . $at->id . $urloptions . ' ">' . $at->attempt . '</a>';
+            }
+        }
+        $rows[] = '<tr><th scope="row" class="cell">' . get_string('attempts', 'quiz') .
+                '</th><td class="cell">' . implode(', ', $attemptlist) . '</td></tr>';
     }
 
-    echo '<tr><th scope="row" class="cell">', get_string('startedon', 'quiz'), '</th><td class="cell">',
-            userdate($attempt->timestart), '</td></tr>';
+/// Timing information.
+    $rows[] = '<tr><th scope="row" class="cell">' . get_string('startedon', 'quiz') .
+            '</th><td class="cell">' . userdate($attempt->timestart) . '</td></tr>';
     if ($attempt->timefinish) {
-        echo '<tr><th scope="row" class="cell">', $strtimecompleted, '</th><td class="cell">',
-                userdate($attempt->timefinish), '</td></tr>';
-        echo '<tr><th scope="row" class="cell">', $strtimetaken, '</th><td class="cell">',
-                $timetaken, '</td></tr>';
+        $rows[] = '<tr><th scope="row" class="cell">' . get_string('completedon', 'quiz') . '</th><td class="cell">' .
+                userdate($attempt->timefinish) . '</td></tr>';
+        $rows[] = '<tr><th scope="row" class="cell">' . get_string('timetaken', 'quiz') . '</th><td class="cell">' .
+                $timetaken . '</td></tr>';
     }
     if (!empty($overtime)) {
-        echo '<tr><th scope="row" class="cell">', $stroverdue, '</th><td class="cell">',$overtime, '</td></tr>';
+        $rows[] = '<tr><th scope="row" class="cell">' . get_string('overdue', 'quiz') . '</th><td class="cell">' . $overtime . '</td></tr>';
     }
-    //if the student is allowed to see their score
+
+/// Show scores (if the user is allowed to see scores at the moment).
+    $grade = quiz_rescale_grade($attempt->sumgrades, $quiz);
     if ($options->scores) {
         if ($quiz->grade and $quiz->sumgrades) {
             if($overtime) {
@@ -221,22 +226,38 @@
                 $result->grade = "0.0";
             }
 
+        /// Show raw marks only if they are different from the grade (like on the view page.
+            if ($quiz->grade != $quiz->sumgrades) {
+                $a = new stdClass;
+                $a->grade = round($attempt->sumgrades, $CFG->quiz_decimalpoints);
+                $a->maxgrade = $quiz->sumgrades;
+                $rows[] = '<tr><th scope="row" class="cell">' . get_string('marks', 'quiz') . '</th><td class="cell">' .
+                        get_string('outofshort', 'quiz', $a) . '</td></tr>';
+            }
+
+        /// Now the scaled grade.
             $a = new stdClass;
-            $percentage = round(($attempt->sumgrades/$quiz->sumgrades)*100, 0);
-            $a->grade = $grade;
+            $a->grade = '<b>' . $grade . '</b>';
             $a->maxgrade = $quiz->grade;
-            $rawscore = round($attempt->sumgrades, $CFG->quiz_decimalpoints);
-            echo '<tr><th scope="row" class="cell">', $strscore, '</th><td class="cell">',
-                "$rawscore/$quiz->sumgrades ($percentage%)", '</td></tr>';
-            echo '<tr><th scope="row" class="cell">', $strgrade, '</th><td class="cell">',
-                get_string('outof', 'quiz', $a), '</td></tr>';
+            $a->percent = '<b>' . round(($attempt->sumgrades/$quiz->sumgrades)*100, 0) . '</b>';
+            $rows[] = '<tr><th scope="row" class="cell">' . get_string('grade') . '</th><td class="cell">' .
+                    get_string('outofpercent', 'quiz', $a) . '</td></tr>';
         }
     }
+
+/// Feedback if there is any, and the user is allowed to see it now.
+    $feedback = quiz_feedback_for_grade($grade, $attempt->quiz);
     if ($options->overallfeedback && $feedback) {
-        echo '<tr><th scope="row" class="cell">', get_string('feedback', 'quiz'), '</th><td class="cell">',
-                $feedback, '</td></tr>';
+        $rows[] = '<tr><th scope="row" class="cell">' . get_string('feedback', 'quiz') .
+                '</th><td class="cell">' . $feedback . '</td></tr>';
     }
-    echo '</tbody></table>';
+
+/// Now output the summary table, if there are any rows to be shown.
+    if (!empty($rows)) {
+        echo '<table class="generaltable generalbox quizreviewsummary"><tbody>', "\n";
+        echo implode("\n", $rows);
+        echo "\n</tbody></table>\n";
+    }
 
 /// Print the navigation panel if required
     $numpages = quiz_number_of_pages($attempt->layout);
@@ -248,7 +269,6 @@
     }
 
 /// Print all the questions
-
     $number = quiz_first_questionnumber($attempt->layout, $pagelist);
     foreach ($pagequestions as $i) {
         if (!isset($questions[$i])) {

@@ -186,14 +186,6 @@
 
         print_heading(get_string('summaryofattempts', 'quiz'));
 
-        // Get some strings.
-        $strattempt       = get_string("attempt", "quiz");
-        $strtimetaken     = get_string("timetaken", "quiz");
-        $strtimecompleted = get_string("timecompleted", "quiz");
-        $strgrade         = get_string("grade");
-        $strmarks         = get_string('marks', 'quiz');
-        $strfeedback      = get_string('feedback', 'quiz');
-
         // Work out which columns we need, taking account what data is available in each attempt.
         list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts, $context);
 
@@ -204,28 +196,28 @@
         $feedbackcolumn = quiz_has_feedback($quiz->id);
         $overallfeedback = $feedbackcolumn && $alloptions->overallfeedback;
 
-        // prepare table header
+        // Prepare table header
         $table->class = 'generaltable quizattemptsummary';
-        $table->head = array($strattempt, $strtimecompleted);
-        $table->align = array("center", "left");
-        $table->size = array("", "");
+        $table->head = array(get_string('attempt', 'quiz'), get_string('timecompleted', 'quiz'));
+        $table->align = array('center', 'left');
+        $table->size = array('', '');
         if ($markcolumn) {
-            $table->head[] = "$strmarks / $quiz->sumgrades";
+            $table->head[] = get_string('marks', 'quiz') . " / $quiz->sumgrades";
             $table->align[] = 'center';
             $table->size[] = '';
         }
         if ($gradecolumn) {
-            $table->head[] = "$strgrade / $quiz->grade";
+            $table->head[] = get_string('grade') . " / $quiz->grade";
             $table->align[] = 'center';
             $table->size[] = '';
         }
         if ($feedbackcolumn) {
-            $table->head[] = $strfeedback;
+            $table->head[] = get_string('feedback', 'quiz');
             $table->align[] = 'left';
             $table->size[] = '';
         }
         if (isset($quiz->showtimetaken)) {
-            $table->head[] = $strtimetaken;
+            $table->head[] = get_string('timetaken', 'quiz');
             $table->align[] = 'left';
             $table->size[] = '';
         }
