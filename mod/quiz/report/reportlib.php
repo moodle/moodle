@@ -36,6 +36,44 @@ function quiz_get_newgraded_states($attemptids, $idxattemptq = true){
         return array();
     }
 }
+
+function quiz_get_average_grade_for_questions($quiz, $userids){
+    global $CFG;
+    $gradedevents = QUESTION_EVENTGRADE.','.
+                    QUESTION_EVENTCLOSEANDGRADE.','.
+                    QUESTION_EVENTMANUALGRADE;
+    $qmfilter = quiz_report_qm_filter_subselect($quiz, 'qa.userid');
+    $questionavgssql = "SELECT qs.question, AVG(qs.grade) FROM " .
+            "{$CFG->prefix}question_sessions qns, " .
+            "{$CFG->prefix}quiz_attempts qa, " .
+            "{$CFG->prefix}question_states qs " .
+            "WHERE qns.attemptid = qa.uniqueid AND " .
+            "qa.quiz = {$quiz->id} AND " .
+            ($qmfilter?$qmfilter.' AND ':'').
+            "qa.userid IN ({$userids}) AND " .
+            "qs.event IN ($gradedevents) AND ".
+            "qns.newgraded = qs.id GROUP BY qs.question";
+    return get_records_sql_menu($questionavgssql);
+}
+function quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz, $download){
+    $row = array();
+    if (!$avggradebyq){
+        $avggradebyq = array();
+    }
+    foreach(array_keys($questions) as $questionid) {
+        if (isset($avggradebyq[$questionid])){
+            $grade = $avggradebyq[$questionid];
+            $grade = quiz_rescale_grade($grade, $quiz);
+        } else {
+            $grade = '--';
+        }
+        if (!$download) {
+            $grade = $grade.'/'.quiz_rescale_grade($questions[$questionid]->grade, $quiz);
+        }
+        $row['$'.$questionid]= $grade;
+    }
+    return $row;
+}
 /**
  * Load the question data necessary in the reports.
  * - Remove description questions.
@@ -78,7 +116,7 @@ function quiz_report_load_questions($quiz){
  * one attempt that will be graded for each user. Or return 
  * empty string if all attempts contribute to final grade.
  */
-function quiz_report_qm_filter_subselect($quiz){
+function quiz_report_qm_filter_subselect($quiz, $useridsql = 'u.id'){
     global $CFG;
     if ($quiz->attempts == 1) {//only one attempt allowed on this quiz
         return '';
@@ -100,7 +138,7 @@ function quiz_report_qm_filter_subselect($quiz){
     }
     if ($qmfilterattempts){
         $qmsubselect = "(SELECT id FROM {$CFG->prefix}quiz_attempts " .
-                "WHERE quiz = {$quiz->id} AND u.id = userid " .
+                "WHERE quiz = {$quiz->id} AND $useridsql = userid " .
                 "ORDER BY $qmorderby LIMIT 1)=qa.id";
     } else {
         $qmsubselect = '';
@@ -140,5 +178,36 @@ function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)
         return "<p>".get_string('showinggradedandungraded', "quiz_overview",
                 ('<span class="highlight">'.quiz_get_grading_option_name($quiz->grademethod).'</span>'))."</p>";
     }
+}
+
+
+/**
+ * Get the feedback text for a grade on this quiz. The feedback is
+ * processed ready for display.
+ *
+ * @param float $grade a grade on this quiz.
+ * @param integer $quizid the id of the quiz object.
+ * @return string the comment that corresponds to this grade (empty string if there is not one.
+ */
+function quiz_report_feedback_for_grade($grade, $quizid) {
+    static $feedbackcache = array();
+    if (!isset($feedbackcache[$quizid])){
+        $feedbackcache[$quizid] = get_records('quiz_feedback', 'quizid', $quizid);
+    }
+    $feedbacks = $feedbackcache[$quizid];
+    $feedbacktext = '';
+    foreach ($feedbacks as $feedback) {
+        if ($feedback->mingrade <= $grade && $grade < $feedback->maxgrade){
+            $feedbacktext = $feedback->feedbacktext;
+            break;
+        }
+    }
+
+    // Clean the text, ready for display.
+    $formatoptions = new stdClass;
+    $formatoptions->noclean = true;
+    $feedbacktext = format_text($feedbacktext, FORMAT_MOODLE, $formatoptions);
+
+    return $feedbacktext;
 }
 ?>

@@ -774,6 +774,27 @@ class flexible_table {
         }
         $this->data[] = NULL;
     }
+    
+    /**
+     * Add a row of data to the table. This function takes an array with 
+     * column names as keys. 
+     * It ignores any elements with keys that are not defined as columns. It
+     * puts in empty strings into the row when there is no element in the passed
+     * array corresponding to a column in the table. It puts the row elements in
+     * the proper order.
+     * @param $rowwithkeys array
+     * 
+     */
+    function add_data_keyed($rowwithkeys){
+        foreach (array_keys($this->columns) as $column){
+            if (isset($rowwithkeys[$column])){
+                $row [] = $rowwithkeys[$column];
+            } else {
+                $row[] ='';
+            }
+        }
+        $this->add_data($row);
+    }
 
 }
 
