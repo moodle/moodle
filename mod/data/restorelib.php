@@ -96,6 +96,9 @@ function data_restore_mods($mod,$restore) {
         $database->defaultsortdir = backup_todb($info['MOD']['#']['DEFAULTSORTDIR']['0']['#']);
         $database->editany = backup_todb($info['MOD']['#']['EDITANY']['0']['#']);
         $database->notification = backup_todb($info['MOD']['#']['NOTIFICATION']['0']['#']);
+        if ($database->notification == null) { /// Changed to NOT NULL between 1.9 and 2.0 - MDL-14548
+            unset($database->notification);    /// Unset it if null to get proper Moodle 2.0 default (0) applied
+        }
 
         $newid = insert_record ('data', $database);
 
