@@ -254,7 +254,7 @@ class check_defaults extends XMLDBAction {
             /// Add the SQL statements (all together)
                 $r.= '<hr />' . $s;
             } else {
-                $r.= '    <p class="centerpara">' . $this->str['nowrongintsfound'] . '</p>';
+                $r.= '    <p class="centerpara">' . $this->str['nowrongdefaultsfound'] . '</p>';
             }
             $r.= '  </td></tr>';
             $r.= '  <tr><td class="generalboxcontent">';
