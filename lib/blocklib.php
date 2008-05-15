@@ -512,7 +512,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
                     unset($data->$item);
                 }
                 if(!$blockobject->instance_config_save($data,$pinned)) {
-                    print_error('Error saving block configuration');
+                    print_error('cannotsaveblock');
                 }
                 // And nothing more, continue with displaying the page
             }
@@ -541,7 +541,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
         break;
         case 'toggle':
             if(empty($instance))  {
-                print_error('Invalid block instance for '.$blockaction);
+                print_error('invalidblockinstance', '', '', $blockaction);
             }
             $instance->visible = ($instance->visible) ? 0 : 1;
             if (!empty($pinned)) {
@@ -552,13 +552,13 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
         break;
         case 'delete':
             if(empty($instance))  {
-                print_error('Invalid block instance for '. $blockaction);
+                print_error('invalidblockinstance', '', '', $blockaction);
             }
             blocks_delete_instance($instance, $pinned);
         break;
         case 'moveup':
             if(empty($instance))  {
-                print_error('Invalid block instance for '. $blockaction);
+                print_error('invalidblockinstance', '', '', $blockaction);
             }
 
             if($instance->weight == 0) {
@@ -595,7 +595,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
         break;
         case 'movedown':
             if(empty($instance))  {
-                print_error('Invalid block instance for '. $blockaction);
+                print_error('invalidblockinstance', '', '', $blockaction);
             }
 
             if($instance->weight == max(array_keys($pageblocks[$instance->position]))) {
@@ -632,7 +632,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
         break;
         case 'moveleft':
             if(empty($instance))  {
-                print_error('Invalid block instance for '. $blockaction);
+                print_error('invalidblockinstance', '', '', $blockaction);
             }
 
             // Where is the instance going to be moved?
@@ -643,7 +643,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
         break;
         case 'moveright':
             if(empty($instance))  {
-                print_error('Invalid block instance for '. $blockaction);
+                print_error('invalidblockinstance', '', '', $blockaction);
             }
 
             // Where is the instance going to be moved?
@@ -976,7 +976,7 @@ function blocks_repopulate_page($page) {
     $allblocks = blocks_get_record();
 
     if(empty($allblocks)) {
-        print_error('Could not retrieve blocks from the database');
+        print_error('cannotgetblock');
     }
 
     // Assemble the information to correlate block names to ids
@@ -1078,10 +1078,10 @@ function upgrade_blocks_db($continueto) {
                     }
                 }
             } else {
-                print_error('Upgrade of blocks system failed! (Could not update version in config table)');
+                print_error('cannotupgradeblock');
             }
         } else {
-            print_error('Blocks tables could NOT be set up successfully!');
+            print_error('cannotsetupblock');
         }
     }
 
@@ -1130,10 +1130,10 @@ function upgrade_blocks_db($continueto) {
                 exit;
                 }
             } else {
-                print_error('Upgrade of blocks system failed! (Could not update version in config table)');
+                print_error('cannotupgradeblock');
             }
         } else {
-            print_error('Upgrade failed!  See blocks/version.php');
+            print_error('cannotupgradeblock');
         }
 
     } else if ($blocks_version < $CFG->blocks_version) {
@@ -1166,12 +1166,12 @@ function upgrade_blocks_plugins($continueto) {
     $site = get_site();
 
     if (!$blocks = get_list_of_plugins('blocks', 'db') ) {
-        print_error('No blocks installed!');
+        print_error('noblocks', 'debug');
     }
 
     include_once($CFG->dirroot .'/blocks/moodleblock.class.php');
     if(!class_exists('block_base')) {
-        print_error('Class block_base is not defined or file not found for /blocks/moodleblock.class.php');
+        print_error('noblockbase');
     }
 
     foreach ($blocks as $blockname) {
@@ -1289,11 +1289,11 @@ function upgrade_blocks_plugins($continueto) {
                     // OK so far, now update the block record
                     $block->id = $currblock->id;
                     if (! update_record('block', $block)) {
-                        print_error('Could not update block '. $block->name .' record in block table!');
+                        print_error('cannotupdateblock', '', '', $block->name);
                     }
                     $component = 'block/'.$block->name;
                     if (!update_capabilities($component)) {
-                        print_error('Could not update '.$block->name.' capabilities!');
+                        print_error('nopermissiontoupdateblock', '', '', $block->name);
                     }
 
                     events_update_definition($component);
@@ -1306,7 +1306,7 @@ function upgrade_blocks_plugins($continueto) {
                 }
             } else {
                 upgrade_log_start();
-                print_error('Version mismatch: block '. $block->name .' can\'t downgrade '. $currblock->version .' -> '. $block->version .'!');
+                print_error('cannotdowngrade', 'debug', '', array($currblock->version, $block->version));
             }
 
         } else {    // block not installed yet, so install it
@@ -1326,9 +1326,9 @@ function upgrade_blocks_plugins($continueto) {
                 // Duplicate block titles are not allowed, they confuse people
                 // AND PHP's associative arrays ;)
                 if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                    print_error('<strong>Naming conflict</strong>: block <strong>'.$block->name.'</strong> has the same title with an existing block, <strong>'.$conflictblock.'</strong>!');
+                    print_error('blocknameconflict', '', '', array($block->name, $conflictblock));
                 } else if (CLI_UPGRADE) {
-                    print_error('Naming conflict: block "'.$block->name.'" has the same title with an existing block, "'.$conflictblock.'"!');
+                    print_error('blocknameconflict', '', '', array($block->name, $conflictblock));
                 }
             }
             if (empty($updated_blocks)) {
@@ -1372,10 +1372,10 @@ function upgrade_blocks_plugins($continueto) {
                     echo '<hr />';
                     }
                 } else {
-                    print_error($block->name .' block could not be added to the block list!');
+                    print_error('cannotaddblock', '', '', $block->name);
                 }
             } else {
-                print_error('Block '. $block->name .' tables could NOT be set up successfully!');
+                print_error('cannotsetupblock', '', '', $block->name);
             }
         }
 

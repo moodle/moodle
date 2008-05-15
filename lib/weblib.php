@@ -699,7 +699,7 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
                        "onclick=\"this.target='$name'; return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>";
             break;
         default :
-            print_error('Undefined element - can\'t create popup window.');
+            print_error('cannotcreatepopupwin');
             break;
     }
 
@@ -3676,7 +3676,7 @@ function build_navigation($extranavlinks, $cm = null) {
                     'a $cm parameter. If you get $cm using get_coursemodule_from_instance or '.
                     'get_coursemodule_from_id, this will be done automatically.', DEBUG_DEVELOPER);
             if (!$cm->modname = get_field('modules', 'name', 'id', $cm->module)) {
-                print_error('Cannot get the module type in build navigation.');
+                print_error('cannotmoduletype');
             }
         }
         if (!isset($cm->name)) {
@@ -3684,7 +3684,7 @@ function build_navigation($extranavlinks, $cm = null) {
                     'a $cm parameter. If you get $cm using get_coursemodule_from_instance or '.
                     'get_coursemodule_from_id, this will be done automatically.', DEBUG_DEVELOPER);
             if (!$cm->name = get_field($cm->modname, 'name', 'id', $cm->instance)) {
-                print_error('Cannot get the module name in build navigation.');
+                print_error('cannotmodulename');
             }
         }
         $navlinks[] = array(
@@ -5755,7 +5755,7 @@ function editorhelpbutton(){
                     $titles[] = get_string('helptext');
                     break;
                 default :
-                    print_error('Unknown help topic '.$item);
+                    print_error('unknownhelp', '', '', $item);
             }
         }
         $i++;

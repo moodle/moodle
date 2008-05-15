@@ -856,10 +856,10 @@ function require_capability($capability, $context, $userid=NULL, $doanything=tru
 
         } else if ($context->contextlevel == CONTEXT_MODULE) {
             if (!$cm = get_record('course_modules', 'id', $context->instanceid)) {
-                print_error('Incorrect module');
+                print_error('invalidmodule');
             }
             if (!$course = get_record('course', 'id', $cm->course)) {
-                print_error('Incorrect course.');
+                print_error('invalidcourseid');
             }
             require_course_login($course, true, $cm);
             $errorlink = $CFG->wwwroot.'/course/view.php?id='.$cm->course;
@@ -1713,10 +1713,10 @@ function moodle_install_roles() {
 /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
 
     if (!assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $systemcontext->id)) {
-        print_error('Could not assign moodle/site:doanything to the admin role');
+        print_error('cannotassignanthing');
     }
     if (!update_capabilities()) {
-        print_error('Had trouble upgrading the core capabilities for the Roles System');
+        print_error('cannotupgradecaps');
     }
 
 /// Look inside user_admin, user_creator, user_teachers, user_students and
@@ -1929,7 +1929,7 @@ function assign_legacy_capabilities($capability, $legacyperms) {
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
         if (!array_key_exists($type, $legacyroles)) {
-            print_error('Incorrect legacy role definition for type: '.$type);
+            print_error('invalidlegacy', '', '', $type);
         }
 
         if ($roles = get_roles_with_capability($legacyroles[$type], CAP_ALLOW)) {
@@ -2386,7 +2386,7 @@ function get_context_instance($contextlevel, $instance=0) {
 /// check allowed context levels
     if (!in_array($contextlevel, $allowed_contexts)) {
         // fatal error, code must be fixed - probably typo or switched parameters
-        print_error('Error: get_context_instance() called with incorrect context level "'.s($contextlevel).'"');
+        print_error('invalidcourselevel');
     }
 
     if (!is_array($instance)) {
@@ -2514,11 +2514,11 @@ function create_role($name, $shortname, $description, $legacy='') {
     // check for duplicate role name
 
     if ($role = get_record('role','name', $name)) {
-        print_error('there is already a role with this name!');
+        print_error('duplicaterolename');
     }
 
     if ($role = get_record('role','shortname', $shortname)) {
-        print_error('there is already a role with this shortname!');
+        print_error('duplicateroleshortname');
     }
 
     $role = new object();
@@ -3077,7 +3077,7 @@ function get_cached_capabilities($component='moodle') {
  */
 function get_default_capabilities($legacyrole) {
     if (!$allcaps = get_records('capabilities')) {
-        print_error('Error: no capabilitites defined!');
+        print_error('nocaps', 'debug');
     }
     $alldefs = array();
     $defaults = array();
@@ -3253,7 +3253,7 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
 
                 // Remove from capabilities cache.
                 if (!delete_records('capabilities', 'name', $cachedcap->name)) {
-                    print_error('Could not delete deprecated capability '.$cachedcap->name);
+                    print_error('cannotdeletecap', '', '', $cachedcap->name);
                 } else {
                     $removedcount++;
                 }
@@ -3261,8 +3261,7 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
                 if($roles = get_roles_with_capability($cachedcap->name)) {
                     foreach($roles as $role) {
                         if (!unassign_capability($cachedcap->name, $role->id)) {
-                            print_error('Could not unassign deprecated capability '.
-                                    $cachedcap->name.' from role '.$role->name);
+                            print_error('cannotunassigncap', '', '', array($cachedcap->name, $role->name));
                         }
                     }
                 }
@@ -3679,7 +3678,7 @@ function get_child_contexts($context) {
         break;
 
         default:
-            print_error('This is an unknown context (' . $context->contextlevel . ') in get_child_contexts!');
+            print_error('unknowcontext', '', '', $context->contextlevel);
         return false;
     }
 }

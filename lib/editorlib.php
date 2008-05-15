@@ -66,11 +66,11 @@ class editorObject {
             // If args is an array search keys courseid and name.
             // Name represents editor name to load.
             if ( !array_key_exists('courseid', $args) ) {
-                print_error("Required variable courseid is missing!");
+                print_error('invalidcourseid');
             }
 
             if ( !array_key_exists('name', $args) ) {
-                print_error("Required variable name is missing!");
+                print_error('missingvarname');
             }
 
             $courseid   = clean_param($args['courseid'], PARAM_INT);

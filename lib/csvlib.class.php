@@ -253,7 +253,7 @@ class csv_import_reader {
         global $USER;
 
         if (!$filename = make_upload_directory('temp/csvimport/'.$type.'/'.$USER->id, false)) {
-            print_error('Can not create temporary upload directory - verify moodledata permissions!');
+            print_error('cannotcreatetempdir');
         }
 
         // use current (non-conflicting) time stamp
