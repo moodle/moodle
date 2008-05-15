@@ -120,8 +120,13 @@ function quiz_report_grade_bands($bands, $quizid, $useridlist){
     ORDER BY band";
     $data = get_records_sql_menu($sql);
     //need to create array elements with values 0 at indexes where there is no element
-    $data =  $data + array_fill(0, $bands, 0);
+    $data =  $data + array_fill(0, $bands+1, 0);
     ksort($data);
+    //place the maximum (prefect grade) into the last band i.e. make last 
+    //band for example 9 <= g <=10 (where 10 is the perfect grade) rather than
+    //just 9 <= g <10.
+    $data[$bands-1] += $data[$bands];
+    unset($data[$bands]);
     return $data;
 }
 function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter){
