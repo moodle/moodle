@@ -2970,6 +2970,11 @@ function xmldb_main_upgrade($oldversion=0) {
     if ($result && $oldversion < 2007101512) {
         notify('Increasing size of user idnumber field, this may take a while...', 'notifysuccess');
 
+    /// Under MySQL and Postgres... detect old NULL contents and change them by correct empty string. MDL-14859
+        if ($CFG->dbfamily == 'mysql' || $CFG->dbfamily == 'postgres') {
+            execute_sql("UPDATE {$CFG->prefix}user SET idnumber = '' WHERE idnumber IS NULL", true);
+        }
+
     /// Define index idnumber (not unique) to be dropped form user
         $table = new XMLDBTable('user');
         $index = new XMLDBIndex('idnumber');
