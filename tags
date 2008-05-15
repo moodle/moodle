@@ -4175,6 +4175,8 @@ cancel	lib/editor/htmlarea/popups/dlg_ins_char.php	/^function cancel() {$/;"	f
 cancel	lib/editor/htmlarea/popups/dlg_ins_smile.php	/^function cancel() {$/;"	f
 capabilities_cleanup	lib/accesslib.php	/^function capabilities_cleanup($component, $newcapdef=NULL) {$/;"	f
 category_collapse	grade/lib.php	/^    function category_collapse(&$element, $collapsed) {$/;"	f
+category_delete_full	course/lib.php	/^function category_delete_full($category, $showfeedback=true) {$/;"	f
+category_delete_move	course/lib.php	/^function category_delete_move($category, $newparentid, $showfeedback=true) {$/;"	f
 category_grade_last	grade/lib.php	/^    function category_grade_last(&$element) {$/;"	f
 cc_submit	enrol/authorize/enrol.php	/^    function cc_submit($form, $course)$/;"	f
 censor_filter	filter/censor/filter.php	/^function censor_filter($courseid, $text) {$/;"	f
@@ -4960,6 +4962,7 @@ definition	admin/uploaduser_form.php	/^    function definition (){$/;"	f
 definition	admin/user/user_bulk_forms.php	/^    function definition() {$/;"	f
 definition	admin/user/user_message_form.php	/^    function definition() {$/;"	f
 definition	blog/edit_form.php	/^    function definition() {$/;"	f
+definition	course/delete_category_form.php	/^    function definition() {$/;"	f
 definition	course/edit_form.php	/^    function definition() {$/;"	f
 definition	course/editcategory_form.php	/^    function definition() {$/;"	f
 definition	course/import/activities/import_form.php	/^    function definition() {$/;"	f
@@ -5010,6 +5013,7 @@ definition	mod/journal/mod_form.php	/^    function definition() {$/;"	f
 definition	mod/label/mod_form.php	/^    function definition() {$/;"	f
 definition	mod/lesson/mod_form.php	/^    function definition() {$/;"	f
 definition	mod/quiz/mod_form.php	/^    function definition() {$/;"	f
+definition	mod/quiz/report/overview/overviewsettings_form.php	/^    function definition() {$/;"	f
 definition	mod/resource/mod_form.php	/^    function definition() {$/;"	f
 definition	mod/scorm/mod_form.php	/^    function definition() {$/;"	f
 definition	mod/survey/mod_form.php	/^    function definition() {$/;"	f
@@ -7323,6 +7327,7 @@ get_parameter	lib/bennu/iCalendar_properties.php	/^    function get_parameter($n
 get_params_for_iconstr	grade/lib.php	/^    function get_params_for_iconstr($element) {$/;"	f
 get_parent_category	lib/grade/grade_category.php	/^    function get_parent_category() {$/;"	f
 get_parent_category	lib/grade/grade_item.php	/^    function get_parent_category() {$/;"	f
+get_parent_contextid	lib/accesslib.php	/^function get_parent_contextid($context) {$/;"	f
 get_parent_contexts	lib/accesslib.php	/^function get_parent_contexts($context) {$/;"	f
 get_parsed_array	lib/searchlib.php	/^    function get_parsed_array(){$/;"	f
 get_path	mod/data/preset_class.php	/^    function get_path() {$/;"	f
@@ -7471,7 +7476,7 @@ get_text_for_indexing_html	search/documents/physical_html.php	/^function get_tex
 get_text_for_indexing_pdf	search/documents/physical_pdf.php	/^function get_text_for_indexing_pdf(&$resource){$/;"	f
 get_text_for_indexing_ppt	search/documents/physical_ppt.php	/^function get_text_for_indexing_ppt(&$resource){$/;"	f
 get_text_for_indexing_txt	search/documents/physical_txt.php	/^function get_text_for_indexing_txt(&$resource){$/;"	f
-get_text_for_indexing_xml	search/documents/physical_xml.php	/^function get_text_for_indexing_xml(&$resource){$/;"	f
+get_text_for_indexing_xml	search/documents/physical_xml.php	/^function get_text_for_indexing_xml(&$resource, $directfile = ''){$/;"	f
 get_timezone_offset	lib/moodlelib.php	/^function get_timezone_offset($tz) {$/;"	f
 get_timezone_record	lib/moodlelib.php	/^function get_timezone_record($timezonename) {$/;"	f
 get_title	blocks/moodleblock.class.php	/^    function get_title() {$/;"	f
@@ -7689,6 +7694,7 @@ glossary_upgrade	mod/glossary/db/postgres7.php	/^function glossary_upgrade($oldv
 glossary_user_complete	mod/glossary/lib.php	/^function glossary_user_complete($course, $user, $mod, $glossary) {$/;"	f
 glossary_user_outline	mod/glossary/lib.php	/^function glossary_user_outline($course, $user, $mod, $glossary) {$/;"	f
 grade_build_nav	grade/lib.php	/^function grade_build_nav($path, $pagename=null, $id=null) {$/;"	f
+grade_course_category_delete	lib/gradelib.php	/^function grade_course_category_delete($categoryid, $newparentid, $showfeedback) {$/;"	f
 grade_course_reset	lib/gradelib.php	/^function grade_course_reset($courseid) {$/;"	f
 grade_cron	lib/gradelib.php	/^function grade_cron() {$/;"	f
 grade_export	grade/export/lib.php	/^    function grade_export($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2) {$/;"	f
@@ -9657,6 +9663,7 @@ print_box	lib/weblib.php	/^function print_box($message, $classes='generalbox', $
 print_box_end	lib/weblib.php	/^function print_box_end($return=false) {$/;"	f
 print_box_start	lib/weblib.php	/^function print_box_start($classes='generalbox', $ids='', $return=false) {$/;"	f
 print_category_edit	course/index.php	/^function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $up=false, $down=false) {$/;"	f
+print_category_edit_header	course/index.php	/^function print_category_edit_header() {$/;"	f
 print_category_info	course/lib.php	/^function print_category_info($category, $depth, $files = false) {$/;"	f
 print_cell	files/index.php	/^function print_cell($alignment='center', $text='&nbsp;', $class='') {$/;"	f
 print_cell	lib/editor/htmlarea/coursefiles.php	/^function print_cell($alignment="center", $text="&nbsp;") {$/;"	f
@@ -9753,7 +9760,7 @@ print_navigation	lib/weblib.php	/^function print_navigation ($navigation, $separ
 print_navmenu	mod/resource/type/ims/resource.class.php	/^    function print_navmenu($items, $resource, $page=0) {$/;"	f
 print_next_wizard_page	question/type/datasetdependent/abstractqtype.php	/^    function print_next_wizard_page(&$question, &$form, $course) {$/;"	f
 print_object	lib/datalib.php	/^function print_object($object) {$/;"	f
-print_options_form	mod/quiz/report/analysis/report.php	/^    function print_options_form($quiz, $cm, $attempts, $lowlimit=0, $pagesize=10) {$/;"	f
+print_options_form	mod/quiz/report/analysis/report.php	/^    function print_options_form($quiz, $cm, $attempts, $lowlimit=0, $pagesize=QUIZ_REPORT_DEFAULT_PAGE_SIZE) {$/;"	f
 print_outline_row	course/user.php	/^function print_outline_row($mod, $instance, $result) {$/;"	f
 print_overview	course/lib.php	/^function print_overview($courses) {$/;"	f
 print_paging_bar	lib/weblib.php	/^function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page',$nocurr=false, $return=false) {$/;"	f
@@ -10092,6 +10099,7 @@ question_category_options	lib/questionlib.php	/^function question_category_optio
 question_category_select_menu	lib/questionlib.php	/^function question_category_select_menu($contexts, $top = false, $currentcat = 0, $selected = "", $nochildrenof = -1) {$/;"	f
 question_categorylist	lib/questionlib.php	/^function question_categorylist($categoryid) {$/;"	f
 question_check_no_rqp_questions	question/upgrade.php	/^function question_check_no_rqp_questions($result) {$/;"	f
+question_context_has_any_questions	lib/questionlib.php	/^function question_context_has_any_questions($context) {$/;"	f
 question_cwqpfs_check_children	question/upgrade.php	/^function question_cwqpfs_check_children($checkid, $categories, $categorychildparents, $cwqpfs){$/;"	f
 question_cwqpfs_to_update	question/upgrade.php	/^function question_cwqpfs_to_update($categories = null){$/;"	f
 question_dataset_dependent_definitions_form	question/type/datasetdependent/datasetdefinitions_form.php	/^    function question_dataset_dependent_definitions_form($submiturl, $question){$/;"	f
@@ -10099,6 +10107,7 @@ question_dataset_dependent_items_form	question/type/datasetdependent/datasetitem
 question_decode_content_links_caller	question/restorelib.php	/^    function question_decode_content_links_caller($restore) {$/;"	f
 question_delete_activity	lib/questionlib.php	/^function question_delete_activity($cm, $feedback=true) {$/;"	f
 question_delete_course	lib/questionlib.php	/^function question_delete_course($course, $feedback=true) {$/;"	f
+question_delete_course_category	lib/questionlib.php	/^function question_delete_course_category($category, $newcategory, $feedback=true) {$/;"	f
 question_delete_unused_random	question/upgrade.php	/^function question_delete_unused_random(){$/;"	f
 question_display	mod/questionnaire/questiontypes/questiontypes.class.php	/^    function question_display($data, $qnum='') {$/;"	f
 question_edit_contexts	question/editlib.php	/^    function question_edit_contexts($thiscontext){$/;"	f
@@ -10107,6 +10116,7 @@ question_edit_setup	question/editlib.php	/^function question_edit_setup($edittab
 question_extract_responses	lib/questionlib.php	/^function question_extract_responses($questions, $formdata, $defaultevent=QUESTION_EVENTSAVE) {$/;"	f
 question_file_links_base_url	lib/questionlib.php	/^function question_file_links_base_url($courseid){$/;"	f
 question_find_file_links_from_html	lib/questionlib.php	/^function question_find_file_links_from_html($html, $courseid){$/;"	f
+question_fix_random_question_parents	question/upgrade.php	/^function question_fix_random_question_parents() {$/;"	f
 question_get_export_dir	question/format.php	/^    function question_get_export_dir() {$/;"	f
 question_get_feedback_class	lib/questionlib.php	/^function question_get_feedback_class($fraction) {$/;"	f
 question_get_feedback_image	lib/questionlib.php	/^function question_get_feedback_image($fraction, $selected=true) {$/;"	f
@@ -10123,6 +10133,8 @@ question_list	question/editlib.php	/^function question_list($contexts, $pageurl,
 question_list_instances	lib/questionlib.php	/^function question_list_instances($questionid) {$/;"	f
 question_make_default_categories	lib/questionlib.php	/^function question_make_default_categories($contexts) {$/;"	f
 question_make_name_prefix	lib/questionlib.php	/^function question_make_name_prefix($id) {$/;"	f
+question_move_questions_to_category	lib/questionlib.php	/^function question_move_questions_to_category($questionids, $newcategory) {$/;"	f
+question_multianswer_fix_subquestion_parents_and_categories	question/type/multianswer/db/upgrade.php	/^function question_multianswer_fix_subquestion_parents_and_categories() {$/;"	f
 question_name	question/type/random/questiontype.php	/^    function question_name($category) {$/;"	f
 question_new_attempt_uniqueid	lib/questionlib.php	/^function question_new_attempt_uniqueid($modulename='quiz') {$/;"	f
 question_print_comment_box	lib/questionlib.php	/^function question_print_comment_box($question, $state, $attempt, $url) {$/;"	f
@@ -10139,6 +10151,7 @@ question_restore_dataset_definitions	question/restorelib.php	/^    function ques
 question_restore_dataset_items	question/restorelib.php	/^    function question_restore_dataset_items ($definitionid,$info,$restore) {$/;"	f
 question_restore_map_answers	question/restorelib.php	/^    function question_restore_map_answers ($old_question_id,$new_question_id,$info,$restore) {$/;"	f
 question_restore_numerical_units	question/restorelib.php	/^    function question_restore_numerical_units($old_question_id,$new_question_id,$info,$restore) {$/;"	f
+question_save_from_deletion	lib/questionlib.php	/^function question_save_from_deletion($questionids, $newcontextid, $oldplace, $newcategory = null) {$/;"	f
 question_showbank	question/editlib.php	/^function question_showbank($tabname, $contexts, $pageurl, $cm, $page, $perpage, $sortorder, $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext){$/;"	f
 question_showbank_actions	question/editlib.php	/^function question_showbank_actions($pageurl, $cm){$/;"	f
 question_sort_options	question/editlib.php	/^function question_sort_options($pageurl, $sortorder){$/;"	f
@@ -10225,6 +10238,7 @@ quiz_get_best_grade	mod/quiz/locallib.php	/^function quiz_get_best_grade($quiz, 
 quiz_get_combined_reviewoptions	mod/quiz/locallib.php	/^function quiz_get_combined_reviewoptions($quiz, $attempts, $context=null) {$/;"	f
 quiz_get_grading_option_name	mod/quiz/locallib.php	/^function quiz_get_grading_option_name($option) {$/;"	f
 quiz_get_grading_options	mod/quiz/locallib.php	/^function quiz_get_grading_options() {$/;"	f
+quiz_get_newgraded_states	mod/quiz/report/reportlib.php	/^function quiz_get_newgraded_states($attemptids, $idxattemptq = true){$/;"	f
 quiz_get_participants	mod/quiz/lib.php	/^function quiz_get_participants($quizid) {$/;"	f
 quiz_get_post_actions	mod/quiz/lib.php	/^function quiz_get_post_actions() {$/;"	f
 quiz_get_recent_mod_activity	mod/quiz/lib.php	/^function quiz_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0)  {$/;"	f
@@ -10262,6 +10276,10 @@ quiz_questions_on_page	mod/quiz/locallib.php	/^function quiz_questions_on_page($
 quiz_recode_layout	mod/quiz/restorelib.php	/^    function quiz_recode_layout($layout, $restore) {$/;"	f
 quiz_refresh_events	mod/quiz/lib.php	/^function quiz_refresh_events($courseid = 0) {$/;"	f
 quiz_repaginate	mod/quiz/locallib.php	/^function quiz_repaginate($layout, $perpage, $shuffle=false) {$/;"	f
+quiz_report_grade_bands	mod/quiz/report/reportlib.php	/^function quiz_report_grade_bands($bands, $quizid, $useridlist){$/;"	f
+quiz_report_highlighting_grading_method	mod/quiz/report/reportlib.php	/^function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter){$/;"	f
+quiz_report_load_questions	mod/quiz/report/reportlib.php	/^function quiz_report_load_questions($quiz){$/;"	f
+quiz_report_qm_filter_subselect	mod/quiz/report/reportlib.php	/^function quiz_report_qm_filter_subselect($quiz){$/;"	f
 quiz_rescale_grade	mod/quiz/locallib.php	/^function quiz_rescale_grade($rawgrade, $quiz, $round = true) {$/;"	f
 quiz_reset_course_form_defaults	mod/quiz/lib.php	/^function quiz_reset_course_form_defaults($course) {$/;"	f
 quiz_reset_course_form_definition	mod/quiz/lib.php	/^function quiz_reset_course_form_definition(&$mform) {$/;"	f
@@ -10708,6 +10726,7 @@ restore_recode_answer	question/type/match/questiontype.php	/^    function restor
 restore_recode_answer	question/type/multianswer/questiontype.php	/^    function restore_recode_answer($state, $restore) {$/;"	f
 restore_recode_answer	question/type/multichoice/questiontype.php	/^    function restore_recode_answer($state, $restore) {$/;"	f
 restore_recode_answer	question/type/questiontype.php	/^    function restore_recode_answer($state, $restore) {$/;"	f
+restore_recode_answer	question/type/random/questiontype.php	/^    function restore_recode_answer($state, $restore) {$/;"	f
 restore_recode_answer	question/type/randomsamatch/questiontype.php	/^    function restore_recode_answer($state, $restore) {$/;"	f
 restore_recode_answer	question/type/truefalse/questiontype.php	/^    function restore_recode_answer($state, $restore) {$/;"	f
 restore_recode_category_parents	question/restorelib.php	/^    function restore_recode_category_parents($restore){$/;"	f
@@ -11435,6 +11454,7 @@ setUnique	lib/xmldb/classes/XMLDBIndex.class.php	/^    function setUnique($uniqu
 setUnsigned	lib/xmldb/classes/XMLDBField.class.php	/^    function setUnsigned($unsigned=true) {$/;"	f
 setUp	grade/simpletest/testreportlib.php	/^    function setUp() {$/;"	f
 setUp	lib/simpletest/fixtures/gradetest.php	/^    function setUp() {$/;"	f
+setUp	lib/simpletest/testaccesslib.php	/^    function setUp() {$/;"	f
 setUp	lib/simpletest/testajaxlib.php	/^    function setUp() {$/;"	f
 setUp	lib/simpletest/testbackuplib.php	/^    function setUp() {$/;"	f
 setUp	lib/simpletest/testdmllib.php	/^    function setUp() {$/;"	f
@@ -11674,6 +11694,7 @@ setconfig	lib/editor/htmlarea/htmlarea.class.php	/^    function setconfig() {$/;
 setconfig	lib/editor/tinymce/tinymce.class.php	/^    function setconfig () {$/;"	f
 setfilelist	files/index.php	/^function setfilelist($VARS) {$/;"	f
 setfilelist	lib/editor/htmlarea/coursefiles.php	/^function setfilelist($VARS) {$/;"	f
+setfocus	mod/chat/gui_sockets/chatinput.php	/^function setfocus() {$/;"	f
 setnew_password_and_mail	lib/moodlelib.php	/^function setnew_password_and_mail($user) {$/;"	f
 setup	lib/htmlpurifier/HTMLPurifier/Definition.php	/^    function setup($config) {$/;"	f
 setup	lib/htmlpurifier/HTMLPurifier/DefinitionCacheFactory.php	/^    function setup() {$/;"	f
@@ -12131,6 +12152,7 @@ tagOpen	mod/scorm/datamodels/scormlib.php	/^   function tagOpen($parser, $name, 
 tag_add	tag/lib.php	/^function tag_add($tags, $type="default") {$/;"	f
 tag_assign	tag/lib.php	/^function tag_assign($record_type, $record_id, $tagid, $ordering) {$/;"	f
 tag_autocomplete	tag/lib.php	/^function tag_autocomplete($text) {$/;"	f
+tag_cleanup	tag/lib.php	/^function tag_cleanup() {$/;"	f
 tag_cloud_sort	tag/locallib.php	/^function tag_cloud_sort($a, $b) {$/;"	f
 tag_compute_correlations	tag/lib.php	/^function tag_compute_correlations($min_correlation=2) {$/;"	f
 tag_cron	tag/lib.php	/^function tag_cron() {$/;"	f
@@ -12172,6 +12194,7 @@ tagname	auth/cas/CAS/domxml-php4-php5.php	/^ function tagname() {return $this->m
 takeThis	admin/mysql/themes.php	/^function takeThis(what){$/;"	f
 tally	lib/simpletestlib/mock_objects.php	/^        function tally() {$/;"	f
 tearDown	lib/simpletest/fixtures/gradetest.php	/^    function tearDown() {$/;"	f
+tearDown	lib/simpletest/testaccesslib.php	/^    function tearDown() {$/;"	f
 tearDown	lib/simpletest/testajaxlib.php	/^    function tearDown() {$/;"	f
 tearDown	lib/simpletest/testbackuplib.php	/^    function tearDown() {$/;"	f
 tearDown	lib/simpletest/testdmllib.php	/^    function tearDown() {$/;"	f
@@ -12246,6 +12269,8 @@ test_get_correct_responses	question/type/shortanswer/simpletest/testquestiontype
 test_get_field	lib/simpletest/testdmllib.php	/^    function test_get_field() {$/;"	f
 test_get_field_select	lib/simpletest/testdmllib.php	/^    function test_get_field_select() {$/;"	f
 test_get_field_sql	lib/simpletest/testdmllib.php	/^    function test_get_field_sql() {$/;"	f
+test_get_parent_contextid	lib/simpletest/testaccesslib.php	/^    function test_get_parent_contextid() {$/;"	f
+test_get_parent_contexts	lib/simpletest/testaccesslib.php	/^    function test_get_parent_contexts() {$/;"	f
 test_get_record	lib/simpletest/testdmllib.php	/^    function test_get_record() {$/;"	f
 test_get_record_select	lib/simpletest/testdmllib.php	/^    function test_get_record_select() {$/;"	f
 test_get_record_sql	lib/simpletest/testdmllib.php	/^    function test_get_record_sql() {$/;"	f
@@ -13007,6 +13032,7 @@ validate_internal_user_password	lib/moodlelib.php	/^function validate_internal_u
 validate_line	admin/handlevirus.php	/^function validate_line($line) {$/;"	f
 validate_user_upload_columns	admin/uploaduser.php	/^function validate_user_upload_columns(&$columns) {$/;"	f
 validation	admin/uploaduser_form.php	/^    function validation($data, $files) {$/;"	f
+validation	course/delete_category_form.php	/^    function validation($data, $files) {$/;"	f
 validation	course/edit_form.php	/^    function validation($data, $files) {$/;"	f
 validation	course/import/activities/import_form.php	/^    function validation($data, $files) {$/;"	f
 validation	course/moodleform_mod.php	/^    function validation($data, $files) {$/;"	f
