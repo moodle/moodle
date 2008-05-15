@@ -70,7 +70,7 @@ function quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz
         if (!$download) {
             $grade = $grade.'/'.quiz_rescale_grade($questions[$questionid]->grade, $quiz);
         }
-        $row['$'.$questionid]= $grade;
+        $row['qsgrade'.$questionid]= $grade;
     }
     return $row;
 }

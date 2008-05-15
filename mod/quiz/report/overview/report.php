@@ -52,9 +52,6 @@ class quiz_report extends quiz_default_report {
         $reviewoptions = quiz_get_reviewoptions($quiz, $fakeattempt, $context);
         $showgrades = $quiz->grade && $quiz->sumgrades && $reviewoptions->scores;
 
-        if (!$reviewoptions->scores) {
-            $detailedmarks = 0;
-        }
         $pageoptions = array();
         $pageoptions['id'] = $cm->id;
         $pageoptions['q'] = $quiz->id;
@@ -82,6 +79,9 @@ class quiz_report extends quiz_default_report {
             $attemptsmode = optional_param('attemptsmode', QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH, PARAM_INT);
             $detailedmarks = get_user_preferences('quiz_report_overview_detailedmarks', 1);
             $pagesize = get_user_preferences('quiz_report_pagesize', 0);
+        }
+        if (!$reviewoptions->scores) {
+            $detailedmarks = 0;
         }
         if ($pagesize < 1) {
             $pagesize = QUIZ_REPORT_DEFAULT_PAGE_SIZE;
@@ -168,10 +168,11 @@ class quiz_report extends quiz_default_report {
             $questions = quiz_report_load_questions($quiz);
             foreach ($questions as $id => $question) {
                 // Ignore questions of zero length
-                $columns[] = '$'.$id;
+                $columns[] = 'qsgrade'.$id;
                 $headers[] = '#'.$question->number;
             }
         }
+
         if ($hasfeedback) {
             $columns[] = 'feedbacktext';
             $headers[] = get_string('feedback', 'quiz');
@@ -335,12 +336,30 @@ class quiz_report extends quiz_default_report {
                 break;
         }
         
+        // Add extra limits due to sorting by question grade
+        if ($detailedmarks) {
+            $from .= ' ';
+            // we want to display marks for all questions
+            foreach (array_keys($questions) as $qid) {
+                $select .=  ", qs$qid.grade AS qsgrade$qid, qs$qid.event AS qsevent$qid, qs$qid.id AS qsid$qid";
+                $from .= "LEFT JOIN {$CFG->prefix}question_sessions qns$qid ON qns$qid.attemptid = qa.uniqueid AND qns$qid.questionid = $qid ";
+                $from .=  "LEFT JOIN  {$CFG->prefix}question_states qs$qid ON qs$qid.id = qns$qid.newgraded ";
+            }
+            $select .= ' ';
+        }
+
+        
 
         $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
 
-        if ($download) {
-            $sort = '';
-        } else {    
+        $sort = $table->get_sql_sort();
+        // Fix some wired sorting
+        if (empty($sort)) {
+            $sort = ' ORDER BY uniqueid';
+        } else {
+            $sort = ' ORDER BY '.$sort;
+        }
+         if (!$download) {
             // Add extra limits due to initials bar
             if($table->get_sql_where()) {
                 $where .= ' AND '.$table->get_sql_where();
@@ -356,36 +375,6 @@ class quiz_report extends quiz_default_report {
 
             }
 
-            // Add extra limits due to sorting by question grade
-            if($sort = $table->get_sql_sort()) {
-                $sortparts    = explode(',', $sort);
-                $newsort      = array();
-                $questionsort = false;
-                foreach($sortparts as $sortpart) {
-                    $sortpart = trim($sortpart);
-                    if(substr($sortpart, 0, 1) == '$') {
-                        if(!$questionsort) {
-                            $qid          = intval(substr($sortpart, 1));
-                            $select .= ', qs.grade AS qgrade ';
-                            $from        .= ' LEFT JOIN '.$CFG->prefix.'question_sessions qns ON qns.attemptid = qa.uniqueid '.
-                                                'LEFT JOIN '.$CFG->prefix.'question_states qs ON qs.id = qns.newgraded ';
-                            $where       .= ' AND (qns.questionid IS NULL OR qns.questionid = '.$qid.')';
-                            $newsort[]    = 'qgrade '.(strpos($sortpart, 'ASC')? 'ASC' : 'DESC');
-                            $questionsort = true;
-                        }
-                    } else {
-                        $newsort[] = $sortpart;
-                    }
-                }
-                // Reconstruct the sort string
-                $sort = ' ORDER BY '.implode(', ', $newsort);
-            }
-
-            // Fix some wired sorting
-            if (empty($sort)) {
-                $sort = ' ORDER BY uniqueid';
-            }
-
             $table->pagesize($pagesize, $total);
         }
 
@@ -396,27 +385,14 @@ class quiz_report extends quiz_default_report {
         } else {
             $attempts = get_records_sql($select.$from.$where.$sort);
         }
+        
         // Build table rows
         if (!$download) {
             $table->initialbars($totalinitials>20);
         }
         if ($attempts) {
-            if($detailedmarks) {
-                //get all the attempt ids we want to display on this page
-                //or to export for download.
-                $attemptids = array();
-                foreach ($attempts as $attempt){
-                    if ($attempt->attemptuniqueid > 0){
-                        $attemptids[] = $attempt->attemptuniqueid;
-                    }
-                }
-                $gradedstatesbyattempt = quiz_get_newgraded_states($attemptids);
-            }
-            foreach ($attempts as $attempt) {
-                $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
 
-                $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.
-                        '&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
+            foreach ($attempts as $attempt) {
 
                 // Username columns.
                 $row = array();
@@ -428,9 +404,12 @@ class quiz_report extends quiz_default_report {
                     }
                 }
                 if (in_array('picture', $columns)){
+                    $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
                     $row[] = $picture;
                 }
                 if (!$download){
+                    $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.
+                            '&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
                     $row[] = $userlink;
                 } else {
                     $row[] = fullname($attempt);
@@ -483,26 +462,27 @@ class quiz_report extends quiz_default_report {
                     } else {
                         $row[] = '-';
                     }
+                    
                 }
 
                 if($detailedmarks) {
-                    //get the detailled grade data for this attempt
                     if(empty($attempt->attempt)) {
                         foreach($questions as $question) {
                             $row[] = '-';
                         }
                     } else {
                         foreach($questions as $questionid => $question) {
-                            $stateforqinattempt = $gradedstatesbyattempt[$attempt->attemptuniqueid][$questionid];
-                            if (question_state_is_graded($stateforqinattempt)) {
-                                $grade = quiz_rescale_grade($stateforqinattempt->grade, $quiz);
+                            $state = new object();
+                            $state->event = $attempt->{'qsevent'.$questionid};
+                            if (question_state_is_graded($state)) {
+                                $grade = quiz_rescale_grade($attempt->{'qsgrade'.$questionid}, $quiz);
                             } else {
                                 $grade = '--';
                             }
                             if (!$download) {
                                 $grade = $grade.'/'.quiz_rescale_grade($question->grade, $quiz);
                                 $row[] = link_to_popup_window('/mod/quiz/reviewquestion.php?state='.
-                                        $stateforqinattempt->id.'&amp;number='.$question->number,
+                                        $attempt->{'qsid'.$questionid}.'&amp;number='.$question->number,
                                         'reviewquestion', $grade, 450, 650, $strreviewquestion, 'none', true);
                             } else {
                                 $row[] = $grade;
@@ -548,7 +528,7 @@ class quiz_report extends quiz_default_report {
                     $groupaveragerow = array('fullname' => get_string('groupavg', 'grades'),
                             'sumgrades' => round($groupaverage->grade, $quiz->decimalpoints),
                             'feedbacktext'=> quiz_report_feedback_for_grade($groupaverage->grade, $quiz->id));
-                    if($detailedmarks && $qmfilter) {
+                    if($detailedmarks && $qmsubselect) {
                         $avggradebyq = quiz_get_average_grade_for_questions($quiz, $groupstudents);
                         $groupaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz, $download);
                     }
@@ -558,7 +538,7 @@ class quiz_report extends quiz_default_report {
                 $overallaveragerow = array('fullname' => get_string('overallaverage', 'grades'),
                             'sumgrades' => round($overallaverage->grade, $quiz->decimalpoints),
                             'feedbacktext'=> quiz_report_feedback_for_grade($overallaverage->grade, $quiz->id));
-                if($detailedmarks && $qmfilter) {
+                if($detailedmarks && $qmsubselect) {
                     $avggradebyq = quiz_get_average_grade_for_questions($quiz, $students);
                     $overallaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz, $download);
                 }
