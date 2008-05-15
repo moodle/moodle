@@ -157,7 +157,7 @@ if ($mform->is_cancelled()){
 
         $toform = new object();
 
-        if ($categoriesarr = get_records_menu("glossary_entries_categories", "entryid", $e, '', 'id, categoryid')){
+        if ($categoriesarr = $DB->get_records_menu("glossary_entries_categories", array("entryid"=>$e), '', 'id, categoryid')){
             $toform->categories = array_values($categoriesarr);
         } else {
             $toform->categories = array(0);
@@ -181,7 +181,7 @@ if ($mform->is_cancelled()){
             die;
         }
 
-        if ( $aliases = get_records_menu("glossary_alias", "entryid", $e, '', 'id, alias') ) {
+        if ( $aliases = $DB->get_records_menu("glossary_alias", array("entryid"=>$e), '', 'id, alias') ) {
             $toform->aliases = implode("\n", $aliases) . "\n";
         }
         $mform->set_data($toform);

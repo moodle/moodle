@@ -1375,7 +1375,7 @@ function format_text_menu() {
  */
 function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
 
-    global $CFG, $COURSE;
+    global $CFG, $COURSE, $DB;
 
     static $croncache = array();
 
@@ -1420,7 +1420,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             }
         }
 
-        if ($oldcacheitem = get_record_sql('SELECT * FROM '.$CFG->prefix.'cache_text WHERE md5key = \''.$md5key.'\'', true)) {
+        if ($oldcacheitem = $DB->get_record('cache_text', array('md5key'=>$md5key), '*', true)) {
             if ($oldcacheitem->timemodified >= $time) {
                 if (defined('FULLME') and FULLME == 'cron') {
                     if (count($croncache) > 150) {
@@ -1523,16 +1523,16 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
         $newcacheitem = new object();
         $newcacheitem->md5key = $md5key;
-        $newcacheitem->formattedtext = addslashes($text);
+        $newcacheitem->formattedtext = $text;
         $newcacheitem->timemodified = time();
         if ($oldcacheitem) {                               // See bug 4677 for discussion
             $newcacheitem->id = $oldcacheitem->id;
-            @update_record('cache_text', $newcacheitem);   // Update existing record in the cache table
+            @$DB->update_record('cache_text', $newcacheitem);   // Update existing record in the cache table
                                                            // It's unlikely that the cron cache cleaner could have
                                                            // deleted this entry in the meantime, as it allows
                                                            // some extra time to cover these cases.
         } else {
-            @insert_record('cache_text', $newcacheitem);   // Insert a new record in the cache table
+            @$DB->insert_record('cache_text', $newcacheitem);   // Insert a new record in the cache table
                                                            // Again, it's possible that another user has caused this
                                                            // record to be created already in the time that it took
                                                            // to traverse this function.  That's OK too, as the
@@ -3003,7 +3003,7 @@ function current_theme() {
  * @return  string    theme name
  */
 function current_category_theme($categoryid=0) {
-    global $COURSE;
+    global $COURSE, $DB;
 
 /// Use the COURSE global if the categoryid not set
     if (empty($categoryid)) {
@@ -3015,7 +3015,7 @@ function current_category_theme($categoryid=0) {
     }
 
 /// Retrieve the current category
-    if ($category = get_record('course_categories', 'id', $categoryid)) {
+    if ($category = $DB->get_record('course_categories', array('id'=>$categoryid))) {
 
     /// Return the category theme if it exists
         if (!empty($category->theme)) {
@@ -3313,7 +3313,7 @@ function theme_setup($theme = '', $params=NULL) {
  * @return string
  */
 function user_login_string($course=NULL, $user=NULL) {
-    global $USER, $CFG, $SITE;
+    global $USER, $CFG, $SITE, $DB;
 
     if (empty($user) and !empty($USER->id)) {
         $user = $USER;
@@ -3324,7 +3324,7 @@ function user_login_string($course=NULL, $user=NULL) {
     }
 
     if (!empty($user->realuser)) {
-        if ($realuser = get_record('user', 'id', $user->realuser)) {
+        if ($realuser = $DB->get_record('user', array('id'=>$user->realuser))) {
             $fullname = fullname($realuser, true);
             $realuserinfo = " [<a $CFG->frametarget
             href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;return=1&amp;sesskey=".sesskey()."\">$fullname</a>] ";
@@ -3347,7 +3347,7 @@ function user_login_string($course=NULL, $user=NULL) {
 
         $fullname = fullname($user, true);
         $username = "<a $CFG->frametarget href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
-        if (is_mnet_remote_user($user) and $idprovider = get_record('mnet_host', 'id', $user->mnethostid)) {
+        if (is_mnet_remote_user($user) and $idprovider = $DB->get_record('mnet_host', array('id'=>$user->mnethostid))) {
             $username .= " from <a $CFG->frametarget href=\"{$idprovider->wwwroot}\">{$idprovider->name}</a>";
         }
         if (isset($user->username) && $user->username == 'guest') {
@@ -3355,7 +3355,7 @@ function user_login_string($course=NULL, $user=NULL) {
                       " (<a $CFG->frametarget href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
         } else if (!empty($user->access['rsw'][$context->path])) {
             $rolename = '';
-            if ($role = get_record('role', 'id', $user->access['rsw'][$context->path])) {
+            if ($role = $DB->get_record('role', array('id'=>$user->access['rsw'][$context->path]))) {
                 $rolename = ': '.format_string($role->name);
             }
             $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename.
@@ -3641,7 +3641,7 @@ function print_navigation ($navigation, $separator=0, $return=false) {
  *      navigation strings.
  */
 function build_navigation($extranavlinks, $cm = null) {
-    global $CFG, $COURSE;
+    global $CFG, $COURSE, $DB;
 
     if (is_string($extranavlinks)) {
         if ($extranavlinks == '') {
@@ -3675,7 +3675,7 @@ function build_navigation($extranavlinks, $cm = null) {
             debugging('The field $cm->modname should be set if you call build_navigation with '.
                     'a $cm parameter. If you get $cm using get_coursemodule_from_instance or '.
                     'get_coursemodule_from_id, this will be done automatically.', DEBUG_DEVELOPER);
-            if (!$cm->modname = get_field('modules', 'name', 'id', $cm->module)) {
+            if (!$cm->modname = $DB->get_field('modules', 'name', array('id'=>$cm->module))) {
                 print_error('cannotmoduletype');
             }
         }
@@ -3683,7 +3683,7 @@ function build_navigation($extranavlinks, $cm = null) {
             debugging('The field $cm->name should be set if you call build_navigation with '.
                     'a $cm parameter. If you get $cm using get_coursemodule_from_instance or '.
                     'get_coursemodule_from_id, this will be done automatically.', DEBUG_DEVELOPER);
-            if (!$cm->name = get_field($cm->modname, 'name', 'id', $cm->instance)) {
+            if (!$cm->name = $DB->get_field($cm->modname, 'name', array('id'=>$cm->instance))) {
                 print_error('cannotmodulename');
             }
         }
@@ -4284,7 +4284,7 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
  * @todo Finish documenting this function
  */
 function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
-    global $CFG, $HTTPSPAGEREQUIRED;
+    global $CFG, $HTTPSPAGEREQUIRED, $DB;
 
     $needrec = false;
     // only touch the DB if we are missing data...
@@ -4315,7 +4315,7 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
         }
     }
     if ($needrec) {
-        $user = get_record('user','id',$user, '', '', '', '', 'id,firstname,lastname,imagealt');
+        $user = $DB->get_record('user', array('id'=>$user), 'id,firstname,lastname,imagealt');
     }
 
     if ($link) {
@@ -5208,7 +5208,7 @@ function update_categories_search_button($search,$page,$perpage) {
  */
 function navmenu($course, $cm=NULL, $targetwindow='self') {
 
-    global $CFG, $THEME, $USER;
+    global $CFG, $THEME, $USER, $DB;
 
     if (empty($THEME->navmenuwidth)) {
         $width = 50;
@@ -5242,7 +5242,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     $menu = array();
     $menustyle = array();
 
-    $sections = get_records('course_sections','course',$course->id,'section','section,visible,summary');
+    $sections = $DB->get_records('course_sections', array('course'=>$course->id), 'section', 'section,visible,summary');
 
     if (!empty($THEME->makenavmenulist)) {   /// A hack to produce an XHTML navmenu list for use in themes
         $THEME->navmenulist = navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $width, $cm);
@@ -6075,7 +6075,7 @@ function redirect($url, $message='', $delay=-1) {
  * @param bool $return whether to return an output string or echo now
  */
 function notify($message, $style='notifyproblem', $align='center', $return=false) {
-    global $db;
+    global $DB;
 
     if ($style == 'green') {
         $style = 'notifysuccess';  // backward compatible with old color system
@@ -6084,7 +6084,7 @@ function notify($message, $style='notifyproblem', $align='center', $return=false
     $message = clean_text($message);
     if(!defined('CLI_UPGRADE')||!CLI_UPGRADE) {
     $output = '<div class="'.$style.'" style="text-align:'. $align .'">'. $message .'</div>'."\n";
-    } else if (CLI_UPGRADE && $db->debug) {
+    } else if (CLI_UPGRADE && $DB->get_debug()) {
         $output = '++'.$message.'++';
         return ;
     }

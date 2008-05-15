@@ -139,14 +139,14 @@
 /// Print Section
     if ($SITE->numsections > 0) {
 
-        if (!$section = get_record('course_sections', 'course', $SITE->id, 'section', 1)) {
+        if (!$section = $DB->get_record('course_sections', array('course'=>$SITE->id, 'section'=>1))) {
             delete_records('course_sections', 'course', $SITE->id, 'section', 1); // Just in case
             $section->course = $SITE->id;
             $section->section = 1;
             $section->summary = '';
             $section->sequence = '';
             $section->visible = 1;
-            $section->id = insert_record('course_sections', $section);
+            $section->id = $DB->insert_record('course_sections', $section);
         }
 
         if (!empty($section->sequence) or !empty($section->summary) or $editing) {

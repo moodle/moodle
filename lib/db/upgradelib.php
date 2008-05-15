@@ -8,42 +8,43 @@
  */
 
 function upgrade_fix_category_depths() {
-    global $CFG, $db;
+    global $CFG, $DB;
 
     // first fix incorrect parents
     $sql = "SELECT c.id
-              FROM {$CFG->prefix}course_categories c
-             WHERE c.parent > 0 AND c.parent NOT IN (SELECT pc.id FROM {$CFG->prefix}course_categories pc)";
-    if ($rs = get_recordset_sql($sql)) {
-        while ($cat = rs_fetch_next_record($rs)) {
+              FROM {course_categories} c
+             WHERE c.parent > 0 AND c.parent NOT IN (SELECT pc.id FROM {course_categories} pc)";
+    if ($rs = $DB->get_recordset_sql($sql)) {
+        foreach ($rs as $cat) {
             $cat->depth  = 1;
             $cat->path   = '/'.$cat->id;
             $cat->parent = 0;
-            update_record('course_categories', $cat);
+            $DB->update_record('course_categories', $cat);
         }
-        rs_close($rs);
+        $rs->close();
     }
 
     // now add path and depth to top level categories
-    $sql = "UPDATE {$CFG->prefix}course_categories
+    $sql = "UPDATE {course_categories}
                SET depth = 1, path = ".sql_concat("'/'", "id")."
              WHERE parent = 0";
-    execute_sql($sql);
+    $DB->execute($sql);
 
     // now fix all other levels - slow but works in all supported dbs
     $parentdepth = 1;
-    $db->debug = true;
-    while (record_exists('course_categories', 'depth', 0)) {
+    while ($DB->record_exists('course_categories', array('depth'=>0))) {
         $sql = "SELECT c.id, pc.path
-                  FROM {$CFG->prefix}course_categories c, {$CFG->prefix}course_categories pc
-                 WHERE c.parent=pc.id AND c.depth=0 AND pc.depth=$parentdepth";
-        if ($rs = get_recordset_sql($sql)) {
-            while ($cat = rs_fetch_next_record($rs)) {
+                  FROM {course_categories} c, {course_categories} pc
+                 WHERE c.parent=pc.id AND c.depth=0 AND pc.depth=?";
+        if ($rs = $DB->get_recordset_sql($sql, array($parentdepth))) {
+            $DB->set_debug(false);
+            foreach ($rs as $cat) {
                 $cat->depth = $parentdepth+1;
                 $cat->path  = $cat->path.'/'.$cat->id;
-                update_record('course_categories', $cat);
+                $DB->update_record('course_categories', $cat);
             }
-            rs_close($rs);
+            $rs->close();
+            $DB->set_debug(false);
         }
         $parentdepth++;
         if ($parentdepth > 100) {
@@ -52,7 +53,6 @@ function upgrade_fix_category_depths() {
             break;
         }
     }
-    $db->debug = true;
 }
 
 ?>

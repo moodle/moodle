@@ -72,7 +72,7 @@ class edit_xml_file extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB;
+        global $CFG, $XMLDB, $DB;
 
     /// Do the job, setting $result as needed
 
@@ -127,7 +127,7 @@ class edit_xml_file extends XMLDBAction {
             /// The new table button
                 $b .= '&nbsp;<a href="index.php?action=new_table&amp;postaction=edit_table&amp;table=changeme&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newtable'] . ']</a>';
             /// The new from MySQL button
-                if ($CFG->dbfamily == 'mysql') {
+                if ($DB->get_dbfamily() == 'mysql') {
                     $b .= '&nbsp;<a href="index.php?action=new_table_from_mysql&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newtablefrommysql'] . ']</a>';
                 } else {
                     $b .= '&nbsp;[' . $this->str['newtablefrommysql'] . ']';
@@ -146,17 +146,12 @@ class edit_xml_file extends XMLDBAction {
                 $o .= $b;
             /// Join all the reserved words into one big array
             /// Calculate list of available SQL generators
-                $plugins = get_list_of_plugins('lib/xmldb/classes/generators');
-                $reserved_words = array();
-                foreach($plugins as $plugin) {
-                    $classname = 'XMLDB' . $plugin;
-                    $generator = new $classname();
-                    $reserved_words = array_merge($reserved_words, $generator->getReservedWords());
-                }
-                sort($reserved_words);
-                $reserved_words = array_unique($reserved_words);
+
+                require("$CFG->libdir/ddl/sql_generator.php");
+                $reserved_words = sql_generator::getAllReservedWords();
+
             /// Add the tables list
-                $tables =& $structure->getTables();
+                $tables = $structure->getTables();
                 if ($tables) {
                     $o .= '<h3 class="main">' . $this->str['tables'] . '</h3>';
                     $o .= '<table id="listtables" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
@@ -190,7 +185,7 @@ class edit_xml_file extends XMLDBAction {
                             $b .= '[' . $this->str['delete'] . ']';
                         }
                     /// Detect if the table name is a reserved word
-                         if (in_array($table->getName(), $reserved_words)) {
+                         if (array_key_exists($table->getName(), $reserved_words)) {
                              $b .= '&nbsp;<a href="index.php?action=view_reserved_words"><span class="error">' . $this->str['reserved'] . '</span></a>';
                          }
                         $b .= '</td>';

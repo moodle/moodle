@@ -592,6 +592,10 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                                  /// some persistent drivers like ODBTP (mssql) or if this function is invoked
                                  /// from within a PHP application using persistent connections
         // configure a temp table
+
+/// TODO: move this to sql generators
+error('fix temporary table code in CAS');
+
         print "Configuring temp table\n";
         switch (strtolower($CFG->dbfamily)) {
             case 'mysql':

@@ -19,50 +19,13 @@
 
 function xmldb_lesson_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $db;
+    global $CFG, $THEME, $DB;
+
+    $dbman = $DB->get_manager();
 
     $result = true;
 
-    if ($result && $oldversion < 2006091802) {
-
-    /// Changing nullability of field response on table lesson_answers to null
-        $table = new XMLDBTable('lesson_answers');
-        $field = new XMLDBField('response');
-        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'answer');
-
-    /// Launch change of nullability for field response
-        $result = $result && change_field_notnull($table, $field);
-    }
-
-    if ($result && $oldversion < 2006091803) {
-
-    /// Changing nullability of field useranswer on table lesson_attempts to null
-        $table = new XMLDBTable('lesson_attempts');
-        $field = new XMLDBField('useranswer');
-        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'correct');
-
-    /// Launch change of nullability for field useranswer
-        $result = $result && change_field_notnull($table, $field);
-    }
-
-    if ($result && $oldversion < 2007020201) {
-
-    /// Changing nullability of field answer on table lesson_answers to null
-        $table = new XMLDBTable('lesson_answers');
-        $field = new XMLDBField('answer');
-        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'timemodified');
-
-    /// Launch change of nullability for field answer
-        $result = $result && change_field_notnull($table, $field);
-    }
-
-    if ($result && $oldversion < 2007072200) {
-        require_once($CFG->dirroot.'/mod/lesson/lib.php');
-        // too much debug output
-        $db->debug = false;
-        lesson_update_grades();
-        $db->debug = true;
-    }
+//===== 1.9.0 upgrade line ======//
 
     if ($result && $oldversion < 2007072201) {
 
@@ -71,11 +34,11 @@ function xmldb_lesson_upgrade($oldversion=0) {
         $field2 = new XMLDBField('usemaxgrade');
 
     /// Rename lesson->usegrademax to lesson->usemaxgrade. Some old sites can have it incorrect. MDL-13177
-        if (field_exists($table, $field) && !field_exists($table, $field2)) {
+        if ($dbman->field_exists($table, $field) && !$dbman->field_exists($table, $field2)) {
         /// Set field specs
             $field->setAttributes(XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, null, null, '0', 'ongoing');
         /// Launch rename field usegrademax to usemaxgrade
-            $result = $result && rename_field($table, $field, 'usemaxgrade');
+            $result = $result && $dbman->rename_field($table, $field, 'usemaxgrade');
         }
     }
 

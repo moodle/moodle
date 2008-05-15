@@ -5,7 +5,7 @@ class mod_survey_mod_form extends moodleform_mod {
 
     function definition() {
 
-        global $CFG;
+        global $CFG, $DB;
         $mform =& $this->_form;
 
         $strrequired = get_string('required');
@@ -17,7 +17,7 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
-        if (!$options = get_records_menu("survey", "template", 0, "name", "id, name")) {
+        if (!$options = $DB->get_records_menu("survey", array("template"=>0), "name", "id, name")) {
             print_error('No survey templates found!');
         }
 

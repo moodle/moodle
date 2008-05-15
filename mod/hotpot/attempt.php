@@ -6,7 +6,7 @@
 
     // get attempt, hotpot, course and course_module records
     if (! $attempt = get_record("hotpot_attempts", "id", $attemptid)) {
-        print_error("Hot Potatoes attempt record $attemptid could not be accessed: ".$db->ErrorMsg());
+        print_error("Hot Potatoes attempt record $attemptid could not be accessed: ".$DB->get_last_error());
     }
     if ($attempt->userid != $USER->id) {
         print_error("User ID is incorrect");
@@ -82,7 +82,7 @@
             $attempt->id = insert_record("hotpot_attempts", $attempt);
 
             if (empty($attempt->id)) {
-                print_error("Could not insert attempt record: ".$db->ErrorMsg(), '', $next_url);
+                print_error("Could not insert attempt record: ".$DB->get_last_error(), '', $next_url);
             }
 
             // add attempt details record, if necessary
@@ -91,7 +91,7 @@
                 $details->attempt = $attempt->id;
                 $details->details = $attempt->details;
                 if (! insert_record("hotpot_details", $details, false)) {
-                    print_error("Could not insert attempt details record: ".$db->ErrorMsg(), '', $next_url);
+                    print_error("Could not insert attempt details record: ".$DB->get_last_error(), '', $next_url);
                 }
             }
         } else {
@@ -112,7 +112,7 @@
 
     // update the attempt record
     if (! update_record("hotpot_attempts", $attempt)) {
-        print_error("Could not update attempt record: ".$db->ErrorMsg(), '', $next_url);
+        print_error("Could not update attempt record: ".$DB->get_last_error(), '', $next_url);
     }
 
     // update grades for this user
@@ -134,7 +134,7 @@
             $details->attempt = $attempt->id;
             $details->details = $attempt->details;
             if (! insert_record("hotpot_details", $details)) {
-                print_error("Could not insert attempt details record: ".$db->ErrorMsg(), '', $next_url);
+                print_error("Could not insert attempt details record: ".$DB->get_last_error(), '', $next_url);
             }
         }
     }

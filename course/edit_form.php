@@ -5,7 +5,7 @@ require_once($CFG->libdir.'/formslib.php');
 class course_edit_form extends moodleform {
 
     function definition() {
-        global $USER, $CFG;
+        global $USER, $CFG, $DB;
 
         $mform    =& $this->_form;
 
@@ -350,7 +350,7 @@ class course_edit_form extends moodleform {
             $options['1'] = get_string('yes');
             $mform->addElement('select', 'restrictmodules', get_string('restrictmodules'), $options);
             $mods = array(0=>get_string('allownone'));
-            $mods += get_records_menu('modules', '','','','id, name');
+            $mods += get_records_menu('modules', array() ,'name','id, name');
 
 
             $mform->addElement('select', 'allowedmods', get_string('to'), $mods,

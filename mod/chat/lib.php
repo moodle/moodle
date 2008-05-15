@@ -401,31 +401,25 @@ function chat_get_users($chatid, $groupid=0, $groupingid=0) {
 }
 
 function chat_get_latest_message($chatid, $groupid=0) {
-/// Efficient way to extract just the latest message
-/// Uses ADOdb directly instead of get_record_sql()
-/// because the LIMIT command causes problems with
-/// the developer debugging in there.
+    global $DB;
 
-    global $db, $CFG;
+    $params = array();
 
     if ($groupid) {
-        $groupselect = " AND (groupid='$groupid' OR groupid='0')";
+        $groupselect = " AND (groupid=? OR groupid=0)";
+        $params[] = $groupid;
     } else {
         $groupselect = "";
     }
 
-    if (!$rs = $db->SelectLimit("SELECT *
-                                 FROM {$CFG->prefix}chat_messages
-                                 WHERE chatid = '$chatid' $groupselect
-                                 ORDER BY timestamp DESC", 1)) {
-        return false;
-    }
+    $sql = "SELECT *
+              FROM {chat_messages}
+             WHERE chatid = ?
+                   $groupselect
+          ORDER BY timestamp DESC";
+    $params[] = $chatid;
 
-    $result = rs_fetch_record($rs);
-    
-    rs_close($rs);
-
-    return $result;
+    return $DB->get_record_sql($sql, $params, true);
 }
 
 

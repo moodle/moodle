@@ -74,7 +74,9 @@ class check_indexes extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB;
+        global $CFG, $XMLDB, $DB;
+
+        $dbman = $DB->get_manager();
 
     /// And we nedd some ddl suff
         require_once ($CFG->libdir . '/ddllib.php');
@@ -123,10 +125,6 @@ class check_indexes extends XMLDBAction {
                     }
                 /// Load the XML file
                     $xmldb_file = new XMLDBFile($dbdir->path . '/install.xml');
-                /// Load the needed XMLDB generator
-                    $classname = 'XMLDB' . $CFG->dbtype;
-                    $generator = new $classname();
-                    $generator->setPrefix($CFG->prefix);
 
                 /// Only if the file exists
                     if (!$xmldb_file->fileExists()) {
@@ -147,7 +145,7 @@ class check_indexes extends XMLDBAction {
                     /// Foreach table, process its indexes and keys
                         foreach ($xmldb_tables as $xmldb_table) {
                         /// Skip table if not exists
-                            if (!table_exists($xmldb_table)) {
+                            if (!$dbman->table_exists($xmldb_table)) {
                                 continue;
                             }
                             $o.='            <li>' . $xmldb_table->getName();
@@ -163,7 +161,7 @@ class check_indexes extends XMLDBAction {
                                     }
                                 /// If we aren't creating the keys or the key is a XMLDB_KEY_FOREIGN (not underlying index generated
                                 /// automatically by the RDBMS) create the underlying (created by us) index (if doesn't exists)
-                                    if (!$generator->getKeySQL($xmldb_table, $xmldb_key) || $xmldb_key->getType() == XMLDB_KEY_FOREIGN) {
+                                    if (!$dbman->generator->getKeySQL($xmldb_table, $xmldb_key) || $xmldb_key->getType() == XMLDB_KEY_FOREIGN) {
                                     /// Create the interim index
                                         $xmldb_index = new XMLDBIndex('anyname');
                                         $xmldb_index->setFields($xmldb_key->getFields());
@@ -177,7 +175,7 @@ class check_indexes extends XMLDBAction {
                                                 break;
                                         }
                                     /// Check if the index exists in DB
-                                        if (index_exists($xmldb_table, $xmldb_index)) {
+                                        if ($dbman->index_exists($xmldb_table, $xmldb_index)) {
                                             $o.='<font color="green">' . $this->str['ok'] . '</font>';
                                         } else {
                                             $o.='<font color="red">' . $this->str['missing'] . '</font>';
@@ -198,7 +196,7 @@ class check_indexes extends XMLDBAction {
                                 foreach ($xmldb_indexes as $xmldb_index) {
                                     $o.='            <li>' . $this->str['index'] . ': ' . $xmldb_index->readableInfo() . ' ';
                                 /// Check if the index exists in DB
-                                    if (index_exists($xmldb_table, $xmldb_index)) {
+                                    if ($dbman->index_exists($xmldb_table, $xmldb_index)) {
                                         $o.='<font color="green">' . $this->str['ok'] . '</font>';
                                     } else {
                                         $o.='<font color="red">' . $this->str['missing'] . '</font>';
@@ -237,11 +235,12 @@ class check_indexes extends XMLDBAction {
                 foreach ($missing_indexes as $obj) {
                     $xmldb_table = $obj->table;
                     $xmldb_index = $obj->index;
-                    $sqlarr = $xmldb_table->getAddIndexSQL($CFG->dbtype, $CFG->prefix, $xmldb_index, true);
+                    $sqlarr = $dbman->generator->getAddIndexSQL($xmldb_table, $xmldb_index);
                     $r.= '            <li>' . $this->str['table'] . ': ' . $xmldb_table->getName() . '. ' .
                                               $this->str['index'] . ': ' . $xmldb_index->readableInfo() . '</li>';
+                    $sqlarr = $dbman->generator->getEndedStatements($sqlarr);
                     $s.= '<code>' . str_replace("\n", '<br />', implode('<br />', $sqlarr)) . '</code><br />';
-                    
+
                 }
                 $r.= '        </ul>';
             /// Add the SQL statements (all together)

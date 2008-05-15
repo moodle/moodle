@@ -43,7 +43,7 @@ if (empty($CFG->enablegroupings)) {
     $members    = array(-1 => array()); //groups not in a grouping
     $groupingid = 0;
 } else {
-    if (!$groupings = get_records('groupings', 'courseid', $courseid, 'name')) {
+    if (!$groupings = $DB->get_records('groupings', array('courseid'=>$courseid), 'name')) {
         $groupings = array();
     }
     $members = array();
@@ -54,32 +54,43 @@ if (empty($CFG->enablegroupings)) {
 }
 
 // Get all groups
-if (!$groups = get_records('groups', 'courseid', $courseid, 'name')) {
+if (!$groups = $DB->get_records('groups', array('courseid'=>$courseid), 'name')) {
     $groups = array();
 }
 
+$params = array($courseid);
+if ($groupid) {
+    $groupwhere = "AND g.id = ?";
+    $params[]   = $groupid;
+} else {
+    $groupwhere = "";
+}
+
 if (empty($CFG->enablegroupings)) {
-    $groupwhere    = $groupid ? "AND g.id = $groupid" : "";
     $sql = "SELECT g.id AS groupid, NULL AS groupingid, u.id AS userid, u.firstname, u.lastname, u.idnumber, u.username
-              FROM {$CFG->prefix}groups g
-                   LEFT JOIN {$CFG->prefix}groups_members gm ON g.id = gm.groupid
-                   LEFT JOIN {$CFG->prefix}user u ON gm.userid = u.id
-             WHERE g.courseid = {$course->id} $groupwhere
+              FROM {groups} g
+                   LEFT JOIN {groups_members} gm ON g.id = gm.groupid
+                   LEFT JOIN {user} u ON gm.userid = u.id
+             WHERE g.courseid = ? $groupwhere
           ORDER BY g.name, u.lastname, u.firstname";
 } else {
-    $groupingwhere = $groupingid ? "AND gg.groupingid = $groupingid" : "";
-    $groupwhere    = $groupid ? "AND g.id = $groupid" : "";
+    if ($groupingid) {
+        $groupingwhere = "AND gg.groupingid = ";
+        $params[]      = $groupingid;
+    } else {
+        $groupingwhere = "";
+    }
     $sql = "SELECT g.id AS groupid, gg.groupingid, u.id AS userid, u.firstname, u.lastname, u.idnumber, u.username
-              FROM {$CFG->prefix}groups g
-                   LEFT JOIN {$CFG->prefix}groupings_groups gg ON g.id = gg.groupid
-                   LEFT JOIN {$CFG->prefix}groups_members gm ON g.id = gm.groupid
-                   LEFT JOIN {$CFG->prefix}user u ON gm.userid = u.id
-             WHERE g.courseid = {$course->id} $groupingwhere $groupwhere
+              FROM {groups} g
+                   LEFT JOIN {groupings_groups} gg ON g.id = gg.groupid
+                   LEFT JOIN {groups_members} gm ON g.id = gm.groupid
+                   LEFT JOIN {user} u ON gm.userid = u.id
+             WHERE g.courseid = ? $groupwhere $groupingwhere
           ORDER BY g.name, u.lastname, u.firstname";
 }
 
-if ($rs = get_recordset_sql($sql)) {
-    while ($row = rs_fetch_next_record($rs)) {
+if ($rs = $DB->get_recordset_sql($sql, $params)) {
+    foreach ($rs as $row) {
         $user = new object();
         $user->id        = $row->userid;
         $user->firstname = $row->firstname;

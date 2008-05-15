@@ -650,7 +650,7 @@ class view_table_php extends XMLDBAction {
 
     /**
      * This function will generate all the PHP code needed to
-     * change the enum values (check constraint) of one field 
+     * change the enum values (check constraint) of one field
      * using XMLDB objects and functions
      *
      * @param XMLDBStructure structure object containing all the info

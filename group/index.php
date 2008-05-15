@@ -28,7 +28,7 @@ $returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid;
 // Get the course information so we can print the header and
 // check the course id is valid
 
-if (!$course = get_record('course', 'id',$courseid)) {
+if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     $success = false;
     print_error('invalidcourse'); //'The course ID is invalid'
 }
@@ -141,7 +141,6 @@ echo '<tr>'."\n";
 
 
 echo "<td>\n";
-// NO GROUPINGS YET!
 echo '<p><label for="groups"><span id="groupslabel">'.get_string('groups').':</span><span id="thegrouping">&nbsp;</span></label></p>'."\n";
 
 if (ajaxenabled()) {
@@ -166,7 +165,7 @@ if ($groups) {
             $select = ' selected="selected"';
             $sel_groupid = $group->id;
         }
-        $usercount = (int)count_records('groups_members', 'groupid', $group->id);
+        $usercount = $DB->count_records('groups_members', array('groupid'=>$group->id));
         $groupname = format_string($group->name).' ('.$usercount.')';
 
         echo "<option value=\"{$group->id}\"$select title=\"$groupname\">$groupname</option>\n";

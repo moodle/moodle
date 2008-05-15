@@ -19,83 +19,13 @@
 
 function xmldb_data_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $db;
+    global $CFG, $THEME, $DB;
+
+    $dbman = $DB->get_manager();
 
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one
-/// block of code similar to the next one. Please, delete
-/// this comment lines once this file start handling proper
-/// upgrade code.
-
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of "/lib/ddllib.php" function calls
-/// }
-
-    if ($result && $oldversion < 2006121300) {
-
-    /// Define field format to be added to data_comments
-        $table = new XMLDBTable('data_comments');
-        $field = new XMLDBField('format');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'content');
-
-    /// Launch add field format
-        $result = $result && add_field($table, $field);
-
-    }
-    
-    if ($result && $oldversion < 2007022600) {
-    /// Define field asearchtemplate to be added to data
-        $table = new XMLDBTable('data');
-        $field = new XMLDBField('asearchtemplate');
-        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'jstemplate');
-
-    /// Launch add field asearchtemplate
-        $result = $result && add_field($table, $field);
-    }
-
-
-    if ($result && $oldversion < 2007072200) {
-        require_once($CFG->dirroot.'/mod/data/lib.php');
-        // too much debug output
-        $db->debug = false;
-        data_update_grades();
-        $db->debug = true;
-    }  
-
-    if ($result && $oldversion < 2007081400) {
-
-    /// Define field notification to be added to data
-        $table = new XMLDBTable('data');
-        $field = new XMLDBField('notification');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null, 'editany');
-
-    /// Launch add field notification
-        $result = $result && add_field($table, $field);
-    }
-
-    if ($result && $oldversion < 2007081402) {
-
-    /// Define index type-dataid (not unique) to be added to data_fields
-        $table = new XMLDBTable('data_fields');
-        $index = new XMLDBIndex('type-dataid');
-        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('type', 'dataid'));
-
-    /// Launch add index type-dataid
-        if (!index_exists($table, $index)) {
-            $result = $result && add_index($table, $index);
-        }
-
-    /// Define index course (not unique) to be added to data
-        $table = new XMLDBTable('data');
-        $index = new XMLDBIndex('course');
-        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('course'));
-
-    /// Launch add index course
-        if (!index_exists($table, $index)) {
-            $result = $result && add_index($table, $index);
-        }
-    }
+//===== 1.9.0 upgrade line ======//
 
     if ($result && $oldversion < 2007101512) {
     /// Launch add field asearchtemplate again if does not exists yet - reported on several sites
@@ -104,8 +34,8 @@ function xmldb_data_upgrade($oldversion=0) {
         $field = new XMLDBField('asearchtemplate');
         $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'jstemplate');
 
-        if (!field_exists($table, $field)) {
-            $result = $result && add_field($table, $field);
+        if (!$dbman->field_exists($table, $field)) {
+            $result = $result && $dbman->add_field($table, $field);
         }
     }
 
@@ -113,14 +43,15 @@ function xmldb_data_upgrade($oldversion=0) {
         // Upgrade all the data->notification currently being
         // NULL to 0
         $sql = "UPDATE {$CFG->prefix}data SET notification=0 WHERE notification IS NULL";
-        $result = execute_sql($sql);
+        $result = $DB->execute($sql);
+
         $table = new XMLDBTable('data');
         $field = new XMLDBField('notification');
         // First step, Set NOT NULL
         $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'editany');
-        $result = $result && change_field_notnull($table, $field);
+        $result = $result && $dbman->change_field_notnull($table, $field);
         // Second step, Set default to 0
-        $result = $result && change_field_default($table, $field);
+        $result = $result && $dbman->change_field_default($table, $field);
     }
 
     return $result;

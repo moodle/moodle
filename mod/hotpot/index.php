@@ -163,7 +163,7 @@
                             if ($attempt->details) {
                                 hotpot_add_attempt_details($attempt);
                                 if (! update_record('hotpot_attempts', $attempt)) {
-                                    print_error("Could not update attempt record: ".$db->ErrorMsg(), '', $next_url);
+                                    print_error("Could not update attempt record: ".$DB->get_last_error(), '', $next_url);
                                 }
                             }
                             $attemptcount++;

@@ -5,7 +5,7 @@ class mod_glossary_entry_form extends moodleform {
 
     function definition() {
 
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $DB;
         $mform    =& $this->_form;
 
         $glossary =& $this->_customdata['glossary'];
@@ -29,7 +29,7 @@ class mod_glossary_entry_form extends moodleform {
         $mform->addElement('format');
 
         $categories = array();
-        if ($categories = get_records_menu('glossary_categories', 'glossaryid', $glossary->id, 'name ASC', 'id, name')){
+        if ($categories = $DB->get_records_menu('glossary_categories', array('glossaryid'=>$glossary->id), 'name ASC', 'id, name')){
             $categories = array(0 => get_string('notcategorised', 'glossary')) + $categories;
         } else {
             $categories = array(0 => get_string('notcategorised', 'glossary'));

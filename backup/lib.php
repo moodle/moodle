@@ -326,7 +326,7 @@
     /// This function upgrades the backup tables, if necessary
     /// It's called from admin/index.php, also backup.php and restore.php
 
-        global $CFG, $db, $interactive;
+        global $CFG, $DB, $interactive, $DB;
 
         require_once ("$CFG->dirroot/backup/version.php");  // Get code versions
 
@@ -344,17 +344,17 @@
             upgrade_log_start();
             print_heading('backup');
         if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-            $db->debug=true;
+            $DB->set_debug(true);
         }
 
         /// Both old .sql files and new install.xml are supported
         /// but we priorize install.xml (XMLDB) if present
             $status = false;
             if (file_exists($CFG->dirroot . '/backup/db/install.xml')) {
-                $status = install_from_xmldb_file($CFG->dirroot . '/backup/db/install.xml'); //New method
+                $status = $DB->get_manager()->install_from_xmldb_file($CFG->dirroot . '/backup/db/install.xml'); //New method
             }
         if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-            $db->debug = false;
+            $DB->set_debug(false);
         }
             if ($status) {
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
@@ -402,16 +402,16 @@
             $newupgrade_status = true;
             if ($newupgrade && function_exists($newupgrade_function)) {
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
-                $db->debug = true;
+                $DB->set_debug(true);
             }
                 $newupgrade_status = $newupgrade_function($CFG->backup_version);
             } else if ($newupgrade) {
                 notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                         '/backup/db/upgrade.php');
             }
-        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
-            $db->debug=false;
-        }
+            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
+                $DB->set_debug(false);
+            }
         /// Now analyze upgrade results
             if ($newupgrade_status) {    // No upgrading failed
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {

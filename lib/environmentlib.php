@@ -680,7 +680,7 @@ function environment_check_php($version) {
  * @return object results encapsulated in one environment_result object
  */
 function environment_check_unicode($version) {
-    global $db;
+    global $db, $DB;
 
     $result = new environment_results('unicode');
 
@@ -704,7 +704,7 @@ function environment_check_unicode($version) {
         $level = get_level($data['#']['UNICODE']['0']);
     }
 
-    if (!$unicodedb = setup_is_unicodedb()) {
+    if (!$unicodedb = $DB->setup_is_unicodedb()) {
         $result->setStatus(false);
     } else {
         $result->setStatus(true);
@@ -725,7 +725,7 @@ function environment_check_unicode($version) {
  */
 function environment_check_database($version) {
 
-    global $db;
+    global $DB;
 
     $result = new environment_results('database');
 
@@ -779,9 +779,9 @@ function environment_check_database($version) {
     }
 
 /// Now search the version we are using (depending of vendor)
-    $current_vendor = set_dbfamily();
+    $current_vendor = $DB->get_dbfamily();
 
-    $dbinfo = $db->ServerInfo();
+    $dbinfo = $DB->get_server_info();
     $current_version = normalize_version($dbinfo['version']);
     $needed_version = $vendors[$current_vendor];
 

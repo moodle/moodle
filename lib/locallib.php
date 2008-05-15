@@ -141,11 +141,11 @@ function upgrade_local_db($continueto) {
         require_once ($CFG->dirroot .'/local/db/upgrade.php');
 
         if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-        $db->debug=true;
+            $DB->set_debug(true);
         }
         if (xmldb_local_upgrade($CFG->local_version)) {
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-            $db->debug=false;
+                $DB->set_debug(false);
             }
             if (set_config('local_version', $local_version)) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
@@ -167,7 +167,7 @@ function upgrade_local_db($continueto) {
             }
         } else {
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-            $db->debug=false;
+                $DB->set_debug(false);
             }
             print_error('Upgrade failed!  See local/version.php');
         }

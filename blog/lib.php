@@ -612,9 +612,7 @@
 
         $orderby = ' ORDER BY '. $sort .' ';
 
-        //global $db; $db->debug = true;
         $records = get_records_sql($SQL . $orderby, $limitfrom, $limitnum);
-        //$db->debug = false;
 
         if (empty($records)) {
             return array();

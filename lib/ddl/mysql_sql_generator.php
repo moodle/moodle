@@ -24,67 +24,66 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+require_once($CFG->libdir.'/ddl/sql_generator.php');
+
 /// This class generate SQL code to be used against MySQL
 /// It extends XMLDBgenerator so everything can be
 /// overriden as needed to generate correct SQL.
 
-class XMLDBmysql extends XMLDBGenerator {
+class mysql_sql_generator extends sql_generator {
 
 /// Only set values that are different from the defaults present in XMLDBgenerator
 
-    var $quote_string = '`';   // String used to quote names
+    public $quote_string = '`';   // String used to quote names
 
-    var $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
+    public $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
 
-    var $drop_default_clause_required = true; //To specify if the generator must use some DEFAULT clause to drop defaults
-    var $drop_default_clause = 'NULL'; //The DEFAULT clause required to drop defaults
+    public $drop_default_value_required = true; //To specify if the generator must use some DEFAULT clause to drop defaults
+    public $drop_default_value = NULL; //The DEFAULT clause required to drop defaults
 
-    var $primary_key_name = ''; //To force primary key names to one string (null=no force)
+    public $primary_key_name = ''; //To force primary key names to one string (null=no force)
 
-    var $drop_primary_key = 'ALTER TABLE TABLENAME DROP PRIMARY KEY'; // Template to drop PKs
+    public $drop_primary_key = 'ALTER TABLE TABLENAME DROP PRIMARY KEY'; // Template to drop PKs
                 // with automatic replace for TABLENAME and KEYNAME
 
-    var $drop_unique_key = 'ALTER TABLE TABLENAME DROP KEY KEYNAME'; // Template to drop UKs
+    public $drop_unique_key = 'ALTER TABLE TABLENAME DROP KEY KEYNAME'; // Template to drop UKs
                 // with automatic replace for TABLENAME and KEYNAME
 
-    var $drop_foreign_key = 'ALTER TABLE TABLENAME DROP FOREIGN KEY KEYNAME'; // Template to drop FKs
+    public $drop_foreign_key = 'ALTER TABLE TABLENAME DROP FOREIGN KEY KEYNAME'; // Template to drop FKs
                 // with automatic replace for TABLENAME and KEYNAME
 
-    var $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
-    var $sequence_name = 'auto_increment'; //Particular name for inline sequences in this generator
+    public $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
+    public $sequence_name = 'auto_increment'; //Particular name for inline sequences in this generator
 
-    var $enum_extra_code = false; //Does the generator need to add extra code to generate code for the enums in the table
+    public $enum_extra_code = false; //Does the generator need to add extra code to generate code for the enums in the table
 
-    var $add_after_clause = true; // Does the generator need to add the after clause for fields
+    public $add_after_clause = true; // Does the generator need to add the after clause for fields
 
-    var $concat_character = null; //Characters to be used as concatenation operator. If not defined
+    public $concat_character = null; //Characters to be used as concatenation operator. If not defined
                                   //MySQL CONCAT function will be use
 
-    var $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY COLUMN COLUMNSPECS'; //The SQL template to alter columns
+    public $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY COLUMN COLUMNSPECS'; //The SQL template to alter columns
 
-    var $drop_index_sql = 'ALTER TABLE TABLENAME DROP INDEX INDEXNAME'; //SQL sentence to drop one index
+    public $drop_index_sql = 'ALTER TABLE TABLENAME DROP INDEX INDEXNAME'; //SQL sentence to drop one index
                                                                //TABLENAME, INDEXNAME are dinamically replaced
 
-    var $rename_index_sql = null; //SQL sentence to rename one index (MySQL doesn't support this!)
+    public $rename_index_sql = null; //SQL sentence to rename one index (MySQL doesn't support this!)
                                       //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dinamically replaced
 
-    var $rename_key_sql = null; //SQL sentence to rename one key (MySQL doesn't support this!)
+    public $rename_key_sql = null; //SQL sentence to rename one key (MySQL doesn't support this!)
                                       //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
 
     /**
      * Creates one new XMLDBmysql
      */
-    function XMLDBmysql() {
-        parent::XMLDBGenerator();
-        global $CFG;
-        $this->prefix = '';
-        $this->reserved_words = $this->getReservedWords();
+    public function __construct($mdb) {
+        parent::__construct($mdb);
     }
 
     /**
      * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
      */
-    function getTypeSQL ($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
+    public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
 
         switch ($xmldb_type) {
             case XMLDB_TYPE_INTEGER:    // From http://mysql.com/doc/refman/5.0/en/numeric-types.html!
@@ -167,28 +166,28 @@ class XMLDBmysql extends XMLDBGenerator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its enum 
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its enum
      * (usually invoked from getModifyEnumSQL()
      */
-    function getCreateEnumSQL($xmldb_table, $xmldb_field) {
-    /// For MySQL, just alter the field
-        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
-    }
-
-    /**     
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its enum 
-     * (usually invoked from getModifyEnumSQL()
-     */
-    function getDropEnumSQL($xmldb_table, $xmldb_field) {
+    public function getCreateEnumSQL($xmldb_table, $xmldb_field) {
     /// For MySQL, just alter the field
         return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default 
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its enum
+     * (usually invoked from getModifyEnumSQL()
+     */
+    public function getDropEnumSQL($xmldb_table, $xmldb_field) {
+    /// For MySQL, just alter the field
+        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
-    function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
+    public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
     /// Just a wrapper over the getAlterFieldSQL() function for MySQL that
     /// is capable of handling defaults
         return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
@@ -199,9 +198,7 @@ class XMLDBmysql extends XMLDBGenerator {
      * to rename it (inside one array)
      * MySQL is pretty diferent from the standard to justify this oveloading
      */
-    function getRenameFieldSQL($xmldb_table, $xmldb_field, $newname) {
-
-        $results = array();  //Array where all the sentences will be stored
+    public function getRenameFieldSQL($xmldb_table, $xmldb_field, $newname) {
 
     /// Need a clone of xmldb_field to perform the change leaving original unmodified
         $xmldb_field_clone = clone($xmldb_field);
@@ -209,17 +206,18 @@ class XMLDBmysql extends XMLDBGenerator {
     /// Change the name of the field to perform the change
         $xmldb_field_clone->setName($xmldb_field_clone->getName() . ' ' . $newname);
 
-        $results[] = 'ALTER TABLE ' . $this->getTableName($xmldb_table) . ' CHANGE ' .
-                     $this->getFieldSQL($xmldb_field_clone);
+        $fieldsql = $this->getFieldSQL($xmldb_field_clone);
 
-        return $results;
+        $sql = 'ALTER TABLE ' . $this->getTableName($xmldb_table) . ' CHANGE ' . $fieldsql;
+
+        return array($sql);
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default 
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default
      * (usually invoked from getModifyDefaultSQL()
      */
-    function getDropDefaultSQL($xmldb_table, $xmldb_field) {
+    public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
     /// Just a wrapper over the getAlterFieldSQL() function for MySQL that
     /// is capable of handling defaults
         return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
@@ -228,7 +226,7 @@ class XMLDBmysql extends XMLDBGenerator {
     /**
      * Given one XMLDB Field, return its enum SQL
      */
-    function getEnumSQL ($xmldb_field) {
+    public function getEnumSQL($xmldb_field) {
         return 'enum(' . implode(', ', $xmldb_field->getEnumValues()) . ')';
     }
 
@@ -236,12 +234,11 @@ class XMLDBmysql extends XMLDBGenerator {
      * Returns the code (in array) needed to add one comment to the table
      */
     function getCommentSQL ($xmldb_table) {
-
         $comment = '';
 
         if ($xmldb_table->getComment()) {
             $comment .= 'ALTER TABLE ' . $this->getTableName($xmldb_table);
-            $comment .= " COMMENT='" . addslashes(substr($xmldb_table->getComment(), 0, 60)) . "'";
+            $comment .= " COMMENT='" . $this->addslashes(substr($xmldb_table->getComment(), 0, 60)) . "'";
         }
         return array($comment);
     }
@@ -256,18 +253,37 @@ class XMLDBmysql extends XMLDBGenerator {
      * MySQL doesn't have check constraints in this implementation, but
      * we return them based on the enum fields in the table
      */
-    function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
+    public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
 
         global $db;
 
-        $results = array();
+        $tablename = $xmldb_table->getName($xmldb_table);
 
-        $tablename = $this->getTableName($xmldb_table);
+        $this->mdb->reset_columns($tablename);
 
     /// Fetch all the columns in the table
-        if ($columns = $db->MetaColumns($tablename)) {
-        /// Normalize array keys
-            $columns = array_change_key_case($columns, CASE_LOWER);
+        if (!$columns = $this->mdb->get_columns($tablename)) {
+            return array();
+        }
+
+    /// Filter by the required field if specified
+        if ($xmldb_field) {
+            $filter = $xmldb_field->getName();
+            if (!isset($columns[$filter])) {
+                return array();
+            }
+            $column = ($columns[$filter]);
+            if (!empty($column->enums)) {
+                $result = new object;
+                $result->name = $filter;
+                $result->description = implode(', ', $column->enums);
+                return array($result);
+            } else {
+                return array();
+            }
+
+        } else {
+            $results = array();
         /// Iterate over columns searching for enums
             foreach ($columns as $key => $column) {
             /// Enum found, let's add it to the constraints list
@@ -278,20 +294,8 @@ class XMLDBmysql extends XMLDBGenerator {
                     $results[$key] = $result;
                 }
             }
+            return $results;
         }
-
-    /// Filter by the required field if specified
-        if ($xmldb_field) {
-            $filter = $xmldb_field->getName();
-        /// Check if some of the checks belong to the field (easy under MySQL)
-            if (array_key_exists($filter, $results)) {
-                $results = array($filter => $results[$filter]);
-            } else {
-                $results = array();
-            }
-        }
-
-        return $results;
     }
 
     /**
@@ -299,28 +303,22 @@ class XMLDBmysql extends XMLDBGenerator {
      * return if such name is currently in use (true) or no (false)
      * (invoked from getNameForObject()
      */
-    function isNameInUse($object_name, $type, $table_name) {
-
-        global $db;
+    public function isNameInUse($object_name, $type, $table_name) {
 
     /// Calculate the real table name
         $xmldb_table = new XMLDBTable($table_name);
         $tname = $this->getTableName($xmldb_table);
-        
+
         switch($type) {
             case 'ix':
             case 'uix':
             /// First of all, check table exists
-                $metatables = $db->MetaTables();
-                $metatables = array_flip($metatables);
-                $metatables = array_change_key_case($metatables, CASE_LOWER);
-                if (array_key_exists($tname,  $metatables)) {
+                $metatables = $this->mdb->get_tables();
+                if (isset($metatables[$tname])) {
                 /// Fetch all the indexes in the table
-                    if ($indexes = $db->MetaIndexes($tname)) {
-                    /// Normalize array keys
-                        $indexes = array_change_key_case($indexes, CASE_LOWER);
+                    if ($indexes = $this->mdb->get_indexes($tname)) {
                     /// Look for existing index in array
-                        if (array_key_exists(strtolower($object_name), $indexes)) {
+                        if (isset($indexes[$object_name])) {
                             return true;
                         }
                     }
@@ -334,7 +332,7 @@ class XMLDBmysql extends XMLDBGenerator {
     /**
      * Returns an array of reserved words (lowercase) for this DB
      */
-    function getReservedWords() {
+    public static function getReservedWords() {
     /// This file contains the reserved words for MySQL databases
     /// from http://dev.mysql.com/doc/refman/5.0/en/reserved-words.html
         $reserved_words = array (

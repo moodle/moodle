@@ -369,55 +369,6 @@ class XMLDBStatement extends XMLDBObject {
 
         return $values;
     }
-
-    /**
-     * This function will return the code needed to execute a collection
-     * of sentences present inside one statement for the specified BD
-     * and prefix.
-     * For now it only supports INSERT statements
-     */
-    function getExecuteStatementSQL ($dbtype, $prefix, $statement_end=true) {
-
-        $results = array();
-
-    /// Based on statement type
-        switch ($this->type) {
-            case XMLDB_STATEMENT_INSERT:
-                $results = $this->getExecuteInsertSQL($dbtype, $prefix, $statement_end);
-                break;
-            case XMLDB_STATEMENT_UPDATE:
-                break;
-            case XMLDB_STATEMENT_DELETE:
-                break;
-            case XMLDB_STATEMENT_CUSTOM:
-                break;
-        }
-
-        return $results;
-    }
-
-    /**
-     * This function will return the code needed to execute a collection
-     * of insert sentences present inside the statement for the specified BD
-     * and prefix. Just one simple wrapper over generators.
-     */
-    function getExecuteInsertSQL ($dbtype, $prefix, $statement_end=true) {
-
-        $results = array();
-
-        $classname = 'XMLDB' . $dbtype;
-        $generator = new $classname();
-        $generator->setPrefix($prefix);
-
-        $results = $generator->getExecuteInsertSQL($this);
-
-        if ($statement_end) {
-            $results = $generator->getEndedStatements($results);
-        }
-
-        return $results;
-    }
-
 }
 
 ?>

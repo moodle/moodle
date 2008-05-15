@@ -26,7 +26,7 @@
 
 /// This class will check all the default values existing in the DB
 /// match those specified in the xml specs
-/// and providing one SQL script to fix all them. 
+/// and providing one SQL script to fix all them.
 
 class check_defaults extends XMLDBAction {
 
@@ -76,10 +76,11 @@ class check_defaults extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB, $db;
+        global $CFG, $XMLDB, $DB;
 
     /// And we nedd some ddl suff
         require_once ($CFG->libdir . '/ddllib.php');
+        $dbman = $DB->get_manager();
 
     /// Here we'll acummulate all the wrong fields found
         $wrong_fields = array();
@@ -125,10 +126,6 @@ class check_defaults extends XMLDBAction {
                     }
                 /// Load the XML file
                     $xmldb_file = new XMLDBFile($dbdir->path . '/install.xml');
-                /// Load the needed XMLDB generator
-                    $classname = 'XMLDB' . $CFG->dbtype;
-                    $generator = new $classname();
-                    $generator->setPrefix($CFG->prefix);
 
                 /// Only if the file exists
                     if (!$xmldb_file->fileExists()) {
@@ -142,7 +139,7 @@ class check_defaults extends XMLDBAction {
                     }
                 /// Arriving here, everything is ok, get the XMLDB structure
                     $structure = $xmldb_file->getStructure();
-//echo "<pre>"; print_r( $structure ); die;
+
                     $o.='    <li>' . str_replace($CFG->dirroot . '/', '', $dbdir->path . '/install.xml');
                 /// Getting tables
                     if ($xmldb_tables = $structure->getTables()) {
@@ -150,14 +147,11 @@ class check_defaults extends XMLDBAction {
                     /// Foreach table, process its fields
                         foreach ($xmldb_tables as $xmldb_table) {
                         /// Skip table if not exists
-                            if (!table_exists($xmldb_table)) {
+                            if (!$dbman->table_exists($xmldb_table)) {
                                 continue;
                             }
                         /// Fetch metadata from phisical DB. All the columns info.
-                            if ($metacolumns = $db->MetaColumns($CFG->prefix . $xmldb_table->getName())) {
-                                $metacolumns = array_change_key_case($metacolumns, CASE_LOWER);
-// echo "<pre>".$xmldb_table->getName(); print_r( $metacolumns ); die;
-                            } else {
+                            if (!$metacolumns = $DB->get_columns($xmldb_table->getName())) {
                             //// Skip table if no metacolumns is available for it
                                 continue;
                             }
@@ -167,33 +161,32 @@ class check_defaults extends XMLDBAction {
                             if ($xmldb_fields = $xmldb_table->getFields()) {
                                 $o.='        <ul>';
                                 foreach ($xmldb_fields as $xmldb_field) {
-//echo "<pre>"; print_r( $xmldb_field ); die; 
 
-                                // Get the default value for the field 
-                                $xmldbdefault = $xmldb_field->getDefault();
-                                
-                                /// If the metadata for that column doesn't exist, skip
-                                if (!isset($metacolumns[$xmldb_field->getName()])) {
-                                    continue;
-                                }
+                                    // Get the default value for the field
+                                    $xmldbdefault = $xmldb_field->getDefault();
 
-                                /// To variable for better handling
-                                $metacolumn = $metacolumns[$xmldb_field->getName()];
+                                    /// If the metadata for that column doesn't exist or 'id' field found, skip
+                                    if (!isset($metacolumns[$xmldb_field->getName()]) or $xmldb_field->getName() == 'id') {
+                                        continue;
+                                    }
 
-                                /// Going to check this field in DB
-                                $o.='            <li>' . $this->str['field'] . ': ' . $xmldb_field->getName() . ' ';
+                                    /// To variable for better handling
+                                    $metacolumn = $metacolumns[$xmldb_field->getName()];
 
-                                // get the value of the physical default (or blank if there isn't one)
-                                if ($metacolumn->has_default==1) {
-                                    $physicaldefault = $metacolumn->default_value;
-                                }
-                                else {
-                                    $physicaldefault = '';
-                                }
+                                    /// Going to check this field in DB
+                                    $o.='            <li>' . $this->str['field'] . ': ' . $xmldb_field->getName() . ' ';
 
-                                // there *is* a default and it's wrong
-                                if ($physicaldefault != $xmldbdefault) {
-                                    $info = '['.$this->str['shouldbe']." '$xmldbdefault' ".$this->str['butis'].
+                                    // get the value of the physical default (or blank if there isn't one)
+                                    if ($metacolumn->has_default==1) {
+                                        $physicaldefault = $metacolumn->default_value;
+                                    }
+                                    else {
+                                        $physicaldefault = '';
+                                    }
+
+                                    // there *is* a default and it's wrong
+                                    if ($physicaldefault != $xmldbdefault) {
+                                        $info = '['.$this->str['shouldbe']." '$xmldbdefault' ".$this->str['butis'].
                                         " '$physicaldefault']";
                                         $o.='<font color="red">' . $this->str['wrong'] . " $info</font>";
                                     /// Add the wrong field to the list
@@ -237,9 +230,9 @@ class check_defaults extends XMLDBAction {
                     $xmldb_field = $obj->field;
                     $physicaldefault = $obj->physicaldefault;
                     $xmldbdefault = $obj->xmldbdefault;
-                     
+
                     // get the alter table command
-                    $sqlarr = $xmldb_table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $xmldb_field, true);
+                    $sqlarr = $dbman->generator->getAlterFieldSQL($xmldb_table, $xmldb_field);
 
                     $r.= '            <li>' . $this->str['table'] . ': ' . $xmldb_table->getName() . '. ' .
                                               $this->str['field'] . ': ' . $xmldb_field->getName() . ', ' .
@@ -247,6 +240,7 @@ class check_defaults extends XMLDBAction {
                                               $this->str['butis'] . ' ' . "'$physicaldefault'" . '</li>';
                     /// Add to output if we have sentences
                     if ($sqlarr) {
+                        $sqlarr = $dbman->generator->getEndedStatements($sqlarr);
                         $s.= '<code>' . str_replace("\n", '<br />', implode('<br />', $sqlarr)) . '</code><br />';
                     }
                 }

@@ -1865,7 +1865,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     // Note that this function intentionally does not follow the normal Moodle DB access idioms.
     // This is for a good reason: it is the most frequently used DB update function,
     // so it has been optimised for speed.
-    global $db, $CFG, $USER;
+    global $DB, $CFG, $USER;
 
     if ($cm === '' || is_null($cm)) { // postgres won't translate empty string to its default
         $cm = 0;
@@ -1908,33 +1908,30 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     }
     $url=addslashes($url);
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; $PERF->logwrites++;};
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->logwrites++;};
 
     if ($CFG->type = 'oci8po') {
-        if (empty($info)) {
+        if ($info == '') {
             $info = ' ';
         }
     }
-    $sql ='INSERT INTO '. $CFG->prefix .'log (time, userid, course, ip, module, cmid, action, url, info)
-        VALUES (' . "'$timenow', '$userid', '$courseid', '$REMOTE_ADDR', '$module', '$cm', '$action', '$url', '$info')";
-
-    $result = $db->Execute($sql);
+    $log = array('time'=>$timenow, 'userid'=>$userid, 'course'=>$courseid, 'ip'=>$REMOTE_ADDR, 'module'=>$module,
+                 'cmid'=>$cm, 'action'=>$action, 'url'=>$url, 'info'=>$info);
+    $result = $DB->insert_record_raw('log', $log, false);
 
     // MDL-11893, alert $CFG->supportemail if insert into log failed
-    if (!$result && $CFG->supportemail) {
+    if (!$result and $CFG->supportemail and empty($CFG->noemailever)) {
+        // email_to_user is not usable because email_to_user tries to write to the logs table,
+        // and this will get caught in an infinite loop, if disk is full
         $site = get_site();
         $subject = 'Insert into log failed at your moodle site '.$site->fullname;
         $message = "Insert into log table failed at ". date('l dS \of F Y h:i:s A') .".\n It is possible that your disk is full.\n\n";
-        $message .= "The failed SQL is:\n\n" . $sql;
+        $message .= "The failed query parameters are:\n\n" . var_export($log, true);
 
-        // email_to_user is not usable because email_to_user tries to write to the logs table,
-        // and this will get caught in an infinite loop, if disk is full
-        if (empty($CFG->noemailever)) {
-            $lasttime = get_config('admin', 'lastloginserterrormail');
-            if(empty($lasttime) || time() - $lasttime > 60*60*24) { // limit to 1 email per day
-                mail($CFG->supportemail, $subject, $message);
-                set_config('lastloginserterrormail', time(), 'admin');
-            }
+        $lasttime = get_config('admin', 'lastloginserterrormail');
+        if(empty($lasttime) || time() - $lasttime > 60*60*24) { // limit to 1 email per day
+            mail($CFG->supportemail, $subject, $message);
+            set_config('lastloginserterrormail', time(), 'admin');
         }
     }
 
@@ -1956,7 +1953,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
  */
 function user_accesstime_log($courseid=0) {
 
-    global $USER, $CFG, $PERF, $db;
+    global $USER, $CFG, $DB;
 
     if (!isloggedin() or !empty($USER->realuser)) {
         // no access tracking
@@ -1973,18 +1970,14 @@ function user_accesstime_log($courseid=0) {
     if ($timenow - $USER->lastaccess > LASTACCESS_UPDATE_SECS) {
     /// Update $USER->lastaccess for next checks
         $USER->lastaccess = $timenow;
-        if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
 
-        $remoteaddr = getremoteaddr();
-        if ($db->Execute("UPDATE {$CFG->prefix}user
-                             SET lastip = '$remoteaddr', lastaccess = $timenow
-                           WHERE id = $USER->id")) {
-        } else {
-            debugging('Error: Could not update global user lastaccess information');  // Don't throw an error
-        }
-    /// Remove this record from record cache since it will change
-        if (!empty($CFG->rcache)) {
-            rcache_unset('user', $USER->id);
+        $last = new object();
+        $last->id         = $USER->id;
+        $last->lastip     = getremoteaddr();
+        $last->lastaccess = $timenow;
+
+        if (!$DB->update_record_raw('user', $last)) {
+            debugging('Error: Could not update global user lastaccess information', DEBUG_ALL);  // Don't throw an error
         }
     }
 
@@ -1995,42 +1988,30 @@ function user_accesstime_log($courseid=0) {
 
 /// Store course lastaccess times for the current user
     if (empty($USER->currentcourseaccess[$courseid]) or ($timenow - $USER->currentcourseaccess[$courseid] > LASTACCESS_UPDATE_SECS)) {
-        if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
-        $exists = false; // To detect if the user_lastaccess record exists or no
-        if ($rs = $db->Execute("SELECT timeaccess
-                                  FROM {$CFG->prefix}user_lastaccess
-                                 WHERE userid = $USER->id AND courseid = $courseid")) {
-            if (!$rs->EOF) {
-                $exists = true;
-                $lastaccess = reset($rs->fields);
-                if ($timenow - $lastaccess <  LASTACCESS_UPDATE_SECS) {
-                /// no need to update now, it was updated recently in concurrent login ;-)
-                    $rs->Close();
-                    return;
-                }
+        $lastaccess = $DB->get_field('user_lastaccess', 'timeaccess', array('userid'=>$USER->id, 'courseid'=>$courseid));
+
+        if ($lastaccess === false) {
+            // Update course lastaccess for next checks
+            $USER->currentcourseaccess[$courseid] = $timenow;
+
+            $last = new object();
+            $last->userid     = $USER->id;
+            $last->courseid   = $courseid;
+            $last->timeaccess = $timenow;
+            if (!$DB->insert_record_raw('user_lastaccess', $last, false)) {
+                debugging('Error: Could not insert course user lastaccess information', DEBUG_ALL);  // Don't throw an error
             }
-            $rs->Close();
-        }
+            
+        } else if ($timenow - $lastaccess <  LASTACCESS_UPDATE_SECS) {
+            // no need to update now, it was updated recently in concurrent login ;-)
 
-    /// Update course lastaccess for next checks
-        $USER->currentcourseaccess[$courseid] = $timenow;
-        if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+        } else {
+            // Update course lastaccess for next checks
+            $USER->currentcourseaccess[$courseid] = $timenow;
 
-        if ($exists) { // user_lastaccess record exists, update it
-            if ($db->Execute("UPDATE {$CFG->prefix}user_lastaccess
-                                 SET timeaccess = $timenow
-                               WHERE userid = $USER->id AND courseid = $courseid")) {
-            } else {
+            if (!$DB->set_field('user_lastaccess', 'timeaccess', $timenow, array('userid'=>$USER->id, 'courseid'=>$courseid))) {
                 debugging('Error: Could not update course user lastacess information');  // Don't throw an error
-            }
-
-        } else { // user lastaccess record doesn't exist, insert it
-            if ($db->Execute("INSERT INTO {$CFG->prefix}user_lastaccess
-                                     (userid, courseid, timeaccess)
-                              VALUES ($USER->id, $courseid, $timenow)")) {
-            } else {
-                debugging('Error: Could not insert course user lastaccess information');  // Don't throw an error
             }
         }
     }

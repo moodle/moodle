@@ -24,7 +24,7 @@ if (!$go or !data_submitted() or !confirm_sesskey()) {   /// Print a form
 }
 
 
-if (!$tables = $db->Metatables() ) {    // No tables yet at all.
+if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
     print_error('notables', 'debug');
 }
 
@@ -38,29 +38,28 @@ while(@ob_end_flush());
 
 echo '<strong>Progress:</strong>';
 $i = 0;
-$skiptables = array($CFG->prefix.'config', $CFG->prefix.'user_students', $CFG->prefix.'user_teachers');//, $CFG->prefix.'sessions2');
+$skiptables = array('config', 'user_students', 'user_teachers');//, 'sessions2');
 
 foreach ($tables as $table) {
-    if (($CFG->prefix && strpos($table, $CFG->prefix) !== 0)
-      or strpos($table, $CFG->prefix.'pma') === 0) { // Not our tables
+    if (strpos($table,'pma') === 0) { // Not our tables
         continue;
     }
     if (in_array($table, $skiptables)) { // Don't process these
         continue;
     }
-    if ($columns = $db->MetaColumns($table, false)) {
+    $fulltable = $DB->get_prefix().$table;
+    if ($columns = $DB->get_columns($table)) {
         if (!array_key_exists('id', $columns) and !array_key_exists('ID', $columns)) {
             continue; // moodle tables have id
         }
         foreach ($columns as $column => $data) {
             if (in_array($data->type, array('text','mediumtext','longtext','varchar'))) {  // Text stuff only
                 // first find candidate records
-                $rs = get_recordset_sql("SELECT id, $column FROM $table WHERE $column LIKE '%</lang>%' OR $column LIKE '%<span lang=%'");
-                if ($rs) {
-                    while (!$rs->EOF) {
-                        $text = $rs->fields[$column];
-                        $id   = $rs->fields['id'];
-
+                $sql = "SELECT id, $column FROM $fulltable WHERE $column LIKE '%</lang>%' OR $column LIKE '%<span lang=%'";
+                if ($rs = $DB->get_recordset_sql($sql)) {
+                    foreach ($rs as $data) {
+                        $text = $data->$column;
+                        $id   = $data->id;
                         if ($i % 600 == 0) {
                             echo '<br />';
                         }
@@ -68,7 +67,6 @@ foreach ($tables as $table) {
                             echo '.';
                         }
                         $i++;
-                        $rs->MoveNext();
 
                         if (empty($text) or is_numeric($text)) {
                             continue; // nothing to do
@@ -82,11 +80,10 @@ foreach ($tables as $table) {
                         }
 
                         if ($newtext != $text) {
-                            $newtext = addslashes($newtext);
-                            execute_sql("UPDATE $table SET $column='$newtext' WHERE id=$id", false);
+                            $DB->execute("UPDATE $fulltable SET $column=? WHERE id=?", array($newtext, $id));
                         }
                     }
-                    rs_close($rs);
+                    $rs->close();
                 }
             }
         }

@@ -19,7 +19,7 @@
 
 function xmldb_enrol_authorize_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $db;
+    global $CFG, $THEME, $DB;
 
     $result = true;
 

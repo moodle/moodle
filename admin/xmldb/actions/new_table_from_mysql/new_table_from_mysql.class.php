@@ -60,7 +60,7 @@ class new_table_from_mysql extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB, $db;
+        global $CFG, $XMLDB, $DB;
 
     /// Do the job, setting result as needed
     /// Get the dir containing the file
@@ -85,10 +85,9 @@ class new_table_from_mysql extends XMLDBAction {
         /// No postaction here
             $this->postaction = NULL;
         /// Get list of tables
-            $dbtables = $db->MetaTables('TABLES');
+            $dbtables = $DB->get_tables();
             $selecttables = array();
             foreach ($dbtables as $dbtable) {
-                $dbtable = strtolower(str_replace($CFG->prefix, '', $dbtable));
                 $i = $structure->findTableInArray($dbtable);
                 if ($i === NULL) {
                     $selecttables[$dbtable] = $dbtable;
@@ -132,14 +131,11 @@ class new_table_from_mysql extends XMLDBAction {
             $table = new XMLDBTable(strtolower(trim($tableparam)));
             $table->setComment($table->getName() . ' table retrofitted from MySQL');
         /// Get fields info from ADODb
-            if(!$dbfields = $db->MetaColumns($CFG->prefix . $tableparam)) {
-            ///Try it without prefix if doesn't exist
-                $dbfields = $db->MetaColumns($tableparam);
-            }
+            $dbfields = $DB->get_columns($tableparam);
             if ($dbfields) {
                 foreach ($dbfields as $dbfield) {
                 /// Create new XMLDB field
-                    $field = new XMLDBField(strtolower($dbfield->name));
+                    $field = new XMLDBField($dbfield->name);
                 /// Set field with info retrofitted
                     $field->setFromADOField($dbfield);
                 /// Add field to the table
@@ -147,7 +143,7 @@ class new_table_from_mysql extends XMLDBAction {
                 }
             }
         /// Get PK, UK and indexes info from ADODb
-            $dbindexes = $db->MetaIndexes($CFG->prefix . $tableparam, true);
+            $dbindexes = $DB->get_indexes($tableparam);
             if ($dbindexes) {
                 $lastkey = NULL; //To temp store the last key processed
                 foreach ($dbindexes as $indexname => $dbindex) {

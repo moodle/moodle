@@ -8,7 +8,7 @@ class block_admin extends block_list {
 
     function get_content() {
 
-        global $CFG, $USER, $SITE, $COURSE;
+        global $CFG, $USER, $SITE, $COURSE, $DB;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -30,7 +30,7 @@ class block_admin extends block_list {
             if ($COURSE->id == $this->instance->pageid) {
                 $course = $COURSE;
             } else {
-                $course = get_record('course', 'id', $this->instance->pageid);
+                $course = $DB->get_record('course', array('id'=>$this->instance->pageid));
             }
         } else {
             $context = get_context_instance(CONTEXT_SYSTEM);

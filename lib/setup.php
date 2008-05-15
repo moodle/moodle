@@ -54,10 +54,15 @@ global $MCACHE;
  */
 global $COURSE;
 /**
- * Definition of db type
+ * Legacy definition of db type TODO: remove in 2.0
  * @global object(db) $db
  */
 global $db;
+/**
+ * Database instances
+ * @global object(mdb) $DB
+ */
+global $DB;
 /**
  * $THEME is a global that defines the site theme.
  *
@@ -115,81 +120,16 @@ global $HTTPSPAGEREQUIRED;
         exit;
     }
 
-/// Connect to the database using adodb
-
-/// Set $CFG->dbfamily global
-/// and configure some other specific variables for each db BEFORE attempting the connection
-    preconfigure_dbconnection();
-
-    require_once($CFG->libdir .'/adodb/adodb.inc.php'); // Database access functions
-
-    $db = &ADONewConnection($CFG->dbtype);
-
-    // See MDL-6760 for why this is necessary. In Moodle 1.8, once we start using NULLs properly,
-    // we probably want to change this value to ''.
-    $db->null2null = 'A long random string that will never, ever match something we want to insert into the database, I hope. \'';
-
-    error_reporting(0);  // Hide errors
-
-    if (!isset($CFG->dbpersist) or !empty($CFG->dbpersist)) {    // Use persistent connection (default)
-        $dbconnected = $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname);
-    } else {                                                     // Use single connection
-        $dbconnected = $db->Connect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname);
+/// Define admin directory
+    if (!isset($CFG->admin)) {   // Just in case it isn't defined in config.php
+        $CFG->admin = 'admin';   // This is relative to the wwwroot and dirroot
     }
-    if (! $dbconnected) {
-        // In the name of protocol correctness, monitoring and performance
-        // profiling, set the appropriate error headers for machine comsumption
-        if (isset($_SERVER['SERVER_PROTOCOL'])) { 
-            // Avoid it with cron.php. Note that we assume it's HTTP/1.x
-            header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');        
-        }
-        // and then for human consumption...
-        echo '<html><body>';
-        echo '<table align="center"><tr>';
-        echo '<td style="color:#990000; text-align:center; font-size:large; border-width:1px; '.
-             '    border-color:#000000; border-style:solid; border-radius: 20px; border-collapse: collapse; '.
-             '    -moz-border-radius: 20px; padding: 15px">';
-        echo '<p>Error: Database connection failed.</p>';
-        echo '<p>It is possible that the database is overloaded or otherwise not running properly.</p>';
-        echo '<p>The site administrator should also check that the database details have been correctly specified in config.php</p>';
-        echo '</td></tr></table>';
-        echo '</body></html>';
-
-        error_log('ADODB Error: '.$db->ErrorMsg()); // see MDL-14628
-
-        if (empty($CFG->noemailever) and !empty($CFG->emailconnectionerrorsto)) {
-            mail($CFG->emailconnectionerrorsto, 
-                 'WARNING: Database connection error: '.$CFG->wwwroot, 
-                 'Connection error: '.$CFG->wwwroot);
-        }
-        die;
-    }
-
-/// Forcing ASSOC mode for ADOdb (some DBs default to FETCH_BOTH)
-    $db->SetFetchMode(ADODB_FETCH_ASSOC);
-
-/// Starting here we have a correct DB conection but me must avoid
-/// to execute any DB transaction until "set names" has been executed
-/// some lines below!
-
-    error_reporting(E_ALL);       // Show errors from now on.
 
     if (!isset($CFG->prefix)) {   // Just in case it isn't defined in config.php
         $CFG->prefix = '';
     }
 
-
-/// Define admin directory
-
-    if (!isset($CFG->admin)) {   // Just in case it isn't defined in config.php
-        $CFG->admin = 'admin';   // This is relative to the wwwroot and dirroot
-    }
-
-/// Increase memory limits if possible
-    raise_memory_limit('96M');    // We should never NEED this much but just in case...
-
 /// Load up standard libraries
-
     require_once($CFG->libdir .'/textlib.class.php');   // Functions to handle multibyte strings
     require_once($CFG->libdir .'/weblib.php');          // Functions for producing HTML
     require_once($CFG->libdir .'/dmllib.php');          // Functions to handle DB data (DML)
@@ -204,6 +144,12 @@ global $HTTPSPAGEREQUIRED;
     //the problem is that we need specific version of quickforms and hacked excel files :-(
     ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
 
+/// Connect to the database
+    setup_DB();
+
+/// Increase memory limits if possible
+    raise_memory_limit('96M');    // We should never NEED this much but just in case...
+
 /// Disable errors for now - needed for installation when debug enabled in config.php
     if (isset($CFG->debug)) {
         $originalconfigdebug = $CFG->debug;
@@ -212,16 +158,12 @@ global $HTTPSPAGEREQUIRED;
         $originalconfigdebug = -1;
     }
 
-/// Set the client/server and connection to utf8
-/// and configure some other specific variables for each db
-    configure_dbconnection();
-
 /// Load up any configuration from the config table
     $CFG = get_config();
 
 /// Turn on SQL logging if required
     if (!empty($CFG->logsql)) {
-        $db->LogSQL();
+        $DB->set_logging(true);
     }
 
 /// Prevent warnings from roles when upgrading with debug on
@@ -671,7 +613,7 @@ global $HTTPSPAGEREQUIRED;
                                              $USER->lastname);
         }
         if (isset($USER->realuser)) {
-            if ($realuser = get_record('user', 'id', $USER->realuser)) {
+            if ($realuser = $DB->get_record('user', array('id'=>$USER->realuser))) {
                 $apachelog_username = clean_filename($realuser->username." as ".$apachelog_username);
                 $apachelog_name = clean_filename($realuser->firstname." ".$realuser->lastname ." as ".$apachelog_name);
                 $apachelog_userid = clean_filename($realuser->id." as ".$apachelog_userid);

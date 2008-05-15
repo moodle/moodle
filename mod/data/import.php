@@ -104,7 +104,6 @@
         if (!$records = data_get_records_csv($filename, $fielddelimiter, $fieldenclosure)) {
             print_error('get_records_csv failed to read data from the uploaded file. Please check file for field name typos and formatting errors.');
         } else {
-            //$db->debug = true;
             $fieldnames = array_shift($records);
 
             foreach ($records as $record) {

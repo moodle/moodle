@@ -175,7 +175,6 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
         }
 
         //var_dump($csv_data);
-        //$db->debug = 3498723498237; // .. very large randomly-typed random value
 
         if ($local_scope) {
             $outcome = get_records_select('grade_outcomes', 'shortname = "'. $csv_data[$imported_headers['outcome_shortname']] .'" and courseid = '. $courseid );

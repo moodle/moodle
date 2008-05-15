@@ -158,8 +158,8 @@
                         }
 
                         execute_sql('UPDATE '.$CFG->prefix.'event SET '.
-                            'name = '.$db->qstr($form->name).','.
-                            'description = '.$db->qstr($form->description).','.
+                            'name = '.addslashes($form->name).','.
+                            'description = '.addslashes($form->description).','.
                             'timestart = '.$timestartoffset.','.
                             'timeduration = '.$form->timeduration.','.
                             'timemodified = '.time().' WHERE repeatid = '.$event->repeatid);

@@ -19,9 +19,11 @@
 
 function xmldb_main_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $USER, $db;
+    global $CFG, $THEME, $USER, $DB;
 
     $result = true;
+
+    $dbman = $DB->get_manager(); // loads XSMLDB classes too
 
     ////////////////////////////////////////
     ///upgrade supported only from 1.9.x ///
@@ -35,7 +37,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('contextid', 'lowerboundary'));
 
     /// Launch drop index contextid-lowerboundary
-        $result = $result && drop_index($table, $index);
+        $result = $result && $dbman->drop_index($table, $index);
 
     /// Define index contextid-lowerboundary-letter (unique) to be added to grade_letters
         $table = new XMLDBTable('grade_letters');
@@ -43,7 +45,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $index->setAttributes(XMLDB_INDEX_UNIQUE, array('contextid', 'lowerboundary', 'letter'));
 
     /// Launch add index contextid-lowerboundary-letter
-        $result = $result && add_index($table, $index);
+        $result = $result && $dbman->add_index($table, $index);
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008030700);
@@ -51,7 +53,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2008050100) {
         // Update courses that used weekscss to weeks
-        $result = set_field('course', 'format', 'weeks', 'format', 'weekscss');
+        $result = $DB->set_field('course', 'format', 'weeks', 'format', 'weekscss');
         upgrade_main_savepoint($result, 2008050100);
     }
 
@@ -98,8 +100,8 @@ function xmldb_main_upgrade($oldversion=0) {
         $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
 
     /// Launch drop index idnumber
-        if (index_exists($table, $index)) {
-            $result = $result && drop_index($table, $index);
+        if ($dbman->index_exists($table, $index)) {
+            $result = $result && $dbman->drop_index($table, $index);
         }
 
     /// Changing precision of field idnumber on table user to (255)
@@ -108,16 +110,22 @@ function xmldb_main_upgrade($oldversion=0) {
         $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'password');
 
     /// Launch change of precision for field idnumber
-        $result = $result && change_field_precision($table, $field);
+        $result = $result && $dbman->change_field_precision($table, $field);
 
     /// Launch add index idnumber again
         $index = new XMLDBIndex('idnumber');
         $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
-        $result = $result && add_index($table, $index);
+        $result = $result && $dbman->add_index($table, $index);
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008051201);
     }
+
+/*
+ * TODO:
+ *   drop adodb_logsql table and create a ner general sql log table
+ *
+ */
 
     return $result;
 }

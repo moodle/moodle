@@ -2,7 +2,12 @@
 
     require_once('../config.php');
 
-    $zone = optional_param('zone', '', PARAM_PATH); //not a path, but it looks like it anyway
+    $zone = optional_param('zone', '', PARAM_RAW);
+
+    if (!is_numeric($zone)) {
+         //not a path, but it looks like it anyway
+         $zone = clean_param($zone, PARAM_PATH);
+    }    
 
     require_login();
 
@@ -17,24 +22,26 @@
 
     print_heading("");
 
-    if (!empty($zone) and confirm_sesskey()) {
-        $db->debug = true;
+    if (data_submitted() and !empty($zone) and confirm_sesskey()) {
         echo "<center>";
-        execute_sql("UPDATE {$CFG->prefix}user SET timezone = '$zone'");
-        $db->debug = false;
+        $DB->execute("UPDATE {user} SET timezone = ?", array($zone));
         echo "</center>";
 
         $USER->timezone = $zone;
+        $current = $zone;
+        notify('Timezone of all users changed', 'notifysuccess');
+    } else {
+        $current = 99;
     }
 
     require_once($CFG->dirroot.'/calendar/lib.php');
     $timezones = get_list_of_timezones();
 
-    echo '<center><form action="timezone.php" method="get">';
+    echo '<center><form action="timezone.php" method="post">';
     echo "$strusers ($strall): ";
-    choose_from_menu ($timezones, "zone", 99, get_string("serverlocaltime"), "", "99");
+    choose_from_menu ($timezones, "zone", $current, get_string("serverlocaltime"), "", "99");
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
-    echo "<input type=\"submit\" value=\"$strsavechanges\" />";
+    echo '<input type="submit" value="'.s($strsavechanges).'" />';
     echo "</form></center>";
 
     print_footer();

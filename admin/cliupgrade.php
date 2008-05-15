@@ -860,16 +860,16 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         /// Both old .sql files and new install.xml are supported
         /// But we prioritise install.xml (XMLDB) if present
 
-        change_db_encoding(); // first try to change db encoding to utf8
-
-        if (!setup_is_unicodedb()) {
-            // If could not convert successfully, throw error, and prevent installation
-            console_write(STDERR,'unicoderequired', 'admin');
+        if (!$DB->setup_is_unicodedb()) {
+            if (!$DB->change_db_encoding()) {
+                // If could not convert successfully, throw error, and prevent installation
+                console_write(STDERR,'unicoderequired', 'admin');
+            }
         }
 
         $status = false;
         if (file_exists("$CFG->libdir/db/install.xml")) {
-            $status = install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
+            $status = $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
         } else {
             console_write(STDERR,"Error: Your database ($CFG->dbtype) is not yet fully supported by Moodle or install.xml is not present.  See the lib/db directory.",'',false);
         }

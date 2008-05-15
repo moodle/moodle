@@ -532,6 +532,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         // configure a temp table
         print "Configuring temp table\n";
+error('fix temporary table code in CAS'); // use sql generator
         switch (strtolower($CFG->dbfamily)) {
             case 'mysql':
                 $droptablesql[] = 'DROP TEMPORARY TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
@@ -556,6 +557,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                 break;
         }
 
+/// TODO: remove these ugly hacks
+error('fix temporary table code in CAS');
 
         execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
         echo "Creating temp table $temptable\n";

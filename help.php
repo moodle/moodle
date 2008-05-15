@@ -193,9 +193,9 @@ function file_exists_and_readable($filepath) {
 // Some functions for handling special cases ========================================
 
 function include_help_for_each_module($file, $langs, $helpdir) {
-    global $CFG;
+    global $CFG, $DB;
 
-    if (!$modules = get_records('modules', 'visible', 1)) {
+    if (!$modules = $DB->get_records('modules', array('visible'=>1))) {
         print_error('nomodules', 'debug');        // Should never happen
     }
     

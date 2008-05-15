@@ -103,7 +103,7 @@ class edit_table extends XMLDBAction {
 
     /// Add the main form
         $o = '<form id="form" action="index.php" method="post">';
-        $o.= '<div>';        
+        $o.= '<div>';
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="table" value="' . $tableparam .'" />';
         $o.= '    <input type="hidden" name ="action" value="edit_table_save" />';
@@ -150,17 +150,8 @@ class edit_table extends XMLDBAction {
         $b .= '</p>';
         $o .= $b;
 
-    /// Join all the reserved words into one big array
-    /// Calculate list of available SQL generators
-        $plugins = get_list_of_plugins('lib/xmldb/classes/generators');
-        $reserved_words = array();
-        foreach($plugins as $plugin) {
-            $classname = 'XMLDB' . $plugin;
-            $generator = new $classname();
-            $reserved_words = array_merge($reserved_words, $generator->getReservedWords());
-        }
-        sort($reserved_words);
-        $reserved_words = array_unique($reserved_words);
+        require("$CFG->libdir/ddl/sql_generator.php");
+        $reserved_words = sql_generator::getAllReservedWords();
 
     /// Delete any 'changeme' field/key/index
         $table->deleteField('changeme');
@@ -205,7 +196,7 @@ class edit_table extends XMLDBAction {
                     $b .= '[' . $this->str['delete'] . ']';
                 }
             /// Detect if the table name is a reserved word
-                if (in_array($field->getName(), $reserved_words)) {
+                if (array_key_exists($field->getName(), $reserved_words)) {
                     $b .= '&nbsp;<a href="index.php?action=view_reserved_words"><span class="error">' . $this->str['reserved'] . '</span></a>';
                 }
             /// The readable info

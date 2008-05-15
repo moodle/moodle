@@ -24,67 +24,112 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+require_once($CFG->libdir.'/ddl/sql_generator.php');
+
 /// This class generate SQL code to be used against MSSQL
 /// It extends XMLDBgenerator so everything can be
 /// overriden as needed to generate correct SQL.
 
-class XMLDBmssql extends XMLDBgenerator {
+class mssql_sql_generator extends sql_generator {
 
 /// Only set values that are different from the defaults present in XMLDBgenerator
 
-    var $statement_end = "\ngo"; // String to be automatically added at the end of each statement
+    public $statement_end = "\ngo"; // String to be automatically added at the end of each statement
 
-    var $number_type = 'DECIMAL';    // Proper type for NUMBER(x) in this DB
+    public $number_type = 'DECIMAL';    // Proper type for NUMBER(x) in this DB
 
-    var $unsigned_allowed = false;    // To define in the generator must handle unsigned information
-    var $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
+    public $unsigned_allowed = false;    // To define in the generator must handle unsigned information
+    public $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
 
-    var $specify_nulls = true;  //To force the generator if NULL clauses must be specified. It shouldn't be necessary
+    public $specify_nulls = true;  //To force the generator if NULL clauses must be specified. It shouldn't be necessary
                                      //but some mssql drivers require them or everything is created as NOT NULL :-(
 
-    var $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
-    var $sequence_name = 'IDENTITY(1,1)'; //Particular name for inline sequences in this generator
-    var $sequence_only = false; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name variable
+    public $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
+    public $sequence_name = 'IDENTITY(1,1)'; //Particular name for inline sequences in this generator
+    public $sequence_only = false; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name variable
 
-    var $enum_inline_code = false; //Does the generator need to add inline code in the column definition
+    public $enum_inline_code = false; //Does the generator need to add inline code in the column definition
 
-    var $add_table_comments  = false;  // Does the generator need to add code for table comments
+    public $add_table_comments  = false;  // Does the generator need to add code for table comments
 
-    var $concat_character = '+'; //Characters to be used as concatenation operator. If not defined
+    public $concat_character = '+'; //Characters to be used as concatenation operator. If not defined
                                   //MySQL CONCAT function will be use
 
-    var $rename_table_sql = "sp_rename 'OLDNAME', 'NEWNAME'"; //SQL sentence to rename one table, both
+    public $rename_table_sql = "sp_rename 'OLDNAME', 'NEWNAME'"; //SQL sentence to rename one table, both
                                   //OLDNAME and NEWNAME are dinamically replaced
 
-    var $rename_table_extra_code = true; //Does the generator need to add code after table rename
-
-    var $rename_column_extra_code = true; //Does the generator need to add code after field rename
-
-    var $rename_column_sql = "sp_rename 'TABLENAME.OLDFIELDNAME', 'NEWFIELDNAME', 'COLUMN'";
+    public $rename_column_sql = "sp_rename 'TABLENAME.OLDFIELDNAME', 'NEWFIELDNAME', 'COLUMN'";
                                       ///TABLENAME, OLDFIELDNAME and NEWFIELDNAME are dianmically replaced
 
-    var $drop_index_sql = 'DROP INDEX TABLENAME.INDEXNAME'; //SQL sentence to drop one index
+    public $drop_index_sql = 'DROP INDEX TABLENAME.INDEXNAME'; //SQL sentence to drop one index
                                                                //TABLENAME, INDEXNAME are dinamically replaced
 
-    var $rename_index_sql = "sp_rename 'TABLENAME.OLDINDEXNAME', 'NEWINDEXNAME', 'INDEX'"; //SQL sentence to rename one index
+    public $rename_index_sql = "sp_rename 'TABLENAME.OLDINDEXNAME', 'NEWINDEXNAME', 'INDEX'"; //SQL sentence to rename one index
                                       //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dinamically replaced
 
-    var $rename_key_sql = null; //SQL sentence to rename one key
+    public $rename_key_sql = null; //SQL sentence to rename one key
                                           //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
 
     /**
      * Creates one new XMLDBmssql
      */
-    function XMLDBmssql() {
-        parent::XMLDBgenerator();
-        $this->prefix = '';
-        $this->reserved_words = $this->getReservedWords();
+    public function __construct($mdb) {
+        parent::__construct($mdb);
+    }
+
+    /**
+     * This function will create the temporary table passed as argument with all its
+     * fields/keys/indexes/sequences, everything based in the XMLDB object
+     *
+     * TRUNCATE the table immediately after creation. A previous process using
+     * the same persistent connection may have created the temp table and failed to
+     * drop it. In that case, the table will exist, and create_temp_table() will
+     * will succeed.
+     *
+     * NOTE: The return value is the tablename - some DBs (MSSQL at least) use special
+     * names for temp tables.
+     *
+     * @uses $CFG, $db
+     * @param XMLDBTable table object (full specs are required)
+     * @param boolean continue to specify if must continue on error (true) or stop (false)
+     * @param boolean feedback to specify to show status info (true) or not (false)
+     * @return string tablename on success, false on error
+     */
+    function create_temp_table($xmldb_table, $continue=true, $feedback=true) {
+        if (!($xmldb_table instanceof XMLDBTable)) {
+            debugging('Incorrect create_table() $xmldb_table parameter');
+            return false;
+        }
+
+    /// Check table doesn't exist
+        if ($this->table_exists($xmldb_table)) {
+            debugging('Table ' . $xmldb_table->getName() .
+                      ' already exists. Create skipped', DEBUG_DEVELOPER);
+            return $xmldb_table->getName(); //Table exists, nothing to do
+        }
+
+        if (!$sqlarr = $this->getCreateTableSQL($xmldb_table)) {
+            return $xmldb_table->getName(); //Empty array = nothing to do = no error
+        }
+
+        // TODO: somehow change the name to have a #
+        /*$temporary = '';
+
+        if (!empty($temporary)) {
+            $sqlarr = preg_replace('/^CREATE/', "CREATE $temporary", $sqlarr);
+        }*/
+
+        if (execute_sql_arr($sqlarr, $continue, $feedback)) {
+            return $xmldb_table->getName();
+        } else {
+            return false;
+        }
     }
 
     /**
      * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
      */
-    function getTypeSQL ($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
+    public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
 
         switch ($xmldb_type) {
             case XMLDB_TYPE_INTEGER:    // From http://msdn.microsoft.com/library/en-us/tsqlref/ts_da-db_7msw.asp?frame=true
@@ -144,7 +189,7 @@ class XMLDBmssql extends XMLDBgenerator {
     /**
      * Returns the code needed to create one enum for the xmldb_table and xmldb_field passes
      */
-    function getEnumExtraSQL ($xmldb_table, $xmldb_field) {
+    public function getEnumExtraSQL($xmldb_table, $xmldb_field) {
 
         $sql = 'CONSTRAINT ' . $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck');
         $sql.= ' CHECK (' . $this->getEncQuoted($xmldb_field->getName()) . ' IN (' . implode(', ', $xmldb_field->getEnumValues()) . '))';
@@ -157,7 +202,7 @@ class XMLDBmssql extends XMLDBgenerator {
      * MSSQL overwrites the standard sentence because it needs to do some extra work dropping the default and
      * check constraints
      */
-    function getDropFieldSQL($xmldb_table, $xmldb_field) {
+    public function getDropFieldSQL($xmldb_table, $xmldb_field) {
 
         global $db;
 
@@ -189,7 +234,7 @@ class XMLDBmssql extends XMLDBgenerator {
      * MSSQL is special, so we overload the function here. It needs to
      * drop the constraints BEFORE renaming the field
      */
-    function getRenameFieldSQL($xmldb_table, $xmldb_field, $newname) {
+    public function getRenameFieldSQL($xmldb_table, $xmldb_field, $newname) {
 
         $results = array();  //Array where all the sentences will be stored
 
@@ -218,7 +263,7 @@ class XMLDBmssql extends XMLDBgenerator {
     /**
      * Returns the code (array of statements) needed to execute extra statements on field rename
      */
-    function getRenameFieldExtraSQL ($xmldb_table, $xmldb_field, $newname) {
+    public function getRenameFieldExtraSQL($xmldb_table, $xmldb_field, $newname) {
 
         $results = array();
 
@@ -240,7 +285,7 @@ class XMLDBmssql extends XMLDBgenerator {
     /**
      * Returns the code (array of statements) needed to execute extra statements on table rename
      */
-    function getRenameTableExtraSQL ($xmldb_table, $newname) {
+    public function getRenameTableExtraSQL($xmldb_table, $newname) {
 
         $results = array();
 
@@ -271,21 +316,21 @@ class XMLDBmssql extends XMLDBgenerator {
     /**
      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
      */
-    function getAlterFieldSQL($xmldb_table, $xmldb_field) {
-
-        global $db;
+    public function getAlterFieldSQL($xmldb_table, $xmldb_field) {
 
         $results = array(); /// To store all the needed SQL commands
 
     /// Get the quoted name of the table and field
-        $tablename = $this->getTableName($xmldb_table);
-        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+        $tablename = $xmldb_table->getName();
+        $fieldname = $xmldb_field->getName();
 
     /// Take a look to field metadata
-        $meta = array_change_key_case($db->MetaColumns($tablename));
+        $this->mdb->reset_columns($tablename);
+
+        $meta = $this->mdb->get_columns($tablename);
         $metac = $meta[$fieldname];
-        $oldtype = strtolower($metac->type);
-        $oldmetatype = column_type($xmldb_table->getName(), $fieldname);
+        $oldmetatype = $$metac->meta_type;
+
         $oldlength = $metac->max_length;
         $olddecimals = empty($metac->scale) ? null : $metac->scale;
         $oldnotnull = empty($metac->not_null) ? false : $metac->not_null;
@@ -295,11 +340,11 @@ class XMLDBmssql extends XMLDBgenerator {
         $lengthchanged = true;  //By default, assume that the column length has changed
 
     /// Detect if we are changing the type of the column
-        if (($xmldb_field->getType() == XMLDB_TYPE_INTEGER && substr($oldmetatype, 0, 1) == 'I') ||
+        if (($xmldb_field->getType() == XMLDB_TYPE_INTEGER && $oldmetatype == 'I') ||
             ($xmldb_field->getType() == XMLDB_TYPE_NUMBER  && $oldmetatype == 'N') ||
             ($xmldb_field->getType() == XMLDB_TYPE_FLOAT   && $oldmetatype == 'F') ||
-            ($xmldb_field->getType() == XMLDB_TYPE_CHAR    && substr($oldmetatype, 0, 1) == 'C') ||
-            ($xmldb_field->getType() == XMLDB_TYPE_TEXT    && substr($oldmetatype, 0, 1) == 'X') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_CHAR    && $oldmetatype == 'C') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_TEXT    && $oldmetatype == 'X') ||
             ($xmldb_field->getType() == XMLDB_TYPE_BINARY  && $oldmetatype == 'B')) {
             $typechanged = false;
         }
@@ -331,20 +376,17 @@ class XMLDBmssql extends XMLDBgenerator {
     /**
      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to modify the default of the field in the table
      */
-    function getModifyDefaultSQL($xmldb_table, $xmldb_field) {
+    public function getModifyDefaultSQL($xmldb_table, $xmldb_field) {
     /// MSSQL is a bit special with default constraints because it implements them as external constraints so
     /// normal ALTER TABLE ALTER COLUMN don't work to change defaults. Because this, we have this method overloaded here
 
         $results = array();
 
-    /// Get the quoted name of the table and field
-        $tablename = $this->getTableName($xmldb_table);
-        $fieldname = $this->getEncQuoted($xmldb_field->getName());
-
     /// Decide if we are going to create/modify or to drop the default
         if ($xmldb_field->getDefault() === null) {
             $results = $this->getDropDefaultSQL($xmldb_table, $xmldb_field); //Drop but, under some circumptances, re-enable
-            if ($this->getDefaultClause($xmldb_field)) { //If getDefaultClause() it must have one default, create it
+            $default_clause = $this->getDefaultClause($xmldb_field);
+            if ($default_clause) { //If getDefaultClause() it must have one default, create it
                 $results = array_merge($results, $this->getCreateDefaultSQL($xmldb_table, $xmldb_field)); //Create/modify
             }
         } else {
@@ -356,10 +398,10 @@ class XMLDBmssql extends XMLDBgenerator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its enum 
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its enum
      * (usually invoked from getModifyEnumSQL()
      */
-    function getCreateEnumSQL($xmldb_table, $xmldb_field) {
+    public function getCreateEnumSQL($xmldb_table, $xmldb_field) {
     /// All we have to do is to create the check constraint
         return array('ALTER TABLE ' . $this->getTableName($xmldb_table) .
                      ' ADD ' . $this->getEnumExtraSQL($xmldb_table, $xmldb_field));
@@ -369,7 +411,7 @@ class XMLDBmssql extends XMLDBgenerator {
      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its enum
      * (usually invoked from getModifyEnumSQL()
      */
-    function getDropEnumSQL($xmldb_table, $xmldb_field) {
+    public function getDropEnumSQL($xmldb_table, $xmldb_field) {
     /// Let's introspect to know the real name of the check constraint
         if ($check_constraints = $this->getCheckConstraintsFromDB($xmldb_table, $xmldb_field)) {
             $check_constraint = array_shift($check_constraints); /// Get the 1st (should be only one)
@@ -383,10 +425,10 @@ class XMLDBmssql extends XMLDBgenerator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default 
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
-    function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
+    public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
     /// MSSQL is a bit special and it requires the corresponding DEFAULT CONSTRAINT to be dropped
 
         $results = array();
@@ -396,19 +438,21 @@ class XMLDBmssql extends XMLDBgenerator {
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
     /// Now, check if, with the current field attributes, we have to build one default
-        if ($default_clause = $this->getDefaultClause($xmldb_field)) {
+        $default_clause = $this->getDefaultClause($xmldb_field);
+        if ($default_clause) {
         /// We need to build the default (Moodle) default, so do it
-            $results[] = 'ALTER TABLE ' . $tablename . ' ADD' . $default_clause . ' FOR ' . $fieldname;
+            $sql = 'ALTER TABLE ' . $tablename . ' ADD' . $default_clause . ' FOR ' . $fieldname;
+            $results[] = $sql;
         }
 
         return $results;
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default 
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default
      * (usually invoked from getModifyDefaultSQL()
      */
-    function getDropDefaultSQL($xmldb_table, $xmldb_field) {
+    public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
     /// MSSQL is a bit special and it requires the corresponding DEFAULT CONSTRAINT to be dropped
 
         $results = array();
@@ -420,7 +464,7 @@ class XMLDBmssql extends XMLDBgenerator {
     /// Look for the default contraint and, if found, drop it
         if ($defaultname = $this->getDefaultConstraintName($xmldb_table, $xmldb_field)) {
             $results[] = 'ALTER TABLE ' . $tablename . ' DROP CONSTRAINT ' . $defaultname;
-        } 
+        }
 
         return $results;
     }
@@ -430,7 +474,7 @@ class XMLDBmssql extends XMLDBgenerator {
      * or false if not found
      * This function should be considered internal and never used outside from generator
      */
-    function getDefaultConstraintName($xmldb_table, $xmldb_field) {
+    public function getDefaultConstraintName($xmldb_table, $xmldb_field) {
 
     /// Get the quoted name of the table and field
         $tablename = $this->getTableName($xmldb_table);
@@ -455,7 +499,7 @@ class XMLDBmssql extends XMLDBgenerator {
      * Each element contains the name of the constraint and its description
      * If no check constraints are found, returns an empty array
      */
-    function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
+    public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
 
         $results = array();
 
@@ -498,7 +542,7 @@ class XMLDBmssql extends XMLDBgenerator {
      * return if such name is currently in use (true) or no (false)
      * (invoked from getNameForObject()
      */
-    function isNameInUse($object_name, $type, $table_name) {
+    public function isNameInUse($object_name, $type, $table_name) {
         switch($type) {
             case 'seq':
             case 'trg':
@@ -506,15 +550,15 @@ class XMLDBmssql extends XMLDBgenerator {
             case 'uk':
             case 'fk':
             case 'ck':
-                if ($check = get_records_sql("SELECT name 
-                                              FROM sysobjects 
+                if ($check = get_records_sql("SELECT name
+                                              FROM sysobjects
                                               WHERE lower(name) = '" . strtolower($object_name) . "'")) {
                     return true;
                 }
                 break;
             case 'ix':
             case 'uix':
-                if ($check = get_records_sql("SELECT name 
+                if ($check = get_records_sql("SELECT name
                                               FROM sysindexes
                                               WHERE lower(name) = '" . strtolower($object_name) . "'")) {
                     return true;
@@ -525,9 +569,22 @@ class XMLDBmssql extends XMLDBgenerator {
     }
 
     /**
+     * Returns the code (in array) needed to add one comment to the table
+     */
+    public function getCommentSQL($xmldb_table) {
+        return array();
+    }
+
+    public function addslashes($s) {
+        // do not use php addslashes() because it depends on PHP quote settings!
+        $s = str_replace("'",  "''", $s);
+        return $s;
+    }
+
+    /**
      * Returns an array of reserved words (lowercase) for this DB
      */
-    function getReservedWords() {
+    public static function getReservedWords() {
     /// This file contains the reserved words for MSSQL databases
     /// from http://msdn2.microsoft.com/en-us/library/ms189822.aspx
         $reserved_words = array (

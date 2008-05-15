@@ -34,16 +34,16 @@ if (!data_submitted() or !$search or !$replace or !confirm_sesskey()) {   /// Pr
 
 print_simple_box_start('center');
 
-if (!db_replace($search, $replace)) {
+if (!db_replace(stripslashes($search), stripslashes($replace))) {
     print_error('erroroccur', debug);
 }
 
 print_simple_box_end();
 
 /// Rebuild course cache which might be incorrect now
-notify('Rebuilding course cache...');
+notify('Rebuilding course cache...', 'notifysuccess');
 rebuild_course_cache();
-notify('...finished');
+notify('...finished', 'notifysuccess');
 
 print_continue('index.php');
 

@@ -76,7 +76,10 @@ class check_bigints extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB, $db;
+        global $CFG, $XMLDB, $db, $DB;
+
+        $dbman = $DB->get_manager();
+        $dbfamily = $DB->get_dbfamily();
 
     /// And we nedd some ddl suff
         require_once ($CFG->libdir . '/ddllib.php');
@@ -85,7 +88,7 @@ class check_bigints extends XMLDBAction {
         $wrong_fields = array();
 
     /// Correct fields must be type bigint for MySQL and int8 for PostgreSQL
-        switch ($CFG->dbfamily) {
+        switch ($dbfamily) {
             case 'mysql':
                 $correct_type = 'bigint';
                 break;
@@ -106,7 +109,7 @@ class check_bigints extends XMLDBAction {
             $o = '<table class="generalbox" border="0" cellpadding="5" cellspacing="0" id="notice">';
             $o.= '  <tr><td class="generalboxcontent">';
             $o.= '    <p class="centerpara">' . $this->str['confirmcheckbigints'] . '</p>';
-            if ($CFG->dbfamily == 'mysql') {
+            if ($dbfamily == 'mysql') {
                 $o.= '    <p class="centerpara">' . $this->str['mysqlextracheckbigints'] . '</p>';
             }
             $o.= '    <table class="boxaligncenter" cellpadding="20"><tr><td>';
@@ -140,10 +143,6 @@ class check_bigints extends XMLDBAction {
                     }
                 /// Load the XML file
                     $xmldb_file = new XMLDBFile($dbdir->path . '/install.xml');
-                /// Load the needed XMLDB generator
-                    $classname = 'XMLDB' . $CFG->dbtype;
-                    $generator = new $classname();
-                    $generator->setPrefix($CFG->prefix);
 
                 /// Only if the file exists
                     if (!$xmldb_file->fileExists()) {
@@ -164,13 +163,11 @@ class check_bigints extends XMLDBAction {
                     /// Foreach table, process its fields
                         foreach ($xmldb_tables as $xmldb_table) {
                         /// Skip table if not exists
-                            if (!table_exists($xmldb_table)) {
+                            if (!$dbman->table_exists($xmldb_table)) {
                                 continue;
                             }
                         /// Fetch metadata from phisical DB. All the columns info.
-                            if ($metacolumns = $db->MetaColumns($CFG->prefix . $xmldb_table->getName())) {
-                                $metacolumns = array_change_key_case($metacolumns, CASE_LOWER);
-                            } else {
+                            if (!$metacolumns = $DB->get_columns($xmldb_table->getName())) {
                             //// Skip table if no metacolumns is available for it
                                 continue;
                             }
@@ -193,7 +190,7 @@ class check_bigints extends XMLDBAction {
                                 /// Going to check this field in DB
                                     $o.='            <li>' . $this->str['field'] . ': ' . $xmldb_field->getName() . ' ';
                                 /// Detect if the phisical field is wrong and, under mysql, check for incorrect signed fields too
-                                    if ($metacolumn->type != $correct_type || ($CFG->dbfamily == 'mysql' && $xmldb_field->getUnsigned() && !$metacolumn->unsigned)) {
+                                    if ($metacolumn->type != $correct_type || ($dbfamily == 'mysql' && $xmldb_field->getUnsigned() && !$metacolumn->unsigned)) {
                                         $o.='<font color="red">' . $this->str['wrong'] . '</font>';
                                     /// Add the wrong field to the list
                                         $obj = new object;
@@ -233,18 +230,22 @@ class check_bigints extends XMLDBAction {
                     $xmldb_table = $obj->table;
                     $xmldb_field = $obj->field;
                 /// MySQL directly supports this
-                    if ($CFG->dbfamily == 'mysql') {
-                        $sqlarr = $xmldb_table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $xmldb_field, true);
+
+// TODO: move this hack to generators!!
+
+                    if ($dbfamily == 'mysql') {
+                        $sqlarr = $dbman->generator->getAlterFieldSQL($xmldb_table, $xmldb_field);
                 /// PostgreSQL (XMLDB implementation) is a bit, er... imperfect.
-                    } else if ($CFG->dbfamily == 'postgres') {
-                        $sqlarr = array('ALTER TABLE ' . $CFG->prefix . $xmldb_table->getName() .
+                    } else if ($dbfamily == 'postgres') {
+                        $sqlarr = array('ALTER TABLE ' . $DB->get_prefix() . $xmldb_table->getName() .
                                   ' ALTER COLUMN ' . $xmldb_field->getName() . ' TYPE BIGINT;');
                     }
                     $r.= '            <li>' . $this->str['table'] . ': ' . $xmldb_table->getName() . '. ' .
                                               $this->str['field'] . ': ' . $xmldb_field->getName() . '</li>';
                 /// Add to output if we have sentences
                     if ($sqlarr) {
-                        $s.= '<code>' . str_replace("\n", '<br />', implode('<br />', $sqlarr)) . '</code><br />';
+                        $sqlarr = $dbman->generator->getEndedStatements($sqlarr);
+                        $s.= '<code>' . str_replace("\n", implode('<br />', $sqlarr)). '</code><br />';
                     }
                 }
                 $r.= '        </ul>';

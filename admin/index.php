@@ -61,14 +61,6 @@
         print_error('phpvaron', 'debug', '', array('file_uploads', $documentationlink));
     }
 
-    if (empty($CFG->prefix) && $CFG->dbfamily != 'mysql') {  //Enforce prefixes for everybody but mysql
-        print_error('prefixcannotbeempty', 'debug', '', array($CFG->prefix, $CFG->dbtype));
-    }
-
-    if ($CFG->dbfamily == 'oracle' && strlen($CFG->prefix) > 2) { //Max prefix length for Oracle is 2cc
-        print_error('prefixlimit', 'debug', '', $CFG->prefix);
-    }
-
 /// Check that config.php has been edited
 
     if ($CFG->wwwroot == "http://example.com/moodle") {
@@ -103,8 +95,7 @@
     }
 
 /// Check if the main tables have been installed yet or not.
-
-    if (! $tables = $db->Metatables() ) {    // No tables yet at all.
+    if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
         $maintables = false;
 
     } else {                                 // Check for missing main tables
@@ -113,7 +104,7 @@
                          "course_sections", "log", "log_display", "modules",
                          "user");
         foreach ($mtables as $mtable) {
-            if (!in_array($CFG->prefix.$mtable, $tables)) {
+            if (!in_array($mtable, $tables)) {
                 $maintables = false;
                 break;
             }
@@ -164,20 +155,21 @@
         $CFG->debug = $origdebug;
         error_reporting($CFG->debug);
         upgrade_log_start();
-        $db->debug = true;
+        $DB->set_debug(true);
 
     /// Both old .sql files and new install.xml are supported
     /// But we prioritise install.xml (XMLDB) if present
 
-        change_db_encoding(); // first try to change db encoding to utf8
-        if (!setup_is_unicodedb()) {
-            // If could not convert successfully, throw error, and prevent installation
-            print_error('unicoderequired', 'admin');
+        if (!$DB->setup_is_unicodedb()) {
+            if (!$DB->change_db_encoding()) {
+                // If could not convert successfully, throw error, and prevent installation
+                print_error('unicoderequired', 'admin');
+            }
         }
 
         $status = false;
         if (file_exists("$CFG->libdir/db/install.xml")) {
-            $status = install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
+            $status = $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
         } else {
             print_error('dbnotsupport', 'debug', '', $CFG->dbtype);
         }
@@ -186,7 +178,7 @@
         set_config('unicodedb', 1);
 
     /// Continue with the instalation
-        $db->debug = false;
+        $DB->set_debug(false);
         if ($status) {
 
             /// Groups install is now in core above.
@@ -335,7 +327,7 @@
                 upgrade_language_pack();
 
                 print_heading($strdatabasechecking);
-                $db->debug=true;
+                $DB->set_debug(true);
             /// Launch the old main upgrade (if exists)
                 $status = true;
                 if (function_exists('main_upgrade')) {
@@ -345,7 +337,7 @@
                 if ($status && function_exists('xmldb_main_upgrade')) {
                     $status = xmldb_main_upgrade($CFG->version);
                 }
-                $db->debug=false;
+                $DB->set_debug(false);
             /// If successful, continue upgrading roles and setting everything properly
                 if ($status) {
                     if (!update_capabilities()) {
@@ -473,7 +465,7 @@
         $newsite->students = get_string("defaultcoursestudents");
         $newsite->timemodified = time();
 
-        if (!$newid = insert_record('course', $newsite)) {
+        if (!$newid = $DB->insert_record('course', $newsite)) {
             print_error('cannotsetupsite', 'error');
         }
         // make sure course context exists
@@ -486,7 +478,7 @@
         $cat = new object();
         $cat->name = get_string('miscellaneous');
         $cat->depth = 1;
-        if (!$catid = insert_record('course_categories', $cat)) {
+        if (!$catid = $DB->insert_record('course_categories', $cat)) {
             print_error('cannotsetupcategory', 'error');
         }
         // make sure category context exists
@@ -505,10 +497,10 @@
         blocks_repopulate_page($page);
 
         //add admin_tree block to site if not already present
-        if ($admintree = get_record('block', 'name', 'admin_tree')) {
+        if ($admintree = $DB->get_record('block', array('name'=>'admin_tree'))) {
             $page = page_create_object(PAGE_COURSE_VIEW, SITEID);
             blocks_execute_action($page, blocks_get_by_page($page), 'add', (int)$admintree->id, false, false);
-            if ($admintreeinstance = get_record('block_instance', 'pagetype', $page->type, 'pageid', SITEID, 'blockid', $admintree->id)) {
+            if ($admintreeinstance = $DB->get_record('block_instance', array('pagetype'=>$page->type, 'pageid'=>SITEID, 'blockid'=>$admintree->id))) {
                 blocks_execute_action($page, blocks_get_by_page($page), 'moveleft', $admintreeinstance, false, false);
             }
         }
@@ -522,7 +514,7 @@
     }
 
 /// Check if the guest user exists.  If not, create one.
-    if (! record_exists("user", "username", "guest")) {
+    if (!$DB->record_exists('user', array('username'=>'guest'))) {
         if (! $guest = create_guest_record()) {
             notify("Could not create guest user record !!!");
         }

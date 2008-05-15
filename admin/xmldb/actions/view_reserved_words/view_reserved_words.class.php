@@ -63,49 +63,27 @@ class view_reserved_words extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB, $db;
+        global $CFG, $XMLDB, $DB;
 
     /// Calculate list of available SQL generators
-        $plugins = get_list_of_plugins('lib/xmldb/classes/generators');
-        $reserved_words = array();
-        $reserved_words_bydb = array();
-        foreach($plugins as $plugin) {
-            $classname = 'XMLDB' . $plugin;
-            $generator = new $classname();
-            $reserved_words = array_merge($reserved_words, $generator->getReservedWords());
-            $reserved_words_bydb[$plugin] = $generator->getReservedWords();
-        }
-        sort($reserved_words);
-        $reserved_words = array_unique($reserved_words);
+        require("$CFG->libdir/ddl/sql_generator.php");
+        $reserved_words = sql_generator::getAllReservedWords();
 
     /// Now, calculate, looking into current DB (with AdoDB Metadata), which fields are
     /// in the list of reserved words
         $wronguses = array();
-        $dbtables = $db->MetaTables('TABLES');
+        $dbtables = $DB->get_tables();
         if ($dbtables) {
-            foreach ($dbtables as $dbtable) {
-                $table = str_replace($CFG->prefix, '', $dbtable);
-                if (in_array($table, $reserved_words)) {
-                    $list_of_db = array();
-                    foreach ($reserved_words_bydb as $key=>$words) {
-                        if (in_array($table, $words)) {
-                            $list_of_db[] = $key;
-                        }
-                    }
-                    $wronguses[] = $this->str['table'] . ' - ' . $table . ' (' . implode(', ',$list_of_db) . ')';
+            foreach ($dbtables as $table) {
+                if (array_key_exists($table, $reserved_words)) {
+                    $wronguses[] = $this->str['table'] . ' - ' . $table . ' (' . implode(', ',$reserved_words[$table]) . ')';
 
                 }
-                $dbfields = $db->MetaColumns($dbtable);
+                $dbfields = $DB->get_columns($table);
                 if ($dbfields) {
                     foreach ($dbfields as $dbfield) {
-                        if (in_array($dbfield->name, $reserved_words)) {
-                            $list_of_db = array();
-                            foreach ($reserved_words_bydb as $key=>$words) {
-                                if (in_array($dbfield->name, $words)) {
-                                    $list_of_db[] = $key;
-                                }
-                            }
-                            $wronguses[] = $this->str['field'] . ' - ' . $table . '->' . $dbfield->name . ' (' . implode(', ',$list_of_db) . ')';
+                        if (array_key_exists($dbfield->name, $reserved_words)) {
+                            $wronguses[] = $this->str['field'] . ' - ' . $table . '->' . $dbfield->name . ' (' . implode(', ',$reserved_words[$dbfield->name]) . ')';
                         }
                     }
                 }
@@ -135,7 +113,7 @@ class view_reserved_words extends XMLDBAction {
         $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
         $o.= '      <tr><td align="center">' . $this->str['listreservedwords'].'</td></tr>';
         $o.= '      <tr><td><textarea cols="80" rows="32">';
-        $o.= s(implode(', ', $reserved_words));
+        $o.= s(implode(', ', array_keys($reserved_words)));
         $o.= '</textarea></td></tr>';
         $o.= '    </table>';
 

@@ -36,7 +36,7 @@
 
 /// Extra debugging (set in config.php)
     if (!empty($CFG->showcronsql)) {
-        $db->debug = true;
+        $DB->set_debug(true);
     }
     if (!empty($CFG->showcrondebugging)) {
         $CFG->debug = DEBUG_DEVELOPER;

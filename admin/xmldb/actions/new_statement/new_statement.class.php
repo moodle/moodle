@@ -60,7 +60,7 @@ class new_statement extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB, $db;
+        global $CFG, $XMLDB, $DB;
 
     /// Do the job, setting result as needed
     /// Get the dir containing the file
@@ -86,12 +86,7 @@ class new_statement extends XMLDBAction {
         /// No postaction here
             $this->postaction = NULL;
         /// Get list of tables
-            $dbtables = $db->MetaTables('TABLES');
-            $selecttables = array();
-            foreach ($dbtables as $dbtable) {
-                $dbtable = str_replace($CFG->prefix, '', $dbtable);
-                $selecttables[$dbtable] = $dbtable;
-            }
+            $selecttables = $DB->get_tables();
         /// Get list of statement types
             $typeoptions = array (XMLDB_STATEMENT_INSERT => XMLDBStatement::getXMLDBStatementName(XMLDB_STATEMENT_INSERT),
                                   XMLDB_STATEMENT_UPDATE => XMLDBStatement::getXMLDBStatementName(XMLDB_STATEMENT_UPDATE),

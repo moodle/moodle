@@ -58,7 +58,8 @@ class view_table_sql extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB;
+        global $CFG, $XMLDB, $DB;
+        $dbman = $DB->get_manager();
 
     /// Do the job, setting result as needed
     /// Get the dir containing the file
@@ -79,24 +80,9 @@ class view_table_sql extends XMLDBAction {
 
     /// Get parameters
         $tableparam = required_param('table', PARAM_PATH);
-        if (!$table =& $structure->getTable($tableparam)) {
-            $this->errormsg = 'Wrong table specified: ' . $tableparm;
+        if (!$table = $structure->getTable($tableparam)) {
+            $this->errormsg = 'Wrong table specified: ' . $tableparam;
             return false;
-        }
-        $generatorparam = optional_param('generator', null, PARAM_ALPHANUM);
-        if (empty($generatorparam)) {
-            $generatorparam = $CFG->dbtype;
-        }
-
-    /// Calculate list of available SQL generators
-        $plugins = get_list_of_plugins('lib/xmldb/classes/generators');
-        $generators = array();
-        foreach($plugins as $plugin) {
-            $generators[$plugin] = $plugin;
-        }
-    /// Check we have the selected generator
-        if (!in_array($generatorparam, $generators)) {
-            $generatorparam = reset($generators);
         }
 
         /// The back to edit table button
@@ -106,15 +92,11 @@ class view_table_sql extends XMLDBAction {
         $o = $b;
 
         $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
-        $o.= '      <tr><td align="center">' . $this->str['selectdb'];
-
-    /// Show the popup of generators
-        $url = 'index.php?action=view_table_sql&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;generator=';
-        $o.= popup_form($url, $generators, 'selectgenerator', $generatorparam, '', '', '' , true);
-        $o.= '      </td></tr>';
         $o.= '      <tr><td><textarea cols="80" rows="32">';
+
     /// Get an array of statements
-        if ($starr = $table->getCreateTableSQL($generatorparam, $CFG->prefix)) {
+        if ($starr = $DB->get_manager()->generator->getCreateTableSQL($table)) {
+            $starr = $dbman->generator->getEndedStatements($starr);
             $sqltext = '';
             foreach ($starr as $st) {
                 $sqltext .= s($st) . "\n\n";

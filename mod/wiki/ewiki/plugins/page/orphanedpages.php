@@ -19,9 +19,9 @@ function ewiki_page_orphanedpages($id, $data, $action) {
    $orphaned = array();
 
    #-- read database
-   $db = ewiki_database("GETALL", array("refs", "flags"));
+   $datab = ewiki_database("GETALL", array("refs", "flags"));
    $n=0;
-   while ($row = $db->get()) {
+   while ($row = $datab->get()) {
 
       $p = $row["id"];
 

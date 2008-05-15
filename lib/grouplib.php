@@ -23,7 +23,8 @@ define('VISIBLEGROUPS', 2);
  * occurred.
  */
 function groups_group_exists($groupid) {
-    return record_exists('groups', 'id', $groupid);
+    global $DB;
+    return $DB->record_exists('groups', array('id'=>$groupid));
 }
 
 /**
@@ -32,7 +33,8 @@ function groups_group_exists($groupid) {
  * @return string The name of the group
  */
 function groups_get_group_name($groupid) {
-    return get_field('groups', 'name', 'id', $groupid);
+    global $DB;
+    return $DB->get_field('groups', 'name', array('id'=>$groupid));
 }
 
 /**
@@ -41,7 +43,8 @@ function groups_get_group_name($groupid) {
  * @return string The name of the grouping
  */
 function groups_get_grouping_name($groupingid) {
-    return get_field('groupings', 'name', 'id', $groupingid);
+    global $DB;
+    return $DB->get_field('groupings', 'name', array('id'=>$groupingid));
 }
 
 /**
@@ -52,7 +55,8 @@ function groups_get_grouping_name($groupingid) {
  * @return int $groupid
  */
 function groups_get_group_by_name($courseid, $name) {
-    if ($groups = get_records_select('groups', "courseid=$courseid AND name='".addslashes($name)."'")) {
+    global $DB;
+    if ($groups = $DB->get_records('groups', array('courseid'=>$courseid, 'name'=>$name))) {
         return key($groups);
     }
     return false;
@@ -66,7 +70,8 @@ function groups_get_group_by_name($courseid, $name) {
  * @return int $groupid
  */
 function groups_get_grouping_by_name($courseid, $name) {
-    if ($groupings = get_records_select('groupings', "courseid=$courseid AND name='".addslashes($name)."'")) {
+    global $DB;
+    if ($groupings = $DB->get_records_select('groupings', array('courseid'=>$courseid, 'name'=>$name))) {
         return key($groupings);
     }
     return false;
@@ -78,7 +83,8 @@ function groups_get_grouping_by_name($courseid, $name) {
  * @return group object
  */
 function groups_get_group($groupid) {
-    return get_record('groups', 'id', $groupid);
+    global $DB;
+    return $DB->get_record('groups', array('id'=>$groupid));
 }
 
 /**
@@ -87,7 +93,8 @@ function groups_get_group($groupid) {
  * @return group object
  */
 function groups_get_grouping($groupingid) {
-    return get_record('groupings', 'id', $groupingid);
+    global $DB;
+    return $DB->get_record('groupings', array('id'=>$groupingid));
 }
 
 /**
@@ -99,39 +106,40 @@ function groups_get_grouping($groupingid) {
  * or an error occurred. (userid field returned if array in $userid)
  */
 function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*') {
-    global $CFG;
+    global $CFG, $DB;
 
     // groupings are ignored when not enabled
     if (empty($CFG->enablegroupings)) {
         $groupingid = 0;
     }
 
+
     if (empty($userid)) {
         $userfrom  = "";
         $userwhere = "";
-
-    } else if (is_array($userid)) {
-        $userids = implode(',', $userid);
-        $userfrom  = ", {$CFG->prefix}groups_members gm";
-        $userwhere = "AND g.id = gm.groupid AND gm.userid IN ($userids)";
+        $params = array();
 
     } else {
-        $userfrom  = ", {$CFG->prefix}groups_members gm";
-        $userwhere = "AND g.id = gm.groupid AND gm.userid = '$userid'";
+        list($usql, $params) = $DB->get_in_or_equal($userid);
+        $userfrom  = ", {groups_members} gm";
+        $userwhere = "AND g.id = gm.groupid AND gm.userid $usql";
     }
 
     if (!empty($groupingid)) {
-        $groupingfrom  = ", {$CFG->prefix}groupings_groups gg";
-        $groupingwhere = "AND g.id = gg.groupid AND gg.groupingid = '$groupingid'";
+        $groupingfrom  = ", {groupings_groups} gg";
+        $groupingwhere = "AND g.id = gg.groupid AND gg.groupingid = ?";
+        $params[] = $groupingid;
     } else {
         $groupingfrom  = "";
         $groupingwhere = "";
     }
 
-    return get_records_sql("SELECT $fields
-                              FROM {$CFG->prefix}groups g $userfrom $groupingfrom
-                             WHERE g.courseid = $courseid $userwhere $groupingwhere
-                          ORDER BY name ASC");
+    array_unshift($params, $courseid);
+
+    return $DB->get_records_sql("SELECT $fields
+                                   FROM {groups} g $userfrom $groupingfrom
+                                  WHERE g.courseid = ? $userwhere $groupingwhere
+                               ORDER BY name ASC", $params);
 }
 
 /**
@@ -141,24 +149,27 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
  * @return array[groupingid][groupid] including grouping id 0 which means all groups
  */
 function groups_get_user_groups($courseid, $userid=0) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     if (empty($userid)) {
         $userid = $USER->id;
     }
 
-    if (!$rs = get_recordset_sql("SELECT g.id, gg.groupingid
-                                    FROM {$CFG->prefix}groups g
-                                         JOIN {$CFG->prefix}groups_members gm        ON gm.groupid = g.id
-                                         LEFT JOIN {$CFG->prefix}groupings_groups gg ON gg.groupid = g.id
-                                   WHERE gm.userid = $userid AND g.courseid = $courseid")) {
+    $sql = "SELECT g.id, gg.groupingid
+              FROM {groups} g
+                   JOIN {groups_members} gm   ON gm.groupid = g.id
+              LEFT JOIN {groupings_groups} gg ON gg.groupid = g.id
+             WHERE gm.userid = ? AND g.courseid = ?";
+    $params = array($userid, $courseid);
+
+    if (!$rs = $DB->get_recordset_sql($sql, $params)) {
         return array('0' => array());
     }
 
     $result    = array();
     $allgroups = array();
     
-    while ($group = rs_fetch_next_record($rs)) {
+    foreach ($rs as $group) {
         $allgroups[$group->id] = $group->id;
         if (is_null($group->groupingid)) {
             continue;
@@ -168,7 +179,7 @@ function groups_get_user_groups($courseid, $userid=0) {
         }
         $result[$group->groupingid][$group->id] = $group->id;
     }
-    rs_close($rs);
+    $rs->close();
 
     $result['0'] = array_keys($allgroups); // all groups
 
@@ -182,16 +193,16 @@ function groups_get_user_groups($courseid, $userid=0) {
  * or an error occurred.
  */
 function groups_get_all_groupings($courseid) {
-    global $CFG;
+    global $CFG, $DB;
 
     // groupings are ignored when not enabled
     if (empty($CFG->enablegroupings)) {
         return(false);
     }
-    return get_records_sql("SELECT *
-                              FROM {$CFG->prefix}groupings
-                             WHERE courseid = $courseid
-                          ORDER BY name ASC");
+    return $DB->get_records_sql("SELECT *
+                                   FROM {groupings}
+                                  WHERE courseid = ?
+                               ORDER BY name ASC", array($courseid));
 }
 
 
@@ -205,13 +216,13 @@ function groups_get_all_groupings($courseid) {
  * @return boolean True if the user is a member, false otherwise.
  */
 function groups_is_member($groupid, $userid=null) {
-    global $USER;
+    global $USER, $DB;
 
     if (!$userid) {
         $userid = $USER->id;
     }
 
-    return record_exists('groups_members', 'groupid', $groupid, 'userid', $userid);
+    return $DB->record_exists('groups_members', array('groupid'=>$groupid, 'userid'=>$userid));
 }
 
 /**
@@ -221,7 +232,7 @@ function groups_is_member($groupid, $userid=null) {
  * @return booelan true if user member of at least one group used in activity
  */
 function groups_has_membership($cm, $userid=null) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     static $cache = array();
 
@@ -242,17 +253,19 @@ function groups_has_membership($cm, $userid=null) {
     if ($cm->groupingid) {
         // find out if member of any group in selected activity grouping
         $sql = "SELECT 'x'
-                  FROM {$CFG->prefix}groups_members gm, {$CFG->prefix}groupings_groups gg
-                 WHERE gm.userid = $userid AND gm.groupid = gg.groupid AND gg.groupingid = {$cm->groupingid}";
+                  FROM {groups_members} gm, {groupings_groups} gg
+                 WHERE gm.userid = ? AND gm.groupid = gg.groupid AND gg.groupingid = ?";
+        $params = array($userid, $cm->groupingid);
 
     } else {
         // no grouping used - check all groups in course
         $sql = "SELECT 'x'
-                  FROM {$CFG->prefix}groups_members gm, {$CFG->prefix}groups g
-                 WHERE gm.userid = $userid AND gm.groupid = g.id AND g.courseid = {$cm->course}";
+                  FROM {groups_members} gm, {groups} g
+                 WHERE gm.userid = ? AND gm.groupid = g.id AND g.courseid = ?";
+        $params = array($userid, $cm->course);
     }
 
-    $cache[$cachekey] = record_exists_sql($sql);
+    $cache[$cachekey] = $DB->record_exists_sql($sql, $params);
 
     return $cache[$cachekey];
 }
@@ -266,12 +279,12 @@ function groups_has_membership($cm, $userid=null) {
  * group or false if no users or an error returned.
  */
 function groups_get_members($groupid, $fields='u.*', $sort='lastname ASC') {
-    global $CFG;
+    global $DB;
 
-    return get_records_sql("SELECT $fields
-                              FROM {$CFG->prefix}user u, {$CFG->prefix}groups_members gm
-                             WHERE u.id = gm.userid AND gm.groupid = '$groupid'
-                          ORDER BY $sort");
+    return $DB->get_records_sql("SELECT $fields
+                                   FROM {user} u, {groups_members} gm
+                                  WHERE u.id = gm.userid AND gm.groupid = ?
+                               ORDER BY $sort", array($groupid));
 }
 
 
@@ -284,14 +297,14 @@ function groups_get_members($groupid, $fields='u.*', $sort='lastname ASC') {
  * group or false if no users or an error returned.
  */
 function groups_get_grouping_members($groupingid, $fields='u.*', $sort='lastname ASC') {
-    global $CFG;
+    global $DB;
 
-    return get_records_sql("SELECT $fields
-                              FROM {$CFG->prefix}user u
-                                INNER JOIN {$CFG->prefix}groups_members gm ON u.id = gm.userid
-                                INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = gg.groupid
-                             WHERE  gg.groupingid = $groupingid
-                          ORDER BY $sort");
+    return $DB->get_records_sql("SELECT $fields
+                                   FROM {user} u
+                                     INNER JOIN {groups_members} gm ON u.id = gm.userid
+                                     INNER JOIN {groupings_groups} gg ON gm.groupid = gg.groupid
+                                  WHERE  gg.groupingid = ?
+                               ORDER BY $sort", array($groupingid));
 }
 
 /**
@@ -310,7 +323,7 @@ function groups_get_course_groupmode($course) {
  * @return integer group mode
  */
 function groups_get_activity_groupmode($cm, $course=null) {
-    global $COURSE;
+    global $COURSE, $DB;
 
     // get course object (reuse COURSE if possible)
     if (isset($course->id) and $course->id == $cm->course) {
@@ -318,7 +331,7 @@ function groups_get_activity_groupmode($cm, $course=null) {
     } else if ($cm->course == $COURSE->id) {
         $course = $COURSE;
     } else {
-        if (!$course = get_record('course', 'id', $cm->course)) {
+        if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
             error('Incorrect course id in cm');
         }
     }

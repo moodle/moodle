@@ -28,23 +28,21 @@
 /// all the actions supported will be launched.
 
 /// Add required XMLDB constants
-    require_once('../../lib/xmldb/classes/XMLDBConstants.php');
+    require_once('../../lib/xmldb/XMLDBConstants.php');
 
 /// Add required XMLDB action classes
     require_once('actions/XMLDBAction.class.php');
 
-/// Add main XMLDB Generator
-    require_once('../../lib/xmldb/classes/generators/XMLDBGenerator.class.php');
 
 /// Add required XMLDB DB classes
-    require_once('../../lib/xmldb/classes/XMLDBObject.class.php');
-    require_once('../../lib/xmldb/classes/XMLDBFile.class.php');
-    require_once('../../lib/xmldb/classes/XMLDBStructure.class.php');
-    require_once('../../lib/xmldb/classes/XMLDBTable.class.php');
-    require_once('../../lib/xmldb/classes/XMLDBField.class.php');
-    require_once('../../lib/xmldb/classes/XMLDBKey.class.php');
-    require_once('../../lib/xmldb/classes/XMLDBIndex.class.php');
-    require_once('../../lib/xmldb/classes/XMLDBStatement.class.php');
+    require_once('../../lib/xmldb/XMLDBObject.class.php');
+    require_once('../../lib/xmldb/XMLDBFile.class.php');
+    require_once('../../lib/xmldb/XMLDBStructure.class.php');
+    require_once('../../lib/xmldb/XMLDBTable.class.php');
+    require_once('../../lib/xmldb/XMLDBField.class.php');
+    require_once('../../lib/xmldb/XMLDBKey.class.php');
+    require_once('../../lib/xmldb/XMLDBIndex.class.php');
+    require_once('../../lib/xmldb/XMLDBStatement.class.php');
 
 /// Add Moodle config script (this is loaded AFTER all the rest
 /// of classes because it starts the SESSION and classes to be
@@ -58,12 +56,6 @@
 
 /// Add other used libraries
     require_once($CFG->libdir . '/xmlize.php');
-
-/// Add all the available SQL generators
-    $generators = get_list_of_plugins('lib/xmldb/classes/generators');
-    foreach($generators as $generator) {
-        require_once ('../../lib/xmldb/classes/generators/' . $generator . '/' . $generator . '.class.php');
-    }
 
 /// Handle session data
     global $XMLDB;

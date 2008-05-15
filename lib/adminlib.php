@@ -42,14 +42,13 @@ function upgrade_blocks_savepoint($result, $version, $type) {
 /**
  * Upgrade plugins
  *
- * @uses $db
  * @uses $CFG
  * @param string $type The type of plugins that should be updated (e.g. 'enrol', 'qtype')
  * @param string $dir  The directory where the plugins are located (e.g. 'question/questiontypes')
  * @param string $return The url to prompt the user to continue to
  */
 function upgrade_plugins($type, $dir, $return) {
-    global $CFG, $db, $interactive;
+    global $CFG, $interactive, $DB;
 
 /// Let's know if the header has been printed, so the funcion is being called embedded in an outer page
     $embedded = defined('HEADER_PRINTED');
@@ -119,7 +118,7 @@ function upgrade_plugins($type, $dir, $return) {
             upgrade_log_start();
             print_heading($dir.'/'. $plugin->name .' plugin needs upgrading');
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                $db->debug = true;
+                $DB->set_debug(true);
             }
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
@@ -128,12 +127,12 @@ function upgrade_plugins($type, $dir, $return) {
             /// but we priorize install.xml (XMLDB) if present
                 $status = false;
                 if (file_exists($fullplug . '/db/install.xml')) {
-                    $status = install_from_xmldb_file($fullplug . '/db/install.xml'); //New method
+                    $status = $DB->get_manager()->install_from_xmldb_file($fullplug . '/db/install.xml'); //New method
                 } else {
                     $status = true;
                 }
                 if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                    $db->debug = false;
+                    $DB->set_debug(false);
                 }
             /// Continue with the instalation, roles and other stuff
                 if ($status) {
@@ -170,7 +169,7 @@ function upgrade_plugins($type, $dir, $return) {
                 $newupgrade_status = true;
                 if ($newupgrade && function_exists($newupgrade_function)) {
                     if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                        $db->debug = true;
+                        $DB->set_debug(true);
                     }
                     $newupgrade_status = $newupgrade_function($CFG->$pluginversion);
                 } else if ($newupgrade) {
@@ -178,7 +177,7 @@ function upgrade_plugins($type, $dir, $return) {
                              $fullplug . '/db/upgrade.php');
                 }
                 if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                    $db->debug=false;
+                    $DB->set_debug(false);
                 }
             /// Now analyze upgrade results
                 if ($newupgrade_status) {    // No upgrading failed
@@ -223,14 +222,13 @@ function upgrade_plugins($type, $dir, $return) {
 /**
  * Find and check all modules and load them up or upgrade them if necessary
  *
- * @uses $db
  * @uses $CFG
  * @param string $return The url to prompt the user to continue to
  * @todo Finish documenting this function
  */
 function upgrade_activity_modules($return) {
 
-    global $CFG, $db, $interactive;
+    global $CFG, $interactive, $DB;
 
     if (!$mods = get_list_of_plugins('mod') ) {
         print_error('No modules installed!');
@@ -289,7 +287,7 @@ function upgrade_activity_modules($return) {
 
         include_once($fullmod.'/lib.php');  // defines upgrading and/or installing functions
 
-        if ($currmodule = get_record('modules', 'name', $module->name)) {
+        if ($currmodule = $DB->get_record('modules', array('name'=>$module->name))) {
             if ($currmodule->version == $module->version) {
                 // do nothing
             } else if ($currmodule->version < $module->version) {
@@ -314,7 +312,7 @@ function upgrade_activity_modules($return) {
                 $newupgrade_status = true;
                 if ($newupgrade && function_exists($newupgrade_function)) {
                     if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                    $db->debug = true;
+                        $DB->set_debug(true);
                     }
                     $newupgrade_status = $newupgrade_function($currmodule->version, $module);
                 } else if ($newupgrade) {
@@ -322,13 +320,13 @@ function upgrade_activity_modules($return) {
                              $mod . ': ' . $fullmod . '/db/upgrade.php');
                 }
                 if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                $db->debug=false;
+                    $DB->set_debug(false);
                 }
             /// Now analyze upgrade results
                 if ($newupgrade_status) {    // No upgrading failed
                     // OK so far, now update the modules record
                     $module->id = $currmodule->id;
-                    if (! update_record('modules', $module)) {
+                    if (!$DB->update_record('modules', $module)) {
                         print_error('Could not update '. $module->name .' record in modules table!');
                     }
                     remove_dir($CFG->dataroot . '/cache', true); // flush cache
@@ -366,22 +364,22 @@ function upgrade_activity_modules($return) {
             $updated_modules = true;
             // To avoid unnecessary output from the SQL queries in the CLI version
             if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE ) {
-                $db->debug = true;
+                $DB->set_debug(true);
             }
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
         /// Both old .sql files and new install.xml are supported
         /// but we priorize install.xml (XMLDB) if present
             if (file_exists($fullmod . '/db/install.xml')) {
-                $status = install_from_xmldb_file($fullmod . '/db/install.xml'); //New method
+                $status = $DB->get_manager()->install_from_xmldb_file($fullmod . '/db/install.xml'); //New method
             }
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                $db->debug = false;
+                $DB->set_debug(false);
             }
 
         /// Continue with the installation, roles and other stuff
             if ($status) {
-                if ($module->id = insert_record('modules', $module)) {
+                if ($module->id = $DB->insert_record('modules', $module)) {
 
                 /// Capabilities
                     if (!update_capabilities('mod/'.$module->name)) {
@@ -461,6 +459,7 @@ function upgrade_activity_modules($return) {
  * @return bool true if lock obtained
  */
 function set_cron_lock($name, $until, $ignorecurrent=false) {
+    global $DB;
     if (empty($name)) {
         debugging("Tried to get a cron lock for a null fieldname");
         return false;
@@ -474,7 +473,7 @@ function set_cron_lock($name, $until, $ignorecurrent=false) {
 
     if (!$ignorecurrent) {
         // read value from db - other processes might have changed it
-        $value = get_field('config', 'value', 'name', $name);
+        $value = $DB->get_field('config', 'value', array('name'=>$name));
 
         if ($value and $value > time()) {
             //lock active
@@ -521,7 +520,7 @@ function print_progress($done, $total, $updatetime=5, $sleeptime=1, $donetext=''
         }
 
         echo '<script>';
-        echo 'document.getElementById("text'.$total.'").innerHTML = "'.addslashes($donetext).' ('.$done.'/'.$total.') '.$projectedtext.'";'."\n";
+        echo 'document.getElementById("text'.$total.'").innerHTML = "'.addslashes_js($donetext).' ('.$done.'/'.$total.') '.$projectedtext.'";'."\n";
         echo 'document.getElementById("slider'.$total.'").style.width = \''.$width.'px\';'."\n";
         echo '</script>';
 
@@ -544,7 +543,7 @@ function upgrade_get_javascript() {
 }
 
 function create_admin_user($user_input=NULL) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     if (empty($CFG->rolesactive)) {   // No admin user yet.
 
@@ -564,11 +563,11 @@ function create_admin_user($user_input=NULL) {
         if ($user_input) {
             $user = $user_input;
         }
-        if (!$user->id = insert_record('user', $user)) {
+        if (!$user->id = $DB->insert_record('user', $user)) {
             print_error('SERIOUS ERROR: Could not create admin user record !!!');
         }
 
-        if (!$user = get_record('user', 'id', $user->id)) {   // Double check.
+        if (!$user = $DB->get_record('user', array('id'=>$user->id))) {   // Double check.
             print_error('User ID was incorrect (can\'t find it)');
         }
 
@@ -2431,6 +2430,7 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
     }
 
     function write_setting($data) {
+        global $DB;
         if (!in_array($data, array_keys($this->choices))) {
             return get_string('errorsetting', 'admin');
         }
@@ -2439,7 +2439,7 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
         $temp                 = $this->name;
         $record->$temp        = $data;
         $record->timemodified = time();
-        return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
+        return ($DB->update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
     }
 }
 
@@ -2538,11 +2538,12 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
     }
 
     function write_setting($data) {
+        global $DB;
         $record = new object();
         $record->id            = SITEID;
         $record->{$this->name} = ($data == '1' ? 1 : 0);
         $record->timemodified  = time();
-        return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
+        return ($DB->update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
     }
 }
 
@@ -2569,6 +2570,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
     }
 
     function write_setting($data) {
+        global $DB;
         $data = trim($data);
         $validated = $this->validate($data); 
         if ($validated !== true) {
@@ -2577,9 +2579,9 @@ class admin_setting_sitesettext extends admin_setting_configtext {
 
         $record = new object();
         $record->id            = SITEID;
-        $record->{$this->name} = addslashes($data);
+        $record->{$this->name} = $data;
         $record->timemodified  = time();
-        return (update_record('course', $record) ? '' : get_string('dbupdatefailed', 'error'));
+        return ($DB->update_record('course', $record) ? '' : get_string('dbupdatefailed', 'error'));
     }
 }
 
@@ -2597,11 +2599,12 @@ class admin_setting_special_frontpagedesc extends admin_setting {
     }
 
     function write_setting($data) {
+        global $DB;
         $record = new object();
         $record->id            = SITEID;
-        $record->{$this->name} = addslashes($data);
+        $record->{$this->name} = $data;
         $record->timemodified  = time();
-        return(update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
+        return($DB->update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
     }
 
     function output_html($data, $query='') {
@@ -3166,14 +3169,14 @@ class admin_setting_special_gradebookroles extends admin_setting_configmultichec
     }
 
     function load_choices() {
-        global $CFG;
+        global $CFG, $DB;
         if (empty($CFG->rolesactive)) {
             return false;
         }
         if (is_array($this->choices)) {
             return true;
         }
-        if ($roles = get_records('role')) {
+        if ($roles = $DB->get_records('role')) {
             $this->choices = array();
             foreach($roles as $role) {
                 $this->choices[$role->id] = format_string($role->name);
@@ -3201,7 +3204,7 @@ class admin_setting_special_gradebookroles extends admin_setting_configmultichec
 
 class admin_setting_regradingcheckbox extends admin_setting_configcheckbox {
     function write_setting($data) {
-        global $CFG;
+        global $CFG, $DB;
 
         $oldvalue  = $this->config_read($this->name);
         $return    = parent::write_setting($data);
@@ -3209,7 +3212,7 @@ class admin_setting_regradingcheckbox extends admin_setting_configcheckbox {
 
         if ($oldvalue !== $newvalue) {
             // force full regrading
-            set_field('grade_items', 'needsupdate', 1, 'needsupdate', 0);
+            $DB->set_field('grade_items', 'needsupdate', 1, array('needsupdate'=>0));
         }
 
         return $return;
@@ -3226,10 +3229,11 @@ class admin_setting_special_coursemanager extends admin_setting_configmulticheck
     }
 
     function load_choices() {
+        global $DB;
         if (is_array($this->choices)) {
             return true;
         }
-        if ($roles = get_records('role')) {
+        if ($roles = $DB->get_records('role')) {
             $this->choices = array();
             foreach($roles as $role) {
                 $this->choices[$role->id] = format_string($role->name);
@@ -3462,12 +3466,13 @@ class admin_page_managemods extends admin_externalpage {
     }
 
     function search($query) {
+        global $DB;
         if ($result = parent::search($query)) {
             return $result;
         }
 
         $found = false;
-        if ($modules = get_records('modules')) {
+        if ($modules = $DB->get_records('modules')) {
             $textlib = textlib_get_instance();
             foreach ($modules as $module) {
                 if (strpos($module->name, $query) !== false) {
@@ -3502,13 +3507,13 @@ class admin_page_manageblocks extends admin_externalpage {
     }
 
     function search($query) {
-        global $CFG;
+        global $CFG, $DB;
         if ($result = parent::search($query)) {
             return $result;
         }
 
         $found = false;
-        if (!empty($CFG->blocks_version) and $blocks = get_records('block')) {
+        if (!empty($CFG->blocks_version) and $blocks = $DB->get_records('block')) {
             $textlib = textlib_get_instance();
             foreach ($blocks as $block) {
                 if (strpos($block->name, $query) !== false) {
@@ -4151,7 +4156,7 @@ function admin_apply_default_settings($node=NULL, $unconditional=true) {
  * @return int number of changed settings
  */
 function admin_write_settings($formdata) {
-    global $CFG, $SITE, $COURSE;
+    global $CFG, $SITE, $COURSE, $DB;
 
     $olddbsessions = !empty($CFG->dbsessions);
     $formdata = (array)stripslashes_recursive($formdata);
@@ -4191,7 +4196,7 @@ function admin_write_settings($formdata) {
     }
 
     // now update $SITE - it might have been changed
-    $SITE = get_record('course', 'id', $SITE->id);
+    $SITE = $DB->get_record('course', array('id'=>$SITE->id));
     $COURSE = clone($SITE);
 
     // now reload all settings - some of them might depend on the changed
@@ -4469,36 +4474,36 @@ function any_new_admin_settings($node) {
 
 /**
  * Moved from admin/replace.php so that we can use this in cron
- * @param string $search - string to look for (with magic quotes)
- * @param string $replace - string to replace (with magic quotes)
+ * @param string $search - string to look for
+ * @param string $replace - string to replace
  * @return bool - success or fail
  */
 function db_replace($search, $replace) {
 
-    global $db, $CFG;
+    global $DB, $CFG;
 
     /// Turn off time limits, sometimes upgrades can be slow.
     @set_time_limit(0);
     @ob_implicit_flush(true);
     while(@ob_end_flush());
 
-    if (!$tables = $db->Metatables() ) {    // No tables yet at all.
+    if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
         return false;
     }
     foreach ($tables as $table) {
 
-        if (in_array($table, array($CFG->prefix.'config'))) {      // Don't process these
+        if (in_array($table, array('config'))) {      // Don't process these
             continue;
         }
 
-        if ($columns = $db->MetaColumns($table, false)) {
+        if ($columns = $DB->get_columns($table)) {
+            $DB->set_debug(true);
             foreach ($columns as $column => $data) {
-                if (in_array($data->type, array('text','mediumtext','longtext','varchar'))) {  // Text stuff only
-                    $db->debug = true;
-                    execute_sql("UPDATE $table SET $column = REPLACE($column, '$search', '$replace');");
-                    $db->debug = false;
+                if (in_array($data->meta_type, array('C', 'X'))) {  // Text stuff only
+                    $DB->execute("UPDATE {$CFG->prefix}$table SET $column = REPLACE($column, ?, ?)", array($search, $replace));
                 }
             }
+            $DB->set_debug(false);
         }
     }
 
@@ -4511,6 +4516,7 @@ function db_replace($search, $replace) {
  * distribution or not.
  */
 function print_plugin_tables() {
+    global $DB;
     $plugins_standard = array();
     $plugins_standard['mod'] = array('assignment',
                                      'chat',
@@ -4571,8 +4577,8 @@ function print_plugin_tables() {
                                         'tidy');
 
     $plugins_installed = array();
-    $installed_mods = get_records_list('modules', '', '', '', 'name');
-    $installed_blocks = get_records_list('block', '', '', '', 'name');
+    $installed_mods = $DB->get_records_list('modules', '', null, '', 'name');
+    $installed_blocks = $DB->get_records_list('block', '', null, '', 'name');
 
     foreach($installed_mods as $mod) {
         $plugins_installed['mod'][] = $mod->name;

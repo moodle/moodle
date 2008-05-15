@@ -714,28 +714,6 @@ class XMLDBStructure extends XMLDBObject {
             return false;
         }
     }
-
-    /**
-     * This function will return the SQL code needed to create the table for the specified DB and
-     * prefix. Just one simple wrapper over generators.
-     */
-    function getCreateStructureSQL ($dbtype, $prefix, $statement_end=true) {
-
-        $results = array();
-
-        if ($tables = $this->getTables()) {
-            foreach ($tables as $table) {
-                $results = array_merge($results, $table->getCreateTableSQL($dbtype, $prefix, $statement_end));
-            }
-        }
-
-        if ($statements = $this->getStatements()) {
-            foreach ($statements as $statement) {
-                $results = array_merge($results, $statement->getExecuteStatementSQL($dbtype, $prefix, $statement_end));
-            }
-        }
-        return $results;
-    }
 }
 
 ?>

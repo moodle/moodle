@@ -733,9 +733,9 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
 }
 
 function get_records_csv($file, $table) {
-    global $CFG, $db;
+    global $CFG, $DB;
 
-    if (!$metacolumns = $db->MetaColumns($CFG->prefix . $table)) {
+    if (!$metacolumns = $DB->get_columns($table)) {
         return false;
     }
 
@@ -773,14 +773,14 @@ function get_records_csv($file, $table) {
 }
 
 function put_records_csv($file, $records, $table = NULL) {
-    global $CFG, $db;
+    global $CFG, $DB;
 
     if (empty($records)) {
         return true;
     }
 
     $metacolumns = NULL;
-    if ($table !== NULL && !$metacolumns = $db->MetaColumns($CFG->prefix . $table)) {
+    if ($table !== NULL && !$metacolumns = $DB->get_columns($table)) {
         return false;
     }
 

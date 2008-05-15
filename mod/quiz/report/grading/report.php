@@ -241,11 +241,11 @@ class quiz_report extends quiz_default_report {
         $table->setup();
 
         // this sql is a join of the attempts table and the user table.  I do this so I can sort by user name and attempt number (not id)
-        $select = 'SELECT '.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS userattemptid, qa.id AS attemptid, qa.uniqueid, qa.attempt, qa.timefinish, u.id AS userid, u.firstname, u.lastname, u.picture ';
+        $select = 'SELECT '.sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, 0)').' AS userattemptid, qa.id AS attemptid, qa.uniqueid, qa.attempt, qa.timefinish, u.id AS userid, u.firstname, u.lastname, u.picture ';
         $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
         $where  = 'WHERE u.id IN ('.$userids.') ';
-        $where .= 'AND '.$db->IfNull('qa.attempt', '0').' != 0 ';
-        $where .= 'AND '.$db->IfNull('qa.timefinish', '0').' != 0 ';
+        $where .= 'AND COALESCE(qa.attempt, 0) != 0 ';
+        $where .= 'AND COALESCE(qa.timefinish, 0) != 0 ';
         $where .= 'AND preview = 0 '; // ignore previews
 
         if($table->get_sql_where()) { // forgot what this does
@@ -261,7 +261,7 @@ class quiz_report extends quiz_default_report {
         }
 
         // set up the pagesize
-        $total  = count_records_sql('SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where);
+        $total  = count_records_sql('SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, 0)').')) '.$from.$where);
         $table->pagesize(QUIZ_REPORT_DEFAULT_PAGE_SIZE, $total);
 
         // get the attempts and process them
@@ -348,7 +348,7 @@ class quiz_report extends quiz_default_report {
         $userids   = implode(',', array_keys($users));
 
         // this sql joins the attempts table and the user table
-        $select = 'SELECT '.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS userattemptid,
+        $select = 'SELECT '.sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, 0)').' AS userattemptid,
                     qa.id AS attemptid, qa.uniqueid, qa.attempt, qa.timefinish, qa.preview,
                     u.id AS userid, u.firstname, u.lastname, u.picture ';
         $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
@@ -364,8 +364,8 @@ class quiz_report extends quiz_default_report {
         // ignore previews
         $where .= ' AND preview = 0 ';
 
-        $where .= 'AND '.$db->IfNull('qa.attempt', '0').' != 0 ';
-        $where .= 'AND '.$db->IfNull('qa.timefinish', '0').' != 0 ';
+        $where .= 'AND COALESCE(qa.attempt, 0) != 0 ';
+        $where .= 'AND COALESCE(qa.timefinish, 0) != 0 ';
         $sort = 'ORDER BY u.firstname, u.lastname, qa.attempt ASC';
         $attempts = get_records_sql($select.$from.$where.$sort);
 

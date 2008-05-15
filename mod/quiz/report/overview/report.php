@@ -306,7 +306,7 @@ class quiz_report extends quiz_default_report {
         }
 
         // Construct the SQL
-        $select = 'SELECT '.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
+        $select = 'SELECT '.sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, 0)').' AS uniqueid, '.
             ($qmsubselect?$qmsubselect.' AS gradedattempt, ':'').
             'qa.uniqueid AS attemptuniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, '.
             'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
@@ -350,7 +350,7 @@ class quiz_report extends quiz_default_report {
 
         
 
-        $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
+        $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, 0)').')) '.$from.$where;
 
         $sort = $table->get_sql_sort();
         // Fix some wired sorting

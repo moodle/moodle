@@ -1036,7 +1036,7 @@ function upgrade_blocks_db($continueto) {
 /// This function upgrades the blocks tables, if necessary
 /// It's called from admin/index.php
 
-    global $CFG, $db, $interactive;
+    global $CFG, $interactive, $DB;
 
     require_once ($CFG->dirroot .'/blocks/version.php');  // Get code versions
 
@@ -1050,16 +1050,16 @@ function upgrade_blocks_db($continueto) {
         upgrade_log_start();
         print_heading('blocks');
         if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-        $db->debug=true;
+        $DB->set_debug(true);
         }
     /// Both old .sql files and new install.xml are supported
     /// but we priorize install.xml (XMLDB) if present
         $status = false;
         if (file_exists($CFG->dirroot . '/blocks/db/install.xml')) {
-            $status = install_from_xmldb_file($CFG->dirroot . '/blocks/db/install.xml'); //New method
+            $status = $DB->get_manager()->install_from_xmldb_file($CFG->dirroot . '/blocks/db/install.xml'); //New method
         }
         if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-        $db->debug = false;
+        $DB->set_debug(false);
         }
         if ($status) {
             if (set_config('blocks_version', $blocks_version)) {
@@ -1109,7 +1109,7 @@ function upgrade_blocks_db($continueto) {
         $newupgrade_status = true;
         if ($newupgrade && function_exists($newupgrade_function)) {
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-            $db->debug = true;
+                $DB->set_debug(true);
             }
             $newupgrade_status = $newupgrade_function($CFG->blocks_version);
         } else if ($newupgrade) {
@@ -1117,7 +1117,7 @@ function upgrade_blocks_db($continueto) {
                      '/blocks/db/upgrade.php');
         }
         if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-        $db->debug=false;
+            $DB->set_debug(false);
         }
     /// Now analyze upgrade results
         if ($newupgrade_status) {    // No upgrading failed
@@ -1147,7 +1147,7 @@ function upgrade_blocks_db($continueto) {
 //into blocks table or do all the upgrade process if newer
 function upgrade_blocks_plugins($continueto) {
 
-    global $CFG, $db, $interactive;
+    global $CFG, $interactive, $DB;
 
     $blocktitles = array();
     $invalidblocks = array();
@@ -1270,7 +1270,7 @@ function upgrade_blocks_plugins($continueto) {
                 $newupgrade_status = true;
                 if ($newupgrade && function_exists($newupgrade_function)) {
                     if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                    $db->debug = true;
+                        $DB->set_debug(true);
                     }
                     $newupgrade_status = $newupgrade_function($currblock->version, $block);
                 } else if ($newupgrade) {
@@ -1278,7 +1278,7 @@ function upgrade_blocks_plugins($continueto) {
                              $fullblock . '/db/upgrade.php');
                 }
                 if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                $db->debug=false;
+                    $DB->set_debug(false);
                 }
             /// Now analyze upgrade results
                 if ($newupgrade_status) {    // No upgrading failed
@@ -1343,7 +1343,7 @@ function upgrade_blocks_plugins($continueto) {
             upgrade_log_start();
             print_heading($block->name);
             if (!defined('CLI_UPGRADE')||!CLI_UPGRADE) {
-            $db->debug = true;
+                $DB->set_debug(true);
             }
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
@@ -1351,12 +1351,12 @@ function upgrade_blocks_plugins($continueto) {
         /// but we priorize install.xml (XMLDB) if present
             $status = false;
             if (file_exists($fullblock . '/db/install.xml')) {
-                $status = install_from_xmldb_file($fullblock . '/db/install.xml'); //New method
+                $status = $DB->get_manager()->install_from_xmldb_file($fullblock . '/db/install.xml'); //New method
             } else {
                 $status = true;
             }
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-            $db->debug = false;
+                $DB->set_debug(false);
             }
             if ($status) {
                 if ($block->id = insert_record('block', $block)) {

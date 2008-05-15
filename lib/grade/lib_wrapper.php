@@ -24,6 +24,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 class grade_lib_wrapper {
+/*
     function get_records_sql($sql, $limitfrom='', $limitnum='') {
         return get_records_sql($sql, $limitfrom, $limitnum);
     }
@@ -107,7 +108,7 @@ class grade_lib_wrapper {
     function rs_close(&$rs) {
         return;
     }
-    
+*/    
     function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
         return get_coursemodule_from_instance($modulename, $instance, $courseid);
     }

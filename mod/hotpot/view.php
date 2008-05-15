@@ -146,7 +146,7 @@
 
                 $attemptid = hotpot_add_attempt($hotpot->id);
                 if (! is_numeric($attemptid)) {
-                    print_error('Could not insert attempt record: '.$db->ErrorMsg);
+                    print_error('Could not insert attempt record: '.$DB->get_last_error());
                 }
             }
             $hp->adjust_media_urls();

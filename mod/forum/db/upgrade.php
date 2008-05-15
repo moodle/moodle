@@ -32,25 +32,16 @@ function xmldb_forum_upgrade($oldversion=0) {
 ///     $result = result of "/lib/ddllib.php" function calls
 /// }
 
-    if ($result && $oldversion < 2007101000) {
-
-    /// Define field timemodified to be added to forum_queue
-        $table = new XMLDBTable('forum_queue');
-        $field = new XMLDBField('timemodified');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'postid');
-
-    /// Launch add field timemodified
-        $result = $result && add_field($table, $field);
-    }
+//===== 1.9.0 upgrade line ======//
 
     if ($result and $oldversion < 2007101511) {
         notify('Processing forum grades, this may take a while if there are many forums...', 'notifysuccess');
         //MDL-13866 - send forum ratins to gradebook again
         require_once($CFG->dirroot.'/mod/forum/lib.php');
         // too much debug output
-        $db->debug = false;
+        $DB->set_debug(false);
         forum_update_grades();
-        $db->debug = true;
+        $DB->set_debug(true);
     }
 
     if ($result && $oldversion < 2007101512) {
@@ -71,12 +62,12 @@ function xmldb_forum_upgrade($oldversion=0) {
                  WHERE ra.id IS NULL";
 
         if ($rs = get_recordset_sql($sql)) {
-            $db->debug = false;
+            $DB->set_debug(false);
             while ($remove = rs_fetch_next_record($rs)) {
                 delete_records('forum_subscriptions', 'userid', $remove->userid, 'forum', $remove->forumid);
                 echo '.';
             }
-            $db->debug = true;
+            $DB->set_debug(true);
             rs_close($rs);
         }
     }

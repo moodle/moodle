@@ -97,8 +97,9 @@ class mod_choice_mod_form extends moodleform_mod {
     }
 
     function data_preprocessing(&$default_values){
-        if (!empty($this->_instance) && ($options = get_records_menu('choice_options','choiceid', $this->_instance, 'id', 'id,text'))
-               && ($options2 = get_records_menu('choice_options','choiceid', $this->_instance, 'id', 'id,maxanswers')) ) {
+        global $DB;
+        if (!empty($this->_instance) && ($options = $DB->get_records_menu('choice_options',array('choiceid'=>$this->_instance), 'id', 'id,text'))
+               && ($options2 = $DB->get_records_menu('choice_options', array('choiceid'=>$this->_instance), 'id', 'id,maxanswers')) ) {
             $choiceids=array_keys($options);
             $options=array_values($options);
             $options2=array_values($options2);

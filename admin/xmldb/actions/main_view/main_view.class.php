@@ -68,7 +68,7 @@ class main_view extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB, $SESSION;
+        global $CFG, $XMLDB, $SESSION, $DB;
 
     /// Get lastused
         $o = '';
@@ -92,7 +92,7 @@ class main_view extends XMLDBAction {
     /// The check defaults button
         $b .= '&nbsp;<a href="index.php?action=check_defaults">[' . $this->str['checkdefaults'] . ']</a>';
     /// The check bigints button (only for MySQL and PostgreSQL) MDL-11038a
-        if ($CFG->dbfamily == 'mysql' || $CFG->dbfamily == 'postgres') {
+        if ($DB->get_dbfamily() == 'mysql' || $DB->get_dbfamily() == 'postgres') {
             $b .= '&nbsp;<a href="index.php?action=check_bigints">[' . $this->str['checkbigints'] . ']</a>';
         }
         $b .= '</p>';

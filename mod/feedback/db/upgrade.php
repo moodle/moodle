@@ -19,7 +19,9 @@
 
 function xmldb_feedback_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $db;
+    global $CFG, $THEME, $DB;
+
+    $dbman = $DB->get_manager();
 
     $result = true;
 
@@ -56,7 +58,7 @@ function xmldb_feedback_upgrade($oldversion=0) {
         $key->setAttributes(XMLDB_KEY_FOREIGN, array('feedback'), 'feedback', 'id');
         $table->addKey($key);
 
-        $result = $result && create_table($table);
+        $result = $result && $dbman->create_table($table);
         ////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////
         //create a new table feedback_valuetmp and the field-definition
@@ -94,7 +96,7 @@ function xmldb_feedback_upgrade($oldversion=0) {
         $key->setAttributes(XMLDB_KEY_FOREIGN, array('item'), 'feedback_item', 'id');
         $table->addKey($key);
 
-        $result = $result && create_table($table);
+        $result = $result && $dbman->create_table($table);
         ////////////////////////////////////////////////////////////
     }
 
@@ -105,28 +107,28 @@ function xmldb_feedback_upgrade($oldversion=0) {
         $field = new XMLDBField('random_response');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, null, null, '0', null);
         /// Launch add field1
-        $result = $result && add_field($table, $field);
+        $result = $result && $dbman->add_field($table, $field);
 
         /// Define field anonymous_response to be added to feedback_completed
         $table = new XMLDBTable('feedback_completed');
         $field = new XMLDBField('anonymous_response');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, null, null, '1', null);
         /// Launch add field2
-        $result = $result && add_field($table, $field);
+        $result = $result && $dbman->add_field($table, $field);
 
         /// Define field random_response to be added to feedback_completed
         $table = new XMLDBTable('feedback_completedtmp');
         $field = new XMLDBField('random_response');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, null, null, '0', null);
         /// Launch add field1
-        $result = $result && add_field($table, $field);
+        $result = $result && $dbman->add_field($table, $field);
 
         /// Define field anonymous_response to be added to feedback_completed
         $table = new XMLDBTable('feedback_completedtmp');
         $field = new XMLDBField('anonymous_response');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, null, null, '1', null);
         /// Launch add field2
-        $result = $result && add_field($table, $field);
+        $result = $result && $dbman->add_field($table, $field);
 
         ////////////////////////////////////////////////////////////
     }
@@ -136,39 +138,40 @@ function xmldb_feedback_upgrade($oldversion=0) {
 
         $table = new XMLDBTable('feedback_template');
         $field = new XMLDBField('ispublic');
-        if (!field_exists($table, $field)) {
-            $result = $result && table_column('feedback_template', 'public', 'ispublic', 'integer', 1);
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, null, null, '1', null);
+        if (!$dbman->field_exists($table, $field)) {
+            $result = $result && $dbman->add_field($table, $field);
         }
     }
 
     if ($result && $oldversion < 2008042400) { //New version in version.php
-        if($all_nonanonymous_feedbacks = get_records('feedback', 'anonymous', 2)) {
-            $update_sql = 'UPDATE '.$CFG->prefix.'feedback_completed SET anonymous_response = 2 WHERE feedback = ';
+        if ($all_nonanonymous_feedbacks = $DB->get_records('feedback', 'anonymous', 2)) {
+            $update_sql = 'UPDATE {feedback_completed} SET anonymous_response = 2 WHERE feedback = ';
             foreach ($all_nonanonymous_feedbacks as $fb) {
-                $result = $result && execute_sql($update_sql.$fb->id);
+                $result = $result && $DB->execute($update_sql.$fb->id);
             }
         }
     }
 
     if ($result && $oldversion < 2008042401) { //New version in version.php
-        if($result) {
-            $concat_radio = sql_concat("'r>>>>>'",'presentation');
-            $concat_check = sql_concat("'d>>>>>'",'presentation');
-            $concat_dropdown = sql_concat("'c>>>>>'",'presentation');
+        if ($result) {
+            $concat_radio    = $DB->sql_concat("'r>>>>>'",'presentation');
+            $concat_check    = $DB->sql_concat("'d>>>>>'",'presentation');
+            $concat_dropdown = $DB->sql_concat("'c>>>>>'",'presentation');
             
-            $update_sql1 = "UPDATE ".$CFG->prefix."feedback_item SET presentation = ".$concat_radio." WHERE typ IN('radio','radiorated')";
-            $update_sql2 = "UPDATE ".$CFG->prefix."feedback_item SET presentation = ".$concat_dropdown." WHERE typ IN('dropdown','dropdownrated')";
-            $update_sql3 = "UPDATE ".$CFG->prefix."feedback_item SET presentation = ".$concat_check." WHERE typ = 'check'";
+            $update_sql1 = "UPDATE {feedback_item} SET presentation = ".$concat_radio." WHERE typ IN('radio','radiorated')";
+            $update_sql2 = "UPDATE {feedback_item} SET presentation = ".$concat_dropdown." WHERE typ IN('dropdown','dropdownrated')";
+            $update_sql3 = "UPDATE {feedback_item} SET presentation = ".$concat_check." WHERE typ = 'check'";
             
-            $result = $result && execute_sql($update_sql1);
-            $result = $result && execute_sql($update_sql2);
-            $result = $result && execute_sql($update_sql3);
+            $result = $result && $DB->execute($update_sql1);
+            $result = $result && $DB->execute($update_sql2);
+            $result = $result && $BB->execute($update_sql3);
         }
-        if($result) {
-            $update_sql1 = "UPDATE ".$CFG->prefix."feedback_item SET typ = 'multichoice' WHERE typ IN('radio','check','dropdown')";
-            $update_sql2 = "UPDATE ".$CFG->prefix."feedback_item SET typ = 'multichoicerated' WHERE typ IN('radiorated','dropdownrated')";
-            $result = $result && execute_sql($update_sql1);            
-            $result = $result && execute_sql($update_sql2);            
+        if ($result) {
+            $update_sql1 = "UPDATE {feedback_item} SET typ = 'multichoice' WHERE typ IN('radio','check','dropdown')";
+            $update_sql2 = "UPDATE {feedback_item} SET typ = 'multichoicerated' WHERE typ IN('radiorated','dropdownrated')";
+            $result = $result && $DB->execute($update_sql1);            
+            $result = $result && $DB->execute($update_sql2);            
         }
     }
 
@@ -178,25 +181,25 @@ function xmldb_feedback_upgrade($oldversion=0) {
         $new_log_display->action = 'startcomplete';
         $new_log_display->mtable = 'feedback';
         $new_log_display->field = 'name';
-        $result = $result && insert_record('log_display', $new_log_display);
+        $result = $result && $DB->insert_record('log_display', $new_log_display);
         
         $new_log_display = clone($new_log_display);
         $new_log_display->action = 'submit';
-        $result = $result && insert_record('log_display', $new_log_display);
+        $result = $result && $DB->insert_record('log_display', $new_log_display);
         
         $new_log_display = clone($new_log_display);
         $new_log_display->action = 'delete';
-        $result = $result && insert_record('log_display', $new_log_display);
+        $result = $result && $DB->insert_record('log_display', $new_log_display);
         
         $new_log_display = clone($new_log_display);
         $new_log_display->action = 'view';
-        $result = $result && insert_record('log_display', $new_log_display);
+        $result = $result && $DB->insert_record('log_display', $new_log_display);
         
         $new_log_display = clone($new_log_display);
         $new_log_display->action = 'view all';
         $new_log_display->mtable = 'course';
         $new_log_display->field = 'shortname';
-        $result = $result && insert_record('log_display', $new_log_display);
+        $result = $result && $DB->insert_record('log_display', $new_log_display);
     }
 
     if ($result && $oldversion < 2008042900) {
@@ -205,7 +208,7 @@ function xmldb_feedback_upgrade($oldversion=0) {
         $field = new XMLDBField('autonumbering');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '1', 'multiple_submit');
         /// Launch add field2
-        $result = $result && add_field($table, $field);
+        $result = $result && $dbman->add_field($table, $field);
     }
 
     if ($result && $oldversion < 2008050104) {
@@ -214,7 +217,7 @@ function xmldb_feedback_upgrade($oldversion=0) {
         $field = new XMLDBField('site_after_submit');
         $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, null, false, null, null, '', 'autonumbering');
         /// Launch add field2
-        $result = $result && add_field($table, $field);
+        $result = $result && $dbman->add_field($table, $field);
     }
     return $result;
 }

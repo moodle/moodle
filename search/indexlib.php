@@ -37,7 +37,7 @@ class IndexInfo {
             $time;        //date index was generated
     
     public function __construct($path = SEARCH_INDEX_PATH) {
-        global $CFG, $db;
+        global $CFG, $DB;
         
         $this->path = $path;
         
@@ -65,17 +65,17 @@ class IndexInfo {
         $db_exists = false; //for now
         
         //get all the current tables in moodle
-        $admin_tables = $db->MetaTables();
+        $admin_tables = $DB->get_tables();
         
         //TODO: use new IndexDBControl class for database checks?
         
         //check if our search table exists
-        if (in_array($CFG->prefix.SEARCH_DATABASE_TABLE, $admin_tables)) {
+        if (in_array(SEARCH_DATABASE_TABLE, $admin_tables)) {
             //retrieve database information if it does
             $db_exists = true;
             
             //total documents
-            $this->dbcount = count_records(SEARCH_DATABASE_TABLE);
+            $this->dbcount = $DB->count_records(SEARCH_DATABASE_TABLE);
             
             //individual document types
             // $types = search_get_document_types();
@@ -83,7 +83,7 @@ class IndexInfo {
             sort($types);
             
             foreach($types as $type) {
-                $c = count_records(SEARCH_DATABASE_TABLE, 'doctype', $type);
+                $c = $DB->count_records(SEARCH_DATABASE_TABLE, array('doctype'=>$type));
                 $this->types[$type] = (int)$c;
             }
         } else {
@@ -181,11 +181,11 @@ class IndexDBControl {
     * @uses CFG, db
     */
     public function checkTableExists() {
-        global $CFG, $db;
+        global $CFG, $DB;
         
         $table = SEARCH_DATABASE_TABLE;
-        $tables = $db->MetaTables();
-        if (in_array($CFG->prefix.$table, $tables)) {
+        $tables = $DB->get_tables();
+        if (in_array($table, $tables)) {
             return true;
         } 
         else {

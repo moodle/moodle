@@ -1535,7 +1535,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
  * @param boolean $clearonly - only clear the modinfo fields, gets rebuild automatically on the fly
  */
 function rebuild_course_cache($courseid=0, $clearonly=false) {
-    global $COURSE;
+    global $COURSE, $DB;
 
     if ($clearonly) {
         $courseselect = empty($courseid) ? "" : "id = $courseid";
@@ -2581,6 +2581,7 @@ function print_groupmode_setting($form, $course=NULL) {
  * Print groupmode form element on module setup forms in mod/.../mod.html
  */
 function print_grouping_settings($form, $course=NULL) {
+    global $DB;
 
     if (empty($course)) {
         if (! $course = get_record('course', 'id', $form->course)) {
@@ -2595,13 +2596,12 @@ function print_grouping_settings($form, $course=NULL) {
         $cm = null;
     }
 
-    $groupings = get_records_menu('groupings', 'courseid', $course->id, 'name', 'id, name');
+    $groupings = $DB->get_records_menu('groupings', array('courseid'=>$course->id), 'name', 'id, name');
     if (!empty($groupings)) {
         echo '<tr valign="top">';
         echo '<td align="right"><b>'.get_string('grouping', 'group').':</b></td>';
         echo '<td align="left">';
         
-        $groupings;
         $groupingid = isset($cm->groupingid) ? $cm->groupingid : 0;
         
         choose_from_menu($groupings, 'groupingid', $groupingid, get_string('none'), '', 0, false);

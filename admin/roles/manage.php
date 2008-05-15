@@ -14,6 +14,9 @@
     $confirm     = optional_param('confirm', 0, PARAM_BOOL);
     $cancel      = optional_param('cancel', 0, PARAM_BOOL);
 
+    $name        = stripslashes($name);
+    $description = stripslashes($description);
+
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
     require_capability('moodle/role:manage', $sitecontext);
@@ -65,13 +68,13 @@
 
                 if (empty($name)) {
                     $errors['name'] = get_string('errorbadrolename', 'role');
-                } else if (count_records('role', 'name', $name)) {
+                } else if ($DB->count_records('role', array('name'=>$name))) {
                     $errors['name'] = get_string('errorexistsrolename', 'role');
                 }
 
                 if (empty($shortname)) {
                     $errors['shortname'] = get_string('errorbadroleshortname', 'role');
-                } else if (count_records('role', 'shortname', $shortname)) {
+                } else if ($DB->count_records('role', array('shortname'=>$shortname))) {
                     $errors['shortname'] = get_string('errorexistsroleshortname', 'role');
                 }
 
@@ -142,7 +145,7 @@
 
                 if (empty($name)) {
                     $errors['name'] = get_string('errorbadrolename', 'role');
-                } else if ($rs = get_records('role', 'name', $name)) {
+                } else if ($rs = $DB->get_records('role', array('name'=>$name))) {
                     unset($rs[$roleid]);
                     if (!empty($rs)) {
                         $errors['name'] = get_string('errorexistsrolename', 'role');
@@ -151,7 +154,7 @@
 
                 if (empty($shortname)) {
                     $errors['shortname'] = get_string('errorbadroleshortname', 'role');
-                } else if ($rs = get_records('role', 'shortname', $shortname)) {
+                } else if ($rs = $DB->get_records('role', array('shortname'=>$shortname))) {
                     unset($rs[$roleid]);
                     if (!empty($rs)) {
                         $errors['shortname'] = get_string('errorexistsroleshortname', 'role');
@@ -190,11 +193,13 @@
                     }
 
                     // edit default caps
-                    $SQL = "SELECT * FROM {$CFG->prefix}role_capabilities
-                            WHERE roleid = $roleid AND capability = '$capname'
-                              AND contextid = $sitecontext->id";
+                    $SQL = "SELECT *
+                              FROM {role_capabilities}
+                             WHERE roleid = ? AND capability = ?
+                                   AND contextid = ?";
+                    $params = array($roleid, $capname, $sitecontext->id); 
 
-                    $localoverride = get_record_sql($SQL);
+                    $localoverride = $DB->get_record_sql($SQL, $params);
 
                     if ($localoverride) { // update current overrides
                         if ($value == CAP_INHERIT) { // inherit = delete
@@ -204,7 +209,7 @@
                             $localoverride->permission = $value;
                             $localoverride->timemodified = time();
                             $localoverride->modifierid = $USER->id;
-                            update_record('role_capabilities', $localoverride);
+                            $DB->update_record('role_capabilities', $localoverride);
                         }
                     } else { // insert a record
                         if ($value != CAP_INHERIT) {
@@ -221,7 +226,7 @@
                     $role->shortname = $shortname;
                     $role->description = $description;
 
-                    if (!update_record('role', $role)) {
+                    if (!$DB->update_record('role', $role)) {
                         print_error('cannotupdaterole', 'error');
                     }
 
@@ -331,7 +336,7 @@
             }
 
             // duplicate current role
-            $sourcerole = get_record('role','id',$roleid);
+            $sourcerole = $DB->get_record('role', array('id'=>$roleid));
 
             $fullname = $sourcerole->name;
             $shortname = $sourcerole->shortname;
@@ -351,8 +356,8 @@
                 $currentfullname = $fullname.$suffixfull;
                 // Limit the size of shortname - database column accepts <= 100 chars
                 $currentshortname = substr($shortname, 0, 100 - strlen($suffixshort)).$suffixshort;
-                $coursefull  = get_record("role","name",addslashes($currentfullname));
-                $courseshort = get_record("role","shortname",addslashes($currentshortname));
+                $coursefull  = $DB->get_record("role", array("name"=>$currentfullname));
+                $courseshort = $DB->get_record("role", array("shortname"=>$currentshortname));
                 $counter++;
             } while ($coursefull || $courseshort);
 
@@ -365,7 +370,7 @@
                 mark_context_dirty($sitecontext->path);
 
             }
-            $rolename = get_field('role', 'name', 'id', $newrole);
+            $rolename = $DB->get_field('role', 'name', array('id'=>$newrole));
             add_to_log(SITEID, 'role', 'duplicate', 'admin/roles/manage.php?roleid='.$newrole.'&action=duplicate', $rolename, '', $USER->id);
             redirect('manage.php');
             break;
@@ -430,12 +435,12 @@
                 $role->description = '';
                 $role->legacytype  = '';
             } else {
-                $role = stripslashes_safe($newrole);
+                $role = $newrole;
             }
         } else if ($action == 'edit' and !empty($errors) and !empty($newrole)) {
-                $role = stripslashes_safe($newrole);
+                $role = $newrole;
         } else {
-            if(!$role = get_record('role', 'id', $roleid)) {
+            if(!$role = $DB->get_record('role', array('id'=>$roleid))) {
                 print_error('wrongroleid', 'error');
             }
             $role->legacytype = get_legacy_type($role->id);

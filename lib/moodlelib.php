@@ -1432,15 +1432,13 @@ function get_user_timezone($tz = 99) {
 }
 
 /**
- * ?
+ * Returns cached timezone record for given $timezonename
  *
- * @uses $CFG
- * @uses $db
- * @param string $timezonename ?
- * @return object
+ * @param string $timezonename
+ * @return mixed timezonerecord object or false
  */
 function get_timezone_record($timezonename) {
-    global $CFG, $db;
+    global $CFG, $DB;
     static $cache = NULL;
 
     if ($cache === NULL) {
@@ -1451,8 +1449,8 @@ function get_timezone_record($timezonename) {
         return $cache[$timezonename];
     }
 
-    return $cache[$timezonename] = get_record_sql('SELECT * FROM '.$CFG->prefix.'timezone
-                                      WHERE name = '.$db->qstr($timezonename).' ORDER BY year DESC', true);
+    return $cache[$timezonename] = $DB->get_record_sql('SELECT * FROM {timezone}
+                                                        WHERE name = ? ORDER BY year DESC', array($timezonename), true); 
 }
 
 /**
@@ -2776,16 +2774,14 @@ function is_internal_auth($auth) {
 /**
  * Returns an array of user fields
  *
- * @uses $CFG
- * @uses $db
  * @return array User field/column names
  */
 function get_user_fieldnames() {
+    global $DB;
 
-    global $CFG, $db;
-
-    $fieldarray = $db->MetaColumnNames($CFG->prefix.'user');
-    unset($fieldarray['ID']);
+    $fieldarray = $DB->get_columns('user');
+    unset($fieldarray['id']);
+    $fieldarray = array_keys($fieldarray);
 
     return $fieldarray;
 }
@@ -7525,7 +7521,7 @@ function array_is_nested($array) {
  ***
  **/
 function get_performance_info() {
-    global $CFG, $PERF, $rcache;
+    global $CFG, $PERF;
 
     $info = array();
     $info['html'] = '';         // holds userfriendly HTML representation
@@ -7602,14 +7598,14 @@ function get_performance_info() {
         $info['txt'] .= "serverload: {$info['serverload']} ";
     }
 
-    if (isset($rcache->hits) && isset($rcache->misses)) {
+/*    if (isset($rcache->hits) && isset($rcache->misses)) {
         $info['rcachehits'] = $rcache->hits;
         $info['rcachemisses'] = $rcache->misses;
         $info['html'] .= '<span class="rcache">Record cache hit/miss ratio : '.
             "{$rcache->hits}/{$rcache->misses}</span> ";
         $info['txt'] .= 'rcache: '.
             "{$rcache->hits}/{$rcache->misses} ";
-    }
+    }*/
     $info['html'] = '<div class="performanceinfo">'.$info['html'].'</div>';
     return $info;
 }

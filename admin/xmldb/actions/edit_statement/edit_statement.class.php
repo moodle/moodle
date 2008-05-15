@@ -103,7 +103,7 @@ class edit_statement extends XMLDBAction {
 
     /// Add the main form
         $o = '<form id="form" action="index.php" method="post">';
-        $o.= '<div>';        
+        $o.= '<div>';
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="statement" value="' . $statementparam .'" />';
         $o.= '    <input type="hidden" name ="action" value="edit_statement_save" />';

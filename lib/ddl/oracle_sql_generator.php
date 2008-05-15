@@ -24,54 +24,48 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+require_once($CFG->libdir.'/ddl/sql_generator.php');
+
 /// This class generate SQL code to be used against Oracle
 /// It extends XMLDBgenerator so everything can be
 /// overriden as needed to generate correct SQL.
 
-class XMLDBoci8po extends XMLDBgenerator {
+class oracle_sql_generator extends sql_generator {
 
 /// Only set values that are different from the defaults present in XMLDBgenerator
 
-    var $statement_end = "\n/"; // String to be automatically added at the end of each statement
+    public $statement_end = "\n/"; // String to be automatically added at the end of each statement
                                 // Using "/" because the standard ";" isn't good for stored procedures (triggers)
 
-    var $number_type = 'NUMBER';    // Proper type for NUMBER(x) in this DB
+    public $number_type = 'NUMBER';    // Proper type for NUMBER(x) in this DB
 
-    var $unsigned_allowed = false;    // To define in the generator must handle unsigned information
-    var $default_for_char = ' ';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
+    public $unsigned_allowed = false;    // To define in the generator must handle unsigned information
+    public $default_for_char = ' ';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
                                       // Using this whitespace here because Oracle doesn't distinguish empty and null! :-(
 
-    var $drop_default_clause_required = true; //To specify if the generator must use some DEFAULT clause to drop defaults
-    var $drop_default_clause = 'NULL'; //The DEFAULT clause required to drop defaults
+    public $drop_default_value_required = true; //To specify if the generator must use some DEFAULT clause to drop defaults
+    public $drop_default_value = NULL; //The DEFAULT clause required to drop defaults
 
-    var $default_after_null = false;  //To decide if the default clause of each field must go after the null clause
+    public $default_after_null = false;  //To decide if the default clause of each field must go after the null clause
 
-    var $sequence_extra_code = true; //Does the generator need to add extra code to generate the sequence fields
-    var $sequence_name = ''; //Particular name for inline sequences in this generator
+    public $sequence_extra_code = true; //Does the generator need to add extra code to generate the sequence fields
+    public $sequence_name = ''; //Particular name for inline sequences in this generator
 
-    var $drop_table_extra_code = true; //Does the generator need to add code after table drop
+    public $enum_inline_code = false; //Does the generator need to add inline code in the column definition
 
-    var $rename_table_extra_code = true; //Does the generator need to add code after table rename
-
-    var $rename_column_extra_code = true; //Does the generator need to add code after field rename
-
-    var $enum_inline_code = false; //Does the generator need to add inline code in the column definition
-
-    var $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY (COLUMNSPECS)'; //The SQL template to alter columns
+    public $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY (COLUMNSPECS)'; //The SQL template to alter columns
 
     /**
      * Creates one new XMLDBoci8po
      */
-    function XMLDBoci8po() {
-        parent::XMLDBgenerator();
-        $this->prefix = '';
-        $this->reserved_words = $this->getReservedWords();
+    public function __construct($mdb) {
+        parent::__construct($mdb);
     }
 
     /**
      * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
      */
-    function getTypeSQL ($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
+    public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
 
         switch ($xmldb_type) {
             case XMLDB_TYPE_INTEGER:    // From http://www.postgresql.org/docs/7.4/interactive/datatype.html
@@ -118,9 +112,53 @@ class XMLDBoci8po extends XMLDBgenerator {
     }
 
     /**
+     * This function will create the temporary table passed as argument with all its
+     * fields/keys/indexes/sequences, everything based in the XMLDB object
+     *
+     * TRUNCATE the table immediately after creation. A previous process using
+     * the same persistent connection may have created the temp table and failed to
+     * drop it. In that case, the table will exist, and create_temp_table() will
+     * will succeed.
+     *
+     * NOTE: The return value is the tablename - some DBs (MSSQL at least) use special
+     * names for temp tables.
+     *
+     * @uses $CFG, $db
+     * @param XMLDBTable table object (full specs are required)
+     * @param boolean continue to specify if must continue on error (true) or stop (false)
+     * @param boolean feedback to specify to show status info (true) or not (false)
+     * @return string tablename on success, false on error
+     */
+    function create_temp_table($xmldb_table, $continue=true, $feedback=true) {
+        if (!($xmldb_table instanceof XMLDBTable)) {
+            debugging('Incorrect create_table() $xmldb_table parameter');
+            return false;
+        }
+
+    /// Check table doesn't exist
+        if ($this->table_exists($xmldb_table)) {
+            debugging('Table ' . $xmldb_table->getName() .
+                      ' already exists. Create skipped', DEBUG_DEVELOPER);
+            return $xmldb_table->getName(); //Table exists, nothing to do
+        }
+
+        if (!$sqlarr = $this->getCreateTableSQL($xmldb_table)) {
+            return $xmldb_table->getName(); //Empty array = nothing to do = no error
+        }
+
+        $sqlarr = preg_replace('/^CREATE/', "CREATE GLOBAL TEMPORARY", $sqlarr);
+
+        if (execute_sql_arr($sqlarr, $continue, $feedback)) {
+            return $xmldb_table->getName();
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Returns the code needed to create one enum for the xmldb_table and xmldb_field passes
      */
-    function getEnumExtraSQL ($xmldb_table, $xmldb_field) {
+    public function getEnumExtraSQL($xmldb_table, $xmldb_field) {
 
         $sql = 'CONSTRAINT ' . $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck');
         $sql.= ' CHECK (' . $this->getEncQuoted($xmldb_field->getName()) . ' IN (' . implode(', ', $xmldb_field->getEnumValues()) . '))';
@@ -131,7 +169,7 @@ class XMLDBoci8po extends XMLDBgenerator {
     /**
      * Returns the code needed to create one sequence for the xmldb_table and xmldb_field passes
      */
-    function getCreateSequenceSQL ($xmldb_table, $xmldb_field) {
+    public function getCreateSequenceSQL($xmldb_table, $xmldb_field) {
 
         $results = array();
 
@@ -152,7 +190,7 @@ class XMLDBoci8po extends XMLDBgenerator {
     /**
      * Returns the code needed to create one trigger for the xmldb_table and xmldb_field passed
      */
-    function getCreateTriggerSQL ($xmldb_table, $xmldb_field) {
+    public function getCreateTriggerSQL($xmldb_table, $xmldb_field) {
 
         $trigger_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'trg');
         $sequence_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
@@ -174,7 +212,7 @@ class XMLDBoci8po extends XMLDBgenerator {
      * Returns the code needed to drop one sequence for the xmldb_table and xmldb_field passed
      * Can, optionally, specify if the underlying trigger will be also dropped
      */
-    function getDropSequenceSQL ($xmldb_table, $xmldb_field, $include_trigger=false) {
+    public function getDropSequenceSQL($xmldb_table, $xmldb_field, $include_trigger=false) {
 
         $sequence_name = $this->getSequenceFromDB($xmldb_table);
 
@@ -198,7 +236,7 @@ class XMLDBoci8po extends XMLDBgenerator {
     function getCommentSQL ($xmldb_table) {
 
         $comment = "COMMENT ON TABLE " . $this->getTableName($xmldb_table);
-        $comment.= " IS '" . addslashes(substr($xmldb_table->getComment(), 0, 250)) . "'";
+        $comment.= " IS '" . $this->addslashes(substr($xmldb_table->getComment(), 0, 250)) . "'";
 
         return array($comment);
     }
@@ -206,7 +244,7 @@ class XMLDBoci8po extends XMLDBgenerator {
     /**
      * Returns the code (array of statements) needed to execute extra statements on field rename
      */
-    function getRenameFieldExtraSQL ($xmldb_table, $xmldb_field, $newname) {
+    public function getRenameFieldExtraSQL($xmldb_table, $xmldb_field, $newname) {
 
         $results = array();
 
@@ -227,7 +265,7 @@ class XMLDBoci8po extends XMLDBgenerator {
     /**
      * Returns the code (array of statements) needed to execute extra statements on table drop
      */
-    function getDropTableExtraSQL ($xmldb_table) {
+    public function getDropTableExtraSQL($xmldb_table) {
         $xmldb_field = new XMLDBField('id'); // Fields having sequences should be exclusively, id.
         return $this->getDropSequenceSQL($xmldb_table, $xmldb_field, false);
     }
@@ -235,7 +273,7 @@ class XMLDBoci8po extends XMLDBgenerator {
     /**
      * Returns the code (array of statements) needed to execute extra statements on table rename
      */
-    function getRenameTableExtraSQL ($xmldb_table, $newname) {
+    public function getRenameTableExtraSQL($xmldb_table, $newname) {
 
         $results = array();
 
@@ -287,7 +325,7 @@ class XMLDBoci8po extends XMLDBgenerator {
      *     - error is dropped if the null/not null clause is specified and hasn't changed
      *     - changes in precision/decimals of numeric fields drop an ORA-1440 error
      */
-    function getAlterFieldSQL($xmldb_table, $xmldb_field) {
+    public function getAlterFieldSQL($xmldb_table, $xmldb_field) {
 
         global $db;
 
@@ -298,10 +336,10 @@ class XMLDBoci8po extends XMLDBgenerator {
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
     /// Take a look to field metadata
-        $meta = array_change_key_case($db->MetaColumns($tablename));
+        $meta = $this->mdb->get_columns($tablename);
         $metac = $meta[$fieldname];
-        $oldtype = strtolower($metac->type);
-        $oldmetatype = column_type($xmldb_table->getName(), $fieldname);
+        $oldmetatype = $metac->meta_type;
+
         $oldlength = $metac->max_length;
     /// To calculate the oldlength if the field is numeric, we need to perform one extra query
     /// because ADOdb has one bug here. http://phplens.com/lens/lensforum/msgs.php?id=15883
@@ -328,14 +366,14 @@ class XMLDBoci8po extends XMLDBgenerator {
         $from_temp_fields = false; //By default don't assume we are going to use temporal fields
 
     /// Detect if we are changing the type of the column
-        if (($xmldb_field->getType() == XMLDB_TYPE_INTEGER && substr($oldmetatype, 0, 1) == 'I') ||
+        if (($xmldb_field->getType() == XMLDB_TYPE_INTEGER && $oldmetatype == 'I') ||
             ($xmldb_field->getType() == XMLDB_TYPE_NUMBER  && $oldmetatype == 'N') ||
             ($xmldb_field->getType() == XMLDB_TYPE_FLOAT   && $oldmetatype == 'F') ||
-            ($xmldb_field->getType() == XMLDB_TYPE_CHAR    && substr($oldmetatype, 0, 1) == 'C') ||
-            ($xmldb_field->getType() == XMLDB_TYPE_TEXT    && substr($oldmetatype, 0, 1) == 'X') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_CHAR    && $oldmetatype == 'C') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_TEXT    && $oldmetatype == 'X') ||
             ($xmldb_field->getType() == XMLDB_TYPE_BINARY  && $oldmetatype == 'B')) {
             $typechanged = false;
-        } 
+        }
     /// Detect if precision has changed
         if (($xmldb_field->getType() == XMLDB_TYPE_TEXT) ||
             ($xmldb_field->getType() == XMLDB_TYPE_BINARY) ||
@@ -421,8 +459,11 @@ class XMLDBoci8po extends XMLDBgenerator {
         if (!$defaultchanged) {
             $this->alter_column_skip_default = true; /// Initially, prevent the default clause
         /// But, if we have used the temp field and the new field has default clause, then enforce the default clause
-            if ($from_temp_fields && $default_clause = $this->getDefaultClause($xmldb_field)) {
-                $this->alter_column_skip_default = false;
+            if ($from_temp_fields) {
+                $default_clause = $this->getDefaultClause($xmldb_field);
+                if ($default_clause) {
+                    $this->alter_column_skip_default = false;
+                }
             }
         }
 
@@ -437,51 +478,51 @@ class XMLDBoci8po extends XMLDBgenerator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its enum 
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its enum
      * (usually invoked from getModifyEnumSQL()
      */
-    function getCreateEnumSQL($xmldb_table, $xmldb_field) {
+    public function getCreateEnumSQL($xmldb_table, $xmldb_field) {
     /// All we have to do is to create the check constraint
-        return array('ALTER TABLE ' . $this->getTableName($xmldb_table) . 
+        return array('ALTER TABLE ' . $this->getTableName($xmldb_table) .
                      ' ADD ' . $this->getEnumExtraSQL($xmldb_table, $xmldb_field));
     }
-                                                       
-    /**     
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its enum 
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its enum
      * (usually invoked from getModifyEnumSQL()
-     */         
-    function getDropEnumSQL($xmldb_table, $xmldb_field) {
+     */
+    public function getDropEnumSQL($xmldb_table, $xmldb_field) {
     /// Let's introspect to know the real name of the check constraint
         if ($check_constraints = $this->getCheckConstraintsFromDB($xmldb_table, $xmldb_field)) {
             $check_constraint = array_shift($check_constraints); /// Get the 1st (should be only one)
             $constraint_name = strtolower($check_constraint->name); /// Extract the REAL name
         /// All we have to do is to drop the check constraint
-            return array('ALTER TABLE ' . $this->getTableName($xmldb_table) . 
+            return array('ALTER TABLE ' . $this->getTableName($xmldb_table) .
                      ' DROP CONSTRAINT ' . $constraint_name);
         } else { /// Constraint not found. Nothing to do
             return array();
         }
-    }   
+    }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default 
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
-    function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
+    public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
     /// Just a wrapper over the getAlterFieldSQL() function for Oracle that
     /// is capable of handling defaults
         return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
     }
-                                                       
-    /**     
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default 
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default
      * (usually invoked from getModifyDefaultSQL()
-     */         
-    function getDropDefaultSQL($xmldb_table, $xmldb_field) {
+     */
+    public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
     /// Just a wrapper over the getAlterFieldSQL() function for Oracle that
     /// is capable of handling defaults
         return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
-    }   
+    }
 
     /**
      * Given one XMLDBTable returns one array with all the check constrainsts
@@ -491,7 +532,7 @@ class XMLDBoci8po extends XMLDBgenerator {
      * Each element contains the name of the constraint and its description
      * If no check constraints are found, returns an empty array
      */
-    function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
+    public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
 
         $results = array();
 
@@ -533,7 +574,7 @@ class XMLDBoci8po extends XMLDBgenerator {
      * independent elements)
      * If no sequence is found, returns false
      */
-    function getSequenceFromDB($xmldb_table) {
+    public function getSequenceFromDB($xmldb_table) {
 
          $tablename    = strtoupper($this->getTableName($xmldb_table));
          $prefixupper  = strtoupper($this->prefix);
@@ -558,7 +599,7 @@ class XMLDBoci8po extends XMLDBgenerator {
      * in the table (fetched from DB)
      * If no trigger is found, returns false
      */
-    function getTriggerFromDB($xmldb_table) {
+    public function getTriggerFromDB($xmldb_table) {
 
         $tablename   = strtoupper($this->getTableName($xmldb_table));
         $prefixupper = strtoupper($this->prefix);
@@ -579,14 +620,14 @@ class XMLDBoci8po extends XMLDBgenerator {
      * return if such name is currently in use (true) or no (false)
      * (invoked from getNameForObject()
      */
-    function isNameInUse($object_name, $type, $table_name) {
+    public function isNameInUse($object_name, $type, $table_name) {
         switch($type) {
             case 'ix':
             case 'uix':
             case 'seq':
             case 'trg':
-                if ($check = get_records_sql("SELECT object_name 
-                                              FROM user_objects 
+                if ($check = get_records_sql("SELECT object_name
+                                              FROM user_objects
                                               WHERE lower(object_name) = '" . strtolower($object_name) . "'")) {
                     return true;
                 }
@@ -595,7 +636,7 @@ class XMLDBoci8po extends XMLDBgenerator {
             case 'uk':
             case 'fk':
             case 'ck':
-                if ($check = get_records_sql("SELECT constraint_name 
+                if ($check = get_records_sql("SELECT constraint_name
                                               FROM user_constraints
                                               WHERE lower(constraint_name) = '" . strtolower($object_name) . "'")) {
                     return true;
@@ -605,10 +646,16 @@ class XMLDBoci8po extends XMLDBgenerator {
         return false; //No name in use found
     }
 
+    public function addslashes($s) {
+        // do not use php addslashes() because it depends on PHP quote settings!
+        $s = str_replace("'",  "''", $s);
+        return $s;
+    }
+
     /**
      * Returns an array of reserved words (lowercase) for this DB
      */
-    function getReservedWords() {
+    public static function getReservedWords() {
     /// This file contains the reserved words for Oracle databases
     /// from http://download-uk.oracle.com/docs/cd/B10501_01/server.920/a96540/ap_keywd.htm
         $reserved_words = array (
