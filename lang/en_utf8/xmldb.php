@@ -6,15 +6,22 @@ $string['aftertable'] = 'After Table:';
 $string['back'] = 'Back';
 $string['backtomainview'] = 'Back To Main';
 $string['binaryincorrectlength'] = 'Incorrect length for binary field';
+$string['butis'] = 'but is';
 $string['cannotuseidfield'] = 'Cannot insert the \"id\" field. It is an autonumeric column';
 $string['change'] = 'Change';
 $string['charincorrectlength'] = 'Incorrect length for char field';
 $string['checkbigints'] = 'Check Bigints';
+$string['checkdefaults'] = 'Check Defaults';
 $string['checkindexes'] = 'Check Indexes';
+$string['check_defaults'] = 'Look for inconsistent default values';
 $string['check_bigints'] = 'Look for incorrect DB integers';
 $string['check_indexes'] = 'Look for missing DB indexes';
 $string['completelogbelow'] = '(see the complete log of the search below)';
 $string['confirmcheckbigints'] = 'This functionality will search for <a href=\"http://tracker.moodle.org/browse/MDL-11038\">potential wrong integer fields</a> in your Moodle server, generating (but not executing!) automatically the needed SQL statements to have all the integers in your DB properly defined.<br /><br />
+Once generated you can copy such statements and execute them safely with your favourite SQL interface (don\'t forget to backup your data before doing that).<br /><br />
+It\'s highly recommended to be running the latest (+ version) available of your Moodle release (1.8, 1.9, 2.x ...) before executing the search of wrong integers.<br /><br />
+This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
+$string['confirmcheckdefaults'] = 'This functionality will search for inconsistent default values in your Moodle server, generating (but not executing!) the needed SQL statements to have all the default values properly defined.<br /><br />
 Once generated you can copy such statements and execute them safely with your favourite SQL interface (don\'t forget to backup your data before doing that).<br /><br />
 It\'s highly recommended to be running the latest (+ version) available of your Moodle release (1.8, 1.9, 2.x ...) before executing the search of wrong integers.<br /><br />
 This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
@@ -105,6 +112,7 @@ $string['selectonecommand'] = 'Please, select one Action from the list to view P
 $string['selectonefieldkeyindex'] = 'Please, select one Field/Key/Index from the list to view the PHP code';
 $string['selecttable'] = 'Select Table:';
 $string['sentences'] = 'Sentences';
+$string['shouldbe'] = 'should be';
 $string['statements'] = 'Statements';
 $string['statementtable'] = 'Statement Table:';
 $string['statementtype'] = 'Statement Type:';
@@ -125,10 +133,12 @@ $string['vieworiginal'] = 'View Original';
 $string['viewphpcode'] = 'View PHP Code';
 $string['viewsqlcode'] = 'View SQL Code';
 $string['wrong'] = 'Wrong';
+$string['wrongdefaults'] = 'Wrong Defaults Found';
 $string['wrongints'] = 'Wrong Integers Found';
 $string['wronglengthforenum'] = 'Incorrect length for enum field';
 $string['wrongnumberoffieldsorvalues'] = 'Incorrect number of fields or values in sentence';
 $string['wrongreservedwords'] = 'Currently Used Reserved Words<br />(note that table names aren\'t important if using $CFG->prefix)';
+$string['yeswrongdefaultsfound'] = 'Some inconsistent defaults have been found in your DB. Here there are their details and the needed SQL statements to be executed with your favourite SQL interface to fix them all (don\'t forget to backup your data before doing that).<br /><br />After doing that, it\'s highly recommended to execute this utility again to check that no more iconsistent defaults are found.';
 $string['yesmissingindexesfound'] = 'Some missing indexes have been found in your DB. Here there are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them (don\'t forget to backup your data before doing that).<br /><br />After doing that, it\'s highly recommended to execute this utility again to check that no more missing indexes are found.';
 $string['yeswrongintsfound'] = 'Some wrong integers have been found in your DB. Here there are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them (don\'t forget to backup your data before doing that).<br /><br />After doing that, it\'s highly recommended to execute this utility again to check that no more wrong integers are found.';
 ?>
