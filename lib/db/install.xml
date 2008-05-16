@@ -1689,6 +1689,7 @@
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'view', 'course', 'fullname')" />
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'update', 'course', 'fullname')" />
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'enrol', 'course', 'fullname')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'unenrol', 'course', 'fullname')" />
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'report log', 'course', 'fullname')" />
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'report live', 'course', 'fullname')" />
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'report outline', 'course', 'fullname')" />

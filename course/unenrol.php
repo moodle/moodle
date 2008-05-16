@@ -62,7 +62,8 @@
                 error("An error occurred while trying to unenrol that person.");
             }
 
-            add_to_log($course->id, 'course', 'unenrol', "view.php?id=$course->id", $userid);
+            add_to_log($course->id, 'course', 'unenrol',
+                    "view.php?id=$course->id", $course->id);
             redirect($CFG->wwwroot.'/user/index.php?id='.$course->id);
 
         } else {
@@ -72,7 +73,8 @@
 
             // force a refresh of mycourses
             unset($USER->mycourses);
-            add_to_log($course->id, 'course', 'unenrol', "view.php?id=$course->id", $USER->id);
+            add_to_log($course->id, 'course', 'unenrol',
+                    "view.php?id=$course->id", $course->id);
 
             redirect($CFG->wwwroot);
         }
