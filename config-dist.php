@@ -139,10 +139,6 @@ $CFG->admin = 'admin';
 // Prevent stats processing and hide the GUI
 //      $CFG->disablestatsprocessing = true;
 //
-// Set global password for "Login as", teacher is prompted only once in each session.
-// Set your own password and tell it only to teachers that should have access to this feature.
-//      $CFG->loginaspassword = 'yoursharedpassword';
-//
 // Setting this to true will enable admins to edit any post at any time
 //      $CFG->admineditalways = true;
 //
