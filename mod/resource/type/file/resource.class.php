@@ -24,6 +24,9 @@ class resource_file extends resource_base {
 
         $site = get_site();
 
+        $littlecfg = new object;       // to avoid some notices later
+        $littlecfg->wwwroot = $CFG->wwwroot;
+
 
         $this->parameters = array(
                 'label2'          => array('langstr' => "",
@@ -61,8 +64,8 @@ class resource_file extends resource_base {
                                            'value'   => current_language()),
                 'sitename'        => array('langstr' => get_string('fullsitename'),
                                            'value'   => format_string($site->fullname)),
-                'serverurl'       => array('langstr' => get_string('serverurl', 'resource', $CFG),
-                                           'value'   => $CFG->wwwroot),
+                'serverurl'       => array('langstr' => get_string('serverurl', 'resource', $littlecfg),
+                                           'value'   => $littlecfg->wwwroot),
                 'currenttime'     => array('langstr' => get_string('time'),
                                            'value'   => time()),
                 'encryptedcode'   => array('langstr' => get_string('encryptedcode'),
