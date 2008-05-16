@@ -121,6 +121,19 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2008051201);
     }
 
+    if ($result && $oldversion < 2008051202) {
+        $log_action = new stdClass();
+        $log_action->module = 'course';
+        $log_action->action = 'unenrol';
+        $log_action->mtable = 'course';
+        $log_action->field  = 'fullname';
+        if (!record_exists("log_display", "action", "unenrol",
+                    "module", "course")){
+            $result = $result && insert_record('log_display', $log_action);
+        }
+        upgrade_main_savepoint($result, 2008051202);
+    }
+
 /*
  * TODO:
  *   drop adodb_logsql table and create a ner general sql log table

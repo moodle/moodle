@@ -2887,7 +2887,8 @@ function enrol_into_course($course, $user, $enrol) {
 
         email_welcome_message_to_user($course, $user);
 
-        add_to_log($course->id, 'course', 'enrol', 'view.php?id='.$course->id, $user->id);
+        add_to_log($course->id, 'course', 'enrol',
+                'view.php?id='.$course->id, $course->id);
 
         return true;
     }
