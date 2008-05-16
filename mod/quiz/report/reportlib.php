@@ -146,9 +146,9 @@ function quiz_report_qm_filter_subselect($quiz, $useridsql = 'u.id'){
     return $qmsubselect;
 }
 
-function quiz_report_grade_bands($bands, $quizid, $useridlist){
+function quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist){
     $sql = "SELECT
-        FLOOR(qg.grade*$bands/q.grade) AS band,
+        FLOOR(qg.grade/$bandwidth) AS band,
         COUNT(1) AS num
     FROM
         mdl_quiz_grades qg, 

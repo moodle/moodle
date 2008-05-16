@@ -45,21 +45,28 @@ while ($bands >= 20 || $bands < 10){
 }
 
 $bandwidth = $quiz->grade / $bands;
+$bands = ceil($bands);
 $bandlabels = array();
 for ($i=0;$i < $quiz->grade;$i += $bandwidth){
-    $bandlabels[] = number_format($i, $quiz->decimalpoints).' - '.number_format($i+$bandwidth, $quiz->decimalpoints);
+    $label = number_format($i, $quiz->decimalpoints).' - ';
+    if ($quiz->grade > $i+$bandwidth){
+        $label .= number_format($i+$bandwidth, $quiz->decimalpoints);
+    } else {
+        $label .= number_format($quiz->grade, $quiz->decimalpoints);
+    }
+    $bandlabels[] = $label;
 } 
 $line->x_data          = $bandlabels;
 
 $useridlist = join(',',array_keys(get_users_by_capability($modcontext, 'mod/quiz:attempt','','','','','','',false)));
-$line->y_data['allusers'] = quiz_report_grade_bands($bands, $quizid, $useridlist);
+$line->y_data['allusers'] = quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist);
 if ($currentgroup){
     //only turn on legends if there is more than one set of bars
     $line->parameter['legend']        = 'outside-top';
     $line->parameter['legend_border'] = 'black';
     $line->parameter['legend_offset'] = 4;
     $useridingrouplist = join(',',array_keys(get_users_by_capability($modcontext, 'mod/quiz:attempt','','','','',$currentgroup,'',false)));
-    $line->y_data['groupusers'] = quiz_report_grade_bands($bands, $quizid, $useridingrouplist);
+    $line->y_data['groupusers'] = quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridingrouplist);
     $line->y_format['groupusers'] =
         array('colour' => 'green', 'bar' => 'fill', 'shadow_offset' => 1, 'legend' => groups_get_group_name($currentgroup));
     $line->y_order = array('allusers', 'groupusers');
