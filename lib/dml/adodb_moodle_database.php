@@ -60,7 +60,7 @@ abstract class adodb_moodle_database extends moodle_database {
         $tables = array();
         foreach ($metatables as $table) {
             $table = strtolower($table);
-            if (strpos($table, $this->prefix) === 0) {
+            if (strpos($table, $this->prefix) === 0 || empty($this->prefix)) {
                 $tablename = substr($table, strlen($this->prefix));
                 $tables[$tablename] = $tablename;
             }
