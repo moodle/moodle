@@ -18,16 +18,16 @@ class quiz_report extends quiz_default_report {
      */
     function display($quiz, $cm, $course) {
         global $CFG, $db;
+        $this->quiz = $quiz;
         // Define some strings
         $strreallydel  = addslashes(get_string('deleteattemptcheck','quiz'));
-        $strtimeformat = get_string('strftimedatetime');
-        $strreviewquestion = get_string('reviewresponse', 'quiz');
+        $this->strtimeformat = get_string('strftimedatetime');
 
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         // Only print headers if not asked to download data
         if (!$download = optional_param('download', NULL)) {
-            $this->print_header_and_tabs($cm, $course, $quiz, "overview");
+            $this->print_header_and_tabs($cm, $course, $this->quiz, "overview");
         }
 
         if($attemptids = optional_param('attemptid', array(), PARAM_INT)) {
@@ -37,7 +37,7 @@ class quiz_report extends quiz_default_report {
             foreach($attemptids as $attemptid) {
                 add_to_log($course->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
                         $attemptid, $cm->id);
-                quiz_delete_attempt($attemptid, $quiz);
+                quiz_delete_attempt($attemptid, $this->quiz);
             }
             //No need for a redirect, any attemptids that do not exist are ignored.
             //So no problem if the user refreshes and tries to delete the same attempts
@@ -45,24 +45,24 @@ class quiz_report extends quiz_default_report {
         }
 
         // Work out some display options - whether there is feedback, and whether scores should be shown.
-        $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;
+        $hasfeedback = quiz_has_feedback($this->quiz->id) && $this->quiz->grade > 1.e-7 && $this->quiz->sumgrades > 1.e-7;
         $fakeattempt = new stdClass();
         $fakeattempt->preview = false;
-        $fakeattempt->timefinish = $quiz->timeopen;
-        $reviewoptions = quiz_get_reviewoptions($quiz, $fakeattempt, $context);
-        $showgrades = $quiz->grade && $quiz->sumgrades && $reviewoptions->scores;
+        $fakeattempt->timefinish = $this->quiz->timeopen;
+        $reviewoptions = quiz_get_reviewoptions($this->quiz, $fakeattempt, $context);
+        $showgrades = $this->quiz->grade && $this->quiz->sumgrades && $reviewoptions->scores;
 
         $pageoptions = array();
         $pageoptions['id'] = $cm->id;
-        $pageoptions['q'] = $quiz->id;
+        $pageoptions['q'] = $this->quiz->id;
         $pageoptions['mode'] = 'overview';
 
         $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
-        $qmsubselect = quiz_report_qm_filter_subselect($quiz);
-        $mform = new mod_quiz_report_overview_settings($reporturl, compact('qmsubselect', 'quiz'));
+        $this->qmsubselect = quiz_report_qm_filter_subselect($this->quiz);
+        $mform = new mod_quiz_report_overview_settings($reporturl, array('qmsubselect'=> $this->qmsubselect, 'quiz'=>$this->quiz));
         if ($fromform = $mform->get_data()){
             $attemptsmode = $fromform->attemptsmode;
-            if ($qmsubselect){
+            if ($this->qmsubselect){
                 //control is not on the form if
                 //the grading method is not set 
                 //to grade one attempt per user eg. for average attempt grade.
@@ -108,7 +108,7 @@ class quiz_report extends quiz_default_report {
 
         // Print information on the number of existing attempts
         if (!$download) { //do not print notices when downloading
-            if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, false, $currentgroup)) {
+            if ($strattemptnum = quiz_num_attempt_summary($this->quiz, $cm, false, $currentgroup)) {
                 echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
             }
         }
@@ -116,14 +116,14 @@ class quiz_report extends quiz_default_report {
         // Print information on the grading method and whether we are displaying
         // 
         if (!$download) { //do not print notices when downloading
-            if ($strattempthighlight = quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)) {
+            if ($strattempthighlight = quiz_report_highlighting_grading_method($this->quiz, $this->qmsubselect, $qmfilter)) {
                 echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
             }
         }
 
         // Now check if asked download of data
         if ($download) {
-            $filename = clean_filename("$course->shortname ".format_string($quiz->name,true));
+            $filename = clean_filename("$course->shortname ".format_string($this->quiz->name,true));
         }
 
         // Define table columns
@@ -160,17 +160,7 @@ class quiz_report extends quiz_default_report {
 
         if ($showgrades) {
             $columns[] = 'sumgrades';
-            $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
-        }
-
-        if ($detailedmarks) {
-            // we want to display marks for all questions
-            $questions = quiz_report_load_questions($quiz);
-            foreach ($questions as $id => $question) {
-                // Ignore questions of zero length
-                $columns[] = 'qsgrade'.$id;
-                $headers[] = '#'.$question->number;
-            }
+            $headers[] = get_string('grade', 'quiz').'/'.$this->quiz->grade;
         }
 
         if ($hasfeedback) {
@@ -178,107 +168,117 @@ class quiz_report extends quiz_default_report {
             $headers[] = get_string('feedback', 'quiz');
         }
 
+        if ($detailedmarks) {
+            // we want to display marks for all questions
+            $this->questions = quiz_report_load_questions($this->quiz);
+            foreach ($this->questions as $id => $question) {
+                // Ignore questions of zero length
+                $columns[] = 'qsgrade'.$id;
+                $headers[] = '#'.$question->number;
+            }
+        }
+
         if (!$download) {
             // Set up the table
 
-            $table = new flexible_table('mod-quiz-report-overview-report');
+            $this->table = new flexible_table('mod-quiz-report-overview-report');
 
-            $table->define_columns($columns);
-            $table->define_headers($headers);
-            $table->define_baseurl($reporturlwithdisplayoptions->out());
+            $this->table->define_columns($columns);
+            $this->table->define_headers($headers);
+            $this->table->define_baseurl($reporturlwithdisplayoptions->out());
 
-            $table->sortable(true);
-            $table->collapsible(true);
+            $this->table->sortable(true);
+            $this->table->collapsible(true);
 
-            $table->column_suppress('picture');
-            $table->column_suppress('fullname');
+            $this->table->column_suppress('picture');
+            $this->table->column_suppress('fullname');
             
-            $table->no_sorting('feedbacktext');
+            $this->table->no_sorting('feedbacktext');
 
-            $table->column_class('picture', 'picture');
-            $table->column_class('fullname', 'bold');
-            $table->column_class('sumgrades', 'bold');
+            $this->table->column_class('picture', 'picture');
+            $this->table->column_class('fullname', 'bold');
+            $this->table->column_class('sumgrades', 'bold');
 
-            $table->set_attribute('cellspacing', '0');
-            $table->set_attribute('id', 'attempts');
-            $table->set_attribute('class', 'generaltable generalbox');
+            $this->table->set_attribute('cellspacing', '0');
+            $this->table->set_attribute('id', 'attempts');
+            $this->table->set_attribute('class', 'generaltable generalbox');
 
             // Start working -- this is necessary as soon as the niceties are over
-            $table->setup();
+            $this->table->setup();
         } else if ($download =='ODS') {
             require_once("$CFG->libdir/odslib.class.php");
 
             $filename .= ".ods";
             // Creating a workbook
-            $workbook = new MoodleODSWorkbook("-");
+            $this->table->workbook = new MoodleODSWorkbook("-");
             // Sending HTTP headers
-            $workbook->send($filename);
+            $this->table->workbook->send($filename);
             // Creating the first worksheet
             $sheettitle = get_string('reportoverview','quiz');
-            $myxls =& $workbook->add_worksheet($sheettitle);
+            $this->table->myxls =& $this->table->workbook->add_worksheet($sheettitle);
             // format types
-            $format =& $workbook->add_format();
-            $format->set_bold(0);
-            $formatbc =& $workbook->add_format();
-            $formatbc->set_bold(1);
-            $formatbc->set_align('center');
-            $formatb =& $workbook->add_format();
-            $formatb->set_bold(1);
-            $formaty =& $workbook->add_format();
-            $formaty->set_bg_color('yellow');
-            $formatc =& $workbook->add_format();
-            $formatc->set_align('center');
-            $formatr =& $workbook->add_format();
-            $formatr->set_bold(1);
-            $formatr->set_color('red');
-            $formatr->set_align('center');
-            $formatg =& $workbook->add_format();
-            $formatg->set_bold(1);
-            $formatg->set_color('green');
-            $formatg->set_align('center');
+            $this->table->format =& $this->table->workbook->add_format();
+            $this->table->format->set_bold(0);
+            $this->table->formatbc =& $this->table->workbook->add_format();
+            $this->table->formatbc->set_bold(1);
+            $this->table->formatbc->set_align('center');
+            $this->table->formatb =& $this->table->workbook->add_format();
+            $this->table->formatb->set_bold(1);
+            $this->table->formaty =& $this->table->workbook->add_format();
+            $this->table->formaty->set_bg_color('yellow');
+            $this->table->formatc =& $this->table->workbook->add_format();
+            $this->table->formatc->set_align('center');
+            $this->table->formatr =& $this->table->workbook->add_format();
+            $this->table->formatr->set_bold(1);
+            $this->table->formatr->set_color('red');
+            $this->table->formatr->set_align('center');
+            $this->table->formatg =& $this->table->workbook->add_format();
+            $this->table->formatg->set_bold(1);
+            $this->table->formatg->set_color('green');
+            $this->table->formatg->set_align('center');
             // Here starts workshhet headers
 
             $colnum = 0;
             foreach ($headers as $item) {
-                $myxls->write(0,$colnum,$item,$formatbc);
+                $this->table->myxls->write(0,$colnum,$item,$this->table->formatbc);
                 $colnum++;
             }
-            $rownum=1;
+            $this->rownum=1;
         } else if ($download =='Excel') {
             require_once("$CFG->libdir/excellib.class.php");
 
             $filename .= ".xls";
             // Creating a workbook
-            $workbook = new MoodleExcelWorkbook("-");
+            $this->table->workbook = new MoodleExcelWorkbook("-");
             // Sending HTTP headers
-            $workbook->send($filename);
+            $this->table->workbook->send($filename);
             // Creating the first worksheet
             $sheettitle = get_string('reportoverview','quiz');
-            $myxls =& $workbook->add_worksheet($sheettitle);
+            $this->table->myxls =& $this->table->workbook->add_worksheet($sheettitle);
             // format types
-            $format =& $workbook->add_format();
-            $format->set_bold(0);
-            $formatbc =& $workbook->add_format();
-            $formatbc->set_bold(1);
-            $formatbc->set_align('center');
-            $formatb =& $workbook->add_format();
-            $formatb->set_bold(1);
-            $formaty =& $workbook->add_format();
-            $formaty->set_bg_color('yellow');
-            $formatc =& $workbook->add_format();
-            $formatc->set_align('center');
-            $formatr =& $workbook->add_format();
-            $formatr->set_bold(1);
-            $formatr->set_color('red');
-            $formatr->set_align('center');
-            $formatg =& $workbook->add_format();
-            $formatg->set_bold(1);
-            $formatg->set_color('green');
-            $formatg->set_align('center');
+            $this->table->format =& $this->table->workbook->add_format();
+            $this->table->format->set_bold(0);
+            $this->table->formatbc =& $this->table->workbook->add_format();
+            $this->table->formatbc->set_bold(1);
+            $this->table->formatbc->set_align('center');
+            $this->table->formatb =& $this->table->workbook->add_format();
+            $this->table->formatb->set_bold(1);
+            $this->table->formaty =& $this->table->workbook->add_format();
+            $this->table->formaty->set_bg_color('yellow');
+            $this->table->formatc =& $this->table->workbook->add_format();
+            $this->table->formatc->set_align('center');
+            $this->table->formatr =& $this->table->workbook->add_format();
+            $this->table->formatr->set_bold(1);
+            $this->table->formatr->set_color('red');
+            $this->table->formatr->set_align('center');
+            $this->table->formatg =& $this->table->workbook->add_format();
+            $this->table->formatg->set_bold(1);
+            $this->table->formatg->set_color('green');
+            $this->table->formatg->set_align('center');
 
             $colnum = 0;
             foreach ($headers as $item) {
-                $myxls->write(0,$colnum,$item,$formatbc);
+                $this->table->myxls->write(0,$colnum,$item,$this->table->formatbc);
                 $colnum++;
             }
             $rownum=1;
@@ -307,15 +307,15 @@ class quiz_report extends quiz_default_report {
 
         // Construct the SQL
         $select = 'SELECT '.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
-            ($qmsubselect?$qmsubselect.' AS gradedattempt, ':'').
+            ($this->qmsubselect?$this->qmsubselect.' AS gradedattempt, ':'').
             'qa.uniqueid AS attemptuniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, '.
             'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
 
         // This part is the same for all cases - join users and quiz_attempts tables
         $from = 'FROM '.$CFG->prefix.'user u ';
-        $from .= 'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON qa.userid = u.id AND qa.quiz = '.$quiz->id;
-        if ($qmsubselect && $qmfilter){
-            $from .= ' AND '.$qmsubselect;
+        $from .= 'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON qa.userid = u.id AND qa.quiz = '.$this->quiz->id;
+        if ($this->qmsubselect && $qmfilter){
+            $from .= ' AND '.$this->qmsubselect;
         }
         switch ($attemptsmode){
             case QUIZ_REPORT_ATTEMPTS_ALL:
@@ -336,11 +336,11 @@ class quiz_report extends quiz_default_report {
                 break;
         }
         
-        // Add extra limits due to sorting by question grade
+        // Add extra sql due to sorting by question grade
         if ($detailedmarks) {
             $from .= ' ';
             // we want to display marks for all questions
-            foreach (array_keys($questions) as $qid) {
+            foreach (array_keys($this->questions) as $qid) {
                 $select .=  ", qs$qid.grade AS qsgrade$qid, qs$qid.event AS qsevent$qid, qs$qid.id AS qsid$qid";
                 $from .= "LEFT JOIN {$CFG->prefix}question_sessions qns$qid ON qns$qid.attemptid = qa.uniqueid AND qns$qid.questionid = $qid ";
                 $from .=  "LEFT JOIN  {$CFG->prefix}question_states qs$qid ON qs$qid.id = qns$qid.newgraded ";
@@ -352,7 +352,7 @@ class quiz_report extends quiz_default_report {
 
         $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
 
-        $sort = $table->get_sql_sort();
+        $sort = $this->table->get_sql_sort();
         // Fix some wired sorting
         if (empty($sort)) {
             $sort = ' ORDER BY uniqueid';
@@ -361,188 +361,68 @@ class quiz_report extends quiz_default_report {
         }
          if (!$download) {
             // Add extra limits due to initials bar
-            if($table->get_sql_where()) {
-                $where .= ' AND '.$table->get_sql_where();
+            if($this->table->get_sql_where()) {
+                $where .= ' AND '.$this->table->get_sql_where();
             }
 
             // Count the records NOW, before funky question grade sorting messes up $from
             if (!empty($countsql)) {
                 $totalinitials = count_records_sql($countsql);
-                if ($table->get_sql_where()) {
-                    $countsql .= ' AND '.$table->get_sql_where();
+                if ($this->table->get_sql_where()) {
+                    $countsql .= ' AND '.$this->table->get_sql_where();
                 }
                 $total  = count_records_sql($countsql);
 
             }
 
-            $table->pagesize($pagesize, $total);
+            $this->table->pagesize($pagesize, $total);
         }
 
         // Fetch the attempts
         if (!$download) {
             $attempts = get_records_sql($select.$from.$where.$sort,
-                                    $table->get_page_start(), $table->get_page_size());
+                                    $this->table->get_page_start(), $this->table->get_page_size());
         } else {
             $attempts = get_records_sql($select.$from.$where.$sort);
         }
         
         // Build table rows
         if (!$download) {
-            $table->initialbars($totalinitials>20);
+            $this->table->initialbars($totalinitials>20);
         }
         if ($attempts) {
-
-            foreach ($attempts as $attempt) {
-
-                // Username columns.
-                $row = array();
-                if (in_array('checkbox', $columns)){
-                    if ($attempt->attempt){
-                        $row[] = '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />';
-                    } else {
-                        $row[] = '';
-                    }
-                }
-                if (in_array('picture', $columns)){
-                    $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
-                    $row[] = $picture;
-                }
-                if (!$download){
-                    $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.
-                            '&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
-                    $row[] = $userlink;
-                } else {
-                    $row[] = fullname($attempt);
-                }
-                
-                if (in_array('idnumber', $columns)){
-                    $row[] = $attempt->idnumber;
-                }
-
-                // Timing columns.
-                if ($attempt->attempt) {
-                    $startdate = userdate($attempt->timestart, $strtimeformat);
-                    if (!$download) {
-                        $row[] = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$startdate.'</a>';
-                    } else {
-                        $row[] = $startdate;
-                    }
-                    if ($attempt->timefinish) {
-                        $timefinish = userdate($attempt->timefinish, $strtimeformat);
-                        $duration = format_time($attempt->duration);
-                        if (!$download) {
-                            $row[] = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$timefinish.'</a>';
-                        } else {
-                            $row[] = $timefinish;
-                        }
-                        $row[] = $duration;
-                    } else {
-                        $row[] = '-';
-                        $row[] = get_string('unfinished', 'quiz');
-                    }
-                } else {
-                    $row[] = '-';
-                    $row[] = '-';
-                    $row[] = '-';
-                }
-
-                // Grades columns.
-                if ($showgrades) {
-                    if ($attempt->timefinish) {
-                        $grade = quiz_rescale_grade($attempt->sumgrades, $quiz);
-                        if (!$download) {
-                            $gradehtml = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$grade.'</a>';
-                            if ($qmsubselect && $attempt->gradedattempt){
-                                $gradehtml = '<div class="highlight">'.$gradehtml.'</div>';
-                            }
-                            $row[] = $gradehtml;
-                        } else {
-                            $row[] = $grade;
-                        }
-                    } else {
-                        $row[] = '-';
-                    }
-                    
-                }
-
-                if($detailedmarks) {
-                    if(empty($attempt->attempt)) {
-                        foreach($questions as $question) {
-                            $row[] = '-';
-                        }
-                    } else {
-                        foreach($questions as $questionid => $question) {
-                            $state = new object();
-                            $state->event = $attempt->{'qsevent'.$questionid};
-                            if (question_state_is_graded($state)) {
-                                $grade = quiz_rescale_grade($attempt->{'qsgrade'.$questionid}, $quiz);
-                            } else {
-                                $grade = '--';
-                            }
-                            if (!$download) {
-                                $grade = $grade.'/'.quiz_rescale_grade($question->grade, $quiz);
-                                $row[] = link_to_popup_window('/mod/quiz/reviewquestion.php?state='.
-                                        $attempt->{'qsid'.$questionid}.'&amp;number='.$question->number,
-                                        'reviewquestion', $grade, 450, 650, $strreviewquestion, 'none', true);
-                            } else {
-                                $row[] = $grade;
-                            }
-                        }
-                    }
-                }
-
-                // Feedback column.
-                if ($hasfeedback) {
-                    if ($attempt->timefinish) {
-                        $row[] = quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $quiz), $quiz->id);
-                    } else {
-                        $row[] = '-';
-                    }
-                }
-                if (!$download) {
-                    $table->add_data($row);
-                } else if ($download == 'Excel' or $download == 'ODS') {
-                    $colnum = 0;
-                    foreach($row as $item){
-                        $myxls->write($rownum,$colnum,$item,$format);
-                        $colnum++;
-                    }
-                    $rownum++;
-                } else if ($download=='CSV') {
-                    $text = implode("\t", $row);
-                    echo $text." \n";
-                }
-            }
+            
+            $this->build_table($attempts, $download);
             //end of adding data from attempts data to table / download
             //now add averages :
             if (!$download && $attempts){
     
                 $averagesql = "SELECT AVG(qg.grade) AS grade " .
                         "FROM {$CFG->prefix}quiz_grades qg " .
-                        "WHERE quiz=".$quiz->id;
+                        "WHERE quiz=".$this->quiz->id;
                         
-                $table->add_separator();
+                $this->table->add_separator();
                 if ($groupstudents){
                     $groupaveragesql = $averagesql." AND qg.userid IN ($groupstudents)";
                     $groupaverage = get_record_sql($groupaveragesql);
                     $groupaveragerow = array('fullname' => get_string('groupavg', 'grades'),
-                            'sumgrades' => round($groupaverage->grade, $quiz->decimalpoints),
-                            'feedbacktext'=> quiz_report_feedback_for_grade($groupaverage->grade, $quiz->id));
-                    if($detailedmarks && $qmsubselect) {
-                        $avggradebyq = quiz_get_average_grade_for_questions($quiz, $groupstudents);
-                        $groupaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz, $download);
+                            'sumgrades' => round($groupaverage->grade, $this->quiz->decimalpoints),
+                            'feedbacktext'=> quiz_report_feedback_for_grade($groupaverage->grade, $this->quiz->id));
+                    if($detailedmarks && $this->qmsubselect) {
+                        $avggradebyq = quiz_get_average_grade_for_questions($this->quiz, $groupstudents);
+                        $groupaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $this->questions, $this->quiz, $download);
                     }
-                    $table->add_data_keyed($groupaveragerow);
+                    $this->table->add_data_keyed($groupaveragerow);
                 }
                 $overallaverage = get_record_sql($averagesql." AND qg.userid IN ($students)");
                 $overallaveragerow = array('fullname' => get_string('overallaverage', 'grades'),
-                            'sumgrades' => round($overallaverage->grade, $quiz->decimalpoints),
-                            'feedbacktext'=> quiz_report_feedback_for_grade($overallaverage->grade, $quiz->id));
-                if($detailedmarks && $qmsubselect) {
-                    $avggradebyq = quiz_get_average_grade_for_questions($quiz, $students);
-                    $overallaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz, $download);
+                            'sumgrades' => round($overallaverage->grade, $this->quiz->decimalpoints),
+                            'feedbacktext'=> quiz_report_feedback_for_grade($overallaverage->grade, $this->quiz->id));
+                if($detailedmarks && $this->qmsubselect) {
+                    $avggradebyq = quiz_get_average_grade_for_questions($this->quiz, $students);
+                    $overallaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $this->questions, $this->quiz, $download);
                 }
-                $table->add_data_keyed($overallaveragerow);
+                $this->table->add_data_keyed($overallaveragerow);
             }    
             if (!$download) {
                 // Start form
@@ -553,7 +433,7 @@ class quiz_report extends quiz_default_report {
                 echo '<div>';
 
                 // Print table
-                $table->print_html();
+                $this->table->print_html();
 
                 // Print "Select all" etc.
                 if (!empty($attempts) && $candelete) {
@@ -593,11 +473,11 @@ class quiz_report extends quiz_default_report {
             }
         } else {
             if (!$download) {
-                $table->print_html();
+                $this->table->print_html();
             }
         }
         if ($download == 'Excel' or $download == 'ODS') {
-            $workbook->close();
+            $this->table->workbook->close();
             exit;
         } else if ($download == 'CSV') {
             exit;
@@ -607,13 +487,148 @@ class quiz_report extends quiz_default_report {
             $mform->set_data($displayoptions +compact('detailedmarks', 'pagesize'));
             $mform->display();
             if ($attempts){
-                $imageurl = $CFG->wwwroot.'/mod/quiz/report/overview/overviewgraph.php?id='.$quiz->id;
+                $imageurl = $CFG->wwwroot.'/mod/quiz/report/overview/overviewgraph.php?id='.$this->quiz->id;
                 print_heading(get_string('overviewreportgraph', 'quiz_overview'));
                 echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.get_string('overviewreportgraph', 'quiz_overview').'" /></div>';
             }
         }
         return true;
     }
+    
+    function col_checkbox($attempt, $download){
+        if ($attempt->attempt){
+            return '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />';
+        } else {
+            return '';
+        }
+    }
+    
+    function col_picture($attempt, $download){
+        global $COURSE;
+        return print_user_picture($attempt->userid, $COURSE->id, $attempt->picture, false, true);
+    }
+
+    function col_fullname($attempt, $download){
+        global $COURSE, $CFG;
+        if (!$download){
+            return '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.
+                    '&amp;course='.$COURSE->id.'">'.fullname($attempt).'</a>';
+        } else {
+            return fullname($attempt);
+        }
+    }    
+    function col_timestart($attempt, $download){
+        if ($attempt->attempt) {
+            $startdate = userdate($attempt->timestart, $this->strtimeformat);
+            if (!$download) {
+                return  '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$startdate.'</a>';
+            } else {
+                return  $startdate;
+            }
+        } else {
+            return  '-';
+        }
+    }
+    function col_timefinish($attempt, $download){
+        if ($attempt->attempt) {
+            if ($attempt->timefinish) {
+                $timefinish = userdate($attempt->timefinish, $this->strtimeformat);
+                if (!$download) {
+                    return '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$timefinish.'</a>';
+                } else {
+                    return $timefinish;
+                }
+            } else {
+                return  '-';
+            }
+        } else {
+            return  '-';
+        }
+    }
+    
+    function col_duration($attempt, $download){
+        if ($attempt->timefinish) {
+            return format_time($attempt->duration);
+        } elseif ($attempt->timestart) {
+            return get_string('unfinished', 'quiz');
+        } else {
+            return '-';
+        }
+    }
+    function col_sumgrades($attempt, $download){
+        if ($attempt->timefinish) {
+            $grade = quiz_rescale_grade($attempt->sumgrades, $this->quiz);
+            if (!$download) {
+                $gradehtml = '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$grade.'</a>';
+                if ($this->qmsubselect && $attempt->gradedattempt){
+                    $gradehtml = '<div class="highlight">'.$gradehtml.'</div>';
+                }
+                return $gradehtml;
+            } else {
+                return $grade;
+            }
+        } else {
+            return '-';
+        }
+    }
+    function other_cols($colname, $attempt, $download){
+        if (preg_match('/^qsgrade([0-9]+)$/', $colname, $matches)){
+            $questionid = $matches[1];
+            $question = $this->questions[$questionid];
+            $state = new object();
+            $state->event = $attempt->{'qsevent'.$questionid};
+            if (question_state_is_graded($state)) {
+                $grade = quiz_rescale_grade($attempt->{'qsgrade'.$questionid}, $this->quiz);
+            } else {
+                $grade = '--';
+            }
+            if (!$download) {
+                $grade = $grade.'/'.quiz_rescale_grade($question->grade, $this->quiz);
+                return link_to_popup_window('/mod/quiz/reviewquestion.php?state='.
+                        $attempt->{'qsid'.$questionid}.'&amp;number='.$question->number,
+                        'reviewquestion', $grade, 450, 650, get_string('reviewresponse', 'quiz'),
+                        'none', true);
+            } else {
+                return $grade;
+            }     
+        } else {
+            return NULL;
+        }
+    }
+    
+    function col_feedbacktext($attempt, $download){
+        if ($attempt->timefinish) {
+            return quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz), $this->quiz->id);
+        } else {
+            return '-';
+        }
+    
+    }
+    
+    function format_row($row, $download){
+        $formattedrow = array();
+        foreach (array_keys($this->table->columns) as $column){
+            $colmethodname = 'col_'.$column;
+            if (method_exists($this, $colmethodname)){
+                $formattedcolumn = $this->$colmethodname($row, $download);
+            } else {
+                $formattedcolumn = $this->other_cols($column, $row, $download);
+                if ($formattedcolumn===NULL){
+                    $formattedcolumn = $row->$column;
+                }
+            }
+            $formattedrow[$column] = $formattedcolumn;
+        }
+        return $formattedrow;
+    }
+    
+    function build_table($rows, $download){
+        foreach($rows as $row){
+            $formattedrow = $this->format_row($row, $download);
+            $this->table->add_data_keyed($formattedrow, $download);
+        }
+    }
+
 }
 
 ?>
