@@ -64,7 +64,7 @@
 
     // Creating a workbook
     $workbook = new EasyWorkbook("-");
-    $workbook->setTempDir('/srv/www/moodledata');
+    $workbook->setTempDir($CFG->dataroot.'/temp');
     $workbook->send($filename);
     $workbook->setVersion(8);
     // Creating the worksheets
