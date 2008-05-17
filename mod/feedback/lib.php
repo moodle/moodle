@@ -182,19 +182,20 @@ function feedback_scale_used ($feedbackid,$scaleid) {
     return $return;
 }
 
-/** 
- * This function is used by the remove_course_userdata function in moodlelib.
- * If this function exists, remove_course_userdata will execute it.
- * This function will remove all completeds from the specified feedback.
- * @param object $data
- * @param boolean $showfeedback
- * @return void
+/**
+ * This function is used by the reset_course_userdata function in moodlelib.
+ * This function will remove all responses from the specified feedback
+ * and clean up any related data.
+ * @param $data the data submitted from the reset course.
+ * @return array status array
  */
-function feedback_delete_userdata($data, $showfeedback=true) {
+function feedback_reset_userdata($data) {
     global $CFG;
     
     $resetfeedbacks = array();
     $dropfeedbacks = array();
+    $status = array();
+    $componentstr = get_string('modulenameplural', 'feedback');
     
     //get the relevant entries from $data
     foreach($data as $key => $value) {
@@ -216,15 +217,53 @@ function feedback_delete_userdata($data, $showfeedback=true) {
     
     //reset the selected feedbacks
     foreach($resetfeedbacks as $id) {
+        $feedback = get_record('feedback', 'id', $id);
         feedback_delete_all_completeds($id);
+        $status[] = array('component'=>$componentstr.':'.$feedback->name, 'item'=>get_string('resetting_data','feedback'), 'error'=>false);
     }
     
     //drop the selected feedbacks
-    foreach($dropfeedbacks as $id) {
-        $cm = get_coursemodule_from_instance('feedback', $id);
-        feedback_delete_instance($id);
-        feedback_delete_course_module($cm->id);
+    // foreach($dropfeedbacks as $id) {
+        // $cm = get_coursemodule_from_instance('feedback', $id);
+        // feedback_delete_instance($id);
+        // feedback_delete_course_module($cm->id);
+        // $status[] = array('component'=>$componentstr, 'item'=>get_string('drop_feedback','feedback'), 'error'=>false);
+    // }
+    return $status;
+}
+
+/**
+ * Called by course/reset.php
+ * @param $mform form passed by reference
+ */
+function feedback_reset_course_form_definition(&$mform) {
+    global $COURSE;
+    $mform->addElement('header', 'feedbackheader', get_string('modulenameplural', 'feedback'));
+    
+    if(!$feedbacks = get_records('feedback', 'course', $COURSE->id, 'name')){
+        return;
     }
+
+    $mform->addElement('static', 'hint', get_string('resetting_data','feedback'));
+    foreach($feedbacks as $feedback) {
+        $mform->addElement('checkbox', FEEDBACK_RESETFORM_RESET.$feedback->id, $feedback->name);
+        // $mform->addElement('checkbox', FEEDBACK_RESETFORM_DROP.$feedback->id, get_string('drop_feedback','feedback'));
+    }
+}
+
+/**
+ * Course reset form defaults.
+ */
+function feedback_reset_course_form_defaults($course) {
+    $return = array();
+    if(!$feedbacks = get_records('feedback', 'course', $course->id, 'name')){
+        return;
+    }
+    foreach($feedbacks as $feedback) {
+        $return[FEEDBACK_RESETFORM_RESET.$feedback->id] = true;
+        // $return[FEEDBACK_RESETFORM_DROP.$feedback->id] = false;
+    }
+    return $return;
 }
 
 /** 
