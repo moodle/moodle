@@ -9,8 +9,6 @@ require_once($CFG->libdir.'/dml/mysqli_adodb_moodle_database.php');
  * @package dmlib
  */
 class mysql_adodb_moodle_database extends mysqli_adodb_moodle_database {
-    protected $columns = array();
-
     function __construct ($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix) {
         parent::__construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix);
     }

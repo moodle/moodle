@@ -20,7 +20,7 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         if (!defined('ADODB_ASSOC_CASE')) {
             define ('ADODB_ASSOC_CASE', 2);
         }
-        $this->db->SetFetchMode(ADODB_ASSOC_CASE);
+        $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 
         /// No need to set charset. It must be specified in the driver conf
         /// Allow quoted identifiers

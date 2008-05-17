@@ -32,7 +32,7 @@ class oci8_adodb_moodle_database extends adodb_moodle_database {
         if (!defined('ADODB_PREFETCH_ROWS')) {
             define ('ADODB_PREFETCH_ROWS', 1000);
         }
-        $this->db->SetFetchMode(ADODB_ASSOC_CASE);
+        $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 
         /// No need to set charset. It must be specified by the NLS_LANG env. variable
         /// Enable sybase quotes, so addslashes and stripslashes will use "'"

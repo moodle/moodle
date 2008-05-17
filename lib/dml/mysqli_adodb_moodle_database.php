@@ -16,7 +16,7 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
         if (!defined('ADODB_ASSOC_CASE')) {
             define ('ADODB_ASSOC_CASE', 2);
         }
-        $this->db->SetFetchMode(ADODB_ASSOC_CASE);
+        $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
         $this->db->Execute("SET NAMES 'utf8'");
         return true;
     }
