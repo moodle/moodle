@@ -113,8 +113,12 @@
     $feedbackitems = get_records('feedback_item', 'feedback', $feedback->id, 'position');
     if(is_array($feedbackitems)){
         $feedbackitems = array_values($feedbackitems);
-        $lastitem = $feedbackitems[count($feedbackitems)-1];
-        $lastposition = $lastitem->position;
+        if(count($feedbackitems) > 0) {
+            $lastitem = $feedbackitems[count($feedbackitems)-1];
+            $lastposition = $lastitem->position;
+        }else {
+            $lastposition = 0;
+        }
     }
     $lastposition++;
     
