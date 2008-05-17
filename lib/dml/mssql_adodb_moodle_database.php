@@ -9,10 +9,6 @@ require_once($CFG->libdir.'/dml/adodb_moodle_database.php');
  */
 class mssql_adodb_moodle_database extends adodb_moodle_database {
     function __construct ($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix) {
-        if ($prefix=='') {
-            print_error('prefixcannotbeempty', 'debug', '', array($prefix, $this->get_dbfamily()));
-        }
-
         parent::__construct($dbhost, $dbuser, $dbpass, $dbname, false, $prefix);
     }
 

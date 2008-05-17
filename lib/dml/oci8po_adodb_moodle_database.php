@@ -10,13 +10,6 @@ require_once($CFG->libdir.'/dml/oci8po_adodb_moodle_recordset.php');
  */
 class oci8_adodb_moodle_database extends adodb_moodle_database {
     function __construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix) {
-        if ($prefix=='') {
-            print_error('prefixcannotbeempty', 'debug', '', array($prefix, $this->get_dbfamily()));
-        }
-        if (strlen($prefix) > 2) { //Max prefix length for Oracle is 2cc
-            print_error('prefixlimit', 'debug', '', $prefix);
-        }
-
         parent::__construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix);
     }
 
