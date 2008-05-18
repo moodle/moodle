@@ -33,8 +33,13 @@ class question_edit_multianswer_form extends question_edit_form {
             $this->questiondisplay = "";
         }       
 
-        if ( isset($this->questiondisplay->options->questions) && count($this->questiondisplay->options->questions) > 0 ) {
-            $countsubquestions = count($this->questiondisplay->options->questions);
+        if ( isset($this->questiondisplay->options->questions) && is_array($this->questiondisplay->options->questions) ) {
+            $countsubquestions =0;
+            foreach($this->questiondisplay->options->questions as $subquestion){
+                if ($subquestion != ''){
+                   $countsubquestions++;
+                }
+            } 
         } else {
             $countsubquestions =0;
         }
@@ -61,6 +66,9 @@ class question_edit_multianswer_form extends question_edit_form {
             $mform->addElement('static', 'sub_'.$sub."_".'defaultgrade', get_string('defaultgrade', 'quiz'));
             $mform->setDefault('sub_'.$sub."_".'defaultgrade',$this->questiondisplay->options->questions[$sub]->defaultgrade);
 
+                if ($this->questiondisplay->options->questions[$sub]->qtype =='multichoice'  ) {
+                    $mform->addElement('checkbox', 'sub_'.$sub."_".'layout', get_string('layout', 'quiz')) ;//, $gradeoptions);
+                }    
             foreach ($this->questiondisplay->options->questions[$sub]->answer as $key =>$ans) {
 
                $mform->addElement('static', 'sub_'.$sub."_".'answer['.$key.']', get_string('answer', 'quiz'), array('cols'=>60, 'rows'=>1));
@@ -84,6 +92,7 @@ class question_edit_multianswer_form extends question_edit_form {
         if (isset($question->id) and $question->id and $question->qtype and $question->questiontext) {
 
             foreach ($question->options->questions as $key => $wrapped) {
+                if($wrapped != ''){
                 // The old way of restoring the definitions is kept to gradually
                 // update all multianswer questions
                 if (empty($wrapped->questiontext)) {
@@ -126,6 +135,7 @@ class question_edit_multianswer_form extends question_edit_form {
                 }
                 $question->questiontext = str_replace("{#$key}", $parsableanswerdef, $question->questiontext);
             }
+        }
         }
                 
         // set default to $questiondisplay questions elements
@@ -231,7 +241,7 @@ class question_edit_multianswer_form extends question_edit_form {
                     $sub++;                     
                 }
             } else {
-                $errors['questiontext']=get_string('questions missing', 'question');  
+                $errors['questiontext']=get_string('questionsmissing', 'qtype_multianswer');  
             }
         }
 
