@@ -185,15 +185,21 @@ httpsrequired();
 
         /// check if user password has expired
         /// Currently supported only for ldap-authentication module
+            $userauth = get_auth_plugin($USER->auth);
             if (!empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
+                if ($userauth->can_change_password()) {
+                    $passwordchangeurl = $userauth->change_password_url();
+                } else {
+                    $passwordchangeurl = $CFG->httpswwwroot.'/login/change_password.php';
+                }
                 $days2expire = $userauth->password_expire($USER->username);
                 if (intval($days2expire) > 0 && intval($days2expire) < intval($userauth->config->expiration_warning)) {
-                    print_header("$site->fullname: $loginsite", "$site->fullname", $navigation, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>");
+                    print_header("$site->fullname: $loginsite", "$site->fullname", $navigation, '', '', true, "<div class=\"langmenu\">$langmenu</div>");
                     notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo);
                     print_footer();
                     exit;
                 } elseif (intval($days2expire) < 0 ) {
-                    print_header("$site->fullname: $loginsite", "$site->fullname", $navigation, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>");
+                    print_header("$site->fullname: $loginsite", "$site->fullname", $navigation, '', '', true, "<div class=\"langmenu\">$langmenu</div>");
                     notice_yesno(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
                     print_footer();
                     exit;
