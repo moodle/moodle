@@ -21,6 +21,10 @@ Our changes:
        in the MetaColumns() function. MDL-14215.
        Reported to ADOdb at: http://phplens.com/lens/lensforum/msgs.php?id=17383
        Once fixed by adodb guys, we'll return to their official distro.
+ * drivers/adodb-mssql.ic.php - fixed problem with insert statements using placeholders
+       not able to return the Insert_ID() at all. MDL-14886.
+       Reported to ADOdb at: http://phplens.com/lens/lensforum/msgs.php?id=17068
+       Once fixed by adodb guys, we'll return to their official distro.
 
 skodak, iarenaza, moodler, stronk7
 
