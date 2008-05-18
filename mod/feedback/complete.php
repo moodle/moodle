@@ -194,12 +194,11 @@
                     feedback_send_email_anonym($cm, $feedback, $course, $userid);
                 }
                 //tracking the submit
-                $multiple_count = null;
-                $multiple_count->userid = $USER->id;
-                $multiple_count->feedback = $feedback->id;
-                $multiple_count->completed = $new_completed_id;
-                $multiple_count->count = 1;
-                insert_record('feedback_tracking', $multiple_count);
+                $tracking = null;
+                $tracking->userid = $USER->id;
+                $tracking->feedback = $feedback->id;
+                $tracking->completed = $new_completed_id;
+                insert_record('feedback_tracking', $tracking);
                 unset($SESSION->feedback->is_started);
                 
             }else {

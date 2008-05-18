@@ -162,7 +162,6 @@
                fwrite ($bf,full_tag("USERID",6,false,$feedbacktracking->userid));
                fwrite ($bf,full_tag("FEEDBACK",6,false,$feedbacktracking->feedback));
                fwrite ($bf,full_tag("COMPLETED",6,false,$feedbacktracking->completed));
-               fwrite ($bf,full_tag("COUNT",6,false,$feedbacktracking->count));
                
                //End completed
                $status =fwrite ($bf,end_tag("TRACKING",5,true));

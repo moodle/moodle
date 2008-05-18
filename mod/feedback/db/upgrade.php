@@ -219,6 +219,13 @@ function xmldb_feedback_upgrade($oldversion=0) {
         /// Launch add field2
         $result = $result && $dbman->add_field($table, $field);
     }
+    
+    if ($result && $oldversion < 2008050105) {
+        //field count is not more needed
+        $table = new XMLDBTable('feedback_tracking');
+        $field = new XMLDBField('count');
+        $result = $result && $dbman->drop_field($table, $field);
+    }
     return $result;
 }
 
