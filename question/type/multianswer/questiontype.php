@@ -267,7 +267,7 @@ class embedded_cloze_qtype extends default_questiontype {
             if (isset($question->options->questions[$positionkey]) && $question->options->questions[$positionkey] != ''){
             $wrapped = &$question->options->questions[$positionkey];
             $answers = &$wrapped->options->answers;
-            $correctanswers = $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $state);
+           // $correctanswers = $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $state);
 
             $inputname = $nameprefix.$positionkey;
             if (isset($state->responses[$positionkey])) {
@@ -280,6 +280,38 @@ class embedded_cloze_qtype extends default_questiontype {
             $popup = '';
             $style = '';
             $feedbackimg = '';
+            $feedback = '' ;
+            $correctanswer = '';
+            $strfeedbackwrapped  = $strfeedback; 
+           // if($wrapped->qtype == 'numerical' ||$wrapped->qtype == 'shortanswer'){
+                $testedstate = clone($state); 
+                if ($correctanswers =  $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $testedstate)) {
+                    if ($options->readonly && $options->correct_responses) {
+                        $delimiter = '';
+                        if ($correctanswers) {
+                            foreach ($correctanswers as $ca) {
+                                switch($wrapped->qtype){
+                                    case 'numerical':
+                                    case 'shortanswer':                                    
+                                        $correctanswer .= $delimiter.$ca;
+                                        break ;
+                                    case 'multichoice':
+                                        if (isset($answers[$ca])){
+                                            $correctanswer .= $delimiter.$answers[$ca]->answer;
+                                        }
+                                        break ;
+                                }        
+                                $delimiter = ', ';
+                            }
+                        }
+                    }
+                    if ($correctanswer) {
+                        $feedback = '<div class="correctness">';
+                        $feedback .= get_string('correctansweris', 'quiz', s($correctanswer, true));
+                        $feedback .= '</div>';
+                       // $strfeedbackwrapped = get_string('correctanswer and', 'quiz').get_string('feedback', 'quiz');
+                    }
+                }
             if ($options->feedback) {
                 $chosenanswer = null;
                 switch ($wrapped->qtype) {
@@ -312,8 +344,13 @@ class embedded_cloze_qtype extends default_questiontype {
                 }
 
                 if (!empty($chosenanswer->feedback)) {
-                    $feedback = s(str_replace(array("\\", "'"), array("\\\\", "\\'"), $chosenanswer->feedback));
-                    $popup = " onmouseover=\"return overlib('$feedback', STICKY, MOUSEOFF, CAPTION, '$strfeedback', FGCOLOR, '#FFFFFF');\" ".
+                    $feedback = s(str_replace(array("\\", "'"), array("\\\\", "\\'"), $feedback.$chosenanswer->feedback));
+                    if  ($options->readonly && $options->correct_responses) {
+                        $strfeedbackwrapped = get_string('correctanswerandfeedback', 'qtype_multianswer');
+                    }else {
+                        $strfeedbackwrapped = get_string('feedback', 'quiz');
+                    }
+                    $popup = " onmouseover=\"return overlib('$feedback', STICKY, MOUSEOFF, CAPTION, '$strfeedbackwrapped', FGCOLOR, '#FFFFFF');\" ".
                              " onmouseout=\"return nd();\" ";
                 }
 
@@ -325,6 +362,12 @@ class embedded_cloze_qtype extends default_questiontype {
                     $style = '';
                     $feedbackimg = '';
                 }
+            }
+            if ($feedback !='' && $popup == ''){
+                $strfeedbackwrapped = get_string('correctanswer', 'qtype_multianswer'); 
+                    $feedback = s(str_replace(array("\\", "'"), array("\\\\", "\\'"), $feedback));
+                    $popup = " onmouseover=\"return overlib('$feedback', STICKY, MOUSEOFF, CAPTION, '$strfeedbackwrapped', FGCOLOR, '#FFFFFF');\" ".
+                             " onmouseout=\"return nd();\" ";
             }
 
             // Print the input control
