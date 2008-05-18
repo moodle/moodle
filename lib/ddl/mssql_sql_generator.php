@@ -329,7 +329,7 @@ class mssql_sql_generator extends sql_generator {
 
         $meta = $this->mdb->get_columns($tablename);
         $metac = $meta[$fieldname];
-        $oldmetatype = $$metac->meta_type;
+        $oldmetatype = $metac->meta_type;
 
         $oldlength = $metac->max_length;
         $olddecimals = empty($metac->scale) ? null : $metac->scale;
