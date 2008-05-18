@@ -857,7 +857,6 @@ class test extends XMLDBAction {
                     } else {
                         $test->error = $db->ErrorMsg();
                         $test->sql = array($newtextlen . ' cc. (text) transfer failed. Data changed!');
-                        print_object($new);
                         $test->status = false;
                     }
                 } else {
