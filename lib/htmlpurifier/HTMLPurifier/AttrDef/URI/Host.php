@@ -40,11 +40,23 @@ class HTMLPurifier_AttrDef_URI_Host extends HTMLPurifier_AttrDef
         $ipv4 = $this->ipv4->validate($string, $config, $context);
         if ($ipv4 !== false) return $ipv4;
         
-        // validate a domain name here, do filtering, etc etc etc
+        // A regular domain name.
         
-        // We could use this, but it would break I18N domain names
-        //$match = preg_match('/^[a-z0-9][\w\-\.]*[a-z0-9]$/i', $string);
-        //if (!$match) return false;
+        // This breaks I18N domain names, but we don't have proper IRI support,
+        // so force users to insert Punycode. If there's complaining we'll 
+        // try to fix things into an international friendly form.
+        
+        // The productions describing this are:
+        $a   = '[a-z]';     // alpha
+        $an  = '[a-z0-9]';  // alphanum
+        $and = '[a-z0-9-]'; // alphanum | "-"
+        // domainlabel = alphanum | alphanum *( alphanum | "-" ) alphanum
+        $domainlabel   = "$an($and*$an)?";
+        // toplabel    = alpha | alpha *( alphanum | "-" ) alphanum
+        $toplabel      = "$a($and*$an)?";
+        // hostname    = *( domainlabel "." ) toplabel [ "." ]
+        $match = preg_match("/^($domainlabel\.)*$toplabel\.?$/i", $string);
+        if (!$match) return false;
         
         return $string;
     }

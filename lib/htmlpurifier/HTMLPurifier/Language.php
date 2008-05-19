@@ -26,6 +26,13 @@ class HTMLPurifier_Language
     var $errorNames = array();
     
     /**
+     * True if no message file was found for this language, so English
+     * is being used instead. Check this if you'd like to notify the
+     * user that they've used a non-supported language.
+     */
+    var $error = false;
+    
+    /**
      * Has the language object been loaded yet?
      * @private
      */

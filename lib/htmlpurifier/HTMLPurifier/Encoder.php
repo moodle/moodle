@@ -63,6 +63,11 @@ class HTMLPurifier_Encoder
     }
     
     /**
+     * Error-handler that mutes errors, alternative to shut-up operator.
+     */
+    function muteErrorHandler() {}
+    
+    /**
      * Cleans a UTF-8 string for well-formedness and SGML validity
      * 
      * It will parse according to UTF-8 and return a valid UTF8 string, with
@@ -106,9 +111,18 @@ class HTMLPurifier_Encoder
         static $iconv = null;
         if ($iconv === null) $iconv = function_exists('iconv');
         
+        // UTF-8 validity is checked since PHP 4.3.5
+        // This is an optimization: if the string is already valid UTF-8, no
+        // need to do iconv/php stuff. 99% of the time, this will be the case.
+        if (preg_match('/^.{1}/us', $str)) {
+            return strtr($str, $non_sgml_chars);
+        }
+        
         if ($iconv && !$force_php) {
             // do the shortcut way
-            $str = @iconv('UTF-8', 'UTF-8//IGNORE', $str);
+            set_error_handler(array('HTMLPurifier_Encoder', 'muteErrorHandler'));
+            $str = iconv('UTF-8', 'UTF-8//IGNORE', $str);
+            restore_error_handler();
             return strtr($str, $non_sgml_chars);
         }
         

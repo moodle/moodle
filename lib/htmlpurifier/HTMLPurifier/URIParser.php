@@ -4,24 +4,39 @@ require_once 'HTMLPurifier/URI.php';
 
 /**
  * Parses a URI into the components and fragment identifier as specified
- * by RFC 2396.
- * @todo Replace regexps with a native PHP parser
+ * by RFC 3986.
  */
 class HTMLPurifier_URIParser
 {
     
     /**
-     * Parses a URI
+     * Instance of HTMLPurifier_PercentEncoder to do normalization with.
+     */
+    var $percentEncoder;
+    
+    function HTMLPurifier_URIParser() {
+        $this->percentEncoder = new HTMLPurifier_PercentEncoder();
+    }
+    
+    /**
+     * Parses a URI.
      * @param $uri string URI to parse
-     * @return HTMLPurifier_URI representation of URI
+     * @return HTMLPurifier_URI representation of URI. This representation has
+     *         not been validated yet and may not conform to RFC.
      */
     function parse($uri) {
+        
+        $uri = $this->percentEncoder->normalize($uri);
+        
+        // Regexp is as per Appendix B.
+        // Note that ["<>] are an addition to the RFC's recommended 
+        // characters, because they represent external delimeters.
         $r_URI = '!'.
-            '(([^:/?#<>\'"]+):)?'. // 2. Scheme
-            '(//([^/?#<>\'"]*))?'. // 4. Authority
-            '([^?#<>\'"]*)'.       // 5. Path
-            '(\?([^#<>\'"]*))?'.   // 7. Query
-            '(#([^<>\'"]*))?'.     // 8. Fragment
+            '(([^:/?#"<>]+):)?'. // 2. Scheme
+            '(//([^/?#"<>]*))?'. // 4. Authority
+            '([^?#"<>]*)'.       // 5. Path
+            '(\?([^#"<>]*))?'.   // 7. Query
+            '(#([^"<>]*))?'.     // 8. Fragment
             '!';
         
         $matches = array();
@@ -38,13 +53,7 @@ class HTMLPurifier_URIParser
         
         // further parse authority
         if ($authority !== null) {
-            // ridiculously inefficient: it's a stacked regex!
-            $HEXDIG = '[A-Fa-f0-9]';
-            $unreserved = 'A-Za-z0-9-._~'; // make sure you wrap with []
-            $sub_delims = '!$&\'()'; // needs []
-            $pct_encoded = "%$HEXDIG$HEXDIG";
-            $r_userinfo = "(?:[$unreserved$sub_delims:]|$pct_encoded)*";
-            $r_authority = "/^(($r_userinfo)@)?(\[[^\]]+\]|[^:]*)(:(\d*))?/";
+            $r_authority = "/^((.+?)@)?(\[[^\]]+\]|[^:]*)(:(\d*))?/";
             $matches = array();
             preg_match($r_authority, $authority, $matches);
             $userinfo   = !empty($matches[1]) ? $matches[2] : null;

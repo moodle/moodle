@@ -222,6 +222,8 @@ class HTMLPurifier_HTMLDefinition extends HTMLPurifier_Definition
     
     /**
      * Adds a custom attribute to a pre-existing element
+     * @note This is strictly convenience, and does not have a corresponding
+     *       method in HTMLPurifier_HTMLModule
      * @param $element_name String element name to add attribute to
      * @param $attr_name String name of attribute
      * @param $def Attribute definition, can be string or object, see
@@ -229,7 +231,11 @@ class HTMLPurifier_HTMLDefinition extends HTMLPurifier_Definition
      */
     function addAttribute($element_name, $attr_name, $def) {
         $module =& $this->getAnonymousModule();
-        $element =& $module->addBlankElement($element_name);
+        if (!isset($module->info[$element_name])) {
+            $element =& $module->addBlankElement($element_name);
+        } else {
+            $element =& $module->info[$element_name];
+        }
         $element->attr[$attr_name] = $def;
     }
     

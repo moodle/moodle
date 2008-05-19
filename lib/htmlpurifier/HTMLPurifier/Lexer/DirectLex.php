@@ -168,7 +168,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                 
                 // Check if it's a comment
                 if (
-                    substr($segment, 0, 3) === '!--'
+                    strncmp('!--', $segment, 3) === 0
                 ) {
                     // re-determine segment length, looking for -->
                     $position_comment_end = strpos($html, '-->', $cursor);
@@ -184,12 +184,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                     }
                     $strlen_segment = $position_comment_end - $cursor;
                     $segment = substr($html, $cursor, $strlen_segment);
-                    $token = new
-                        HTMLPurifier_Token_Comment(
-                            substr(
-                                $segment, 3, $strlen_segment - 3
-                            )
-                        );
+                    $token = new HTMLPurifier_Token_Comment(substr($segment, 3));
                     if ($maintain_line_numbers) {
                         $token->line = $current_line;
                         $current_line += $this->substrCount($html, $nl, $cursor, $strlen_segment);
