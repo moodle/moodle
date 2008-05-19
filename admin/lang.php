@@ -294,7 +294,7 @@
                         $missingcounter++;
                     }
                     if (LANG_LINK_MISSING_STRINGS && ($missingstring || $translationsdiffer)) {
-                        $missinglinkstart = "<a href=\"lang.php?mode=compare&amp;currentfile=$filename#missing$missingcounter\">";
+                        $missinglinkstart = "<a href=\"lang.php?mode=compare&amp;currentfile=$filename#$key\">";
                         $missinglinkend = '</a>';
                     } else {
                         $missinglinkstart = '';
@@ -571,7 +571,7 @@
                 }
                 $o .= '">';
                 $o .= '<td dir="ltr" lang="en">';
-                $o .= '<span class="stren">'.$envalue.'</span>';
+                $o .= '<span id="'.$key.'" class="stren">'.$envalue.'</span>';
                 $o .= '<br />'."\n";
                 $o .= '<span class="strkey">'.$key.'</span>';
                 $o .= '</td>'."\n";
@@ -613,7 +613,7 @@
                     }
                 } else {
                     // the string is translated in the pack being processed
-                    if ($value <> $value2 && ($uselocal || $value2 <> '')) {
+                    if ($value <> $value2 && ($value2 <> '')) {
                         $cellcolour = 'class="localdifferent"';
                         $usetabindex = true;
                         $missingcounter++;
