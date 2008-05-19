@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -865,7 +865,6 @@ class test extends XMLDBAction {
                     } else {
                         $test->error = $DB->get_last_error();
                         $test->sql = array($newtextlen . ' cc. (text) transfer failed. Data changed!');
-                        print_object($new);
                         $test->status = false;
                     }
                 } else {
@@ -874,6 +873,7 @@ class test extends XMLDBAction {
             } else {
                 $test->error = $DB->get_last_error().'yy'.var_export($rec->id, true);
             }
+            $tests['insert record '. $textlen . ' cc. (text)'] = $test;
         }
 
     /// 48th test. Inserting BINARY contents
@@ -884,11 +884,11 @@ class test extends XMLDBAction {
             $rec->avatar = $fulltext;
             $rec->name = 'binarytest';
         /// Calculate its length
-            $textlen = strlen($fulltext);
+            $textlen = strlen($rec->avatar);
             if ($rec->id = $DB->insert_record('newnameforthetable', $rec)) {
                 if ($new = $DB->get_record('newnameforthetable', array('id'=>$rec->id))) {
                     $newtextlen = strlen($new->avatar);
-                    if ($fulltext === $new->avatar) {
+                    if ($rec->avatar === $new->avatar) {
                         $test->sql = array($newtextlen . ' bytes (binary) sent and received ok');
                         $test->status = true;
                     } else {
@@ -984,11 +984,11 @@ class test extends XMLDBAction {
             $rec->avatar = $fulltext;
             $rec->name = 'updatelobs';
         /// Calculate its length
-            $textlen = strlen($fulltext);
+            $textlen = strlen($rec->avatar);
             if ($DB->set_field('newnameforthetable', 'avatar', $rec->avatar, array('name'=>$rec->name))) {
                 if ($new = $DB->get_record('newnameforthetable', array('id'=>$rec->id))) {
                     $newtextlen = strlen($new->avatar);
-                    if ($fulltext === $new->avatar) {
+                    if ($rec->avatar === $new->avatar) {
                         $test->sql = array($newtextlen . ' bytes (binary) sent and received ok');
                         $test->status = true;
                     } else {
