@@ -183,6 +183,8 @@ phpversion
 phpversionerror
 phpversionhelp
 postgres7
+prefixcannotbeempty
+prefixtoolong
 previous
 qtyperqpwillberemoved
 qtyperqpwillberemovedanyway
