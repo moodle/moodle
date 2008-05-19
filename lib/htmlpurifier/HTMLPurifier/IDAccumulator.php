@@ -28,9 +28,9 @@ class HTMLPurifier_IDAccumulator
      * @static
      */
     function build($config, &$context) {
-        $id_accumulator = new HTMLPurifier_IDAccumulator();
-        $id_accumulator->load($config->get('Attr', 'IDBlacklist'));
-        return $id_accumulator;
+        $acc = new HTMLPurifier_IDAccumulator();
+        $acc->load($config->get('Attr', 'IDBlacklist'));
+        return $acc;
     }
     
     /**

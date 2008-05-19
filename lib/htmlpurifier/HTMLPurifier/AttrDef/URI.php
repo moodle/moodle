@@ -68,7 +68,7 @@ HTMLPurifier_ConfigSchema::define(
 class HTMLPurifier_AttrDef_URI extends HTMLPurifier_AttrDef
 {
     
-    var $parser, $percentEncoder;
+    var $parser;
     var $embedsResource;
     
     /**
@@ -76,7 +76,6 @@ class HTMLPurifier_AttrDef_URI extends HTMLPurifier_AttrDef
      */
     function HTMLPurifier_AttrDef_URI($embeds_resource = false) {
         $this->parser = new HTMLPurifier_URIParser();
-        $this->percentEncoder = new HTMLPurifier_PercentEncoder();
         $this->embedsResource = (bool) $embeds_resource;
     }
     
@@ -84,9 +83,7 @@ class HTMLPurifier_AttrDef_URI extends HTMLPurifier_AttrDef
         
         if ($config->get('URI', 'Disable')) return false;
         
-        // initial operations
         $uri = $this->parseCDATA($uri);
-        $uri = $this->percentEncoder->normalize($uri);
         
         // parse the URI
         $uri = $this->parser->parse($uri);
@@ -121,13 +118,6 @@ class HTMLPurifier_AttrDef_URI extends HTMLPurifier_AttrDef
         
         $context->destroy('EmbeddedURI');
         if (!$ok) return false;
-        
-        // munge scheme off if necessary (this must be last)
-        if (!is_null($uri->scheme) && is_null($uri->host)) {
-            if ($uri_def->defaultScheme == $uri->scheme) {
-                $uri->scheme = null;
-            }
-        }
         
         // back to string
         $result = $uri->toString();

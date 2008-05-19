@@ -39,20 +39,13 @@ class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
         if ($colors === null) $colors = $config->get('Core', 'ColorKeywords');
         
         $color = trim($color);
-        if (!$color) return false;
+        if ($color === '') return false;
         
         $lower = strtolower($color);
         if (isset($colors[$lower])) return $colors[$lower];
         
-        if ($color[0] === '#') {
-            // hexadecimal handling
-            $hex = substr($color, 1);
-            $length = strlen($hex);
-            if ($length !== 3 && $length !== 6) return false;
-            if (!ctype_xdigit($hex)) return false;
-        } else {
+        if (strpos($color, 'rgb(') !== false) {
             // rgb literal handling
-            if (strpos($color, 'rgb(')) return false;
             $length = strlen($color);
             if (strpos($color, ')') !== $length - 1) return false;
             $triad = substr($color, 4, $length - 4 - 1);
@@ -90,6 +83,17 @@ class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
             }
             $new_triad = implode(',', $new_parts);
             $color = "rgb($new_triad)";
+        } else {
+            // hexadecimal handling
+            if ($color[0] === '#') {
+                $hex = substr($color, 1);
+            } else {
+                $hex = $color;
+                $color = '#' . $color;
+            }
+            $length = strlen($hex);
+            if ($length !== 3 && $length !== 6) return false;
+            if (!ctype_xdigit($hex)) return false;
         }
         
         return $color;

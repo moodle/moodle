@@ -82,7 +82,7 @@ class HTMLPurifier_ElementDef
     
     /**
      * List of the names of required attributes this element has. Dynamically
-     * populated.
+     * populated by HTMLPurifier_HTMLDefinition::getElement
      * @public
      */
     var $required_attr = array();

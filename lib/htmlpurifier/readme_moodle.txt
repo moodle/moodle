@@ -1,4 +1,4 @@
-Description of HTML Purifier v2.1.3 Lite library import into Moodle
+Description of HTML Purifier v2.1.4 Lite library import into Moodle
 
 Changes:
  * HMLTModule/Text.php - added  <nolink>, <tex>, <lang> and <algebra> tags

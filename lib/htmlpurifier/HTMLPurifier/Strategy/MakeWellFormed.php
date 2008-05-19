@@ -158,10 +158,9 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
                     // the parent
                     if (!isset($parent_info->child->elements[$token->name])) {
                         if ($e) $e->send(E_NOTICE, 'Strategy_MakeWellFormed: Tag auto closed', $parent);
-                        // close the parent, then append the token
+                        // close the parent, then re-loop to reprocess token
                         $result[] = new HTMLPurifier_Token_End($parent->name);
-                        $result[] = $token;
-                        $this->currentNesting[] = $token;
+                        $this->inputIndex--;
                         continue;
                     }
                     
