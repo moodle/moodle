@@ -108,9 +108,9 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
             }
             $column = $columns[$field];
             if ($column->meta_type == 'B') { /// BLOBs (IMAGE) columns need to be updated apart
-                $value = null;               /// Set the default value to be inserted in first instance
-                if (!is_null($value)) {      /// If value not, null, add it to the list of BLOBs to update later
+                if (!is_null($value)) {      /// If value not null, add it to the list of BLOBs to update later
                     $blobs[$field] = $value;
+                    $value = null;           /// Set the default value to be inserted in first instance
                 }
 
             } else if (is_bool($value)) {
@@ -128,13 +128,17 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
             return false;
         }
 
-        if (empty($blobs)) { /// Without BLOBs, execute the raw insert and return
+        if (empty($blobs)) { /// Without BLOBs, execute the raw update and return
             return $this->update_record_raw($table, $cleaned, $bulk);
         }
 
-    /// We have BLOBs to postprocess
+    /// We have BLOBs to postprocess, execute the raw update and then update blobs
+        if (!$this->update_record_raw($table, $cleaned, $bulk)) {
+            return false;
+        }
+
         foreach ($blobs as $key=>$value) {
-            if (!$db->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
+            if (!$this->db->UpdateBlob($this->prefix.$table, $key, $value, "id = {$dataobject->id}")) {
                 return false;
             }
         }
@@ -164,8 +168,8 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
 
         if ($column->meta_type == 'B') { /// If the column is a BLOB (IMAGE)
         /// Update BLOB column and return
-            $select = $this->emulate_bound_params($select, $params); /// ADOdb does not use bound parameters for blob updates :-(
-            return $this->db->UpdateBlob($this->prefix.$table, $newfield, $newvalue, "WHERE $select");
+            $select = $this->emulate_bound_params($select, $params); // adodb does not use bound parameters for blob updates :-(
+            return $this->db->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select);
         }
 
     /// Arrived here, normal update (without BLOBs)
@@ -220,9 +224,9 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
             }
             $column = $columns[$field];
             if ($column->meta_type == 'B') { /// BLOBs (IMAGE) columns need to be updated apart
-                $value = null;               /// Set the default value to be inserted in first instance
-                if (!is_null($value)) {      /// If value not, null, add it to the list of BLOBs to update later
+                if (!is_null($value)) {      /// If value not null, add it to the list of BLOBs to update later
                     $blobs[$field] = $value;
+                    $value = null;           /// Set the default value to be inserted in first instance
                 }
 
             } else if (is_bool($value)) {
@@ -251,11 +255,38 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
 
 
         foreach ($blobs as $key=>$value) {
-            if (!$db->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
+            if (!$this->db->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
                 return false;
             }
         }
 
         return ($returnid ? $id : true);
     }
+
+    /**
+     * Very ugly hack which emulates bound parameters in mssql queries
+     * where params not supported (UpdateBlob) :-(
+     */
+    private function emulate_bound_params($sql, array $params=null) {
+        if (empty($params)) {
+            return $sql;
+        }
+        // ok, we have verified sql statement with ? and correct number of params
+        $return = strtok($sql, '?');
+        foreach ($params as $param) {
+            if (is_bool($param)) {
+                $return .= (int)$param;
+            } else if (is_null($param)) {
+                $return .= 'NULL';
+            } else if (is_numeric($param)) {
+                $return .= $param;
+            } else {
+                $param = $this->db->qstr($param);
+                $return .= "$param";
+            }
+            $return .= strtok('?');
+        }
+        return $return;
+    }
+
 }
