@@ -8,14 +8,26 @@ require_once($CFG->libdir.'/dml/adodb_moodle_database.php');
  * @package dmlib
  */
 class mysqli_adodb_moodle_database extends adodb_moodle_database {
-    function __construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix) {
-        parent::__construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix);
+
+    /**
+     * Detects if all needed PHP stuff installed.
+     * Do not connect to connect to db if this test fails.
+     * @return mixed true if ok, string if something
+     */
+    public function driver_installed() {
+        if (!extension_loaded('mysqli')) {
+            return get_string('mysqliextensionisnotpresentinphp', 'install');
+        }
+        return true;
     }
 
-    protected function configure_dbconnection() {
+    protected function preconfigure_dbconnection() {
         if (!defined('ADODB_ASSOC_CASE')) {
             define ('ADODB_ASSOC_CASE', 2);
         }
+    }
+
+    protected function configure_dbconnection() {
         $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
         $this->db->Execute("SET NAMES 'utf8'");
         return true;
@@ -35,6 +47,15 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
      */
     protected function get_dbtype() {
         return 'mysqli';
+    }
+
+    /**
+     * Returns localised database description
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function get_configuration_hints() {
+        return get_string('databasesettingssub_mysqli', 'install');
     }
 
     /**

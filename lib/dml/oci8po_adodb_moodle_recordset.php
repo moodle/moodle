@@ -4,7 +4,7 @@
  * Oracle moodle recordest with special hacks
  * @package dmlib
  */
-class oci8po_adodb_moodle_recordset implements adodb_moodle_recordset {
+class oci8po_adodb_moodle_recordset extends adodb_moodle_recordset {
     private $rs;
 
     public function __construct($rs) {

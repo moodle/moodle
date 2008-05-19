@@ -86,10 +86,14 @@ function setup_DB() {
         $CFG->dblibrary = 'adodb';
     }
 
+    if (!isset($CFG->dboptions)) {
+        $CFG->dboptions = array();
+    }
+
     if ($CFG->dblibrary == 'adodb') {
         $classname = $CFG->dbtype.'_adodb_moodle_database';
         require_once($CFG->libdir.'/dml/'.$classname.'.php');
-        $DB = new $classname($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->prefix);
+        $DB = new $classname();
 
     } else {
         error('Not implemented db library yet: '.$CFG->dblibrary);
@@ -97,34 +101,39 @@ function setup_DB() {
 
     $CFG->dbfamily = $DB->get_dbfamily(); // TODO: BC only for now
 
-    $prevdebug = error_reporting(E_ALL);  // do not hide errors yet
-    if (!$DB->connect()) {
-        // In the name of protocol correctness, monitoring and performance
-        // profiling, set the appropriate error headers for machine comsumption
-        if (isset($_SERVER['SERVER_PROTOCOL'])) {
-            // Avoid it with cron.php. Note that we assume it's HTTP/1.x
-            header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
-        }
-        // and then for human consumption...
-        echo '<html><body>';
-        echo '<table align="center"><tr>';
-        echo '<td style="color:#990000; text-align:center; font-size:large; border-width:1px; '.
-             '    border-color:#000000; border-style:solid; border-radius: 20px; border-collapse: collapse; '.
-             '    -moz-border-radius: 20px; padding: 15px">';
-        echo '<p>Error: Database connection failed.</p>';
-        echo '<p>It is possible that the database is overloaded or otherwise not running properly.</p>';
-        echo '<p>The site administrator should also check that the database details have been correctly specified in config.php</p>';
-        echo '</td></tr></table>';
-        echo '</body></html>';
+    $driverstatus = $DB->driver_installed();
 
-        if (empty($CFG->noemailever) and !empty($CFG->emailconnectionerrorsto)) {
-            mail($CFG->emailconnectionerrorsto,
-                 'WARNING: Database connection error: '.$CFG->wwwroot,
-                 'Connection error: '.$CFG->wwwroot);
-        }
-        die;
+    if ($driverstatus !== true) {
+        print_error('dbdriverproblem', 'error', '', $driverstatus);
     }
-    error_reporting($prevdebug);
+
+    if (debugging('', DEBUG_ALL)) {
+        // catch errors
+        ob_start();
+    } else {
+        $prevdebug = error_reporting(0);
+    }
+    if (!$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->prefix, $CFG->dboptions)) {
+        if (debugging('', DEBUG_ALL)) {
+            if ($dberr = ob_get_contents()) {
+                $dberr = '<p><em>'.$dberr.'</em></p>';
+            }
+            ob_end_clean();
+        } else {
+            $dberr = '';
+        }
+        if (empty($CFG->noemailever) and !empty($CFG->emailconnectionerrorsto)) {
+            @mail($CFG->emailconnectionerrorsto,
+                  'WARNING: Database connection error: '.$CFG->wwwroot,
+                  'Connection error: '.$CFG->wwwroot);
+        }
+        print_error('dbconnectionfailed', 'error', '', $dberr);
+    }
+    if (debugging('', DEBUG__ALL)) {
+        ob_end_clean();
+    } else {
+        error_reporting($prevdebug);
+    }
 
     return true;
 }

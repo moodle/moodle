@@ -94,15 +94,6 @@
         print_error('withoutversion', 'debug'); // without version, stop
     }
 
-/// Check DB prefix requirements are fulfilled
-    if (empty($CFG->prefix) && $DB->get_dbfamily() != 'mysql') {  //Enforce prefixes for everybody but mysql
-        print_error('prefixcannotbeempty', 'debug', '', array($CFG->prefix, $CFG->dbtype));
-    }
-
-    if ($DB->get_dbfamily() == 'oracle' && strlen($CFG->prefix) > 2) { //Max prefix length for Oracle is 2cc
-        print_error('prefixlimit', 'debug', '', $CFG->prefix);
-    }
-
 /// Check if the main tables have been installed yet or not.
     if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
         $maintables = false;

@@ -8,12 +8,34 @@ require_once($CFG->libdir.'/dml/oci8po_adodb_moodle_recordset.php');
  * Oracle database class using adodb backend
  * @package dmlib
  */
-class oci8_adodb_moodle_database extends adodb_moodle_database {
-    function __construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix) {
-        parent::__construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix);
+class oci8po_adodb_moodle_database extends adodb_moodle_database {
+
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
+        if ($prefix == '' and !$this->external) {
+            //Enforce prefixes for everybody but mysql
+            print_error('prefixcannotbeempty', 'error', '', $this->get_dbfamily());
+        }
+        if (!$this->external and strlen($prefix) > 2) {
+            //Max prefix length for Oracle is 2cc
+            $a = (object)array('dbfamily'=>'oracle', 'maxlength'=>2);
+            print_error('prefixtoolong', 'error', '', $a);
+        }
+        return parent::connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
     }
 
-    protected function configure_dbconnection() {
+    /**
+     * Detects if all needed PHP stuff installed.
+     * Do not connect to connect to db if this test fails.
+     * @return mixed true if ok, string if something
+     */
+    public function driver_installed() {
+        if (!extension_loaded('oci8')) {
+            return get_string('ociextensionisnotpresentinphp', 'install');
+        }
+        return true;
+    }
+
+    protected function preconfigure_dbconnection() {
         if (!defined('ADODB_ASSOC_CASE')) {
             define ('ADODB_ASSOC_CASE', 0); /// Use lowercase fieldnames for ADODB_FETCH_ASSOC
                                             /// (only meaningful for oci8po, it's the default
@@ -25,18 +47,22 @@ class oci8_adodb_moodle_database extends adodb_moodle_database {
         if (!defined('ADODB_PREFETCH_ROWS')) {
             define ('ADODB_PREFETCH_ROWS', 1000);
         }
+    }
+
+    protected function configure_dbconnection() {
         $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 
         /// No need to set charset. It must be specified by the NLS_LANG env. variable
-        /// Enable sybase quotes, so addslashes and stripslashes will use "'"
-            ini_set('magic_quotes_sybase', '1');
-        /// NOTE: Not 100% useful because GPC has been addslashed with the setting off
-        ///       so IT'S MANDATORY TO ENABLE THIS UNDER php.ini or .htaccess for this DB
-        ///       or to turn off magic_quotes to allow Moodle to do it properly
+
         /// Now set the decimal separator to DOT, Moodle & PHP will always send floats to
         /// DB using DOTS. Manually introduced floats (if using other characters) must be
         /// converted back to DOTs (like gradebook does)
-            $this->db->Execute("ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'");
+        $this->db->Execute("ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'");
+        /// Enable sybase quotes, so addslashes and stripslashes will use "'"
+        ini_set('magic_quotes_sybase', '1');
+        /// NOTE: Not 100% useful because GPC has been addslashed with the setting off
+        ///       so IT'S MANDATORY TO ENABLE THIS UNDER php.ini or .htaccess for this DB
+        ///       or to turn off magic_quotes to allow Moodle to do it properly
 
         return true;
     }
@@ -55,6 +81,21 @@ class oci8_adodb_moodle_database extends adodb_moodle_database {
      */
     protected function get_dbtype() {
         return 'oci8po';
+    }
+
+    /**
+     * Returns localised database description
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function get_configuration_hints() {
+        $str = get_string('databasesettingssub_oci8po', 'install');
+        $str .= "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
+        $str .= "onclick=\"return window.open('http://docs.moodle.org/en/Installing_Oracle_for_PHP')\"";
+        $str .= ">";
+        $str .= '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
+        $str .= get_string('moodledocslink', 'install') . '</a></p>';
+        return $str;
     }
 
     /**
@@ -457,6 +498,10 @@ error('todo');
 
         return (integer)$id;
 
+    }
+
+    public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {
+        error('todo');
     }
 }
 

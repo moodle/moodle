@@ -117,6 +117,11 @@ $string['csvfewcolumns'] = 'Not enough columns, please verify the delimiter sett
 $string['csvinvalidcolsnum'] = 'INVALID CSV FILE; Each line must include 49 or 70 fields';
 $string['csvinvalidcols'] = '<b>INVALID CSV FILE:</b> First line must include "Header Fields" and the file must be type of <br />"Expanded Fields/Comma Separated"<br />or<br /> "Expanded Fields with CAVV Result Code/Comma Separated"';
 $string['csvweirdcolumns'] = 'Invalid CSV file format - number of columns is not constant!';
+$string['dbconnectionfailed'] = '<p>Error: Database connection failed.</p>
+<p>It is possible that the database is overloaded or otherwise not running properly.</p>
+<p>The site administrator should also check that the database details have been correctly specified in config.php</p>$a';
+$string['dbdriverproblem'] = '<p>Error: database driver problem detected</p>
+<p>The site administrator should verify server configuration</p><p>$a</p>';
 $string['dbupdatefailed'] = 'Database update failed.';
 $string['destinationcmnotexit'] = 'The destination course module does not exist';
 $string['downloadedfilecheckfailed'] = 'Downloaded file check failed.';
@@ -255,6 +260,10 @@ $string['pagenotexist'] = 'An unusual error occurred (tried to reach a page that
 $string['pathdoesnotstartslash'] = 'No valid arguments supplied, path does not start with slash!';
 $string['pleasereport'] = 'If you have time, please let us know what you were trying to do when the error occurred:';
 $string['pluginrequirementsnotmet'] = 'Plugin \"$a->pluginname\" ($a->pluginversion) could not be installed.  It requires a newer version of Moodle (currently you are using $a->currentmoodle, you need $a->requiremoodle).';
+$string['prefixcannotbeempty'] = '<p>Error: database table prefix can not be empty ($a)</p>
+<p>The site administrator must fix this problem.</p>';
+$string['prefixtoolong'] = '<p>Error: database table prefix is too long ($a->dbfamily)</p>
+<p>The site administrator must fix this problem. Maximum length for table prefixes in $a->dbfamily is $a->maxlength characters.</p>';
 $string['processingstops'] = 'Processing stops here. Remaining records ignored.';
 $string['refoundtoorigi'] = 'Refunded to original amount: $a';
 $string['refoundto'] = 'Can be refunded to $a';

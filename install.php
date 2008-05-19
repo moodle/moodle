@@ -59,7 +59,7 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
     $INSTALL['dbhost']          = 'localhost';
     $INSTALL['dbuser']          = '';
     $INSTALL['dbpass']          = '';
-    $INSTALL['dbtype']          = 'mysql';
+    $INSTALL['dbtype']          = 'mysqli_adodb';
     $INSTALL['dbname']          = 'moodle';
     $INSTALL['prefix']          = 'mdl_';
 
@@ -150,7 +150,7 @@ require_once($CFG->libdir.'/setuplib.php');
 require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->libdir.'/weblib.php');
 require_once($CFG->libdir.'/deprecatedlib.php');
-require_once($CFG->libdir.'/adodb/adodb.inc.php');
+require_once($CFG->libdir.'/dmllib.php');
 require_once($CFG->libdir.'/environmentlib.php');
 require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/componentlib.class.php');
@@ -160,10 +160,22 @@ require_once($CFG->dirroot.'/version.php');
 $INSTALL['version'] = $version;
 $INSTALL['release'] = $release;
 
-/// Have the $db object ready because we are going to use it often
-define ('ADODB_ASSOC_CASE', 0); //Use lowercase fieldnames for ADODB_FETCH_ASSOC
-$db = &ADONewConnection($INSTALL['dbtype']);
-$db->SetFetchMode(ADODB_FETCH_ASSOC);
+/// list all supported drivers - unsupported must be installed manually ;-)
+$supported = array (
+    'mysqli_adodb',
+    'mysql_adodb',
+    'postgres7_adodb',
+    'mssql_n_adodb',
+    'mssql_adodb',
+    'odbc_mssql_adodb',
+    'oci8po_adodb'
+);
+$databases = array ();
+foreach($supported as $driver) {
+    $classname = $driver.'_moodle_database';
+    require_once ("$CFG->libdir/dml/$classname.php");
+    $databases[$driver] = new $classname ();
+}
 
 /// guess the www root
 if ($INSTALL['wwwroot'] == '') {
@@ -241,31 +253,32 @@ if ($INSTALL['stage'] == DIRECTORY) {
     error_reporting(0);
 
     /// check wwwroot
-    if (ini_get('allow_url_fopen') && false) {  /// This was not reliable
+    if (ini_get('allow_url_fopen') && false) { /// This was not reliable
         if (($fh = @fopen($INSTALL['wwwrootform'].'/install.php', 'r')) === false) {
             $errormsg .= get_string('wwwrooterror', 'install').'<br />';
             $INSTALL['wwwrootform'] = $INSTALL['wwwroot'];
+            fclose($fh);
         }
     }
-    if ($fh) fclose($fh);
 
     /// check dirroot
-    if (($fh = @fopen($INSTALL['dirrootform'].'/install.php', 'r')) === false ) {
+    if (($fh = @fopen($INSTALL['dirrootform'].'/install.php', 'r')) === false) {
         $errormsg .= get_string('dirrooterror', 'install').'<br />';
         $INSTALL['dirrootform'] = $INSTALL['dirroot'];
+        fclose($fh);
     }
-    if ($fh) fclose($fh);
 
     /// check dataroot
     $CFG->dataroot = $INSTALL['dataroot'];
-    if (make_upload_directory('sessions', false) === false ) {
+    if (make_upload_directory('sessions', false) === false) {
         $errormsg .= get_string('datarooterror', 'install').'<br />';
     }
-    if ($fh) fclose($fh);
 
-    if (!empty($errormsg)) $nextstage = DIRECTORY;
+    if (!empty($errormsg)) {
+        $nextstage = DIRECTORY;
+    }
 
-    error_reporting(7);
+    error_reporting(38911);
 }
 
 
@@ -277,87 +290,36 @@ if ($INSTALL['stage'] == DIRECTORY) {
 
 if ($INSTALL['stage'] == DATABASE) {
 
-    /// different format for postgres7 by socket
-    if ($INSTALL['dbtype'] == 'postgres7' and ($INSTALL['dbhost'] == 'localhost' || $INSTALL['dbhost'] == '127.0.0.1')) {
-        $INSTALL['dbhost'] = "user='{$INSTALL['dbuser']}' password='{$INSTALL['dbpass']}' dbname='{$INSTALL['dbname']}'";
-        $INSTALL['dbuser'] = '';
-        $INSTALL['dbpass'] = '';
-        $INSTALL['dbname'] = '';
+    $DB = $databases[$INSTALL['dbtype']];
 
-        if ($INSTALL['prefix'] == '') { /// must have a prefix
-            $INSTALL['prefix'] = 'mdl_';
-        }
+    $dbfamily = $DB->get_dbfamily();
+    $errormsg = $DB->driver_installed();
+
+    if ($errormsg === true) {
+        $errormsg = '';
+    } else {
+        $nextstage = DATABASE;
     }
 
-    if ($INSTALL['dbtype'] == 'mysql') {  /// Check MySQL extension is present
-        if (!extension_loaded('mysql')) {
-            $errormsg = get_string('mysqlextensionisnotpresentinphp', 'install');
-            $nextstage = DATABASE;
-        }
-    }
-
-    if ($INSTALL['dbtype'] == 'mysqli') {  /// Check MySQLi extension is present
-        if (!extension_loaded('mysqli')) {
-            $errormsg = get_string('mysqliextensionisnotpresentinphp', 'install');
-            $nextstage = DATABASE;
-        }
-    }
-
-    if ($INSTALL['dbtype'] == 'postgres7') {  /// Check PostgreSQL extension is present
-        if (!extension_loaded('pgsql')) {
-            $errormsg = get_string('pgsqlextensionisnotpresentinphp', 'install');
-            $nextstage = DATABASE;
-        }
-    }
-
-    if ($INSTALL['dbtype'] == 'mssql') {  /// Check MSSQL extension is present
-        if (!function_exists('mssql_connect')) {
-            $errormsg = get_string('mssqlextensionisnotpresentinphp', 'install');
-            $nextstage = DATABASE;
-        }
-    }
-
-    if ($INSTALL['dbtype'] == 'mssql_n') {  /// Check MSSQL extension is present
-        if (!function_exists('mssql_connect')) {
-            $errormsg = get_string('mssqlextensionisnotpresentinphp', 'install');
-            $nextstage = DATABASE;
-        }
-    }
-
-    if ($INSTALL['dbtype'] == 'odbc_mssql') {  /// Check ODBC extension is present
-        if (!extension_loaded('odbc')) {
-            $errormsg = get_string('odbcextensionisnotpresentinphp', 'install');
-            $nextstage = DATABASE;
-        }
-    }
-
-    if ($INSTALL['dbtype'] == 'oci8po') {  /// Check OCI extension is present
-        if (!extension_loaded('oci8')) {
-            $errormsg = get_string('ociextensionisnotpresentinphp', 'install');
-            $nextstage = DATABASE;
-        }
-    }
-
-    if (empty($INSTALL['prefix']) && $INSTALL['dbtype'] != 'mysql' && $INSTALL['dbtype'] != 'mysqli') { // All DBs but MySQL require prefix (reserv. words)
+    if (empty($INSTALL['prefix']) and $dbfamily != 'mysql') { // All DBs but MySQL require prefix (reserv. words)
         $errormsg = get_string('dbwrongprefix', 'install');
         $nextstage = DATABASE;
     }
 
-    if ($INSTALL['dbtype'] == 'oci8po' && strlen($INSTALL['prefix']) > 2) { // Oracle max prefix = 2cc (30cc limit)
+    if ($dbfamily == 'oracle' and strlen($INSTALL['prefix']) > 2) { // Oracle max prefix = 2cc (30cc limit)
         $errormsg = get_string('dbwrongprefix', 'install');
         $nextstage = DATABASE;
     }
 
-    if ($INSTALL['dbtype'] == 'oci8po' && !empty($INSTALL['dbhost'])) { // Oracle host must be blank (tnsnames.ora has it)
+    if ($dbfamily == 'oracle' and !empty ($INSTALL['dbhost'])) { // Oracle host must be blank (tnsnames.ora has it)
         $errormsg = get_string('dbwronghostserver', 'install');
         $nextstage = DATABASE;
     }
 
     if (empty($errormsg)) {
-
         error_reporting(0);  // Hide errors
 
-        if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
+        if (! $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix'])) {
             $db->database = ''; // reset database name cached by ADODB. Trick from MDL-9609
             if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) { /// Try to connect without DB
                 switch ($INSTALL['dbtype']) {   /// Try to create a database
@@ -373,41 +335,14 @@ if ($INSTALL['stage'] == DATABASE) {
                 }
             }
         } else {
-        /// We have been able to connect properly, just test the database encoding now.
-        /// It must be Unicode for 1.8 installations.
-            $encoding = '';
-            switch ($INSTALL['dbtype']) {
-                case 'mysql':
-                case 'mysqli':
-                /// Get MySQL character_set_database value
-                    $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");
-                    if ($rs && !$rs->EOF) {
-                        $records = $rs->GetAssoc(true);
-                        $encoding = $records['character_set_database']['Value'];
-                        if (strtoupper($encoding) != 'UTF8') {
-                        /// Try to set the encoding now!
-                            if (! $db->Metatables()) {  // We have no tables so go ahead
-                                $db->Execute("ALTER DATABASE `".$INSTALL['dbname']."` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci");
-                                $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");  // this works
-
-                            }
-                        }
-                        /// If conversion fails, skip, let environment testing do the job
-                    }
-                    break;
-                case 'postgres7':
-                /// Skip, let environment testing do the job
-                    break;
-                case 'oci8po':
-                /// Skip, let environment testing do the job
-                    break;
-            }
+// TODO: db encoding checks ??
         }
     }
 
-    error_reporting(7);
+    error_reporting(38911);
 
-    if (($dbconnected === false) and (empty($errormsg)) ) {
+/// Output db connection error
+    if ((empty($errormsg) and ($dbconnected === false)) ) {
         $errormsg = get_string('dbconnectionerror', 'install');
         $nextstage = DATABASE;
     }
@@ -441,9 +376,11 @@ if ($nextstage == ADMIN or $INSTALL['stage'] == ADMIN) {
 // Check if we can navigate from the environemt page (because it's ok)
 
 if ($INSTALL['stage'] == ENVIRONMENT) {
+    $DB = $databases[$INSTALL['dbtype']];
+
     error_reporting(0);  // Hide errors
-    $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
-    error_reporting(7);  // Show errors
+    $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix']);
+    error_reporting(38911);  // Show errors
     if ($dbconnected) {
     /// Execute environment check, printing results
         if (!check_moodle_environment($INSTALL['release'], $environment_results, false)) {
@@ -500,7 +437,7 @@ if ($INSTALL['stage'] == DOWNLOADLANG && $INSTALL['downloadlangpack']) {
         //We shouldn't reach this point
     }
 
-    error_reporting(7);  // Show errors
+    error_reporting(38911);  // Show errors
 
     if ($downloadsuccess) {
         $INSTALL['downloadlangpack']       = false;
@@ -523,28 +460,36 @@ if ($INSTALL['stage'] == DOWNLOADLANG && $INSTALL['downloadlangpack']) {
 
 if ($nextstage == SAVE) {
 
-    $str  = '<?php  /// Moodle Configuration File '."\r\n";
+    $str = '<?php  /// Moodle Configuration File ' . "\r\n";
     $str .= "\r\n";
 
     $str .= 'unset($CFG);'."\r\n";
+    $str .= '$CFG = new stdClass();'."\r\n"; // prevent PHP5 strict warnings
     $str .= "\r\n";
 
-    $str .= '$CFG->dbtype    = \''.$INSTALL['dbtype']."';\r\n";
-    $str .= '$CFG->dbhost    = \''.addslashes($INSTALL['dbhost'])."';\r\n";
-    if (!empty($INSTALL['dbname'])) {
-        $str .= '$CFG->dbname    = \''.$INSTALL['dbname']."';\r\n";
-        // support single quotes in db user/passwords
-        $str .= '$CFG->dbuser    = \''.addsingleslashes($INSTALL['dbuser'])."';\r\n";
-        $str .= '$CFG->dbpass    = \''.addsingleslashes($INSTALL['dbpass'])."';\r\n";
+    $database = $databases[$INSTALL['dbtype']];
+    $database->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix']);
+    $dbconfig = $database->export_dbconfig();
+    $dbconfig->persistent = false;
+
+    foreach ($dbconfig as $key=>$value) {
+        $key = str_pad($key, 9);
+        if (is_bool($value)) {
+            if ($value) {
+                $str .= '$CFG->'.$key.' = true;'."\r\n";
+            } else {
+                $str .= '$CFG->'.$key.' = false;'."\r\n";
+            }
+        } else {
+            $str .= '$CFG->'.$key.' = \''.addsingleslashes($value)."';\r\n";
+        }
     }
-    $str .= '$CFG->dbpersist =  false;'."\r\n";
-    $str .= '$CFG->prefix    = \''.$INSTALL['prefix']."';\r\n";
     $str .= "\r\n";
 
-    $str .= '$CFG->wwwroot   = \''.s($INSTALL['wwwrootform'],true)."';\r\n";
-    $str .= '$CFG->dirroot   = \''.s($INSTALL['dirrootform'],true)."';\r\n";
-    $str .= '$CFG->dataroot  = \''.s($INSTALL['dataroot'],true)."';\r\n";
-    $str .= '$CFG->admin     = \''.s($INSTALL['admindirname'],true)."';\r\n";
+    $str .= '$CFG->wwwroot   = \''.addsingleslashes($INSTALL['wwwrootform'])."';\r\n";
+    $str .= '$CFG->dirroot   = \''.addsingleslashes($INSTALL['dirrootform'])."';\r\n";
+    $str .= '$CFG->dataroot  = \''.addsingleslashes($INSTALL['dataroot'])."';\r\n";
+    $str .= '$CFG->admin     = \''.addsingleslashes($INSTALL['admindirname'])."';\r\n";
     $str .= "\r\n";
 
     $str .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";
@@ -577,8 +522,8 @@ if ($nextstage == SAVE) {
 <link rel="shortcut icon" href="theme/standard/favicon.ico" />
 <title>Moodle Install</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-<?php css_styles() ?>
-<?php database_js() ?>
+<?php css_styles($databases) ?>
+<?php database_js($databases) ?>
 
 </head>
 
@@ -609,52 +554,12 @@ if (isset($_GET['help'])) {
             <?php /// Exceptionaly, depending of the DB selected, we show some different text
                   /// from the standard one to show better instructions for each DB
                 if ($nextstage == DATABASE) {
-                    echo '<script type="text/javascript" defer="defer">window.onload=toggledbinfo;</script>';
-                    echo '<div id="mysql">' . get_string('databasesettingssub_mysql', 'install');
-                    echo '<p style="text-align: center">' . get_string('databasesettingswillbecreated', 'install') . '</p>';
-                    echo '</div>';
-
-                    echo '<div id="mysqli">' . get_string('databasesettingssub_mysqli', 'install');
-                    echo '<p style="text-align: center">' . get_string('databasesettingswillbecreated', 'install') . '</p>';
-                    echo '</div>';
-
-                    echo '<div id="postgres7">' . get_string('databasesettingssub_postgres7', 'install') . '</div>';
-
-                    echo '<div id="mssql">' . get_string('databasesettingssub_mssql', 'install');
-                /// Link to mssql installation page
-                    echo "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
-                    echo "onclick=\"return window.open('http://docs.moodle.org/en/Installing_MSSQL_for_PHP')\"";
-                    echo ">";
-                    echo '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
-                    echo get_string('moodledocslink', 'install') . '</a></p>';
-                    echo '</div>';
-
-                    echo '<div id="mssql_n">' . get_string('databasesettingssub_mssql_n', 'install');
-                /// Link to mssql installation page
-                    echo "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
-                    echo "onclick=\"return window.open('http://docs.moodle.org/en/Installing_MSSQL_for_PHP')\"";
-                    echo ">";
-                    echo '<img src="pix/docs.gif' . '" alt="Docs" />';
-                    echo get_string('moodledocslink', 'install') . '</a></p>';
-                    echo '</div>';
-
-                    echo '<div id="odbc_mssql">'. get_string('databasesettingssub_odbc_mssql', 'install');
-                /// Link to mssql installation page
-                    echo "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
-                    echo "onclick=\"return window.open('http://docs.moodle.org/en/Installing_MSSQL_for_PHP')\"";
-                    echo ">";
-                    echo '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
-                    echo get_string('moodledocslink', 'install') . '</a></p>';
-                    echo '</div>';
-
-                    echo '<div id="oci8po">' . get_string('databasesettingssub_oci8po', 'install');
-                /// Link to oracle installation page
-                    echo "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
-                    echo "onclick=\"return window.open('http://docs.moodle.org/en/Installing_Oracle_for_PHP')\"";
-                    echo ">";
-                    echo '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
-                    echo get_string('moodledocslink', 'install') . '</a></p>';
-                    echo '</div>';
+                    foreach ($databases as $driver=>$database) {
+                        echo '<script type="text/javascript" defer="defer">window.onload=toggledbinfo;</script>';
+                        echo '<div id="'.$driver.'">' . $database->get_configuration_hints();
+                        echo '<p style="text-align: center">' . get_string('databasesettingswillbecreated', 'install') . '</p>';
+                        echo '</div>';
+                    }
                 } else {
                     if (!empty($substagetext[$nextstage])) {
                         echo '<p class="p_subheading">' . $substagetext[$nextstage] . '</p>';
@@ -709,13 +614,13 @@ if ($nextstage == SAVE) {
         echo "<hr />\n";
         echo "<div style=\"text-align: ".fix_align_rtl("left")."\">\n";
         echo "<pre>\n";
-        print_r(s($str));
+        p($INSTALL['config']);
         echo "</pre>\n";
         echo "</div>\n";
     }
 } else {
     $formaction = (isset($_GET['configfile'])) ? "install.php?configfile=".$_GET['configfile'] : "install.php";
-    form_table($nextstage, $formaction);
+    form_table($nextstage, $formaction, $databases);
 }
 
 ?>
@@ -745,7 +650,7 @@ if ($nextstage == SAVE) {
 
 //==========================================================================//
 
-function form_table($nextstage = WELCOME, $formaction = "install.php") {
+function form_table($nextstage, $formaction, $databases) {
     global $INSTALL, $db;
 
     /// Print the standard form if we aren't in the DOWNLOADLANG page
@@ -829,14 +734,19 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             <tr>
                 <td class="td_left"><p class="p_install"><?php print_string('dbtype', 'install') ?></p></td>
                 <td class="td_right">
-                <?php choose_from_menu (array('mysql' => get_string('mysql', 'install'),
-                                              'mysqli' => get_string('mysqli', 'install'),
-                                              'oci8po' => get_string('oci8po', 'install'),
-                                              'postgres7' => get_string('postgres7', 'install'),
-                                              'mssql' => get_string('mssql', 'install'),
-                                              'mssql_n' => get_string('mssql_n', 'install'),
-                                              'odbc_mssql' => get_string('odbc_mssql', 'install')),
-                                        'dbtype', $INSTALL['dbtype'], '', 'toggledbinfo();') ?>
+
+                <?php
+
+            $options = array ();
+            foreach ($databases as $type => $database) {
+                $name = $database->get_name();
+                if ($database->driver_installed() !== true) {
+                    $name = "$name - driver not installed"; // TODO: improve missing driver notification
+                }
+                $options[$type] = $name;
+            }
+            choose_from_menu($options, 'dbtype', $INSTALL['dbtype'], '', 'toggledbinfo();')
+?>
                 </td>
             </tr>
             <tr>
@@ -893,7 +803,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
                 <?php
                     error_reporting(0);  // Hide errors
                     $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
-                    error_reporting(7);  // Show errors
+                    error_reporting(38911);  // Show errors
                     if ($dbconnected) {
                     /// Execute environment check, printing results
                         check_moodle_environment($INSTALL['release'], $environment_results, true);
@@ -1114,7 +1024,7 @@ function get_installer_list_of_languages() {
 
 //==========================================================================//
 
-function css_styles() {
+function css_styles($databases) {
 ?>
 
 <style type="text/css">
@@ -1194,7 +1104,7 @@ function css_styles() {
         margin-bottom: 16px;
     }
     .p_mainheader{
-        text-align: right; 
+        text-align: right;
         font-size: 20pt;
         font-weight: bold;
         margin-top: 0px;
@@ -1228,11 +1138,11 @@ function css_styles() {
         margin-bottom: 0px;
     }
     /* This override the p tag for every p tag in this installation script,
-       but not in lang\xxx\installer.php 
+       but not in lang\xxx\installer.php
       */
     .p_install {
         margin-top: 0px;
-        margin-bottom: 0px; 
+        margin-bottom: 0px;
     }
     .environmenttable {
         font-size: 10pt;
@@ -1273,7 +1183,14 @@ function css_styles() {
       padding:0px;
       margin:0px;
     }
-    #mysql, #mysqli, #postgres7, #mssql, #mssql_n, #odbc_mssql, #oci8po {
+    <?php
+        $list = array();
+        foreach ($databases as $driver=>$unused) {
+            $list[] = '#'.$driver;
+        }
+        $list = implode(',', $list);
+        echo ($list);
+    ?> {
         display: none;
     }
 
@@ -1284,7 +1201,7 @@ function css_styles() {
 
 //==========================================================================//
 
-function database_js() {
+function database_js($databases) {
 ?>
 
 <script type="text/javascript" defer="defer">
@@ -1296,37 +1213,34 @@ function toggledbinfo() {
     }
     if (document.getElementById) {
         //Hide all the divs
-        document.getElementById('mysql').style.display = '';
-        document.getElementById('mysqli').style.display = '';
-        document.getElementById('postgres7').style.display = '';
-        document.getElementById('mssql').style.display = '';
-        document.getElementById('mssql_n').style.display = '';
-        document.getElementById('odbc_mssql').style.display = '';
-        document.getElementById('oci8po').style.display = '';
+    <?php
+        $list = array();
+        foreach ($databases as $driver=>$unused) {
+            echo "document.getElementById('$driver').style.display = '';";
+        }
+    ?>
         //Show the selected div
         document.getElementById(showid).style.display = 'block';
     } else if (document.all) {
         //This is the way old msie versions work
         //Hide all the divs
-        document.all['mysql'].style.display = '';
-        document.all['mysqli'].style.display = '';
-        document.all['postgres7'].style.display = '';
-        document.all['mssql'].style.display = '';
-        document.all['mssql_n'].style.display = '';
-        document.all['odbc_mssql'].style.display = '';
-        document.all['oci8po'].style.display = '';
+    <?php
+        $list = array();
+        foreach ($databases as $driver=>$unused) {
+            echo "document.all['$driver'].style.display = '';";
+        }
+    ?>
         //Show the selected div
         document.all[showid].style.display = 'block';
     } else if (document.layers) {
         //This is the way nn4 works
         //Hide all the divs
-        document.layers['mysql'].style.display = '';
-        document.layers['mysqli'].style.display = '';
-        document.layers['postgres7'].style.display = '';
-        document.layers['mssql'].style.display = '';
-        document.layers['mssql_n'].style.display = '';
-        document.layers['odbc_mssql'].style.display = '';
-        document.layers['oci8po'].style.display = '';
+    <?php
+        $list = array();
+        foreach ($databases as $driver=>$unused) {
+            echo "document.layers['$driver'].style.display = '';";
+        }
+    ?>
         //Show the selected div
         document.layers[showid].style.display = 'block';
     }

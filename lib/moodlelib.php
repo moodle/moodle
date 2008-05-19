@@ -4993,8 +4993,11 @@ function current_language() {
     } else if (!empty($USER->lang)) {
         $return = $USER->lang;
 
-    } else {
+    } else if (isset($CFG->lang)) {
         $return = $CFG->lang;
+
+    } else {
+        $return = 'en_utf8';
     }
 
     if ($return == 'en') {

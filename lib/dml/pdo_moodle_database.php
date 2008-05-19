@@ -12,8 +12,9 @@ abstract class pdo_moodle_database extends moodle_database {
     protected $pdb;
     protected $columns = array(); // I wish we had a shared memory cache for this :-(
 
-    public function __construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix) {
-        parent::__construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix);
+    //TODO: This looks incorrect now IMO. Construct should have only external and connect get all the rest of params
+    public function __construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null, $external=false) {
+        parent::__construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions, $external);
     }
 
     public function connect() {
@@ -26,6 +27,7 @@ abstract class pdo_moodle_database extends moodle_database {
         }
     }
 
+    ///TODO: not needed preconfigure_dbconnection() stuff for PDO drivers?
     protected function configure_dbconnection() {
     }
 

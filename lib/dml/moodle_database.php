@@ -6,12 +6,7 @@
  */
 abstract class moodle_database {
 
-    /**
-     * supports :name, "?" or both types of parameters?
-     * must be set in implementing class constructor
-     */
-    protected $param_types;
-
+    // manipulates the db structure
     protected $database_manager;
 
     // db connection options
@@ -22,32 +17,92 @@ abstract class moodle_database {
     protected $dbpersist;
     protected $prefix;
 
+    /**
+     * Non-moodle external database used.
+     */
+    protected $external;
+
+    /**
+     * Database or driver specific options, such as sockets or TCPIP db connections
+     */
+    protected $dboptions;
+
     // TODO: perf stuff goes here
     // TODO: do we really need record caching??
 
     /**
-     * Contructor - sets up database connection, prints error in case of problem.
-     * @param string $dbhost
-     * @param string $dbuser
-     * @param string $dbpass
-     * @param string $dbname
-     * @param string $dbpersist
-     * @param string $prefix table prefix
+     * Contructor - instantiates the database, specifying if it's external (connect to other systems) or no (Moodle DB)
+     *              note this has effect to decide if prefix checks must be performed or no
+     * @param bool true means external database used
      */
-    public function __construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix) {
-        $this->dbhost    = $dbhost;
-        $this->dbuser    = $dbuser;
-        $this->dbpass    = $dbpass;
-        $this->dbname    = $dbname;
-        $this->dbpersist = $dbpersist;
-        $this->prefix    = $prefix;
+    public function __construct($external=false) {
+        $this->external  = $external;
+    }
+
+    /**
+     * Detects if all needed PHP stuff installed.
+     * Note: can be used before connect()
+     * @return mixed true if ok, string if something
+     */
+    public abstract function driver_installed();
+
+    /**
+     * Returns database table prefix
+     * Note: can be used before connect()
+     * @return string database table prefix
+     */
+    public function get_prefix() {
+        return $this->prefix;
     }
 
     /**
      * Returns database family type - describes SQL dialect
+     * Note: can be used before connect()
      * @return string db family name (mysql, postgres, mssql, oracle, etc.)
      */
     public abstract function get_dbfamily();
+
+    /**
+     * Returns more specific database driver type
+     * Note: can be used before connect()
+     * @return string db type mysql, mysqli, postgres7
+     */
+    protected abstract function get_dbtype();
+
+    /**
+     * Returns localised database type name
+     * Note: can be used before connect()
+     * @return string
+     */
+    public abstract function get_name();
+
+    /**
+     * Returns localised database description
+     * Note: can be used before connect()
+     * @return string
+     */
+    public abstract function get_configuration_hints();
+
+    /**
+     * Returns db related part of config.php
+     * Note: can be used before connect()
+     * @return string
+     */
+    public abstract function export_dbconfig();
+
+    /**
+     * Connect to db
+     * Must be called before other methods.
+     * @param string $dbhost
+     * @param string $dbuser
+     * @param string $dbpass
+     * @param string $dbname
+     * @param bool $dbpersist
+     * @param mixed $prefix string means moodle db prefix, false used for external databases where prefix not used
+     * @param array $dboptions driver specific options
+     * @return bool success
+     */
+    public abstract function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null);
 
     /**
      * Returns database server info array
@@ -56,31 +111,10 @@ abstract class moodle_database {
     public abstract function get_server_info();
 
     /**
-     * Returns database table prefix
-     * @return string database table prefix
-     */
-    public function get_prefix() {
-        return $this->prefix;
-    }
-
-    /**
-     * Returns database type
-     * @return string db type mysql, mysqli, postgres7
-     */
-    protected abstract function get_dbtype();
-
-    /**
      * Returns supported query parameter types
      * @return bitmask
      */
     protected abstract function allowed_param_types();
-
-    /**
-     * Connect to db specified in constructor
-     * Must be called before any other methods.
-     * @return bool success
-     */
-    public abstract function connect();
 
     /**
      * Returns last error reported by database engine.

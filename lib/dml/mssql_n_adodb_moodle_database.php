@@ -9,9 +9,6 @@ require_once($CFG->libdir.'/dml/mssql_adodb_moodle_database.php');
  * @package dmlib
  */
 class mssql_n_adodb_moodle_database extends mssql_adodb_moodle_database {
-    function __construct ($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix) {
-        parent::__construct($dbhost, $dbuser, $dbpass, $dbname, false, $prefix);
-    }
 
     /**
      * Returns database type
@@ -19,6 +16,21 @@ class mssql_n_adodb_moodle_database extends mssql_adodb_moodle_database {
      */
     protected function get_dbtype() {
         return 'mssql_n';
+    }
+
+    /**
+     * Returns localised database description
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function get_configuration_hints() {
+        $str = get_string('databasesettingssub_mssql_n', 'install');
+        $str .= "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
+        $str .= "onclick=\"return window.open('http://docs.moodle.org/en/Installing_MSSQL_for_PHP')\"";
+        $str .= ">";
+        $str .= '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
+        $str .= get_string('moodledocslink', 'install') . '</a></p>';
+        return $str;
     }
 
 }

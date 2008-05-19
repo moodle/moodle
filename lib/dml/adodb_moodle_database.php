@@ -1,6 +1,5 @@
 <?php  //$Id$
 
-require_once($CFG->libdir.'/adodb/adodb.inc.php');
 require_once($CFG->libdir.'/dml/moodle_database.php');
 require_once($CFG->libdir.'/dml/adodb_moodle_recordset.php');
 
@@ -13,11 +12,57 @@ abstract class adodb_moodle_database extends moodle_database {
     protected $db;
     protected $columns = array(); // I wish we had a shared memory cache for this :-(
 
-    public function __construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix) {
-        parent::__construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix);
+    /**
+     * Returns localised database type name
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function get_name() {
+        $dbtype = $this->get_dbtype();
+        return get_string($dbtype, 'install');
     }
 
-    public function connect() {
+    /**
+     * Returns db related part of config.php
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function export_dbconfig() {
+        $cfg = new stdClass();
+        $cfg->dbtype  = $this->get_dbtype();
+        $cfg->library = 'adodb';
+        $cfg->dbhost  = $this->dbhost;
+        $cfg->dbname  = $this->dbname;
+        $cfg->dbuser  = $this->dbuser;
+        $cfg->dbpass  = $this->dbpass;
+        $cfg->prefix  = $this->prefix;
+
+        return $cfg;
+    }
+
+    //TODO: preconfigure_dbconnection(): Decide if this should be declared as abstract because all adodb drivers will need it
+    /**
+     * Adodb preconnection routines, ususally sets up needed defines;
+     */
+    protected function preconfigure_dbconnection() {
+        // empty
+    }
+
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
+        $this->dbhost    = $dbhost;
+        $this->dbuser    = $dbuser;
+        $this->dbpass    = $dbpass;
+        $this->dbname    = $dbname;
+        $this->dbpersist = $dbpersist;
+        $this->prefix    = $prefix;
+        $this->dboptions = (array)$dboptions;
+
+        global $CFG;
+
+        $this->preconfigure_dbconnection();
+
+        require_once($CFG->libdir.'/adodb/adodb.inc.php');
+
         $this->db = ADONewConnection($this->get_dbtype());
 
         global $db; $db = $this->db; // TODO: BC only for now
@@ -39,10 +84,15 @@ abstract class adodb_moodle_database extends moodle_database {
         return true;
     }
 
+    //TODO: configure_dbconnection(): Decide if this should be declared as abstract because all adodb drivers will need it
+    /**
+     * Adodb post connection routines, usually sets up encoding,e tc.
+     */
     protected function configure_dbconnection() {
         // empty
     }
 
+    //TODO: make all dblibraries return this info in a structured way (new server_info class or so, like database_column_info class)
     /**
      * Returns database server info array
      * @return array
@@ -185,6 +235,7 @@ abstract class adodb_moodle_database extends moodle_database {
         return $result;
     }
 
+    //TODO: do we want the *_raw() functions being public? I see the benefits but... won't that cause problems. To decide.
     /**
      * Insert new record into database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name

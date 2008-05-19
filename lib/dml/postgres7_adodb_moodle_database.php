@@ -8,8 +8,38 @@ require_once($CFG->libdir.'/dml/adodb_moodle_database.php');
  * @package dmlib
  */
 class postgres7_adodb_moodle_database extends adodb_moodle_database {
-    function __construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix) {
-        parent::__construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix);
+
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
+        if ($prefix == '' and !$this->external) {
+            //Enforce prefixes for everybody but mysql
+            print_error('prefixcannotbeempty', 'error', '', $this->get_dbfamily());
+        }
+        return parent::connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
+    }
+
+    /**
+     * Detects if all needed PHP stuff installed.
+     * Do not connect to connect to db if this test fails.
+     * @return mixed true if ok, string if something
+     */
+    public function driver_installed() {
+        if (!extension_loaded('pgsql')) {
+            return get_string('pgsqlextensionisnotpresentinphp', 'install');
+        }
+        return true;
+    }
+
+    protected function preconfigure_dbconnection() {
+        if (!defined('ADODB_ASSOC_CASE')) {
+            define ('ADODB_ASSOC_CASE', 2);
+        }
+    }
+
+    protected function configure_dbconnection() {
+        $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
+        $this->db->Execute("SET NAMES 'utf8'");
+
+        return true;
     }
 
     /**
@@ -26,6 +56,40 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
      */
     protected function get_dbtype() {
         return 'postgres7';
+    }
+
+    /**
+     * Returns localised database description
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function get_configuration_hints() {
+        return get_string('databasesettingssub_postgres7', 'install');
+    }
+
+    /**
+     * Returns db related part of config.php
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function export_dbconfig() {
+        $cfg = new stdClass();
+        $cfg->dbtype  = $this->get_dbtype();
+        $cfg->library = 'adodb';
+        if ($this->dbhost == 'localhost' or $this->dbhost == '127.0.0.1') {
+            $cfg->dbhost  = "user='{$this->dbuser}' password='{$this->dbpass}' dbname='{$this->dbname}'";
+            $cfg->dbname  = '';
+            $cfg->dbuser  = '';
+            $cfg->dbpass  = '';
+        } else {
+            $cfg->dbhost  = $this->dbhost;
+            $cfg->dbname  = $this->dbname;
+            $cfg->dbuser  = $this->dbuser;
+            $cfg->dbpass  = $this->dbpass;
+        }
+        $cfg->prefix  = $this->prefix;
+
+        return $cfg;
     }
 
     /**
@@ -65,17 +129,6 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
         }
 
         return $this->columns[$table];
-    }
-
-    protected function configure_dbconnection() {
-        if (!defined('ADODB_ASSOC_CASE')) {
-            define ('ADODB_ASSOC_CASE', 2);
-        }
-
-        $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
-        $this->db->Execute("SET NAMES 'utf8'");
-
-        return true;
     }
 
     /**

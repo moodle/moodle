@@ -8,14 +8,34 @@ require_once($CFG->libdir.'/dml/adodb_moodle_database.php');
  * @package dmlib
  */
 class mssql_adodb_moodle_database extends adodb_moodle_database {
-    function __construct ($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix) {
-        parent::__construct($dbhost, $dbuser, $dbpass, $dbname, false, $prefix);
+
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
+        if ($prefix == '' and !$this->external) {
+            //Enforce prefixes for everybody but mysql
+            print_error('prefixcannotbeempty', 'error', '', $this->get_dbfamily());
+        }
+        return parent::connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
     }
 
-    protected function configure_dbconnection() {
+    /**
+     * Detects if all needed PHP stuff installed.
+     * Do not connect to connect to db if this test fails.
+     * @return mixed true if ok, string if something
+     */
+    public function driver_installed() {
+        if (!function_exists('mssql_connect')) {
+            return get_string('mssqlextensionisnotpresentinphp', 'install');
+        }
+        return true;
+    }
+
+    protected function preconfigure_dbconnection() {
         if (!defined('ADODB_ASSOC_CASE')) {
             define ('ADODB_ASSOC_CASE', 2);
         }
+    }
+
+    protected function configure_dbconnection() {
         $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 
         /// No need to set charset. It must be specified in the driver conf
@@ -47,6 +67,21 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
      */
     protected function get_dbtype() {
         return 'mssql';
+    }
+
+    /**
+     * Returns localised database description
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function get_configuration_hints() {
+        $str = get_string('databasesettingssub_mssql', 'install');
+        $str .= "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
+        $str .= "onclick=\"return window.open('http://docs.moodle.org/en/Installing_MSSQL_for_PHP')\"";
+        $str .= ">";
+        $str .= '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
+        $str .= get_string('moodledocslink', 'install') . '</a></p>';
+        return $str;
     }
 
     /**

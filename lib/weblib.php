@@ -5623,6 +5623,7 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  * @param string $errorcode The name of the string from error.php to print
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  * @param object $a Extra words and phrases that might be required in the error string
+ * @return terminates script, does not return!
  */
 function print_error ($errorcode, $module='', $link='', $a=NULL) {
 
@@ -5633,6 +5634,13 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
         $modulelink = 'moodle';
     } else {
         $modulelink = $module;
+    }
+
+    $message = get_string($errorcode, $module, $a);
+
+    if (!isset($CFG->theme)) {
+        // error found before setup.php finished
+        print_early_error($message);
     }
 
     if (empty($link) and !defined('ADMIN_EXT_HEADER_PRINTED')) {
@@ -5651,8 +5659,6 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
     } else {
         $errordocroot = 'http://docs.moodle.org';
     }
-
-    $message = get_string($errorcode, $module, $a);
 
     if (defined('FULLME') && FULLME == 'cron') {
         // Errors in cron should be mtrace'd.
@@ -5693,6 +5699,45 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
     for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
         echo ' ';
     }
+    die;
+}
+
+/**
+ * Internal function - do not use directly
+ * This function is used if fatal error occures before the themes are fully initialised (eg. in lib/setup.php)
+ * @param string $errorcode The name of the string from error.php to print
+ * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
+ * @param object $a Extra words and phrases that might be required in the error string
+ * @return terminates script, does not return!
+ */
+function print_early_error($message) {
+    // In the name of protocol correctness, monitoring and performance
+    // profiling, set the appropriate error headers for machine comsumption
+    if (isset($_SERVER['SERVER_PROTOCOL'])) {
+        // Avoid it with cron.php. Note that we assume it's HTTP/1.x
+        @header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    }
+
+    // better disable any caching
+    @header('Content-Type: text/html; charset=utf-8');
+    @header('Cache-Control: no-store, no-cache, must-revalidate');
+    @header('Cache-Control: post-check=0, pre-check=0', false);
+    @header('Pragma: no-cache');
+    @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
+    @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+
+    echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" '.get_html_lang().'>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>'.get_string('error').'</title>
+</head><body>
+<div style="margin-top: 6em; margin-left:auto; margin-right:auto; color:#990000; text-align:center; font-size:large; border-width:1px;
+    border-color:black; background-color:#ffffee; border-style:solid; border-radius: 20px; border-collapse: collapse;
+    width: 80%; -moz-border-radius: 20px; padding: 15px">
+'.clean_text($message, FORMAT_HTML).'
+</div>
+</body></html>';
     die;
 }
 
