@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -333,7 +333,7 @@ class oracle_sql_generator extends sql_generator {
 
     /// Get the quoted name of the table and field
         $tablename = $this->getTableName($xmldb_table);
-        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+        $fieldname = $xmldb_field->getName();
 
     /// Take a look to field metadata
         $meta = $this->mdb->get_columns($tablename);

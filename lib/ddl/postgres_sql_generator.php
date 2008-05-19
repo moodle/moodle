@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -183,7 +183,11 @@ class postgres_sql_generator extends sql_generator {
      *
      * This function can be safely removed once min req. for PG will be 8.0
      */
-    public function getAddFieldSQL($xmldb_table, $xmldb_field) {
+    public function getAddFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
+
+        $skip_type_clause = is_null($skip_type_clause) ? $this->alter_column_skip_type : $skip_type_clause;
+        $skip_default_clause = is_null($skip_default_clause) ? $this->alter_column_skip_default : $skip_default_clause;
+        $skip_notnull_clause = is_null($skip_notnull_clause) ? $this->alter_column_skip_notnull : $skip_notnull_clause;
 
         $results = array();
 
@@ -192,21 +196,10 @@ class postgres_sql_generator extends sql_generator {
 
         $defaultvalue = $xmldb_field->getDefault();
 
-    /// Save old flags
-        $old_skip_default = $this->alter_column_skip_default;
-        $old_skip_notnull = $this->alter_column_skip_notnull;
-
-    /// Prevent default clause and launch parent getAddField()
-        $this->alter_column_skip_default = true;
-        $this->alter_column_skip_notnull = true;
-        $results = parent::getAddFieldSQL($xmldb_table, $xmldb_field);
-
-    /// Re-set old flags
-        $this->alter_column_skip_default = $old_skip_default;
-        $this->alter_column_skip_notnull = $old_skip_notnull;
+        $results = parent::getAddFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause, $skip_default_clause, $skip_notnull_clause);
 
     /// Add default (only if not skip_default)
-        if (!$this->alter_column_skip_default) {
+        if (!$skip_default_clause) {
             $default_clause = $this->getDefaultClause($xmldb_field);
             if ($default_clause) {
                 $sql = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET' . $default_clause; /// Add default clause
@@ -224,7 +217,7 @@ class postgres_sql_generator extends sql_generator {
         }
 
     /// Add not null (only if no skip_notnull)
-        if (!$this->alter_column_skip_notnull) {
+        if (!$skip_notnull_clause) {
             if ($xmldb_field->getNotnull()) {
                 $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET NOT NULL'; /// Add not null
             }
@@ -325,12 +318,10 @@ class postgres_sql_generator extends sql_generator {
     ///     - rename the temp column to the original name
         if ($typechanged || $precisionchanged || $decimalchanged) {
             $tempcolname = $xmldb_field->getName() . '_alter_column_tmp';
-        /// Prevent temp field to have both NULL/NOT NULL and DEFAULT constraints
-            $this->alter_column_skip_notnull = true;
-            $this->alter_column_skip_default = true;
             $xmldb_field->setName($tempcolname);
         /// Create the temporal column
-            $results = array_merge($results, $this->getAddFieldSQL($xmldb_table, $xmldb_field));
+        /// Prevent temp field to have both NULL/NOT NULL and DEFAULT constraints
+            $results = array_merge($results, $this->getAddFieldSQL($xmldb_table, $xmldb_field, NULL, true, true));
         /// Detect some basic casting options
             if ((substr($oldmetatype, 0, 1) == 'C' && $xmldb_field->getType() == XMLDB_TYPE_NUMBER) ||
                 (substr($oldmetatype, 0, 1) == 'C' && $xmldb_field->getType() == XMLDB_TYPE_FLOAT)) {

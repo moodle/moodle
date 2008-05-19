@@ -361,7 +361,12 @@ abstract class sql_generator {
     /**
      * Given one correct XMLDBField, returns the complete SQL line to create it
      */
-    public function getFieldSQL($xmldb_field, $skip_type_clause = false, $skip_default_clause = false, $skip_notnull_clause = false)  {
+    public function getFieldSQL($xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL, $specify_nulls_clause = NULL)  {
+
+        $skip_type_clause = is_null($skip_type_clause) ? $this->alter_column_skip_type : $skip_type_clause;
+        $skip_default_clause = is_null($skip_default_clause) ? $this->alter_column_skip_default : $skip_default_clause;
+        $skip_notnull_clause = is_null($skip_notnull_clause) ? $this->alter_column_skip_notnull : $skip_notnull_clause;
+        $specify_nulls_clause = is_null($specify_nulls_clause) ? $this->specify_nulls : $specify_nulls_clause;
 
     /// First of all, convert integers to numbers if defined
         if ($this->integer_to_number) {
@@ -403,7 +408,7 @@ abstract class sql_generator {
             if ($xmldb_field->getNotNull()) {
                 $notnull = ' NOT NULL';
             } else {
-                if ($this->specify_nulls) {
+                if ($specify_nulls_clause) {
                     $notnull = ' NULL';
                 }
             }
@@ -567,7 +572,11 @@ abstract class sql_generator {
     /**
      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to add the field to the table
      */
-    public function getAddFieldSQL($xmldb_table, $xmldb_field) {
+    public function getAddFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
+
+        $skip_type_clause = is_null($skip_type_clause) ? $this->alter_column_skip_type : $skip_type_clause;
+        $skip_default_clause = is_null($skip_default_clause) ? $this->alter_column_skip_default : $skip_default_clause;
+        $skip_notnull_clause = is_null($skip_notnull_clause) ? $this->alter_column_skip_notnull : $skip_notnull_clause;
 
         $results = array();
 
@@ -575,9 +584,9 @@ abstract class sql_generator {
         $tablename = $this->getTableName($xmldb_table);
 
     /// Build the standard alter table add
-        $sql = $this->getFieldSQL($xmldb_field, $this->alter_column_skip_type,
-                                  $this->alter_column_skip_default,
-                                  $this->alter_column_skip_notnull);
+        $sql = $this->getFieldSQL($xmldb_field, $skip_type_clause,
+                                  $skip_default_clause,
+                                  $skip_notnull_clause);
         $altertable = 'ALTER TABLE ' . $tablename . ' ADD ' . $sql;
     /// Add the after clause if necesary
         if ($this->add_after_clause && $xmldb_field->getPrevious()) {
@@ -616,12 +625,13 @@ abstract class sql_generator {
     /**
      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
      */
-    public function getAlterFieldSQL($xmldb_table, $xmldb_field) {
+    public function getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
+
+        $skip_type_clause = is_null($skip_type_clause) ? $this->alter_column_skip_type : $skip_type_clause;
+        $skip_default_clause = is_null($skip_default_clause) ? $this->alter_column_skip_default : $skip_default_clause;
+        $skip_notnull_clause = is_null($skip_notnull_clause) ? $this->alter_column_skip_notnull : $skip_notnull_clause;
 
         $results = array();
-
-    /// Always specify NULLs in alter fields because we can change not nulls to nulls
-        $this->specify_nulls = true;
 
     /// Get the quoted name of the table and field
         $tablename = $this->getTableName($xmldb_table);
@@ -629,9 +639,10 @@ abstract class sql_generator {
 
     /// Build de alter sentence using the alter_column_sql template
         $alter = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->alter_column_sql);
-        $colspec = $this->getFieldSQL($xmldb_field, $this->alter_column_skip_type,
-                                      $this->alter_column_skip_default,
-                                      $this->alter_column_skip_notnull);
+        $colspec = $this->getFieldSQL($xmldb_field, $skip_type_clause,
+                                      $skip_default_clause,
+                                      $skip_notnull_clause,
+                                      true);
         $alter = str_replace('COLUMNSPECS', $colspec, $alter);
 
     /// Add the after clause if necesary

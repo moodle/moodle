@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -361,8 +361,7 @@ class mssql_sql_generator extends sql_generator {
         }
 
     /// Just prevent default clauses in this type of sentences for mssql and launch the parent one
-        $this->alter_column_skip_default = true;
-        $results = array_merge($results, parent::getAlterFieldSQL($xmldb_table, $xmldb_field)); // Call parent
+        $results = array_merge($results, parent::getAlterFieldSQL($xmldb_table, $xmldb_field, NULL, true, NULL)); // Call parent
 
     /// Finally, process the default clause to add it back if necessary
         if ($typechanged || $lengthchanged) {
@@ -478,7 +477,7 @@ class mssql_sql_generator extends sql_generator {
 
     /// Get the quoted name of the table and field
         $tablename = $this->getTableName($xmldb_table);
-        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+        $fieldname = $xmldb_field->getName();
 
     /// Look for any default constraint in this field and drop it
         if ($default = get_record_sql("SELECT id, object_name(cdefault) AS defaultconstraint
