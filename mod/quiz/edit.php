@@ -182,7 +182,7 @@
 
         if ($randomcreate > 0) {
 
-            $form->name = get_string('random', 'quiz') .' ('. $category->name .')';
+            $form->name = addslashes(get_string('random', 'quiz') .' ('. $category->name .')');
             $form->category = $category->id;
             $form->questiontext = $recurse; // we use the questiontext field to store the info
                                             // on whether to include questions in subcategories
