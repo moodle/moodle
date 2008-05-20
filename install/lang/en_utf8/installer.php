@@ -356,6 +356,10 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 
 <p>You must upgrade PHP or move to a host with a newer version of PHP!<br/>
 (In case of 5.0.x you could also downgrade to 4.4.x version)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['prefixcannotbeempty'] = '<p>Error: database table prefix can not be empty ($a)</p>
+<p>The site administrator must fix this problem.</p>';
+$string['prefixtoolong'] = '<p>Error: database table prefix is too long ($a->dbfamily)</p>
+<p>The site administrator must fix this problem. Maximum length for table prefixes in $a->dbfamily is $a->maxlength characters.</p>';
 $string['previous'] = 'Previous';
 $string['qtyperqpwillberemoved'] = 'During the upgrade, the RQP question type will be removed. You were not using this question type, so you should not experience any problems.';
 $string['qtyperqpwillberemovedanyway'] = 'During the upgrade, the RQP question type will be removed. You have some RQP questions in your database, and these will stop working unless you reinstall the code from http://moodle.org/mod/data/view.php?d=13&amp;rid=797 before continuing with the upgrade.';

@@ -261,6 +261,8 @@ $string['phpversion'] = 'Version de PHP';
 $string['phpversionerror'] = 'La version du programme PHP doit être au moins 4.3.0 ou 5.1.0 (5.0.x a bon nombre de problèmes).';
 $string['phpversionhelp'] = '<p>Moodle nécessite au minimum la version 4.3.0 ou 5.1.0 (5.0.x a bon nombre de problèmes).</p><p>Vous utilisez actuellement la version $a.</p><p>Pour que Moodle fonctionne, vous devez mettre à jour PHP ou aller chez un hébergeur ayant une version récente de PHP.<br />(Si vous avez une version 5.0.x, vous pouvez aussi re-passer à la version 4.4.x)</p>'; // ORPHANED
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['prefixcannotbeempty'] = '<p>Erreur&nbsp;: le préfixe des tables de la base de données ne peut pas être vide ($a).</p><p>L\'administrateur du site doit corriger ce problème.</p>';
+$string['prefixtoolong'] = '<p>Erreur&nbsp;: le préfixe des tables de la base de données est trop long ($a->dbfamily).</p><p>L\'administrateur du site doit corriger ce problème. La longueur maximale pour le préfixe des tables dans $a->dbfamily est de $a->maxlength caractères.</p>';
 $string['previous'] = 'Précédent';
 $string['qtyperqpwillberemoved'] = 'Au cours de cette mise à jour, le type de question RQP sera supprimé. Vous n\'utilisiez pas ce type de question, et ne souffrirez donc d\'aucun problème.';
 $string['qtyperqpwillberemovedanyway'] = 'Au cours de cette mise à jour, le type de question RQP sera supprimé. Votre base de données comporte des questions RQP, qui ne fonctionneront plus, à moins que vous ne réinstalliez le code disponible sur http://moodle.org/mod/data/view.php?d=13&amp;rid=797 avant de continuer la mise à jour.';
