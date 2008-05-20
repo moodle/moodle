@@ -416,9 +416,9 @@ class question_category_object {
         //never move category where it is the default
         if (1 != count_records_sql("SELECT count(*) FROM {$CFG->prefix}question_categories c1, {$CFG->prefix}question_categories c2 WHERE c2.id = $updateid AND c1.contextid = c2.contextid")){
             // If the question name has changed, rename any random questions in that category.
-            if ($oldcat->name != $cat->name) {
+            if (addslashes($oldcat->name) != $cat->name) {
                 $randomqname = $QTYPES[RANDOM]->question_name($cat);
-                set_field('question', 'name', $randomqname, 'category', $cat->id, 'qtype', RANDOM);
+                set_field('question', 'name', addslashes($randomqname), 'category', $cat->id, 'qtype', RANDOM);
                 // Ignore errors here. It is not a big deal if the questions are not renamed.
             }
 
