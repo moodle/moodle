@@ -54,7 +54,7 @@ class database_manager {
      * @param array $sqlarr array of sql statements to execute
      * @param boolean $continue to specify if must continue on error (true) or stop (false)
      * @param boolean $feedback to specify to show status info (true) or not (false)
-     * @param boolean true if everything was ok, false if some error was found
+     * @return boolean true if everything was ok, false if some error was found
      */
     protected function execute_sql_arr(array $sqlarr, $continue, $feedback=true) {
         $result = true;
@@ -229,7 +229,7 @@ class database_manager {
      * @uses, $db
      * @param XMLDBTable the table to be searched
      * @param XMLDBField the field to be searched
-     * @return string check consrtaint name or false
+     * @return string check constraint name or false
      */
     public function find_check_constraint_name($xmldb_table, $xmldb_field) {
 
@@ -289,6 +289,11 @@ class database_manager {
     public function find_key_name($xmldb_table, $xmldb_key) {
 
     /// Extract key columns
+        if (!($xmldb_key instanceof XMLDBKey)) {
+            debugging("Wrong type for second parameter to database_manager::find_key_name. Should be XMLDBKey, got " . gettype($xmldb_key));
+            return false;
+        }
+
         $keycolumns = $xmldb_key->getFields();
 
     /// Get list of keys in table
