@@ -170,7 +170,7 @@ class view_structure_php extends XMLDBAction {
     /// Add contents
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Define table ' . $table->getName() . ' to be created' . XMLDB_LINEFEED;
-        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Adding fields to table ' . $table->getName() . XMLDB_LINEFEED;
     /// Iterate over each field
@@ -248,7 +248,7 @@ class view_structure_php extends XMLDBAction {
     /// Add contents
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Define table ' . $table->getName() . ' to be dropped' . XMLDB_LINEFEED;
-        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -289,7 +289,7 @@ class view_structure_php extends XMLDBAction {
     /// Add contents
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Define table ' . $table->getName() . ' to be renamed to NEWNAMEGOESHERE' . XMLDB_LINEFEED;
-        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;

@@ -124,13 +124,13 @@ class oracle_sql_generator extends sql_generator {
      * names for temp tables.
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (full specs are required)
+     * @param xmldb_table table object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return string tablename on success, false on error
      */
     function create_temp_table($xmldb_table, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect create_table() $xmldb_table parameter');
             return false;
         }
@@ -266,7 +266,7 @@ class oracle_sql_generator extends sql_generator {
      * Returns the code (array of statements) needed to execute extra statements on table drop
      */
     public function getDropTableExtraSQL($xmldb_table) {
-        $xmldb_field = new XMLDBField('id'); // Fields having sequences should be exclusively, id.
+        $xmldb_field = new xmldb_field('id'); // Fields having sequences should be exclusively, id.
         return $this->getDropSequenceSQL($xmldb_table, $xmldb_field, false);
     }
 
@@ -277,7 +277,7 @@ class oracle_sql_generator extends sql_generator {
 
         $results = array();
 
-        $xmldb_field = new XMLDBField('id'); // Fields having sequences should be exclusively, id.
+        $xmldb_field = new xmldb_field('id'); // Fields having sequences should be exclusively, id.
 
         $oldseqname = $this->getSequenceFromDB($xmldb_table);
         $newseqname = $this->getNameForObject($newname, $xmldb_field->getName(), 'seq');
@@ -291,7 +291,7 @@ class oracle_sql_generator extends sql_generator {
     /// Drop old trigger
         $results[] = "DROP TRIGGER " . $oldtriggername;
 
-        $newt = new XMLDBTable($newname); /// Temp table for trigger code generation
+        $newt = new xmldb_table($newname); /// Temp table for trigger code generation
 
     /// Create new trigger
         $results = array_merge($results, $this->getCreateTriggerSQL($newt, $xmldb_field));
@@ -319,7 +319,7 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to alter the field in the table
      * Oracle has some severe limits:
      *     - clob and blob fields doesn't allow type to be specified
      *     - error is dropped if the null/not null clause is specified and hasn't changed
@@ -478,7 +478,7 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public function getCreateEnumSQL($xmldb_table, $xmldb_field) {
@@ -488,7 +488,7 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public function getDropEnumSQL($xmldb_table, $xmldb_field) {
@@ -505,7 +505,7 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
@@ -515,7 +515,7 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
@@ -525,7 +525,7 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable returns one array with all the check constrainsts
+     * Given one xmldb_table returns one array with all the check constrainsts
      * in the table (fetched from DB)
      * Optionally the function allows one xmldb_field to be specified in
      * order to return only the check constraints belonging to one field.
@@ -567,7 +567,7 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable returns one string with the sequence of the table
+     * Given one xmldb_table returns one string with the sequence of the table
      * in the table (fetched from DB)
      * The sequence name for oracle is calculated by looking the corresponding
      * trigger and retrieving the sequence name from it (because sequences are
@@ -595,7 +595,7 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable returns one string with the trigger
+     * Given one xmldb_table returns one string with the trigger
      * in the table (fetched from DB)
      * If no trigger is found, returns false
      */

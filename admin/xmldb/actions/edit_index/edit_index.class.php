@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -115,12 +115,12 @@ class edit_index extends XMLDBAction {
         $o.= '      <tr valign="top"><td><label for="name" accesskey="n">Name:</label></td><td colspan="2"><input name="name" type="text" size="30" id="name"' . $disabled . ' value="' . s($index->getName()) . '" /></td></tr>';
     /// XMLDB key comment
         $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td colspan="2"><textarea name="comment" rows="3" cols="80" id="comment">' . s($index->getComment()) . '</textarea></td></tr>';
-    /// XMLDBIndex Type
+    /// xmldb_index Type
         $typeoptions = array (0 => 'not unique',
                               1 => 'unique');
         $o.= '      <tr valign="top"><td><label for="menuunique" accesskey="t">Type:</label></td>';
         $o.= '        <td colspan="2">' . choose_from_menu($typeoptions, 'unique', $index->getUnique(), '', '', '', true) . '</td></tr>';
-    /// XMLDBIndex Fields
+    /// xmldb_index Fields
         $o.= '      <tr valign="top"><td><label for="fields" accesskey="f">Fields:</label></td>';
         $o.= '        <td colspan="2"><input name="fields" type="text" size="40" maxlength="80" id="fields" value="' . s(implode(', ', $index->getFields())) . '" /></td></tr>';
     /// Change button

@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -88,10 +88,10 @@ class new_statement extends XMLDBAction {
         /// Get list of tables
             $selecttables = $DB->get_tables();
         /// Get list of statement types
-            $typeoptions = array (XMLDB_STATEMENT_INSERT => XMLDBStatement::getXMLDBStatementName(XMLDB_STATEMENT_INSERT),
-                                  XMLDB_STATEMENT_UPDATE => XMLDBStatement::getXMLDBStatementName(XMLDB_STATEMENT_UPDATE),
-                                  XMLDB_STATEMENT_DELETE => XMLDBStatement::getXMLDBStatementName(XMLDB_STATEMENT_DELETE),
-                                  XMLDB_STATEMENT_CUSTOM => XMLDBStatement::getXMLDBStatementName(XMLDB_STATEMENT_CUSTOM));
+            $typeoptions = array (XMLDB_STATEMENT_INSERT => xmldb_statement::getXMLDBStatementName(XMLDB_STATEMENT_INSERT),
+                                  XMLDB_STATEMENT_UPDATE => xmldb_statement::getXMLDBStatementName(XMLDB_STATEMENT_UPDATE),
+                                  XMLDB_STATEMENT_DELETE => xmldb_statement::getXMLDBStatementName(XMLDB_STATEMENT_DELETE),
+                                  XMLDB_STATEMENT_CUSTOM => xmldb_statement::getXMLDBStatementName(XMLDB_STATEMENT_CUSTOM));
             if (!$selecttables) {
                 $this->errormsg = 'No tables available to create statements';
                 return false;
@@ -126,7 +126,7 @@ class new_statement extends XMLDBAction {
             }
 
         /// Calculate the name of the statement
-            $typename = XMLDBStatement::getXMLDBStatementName($typeparam);
+            $typename = xmldb_statement::getXMLDBStatementName($typeparam);
             $name = trim(strtolower($typename . ' ' . $tableparam));
 
         /// Check that this Statement hasn't been created before
@@ -135,8 +135,8 @@ class new_statement extends XMLDBAction {
                 return false;
             }
 
-        /// Create one new XMLDBStatement
-            $statement = new XMLDBStatement($name);
+        /// Create one new xmldb_statement
+            $statement = new xmldb_statement($name);
             $statement->setType($typeparam);
             $statement->setTable($tableparam);
             $statement->setComment('Initial ' . $typename . ' of records on table ' . $tableparam);

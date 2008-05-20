@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -115,7 +115,7 @@ class edit_key extends XMLDBAction {
         $o.= '      <tr valign="top"><td><label for="name" accesskey="n">Name:</label></td><td colspan="2"><input name="name" type="text" size="30" id="name"' . $disabled . ' value="' . s($key->getName()) . '" /></td></tr>';
     /// XMLDB key comment
         $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td colspan="2"><textarea name="comment" rows="3" cols="80" id="comment">' . s($key->getComment()) . '</textarea></td></tr>';
-    /// XMLDBKey Type
+    /// xmldb_key Type
         $typeoptions = array (XMLDB_KEY_PRIMARY => $key->getXMLDBKeyName(XMLDB_KEY_PRIMARY),
                               XMLDB_KEY_UNIQUE  => $key->getXMLDBKeyName(XMLDB_KEY_UNIQUE),
                               XMLDB_KEY_FOREIGN   => $key->getXMLDBKeyName(XMLDB_KEY_FOREIGN),
@@ -126,13 +126,13 @@ class edit_key extends XMLDBAction {
     /// }
         $o.= '      <tr valign="top"><td><label for="menutype" accesskey="t">Type:</label></td>';
         $o.= '        <td colspan="2">' . choose_from_menu($typeoptions, 'type', $key->getType(), '', '', '', true) . '</td></tr>';
-    /// XMLDBKey Fields
+    /// xmldb_key Fields
         $o.= '      <tr valign="top"><td><label for="fields" accesskey="f">Fields:</label></td>';
         $o.= '        <td colspan="2"><input name="fields" type="text" size="40" maxlength="80" id="fields" value="' . s(implode(', ', $key->getFields())) . '" /></td></tr>';
-    /// XMLDBKey Reftable
+    /// xmldb_key Reftable
         $o.= '      <tr valign="top"><td><label for="reftable" accesskey="t">Reftable:</label></td>';
         $o.= '        <td colspan="2"><input name="reftable" type="text" size="20" maxlength="40" id="reftable" value="' . s($key->getReftable()) . '" /></td></tr>';
-    /// XMLDBKey Reffields
+    /// xmldb_key Reffields
         $o.= '      <tr valign="top"><td><label for="reffields" accesskey="t">Reffields:</label></td>';
         $o.= '        <td colspan="2"><input name="reffields" type="text" size="40" maxlength="80" id="reffields" value="' . s(implode(', ', $key->getRefFields())) . '" /></td></tr>';
     /// Change button

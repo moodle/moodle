@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -28,16 +28,27 @@
 /// (a group of SQL arbitrary sentences)
 /// (only INSERT is allowed for now)
 
-class XMLDBStatement extends xmldb_object {
+/// TODO: Delete for 2.1 (deeprecated in 2.0).
+/// Deprecated API starts here
+class XMLDBStatement extends xmldb_statement {
+
+    function __construct($name) {
+        parent::__construct($name);
+    }
+
+}
+/// Deprecated API ends here
+
+class xmldb_statement extends xmldb_object {
 
     var $table;     // Table we are handling
     var $type;      // XMLDB_STATEMENT_TYPE
     var $sentences; // Collection of sentences in the statement
 
     /**
-     * Creates one new XMLDBStatement
+     * Creates one new xmldb_statement
      */
-    function XMLDBStatement($name) {
+    function __construct($name) {
         parent::__construct($name);
         $this->table     = NULL;
         $this->type      = XMLDB_STATEMENT_INCORRECT;
@@ -89,7 +100,7 @@ class XMLDBStatement extends xmldb_object {
     /**
      * Load data from XML to the index
      */
-    function arr2XMLDBStatement($xmlarr) {
+    function arr2xmldb_statement($xmlarr) {
 
         $result = true;
 
@@ -255,7 +266,7 @@ class XMLDBStatement extends xmldb_object {
     }
 
     /**
-     * This function calculate and set the hash of one XMLDBStatement
+     * This function calculate and set the hash of one xmldb_statement
      */
      function calculateHash($recursive = false) {
         if (!$this->loaded) {
@@ -271,7 +282,7 @@ class XMLDBStatement extends xmldb_object {
      */
     function xmlOutput() {
         $o = '';
-        $o.= '    <STATEMENT NAME="' . $this->name . '" TYPE="' . XMLDBStatement::getXMLDBStatementName($this->type) . '" TABLE="' . $this->table . '"';
+        $o.= '    <STATEMENT NAME="' . $this->name . '" TYPE="' . xmldb_statement::getXMLDBStatementName($this->type) . '" TABLE="' . $this->table . '"';
         if ($this->comment) {
             $o.= ' COMMENT="' . htmlspecialchars($this->comment) . '"';
         }
@@ -297,7 +308,7 @@ class XMLDBStatement extends xmldb_object {
     }
 
     /**
-     * This function will set all the attributes of the XMLDBIndex object
+     * This function will set all the attributes of the xmldb_index object
      * based on information passed in one ADOindex
      */
     function setFromADOIndex($adoindex) {

@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -26,7 +26,18 @@
 
 /// This class represent one XMLDB Field
 
-class XMLDBField extends xmldb_object {
+/// TODO: Delete for 2.1 (deeprecated in 2.0).
+/// Deprecated API starts here
+class XMLDBField extends xmldb_field {
+
+    function __construct($name) {
+        parent::__construct($name);
+    }
+
+}
+/// Deprecated API ends here
+
+class xmldb_field extends xmldb_object {
 
     var $type;
     var $length;
@@ -39,9 +50,9 @@ class XMLDBField extends xmldb_object {
     var $decimals;
 
     /**
-     * Creates one new XMLDBField
+     * Creates one new xmldb_field
      */
-    function XMLDBField($name) {
+    function __construct($name) {
         parent::__construct($name);
         $this->type = NULL;
         $this->length = NULL;
@@ -55,7 +66,7 @@ class XMLDBField extends xmldb_object {
     }
 
     /**
-     * Set all the attributes of one XMLDBField
+     * Set all the attributes of one xmldb_field
      *
      * @param string type XMLDB_TYPE_INTEGER, XMLDB_TYPE_NUMBER, XMLDB_TYPE_CHAR, XMLDB_TYPE_TEXT, XMLDB_TYPE_BINARY
      * @param string precision length for integers and chars, two-comma separated numbers for numbers and 'small', 'medium', 'big' for texts and binaries
@@ -243,7 +254,7 @@ class XMLDBField extends xmldb_object {
     /**
      * Load data from XML to the table
      */
-    function arr2XMLDBField($xmlarr) {
+    function arr2xmldb_field($xmlarr) {
 
         $result = true;
 
@@ -534,7 +545,7 @@ class XMLDBField extends xmldb_object {
     }
 
     /**
-     * This function calculate and set the hash of one XMLDBField
+     * This function calculate and set the hash of one xmldb_field
      */
      function calculateHash($recursive = false) {
         if (!$this->loaded) {
@@ -617,7 +628,7 @@ class XMLDBField extends xmldb_object {
     }
 
     /**
-     * This function will set all the attributes of the XMLDBField object
+     * This function will set all the attributes of the xmldb_field object
      * based on information passed in one ADOField
      */
     function setFromADOField($adofield) {
@@ -744,7 +755,7 @@ class XMLDBField extends xmldb_object {
     }
 
     /**
-     * Returns the PHP code needed to define one XMLDBField
+     * Returns the PHP code needed to define one xmldb_field
      */
     function getPHP($includeprevious=true) {
 

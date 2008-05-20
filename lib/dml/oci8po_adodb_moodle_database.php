@@ -397,7 +397,7 @@ error('todo');
         if ($CFG->dbfamily === 'oracle' && ($returnid == true || !empty($foundclobs) || !empty($foundblobs))) {
         /// We need this here (move this function to dmlib?)
             include_once($CFG->libdir . '/ddllib.php');
-            $xmldb_table = new XMLDBTable($table);
+            $xmldb_table = new xmldb_table($table);
             $seqname = find_sequence_name($xmldb_table);
             if (!$seqname) {
             /// Fallback, seqname not found, something is wrong. Inform and use the alternative getNameForObject() method

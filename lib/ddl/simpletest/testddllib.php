@@ -20,11 +20,11 @@ class ddllib_test extends UnitTestCase {
     public function setUp() {
         global $CFG;
 
-        $this->db = new mysql_adodb_moodle_database();
+        $this->db = new mysqli_adodb_moodle_database();
         $this->db->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->prefix);
         $this->dbmanager = $this->db->get_manager();
 
-        $table = new XMLDBTable("testtable");
+        $table = new xmldb_table("testtable");
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->addFieldInfo('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM,
@@ -57,7 +57,7 @@ class ddllib_test extends UnitTestCase {
         $this->tables[] = $table;
 
         // Second, smaller table
-        $table = new XMLDBTable ('anothertest');
+        $table = new xmldb_table ('anothertest');
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->addFieldInfo('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
@@ -83,11 +83,11 @@ class ddllib_test extends UnitTestCase {
     }
 
     public function testCreateTable() {
-        $table = new XMLDBTable("other_test_table");
-        $field = new XMLDBField('id');
+        $table = new xmldb_table("other_test_table");
+        $field = new xmldb_field('id');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, true);
         $table->addField($field);
-        $key = new XMLDBKey('PRIMARY');
+        $key = new xmldb_key('PRIMARY');
         $key->setAttributes(XMLDB_KEY_PRIMARY, array('id'));
         $table->addKey($key);
 
@@ -105,7 +105,7 @@ class ddllib_test extends UnitTestCase {
     public function testAddEnumField() {
         $table = $this->tables[0];
         /// Create a new field with complex specs (enums are good candidates)
-        $field = new XMLDBField('type2');
+        $field = new xmldb_field('type2');
         $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM,
             array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
         $this->assertTrue($this->dbmanager->add_field($table, $field));
@@ -117,7 +117,7 @@ class ddllib_test extends UnitTestCase {
     public function testAddNumericField() {
         $table = $this->tables[0];
         /// Create a new field with complex specs (enums are good candidates)
-        $field = new XMLDBField('onenumber');
+        $field = new xmldb_field('onenumber');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, 0, 'type');
         $this->assertTrue($this->dbmanager->add_field($table, $field));
         $this->assertTrue($this->dbmanager->field_exists($table, 'onenumber'));
@@ -136,122 +136,122 @@ class ddllib_test extends UnitTestCase {
 
     public function testChangeFieldType() {
         $table = $this->tables[1];
-        $field = new XMLDBField('course');
+        $field = new xmldb_field('course');
         $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, '0');
         $this->assertTrue($this->dbmanager->change_field_type($this->tables[1], $field));
 
-        $field = new XMLDBField('course');
+        $field = new xmldb_field('course');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $this->assertTrue($this->dbmanager->change_field_type($this->tables[1], $field));
 
-        $field = new XMLDBField('grade');
+        $field = new xmldb_field('grade');
         $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, "test'n drop");
         $this->assertTrue($this->dbmanager->change_field_type($this->tables[1], $field));
 
-        $field = new XMLDBField('grade');
+        $field = new xmldb_field('grade');
         $field->setAttributes(XMLDB_TYPE_FLOAT, '20,10', XMLDB_UNSIGNED, null, null, null, null, null);
         $this->assertTrue($this->dbmanager->change_field_type($this->tables[1], $field));
 
-        $field = new XMLDBField('grade');
+        $field = new xmldb_field('grade');
         $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'test');
         $this->assertTrue($this->dbmanager->change_field_type($this->tables[1], $field));
 
-        $field = new XMLDBField('grade');
+        $field = new xmldb_field('grade');
         $field->setAttributes(XMLDB_TYPE_NUMBER, '20,10', XMLDB_UNSIGNED, null, null, null, null, null);
         $this->assertTrue($this->dbmanager->change_field_type($this->tables[1], $field));
     }
 
     public function testChangeFieldPrecision() {
         $table = $this->tables[1];
-        $field = new XMLDBField('intro');
+        $field = new xmldb_field('intro');
         $field->setAttributes(XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null, null, null);
         $this->assertTrue($this->dbmanager->change_field_precision($this->tables[1], $field));
 
-        $field = new XMLDBField('secondname');
+        $field = new xmldb_field('secondname');
         $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
         $this->assertTrue($this->dbmanager->change_field_precision($this->tables[1], $field));
 
-        $field = new XMLDBField('grade');
+        $field = new xmldb_field('grade');
         $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null, null, null);
         $this->assertTrue($this->dbmanager->change_field_precision($this->tables[1], $field));
 
-        $field = new XMLDBField('course');
+        $field = new xmldb_field('course');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $this->assertTrue($this->dbmanager->change_field_precision($this->tables[1], $field));
     }
 
     public function testChangeFieldSign() {
         $table = $this->tables[1];
-        $field = new XMLDBField('grade');
+        $field = new xmldb_field('grade');
         $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', XMLDB_UNSIGNED, null, null, null, null, null);
         $this->assertTrue($this->dbmanager->change_field_unsigned($this->tables[1], $field));
 
-        $field = new XMLDBField('grade');
+        $field = new xmldb_field('grade');
         $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null, null, null);
         $this->assertTrue($this->dbmanager->change_field_unsigned($this->tables[1], $field));
     }
 
     public function testChangeFieldNullability() {
         $table = $this->tables[1];
-        $field = new XMLDBField('name');
+        $field = new xmldb_field('name');
         $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
         $this->assertTrue($this->dbmanager->change_field_notnull($this->tables[1], $field));
 
-        $field = new XMLDBField('name');
+        $field = new xmldb_field('name');
         $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
         $this->assertTrue($this->dbmanager->change_field_notnull($this->tables[1], $field));
     }
 
     public function testChangeFieldDefault() {
         $table = $this->tables[1];
-        $field = new XMLDBField('name');
+        $field = new xmldb_field('name');
         $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, null);
         $this->assertTrue($this->dbmanager->change_field_default($this->tables[1], $field));
 
-        $field = new XMLDBField('name');
+        $field = new xmldb_field('name');
         $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
         $this->assertTrue($this->dbmanager->change_field_default($this->tables[1], $field));
 
-        $field = new XMLDBField('secondname');
+        $field = new xmldb_field('secondname');
         $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, 'Moodle2');
         $this->assertTrue($this->dbmanager->change_field_default($this->tables[1], $field));
 
-        $field = new XMLDBField('secondname');
+        $field = new xmldb_field('secondname');
         $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
         $this->assertTrue($this->dbmanager->change_field_default($this->tables[1], $field));
     }
 
     public function testAddUniqueIndex() {
         $table = $this->tables[1];
-        $index = new XMLDBIndex('secondname');
+        $index = new xmldb_index('secondname');
         $index->setAttributes(XMLDB_INDEX_UNIQUE, array('name', 'secondname', 'grade'));
         $this->assertTrue($this->dbmanager->add_index($this->tables[1], $index));
     }
 
     public function testAddNonUniqueIndex() {
         $table = $this->tables[1];
-        $index = new XMLDBIndex('secondname');
+        $index = new xmldb_index('secondname');
         $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('course', 'name'));
         $this->assertTrue($this->dbmanager->add_index($this->tables[1], $index));
     }
 
     public function testFindIndexName() {
         $table = $this->tables[1];
-        $index = new XMLDBIndex('secondname');
+        $index = new xmldb_index('secondname');
         $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('course', 'name'));
         $this->dbmanager->add_index($this->tables[1], $index);
 
         // TODO DBM Systems name their indices differently. Maybe just test for non-false (or simply true)
         $this->assertEqual($this->dbmanager->find_index_name($this->tables[1], $index), 'mdl_anot_counam_ix');
 
-        $nonexistentindex = new XMLDBIndex('nonexistentindex');
+        $nonexistentindex = new xmldb_index('nonexistentindex');
         $nonexistentindex->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('name'));
         $this->assertFalse($this->dbmanager->find_index_name($this->tables[1], $nonexistentindex));
     }
 
     public function testDropIndex() {
         $table = $this->tables[1];
-        $index = new XMLDBIndex('secondname');
+        $index = new xmldb_index('secondname');
         $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('course', 'name'));
         $this->dbmanager->add_index($this->tables[1], $index);
 
@@ -261,21 +261,21 @@ class ddllib_test extends UnitTestCase {
 
     public function testAddUniqueKey() {
         $table = $this->tables[1];
-        $key = new XMLDBKey('id-course-grade');
+        $key = new xmldb_key('id-course-grade');
         $key->setAttributes(XMLDB_KEY_UNIQUE, array('id', 'course', 'grade'));
         $this->assertTrue($this->dbmanager->add_key($this->tables[1], $key));
     }
 
     public function testAddForeignUniqueKey() {
         $table = $this->tables[1];
-        $key = new XMLDBKey('course');
+        $key = new xmldb_key('course');
         $key->setAttributes(XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'anothertest', array('id'));
         $this->assertTrue($this->dbmanager->add_key($this->tables[1], $key));
     }
 
     public function testDropKey() {
         $table = $this->tables[1];
-        $key = new XMLDBKey('course');
+        $key = new xmldb_key('course');
         $key->setAttributes(XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'anothertest', array('id'));
         $this->dbmanager->add_key($this->tables[1], $key);
 
@@ -284,14 +284,14 @@ class ddllib_test extends UnitTestCase {
 
     public function testAddForeignKey() {
         $table = $this->tables[1];
-        $key = new XMLDBKey('course');
+        $key = new xmldb_key('course');
         $key->setAttributes(XMLDB_KEY_FOREIGN, array('course'), 'anothertest', array('id'));
         $this->assertTrue($this->dbmanager->add_key($this->tables[1], $key));
     }
 
     public function testDropForeignKey() {
         $table = $this->tables[1];
-        $key = new XMLDBKey('course');
+        $key = new xmldb_key('course');
         $key->setAttributes(XMLDB_KEY_FOREIGN, array('course'), 'anothertest', array('id'));
         $this->dbmanager->add_key($this->tables[1], $key);
 
@@ -301,14 +301,14 @@ class ddllib_test extends UnitTestCase {
     public function testChangeFieldEnum() {
         $table = $this->tables[0];
         // Removing an enum value
-        $field = new XMLDBField('type');
+        $field = new xmldb_field('type');
         $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM,
                 array('news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
 
         $this->assertTrue($this->dbmanager->change_field_enum($table, $field));
 
         // Adding an enum value
-        $field = new XMLDBField('type');
+        $field = new xmldb_field('type');
         $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM,
                 array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
         $this->assertTrue($this->dbmanager->change_field_enum($table, $field));
@@ -316,7 +316,7 @@ class ddllib_test extends UnitTestCase {
 
     public function testRenameIndex() {
         $table = $this->tables[0];
-        $index = new XMLDBIndex('course');
+        $index = new xmldb_index('course');
         $index->setAttributes(XMLDB_INDEX_UNIQUE, array('course'));
 
         $this->assertTrue($this->dbmanager->rename_index($table, $index, 'newindexname'));
@@ -324,7 +324,7 @@ class ddllib_test extends UnitTestCase {
 
     public function testRenameKey() {
         $table = $this->tables[0];
-        $key = new XMLDBKey('course');
+        $key = new xmldb_key('course');
         $key->setAttributes(XMLDB_KEY_UNIQUE, array('course'));
 
         $this->assertTrue($this->dbmanager->rename_key($table, $key, 'newkeyname'));
@@ -333,7 +333,7 @@ class ddllib_test extends UnitTestCase {
 
     public function testRenameField() {
         $table = $this->tables[0];
-        $field = new XMLDBField('type');
+        $field = new xmldb_field('type');
         $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM,
                 array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
 
@@ -354,7 +354,7 @@ class ddllib_test extends UnitTestCase {
         $this->assertTrue($this->dbmanager->table_exists('testtable'));
 
         // Test giving a table object
-        $nonexistenttable = new XMLDBTable('nonexistenttable');
+        $nonexistenttable = new xmldb_table('nonexistenttable');
         $this->assertFalse($this->dbmanager->table_exists($nonexistenttable));
         $this->assertTrue($this->dbmanager->table_exists($table));
     }
@@ -375,11 +375,11 @@ class ddllib_test extends UnitTestCase {
         $realfield = $table->getField('id');
 
         // Give a nonexistent table as first param
-        $nonexistenttable = new XMLDBTable('nonexistenttable');
+        $nonexistenttable = new xmldb_table('nonexistenttable');
         $this->assertFalse($this->dbmanager->field_exists($nonexistenttable, $realfield));
 
         // Give a nonexistent field as second param
-        $nonexistentfield = new XMLDBField('nonexistentfield');
+        $nonexistentfield = new xmldb_field('nonexistentfield');
         $this->assertFalse($this->dbmanager->field_exists($table, $nonexistentfield));
 
         // Correct string params
@@ -419,7 +419,7 @@ class ddllib_test extends UnitTestCase {
         $this->assertFalse($this->dbmanager->find_sequence_name($table));
 
         // give nonexistent table param
-        $table = new XMLDBTable("nonexistenttable");
+        $table = new xmldb_table("nonexistenttable");
         $this->assertFalse($this->dbmanager->find_sequence_name($table));
 
         // Give existing and valid table param

@@ -35,8 +35,8 @@ function xmldb_blocks_upgrade($oldversion=0) {
     if ($result && $oldversion < 2007081300) {
 
     /// Changing nullability of field configdata on table block_instance to null
-        $table = new XMLDBTable('block_instance');
-        $field = new XMLDBField('configdata');
+        $table = new xmldb_table('block_instance');
+        $field = new xmldb_field('configdata');
         $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'visible');
 
     /// Launch change of nullability for field configdata

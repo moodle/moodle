@@ -38,11 +38,11 @@
     require_once('../../lib/xmldb/xmldb_object.php');
     require_once('../../lib/xmldb/xmldb_file.php');
     require_once('../../lib/xmldb/xmldb_structure.php');
-    require_once('../../lib/xmldb/XMLDBTable.class.php');
-    require_once('../../lib/xmldb/XMLDBField.class.php');
-    require_once('../../lib/xmldb/XMLDBKey.class.php');
-    require_once('../../lib/xmldb/XMLDBIndex.class.php');
-    require_once('../../lib/xmldb/XMLDBStatement.class.php');
+    require_once('../../lib/xmldb/xmldb_table.php');
+    require_once('../../lib/xmldb/xmldb_field.php');
+    require_once('../../lib/xmldb/xmldb_key.php');
+    require_once('../../lib/xmldb/xmldb_index.php');
+    require_once('../../lib/xmldb/xmldb_statement.php');
 
 /// Add Moodle config script (this is loaded AFTER all the rest
 /// of classes because it starts the SESSION and classes to be

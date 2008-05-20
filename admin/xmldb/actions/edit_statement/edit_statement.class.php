@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -89,7 +89,7 @@ class edit_statement extends XMLDBAction {
         if (!$statementparam) {
             $typeparam = optional_param('type', NULL, PARAM_CLEAN);
             $tableparam = optional_param('table', NULL, PARAM_CLEAN);
-            $typename = XMLDBStatement::getXMLDBStatementName($typeparam);
+            $typename = xmldb_statement::getXMLDBStatementName($typeparam);
             $statementparam = trim(strtolower($typename . ' ' . $tableparam));
         }
         if (!$statement =& $structure->getStatement($statementparam)) {

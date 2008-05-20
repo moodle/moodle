@@ -118,7 +118,7 @@ class grade_test extends UnitTestCase {
         $result = true;
 
         /// Define table course_modules to be created
-        $table = new XMLDBTable('course_modules');
+        $table = new xmldb_table('course_modules');
 
         if (!table_exists($table)) {
             /// Adding fields to table course_modules
@@ -155,7 +155,7 @@ class grade_test extends UnitTestCase {
         }
 
         /// Define table modules to be created
-        $table = new XMLDBTable('modules');
+        $table = new xmldb_table('modules');
 
         if (!table_exists($table)) {
 
@@ -181,7 +181,7 @@ class grade_test extends UnitTestCase {
         }
 
         /// Define table grade_items to be created
-        $table = new XMLDBTable('grade_items');
+        $table = new xmldb_table('grade_items');
 
         if (!table_exists($table)) {
             $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
@@ -229,7 +229,7 @@ class grade_test extends UnitTestCase {
 
 
         /// Define table grade_categories to be created
-        $table = new XMLDBTable('grade_categories');
+        $table = new xmldb_table('grade_categories');
 
         if ($result && !table_exists($table)) {
 
@@ -261,7 +261,7 @@ class grade_test extends UnitTestCase {
 
 
         /// Define table grade_grades to be created
-        $table = new XMLDBTable('grade_grades');
+        $table = new xmldb_table('grade_grades');
 
         if ($result && !table_exists($table)) {
 
@@ -302,7 +302,7 @@ class grade_test extends UnitTestCase {
 
 
         /// Define table grade_outcomes to be created
-        $table = new XMLDBTable('grade_outcomes');
+        $table = new xmldb_table('grade_outcomes');
 
         if ($result && !table_exists($table)) {
 
@@ -331,7 +331,7 @@ class grade_test extends UnitTestCase {
 
 
         /// Define table scale to be created
-        $table = new XMLDBTable('scale');
+        $table = new xmldb_table('scale');
 
         if ($result && !table_exists($table)) {
 
@@ -353,7 +353,7 @@ class grade_test extends UnitTestCase {
         }
 
         /// Define table quiz to be created
-        $table = new XMLDBTable('quiz');
+        $table = new xmldb_table('quiz');
 
         if ($result && !table_exists($table)) {
             /// Adding fields to table quiz
@@ -405,7 +405,7 @@ class grade_test extends UnitTestCase {
         $result = true;
 
         /// Define table grade_items to be created
-        $table = new XMLDBTable('grade_items_history');
+        $table = new xmldb_table('grade_items_history');
 
         if (!table_exists($table)) {
 
@@ -461,7 +461,7 @@ class grade_test extends UnitTestCase {
         }
 
         /// Define table grade_categories to be created
-        $table = new XMLDBTable('grade_categories_history');
+        $table = new xmldb_table('grade_categories_history');
 
 
         if ($result && !table_exists($table)) {
@@ -503,7 +503,7 @@ class grade_test extends UnitTestCase {
 
 
         /// Define table grade_grades to be created
-        $table = new XMLDBTable('grade_grades_history');
+        $table = new xmldb_table('grade_grades_history');
 
         if ($result && !table_exists($table)) {
 
@@ -554,7 +554,7 @@ class grade_test extends UnitTestCase {
 
 
         /// Define table grade_outcomes to be created
-        $table = new XMLDBTable('grade_outcomes_history');
+        $table = new xmldb_table('grade_outcomes_history');
 
         if ($result && !table_exists($table)) {
 
@@ -588,7 +588,7 @@ class grade_test extends UnitTestCase {
         }
 
         /// Define table scale to be created
-        $table = new XMLDBTable('scale_history');
+        $table = new xmldb_table('scale_history');
 
 
         if ($result && !table_exists($table)) {

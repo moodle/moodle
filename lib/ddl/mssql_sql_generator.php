@@ -90,13 +90,13 @@ class mssql_sql_generator extends sql_generator {
      * names for temp tables.
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (full specs are required)
+     * @param xmldb_table table object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return string tablename on success, false on error
      */
     function create_temp_table($xmldb_table, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect create_table() $xmldb_table parameter');
             return false;
         }
@@ -198,7 +198,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop the field from the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop the field from the table
      * MSSQL overwrites the standard sentence because it needs to do some extra work dropping the default and
      * check constraints
      */
@@ -229,7 +229,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one correct XMLDBField and the new name, returns the SQL statements
+     * Given one correct xmldb_field and the new name, returns the SQL statements
      * to rename it (inside one array)
      * MSSQL is special, so we overload the function here. It needs to
      * drop the constraints BEFORE renaming the field
@@ -289,7 +289,7 @@ class mssql_sql_generator extends sql_generator {
 
         $results = array();
 
-        $newt = new XMLDBTable($newname); //Temporal table for name calculations
+        $newt = new xmldb_table($newname); //Temporal table for name calculations
 
         $oldtablename = $this->getTableName($xmldb_table);
         $newtablename = $this->getTableName($newt);
@@ -314,7 +314,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to alter the field in the table
      */
     public function getAlterFieldSQL($xmldb_table, $xmldb_field) {
 
@@ -373,7 +373,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to modify the default of the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to modify the default of the field in the table
      */
     public function getModifyDefaultSQL($xmldb_table, $xmldb_field) {
     /// MSSQL is a bit special with default constraints because it implements them as external constraints so
@@ -397,7 +397,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public function getCreateEnumSQL($xmldb_table, $xmldb_field) {
@@ -407,7 +407,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public function getDropEnumSQL($xmldb_table, $xmldb_field) {
@@ -424,7 +424,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
@@ -448,7 +448,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
@@ -469,7 +469,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, returns the name of its default constraint in DB
+     * Given one xmldb_table and one xmldb_field, returns the name of its default constraint in DB
      * or false if not found
      * This function should be considered internal and never used outside from generator
      */
@@ -491,7 +491,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable returns one array with all the check constrainsts
+     * Given one xmldb_table returns one array with all the check constrainsts
      * in the table (fetched from DB)
      * Optionally the function allows one xmldb_field to be specified in
      * order to return only the check constraints belonging to one field.

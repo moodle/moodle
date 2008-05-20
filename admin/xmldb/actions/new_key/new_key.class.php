@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -88,7 +88,7 @@ class new_key extends XMLDBAction {
             }
         }
         if (!$changeme_exists) { /// Lets create the Key
-            $key = new XMLDBKey('changeme');
+            $key = new xmldb_key('changeme');
             $table->addKey($key);
 
         /// We have one new key, so the structure has changed

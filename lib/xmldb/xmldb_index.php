@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -26,22 +26,33 @@
 
 /// This class represent one XMLDB Index
 
-class XMLDBIndex extends xmldb_object {
+/// TODO: Delete for 2.1 (deeprecated in 2.0).
+/// Deprecated API starts here
+class XMLDBIndex extends xmldb_index {
+
+    function __construct($name) {
+        parent::__construct($name);
+    }
+
+}
+/// Deprecated API ends here
+
+class xmldb_index extends xmldb_object {
 
     var $unique;
     var $fields;
 
     /**
-     * Creates one new XMLDBIndex
+     * Creates one new xmldb_index
      */
-    function XMLDBIndex($name) {
+    function __construct($name) {
         parent::__construct($name);
         $this->unique = false;
         $this->fields = array();
     }
 
     /**
-     * Set all the attributes of one XMLDBIndex
+     * Set all the attributes of one xmldb_index
      *
      * @param string type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
      * @param array fields an array of fieldnames to build the index over
@@ -82,7 +93,7 @@ class XMLDBIndex extends xmldb_object {
     /**
      * Load data from XML to the index
      */
-    function arr2XMLDBIndex($xmlarr) {
+    function arr2xmldb_index($xmlarr) {
 
         $result = true;
 
@@ -164,7 +175,7 @@ class XMLDBIndex extends xmldb_object {
     }
 
     /**
-     * This function calculate and set the hash of one XMLDBIndex
+     * This function calculate and set the hash of one xmldb_index
      */
      function calculateHash($recursive = false) {
         if (!$this->loaded) {
@@ -203,7 +214,7 @@ class XMLDBIndex extends xmldb_object {
     }
 
     /**
-     * This function will set all the attributes of the XMLDBIndex object
+     * This function will set all the attributes of the xmldb_index object
      * based on information passed in one ADOindex
      */
     function setFromADOIndex($adoindex) {
@@ -219,7 +230,7 @@ class XMLDBIndex extends xmldb_object {
     }
 
     /**
-     * Returns the PHP code needed to define one XMLDBIndex
+     * Returns the PHP code needed to define one xmldb_index
      */
     function getPHP() {
 

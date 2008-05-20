@@ -90,9 +90,9 @@ class database_manager {
     }
 
     /**
-     * Given one XMLDBTable, check if it exists in DB (true/false)
+     * Given one xmldb_table, check if it exists in DB (true/false)
      *
-     * @param mixed the table to be searched (string name or XMLDBTable instance)
+     * @param mixed the table to be searched (string name or xmldb_table instance)
      * @return boolean true/false
      */
     public function table_exists($table) {
@@ -117,10 +117,10 @@ class database_manager {
     }
 
     /**
-     * Given one XMLDBField, check if it exists in DB (true/false)
+     * Given one xmldb_field, check if it exists in DB (true/false)
      *
-     * @param mixed the table to be searched (string name or XMLDBTable instance)
-     * @param mixed the field to be searched for (string name or XMLDBField instance)
+     * @param mixed the table to be searched (string name or xmldb_table instance)
+     * @param mixed the field to be searched for (string name or xmldb_field instance)
      * @return boolean true/false
      */
     public function field_exists($table, $field) {
@@ -162,11 +162,11 @@ class database_manager {
     }
 
     /**
-     * Given one XMLDBIndex, the function returns the name of the index in DB (if exists)
+     * Given one xmldb_index, the function returns the name of the index in DB (if exists)
      * of false if it doesn't exist
      *
-     * @param mixed the table to be searched (string name or XMLDBTable instance)
-     * @param XMLDBIndex the index to be searched
+     * @param mixed the table to be searched (string name or xmldb_table instance)
+     * @param xmldb_index the index to be searched
      * @return string index name of false
      */
     public function find_index_name($table, $xmldb_index) {
@@ -210,10 +210,10 @@ class database_manager {
     }
 
     /**
-     * Given one XMLDBIndex, check if it exists in DB (true/false)
+     * Given one xmldb_index, check if it exists in DB (true/false)
      *
-     * @param mixed the table to be searched (string name or XMLDBTable instance)
-     * @param XMLDBIndex the index to be searched for
+     * @param mixed the table to be searched (string name or xmldb_table instance)
+     * @param xmldb_index the index to be searched for
      * @return boolean true/false
      */
     public function index_exists($table, $xmldb_index) {
@@ -221,14 +221,14 @@ class database_manager {
     }
 
     /**
-     * Given one XMLDBField, the function returns the name of the check constraint in DB (if exists)
+     * Given one xmldb_field, the function returns the name of the check constraint in DB (if exists)
      * of false if it doesn't exist. Note that XMLDB limits the number of check constrainst per field
      * to 1 "enum-like" constraint. So, if more than one is returned, only the first one will be
      * retrieved by this funcion.
      *
      * @uses, $db
-     * @param XMLDBTable the table to be searched
-     * @param XMLDBField the field to be searched
+     * @param xmldb_table the table to be searched
+     * @param xmldb_field the field to be searched
      * @return string check constraint name or false
      */
     public function find_check_constraint_name($xmldb_table, $xmldb_field) {
@@ -263,11 +263,11 @@ class database_manager {
     }
 
     /**
-     * Given one XMLDBField, check if it has a check constraint in DB
+     * Given one xmldb_field, check if it has a check constraint in DB
      *
      * @uses, $db
-     * @param XMLDBTable the table
-     * @param XMLDBField the field to be searched for any existing constraint
+     * @param xmldb_table the table
+     * @param xmldb_field the field to be searched for any existing constraint
      * @return boolean true/false
      */
     public function check_constraint_exists($xmldb_table, $xmldb_field) {
@@ -278,19 +278,19 @@ class database_manager {
      * This function IS NOT IMPLEMENTED. ONCE WE'LL BE USING RELATIONAL
      * INTEGRITY IT WILL BECOME MORE USEFUL. FOR NOW, JUST CALCULATE "OFFICIAL"
      * KEY NAMES WITHOUT ACCESSING TO DB AT ALL.
-     * Given one XMLDBKey, the function returns the name of the key in DB (if exists)
+     * Given one xmldb_key, the function returns the name of the key in DB (if exists)
      * of false if it doesn't exist
      *
      * @uses, $db
-     * @param XMLDBTable the table to be searched
-     * @param XMLDBKey the key to be searched
+     * @param xmldb_table the table to be searched
+     * @param xmldb_key the key to be searched
      * @return string key name of false
      */
     public function find_key_name($xmldb_table, $xmldb_key) {
 
     /// Extract key columns
-        if (!($xmldb_key instanceof XMLDBKey)) {
-            debugging("Wrong type for second parameter to database_manager::find_key_name. Should be XMLDBKey, got " . gettype($xmldb_key));
+        if (!($xmldb_key instanceof xmldb_key)) {
+            debugging("Wrong type for second parameter to database_manager::find_key_name. Should be xmldb_key, got " . gettype($xmldb_key));
             return false;
         }
 
@@ -332,14 +332,14 @@ class database_manager {
 
 
     /**
-     * Given one XMLDBTable, the function returns the name of its sequence in DB (if exists)
+     * Given one xmldb_table, the function returns the name of its sequence in DB (if exists)
      * of false if it doesn't exist
      *
-     * @param XMLDBTable the table to be searched
+     * @param xmldb_table the table to be searched
      * @return string sequence name of false
      */
     public function find_sequence_name($xmldb_table) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect find_sequence_name() $xmldb_table parameter');
             return false;
         }
@@ -407,13 +407,13 @@ class database_manager {
      * and all the associated objects (keys, indexes, constaints, sequences, triggers)
      * will be dropped too.
      *
-     * @param XMLDBTable table object (just the name is mandatory)
+     * @param xmldb_table table object (just the name is mandatory)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
      */
     public function drop_table($xmldb_table, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect drop_table() $xmldb_table parameter');
             return false;
         }
@@ -479,13 +479,13 @@ class database_manager {
      * This function will create the table passed as argument with all its
      * fields/keys/indexes/sequences, everything based in the XMLDB object
      *
-     * @param XMLDBTable table object (full specs are required)
+     * @param xmldb_table table object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
      */
     public function create_table($xmldb_table, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect create_table() $xmldb_table parameter');
             return false;
         }
@@ -515,13 +515,13 @@ class database_manager {
      * NOTE: The return value is the tablename - some DBs (MSSQL at least) use special
      * names for temp tables.
      *
-     * @param XMLDBTable table object (full specs are required)
+     * @param xmldb_table table object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return string tablename on success, false on error
      */
     function create_temp_table($xmldb_table, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect create_table() $xmldb_table parameter');
             return false;
         }
@@ -548,14 +548,14 @@ class database_manager {
      * This function will rename the table passed as argument
      * Before renaming the index, the function will check it exists
      *
-     * @param XMLDBTable table object (just the name is mandatory)
+     * @param xmldb_table table object (just the name is mandatory)
      * @param string new name of the index
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
      */
     public function rename_table($xmldb_table, $newname, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect rename_table() $xmldb_table parameter');
             return false;
         }
@@ -567,7 +567,7 @@ class database_manager {
             return false; //error!
         }
 
-        $check = new XMLDBTable($newname);
+        $check = new xmldb_table($newname);
 
     /// Check table already renamed
         if (!$this->table_exists($xmldb_table) and $this->table_exists($check)) {
@@ -602,19 +602,19 @@ class database_manager {
      * This function will add the field to the table passed as arguments
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBField field object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_field field object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
      */
     public function add_field($xmldb_table, $xmldb_field, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect add_field() $xmldb_table parameter');
             return false;
         }
 
-        if (!($xmldb_field instanceof XMLDBField)) {
+        if (!($xmldb_field instanceof xmldb_field)) {
             debugging('Incorrect add_field() $xmldb_field parameter');
             return false;
         }
@@ -644,19 +644,19 @@ class database_manager {
      * This function will drop the field from the table passed as arguments
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBField field object (just the name is mandatory)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_field field object (just the name is mandatory)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
      */
     public function drop_field($xmldb_table, $xmldb_field, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect drop_field() $xmldb_table parameter');
             return false;
         }
 
-        if (!($xmldb_field instanceof XMLDBField)) {
+        if (!($xmldb_field instanceof xmldb_field)) {
             debugging('Incorrect drop_field() $xmldb_field parameter');
             return false;
         }
@@ -679,19 +679,19 @@ class database_manager {
      * This function will change the type of the field in the table passed as arguments
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBField field object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_field field object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
      */
     public function change_field_type($xmldb_table, $xmldb_field, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect change_field_type() $xmldb_table parameter');
             return false;
         }
 
-        if (!($xmldb_field instanceof XMLDBField)) {
+        if (!($xmldb_field instanceof xmldb_field)) {
             debugging('Incorrect change_field_type() $xmldb_field parameter');
             return false;
         }
@@ -714,8 +714,8 @@ class database_manager {
      * This function will change the precision of the field in the table passed as arguments
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBField field object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_field field object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
@@ -730,8 +730,8 @@ class database_manager {
      * This function will change the unsigned/signed of the field in the table passed as arguments
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBField field object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_field field object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
@@ -746,8 +746,8 @@ class database_manager {
      * This function will change the nullability of the field in the table passed as arguments
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBField field object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_field field object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
@@ -761,19 +761,19 @@ class database_manager {
     /**
      * This function will change the enum status of the field in the table passed as arguments
      *
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBField field object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_field field object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
      */
     public function change_field_enum($xmldb_table, $xmldb_field, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect change_field_enum() $xmldb_table parameter');
             return false;
         }
 
-        if (!($xmldb_field instanceof XMLDBField)) {
+        if (!($xmldb_field instanceof xmldb_field)) {
             debugging('Incorrect change_field_enum() $xmldb_field parameter');
             return false;
         }
@@ -812,19 +812,19 @@ class database_manager {
      * One null value in the default field means delete the default
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBField field object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_field field object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
      */
     public function change_field_default($xmldb_table, $xmldb_field, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect change_field_default() $xmldb_table parameter');
             return false;
         }
 
-        if (!($xmldb_field instanceof XMLDBField)) {
+        if (!($xmldb_field instanceof xmldb_field)) {
             debugging('Incorrect change_field_default() $xmldb_field parameter');
             return false;
         }
@@ -848,20 +848,20 @@ class database_manager {
      * Before renaming the field, the function will check it exists
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBField index object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_field index object (full specs are required)
      * @param string new name of the field
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
      */
     public function rename_field($xmldb_table, $xmldb_field, $newname, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect rename_field() $xmldb_table parameter');
             return false;
         }
 
-        if (!($xmldb_field instanceof XMLDBField)) {
+        if (!($xmldb_field instanceof xmldb_field)) {
             debugging('Incorrect rename_field() $xmldb_field parameter');
             return false;
         }
@@ -917,19 +917,19 @@ class database_manager {
      * This function will create the key in the table passed as arguments
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBKey index object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_key index object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
      */
     public function add_key($xmldb_table, $xmldb_key, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect add_key() $xmldb_table parameter');
             return false;
         }
 
-        if (!($xmldb_key instanceof XMLDBKey)) {
+        if (!($xmldb_key instanceof xmldb_key)) {
             debugging('Incorrect add_key() $xmldb_key parameter');
             return false;
         }
@@ -950,19 +950,19 @@ class database_manager {
      * This function will drop the key in the table passed as arguments
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBKey key object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_key key object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
      */
     public function drop_key($xmldb_table, $xmldb_key, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect drop_key() $xmldb_table parameter');
             return false;
         }
 
-        if (!($xmldb_key instanceof XMLDBKey)) {
+        if (!($xmldb_key instanceof xmldb_key)) {
             debugging('Incorrect drop_key() $xmldb_key parameter');
             return false;
         }
@@ -984,8 +984,8 @@ class database_manager {
      * Experimental. Shouldn't be used at all in normal installation/upgrade!
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBKey key object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_key key object (full specs are required)
      * @param string new name of the key
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
@@ -994,12 +994,12 @@ class database_manager {
     public function rename_key($xmldb_table, $xmldb_key, $newname, $continue=true, $feedback=true) {
         debugging('rename_key() is one experimental feature. You must not use it in production!', DEBUG_DEVELOPER);
 
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect rename_key() $xmldb_table parameter');
             return false;
         }
 
-        if (!($xmldb_key instanceof XMLDBKey)) {
+        if (!($xmldb_key instanceof xmldb_key)) {
             debugging('Incorrect rename_key() $xmldb_key parameter');
             return false;
         }
@@ -1024,19 +1024,19 @@ class database_manager {
      * Before creating the index, the function will check it doesn't exists
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBIndex index object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_index index object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
      */
     public function add_index($xmldb_table, $xmldb_intex, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect add_index() $xmldb_table parameter');
             return false;
         }
 
-        if (!($xmldb_intex instanceof XMLDBIndex)) {
+        if (!($xmldb_intex instanceof xmldb_index)) {
             debugging('Incorrect add_index() $xmldb_index parameter');
             return false;
         }
@@ -1060,19 +1060,19 @@ class database_manager {
      * Before dropping the index, the function will check it exists
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBIndex index object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_index index object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
      */
     public function drop_index($xmldb_table, $xmldb_intex, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect add_index() $xmldb_table parameter');
             return false;
         }
 
-        if (!($xmldb_intex instanceof XMLDBIndex)) {
+        if (!($xmldb_intex instanceof xmldb_index)) {
             debugging('Incorrect add_index() $xmldb_index parameter');
             return false;
         }
@@ -1097,8 +1097,8 @@ class database_manager {
      * Experimental. Shouldn't be used at all!
      *
      * @uses $CFG, $db
-     * @param XMLDBTable table object (just the name is mandatory)
-     * @param XMLDBIndex index object (full specs are required)
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_index index object (full specs are required)
      * @param string new name of the index
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
@@ -1107,12 +1107,12 @@ class database_manager {
     public function rename_index($xmldb_table, $xmldb_intex, $newname, $continue=true, $feedback=true) {
         debugging('rename_index() is one experimental feature. You must not use it in production!', DEBUG_DEVELOPER);
 
-        if (!($xmldb_table instanceof XMLDBTable)) {
+        if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect add_index() $xmldb_table parameter');
             return false;
         }
 
-        if (!($xmldb_intex instanceof XMLDBIndex)) {
+        if (!($xmldb_intex instanceof xmldb_index)) {
             debugging('Incorrect add_index() $xmldb_index parameter');
             return false;
         }

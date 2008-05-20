@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -117,7 +117,7 @@ class edit_field extends XMLDBAction {
         }
     /// XMLDB field comment
         $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td colspan="2"><textarea name="comment" rows="3" cols="80" id="comment">' . s($field->getComment()) . '</textarea></td></tr>';
-    /// XMLDBField Type
+    /// xmldb_field Type
         $typeoptions = array (XMLDB_TYPE_INTEGER => $field->getXMLDBTypeName(XMLDB_TYPE_INTEGER),
                               XMLDB_TYPE_NUMBER  => $field->getXMLDBTypeName(XMLDB_TYPE_NUMBER),
                               XMLDB_TYPE_FLOAT   => $field->getXMLDBTypeName(XMLDB_TYPE_FLOAT),
@@ -137,25 +137,25 @@ class edit_field extends XMLDBAction {
         }
         $o.= '      <tr valign="top"><td><label for="menutype" accesskey="t">Type:</label></td>';
         $o.= '        <td colspan="2">' . choose_from_menu($typeoptions, 'type', $field->getType(), '', '', '', true) . '</td></tr>';
-    /// XMLDBField Length
+    /// xmldb_field Length
         $o.= '      <tr valign="top"><td><label for="length" accesskey="l">Length:</label></td>';
         $o.= '        <td colspan="2"><input name="length" type="text" size="6" maxlength="6" id="length" value="' . s($field->getLength()) . '" /><span id="lengthtip"></span></td></tr>';
-    /// XMLDBField Decimals
+    /// xmldb_field Decimals
         $o.= '      <tr valign="top"><td><label for="decimals" accesskey="d">Decimals:</label></td>';
         $o.= '        <td colspan="2"><input name="decimals" type="text" size="6" maxlength="6" id="decimals" value="' . s($field->getDecimals()) . '" /><span id="decimalstip"></span></td></tr>';
-    /// XMLDBField Unsigned
+    /// xmldb_field Unsigned
         $unsignedoptions = array (0 => 'signed', 1 => 'unsigned');
         $o.= '      <tr valign="top"><td><label for="menuunsigned" accesskey="u">Unsigned:</label></td>';
         $o.= '        <td colspan="2">' . choose_from_menu($unsignedoptions, 'unsigned', $field->getUnsigned(), '', '', '', true) . '</td></tr>';
-    /// XMLDBField NotNull
+    /// xmldb_field NotNull
         $notnulloptions = array (0 => 'null', 'not null');
         $o.= '      <tr valign="top"><td><label for="menunotnull" accesskey="n">Not Null:</label></td>';
         $o.= '        <td colspan="2">' . choose_from_menu($notnulloptions, 'notnull', $field->getNotNull(), '', '', '', true) . '</td></tr>';
-    /// XMLDBField Sequence
+    /// xmldb_field Sequence
         $sequenceoptions = array (0 => $this->str['no'], 1 => 'auto-numbered');
         $o.= '      <tr valign="top"><td><label for="menusequence" accesskey="s">Sequence:</label></td>';
         $o.= '        <td colspan="2">' . choose_from_menu($sequenceoptions, 'sequence', $field->getSequence(), '', '', '', true) . '</td></tr>';
-    /// XMLDBField Enum and enumvalues
+    /// xmldb_field Enum and enumvalues
         $enumoptions = array (0 => $this->str['no'], 1 => $this->str['yes']);
         $o.= '      <tr valign="top"><td><label for="menuenum" accesskey="s">Enum:</label></td>';
         $o.= '        <td>' . choose_from_menu($enumoptions, 'enum', $field->getEnum(), '', '', '', true) . '</td>';
@@ -165,7 +165,7 @@ class edit_field extends XMLDBAction {
             $enumvalues = '';
         }
         $o.= '            <td><textarea name="enumvalues" rows="3" cols="70" id="enumvalues">' . s($enumvalues) . '</textarea></td></tr>';
-    /// XMLDBField Default
+    /// xmldb_field Default
         $o.= '      <tr valign="top"><td><label for="default" accesskey="d">Default:</label></td>';
         $o.= '        <td colspan="2"><input type="text" name="default" size="30" maxlength="80" id="default" value="' . s($field->getDefault()) . '" /></td></tr>';
     /// Change button

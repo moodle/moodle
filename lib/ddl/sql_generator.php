@@ -198,9 +198,9 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBTable, returns it's correct name, depending of all the parametrization
+     * Given one xmldb_table, returns it's correct name, depending of all the parametrization
      *
-     * @param XMLDBTable table whose name we want
+     * @param xmldb_table table whose name we want
      * @param boolean to specify if the name must be quoted (if reserved word, only!)
      * @return string the correct name of the table
      */
@@ -217,7 +217,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one correct XMLDBTable, returns the SQL statements
+     * Given one correct xmldb_table, returns the SQL statements
      * to create it (inside one array)
      */
     public function getCreateTableSQL($xmldb_table) {
@@ -294,7 +294,7 @@ abstract class sql_generator {
             /// automatically by the RDBMS) create the underlying (created by us) index (if doesn't exists)
                 if (!$this->getKeySQL($xmldb_table, $xmldb_key) || $xmldb_key->getType() == XMLDB_KEY_FOREIGN) {
                 /// Create the interim index
-                    $index = new XMLDBIndex('anyname');
+                    $index = new xmldb_index('anyname');
                     $index->setFields($xmldb_key->getFields());
                 ///Only process all this if the index doesn't exist in DB
                     if (!$this->mdb->get_manager()->index_exists($xmldb_table, $index)) {
@@ -338,7 +338,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one correct XMLDBIndex, returns the SQL statements
+     * Given one correct xmldb_index, returns the SQL statements
      * needed to create it (in array)
      */
     public function getCreateIndexSQL($xmldb_table, $xmldb_index) {
@@ -359,7 +359,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one correct XMLDBField, returns the complete SQL line to create it
+     * Given one correct xmldb_field, returns the complete SQL line to create it
      */
     public function getFieldSQL($xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL, $specify_nulls_clause = NULL)  {
 
@@ -443,7 +443,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one correct XMLDBKey, returns its specs
+     * Given one correct xmldb_key, returns its specs
      */
     public function getKeySQL($xmldb_table, $xmldb_key) {
 
@@ -481,7 +481,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Give one XMLDBField, returns the correct "default value" for the current configuration
+     * Give one xmldb_field, returns the correct "default value" for the current configuration
      */
     public function getDefaultValue($xmldb_field) {
 
@@ -515,7 +515,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBField, returns the correct "default clause" for the current configuration
+     * Given one xmldb_field, returns the correct "default clause" for the current configuration
      */
     public function getDefaultClause($xmldb_field) {
 
@@ -529,14 +529,14 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one correct XMLDBTable and the new name, returns the SQL statements
+     * Given one correct xmldb_table and the new name, returns the SQL statements
      * to rename it (inside one array)
      */
     public function getRenameTableSQL($xmldb_table, $newname) {
 
         $results = array();  //Array where all the sentences will be stored
 
-        $newt = new XMLDBTable($newname); //Temporal table for name calculations
+        $newt = new xmldb_table($newname); //Temporal table for name calculations
 
         $rename = str_replace('OLDNAME', $this->getTableName($xmldb_table), $this->rename_table_sql);
         $rename = str_replace('NEWNAME', $this->getTableName($newt), $rename);
@@ -551,7 +551,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one correct XMLDBTable and the new name, returns the SQL statements
+     * Given one correct xmldb_table and the new name, returns the SQL statements
      * to drop it (inside one array)
      */
     public function getDropTableSQL($xmldb_table) {
@@ -570,7 +570,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to add the field to the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to add the field to the table
      */
     public function getAddFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
 
@@ -606,7 +606,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop the field from the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop the field from the table
      */
     public function getDropFieldSQL($xmldb_table, $xmldb_field) {
 
@@ -623,7 +623,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to alter the field in the table
      */
     public function getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
 
@@ -657,7 +657,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to modify the enum of the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to modify the enum of the field in the table
      */
     public function getModifyEnumSQL($xmldb_table, $xmldb_field) {
 
@@ -678,7 +678,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to modify the default of the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to modify the default of the field in the table
      */
     public function getModifyDefaultSQL($xmldb_table, $xmldb_field) {
 
@@ -699,7 +699,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one correct XMLDBField and the new name, returns the SQL statements
+     * Given one correct xmldb_field and the new name, returns the SQL statements
      * to rename it (inside one array)
      */
     public function getRenameFieldSQL($xmldb_table, $xmldb_field, $newname) {
@@ -731,7 +731,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBKey, return the SQL statements needded to add the key to the table
+     * Given one xmldb_table and one xmldb_key, return the SQL statements needded to add the key to the table
      * note that undelying indexes will be added as parametrised by $xxxx_keys and $xxxx_index parameters
      */
     public function getAddKeySQL($xmldb_table, $xmldb_key) {
@@ -754,7 +754,7 @@ abstract class sql_generator {
             } else {
                 $indextype = XMLDB_INDEX_UNIQUE;
             }
-            $xmldb_index = new XMLDBIndex('anyname');
+            $xmldb_index = new xmldb_index('anyname');
             $xmldb_index->setAttributes($indextype, $xmldb_key->getFields());
             if (!$this->mdb->get_manager()->index_exists($xmldb_table, $xmldb_index)) {
                 $results = array_merge($results, $this->getAddIndexSQL($xmldb_table, $xmldb_index));
@@ -773,7 +773,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBIndex, return the SQL statements needded to drop the index from the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to drop the index from the table
      */
     public function getDropKeySQL($xmldb_table, $xmldb_key) {
 
@@ -822,7 +822,7 @@ abstract class sql_generator {
     /// automatically by the RDBMS) drop the underlying (created by us) index (if exists)
         if (!$dropkey || $xmldb_key->getType() == XMLDB_KEY_FOREIGN) {
         /// Only if they exist
-            $xmldb_index = new XMLDBIndex('anyname');
+            $xmldb_index = new xmldb_index('anyname');
             $xmldb_index->setAttributes(XMLDB_INDEX_UNIQUE, $xmldb_key->getFields());
             if ($this->mdb->get_manager()->index_exists($xmldb_table, $xmldb_index)) {
                 $results = array_merge($results, $this->getDropIndexSQL($xmldb_table, $xmldb_index));
@@ -841,7 +841,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBKey, return the SQL statements needded to rename the key in the table
+     * Given one xmldb_table and one xmldb_key, return the SQL statements needded to rename the key in the table
      * Experimental! Shouldn't be used at all!
      */
 
@@ -858,7 +858,7 @@ abstract class sql_generator {
             ($xmldb_key->getType() == XMLDB_KEY_FOREIGN && !$this->foreign_keys) ||
             ($xmldb_key->getType() == XMLDB_KEY_FOREIGN_UNIQUE && !$this->unique_keys && !$this->foreign_keys)) {
         /// We aren't generating this type of keys, delegate to child indexes
-            $xmldb_index = new XMLDBIndex($xmldb_key->getName());
+            $xmldb_index = new xmldb_index($xmldb_key->getName());
             $xmldb_index->setFields($xmldb_key->getFields());
             return $this->getRenameIndexSQL($xmldb_table, $xmldb_index, $newname);
         }
@@ -878,7 +878,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBIndex, return the SQL statements needded to add the index to the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to add the index to the table
      */
     public function getAddIndexSQL($xmldb_table, $xmldb_index) {
 
@@ -887,7 +887,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBIndex, return the SQL statements needded to drop the index from the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to drop the index from the table
      */
     public function getDropIndexSQL($xmldb_table, $xmldb_index) {
 
@@ -906,7 +906,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBIndex, return the SQL statements needded to rename the index in the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to rename the index in the table
      * Experimental! Shouldn't be used at all!
      */
     function getRenameIndexSQL($xmldb_table, $xmldb_index, $newname) {
@@ -1108,7 +1108,7 @@ abstract class sql_generator {
     /**
      * Given one object name and it's type (pk, uk, fk, ck, ix, uix, seq, trg)
      * return if such name is currently in use (true) or no (false)
-     * (MySQL requires the whole XMLDBTable object to be specified, so we add it always)
+     * (MySQL requires the whole xmldb_table object to be specified, so we add it always)
      * (invoked from getNameForObject()
      * Only some DB have this implemented
      */
@@ -1174,32 +1174,32 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public abstract function getDropEnumSQL($xmldb_table, $xmldb_field);
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to add its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to add its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public abstract function getCreateEnumSQL($xmldb_table, $xmldb_field);
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public abstract function getDropDefaultSQL($xmldb_table, $xmldb_field);
 
     /**
-     * Given one XMLDBTable and one optional XMLDBField, return one array with all the check
+     * Given one xmldb_table and one optional xmldb_field, return one array with all the check
      * constrainst found for that table (or field). Must exist for each DB supported.
      * (usually invoked from find_check_constraint_name)
      */
     public abstract function getCheckConstraintsFromDB($xmldb_table, $xmldb_field=null);
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to add its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to add its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public abstract function getCreateDefaultSQL($xmldb_table, $xmldb_field);

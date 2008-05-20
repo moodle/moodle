@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -26,16 +26,27 @@
 
 /// This class represent one XMLDB table
 
-class XMLDBTable extends xmldb_object {
+/// TODO: Delete for 2.1 (deeprecated in 2.0).
+/// Deprecated API starts here
+class XMLDBTable extends xmldb_table {
+
+    function __construct($name) {
+        parent::__construct($name);
+    }
+
+}
+/// Deprecated API ends here
+
+class xmldb_table extends xmldb_object {
 
     var $fields;
     var $keys;
     var $indexes;
 
     /**
-     * Creates one new XMLDBTable
+     * Creates one new xmldb_table
      */
-    function XMLDBTable($name) {
+    function __construct($name) {
         parent::__construct($name);
         $this->fields = array();
         $this->keys = array();
@@ -202,7 +213,7 @@ class XMLDBTable extends xmldb_object {
     }
 
     /**
-     * Returns one XMLDBField
+     * Returns one xmldb_field
      */
     function &getField($fieldname) {
         $i = $this->findFieldInArray($fieldname);
@@ -240,7 +251,7 @@ class XMLDBTable extends xmldb_object {
     }
 
     /**
-     * Returns one XMLDBKey
+     * Returns one xmldb_key
      */
     function &getKey($keyname) {
         $i = $this->findKeyInArray($keyname);
@@ -278,7 +289,7 @@ class XMLDBTable extends xmldb_object {
     }
 
     /**
-     * Returns one XMLDBIndex
+     * Returns one xmldb_index
      */
     function &getIndex($indexname) {
         $i = $this->findIndexInArray($indexname);
@@ -432,7 +443,7 @@ class XMLDBTable extends xmldb_object {
     /**
      * Load data from XML to the table
      */
-    function arr2XMLDBTable($xmlarr) {
+    function arr2xmldb_table($xmlarr) {
 
         global $CFG;
 
@@ -474,8 +485,8 @@ class XMLDBTable extends xmldb_object {
                     continue;
                 }
                 $name = trim($xmlfield['@']['NAME']);
-                $field = new XMLDBField($name);
-                $field->arr2XMLDBField($xmlfield);
+                $field = new xmldb_field($name);
+                $field->arr2xmldb_field($xmlfield);
                 $this->fields[] = $field;
                 if (!$field->isLoaded()) {
                     $this->errormsg = 'Problem loading field ' . $name;
@@ -519,8 +530,8 @@ class XMLDBTable extends xmldb_object {
                     continue;
                 }
                 $name = trim($xmlkey['@']['NAME']);
-                $key = new XMLDBKey($name);
-                $key->arr2XMLDBKey($xmlkey);
+                $key = new xmldb_key($name);
+                $key->arr2xmldb_key($xmlkey);
                 $this->keys[] = $key;
                 if (!$key->isLoaded()) {
                     $this->errormsg = 'Problem loading key ' . $name;
@@ -567,8 +578,8 @@ class XMLDBTable extends xmldb_object {
                     continue;
                 }
                 $name = trim($xmlindex['@']['NAME']);
-                $index = new XMLDBIndex($name);
-                $index->arr2XMLDBIndex($xmlindex);
+                $index = new xmldb_index($name);
+                $index->arr2xmldb_index($xmlindex);
                 $this->indexes[] = $index;
                 if (!$index->isLoaded()) {
                     $this->errormsg = 'Problem loading index ' . $name;
@@ -612,7 +623,7 @@ class XMLDBTable extends xmldb_object {
     }
 
     /**
-     * This function calculate and set the hash of one XMLDBTable
+     * This function calculate and set the hash of one xmldb_table
      */
      function calculateHash($recursive = false) {
         if (!$this->loaded) {
@@ -711,7 +722,7 @@ class XMLDBTable extends xmldb_object {
      * @param string previous name of the previous field in the table or null (or false)
      */
     function addFieldInfo($name, $type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
-        $field = new XMLDBField($name);
+        $field = new xmldb_field($name);
         $field->setAttributes($type, $precision, $unsigned, $notnull, $sequence, $enum, $enumvalues, $default);
         $this->addField($field, $previous);
 
@@ -729,7 +740,7 @@ class XMLDBTable extends xmldb_object {
      * @param array reffields an array of fieldnames in the FK table or null
      */
     function addKeyInfo($name, $type, $fields, $reftable=null, $reffields=null) {
-        $key = new XMLDBKey($name);
+        $key = new xmldb_key($name);
         $key->setAttributes($type, $fields, $reftable, $reffields);
         $this->addKey($key);
     }
@@ -743,7 +754,7 @@ class XMLDBTable extends xmldb_object {
      * @param array fields an array of fieldnames to build the index over
      */
     function addIndexInfo($name, $type, $fields) {
-        $index = new XMLDBIndex($name);
+        $index = new xmldb_index($name);
         $index->setAttributes($type, $fields);
         $this->addIndex($index);
     }

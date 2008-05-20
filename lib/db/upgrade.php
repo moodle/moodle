@@ -32,16 +32,16 @@ function xmldb_main_upgrade($oldversion=0) {
     if ($result && $oldversion < 2008030700) {
 
     /// Define index contextid-lowerboundary (not unique) to be dropped form grade_letters
-        $table = new XMLDBTable('grade_letters');
-        $index = new XMLDBIndex('contextid-lowerboundary');
+        $table = new xmldb_table('grade_letters');
+        $index = new xmldb_index('contextid-lowerboundary');
         $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('contextid', 'lowerboundary'));
 
     /// Launch drop index contextid-lowerboundary
         $result = $result && $dbman->drop_index($table, $index);
 
     /// Define index contextid-lowerboundary-letter (unique) to be added to grade_letters
-        $table = new XMLDBTable('grade_letters');
-        $index = new XMLDBIndex('contextid-lowerboundary-letter');
+        $table = new xmldb_table('grade_letters');
+        $index = new xmldb_index('contextid-lowerboundary-letter');
         $index->setAttributes(XMLDB_INDEX_UNIQUE, array('contextid', 'lowerboundary', 'letter'));
 
     /// Launch add index contextid-lowerboundary-letter
@@ -53,7 +53,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2008050100) {
         // Update courses that used weekscss to weeks
-        $result = $DB->set_field('course', 'format', 'weeks', 'format', 'weekscss');
+        $result = $DB->set_field('course', 'format', 'weeks', array('format' => 'weekscss'));
         upgrade_main_savepoint($result, 2008050100);
     }
 
@@ -95,8 +95,8 @@ function xmldb_main_upgrade($oldversion=0) {
         }
 
     /// Define index idnumber (not unique) to be dropped form user
-        $table = new XMLDBTable('user');
-        $index = new XMLDBIndex('idnumber');
+        $table = new xmldb_table('user');
+        $index = new xmldb_index('idnumber');
         $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
 
     /// Launch drop index idnumber
@@ -105,15 +105,15 @@ function xmldb_main_upgrade($oldversion=0) {
         }
 
     /// Changing precision of field idnumber on table user to (255)
-        $table = new XMLDBTable('user');
-        $field = new XMLDBField('idnumber');
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('idnumber');
         $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'password');
 
     /// Launch change of precision for field idnumber
         $result = $result && $dbman->change_field_precision($table, $field);
 
     /// Launch add index idnumber again
-        $index = new XMLDBIndex('idnumber');
+        $index = new xmldb_index('idnumber');
         $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
         $result = $result && $dbman->add_index($table, $index);
 

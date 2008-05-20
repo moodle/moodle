@@ -144,9 +144,9 @@ class postgres_sql_generator extends sql_generator {
 
         $results = array();
 
-        $newt = new XMLDBTable($newname);
+        $newt = new xmldb_table($newname);
 
-        $xmldb_field = new XMLDBField('id'); // Fields having sequences should be exclusively, id.
+        $xmldb_field = new xmldb_field('id'); // Fields having sequences should be exclusively, id.
 
         $oldseqname = $this->getTableName($xmldb_table) . '_' . $xmldb_field->getName() . '_seq';
         $newseqname = $this->getTableName($newt) . '_' . $xmldb_field->getName() . '_seq';
@@ -177,7 +177,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to add the field to the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to add the field to the table
      * PostgreSQL is pretty standard but with one severe restriction under 7.4 that forces us to overload
      * this function: Default clause is not allowed when adding fields.
      *
@@ -227,7 +227,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to alter the field in the table
      * PostgreSQL has some severe limits:
      *     - Any change of type or precision requires a new temporary column to be created, values to
      *       be transfered potentially casting them, to apply defaults if the column is not null and
@@ -388,7 +388,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public function getCreateEnumSQL($xmldb_table, $xmldb_field) {
@@ -398,7 +398,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public function getDropEnumSQL($xmldb_table, $xmldb_field) {
@@ -415,7 +415,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
@@ -425,7 +425,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
@@ -435,7 +435,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable returns one array with all the check constrainsts
+     * Given one xmldb_table returns one array with all the check constrainsts
      * in the table (fetched from DB)
      * Optionally the function allows one xmldb_field to be specified in
      * order to return only the check constraints belonging to one field.
@@ -483,7 +483,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
 /**
- * Given one XMLDBTable returns one string with the sequence of the table
+ * Given one xmldb_table returns one string with the sequence of the table
  * in the table (fetched from DB)
  * The sequence name for Postgres has one standard name convention:
  *     tablename_fieldname_seq

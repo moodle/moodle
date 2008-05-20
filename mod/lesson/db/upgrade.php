@@ -29,9 +29,9 @@ function xmldb_lesson_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2007072201) {
 
-        $table = new XMLDBTable('lesson');
-        $field = new XMLDBField('usegrademax');
-        $field2 = new XMLDBField('usemaxgrade');
+        $table = new xmldb_table('lesson');
+        $field = new xmldb_field('usegrademax');
+        $field2 = new xmldb_field('usemaxgrade');
 
     /// Rename lesson->usegrademax to lesson->usemaxgrade. Some old sites can have it incorrect. MDL-13177
         if ($dbman->field_exists($table, $field) && !$dbman->field_exists($table, $field2)) {

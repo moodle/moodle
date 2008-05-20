@@ -30,8 +30,8 @@ function xmldb_data_upgrade($oldversion=0) {
     if ($result && $oldversion < 2007101512) {
     /// Launch add field asearchtemplate again if does not exists yet - reported on several sites
 
-        $table = new XMLDBTable('data');
-        $field = new XMLDBField('asearchtemplate');
+        $table = new xmldb_table('data');
+        $field = new xmldb_field('asearchtemplate');
         $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'jstemplate');
 
         if (!$dbman->field_exists($table, $field)) {
@@ -45,8 +45,8 @@ function xmldb_data_upgrade($oldversion=0) {
         $sql = "UPDATE {$CFG->prefix}data SET notification=0 WHERE notification IS NULL";
         $result = $DB->execute($sql);
 
-        $table = new XMLDBTable('data');
-        $field = new XMLDBField('notification');
+        $table = new xmldb_table('data');
+        $field = new xmldb_field('notification');
         // First step, Set NOT NULL
         $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'editany');
         $result = $result && $dbman->change_field_notnull($table, $field);

@@ -166,7 +166,7 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public function getCreateEnumSQL($xmldb_table, $xmldb_field) {
@@ -175,7 +175,7 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public function getDropEnumSQL($xmldb_table, $xmldb_field) {
@@ -184,7 +184,7 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
@@ -194,7 +194,7 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one correct XMLDBField and the new name, returns the SQL statements
+     * Given one correct xmldb_field and the new name, returns the SQL statements
      * to rename it (inside one array)
      * MySQL is pretty diferent from the standard to justify this oveloading
      */
@@ -214,7 +214,7 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
@@ -244,7 +244,7 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDBTable returns one array with all the check constrainsts
+     * Given one xmldb_table returns one array with all the check constrainsts
      * in the table (fetched from DB)
      * Optionally the function allows one xmldb_field to be specified in
      * order to return only the check constraints belonging to one field.
@@ -306,7 +306,7 @@ class mysql_sql_generator extends sql_generator {
     public function isNameInUse($object_name, $type, $table_name) {
 
     /// Calculate the real table name
-        $xmldb_table = new XMLDBTable($table_name);
+        $xmldb_table = new xmldb_table($table_name);
         $tname = $this->getTableName($xmldb_table);
 
         switch($type) {

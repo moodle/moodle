@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -26,7 +26,18 @@
 
 /// This class represent one XMLDB Key
 
-class XMLDBKey extends xmldb_object {
+/// TODO: Delete for 2.1 (deeprecated in 2.0).
+/// Deprecated API starts here
+class XMLDBKey extends xmldb_key {
+
+    function __construct($name) {
+        parent::__construct($name);
+    }
+
+}
+/// Deprecated API ends here
+
+class xmldb_key extends xmldb_object {
 
     var $type;
     var $fields;
@@ -34,9 +45,9 @@ class XMLDBKey extends xmldb_object {
     var $reffields;
 
     /**
-     * Creates one new XMLDBKey
+     * Creates one new xmldb_key
      */
-    function XMLDBKey($name) {
+    function __construct($name) {
         parent::__construct($name);
         $this->type = NULL;
         $this->fields = array();
@@ -45,7 +56,7 @@ class XMLDBKey extends xmldb_object {
     }
 
     /**
-     * Set all the attributes of one XMLDBKey
+     * Set all the attributes of one xmldb_key
      *
      * @param string type XMLDB_KEY_PRIMARY, XMLDB_KEY_UNIQUE, XMLDB_KEY_FOREIGN
      * @param array fields an array of fieldnames to build the key over
@@ -118,7 +129,7 @@ class XMLDBKey extends xmldb_object {
     /**
      * Load data from XML to the key
      */
-    function arr2XMLDBKey($xmlarr) {
+    function arr2xmldb_key($xmlarr) {
 
         $result = true;
 
@@ -323,7 +334,7 @@ class XMLDBKey extends xmldb_object {
     }
 
     /**
-     * This function calculate and set the hash of one XMLDBKey
+     * This function calculate and set the hash of one xmldb_key
      */
      function calculateHash($recursive = false) {
         if (!$this->loaded) {
@@ -367,7 +378,7 @@ class XMLDBKey extends xmldb_object {
     }
 
     /**
-     * This function will set all the attributes of the XMLDBKey object
+     * This function will set all the attributes of the xmldb_key object
      * based on information passed in one ADOkey
      */
     function setFromADOKey($adokey) {
@@ -389,7 +400,7 @@ class XMLDBKey extends xmldb_object {
     }
 
     /**
-     * Returns the PHP code needed to define one XMLDBKey
+     * Returns the PHP code needed to define one xmldb_key
      */
     function getPHP() {
 

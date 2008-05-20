@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -84,7 +84,7 @@ class new_table extends XMLDBAction {
             }
         }
         if (!$changeme_exists) { /// Lets create the table
-            $field = new XMLDBField('id');
+            $field = new xmldb_field('id');
             $field->setType(XMLDB_TYPE_INTEGER);
             $field->setLength(10);
             $field->setNotNull(true);
@@ -93,13 +93,13 @@ class new_table extends XMLDBAction {
             $field->setLoaded(true);
             $field->setChanged(true);
 
-            $key = new XMLDBKey('primary');
+            $key = new xmldb_key('primary');
             $key->setType(XMLDB_KEY_PRIMARY);
             $key->setFields(array('id'));
             $key->setLoaded(true);
             $key->setChanged(true);
 
-            $table = new XMLDBTable('changeme');
+            $table = new xmldb_table('changeme');
             $table->setComment('Default comment for the table, please edit me');
             $table->addField($field);
             $table->addKey($key);

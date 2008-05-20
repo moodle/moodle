@@ -45,11 +45,11 @@ require_once($CFG->libdir.'/xmldb/xmldb_constants.php');
 require_once($CFG->libdir.'/xmldb/xmldb_object.php');
 require_once($CFG->libdir.'/xmldb/xmldb_file.php');
 require_once($CFG->libdir.'/xmldb/xmldb_structure.php');
-require_once($CFG->libdir.'/xmldb/XMLDBTable.class.php');
-require_once($CFG->libdir.'/xmldb/XMLDBField.class.php');
-require_once($CFG->libdir.'/xmldb/XMLDBKey.class.php');
-require_once($CFG->libdir.'/xmldb/XMLDBIndex.class.php');
-require_once($CFG->libdir.'/xmldb/XMLDBStatement.class.php');
+require_once($CFG->libdir.'/xmldb/xmldb_table.php');
+require_once($CFG->libdir.'/xmldb/xmldb_field.php');
+require_once($CFG->libdir.'/xmldb/xmldb_key.php');
+require_once($CFG->libdir.'/xmldb/xmldb_index.php');
+require_once($CFG->libdir.'/xmldb/xmldb_statement.php');
 
 /// Add other libraries
 require_once($CFG->libdir.'/xmlize.php');
@@ -81,7 +81,7 @@ function drop_plugin_tables($name, $file, $feedback=true) {
 
         // found orphan table --> delete it
         if ($DB->get_manager()->table_exists($table)) {
-            $xmldb_table = new XMLDBTable($table);
+            $xmldb_table = new xmldb_table($table);
             $DB->get_manager()->drop_table($xmldb_table, true, $feedback);
         }
     }

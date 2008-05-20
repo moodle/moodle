@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -159,7 +159,7 @@ class edit_index_save extends XMLDBAction {
         }
 
         if (!empty($errors)) {
-            $tempindex = new XMLDBIndex($name);
+            $tempindex = new xmldb_index($name);
             $tempindex->setUnique($unique);
             $tempindex->setFields($fieldsarr);
         /// Prepare the output

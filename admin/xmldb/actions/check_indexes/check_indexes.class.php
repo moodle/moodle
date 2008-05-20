@@ -163,7 +163,7 @@ class check_indexes extends XMLDBAction {
                                 /// automatically by the RDBMS) create the underlying (created by us) index (if doesn't exists)
                                     if (!$dbman->generator->getKeySQL($xmldb_table, $xmldb_key) || $xmldb_key->getType() == XMLDB_KEY_FOREIGN) {
                                     /// Create the interim index
-                                        $xmldb_index = new XMLDBIndex('anyname');
+                                        $xmldb_index = new xmldb_index('anyname');
                                         $xmldb_index->setFields($xmldb_key->getFields());
                                         switch ($xmldb_key->getType()) {
                                             case XMLDB_KEY_UNIQUE:

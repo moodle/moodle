@@ -73,21 +73,21 @@ class test extends XMLDBAction {
         $o = $b;
 
     /// Silenty drop any previous test tables
-        $table = new XMLDBTable('testtable');
+        $table = new xmldb_table('testtable');
         if ($dbman->table_exists($table)) {
             $status = $dbman->drop_table($table, true, false);
         }
-        $table = new XMLDBTable ('anothertest');
+        $table = new xmldb_table ('anothertest');
         if ($dbman->table_exists($table)) {
             $status = $dbman->drop_table($table, true, false);
         }
-        $table = new XMLDBTable ('newnameforthetable');
+        $table = new xmldb_table ('newnameforthetable');
         if ($dbman->table_exists($table)) {
             $status = $dbman->drop_table($table, true, false);
         }
 
     /// 1st test. Complete table creation.
-        $table = new XMLDBTable('testtable');
+        $table = new xmldb_table('testtable');
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->addFieldInfo('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general');
@@ -139,7 +139,7 @@ class test extends XMLDBAction {
 
     /// 3rd test. creating another, smaller table
         if ($test->status) {
-            $table = new XMLDBTable ('anothertest');
+            $table = new xmldb_table ('anothertest');
             $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
             $table->addFieldInfo('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
@@ -175,7 +175,7 @@ class test extends XMLDBAction {
     /// 4th test. Adding one complex enum field
         if ($test->status) {
         /// Create a new field with complex specs (enums are good candidates)
-            $field = new XMLDBField('type');
+            $field = new xmldb_field('type');
             $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -202,7 +202,7 @@ class test extends XMLDBAction {
     /// 6th test. Adding one complex enum field
         if ($test->status) {
         /// Create a new field with complex specs (enums are good candidates)
-            $field = new XMLDBField('type');
+            $field = new xmldb_field('type');
             $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -217,7 +217,7 @@ class test extends XMLDBAction {
     /// 7th test. Adding one numeric field
         if ($test->status) {
         /// Create a new field (numeric)
-            $field = new XMLDBField('onenumber');
+            $field = new xmldb_field('onenumber');
             $field->setAttributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, 0, 'type');
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -232,7 +232,7 @@ class test extends XMLDBAction {
     /// 8th test. Dropping one complex enum field
         if ($test->status) {
         /// Create a new field with complex specs (enums are good candidates)
-            $field = new XMLDBField('type');
+            $field = new xmldb_field('type');
             $test = new stdClass;
             $test->sql = $gen->getDropFieldSQL($table, $field);
             $test->status = $dbman->drop_field($table, $field, false, false);
@@ -246,7 +246,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('course');
+            $field = new xmldb_field('course');
             $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, '0');
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -261,7 +261,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('course');
+            $field = new xmldb_field('course');
             $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -276,7 +276,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('grade');
+            $field = new xmldb_field('grade');
             $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, "test'n drop");
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -291,7 +291,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('grade');
+            $field = new xmldb_field('grade');
             $field->setAttributes(XMLDB_TYPE_FLOAT, '20,10', XMLDB_UNSIGNED, null, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -306,7 +306,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('grade');
+            $field = new xmldb_field('grade');
             $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'test');
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -321,7 +321,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('grade');
+            $field = new xmldb_field('grade');
             $field->setAttributes(XMLDB_TYPE_NUMBER, '20,10', XMLDB_UNSIGNED, null, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -337,7 +337,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('intro');
+            $field = new xmldb_field('intro');
             $field->setAttributes(XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -352,7 +352,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('secondname');
+            $field = new xmldb_field('secondname');
             $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -367,7 +367,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('grade');
+            $field = new xmldb_field('grade');
             $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -382,7 +382,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('course');
+            $field = new xmldb_field('course');
             $field->setAttributes(XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -397,7 +397,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('grade');
+            $field = new xmldb_field('grade');
             $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', XMLDB_UNSIGNED, null, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -412,7 +412,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('grade');
+            $field = new xmldb_field('grade');
             $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -427,7 +427,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('name');
+            $field = new xmldb_field('name');
             $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -442,7 +442,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('name');
+            $field = new xmldb_field('name');
             $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
@@ -457,7 +457,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('name');
+            $field = new xmldb_field('name');
             $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, null);
 
             $test->sql = $gen->getModifyDefaultSQL($table, $field);
@@ -472,7 +472,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('name');
+            $field = new xmldb_field('name');
             $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
 
             $test->sql = $gen->getModifyDefaultSQL($table, $field);
@@ -487,7 +487,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('secondname');
+            $field = new xmldb_field('secondname');
             $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, 'Moodle2');
 
             $test->sql = $gen->getModifyDefaultSQL($table, $field);
@@ -503,7 +503,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('secondname');
+            $field = new xmldb_field('secondname');
             $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
 
             $test->sql = $gen->getModifyDefaultSQL($table, $field);
@@ -518,7 +518,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $index = new XMLDBIndex('secondname');
+            $index = new xmldb_index('secondname');
             $index->setAttributes(XMLDB_INDEX_UNIQUE, array('name', 'secondname', 'grade'));
 
             $test->sql = $gen->getAddIndexSQL($table, $index);
@@ -533,7 +533,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $index = new XMLDBIndex('secondname');
+            $index = new xmldb_index('secondname');
             $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('course', 'name'));
 
             $test->sql = $gen->getAddIndexSQL($table, $index);
@@ -548,7 +548,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $index = new XMLDBIndex('secondname');
+            $index = new xmldb_index('secondname');
             $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('name', 'course'));
 
             if ($indexfound = $dbman->find_index_name($table, $index)) {
@@ -567,7 +567,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $index = new XMLDBIndex('name');
+            $index = new xmldb_index('name');
             $index->setAttributes(XMLDB_INDEX_UNIQUE, array('name', 'grade', 'secondname'));
 
             $test->sql = $gen->getDropIndexSQL($table, $index);
@@ -582,7 +582,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $key = new XMLDBKey('id-course-grade');
+            $key = new xmldb_key('id-course-grade');
             $key->setAttributes(XMLDB_KEY_UNIQUE, array('id', 'course', 'grade'));
 
             $test->sql = $gen->getAddKeySQL($table, $key);
@@ -597,7 +597,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $key = new XMLDBKey('course');
+            $key = new xmldb_key('course');
             $key->setAttributes(XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'anothertest', array('id'));
 
             $test->sql = $gen->getAddKeySQL($table, $key);
@@ -612,7 +612,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $key = new XMLDBKey('course');
+            $key = new xmldb_key('course');
             $key->setAttributes(XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'anothertest', array('id'));
 
             $test->sql = $gen->getDropKeySQL($table, $key);
@@ -627,7 +627,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $key = new XMLDBKey('course');
+            $key = new xmldb_key('course');
             $key->setAttributes(XMLDB_KEY_FOREIGN, array('course'), 'anothertest', array('id'));
 
             $test->sql = $gen->getAddKeySQL($table, $key);
@@ -642,7 +642,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $key = new XMLDBKey('course');
+            $key = new xmldb_key('course');
             $key->setAttributes(XMLDB_KEY_FOREIGN, array('course'), 'anothertest', array('id'));
 
             $test->sql = $gen->getDropKeySQL($table, $key);
@@ -656,7 +656,7 @@ class test extends XMLDBAction {
     /// 36th test. Adding one complex enum field
         if ($test->status) {
         /// Create a new field with complex specs (enums are good candidates)
-            $field = new XMLDBField('type');
+            $field = new xmldb_field('type');
             $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -673,7 +673,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('type');
+            $field = new xmldb_field('type');
             $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'general', 'course');
             $test->sql = $gen->getModifyEnumSQL($table, $field);
             $test->status = $dbman->change_field_enum($table, $field, false, false);
@@ -687,7 +687,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('type');
+            $field = new xmldb_field('type');
             $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
             $test->sql = $gen->getModifyEnumSQL($table, $field);
             $test->status = $dbman->change_field_enum($table, $field, false, false);
@@ -701,7 +701,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $index = new XMLDBIndex('anyname');
+            $index = new xmldb_index('anyname');
             $index->setAttributes(XMLDB_INDEX_UNIQUE, array('name', 'course'));
             $test->sql = $gen->getRenameIndexSQL($table, $index, 'newnamefortheindex');
             $test->status = $dbman->rename_index($table, $index, 'newnamefortheindex', false, false);
@@ -717,7 +717,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $key = new XMLDBKey('anyname');
+            $key = new xmldb_key('anyname');
             $key->setAttributes(XMLDB_KEY_UNIQUE, array('id', 'course', 'grade'));
 
             $test->sql = $gen->getRenameKeySQL($table, $key, 'newnameforthekey', true);
@@ -739,7 +739,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('type');
+            $field = new xmldb_field('type');
             $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
 
             $test->sql = $gen->getRenameFieldSQL($table, $field, 'newnameforthefield', true);
@@ -767,7 +767,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Add enum to field containing enum
             $table->setName('newnameforthetable');
-            $field = new XMLDBField('newnameforthefield');
+            $field = new xmldb_field('newnameforthefield');
             $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -789,7 +789,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Drop enum from field containing enum
             $table->setName('newnameforthetable');
-            $field = new XMLDBField('newnameforthefield');
+            $field = new xmldb_field('newnameforthefield');
             $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'general', 'course');
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -805,7 +805,7 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Drop enum from field not containing enum
             $table->setName('newnameforthetable');
-            $field = new XMLDBField('newnameforthefield');
+            $field = new xmldb_field('newnameforthefield');
             $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'general', 'course');
         /// Get SQL code and execute it
             $test = new stdClass;

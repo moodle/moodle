@@ -36,7 +36,7 @@ class xmldb_structure extends xmldb_object {
     /**
      * Creates one new xmldb_structure
      */
-    function construct($name) {
+    function __construct($name) {
         parent::__construct($name);
         $this->path = NULL;
         $this->version = NULL;
@@ -59,7 +59,7 @@ class xmldb_structure extends xmldb_object {
     }
 
     /**
-     * Returns one XMLDBTable
+     * Returns one xmldb_table
      */
     function &getTable($tablename) {
         $i = $this->findTableInArray($tablename);
@@ -130,7 +130,7 @@ class xmldb_structure extends xmldb_object {
     }
 
     /**
-     * Returns one XMLDBStatement
+     * Returns one xmldb_statement
      */
     function &getStatement($statementname) {
         $i = $this->findStatementInArray($statementname);
@@ -371,8 +371,8 @@ class xmldb_structure extends xmldb_object {
                     continue;
                 }
                 $name = trim($xmltable['@']['NAME']);
-                $table = new XMLDBTable($name);
-                $table->arr2XMLDBTable($xmltable);
+                $table = new xmldb_table($name);
+                $table->arr2xmldb_table($xmltable);
                 $this->tables[] = $table;
                 if (!$table->isLoaded()) {
                     $this->errormsg = 'Problem loading table ' . $name;
@@ -416,8 +416,8 @@ class xmldb_structure extends xmldb_object {
                     continue;
                 }
                 $name = trim($xmlstatement['@']['NAME']);
-                $statement = new XMLDBStatement($name);
-                $statement->arr2XMLDBStatement($xmlstatement);
+                $statement = new xmldb_statement($name);
+                $statement->arr2xmldb_statement($xmlstatement);
                 $this->statements[] = $statement;
                 if (!$statement->isLoaded()) {
                     $this->errormsg = 'Problem loading statement ' . $name;

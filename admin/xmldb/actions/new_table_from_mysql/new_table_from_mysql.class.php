@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -25,7 +25,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /// This class will ask and retrofit all the information from one
-/// mysql table present in the Moodle DB to one XMLDBTable structure
+/// mysql table present in the Moodle DB to one xmldb_table structure
 
 class new_table_from_mysql extends XMLDBAction {
 
@@ -127,15 +127,15 @@ class new_table_from_mysql extends XMLDBAction {
             $tableparam = required_param('table', PARAM_CLEAN);
             $afterparam = required_param('after', PARAM_CLEAN);
 
-        /// Create one new XMLDBTable
-            $table = new XMLDBTable(strtolower(trim($tableparam)));
+        /// Create one new xmldb_table
+            $table = new xmldb_table(strtolower(trim($tableparam)));
             $table->setComment($table->getName() . ' table retrofitted from MySQL');
         /// Get fields info from ADODb
             $dbfields = $DB->get_columns($tableparam);
             if ($dbfields) {
                 foreach ($dbfields as $dbfield) {
                 /// Create new XMLDB field
-                    $field = new XMLDBField($dbfield->name);
+                    $field = new xmldb_field($dbfield->name);
                 /// Set field with info retrofitted
                     $field->setFromADOField($dbfield);
                 /// Add field to the table
@@ -149,9 +149,9 @@ class new_table_from_mysql extends XMLDBAction {
                 foreach ($dbindexes as $indexname => $dbindex) {
                 /// Add the indexname to the array
                     $dbindex['name'] = $indexname;
-                /// We are handling one XMLDBKey (primaries + uniques)
+                /// We are handling one xmldb_key (primaries + uniques)
                     if ($dbindex['unique']) {
-                        $key = new XMLDBKey(strtolower($dbindex['name']));
+                        $key = new xmldb_key(strtolower($dbindex['name']));
                     /// Set key with info retrofitted
                         $key->setFromADOKey($dbindex);
                     /// Set default comment to PKs
@@ -160,9 +160,9 @@ class new_table_from_mysql extends XMLDBAction {
                     /// Add key to the table
                         $table->addKey($key);
 
-                /// We are handling one XMLDBIndex (non-uniques)
+                /// We are handling one xmldb_index (non-uniques)
                     } else {
-                        $index = new XMLDBIndex(strtolower($dbindex['name']));
+                        $index = new xmldb_index(strtolower($dbindex['name']));
                     /// Set index with info retrofitted
                         $index->setFromADOIndex($dbindex);
                     /// Add index to the table
