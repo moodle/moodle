@@ -2,12 +2,17 @@
 /*
  * debug information for developer only
  */
+$string['authpluginnotfound'] = 'Authentication plugin $a not found.';
+$string['cannotbenull'] = '$a cannot be null!';
+$string['cannotcreateadminuser'] = 'SERIOUS ERROR: Could not create admin user record !!!';
 $string['cannotdowngrade'] = 'Cannot downgrade from $a[0] to $a[1].';
+$string['cannotinitpage'] = 'Cannot fully initialize page: invalid $a[0] id $a[1]';
 $string['cannotupgradecapabilities'] = 'Had trouble upgrading the core capabilities for the Roles System';
 $string['cannotupdateversion'] = 'Upgrade failed!  (Could not update version in config table)';
 $string['cannotupdaterelease'] = 'ERROR: Could not update release version in database!!';
 $string['cannotsetupsite'] = 'Serious Error! Could not set up the site!';
 $string['cannotfindadmin'] = 'Could not find an admin user!';
+$string['cannotupgradedbcustom'] = 'Upgrade of local database customisations failed! (Could not update version in config table)';
 $string['configmoodle'] = 'Moodle has not been configured yet. You need to edit config.php first.';
 $string['dbnotinsert'] = 'Database error - Cannot insert ($a)';
 $string['dbnotupdate'] = 'Database error - Cannot update ($a)';
@@ -16,10 +21,17 @@ $string['dbnotsetup'] = 'Error: Main databases NOT set up successfully';
 $string['doesnotworkwitholdversion'] = 'This script does not work with this old version of Moodle';
 $string['erroroccur'] = 'An error has occurred during this process';
 $string['fixsetting'] = 'Please fix your settings in config.php: <p>You have:</p> <p>\$CFG->dirroot = \"$a[0]\";</p> <p>but it should be:</p> <p>\$CFG->dirroot = \"$a[1]\"</p>';
+$string['invalideventdata'] = 'Incorrect eventadata submitted: $a';
+$string['invalidarraysize'] = 'Incorrect size of arrays in params of $a';
+$string['mustbeoveride'] = 'Abstract $a method must be overriden.';
+$string['morethanonerecordinfetch'] = 'Found more than one record in fetch() !';
+$string['noadminrole'] = 'No admin role could be found';
+$string['noactivityname'] = 'Page object derived from page_generic_activity but did not define $this->activityname';
 $string['noblocks'] = 'No blocks installed!';
 $string['noblockbase'] = 'Class block_base is not defined or file not found for /blocks/moodleblock.class.php';
 $string['nocaps'] = 'Error: no capabilitites defined!';
 $string['notables'] = 'No Tables!';
+$string['nopageclass'] = 'Imported $a but found no page classes';
 $string['noreports'] = 'No reports accessible';
 $string['nomodules'] = 'No modules found!!';
 $string['phpvaroff'] = 'The PHP server variable \'$a[0]\' should be Off - $a[1]';
@@ -29,5 +41,8 @@ $string['prefixlimit'] = 'Table prefix \"$a\" maximum allowed length for Oracle 
 $string['withoutversion'] = 'Main version.php was not readable or specified';
 $string['sessionmissing'] = '$a object missing from session';
 $string['siteisnotdefined'] = 'Site is not defined!';
+$string['sqlrelyonobsoletetable'] = 'This SQL relies on obsolete table(s): $a!  Your code must be fixed by a developer.';
+$string['upgradefail'] = 'Upgrade failed! see: $a';
+$string['withoutversion'] = 'Main version.php was not readable or specified';
 
 ?>
