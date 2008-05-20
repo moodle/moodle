@@ -231,7 +231,7 @@ error('todo');
         if (!empty($CFG->rolesactive)) {
             if (in_array($table, array('user_students', 'user_teachers', 'user_coursecreators', 'user_admins'))) {
                 if (debugging()) { var_dump(debug_backtrace()); }
-                print_error('This SQL relies on obsolete tables ('.$table.')!  Your code must be fixed by a developer.');
+                print_error('sqlrelyonobsoletetable', 'debug', '', $table);
             }
         }
 
@@ -342,7 +342,7 @@ error('todo');
         if (!empty($CFG->rolesactive)) {
             if (in_array($table, array('user_students', 'user_teachers', 'user_coursecreators', 'user_admins'))) {
                 if (debugging()) { var_dump(debug_backtrace()); }
-                print_error('This SQL relies on obsolete tables ('.$table.')!  Your code must be fixed by a developer.');
+                print_error('sqlrelyonobsoletetable', 'debug', '', $table);
             }
         }
 

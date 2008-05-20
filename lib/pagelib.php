@@ -32,7 +32,7 @@ function page_import_types($path) {
     if(is_file($file)) {
         require($file);
         if(!isset($DEFINEDPAGES)) {
-            print_error('Imported '.$file.' but found no page classes');
+            print_error('nopageclass', 'debug', '', $page);
         }
         return $types[$path] = $DEFINEDPAGES;
     }
@@ -314,7 +314,7 @@ class page_course extends page_base {
     // Do NOT load up "expensive" resouces (e.g. SQL data) here!
     function init_quick($data) {
         if(empty($data->pageid) && !defined('ADMIN_STICKYBLOCKS')) {
-            print_error('Cannot quickly initialize page: empty course id');
+            print_error('cannotinitpage', '', '', null);
         }
         parent::init_quick($data);
     }
@@ -338,7 +338,7 @@ class page_course extends page_base {
         }
 
         if(empty($this->courserecord) && !defined('ADMIN_STICKYBLOCKS')) {
-            print_error('Cannot fully initialize page: invalid course id '. $this->id);
+            print_error('cannotinitpage', '', '', $this->id);
         }
 
         $this->context = get_context_instance(CONTEXT_COURSE, $this->id);
@@ -588,18 +588,18 @@ class page_generic_activity extends page_base {
             return;
         }
         if(empty($this->activityname)) {
-            print_error('Page object derived from page_generic_activity but did not define $this->activityname');
+            print_error('noactivityname', 'debug');
         }
         if (!$this->modulerecord = get_coursemodule_from_instance($this->activityname, $this->id)) {
-            print_error('Cannot fully initialize page: invalid '.$this->activityname.' instance id '. $this->id);
+            print_error('cannotinitpager', 'debug', '', array($this->activityname, $this->id));
         }
         $this->courserecord = get_record('course', 'id', $this->modulerecord->course);
         if(empty($this->courserecord)) {
-            print_error('Cannot fully initialize page: invalid course id '. $this->modulerecord->course);
+            print_error('invalidcourseid');
         }
         $this->activityrecord = get_record($this->activityname, 'id', $this->id);
         if(empty($this->activityrecord)) {
-            print_error('Cannot fully initialize page: invalid '.$this->activityname.' id '. $this->id);
+            print_error('cannotinitpager', 'debug', '', array($this->activityname, $this->id));
         }
         $this->full_init_done = true;
     }

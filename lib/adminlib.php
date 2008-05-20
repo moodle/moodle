@@ -15,7 +15,7 @@ function upgrade_main_savepoint($result, $version) {
     if ($result) {
         if ($CFG->version >= $version) {
             // something really wrong is going on in main upgrade script
-            print_error("Upgrade savepoint: Can not upgrade main version from $CFG->version to $version.");
+            print_error('cannotdowngrade', 'debug', '', array($CFG->version, $version));
         }
         set_config('version', $version);
     } else {
@@ -141,7 +141,7 @@ function upgrade_plugins($type, $dir, $return) {
 
                 /// Install capabilities
                     if (!update_capabilities($type.'/'.$plug)) {
-                        print_error('Could not set up the capabilities for '.$plugin->name.'!');
+                        print_error('cannotsetupcapforplugin', '', '', $plugin->name);
                     }
                 /// Install events
                     events_update_definition($type.'/'.$plug);
@@ -184,7 +184,7 @@ function upgrade_plugins($type, $dir, $return) {
                     // OK so far, now update the plugins record
                     set_config($pluginversion, $plugin->version);
                     if (!update_capabilities($type.'/'.$plug)) {
-                        print_error('Could not update '.$plugin->name.' capabilities!');
+                        print_error('cannotupdateplugincap', '', '', $plugin->name);
                     }
                     events_update_definition($type.'/'.$plug);
                     notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
@@ -197,7 +197,7 @@ function upgrade_plugins($type, $dir, $return) {
             }
         } else {
             upgrade_log_start();
-            print_error('Version mismatch: '. $plugin->name .' can\'t downgrade '. $CFG->$pluginversion .' -> '. $plugin->version .' !');
+            print_error('cannotdowngrade', 'debug', '', array($CFG->pluginversion, $plugin->version));
         }
     }
 
@@ -231,7 +231,7 @@ function upgrade_activity_modules($return) {
     global $CFG, $interactive, $DB;
 
     if (!$mods = get_list_of_plugins('mod') ) {
-        print_error('No modules installed!');
+        print_error('nomodules', 'debug');
     }
 
     $updated_modules = false;
@@ -327,7 +327,7 @@ function upgrade_activity_modules($return) {
                     // OK so far, now update the modules record
                     $module->id = $currmodule->id;
                     if (!$DB->update_record('modules', $module)) {
-                        print_error('Could not update '. $module->name .' record in modules table!');
+                        print_error('cannotupdatemod', '', '', $module->name);
                     }
                     remove_dir($CFG->dataroot . '/cache', true); // flush cache
                     notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
@@ -340,7 +340,7 @@ function upgrade_activity_modules($return) {
 
             /// Update the capabilities table?
                 if (!update_capabilities('mod/'.$module->name)) {
-                    print_error('Could not update '.$module->name.' capabilities!');
+                    print_error('cannotupdatemodcap', '', '', $module->name);
                 }
                 events_update_definition('mod/'.$module->name);
 
@@ -348,7 +348,7 @@ function upgrade_activity_modules($return) {
 
             } else {
                 upgrade_log_start();
-                print_error('Version mismatch: '. $module->name .' can\'t downgrade '. $currmodule->version .' -> '. $module->version .' !');
+                print_error('cannotdowngrade', 'debug', '', array($currmodule->version, $module->version));
             }
 
         } else {    // module not installed yet, so install it
@@ -383,7 +383,7 @@ function upgrade_activity_modules($return) {
 
                 /// Capabilities
                     if (!update_capabilities('mod/'.$module->name)) {
-                        print_error('Could not set up the capabilities for '.$module->name.'!');
+                        print_error('cannotsetupcapformod', '', '', $module->name);
                     }
 
                 /// Events
@@ -564,16 +564,16 @@ function create_admin_user($user_input=NULL) {
             $user = $user_input;
         }
         if (!$user->id = $DB->insert_record('user', $user)) {
-            print_error('SERIOUS ERROR: Could not create admin user record !!!');
+            print_error('cannotcreateadminuser', 'debug');
         }
 
         if (!$user = $DB->get_record('user', array('id'=>$user->id))) {   // Double check.
-            print_error('User ID was incorrect (can\'t find it)');
+            print_error('invaliduserid');
         }
 
         // Assign the default admin roles to the new user.
         if (!$adminroles = get_roles_with_capability('moodle/legacy:admin', CAP_ALLOW)) {
-            print_error('No admin role could be found');
+            print_error('noadminrole', 'debug');
         }
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         foreach ($adminroles as $adminrole) {
@@ -591,7 +591,7 @@ function create_admin_user($user_input=NULL) {
         redirect("$CFG->wwwroot/user/editadvanced.php?id=$user->id");  // Edit thyself
         }
     } else {
-        print_error('Can not create admin!');
+        print_error('cannotcreateadminuser', 'debug');
     }
 }
 

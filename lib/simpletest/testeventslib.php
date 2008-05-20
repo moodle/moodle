@@ -36,7 +36,7 @@ function sample_function_handler($eventdata) {
         return true;
     }
 
-    print_error('Incorrect eventadata submitted: '.$eventdata);
+    print_error('invalideventdata', '', '', $eventdata);
 }
 
 // test handler class with static method
@@ -70,7 +70,7 @@ class sample_handler_class {
             return true;
         }
 
-        print_error('Incorrect eventadata submitted: '.$eventdata);
+        print_error('invalideventdata', '', '', $eventdata);
     }
 }
 

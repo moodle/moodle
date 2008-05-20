@@ -306,7 +306,7 @@ function required_param($parname, $type=PARAM_CLEAN) {
     } else if (isset($_GET[$parname])) {
         $param = $_GET[$parname];
     } else {
-        print_error('A required parameter ('.$parname.') was missing');
+        print_error('missingparam', '', '', $parname);
     }
 
     return clean_param($param, $type);
@@ -596,7 +596,7 @@ function clean_param($param, $type) {
             }
 
         default:                 // throw error, switched parameters in optional_param or another serious problem
-            print_error("Unknown parameter type: $type");
+            print_error("unknowparamtype", '', '', $type);
     }
 }
 
@@ -1806,7 +1806,7 @@ function course_setup($courseorid=0) {
             $COURSE = clone($course);
         } else {
             if (!$COURSE = get_record('course', 'id', $courseorid)) {
-                print_error('Invalid course ID');
+                print_error('invalidcourseid');
             }
         }
     }
@@ -2148,7 +2148,7 @@ function require_user_key_login($script, $instance=null) {
     global $nomoodlecookie, $USER, $SESSION, $CFG;
 
     if (empty($nomoodlecookie)) {
-        print_error('Incorrect use of require_key_login() - session cookies must be disabled!');
+        print_error('sessioncookiesdisable');
     }
 
 /// extra safety
@@ -2157,22 +2157,22 @@ function require_user_key_login($script, $instance=null) {
     $keyvalue = required_param('key', PARAM_ALPHANUM);
 
     if (!$key = get_record('user_private_key', 'script', $script, 'value', $keyvalue, 'instance', $instance)) {
-        print_error('Incorrect key');
+        print_error('invalidkey');
     }
 
     if (!empty($key->validuntil) and $key->validuntil < time()) {
-        print_error('Expired key');
+        print_error('expiredkey');
     }
 
     if ($key->iprestriction) {
         $remoteaddr = getremoteaddr();
         if ($remoteaddr == '' or !address_in_subnet($remoteaddr, $key->iprestriction)) {
-            print_error('Client IP address mismatch');
+            print_error('ipmismatch');
         }
     }
 
     if (!$user = get_record('user', 'id', $key->userid)) {
-        print_error('Incorrect user record');
+        print_error('invaliduserid');
     }
 
 /// emulate normal session
@@ -2215,7 +2215,7 @@ function create_user_key($script, $userid, $instance=null, $iprestriction=null, 
     }
 
     if (!insert_record('user_private_key', $key)) {
-        print_error('Can not insert new key');
+        print_error('cannotinsertkey');
     }
 
     return $key->value;
@@ -2716,7 +2716,7 @@ function get_auth_plugin($auth) {
 
     // check the plugin exists first
     if (! exists_auth_plugin($auth)) {
-        print_error("Authentication plugin '$auth' not found.");
+        print_error('authpluginnotfound', 'debug', '', $auth);
     }
 
     // return auth plugin instance
@@ -3478,7 +3478,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
     $result = true;
 
     if (! $course = get_record('course', 'id', $courseid)) {
-        print_error('Course ID was incorrect (can\'t find it)');
+        print_error('invalidcourseid');
     }
 
     $strdeleted = get_string('deleted');
@@ -3529,7 +3529,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
             }
         }
     } else {
-        print_error('No modules are installed!');
+        print_error('nomodules', 'debug');
     }
 
 /// Give local code a chance to delete its references to this course.
@@ -4275,7 +4275,7 @@ function reset_password_and_mail($user) {
     $newpassword = generate_password();
 
     if (!$userauth->user_update_password(addslashes_recursive($user), addslashes($newpassword))) {
-        print_error("Could not set user password!");
+        print_error("cannotsetpassword");
     }
 
     $a = new object();

@@ -399,7 +399,8 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
             strpos($sql, ' '.$CFG->prefix.'user_coursecreators ') ||
             strpos($sql, ' '.$CFG->prefix.'user_admins ')) {
             if (debugging()) { var_dump(debug_backtrace()); }
-            print_error('This SQL relies on obsolete tables!  Your code must be fixed by a developer.');
+            print_error('sqlrelyonobsoletetable', 'debug', '',
+                    'user_student, user_teachers, user_coursecreators, user_admins');
         }
     }
 

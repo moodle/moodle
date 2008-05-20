@@ -370,7 +370,7 @@ class grade_item extends grade_object {
         global $CFG;
 
         if (empty($this->courseid)) {
-            print_error('Can not insert grade item without course id!');
+            print_error('cannotinsertgrade');
         }
 
         // load scale if needed
@@ -1190,7 +1190,7 @@ class grade_item extends grade_object {
      */
     function set_parent($parentid) {
         if ($this->is_course_item() or $this->is_category_item()) {
-            print_error('Can not set parent for category or course item!');
+            print_error('cannotsetparentforcatoritem');
         }
 
         if ($this->categoryid == $parentid) {
