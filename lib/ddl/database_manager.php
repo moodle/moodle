@@ -372,7 +372,7 @@ class database_manager {
      */
     public function delete_tables_from_xmldb_file($file, $feedback=true ) {
 
-        $xmldb_file = new XMLDBFile($file);
+        $xmldb_file = new xmldb_file($file);
 
         if (!$xmldb_file->fileExists()) {
             return false;
@@ -441,7 +441,7 @@ class database_manager {
      * @return boolean (true on success, false on error)
      */
     public function install_from_xmldb_file($file, $continue=true, $feedback=true) {
-        $xmldb_file = new XMLDBFile($file);
+        $xmldb_file = new xmldb_file($file);
 
         if (!$xmldb_file->fileExists()) {
             return false;

@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -28,16 +28,16 @@
 /// all the actions supported will be launched.
 
 /// Add required XMLDB constants
-    require_once('../../lib/xmldb/XMLDBConstants.php');
+    require_once('../../lib/xmldb/xmldb_constants.php');
 
 /// Add required XMLDB action classes
     require_once('actions/XMLDBAction.class.php');
 
 
 /// Add required XMLDB DB classes
-    require_once('../../lib/xmldb/XMLDBObject.class.php');
-    require_once('../../lib/xmldb/XMLDBFile.class.php');
-    require_once('../../lib/xmldb/XMLDBStructure.class.php');
+    require_once('../../lib/xmldb/xmldb_object.php');
+    require_once('../../lib/xmldb/xmldb_file.php');
+    require_once('../../lib/xmldb/xmldb_structure.php');
     require_once('../../lib/xmldb/XMLDBTable.class.php');
     require_once('../../lib/xmldb/XMLDBField.class.php');
     require_once('../../lib/xmldb/XMLDBKey.class.php');

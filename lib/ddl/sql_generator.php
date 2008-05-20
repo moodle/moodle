@@ -1048,7 +1048,7 @@ abstract class sql_generator {
                          if (isset($matches[1])) {
                              $part = $matches[1];
                          /// Convert the comma separated string to an array
-                             $arr = XMLDBObject::comma2array($part);
+                             $arr = xmldb_object::comma2array($part);
                              if ($arr) {
                                  $value = $this->getConcatSQL($arr);
                              }

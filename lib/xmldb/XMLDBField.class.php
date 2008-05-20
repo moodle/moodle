@@ -26,7 +26,7 @@
 
 /// This class represent one XMLDB Field
 
-class XMLDBField extends XMLDBObject {
+class XMLDBField extends xmldb_object {
 
     var $type;
     var $length;
@@ -42,7 +42,7 @@ class XMLDBField extends XMLDBObject {
      * Creates one new XMLDBField
      */
     function XMLDBField($name) {
-        parent::XMLDBObject($name);
+        parent::__construct($name);
         $this->type = NULL;
         $this->length = NULL;
         $this->unsigned = true;

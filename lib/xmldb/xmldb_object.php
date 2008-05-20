@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -27,7 +27,7 @@
 /// This class represent the XMLDB base class where all the common piezes
 /// are defined
 
-class XMLDBObject {
+class xmldb_object {
 
     var $name;
     var $comment;
@@ -39,9 +39,9 @@ class XMLDBObject {
     var $errormsg;
 
     /**
-     * Creates one new XMLDBObject
+     * Creates one new xmldb_object
      */
-    function XMLDBObject($name) {
+    function __construct($name) {
         $this->name = $name;
         $this->comment = NULL;
         $this->previous = NULL;
@@ -53,49 +53,49 @@ class XMLDBObject {
     }
 
     /**
-     * This function returns true/false, if the XMLDBObject has been loaded
+     * This function returns true/false, if the xmldb_object has been loaded
      */
     function isLoaded() {
         return $this->loaded;
     }
 
     /**
-     * This function returns true/false, if the XMLDBObject has changed
+     * This function returns true/false, if the xmldb_object has changed
      */
     function hasChanged() {
         return $this->changed;
     }
 
     /**
-     * This function returns the comment of one XMLDBObject
+     * This function returns the comment of one xmldb_object
      */
     function getComment() {
         return $this->comment;
     }
 
     /**
-     * This function returns the hash of one XMLDBObject
+     * This function returns the hash of one xmldb_object
      */
     function getHash() {
         return $this->hash;
     }
 
     /**
-     * This function will return the name of the previous XMLDBObject
+     * This function will return the name of the previous xmldb_object
      */
     function getPrevious() {
         return $this->previous;
     }
 
     /**
-     * This function will return the name of the next XMLDBObject
+     * This function will return the name of the next xmldb_object
      */
     function getNext() {
         return $this->next;
     }
 
     /**
-     * This function will return the name of the XMLDBObject
+     * This function will return the name of the xmldb_object
      */
     function getName() {
         return $this->name;
@@ -109,48 +109,48 @@ class XMLDBObject {
     }
 
     /**
-     * This function will set the comment of the XMLDB object
+     * This function will set the comment of the xmldb_object
      */
     function setComment($comment) {
         $this->comment = $comment;
     }
 
     /**
-     * This function will set the previous of the XMLDB object
+     * This function will set the previous of the xmldb_object
      */
     function setPrevious($previous) {
         $this->previous = $previous;
     }
 
     /**
-     * This function will set the next of the XMLDB object
+     * This function will set the next of the xmldb_object
      */
     function setNext($next) {
         $this->next = $next;
     }
 
     /**
-     * This function will set the hash of the XMLDB object
+     * This function will set the hash of the xmldb_object
      */
     function setHash($hash) {
         $this->hash = $hash;
     }
 
     /**
-     * This function will set the loaded field of the XMLDB object
+     * This function will set the loaded field of the xmldb_object
      */
     function setLoaded($loaded = true) {
         $this->loaded = $loaded;
     }
 
     /**
-     * This function will set the changed field of the XMLDB object
+     * This function will set the changed field of the xmldb_object
      */
     function setChanged($changed = true) {
         $this->changed = $changed;
     }
     /**
-     * This function will set the name field of the XMLDB object
+     * This function will set the name field of the xmldb_object
      */
     function setName($name) {
         $this->name = $name;
@@ -364,7 +364,7 @@ class XMLDBObject {
     }
 
     /**
-     * This function will display a readable info about the XMLDBObject
+     * This function will display a readable info about the xmldb_object
      * (should be implemented inside each XMLDBxxx object)
      */
     function readableInfo() {

@@ -26,7 +26,7 @@
 
 /// This class represent one XMLDB table
 
-class XMLDBTable extends XMLDBObject {
+class XMLDBTable extends xmldb_object {
 
     var $fields;
     var $keys;
@@ -36,7 +36,7 @@ class XMLDBTable extends XMLDBObject {
      * Creates one new XMLDBTable
      */
     function XMLDBTable($name) {
-        parent::XMLDBObject($name);
+        parent::__construct($name);
         $this->fields = array();
         $this->keys = array();
         $this->indexes = array();

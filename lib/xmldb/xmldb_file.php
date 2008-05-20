@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -26,7 +26,7 @@
 
 /// This class represents an entire XMLDB file
 
-class XMLDBFile extends XMLDBObject {
+class xmldb_file extends xmldb_object {
 
     var $path;
     var $schema;
@@ -34,10 +34,10 @@ class XMLDBFile extends XMLDBObject {
     var $xmldb_structure;
 
     /**
-     * Constructor of the XMLDBFile
+     * Constructor of the xmldb_file
      */
-    function XMLDBFile ($path) {
-        parent::XMLDBObject($path);
+    function __construct ($path) {
+        parent::__construct($path);
         $this->path = $path;
         $this->xmldb_structure = NULL;
     }
@@ -96,7 +96,7 @@ class XMLDBFile extends XMLDBObject {
         /// Prepare errors
             if (!empty($errors)) {
             /// Create one structure to store errors
-                $structure = new XMLDBStructure($this->path);
+                $structure = new xmldb_structure($this->path);
             /// Add errors to structure
                 $structure->errormsg = 'XML Error: ';
                 foreach ($errors as $error) {
@@ -115,7 +115,7 @@ class XMLDBFile extends XMLDBObject {
             $parser = xml_parser_create();
             if (!xml_parse($parser, file_get_contents($this->path))) {
             /// Create one structure to store errors
-                $structure = new XMLDBStructure($this->path);
+                $structure = new xmldb_structure($this->path);
             /// Add error to structure
                 $structure->errormsg = sprintf("XML Error: %s at line %d", 
                          xml_error_string(xml_get_error_code($parser)),
@@ -148,7 +148,7 @@ class XMLDBFile extends XMLDBObject {
         /// Load everything to a big array
             $xmlarr = xmlize(file_get_contents($this->path));
         /// Convert array to xmldb structure
-            $this->xmldb_structure = $this->arr2XMLDBStructure($xmlarr);
+            $this->xmldb_structure = $this->arr2xmldb_structure($xmlarr);
         /// Analize results
             if ($this->xmldb_structure->isLoaded()) {
                 $this->loaded = true;
@@ -161,11 +161,11 @@ class XMLDBFile extends XMLDBObject {
     }
 
     /**
-     * This function takes an xmlized array and put it into one XMLDBStructure
+     * This function takes an xmlized array and put it into one xmldb_structure
      */
-    function arr2XMLDBStructure ($xmlarr) {
-        $structure = new XMLDBStructure($this->path);
-        $structure->arr2XMLDBStructure($xmlarr);
+    function arr2xmldb_structure ($xmlarr) {
+        $structure = new xmldb_structure($this->path);
+        $structure->arr2xmldb_structure($xmlarr);
         return $structure;
     }
 
@@ -184,7 +184,7 @@ class XMLDBFile extends XMLDBObject {
     }
 
     /**
-     * This function saves the whole XMLDBStructure to its file
+     * This function saves the whole xmldb_structure to its file
      */
     function saveXMLFile() {
 

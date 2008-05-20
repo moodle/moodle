@@ -149,7 +149,7 @@ class view_structure_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * create one table using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table code to be created
      * @return string PHP code to be used to create the table
      */
@@ -227,7 +227,7 @@ class view_structure_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * drop one table using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table code to be dropped
      * @return string PHP code to be used to drop the table
      */
@@ -268,7 +268,7 @@ class view_structure_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * rename one table using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table code to be renamed
      * @return string PHP code to be used to rename the table
      */
@@ -310,7 +310,7 @@ class view_structure_php extends XMLDBAction {
      * implement the upgrade_xxxx_savepoint() php calls in
      * upgrade code generated from the editor
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @return string PHP code to be used to stabilish a savepoint
      */
     function upgrade_savepoint_php ($structure) {

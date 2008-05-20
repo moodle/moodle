@@ -26,7 +26,7 @@
 
 /// This class represent one XMLDB Key
 
-class XMLDBKey extends XMLDBObject {
+class XMLDBKey extends xmldb_object {
 
     var $type;
     var $fields;
@@ -37,7 +37,7 @@ class XMLDBKey extends XMLDBObject {
      * Creates one new XMLDBKey
      */
     function XMLDBKey($name) {
-        parent::XMLDBObject($name);
+        parent::__construct($name);
         $this->type = NULL;
         $this->fields = array();
         $this->reftable = NULL;

@@ -26,7 +26,7 @@
 
 /// This class represent one XMLDB Index
 
-class XMLDBIndex extends XMLDBObject {
+class XMLDBIndex extends xmldb_object {
 
     var $unique;
     var $fields;
@@ -35,7 +35,7 @@ class XMLDBIndex extends XMLDBObject {
      * Creates one new XMLDBIndex
      */
     function XMLDBIndex($name) {
-        parent::XMLDBObject($name);
+        parent::__construct($name);
         $this->unique = false;
         $this->fields = array();
     }

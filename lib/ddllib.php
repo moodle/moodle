@@ -39,12 +39,12 @@
 // For further documentation, visit http://docs.moodle.org/en/DDL_functions
 
 /// Add required XMLDB constants
-require_once($CFG->libdir.'/xmldb/XMLDBConstants.php');
+require_once($CFG->libdir.'/xmldb/xmldb_constants.php');
 
 /// Add required XMLDB DB classes
-require_once($CFG->libdir.'/xmldb/XMLDBObject.class.php');
-require_once($CFG->libdir.'/xmldb/XMLDBFile.class.php');
-require_once($CFG->libdir.'/xmldb/XMLDBStructure.class.php');
+require_once($CFG->libdir.'/xmldb/xmldb_object.php');
+require_once($CFG->libdir.'/xmldb/xmldb_file.php');
+require_once($CFG->libdir.'/xmldb/xmldb_structure.php');
 require_once($CFG->libdir.'/xmldb/XMLDBTable.class.php');
 require_once($CFG->libdir.'/xmldb/XMLDBField.class.php');
 require_once($CFG->libdir.'/xmldb/XMLDBKey.class.php');
@@ -100,7 +100,7 @@ function get_used_table_names() {
     foreach ($dbdirs as $dbdir) {
         $file = $dbdir.'/install.xml';
 
-        $xmldb_file = new XMLDBFile($file);
+        $xmldb_file = new xmldb_file($file);
 
         if (!$xmldb_file->fileExists()) {
             continue;

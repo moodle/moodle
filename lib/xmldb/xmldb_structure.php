@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -26,7 +26,7 @@
 
 /// This class represent one XMLDB structure
 
-class XMLDBStructure extends XMLDBObject {
+class xmldb_structure extends xmldb_object {
 
     var $path;
     var $version;
@@ -34,10 +34,10 @@ class XMLDBStructure extends XMLDBObject {
     var $statements;
 
     /**
-     * Creates one new XMLDBStructure
+     * Creates one new xmldb_structure
      */
-    function XMLDBStructure($name) {
-        parent::XMLDBObject($name);
+    function construct($name) {
+        parent::__construct($name);
         $this->path = NULL;
         $this->version = NULL;
         $this->tables = array();
@@ -328,7 +328,7 @@ class XMLDBStructure extends XMLDBObject {
     /**
      * Load data from XML to the structure
      */
-    function arr2XMLDBStructure($xmlarr) {
+    function arr2xmldb_structure($xmlarr) {
 
         global $CFG;
 
@@ -459,7 +459,7 @@ class XMLDBStructure extends XMLDBObject {
     }
 
     /**
-     * This function calculate and set the hash of one XMLDBStructure
+     * This function calculate and set the hash of one xmldb_structure
      */
      function calculateHash($recursive = false) {
         if (!$this->loaded) {
@@ -561,7 +561,7 @@ class XMLDBStructure extends XMLDBObject {
 
     /**
      * This function returns the number of uses of one field inside
-     * a whole XMLDBStructure. Useful to detect if the field must be
+     * a whole xmldb_structure. Useful to detect if the field must be
      * locked. Return false if no uses are found.
      */
     function getFieldUses($tablename, $fieldname) {
@@ -618,7 +618,7 @@ class XMLDBStructure extends XMLDBObject {
 
     /**
      * This function returns the number of uses of one key inside
-     * a whole XMLDBStructure. Useful to detect if the key must be
+     * a whole xmldb_structure. Useful to detect if the key must be
      * locked. Return false if no uses are found.
      */
     function getKeyUses($tablename, $keyname) {
@@ -657,7 +657,7 @@ class XMLDBStructure extends XMLDBObject {
 
     /**
      * This function returns the number of uses of one index inside
-     * a whole XMLDBStructure. Useful to detect if the index must be
+     * a whole xmldb_structure. Useful to detect if the index must be
      * locked. Return false if no uses are found.
      */
     function getIndexUses($tablename, $indexname) {

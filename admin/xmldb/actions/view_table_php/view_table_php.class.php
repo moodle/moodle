@@ -305,7 +305,7 @@ class view_table_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * create one field using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string field field name to be created
      * @return string PHP code to be used to create the field
@@ -352,7 +352,7 @@ class view_table_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * drop one field using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string field field name to be dropped
      * @return string PHP code to be used to drop the field
@@ -398,7 +398,7 @@ class view_table_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * rename one field using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string field field name to be renamed
      * @return string PHP code to be used to rename the field
@@ -452,7 +452,7 @@ class view_table_php extends XMLDBAction {
      *     float to char
      *     char to float
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string field field name to change precision
      */
@@ -501,7 +501,7 @@ class view_table_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * change the precision of one field using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string field field name to change precision
      */
@@ -554,7 +554,7 @@ class view_table_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * change the unsigned/signed of one field using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string field field name to change unsigned/signed
      */
@@ -603,7 +603,7 @@ class view_table_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * change the nullability of one field using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string field field name to change null/not null
      */
@@ -653,7 +653,7 @@ class view_table_php extends XMLDBAction {
      * change the enum values (check constraint) of one field
      * using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string field field name to change its enum
      */
@@ -702,7 +702,7 @@ class view_table_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * change the default of one field using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string field field name to change null/not null
      */
@@ -751,7 +751,7 @@ class view_table_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * create one key using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string key key name to be created
      * @return string PHP code to be used to create the key
@@ -798,7 +798,7 @@ class view_table_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * drop one key using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string key key name to be dropped
      * @return string PHP code to be used to drop the key
@@ -845,7 +845,7 @@ class view_table_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * rename one key using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string key key name to be renamed
      * @return string PHP code to be used to rename the key
@@ -895,7 +895,7 @@ class view_table_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * create one index using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string index index name to be created
      * @return string PHP code to be used to create the index
@@ -942,7 +942,7 @@ class view_table_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * drop one index using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string index index name to be dropped
      * @return string PHP code to be used to drop the index
@@ -989,7 +989,7 @@ class view_table_php extends XMLDBAction {
      * This function will generate all the PHP code needed to
      * rename one index using XMLDB objects and functions
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @param string table table name
      * @param string index index name to be renamed
      * @return string PHP code to be used to rename the index
@@ -1040,7 +1040,7 @@ class view_table_php extends XMLDBAction {
      * implement the upgrade_xxxx_savepoint() php calls in
      * upgrade code generated from the editor
      *
-     * @param XMLDBStructure structure object containing all the info
+     * @param xmldb_structure structure object containing all the info
      * @return string PHP code to be used to stabilish a savepoint
      */
     function upgrade_savepoint_php ($structure) {

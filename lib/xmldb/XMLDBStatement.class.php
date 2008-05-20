@@ -28,7 +28,7 @@
 /// (a group of SQL arbitrary sentences)
 /// (only INSERT is allowed for now)
 
-class XMLDBStatement extends XMLDBObject {
+class XMLDBStatement extends xmldb_object {
 
     var $table;     // Table we are handling
     var $type;      // XMLDB_STATEMENT_TYPE
@@ -38,7 +38,7 @@ class XMLDBStatement extends XMLDBObject {
      * Creates one new XMLDBStatement
      */
     function XMLDBStatement($name) {
-        parent::XMLDBObject($name);
+        parent::__construct($name);
         $this->table     = NULL;
         $this->type      = XMLDB_STATEMENT_INCORRECT;
         $this->sentences = array();
