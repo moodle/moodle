@@ -20,9 +20,9 @@
 
     // relative path must start with '/', because of backup/restore!!!
     if (!$relativepath) {
-        print_error('No valid arguments supplied or incorrect server configuration');
+        print_error('invalidarguments');
     } else if ($relativepath{0} != '/') {
-        print_error('No valid arguments supplied, path does not start with slash!');
+        print_error('pathdoesnotstartslash');
     }
 
     $pathname = $CFG->dataroot.'/questionattempt'.$relativepath;
@@ -32,7 +32,7 @@
 
     // check for the right number of directories in the path
     if (count($args) != 3) {
-        print_error('Invalid arguments supplied');
+        print_error('invalidarguments');
     }
 
     // security: require login

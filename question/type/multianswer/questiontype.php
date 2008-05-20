@@ -439,7 +439,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     echo $feedbackimg;
                     break;
                 default:
-                    print_error("Unable to recognize questiontype of question part #$positionkey.");
+                    print_error('unknownquestiontype', 'question');
                     break;
            }
            echo "</label>"; // MDL-7497
@@ -672,7 +672,7 @@ class embedded_cloze_qtype extends default_questiontype {
             $answer = $exploded[1];
             // $sequence is an ordered array of the question ids.
             if (!$sequence = get_field('question_multianswer', 'sequence', 'question', $state->question)) {
-                print_error("The cloze question $state->question is missing its options");
+                print_error('missingoption', 'question', '', $state->question);
             }
             $sequence = explode(',', $sequence);
             // The id of the current question.
@@ -799,7 +799,7 @@ function qtype_multianswer_extract_question($text) {
             $wrapped->partiallycorrectfeedback = '';
             $wrapped->incorrectfeedback = '';
         } else {
-            print_error("Cannot identify qtype $answerregs[2]");
+            print_error('unknownquestiontype', 'question', '', $answerregs[2]);
             return false;
         }
 
