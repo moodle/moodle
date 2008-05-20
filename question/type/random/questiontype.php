@@ -57,7 +57,7 @@ class random_qtype extends default_questiontype {
             print_error('cannotretrieveqcat', 'question');
         }
         $question->name = $this->question_name($category);
-        if (!set_field('question', 'name', $question->name, 'id', $question->id)) {
+        if (!set_field('question', 'name', addslashes($question->name), 'id', $question->id)) {
             print_error('cannotupdaterandomqname', 'question');
         }
         return $question;
