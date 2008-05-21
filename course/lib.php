@@ -1883,7 +1883,16 @@ function print_course($course) {
                     $aliasnames = get_records('role_names', 'contextid', $context->id,'','roleid,contextid,name');
                 }
 
+                // keep a note of users displayed to eliminate duplicates
+                $usersshown = array();
                 foreach ($rusers as $ra) {
+
+                    // if we've already displayed user don't again
+                    if (in_array($ra->user->id,$usersshown)) {
+                        continue;
+                    }
+                    $usersshown[] = $ra->user->id;
+
                     if ($ra->hidden == 0 || $canseehidden) {
                         $fullname = fullname($ra->user, $canviewfullnames); 
                         if ($ra->hidden == 1) {
