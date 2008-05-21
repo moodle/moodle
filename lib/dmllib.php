@@ -52,7 +52,7 @@ define('SQL_PARAMS_QM', 2);
 /**
  * Bitmask, indicates only $1, $2.. type parameters are supported by db backend.
  */
-define('SQL_PARAMS_DOLAR', 4);
+define('SQL_PARAMS_DOLLAR', 4);
 
 
 /**

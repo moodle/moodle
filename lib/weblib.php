@@ -622,7 +622,7 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
  *
  * $url must be relative to home page  eg /mod/survey/stuff.php
  * @param string $url Web link relative to home page
- * @param string $name Name to be assigned to the popup window (this is used by 
+ * @param string $name Name to be assigned to the popup window (this is used by
  *   client-side scripts to "talk" to the popup window)
  * @param string $linkname Text to be displayed as web link
  * @param int $height Height to assign to popup window
@@ -673,7 +673,7 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
     } else {
         $name = 'popup';
     }
-    
+
     // get some default string, using the localized version of legacy defaults
     if (is_null($linkname) || $linkname === '') {
         $linkname = get_string('clickhere');
@@ -859,7 +859,7 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
  * Choose value 0 or 1 from a menu with options 'No' and 'Yes'.
  * Other options like choose_from_menu.
  * @param string $name
- * @param string $selected 
+ * @param string $selected
  * @param string $string (defaults to '')
  * @param boolean $return whether this function should return a string or output it (defaults to false)
  * @param boolean $disabled (defaults to false)
@@ -1110,16 +1110,16 @@ $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
         $selectlabel = '<label for="'.$formid.'_jump">'.$selectlabel.'</label>';
     }
 
-    //IE and Opera fire the onchange when ever you move into a dropdwown list with the keyboard. 
+    //IE and Opera fire the onchange when ever you move into a dropdwown list with the keyboard.
     //onfocus will call a function inside dropdown.js. It fixes this IE/Opera behavior.
     if (check_browser_version('MSIE') || check_browser_version('Opera')) {
         $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" onfocus="initSelect(\''.$formid.'\','.$targetwindow.')" name="jump">'."\n";
     }
     //Other browser
     else {
-        $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";  
+        $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";
     }
-    
+
     if ($nothing != '') {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
     }
@@ -5638,6 +5638,16 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
 
     $message = get_string($errorcode, $module, $a);
 
+
+    /**
+     * TODO VERY DIRTY HACK USED FOR UNIT TESTING UNTIL PROPER EXCEPTION HANDLING IS IMPLEMENTED
+     */
+    if (defined('UNITTEST')) {
+        // Errors in unit test become exceptions, so you can unit test
+        // code that might call error().
+        throw new Exception('error() call: '.  $message.($link!=='' ? ' ['.$link.']' : ''));
+    }
+
     if (!isset($CFG->theme)) {
         // error found before setup.php finished
         print_early_error($message);
@@ -5746,11 +5756,11 @@ function print_early_error($message) {
  * Default errorcode is 1.
  *
  * Very useful for perl-like error-handling:
- * 
+ *
  * do_somethting() or mdie("Something went wrong");
  *
  * @param string  $msg       Error message
- * @param integer $errorcode Error code to emit 
+ * @param integer $errorcode Error code to emit
  */
 function mdie($msg='', $errorcode=1) {
     trigger_error($msg);
@@ -6442,8 +6452,8 @@ function print_side_block_start($heading='', $attributes = array()) {
         // page block including the h2 for accessibility
         if(strpos($heading,'</div>')===false) {
             $heading='<div class="title"><h2>'.$heading.'</h2></div>';
-        }        
-        
+        }
+
         echo '<div class="header">';
         if (!empty($THEME->customcorners)) {
             echo '<div class="bt"><div>&nbsp;</div></div>';
@@ -6801,7 +6811,7 @@ function page_doc_link($text='', $iconpath='') {
  */
 function doc_link($path='', $text='', $iconpath='') {
     global $CFG;
-    
+
     if (empty($CFG->docroot)) {
         return '';
     }
@@ -6819,7 +6829,7 @@ function doc_link($path='', $text='', $iconpath='') {
 
     $str = "<a href=\"$url\"$target>";
 
-    if (empty($iconpath)) { 
+    if (empty($iconpath)) {
         $iconpath = $CFG->httpswwwroot . '/pix/docs.gif';
     }
 

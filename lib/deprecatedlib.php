@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.org                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas, Moodle  http://moodle.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas, Moodle  http://moodle.com//
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -506,8 +506,8 @@ function get_group_students($groupids, $sort='ul.timeaccess DESC') {
 }
 
 /**
- * Determines if the HTML editor is enabled. This function has 
- * been deprecated, but needs to remain available because it is 
+ * Determines if the HTML editor is enabled. This function has
+ * been deprecated, but needs to remain available because it is
  * used in language packs for Moodle 1.6 to 1.9.
  *
  * @deprecated Use {@link can_use_html_editor()} instead.
@@ -818,6 +818,15 @@ function error ($message, $link='') {
     global $CFG, $SESSION, $THEME;
     debugging('error() is a deprecated function, please call print_error() instead of error()', DEBUG_DEVELOPER);
     $message = clean_text($message);   // In case nasties are in here
+
+    /**
+     * TODO VERY DIRTY HACK USED FOR UNIT TESTING UNTIL PROPER EXCEPTION HANDLING IS IMPLEMENTED
+     */
+    if (defined('UNITTEST')) {
+        // Errors in unit test become exceptions, so you can unit test
+        // code that might call error().
+        throw new Exception('error() call: '.  $message.($link!=='' ? ' ['.$link.']' : ''));
+    }
 
     if (defined('FULLME') && FULLME == 'cron') {
         // Errors in cron should be mtrace'd.

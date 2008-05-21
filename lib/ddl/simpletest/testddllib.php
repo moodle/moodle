@@ -14,15 +14,14 @@ require_once($CFG->libdir . '/ddllib.php');
 
 class ddllib_test extends UnitTestCase {
     private $tables = array();
-    private $db;
     private $dbmanager;
 
     public function setUp() {
         global $CFG;
 
-        $this->db = new mysqli_adodb_moodle_database();
-        $this->db->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->prefix);
-        $this->dbmanager = $this->db->get_manager();
+        $db = new mysqli_adodb_moodle_database();
+        $db->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->prefix);
+        $this->dbmanager = $db->get_manager();
 
         $table = new xmldb_table("testtable");
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);

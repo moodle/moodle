@@ -181,8 +181,9 @@ abstract class moodle_database {
         // convert table names
         $sql = preg_replace('/\{([a-z][a-z0-9_]*)\}/', $this->prefix.'$1', $sql);
 
-        $named_count = preg_match_all('/(?!:):[a-z][a-z0-9_]*/', $sql, $named_matches); // :: used in pgsql casts
-        $dolar_count = preg_match_all('/\$[1-9][0-9]*/', $sql, $dolar_matches);
+        // NICOLAS C: Fixed regexp for negative backwards lookahead of double colons. Thanks for Sam Marshall's help
+        $named_count = preg_match_all('/(?<!:):[a-z][a-z0-9_]*/', $sql, $named_matches); // :: used in pgsql casts
+        $dollar_count = preg_match_all('/\$[1-9][0-9]*/', $sql, $dollar_matches);
         $q_count     = substr_count($sql, '?');
 
         $count = 0;
@@ -192,12 +193,12 @@ abstract class moodle_database {
             $count = $named_count;
 
         }
-        if ($dolar_count) {
+        if ($dollar_count) {
             if ($count) {
                 error('ERROR: Mixed types of sql query parameters!!');
             }
-            $type = SQL_PARAMS_DOLAR;
-            $count = $dolar_count;
+            $type = SQL_PARAMS_DOLLAR;
+            $count = $dollar_count;
 
         }
         if ($q_count) {
@@ -216,12 +217,12 @@ abstract class moodle_database {
             } else if ($allowed_types & SQL_PARAMS_QM) {
                 return array($sql, array(), SQL_PARAMS_QM);
             } else {
-                return array($sql, array(), SQL_PARAMS_DOLAR);
+                return array($sql, array(), SQL_PARAMS_DOLLAR);
             }
         }
 
         if ($count > count($params)) {
-            error('ERROR: Incorrect number of query parameters!! '.s($sql));
+            error('ERROR: Incorrect number of query parameters!!');
         }
 
         if ($type & $allowed_types) { // bitwise AND
@@ -229,7 +230,7 @@ abstract class moodle_database {
                 if ($type == SQL_PARAMS_QM) {
                     return array($sql, array_values($params), SQL_PARAMS_QM); // 0-based array required
                 } else {
-                    //better do the validation of names bellow
+                    //better do the validation of names below
                 }
             }
             // needs some fixing or validation - there might be more params than needed
@@ -253,15 +254,15 @@ abstract class moodle_database {
             }
 
             if ($target_type & SQL_PARAMS_QM) {
-                $sql = preg_replace('/(?!:):[a-z][a-z0-9_]*/', '?', $sql);
+                $sql = preg_replace('/(?<!:):[a-z][a-z0-9_]*/', '?', $sql);
                 return array($sql, array_values($finalparams), SQL_PARAMS_QM); // 0-based required
             } else if ($target_type & SQL_PARAMS_NAMED) {
                 return array($sql, $finalparams, SQL_PARAMS_NAMED);
-            } else {  // $type & SQL_PARAMS_DOLAR
+            } else {  // $type & SQL_PARAMS_DOLLAR
                 error('Pg $1, $2 bound syntax not supported yet :-(');
             }
 
-        } else if ($type == SQL_PARAMS_DOLAR) {
+        } else if ($type == SQL_PARAMS_DOLLAR) {
             error('Pg $1, $2 bound syntax not supported yet :-(');
 
         } else { // $type == SQL_PARAMS_QM
@@ -283,7 +284,7 @@ abstract class moodle_database {
                     $finalparams[$pname] = $param;
                 }
                 return array($sql, $finalparams, SQL_PARAMS_NAMED);
-            } else {  // $type & SQL_PARAMS_DOLAR
+            } else {  // $type & SQL_PARAMS_DOLLAR
                 error('Pg $1, $2 bound syntax not supported yet :-(');
             }
         }
