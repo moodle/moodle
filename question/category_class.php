@@ -273,7 +273,7 @@ class question_category_object {
             $this->catform->set_data($category);
             $this->catform->display();
         } else {
-            print_error("Category $categoryid not found");
+            print_error('invalidcategory', '', '', $categoryid);
         }
     }
 
@@ -324,11 +324,11 @@ class question_category_object {
         global $CFG;
         question_can_delete_cat($categoryid);
         if (!$category = get_record("question_categories", "id", $categoryid)) {  // security
-            print_error("No such category $cat!", '', $this->pageurl->out());
+            print_error('unknowcategory');
         }
         /// Send the children categories to live with their grandparent
         if (!set_field("question_categories", "parent", $category->parent, "parent", $category->id)) {
-            print_error("Could not update a child category!", '', $this->pageurl->out());
+            print_error('cannotupdatesubcate', 'question');
         }
 
         /// Finally delete the category itself
@@ -372,7 +372,7 @@ class question_category_object {
 
         if ($parentid) {
             if(!(get_field('question_categories', 'contextid', 'id', $parentid) == $contextid)) {
-                print_error("Could not insert the new question category '$newcategory' illegal contextid '$contextid'.");
+                print_error('cannotinsertquestioncatecontext', 'question', '', array($newcategory, $contextid));
             }
         }
 
@@ -384,7 +384,7 @@ class question_category_object {
         $cat->sortorder = 999;
         $cat->stamp = make_unique_id_code();
         if (!insert_record("question_categories", $cat)) {
-            print_error("Could not insert the new question category '$newcategory'");
+            print_error('cannotinsertquestioncate', 'question', '', $newcategory);
         } else {
             redirect($this->pageurl->out());//always redirect after successful action
         }
@@ -426,13 +426,13 @@ class question_category_object {
             if ($oldcat->contextid == $tocontextid){ // not moving contexts
                 $cat->parent = $parentid;
                 if (!update_record("question_categories", $cat)) {
-                    print_error("Could not update the category '$newname'", '', $this->pageurl->out());
+                    print_error('cannotupdatecate', 'question', $this->pageurl->out(), $newname);
                 } else {
                     redirect($this->pageurl->out());
                 }
             } else {
                 if (!update_record("question_categories", $cat)) {
-                    print_error("Could not update the category '$newname'", '', $this->pageurl->out());
+                    print_error('cannotupdatecate', 'question', $this->pageurl->out(), $newname);
                 } else {
                     redirect($CFG->wwwroot.'/question/contextmove.php?'.
                                 $this->pageurl->get_query_string(array('cattomove' => $updateid,
@@ -440,7 +440,7 @@ class question_category_object {
                 }
             }
         } else {
-            print_error("Cannot move the category '$newname'. It is the last in this context.", '', $this->pageurl->out());
+            print_error('cannotmovecate', 'question', $this->pageurl->out(), $newname);
         }
     }
 
