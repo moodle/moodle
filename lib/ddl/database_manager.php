@@ -364,7 +364,7 @@ class database_manager {
     }
 
     /**
-     * This function will all tables found in XMLDB file from db
+     * This function will delete all tables found in XMLDB file from db
      *
      * @param $file full path to the XML file to be used
      * @param $feedback
@@ -411,6 +411,10 @@ class database_manager {
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
+     * @TODO I don't think returning TRUE when trying to drop a non-existing table is a good idea.
+     *       the point is, the method name is drop_table, and if it doesn't drop a table,
+     *       it should be obvious to the code calling this method, and not rely on the visual
+     *       feedback of debugging(). Exception handling may solve this.
      */
     public function drop_table($xmldb_table, $continue=true, $feedback=true) {
         if (!($xmldb_table instanceof xmldb_table)) {
@@ -483,6 +487,10 @@ class database_manager {
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return boolean true on success, false on error
+     * @TODO I don't think returning TRUE when trying to create an existing table is a good idea.
+     *       the point is, the method name is create_table, and if it doesn't create a table,
+     *       it should be obvious to the code calling this method, and not rely on the visual
+     *       feedback of debugging(). Exception handling may solve this.
      */
     public function create_table($xmldb_table, $continue=true, $feedback=true) {
         if (!($xmldb_table instanceof xmldb_table)) {
@@ -514,6 +522,10 @@ class database_manager {
      *
      * NOTE: The return value is the tablename - some DBs (MSSQL at least) use special
      * names for temp tables.
+     *
+     * @TODO There is no way to know, from the return value alone, whether a table was actually created
+     *       or not: if an existing table is given as param, its name will be returned, but no DB action
+     *       will have occurred. This should be remedied using an Exception
      *
      * @param xmldb_table table object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)

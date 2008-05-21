@@ -94,12 +94,29 @@ class ddllib_test extends UnitTestCase {
         $this->assertTrue($this->dbmanager->create_table($table));
         $this->assertTrue($this->dbmanager->table_exists("other_test_table"));
         $this->dbmanager->drop_table($table);
+
+        // Give existing table as argument
+        $table = $this->tables[1];
+        $this->assertFalse($this->dbmanager->create_table($table));
+
+        // Give a wrong table param
+        $table = 'string';
+        $this->assertFalse($this->dbmanager->create_table($table));
+
     }
 
     public function testDropTable() {
         $table = $this->tables[0];
         $this->assertTrue($this->dbmanager->drop_table($table, true, false));
         $this->assertFalse($this->dbmanager->table_exists("testtable"));
+
+        // Try dropping non-existent table
+        $table = new xmldb_table('nonexistenttable');
+        $this->assertFalse($this->dbmanager->drop_table($table, true, false));
+
+        // Give a wrong table param
+        $table = 'string';
+        $this->assertFalse($this->dbmanager->drop_table($table, true, false));
     }
 
     public function testAddEnumField() {
@@ -429,16 +446,58 @@ class ddllib_test extends UnitTestCase {
     }
 
     public function testDeleteTablesFromXmldbFile() {
+        global $CFG;
+        $this->assertTrue($this->dbmanager->table_exists('anothertest'));
 
+        // feed nonexistent file
+        $this->assertFalse($this->dbmanager->delete_tables_from_xmldb_file('fpsoiudfposui', false));
+
+        // Real file but invalid xml file
+        $this->assertFalse($this->dbmanager->delete_tables_from_xmldb_file($CFG->libdir . '/ddl/simpletest/fixtures/invalid.xml', false));
+
+        // Check that the table has not been deleted from DB
+        $this->assertTrue($this->dbmanager->table_exists('anothertest'));
+
+        // Real and valid xml file
+        $this->assertTrue($this->dbmanager->delete_tables_from_xmldb_file($CFG->libdir . '/ddl/simpletest/fixtures/xmldb_table.xml', false));
+
+        // Check that the table has been deleted from DB
+        $this->assertFalse($this->dbmanager->table_exists('anothertest'));
     }
 
     public function testInstallFromXmldbFile() {
+        global $CFG;
+        // First delete existing test table to make room for new one
+        $table = $this->tables[1];
+        $this->dbmanager->drop_table($table);
+        $this->assertFalse($this->dbmanager->table_exists('anothertest'));
 
+        // feed nonexistent file
+        $this->assertFalse($this->dbmanager->install_from_xmldb_file('fpsoiudfposui', false));
+
+        // Real but invalid xml file
+        $this->assertFalse($this->dbmanager->install_from_xmldb_file($CFG->libdir . '/ddl/simpletest/fixtures/invalid.xml', false));
+
+        // Check that the table has not yet been created in DB
+        $this->assertFalse($this->dbmanager->table_exists('anothertest'));
+
+        // Real and valid xml file
+        $this->assertTrue($this->dbmanager->install_from_xmldb_file($CFG->libdir . '/ddl/simpletest/fixtures/xmldb_table.xml', false));
+        $this->assertTrue($this->dbmanager->table_exists('anothertest'));
     }
 
     public function testCreateTempTable() {
+        // Feed incorrect table param
+        $this->assertFalse($this->dbmanager->create_temp_table('anothertest'));
+
+        // Correct table but with existing name
+        $table = $this->tables[0];
+        $this->assertEqual('testtable', $this->dbmanager->create_temp_table($table));
+
+        // New table
+        $this->dbmanager->drop_table($this->tables[0]);
+        $this->assertEqual('testtable', $this->dbmanager->create_temp_table($table));
 
     }
 }
-
 ?>
