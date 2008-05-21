@@ -344,7 +344,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 $min = $answer->answer / $quotient;
                 break;
             default:
-                print_error("Unknown tolerance type $answer->tolerancetype");
+                print_error('unknowntolerance', 'question', '', $answer->tolerancetype);
         }
 
         $answer->min = $min;

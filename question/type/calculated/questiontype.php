@@ -247,7 +247,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             if (  $todo=='create'){
                 if (!$datasetdef->id = insert_record(
                     'question_dataset_definitions', $datasetdef)) {
-                    print_error("Unable to create dataset $defid");
+                    print_error('cannotcreatedataset', 'question', '', $defid);
                 } 
            }  
            // Create relation to the dataset:
@@ -256,7 +256,8 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
            $questiondataset->datasetdefinition = $datasetdef->id;
             if (!insert_record('question_datasets',
                                $questiondataset)) {
-                print_error("Unable to create relation to dataset $dataset->name $todo");
+                print_error("cannotcreaterelation", 'question', '',
+                        array($dataset->name, $todo));
             }
             if ($todo=='create'){ // add the items
                 foreach ($dataset->datasetitem as $dataitem ){
@@ -265,7 +266,8 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     $datasetitem->itemnumber = $dataitem->itemnumber ;
                     $datasetitem->value = $dataitem->value ;
                     if (!insert_record('question_dataset_items', $datasetitem)) {
-                        print_error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
+                        print_error('cannotinsertitem', 'question', '',
+                                array($item->itemnumber, $item->value, $datasetdef->name));
                     }
                 }     
             }                                
@@ -623,11 +625,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                 // Reuse any previously used record
                 $addeditem->id = $fromform->itemid[$i];
                 if (!update_record('question_dataset_items', $addeditem)) {
-                    print_error("Error: Unable to update dataset item");
+                    print_error('cannotupdateitem', 'question');
                 }
             } else {
                 if (!insert_record('question_dataset_items', $addeditem)) {
-                    print_error("Error: Unable to insert dataset item");
+                    print_error('cannotinsert', 'question');
                 }
             }
 
@@ -674,7 +676,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                         }
                         //pp  echo "<pre>"; print_r( $datasetitem );
                         if (!insert_record('question_dataset_items', $datasetitem)) {
-                            print_error("Error: Unable to insert new dataset item");
+                            print_error('cannotinsert', 'question');
                         }                        
                     }
                 }//for number added
@@ -698,7 +700,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     $datasetdef->itemcount= $newmaxnumber ;        
                     if (!update_record('question_dataset_definitions',
                                        $datasetdef)) {
-                         print_error("Error: Unable to update itemcount");
+                         print_error('cannotupdatecount', 'question');
                     }
                 }
             }
@@ -720,7 +722,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             return sprintf("%.".$regs[4]."f",$nbr);
  
         } else {
-            print_error("The distribution $regs[1] caused problems");
+            print_error('disterror', 'question', '', $regs[1]);
         }
         return '';
     }

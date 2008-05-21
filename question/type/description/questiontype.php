@@ -51,7 +51,7 @@ class description_qtype extends default_questiontype {
         } else if (!empty($cmoptions->course)) {
             $cmorcourseid = '&amp;courseid='.$cmoptions->course;
         } else {
-            print_error('Need to provide courseid or cmid to print_question.');
+            print_error('missingcourseorcmid', 'question');
         }
 
         // For editing teachers print a link to an editing popup window
