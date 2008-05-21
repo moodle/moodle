@@ -3233,7 +3233,7 @@ class admin_setting_special_coursemanager extends admin_setting_configmulticheck
         if (is_array($this->choices)) {
             return true;
         }
-        if ($roles = $DB->get_records('role')) {
+        if ($roles = $DB->get_records('role',null,'sortorder')) {
             $this->choices = array();
             foreach($roles as $role) {
                 $this->choices[$role->id] = format_string($role->name);
