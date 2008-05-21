@@ -30,6 +30,7 @@ $string['noactivityname'] = 'Page object derived from page_generic_activity but 
 $string['noblocks'] = 'No blocks installed!';
 $string['noblockbase'] = 'Class block_base is not defined or file not found for /blocks/moodleblock.class.php';
 $string['nocaps'] = 'Error: no capabilitites defined!';
+$string['nocate'] = 'No categories!';
 $string['notables'] = 'No Tables!';
 $string['nopageclass'] = 'Imported $a but found no page classes';
 $string['noreports'] = 'No reports accessible';
