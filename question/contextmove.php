@@ -26,7 +26,7 @@
     list($toparent, $contextto) = explode(',', $toparent);
     if (!empty($toparent)){//not top level category, make it a child of $toparent
         if (!$toparent = get_record('question_categories', 'id', $toparent)){
-            print_error('Invalid category id for parent!', '', $onerrorurl);
+            print_error('invalidcategoryidforparent', 'question', $onerrorurl);
         }
         $contextto = $toparent->contextid;
     } else {
@@ -35,10 +35,10 @@
         $toparent->contextid = $contextto;
     }
     if (!$cattomove = get_record('question_categories', 'id', $cattomove)){
-        print_error('Invalid category id to move!', '', $onerrorurl);
+        print_error('invalidcategoryidtomove', 'question', $onerrorurl);
     }
     if ($cattomove->contextid == $contextto){
-        print_error("You shouldn't have got here if you're not moving a category to another context.", '', $onerrorurl);
+        print_error('contexterror', '', $onerrorurl);
     }
     $cattomove->categorylist = question_categorylist($cattomove->id);
 
@@ -130,7 +130,7 @@
                     case QUESTION_FILEMOVELINKSONLY :
                         break;
                     default :
-                        print_error('Invalid action selected!', '', $onerrorurl);
+                        print_error('invalidaction', '', $onerrorurl);
                 }
                 switch ($urlaction){
                     //now search and replace urls in questions.
@@ -176,11 +176,11 @@
         $cat->parent = $toparent->id;
         //set context of category we are moving and all children also!
         if (!execute_sql("UPDATE {$CFG->prefix}question_categories SET contextid = {$contextto->id} WHERE id IN ({$cattomove->categorylist})", false)){
-            print_error("Could not move the category '$newname' to ".$contexttostring, '', $onerrorurl);
+            print_error('cannotmovefromto', 'question', $onerrorurl, array($newname, $contexttostring));
         }
         //finally set the new parent id
         if (!update_record("question_categories", $cat)) {
-            print_error("Could not update the category '$updatename'", '', $onerrorurl);
+            print_error('cannotupdatecate', 'question', $onerrorurl, $updatename);
         }
         $thispageurl->remove_params('cattomove', 'toparent', 'totop');
         redirect($CFG->wwwroot."/question/category.php?".$thispageurl->get_query_string(array('cat'=>"{$cattomove->id},{$contextto->id}")));

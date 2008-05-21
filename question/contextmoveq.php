@@ -42,7 +42,7 @@ if ($cmid){
     }
     $thispageurl->param('courseid', $COURSE->id);
 } else {
-    print_error('Need to pass courseid or cmid to this script.');
+    print_error('missingcourseorcmid', 'question');
 }
 $contexts = new question_edit_contexts($thiscontext);
 
@@ -70,7 +70,7 @@ foreach (array_keys($questions) as $id){
     $questions[$id]->context = get_context_instance_by_id($questions[$id]->contextid);
     $thisfilesid =  get_filesdir_from_context($questions[$id]->context);
     if ($fromcoursefilesid && $thisfilesid != $fromcoursefilesid){
-       print_error('You can\'t use this script to move questions that have files associated with them from different areas.');
+       print_error('cannotmovequestion', 'question');
     } else {
        $fromcoursefilesid =  $thisfilesid;
     }
@@ -136,7 +136,7 @@ if ($contextmoveform->is_cancelled()){
                 case QUESTION_FILEDONOTHING :
                     break;
                 default :
-                    print_error('Invalid action selected!', '', $returnurl);
+                    print_error('invalidaction', '', $returnurl);
             }
             //now search and replace urls in questions.
             switch ($urlaction){
@@ -152,7 +152,7 @@ if ($contextmoveform->is_cancelled()){
                 case  QUESTION_FILEDONOTHING :
                     break;
                 default :
-                    print_error('Invalid action selected!', '', $returnurl);
+                    print_error('invalidaction', '', $returnurl);
                     break;
             }
 

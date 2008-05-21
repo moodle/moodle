@@ -81,7 +81,7 @@
 
 
         if (! is_readable("format/$from_form->format/format.php")) {
-            print_error("Format not known ($from_form->format)");
+            print_error('unknowformat', '', '', $from_form->format);
         }
 
         // load parent class for import/export

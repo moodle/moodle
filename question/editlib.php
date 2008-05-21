@@ -880,12 +880,12 @@ function require_login_in_context($contextorid = null){
     } else if ($context && ($context->contextlevel == CONTEXT_MODULE)) {
         if ($cm = get_record('course_modules','id',$context->instanceid)) {
             if (!$course = get_record('course', 'id', $cm->course)) {
-                print_error('Incorrect course.');
+                print_error('invalidcourseid');
             }
             require_course_login($course, true, $cm);
 
         } else {
-            print_error('Incorrect course module id.');
+            print_error('invalidcoursemodule');
         }
     } else if ($context && ($context->contextlevel == CONTEXT_SYSTEM)) {
         if (!empty($CFG->forcelogin)) {

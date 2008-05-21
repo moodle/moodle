@@ -12,7 +12,7 @@
         $currenttab = '';
     }
     if (!isset($COURSE)) {
-        print_error('No course specified');
+        print_error('invalidcourse');
     }
 
     $tabs = array();

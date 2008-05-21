@@ -43,7 +43,7 @@ class qformat_coursetestmanager extends qformat_default {
         if ((PHP_OS == "Linux") and !isset($hostname)) {
             // copy the file to a semi-permanent location
             if (! $basedir = make_upload_directory("$COURSE->id")) {
-                print_error("The site administrator needs to fix the file permissions for the data directory");
+                print_error('cannotcreateuploaddir');
             }
             if (!isset($hostname_access_error)) {
                 $bname=basename($filename);
@@ -101,7 +101,7 @@ class qformat_coursetestmanager extends qformat_default {
             if (PHP_OS == "WINNT") {
             // copy the file to a semi-permanent location
                 if (! $basedir = make_upload_directory("$COURSE->id")) {
-                    print_error("The site administrator needs to fix the file permissions for the data directory");
+                    print_error('cannotcreateuploaddir');
                 }
                 $bname=basename($filename);
                 $cleanfilename = clean_filename($bname);
@@ -124,7 +124,7 @@ class qformat_coursetestmanager extends qformat_default {
             }
             // print the intermediary form
             if (!$categories = question_category_options($COURSE->id, true)) {
-                print_error("No categories!");
+                print_error('nocate', 'debug');
             }
             print_heading_with_help($strimportquestions, "import", "quiz");
             print_simple_box_start("center");
@@ -264,7 +264,7 @@ class qformat_coursetestmanager extends qformat_default {
             $question->createdby = $USER->id;
             $question->timecreated = time();
             if (!$question->id = insert_record("question", $question)) {
-                print_error("Could not insert new question!");
+                print_error('cannotinsertquestion', 'question');
             }
             $this->questionids[] = $question->id;
             // Now to save all the answers and type-specific options

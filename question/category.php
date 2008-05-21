@@ -48,7 +48,7 @@
     }
     if ($param->delete && ($questionstomove = count_records("question", "category", $param->delete))){
         if (!$category = get_record("question_categories", "id", $param->delete)) {  // security
-            print_error("No such category {$param->delete}!", '', $thispageurl->out());
+            print_error('nocate', 'question', $thispageurl->out(), $param->delete);
         }
         $categorycontext = get_context_instance_by_id($category->contextid);
         $qcobject->moveform = new question_move_form($thispageurl,

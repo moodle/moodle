@@ -159,7 +159,7 @@ class qformat_blackboard_6 extends qformat_default {
         if ($this->check_and_create_import_dir($unique_code)) {
             if(is_readable($filename)) {
                 if (!copy($filename, "$temp_dir/bboard.zip")) {
-                    print_error("Could not copy backup file");
+                    print_error('cannotcopybackup', 'question');
                 }
                 if(unzip_file("$temp_dir/bboard.zip", '', false)) {
                     // assuming that the information is in res0001.dat
@@ -178,20 +178,20 @@ class qformat_blackboard_6 extends qformat_default {
                         }
                     }
                     else {
-                        print_error("Could not find question data file in zip");   
+                        print_error('cannotfindquestionfile', 'questioni');   
                     }
                 }
                 else {
                     print "filename: $filename<br />tempdir: $temp_dir <br />";
-                    print_error("Could not unzip file.");   
+                    print_error('cannotunzip', 'question');   
                 }
             }
             else {
-                error ("Could not read uploaded file");   
+                print_error('cannotreaduploadfile');   
             }
         }
         else {
-            print_error("Could not create temporary directory");   
+            print_error('cannotcreatetempdir');   
         }
     }
         
