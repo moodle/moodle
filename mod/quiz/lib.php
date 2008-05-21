@@ -1054,14 +1054,14 @@ function quiz_reset_userdata($data) {
  * Checks whether the current user is allowed to view a file uploaded in a quiz.
  * Teachers can view any from their courses, students can only view their own.
  *
- * @param int $attemptid int attempt id
+ * @param int $attemptuniqueid int attempt id
  * @param int $questionid int question id
  * @return boolean to indicate access granted or denied
  */
-function quiz_check_file_access($attemptid, $questionid) {
+function quiz_check_file_access($attemptuniqueid, $questionid) {
     global $USER;
 
-    $attempt = get_record("quiz_attempts", 'id', $attemptid);
+    $attempt = get_record("quiz_attempts", 'uniqueid', $attemptid);
     $quiz = get_record("quiz", 'id', $attempt->quiz);
     $context = get_context_instance(CONTEXT_COURSE, $quiz->course);
 
