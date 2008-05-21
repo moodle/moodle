@@ -176,7 +176,7 @@ class view_structure_php extends XMLDBAction {
     /// Iterate over each field
         foreach ($table->getFields() as $field) {
         /// The field header, with name
-            $result .= '        $table->addFieldInfo(' . "'" . $field->getName() . "', ";
+            $result .= '        $table->add_field(' . "'" . $field->getName() . "', ";
         /// The field PHP specs
             $result .= $field->getPHP(false);
         /// The end of the line
@@ -188,7 +188,7 @@ class view_structure_php extends XMLDBAction {
             $result .= '    /// Adding keys to table ' . $table->getName() . XMLDB_LINEFEED;
             foreach ($keys as $key) {
             /// The key header, with name
-                $result .= '        $table->addKeyInfo(' . "'" . $key->getName() . "', ";
+                $result .= '        $table->add_key(' . "'" . $key->getName() . "', ";
             /// The key PHP specs
                 $result .= $key->getPHP();
             /// The end of the line
@@ -201,7 +201,7 @@ class view_structure_php extends XMLDBAction {
             $result .= '    /// Adding indexes to table ' . $table->getName() . XMLDB_LINEFEED;
             foreach ($indexes as $index) {
             /// The index header, with name
-                $result .= '        $table->addIndexInfo(' . "'" . $index->getName() . "', ";
+                $result .= '        $table->add_index(' . "'" . $index->getName() . "', ";
             /// The index PHP specs
                 $result .= $index->getPHP();
             /// The end of the line

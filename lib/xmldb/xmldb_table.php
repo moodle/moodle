@@ -706,6 +706,17 @@ class xmldb_table extends xmldb_object {
         return $o;
     }
 
+/// TODO: Delete for 2.1 (deprecated in 2.0).
+/// Deprecated API starts here
+    function addFieldInfo($name, $type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
+
+        debugging('XMLDBTable->addFieldInfo() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_table->add_field() instead', DEBUG_DEVELOPER);
+
+        return $this->add_field($name, $type, $precision, $unsigned, $notnull, $sequence, $enum, $enumvalues, $default, $previous);
+
+    }
+/// Deprecated API ends here
+
     /**
      * This function will add one new field to the table with all
      * its attributes defined
@@ -721,13 +732,25 @@ class xmldb_table extends xmldb_object {
      * @param string default meaningful default o null (or false)
      * @param string previous name of the previous field in the table or null (or false)
      */
-    function addFieldInfo($name, $type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
+    function add_field($name, $type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
         $field = new xmldb_field($name);
         $field->setAttributes($type, $precision, $unsigned, $notnull, $sequence, $enum, $enumvalues, $default);
         $this->addField($field, $previous);
 
         return $field;
     }
+
+/// TODO: Delete for 2.1 (deprecated in 2.0).
+/// Deprecated API starts here
+
+    function addKeyInfo($name, $type, $fields, $reftable=null, $reffields=null) {
+
+        debugging('XMLDBTable->addKeyInfo() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_table->add_key() instead', DEBUG_DEVELOPER);
+
+        return $this->add_key($name, $type, $fields, $reftable, $reffields);
+
+    }
+/// Deprecated API ends here
 
     /**
      * This function will add one new key to the table with all
@@ -739,11 +762,22 @@ class xmldb_table extends xmldb_object {
      * @param string reftable name of the table the FK points to or null
      * @param array reffields an array of fieldnames in the FK table or null
      */
-    function addKeyInfo($name, $type, $fields, $reftable=null, $reffields=null) {
+    function add_key($name, $type, $fields, $reftable=null, $reffields=null) {
         $key = new xmldb_key($name);
         $key->setAttributes($type, $fields, $reftable, $reffields);
         $this->addKey($key);
     }
+
+/// TODO: Delete for 2.1 (deprecated in 2.0).
+/// Deprecated API starts here
+    function addIndexInfo($name, $type, $fields) {
+
+        debugging('XMLDBTable->addIndexInfo() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_table->add_index() instead', DEBUG_DEVELOPER);
+
+        return $this->add_index($name, $type, $fields);
+
+    }
+/// Deprecated API ends here
 
     /**
      * This function will add one new index to the table with all
@@ -753,7 +787,7 @@ class xmldb_table extends xmldb_object {
      * @param string type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
      * @param array fields an array of fieldnames to build the index over
      */
-    function addIndexInfo($name, $type, $fields) {
+    function add_index($name, $type, $fields) {
         $index = new xmldb_index($name);
         $index->setAttributes($type, $fields);
         $this->addIndex($index);
