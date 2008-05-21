@@ -305,6 +305,10 @@ $string['phpversionhelp'] = '<p>Moodleには、少なくとも 4.3.0 または 5
 <p>PHPをアップグレードするか、新しいバージョンがインストールされているホストに移動してください!<br/>
 (5.0.x の場合、バージョン 4.4.x にダウングレードすることもできます。)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['prefixcannotbeempty'] = '<p>エラー: データベーステーブル接頭辞に空白は指定できません ($a)</p>
+<p>サイト管理者は、この問題を修正してください。</p>';
+$string['prefixtoolong'] = '<p>エラー: データベーステーブル接頭辞が長すぎます ($a->dbfamily)</p>
+<p>サイト管理者は、この問題を修正してください。$a->dbfamily のテーブル接頭辞の最大長は、半角 $a->maxlength 文字です。</p>';
 $string['previous'] = '前へ';
 $string['qtyperqpwillberemoved'] = 'アップグレード中、RQP問題タイプは削除されます。あなたはこの問題タイプを使用していませんので、トラブルが発生することはありません。';
 $string['qtyperqpwillberemovedanyway'] = 'アップグレード中、RQP問題タイプは削除されます。あなたのデータベース内にRQP問題タイプが登録されています。アップグレードを続ける前に、 http://moodle.org/mod/data/view.php?d=13&amp;rid=797 から対応するプログラムをインストールしない場合、これらの問題は動作しなくなります。';
