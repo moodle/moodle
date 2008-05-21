@@ -179,7 +179,7 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
 
     print_headline(get_string('newsurveyresponses', 'survey').':');
     foreach ($surveys as $survey) {
-        $url = $CFG->wwwroot.'/mod/survey/view.pgp?id='.$survey->cmid;
+        $url = $CFG->wwwroot.'/mod/survey/view.php?id='.$survey->cmid;
         print_recent_activity_note($survey->time, $survey, $survey->name, $url, false, $viewfullnames);
     }
  
