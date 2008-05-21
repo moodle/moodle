@@ -422,13 +422,14 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
 
 function print_category_edit_header() {
     global $CFG;
+    global $SITE;
 
     if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         require_once($CFG->libdir.'/adminlib.php');
         admin_externalpage_setup('coursemgmt');
         admin_externalpage_print_header();
     } else {
-        print_header("$site->shortname: $strcategories", get_string('courses'),
+        print_header("$SITE->shortname:". get_string('categories'), get_string('courses'),
             build_navigation(array(array('name'=>get_string('categories'),'link'=>'','type'=>'misc'))), '', '', true, update_categories_button());
     }
 }
