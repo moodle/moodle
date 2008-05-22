@@ -182,7 +182,7 @@ if ($INSTALL['wwwroot'] == '') {
         }
         $CFG->dataroot = dirname($parrent).'/moodledata';
     }
-    $INSTALL['dataroot'] = $CFG->dataroot;
+        $INSTALL['dataroot'] = $CFG->dataroot;
 }
 
 $headstagetext = array(WELCOME       => get_string('chooselanguagehead', 'install'),
@@ -1164,7 +1164,7 @@ function css_styles() {
         text-align: <?php echo fix_align_rtl("left") ?>;
     }
     .main {
-        width: 500px;
+        width: 80%;
         border-width: 1px;
         border-style: solid;
         border-color: #ffc85f;
