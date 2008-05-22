@@ -392,12 +392,15 @@ class moodle_url {
      *
      * @param  array $exclude params to ignore
      * @param integer $indent indentation
+     * @param array $overrideparams params to add to the output params, these
+     * override existing ones with the same name.
      * @return string html for form elements.
      */
-    function hidden_params_out($exclude = array(), $indent = 0){
+    function hidden_params_out($exclude = array(), $indent = 0, $overrideparams=array()){
         $tabindent = str_repeat("\t", $indent);
         $str = '';
-        foreach ($this->params as $key => $val){
+        $params = $overrideparams + $this->params;
+        foreach ($params as $key => $val){
             if (FALSE === array_search($key, $exclude)) {
                 $val = s($val);
                 $str.= "$tabindent<input type=\"hidden\" name=\"$key\" value=\"$val\" />\n";
