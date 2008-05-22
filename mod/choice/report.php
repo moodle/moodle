@@ -204,21 +204,23 @@
     choice_show_results($choice, $course, $cm, $users, $format); //show table with students responses.
 
    //now give links for downloading spreadsheets. 
-    echo "<br />\n";
-    echo "<table class=\"downloadreport\"><tr>\n";
-    echo "<td>";
-    $options = array();
-    $options["id"] = "$cm->id";   
-    $options["download"] = "ods";
-    print_single_button("report.php", $options, get_string("downloadods"));
-    echo "</td><td>";
-    $options["download"] = "xls";
-    print_single_button("report.php", $options, get_string("downloadexcel"));
-    echo "</td><td>";
-    $options["download"] = "txt";    
-    print_single_button("report.php", $options, get_string("downloadtext"));
+    if (has_capability('mod/choice:downloadresponses',$context)) {
+        echo "<br />\n";
+        echo "<table class=\"downloadreport\"><tr>\n";
+        echo "<td>";
+        $options = array();
+        $options["id"] = "$cm->id";   
+        $options["download"] = "ods";
+        print_single_button("report.php", $options, get_string("downloadods"));
+        echo "</td><td>";
+        $options["download"] = "xls";
+        print_single_button("report.php", $options, get_string("downloadexcel"));
+        echo "</td><td>";
+        $options["download"] = "txt";    
+        print_single_button("report.php", $options, get_string("downloadtext"));
 
-    echo "</td></tr></table>";
+        echo "</td></tr></table>";
+    }
     print_footer($course);
 
 ?>
