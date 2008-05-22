@@ -158,6 +158,7 @@ Nemáte-li přístup k souboru php.ini, nebo pokud nemůžete/nechcete měnit to
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
 </p>';
+$string['globalswarning'] = '<p><strong>Bezpečnostní varování</strong>: Aby Moodle pracoval správně, potřebuje udělat změny v nastavení PHP.<p/><p><em>Musíte</em> nastavit <code>register_globals=off</code>. Tohoto nastavení dosáhnete buď úpravou soubor <code>php.ini</code> (Apache nebo IIS), nebo nastavením pomocí <code>.htaccess</code>.';
 $string['help'] = 'Nápověda';
 $string['iconvrecommended'] = 'Instalace volitelné knihovny ICONV je silně doporučena, neboť zvyšuje výkon stránek, zejména pokud používáte jazyky nezaložené na latince.';
 $string['info'] = 'Informace';
@@ -260,4 +261,5 @@ $string['wrongsourcebase'] = 'Chybné URL zdrojového serveru';
 $string['wrongzipfilename'] = 'Chybné jméno souboru ZIP';
 $string['wwwroot'] = 'Webová adresa';
 $string['wwwrooterror'] = 'Parametr \'Webová adresa\' je zřejmě nastaven nesprávně -- v zadaném umístění se nepodařilo najít instalaci Moodlu. Ve formuláři níže byla automaticky nastavena výchozí hodnota.';
+$string['xmlrpcrecommended'] = 'Instalace rozšíření pro podporu XML-RPC je velmi užitečná pro síťové funkce Moodlu.';
 ?>
