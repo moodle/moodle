@@ -754,8 +754,7 @@ abstract class sql_generator {
             } else {
                 $indextype = XMLDB_INDEX_UNIQUE;
             }
-            $xmldb_index = new xmldb_index('anyname');
-            $xmldb_index->setAttributes($indextype, $xmldb_key->getFields());
+            $xmldb_index = new xmldb_index('anyname', $indextype, $xmldb_key->getFields());
             if (!$this->mdb->get_manager()->index_exists($xmldb_table, $xmldb_index)) {
                 $results = array_merge($results, $this->getAddIndexSQL($xmldb_table, $xmldb_index));
             }
@@ -822,8 +821,7 @@ abstract class sql_generator {
     /// automatically by the RDBMS) drop the underlying (created by us) index (if exists)
         if (!$dropkey || $xmldb_key->getType() == XMLDB_KEY_FOREIGN) {
         /// Only if they exist
-            $xmldb_index = new xmldb_index('anyname');
-            $xmldb_index->setAttributes(XMLDB_INDEX_UNIQUE, $xmldb_key->getFields());
+            $xmldb_index = new xmldb_index('anyname', XMLDB_INDEX_UNIQUE, $xmldb_key->getFields());
             if ($this->mdb->get_manager()->index_exists($xmldb_table, $xmldb_index)) {
                 $results = array_merge($results, $this->getDropIndexSQL($xmldb_table, $xmldb_index));
             }

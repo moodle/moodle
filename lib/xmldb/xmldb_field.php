@@ -52,8 +52,7 @@ class xmldb_field extends xmldb_object {
     /**
      * Creates one new xmldb_field
      */
-    function __construct($name) {
-        parent::__construct($name);
+    function __construct($name, $type=null, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
         $this->type = NULL;
         $this->length = NULL;
         $this->unsigned = true;
@@ -63,7 +62,20 @@ class xmldb_field extends xmldb_object {
         $this->enum = false;
         $this->enumvalues = NULL;
         $this->decimals = NULL;
+        parent::__construct($name);
+        $this->set_attributes($type, $precision, $unsigned, $notnull, $sequence, $enum, $enumvalues, $default, $previous);
     }
+
+/// TODO: Delete for 2.1 (deprecated in 2.0).
+/// Deprecated API starts here
+
+    function setAttributes($type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
+
+        debugging('XMLDBField->setAttributes() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_field->set_attributes() instead.', DEBUG_DEVELOPER);
+
+        return $this->set_attributes($type, $precision, $unsigned, $notnull, $sequence, $enum, $enumvalues, $default, $previous);
+    }
+/// Deprecated API ends here
 
     /**
      * Set all the attributes of one xmldb_field
@@ -77,7 +89,7 @@ class xmldb_field extends xmldb_object {
      * @param array enumvalues an array of possible values if XMLDB_ENUM is set
      * @param string default meaningful default o null (or false)
      */
-    function setAttributes($type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
+    function set_attributes($type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
         $this->type = $type;
     /// Try to split the precision into length and decimals and apply
     /// each one as needed

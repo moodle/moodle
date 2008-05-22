@@ -33,16 +33,14 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Define index contextid-lowerboundary (not unique) to be dropped form grade_letters
         $table = new xmldb_table('grade_letters');
-        $index = new xmldb_index('contextid-lowerboundary');
-        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('contextid', 'lowerboundary'));
+        $index = new xmldb_index('contextid-lowerboundary', XMLDB_INDEX_NOTUNIQUE, array('contextid', 'lowerboundary'));
 
     /// Launch drop index contextid-lowerboundary
         $result = $result && $dbman->drop_index($table, $index);
 
     /// Define index contextid-lowerboundary-letter (unique) to be added to grade_letters
         $table = new xmldb_table('grade_letters');
-        $index = new xmldb_index('contextid-lowerboundary-letter');
-        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('contextid', 'lowerboundary', 'letter'));
+        $index = new xmldb_index('contextid-lowerboundary-letter', XMLDB_INDEX_UNIQUE, array('contextid', 'lowerboundary', 'letter'));
 
     /// Launch add index contextid-lowerboundary-letter
         $result = $result && $dbman->add_index($table, $index);
@@ -96,8 +94,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Define index idnumber (not unique) to be dropped form user
         $table = new xmldb_table('user');
-        $index = new xmldb_index('idnumber');
-        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
+        $index = new xmldb_index('idnumber', XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
 
     /// Launch drop index idnumber
         if ($dbman->index_exists($table, $index)) {
@@ -106,15 +103,13 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Changing precision of field idnumber on table user to (255)
         $table = new xmldb_table('user');
-        $field = new xmldb_field('idnumber');
-        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'password');
+        $field = new xmldb_field('idnumber', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'password');
 
     /// Launch change of precision for field idnumber
         $result = $result && $dbman->change_field_precision($table, $field);
 
     /// Launch add index idnumber again
-        $index = new xmldb_index('idnumber');
-        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
+        $index = new xmldb_index('idnumber', XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
         $result = $result && $dbman->add_index($table, $index);
 
     /// Main savepoint reached

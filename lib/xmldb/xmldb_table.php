@@ -733,8 +733,7 @@ class xmldb_table extends xmldb_object {
      * @param string previous name of the previous field in the table or null (or false)
      */
     function add_field($name, $type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
-        $field = new xmldb_field($name);
-        $field->setAttributes($type, $precision, $unsigned, $notnull, $sequence, $enum, $enumvalues, $default);
+        $field = new xmldb_field($name, $type, $precision, $unsigned, $notnull, $sequence, $enum, $enumvalues, $default);
         $this->addField($field, $previous);
 
         return $field;
@@ -763,8 +762,7 @@ class xmldb_table extends xmldb_object {
      * @param array reffields an array of fieldnames in the FK table or null
      */
     function add_key($name, $type, $fields, $reftable=null, $reffields=null) {
-        $key = new xmldb_key($name);
-        $key->setAttributes($type, $fields, $reftable, $reffields);
+        $key = new xmldb_key($name, $type, $fields, $reftable, $reffields);
         $this->addKey($key);
     }
 
@@ -788,8 +786,7 @@ class xmldb_table extends xmldb_object {
      * @param array fields an array of fieldnames to build the index over
      */
     function add_index($name, $type, $fields) {
-        $index = new xmldb_index($name);
-        $index->setAttributes($type, $fields);
+        $index = new xmldb_index($name, $type, $fields);
         $this->addIndex($index);
     }
 

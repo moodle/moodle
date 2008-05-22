@@ -47,13 +47,25 @@ class xmldb_key extends xmldb_object {
     /**
      * Creates one new xmldb_key
      */
-    function __construct($name) {
-        parent::__construct($name);
+    function __construct($name, $type=null, $fields=null, $reftable=null, $reffields=null) {
         $this->type = NULL;
         $this->fields = array();
         $this->reftable = NULL;
         $this->reffields = array();
+        parent::__construct($name);
+        $this->set_attributes($type, $fields, $reftable, $reffields);
     }
+
+/// TODO: Delete for 2.1 (deprecated in 2.0).
+/// Deprecated API starts here
+
+    function setAttributes($type, $fields, $reftable=null, $reffields=null) {
+
+        debugging('XMLDBKey->setAttributes() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_key->set_attributes() instead.', DEBUG_DEVELOPER);
+
+        return $this->set_attributes($type, $fields, $reftable, $reffields);
+    }
+/// Deprecated API ends here
 
     /**
      * Set all the attributes of one xmldb_key
@@ -63,11 +75,11 @@ class xmldb_key extends xmldb_object {
      * @param string reftable name of the table the FK points to or null
      * @param array reffields an array of fieldnames in the FK table or null
      */
-    function setAttributes($type, $fields, $reftable=null, $reffields=null) {
+    function set_attributes($type, $fields, $reftable=null, $reffields=null) {
         $this->type = $type;
         $this->fields = $fields;
         $this->reftable = $reftable;
-        $this->reffields = $reffields;
+        $this->reffields = empty($reffields) ? array() : $reffields;
     }
 
     /**

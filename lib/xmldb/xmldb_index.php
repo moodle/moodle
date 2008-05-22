@@ -45,11 +45,22 @@ class xmldb_index extends xmldb_object {
     /**
      * Creates one new xmldb_index
      */
-    function __construct($name) {
-        parent::__construct($name);
+    function __construct($name, $type=null, $fields=null) {
         $this->unique = false;
         $this->fields = array();
+        parent::__construct($name);
+        return $this->set_attributes($type, $fields);
     }
+
+/// TODO: Delete for 2.1 (deprecated in 2.0).
+/// Deprecated API starts here
+    function setAttributes($type, $fields) {
+
+        debugging('XMLDBIndex->setAttributes() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_index->set_attributes() instead.', DEBUG_DEVELOPER);
+
+        return $this->set_attributes($type, $fields);
+    }
+/// Deprecated API ends here
 
     /**
      * Set all the attributes of one xmldb_index
@@ -57,7 +68,7 @@ class xmldb_index extends xmldb_object {
      * @param string type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
      * @param array fields an array of fieldnames to build the index over
      */
-    function setAttributes($type, $fields) {
+    function set_attributes($type, $fields) {
         $this->unique = !empty($type) ? true : false;
         $this->fields = $fields;
     }

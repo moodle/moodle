@@ -331,8 +331,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Define field ' . $field->getName() . ' to be added to ' . $table->getName() . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -424,8 +423,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Rename field ' . $field->getName() . ' on table ' . $table->getName() . ' to NEWNAMEGOESHERE'. XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -480,8 +478,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Changing type of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $type . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -533,8 +530,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Changing precision of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $precision . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " .$field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -582,8 +578,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Changing sign of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $unsigned . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -631,8 +626,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Changing nullability of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $notnull . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -681,8 +675,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Changing list of values (enum) of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $enum . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -730,8 +723,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Changing the default of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $default . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -777,8 +769,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Define key ' . $key->getName() . ' ('. $key->getXMLDBKeyName($key->getType()) . ') to be added to ' . $table->getName() . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $key = new xmldb_key(' . "'" . $key->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $key->setAttributes(' . $key->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $key = new xmldb_key(' . "'" . $key->getName() . "', " . $key->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -824,8 +815,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Define key ' . $key->getName() . ' ('. $key->getXMLDBKeyName($key->getType()) . ') to be dropped form ' . $table->getName() . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $key = new xmldb_key(' . "'" . $key->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $key->setAttributes(' . $key->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $key = new xmldb_key(' . "'" . $key->getName() . "', " . $key->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -874,8 +864,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Define key ' . $key->getName() . ' ('. $key->getXMLDBKeyName($key->getType()) . ') to be renamed to NEWNAMEGOESHERE' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $key = new xmldb_key(' . "'" . $key->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $key->setAttributes(' . $key->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $key = new xmldb_key(' . "'" . $key->getName() . "', " . $key->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -921,8 +910,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Define index ' . $index->getName() . ' ('. ($index->getUnique() ? 'unique' : 'not unique') . ') to be added to ' . $table->getName() . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $index = new xmldb_index(' . "'" . $index->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $index->setAttributes(' . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $index = new xmldb_index(' . "'" . $index->getName() . "', " . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -968,8 +956,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Define index ' . $index->getName() . ' ('. ($index->getUnique() ? 'unique' : 'not unique') . ') to be dropped form ' . $table->getName() . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $index = new xmldb_index(' . "'" . $index->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $index->setAttributes(' . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $index = new xmldb_index(' . "'" . $index->getName() . "', " . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
@@ -1018,8 +1005,7 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Define index ' . $index->getName() . ' ('. ($index->getUnique() ? 'unique' : 'not unique') . ') to be renamed to NEWNAMEGOESHERE' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $index = new xmldb_index(' . "'" . $index->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $index->setAttributes(' . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $index = new xmldb_index(' . "'" . $index->getName() . "', " . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
