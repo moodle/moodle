@@ -380,7 +380,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                         foreach ($allresponses[$optionid] as $user) {
                             $columncount[$optionid] += 1;
                             echo '<tr><td class="attemptcell">';
-                            if ($viewresponses) {
+                            if ($viewresponses and has_capability('mod/choice:deleteresponses',$context)) {
                                 echo '<input type="checkbox" name="attemptid[]" value="'. $user->id. '" />';
                             }
                             echo '</td><td class="picture">';
@@ -422,7 +422,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
             echo "</tr>";
             
             /// Print "Select all" etc.
-            if ($viewresponses) {
+            if ($viewresponses and has_capability('mod/choice:deleteresponses',$context)) {
                 echo '<tr><td></td><td>';
                 echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
                 echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
