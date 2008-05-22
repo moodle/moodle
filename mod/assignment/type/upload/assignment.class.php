@@ -105,7 +105,7 @@ class assignment_upload extends assignment_base {
 
     /// We need the teacher info
         if (!$teacher = get_record('user', 'id', $graded_by)) {
-            print_error('Could not find the teacher');
+            print_error('cannotfindteacher');
         }
 
     /// Print the feedback
@@ -466,7 +466,7 @@ class assignment_upload extends assignment_base {
             case 'editnotes':
                 $this->upload_notes();
             default:
-                print_error('Error: Unknow upload action ('.$action.').');
+                print_error('unknowuploadaction', '', '', $action);
         }
     }
 

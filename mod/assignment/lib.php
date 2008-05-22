@@ -52,7 +52,7 @@ class assignment_base {
         if ($cm) {
             $this->cm = $cm;
         } else if (! $this->cm = get_coursemodule_from_id('assignment', $cmid)) {
-            print_error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
 
         $this->context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
@@ -62,13 +62,13 @@ class assignment_base {
         } else if ($this->cm->course == $COURSE->id) {
             $this->course = $COURSE;
         } else if (! $this->course = get_record('course', 'id', $this->cm->course)) {
-            print_error('Course is misconfigured');
+            print_error('invalidid', 'assignment');
         }
 
         if ($assignment) {
             $this->assignment = $assignment;
         } else if (! $this->assignment = get_record('assignment', 'id', $this->cm->instance)) {
-            print_error('assignment ID was incorrect');
+            print_error('invalidid', 'assignment');
         }
 
         $this->assignment->cmidnumber = $this->cm->id;     // compatibility with modedit assignment obj
@@ -235,7 +235,7 @@ class assignment_base {
 
     /// We need the teacher info
         if (!$teacher = get_record('user', 'id', $graded_by)) {
-            print_error('Could not find the teacher');
+            print_error('cannotfindteacher');
         }
 
     /// Print the feedback
@@ -787,7 +787,7 @@ class assignment_base {
         $offset = required_param('offset', PARAM_INT);//offset for where to start looking for student.
 
         if (!$user = get_record('user', 'id', $userid)) {
-            print_error('No such user!');
+            print_error('nousers');
         }
 
         if (!$submission = $this->get_submission($user->id)) {
@@ -1490,7 +1490,7 @@ class assignment_base {
         }
         $newsubmission = $this->prepare_new_submission($userid, $teachermodified);
         if (!insert_record("assignment_submissions", $newsubmission)) {
-            print_error("Could not insert a new empty submission");
+            print_error('cannotinsertempty', 'assignment');
         }
 
         return get_record('assignment_submissions', 'assignment', $this->assignment->id, 'userid', $userid);

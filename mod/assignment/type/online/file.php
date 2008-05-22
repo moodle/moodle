@@ -8,29 +8,29 @@
     $userid = required_param('userid', PARAM_INT);  // User ID
 
     if (! $cm = get_coursemodule_from_id('assignment', $id)) {
-        print_error("Course Module ID was incorrect");
+        print_error('invalidcoursemodule');
     }
 
     if (! $assignment = get_record("assignment", "id", $cm->instance)) {
-        print_error("Assignment ID was incorrect");
+        print_error('invalidid', 'assignment');
     }
 
     if (! $course = get_record("course", "id", $assignment->course)) {
-        print_error("Course is misconfigured");
+        print_error('coursemisconf', 'assignment');
     }
 
     if (! $user = get_record("user", "id", $userid)) {
-        print_error("User is misconfigured");
+        print_error('usermisconf', 'assignment');
     }
 
     require_login($course->id, false, $cm);
 
     if (($USER->id != $user->id) && !has_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {
-        print_error("You can not view this assignment");
+        print_error('cannotviewassignment', 'assignment');
     }
 
     if ($assignment->assignmenttype != 'online') {
-        print_error("Incorrect assignment type");
+        print_error('invalidtype', 'assignment');
     }
 
     $assignmentinstance = new assignment_online($cm->id, $assignment, $cm, $course);
