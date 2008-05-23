@@ -486,6 +486,7 @@ function set_cron_lock($name, $until, $ignorecurrent=false) {
 }
 
 function print_progress($done, $total, $updatetime=5, $sleeptime=1, $donetext='') {
+    static $thisbarid;
     static $starttime;
     static $lasttime;
 
@@ -493,14 +494,26 @@ function print_progress($done, $total, $updatetime=5, $sleeptime=1, $donetext=''
         return;
     }
 
+    // Are we done?
+    if ($done >= $total) {
+        $done = $total;
+        if (!empty($thisbarid)) {
+            $donetext .= ' ('.$done.'/'.$total.') '.get_string('success');
+            print_progress_redraw($thisbarid, $done, $total, 500, $donetext);
+            $thisbarid = $starttime = $lasttime = NULL;
+        }
+        return;
+    }
+
     if (empty($starttime)) {
         $starttime = $lasttime = time();
         $lasttime = $starttime - $updatetime;
+        $thisbarid = uniqid();
         echo '<table width="500" cellpadding="0" cellspacing="0" align="center"><tr><td width="500">';
-        echo '<div id="bar'.$total.'" style="border-style:solid;border-width:1px;width:500px;height:50px;">';
-        echo '<div id="slider'.$total.'" style="border-style:solid;border-width:1px;height:48px;width:10px;background-color:green;"></div>';
+        echo '<div id="bar'.$thisbarid.'" style="border-style:solid;border-width:1px;width:500px;height:50px;">';
+        echo '<div id="slider'.$thisbarid.'" style="border-style:solid;border-width:1px;height:48px;width:10px;background-color:green;"></div>';
         echo '</div>';
-        echo '<div id="text'.$total.'" align="center" style="width:500px;"></div>';
+        echo '<div id="text'.$thisbarid.'" align="center" style="width:500px;"></div>';
         echo '</td></tr></table>';
         echo '</div>';
     }
@@ -519,14 +532,22 @@ function print_progress($done, $total, $updatetime=5, $sleeptime=1, $donetext=''
             $projectedtext = '';
         }
 
-        echo '<script>';
-        echo 'document.getElementById("text'.$total.'").innerHTML = "'.addslashes_js($donetext).' ('.$done.'/'.$total.') '.$projectedtext.'";'."\n";
-        echo 'document.getElementById("slider'.$total.'").style.width = \''.$width.'px\';'."\n";
-        echo '</script>';
+        $donetext .= ' ('.$done.'/'.$total.') '.$projectedtext;
+        print_progress_redraw($thisbarid, $done, $total, $width, $donetext);
 
         $lasttime = $now;
-        sleep($sleeptime);
     }
+}
+
+// Don't call this function directly, it's called from print_progress.
+function print_progress_redraw($thisbarid, $done, $total, $width, $donetext='') {
+    if (empty($thisbarid)) {
+        return;
+    }
+    echo '<script>';
+    echo 'document.getElementById("text'.$thisbarid.'").innerHTML = "'.addslashes($donetext).'";'."\n";
+    echo 'document.getElementById("slider'.$thisbarid.'").style.width = \''.$width.'px\';'."\n";
+    echo '</script>';
 }
 
 function upgrade_get_javascript() {
