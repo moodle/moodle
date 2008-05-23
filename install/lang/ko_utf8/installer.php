@@ -304,6 +304,10 @@ $string['phpversionhelp'] = '<p>무들은 적어도 PHP4.3.0 혹은 5.1.0. 이�
 <p>현재 구동되고 있는 PHP버전은 $a 입니다.</p>
 <p>PHP를 업그레이드 하시거나 새버전을 제공하는 웹호스팅 업체로 이전하기를 권합니다!<br />(만일 5.0.x버전을 사용 중이라면 4.4.x 버전으로 다운그레이드 할 수 있습니다)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['prefixcannotbeempty'] = '<p>오류: 데이터베이스의 테이블 접두사는 생략될 수 없습니다. ($a)</p>
+<p>시이트 관리자가 이를 바로잡이야 합니다.</p>';
+$string['prefixtoolong'] = '<p>오류: 데이터베이스의 테이블 접두사가 너무 깁니다. ($a->dbfamily)</p>
+<p>시이트 관리자가 이를 바로잡이야 합니다 $a->dbfamily 테이블 접두사의 최대 길이는 $a->maxlength 자 입니다.</p>';
 $string['previous'] = '이전으로';
 $string['qtyperqpwillberemoved'] = '갱신과정에서 RQP 문제 유형은 제거될 것입니다. 만일 이 유형의 문제를 사용하지 않았다면, 추후에는 어떤 문제도 발생하지 않을 것입니다.';
 $string['qtyperqpwillberemovedanyway'] = '갱신과정에서 RQP 문제 유형은 제거될 것입니다. 데이터베이스에 RQP 문제가 탑재되어 있다면, 비록 갱신하기 전에 http://moodle.org/mod/data/view.php?d=13&amp;rid=797  에서 코드를 다시 불러들였다 하더라도 작업이 중단될 것입니다.';
