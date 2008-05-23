@@ -1265,7 +1265,8 @@ function load_subcontext($userid, $context, &$accessdata) {
         // If we ever see stuff nested further this needs to
         // change to do 1 query over the exploded path to
         // find out which one is the course
-        $targetid    = array_pop(explode('/',get_course_from_path($context->path)));
+        $courses = explode('/',get_course_from_path($context->path));
+        $targetid = array_pop($courses);
         $context = get_context_instance_by_id($targetid);
                                  
     }
