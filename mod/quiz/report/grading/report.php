@@ -9,7 +9,7 @@
 // Flow of the file:
 //     Get variables, run essential queries
 //     Check for post data submitted.  If exists, then process data (the data is the grades and comments for essay questions)
-//     Check for userid, attemptid, or gradeall and for questionid.  If found, print out the appropriate essay question attempts
+//     Check for userid, attemptid and for questionid.  If found, print out the appropriate essay question attempts
 //     Switch:
 //         first case: print out all essay questions in quiz and the number of ungraded attempts
 //         second case: print out all users and their attempts for a specific essay question
@@ -28,15 +28,38 @@ class quiz_report extends quiz_default_report {
      * Displays the report.
      */
     function display($quiz, $cm, $course) {
-
+        global $CFG;
+        
+        $viewoptions = array('mode'=>'grading', 'q'=>$quiz->id);
         $action = optional_param('action', 'viewquestions', PARAM_ALPHA);
+        if ($action !== 'viewquestions'){
+            $viewoptions += array('action'=> $action);
+        }
         $questionid = optional_param('questionid', 0, PARAM_INT);
+        if ($questionid){
+            $viewoptions += array('questionid'=>$questionid);
+        }
+        
+        // grade question specific parameters
 
+        if ($userid    = optional_param('userid', 0, PARAM_INT)){
+            $viewoptions += array('userid'=>$userid);
+        }
+        if ($attemptid = optional_param('attemptid', 0, PARAM_INT)){
+            $viewoptions += array('attemptid'=>$attemptid);
+        }
+        if ($action !== 'viewquestions'){
+            $viewoptions += array('action'=> $action);
+        }
+        
+        
+        $this->cm = $cm;
+        
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="grading");
 
         // Check permissions
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        if (!has_capability('mod/quiz:grade', $context)) {
+        $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        if (!has_capability('mod/quiz:grade', $this->context)) {
             notify(get_string('gradingnotallowed', 'quiz_grading'));
             return true;
         }
@@ -101,6 +124,16 @@ class quiz_report extends quiz_default_report {
                 notify(get_string('changessavedwitherrors', 'quiz'), 'notifysuccess');
             }
         }
+        $this->viewurl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $viewoptions); 
+        /// find out current groups mode
+        $currentgroup = groups_get_activity_group($this->cm, true);
+
+        if ($groupmode = groups_get_activity_groupmode($this->cm)) {   // Groups are being used
+            groups_print_activity_menu($this->cm, $this->viewurl->out(false, array('userid'=>0, 'attemptid'=>0)));
+        }
+
+        $this->users     = get_users_by_capability($this->context, 'mod/quiz:attempt','','','','',$currentgroup,'',false);
+        $this->userids   = implode(',', array_keys($this->users));
 
         // our 3 different views
         // the first one displays all of the manually graded questions in the quiz
@@ -120,7 +153,7 @@ class quiz_report extends quiz_default_report {
                 $this->view_question($quiz, $question);
                 break;
             case 'grade':
-                $this->print_questions_and_form($quiz, $question);
+                $this->print_questions_and_form($quiz, $question, $userid, $attemptid);
                 break;
         }
         return true;
@@ -130,17 +163,13 @@ class quiz_report extends quiz_default_report {
      * Prints a table containing all manually graded questions
      *
      * @param object $quiz Quiz object of the currrent quiz
-     * @param object $course Course object of the current course
-     * @param string $userids Comma-separated list of userids in this course
      * @return boolean
      * @todo Look for the TODO in this code to see what still needs to be done
      **/
     function view_questions($quiz) {
         global $CFG, $QTYPE_MANUAL;
 
-        $users = get_course_students($quiz->course);
-
-        if(empty($users)) {
+        if(empty($this->users)) {
             print_heading(get_string("noattempts", "quiz"));
             return true;
         }
@@ -171,8 +200,7 @@ class quiz_report extends quiz_default_report {
         notify(get_string('essayonly', 'quiz_grading'));
 
         // get all the finished attempts by the users
-        $userids = implode(', ', array_keys($users));
-        if ($attempts = get_records_select('quiz_attempts', "quiz = $quiz->id and timefinish > 0 AND userid IN ($userids) AND preview = 0", 'userid, attempt')) {
+        if ($attempts = get_records_select('quiz_attempts', "quiz = $quiz->id and timefinish > 0 AND userid IN ({$this->userids}) AND preview = 0", 'userid, attempt')) {
             foreach($questions as $question) {
 
                 $link = "<a href=\"report.php?mode=grading&amp;q=$quiz->id&amp;action=viewquestion&amp;questionid=$question->id\">".
@@ -205,9 +233,8 @@ class quiz_report extends quiz_default_report {
     function view_question($quiz, $question) {
         global $CFG, $db;
 
-        $users     = get_course_students($quiz->course);
-        $userids   = implode(',', array_keys($users));
-        $usercount = count($users);
+
+        $usercount = count($this->users);
 
         // set up table
         $tablecolumns = array('picture', 'fullname', 'timefinish', 'grade');
@@ -217,7 +244,7 @@ class quiz_report extends quiz_default_report {
 
         $table->define_columns($tablecolumns);
         $table->define_headers($tableheaders);
-        $table->define_baseurl($CFG->wwwroot.'/mod/quiz/report.php?mode=grading&amp;q='.$quiz->id.'&amp;action=viewquestion&amp;questionid='.$question->id);
+        $table->define_baseurl($this->viewurl->out());
 
         $table->sortable(true);
         $table->initialbars($usercount>20);  // will show initialbars if there are more than 20 users
@@ -243,7 +270,7 @@ class quiz_report extends quiz_default_report {
         // this sql is a join of the attempts table and the user table.  I do this so I can sort by user name and attempt number (not id)
         $select = 'SELECT '.sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, 0)').' AS userattemptid, qa.id AS attemptid, qa.uniqueid, qa.attempt, qa.timefinish, u.id AS userid, u.firstname, u.lastname, u.picture ';
         $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
-        $where  = 'WHERE u.id IN ('.$userids.') ';
+        $where  = 'WHERE u.id IN ('.$this->userids.') ';
         $where .= 'AND COALESCE(qa.attempt, 0) != 0 ';
         $where .= 'AND COALESCE(qa.timefinish, 0) != 0 ';
         $where .= 'AND preview = 0 '; // ignore previews
@@ -293,7 +320,7 @@ class quiz_report extends quiz_default_report {
         }
 
         // grade all and "back" links
-        $links = "<div class=\"boxaligncenter\"><a href=\"report.php?mode=grading&amp;action=grade&amp;q=$quiz->id&amp;questionid=$question->id&amp;gradeall=1\">".get_string('gradeall', 'quiz').'</a> | '.
+        $links = "<div class=\"boxaligncenter\"><a href=\"report.php?mode=grading&amp;action=grade&amp;q=$quiz->id&amp;questionid=$question->id\">".get_string('gradeall', 'quiz').'</a> | '.
                 "<a href=\"report.php?mode=grading&amp;q=$quiz->id&amp;action=viewquestions\">".get_string('backtoquestionlist', 'quiz').'</a></div>'.
 
         // print everything here
@@ -331,21 +358,14 @@ class quiz_report extends quiz_default_report {
      * @return void
      * @todo Finish documenting this function
      **/
-    function print_questions_and_form($quiz, $question) {
-        global $CFG, $db;
-
-        // grade question specific parameters
-        $gradeall  = optional_param('gradeall', 0, PARAM_INT);
-        $userid    = optional_param('userid', 0, PARAM_INT);
-        $attemptid = optional_param('attemptid', 0, PARAM_INT);
+    function print_questions_and_form($quiz, $question, $userid, $attemptid) {
+        global $CFG;
 
         // TODO get the context, and put in proper roles an permissions checks.
         $context = NULL;
 
         $questions[$question->id] = &$question;
         $usehtmleditor = can_use_html_editor();
-        $users     = get_course_students($quiz->course);
-        $userids   = implode(',', array_keys($users));
 
         // this sql joins the attempts table and the user table
         $select = 'SELECT '.sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, 0)').' AS userattemptid,
@@ -353,12 +373,12 @@ class quiz_report extends quiz_default_report {
                     u.id AS userid, u.firstname, u.lastname, u.picture ';
         $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
 
-        if ($gradeall) { // get all user attempts
-            $where  = 'WHERE u.id IN ('.$userids.') ';
-        } else if ($userid) { // get all the attempts for a specific user
+        if ($userid) { // get all the attempts for a specific user
             $where = 'WHERE u.id='.$userid.' ';
-        } else { // get a specific attempt
+        } else if ($attemptid) { // get a specific attempt
             $where = 'WHERE qa.id='.$attemptid.' ';
+        } else { // get all user attempts
+            $where  = 'WHERE u.id IN ('.$this->userids.') ';
         }
 
         // ignore previews
@@ -394,7 +414,7 @@ class quiz_report extends quiz_default_report {
             $options->readonly = 1;
 
             // print the user name, attempt count, the question, and some more hidden fields
-            echo '<div class="boxaligncenter" width="80%" style="padding:15px;">'.
+            echo '<div class="boxaligncenter" width="80%" style="clear:left;padding:15px;">'.
                 fullname($attempt, true).': '.
                 get_string('attempt', 'quiz').$attempt->attempt;
 
