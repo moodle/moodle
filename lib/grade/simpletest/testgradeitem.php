@@ -42,7 +42,7 @@ Mock::generatePartial('grade_item', 'mock_grade_item_for_test_is_calculated', ar
 @set_time_limit(0);
 
 class grade_item_test extends grade_test {
-    
+
     function test_grade_item_construct() {
         $params = new stdClass();
 
@@ -80,15 +80,17 @@ class grade_item_test extends grade_test {
     }
 
     function test_grade_item_delete() {
+        global $DB;
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'delete'));
 
         $this->assertTrue($grade_item->delete());
 
-        $this->assertFalse(get_record('grade_items', 'id', $grade_item->id));
+        $this->assertFalse($DB->get_record('grade_items', array('id' => $grade_item->id)));
     }
 
     function test_grade_item_update() {
+        global $DB;
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'update'));
 
@@ -100,7 +102,7 @@ class grade_item_test extends grade_test {
         $this->assertTrue($grade_item->qualifies_for_regrading());
         $this->assertTrue($grade_item->update());
 
-        $iteminfo = get_field('grade_items', 'iteminfo', 'id', $this->grade_items[0]->id);
+        $iteminfo = $DB->get_field('grade_items', 'iteminfo', array('id' => $this->grade_items[0]->id));
         $this->assertEqual($grade_item->iteminfo, $iteminfo);
     }
 
@@ -208,7 +210,7 @@ class grade_item_test extends grade_test {
         $this->assertEqual($grade_item->sortorder, 6);
 
         $after = grade_item::fetch(array('id'=>$this->grade_items[6]->id));
-        $this->assertEqual($after->sortorder, 8);
+        $this->assertEqual($after->sortorder, 7);
     }
 
     function test_grade_item_get_name() {
@@ -447,14 +449,14 @@ class grade_item_test extends grade_test {
         $res = array($this->grade_items[4]->id, $this->grade_items[5]->id);
         $this->assertEqual($res, $deps);
     }
-    
+
     function test_grade_item_is_calculated() {
         $grade_item = new mock_grade_item_for_test_is_calculated($this);
         $grade_item->set_properties($grade_item, $this->grade_items[1]);
         $this->assertTrue(method_exists($grade_item, 'is_calculated'));
         $grade_itemsource = new grade_item($this->grade_items[0]);
         $normalizedformula = str_replace("[[$grade_itemsource->idnumber]]", "##gi$grade_itemsource->id##", $this->grade_items[1]->calculation);
-        
+
         $grade_item->expectOnce('set_calculation', array($grade_item->calculation));
         $grade_item->setReturnValue('set_calculation', $normalizedformula);
         $this->assertTrue($grade_item->is_calculated());
@@ -495,13 +497,13 @@ class grade_item_test extends grade_test {
         $grade_grade->delete();
 
         $grade_item->compute();
-
         $grade_grade = grade_grade::fetch(array('userid'=>$this->grade_grades[3]->userid, 'itemid'=>$this->grade_grades[3]->itemid));
         $this->assertEqual($this->grade_grades[3]->finalgrade, $grade_grade->finalgrade);
         $grade_grade = grade_grade::fetch(array('userid'=>$this->grade_grades[4]->userid, 'itemid'=>$this->grade_grades[4]->itemid));
         $this->assertEqual($this->grade_grades[4]->finalgrade, $grade_grade->finalgrade);
         $grade_grade = grade_grade::fetch(array('userid'=>$this->grade_grades[5]->userid, 'itemid'=>$this->grade_grades[5]->itemid));
         $this->assertEqual($this->grade_grades[5]->finalgrade, $grade_grade->finalgrade);
+
     }
 
 }

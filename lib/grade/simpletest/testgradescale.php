@@ -77,21 +77,23 @@ class grade_scale_test extends grade_test {
     }
 
     function test_grade_scale_update() {
+        global $DB;
         $grade_scale = new grade_scale($this->scale[0]);
         $this->assertTrue(method_exists($grade_scale, 'update'));
-        
+
         $grade_scale->name = 'Updated info for this unittest grade_scale';
         $this->assertTrue($grade_scale->update());
-        $name = get_field('scale', 'name', 'id', $this->scale[0]->id);
+        $name = $DB->get_field('scale', 'name', array('id' => $this->scale[0]->id));
         $this->assertEqual($grade_scale->name, $name);
     }
 
     function test_grade_scale_delete() {
+        global $DB;
         $grade_scale = new grade_scale($this->scale[0]);
         $this->assertTrue(method_exists($grade_scale, 'delete'));
 
         $this->assertTrue($grade_scale->delete());
-        $this->assertFalse(get_record('scale', 'id', $grade_scale->id));
+        $this->assertFalse($DB->get_record('scale', array('id' => $grade_scale->id)));
     }
 
     function test_grade_scale_fetch() {

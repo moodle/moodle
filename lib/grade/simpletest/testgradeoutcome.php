@@ -68,20 +68,22 @@ class grade_outcome_test extends grade_test {
     }
 
     function test_grade_outcome_update() {
+        global $DB;
         $grade_outcome = new grade_outcome($this->grade_outcomes[0]);
         $this->assertTrue(method_exists($grade_outcome, 'update'));
         $grade_outcome->shortname = 'Team work';
         $this->assertTrue($grade_outcome->update());
-        $shortname = get_field('grade_outcomes', 'shortname', 'id', $this->grade_outcomes[0]->id);
+        $shortname = $DB->get_field('grade_outcomes', 'shortname', array('id' => $this->grade_outcomes[0]->id));
         $this->assertEqual($grade_outcome->shortname, $shortname);
     }
 
     function test_grade_outcome_delete() {
+        global $DB;
         $grade_outcome = new grade_outcome($this->grade_outcomes[0]);
         $this->assertTrue(method_exists($grade_outcome, 'delete'));
 
         $this->assertTrue($grade_outcome->delete());
-        $this->assertFalse(get_record('grade_outcomes', 'id', $grade_outcome->id));
+        $this->assertFalse($DB->get_record('grade_outcomes', array('id' => $grade_outcome->id)));
     }
 
     function test_grade_outcome_fetch() {

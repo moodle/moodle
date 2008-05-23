@@ -34,13 +34,13 @@ class grade_item extends grade_object {
      * DB Table (used by grade_object).
      * @var string $table
      */
-    var $table = 'grade_items';
+    public $table = 'grade_items';
 
     /**
      * Array of required table fields, must start with 'id'.
      * @var array $required_fields
      */
-    var $required_fields = array('id', 'courseid', 'categoryid', 'itemname', 'itemtype', 'itemmodule', 'iteminstance',
+    public $required_fields = array('id', 'courseid', 'categoryid', 'itemname', 'itemtype', 'itemmodule', 'iteminstance',
                                  'itemnumber', 'iteminfo', 'idnumber', 'calculation', 'gradetype', 'grademax', 'grademin',
                                  'scaleid', 'outcomeid', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef',
                                  'sortorder', 'display', 'decimals', 'hidden', 'locked', 'locktime', 'needsupdate', 'timecreated',
@@ -50,198 +50,198 @@ class grade_item extends grade_object {
      * The course this grade_item belongs to.
      * @var int $courseid
      */
-    var $courseid;
+    public $courseid;
 
     /**
      * The category this grade_item belongs to (optional).
      * @var int $categoryid
      */
-    var $categoryid;
+    public $categoryid;
 
     /**
      * The grade_category object referenced $this->iteminstance (itemtype must be == 'category' or == 'course' in that case).
      * @var object $item_category
      */
-    var $item_category;
+    public $item_category;
 
     /**
      * The grade_category object referenced by $this->categoryid.
      * @var object $parent_category
      */
-    var $parent_category;
+    public $parent_category;
 
 
     /**
      * The name of this grade_item (pushed by the module).
      * @var string $itemname
      */
-    var $itemname;
+    public $itemname;
 
     /**
      * e.g. 'category', 'course' and 'mod', 'blocks', 'import', etc...
      * @var string $itemtype
      */
-    var $itemtype;
+    public $itemtype;
 
     /**
      * The module pushing this grade (e.g. 'forum', 'quiz', 'assignment' etc).
      * @var string $itemmodule
      */
-    var $itemmodule;
+    public $itemmodule;
 
     /**
      * ID of the item module
      * @var int $iteminstance
      */
-    var $iteminstance;
+    public $iteminstance;
 
     /**
      * Number of the item in a series of multiple grades pushed by an activity.
      * @var int $itemnumber
      */
-    var $itemnumber;
+    public $itemnumber;
 
     /**
      * Info and notes about this item.
      * @var string $iteminfo
      */
-    var $iteminfo;
+    public $iteminfo;
 
     /**
      * Arbitrary idnumber provided by the module responsible.
      * @var string $idnumber
      */
-    var $idnumber;
+    public $idnumber;
 
     /**
      * Calculation string used for this item.
      * @var string $calculation
      */
-    var $calculation;
+    public $calculation;
 
     /**
      * Indicates if we already tried to normalize the grade calculation formula.
      * This flag helps to minimize db access when broken formulas used in calculation.
      * @var boolean
      */
-    var $calculation_normalized;
+    public $calculation_normalized;
     /**
      * Math evaluation object
      */
-    var $formula;
+    public $formula;
 
     /**
      * The type of grade (0 = none, 1 = value, 2 = scale, 3 = text)
      * @var int $gradetype
      */
-    var $gradetype = GRADE_TYPE_VALUE;
+    public $gradetype = GRADE_TYPE_VALUE;
 
     /**
      * Maximum allowable grade.
      * @var float $grademax
      */
-    var $grademax = 100;
+    public $grademax = 100;
 
     /**
      * Minimum allowable grade.
      * @var float $grademin
      */
-    var $grademin = 0;
+    public $grademin = 0;
 
     /**
      * id of the scale, if this grade is based on a scale.
      * @var int $scaleid
      */
-    var $scaleid;
+    public $scaleid;
 
     /**
      * A grade_scale object (referenced by $this->scaleid).
      * @var object $scale
      */
-    var $scale;
+    public $scale;
 
     /**
      * The id of the optional grade_outcome associated with this grade_item.
      * @var int $outcomeid
      */
-    var $outcomeid;
+    public $outcomeid;
 
     /**
      * The grade_outcome this grade is associated with, if applicable.
      * @var object $outcome
      */
-    var $outcome;
+    public $outcome;
 
     /**
      * grade required to pass. (grademin <= gradepass <= grademax)
      * @var float $gradepass
      */
-    var $gradepass = 0;
+    public $gradepass = 0;
 
     /**
      * Multiply all grades by this number.
      * @var float $multfactor
      */
-    var $multfactor = 1.0;
+    public $multfactor = 1.0;
 
     /**
      * Add this to all grades.
      * @var float $plusfactor
      */
-    var $plusfactor = 0;
+    public $plusfactor = 0;
 
     /**
      * Aggregation coeficient used for weighted averages
      * @var float $aggregationcoef
      */
-    var $aggregationcoef = 0;
+    public $aggregationcoef = 0;
 
     /**
      * Sorting order of the columns.
      * @var int $sortorder
      */
-    var $sortorder = 0;
+    public $sortorder = 0;
 
     /**
      * Display type of the grades (Real, Percentage, Letter, or default).
      * @var int $display
      */
-    var $display = GRADE_DISPLAY_TYPE_DEFAULT;
+    public $display = GRADE_DISPLAY_TYPE_DEFAULT;
 
     /**
      * The number of digits after the decimal point symbol. Applies only to REAL and PERCENTAGE grade display types.
      * @var int $decimals
      */
-    var $decimals = null;
+    public $decimals = null;
 
     /**
      * 0 if visible, 1 always hidden or date not visible until
      * @var int $hidden
      */
-    var $hidden = 0;
+    public $hidden = 0;
 
     /**
      * Grade item lock flag. Empty if not locked, locked if any value present, usually date when item was locked. Locking prevents updating.
      * @var int $locked
      */
-    var $locked = 0;
+    public $locked = 0;
 
     /**
      * Date after which the grade will be locked. Empty means no automatic locking.
      * @var int $locktime
      */
-    var $locktime = 0;
+    public $locktime = 0;
 
     /**
      * If set, the whole column will be recalculated, then this flag will be switched off.
      * @var boolean $needsupdate
      */
-    var $needsupdate = 1;
+    public $needsupdate = 1;
 
     /**
      * Cached dependson array
      */
-    var $dependson_cache = null;
+    public $dependson_cache = null;
 
     /**
      * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.
@@ -250,7 +250,7 @@ class grade_item extends grade_object {
      * @param string $source from where was the object inserted (mod/forum, manual, etc.)
      * @return boolean success
      */
-    function update($source=null) {
+    public function update($source=null) {
         // reset caches
         $this->dependson_cache = null;
 
@@ -283,7 +283,7 @@ class grade_item extends grade_object {
      * This assumes that this object has an id number and a matching record in DB. If not, it will return false.
      * @return boolean
      */
-    function qualifies_for_regrading() {
+    public function qualifies_for_regrading() {
         if (empty($this->id)) {
             return false;
         }
@@ -317,7 +317,7 @@ class grade_item extends grade_object {
      * @param array $params associative arrays varname=>value
      * @return object grade_item instance or false if none found.
      */
-    function fetch($params) {
+    public static function fetch($params) {
         return grade_object::fetch_helper('grade_items', 'grade_item', $params);
     }
 
@@ -328,7 +328,7 @@ class grade_item extends grade_object {
      * @param array $params associative arrays varname=>value
      * @return array array of grade_item insatnces or false if none found.
      */
-    function fetch_all($params) {
+    public static function fetch_all($params) {
         return grade_object::fetch_all_helper('grade_items', 'grade_item', $params);
     }
 
@@ -337,7 +337,7 @@ class grade_item extends grade_object {
      * @param string $source from where was the object deleted (mod/forum, manual, etc.)
      * @return boolean success
      */
-    function delete($source=null) {
+    public function delete($source=null) {
         $this->delete_all_grades($source);
         return parent::delete($source);
     }
@@ -347,7 +347,7 @@ class grade_item extends grade_object {
      * @param string $source from where was the object deleted (mod/forum, manual, etc.)
      * @return boolean success
      */
-    function delete_all_grades($source=null) {
+    public function delete_all_grades($source=null) {
         if (!$this->is_course_item()) {
             $this->force_regrading();
         }
@@ -366,8 +366,8 @@ class grade_item extends grade_object {
      * @param string $source from where was the object inserted (mod/forum, manual, etc.)
      * @return int PK ID if successful, false otherwise
      */
-    function insert($source=null) {
-        global $CFG;
+    public function insert($source=null) {
+        global $CFG, $DB;
 
         if (empty($this->courseid)) {
             print_error('cannotinsertgrade');
@@ -384,7 +384,7 @@ class grade_item extends grade_object {
         }
 
         // always place the new items at the end, move them after insert if needed
-        $last_sortorder = get_field_select('grade_items', 'MAX(sortorder)', "courseid = {$this->courseid}");
+        $last_sortorder = $DB->get_field_select('grade_items', 'MAX(sortorder)', "courseid = {$this->courseid}");
         if (!empty($last_sortorder)) {
             $this->sortorder = $last_sortorder + 1;
         } else {
@@ -421,7 +421,8 @@ class grade_item extends grade_object {
      * @param string $idnumber (without magic quotes)
      * @return boolean success
      */
-    function add_idnumber($idnumber) {
+    public function add_idnumber($idnumber) {
+        global $DB;
         if (!empty($this->idnumber)) {
             return false;
         }
@@ -433,7 +434,7 @@ class grade_item extends grade_object {
             if (!empty($cm->idnumber)) {
                 return false;
             }
-            if (set_field('course_modules', 'idnumber', addslashes($idnumber), 'id', $cm->id)) {
+            if ($DB->set_field('course_modules', 'idnumber', addslashes($idnumber), array('id' => $cm->id))) {
                 $this->idnumber = $idnumber;
                 return $this->update();
             }
@@ -453,7 +454,7 @@ class grade_item extends grade_object {
      * @param int $userid
      * @return boolean Locked state
      */
-    function is_locked($userid=NULL) {
+    public function is_locked($userid=NULL) {
         if (!empty($this->locked)) {
             return true;
         }
@@ -475,7 +476,7 @@ class grade_item extends grade_object {
      * @param boolean $refresh refresh grades when unlocking
      * @return boolean true if grade_item all grades updated, false if at least one update fails
      */
-    function set_locked($lockedstate, $cascade=false, $refresh=true) {
+    public function set_locked($lockedstate, $cascade=false, $refresh=true) {
         if ($lockedstate) {
         /// setting lock
             if ($this->needsupdate) {
@@ -527,7 +528,7 @@ class grade_item extends grade_object {
     /**
      * Lock the grade if needed - make sure this is called only when final grades are valid
      */
-    function check_locktime() {
+    public function check_locktime() {
         if (!empty($this->locked)) {
             return; // already locked
         }
@@ -544,7 +545,7 @@ class grade_item extends grade_object {
      * @param int $locktime timestamp for lock to activate
      * @return void
      */
-    function set_locktime($locktime) {
+    public function set_locktime($locktime) {
         $this->locktime = $locktime;
         $this->update();
     }
@@ -554,7 +555,7 @@ class grade_item extends grade_object {
      *
      * @return int $locktime timestamp for lock to activate
      */
-    function get_locktime() {
+    public function get_locktime() {
         return $this->locktime;
     }
 
@@ -562,7 +563,7 @@ class grade_item extends grade_object {
      * Returns the hidden state of this grade_item
      * @return boolean hidden state
      */
-    function is_hidden() {
+    public function is_hidden() {
         return ($this->hidden == 1 or ($this->hidden != 0 and $this->hidden > time()));
     }
 
@@ -570,7 +571,7 @@ class grade_item extends grade_object {
      * Check grade hidden status. Uses data from both grade item and grade.
      * @return boolean true if hiddenuntil, false if not
      */
-    function is_hiddenuntil() {
+    public function is_hiddenuntil() {
         return $this->hidden > 1;
     }
 
@@ -578,7 +579,7 @@ class grade_item extends grade_object {
      * Check grade item hidden status.
      * @return int 0 means visible, 1 hidden always, timestamp hidden until
      */
-    function get_hidden() {
+    public function get_hidden() {
         return $this->hidden;
     }
 
@@ -588,7 +589,7 @@ class grade_item extends grade_object {
      * @param boolean $cascade apply to child objects too
      * @return void
      */
-    function set_hidden($hidden, $cascade=false) {
+    public function set_hidden($hidden, $cascade=false) {
         $this->hidden = $hidden;
         $this->update();
 
@@ -606,19 +607,20 @@ class grade_item extends grade_object {
      * Returns the number of grades that are hidden.
      * @param return int Number of hidden grades
      */
-    function has_hidden_grades($groupsql="", $groupwheresql="") {
-        global $CFG;
-        return get_field_sql("SELECT COUNT(*) FROM {$CFG->prefix}grade_grades g LEFT JOIN "
+    public function has_hidden_grades($groupsql="", $groupwheresql="") {
+        global $CFG, $DB;
+        return $DB->get_field_sql("SELECT COUNT(*) FROM {$CFG->prefix}grade_grades g LEFT JOIN "
                             ."{$CFG->prefix}user u ON g.userid = u.id $groupsql WHERE itemid = $this->id AND hidden = 1 $groupwheresql");
     }
 
     /**
      * Mark regrading as finished successfully.
      */
-    function regrading_finished() {
+    public function regrading_finished() {
+        global $DB;
         $this->needsupdate = 0;
         //do not use $this->update() because we do not want this logged in grade_item_history
-        set_field('grade_items', 'needsupdate', 0, 'id', $this->id);
+        $DB->set_field('grade_items', 'needsupdate', 0, array('id' => $this->id));
     }
 
     /**
@@ -630,8 +632,8 @@ class grade_item extends grade_object {
      *
      * @return boolean true if ok, error string otherwise
      */
-    function regrade_final_grades($userid=null) {
-        global $CFG;
+    public function regrade_final_grades($userid=null) {
+        global $CFG, $DB;
 
         // locked grade items already have correct final grades
         if ($this->is_locked()) {
@@ -675,12 +677,12 @@ class grade_item extends grade_object {
         $grade_inst = new grade_grade();
         $fields = implode(',', $grade_inst->required_fields);
         if ($userid) {
-            $rs = get_recordset_select('grade_grades', "itemid={$this->id} AND userid=$userid", '', $fields);
+            $rs = $DB->get_recordset_select('grade_grades', "itemid={$this->id} AND userid=$userid", null, '', $fields);
         } else {
-            $rs = get_recordset('grade_grades', 'itemid', $this->id, '', $fields);
+            $rs = $DB->get_recordset('grade_grades', array('itemid' => $this->id), '', $fields);
         }
         if ($rs) {
-            while ($grade_record = rs_fetch_next_record($rs)) {
+            foreach ($rs as $grade_record) {
                 $grade = new grade_grade($grade_record, false);
 
                 if (!empty($grade_record->locked) or !empty($grade_record->overridden)) {
@@ -696,7 +698,7 @@ class grade_item extends grade_object {
                     }
                 }
             }
-            rs_close($rs);
+            $rs->close();
         }
 
         return $result;
@@ -710,7 +712,7 @@ class grade_item extends grade_object {
      * @param float $rawmax original rawmax
      * @return mixed
      */
-    function adjust_raw_grade($rawgrade, $rawmin, $rawmax) {
+    public function adjust_raw_grade($rawgrade, $rawmin, $rawmax) {
         if (is_null($rawgrade)) {
             return null;
         }
@@ -773,7 +775,7 @@ class grade_item extends grade_object {
      * Sets this grade_item's needsupdate to true. Also marks the course item as needing update.
      * @return void
      */
-    function force_regrading() {
+    public function force_regrading() {
         global $DB;
         $this->needsupdate = 1;
         //mark this item and course item only - categories and calculated items are always regraded
@@ -787,7 +789,7 @@ class grade_item extends grade_object {
      * if this item's scaleid variable is set.
      * @return object grade_scale or null if no scale used
      */
-    function load_scale() {
+    public function load_scale() {
         if ($this->gradetype != GRADE_TYPE_SCALE) {
             $this->scaleid = null;
         }
@@ -821,7 +823,7 @@ class grade_item extends grade_object {
      * if this item's outcomeid variable is set.
      * @return object grade_outcome
      */
-    function load_outcome() {
+    public function load_outcome() {
         if (!empty($this->outcomeid)) {
             $this->outcome = grade_outcome::fetch(array('id'=>$this->outcomeid));
         }
@@ -834,7 +836,7 @@ class grade_item extends grade_object {
     *
     * @return mixed grade_category object if applicable, false if course item
     */
-    function get_parent_category() {
+    public function get_parent_category() {
         if ($this->is_category_item() or $this->is_course_item()) {
             return $this->get_item_category();
 
@@ -848,7 +850,7 @@ class grade_item extends grade_object {
      * from the DB and assigns it to $this->parent_category. It also returns the object.
      * @return object Grade_category
      */
-    function load_parent_category() {
+    public function load_parent_category() {
         if (empty($this->parent_category->id)) {
             $this->parent_category = $this->get_parent_category();
         }
@@ -860,7 +862,7 @@ class grade_item extends grade_object {
     *
     * @return mixed grade_category object if applicable, false otherwise
     */
-    function get_item_category() {
+    public function get_item_category() {
         if (!$this->is_course_item() and !$this->is_category_item()) {
             return false;
         }
@@ -872,7 +874,7 @@ class grade_item extends grade_object {
      * from the DB and assigns it to $this->item_category. It also returns the object.
      * @return object Grade_category
      */
-    function load_item_category() {
+    public function load_item_category() {
         if (empty($this->category->id)) {
             $this->item_category = $this->get_item_category();
         }
@@ -883,7 +885,7 @@ class grade_item extends grade_object {
      * Is the grade item associated with category?
      * @return boolean
      */
-    function is_category_item() {
+    public function is_category_item() {
         return ($this->itemtype == 'category');
     }
 
@@ -891,7 +893,7 @@ class grade_item extends grade_object {
      * Is the grade item associated with course?
      * @return boolean
      */
-    function is_course_item() {
+    public function is_course_item() {
         return ($this->itemtype == 'course');
     }
 
@@ -899,7 +901,7 @@ class grade_item extends grade_object {
      * Is this a manualy graded item?
      * @return boolean
      */
-    function is_manual_item() {
+    public function is_manual_item() {
         return ($this->itemtype == 'manual');
     }
 
@@ -907,7 +909,7 @@ class grade_item extends grade_object {
      * Is this an outcome item?
      * @return boolean
      */
-    function is_outcome_item() {
+    public function is_outcome_item() {
         return !empty($this->outcomeid);
     }
 
@@ -915,7 +917,7 @@ class grade_item extends grade_object {
      * Is the grade item external - associated with module, plugin or something else?
      * @return boolean
      */
-    function is_external_item() {
+    public function is_external_item() {
         return ($this->itemtype == 'mod');
     }
 
@@ -923,7 +925,7 @@ class grade_item extends grade_object {
      * Is the grade item overridable
      * @return boolean
      */
-    function is_overridable_item() {
+    public function is_overridable_item() {
         return !$this->is_outcome_item() and ($this->is_external_item() or $this->is_calculated() or $this->is_course_item() or $this->is_category_item());
     }
 
@@ -931,7 +933,7 @@ class grade_item extends grade_object {
      * Is the grade item feedback overridable
      * @return boolean
      */
-    function is_overridable_item_feedback() {
+    public function is_overridable_item_feedback() {
         return !$this->is_outcome_item() and $this->is_external_item();
     }
 
@@ -939,7 +941,7 @@ class grade_item extends grade_object {
      * Returns true if grade items uses raw grades
      * @return boolean
      */
-    function is_raw_used() {
+    public function is_raw_used() {
         return ($this->is_external_item() and !$this->is_calculated() and !$this->is_outcome_item());
     }
 
@@ -948,7 +950,7 @@ class grade_item extends grade_object {
      * @param int $courseid
      * @return course item object
      */
-    function fetch_course_item($courseid) {
+    public function fetch_course_item($courseid) {
         if ($course_item = grade_item::fetch(array('courseid'=>$courseid, 'itemtype'=>'course'))) {
             return $course_item;
         }
@@ -962,7 +964,7 @@ class grade_item extends grade_object {
      * Is grading object editable?
      * @return boolean
      */
-    function is_editable() {
+    public function is_editable() {
         return true;
     }
 
@@ -970,7 +972,7 @@ class grade_item extends grade_object {
      * Checks if grade calculated. Returns this object's calculation.
      * @return boolean true if grade item calculated.
      */
-    function is_calculated() {
+    public function is_calculated() {
         if (empty($this->calculation)) {
             return false;
         }
@@ -993,7 +995,7 @@ class grade_item extends grade_object {
      * Returns calculation string if grade calculated.
      * @return mixed string if calculation used, null if not
      */
-    function get_calculation() {
+    public function get_calculation() {
         if ($this->is_calculated()) {
             return grade_item::denormalize_formula($this->calculation, $this->courseid);
 
@@ -1009,7 +1011,7 @@ class grade_item extends grade_object {
      * @param string $formula string representation of formula used for calculation
      * @return boolean success
      */
-    function set_calculation($formula) {
+    public function set_calculation($formula) {
         $this->calculation = grade_item::normalize_formula($formula, $this->courseid);
         $this->calculation_normalized = true;
         return $this->update();
@@ -1021,7 +1023,7 @@ class grade_item extends grade_object {
      * @param string $formula
      * @return string denormalized string
      */
-    function denormalize_formula($formula, $courseid) {
+    public static function denormalize_formula($formula, $courseid) {
         if (empty($formula)) {
             return '';
         }
@@ -1047,7 +1049,7 @@ class grade_item extends grade_object {
      * @param string $formula
      * @return string normalized string
      */
-    function normalize_formula($formula, $courseid) {
+    public static function normalize_formula($formula, $courseid) {
         $formula = trim($formula);
 
         if (empty($formula)) {
@@ -1070,14 +1072,15 @@ class grade_item extends grade_object {
      * @param int $userid Optional: to retrieve a single final grade
      * @return mixed An array of all final_grades (stdClass objects) for this grade_item, or a single final_grade.
      */
-    function get_final($userid=NULL) {
+    public function get_final($userid=NULL) {
+        global $DB;
         if ($userid) {
-            if ($user = get_record('grade_grades', 'itemid', $this->id, 'userid', $userid)) {
+            if ($user = $DB->get_record('grade_grades', array('itemid' => $this->id, 'userid' => $userid))) {
                 return $user;
             }
 
         } else {
-            if ($grades = get_records('grade_grades', 'itemid', $this->id)) {
+            if ($grades = $DB->get_records('grade_grades', array('itemid' => $this->id))) {
                 //TODO: speed up with better SQL
                 $result = array();
                 foreach ($grades as $grade) {
@@ -1095,7 +1098,7 @@ class grade_item extends grade_object {
      * @param int $userid
      * @return object grade_grade object instance
      */
-    function get_grade($userid, $create=true) {
+    public function get_grade($userid, $create=true) {
         if (empty($this->id)) {
             debugging('Can not use before insert');
             return false;
@@ -1114,7 +1117,7 @@ class grade_item extends grade_object {
      * grade_category, for cases where the object type is not know.
      * @return int Sort order
      */
-    function get_sortorder() {
+    public function get_sortorder() {
         return $this->sortorder;
     }
 
@@ -1123,7 +1126,7 @@ class grade_item extends grade_object {
      * grade_category, for cases where the object type is not know.
      * @return string idnumber
      */
-    function get_idnumber() {
+    public function get_idnumber() {
         return $this->idnumber;
     }
 
@@ -1132,7 +1135,7 @@ class grade_item extends grade_object {
      * grade_category, for cases where the object type is not know.
      * @return string idnumber
      */
-    function get_grade_item() {
+    public function get_grade_item() {
         return $this;
     }
 
@@ -1142,7 +1145,7 @@ class grade_item extends grade_object {
      * @param int $sortorder
      * @return void
      */
-    function set_sortorder($sortorder) {
+    public function set_sortorder($sortorder) {
         if ($this->sortorder == $sortorder) {
             return;
         }
@@ -1150,7 +1153,7 @@ class grade_item extends grade_object {
         $this->update();
     }
 
-    function move_after_sortorder($sortorder) {
+    public function move_after_sortorder($sortorder) {
         global $CFG;
 
         //make some room first
@@ -1167,7 +1170,7 @@ class grade_item extends grade_object {
      * when we do not know the exact type of an object.
      * @return string name
      */
-    function get_name() {
+    public function get_name() {
         if (!empty($this->itemname)) {
             // MDL-10557
             return format_string($this->itemname);
@@ -1188,7 +1191,7 @@ class grade_item extends grade_object {
      * @param int $parentid
      * @return boolean success;
      */
-    function set_parent($parentid) {
+    public function set_parent($parentid) {
         if ($this->is_course_item() or $this->is_category_item()) {
             print_error('cannotsetparentforcatoritem');
         }
@@ -1216,8 +1219,8 @@ class grade_item extends grade_object {
      * @param bool $reset_cache
      * @return array of grade_item ids this one depends on
      */
-    function depends_on($reset_cache=false) {
-        global $CFG;
+    public function depends_on($reset_cache=false) {
+        global $CFG, $DB;
 
         if ($reset_cache) {
             $this->dependson_cache = null;
@@ -1289,7 +1292,7 @@ class grade_item extends grade_object {
                                $outcomes_sql";
             }
 
-            if ($children = get_records_sql($sql)) {
+            if ($children = $DB->get_records_sql($sql)) {
                 $this->dependson_cache = array_keys($children);
                 return $this->dependson_cache;
             } else {
@@ -1307,14 +1310,15 @@ class grade_item extends grade_object {
      * Refetch grades from modules, plugins.
      * @param int $userid optional, one user only
      */
-    function refresh_grades($userid=0) {
+    public function refresh_grades($userid=0) {
+        global $DB;
         if ($this->itemtype == 'mod') {
             if ($this->is_outcome_item()) {
                 //nothing to do
                 return;
             }
 
-            if (!$activity = get_record($this->itemmodule, 'id', $this->iteminstance)) {
+            if (!$activity = $DB->get_record($this->itemmodule, array('id' => $this->iteminstance))) {
                 debugging("Can not find $this->itemmodule activity with id $this->iteminstance");
                 return;
             }
@@ -1345,7 +1349,7 @@ class grade_item extends grade_object {
      * @param int $feedbackformat
      * @return boolean success
      */
-    function update_final_grade($userid, $finalgrade=false, $source=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
+    public function update_final_grade($userid, $finalgrade=false, $source=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
         global $USER, $CFG;
 
         $result = true;
@@ -1465,7 +1469,7 @@ class grade_item extends grade_object {
      * @param object $grade object - usefull for bulk upgrades
      * @return boolean success
      */
-    function update_raw_grade($userid, $rawgrade=false, $source=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null, $dategraded=null, $datesubmitted=null, $grade=null) {
+    public function update_raw_grade($userid, $rawgrade=false, $source=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null, $dategraded=null, $datesubmitted=null, $grade=null) {
         global $USER;
 
         $result = true;
@@ -1601,8 +1605,8 @@ class grade_item extends grade_object {
      * The parameters are taken from final grades of grade items in current course only.
      * @return boolean false if error
      */
-    function compute($userid=null) {
-        global $CFG;
+    public function compute($userid=null) {
+        global $CFG, $DB;
 
         if (!$this->is_calculated()) {
             return false;
@@ -1622,7 +1626,7 @@ class grade_item extends grade_object {
                        LEFT OUTER JOIN {$CFG->prefix}grade_grades g
                        ON (g.userid = go.userid AND g.itemid = $this->id)
                  WHERE gi.id <> $this->id AND g.id IS NULL";
-        if ($missing = get_records_sql($sql)) {
+        if ($missing = $DB->get_records_sql($sql)) {
             foreach ($missing as $m) {
                 $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$m->userid), false);
                 $grade->grade_item =& $this;
@@ -1662,11 +1666,11 @@ class grade_item extends grade_object {
         $return = true;
 
         // group the grades by userid and use formula on the group
-        if ($rs = get_recordset_sql($sql)) {
+        if ($rs = $DB->get_recordset_sql($sql)) {
             $prevuser = 0;
             $grade_records   = array();
             $oldgrade    = null;
-            while ($used = rs_fetch_next_record($rs)) {
+            foreach ($rs as $used) {
                 if ($used->userid != $prevuser) {
                     if (!$this->use_formula($prevuser, $grade_records, $useditems, $oldgrade)) {
                         $return = false;
@@ -1680,11 +1684,11 @@ class grade_item extends grade_object {
                 }
                 $grade_records['gi'.$used->itemid] = $used->finalgrade;
             }
+            $rs->close();
             if (!$this->use_formula($prevuser, $grade_records, $useditems, $oldgrade)) {
                 $return = false;
             }
         }
-        rs_close($rs);
 
         return $return;
     }
@@ -1692,7 +1696,7 @@ class grade_item extends grade_object {
     /**
      * internal function - does the final grade calculation
      */
-    function use_formula($userid, $params, $useditems, $oldgrade) {
+    public function use_formula($userid, $params, $useditems, $oldgrade) {
         if (empty($userid)) {
             return true;
         }
@@ -1766,8 +1770,8 @@ class grade_item extends grade_object {
      * @param string $formula
      * @return boolean true if calculation possible, false otherwise
      */
-    function validate_formula($formulastr) {
-        global $CFG;
+    public function validate_formula($formulastr) {
+        global $CFG, $DB;
         require_once($CFG->libdir.'/mathslib.php');
 
         $formulastr = grade_item::normalize_formula($formulastr, $this->courseid);
@@ -1810,7 +1814,7 @@ class grade_item extends grade_object {
                       FROM {$CFG->prefix}grade_items gi
                      WHERE gi.id IN ($gis) and gi.courseid={$this->courseid}"; // from the same course only!
 
-            if (!$grade_items = get_records_sql($sql)) {
+            if (!$grade_items = $DB->get_records_sql($sql)) {
                 $grade_items = array();
             }
         }
@@ -1843,7 +1847,7 @@ class grade_item extends grade_object {
      * Returns the value of the display type. It can be set at 3 levels: grade_item, course setting and site. The lowest level overrides the higher ones.
      * @return int Display type
      */
-    function get_displaytype() {
+    public function get_displaytype() {
         global $CFG;
 
         if ($this->display == GRADE_DISPLAY_TYPE_DEFAULT) {
@@ -1858,7 +1862,7 @@ class grade_item extends grade_object {
      * Returns the value of the decimals field. It can be set at 3 levels: grade_item, course setting and site. The lowest level overrides the higher ones.
      * @return int Decimals (0 - 5)
      */
-    function get_decimals() {
+    public function get_decimals() {
         global $CFG;
 
         if (is_null($this->decimals)) {

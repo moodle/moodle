@@ -27,37 +27,39 @@
  * An abstract object that holds methods and attributes common to all grade_* objects defined here.
  * @abstract
  */
-class grade_object {
+abstract class grade_object {
+    public $table;
+
     /**
      * Array of required table fields, must start with 'id'.
      * @var array $required_fields
      */
-    var $required_fields = array('id', 'timecreated', 'timemodified');
+    public $required_fields = array('id', 'timecreated', 'timemodified');
 
     /**
      * Array of optional fields with default values - usually long text information that is not always needed.
      * If you want to create an instance without optional fields use: new grade_object($only_required_fields, false);
      * @var array $optional_fields
      */
-    var $optional_fields = array();
+    public $optional_fields = array();
 
     /**
      * The PK.
      * @var int $id
      */
-    var $id;
+    public $id;
 
     /**
      * The first time this grade_object was created.
      * @var int $timecreated
      */
-    var $timecreated;
+    public $timecreated;
 
     /**
      * The last time this grade_object was modified.
      * @var int $timemodified
      */
-    var $timemodified;
+    public $timemodified;
 
     /**
      * Constructor. Optionally (and by default) attempts to fetch corresponding row from DB.
@@ -65,7 +67,7 @@ class grade_object {
      * @param boolean $fetch Whether to fetch corresponding row from DB or not,
      *        optional fields might not be defined if false used
      */
-    function grade_object($params=NULL, $fetch=true) {
+    public function __construct($params=NULL, $fetch=true) {
         if (!empty($params) and (is_array($params) or is_object($params))) {
             if ($fetch) {
                 if ($data = $this->fetch($params)) {
@@ -89,7 +91,8 @@ class grade_object {
      * If id present (==instance exists in db) fetches data from db.
      * Defaults are used for new instances.
      */
-    function load_optional_fields() {
+    public function load_optional_fields() {
+        global $DB;
         foreach ($this->optional_fields as $field=>$default) {
             if (array_key_exists($field, $this)) {
                 continue;
@@ -97,7 +100,7 @@ class grade_object {
             if (empty($this->id)) {
                 $this->$field = $default;
             } else {
-                $this->$field = get_field($this->table, $field, 'id', $this->id);
+                $this->$field = $DB->get_field($this->table, $field, array('id', $this->id));
             }
         }
     }
@@ -109,9 +112,7 @@ class grade_object {
      * @param array $params associative arrays varname=>value
      * @return object grade_object instance or false if none found.
      */
-    function fetch($params) {
-        print_error('mustbeoveride', 'debug', '', 'fetch()');
-    }
+    public static abstract function fetch($params);
 
     /**
      * Finds and returns all grade_object instances based on params.
@@ -120,16 +121,14 @@ class grade_object {
      * @param array $params associative arrays varname=>value
      * @return array array of grade_object insatnces or false if none found.
      */
-    function fetch_all($params) {
-        print_error('mustbeoveride', 'debug', '', 'fetch_all()');
-    }
+    public static abstract function fetch_all($params);
 
     /**
      * Factory method - uses the parameters to retrieve matching instance from the DB.
      * @static final protected
      * @return mixed object instance or false if not found
      */
-    function fetch_helper($table, $classname, $params) {
+    protected static function fetch_helper($table, $classname, $params) {
         if ($instances = grade_object::fetch_all_helper($table, $classname, $params)) {
             if (count($instances) > 1) {
                 // we should not tolerate any errors here - problems might appear later
@@ -146,7 +145,7 @@ class grade_object {
      * @static final protected
      * @return mixed array of object instances or false if not found
      */
-    function fetch_all_helper($table, $classname, $params) {
+    protected static function fetch_all_helper($table, $classname, $params) {
         $instance = new $classname();
 
         $classvars = (array)$instance;
@@ -173,7 +172,8 @@ class grade_object {
             $wheresql = implode("AND", $wheresql);
         }
 
-        if ($datas = get_records_select($table, $wheresql, 'id')) {
+        global $DB;
+        if ($datas = $DB->get_records_select($table, $wheresql, array('id'))) {
             $result = array();
             foreach($datas as $data) {
                 $instance = new $classname();
@@ -192,8 +192,8 @@ class grade_object {
      * @param string $source from where was the object updated (mod/forum, manual, etc.)
      * @return boolean success
      */
-    function update($source=null) {
-        global $USER, $CFG;
+    public function update($source=null) {
+        global $USER, $CFG, $DB;
 
         if (empty($this->id)) {
             debugging('Can not update grade object, no id!');
@@ -202,7 +202,7 @@ class grade_object {
 
         $data = $this->get_record_data();
 
-        if (!update_record($this->table, addslashes_recursive($data))) {
+        if (!$DB->update_record($this->table, addslashes_recursive($data))) {
             return false;
         }
 
@@ -213,7 +213,7 @@ class grade_object {
             $data->source       = $source;
             $data->timemodified = time();
             $data->userlogged   = $USER->id;
-            insert_record($this->table.'_history', addslashes_recursive($data));
+            $DB->insert_record($this->table.'_history', addslashes_recursive($data));
         }
 
         return true;
@@ -224,8 +224,8 @@ class grade_object {
      * @param string $source from where was the object deleted (mod/forum, manual, etc.)
      * @return boolean success
      */
-    function delete($source=null) {
-        global $USER, $CFG;
+    public function delete($source=null) {
+        global $USER, $CFG, $DB;
 
         if (empty($this->id)) {
             debugging('Can not delete grade object, no id!');
@@ -243,7 +243,7 @@ class grade_object {
                 $data->source       = $source;
                 $data->timemodified = time();
                 $data->userlogged   = $USER->id;
-                insert_record($this->table.'_history', addslashes_recursive($data));
+                $DB->insert_record($this->table.'_history', addslashes_recursive($data));
             }
             return true;
 
@@ -255,7 +255,7 @@ class grade_object {
     /**
      * Returns object with fields and values that are defined in database
      */
-    function get_record_data() {
+    public function get_record_data() {
         $data = new object();
         // we need to do this to prevent infinite loops in addslashes_recursive - grade_item -> category ->grade_item
         foreach ($this as $var=>$value) {
@@ -277,8 +277,8 @@ class grade_object {
      * @param string $source from where was the object inserted (mod/forum, manual, etc.)
      * @return int PK ID if successful, false otherwise
      */
-    function insert($source=null) {
-        global $USER, $CFG;
+    public function insert($source=null) {
+        global $USER, $CFG, $DB;
 
         if (!empty($this->id)) {
             debugging("Grade object already exists!");
@@ -287,7 +287,7 @@ class grade_object {
 
         $data = $this->get_record_data();
 
-        if (!$this->id = insert_record($this->table, addslashes_recursive($data))) {
+        if (!$this->id = $DB->insert_record($this->table, addslashes_recursive($data))) {
             debugging("Could not insert object into db");
             return false;
         }
@@ -304,7 +304,7 @@ class grade_object {
             $data->source       = $source;
             $data->timemodified = time();
             $data->userlogged   = $USER->id;
-            insert_record($this->table.'_history', addslashes_recursive($data));
+            $DB->insert_record($this->table.'_history', addslashes_recursive($data));
         }
 
         return $this->id;
@@ -316,13 +316,13 @@ class grade_object {
      * the object. This is different from the update() function, which acts on the DB record
      * based on the object.
      */
-    function update_from_db() {
+    public function update_from_db() {
         if (empty($this->id)) {
             debugging("The object could not be used in its state to retrieve a matching record from the DB, because its id field is not set.");
             return false;
         }
-
-        if (!$params = get_record($this->table, 'id', $this->id)) {
+        global $DB;
+        if (!$params = $DB->get_record($this->table, array('id' => $this->id))) {
             debugging("Object with this id:{$this->id} does not exist in table:{$this->table}, can not update from db!");
             return false;
         }
@@ -337,7 +337,7 @@ class grade_object {
      * and assigns the value to the corresponding variable in this object.
      * @static final
      */
-    function set_properties(&$instance, $params) {
+    public static function set_properties(&$instance, $params) {
         $params = (array) $params;
         foreach ($params as $var => $value) {
             if (in_array($var, $instance->required_fields) or array_key_exists($var, $instance->optional_fields)) {

@@ -100,6 +100,7 @@ class grade_category_test extends grade_test {
     }
 
     function test_grade_category_update() {
+        global $DB;
         $grade_category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($grade_category, 'update'));
 
@@ -113,13 +114,13 @@ class grade_category_test extends grade_test {
 
         $this->assertTrue($grade_category->update());
 
-        $fullname = get_field('grade_categories', 'fullname', 'id', $this->grade_categories[0]->id);
+        $fullname = $DB->get_field('grade_categories', 'fullname', array('id' => $this->grade_categories[0]->id));
         $this->assertEqual($grade_category->fullname, $fullname);
 
-        $path = get_field('grade_categories', 'path', 'id', $this->grade_categories[0]->id);
+        $path = $DB->get_field('grade_categories', 'path', array('id' => $this->grade_categories[0]->id));
         $this->assertEqual($grade_category->path, $path);
 
-        $depth = get_field('grade_categories', 'depth', 'id', $this->grade_categories[0]->id);
+        $depth = $DB->get_field('grade_categories', 'depth', array('id' => $this->grade_categories[0]->id));
         $this->assertEqual($grade_category->depth, $depth);
 
         $grade_item = $grade_category->get_grade_item();
@@ -127,11 +128,12 @@ class grade_category_test extends grade_test {
     }
 
     function test_grade_category_delete() {
+        global $DB;
         $grade_category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($grade_category, 'delete'));
 
         $this->assertTrue($grade_category->delete());
-        $this->assertFalse(get_record('grade_categories', 'id', $grade_category->id));
+        $this->assertFalse($DB->get_record('grade_categories', array('id' => $grade_category->id)));
     }
 
     function test_grade_category_insert() {
