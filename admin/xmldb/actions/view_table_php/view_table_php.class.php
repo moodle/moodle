@@ -335,8 +335,10 @@ class view_table_php extends XMLDBAction {
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '    /// Launch add field ' . $field->getName() . XMLDB_LINEFEED;
-        $result .= '        $result = $result && add_field($table, $field);' . XMLDB_LINEFEED;
+        $result .= '    /// Conditionally launch add field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        if (!field_exists($table, $field)) {'. XMLDB_LINEFEED;
+        $result .= '            $result = $result && add_field($table, $field);' . XMLDB_LINEFEED;
+        $result .= '        }'. XMLDB_LINEFEED;
 
     /// Add the proper upgrade_xxxx_savepoint call
         $result .= $this->upgrade_savepoint_php ($structure);
@@ -381,8 +383,10 @@ class view_table_php extends XMLDBAction {
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '    /// Launch drop field ' . $field->getName() . XMLDB_LINEFEED;
-        $result .= '        $result = $result && drop_field($table, $field);' . XMLDB_LINEFEED;
+        $result .= '    /// Conditionally launch drop field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        if (field_exists($table, $field)) {' . XMLDB_LINEFEED;
+        $result .= '            $result = $result && drop_field($table, $field);' . XMLDB_LINEFEED;
+        $result .= '        }' . XMLDB_LINEFEED;
 
     /// Add the proper upgrade_xxxx_savepoint call
         $result .= $this->upgrade_savepoint_php ($structure);
@@ -914,8 +918,10 @@ class view_table_php extends XMLDBAction {
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '    /// Launch add index ' . $index->getName() . XMLDB_LINEFEED;
-        $result .= '        $result = $result && add_index($table, $index);' . XMLDB_LINEFEED;
+        $result .= '    /// Conditionally launch add index ' . $index->getName() . XMLDB_LINEFEED;
+        $result .= '        if (!index_exists($table, $index) {' . XMLDB_LINEFEED;
+        $result .= '            $result = $result && add_index($table, $index);' . XMLDB_LINEFEED;
+        $result .= '        }' . XMLDB_LINEFEED;
 
     /// Add the proper upgrade_xxxx_savepoint call
         $result .= $this->upgrade_savepoint_php ($structure);
@@ -960,8 +966,10 @@ class view_table_php extends XMLDBAction {
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '    /// Launch drop index ' . $index->getName() . XMLDB_LINEFEED;
-        $result .= '        $result = $result && drop_index($table, $index);' . XMLDB_LINEFEED;
+        $result .= '    /// Conditionally launch drop index ' . $index->getName() . XMLDB_LINEFEED;
+        $result .= '        if (index_exists($table, $index) {' . XMLDB_LINEFEED;
+        $result .= '            $result = $result && drop_index($table, $index);' . XMLDB_LINEFEED;
+        $result .= '        }' . XMLDB_LINEFEED;
 
     /// Add the proper upgrade_xxxx_savepoint call
         $result .= $this->upgrade_savepoint_php ($structure);
