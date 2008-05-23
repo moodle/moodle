@@ -43,58 +43,58 @@ $string['customcheck'] = 'ஏனைய சோதனைகள்.';
 $string['database'] = 'தரவுத்தளம்.';
 $string['databasecreationsettingshead'] = 'தற்பொழுது நீங்கள் அதிகளவு Moodle தரவுகள் சேமிக்கப்பட்டவுள்ள தரவுத்தள அமைப்பை உள்ளமைக்கலாம். 
 	 இந்த தரவுத்தளம் நிறுவியால் கீழ் உள்ள அமைப்பினால் தானாக உருவாக்கப்படும்.';
-$string['databasecreationsettingssub'] = '<b>Type:</b> fixed to \"mysql\" நிறுவியால்<br />
-       <b>Host:</b> fixed to \"localhost\" by the installer<br />
-       <b>Name:</b> database name, eg moodle<br />
-       <b>User:</b> fixed to \"root\" by the installer<br />
-       <b>Password:</b> your database password<br />
-       <b>Tables Prefix:</b> optional prefix to use for all table names';
+$string['databasecreationsettingssub'] = '<b>Type:</b> நிறுவியால்  \"mysql\" ஆகத் தீர்மானிக்கப்பட்டுள்ளது<br />
+       <b>Host:</b> நிறுவியால் \"localhost\" ஆகத் தீர்மானிக்கப்பட்டுள்ளது<br />
+       <b>Name:</b> தரவுத்தளப் பெயர், உதாரணம் moodle<br />
+       <b>User:</b> நிறுவியால் \"root\" ஆகத் தீர்மானிக்கப்பட்டுள்ளது<br />
+       <b>Password:</b> உங்கள் தரவுத்தளக் கடவுச் சொல்<br />
+       <b>Tables Prefix:</b> எல்லா அட்டவணைப் பெயரையும் பயன்படுத்தும் முற்சேர்க்கை';
 $string['databasesettingshead'] = 'தற்பொழுது நீங்கள் அதிகளவு Moodle தரவுகள் சேமிக்கப்பட்டவுள்ள தரவுத்தள அமைப்பை உள்ளமைக்கலாம். 
 	 இந்த தரவுத்தளம் நிறுவியால் ஏற்கனவே உருவாக்கப்பட்டுள்ளதுடன்
 	பயனாளர் பெயர், கடவுச்சொல் பயன்படுத்த உருவாக்கப்பட்டுள்ளது.';
-$string['databasesettingssub'] = '<b>Type:</b> mysql or postgres7<br />
-       <b>Host:</b> eg localhost or db.isp.com<br />
-       <b>Name:</b> database name, eg moodle<br />
-       <b>User:</b> your database username<br />
-       <b>Password:</b> your database password<br />
+$string['databasesettingssub'] = '       <b>Type:</b> mysql அல்லது postgres7<br />
+       <b>Host:</b> உதாரணம் localhost அல்லது db.isp.com<br />
+       <b>Name:</b> தரவுத்தளப் பெயர், உதாரணம் moodle<br />
+       <b>User:</b> உங்கள் தரவுத்தளத்தின் பயனாளர் பெயர்<br />
+       <b>Password:</b> உங்கள் தரவுத்தளத்தின் கடவுச்சொல்<br />
        <b>Tables Prefix:</b> எல்லா அட்டவணைப் பெயரையும் பயன்படுத்தும் முற்சேர்க்கை';
 $string['databasesettingssub_mssql'] = '<b>வகை:</b> SQL*வழங்கி(UTF-8 அல்லாத) <b><font color=\"red\">பரிசோதனைக்கு! (உற்பத்திப்பயன்பாட்டிற்கில்லை)</font></b><br />
-<b>வழங்கி:</b> உ+ம்  localhost or db.isp.com<br />
-<b>பெயர்:</b> தகவல் தள பெயர், உ+ம் moodle<br />
+<b>Host:</b> உ+ம்  localhost அல்லது db.isp.com<br />
+<b>Name:</b> தகவல் தள பெயர், உ-ம் moodle<br />
 <b>User:</b> உமது தகவல் தள பயனாளர் பெயர்<br />
-<b>கடவுச்சொல்:</b> உமது தகவல் தள பயனாளர் கடவுச்சொல்<br />
-<b>அட்டவணைகளின் முற்சேர்க்கை :</b> சகல அட்டவணைப் பெயரையும் பயன்படுத்தும் முற்சேர்க்கை(அதிகாரமழிக்கப்பட்ட)
+<b>Password:</b> உமது தகவல் தள பயனாளர் கடவுச்சொல்<br />
+<b>Tables Prefix:</b> சகல அட்டவணைப் பெயரையும் பயன்படுத்தும் முற்சேர்க்கை(அதிகாரமழிக்கப்பட்ட)
 databasesettingssub_mssql';
 $string['databasesettingssub_mssql_n'] = '<b>Type:</b> SQL*Server (UTF-8 enabled)<br />
-<b>Host:</b> eg localhost or db.isp.com<br />
-<b>Name:</b> database name, eg moodle<br />
-<b>User:</b> your database username<br />
-<b>Password:</b> your database password<br />
-<b>Tables Prefix:</b> prefix to use for all table names (mandatory)';
+<b>Host:</b>உ-ம் localhost அல்லது db.isp.com<br />
+<b>Name:</b> தரவுத்தளப் பெயர், உ-ம் moodle<br />
+<b>User:</b> உங்கள் தரவுத்தளப் பயனாளர் பெயர்<br />
+<b>Password:</b> உங்கள் தரவுத்தளக் கடவுச்சொல்<br />
+<b>Tables Prefix:</b> எல்லா அட்டவணைப் பெயர்களுக்கும் யன்படுத்த வேண்டிய முற்சேர்க்கை(கட்டாயம்)';
 $string['databasesettingssub_mysql'] = '<b>Type:</b> MySQL<br />
-<b>Host:</b> eg localhost or db.isp.com<br />
-<b>Name:</b> database name, eg moodle<br />
-<b>User:</b> your database username<br />
-<b>Password:</b> your database password<br />
-<b>Tables Prefix:</b> prefix to use for all table names (optional)';
+<b>Host:</b>உ-ம் localhost அல்லது db.isp.com<br />
+<b>Name:</b> தரவுத்தளப் பெயர், உ-ம் moodle<br />
+<b>User:</b> உங்கள் தரவுத்தளப் பயனாளர் பெயர்<br />
+<b>Password:</b> உங்கள் தரவுத்தளக் கடவுச்சொல்<br />
+<b>Tables Prefix:</b> எல்லா அட்டவணைப் பெயர்களுக்கும் யன்படுத்த வேண்டிய முற்சேர்க்கை(விருப்பத்தெரிவுக்குரியது)';
 $string['databasesettingssub_oci8po'] = '<b>Type:</b> Oracle<br />
-<b>Host:</b> not used, must be left blank<br />
-<b>Name:</b> given name of the tnsnames.ora connection<br />
-<b>User:</b> your database username<br />
-<b>Password:</b> your database password<br />
-<b>Tables Prefix:</b> prefix to use for all table names (mandatory, 2cc. max)';
-$string['databasesettingssub_odbc_mssql'] = '<b>Type:</b> SQL*Server (over ODBC) <b><font color=\"red\">Experimental! (not for use in production)</font></b><br />
+<b>Host:</b> பயன்படுத்தப்படவில்லை, வெறுமையாக விடப்பட வேண்டும்<br />
+<b>Name:</b> tnsnames.ora தொடர்பிற்கு வழங்கப்பட்ட பெயர்<br />
+<b>User:</b> உங்கள் தரவுத்தளப் பயனாளர் பெயர்<br />
+<b>Password:</b> உங்கள் தரவுத்தளக் கடவுச்சொல்<br />
+<b>Tables Prefix:</b> எல்லா அட்டவணைப் பெயர்களுக்கும் யன்படுத்த வேண்டிய முற்சேர்க்கை (mandatory, 2cc. max)';
+$string['databasesettingssub_odbc_mssql'] = '<b>Type:</b> SQL*Server (over ODBC) <b><font color=\"red\">பரீட்சார்த்தமானது! (உற்பத்தியில் பயன்படுத்துவதற்கானது அல்ல)</font></b><br />
 <b>Host:</b> given name of the DSN in the ODBC control panel<br />
-<b>Name:</b> database name, eg moodle<br />
-<b>User:</b> your database username<br />
-<b>Password:</b> your database password<br />
-<b>Tables Prefix:</b> prefix to use for all table names (mandatory)';
+<b>Name:</b> தரவுத்தளப் பெயர், உ-ம் moodle<br />
+<b>User:</b> உங்கள் தரவுத்தளப் பயனாளர் பெயர்<br />
+<b>Password:</b> உங்கள் தரவுத்தளக் கடவுச்சொல்<br />
+<b>Tables Prefix:</b> எல்லா அட்டவணைப் பெயர்களுக்கும் யன்படுத்த வேண்டிய முற்சேர்க்கை(கட்டாயம்)';
 $string['databasesettingssub_postgres7'] = '<b>Type:</b> PostgreSQL<br />
-<b>Host:</b> eg localhost or db.isp.com<br />
-<b>Name:</b> database name, eg moodle<br />
-<b>User:</b> your database username<br />
-<b>Password:</b> your database password<br />
-<b>Tables Prefix:</b> prefix to use for all table names (mandatory)';
+<b>Host:</b>உ-ம் localhost அல்லது db.isp.com<br />
+<b>Name:</b> தரவுத்தளப் பெயர், உ-ம் moodle<br />
+<b>User:</b> உங்கள் தரவுத்தளப் பயனாளர் பெயர்<br />
+<b>Password:</b> உங்கள் தரவுத்தளக் கடவுச்சொல்<br />
+<b>Tables Prefix:</b> எல்லா அட்டவணைப் பெயர்களுக்கும் யன்படுத்த வேண்டிய முற்சேர்க்கை(கட்டாயம்)';
 $string['dataroot'] = 'தரவுக் கோப்புறை';
 $string['datarooterror'] = 'நீங்கள் குறிப்பிட்ட \'தரவுக் கோப்புறை\' காணப்படவுமில்லை, உருவாக்கப்படவும் முடியவில்லை. பாதையைச் சரி செய்யவும் அல்லது கோப்புறையைக் கைமுறையால் உருவாக்கவும்.';
 $string['dbconnectionerror'] = 'நீங்கள் குறிப்பிட்ட தரவுத்தளத்துடன் தொடர்பு கொள்ள முடியவில்லை. தயவுசெய்து உங்கள் தரவுத்தள அமைப்புகளைச் சரி பார்க்கவும்.';

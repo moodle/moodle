@@ -77,7 +77,7 @@ baina ez da komenigarria webetik zuzenean sartu ahal izatea.';
 $string['dirroot'] = 'Moodle-ren direktorioa';
 $string['dirrooterror'] = '\'Moodle-ren direktorioa\' zuzena ez dela dirudi. Ezin izan da Moodle-ren instalaziorik aurkitu. Jatorrizko balorea berrezarri da.';
 $string['download'] = 'Jaitsi';
-$string['downloadedfilecheckfailed'] = 'Jaitsitako fitxategiaren konprobazioak huts egin du.';
+$string['downloadedfilecheckfailed'] = 'Jaitsitako fitxategiaren konprobazioak kale egin du.';
 $string['downloadlanguagebutton'] = '\"$a\" hizkuntza-paketea jaitsi';
 $string['downloadlanguagehead'] = 'Hizkuntza-paketea jaitsi';
 $string['downloadlanguagenotneeded'] = 'Instalazio-prozesua lehenetsitako hizkuntzaz jarrai dezakezu, \"$a\".';
@@ -86,6 +86,7 @@ $string['environmenterrortodo'] = 'Moodle-ren bertsio hau instalatu aurretik goi
 $string['environmenthead'] = 'Zure ingurunea konprobatzen';
 $string['environmentrecommendinstall'] = 'gomendagarria da instalatuta/gaituta egotea';
 $string['environmentrecommendversion'] = '$a->needed bertsioa gomendatzen da eta zu $a->current ari zara egikaritzen';
+$string['environmentrequirecustomcheck'] = 'test hau pasatu beharra dago';
 $string['environmentrequireinstall'] = 'derrigorrezkoa da instalatuta/gaituta izatea';
 $string['environmentrequireversion'] = '$a->needed bertsioa beharrezkoa da eta zu $a->current ari zara egikaritzen';
 $string['environmentsub'] = 'Zure zerbitzariaren osagai ezberdinak sistemaren betebeharrekin bat datozen egiaztatzen ari gara';
@@ -119,7 +120,7 @@ $string['globalsquoteshelp'] = '<p>Ez da aholkatzen Magic Quotes GPC indargabetz
 <blockquote>php_value register_globals Off</blockquote>
 </p>';
 $string['help'] = 'Laguntza';
-$string['iconvrecommended'] = 'ICONV aukerako libreria instalatzea gomendagarria da  oso gunearen errendimendua hobetzeko, batez ere zure guneak latindarrak ez diren hizkuntzak erabiltzen baditu.';
+$string['iconvrecommended'] = 'ICONV aukerako liburutegia instalatzea gomendagarria da  oso gunearen errendimendua hobetzeko, batez ere zure guneak latindarrak ez diren hizkuntzak erabiltzen baditu.';
 $string['info'] = 'Informazioa';
 $string['installation'] = 'Instalazioa';
 $string['invalidmd5'] = 'md5 ez da baliagarria';
@@ -135,7 +136,7 @@ $string['magicquotesruntimehelp'] = '<p>Magic quotes runtime desaktibatu behar d
 <p>php.ini fitxategira sarbiderik ez baduzu, Moodle-ren direktorioaren barruko .htaccess izeneko fitxategian lerro hau idatzi beharko duzu:
 <blockquote>php_value magic_quotes_runtime Off</blockquote>
 </p>';
-$string['mbstringrecommended'] = 'MBSTRING aukerako libreria instalatzea gomendagarria da  oso gunearen errendimendua hobetzeko, batez ere zure guneak latindarrak ez diren hizkuntzak erabiltzen baditu.';
+$string['mbstringrecommended'] = 'MBSTRING aukerako liburutegia instalatzea gomendagarria da  oso gunearen errendimendua hobetzeko, batez ere zure guneak latindarrak ez diren hizkuntzak erabiltzen baditu.';
 $string['memorylimit'] = 'Memoriaren muga';
 $string['memorylimiterror'] = 'PHP memoriaren muga baxuegia da... Beranduago arazoak izan ditzakezu.';
 $string['memorylimithelp'] = '<p>Zure zerbitzarian PHP memoria-muga $a da.</p>
@@ -184,6 +185,7 @@ $string['safemodehelp'] = '<p>Moodle-k arazo ezberdinak izan ditzake \'modu segu
 <p>Normalean \'modu segurua\' web zerbitzari publiko paranoideek soilik aktibatzen dute. Hori dela eta, zure Moodle webgunerako beste enpresa bilatu beharko duzu.</p>
 
 <p>Nahi izanez gero, zure instalazioarekin jarrai dezakezu, baina aurrerago arazoak izango dituzu.</p>';
+$string['serverchecks'] = 'Zerbitzariaren egiaztatzeak';
 $string['sessionautostart'] = 'Saioaren hasiera automatikoa';
 $string['sessionautostarterror'] = 'Indargabetuta egon behar du';
 $string['sessionautostarthelp'] = '<p>Moodle-k saioko laguntza behar du eta horren ezean ez du funtzionatuko.</p>
@@ -196,7 +198,7 @@ $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Euskara';
 $string['unicoderecommended'] = 'Datu guztiak Unicode (UTF-8)-n gordetzeko gomendatzen da. Instalazio berriak berez Unicode karaktere-multzoa duten datu-baseetan exekutatu beharko lirateke. Eguneraketa bat egiten ari bazara, UTF-8rako migrazio-prozesua egin beharko zenuke (begiratu horretarako Kudeaketa-orria)';
 $string['unicoderequired'] = 'Datu guztiak Unicode (UTF-8)-n gorde behar dituzu. Instalazio berriak berez Unicode karaktere-multzoa duten datu-baseetan exekutatu beharko lirateke. Eguneraketa bat egiten ari bazara, UTF-8rako migrazio-prozesua egin beharko zenuke (begiratu horretarako Kudeaketa-orria)';
-$string['user'] = 'Erabiltzaile';
+$string['user'] = 'Erabiltzailea';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Orri hau ikusten baduzu <strong>$a->packname $a->packversion</strong> paketea
     zure ordenadorean instalatu ahal izan duzu. Zorionak!';
