@@ -23,7 +23,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     $result = true;
 
-    $dbman = $DB->get_manager(); // loads XSMLDB classes too
+    $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
 
     ////////////////////////////////////////
     ///upgrade supported only from 1.9.x ///
