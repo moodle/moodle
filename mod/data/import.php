@@ -36,24 +36,24 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('data', $id)) {
-            print_error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
         if (! $course = get_record('course', 'id', $cm->course)) {
-            print_error('Course is misconfigured');
+            print_error('coursemisconf');
         }
         if (! $data = get_record('data', 'id', $cm->instance)) {
-            print_error('Course module is incorrect');
+            print_error('invalidcoursemodule');
         }
 
     } else {
         if (! $data = get_record('data', 'id', $d)) {
-            print_error('Data ID is incorrect');
+            print_error('invalidid', 'data');
         }
         if (! $course = get_record('course', 'id', $data->course)) {
-            print_error('Course is misconfigured');
+            print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-            print_error('Course Module ID was incorrect');
+            print_error('coursemisconf');
         }
     }
 

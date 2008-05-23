@@ -22,7 +22,7 @@ class page_data extends page_generic_activity {
 
     function init_quick($data) {
         if(empty($data->pageid)) {
-            print_error('Cannot quickly initialize page: empty course id');
+            print_error('invalidcourseid');
         }
         $this->activityname = 'data';
         parent::init_quick($data);

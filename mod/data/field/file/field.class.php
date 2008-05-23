@@ -133,7 +133,7 @@ class data_field_file extends data_field_base {
             $oldcontent->fieldid = $this->field->id;
             $oldcontent->recordid = $recordid;
             if ($oldcontent->id = insert_record('data_content', $oldcontent)) {
-                print_error('Could not make an empty record!');
+                print_error('cannotinsertempty', 'data');
             }
         }
 

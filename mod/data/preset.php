@@ -25,26 +25,26 @@ unset($fullname);
 
 if ($id) {
     if (! $cm = get_coursemodule_from_id('data', $id)) {
-        print_error('Course Module ID was incorrect');
+        print_error('invalidcoursemodule');
     }
     if (! $course = get_record('course', 'id', $cm->course)) {
-        print_error('Course is misconfigured');
+        print_error('coursemisconf');
     }
     if (! $data = get_record('data', 'id', $cm->instance)) {
-        print_error('Module Incorrect');
+        print_error('invalidid', 'data');
     }
 } else if ($d) {
     if (! $data = get_record('data', 'id', $d)) {
-        print_error('Database ID Incorrect');
+        print_error('invalidid', 'data');
     }
     if (! $course = get_record('course', 'id', $data->course)) {
-        print_error('Course is misconfigured');
+        print_error('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        print_error('Course Module ID was incorrect');
+        print_error('invalidcoursemodule');
     }
 } else {
-    print_error('Parameter missing');
+    print_error('missingparameter');
 }
 
 // fill in missing properties needed for updating of instance
@@ -53,7 +53,7 @@ $data->cmidnumber = $cm->idnumber;
 $data->instance   = $cm->instance;
 
 if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
-    print_error('Could not find context');
+    print_error('cannotfindcontext');
 }
 
 require_login($course->id, false, $cm);
@@ -61,7 +61,7 @@ require_login($course->id, false, $cm);
 require_capability('mod/data:managetemplates', $context);
 
 if ($userid && ($userid != $USER->id) && !has_capability('mod/data:viewalluserpresets', $context)) {
-    print_error('You are not allowed to access presets from other users');
+    print_error('cannotaccesspresentsother', 'data');
 }
 
 /* Need sesskey security check here for import instruction */
@@ -76,13 +76,13 @@ switch ($action) {
         /***************** Deleting *****************/
     case 'confirmdelete' :
         if (!confirm_sesskey()) { // GET request ok here
-            print_error("Sesskey Invalid");
+            print_error('invalidsesskey');
         }
 
         if ($userid > 0 and ($userid == $USER->id || has_capability('mod/data:manageuserpresets', $context))) {
            //ok can delete
         } else {
-            print_error("Invalid request");
+            print_error('invalidrequest');
         }
 
         $path = data_preset_path($course, $userid, $shortname);
@@ -105,19 +105,19 @@ switch ($action) {
 
     case 'delete' :
         if (!data_submitted() and !confirm_sesskey()) {
-            print_error("Invalid request");
+            print_error('invalidrequest');
         }
 
         if ($userid > 0 and ($userid == $USER->id || has_capability('mod/data:manageuserpresets', $context))) {
            //ok can delete
         } else {
-            print_error("Invalid request");
+            print_error('invalidrequest');
         }
 
         $presetpath = data_preset_path($course, $userid, $shortname);
 
         if (!clean_preset($presetpath)) {
-            print_error("Error deleting a preset!");
+            print_error('cannotdeletepreset', 'data');
         }
         @rmdir($presetpath);
 
@@ -130,7 +130,7 @@ switch ($action) {
         /***************** Importing *****************/
     case 'importpreset' :
         if (!data_submitted() or !confirm_sesskey()) {
-            print_error("Invalid request");
+            print_error('invalidrequest');
         }
 
         $pimporter = new PresetImporter($course, $cm, $data, $userid, $shortname);
@@ -143,18 +143,18 @@ switch ($action) {
         /* Imports a zip file. */
     case 'importzip' :
         if (!data_submitted() or !confirm_sesskey()) {
-            print_error("Invalid request");
+            print_error('invalidrequest');
         }
 
         if (!make_upload_directory('temp/data/'.$USER->id)) {
-            print_error("Can't Create Directory");
+            print_error('nopermissiontomkdir');
         }
 
         $presetfile = $CFG->dataroot.'/temp/data/'.$USER->id;
         clean_preset($presetfile);
 
         if (!unzip_file($CFG->dataroot."/$course->id/$file", $presetfile, false)) {
-            print_error("Can't unzip file");
+            print_error('cannotunzipfile');
         }
 
         $pimporter = new PresetImporter($course, $cm, $data, -$USER->id, $shortname);
@@ -166,7 +166,7 @@ switch ($action) {
 
     case 'finishimport':
         if (!data_submitted() or !confirm_sesskey()) {
-            print_error("Invalid request");
+            print_error('invalidrequest');
         }
 
         $pimporter = new PresetImporter($course, $cm, $data, $userid, $shortname);
@@ -185,7 +185,7 @@ switch ($action) {
         /* Exports as a zip file ready for download. */
     case 'export':
         if (!data_submitted() or !confirm_sesskey()) {
-            print_error("Invalid request");
+            print_error('invalidrequest');
         }
 
         echo '<div style="text-align:center">';
@@ -197,7 +197,8 @@ switch ($action) {
         make_upload_directory("$course->id/moddata/data/$data->id");
 
         /* now just move the zip into this folder to allow a nice download */
-        if (!rename($file, $perminantfile)) print_error("Can't move zip");
+        if (!rename($file, $perminantfile)) 
+            print_error('cannotmovezip');
         echo "<a href='$CFG->wwwroot/file.php/$course->id/moddata/data/$data->id/preset.zip'>".get_string('download', 'data')."</a>";
         echo '</div>';
         break;
@@ -205,7 +206,7 @@ switch ($action) {
         /***************** Exporting *****************/
     case 'save1':
         if (!data_submitted() or !confirm_sesskey()) {
-            print_error("Invalid request");
+            print_error('invalidrequest');
         }
 
         $strcontinue = get_string('continue');
@@ -227,7 +228,7 @@ switch ($action) {
 
     case 'save2':
         if (!data_submitted() or !confirm_sesskey()) {
-            print_error("Invalid request");
+            print_error('invalidrequest');
         }
 
         $strcontinue = get_string('continue');
@@ -263,7 +264,7 @@ switch ($action) {
 
     case 'save3':
         if (!data_submitted() or !confirm_sesskey()) {
-            print_error("Invalid request");
+            print_error('invalidrequest');
         }
 
         $name = optional_param('name', $data->name, PARAM_FILE);
@@ -274,7 +275,7 @@ switch ($action) {
 
         $file = data_presets_export($course, $cm, $data);
         if (!unzip_file($file, $CFG->dataroot.$presetdirectory, false)) {
-            print_error("Can't unzip to the preset directory");
+            print_error('cannotunziptopreset', 'data');
         }
         notify(get_string('savesuccess', 'data'), 'notifysuccess');
         break;

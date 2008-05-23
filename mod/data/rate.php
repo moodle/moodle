@@ -5,32 +5,32 @@
     $dataid = required_param('dataid', PARAM_INT); // The forum the rated posts are from
 
     if (!$data = get_record('data', 'id', $dataid)) {
-        print_error("Incorrect data id");
+        print_error('invalidid', 'data');
     }
 
     if (!$course = get_record('course', 'id', $data->course)) {
-        print_error("Course ID was incorrect");
+        print_error('invalidcourseid');
     }
 
     if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
-        print_error("Course Module ID was incorrect");
+        print_error('invalidcoursemodule');
     }
 
     require_login($course, false, $cm);
 
     if (isguestuser()) {
-        print_error("Guests are not allowed to rate entries.");
+        print_error('guestrate', 'data');
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/data:rate', $context);
 
     if (!$data->assessed) {
-        print_error("Rating of items not allowed!");
+        print_error('cannotrate', 'data');
     }
 
     if (!$frmdata = data_submitted() or !confirm_sesskey()) {
-        print_error("This page was not accessed correctly");
+        print_error('invalidaccess', 'data');
     }
 
     $count = 0;
@@ -41,11 +41,11 @@
         }
 
         if (!$record = get_record('data_records', 'id', $recordid)) {
-            print_error("Record ID is incorrect");
+            print_error('invalidid', 'data');
         }
 
         if ($data->id != $record->dataid) {
-            print_error("Incorrect record.");
+            print_error('invalidrecord', 'data');
         }
 
         if ($record->userid == $USER->id) {
@@ -64,7 +64,7 @@
             } else if ($rating != $oldrating->rating) {
                 $oldrating->rating = $rating;
                 if (! update_record('data_ratings', $oldrating)) {
-                    print_error("Could not update an old rating ($record->id = $rating)");
+                    print_error('cannotupdaterate', 'data', '', array($record->id, $rating));
                 }
                 data_update_grades($data, $record->userid);
 
@@ -76,14 +76,14 @@
             $newrating->recordid = $record->id;
             $newrating->rating   = $rating;
             if (! insert_record('data_ratings', $newrating)) {
-                print_error("Could not insert a new rating ($record->id = $rating)");
+                print_error('cannotinsertrate', 'data', '', array($record->id, $rating));
             }
             data_update_grades($data, $record->userid);
         }
     }
 
     if ($count == 0) {
-        print_error("Incorrect submitted ratings data");
+        print_error('invalidratedata', 'data');
     }
 
     if (!empty($_SERVER['HTTP_REFERER'])) {
