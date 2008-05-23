@@ -211,8 +211,10 @@ class view_structure_php extends XMLDBAction {
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '    /// Launch create table for ' . $table->getName() . XMLDB_LINEFEED;
-        $result .= '        $result = $result && create_table($table);' . XMLDB_LINEFEED;
+        $result .= '    /// Conditionally launch create table for ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        if (!table_exists($table)) {' . XMLDB_LINEFEED;
+        $result .= '            $result = $result && create_table($table);' . XMLDB_LINEFEED;
+        $result .= '        }' . XMLDB_LINEFEED;
 
     /// Add the proper upgrade_xxxx_savepoint call
         $result .= $this->upgrade_savepoint_php ($structure);
@@ -252,8 +254,10 @@ class view_structure_php extends XMLDBAction {
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '    /// Launch drop table for ' . $table->getName() . XMLDB_LINEFEED;
-        $result .= '        $result = $result && drop_table($table);' . XMLDB_LINEFEED;
+        $result .= '    /// Conditionally launch drop table for ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        if (table_exists($table)) {' . XMLDB_LINEFEED;
+        $result .= '            $result = $result && drop_table($table);' . XMLDB_LINEFEED;
+        $result .= '        }' . XMLDB_LINEFEED;
 
     /// Add the proper upgrade_xxxx_savepoint call
         $result .= $this->upgrade_savepoint_php ($structure);
