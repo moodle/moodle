@@ -126,6 +126,7 @@ $string['confirmsesskeybad'] = 'Sorry, but your session key could not be confirm
 $string['copiedcmnotexist'] = 'The copied course module does not exist!';
 $string['couldnotassignrole'] = 'A serious but unspecified error occurred while trying to assign a role to you';
 $string['coursegroupunknown'] = 'Course corresponding to group $a not specified';
+$string['coursemisconf'] = 'Course is misconfigured';
 $string['csvemptyfile'] = 'The CSV file is empty.';
 $string['csvcolumnduplicates'] = 'Duplicate columns detected.';
 $string['csvfewcolumns'] = 'Not enough columns, please verify the delimiter setting.';

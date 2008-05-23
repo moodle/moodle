@@ -5,6 +5,8 @@
 $string['addmorechoices'] = 'Add more choices';
 $string['allowupdate'] = 'Allow choice to be updated';
 $string['answered'] = 'Answered';
+$string['cannotupdatechoice'] = 'Could not update your choice because of a database error';
+$string['cannotsavechoice'] = 'Could not save your choice';
 $string['choice'] = 'Choice';
 $string['choice:choose'] = 'Record a choice';
 $string['choice:deleteresponses'] = 'Delete responses';
