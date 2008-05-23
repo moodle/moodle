@@ -264,7 +264,7 @@ function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $
             $newanswer->optionid = $formanswer;
             $newanswer->timemodified = time();
             if (! update_record("choice_answers", $newanswer)) {
-                print_error("Could not update your choice because of a database error");
+                print_error('cannotupdatechoice', 'choice');
             }
             add_to_log($courseid, "choice", "choose again", "view.php?id=$cm->id", $choice->id, $cm->id);
         } else {
@@ -274,13 +274,13 @@ function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $
             $newanswer->optionid = $formanswer;
             $newanswer->timemodified = time();
             if (! insert_record("choice_answers", $newanswer)) {
-                print_error("Could not save your choice");
+                print_error('cannotsavechoice', 'choice');
             }
             add_to_log($courseid, "choice", "choose", "view.php?id=$cm->id", $choice->id, $cm->id);
         }
     } else {
         if (!($current->optionid==$formanswer)) { //check to see if current choice already selected - if not display error
-            print_error("this choice is full!");
+            print_error('choicefull', 'choice');
         }
     }
 }
