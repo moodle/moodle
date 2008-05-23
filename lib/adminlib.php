@@ -4829,13 +4829,7 @@ EOT;
       * @param $msg     string the message needed to be shown
       */
     function update_full($percent, $msg){
-        if ($percent >= 100){
-            $percent = 1; 
-        }
-        if ($percent <= 0)
-        {
-            $percent = 0; 
-        }
+        $percent = max(min($percent, 100), 0);
         $this->_update($percent/100, $msg);
     }
     /**
@@ -4846,14 +4840,12 @@ EOT;
       * @param $msg   string    message
       */
     function update($cur, $total, $msg){
+        $cur = max($cur, 0);
         if ($cur >= $total){
             $percent = 1; 
+        } else {
+            $percent = $cur / $total;
         }
-        if ($cur <= 0)
-        {
-            $percent = 0; 
-        }
-        $percent = $cur / $total;
         $es = $this->estimate(microtime(true), $percent);
         $this->_update($percent, $msg, $es);
     }
