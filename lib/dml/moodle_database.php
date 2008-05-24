@@ -143,16 +143,21 @@ abstract class moodle_database {
         if ($type == SQL_PARAMS_QM) {
             if (!is_array($items) or count($items) == 1) {
                 $sql = '= ?';
-                $params = array($items);
+                $items = (array)$items;
+                $params = array_values($items);
             } else {
                 $sql = 'IN ('.implode(',', array_fill(0, count($items), '?')).')';
                 $params = array_values($items);
             }
 
         } else if ($type == SQL_PARAMS_NAMED) {
-            if (!is_array($items) or count($items) == 1) {
+            if (!is_array($items)){
                 $sql = '= :'.$start;
                 $params = array($start=>$items);
+            } else if (count($items) == 1) {
+                $sql = '= :'.$start;
+                $item = reset($items);
+                $params = array($start=>$item);
             } else {
                 $params = array();
                 $sql = array();
