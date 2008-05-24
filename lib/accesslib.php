@@ -4202,7 +4202,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     $roleids = array_unique($roleids);
 
     if (count($roleids)===0) { // noone here!
-        return false;
+        return array();
     }
 
     // is the default role interesting? does it have
@@ -4641,9 +4641,9 @@ function has_capability_from_rarc($ras, $roleperms, $capability, $doanything) {
             $hascap[$cap]->perm += $rp->perm;
         }
     }
-    if ($hascap[$capability]->perm > 0
-        || ($doanything && isset($hascap['moodle/site:candoanything'])
-            && $hascap['moodle/site:candoanything']->perm > 0)) {
+    if ((isset($hascap[$capability]->perm) and  $hascap[$capability]->perm > 0)
+        or ($doanything and isset($hascap['moodle/site:candoanything'])
+            and $hascap['moodle/site:candoanything']->perm > 0)) {
         return true;
     }
     return false;
