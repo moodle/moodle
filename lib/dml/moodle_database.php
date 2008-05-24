@@ -137,25 +137,30 @@ abstract class moodle_database {
      * @param mixed $items single or array of values
      * @param int $type bound param type
      * @param string named param placeholder start
+     * @param bool true means equal, false not equal
      * @return array - $sql and $params
      */
-    public function get_in_or_equal($items, $type=SQL_PARAMS_QM, $start='param0000') {
+    public function get_in_or_equal($items, $type=SQL_PARAMS_QM, $start='param0000', $equal=true) {
         if ($type == SQL_PARAMS_QM) {
             if (!is_array($items) or count($items) == 1) {
-                $sql = '= ?';
+                $sql = $equal ? '= ?' : '<> ?';
                 $items = (array)$items;
                 $params = array_values($items);
             } else {
-                $sql = 'IN ('.implode(',', array_fill(0, count($items), '?')).')';
+                if ($equal) {
+                    $sql = 'IN ('.implode(',', array_fill(0, count($items), '?')).')';
+                } else {
+                    $sql = 'NOT IN ('.implode(',', array_fill(0, count($items), '?')).')';
+                }
                 $params = array_values($items);
             }
 
         } else if ($type == SQL_PARAMS_NAMED) {
             if (!is_array($items)){
-                $sql = '= :'.$start;
+                $sql = $equal ? "= :$start" : "<> :$start";
                 $params = array($start=>$items);
             } else if (count($items) == 1) {
-                $sql = '= :'.$start;
+                $sql = $equal ? "= :$start" : "<> :$start";
                 $item = reset($items);
                 $params = array($start=>$item);
             } else {
@@ -163,9 +168,13 @@ abstract class moodle_database {
                 $sql = array();
                 foreach ($items as $item) {
                     $params[$start] = $item;
-                    $sql .= ':'.$start++;
+                    $sql[] = ':'.$start++;
                 }
-                $sql = 'IN ('.implode(',', $sql).')';
+                if ($equal) {
+                    $sql = 'IN ('.implode(',', $sql).')';
+                } else {
+                    $sql = 'NOT IN ('.implode(',', $sql).')';
+                }
             }
 
         } else {
