@@ -26,17 +26,6 @@
 
 /// This class represent one XMLDB Key
 
-/// TODO: Delete for 2.1 (deeprecated in 2.0).
-/// Deprecated API starts here
-class XMLDBKey extends xmldb_key {
-
-    function __construct($name) {
-        parent::__construct($name);
-    }
-
-}
-/// Deprecated API ends here
-
 class xmldb_key extends xmldb_object {
 
     var $type;
@@ -476,5 +465,16 @@ class xmldb_key extends xmldb_object {
         return $o;
     }
 }
+
+/// TODO: Delete for 2.1 (deeprecated in 2.0).
+/// Deprecated API starts here
+class XMLDBKey extends xmldb_key {
+
+    function __construct($name) {
+        parent::__construct($name);
+    }
+
+}
+/// Deprecated API ends here
 
 ?>

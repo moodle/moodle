@@ -28,17 +28,6 @@
 /// (a group of SQL arbitrary sentences)
 /// (only INSERT is allowed for now)
 
-/// TODO: Delete for 2.1 (deeprecated in 2.0).
-/// Deprecated API starts here
-class XMLDBStatement extends xmldb_statement {
-
-    function __construct($name) {
-        parent::__construct($name);
-    }
-
-}
-/// Deprecated API ends here
-
 class xmldb_statement extends xmldb_object {
 
     var $table;     // Table we are handling
@@ -381,5 +370,16 @@ class xmldb_statement extends xmldb_object {
         return $values;
     }
 }
+
+/// TODO: Delete for 2.1 (deeprecated in 2.0).
+/// Deprecated API starts here
+class XMLDBStatement extends xmldb_statement {
+
+    function __construct($name) {
+        parent::__construct($name);
+    }
+
+}
+/// Deprecated API ends here
 
 ?>

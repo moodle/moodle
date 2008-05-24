@@ -26,17 +26,6 @@
 
 /// This class represent one XMLDB table
 
-/// TODO: Delete for 2.1 (deeprecated in 2.0).
-/// Deprecated API starts here
-class XMLDBTable extends xmldb_table {
-
-    function __construct($name) {
-        parent::__construct($name);
-    }
-
-}
-/// Deprecated API ends here
-
 class xmldb_table extends xmldb_object {
 
     var $fields;
@@ -834,5 +823,16 @@ class xmldb_table extends xmldb_object {
         }
     }
 }
+
+/// TODO: Delete for 2.1 (deeprecated in 2.0).
+/// Deprecated API starts here
+class XMLDBTable extends xmldb_table {
+
+    function __construct($name) {
+        parent::__construct($name);
+    }
+
+}
+/// Deprecated API ends here
 
 ?>

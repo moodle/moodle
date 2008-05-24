@@ -26,17 +26,6 @@
 
 /// This class represent one XMLDB Field
 
-/// TODO: Delete for 2.1 (deeprecated in 2.0).
-/// Deprecated API starts here
-class XMLDBField extends xmldb_field {
-
-    function __construct($name) {
-        parent::__construct($name);
-    }
-
-}
-/// Deprecated API ends here
-
 class xmldb_field extends xmldb_object {
 
     var $type;
@@ -931,5 +920,16 @@ class xmldb_field extends xmldb_object {
         return $o;
     }
 }
+
+/// TODO: Delete for 2.1 (deeprecated in 2.0).
+/// Deprecated API starts here
+class XMLDBField extends xmldb_field {
+
+    function __construct($name) {
+        parent::__construct($name);
+    }
+
+}
+/// Deprecated API ends here
 
 ?>

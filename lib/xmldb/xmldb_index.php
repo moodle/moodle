@@ -26,17 +26,6 @@
 
 /// This class represent one XMLDB Index
 
-/// TODO: Delete for 2.1 (deeprecated in 2.0).
-/// Deprecated API starts here
-class XMLDBIndex extends xmldb_index {
-
-    function __construct($name) {
-        parent::__construct($name);
-    }
-
-}
-/// Deprecated API ends here
-
 class xmldb_index extends xmldb_object {
 
     var $unique;
@@ -282,5 +271,16 @@ class xmldb_index extends xmldb_object {
         return $o;
     }
 }
+
+/// TODO: Delete for 2.1 (deeprecated in 2.0).
+/// Deprecated API starts here
+class XMLDBIndex extends xmldb_index {
+
+    function __construct($name) {
+        parent::__construct($name);
+    }
+
+}
+/// Deprecated API ends here
 
 ?>
