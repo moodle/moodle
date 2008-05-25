@@ -242,6 +242,20 @@ function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='',
 
 }
 
+/**
+ * Returns a list of all site users
+ * Obsolete, just calls get_course_users(SITEID)
+ *
+ * @uses SITEID
+ * @deprecated Use {@link get_course_users()} instead.
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return object|false  {@link $USER} records or false if error.
+ */
+function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') {
+
+    return get_course_users(SITEID, $sort, $exceptions, $fields);
+}
+
 
 ########### FROM weblib.php ##########################################################################
 
