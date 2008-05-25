@@ -4116,7 +4116,7 @@ function get_default_course_role($course) {
  * @param $limitnum - number of records to fetch
  * @param $groups - single group or array of groups - only return
  *               users who are in one of these group(s).
- * @param $exceptions - list of users to exclude
+ * @param $exceptions - list of users to exclude, comma separated or array
  * @param view - set to true when roles are pulled for display only
  *               this is so that we can filter roles with no visible
  *               assignment, for example, you might want to "hide" all
@@ -4238,6 +4238,9 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
     /// User exceptions
     if (!empty($exceptions)) {
+        if (is_array($exceptions)) {
+            $exceptions = implode(',', $exceptions);
+        }
         $wherecond['userexceptions'] = ' u.id NOT IN ('.$exceptions.')';
     }
 

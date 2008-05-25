@@ -274,12 +274,11 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
                 }
                 // Now we have to make sure site teachers are excluded
 
+                $exceptions = array();
                 if ($teachers = get_course_teachers(SITEID)) {
                     foreach ($teachers as $teacher) {
-                        $exceptions .= ','. $teacher->userid;
+                        $exceptions[] = $teacher->userid;
                     }
-                    $exceptions = ltrim($exceptions, ',');
-
                 }
 
                 return get_users(true, $search, true, $exceptions, $sort, $firstinitial, $lastinitial,
@@ -363,7 +362,7 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
  * @return object
  * @todo Finish documenting this function
  */
-function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='') {
+function get_course_teachers($courseid, $sort='t.authority ASC', array $exceptions=null) {
 
     global $CFG;
 
@@ -398,15 +397,6 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
     return sort_by_roleassignment_authority($users, $context);
 
     /// some fields will be missing, like authority, editall
-    /*
-    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest,
-                                   u.email, u.city, u.country, u.lastlogin, u.picture, u.lang, u.timezone,
-                                   u.emailstop, t.authority,t.role,t.editall,t.timeaccess as lastaccess
-                            FROM {$CFG->prefix}user u,
-                                 {$CFG->prefix}user_teachers t
-                            WHERE t.course = '$courseid' AND t.userid = u.id
-                              AND u.deleted = '0' AND u.confirmed = '1' $exceptions $sort");
-    */
 }
 
 /**

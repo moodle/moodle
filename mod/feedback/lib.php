@@ -1734,7 +1734,6 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
         return;
     }
     
-    // $teachers = get_course_teachers($course->id);
     $teachers = feedback_get_receivemail_users($cm->id);
 
     if ($teachers) {
