@@ -449,15 +449,20 @@ class moodle_url {
  *
  * Checks that submitted POST data exists and returns it as object.
  *
- * @param string $url not used anymore
+ * @param bool slashes TEMPORARY - false if strip magic quotes
  * @return mixed false or object
  */
-function data_submitted($url='') {
+function data_submitted($slashes=true) {
 
     if (empty($_POST)) {
         return false;
     } else {
-        return (object)$_POST;
+        if ($slashes===false) {
+            $post = stripslashes_recursive($_POST); // temporary hack before magic quotes removal
+            return (object)$post;
+        } else {
+            return (object)$_POST;
+        }
     }
 }
 
