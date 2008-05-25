@@ -1178,7 +1178,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                             'rfc2307' => 'shadowExpire',
                             'rfc2307bis' => 'shadowExpire',
                             'samba' => '', //No support yet
-                            'ad' => '', //No support yet
+                            'ad' => 'pwdLastSet',
                             'default' => ''
                             );
         return $default;
