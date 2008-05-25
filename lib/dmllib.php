@@ -354,7 +354,7 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
         $conditions[$field3] = stripslashes_recursive($value3);
     }
 
-    return $DB->set_field($table, $newfield, $newvalue, $conditions);
+    return $DB->set_field($table, $newfield, stripslashes_recursive($newvalue), $conditions);
 }
 
 function count_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
