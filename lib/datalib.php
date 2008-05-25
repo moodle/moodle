@@ -390,14 +390,17 @@ function get_site() {
  *            in such a large SELECT
  *
  * @param    type description
- *
+ * @return array of courses
  */
 function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") {
 
-    global $USER, $CFG;
+    global $USER, $CFG, $DB;
 
-    if ($categoryid != "all" && is_numeric($categoryid)) {
-        $categoryselect = "WHERE c.category = '$categoryid'";
+    $params = array();
+
+    if ($categoryid !== "all" && is_numeric($categoryid)) {
+        $categoryselect = "WHERE c.category = :catid";
+        $params['catid'] = $categoryid;
     } else {
         $categoryselect = "";
     }
@@ -410,16 +413,17 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
 
     $visiblecourses = array();
 
+    $sql = "SELECT $fields,
+                   ctx.id AS ctxid, ctx.path AS ctxpath,
+                   ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
+              FROM {course} c
+              JOIN {context} ctx
+                   ON (c.id = ctx.instanceid  AND ctx.contextlevel=".CONTEXT_COURSE.")
+              $categoryselect
+              $sortstatement";
+
     // pull out all course matching the cat
-    if ($courses = get_records_sql("SELECT $fields,
-                                    ctx.id AS ctxid, ctx.path AS ctxpath,
-                                    ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
-                                    FROM {$CFG->prefix}course c
-                                    JOIN {$CFG->prefix}context ctx
-                                      ON (c.id = ctx.instanceid 
-                                          AND ctx.contextlevel=".CONTEXT_COURSE.")
-                                    $categoryselect
-                                    $sortstatement")) {
+    if ($courses = $DB->get_records_sql($sql, $params)) {
 
         // loop throught them
         foreach ($courses as $course) {
@@ -427,10 +431,10 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
             if (isset($course->visible) && $course->visible <= 0) {
                 // for hidden courses, require visibility check
                 if (has_capability('moodle/course:viewhiddencourses', $course->context)) {
-                    $visiblecourses [] = $course;
+                    $visiblecourses [$course->id] = $course;
                 }
             } else {
-                $visiblecourses [] = $course;
+                $visiblecourses [$course->id] = $course;
             }
         }
     }
@@ -447,31 +451,34 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
  *            in such a large SELECT
  *
  * @param    type description
- *
+ * @return array of courses
  */
 function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c.*",
                           &$totalcount, $limitfrom="", $limitnum="") {
+    global $USER, $CFG, $DB;
 
-    global $USER, $CFG;
+    $params = array();
 
     $categoryselect = "";
     if ($categoryid != "all" && is_numeric($categoryid)) {
-        $categoryselect = "WHERE c.category = '$categoryid'";
+        $categoryselect = "WHERE c.category = :catid";
+        $params['catid'] = $categoryid;
     } else {
         $categoryselect = "";
     }
 
+    $sql = "SELECT $fields,
+                   ctx.id AS ctxid, ctx.path AS ctxpath,
+                   ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
+              FROM {course} c
+              JOIN {context} ctx
+                   ON (c.id = ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+           $categoryselect
+          ORDER BY $sort";
+
     // pull out all course matching the cat
-    $visiblecourses = array();
-    if (!($rs = get_recordset_sql("SELECT $fields,
-                                          ctx.id AS ctxid, ctx.path AS ctxpath,
-                                          ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
-                                   FROM {$CFG->prefix}course c
-                                   JOIN {$CFG->prefix}context ctx
-                                     ON (c.id = ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-                                   $categoryselect
-                                   ORDER BY $sort"))) {
-        return $visiblecourses;
+    if (!$rs = $DB->get_recordset_sql($sql, $params)) {
+        return array();
     }
     $totalcount = 0;
 
@@ -480,24 +487,25 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     }
 
     // iteration will have to be done inside loop to keep track of the limitfrom and limitnum
-    while ($course = rs_fetch_next_record($rs)) {
+    $visiblecourses = array();
+    foreach($rs as $course) {
         $course = make_context_subobj($course);
         if ($course->visible <= 0) {
             // for hidden courses, require visibility check
             if (has_capability('moodle/course:viewhiddencourses', $course->context)) {
                 $totalcount++;
                 if ($totalcount > $limitfrom && (!$limitnum or count($visiblecourses) < $limitnum)) {
-                    $visiblecourses [] = $course;
+                    $visiblecourses [$course->id] = $course;
                 }
             }
         } else {
             $totalcount++;
             if ($totalcount > $limitfrom && (!$limitnum or count($visiblecourses) < $limitnum)) {
-                $visiblecourses [] = $course;
+                $visiblecourses [$course->id] = $course;
             }
         }
     }
-    rs_close($rs);
+    $rs->close();
     return $visiblecourses;
 }
 
@@ -529,14 +537,16 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
      * So this should _never_ get called with 'all' on a large site.
      *
      */
-    global $USER, $CFG;
+    global $USER, $CFG, $DB;
 
+    $params = array();
     $allcats = false; // bool flag
     if ($categoryid === 'all') {
         $categoryclause   = '';
         $allcats = true;
     } elseif (is_numeric($categoryid)) {
-        $categoryclause = "c.category = $categoryid";
+        $categoryclause = "c.category = :catid";
+        $params['catid'] = $categoryid;
     } else {
         debugging("Could not recognise categoryid = $categoryid");
         $categoryclause = '';
@@ -579,15 +589,15 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
     $sql = "SELECT $coursefields,
                    ctx.id AS ctxid, ctx.path AS ctxpath,
                    ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
-            FROM {$CFG->prefix}course c
-            JOIN {$CFG->prefix}context ctx
-                 ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-                 $where
-                 $sortstatement";
+              FROM {course} c
+              JOIN {context} ctx
+                   ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+               $where
+               $sortstatement";
 
     $catpaths = array();
     $catpath  = NULL;
-    if ($courses = get_records_sql($sql)) {
+    if ($courses = $DB->get_records_sql($sql, $params)) {
         // loop on courses materialising
         // the context, and prepping data to fetch the
         // managers efficiently later...
@@ -650,15 +660,12 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
                        ra.hidden,
                        r.id AS roleid, r.name as rolename,
                        u.id AS userid, u.firstname, u.lastname
-                FROM {$CFG->prefix}role_assignments ra
-                JOIN {$CFG->prefix}context ctx
-                  ON ra.contextid = ctx.id
-                JOIN {$CFG->prefix}user u
-                  ON ra.userid = u.id
-                JOIN {$CFG->prefix}role r
-                  ON ra.roleid = r.id
-                LEFT OUTER JOIN {$CFG->prefix}course c
-                  ON (ctx.instanceid=c.id AND ctx.contextlevel=".CONTEXT_COURSE.")
+                  FROM {role_assignments} ra
+                  JOIN {context} ctx ON ra.contextid = ctx.id
+                  JOIN {user} u ON ra.userid = u.id
+                  JOIN {role} r ON ra.roleid = r.id
+                  LEFT OUTER JOIN {course} c
+                       ON (ctx.instanceid=c.id AND ctx.contextlevel=".CONTEXT_COURSE.")
                 WHERE ( c.id IS NOT NULL";
         // under certain conditions, $catctxids is NULL
         if($catctxids == NULL){
@@ -670,11 +677,11 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
         $sql .= "AND ra.roleid IN ({$CFG->coursemanager})
                       $categoryclause
                 ORDER BY r.sortorder ASC, ctx.contextlevel ASC, ra.sortorder ASC";
-        $rs = get_recordset_sql($sql);
+        $rs = $DB->get_recordset_sql($sql, $params);
 
         // This loop is fairly stupid as it stands - might get better
         // results doing an initial pass clustering RAs by path.
-        while ($ra = rs_fetch_next_record($rs)) {
+        foreach($rs as $ra) {
             $user = new StdClass;
             $user->id        = $ra->userid;    unset($ra->userid);
             $user->firstname = $ra->firstname; unset($ra->firstname);
@@ -707,7 +714,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
                 $courses[$ra->instanceid]->managers[] = $ra;
             }
         }
-        rs_close($rs);
+        $rs->close();
     }
 
     return $courses;
@@ -747,12 +754,11 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
  * @return array {@link $COURSE} of course objects
  */
 function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NULL, $doanything=false,$limit=0) {
-
-    global $CFG,$USER;
+    global $CFG, $USER, $DB;
 
     // Guest's do not have any courses
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-    if (has_capability('moodle/legacy:guest',$sitecontext,$userid,false)) {
+    if (has_capability('moodle/legacy:guest', $sitecontext, $userid, false)) {
         return(array());
     }
 
@@ -836,17 +842,16 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
                            ctx.id AS ctxid, ctx.path AS ctxpath,
                            ctx.depth as ctxdepth, ctx.contextlevel AS ctxlevel,
                            cc.path AS categorypath
-                    FROM {$CFG->prefix}course c
-                    JOIN {$CFG->prefix}course_categories cc
-                      ON c.category=cc.id
-                    JOIN {$CFG->prefix}context ctx
-                      ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-                    WHERE c.id IN ($courseids)
-                    $orderby";
-            $rs = get_recordset_sql($sql);
+                      FROM {course} c
+                      JOIN {course_categories} cc ON c.category=cc.id
+                      JOIN {context} ctx
+                           ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+                     WHERE c.id IN ($courseids)
+                  $orderby";
+            $rs = $DB->get_recordset_sql($sql);
             $courses = array();
             $cc = 0; // keep count
-            while ($c = rs_fetch_next_record($rs)) {
+            foreach ($rs as $c) {
                 // build the context obj
                 $c = make_context_subobj($c);
 
@@ -855,7 +860,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
                     break;
                 }
             }
-            rs_close($rs);
+            $rs->close();
             return $courses;
         }
     }
@@ -879,20 +884,20 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
         $sql = "SELECT cc.id, cc.path, cc.visible,
                        ctx.id AS ctxid, ctx.path AS ctxpath,
                        ctx.depth as ctxdepth, ctx.contextlevel AS ctxlevel
-                 FROM {$CFG->prefix}course_categories cc
-                 JOIN {$CFG->prefix}context ctx ON (cc.id = ctx.instanceid)
-                WHERE ctx.contextlevel = ".CONTEXT_COURSECAT."
-             ORDER BY cc.id";
-        $rs = get_recordset_sql($sql);
+                  FROM {course_categories} cc
+                  JOIN {context} ctx ON (cc.id = ctx.instanceid)
+                 WHERE ctx.contextlevel = ".CONTEXT_COURSECAT."
+              ORDER BY cc.id";
+        $rs = $DB->get_recordset_sql($sql);
 
         // Using a temporary array instead of $cats here, to avoid a "true" result when isnull($cats) further down
         $categories = array();
-        while ($course_cat = rs_fetch_next_record($rs)) {
+        foreach($rs as $course_cat) {
             // build the context obj
             $course_cat = make_context_subobj($course_cat);
             $categories[$course_cat->id] = $course_cat;
         }
-        rs_close($rs);
+        $rs->close();
 
         if (!empty($categories)) {
             $cats = $categories;
@@ -1014,24 +1019,21 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
  * @return object {@link $COURSE} records
  */
 function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $recordsperpage=50, &$totalcount) {
+    global $CFG, $DB;
 
-    global $CFG;
-
-    //to allow case-insensitive search for postgesql
     if ($CFG->dbfamily == 'postgres') {
-        $LIKE = 'ILIKE';
-        $NOTLIKE = 'NOT ILIKE';   // case-insensitive
-        $REGEXP = '~*';
+        $REGEXP    = '~*';
         $NOTREGEXP = '!~*';
     } else {
-        $LIKE = 'LIKE';
-        $NOTLIKE = 'NOT LIKE';
-        $REGEXP = 'REGEXP';
+        $REGEXP    = 'REGEXP';
         $NOTREGEXP = 'NOT REGEXP';
     }
+    $LIKE = $DB->sql_ilike(); // case-insensitive
 
     $fullnamesearch = '';
     $summarysearch = '';
+
+    $params = array();
 
     foreach ($searchterms as $searchterm) {
 
@@ -1054,53 +1056,60 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
             $summarysearch .= ' AND ';
         }
 
+        // TODO: the "-" here does not work much because it may be cancelled by OR condition "( $fullnamesearch ) OR ( $summarysearch )"
+
         if (substr($searchterm,0,1) == '+') {
             $searchterm      = substr($searchterm,1);
-            $summarysearch  .= " c.summary $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
-            $fullnamesearch .= " c.fullname $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $searchterm      = preg_quote($searchterm, '|');
+            $summarysearch  .= " c.summary $REGEXP :ss ";
+            $params['ss'] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
+            $fullnamesearch .= " c.fullname $REGEXP :fs ";
+            $params['fs'] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
         } else if (substr($searchterm,0,1) == "-") {
             $searchterm      = substr($searchterm,1);
-            $summarysearch  .= " c.summary $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
-            $fullnamesearch .= " c.fullname $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $searchterm      = preg_quote($searchterm, '|');
+            $summarysearch  .= " c.summary $NOTREGEXP :ss ";
+            $params['ss'] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
+            $fullnamesearch .= " c.fullname $NOTREGEXP :fs ";
+            $params['fs'] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
         } else {
-            $summarysearch .= ' summary '. $NOT . $LIKE .' \'%'. $searchterm .'%\' ';
-            $fullnamesearch .= ' fullname '. $NOT . $LIKE .' \'%'. $searchterm .'%\' ';
+            $summarysearch .= " summary $NOT $LIKE :ss ";
+            $fullnamesearch .= " fullname $NOT $LIKE :fs ";
+            $params['ss'] = "%$searchterm%";
+            $params['fs'] = "%$searchterm%";
         }
-
     }
 
     $sql = "SELECT c.*,
                    ctx.id AS ctxid, ctx.path AS ctxpath,
                    ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
-            FROM {$CFG->prefix}course c
-            JOIN {$CFG->prefix}context ctx
-             ON (c.id = ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+              FROM {course} c
+              JOIN {context} ctx
+                   ON (c.id = ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
             WHERE (( $fullnamesearch ) OR ( $summarysearch ))
                   AND category > 0
-            ORDER BY " . $sort;
-
+            ORDER BY $sort";
     $courses = array();
+    $c = 0; // counts how many visible courses we've seen
 
-    if ($rs = get_recordset_sql($sql)) {
-
-
+    if ($rs = $DB->get_recordset_sql($sql, $params)) {
         // Tiki pagination
         $limitfrom = $page * $recordsperpage;
         $limitto   = $limitfrom + $recordsperpage;
-        $c = 0; // counts how many visible courses we've seen
 
-        while ($course = rs_fetch_next_record($rs)) {
+        foreach($rs as $course) {
             $course = make_context_subobj($course);
             if ($course->visible || has_capability('moodle/course:viewhiddencourses', $course->context)) {
                 // Don't exit this loop till the end
                 // we need to count all the visible courses
                 // to update $totalcount
                 if ($c >= $limitfrom && $c < $limitto) {
-                    $courses[] = $course;
+                    $courses[$course->id] = $course;
                 }
                 $c++;
             }
         }
+        $rs->close();
     }
 
     // our caller expects 2 bits of data - our return
@@ -1126,7 +1135,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
  * @return array of categories
  */
 function get_categories($parent='none', $sort=NULL, $shallow=true) {
-    global $CFG;
+    global $DB;
 
     if ($sort === NULL) {
         $sort = 'ORDER BY cc.sortorder ASC';
@@ -1138,44 +1147,48 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
 
     if ($parent === 'none') {
         $sql = "SELECT cc.*,
-                      ctx.id AS ctxid, ctx.path AS ctxpath,
-                      ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
-                FROM {$CFG->prefix}course_categories cc
-                JOIN {$CFG->prefix}context ctx
-                  ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
+                       ctx.id AS ctxid, ctx.path AS ctxpath,
+                       ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
+                  FROM {course_categories} cc
+                  JOIN {context} ctx
+                       ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
                 $sort";
+        $params = array();
+
     } elseif ($shallow) {
-        $parent = (int)$parent;
         $sql = "SELECT cc.*,
                        ctx.id AS ctxid, ctx.path AS ctxpath,
                        ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
-                FROM {$CFG->prefix}course_categories cc
-                JOIN {$CFG->prefix}context ctx
-                  ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
-                WHERE cc.parent=$parent
+                  FROM {course_categories} cc
+                  JOIN {context} ctx
+                       ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
+                 WHERE cc.parent=?
                 $sort";
+        $params = array($parent);
+
     } else {
-        $parent = (int)$parent;
         $sql = "SELECT cc.*,
                        ctx.id AS ctxid, ctx.path AS ctxpath,
                        ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
-                FROM {$CFG->prefix}course_categories cc
-                JOIN {$CFG->prefix}context ctx
-                  ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
-                JOIN {$CFG->prefix}course_categories ccp
-                     ON (cc.path LIKE ".sql_concat('ccp.path',"'%'").")
-                WHERE ccp.id=$parent
+                  FROM {course_categories} cc
+                  JOIN {context} ctx
+                       ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
+                  JOIN {course_categories} ccp
+                       ON (cc.path LIKE ".$DB->sql_concat('ccp.path',"'%'").")
+                 WHERE ccp.id=?
                 $sort";
+        $params = array($parent);
     }
     $categories = array();
 
-    if( $rs = get_recordset_sql($sql) ){
-        while ($cat = rs_fetch_next_record($rs)) {
+    if( $rs = $DB->get_recordset_sql($sql, $params) ){
+        foreach($rs as $cat) {
             $cat = make_context_subobj($cat);
-            if ($cat->visible || has_capability('moodle/course:create',$cat->context)) {
+            if ($cat->visible || has_capability('moodle/course:create', $cat->context)) {
                 $categories[$cat->id] = $cat;
             }
         }
+        $rs->close();
     }
     return $categories;
 }
@@ -1188,10 +1201,11 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
  * @return array of category ids.
  */
 function get_all_subcategories($catid) {
+    global $DB;
 
     $subcats = array();
 
-    if ($categories = get_records('course_categories', 'parent', $catid)) {
+    if ($categories = $DB->get_records('course_categories', array('parent'=>$catid))) {
         foreach ($categories as $cat) {
             array_push($subcats, $cat->id);
             $subcats = array_merge($subcats, get_all_subcategories($cat->id));
