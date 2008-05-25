@@ -107,7 +107,7 @@ abstract class adodb_moodle_database extends moodle_database {
     }
 
     /**
-     * Return tables in database with WITHOUT current prefix
+     * Return tables in database WITHOUT current prefix
      * @return array of table names in lowercase and without prefix
      */
     public function get_tables() {

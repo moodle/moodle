@@ -322,8 +322,8 @@ abstract class moodle_database {
     }
 
     /**
-     * Return tables in database with current prefix
-     * @return array of table names
+     * Return tables in database WITHOUT current prefix
+     * @return array of table names in lowercase and without prefix
      */
     public abstract function get_tables();
 
