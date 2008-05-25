@@ -80,7 +80,7 @@ class database_column_info {
     public $default_value;
 
     /**
-     * True if field values unique
+     * True if field values unique, false if not
      */
     public $unique;
 
@@ -107,6 +107,18 @@ class database_column_info {
             if (array_key_exists($key, $this)) {
                 $this->$key = $value;
             }
+        }
+
+        switch ($this->meta_type) {
+            case 'R': // normalise counters (usually 'id')
+                $this->auto_increment = true;
+                $this->binary         = false;
+                $this->has_default    = false;
+                $this->default_value  = null;
+                $this->unique         = true;
+            case 'C':
+                $this->auto_increment = false;
+                $this->binary         = false;
         }
     }
 }
