@@ -1365,7 +1365,7 @@ error('fix temporary table code in CAS');
                             'rfc2307' => 'shadowExpire',
                             'rfc2307bis' => 'shadowExpire',
                             'samba' => '', //No support yet
-                            'ad' => '', //No support yet
+                            'ad' => 'pwdLastSet',
                             'default' => ''
                             );
         return $default;
