@@ -297,31 +297,4 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
 
         return ($returnid ? $id : true);
     }
-
-    /**
-     * Very ugly hack which emulates bound parameters in mssql queries
-     * where params not supported (UpdateBlob) :-(
-     */
-    private function emulate_bound_params($sql, array $params=null) {
-        if (empty($params)) {
-            return $sql;
-        }
-        // ok, we have verified sql statement with ? and correct number of params
-        $return = strtok($sql, '?');
-        foreach ($params as $param) {
-            if (is_bool($param)) {
-                $return .= (int)$param;
-            } else if (is_null($param)) {
-                $return .= 'NULL';
-            } else if (is_numeric($param)) {
-                $return .= $param;
-            } else {
-                $param = $this->db->qstr($param);
-                $return .= "$param";
-            }
-            $return .= strtok('?');
-        }
-        return $return;
-    }
-
 }
