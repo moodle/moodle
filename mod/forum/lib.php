@@ -70,8 +70,10 @@ function forum_add_instance($forum) {
         }
     }
 
-    if ($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) { // all users should be subscribed initially
-        $users = get_course_users($forum->course);
+    if ($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) {
+        // all users should be subscribed initially
+        $users = get_users_by_capability(get_context_instance(CONTEXT_COURSE, $forum->course),
+                                         'mod/forum:initialsubscriptions', 'u.id', '', '','','',null, false);
         foreach ($users as $user) {
             forum_subscribe($user->id, $forum->id);
         }

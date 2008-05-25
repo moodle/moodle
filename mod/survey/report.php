@@ -80,12 +80,16 @@
     }
 
     if ($currentgroup) {
-        $users = groups_get_members($currentgroup);
+        $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', $currentgroup, null, false);
     } else if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) { 
-        $users = groups_get_grouping_members($cm->groupingid);
+        $groups = groups_get_all_groups($courseid, 0, $cm->groupingid);
+        $groups = array_keys($groups);
+        $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', $groups, null, false);
     } else {
-        $users = get_course_users($course->id);
+        $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', '', null, false);
+        $group = false;
     }
+
     $groupingid = $cm->groupingid;
     
     print_simple_box_start("center");

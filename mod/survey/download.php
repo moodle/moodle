@@ -16,8 +16,10 @@
         print_error("Course is misconfigured");
     }
 
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     require_login($course->id, false, $cm);
-    require_capability('mod/survey:download', get_context_instance(CONTEXT_MODULE, $cm->id)) ;
+    require_capability('mod/survey:download', $context) ;
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {
         print_error("Survey ID was incorrect");
@@ -30,9 +32,9 @@
     $groupmode = groups_get_activity_groupmode($cm);   // Groups are being used
 
     if ($groupmode and $group) {
-        $users = groups_get_members($group);
+        $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', $group, null, false);
     } else {
-        $users = get_course_users($course->id);
+        $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', '', null, false);
         $group = false;
     }
 

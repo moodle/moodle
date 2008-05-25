@@ -203,60 +203,6 @@ function get_recent_enrolments($courseid, $timestart) {
                               ORDER BY l.time ASC");
 }
 
-/**
- * Returns all the users of a course: students and teachers
- *
- * @param int $courseid The course in question.
- * @param string $sort ?
- * @param string $exceptions ?
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return object
- * @todo Finish documenting this function
- */
-function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='', $fields='u.*, ul.timeaccess as lastaccess') {
-    global $CFG;
-
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-
-    /// If the course id is the SITEID, we need to return all the users if the "defaultuserroleid"
-    /// has the capbility of accessing the site course. $CFG->nodefaultuserrolelists set to true can
-    /// over-rule using this.
-    if (($courseid == SITEID) && !empty($CFG->defaultuserroleid) && empty($CFG->nodefaultuserrolelists)) {
-        if ($roles = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $context)) {
-            $hascap = false;
-            foreach ($roles as $role) {
-                if ($role->id == $CFG->defaultuserroleid) {
-                    $hascap = true;
-                    break;
-                }
-            }
-            if ($hascap) {
-                if (empty($fields)) {
-                    $fields = '*';
-                }
-                return get_users(true, '', true, $exceptions, 'lastname ASC', '', '', '', '', $fields);
-            }
-        }
-    }
-    return get_users_by_capability($context, 'moodle/course:view', $fields, $sort, '','','',$exceptions, false);
-
-}
-
-/**
- * Returns a list of all site users
- * Obsolete, just calls get_course_users(SITEID)
- *
- * @uses SITEID
- * @deprecated Use {@link get_course_users()} instead.
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return object|false  {@link $USER} records or false if error.
- */
-function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') {
-
-    return get_course_users(SITEID, $sort, $exceptions, $fields);
-}
-
-
 ########### FROM weblib.php ##########################################################################
 
 /**
