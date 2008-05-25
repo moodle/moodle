@@ -629,39 +629,6 @@ function mygroupid($courseid) {
 
 
 /**
- * Returns an array of user objects
- *
- * @uses $CFG
- * @param int $groupid The group in question.
- * @param string $sort ?
- * @param string $exceptions ?
- * @return object
- * @todo Finish documenting this function
- */
-function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='',
-                         $fields='u.*') {
-    global $CFG;
-    if (!empty($exceptions)) {
-        $except = ' AND u.id NOT IN ('. $exceptions .') ';
-    } else {
-        $except = '';
-    }
-    // in postgres, you can't have things in sort that aren't in the select, so...
-    $extrafield = str_replace('ASC','',$sort);
-    $extrafield = str_replace('DESC','',$extrafield);
-    $extrafield = trim($extrafield);
-    if (!empty($extrafield)) {
-        $extrafield = ','.$extrafield;
-    }
-    return get_records_sql("SELECT DISTINCT $fields $extrafield
-                              FROM {$CFG->prefix}user u,
-                                   {$CFG->prefix}groups_members m
-                             WHERE m.groupid = '$groupid'
-                               AND m.userid = u.id $except
-                          ORDER BY $sort");
-}
-
-/**
  * Returns the current group mode for a given course or activity module
  *
  * Could be false, SEPARATEGROUPS or VISIBLEGROUPS    (<-- Martin)
