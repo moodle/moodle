@@ -325,9 +325,11 @@ class oracle_sql_generator extends sql_generator {
      *     - error is dropped if the null/not null clause is specified and hasn't changed
      *     - changes in precision/decimals of numeric fields drop an ORA-1440 error
      */
-    public function getAlterFieldSQL($xmldb_table, $xmldb_field) {
+    public function getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
 
-        global $db;
+        $skip_type_clause = is_null($skip_type_clause) ? $this->alter_column_skip_type : $skip_type_clause;
+        $skip_default_clause = is_null($skip_default_clause) ? $this->alter_column_skip_default : $skip_default_clause;
+        $skip_notnull_clause = is_null($skip_notnull_clause) ? $this->alter_column_skip_notnull : $skip_notnull_clause;
 
         $results = array(); /// To store all the needed SQL commands
 
@@ -336,7 +338,7 @@ class oracle_sql_generator extends sql_generator {
         $fieldname = $xmldb_field->getName();
 
     /// Take a look to field metadata
-        $meta = $this->mdb->get_columns($tablename);
+        $meta = $this->mdb->get_columns($xmldb_table->getName());
         $metac = $meta[$fieldname];
         $oldmetatype = $metac->meta_type;
 
@@ -411,11 +413,11 @@ class oracle_sql_generator extends sql_generator {
         if (($typechanged) || (($oldmetatype == 'N' || $oldmetatype == 'I')  && ($precisionchanged || $decimalchanged))) {
             $tempcolname = $xmldb_field->getName() . '_alter_column_tmp';
         /// Prevent temp field to have both NULL/NOT NULL and DEFAULT constraints
-            $this->alter_column_skip_notnull = true;
-            $this->alter_column_skip_default = true;
+            $skip_notnull_clause = true;
+            $skip_default_clause = true;
             $xmldb_field->setName($tempcolname);
         /// Create the temporal column
-            $results = array_merge($results, $this->getAddFieldSQL($xmldb_table, $xmldb_field));
+            $results = array_merge($results, $this->getAddFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause, $skip_type_clause, $skip_notnull_clause));
         /// Copy contents from original col to the temporal one
             $results[] = 'UPDATE ' . $tablename . ' SET ' . $tempcolname . ' = ' . $fieldname;
         /// Drop the old column
@@ -426,10 +428,10 @@ class oracle_sql_generator extends sql_generator {
         /// Mark we have performed one change based in temp fields
             $from_temp_fields = true;
         /// Re-enable the notnull and default sections so the general AlterFieldSQL can use it
-            $this->alter_column_skip_notnull = false;
-            $this->alter_column_skip_default = false;
+            $skip_notnull_clause = false;
+            $skip_default_clause = false;
         /// Dissable the type section because we have done it with the temp field
-            $this->alter_column_skip_type = true;
+            $skip_type_clause = true;
         /// If new field is nullable, nullability hasn't changed
             if (!$xmldb_field->getNotnull()) {
                 $notnullchanged = false;
@@ -442,34 +444,34 @@ class oracle_sql_generator extends sql_generator {
 
     /// If type and precision and decimals hasn't changed, prevent the type clause
         if (!$typechanged && !$precisionchanged && !$decimalchanged) {
-            $this->alter_column_skip_type = true;
+            $skip_type_clause = true;
         }
 
     /// If NULL/NOT NULL hasn't changed
     /// prevent null clause to be specified
         if (!$notnullchanged) {
-            $this->alter_column_skip_notnull = true; /// Initially, prevent the notnull clause
+            $skip_notnull_clause = true; /// Initially, prevent the notnull clause
         /// But, if we have used the temp field and the new field is not null, then enforce the not null clause
             if ($from_temp_fields &&  $xmldb_field->getNotnull()) {
-                $this->alter_column_skip_notnull = false;
+                $skip_notnull_clause = false;
             }
         }
     /// If default hasn't changed
     /// prevent default clause to be specified
         if (!$defaultchanged) {
-            $this->alter_column_skip_default = true; /// Initially, prevent the default clause
+            $skip_default_clause = true; /// Initially, prevent the default clause
         /// But, if we have used the temp field and the new field has default clause, then enforce the default clause
             if ($from_temp_fields) {
                 $default_clause = $this->getDefaultClause($xmldb_field);
                 if ($default_clause) {
-                    $this->alter_column_skip_default = false;
+                    $skip_notnull_clause = false;
                 }
             }
         }
 
     /// If arriving here, something is not being skiped (type, notnull, default), calculate the standar AlterFieldSQL
-        if (!$this->alter_column_skip_type || !$this->alter_column_skip_notnull || !$this->alter_column_skip_default) {
-            $results = array_merge($results, parent::getAlterFieldSQL($xmldb_table, $xmldb_field));
+        if (!$skip_type_clause || !$skip_notnull_clause || !$skip_default_clause) {
+            $results = array_merge($results, parent::getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause, $skip_default_clause, $skip_notnull_clause));
             return $results;
         }
 
