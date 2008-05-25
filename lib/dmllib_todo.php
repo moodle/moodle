@@ -1296,4 +1296,18 @@ error('todo');
     return $status;
 }
 
+/**
+ * This function is used to convert all the Oracle 1-space defaults to the empty string
+ * like a really DIRTY HACK to allow it to work better until all those NOT NULL DEFAULT ''
+ * fields will be out from Moodle.
+ * @param string the string to be converted to '' (empty string) if it's ' ' (one space)
+ * @param mixed the key of the array in case we are using this function from array_walk,
+ *              defaults to null for other (direct) uses
+ * @return boolean always true (the converted variable is returned by reference)
+ */
+ function onespace2empty(&$item, $key=null) {
+     $item = $item == ' ' ? '' : $item;
+     return true;
+ }
+
 ?>
