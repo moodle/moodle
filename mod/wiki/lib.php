@@ -565,8 +565,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
             /// If the user is an editing teacher, or a non-editing teacher not assigned to a group, show all student
             /// wikis, regardless of creation.
             if ((SITEID != $course->id) and ($isteacheredit or ($groupmode == NOGROUPS))) {
-
-                if ($students = get_course_students($course->id)) {
+                if ($students = get_users_by_capability(get_context_instance(CONTEXT_COURSE, $course->id), 'moodle/course:view', '', '', '', '', '', '', false)) {
                     /// Default pagename is dependent on the wiki settings.
                     $defpagename = empty($wiki->pagename) ? get_string('wikidefaultpagename', 'wiki') : $wiki->pagename;
 
