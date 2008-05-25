@@ -452,30 +452,6 @@ function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') 
     return get_course_users(SITEID, $sort, $exceptions, $fields);
 }
 
-/**
- * Returns an array of user objects
- *
- * @uses $CFG
- * @param int $groupid The group(s) in question.
- * @param string $sort How to sort the results
- * @return object (changed to groupids)
- */
-function get_group_students($groupids, $sort='ul.timeaccess DESC') {
-
-    if (is_array($groupids)){
-        $groups = $groupids;
-        // all groups must be from one course anyway...
-        $group = groups_get_group(array_shift($groups));
-    } else {
-        $group = groups_get_group($groupids);
-    }
-    if (!$group) {
-        return NULL;
-    }
-
-    $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-    return get_users_by_capability($context, 'moodle/legacy:student', 'u.*, ul.timeaccess as lastaccess', $sort, '','',$groupids, '', false);
-}
 
 ########### FROM weblib.php ##########################################################################
 
