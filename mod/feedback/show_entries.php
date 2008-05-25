@@ -114,7 +114,7 @@
             //get students in conjunction with groupmode
             if($groupmode > 0) {
                 if($SESSION->feedback->lstgroupid == -2) {
-                    if(isadmin()) {
+                    if(has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
                         $mygroupid = false;
                         $SESSION->feedback->lstgroupid = false;
                     }else{

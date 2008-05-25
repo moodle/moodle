@@ -1477,7 +1477,7 @@ function feedback_get_groupid($course, $cm) {
     $groupmode = groupmode($course, $cm);
     
     //get groupid
-    if($groupmode > 0 && !isadmin()) {
+    if($groupmode > 0 && !has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
         if($mygroupid = mygroupid($course->id)) {
             return $mygroupid[0]; //get the first groupid
         }

@@ -35,38 +35,6 @@
  * @package moodlecore
  */
 
-
-/**
- * Determines if a user an admin
- *
- * @uses $USER
- * @param int $userid The id of the user as is found in the 'user' table
- * @staticvar array $admins List of users who have been found to be admins by user id
- * @staticvar array $nonadmins List of users who have been found not to be admins by user id
- * @return bool
- */
-function isadmin($userid=0) {
-    global $USER, $CFG;
-
-    if (empty($CFG->rolesactive)) {    // Then the user is likely to be upgrading NOW
-        if (!$userid) {
-            if (empty($USER->id)) {
-                return false;
-            }
-            if (!empty($USER->admin)) {
-                return true;
-            }
-            $userid = $USER->id;
-        }
-
-        return record_exists('user_admins', 'userid', $userid);
-    }
-
-    $context = get_context_instance(CONTEXT_SYSTEM);
-
-    return has_capability('moodle/legacy:admin', $context, $userid, false);
-}
-
 /**
  * Determines if a user is a teacher (or better)
  *

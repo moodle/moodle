@@ -79,7 +79,7 @@
             }
         }
     } else { // if upgrading from 1.6 or below
-        if (isadmin() && moodle_needs_upgrading()) {
+        if (is_siteadmin() && moodle_needs_upgrading()) {
             redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
         }
     }

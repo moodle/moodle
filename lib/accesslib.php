@@ -514,7 +514,7 @@ function has_any_capability($capabilities, $context, $userid=NULL, $doanything=t
  *  - moodle/site:doanything
  *
  * @param   int  $userid
- * @returns bool $isadmin
+ * @returns bool true is user can administer server settings
  */
 function is_siteadmin($userid) {
     global $CFG, $DB;
@@ -532,8 +532,7 @@ function is_siteadmin($userid) {
             HAVING SUM(rc.permission) > 0";
     $params = array($userid, 'moodle/site:config', 'moodle/legacy:admin', 'moodle/site:doanything');
 
-    $isadmin = $DB->record_exists_sql($sql, $params);
-    return $isadmin;
+    return $DB->record_exists_sql($sql, $params);
 }
 
 function get_course_from_path ($path) {

@@ -30,9 +30,13 @@ require_once("{$CFG->dirroot}/search/lib.php");
         error(get_string('globalsearchdisabled', 'search'));
     }
     
-    require_once("{$CFG->dirroot}/search/indexlib.php");
-    
-    $indexinfo = new IndexInfo();
+/// check for php5, but don't die yet
+
+    if ($check = search_check_php5()) {
+        require_once("{$CFG->dirroot}/search/indexlib.php");
+        
+        $indexinfo = new IndexInfo();
+    } 
     
     if (!$site = get_site()) {
         redirect("index.php");
@@ -54,6 +58,12 @@ require_once("{$CFG->dirroot}/search/lib.php");
     
 /// keep things pretty, even if php5 isn't available
 
+    if (!$check) {
+        print_heading(search_check_php5(true));
+        print_footer();
+        exit(0);
+    }
+    
     print_box_start();
     print_heading($strquery);
     
@@ -67,7 +77,7 @@ require_once("{$CFG->dirroot}/search/lib.php");
     
 /// this table is only for admins, shows index directory size and location
 
-    if (isadmin()) {
+    if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
         $datadirectorystr = get_string('datadirectory', 'search');
         $inindexdirectorystr = get_string('filesinindexdirectory', 'search');
         $totalsizestr = get_string('totalsize', 'search');
@@ -137,7 +147,7 @@ require_once("{$CFG->dirroot}/search/lib.php");
     
 /// add extra fields if we're admin
 
-    if (isadmin()) {
+    if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
         //don't want to confuse users if the two totals don't match (hint: they should)
         $table->data[] = array($documentsinindexstr, $indexinfo->indexcount);
         

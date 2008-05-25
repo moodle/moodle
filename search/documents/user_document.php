@@ -334,7 +334,7 @@ function user_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
         $userrecord = get_record('user', 'id', $this_id);
 
         // we cannot see nothing from unconfirmed users
-        if (!$userrecord->confirmed and !isadmin()){
+        if (!$userrecord->confirmed and !has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))){
             if (!empty($CFG->search_access_debug)) echo "search reject : unconfirmed user ";
             return false;
         }

@@ -34,7 +34,7 @@
         error(get_string('globalsearchdisabled', 'search'));
     }
     
-    if (!isadmin()) {
+    if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
         error(get_string('beadmin', 'search'), "$CFG->wwwroot/login/index.php");
     } 
     

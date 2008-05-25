@@ -377,7 +377,7 @@ class SearchQuery {
       * course related checks
       */
       // admins can see everything, anyway.
-      if (isadmin()){
+      if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))){
         return true;
       }
             

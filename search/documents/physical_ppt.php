@@ -31,15 +31,19 @@
 * @param object $resource
 * @uses CFG, USER
 */
-function get_text_for_indexing_ppt(&$resource){
+function get_text_for_indexing_ppt(&$resource, $directfile = ''){
     global $CFG, $USER;
 
     $indextext = null;
     
     // SECURITY : do not allow non admin execute anything on system !!
-    if (!isadmin($USER->id)) return;
+    if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) return;
 
-    $text = implode('', file("{$CFG->dataroot}/{$resource->course}/{$resource->reference}"));
+    if ($directfile == ''){
+        $text = implode('', file("{$CFG->dataroot}/{$resource->course}/{$resource->reference}"));
+    } else {
+        $text = implode('', file("{$CFG->dataroot}/{$directfile}"));
+    }
     
     $remains = $text;
     $fragments = array();

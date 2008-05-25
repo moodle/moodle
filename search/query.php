@@ -50,90 +50,102 @@
     
 /// check for php5, but don't die yet (see line 52)
 
-    require_once("{$CFG->dirroot}/search/querylib.php");
-
-    $page_number  = optional_param('page', -1, PARAM_INT);
-    $pages        = ($page_number == -1) ? false : true;
-    $advanced     = (optional_param('a', '0', PARAM_INT) == '1') ? true : false;
-    $query_string = optional_param('query_string', '', PARAM_CLEAN);
-
-    if ($pages && isset($_SESSION['search_advanced_query'])) {
-        // if both are set, then we are busy browsing through the result pages of an advanced query
-        $adv = unserialize($_SESSION['search_advanced_query']);
-    } else if ($advanced) {
-        // otherwise we are dealing with a new advanced query
-        unset($_SESSION['search_advanced_query']);
-        session_unregister('search_advanced_query');
+    if ($check = search_check_php5()) {
+        require_once("{$CFG->dirroot}/search/querylib.php");
+    
+        $page_number  = optional_param('page', -1, PARAM_INT);
+        $pages        = ($page_number == -1) ? false : true;
+        $advanced     = (optional_param('a', '0', PARAM_INT) == '1') ? true : false;
+        $query_string = optional_param('query_string', '', PARAM_CLEAN);
         
-        // chars to strip from strings (whitespace)
-        $chars = " \t\n\r\0\x0B,-+";
+        /**
+        * discard harmfull searches  
+        */
+        if (preg_match("/^[\*\?]+$/", $query_string)){
+            $query_string = '';
+            $error = get_string('fullwildcardquery','search');
+        }
         
-        // retrieve advanced query variables
-        $adv->mustappear  = trim(optional_param('mustappear', '', PARAM_CLEAN), $chars);
-        $adv->notappear   = trim(optional_param('notappear', '', PARAM_CLEAN), $chars);
-        $adv->canappear   = trim(optional_param('canappear', '', PARAM_CLEAN), $chars);
-        $adv->module      = optional_param('module', '', PARAM_CLEAN);
-        $adv->title       = trim(optional_param('title', '', PARAM_CLEAN), $chars);
-        $adv->author      = trim(optional_param('author', '', PARAM_CLEAN), $chars);
+    
+        if ($pages && isset($_SESSION['search_advanced_query'])) {
+            // if both are set, then we are busy browsing through the result pages of an advanced query
+            $adv = unserialize($_SESSION['search_advanced_query']);
+        } elseif ($advanced) {
+            // otherwise we are dealing with a new advanced query
+            unset($_SESSION['search_advanced_query']);
+            session_unregister('search_advanced_query');
+            
+            // chars to strip from strings (whitespace)
+            $chars = " \t\n\r\0\x0B,-+";
+            
+            // retrieve advanced query variables
+            $adv->mustappear  = trim(optional_param('mustappear', '', PARAM_CLEAN), $chars);
+            $adv->notappear   = trim(optional_param('notappear', '', PARAM_CLEAN), $chars);
+            $adv->canappear   = trim(optional_param('canappear', '', PARAM_CLEAN), $chars);
+            $adv->module      = optional_param('module', '', PARAM_CLEAN);
+            $adv->title       = trim(optional_param('title', '', PARAM_CLEAN), $chars);
+            $adv->author      = trim(optional_param('author', '', PARAM_CLEAN), $chars);
+        } 
+    
+        if ($advanced) {
+            //parse the advanced variables into a query string
+            //TODO: move out to external query class (QueryParse?)
+            
+            $query_string = '';
+            
+            // get all available module types
+            $module_types = array_merge(array('all'), array_values(search_get_document_types()));
+            $adv->module = in_array($adv->module, $module_types) ? $adv->module : 'all';
+            
+            // convert '1 2' into '+1 +2' for required words field
+            if (strlen(trim($adv->mustappear)) > 0) {
+                $query_string  = ' +'.implode(' +', preg_split("/[\s,;]+/", $adv->mustappear));
+            } 
+            
+            // convert '1 2' into '-1 -2' for not wanted words field
+            if (strlen(trim($adv->notappear)) > 0) {
+                $query_string .= ' -'.implode(' -', preg_split("/[\s,;]+/", $adv->notappear));
+            } 
+            
+            // this field is left untouched, apart from whitespace being stripped
+            if (strlen(trim($adv->canappear)) > 0) {
+                $query_string .= ' '.implode(' ', preg_split("/[\s,;]+/", $adv->canappear));
+            } 
+            
+            // add module restriction
+            $doctypestr = get_string('doctype', 'search');
+            $titlestr = get_string('title', 'search');
+            $authorstr = get_string('author', 'search');
+            if ($adv->module != 'all') {
+                $query_string .= " +{$doctypestr}:".$adv->module;
+            } 
+            
+            // create title search string
+            if (strlen(trim($adv->title)) > 0) {
+                $query_string .= " +{$titlestr}:".implode(" +{$titlestr}:", preg_split("/[\s,;]+/", $adv->title));
+            } 
+            
+            // create author search string
+            if (strlen(trim($adv->author)) > 0) {
+                $query_string .= " +{$authorstr}:".implode(" +{$authorstr}:", preg_split("/[\s,;]+/", $adv->author));
+            } 
+            
+            // save our options if the query is valid
+            if (!empty($query_string)) {
+                $_SESSION['search_advanced_query'] = serialize($adv);
+            } 
+        } 
+    
+        // normalise page number
+        if ($page_number < 1) {
+            $page_number = 1;
+        } 
+    
+        //run the query against the index
+        Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8());
+        $sq = new SearchQuery($query_string, $page_number, 10, false);
     } 
-
-    if ($advanced) {
-        //parse the advanced variables into a query string
-        //TODO: move out to external query class (QueryParse?)
-        
-        $query_string = '';
-        
-        // get all available module types
-        $module_types = array_merge(array('all'), array_values(search_get_document_types()));
-        $adv->module = in_array($adv->module, $module_types) ? $adv->module : 'all';
-        
-        // convert '1 2' into '+1 +2' for required words field
-        if (strlen(trim($adv->mustappear)) > 0) {
-            $query_string  = ' +'.implode(' +', preg_split("/[\s,;]+/", $adv->mustappear));
-        } 
-        
-        // convert '1 2' into '-1 -2' for not wanted words field
-        if (strlen(trim($adv->notappear)) > 0) {
-            $query_string .= ' -'.implode(' -', preg_split("/[\s,;]+/", $adv->notappear));
-        } 
-        
-        // this field is left untouched, apart from whitespace being stripped
-        if (strlen(trim($adv->canappear)) > 0) {
-            $query_string .= ' '.implode(' ', preg_split("/[\s,;]+/", $adv->canappear));
-        } 
-        
-        // add module restriction
-        $doctypestr = get_string('doctype', 'search');
-        $titlestr = get_string('title', 'search');
-        $authorstr = get_string('author', 'search');
-        if ($adv->module != 'all') {
-            $query_string .= " +{$doctypestr}:".$adv->module;
-        } 
-        
-        // create title search string
-        if (strlen(trim($adv->title)) > 0) {
-            $query_string .= " +{$titlestr}:".implode(" +{$titlestr}:", preg_split("/[\s,;]+/", $adv->title));
-        } 
-        
-        // create author search string
-        if (strlen(trim($adv->author)) > 0) {
-            $query_string .= " +{$authorstr}:".implode(" +{$authorstr}:", preg_split("/[\s,;]+/", $adv->author));
-        } 
-        
-        // save our options if the query is valid
-        if (!empty($query_string)) {
-            $_SESSION['search_advanced_query'] = serialize($adv);
-        } 
-    } 
-
-    // normalise page number
-    if ($page_number < 1) {
-        $page_number = 1;
-    } 
-
-    //run the query against the index
-    $sq = new SearchQuery($query_string, $page_number, 10, false);
-
+    
     if (!$site = get_site()) {
         redirect("index.php");
     } 
@@ -153,6 +165,17 @@
         print_header("$strsearch", "$site->fullname" , $navigation, "", "", true, "&nbsp;", navmenu($site));
     }
     
+    //keep things pretty, even if php5 isn't available
+    if (!$check) {
+        print_heading(search_check_php5(true));
+        print_footer();
+        exit(0);
+    } 
+
+    if (!empty($error)){
+        notice ($error);
+    }
+    
     print_box_start();
     print_heading($strquery);
     
@@ -168,7 +191,6 @@
         } 
     }
     ?>
-    
     <form id="query" method="get" action="query.php">
     <?php 
     if (!$advanced) { 
@@ -178,7 +200,8 @@
         <a href="query.php?a=1"><?php print_string('advancedsearch', 'search') ?></a> |
         <a href="stats.php"><?php print_string('statistics', 'search') ?></a>
     <?php 
-    } else {
+    } 
+    else {
         print_box_start();
       ?>
         <input type="hidden" name="a" value="<?php print $advanced; ?>"/>
@@ -267,7 +290,8 @@
     if ($sq->is_valid_index()) {
         //use cached variable to show up-to-date index size (takes deletions into account)
         print $CFG->search_index_size;
-    } else {
+    } 
+    else {
         print "0";
     } 
     
@@ -275,7 +299,7 @@
     print_string('documents', 'search');
     print '.';
     
-    if (!$sq->is_valid_index() and isadmin()) {
+    if (!$sq->is_valid_index() and has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
         print '<p>' . get_string('noindexmessage', 'search') . '<a href="indexersplash.php">' . get_string('createanindex', 'search')."</a></p>\n";
     } 
     

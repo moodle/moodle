@@ -166,7 +166,8 @@ function forum_get_discussions_fast($forum_id) {
     
     $timelimit='';
     if (!empty($CFG->forum_enabletimedposts)) {
-        if (!((isadmin() and !empty($CFG->admineditalways)) || isteacher(get_field('forum', 'course', 'id', $forum_id)))) {
+        if (!((has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))
+          and !empty($CFG->admineditalways)) || isteacher(get_field('forum', 'course', 'id', $forum_id)))) {
             $now = time();
             $timelimit = " AND ((d.timestart = 0 OR d.timestart <= '$now') AND (d.timeend = 0 OR d.timeend > '$now')";
             if (!empty($USER->id)) {
@@ -302,7 +303,8 @@ function forum_check_text_access($path, $itemtype, $this_id, $user, $group_id, $
 * @param string $title
 */
 function forum_link_post_processing($title){
-    return mb_convert_encoding($title, 'UTF-8', 'auto');
+    // return mb_convert_encoding($title, 'UTF-8', 'auto');
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 
 ?>
