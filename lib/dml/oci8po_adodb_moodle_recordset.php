@@ -1,4 +1,6 @@
-<?php
+<?php  //$Id$
+
+require_once($CFG->libdir.'/dml/adodb_moodle_recordset.php');
 
 /**
  * Oracle moodle recordest with special hacks

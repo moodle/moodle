@@ -139,22 +139,6 @@ function setup_DB() {
 }
 
 /**
- * Interface definitions for resultsets returned from database functions.
- * This is a simple Iterator with needed recorset closing support.
- *
- * The differnece from old recorset is that the records are returned
- * as objects, not arrays. You should use "foreach ($recordset as $record) {}".
- *
- * Do not forget to close all recordsets when they are not needed anymore!
- */
-interface moodle_recordset extends Iterator {
-    /**
-     * Free resources and connections, recordset can not be used anymore.
-     */
-    public function close();
-}
-
-/**
  * Detail database field information.
  * Based on ADOFieldObject.
  */

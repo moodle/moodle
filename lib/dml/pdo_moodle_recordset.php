@@ -1,10 +1,12 @@
-<?php
+<?php  //$Id$
+
+require_once($CFG->libdir.'/dml/moodle_recordset.php');
 
 /**
  * Experimental pdo recordset
  * @package dmlib
  */
-class adodb_moodle_recordset implements moodle_recordset {
+class pdo_moodle_recordset extends moodle_recordset {
     private $sht;
 
     public function __construct($sth) {
