@@ -58,15 +58,19 @@ class user_filter_simpleselect extends user_filter_type {
     /**
      * Returns the condition to be used with SQL where
      * @param array $data filter settings
-     * @return string the filtering condition or null if the filter is disabled
+     * @return array sql string and $params
      */
     function get_sql_filter($data) {
-        $value = addslashes($data['value']);
+        static $counter = 0;
+        $name = 'ex_simpleselect'.$counter++;
+
+        $value = $data['value'];
+        $params = array();
         $field = $this->_field;
         if ($value == '') {
             return '';
         }
-        return "$field='$value'";
+        return array("$field=:$name", array($name=>$value));
     }
 
     /**

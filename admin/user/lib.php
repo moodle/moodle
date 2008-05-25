@@ -10,7 +10,7 @@ function add_selection_all($ufiltering) {
     global $SESSION;
 
     $guest = get_guest();
-    $sqlwhere = $ufiltering->get_sql_filter("id<>{$guest->id} AND deleted <> 1");
+    $sqlwhere = $ufiltering->get_sql_filter("id<>:exguest AND deleted <> 1", array('exguest'=>$guest->id));
 
     if ($rs = get_recordset_select('user', $sqlwhere, 'fullname', 'id,'.sql_fullname().' AS fullname')) {
         while ($user = rs_fetch_next_record($rs)) {
@@ -23,18 +23,18 @@ function add_selection_all($ufiltering) {
 }
 
 function get_selection_data($ufiltering) {
-    global $SESSION;
+    global $SESSION, $DB;
 
     // get the SQL filter
     $guest = get_guest();
-    $sqlwhere = $ufiltering->get_sql_filter("id<>{$guest->id} AND deleted <> 1");
+    list($sqlwhere, $params) = $ufiltering->get_sql_filter("id<>:exguest AND deleted <> 1", array('exguest'=>$guest->id));
 
-    $total  = count_records_select('user', "id<>{$guest->id} AND deleted <> 1");
-    $acount = count_records_select('user', $sqlwhere);
+    $total  = $DB->count_records_select('user', "id<>:exguest AND deleted <> 1", array('exguest'=>$guest->id));
+    $acount = $DB->count_records_select('user', $sqlwhere, $params);
     $scount = count($SESSION->bulk_users);
 
     $userlist = array('acount'=>$acount, 'scount'=>$scount, 'ausers'=>false, 'susers'=>false, 'total'=>$total);
-    $userlist['ausers'] = get_records_select_menu('user', $sqlwhere, 'fullname', 'id,'.sql_fullname().' AS fullname', 0, MAX_BULK_USERS);
+    $userlist['ausers'] = $DB->get_records_select_menu('user', $sqlwhere, $params, 'fullname', 'id,'.sql_fullname().' AS fullname', 0, MAX_BULK_USERS);
 
     if ($scount) {
         if ($scount < MAX_BULK_USERS) {
@@ -43,7 +43,7 @@ function get_selection_data($ufiltering) {
             $bulkusers = array_slice($SESSION->bulk_users, 0, MAX_BULK_USERS, true);
             $in = implode(',', $bulkusers);
         }
-        $userlist['susers'] = get_records_select_menu('user', "id IN ($in)", 'fullname', 'id,'.sql_fullname().' AS fullname');
+        $userlist['susers'] = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.sql_fullname().' AS fullname');
     }
 
     return $userlist;

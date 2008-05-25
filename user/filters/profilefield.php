@@ -97,10 +97,12 @@ class user_filter_profilefield extends user_filter_type {
     /**
      * Returns the condition to be used with SQL where
      * @param array $data filter settings
-     * @return string the filtering condition or null if the filter is disabled
+     * @return array sql string and $params
      */
     function get_sql_filter($data) {
         global $CFG;
+        static $counter = 0;
+        $name = 'ex_profilefield'.$counter++;
 
         $profile_fields = $this->get_profile_fields();
         if (empty($profile_fields)) {
@@ -109,10 +111,11 @@ class user_filter_profilefield extends user_filter_type {
 
         $profile  = $data['profile'];
         $operator = $data['operator'];
-        $value    = addslashes($data['value']);
+        $value    = $data['value'];
 
+        $params = array();
         if (!array_key_exists($profile, $profile_fields)) {
-            return '';
+            return array('', array());
         } 
 
         $where = "";
@@ -125,17 +128,29 @@ class user_filter_profilefield extends user_filter_type {
 
         switch($operator) {
             case 0: // contains
-                $where = "data $ilike '%$value%'"; break;
+                $where = "data $ilike :$name";
+                $params[$name] = "%$value%"; 
+                break;
             case 1: // does not contain
-                $where = "data NOT $ilike '%$value%'"; break;
+                $where = "data NOT $ilike :$name";
+                $params[$name] = "%$value%"; 
+                break;
             case 2: // equal to
-                $where = "data $ilike '$value'"; break;
+                $where = "data $ilike :$name";
+                $params[$name] = "$value"; 
+                break;
             case 3: // starts with
-                $where = "data $ilike '$value%'"; break;
+                $where = "data $ilike :$name";
+                $params[$name] = "$value%"; 
+                break;
             case 4: // ends with
-                $where = "data $ilike '%$value'"; break;
+                $where = "data $ilike :$name";
+                $params[$name] = "%$value"; 
+                break;
             case 5: // empty
-                $where = "data=''"; break;
+                $where = "data=:$name";
+                $params[$name] = ""; 
+                break;
             case 6: // is not defined
                 $op = " NOT IN "; break;
             case 7: // is defined
@@ -150,7 +165,7 @@ class user_filter_profilefield extends user_filter_type {
         if ($where !== '') {
             $where = "WHERE $where";
         }
-        return "id $op (SELECT userid FROM {$CFG->prefix}user_info_data $where)";
+        return array("id $op (SELECT userid FROM {user_info_data} $where)", $params);
     }
 
     /**

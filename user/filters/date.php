@@ -81,15 +81,15 @@ class user_filter_date extends user_filter_type {
     /**
      * Returns the condition to be used with SQL where
      * @param array $data filter settings
-     * @return string the filtering condition or null if the filter is disabled
+     * @return array sql string and $params
      */
     function get_sql_filter($data) {
-        $after  = $data['after'];
-        $before = $data['before'];
+        $after  = (int)$data['after'];
+        $before = (int)$data['before'];
         $field  = $this->_field;
 
         if (empty($after) and empty($before)) {
-            return '';
+            return array('', array());
         }
 
         $res = "$field > 0" ;
@@ -100,7 +100,7 @@ class user_filter_date extends user_filter_type {
         if ($before) {
             $res .= " AND $field <= $before";
         }
-        return $res;
+        return array($res, array());
     }
 
     /**

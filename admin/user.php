@@ -150,10 +150,10 @@
         $sort = "firstname";
     }
 
-    $extrasql = $ufiltering->get_sql_filter();
-    $users = get_users_listing($sort, $dir, $page*$perpage, $perpage, '', '', '', $extrasql);
+    list($extrasql, $params) = $ufiltering->get_sql_filter();
+    $users = get_users_listing($sort, $dir, $page*$perpage, $perpage, '', '', '', $extrasql, $params);
     $usercount = get_users(false);
-    $usersearchcount = get_users(false, '', true, "", "", '', '', '', '', '*', $extrasql);
+    $usersearchcount = get_users(false, '', true, null, "", '', '', '', '', '*', $extrasql, $params);
 
     if ($extrasql !== '') {
         print_heading("$usersearchcount / $usercount ".get_string('users'));

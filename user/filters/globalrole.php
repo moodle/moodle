@@ -57,18 +57,19 @@ class user_filter_globalrole extends user_filter_type {
     /**
      * Returns the condition to be used with SQL where
      * @param array $data filter settings
-     * @return string the filtering condition or null if the filter is disabled
+     * @return array sql string and $params
      */
     function get_sql_filter($data) {
         global $CFG;
-        $value = $data['value'];
+        $value = (int)$data['value'];
 
         $timenow = round(time(), 100);
 
-        return "id IN (SELECT userid
+        $sql = "id IN (SELECT userid
                          FROM {$CFG->prefix}role_assignments a
                         WHERE a.contextid=".SYSCONTEXTID." AND a.roleid=$value AND a.timestart<$timenow
                               AND (a.timeend=0 OR a.timeend>$timenow))";
+        return array($sql, array());
     }
 
     /**

@@ -80,22 +80,31 @@ class user_filter_select extends user_filter_type {
     /**
      * Returns the condition to be used with SQL where
      * @param array $data filter settings
-     * @return string the filtering condition or null if the filter is disabled
+     * @return array sql string and $params
      */
     function get_sql_filter($data) {
+        static $counter = 0;
+        $name = 'ex_select'.$counter++;
+
         $operator = $data['operator'];
-        $value    = addslashes($data['value']);
+        $value    = $data['value'];
         $field    = $this->_field;
+
+        $params = array();
 
         switch($operator) {
             case 1: // equal to
-                $res = "='$value'"; break;
+                $res = "=:$name";
+                $params[$name] = $value;
+                break;
             case 2: // not equal to
-                $res = "<>'$value'"; break;
+                $res = "<>:$name";
+                $params[$name] = $value;
+                 break;
             default:
-                return '';
+                return array('', array());
         }
-        return $field.$res;
+        return array($field.$res, $params);
     }
 
     /**

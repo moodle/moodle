@@ -72,12 +72,17 @@ class user_filter_text extends user_filter_type {
     /**
      * Returns the condition to be used with SQL where
      * @param array $data filter settings
-     * @return string the filtering condition or null if the filter is disabled
+     * @return array sql string and $params
      */
     function get_sql_filter($data) {
+        static $counter = 0;
+        $name = 'ex_text'.$counter++;
+
         $operator = $data['operator'];
-        $value    = addslashes($data['value']);
+        $value    = $data['value'];
         $field    = $this->_field;
+
+        $params = array();
 
         if ($operator != 5 and $value === '') {
             return '';
@@ -87,21 +92,33 @@ class user_filter_text extends user_filter_type {
 
         switch($operator) {
             case 0: // contains
-                $res = "$ilike '%$value%'"; break;
+                $res = "$ilike :$name";
+                $params[$name] = "%$value%";
+                break;
             case 1: // does not contain
-                $res = "NOT $ilike '%$value%'"; break;
+                $res = "NOT $ilike :$name";
+                $params[$name] = "%$value%";
+                break;
             case 2: // equal to
-                $res = "$ilike '$value'"; break;
+                $res = "$ilike :$name";
+                $params[$name] = "$value";
+                break;
             case 3: // starts with
-                $res = "$ilike '$value%'"; break;
+                $res = "$ilike :$name";
+                $params[$name] = "$value%";
+                break;
             case 4: // ends with
-                $res = "$ilike '%$value'"; break;
+                $res = "$ilike :$name";
+                $params[$name] = "%$value";
+                break;
             case 5: // empty
-                $res = "=''"; break;
+                $res = "=:$name";
+                $params[$name] = "";
+                break;
             default:
                 return '';
         }
-        return $field.' '.$res;
+        return array($field.' '.$res, $params);
     }
 
     /**

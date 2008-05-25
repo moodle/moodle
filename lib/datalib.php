@@ -69,73 +69,76 @@ function get_admin () {
  * @return object
  */
 function get_admins() {
-
-    global $CFG;
+    global $DB;
 
     $sql = "SELECT ra.userid, SUM(rc.permission) AS permission, MIN(ra.id) AS adminid
-            FROM " . $CFG->prefix . "role_capabilities rc
-            JOIN " . $CFG->prefix . "context ctx
-              ON ctx.id=rc.contextid
-            JOIN " . $CFG->prefix . "role_assignments ra
-              ON ra.roleid=rc.roleid AND ra.contextid=ctx.id
-            WHERE ctx.contextlevel=10
-              AND rc.capability IN ('moodle/site:config',
-                                    'moodle/legacy:admin',
-                                    'moodle/site:doanything')       
-            GROUP BY ra.userid
+              FROM {role_capabilities} rc
+              JOIN {context} ctx ON ctx.id=rc.contextid
+              JOIN {role_assignments} ra ON ra.roleid=rc.roleid AND ra.contextid=ctx.id
+             WHERE ctx.contextlevel=10 AND rc.capability IN (?, ?, ?)       
+          GROUP BY ra.userid
             HAVING SUM(rc.permission) > 0";
+    $params = array('moodle/site:config', 'moodle/legacy:admin', 'moodle/site:doanything');
 
     $sql = "SELECT u.*, ra.adminid
-            FROM  " . $CFG->prefix . "user u
-            JOIN ($sql) ra
-              ON u.id=ra.userid
-            ORDER BY ra.adminid ASC";
+              FROM {user} u
+              JOIN ($sql) ra
+                   ON u.id=ra.userid
+          ORDER BY ra.adminid ASC";
 
-    return get_records_sql($sql);
+    return $DB->get_records_sql($sql, $params);
 }
 
 
 function get_courses_in_metacourse($metacourseid) {
-    global $CFG;
+    global $DB;
 
-    $sql = "SELECT c.id,c.shortname,c.fullname FROM {$CFG->prefix}course c, {$CFG->prefix}course_meta mc WHERE mc.parent_course = $metacourseid
-        AND mc.child_course = c.id ORDER BY c.shortname";
+    $sql = "SELECT c.id, c.shortname, c.fullname
+              FROM {course} c, {course_meta} mc
+             WHERE mc.parent_course = ? AND mc.child_course = c.id
+          ORDER BY c.shortname";
+    $params = array($metacourseid);
 
-    return get_records_sql($sql);
+    return $DB->get_records_sql($sql, $params);
 }
 
-function get_courses_notin_metacourse($metacourseid,$count=false) {
+function get_courses_notin_metacourse($metacourseid) {
+    global $DB;
 
-    global $CFG;
-
-    if ($count) {
-        $sql  = "SELECT COUNT(c.id)";
+    if ($alreadycourses = get_courses_in_metacourse($metacourseid)) {
+        $alreadycourses = implode(',',array_keys($alreadycourses));
+        $alreadycourses = "AND c.id NOT IN ($alreadycourses)";
     } else {
-        $sql = "SELECT c.id,c.shortname,c.fullname";
+        $alreadycourses = "";
     }
 
-    $alreadycourses = get_courses_in_metacourse($metacourseid);
+    $sql = "SELECT c.id,c.shortname,c.fullname
+              FROM {course} c
+             WHERE c.id != ? and c.id != ".SITEID." and c.metacourse != 1
+                   $alreadycourses
+          ORDER BY c.shortname";
+    $params = array($metacourseid);
 
-    $sql .= " FROM {$CFG->prefix}course c WHERE ".((!empty($alreadycourses)) ? "c.id NOT IN (".implode(',',array_keys($alreadycourses)).")
-    AND " : "")." c.id !=$metacourseid and c.id != ".SITEID." and c.metacourse != 1 ".((empty($count)) ? " ORDER BY c.shortname" : "");
-
-    return get_records_sql($sql);
+    return $DB->get_records_sql($sql, $params);
 }
 
 function count_courses_notin_metacourse($metacourseid) {
-    global $CFG;
+    global $DB;
 
-    $alreadycourses = get_courses_in_metacourse($metacourseid);
-
-    $sql = "SELECT COUNT(c.id) AS notin FROM {$CFG->prefix}course c
-             WHERE ".((!empty($alreadycourses)) ? "c.id NOT IN (".implode(',',array_keys($alreadycourses)).")
-              AND " : "")." c.id !=$metacourseid and c.id != ".SITEID." and c.metacourse != 1";
-
-    if (!$count = get_record_sql($sql)) {
-        return 0;
+    if ($alreadycourses = get_courses_in_metacourse($metacourseid)) {
+        $alreadycourses = implode(',',array_keys($alreadycourses));
+        $alreadycourses = "AND c.id NOT IN ($alreadycourses)";
+    } else {
+        $alreadycourses = "";
     }
 
-    return $count->notin;
+    $sql = "SELECT COUNT(c.id) 
+              FROM {course} c
+             WHERE c.id != ? and c.id != ".SITEID." and c.metacourse != 1
+                   $alreadycourses";
+    $params = array($metacourseid);
+
+    return $DB->count_records_sql($sql, $params);
 }
 
 /**
@@ -144,80 +147,70 @@ function count_courses_notin_metacourse($metacourseid) {
  * If $coursid specifies the site course then this function searches
  * through all undeleted and confirmed users
  *
- * @uses $CFG
- * @uses SITEID
  * @param int $courseid The course in question.
  * @param int $groupid The group in question.
  * @param string $searchtext ?
  * @param string $sort ?
- * @param string $exceptions ?
+ * @param array $exceptions ?
  * @return object
  */
-function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions='') {
-    global $CFG;
+function search_users($courseid, $groupid, $searchtext, $sort='', array $exceptions=null) {
+    global $DB;
 
     $LIKE      = sql_ilike();
     $fullname  = sql_fullname('u.firstname', 'u.lastname');
 
     if (!empty($exceptions)) {
-        $except = ' AND u.id NOT IN ('. $exceptions .') ';
+        list($exceptions, $params) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'ex0000', false);
+        $except = "AND u.id $exceptions";
     } else {
-        $except = '';
+        $except = "";
+        $params = array();
     }
 
     if (!empty($sort)) {
-        $order = ' ORDER BY '. $sort;
+        $order = "ORDER BY $sort";
     } else {
-        $order = '';
+        $order = "";
     }
 
-    $select = 'u.deleted = \'0\' AND u.confirmed = \'1\'';
+    $select = "u.deleted = 0 AND u.confirmed = 1 AND ($fullname $LIKE :search1 OR u.email $LIKE :search2)";
+    $params['search1'] = "%$searchtext%";
+    $params['search2'] = "%$searchtext%";
 
     if (!$courseid or $courseid == SITEID) {
-        return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
-                      FROM {$CFG->prefix}user u
-                      WHERE $select
-                          AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
-                          $except $order");
-    } else {
+        $sql = "SELECT u.id, u.firstname, u.lastname, u.email
+                  FROM {user} u
+                 WHERE $select
+                       $except
+                $order";
+        return $DB->get_records_sql($sql, $params);
 
+    } else {
         if ($groupid) {
-//TODO:check. Remove group DB dependencies.
-            return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
-                          FROM {$CFG->prefix}user u,
-                               {$CFG->prefix}groups_members gm
-                          WHERE $select AND gm.groupid = '$groupid' AND gm.userid = u.id
-                              AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
-                              $except $order");
+            $sql = "SELECT u.id, u.firstname, u.lastname, u.email
+                      FROM {user} u
+                      JOIN {groups_members} gm ON gm.userid = u.id
+                     WHERE $select AND gm.groupid = :groupid
+                           $except
+                     $order";
+            $params['groupid'] = $groupid;
+            return $DB->get_records_sql($sql, $params);
+
         } else {
             $context = get_context_instance(CONTEXT_COURSE, $courseid);
             $contextlists = get_related_contexts_string($context);
-            $users = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
-                          FROM {$CFG->prefix}user u,
-                               {$CFG->prefix}role_assignments ra
-                          WHERE $select AND ra.contextid $contextlists AND ra.userid = u.id
-                              AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
-                              $except $order");
+
+            $sql = "SELECT u.id, u.firstname, u.lastname, u.email
+                      FROM {user} u
+                      JOIN {role_assignments} ra ON ra.userid = u.id
+                     WHERE $select AND ra.contextid $contextlists
+                           $except
+                    $order";
+            return $DB->get_records_sql($sql, $params);
         }
-        return $users;
     }
 }
-
-
-/**
- * Returns a list of all site users
- * Obsolete, just calls get_course_users(SITEID)
- *
- * @uses SITEID
- * @deprecated Use {@link get_course_users()} instead.
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return object|false  {@link $USER} records or false if error.
- */
-function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') {
-
-    return get_course_users(SITEID, $sort, $exceptions, $fields);
-}
-
 
 /**
  * Returns a subset of users
@@ -235,10 +228,9 @@ function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') 
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
  * @return object|false|int  {@link $USER} records unless get is false in which case the integer count of the records found is returned. False is returned if an error is encountered.
  */
-function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sort='firstname ASC',
-                   $firstinitial='', $lastinitial='', $page='', $recordsperpage='', $fields='*', $extraselect='') {
-
-    global $CFG;
+function get_users($get=true, $search='', $confirmed=false, array $exceptions=null, $sort='firstname ASC',
+                   $firstinitial='', $lastinitial='', $page='', $recordsperpage='', $fields='*', $extraselect='', array $extraparams=null) {
+    global $DB;
 
     if ($get && !$recordsperpage) {
         debugging('Call to get_users with $get = true no $recordsperpage limit. ' .
@@ -250,36 +242,45 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
     $LIKE      = sql_ilike();
     $fullname  = sql_fullname();
 
-    $select = 'username <> \'guest\' AND deleted = 0';
+    $select = " username <> :guest AND deleted = 0";
+    $params = array('guest'=>'guest');
 
     if (!empty($search)){
         $search = trim($search);
-        $select .= " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
+        $select .= " AND ($fullname $LIKE :search1 OR email $LIKE :search2 OR username = :search3)";
+        $params['search1'] = "%$search%";
+        $params['search2'] = "%$search%";
+        $params['search3'] = "$search";
     }
 
     if ($confirmed) {
-        $select .= ' AND confirmed = \'1\' ';
+        $select .= " AND confirmed = 1";
     }
 
     if ($exceptions) {
-        $select .= ' AND id NOT IN ('. $exceptions .') ';
+        list($exceptions, $eparams) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'ex0000', false);
+        $params = $params + $eparams;
+        $except = " AND id $exceptions";
     }
 
     if ($firstinitial) {
-        $select .= ' AND firstname '. $LIKE .' \''. $firstinitial .'%\'';
+        $select .= " AND firstname $LIKE :fni";
+        $params['fni'] = "$firstinitial%";
     }
     if ($lastinitial) {
-        $select .= ' AND lastname '. $LIKE .' \''. $lastinitial .'%\'';
+        $select .= " AND lastname $LIKE :lni";
+        $params['lni'] = "$lastinitial%";
     }
 
     if ($extraselect) {
-        $select .= " AND $extraselect ";
+        $select .= " AND $extraselect";
+        $params = $params + (array)$extraparams;
     }
 
     if ($get) {
-        return get_records_select('user', $select, $sort, $fields, $page, $recordsperpage);
+        return $DB->get_records_select('user', $select, $params, $sort, $fields, $page, $recordsperpage);
     } else {
-        return count_records_select('user', $select);
+        return $DB->count_records_select('user', $select, $params);
     }
 }
 
@@ -289,7 +290,6 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
  *
  * longdesc
  *
- * @uses $CFG
  * @param string $sort ?
  * @param string $dir ?
  * @param int $categoryid ?
@@ -302,40 +302,46 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
  */
 
 function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=0,
-                           $search='', $firstinitial='', $lastinitial='', $extraselect='') {
-
-    global $CFG;
+                           $search='', $firstinitial='', $lastinitial='', $extraselect='', array $extraparams=null) {
+    global $DB;
 
     $LIKE      = sql_ilike();
     $fullname  = sql_fullname();
 
-    $select = "deleted <> '1'";
+    $select = "deleted <> 1";
+    $params = array();
 
     if (!empty($search)) {
         $search = trim($search);
-        $select .= " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%' OR username='$search') ";
+        $select .= " AND ($fullname $LIKE :search1 OR email $LIKE :search2 OR username = :search3)";
+        $params['search1'] = "%$search%";
+        $params['search2'] = "%$search%";
+        $params['search3'] = "$search";
     }
 
     if ($firstinitial) {
-        $select .= ' AND firstname '. $LIKE .' \''. $firstinitial .'%\' ';
+        $select .= " AND firstname $LIKE :fni";
+        $params['fni'] = "$firstinitial%";
     }
-
     if ($lastinitial) {
-        $select .= ' AND lastname '. $LIKE .' \''. $lastinitial .'%\' ';
+        $select .= " AND lastname $LIKE :lni";
+        $params['lni'] = "$lastinitial%";
     }
 
     if ($extraselect) {
-        $select .= " AND $extraselect ";
+        $select .= " AND $extraselect";
+        $params = $params + (array)$extraparams;
     }
 
     if ($sort) {
-        $sort = ' ORDER BY '. $sort .' '. $dir;
+        $sort = " ORDER BY $sort $dir";
     }
 
 /// warning: will return UNCONFIRMED USERS
-    return get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess, confirmed, mnethostid
-                              FROM {$CFG->prefix}user
-                             WHERE $select $sort", $page, $recordsperpage);
+    return $DB->get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess, confirmed, mnethostid
+                                   FROM {user}
+                                  WHERE $select
+                                  $sort", $params, $page, $recordsperpage);
 
 }
 
@@ -343,16 +349,13 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 /**
  * Full list of users that have confirmed their accounts.
  *
- * @uses $CFG
- * @return object
+ * @return array of unconfirmed users
  */
 function get_users_confirmed() {
-    global $CFG;
-    return get_records_sql("SELECT *
-                              FROM {$CFG->prefix}user
-                             WHERE confirmed = 1
-                               AND deleted = 0
-                               AND username <> 'guest'");
+    global $DB;
+    return $DB->get_records_sql("SELECT *
+                                   FROM {user}
+                                  WHERE confirmed = 1 AND deleted = 0 AND username <> ?", array('guest'));
 }
 
 
@@ -365,14 +368,13 @@ function get_users_confirmed() {
  * @return course  A {@link $COURSE} object for the site
  */
 function get_site() {
-
-    global $SITE;
+    global $SITE, $DB;
 
     if (!empty($SITE->id)) {   // We already have a global to use, so return that
         return $SITE;
     }
 
-    if ($course = get_record('course', 'category', 0)) {
+    if ($course = $DB->get_record('course', array('category'=>0))) {
         return $course;
     } else {
         return false;
@@ -433,37 +435,6 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
         }
     }
     return $visiblecourses;
-
-/*
-    $teachertable = "";
-    $visiblecourses = "";
-    $sqland = "";
-    if (!empty($categoryselect)) {
-        $sqland = "AND ";
-    }
-    if (!empty($USER->id)) {  // May need to check they are a teacher
-        if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM))) {
-            $visiblecourses = "$sqland ((c.visible > 0) OR t.userid = '$USER->id')";
-            $teachertable = "LEFT JOIN {$CFG->prefix}user_teachers t ON t.course = c.id";
-        }
-    } else {
-        $visiblecourses = "$sqland c.visible > 0";
-    }
-
-    if ($categoryselect or $visiblecourses) {
-        $selectsql = "{$CFG->prefix}course c $teachertable WHERE $categoryselect $visiblecourses";
-    } else {
-        $selectsql = "{$CFG->prefix}course c $teachertable";
-    }
-
-    $extrafield = str_replace('ASC','',$sort);
-    $extrafield = str_replace('DESC','',$extrafield);
-    $extrafield = trim($extrafield);
-    if (!empty($extrafield)) {
-        $extrafield = ','.$extrafield;
-    }
-    return get_records_sql("SELECT ".((!empty($teachertable)) ? " DISTINCT " : "")." $fields $extrafield FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : ""));
-    */
 }
 
 
@@ -528,44 +499,9 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     }
     rs_close($rs);
     return $visiblecourses;
-
-/**
-
-    $categoryselect = "";
-    if ($categoryid != "all" && is_numeric($categoryid)) {
-        $categoryselect = "c.category = '$categoryid'";
-    }
-
-    $teachertable = "";
-    $visiblecourses = "";
-    $sqland = "";
-    if (!empty($categoryselect)) {
-        $sqland = "AND ";
-    }
-    if (!empty($USER) and !empty($USER->id)) {  // May need to check they are a teacher
-        if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM))) {
-            $visiblecourses = "$sqland ((c.visible > 0) OR t.userid = '$USER->id')";
-            $teachertable = "LEFT JOIN {$CFG->prefix}user_teachers t ON t.course=c.id";
-        }
-    } else {
-        $visiblecourses = "$sqland c.visible > 0";
-    }
-
-    if ($limitfrom !== "") {
-        $limit = sql_paging_limit($limitfrom, $limitnum);
-    } else {
-        $limit = "";
-    }
-
-    $selectsql = "{$CFG->prefix}course c $teachertable WHERE $categoryselect $visiblecourses";
-
-    $totalcount = count_records_sql("SELECT COUNT(DISTINCT c.id) FROM $selectsql");
-
-    return get_records_sql("SELECT $fields FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : "")." $limit");
-    */
 }
 
-/*
+/**
  * Retrieve course records with the course managers and other related records
  * that we need for print_course(). This allows print_courses() to do its job
  * in a constant number of DB queries, regardless of the number of courses,
@@ -2143,7 +2079,7 @@ function print_object($object) {
     echo '<pre class="notifytiny">' . htmlspecialchars(print_r($object,true)) . '</pre>';
 }
 
-/*
+/**
  * Check whether a course is visible through its parents
  * path.
  *
@@ -2242,7 +2178,7 @@ function user_can_create_courses() {
 }
 
 /**
- * get the list of categories the current user can create courses in
+ * Get the list of categories the current user can create courses in
  * @return array
  */
 function get_creatable_categories() {
@@ -2258,5 +2194,4 @@ function get_creatable_categories() {
     return $creatablecats;
 }
 
-// vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

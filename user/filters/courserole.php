@@ -78,16 +78,21 @@ class user_filter_courserole extends user_filter_type {
     /**
      * Returns the condition to be used with SQL where
      * @param array $data filter settings
-     * @return string the filtering condition or null if the filter is disabled
+     * @return array sql string and $params
      */
     function get_sql_filter($data) {
         global $CFG;
-        $value      = addslashes($data['value']);
-        $roleid     = $data['roleid'];
-        $categoryid = $data['categoryid'];
+        static $counter = 0;
+        $name = 'ex_courserole'.$counter++;
+
+        $value      = $data['value'];
+        $roleid     = (int)$data['roleid'];
+        $categoryid = (int)$data['categoryid'];
+
+        $params = array();
 
         if (empty($value) and empty($roleid) and empty($categoryid)) {
-            return '';
+            return array('', $params);
         }
 
         $timenow = round(time(), 100); // rounding - enable sql caching
@@ -99,13 +104,14 @@ class user_filter_courserole extends user_filter_type {
             $where .= " AND c.category=$categoryid";
         }
         if ($value) {
-            $where .= " AND c.shortname ".sql_ilike()." '$value'";
+            $where .= " AND c.shortname ".sql_ilike()." :$name";
+            $params[$name] = $value;
         }
-        return "id IN (SELECT userid
-                         FROM {$CFG->prefix}role_assignments a
-                   INNER JOIN {$CFG->prefix}context b ON a.contextid=b.id
-                   INNER JOIN {$CFG->prefix}course c ON b.instanceid=c.id
-                        WHERE $where)";
+        return array("id IN (SELECT userid
+                               FROM {role_assignments} a
+                         INNER JOIN {context} b ON a.contextid=b.id
+                         INNER JOIN {course} c ON b.instanceid=c.id
+                              WHERE $where)", $params);
     }
 
     /**

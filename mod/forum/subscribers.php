@@ -7,11 +7,11 @@
     $group = optional_param('group',0,PARAM_INT);      // change of group
     $edit  = optional_param('edit',-1,PARAM_BOOL);     // Turn editing on and off
 
-    if (! $forum = get_record("forum", "id", $id)) {
+    if (! $forum = $DB->get_record("forum", array("id"=>$id))) {
         print_error("Forum ID is incorrect");
     }
 
-    if (! $course = get_record("course", "id", $forum->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$forum->course))) {
         print_error("Could not find this course!");
     }
 
@@ -31,10 +31,10 @@
 
     add_to_log($course->id, "forum", "view subscribers", "subscribers.php?id=$forum->id", $forum->id, $cm->id);
 
-    $strsubscribeall = get_string("subscribeall", "forum");
+    $strsubscribeall  = get_string("subscribeall", "forum");
     $strsubscribenone = get_string("subscribenone", "forum");
-    $strsubscribers = get_string("subscribers", "forum");
-    $strforums      = get_string("forums", "forum");
+    $strsubscribers   = get_string("subscribers", "forum");
+    $strforums        = get_string("forums", "forum");
 
     $navigation = build_navigation($strsubscribers, $cm);
 
@@ -129,27 +129,16 @@
     }
     $subscriberlist = implode(',', $subscriberarray);
 
-    unset($subscriberarray);
-
 /// Get search results excluding any users already subscribed
 
     if (!empty($frm->searchtext) and $previoussearch) {
-        $searchusers = search_users($course->id, $currentgroup, $frm->searchtext, 'firstname ASC, lastname ASC', $subscriberlist);
+        $searchusers = search_users($course->id, $currentgroup, $frm->searchtext, 'firstname ASC, lastname ASC', $subscriberarray);
     }
 
 /// If no search results then get potential subscribers for this forum excluding users already subscribed
     if (empty($searchusers)) {
-        if ($currentgroup) {
-            $users = get_group_users($currentgroup, 'firstname ASC, lastname ASC', $subscriberlist);
-        } else {
-             $users = get_course_users($course->id, 'firstname ASC, lastname ASC', $subscriberlist);
-        }
-        if (!$users) {
-            $users = array();
-        }
-
+        $users = get_users_by_capability($context, 'moodle/course:view', '', 'firstname ASC, lastname ASC', '','',$currentgroup,$subscriberlist, false);
     }
-
     $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";
     $previoussearch = ($previoussearch) ? '1' : '0';
 

@@ -142,15 +142,17 @@ class user_filtering {
     /**
      * Returns sql where statement based on active user filters
      * @param string $extra sql
-     * @return string
+     * @param array named params (recommended prefix ex)
+     * @return array sql string and $params
      */
-    function get_sql_filter($extra='') {
+    function get_sql_filter($extra='', array $params=null) {
         global $SESSION;
 
         $sqls = array();
         if ($extra != '') {
             $sqls[] = $extra;
         }
+        $params = (array)$params;
 
         if (!empty($SESSION->user_filtering)) {
             foreach ($SESSION->user_filtering as $fname=>$datas) {
@@ -159,15 +161,18 @@ class user_filtering {
                 }
                 $field = $this->_fields[$fname];
                 foreach($datas as $i=>$data) {
-                    $sqls[] = $field->get_sql_filter($data);
+                    list($s, $p) = $field->get_sql_filter($data);
+                    $sqls[] = $s;
+                    $params = $params + $p;
                 }
             }
         }
 
         if (empty($sqls)) {
-            return '';
+            return array('', array());
         } else {
-            return implode(' AND ', $sqls);
+            $sqls = implode(' AND ', $sqls);
+            return array($sqls, $params);
         }
     }
 

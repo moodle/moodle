@@ -49,11 +49,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
 
     // If looking at a different host, we're interested in all our site users
     if ($hostid == $CFG->mnet_localhost_id && $course->id != SITEID) {
-        if ($selectedgroup) {   // If using a group, only get users in that group.
-            $courseusers = get_group_users($selectedgroup, 'u.lastname ASC', '', 'u.id, u.firstname, u.lastname, u.idnumber');
-        } else {
-            $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname, u.idnumber');
-        }
+        $courseusers = get_users_by_capability($context, 'moodle/course:view', '', 'lastname ASC, firstname ASC', '','u.id, u.firstname, u.lastname, u.idnumber',$selectedgroup,null, false);
     } else {
         $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname, u.idnumber");
     }
@@ -307,11 +303,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     $users = array();
 
     if ($course->id != SITEID) {
-        if ($selectedgroup) {   // If using a group, only get users in that group.
-            $courseusers = get_group_users($selectedgroup, 'u.lastname ASC', '', 'u.id, u.firstname, u.lastname, u.idnumber');
-        } else {
-            $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname, u.idnumber');
-        }
+        $courseusers = get_users_by_capability($context, 'moodle/course:view', '', 'lastname ASC, firstname ASC', '','u.id, u.firstname, u.lastname, u.idnumber',$selectedgroup,null, false);
     } else {
         $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname, u.idnumber");
     }
