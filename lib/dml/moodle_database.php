@@ -1,5 +1,7 @@
 <?php  //$Id$
 
+require_once($CFG->libdir.'/dml/database_column_info.php');
+
 /**
  * Abstract class representing moodle database interface.
  * @package dmlib

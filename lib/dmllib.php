@@ -138,40 +138,6 @@ function setup_DB() {
     return true;
 }
 
-/**
- * Detail database field information.
- * Based on ADOFieldObject.
- */
-class database_column_info {
-    public $name;
-    public $type;         // raw db field type
-    public $max_length;
-    public $scale;
-    public $enums;
-    public $not_null;
-    public $primary_key;
-    public $auto_increment;
-    public $binary;
-    public $unsigned;
-    public $zerofill;
-    public $has_default;
-    public $default_value;
-    public $unique;
-
-    public $meta_type; // type as one character
-
-    /**
-     * Contructor
-     * @param $data mixed object or array with properties
-     */
-    public function database_column_info($data) {
-        foreach ($data as $key=>$value) {
-            if (array_key_exists($key, $this)) {
-                $this->$key = $value;
-            }
-        }
-    }
-}
 
 
 
