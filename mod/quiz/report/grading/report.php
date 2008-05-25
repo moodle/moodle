@@ -263,12 +263,12 @@ class quiz_report extends quiz_default_report {
         // set up the pagesize
         $table->pagesize(QUIZ_REPORT_DEFAULT_PAGE_SIZE, $totalattempts);
 
-        // grade all and "back" links
-        $link = "<strong><a href=\"report.php?mode=grading&amp;gradeall=1&amp;q=$quiz->id&amp;questionid=$question->id\">".get_string('gradeall', 'quiz_grading', $totalattempts).'</a></strong>';
-        $table->add_data_keyed(array('grade'=> $link));
-        $table->add_separator();
         // get the attempts and process them
         if ($attempts = get_records_sql($select.$from.$where.$sort,$table->get_page_start(), $table->get_page_size())) {
+            // grade all and "back" links
+            $link = "<strong><a href=\"report.php?mode=grading&amp;gradeall=1&amp;q=$quiz->id&amp;questionid=$question->id\">".get_string('gradeall', 'quiz_grading', $totalattempts).'</a></strong>';
+            $table->add_data_keyed(array('grade'=> $link));
+            $table->add_separator();
             foreach($attempts as $attempt) {
 
                 $picture = print_user_picture($attempt->userid, $quiz->course, $attempt->picture, false, true);
@@ -293,9 +293,9 @@ class quiz_report extends quiz_default_report {
 
                 $table->add_data( array($picture, $userlink, $attemptlink, $gradelink) );
             }
+            $table->add_separator();
+            $table->add_data_keyed(array('grade'=> $link));
         }
-        $table->add_separator();
-        $table->add_data_keyed(array('grade'=> $link));
 
 
         // print everything here
