@@ -119,25 +119,6 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
     return false;
 }
 
-/**
- * Determines if a user can create new courses
- *
- * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
- * @return bool
- */
-function iscreator ($userid=0) {
-    global $CFG;
-
-    if (empty($CFG->rolesactive)) {
-        return false;
-    }
-
-    $context = get_context_instance(CONTEXT_SYSTEM);
-
-    return (has_capability('moodle/legacy:coursecreator', $context, $userid, false)
-         or has_capability('moodle/legacy:admin', $context, $userid, false));
-}
-
 
 /**
  * Determines if the specified user is logged in as guest.
