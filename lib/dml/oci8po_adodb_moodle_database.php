@@ -53,7 +53,6 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 
         /// No need to set charset. It must be specified by the NLS_LANG env. variable
-
         /// Now set the decimal separator to DOT, Moodle & PHP will always send floats to
         /// DB using DOTS. Manually introduced floats (if using other characters) must be
         /// converted back to DOTs (like gradebook does)
@@ -103,7 +102,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
      * @return bitmask
      */
     protected function allowed_param_types() {
-        return SQL_PARAMS_NAMED;
+        return SQL_PARAMS_QM;
     }
 
     /**
@@ -132,7 +131,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
      */
     public function get_fieldset_sql($sql, array $params=null) {
         if ($result = parent::get_fieldset_sql($sql, $params)) {
-            array_walk($result, 'onespace2empty');
+            array_walk($result, array('oci8po_adodb_moodle_database', 'onespace2empty'));
         }
         return $result;
     }
@@ -147,7 +146,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         if ($result = parent::adodb_recordset_to_array($rs)) {
             foreach ($result as $key=>$row) {
                 $row = (array)$row;
-                array_walk($row, 'onespace2empty');
+                array_walk($row, array('oci8po_adodb_moodle_database', 'onespace2empty'));
                 $result[$key] = (object)$row;
             }
         }
@@ -212,96 +211,73 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
      * @return bool success
      */
     public function update_record($table, $dataobject, $bulk=false) {
-
-error('todo');
-
-        global $db, $CFG;
+        if (!is_object($dataobject)) {
+            $dataobject = (object)$dataobject;
+        }
 
         if (! isset($dataobject->id) ) {
             return false;
         }
 
-    /// Check we are handling a proper $dataobject
-        if (is_array($dataobject)) {
-            debugging('Warning. Wrong call to update_record(). $dataobject must be an object. array found instead', DEBUG_DEVELOPER);
-            $dataobject = (object)$dataobject;
-        }
+        oracle_dirty_hack($table, $dataobject); /// Convert object to the correct "empty" values for Oracle DB
 
-    /// Temporary hack as part of phasing out all access to obsolete user tables  XXX
-        if (!empty($CFG->rolesactive)) {
-            if (in_array($table, array('user_students', 'user_teachers', 'user_coursecreators', 'user_admins'))) {
-                if (debugging()) { var_dump(debug_backtrace()); }
-                print_error('sqlrelyonobsoletetable', 'debug', '', $table);
-            }
-        }
+        $columns = $this->get_columns($table);
+        $cleaned = array();
+        $clobs   = array();
+        $blobs   = array();
 
-    /// Begin DIRTY HACK
-        if ($CFG->dbfamily == 'oracle') {
-            oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
-        }
-    /// End DIRTY HACK
-
-    /// Under Oracle, MSSQL and PostgreSQL we have our own update record process
-    /// detect all the clob/blob fields and delete them from the record being updated
-    /// saving them into $foundclobs and $foundblobs [$fieldname]->contents
-    /// They will be updated later
-        if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'postgres')
-          && !empty($dataobject->id)) {
-        /// Detect lobs
-            $foundclobs = array();
-            $foundblobs = array();
-            db_detect_lobs($table, $dataobject, $foundclobs, $foundblobs, true);
-        }
-
-        // Determine all the fields in the table
-        if (!$columns = $db->MetaColumns($CFG->prefix . $table)) {
-            return false;
-        }
-        $data = (array)$dataobject;
-
-        if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
-
-        // Pull out data matching these fields
-        $update = array();
-        foreach ($columns as $column) {
-            if ($column->name == 'id') {
+        foreach ($dataobject as $field=>$value) {
+            if (!isset($columns[$field])) { /// Non-existing table field, skip it
                 continue;
             }
-            if (array_key_exists($column->name, $data)) {
-                $key   = $column->name;
-                $value = $data[$key];
-                if (is_null($value)) {
-                    $update[] = "$key = NULL"; // previously NULLs were not updated
-                } else if (is_bool($value)) {
-                    $value = (int)$value;
-                    $update[] = "$key = $value";   // lets keep pg happy, '' is not correct smallint MDL-13038
-                } else {
-                    $update[] = "$key = '$value'"; // All incoming data is already quoted
+            $column = $columns[$field];
+            if ($column->meta_type == 'B') { /// BLOB columns need to be updated apart
+                if (!is_null($value)) {      /// If value not null, add it to the list of BLOBs to update later
+                    $blobs[$field] = $value;
+                    continue;                /// We don't want this column to be processed by update_record_raw() at all.
+                    /// $value = 'empty_blob()'; /// Set the default value to be inserted in first instance. Not needed to initialize lob storage in updates
+                }
+
+            } else if ($column->meta_type == 'X' && strlen($value) > 4000) { /// CLOB columns need to be updated apart (if lenght > 4000)
+                if (!is_null($value)) {      /// If value not null, add it to the list of BLOBs to update later
+                    $blobs[$field] = $value;
+                    continue;                /// We don't want this column to be processed by update_record_raw() at all.
+                    /// $value = 'empty_clob()'; /// Set the default value to be inserted in first instance. Not needed to initialize lob storage in updates
+                }
+
+            } else if (is_bool($value)) {
+                $value = (int)$value; // prevent "false" problems
+
+            } else if ($value === '' || $value === ' ') {
+                if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
+                    $value = 0; // prevent '' problems in numeric fields
                 }
             }
+            $cleaned[$field] = $value;
         }
 
-    /// Only if we have fields to be updated (this will prevent both wrong updates +
-    /// updates of only LOBs in Oracle
-        if ($update) {
-            $query = "UPDATE {$CFG->prefix}{$table} SET ".implode(',', $update)." WHERE id = {$dataobject->id}";
-            if (!$rs = $db->Execute($query)) {
-                debugging($db->ErrorMsg() .'<br /><br />'.s($query));
-                if (!empty($CFG->dblogerror)) {
-                    $debug=array_shift(debug_backtrace());
-                    error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $query");
-                }
+        if (empty($cleaned)) {
+            return false;
+        }
+
+        if (empty($blobs) && empty($clobs)) { /// Without BLOBs and CLOBs, execute the raw update and return
+            return $this->update_record_raw($table, $cleaned, $bulk);
+        }
+
+    /// We have BLOBs or CLOBs to postprocess, execute the raw update and then update blobs
+        if (!$this->update_record_raw($table, $cleaned, $bulk)) {
+            return false;
+        }
+
+        foreach ($blobs as $key=>$value) {
+            if (!$this->db->UpdateBlob($this->prefix.$table, $key, $value, "id = {$dataobject->id}")) {
                 return false;
             }
         }
 
-    /// Under Oracle, MSSQL and PostgreSQL, finally, update all the Clobs and Blobs present in the record
-    /// if we know we have some of them in the query
-        if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'postgres') &&
-            !empty($dataobject->id) &&
-            (!empty($foundclobs) || !empty($foundblobs))) {
-            if (!db_update_lobs($table, $dataobject->id, $foundclobs, $foundblobs)) {
-                return false; //Some error happened while updating LOBs
+        foreach ($clobs as $key=>$value) {
+            if (!$this->db->UpdateClob($this->prefix.$table, $key, $value, "id = {$dataobject->id}")) {
+                return false;
             }
         }
 
@@ -320,202 +296,362 @@ error('todo');
      * @return mixed success or new ID
      */
     public function insert_record($table, $dataobject, $returnid=true, $bulk=false) {
-error('todo');
-
-    ///////////////////////////////////////////////////////////////
-    /// TODO: keeping this for now - only mysql implemented ;-) ///
-    ///////////////////////////////////////////////////////////////
-
-        global $db, $CFG, $empty_rs_cache;
-
-        if (empty($db)) {
-            return false;
-        }
-
-    /// Check we are handling a proper $dataobject
-        if (is_array($dataobject)) {
-            debugging('Warning. Wrong call to insert_record(). $dataobject must be an object. array found instead', DEBUG_DEVELOPER);
+        if (!is_object($dataobject)) {
             $dataobject = (object)$dataobject;
         }
 
-    /// Temporary hack as part of phasing out all access to obsolete user tables  XXX
-        if (!empty($CFG->rolesactive)) {
-            if (in_array($table, array('user_students', 'user_teachers', 'user_coursecreators', 'user_admins'))) {
-                if (debugging()) { var_dump(debug_backtrace()); }
-                print_error('sqlrelyonobsoletetable', 'debug', '', $table);
+        unset($dataobject->id);
+
+        oracle_dirty_hack($table, $dataobject); /// Convert object to the correct "empty" values for Oracle DB
+
+        $columns = $this->get_columns($table);
+        $cleaned = array();
+        $blobs = array();
+        $clobs = array();
+
+        foreach ($dataobject as $field=>$value) {
+            if (!isset($columns[$field])) { /// Non-existing table field, skip it
+                continue;
             }
+            $column = $columns[$field];
+            if ($column->meta_type == 'B') { /// BLOBs columns need to be updated apart
+                if (!is_null($value)) {      /// If value not null, add it to the list of BLOBs to update later
+                    $blobs[$field] = $value;
+                    $value = 'empty_blob()'; /// Set the default value to be inserted (preparing lob storage for next update)
+                }
+
+            } else if ($column->meta_type == 'X' && strlen($value) > 4000) { /// CLOB columns need to be updated apart (if lenght > 4000)
+                if (!is_null($value)) {      /// If value not null, add it to the list of BLOBs to update later
+                    $clobs[$field] = $value;
+                    $value = 'empty_clob()'; /// Set the default value to be inserted (preparing lob storage for next update)
+                }
+
+            } else if (is_bool($value)) {
+                $value = (int)$value; // prevent "false" problems
+
+            } else if ($value === '' || $value === ' ') {
+                if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
+                    $value = 0; // prevent '' problems in numeric fields
+                }
+            }
+            $cleaned[$field] = $value;
         }
 
-        if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+        if (empty($cleaned)) {
+            return false;
+        }
 
-    /// In Moodle we always use auto-numbering fields for the primary key
-    /// so let's unset it now before it causes any trouble later
-        unset($dataobject->{$primarykey});
+        if (empty($blobs) && empty($clobs)) { /// Without BLOBs and CLOBs, execute the raw insert and return
+            return $this->insert_record_raw($table, $cleaned, $returnid, $bulk);
+        }
 
-    /// Get an empty recordset. Cache for multiple inserts.
-        if (empty($empty_rs_cache[$table])) {
-            /// Execute a dummy query to get an empty recordset
-            if (!$empty_rs_cache[$table] = $db->Execute('SELECT * FROM '. $CFG->prefix . $table .' WHERE '. $primarykey  .' = \'-1\'')) {
+        /// We have BLOBs or CLOBs to postprocess, insert the raw record fetching the id to be used later
+        if (!$id = $this->insert_record_raw($table, $cleaned, true, $bulk)) {
+            return false;
+        }
+
+        foreach ($blobs as $key=>$value) {
+            if (!$this->db->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
                 return false;
             }
         }
 
-        $rs = $empty_rs_cache[$table];
-
-    /// Postgres doesn't have the concept of primary key built in
-    /// and will return the OID which isn't what we want.
-    /// The efficient and transaction-safe strategy is to
-    /// move the sequence forward first, and make the insert
-    /// with an explicit id.
-        if ( $CFG->dbfamily === 'postgres' && $returnid == true ) {
-            if ($nextval = (int)get_field_sql("SELECT NEXTVAL('{$CFG->prefix}{$table}_{$primarykey}_seq')")) {
-                $dataobject->{$primarykey} = $nextval;
+        foreach ($clobs as $key=>$value) {
+            if (!$this->db->UpdateClob($this->prefix.$table, $key, $value, "id = $id")) {
+                return false;
             }
         }
 
-    /// Begin DIRTY HACK
-        if ($CFG->dbfamily == 'oracle') {
-            oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
-        }
-    /// End DIRTY HACK
+        return ($returnid ? $id : true);
+    }
 
-    /// Under Oracle, MSSQL and PostgreSQL we have our own insert record process
-    /// detect all the clob/blob fields and change their contents to @#CLOB#@ and @#BLOB#@
-    /// saving them into $foundclobs and $foundblobs [$fieldname]->contents
-    /// Same for mssql (only processing blobs - image fields)
-        if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'postgres') {
-            $foundclobs = array();
-            $foundblobs = array();
-            db_detect_lobs($table, $dataobject, $foundclobs, $foundblobs);
+    /**
+     * Set a single field in every table row where the select statement evaluates to true.
+     *
+     * @param string $table The database table to be checked against.
+     * @param string $newfield the field to set.
+     * @param string $newvalue the value to set the field to.
+     * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+     * @param array $params array of sql parameters
+     * @return bool success
+     */
+    public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {
+
+        if (is_null($params)) {
+            $params = array();
+        }
+        list($select, $params, $type) = $this->fix_sql_params($select, $params);
+
+        $dataobject = new StdClass;
+        $dataobject->{$newfield} = $newvalue;
+        oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
+        $newvalue = $dataobject->{$newfield};
+
+        $columns = $this->get_columns($table);
+        $column = $columns[$newfield];
+
+        if ($column->meta_type == 'B') { /// If the column is a BLOB
+        /// Update BLOB column and return
+            $select = $this->emulate_bound_params($select, $params); // adodb does not use bound parameters for blob updates :-(
+            return $this->db->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select);
         }
 
-    /// Under Oracle, if the primary key inserted has been requested OR
-    /// if there are LOBs to insert, we calculate the next value via
-    /// explicit query to the sequence.
-    /// Else, the pre-insert trigger will do the job, because the primary
-    /// key isn't needed at all by the rest of PHP code
-        if ($CFG->dbfamily === 'oracle' && ($returnid == true || !empty($foundclobs) || !empty($foundblobs))) {
-        /// We need this here (move this function to dmlib?)
-            include_once($CFG->libdir . '/ddllib.php');
+        if ($column->meta_type == 'X' && strlen($newvalue) > 4000) { /// If the column is a CLOB with lenght > 4000
+        /// Update BLOB column and return
+            $select = $this->emulate_bound_params($select, $params); // adodb does not use bound parameters for blob updates :-(
+            return $this->db->UpdateClob($this->prefix.$table, $newfield, $newvalue, $select);
+        }
+
+    /// Arrived here, normal update (without BLOBs)
+        if (is_null($newvalue)) {
+            $newfield = "$newfield = NULL";
+        } else {
+            if (is_bool($newvalue)) {
+                $newvalue = (int)$newvalue; // prevent "false" problems
+            } else if ($newvalue === '' || $newvalue === ' ') {
+                if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
+                    $newvalue = 0; // prevent '' problems in numeric fields
+                }
+            }
+
+            $newfield = "$newfield = ?";
+            array_unshift($params, $newvalue); // add as first param
+        }
+        $sql = "UPDATE {$this->prefix}$table SET $newfield WHERE $select";
+
+        if (!$rs = $this->db->Execute($sql, $params)) {
+            $this->report_error($sql, $params);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Insert new record into database, as fast as possible, no safety checks, lobs not supported.
+     * (overloaded from adodb_moodle_database because of sequence numbers and empty_blob()/empty_clob())
+     * @param string $table name
+     * @param mixed $params data record as object or array
+     * @param bool $returnit return it of inserted record
+     * @param bool $bulk true means repeated inserts expected
+     * @return mixed success or new id
+     */
+    public function insert_record_raw($table, $params, $returnid=true, $bulk=false) {
+        if (!is_array($params)) {
+            $params = (array)$params;
+        }
+        unset($params['id']);
+
+        if ($returnid) {
+            $dbman = $this->get_manager();
             $xmldb_table = new xmldb_table($table);
-            $seqname = find_sequence_name($xmldb_table);
+            $seqname = $dbman->find_sequence_name($xmldb_table);
             if (!$seqname) {
             /// Fallback, seqname not found, something is wrong. Inform and use the alternative getNameForObject() method
-                debugging('Sequence name for table ' . $table->getName() . ' not found', DEBUG_DEVELOPER);
-                $generator = new XMLDBoci8po();
-                $generator->setPrefix($CFG->prefix);
+                $generator = $this->get_dbman()->generator;
+                $generator->setPrefix($this->getPrefix());
                 $seqname = $generator->getNameForObject($table, $primarykey, 'seq');
             }
-            if ($nextval = (int)$db->GenID($seqname)) {
-                $dataobject->{$primarykey} = $nextval;
+            if ($nextval = $this->db->GenID($seqname)) {
+                $params['id'] = (int)$nextval;
+            }
+        }
+
+        if (empty($params)) {
+            return false;
+        }
+
+        $fields = implode(',', array_keys($params));
+        $qms    = array();
+    /// Look for 'empty_clob() and empty_blob() params to replace question marks properly
+    /// Oracle requires those function calls on insert to prepare blob/clob storage, so we
+    /// specify them as SQL, deleting them from parameters
+        foreach ($params as $key=>$param) {
+            if ($param == 'empty_blob()') {
+                $qms[] = 'empty_blob()';
+                unset($params[$key]);
+            } else if ($param == 'empty_clob()') {
+                $qms[] = 'empty_clob()';
+                unset($params[$key]);
             } else {
-                debugging('Not able to get value from sequence ' . $seqname, DEBUG_DEVELOPER);
+                $qms[] = '?';
             }
         }
+        $qms    = implode(',', $qms);
 
-    /// Get the correct SQL from adoDB
-        if (!$insertSQL = $db->GetInsertSQL($rs, (array)$dataobject, true)) {
+        $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($qms)";
+
+        if (!$rs = $this->db->Execute($sql, $params)) {
+            $this->report_error($sql, $params);
             return false;
         }
-
-    /// Under Oracle, MSSQL and PostgreSQL, replace all the '@#CLOB#@' and '@#BLOB#@' ocurrences to proper default values
-    /// if we know we have some of them in the query
-        if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'postgres') &&
-          (!empty($foundclobs) || !empty($foundblobs))) {
-        /// Initial configuration, based on DB
-            switch ($CFG->dbfamily) {
-                case 'oracle':
-                    $clobdefault = 'empty_clob()'; //Value of empty default clobs for this DB
-                    $blobdefault = 'empty_blob()'; //Value of empty default blobs for this DB
-                    break;
-                case 'mssql':
-                case 'postgres':
-                    $clobdefault = 'null'; //Value of empty default clobs for this DB (under mssql this won't be executed
-                    $blobdefault = 'null'; //Value of empty default blobs for this DB
-                    break;
-            }
-            $insertSQL = str_replace("'@#CLOB#@'", $clobdefault, $insertSQL);
-            $insertSQL = str_replace("'@#BLOB#@'", $blobdefault, $insertSQL);
-        }
-
-    /// Run the SQL statement
-        if (!$rs = $db->Execute($insertSQL)) {
-            debugging($db->ErrorMsg() .'<br /><br />'.s($insertSQL));
-            if (!empty($CFG->dblogerror)) {
-                $debug=array_shift(debug_backtrace());
-                error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $insertSQL");
-            }
-            return false;
-        }
-
-    /// Under Oracle and PostgreSQL, finally, update all the Clobs and Blobs present in the record
-    /// if we know we have some of them in the query
-        if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'postgres') &&
-          !empty($dataobject->{$primarykey}) &&
-          (!empty($foundclobs) || !empty($foundblobs))) {
-            if (!db_update_lobs($table, $dataobject->{$primarykey}, $foundclobs, $foundblobs)) {
-                return false; //Some error happened while updating LOBs
-            }
-        }
-
-    /// If a return ID is not needed then just return true now (but not in MSSQL DBs, where we may have some pending tasks)
-        if (!$returnid && $CFG->dbfamily != 'mssql') {
+        if (!$returnid) {
             return true;
         }
-
-    /// We already know the record PK if it's been passed explicitly,
-    /// or if we've retrieved it from a sequence (Postgres and Oracle).
-        if (!empty($dataobject->{$primarykey})) {
-            return $dataobject->{$primarykey};
+        if (!empty($params['id'])) {
+            return (int)$params['id'];
         }
+        return false;
+    }
 
-    /// This only gets triggered with MySQL and MSQL databases
-    /// however we have some postgres fallback in case we failed
-    /// to find the sequence.
-        $id = $db->Insert_ID();
-
-    /// Under MSSQL all the Clobs and Blobs (IMAGE) present in the record
-    /// if we know we have some of them in the query
-        if (($CFG->dbfamily == 'mssql') &&
-          !empty($id) &&
-          (!empty($foundclobs) || !empty($foundblobs))) {
-            if (!db_update_lobs($table, $id, $foundclobs, $foundblobs)) {
-                return false; //Some error happened while updating LOBs
-            }
+    /**
+     * Update record in database, as fast as possible, no safety checks, lobs not supported.
+     * (overloaded from adodb_moodle_database because of empty_blob()/empty_clob())
+     * @param string $table name
+     * @param mixed $params data record as object or array
+     * @param bool true means repeated updates expected
+     * @return bool success
+     */
+    public function update_record_raw($table, $params, $bulk=false) {
+        if (!is_array($params)) {
+            $params = (array)$params;
         }
+        if (!isset($params['id'])) {
+            return false;
+        }
+        $id = $params['id'];
+        unset($params['id']);
 
-        if ($CFG->dbfamily === 'postgres') {
-            // try to get the primary key based on id
-            if ( ($rs = $db->Execute('SELECT '. $primarykey .' FROM '. $CFG->prefix . $table .' WHERE oid = '. $id))
-                 && ($rs->RecordCount() == 1) ) {
-                trigger_error("Retrieved $primarykey from oid on table $table because we could not find the sequence.");
-                return (integer)reset($rs->fields);
-            }
-            trigger_error('Failed to retrieve primary key after insert: SELECT '. $primarykey .
-                          ' FROM '. $CFG->prefix . $table .' WHERE oid = '. $id);
+        if (empty($params)) {
             return false;
         }
 
-        return (integer)$id;
+        $sets = array();
+        foreach ($params as $field=>$value) {
+            $sets[] = "$field = ?";
+        }
 
+        $params[] = $id; // last ? in WHERE condition
+
+        $sets = implode(',', $sets);
+        $sql = "UPDATE {$this->prefix}$table SET $sets WHERE id=?";
+
+        if (!$rs = $this->db->Execute($sql, $params)) {
+            $this->report_error($sql, $params);
+            return false;
+        }
+        return true;
     }
 
-    public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {
-        error('todo');
+     /**
+      * Very ugly hack which emulates bound parameters in mssql queries
+      * where params not supported (UpdateBlob) :-(
+      */
+     private function emulate_bound_params($sql, array $params=null) {
+         if (empty($params)) {
+             return $sql;
+         }
+         // ok, we have verified sql statement with ? and correct number of params
+         $return = strtok($sql, '?');
+         foreach ($params as $param) {
+             if (is_bool($param)) {
+                 $return .= (int)$param;
+             } else if (is_null($param)) {
+                 $return .= 'NULL';
+             } else if (is_numeric($param)) {
+                 $return .= $param;
+             } else {
+                 $param = $this->db->qstr($param);
+                 $return .= "$param";
+             }
+             $return .= strtok('?');
+         }
+         return $return;
+     }
+
+    /**
+     * This function is used to convert all the Oracle 1-space defaults to the empty string
+     * like a really DIRTY HACK to allow it to work better until all those NOT NULL DEFAULT ''
+     * fields will be out from Moodle.
+     * @param string the string to be converted to '' (empty string) if it's ' ' (one space)
+     * @param mixed the key of the array in case we are using this function from array_walk,
+     *              defaults to null for other (direct) uses
+     * @return boolean always true (the converted variable is returned by reference)
+     */
+    static function onespace2empty(&$item, $key=null) {
+        $item = $item == ' ' ? '' : $item;
+        return true;
     }
-}
 
+    /**
+     * This function will handle all the records before being inserted/updated to DB for Oracle
+     * installations. This is because the "special feature" of Oracle where the empty string is
+     * equal to NULL and this presents a problem with all our currently NOT NULL default '' fields.
+     *
+     * Once Moodle DB will be free of this sort of false NOT NULLS, this hack could be removed safely
+     *
+     * Note that this function is 100% private and should be used, exclusively by DML functions
+     * in this file. Also, this is considered a DIRTY HACK to be removed when possible. (stronk7)
+     *
+     * This function is private and must not be used outside dmllib at all
+     *
+     * @param $table string the table where the record is going to be inserted/updated (without prefix)
+     * @param $dataobject object the object to be inserted/updated
+     * @param $usecache boolean flag to determinate if we must use the per request cache of metadata
+     *        true to use it, false to ignore and delete it
+     */
+    private function oracle_dirty_hack ($table, &$dataobject, $usecache = true) {
 
-/**
- * This function is used to convert all the Oracle 1-space defaults to the empty string
- * like a really DIRTY HACK to allow it to work better until all those NOT NULL DEFAULT ''
- * fields will be out from Moodle.
- * @param string the string to be converted to '' (empty string) if it's ' ' (one space)
- * @param mixed the key of the array in case we are using this function from array_walk,
- *              defaults to null for other (direct) uses
- * @return boolean always true (the converted variable is returned by reference)
- */
-function onespace2empty(&$item, $key=null) {
-    $item = $item == ' ' ? '' : $item;
-    return true;
+        global $CFG, $db, $metadata_cache;
+
+    /// Init and delete metadata cache
+        if (!isset($metadata_cache) || !$usecache) {
+            $metadata_cache = array();
+        }
+
+    /// For Oracle DB, empty strings are converted to NULLs in DB
+    /// and this breaks a lot of NOT NULL columns currenty Moodle. In the future it's
+    /// planned to move some of them to NULL, if they must accept empty values and this
+    /// piece of code will become less and less used. But, for now, we need it.
+    /// What we are going to do is to examine all the data being inserted and if it's
+    /// an empty string (NULL for Oracle) and the field is defined as NOT NULL, we'll modify
+    /// such data in the best form possible ("0" for booleans and numbers and " " for the
+    /// rest of strings. It isn't optimal, but the only way to do so.
+    /// In the oppsite, when retrieving records from Oracle, we'll decode " " back to
+    /// empty strings to allow everything to work properly. DIRTY HACK.
+
+    /// Get Meta info to know what to change, using the cached meta if exists
+        if (!isset($metadata_cache[$table])) {
+            $metadata_cache[$table] = array_change_key_case($db->MetaColumns($CFG->prefix . $table), CASE_LOWER);
+        }
+        $columns = $metadata_cache[$table];
+    /// Iterate over all the fields in the insert, transforming values
+    /// in the best possible form
+        foreach ($dataobject as $fieldname => $fieldvalue) {
+        /// If the field doesn't exist in metadata, skip
+            if (!isset($columns[strtolower($fieldname)])) {
+                continue;
+            }
+        /// If the field ins't VARCHAR or CLOB, skip
+            if ($columns[strtolower($fieldname)]->type != 'VARCHAR2' && $columns[strtolower($fieldname)]->type != 'CLOB') {
+                continue;
+            }
+        /// If the field isn't NOT NULL, skip (it's nullable, so accept empty values)
+            if (!$columns[strtolower($fieldname)]->not_null) {
+                continue;
+            }
+        /// If the value isn't empty, skip
+            if (!empty($fieldvalue)) {
+                continue;
+            }
+        /// Now, we have one empty value, going to be inserted to one NOT NULL, VARCHAR2 or CLOB field
+        /// Try to get the best value to be inserted
+
+        /// The '0' string doesn't need any transformation, skip
+            if ($fieldvalue === '0') {
+                continue;
+            }
+
+        /// Transformations start
+            if (gettype($fieldvalue) == 'boolean') {
+                $dataobject->$fieldname = '0'; /// Transform false to '0' that evaluates the same for PHP
+            } else if (gettype($fieldvalue) == 'integer') {
+                $dataobject->$fieldname = '0'; /// Transform 0 to '0' that evaluates the same for PHP
+            } else if (gettype($fieldvalue) == 'NULL') {
+                $dataobject->$fieldname = '0'; /// Transform NULL to '0' that evaluates the same for PHP
+            } else if ($fieldvalue === '') {
+                $dataobject->$fieldname = ' '; /// Transform '' to ' ' that DONT'T EVALUATE THE SAME
+                                               /// (we'll transform back again on get_records_XXX functions and others)!!
+            }
+        }
+    }
 }

@@ -15,7 +15,7 @@ class oci8po_adodb_moodle_recordset extends adodb_moodle_recordset {
         /// Really DIRTY HACK for Oracle - needed because it can not see difference from NULL and ''
         /// this can not be removed even if we chane db defaults :-(
         $fields = $this->rs->fields;
-        array_walk($fields, 'onespace2empty');
+        array_walk($fields, array('oci8po_adodb_moodle_database', 'onespace2empty'));
         return (object)$fields;
     }
 
