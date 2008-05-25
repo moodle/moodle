@@ -151,6 +151,7 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
 
     /**
      * Insert new record into database, as fast as possible, no safety checks, lobs not supported.
+     * (overloaded from adodb_moodle_database because of sequence numbers
      * @param string $table name
      * @param mixed $params data record as object or array
      * @param bool $returnit return it of inserted record
@@ -169,7 +170,8 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
         }
         unset($params['id']);
         if ($returnid) {
-            if ($nextval = $this->get_field_sql("SELECT NEXTVAL('{$this->prefix}{$table}_id_seq')")) {
+            $seqname = "{$this->prefix}{$table}_id_seq";
+            if ($nextval = $this->db->GenID($seqname)) {
                 $params['id'] = (int)$nextval;
             }
         }
