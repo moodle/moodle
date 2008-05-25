@@ -124,7 +124,7 @@ abstract class adodb_moodle_database extends moodle_database {
     }
 
     /**
-     * Return table indexes
+     * Return table indexes - everything lowercased
      * @return array of arrays
      */
     public function get_indexes($table) {

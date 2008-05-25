@@ -328,7 +328,7 @@ abstract class moodle_database {
     public abstract function get_tables();
 
     /**
-     * Return table indexes
+     * Return table indexes - everything lowercased
      * @return array of arrays
      */
     public abstract function get_indexes($table);
