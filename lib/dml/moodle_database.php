@@ -107,6 +107,19 @@ abstract class moodle_database {
     public abstract function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null);
 
     /**
+     * Close database connection and release all resources
+     * and memory (especially circular memory references).
+     * Do NOT use connect() again, create a new instance if needed.
+     */
+    public function dispose() {
+        if ($this->database_manager) {
+            $this->database_manager->dispose();
+            $this->database_manager = null;
+        }
+        $this->columns   = array();
+    }
+
+    /**
      * Returns database server info array
      * @return array
      */

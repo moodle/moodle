@@ -47,6 +47,17 @@ class database_manager {
     }
 
     /**
+     * Release all resources
+     */
+    public function dispose() {
+        if ($this->generator) {
+            $this->generator->dispose();
+            $this->generator = null;
+        }
+        $this->mdb       = null;
+    }
+
+    /**
      * This function will execute an array of SQL commands, returning
      * true/false if any error is found and stopping/continue as desired.
      * It's widely used by all the ddllib.php functions

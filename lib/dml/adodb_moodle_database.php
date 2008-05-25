@@ -39,13 +39,10 @@ abstract class adodb_moodle_database extends moodle_database {
         return $cfg;
     }
 
-    //TODO: preconfigure_dbconnection(): Decide if this should be declared as abstract because all adodb drivers will need it
     /**
      * Adodb preconnection routines, ususally sets up needed defines;
      */
-    protected function preconfigure_dbconnection() {
-        // empty
-    }
+    protected abstract function preconfigure_dbconnection();
 
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
         $this->dbhost    = $dbhost;
@@ -83,12 +80,21 @@ abstract class adodb_moodle_database extends moodle_database {
         return true;
     }
 
-    //TODO: configure_dbconnection(): Decide if this should be declared as abstract because all adodb drivers will need it
     /**
      * Adodb post connection routines, usually sets up encoding,e tc.
      */
-    protected function configure_dbconnection() {
-        // empty
+    protected abstract function configure_dbconnection();
+
+    /**
+     * Close database connection and release all resources
+     * and memory (especially circular memory references).
+     * Do NOT use connect() again, create a new instance if needed.
+     */
+    public function dispose() {
+        if ($this->db) {
+            $this->db->Close();
+        }
+        parent::dispose();
     }
 
     //TODO: make all dblibraries return this info in a structured way (new server_info class or so, like database_column_info class)

@@ -136,6 +136,13 @@ abstract class sql_generator {
     }
 
     /**
+     * Release all resources
+     */
+    public function dispose() {
+        $this->mdb = null;
+    }
+
+    /**
      * Given one string (or one array), ends it with statement_end
      */
     public function getEndedStatements($input) {
