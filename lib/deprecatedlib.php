@@ -204,56 +204,6 @@ function get_recent_enrolments($courseid, $timestart) {
 }
 
 /**
- * Returns list of all teachers in this course
- *
- * If $courseid matches the site id then this function
- * returns a list of all teachers for the site.
- *
- * @uses $CFG
- * @param int $courseid The course in question.
- * @param string $sort ?
- * @param string $exceptions ?
- * @return object
- * @todo Finish documenting this function
- */
-function get_course_teachers($courseid, $sort='t.authority ASC', array $exceptions=null) {
-
-    global $CFG;
-
-    $sort = 'ul.timeaccess DESC';
-
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-
-    /// For the site course, if the $CFG->defaultuserroleid is set to the legacy teacher role, then all
-    /// users are teachers. This function should be replaced where it is used with something more
-    /// meaningful.
-    if (($courseid == SITEID) && !empty($CFG->defaultuserroleid) && empty($CFG->nodefaultuserrolelists)) {
-        if ($roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW, $context)) {
-            $hascap = false;
-            foreach ($roles as $role) {
-                if ($role->id == $CFG->defaultuserroleid) {
-                    $hascap = true;
-                    break;
-                }
-            }
-            if ($hascap) {
-                if (empty($fields)) {
-                    $fields = '*';
-                }
-                return get_users(true, '', true, $exceptions, 'lastname ASC', '', '', '', '', $fields);
-            }
-        }
-    }
-
-    $users = get_users_by_capability($context, 'moodle/course:update',
-                                     'u.*, ul.timeaccess as lastaccess',
-                                     $sort, '','','',$exceptions, false);
-    return sort_by_roleassignment_authority($users, $context);
-
-    /// some fields will be missing, like authority, editall
-}
-
-/**
  * Returns all the users of a course: students and teachers
  *
  * @param int $courseid The course in question.
