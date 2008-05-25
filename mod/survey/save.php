@@ -31,7 +31,9 @@
 
     add_to_log($course->id, "survey", "submit", "view.php?id=$cm->id", "$survey->id", "$cm->id");
 
-    $navigation = build_navigation($strsurveysaved, $cm);
+    $strsurveysaved = get_string('surveysaved', 'survey');
+
+    $navigation = build_navigation('', $cm);
     print_header_simple("$strsurveysaved", "", $navigation, "");
 
 
