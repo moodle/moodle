@@ -424,4 +424,20 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
     public function sql_cast_char2int($fieldname, $text=false) {
         return ' CAST(' . $fieldname . ' AS INT) ';
     }
+
+    /**
+     * Does this driver suppoer regex syntax when searching
+     */
+    public function sql_regex_supported() {
+        return true;
+    }
+
+    /**
+     * Return regex positive or negative match sql
+     * @param bool $positivematch
+     * @return string or empty if not supported
+     */
+    public function sql_regex($positivematch=true) {
+        return $positivematch ? '~*' : '!~*';
+    }
 }

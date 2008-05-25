@@ -1281,6 +1281,22 @@ abstract class moodle_database {
         return ' ( NOT ' . $this->sql_isempty($tablename, $fieldname, $nullablefield, $textfield) . ') ';
     }
 
+    /**
+     * Does this driver suppoer regex syntax when searching
+     */
+    public function sql_regex_supported() {
+        return false;
+    }
+
+    /**
+     * Return regex positive or negative match sql
+     * @param bool $positivematch
+     * @return string or empty if not supported
+     */
+    public function sql_regex($positivematch=true) {
+        return '';
+    }
+
 /// transactions
     /**
      * on DBs that support it, switch to transaction mode and begin a transaction

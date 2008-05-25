@@ -221,4 +221,19 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
         return ' CAST(' . $fieldname . ' AS SIGNED) ';
     }
 
+    /**
+     * Does this driver suppoer regex syntax when searching
+     */
+    public function sql_regex_supported() {
+        return true;
+    }
+
+    /**
+     * Return regex positive or negative match sql
+     * @param bool $positivematch
+     * @return string or empty if not supported
+     */
+    public function sql_regex($positivematch=true) {
+        return $positivematch ? 'REGEXP' : 'NOT REGEXP';
+    }
 }

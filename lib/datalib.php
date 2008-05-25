@@ -1021,64 +1021,59 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
 function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $recordsperpage=50, &$totalcount) {
     global $CFG, $DB;
 
-    if ($CFG->dbfamily == 'postgres') {
-        $REGEXP    = '~*';
-        $NOTREGEXP = '!~*';
-    } else {
-        $REGEXP    = 'REGEXP';
-        $NOTREGEXP = 'NOT REGEXP';
+    if ($DB->sql_regex_supported()) {
+        $REGEXP    = $DB->sql_regex(true);
+        $NOTREGEXP = $DB->sql_regex(false);
     }
     $LIKE = $DB->sql_ilike(); // case-insensitive
 
-    $fullnamesearch = '';
-    $summarysearch = '';
+    $searchcond = array();
+    $params     = array();
+    $i = 0;
 
-    $params = array();
+    $concat = $DB->sql_concat('c.summary', "' '", 'c.fullname');
 
     foreach ($searchterms as $searchterm) {
+        $i++;
 
         $NOT = ''; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
                    /// will use it to simulate the "-" operator with LIKE clause
 
     /// Under Oracle and MSSQL, trim the + and - operators and perform
     /// simpler LIKE (or NOT LIKE) queries
-        if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') {
+        if (!$DB->sql_regex_supported()) {
             if (substr($searchterm, 0, 1) == '-') {
                 $NOT = ' NOT ';
             }
             $searchterm = trim($searchterm, '+-');
         }
 
-        if ($fullnamesearch) {
-            $fullnamesearch .= ' AND ';
-        }
-        if ($summarysearch) {
-            $summarysearch .= ' AND ';
-        }
-
-        // TODO: the "-" here does not work much because it may be cancelled by OR condition "( $fullnamesearch ) OR ( $summarysearch )"
+        // TODO: +- may not work for non latin languages
 
         if (substr($searchterm,0,1) == '+') {
-            $searchterm      = substr($searchterm,1);
-            $searchterm      = preg_quote($searchterm, '|');
-            $summarysearch  .= " c.summary $REGEXP :ss ";
-            $params['ss'] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
-            $fullnamesearch .= " c.fullname $REGEXP :fs ";
-            $params['fs'] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
+            $searchterm = trim($searchterm, '+-');
+            $searchterm = preg_quote($searchterm, '|');
+            $searchcond[] = "$concat $REGEXP :ss$i";
+            $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
+
         } else if (substr($searchterm,0,1) == "-") {
-            $searchterm      = substr($searchterm,1);
-            $searchterm      = preg_quote($searchterm, '|');
-            $summarysearch  .= " c.summary $NOTREGEXP :ss ";
-            $params['ss'] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
-            $fullnamesearch .= " c.fullname $NOTREGEXP :fs ";
-            $params['fs'] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
+            $searchterm = trim($searchterm, '+-');
+            $searchterm = preg_quote($searchterm, '|');
+            $searchcond[] = "$concat $NOTREGEXP :ss$i";
+            $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
+
         } else {
-            $summarysearch .= " summary $NOT $LIKE :ss ";
-            $fullnamesearch .= " fullname $NOT $LIKE :fs ";
-            $params['ss'] = "%$searchterm%";
-            $params['fs'] = "%$searchterm%";
+            $searchcond[] = "$concat $NOT $LIKE :ss$i";
+            $params['ss'.$i] = "%$searchterm%";
         }
     }
+
+    if (empty($searchcond)) {
+        $totalcount = 0;
+        return array();
+    }
+
+    $searchcond = implode(" AND ", $searchcond);
 
     $sql = "SELECT c.*,
                    ctx.id AS ctxid, ctx.path AS ctxpath,
@@ -1086,9 +1081,8 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
               FROM {course} c
               JOIN {context} ctx
                    ON (c.id = ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-            WHERE (( $fullnamesearch ) OR ( $summarysearch ))
-                  AND category > 0
-            ORDER BY $sort";
+             WHERE $searchcond AND c.id <> ".SITEID."
+          ORDER BY $sort";
     $courses = array();
     $c = 0; // counts how many visible courses we've seen
 

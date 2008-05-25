@@ -200,8 +200,8 @@
 
         if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             foreach ($courses as $course) {
-                $course->fullname = highlight("$search", $course->fullname);
-                $course->summary = highlight("$search", $course->summary);
+                $course->fullname = highlight(trim($search, '+'), $course->fullname);
+                $course->summary = highlight(trim($search, '+'), $course->summary);
                 $course->summary .= "<br /><p class=\"category\">";
                 $course->summary .= "$strcategory: <a href=\"category.php?id=$course->category\">";
                 $course->summary .= $displaylist[$course->category];
@@ -230,7 +230,7 @@
                     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 }
 
-                $course->fullname = highlight("$search", $course->fullname);
+                $course->fullname = highlight(trim($search, '+'), $course->fullname);
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
 
                 // are we displaying the front page (courseid=1)?
