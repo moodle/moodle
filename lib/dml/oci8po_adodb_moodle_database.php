@@ -219,7 +219,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
             return false;
         }
 
-        oracle_dirty_hack($table, $dataobject); /// Convert object to the correct "empty" values for Oracle DB
+        $this->oracle_dirty_hack($table, $dataobject); /// Convert object to the correct "empty" values for Oracle DB
 
         $columns = $this->get_columns($table);
         $cleaned = array();
@@ -302,7 +302,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
 
         unset($dataobject->id);
 
-        oracle_dirty_hack($table, $dataobject); /// Convert object to the correct "empty" values for Oracle DB
+        $this->oracle_dirty_hack($table, $dataobject); /// Convert object to the correct "empty" values for Oracle DB
 
         $columns = $this->get_columns($table);
         $cleaned = array();
@@ -384,7 +384,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
 
         $dataobject = new StdClass;
         $dataobject->{$newfield} = $newvalue;
-        oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
+        $this->oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
         $newvalue = $dataobject->{$newfield};
 
         $columns = $this->get_columns($table);
@@ -449,7 +449,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
             /// Fallback, seqname not found, something is wrong. Inform and use the alternative getNameForObject() method
                 $generator = $this->get_dbman()->generator;
                 $generator->setPrefix($this->getPrefix());
-                $seqname = $generator->getNameForObject($table, $primarykey, 'seq');
+                $seqname = $generator->getNameForObject($table, 'id', 'seq');
             }
             if ($nextval = $this->db->GenID($seqname)) {
                 $params['id'] = (int)$nextval;
@@ -466,10 +466,10 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
     /// Oracle requires those function calls on insert to prepare blob/clob storage, so we
     /// specify them as SQL, deleting them from parameters
         foreach ($params as $key=>$param) {
-            if ($param == 'empty_blob()') {
+            if ($param === 'empty_blob()') {
                 $qms[] = 'empty_blob()';
                 unset($params[$key]);
-            } else if ($param == 'empty_clob()') {
+            } else if ($param === 'empty_clob()') {
                 $qms[] = 'empty_clob()';
                 unset($params[$key]);
             } else {
@@ -491,45 +491,6 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
             return (int)$params['id'];
         }
         return false;
-    }
-
-    /**
-     * Update record in database, as fast as possible, no safety checks, lobs not supported.
-     * (overloaded from adodb_moodle_database because of empty_blob()/empty_clob())
-     * @param string $table name
-     * @param mixed $params data record as object or array
-     * @param bool true means repeated updates expected
-     * @return bool success
-     */
-    public function update_record_raw($table, $params, $bulk=false) {
-        if (!is_array($params)) {
-            $params = (array)$params;
-        }
-        if (!isset($params['id'])) {
-            return false;
-        }
-        $id = $params['id'];
-        unset($params['id']);
-
-        if (empty($params)) {
-            return false;
-        }
-
-        $sets = array();
-        foreach ($params as $field=>$value) {
-            $sets[] = "$field = ?";
-        }
-
-        $params[] = $id; // last ? in WHERE condition
-
-        $sets = implode(',', $sets);
-        $sql = "UPDATE {$this->prefix}$table SET $sets WHERE id=?";
-
-        if (!$rs = $this->db->Execute($sql, $params)) {
-            $this->report_error($sql, $params);
-            return false;
-        }
-        return true;
     }
 
     /**
