@@ -73,7 +73,7 @@ function isteacher($courseid=0, $userid=0, $obsolete_includeadmin=true) {
  * @return bool
  */
 function isteacherinanycourse($userid=0, $includeadmin=true) {
-    global $USER, $CFG;
+    global $USER, $CFG, $DB;
 
     if (empty($CFG->rolesactive)) {     // Teachers are locked out during an upgrade to 1.7
         return false;
@@ -86,14 +86,14 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
         $userid = $USER->id;
     }
 
-    if (!record_exists('role_assignments', 'userid', $userid)) {    // Has no roles anywhere
+    if (!$DB->record_exists('role_assignments', array('userid'=>$userid))) {    // Has no roles anywhere
         return false;
     }
 
 /// If this user is assigned as an editing teacher anywhere then return true
     if ($roles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW)) {
         foreach ($roles as $role) {
-            if (record_exists('role_assignments', 'roleid', $role->id, 'userid', $userid)) {
+            if ($DB->record_exists('role_assignments', array('roleid'=>$role->id, 'userid'=>$userid))) {
                 return true;
             }
         }
@@ -102,7 +102,7 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
 /// If this user is assigned as a non-editing teacher anywhere then return true
     if ($roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
         foreach ($roles as $role) {
-            if (record_exists('role_assignments', 'roleid', $role->id, 'userid', $userid)) {
+            if ($DB->record_exists('role_assignments', array('roleid'=>$role->id, 'userid'=>$userid))) {
                 return true;
             }
         }
@@ -240,20 +240,6 @@ function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='',
     }
     return get_users_by_capability($context, 'moodle/course:view', $fields, $sort, '','','',$exceptions, false);
 
-}
-
-/**
- * Returns a list of all site users
- * Obsolete, just calls get_course_users(SITEID)
- *
- * @uses SITEID
- * @deprecated Use {@link get_course_users()} instead.
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return object|false  {@link $USER} records or false if error.
- */
-function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') {
-
-    return get_course_users(SITEID, $sort, $exceptions, $fields);
 }
 
 

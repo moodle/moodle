@@ -51,7 +51,8 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     if ($hostid == $CFG->mnet_localhost_id && $course->id != SITEID) {
         $courseusers = get_users_by_capability($context, 'moodle/course:view', '', 'lastname ASC, firstname ASC', '','u.id, u.firstname, u.lastname, u.idnumber',$selectedgroup,null, false);
     } else {
-        $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname, u.idnumber");
+        // this may be a lot of users :-(
+        $courseusers = $DB->get_records('user', array('deleted'=>0), 'u.lastaccess DESC', 'u.id, u.firstname, u.lastname, u.idnumber');
     }
 
     if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
@@ -274,7 +275,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
 function print_log_selector_form($course, $selecteduser=0, $selecteddate='today',
                                  $modname="", $modid=0, $modaction='', $selectedgroup=-1, $showcourses=0, $showusers=0, $logformat='showashtml') {
 
-    global $USER, $CFG;
+    global $USER, $CFG, $DB;
 
     // first check to see if we can override showcourses and showusers
     $numcourses =  count_records_select("course", "", "COUNT(id)");
@@ -305,7 +306,8 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     if ($course->id != SITEID) {
         $courseusers = get_users_by_capability($context, 'moodle/course:view', '', 'lastname ASC, firstname ASC', '','u.id, u.firstname, u.lastname, u.idnumber',$selectedgroup,null, false);
     } else {
-        $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname, u.idnumber");
+        // this may be a lot of users :-(
+        $courseusers = $DB->get_records('user', array('deleted'=>0), 'u.lastaccess DESC', 'u.id, u.firstname, u.lastname, u.idnumber');
     }
     
     if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
