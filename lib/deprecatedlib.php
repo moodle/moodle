@@ -184,23 +184,22 @@ function get_teacher($courseid) {
  * @todo Finish documenting this function
  */
 function get_recent_enrolments($courseid, $timestart) {
-
-    global $CFG;
+    global $DB;
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
-    return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, l.time
-                            FROM {$CFG->prefix}user u,
-                                 {$CFG->prefix}role_assignments ra,
-                                 {$CFG->prefix}log l
-                            WHERE l.time > '$timestart'
-                              AND l.course = '$courseid'
-                              AND l.module = 'course'
-                              AND l.action = 'enrol'
-                              AND l.info = u.id
-                              AND u.id = ra.userid
-                              AND ra.contextid ".get_related_contexts_string($context)."
-                              ORDER BY l.time ASC");
+    $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, l.time
+              FROM {user} u, {role_assignments} ra, {log} l
+             WHERE l.time > ?
+                   AND l.course = ?
+                   AND l.module = 'course'
+                   AND l.action = 'enrol'
+                   AND l.info = u.id
+                   AND u.id = ra.userid
+                   AND ra.contextid ".get_related_contexts_string($context)."
+          ORDER BY l.time ASC";
+    $params = array($timestart, $courseid);
+    return $DB->get_records_sql($sql, $params);
 }
 
 ########### FROM weblib.php ##########################################################################
@@ -423,12 +422,6 @@ function get_current_group($courseid, $full = false) {
         return 0;
     }
 }
-
-
-
-
-
-
 
 
 
