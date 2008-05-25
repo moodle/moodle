@@ -10,7 +10,6 @@ require_once($CFG->libdir.'/dml/pdo_moodle_recordset.php');
 abstract class pdo_moodle_database extends moodle_database {
 
     protected $pdb;
-    protected $columns = array(); // I wish we had a shared memory cache for this :-(
 
     //TODO: This looks incorrect now IMO. Construct should have only external and connect get all the rest of params
     public function __construct($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null, $external=false) {
@@ -31,8 +30,8 @@ abstract class pdo_moodle_database extends moodle_database {
     protected function configure_dbconnection() {
     }
 
-    public function get_columns($table) {
-        if (isset($this->columns[$table])) {
+    public function get_columns($table, $usecache=true) {
+        if ($usecache and isset($this->columns[$table])) {
             return $this->columns[$table];
         }
 
@@ -42,15 +41,6 @@ abstract class pdo_moodle_database extends moodle_database {
 
         return $this->columns[$table];
     }
-
-    public function reset_columns($table=null) {
-        if ($table) {
-            unset($this->columns[$table]);
-        } else {
-            $this->columns[$table] = array();
-        }
-    }
-
 
     protected function report_error($sql, $params, $obj) {
         debugging($e->getMessage() .'<br /><br />'. s($sql));
@@ -66,7 +56,6 @@ abstract class pdo_moodle_database extends moodle_database {
 
     public function execute($sql, array $params=null) {
         try {
-            //$this->reset_columns(); // TODO: do we need to clean the cache here??
             list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
             $sth = $this->dbh->prepare($sql);
             return $sth->execute($params);

@@ -100,8 +100,8 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
         return SQL_PARAMS_QM;
     }
 
-    public function get_columns($table) {
-        if (isset($this->columns[$table])) {
+    public function get_columns($table, $usecache=true) {
+        if ($usecache and isset($this->columns[$table])) {
             return $this->columns[$table];
         }
 

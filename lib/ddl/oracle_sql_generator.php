@@ -338,7 +338,7 @@ class oracle_sql_generator extends sql_generator {
         $fieldname = $xmldb_field->getName();
 
     /// Take a look to field metadata
-        $meta = $this->mdb->get_columns($xmldb_table->getName());
+        $meta = $this->mdb->get_columns($tablename, false);
         $metac = $meta[$fieldname];
         $oldmetatype = $metac->meta_type;
 

@@ -39,11 +39,11 @@ function execute_sql($command, $feedback=true) {
         }
     }
 
-    $DB->reset_columns();  // Clear out the cache, just in case changes were made to table structures
-
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     $rs = $db->Execute($command);
+
+    $DB->reset_columns();  // Clear out the cache, just in case changes were made to table structures
 
     $db->debug = $olddebug;
 

@@ -10,7 +10,6 @@ require_once($CFG->libdir.'/dml/adodb_moodle_recordset.php');
 abstract class adodb_moodle_database extends moodle_database {
 
     protected $db;
-    protected $columns = array(); // I wish we had a shared memory cache for this :-(
 
     /**
      * Returns localised database type name
@@ -137,8 +136,8 @@ abstract class adodb_moodle_database extends moodle_database {
         return $indexes;
     }
 
-    public function get_columns($table) {
-        if (isset($this->columns[$table])) {
+    public function get_columns($table, $usecache=true) {
+        if ($usecache and isset($this->columns[$table])) {
             return $this->columns[$table];
         }
 
@@ -155,14 +154,6 @@ abstract class adodb_moodle_database extends moodle_database {
         }
 
         return $this->columns[$table];
-    }
-
-    public function reset_columns($table=null) {
-        if ($table) {
-            unset($this->columns[$table]);
-        } else {
-            $this->columns[$table] = array();
-        }
     }
 
     public function get_last_error() {
@@ -206,6 +197,8 @@ abstract class adodb_moodle_database extends moodle_database {
             $result = false;
             $this->report_error($sql);
         }
+        // structure changed, reset columns cache
+        $this->reset_columns();
         return $result;
     }
 

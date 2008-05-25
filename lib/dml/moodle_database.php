@@ -9,6 +9,8 @@ abstract class moodle_database {
     // manipulates the db structure
     protected $database_manager;
 
+    protected $columns = array(); // I wish we had a shared memory cache for this :-(
+
     // db connection options
     protected $dbhost;
     protected $dbuser;
@@ -319,16 +321,19 @@ abstract class moodle_database {
     /**
      * Returns datailed information about columns in table. This information is cached internally.
      * @param string $table name
+     * @param bool $usecache
      * @return array array of database_column_info objects indexed with column names
      */
-    public abstract function get_columns($table);
+    public abstract function get_columns($table, $usecache=true);
 
     /**
      * Reset internal column details cache
      * @param string $table - empty means all, or one if name of table given
      * @return void
      */
-    public abstract function reset_columns($table=null);
+    public function reset_columns() {
+        $this->columns[] = array();
+    }
 
     /**
      * Returns sql generator used for db manipulation.

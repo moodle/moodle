@@ -255,14 +255,10 @@ class mysql_sql_generator extends sql_generator {
      */
     public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
 
-        global $db;
-
         $tablename = $xmldb_table->getName($xmldb_table);
 
-        $this->mdb->reset_columns($tablename);
-
     /// Fetch all the columns in the table
-        if (!$columns = $this->mdb->get_columns($tablename)) {
+        if (!$columns = $this->mdb->get_columns($tablename, false)) {
             return array();
         }
 

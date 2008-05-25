@@ -84,8 +84,6 @@ class database_manager {
             notify('<strong>' . get_string('error') . '</strong>');
         }
 
-        $this->mdb->reset_columns();  // Clear out the cache, just in case changes were made to table structures
-
         return $result;
     }
 
@@ -150,8 +148,7 @@ class database_manager {
         }
 
     /// Get list of fields in table
-        $this->mdb->reset_columns($tablename); // better reset before testing
-        $columns = $this->mdb->get_columns($tablename);
+        $columns = $this->mdb->get_columns($tablename, false);
 
         $exists = array_key_exists($fieldname,  $columns);
 
