@@ -1035,6 +1035,9 @@ table.quizreviewsummary th.cell {
 table.quizreviewsummary td.cell {
     background: #fafafa;
 }
+.mod-quiz .highlightgraded {
+    background:yellow;
+}
 
 /***
  *** Modules: Resource
