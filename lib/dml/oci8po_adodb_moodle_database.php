@@ -219,8 +219,6 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
             return false;
         }
 
-        $this->oracle_dirty_hack($table, $dataobject); /// Convert object to the correct "empty" values for Oracle DB
-
         $columns = $this->get_columns($table);
         $cleaned = array();
         $clobs   = array();
@@ -230,6 +228,10 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
             if (!isset($columns[$field])) { /// Non-existing table field, skip it
                 continue;
             }
+        /// Apply Oracle dirty hack to value, to have "correct" empty values for Oracle
+            $value = $this->oracle_dirty_hack($table, $field, $value);
+
+        /// Get column metadata
             $column = $columns[$field];
             if ($column->meta_type == 'B') { /// BLOB columns need to be updated apart
                 if (!is_null($value)) {      /// If value not null, add it to the list of BLOBs to update later
@@ -302,8 +304,6 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
 
         unset($dataobject->id);
 
-        $this->oracle_dirty_hack($table, $dataobject); /// Convert object to the correct "empty" values for Oracle DB
-
         $columns = $this->get_columns($table);
         $cleaned = array();
         $blobs = array();
@@ -313,6 +313,10 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
             if (!isset($columns[$field])) { /// Non-existing table field, skip it
                 continue;
             }
+        /// Apply Oracle dirty hack to value, to have "correct" empty values for Oracle
+            $value = $this->oracle_dirty_hack($table, $field, $value);
+
+        /// Get column metadata
             $column = $columns[$field];
             if ($column->meta_type == 'B') { /// BLOBs columns need to be updated apart
                 if (!is_null($value)) {      /// If value not null, add it to the list of BLOBs to update later
@@ -382,11 +386,10 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         }
         list($select, $params, $type) = $this->fix_sql_params($select, $params);
 
-        $dataobject = new StdClass;
-        $dataobject->{$newfield} = $newvalue;
-        $this->oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
-        $newvalue = $dataobject->{$newfield};
+    /// Apply Oracle dirty hack to value, to have "correct" empty values for Oracle
+        $newvalue = $this->oracle_dirty_hack($table, $newfield, $newvalue);
 
+    /// Get column metadata
         $columns = $this->get_columns($table);
         $column = $columns[$newfield];
 
@@ -517,21 +520,20 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
      * Note that this function is 100% private and should be used, exclusively by DML functions
      * in this file. Also, this is considered a DIRTY HACK to be removed when possible. (stronk7)
      *
-     * This function is private and must not be used outside dmllib at all
+     * This function is private and must not be used outside this driver at all
      *
      * @param $table string the table where the record is going to be inserted/updated (without prefix)
-     * @param $dataobject object the object to be inserted/updated
-     * @param $usecache boolean flag to determinate if we must use the per request cache of metadata
-     *        true to use it, false to ignore and delete it
+     * @param $field string the field where the record is going to be inserted/updated
+     * @param $value mixed the value to be inserted/updated
      */
-    private function oracle_dirty_hack ($table, &$dataobject, $usecache = true) {
+    private function oracle_dirty_hack ($table, $field, $value) {
 
-        global $CFG, $db, $metadata_cache;
-
-    /// Init and delete metadata cache
-        if (!isset($metadata_cache) || !$usecache) {
-            $metadata_cache = array();
+    /// Get metadata
+        $columns = $this->get_columns($table);
+        if (!isset($columns[$field])) {
+            return $value;
         }
+        $column = $columns[$field];
 
     /// For Oracle DB, empty strings are converted to NULLs in DB
     /// and this breaks a lot of NOT NULL columns currenty Moodle. In the future it's
@@ -544,49 +546,45 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
     /// In the oppsite, when retrieving records from Oracle, we'll decode " " back to
     /// empty strings to allow everything to work properly. DIRTY HACK.
 
-    /// Get Meta info to know what to change, using the cached meta if exists
-        if (!isset($metadata_cache[$table])) {
-            $metadata_cache[$table] = array_change_key_case($db->MetaColumns($CFG->prefix . $table), CASE_LOWER);
+    /// If the field ins't VARCHAR or CLOB, skip
+        if ($column->meta_type != 'C' and $column->meta_type != 'X') {
+            return $value;
         }
-        $columns = $metadata_cache[$table];
-    /// Iterate over all the fields in the insert, transforming values
-    /// in the best possible form
-        foreach ($dataobject as $fieldname => $fieldvalue) {
-        /// If the field doesn't exist in metadata, skip
-            if (!isset($columns[strtolower($fieldname)])) {
-                continue;
-            }
-        /// If the field ins't VARCHAR or CLOB, skip
-            if ($columns[strtolower($fieldname)]->type != 'VARCHAR2' && $columns[strtolower($fieldname)]->type != 'CLOB') {
-                continue;
-            }
-        /// If the field isn't NOT NULL, skip (it's nullable, so accept empty values)
-            if (!$columns[strtolower($fieldname)]->not_null) {
-                continue;
-            }
-        /// If the value isn't empty, skip
-            if (!empty($fieldvalue)) {
-                continue;
-            }
-        /// Now, we have one empty value, going to be inserted to one NOT NULL, VARCHAR2 or CLOB field
-        /// Try to get the best value to be inserted
 
-        /// The '0' string doesn't need any transformation, skip
-            if ($fieldvalue === '0') {
-                continue;
-            }
-
-        /// Transformations start
-            if (gettype($fieldvalue) == 'boolean') {
-                $dataobject->$fieldname = '0'; /// Transform false to '0' that evaluates the same for PHP
-            } else if (gettype($fieldvalue) == 'integer') {
-                $dataobject->$fieldname = '0'; /// Transform 0 to '0' that evaluates the same for PHP
-            } else if (gettype($fieldvalue) == 'NULL') {
-                $dataobject->$fieldname = '0'; /// Transform NULL to '0' that evaluates the same for PHP
-            } else if ($fieldvalue === '') {
-                $dataobject->$fieldname = ' '; /// Transform '' to ' ' that DONT'T EVALUATE THE SAME
-                                               /// (we'll transform back again on get_records_XXX functions and others)!!
-            }
+    /// If the field isn't NOT NULL, skip (it's nullable, so accept empty-null values)
+        if (!$column->not_null) {
+            return $value;
         }
+
+    /// If the value isn't empty, skip
+        if (!empty($value)) {
+            return $value;
+        }
+
+    /// Now, we have one empty value, going to be inserted to one NOT NULL, VARCHAR2 or CLOB field
+    /// Try to get the best value to be inserted
+
+    /// The '0' string doesn't need any transformation, skip
+        if ($value === '0') {
+            return $value;
+        }
+
+    /// Transformations start
+        if (gettype($value) == 'boolean') {
+            return '0'; /// Transform false to '0' that evaluates the same for PHP
+
+        } else if (gettype($value) == 'integer') {
+            return '0'; /// Transform 0 to '0' that evaluates the same for PHP
+
+        } else if (gettype($value) == 'NULL') {
+            return '0'; /// Transform NULL to '0' that evaluates the same for PHP
+
+        } else if ($value === '') {
+            return ' '; /// Transform '' to ' ' that DONT'T EVALUATE THE SAME
+                        /// (we'll transform back again on get_records_XXX functions and others)!!
+        }
+
+    /// Fail safe to original value
+        return $value;
     }
 }
