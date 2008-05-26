@@ -39,9 +39,6 @@ function quiz_get_newgraded_states($attemptids, $idxattemptq = true){
 
 function quiz_get_average_grade_for_questions($quiz, $userids){
     global $CFG;
-    $gradedevents = QUESTION_EVENTGRADE.','.
-                    QUESTION_EVENTCLOSEANDGRADE.','.
-                    QUESTION_EVENTMANUALGRADE;
     $qmfilter = quiz_report_qm_filter_subselect($quiz, 'qa.userid');
     $questionavgssql = "SELECT qs.question, AVG(qs.grade) FROM " .
             "{$CFG->prefix}question_sessions qns, " .
@@ -51,10 +48,29 @@ function quiz_get_average_grade_for_questions($quiz, $userids){
             "qa.quiz = {$quiz->id} AND " .
             ($qmfilter?$qmfilter.' AND ':'').
             "qa.userid IN ({$userids}) AND " .
-            "qs.event IN ($gradedevents) AND ".
+            "qs.event IN (".QUESTION_EVENTS_GRADED.") AND ".
             "qns.newgraded = qs.id GROUP BY qs.question";
     return get_records_sql_menu($questionavgssql);
 }
+
+function quiz_get_total_qas_graded_and_ungraded($quiz, $questionids, $userids){
+    global $CFG;
+    $sql = "SELECT qs.question, COUNT(1) AS totalattempts, " .
+            "SUM(qs.event IN (".QUESTION_EVENTS_GRADED.")) AS gradedattempts " .
+            "FROM " .
+            "{$CFG->prefix}quiz_attempts qa, " .
+            "{$CFG->prefix}question_sessions qns, " .
+            "{$CFG->prefix}question_states qs " .
+            "WHERE " .
+            "qa.quiz = {$quiz->id} AND " .
+            "qa.userid IN ({$userids}) AND " .
+            "qns.attemptid = qa.uniqueid AND " .
+            "qns.newgraded = qs.id AND " .
+            "qs.question IN ({$questionids}) " .
+            "GROUP BY qs.question";
+    return get_records_sql($sql);
+}
+
 function quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz, $download){
     $row = array();
     if (!$avggradebyq){

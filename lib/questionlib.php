@@ -33,6 +33,10 @@ define('QUESTION_EVENTCLOSEANDGRADE', '6'); // Moodle has graded the responses. 
 define('QUESTION_EVENTSUBMIT', '7');    // The student response has been submitted but it has not yet been marked
 define('QUESTION_EVENTCLOSE', '8');     // The response has been submitted and the session has been closed, either because the student requested it or because Moodle did it (e.g. because of a timelimit). The responses have not been graded.
 define('QUESTION_EVENTMANUALGRADE', '9');   // Grade was entered by teacher
+
+define('QUESTION_EVENTS_GRADED', QUESTION_EVENTGRADE.','.
+                    QUESTION_EVENTCLOSEANDGRADE.','.
+                    QUESTION_EVENTMANUALGRADE);
 /**#@-*/
 
 /**#@+
@@ -1059,9 +1063,8 @@ function save_question_session(&$question, &$state) {
 * @param object $state
 */
 function question_state_is_graded($state) {
-    return ($state->event == QUESTION_EVENTGRADE
-         or $state->event == QUESTION_EVENTCLOSEANDGRADE
-         or $state->event == QUESTION_EVENTMANUALGRADE);
+    $gradedevents = explode(',', QUESTION_EVENTS_GRADED);
+    return (in_array($state->event, $gradedevents));
 }
 
 /**

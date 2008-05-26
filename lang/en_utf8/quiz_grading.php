@@ -4,6 +4,7 @@
 
 $string['essayonly'] = 'The following questions need to be graded manually';
 $string['grading'] = 'Manual grading';
+$string['gradeall'] = 'Grade all $a attempts';
 $string['gradingnotallowed'] = 'You do not have permission to manually grade responses in this quiz';
-
+$string['questiontitle'] = 'Question $a->number : \"$a->name\" ($a->gradedattempts / $a->totalattempts attempts graded).';
 ?>
