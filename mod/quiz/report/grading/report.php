@@ -148,6 +148,8 @@ class quiz_report extends quiz_default_report {
             groups_print_activity_menu($this->cm, $this->viewurl->out(false, array('userid'=>0, 'attemptid'=>0)));
         }
 
+        echo '<div class="quizattemptcounts">' . quiz_num_attempt_summary($quiz, $cm, true, $currentgroup) . '</div>';
+
         $this->users     = get_users_by_capability($this->context, 'mod/quiz:attempt','','','','',$currentgroup,'',false);
         $this->userids   = implode(',', array_keys($this->users));
         if(empty($this->users)) {
