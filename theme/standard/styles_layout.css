@@ -3904,6 +3904,7 @@ table.quizreviewsummary td.cell {
 #mod-quiz-edit #page .controls,
 #mod-quiz-edit #page .quizattemptcounts
 {
+  clear : left;
   text-align: center;
 }
 #mod-quiz-edit .quizquestions h2 {
