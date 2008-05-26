@@ -181,16 +181,18 @@ class quiz_report extends quiz_default_report {
             $menu = popup_form(($qurl->out()).'&amp;questionid=',$qmenu, 'questionid', $questionid, 'choose', '', '', true);
             echo '<div class="mdl-align" style="clear:left;">'.$menu.'</div>';
         }
-        if ($questionid){
-            $a= new object();
-            $a->number = $question->number;
-            $a->name = $question->name;
-            $a->gradedattempts =$qattempts[$question->id]->gradedattempts;
-            $a->totalattempts =$qattempts[$question->id]->totalattempts;
-            $a->openspan ='<span class="highlightgraded">';
-            $a->closespan ='</span>';
-            print_heading(get_string('questiontitle', 'quiz_grading', $a));
+        if (!$questionid){
+            return true;
         }
+        $a= new object();
+        $a->number = $question->number;
+        $a->name = $question->name;
+        $a->gradedattempts =$qattempts[$question->id]->gradedattempts;
+        $a->totalattempts =$qattempts[$question->id]->totalattempts;
+        $a->openspan ='<span class="highlightgraded">';
+        $a->closespan ='</span>';
+        print_heading(get_string('questiontitle', 'quiz_grading', $a));
+
         // our 3 different views
         // the first one displays all of the manually graded questions in the quiz
         // with the number of ungraded attempts for each question
@@ -204,7 +206,7 @@ class quiz_report extends quiz_default_report {
         $ungraded = $qattempts[$questionid]->totalattempts- $qattempts[$questionid]->gradedattempts;
         if ($gradeungraded || $gradeall || $userid || $attemptid){
             $this->print_questions_and_form($quiz, $question, $userid, $attemptid, $gradeungraded, $ungraded);
-        } else if ($questionid){
+        } else {
             $this->view_question($quiz, $question, $qattempts[$questionid]->totalattempts, $ungraded);
         }
         return true;
