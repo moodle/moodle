@@ -163,12 +163,13 @@ function quiz_report_qm_filter_subselect($quiz, $useridsql = 'u.id'){
 }
 
 function quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist){
+    global $CFG;
     $sql = "SELECT
         FLOOR(qg.grade/$bandwidth) AS band,
         COUNT(1) AS num
     FROM
-        mdl_quiz_grades qg, 
-        mdl_quiz q
+        {$CFG->prefix}quiz_grades qg, 
+        {$CFG->prefix}quiz q
     WHERE qg.quiz = q.id AND qg.quiz = $quizid AND qg.userid IN ($useridlist)
     GROUP BY band
     ORDER BY band";
