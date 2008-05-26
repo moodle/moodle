@@ -358,8 +358,8 @@ class moodle_url {
     function remove_params(){
         if ($thisargs = func_get_args()){
             foreach ($thisargs as $arg){
-                if (isset($this->params->$arg)){
-                    unset($this->params->$arg);
+                if (isset($this->params[$arg])){
+                    unset($this->params[$arg]);
                 }
             }
         } else { // no args
