@@ -210,7 +210,7 @@ class grade_item_test extends grade_test {
         $this->assertEqual($grade_item->sortorder, 6);
 
         $after = grade_item::fetch(array('id'=>$this->grade_items[6]->id));
-        $this->assertEqual($after->sortorder, 7);
+        $this->assertEqual($after->sortorder, 8);
     }
 
     function test_grade_item_get_name() {

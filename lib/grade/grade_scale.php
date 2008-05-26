@@ -236,14 +236,15 @@ class grade_scale extends grade_object {
         global $CFG;
 
         // count grade items excluding the
-        $sql = "SELECT COUNT(id) FROM {$CFG->prefix}grade_items WHERE scaleid = {$this->id} AND outcomeid IS NULL";
-        if (count_records_sql($sql)) {
+        $params = array($this->id);
+        $sql = "SELECT COUNT(id) FROM {grade_items} WHERE scaleid = ? AND outcomeid IS NULL";
+        if ($DB->count_records_sql($sql, $params)) {
             return true;
         }
 
         // count outcomes
-        $sql = "SELECT COUNT(id) FROM {$CFG->prefix}grade_outcomes WHERE scaleid = {$this->id}";
-        if (count_records_sql($sql)) {
+        $sql = "SELECT COUNT(id) FROM {grade_outcomes} WHERE scaleid = ?";
+        if ($DB->count_records_sql($sql, $params)) {
             return true;
         }
 

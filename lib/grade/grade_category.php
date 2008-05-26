@@ -417,31 +417,34 @@ class grade_category extends grade_object {
         if (empty($depends_on)) {
             $items = false;
         } else {
-            $gis = implode(',', $depends_on);
+            list($usql, $params) = $DB->get_in_or_equal($depends_on);
             $sql = "SELECT *
-                      FROM {$CFG->prefix}grade_items
-                     WHERE id IN ($gis)";
-            $items = $DB->get_records_sql($sql);
-        }
-
-        if ($userid) {
-            $usersql = "AND g.userid=$userid";
-        } else {
-            $usersql = "";
+                      FROM {grade_items}
+                     WHERE id $usql";
+            $items = $DB->get_records_sql($sql, $params);
         }
 
         $grade_inst = new grade_grade();
         $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
 
         // where to look for final grades - include grade of this item too, we will store the results there
-        $gis = implode(',', array_merge($depends_on, array($this->grade_item->id)));
+        $gis = array_merge($depends_on, array($this->grade_item->id));
+        list($usql, $params) = $DB->get_in_or_equal($gis);
+
+        if ($userid) {
+            $usersql = "AND g.userid=?";
+            $params[] = $userid;
+        } else {
+            $usersql = "";
+        }
+
         $sql = "SELECT $fields
-                  FROM {$CFG->prefix}grade_grades g, {$CFG->prefix}grade_items gi
-                 WHERE gi.id = g.itemid AND gi.id IN ($gis) $usersql
+                  FROM {grade_grades} g, {grade_items} gi
+                 WHERE gi.id = g.itemid AND gi.id $usql $usersql
               ORDER BY g.userid";
 
         // group the results by userid and aggregate the grades for this user
-        if ($rs = $DB->get_recordset_sql($sql)) {
+        if ($rs = $DB->get_recordset_sql($sql, $params)) {
             $prevuser = 0;
             $grade_values = array();
             $excluded     = array();
@@ -1294,9 +1297,10 @@ class grade_category extends grade_object {
      * @static
      */
     public static function updated_forced_settings() {
-        global $CFG;
-        $sql = "UPDATE {$CFG->prefix}grade_items SET needsupdate=1 WHERE itemtype='course' or itemtype='category'";
-        execute_sql($sql, false);
+        global $CFG, $DB;
+        $params = array(1, 'course', 'category');
+        $sql = "UPDATE {grade_items} SET needsupdate=? WHERE itemtype=? or itemtype=?";
+        $DB->execute($sql, $params);
     }
 }
 ?>

@@ -91,8 +91,9 @@ class grade_outcome extends grade_object {
      * @return boolean success
      */
     public function delete($source=null) {
+        global $DB;
         if (!empty($this->courseid)) {
-            delete_records('grade_outcomes_courses', 'outcomeid', $this->id, 'courseid', $this->courseid);
+            $DB->delete_records('grade_outcomes_courses', array('outcomeid' => $this->id, 'courseid' => $this->courseid));
         }
         return parent::delete($source);
     }
@@ -147,7 +148,7 @@ class grade_outcome extends grade_object {
             return false;
         }
 
-        if (!record_exists('grade_outcomes_courses', 'courseid', $courseid, 'outcomeid', $this->id)) {
+        if (!$DB->record_exists('grade_outcomes_courses', array('courseid' => $courseid, 'outcomeid' => $this->id))) {
             $goc = new object();
             $goc->courseid  = $courseid;
             $goc->outcomeid = $this->id;
@@ -225,12 +226,13 @@ class grade_outcome extends grade_object {
         global $CFG, $DB;
 
         $result = array();
+        $params = array($courseid);
         $sql = "SELECT go.*
-                  FROM {$CFG->prefix}grade_outcomes go, {$CFG->prefix}grade_outcomes_courses goc
-                 WHERE go.id = goc.outcomeid AND goc.courseid = {$courseid}
+                  FROM {grade_outcomes} go, {grade_outcomes_courses} goc
+                 WHERE go.id = goc.outcomeid AND goc.courseid = ?
               ORDER BY go.id ASC";
 
-        if ($datas = $DB->get_records_sql($sql)) {
+        if ($datas = $DB->get_records_sql($sql, $params)) {
             foreach($datas as $data) {
                 $instance = new grade_outcome();
                 grade_object::set_properties($instance, $data);
@@ -279,13 +281,13 @@ class grade_outcome extends grade_object {
      * @return int
      */
     public function get_course_uses_count() {
-        global $CFG;
+        global $DB;
 
         if (!empty($this->courseid)) {
             return 1;
         }
 
-        return count_records('grade_outcomes_courses', 'outcomeid', $this->id);
+        return $DB->count_records('grade_outcomes_courses', array('outcomeid' => $this->id));
     }
 
     /**
@@ -293,7 +295,8 @@ class grade_outcome extends grade_object {
      * @return int
      */
     public function get_item_uses_count() {
-        return count_records('grade_items', 'outcomeid', $this->id);
+        global $DB;
+        return $DB->count_records('grade_items', array('outcomeid' => $this->id));
     }
 
     /**
@@ -321,24 +324,27 @@ class grade_outcome extends grade_object {
             return false;
         }
 
+        $params = array($this->id);
+
         $wheresql = '';
         if (!is_null($courseid)) {
-            $wheresql = " AND {$CFG->prefix}grade_items.courseid = $courseid ";
+            $wheresql = " AND {grade_items}.courseid = ? ";
+            $params[] = $courseid;
         }
 
         $selectadd = '';
         if ($items !== false) {
-            $selectadd = ", {$CFG->prefix}grade_items.* ";
+            $selectadd = ", {grade_items}.* ";
         }
 
         $sql = "SELECT finalgrade $selectadd
-                  FROM {$CFG->prefix}grade_grades, {$CFG->prefix}grade_items, {$CFG->prefix}grade_outcomes
-                 WHERE {$CFG->prefix}grade_outcomes.id = {$CFG->prefix}grade_items.outcomeid
-                   AND {$CFG->prefix}grade_items.id = {$CFG->prefix}grade_grades.itemid
-                   AND {$CFG->prefix}grade_outcomes.id = $this->id
+                  FROM {grade_grades}, {grade_items}, {grade_outcomes}
+                 WHERE {grade_outcomes}.id = {grade_items}.outcomeid
+                   AND {grade_items}.id = {grade_grades}.itemid
+                   AND {grade_outcomes}.id = ?
                    $wheresql";
 
-        $grades = $DB->get_records_sql($sql);
+        $grades = $DB->get_records_sql($sql, $params);
         $retval = array();
 
         if ($average !== false && count($grades) > 0) {

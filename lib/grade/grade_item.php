@@ -434,7 +434,7 @@ class grade_item extends grade_object {
             if (!empty($cm->idnumber)) {
                 return false;
             }
-            if ($DB->set_field('course_modules', 'idnumber', addslashes($idnumber), array('id' => $cm->id))) {
+            if ($DB->set_field('course_modules', 'idnumber', $idnumber, array('id' => $cm->id))) {
                 $this->idnumber = $idnumber;
                 return $this->update();
             }
@@ -608,9 +608,10 @@ class grade_item extends grade_object {
      * @param return int Number of hidden grades
      */
     public function has_hidden_grades($groupsql="", $groupwheresql="") {
-        global $CFG, $DB;
-        return $DB->get_field_sql("SELECT COUNT(*) FROM {$CFG->prefix}grade_grades g LEFT JOIN "
-                            ."{$CFG->prefix}user u ON g.userid = u.id $groupsql WHERE itemid = $this->id AND hidden = 1 $groupwheresql");
+        global $DB;
+        $params = array($this->id);
+        return $DB->get_field_sql("SELECT COUNT(*) FROM {grade_grades} g LEFT JOIN "
+                            ."{user} u ON g.userid = u.id $groupsql WHERE itemid = ? AND hidden = 1 $groupwheresql", $params);
     }
 
     /**
@@ -677,7 +678,8 @@ class grade_item extends grade_object {
         $grade_inst = new grade_grade();
         $fields = implode(',', $grade_inst->required_fields);
         if ($userid) {
-            $rs = $DB->get_recordset_select('grade_grades', "itemid={$this->id} AND userid=$userid", null, '', $fields);
+            $params = array($this->id, $userid);
+            $rs = $DB->get_recordset_select('grade_grades', "itemid=? AND userid=?", $params, '', $fields);
         } else {
             $rs = $DB->get_recordset('grade_grades', array('itemid' => $this->id), '', $fields);
         }
@@ -1154,13 +1156,14 @@ class grade_item extends grade_object {
     }
 
     public function move_after_sortorder($sortorder) {
-        global $CFG;
+        global $CFG, $DB;
 
         //make some room first
-        $sql = "UPDATE {$CFG->prefix}grade_items
+        $params = array($sortorder, $this->courseid);
+        $sql = "UPDATE {grade_items}
                    SET sortorder = sortorder + 1
-                 WHERE sortorder > $sortorder AND courseid = {$this->courseid}";
-        execute_sql($sql, false);
+                 WHERE sortorder > ? AND courseid = ?";
+        $DB->execute($sql, $params);
 
         $this->set_sortorder($sortorder + 1);
     }
@@ -1244,6 +1247,8 @@ class grade_item extends grade_object {
             }
 
         } else if ($grade_category = $this->load_item_category()) {
+            $params = array();
+
             //only items with numeric or scale values can be aggregated
             if ($this->gradetype != GRADE_TYPE_VALUE and $this->gradetype != GRADE_TYPE_SCALE) {
                 $this->dependson_cache = array();
@@ -1259,40 +1264,47 @@ class grade_item extends grade_object {
             }
 
             if (empty($CFG->grade_includescalesinaggregation)) {
-                $gtypes = "gi.gradetype = ".GRADE_TYPE_VALUE;
+                $gtypes = "gi.gradetype = ?";
+                $params[] = GRADE_TYPE_VALUE;
             } else {
-                $gtypes = "(gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")";
+                $gtypes = "(gi.gradetype = ? OR gi.gradetype = ?)";
+                $params[] = GRADE_TYPE_VALUE;
+                $params[] = GRADE_TYPE_SCALE;
             }
 
             if ($grade_category->aggregatesubcats) {
                 // return all children excluding category items
+                $params[] = $grade_category->id;
                 $sql = "SELECT gi.id
-                          FROM {$CFG->prefix}grade_items gi
+                          FROM {grade_items} gi
                          WHERE $gtypes
                                $outcomes_sql
                                AND gi.categoryid IN (
                                   SELECT gc.id
-                                    FROM {$CFG->prefix}grade_categories gc
-                                   WHERE gc.path LIKE '%/{$grade_category->id}/%')";
+                                    FROM {grade_categories} gc
+                                   WHERE gc.path LIKE '%?%')";
 
             } else {
+                $params[] = $grade_category->id;
+                $params[] = $grade_category->id;
+                $params[] = GRADE_TYPE_VALUE;
+                $params[] = GRADE_TYPE_SCALE;
                 $sql = "SELECT gi.id
-                          FROM {$CFG->prefix}grade_items gi
-                         WHERE gi.categoryid = {$grade_category->id}
-                               AND $gtypes
+                          FROM {grade_items} gi
+                         WHERE $gtypes
+                               AND gi.categoryid = ?
                                $outcomes_sql
-
                         UNION
 
                         SELECT gi.id
-                          FROM {$CFG->prefix}grade_items gi, {$CFG->prefix}grade_categories gc
+                          FROM {grade_items} gi, {grade_categories} gc
                          WHERE (gi.itemtype = 'category' OR gi.itemtype = 'course') AND gi.iteminstance=gc.id
-                               AND gc.parent = {$grade_category->id}
+                               AND gc.parent = ?
                                AND $gtypes
                                $outcomes_sql";
             }
 
-            if ($children = $DB->get_records_sql($sql)) {
+            if ($children = $DB->get_records_sql($sql, $params)) {
                 $this->dependson_cache = array_keys($children);
                 return $this->dependson_cache;
             } else {
@@ -1619,14 +1631,15 @@ class grade_item extends grade_object {
         }
 
         // precreate grades - we need them to exist
+        $params = array($this->id);
         $sql = "SELECT DISTINCT go.userid
-                  FROM {$CFG->prefix}grade_grades go
-                       JOIN {$CFG->prefix}grade_items gi
+                  FROM {grade_grades} go
+                       JOIN {grade_items} gi
                        ON gi.id = go.itemid
-                       LEFT OUTER JOIN {$CFG->prefix}grade_grades g
-                       ON (g.userid = go.userid AND g.itemid = $this->id)
+                       LEFT OUTER JOIN {grade_grades} g
+                       ON (g.userid = go.userid AND g.itemid = ?)
                  WHERE gi.id <> $this->id AND g.id IS NULL";
-        if ($missing = $DB->get_records_sql($sql)) {
+        if ($missing = $DB->get_records_sql($sql, $params)) {
             foreach ($missing as $m) {
                 $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$m->userid), false);
                 $grade->grade_item =& $this;
@@ -1647,10 +1660,12 @@ class grade_item extends grade_object {
 
         // where to look for final grades?
         // this itemid is added so that we use only one query for source and final grades
-        $gis = implode(',', array_merge($useditems, array($this->id)));
+        $gis = array_merge($useditems, array($this->id));
+        list($usql, $params) = $DB->get_in_or_equal($gis);
 
         if ($userid) {
-            $usersql = "AND g.userid=$userid";
+            $usersql = "AND g.userid=?";
+            $params[] = $userid;
         } else {
             $usersql = "";
         }
@@ -1658,15 +1673,16 @@ class grade_item extends grade_object {
         $grade_inst = new grade_grade();
         $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
 
+        $params[] = $this->courseid;
         $sql = "SELECT $fields
-                  FROM {$CFG->prefix}grade_grades g, {$CFG->prefix}grade_items gi
-                 WHERE gi.id = g.itemid AND gi.courseid={$this->courseid} AND gi.id IN ($gis) $usersql
-              ORDER BY g.userid";
+                  FROM {grade_grades} g, {grade_items} gi
+                 WHERE gi.id = g.itemid AND gi.id $usql $usersql AND gi.courseid=?
+                 ORDER BY g.userid";
 
         $return = true;
 
         // group the grades by userid and use formula on the group
-        if ($rs = $DB->get_recordset_sql($sql)) {
+        if ($rs = $DB->get_recordset_sql($sql, $params)) {
             $prevuser = 0;
             $grade_records   = array();
             $oldgrade    = null;
@@ -1808,13 +1824,13 @@ class grade_item extends grade_object {
             $grade_items = array();
 
         } else {
-            $gis = implode(',', $useditems);
-
+            list($usql, $params) = $DB->get_in_or_equal($useditems);
+            $params[] = $this->courseid;
             $sql = "SELECT gi.*
-                      FROM {$CFG->prefix}grade_items gi
-                     WHERE gi.id IN ($gis) and gi.courseid={$this->courseid}"; // from the same course only!
+                      FROM {grade_items} gi
+                     WHERE gi.id $usql and gi.courseid=?"; // from the same course only!
 
-            if (!$grade_items = $DB->get_records_sql($sql)) {
+            if (!$grade_items = $DB->get_records_sql($sql, $params)) {
                 $grade_items = array();
             }
         }

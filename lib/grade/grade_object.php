@@ -154,6 +154,8 @@ abstract class grade_object {
         $wheresql = array();
 
         // remove incorrect params
+        $named_params = array();
+
         foreach ($params as $var=>$value) {
             if (!in_array($var, $instance->required_fields) and !array_key_exists($var, $instance->optional_fields)) {
                 continue;
@@ -161,8 +163,8 @@ abstract class grade_object {
             if (is_null($value)) {
                 $wheresql[] = " $var IS NULL ";
             } else {
-                $value = addslashes($value);
-                $wheresql[] = " $var = '$value' ";
+                $wheresql[] = " $var = ? ";
+                $named_params[] = $value;
             }
         }
 
@@ -173,7 +175,7 @@ abstract class grade_object {
         }
 
         global $DB;
-        if ($datas = $DB->get_records_select($table, $wheresql, array('id'))) {
+        if ($datas = $DB->get_records_select($table, $wheresql, $named_params)) {
             $result = array();
             foreach($datas as $data) {
                 $instance = new $classname();
@@ -202,7 +204,7 @@ abstract class grade_object {
 
         $data = $this->get_record_data();
 
-        if (!$DB->update_record($this->table, addslashes_recursive($data))) {
+        if (!$DB->update_record($this->table, $data)) {
             return false;
         }
 
@@ -213,7 +215,7 @@ abstract class grade_object {
             $data->source       = $source;
             $data->timemodified = time();
             $data->userlogged   = $USER->id;
-            $DB->insert_record($this->table.'_history', addslashes_recursive($data));
+            $DB->insert_record($this->table.'_history', $data);
         }
 
         return true;
@@ -243,7 +245,7 @@ abstract class grade_object {
                 $data->source       = $source;
                 $data->timemodified = time();
                 $data->userlogged   = $USER->id;
-                $DB->insert_record($this->table.'_history', addslashes_recursive($data));
+                $DB->insert_record($this->table.'_history', $data);
             }
             return true;
 
@@ -287,7 +289,7 @@ abstract class grade_object {
 
         $data = $this->get_record_data();
 
-        if (!$this->id = $DB->insert_record($this->table, addslashes_recursive($data))) {
+        if (!$this->id = $DB->insert_record($this->table, $data)) {
             debugging("Could not insert object into db");
             return false;
         }
@@ -304,7 +306,7 @@ abstract class grade_object {
             $data->source       = $source;
             $data->timemodified = time();
             $data->userlogged   = $USER->id;
-            $DB->insert_record($this->table.'_history', addslashes_recursive($data));
+            $DB->insert_record($this->table.'_history', $data);
         }
 
         return $this->id;
