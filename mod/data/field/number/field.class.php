@@ -34,7 +34,12 @@ class data_field_number extends data_field_base {
         $content = new object;
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
-        $content->content = (float)$value;
+        $value = trim($value);
+        if (strlen($value) > 0) {
+            $content->content = floatval($value);
+        } else {
+            $content->content = null;
+        }
 
         if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             $content->id = $oldcontent->id;
