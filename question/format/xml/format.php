@@ -180,7 +180,12 @@ class qformat_xml extends qformat_default {
         $qo->correctfeedback = $this->getpath( $question, array('#','correctfeedback',0,'#','text',0,'#'), '', true );
         $qo->partiallycorrectfeedback = $this->getpath( $question, array('#','partiallycorrectfeedback',0,'#','text',0,'#'), '', true );
         $qo->incorrectfeedback = $this->getpath( $question, array('#','incorrectfeedback',0,'#','text',0,'#'), '', true );
-        
+
+        // There was a time on the 1.8 branch when it could output an empty answernumbering tag, so fix up any found.
+        if (empty($qo->answernumbering)) {
+            $qo->answernumbering = 'abc';
+        }
+
         // run through the answers
         $answers = $question['#']['answer'];  
         $a_count = 0;
