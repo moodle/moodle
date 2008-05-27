@@ -768,7 +768,7 @@ class grade_category extends grade_object {
      * Returns true if category uses special aggregation coeficient
      * @return boolean true if coeficient used
      */
-    private function is_aggregationcoef_used() {
+    public function is_aggregationcoef_used() {
         return ($this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN
              or $this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN
              or $this->aggregation == GRADE_AGGREGATE_SUM);
