@@ -523,7 +523,7 @@ function question_showbank($tabname, $contexts, $pageurl, $cm, $page, $perpage, 
 
     if (optional_param('deleteselected', false, PARAM_BOOL)){ // teacher still has to confirm
         // make a list of all the questions that are selected
-        $rawquestions = (array) data_submitted();
+        $rawquestions = $_REQUEST; // This code is called by both POST forms and GET links, so cannot use data_submitted.
         $questionlist = '';  // comma separated list of ids of questions to be deleted
         $questionnames = ''; // string with names of questions separated by <br /> with
                              // an asterix in front of those that are in use
