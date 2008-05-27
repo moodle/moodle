@@ -151,8 +151,8 @@ function xmldb_feedback_upgrade($oldversion=0) {
     if ($result && $oldversion < 2008042401) { //New version in version.php
         if ($result) {
             $concat_radio    = $DB->sql_concat("'r>>>>>'",'presentation');
-            $concat_check    = $DB->sql_concat("'d>>>>>'",'presentation');
-            $concat_dropdown = $DB->sql_concat("'c>>>>>'",'presentation');
+            $concat_check    = $DB->sql_concat("'c>>>>>'",'presentation');
+            $concat_dropdown = $DB->sql_concat("'d>>>>>'",'presentation');
             
             $update_sql1 = "UPDATE {feedback_item} SET presentation = ".$concat_radio." WHERE typ IN('radio','radiorated')";
             $update_sql2 = "UPDATE {feedback_item} SET presentation = ".$concat_dropdown." WHERE typ IN('dropdown','dropdownrated')";
