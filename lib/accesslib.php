@@ -3334,7 +3334,7 @@ function fetch_context_capabilities($context) {
             $sql = "SELECT *
                       FROM {capabilities}
                      WHERE contextlevel = ".CONTEXT_MODULE." AND component = ?";
-            $params = "mod/$module->name";
+            $params = array("mod/$module->name");
         break;
 
         case CONTEXT_BLOCK: // block caps
@@ -3344,7 +3344,7 @@ function fetch_context_capabilities($context) {
             $sql = "SELECT *
                       FROM {capabilities}
                      WHERE (contextlevel = ".CONTEXT_BLOCK." AND component = 'moodle') OR (component = ?)";
-            $params = "block/$block->name";
+            $params = array("block/$block->name");
         break;
 
         default:
