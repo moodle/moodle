@@ -9,15 +9,15 @@
     $forumid = required_param('forumid', PARAM_INT); // The forum the rated posts are from
 
     if (!$forum = get_record('forum', 'id', $forumid)) {
-        print_error("Course ID was incorrect");
+        print_error('invalidforumid', 'forum');
     }
 
     if (!$course = get_record('course', 'id', $forum->course)) {
-        print_error("Course ID was incorrect");
+        print_error('invalidcourseid');
     }
 
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
-        print_error("Course Module ID was incorrect");
+        print_error('invalidcoursemodule');
     } else {
         $forum->cmidnumber = $cm->id; //MDL-12961
         }
@@ -25,11 +25,11 @@
     require_login($course, false, $cm);
 
     if (isguestuser()) {
-        print_error("Guests are not allowed to rate entries.");
+        print_error('noguestrate', 'forum');
     }
 
     if (!$forum->assessed) {
-        print_error("Rating of items not allowed!");
+        print_error('norate', 'forum');
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -50,7 +50,7 @@
                      WHERE fp.id = '$postid' AND fp.discussion = fd.id AND fd.forum = $forum->id";
 
             if (!$post = get_record_sql($sql)) {
-                print_error("Incorrect postid - $postid");
+                print_error('invalidpostid', 'forum', '', $postid);
             }
 
             $discussionid = $post->discussion;
@@ -71,7 +71,8 @@
                     $oldrating->rating = $rating;
                     $oldrating->time   = time();
                     if (! update_record('forum_ratings', $oldrating)) {
-                        print_error("Could not update an old rating ($post->id = $rating)");
+                        print_error('cannotupdaterate', 'forum', '',
+                                array($post->id, $rating));
                     }
                     forum_update_grades($forum, $post->userid);
                 }
@@ -84,7 +85,8 @@
                 $newrating->rating = $rating;
 
                 if (! insert_record('forum_ratings', $newrating)) {
-                    print_error("Could not insert a new rating ($postid = $rating)");
+                    print_error('cannotinsertrate', 'forum', '',
+                            array($postid, $rating));
                 }
                 forum_update_grades($forum, $post->userid);
             }
@@ -97,7 +99,7 @@
         }
 
     } else {
-        print_error("This page was not accessed correctly");
+        print_error('invalidaccess', 'forum');
     }
 
 ?>
