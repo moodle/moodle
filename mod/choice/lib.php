@@ -269,7 +269,6 @@ WHERE
             $answers = get_records("choice_answers", "optionid", $formanswer);
         }
 
-        $countanswers=0;
         if ($answers) {
             foreach ($answers as $a) { //only return enrolled users.
                 if (has_capability('mod/choice:choose', $context, $a->userid, false)) {
