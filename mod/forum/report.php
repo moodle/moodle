@@ -9,37 +9,37 @@
     $sort = optional_param('sort', '', PARAM_ALPHA);
 
     if (! $post = get_record('forum_posts', 'id', $id)) {
-        print_error("Post ID was incorrect");
+        print_error('invalidpostid','forum');
     }
 
     if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
-        print_error("Discussion ID was incorrect");
+        print_error('invaliddiscussion', 'forum');
     }
 
     if (! $forum = get_record('forum', 'id', $discussion->forum)) {
-        print_error("Forum ID was incorrect");
+        print_error('invalidforumid', 'forum');
     }
 
     if (! $course = get_record('course', 'id', $forum->course)) {
-        print_error("Course ID was incorrect");
+        print_error('invalidcourseid');
     }
 
     if (! $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-        print_error("Course Module ID was incorrect");
+        print_error('invalidcoursemodule');
     }
 
     require_login($course, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (!$forum->assessed) {
-        print_error("This activity does not use ratings");
+        print_error('norate', 'forum');
     }
 
     if (!has_capability('mod/forum:viewrating', $context)) {
-        print_error("You do not have the capability to view post ratings");
+        print_error('noviewrate', 'forum');
     }
     if (!has_capability('mod/forum:viewanyrating', $context) and $USER->id != $post->userid) {
-        print_error("You can only look at results for posts that you made");
+        print_error('noviewanyrate', 'forum');
     }
 
     switch ($sort) {
@@ -58,7 +58,7 @@
     print_header("$strratings: ".format_string($post->subject));
 
     if (!$ratings = forum_get_ratings($post->id, $sqlsort)) {
-        print_error("No ratings for this post: \"".format_string($post->subject)."\"");
+        print_error('noresult', 'forum', '', format_string($post->subject));
 
     } else {
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" style=\"width:100%\">";
