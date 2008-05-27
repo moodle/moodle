@@ -2090,9 +2090,9 @@ function delete_context($contextlevel, $instanceid) {
     // do not use get_context_instance(), because the related object might not exist,
     // or the context does not exist yet and it would be created now
     if ($context = $DB->get_record('context', array('contextlevel'=>$contextlevel, 'instanceid'=>$instanceid))) {
-        $result = delete_records('role_assignments', array('contextid'=>$context->id)) &&
-                  delete_records('role_capabilities', array('contextid'=>$context->id)) &&
-                  delete_records('context', array('id'=>$context->id));
+        $result = $DB->delete_records('role_assignments', array('contextid'=>$context->id)) &&
+                  $DB->delete_records('role_capabilities', array('contextid'=>$context->id)) &&
+                  $DB->delete_records('context', array('id'=>$context->id));
 
         // do not mark dirty contexts if parents unknown
         if (!is_null($context->path) and $context->depth > 0) {
