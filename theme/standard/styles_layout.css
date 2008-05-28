@@ -4240,3 +4240,13 @@ wikiadminactions {
   border: 1px dashed #ddd;
   padding: 3px;
 }
+#add, #remove{
+    width:100px; 
+    height:35px 
+}
+#add{
+    text-align:left;
+}
+#remove{
+    text-align:right;
+}
