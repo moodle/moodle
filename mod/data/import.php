@@ -127,16 +127,27 @@
                         $content = new object();
                         $content->fieldid = $field->id;
                         $content->recordid = $recordid;
+                        if ($field->type == 'textarea') {
+                            // the only field type where HTML is possible
+                            $value = clean_param($value, PARAM_CLEANHTML);
+                        } else {
+                            // remove potential HTML:
+                            $patterns[] = '/</';
+                            $replacements[] = '&lt;';
+                            $patterns[] = '/>/';
+                            $replacements[] = '&gt;';
+                            $value = preg_replace($patterns, $replacements, $value);
+                        }
+                        $value = addslashes($value);
                         // for now, only for "latlong" and "url" fields, but that should better be looked up from
                         // $CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php'
                         // once there is stored how many contents the field can have. 
-                        $value = addslashes($value);
                         if (preg_match("/^(latlong|url)$/", $field->type)) {
-                            $values = explode(" ", clean_param($value, PARAM_NOTAGS), 2);
+                            $values = explode(" ", $value, 2);
                             $content->content  = $values[0];
                             $content->content1 = $values[1];
                         } else {
-                            $content->content = clean_param($value, PARAM_NOTAGS);
+                            $content->content = $value;
                         }
                         $oldcontent = get_record('data_content', 'fieldid', $field->id, 'recordid', $recordid);
                         $content->id = $oldcontent->id;
