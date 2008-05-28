@@ -94,7 +94,7 @@
         $fullmode = false;
     }
 
-/// Check to see if groups are being used in this forum
+/// Check to see if groups are being used in this course
 /// and if so, set $currentgroup to reflect the current group
 
     $groupmode    = groupmode($course);   // Groups are being used
@@ -111,7 +111,7 @@
         print_header("$course->shortname: ".get_string('participants'), $course->fullname,
                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> ".
                      get_string('participants'), "", "", true, "&nbsp;", navmenu($course));
-        print_heading(get_string("notingroup", "forum"));
+        print_heading(get_string("notingroup"));
         print_footer($course);
         exit;
     }
