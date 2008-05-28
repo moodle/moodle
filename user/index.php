@@ -134,7 +134,7 @@
         $mode = MODE_BRIEF;
     }
 
-/// Check to see if groups are being used in this forum
+/// Check to see if groups are being used in this course
 /// and if so, set $currentgroup to reflect the current group
 
     $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
@@ -153,7 +153,7 @@
         $navigation = build_navigation($navlinks);
 
         print_header("$course->shortname: ".get_string('participants'), $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
-        print_heading(get_string("notingroup", "forum"));
+        print_heading(get_string("notingroup"));
         print_footer($course);
         exit;
     }
