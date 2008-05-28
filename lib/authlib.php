@@ -63,7 +63,7 @@ class auth_plugin_base {
      */
     var $userfields = array("firstname", "lastname", "email", "phone1", "phone2", 
             "institution", "department", "address", "city", "country", 
-            "description", "idnumber", "lang");
+            "description", "idnumber", "lang", "url");
 
     /**
 

@@ -136,10 +136,11 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
             $fieldname = get_string('language');
         } elseif (preg_match('/^(.+?)(\d+)$/', $fieldname, $matches)) {
             $fieldname =  get_string($matches[1]) . ' ' . $matches[2];
+        } elseif ($fieldname == 'url') {
+            $fieldname = get_string('webpage');
         } else {
             $fieldname = get_string($fieldname);
-        }
-
+        } 
         if ($retrieveopts) {
             $varname = 'field_map_' . $field;
 
