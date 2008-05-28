@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 /**
  * @author Martin Dougiamas
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -59,11 +59,23 @@ class auth_plugin_base {
     var $authtype;
     /*
      * The fields we can lock and update from/to external authentication backends
-     *
      */
-    var $userfields = array("firstname", "lastname", "email", "phone1", "phone2", 
-            "institution", "department", "address", "city", "country", 
-            "description", "idnumber", "lang", "url");
+    var $userfields = array(
+        'firstname',
+        'lastname',
+        'email',
+        'city',
+        'country',
+        'lang',
+        'description',
+        'url',
+        'idnumber',
+        'institution',
+        'department',
+        'phone1',
+        'phone2',
+        'address'
+    );
 
     /**
 
