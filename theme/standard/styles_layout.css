@@ -4285,3 +4285,13 @@ wikiadminactions {
     padding-left: 7px;
     float: left;
 }
+#add, #remove{
+    width:100px; 
+    height:35px 
+}
+#add{
+    text-align:left;
+}
+#remove{
+    text-align:right;
+}
