@@ -599,7 +599,9 @@ class assignment_upload extends assignment_base {
                         'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                 $submission = $this->get_submission($USER->id);
                 $this->update_grade($submission);
-
+                if (!$this->drafts_tracked()) {
+                    $this->email_teachers($submission);
+                }
             } else {
                 $new_filename = $um->get_new_filename();
                 $this->view_header(get_string('upload'));
