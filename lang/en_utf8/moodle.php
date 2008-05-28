@@ -615,8 +615,8 @@ This is a notification that your enrolment in the course $a->course will expire 
 Please contact $a->teacherstr for any further enquiries.';
 $string['expirythreshold'] = 'Threshold';
 $string['explanation'] = 'Explanation';
-$string['extendenrol'] = 'Extend enrolment';
-$string['groupextendenrol'] = 'Extend enrolment for all';
+$string['extendenrol'] = 'Extend enrolment (individual)';
+$string['groupextendenrol'] = 'Extend enrolment (common)';
 $string['courseenrolstartdate'] = 'Course enrolment start date';
 $string['courseenrolenddate'] = 'Course enrolment end date';
 $string['startingfrom'] = 'Starting from';
