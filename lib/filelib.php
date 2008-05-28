@@ -598,13 +598,13 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
 
     // if user is using IE, urlencode the filename so that multibyte file name will show up correctly on popup
     if (check_browser_version('MSIE')) {
-        $filename = urlencode($filename);
+        $filename = rawurlencode($filename);
     }
 
     if ($forcedownload) {
-        @header('Content-Disposition: attachment; filename='.$filename);
+        @header('Content-Disposition: attachment; filename="'.$filename.'"');
     } else {
-        @header('Content-Disposition: inline; filename='.$filename);
+        @header('Content-Disposition: inline; filename="'.$filename.'"');
     }
 
     if ($lifetime > 0) {
