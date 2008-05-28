@@ -16,12 +16,12 @@ function get_file_url($path, $options=null, $type='coursefile') {
 
     if ($CFG->slasharguments) {
         $parts = explode('/', $path);
-        $parts = array_map('urlencode', $parts);
+        $parts = array_map('rawurlencode', $parts);
         $path  = implode('/', $parts);
         $ffurl = "$CFG->wwwroot/file.php/$path";
         $separator = '?';
     } else {
-        $path = urlencode("/$path");
+        $path = rawurlencode("/$path");
         $ffurl = "$CFG->wwwroot/file.php?file=$path";
         $separator = '&amp;';
     }
