@@ -10,24 +10,24 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
-            print_error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
         if (! $course = get_record("course", "id", $cm->course)) {
-            print_error("Course is misconfigured");
+            print_error('coursemisconf');
         }    
         if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
-            print_error("Course module is incorrect");
+            print_error('invalidhotpotid', 'hotpot');
         }
 
     } else {
         if (! $hotpot = get_record("hotpot", "id", $hp)) {
-            print_error("Course module is incorrect");
+            print_error('invalidhotpotid', 'hotpot');
         }
         if (! $course = get_record("course", "id", $hotpot->course)) {
-            print_error("Course is misconfigured");
+            print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance("hotpot", $hotpot->id, $course->id)) {
-            print_error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
     }
 
@@ -331,7 +331,7 @@
 /// Open the selected hotpot report and display it
 
     if (! is_readable("report/$mode/report.php")) {
-        print_error("Report not known (".clean_text($mode).")", '', $course_homeurl);
+        print_error('unknownreport', 'hotpot', $course_homeurl, clean_text($mode));
     }
 
     include("report/default.php");  // Parent class
@@ -340,7 +340,7 @@
     $report = new hotpot_report();
 
     if (! $report->display($hotpot, $cm, $course, $users, $attempts, $questions, $formdata)) {
-        print_error("Error occurred during report processing!", '', $course_homeurl);
+        print_error('error_processreport', 'hotpot', $course_homeurl);
     }
 
     if ($formdata['reportformat']=='htm') {

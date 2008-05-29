@@ -455,7 +455,7 @@ function hotpot_is_visible(&$cm) {
 
     if (!isset($cm->sectionvisible)) {
         if (! $section = get_record('course_sections', 'id', $cm->section)) {
-            print_error('Course module record contains invalid section');
+            print_error('invalidsection');
         }
         $cm->sectionvisible = $section->visible;
     }
@@ -569,7 +569,7 @@ function hotpot_add_chain(&$hotpot) {
             $hotpot->reference = addslashes($hotpot->reference);
 
             if (!$hotpot->instance = insert_record("hotpot", $hotpot)) {
-                print_error("Could not add a new instance of $hotpot->modulename", '', "view.php?id=$hotpot->course");
+                print_error('cannotaddnewinstance', '', 'view.php?id='.$hotpot->course, $hotpot->modulename);
             }
 
             // store (hotpot table) id of start of chain
@@ -582,14 +582,14 @@ function hotpot_add_chain(&$hotpot) {
             }
 
             if (! $hotpot->coursemodule = add_course_module($hotpot)) {
-                print_error("Could not add a new course module");
+                print_error('cannotaddcoursemodule');
             }
             if (! $sectionid = add_mod_to_section($hotpot) ) {
-                print_error("Could not add the new course module to that section");
+                print_error('cannotaddcoursemoduletosection');
             }
 
-            if (! set_field("course_modules", "section", $sectionid, "id", $hotpot->coursemodule)) {
-                print_error("Could not update the course module with the correct section");
+            if (! set_field('course_modules', 'section', $sectionid, "id", $hotpot->coursemodule)) {
+                print_error('cannotupdatecoursemodule');
             }
 
             add_to_log($hotpot->course, "course", "add mod",
@@ -868,7 +868,8 @@ function hotpot_update_chain(&$hotpot) {
 
                 // update $thishotpot, if required
                 if ($require_update && !update_record("hotpot", $thishotpot)) {
-                    print_error("Could not update the $hotpot->modulename", '', "view.php?id=$hotpot->course");
+                    print_error('cannotupdatemod', '',
+                            'view.php?id='.$hotpot->course, $hotpot->modulename);
                 }
             }
         } // end foreach $ids
@@ -1586,7 +1587,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
         // check xmlize functions are available
         if (! function_exists("xmlize")) {
-            print_error('xmlize functions are not available');
+            print_error('xmlizeunavailable', 'debug');
         }
 
         $this->read_file = $read_file;

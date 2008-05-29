@@ -5,15 +5,15 @@
     $id   = required_param('id', PARAM_INT);          // Course module ID
 
     if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
-        print_error("Course Module ID was incorrect");
+        print_error('invalidcoursemodule');
     }
 
     if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
-        print_error("hotpot ID was incorrect");
+        print_error('invalidhotpotid', 'hotpot');
     }
 
     if (! $course = get_record("course", "id", $hotpot->course)) {
-        print_error("Course is misconfigured");
+        print_error("invalidcourse");
     }
 
     require_login($course->id, false, $cm);

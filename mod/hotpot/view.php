@@ -13,24 +13,24 @@
 
         if ($id) {
             if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
-                print_error("Course Module ID was incorrect");
+                print_error('invalidcoursemodule');
             }
             if (! $course = get_record("course", "id", $cm->course)) {
-                print_error("Course is misconfigured");
+                print_error('coursemisconf');
             }
             if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
-                print_error("Course module is incorrect");
+                print_error('invalidcoursemodule');
             }
 
         } else {
             if (! $hotpot = get_record("hotpot", "id", $hp)) {
-                print_error("Course module is incorrect");
+                print_error('invalidhotpotid', 'hotpot');
             }
             if (! $course = get_record("course", "id", $hotpot->course)) {
-                print_error("Course is misconfigured");
+                print_error('coursemisconf');
             }
             if (! $cm = get_coursemodule_from_instance("hotpot", $hotpot->id, $course->id)) {
-                print_error("Course Module ID was incorrect");
+                print_error('invalidcoursemodule');
             }
 
         }
@@ -113,7 +113,7 @@
     }
     // open and parse the source file
     if(!$hp = new hotpot_xml_quiz($hotpot)) {
-        print_error("Quiz is unavailable at the moment");
+        print_error('quizunavailable', 'hotpot');
     }
     $get_js = optional_param('js', '', PARAM_ALPHA);
     $get_css = optional_param('css', '', PARAM_ALPHA);
@@ -146,7 +146,7 @@
 
                 $attemptid = hotpot_add_attempt($hotpot->id);
                 if (! is_numeric($attemptid)) {
-                    print_error('Could not insert attempt record: '.$DB->get_last_error());
+                    print_error('cannotinsertattempt', 'hotpot', '', $DB->get_last_error());
                 }
             }
             $hp->adjust_media_urls();
