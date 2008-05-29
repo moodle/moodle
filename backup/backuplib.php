@@ -215,54 +215,28 @@
 
     //Calculate the number of user files to backup
     //Under $CFG->dataroot/users
-    //and put them (their path) in backup_ids
     //Return an array of info (name,value)
     function user_files_check_backup($course,$backup_unique_code) {
 
         global $CFG;
-
-        $rootdir = $CFG->dataroot."/users";
-        //Check if directory exists
-        if (is_dir($rootdir)) {
-            //Get directories without descend
-            $userdirs = get_directory_list($rootdir,"",false,true,false);
-            foreach ($userdirs as $dir) {
-                //Extracts user id from file path
-                $tok = strtok($dir,"/");
-                if ($tok) {
-                    $userid = $tok;
-                } else {
-                    //We were getting $dir='0', so continue (WAS: $tok = "";)
-                    continue;
-                }
-                //Look it is a backupable user
-                $data = get_record ("backup_ids","backup_code","$backup_unique_code",
-                                                 "table_name","user",
-                                                 "old_id",$userid);
-                if ($data) {
-                    //Insert them into backup_files
-                    $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
-                                               (backup_code, file_type, path, old_id)
-                                           VALUES
-                                               ('$backup_unique_code','user','".addslashes($dir)."','$userid')",false);
-                }
-                //Do some output
-                backup_flush(30);
+        $count = 0;
+        
+        $backup_users = get_recordset_select("backup_ids",
+            "backup_code='$backup_unique_code' AND table_name='user'", "", "id, old_id");
+ 
+        while ($user = rs_fetch_next_record($backup_users)) {               
+            //Is this user needed in the backup?
+            $userdir = make_user_directory($user->old_id, true);
+            if (check_dir_exists($userdir)) {
+                $count++;
             }
+            //Do some output
+            backup_flush(30);
         }
-
-        //Now execute the select
-        $ids = get_records_sql("SELECT DISTINCT b.path, b.old_id
-                                FROM {$CFG->prefix}backup_files b
-                                WHERE backup_code = '$backup_unique_code' AND
-                                      file_type = 'user'");
+        rs_close($backup_users);
         //Gets the user data
-        $info[0][0] = get_string("files");
-        if ($ids) {
-            $info[0][1] = count($ids);
-        } else {
-            $info[0][1] = 0;
-        }
+        $info[0][0] = get_string("userswithfiles");
+        $info[0][1] = $count;
 
         return $info;
     }
@@ -2273,6 +2247,7 @@
         global $CFG;
 
         $status = true;
+        $statusm = true;
 
         require_once($CFG->dirroot.'/mod/'.$module.'/backuplib.php');
 
@@ -2399,7 +2374,7 @@
         return $result;
     }
 
-    //This function copies all the needed files under the "users" directory to the "user_files"
+    //This function copies all the needed files under the "user" directory to the "user_files"
     //directory under temp/backup
     function backup_copy_user_files ($preferences) {
 
@@ -2407,24 +2382,19 @@
 
         $status = true;
 
-        //First we check to "user_files" exists and create it as necessary
+        //First we check that "user_files" exists and create it if necessary
         //in temp/backup/$backup_code  dir
         $status = check_and_create_user_files_dir($preferences->backup_unique_code);
-
-        //Now iterate over directories under "user" to check if that user must be copied to backup
-
-        // Method to get a list of userid=>array(basedir => $basedir, userfolder => $userfolder) 
-        $userlist = get_user_directories();
-
-        foreach ($userlist as $userid => $userinfo) {
-            //Look for dir like username in backup_ids
-            $data = count_records("backup_ids","backup_code",$preferences->backup_unique_code, "table_name","user", "old_id",$userid);
-            
-            //If exists, copy it
-            if ($data) {
-                $parts = explode('/', $userinfo['userfolder']);
+        //now get a list of users that we need for this backup.
+        $backup_users = get_recordset_select("backup_ids",
+            "backup_code='$preferences->backup_unique_code' AND table_name='user'", "", "id, old_id");
+        while ($user = rs_fetch_next_record($backup_users)) {
+            //If this user's directory exists, copy it
+            $userdir = make_user_directory($user->old_id, true);
+            if (check_dir_exists($userdir)) {
+                //first remove dirroot so we can split out the folders.
+                $parts = explode('/', str_replace($CFG->dataroot.'/user/', '', $userdir));
                 $status = true;
-
                 if (is_array($parts)) {
                     $group = $parts[0];
                     $userid = $parts[1];
@@ -2433,10 +2403,13 @@
                     $status = check_dir_exists("$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/". $group, true);
                 }
 
-                $status = $status && backup_copy_file($userinfo['basedir'] . '/' . $userinfo['userfolder'], 
-                    "$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/{$userinfo['userfolder']}");
+                $status = $status && backup_copy_file($userdir, 
+                    "$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/$group/$user->old_id");
             }
+            //Do some output
+            backup_flush(30);
         }
+        rs_close($backup_users);
 
         return $status;
     }
