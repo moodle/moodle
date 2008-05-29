@@ -5465,7 +5465,7 @@ function role_cap_duplicate($sourcerole, $targetrole) {
     $caps = $DB->get_records_sql("SELECT *
                                     FROM {role_capabilities}
                                    WHERE roleid = ? AND contextid = ?",
-                                 array($grade_category->id, $systemcontext->id));
+                                 array($sourcerole->id, $systemcontext->id));
     // adding capabilities
     foreach ($caps as $cap) {
         unset($cap->id);
