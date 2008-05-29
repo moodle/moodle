@@ -40,7 +40,6 @@ class data_field_number extends data_field_base {
         } else {
             $content->content = null;
         }
-
         if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             $content->id = $oldcontent->id;
             return update_record('data_content', $content);
@@ -48,7 +47,24 @@ class data_field_number extends data_field_base {
             return insert_record('data_content', $content);
         }
     }
-    
+
+    function display_browse_field($recordid, $template) {
+        if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)) {
+            if (strlen($content->content) < 1) {
+                return false;
+            }
+            $number = $content->content;
+            $decimals = intval($this->field->param1);
+            if (isset($decimals) && is_int($decimals) && $decimals >= 0) {
+                $str = number_format($number, $decimals, '.', '');
+            } else {
+                $str = $number;
+            }
+            return $str;
+        }
+        return false;
+    }
+
     function display_search_field($value = '') {
         return '<input type="text" size="16" name="f_'.$this->field->id.'" value="'.$value.'" />';   
     }
@@ -64,7 +80,6 @@ class data_field_number extends data_field_base {
     
     function get_sort_sql($fieldname) {
         global $CFG;
-
         switch ($CFG->dbfamily) {
             case 'mysql':   // string in an arithmetic operation is converted to a floating-point number
                 return '('.$fieldname.'+0.0)';
