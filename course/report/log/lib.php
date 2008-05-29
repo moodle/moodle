@@ -3,7 +3,7 @@
 function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $selecteddate='today',
                                  $modname="", $modid=0, $modaction='', $selectedgroup=-1, $showcourses=0, $showusers=0, $logformat='showashtml') {
 
-    global $USER, $CFG, $SITE;
+    global $USER, $CFG, $SITE, $DB;
     require_once $CFG->dirroot.'/mnet/peer.php';
     
     $mnet_peer = new mnet_peer();
@@ -52,7 +52,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         $courseusers = get_users_by_capability($context, 'moodle/course:view', '', 'lastname ASC, firstname ASC', '','u.id, u.firstname, u.lastname, u.idnumber',$selectedgroup,null, false);
     } else {
         // this may be a lot of users :-(
-        $courseusers = $DB->get_records('user', array('deleted'=>0), 'u.lastaccess DESC', 'u.id, u.firstname, u.lastname, u.idnumber');
+        $courseusers = $DB->get_records('user', array('deleted'=>0), 'lastaccess DESC', 'id, firstname, lastname, idnumber');
     }
 
     if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
