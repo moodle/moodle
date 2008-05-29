@@ -2521,7 +2521,7 @@ function delete_role($roleid) {
     }
 
     if ($success) {
-        add_to_log(SITEID, 'role', 'delete', 'admin/roles/action=delete&roleid='.$roleid, $rolename, '', $USER->id);
+        add_to_log(SITEID, 'role', 'delete', 'admin/roles/action=delete&roleid='.$roleid, $rolename, '');
     }
 
     return $success;
