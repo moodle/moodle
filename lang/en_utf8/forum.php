@@ -29,6 +29,8 @@ $string['bynameondate'] = 'by $a->name - $a->date';
 $string['cannotviewpostyet'] = 'You cannot read other students questions in this discussion yet because you haven\'t posted';
 $string['cannotadddiscussion'] = 'Adding discussions to this forum requires group membership.';
 $string['cannotadddiscussionall'] = 'You do not have permission to add a new discussion topic for all participants.';
+$string['cannotaddsubscriber'] = 'Could not add subscriber with id $a to this forum!';
+$string['cannotremovesubscriber'] = 'Could not remove subscriber with id $a from this forum!';
 $string['cannotfindorcreateforum'] = 'Could not find or create a main news forum for the site';
 $string['cannotupdaterate'] = 'Could not update an old rating ($a[0] = $a[1])';
 $string['cannotinsertrate'] = 'Could not insert a new rating ($a[0] = $a[1])';
@@ -165,6 +167,7 @@ $string['noguestsubscribe'] = 'Sorry, guests are not allowed to subscribe to rec
 $string['noguesttracking'] = 'Sorry, guests are not allowed to set tracking options.';
 $string['nomorepostscontaining'] = 'No more posts containing \'$a\' were found';
 $string['nonews'] = 'No news has been posted yet';
+$string['nopermissiontosubscribe']  = 'You do not have the permission to view forum subscribers';
 $string['nopostforum'] = 'Sorry, you are not allowed to post to this forum';
 $string['noposts'] = 'No posts';
 $string['nopostscontaining'] = 'No posts containing \'$a\' were found';
