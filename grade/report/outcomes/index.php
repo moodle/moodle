@@ -63,7 +63,7 @@ foreach ($outcomes as $outcomeid => $outcome) {
     // Get average grades for each item
     if (is_array($report_info[$outcomeid]['items'])) {
         foreach ($report_info[$outcomeid]['items'] as $itemid => $item) {
-            $sql = "SELECT id, AVG(finalgrade) AS `avg`, COUNT(finalgrade) AS `count`
+            $sql = "SELECT itemid, AVG(finalgrade) AS avg, COUNT(finalgrade) AS count
                       FROM {$CFG->prefix}grade_grades
                      WHERE itemid = $itemid
                   GROUP BY itemid";
