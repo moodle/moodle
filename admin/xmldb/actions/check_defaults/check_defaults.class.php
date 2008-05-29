@@ -55,8 +55,8 @@ class check_defaults extends XMLDBAction {
             'yes' => '',
             'no' => '',
             'error' => '',
-            'shouldbe' => 'xmldb',
-            'butis' => 'xmldb',
+            'expected' => 'xmldb',
+            'actual' => 'xmldb',
             'back' => 'xmldb'
 
         ));
@@ -186,8 +186,8 @@ class check_defaults extends XMLDBAction {
 
                                     // there *is* a default and it's wrong
                                     if ($physicaldefault != $xmldbdefault) {
-                                        $info = '['.$this->str['shouldbe']." '$xmldbdefault' ".$this->str['butis'].
-                                        " '$physicaldefault']";
+                                        $info = '('.$this->str['expected']." '$xmldbdefault', ".$this->str['actual'].
+                                        " '$physicaldefault')";
                                         $o.='<font color="red">' . $this->str['wrong'] . " $info</font>";
                                     /// Add the wrong field to the list
                                         $obj = new object;
@@ -236,8 +236,8 @@ class check_defaults extends XMLDBAction {
 
                     $r.= '            <li>' . $this->str['table'] . ': ' . $xmldb_table->getName() . '. ' .
                                               $this->str['field'] . ': ' . $xmldb_field->getName() . ', ' .
-                                              $this->str['shouldbe'] . ' ' . "'$xmldbdefault'" . ' ' .
-                                              $this->str['butis'] . ' ' . "'$physicaldefault'" . '</li>';
+                                              $this->str['expected'] . ' ' . "'$xmldbdefault'" . ' ' .
+                                              $this->str['actual'] . ' ' . "'$physicaldefault'" . '</li>';
                     /// Add to output if we have sentences
                     if ($sqlarr) {
                         $sqlarr = $dbman->generator->getEndedStatements($sqlarr);

@@ -1,12 +1,11 @@
 <?PHP // $Id$ 
       // xmldb.php - created with Moodle 1.7 beta + (2006101003)
 
-
+$string['actual'] = 'Actual';
 $string['aftertable'] = 'After Table:';
 $string['back'] = 'Back';
 $string['backtomainview'] = 'Back To Main';
 $string['binaryincorrectlength'] = 'Incorrect length for binary field';
-$string['butis'] = 'but is';
 $string['cannotuseidfield'] = 'Cannot insert the \"id\" field. It is an autonumeric column';
 $string['change'] = 'Change';
 $string['charincorrectlength'] = 'Incorrect length for char field';
@@ -61,6 +60,7 @@ $string['edit_statement'] = 'Edit Statement';
 $string['edit_table'] = 'Edit Table';
 $string['edit_xml_file'] = 'Edit XML File';
 $string['enumvaluesincorrect'] = 'Incorrect values for enum field';
+$string['expected'] = 'Expected';
 $string['field'] = 'Field';
 $string['fieldnameempty'] = 'Name field empty';
 $string['fields'] = 'Fields';
@@ -113,7 +113,6 @@ $string['selectonecommand'] = 'Please, select one Action from the list to view P
 $string['selectonefieldkeyindex'] = 'Please, select one Field/Key/Index from the list to view the PHP code';
 $string['selecttable'] = 'Select Table:';
 $string['sentences'] = 'Sentences';
-$string['shouldbe'] = 'should be';
 $string['statements'] = 'Statements';
 $string['statementtable'] = 'Statement Table:';
 $string['statementtype'] = 'Statement Type:';
