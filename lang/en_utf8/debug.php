@@ -45,5 +45,6 @@ $string['siteisnotdefined'] = 'Site is not defined!';
 $string['sqlrelyonobsoletetable'] = 'This SQL relies on obsolete table(s): $a!  Your code must be fixed by a developer.';
 $string['upgradefail'] = 'Upgrade failed! see: $a';
 $string['withoutversion'] = 'Main version.php was not readable or specified';
+$string['xmlizeunavailable'] = 'xmlize functions are not available';
 
 ?>
