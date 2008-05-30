@@ -63,7 +63,7 @@ require_once($CFG->libdir . '/grade/grade_outcome.php');
  * @param mixed $itemdetails object or array describing the grading item, NULL if no change
  */
 function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grades=NULL, $itemdetails=NULL) {
-    global $USER, $CFG;
+    global $USER, $CFG, $DB;
 
     // only following grade_item properties can be changed in this function
     $allowed = array('itemname', 'idnumber', 'gradetype', 'grademax', 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted', 'hidden');
@@ -208,20 +208,17 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
     }
 
     $count = count($grades);
-    if ($count == 1) {
-        reset($grades);
-        $uid = key($grades);
-        $sql = "SELECT * FROM {$CFG->prefix}grade_grades WHERE itemid = $grade_item->id AND userid = $uid";
-
-    } else if ($count < 200) {
-        $uids = implode(',', array_keys($grades));
-        $sql = "SELECT * FROM {$CFG->prefix}grade_grades WHERE itemid = $grade_item->id AND userid IN ($uids)";
+    if ($count > 0 and $count < 200) {
+        list($uids, $params) = $DB->get_in_or_equal(array_keys($grades), SQL_PARAMS_NAMED, $start='uid0'); 
+        $params['gid'] = $grade_item->id;
+        $sql = "SELECT * FROM {grade_grades} WHERE itemid = :gid AND userid $uids";
 
     } else {
-        $sql = "SELECT * FROM {$CFG->prefix}grade_grades WHERE itemid = $grade_item->id";
+        $sql = "SELECT * FROM {grade_grades} WHERE itemid = :gid";
+        $params = array('gid'=>$grade_item->id);
     }
 
-    $rs = get_recordset_sql($sql);
+    $rs = $DB->get_recordset_sql($sql, $params);
 
     $failed = false;
 
@@ -229,8 +226,9 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         $grade_grade = null;
         $grade       = null;
 
-        while ($rs and !rs_EOF($rs)) {
-            if (!$gd = rs_fetch_next_record($rs)) {
+        while ($rs and $rs->valid()) {
+            $rs->next();
+            if (!$gd = $rs->current()) {
                 break;
             }
             $userid = $gd->userid;
@@ -296,7 +294,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
     }
 
     if ($rs) {
-        rs_close($rs);
+        $rs->close();
     }
 
     if (!$failed) {
@@ -558,6 +556,8 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
  * @return string value, NULL if no setting
  */
 function grade_get_setting($courseid, $name, $default=null, $resetcache=false) {
+    global $DB;
+
     static $cache = array();
 
     if ($resetcache or !array_key_exists($courseid, $cache)) {
@@ -570,7 +570,7 @@ function grade_get_setting($courseid, $name, $default=null, $resetcache=false) {
         return $cache[$courseid][$name];
     }
 
-    if (!$data = get_record('grade_settings', 'courseid', $courseid, 'name', addslashes($name))) {
+    if (!$data = $DB->get_record('grade_settings', array('courseid'=>$courseid, 'name'=>$name))) {
         $result = null;
     } else {
         $result = $data->value;
@@ -590,10 +590,12 @@ function grade_get_setting($courseid, $name, $default=null, $resetcache=false) {
  * @return object
  */
 function grade_get_settings($courseid) {
+    global $DB;
+
      $settings = new object();
      $settings->id = $courseid;
 
-    if ($records = get_records('grade_settings', 'courseid', $courseid)) {
+    if ($records = $DB->get_records('grade_settings', array('courseid'=>$courseid))) {
         foreach ($records as $record) {
             $settings->{$record->name} = $record->value;
         }
@@ -610,21 +612,23 @@ function grade_get_settings($courseid) {
  * @return void
  */
 function grade_set_setting($courseid, $name, $value) {
-    if (is_null($value)) {
-        delete_records('grade_settings', 'courseid', $courseid, 'name', addslashes($name));
+    global $DB;
 
-    } else if (!$existing = get_record('grade_settings', 'courseid', $courseid, 'name', addslashes($name))) {
+    if (is_null($value)) {
+        $DB->delete_records('grade_settings', array('courseid'=>$courseid, 'name'=>$name));
+
+    } else if (!$existing = $DB->get_record('grade_settings', array('courseid'=>$courseid, 'name'=>$name))) {
         $data = new object();
         $data->courseid = $courseid;
-        $data->name     = addslashes($name);
-        $data->value    = addslashes($value);
-        insert_record('grade_settings', $data);
+        $data->name     = $name;
+        $data->value    = $value;
+        $DB->insert_record('grade_settings', $data);
 
     } else {
         $data = new object();
         $data->id       = $existing->id;
-        $data->value    = addslashes($value);
-        update_record('grade_settings', $data);
+        $data->value    = $value;
+        $DB->update_record('grade_settings', $data);
     }
 
     grade_get_setting($courseid, null, null, true); // reset the cache
@@ -746,6 +750,8 @@ function grade_get_categories_menu($courseid, $includenew=false) {
  * @return array of grade_boundary=>letter_string
  */
 function grade_get_letters($context=null) {
+    global $DB;
+
     if (empty($context)) {
         //default grading letters
         return array('93'=>'A', '90'=>'A-', '87'=>'B+', '83'=>'B', '80'=>'B-', '77'=>'C+', '73'=>'C', '70'=>'C-', '67'=>'D+', '60'=>'D', '0'=>'F');
@@ -767,7 +773,7 @@ function grade_get_letters($context=null) {
     array_unshift($contexts, $context->id);
 
     foreach ($contexts as $ctxid) {
-        if ($records = get_records('grade_letters', 'contextid', $ctxid, 'lowerboundary DESC')) {
+        if ($records = $DB->get_records('grade_letters', array('contextid'=>$ctxid), 'lowerboundary DESC')) {
             foreach ($records as $record) {
                 $letters[$record->lowerboundary] = $record->letter;
             }
@@ -794,6 +800,8 @@ function grade_get_letters($context=null) {
  * @return boolean true means idnumber ok
  */
 function grade_verify_idnumber($idnumber, $courseid, $grade_item=null, $cm=null) {
+    global $DB;
+
     if ($idnumber == '') {
         //we allow empty idnumbers
         return true;
@@ -806,11 +814,11 @@ function grade_verify_idnumber($idnumber, $courseid, $grade_item=null, $cm=null)
         return true;
     }
 
-    if (get_records_select('course_modules', "course = $courseid AND idnumber='$idnumber'")) {
+    if ($DB->record_exists('course_modules', array('course'=>$courseid, 'idnumber'=>$idnumber))) {
         return false;
     }
 
-    if (get_records_select('grade_items', "courseid = $courseid AND idnumber='$idnumber'")) {
+    if ($DB->record_exists('grade_items', array('courseid'=>$courseid, 'idnumber'=>$idnumber))) {
         return false;
     }
 
@@ -822,7 +830,8 @@ function grade_verify_idnumber($idnumber, $courseid, $grade_item=null, $cm=null)
  * @param int $courseid
  */
 function grade_force_full_regrading($courseid) {
-    set_field('grade_items', 'needsupdate', 1, 'courseid', $courseid);
+    global $DB;
+    $DB->set_field('grade_items', 'needsupdate', 1, array('courseid'=>$courseid));
 }
 
 /**
@@ -981,14 +990,15 @@ function grade_grab_legacy_grades($courseid) {
  * @return success
  */
 function grade_grab_course_grades($courseid, $modname=null) {
-    global $CFG;
+    global $CFG, $DB;
 
     if ($modname) {
         $sql = "SELECT a.*, cm.idnumber as cmidnumber, m.name as modname
-                  FROM {$CFG->prefix}$modname a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-                 WHERE m.name='$modname' AND m.visible=1 AND m.id=cm.module AND cm.instance=a.id AND cm.course=$courseid";
+                  FROM {".$modname."} a, {course_modules} cm, {modules} m
+                 WHERE m.name=:modname AND m.visible=1 AND m.id=cm.module AND cm.instance=a.id AND cm.course=:courseid";
+        $params = array('modname'=>$modname, 'courseid'=>$courseid);
 
-        if ($modinstances = get_records_sql($sql)) {
+        if ($modinstances = $DB->get_records_sql($sql, $params)) {
             foreach ($modinstances as $modinstance) {
                 grade_update_mod_grades($modinstance);
             }
@@ -1011,10 +1021,11 @@ function grade_grab_course_grades($courseid, $modname=null) {
         if (file_exists($fullmod.'/lib.php')) {
             // get all instance of the activity
             $sql = "SELECT a.*, cm.idnumber as cmidnumber, m.name as modname
-                      FROM {$CFG->prefix}$mod a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-                     WHERE m.name='$mod' AND m.visible=1 AND m.id=cm.module AND cm.instance=a.id AND cm.course=$courseid";
+                      FROM {".$mod."} a, {course_modules} cm, {modules} m
+                     WHERE m.name=:mod AND m.visible=1 AND m.id=cm.module AND cm.instance=a.id AND cm.course=:courseid";
+            $params = array('mod'=>$mod, 'courseid'=>$courseid);
 
-            if ($modinstances = get_records_sql($sql)) {
+            if ($modinstances = $DB->get_records_sql($sql, $params)) {
                 foreach ($modinstances as $modinstance) {
                     grade_update_mod_grades($modinstance);
                 }
@@ -1029,7 +1040,7 @@ function grade_grab_course_grades($courseid, $modname=null) {
  * @return boolean success
  */
 function grade_update_mod_grades($modinstance, $userid=0) {
-    global $CFG;
+    global $CFG, $DB;
 
     $fullmod = $CFG->dirroot.'/mod/'.$modinstance->modname;
     if (!file_exists($fullmod.'/lib.php')) {
@@ -1052,7 +1063,7 @@ function grade_update_mod_grades($modinstance, $userid=0) {
             $scaleid = NULL;
             if (!is_numeric($grademax)) {
                 // scale name is provided as a string, try to find it
-                if (!$scale = get_record('scale', 'name', $grademax)) {
+                if (!$scale = $DB->get_record('scale', array('name'=>$grademax))) {
                     debugging('Incorrect scale name! name:'.$grademax);
                     return false;
                 }
@@ -1176,9 +1187,11 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
  * @param object $context
  */
 function remove_grade_letters($context, $showfeedback) {
+    global $DB;
+
     $strdeleted = get_string('deleted');
 
-    delete_records('grade_letters', 'contextid', $context->id);
+    $DB->delete_records('grade_letters', array('contextid'=>$context->id));
     if ($showfeedback) {
         notify($strdeleted.' - '.get_string('letters', 'grades'));
     }
@@ -1189,6 +1202,8 @@ function remove_grade_letters($context, $showfeedback) {
  * @param bool $showfeedback print feedback
  */
 function remove_course_grades($courseid, $showfeedback) {
+    global $DB;
+
     $strdeleted = get_string('deleted');
 
     $course_category = grade_category::fetch_course_category($courseid);
@@ -1202,7 +1217,7 @@ function remove_course_grades($courseid, $showfeedback) {
             $outcome->delete('coursedelete');
         }
     }
-    delete_records('grade_outcomes_courses', 'courseid', $courseid);
+    $DB->delete_records('grade_outcomes_courses', array('courseid'=>$courseid));
     if ($showfeedback) {
         notify($strdeleted.' - '.get_string('outcomes', 'grades'));
     }
@@ -1216,7 +1231,7 @@ function remove_course_grades($courseid, $showfeedback) {
         notify($strdeleted.' - '.get_string('scales'));
     }
 
-    delete_records('grade_settings', 'courseid', $courseid);
+    $DB->delete_records('grade_settings', array('courseid'=>$courseid));
     if ($showfeedback) {
         notify($strdeleted.' - '.get_string('settings', 'grades'));
     }
@@ -1229,27 +1244,29 @@ function remove_course_grades($courseid, $showfeedback) {
  * @param bool $showfeedback print feedback
  */
 function grade_course_category_delete($categoryid, $newparentid, $showfeedback) {
+    global $DB;
+
     $context = get_context_instance(CONTEXT_COURSECAT, $categoryid);
-    delete_records('grade_letters', 'contextid', $context->id);
+    $DB->delete_records('grade_letters', array('contextid'=>$context->id));
 }
 
 /**
  * Does gradebook cleanup when module uninstalled.
  */
 function grade_uninstalled_module($modname) {
-    global $CFG;
+    global $CFG, $DB;
 
     $sql = "SELECT *
-              FROM {$CFG->prefix}grade_items
-             WHERE itemtype='mod' AND itemmodule='$modname'";
+              FROM {grade_items}
+             WHERE itemtype='mod' AND itemmodule=?";
 
     // go all items for this module and delete them including the grades
-    if ($rs = get_recordset_sql($sql)) {
-        while ($item = rs_fetch_next_record($rs)) {
+    if ($rs = $DB->get_recordset_sql($sql, array($modname))) {
+        foreach ($rs as $item) {
             $grade_item = new grade_item($item, false);
             $grade_item->delete('moduninstall');
         }
-        rs_close($rs);
+        $rs->close();
     }
 }
 
@@ -1257,41 +1274,41 @@ function grade_uninstalled_module($modname) {
  * Grading cron job
  */
 function grade_cron() {
-    global $CFG;
+    global $CFG, $DB;
 
     $now = time();
 
     $sql = "SELECT i.*
-              FROM {$CFG->prefix}grade_items i
-             WHERE i.locked = 0 AND i.locktime > 0 AND i.locktime < $now AND EXISTS (
-                SELECT 'x' FROM {$CFG->prefix}grade_items c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
+              FROM {grade_items} i
+             WHERE i.locked = 0 AND i.locktime > 0 AND i.locktime < ? AND EXISTS (
+                SELECT 'x' FROM {grade_items} c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
 
     // go through all courses that have proper final grades and lock them if needed
-    if ($rs = get_recordset_sql($sql)) {
-        while ($item = rs_fetch_next_record($rs)) {
+    if ($rs = $DB->get_recordset_sql($sql, params($now))) {
+        foreach ($rs as $item) {
             $grade_item = new grade_item($item, false);
             $grade_item->locked = $now;
             $grade_item->update('locktime');
         }
-        rs_close($rs);
+        $rs->close();
     }
 
     $grade_inst = new grade_grade();
     $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
 
     $sql = "SELECT $fields
-              FROM {$CFG->prefix}grade_grades g, {$CFG->prefix}grade_items i
-             WHERE g.locked = 0 AND g.locktime > 0 AND g.locktime < $now AND g.itemid=i.id AND EXISTS (
-                SELECT 'x' FROM {$CFG->prefix}grade_items c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
+              FROM {grade_grades} g, {grade_items} i
+             WHERE g.locked = 0 AND g.locktime > 0 AND g.locktime < ? AND g.itemid=i.id AND EXISTS (
+                SELECT 'x' FROM {grade_items} c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
 
     // go through all courses that have proper final grades and lock them if needed
-    if ($rs = get_recordset_sql($sql)) {
-        while ($grade = rs_fetch_next_record($rs)) {
+    if ($rs = $DB->get_recordset_sql($sql, array($now))) {
+        foreach ($rs as $grade) {
             $grade_grade = new grade_grade($grade, false);
             $grade_grade->locked = $now;
             $grade_grade->update('locktime');
         }
-        rs_close($rs);
+        $rs->close();
     }
 
     //TODO: do not run this cleanup every cron invocation
@@ -1300,7 +1317,7 @@ function grade_cron() {
         $histlifetime = $now - ($CFG->gradehistorylifetime * 3600 * 24);
         $tables = array('grade_outcomes_history', 'grade_categories_history', 'grade_items_history', 'grade_grades_history', 'scale_history');
         foreach ($tables as $table) {
-            if (delete_records_select($table, "timemodified < $histlifetime")) {
+            if ($DB->delete_records_select($table, "timemodified < ?", array($histlifetime))) {
                 mtrace("    Deleted old grade history records from '$table'");
             }
         }

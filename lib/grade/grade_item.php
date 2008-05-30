@@ -384,7 +384,7 @@ class grade_item extends grade_object {
         }
 
         // always place the new items at the end, move them after insert if needed
-        $last_sortorder = $DB->get_field_select('grade_items', 'MAX(sortorder)', "courseid = {$this->courseid}");
+        $last_sortorder = $DB->get_field_select('grade_items', 'MAX(sortorder)', "courseid = ?", array($this->courseid));
         if (!empty($last_sortorder)) {
             $this->sortorder = $last_sortorder + 1;
         } else {
@@ -605,13 +605,18 @@ class grade_item extends grade_object {
 
     /**
      * Returns the number of grades that are hidden.
-     * @param return int Number of hidden grades
+     * @param string $groupsql
+     * @param array $params sql params in $groupsql
+     * @param string $groupsqlwhere
+     * @return int Number of hidden grades
      */
-    public function has_hidden_grades($groupsql="", $groupwheresql="") {
+    public function has_hidden_grades($groupsql="", array $params=null, $groupwheresql="") {
         global $DB;
-        $params = array($this->id);
+        $params = (array)$params;
+        $params['itemid'] = $this->id;
+
         return $DB->get_field_sql("SELECT COUNT(*) FROM {grade_grades} g LEFT JOIN "
-                            ."{user} u ON g.userid = u.id $groupsql WHERE itemid = ? AND hidden = 1 $groupwheresql", $params);
+                            ."{user} u ON g.userid = u.id $groupsql WHERE itemid = :itemid AND hidden = 1 $groupwheresql", $params);
     }
 
     /**
