@@ -71,7 +71,7 @@ function xmldb_main_upgrade($oldversion=0) {
     if ($result && $oldversion < 2008051200) {
         // if guest role used as default user role unset it and force admin to choose new setting
         if (!empty($CFG->defaultuserroleid)) {
-            if ($role = get_record('role', 'id', $CFG->defaultuserroleid)) {
+            if ($role = $DB->get_record('role', array('id'=>$CFG->defaultuserroleid))) {
                 if ($guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
                     if (isset($guestroles[$role->id])) {
                         set_config('defaultuserroleid', null);
@@ -89,7 +89,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Under MySQL and Postgres... detect old NULL contents and change them by correct empty string. MDL-14859
         if ($CFG->dbfamily == 'mysql' || $CFG->dbfamily == 'postgres') {
-            execute_sql("UPDATE {$CFG->prefix}user SET idnumber = '' WHERE idnumber IS NULL", true);
+            $DB->execute("UPDATE {user} SET idnumber = '' WHERE idnumber IS NULL", true);
         }
 
     /// Define index idnumber (not unique) to be dropped form user
@@ -117,14 +117,13 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2008051202) {
-        $log_action = new stdClass();
+        $log_action = new object();
         $log_action->module = 'course';
         $log_action->action = 'unenrol';
         $log_action->mtable = 'course';
         $log_action->field  = 'fullname';
-        if (!record_exists("log_display", "action", "unenrol",
-                    "module", "course")){
-            $result = $result && insert_record('log_display', $log_action);
+        if (!$DB->record_exists('log_display', array('action'=>'unenrol', 'module'=>'course'))) {
+            $result = $result && $DB->insert_record('log_display', $log_action);
         }
         upgrade_main_savepoint($result, 2008051202);
     }
