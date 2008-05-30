@@ -324,7 +324,8 @@ class page_course extends page_base {
     // in init_quick() and instead deferred here. Of course this function had better recognize
     // $this->full_init_done to prevent wasteful multiple-time data retrieval.
     function init_full() {
-        global $COURSE;
+        global $COURSE, $DB;
+
         if($this->full_init_done) {
             return;
         }
@@ -334,7 +335,7 @@ class page_course extends page_base {
         if ($this->id == $COURSE->id) {
             $this->courserecord = $COURSE;
         } else {
-            $this->courserecord = get_record('course', 'id', $this->id);
+            $this->courserecord = $DB->get_record('course', 'id', $this->id);
         }
 
         if(empty($this->courserecord) && !defined('ADMIN_STICKYBLOCKS')) {
@@ -584,6 +585,8 @@ class page_generic_activity extends page_base {
     var $activityrecord = NULL;
 
     function init_full() {
+        global $DB;
+
         if($this->full_init_done) {
             return;
         }
@@ -593,11 +596,11 @@ class page_generic_activity extends page_base {
         if (!$this->modulerecord = get_coursemodule_from_instance($this->activityname, $this->id)) {
             print_error('cannotinitpager', 'debug', '', array($this->activityname, $this->id));
         }
-        $this->courserecord = get_record('course', 'id', $this->modulerecord->course);
+        $this->courserecord = $DB->get_record('course', array('id'=>$this->modulerecord->course));
         if(empty($this->courserecord)) {
             print_error('invalidcourseid');
         }
-        $this->activityrecord = get_record($this->activityname, 'id', $this->id);
+        $this->activityrecord = $DB->get_record($this->activityname, array('id'=>$this->id));
         if(empty($this->activityrecord)) {
             print_error('cannotinitpager', 'debug', '', array($this->activityname, $this->id));
         }
