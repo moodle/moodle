@@ -18,8 +18,7 @@ $err = array();
 $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageauths";
 
 // save configuration changes
-if ($frm = data_submitted() and confirm_sesskey()) {
-    $frm = stripslashes_recursive($frm);
+if ($frm = data_submitted(false) and confirm_sesskey()) {
 
     $authplugin->validate_form($frm, $err);
 

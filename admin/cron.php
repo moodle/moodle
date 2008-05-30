@@ -101,7 +101,7 @@
 
     mtrace("Starting activity modules");
     get_mailer('buffer');
-    if ($mods = get_records_select("modules", "cron > 0 AND (($timenow - lastcron) > cron) AND visible = 1 ")) {
+    if ($mods = $DB->get_records_select("modules", "cron > 0 AND ((? - lastcron) > cron) AND visible = 1", array($timenow))) {
         foreach ($mods as $mod) {
             $libfile = "$CFG->dirroot/mod/$mod->name/lib.php";
             if (file_exists($libfile)) {
@@ -115,7 +115,7 @@
                         $pre_time      = microtime(1);
                     }
                     if ($cron_function()) {
-                        if (! set_field("modules", "lastcron", $timenow, "id", $mod->id)) {
+                        if (!$DB->set_field("modules", "lastcron", $timenow, array("id"=>$mod->id))) {
                             mtrace("Error: could not update timestamp for $mod->fullname");
                         }
                     }
@@ -134,7 +134,7 @@
     mtrace("Finished activity modules");
 
     mtrace("Starting blocks");
-    if ($blocks = get_records_select("block", "cron > 0 AND (($timenow - lastcron) > cron) AND visible = 1")) {
+    if ($blocks = $DB->get_records_select("block", "cron > 0 AND ((? - lastcron) > cron) AND visible = 1", array($timenow))) {
         // we will need the base class.
         require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
         foreach ($blocks as $block) {
@@ -146,7 +146,7 @@
                 if (method_exists($blockobj,'cron')) {
                     mtrace("Processing cron function for ".$block->name.'....','');
                     if ($blockobj->cron()) {
-                        if (!set_field('block','lastcron',$timenow,'id',$block->id)) {
+                        if (!$DB->set_field('block', 'lastcron', $timenow, array('id'=>$block->id))) {
                             mtrace('Error: could not update timestamp for '.$block->name);
                         }
                     }
@@ -197,22 +197,22 @@
     $somefound = false;
     // The preferred way saves memory, dmllib.php
     // find courses where limited enrolment is enabled
-    global $CFG;
-    $rs_enrol = get_recordset_sql("SELECT ra.roleid, ra.userid, ra.contextid
-        FROM {$CFG->prefix}course c
-        INNER JOIN {$CFG->prefix}context cx ON cx.instanceid = c.id
-        INNER JOIN {$CFG->prefix}role_assignments ra ON ra.contextid = cx.id
-        WHERE cx.contextlevel = '".CONTEXT_COURSE."'
-        AND ra.timeend > 0
-        AND ra.timeend < '$timenow'
-        AND c.enrolperiod > 0
-        ");
-    while ($oldenrolment = rs_fetch_next_record($rs_enrol)) {
-        role_unassign($oldenrolment->roleid, $oldenrolment->userid, 0, $oldenrolment->contextid);
-        $somefound = true;
+    $sql = "SELECT ra.roleid, ra.userid, ra.contextid
+              FROM {course} c
+              JOIN {context} cx ON cx.instanceid = c.id
+              JOIN {role_assignments} ra ON ra.contextid = cx.id
+             WHERE cx.contextlevel = '".CONTEXT_COURSE."'
+                   AND ra.timeend > 0
+                   AND ra.timeend < ?
+                   AND c.enrolperiod > 0";
+    if ($rs = $DB->get_recordset_sql($sql, array($timenow))) {
+        foreach ($rs as $oldenrolment) {
+            role_unassign($oldenrolment->roleid, $oldenrolment->userid, 0, $oldenrolment->contextid);
+            $somefound = true;
+        }
+        $rs->close();
     }
-    rs_close($rs_enrol);
-    if($somefound) {
+    if ($somefound) {
         mtrace('Done');
     } else {
         mtrace('none found');
@@ -239,33 +239,33 @@
 
         if ($CFG->longtimenosee) { // value in days
             $cuttime = $timenow - ($CFG->longtimenosee * 3600 * 24);
-            $rs = get_recordset_sql ("SELECT id, userid, courseid
-                                        FROM {$CFG->prefix}user_lastaccess
-                                       WHERE courseid != ".SITEID."
-                                         AND timeaccess < $cuttime ");
-            while ($assign = rs_fetch_next_record($rs)) {
+            $rs = $DB->get_recordset_sql ("SELECT id, userid, courseid
+                                             FROM {user_lastaccess}
+                                            WHERE courseid != ".SITEID."
+                                                  AND timeaccess < ?", array($cuttime));
+            foreach ($rs as $assign) {
                 if ($context = get_context_instance(CONTEXT_COURSE, $assign->courseid)) {
                     if (role_unassign(0, $assign->userid, 0, $context->id)) {
                         mtrace("Deleted assignment for user $assign->userid from course $assign->courseid");
                     }
                 }
             }
-            rs_close($rs);
+            $rs->close();
         /// Execute the same query again, looking for remaining records and deleting them
         /// if the user hasn't moodle/course:view in the CONTEXT_COURSE context (orphan records)
-            $rs = get_recordset_sql ("SELECT id, userid, courseid
-                                        FROM {$CFG->prefix}user_lastaccess
-                                       WHERE courseid != ".SITEID."
-                                         AND timeaccess < $cuttime ");
-            while ($assign = rs_fetch_next_record($rs)) {
+            $rs = $DB->get_recordset_sql ("SELECT id, userid, courseid
+                                             FROM {user_lastaccess}
+                                            WHERE courseid != ".SITEID."
+                                                  AND timeaccess < ?", array($cuttime));
+            foreach ($rs as $assign) {
                 if ($context = get_context_instance(CONTEXT_COURSE, $assign->courseid)) {
                     if (!has_capability('moodle/course:view', $context, $assign->userid)) {
-                        delete_records('user_lastaccess', 'userid', $assign->userid, 'courseid', $assign->courseid);
+                        $DB->delete_records('user_lastaccess', array('userid'=>$assign->userid, 'courseid'=>$assign->courseid));
                         mtrace("Deleted orphan user_lastaccess for user $assign->userid from course $assign->courseid");
                     }
                 }
             }
-            rs_close($rs);
+            $rs->close();
         }
         flush();
 
@@ -274,17 +274,16 @@
 
         if (!empty($CFG->deleteunconfirmed)) {
             $cuttime = $timenow - ($CFG->deleteunconfirmed * 3600);
-            $rs = get_recordset_sql ("SELECT id, firstname, lastname
-                                        FROM {$CFG->prefix}user
-                                       WHERE confirmed = 0
-                                         AND firstaccess > 0
-                                         AND firstaccess < $cuttime");
-            while ($user = rs_fetch_next_record($rs)) {
-                if (delete_records('user', 'id', $user->id)) {
+            $rs = $DB->get_recordset_sql ("SELECT id, firstname, lastname
+                                             FROM {user}
+                                            WHERE confirmed = 0 AND firstaccess > 0
+                                                  AND firstaccess < ?", array($cuttime));
+            foreach ($rs as $user) {
+                if ($DB->delete_records('user', array('id'=>$user->id))) {
                     mtrace("Deleted unconfirmed user for ".fullname($user, true)." ($user->id)");
                 }
             }
-            rs_close($rs);
+            $rs->close();
         }
         flush();
 
@@ -293,19 +292,18 @@
 
         if (!empty($CFG->deleteunconfirmed)) {
             $cuttime = $timenow - ($CFG->deleteunconfirmed * 3600);
-            $rs = get_recordset_sql ("SELECT id, username
-                                        FROM {$CFG->prefix}user
-                                       WHERE confirmed = 1
-                                         AND lastaccess > 0
-                                         AND lastaccess < $cuttime
-                                         AND deleted = 0
-                                         AND (lastname = '' OR firstname = '' OR email = '')");
-            while ($user = rs_fetch_next_record($rs)) {
-                if (delete_records('user', 'id', $user->id)) {
+            $rs = $DB->get_recordset_sql ("SELECT id, username
+                                             FROM {user}
+                                            WHERE confirmed = 1 AND lastaccess > 0
+                                                  AND lastaccess < ? AND deleted = 0
+                                                  AND (lastname = '' OR firstname = '' OR email = '')",
+                                          array($cuttime));
+            foreach ($rs as $user) {
+                if ($DB->delete_records('user', array('id'=>$user->id))) {
                     mtrace("Deleted not fully setup user $user->username ($user->id)");
                 }
             }
-            rs_close($rs);
+            $rs->close();
         }
         flush();
 
@@ -314,7 +312,7 @@
 
         if (!empty($CFG->loglifetime)) {  // value in days
             $loglifetime = $timenow - ($CFG->loglifetime * 3600 * 24);
-            if (delete_records_select("log", "time < '$loglifetime'")) {
+            if ($DB->delete_records_select("log", "time < ?", array($loglifetime))) {
                 mtrace("Deleted old log records");
             }
         }
@@ -325,7 +323,7 @@
 
         if (!empty($CFG->cachetext)) {   // Defined in config.php
             $cachelifetime = time() - $CFG->cachetext - 60;  // Add an extra minute to allow for really heavy sites
-            if (delete_records_select('cache_text', "timemodified < '$cachelifetime'")) {
+            if ($DB->delete_records_select('cache_text', "timemodified < ?", array($cachelifetime))) {
                 mtrace("Deleted old cache_text records");
             }
         }
@@ -344,21 +342,21 @@
         // generate new password emails for users 
         //
         mtrace('checking for create_password');
-        if (count_records('user_preferences', 'name', 'create_password', 'value', '1')) {
+        if ($DB->count_records('user_preferences', array('name'=>'create_password', 'value'=>'1'))) {
             mtrace('creating passwords for new users');
-            $newusers = get_records_sql("SELECT  u.id as id, u.email, u.firstname, 
-                                                u.lastname, u.username,
-                                                p.id as prefid 
-                                        FROM {$CFG->prefix}user u 
-                                             JOIN {$CFG->prefix}user_preferences p ON u.id=p.userid
-                                        WHERE p.name='create_password' AND p.value=1 AND u.email !='' ");
+            $newusers = $DB->get_records_sql("SELECT u.id as id, u.email, u.firstname, 
+                                                     u.lastname, u.username,
+                                                     p.id as prefid 
+                                                FROM {user} u 
+                                                JOIN {user_preferences} p ON u.id=p.userid
+                                               WHERE p.name='create_password' AND p.value=1 AND u.email !='' ");
 
             foreach ($newusers as $newuserid => $newuser) {
                 $newuser->emailstop = 0; // send email regardless
                 // email user                               
                 if (setnew_password_and_mail($newuser)) {
                     // remove user pref
-                    delete_records('user_preferences', 'id', $newuser->prefid);
+                    $DB->delete_records('user_preferences', array('id'=>$newuser->prefid));
                 } else {
                     trigger_error("Could not create and mail new user password!");
                 }

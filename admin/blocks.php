@@ -32,18 +32,18 @@
 /// If data submitted, then process and store.
 
     if (!empty($hide) && confirm_sesskey()) {
-        if (!$block = get_record('block', 'id', $hide)) {
+        if (!$block = $DB->get_record('block', array('id'=>$hide))) {
             print_error('blockdoesnotexist', 'error');
         }
-        set_field('block', 'visible', '0', 'id', $block->id);      // Hide block
+        $DB->set_field('block', 'visible', '0', array('id'=>$block->id));      // Hide block
         admin_get_root(true, false);  // settings not required - only pages
     }
 
     if (!empty($show) && confirm_sesskey() ) {
-        if (!$block = get_record('block', 'id', $show)) {
+        if (!$block = $DB->get_record('block', array('id'=>$show))) {
             print_error('blockdoesnotexist', 'error');
         }
-        set_field('block', 'visible', '1', 'id', $block->id);      // Show block
+        $DB->set_field('block', 'visible', '1', array('id'=>$block->id));      // Show block
         admin_get_root(true, false);  // settings not required - only pages
     }
 
@@ -52,7 +52,7 @@
             print_error('blockdoesnotexist', 'error');
         }
         $block->multiple = !$block->multiple;
-        update_record('block', $block);
+        $DB->update_record('block', $block);
         admin_get_root(true, false);  // settings not required - only pages
     }
 
@@ -87,7 +87,7 @@
             }
 
             // First delete instances and then block
-            $instances = get_records('block_instance', 'blockid', $block->id);
+            $instances = $DB->get_records('block_instance', array('blockid'=>$block->id));
             if(!empty($instances)) {
                 foreach($instances as $instance) {
                     blocks_delete_instance($instance);
@@ -96,7 +96,7 @@
             }
 
             // Delete block
-            if (!delete_records('block', 'id', $block->id)) {
+            if (!$DB->delete_records('block', array('id'=>$block->id))) {
                 notify("Error occurred while deleting the $strblockname record from blocks table");
             }
 
@@ -122,19 +122,19 @@
 
 /// Get and sort the existing blocks
 
-    if (false === ($blocks = get_records('block'))) {
+    if (!$blocks = $DB->get_records('block')) {
         print_error('noblocks', 'error');  // Should never happen
     }
 
     $incompatible = array();
 
     foreach ($blocks as $block) {
-        if(!block_is_compatible($block->name)) {
+        if (!block_is_compatible($block->name)) {
             notify('Block '. $block->name .' is not compatible with the current version of Moodle and needs to be updated by a programmer.');
             $incompatible[] = $block;
             continue;
         }
-        if(($blockobject = block_instance($block->name)) === false) {
+        if (($blockobject = block_instance($block->name)) === false) {
             // Failed to load
             continue;
         }
@@ -178,12 +178,8 @@
         // MDL-11167, blocks can be placed on mymoodle, or the blogs page
         // and it should not show up on course search page
 
-        $totalcount = count_records('block_instance', 'blockid', $blockid);
-
-        $count = count_records_sql('SELECT COUNT(*)
-                                        FROM '.$CFG->prefix.'block_instance
-                                        WHERE blockid = '.$blockid.' AND
-                                        pagetype = \'course-view\'');
+        $totalcount = $DB->count_records('block_instance', array('blockid'=>$blockid));
+        $count      = $DB->count_records('block_instance', array('blockid'=>$blockid, 'pagetype'=>'course-view'));
 
         if ($count>0) {
             $blocklist = "<a href=\"{$CFG->wwwroot}/course/search.php?blocklist=$blockid&amp;sesskey={$USER->sesskey}\" ";

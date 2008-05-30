@@ -3,6 +3,8 @@
 
     require_once('../config.php');
 
+error('TODO: rewrite db perf code'); // TODO: rewrite
+
     // disable moodle specific debug messages that would be breaking the frames
     disable_debugging();
 
