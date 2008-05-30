@@ -75,7 +75,7 @@ function get_admins() {
               FROM {role_capabilities} rc
               JOIN {context} ctx ON ctx.id=rc.contextid
               JOIN {role_assignments} ra ON ra.roleid=rc.roleid AND ra.contextid=ctx.id
-             WHERE ctx.contextlevel=10 AND rc.capability IN (?, ?, ?)       
+             WHERE ctx.contextlevel=10 AND rc.capability IN (?, ?, ?)
           GROUP BY ra.userid
             HAVING SUM(rc.permission) > 0";
     $params = array('moodle/site:config', 'moodle/legacy:admin', 'moodle/site:doanything');
@@ -132,7 +132,7 @@ function count_courses_notin_metacourse($metacourseid) {
         $alreadycourses = "";
     }
 
-    $sql = "SELECT COUNT(c.id) 
+    $sql = "SELECT COUNT(c.id)
               FROM {course} c
              WHERE c.id != ? and c.id != ".SITEID." and c.metacourse != 1
                    $alreadycourses";
@@ -1565,12 +1565,12 @@ function get_coursemodule_from_id($modulename, $cmid, $courseid=0) {
     global $DB;
 
     $params = array();
-    $courseselect = ""; 
+    $courseselect = "";
 
     if ($courseid) {
         $courseselect = "cm.course = :courseid AND ";
         $params['courseid'] = $courseid;
-    } 
+    }
     $params['cmid'] = $cmid;
     $params['modulename'] = $modulename;
 
@@ -1595,12 +1595,12 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
     global $DB;
 
     $params = array();
-    $courseselect = ""; 
+    $courseselect = "";
 
     if ($courseid) {
         $courseselect = "cm.course = :courseid AND ";
         $params['courseid'] = $courseid;
-    } 
+    }
     $params['instance'] = $instance;
     $params['modulename'] = $modulename;
 
@@ -1742,7 +1742,7 @@ function instance_is_visible($moduletype, $module) {
     global $DB;
 
     if (!empty($module->id)) {
-        $params = array('courseid'=>$module->course, 'moduletype'=>$moduletype, 'moduleid'=>$module->id); 
+        $params = array('courseid'=>$module->course, 'moduletype'=>$moduletype, 'moduleid'=>$module->id);
         if ($records = $DB->get_records_sql("SELECT cm.instance, cm.visible, cm.groupingid, cm.id, cm.groupmembersonly, cm.course
                                                FROM {course_modules} cm, {modules} m
                                               WHERE cm.course = :courseid AND
@@ -1948,7 +1948,7 @@ function user_accesstime_log($courseid=0) {
             if (!$DB->insert_record_raw('user_lastaccess', $last, false)) {
                 debugging('Error: Could not insert course user lastaccess information', DEBUG_ALL);  // Don't throw an error
             }
-            
+
         } else if ($timenow - $lastaccess <  LASTACCESS_UPDATE_SECS) {
             // no need to update now, it was updated recently in concurrent login ;-)
 
@@ -1996,9 +1996,9 @@ function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom=
     $totalcount = $DB->count_records_sql($sql, $params);
 
     $sql = "SELECT l.*, u.firstname, u.lastname, u.picture
-              FROM {log} l 
+              FROM {log} l
               LEFT JOIN {user} u ON l.userid = u.id
-           $select 
+           $select
             $order";
 
     return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum) ;
@@ -2023,10 +2023,10 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
     $courseselect = '';
     if ($courseid) {
         $courseselect = "AND course = :courseid";
-        $params['courseid'] = $courseid; 
+        $params['courseid'] = $courseid;
     }
     $params['userid'] = $userid;
-    $params['coursestart'] = $coursestart; 
+    $params['coursestart'] = $coursestart;
 
     return $DB->get_records_sql("SELECT FLOOR((time - :coursestart)/". DAYSECS .") AS day, COUNT(*) AS num
                                    FROM {log}
@@ -2054,10 +2054,10 @@ function get_logs_userday($userid, $courseid, $daystart) {
     $courseselect = '';
     if ($courseid) {
         $courseselect = "AND course = :courseid";
-        $params['courseid'] = $courseid; 
+        $params['courseid'] = $courseid;
     }
     $params['userid'] = $userid;
-    $params['daystart'] = $daystart; 
+    $params['daystart'] = $daystart;
 
     return $DB->get_records_sql("SELECT FLOOR((time - :daystart)/". HOURSECS .") AS hour, COUNT(*) AS num
                                    FROM {log}
