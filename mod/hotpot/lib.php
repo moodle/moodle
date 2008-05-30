@@ -225,7 +225,7 @@ function hotpot_update_events($hotpot) {
     delete_records('event', 'modulename', 'hotpot', 'instance', $hotpot->id);
 
     $event = new stdClass();
-    $event->description = addslashes($hotpot->summary);
+    $event->description = $hotpot->summary;
     $event->courseid    = $hotpot->course;
     $event->groupid     = 0;
     $event->userid      = 0;
@@ -245,13 +245,13 @@ function hotpot_update_events($hotpot) {
 
         if ($event->timeduration > HOTPOT_MAX_EVENT_LENGTH) {  /// Long durations create two events
     
-            $event->name          = addslashes($hotpot->name).' ('.get_string('hotpotopens', 'hotpot').')';
+            $event->name          = $hotpot->name.' ('.get_string('hotpotopens', 'hotpot').')';
             $event->timeduration  = 0;
             add_event($event);
     
             $event->timestart    = $hotpot->timeclose;
             $event->eventtype    = 'close';
-            $event->name         = addslashes($hotpot->name).' ('.get_string('hotpotcloses', 'hotpot').')';
+            $event->name         = $hotpot->name.' ('.get_string('hotpotcloses', 'hotpot').')';
             unset($event->id);
             add_event($event);
         } else { // single event with duration

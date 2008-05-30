@@ -1178,8 +1178,8 @@ error('fix temporary table code in CAS');
      * called when the user password is updated.
      * changes userpassword in external db
      *
-     * @param  object  $user        User table object  (with system magic quotes)
-     * @param  string  $newpassword Plaintext password (with system magic quotes)
+     * @param  object  $user        User table object
+     * @param  string  $newpassword Plaintext password
      * @return boolean result
      *
      */
@@ -1193,8 +1193,8 @@ error('fix temporary table code in CAS');
         $username = $user->username;
 
         $textlib = textlib_get_instance();
-        $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->ldapencoding);
-        $extpassword = $textlib->convert(stripslashes($newpassword), 'utf-8', $this->config->ldapencoding);
+        $extusername = $textlib->convert($username, 'utf-8', $this->config->ldapencoding);
+        $extpassword = $textlib->convert($newpassword, 'utf-8', $this->config->ldapencoding);
 
         switch ($this->config->passtype) {
             case 'md5':
@@ -1213,7 +1213,7 @@ error('fix temporary table code in CAS');
         $user_dn = $this->ldap_find_userdn($ldapconnection, $extusername);
 
         if (!$user_dn) {
-            error_log('LDAP Error in user_update_password(). No DN for: ' . stripslashes($user->username));
+            error_log('LDAP Error in user_update_password(). No DN for: ' . $user->username);
             return false;
         }
 

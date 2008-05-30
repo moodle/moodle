@@ -135,8 +135,8 @@ class auth_plugin_base {
      * auth_user_update_password accepted a username as the first parameter. The
      * revised function expects a user object.
      *
-     * @param  object  $user        User table object  (with system magic quotes)
-     * @param  string  $newpassword Plaintext password (with system magic quotes)
+     * @param  object  $user        User table object
+     * @param  string  $newpassword Plaintext password
      *
      * @return bool                  True on success
      */

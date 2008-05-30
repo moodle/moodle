@@ -192,8 +192,8 @@ class auth_plugin_db extends auth_plugin_base {
     /**
      * Change a user's password
      *
-     * @param  object  $user        User table object  (with system magic quotes)
-     * @param  string  $newpassword Plaintext password (with system magic quotes)
+     * @param  object  $user        User table object
+     * @param  string  $newpassword Plaintext password
      *
      * @return bool                  True on success
      */

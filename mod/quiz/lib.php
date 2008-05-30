@@ -484,8 +484,8 @@ function quiz_refresh_events($courseid = 0) {
             }
         }
 
-        $event->name        = addslashes($quiz->name);
-        $event->description = addslashes($quiz->intro);
+        $event->name        = $quiz->name;
+        $event->description = $quiz->intro;
         $event->courseid    = $quiz->course;
         $event->groupid     = 0;
         $event->userid      = 0;
@@ -500,10 +500,10 @@ function quiz_refresh_events($courseid = 0) {
 
             $event2 = $event;
 
-            $event->name         = addslashes($quiz->name).' ('.get_string('quizopens', 'quiz').')';
+            $event->name         = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
             $event->timeduration = 0;
 
-            $event2->name        = addslashes($quiz->name).' ('.get_string('quizcloses', 'quiz').')';
+            $event2->name        = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
             $event2->timestart   = $quiz->timeclose;
             $event2->eventtype   = 'close';
             $event2->timeduration = 0;

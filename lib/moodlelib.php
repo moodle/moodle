@@ -154,8 +154,8 @@ define('PARAM_FILE',     0x0010);
 define('PARAM_TAG',   0x0011);
 
 /**
- * PARAM_TAGLIST - list of tags separated by commas (interests, blogs, etc.) 	 
- */ 	 
+ * PARAM_TAGLIST - list of tags separated by commas (interests, blogs, etc.) 	
+ */ 	
 define('PARAM_TAGLIST',   0x0012);
 
 /**
@@ -259,9 +259,9 @@ define ('BLOG_GLOBAL_LEVEL', 5);
 /**
  * Tag constanst
  */
-//To prevent problems with multibytes strings, this should not exceed the 
+//To prevent problems with multibytes strings, this should not exceed the
 //length of "varchar(255) / 3 (bytes / utf-8 character) = 85".
-define('TAG_MAX_LENGTH', 50); 
+define('TAG_MAX_LENGTH', 50);
 
 /**
  * Password policy constants
@@ -570,7 +570,7 @@ function clean_param($param, $type) {
             }
 
         case PARAM_TAG:
-            //as long as magic_quotes_gpc is used, a backslash will be a 
+            //as long as magic_quotes_gpc is used, a backslash will be a
             //problem, so remove *all* backslash.
             $param = str_replace('\\', '', $param);
             //convert many whitespace chars into one
@@ -580,19 +580,19 @@ function clean_param($param, $type) {
             return $param;
 
 
-        case PARAM_TAGLIST:      
-            $tags = explode(',', $param);   
-            $result = array();      
-            foreach ($tags as $tag) {   
-                $res = clean_param($tag, PARAM_TAG);    
-                if ($res != '') {   
-                    $result[] = $res;   
-                }   
-            }   
-            if ($result) {      
-                return implode(',', $result);   
-            } else {    
-                return '';      
+        case PARAM_TAGLIST:
+            $tags = explode(',', $param);
+            $result = array();
+            foreach ($tags as $tag) {
+                $res = clean_param($tag, PARAM_TAG);
+                if ($res != '') {
+                    $result[] = $res;
+                }
+            }
+            if ($result) {
+                return implode(',', $result);
+            } else {
+                return '';
             }
 
         default:                 // throw error, switched parameters in optional_param or another serious problem
@@ -613,6 +613,8 @@ function clean_param($param, $type) {
  *
  * A NULL value will delete the entry.
  *
+ * No need for get_config because they are usually always available in $CFG
+ *
  * @param string $name the key to set
  * @param string $value the value to set (without magic quotes)
  * @param string $plugin (optional) the plugin scope
@@ -620,9 +622,7 @@ function clean_param($param, $type) {
  * @return bool
  */
 function set_config($name, $value, $plugin=NULL) {
-/// No need for get_config because they are usually always available in $CFG
-
-    global $CFG;
+    global $CFG, $DB;
 
     if (empty($plugin)) {
         if (!array_key_exists($name, $CFG->config_php_settings)) {
@@ -634,37 +634,38 @@ function set_config($name, $value, $plugin=NULL) {
             }
         }
 
-        if (get_field('config', 'name', 'name', $name)) {
+        if ($DB->get_field('config', 'name', array('name'=>$name))) {
             if ($value===null) {
-                return delete_records('config', 'name', $name);
+                return $DB->delete_records('config', array('name'=>$name));
             } else {
-                return set_field('config', 'value', addslashes($value), 'name', $name);
+                return $DB->set_field('config', 'value', $value, array('name'=>$name));
             }
         } else {
             if ($value===null) {
                 return true;
             }
             $config = new object();
-            $config->name = $name;
-            $config->value = addslashes($value);
-            return insert_record('config', $config);
+            $config->name  = $name;
+            $config->value = $value;
+            return $DB->insert_record('config', $config);
         }
+
     } else { // plugin scope
-        if ($id = get_field('config_plugins', 'id', 'name', $name, 'plugin', $plugin)) {
+        if ($id = $DB->get_field('config_plugins', 'id', array('name'=>$name, 'plugin'=>$plugin))) {
             if ($value===null) {
-                return delete_records('config_plugins', 'name', $name, 'plugin', $plugin);
+                return $DB->delete_records('config_plugins', array('name'=>$name, 'plugin'=>$plugin));
             } else {
-                return set_field('config_plugins', 'value', addslashes($value), 'id', $id);
+                return $DB->set_field('config_plugins', 'value', $value, array('id'=>$id));
             }
         } else {
             if ($value===null) {
                 return true;
             }
             $config = new object();
-            $config->plugin = addslashes($plugin);
+            $config->plugin = $plugin;
             $config->name   = $name;
-            $config->value  = addslashes($value);
-            return insert_record('config_plugins', $config);
+            $config->value  = $value;
+            return $DB->insert_record('config_plugins', $config);
         }
     }
 }
@@ -687,20 +688,19 @@ function set_config($name, $value, $plugin=NULL) {
  *
  */
 function get_config($plugin=NULL, $name=NULL) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     if (!empty($name)) { // the user is asking for a specific value
         if (!empty($plugin)) {
-            return get_field('config_plugins', 'value', 'plugin' , $plugin, 'name', $name);
+            return $DB->get_field('config_plugins', 'value', array('plugin'=>$plugin, 'name'=>$name));
         } else {
-            return get_field('config', 'value', 'name', $name);
+            return $DB->get_field('config', 'value', array('name'=>$name));
         }
     }
 
     // the user is after a recordset
     if (!empty($plugin)) {
-        if ($configs=get_records('config_plugins', 'plugin', $plugin, '', 'name,value')) {
+        if ($configs = $DB->get_records('config_plugins', array('plugin'=>$plugin), '', 'name,value')) {
             $configs = (array)$configs;
             $localcfg = array();
             foreach ($configs as $config) {
@@ -712,7 +712,7 @@ function get_config($plugin=NULL, $name=NULL) {
         }
     } else {
         // this was originally in setup.php
-        if ($configs = get_records('config')) {
+        if ($configs = $DB->get_records('config')) {
             $localcfg = (array)$CFG;
             foreach ($configs as $config) {
                 if (!isset($localcfg[$config->name])) {
@@ -740,15 +740,14 @@ function get_config($plugin=NULL, $name=NULL) {
  * @return bool
  */
 function unset_config($name, $plugin=NULL) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     unset($CFG->$name);
 
     if (empty($plugin)) {
-        return delete_records('config', 'name', $name);
+        return $DB->delete_records('config', array('name'=>$name));
     } else {
-        return delete_records('config_plugins', 'name', $name, 'plugin', $plugin);
+        return $DB->delete_records('config_plugins', array('name'=>$name, 'plugin'=>$plugin));
     }
 }
 
@@ -761,16 +760,17 @@ function unset_config($name, $plugin=NULL) {
  *
  */
 function get_cache_flags($type, $changedsince=NULL) {
+    global $DB;
 
-    $type = addslashes($type);
-
-    $sqlwhere = 'flagtype=\'' . $type . '\' AND expiry >= ' . time();
+    $params = array('type'=>$type, 'expiry'=>time());
+    $sqlwhere = "flagtype = :type AND expiry >= :expiry";
     if ($changedsince !== NULL) {
-        $changedsince = (int)$changedsince;
-        $sqlwhere .= ' AND timemodified > ' . $changedsince;
+        $params['changedsince'] = $changedsince;
+        $sqlwhere .= " AND timemodified > :changedsince";
     }
     $cf = array();
-    if ($flags=get_records_select('cache_flags', $sqlwhere, '', 'name,value')) {
+
+    if ($flags = $DB->get_records_select('cache_flags', $sqlwhere, $params, '', 'name,value')) {
         foreach ($flags as $flag) {
             $cf[$flag->name] = $flag->value;
         }
@@ -788,16 +788,17 @@ function get_cache_flags($type, $changedsince=NULL) {
  *
  */
 function get_cache_flag($type, $name, $changedsince=NULL) {
+    global $DB;
 
-    $type = addslashes($type);
-    $name = addslashes($name);
+    $params = array('type'=>$type, 'name'=>$name, 'expiry'=>time());
 
-    $sqlwhere = 'flagtype=\'' . $type . '\' AND name=\'' . $name . '\' AND expiry >= ' . time();
+    $sqlwhere = "flagtype = :type AND name = :name AND expiry >= :expiry";
     if ($changedsince !== NULL) {
-        $changedsince = (int)$changedsince;
-        $sqlwhere .= ' AND timemodified > ' . $changedsince;
+        $params['changedsince'] = $changedsince;
+        $sqlwhere .= " AND timemodified > :changedsince";
     }
-    return get_field_select('cache_flags', 'value', $sqlwhere);
+
+    return $DB->get_field_select('cache_flags', 'value', $sqlwhere, $params);
 }
 
 /**
@@ -810,7 +811,7 @@ function get_cache_flag($type, $name, $changedsince=NULL) {
  * @return bool
  */
 function set_cache_flag($type, $name, $value, $expiry=NULL) {
-
+    global $DB;
 
     $timemodified = time();
     if ($expiry===NULL || $expiry < $timemodified) {
@@ -823,24 +824,22 @@ function set_cache_flag($type, $name, $value, $expiry=NULL) {
         return unset_cache_flag($type,$name);
     }
 
-    $type = addslashes($type);
-    $name = addslashes($name);
-    if ($f = get_record('cache_flags', 'name', $name, 'flagtype', $type)) { // this is a potentail problem in DEBUG_DEVELOPER
+    if ($f = $DB->get_record('cache_flags', array('name'=>$name, 'flagtype'=>$type))) { // this is a potentail problem in DEBUG_DEVELOPER
         if ($f->value == $value and $f->expiry == $expiry and $f->timemodified == $timemodified) {
             return true; //no need to update; helps rcache too
         }
-        $f->value        = addslashes($value);
+        $f->value        = $value;
         $f->expiry       = $expiry;
         $f->timemodified = $timemodified;
-        return update_record('cache_flags', $f);
+        return $DB->update_record('cache_flags', $f);
     } else {
         $f = new object();
         $f->flagtype     = $type;
         $f->name         = $name;
-        $f->value        = addslashes($value);
+        $f->value        = $value;
         $f->expiry       = $expiry;
         $f->timemodified = $timemodified;
-        return (bool)insert_record('cache_flags', $f);
+        return (bool)$DB->insert_record('cache_flags', $f);
     }
 }
 
@@ -853,10 +852,8 @@ function set_cache_flag($type, $name, $value, $expiry=NULL) {
  * @return bool
  */
 function unset_cache_flag($type, $name) {
-
-    return delete_records('cache_flags',
-                          'name', addslashes($name),
-                          'flagtype', addslashes($type));
+    global $DB;
+    return $DB->delete_records('cache_flags', array('name'=>$name, 'flagtype'=>$type));
 }
 
 /**
@@ -864,7 +861,8 @@ function unset_cache_flag($type, $name) {
  *
  */
 function gc_cache_flags() {
-    return delete_records_select('cache_flags', 'expiry < ' . time());
+    global $DB;
+    return $DB->delete_records_select('cache_flags', 'expiry < ?', array(time()));
 }
 
 /**
@@ -872,8 +870,7 @@ function gc_cache_flags() {
  * @uses $USER
  */
 function reload_user_preferences() {
-
-    global $USER;
+    global $USER, $DB;
 
     //reset preference
     $USER->preference = array();
@@ -881,7 +878,7 @@ function reload_user_preferences() {
     if (!isloggedin() or isguestuser()) {
         // no permanent storage for not-logged-in user and guest
 
-    } else if ($preferences = get_records('user_preferences', 'userid', $USER->id)) {
+    } else if ($preferences = $DB->get_records('user_preferences', array('userid'=>$USER->id))) {
         foreach ($preferences as $preference) {
             $USER->preference[$preference->name] = $preference->value;
         }
@@ -902,8 +899,7 @@ function reload_user_preferences() {
  * @return bool
  */
 function set_user_preference($name, $value, $otheruserid=NULL) {
-
-    global $USER;
+    global $USER, $DB;
 
     if (!isset($USER->preference)) {
         reload_user_preferences();
@@ -931,20 +927,20 @@ function set_user_preference($name, $value, $otheruserid=NULL) {
     if ($nostore) {
         // no permanent storage for not-logged-in user and guest
 
-    } else if ($preference = get_record('user_preferences', 'userid', $userid, 'name', addslashes($name))) {
+    } else if ($preference = $DB->get_record('user_preferences', array('userid'=>$userid, 'name'=>$name))) {
         if ($preference->value === $value) {
             return true;
         }
-        if (!set_field('user_preferences', 'value', addslashes((string)$value), 'id', $preference->id)) {
+        if (!$DB->set_field('user_preferences', 'value', (string)$value, array('id'=>$preference->id))) {
             $return = false;
         }
 
     } else {
         $preference = new object();
         $preference->userid = $userid;
-        $preference->name   = addslashes($name);
-        $preference->value  = addslashes((string)$value);
-        if (!insert_record('user_preferences', $preference)) {
+        $preference->name   = $name;
+        $preference->value  = (string)$value;
+        if (!$DB->insert_record('user_preferences', $preference)) {
             $return = false;
         }
     }
@@ -965,8 +961,7 @@ function set_user_preference($name, $value, $otheruserid=NULL) {
  * @param int $otheruserid A moodle user ID
  */
 function unset_user_preference($name, $otheruserid=NULL) {
-
-    global $USER;
+    global $USER, $DB;
 
     if (!isset($USER->preference)) {
         reload_user_preferences();
@@ -984,7 +979,7 @@ function unset_user_preference($name, $otheruserid=NULL) {
     }
 
     //Then from DB
-    return delete_records('user_preferences', 'userid', $userid, 'name', addslashes($name));
+    return $DB->delete_records('user_preferences', array('userid'=>$userid, 'name'=>$name));
 }
 
 
@@ -1022,7 +1017,7 @@ function set_user_preferences($prefarray, $otheruserid=NULL) {
  * @return string
  */
 function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {
-    global $USER;
+    global $USER, $DB;
 
     if (!isset($USER->preference)) {
         reload_user_preferences();
@@ -1039,7 +1034,7 @@ function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {
 
     } else {
         $preference = array();
-        if ($prefdata = get_records('user_preferences', 'userid', $userid)) {
+        if ($prefdata = $DB->get_records('user_preferences', array('userid'=>$userid))) {
             foreach ($prefdata as $pref) {
                 $preference[$pref->name] = $pref->value;
             }
@@ -1450,7 +1445,7 @@ function get_timezone_record($timezonename) {
     }
 
     return $cache[$timezonename] = $DB->get_record_sql('SELECT * FROM {timezone}
-                                                        WHERE name = ? ORDER BY year DESC', array($timezonename), true); 
+                                                        WHERE name = ? ORDER BY year DESC', array($timezonename), true);
 }
 
 /**
@@ -1463,7 +1458,7 @@ function get_timezone_record($timezonename) {
  * @return bool
  */
 function calculate_user_dst_table($from_year = NULL, $to_year = NULL, $strtimezone = NULL) {
-    global $CFG, $SESSION;
+    global $CFG, $SESSION, $DB;
 
     $usertz = get_user_timezone($strtimezone);
 
@@ -1542,7 +1537,7 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL, $strtimezo
 
     static $presets_cache = array();
     if (!isset($presets_cache[$usertz])) {
-        $presets_cache[$usertz] = get_records('timezone', 'name', $usertz, 'year DESC', 'year, gmtoff, dstoff, dst_month, dst_startday, dst_weekday, dst_skipweeks, dst_time, std_month, std_startday, std_weekday, std_skipweeks, std_time');
+        $presets_cache[$usertz] = $DB->get_records('timezone', array('name'=>$usertz), 'year DESC', 'year, gmtoff, dstoff, dst_month, dst_startday, dst_weekday, dst_skipweeks, dst_time, std_month, std_startday, std_weekday, std_skipweeks, std_time');
     }
     if(empty($presets_cache[$usertz])) {
         return false;
@@ -1790,7 +1785,7 @@ function confirm_sesskey($sesskey=NULL) {
  * @param mixed $courseorid id of the course or course object
  */
 function course_setup($courseorid=0) {
-    global $COURSE, $CFG, $SITE;
+    global $COURSE, $SITE, $DB;
 
 /// Redefine global $COURSE if needed
     if (empty($courseorid)) {
@@ -1805,7 +1800,7 @@ function course_setup($courseorid=0) {
         } else if (!empty($course->id) and $course->id == $courseorid) {
             $COURSE = clone($course);
         } else {
-            if (!$COURSE = get_record('course', 'id', $courseorid)) {
+            if (!$COURSE = $DB->get_record('course', array('id'=>$courseorid))) {
                 print_error('invalidcourseid');
             }
         }
@@ -1846,7 +1841,6 @@ function course_setup($courseorid=0) {
  *             in order to keep redirects working properly. MDL-14495
  */
 function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsurltome=true) {
-
     global $CFG, $SESSION, $USER, $COURSE, $FULLME;
 
 /// setup global $COURSE, themes, language and locale
@@ -1952,12 +1946,12 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     // Fetch the course context, and prefetch its child contexts
     if (!isset($COURSE->context)) {
         if ( ! $COURSE->context = get_context_instance(CONTEXT_COURSE, $COURSE->id) ) {
-            print_error('nocontext');        
+            print_error('nocontext');
         }
     }
     if ($COURSE->id == SITEID) {
         /// Eliminate hidden site activities straight away
-        if (!empty($cm) && !$cm->visible 
+        if (!empty($cm) && !$cm->visible
             && !has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) {
             redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
         }
@@ -1999,7 +1993,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
 
             switch ($COURSE->guest) {    /// Check course policy about guest access
 
-                case 1:    /// Guests always allowed 
+                case 1:    /// Guests always allowed
                     if (!has_capability('moodle/course:view', $COURSE->context)) {    // Prohibited by capability
                         print_header_simple();
                         notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), "$CFG->wwwroot/login/index.php");
@@ -2049,7 +2043,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
 
         /// Make sure they can read this activity too, if specified
 
-            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) { 
+            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) {
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
             user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
@@ -2145,7 +2139,7 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null, $setw
  * @param int $instance optional instance id
  */
 function require_user_key_login($script, $instance=null) {
-    global $nomoodlecookie, $USER, $SESSION, $CFG;
+    global $nomoodlecookie, $USER, $SESSION, $CFG, $DB;
 
     if (empty($nomoodlecookie)) {
         print_error('sessioncookiesdisable');
@@ -2156,7 +2150,7 @@ function require_user_key_login($script, $instance=null) {
 
     $keyvalue = required_param('key', PARAM_ALPHANUM);
 
-    if (!$key = get_record('user_private_key', 'script', $script, 'value', $keyvalue, 'instance', $instance)) {
+    if (!$key = $DB->get_record('user_private_key', array('script'=>$script, 'value'=>$keyvalue, 'instance'=>$instance))) {
         print_error('invalidkey');
     }
 
@@ -2171,7 +2165,7 @@ function require_user_key_login($script, $instance=null) {
         }
     }
 
-    if (!$user = get_record('user', 'id', $key->userid)) {
+    if (!$user = $DB->get_record('user', array('id'=>$key->userid))) {
         print_error('invaliduserid');
     }
 
@@ -2200,6 +2194,8 @@ function require_user_key_login($script, $instance=null) {
  * @return string access key value
  */
 function create_user_key($script, $userid, $instance=null, $iprestriction=null, $validuntil=null) {
+    global $DB;
+
     $key = new object();
     $key->script        = $script;
     $key->userid        = $userid;
@@ -2209,12 +2205,12 @@ function create_user_key($script, $userid, $instance=null, $iprestriction=null, 
     $key->timecreated   = time();
 
     $key->value         = md5($userid.'_'.time().random_string(40)); // something long and unique
-    while (record_exists('user_private_key', 'value', $key->value)) {
+    while ($DB->record_exists('user_private_key', array('value'=>$key->value))) {
         // must be unique
         $key->value     = md5($userid.'_'.time().random_string(40));
     }
 
-    if (!insert_record('user_private_key', $key)) {
+    if (!$DB->insert_record('user_private_key', $key)) {
         print_error('cannotinsertkey');
     }
 
@@ -2229,7 +2225,7 @@ function create_user_key($script, $userid, $instance=null, $iprestriction=null, 
  * @return bool
  */
 function update_user_login_times() {
-    global $USER;
+    global $USER, $DB;
 
     $user = new object();
     $USER->lastlogin = $user->lastlogin = $USER->currentlogin;
@@ -2237,7 +2233,7 @@ function update_user_login_times() {
 
     $user->id = $USER->id;
 
-    return update_record('user', $user);
+    return $DB->update_record('user', $user);
 }
 
 /**
@@ -2251,8 +2247,7 @@ function user_not_fully_set_up($user) {
 }
 
 function over_bounce_threshold($user) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     if (empty($CFG->handlebounces)) {
         return false;
@@ -2266,10 +2261,10 @@ function over_bounce_threshold($user) {
     }
     $bouncecount = 0;
     $sendcount = 0;
-    if ($bounce = get_record('user_preferences','userid',$user->id,'name','email_bounce_count')) {
+    if ($bounce = $DB->get_record('user_preferences', array ('userid'=>$user->id, 'name'=>'email_bounce_count'))) {
         $bouncecount = $bounce->value;
     }
-    if ($send = get_record('user_preferences','userid',$user->id,'name','email_send_count')) {
+    if ($send = $DB->get_record('user_preferences', array('userid'=>$user->id, 'name'=>'email_send_count'))) {
         $sendcount = $send->value;
     }
     return ($bouncecount >= $CFG->minbounces && $bouncecount/$sendcount >= $CFG->bounceratio);
@@ -2280,16 +2275,19 @@ function over_bounce_threshold($user) {
  * @param $reset - will reset the count to 0
  */
 function set_send_count($user,$reset=false) {
-    if ($pref = get_record('user_preferences','userid',$user->id,'name','email_send_count')) {
+    global $DB;
+
+    if ($pref = $DB->get_record('user_preferences', array('userid'=>$user->id, 'name'=>'email_send_count'))) {
         $pref->value = (!empty($reset)) ? 0 : $pref->value+1;
-        update_record('user_preferences',$pref);
+        $DB->update_record('user_preferences', $pref);
     }
     else if (!empty($reset)) { // if it's not there and we're resetting, don't bother.
         // make a new one
-        $pref->name = 'email_send_count';
-        $pref->value = 1;
+        $pref = new object();
+        $pref->name   = 'email_send_count';
+        $pref->value  = 1;
         $pref->userid = $user->id;
-        insert_record('user_preferences',$pref, false);
+        $DB->insert_record('user_preferences', $pref, false);
     }
 }
 
@@ -2298,16 +2296,19 @@ function set_send_count($user,$reset=false) {
  * @param $reset - will reset the count to 0
  */
 function set_bounce_count($user,$reset=false) {
-    if ($pref = get_record('user_preferences','userid',$user->id,'name','email_bounce_count')) {
+    global $DB;
+
+    if ($pref = $DB->get_record('user_preferences', array('userid'=>$user->id, 'name'=>'email_bounce_count'))) {
         $pref->value = (!empty($reset)) ? 0 : $pref->value+1;
-        update_record('user_preferences',$pref);
+        $DB->update_record('user_preferences', $pref);
     }
     else if (!empty($reset)) { // if it's not there and we're resetting, don't bother.
         // make a new one
-        $pref->name = 'email_bounce_count';
-        $pref->value = 1;
+        $pref = new object();
+        $pref->name   = 'email_bounce_count';
+        $pref->value  = 1;
         $pref->userid = $user->id;
-        insert_record('user_preferences',$pref, false);
+        $DB->insert_record('user_preferences', $pref, false);
     }
 }
 
@@ -2317,7 +2318,6 @@ function set_bounce_count($user,$reset=false) {
  * @uses $SESSION
  */
 function update_login_count() {
-
     global $SESSION;
 
     $max_logins = 10;
@@ -2346,10 +2346,9 @@ function reset_login_count() {
 }
 
 function sync_metacourses() {
+    global $DB;
 
-    global $CFG;
-
-    if (!$courses = get_records('course', 'metacourse', 1)) {
+    if (!$courses = $DB->get_records('course', array('metacourse'=>1))) {
         return;
     }
 
@@ -2364,11 +2363,11 @@ function sync_metacourses() {
  * @param mixed $course the metacourse to synch. Either the course object itself, or the courseid.
  */
 function sync_metacourse($course) {
-    global $CFG;
+    global $CFG, $DB;
 
     // Check the course is valid.
     if (!is_object($course)) {
-        if (!$course = get_record('course', 'id', $course)) {
+        if (!$course = $DB->get_record('course', array('id'=>$course))) {
             return false; // invalid course id
         }
     }
@@ -2397,55 +2396,41 @@ function sync_metacourse($course) {
 
     // Get assignments of a user to a role that exist in a child course, but
     // not in the meta coure. That is, get a list of the assignments that need to be made.
-    if (!$assignments = get_records_sql("
-            SELECT
-                ra.id, ra.roleid, ra.userid
-            FROM
-                {$CFG->prefix}role_assignments ra,
-                {$CFG->prefix}context con,
-                {$CFG->prefix}course_meta cm
-            WHERE
-                ra.contextid = con.id AND
-                con.contextlevel = " . CONTEXT_COURSE . " AND
-                con.instanceid = cm.child_course AND
-                cm.parent_course = {$course->id} AND
-                $roleexclusions
-                NOT EXISTS (
-                    SELECT 1 FROM
-                        {$CFG->prefix}role_assignments ra2
-                    WHERE
-                        ra2.userid = ra.userid AND
-                        ra2.roleid = ra.roleid AND
-                        ra2.contextid = {$context->id}
-                )
-    ")) {
+    if (!$assignments = $DB->get_records_sql("
+            SELECT ra.id, ra.roleid, ra.userid
+              FROM {role_assignments} ra, {context} con, {course_meta} cm
+             WHERE ra.contextid = con.id AND
+                   con.contextlevel = ".CONTEXT_COURSE." AND
+                   con.instanceid = cm.child_course AND
+                   cm.parent_course = ? AND
+                   $roleexclusions
+                   NOT EXISTS (
+                     SELECT 1
+                       FROM {role_assignments} ra2
+                      WHERE ra2.userid = ra.userid AND
+                            ra2.roleid = ra.roleid AND
+                            ra2.contextid = ?
+                  )", array($course->id, $context->id))) {
         $assignments = array();
     }
 
     // Get assignments of a user to a role that exist in the meta course, but
     // not in any child courses. That is, get a list of the unassignments that need to be made.
-    if (!$unassignments = get_records_sql("
-            SELECT
-                ra.id, ra.roleid, ra.userid
-            FROM
-                {$CFG->prefix}role_assignments ra
-            WHERE
-                ra.contextid = {$context->id} AND
-                $roleexclusions
-                NOT EXISTS (
-                    SELECT 1 FROM
-                        {$CFG->prefix}role_assignments ra2,
-                        {$CFG->prefix}context con2,
-                        {$CFG->prefix}course_meta cm
-                    WHERE
-                        ra2.userid = ra.userid AND
-                        ra2.roleid = ra.roleid AND
-                        ra2.contextid = con2.id AND
-                        con2.contextlevel = " . CONTEXT_COURSE . " AND
-                        con2.instanceid = cm.child_course AND
-                        cm.parent_course = {$course->id}
-                )
-    ")) {
+    if (!$unassignments = $DB->get_records_sql("
+            SELECT ra.id, ra.roleid, ra.userid
+              FROM {role_assignments} ra
+             WHERE ra.contextid = ? AND
+                   $roleexclusions
+                   NOT EXISTS (
+                    SELECT 1
+                      FROM {role_assignments} ra2, {context} con2, {course_meta} cm
+                    WHERE ra2.userid = ra.userid AND
+                          ra2.roleid = ra.roleid AND
+                          ra2.contextid = con2.id AND
+                          con2.contextlevel = " . CONTEXT_COURSE . " AND
+                          con2.instanceid = cm.child_course AND
+                          cm.parent_course = ?
+                  )", array($context->id, $course->id))) {
         $unassignments = array();
     }
 
@@ -2473,20 +2458,21 @@ function sync_metacourse($course) {
  * Adds a record to the metacourse table and calls sync_metacoures
  */
 function add_to_metacourse ($metacourseid, $courseid) {
+    global $DB;
 
-    if (!$metacourse = get_record("course","id",$metacourseid)) {
+    if (!$metacourse = $DB->get_record("course", array("id"=>$metacourseid))) {
         return false;
     }
 
-    if (!$course = get_record("course","id",$courseid)) {
+    if (!$course = $DB->get_record("course", array("id"=>$courseid))) {
         return false;
     }
 
-    if (!$record = get_record("course_meta","parent_course",$metacourseid,"child_course",$courseid)) {
+    if (!$record = $DB->get_record("course_meta", array("parent_course"=>$metacourseid, "child_course"=>$courseid))) {
         $rec = new object();
         $rec->parent_course = $metacourseid;
-        $rec->child_course = $courseid;
-        if (!insert_record('course_meta',$rec)) {
+        $rec->child_course  = $courseid;
+        if (!$DB->insert_record('course_meta', $rec)) {
             return false;
         }
         return sync_metacourse($metacourseid);
@@ -2499,8 +2485,9 @@ function add_to_metacourse ($metacourseid, $courseid) {
  * Removes the record from the metacourse table and calls sync_metacourse
  */
 function remove_from_metacourse($metacourseid, $courseid) {
+    global $DB;
 
-    if (delete_records('course_meta','parent_course',$metacourseid,'child_course',$courseid)) {
+    if ($DB->delete_records('course_meta', array('parent_course'=>$metacourseid, 'child_course'=>$courseid))) {
         return sync_metacourse($metacourseid);
     }
     return false;
@@ -2528,11 +2515,12 @@ function isloggedin() {
  * @return bool true if user is the real guest user, false if not logged in or other user
  */
 function isguestuser($user=NULL) {
-    global $USER;
+    global $USER, $DB;
+
     if ($user === NULL) {
         $user = $USER;
     } else if (is_numeric($user)) {
-        $user = get_record('user', 'id', $user, '', '', '', '', 'id, username');
+        $user = $DB->get_record('user', array('id'=>$user), 'id, username');
     }
 
     if (empty($user->id)) {
@@ -2590,7 +2578,6 @@ function ismoving($courseid) {
  * @param bool $override If true then the name will be first name followed by last name rather than adhering to fullnamedisplay setting.
  */
 function fullname($user, $override=false) {
-
     global $CFG, $SESSION;
 
     if (!isset($user->firstname) and !isset($user->lastname)) {
@@ -2792,23 +2779,22 @@ function get_user_fieldnames() {
  * @return mixed user object created or boolean false if the creation has failed
  */
 function create_guest_record() {
+    global $CFG, $DB;
 
-    global $CFG;
-
-    $guest = new stdClass();
+    $guest = new object();
     $guest->auth        = 'manual';
     $guest->username    = 'guest';
     $guest->password    = hash_internal_user_password('guest');
-    $guest->firstname   = addslashes(get_string('guestuser'));
+    $guest->firstname   = get_string('guestuser');
     $guest->lastname    = ' ';
     $guest->email       = 'root@localhost';
-    $guest->description = addslashes(get_string('guestuserinfo'));
+    $guest->description = get_string('guestuserinfo');
     $guest->mnethostid  = $CFG->mnet_localhost_id;
     $guest->confirmed   = 1;
     $guest->lang        = $CFG->lang;
     $guest->timemodified= time();
 
-    if (! $guest->id = insert_record("user", $guest)) {
+    if (! $guest->id = $DB->insert_record('user', $guest)) {
         return false;
     }
 
@@ -2826,17 +2812,19 @@ function create_guest_record() {
  * @todo Outline auth types and provide code example
  */
 function create_user_record($username, $password, $auth='manual') {
-    global $CFG;
+    global $CFG, $DB;
 
     //just in case check text case
     $username = trim(moodle_strtolower($username));
 
     $authplugin = get_auth_plugin($auth);
 
+    $newuser = new object();
+
     if ($newinfo = $authplugin->get_userinfo($username)) {
         $newinfo = truncate_userinfo($newinfo);
         foreach ($newinfo as $key => $value){
-            $newuser->$key = addslashes($value);
+            $newuser->$key = $value;
         }
     }
 
@@ -2861,7 +2849,7 @@ function create_user_record($username, $password, $auth='manual') {
     $newuser->timemodified = time();
     $newuser->mnethostid = $CFG->mnet_localhost_id;
 
-    if (insert_record('user', $newuser)) {
+    if ($DB->insert_record('user', $newuser)) {
         $user = get_complete_user_data('username', $newuser->username);
         if(!empty($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'})){
             set_user_preference('auth_forcepasswordchange', 1, $user->id);
@@ -2880,9 +2868,11 @@ function create_user_record($username, $password, $auth='manual') {
  * @return user A {@link $USER} object
  */
 function update_user_record($username, $authplugin) {
+    global $DB;
+
     $username = trim(moodle_strtolower($username)); /// just in case check text case
 
-    $oldinfo = get_record('user', 'username', $username, '','','','', 'username, auth');
+    $oldinfo = $DB->get_record('user', array('username'=>$username), 'username, auth');
     $userauth = get_auth_plugin($oldinfo->auth);
 
     if ($newinfo = $userauth->get_userinfo($username)) {
@@ -2890,8 +2880,7 @@ function update_user_record($username, $authplugin) {
         foreach ($newinfo as $key => $value){
             $confkey = 'field_updatelocal_' . $key;
             if (!empty($userauth->config->$confkey) and $userauth->config->$confkey === 'onlogin') {
-                $value = addslashes(stripslashes($value));   // Just in case
-                set_field('user', $key, $value, 'username', $username)
+                $DB->set_field('user', $key, $value, array('username'=>$username))
                     or error_log("Error updating $key for $username");
             }
         }
@@ -2939,11 +2928,11 @@ function truncate_userinfo($info) {
  * @return boolean success
  */
 function delete_user($user) {
-    global $CFG;
+    global $CFG, $DB;
     require_once($CFG->libdir.'/grouplib.php');
     require_once($CFG->libdir.'/gradelib.php');
 
-    begin_sql();
+    $DB->begin_sql();
 
     // delete all grades - backup is kept in grade_grades_history table
     if ($grades = grade_grade::fetch_all(array('userid'=>$user->id))) {
@@ -2953,7 +2942,7 @@ function delete_user($user) {
     }
 
     // remove from all groups
-    delete_records('groups_members', 'userid', $user->id);
+    $DB->delete_records('groups_members', array('userid'=>$user->id));
 
     // unenrol from all roles in all contexts
     role_unassign(0, $user->id); // this might be slow but it is really needed - modules might do some extra cleanup!
@@ -2965,8 +2954,8 @@ function delete_user($user) {
     tag_set('user', $user->id, array());
 
     // workaround for bulk deletes of users with the same email address
-    $delname = addslashes("$user->email.".time());
-    while (record_exists('user', 'username', $delname)) { // no need to use mnethostid here
+    $delname = "$user->email.".time();
+    while ($DB->record_exists('user', array('username'=>$delname))) { // no need to use mnethostid here
         $delname++;
     }
 
@@ -2979,15 +2968,15 @@ function delete_user($user) {
     $updateuser->idnumber     = '';               // Clear this field to free it up
     $updateuser->timemodified = time();
 
-    if (update_record('user', $updateuser)) {
-        commit_sql();
+    if ($DB->update_record('user', $updateuser)) {
+        $DB->commit_sql();
         // notify auth plugin - do not block the delete even when plugin fails
         $authplugin = get_auth_plugin($user->auth);
         $authplugin->user_delete($user);
         return true;
 
     } else {
-        rollback_sql();
+        $DB->rollback_sql();
         return false;
     }
 }
@@ -2999,9 +2988,9 @@ function delete_user($user) {
  * @return user A {@link $USER} object
  */
 function guest_user() {
-    global $CFG;
+    global $CFG, $DB;
 
-    if ($newuser = get_record('user', 'username', 'guest', 'mnethostid',  $CFG->mnet_localhost_id)) {
+    if ($newuser = $DB->get_record('user', array('username'=>'guest', 'mnethostid'=>$CFG->mnet_localhost_id))) {
         $newuser->confirmed = 1;
         $newuser->lang = $CFG->lang;
         $newuser->lastip = getremoteaddr();
@@ -3028,8 +3017,7 @@ function guest_user() {
  * @return user|flase A {@link $USER} object or false if error
  */
 function authenticate_user_login($username, $password) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     $authsenabled = get_enabled_auth_plugins();
 
@@ -3064,7 +3052,7 @@ function authenticate_user_login($username, $password) {
         // successful authentication
         if ($user->id) {                          // User already exists in database
             if (empty($user->auth)) {             // For some reason auth isn't set yet
-                set_field('user', 'auth', $auth, 'username', $username);
+                $DB->set_field('user', 'auth', $auth, array('username'=>$username));
                 $user->auth = $auth;
             }
 
@@ -3114,7 +3102,7 @@ function authenticate_user_login($username, $password) {
  * Call to complete the user login process after authenticate_user_login()
  * has succeeded. It will setup the $USER variable and other required bits
  * and pieces.
- * 
+ *
  * NOTE:
  * - It will NOT log anything -- up to the caller to decide what to log.
  *
@@ -3126,7 +3114,7 @@ function authenticate_user_login($username, $password) {
  */
 function complete_user_login($user) {
     global $CFG, $USER;
-    
+
     $USER = $user; // this is required because we need to access preferences here!
 
     reload_user_preferences();
@@ -3235,7 +3223,7 @@ function hash_internal_user_password($password) {
  * @return true if hash changed
  */
 function update_internal_user_password(&$user, $password) {
-    global $CFG;
+    global $CFG, $DB;
 
     $authplugin = get_auth_plugin($user->auth);
     if (!empty($authplugin->config->preventpassindb)) {
@@ -3244,7 +3232,7 @@ function update_internal_user_password(&$user, $password) {
         $hashedpassword = hash_internal_user_password($password);
     }
 
-    return set_field('user', 'password',  $hashedpassword, 'id', $user->id);
+    return $DB->set_field('user', 'password',  $hashedpassword, array('id'=>$user->id));
 }
 
 /**
@@ -3259,16 +3247,15 @@ function update_internal_user_password(&$user, $password) {
  * @return user A {@link $USER} object.
  */
 function get_complete_user_data($field, $value, $mnethostid=null) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     if (!$field || !$value) {
         return false;
     }
 
 /// Build the WHERE clause for an SQL query
-
-    $constraints = $field .' = \''. $value .'\' AND deleted <> \'1\'';
+    $params = array('fieldval'=>$value);
+    $constraints = "$field = :fieldval AND deleted <> 1";
 
     if (is_null($mnethostid)) {
         // if null, we restrict to local users
@@ -3279,18 +3266,18 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
         //    but the first one is FAST with our indexes
         $mnethostid = $CFG->mnet_localhost_id;
     }
-    $mnethostid = (int)$mnethostid;
-    $constraints .= ' AND mnethostid = \''.$mnethostid.'\'';
+    $params['mnethostid'] = $mnethostid;
+    $constraints .= " AND mnethostid = :mnethostid";
 
 /// Get all the basic user data
 
-    if (! $user = get_record_select('user', $constraints)) {
+    if (! $user = $DB->get_record_select('user', $constraints, $params)) {
         return false;
     }
 
 /// Get various settings and preferences
 
-    if ($displays = get_records('course_display', 'userid', $user->id)) {
+    if ($displays = $DB->get_records('course_display', array('userid'=>$user->id))) {
         foreach ($displays as $display) {
             $user->display[$display->course] = $display->display;
         }
@@ -3300,19 +3287,19 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
 
     $user->lastcourseaccess    = array(); // during last session
     $user->currentcourseaccess = array(); // during current session
-    if ($lastaccesses = get_records('user_lastaccess', 'userid', $user->id)) {
+    if ($lastaccesses = $DB->get_records('user_lastaccess', array('userid'=>$user->id))) {
         foreach ($lastaccesses as $lastaccess) {
             $user->lastcourseaccess[$lastaccess->courseid] = $lastaccess->timeaccess;
         }
     }
 
     $sql = "SELECT g.id, g.courseid
-              FROM {$CFG->prefix}groups g, {$CFG->prefix}groups_members gm
-             WHERE gm.groupid=g.id AND gm.userid={$user->id}";
+              FROM {groups} g, {groups_members} gm
+             WHERE gm.groupid=g.id AND gm.userid=?";
 
     // this is a special hack to speedup calendar display
     $user->groupmember = array();
-    if ($groups = get_records_sql($sql)) {
+    if ($groups = $DB->get_records_sql($sql, array($user->id))) {
         foreach ($groups as $group) {
             if (!array_key_exists($group->courseid, $user->groupmember)) {
                 $user->groupmember[$group->courseid] = array();
@@ -3322,7 +3309,7 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
     }
 
 /// Add the custom profile fields to the user record
-    include_once($CFG->dirroot.'/user/profile/lib.php');
+    require_once($CFG->dirroot.'/user/profile/lib.php');
     $customfields = (array)profile_user_record($user->id);
     foreach ($customfields as $cname=>$cvalue) {
         if (!isset($user->$cname)) { // Don't overwrite any standard fields
@@ -3418,7 +3405,7 @@ function set_login_session_preferences() {
  *             failed, but you have no way of knowing which.
  */
 function delete_course($courseid, $showfeedback = true) {
-    global $CFG;
+    global $CFG, $DB;
     $result = true;
 
     // frontpage course can not be deleted!!
@@ -3433,7 +3420,7 @@ function delete_course($courseid, $showfeedback = true) {
         $result = false;
     }
 
-    if (!delete_records("course", "id", $courseid)) {
+    if (!$DB->delete_records("course", array("id"=>$courseid))) {
         if ($showfeedback) {
             notify("An error occurred while deleting the main course record.");
         }
@@ -3470,14 +3457,13 @@ function delete_course($courseid, $showfeedback = true) {
  *             failed, but you have no way of knowing which.
  */
 function remove_course_contents($courseid, $showfeedback=true) {
-
-    global $CFG;
+    global $CFG, $DB;
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/gradelib.php');
 
     $result = true;
 
-    if (! $course = get_record('course', 'id', $courseid)) {
+    if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('invalidcourseid');
     }
 
@@ -3485,7 +3471,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 /// First delete every instance of every module
 
-    if ($allmods = get_records('modules') ) {
+    if ($allmods = $DB->get_records('modules') ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modfile = $CFG->dirroot .'/mod/'. $modname .'/lib.php';
@@ -3495,7 +3481,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
             if (file_exists($modfile)) {
                 include_once($modfile);
                 if (function_exists($moddelete)) {
-                    if ($instances = get_records($modname, 'course', $course->id)) {
+                    if ($instances = $DB->get_records($modname, array('course'=>$course->id))) {
                         foreach ($instances as $instance) {
                             if ($cm = get_coursemodule_from_instance($modname, $instance->id, $course->id)) {
                                 /// Delete activity context questions and question categories
@@ -3510,7 +3496,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
                             }
                             if ($cm) {
                                 // delete cm and its context in correct order
-                                delete_records('course_modules', 'id', $cm->id);
+                                $DB->delete_records('course_modules', array('id'=>$cm->id));
                                 delete_context(CONTEXT_MODULE, $cm->id);
                             }
                         }
@@ -3538,11 +3524,11 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 /// Delete course blocks
 
-    if ($blocks = get_records_sql("SELECT *
-                                   FROM {$CFG->prefix}block_instance
-                                   WHERE pagetype = '".PAGE_COURSE_VIEW."'
-                                   AND pageid = $course->id")) {
-        if (delete_records('block_instance', 'pagetype', PAGE_COURSE_VIEW, 'pageid', $course->id)) {
+    if ($blocks = $DB->get_records_sql("SELECT *
+                                          FROM {block_instance}
+                                         WHERE pagetype = '".PAGE_COURSE_VIEW."'
+                                               AND pageid = ?", array($course->id))) {
+        if ($DB->delete_records('block_instance', array('pagetype'=>PAGE_COURSE_VIEW, 'pageid'=>$course->id))) {
             if ($showfeedback) {
                 notify($strdeleted .' block_instance');
             }
@@ -3592,7 +3578,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
         'backup_log' => 'courseid'
     );
     foreach ($tablestoclear as $table => $col) {
-        if (delete_records($table, $col, $course->id)) {
+        if ($DB->delete_records($table, array($col=>$course->id))) {
             if ($showfeedback) {
                 notify($strdeleted . ' ' . $table);
             }
@@ -3605,13 +3591,13 @@ function remove_course_contents($courseid, $showfeedback=true) {
 /// Clean up metacourse stuff
 
     if ($course->metacourse) {
-        delete_records("course_meta","parent_course",$course->id);
+        $DB->delete_records("course_meta", array("parent_course"=>$course->id));
         sync_metacourse($course->id); // have to do it here so the enrolments get nuked. sync_metacourses won't find it without the id.
         if ($showfeedback) {
             notify("$strdeleted course_meta");
         }
     } else {
-        if ($parents = get_records("course_meta","child_course",$course->id)) {
+        if ($parents = $DB->get_records("course_meta", array("child_course"=>$course->id))) {
             foreach ($parents as $parent) {
                 remove_from_metacourse($parent->parent_course,$parent->child_course); // this will do the unenrolments as well.
             }
@@ -3640,15 +3626,15 @@ function remove_course_contents($courseid, $showfeedback=true) {
  * @return success
  */
 function shift_course_mod_dates($modname, $fields, $timeshift, $courseid) {
-    global $CFG;
+    global $CFG, $DB;
     include_once($CFG->dirroot.'/mod/'.$modname.'/lib.php');
 
     $return = true;
     foreach ($fields as $field) {
-        $updatesql = "UPDATE {$CFG->prefix}$modname
-                          SET $field = $field + ($timeshift)
-                        WHERE course=$courseid AND $field<>0 AND $field<>0";
-        $return = execute_sql($updatesql, false) && $return;
+        $updatesql = "UPDATE {".$modname."}
+                          SET $field = $field + ?
+                        WHERE course=? AND $field<>0 AND $field<>0";
+        $return = $DB->execute($updatesql, array($timeshift, $courseid)) && $return;
     }
 
     $refreshfunction = $modname.'_refresh_events';
@@ -3666,7 +3652,7 @@ function shift_course_mod_dates($modname, $fields, $timeshift, $courseid) {
  * @return array status array of array component, item, error
  */
 function reset_course_userdata($data) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/group/lib.php');
 
@@ -3690,12 +3676,12 @@ function reset_course_userdata($data) {
     // move the course start time
     if (!empty($data->reset_start_date) and $data->timeshift) {
         // change course start data
-        set_field('course', 'startdate', $data->reset_start_date, 'id', $data->courseid);
+        $DB->set_field('course', 'startdate', $data->reset_start_date, array('id'=>$data->courseid));
         // update all course and group events - do not move activity events
         $updatesql = "UPDATE {$CFG->prefix}event
-                         SET timestart = timestart + ({$data->timeshift})
-                       WHERE courseid={$data->courseid} AND instance=0";
-        execute_sql($updatesql, false);
+                         SET timestart = timestart + ?
+                       WHERE courseid=? AND instance=0";
+        $DB->execute($updatesql, array($data->timeshift, $data->courseid));
 
         $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
     }
@@ -3721,9 +3707,9 @@ function reset_course_userdata($data) {
     if (!empty($data->reset_roles_overrides)) {
         $children = get_child_contexts($context);
         foreach ($children as $child) {
-            delete_records('role_capabilities', 'contextid', $child->id);
+            $DB->delete_records('role_capabilities', array('contextid'=>$child->id));
         }
-        delete_records('role_capabilities', 'contextid', $context->id);
+        $DB->delete_records('role_capabilities', array('contextid'=>$context->id));
         //force refresh for logged in users
         mark_context_dirty($context->path);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deletecourseoverrides', 'role'), 'error'=>false);
@@ -3786,10 +3772,10 @@ function reset_course_userdata($data) {
 
     // Look in every instance of every module for data to delete
     $unsupported_mods = array();
-    if ($allmods = get_records('modules') ) {
+    if ($allmods = $DB->get_records('modules') ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
-            if (!count_records($modname, 'course', $data->courseid)) {
+            if (!$DB->count_records($modname, array('course'=>$data->courseid))) {
                 continue; // skip mods with no instances
             }
             $modfile = $CFG->dirroot.'/mod/'. $modname.'/lib.php';
@@ -3849,11 +3835,13 @@ function generate_email_processing_address($modid,$modargs) {
 
 
 function moodle_process_email($modargs,$body) {
+    global $DB;
+
     // the first char should be an unencoded letter. We'll take this as an action
     switch ($modargs{0}) {
         case 'B': { // bounce
             list(,$userid) = unpack('V',base64_decode(substr($modargs,1,8)));
-            if ($user = get_record_select("user","id=$userid","id,email")) {
+            if ($user = $DB->get_record("user", array('id'=>$userid), "id,email")) {
                 // check the half md5 of their email
                 $md5check = substr(md5($user->email),0,16);
                 if ($md5check == substr($modargs, -16)) {
@@ -4190,10 +4178,9 @@ function generate_email_signoff() {
 
 /**
  * Generate a fake user for emails based on support settings
- *
+ * @return object user info
  */
 function generate_email_supportuser() {
-
     global $CFG;
 
     static $supportuser;
@@ -4221,8 +4208,7 @@ function generate_email_supportuser() {
  *          was blocked by user and "false" if there was another sort of error.
  */
 function setnew_password_and_mail($user) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     $site  = get_site();
 
@@ -4230,7 +4216,7 @@ function setnew_password_and_mail($user) {
 
     $newpassword = generate_password();
 
-    if (! set_field('user', 'password', md5($newpassword), 'id', $user->id) ) {
+    if (! $DB->set_field('user', 'password', md5($newpassword), array('id'=>$user->id)) ) {
         trigger_error('Could not set user password!');
         return false;
     }
@@ -4245,7 +4231,7 @@ function setnew_password_and_mail($user) {
 
     $message = get_string('newusernewpasswordtext', '', $a);
 
-    $subject  = format_string($site->fullname) .': '. get_string('newusernewpasswordsubj');
+    $subject = format_string($site->fullname) .': '. get_string('newusernewpasswordsubj');
 
     return email_to_user($user, $supportuser, $subject, $message);
 
@@ -4260,7 +4246,6 @@ function setnew_password_and_mail($user) {
  *          was blocked by user and "false" if there was another sort of error.
  */
 function reset_password_and_mail($user) {
-
     global $CFG;
 
     $site  = get_site();
@@ -4274,7 +4259,7 @@ function reset_password_and_mail($user) {
 
     $newpassword = generate_password();
 
-    if (!$userauth->user_update_password(addslashes_recursive($user), addslashes($newpassword))) {
+    if (!$userauth->user_update_password($user, $newpassword)) {
         print_error("cannotsetpassword");
     }
 
@@ -4303,7 +4288,6 @@ function reset_password_and_mail($user) {
  *          was blocked by user and "false" if there was another sort of error.
  */
  function send_confirmation_email($user) {
-
     global $CFG;
 
     $site = get_site();
@@ -4311,12 +4295,12 @@ function reset_password_and_mail($user) {
 
     $data = new object();
     $data->firstname = fullname($user);
-    $data->sitename = format_string($site->fullname);
-    $data->admin = generate_email_signoff();
+    $data->sitename  = format_string($site->fullname);
+    $data->admin     = generate_email_signoff();
 
     $subject = get_string('emailconfirmationsubject', '', format_string($site->fullname));
 
-    $data->link = $CFG->wwwroot .'/login/confirm.php?data='. $user->secret .'/'. urlencode($user->username);
+    $data->link  = $CFG->wwwroot .'/login/confirm.php?data='. $user->secret .'/'. urlencode($user->username);
     $message     = get_string('emailconfirmation', '', $data);
     $messagehtml = text_to_html(get_string('emailconfirmation', '', $data), false, false, true);
 
@@ -4335,7 +4319,6 @@ function reset_password_and_mail($user) {
  *          was blocked by user and "false" if there was another sort of error.
  */
 function send_password_change_confirmation_email($user) {
-
     global $CFG;
 
     $site = get_site();
@@ -4343,9 +4326,9 @@ function send_password_change_confirmation_email($user) {
 
     $data = new object();
     $data->firstname = $user->firstname;
-    $data->sitename = format_string($site->fullname);
-    $data->link = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. urlencode($user->username);
-    $data->admin = generate_email_signoff();
+    $data->sitename  = format_string($site->fullname);
+    $data->link      = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. urlencode($user->username);
+    $data->admin     = generate_email_signoff();
 
     $message = get_string('emailpasswordconfirmation', '', $data);
     $subject = get_string('emailpasswordconfirmationsubject', '', format_string($site->fullname));
@@ -4363,7 +4346,6 @@ function send_password_change_confirmation_email($user) {
  *          was blocked by user and "false" if there was another sort of error.
  */
 function send_password_change_info($user) {
-
     global $CFG;
 
     $site = get_site();
@@ -4372,8 +4354,8 @@ function send_password_change_info($user) {
 
     $data = new object();
     $data->firstname = $user->firstname;
-    $data->sitename = format_string($site->fullname);
-    $data->admin = generate_email_signoff();
+    $data->sitename  = format_string($site->fullname);
+    $data->admin     = generate_email_signoff();
 
     $userauth = get_auth_plugin($user->auth);
 
@@ -4413,7 +4395,6 @@ function send_password_change_info($user) {
  * @return string|false
  */
 function email_is_not_allowed($email) {
-
     global $CFG;
 
     if (!empty($CFG->allowemailaddresses)) {
@@ -4479,7 +4460,7 @@ function email_welcome_message_to_user($course, $user=NULL) {
     /// If you don't want a welcome message sent, then make the message string blank.
     if (!empty($message)) {
         $subject = get_string('welcometocourse', '', format_string($course->fullname));
-    
+
         if (! $teacher = get_teacher($course->id)) {
             $teacher = get_admin();
         }
@@ -4534,7 +4515,7 @@ function make_user_directory($userid, $test=false) {
 
     // Generate a two-level path for the userid. First level groups them by slices of 1000 users, second level is userid
     $level1 = floor($userid / 1000) * 1000;
-    
+
     $userdir = "user/$level1/$userid";
     if ($test) {
         return $CFG->dataroot . '/' . $userdir;
@@ -4548,20 +4529,20 @@ function make_user_directory($userid, $test=false) {
  *
  * @param bool $only_non_empty Only return directories that contain files
  * @param bool $legacy Search for user directories in legacy location (dataroot/users/userid) instead of (dataroot/user/section/userid)
- * @return array An associative array: userid=>array(basedir => $basedir, userfolder => $userfolder) 
+ * @return array An associative array: userid=>array(basedir => $basedir, userfolder => $userfolder)
  */
 function get_user_directories($only_non_empty=true, $legacy=false) {
     global $CFG;
 
     $rootdir = $CFG->dataroot."/user";
-    
+
     if ($legacy) {
-        $rootdir = $CFG->dataroot."/users"; 
+        $rootdir = $CFG->dataroot."/users";
     }
     $dirlist = array();
 
-    //Check if directory exists 
-    if (check_dir_exists($rootdir, true)) { 
+    //Check if directory exists
+    if (check_dir_exists($rootdir, true)) {
         if ($legacy) {
             if ($userlist = get_directory_list($rootdir, '', true, true, false)) {
                 foreach ($userlist as $userid) {
@@ -4569,7 +4550,7 @@ function get_user_directories($only_non_empty=true, $legacy=false) {
                 }
             } else {
                 notify("no directories found under $rootdir");
-            } 
+            }
         } else {
             if ($grouplist =get_directory_list($rootdir, '', true, true, false)) { // directories will be in the form 0, 1000, 2000 etc...
                 foreach ($grouplist as $group) {
@@ -4579,7 +4560,7 @@ function get_user_directories($only_non_empty=true, $legacy=false) {
                         }
                     }
                 }
-            } 
+            }
         }
     } else {
         notify("$rootdir does not exist!");
@@ -4869,7 +4850,6 @@ function get_directory_list($rootdir, $excludefiles='', $descend=true, $getdirs=
  * @todo Finish documenting this function
  */
 function get_directory_size($rootdir, $excludefile='') {
-
     global $CFG;
 
     // do it this way if we can, it's much faster
@@ -4957,6 +4937,7 @@ function display_size($size) {
  */
 function clean_filename($string) {
     global $CFG;
+
     if (empty($CFG->unicodecleanfilename)) {
         $textlib = textlib_get_instance();
         $string = $textlib->specialtoascii($string);
@@ -5142,7 +5123,6 @@ or
  * @return string The localized string.
  */
 function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
-
     global $CFG;
 
 /// originally these special strings were stored in moodle.php now we are only in langconfig.php
@@ -5569,7 +5549,6 @@ function get_list_of_countries() {
  * @return array
  */
 function get_list_of_themes() {
-
     global $CFG;
 
     $themes = array();
@@ -5639,7 +5618,7 @@ function get_list_of_pixnames($lang = '') {
  * @return array
  */
 function get_list_of_timezones() {
-    global $CFG;
+    global $CFG, $DB;
 
     static $timezones;
 
@@ -5649,7 +5628,7 @@ function get_list_of_timezones() {
 
     $timezones = array();
 
-    if ($rawtimezones = get_records_sql('SELECT MAX(id), name FROM '.$CFG->prefix.'timezone GROUP BY name')) {
+    if ($rawtimezones = $DB->get_records_sql("SELECT MAX(id), name FROM {timezone} GROUP BY name")) {
         foreach($rawtimezones as $timezone) {
             if (!empty($timezone->name)) {
                 $timezones[$timezone->name] = get_string(strtolower($timezone->name), 'timezones');
@@ -5833,12 +5812,11 @@ function endecrypt ($pwd, $data, $case) {
  * @return int The id number of the resulting record
  */
  function add_event($event) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     $event->timemodified = time();
 
-    if (!$event->id = insert_record('event', $event)) {
+    if (!$event->id = $DB->insert_record('event', $event)) {
         return false;
     }
 
@@ -5864,8 +5842,7 @@ function endecrypt ($pwd, $data, $case) {
  * @return bool
  */
 function update_event($event) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     $event->timemodified = time();
 
@@ -5878,7 +5855,7 @@ function update_event($event) {
             }
         }
     }
-    return update_record('event', $event);
+    return $DB->update_record('event', $event);
 }
 
 /**
@@ -5890,8 +5867,7 @@ function update_event($event) {
  * @todo Verify return type
  */
 function delete_event($id) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     if (!empty($CFG->calendar)) { // call the delete_event function of the selected calendar
         if (file_exists($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php')) {
@@ -5902,7 +5878,7 @@ function delete_event($id) {
             }
         }
     }
-    return delete_records('event', 'id', $id);
+    return $DB->delete_records('event', array('id'=>$id));
 }
 
 /**
@@ -5915,7 +5891,7 @@ function delete_event($id) {
  * @todo Verify return type
  */
 function hide_event($event) {
-    global $CFG;
+    global $CFG, $DB;
 
     if (!empty($CFG->calendar)) { // call the update_event function of the selected calendar
         if (file_exists($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php')) {
@@ -5926,7 +5902,7 @@ function hide_event($event) {
             }
         }
     }
-    return set_field('event', 'visible', 0, 'id', $event->id);
+    return $DB->set_field('event', 'visible', 0, array('id'=>$event->id));
 }
 
 /**
@@ -5939,7 +5915,7 @@ function hide_event($event) {
  * @todo Verify return type
  */
 function show_event($event) {
-    global $CFG;
+    global $CFG, $DB;
 
     if (!empty($CFG->calendar)) { // call the update_event function of the selected calendar
         if (file_exists($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php')) {
@@ -5950,7 +5926,7 @@ function show_event($event) {
             }
         }
     }
-    return set_field('event', 'visible', 1, 'id', $event->id);
+    return $DB->set_field('event', 'visible', 1, array('id'=>$event->id));
 }
 
 
@@ -5966,7 +5942,6 @@ function show_event($event) {
  * @return array of plugins found under the requested parameters
  */
 function get_list_of_plugins($plugin='mod', $exclude='', $basedir='') {
-
     global $CFG;
 
     $plugins = array();
@@ -6013,7 +5988,7 @@ function get_list_of_plugins($plugin='mod', $exclude='', $basedir='') {
  * @param string $version The version of php being tested.
  * @return bool
  */
-function check_php_version($version='4.1.0') {
+function check_php_version($version='5.2.0') {
     return (version_compare(phpversion(), $version) >= 0);
 }
 
@@ -6146,7 +6121,7 @@ function ini_get_bool($ini_get_arg) {
 /**
  * Determines if the HTML editor is enabled.
  *
- * This depends on site and user settings, as well as the current browser being 
+ * This depends on site and user settings, as well as the current browser being
  * used.  The current requirements are based on Tinymce's, which are available
  * on http://wiki.moxiecode.com/index.php/TinyMCE:Compatiblity
  *
@@ -6221,7 +6196,7 @@ function check_gd_version() {
  * @return bool
  */
 function moodle_needs_upgrading() {
-    global $CFG;
+    global $CFG, $DB;
 
     $version = null;
     include_once($CFG->dirroot .'/version.php');  # defines $version and upgrades
@@ -6238,7 +6213,7 @@ function moodle_needs_upgrading() {
                     continue;
                 }
                 include_once($fullmod .'/version.php');  # defines $module with version etc
-                if ($currmodule = get_record('modules', 'name', $mod)) {
+                if ($currmodule = $DB->get_record('modules', array('name'=>$mod))) {
                     if ($module->version > $currmodule->version) {
                         return true;
                     }
@@ -6262,11 +6237,10 @@ function moodle_needs_upgrading() {
  * by name before finishing
  *
  * @uses $CFG
- * @uses $db
  * @uses HOURSECS
  */
 function notify_login_failures() {
-    global $CFG, $db;
+    global $CFG, $DB;
 
     switch ($CFG->notifyloginfailures) {
         case 'mainadmin' :
@@ -6288,67 +6262,72 @@ function notify_login_failures() {
 
 /// Get all the IPs with more than notifyloginthreshold failures since lastnotifyfailure
 /// and insert them into the cache_flags temp table
-    $iprs = get_recordset_sql("SELECT ip, count(*)
-                                 FROM {$CFG->prefix}log
-                                WHERE module = 'login'
-                                  AND action = 'error'
-                                  AND time > $CFG->lastnotifyfailure
-                             GROUP BY ip
-                               HAVING count(*) >= $CFG->notifyloginthreshold");
-    while ($iprec = rs_fetch_next_record($iprs)) {
-        if (!empty($iprec->ip)) {
-            set_cache_flag('login_failure_by_ip', $iprec->ip, '1', 0);
+    $sql = "SELECT ip, COUNT(*)
+              FROM {log}
+             WHERE module = 'login' AND action = 'error'
+                   AND time > ?
+          GROUP BY ip
+            HAVING COUNT(*) >= ?";
+    $params = array($CFG->lastnotifyfailure, $CFG->notifyloginthreshold);
+    if ($rs = $DB->get_recordset_sql($sql, $params)) {
+        foreach ($rs as $iprec) {
+            if (!empty($iprec->ip)) {
+                set_cache_flag('login_failure_by_ip', $iprec->ip, '1', 0);
+            }
         }
+        $rs->close();
     }
-    rs_close($iprs);
 
 /// Get all the INFOs with more than notifyloginthreshold failures since lastnotifyfailure
 /// and insert them into the cache_flags temp table
-    $infors = get_recordset_sql("SELECT info, count(*)
-                                   FROM {$CFG->prefix}log
-                                  WHERE module = 'login'
-                                    AND action = 'error'
-                                    AND time > $CFG->lastnotifyfailure
-                               GROUP BY info
-                                 HAVING count(*) >= $CFG->notifyloginthreshold");
-    while ($inforec = rs_fetch_next_record($infors)) {
-        if (!empty($inforec->info)) {
-            set_cache_flag('login_failure_by_info', $inforec->info, '1', 0);
+    $sql = "SELECT info, count(*)
+              FROM {$CFG->prefix}log
+             WHERE module = 'login' AND action = 'error'
+                   AND time > ?
+          GROUP BY info
+            HAVING count(*) >= ?";
+    $params = array($CFG->lastnotifyfailure, $CFG->notifyloginthreshold);
+    if ($rs = $DB->get_recordset_sql($sql, $params)) {
+        foreach ($rs as $inforec) {
+            if (!empty($inforec->info)) {
+                set_cache_flag('login_failure_by_info', $inforec->info, '1', 0);
+            }
         }
+        $rs->close();
     }
-    rs_close($infors);
 
 /// Now, select all the login error logged records belonging to the ips and infos
 /// since lastnotifyfailure, that we have stored in the cache_flags table
-    $logsrs = get_recordset_sql("SELECT l.*, u.firstname, u.lastname
-                                   FROM {$CFG->prefix}log l
-                                   JOIN {$CFG->prefix}cache_flags cf ON (l.ip = cf.name)
-                              LEFT JOIN {$CFG->prefix}user u ON (l.userid = u.id)
-                                  WHERE l.module = 'login'
-                                    AND l.action = 'error'
-                                    AND l.time > $CFG->lastnotifyfailure
-                                    AND cf.flagtype = 'login_failure_by_ip'
-                             UNION ALL
-                                 SELECT l.*, u.firstname, u.lastname
-                                   FROM {$CFG->prefix}log l
-                                   JOIN {$CFG->prefix}cache_flags cf ON (l.info = cf.name)
-                              LEFT JOIN {$CFG->prefix}user u ON (l.userid = u.id)
-                                  WHERE l.module = 'login'
-                                    AND l.action = 'error'
-                                    AND l.time > $CFG->lastnotifyfailure
-                                    AND cf.flagtype = 'login_failure_by_info'
-                             ORDER BY time DESC");
+    $sql = "SELECT l.*, u.firstname, u.lastname
+              FROM {log} l
+              JOIN {cache_flags} cf ON l.ip = cf.name
+         LEFT JOIN {user} u         ON l.userid = u.id
+             WHERE l.module = 'login' AND l.action = 'error'
+                   AND l.time > ?
+                   AND cf.flagtype = 'login_failure_by_ip'
+        UNION ALL
+            SELECT l.*, u.firstname, u.lastname
+              FROM {log} l
+              JOIN {cache_flags} cf ON l.info = cf.name
+         LEFT JOIN {user} u         ON l.userid = u.id
+             WHERE l.module = 'login' AND l.action = 'error'
+                   AND l.time > ?
+                   AND cf.flagtype = 'login_failure_by_info'
+          ORDER BY time DESC";
+    $params = array($CFG->lastnotifyfailure, $CFG->lastnotifyfailure);
 
 /// Init some variables
     $count = 0;
     $messages = '';
 /// Iterate over the logs recordset
-    while ($log = rs_fetch_next_record($logsrs)) {
-        $log->time = userdate($log->time);
-        $messages .= get_string('notifyloginfailuresmessage','',$log)."\n";
-        $count++;
+    if ($rs = $DB->get_recordset_sql($sql, $params)) {
+        foreach ($rs as $log) {
+            $log->time = userdate($log->time);
+            $messages .= get_string('notifyloginfailuresmessage','',$log)."\n";
+            $count++;
+        }
+        $rs->close();
     }
-    rs_close($logsrs);
 
 /// If we haven't run in the last hour and
 /// we have something useful to report and we
@@ -6373,7 +6352,7 @@ function notify_login_failures() {
     }
 
 /// Finally, delete all the temp records we have created in cache_flags
-    delete_records_select('cache_flags', "flagtype IN ('login_failure_by_ip', 'login_failure_by_info')");
+    $DB->delete_records_select('cache_flags', "flagtype IN ('login_failure_by_ip', 'login_failure_by_info')");
 }
 
 /**
@@ -6384,7 +6363,6 @@ function notify_login_failures() {
  * @todo Finish documenting this function
  */
 function moodle_setlocale($locale='') {
-
     global $CFG;
 
     static $currentlocale = ''; // last locale caching
@@ -6506,13 +6484,13 @@ function random_string ($length=15) {
     return $string;
 }
 
-/*
+/**
  * Given some text (which may contain HTML) and an ideal length,
  * this function truncates the text neatly on a word boundary if possible
  * @param string $text - text to be shortened
  * @param int $ideal - ideal string length
  * @param boolean $exact if false, $text will not be cut mid-word
- * @return string $truncate - shortened string 
+ * @return string $truncate - shortened string
  */
 
 function shorten_text($text, $ideal=30, $exact = false) {
@@ -6524,7 +6502,7 @@ function shorten_text($text, $ideal=30, $exact = false) {
     if (strlen(preg_replace('/<.*?>/', '', $text)) <= $ideal) {
         return $text;
     }
-            
+
     // splits all html-tags to scanable lines
     preg_match_all('/(<.+?>)?([^<>]*)/s', $text, $lines, PREG_SET_ORDER);
 
@@ -6580,7 +6558,7 @@ function shorten_text($text, $ideal=30, $exact = false) {
             $truncate .= $line_matchings[2];
             $total_length += $content_length;
         }
-                
+
         // if the maximum length is reached, get off the loop
         if($total_length >= $ideal) {
             break;
@@ -6601,7 +6579,7 @@ function shorten_text($text, $ideal=30, $exact = false) {
                 }
             }
 		}
-        
+
 		if (isset($breakpos)) {
             // ...and cut the text in this position
             $truncate = substr($truncate, 0, $breakpos);
@@ -6850,9 +6828,11 @@ function make_menu_from_list($list, $separator=',') {
  * @todo Finish documenting this function
  */
 function make_grades_menu($gradingtype) {
+    global $DB;
+
     $grades = array();
     if ($gradingtype < 0) {
-        if ($scale = get_record('scale', 'id', - $gradingtype)) {
+        if ($scale = $DB->get_record('scale', array('id'=> (-$gradingtype)))) {
             return make_menu_from_list($scale->scale);
         }
     } else if ($gradingtype > 0) {
@@ -6874,8 +6854,7 @@ function make_grades_menu($gradingtype) {
  * @todo Finish documenting this function
  */
 function course_scale_used($courseid, $scaleid) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     $return = 0;
 
@@ -6896,15 +6875,15 @@ function course_scale_used($courseid, $scaleid) {
         }
 
         // check if any course grade item makes use of the scale
-        $return += count_records('grade_items', 'courseid', $courseid, 'scaleid', $scaleid);
+        $return += $DB->count_records('grade_items', array('courseid'=>$courseid, 'scaleid'=>$scaleid));
 
         // check if any outcome in the course makes use of the scale
-        $return += count_records_sql("SELECT COUNT(*)
-                                      FROM {$CFG->prefix}grade_outcomes_courses goc,
-                                           {$CFG->prefix}grade_outcomes go
-                                      WHERE go.id = goc.outcomeid
-                                        AND go.scaleid = $scaleid
-                                        AND goc.courseid = $courseid");
+        $return += $DB->count_records_sql("SELECT COUNT('x')
+                                             FROM {grade_outcomes_courses} goc,
+                                                  {grade_outcomes} go
+                                            WHERE go.id = goc.outcomeid
+                                                  AND go.scaleid = ? AND goc.courseid = ?",
+                                          array($scaleid, $courseid));
     }
     return $return;
 }
@@ -6917,10 +6896,7 @@ function course_scale_used($courseid, $scaleid) {
  * @return int
  * @todo Finish documenting this function. Is return type correct?
  */
-function site_scale_used($scaleid,&$courses) {
-
-    global $CFG;
-
+function site_scale_used($scaleid, &$courses) {
     $return = 0;
 
     if (!is_array($courses) || count($courses) == 0) {
@@ -7175,12 +7151,13 @@ function zip_files ($originalfiles, $destination) {
     return true;
 }
 
-function unzip_file ($zipfile, $destination = '', $showstatus = true) {
-//Unzip one zip file to a destination dir
-//Both parameters must be FULL paths
-//If destination isn't specified, it will be the
-//SAME directory where the zip file resides.
-
+/**
+ * Unzip one zip file to a destination dir
+ * Both parameters must be FULL paths
+ * If destination isn't specified, it will be the
+ * SAME directory where the zip file resides.
+ */
+function unzip_file($zipfile, $destination = '', $showstatus = true) {
     global $CFG;
 
     //Extract everything from zipfile
@@ -7266,10 +7243,12 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
     return true;
 }
 
+/**
+ * This function is used as callback in unzip_file() function
+ * to clean illegal characters for given platform and to prevent directory traversal.
+ * Produces the same result as info-zip unzip.
+ */
 function unzip_cleanfilename ($p_event, &$p_header) {
-//This function is used as callback in unzip_file() function
-//to clean illegal characters for given platform and to prevent directory traversal.
-//Produces the same result as info-zip unzip.
     $p_header['filename'] = ereg_replace('[[:cntrl:]]', '', $p_header['filename']); //strip control chars first!
     $p_header['filename'] = ereg_replace('\.\.+', '', $p_header['filename']); //directory traversal protection
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -7285,11 +7264,12 @@ function unzip_cleanfilename ($p_event, &$p_header) {
     return 1;
 }
 
+/**
+ * This function shows the results of the unzip execution
+ * depending of the value of the $CFG->zip, results will be
+ * text or an array of files.
+ */
 function unzip_show_status ($list,$removepath) {
-//This function shows the results of the unzip execution
-//depending of the value of the $CFG->zip, results will be
-//text or an array of files.
-
     global $CFG;
 
     if (empty($CFG->unzip)) {    // Use built-in php-based zip function
@@ -7411,7 +7391,7 @@ function fullclone($thing) {
 }
 
 
-/*
+/**
  * This function expects to called during shutdown
  * should be set via register_shutdown_function()
  * in lib/setup.php .
@@ -7422,7 +7402,6 @@ function fullclone($thing) {
  *
  */
 function moodle_request_shutdown() {
-
     global $CFG;
 
     // initially, we are only ever called under apache
@@ -7472,7 +7451,7 @@ function moodle_request_shutdown() {
  * @return string Javascript code
  */
 function message_popup_window() {
-    global $USER;
+    global $USER, $DB;
 
     $popuplimit = 30;     // Minimum seconds between popups
 
@@ -7483,7 +7462,7 @@ function message_popup_window() {
             }
             if ((time() - $USER->message_lastpopup) > $popuplimit) {  /// It's been long enough
                 if (get_user_preferences('message_showmessagewindow', 1) == 1) {
-                    if (count_records_select('message', 'useridto = \''.$USER->id.'\' AND timecreated > \''.$USER->message_lastpopup.'\'')) {
+                    if ($DB->count_records_select('message', 'useridto = ? AND timecreated > ?', array($USER->id, $USER->message_lastpopup))) {
                         $USER->message_lastpopup = time();
                         return '<script type="text/javascript">'."\n//<![CDATA[\n openpopup('/message/index.php', 'message',
                         'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\n//]]>\n</script>";
@@ -7656,7 +7635,6 @@ function remove_dir($dir, $content_only=false) {
  * @return boolean true if directory exists or created
  */
 function check_dir_exists($dir, $create=false, $recursive=false) {
-
     global $CFG;
 
     if (strstr($dir, $CFG->dataroot.'/') === false) {
@@ -7922,14 +7900,14 @@ function is_proxybypass( $url ) {
         }
 
         // try for host match (Right side)
-        $rhs = substr($host,-strlen($match)); 
+        $rhs = substr($host,-strlen($match));
         if (strcasecmp($match,$rhs)==0) {
             return true;
-        }     
+        }
     }
 
     // nothing matched.
-    return false; 
+    return false;
 }
 
 
@@ -7990,7 +7968,7 @@ function object_array_unique($array, $keep_key_assoc = true) {
 
 /**
  * Returns the language string for the given plugin.
- * 
+ *
  * @param string $plugin the plugin code name
  * @param string $type the type of plugin (mod, block, filter)
  * @return string The plugin language string
@@ -7999,7 +7977,7 @@ function get_plugin_name($plugin, $type='mod') {
     $plugin_name = '';
 
     switch ($type) {
-        case 'mod': 
+        case 'mod':
             $plugin_name = get_string('modulename', $plugin);
             break;
         case 'blocks':
@@ -8010,14 +7988,14 @@ function get_plugin_name($plugin, $type='mod') {
                 } else {
                     $plugin_name = "[[$plugin]]";
                 }
-            } 
+            }
             break;
         case 'filter':
             $plugin_name = trim(get_string('filtername', $plugin));
             if (empty($plugin_name) or ($plugin_name == '[[filtername]]')) {
                 $textlib = textlib_get_instance();
                 $plugin_name = $textlib->strtotitle($plugin);
-            } 
+            }
             break;
         default:
             $plugin_name = $plugin;
@@ -8031,7 +8009,7 @@ function get_plugin_name($plugin, $type='mod') {
  * Is a userid the primary administrator?
  *
  * @param $userid int id of user to check
- * @return boolean 
+ * @return boolean
  */
 function is_primary_admin($userid){
     $primaryadmin =  get_admin();
