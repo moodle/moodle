@@ -1187,6 +1187,11 @@ abstract class moodle_database {
      */
     public abstract function sql_substr();
 
+    /**
+     * Returns SQL WHERE conditions
+     * @param array conditions - must not contain numeric indexes
+     * @return array sql part and params 
+     */
     public function where_clause(array $conditions=null) {
         $allowed_types = $this->allowed_param_types();
         if (empty($conditions)) {
@@ -1195,6 +1200,9 @@ abstract class moodle_database {
         $where = array();
         $params = array();
         foreach ($conditions as $key=>$value) {
+            if (is_int($key)) {
+                error('$conditions array may not contain numeric keys, please fix the code!');
+            }
             if (is_null($value)) {
                 $where[] = "$key IS NULL";
             } else {
