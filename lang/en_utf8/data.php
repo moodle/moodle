@@ -1,6 +1,4 @@
-<?PHP // $Id$ 
-      // data.php - created with Moodle 1.7 beta + (2006101003)
-
+<?PHP // $Id$
 
 $string['action'] = 'Action';
 $string['add'] = 'Add entry';
@@ -44,7 +42,7 @@ $string['confirmdeletefield'] = 'You are about to delete this field, are you sur
 $string['confirmdeleterecord'] = 'Are you sure you want to delete this entry?';
 $string['csstemplate'] = 'CSS template';
 $string['csvfile'] = 'CSV file';
-$string['csvformatwithselecteddelimiter'] = 'CSV format with selected delimiter:';
+$string['csvwithselecteddelimiter'] = '<acronym title=\"Comma Separated Values\">CSV</acronym> text with selected delimiter:';
 $string['csvimport'] = 'CSV file import';
 $string['data:approve'] = 'Approve unapproved entries';
 $string['data:comment'] = 'Write comments';
@@ -86,10 +84,10 @@ $string['entry'] = 'Entry';
 $string['entrysaved'] = 'Your entry has been saved';
 $string['errormustbeteacher'] = 'You need to be a teacher to use this page!';
 $string['example'] = 'Database module example';
-$string['excelformat'] = 'Excel format';
+$string['excel'] = 'Excel';
 $string['export'] = 'Export';
 $string['exportaszip'] = 'Export as zip';
-$string['exportdatabase'] = 'Export Database records';
+$string['exportdatabaserecords'] = 'Export Database records';
 $string['exportedtozip'] = 'Exported to temporary zip...';
 $string['failedpresetdelete'] = 'Error deleting a preset!';
 $string['fieldadded'] = 'Field added';
@@ -181,7 +179,7 @@ $string['number'] = 'Number';
 $string['numberrssarticles'] = 'RSS articles';
 $string['numnotapproved'] = 'Pending';
 $string['numrecords'] = '$a entries';
-$string['odsformat'] = 'ODS Format';
+$string['ods'] = '<acronym title=\"OpenDocument Spreadsheet\">ODS</acronym> (OpenOffice)';
 $string['optionaldescription'] = 'Short description (optional)';
 $string['optionalfilename'] = 'Filename (optional)';
 $string['other'] = 'Other';
