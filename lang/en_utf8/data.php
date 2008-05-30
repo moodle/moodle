@@ -1,6 +1,4 @@
 <?PHP // $Id$ 
-      // data.php - created with Moodle 1.7 beta + (2006101003)
-
 
 $string['action'] = 'Action';
 $string['add'] = 'Add entry';
@@ -52,7 +50,7 @@ $string['confirmdeletefield'] = 'You are about to delete this field, are you sur
 $string['confirmdeleterecord'] = 'Are you sure you want to delete this entry?';
 $string['csstemplate'] = 'CSS template';
 $string['csvfile'] = 'CSV file';
-$string['csvformat'] = 'CSV format';
+$string['csvformatwithselecteddelimiter'] = 'CSV format with selected delimiter:';
 $string['csvimport'] = 'CSV file import';
 $string['data:approve'] = 'Approve unapproved entries';
 $string['data:comment'] = 'Write comments';
