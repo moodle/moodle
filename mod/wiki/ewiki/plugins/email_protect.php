@@ -34,13 +34,13 @@
  $ewiki_t["en"]["PROTE6"] = "the email address you've clicked on is:";
  $ewiki_t["en"]["PROTE7"] = "<b>spammers, please eat these:</b>";
 
- $ewiki_t["de"]["PROTE0"] = "Geschützte EMail-Adresse";
- $ewiki_t["de"]["PROTE1"] = "Die EMail-Adresse, die du angeklickt hast, wird durch dieses Formular vor <a href=\"http://google.com/search?q=spambots\">spambots</a> (automatisierte Suchwerkzeuge, die das Netz zur Freude der MarketingMafia nach Adressen abgrasen) beschützt.";
- $ewiki_t["de"]["PROTE2"] = "Die Seite, die du ändern willst, enthält momentan wenigstens eine EMail-Adresse. Um diese zu schützen müssen wir sicherstellen, daß kein Spambot an die Edit-Box kommt (weil dort die Adresse ja im Klartext steht).";
+ $ewiki_t["de"]["PROTE0"] = "Geschï¿½tzte EMail-Adresse";
+ $ewiki_t["de"]["PROTE1"] = "Die EMail-Adresse, die du angeklickt hast, wird durch dieses Formular vor <a href=\"http://google.com/search?q=spambots\">spambots</a> (automatisierte Suchwerkzeuge, die das Netz zur Freude der MarketingMafia nach Adressen abgrasen) beschï¿½tzt.";
+ $ewiki_t["de"]["PROTE2"] = "Die Seite, die du ï¿½ndern willst, enthï¿½lt momentan wenigstens eine EMail-Adresse. Um diese zu schï¿½tzen mï¿½ssen wir sicherstellen, daï¿½ kein Spambot an die Edit-Box kommt (weil dort die Adresse ja im Klartext steht).";
  $ewiki_t["de"]["PROTE4"] = "Ich bin wirklich kein Spambot!";
  $ewiki_t["de"]["PROTE5"] = "<b>noch mehr fingierte Adressen anzeigen</b>";
  $ewiki_t["de"]["PROTE6"] = "die EMail-Adresse die du angeklickt hast lautet:";
- $ewiki_t["de"]["PROTE7"] = "<b>Liebe Spammer, bitte freßt das:</b>";
+ $ewiki_t["de"]["PROTE7"] = "<b>Liebe Spammer, bitte freï¿½t das:</b>";
 
  #-- plugin glue
  $ewiki_plugins["link_url"][] = "ewiki_email_protect_link";
@@ -85,9 +85,11 @@
   */
  function ewiki_email_protect_edit_hook($id, &$data, &$hidden_postdata) {
 
+    $ewiki_up_nospambot = optional_param(EWIKI_UP_NOSPAMBOT, null);
+
     $hidden_postdata[EWIKI_UP_NOSPAMBOT] = 1;
 
-    if (empty($_REQUEST[EWIKI_UP_NOSPAMBOT])
+    if (empty($ewiki_up_nospambot )
         && strpos($data["content"], "@")
         && preg_match('/\w\w@([-\w]+\.)+\w\w/', $data["content"])   )
     {
@@ -96,7 +98,7 @@
        return($o);
     }
 
-    if (!empty($_POST[EWIKI_UP_NOSPAMBOT]) && empty($_COOKIE[EWIKI_UP_NOSPAMBOT]) && EWIKI_HTTP_HEADERS) {
+    if (!empty($ewiki_up_nospambot) && empty($_COOKIE[EWIKI_UP_NOSPAMBOT]) && EWIKI_HTTP_HEADERS) {
        setcookie(EWIKI_UP_NOSPAMBOT, "grant_access", time()+7*24*3600, "/");
     }
 
@@ -110,11 +112,14 @@
   */
  function ewiki_email_protect_form($id, $data=0, $action=0, $text="PROTE1", $url="") {
 
-    if ($url || ($email = @$_REQUEST[EWIKI_UP_ENCEMAIL])) {
+    $ewiki_up_encemail = optional_param(EWIKI_UP_ENCEMAIL, null);
+    $ewiki_up_nospambot = optional_param(EWIKI_UP_NOSPAMBOT, null);
+
+    if ($url || ($email = $ewiki_up_encemail)) {
 
           $html = "<h3>" . ewiki_t("PROTE0") . "</h3>\n";
 
-          if (empty($_REQUEST[EWIKI_UP_NOSPAMBOT])) {  #// from GET,POST,COOKIE
+          if (empty($ewiki_up_nospambot)) {  #// from GET,POST,COOKIE
 
              (empty($url)) and ($url = ewiki_script("", EWIKI_PAGE_EMAIL));
 
@@ -172,7 +177,7 @@
           while (($rd = strrpos($string, ".")) > strpos($string, "@")) {
              $string = substr($string, 0, $rd);
           }
-          $string = strtr($string, "@.-_", "»·±¯");
+          $string = strtr($string, "@.-_", "ï¿½ï¿½ï¿½ï¿½");
           break;
 
        case 1:  // encode
@@ -230,6 +235,8 @@
 
     global $ewiki_config;
 
+    $ewiki_up_requestlv = optional_param(EWIKI_UP_REQUESTLV, 0);
+    
     $html = "";
     srand(time()/17-1000*microtime());
 
@@ -276,7 +283,7 @@
 
     $html .= '<a href="mailto:'.$traps[rand(0, $n_trp)].'">'.$traps[rand(0, $n_trp)].'</a>';
 
-    if (($rl = 1 + @$_REQUEST[EWIKI_UP_REQUESTLV]) < EWIKI_FAKE_EMAIL_LOOP) {
+    if (($rl = 1 + $ewiki_up_requestlv) < EWIKI_FAKE_EMAIL_LOOP) {
        $html .= ",\n" . '<br /><a href="' .
              ewiki_script("", EWIKI_PAGE_EMAIL,
                array(

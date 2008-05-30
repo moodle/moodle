@@ -479,21 +479,21 @@ function ewiki_page($id=false) {
    $o = "";
 
    #-- selected page
-   if (!isset($_REQUEST)) {
-      $_REQUEST = @array_merge($_GET, $_POST);
-   }
+    $action  = optional_param('action', EWIKI_DEFAULT_ACTION);
+    $content = optional_param('content', false);
+    $version = optional_param('version', false);
+
    if (!strlen($id)) {
       $id = ewiki_id();
    }
    $id = format_string($id,true);
    #-- page action
-   $action = EWIKI_DEFAULT_ACTION;
    if ($delim = strpos($id, EWIKI_ACTION_SEP_CHAR)) {
       $action = substr($id, 0, $delim);
       $id = substr($id, $delim + 1);
    }
-   elseif (EWIKI_USE_ACTION_PARAM && isset($_REQUEST["action"])) {
-      $action = $_REQUEST["action"];
+   elseif (!EWIKI_USE_ACTION_PARAM) {
+      $action = EWIKI_DEFAULT_ACTION;
    }
    $GLOBALS["ewiki_id"] = $id;
    $GLOBALS["ewiki_title"] = ewiki_split_title($id);
@@ -503,7 +503,7 @@ function ewiki_page($id=false) {
    $dquery = array(
       "id" => $id
    );
-   if (!isset($_REQUEST["content"]) && ($dquery["version"] = @$_REQUEST["version"])) {
+   if (!$content && ($dquery["version"] = $version)) {
       $dquery["forced_version"] = $dquery["version"];
    }
    $data = @array_merge($dquery, ewiki_database("GET", $dquery));
@@ -725,6 +725,8 @@ function ewiki_page_view($id, &$data, $action, $all=1) {
    global $ewiki_plugins, $ewiki_config;
    $o = "";
 
+   $thanks = optional_param('thankyou', '');
+
    #-- render requested wiki page  <-- goal !!!
    $render_args = array(
       "scan_links" => 1,
@@ -750,7 +752,7 @@ function ewiki_page_view($id, &$data, $action, $all=1) {
       foreach ($pf_a as $n => $pf) { $pf($o, $id, $data, $action); }
    }
 
-   if (!empty($_REQUEST["thankyou"]) && $ewiki_config["edit_thank_you"]) {
+   if (!empty($thankyou) && $ewiki_config["edit_thank_you"]) {
       $o = ewiki_t("THANKSFORCONTRIBUTION") . $o;
    }
 
@@ -773,10 +775,10 @@ function ewiki_page_view($id, &$data, $action, $all=1) {
     further whenever desired
 */
 function ewiki_id() {
-   ($id = @$_REQUEST["id"]) or
-   ($id = @$_REQUEST["name"]) or
-   ($id = @$_REQUEST["page"]) or
-   ($id = @$_REQUEST["file"]) or
+   ($id = optional_param("id", '')) or
+   ($id = optional_param("name", '')) or
+   ($id = optional_param("page", '')) or
+   ($id = optional_param("file", '')) or
    (EWIKI_USE_PATH_INFO) and ($id = ltrim(@$_SERVER["PATH_INFO"], "/")) or
    (!isset($_REQUEST["id"])) and ($id = trim(strtok($_SERVER["QUERY_STRING"], "&")));
    if (!strlen($id) || ($id=="id=")) {
@@ -1092,9 +1094,10 @@ function ewiki_page_search($id, &$data, $action) {
 
    global $CFG;
 
+   $q = optional_param('q', '');
    $o = ewiki_make_title($id, $id, 2, $action);
 
-   if (! ($q = @$_REQUEST["q"])) {
+   if ($q == '') {
 
       $o .= '<form action="' . ewiki_script("", $id) . '" method="post">';
       $o .= '<fieldset class="invisiblefieldset">';
@@ -1146,6 +1149,9 @@ function ewiki_page_info($id, &$data, $action) {
    global $ewiki_plugins, $ewiki_config, $ewiki_links;
    global $CFG, $course;  // MOODLE HACK
 
+   $pnum = optional_param(EWIKI_UP_PAGENUM, 0);
+   $pend = optional_param(EWIKI_UP_PAGEEND, 0);
+
    $o = ewiki_make_title($id, ewiki_t("INFOABOUTPAGE")." '{$id}'", 2, $action,"", "_MAY_SPLIT=1"); 
 
    $flagnames = array(
@@ -1160,12 +1166,12 @@ function ewiki_page_info($id, &$data, $action) {
 
    #-- versions to show
    $v_start = $data["version"];
-   if ( ($uu=@$_REQUEST[EWIKI_UP_PAGENUM]) && ($uu<=$v_start) ) {
-      $v_start = $uu;
+   if ( $pnum && ($pnum<=$v_start) ) {
+      $v_start = $pnum;
    }
    $v_end = $v_start - $ewiki_config["list_limit"] + 1;
-   if ( ($uu=@$_REQUEST[EWIKI_UP_PAGEEND]) && ($uu<=$v_start) ) {
-      $v_end = $uu;
+   if ( $pend && ($pend<=$v_start) ) {
+      $v_end = $pend;
    }
    $v_end = max($v_end, 1);
 
@@ -1349,6 +1355,11 @@ function ewiki_page_edit($id, $data, $action) {
 
    global $ewiki_links, $ewiki_author, $ewiki_plugins, $ewiki_ring, $ewiki_errmsg;
 
+   $content = optional_param('content', '');
+   $version = optional_param('version', '');
+   $preview = optional_param('preview', false);
+   $save    = optional_param('save', false);
+   
    $hidden_postdata = array();
 
    #-- previous version come back
@@ -1358,8 +1369,11 @@ function ewiki_page_edit($id, $data, $action) {
       $data["version"] = $current["version"];
       unset($current);
 
-      unset($_REQUEST["content"]);
-      unset($_REQUEST["version"]);
+    /// Is this done for somewhere else?
+      $_REQUEST['content'] = $_POST['content'] = $_GET['content'] = null;
+      $_REQUEST['version'] = $_POST['version'] = $_GET['version'] = null;
+      $content = '';
+      $version = '';
    }
 
    #-- edit hacks
@@ -1397,21 +1411,21 @@ function ewiki_page_edit($id, $data, $action) {
    $o = ewiki_make_title($id, ewiki_t("EDITTHISPAGE").(" '{$id}'"), 2, $action, "", "_MAY_SPLIT=1");
 
    #-- preview
-   if (isset($_REQUEST["preview"])) {
+   if ($preview) {
       $o .= $ewiki_plugins["edit_preview"][0]($data);
    }
 
    #-- save
-   if (isset($_REQUEST["save"])) {
+   if ($save) {
 
 
          #-- normalize to UNIX newlines
-         $_REQUEST["content"] = str_replace("\015\012", "\012", $_REQUEST["content"]);
-         $_REQUEST["content"] = str_replace("\015", "\012", $_REQUEST["content"]);
+         $content = str_replace("\015\012", "\012", $content);
+         $content = str_replace("\015", "\012", $content);
 
          #-- check for concurrent version saving
          $error = 0;
-         if ((@$data["version"] >= 1) && ($data["version"] != @$_REQUEST["version"]) || (@$_REQUEST["version"] < 1)) {
+         if ((@$data["version"] >= 1) && ($data["version"] != $version) || ($version < 1)) {
 
             $pf = $ewiki_plugins["edit_patch"][0];
 
@@ -1436,7 +1450,7 @@ function ewiki_page_edit($id, $data, $action) {
                "id" => $id,
                "version" => @$data["version"] + 1,
                "flags" => $set_flags,
-               "content" => $_REQUEST["content"],
+               "content" => $content,
                "created" => ($uu=@$data["created"]) ? $uu : time(),
                "meta" => ($uu=@$data["meta"]) ? $uu : "",
                "hits" => ($uu=@$data["hits"]) ? $uu : "0",
@@ -1518,13 +1532,16 @@ function ewiki_data_update(&$data, $author="") {
 function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    global $ewiki_plugins, $ewiki_config, $moodle_format;   
 
+   $content = optional_param('content', '');
+   $version = optional_param('version', '');
+
    $o='';
       
    #-- previously edited, or db fetched content
-   if (@$_REQUEST["content"] || @$_REQUEST["version"]) {
+   if ($content || $version) {
       $data = array(
-         "version" => &$_REQUEST["version"],
-         "content" => &$_REQUEST["content"]
+         "version" => $version,
+         "content" => $content
       );
    }
    else {
@@ -1636,7 +1653,7 @@ function ewiki_page_edit_form_final_imgupload(&$o, &$id, &$data, &$action) {
 function ewiki_page_edit_preview(&$data) {
 #### BEGIN MOODLE CHANGES   
    global $moodle_format;   
-   $preview_text=$GLOBALS["ewiki_plugins"]["render"][0]($_REQUEST["content"], 1, EWIKI_ALLOW_HTML || (@$data["flags"]&EWIKI_DB_F_HTML));
+   $preview_text=$GLOBALS["ewiki_plugins"]["render"][0](optional_param("content", null), 1, EWIKI_ALLOW_HTML || (@$data["flags"]&EWIKI_DB_F_HTML));
    return( '<div class="preview">'
            . "<hr noshade>"
            . "<div align=\"right\">" . ewiki_t("PREVIEW") . "</div><hr noshade><br />\n"
@@ -2536,8 +2553,10 @@ function ewiki_binary($break=0) {
    global $ewiki_plugins;
    global $USER;   // MOODLE
 
+   $id = optional_param(EWIKI_UP_BINARY, '');
+
    #-- reject calls
-   if (!strlen($id = @$_REQUEST[EWIKI_UP_BINARY]) || !EWIKI_IDF_INTERNAL) {
+   if (!strlen($id) || !EWIKI_IDF_INTERNAL) {
       return(false);
    }
    if (headers_sent()) die("ewiki-binary configuration error");
@@ -2571,7 +2590,8 @@ function ewiki_binary($break=0) {
    #-- auth only happens when enforced with _PROTECTED_MODE_XXL setting
    #   (authentication for inline images in violation of the WWW spirit)
    if ((EWIKI_PROTECTED_MODE>=5) && !ewiki_auth($id, $data, "binary-{$do}")) {
-      return($_REQUEST["id"]="view/BinaryPermissionError");
+      $_REQUEST['id'] = $_POST['id'] = $_GET['id'] = "view/BinaryPermissionError";
+      return("view/BinaryPermissionError");
    }
 
    #-- upload an image

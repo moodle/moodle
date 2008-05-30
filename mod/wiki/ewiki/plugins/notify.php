@@ -46,17 +46,17 @@ _END_OF_STRING;
 
 
 #-- translation.de
-$ewiki_t["de"]["NOTIFY_SUBJECT"] = '"$id" wurde geändert [notify:...]';
+$ewiki_t["de"]["NOTIFY_SUBJECT"] = '"$id" wurde geï¿½ndert [notify:...]';
 $ewiki_t["de"]["NOTIFY_BODY"] = <<<_END_OF_STRING
 Hi,
 
-Eine WikiSeite hat sich geändert, und du wolltest ja unbedingt wissen,
-wenn das passiert. Die geänderte Seite war '\$id' und
+Eine WikiSeite hat sich geï¿½ndert, und du wolltest ja unbedingt wissen,
+wenn das passiert. Die geï¿½nderte Seite war '\$id' und
 ist leicht zu finden unter folgender URL:
 \$link
 
 Wenn du diese Benachrichtigungen nicht mehr bekommen willst, solltest du
-deine [notify:...]-Adresse aus der entsprechenden Edit-Box herauslöschen:
+deine [notify:...]-Adresse aus der entsprechenden Edit-Box herauslï¿½schen:
 \$edit_link
 
 (\$wiki_title auf http://\$server/)
@@ -72,9 +72,12 @@ _END_OF_STRING;
 function ewiki_notify_edit_hook($id, $data, &$hidden_postdata) {
 
    global $ewiki_t, $ewiki_plugins;
-   $ret_err = 0;
 
-   if (!isset($_REQUEST["save"])) {
+   $content = optional_param('content', '');
+   $ret_err = 0;
+   $save = optional_param('save', false);
+
+   if ($save === false) {
       return(false);
    }
 
@@ -90,12 +93,12 @@ function ewiki_notify_edit_hook($id, $data, &$hidden_postdata) {
 
       #-- save page versions temporarily as files
       $fn1 = EWIKI_TMP."/ewiki.tmp.notify.diff.".md5($data["content"]);
-      $fn2 = EWIKI_TMP."/ewiki.tmp.notify.diff.".md5($_REQUEST["content"]);
+      $fn2 = EWIKI_TMP."/ewiki.tmp.notify.diff.".md5($content);
       $f = fopen($fn1, "w");
       fwrite($f, $data["content"]);
       fclose($f);
       $f = fopen($fn2, "w");
-      fwrite($f, $_REQUEST["content"]);
+      fwrite($f, $content);
       fclose($f);
       #-- set mtime of the old one (GNU diff will report it)
       touch($fn1, $data["lastmodified"]);

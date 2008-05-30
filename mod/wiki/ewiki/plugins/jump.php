@@ -34,8 +34,10 @@ $ewiki_config["interwiki"]["goto"] = "";
 function ewiki_handler_jump(&$id, &$data, &$action) {
 
    global $ewiki_config;
-
    static $redirect_count = 5;
+   
+   $redirect_count = optional_param("EWIKI_UP_REDIRECT_COUNT", $redirect_count, PARAM_INT);
+
    $jump_markup = array("jump", "goto", "redirect", "location");
 
    #-- we only care about "view" action
@@ -44,9 +46,6 @@ function ewiki_handler_jump(&$id, &$data, &$action) {
    }
 
    #-- escape from loop
-   if (isset($_REQUEST["EWIKI_UP_REDIRECT_COUNT"])) {
-      $redirect_count = $_REQUEST["EWIKI_UP_REDIRECT_COUNT"];
-   }
    if ($redirect_count-- <= 0) {
       return(ewiki_t("REDIRECTION_LOOP", array("id"=>$id)));
    }

@@ -116,7 +116,7 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
       }
       if (count($ewiki_upload_sections) > 1) {
          if (empty($def_sec)) {
-            $def_sec = $_REQUEST["section"];
+            $def_sec = optional_param('section', '');
          }
          $o .= '<b>'.ewiki_t("UPL_INSECT").'</b><br /><select name="section">';
          foreach ($ewiki_upload_sections as $id => $title) {
@@ -144,7 +144,7 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
       if (($s = $upload_file["name"]) && (strlen($s) >= 3)
          || ($s = substr(md5(time()+microtime()),0,8) . ".dat"))
       {
-         if (strlen($uu = trim($_REQUEST["new_filename"])) >= 3) {
+         if (strlen($uu = trim(optional_param("new_filename",''))) >= 3) {
             if ($uu != $s) {
                $meta["Original-Filename"] = $s;
             }
@@ -156,7 +156,7 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
          ($p = strrpos($s, '\\')) and ($p++);
          $meta["Content-Disposition"] = 'attachment; filename="'.urlencode(substr($s, $p)).'"';
       }
-      if (strlen($sect = $_REQUEST["section"])) {
+      if (strlen($sect = optional_param("section",''))) {
          if ($ewiki_upload_sections[$sect]
             || ($action==EWIKI_ACTION_ATTACHMENTS) && ($data["content"])
                && strlen($ewiki_plugins["action"][EWIKI_ACTION_ATTACHMENTS])) {
@@ -168,7 +168,7 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
             return($o);
          }
       }
-      if (strlen($s = trim($_REQUEST["comment"]))) {
+      if (strlen($s = trim(optional_param("comment",'')))) {
          $meta["comment"] = $s;
       }
 
@@ -198,13 +198,13 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
 
 
    #-- params (section, orderby)
-   ($orderby = $_REQUEST["orderby"]) or ($orderby = "created");
+   $orderby = optional_param('orderby', 'created');
 
    if ($def_sec) {
       $section = $def_sec;
    }
    else {
-      ($section = $_REQUEST["section"]) or ($section = "");
+      $section = optional_param('section', '');
       if (count($ewiki_upload_sections) > 1) {
          $oa = array();
          $ewiki_upload_sections["*"] = "*";
@@ -256,7 +256,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
 
 
    #-- slice
-   ($pnum = $_REQUEST[EWIKI_UP_PAGENUM]) or ($pnum = 0);
+   $pnum = optional_param(EWIKI_UP_PAGENUM, 0, PARAM_INT);
    if (count($sorted) > EWIKI_LIST_LIMIT) {
       $o_nl .= '<div class="lighter">&gt;&gt; ';
       for ($n=0; $n < (int)(count($sorted) / EWIKI_LIST_LIMIT); $n++) {

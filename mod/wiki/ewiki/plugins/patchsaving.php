@@ -19,19 +19,22 @@ if (function_exists("is_executable") && is_executable(EWIKI_BIN_PATCH) && is_exe
 
 function ewiki_edit_patch($id, &$data) {
 
+   $version = optional_param('version', null);
+   $content = optional_param('content', '');
+
    $r = false;
 
    $base = ewiki_database(
       "GET",
-      array("id"=>$id, "version"=>$_REQUEST["version"])
+      array("id"=>$id, "version"=>$version)
    );
    if (!$base) { 
      return(false);
    }
 
    $fn_base = EWIKI_TMP."/ewiki.base.".md5($base["content"]);
-   $fn_requ = EWIKI_TMP."/ewiki..requ.".md5($_REQUEST["content"]);
-   $fn_patch = EWIKI_TMP."/ewiki.patch.".md5($base["content"])."-".md5($_REQUEST["content"]);
+   $fn_requ = EWIKI_TMP."/ewiki..requ.".md5($content);
+   $fn_patch = EWIKI_TMP."/ewiki.patch.".md5($base["content"])."-".md5($content);
    $fn_curr = EWIKI_TMP."/ewiki.curr.".md5($data["content"]);
 
    if ($f = fopen($fn_base, "w")) {
@@ -43,7 +46,7 @@ function ewiki_edit_patch($id, &$data) {
    }
 
    if ($f = fopen($fn_requ, "w")) {
-     fwrite($f, $_REQUEST["content"]);
+     fwrite($f, $content);
      fclose($f);
    }
    else { 
@@ -67,8 +70,9 @@ function ewiki_edit_patch($id, &$data) {
       exec("patch $fn_curr $fn_patch", $output, $retval);
       if (!$retval) {
 
-         $_REQUEST["version"] = $curr["version"];
-         $_REQUEST["content"] = implode("", file($fn_curr));
+    /// mrc - ?? what is $curr supposed to be ??
+         $_REQUEST["version"] = $_POST["version"] = $_GET["version"] = $curr["version"];
+         $_REQUEST["content"] = $_POST["content"] = $_GET["content"] = implode("", file($fn_curr));
          $r = true;
 
       }

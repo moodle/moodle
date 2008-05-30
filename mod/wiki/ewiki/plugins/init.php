@@ -26,14 +26,17 @@ function ewiki_initialization_wizard($id, &$data, &$action) {
 
    global $ewiki_plugins;
 
-   #-- proceed only if frontpage missing or explicetely requested
-   if ((strtolower($id)=="wikisetupwizard") || ($id==EWIKI_PAGE_INDEX) && ($action=="edit") && empty($data["version"]) && !($_REQUEST["abort"])) {
+   $abort = optional_param('abort', false);
+   $init  = optional_param('init', '');
 
-      if ($_REQUEST["abort"]) {
+   #-- proceed only if frontpage missing or explicetely requested
+   if ((strtolower($id)=="wikisetupwizard") || ($id==EWIKI_PAGE_INDEX) && ($action=="edit") && empty($data["version"]) && !($abort)) {
+
+      if ($abort) {
       }
 
       #-- first print some what-would-we-do-stats
-      elseif (empty($_REQUEST["init"])) {
+      elseif (empty($init)) {
 
          $o = "<h2>WikiSetupWizard</h2>\n";
          $o .= "You don't have any pages in your Wiki yet, so we should try to read-in the default ones from <tt>init-pages/</tt> now.<br /><br />";

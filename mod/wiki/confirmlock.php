@@ -15,12 +15,13 @@ require_once("../../config.php");
 
 header('Content-Type: text/plain');    
 
-if(empty($_POST['lockid'])) {
+$lockid = optional_param('lockid', 0, PARAM_INT);
+
+if($lockid == 0) {
     print 'noid';
     exit;
 }
 
-$lockid=(int)$_POST['lockid'];
 if($lock=get_record('wiki_locks','id',$lockid)) {
     $lock->lockedseen=time();
     update_record('wiki_locks',$lock);

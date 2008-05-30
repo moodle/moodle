@@ -44,19 +44,23 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
   global $userid, $groupid, $cm, $wikipage, $wiki, $course, $CFG;
   #-- return legacy page
   $cont = true;
-  if (!empty($_REQUEST["wikiexport"])) {
-    $binaries=$_REQUEST["exportbinaries"];
+  $wikiexport = optional_param('wikiexport', '');
+  $binaries = optional_param("exportbinaries", null);
+  $exportformatval = optional_param("exportformats", null);
+  $withvirtualpages = optional_param("withvirtualpages", null);
+  $exportdestinationsval = optional_param('exportdestinations', null);
+
+  if (!empty($wikiexport)) {
     if(!$wiki->ewikiacceptbinary) {
       $binaries=0;
     }
-    $exportformats=$_REQUEST["exportformats"];
     if($wiki->htmlmode==2) {
-      $exportformats=1;
+      $exportformatval=1;
     }
     $cont=ewiki_page_wiki_dump_send($binaries, 
-                                $exportformats, 
-                                $_REQUEST["withvirtualpages"], 
-                                $_REQUEST["exportdestinations"]);
+                                $exportformatval, 
+                                $withvirtualpages, 
+                                optional_param("exportdestinations", null));
   }  
   if($cont===false) {
      die;
@@ -89,14 +93,14 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
     $ret.="  <TR valign=\"top\">\n".
         '    <TD align="right">'.get_string("withbinaries","wiki").":</TD>\n".
         "    <TD>\n".
-        '      <input type="checkbox" name="exportbinaries" value="1"'.($_REQUEST["exportbinaries"]==1?" checked":"")." />\n".
+        '      <input type="checkbox" name="exportbinaries" value="1"'.($binaries==1?" checked":"")." />\n".
         "    </TD>\n".
         "  </TR>\n";
   }
   $ret.="  <TR valign=\"top\">\n".
       '    <TD align="right">'.get_string("withvirtualpages","wiki").":</TD>\n".
       "    <TD>\n".
-      '      <input type="checkbox" name="withvirtualpages" value="1"'.($_REQUEST["withvirtualpages"]==1?" checked":"")." />\n".
+      '      <input type="checkbox" name="withvirtualpages" value="1"'.($withvirtualpages==1?" checked":"")." />\n".
       "    </TD>\n".
       "  </TR>\n";
   $exportformats=array( "0" => get_string("plaintext","wiki") , "1" => get_string("html","wiki"));
@@ -105,7 +109,7 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
         '    <TD align="right">'.get_string("exportformats","wiki").":</TD>\n".
         "    <TD>\n";
   if($wiki->htmlmode!=2) {
-    $ret.= choose_from_menu($exportformats, "exportformats", $_REQUEST["exportformats"], "", "", "", true)."\n";
+    $ret.= choose_from_menu($exportformats, "exportformats", $exportformatval, "", "", "", true)."\n";
   } else {
     $ret.= '<INPUT type="hidden" name="exportformats" value="1" />'.
            get_string("html","wiki");
@@ -129,7 +133,7 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
   if(count($exportdestinations)==1) {
     $ret.='<INPUT type="hidden" name="exportdestinations" value="0" />'.$exportdestinations[0]."\n";
   } else {
-    $ret.=choose_from_menu($exportdestinations, "exportdestinations", $_REQUEST["exportdestinations"], "", "", "", true)."\n";
+    $ret.=choose_from_menu($exportdestinations, "exportdestinations", $exportdestinationsval, "", "", "", true)."\n";
   }
   $ret.="    </TD>\n".
       "  </TR>\n".      
