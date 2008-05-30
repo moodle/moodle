@@ -1,7 +1,9 @@
 <?php  // $Id$
        // This file contains all the common stuff to be used in RSS System
 
-//This function returns the icon (from theme) with the link to rss/file.php
+/**
+ * This function returns the icon (from theme) with the link to rss/file.php
+ */
 function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
 
     global $CFG, $USER;
@@ -22,7 +24,9 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
 
 }
 
-//This function returns the URL for the RSS XML file.
+/**
+ * This function returns the URL for the RSS XML file.
+ */
 function rss_get_url($courseid, $userid, $modulename, $id) {
     global $CFG;
     if ($CFG->slasharguments) {
@@ -33,18 +37,21 @@ function rss_get_url($courseid, $userid, $modulename, $id) {
     return $rsspath;
 }
 
-//This function prints the icon (from theme) with the link to rss/file.php
+/**
+ * This function prints the icon (from theme) with the link to rss/file.php
+ */
 function rss_print_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
-
     print rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext);
 
 }
-//This function iterates over each module in the server to see if
-//it supports generating rss feeds, searching for a MODULENAME_rss_feeds()
-//function and invoking it foreach activity as necessary
-function cron_rss_feeds () {
 
-    global $CFG;
+/**
+ * This function iterates over each module in the server to see if
+ * it supports generating rss feeds, searching for a MODULENAME_rss_feeds()
+ * function and invoking it foreach activity as necessary
+ */
+function cron_rss_feeds () {
+    global $CFG, $DB;
 
     $status = true;
 
@@ -56,7 +63,7 @@ function cron_rss_feeds () {
         return true;
     }
 
-    if ($allmods = get_records('modules') ) {
+    if ($allmods = $DB->get_records('modules') ) {
         foreach ($allmods as $mod) {
             mtrace('        '.$mod->name.': ', '');
             $modname = $mod->name;
@@ -95,9 +102,10 @@ function cron_rss_feeds () {
     return $status;
 }
 
-//This function saves to file the rss feed specified in the parameters
-function rss_save_file ($modname, $mod, $result) {
-
+/**
+ * This function saves to file the rss feed specified in the parameters
+ */
+function rss_save_file($modname, $mod, $result) {
     global $CFG;
 
     $status = true;
@@ -127,9 +135,10 @@ function rss_file_name($modname, $mod) {
     return "$CFG->dataroot/rss/$modname/$mod->id.xml";
 }
 
-//This function return all the common headers for every rss feed in the site
+/**
+ * This function return all the common headers for every rss feed in the site
+ */
 function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
-
     global $CFG, $USER;
 
     static $pixpath = '';
@@ -181,7 +190,7 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
         //write image info
         $rsspix = $CFG->pixpath."/i/rsssitelogo.gif";
 
-        //write the info 
+        //write the info
         $result .= rss_start_tag('image', 2, true);
         $result .= rss_full_tag('url', 3, false, $rsspix);
         $result .= rss_full_tag('title', 3, false, 'moodle');
@@ -205,7 +214,6 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
 //item->link: The link url of the item
 //item->description: The content of the item
 function rss_add_items($items) {
-
     global $CFG;
 
     $result = '';
@@ -221,10 +229,10 @@ function rss_add_items($items) {
             $result .= rss_full_tag('link',3,false,$item->link);
             $result .= rss_add_enclosures($item);
             $result .= rss_full_tag('pubDate',3,false,date('D, d M Y H:i:s T',$item->pubdate));
-            //Include the author if exists 
+            //Include the author if exists
             if (isset($item->author)) {
                 //$result .= rss_full_tag('author',3,false,$item->author);
-                //We put it in the description instead because it's more important 
+                //We put it in the description instead because it's more important
                 //for moodle than most other feeds, and most rss software seems to ignore
                 //the author field ...
                 $item->description = get_string('byname','',$item->author).'. &nbsp;<p>'.$item->description.'</p>';
@@ -240,11 +248,10 @@ function rss_add_items($items) {
     return $result;
 }
 
-//This function return all the common footers for every rss feed in the site
+/**
+ * This function return all the common footers for every rss feed in the site
+ */
 function rss_standard_footer($title = NULL, $link = NULL, $description = NULL) {
-
-    global $CFG, $USER;
-
     $status = true;
     $result = '';
 
@@ -256,11 +263,12 @@ function rss_standard_footer($title = NULL, $link = NULL, $description = NULL) {
     return $result;
 }
 
-//This function return an error xml file (string)
-//to be sent when a rss is required (file.php)
-//and something goes wrong
+/**
+ * This function return an error xml file (string)
+ * to be sent when a rss is required (file.php)
+ * and something goes wrong
+ */
 function rss_geterrorxmlfile() {
-
     global $CFG;
 
     $return = '';
@@ -271,9 +279,9 @@ function rss_geterrorxmlfile() {
     //XML item
     if ($return) {
         $item = new object();
-        $item->title = "RSS Error";
-        $item->link = $CFG->wwwroot;
-        $item->pubdate = time();
+        $item->title       = "RSS Error";
+        $item->link        = $CFG->wwwroot;
+        $item->pubdate     = time();
         $item->description = get_string("rsserror");
         $return .= rss_add_items(array($item));
     }
@@ -291,7 +299,9 @@ function rss_geterrorxmlfile() {
 // but I've replicated them here because they have some minor
 // diferences. Someday all they should go to a common place.
 
-//Return the xml start tag
+/**
+ * Return the xml start tag
+ */
 function rss_start_tag($tag,$level=0,$endline=false,$attributes=null) {
     if ($endline) {
        $endchar = "\n";
@@ -307,7 +317,9 @@ function rss_start_tag($tag,$level=0,$endline=false,$attributes=null) {
     return str_repeat(" ",$level*2)."<".$tag.$attrstring.">".$endchar;
 }
 
-//Return the xml end tag
+/**
+ * Return the xml end tag
+ */
 function rss_end_tag($tag,$level=0,$endline=true) {
     if ($endline) {
        $endchar = "\n";
@@ -317,9 +329,10 @@ function rss_end_tag($tag,$level=0,$endline=true) {
     return str_repeat(" ",$level*2)."</".$tag.">".$endchar;
 }
 
-//Return the start tag, the contents and the end tag
+/**
+ * Return the start tag, the contents and the end tag
+ */
 function rss_full_tag($tag,$level=0,$endline=true,$content,$attributes=null) {
-    global $CFG;
     $st = rss_start_tag($tag,$level,$endline,$attributes);
     $co="";
     $co = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
@@ -362,7 +375,7 @@ define('SUBMITTERS_ADMIN_AND_TEACHER', 2);
  * @param object $context we need the context object to check what the user is allowed to do.
  */
 function rss_display_feeds($courseid, $userid, $rssid='', $context) {
-    global $db, $USER, $CFG;
+    global $USER, $CFG, $DB;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
 
     require_once($CFG->libdir.'/tablelib.php');
@@ -393,15 +406,15 @@ function rss_display_feeds($courseid, $userid, $rssid='', $context) {
 
     $table->setup();
 
-    $feeds = get_records_select('block_rss_client', $select, sql_order_by_text('title'));
+    $feeds = $DB->get_records_select('block_rss_client', $select, null, $DB->sql_order_by_text('title'));
 
     if(!empty($feeds)) {
         foreach($feeds as $feed) {
 
             if (!empty($feed->preferredtitle)) {
-                $feedtitle = stripslashes_safe($feed->preferredtitle);
+                $feedtitle = $feed->preferredtitle;
             } else {
-                $feedtitle =  stripslashes_safe($feed->title);
+                $feedtitle =  $feed->title;
             }
 
             if ( ($feed->userid == $USER->id && $manageownfeeds)
@@ -410,7 +423,7 @@ function rss_display_feeds($courseid, $userid, $rssid='', $context) {
                 $feedicons = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=rssedit&amp;rssid='. $feed->id .'&amp;shared='.$feed->shared.'&amp;blogid='. $blogid .'">'.
                              '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. get_string('edit').'" title="'. get_string('edit') .'" /></a>&nbsp;'.
 
-                             '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=delfeed&amp;rssid='. $feed->id.'&amp;shared='.$feed->shared.'blogid='. $blogid .'" 
+                             '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=delfeed&amp;rssid='. $feed->id.'&amp;shared='.$feed->shared.'blogid='. $blogid .'"
                 onclick="return confirm(\''. get_string('deletefeedconfirm', 'block_rss_client') .'\');">'.
                              '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete').'" title="'. get_string('delete') .'" /></a>';
             }
@@ -456,8 +469,9 @@ function rss_print_form($act='none', $url='', $rssid='', $preferredtitle='', $sh
  * @return string Either the form is printed directly and nothing is returned or the form is returned as a string
  */
 function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $shared=0, $courseid='', $context) {
-    global $USER, $CFG, $_SERVER, $blockid, $blockaction;
+    global $USER, $CFG, $blockid, $blockaction;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
+
     $stredit = get_string('edit');
     $stradd = get_string('add');
     $strupdatefeed = get_string('updatefeed', 'block_rss_client');
@@ -549,7 +563,6 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $shar
 * @author   Dan Stowell
 */
 function rss_add_enclosures($item){
-
     global $CFG;
 
     $returnstring = '';
