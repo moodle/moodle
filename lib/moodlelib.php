@@ -4065,7 +4065,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         $mail->AddReplyTo($replyto,$replytoname);
     }
 
-    $mail->Subject = substr(stripslashes($subject), 0, 900);
+    $mail->Subject = substr($subject, 0, 900);
 
     $mail->AddAddress($user->email, fullname($user) );
 
