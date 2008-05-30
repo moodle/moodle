@@ -344,6 +344,10 @@ function record_exists($table, $field1='', $value1='', $field2='', $value2='', $
 function delete_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
     global $DB;
 
+    if (is_array($field1)) {
+        error('Incorrect parameter! (probably missing $DB->)');
+    }
+
     $conditions = array();
     if ($field1) {
         $conditions[$field1] = stripslashes_recursive($value1);
